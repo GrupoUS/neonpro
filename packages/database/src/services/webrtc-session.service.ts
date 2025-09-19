@@ -161,6 +161,80 @@ export class WebRTCSessionService {
   }
 
   /**
+   * Creates a new WebRTC session
+   */
+  async createSession(sessionData: {
+    patientId: string;
+    physicianId: string;
+    sessionType: string;
+    specialtyCode?: string;
+  }): Promise<{ sessionId: string; roomId: string }> {
+    try {
+      const roomId = this.generateRoomId();
+      
+      const { data, error } = await this.supabase
+        .from('telemedicine_sessions')
+        .insert({
+          patient_id: sessionData.patientId,
+          physician_id: sessionData.physicianId,
+          session_type: sessionData.sessionType,
+          specialty_code: sessionData.specialtyCode,
+          room_id: roomId,
+          status: 'created',
+          created_at: new Date().toISOString(),
+        })
+        .select('id')
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to create session: ${error.message}`);
+      }
+
+      return {
+        sessionId: data.id,
+        roomId,
+      };
+    } catch (error) {
+      console.error('Error creating WebRTC session:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Starts a WebRTC session
+   */
+  async startSession(sessionId: string): Promise<{ success: boolean; roomId: string }> {
+    try {
+      const { data, error } = await this.supabase
+        .from('telemedicine_sessions')
+        .update({
+          status: 'active',
+          started_at: new Date().toISOString(),
+        })
+        .eq('id', sessionId)
+        .select('room_id')
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to start session: ${error.message}`);
+      }
+
+      // Log session start event
+      await this.logSessionEvent(sessionId, 'session_started', {
+        timestamp: new Date().toISOString(),
+      });
+
+      return {
+        success: true,
+        roomId: data.room_id,
+      };
+    } catch (error) {
+      console.error('Error starting WebRTC session:', error);
+      throw error;
+    }
+  }
+
+  /**
    * Adds a participant to the WebRTC session
    */
   async addParticipant(
@@ -664,6 +738,114 @@ export class WebRTCSessionService {
 
     } catch (error) {
       console.error('Error logging session event:', error);
+    }
+  }
+
+  /**
+   * Gets detailed session information including participants and metrics
+   */
+  async getSessionDetails(sessionId: string): Promise<{
+    session: any;
+    participants: SessionParticipant[];
+    metrics: SessionQualityMetrics | null;
+    recording: SessionRecording | null;
+  } | null> {
+    try {
+      // Get session data
+      const { data: session, error: sessionError } = await this.supabase
+        .from('webrtc_sessions')
+        .select('*')
+        .eq('id', sessionId)
+        .single();
+
+      if (sessionError || !session) {
+        return null;
+      }
+
+      // Get participants
+      const { data: participants, error: participantsError } = await this.supabase
+        .from('session_participants')
+        .select('*')
+        .eq('session_id', sessionId);
+
+      // Get metrics
+      const { data: metrics, error: metricsError } = await this.supabase
+        .from('session_quality_metrics')
+        .select('*')
+        .eq('session_id', sessionId)
+        .order('timestamp', { ascending: false })
+        .limit(1)
+        .single();
+
+      // Get recording info
+      const { data: recording, error: recordingError } = await this.supabase
+        .from('session_recordings')
+        .select('*')
+        .eq('session_id', sessionId)
+        .single();
+
+      return {
+        session,
+        participants: participants || [],
+        metrics: metrics || null,
+        recording: recording || null,
+      };
+    } catch (error) {
+      console.error('Error getting session details:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Cancels an active WebRTC session
+   */
+  async cancelSession(sessionId: string, reason: string): Promise<void> {
+    try {
+      const { error } = await this.supabase
+        .from('webrtc_sessions')
+        .update({
+          status: 'cancelled',
+          ended_at: new Date().toISOString(),
+          metadata: { cancellation_reason: reason }
+        })
+        .eq('id', sessionId);
+
+      if (error) {
+        throw new Error(`Failed to cancel session: ${error.message}`);
+      }
+
+      // Log the cancellation event
+      await this.logSessionEvent(sessionId, 'session_cancelled', {
+        reason,
+        cancelled_at: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error cancelling session:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Gets quality metrics for a session
+   */
+  async getQualityMetrics(sessionId: string): Promise<SessionQualityMetrics | null> {
+    try {
+      const { data, error } = await this.supabase
+        .from('session_quality_metrics')
+        .select('*')
+        .eq('session_id', sessionId)
+        .order('timestamp', { ascending: false })
+        .limit(1)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "not found"
+        throw new Error(`Failed to get quality metrics: ${error.message}`);
+      }
+
+      return data || null;
+    } catch (error) {
+      console.error('Error getting quality metrics:', error);
+      return null;
     }
   }
 }

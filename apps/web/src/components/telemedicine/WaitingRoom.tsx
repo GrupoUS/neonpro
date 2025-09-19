@@ -1,911 +1,808 @@
-'use client';
+/**
+ * Waiting Room Component for Telemedicine Platform
+ * Handles patient queuing, real-time updates, and CFM compliance verification
+ * Features appointment validation, queue management, and emergency triage
+ */
 
-import { Badge } from '@/components/ui/badge';
+import React, { useEffect, useState, useCallback } from 'react';
+import {
+  Clock, Users, Activity, Phone, Video, Calendar, 
+  User, Shield, CheckCircle, AlertCircle, XCircle,
+  Heart, Thermometer, Scale, Ruler, FileText,
+  Bell, BellOff, Volume2, VolumeX, Settings,
+  RefreshCw, LogOut, Info, AlertTriangle
+} from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// Avatar component not available, will use User icon instead
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
-import useLGPDConsent from '@/hooks/useLGPDConsent';
-import { cn } from '@/lib/utils';
-import type { MedicalDataClassification } from '@neonpro/types';
-import {
-  AlertCircle,
-  AlertTriangle,
-  Calendar,
-  Camera,
-  CameraOff,
-  CheckCircle,
-  Clock,
-  FileText,
-  MessageCircle,
-  Mic,
-  MicOff,
-  Monitor,
-  Phone,
-  Shield,
-  User,
-  UserCheck,
-  Users,
-  Video,
-  VideoOff,
-  Wifi,
-  WifiOff,
-} from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
-import ConsentDialog from './ConsentDialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Switch } from '@/components/ui/switch';
+import { Slider } from '@/components/ui/slider';
+import { toast } from 'sonner';
 
-// Types for waiting room data
-export interface QueuedPatient {
-  id: string;
-  name: string;
-  avatar?: string;
-  appointmentTime: Date;
-  estimatedWaitTime: number; // minutes
-  status: 'waiting' | 'preparing' | 'ready' | 'in-consultation' | 'technical-issues';
-  priority: 'low' | 'normal' | 'high' | 'urgent';
-  hasInsurance: boolean;
-  isNewPatient: boolean;
-  consultationType: 'routine' | 'follow-up' | 'urgent' | 'specialist';
+import { 
+  useWaitingRoom, 
+  useQueuePosition,
+  usePreConsultationCheck,
+  useSessionConsent,
+  useEmergencyTriage
+} from '@/hooks/use-telemedicine';
+
+interface WaitingRoomProps {
+  appointmentId: string;
+  patientId: string;
+  onSessionStart?: (sessionId: string) => void;
+  onEmergencyEscalation?: () => void;
+  className?: string;
 }
 
-export interface ProfessionalStatus {
-  id: string;
-  name: string;
-  avatar?: string;
-  status: 'available' | 'busy' | 'in-consultation' | 'break' | 'offline';
-  currentPatientName?: string;
-  nextAvailable?: Date;
-  specialization: string;
-  totalPatients: number;
-  completedToday: number;
+interface QueueInfo {
+  position: number;
+  estimatedWaitTime: number;
+  totalInQueue: number;
+  currentlyServingId?: string;
 }
 
-export interface WaitingRoomProps {
-  /** Current user/patient information */
-  currentPatient: {
-    id: string;
-    name: string;
-    appointmentTime: Date;
-    estimatedWaitTime: number;
-  };
-  /** List of all patients in queue */
-  queuedPatients: QueuedPatient[];
-  /** Professional/doctor status */
-  professional: ProfessionalStatus;
-  /** Technical readiness check */
-  isConnected: boolean;
-  /** Microphone status */
-  isMicEnabled: boolean;
-  /** Camera status */
-  isCameraEnabled: boolean;
-  /** Queue position for current patient */
-  queuePosition: number;
-  /** Total estimated wait time */
-  totalWaitTime: number;
-  /** Callback when patient is ready to join */
-  onJoinConsultation?: () => void;
-  /** Callback for technical test */
-  onTechnicalTest?: () => void;
-  /** Callback for mic toggle */
-  onToggleMic?: () => void;
-  /** Callback for camera toggle */
-  onToggleCamera?: () => void;
-  /** Callback for messaging */
-  onSendMessage?: (message: string) => void;
-  /** Real-time updates enabled */
-  realTimeUpdates?: boolean;
-  /** Current time for display */
-  currentTime?: Date;
-
-  // LGPD Consent Management
-  /** Session ID for WebRTC session */
-  sessionId: string;
-  /** Patient user ID for consent */
-  userId: string;
-  /** Clinic ID for audit logging */
-  clinicId: string;
-  /** Types of medical data to be processed */
-  dataTypes?: MedicalDataClassification[];
-  /** Purpose of data processing */
-  purpose?: 'telemedicine' | 'medical_treatment' | 'ai_assistance' | 'communication';
-  /** Doctor name for consent dialog */
-  doctorName?: string;
-  /** Clinic name for consent dialog */
-  clinicName?: string;
+interface VitalSigns {
+  bloodPressure?: { systolic: number; diastolic: number };
+  heartRate?: number;
+  temperature?: number;
+  weight?: number;
+  height?: number;
+  oxygenSaturation?: number;
 }
 
-// Mock data generator for development
-export const generateMockWaitingRoomData = (): Omit<WaitingRoomProps, 'currentPatient'> => {
-  const now = new Date();
+interface PreConsultationData {
+  symptoms: string[];
+  urgencyLevel: 'low' | 'medium' | 'high' | 'critical';
+  vitalSigns?: VitalSigns;
+  medications: string[];
+  allergies: string[];
+  notes?: string;
+}
 
-  return {
-    queuedPatients: [
-      {
-        id: '1',
-        name: 'Maria Silva',
-        appointmentTime: new Date(now.getTime() - 10 * 60000), // 10 minutes ago
-        estimatedWaitTime: 15,
-        status: 'in-consultation',
-        priority: 'normal',
-        hasInsurance: true,
-        isNewPatient: false,
-        consultationType: 'routine',
-      },
-      {
-        id: '2',
-        name: 'João Santos',
-        appointmentTime: new Date(now.getTime() + 5 * 60000), // 5 minutes from now
-        estimatedWaitTime: 5,
-        status: 'preparing',
-        priority: 'high',
-        hasInsurance: true,
-        isNewPatient: true,
-        consultationType: 'specialist',
-      },
-      {
-        id: '3',
-        name: 'Ana Costa',
-        appointmentTime: new Date(now.getTime() + 15 * 60000), // 15 minutes from now
-        estimatedWaitTime: 20,
-        status: 'waiting',
-        priority: 'normal',
-        hasInsurance: false,
-        isNewPatient: false,
-        consultationType: 'follow-up',
-      },
-    ],
-    professional: {
-      id: 'dr-1',
-      name: 'Dr. Carlos Oliveira',
-      status: 'in-consultation',
-      currentPatientName: 'Maria Silva',
-      nextAvailable: new Date(now.getTime() + 12 * 60000),
-      specialization: 'Cardiologia',
-      totalPatients: 8,
-      completedToday: 5,
-    },
-    isConnected: true,
-    isMicEnabled: true,
-    isCameraEnabled: true,
-    queuePosition: 2,
-    totalWaitTime: 20,
-    realTimeUpdates: true,
-    currentTime: now,
-  };
-};
-export function WaitingRoom({
-  currentPatient,
-  queuedPatients,
-  professional,
-  isConnected,
-  isMicEnabled,
-  isCameraEnabled,
-  queuePosition,
-  totalWaitTime,
-  onJoinConsultation,
-  onTechnicalTest,
-  onToggleMic,
-  onToggleCamera,
-  onSendMessage,
-  realTimeUpdates = true,
-  currentTime = new Date(),
-  // LGPD props
-  sessionId,
-  userId,
-  clinicId,
-  dataTypes = ['general-medical'],
-  purpose = 'telemedicine',
-  doctorName,
-  clinicName,
+export function WaitingRoom({ 
+  appointmentId, 
+  patientId, 
+  onSessionStart,
+  onEmergencyEscalation,
+  className = '' 
 }: WaitingRoomProps) {
-  const [currentDisplayTime, setCurrentDisplayTime] = useState(currentTime);
-  const [connectionQuality, setConnectionQuality] = useState<
-    'excellent' | 'good' | 'fair' | 'poor'
-  >('good');
-  const [showConsentDialog, setShowConsentDialog] = useState(false);
+  // Hooks
+  const { 
+    waitingRoom, 
+    joinWaitingRoom, 
+    leaveWaitingRoom,
+    updatePreConsultationData,
+    isJoining,
+    isLeaving 
+  } = useWaitingRoom({ appointmentId, patientId });
+  
+  const { queueInfo, refreshPosition } = useQueuePosition(appointmentId);
+  const { checkResults, performCheck, isChecking } = usePreConsultationCheck(appointmentId);
+  const { consent, requestConsent, updateConsent } = useSessionConsent(appointmentId);
+  const { triageAssessment, performTriage } = useEmergencyTriage(appointmentId);
 
-  // LGPD Consent Management
-  const {
-    hasValidConsent,
-    isLoading: consentLoading,
-    error: consentError,
-    checkConsent,
-    requestConsent,
-    grantConsent,
-    startSession,
-    endSession,
-    logDataAccess,
-  } = useLGPDConsent({
-    userId,
-    sessionId,
-    clinicId,
-    dataTypes,
-    purpose,
-    autoCheck: true,
+  // State
+  const [preConsultationData, setPreConsultationData] = useState<PreConsultationData>({
+    symptoms: [],
+    urgencyLevel: 'low',
+    medications: [],
+    allergies: []
   });
+  const [isPreparationComplete, setIsPreparationComplete] = useState(false);
+  const [showVitalsDialog, setShowVitalsDialog] = useState(false);
+  const [showTriageDialog, setShowTriageDialog] = useState(false);
+  const [showConsentDialog, setShowConsentDialog] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(true);
+  const [videoEnabled, setVideoEnabled] = useState(true);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [volume, setVolume] = useState([80]);
+  const [waitingTime, setWaitingTime] = useState(0);
 
-  // Update current time every minute if real-time updates are enabled
+  // Effects
   useEffect(() => {
-    if (!realTimeUpdates) return;
+    if (appointmentId && patientId) {
+      joinWaitingRoom();
+    }
 
-    const timer = setInterval(() => {
-      setCurrentDisplayTime(new Date());
-    }, 60000); // Update every minute
-
-    return () => clearInterval(timer);
-  }, [realTimeUpdates]);
-
-  // Simulate connection quality monitoring
-  useEffect(() => {
-    const checkConnection = () => {
-      if (!isConnected) {
-        setConnectionQuality('poor');
-        return;
-      }
-
-      // Simulate varying connection quality
-      const qualities: Array<'excellent' | 'good' | 'fair' | 'poor'> = [
-        'excellent',
-        'good',
-        'fair',
-      ];
-      const randomQuality = qualities[Math.floor(Math.random() * qualities.length)];
-      setConnectionQuality(randomQuality);
+    return () => {
+      leaveWaitingRoom();
     };
+  }, [appointmentId, patientId, joinWaitingRoom, leaveWaitingRoom]);
 
-    const timer = setInterval(checkConnection, 30000); // Check every 30 seconds
-    checkConnection(); // Initial check
-
-    return () => clearInterval(timer);
-  }, [isConnected]);
-
-  // Calculate wait time status
-  const waitTimeStatus = useMemo(() => {
-    if (totalWaitTime <= 5) return 'excellent';
-    if (totalWaitTime <= 15) return 'good';
-    if (totalWaitTime <= 30) return 'fair';
-    return 'concerning';
-  }, [totalWaitTime]);
-
-  // LGPD Consent Handling
+  // Waiting time counter
   useEffect(() => {
-    // Show consent dialog if consent is not valid
-    if (!consentLoading && !hasValidConsent) {
-      setShowConsentDialog(true);
+    if (waitingRoom?.joinedAt) {
+      const interval = setInterval(() => {
+        const joinTime = new Date(waitingRoom.joinedAt!).getTime();
+        const currentTime = Date.now();
+        setWaitingTime(Math.floor((currentTime - joinTime) / 1000));
+      }, 1000);
+
+      return () => clearInterval(interval);
     }
-  }, [consentLoading, hasValidConsent]);
+  }, [waitingRoom?.joinedAt]);
 
-  // Handle consent dialog response
-  const handleConsentResponse = async (granted: boolean) => {
-    setShowConsentDialog(false);
+  // Auto-perform pre-consultation check
+  useEffect(() => {
+    if (waitingRoom && !checkResults) {
+      performCheck();
+    }
+  }, [waitingRoom, checkResults, performCheck]);
 
-    if (granted) {
-      // Request consent for the specified data types
-      const success = await requestConsent();
-      if (success) {
-        // Log successful consent
-        await logDataAccess(
-          'general-medical',
-          'User granted consent for telemedicine session',
-          'patient',
-          { purpose, dataTypes },
-        );
+  // Check if ready for consultation
+  useEffect(() => {
+    const isReady = Boolean(
+      checkResults?.systemCheck &&
+      checkResults?.connectionCheck &&
+      consent?.given &&
+      preConsultationData.symptoms.length > 0
+    );
+    setIsPreparationComplete(isReady);
+  }, [checkResults, consent, preConsultationData]);
+
+  // Format time
+  const formatTime = useCallback((seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  }, []);
+
+  // Format wait time estimate
+  const formatWaitTimeEstimate = useCallback((minutes: number) => {
+    if (minutes < 1) return 'Menos de 1 minuto';
+    if (minutes === 1) return '1 minuto';
+    if (minutes < 60) return `${minutes} minutos`;
+    const hours = Math.floor(minutes / 60);
+    const remainingMins = minutes % 60;
+    return remainingMins > 0 ? `${hours}h ${remainingMins}min` : `${hours}h`;
+  }, []);
+
+  // Handle emergency escalation
+  const handleEmergencyEscalation = useCallback(async () => {
+    try {
+      const assessment = await performTriage({
+        symptoms: preConsultationData.symptoms,
+        vitalSigns: preConsultationData.vitalSigns,
+        urgencyLevel: 'critical'
+      });
+
+      if (assessment.requiresImmediate) {
+        onEmergencyEscalation?.();
+        toast.success('Emergência escalada com prioridade máxima');
+      } else {
+        setShowTriageDialog(true);
       }
-    } else {
-      // User denied consent - log and potentially restrict access
-      await logDataAccess(
-        'general-medical',
-        'User denied consent for telemedicine session',
-        'patient',
-        { purpose, dataTypes, denied: true },
-      );
+    } catch (error) {
+      toast.error('Erro ao processar emergência');
     }
-  };
+  }, [preConsultationData, performTriage, onEmergencyEscalation]);
 
-  // Enhanced join consultation with LGPD logging
-  const handleJoinConsultation = async () => {
-    if (!hasValidConsent) {
-      setShowConsentDialog(true);
+  // Handle consultation start
+  const handleConsultationStart = useCallback(async () => {
+    if (!isPreparationComplete) {
+      toast.error('Complete a preparação antes de iniciar');
       return;
     }
 
-    // Log session start
-    await startSession(professional.id);
-
-    // Log data access
-    await logDataAccess(
-      'general-medical',
-      'Patient joined telemedicine consultation',
-      'patient',
-      {
-        professional: professional.name,
-        appointmentTime: currentPatient.appointmentTime.toISOString(),
-      },
-    );
-
-    // Call original handler
-    onJoinConsultation?.();
-  }; // Status badge color mapping
-  const getStatusColor = (status: QueuedPatient['status']) => {
-    switch (status) {
-      case 'waiting':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-      case 'preparing':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
-      case 'ready':
-        return 'bg-green-100 text-green-800 border-green-200';
-      case 'in-consultation':
-        return 'bg-purple-100 text-purple-800 border-purple-200';
-      case 'technical-issues':
-        return 'bg-red-100 text-red-800 border-red-200';
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+    try {
+      // Update pre-consultation data
+      await updatePreConsultationData(preConsultationData);
+      
+      // Start session
+      const sessionId = `session_${appointmentId}_${Date.now()}`;
+      onSessionStart?.(sessionId);
+      
+      toast.success('Iniciando consulta...');
+    } catch (error) {
+      toast.error('Erro ao iniciar consulta');
     }
-  };
+  }, [isPreparationComplete, preConsultationData, updatePreConsultationData, appointmentId, onSessionStart]);
 
-  // Priority badge color mapping
-  const getPriorityColor = (priority: QueuedPatient['priority']) => {
-    switch (priority) {
-      case 'low':
-        return 'bg-gray-100 text-gray-600';
-      case 'normal':
-        return 'bg-blue-100 text-blue-600';
-      case 'high':
-        return 'bg-orange-100 text-orange-600';
-      case 'urgent':
-        return 'bg-red-100 text-red-600';
-      default:
-        return 'bg-gray-100 text-gray-600';
+  // Handle vital signs update
+  const handleVitalSignsUpdate = useCallback((vitals: VitalSigns) => {
+    setPreConsultationData(prev => ({
+      ...prev,
+      vitalSigns: { ...prev.vitalSigns, ...vitals }
+    }));
+    setShowVitalsDialog(false);
+    toast.success('Sinais vitais atualizados');
+  }, []);
+
+  // Handle symptoms update
+  const handleSymptomsUpdate = useCallback((symptoms: string[]) => {
+    setPreConsultationData(prev => ({
+      ...prev,
+      symptoms
+    }));
+  }, []);
+
+  // Handle consent completion
+  const handleConsentComplete = useCallback(async () => {
+    try {
+      await updateConsent({
+        given: true,
+        timestamp: new Date(),
+        type: 'telemedicine_consultation'
+      });
+      setShowConsentDialog(false);
+      toast.success('Consentimento registrado');
+    } catch (error) {
+      toast.error('Erro ao registrar consentimento');
     }
-  };
+  }, [updateConsent]);
 
-  // Connection quality indicator
-  const getConnectionIcon = () => {
-    if (!isConnected) return <WifiOff className='h-4 w-4 text-red-500' />;
-    return <Wifi className='h-4 w-4 text-green-500' />;
-  };
-
-  const getConnectionText = () => {
-    if (!isConnected) return 'Disconnected';
-    return `Connection: ${connectionQuality}`;
-  };
-
-  // Helper functions for badges
-  const getStatusBadge = (status: QueuedPatient['status']) => {
-    const variants = {
-      waiting: { variant: 'secondary' as const, text: 'Aguardando' },
-      preparing: { variant: 'default' as const, text: 'Preparando' },
-      ready: { variant: 'default' as const, text: 'Pronto' },
-      'in-consultation': { variant: 'outline' as const, text: 'Em Consulta' },
-      'technical-issues': { variant: 'destructive' as const, text: 'Problemas Técnicos' },
-    };
-
-    const config = variants[status] || { variant: 'secondary' as const, text: 'Aguardando' };
-
+  if (!waitingRoom) {
     return (
-      <Badge variant={config.variant}>
-        {config.text}
-      </Badge>
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <Activity className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p>Conectando à sala de espera...</p>
+        </div>
+      </div>
     );
-  };
-
-  const getPriorityBadge = (priority: QueuedPatient['priority']) => {
-    const variants = {
-      urgent: { variant: 'destructive' as const, text: 'Urgente' },
-      high: { variant: 'default' as const, text: 'Alta' },
-      normal: { variant: 'secondary' as const, text: 'Normal' },
-      low: { variant: 'outline' as const, text: 'Baixa' },
-    };
-
-    const config = variants[priority] || { variant: 'secondary' as const, text: 'Normal' };
-
-    return (
-      <Badge variant={config.variant}>
-        {config.text}
-      </Badge>
-    );
-  };
+  }
 
   return (
-    <div className='max-w-6xl mx-auto p-6 space-y-6'>
-      {/* Header Section */}
-      <div className='flex items-center justify-between'>
-        <div>
-          <h1 className='text-2xl font-bold text-gray-900'>Virtual Waiting Room</h1>
-          <p className='text-gray-600'>
-            {currentDisplayTime.toLocaleString('pt-BR', {
-              weekday: 'long',
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
+    <div className={`min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-6 ${className}`}>
+      <div className="max-w-4xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Sala de Espera Virtual
+          </h1>
+          <p className="text-gray-600">
+            Aguarde ser chamado para sua consulta de telemedicina
           </p>
         </div>
 
-        <div className='flex items-center gap-3'>
-          {getConnectionIcon()}
-          <span className='text-sm text-gray-600'>{getConnectionText()}</span>
-        </div>
-      </div>
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Queue Information */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Queue Status */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Users className="h-5 w-5" />
+                  <span>Status da Fila</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {queueInfo && (
+                  <>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-blue-600">
+                          {queueInfo.position}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Sua Posição
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-green-600">
+                          {formatWaitTimeEstimate(queueInfo.estimatedWaitTime)}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Tempo Estimado
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-orange-600">
+                          {queueInfo.totalInQueue}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Total na Fila
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-2xl font-bold text-purple-600">
+                          {formatTime(waitingTime)}
+                        </div>
+                        <div className="text-sm text-gray-600">
+                          Tempo Aguardando
+                        </div>
+                      </div>
+                    </div>
 
-      <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
-        {/* Main Patient Information */}
-        <div className='lg:col-span-2 space-y-6'>
-          {/* Current Patient Status */}
-          <Card className='border-blue-200 bg-blue-50'>
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <User className='h-5 w-5' />
-                Your Appointment
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-4'>
-                <div className='flex items-center justify-between'>
-                  <div>
-                    <h3 className='font-semibold text-lg'>{currentPatient.name}</h3>
-                    <p className='text-gray-600'>
-                      Scheduled: {currentPatient.appointmentTime.toLocaleTimeString('pt-BR', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </p>
+                    {/* Progress Indicator */}
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm text-gray-600">
+                        <span>Progresso na fila</span>
+                        <span>{Math.round(((queueInfo.totalInQueue - queueInfo.position + 1) / queueInfo.totalInQueue) * 100)}%</span>
+                      </div>
+                      <Progress 
+                        value={((queueInfo.totalInQueue - queueInfo.position + 1) / queueInfo.totalInQueue) * 100}
+                        className="h-2"
+                      />
+                    </div>
+
+                    <div className="flex justify-between items-center">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={refreshPosition}
+                        className="flex items-center space-x-1"
+                      >
+                        <RefreshCw className="h-4 w-4" />
+                        <span>Atualizar</span>
+                      </Button>
+
+                      {queueInfo.position <= 3 && (
+                        <Alert className="flex-1 ml-4">
+                          <Bell className="h-4 w-4" />
+                          <AlertDescription>
+                            Você está próximo! Prepare-se para a consulta.
+                          </AlertDescription>
+                        </Alert>
+                      )}
+                    </div>
+                  </>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Pre-Consultation Checklist */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <CheckCircle className="h-5 w-5" />
+                  <span>Preparação para Consulta</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid gap-3">
+                  {/* System Check */}
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                        checkResults?.systemCheck ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
+                      }`}>
+                        {checkResults?.systemCheck ? <CheckCircle className="h-4 w-4" /> : <Activity className="h-4 w-4" />}
+                      </div>
+                      <div>
+                        <div className="font-medium">Verificação do Sistema</div>
+                        <div className="text-sm text-gray-600">
+                          {checkResults?.systemCheck ? 'Sistema compatível' : 'Verificando compatibilidade...'}
+                        </div>
+                      </div>
+                    </div>
+                    {isChecking && <Activity className="h-4 w-4 animate-spin" />}
                   </div>
-                  <Badge variant='outline' className='bg-white'>
-                    Position #{queuePosition}
-                  </Badge>
+
+                  {/* Connection Check */}
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                        checkResults?.connectionCheck ? 'bg-green-100 text-green-600' : 'bg-gray-100 text-gray-400'
+                      }`}>
+                        {checkResults?.connectionCheck ? <CheckCircle className="h-4 w-4" /> : <Activity className="h-4 w-4" />}
+                      </div>
+                      <div>
+                        <div className="font-medium">Teste de Conexão</div>
+                        <div className="text-sm text-gray-600">
+                          {checkResults?.connectionCheck ? 'Conexão estável' : 'Testando velocidade...'}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Consent Check */}
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                        consent?.given ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'
+                      }`}>
+                        {consent?.given ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                      </div>
+                      <div>
+                        <div className="font-medium">Consentimento</div>
+                        <div className="text-sm text-gray-600">
+                          {consent?.given ? 'Consentimento dado' : 'Aguardando consentimento'}
+                        </div>
+                      </div>
+                    </div>
+                    {!consent?.given && (
+                      <Button 
+                        size="sm" 
+                        onClick={() => setShowConsentDialog(true)}
+                        className="ml-2"
+                      >
+                        Dar Consentimento
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Symptoms Check */}
+                  <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
+                        preConsultationData.symptoms.length > 0 ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'
+                      }`}>
+                        {preConsultationData.symptoms.length > 0 ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                      </div>
+                      <div>
+                        <div className="font-medium">Sintomas Informados</div>
+                        <div className="text-sm text-gray-600">
+                          {preConsultationData.symptoms.length > 0 
+                            ? `${preConsultationData.symptoms.length} sintoma(s) reportado(s)` 
+                            : 'Nenhum sintoma informado'
+                          }
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className='space-y-2'>
-                  <div className='flex items-center justify-between text-sm'>
-                    <span>Estimated wait time</span>
-                    <span
-                      className={cn(
-                        'font-semibold',
-                        waitTimeStatus === 'excellent' && 'text-green-600',
-                        waitTimeStatus === 'good' && 'text-blue-600',
-                        waitTimeStatus === 'fair' && 'text-orange-600',
-                        waitTimeStatus === 'concerning' && 'text-red-600',
-                      )}
-                    >
-                      {totalWaitTime} minutes
-                    </span>
+                {/* Ready Status */}
+                {isPreparationComplete && (
+                  <Alert className="bg-green-50 border-green-200">
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                    <AlertDescription className="text-green-800">
+                      Preparação completa! Você está pronto para a consulta.
+                    </AlertDescription>
+                  </Alert>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Emergency Alert */}
+            <Card className="border-red-200 bg-red-50">
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2 text-red-700">
+                  <AlertTriangle className="h-5 w-5" />
+                  <span>Emergência Médica</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-red-600 text-sm mb-4">
+                  Se você está passando por uma emergência médica, clique no botão abaixo para ser atendido com prioridade máxima.
+                </p>
+                <Button 
+                  variant="destructive" 
+                  onClick={handleEmergencyEscalation}
+                  className="w-full"
+                >
+                  <Heart className="h-4 w-4 mr-2" />
+                  Declarar Emergência Médica
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right Column - Settings and Actions */}
+          <div className="space-y-6">
+            {/* Patient Info */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <User className="h-5 w-5" />
+                  <span>Sua Consulta</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="text-center">
+                  <Avatar className="h-16 w-16 mx-auto mb-3">
+                    <AvatarImage src="" />
+                    <AvatarFallback className="bg-blue-100 text-blue-600 text-lg">
+                      {waitingRoom.patientName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'P'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <h3 className="font-semibold">{waitingRoom.patientName}</h3>
+                  <p className="text-sm text-gray-600">Consulta de {waitingRoom.appointmentType}</p>
+                </div>
+
+                <Separator />
+
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Agendamento:</span>
+                    <span>{appointmentId}</span>
                   </div>
-                  <Progress
-                    value={Math.max(0, 100 - (totalWaitTime / 60) * 100)}
-                    className='h-2'
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Status:</span>
+                    <Badge variant="outline" className="text-xs">
+                      {waitingRoom.status}
+                    </Badge>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Profissional:</span>
+                    <span>{waitingRoom.professionalName || 'A definir'}</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Quick Actions */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Ações Rápidas</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button 
+                  className="w-full" 
+                  onClick={() => setShowVitalsDialog(true)}
+                  variant="outline"
+                >
+                  <Thermometer className="h-4 w-4 mr-2" />
+                  Informar Sinais Vitais
+                </Button>
+
+                <Button 
+                  className="w-full" 
+                  onClick={() => setShowTriageDialog(true)}
+                  variant="outline"
+                >
+                  <FileText className="h-4 w-4 mr-2" />
+                  Pré-Triagem
+                </Button>
+
+                <Button 
+                  className="w-full" 
+                  onClick={handleConsultationStart}
+                  disabled={!isPreparationComplete}
+                  variant={isPreparationComplete ? "default" : "outline"}
+                >
+                  <Video className="h-4 w-4 mr-2" />
+                  {isPreparationComplete ? 'Entrar na Consulta' : 'Complete a Preparação'}
+                </Button>
+
+                <Separator />
+
+                <Button 
+                  className="w-full" 
+                  onClick={leaveWaitingRoom}
+                  disabled={isLeaving}
+                  variant="outline"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  {isLeaving ? 'Saindo...' : 'Sair da Fila'}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Settings */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Settings className="h-5 w-5" />
+                  <span>Configurações</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    {notificationsEnabled ? <Bell className="h-4 w-4" /> : <BellOff className="h-4 w-4" />}
+                    <span className="text-sm">Notificações</span>
+                  </div>
+                  <Switch 
+                    checked={notificationsEnabled} 
+                    onCheckedChange={setNotificationsEnabled}
                   />
                 </div>
 
-                {queuePosition <= 1 && (
-                  <div className='flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg'>
-                    <CheckCircle className='h-5 w-5 text-green-600' />
-                    <span className='text-green-800 font-medium'>
-                      You're next! Please prepare for your consultation.
-                    </span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    {audioEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+                    <span className="text-sm">Áudio</span>
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>{' '}
-          {/* Technical Setup */}
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Video className='h-5 w-5' />
-                Technical Setup
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
-                <div className='flex items-center gap-3'>
-                  <div
-                    className={cn(
-                      'p-2 rounded-full',
-                      isConnected ? 'bg-green-100' : 'bg-red-100',
-                    )}
-                  >
-                    {isConnected
-                      ? <Wifi className='h-4 w-4 text-green-600' />
-                      : <WifiOff className='h-4 w-4 text-red-600' />}
-                  </div>
-                  <div>
-                    <p className='text-sm font-medium'>Connection</p>
-                    <p className='text-xs text-gray-600'>
-                      {isConnected ? 'Connected' : 'Disconnected'}
-                    </p>
-                  </div>
+                  <Switch 
+                    checked={audioEnabled} 
+                    onCheckedChange={setAudioEnabled}
+                  />
                 </div>
 
-                <div className='flex items-center gap-3'>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    onClick={onToggleMic}
-                    className={cn(
-                      'p-2',
-                      isMicEnabled
-                        ? 'bg-green-100 hover:bg-green-200'
-                        : 'bg-red-100 hover:bg-red-200',
-                    )}
-                  >
-                    {isMicEnabled
-                      ? <Mic className='h-4 w-4 text-green-600' />
-                      : <MicOff className='h-4 w-4 text-red-600' />}
-                  </Button>{' '}
-                  <div>
-                    <p className='text-sm font-medium'>Microphone</p>
-                    <p className='text-xs text-gray-600'>
-                      {isMicEnabled ? 'Enabled' : 'Disabled'}
-                    </p>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    {videoEnabled ? <Video className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
+                    <span className="text-sm">Vídeo</span>
                   </div>
+                  <Switch 
+                    checked={videoEnabled} 
+                    onCheckedChange={setVideoEnabled}
+                  />
                 </div>
 
-                <div className='flex items-center gap-3'>
-                  <Button
-                    variant='ghost'
-                    size='sm'
-                    onClick={onToggleCamera}
-                    className={cn(
-                      'p-2',
-                      isCameraEnabled
-                        ? 'bg-green-100 hover:bg-green-200'
-                        : 'bg-red-100 hover:bg-red-200',
-                    )}
-                  >
-                    {isCameraEnabled
-                      ? <Video className='h-4 w-4 text-green-600' />
-                      : <VideoOff className='h-4 w-4 text-red-600' />}
-                  </Button>
-                  <div>
-                    <p className='text-sm font-medium'>Camera</p>
-                    <p className='text-xs text-gray-600'>
-                      {isCameraEnabled ? 'Enabled' : 'Disabled'}
-                    </p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm">Volume</span>
+                    <span className="text-sm text-gray-600">{volume[0]}%</span>
                   </div>
+                  <Slider
+                    value={volume}
+                    onValueChange={setVolume}
+                    max={100}
+                    step={10}
+                    className="w-full"
+                  />
                 </div>
-              </div>
+              </CardContent>
+            </Card>
 
-              <div className='mt-4 flex gap-2'>
-                <Button variant='outline' size='sm' onClick={onTechnicalTest}>
-                  <Video className='h-4 w-4 mr-2' />
-                  Test Audio/Video
-                </Button>
-                <div className='flex items-center gap-2'>
-                  <Button
-                    className='flex-1'
-                    onClick={handleJoinConsultation}
-                    disabled={!hasValidConsent || !isConnected}
-                  >
-                    <Video className='h-4 w-4 mr-2' />
-                    {hasValidConsent ? 'Join Consultation' : 'Consent Required'}
-                  </Button>
-                  <Button
-                    variant='outline'
-                    onClick={onTechnicalTest}
-                    disabled={!isConnected}
-                  >
-                    <Monitor className='h-4 w-4 mr-2' />
-                    Test Setup
-                  </Button>
+            {/* Compliance Indicators */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center space-x-2">
+                  <Shield className="h-5 w-5" />
+                  <span>Conformidade</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">CFM Compliant</span>
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    ✓ Ativo
+                  </Badge>
                 </div>
-              </div>
-
-              <div className='flex items-center gap-2'>
-                <Button variant='outline' size='sm'>
-                  <MessageCircle className='h-4 w-4 mr-2' />
-                  Contact Support
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* LGPD Consent Status */}
-          <Card
-            className={cn(
-              'border-2',
-              hasValidConsent ? 'border-green-200 bg-green-50' : 'border-orange-200 bg-orange-50',
-            )}
-          >
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Shield className='h-5 w-5' />
-                Status de Consentimento LGPD
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-4'>
-                <div className='flex items-center gap-3'>
-                  {hasValidConsent
-                    ? (
-                      <>
-                        <CheckCircle className='h-5 w-5 text-green-600' />
-                        <div>
-                          <p className='font-medium text-green-800'>Consentimento Válido</p>
-                          <p className='text-sm text-green-600'>
-                            Autorizado para: {purpose === 'telemedicine' ? 'Telemedicina' : purpose}
-                          </p>
-                        </div>
-                      </>
-                    )
-                    : (
-                      <>
-                        <AlertCircle className='h-5 w-5 text-orange-600' />
-                        <div>
-                          <p className='font-medium text-orange-800'>Consentimento Necessário</p>
-                          <p className='text-sm text-orange-600'>
-                            Clique para autorizar o tratamento de dados
-                          </p>
-                        </div>
-                      </>
-                    )}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">LGPD Compliant</span>
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    ✓ Ativo
+                  </Badge>
                 </div>
-
-                {!hasValidConsent && (
-                  <Button
-                    onClick={() => setShowConsentDialog(true)}
-                    className='w-full'
-                    variant='outline'
-                  >
-                    <Shield className='h-4 w-4 mr-2' />
-                    Gerenciar Consentimento
-                  </Button>
-                )}
-
-                {consentError && (
-                  <div className='text-sm text-red-600 bg-red-50 p-2 rounded'>
-                    Erro: {consentError}
-                  </div>
-                )}
-
-                <div className='text-xs text-gray-600 space-y-1'>
-                  <p>• Seus dados são protegidos pela LGPD</p>
-                  <p>• Você pode revogar o consentimento a qualquer momento</p>
-                  <p>• ID da Sessão: {sessionId}</p>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Criptografia E2E</span>
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                    ✓ Ativo
+                  </Badge>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Queue Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Users className='h-5 w-5' />
-                Queue Status ({queuedPatients.length} patients)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-3'>
-                {queuedPatients.map((patient, index) => (
-                  <div
-                    key={patient.id}
-                    className={cn(
-                      'flex items-center justify-between p-3 rounded-lg border',
-                      patient.id === currentPatient.id
-                        ? 'border-blue-300 bg-blue-50'
-                        : 'border-gray-200',
-                    )}
-                  >
-                    <div className='flex items-center gap-3'>
-                      <div className='text-sm text-gray-500 font-mono'>
-                        #{index + 1}
-                      </div>
-                      <div className='h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center'>
-                        <User className='h-4 w-4 text-blue-600' />
-                      </div>
-                      <div>
-                        <p className='font-medium'>
-                          {patient.id === currentPatient.id ? 'You' : patient.name}
-                        </p>
-                        <div className='flex items-center gap-2 text-xs text-gray-600'>
-                          <Clock className='h-3 w-3' />
-                          <span>
-                            {patient.appointmentTime.toLocaleTimeString('pt-BR', {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className='flex items-center gap-2'>
-                      {getPriorityBadge(patient.priority)}
-                      {getStatusBadge(patient.status)}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Technical Setup */}
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <Monitor className='h-5 w-5' />
-                Technical Setup
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-4'>
-                {/* Connection Quality */}
-                <div className='space-y-2'>
-                  <label className='text-sm font-medium'>Connection Quality</label>
-                  <div className='flex items-center gap-3'>
-                    {getConnectionIcon(connectionQuality)}
-                    <div className='flex-1'>
-                      <div className='text-sm text-gray-600'>
-                        {connectionQuality.type === 'excellent' && 'Excellent connection'}
-                        {connectionQuality.type === 'good' && 'Good connection'}
-                        {connectionQuality.type === 'fair'
-                          && 'Fair connection - may affect call quality'}
-                        {connectionQuality.type === 'poor'
-                          && 'Poor connection - consider improving internet'}
-                      </div>
-                      <div className='text-xs text-gray-500'>
-                        {connectionQuality.speed} Mbps • Latency: {connectionQuality.latency}ms
-                      </div>
-                    </div>
-                  </div>
-                </div>{' '}
-                {/* Camera & Microphone Test */}
-                <div className='space-y-3'>
-                  <label className='text-sm font-medium'>Camera & Audio</label>
-                  <div className='grid grid-cols-2 gap-3'>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={onToggleCamera}
-                      className={cn(
-                        'flex items-center gap-2',
-                        isCameraEnabled
-                          ? 'text-green-600 border-green-300'
-                          : 'text-red-600 border-red-300',
-                      )}
-                    >
-                      {isCameraEnabled
-                        ? <Camera className='h-4 w-4' />
-                        : <CameraOff className='h-4 w-4' />}
-                      {isCameraEnabled ? 'Camera On' : 'Camera Off'}
-                    </Button>
-                    <Button
-                      variant='outline'
-                      size='sm'
-                      onClick={onToggleMic}
-                      className={cn(
-                        'flex items-center gap-2',
-                        isMicEnabled
-                          ? 'text-green-600 border-green-300'
-                          : 'text-red-600 border-red-300',
-                      )}
-                    >
-                      {isMicEnabled ? <Mic className='h-4 w-4' /> : <MicOff className='h-4 w-4' />}
-                      {isMicEnabled ? 'Mic On' : 'Mic Off'}
-                    </Button>
-                  </div>
-
-                  {/* Video Preview */}
-                  {isCameraEnabled && (
-                    <div className='bg-gray-100 rounded-lg aspect-video flex items-center justify-center'>
-                      <div className='text-center text-gray-500'>
-                        <Camera className='h-8 w-8 mx-auto mb-2' />
-                        <p className='text-sm'>Camera preview would appear here</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>{' '}
-        {/* Right Column - Professional Info & Actions */}
-        <div className='space-y-6'>
-          {/* Professional Status */}
-          <Card>
-            <CardHeader>
-              <CardTitle className='flex items-center gap-2'>
-                <UserCheck className='h-5 w-5' />
-                Dr. {professional.name}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-3'>
-                <div className='flex items-center gap-2'>
-                  {professional.status === 'online'
-                    ? <div className='h-2 w-2 bg-green-500 rounded-full'></div>
-                    : <div className='h-2 w-2 bg-gray-400 rounded-full'></div>}
-                  <span className='text-sm'>
-                    {professional.status === 'online' ? 'Online' : 'Offline'}
-                  </span>
-                </div>
-
-                {professional.specialty && (
-                  <div className='text-sm text-gray-600'>
-                    <p>{professional.specialty}</p>
-                  </div>
-                )}
-
-                {professional.totalConsultations && (
-                  <div className='flex items-center gap-2 text-sm text-blue-600'>
-                    <Clock className='h-4 w-4' />
-                    <span>Total consultations: {professional.totalConsultations}</span>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className='space-y-3'>
-                <Button
-                  variant='outline'
-                  className='w-full flex items-center gap-2'
-                  onClick={() => console.log('Updating availability...')}
-                >
-                  <Clock className='h-4 w-4' />
-                  Update Availability
-                </Button>
-
-                <Button
-                  variant='outline'
-                  className='w-full flex items-center gap-2'
-                  onClick={() => console.log('Testing connection...')}
-                >
-                  <Wifi className='h-4 w-4' />
-                  Test Connection
-                </Button>
-
-                <Button
-                  variant='outline'
-                  className='w-full flex items-center gap-2'
-                  onClick={() => console.log('Reviewing notes...')}
-                >
-                  <FileText className='h-4 w-4' />
-                  Review Patient Notes
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Emergency Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle className='text-red-600'>Emergency</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Button
-                variant='destructive'
-                className='w-full flex items-center gap-2'
-                onClick={() => console.log('Emergency protocols...')}
-              >
-                <AlertTriangle className='h-4 w-4' />
-                Emergency Protocols
-              </Button>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
         </div>
-      </div>
 
-      {/* LGPD Consent Dialog */}
-      <ConsentDialog
-        isOpen={showConsentDialog}
-        onClose={() => setShowConsentDialog(false)}
-        onConsent={handleConsentResponse}
-        sessionId={sessionId}
-        dataTypes={dataTypes}
-        purpose={purpose}
-        doctorName={doctorName || professional.name}
-        clinicName={clinicName}
-      />
+        {/* Vitals Dialog */}
+        <Dialog open={showVitalsDialog} onOpenChange={setShowVitalsDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Sinais Vitais</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Pressão Sistólica</label>
+                  <input 
+                    type="number" 
+                    placeholder="120"
+                    className="w-full px-3 py-2 border rounded-lg text-sm"
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      if (!isNaN(value)) {
+                        setPreConsultationData(prev => ({
+                          ...prev,
+                          vitalSigns: {
+                            ...prev.vitalSigns,
+                            bloodPressure: {
+                              ...prev.vitalSigns?.bloodPressure,
+                              systolic: value,
+                              diastolic: prev.vitalSigns?.bloodPressure?.diastolic || 80
+                            }
+                          }
+                        }));
+                      }
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Pressão Diastólica</label>
+                  <input 
+                    type="number" 
+                    placeholder="80"
+                    className="w-full px-3 py-2 border rounded-lg text-sm"
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      if (!isNaN(value)) {
+                        setPreConsultationData(prev => ({
+                          ...prev,
+                          vitalSigns: {
+                            ...prev.vitalSigns,
+                            bloodPressure: {
+                              ...prev.vitalSigns?.bloodPressure,
+                              diastolic: value,
+                              systolic: prev.vitalSigns?.bloodPressure?.systolic || 120
+                            }
+                          }
+                        }));
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium mb-1">Frequência Cardíaca</label>
+                  <input 
+                    type="number" 
+                    placeholder="70"
+                    className="w-full px-3 py-2 border rounded-lg text-sm"
+                    onChange={(e) => {
+                      const value = parseInt(e.target.value);
+                      if (!isNaN(value)) {
+                        setPreConsultationData(prev => ({
+                          ...prev,
+                          vitalSigns: { ...prev.vitalSigns, heartRate: value }
+                        }));
+                      }
+                    }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium mb-1">Temperatura (°C)</label>
+                  <input 
+                    type="number" 
+                    step="0.1"
+                    placeholder="36.5"
+                    className="w-full px-3 py-2 border rounded-lg text-sm"
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      if (!isNaN(value)) {
+                        setPreConsultationData(prev => ({
+                          ...prev,
+                          vitalSigns: { ...prev.vitalSigns, temperature: value }
+                        }));
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setShowVitalsDialog(false)}>
+                  Cancelar
+                </Button>
+                <Button onClick={() => {
+                  handleVitalSignsUpdate(preConsultationData.vitalSigns || {});
+                }}>
+                  Salvar
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* Consent Dialog */}
+        <Dialog open={showConsentDialog} onOpenChange={setShowConsentDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Consentimento para Telemedicina</DialogTitle>
+            </DialogHeader>
+            <ScrollArea className="max-h-96">
+              <div className="space-y-4 text-sm">
+                <p>
+                  Ao prosseguir com a consulta de telemedicina, você concorda com os seguintes termos:
+                </p>
+                <ul className="list-disc list-inside space-y-2 text-gray-600">
+                  <li>Entendo que esta é uma consulta médica via telemedicina</li>
+                  <li>Confirmo a veracidade das informações fornecidas</li>
+                  <li>Autorizo a gravação da sessão para fins médicos e legais</li>
+                  <li>Estou ciente dos benefícios e limitações da telemedicina</li>
+                  <li>Concordo com o tratamento dos meus dados conforme a LGPD</li>
+                </ul>
+              </div>
+            </ScrollArea>
+            <div className="flex justify-end space-x-2">
+              <Button variant="outline" onClick={() => setShowConsentDialog(false)}>
+                Recusar
+              </Button>
+              <Button onClick={handleConsentComplete}>
+                Concordo
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
+
+export default WaitingRoom;

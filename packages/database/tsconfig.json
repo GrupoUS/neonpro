@@ -9,7 +9,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "skipLibCheck": true,
-    "lib": ["ES2022"],
+    "lib": ["ES2022", "DOM", "DOM.Iterable", "WebWorker"],
     "types": ["node"],
     "baseUrl": ".",
     "paths": {

@@ -32,6 +32,8 @@ import {
   useSessionConsent,
   useEmergencyEscalation
 } from '@/hooks/use-telemedicine';
+import { useWebRTC } from '@/hooks/use-webrtc';
+import { useSignalingClient } from '@/hooks/use-signaling-client';
 
 interface VideoConsultationProps {
   sessionId: string;
@@ -55,7 +57,56 @@ export function VideoConsultation({
 }: VideoConsultationProps) {
   // Hooks
   const { session, updateSession, endSession, isEnding } = useTelemedicineSession({ sessionId });
-  const { callState, localVideoRef, remoteVideoRef, initializeCall, toggleMute, toggleVideo, startScreenShare, endCall } = useVideoCall(sessionId);
+  
+  // WebRTC Integration - Replace old useVideoCall with new comprehensive WebRTC hook
+  const { 
+    state: webrtcState,
+    localStream,
+    remoteStreams,
+    startCall,
+    endCall,
+    toggleVideo,
+    toggleAudio,
+    startScreenShare,
+    stopScreenShare,
+    updateMediaConstraints
+  } = useWebRTC({
+    sessionId,
+    participantId: session?.patientId || 'unknown',
+    autoStartMedia: true,
+    compliance: {
+      requireConsent: true,
+      enableAuditLogging: true,
+      dataRetentionDays: 90
+    }
+  });
+
+  // Signaling Client for WebRTC communication
+  const signalingClient = useSignalingClient(
+    sessionId,
+    session?.patientId || 'unknown',
+    {
+      onMessage: (message) => {
+        // Handle incoming signaling messages
+        console.log('Received signaling message:', message);
+      },
+      onParticipantJoined: (participantId) => {
+        console.log('Participant joined:', participantId);
+        toast.info(`Participante ${participantId} entrou na sessão`);
+      },
+      onParticipantLeft: (participantId) => {
+        console.log('Participant left:', participantId);
+        toast.info(`Participante ${participantId} saiu da sessão`);
+      },
+      onSessionEnd: () => {
+        handleEndSession();
+      },
+      onConnectionStateChange: (state) => {
+        console.log('Signaling connection state changed:', state);
+      }
+    }
+  );
+
   const { messages, sendMessage, isSending } = useRealTimeChat({ sessionId, enableAI: true });
   const { isRecording, startRecording, stopRecording } = useSessionRecording(sessionId);
   const { consent, updateConsent } = useSessionConsent(sessionId);
@@ -71,21 +122,38 @@ export function VideoConsultation({
   const [networkQuality, setNetworkQuality] = useState<'excellent' | 'good' | 'poor' | 'critical'>('excellent');
   const [showEmergencyDialog, setShowEmergencyDialog] = useState(false);
 
-  // Refs
+  // Refs for video elements
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const sessionStartTime = useRef<Date>(new Date());
   const durationInterval = useRef<NodeJS.Timeout>();
   const chatMessageRef = useRef<HTMLInputElement>(null);
 
-  // Initialize video call when component mounts
+  // Initialize WebRTC and attach streams to video elements
   useEffect(() => {
-    if (sessionId) {
-      initializeCall();
+    if (sessionId && session) {
+      // Start WebRTC call
+      startCall();
     }
 
     return () => {
       endCall();
     };
-  }, [sessionId, initializeCall, endCall]);
+  }, [sessionId, session, startCall, endCall]);
+
+  // Attach local stream to video element
+  useEffect(() => {
+    if (localStream && localVideoRef.current) {
+      localVideoRef.current.srcObject = localStream;
+    }
+  }, [localStream]);
+
+  // Attach remote streams to video element (first remote stream)
+  useEffect(() => {
+    if (remoteStreams.length > 0 && remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = remoteStreams[0];
+    }
+  }, [remoteStreams]);
 
   // Session duration timer
   useEffect(() => {
@@ -100,14 +168,14 @@ export function VideoConsultation({
     };
   }, []);
 
-  // Monitor connection quality
+  // Monitor connection quality from WebRTC state
   useEffect(() => {
-    if (callState.connectionQuality) {
-      setNetworkQuality(callState.connectionQuality);
+    if (webrtcState.connectionQuality) {
+      setNetworkQuality(webrtcState.connectionQuality);
     }
-  }, [callState.connectionQuality]);
+  }, [webrtcState.connectionQuality]);
 
-  // Update participants list
+  // Update participants list with WebRTC connection state
   useEffect(() => {
     if (session) {
       const participantsList: ParticipantInfo[] = [
@@ -115,20 +183,20 @@ export function VideoConsultation({
           id: session.patientId,
           name: session.metadata.patientName,
           role: 'patient',
-          isConnected: callState.isConnected,
-          connectionQuality: callState.connectionQuality,
+          isConnected: webrtcState.isConnected,
+          connectionQuality: webrtcState.connectionQuality || 'good',
         },
         {
           id: session.professionalId,
           name: session.metadata.professionalName,
           role: 'physician',
-          isConnected: callState.isConnected,
-          connectionQuality: callState.connectionQuality,
+          isConnected: webrtcState.isConnected,
+          connectionQuality: webrtcState.connectionQuality || 'good',
         }
       ];
       setParticipants(participantsList);
     }
-  }, [session, callState.isConnected, callState.connectionQuality]);
+  }, [session, webrtcState.isConnected, webrtcState.connectionQuality]);
 
   // Format duration
   const formatDuration = useCallback((seconds: number) => {
@@ -175,15 +243,20 @@ export function VideoConsultation({
     }
   }, [escalateEmergency, sessionId]);
 
-  // Handle screen sharing
+  // Handle screen sharing with new WebRTC hook
   const handleScreenShare = useCallback(async () => {
     try {
-      await startScreenShare();
-      toast.success(callState.isScreenSharing ? 'Compartilhamento de tela interrompido' : 'Compartilhamento de tela iniciado');
+      if (webrtcState.isScreenSharing) {
+        await stopScreenShare();
+        toast.success('Compartilhamento de tela interrompido');
+      } else {
+        await startScreenShare();
+        toast.success('Compartilhamento de tela iniciado');
+      }
     } catch (error) {
       toast.error('Erro no compartilhamento de tela');
     }
-  }, [startScreenShare, callState.isScreenSharing]);
+  }, [startScreenShare, stopScreenShare, webrtcState.isScreenSharing]);
 
   // Handle recording toggle
   const handleRecordingToggle = useCallback(async () => {
@@ -312,11 +385,11 @@ export function VideoConsultation({
           <div className="absolute bottom-2 right-2 flex space-x-1">
             <Button
               size="sm"
-              variant={callState.isVideoEnabled ? "default" : "destructive"}
+              variant={webrtcState.isVideoEnabled ? "default" : "destructive"}
               className="h-6 w-6 p-0"
               onClick={toggleVideo}
             >
-              {callState.isVideoEnabled ? <Video className="h-3 w-3" /> : <VideoOff className="h-3 w-3" />}
+              {webrtcState.isVideoEnabled ? <Video className="h-3 w-3" /> : <VideoOff className="h-3 w-3" />}
             </Button>
           </div>
         </div>
@@ -420,30 +493,30 @@ export function VideoConsultation({
           {/* Left Controls - Media */}
           <div className="flex items-center space-x-2">
             <Button
-              variant={callState.isMuted ? "destructive" : "outline"}
+              variant={!webrtcState.isAudioEnabled ? "destructive" : "outline"}
               size="sm"
-              onClick={toggleMute}
-              title={callState.isMuted ? "Ligar microfone" : "Desligar microfone"}
+              onClick={toggleAudio}
+              title={!webrtcState.isAudioEnabled ? "Ligar microfone" : "Desligar microfone"}
             >
-              {callState.isMuted ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+              {webrtcState.isAudioEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
             </Button>
             
             <Button
-              variant={callState.isVideoEnabled ? "outline" : "destructive"}
+              variant={webrtcState.isVideoEnabled ? "outline" : "destructive"}
               size="sm"
               onClick={toggleVideo}
-              title={callState.isVideoEnabled ? "Desligar câmera" : "Ligar câmera"}
+              title={webrtcState.isVideoEnabled ? "Desligar câmera" : "Ligar câmera"}
             >
-              {callState.isVideoEnabled ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}
+              {webrtcState.isVideoEnabled ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}
             </Button>
             
             <Button
-              variant={callState.isScreenSharing ? "default" : "outline"}
+              variant={webrtcState.isScreenSharing ? "default" : "outline"}
               size="sm"
               onClick={handleScreenShare}
               title="Compartilhar tela"
             >
-              {callState.isScreenSharing ? <MonitorOff className="h-4 w-4" /> : <Monitor className="h-4 w-4" />}
+              {webrtcState.isScreenSharing ? <MonitorOff className="h-4 w-4" /> : <Monitor className="h-4 w-4" />}
             </Button>
           </div>
 

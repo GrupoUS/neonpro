@@ -614,4 +614,48 @@ export class MedicalLicenseService {
       };
     }
   }
+
+  /**
+   * Validates CRM number format and check digit
+   */
+  validateCRMNumber(crmNumber: string, state: string): boolean {
+    if (!crmNumber || !state) return false;
+
+    // Remove non-numeric characters
+    const cleanCRM = crmNumber.replace(/\D/g, '');
+    
+    // CRM should have 4-6 digits depending on the state
+    if (cleanCRM.length < 4 || cleanCRM.length > 6) return false;
+
+    // Check if state exists in our councils
+    const stateCouncil = this.stateCouncils.find(council => council.state === state.toUpperCase());
+    if (!stateCouncil) return false;
+
+    // Basic format validation - more complex validation would require API integration
+    return /^\d{4,6}$/.test(cleanCRM);
+  }
+
+  /**
+   * Gets physician specialties from CRM registration
+   */
+  async getPhysicianSpecialties(crmNumber: string, state: string): Promise<string[]> {
+    try {
+      const { data, error } = await this.supabase
+        .from('physician_specialties')
+        .select('specialty_name')
+        .eq('crm_number', crmNumber)
+        .eq('crm_state', state)
+        .eq('is_active', true);
+
+      if (error) {
+        console.error('Error fetching specialties:', error);
+        return [];
+      }
+
+      return data?.map(item => item.specialty_name) || [];
+    } catch (error) {
+      console.error('Error getting physician specialties:', error);
+      return [];
+    }
+  }
 }

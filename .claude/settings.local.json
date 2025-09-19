@@ -84,13 +84,13 @@
       "mcp__serena__find_referencing_symbols",
       "mcp__archon__rag_search_knowledge_base",
       "mcp__archon__get_project_features",
-      "mcp__archon__rag_search_code_examples",
-      "Read",
-      "Bash",
+      "mcp__archon__rag_search_code_examples"
     ],
     "deny": [
       "Edit",     
       "Write",
+      "Read",
+      "Bash",
       "NotebookRead",
       "NotebookEdit",
       "WebSearch",
@@ -107,7 +107,7 @@
       "mcp__desktop-commander__get_config",
       "mcp__desktop-commander__get_file_info",
       "mcp__desktop-commander__list_sessions",
-      "mcp__supabase__get_project_url",
+      "mcp__supabase__get_project_url"
     ]
   },
   "enableAllProjectMcpServers": true,

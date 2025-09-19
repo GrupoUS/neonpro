@@ -210,7 +210,7 @@ export class WebRTCSignalingServer {
 
     // Validate session exists and user is authorized
     const sessionStatus = await this.webrtcService.getSessionStatus(sessionId);
-    if (sessionStatus.status !== 'active' && sessionStatus.status !== 'waiting') {
+    if (sessionStatus.connectionState !== 'active' && sessionStatus.connectionState !== 'waiting') {
       throw new Error('Session is not available for joining');
     }
 
@@ -248,7 +248,7 @@ export class WebRTCSignalingServer {
     room.participants.set(socket.id, participant);
 
     // Join Socket.IO room
-    socket.join(sessionId);
+    (socket as any).join(sessionId);
 
     // Log compliance event
     await this.cfmService.logComplianceEvent({
@@ -264,7 +264,7 @@ export class WebRTCSignalingServer {
     });
 
     // Notify other participants
-    socket.to(sessionId).emit('participant-joined', {
+    (socket as any).to(sessionId).emit('participant-joined', {
       userId,
       participantType,
       socketId: socket.id,
@@ -357,8 +357,9 @@ export class WebRTCSignalingServer {
     if (type === 'offer' || type === 'answer') {
       await this.cfmService.logComplianceEvent({
         sessionId,
-        eventType: `webrtc_${type}`,
-        userId: sender.userId,
+        eventType: `webrtc_${type}` as import('../types/events').ComplianceEventType,
+        description: `WebRTC ${type} sent`,
+        // userId: sender.userId, // not part of type, move to metadata
         metadata: {
           targetUser: to,
           signalType: type,
@@ -409,7 +410,7 @@ export class WebRTCSignalingServer {
     );
 
     // Broadcast connection state to other participants (for UI updates)
-    socket.to(sessionId).emit('participant-connection-state', {
+    (socket as any).to(sessionId).emit('participant-connection-state', {
       userId: participant.userId,
       connectionState,
       iceConnectionState,

@@ -591,4 +591,74 @@ export class CFMComplianceService {
     
     return true;
   }
+
+  /**
+   * Logs compliance events for audit trail
+   */
+  /**
+   * Logs compliance events for audit trail
+   */
+  async logComplianceEvent(event: {
+    sessionId: string;
+    eventType: import('../types/events').ComplianceEventType;
+    description: string;
+    metadata?: Record<string, any>;
+    severity?: 'low' | 'medium' | 'high' | 'critical';
+  }): Promise<void> {
+    try {
+      const { error } = await this.supabase
+        .from('compliance_audit_log')
+        .insert({
+          session_id: event.sessionId,
+          event_type: event.eventType,
+          description: event.description,
+          metadata: event.metadata || {},
+          severity: event.severity || 'medium',
+          timestamp: new Date().toISOString(),
+        });
+
+      if (error) {
+        console.error('Failed to log compliance event:', error);
+        // Don't throw error to avoid breaking the main flow
+      }
+    } catch (error) {
+      console.error('Error logging compliance event:', error);
+      // Don't throw error to avoid breaking the main flow
+    }
+  }
+
+  /**
+   * Get session audit trail for compliance reporting
+   */
+  async getSessionAuditTrail(sessionId: string): Promise<any> {
+    try {
+      const { data, error } = await this.supabase
+        .from('telemedicine_sessions')
+        .select(`
+          *,
+          compliance_logs (
+            event_type,
+            event_data,
+            timestamp,
+            compliance_status
+          )
+        `)
+        .eq('id', sessionId)
+        .single();
+
+      if (error) {
+        throw new Error(`Failed to get audit trail: ${error.message}`);
+      }
+
+      return {
+        sessionId,
+        auditTrail: data?.compliance_logs || [],
+        sessionData: data,
+        generatedAt: new Date().toISOString(),
+      };
+    } catch (error) {
+      console.error('Error getting session audit trail:', error);
+      throw error;
+    }
+  }
 }

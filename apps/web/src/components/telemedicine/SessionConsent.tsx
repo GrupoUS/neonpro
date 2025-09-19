@@ -1,691 +1,767 @@
 /**
- * SessionConsent Component
- *
- * T042: Telemedicine Interface Components
- *
- * Features:
- * - Pre-consultation consent documentation with LGPD compliance
- * - CFM Resolution 2,314/2022 telemedicine standards compliance
- * - Brazilian healthcare consent forms with legal validity
- * - Digital signature with ICP-Brasil compatibility
- * - Multi-step consent process with clear information
- * - Patient rights information in Portuguese
- * - Audit trail with cryptographic proof
- * - Mobile-first design for smartphone consultations
- * - WCAG 2.1 AA+ accessibility compliance
+ * Session Consent Component for Telemedicine Platform
+ * Handles LGPD compliance, CFM consent requirements, and session permissions
+ * Features granular consent management, audit trails, and legal compliance
  */
 
+import React, { useEffect, useState, useCallback } from 'react';
 import {
-  AlertTriangle,
-  Camera,
-  Check,
-  Clock,
-  CreditCard,
-  Database,
-  Download,
-  Eye,
-  EyeOff,
-  FileText,
-  Heart,
-  Info,
-  Lock,
-  Mail,
-  MapPin,
-  Mic,
-  Phone,
-  Print,
-  Scroll,
-  Share,
-  Shield,
-  Signature,
-  Stethoscope,
-  User,
-  UserCheck,
-  Video,
-  X,
+  Shield, FileText, Video, Mic, Monitor, Database,
+  Eye, Lock, Clock, CheckCircle, AlertCircle, XCircle,
+  User, Stethoscope, Camera, Heart, Activity, Download,
+  Print, Share, Archive, Settings, Info, AlertTriangle
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Progress } from '@/components/ui/progress';
 import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
+import { toast } from 'sonner';
 
-import { cn } from '@/lib/utils';
+import { 
+  useSessionConsent, 
+  useConsentCompliance,
+  useConsentAudit,
+  useLGPDCompliance 
+} from '@/hooks/use-telemedicine';
 
-export interface SessionConsentProps {
+interface SessionConsentProps {
   sessionId: string;
   patientId: string;
   professionalId: string;
-  patientName: string;
-  professionalName: string;
-  professionalCRM: string;
-  clinicName: string;
-  sessionType: 'initial_consultation' | 'follow_up' | 'emergency' | 'second_opinion';
-  estimatedDuration: number; // minutes
-  onConsentComplete: (consent: SessionConsentData) => void;
-  onConsentDecline: () => void;
+  onConsentComplete?: (consent: ConsentData) => void;
+  onConsentRevoke?: () => void;
+  mode?: 'initial' | 'review' | 'audit';
   className?: string;
-  isOpen: boolean;
-  onClose: () => void;
 }
 
-export interface SessionConsentData {
-  sessionId: string;
-  patientId: string;
-  consentDate: Date;
-  digitalSignature: string;
+interface ConsentData {
+  // Basic Consent
+  telemedicineConsent: boolean;
+  dataProcessingConsent: boolean;
+  recordingConsent: boolean;
+  
+  // LGPD Specific
+  lgpdDataProcessing: boolean;
+  lgpdDataSharing: boolean;
+  lgpdDataRetention: boolean;
+  lgpdDataPortability: boolean;
+  lgpdDataDeletion: boolean;
+  
+  // CFM Specific
+  cfmTelemedicineAuthorization: boolean;
+  cfmProfessionalValidation: boolean;
+  cfmMedicalSecrecy: boolean;
+  cfmTechnicalStandards: boolean;
+  
+  // Technical Permissions
+  audioPermission: boolean;
+  videoPermission: boolean;
+  screenSharingPermission: boolean;
+  fileUploadPermission: boolean;
+  locationPermission: boolean;
+  
+  // Advanced Consent
+  aiAssistanceConsent: boolean;
+  emergencyContactConsent: boolean;
+  researchParticipationConsent: boolean;
+  marketingConsent: boolean;
+  
+  // Metadata
+  consentVersion: string;
+  timestamp: Date;
   ipAddress: string;
-  deviceInfo: string;
-  consentItems: ConsentItem[];
-  patientDeclaration: PatientDeclaration;
-  professionalDeclaration: ProfessionalDeclaration;
-  auditTrail: ConsentAuditEvent[];
-  legalBasis: LGPDLegalBasis[];
+  userAgent: string;
+  consentMethod: 'digital_signature' | 'checkbox' | 'voice' | 'biometric';
+  witnessId?: string;
+  additionalNotes?: string;
 }
 
-export interface ConsentItem {
+interface ConsentSection {
   id: string;
-  category:
-    | 'data_processing'
-    | 'telemedicine'
-    | 'recording'
-    | 'ai_assistance'
-    | 'communication'
-    | 'storage';
   title: string;
   description: string;
   required: boolean;
-  granted: boolean;
+  category: 'basic' | 'lgpd' | 'cfm' | 'technical' | 'advanced';
   legalBasis: string;
-  dataTypes: string[];
-  retentionPeriod: string;
-  thirdParties?: string[];
+  consequences: string;
 }
 
-export interface PatientDeclaration {
-  confirmsIdentity: boolean;
-  confirmsLocation: string;
-  confirmsPrivacy: boolean;
-  emergencyContact: string;
-  alternativeContact: string;
-  medicalHistory: boolean;
-  medicationList: boolean;
-  allergies: string;
-  symptoms: string;
-}
-
-export interface ProfessionalDeclaration {
-  crmValidated: boolean;
-  locationVerified: boolean;
-  equipmentTested: boolean;
-  emergencyProcedures: boolean;
-  dataProtectionCompliance: boolean;
-}
-
-export interface ConsentAuditEvent {
-  timestamp: Date;
-  action: 'view' | 'accept' | 'decline' | 'modify' | 'withdraw';
-  item: string;
-  details: string;
-}
-
-export interface LGPDLegalBasis {
-  article: string;
-  purpose: string;
-  dataCategory: string;
-  retention: string;
-}
-
-const consentItems: ConsentItem[] = [
-  {
-    id: 'telemedicine_consultation',
-    category: 'telemedicine',
-    title: 'Consulta por Telemedicina',
-    description:
-      'Autorizo a realização de consulta médica através de telemedicina, conforme Resolução CFM 2.314/2022. Entendo as limitações desta modalidade e a necessidade de consulta presencial quando indicado pelo profissional.',
-    required: true,
-    granted: false,
-    legalBasis: 'LGPD Art. 7º, V - execução de contrato',
-    dataTypes: ['Dados de saúde', 'Imagem', 'Voz', 'Localização'],
-    retentionPeriod: '20 anos (CFM Resolução 1.821/2007)',
-  },
-  {
-    id: 'data_processing',
-    category: 'data_processing',
-    title: 'Processamento de Dados Pessoais',
-    description:
-      'Autorizo o processamento dos meus dados pessoais e dados sensíveis de saúde para fins de prestação de serviços médicos, conforme LGPD Lei 13.709/2018.',
-    required: true,
-    granted: false,
-    legalBasis: 'LGPD Art. 7º, V e Art. 11º, I',
-    dataTypes: ['Dados pessoais', 'Dados sensíveis de saúde', 'CPF', 'RG'],
-    retentionPeriod: '20 anos para dados médicos',
-  },
-  {
-    id: 'session_recording',
-    category: 'recording',
-    title: 'Gravação da Sessão',
-    description:
-      'Autorizo a gravação da consulta para fins de documentação médica, qualidade assistencial e arquivo no prontuário eletrônico. A gravação será protegida conforme padrões de segurança médica.',
-    required: false,
-    granted: false,
-    legalBasis: 'LGPD Art. 11º, I - proteção da vida',
-    dataTypes: ['Áudio', 'Vídeo', 'Transcrição'],
-    retentionPeriod: '20 anos com criptografia',
-  },
-  {
-    id: 'ai_assistance',
-    category: 'ai_assistance',
-    title: 'Assistência de Inteligência Artificial',
-    description:
-      'Autorizo o uso de ferramentas de IA para auxílio diagnóstico, análise de sintomas e sugestões terapêuticas. Os dados serão anonimizados antes do processamento pela IA.',
-    required: false,
-    granted: false,
-    legalBasis: 'LGPD Art. 11º, I - proteção da vida',
-    dataTypes: ['Dados anonimizados de saúde', 'Sintomas', 'Histórico médico'],
-    retentionPeriod: 'Não armazenado pela IA',
-  },
-  {
-    id: 'communication',
-    category: 'communication',
-    title: 'Comunicação por Múltiplos Canais',
-    description:
-      'Autorizo comunicação através de WhatsApp, SMS, email e ligações para agendamentos, lembretes, resultados e orientações médicas.',
-    required: false,
-    granted: false,
-    legalBasis: 'LGPD Art. 7º, V - execução de contrato',
-    dataTypes: ['Telefone', 'Email', 'Mensagens'],
-    retentionPeriod: '5 anos para comunicações',
-  },
-  {
-    id: 'emergency_access',
-    category: 'data_processing',
-    title: 'Acesso de Emergência',
-    description:
-      'Em situações de emergência médica, autorizo o acesso aos meus dados de saúde por profissionais habilitados para garantir atendimento adequado.',
-    required: true,
-    granted: false,
-    legalBasis: 'LGPD Art. 11º, I - proteção da vida',
-    dataTypes: ['Todos os dados médicos', 'Contatos de emergência'],
-    retentionPeriod: 'Conforme necessidade médica',
-  },
-];
-
-/**
- * SessionConsent - Pre-consultation consent and documentation
- */
-export function SessionConsent({
-  sessionId,
-  patientId,
+export function SessionConsent({ 
+  sessionId, 
+  patientId, 
   professionalId,
-  patientName,
-  professionalName,
-  professionalCRM,
-  clinicName,
-  sessionType,
-  estimatedDuration,
   onConsentComplete,
-  onConsentDecline,
-  className,
-  isOpen,
-  onClose,
+  onConsentRevoke,
+  mode = 'initial',
+  className = '' 
 }: SessionConsentProps) {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [consents, setConsents] = useState<ConsentItem[]>(consentItems);
-  const [patientDeclaration, setPatientDeclaration] = useState<Partial<PatientDeclaration>>({});
-  const [professionalDeclaration, setProfessionalDeclaration] = useState<
-    Partial<ProfessionalDeclaration>
-  >({});
-  const [digitalSignature, setDigitalSignature] = useState('');
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [auditTrail, setAuditTrail] = useState<ConsentAuditEvent[]>([]);
+  // Hooks
+  const { 
+    consent, 
+    updateConsent, 
+    revokeConsent,
+    validateConsent,
+    isUpdating 
+  } = useSessionConsent(sessionId);
+  
+  const { 
+    complianceStatus, 
+    checkCompliance,
+    generateComplianceReport 
+  } = useConsentCompliance(sessionId);
+  
+  const { 
+    auditTrail, 
+    logConsentAction,
+    exportAuditTrail 
+  } = useConsentAudit(sessionId);
+  
+  const { 
+    lgpdStatus, 
+    processLGPDRequest 
+  } = useLGPDCompliance(patientId);
 
-  const totalSteps = 4;
-  const progress = (currentStep / totalSteps) * 100;
+  // State
+  const [consentData, setConsentData] = useState<ConsentData>({
+    // Basic Consent
+    telemedicineConsent: false,
+    dataProcessingConsent: false,
+    recordingConsent: false,
+    
+    // LGPD Specific
+    lgpdDataProcessing: false,
+    lgpdDataSharing: false,
+    lgpdDataRetention: false,
+    lgpdDataPortability: false,
+    lgpdDataDeletion: false,
+    
+    // CFM Specific
+    cfmTelemedicineAuthorization: false,
+    cfmProfessionalValidation: false,
+    cfmMedicalSecrecy: false,
+    cfmTechnicalStandards: false,
+    
+    // Technical Permissions
+    audioPermission: false,
+    videoPermission: false,
+    screenSharingPermission: false,
+    fileUploadPermission: false,
+    locationPermission: false,
+    
+    // Advanced Consent
+    aiAssistanceConsent: false,
+    emergencyContactConsent: false,
+    researchParticipationConsent: false,
+    marketingConsent: false,
+    
+    // Metadata
+    consentVersion: '2.1.0',
+    timestamp: new Date(),
+    ipAddress: '',
+    userAgent: '',
+    consentMethod: 'checkbox'
+  });
 
-  // Add audit event
-  const addAuditEvent = (action: ConsentAuditEvent['action'], item: string, details: string) => {
-    const event: ConsentAuditEvent = {
-      timestamp: new Date(),
-      action,
-      item,
-      details,
-    };
-    setAuditTrail(prev => [...prev, event]);
-  };
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showLegalText, setShowLegalText] = useState(false);
+  const [showAuditDialog, setShowAuditDialog] = useState(false);
+  const [additionalNotes, setAdditionalNotes] = useState('');
+  const [isValidating, setIsValidating] = useState(false);
+  const [consentProgress, setConsentProgress] = useState(0);
 
-  useEffect(() => {
-    if (isOpen) {
-      addAuditEvent('view', 'consent_form', 'Formulário de consentimento aberto');
+  // Consent sections configuration
+  const consentSections: ConsentSection[] = [
+    {
+      id: 'telemedicineConsent',
+      title: 'Consentimento para Telemedicina',
+      description: 'Autorizo a realização de consulta médica por telemedicina, compreendendo suas limitações e benefícios.',
+      required: true,
+      category: 'basic',
+      legalBasis: 'Resolução CFM nº 2.314/2022',
+      consequences: 'Sem este consentimento, não é possível realizar a consulta por telemedicina.'
+    },
+    {
+      id: 'dataProcessingConsent',
+      title: 'Processamento de Dados Pessoais',
+      description: 'Autorizo o processamento dos meus dados pessoais para finalidades médicas e administrativas.',
+      required: true,
+      category: 'lgpd',
+      legalBasis: 'LGPD Art. 7º, II - execução de contrato',
+      consequences: 'Dados necessários para prestação do serviço médico.'
+    },
+    {
+      id: 'recordingConsent',
+      title: 'Gravação da Consulta',
+      description: 'Autorizo a gravação da consulta para fins médicos, legais e de qualidade.',
+      required: true,
+      category: 'cfm',
+      legalBasis: 'CFM nº 2.314/2022 Art. 8º',
+      consequences: 'Gravação necessária para documentação médica e conformidade legal.'
+    },
+    {
+      id: 'cfmTelemedicineAuthorization',
+      title: 'Autorização CFM para Telemedicina',
+      description: 'Reconheço que o profissional está devidamente habilitado pelo CFM para telemedicina.',
+      required: true,
+      category: 'cfm',
+      legalBasis: 'Resolução CFM nº 2.314/2022',
+      consequences: 'Validação obrigatória da habilitação profissional.'
+    },
+    {
+      id: 'lgpdDataRetention',
+      title: 'Retenção de Dados LGPD',
+      description: 'Autorizo a retenção dos meus dados pelo período legal de 20 anos (prontuário médico).',
+      required: true,
+      category: 'lgpd',
+      legalBasis: 'LGPD Art. 7º, II + CFM Resolução 1.821/2007',
+      consequences: 'Retenção legal obrigatória para prontuário médico.'
+    },
+    {
+      id: 'audioPermission',
+      title: 'Permissão de Áudio',
+      description: 'Autorizo o uso do microfone para comunicação durante a consulta.',
+      required: true,
+      category: 'technical',
+      legalBasis: 'Necessário para teleconsulta',
+      consequences: 'Sem áudio, a consulta não pode ser realizada adequadamente.'
+    },
+    {
+      id: 'videoPermission',
+      title: 'Permissão de Vídeo',
+      description: 'Autorizo o uso da câmera para visualização durante a consulta.',
+      required: true,
+      category: 'technical',
+      legalBasis: 'Necessário para teleconsulta',
+      consequences: 'Vídeo é fundamental para avaliação médica visual.'
+    },
+    {
+      id: 'aiAssistanceConsent',
+      title: 'Assistência de Inteligência Artificial',
+      description: 'Autorizo o uso de IA para auxiliar na consulta (triagem, sugestões, tradução).',
+      required: false,
+      category: 'advanced',
+      legalBasis: 'LGPD Art. 7º, I - consentimento',
+      consequences: 'IA pode melhorar a qualidade do atendimento.'
+    },
+    {
+      id: 'emergencyContactConsent',
+      title: 'Contato de Emergência',
+      description: 'Autorizo contato com serviços de emergência caso necessário durante a consulta.',
+      required: false,
+      category: 'advanced',
+      legalBasis: 'Interesse legítimo - proteção à vida',
+      consequences: 'Permite atendimento emergencial rápido se necessário.'
+    },
+    {
+      id: 'screenSharingPermission',
+      title: 'Compartilhamento de Tela',
+      description: 'Autorizo o compartilhamento de tela para mostrar exames ou documentos.',
+      required: false,
+      category: 'technical',
+      legalBasis: 'Consentimento específico',
+      consequences: 'Facilita discussão de exames e documentos.'
     }
-  }, [isOpen]);
+  ];
 
-  const handleConsentChange = (itemId: string, granted: boolean) => {
-    setConsents(prev => prev.map(item => item.id === itemId ? { ...item, granted } : item));
+  // Load existing consent
+  useEffect(() => {
+    if (consent) {
+      setConsentData(prev => ({ ...prev, ...consent }));
+    }
+  }, [consent]);
 
-    addAuditEvent(
-      granted ? 'accept' : 'decline',
-      itemId,
-      `Consentimento ${granted ? 'aceito' : 'recusado'}`,
+  // Calculate progress
+  useEffect(() => {
+    const requiredSections = consentSections.filter(s => s.required);
+    const completedRequired = requiredSections.filter(s => 
+      consentData[s.id as keyof ConsentData] === true
+    ).length;
+    
+    const totalSections = consentSections.length;
+    const completedTotal = consentSections.filter(s => 
+      consentData[s.id as keyof ConsentData] === true
+    ).length;
+    
+    const progress = (completedTotal / totalSections) * 100;
+    setConsentProgress(progress);
+  }, [consentData, consentSections]);
+
+  // Handle consent change
+  const handleConsentChange = useCallback((sectionId: string, value: boolean) => {
+    setConsentData(prev => ({
+      ...prev,
+      [sectionId]: value,
+      timestamp: new Date()
+    }));
+
+    // Log the action
+    logConsentAction({
+      action: value ? 'granted' : 'revoked',
+      section: sectionId,
+      timestamp: new Date(),
+      metadata: { step: currentStep }
+    });
+  }, [currentStep, logConsentAction]);
+
+  // Validate all required consents
+  const validateRequiredConsents = useCallback(() => {
+    const requiredSections = consentSections.filter(s => s.required);
+    const missingConsents = requiredSections.filter(s => 
+      !consentData[s.id as keyof ConsentData]
     );
-  };
+    
+    return missingConsents.length === 0;
+  }, [consentData, consentSections]);
 
-  const canProceed = () => {
-    const requiredConsents = consents.filter(item => item.required);
-    return requiredConsents.every(item => item.granted);
-  };
+  // Handle consent submission
+  const handleSubmitConsent = useCallback(async () => {
+    if (!validateRequiredConsents()) {
+      toast.error('Por favor, complete todos os consentimentos obrigatórios');
+      return;
+    }
 
-  const handleComplete = async () => {
-    if (!canProceed()) return;
-
-    setIsProcessing(true);
-
+    setIsValidating(true);
+    
     try {
-      const consentData: SessionConsentData = {
-        sessionId,
-        patientId,
-        consentDate: new Date(),
-        digitalSignature: digitalSignature || `${patientName}_${Date.now()}`,
-        ipAddress: 'IP_ADDRESS_PLACEHOLDER',
-        deviceInfo: navigator.userAgent,
-        consentItems: consents,
-        patientDeclaration: patientDeclaration as PatientDeclaration,
-        professionalDeclaration: professionalDeclaration as ProfessionalDeclaration,
-        auditTrail,
-        legalBasis: [
-          {
-            article: 'LGPD Art. 7º, V',
-            purpose: 'Execução de contrato de prestação de serviços médicos',
-            dataCategory: 'Dados pessoais e de saúde',
-            retention: '20 anos conforme CFM',
-          },
-          {
-            article: 'LGPD Art. 11º, I',
-            purpose: 'Proteção da vida ou da incolumidade física',
-            dataCategory: 'Dados sensíveis de saúde',
-            retention: 'Necessário para cuidados médicos',
-          },
-        ],
+      // Add metadata
+      const finalConsentData: ConsentData = {
+        ...consentData,
+        timestamp: new Date(),
+        ipAddress: 'xxx.xxx.xxx.xxx', // Should be retrieved from request
+        userAgent: navigator.userAgent,
+        additionalNotes
       };
 
-      addAuditEvent('accept', 'complete_consent', 'Consentimento completo assinado');
+      // Update consent
+      await updateConsent(finalConsentData);
+      
+      // Validate compliance
+      const isValid = await validateConsent(sessionId);
+      
+      if (isValid) {
+        // Log completion
+        await logConsentAction({
+          action: 'completed',
+          section: 'all',
+          timestamp: new Date(),
+          metadata: { 
+            version: finalConsentData.consentVersion,
+            method: finalConsentData.consentMethod,
+            notes: additionalNotes
+          }
+        });
 
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate processing
-
-      onConsentComplete(consentData);
+        onConsentComplete?.(finalConsentData);
+        toast.success('Consentimento registrado com sucesso');
+      } else {
+        toast.error('Falha na validação do consentimento');
+      }
     } catch (error) {
-      console.error('Erro ao processar consentimento:', error);
+      toast.error('Erro ao registrar consentimento');
     } finally {
-      setIsProcessing(false);
+      setIsValidating(false);
     }
-  };
+  }, [
+    validateRequiredConsents,
+    consentData,
+    additionalNotes,
+    updateConsent,
+    validateConsent,
+    sessionId,
+    logConsentAction,
+    onConsentComplete
+  ]);
 
-  const getSessionTypeLabel = (type: string) => {
-    switch (type) {
-      case 'initial_consultation':
-        return 'Consulta Inicial';
-      case 'follow_up':
-        return 'Retorno';
-      case 'emergency':
-        return 'Emergência';
-      case 'second_opinion':
-        return 'Segunda Opinião';
-      default:
-        return 'Consulta';
+  // Handle consent revocation
+  const handleRevokeConsent = useCallback(async () => {
+    try {
+      await revokeConsent();
+      await logConsentAction({
+        action: 'revoked_all',
+        section: 'all',
+        timestamp: new Date(),
+        metadata: { reason: 'user_request' }
+      });
+      
+      onConsentRevoke?.();
+      toast.success('Consentimento revogado');
+    } catch (error) {
+      toast.error('Erro ao revogar consentimento');
     }
-  };
+  }, [revokeConsent, logConsentAction, onConsentRevoke]);
 
-  return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className='max-w-4xl max-h-[90vh] overflow-hidden flex flex-col'>
-        <DialogHeader>
-          <DialogTitle className='flex items-center'>
-            <FileText className='h-5 w-5 mr-2' />
-            Termo de Consentimento - Telemedicina
-          </DialogTitle>
-        </DialogHeader>
+  // Get section status icon
+  const getSectionStatusIcon = useCallback((section: ConsentSection) => {
+    const isConsented = consentData[section.id as keyof ConsentData] as boolean;
+    
+    if (isConsented) {
+      return <CheckCircle className="h-4 w-4 text-green-600" />;
+    } else if (section.required) {
+      return <AlertCircle className="h-4 w-4 text-red-600" />;
+    } else {
+      return <XCircle className="h-4 w-4 text-gray-400" />;
+    }
+  }, [consentData]);
 
-        {/* Progress Bar */}
-        <div className='px-6'>
-          <div className='flex items-center justify-between text-sm text-gray-600 mb-2'>
-            <span>Etapa {currentStep} de {totalSteps}</span>
-            <span>{Math.round(progress)}% concluído</span>
-          </div>
-          <Progress value={progress} className='h-2' />
-        </div>
+  // Get category icon
+  const getCategoryIcon = useCallback((category: string) => {
+    switch (category) {
+      case 'basic': return <FileText className="h-4 w-4" />;
+      case 'lgpd': return <Shield className="h-4 w-4" />;
+      case 'cfm': return <Stethoscope className="h-4 w-4" />;
+      case 'technical': return <Settings className="h-4 w-4" />;
+      case 'advanced': return <Activity className="h-4 w-4" />;
+      default: return <Info className="h-4 w-4" />;
+    }
+  }, []);
 
-        <ScrollArea className='flex-1 px-6'>
-          {currentStep === 1 && (
-            <div className='space-y-6'>
-              <Card>
-                <CardHeader>
-                  <CardTitle className='text-lg'>Informações da Consulta</CardTitle>
-                </CardHeader>
-                <CardContent className='space-y-4'>
-                  <div className='grid grid-cols-2 gap-4'>
-                    <div>
-                      <Label className='text-sm font-medium text-gray-600'>Paciente</Label>
-                      <div className='flex items-center space-x-2'>
-                        <User className='h-4 w-4' />
-                        <span>{patientName}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <Label className='text-sm font-medium text-gray-600'>Profissional</Label>
-                      <div className='flex items-center space-x-2'>
-                        <Stethoscope className='h-4 w-4' />
-                        <span>{professionalName}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <Label className='text-sm font-medium text-gray-600'>CRM</Label>
-                      <div className='flex items-center space-x-2'>
-                        <UserCheck className='h-4 w-4' />
-                        <span>{professionalCRM}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <Label className='text-sm font-medium text-gray-600'>Tipo de Consulta</Label>
-                      <div className='flex items-center space-x-2'>
-                        <FileText className='h-4 w-4' />
-                        <span>{getSessionTypeLabel(sessionType)}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <Label className='text-sm font-medium text-gray-600'>Duração Estimada</Label>
-                      <div className='flex items-center space-x-2'>
-                        <Clock className='h-4 w-4' />
-                        <span>{estimatedDuration} minutos</span>
-                      </div>
-                    </div>
-                    <div>
-                      <Label className='text-sm font-medium text-gray-600'>Clínica</Label>
-                      <div className='flex items-center space-x-2'>
-                        <MapPin className='h-4 w-4' />
-                        <span>{clinicName}</span>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Alert>
-                <Info className='h-4 w-4' />
-                <AlertDescription>
-                  <div className='space-y-2'>
-                    <div className='font-medium'>Importante sobre a Telemedicina:</div>
-                    <ul className='text-sm space-y-1'>
-                      <li>• A telemedicina é regulamentada pela Resolução CFM 2.314/2022</li>
-                      <li>• Não substitui consultas presenciais quando necessário</li>
-                      <li>• Em emergências, procure atendimento presencial imediato</li>
-                      <li>• Seus dados são protegidos conforme LGPD e sigilo médico</li>
-                    </ul>
-                  </div>
-                </AlertDescription>
-              </Alert>
+  // Render consent section
+  const renderConsentSection = useCallback((section: ConsentSection) => {
+    const isConsented = consentData[section.id as keyof ConsentData] as boolean;
+    
+    return (
+      <Card key={section.id} className={`${isConsented ? 'border-green-200 bg-green-50' : section.required ? 'border-red-200' : 'border-gray-200'}`}>
+        <CardContent className="p-4">
+          <div className="flex items-start space-x-3">
+            <div className="mt-1">
+              {getSectionStatusIcon(section)}
             </div>
-          )}
-
-          {currentStep === 2 && (
-            <div className='space-y-4'>
-              <div className='text-lg font-medium mb-4'>Consentimentos Específicos</div>
-
-              {consents.map(item => (
-                <Card
-                  key={item.id}
-                  className={cn(
-                    'border',
-                    item.required && !item.granted ? 'border-red-200 bg-red-50' : '',
+            
+            <div className="flex-1 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  {getCategoryIcon(section.category)}
+                  <h4 className="font-medium text-sm">{section.title}</h4>
+                  {section.required && (
+                    <Badge variant="destructive" className="text-xs">
+                      Obrigatório
+                    </Badge>
                   )}
-                >
-                  <CardContent className='p-4'>
-                    <div className='flex items-start space-x-3'>
-                      <Checkbox
-                        checked={item.granted}
-                        onCheckedChange={checked =>
-                          handleConsentChange(item.id, checked as boolean)}
-                        className='mt-1'
-                      />
-                      <div className='flex-1 space-y-2'>
-                        <div className='flex items-center space-x-2'>
-                          <span className='font-medium'>{item.title}</span>
-                          {item.required && (
-                            <Badge variant='destructive' className='text-xs'>
-                              Obrigatório
-                            </Badge>
-                          )}
-                          <Badge variant='outline' className='text-xs'>
-                            {item.category}
-                          </Badge>
-                        </div>
+                </div>
+                
+                <Checkbox
+                  checked={isConsented}
+                  onCheckedChange={(checked) => handleConsentChange(section.id, checked as boolean)}
+                  className="ml-2"
+                />
+              </div>
+              
+              <p className="text-sm text-gray-600">
+                {section.description}
+              </p>
+              
+              <div className="text-xs text-gray-500 space-y-1">
+                <div>
+                  <span className="font-medium">Base Legal:</span> {section.legalBasis}
+                </div>
+                <div>
+                  <span className="font-medium">Consequências:</span> {section.consequences}
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }, [consentData, handleConsentChange, getSectionStatusIcon, getCategoryIcon]);
 
-                        <div className='text-sm text-gray-700'>
-                          {item.description}
-                        </div>
-
-                        <div className='text-xs text-gray-600 space-y-1'>
-                          <div>
-                            <strong>Base legal:</strong> {item.legalBasis}
-                          </div>
-                          <div>
-                            <strong>Dados:</strong> {item.dataTypes.join(', ')}
-                          </div>
-                          <div>
-                            <strong>Retenção:</strong> {item.retentionPeriod}
-                          </div>
-                          {item.thirdParties && (
-                            <div>
-                              <strong>Terceiros:</strong> {item.thirdParties.join(', ')}
-                            </div>
-                          )}
-                        </div>
-                      </div>
+  if (mode === 'audit') {
+    return (
+      <div className={`space-y-6 ${className}`}>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Shield className="h-5 w-5" />
+              <span>Auditoria de Consentimento</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="current" className="w-full">
+              <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="current">Atual</TabsTrigger>
+                <TabsTrigger value="history">Histórico</TabsTrigger>
+                <TabsTrigger value="compliance">Conformidade</TabsTrigger>
+                <TabsTrigger value="export">Exportar</TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="current" className="space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  {Object.entries(consentData).map(([key, value]) => (
+                    <div key={key} className="flex justify-between text-sm">
+                      <span className="font-medium">{key}:</span>
+                      <span className={typeof value === 'boolean' ? (value ? 'text-green-600' : 'text-red-600') : ''}>
+                        {typeof value === 'boolean' ? (value ? '✓' : '✗') : String(value)}
+                      </span>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
-
-              {!canProceed() && (
-                <Alert variant='destructive'>
-                  <AlertTriangle className='h-4 w-4' />
+                  ))}
+                </div>
+              </TabsContent>
+              
+              <TabsContent value="history" className="space-y-4">
+                <ScrollArea className="h-96">
+                  {auditTrail.map((entry, index) => (
+                    <div key={index} className="flex justify-between text-sm py-2 border-b">
+                      <div>
+                        <span className="font-medium">{entry.action}</span>
+                        <span className="text-gray-600 ml-2">{entry.section}</span>
+                      </div>
+                      <span className="text-gray-500">
+                        {new Date(entry.timestamp).toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
+                </ScrollArea>
+              </TabsContent>
+              
+              <TabsContent value="compliance" className="space-y-4">
+                <Alert>
+                  <CheckCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Você deve aceitar todos os consentimentos obrigatórios para prosseguir.
+                    Todos os consentimentos estão em conformidade com LGPD e CFM.
                   </AlertDescription>
                 </Alert>
-              )}
+              </TabsContent>
+              
+              <TabsContent value="export" className="space-y-4">
+                <div className="space-y-2">
+                  <Button onClick={() => exportAuditTrail('pdf')} className="w-full">
+                    <Download className="h-4 w-4 mr-2" />
+                    Exportar como PDF
+                  </Button>
+                  <Button onClick={() => exportAuditTrail('json')} variant="outline" className="w-full">
+                    <Download className="h-4 w-4 mr-2" />
+                    Exportar como JSON
+                  </Button>
+                </div>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`max-w-4xl mx-auto space-y-6 ${className}`}>
+      {/* Header */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <Shield className="h-6 w-6 text-blue-600" />
+              <span>Consentimento para Telemedicina</span>
             </div>
-          )}
-
-          {currentStep === 3 && (
-            <div className='space-y-6'>
-              <div className='text-lg font-medium mb-4'>Declarações do Paciente</div>
-
-              <Card>
-                <CardContent className='p-4 space-y-4'>
-                  <div className='flex items-center space-x-3'>
-                    <Checkbox
-                      checked={patientDeclaration.confirmsIdentity}
-                      onCheckedChange={checked =>
-                        setPatientDeclaration(prev => ({
-                          ...prev,
-                          confirmsIdentity: checked as boolean,
-                        }))}
-                    />
-                    <Label>
-                      Confirmo minha identidade e que sou o paciente titular dos dados fornecidos
-                    </Label>
-                  </div>
-
-                  <div>
-                    <Label>Local onde me encontro durante a consulta:</Label>
-                    <Input
-                      value={patientDeclaration.confirmsLocation || ''}
-                      onChange={e =>
-                        setPatientDeclaration(prev => ({
-                          ...prev,
-                          confirmsLocation: e.target.value,
-                        }))}
-                      placeholder='Ex: Residência, trabalho, etc.'
-                    />
-                  </div>
-
-                  <div className='flex items-center space-x-3'>
-                    <Checkbox
-                      checked={patientDeclaration.confirmsPrivacy}
-                      onCheckedChange={checked =>
-                        setPatientDeclaration(prev => ({
-                          ...prev,
-                          confirmsPrivacy: checked as boolean,
-                        }))}
-                    />
-                    <Label>
-                      Confirmo que estou em ambiente privado e seguro para a consulta
-                    </Label>
-                  </div>
-
-                  <div>
-                    <Label>Contato de emergência:</Label>
-                    <Input
-                      value={patientDeclaration.emergencyContact || ''}
-                      onChange={e =>
-                        setPatientDeclaration(prev => ({
-                          ...prev,
-                          emergencyContact: e.target.value,
-                        }))}
-                      placeholder='Nome e telefone'
-                    />
-                  </div>
-
-                  <div>
-                    <Label>Alergias e medicamentos em uso:</Label>
-                    <Textarea
-                      value={patientDeclaration.allergies || ''}
-                      onChange={e =>
-                        setPatientDeclaration(prev => ({
-                          ...prev,
-                          allergies: e.target.value,
-                        }))}
-                      placeholder='Descreva alergias conhecidas e medicamentos atuais'
-                    />
-                  </div>
-                </CardContent>
-              </Card>
+            <Badge variant="outline" className="bg-blue-50 text-blue-700">
+              Versão {consentData.consentVersion}
+            </Badge>
+          </CardTitle>
+          
+          {/* Progress Bar */}
+          <div className="space-y-2">
+            <div className="flex justify-between text-sm">
+              <span>Progresso do Consentimento</span>
+              <span>{Math.round(consentProgress)}% completo</span>
             </div>
-          )}
-
-          {currentStep === 4 && (
-            <div className='space-y-6'>
-              <div className='text-lg font-medium mb-4'>Assinatura Digital</div>
-
-              <Card>
-                <CardContent className='p-4 space-y-4'>
-                  <Alert>
-                    <Shield className='h-4 w-4' />
-                    <AlertDescription>
-                      Ao assinar digitalmente, você confirma ter lido e concordado com todos os
-                      termos apresentados. Esta assinatura tem validade legal conforme MP
-                      2.200-2/2001.
-                    </AlertDescription>
-                  </Alert>
-
-                  <div>
-                    <Label>Nome completo para assinatura digital:</Label>
-                    <Input
-                      value={digitalSignature}
-                      onChange={e => setDigitalSignature(e.target.value)}
-                      placeholder='Digite seu nome completo'
-                    />
-                  </div>
-
-                  <div className='text-sm text-gray-600 space-y-2'>
-                    <div>
-                      <strong>Data:</strong> {new Date().toLocaleString('pt-BR')}
-                    </div>
-                    <div>
-                      <strong>IP:</strong> [Será registrado automaticamente]
-                    </div>
-                    <div>
-                      <strong>Dispositivo:</strong> {navigator.userAgent.split(' ')[0]}
-                    </div>
-                  </div>
-
-                  <Separator />
-
-                  <div className='text-xs text-gray-600'>
-                    <div className='font-medium mb-2'>Resumo dos Consentimentos:</div>
-                    <ul className='space-y-1'>
-                      {consents.filter(item => item.granted).map(item => (
-                        <li key={item.id}>• {item.title}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          )}
-        </ScrollArea>
-
-        {/* Footer */}
-        <div className='flex items-center justify-between p-6 border-t'>
-          <div className='flex space-x-2'>
-            {currentStep > 1 && (
-              <Button
-                variant='outline'
-                onClick={() => setCurrentStep(prev => prev - 1)}
-              >
-                Anterior
-              </Button>
-            )}
+            <Progress value={consentProgress} className="h-2" />
           </div>
+        </CardHeader>
+      </Card>
 
-          <div className='flex space-x-2'>
-            <Button variant='outline' onClick={onConsentDecline}>
-              Cancelar
+      {/* Compliance Indicators */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="p-4 text-center">
+            <Shield className="h-8 w-8 text-green-600 mx-auto mb-2" />
+            <div className="text-sm font-medium">LGPD Compliant</div>
+            <div className="text-xs text-gray-600">Lei Geral de Proteção de Dados</div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4 text-center">
+            <Stethoscope className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+            <div className="text-sm font-medium">CFM Authorized</div>
+            <div className="text-xs text-gray-600">Conselho Federal de Medicina</div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4 text-center">
+            <Lock className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+            <div className="text-sm font-medium">End-to-End Encrypted</div>
+            <div className="text-xs text-gray-600">Criptografia de ponta a ponta</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Important Notice */}
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertDescription>
+          <strong>Importante:</strong> Leia atentamente cada seção antes de dar seu consentimento. 
+          Você pode revogar seu consentimento a qualquer momento, exceto para dados já processados 
+          sob base legal legítima. Campos marcados como "Obrigatório" são necessários para a realização da consulta.
+        </AlertDescription>
+      </Alert>
+
+      {/* Consent Sections */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold">Seções de Consentimento</h3>
+        
+        {/* Group by category */}
+        {['basic', 'lgpd', 'cfm', 'technical', 'advanced'].map(category => {
+          const sectionsInCategory = consentSections.filter(s => s.category === category);
+          if (sectionsInCategory.length === 0) return null;
+          
+          return (
+            <div key={category} className="space-y-3">
+              <h4 className="font-medium text-gray-900 capitalize flex items-center space-x-2">
+                {getCategoryIcon(category)}
+                <span>
+                  {category === 'basic' && 'Consentimentos Básicos'}
+                  {category === 'lgpd' && 'LGPD - Lei Geral de Proteção de Dados'}
+                  {category === 'cfm' && 'CFM - Conselho Federal de Medicina'}
+                  {category === 'technical' && 'Permissões Técnicas'}
+                  {category === 'advanced' && 'Consentimentos Avançados'}
+                </span>
+              </h4>
+              
+              <div className="space-y-3">
+                {sectionsInCategory.map(renderConsentSection)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Additional Notes */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Observações Adicionais (Opcional)</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Textarea
+            value={additionalNotes}
+            onChange={(e) => setAdditionalNotes(e.target.value)}
+            placeholder="Adicione qualquer observação ou comentário sobre o consentimento..."
+            className="min-h-[80px]"
+          />
+        </CardContent>
+      </Card>
+
+      {/* Legal Text Dialog */}
+      <Dialog open={showLegalText} onOpenChange={setShowLegalText}>
+        <DialogTrigger asChild>
+          <Button variant="outline" className="w-full">
+            <FileText className="h-4 w-4 mr-2" />
+            Ler Texto Legal Completo
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-4xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle>Texto Legal Completo</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-96">
+            <div className="space-y-4 text-sm">
+              <h4 className="font-medium">Termos e Condições para Telemedicina</h4>
+              <p>
+                Este documento estabelece os termos e condições para a realização de consulta médica 
+                por telemedicina, em conformidade com a Resolução CFM nº 2.314/2022 e a Lei Geral 
+                de Proteção de Dados (LGPD - Lei 13.709/2018).
+              </p>
+              
+              <h5 className="font-medium">1. Definições</h5>
+              <p>
+                Telemedicina: exercício da medicina mediado por tecnologias para fins de assistência, 
+                educação, pesquisa, prevenção de doenças e lesões e promoção de saúde.
+              </p>
+              
+              <h5 className="font-medium">2. Consentimento do Paciente</h5>
+              <p>
+                O paciente deve consentir de forma livre e esclarecida para a realização da 
+                telemedicina, após ser informado sobre as limitações inerentes ao uso da tecnologia.
+              </p>
+              
+              <h5 className="font-medium">3. Proteção de Dados</h5>
+              <p>
+                Todos os dados pessoais serão tratados em conformidade com a LGPD, garantindo 
+                a segurança, confidencialidade e integridade das informações.
+              </p>
+              
+              {/* Add more legal text as needed */}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+
+      {/* Action Buttons */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        {mode === 'review' ? (
+          <>
+            <Button
+              variant="destructive"
+              onClick={handleRevokeConsent}
+              className="flex-1"
+            >
+              <XCircle className="h-4 w-4 mr-2" />
+              Revogar Consentimento
             </Button>
-
-            {currentStep < totalSteps
-              ? (
-                <Button
-                  onClick={() => setCurrentStep(prev => prev + 1)}
-                  disabled={currentStep === 2 && !canProceed()}
-                >
-                  Próximo
-                </Button>
-              )
-              : (
-                <Button
-                  onClick={handleComplete}
-                  disabled={!digitalSignature.trim() || isProcessing}
-                >
-                  {isProcessing
-                    ? (
-                      <>
-                        <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2' />
-                        Processando...
-                      </>
-                    )
-                    : (
-                      <>
-                        <Signature className='h-4 w-4 mr-2' />
-                        Assinar e Iniciar Consulta
-                      </>
-                    )}
-                </Button>
+            <Button
+              onClick={() => setShowAuditDialog(true)}
+              variant="outline"
+              className="flex-1"
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              Ver Auditoria
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              onClick={handleSubmitConsent}
+              disabled={!validateRequiredConsents() || isValidating}
+              className="flex-1"
+            >
+              {isValidating ? (
+                <Activity className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <CheckCircle className="h-4 w-4 mr-2" />
               )}
-          </div>
-        </div>
-      </DialogContent>
-    </Dialog>
+              {isValidating ? 'Processando...' : 'Confirmar Consentimento'}
+            </Button>
+            
+            <Button
+              variant="outline"
+              onClick={() => setShowAuditDialog(true)}
+              className="sm:w-auto"
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              Revisar
+            </Button>
+          </>
+        )}
+      </div>
+
+      {/* Validation Status */}
+      {!validateRequiredConsents() && (
+        <Alert className="border-red-200 bg-red-50">
+          <AlertTriangle className="h-4 w-4 text-red-600" />
+          <AlertDescription className="text-red-800">
+            Para prosseguir, é necessário aceitar todos os consentimentos obrigatórios.
+          </AlertDescription>
+        </Alert>
+      )}
+    </div>
   );
 }
 

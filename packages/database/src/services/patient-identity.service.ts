@@ -575,4 +575,79 @@ export class PatientIdentityService {
       return { verified: false, confidence: 0, method: 'error' };
     }
   }
+
+  /**
+   * Verifies physician identity for telemedicine sessions
+   */
+  async verifyPhysicianIdentity(physicianId: string, crmNumber: string, crmState: string): Promise<{
+    isValid: boolean;
+    verificationLevel: 'basic' | 'enhanced' | 'biometric';
+    documentsVerified: string[];
+    errors: string[];
+  }> {
+    try {
+      // Get physician data
+      const { data: physician, error } = await this.supabase
+        .from('physicians')
+        .select('cpf, rg, full_name, crm_number, crm_state')
+        .eq('id', physicianId)
+        .single();
+
+      if (error || !physician) {
+        return {
+          isValid: false,
+          verificationLevel: 'basic',
+          documentsVerified: [],
+          errors: ['Physician not found'],
+        };
+      }
+
+      const errors: string[] = [];
+      const documentsVerified: string[] = [];
+
+      // Validate CRM matches
+      if (physician.crm_number !== crmNumber || physician.crm_state !== crmState) {
+        errors.push('CRM number or state mismatch');
+      } else {
+        documentsVerified.push('CRM');
+      }
+
+      // Validate CPF
+      if (physician.cpf) {
+        if (this.validateCPF(physician.cpf)) {
+          documentsVerified.push('CPF');
+        } else {
+          errors.push('Invalid CPF format');
+        }
+      } else {
+        errors.push('CPF is required');
+      }
+
+      // Validate RG
+      if (physician.rg) {
+        documentsVerified.push('RG');
+      } else {
+        errors.push('RG is required');
+      }
+
+      const isValid = errors.length === 0 && documentsVerified.length >= 2;
+      const verificationLevel = documentsVerified.length >= 3 ? 'enhanced' : 'basic';
+
+      return {
+        isValid,
+        verificationLevel,
+        documentsVerified,
+        errors,
+      };
+
+    } catch (error) {
+      console.error('Error verifying physician identity:', error);
+      return {
+        isValid: false,
+        verificationLevel: 'basic',
+        documentsVerified: [],
+        errors: [error instanceof Error ? error.message : 'Verification failed'],
+      };
+    }
+  }
 }

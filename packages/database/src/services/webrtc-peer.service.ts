@@ -4,7 +4,7 @@
  * with quality monitoring, recording capabilities, and compliance features
  */
 
-import type { MediaStreamConstraints, RTCConfiguration } from '@neonpro/types';
+// Using native WebRTC types from DOM lib
 
 interface PeerConnectionConfig {
   sessionId: string;
