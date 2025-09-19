@@ -47,6 +47,10 @@ export default defineConfig({
         // Integration tests for T013, T014, T015
         'tests/integration/performance-monitoring.test.ts',
         'tests/integration/accessibility.test.ts',
+        // T042: Automated accessibility testing suite
+        'tests/accessibility/axe-integration.test.ts',
+        'tests/accessibility/real-component-tests.ts',
+        'tests/accessibility/automated-test-runner.ts',
         // New UI tests
         'tests/ui/**/*.test.tsx',
         // Telemedicine tests (T102.2 implementation)

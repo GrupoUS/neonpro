@@ -210,7 +210,12 @@ export class SemanticCacheService {
         }
 
         // 🚨 SECURITY FIX: Additional context compliance check
-        if (!this.hasRequiredCompliance(entry.metadata.compliance, context.requiredCompliance || [ComplianceLevel.LGPD_COMPLIANT])) {
+        if (
+          !this.hasRequiredCompliance(
+            entry.metadata.compliance,
+            context.requiredCompliance || [ComplianceLevel.LGPD_COMPLIANT],
+          )
+        ) {
           continue;
         }
 
@@ -245,7 +250,11 @@ export class SemanticCacheService {
         this.stats.cacheHits++;
         this.stats.totalSavedCost += bestMatch.metadata.cost;
 
-        console.log(`Cache hit! Similaridade: ${(bestSimilarity * 100).toFixed(2)}% - Patient: ${context.patientId}`);
+        console.log(
+          `Cache hit! Similaridade: ${
+            (bestSimilarity * 100).toFixed(2)
+          }% - Patient: ${context.patientId}`,
+        );
       } else {
         this.stats.cacheMisses++;
       }
@@ -335,7 +344,9 @@ export class SemanticCacheService {
 
       this.stats.cacheSize = this.cache.size;
 
-      console.log(`Entrada adicionada ao cache. ID: ${id}, Patient: ${metadata.patientId}, Tamanho: ${this.cache.size}`);
+      console.log(
+        `Entrada adicionada ao cache. ID: ${id}, Patient: ${metadata.patientId}, Tamanho: ${this.cache.size}`,
+      );
       return id;
     } catch (error) {
       console.error('Erro ao adicionar entrada ao cache:', error);
@@ -459,7 +470,7 @@ export class SemanticCacheService {
    */
   private ensureLGPDCompliance(compliance?: ComplianceLevel[]): ComplianceLevel[] {
     const requiredCompliance = [ComplianceLevel.LGPD_COMPLIANT];
-    
+
     if (!compliance || compliance.length === 0) {
       return requiredCompliance;
     }
@@ -528,7 +539,9 @@ export class SemanticCacheService {
     }
 
     if (context.patientId !== entry.metadata.patientId) {
-      console.error(`LGPD Violation Attempt: Patient ${context.patientId} tried to access data for patient ${entry.metadata.patientId}`);
+      console.error(
+        `LGPD Violation Attempt: Patient ${context.patientId} tried to access data for patient ${entry.metadata.patientId}`,
+      );
       return false;
     }
 

@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  Button,
   Card,
   CardContent,
   CardDescription,
@@ -17,7 +16,6 @@ import React, { useState } from 'react';
 import {
   AccessibilityProvider,
   type CompletePatientRegistration,
-  ConsentManagementDialog,
   EnhancedPatientRegistrationForm,
   formatters,
   HealthcareSearch,

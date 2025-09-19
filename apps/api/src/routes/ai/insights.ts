@@ -68,7 +68,14 @@ interface InsightsResponse {
     healthSummary: HealthSummary;
     recommendations: Recommendation[];
     riskFactors: RiskFactor[];
-    [key: string]: AIInsight[] | HealthSummary | Recommendation[] | RiskFactor[] | string | number | boolean;
+    [key: string]:
+      | AIInsight[]
+      | HealthSummary
+      | Recommendation[]
+      | RiskFactor[]
+      | string
+      | number
+      | boolean;
   };
   message?: string;
 }
@@ -126,7 +133,10 @@ const getFromCache = (key: string) => {
 };
 
 // Function to set cache
-const setCache = (key: string, data: unknown) => {
+const setCache = (
+  key: string,
+  data: AIInsight[] | HealthSummary | Recommendation[] | RiskFactor[],
+) => {
   cache.set(key, {
     data,
     timestamp: Date.now(),

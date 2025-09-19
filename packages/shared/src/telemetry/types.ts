@@ -169,4 +169,4 @@ export const SENSITIVE_FIELD_NAMES = [
   'crm', 'cro', 'professional_id', 'id_profissional',
 ];
 
-export { initializeOpenTelemetry, HealthcareTracer, healthcareTracer } from './index';
+export { initializeGlobalTelemetry, getGlobalTelemetryManager } from './index';

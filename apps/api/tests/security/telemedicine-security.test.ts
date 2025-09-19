@@ -3,10 +3,10 @@
  * Testing security vulnerabilities identified in PR 40
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import type { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
 import TelemedicineService from '../../src/services/telemedicine';
-import type { PrismaClient } from '@prisma/client';
 
 // Mock Prisma client
 const mockPrisma = {
@@ -94,7 +94,7 @@ async function analyzeSecurityVulnerabilities(): Promise<{
   const fs = await import('fs/promises');
   const serviceCode = await fs.readFile(
     '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
-    'utf8'
+    'utf8',
   );
 
   // Detect hardcoded secrets
@@ -102,7 +102,7 @@ async function analyzeSecurityVulnerabilities(): Promise<{
     /'default-secret'/g,
     /'default-key'/g,
     /\|\s*'[^']*secret[^']*'/gi,
-    /\|\s*'[^']*key[^']*'/gi
+    /\|\s*'[^']*key[^']*'/gi,
   ];
 
   const foundSecrets: string[] = [];
@@ -115,7 +115,7 @@ async function analyzeSecurityVulnerabilities(): Promise<{
 
   return {
     hasHardcodedSecrets: foundSecrets.length > 0,
-    hardcodedSecrets: foundSecrets
+    hardcodedSecrets: foundSecrets,
   };
 }
 
@@ -126,14 +126,14 @@ async function analyzeEncryptionSecurity(): Promise<{
   const fs = await import('fs/promises');
   const serviceCode = await fs.readFile(
     '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
-    'utf8'
+    'utf8',
   );
 
   // Detect hardcoded salt
   const saltPatterns = [
     /'salt'/g,
     /,\s*'[^']*salt[^']*'/gi,
-    /scryptSync\([^,]+,\s*'[^']+'/g
+    /scryptSync\([^,]+,\s*'[^']+'/g,
   ];
 
   const foundSalts: string[] = [];
@@ -146,7 +146,7 @@ async function analyzeEncryptionSecurity(): Promise<{
 
   return {
     hasHardcodedSalt: foundSalts.length > 0,
-    saltVariants: foundSalts
+    saltVariants: foundSalts,
   };
 }
 
@@ -157,7 +157,7 @@ async function analyzeSensitiveLogging(): Promise<{
   const fs = await import('fs/promises');
   const serviceCode = await fs.readFile(
     '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
-    'utf8'
+    'utf8',
   );
 
   // Detect console.log with sensitive data
@@ -165,7 +165,7 @@ async function analyzeSensitiveLogging(): Promise<{
     /console\.log\([^)]*session[^)]*\)/gi,
     /console\.log\([^)]*patient[^)]*\)/gi,
     /console\.log\([^)]*medical[^)]*\)/gi,
-    /console\.log\([^)]*audit[^)]*\)/gi
+    /console\.log\([^)]*audit[^)]*\)/gi,
   ];
 
   const foundLogs: string[] = [];
@@ -178,7 +178,7 @@ async function analyzeSensitiveLogging(): Promise<{
 
   return {
     hasSensitiveLogs: foundLogs.length > 0,
-    sensitiveLogs: foundLogs
+    sensitiveLogs: foundLogs,
   };
 }
 
@@ -189,14 +189,14 @@ async function analyzeMemorySecurityy(): Promise<{
   const fs = await import('fs/promises');
   const serviceCode = await fs.readFile(
     '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
-    'utf8'
+    'utf8',
   );
 
   // Detect insecure memory storage patterns
   const insecureStoragePatterns = [
     /private\s+activeSessions:\s*Map/g,
     /this\.activeSessions\.set/g,
-    /Map<string,\s*TelemedicineSession>/g
+    /Map<string,\s*TelemedicineSession>/g,
   ];
 
   const foundInsecure: string[] = [];
@@ -209,7 +209,7 @@ async function analyzeMemorySecurityy(): Promise<{
 
   return {
     hasInsecureStorage: foundInsecure.length > 0,
-    insecureStorageAreas: foundInsecure
+    insecureStorageAreas: foundInsecure,
   };
 }
 
@@ -222,7 +222,7 @@ async function validateLGPDEncryption(): Promise<{
   return {
     hasProperEncryption: false, // Currently fails
     encryptionStandard: 'AES-256-CBC', // Should be GCM
-    keyManagement: 'insecure' // Currently insecure
+    keyManagement: 'insecure', // Currently insecure
   };
 }
 
@@ -233,6 +233,6 @@ async function validateAuditTrailSecurity(): Promise<{
   // This should check audit trail security
   return {
     hasSecureAuditTrail: false, // Currently fails
-    auditIntegrity: 'unsecured' // Currently unsecured
+    auditIntegrity: 'unsecured', // Currently unsecured
   };
 }

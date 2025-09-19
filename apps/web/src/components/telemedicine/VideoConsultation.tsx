@@ -7,7 +7,7 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { 
   Video, VideoOff, Mic, MicOff, Phone, PhoneOff, Monitor, MonitorOff,
-  Settings, Volume2, VolumeX, Maximize, Minimize, Record, Square,
+  Settings, Volume2, VolumeX, Maximize, Minimize, Circle, Square,
   Users, MessageSquare, FileText, Shield, Activity, AlertTriangle,
   Camera, CameraOff, Wifi, WifiOff, Clock, Heart
 } from 'lucide-react';
@@ -542,7 +542,7 @@ export function VideoConsultation({
               onClick={handleRecordingToggle}
               title={isRecording ? "Parar gravação" : "Iniciar gravação"}
             >
-              {isRecording ? <Square className="h-4 w-4" /> : <Record className="h-4 w-4" />}
+              {isRecording ? <Square className="h-4 w-4" /> : <Circle className="h-4 w-4" />}
             </Button>
 
             <Dialog open={showEmergencyDialog} onOpenChange={setShowEmergencyDialog}>

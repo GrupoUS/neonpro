@@ -11,6 +11,9 @@ import { realtimeTelemedicineRouter } from './routers/realtime-telemedicine';
 import { telemedicineRouter } from './routers/telemedicine';
 import { router } from './trpc';
 
+// Import comprehensive API contracts from T016
+import { apiRouter } from './contracts';
+
 /**
  * App Router - Main tRPC router for the healthcare platform
  *
@@ -35,12 +38,17 @@ import { router } from './trpc';
  * - Comprehensive audit logging for all operations
  */
 export const appRouter = router({
+  // Legacy routers (maintain backward compatibility)
   patients: patientsRouter,
   appointments: appointmentsRouter,
   ai: aiRouter,
   healthcareServices: healthcareServicesRouter,
   realtimeTelemedicine: realtimeTelemedicineRouter,
   telemedicine: telemedicineRouter,
+  
+  // T016: Comprehensive API contracts with tRPC v11
+  // New healthcare-compliant API contracts with enhanced features
+  api: apiRouter,
 });
 
 // Export the router type for use in clients

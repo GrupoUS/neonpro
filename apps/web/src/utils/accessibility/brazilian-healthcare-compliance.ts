@@ -218,7 +218,7 @@ export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
           return Array.from(telemedicineElements).every(element => {
             return (
               element.hasAttribute('aria-label') &&
-              element.hasAttribute('aria-live') === 'polite' &&
+              element.getAttribute('aria-live') === 'polite' &&
               element.querySelector('video[aria-label]') !== null
             );
           });
@@ -316,6 +316,9 @@ export class BrazilianHealthcareComplianceValidator {
       throw new Error('Compliance validation context not found');
     }
 
+    // Ensure we have an Element for standard validation
+    const elementContext = auditContext instanceof Document ? auditContext.documentElement : auditContext;
+
     const results = {
       overallScore: 0,
       standards: {
@@ -330,7 +333,7 @@ export class BrazilianHealthcareComplianceValidator {
 
     // Validate each standard
     for (const [standardId, standard] of Object.entries(this.complianceStandards)) {
-      const standardResult = await this.validateStandard(standardId, standard, auditContext);
+      const standardResult = await this.validateStandard(standardId, standard, elementContext);
       results.standards[standardId as keyof typeof results.standards] = standardResult;
       results.auditTrail.push(...standardResult.auditTrail);
       results.criticalIssues.push(...standardResult.criticalIssues);
@@ -391,54 +394,57 @@ export class BrazilianHealthcareComplianceValidator {
 
     for (const [reqId, requirement] of Object.entries(standard.requirements)) {
       try {
-        const passed = requirement.validation(context);
-        const violations = passed ? [] : this.generateRequirementViolations(requirement);
+        const req = requirement as any; // Type assertion to handle unknown type
+        const passed = req.validation(context);
+        const violations = passed ? [] : this.generateRequirementViolations(req);
         
         requirements.push({
-          id: requirement.id,
-          name: requirement.name,
+          id: req.id,
+          name: req.name,
           passed,
-          critical: requirement.critical,
+          critical: req.critical,
           violations
         });
 
         if (passed) {
           passedRequirements++;
-        } else if (requirement.critical) {
+        } else if (req.critical) {
           criticalIssues.push({
             standard: standard.name,
-            requirement: requirement.name,
-            description: requirement.description,
-            severity: 'critical',
-            fix: this.generateRequirementFix(requirement)
+            requirement: req.name,
+            description: req.description,
+            severity: 'critical' as const,
+            fix: this.generateRequirementFix(req)
           });
         }
 
         auditTrail.push({
           timestamp: new Date().toISOString(),
           standard: standard.name,
-          requirement: requirement.name,
-          result: passed ? 'pass' : 'fail',
-          details: passed ? 'Requirement validated successfully' : `Validation failed: ${requirement.description}`
+          requirement: req.name,
+          result: passed ? 'pass' as const : 'fail' as const,
+          details: passed ? 'Requirement validated successfully' : `Validation failed: ${req.description}`
         });
-      } catch (error) {
-        console.error(`Validation failed for ${requirement.id}:`, error);
+      } catch (error: unknown) {
+        const req = requirement as any;
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`Validation failed for ${req.id}:`, error);
         
         requirements.push({
-          id: requirement.id,
-          name: requirement.name,
+          id: req.id,
+          name: req.name,
           passed: false,
-          critical: requirement.critical,
-          violations: [`Validation error: ${error.message}`]
+          critical: req.critical,
+          violations: [`Validation error: ${errorMessage}`]
         });
 
-        if (requirement.critical) {
+        if (req.critical) {
           criticalIssues.push({
             standard: standard.name,
-            requirement: requirement.name,
-            description: requirement.description,
-            severity: 'critical',
-            fix: `Fix validation error: ${error.message}`
+            requirement: req.name,
+            description: req.description,
+            severity: 'critical' as const,
+            fix: `Fix validation error: ${errorMessage}`
           });
         }
       }
@@ -673,7 +679,7 @@ export async function quickBrazilianComplianceCheck(
 
   try {
     const validator = new BrazilianHealthcareComplianceValidator();
-    const results = await validator.validateCompliance(context);
+    const results = await validator.validateCompliance(context as Element);
     
     return {
       passed: results.overallScore >= 90,

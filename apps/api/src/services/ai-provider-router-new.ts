@@ -15,18 +15,18 @@
  */
 
 import {
-  AIProvider,
   AIModelCategory,
-  HealthcareAIUseCase,
   AIModelConfig,
+  AIPerformanceMetrics,
+  AIProvider,
   HealthcareAIOptimizationUtils,
+  HealthcareAIUseCase,
   HealthcareDataClassification,
   LGPDDataCategory,
-  AIPerformanceMetrics,
 } from '@neonpro/shared';
-import { SemanticCacheService } from './semantic-cache';
-import { AuditTrailService, AuditEventType } from './audit-trail';
 import { z } from 'zod';
+import { AuditEventType, AuditTrailService } from './audit-trail';
+import { SemanticCacheService } from './semantic-cache';
 
 // ============================================================================
 // Types and Interfaces
@@ -216,7 +216,7 @@ export const RoutingRequestSchema = z.object({
   prompt: z.string().min(1).max(10000),
   messages: z.array(z.object({
     role: z.string(),
-    content: z.string()
+    content: z.string(),
   })).optional(),
   healthcare_context: z.object({
     use_case: z.nativeEnum(HealthcareAIUseCase),
@@ -226,7 +226,7 @@ export const RoutingRequestSchema = z.object({
     contains_pii: z.boolean(),
     data_classification: z.nativeEnum(HealthcareDataClassification),
     lgpd_categories: z.array(z.nativeEnum(LGPDDataCategory)),
-    requires_audit: z.boolean()
+    requires_audit: z.boolean(),
   }),
   ai_config: z.object({
     model_category: z.nativeEnum(AIModelCategory),
@@ -234,22 +234,22 @@ export const RoutingRequestSchema = z.object({
     temperature: z.number().min(0).max(2).optional(),
     preferred_providers: z.array(z.nativeEnum(AIProvider)).optional(),
     fallback_enabled: z.boolean(),
-    cache_enabled: z.boolean()
+    cache_enabled: z.boolean(),
   }),
   routing_config: z.object({
     strategy: z.nativeEnum(RoutingStrategy),
     max_cost_usd: z.number().min(0).optional(),
     max_latency_ms: z.number().min(100).optional(),
     min_quality_score: z.number().min(0).max(1).optional(),
-    priority_level: z.enum(['low', 'normal', 'high', 'emergency'])
+    priority_level: z.enum(['low', 'normal', 'high', 'emergency']),
   }),
   request_metadata: z.object({
     request_id: z.string().uuid(),
     user_id: z.string(),
     session_id: z.string().optional(),
     correlation_id: z.string().optional(),
-    created_at: z.date()
-  })
+    created_at: z.date(),
+  }),
 });
 
 // ============================================================================
@@ -269,7 +269,7 @@ export class AIProviderRouterService {
   constructor(
     semantic_cache: SemanticCacheService,
     audit_service: AuditTrailService,
-    provider_configs: ProviderConfig[] = []
+    provider_configs: ProviderConfig[] = [],
   ) {
     this.semantic_cache = semantic_cache;
     this.audit_service = audit_service;
@@ -308,13 +308,13 @@ export class AIProviderRouterService {
             input_cost_per_1k_tokens: 0.01,
             output_cost_per_1k_tokens: 0.03,
             max_tokens: 4096,
-            max_monthly_budget: 1000
+            max_monthly_budget: 1000,
           },
           performance_config: {
             max_latency_ms: 5000,
             timeout_ms: 30000,
             retry_attempts: 3,
-            rate_limit_rpm: 3500
+            rate_limit_rpm: 3500,
           },
           healthcare_config: {
             pii_redaction_enabled: true,
@@ -322,9 +322,9 @@ export class AIProviderRouterService {
             anvisa_approved: true,
             cfm_professional_use: true,
             patient_data_processing: true,
-            audit_logging_required: true
-          }
-        }
+            audit_logging_required: true,
+          },
+        },
       ],
       health_check_interval_ms: 30000,
       max_concurrent_requests: 100,
@@ -332,14 +332,14 @@ export class AIProviderRouterService {
       cost_config: {
         monthly_budget_limit: 1000,
         current_spend: 0,
-        cost_alert_threshold: 80
+        cost_alert_threshold: 80,
       },
       healthcare_compliance: {
         lgpd_approved: true,
         anvisa_certified: true,
         cfm_approved: true,
-        pii_handling_approved: true
-      }
+        pii_handling_approved: true,
+      },
     });
 
     // Anthropic - Claude models
@@ -356,13 +356,13 @@ export class AIProviderRouterService {
             input_cost_per_1k_tokens: 0.00025,
             output_cost_per_1k_tokens: 0.00125,
             max_tokens: 4096,
-            max_monthly_budget: 300
+            max_monthly_budget: 300,
           },
           performance_config: {
             max_latency_ms: 2000,
             timeout_ms: 15000,
             retry_attempts: 3,
-            rate_limit_rpm: 1000
+            rate_limit_rpm: 1000,
           },
           healthcare_config: {
             pii_redaction_enabled: true,
@@ -370,9 +370,9 @@ export class AIProviderRouterService {
             anvisa_approved: true,
             cfm_professional_use: true,
             patient_data_processing: true,
-            audit_logging_required: true
-          }
-        }
+            audit_logging_required: true,
+          },
+        },
       ],
       health_check_interval_ms: 30000,
       max_concurrent_requests: 50,
@@ -380,14 +380,14 @@ export class AIProviderRouterService {
       cost_config: {
         monthly_budget_limit: 300,
         current_spend: 0,
-        cost_alert_threshold: 75
+        cost_alert_threshold: 75,
       },
       healthcare_compliance: {
         lgpd_approved: true,
         anvisa_certified: true,
         cfm_approved: true,
-        pii_handling_approved: true
-      }
+        pii_handling_approved: true,
+      },
     });
 
     // Azure OpenAI - Enterprise healthcare compliance
@@ -405,13 +405,13 @@ export class AIProviderRouterService {
             input_cost_per_1k_tokens: 0.01,
             output_cost_per_1k_tokens: 0.03,
             max_tokens: 4096,
-            max_monthly_budget: 2000
+            max_monthly_budget: 2000,
           },
           performance_config: {
             max_latency_ms: 4000,
             timeout_ms: 30000,
             retry_attempts: 3,
-            rate_limit_rpm: 2000
+            rate_limit_rpm: 2000,
           },
           healthcare_config: {
             pii_redaction_enabled: true,
@@ -419,9 +419,9 @@ export class AIProviderRouterService {
             anvisa_approved: true,
             cfm_professional_use: true,
             patient_data_processing: true,
-            audit_logging_required: true
-          }
-        }
+            audit_logging_required: true,
+          },
+        },
       ],
       health_check_interval_ms: 30000,
       max_concurrent_requests: 50,
@@ -429,14 +429,14 @@ export class AIProviderRouterService {
       cost_config: {
         monthly_budget_limit: 2000,
         current_spend: 0,
-        cost_alert_threshold: 85
+        cost_alert_threshold: 85,
       },
       healthcare_compliance: {
         lgpd_approved: true,
         anvisa_certified: true,
         cfm_approved: true,
-        pii_handling_approved: true
-      }
+        pii_handling_approved: true,
+      },
     });
 
     // AWS Bedrock - Healthcare certified models
@@ -454,13 +454,13 @@ export class AIProviderRouterService {
             input_cost_per_1k_tokens: 0.00025,
             output_cost_per_1k_tokens: 0.00125,
             max_tokens: 4096,
-            max_monthly_budget: 800
+            max_monthly_budget: 800,
           },
           performance_config: {
             max_latency_ms: 3000,
             timeout_ms: 25000,
             retry_attempts: 3,
-            rate_limit_rpm: 1000
+            rate_limit_rpm: 1000,
           },
           healthcare_config: {
             pii_redaction_enabled: true,
@@ -468,9 +468,9 @@ export class AIProviderRouterService {
             anvisa_approved: true,
             cfm_professional_use: true,
             patient_data_processing: true,
-            audit_logging_required: true
-          }
-        }
+            audit_logging_required: true,
+          },
+        },
       ],
       health_check_interval_ms: 30000,
       max_concurrent_requests: 30,
@@ -478,14 +478,14 @@ export class AIProviderRouterService {
       cost_config: {
         monthly_budget_limit: 800,
         current_spend: 0,
-        cost_alert_threshold: 80
+        cost_alert_threshold: 80,
       },
       healthcare_compliance: {
         lgpd_approved: true,
         anvisa_certified: true,
         cfm_approved: true,
-        pii_handling_approved: true
-      }
+        pii_handling_approved: true,
+      },
     });
   }
 
@@ -503,7 +503,7 @@ export class AIProviderRouterService {
       success_rate: 100,
       rate_limit_remaining: config.rate_limit_rpm,
       cost_efficiency: 0.8,
-      last_check: new Date()
+      last_check: new Date(),
     });
 
     // Initialize circuit breaker
@@ -525,27 +525,27 @@ export class AIProviderRouterService {
         p95: 3000,
         p99: 5000,
         average: 1500,
-        timeout_rate: 0
+        timeout_rate: 0,
       },
       cost: {
         input_tokens: 0,
         output_tokens: 0,
         total_cost_usd: 0,
         cost_per_request: 0,
-        monthly_budget_used: 0
+        monthly_budget_used: 0,
       },
       quality: {
         cache_hit_rate: 0,
         success_rate: 100,
         error_rate: 0,
-        user_satisfaction: 4.5
+        user_satisfaction: 4.5,
       },
       healthcare_compliance: {
         pii_redaction_rate: 100,
         lgpd_compliance_score: 100,
         anvisa_security_score: 95,
-        cfm_professional_standards: true
-      }
+        cfm_professional_standards: true,
+      },
     });
   }
 
@@ -583,12 +583,14 @@ export class AIProviderRouterService {
       const response = await this.executeProviderRequest(
         validated_request,
         selected_provider,
-        start_time
+        start_time,
       );
 
       // Cache successful response (if enabled and appropriate)
-      if (validated_request.ai_config.cache_enabled &&
-          this.shouldCacheResponse(validated_request, response)) {
+      if (
+        validated_request.ai_config.cache_enabled
+        && this.shouldCacheResponse(validated_request, response)
+      ) {
         await this.cacheResponse(validated_request, response);
       }
 
@@ -596,7 +598,6 @@ export class AIProviderRouterService {
       await this.auditRequestComplete(validated_request, response);
 
       return response;
-
     } catch (error) {
       await this.auditRequestError(request, error as Error, start_time);
       throw error;
@@ -631,7 +632,7 @@ export class AIProviderRouterService {
 
     return {
       ...request,
-      prompt: redacted_prompt
+      prompt: redacted_prompt,
     };
   }
 
@@ -665,7 +666,7 @@ export class AIProviderRouterService {
    */
   private async redactPII(
     prompt: string,
-    healthcare_context: RoutingRequest['healthcare_context']
+    healthcare_context: RoutingRequest['healthcare_context'],
   ): Promise<string> {
     let redacted = prompt;
 
@@ -678,9 +679,15 @@ export class AIProviderRouterService {
       // Phone numbers
       { pattern: /\(?\d{2}\)?\s?\d{4,5}-?\d{4}/g, replacement: '[PHONE_REDACTED]' },
       // Email addresses
-      { pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, replacement: '[EMAIL_REDACTED]' },
+      {
+        pattern: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+        replacement: '[EMAIL_REDACTED]',
+      },
       // Names (basic pattern - in production use more sophisticated NER)
-      { pattern: /\b[A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g, replacement: '[NAME_REDACTED]' }
+      {
+        pattern: /\b[A-Z][a-z]+\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\b/g,
+        replacement: '[NAME_REDACTED]',
+      },
     ];
 
     // Apply redaction patterns
@@ -700,8 +707,8 @@ export class AIProviderRouterService {
           use_case: healthcare_context.use_case,
           redaction_applied: true,
           original_length: prompt.length,
-          redacted_length: redacted.length
-        }
+          redacted_length: redacted.length,
+        },
       });
     }
 
@@ -713,7 +720,7 @@ export class AIProviderRouterService {
    */
   private async handleEmergencyRequest(
     request: RoutingRequest,
-    start_time: number
+    start_time: number,
   ): Promise<RoutingResponse> {
     // Emergency requests bypass normal routing and go to fastest available provider
     const emergency_providers = this.getEmergencyCapableProviders();
@@ -741,8 +748,8 @@ export class AIProviderRouterService {
         request_id: request.request_metadata.request_id,
         use_case: request.healthcare_context.use_case,
         patient_id: request.healthcare_context.patient_id,
-        emergency_justification: 'Emergency AI request routing'
-      }
+        emergency_justification: 'Emergency AI request routing',
+      },
     });
 
     return await this.executeProviderRequest(request, selected_provider, start_time);
@@ -760,8 +767,9 @@ export class AIProviderRouterService {
 
       // Must have emergency-capable models
       const has_emergency_model = provider.models.some(
-        model => model.healthcare_config.patient_data_processing &&
-                 model.performance_config.max_latency_ms <= 5000
+        model =>
+          model.healthcare_config.patient_data_processing
+          && model.performance_config.max_latency_ms <= 5000,
       );
 
       if (!has_emergency_model) return false;
@@ -852,8 +860,10 @@ export class AIProviderRouterService {
       }
 
       // Check preferred providers
-      if (request.ai_config.preferred_providers &&
-          request.ai_config.preferred_providers.length > 0) {
+      if (
+        request.ai_config.preferred_providers
+        && request.ai_config.preferred_providers.length > 0
+      ) {
         if (!request.ai_config.preferred_providers.includes(provider_type)) {
           continue;
         }
@@ -870,7 +880,7 @@ export class AIProviderRouterService {
    */
   private isHealthcareCompliant(
     provider: ProviderConfig,
-    healthcare_context: RoutingRequest['healthcare_context']
+    healthcare_context: RoutingRequest['healthcare_context'],
   ): boolean {
     const compliance = provider.healthcare_compliance;
 
@@ -888,11 +898,13 @@ export class AIProviderRouterService {
     const anvisa_required_use_cases = [
       HealthcareAIUseCase.SYMPTOMS_ANALYSIS,
       HealthcareAIUseCase.TREATMENT_PLANNING,
-      HealthcareAIUseCase.MEDICAL_TRANSCRIPTION
+      HealthcareAIUseCase.MEDICAL_TRANSCRIPTION,
     ];
 
-    if (anvisa_required_use_cases.includes(healthcare_context.use_case) &&
-        !compliance.anvisa_certified) {
+    if (
+      anvisa_required_use_cases.includes(healthcare_context.use_case)
+      && !compliance.anvisa_certified
+    ) {
       return false;
     }
 
@@ -900,11 +912,13 @@ export class AIProviderRouterService {
     const cfm_required_use_cases = [
       HealthcareAIUseCase.TREATMENT_PLANNING,
       HealthcareAIUseCase.SYMPTOMS_ANALYSIS,
-      HealthcareAIUseCase.MEDICAL_TRANSCRIPTION
+      HealthcareAIUseCase.MEDICAL_TRANSCRIPTION,
     ];
 
-    if (cfm_required_use_cases.includes(healthcare_context.use_case) &&
-        !compliance.cfm_approved) {
+    if (
+      cfm_required_use_cases.includes(healthcare_context.use_case)
+      && !compliance.cfm_approved
+    ) {
       return false;
     }
 
@@ -923,13 +937,13 @@ export class AIProviderRouterService {
     const input_tokens = Math.ceil(request.prompt.length / 4);
     const estimated_output_tokens = Math.min(
       request.ai_config.max_tokens || 1000,
-      model.cost_config.max_tokens
+      model.cost_config.max_tokens,
     );
 
     return HealthcareAIOptimizationUtils.estimateRequestCost(
       input_tokens,
       estimated_output_tokens,
-      model
+      model,
     ).estimated_cost;
   }
 
@@ -938,7 +952,7 @@ export class AIProviderRouterService {
    */
   private selectCostOptimizedProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest
+    request: RoutingRequest,
   ): ProviderConfig {
     let best_provider = providers[0];
     let lowest_cost = this.estimateProviderCost(best_provider, request);
@@ -959,7 +973,7 @@ export class AIProviderRouterService {
    */
   private selectLatencyOptimizedProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest
+    request: RoutingRequest,
   ): ProviderConfig {
     let best_provider = providers[0];
     let lowest_latency = this.provider_health.get(best_provider.provider)?.latency || Infinity;
@@ -980,7 +994,7 @@ export class AIProviderRouterService {
    */
   private selectQualityOptimizedProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest
+    request: RoutingRequest,
   ): ProviderConfig {
     let best_provider = providers[0];
     let best_quality = this.provider_health.get(best_provider.provider)?.success_rate || 0;
@@ -1001,7 +1015,7 @@ export class AIProviderRouterService {
    */
   private selectHealthcareSpecificProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest
+    request: RoutingRequest,
   ): ProviderConfig {
     // Healthcare-specific scoring based on use case and compliance
     let best_provider = providers[0];
@@ -1023,15 +1037,15 @@ export class AIProviderRouterService {
    */
   private selectEmergencyProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest
+    request: RoutingRequest,
   ): ProviderConfig {
     // For emergency, prioritize fastest response with highest compliance
     return this.selectLatencyOptimizedProvider(
       providers.filter(p =>
-        p.healthcare_compliance.lgpd_approved &&
-        p.healthcare_compliance.anvisa_certified
+        p.healthcare_compliance.lgpd_approved
+        && p.healthcare_compliance.anvisa_certified
       ),
-      request
+      request,
     );
   }
 
@@ -1040,7 +1054,7 @@ export class AIProviderRouterService {
    */
   private selectLoadBalancedProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest
+    request: RoutingRequest,
   ): ProviderConfig {
     // Simple round-robin based on current health metrics
     const sorted_providers = providers.sort((a, b) => {
@@ -1062,7 +1076,7 @@ export class AIProviderRouterService {
    */
   private calculateHealthcareScore(
     provider: ProviderConfig,
-    request: RoutingRequest
+    request: RoutingRequest,
   ): number {
     let score = 0;
 
@@ -1128,7 +1142,7 @@ export class AIProviderRouterService {
   private async executeProviderRequest(
     request: RoutingRequest,
     provider: ProviderConfig,
-    start_time: number
+    start_time: number,
   ): Promise<RoutingResponse> {
     const providers_to_try = [provider];
 
@@ -1158,8 +1172,8 @@ export class AIProviderRouterService {
             request_id: request.request_metadata.request_id,
             original_provider: provider.provider,
             fallback_provider: current_provider.provider,
-            attempt: i + 1
-          }
+            attempt: i + 1,
+          },
         });
       }
 
@@ -1176,17 +1190,20 @@ export class AIProviderRouterService {
         circuit_breaker?.recordSuccess();
 
         // Update provider health
-        await this.updateProviderHealth(current_provider.provider, true, response.metrics.provider_latency_ms);
+        await this.updateProviderHealth(
+          current_provider.provider,
+          true,
+          response.metrics.provider_latency_ms,
+        );
 
         return {
           ...response,
           metrics: {
             ...response.metrics,
             total_latency_ms: Date.now() - start_time,
-            fallback_used
-          }
+            fallback_used,
+          },
         };
-
       } catch (error) {
         last_error = error as Error;
 
@@ -1215,7 +1232,7 @@ export class AIProviderRouterService {
    */
   private selectBestModelForProvider(
     provider: ProviderConfig,
-    request: RoutingRequest
+    request: RoutingRequest,
   ): AIModelConfig | null {
     const eligible_models = provider.models.filter(model => {
       // Check model category
@@ -1224,8 +1241,10 @@ export class AIProviderRouterService {
       }
 
       // Check healthcare compliance
-      if (request.healthcare_context.contains_pii &&
-          !model.healthcare_config.patient_data_processing) {
+      if (
+        request.healthcare_context.contains_pii
+        && !model.healthcare_config.patient_data_processing
+      ) {
         return false;
       }
 
@@ -1238,8 +1257,10 @@ export class AIProviderRouterService {
       }
 
       // Check latency constraints
-      if (request.routing_config.max_latency_ms &&
-          model.performance_config.max_latency_ms > request.routing_config.max_latency_ms) {
+      if (
+        request.routing_config.max_latency_ms
+        && model.performance_config.max_latency_ms > request.routing_config.max_latency_ms
+      ) {
         return false;
       }
 
@@ -1270,13 +1291,13 @@ export class AIProviderRouterService {
     const input_tokens = Math.ceil(request.prompt.length / 4);
     const estimated_output_tokens = Math.min(
       request.ai_config.max_tokens || 1000,
-      model.cost_config.max_tokens
+      model.cost_config.max_tokens,
     );
 
     return HealthcareAIOptimizationUtils.estimateRequestCost(
       input_tokens,
       estimated_output_tokens,
-      model
+      model,
     ).estimated_cost;
   }
 
@@ -1286,7 +1307,7 @@ export class AIProviderRouterService {
   private async callProviderAPI(
     provider: ProviderConfig,
     model: AIModelConfig,
-    request: RoutingRequest
+    request: RoutingRequest,
   ): Promise<RoutingResponse> {
     const api_start = Date.now();
 
@@ -1295,7 +1316,10 @@ export class AIProviderRouterService {
     await new Promise(resolve => setTimeout(resolve, latency_simulation));
 
     // Generate mock response based on healthcare context
-    const response_content = this.generateMockResponse(request.healthcare_context.use_case, request.prompt);
+    const response_content = this.generateMockResponse(
+      request.healthcare_context.use_case,
+      request.prompt,
+    );
 
     // Calculate tokens and cost
     const input_tokens = Math.ceil(request.prompt.length / 4);
@@ -1303,7 +1327,7 @@ export class AIProviderRouterService {
     const total_cost = HealthcareAIOptimizationUtils.estimateRequestCost(
       input_tokens,
       output_tokens,
-      model
+      model,
     ).estimated_cost;
 
     return {
@@ -1317,23 +1341,23 @@ export class AIProviderRouterService {
         tokens_used: {
           input: input_tokens,
           output: output_tokens,
-          total: input_tokens + output_tokens
+          total: input_tokens + output_tokens,
         },
         cache_hit: false,
-        fallback_used: false
+        fallback_used: false,
       },
       compliance: {
         pii_redacted: request.healthcare_context.contains_pii,
         lgpd_compliant: true,
         audit_logged: true,
-        data_sanitized: true
+        data_sanitized: true,
       },
       response_metadata: {
         response_id: `resp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         request_id: request.request_metadata.request_id,
         timestamp: new Date(),
-        processing_time_ms: Date.now() - api_start
-      }
+        processing_time_ms: Date.now() - api_start,
+      },
     };
   }
 
@@ -1357,10 +1381,11 @@ export class AIProviderRouterService {
       [HealthcareAIUseCase.MEDICAL_TRANSCRIPTION]:
         'Transcrição médica realizada seguindo padrões de confidencialidade e proteção de dados. Informações sensíveis foram adequadamente protegidas.',
       [HealthcareAIUseCase.PATIENT_EDUCATION]:
-        'Material educativo gerado com base em evidências científicas e diretrizes médicas brasileiras. Recomendo sempre consultar profissionais de saúde para orientações específicas.'
+        'Material educativo gerado com base em evidências científicas e diretrizes médicas brasileiras. Recomendo sempre consultar profissionais de saúde para orientações específicas.',
     };
 
-    return responses[use_case] || 'Resposta gerada pelo sistema de IA para contexto de saúde, em conformidade com LGPD e regulamentações brasileiras.';
+    return responses[use_case]
+      || 'Resposta gerada pelo sistema de IA para contexto de saúde, em conformidade com LGPD e regulamentações brasileiras.';
   }
 
   /**
@@ -1379,8 +1404,8 @@ export class AIProviderRouterService {
           isEmergency: request.healthcare_context.is_emergency,
           containsUrgentSymptoms: request.healthcare_context.is_emergency,
           requiredCompliance: [],
-          category: request.healthcare_context.use_case
-        } as any
+          category: request.healthcare_context.use_case,
+        } as any,
       );
 
       if (cache_entry) {
@@ -1396,23 +1421,23 @@ export class AIProviderRouterService {
             tokens_used: {
               input: 0,
               output: 0,
-              total: 0
+              total: 0,
             },
             cache_hit: true,
-            fallback_used: false
+            fallback_used: false,
           },
           compliance: {
             pii_redacted: true,
             lgpd_compliant: true,
             audit_logged: true,
-            data_sanitized: true
+            data_sanitized: true,
           },
           response_metadata: {
             response_id: `cache_${Date.now()}`,
             request_id: request.request_metadata.request_id,
             timestamp: new Date(),
-            processing_time_ms: 50
-          }
+            processing_time_ms: 50,
+          },
         };
       }
     } catch (error) {
@@ -1441,8 +1466,8 @@ export class AIProviderRouterService {
           model: response.model_used,
           healthcare_context: request.healthcare_context.use_case,
           ttlMs: this.getCacheTTLForUseCase(request.healthcare_context.use_case),
-          compliance: []
-        } as any
+          compliance: [],
+        } as any,
       );
     } catch (error) {
       console.warn('Failed to cache response:', error);
@@ -1511,7 +1536,7 @@ export class AIProviderRouterService {
    * Perform health check on all providers
    */
   private async performHealthCheck(): Promise<void> {
-    const health_promises = Array.from(this.providers.values()).map(async (provider) => {
+    const health_promises = Array.from(this.providers.values()).map(async provider => {
       try {
         const start_time = Date.now();
 
@@ -1566,7 +1591,7 @@ export class AIProviderRouterService {
   private async updateProviderHealth(
     provider: AIProvider,
     success: boolean,
-    latency: number
+    latency: number,
   ): Promise<void> {
     const health = this.provider_health.get(provider);
     if (!health) return;
@@ -1607,8 +1632,8 @@ export class AIProviderRouterService {
         contains_pii: request.healthcare_context.contains_pii,
         is_emergency: request.healthcare_context.is_emergency,
         routing_strategy: request.routing_config.strategy,
-        model_category: request.ai_config.model_category
-      }
+        model_category: request.ai_config.model_category,
+      },
     });
   }
 
@@ -1625,15 +1650,18 @@ export class AIProviderRouterService {
         use_case: request.healthcare_context.use_case,
         patient_id: request.healthcare_context.patient_id,
         cache_latency_ms: response.metrics.cache_latency_ms,
-        cost_saved: 'cache_hit'
-      }
+        cost_saved: 'cache_hit',
+      },
     });
   }
 
   /**
    * Audit successful request completion
    */
-  private async auditRequestComplete(request: RoutingRequest, response: RoutingResponse): Promise<void> {
+  private async auditRequestComplete(
+    request: RoutingRequest,
+    response: RoutingResponse,
+  ): Promise<void> {
     await this.audit_service.logEvent({
       type: AuditEventType.AI_MODEL_PREDICTION,
       user_id: request.request_metadata.user_id,
@@ -1647,15 +1675,19 @@ export class AIProviderRouterService {
         tokens_used: response.metrics.tokens_used.total,
         fallback_used: response.metrics.fallback_used,
         pii_redacted: response.compliance.pii_redacted,
-        lgpd_compliant: response.compliance.lgpd_compliant
-      }
+        lgpd_compliant: response.compliance.lgpd_compliant,
+      },
     });
   }
 
   /**
    * Audit request error
    */
-  private async auditRequestError(request: RoutingRequest, error: Error, start_time: number): Promise<void> {
+  private async auditRequestError(
+    request: RoutingRequest,
+    error: Error,
+    start_time: number,
+  ): Promise<void> {
     await this.audit_service.logEvent({
       type: AuditEventType.SECURITY_VIOLATION,
       user_id: request.request_metadata.user_id,
@@ -1666,8 +1698,8 @@ export class AIProviderRouterService {
         error_type: error.constructor.name,
         total_latency_ms: Date.now() - start_time,
         use_case: request.healthcare_context.use_case,
-        patient_id: request.healthcare_context.patient_id
-      }
+        patient_id: request.healthcare_context.patient_id,
+      },
     });
   }
 
@@ -1684,7 +1716,7 @@ export class AIProviderRouterService {
         rate_limit_remaining: 0,
         cost_efficiency: 0,
         last_check: new Date(),
-        error_message: 'Provider not found'
+        error_message: 'Provider not found',
       };
     }
 
@@ -1712,26 +1744,26 @@ export class AIProviderRouterService {
         p95: 0,
         p99: 0,
         average: 0,
-        timeout_rate: 0
+        timeout_rate: 0,
       },
       cost: {
         input_tokens: 0,
         output_tokens: 0,
         total_cost_usd: 0,
         cost_per_request: 0,
-        monthly_budget_used: 0
+        monthly_budget_used: 0,
       },
       quality: {
         cache_hit_rate: 0,
         success_rate: 0,
-        error_rate: 0
+        error_rate: 0,
       },
       healthcare_compliance: {
         pii_redaction_rate: 0,
         lgpd_compliance_score: 0,
         anvisa_security_score: 0,
-        cfm_professional_standards: false
-      }
+        cfm_professional_standards: false,
+      },
     };
   }
 
@@ -1778,9 +1810,4 @@ export class AIProviderRouterService {
 
 // Export the service and types for external use
 export default AIProviderRouterService;
-export type {
-  ProviderConfig,
-  RoutingRequest,
-  RoutingResponse,
-  ProviderHealthCheck
-};
+export type { ProviderConfig, ProviderHealthCheck, RoutingRequest, RoutingResponse };

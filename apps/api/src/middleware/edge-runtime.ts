@@ -123,58 +123,79 @@ const BRASIL_HEALTHCARE_CONFIG = {
   },
 } as const;
 
-// Security headers for Brazilian healthcare compliance
-const HEALTHCARE_SECURITY_HEADERS = {
-  // LGPD compliance headers
-  'X-LGPD-Compliant': 'true',
-  'X-Data-Controller': 'NeonPro Healthcare Platform',
-  'X-Legal-Basis': 'health-protection',
+/**
+ * Generate healthcare security headers with fresh CSP nonce per request
+ * SECURITY FIX: Each request gets a unique nonce to prevent XSS attacks
+ */
+function getHealthcareSecurityHeaders(): Record<string, string> {
+  // Generate fresh nonce per request (CRITICAL SECURITY FIX)
+  const nonce = crypto.randomBytes(16).toString('base64');
 
-  // CFM compliance headers
-  'X-CFM-Compliant': 'true',
-  'X-Telemedicine-Standard': 'CFM-2314-2022',
-  'X-Medical-Grade': 'true',
+  return {
+    // LGPD compliance headers
+    'X-LGPD-Compliant': 'true',
+    'X-Data-Controller': 'NeonPro Healthcare Platform',
+    'X-Legal-Basis': 'health-protection',
 
-  // ANVISA compliance headers
-  'X-ANVISA-Compliant': 'true',
-  'X-Medical-Device-Class': 'IIa',
-  'X-Adverse-Event-Reporting': 'enabled',
+    // CFM compliance headers
+    'X-CFM-Compliant': 'true',
+    'X-Telemedicine-Standard': 'CFM-2314-2022',
+    'X-Medical-Grade': 'true',
 
-  // Security headers
-  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'X-XSS-Protection': '1; mode=block',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'camera=self, microphone=self, geolocation=(), payment=()',
+    // ANVISA compliance headers
+    'X-ANVISA-Compliant': 'true',
+    'X-Medical-Device-Class': 'IIa',
+    'X-Adverse-Event-Reporting': 'enabled',
 
-  // CORS for healthcare applications
-  'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
-    ? 'https://neonpro.com.br'
-    : '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Clinic-ID, X-Patient-ID',
-  'Access-Control-Max-Age': '86400',
+    // Security headers
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=self, microphone=self, geolocation=(), payment=()',
 
-  // Content Security Policy for medical applications (SECURE)
-  'Content-Security-Policy': [
-    'default-src \'self\'',
-    'script-src \'self\' \'nonce-${nonce}\' https://js.stripe.com https://maps.googleapis.com', // Removed unsafe directives
-    'style-src \'self\' \'nonce-${nonce}\' https://fonts.googleapis.com', // Removed unsafe-inline
-    'img-src \'self\' data: blob: https://maps.gstatic.com',
-    'font-src \'self\' https://fonts.gstatic.com',
-    'connect-src \'self\' wss: ws: *.neonpro.com.br',
-    'media-src \'self\' blob: mediastream:',
-    'object-src \'none\'',
-    'embed-src \'none\'',
-    'frame-src \'self\' https://js.stripe.com',
-    'frame-ancestors \'none\'',
-    'base-uri \'self\'',
-    'form-action \'self\'',
-    'worker-src \'self\' blob:',
-    'upgrade-insecure-requests',
-  ].join('; ').replace('${nonce}', crypto.randomBytes(16).toString('base64')),
-};
+    // CORS for healthcare applications
+    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
+      ? 'https://neonpro.com.br'
+      : '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Clinic-ID, X-Patient-ID',
+    'Access-Control-Max-Age': '86400',
+
+    // Content Security Policy for medical applications (SECURE)
+    // SECURITY FIX: Fresh nonce generated per request, not per deployment
+    'Content-Security-Policy': [
+      'default-src \'self\'',
+      `script-src 'self' 'nonce-${nonce}' https://js.stripe.com https://maps.googleapis.com`, // Fresh nonce per request
+      `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`, // Fresh nonce per request
+      'img-src \'self\' data: blob: https://maps.gstatic.com',
+      'font-src \'self\' https://fonts.gstatic.com',
+      'connect-src \'self\' wss: ws: *.neonpro.com.br',
+      'media-src \'self\' blob: mediastream:',
+      'object-src \'none\'',
+      'embed-src \'none\'',
+      'frame-src \'self\' https://js.stripe.com',
+      'frame-ancestors \'none\'',
+      'base-uri \'self\'',
+      'form-action \'self\'',
+      'worker-src \'self\' blob:',
+      'upgrade-insecure-requests',
+    ].join('; '),
+
+    // Additional headers for healthcare compliance
+    'X-Audit-Log': 'enabled',
+    'X-Data-Retention': 'as-per-lgpd',
+    'X-Encryption-Standard': 'AES-256',
+
+    // Performance and monitoring
+    'X-Cache-Control': 'healthcare-optimized',
+    'Server-Timing': 'edge-processing',
+  };
+}
+
+// Backward compatibility: Keep original export name but make it dynamic
+const HEALTHCARE_SECURITY_HEADERS = getHealthcareSecurityHeaders();
 
 // Edge runtime configuration middleware
 export class BrazilianHealthcareEdgeRuntime {
@@ -215,8 +236,8 @@ export class BrazilianHealthcareEdgeRuntime {
       // Create response with healthcare compliance headers
       const response = NextResponse.next();
 
-      // Add all healthcare security headers
-      Object.entries(HEALTHCARE_SECURITY_HEADERS).forEach(([key, value]) => {
+      // Add all healthcare security headers (SECURITY FIX: Fresh headers per request)
+      Object.entries(getHealthcareSecurityHeaders()).forEach(([key, value]) => {
         response.headers.set(key, value);
       });
 
@@ -242,7 +263,7 @@ export class BrazilianHealthcareEdgeRuntime {
           status: 403,
           headers: {
             'Content-Type': 'application/json',
-            ...HEALTHCARE_SECURITY_HEADERS,
+            ...getHealthcareSecurityHeaders(), // SECURITY FIX: Fresh headers per request
           },
         },
       );
@@ -566,7 +587,7 @@ export function createHealthcareResponse(
     cacheControl?: string;
   } = {},
 ): Response {
-  const headers = new Headers(HEALTHCARE_SECURITY_HEADERS);
+  const headers = new Headers(getHealthcareSecurityHeaders()); // SECURITY FIX: Fresh headers per request
 
   // Add healthcare-specific headers
   if (options.patientId) {

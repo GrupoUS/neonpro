@@ -3,12 +3,12 @@ import { NodeSDK } from '@opentelemetry/sdk-node';
 import { Resource } from '@opentelemetry/resources';
 import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
-import { ConsoleSpanExporter, SimpleSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import { ConsoleSpanExporter, SimpleSpanProcessor, BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
 import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
-import { HonoInstrumentation } from '@opentelemetry/instrumentation-hono';
 import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
+import { ParentBasedSampler, TraceIdRatioBasedSampler, AlwaysOnSampler, AlwaysOffSampler } from '@opentelemetry/sdk-trace-base';
 
 // Healthcare-specific telemetry configuration
 export interface HealthcareTelemetryConfig {
@@ -42,6 +42,7 @@ export enum HealthcareSpanAttributes {
 
 // Healthcare-specific operations
 export enum HealthcareOperations {
+  PATIENT_DATA_READ = 'patient.data.read',
   PATIENT_DATA_ACCESS = 'patient.data.access',
   PATIENT_DATA_UPDATE = 'patient.data.update',
   MEDICAL_RECORD_CREATE = 'medical_record.create',
@@ -124,23 +125,27 @@ export class HealthcareTelemetryManager {
         port: this.config.prometheusPort,
       });
       metricReader = new PeriodicExportingMetricReader({
-        exporter: prometheusExporter,
+        exporter: prometheusExporter as any,
         exportIntervalMillis: 10000,
       });
     }
 
     this.sdk = new NodeSDK({
       resource,
-      spanProcessors,
+      spanProcessor: new BatchSpanProcessor(new ConsoleSpanExporter()),
       metricReader,
       instrumentations: [
         new HttpInstrumentation(),
         new ExpressInstrumentation(),
-        new HonoInstrumentation(),
+        // TODO: Add Hono instrumentation when available
       ],
-      sampler: {
-        samplingRate: this.config.samplingRate,
-      },
+      sampler: new ParentBasedSampler({
+        root: new TraceIdRatioBasedSampler(this.config.samplingRate),
+        remoteParentSampled: new AlwaysOnSampler(),
+        remoteParentNotSampled: new AlwaysOffSampler(),
+        localParentSampled: new AlwaysOnSampler(),
+        localParentNotSampled: new AlwaysOffSampler(),
+      }),
     });
 
     try {
@@ -165,13 +170,18 @@ export class HealthcareTelemetryManager {
     return this.initialized;
   }
 
+  // Get tracer for creating spans
+  getTracer(): opentelemetry.Tracer {
+    return opentelemetry.trace.getTracer(this.config.serviceName, this.config.serviceVersion);
+  }
+
   // Healthcare-specific span creation
   createHealthcareSpan(
     name: string,
     operation: HealthcareOperations,
     attributes: Record<string, string | number | boolean> = {}
   ): opentelemetry.Span {
-    const tracer = opentelemetry.trace.getTracer(this.config.serviceName, this.config.serviceVersion);
+    const tracer = this.getTracer();
     const span = tracer.startSpan(name);
 
     // Set healthcare-specific attributes

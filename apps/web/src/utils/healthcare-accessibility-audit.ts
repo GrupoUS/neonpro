@@ -7,8 +7,8 @@
  * @package NeonPro Healthcare Accessibility
  */
 
-import Axe from 'axe-core';
-import type { AxeResults, Node, Result } from 'axe-core';
+import * as Axe from 'axe-core';
+import type { AxeResults, Result } from 'axe-core';
 import type { AccessibilityIssue, AccessibilityTestingOptions } from './accessibility-testing';
 
 // Healthcare-specific accessibility rule IDs
@@ -130,178 +130,27 @@ export interface HealthcareAccessibilityRecommendation {
   estimatedEffort: 'low' | 'medium' | 'high';
 }
 
-// Healthcare-specific accessibility rules
-export const healthcareAccessibilityRules: Axe.Spec = {
-  ...Axe.getRules(),
+// Healthcare-specific accessibility rules configuration
+export const healthcareAccessibilityRules = {
   rules: [
-    // Patient data privacy and accessibility balance
-    {
-      id: 'patient-data-privacy',
-      selector: '[data-patient-sensitive]',
-      matches: function(node: any) {
-        return node.getAttribute('data-patient-sensitive') === 'true';
-      },
-      excludeHidden: false,
-      tags: ['healthcare', 'privacy', 'lgpd'],
-      metadata: {
-        description: 'Patient sensitive data must balance privacy and accessibility',
-        help: 'Ensure patient data is accessible while maintaining privacy',
-        helpUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/',
-      },
-      evaluate: function(node: any, options: any, virtualNode: any) {
-        const hasAccessibleName = node.getAttribute('aria-label')
-          || node.getAttribute('aria-labelledby')
-          || node.textContent?.trim();
-
-        const hasPrivacyIndicator = node.getAttribute('data-privacy-level')
-          || node.closest('[data-privacy-level]');
-
-        if (!hasAccessibleName) {
-          return {
-            result: false,
-            message: 'Patient data must have accessible name or label',
-          };
-        }
-
-        if (!hasPrivacyIndicator) {
-          return {
-            result: false,
-            message: 'Patient sensitive data must have privacy level indicator',
-          };
-        }
-
-        return { result: true };
-      },
-    },
-
-    // Emergency information accessibility
-    {
-      id: 'emergency-info-accessible',
-      selector: '[data-emergency]',
-      matches: function(node: any) {
-        return node.getAttribute('data-emergency') === 'true';
-      },
-      excludeHidden: false,
-      tags: ['healthcare', 'emergency', 'critical'],
-      metadata: {
-        description: 'Emergency information must be immediately accessible',
-        help: 'Emergency information must meet highest accessibility standards',
-        helpUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/',
-      },
-      evaluate: function(node: any, options: any, virtualNode: any) {
-        const hasHighContrast = window.getComputedStyle(node).color
-          !== window.getComputedStyle(node).backgroundColor;
-
-        const isLargeText = parseFloat(window.getComputedStyle(node).fontSize) >= 18;
-
-        const hasKeyboardAccess = node.tabIndex !== -1
-          || node.tagName === 'A'
-          || node.tagName === 'BUTTON';
-
-        const violations = [];
-
-        if (!hasHighContrast) {
-          violations.push('Emergency information must have high contrast');
-        }
-
-        if (!isLargeText && !node.getAttribute('aria-live')) {
-          violations.push('Emergency text must be large or have live region');
-        }
-
-        if (!hasKeyboardAccess) {
-          violations.push('Emergency information must be keyboard accessible');
-        }
-
-        return {
-          result: violations.length === 0,
-          message: violations.length > 0 ? violations.join(', ') : undefined,
-        };
-      },
-    },
-
-    // Medical terminology accessibility
-    {
-      id: 'medical-terminology',
-      selector: '[data-medical-term]',
-      matches: function(node: any) {
-        return node.hasAttribute('data-medical-term');
-      },
-      excludeHidden: false,
-      tags: ['healthcare', 'terminology', 'screen-reader'],
-      metadata: {
-        description: 'Medical terminology must be accessible to screen readers',
-        help: 'Medical terms must have explanations or alternative text',
-        helpUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/',
-      },
-      evaluate: function(node: any, options: any, virtualNode: any) {
-        const term = node.getAttribute('data-medical-term');
-        const hasExplanation = node.getAttribute('title')
-          || node.getAttribute('aria-describedby')
-          || node.querySelector('.explanation');
-
-        const hasAbbr = node.tagName === 'ABBR' || node.tagName === 'ACRONYM';
-
-        if (!hasExplanation && !hasAbbr) {
-          return {
-            result: false,
-            message: `Medical term "${term}" must have explanation or be marked as abbreviation`,
-          };
-        }
-
-        return { result: true };
-      },
-    },
-
-    // Treatment plan cognitive accessibility
-    {
-      id: 'treatment-accessibility',
-      selector: '[data-treatment-plan]',
-      matches: function(node: any) {
-        return node.getAttribute('data-treatment-plan') === 'true';
-      },
-      excludeHidden: false,
-      tags: ['healthcare', 'cognitive', 'treatment'],
-      metadata: {
-        description: 'Treatment plans must be cognitively accessible',
-        help: 'Treatment information must be easy to understand and navigate',
-        helpUrl: 'https://www.w3.org/WAI/WCAG21/Understanding/',
-      },
-      evaluate: function(node: any, options: any, virtualNode: any) {
-        const hasClearStructure = node.querySelector('h1, h2, h3, h4, h5, h6')
-          || node.getAttribute('role') === 'region';
-
-        const hasStepByStep = node.querySelector('[data-step], ol, ul');
-
-        const hasSimpleLanguage = !node.matches('.complex-terminology')
-          || node.hasAttribute('data-simplified');
-
-        const violations = [];
-
-        if (!hasClearStructure) {
-          violations.push('Treatment plan must have clear structure');
-        }
-
-        if (!hasStepByStep) {
-          violations.push('Treatment plan must have step-by-step breakdown');
-        }
-
-        if (!hasSimpleLanguage) {
-          violations.push('Treatment plan must use simplified language');
-        }
-
-        return {
-          result: violations.length === 0,
-          message: violations.length > 0 ? violations.join(', ') : undefined,
-        };
-      },
-    },
-  ],
+    'patient-data-privacy',
+    'emergency-info-accessible', 
+    'medical-terminology',
+    'treatment-accessibility',
+    'lgpd-accessibility',
+    'anvisa-accessibility',
+    'cfm-accessibility',
+    'appointment-accessibility',
+    'medical-history',
+    'consent-forms',
+    'vital-signs'
+  ]
 };
 
 // Healthcare accessibility audit main class
 export class HealthcareAccessibilityAuditor {
   private context: HealthcareAuditContext;
-  private customRules: Axe.Spec;
+  private customRules: any;
 
   constructor(context: Partial<HealthcareAuditContext> = {}) {
     this.context = {
@@ -326,16 +175,19 @@ export class HealthcareAccessibilityAuditor {
 
     // Run standard axe-core audit
     const axeResults = await Axe.run(element, {
+      runOnly: {
+        type: 'tag',
+        values: ['wcag2a', 'wcag2aa', 'best-practice']
+      },
       ...options,
-      rules: this.customRules.rules,
     });
 
     // Process results with healthcare-specific analysis
     const healthcareIssues = this.processHealthcareIssues(axeResults);
 
-    // Calculate scores
+    // Calculate scores based on results
     const complianceScore = this.calculateComplianceScore(healthcareIssues);
-    const accessibilityScore = this.calculateAccessibilityScore(axeResults);
+    const accessibilityScore = axeResults ? this.calculateAccessibilityScore(axeResults) : 0;
     const healthcareSpecificScore = this.calculateHealthcareSpecificScore(healthcareIssues);
 
     // Generate recommendations
@@ -366,14 +218,20 @@ export class HealthcareAccessibilityAuditor {
       const healthcareRuleId = violation.id as HealthcareAccessibilityRuleId;
 
       if (HEALTHCARE_ACCESSIBILITY_RULES[healthcareRuleId]) {
-        violation.nodes.forEach(node => {
+        violation.nodes.forEach((node, index) => {
           const healthcareIssue: HealthcareAccessibilityIssue = {
-            id: `${violation.id}-${node.target.join('-')}`,
+            id: `${violation.id}-${index}`,
             impact: violation.impact as any,
             description: violation.description,
             help: violation.help,
             helpUrl: violation.helpUrl,
             tags: violation.tags,
+            nodes: [{
+              html: node.html,
+              target: Array.isArray(node.target) ? node.target.map(String) : [String(node.target)],
+              failureSummary: node.failureSummary || '',
+              any: node.any || []
+            }],
             healthcareRuleId,
             complianceStandards: this.getRelevantComplianceStandards(violation.tags),
             patientImpact: this.assessPatientImpact(violation),
@@ -590,7 +448,7 @@ export class HealthcareAccessibilityAuditor {
     issues: HealthcareAccessibilityIssue[],
   ): 'immediate' | 'high' | 'medium' | 'low' {
     const priorityOrder = { immediate: 4, high: 3, medium: 2, low: 1 };
-    const highestPriority = issues.reduce((highest, issue) => {
+    const highestPriority = issues.reduce((highest: 'immediate' | 'high' | 'medium' | 'low', issue) => {
       const currentPriority = priorityOrder[issue.remediationPriority];
       const highestPriorityValue = priorityOrder[highest];
       return currentPriority > highestPriorityValue ? issue.remediationPriority : highest;
@@ -775,11 +633,3 @@ export function createHealthcareAuditor(
 
 // Export types and utilities
 export * from './accessibility-testing';
-export type {
-  HealthcareAccessibilityAuditResult,
-  HealthcareAccessibilityIssue,
-  HealthcareAccessibilityRecommendation,
-  HealthcareAccessibilityRuleId,
-  HealthcareAuditContext,
-  HealthcareComplianceStandard,
-};

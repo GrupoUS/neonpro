@@ -1,5 +1,6 @@
 import type { Context, Next } from 'hono';
 import { badRequest, forbidden, notFound, serverError, unauthorized } from '../utils/responses';
+import { errorTracker } from '../services/error-tracking-bridge';
 
 export async function errorHandler(c: Context, next: Next): Promise<Response | void> {
   try {
@@ -12,6 +13,21 @@ export async function errorHandler(c: Context, next: Next): Promise<Response | v
   } catch (err: any) {
     const message = err?.message || 'Unhandled error';
     const code = err?.code || 'INTERNAL_ERROR';
+
+    // Extract context and capture exception with healthcare compliance
+    const context = errorTracker.extractContextFromHono(c);
+    const eventId = errorTracker.captureException(err, context, {
+      errorCode: code,
+      errorMessage: message,
+      details: err?.details
+    });
+
+    // Add breadcrumb for error handling
+    errorTracker.addBreadcrumb(
+      'Error handled in middleware', 
+      'error',
+      { code, eventId, endpoint: c.req.path, method: c.req.method }
+    );
 
     // Map common error types
     if (code === 'VALIDATION_ERROR') {
@@ -27,7 +43,10 @@ export async function errorHandler(c: Context, next: Next): Promise<Response | v
       return notFound(c, message);
     }
 
-    // Default
-    return serverError(c, message, process.env.NODE_ENV === 'production' ? undefined : err);
+    // Default - include eventId for tracking
+    return serverError(c, message, {
+      eventId,
+      ...(process.env.NODE_ENV === 'production' ? {} : { error: err })
+    });
   }
 }

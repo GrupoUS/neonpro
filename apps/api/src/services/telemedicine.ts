@@ -358,8 +358,9 @@ export class TelemedicineService {
       });
 
       return session;
-    } catch (error) {
-      throw new Error(`Failed to create telemedicine session: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to create telemedicine session: ${errorMessage}`);
     }
   }
 
@@ -438,8 +439,9 @@ export class TelemedicineService {
         connectionDetails,
         qualityRequirements: QUALITY_THRESHOLDS,
       };
-    } catch (error) {
-      throw new Error(`Failed to start session: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to start session: ${errorMessage}`);
     }
   }
 
@@ -625,8 +627,9 @@ export class TelemedicineService {
         timestamp: new Date(),
         isValid: true,
       };
-    } catch (error) {
-      throw new Error(`Failed to create digital prescription: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to create digital prescription: ${errorMessage}`);
     }
   } /**
    * Activate emergency escalation protocol
@@ -740,8 +743,9 @@ export class TelemedicineService {
         emergencyContacts: notificationResults,
         nearestHospital,
       };
-    } catch (error) {
-      throw new Error(`Emergency escalation failed: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Emergency escalation failed: ${errorMessage}`);
     }
   }
 
@@ -827,8 +831,9 @@ export class TelemedicineService {
         complianceReport,
         archivalDetails,
       };
-    } catch (error) {
-      throw new Error(`Failed to end session: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`Failed to end session: ${errorMessage}`);
     }
   }
 
@@ -879,8 +884,9 @@ export class TelemedicineService {
 
       this.cfmCache.set(professionalId, validation);
       return validation;
-    } catch (error) {
-      throw new Error(`CFM validation failed: ${error.message}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new Error(`CFM validation failed: ${errorMessage}`);
     }
   }
 
@@ -896,7 +902,7 @@ export class TelemedicineService {
     // Validate required security level
     const requiredMethods = this.getRequiredAuthMethods(authContext.securityLevel);
     const hasRequiredMethods = requiredMethods.every(method =>
-      authContext.authenticationMethods.includes(method)
+      authContext.authenticationMethods.includes(method as any)
     );
 
     if (!hasRequiredMethods) {
@@ -979,7 +985,7 @@ export class TelemedicineService {
     let score = 100;
 
     // Video resolution score
-    const resolutionScore = {
+    const resolutionScore: Record<string, number> = {
       '1080p': 100,
       '720p': 90,
       '480p': 70,

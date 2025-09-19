@@ -4,11 +4,11 @@
  */
 
 import { Context, Next } from 'hono';
-import { healthcareTracer, HealthcareSpanAttributes } from './index';
+import { HealthcareSpanAttributes, getGlobalTelemetryManager, HealthcareOperations } from './index';
 import { DataClassification, ComplianceLevel, HealthcareOperationType } from './types';
 
 // Extract healthcare context from request
-function extractHealthcareContext(c: Context): HealthcareSpanAttributes {
+function extractHealthcareContext(c: Context): Record<string, string | number | boolean> {
   const headers = c.req.header();
   const url = c.req.url;
   const method = c.req.method;
@@ -48,12 +48,12 @@ function extractHealthcareContext(c: Context): HealthcareSpanAttributes {
   }
   
   return {
-    'healthcare.clinic_id': headers['x-clinic-id'],
-    'healthcare.user_id': headers['x-user-id'],
+    'healthcare.clinic_id': headers['x-clinic-id'] || 'unknown',
+    'healthcare.user_id': headers['x-user-id'] || 'anonymous',
     'healthcare.feature': extractFeatureFromUrl(url),
     'healthcare.patient_data_involved': isPatientDataInvolved,
     'healthcare.compliance_level': complianceLevel,
-    'healthcare.operation_type': operationType as any,
+    'healthcare.operation_type': operationType,
     'healthcare.data_classification': isPatientDataInvolved ? 'medical' : 'personal',
   };
 }
@@ -93,14 +93,26 @@ export function healthcareTelemetryMiddleware() {
     
     try {
       // Trace the API operation
-      await healthcareTracer.traceApiOperation(
-        url,
-        method,
-        async () => {
+      const telemetryManager = getGlobalTelemetryManager();
+      if (telemetryManager) {
+        const span = telemetryManager.createHealthcareSpan(
+          url,
+          HealthcareOperations.PATIENT_DATA_READ,
+          healthcareContext
+        );
+        try {
           await next();
-        },
-        healthcareContext
-      );
+          span.end();
+        } catch (error) {
+          span.recordException(error as Error);
+          span.setStatus({ code: 2, message: error instanceof Error ? error.message : 'Unknown error' });
+          span.end();
+          throw error;
+        }
+      } else {
+        // Fallback if telemetry is not initialized
+        await next();
+      }
       
       // Record metrics
       const duration = Date.now() - startTime;
@@ -119,7 +131,7 @@ export function healthcareTelemetryMiddleware() {
 function recordApiMetrics(
   c: Context, 
   duration: number, 
-  context: HealthcareSpanAttributes
+  context: Record<string, string | number | boolean>
 ) {
   // Only record metrics in production or when enabled
   if (process.env.NODE_ENV !== 'production' && process.env.ENABLE_METRICS !== 'true') {
@@ -175,7 +187,7 @@ function recordApiError(
   c: Context, 
   error: Error, 
   duration: number, 
-  context: HealthcareSpanAttributes
+  context: Record<string, string | number | boolean>
 ) {
   try {
     const { metrics } = require('@opentelemetry/api');

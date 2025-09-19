@@ -15,6 +15,7 @@
 import { createBrowserClient, createServerClient as createSSRServerClient } from '@supabase/ssr';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../../../packages/database/src/types/supabase';
+import { createTelemetryEnabledSupabaseClient, TelemetryEnabledSupabaseClient } from '../lib/supabase-telemetry';
 
 // Environment validation with fallback to NEXT_PUBLIC_ variables
 function getSupabaseUrl(): string {
@@ -422,3 +423,12 @@ export class RLSQueryBuilder {
 // Default client instances for backward compatibility
 export const supabaseAdmin = createAdminClient();
 export const supabaseClient = createUserClient();
+
+// Telemetry-enabled clients for healthcare monitoring
+export const supabaseAdminWithTelemetry = createTelemetryEnabledSupabaseClient(supabaseAdmin);
+export const supabaseClientWithTelemetry = createTelemetryEnabledSupabaseClient(supabaseClient);
+
+// Helper function to get telemetry-enabled client based on context
+export function getTelemetryEnabledClient(useAdmin = false): TelemetryEnabledSupabaseClient {
+  return useAdmin ? supabaseAdminWithTelemetry : supabaseClientWithTelemetry;
+}

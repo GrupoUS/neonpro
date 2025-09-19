@@ -10,7 +10,7 @@
  * - Keyboard navigation validation
  */
 
-import { AxeResults, Result, Violation } from '@axe-core/react';
+import { AxeResults, Result } from 'axe-core';
 import {
   calculateContrastRatio,
   meetsContrastRequirement,
@@ -37,6 +37,11 @@ export interface AccessibilityIssue {
   }>;
   healthcareSpecific?: boolean;
   lgpdRelevant?: boolean;
+}
+
+export interface AccessibilityTestingOptions {
+  includeHealthcareRules?: boolean;
+  context?: string;
 }
 
 export interface AccessibilityTestResult {
@@ -141,7 +146,7 @@ export function convertAxeResults(axeResults: AxeResults): AccessibilityIssue[] 
       help: violation.help,
       helpUrl: violation.helpUrl,
       tags: violation.tags,
-      nodes: violation.nodes.map(node => ({
+      nodes: violation.nodes.map((node: any) => ({
         html: node.html,
         target: node.target,
         failureSummary: node.failureSummary,
@@ -178,7 +183,7 @@ function isHealthcareSpecificViolation(violation: Result): boolean {
   return healthcareKeywords.some(keyword =>
     violation.description.toLowerCase().includes(keyword)
     || violation.help.toLowerCase().includes(keyword)
-    || violation.tags.some(tag => tag.toLowerCase().includes(keyword))
+    || violation.tags.some((tag: string) => tag.toLowerCase().includes(keyword))
   );
 }
 
@@ -200,7 +205,7 @@ function isLgpdRelevantViolation(violation: Result): boolean {
   return lgpdKeywords.some(keyword =>
     violation.description.toLowerCase().includes(keyword)
     || violation.help.toLowerCase().includes(keyword)
-    || violation.tags.some(tag => tag.toLowerCase().includes(keyword))
+    || violation.tags.some((tag: string) => tag.toLowerCase().includes(keyword))
   );
 }
 
@@ -209,12 +214,10 @@ function isLgpdRelevantViolation(violation: Result): boolean {
  */
 export async function runAccessibilityTest(
   element: HTMLElement | Document = document.documentElement,
-  options: {
-    includeHealthcareRules?: boolean;
-    context?: string;
-  } = {},
+  options: AccessibilityTestingOptions = {},
 ): Promise<AccessibilityTestResult> {
-  const axe = (await import('@axe-core/react')).default;
+  const axeModule = await import('axe-core');
+  const axe = (axeModule as any).default || axeModule;
 
   const axeResults: AxeResults = await axe(element, {
     runOnly: {
@@ -228,7 +231,7 @@ export async function runAccessibilityTest(
 
   // Run healthcare-specific rules
   if (options.includeHealthcareRules) {
-    const healthcareViolations = runHealthcareRules(element);
+    const healthcareViolations = runHealthcareRules(element as HTMLElement);
     violations.push(...healthcareViolations);
   }
 
@@ -241,7 +244,7 @@ export async function runAccessibilityTest(
     healthcareCompliance: {
       lgpd: !violations.some(v => v.lgpdRelevant),
       healthcareData: !violations.some(v => v.healthcareSpecific),
-      emergencyFeatures: validateEmergencyFeatures(element),
+      emergencyFeatures: validateEmergencyFeatures(element instanceof Document ? element.documentElement : element),
     },
   };
 }
@@ -404,7 +407,7 @@ URL: ${result.url}
     violations.forEach(violation => {
       report += `### ${violation.impact.toUpperCase()}: ${violation.id}\n`;
       report += `**Description:** ${violation.description}\n`;
-      report += `**Help:** ${viation.help}\n`;
+      report += `**Help:** ${violation.help}\n`;
 
       if (violation.healthcareSpecific) {
         report += `**Healthcare Specific:** Yes\n`;

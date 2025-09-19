@@ -5,7 +5,7 @@
 
 import { Context, Next } from 'hono';
 import * as v from 'valibot';
-import { createHealthcareError, ErrorCategory, ErrorSeverity } from './error-tracking';
+import { createHealthcareError, ErrorCategory, ErrorSeverity } from '../services/error-tracking-bridge';
 
 // Validation target types
 export type ValidationTarget = 'query' | 'params' | 'body' | 'headers';

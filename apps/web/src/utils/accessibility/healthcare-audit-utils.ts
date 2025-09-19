@@ -198,7 +198,7 @@ export const HEALTHCARE_AUDIT_RULES = {
       appointmentElements.forEach(el => {
         const dateInputs = el.querySelectorAll('input[type="date"], input[type="time"]');
         dateInputs.forEach(input => {
-          if (!input.hasAttribute('aria-label')) {
+          if (!input.hasAttribute('aria-label') && input instanceof HTMLInputElement) {
             input.setAttribute('aria-label', input.type === 'date' ? 'Date selection' : 'Time selection');
           }
         });
@@ -277,6 +277,9 @@ export class HealthcareAccessibilityAuditor {
       throw new Error('Audit context not found');
     }
 
+    // Ensure we have an Element for category audits
+    const elementContext = auditContext instanceof Document ? auditContext.documentElement : auditContext;
+
     const results = {
       summary: {
         overallScore: 0,
@@ -297,7 +300,7 @@ export class HealthcareAccessibilityAuditor {
 
     // Run category-specific audits
     for (const [categoryId, category] of Object.entries(this.categories)) {
-      const categoryResult = await this.auditCategory(categoryId, category, auditContext);
+      const categoryResult = await this.auditCategory(categoryId, category, elementContext);
       results.categoryResults.push(categoryResult);
       
       // Update summary counts
@@ -328,7 +331,7 @@ export class HealthcareAccessibilityAuditor {
     results.summary.overallScore = Math.round((passedChecks / totalChecks) * 100);
 
     // Validate healthcare compliance
-    results.summary.healthcareCompliance = await this.validateHealthcareCompliance(auditContext);
+    results.summary.healthcareCompliance = await this.validateHealthcareCompliance(elementContext);
 
     // Generate recommendations
     results.recommendations = this.generateRecommendations(results);
@@ -421,7 +424,7 @@ export class HealthcareAccessibilityAuditor {
   private validateLGPDCompliance(context: Element): boolean {
     const lgpdElements = context.querySelectorAll('[data-lgpd="true"], [data-sensitive="personal"]');
     
-    for (const element of lgpdElements) {
+    for (const element of Array.from(lgpdElements)) {
       if (!element.hasAttribute('aria-label') && 
           !element.hasAttribute('aria-labelledby')) {
         return false;
@@ -442,7 +445,7 @@ export class HealthcareAccessibilityAuditor {
   private validateANVISACompliance(context: Element): boolean {
     const anvisaElements = context.querySelectorAll('[data-anvisa="true"], [data-medical-device="true"]');
     
-    for (const element of anvisaElements) {
+    for (const element of Array.from(anvisaElements)) {
       if (!element.hasAttribute('aria-label') && 
           !element.hasAttribute('aria-describedby') &&
           !element.hasAttribute('role')) {
@@ -459,7 +462,7 @@ export class HealthcareAccessibilityAuditor {
   private validateCFMCompliance(context: Element): boolean {
     const cfmElements = context.querySelectorAll('[data-cfm="true"], [data-professional="medical"]');
     
-    for (const element of cfmElements) {
+    for (const element of Array.from(cfmElements)) {
       if (!element.hasAttribute('aria-label') && 
           !element.hasAttribute('aria-describedby')) {
         return false;
@@ -577,13 +580,14 @@ export class HealthcareAccessibilityAuditor {
     }>;
   }> {
     const auditContext = context || document;
+    const elementContext = auditContext instanceof Document ? auditContext.documentElement : auditContext;
     const fixes = [];
     let fixed = 0;
     let failed = 0;
 
     for (const [ruleId, rule] of Object.entries(this.rules)) {
       try {
-        rule.fix(auditContext);
+        rule.fix(elementContext);
         fixes.push({
           rule: rule.id,
           element: 'document',
@@ -677,7 +681,8 @@ export async function quickHealthcareAccessibilityCheck(
 
   try {
     const auditor = new HealthcareAccessibilityAuditor();
-    const results = await auditor.performComprehensiveAudit(context);
+    const elementContext = context instanceof Document ? context.documentElement : context;
+    const results = await auditor.performComprehensiveAudit(elementContext);
     
     return {
       passed: results.summary.overallScore >= 90,

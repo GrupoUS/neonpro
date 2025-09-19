@@ -5,7 +5,7 @@
  * with automated testing, validation patterns, and healthcare-specific checks.
  */
 
-import { axe } from 'axe-core';
+import * as axe from 'axe-core';
 import { generateAccessibilityReport } from './axe-core-integration';
 
 // Healthcare-specific test scenarios
@@ -301,7 +301,7 @@ export class HealthcareAccessibilityTester {
     for (const selector of lgpdSelectors) {
       const elements = document.querySelectorAll(selector);
       
-      for (const element of elements) {
+      for (const element of Array.from(elements)) {
         if (!element.hasAttribute('aria-label') && 
             !element.hasAttribute('aria-labelledby')) {
           return false;
@@ -319,7 +319,7 @@ export class HealthcareAccessibilityTester {
     // Check for ANVISA-specific requirements
     const anvisaElements = document.querySelectorAll('[data-anvisa="medical-device"]');
     
-    for (const element of anvisaElements) {
+    for (const element of Array.from(anvisaElements)) {
       if (!element.hasAttribute('role') && 
           !element.hasAttribute('aria-label')) {
         return false;
@@ -336,7 +336,7 @@ export class HealthcareAccessibilityTester {
     // Check for CFM-specific requirements
     const cfmElements = document.querySelectorAll('[data-cfm="professional"]');
     
-    for (const element of cfmElements) {
+    for (const element of Array.from(cfmElements)) {
       if (!element.hasAttribute('aria-label') && 
           !element.hasAttribute('aria-describedby')) {
         return false;

@@ -3,7 +3,13 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  plugins: [
+    tsconfigPaths({
+      // Restrict to this app's tsconfig and ignore errors in external dist tsconfigs
+      projects: [path.resolve(__dirname, './tsconfig.json')],
+      ignoreConfigErrors: true,
+    }),
+  ],
   test: {
     environment: 'node',
     globals: true,

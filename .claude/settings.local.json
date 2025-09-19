@@ -84,10 +84,11 @@
       "mcp__serena__find_referencing_symbols",
       "mcp__archon__rag_search_knowledge_base",
       "mcp__archon__get_project_features",
-      "mcp__archon__rag_search_code_examples"
+      "mcp__archon__rag_search_code_examples",
+      "mcp__archon__find_documents"
     ],
     "deny": [
-      "Edit",     
+      "Edit",
       "Write",
       "Read",
       "Bash",

@@ -1,7 +1,7 @@
 // Rate limiting wrapper (Phase 3.4 T030)
 // Adapts existing rate-limiting manager to provide simple presets for chat endpoints.
 import type { Context, Next } from 'hono';
-import { rateLimitMiddleware as baseRateLimit } from './rate-limiting';
+import { healthcareRateLimit as baseRateLimit } from './rate-limiting';
 
 // Preset: 10 requests per 5 minutes and 30 per hour per key (user/ip)
 // Properly chains two rate limiting middlewares: 5-minute window first, then 1-hour window
@@ -9,13 +9,13 @@ import { rateLimitMiddleware as baseRateLimit } from './rate-limiting';
 export function chatRateLimit() {
   // Create configurations for 5-minute and 1-hour windows
   const config5m = {
-    default: { maxRequests: 10, windowMs: 5 * 60 * 1000 },
-    endpoints: {},
+    maxRequests: 10,
+    windowMs: 5 * 60 * 1000,
   };
 
   const config1h = {
-    default: { maxRequests: 30, windowMs: 60 * 60 * 1000 },
-    endpoints: {},
+    maxRequests: 30,
+    windowMs: 60 * 60 * 1000,
   };
 
   const limit5m = baseRateLimit(config5m);
