@@ -3,7 +3,8 @@
  * Defines the structure and validation rules for API contracts
  */
 
-import { ErrorCategory, ErrorSeverity } from '../../../services/createHealthcareError';
+import { ErrorCategory } from '../../../services/createHealthcareError';
+import { ErrorSeverity } from '../../../types/error-severity';
 
 /**
  * Healthcare validation error interface

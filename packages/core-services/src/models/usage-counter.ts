@@ -7,15 +7,13 @@ import type {
   SubscriptionTier,
   EnhancedAIModel,
   AIUsageRecord,
-  QuotaStatus,
   BillingMetrics,
   AuditTrail,
   MedicalSpecialty,
+  AIProvider,
 } from '@neonpro/types';
 import { 
   calculateRequestCost, 
-  shouldApplySemanticCache,
-  MODEL_COST_CONFIG,
 } from '@neonpro/config/quotas';
 
 // ================================================
@@ -59,9 +57,9 @@ export interface UsageCounterData {
 export interface UsageAggregation {
   readonly period: 'hour' | 'day' | 'week' | 'month';
   readonly timestamp: Date;
-  readonly queries: number;
-  readonly costUsd: number;
-  readonly tokens: number;
+  queries: number;
+  costUsd: number;
+  tokens: number;
   readonly uniqueUsers: number;
   readonly modelBreakdown: Record<EnhancedAIModel, number>;
   readonly specialtyBreakdown: Record<MedicalSpecialty, number>;
@@ -456,13 +454,12 @@ export class UsageCounter {
   // HELPER METHODS
   // ================================================
 
-  private getProviderForModel(modelCode: EnhancedAIModel): string {
-    const modelConfig = MODEL_COST_CONFIG[modelCode];
+  private getProviderForModel(modelCode: EnhancedAIModel): AIProvider | "healthcare-br" {
     if (modelCode.startsWith('gpt-')) return 'openai';
     if (modelCode.startsWith('claude-')) return 'anthropic';
     if (modelCode.startsWith('gemini-')) return 'google';
     if (modelCode === 'healthcare-pt-br') return 'healthcare-br';
-    return 'unknown';
+    return 'mock' as AIProvider;
   }
 
   private isDiagnosisSpecialty(specialty?: MedicalSpecialty): boolean {

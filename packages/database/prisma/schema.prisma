@@ -611,6 +611,10 @@ enum AuditAction {
   EXPORT
   LOGIN
   LOGOUT
+  AI_CHAT
+  AI_PREDICTION
+  AI_ANALYSIS
+  AI_RECOMMENDATION
 }
 
 enum ResourceType {

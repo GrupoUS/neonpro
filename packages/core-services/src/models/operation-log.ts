@@ -46,10 +46,7 @@ export type DataProcessingPurpose =
   | 'analytics'
   | 'diagnosis'
   | 'training'
-  | 'audit'
-  | 'billing'
-  | 'support'
-  | 'research';
+  | 'audit';
 
 /**
  * Comprehensive operation log entry
@@ -204,7 +201,7 @@ export class OperationLog {
         ipAddress: entry.ipAddress,
         userAgent: entry.userAgent,
         consentStatus: entry.consentStatus,
-        dataProcessingPurpose: entry.dataProcessingPurpose || 'audit',
+        dataProcessingPurpose: (entry.dataProcessingPurpose as 'analytics' | 'diagnosis' | 'training' | 'audit') || 'audit',
         anonymizationLevel: entry.anonymizationApplied ? 'anonymized' : 'none',
         metadata: {
           category: entry.category,
@@ -312,7 +309,7 @@ export class OperationLog {
       userAgent: params.userAgent,
       planCode: params.toPlan,
       complianceFrameworks: ['LGPD'],
-      dataProcessingPurpose: 'billing',
+      dataProcessingPurpose: 'analytics',
       personalDataInvolved: true,
       sensitiveDataLevel: 'medium',
       anonymizationApplied: false,

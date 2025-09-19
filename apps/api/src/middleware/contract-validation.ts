@@ -1,11 +1,10 @@
 import {
   APIContract,
-  APIContractValidationResult,
   HealthcareValidationError,
 } from '@neonpro/shared/models/api-contract';
 import { Context, Next } from 'hono';
-import { OpenAPIV3_1 } from 'openapi-types';
-import * as v from 'valibot';
+import type { OpenAPIV3_1 } from '../../types/openapi';
+// Removed unused import: import * as v from 'valibot';
 import {
   createHealthcareError,
   ErrorCategory as HealthcareErrorCategory,
@@ -58,7 +57,7 @@ export interface HealthcareValidationRule {
 }
 
 // import { OpenAPIV3_1 } from 'openapi-types';
-import { OpenAPIV3_1 } from '../../types/openapi';
+// Removed duplicate import of OpenAPIV3_1 from '../../types/openapi'
 
 /**
  * Validation context for healthcare rules
@@ -164,7 +163,7 @@ const HEALTHCARE_VALIDATION_RULES: HealthcareValidationRule[] = [
     id: 'lgpd_consent_check',
     name: 'LGPD Consent Verification',
     description: 'Verify proper consent for personal data processing',
-    validate: (data, context) => {
+    validate: (data, _context) => {
       const errors: HealthcareValidationError[] = [];
 
       // Check if personal data is present without consent
@@ -190,7 +189,7 @@ const HEALTHCARE_VALIDATION_RULES: HealthcareValidationRule[] = [
     id: 'medical_data_validation',
     name: 'Medical Data Integrity',
     description: 'Validate medical data integrity and healthcare standards',
-    validate: (data, context) => {
+    validate: (data, _context) => {
       const errors: HealthcareValidationError[] = [];
 
       // Validate medical record format
@@ -614,7 +613,7 @@ async function validateHealthcareContract(
 function validateComplianceRequirement(
   data: any,
   requirement: string,
-  context: ValidationContext,
+  _context: ValidationContext,
 ): HealthcareValidationError[] {
   const errors: HealthcareValidationError[] = [];
 

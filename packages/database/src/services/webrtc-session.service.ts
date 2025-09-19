@@ -791,6 +791,17 @@ export class WebRTCSessionService {
    */
   async cancelSession(sessionId: string, reason: string): Promise<void> {
     try {
+      // Get the WebRTC session to find the telemedicine session ID
+      const { data: webrtcSession, error: getError } = await this.supabase
+        .from('webrtc_sessions')
+        .select('telemedicine_session_id')
+        .eq('id', sessionId)
+        .single();
+
+      if (getError || !webrtcSession) {
+        throw new Error(`WebRTC session not found: ${getError?.message || 'Session not found'}`);
+      }
+
       const { error } = await this.supabase
         .from('webrtc_sessions')
         .update({
@@ -805,7 +816,7 @@ export class WebRTCSessionService {
       }
 
       // Log the cancellation event
-      await this.logSessionEvent(sessionId, {
+      await this.logSessionEvent(webrtcSession.telemedicine_session_id, {
         type: 'session_cancelled',
         reason,
         cancelled_at: new Date().toISOString()

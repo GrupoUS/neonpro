@@ -786,21 +786,21 @@ function isValidLicenseFormat(licenseType: string, licenseNumber: string): boole
 }
 
 async function validateLicenseWithAuthority(
-  licenseType: string,
-  licenseNumber: string,
+  _licenseType: string,
+  _licenseNumber: string,
 ): Promise<{ isValid: boolean; source: string; errors?: string[] }> {
   // Placeholder for actual license validation with regulatory authorities
   // This would integrate with CFM, CRO, CRF APIs, etc.
   return {
     isValid: true,
-    source: `${licenseType}_AUTHORITY`,
+    source: `${_licenseType}_AUTHORITY`,
   };
 }
 
 async function calculateProfessionalMetrics(
-  professionalId: string,
-  dateFrom: Date,
-  dateTo: Date,
+  _professionalId: string,
+  _dateFrom: Date,
+  _dateTo: Date,
 ): Promise<any> {
   // Placeholder for performance metrics calculation
   return {
@@ -813,23 +813,23 @@ async function calculateProfessionalMetrics(
 }
 
 function calculateAvailableSlots(
-  dateFrom: Date,
-  dateTo: Date,
-  workingHours: any[],
-  existingAppointments: any[],
-  slotDuration: number,
-  includeBookedSlots: boolean,
+  _dateFrom: Date,
+  _dateTo: Date,
+  _workingHours: any[],
+  _existingAppointments: any[],
+  _slotDuration: number,
+  _includeBookedSlots: boolean,
 ): any[] {
   // Placeholder for slot calculation algorithm
   return [];
 }
 
-async function sendProfessionalWelcomeNotification(professional: any): Promise<void> {
+async function sendProfessionalWelcomeNotification(_professional: unknown): Promise<void> {
   // Placeholder for welcome notification
 }
 
 function getChanges(current: any, input: any): Record<string, any> {
-  const changes = {};
+  const changes = {} as Record<string, any>;
   Object.keys(input).forEach(key => {
     if (key !== 'id' && input[key] !== undefined && input[key] !== current[key]) {
       changes[key] = {
@@ -841,12 +841,12 @@ function getChanges(current: any, input: any): Record<string, any> {
   return changes;
 }
 
-async function validateClinicAccess(userId: string, clinicId: string): Promise<void> {
+async function validateClinicAccess(_userId: string, _clinicId: string): Promise<void> {
   // Implementation for clinic access validation
   return Promise.resolve();
 }
 
-async function validateClinicAdminAccess(userId: string, clinicId: string): Promise<void> {
+async function validateClinicAdminAccess(_userId: string, _clinicId: string): Promise<void> {
   // Implementation for clinic admin access validation
   return Promise.resolve();
 }

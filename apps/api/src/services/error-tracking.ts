@@ -12,7 +12,7 @@
  * - Performance impact monitoring
  */
 
-import { context, SpanStatusCode, trace } from '@opentelemetry/api';
+import { SpanStatusCode, trace } from '@opentelemetry/api';
 import * as Sentry from '@sentry/node';
 import { z } from 'zod';
 
@@ -224,7 +224,7 @@ class HealthcareErrorTracker {
   /**
    * Determines error severity based on type and context
    */
-  private determineSeverity(errorType: HealthcareErrorType, context: ErrorContext): ErrorSeverity {
+  private determineSeverity(errorType: HealthcareErrorType, _context: ErrorContext): ErrorSeverity {
     // Critical errors - immediate attention required
     if (
       errorType === 'patient_data_exposure'

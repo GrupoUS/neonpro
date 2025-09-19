@@ -1,5 +1,3 @@
-'use client';
-
 import { AnimatedModal } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -33,14 +31,11 @@ import {
   Zap,
   Eye,
   RefreshCw,
-  UserPlus,
-  FileText,
-  AlertCircle,
 } from 'lucide-react';
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import { cn } from '@/lib/utils';
 
-export const Route = createFileRoute('/patients/dashboard')({
+export const Route = createFileRoute('/patients/dashboard-backup')({
   component: PatientDashboard,
 });
 
@@ -58,11 +53,6 @@ interface Patient {
   };
   healthInsurance?: {
     provider: string;
-  };
-  age?: number;
-  address?: {
-    city: string;
-    state: string;
   };
 }
 
@@ -99,7 +89,12 @@ interface RealTimeUpdate {
   patientId?: string;
 }
 
-function PatientCard({ patient, onClick }: { patient: Patient; onClick: (patientId: string) => void }) {
+interface PatientCardProps {
+  patient: Patient;
+  onClick: (patientId: string) => void;
+}
+
+function PatientCard({ patient, onClick }: PatientCardProps) {
   const getRiskColor = (riskScore: number) => {
     if (riskScore >= 0.8) return 'destructive';
     if (riskScore >= 0.6) return 'warning';
@@ -116,8 +111,6 @@ function PatientCard({ patient, onClick }: { patient: Patient; onClick: (patient
     <Card
       className='hover:shadow-lg transition-shadow cursor-pointer'
       onClick={() => onClick(patient.id)}
-      role='article'
-      aria-label={`Paciente: ${patient.name}`}
     >
       <CardHeader className='pb-3'>
         <div className='flex items-center justify-between'>
@@ -127,47 +120,29 @@ function PatientCard({ patient, onClick }: { patient: Patient; onClick: (patient
           </Badge>
         </div>
         <CardDescription>
-          <div className='flex flex-col gap-1 sm:flex-row sm:gap-2'>
-            <span className='flex items-center gap-1'>
-              <Mail className='h-3 w-3' />
-              {patient.email}
-            </span>
-            <span className='flex items-center gap-1'>
-              <Phone className='h-3 w-3' />
-              {patient.phone}
-            </span>
-          </div>
+          {patient.email} • {patient.phone}
         </CardDescription>
       </CardHeader>
       <CardContent className='space-y-3'>
-        <div className='grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm'>
-          <div>
-            <span className='text-muted-foreground'>Idade:</span>
-            <span className='ml-1 font-medium'>{patient.age || 'N/A'}</span>
-          </div>
-          <div>
-            <span className='text-muted-foreground'>Última consulta:</span>
-            <span className='ml-1 font-medium'>
-              {patient.lastVisit
-                ? format(new Date(patient.lastVisit), 'dd/MM/yyyy', { locale: ptBR })
-                : 'Nunca'}
-            </span>
-          </div>
+        <div className='flex justify-between text-sm'>
+          <span>Última consulta:</span>
+          <span>
+            {patient.lastVisit
+              ? format(new Date(patient.lastVisit), 'dd/MM/yyyy', { locale: ptBR })
+              : 'Nunca'}
+          </span>
         </div>
         <div className='flex justify-between text-sm'>
-          <span className='text-muted-foreground'>Plano de saúde:</span>
-          <span className='font-medium'>{patient.healthInsurance?.provider || 'Particular'}</span>
+          <span>Plano de saúde:</span>
+          <span>{patient.healthInsurance?.provider || 'Particular'}</span>
         </div>
         <div className='flex justify-between text-sm'>
-          <span className='text-muted-foreground'>Status:</span>
+          <span>Status:</span>
           <Badge variant='outline'>{patient.status}</Badge>
         </div>
         {patient.nextAppointment && (
           <div className='pt-2 border-t'>
-            <div className='text-sm font-medium flex items-center gap-1'>
-              <Calendar className='h-4 w-4' />
-              Próxima consulta:
-            </div>
+            <div className='text-sm font-medium'>Próxima consulta:</div>
             <div className='text-sm text-muted-foreground'>
               {format(new Date(patient.nextAppointment.date), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
             </div>
@@ -182,9 +157,6 @@ function PatientDashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
-  const [aiInsights, setAiInsights] = useState<AIInsight[]>([]);
-  const [realTimeUpdates, setRealTimeUpdates] = useState<RealTimeUpdate[]>([]);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -264,7 +236,6 @@ function PatientDashboard() {
       phone: '+55 11 99999-8888',
       status: 'Ativo',
       riskScore: 0.3,
-      age: 45,
       lastVisit: '2024-01-15',
       nextAppointment: {
         date: '2024-02-01',
@@ -272,10 +243,6 @@ function PatientDashboard() {
       },
       healthInsurance: {
         provider: 'Unimed',
-      },
-      address: {
-        city: 'São Paulo',
-        state: 'SP',
       },
     },
     {
@@ -285,14 +252,9 @@ function PatientDashboard() {
       phone: '+55 11 98888-7777',
       status: 'Ativo',
       riskScore: 0.7,
-      age: 32,
       lastVisit: '2024-01-10',
       healthInsurance: {
         provider: 'Amil',
-      },
-      address: {
-        city: 'São Paulo',
-        state: 'SP',
       },
     },
     {
@@ -302,88 +264,18 @@ function PatientDashboard() {
       phone: '+55 11 97777-6666',
       status: 'Inativo',
       riskScore: 0.9,
-      age: 58,
       lastVisit: '2023-12-20',
       healthInsurance: {
         provider: 'Bradesco Saúde',
       },
-      address: {
-        city: 'Santos',
-        state: 'SP',
-      },
     },
   ];
-
-  // Initialize data
-  useEffect(() => {
-    setAiInsights(mockAIInsights);
-    setRealTimeUpdates(mockRealTimeUpdates);
-  }, []);
 
   const stats = mockStats;
   const patients = mockPatients.filter(patient =>
-    patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    patient.phone.includes(searchTerm)
+    patient.name.toLowerCase().includes(searchTerm.toLowerCase())
+    || patient.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Enhanced stats cards with healthcare metrics
-  const statsCards = [
-    {
-      title: 'Total de Pacientes',
-      value: stats.totalPatients.toLocaleString('pt-BR'),
-      change: `+${stats.newThisMonth}`,
-      changeType: 'increase' as const,
-      description: 'Novos este mês',
-      icon: Users,
-      color: 'text-blue-600',
-    },
-    {
-      title: 'Consultas Hoje',
-      value: stats.appointmentsToday,
-      change: '+12%',
-      changeType: 'increase' as const,
-      description: 'Comparado ontem',
-      icon: Calendar,
-      color: 'text-green-600',
-    },
-    {
-      title: 'Pacientes de Alto Risco',
-      value: stats.highRiskPatients,
-      change: '-5%',
-      changeType: 'decrease' as const,
-      description: 'Melhoria este mês',
-      icon: AlertTriangle,
-      color: 'text-orange-600',
-    },
-    {
-      title: 'Taxa de Não Comparecimento',
-      value: `${stats.noShowRate.toFixed(1)}%`,
-      change: '-2.1%',
-      changeType: 'decrease' as const,
-      description: 'Redução este mês',
-      icon: Clock,
-      color: 'text-red-600',
-    },
-    {
-      title: 'Pacientes Ativos',
-      value: stats.activePatients.toLocaleString('pt-BR'),
-      change: '+3.2%',
-      changeType: 'increase' as const,
-      description: 'Engajamento',
-      icon: Heart,
-      color: 'text-purple-600',
-    },
-    {
-      title: 'Satisfação dos Pacientes',
-      value: stats.patientSatisfaction.toFixed(1),
-      change: '+0.3',
-      changeType: 'increase' as const,
-      description: 'Nota média',
-      icon: TrendingUp,
-      color: 'text-green-600',
-    },
-  ];
 
   const handlePatientClick = (patientId: string) => {
     navigate({ to: '/patients/$patientId', params: { patientId } });
@@ -397,40 +289,12 @@ function PatientDashboard() {
   const confirmDelete = () => {
     toast({
       title: 'Paciente excluído com sucesso',
-      description: 'O paciente foi removido do sistema conforme LGPD.',
+      description: 'O paciente foi removido do sistema.',
     });
     setIsModalOpen(false);
     setSelectedPatient(null);
   };
 
-  const handleAIInsightAction = (insight: AIInsight) => {
-    toast({
-      title: 'Ação de IA executada',
-      description: `${insight.actionLabel} para ${insight.patientName}`,
-    });
-  };
-
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case 'critical': return 'destructive';
-      case 'high': return 'destructive';
-      case 'medium': return 'warning';
-      case 'low': return 'default';
-      default: return 'default';
-    }
-  };
-
-  const getPriorityLabel = (priority: string) => {
-    switch (priority) {
-      case 'critical': return 'Crítico';
-      case 'high': return 'Alto';
-      case 'medium': return 'Médio';
-      case 'low': return 'Baixo';
-      default: return 'Normal';
-    }
-  };
-
-  // Enhanced table columns with Brazilian healthcare context
   const tableColumns = [
     {
       accessorKey: 'name',
@@ -457,7 +321,7 @@ function PatientDashboard() {
       header: 'Risco',
       cell: (info: any) => {
         const score = info.getValue();
-        let variant: 'default' | 'destructive' | 'outline' | 'secondary' = 'default';
+        let variant: 'default' | 'destructive' | 'outline' = 'default';
         let label = 'Baixo';
 
         if (score >= 0.8) {
@@ -490,18 +354,23 @@ function PatientDashboard() {
               variant='outline'
               size='sm'
               onClick={() => handlePatientClick(patient.id)}
-              aria-label={`Ver detalhes do paciente ${patient.name}`}
             >
-              <Eye className='h-4 w-4' />
+              Ver
             </Button>
             <Button
               variant='outline'
               size='sm'
               onClick={() =>
                 navigate({ to: '/patients/$patientId/edit', params: { patientId: patient.id } })}
-              aria-label={`Editar paciente ${patient.name}`}
             >
-              <FileText className='h-4 w-4' />
+              Editar
+            </Button>
+            <Button
+              variant='destructive'
+              size='sm'
+              onClick={() => handleDeletePatient(patient)}
+            >
+              Excluir
             </Button>
           </div>
         );
@@ -509,28 +378,41 @@ function PatientDashboard() {
     },
   ];
 
-  return (
-    <div className='container mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6 max-w-7xl'>
-      {/* Header with CFM compliance and mobile-first responsive */}
-      <header className='space-y-4 sm:space-y-0'>
-        {/* CFM Header - Brazilian healthcare compliance */}
-        <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4'>
-          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
-            <div className='flex items-center gap-2'>
-              <Shield className='h-5 w-5 text-blue-600' />
-              <span className='text-sm sm:text-base font-medium text-blue-900'>
-                CRM/SP 123456 - Dr. João Silva
-              </span>
-            </div>
-            <div className='flex items-center gap-2'>
-              <Bell className='h-4 w-4 text-blue-600' />
-              <span className='text-xs sm:text-sm text-blue-700'>
-                Sistema conforme LGPD - Resolução CFM 2.314/2022
-              </span>
-            </div>
-          </div>
-        </div>
+  const statsCards = [
+    {
+      title: 'Total de Pacientes',
+      value: stats.totalPatients,
+      change: stats.newThisMonth,
+      changeType: 'increase' as const,
+      description: 'Novos este mês',
+    },
+    {
+      title: 'Consultas Hoje',
+      value: stats.appointmentsToday,
+      change: '+12%',
+      changeType: 'increase' as const,
+      description: 'Comparado ontem',
+    },
+    {
+      title: 'Pacientes de Alto Risco',
+      value: stats.highRiskPatients,
+      change: '-5%',
+      changeType: 'decrease' as const,
+      description: 'Melhoria este mês',
+    },
+    {
+      title: 'Taxa de Não Comparecimento',
+      value: `${stats.noShowRate.toFixed(1)}%`,
+      change: '-2.1%',
+      changeType: 'decrease' as const,
+      description: 'Redução este mês',
+    },
+  ];
 
+  return (
+    <div className='container mx-auto p-4 sm:p-6 space-y-4 sm:space-y-6'>
+      {/* Header - Mobile-first responsive */}
+      <header className='space-y-4 sm:space-y-0'>
         <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
           <div>
             <h1 className='text-2xl sm:text-3xl font-bold tracking-tight text-gray-900'>
@@ -549,7 +431,6 @@ function PatientDashboard() {
               className='bg-blue-600 hover:bg-blue-700 active:bg-blue-800 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 h-11 sm:h-10 text-base sm:text-sm font-medium w-full sm:w-auto'
               aria-label='Cadastrar novo paciente no sistema'
             >
-              <UserPlus className='h-4 w-4 mr-2' />
               Novo Paciente
             </UniversalButton>
             <UniversalButton
@@ -558,43 +439,20 @@ function PatientDashboard() {
               className='h-11 sm:h-10 text-base sm:text-sm font-medium w-full sm:w-auto focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
               aria-label='Visualizar insights de inteligência artificial'
             >
-              <Zap className='h-4 w-4 mr-2' />
               Insights de IA
             </UniversalButton>
           </div>
         </div>
       </header>
 
-      {/* Real-time Updates Banner */}
-      {realTimeUpdates.length > 0 && (
-        <div className='bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4'>
-          <div className='flex items-center gap-2 mb-2'>
-            <RefreshCw className='h-4 w-4 text-green-600 animate-pulse' />
-            <span className='text-sm font-medium text-green-900'>Atualizações em tempo real</span>
-          </div>
-          <div className='space-y-1'>
-            {realTimeUpdates.slice(0, 2).map((update, index) => (
-              <div key={index} className='text-xs sm:text-sm text-green-700 flex items-center gap-1'>
-                <span className='w-2 h-2 bg-green-500 rounded-full'></span>
-                {update.message}
-                <span className='text-green-600'>
-                  • {format(update.timestamp, 'HH:mm', { locale: ptBR })}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Enhanced Stats Cards - Mobile-optimized grid */}
+      {/* Stats Cards - Mobile-optimized grid */}
       <section aria-labelledby="stats-heading" className='space-y-4'>
         <h2 id="stats-heading" className='sr-only'>Estatísticas do dashboard</h2>
-        <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
+        <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
           {statsCards.map((stat, index) => (
-            <Card key={stat.title} className='transition-all hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'>
+            <Card key={stat.title} className='transition-shadow hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'>
               <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-                <CardTitle className='text-sm sm:text-base font-medium text-gray-900 flex items-center gap-2'>
-                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                <CardTitle className='text-sm sm:text-base font-medium text-gray-900'>
                   {stat.title}
                 </CardTitle>
               </CardHeader>
@@ -624,95 +482,16 @@ function PatientDashboard() {
         </div>
       </section>
 
-      {/* AI Insights Section */}
-      <section aria-labelledby="ai-insights-heading">
-        <Card>
-          <CardHeader>
-            <CardTitle id="ai-insights-heading" className='text-lg sm:text-xl font-semibold text-gray-900 flex items-center gap-2'>
-              <Zap className='h-5 w-5 text-purple-600' />
-              Insights de Inteligência Artificial
-            </CardTitle>
-            <CardDescription className='text-sm sm:text-base'>
-              Recomendações e alertas baseados em análise de dados em tempo real
-            </CardDescription>
-          </CardHeader>
-          <CardContent className='space-y-4'>
-            <div className='grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'>
-              {aiInsights.map((insight) => (
-                <Card key={insight.id} className='transition-all hover:shadow-md border-l-4 border-l-purple-500'>
-                  <CardHeader className='pb-3'>
-                    <div className='flex items-center justify-between'>
-                      <CardTitle className='text-sm font-medium flex items-center gap-2'>
-                        <AlertCircle className={`h-4 w-4 ${
-                          insight.priority === 'critical' ? 'text-red-600' :
-                          insight.priority === 'high' ? 'text-orange-600' :
-                          insight.priority === 'medium' ? 'text-yellow-600' : 'text-blue-600'
-                        }`} />
-                        {insight.title}
-                      </CardTitle>
-                      <Badge variant={getPriorityColor(insight.priority)}>
-                        {getPriorityLabel(insight.priority)}
-                      </Badge>
-                    </div>
-                    <CardDescription className='text-xs'>
-                      Confiança: {(insight.confidence * 100).toFixed(0)}%
-                      {insight.patientName && ` • ${insight.patientName}`}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className='pt-2 space-y-3'>
-                    <p className='text-sm text-gray-700'>{insight.description}</p>
-                    {insight.actionable && (
-                      <Button
-                        variant='outline'
-                        size='sm'
-                        onClick={() => handleAIInsightAction(insight)}
-                        className='w-full'
-                      >
-                        {insight.actionLabel}
-                      </Button>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      </section>
-
-      {/* Patient Management Section */}
+      {/* Search and Patient Management */}
       <section aria-labelledby="patients-heading">
         <Card>
           <CardHeader>
-            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
-              <div>
-                <CardTitle id="patients-heading" className='text-lg sm:text-xl font-semibold text-gray-900'>
-                  Pacientes
-                </CardTitle>
-                <CardDescription className='text-sm sm:text-base'>
-                  Busque e gerencie todos os pacientes cadastrados no sistema
-                </CardDescription>
-              </div>
-              
-              {/* View mode toggle */}
-              <div className='flex items-center gap-2'>
-                <Button
-                  variant={viewMode === 'cards' ? 'default' : 'outline'}
-                  size='sm'
-                  onClick={() => setViewMode('cards')}
-                  aria-label='Visualizar em cartões'
-                >
-                  Cartões
-                </Button>
-                <Button
-                  variant={viewMode === 'table' ? 'default' : 'outline'}
-                  size='sm'
-                  onClick={() => setViewMode('table')}
-                  aria-label='Visualizar em tabela'
-                >
-                  Tabela
-                </Button>
-              </div>
-            </div>
+            <CardTitle id="patients-heading" className='text-lg sm:text-xl font-semibold text-gray-900'>
+              Pacientes
+            </CardTitle>
+            <CardDescription className='text-sm sm:text-base'>
+              Busque e gerencie todos os pacientes cadastrados no sistema
+            </CardDescription>
           </CardHeader>
           <CardContent className='space-y-4'>
             {/* Mobile-optimized search */}
@@ -726,7 +505,7 @@ function PatientDashboard() {
                   type="search"
                   placeholder='Buscar por nome, email ou CPF...'
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className='w-full h-11 sm:h-10 text-base sm:text-sm pl-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
                   aria-describedby="search-help"
                 />
@@ -744,48 +523,17 @@ function PatientDashboard() {
               </div>
             </div>
 
-            {/* Conditional rendering based on view mode */}
-            {viewMode === 'cards' ? (
-              <div className='grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3'>
-                {patients.map((patient) => (
-                  <PatientCard
-                    key={patient.id}
-                    patient={patient}
-                    onClick={handlePatientClick}
-                  />
-                ))}
-              </div>
-            ) : (
-              <div className='overflow-x-auto'>
-                <EnhancedTable
-                  columns={tableColumns}
-                  data={patients}
-                  searchable={false}
-                  pagination={true}
-                  itemsPerPage={10}
-                  className="min-w-full"
-                  aria-label="Lista de pacientes"
-                />
-              </div>
-            )}
-
-            {patients.length === 0 && (
-              <div className='text-center py-8'>
-                <Users className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
-                <h3 className='text-lg font-medium text-gray-900 mb-2'>
-                  Nenhum paciente encontrado
-                </h3>
-                <p className='text-muted-foreground mb-4'>
-                  Tente ajustar sua busca ou cadastre um novo paciente.
-                </p>
-                <UniversalButton
-                  variant='primary'
-                  onClick={() => navigate({ to: '/patients/register' })}
-                >
-                  Cadastrar Novo Paciente
-                </UniversalButton>
-              </div>
-            )}
+            <div className='overflow-x-auto'>
+              <EnhancedTable
+                columns={tableColumns}
+                data={patients}
+                searchable={false}
+                pagination={true}
+                itemsPerPage={10}
+                className="min-w-full"
+                aria-label="Lista de pacientes"
+              />
+            </div>
           </CardContent>
         </Card>
       </section>
@@ -836,7 +584,7 @@ function PatientDashboard() {
           setSelectedPatient(null);
         }}
         title='Confirmar Exclusão'
-        description={`Tem certeza que deseja excluir o paciente "${selectedPatient?.name}"? Esta ação não pode ser desfeita e está em conformidade com a LGPD.`}
+        description={`Tem certeza que deseja excluir o paciente "${selectedPatient?.name}"? Esta ação não pode ser desfeita.`}
       >
         <div className='flex justify-end gap-3 mt-6'>
           <UniversalButton

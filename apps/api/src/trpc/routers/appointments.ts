@@ -15,19 +15,15 @@
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
-import {
-  AppointmentReminderValibot,
-  CreateAppointmentValibot,
-  NoShowPredictionValibot,
-  RealTimeAvailabilityValibot,
-} from '../../../../../../packages/types/src/appointment.valibot';
+// Removed unused AppointmentReminderValibot import per linter
+
 import {
   CreateAppointmentSchema,
   GetAppointmentSchema,
   ListAppointmentsSchema,
   UpdateAppointmentSchema,
 } from '../schemas';
-import { healthcareProcedure, patientProcedure, protectedProcedure, router } from '../trpc';
+import { healthcareProcedure, protectedProcedure, router } from '../trpc';
 
 // =====================================
 // BRAZILIAN HEALTHCARE COMPLIANCE

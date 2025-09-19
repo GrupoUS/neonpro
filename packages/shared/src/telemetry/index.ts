@@ -11,9 +11,7 @@ export {
 } from './opentelemetry-config';
 
 // Re-export specific OpenTelemetry utilities for convenience
-export {
-  trace,
-  context,
+export type {
   Span,
   SpanContext,
   SpanStatusCode,
@@ -23,11 +21,10 @@ export {
   Sampler,
   SamplingDecision,
   SamplingResult,
-  diag,
   DiagLogger,
 } from '@opentelemetry/api';
 
-export {
+export type {
   Meter,
   MeterProvider,
   Counter,
@@ -38,9 +35,15 @@ export {
   ObservableUpDownCounter,
 } from '@opentelemetry/api';
 
-export {
+export type {
   BasicTracerProvider,
   BatchSpanProcessor,
   ConsoleSpanExporter,
   SimpleSpanProcessor,
 } from '@opentelemetry/sdk-trace-base';
+
+export {
+  trace,
+  context,
+  diag,
+} from '@opentelemetry/api';

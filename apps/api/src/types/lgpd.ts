@@ -324,15 +324,32 @@ export async function export_patient_data(
 }
 
 // Utility functions
+import { createHash, randomBytes } from 'crypto';
+import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma.js';
+
+/**
+ * LGPD-compliant cryptographic hash function for patient data anonymization
+ * Uses SHA-256 with environmental salt for irreversible anonymization
+ * Compliant with LGPD Art. 12 (data anonymization requirements)
+ */
 function hashString(input: string): string {
-  // Simple hash function for demonstration - in production, use crypto.createHash
-  let hash = 0;
-  for (let i = 0; i < input.length; i++) {
-    const char = input.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
-  }
-  return Math.abs(hash).toString(16);
+  // Get or generate anonymization salt for LGPD compliance
+  const salt = process.env.LGPD_ANONYMIZATION_SALT || generateStaticSalt();
+  
+  // Create SHA-256 hash with salt for irreversible anonymization
+  return createHash('sha256')
+    .update(input + salt)
+    .digest('hex')
+    .substring(0, 16); // Truncate for consistent length
+}
+
+/**
+ * Generate a consistent salt for anonymization when env var is not set
+ * In production, LGPD_ANONYMIZATION_SALT should always be set
+ */
+function generateStaticSalt(): string {
+  // Use a static salt for development - in production, use process.env.LGPD_ANONYMIZATION_SALT
+  return 'NEONPRO_LGPD_DEV_SALT_2025';
 }
 
 function convertToCSV(data: any[]): string {

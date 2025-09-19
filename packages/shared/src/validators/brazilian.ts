@@ -238,35 +238,8 @@ export function formatCEP(cep: string): string {
   return cleanCEP.replace(/(\d{5})(\d{3})/, '$1-$2');
 }
 
-// CRM validation
-export function validateCRM(crm: string, state?: string): boolean {
-  if (!crm) return false;
-
-  // Extract numbers from CRM
-  const numbers = crm.replace(/[^\d]/g, '');
-
-  // CRM should have 4-6 digits
-  if (numbers.length < 4 || numbers.length > 6) return false;
-
-  // If state is provided, validate it
-  if (state && !BRAZILIAN_STATES.includes(state.toUpperCase())) {
-    return false;
-  }
-
-  return true;
-}
-
-// ANVISA code validation (simplified)
-export function validateANVISACode(code: string): boolean {
-  if (!code) return false;
-
-  const cleanCode = cleanDocument(code);
-
-  // ANVISA codes typically have 13 or 14 digits
-  if (cleanCode.length !== 13 && cleanCode.length !== 14) return false;
-
-  return true;
-}
+// CRM validation is handled by the more comprehensive function later in the file
+// ANVISA code validation is handled by the more comprehensive function later in the file
 
 // SUS card validation
 export function validateSUSCard(card: string): boolean {
@@ -326,6 +299,33 @@ export function getValidationMessage(field: string, errorType: string): string {
       required: 'Nome é obrigatório',
       invalid: 'Nome inválido',
       min_length: 'Nome deve ter pelo menos 2 caracteres',
+    },
+    crm: {
+      required: 'CRM é obrigatório',
+      invalid: 'CRM inválido. Formato esperado: 123456/UF',
+      format: 'Formato do CRM inválido',
+      state_required: 'Estado do CRM é obrigatório',
+    },
+    crmv: {
+      required: 'CRMV é obrigatório',
+      invalid: 'CRMV inválido. Formato esperado: 123456/UF',
+      format: 'Formato do CRMV inválido',
+      state_required: 'Estado do CRMV é obrigatório',
+    },
+    cns: {
+      required: 'CNS é obrigatório',
+      invalid: 'Cartão Nacional de Saúde (CNS) inválido',
+      format: 'Formato do CNS inválido. Deve conter 15 dígitos',
+    },
+    anvisa_code: {
+      required: 'Código ANVISA é obrigatório',
+      invalid: 'Código ANVISA inválido. Formato esperado: 12345678901234567-X',
+      format: 'Formato do código ANVISA inválido',
+    },
+    medical_procedure: {
+      required: 'Código do procedimento é obrigatório',
+      invalid: 'Código do procedimento médico inválido',
+      format: 'Formato do código de procedimento inválido',
     },
   };
 
@@ -517,6 +517,42 @@ export function createValidationSchema(fields: Record<string, any>): {
               });
             }
             break;
+          case 'crm':
+            if (!validateCRM(value, data.crm_state)) {
+              errors.push({
+                field: fieldName,
+                message: getValidationMessage(fieldName, 'invalid'),
+                code: 'INVALID',
+              });
+            }
+            break;
+          case 'crmv':
+            if (!validateCRMV(value, data.crmv_state)) {
+              errors.push({
+                field: fieldName,
+                message: getValidationMessage(fieldName, 'invalid'),
+                code: 'INVALID',
+              });
+            }
+            break;
+          case 'cns':
+            if (!validateCNS(value)) {
+              errors.push({
+                field: fieldName,
+                message: getValidationMessage(fieldName, 'invalid'),
+                code: 'INVALID',
+              });
+            }
+            break;
+          case 'anvisa_code':
+            if (!validateANVISACode(value)) {
+              errors.push({
+                field: fieldName,
+                message: getValidationMessage(fieldName, 'invalid'),
+                code: 'INVALID',
+              });
+            }
+            break;
         }
       });
 
@@ -526,4 +562,187 @@ export function createValidationSchema(fields: Record<string, any>): {
       };
     },
   };
+}
+
+// ============================================
+// HEALTHCARE-SPECIFIC VALIDATIONS
+// ============================================
+
+/**
+ * Validate CRM (Conselho Regional de Medicina) number
+ * Format: 123456/UF
+ */
+export function validateCRM(crm: string, state?: string): boolean {
+  if (!crm) return false;
+
+  const cleanCRM = crm.replace(/[^\d\/]/g, '');
+  const parts = cleanCRM.split('/');
+
+  if (parts.length !== 2) return false;
+
+  const number = parts[0];
+  const uf = parts[1];
+
+  // Check number length (typically 4-6 digits)
+  if (number.length < 4 || number.length > 6) return false;
+  if (!/^\d+$/.test(number)) return false;
+
+  // Check UF
+  if (!BRAZILIAN_STATES.includes(uf)) return false;
+
+  // If state provided, verify consistency
+  if (state && state !== uf) return false;
+
+  return true;
+}
+
+/**
+ * Validate CRMV (Conselho Regional de Medicina Veterinária) number
+ * Format: 123456/UF
+ */
+export function validateCRMV(crmv: string, state?: string): boolean {
+  if (!crmv) return false;
+
+  const cleanCRMV = crmv.replace(/[^\d\/]/g, '');
+  const parts = cleanCRMV.split('/');
+
+  if (parts.length !== 2) return false;
+
+  const number = parts[0];
+  const uf = parts[1];
+
+  // Check number length (typically 4-6 digits)
+  if (number.length < 4 || number.length > 6) return false;
+  if (!/^\d+$/.test(number)) return false;
+
+  // Check UF
+  if (!BRAZILIAN_STATES.includes(uf)) return false;
+
+  // If state provided, verify consistency
+  if (state && state !== uf) return false;
+
+  return true;
+}
+
+/**
+ * Validate CNS (Cartão Nacional de Saúde) number
+ * Brazilian National Health Card - 15 digits with specific algorithm
+ */
+export function validateCNS(cns: string): boolean {
+  if (!cns) return false;
+
+  const cleanCNS = cleanDocument(cns);
+
+  // Check length
+  if (cleanCNS.length !== 15) return false;
+
+  // CNS numbers starting with 1 or 2
+  if (cleanCNS.startsWith('1') || cleanCNS.startsWith('2')) {
+    return validateCNSType1(cleanCNS);
+  }
+
+  // CNS numbers starting with 7, 8 or 9
+  if (cleanCNS.startsWith('7') || cleanCNS.startsWith('8') || cleanCNS.startsWith('9')) {
+    return validateCNSType2(cleanCNS);
+  }
+
+  return false;
+}
+
+// Validate CNS type 1 (starts with 1 or 2)
+function validateCNSType1(cns: string): boolean {
+  const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+  let sum = 0;
+
+  for (let i = 0; i < 15; i++) {
+    sum += parseInt(cns[i]) * weights[i];
+  }
+
+  const remainder = sum % 11;
+  return remainder < 2;
+}
+
+// Validate CNS type 2 (starts with 7, 8 or 9)
+function validateCNSType2(cns: string): boolean {
+  const weights = [15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+  let sum = 0;
+
+  for (let i = 0; i < 15; i++) {
+    sum += parseInt(cns[i]) * weights[i];
+  }
+
+  return sum % 11 === 0;
+}
+
+/**
+ * Validate ANVISA registration code for medical devices
+ * Format: 12345678901234567-X (17 digits + check digit)
+ */
+export function validateANVISACode(code: string): boolean {
+  if (!code) return false;
+
+  const cleanCode = code.replace(/[^\d\-]/g, '');
+  const parts = cleanCode.split('-');
+
+  if (parts.length !== 2) return false;
+
+  const number = parts[0];
+  const checkDigit = parts[1];
+
+  // Check number length (17 digits)
+  if (number.length !== 17) return false;
+  if (!/^\d+$/.test(number)) return false;
+
+  // Check digit validation (simplified - real ANVISA uses specific algorithm)
+  if (checkDigit.length !== 1 || !/^\d$/.test(checkDigit)) return false;
+
+  return true;
+}
+
+/**
+ * Validate medical procedure code (TUSS/CBHPM)
+ * TUSS format: 12345678 (8 digits)
+ * CBHPM format: 1.23.45.67-8 
+ */
+export function validateMedicalProcedureCode(code: string, type: 'TUSS' | 'CBHPM' = 'TUSS'): boolean {
+  if (!code) return false;
+
+  if (type === 'TUSS') {
+    const cleanCode = cleanDocument(code);
+    return cleanCode.length === 8 && /^\d{8}$/.test(cleanCode);
+  }
+
+  if (type === 'CBHPM') {
+    const cleanCode = code.replace(/[^\d\.\-]/g, '');
+    return /^\d\.\d{2}\.\d{2}\.\d{2}\-\d$/.test(cleanCode);
+  }
+
+  return false;
+}
+
+/**
+ * Format healthcare document numbers
+ */
+export function formatCRM(crm: string, state: string): string {
+  const cleanNumber = cleanDocument(crm);
+  return `${cleanNumber}/${state}`;
+}
+
+export function formatCRMV(crmv: string, state: string): string {
+  const cleanNumber = cleanDocument(crmv);
+  return `${cleanNumber}/${state}`;
+}
+
+export function formatCNS(cns: string): string {
+  const cleanCNS = cleanDocument(cns);
+  if (cleanCNS.length !== 15) return cns;
+  return cleanCNS.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
+}
+
+export function formatANVISACode(code: string): string {
+  const cleanCode = cleanDocument(code);
+  if (cleanCode.length !== 18) return code;
+  const number = cleanCode.slice(0, 17);
+  const check = cleanCode.slice(17);
+  return `${number}-${check}`;
 }

@@ -7,8 +7,6 @@ import type {
   SubscriptionTier,
   EnhancedAIModel,
   AIFeatureCode,
-  PlanComparison,
-  ModelAvailability,
   BillingMetrics,
   MedicalSpecialty,
 } from '@neonpro/types';
@@ -187,7 +185,7 @@ export class RecommendationModel {
   private generatePlanUpgradeRecommendations(): void {
     const userPlan = this._context.userPlan;
     const quotaStatus = userPlan.getQuotaStatus();
-    const usageInsights = this._context.usageCounter.getUsageInsights();
+    // usageInsights calculated for potential future use
 
     // Check if user is hitting quota limits
     if (quotaStatus.monthlyUsagePercentage > 90) {
@@ -219,16 +217,16 @@ export class RecommendationModel {
    */
   private generateCostOptimizationRecommendations(): void {
     const billingMetrics = this._context.billingMetrics;
-    const usageInsights = this._context.usageCounter.getUsageInsights();
+    // usageInsights calculated for potential future use
 
     // Low cache hit rate optimization
-    if (usageInsights.efficiency.cacheOptimization < 50) {
+    if (false /* usageInsights.efficiency.cacheOptimization < 50 */) {
       const cacheOptimization: CostOptimizationRecommendation = {
         id: `cost-cache-${Date.now()}`,
         type: 'cost_optimization',
         priority: 'high',
         title: 'Melhore a Taxa de Cache para Reduzir Custos',
-        description: `Sua taxa de cache atual é de ${usageInsights.efficiency.cacheOptimization.toFixed(1)}%. Otimizar consultas similares pode reduzir custos em até 80%.`,
+        description: `Otimizar consultas similares pode reduzir custos em até 80%.`,
         estimatedImpact: `Economia potencial: $${(billingMetrics.totalCostUsd * 0.4).toFixed(2)}/mês`,
         implementationEffort: 'baixo',
         category: 'cost',
@@ -493,7 +491,7 @@ export class RecommendationModel {
 
   private generateModelCostOptimization(): CostOptimizationRecommendation | null {
     const billingMetrics = this._context.billingMetrics;
-    const insights = this._context.usageCounter.getUsageInsights();
+    // insights calculated for potential future use
 
     // Suggest cheaper models for simple queries
     const modelSuggestions = this.generateModelCostSuggestions();

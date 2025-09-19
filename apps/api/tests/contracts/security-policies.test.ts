@@ -51,7 +51,7 @@ import {
   SecurityHeaderConfig,
   SecurityHeaders,
   validateSecurityHeaders,
-} from '@/services/security-headers-service';
+} from '../../src/services/security-headers-service';
 
 import {
   AuditEvent,

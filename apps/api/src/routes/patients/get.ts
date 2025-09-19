@@ -196,7 +196,7 @@ const getHandler = async (c: any) => {
       error: 'Erro interno do servidor',
     }, 500);
   }
-};
+};;
 
 app.get('/:id', requireAuth, dataProtection.patientView, getHandler);
 

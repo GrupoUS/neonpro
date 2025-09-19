@@ -7,8 +7,6 @@
  */
 
 import { Context, Next } from 'hono';
-import { z } from 'zod';
-import { LGPDCompliancePolicy } from '../../../../packages/shared/src/models/security-policy';
 
 // ============================================================================
 // LGPD Data Categories & Classification
@@ -762,7 +760,7 @@ export function lgpdComplianceMiddleware(config: Partial<LGPDMiddlewareConfig> =
       await next();
 
       // Log processing completion
-      const processingTime = Date.now() - startTime;
+      const _processingTime = Date.now() - startTime;
 
       if (lgpdEnrichedRequest.auditRequired) {
         await LGPDAuditLogger.logComplianceEvent(
@@ -907,7 +905,7 @@ function determineProcessingPurpose(pathname: string, method: string): string[] 
 /**
  * Determine legal basis for processing
  */
-function determineLegalBasis(purposes: string[], dataSubjectType: string): LGPDLegalBasis {
+function determineLegalBasis(purposes: string[], _dataSubjectType: string): LGPDLegalBasis {
   // Emergency care - vital interests
   if (purposes.includes('emergency_care')) {
     return LGPDLegalBasis.VITAL_INTERESTS;
@@ -989,13 +987,4 @@ function getRetentionPeriod(categories: LGPDDataCategory[]): number {
 // Export Middleware and Utilities
 // ============================================================================
 
-export {
-  LGPDAuditLogger,
-  lgpdComplianceMiddleware as default,
-  LGPDConsentManager,
-  LGPDDataDetector,
-  LGPDDataMinimizer,
-};
-
-// Export types
-export type { LGPDContext, LGPDEnrichedRequest, LGPDMiddlewareConfig };
+export { lgpdComplianceMiddleware as default };

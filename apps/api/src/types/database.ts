@@ -249,6 +249,58 @@ export interface Database {
           created_at?: string;
         };
       };
+
+      // Healthcare metrics table
+      healthcare_metrics: {
+        Row: {
+          id: string;
+          timestamp: string;
+          type: string;
+          value: number;
+          metadata: Record<string, any>;
+          clinic_id?: string;
+          user_id?: string;
+          compliance_flags: {
+            lgpd_compliant: boolean;
+            cfm_validated: boolean;
+            anvisa_compliant: boolean;
+            rls_enforced: boolean;
+          };
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          timestamp: string;
+          type: string;
+          value: number;
+          metadata: Record<string, any>;
+          clinic_id?: string;
+          user_id?: string;
+          compliance_flags: {
+            lgpd_compliant: boolean;
+            cfm_validated: boolean;
+            anvisa_compliant: boolean;
+            rls_enforced: boolean;
+          };
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          timestamp?: string;
+          type?: string;
+          value?: number;
+          metadata?: Record<string, any>;
+          clinic_id?: string;
+          user_id?: string;
+          compliance_flags?: {
+            lgpd_compliant: boolean;
+            cfm_validated: boolean;
+            anvisa_compliant: boolean;
+            rls_enforced: boolean;
+          };
+          created_at?: string;
+        };
+      };
     };
 
     Views: {
