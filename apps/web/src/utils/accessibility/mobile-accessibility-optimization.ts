@@ -13,6 +13,25 @@
 
 import { generateAccessibilityReport } from './axe-core-integration';
 
+// Type guards and utilities
+function isHTMLElement(element: Element | Node): element is HTMLElement {
+  return element instanceof HTMLElement;
+}
+
+function isElement(node: Element | Document): node is Element {
+  return node instanceof Element;
+}
+
+function getErrorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (typeof error === 'string') {
+    return error;
+  }
+  return 'Unknown error occurred';
+}
+
 // Mobile-specific accessibility requirements
 export const MOBILE_ACCESSIBILITY_REQUIREMENTS = {
   TOUCH_TARGETS: {
@@ -68,8 +87,10 @@ export const MOBILE_HEALTHCARE_RULES = {
     fix: (element: Element) => {
       const emergencyElements = element.querySelectorAll('[data-emergency="true"], .emergency');
       emergencyElements.forEach(el => {
-        el.style.minWidth = '48px';
-        el.style.minHeight = '48px';
+        if (isHTMLElement(el)) {
+          el.style.minWidth = '48px';
+          el.style.minHeight = '48px';
+        }
         el.setAttribute('aria-label', el.getAttribute('aria-label') || 'Emergency control');
       });
     }
@@ -97,8 +118,10 @@ export const MOBILE_HEALTHCARE_RULES = {
         inputs.forEach(input => {
           const rect = input.getBoundingClientRect();
           if (rect.width < 44 || rect.height < 44) {
-            input.style.minWidth = '44px';
-            input.style.minHeight = '44px';
+            if (isHTMLElement(input)) {
+              input.style.minWidth = '44px';
+              input.style.minHeight = '44px';
+            }
           }
         });
       });
@@ -151,8 +174,10 @@ export const MOBILE_HEALTHCARE_RULES = {
     fix: (element: Element) => {
       const medicalContent = element.querySelectorAll('[data-medical="true"], .medical-content');
       medicalContent.forEach(content => {
-        content.style.fontSize = '16px';
-        content.style.lineHeight = '1.5';
+        if (isHTMLElement(content)) {
+          content.style.fontSize = '16px';
+          content.style.lineHeight = '1.5';
+        }
       });
     }
   },
@@ -179,8 +204,10 @@ export const MOBILE_HEALTHCARE_RULES = {
         navItems.forEach(item => {
           const rect = item.getBoundingClientRect();
           if (rect.width < 44 || rect.height < 44) {
-            item.style.minWidth = '44px';
-            item.style.minHeight = '44px';
+            if (isHTMLElement(item)) {
+              item.style.minWidth = '44px';
+              item.style.minHeight = '44px';
+            }
           }
         });
       });
@@ -256,6 +283,9 @@ export class MobileAccessibilityOptimizer {
       throw new Error('Mobile optimization context not found');
     }
 
+    // Ensure we have an Element, not Document
+    const elementContext = isElement(auditContext) ? auditContext : document.documentElement;
+
     const results = {
       summary: {
         overallScore: 0,
@@ -265,15 +295,21 @@ export class MobileAccessibilityOptimizer {
         offlineOptimizations: 0,
         mobileCompliance: false
       },
-      deviceResults: [],
+      deviceResults: [] as Array<{
+        deviceType: string;
+        screenSize: string;
+        score: number;
+        issues: any[];
+        optimizations: string[];
+      }>,
       performanceMetrics: {
         firstContentfulPaint: 0,
         largestContentfulPaint: 0,
         cumulativeLayoutShift: 0,
         firstInputDelay: 0
       },
-      recommendations: [],
-      offlineCapabilities: []
+      recommendations: [] as string[],
+      offlineCapabilities: [] as string[]
     };
 
     // Test across different device types
@@ -285,12 +321,12 @@ export class MobileAccessibilityOptimizer {
     ];
 
     for (const device of deviceTypes) {
-      const deviceResult = await this.testDevice(device, auditContext);
+      const deviceResult = await this.testDevice(device, elementContext);
       results.deviceResults.push(deviceResult);
     }
 
     // Apply optimizations
-    const optimizationStats = await this.applyOptimizations(auditContext);
+    const optimizationStats = await this.applyOptimizations(elementContext);
     results.summary = {
       ...optimizationStats,
       overallScore: this.calculateOverallScore(results.deviceResults),
@@ -304,7 +340,7 @@ export class MobileAccessibilityOptimizer {
     results.recommendations = this.generateMobileRecommendations(results);
 
     // Identify offline capabilities
-    results.offlineCapabilities = this.identifyOfflineCapabilities(auditContext);
+    results.offlineCapabilities = this.identifyOfflineCapabilities(elementContext);
 
     return results;
   }
@@ -352,7 +388,7 @@ export class MobileAccessibilityOptimizer {
         } else {
           passedChecks++;
         }
-      } catch (error) {
+      } catch (error: unknown) {
         console.error(`Mobile rule ${ruleId} failed:`, error);
         issues.push({
           ruleId: rule.id,
@@ -360,7 +396,7 @@ export class MobileAccessibilityOptimizer {
           description: rule.description,
           severity: rule.severity,
           device: device.type,
-          error: error.message
+          error: getErrorMessage(error)
         });
       }
     }
@@ -393,7 +429,7 @@ export class MobileAccessibilityOptimizer {
     // Test if content is readable at this size
     const textElements = context.querySelectorAll('p, span, label, h1, h2, h3, h4, h5, h6');
     
-    for (const element of textElements) {
+    for (const element of Array.from(textElements)) {
       const computedStyle = window.getComputedStyle(element);
       const fontSize = parseInt(computedStyle.fontSize);
       
@@ -413,7 +449,7 @@ export class MobileAccessibilityOptimizer {
     if (width < 768) {
       const touchElements = context.querySelectorAll('button, input, select, textarea, a');
       
-      for (const element of touchElements) {
+      for (const element of Array.from(touchElements)) {
         const rect = element.getBoundingClientRect();
         
         if (rect.width < 44 || rect.height < 44) {
@@ -458,9 +494,11 @@ export class MobileAccessibilityOptimizer {
       const rect = element.getBoundingClientRect();
       
       if (rect.width < 44 || rect.height < 44) {
-        element.style.minWidth = '44px';
-        element.style.minHeight = '44px';
-        stats.touchTargetsOptimized++;
+        if (isHTMLElement(element)) {
+          element.style.minWidth = '44px';
+          element.style.minHeight = '44px';
+          stats.touchTargetsOptimized++;
+        }
       }
     });
 
@@ -483,9 +521,11 @@ export class MobileAccessibilityOptimizer {
       const fontSize = parseInt(computedStyle.fontSize);
       
       if (fontSize < 14) {
-        element.style.fontSize = '16px';
-        element.style.lineHeight = '1.5';
-        stats.responsiveImprovements++;
+        if (isHTMLElement(element)) {
+          element.style.fontSize = '16px';
+          element.style.lineHeight = '1.5';
+          stats.responsiveImprovements++;
+        }
       }
     });
 
@@ -627,7 +667,7 @@ export class MobileAccessibilityOptimizer {
    * Identify offline healthcare capabilities
    */
   private identifyOfflineCapabilities(context: Element): string[] {
-    const capabilities = [];
+    const capabilities: string[] = [];
     
     const offlineElements = context.querySelectorAll('[data-offline="true"], .offline-capable');
     offlineElements.forEach(element => {
@@ -637,7 +677,7 @@ export class MobileAccessibilityOptimizer {
       capabilities.push(capability);
     });
 
-    return [...new Set(capabilities)]; // Remove duplicates
+    return Array.from(new Set(capabilities)); // Remove duplicates
   }
 
   /**
@@ -758,7 +798,9 @@ export async function quickMobileAccessibilityCheck(
 
   try {
     const optimizer = new MobileAccessibilityOptimizer();
-    const results = await optimizer.optimizeMobileAccessibility(context);
+    // Ensure we have an Element, not Document
+    const elementContext = isElement(context) ? context : document.documentElement;
+    const results = await optimizer.optimizeMobileAccessibility(elementContext);
     
     return {
       passed: results.summary.overallScore >= 80,
@@ -776,7 +818,7 @@ export async function quickMobileAccessibilityCheck(
       touchTargets: 0,
       screenReaderSupport: false,
       responsiveDesign: false,
-      issues: [`Mobile accessibility check failed: ${error}`]
+      issues: [`Mobile accessibility check failed: ${getErrorMessage(error)}`]
     };
   }
 }

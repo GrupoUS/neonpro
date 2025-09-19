@@ -58,13 +58,13 @@ export interface LGPDOperationResult {
  */
 export async function anonymize_patient_data(
   patientData: LGPDPatientData | LGPDPatientData[],
-  options: AnonymizationOptions = {}
+  options: AnonymizationOptions = {},
 ): Promise<LGPDOperationResult> {
   const {
     preserveId = false,
     preserveStatistics = true,
     hashSensitiveData = true,
-    removeDirectIdentifiers = true
+    removeDirectIdentifiers = true,
   } = options;
 
   const patients = Array.isArray(patientData) ? patientData : [patientData];
@@ -80,23 +80,27 @@ export async function anonymize_patient_data(
         if (!preserveId) {
           anonymized.id = hashSensitiveData ? `anon_${hashString(patient.id)}` : 'anonymized';
         }
-        
+
         if (patient.name) {
-          anonymized.name = hashSensitiveData ? `Patient_${hashString(patient.name)}` : 'Anonymous Patient';
+          anonymized.name = hashSensitiveData
+            ? `Patient_${hashString(patient.name)}`
+            : 'Anonymous Patient';
         }
-        
+
         if (patient.cpf) {
           anonymized.cpf = hashSensitiveData ? hashString(patient.cpf) : null;
         }
-        
+
         if (patient.email) {
-          anonymized.email = hashSensitiveData ? `${hashString(patient.email)}@anonymized.local` : null;
+          anonymized.email = hashSensitiveData
+            ? `${hashString(patient.email)}@anonymized.local`
+            : null;
         }
-        
+
         if (patient.phone) {
           anonymized.phone = hashSensitiveData ? hashString(patient.phone) : null;
         }
-        
+
         if (patient.address) {
           anonymized.address = hashSensitiveData ? 'Anonymized Address' : null;
         }
@@ -108,7 +112,7 @@ export async function anonymize_patient_data(
           ...record,
           patient_id: anonymized.id,
           // Remove patient-specific details but keep medical data
-          notes: hashSensitiveData ? hashString(record.notes || '') : 'Anonymized notes'
+          notes: hashSensitiveData ? hashString(record.notes || '') : 'Anonymized notes',
         }));
       }
 
@@ -120,7 +124,7 @@ export async function anonymize_patient_data(
       recordsProcessed: processedRecords.length,
       operationId: `anon_${Date.now()}`,
       timestamp: new Date().toISOString(),
-      errors: errors.length > 0 ? errors : undefined
+      errors: errors.length > 0 ? errors : undefined,
     };
   } catch (error) {
     return {
@@ -128,7 +132,7 @@ export async function anonymize_patient_data(
       recordsProcessed: 0,
       operationId: `anon_error_${Date.now()}`,
       timestamp: new Date().toISOString(),
-      errors: [`Anonymization failed: ${error instanceof Error ? error.message : 'Unknown error'}`]
+      errors: [`Anonymization failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
     };
   }
 }
@@ -139,13 +143,13 @@ export async function anonymize_patient_data(
  */
 export async function delete_patient_data(
   patientId: string | string[],
-  options: DeletionOptions = {}
+  options: DeletionOptions = {},
 ): Promise<LGPDOperationResult> {
   const {
     softDelete = false,
     retainAuditTrail = true,
     anonymizeBeforeDelete = true,
-    backupBeforeDelete = true
+    backupBeforeDelete = true,
   } = options;
 
   const patientIds = Array.isArray(patientId) ? patientId : [patientId];
@@ -194,7 +198,7 @@ export async function delete_patient_data(
       recordsProcessed,
       operationId: `del_${Date.now()}`,
       timestamp: new Date().toISOString(),
-      errors: errors.length > 0 ? errors : undefined
+      errors: errors.length > 0 ? errors : undefined,
     };
   } catch (error) {
     return {
@@ -202,7 +206,7 @@ export async function delete_patient_data(
       recordsProcessed,
       operationId: `del_error_${Date.now()}`,
       timestamp: new Date().toISOString(),
-      errors: [`Deletion failed: ${error instanceof Error ? error.message : 'Unknown error'}`]
+      errors: [`Deletion failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
     };
   }
 }
@@ -213,13 +217,13 @@ export async function delete_patient_data(
  */
 export async function export_patient_data(
   patientId: string | string[],
-  options: ExportOptions = {}
+  options: ExportOptions = {},
 ): Promise<LGPDOperationResult & { exportData?: any; exportUrl?: string }> {
   const {
     format = 'json',
     includeMetadata = true,
     anonymizeData = false,
-    dateRange
+    dateRange,
   } = options;
 
   const patientIds = Array.isArray(patientId) ? patientId : [patientId];
@@ -245,7 +249,7 @@ export async function export_patient_data(
         medical_records: [],
         appointments: [],
         created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
 
       // Apply date range filter if specified
@@ -259,9 +263,9 @@ export async function export_patient_data(
       if (anonymizeData) {
         const anonymizationResult = await anonymize_patient_data(patientData, {
           preserveId: false,
-          removeDirectIdentifiers: true
+          removeDirectIdentifiers: true,
         });
-        
+
         if (!anonymizationResult.success) {
           errors.push(`Failed to anonymize data for patient ${id}`);
           continue;
@@ -276,8 +280,8 @@ export async function export_patient_data(
             exportedAt: new Date().toISOString(),
             format,
             anonymized: anonymizeData,
-            lgpdCompliant: true
-          }
+            lgpdCompliant: true,
+          },
         };
       }
 
@@ -306,7 +310,7 @@ export async function export_patient_data(
       timestamp: new Date().toISOString(),
       exportData: formattedData,
       exportUrl: `https://api.example.com/exports/exp_${Date.now()}.${format}`,
-      errors: errors.length > 0 ? errors : undefined
+      errors: errors.length > 0 ? errors : undefined,
     };
   } catch (error) {
     return {
@@ -314,7 +318,7 @@ export async function export_patient_data(
       recordsProcessed: 0,
       operationId: `exp_error_${Date.now()}`,
       timestamp: new Date().toISOString(),
-      errors: [`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`]
+      errors: [`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
     };
   }
 }
@@ -333,10 +337,10 @@ function hashString(input: string): string {
 
 function convertToCSV(data: any[]): string {
   if (data.length === 0) return '';
-  
+
   const headers = Object.keys(data[0]);
   const csvRows = [headers.join(',')];
-  
+
   for (const row of data) {
     const values = headers.map(header => {
       const value = row[header];
@@ -344,13 +348,13 @@ function convertToCSV(data: any[]): string {
     });
     csvRows.push(values.join(','));
   }
-  
+
   return csvRows.join('\n');
 }
 
 function convertToXML(data: any[]): string {
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n<patients>\n';
-  
+
   for (const patient of data) {
     xml += '  <patient>\n';
     for (const [key, value] of Object.entries(patient)) {
@@ -358,7 +362,7 @@ function convertToXML(data: any[]): string {
     }
     xml += '  </patient>\n';
   }
-  
+
   xml += '</patients>';
   return xml;
 }
@@ -367,5 +371,5 @@ function convertToXML(data: any[]): string {
 export {
   anonymize_patient_data as anonymizePatientData,
   delete_patient_data as deletePatientData,
-  export_patient_data as exportPatientData
+  export_patient_data as exportPatientData,
 };

@@ -10,6 +10,7 @@ import { criticalComponents } from './hooks/useLazyComponent';
 import { logBundleSize, performanceMonitor } from './utils/performance';
 import { initializeServiceWorker } from './utils/serviceWorker';
 import { generateNonce, getSecurityHeaders } from './lib/security/csp';
+import { initializeHealthcareSRI, healthcareSRIConfig } from './lib/security/sri';
 
 import './index.css';
 
@@ -47,6 +48,43 @@ if ((import.meta as any).env?.DEV) {
 // Initialize Sentry monitoring disabled for now to unblock Vercel build
 // initializeSentry();
 
+// Healthcare SRI-enabled resource loading utility
+function loadResourceWithSRI(
+  url: string,
+  type: 'script' | 'style',
+  integrity?: string,
+  options: {
+    async?: boolean;
+    defer?: boolean;
+    crossorigin?: 'anonymous' | 'use-credentials';
+  } = {}
+): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const element = document.createElement(type);
+    
+    if (type === 'script') {
+      element.src = url;
+      element.async = options.async ?? true;
+      element.defer = options.defer ?? false;
+    } else {
+      element.rel = 'stylesheet';
+      element.href = url;
+    }
+    
+    element.crossOrigin = options.crossorigin ?? 'anonymous';
+    
+    // Add SRI if provided for healthcare resources
+    if (integrity) {
+      element.integrity = integrity;
+    }
+    
+    element.onload = () => resolve();
+    element.onerror = () => reject(new Error(`Failed to load ${type}: ${url}`));
+    
+    document.head.appendChild(element);
+  });
+}
+
 async function bootstrap() {
   const rootEl = document.getElementById('root');
   if (!rootEl) throw new Error('#root element not found');
@@ -65,6 +103,38 @@ async function bootstrap() {
 
   // Store nonce for dynamic script loading
   (window as any).__CSP_NONCE__ = nonce;
+
+  // Initialize SRI for healthcare-critical resources
+  if (process.env.NODE_ENV === 'production') {
+    console.log('[NeonPro] Initializing Subresource Integrity for healthcare compliance...');
+    
+    // Initialize healthcare SRI for security compliance
+    const sriValidator = initializeHealthcareSRI();
+    
+    // Log SRI initialization for compliance audit
+    console.log('[NeonPro] Healthcare SRI initialized:', {
+      algorithm: healthcareSRIConfig.algorithm,
+      enforce: healthcareSRIConfig.enforce,
+      timestamp: new Date().toISOString(),
+    });
+
+    // Store SRI manager globally for dynamic resource loading
+    (window as any).__HEALTHCARE_SRI_MANAGER__ = sriValidator;
+    
+    // Set up SRI violation monitoring
+    if (typeof window !== 'undefined') {
+      window.addEventListener('error', (event) => {
+        if (event.target && (event.target as HTMLScriptElement | HTMLLinkElement).src) {
+          const element = event.target as HTMLScriptElement | HTMLLinkElement;
+          console.warn('[NeonPro] SRI Violation Detected:', {
+            src: element.src,
+            integrity: element.integrity || 'none',
+            timestamp: new Date().toISOString(),
+          });
+        }
+      }, true);
+    }
+  }
 
   // Initialize performance monitoring
   if ((import.meta as any).env?.DEV) {

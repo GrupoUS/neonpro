@@ -8,29 +8,18 @@ export const shared = { version: '1.0.0' };
 // Telemetry and observability models
 // Export only types to avoid function name collisions; alias helper if needed
 export type {
-  LGPDDataClassification,
-  LGPDMetadata,
-  HealthcareWorkflowType,
-  HealthcareContext,
   TelemetryEventType,
   TelemetrySeverity,
-  TelemetrySource,
+  HealthcareDataSensitivity,
   TelemetryEvent,
-  WebVitals,
-  HealthcareMetrics,
-  ResourceUtilization,
-  EnvironmentContext,
-  PerformanceMetrics,
-  ErrorType,
-  HealthcareImpact,
-  UserContext,
-  TechnicalContext,
-  ErrorResolution,
-  ErrorEvent,
+  WebVitalsEvent,
+  HealthcareAccessEvent,
+  AICostEvent,
+  ComplianceEvent,
 } from './models/telemetry-event';
-export { createDefaultLGPDMetadata, PerformanceMetricsSchema, sanitizeTelemetryEvent } from './models/telemetry-event';
+// export { createDefaultLGPDMetadata, PerformanceMetricsSchema, sanitizeTelemetryEvent } from './models/telemetry-event';
 // Alias function to avoid conflicts with notifications.validateHealthcareCompliance
-export { validateHealthcareCompliance as validateTelemetryCompliance } from './models/telemetry-event';
+// export { validateHealthcareCompliance as validateTelemetryCompliance } from './models/telemetry-event';
 
 // Existing exports
 export * from './types/ai-insights';

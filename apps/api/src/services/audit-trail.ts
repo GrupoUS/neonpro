@@ -319,12 +319,14 @@ export class DatabaseAuditStorage implements AuditStorage {
   async store(event: AuditEvent): Promise<void> {
     try {
       // Encrypt sensitive data if required
-      const encryptedEvent = this.config.storage.encryptionEnabled ?
-        await this.encryptSensitiveData(event) : event;
+      const encryptedEvent = this.config.storage.encryptionEnabled
+        ? await this.encryptSensitiveData(event)
+        : event;
 
       // Add digital signature if required
-      const signedEvent = this.config.security.digitalSignatures ?
-        await this.addDigitalSignature(encryptedEvent) : encryptedEvent;
+      const signedEvent = this.config.security.digitalSignatures
+        ? await this.addDigitalSignature(encryptedEvent)
+        : encryptedEvent;
 
       // Store in database (pseudo-code - replace with actual DB implementation)
       // await db.auditEvents.create(signedEvent);
@@ -375,14 +377,16 @@ export class DatabaseAuditStorage implements AuditStorage {
     // Encrypt sensitive fields
     if (encryptedEvent.healthcareContext?.patientId) {
       encryptedEvent.healthcareContext.patientId = await this.encrypt(
-        encryptedEvent.healthcareContext.patientId
+        encryptedEvent.healthcareContext.patientId,
       );
     }
 
     return encryptedEvent;
   }
 
-  private async addDigitalSignature(event: AuditEvent): Promise<AuditEvent & { signature: string }> {
+  private async addDigitalSignature(
+    event: AuditEvent,
+  ): Promise<AuditEvent & { signature: string }> {
     // Implement digital signature
     const eventString = JSON.stringify(event);
     const signature = await this.generateSignature(eventString);
@@ -447,7 +451,7 @@ export class AuditTrailService {
       healthcareContext?: AuditEvent['healthcareContext'];
       technicalContext?: Partial<AuditEvent['technicalContext']>;
       riskAssessment?: AuditEvent['riskAssessment'];
-    } = {}
+    } = {},
   ): Promise<void> {
     try {
       // Check if logging is enabled for this event type
@@ -480,7 +484,6 @@ export class AuditTrailService {
       if (this.config.realTimeLogging) {
         await this.processRealTimeEvent(auditEvent);
       }
-
     } catch (error) {
       console.error('[AuditTrail] Failed to log event:', error);
       // Log audit failure as a separate event
@@ -498,7 +501,7 @@ export class AuditTrailService {
     dataType: string,
     action: 'view' | 'create' | 'update' | 'delete',
     technicalContext: Partial<AuditEvent['technicalContext']> = {},
-    clinicalJustification?: string
+    clinicalJustification?: string,
   ): Promise<void> {
     const eventType = this.getPatientDataEventType(action);
 
@@ -528,7 +531,7 @@ export class AuditTrailService {
           clinicalJustification,
         },
         technicalContext,
-      }
+      },
     );
   }
 
@@ -540,7 +543,7 @@ export class AuditTrailService {
     patientId: string,
     justification: string,
     accessType: 'break_glass' | 'emergency_override',
-    technicalContext: Partial<AuditEvent['technicalContext']> = {}
+    technicalContext: Partial<AuditEvent['technicalContext']> = {},
   ): Promise<void> {
     await this.logEvent(
       AuditEventType.EMERGENCY_ACCESS,
@@ -575,7 +578,7 @@ export class AuditTrailService {
           mitigationActions: ['audit_review', 'supervisor_notification'],
           followUpRequired: true,
         },
-      }
+      },
     );
   }
 
@@ -587,7 +590,7 @@ export class AuditTrailService {
     description: string,
     userId?: string,
     technicalContext: Partial<AuditEvent['technicalContext']> = {},
-    additionalData: Record<string, any> = {}
+    additionalData: Record<string, any> = {},
   ): Promise<void> {
     await this.logEvent(
       AuditEventType.SECURITY_VIOLATION,
@@ -616,7 +619,7 @@ export class AuditTrailService {
           mitigationActions: ['immediate_investigation', 'access_review'],
           followUpRequired: true,
         },
-      }
+      },
     );
   }
 
@@ -627,7 +630,7 @@ export class AuditTrailService {
     dataSubjectId: string,
     requestType: 'access' | 'correction' | 'deletion' | 'portability',
     status: 'received' | 'processing' | 'completed' | 'denied',
-    processingDetails?: Record<string, any>
+    processingDetails?: Record<string, any>,
   ): Promise<void> {
     await this.logEvent(
       AuditEventType.DATA_SUBJECT_REQUEST,
@@ -652,7 +655,7 @@ export class AuditTrailService {
         healthcareContext: {
           patientId: dataSubjectId,
         },
-      }
+      },
     );
   }
 
@@ -668,7 +671,7 @@ export class AuditTrailService {
    */
   async exportEvents(
     filters: AuditQueryFilters,
-    format: 'json' | 'csv' | 'pdf'
+    format: 'json' | 'csv' | 'pdf',
   ): Promise<string> {
     // Log the export request itself
     await this.logEvent(
@@ -690,7 +693,7 @@ export class AuditTrailService {
       {
         severity: AuditSeverity.HIGH,
         outcome: AuditOutcome.SUCCESS,
-      }
+      },
     );
 
     return await this.storage.export(filters, format);
@@ -701,7 +704,7 @@ export class AuditTrailService {
    */
   async getAuditStatistics(
     fromDate: Date,
-    toDate: Date
+    toDate: Date,
   ): Promise<{
     totalEvents: number;
     eventsByType: Record<string, number>;
@@ -758,32 +761,38 @@ export class AuditTrailService {
 
   private determineSeverity(eventType: AuditEventType, outcome?: AuditOutcome): AuditSeverity {
     // Critical events
-    if ([
-      AuditEventType.EMERGENCY_ACCESS,
-      AuditEventType.SECURITY_VIOLATION,
-      AuditEventType.DATA_BREACH_ATTEMPT,
-      AuditEventType.UNAUTHORIZED_ACCESS,
-    ].includes(eventType)) {
+    if (
+      [
+        AuditEventType.EMERGENCY_ACCESS,
+        AuditEventType.SECURITY_VIOLATION,
+        AuditEventType.DATA_BREACH_ATTEMPT,
+        AuditEventType.UNAUTHORIZED_ACCESS,
+      ].includes(eventType)
+    ) {
       return AuditSeverity.CRITICAL;
     }
 
     // High severity events
-    if ([
-      AuditEventType.PATIENT_DELETE,
-      AuditEventType.MEDICAL_RECORD_DELETE,
-      AuditEventType.PRIVILEGE_ESCALATION,
-      AuditEventType.DATA_DELETION,
-    ].includes(eventType)) {
+    if (
+      [
+        AuditEventType.PATIENT_DELETE,
+        AuditEventType.MEDICAL_RECORD_DELETE,
+        AuditEventType.PRIVILEGE_ESCALATION,
+        AuditEventType.DATA_DELETION,
+      ].includes(eventType)
+    ) {
       return AuditSeverity.HIGH;
     }
 
     // Medium severity events
-    if ([
-      AuditEventType.PATIENT_UPDATE,
-      AuditEventType.MEDICAL_RECORD_UPDATE,
-      AuditEventType.PRESCRIPTION_CREATE,
-      AuditEventType.ROLE_CHANGE,
-    ].includes(eventType)) {
+    if (
+      [
+        AuditEventType.PATIENT_UPDATE,
+        AuditEventType.MEDICAL_RECORD_UPDATE,
+        AuditEventType.PRESCRIPTION_CREATE,
+        AuditEventType.ROLE_CHANGE,
+      ].includes(eventType)
+    ) {
       return AuditSeverity.MEDIUM;
     }
 
@@ -813,7 +822,7 @@ export class AuditTrailService {
   private buildComplianceMetadata(
     eventType: AuditEventType,
     resource: AuditEvent['resource'],
-    healthcareContext?: AuditEvent['healthcareContext']
+    healthcareContext?: AuditEvent['healthcareContext'],
   ): AuditEvent['compliance'] {
     const isPatientData = resource.type === 'patient' || resource.type === 'medical_record';
     const isSecurityEvent = eventType.includes('security') || eventType.includes('violation');
@@ -937,10 +946,9 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
             responseTime,
             ipAddress: req.ip,
             userAgent: req.headers['user-agent'],
-          }
+          },
         );
       }
-
     } catch (error) {
       // Log failed request
       await auditService.logEvent(
@@ -971,7 +979,7 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
             ipAddress: req.ip,
             userAgent: req.headers['user-agent'],
           },
-        }
+        },
       );
 
       throw error;
@@ -985,9 +993,4 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
 
 export default AuditTrailService;
 
-export type {
-  AuditEvent,
-  AuditTrailConfig,
-  AuditStorage,
-  AuditQueryFilters,
-};
+export type { AuditEvent, AuditQueryFilters, AuditStorage, AuditTrailConfig };

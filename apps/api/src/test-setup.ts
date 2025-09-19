@@ -81,11 +81,11 @@ vi.mock('@hono/zod-openapi', async () => {
 // Mock openapi-generator module to provide healthcare functions
 vi.mock('./lib/openapi-generator', async () => {
   const { Hono } = await import('hono');
-  
+
   // Mock createHealthcareOpenAPIApp
   const createHealthcareOpenAPIApp = vi.fn(() => {
     const app = new Hono();
-    
+
     // Add openapi method
     app.openapi = function(route: any, ...handlers: any[]) {
       const path = route.path || '/';

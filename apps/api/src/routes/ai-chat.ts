@@ -3,11 +3,13 @@
 
 import { zValidator } from '@hono/zod-validator';
 import { type AIMessage, AIProviderFactory } from '@neonpro/core-services';
+import { type HealthcareAIContext, ComplianceLevel } from '@neonpro/shared';
 
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { z } from 'zod';
 import { endTimerMs, logMetric, startTimer } from '../services/metrics';
+import { SemanticCacheService } from '../services/semantic-cache';
 
 // Request validation schemas
 const ChatMessageSchema = z.object({
@@ -27,6 +29,14 @@ const ChatRequestSchema = z.object({
 });
 
 const app = new Hono();
+
+// Initialize semantic cache for AI cost optimization
+const semanticCache = new SemanticCacheService({
+  maxEntries: 1000,
+  ttlMs: 3600000, // 1 hour cache for aesthetic queries
+  enabled: process.env.AI_SEMANTIC_CACHE_ENABLED !== 'false',
+  strategy: 'semantic',
+});
 
 // Enable CORS for browser requests
 const allowedOrigins = [
@@ -115,6 +125,82 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
       aiMessages.push({ role: 'user', content: text.trim() });
     }
 
+    // Extract user prompt for semantic caching
+    const userPrompt = text?.trim() || 
+      (Array.isArray(messages) && messages.length > 0 
+        ? messages[messages.length - 1]?.content 
+        : '');
+
+    // Create healthcare AI context for semantic caching
+    const healthcareContext: HealthcareAIContext = {
+      patientId: clientId || 'anonymous',
+      isEmergency: false, // Aesthetic consultations are typically non-emergency
+      containsUrgentSymptoms: false,
+      isSensitiveData: true, // All healthcare conversations are sensitive
+      requiresPrivacy: true,
+      complianceLevel: ComplianceLevel.RESTRICTED,
+      sessionId: sessionId,
+      timestamp: new Date(),
+    };
+
+    // Check semantic cache for similar queries (only for non-mock mode)
+    let cachedResponse: string | null = null;
+    if (!mockMode && userPrompt && semanticCache.isEnabled()) {
+      try {
+        const cacheEntry = await semanticCache.findSimilarEntry(userPrompt, healthcareContext);
+        if (cacheEntry && cacheEntry.response) {
+          cachedResponse = cacheEntry.response;
+          console.log('Cache hit for AI query:', {
+            sessionId,
+            similarity: cacheEntry.similarity,
+            originalCost: cacheEntry.originalCost,
+            savedCost: cacheEntry.originalCost,
+          });
+        }
+      } catch (cacheError) {
+        console.warn('Semantic cache error (continuing without cache):', cacheError);
+      }
+    }
+
+    // Return cached response if available
+    if (cachedResponse) {
+      const encoder = new TextEncoder();
+      const stream = new ReadableStream({
+        start(controller) {
+          // Simulate streaming by chunking the cached response
+          const chunks = cachedResponse.split(' ');
+          let index = 0;
+          
+          const sendChunk = () => {
+            if (index < chunks.length) {
+              const chunk = index === chunks.length - 1 ? chunks[index] : chunks[index] + ' ';
+              controller.enqueue(encoder.encode(chunk));
+              index++;
+              setTimeout(sendChunk, 50); // Simulate typing speed
+            } else {
+              controller.close();
+            }
+          };
+          
+          sendChunk();
+        },
+      });
+
+      const ms = endTimerMs(t0);
+      logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: 'cached', cached: true });
+
+      return new Response(stream, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'X-Chat-Model': 'semantic-cache',
+          'X-Response-Time': `${ms}ms`,
+          'X-Chat-Started-At': new Date().toISOString(),
+          'X-Cache-Hit': 'true',
+        },
+      });
+    }
+
     if (mockMode) {
       // Use mock provider from factory
       const mockStream = AIProviderFactory.generateStreamWithFailover(aiMessages, 1);
@@ -152,12 +238,42 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     const providerName = model || process.env.AI_PROVIDER || 'openai';
 
     const encoder = new TextEncoder();
+    let fullResponse = ''; // Collect full response for caching
+    
     const stream = new ReadableStream({
       async start(controller) {
         try {
           for await (const chunk of provider.generateStreamingCompletion(aiMessages)) {
+            fullResponse += chunk; // Accumulate response for caching
             controller.enqueue(encoder.encode(chunk));
           }
+          
+          // Cache the complete response for future similar queries
+          if (userPrompt && fullResponse && semanticCache.isEnabled()) {
+            try {
+              await semanticCache.addEntry({
+                prompt: userPrompt,
+                response: fullResponse,
+                embedding: [], // Will be generated internally
+                timestamp: new Date(),
+                hits: 0,
+                context: healthcareContext,
+                similarity: 1.0,
+                originalCost: 0.002, // Estimated cost for GPT-3.5/4 request
+                complianceLevel: ComplianceLevel.RESTRICTED,
+                integrityHash: '',
+              });
+              
+              console.log('Cached AI response for future queries:', {
+                sessionId,
+                promptLength: userPrompt.length,
+                responseLength: fullResponse.length,
+              });
+            } catch (cacheError) {
+              console.warn('Failed to cache AI response:', cacheError);
+            }
+          }
+          
           controller.close();
         } catch (error) {
           console.error('Streaming error:', error);

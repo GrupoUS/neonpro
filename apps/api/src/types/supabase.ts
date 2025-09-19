@@ -1,23 +1,23 @@
 /**
  * Supabase Types Module
- * 
+ *
  * Re-exports database types from the shared packages directory
  * for use in the API application with proper path resolution.
  */
 
-import type {
-  Database,
-  Json,
-} from '../../../../packages/database/src/types/supabase';
+import type { Database, Json } from '../../../../packages/database/src/types/supabase';
 
 // Re-export the main types
 export type { Database, Json };
 
 // Type aliases for commonly used tables
 export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T];
-export type TableRow<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Row'];
-export type TableInsert<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Insert'];
-export type TableUpdate<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T]['Update'];
+export type TableRow<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Row'];
+export type TableInsert<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Insert'];
+export type TableUpdate<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Update'];
 
 // Specific table type exports for common use cases
 export type Patient = TableRow<'patients'>;

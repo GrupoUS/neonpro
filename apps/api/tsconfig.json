@@ -42,6 +42,12 @@
       ],
       "@neonpro/database/*": [
         "../../packages/database/src/*"
+      ],
+      "@neonpro/types": [
+        "../../packages/types/src"
+      ],
+      "@neonpro/types/*": [
+        "../../packages/types/src/*"
       ]
     },
     "types": [

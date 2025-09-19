@@ -11,7 +11,7 @@ import {
   createHealthcareError,
   ErrorCategory as HealthcareErrorCategory,
   ErrorSeverity as HealthcareErrorSeverity,
-} from './error-tracking';
+} from '../services/error-tracking-bridge';
 
 /**
  * Configuration for contract validation middleware

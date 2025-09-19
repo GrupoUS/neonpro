@@ -1,434 +1,315 @@
-import { Context, Next } from 'hono';
-import { HTTPException } from 'hono/http-exception';
+import { createHash } from 'crypto';
+import { Context, MiddlewareHandler } from 'hono';
 
-/**
- * Rate limiting infrastructure for healthcare APIs
- *
- * Implements sliding window rate limiting with:
- * - Per-endpoint configuration
- * - Clinic IP allowlisting
- * - Healthcare workflow efficiency
- * - LGPD compliance logging
- * - Memory-based storage for development
- */
-
-export interface RateLimitRule {
-  /** Maximum requests per window */
-  maxRequests: number;
-  /** Window duration in milliseconds */
-  windowMs: number;
-  /** Healthcare workflow priority (emergency endpoints get higher limits) */
-  priority?: 'emergency' | 'routine' | 'administrative';
-  /** Skip rate limiting for specific roles */
-  skipRoles?: string[];
-  /** Custom error message for healthcare context */
-  message?: string;
-}
-
+// Healthcare-specific rate limiting configuration
 export interface RateLimitConfig {
-  /** Default rate limit for unspecified endpoints */
-  default: RateLimitRule;
-  /** Per-endpoint rate limit overrides */
-  endpoints: Record<string, RateLimitRule>;
-  /** Allowlisted clinic IP addresses */
-  allowlistedIPs?: string[];
-  /** Enable audit logging for compliance */
-  auditLogging?: boolean;
-  /** Redis connection for production scaling */
-  redisUrl?: string;
+  windowMs: number; // Time window in milliseconds
+  maxRequests: number; // Maximum requests per window
+  keyGenerator?: (c: Context) => string; // Custom key generator
+  skipSuccessfulRequests?: boolean; // Don't count successful requests
+  skipFailedRequests?: boolean; // Don't count failed requests
+  onLimitReached?: (c: Context, key: string) => Promise<void>; // Custom handler
+  healthcare?: {
+    sensitiveEndpoints: string[]; // Healthcare endpoints with stricter limits
+    patientDataEndpoints: string[]; // Patient data endpoints with very strict limits
+    emergencyOverride?: boolean; // Allow emergency access
+  };
 }
 
-export interface RateLimitAttempt {
-  /** Request timestamp */
-  timestamp: number;
-  /** Client IP address */
-  ip: string;
-  /** User ID if authenticated */
-  userId?: string;
-  /** Clinic ID for multi-tenant isolation */
-  clinicId?: string;
-  /** Endpoint being accessed */
-  endpoint: string;
-  /** Request method */
-  method: string;
-}
-
-export interface RateLimitStatus {
-  /** Current request count in window */
-  currentRequests: number;
-  /** Maximum allowed requests */
-  maxRequests: number;
-  /** Window start time */
-  windowStart: number;
-  /** Window duration in ms */
-  windowMs: number;
-  /** Remaining requests in current window */
-  remainingRequests: number;
-  /** Time until window reset (ms) */
+// Rate limiting data structure
+export interface RateLimitData {
+  count: number;
   resetTime: number;
-  /** Whether request is allowed */
-  allowed: boolean;
+  blocked: boolean;
+  healthcareContext?: {
+    isSensitiveEndpoint: boolean;
+    isPatientDataEndpoint: boolean;
+    emergencyAccess: boolean;
+  };
 }
 
-/**
- * Healthcare-specific rate limiting configurations
- */
-export const HEALTHCARE_RATE_LIMITS: Record<string, RateLimitRule> = {
-  // Emergency endpoints - higher limits for critical care
-  '/api/v1/emergency/': {
-    maxRequests: 1000,
-    windowMs: 60 * 1000, // 1 minute
-    priority: 'emergency',
-    skipRoles: ['emergency_responder', 'physician_on_call'],
-    message:
-      'Emergency endpoint rate limit exceeded. Contact system administrator if this is a medical emergency.',
-  },
+// Healthcare-aware rate limiting store
+export class HealthcareRateLimitStore {
+  private store = new Map<string, RateLimitData>();
 
-  // Patient data access - moderate limits with audit logging
-  '/api/v1/patients/': {
-    maxRequests: 300,
-    windowMs: 60 * 1000, // 1 minute
-    priority: 'routine',
-    message: 'Patient data access rate limit exceeded. This is logged for LGPD compliance.',
-  },
+  constructor(private config: RateLimitConfig) {}
 
-  // Authentication endpoints - stricter limits to prevent brute force
-  '/api/v1/auth/': {
-    maxRequests: 10,
-    windowMs: 60 * 1000, // 1 minute
-    priority: 'administrative',
-    message: 'Authentication rate limit exceeded. Account may be temporarily locked for security.',
-  },
-
-  // File upload endpoints - very strict limits for resource protection
-  '/api/v1/files/upload': {
-    maxRequests: 20,
-    windowMs: 60 * 1000, // 1 minute
-    priority: 'administrative',
-    message:
-      'File upload rate limit exceeded. Large files should be uploaded during off-peak hours.',
-  },
-
-  // AI inference endpoints - moderate limits to manage compute costs
-  '/api/v1/ai/': {
-    maxRequests: 100,
-    windowMs: 60 * 1000, // 1 minute
-    priority: 'routine',
-    message: 'AI service rate limit exceeded. Consider batching requests for efficiency.',
-  },
-
-  // Reports and analytics - lower limits for resource-intensive operations
-  '/api/v1/reports/': {
-    maxRequests: 30,
-    windowMs: 60 * 1000, // 1 minute
-    priority: 'administrative',
-    message: 'Report generation rate limit exceeded. Schedule large reports during off-peak hours.',
-  },
-};
-
-/**
- * Default rate limiting configuration for healthcare platform
- */
-export const DEFAULT_RATE_LIMIT_CONFIG: RateLimitConfig = {
-  default: {
-    maxRequests: 100,
-    windowMs: 60 * 1000, // 1 minute
-    priority: 'routine',
-    message: 'Rate limit exceeded. Please reduce request frequency.',
-  },
-  endpoints: HEALTHCARE_RATE_LIMITS,
-  auditLogging: true,
-  allowlistedIPs: [
-    // Add clinic IP addresses here
-    // '192.168.1.0/24', // Example clinic network
-  ],
-};
-
-/**
- * In-memory storage for rate limiting data
- * Note: In production, use Redis for distributed rate limiting
- */
-class MemoryRateLimitStore {
-  private attempts: Map<string, RateLimitAttempt[]> = new Map();
-  private readonly maxStorageTime = 24 * 60 * 60 * 1000; // 24 hours
-
-  /**
-   * Get attempts for a specific key within the window
-   */
-  getAttempts(key: string, windowMs: number): RateLimitAttempt[] {
-    const now = Date.now();
-    const windowStart = now - windowMs;
-
-    const allAttempts = this.attempts.get(key) || [];
-    const validAttempts = allAttempts.filter(attempt => attempt.timestamp >= windowStart);
-
-    // Update stored attempts to only keep valid ones
-    this.attempts.set(key, validAttempts);
-
-    return validAttempts;
+  // Get rate limit data for a key
+  get(key: string): RateLimitData | undefined {
+    return this.store.get(key);
   }
 
-  /**
-   * Record a new attempt
-   */
-  recordAttempt(key: string, attempt: RateLimitAttempt): void {
-    const existing = this.attempts.get(key) || [];
-    existing.push(attempt);
-    this.attempts.set(key, existing);
-
-    // Cleanup old attempts periodically
-    this.cleanup();
+  // Set rate limit data for a key
+  set(key: string, data: RateLimitData): void {
+    this.store.set(key, data);
   }
 
-  /**
-   * Clean up old attempts to prevent memory leaks
-   */
-  private cleanup(): void {
+  // Increment request count
+  increment(key: string, healthcareContext?: RateLimitData['healthcareContext']): RateLimitData {
     const now = Date.now();
-    const cutoff = now - this.maxStorageTime;
+    const resetTime = now + this.config.windowMs;
 
-    for (const [key, attempts] of Array.from(this.attempts.entries())) {
-      const validAttempts = attempts.filter(attempt => attempt.timestamp >= cutoff);
-      if (validAttempts.length === 0) {
-        this.attempts.delete(key);
-      } else {
-        this.attempts.set(key, validAttempts);
+    let data = this.store.get(key);
+
+    if (!data || data.resetTime < now) {
+      // Create new rate limit entry
+      data = {
+        count: 1,
+        resetTime,
+        blocked: false,
+        healthcareContext,
+      };
+    } else {
+      // Increment existing counter
+      data.count++;
+      data.healthcareContext = healthcareContext;
+    }
+
+    // Check if limit exceeded
+    data.blocked = data.count > this.config.maxRequests;
+
+    this.store.set(key, data);
+    return data;
+  }
+
+  // Clean up expired entries
+  cleanup(): void {
+    const now = Date.now();
+    for (const [key, data] of this.store.entries()) {
+      if (data.resetTime < now) {
+        this.store.delete(key);
       }
     }
   }
-
-  /**
-   * Get current statistics for monitoring
-   */
-  getStats(): { totalKeys: number; totalAttempts: number } {
-    let totalAttempts = 0;
-    for (const attempts of this.attempts.values()) {
-      totalAttempts += attempts.length;
-    }
-
-    return {
-      totalKeys: this.attempts.size,
-      totalAttempts,
-    };
-  }
 }
 
-// Global rate limit store instance
-const rateLimitStore = new MemoryRateLimitStore();
+// Generate rate limiting key with healthcare compliance
+export function generateHealthcareRateLimitKey(c: Context): string {
+  const ip = c.req.header('cf-connecting-ip')
+    || c.req.header('x-forwarded-for')
+    || c.req.header('x-real-ip')
+    || 'unknown';
 
-/**
- * Extract client IP address with proxy support
- */
-function getClientIP(c: Context): string {
-  // Check common proxy headers
-  const xForwardedFor = c.req.header('x-forwarded-for');
-  if (xForwardedFor) {
-    return xForwardedFor.split(',')[0].trim();
-  }
-
-  const xRealIP = c.req.header('x-real-ip');
-  if (xRealIP) {
-    return xRealIP;
-  }
-
-  // Fallback to connection IP (may not be available in all environments)
-  return c.req.header('cf-connecting-ip') || '0.0.0.0';
-}
-
-/**
- * Check if IP is in allowlist
- */
-function isIPAllowlisted(ip: string, allowlistedIPs: string[] = []): boolean {
-  // Simple implementation - in production, use proper CIDR matching
-  return allowlistedIPs.some(allowlistedIP => {
-    if (allowlistedIP.includes('/')) {
-      // CIDR notation - simplified check
-      const [network] = allowlistedIP.split('/');
-      return ip.startsWith(network.split('.').slice(0, 3).join('.'));
-    }
-    return ip === allowlistedIP;
-  });
-}
-
-/**
- * Generate rate limit key for request grouping
- */
-function generateRateLimitKey(c: Context, _rule: RateLimitRule): string {
-  const ip = getClientIP(c);
+  const userId = c.get('user')?.id || 'anonymous';
   const path = c.req.path;
-  const method = c.req.method;
 
-  // Include user ID for authenticated requests
-  const userId = c.get('userId') || 'anonymous';
+  // Hash for LGPD compliance (don't store raw IPs)
+  const hashInput = `${ip}:${userId}:${path}:${new Date().getHours()}`;
+  const hash = createHash('sha256').update(hashInput).digest('hex');
 
-  // Include clinic ID for multi-tenant isolation
-  const clinicId = c.get('clinicId') || 'default';
-
-  return `${ip}:${method}:${path}:${userId}:${clinicId}`;
+  return `rl:${hash}`;
 }
 
-/**
- * Check rate limit status for a request
- */
-function checkRateLimit(c: Context, rule: RateLimitRule): RateLimitStatus {
-  const key = generateRateLimitKey(c, rule);
-  const now = Date.now();
-  const windowStart = now - rule.windowMs;
+// Healthcare-specific rate limiting rules
+export const healthcareRateLimitRules: Record<string, RateLimitConfig> = {
+  // General API endpoints
+  general: {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    maxRequests: 100,
+    skipSuccessfulRequests: false,
+    healthcare: {
+      sensitiveEndpoints: ['/api/patients', '/api/appointments', '/api/medical-records'],
+      patientDataEndpoints: ['/api/patients/*/records', '/api/patients/*/diagnostics'],
+      emergencyOverride: true,
+    },
+  },
 
-  // Get current attempts in window
-  const attempts = rateLimitStore.getAttempts(key, rule.windowMs);
-  const currentRequests = attempts.length;
+  // Authentication endpoints (stricter)
+  auth: {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    maxRequests: 5, // Very strict for auth
+    skipFailedRequests: false,
+  },
 
-  return {
-    currentRequests,
-    maxRequests: rule.maxRequests,
-    windowStart,
-    windowMs: rule.windowMs,
-    remainingRequests: Math.max(0, rule.maxRequests - currentRequests),
-    resetTime: rule.windowMs - (now - windowStart),
-    allowed: currentRequests < rule.maxRequests,
-  };
-}
+  // Patient data endpoints (very strict)
+  patientData: {
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    maxRequests: 20,
+    skipSuccessfulRequests: false,
+    healthcare: {
+      sensitiveEndpoints: ['/api/patients'],
+      patientDataEndpoints: ['/api/patients/*/records'],
+      emergencyOverride: true,
+    },
+  },
 
-/**
- * Record rate limit attempt for audit logging
- */
-function recordAttempt(c: Context, rule: RateLimitRule, status: RateLimitStatus): void {
-  const key = generateRateLimitKey(c, rule);
-  const ip = getClientIP(c);
+  // File upload endpoints
+  upload: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxRequests: 10,
+    skipFailedRequests: false,
+  },
 
-  const attempt: RateLimitAttempt = {
-    timestamp: Date.now(),
-    ip,
-    userId: c.get('userId'),
-    clinicId: c.get('clinicId'),
-    endpoint: c.req.path,
-    method: c.req.method,
-  };
+  // API documentation endpoints
+  docs: {
+    windowMs: 60 * 60 * 1000, // 1 hour
+    maxRequests: 50,
+    skipSuccessfulRequests: true,
+  },
+};
 
-  rateLimitStore.recordAttempt(key, attempt);
+// Healthcare rate limiting middleware
+export function healthcareRateLimit(config: RateLimitConfig): MiddlewareHandler {
+  const store = new HealthcareRateLimitStore(config);
 
-  // Log for LGPD compliance if audit logging is enabled
-  if (DEFAULT_RATE_LIMIT_CONFIG.auditLogging) {
-    console.log('RATE_LIMIT_AUDIT', {
-      timestamp: new Date().toISOString(),
-      ip: attempt.ip,
-      userId: attempt.userId,
-      clinicId: attempt.clinicId,
-      endpoint: attempt.endpoint,
-      method: attempt.method,
-      allowed: status.allowed,
-      currentRequests: status.currentRequests,
-      maxRequests: status.maxRequests,
-      // Remove sensitive data for logging
-      userAgent: c.req.header('user-agent')?.substring(0, 100),
-    });
-  }
-}
+  return async (c: Context, next) => {
+    try {
+      // Generate rate limit key
+      const key = config.keyGenerator ? config.keyGenerator(c) : generateHealthcareRateLimitKey(c);
 
-/**
- * Get rate limit rule for endpoint
- */
-function getRateLimitRule(endpoint: string, config: RateLimitConfig): RateLimitRule {
-  // Find most specific matching endpoint rule
-  const matchingEndpoint = Object.keys(config.endpoints)
-    .sort((a, b) => b.length - a.length) // Longest match first
-    .find(pattern => endpoint.startsWith(pattern));
-
-  return matchingEndpoint ? config.endpoints[matchingEndpoint] : config.default;
-}
-
-/**
- * Rate limiting middleware factory
- */
-export function rateLimitMiddleware(config: RateLimitConfig = DEFAULT_RATE_LIMIT_CONFIG) {
-  return async (c: Context, next: Next) => {
-    const ip = getClientIP(c);
-    const endpoint = c.req.path;
-
-    // Skip rate limiting for allowlisted IPs
-    if (isIPAllowlisted(ip, config.allowlistedIPs)) {
-      return next();
-    }
-
-    // Get applicable rate limit rule
-    const rule = getRateLimitRule(endpoint, config);
-
-    // Skip rate limiting for privileged roles
-    const userRole = c.get('userRole');
-    if (rule.skipRoles && userRole && rule.skipRoles.includes(userRole)) {
-      return next();
-    }
-
-    // Check rate limit status
-    const status = checkRateLimit(c, rule);
-
-    // Record attempt for audit logging
-    recordAttempt(c, rule, status);
-
-    // Set rate limit headers
-    c.header('X-RateLimit-Limit', rule.maxRequests.toString());
-    c.header('X-RateLimit-Remaining', status.remainingRequests.toString());
-    c.header('X-RateLimit-Reset', new Date(Date.now() + status.resetTime).toISOString());
-    c.header('X-RateLimit-Window', rule.windowMs.toString());
-
-    // Check if request is allowed
-    if (!status.allowed) {
-      // Enhanced error response for healthcare context
-      const errorResponse = {
-        error: 'RATE_LIMIT_EXCEEDED',
-        message: rule.message || 'Rate limit exceeded',
-        details: {
-          maxRequests: rule.maxRequests,
-          windowMs: rule.windowMs,
-          resetTime: new Date(Date.now() + status.resetTime).toISOString(),
-          priority: rule.priority,
-          endpoint: endpoint,
-        },
-        // Healthcare-specific guidance
-        guidance: rule.priority === 'emergency'
-          ? 'If this is a medical emergency, contact emergency services immediately'
-          : 'Consider reducing request frequency or contact system administrator',
-        // Compliance information
-        compliance: {
-          logged: config.auditLogging,
-          standard: 'LGPD-Article-33-Security-Measures',
-        },
+      // Determine healthcare context
+      const path = c.req.path;
+      const healthcareContext: RateLimitData['healthcareContext'] = {
+        isSensitiveEndpoint: config.healthcare?.sensitiveEndpoints?.some(ep =>
+          path.startsWith(ep.replace('*', ''))
+        ) || false,
+        isPatientDataEndpoint: config.healthcare?.patientDataEndpoints?.some(ep =>
+          path.startsWith(ep.replace('*', ''))
+        ) || false,
+        emergencyAccess: c.req.header('x-emergency-access') === 'true' || false,
       };
 
-      throw new HTTPException(429, {
-        message: JSON.stringify(errorResponse),
-        cause: 'Rate limit exceeded',
-      });
+      // Apply stricter limits for healthcare endpoints
+      let effectiveConfig = { ...config };
+      if (healthcareContext.isSensitiveEndpoint) {
+        effectiveConfig.maxRequests = Math.floor(config.maxRequests * 0.5); // 50% reduction
+      }
+      if (healthcareContext.isPatientDataEndpoint) {
+        effectiveConfig.maxRequests = Math.floor(config.maxRequests * 0.25); // 75% reduction
+      }
+
+      // Allow emergency access override
+      if (healthcareContext.emergencyAccess && config.healthcare?.emergencyOverride) {
+        return next();
+      }
+
+      // Get current rate limit data
+      const data = store.increment(key, healthcareContext);
+
+      // Set rate limit headers
+      c.header('X-RateLimit-Limit', effectiveConfig.maxRequests.toString());
+      c.header(
+        'X-RateLimit-Remaining',
+        Math.max(0, effectiveConfig.maxRequests - data.count).toString(),
+      );
+      c.header('X-RateLimit-Reset', data.resetTime.toString());
+      c.header('X-RateLimit-Window', effectiveConfig.windowMs.toString());
+
+      // Healthcare-specific headers
+      c.header(
+        'X-Healthcare-RateLimit-Sensitive',
+        healthcareContext.isSensitiveEndpoint.toString(),
+      );
+      c.header(
+        'X-Healthcare-RateLimit-PatientData',
+        healthcareContext.isPatientDataEndpoint.toString(),
+      );
+      c.header('X-Healthcare-RateLimit-Emergency', healthcareContext.emergencyAccess.toString());
+
+      // Check if limit exceeded
+      if (data.blocked) {
+        // Log rate limit violation for audit trail
+        await logRateLimitViolation(c, key, data, healthcareContext);
+
+        if (config.onLimitReached) {
+          await config.onLimitReached(c, key);
+        }
+
+        return c.json({
+          error: 'Rate limit exceeded',
+          message: 'Too many requests. Please try again later.',
+          retryAfter: Math.ceil((data.resetTime - Date.now()) / 1000),
+          healthcare: {
+            sensitiveEndpoint: healthcareContext.isSensitiveEndpoint,
+            patientDataEndpoint: healthcareContext.isPatientDataEndpoint,
+            emergencyAccess: healthcareContext.emergencyAccess,
+          },
+        }, 429);
+      }
+
+      await next();
+
+      // Skip counting based on configuration
+      if (
+        (config.skipSuccessfulRequests && c.res.status < 400)
+        || (config.skipFailedRequests && c.res.status >= 400)
+      ) {
+        // Decrement count since we're not counting this request
+        const currentData = store.get(key);
+        if (currentData) {
+          currentData.count = Math.max(0, currentData.count - 1);
+          store.set(key, currentData);
+        }
+      }
+    } catch (error) {
+      console.error('Rate limiting middleware error:', error);
+      // Fail open for healthcare safety
+      await next();
+    }
+  };
+}
+
+// Log rate limit violations for audit compliance
+async function logRateLimitViolation(
+  c: Context,
+  key: string,
+  data: RateLimitData,
+  healthcareContext: RateLimitData['healthcareContext'],
+): Promise<void> {
+  try {
+    const violation = {
+      timestamp: new Date().toISOString(),
+      type: 'RATE_LIMIT_VIOLATION',
+      key: key.substring(0, 16) + '...', // Don't log full key for privacy
+      path: c.req.path,
+      method: c.req.method,
+      userAgent: c.req.header('user-agent')?.substring(0, 100) || 'unknown',
+      rateLimitData: {
+        count: data.count,
+        maxRequests: data.blocked ? 'EXCEEDED' : 'within limits',
+        resetTime: new Date(data.resetTime).toISOString(),
+      },
+      healthcareContext,
+    };
+
+    // Send to audit trail if available
+    if (c.get('auditService')) {
+      await c.get('auditService').logSecurityEvent('RATE_LIMIT_VIOLATION', violation);
     }
 
-    // Add rate limit context to request
-    c.set('rateLimitStatus', status);
-    c.set('rateLimitRule', rule);
-
-    return next();
-  };
+    console.warn('🛡️ Rate Limit Violation:', violation);
+  } catch (error) {
+    console.error('Failed to log rate limit violation:', error);
+  }
 }
 
-/**
- * Get current rate limit statistics for monitoring
- */
-export function getRateLimitStats(): {
-  store: { totalKeys: number; totalAttempts: number };
-  config: { endpointCount: number; auditLogging: boolean };
-} {
-  return {
-    store: rateLimitStore.getStats(),
-    config: {
-      endpointCount: Object.keys(DEFAULT_RATE_LIMIT_CONFIG.endpoints).length,
-      auditLogging: DEFAULT_RATE_LIMIT_CONFIG.auditLogging || false,
-    },
-  };
+// Pre-configured rate limiting middleware for different endpoint types
+export function createGeneralRateLimit(): MiddlewareHandler {
+  return healthcareRateLimit(healthcareRateLimitRules.general);
 }
 
-/**
- * Reset rate limits for testing purposes
- */
-export function resetRateLimits(): void {
-  (rateLimitStore as any).attempts.clear();
+export function createAuthRateLimit(): MiddlewareHandler {
+  return healthcareRateLimit(healthcareRateLimitRules.auth);
 }
+
+export function createPatientDataRateLimit(): MiddlewareHandler {
+  return healthcareRateLimit(healthcareRateLimitRules.patientData);
+}
+
+export function createUploadRateLimit(): MiddlewareHandler {
+  return healthcareRateLimit(healthcareRateLimitRules.upload);
+}
+
+export function createDocsRateLimit(): MiddlewareHandler {
+  return healthcareRateLimit(healthcareRateLimitRules.docs);
+}
+
+// Cleanup expired rate limit entries
+export function setupRateLimitCleanup(): void {
+  setInterval(() => {
+    // This would be called on the store instances
+    // In a production environment, you'd want to track all stores
+  }, 5 * 60 * 1000); // Clean up every 5 minutes
+}
+
+// End of module

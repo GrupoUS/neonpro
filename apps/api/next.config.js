@@ -2,7 +2,7 @@
 const nextConfig = {
   // Minimal configuration to test webpack issue
   output: 'standalone',
-  
+
   // Keep essential experimental features
   experimental: {
     optimizePackageImports: [

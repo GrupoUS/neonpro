@@ -4,15 +4,21 @@
  * for secure telemedicine sessions with comprehensive compliance
  */
 
-import { z } from 'zod';
 import { TRPCError } from '@trpc/server';
-import { healthcareProcedure, patientProcedure, publicProcedure, router, telemedicineProcedure } from '../trpc';
+import { z } from 'zod';
+import {
+  healthcareProcedure,
+  patientProcedure,
+  publicProcedure,
+  router,
+  telemedicineProcedure,
+} from '../trpc';
 
 // Import services
 import { CFMComplianceService } from '@neonpro/database/src/services/cfm-compliance.service';
-import { WebRTCSessionService } from '@neonpro/database/src/services/webrtc-session.service';
-import { PatientIdentityService } from '@neonpro/database/src/services/patient-identity.service';
 import { MedicalLicenseService } from '@neonpro/database/src/services/medical-license.service';
+import { PatientIdentityService } from '@neonpro/database/src/services/patient-identity.service';
+import { WebRTCSessionService } from '@neonpro/database/src/services/webrtc-session.service';
 
 // Initialize services
 const cfmService = new CFMComplianceService();
@@ -75,14 +81,19 @@ const complianceReportSchema = z.object({
     start: z.date(),
     end: z.date(),
   }).optional(),
-  reportType: z.enum(['session_audit', 'compliance_violations', 'license_status', 'consent_status']),
+  reportType: z.enum([
+    'session_audit',
+    'compliance_violations',
+    'license_status',
+    'consent_status',
+  ]),
 });
 
 export const telemedicineRouter = router({
   /**
    * Session Management Endpoints
    */
-  
+
   // Create a new telemedicine session
   createSession: telemedicineProcedure
     .input(createSessionSchema)
@@ -107,7 +118,7 @@ export const telemedicineRouter = router({
         const licenseVerification = await licenseService.verifyMedicalLicense(
           physician.cfm_number,
           physician.state,
-          input.specialty
+          input.specialty,
         );
 
         if (!licenseVerification.complianceStatus.telemedicineCompliant) {
@@ -149,14 +160,13 @@ export const telemedicineRouter = router({
             restrictions: licenseVerification.telemedicineAuth.restrictions,
           },
         };
-
       } catch (error) {
         console.error('Error creating telemedicine session:', error);
-        
+
         if (error instanceof TRPCError) {
           throw error;
         }
-        
+
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
           message: 'Failed to create telemedicine session',
@@ -174,7 +184,7 @@ export const telemedicineRouter = router({
           input.sessionId,
           ctx.userId!,
           input.participantType,
-          input.deviceInfo
+          input.deviceInfo,
         );
 
         // Log compliance event
@@ -187,7 +197,6 @@ export const telemedicineRouter = router({
         });
 
         return sessionDetails;
-
       } catch (error) {
         console.error('Error joining telemedicine session:', error);
         throw new TRPCError({
@@ -211,7 +220,7 @@ export const telemedicineRouter = router({
           input.sessionId,
           ctx.userId!,
           input.endReason,
-          input.notes
+          input.notes,
         );
 
         // Complete compliance record
@@ -222,7 +231,6 @@ export const telemedicineRouter = router({
         });
 
         return sessionSummary;
-
       } catch (error) {
         console.error('Error ending telemedicine session:', error);
         throw new TRPCError({
@@ -252,7 +260,7 @@ export const telemedicineRouter = router({
   /**
    * Patient Verification Endpoints
    */
-  
+
   // Verify patient identity
   verifyPatientIdentity: patientProcedure
     .input(patientVerificationSchema)
@@ -261,7 +269,7 @@ export const telemedicineRouter = router({
         return await identityService.verifyPatientIdentity(
           input.patientId,
           input.documents,
-          input.enableBiometric
+          input.enableBiometric,
         );
       } catch (error) {
         console.error('Error verifying patient identity:', error);
@@ -308,7 +316,7 @@ export const telemedicineRouter = router({
   /**
    * License Verification Endpoints
    */
-  
+
   // Verify medical license
   verifyMedicalLicense: healthcareProcedure
     .input(licenseVerificationSchema)
@@ -317,7 +325,7 @@ export const telemedicineRouter = router({
         return await licenseService.verifyMedicalLicense(
           input.cfmNumber,
           input.physicianState,
-          input.requestedSpecialty
+          input.requestedSpecialty,
         );
       } catch (error) {
         console.error('Error verifying medical license:', error);
@@ -343,7 +351,7 @@ export const telemedicineRouter = router({
           input.cfmNumber,
           input.physicianState,
           input.consultationState,
-          input.specialty
+          input.specialty,
         );
       } catch (error) {
         console.error('Error checking telemedicine authorization:', error);
@@ -358,7 +366,7 @@ export const telemedicineRouter = router({
   /**
    * Consent Management Endpoints
    */
-  
+
   // Record patient consent
   recordConsent: patientProcedure
     .input(consentSchema)
@@ -374,7 +382,6 @@ export const telemedicineRouter = router({
         });
 
         return consent;
-
       } catch (error) {
         console.error('Error recording patient consent:', error);
         throw new TRPCError({
@@ -389,7 +396,8 @@ export const telemedicineRouter = router({
   getConsentStatus: patientProcedure
     .input(z.object({
       patientId: z.string().uuid(),
-      consentType: z.enum(['telemedicine', 'data_processing', 'recording', 'second_opinion']).optional(),
+      consentType: z.enum(['telemedicine', 'data_processing', 'recording', 'second_opinion'])
+        .optional(),
     }))
     .query(async ({ input }) => {
       try {
@@ -407,7 +415,7 @@ export const telemedicineRouter = router({
   /**
    * Compliance Monitoring Endpoints
    */
-  
+
   // Get compliance report
   getComplianceReport: healthcareProcedure
     .input(complianceReportSchema)
@@ -475,7 +483,7 @@ export const telemedicineRouter = router({
   /**
    * WebRTC Signal Management
    */
-  
+
   // Send WebRTC signal (for peer connection establishment)
   sendSignal: telemedicineProcedure
     .input(z.object({
@@ -492,11 +500,10 @@ export const telemedicineRouter = router({
           input.sessionId,
           ctx.userId!,
           input.targetParticipant,
-          input.signal
+          input.signal,
         );
 
         return { success: true };
-
       } catch (error) {
         console.error('Error sending WebRTC signal:', error);
         throw new TRPCError({
@@ -534,8 +541,8 @@ export const telemedicineRouter = router({
         // Verify recording consent exists
         const consentStatus = await cfmService.getPatientConsentStatus(
           // We'll need to get patientId from session
-          input.sessionId, 
-          'recording'
+          input.sessionId,
+          'recording',
         );
 
         if (!consentStatus.hasValidConsent) {
@@ -548,9 +555,8 @@ export const telemedicineRouter = router({
         return await webrtcService.startRecording(
           input.sessionId,
           input.recordingType,
-          ctx.userId!
+          ctx.userId!,
         );
-
       } catch (error) {
         console.error('Error starting recording:', error);
         throw new TRPCError({

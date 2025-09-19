@@ -1,14 +1,18 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { AIProviderRouterService, RoutingStrategy, ProviderStatus } from '../ai-provider-router-new';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import {
-  AIProvider,
   AIModelCategory,
+  AIProvider,
   HealthcareAIUseCase,
   HealthcareDataClassification,
   LGPDDataCategory,
 } from '@neonpro/shared';
-import { SemanticCacheService } from '../semantic-cache';
+import {
+  AIProviderRouterService,
+  ProviderStatus,
+  RoutingStrategy,
+} from '../ai-provider-router-new';
 import { AuditTrailService } from '../audit-trail';
+import { SemanticCacheService } from '../semantic-cache';
 
 // Mock dependencies
 jest.mock('../semantic-cache');
@@ -35,7 +39,7 @@ describe('AIProviderRouterService', () => {
     routerService = new AIProviderRouterService(
       mockSemanticCache,
       mockAuditService,
-      [] // Empty config to trigger default provider initialization
+      [], // Empty config to trigger default provider initialization
     );
   });
 
@@ -46,7 +50,7 @@ describe('AIProviderRouterService', () => {
   describe('Initialization', () => {
     it('should initialize with default healthcare-compliant providers', () => {
       const availableProviders = routerService.getAvailableProvidersList();
-      
+
       expect(availableProviders).toContain(AIProvider.OPENAI);
       expect(availableProviders).toContain(AIProvider.ANTHROPIC);
       expect(availableProviders).toContain(AIProvider.AZURE);
@@ -55,7 +59,7 @@ describe('AIProviderRouterService', () => {
 
     it('should have all providers in healthy state initially', () => {
       const healthChecks = routerService.getProviderHealth();
-      
+
       expect(Array.isArray(healthChecks)).toBe(true);
       healthChecks.forEach((health: any) => {
         expect(health.status).toBe(ProviderStatus.AVAILABLE);
@@ -147,8 +151,8 @@ describe('AIProviderRouterService', () => {
       expect(response.compliance.audit_logged).toBe(true);
       expect(mockAuditService.logEvent).toHaveBeenCalledWith(
         expect.objectContaining({
-          type: 'emergency_access'
-        })
+          type: 'emergency_access',
+        }),
       );
     });
 
@@ -342,9 +346,9 @@ describe('AIProviderRouterService', () => {
           type: 'data_subject_request',
           metadata: expect.objectContaining({
             patient_id: 'patient_joao',
-            redaction_applied: true
-          })
-        })
+            redaction_applied: true,
+          }),
+        }),
       );
     });
   });
@@ -400,7 +404,7 @@ describe('AIProviderRouterService', () => {
 
     it('should return provider health metrics', () => {
       const health = routerService.getProviderHealth(AIProvider.OPENAI);
-      
+
       expect(health).toBeDefined();
       expect(health).toHaveProperty('status');
       expect(health).toHaveProperty('latency');
@@ -410,7 +414,7 @@ describe('AIProviderRouterService', () => {
 
     it('should return provider performance metrics', () => {
       const metrics = routerService.getProviderMetrics(AIProvider.OPENAI);
-      
+
       expect(metrics).toBeDefined();
       expect(metrics).toHaveProperty('latency');
       expect(metrics).toHaveProperty('cost');
@@ -448,7 +452,7 @@ describe('AIProviderRouterService', () => {
       };
 
       const response = await routerService.routeRequest(maliciousRequest);
-      
+
       // Should process the request but with sanitized content
       expect(response).toBeDefined();
       expect(response.compliance.data_sanitized).toBe(true);

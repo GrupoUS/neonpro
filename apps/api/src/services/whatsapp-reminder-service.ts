@@ -908,7 +908,7 @@ export class WhatsAppReminderService {
     averageProcessingTimePerReminder: number;
   }> {
     const startTime = Date.now();
-    
+
     try {
       // Validate input
       if (!Array.isArray(reminders) || reminders.length === 0) {
@@ -920,7 +920,7 @@ export class WhatsAppReminderService {
 
       // Use existing batch processing logic
       const batchResult = await this.sendBatchReminders(reminders);
-      
+
       const processingTime = Date.now() - startTime;
       const averageProcessingTimePerReminder = processingTime / reminders.length;
 
@@ -962,9 +962,9 @@ export class WhatsAppReminderService {
       };
     } catch (error) {
       const processingTime = Date.now() - startTime;
-      
+
       console.error('Bulk reminder processing failed:', error);
-      
+
       // Log error for monitoring
       try {
         await this.supabase

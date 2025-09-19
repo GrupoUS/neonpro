@@ -485,8 +485,8 @@ export class NoShowPredictionService {
     }
 
     return interventions.sort((a, b) => {
-      const priorityOrder = { high: 3, medium: 2, low: 1 };
-      return priorityOrder[b.priority] - priorityOrder[a.priority];
+      const priorityOrder: Record<string, number> = { high: 3, medium: 2, low: 1 };
+      return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
     });
   }
 
@@ -682,7 +682,7 @@ Responda APENAS em formato JSON:
 
     let weightedScore = 0;
     for (const [factor, value] of Object.entries(factors)) {
-      const weight = weights[factor as BrazilianBehaviorFactor] || 0.01;
+      const weight = weights[factor as keyof typeof weights] || 0.01;
       weightedScore += value * weight;
     }
 
@@ -902,7 +902,36 @@ Responda APENAS em formato JSON:
       [BRAZILIAN_BEHAVIOR_FACTORS.APPOINTMENT_TYPE]: impact > 0.5
         ? 'Tipo de consulta tem baixo risco de falta'
         : 'Tipo de consulta apresenta maior risco de falta',
-      // Add more explanations for other factors...
+      [BRAZILIAN_BEHAVIOR_FACTORS.RURAL_ACCESS]: impact > 0.5
+        ? 'Acesso rural limitado pode impactar comparecimento'
+        : 'Acesso rural adequado favorece comparecimento',
+      [BRAZILIAN_BEHAVIOR_FACTORS.EDUCATION_LEVEL]: impact > 0.5
+        ? 'Nível educacional favorece entendimento da importância da consulta'
+        : 'Limitações educacionais podem afetar compreensão',
+      [BRAZILIAN_BEHAVIOR_FACTORS.PRIVATE_INSURANCE]: impact > 0.5
+        ? 'Plano de saúde privado facilita acesso'
+        : 'Dependência do sistema público pode gerar dificuldades',
+      [BRAZILIAN_BEHAVIOR_FACTORS.PRIOR_AUTHORIZATION]: impact > 0.5
+        ? 'Autorização prévia pode gerar demora no acesso'
+        : 'Sem necessidade de autorização prévia',
+      [BRAZILIAN_BEHAVIOR_FACTORS.HEALTH_LITERACY]: impact > 0.5
+        ? 'Boa compreensão sobre saúde favorece comparecimento'
+        : 'Limitações no entendimento sobre saúde podem afetar',
+      [BRAZILIAN_BEHAVIOR_FACTORS.HOLIDAY_PERIODS]: impact > 0.5
+        ? 'Período de feriados pode aumentar faltas'
+        : 'Fora do período de feriados',
+      [BRAZILIAN_BEHAVIOR_FACTORS.SCHOOL_CALENDAR]: impact > 0.5
+        ? 'Período escolar pode impactar disponibilidade familiar'
+        : 'Período de férias escolares favorece flexibilidade',
+      [BRAZILIAN_BEHAVIOR_FACTORS.PROFESSIONAL_REPUTATION]: impact > 0.5
+        ? 'Boa reputação profissional aumenta confiança e comparecimento'
+        : 'Reputação profissional pode influenciar comparecimento',
+      [BRAZILIAN_BEHAVIOR_FACTORS.CLINIC_LOCATION]: impact > 0.5
+        ? 'Localização da clínica favorece acesso'
+        : 'Localização da clínica pode dificultar acesso',
+      [BRAZILIAN_BEHAVIOR_FACTORS.WAITING_TIME_HISTORY]: impact > 0.5
+        ? 'Histórico de pontualidade favorece comparecimento'
+        : 'Histórico de espera pode desestimular comparecimento',
     };
 
     return explanations[factor] || 'Fator analisado conforme padrões comportamentais';

@@ -26,6 +26,9 @@
     "coverage": "vitest --run --coverage",
     "test:coverage": "vitest --run --coverage",
     "test:ui": "vitest --ui",
+    "test:accessibility": "vitest --run tests/accessibility/ --reporter=verbose",
+    "test:accessibility:watch": "vitest tests/accessibility/ --reporter=verbose",
+    "test:accessibility:full": "vitest --run tests/accessibility/automated-test-runner.ts --reporter=json",
     "e2e": "playwright test",
     "e2e:headed": "playwright test --headed",
     "e2e:debug": "playwright test --debug",
@@ -33,7 +36,11 @@
     "e2e:report": "playwright show-report",
     "test:all": "./comprehensive-test-verification.sh",
     "routes:generate": "tsr generate",
-    "routes:watch": "tsr watch"
+    "routes:watch": "tsr watch",
+    "analyze": "ANALYZE=true vite build",
+    "analyze:dev": "ANALYZE=true vite build --mode development",
+    "bundle:stats": "ANALYZE=true vite build && echo 'Bundle analysis complete. Check dist/bundle-analysis.html'",
+    "bundle:size-check": "ANALYZE=true vite build --config vite-bundle-analyzer.config.js"
   },
   "prisma": {
     "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
@@ -154,6 +161,7 @@
     "jsdom": "^26.1.0",
     "postcss": "^8.4.32",
     "prisma": "^5.22.0",
+    "rollup-plugin-visualizer": "^6.0.3",
     "tailwindcss": "^3.3.0",
     "tailwindcss-animate": "^1.0.7",
     "terser": "^5.44.0",

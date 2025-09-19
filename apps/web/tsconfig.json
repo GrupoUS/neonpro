@@ -46,6 +46,9 @@
       "@neonpro/types": [
         "../../packages/types/src"
       ],
+      "@neonpro/types/*": [
+        "../../packages/types/src/*"
+      ],
       "@neonpro/ui": [
         "../../packages/ui/src"
       ],

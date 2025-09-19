@@ -5,7 +5,7 @@
  * with WCAG 2.1 AA+ compliance validation and Brazilian healthcare standards.
  */
 
-import axe from 'axe-core';
+import * as axe from 'axe-core';
 import { type AxeResults, type Rule, type Result } from 'axe-core';
 import * as React from 'react';
 
@@ -66,7 +66,10 @@ const HEALTHCARE_IMPACT_LEVELS = {
  */
 export function initializeAxeCore(): void {
   axe.configure({
-    rules: HEALTHCARE_RULES,
+    rules: Object.entries(HEALTHCARE_RULES).map(([id, config]) => ({
+      id,
+      ...config
+    })),
     // Add healthcare-specific checks
     checks: [
       {

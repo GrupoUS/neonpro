@@ -9,9 +9,17 @@ import patientsRouter from './routes/patients';
 
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
-import { errorTracker, initializeErrorTracking } from './lib/error-tracking';
+import { 
+  initializeErrorTracking, 
+  shutdownErrorTracking,
+  getErrorTrackingHealth 
+} from './services/error-tracking-init';
+import { 
+  errorTracker,
+  createHealthcareError 
+} from './services/error-tracking-bridge';
 import { initializeLogger, logger } from './lib/logger';
-import { initializeSentry } from './lib/sentry';
+import { initializeSentry, sentryMiddleware } from './lib/sentry';
 // import { sdk as telemetrySDK, healthcareTelemetryMiddleware } from '@neonpro/shared/src/telemetry';
 import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator';
 import {
@@ -25,22 +33,9 @@ import { rateLimitMiddleware } from './middleware/rate-limiting';
 
 // Initialize monitoring and telemetry
 Promise.all([
-  initializeErrorTracking({
-    enabled: true,
-    environment: process.env.NODE_ENV as any || 'development',
-    sampleRate: 1.0,
-    maxBreadcrumbs: 100,
-    ignoreErrors: [
-      'AbortError',
-      'NetworkError',
-      'TimeoutError',
-    ],
-    ignoreUrls: [
-      '/health',
-      '/v1/health',
-      '/v1/info',
-    ],
-  }),
+  // Initialize Sentry first for early error capture
+  Promise.resolve(initializeSentry()),
+  initializeErrorTracking(),
   initializeLogger({
     level: process.env.NODE_ENV === 'production' ? 1 : 0, // INFO in production, DEBUG in development
     environment: process.env.NODE_ENV as any || 'development',
@@ -49,14 +44,20 @@ Promise.all([
     enableStructured: true,
     sanitizeContext: true,
   }),
-  initializeSentry(),
   // Initialize OpenTelemetry if available
   // telemetrySDK ? telemetrySDK.start() : Promise.resolve(),
 ]).then(() => {
-  logger.info('Application monitoring and telemetry initialized successfully');
+  logger.info('Application monitoring and telemetry initialized successfully', {
+    sentry: true,
+    errorTracking: true,
+    structuredLogging: true,
+  });
 }).catch(error => {
   console.error('Failed to initialize monitoring:', error);
 });
+
+// Global error tracker instance is now accessed via the bridge
+// const errorTracker = already imported from bridge
 
 // Create healthcare-compliant OpenAPI app
 const app = createHealthcareOpenAPIApp();
@@ -70,21 +71,21 @@ app.use(
     origin: (origin, callback) => {
       // Allow same-origin requests (no origin header)
       if (!origin) return callback(null, true);
-      
+
       // Allowed origins based on environment
       const allowedOrigins = process.env.NODE_ENV === 'production'
         ? [
-            'https://neonpro.com.br',
-            'https://www.neonpro.com.br',
-            'https://neonpro.vercel.app',
-          ]
+          'https://neonpro.com.br',
+          'https://www.neonpro.com.br',
+          'https://neonpro.vercel.app',
+        ]
         : [
-            'http://localhost:3000',
-            'http://localhost:5173',
-            'http://127.0.0.1:5173',
-            'https://neonpro.vercel.app',
-          ];
-      
+          'http://localhost:3000',
+          'http://localhost:5173',
+          'http://127.0.0.1:5173',
+          'https://neonpro.vercel.app',
+        ];
+
       // Check if origin is allowed
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
@@ -99,6 +100,9 @@ app.use(
     exposeHeaders: ['X-Request-ID'],
   }),
 );
+
+// Sentry middleware for error tracking and performance monitoring
+app.use('*', sentryMiddleware());
 
 // Global error handler with enhanced error tracking
 app.use('*', errorHandler);
@@ -237,7 +241,7 @@ app.get('/v1/health', c => {
       region: process.env.VERCEL_REGION,
     },
     monitoring: {
-      errorTracking: errorTracker.getStats(),
+      errorTracking: getErrorTrackingHealth(),
       logger: logger.getStats(),
     },
   };
@@ -310,7 +314,7 @@ app.get('/v1/security/status', /* ...getProtectedRoutesMiddleware(['admin']), */
       auditLogging: 'enabled',
     },
     monitoring: {
-      errorTracking: errorTracker.getStats(),
+      errorTracking: getErrorTrackingHealth(),
       logger: logger.getStats(),
     },
     timestamp: new Date().toISOString(),

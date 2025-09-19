@@ -118,7 +118,7 @@ app.get('/:id', requireAuth, dataProtection.clientView, async c => {
     }
 
     // Log data access for audit trail
-    const auditService = new AuditService();
+    const auditService = new ComprehensiveAuditService();
     const auditPromise = auditService.logActivity({
       userId,
       action: 'patient_data_access',

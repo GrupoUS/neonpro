@@ -34,7 +34,7 @@ export * from './temp-patient-document-service';
 // Infrastructure Services
 export * from './connection-pool-manager';
 export * from './database-performance';
-export * from './error-tracking';
+export * from './error-tracking-bridge';
 export * from './function-warmer';
 export * from './index-optimizer';
 export * from './metrics';
