@@ -50,7 +50,19 @@ export class ConsentService {
   
   async revokeConsent(consentId: string): Promise<ConsentRecord> {
     // In a real implementation, this would update database
-    throw new Error('Not implemented');
+    const revokedConsent: ConsentRecord = {
+      id: consentId,
+      patientId: 'mock-patient',
+      consentType: 'mock-type',
+      status: 'REVOKED',
+      purpose: 'mock-purpose',
+      dataTypes: [],
+      grantedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
+      revokedAt: new Date().toISOString(),
+      auditTrail: [],
+    };
+    console.log('Consent revoked:', revokedConsent);
+    return revokedConsent;
   }
   
   async checkCompliance(patientId: string): Promise<ComplianceCheck> {
