@@ -13,6 +13,7 @@ const QUALITY_GATE_KEY_MAP: Record<AgentType, keyof typeof QUALITY_GATES> = {
   'code-reviewer': 'CODE_QUALITY',
   'security-auditor': 'SECURITY',
   'tdd-orchestrator': 'TDD',
+  'test-agent': 'TDD',
 };
 
 export interface CoordinationConfig {
@@ -238,9 +239,9 @@ export class AgentCoordinator {
     metrics: Record<string, number>,
   ): string[] {
     const recommendations: string[] = [];
-    const agentInfo = AGENT_REGISTRY[agent];
+    const agentInfo = AGENT_REGISTRY[agent as keyof typeof AGENT_REGISTRY];
 
-    agentInfo.specialties.forEach(specialty => {
+    agentInfo.specialties.forEach((specialty: string) => {
       if (metrics[specialty] && metrics[specialty] < 80) {
         recommendations.push(`Improve ${specialty} metrics for ${agent}`);
       }

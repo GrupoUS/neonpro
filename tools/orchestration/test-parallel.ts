@@ -39,7 +39,7 @@ async function testParallelExecution() {
     const agents = [
       "code-reviewer",
       "architect-review",
-      "security-auditor",
+      "test-auditor",
       "test",
     ];
 
@@ -82,9 +82,9 @@ async function testParallelExecution() {
     // Test 4: Quality Control Command Parsing
     console.log("4️⃣ Testing Quality Control Command Parsing...");
     const commands = [
-      "analyze --type security --depth L5 --parallel --agents code-reviewer,security-auditor",
+      "analyze --type security --depth L5 --parallel --agents code-reviewer,test-auditor",
       "test --type unit --parallel --agents test,code-reviewer",
-      "review --depth L6 --parallel --agents architect-review,security-auditor --healthcare",
+      "review --depth L6 --parallel --agents architect-review,test-auditor --healthcare",
     ];
 
     for (const command of commands) {
@@ -126,7 +126,7 @@ async function testParallelExecution() {
     const options = {
       workflow: "parallel" as const,
       coordination: "parallel" as const,
-      agents: ["code-reviewer", "architect-review", "security-auditor"],
+      agents: ["code-reviewer", "architect-review", "test-auditor"],
       healthcare: true,
     };
 

@@ -218,7 +218,7 @@ export class BulkOperationsService {
       // Log undo operation
       logger.info(
         'Bulk operation undone',
-        { undoToken, requesterUserId },
+        { undoToken, requesterUserId }
       );
 
       return true;
@@ -330,7 +330,7 @@ export class BulkOperationsService {
           await new Promise(resolve => setTimeout(resolve, delay));
           logger.warn(
             'Bulk operation attempt failed, retrying',
-            { attempt, delay, error: error.message },
+            { attempt, delay, error: error.message }
           );
         }
       }
@@ -392,7 +392,7 @@ export class BulkOperationsService {
       // In a real implementation, this would be stored in the database
       logger.info(
         'Bulk operation processed entities',
-        { processed: result.processed, failed: result.failed },
+        { processed: result.processed, failed: result.failed }
       );
     }
 

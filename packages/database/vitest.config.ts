@@ -10,6 +10,10 @@ export default defineConfig({
     testTimeout: 10000, // 10 seconds for unit tests
     bail: 1,
     reporters: ["verbose"],
+    env: {
+      NODE_ENV: "test",
+    },
+    setupFiles: ["./src/test-setup.ts"],
   },
   resolve: {
     alias: {

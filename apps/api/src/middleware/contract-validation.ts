@@ -1,6 +1,6 @@
 import { APIContract, HealthcareValidationError } from '@neonpro/shared/models/api-contract';
 import { Context, Next } from 'hono';
-import type { OpenAPIV3_1 } from '../../types/openapi';
+import type { OpenAPIV3_1 as OpenAPISpec } from '../../types/openapi';
 // Removed unused import: import * as v from 'valibot';
 import {
   createHealthcareError,
@@ -14,7 +14,7 @@ import { structuredLogger } from '../services/structured-logging';
  */
 export interface ContractValidationConfig {
   /** OpenAPI specification for contract validation */
-  openApiSpec: OpenAPIV3_1.Document;
+  openApiSpec: OpenAPISpec.Document;
   /** API contract for healthcare-specific validation */
   apiContract: APIContract;
   /** Enable detailed validation logging */
@@ -504,7 +504,7 @@ function generateCacheKey(method: string, path: string, data: any): string {
  */
 async function validateOpenAPIContract(
   data: any,
-  openApiSpec: OpenAPIV3_1.Document,
+  openApiSpec: OpenAPISpec.Document,
   method: string,
   path: string,
 ): Promise<HealthcareValidationError[]> {

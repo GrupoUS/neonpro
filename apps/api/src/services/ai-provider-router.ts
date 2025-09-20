@@ -15,9 +15,6 @@
  */
 
 import {
-  AIModelCategory,
-  AIModelConfigOpt,
-  AIPerformanceMetricsOpt,
   AIProviderOpt,
   HealthcareAIOptimizationUtils,
   HealthcareAIUseCase,

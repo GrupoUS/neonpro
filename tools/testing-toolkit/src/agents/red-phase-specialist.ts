@@ -6,7 +6,7 @@
  */
 
 import { AgentCoordinator } from './coordinator';
-import type { AgentMetrics, AgentType } from './types';
+import type { AgentType } from './types';
 
 export interface REDPhaseConfig {
   feature: string;
@@ -52,7 +52,7 @@ export class REDPhaseSpecialist {
     // Configure agent coordination for RED phase
     const coordinationConfig = {
       pattern: 'hierarchical' as const,
-      agents: ['security-auditor', 'architect-review', 'tdd-orchestrator'] as AgentType[],
+      agents: ['security-auditor', 'architect-review', 'tdd-orchestrator', 'test-agent'] as AgentType[],
       qualityGates: ['red-phase-compliance', 'error-detection', 'test-coverage'],
       timeout: 300000,
     };
@@ -70,7 +70,7 @@ export class REDPhaseSpecialist {
 
     try {
       // Step 1: Coordinate agents for RED phase
-      const agentResults = await this.agentCoordinator.execute();
+      await this.agentCoordinator.execute();
 
       // Step 2: Execute test definition and validation
       const testValidation = await this.validateTestImplementation();
@@ -92,7 +92,7 @@ export class REDPhaseSpecialist {
         testCoverage: testValidation.coverage,
         errorDetectionRate: errorAnalysis.detectionRate,
         qualityValidation,
-        healthcareCompliance,
+        ...(healthcareCompliance && { healthcareCompliance }),
         recommendations: this.generateRecommendations(
           testValidation,
           errorAnalysis,
@@ -173,7 +173,7 @@ export class REDPhaseSpecialist {
     const numErrors = Math.floor(Math.random() * 3) + 1;
     for (let i = 0; i < numErrors; i++) {
       const randomError = errorPatterns[Math.floor(Math.random() * errorPatterns.length)];
-      if (!foundErrors.includes(randomError)) {
+      if (randomError && !foundErrors.includes(randomError)) {
         foundErrors.push(randomError);
       }
     }
@@ -290,7 +290,7 @@ export class REDPhaseSpecialist {
     // Error analysis recommendations
     if (errorAnalysis.foundErrors.length > 0) {
       recommendations.push('Ensure the following error scenarios are properly handled:');
-      recommendations.push(...errorAnalysis.foundErrors.map(err => `- ${err}`));
+      recommendations.push(...errorAnalysis.foundErrors.map((err: string) => `- ${err}`));
     }
 
     return recommendations;

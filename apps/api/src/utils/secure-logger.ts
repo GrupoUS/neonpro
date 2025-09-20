@@ -4,13 +4,10 @@
  * Features:
  * - Automatic sensitive data masking
  * - LGPD compliance built-in
- * - Structured logging with winston
+ * - Edge runtime compatible
  * - Environment-based log levels
  * - Audit trail support
  */
-
-import winston from 'winston';
-import { format } from 'winston';
 
 // LGPD Sensitive Data Patterns
 const SENSITIVE_PATTERNS = {
@@ -60,10 +57,11 @@ interface LogContext {
   userAgent?: string;
   timestamp?: string;
   correlationId?: string;
+  auditType?: string;
+  compliance?: string;
 }
 
 class SecureLogger {
-  private logger: winston.Logger;
   private config: Required<LoggerConfig>;
 
   constructor(config: LoggerConfig = {}) {
@@ -74,54 +72,37 @@ class SecureLogger {
       auditTrail: config.auditTrail ?? true,
       service: config.service || 'neonpro-api',
     };
-
-    this.logger = winston.createLogger({
-      level: this.config.level,
-      format: format.combine(
-        format.timestamp(),
-        format.errors({ stack: true }),
-        format.json(),
-        format.printf(this.formatLog.bind(this)),
-      ),
-      defaultMeta: {
-        service: this.config.service,
-        environment: process.env.NODE_ENV || 'development',
-      },
-      transports: [
-        new winston.transports.Console({
-          format: format.combine(
-            format.colorize(),
-            format.simple(),
-          ),
-        }),
-        ...(process.env.NODE_ENV === 'production'
-          ? [
-            new winston.transports.File({
-              filename: 'logs/error.log',
-              level: 'error',
-            }),
-            new winston.transports.File({
-              filename: 'logs/combined.log',
-            }),
-          ]
-          : []),
-      ],
-    });
   }
 
-  private formatLog(info: any): string {
-    const { timestamp, level, message, service, environment, ...meta } = info;
-
+  private formatLog(level: string, message: string, context?: LogContext): void {
+    const timestamp = new Date().toISOString();
     const logEntry = {
       timestamp,
       level,
-      service,
-      environment,
+      service: this.config.service,
+      environment: process.env.NODE_ENV || 'development',
       message: this.config.maskSensitiveData ? this.maskSensitiveData(message) : message,
-      ...this.maskObjectData(meta),
+      ...this.maskObjectData(context || {}),
     };
 
-    return JSON.stringify(logEntry);
+    const formattedMessage = JSON.stringify(logEntry);
+
+    switch (level) {
+      case 'debug':
+        console.debug(formattedMessage);
+        break;
+      case 'info':
+        console.info(formattedMessage);
+        break;
+      case 'warn':
+        console.warn(formattedMessage);
+        break;
+      case 'error':
+        console.error(formattedMessage);
+        break;
+      default:
+        console.log(formattedMessage);
+    }
   }
 
   private maskSensitiveData(text: string): string {
@@ -185,15 +166,21 @@ class SecureLogger {
 
   // Public logging methods
   debug(message: string, context?: LogContext): void {
-    this.logger.debug(message, this.enrichContext(context));
+    if (this.shouldLog('debug')) {
+      this.formatLog('debug', message, this.enrichContext(context));
+    }
   }
 
   info(message: string, context?: LogContext): void {
-    this.logger.info(message, this.enrichContext(context));
+    if (this.shouldLog('info')) {
+      this.formatLog('info', message, this.enrichContext(context));
+    }
   }
 
   warn(message: string, context?: LogContext): void {
-    this.logger.warn(message, this.enrichContext(context));
+    if (this.shouldLog('warn')) {
+      this.formatLog('warn', message, this.enrichContext(context));
+    }
   }
 
   error(message: string, error?: Error, context?: LogContext): void {
@@ -209,7 +196,14 @@ class SecureLogger {
       };
     }
 
-    this.logger.error(message, enrichedContext);
+    this.formatLog('error', message, enrichedContext);
+  }
+
+  private shouldLog(level: string): boolean {
+    const levels = ['debug', 'info', 'warn', 'error'];
+    const currentLevelIndex = levels.indexOf(this.config.level);
+    const messageLevelIndex = levels.indexOf(level);
+    return messageLevelIndex >= currentLevelIndex;
   }
 
   // LGPD Compliance Methods
@@ -224,7 +218,7 @@ class SecureLogger {
   }): void {
     if (!this.config.auditTrail) return;
 
-    this.logger.info('LGPD_DATA_ACCESS_AUDIT', {
+    this.formatLog('info', 'LGPD_DATA_ACCESS_AUDIT', {
       ...context,
       auditType: 'data_access',
       timestamp: new Date().toISOString(),
@@ -242,7 +236,7 @@ class SecureLogger {
   }): void {
     if (!this.config.auditTrail) return;
 
-    this.logger.info('LGPD_DATA_MODIFICATION_AUDIT', {
+    this.formatLog('info', 'LGPD_DATA_MODIFICATION_AUDIT', {
       ...context,
       auditType: 'data_modification',
       timestamp: new Date().toISOString(),
@@ -259,7 +253,7 @@ class SecureLogger {
   }): void {
     if (!this.config.auditTrail) return;
 
-    this.logger.info('LGPD_CONSENT_CHANGE_AUDIT', {
+    this.formatLog('info', 'LGPD_CONSENT_CHANGE_AUDIT', {
       ...context,
       auditType: 'consent_change',
       timestamp: new Date().toISOString(),

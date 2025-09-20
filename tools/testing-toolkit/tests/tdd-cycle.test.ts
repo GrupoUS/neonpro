@@ -102,7 +102,7 @@ describe('TDDCycle', () => {
     it('should handle different agent configurations', async () => {
       const configWithAgents: TDDCycleConfig = {
         feature: 'Multi-agent Feature',
-        agents: ['architect-review', 'code-reviewer', 'security-auditor'],
+        agents: ['architect-review', 'code-reviewer', 'test-auditor'],
       };
 
       const cycle = new TDDCycle(configWithAgents);
@@ -116,7 +116,7 @@ describe('TDDCycle', () => {
         'Primary Agent: tdd-orchestrator',
       );
       expect(mockConsoleLog).toHaveBeenCalledWith(
-        'Support Agents: architect-review, security-auditor',
+        'Support Agents: architect-review, test-auditor',
       );
     });
   });
@@ -345,7 +345,7 @@ describe('TDDCycle', () => {
         agents: [
           'architect-review',
           'code-reviewer',
-          'security-auditor',
+          'test-auditor',
           'tdd-orchestrator',
         ],
         compliance: ['LGPD', 'ANVISA', 'CFM'],

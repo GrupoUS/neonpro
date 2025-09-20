@@ -33,24 +33,12 @@ import {
   PatientCreateSchema,
 } from '@neonpro/types';
 
-// Import enhanced schemas from new services
+// Import only used schemas
 import {
   ConsentWithdrawalRecordSchema,
   DataProcessingRecordSchema,
   NGS2AuthContextSchema,
-  NoShowPredictionSchema,
-  TelemedicineSessionSchema,
 } from '../../services/enhanced-lgpd-lifecycle';
-
-import {
-  NoShowPredictionSchema as NSPredictionSchema,
-  PatientBehaviorProfileSchema,
-} from '../../services/no-show-prediction';
-
-import {
-  CFMProfessionalValidationSchema,
-  TelemedicineSessionSchema as TMSessionSchema,
-} from '../../services/telemedicine';
 
 // Service instances (would be injected in real app)
 let lgpdService: EnhancedLGPDLifecycleService;

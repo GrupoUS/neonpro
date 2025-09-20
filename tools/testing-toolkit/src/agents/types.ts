@@ -9,7 +9,8 @@ export type AgentType =
   | 'code-reviewer'
   | 'security-auditor'
   | 'tdd-orchestrator'
-  | 'test-agent';
+  | 'test-agent'
+  | 'test-auditor';
 
 export type CoordinationPattern = 'sequential' | 'parallel' | 'hierarchical';
 

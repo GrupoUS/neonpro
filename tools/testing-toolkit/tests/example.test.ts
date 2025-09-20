@@ -16,7 +16,7 @@ describe('NeonPro Testing Toolkit Examples', () => {
     beforeEach(() => {
       cycle = new TDDCycle({
         feature: 'patient-authentication',
-        agents: ['architect-review', 'security-auditor', 'code-reviewer'],
+        agents: ['architect-review', 'test-auditor', 'code-reviewer'],
         compliance: ['LGPD'],
         coverageThreshold: 90,
       });
@@ -71,7 +71,7 @@ describe('NeonPro Testing Toolkit Examples', () => {
       // Resolvido: Problema de importação do AgentCoordinator
       const coordinator = new AgentCoordinator({
         pattern: 'parallel',
-        agents: ['architect-review', 'code-reviewer', 'security-auditor'],
+        agents: ['architect-review', 'code-reviewer', 'test-auditor'],
         qualityGates: [
           'architecture-compliance',
           'code-quality',
@@ -189,7 +189,7 @@ describe('TDD Suite Creator Example', () => {
   createTDDSuite(
     {
       feature: 'user-registration',
-      agents: ['security-auditor', 'code-reviewer'],
+      agents: ['test-auditor', 'code-reviewer'],
       compliance: ['LGPD'],
     },
     {

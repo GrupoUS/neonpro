@@ -5,7 +5,6 @@
  * with Brazilian compliance and LGPD consent validation.
  */
 
-import { logger } from '@/utils/secure-logger';
 import { NextRequest } from 'next/server';
 import type { Database } from '../../../../../packages/database/src/types/supabase';
 import { createAdminClient } from '../../../../lib/supabase/client';
@@ -14,6 +13,7 @@ import {
   type AppointmentReminder,
   whatsappReminderService,
 } from '../../../../services/whatsapp-reminder-service';
+import { logger } from '@/utils/secure-logger';
 
 // Configure for edge runtime
 export const runtime = 'edge';

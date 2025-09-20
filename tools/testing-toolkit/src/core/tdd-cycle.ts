@@ -195,7 +195,7 @@ export function createTDDSuite(
     refactorPhase: () => void;
   },
   options?: { forceMock?: boolean },
-) {
+): { name: string; description: string } | void {
   // If forceMock is true, return a mock object for testing
   if (options?.forceMock) {
     return {

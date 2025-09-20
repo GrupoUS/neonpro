@@ -206,59 +206,62 @@ export const HealthcareAuditEvents = {
     action: string;
     result: 'success' | 'failure' | 'blocked';
     resource: string;
-  }) => createAuditTrail({
-    eventType: 'patient_data_access',
-    severity: data.result === 'blocked' ? AuditSeverity.WARNING : AuditSeverity.INFO,
-    category: 'healthcare',
-    source: 'patient-service',
-    userId: data.userId,
-    action: data.action,
-    result: data.result,
-    message: `Patient data ${data.action} ${data.result === 'success' ? 'successful' : 'failed'}`,
-    resource: data.resource,
-    details: { patientId: data.patientId },
-    compliance: { lgpd: true, anvisa: true, cfm: true },
-  }),
+  }) =>
+    createAuditTrail({
+      eventType: 'patient_data_access',
+      severity: data.result === 'blocked' ? AuditSeverity.WARNING : AuditSeverity.INFO,
+      category: 'healthcare',
+      source: 'patient-service',
+      userId: data.userId,
+      action: data.action,
+      result: data.result,
+      message: `Patient data ${data.action} ${data.result === 'success' ? 'successful' : 'failed'}`,
+      resource: data.resource,
+      details: { patientId: data.patientId },
+      compliance: { lgpd: true, anvisa: true, cfm: true },
+    }),
 
   medicalRecordUpdate: (data: {
     userId: string;
     patientId: string;
     recordType: string;
     changes: string[];
-  }) => createAuditTrail({
-    eventType: 'medical_record_update',
-    severity: AuditSeverity.INFO,
-    category: 'healthcare',
-    source: 'medical-records-service',
-    userId: data.userId,
-    action: 'update',
-    result: 'success',
-    message: 'Medical record updated',
-    resource: `/api/patients/${data.patientId}/records`,
-    details: {
-      patientId: data.patientId,
-      recordType: data.recordType,
-      changes: data.changes,
-    },
-    compliance: { lgpd: true, anvisa: true, cfm: true },
-  }),
+  }) =>
+    createAuditTrail({
+      eventType: 'medical_record_update',
+      severity: AuditSeverity.INFO,
+      category: 'healthcare',
+      source: 'medical-records-service',
+      userId: data.userId,
+      action: 'update',
+      result: 'success',
+      message: 'Medical record updated',
+      resource: `/api/patients/${data.patientId}/records`,
+      details: {
+        patientId: data.patientId,
+        recordType: data.recordType,
+        changes: data.changes,
+      },
+      compliance: { lgpd: true, anvisa: true, cfm: true },
+    }),
 
   unauthorizedAccessAttempt: (data: {
     ipAddress: string;
     resource: string;
     userAgent?: string;
-  }) => logSecurityEvent({
-    eventType: 'unauthorized_access_attempt',
-    severity: AuditSeverity.CRITICAL,
-    category: 'security',
-    source: 'security-service',
-    ipAddress: data.ipAddress,
-    userAgent: data.userAgent,
-    action: 'access',
-    result: 'blocked',
-    message: 'Unauthorized access attempt blocked',
-    resource: data.resource,
-    details: { riskScore: 95 },
-    compliance: { lgpd: true, anvisa: true, cfm: true },
-  }),
+  }) =>
+    logSecurityEvent({
+      eventType: 'unauthorized_access_attempt',
+      severity: AuditSeverity.CRITICAL,
+      category: 'security',
+      source: 'security-service',
+      ipAddress: data.ipAddress,
+      userAgent: data.userAgent,
+      action: 'access',
+      result: 'blocked',
+      message: 'Unauthorized access attempt blocked',
+      resource: data.resource,
+      details: { riskScore: 95 },
+      compliance: { lgpd: true, anvisa: true, cfm: true },
+    }),
 };

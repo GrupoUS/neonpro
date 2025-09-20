@@ -5,9 +5,18 @@ import { afterAll, afterEach, beforeAll } from 'vitest';
 // Mock handlers for financial API endpoints
 export const handlers = [
   // AI CRUD Intent API
-  http.post('/api/v1/ai/crud/intent', async ({ request }) => {
-    const body = await request.json();
-    
+  http.post('*/api/v1/ai/crud/intent', async ({ request }) => {
+    let body;
+    try {
+      body = await request.json();
+    } catch (error) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Invalid JSON',
+        code: 'JSON_PARSE_ERROR',
+      }, { status: 400 });
+    }
+
     // Validate authentication
     const authHeader = request.headers.get('authorization');
     if (!authHeader || authHeader !== 'Bearer test-token') {
@@ -18,16 +27,98 @@ export const handlers = [
       }, { status: 401 });
     }
 
+    // Validate request structure
+    if (!body.entity || !body.operation || !body.context) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Missing required fields',
+        code: 'VALIDATION_ERROR',
+      }, { status: 400 });
+    }
+
+    // Validate entity
+    const validEntities = ['patients', 'appointments', 'treatments', 'prescriptions'];
+    if (!validEntities.includes(body.entity)) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Invalid entity',
+        code: 'INVALID_ENTITY',
+      }, { status: 400 });
+    }
+
+    // Validate operation
+    const validOperations = ['create', 'read', 'update', 'delete'];
+    if (!validOperations.includes(body.operation)) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Invalid operation',
+        code: 'INVALID_OPERATION',
+      }, { status: 400 });
+    }
+
+    // Validate authentication context
+    if (!body.context.userId) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Authentication required',
+        code: 'AUTH_ERROR',
+      }, { status: 401 });
+    }
+
+    if (!body.context.sessionId) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Session required',
+        code: 'SESSION_ERROR',
+      }, { status: 401 });
+    }
+
+    // Validate data schema for operations that include data
+    if (body.data && body.operation === 'create') {
+      // Check for basic data structure issues that would indicate invalid schema
+      if (typeof body.data !== 'object' || body.data === null) {
+        return HttpResponse.json({
+          success: false,
+          error: 'Invalid data schema',
+          code: 'SCHEMA_ERROR',
+        }, { status: 400 });
+      }
+      
+      // Check for required fields based on entity
+      if (body.entity === 'patients') {
+        if (!body.data.name || typeof body.data.name !== 'string') {
+          return HttpResponse.json({
+            success: false,
+            error: 'Invalid data schema',
+            code: 'SCHEMA_ERROR',
+          }, { status: 400 });
+        }
+      }
+    }
+
     // Mock successful intent creation
     return HttpResponse.json({
       success: true,
-      data: {
-        intentId: 'intent-123',
-        token: 'secure-token-456',
-        entity: body.entity,
-        operation: body.operation,
-        status: 'created',
-        expiresAt: new Date(Date.now() + 300000).toISOString(), // 5 minutes
+      intentId: 'intent-123',
+      token: 'secure-token-456',
+      expiresAt: new Date(Date.now() + 300000).toISOString(), // 5 minutes
+      validation: {
+        entityValid: true,
+        operationValid: true,
+        dataSchema: 'valid',
+        lgpdCompliant: true,
+        consentRequired: body.operation === 'delete' || body.entity === 'patients',
+        riskLevel: body.operation === 'delete' ? 'HIGH' : 'MEDIUM',
+      },
+      security: {
+        riskLevel: body.operation === 'delete' ? 'HIGH' : 'MEDIUM',
+      },
+      nextStep: 'confirm',
+      auditTrail: {
+        requestId: 'req-123',
+        timestamp: new Date().toISOString(),
+        userId: body.context.userId,
+        sessionId: body.context.sessionId,
       },
       meta: {
         requestId: 'req-123',
@@ -38,9 +129,9 @@ export const handlers = [
   }),
 
   // AI CRUD Confirm API
-  http.post('/api/v1/ai/crud/confirm', async ({ request }) => {
+  http.post('*/api/v1/ai/crud/confirm', async ({ request }) => {
     const body = await request.json();
-    
+
     // Validate authentication
     const authHeader = request.headers.get('authorization');
     if (!authHeader || authHeader !== 'Bearer test-token') {
@@ -77,9 +168,9 @@ export const handlers = [
   }),
 
   // AI CRUD Execute API
-  http.post('/api/v1/ai/crud/execute', async ({ request }) => {
+  http.post('*/api/v1/ai/crud/execute', async ({ request }) => {
     const body = await request.json();
-    
+
     // Validate authentication
     const authHeader = request.headers.get('authorization');
     if (!authHeader || authHeader !== 'Bearer test-token') {

@@ -5,11 +5,11 @@
  * requirements, running on Vercel Edge Runtime for optimal performance.
  */
 
-import { logger } from '@/utils/secure-logger';
 import {
   brazilianHealthcareEdge,
   createHealthcareResponse,
 } from '../../../../middleware/edge-runtime';
+import { logger } from '@/utils/secure-logger';
 
 // Configure for edge runtime
 export const runtime = 'edge';

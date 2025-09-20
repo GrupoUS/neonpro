@@ -113,7 +113,10 @@ export async function createCrudIntent(
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || `HTTP ${response.status}`);
+      const error = new Error(errorData.error || `HTTP ${response.status}`) as any;
+      error.code = errorData.code;
+      error.details = errorData.details || errorData;
+      throw error;
     }
 
     return response.json();
@@ -145,7 +148,10 @@ export async function confirmCrudIntent(
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || `HTTP ${response.status}`);
+      const error = new Error(errorData.error || `HTTP ${response.status}`) as any;
+      error.code = errorData.code;
+      error.details = errorData.details || errorData;
+      throw error;
     }
 
     return response.json();
@@ -177,7 +183,10 @@ export async function executeCrudOperation(
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || `HTTP ${response.status}`);
+      const error = new Error(errorData.error || `HTTP ${response.status}`) as any;
+      error.code = errorData.code;
+      error.details = errorData.details || errorData;
+      throw error;
     }
 
     return response.json();

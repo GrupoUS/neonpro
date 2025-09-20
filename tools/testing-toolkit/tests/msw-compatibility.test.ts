@@ -3,7 +3,7 @@
  * Tests if MSW can intercept fetch requests in Bun runtime
  */
 
-import { afterAll, beforeAll, describe, expect, it } from 'bun:test';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { http, HttpResponse } from 'msw';
 import { setupServer } from 'msw/node';
 
@@ -42,18 +42,14 @@ describe('MSW Compatibility with Bun', () => {
     }
   }, { timeout: 5000 });
 
-  it('should handle non-mocked requests', async () => {
-    console.log('🧪 Testing non-mocked request...');
-
+  it('should handle non-mocked requests appropriately', async () => {
     try {
       // This should bypass MSW and potentially fail or succeed based on actual network
       const response = await fetch('http://localhost:3000/api/nonexistent');
-      console.log('📡 Non-mocked response status:', response.status);
 
       // We don't assert anything specific here, just want to see the behavior
       expect(response).toBeDefined();
     } catch (error) {
-      console.log('📡 Non-mocked request failed as expected:', error.message);
       // This is expected for non-existent endpoints
       expect(error).toBeDefined();
     }

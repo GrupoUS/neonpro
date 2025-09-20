@@ -3,7 +3,7 @@
  * RED Phase: Define comprehensive test scenarios for healthcare response utilities
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createHealthcareResponse } from '../../src/lib/healthcare-response';
 
 describe('Healthcare Response Module - RED Phase', () => {

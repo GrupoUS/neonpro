@@ -9,9 +9,9 @@
  * - Resource usage tracking
  */
 
-import { logger } from '@/utils/secure-logger';
 import { Context, Next } from 'hono';
 import { queryMonitor } from '../utils/query-optimizer';
+import { logger } from '@/utils/secure-logger';
 
 // Performance metrics
 export interface PerformanceMetrics {

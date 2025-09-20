@@ -44,7 +44,7 @@ describe('AgentCoordinator', () => {
   it('executes agents in parallel and aggregates results', async () => {
     const coordinator = new AgentCoordinator({
       pattern: 'parallel',
-      agents: ['code-reviewer', 'security-auditor'],
+      agents: ['code-reviewer', 'test-auditor'],
       qualityGates: [],
     });
 
@@ -69,7 +69,7 @@ describe('AgentCoordinator', () => {
 
     const codeReviewer = summary.results['code-reviewer'];
     expect(codeReviewer?.recommendations).toEqual([]);
-    const securityAuditor = summary.results['security-auditor'];
+    const securityAuditor = summary.results['test-auditor'];
     expect(securityAuditor?.metrics.vulnerabilities).toBe(0);
   });
 
@@ -106,7 +106,7 @@ describe('AgentCoordinator', () => {
   it('computes success using quality gate thresholds', () => {
     const coordinator = new AgentCoordinator({
       pattern: 'sequential',
-      agents: ['security-auditor'],
+      agents: ['test-auditor'],
       qualityGates: [],
     });
 
@@ -115,7 +115,7 @@ describe('AgentCoordinator', () => {
     );
 
     expect(
-      evaluateSuccess('security-auditor', {
+      evaluateSuccess('test-auditor', {
         compliance: 100,
         vulnerabilities: 0,
         authentication: 100,
@@ -123,7 +123,7 @@ describe('AgentCoordinator', () => {
     ).toBe(true);
 
     expect(
-      evaluateSuccess('security-auditor', {
+      evaluateSuccess('test-auditor', {
         compliance: 80,
         vulnerabilities: 2,
         authentication: 70,
@@ -136,7 +136,7 @@ describe('AgentCoordinator', () => {
       pattern: 'parallel',
       agents: [
         'code-reviewer',
-        'security-auditor',
+        'test-auditor',
         'architect-review',
         'tdd-orchestrator',
       ],
@@ -149,7 +149,7 @@ describe('AgentCoordinator', () => {
       0.9, // code-reviewer metrics
       0.99,
       0.04,
-      0.92, // security-auditor metrics (vulnerabilities should be 0)
+      0.92, // test-auditor metrics (vulnerabilities should be 0)
       0.3,
       0.45,
       0.55, // architect-review metrics
@@ -168,7 +168,7 @@ describe('AgentCoordinator', () => {
     });
 
     const securityMetrics = await (coordinator as any).validateQualityGates(
-      'security-auditor',
+      'test-auditor',
     );
     expect(securityMetrics).toEqual({
       compliance: 99,
@@ -248,7 +248,7 @@ describe('AgentCoordinator', () => {
   it('treats missing metrics as passing when thresholds are undefined', () => {
     const coordinator = new AgentCoordinator({
       pattern: 'sequential',
-      agents: ['security-auditor'],
+      agents: ['test-auditor'],
       qualityGates: [],
     });
 
@@ -256,7 +256,7 @@ describe('AgentCoordinator', () => {
       coordinator,
     );
     expect(
-      evaluateSuccess('security-auditor', {
+      evaluateSuccess('test-auditor', {
         compliance: 100,
       }),
     ).toBe(true);
@@ -265,7 +265,7 @@ describe('AgentCoordinator', () => {
   it('returns success when agent has no quality gate definition', () => {
     const coordinator = new AgentCoordinator({
       pattern: 'sequential',
-      agents: ['security-auditor'],
+      agents: ['test-auditor'],
       qualityGates: [],
     });
 

@@ -42,6 +42,6 @@ export const COMPLIANCE_STANDARDS = ['LGPD', 'ANVISA', 'CFM'] as const;
 export const AGENT_TYPES = [
   'architect-review',
   'code-reviewer',
-  'security-auditor',
+  'test-auditor',
   'tdd-orchestrator',
 ] as const;

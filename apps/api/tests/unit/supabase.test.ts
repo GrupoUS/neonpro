@@ -3,7 +3,7 @@
  * RED Phase: Define comprehensive test scenarios for Supabase utilities
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { supabase } from '../../src/lib/supabase';
 
 describe('Supabase Module - RED Phase', () => {

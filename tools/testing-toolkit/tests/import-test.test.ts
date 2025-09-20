@@ -1,19 +1,27 @@
-import { createTDDSuite } from '@neonpro/testing-toolkit';
 import { describe, expect, it } from 'vitest';
+import { createTDDSuite } from '../src/core/tdd-cycle';
 
 describe('TDD Suite Test', () => {
-  createTDDSuite('Example TDD Cycle', {
-    redPhase: () => {
-      // This should fail initially
-      expect(false).toBe(true);
-    },
-    greenPhase: () => {
-      // This should pass
-      expect(true).toBe(true);
-    },
-    refactorPhase: () => {
-      // This should also pass
-      expect(true).toBe(true);
-    },
+  it('should create TDD suite successfully', () => {
+    const result = createTDDSuite({
+      feature: 'Example TDD Cycle',
+      agents: ['test-agent'],
+      coverageThreshold: 80
+    }, {
+      redPhase: () => {
+        // This should fail initially
+        expect(false).toBe(true);
+      },
+      greenPhase: () => {
+        // Make it pass
+        expect(true).toBe(true);
+      },
+      refactorPhase: () => {
+        // Refactor code
+        expect(true).toBe(true);
+      },
+    });
+    
+    expect(result).toBeDefined();
   });
 });

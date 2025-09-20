@@ -3,6 +3,7 @@
  * RED Phase: Define comprehensive test scenarios for healthcare error utilities
  */
 
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   createHealthcareError,
   formatHealthcareError,
@@ -16,7 +17,6 @@ import {
   sanitizeErrorMessage,
   validateErrorCompliance,
 } from '../../packages/utils/dist/healthcare-errors.js';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ErrorCategory, ErrorSeverity } from '../../src/middleware/error-handling';
 
 describe('Healthcare Errors Module - RED Phase', () => {
