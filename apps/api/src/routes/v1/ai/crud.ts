@@ -86,27 +86,6 @@ const getServices = () => {
 };
 
 // Mock middleware for authentication
-const mockAuthMiddleware = async (c: Context, next: Next) => {
-  const authHeader = c.req.header('authorization');
-  if (!authHeader) {
-    return c.json({
-      success: false,
-      error: 'Não autorizado. Token de acesso necessário.',
-    }, 401);
-  }
-  
-  // Set user context
-  c.set('user', { 
-    id: 'user-123', 
-    role: 'healthcare_professional',
-    clinicId: 'clinic-456'
-  });
-  
-  c.set('userId', 'user-123');
-  c.set('clinicId', 'clinic-456');
-  
-  return next();
-};
 
 const mockLGPDMiddleware = async (c: Context, next: Next) => {
   // Basic LGPD validation
