@@ -111,10 +111,10 @@ export class OperationStateService {
       throw new Error(`Operation state not found for operation ID: ${operationId}`);
     }
 
-    // Update the state
+    // Update the state using the unique ID
     const updatedState = await this.prisma.operationState.update({
       where: {
-        operation_id: operationId,
+        id: currentState.id,
       },
       data: {
         step: updates.step,

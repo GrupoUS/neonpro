@@ -218,9 +218,9 @@ export class FinancialMetricsService {
       id: 'revenue',
       name: 'Total Revenue',
       value: revenue,
-      previousValue: revenue * 0.9, // Mock previous value
-      change: revenue * 0.1,
-      changePercentage: 10,
+      previousValue: 0, // TODO: Calculate from previous period
+      change: 0, // TODO: Calculate from previous period
+      changePercentage: 0, // TODO: Calculate from previous period
       period: options.period,
       category: 'revenue',
       formattedValue: new Intl.NumberFormat('pt-BR', {
@@ -236,8 +236,8 @@ export class FinancialMetricsService {
       id: 'expenses',
       name: 'Total Expenses',
       value: expenses,
-      previousValue: expenses * 1.05, // Mock previous value
-      change: -expenses * 0.05,
+      previousValue: 0, // TODO: Calculate from previous period
+      change: 0, // TODO: Calculate from previous period
       changePercentage: -5,
       period: options.period,
       category: 'expenses',

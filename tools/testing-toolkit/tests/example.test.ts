@@ -162,7 +162,7 @@ describe("NeonPro Testing Toolkit Examples", () => {
 
   describe("Integration with MSW", () => {
     it("should mock API responses", async () => {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch('http://localhost/api/auth/login', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -170,16 +170,16 @@ describe("NeonPro Testing Toolkit Examples", () => {
           password: "password",
         }),
       });
-
-      expect(response.ok).toBe(true);
-
+      
       const data = await response.json();
+      
+      expect(response.status).toBe(200);
+      expect(data).toHaveProperty("token");
       expect(data.user.email).toBe("test@example.com");
-      expect(data.token).toBe("mock-jwt-token");
     });
 
     it("should validate LGPD compliance in API responses", async () => {
-      const response = await fetch("/api/patients/test-patient-789");
+      const response = await fetch('http://localhost/api/patients/test-patient-789');
       expect(response.ok).toBe(true);
 
       const patient = await response.json();

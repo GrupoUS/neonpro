@@ -10,7 +10,7 @@ import { TEST_IDS } from "./index";
 
 // Auth handlers
 export const authHandlers = [
-  http.post("/api/auth/login", async ({ request }) => {
+  http.post('http://localhost/api/auth/login', async ({ request }) => {
     const body = (await request.json()) as { email: string; password: string };
 
     if (body.email === "test@example.com" && body.password === "password") {
@@ -27,11 +27,11 @@ export const authHandlers = [
     return HttpResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }),
 
-  http.post("/api/auth/logout", () => {
-    return HttpResponse.json({ success: true });
+  http.post("http://localhost/api/auth/logout", () => {
+    return HttpResponse.json({ message: 'Logged out successfully' });
   }),
 
-  http.get("/api/auth/me", ({ request }) => {
+  http.get("http://localhost/api/auth/me", ({ request }) => {
     const authHeader = request.headers.get("Authorization");
 
     if (authHeader === "Bearer mock-jwt-token") {
@@ -48,7 +48,7 @@ export const authHandlers = [
 
 // Patient data handlers
 export const patientHandlers = [
-  http.get("/api/patients", ({ request }) => {
+  http.get('http://localhost/api/patients', ({ request }) => {
     const url = new URL(request.url);
     const clinicId = url.searchParams.get("clinic_id");
 
@@ -72,7 +72,7 @@ export const patientHandlers = [
     });
   }),
 
-  http.get("/api/patients/:id", ({ params }) => {
+  http.get('http://localhost/api/patients/:id', ({ params }) => {
     if (params.id === TEST_IDS.PATIENT) {
       return HttpResponse.json({
         id: TEST_IDS.PATIENT,
@@ -99,7 +99,7 @@ export const patientHandlers = [
     return HttpResponse.json({ error: "Patient not found" }, { status: 404 });
   }),
 
-  http.post("/api/patients", async ({ request }) => {
+  http.post('http://localhost/api/patients', async ({ request }) => {
     const body = (await request.json()) as any;
 
     // Validate required fields

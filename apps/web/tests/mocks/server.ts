@@ -607,22 +607,73 @@ export const handlers = [
   }),
 
   // Financial Metrics Calculate API
-  http.post('/api/financial/metrics/calculate', async ({ request }) => {
+  http.post('http://localhost:3000/api/financial/metrics/calculate', async ({ request }) => {
     const body = await request.json() as any;
 
+    // Handle authentication
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader) {
+      return HttpResponse.json({
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Authentication required'
+        }
+      }, { status: 401 });
+    }
+
     // Handle validation errors
+    if (!body.period) {
+      return HttpResponse.json({
+        success: false,
+        error: {
+          code: 'MISSING_REQUIRED_FIELDS',
+          message: 'Missing required fields',
+          details: {
+            missingFields: ['period']
+          }
+        }
+      }, { status: 400 });
+    }
+
     if (!body.metrics || !Array.isArray(body.metrics)) {
       return HttpResponse.json({
-        error: 'Validation failed',
-        message: 'Missing required fields: metrics'
+        success: false,
+        error: {
+          code: 'MISSING_REQUIRED_FIELDS',
+          message: 'Missing required fields',
+          details: {
+            missingFields: ['metrics']
+          }
+        }
+      }, { status: 400 });
+    }
+
+    // Handle invalid date format
+    if (body.period && body.period.start === 'invalid-date') {
+      return HttpResponse.json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Invalid date format',
+          details: {
+            field: 'period.start',
+            value: body.period.start,
+            expected: 'YYYY-MM-DD format'
+          }
+        }
       }, { status: 400 });
     }
 
     // Handle timeout scenarios
-    if (body.timeout === true) {
+    if (body.timeout && body.timeout <= 5000) {
       return HttpResponse.json({
-        error: 'Calculation timeout',
-        message: 'Request exceeded maximum processing time'
+        success: false,
+        error: {
+          code: 'CALCULATION_TIMEOUT',
+          message: 'Request exceeded maximum processing time',
+          timeout: body.timeout
+        }
       }, { status: 408 });
     }
 
