@@ -636,25 +636,6 @@ export class ComplianceValidator {
     };
   }
 
-  /**
-   * Validate access timeframe
-   */
-  validateAccessTimeframe(requestTime: Date): {
-    compliant: boolean;
-    maximumDays: number;
-    responseDeadline: Date;
-  } {
-    const maximumDays = 15; // LGPD Art. 9
-    const responseDeadline = new Date(requestTime.getTime() + maximumDays * 24 * 60 * 60 * 1000);
-
-    return {
-      compliant: true,
-      maximumDays,
-      responseDeadline,
-    };
-  }
-
-  /**
    * Validate data subject right to rectification (Art. 16)
    */
   validateRectificationRequest(rectificationRequest: any, patientData: any): {

@@ -21,6 +21,16 @@
       "import": "./dist/services/structured-logging.mjs",
       "require": "./dist/services/structured-logging.js",
       "types": "./dist/services/structured-logging.d.ts"
+    },
+    "./errors/*": {
+      "import": "./dist/errors/*.mjs",
+      "require": "./dist/errors/*.js",
+      "types": "./dist/errors/*.d.ts"
+    },
+    "./errors/healthcare-errors": {
+      "import": "./dist/errors/healthcare-errors.mjs",
+      "require": "./dist/errors/healthcare-errors.js",
+      "types": "./dist/errors/healthcare-errors.d.ts"
     }
   },
   "scripts": {

@@ -63,7 +63,8 @@
       "mcp__archon__rag_get_available_sources",
       "mcp__desktop-commander__kill_process",
       "mcp__desktop-commander__list_processes",
-      "mcp__supabase__list_tables"
+      "mcp__supabase__list_tables",
+      "mcp__supabase__execute_sql"
     ],
     "deny": [
       "Edit",

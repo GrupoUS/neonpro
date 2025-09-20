@@ -478,6 +478,30 @@ node-compile-cache/
 .user.ini
 
 # =============================================================================
+# 🐍 PYTHON VIRTUAL ENVIRONMENTS & CACHE
+# =============================================================================
+
+# Python virtual environments
+venv/
+**/venv/
+env/
+**/env/
+.venv/
+**/.venv/
+.env/
+**/.env/
+
+# Python cache and compiled files
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+**/*.egg-info/
+
+# =============================================================================
 # 📱 MOBILE & CROSS-PLATFORM (Future NeonPro Mobile)
 # =============================================================================
 

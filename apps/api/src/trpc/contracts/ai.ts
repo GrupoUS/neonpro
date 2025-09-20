@@ -11,7 +11,7 @@ import {
   AIResponseSchema,
   HealthcareTRPCError,
   PaginationSchema,
-} from '@neonpro/types/api/contracts';
+} from '@neonpro/types';
 import { z } from 'zod';
 import { LGPDComplianceMiddleware } from '../../middleware/lgpd-compliance';
 import {

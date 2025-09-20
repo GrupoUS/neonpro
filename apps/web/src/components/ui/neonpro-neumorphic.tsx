@@ -235,11 +235,11 @@ const neumorphicInputVariants = cva(
 export interface NeumorphicButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof neumorphicButtonVariants> {
-  asChild?: boolean;
+  // asChild removed - not used in implementation
 }
 
 const NeumorphicButton = forwardRef<HTMLButtonElement, NeumorphicButtonProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, ...props }, ref) => {
     return (
       <button
         className={cn(neumorphicButtonVariants({ variant, size, className }))}
@@ -255,11 +255,11 @@ NeumorphicButton.displayName = 'NeumorphicButton';
 export interface NeumorphicCardProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof neumorphicCardVariants> {
-  asChild?: boolean;
+  // asChild removed - not used in implementation
 }
 
 const NeumorphicCard = forwardRef<HTMLDivElement, NeumorphicCardProps>(
-  ({ className, variant, size, asChild = false, ...props }, ref) => {
+  ({ className, variant, size, ...props }, ref) => {
     return (
       <div
         className={cn(neumorphicCardVariants({ variant, size, className }))}

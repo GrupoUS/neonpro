@@ -10,7 +10,7 @@ import {
   ProfessionalResponseSchema,
   ProfessionalsListResponseSchema,
   UpdateProfessionalRequestSchema,
-} from '@neonpro/types/api/contracts';
+} from '@neonpro/types';
 import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 

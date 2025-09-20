@@ -39,6 +39,9 @@ export default defineConfig({
         '@opentelemetry/exporter-prometheus',
         '@opentelemetry/sdk-node',
         '@opentelemetry/semantic-conventions',
+        'vite-plugin-node-polyfills/shims/global',
+        'vite-plugin-node-polyfills/shims/buffer',
+        'vite-plugin-node-polyfills/shims/process',
       ],
       output: {
         globals: {
