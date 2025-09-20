@@ -360,49 +360,5 @@ PADRÕES DE COMPORTAMENTO:
     }
   }
 
-  /**
-   * Calculate reliability score for AI analysis
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private _calculateReliabilityScore(analysis: any): number {
-    let score = 0.5; // Base score
-
-    // Increase score based on data quality
-    if (analysis.confidence > 0.8) score += 0.2;
-    if (analysis.sources && analysis.sources.length > 0) score += 0.1;
-    if (analysis.limitations && analysis.limitations.length > 0) score += 0.1;
-    if (analysis.recommendations && analysis.recommendations.length > 2) score += 0.1;
-
-    return Math.min(1, score);
-  }
-
-  /**
-   * Get Portuguese prompt template
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private _getPortuguesePromptTemplate(analysisType: string): string {
-    const templates = {
-      'general': 'Análise geral de saúde do paciente considerando histórico médico e padrões de comportamento.',
-      'risk_assessment': 'Avaliação de riscos à saúde baseada em condições crônicas, medicamentos e histórico de consultas.',
-      'preventive_care': 'Recomendações de cuidados preventivos baseados no perfil do paciente e histórico médico.',
-      'treatment_adherence': 'Análise de adesão ao tratamento e estratégias para melhorar o acompanhamento.',
-    };
-
-    return templates[analysisType as keyof typeof templates] || templates['general'];
-  }
-
-  /**
-   * Get English prompt template
-   */
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  private _getEnglishPromptTemplate(analysisType: string): string {
-    const templates = {
-      'general': 'General health analysis considering medical history and behavioral patterns.',
-      'risk_assessment': 'Health risk assessment based on chronic conditions, medications, and appointment history.',
-      'preventive_care': 'Preventive care recommendations based on patient profile and medical history.',
-      'treatment_adherence': 'Treatment adherence analysis and strategies for improving follow-up.',
-    };
-
-    return templates[analysisType as keyof typeof templates] || templates['general'];
-  }
+  
 }
