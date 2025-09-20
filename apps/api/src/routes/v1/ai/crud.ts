@@ -64,35 +64,6 @@ const tRPCHandle = createTRPCHandle({
       // Add other necessary context properties
       prisma: null, // Will be handled by tRPC context
     };
-  },
-});
-
-// Service interfaces
-interface ServiceInterface {
-  auditService: ComprehensiveAuditService;
-  lgpdService: LGPDService;
-}
-
-// Services for production use
-let services: ServiceInterface | null = null;
-
-const getServices = () => {
-  if (services) return services;
-
-  return {
-    auditService: new ComprehensiveAuditService(),
-    lgpdService: new LGPDService(),
-  };
-};
-
-// Mock middleware for authentication
-
-const mockLGPDMiddleware = async (c: Context, next: Next) => {
-  // Basic LGPD validation
-  c.set('lgpdValidated', true);
-  return next();
-};
-
 const app = new Hono();
 
 // Main CRUD endpoint
