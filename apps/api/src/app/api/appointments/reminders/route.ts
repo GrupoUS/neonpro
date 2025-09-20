@@ -308,7 +308,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS() {
   return createHealthcareResponse({}, {
     status: 200,
     dataType: 'public',

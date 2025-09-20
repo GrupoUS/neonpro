@@ -42,8 +42,8 @@
     "GOOGLE_GENERATIVE_AI_API_KEY"
   ],
   "remoteCache": {
-    "signature": true,
-    "enabled": true,
+    "signature": false,
+    "enabled": false,
     "timeout": 60
   },
   "globalPassThroughEnv": ["CI", "NODE_ENV", "VERCEL_ENV"],

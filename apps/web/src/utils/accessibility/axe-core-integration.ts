@@ -112,7 +112,7 @@ export async function runAccessibilityScan(
   options?: axe.RunOptions,
 ): Promise<AxeResults> {
   try {
-    const results = await axe.run(context, {
+    const results = await axe.run(context || document, {
       ...options,
       reporter: 'v2',
       resultTypes: ['violations', 'passes', 'incomplete', 'inapplicable'],

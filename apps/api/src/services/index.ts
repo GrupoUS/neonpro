@@ -40,6 +40,7 @@ export * from './index-optimizer';
 export * from './metrics';
 
 // Security & Audit
+export * from './ai-security-service';
 export * from './audit-service';
 export * from './lgpd-audit-service';
 export * from './lgpd-consent-service';

@@ -14,8 +14,7 @@ import { Database } from '@neonpro/database';
 import { createClient } from '@supabase/supabase-js';
 import type { 
   UsageCounterData, 
-  SubscriptionTier, 
-  AuditTrail
+  SubscriptionTier
 } from '@neonpro/types';
 
 export interface UsageCounterCreateData {
@@ -478,7 +477,6 @@ export class UsageCounterRepository {
    */
   private mapDatabaseToModel(row: any): UsageCounterData {
     return {
-      id: row.id,
       clinicId: row.clinic_id,
       userId: row.user_id,
       planCode: row.plan_code,
@@ -496,8 +494,6 @@ export class UsageCounterRepository {
       periodStart: new Date(row.period_start),
       lastActivity: new Date(row.last_activity),
       lastReset: new Date(row.last_reset),
-      createdAt: new Date(row.created_at),
-      updatedAt: new Date(row.updated_at),
     };
   }
 }

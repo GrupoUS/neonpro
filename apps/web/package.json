@@ -120,6 +120,7 @@
     "dotenv": "^17.2.2",
     "file-saver": "^2.0.5",
     "framer-motion": "^11.18.2",
+    "googleapis": "^160.0.0",
     "html2canvas": "^1.4.1",
     "ioredis": "^5.7.0",
     "jspdf": "^3.0.2",
@@ -147,7 +148,8 @@
     "vite": "^7.1.5",
     "web-push": "^3.6.7",
     "web-vitals": "^5.1.0",
-    "zod": "^3.25.76"
+    "zod": "^3.25.76",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",

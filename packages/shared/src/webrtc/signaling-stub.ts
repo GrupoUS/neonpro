@@ -203,7 +203,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
 
     // Data classification validation
     const validClassifications: MedicalDataClassification[] = [
-      'public', 'internal', 'personal', 'sensitive', 'confidential'
+      'sensitive', 'confidential', 'internal', 'public'
     ];
     if (!validClassifications.includes(message.dataClassification)) {
       throw new Error(`Invalid data classification: ${message.dataClassification}`);

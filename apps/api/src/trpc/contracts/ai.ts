@@ -29,6 +29,22 @@ import {
 import { LGPDComplianceMiddleware } from '../middleware/lgpd-compliance';
 import { ConsentPurpose, DataCategory } from '../types/lgpd';
 
+// Health analysis functions
+import {
+  gatherPatientAnalysisData,
+  buildHealthAnalysisPrompt,
+  callHealthAnalysisAI,
+  parseHealthAnalysisResponse,
+  storeHealthAnalysis
+} from '@neonpro/core-services';
+
+// AI service management functions
+import {
+  checkAIServiceHealth,
+  checkModelAvailability,
+  getAIUsageStats
+} from '@neonpro/core-services';
+
 export const aiRouter = router({
   /**
    * AI Chat completion with healthcare context and compliance
@@ -201,7 +217,7 @@ export const aiRouter = router({
             resourceId: conversationId,
             ipAddress: ctx.req.socket.remoteAddress || '',
             userAgent: ctx.req.headers['user-agent'] || '',
-            status: 'COMPLIANT',
+            status: 'SUCCESS',
             riskLevel: 'LOW',
             additionalInfo: JSON.stringify({
               patientId: input.patientId,
@@ -260,7 +276,7 @@ export const aiRouter = router({
             resourceId: conversationId,
             ipAddress: ctx.req.socket.remoteAddress || '',
             userAgent: ctx.req.headers['user-agent'] || '',
-            status: 'COMPLIANT',
+            status: 'SUCCESS',
             riskLevel: 'LOW',
             additionalInfo: JSON.stringify({
               role: 'user',
@@ -303,7 +319,7 @@ export const aiRouter = router({
             resourceId: conversationId,
             ipAddress: ctx.req.socket.remoteAddress || '',
             userAgent: ctx.req.headers['user-agent'] || '',
-            status: 'COMPLIANT',
+            status: 'SUCCESS',
             riskLevel: 'LOW',
             additionalInfo: JSON.stringify({
               role: 'assistant',
@@ -335,7 +351,7 @@ export const aiRouter = router({
             resourceId: conversationId,
             ipAddress: ctx.req.socket.remoteAddress || '',
             userAgent: ctx.req.headers['user-agent'] || '',
-            status: 'COMPLIANT',
+            status: 'SUCCESS',
             riskLevel: 'LOW',
             additionalInfo: JSON.stringify({
               model: input.model,

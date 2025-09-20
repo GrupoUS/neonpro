@@ -311,9 +311,9 @@ export class HealthcareAccessibilityAuditor {
           cfm: false,
         },
       },
-      categoryResults: [],
-      recommendations: [],
-      detailedReport: {},
+      categoryResults: [] as Array<{category: string, score: number, issues: any[], passed: boolean}>,
+      recommendations: [] as string[],
+      detailedReport: {} as any,
     };
 
     // Run category-specific audits

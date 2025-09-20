@@ -1,74 +1,8 @@
-# NeonPro - Brazilian Aesthetic Clinic Management Platform
-
-## Project Overview
-
-NeonPro is a revolutionary, AI-native platform designed specifically for advanced aesthetic clinics in Brazil. It aims to eliminate operational inefficiencies through predictive AI while maintaining full compliance with Brazilian regulations like LGPD (data protection) and ANVISA (health surveillance).
-
-**Core Mission**: Eliminar ineficiências operacionais através de IA preditiva mantendo compliance total com LGPD, ANVISA.
-
-**Target Audience**: Brazilian aesthetic clinic owners, administrators, and practitioners.
-
-### Key Features
-
-- **AI-First Innovation**: Predictive algorithms for appointment optimization (Engine Anti-No-Show), personalized patient experiences (CRM Comportamental), and augmented reality results simulation (AR Results Simulator).
-- **Regulatory Compliance**: Built-in adherence to LGPD, ANVISA, and CFM (Federal Council of Medicine) standards.
-- **Market Leadership**: First-to-market AI-native platform for the Brazilian aesthetic health sector, leveraging native Portuguese AI capabilities.
-
-## Technology Stack
-
-NeonPro is a modern monorepo application built with performance, type safety, and developer experience in mind.
-
-### Architecture
-
-- **Monorepo Tool**: Turborepo with PNPM for efficient dependency management.
-- **Structure**:
-  - `apps/api`: Backend API using Hono.dev (TypeScript) with Supabase.
-  - `apps/web`: Frontend application using TanStack Router, Vite, React 19, and TypeScript.
-  - `packages/*`: Shared libraries for types, database schemas, utilities, security, and core services.
-
-### Backend (`apps/api`)
-
-- **Framework**: Hono.dev (Ultra-lightweight, edge-compatible web framework)
-- **Language**: TypeScript
-- **Runtime**: Node.js 20+
-- **Database**: Supabase (PostgreSQL 15+)
-- **Authentication**: Supabase Auth with MFA/WebAuthn support
-- **AI Integration**: Vercel AI SDK for OpenAI GPT-4 and Anthropic Claude.
-
-### Frontend (`apps/web`)
-
-- **Framework**: TanStack Router (Type-safe routing)
-- **Build Tool**: Vite (Fast HMR and optimized builds)
-- **UI Library**: React 19
-- **Language**: TypeScript 5.7.2
-- **Styling**: Tailwind CSS with a focus on accessibility (WCAG 2.1 AA compliance)
-- **Component Library**: shadcn/ui v4
-- **State Management**: TanStack Query, Zustand
-- **Forms**: React Hook Form with Zod validation
-
-### Development & Quality Assurance
-
-- **Testing**: Vitest (unit/integration), Playwright (E2E)
-- **Linting**: Oxlint (fast linting)
-- **Formatting**: dprint
-- **Type Checking**: TypeScript strict mode
-
-### Deployment & Infrastructure
-
-- **Hosting**: Vercel (with edge functions, Sao Paulo region for low latency)
-- **CI/CD**: GitHub Actions
-
-## Development Conventions
-
-- **Monorepo Management**: Follows Turborepo best practices with a clear dependency hierarchy (`types` → `database`/`shared`/`utils`/`security` → `core-services` → `apps`).
-- **Coding Style**: Enforced by Oxlint and dprint. TypeScript strict mode is enabled for type safety.
-- **Testing**: Test-driven development (TDD) is encouraged. Unit, integration, and E2E tests are part of the workflow.
-- **AI Agent Workflow**: A detailed agent coordination system is defined in `AGENTS.md` and `docs/AGENTS.md`, emphasizing research, decomposition, planning, test-driven implementation, and validation.
-
 # Development Workflow
 
 > **🤖 AI Instructions:** This is the mandatory step-by-step process you MUST follow when developing features, unless the user explicitly requests to skip specific steps. Always follow this workflow systematically.
 > **⚠️ IMPORTANT:** Execute entire workflow without interruption asking for next steps. If you unsure about any step, consult the documentation in `/docs` and do a research using `context7` and `tavily` for official docs and best practices. Dont keep asking the user to clarify or provide more info, use your tools to research and fill in the gaps and keep working until all the prompt is complete.
+> **ALWAYS** Execute Tasks, tools and Agents in parallel when possible to optimize time and efficiency.
 
 # MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
 
@@ -175,6 +109,22 @@ CONSTITUTIONAL_PRINCIPLES:
 - **📚 context7** - Documentation
 - **🌐 tavily** - Real-time info
 - **🎨 shadcn-ui** - UI components
+
+### **🤖 AI Agent Technologies**
+
+**NEW: AI Agent Integration Stack**
+
+- **CopilotKit**: Conversational AI UI and infrastructure
+- **AG-UI Protocol**: Real-time agent communication protocol
+- **ottomator-agents**: Backend agent logic with RAG capabilities
+- **Supabase Integration**: Secure database access with RLS enforcement
+
+**Key Integration Points**:
+
+- AI chat interface in React/Next.js frontend
+- Python-based agent backend with natural language processing
+- Real-time communication via AG-UI Protocol
+- Secure data access respecting Row Level Security
 
 ## Mandatory Development Steps
 

@@ -5,7 +5,6 @@
  * requirements, running on Vercel Edge Runtime for optimal performance.
  */
 
-import { NextRequest } from 'next/server';
 import {
   brazilianHealthcareEdge,
   createHealthcareResponse,
@@ -14,7 +13,7 @@ import {
 // Configure for edge runtime
 export const runtime = 'edge';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const startTime = Date.now();
 
@@ -94,7 +93,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS() {
   return createHealthcareResponse({}, {
     status: 200,
     dataType: 'public',

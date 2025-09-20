@@ -21,7 +21,9 @@ model User {
 
   clinics      Clinic[]
   auditTrails  AuditTrail[]
+  auditLogs    AuditLog[]
   escalations  EscalationWorkflow[]
+  googleCalendarIntegrations GoogleCalendarIntegration[]
 
   @@map("users")
 }
@@ -39,10 +41,12 @@ model Clinic {
   professionals     Professional[]
   consentRecords    ConsentRecord[]
   auditTrails       AuditTrail[]
+  auditLogs         AuditLog[]
   riskAssessments   RiskAssessment[]
   complianceStatus  ComplianceStatus[]
   serviceTypes      ServiceType[]
   serviceCategories ServiceCategory[]
+  googleCalendarIntegrations GoogleCalendarIntegration[]
 
   @@map("clinics")
 }
@@ -156,6 +160,7 @@ model Patient {
   consentRecords        ConsentRecord[]
   lgpdConsentHistory    LGPDConsent[]
   auditTrails           AuditTrail[]
+  auditLogs             AuditLog[]
   telemedicineSessions  TelemedicineSession[]
 
   // Database indexes for performance
@@ -185,11 +190,14 @@ model Appointment {
   // Appointment scheduling
   status                 String?   @default("scheduled") // scheduled, confirmed, in_progress, completed, cancelled, no_show
   appointmentType        String?   @default("in_person") @map("appointment_type") // in_person, telemedicine, hybrid
+  scheduledDate          DateTime? @map("scheduled_date") // For backward compatibility
   startTime              DateTime  @map("start_time")
   endTime                DateTime  @map("end_time")
   timeZone               String?   @default("America/Sao_Paulo") @map("time_zone")
   duration               Int?      @map("duration") // Duration in minutes
-  priority               Int?      @default(1) // 1=low, 2=medium, 3=high, 4=urgent
+  priority               EscalationPriority? @default(LOW) // Use enum instead of int
+  treatmentType          String?   @map("treatment_type") // Type of treatment/procedure
+  phone                  String?   @map("phone") // Contact phone for appointment
   
   // Brazilian healthcare compliance (TUSS codes and CFM)
   tussCode               String?   @map("tuss_code") // Terminologia Unificada da Saúde Suplementar
@@ -280,6 +288,7 @@ model Appointment {
 
   // Relations
   telemedicineSession    TelemedicineSession?
+  googleCalendarEvent    GoogleCalendarEvent?
 
   // Indexes for performance optimization
   @@index([clinicId, startTime])
@@ -671,12 +680,73 @@ model AuditTrail {
 
   createdAt      DateTime    @default(now()) @map("created_at")
 
+  // Relations
+  auditLogs      AuditLog[]
+
   @@index([userId, createdAt])
   @@index([clinicId, createdAt])
   @@index([patientId, createdAt])
   @@index([action, status])
   @@index([riskLevel, createdAt])
   @@map("audit_logs")
+}
+
+// Enhanced Audit Log for detailed compliance tracking
+model AuditLog {
+  id                String      @id @default(uuid())
+  
+  // Entity identification
+  entityType        String      @map("entity_type") // Type of entity being audited
+  entityId          String      @map("entity_id")   // ID of the entity being audited
+  
+  // Action details
+  action            String      // Action performed
+  actionType        String      @map("action_type") // CREATE, READ, UPDATE, DELETE, etc.
+  
+  // User context
+  userId            String      @map("user_id")
+  user              User        @relation(fields: [userId], references: [id])
+  clinicId          String?     @map("clinic_id")
+  clinic            Clinic?     @relation(fields: [clinicId], references: [id])
+  patientId         String?     @map("patient_id")
+  patient           Patient?    @relation(fields: [patientId], references: [id])
+  
+  // Request context
+  requestId         String?     @map("request_id")    // Unique request identifier
+  sessionId         String?     @map("session_id")    // Session identifier
+  ipAddress         String      @map("ip_address")
+  userAgent         String      @map("user_agent")
+  
+  // Data details
+ OldData           Json?       @map("old_data")      // Data before change (for updates)
+  NewData           Json?       @map("new_data")      // Data after change
+  
+  // Compliance and risk
+  riskLevel         RiskLevel   @default(LOW) @map("risk_level")
+  complianceStatus  String      @default("COMPLIANT") @map("compliance_status")
+  violationType     String?     @map("violation_type")
+  
+  // Metadata
+  details           Json?       // Additional audit details
+  category          String?     // Audit category
+  severity          String?     // Severity level
+  
+  // Timestamps
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+  
+  // Relations
+  auditTrailId      String?     @map("audit_trail_id")
+  auditTrail        AuditTrail? @relation(fields: [auditTrailId], references: [id])
+  
+  @@index([entityType, entityId])
+  @@index([userId, createdAt])
+  @@index([clinicId, createdAt])
+  @@index([patientId, createdAt])
+  @@index([action, createdAt])
+  @@index([riskLevel, createdAt])
+  @@index([complianceStatus, createdAt])
+  @@map("audit_logs_detailed")
 }enum KPIStatus {
   ACTIVE
   ARCHIVED
@@ -946,4 +1016,173 @@ model EscalationWorkflow {
   @@index([priority, status])
   @@index([status, deadline])
   @@index([assignedTo, status])
+}
+
+// Google Calendar Integration Models
+
+model GoogleCalendarIntegration {
+  id              String                @id @default(uuid())
+  userId          String                @map("user_id")
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clinicId        String                @map("clinic_id")
+  clinic          Clinic                @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  
+  accessToken     String                @map("access_token") @db.Text
+  refreshToken    String?               @map("refresh_token") @db.Text
+  expiresAt       DateTime?             @map("expires_at")
+  scope           String
+  tokenId         String                @map("token_id")
+  
+  // Configuration
+  syncEnabled     Boolean               @default(true) @map("sync_enabled")
+  autoSync        Boolean               @default(true) @map("auto_sync")
+  bidirectional   Boolean               @default(true) @map("bidirectional")
+  
+  // Healthcare Compliance
+  lgpdConsent     Boolean               @default(false) @map("lgpd_consent")
+  consentDate     DateTime?             @map("consent_date")
+  consentVersion  String                @default("1.0") @map("consent_version")
+  
+  // Sync Settings
+  syncCalendarId  String                @map("sync_calendar_id")
+  syncTimezone    String                @default("America/Sao_Paulo") @map("sync_timezone")
+  
+  // Error handling
+  lastSyncAt      DateTime?             @map("last_sync_at")
+  lastError       String?               @map("last_error") @db.Text
+  errorCount      Int                   @default(0) @map("error_count")
+  
+  createdAt       DateTime              @default(now()) @map("created_at")
+  updatedAt       DateTime              @updatedAt @map("updated_at")
+  
+  // Relations
+  syncLogs        GoogleCalendarSyncLog[]
+  
+  @@unique([userId, clinicId])
+  @@index([userId])
+  @@index([clinicId])
+  @@index([syncEnabled])
+  @@map("google_calendar_integrations")
+}
+
+// Store Google Calendar event mappings for appointments
+model GoogleCalendarEvent {
+  id             String                   @id @default(uuid())
+  appointmentId  String                   @map("appointment_id")
+  appointment    Appointment              @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  
+  googleEventId  String                   @map("google_event_id")
+  calendarId     String                   @map("calendar_id")
+  htmlLink       String?                  @map("html_link")
+  
+  // Sync status
+  syncStatus     GoogleCalendarSyncStatus @default(SYNCED) @map("sync_status")
+  lastSyncAt     DateTime                 @default(now()) @map("last_sync_at")
+  
+  // Conflict resolution
+  isConflict     Boolean                  @default(false) @map("is_conflict")
+  conflictType   String?                  @map("conflict_type")
+  resolvedAt     DateTime?                @map("resolved_at")
+  
+  createdAt      DateTime                 @default(now()) @map("created_at")
+  updatedAt      DateTime                 @updatedAt @map("updated_at")
+  
+  @@unique([appointmentId])
+  @@index([googleEventId])
+  @@index([syncStatus])
+  @@map("google_calendar_events")
+}
+
+// Sync logs for audit and compliance
+model GoogleCalendarSyncLog {
+  id            String                   @id @default(uuid())
+  integrationId String                   @map("integration_id")
+  integration   GoogleCalendarIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  
+  operation     GoogleCalendarOperation  @map("operation")
+  direction     SyncDirection            @map("direction")
+  
+  // Event details
+  appointmentId String?                  @map("appointment_id")
+  eventId       String?                  @map("event_id")
+  
+  // Results
+  status        SyncLogStatus            @default(SUCCESS) @map("status")
+  error         String?                  @map("error") @db.Text
+  responseTime  Int?                     @map("response_time") // ms
+  
+  // Compliance
+  ipAddress     String?                  @map("ip_address")
+  userAgent     String?                  @map("user_agent")
+  
+  createdAt     DateTime                 @default(now()) @map("created_at")
+  
+  @@index([integrationId, createdAt])
+  @@index([status, createdAt])
+  @@index([appointmentId])
+  @@map("google_calendar_sync_logs")
+}
+
+// Enums for Google Calendar Integration
+enum GoogleCalendarSyncStatus {
+  SYNCED
+  PENDING
+  FAILED
+  CONFLICT
+  IGNORED
+}
+
+enum GoogleCalendarOperation {
+  CREATE
+  UPDATE
+  DELETE
+  SYNC
+  REFRESH_TOKEN
+}
+
+enum SyncDirection {
+  TO_GOOGLE
+  FROM_GOOGLE
+  BIDIRECTIONAL
+}
+
+// Usage counters for API and service monitoring
+model UsageCounter {
+  id               String    @id @default(uuid())
+  
+  // Entity being tracked
+  entityType       String    // "api", "service", "user", "clinic", etc.
+  entityId         String    // ID of the entity
+  
+  // Usage metrics
+  dailyQueries     Int       @default(0) @map("daily_queries")
+  monthlyQueries   Int       @default(0) @map("monthly_queries")
+  
+  // Performance metrics
+  currentCostUsd   Float?    @map("current_cost_usd")
+  averageLatencyMs Float?    @map("average_latency_ms")
+  cacheHitRate    Float?    @map("cache_hit_rate")  // 0-100 percentage
+  errorRate        Float?    @map("error_rate")     // 0-100 percentage
+  
+  // Time windows
+  date             DateTime  @default(now())  // For daily aggregation
+  month            String?   // For monthly aggregation (YYYY-MM format)
+  
+  // Metadata
+  metadata         Json?     // Additional counter-specific data
+  
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  
+  @@unique([entityType, entityId, date])
+  @@index([entityType, date])
+  @@index([entityId, entityType])
+  @@map("usage_counters")
+}
+
+enum SyncLogStatus {
+  SUCCESS
+  FAILED
+  RETRYING
+  IGNORED
 }

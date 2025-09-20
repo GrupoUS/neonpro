@@ -10,7 +10,7 @@ import {
   HealthcareTRPCError,
   PaginationSchema,
   UpdateAppointmentRequestSchema,
-} from '@neonpro/types/api/contracts';
+} from '@neonpro/types';
 import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 
@@ -73,16 +73,16 @@ export const appointmentRouter = router({
           status: { in: ['scheduled', 'confirmed', 'in_progress'] },
           OR: [
             {
-              scheduledDate: { lte: appointmentDate },
-              endDate: { gt: appointmentDate },
+              startTime: { lte: appointmentDate },
+              endTime: { gt: appointmentDate },
             },
             {
-              scheduledDate: { lt: endDate },
-              endDate: { gte: endDate },
+              startTime: { lt: endDate },
+              endTime: { gte: endDate },
             },
             {
-              scheduledDate: { gte: appointmentDate },
-              endDate: { lte: endDate },
+              startTime: { gte: appointmentDate },
+              endTime: { lte: endDate },
             },
           ],
         },
@@ -95,7 +95,7 @@ export const appointmentRouter = router({
           'APPOINTMENT_CONFLICT',
           {
             conflictingAppointmentId: conflictingAppointment.id,
-            conflictDate: conflictingAppointment.scheduledDate,
+            conflictDate: conflictingAppointment.startTime,
           },
         );
       }

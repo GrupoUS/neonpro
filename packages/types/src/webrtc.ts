@@ -24,10 +24,56 @@ export type RTCConnectionState =
   | 'failed'
   | 'closed';
 
+// Runtime values for TypeScript enum-like behavior
+export const RTCConnectionStates = {
+  NEW: 'new',
+  CONNECTING: 'connecting',
+  CONNECTED: 'connected',
+  DISCONNECTED: 'disconnected',
+  FAILED: 'failed',
+  CLOSED: 'closed'
+} as const;
+
 /**
- * Healthcare-specific call types
+ * Types of telemedicine calls with healthcare compliance
  */
 export type TelemedicineCallType = 
+  | 'emergency'
+  | 'scheduled'
+  | 'consultation'
+  | 'follow-up'
+  | 'urgent-care';
+
+// Runtime values for telemedicine call types
+export const TelemedicineCallTypes = {
+  EMERGENCY: 'emergency',
+  SCHEDULED: 'scheduled',
+  CONSULTATION: 'consultation',
+  FOLLOW_UP: 'follow-up',
+  URGENT_CARE: 'urgent-care'
+} as const;
+
+/**
+ * Classification levels for medical data according to LGPD
+ */
+export type MedicalDataClassification = 
+  | 'sensitive'
+  | 'confidential'
+  | 'internal'
+  | 'public';
+
+// Runtime values for medical data classification
+export const MedicalDataClassifications = {
+  SENSITIVE: 'sensitive',
+  CONFIDENTIAL: 'confidential',
+  INTERNAL: 'internal',
+  PUBLIC: 'public'
+} as const;
+
+/**
+ * Healthcare-specific call types - expanded for comprehensive telemedicine
+ */
+export type TelemedicineCallTypeExpanded = 
   | 'consultation'     // Regular patient consultation
   | 'emergency'        // Emergency medical consultation
   | 'follow-up'        // Post-treatment follow-up
@@ -36,9 +82,9 @@ export type TelemedicineCallType =
   | 'second-opinion';  // Medical second opinion
 
 /**
- * Medical data classification levels for LGPD compliance
+ * Medical data classification levels for LGPD compliance - expanded
  */
-export type MedicalDataClassification = 
+export type MedicalDataClassificationExpanded = 
   | 'public'           // Non-sensitive medical information
   | 'internal'         // Internal clinic data
   | 'personal'         // Personal patient information
@@ -516,6 +562,4 @@ export interface RTCConsentManager {
   deleteUserData(userId: string, sessionId?: string): Promise<void>;
 }
 
-// Re-exports removed to avoid duplicate export conflicts with package barrel.
-// Consumers should import from 'packages/types/src/webrtc' directly or via the package index barrel.
-// NOTE: Removed re-exports referenced unknown names (RecordingOptions, MediaConstraints, etc.) which are not defined in this file.
+// Export all WebRTC types for proper module resolution

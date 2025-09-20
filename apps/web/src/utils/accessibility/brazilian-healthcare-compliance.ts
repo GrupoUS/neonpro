@@ -347,13 +347,13 @@ export class BrazilianHealthcareComplianceValidator {
     const results = {
       overallScore: 0,
       standards: {
-        lgpd: { score: 0, requirements: [], compliance: false },
-        anvisa: { score: 0, requirements: [], compliance: false },
-        cfm: { score: 0, requirements: [], compliance: false },
+        lgpd: { score: 0, requirements: [] as Array<{id: string, name: string, passed: boolean, critical: boolean, violations: string[]}>, compliance: false },
+        anvisa: { score: 0, requirements: [] as Array<{id: string, name: string, passed: boolean, critical: boolean, violations: string[]}>, compliance: false },
+        cfm: { score: 0, requirements: [] as Array<{id: string, name: string, passed: boolean, critical: boolean, violations: string[]}>, compliance: false },
       },
-      auditTrail: [],
-      recommendations: [],
-      criticalIssues: [],
+      auditTrail: [] as Array<{timestamp: string, standard: string, requirement: string, result: 'pass' | 'fail', details: string}>,
+      recommendations: [] as string[],
+      criticalIssues: [] as Array<{standard: string, requirement: string, description: string, severity: 'critical' | 'serious' | 'moderate', fix: string}>,
     };
 
     // Validate each standard

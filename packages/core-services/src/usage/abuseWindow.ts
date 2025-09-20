@@ -11,7 +11,7 @@
  * - Automatic cleanup of expired entries
  */
 
-import type { AuditTrail } from '@neonpro/types';
+// import type { AuditTrail } from '@neonpro/types';
 
 export interface SlidingWindowConfig {
   window60s: number; // ABUSE_Q_60S (default: 12)

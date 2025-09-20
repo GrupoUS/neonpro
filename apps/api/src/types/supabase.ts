@@ -23,10 +23,10 @@ export type TableUpdate<T extends keyof Database['public']['Tables']> =
 export type Patient = TableRow<'patients'>;
 export type Appointment = TableRow<'appointments'>;
 export type Clinic = TableRow<'clinics'>;
-export type Doctor = TableRow<'doctors'>;
+export type Doctor = TableRow<'professionals'>;
 export type AuditLog = TableRow<'audit_logs'>;
-export type PatientConsent = TableRow<'patient_consent'>;
-export type MessageDeliveryLog = TableRow<'message_delivery_log'>;
+export type PatientConsent = TableRow<'consent_records'>;
+// export type MessageDeliveryLog = TableRow<'message_delivery_log'>; // Table doesn't exist in schema
 
 // Function types for Supabase edge functions
 export type SupabaseFunction<T = any, R = any> = (args: T) => Promise<R>;

@@ -1,6 +1,8 @@
 export * from './realtime/realtime-manager.js';
 export * from './resilience/index.js';
 export * from './services/AIService.js';
+export * from './services/health-analysis/index.js';
+export * from './services/ai-service-management.js';
 export * from './services/governance/index.js';
 
 // Phase 4 Compliance & Audit Module

@@ -26,6 +26,7 @@
     "**/__tests__/**/*"
   ],
   "references": [
+    { "path": "../database" },
     { "path": "../types" },
     { "path": "../utils" },
     { "path": "../config" },

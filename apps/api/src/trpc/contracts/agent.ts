@@ -105,7 +105,7 @@ export const AgentAnalyticsSchema = z.object({
   agent_type: AgentTypeSchema,
   metrics: z.object({
     total_messages: z.number().int().min(0),
-    average_response_time: z.number().float().min(0),
+    average_response_time: z.number().min(0),
     user_satisfaction: z.number().min(0).max(5).optional(),
     resolution_rate: z.number().min(0).max(1).optional(),
     tokens_used: z.number().int().min(0),
@@ -136,7 +136,7 @@ export const SearchKnowledgeBaseSchema = z.object({
   agent_type: AgentTypeSchema,
   query: z.string().min(1),
   limit: z.number().int().min(1).max(20).default(10),
-  threshold: z.number().float().min(0).max(1).default(0.7),
+  threshold: z.number().min(0).max(1).default(0.7),
 });
 
 /**
@@ -162,13 +162,13 @@ export const RAGResponseSchema = z.object({
     id: z.string(),
     content: z.string(),
     source: z.string().optional(),
-    score: z.number().float().min(0).max(1),
+    score: z.number().min(0).max(1),
     metadata: z.record(z.unknown()),
   })),
   context: z.string(),
   response: z.string(),
   tokens_used: z.number().int().min(0),
-  processing_time: z.number().float().min(0),
+  processing_time: z.number().min(0),
 });
 
 /**

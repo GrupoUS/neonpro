@@ -91,18 +91,6 @@ export class CrudIntentParser {
     APPOINTMENT: /\b(appointment|agendamento|consulta|sessão|session)\b/gi
   };
 
-  // Filter operators
-  private operatorPatterns = {
-    equals: /\b(equals?|is|=|==)\b/gi,
-    not_equals: /\b(not\s+equals?|!=|<>|não\s+é|diferente)\b/gi,
-    greater_than: /\b(greater\s+than|>|maior\s+que)\b/gi,
-    less_than: /\b(less\s+than|<|menor\s+que)\b/gi,
-    between: /\b(between|entre)\b/gi,
-    like: /\b(like|contains|contém|contém)\b/gi,
-    in: /\b(in|dentro\s+de)\b/gi,
-    not_in: /\b(not\s+in|fora\s+de)\b/gi
-  };
-
   constructor(config: CrudIntentParserConfig = {}) {
     this.config = {
       confidenceThreshold: config.confidenceThreshold ?? 0.7,
@@ -247,12 +235,11 @@ export class CrudIntentParser {
 
   private extractEntities(text: string): EntityArgument[] {
     const entities: EntityArgument[] = [];
-    const normalizedText = text.toLowerCase();
 
     // Extract entities using patterns (including custom entity types)
     for (const [entityType, pattern] of Object.entries(this.entityPatterns)) {
       const matches = [...text.matchAll(pattern)];
-      
+
       for (const match of matches) {
         if (match.index !== undefined) {
           entities.push({
@@ -333,9 +320,9 @@ export class CrudIntentParser {
         // Skip common words that aren't table names
         if (!['with', 'where', 'by', 'from', 'into', 'set', 'com', 'onde', 'por'].includes(tableName.toLowerCase())) {
           entities.push({
-            type: 'TABLE',
-            value: tableName,
-            position: [match.index + match[0].length - tableName.length, match.index + match[0].length],
+            type: 'FIELD',
+            value: match[1],
+            position: [match.index, match.index + match[1].length],
             confidence: 0.85
           });
         }
@@ -345,16 +332,22 @@ export class CrudIntentParser {
     // Look for field names in conditions (field = value, field equals value, etc.)
     const fieldPattern = /(\w+)\s+(?:=|equals?|is|!=|<>|>|<|like|contains|contém|é|não\s+é)\s+/gi;
     const fieldMatches = [...text.matchAll(fieldPattern)];
-    
+
     for (const match of fieldMatches) {
       if (match.index !== undefined) {
         const fieldName = match[1];
-        entities.push({
-          type: 'FIELD',
-          value: fieldName,
-          position: [match.index, match.index + fieldName.length],
-          confidence: 0.8
-        });
+        // Check if this field is already captured to avoid duplicates
+        const existingField = entities.find(e =>
+          e.type === 'FIELD' && e.value.toLowerCase() === fieldName.toLowerCase()
+        );
+        if (!existingField) {
+          entities.push({
+            type: 'FIELD',
+            value: fieldName,
+            position: [match.index, match.index + fieldName.length],
+            confidence: 0.8
+          });
+        }
       }
     }
 
