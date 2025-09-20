@@ -190,32 +190,33 @@ describe("NeonPro Testing Toolkit Examples", () => {
   });
 });
 
-// Example of using the TDD suite creator
-createTDDSuite(
-  {
-    feature: "user-registration",
-    agents: ["security-auditor", "code-reviewer"],
-    compliance: ["LGPD"],
-  },
-  {
-    redPhase: () => {
-      // Define failing tests
-      expect(false).toBe(true); // This will fail
+describe("TDD Suite Creator Example", () => {
+  createTDDSuite(
+    {
+      feature: "user-registration",
+      agents: ["security-auditor", "code-reviewer"],
+      compliance: ["LGPD"],
     },
-    greenPhase: () => {
-      // Minimal implementation
-      const user = { id: "123", email: "test@example.com" };
-      expect(user.id).toBeTruthy();
+    {
+      redPhase: () => {
+        // Define failing tests - this should fail in RED phase
+        expect(false).toBe(true);
+      },
+      greenPhase: () => {
+        // Minimal implementation
+        const user = { id: "123", email: "test@example.com" };
+        expect(user.id).toBe("123");
+      },
+      refactorPhase: () => {
+        // Improved implementation
+        const user = {
+          id: "123",
+          email: "test@example.com",
+          createdAt: new Date(),
+          lgpdCompliant: true,
+        };
+        expect(user.lgpdCompliant).toBe(true);
+      },
     },
-    refactorPhase: () => {
-      // Improved implementation
-      const user = {
-        id: "123",
-        email: "test@example.com",
-        createdAt: new Date(),
-        lgpdCompliant: true,
-      };
-      expect(user.lgpdCompliant).toBe(true);
-    },
-  },
-);
+  );
+});

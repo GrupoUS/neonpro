@@ -5,7 +5,6 @@
  * Following healthcare compliance standards (LGPD/ANVISA/CFM)
  */
 
-import { HealthcareTRPCError } from '@neonpro/types/api/contracts';
 import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 

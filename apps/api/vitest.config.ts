@@ -1,19 +1,11 @@
 import path from 'path';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-  plugins: [
-    tsconfigPaths({
-      // Restrict to this app's tsconfig and ignore errors in external dist tsconfigs
-      projects: [path.resolve(__dirname, './tsconfig.json')],
-      ignoreConfigErrors: true,
-    }),
-  ],
   test: {
     environment: 'node',
-    globals: true,
-    setupFiles: ['./src/test-setup.ts'],
+    globals: false,
+    // setupFiles: ['./src/test-setup.ts'],
     env: {
       // Load env vars for tests
       SUPABASE_URL: process.env.SUPABASE_URL || 'https://ownkoxryswokcdanrdgj.supabase.co',

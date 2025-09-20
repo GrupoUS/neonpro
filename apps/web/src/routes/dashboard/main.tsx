@@ -1,11 +1,6 @@
 "use client";
 
-import { AccessiblePatientCard } from "@/components/accessibility/AccessiblePatientCard";
 import { AIInsightsDashboard } from "@/components/ai/insights-dashboard";
-import { PatientDashboardStats } from "@/components/patients/PatientDashboardStats";
-import { ServiceAnalyticsDashboard } from "@/components/service-analytics/ServiceAnalyticsDashboard";
-import { AnimatedModal } from "@/components/ui/animated-modal";
-import { Badge } from "@/components/ui/badge";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
 import { Button } from "@/components/ui/button";
 import {

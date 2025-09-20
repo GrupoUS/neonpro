@@ -15,6 +15,7 @@ import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/clien
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
 import { healthcareProcedure, protectedProcedure, router } from '../trpc';
+import { createOperationStateService } from '../../services/operation-state-service';
 
 // =====================================
 // TYPE DEFINITIONS & SCHEMAS

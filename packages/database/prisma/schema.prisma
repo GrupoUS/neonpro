@@ -1186,3 +1186,53 @@ enum SyncLogStatus {
   RETRYING
   IGNORED
 }
+
+// Operation State Management Models
+model OperationState {
+  id                    String    @id @default(uuid())
+  operationId           String    @unique @map("operation_id")
+  step                  String    // "intent", "confirm", "execute"
+  status                String    // "pending", "processing", "completed", "failed"
+  entity                String
+  operation             String
+  userId                String    @map("user_id")
+  clinicId              String?   @map("clinic_id")
+  sessionId             String?   @map("session_id")
+  data                  Json?
+  metadata              Json?
+  errorMessage          String?   @map("error_message")
+  aiValidationResult    Json?     @map("ai_validation_result")
+  lgpdComplianceResult  Json?     @map("lgpd_compliance_result")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+  completedAt           DateTime? @map("completed_at")
+  
+  user                  User      @relation(fields: [userId], references: [id])
+  stateAudits           OperationStateAudit[]
+  
+  @@map("operation_states")
+  @@index([operationId])
+  @@index([userId])
+  @@index([status])
+  @@index([step])
+  @@index([createdAt])
+}
+
+model OperationStateAudit {
+  id               String   @id @default(uuid())
+  operationStateId String   @map("operation_state_id")
+  oldStatus        String?  @map("old_status")
+  newStatus        String   @map("new_status")
+  oldStep          String?  @map("old_step")
+  newStep          String   @map("new_step")
+  userId           String   @map("user_id")
+  changeReason     String?  @map("change_reason")
+  metadata         Json?
+  createdAt        DateTime @default(now()) @map("created_at")
+  
+  operationState   OperationState @relation(fields: [operationStateId], references: [id], onDelete: Cascade)
+  
+  @@map("operation_state_audit")
+  @@index([operationStateId])
+  @@index([createdAt])
+}
