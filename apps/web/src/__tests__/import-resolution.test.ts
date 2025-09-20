@@ -15,7 +15,6 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
     });
 
     it('should validate @ alias is used consistently across components', () => {
-      const componentsPath = join(process.cwd(), 'src/components');
       const files = [
         'src/components/ui/button.tsx',
         'src/components/ui/card.tsx',

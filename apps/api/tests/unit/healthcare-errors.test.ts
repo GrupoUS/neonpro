@@ -3,7 +3,7 @@
  * RED Phase: Define comprehensive test scenarios for healthcare error utilities
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import {
   createHealthcareError,
   formatHealthcareError,

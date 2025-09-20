@@ -1,4 +1,4 @@
-import type { AgentCoordinationPattern } from "./types";
+
 
 /**
  * Agent capability definition for TDD orchestration
@@ -218,6 +218,14 @@ export class TDDAgentRegistry {
    * Get agents for specific TDD phase
    */
   getAgentsForPhase(phase: TDDPhase, context: OrchestrationContext): AgentCapability[] {
+    // Handle undefined or empty context gracefully
+    if (!context || !context.healthcareCompliance) {
+      // Return all agents that support the phase if context is invalid
+      return Array.from(this.agents.values()).filter((agent) => 
+        agent.phases.includes(phase)
+      );
+    }
+
     const agents = Array.from(this.agents.values()).filter((agent) => {
       // Check if agent supports the phase
       if (!agent.phases.includes(phase)) {
@@ -256,6 +264,12 @@ export class TDDAgentRegistry {
    * Select optimal agents based on context
    */
   selectOptimalAgents(context: OrchestrationContext): AgentCapability[] {
+    // Handle undefined or incomplete context gracefully
+    if (!context || !context.requirements || !Array.isArray(context.requirements)) {
+      // Return all agents in default order if context is invalid
+      return this.getAllAgents();
+    }
+
     const allAgents = this.getAllAgents();
 
     // Calculate scores for each agent
@@ -323,7 +337,7 @@ export class TDDAgentRegistry {
   /**
    * Validate agent capability against context
    */
-  validateAgentCapability(agent: AgentCapability, context: OrchestrationContext): boolean {
+  validateAgentCapability(agent: AgentCapability): boolean {
     // Check if agent supports required phases
     // This is a simplified validation - in real implementation would be more comprehensive
     return agent.phases.length > 0 && agent.capabilities.length > 0;
@@ -333,8 +347,6 @@ export class TDDAgentRegistry {
    * Get recommended workflow based on context
    */
   getRecommendedWorkflow(context: OrchestrationContext): AgentType[] {
-    const optimalAgents = this.selectOptimalAgents(context);
-
     // Always start with orchestrator
     const workflow: AgentType[] = ["tdd-orchestrator"];
 

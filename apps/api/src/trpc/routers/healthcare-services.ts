@@ -36,8 +36,6 @@ import {
 // Import only used schemas
 import {
   ConsentWithdrawalRecordSchema,
-  DataProcessingRecordSchema,
-  NGS2AuthContextSchema,
 } from '../../services/enhanced-lgpd-lifecycle';
 
 // Service instances (would be injected in real app)

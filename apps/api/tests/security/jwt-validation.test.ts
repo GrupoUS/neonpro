@@ -19,6 +19,7 @@
 
 import { Hono } from 'hono';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { jwtValidator } from '../../src/security/jwt-validator';
 import { requireAuth } from '../../src/middleware/auth';
 import { unauthorized } from '../../src/utils/responses';
 import jwt from 'jsonwebtoken';
@@ -76,11 +77,11 @@ describe('JWT Validation Security Tests', () => {
 
       // This should fail with 401 Unauthorized
       expect(response.status).toBe(401);
-      expect(await response.text()).toContain('algoritmo');
+      expect(await response.text()).toBe('Algoritmo de token não permitido');
     });
 
     it('SHOULD FAIL: Should reject tokens with unsupported algorithms', async () => {
-      // Create token with unsupported algorithm (RS256 with HS256 key)
+      // Create token with unsupported algorithm (HS512 instead of HS256)
       const unsupportedAlgorithmToken = jwt.sign(
         {
           sub: testUserId,
@@ -90,7 +91,7 @@ describe('JWT Validation Security Tests', () => {
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
         'test-secret-key',
-        { algorithm: 'RS256' as any }
+        { algorithm: 'HS512' }
       );
 
       app.use('/protected', requireAuth);
@@ -133,7 +134,7 @@ describe('JWT Validation Security Tests', () => {
 
       // This should fail with 401 Unauthorized
       expect(response.status).toBe(401);
-      expect(await response.text()).toContain('audience');
+      expect(await response.text()).toBe('Público alvo inválido');
     });
 
     it('SHOULD FAIL: Should reject tokens missing audience claim', async () => {
@@ -189,7 +190,7 @@ describe('JWT Validation Security Tests', () => {
 
       // This should fail with 401 Unauthorized
       expect(response.status).toBe(401);
-      expect(await response.text()).toContain('issuer');
+      expect(await response.text()).toBe('Emissor inválido');
     });
 
     it('SHOULD FAIL: Should reject tokens missing issuer claim', async () => {
@@ -371,8 +372,12 @@ describe('JWT Validation Security Tests', () => {
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
         'test-secret-key',
-        { algorithm: 'HS256', keyid: undefined }
+        { algorithm: 'HS256' }
       );
+
+      // Temporarily enable key ID requirement for this test
+      const originalRequireKeyId = jwtValidator.config.requireKeyId;
+      jwtValidator.config.requireKeyId = true;
 
       app.use('/protected', requireAuth);
       app.get('/protected', (c) => c.json({ message: 'protected' }));
@@ -383,9 +388,12 @@ describe('JWT Validation Security Tests', () => {
         }
       });
 
+      // Restore original configuration
+      jwtValidator.config.requireKeyId = originalRequireKeyId;
+
       // This should fail with 401 Unauthorized
       expect(response.status).toBe(401);
-      expect(await response.text()).toContain('key');
+      expect(await response.text()).toBe('ID de chave ausente');
     });
 
     it('SHOULD FAIL: Should reject tokens with invalid key ID', async () => {

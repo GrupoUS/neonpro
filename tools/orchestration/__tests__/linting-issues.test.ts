@@ -64,7 +64,7 @@ describe("Linting Issues - RED Phase", () => {
         registry.getAgentsForPhase("red", mockContext);
         registry.getAgentsForCapability("test");
         registry.selectOptimalAgents(mockContext);
-        registry.validateAgentCapability(registry.getAgent("test")!, mockContext);
+        registry.validateAgentCapability(registry.getAgent("test")!);
         registry.getRecommendedWorkflow(mockContext);
         registry.updateAgentConfiguration("test", {});
         registry.getAgentStats("test");
@@ -281,7 +281,7 @@ describe("Linting Issues - RED Phase", () => {
         registry.getAgentsForPhase("refactor", mockContext);
         registry.getAgentsForCapability("test-pattern-enforcement");
         registry.selectOptimalAgents(mockContext);
-        registry.validateAgentCapability(registry.getAgent("test")!, mockContext);
+        registry.validateAgentCapability(registry.getAgent("test")!);
         registry.getRecommendedWorkflow(mockContext);
         registry.updateAgentConfiguration("test", { test: true });
         registry.getAgentStats("test");

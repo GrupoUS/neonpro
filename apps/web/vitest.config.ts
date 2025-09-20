@@ -62,6 +62,7 @@ export default defineConfig({
         'tests/component/**/*.test.tsx',
         // Integration tests for Financial Dashboard Enhancement
         'tests/integration/**/*.test.ts',
+        'tests/integration/mobile-patient-ux.test.tsx',
         // Telemedicine tests (T102.2 implementation)
         'src/components/telemedicine/__tests__/**/*.test.tsx',
         // Temporarily quarantine legacy route tests

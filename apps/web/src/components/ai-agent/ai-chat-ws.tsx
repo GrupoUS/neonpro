@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useWebSocketAgent } from '@/services/websocket-agent-service';
-import { AgentAction, AgentResponse, ChatMessage, ChatState } from '@neonpro/types';
+import { AgentAction, ChatMessage, ChatState } from '@neonpro/types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface AIChatProps {
@@ -39,7 +39,6 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
     lastMessage,
     sendQuery,
     sendAction,
-    sendFeedback,
   } = useWebSocketAgent({
     url: process.env.NEXT_PUBLIC_AI_AGENT_WS_URL,
   });
@@ -155,8 +154,8 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
           domain: initialContext?.domain,
           professionalId: initialContext?.professionalId,
         });
-      } catch (error) {
-        console.error('WebSocket error:', error);
+      } catch (_error) {
+        console.error('WebSocket error:', _error);
 
         const errorMessage: ChatMessage = {
           id: `msg_${Date.now()}_error`,

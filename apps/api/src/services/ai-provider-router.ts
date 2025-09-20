@@ -505,9 +505,9 @@ export class AIProviderRouterService {
   /**
    * Select emergency-priority provider
    */
-  private selectEmergencyProvider(
+  private selectBestProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): ProviderConfig {
     // For emergency, prioritize fastest response with highest compliance
     return this.selectLatencyOptimizedProvider(
@@ -525,7 +525,7 @@ export class AIProviderRouterService {
    */
   private selectLoadBalancedProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): ProviderConfig {
     // Simple round-robin based on current health metrics
     const sorted_providers = providers.sort((a, b) => {
@@ -862,7 +862,7 @@ export class AIProviderRouterService {
    */
   private generateMockResponse(
     use_case: HealthcareAIUseCase,
-    prompt: string,
+    _prompt: string,
   ): string {
     const responses: Record<HealthcareAIUseCase, string> = {
       [HealthcareAIUseCase.PATIENT_COMMUNICATION]:

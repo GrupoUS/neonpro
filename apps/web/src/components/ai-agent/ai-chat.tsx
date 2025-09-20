@@ -8,9 +8,8 @@
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
-import { useCopilotChat } from '@copilotkit/react-core';
 import { CopilotChat } from '@copilotkit/react-ui';
-import { AgentAction, AgentResponse, ChatMessage, ChatState } from '@neonpro/types';
+import { AgentAction, ChatMessage, ChatState } from '@neonpro/types';
 import React, { useCallback, useRef, useState } from 'react';
 
 interface AIChatProps {
@@ -120,8 +119,8 @@ export function AIChat({ className, initialContext }: AIChatProps) {
         if (data.response.actions && data.response.actions.length > 0) {
           handleActions(data.response.actions);
         }
-      } catch (error) {
-        console.error('Chat error:', error);
+      } catch (_error) {
+        console.error('Chat error:', _error);
         toast({
           title: 'Erro',
           description: error instanceof Error

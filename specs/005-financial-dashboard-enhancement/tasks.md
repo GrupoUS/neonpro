@@ -7,7 +7,7 @@
 
 ```
 1. Load plan.md from feature directory ✓
-   → Tech stack: Next.js 14+, Shadcn MCP, Recharts, TanStack Query, Zustand
+   → Tech stack: TanStack Router + Vite + React 19, Shadcn MCP, Recharts, TanStack Query, Zustand
    → Structure: Web application (frontend + backend integration)
 2. Load optional design documents ✓:
    → data-model.md: 4 core entities (financial_transactions, financial_metrics, dashboard_preferences, audit_logs)
@@ -29,7 +29,8 @@
    → All financial APIs have tests ✓
    → All chart components have tests ✓
    → All user scenarios covered ✓
-9. Return: SUCCESS (46 tasks ready for execution)
+   → All Constitution v1.2.0 security requirements included ✓
+9. Return: SUCCESS (53 tasks ready for execution)
 ```
 
 ## Format: `[ID] [P?] Description`
@@ -58,7 +59,7 @@
 ### Database Schema
 
 - [ ] **T005** Create financial transactions table migration in `supabase/migrations/001_financial_transactions.sql`
-- [x] **T006** Create financial metrics materialized view in `supabase/migrations/002_financial_metrics.sql`
+- [x] **T006** ✅ COMPLETED - Create financial metrics materialized view in `supabase/migrations/002_financial_metrics.sql`
 - [ ] **T007** Create dashboard preferences table in `supabase/migrations/003_dashboard_preferences.sql`
 - [ ] **T008** Create audit logs table with LGPD compliance in `supabase/migrations/004_audit_logs.sql`
 
@@ -66,24 +67,24 @@
 
 ### API Contract Tests
 
-- [x] **T009** [P] Contract test GET /api/financial/dashboard in `apps/web/tests/contract/financial-dashboard.test.ts`
-- [x] **T010** [P] Contract test GET /api/financial/metrics in `apps/web/tests/contract/financial-metrics.test.ts`
-- [x] **T011** [P] Contract test POST /api/financial/export in `apps/web/tests/contract/financial-export.test.ts`
-- [x] **T012** [P] Contract test WebSocket /ws/financial/updates in `apps/web/tests/contract/financial-websocket.test.ts`
+- [x] **T009** [P] ✅ COMPLETED - Contract test GET /api/financial/dashboard in `apps/web/tests/contract/financial-dashboard.test.ts`
+- [x] **T010** [P] ✅ COMPLETED - Contract test GET /api/financial/metrics in `apps/web/tests/contract/financial-metrics.test.ts`
+- [x] **T011** [P] ✅ COMPLETED - Contract test POST /api/financial/export in `apps/web/tests/contract/financial-export.test.ts`
+- [x] **T012** [P] ✅ COMPLETED - Contract test WebSocket /ws/financial/updates in `apps/web/tests/contract/financial-websocket.test.ts`
 
 ### Component Tests
 
-- [x] **T013** [P] Chart component test for MRR visualization in `apps/web/tests/components/chart-mrr.test.tsx`
-- [x] **T014** [P] Chart component test for ARR trends in `apps/web/tests/components/chart-arr.test.tsx`
-- [x] **T015** [P] Chart component test for churn analysis in `apps/web/tests/components/chart-churn.test.tsx`
-- [x] **T016** [P] Dashboard layout responsive test in `apps/web/tests/components/dashboard-layout.test.tsx`
+- [x] **T013** [P] ✅ COMPLETED - Chart component test for MRR visualization in `apps/web/tests/components/chart-mrr.test.tsx`
+- [x] **T014** [P] ✅ COMPLETED - Chart component test for ARR trends in `apps/web/tests/components/chart-arr.test.tsx`
+- [x] **T015** [P] ✅ COMPLETED - Chart component test for churn analysis in `apps/web/tests/components/chart-churn.test.tsx`
+- [x] **T016** [P] ✅ COMPLETED - Dashboard layout responsive test in `apps/web/tests/components/dashboard-layout.test.tsx`
 
 ### Integration Tests
 
-- [x] **T017** [P] Integration test: Financial dashboard loading scenario in `apps/web/tests/integration/dashboard-loading.test.ts`
-- [x] **T018** [P] Integration test: Date range filtering workflow in `apps/web/tests/integration/date-filtering.test.ts`
-- [x] **T019** [P] Integration test: Export functionality end-to-end in `apps/web/tests/integration/export-workflow.test.ts`
-- [x] **T020** [P] Integration test: Mobile responsiveness validation in `apps/web/tests/integration/mobile-responsive.test.ts`
+- [x] **T017** [P] ✅ COMPLETED - Integration test: Financial dashboard loading scenario in `apps/web/tests/integration/dashboard-loading.test.ts`
+- [x] **T018** [P] ✅ COMPLETED - Integration test: Date range filtering workflow in `apps/web/tests/integration/date-filtering.test.ts`
+- [x] **T019** [P] ✅ COMPLETED - Integration test: Export functionality end-to-end in `apps/web/tests/integration/export-workflow.test.ts`
+- [x] **T020** [P] ✅ COMPLETED - Integration test: Mobile responsiveness validation in `apps/web/tests/integration/mobile-responsive.test.ts`
 
 **CRITICAL: Tests T009-T020 MUST be written and MUST FAIL before ANY implementation**
 
@@ -91,10 +92,10 @@
 
 ### Data Services
 
-- [x] **T021** [P] Financial metrics service with TanStack Query in `apps/web/src/services/financial-metrics.ts`
-- [x] **T022** [P] Dashboard data aggregation service in `apps/web/src/services/dashboard-data.ts`
-- [x] **T023** [P] Export service for PDF/Excel generation in `apps/web/src/services/export.ts`
-- [x] **T024** [P] Zustand store for dashboard state in `apps/web/src/stores/dashboard-store.ts`
+- [x] **T021** [P] ✅ COMPLETED - Financial metrics service with TanStack Query in `apps/web/src/services/financial-metrics.ts`
+- [x] **T022** [P] ✅ COMPLETED - Dashboard data aggregation service in `apps/web/src/services/dashboard-data.ts`
+- [x] **T023** [P] ✅ COMPLETED - Export service for PDF/Excel generation in `apps/web/src/services/export.ts`
+- [x] **T024** [P] ✅ COMPLETED - Zustand store for dashboard state in `apps/web/src/stores/dashboard-store.ts`
 
 ### Chart Components (Shadcn MCP + Recharts)
 
@@ -120,25 +121,35 @@
 - [ ] **T036** Authentication middleware for financial data access in `apps/web/src/middleware/auth-financial.ts`
 - [ ] **T037** LGPD audit logging implementation in `apps/web/src/utils/audit-logger.ts`
 
+### Security Implementation (Constitution v1.2.0 Requirements)
+
+- [ ] **T038** [P] Configure HTTPS/TLS 1.3 enforcement in `apps/api/src/middleware/https-enforcement.ts`
+- [ ] **T039** [P] Implement comprehensive security headers (HSTS, CSP, X-Frame-Options) in `apps/api/src/middleware/security-headers.ts`
+- [ ] **T040** [P] Set up WebAuthn biometric authentication in `apps/web/src/components/auth/biometric-auth.tsx`
+- [ ] **T041** [P] Implement JOSE library JWT token handling in `apps/api/src/utils/jwt-handler.ts`
+- [ ] **T042** Certificate management and auto-renewal setup in `apps/api/src/services/certificate-manager.ts`
+
 ### Advanced Features
 
-- [ ] **T038** PDF export with clinic branding in `apps/web/src/utils/pdf-export.ts`
-- [ ] **T039** Excel export with financial formatting in `apps/web/src/utils/excel-export.ts`
-- [ ] **T040** Dark/light theme integration with Shadcn in `apps/web/src/components/theme/theme-provider.tsx`
-- [ ] **T041** Mobile-optimized chart interactions in `apps/web/src/hooks/use-mobile-charts.ts`
+- [ ] **T043** PDF export with clinic branding in `apps/web/src/utils/pdf-export.ts`
+- [ ] **T044** Excel export with financial formatting in `apps/web/src/utils/excel-export.ts`
+- [ ] **T045** Dark/light theme integration with Shadcn in `apps/web/src/components/theme/theme-provider.tsx`
+- [ ] **T046** Mobile-optimized chart interactions in `apps/web/src/hooks/use-mobile-charts.ts`
 
 ## Phase 3.5: Polish & Validation (Days 8-10)
 
 ### Performance & Optimization
 
-- [ ] **T042** [P] Chart data virtualization for large datasets in `apps/web/src/utils/chart-virtualization.ts`
-- [ ] **T043** [P] Performance testing: <2s load time validation in `apps/web/tests/performance/dashboard-load.test.ts`
-- [ ] **T044** [P] Bundle size optimization: <100KB additional impact analysis
+- [ ] **T047** [P] Chart data virtualization for large datasets in `apps/web/src/utils/chart-virtualization.ts`
+- [ ] **T048** [P] Performance testing: <2s load time validation in `apps/web/tests/performance/dashboard-load.test.ts`
+- [ ] **T049** [P] Bundle size optimization: <100KB additional impact analysis
+- [ ] **T050** [P] HTTPS handshake performance testing: ≤300ms validation in `apps/web/tests/performance/https-performance.test.ts`
 
 ### Compliance & Documentation
 
-- [ ] **T045** LGPD compliance audit and validation checklist execution
-- [ ] **T046** Update project documentation with financial dashboard setup in `docs/features/financial-dashboard.md`
+- [ ] **T051** LGPD compliance audit and validation checklist execution
+- [ ] **T052** HTTPS/TLS 1.3 security validation and certificate transparency verification
+- [ ] **T053** Update project documentation with financial dashboard setup in `docs/features/financial-dashboard.md`
 
 ## Dependencies & Critical Path
 
@@ -257,5 +268,5 @@ Task: "Customer churn analysis chart in apps/web/src/components/charts/chart-chu
 
 ---
 
-**Template Version**: 1.1.0 | **Constitution Version**: 1.0.0 | **Last Updated**: 2025-01-15
+**Template Version**: 1.1.0 | **Constitution Version**: 1.2.0 | **Last Updated**: 2025-01-15
 _Total Tasks: 46 | Estimated Duration: 10 business days | TDD Compliance: Mandatory_

@@ -5,7 +5,7 @@
 
 import { createServerClient } from '../clients/supabase.js';
 import { logger } from '@/utils/secure-logger';
-import { enhancedRLSSecurityService, type SecurityAlert } from './enhanced-rls-security.js';
+import { type SecurityAlert } from './enhanced-rls-security.js';
 
 export interface SecurityMetrics {
   timestamp: Date;
@@ -361,7 +361,7 @@ export class SecurityMonitoringDashboardService {
   /**
    * Get compliance status
    */
-  private async getComplianceStatus(clinicId?: string): Promise<{
+  private async getComplianceStatus(_clinicId?: string): Promise<{
     lgpdCompliant: boolean;
     auditLogRetention: boolean;
     dataEncryption: boolean;

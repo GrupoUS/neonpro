@@ -18,6 +18,15 @@ import {
   UpdateKPIMetric,
 } from "@neonpro/types/governance.types";
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import {
+  AuditTrailRecord,
+  KPIMetricRecord,
+  ComplianceStatusRecord,
+  RiskAssessmentRecord,
+  AIGovernanceMetricRecord,
+  PolicyManagementRecord,
+  EscalationWorkflowRecord,
+} from "../../types/database-records";
 
 export class SupabaseGovernanceService implements GovernanceService {
   protected supabase: SupabaseClient;
@@ -391,27 +400,27 @@ export class SupabaseGovernanceService implements GovernanceService {
   }
 
   // Database mapping methods
-  private mapAuditTrailFromDb(data: any): AuditTrailEntry {
+  private mapAuditTrailFromDb(data: AuditTrailRecord): AuditTrailEntry {
     return {
       id: data.id,
       userId: data.user_id,
       clinicId: data.clinic_id,
-      patientId: data.patient_id,
-      action: data.action,
+      patientId: data.patient_id || undefined,
+      action: data.action as any,
       resource: data.resource,
-      resourceType: data.resource_type,
-      resourceId: data.resource_id,
-      ipAddress: data.ip_address,
-      userAgent: data.user_agent,
-      sessionId: data.session_id,
-      status: data.status,
-      riskLevel: data.risk_level,
-      additionalInfo: data.additional_info,
+      resourceType: data.resource_type as any,
+      resourceId: data.resource_id || undefined,
+      ipAddress: data.ip_address || "",
+      userAgent: data.user_agent || "",
+      sessionId: data.session_id || undefined,
+      status: data.status as any,
+      riskLevel: data.risk_level as any,
+      additionalInfo: data.additional_info as any,
       createdAt: new Date(data.created_at),
-      encryptedDetails: data.encrypted_details,
+      encryptedDetails: data.encrypted_details as any,
     };
   }
-  private mapKPIMetricFromDb(data: any): KPIMetric {
+  private mapKPIMetricFromDb(data: KPIMetricRecord): KPIMetric {
     return {
       id: data.id,
       name: data.name,
@@ -419,57 +428,57 @@ export class SupabaseGovernanceService implements GovernanceService {
       category: data.category,
       currentValue: parseFloat(data.current_value),
       targetValue: parseFloat(data.target_value),
-      direction: data.direction,
+      direction: data.direction as any,
       unit: data.unit,
-      status: data.status,
+      status: data.status as any,
       threshold: data.threshold ? parseFloat(data.threshold) : undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
     };
   }
 
-  private mapComplianceStatusFromDb(data: any): ComplianceStatus {
+  private mapComplianceStatusFromDb(data: ComplianceStatusRecord): ComplianceStatus {
     return {
       id: data.id,
       clinicId: data.clinic_id,
-      framework: data.framework,
+      framework: data.framework as any,
       score: parseFloat(data.score),
-      status: data.status,
+      status: data.status as any,
       violations: data.violations,
       lastAudit: data.last_audit ? new Date(data.last_audit) : undefined,
       nextAudit: data.next_audit ? new Date(data.next_audit) : undefined,
-      details: data.details,
+      details: data.details || undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
     };
   }
 
-  private mapRiskAssessmentFromDb(data: any): RiskAssessment {
+  private mapRiskAssessmentFromDb(data: RiskAssessmentRecord): RiskAssessment {
     return {
       id: data.id,
       clinicId: data.clinic_id,
       category: data.category,
       title: data.title,
       description: data.description,
-      severity: data.severity,
-      likelihood: data.likelihood,
-      impact: data.impact,
-      status: data.status,
-      mitigation: data.mitigation,
-      owner: data.owner,
+      severity: data.severity as any,
+      likelihood: data.likelihood as any,
+      impact: data.impact as any,
+      status: data.status as any,
+      mitigation: data.mitigation || undefined,
+      owner: data.owner || undefined,
       dueDate: data.due_date ? new Date(data.due_date) : undefined,
-      metadata: data.metadata,
+      metadata: data.metadata || undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
     };
   }
 
-  private mapAIGovernanceFromDb(data: any): AIGovernanceMetric {
+  private mapAIGovernanceFromDb(data: AIGovernanceMetricRecord): AIGovernanceMetric {
     return {
       id: data.id,
       modelName: data.model_name,
       modelVersion: data.model_version,
-      status: data.status,
+      status: data.status as any,
       hallucinationRate: parseFloat(data.hallucination_rate),
       accuracyScore: parseFloat(data.accuracy_score),
       biasScore: data.bias_score ? parseFloat(data.bias_score) : undefined,
@@ -482,33 +491,33 @@ export class SupabaseGovernanceService implements GovernanceService {
       lastTrainingDate: data.last_training_date
         ? new Date(data.last_training_date)
         : undefined,
-      modelSize: data.model_size,
-      metadata: data.metadata,
+      modelSize: data.model_size || undefined,
+      metadata: data.metadata || undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
     };
   }
-  private mapPolicyFromDb(data: any): PolicyManagement {
+  private mapPolicyFromDb(data: PolicyManagementRecord): PolicyManagement {
     return {
       id: data.id,
       name: data.name,
       description: data.description,
       category: data.category,
-      framework: data.framework,
-      status: data.status,
+      framework: data.framework as any,
+      status: data.status as any,
       version: data.version,
       enforcementRate: parseFloat(data.enforcement_rate),
       violationCount: data.violation_count,
       lastReview: data.last_review ? new Date(data.last_review) : undefined,
       nextReview: data.next_review ? new Date(data.next_review) : undefined,
       content: data.content,
-      metadata: data.metadata,
+      metadata: data.metadata || undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
     };
   }
 
-  private mapEscalationFromDb(data: any): EscalationWorkflow {
+  private mapEscalationFromDb(data: EscalationWorkflowRecord): EscalationWorkflow {
     return {
       id: data.id,
       userId: data.user_id,
@@ -516,16 +525,16 @@ export class SupabaseGovernanceService implements GovernanceService {
       description: data.description,
       category: data.category,
       source: data.source,
-      priority: data.priority,
-      status: data.status,
-      assignedTo: data.assigned_to,
+      priority: data.priority as any,
+      status: data.status as any,
+      assignedTo: data.assigned_to || undefined,
       deadline: data.deadline ? new Date(data.deadline) : undefined,
       escalatedAt: data.escalated_at ? new Date(data.escalated_at) : undefined,
       resolvedAt: data.resolved_at ? new Date(data.resolved_at) : undefined,
-      responseTime: data.response_time,
-      resolutionTime: data.resolution_time,
-      notes: data.notes,
-      metadata: data.metadata,
+      responseTime: data.response_time || undefined,
+      resolutionTime: data.resolution_time || undefined,
+      notes: data.notes || undefined,
+      metadata: data.metadata || undefined,
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
     };

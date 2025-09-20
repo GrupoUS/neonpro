@@ -1,5 +1,5 @@
-import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
-import { makeAbsoluteUrl } from '../utils/test-helpers';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { makeAbsoluteUrl } from '../utils/test-config';
 
 describe('Financial Metrics API Contract Tests', () => {
   beforeAll(async () => {

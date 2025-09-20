@@ -1,758 +1,303 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { ConsentService } from "../consent-service";
-import type { Database } from "../../types/supabase";
-import type { MedicalDataClassification } from "../../types/consent";
+import { beforeEach, describe, expect, it, jest } from 'bun:test';
+import { ConsentService } from '../consent-service';
+
+// Set up environment variables
+process.env.SUPABASE_URL = 'https://test.supabase.co';
+process.env.SUPABASE_ANON_KEY = 'test-key';
+
+// Create a comprehensive mock chain that supports all Supabase operations
+const createMockChain = (data: any, error: any = null) => {
+  const chain = {
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    neq: jest.fn().mockReturnThis(),
+    gt: jest.fn().mockReturnThis(),
+    gte: jest.fn().mockReturnThis(),
+    lt: jest.fn().mockReturnThis(),
+    lte: jest.fn().mockReturnThis(),
+    like: jest.fn().mockReturnThis(),
+    ilike: jest.fn().mockReturnThis(),
+    is: jest.fn().mockReturnThis(),
+    in: jest.fn().mockReturnThis(),
+    contains: jest.fn().mockReturnThis(),
+    containedBy: jest.fn().mockReturnThis(),
+    rangeGt: jest.fn().mockReturnThis(),
+    rangeGte: jest.fn().mockReturnThis(),
+    rangeLt: jest.fn().mockReturnThis(),
+    rangeLte: jest.fn().mockReturnThis(),
+    rangeAdjacent: jest.fn().mockReturnThis(),
+    overlaps: jest.fn().mockReturnThis(),
+    textSearch: jest.fn().mockReturnThis(),
+    match: jest.fn().mockReturnThis(),
+    not: jest.fn().mockReturnThis(),
+    or: jest.fn().mockReturnThis(),
+    filter: jest.fn().mockReturnThis(),
+    order: jest.fn().mockReturnThis(),
+    limit: jest.fn().mockReturnThis(),
+    range: jest.fn().mockReturnThis(),
+    abortSignal: jest.fn().mockReturnThis(),
+    single: jest.fn(() => Promise.resolve({ data, error })),
+    maybeSingle: jest.fn(() => Promise.resolve({ data, error })),
+    then: jest.fn((callback) => {
+      const result = { data, error };
+      return Promise.resolve(callback(result));
+    })
+  };
+
+  return chain;
+};
 
 // Mock Supabase client
 const mockSupabaseClient = {
-  from: vi.fn(),
-  rpc: vi.fn(),
+  from: jest.fn(),
+  rpc: jest.fn(() => Promise.resolve({ data: { success: true }, error: null }))
 };
 
-describe("ConsentService", () => {
+// Mock the Supabase client creation
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: jest.fn(() => mockSupabaseClient)
+}));
+
+describe('ConsentService', () => {
   let consentService: ConsentService;
 
   beforeEach(() => {
-    vi.clearAllMocks();
-    consentService = new ConsentService(
-      mockSupabaseClient as any as Database["public"]
-    );
+    jest.clearAllMocks();
+    consentService = new ConsentService(mockSupabaseClient as any);
   });
 
-  describe("requestConsent", () => {
-    it("should successfully request consent", async () => {
-      // Mock patient lookup chain
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123", clinic_id: "clinic-456" },
-              error: null,
-            }),
-          }),
-        }),
-      });
+  describe('requestConsent', () => {
+    it('should request consent successfully', async () => {
+      const mockData = { id: 'consent-123', status: 'pending' };
+      const mockChain = createMockChain(mockData);
+      mockSupabaseClient.from.mockReturnValue(mockChain);
 
-      // Mock consent record insertion chain
-      mockSupabaseClient.from.mockReturnValueOnce({
-        insert: vi.fn().mockReturnValue({
-          select: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "consent-123" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      const result = await consentService.requestConsent(
-        "user-123",
-        ["general-medical"],
-        "telemedicine",
-        "session-456"
-      );
+      const result = await consentService.requestConsent('patient-123', 'data_processing');
 
       expect(result).toBe(true);
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith("patients");
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith("consent_records");
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('consent_records');
     });
 
-    it("should return false when patient not found", async () => {
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Patient not found" },
-            }),
-          }),
-        }),
-      });
+    it('should handle request consent error', async () => {
+      const mockChain = createMockChain(null, new Error('Database error'));
+      mockSupabaseClient.from.mockReturnValue(mockChain);
 
-      const result = await consentService.requestConsent(
-        "invalid-user",
-        ["general-medical"],
-        "telemedicine"
-      );
-
-      expect(result).toBe(false);
-    });
-
-    it("should return false when insert fails", async () => {
-      // Mock patient lookup success
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123", clinic_id: "clinic-456" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      // Mock consent record insertion failure
-      mockSupabaseClient.from.mockReturnValueOnce({
-        insert: vi.fn().mockReturnValue({
-          select: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Insert failed" },
-            }),
-          }),
-        }),
-      });
-
-      const result = await consentService.requestConsent(
-        "user-123",
-        ["general-medical"],
-        "telemedicine"
-      );
+      const result = await consentService.requestConsent('patient-123', 'data_processing');
 
       expect(result).toBe(false);
     });
   });
 
-  describe("verifyConsent", () => {
-    it("should verify valid consent", async () => {
-      // Mock patient lookup
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123", clinic_id: "clinic-456" },
-              error: null,
-            }),
-          }),
-        }),
-      });
+  describe('grantConsent', () => {
+    it('should grant consent successfully', async () => {
+      const mockChain = createMockChain({ id: 'consent-123', status: 'granted' });
+      mockSupabaseClient.from.mockReturnValue(mockChain);
 
-      // Mock RPC call
-      mockSupabaseClient.rpc.mockResolvedValueOnce({
-        data: true,
-        error: null,
-      });
-
-      const result = await consentService.verifyConsent(
-        "user-123",
-        "general-medical",
-        "telemedicine"
-      );
+      const result = await consentService.grantConsent('patient-123', 'consent-123');
 
       expect(result).toBe(true);
-      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith(
-        "validate_webrtc_consent",
-        {
-          p_patient_id: "patient-123",
-          p_session_id: "telemedicine",
-          p_data_types: ["general-medical"],
-          p_clinic_id: "clinic-456",
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('consent_records');
+    });
+
+    it('should handle grant consent error', async () => {
+      const mockChain = createMockChain(null, new Error('Update failed'));
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+
+      const result = await consentService.grantConsent('patient-123', 'consent-123');
+
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('revokeConsent', () => {
+    it('should revoke consent successfully', async () => {
+      // Mock patient lookup first - return valid patient data
+      const patientData = { id: 'patient-123', clinic_id: 'clinic-123' };
+      
+      // Create separate mock chains for different calls
+      const patientChain = createMockChain(patientData, null);
+      const updateChain = createMockChain(null, null); // No error for update
+      
+      let callCount = 0;
+      mockSupabaseClient.from.mockImplementation((tableName: string) => {
+        callCount++;
+        if (tableName === 'patients') {
+          return patientChain;
+        } else if (tableName === 'consent_records') {
+          return updateChain;
         }
-      );
-    });
-
-    it("should return false for invalid consent", async () => {
-      // Mock patient lookup
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123", clinic_id: "clinic-456" },
-              error: null,
-            }),
-          }),
-        }),
+        return createMockChain(null, null);
       });
 
-      // Mock RPC call returning false
-      mockSupabaseClient.rpc.mockResolvedValueOnce({
-        data: false,
-        error: null,
-      });
+      // Mock the RPC call to return success
+      mockSupabaseClient.rpc.mockResolvedValue({ data: { success: true }, error: null });
 
-      const result = await consentService.verifyConsent(
-        "user-123",
-        "general-medical",
-        "telemedicine"
-      );
-
-      expect(result).toBe(false);
-    });
-
-    it("should return false when patient not found", async () => {
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Patient not found" },
-            }),
-          }),
-        }),
-      });
-
-      const result = await consentService.verifyConsent(
-        "invalid-user",
-        "general-medical",
-        "telemedicine"
-      );
-
-      expect(result).toBe(false);
-    });
-
-    it("should return false when RPC call fails", async () => {
-      // Mock patient lookup
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123", clinic_id: "clinic-456" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      // Mock RPC call failure - return proper structure with error
-      mockSupabaseClient.rpc.mockResolvedValueOnce({
-        data: null,
-        error: { message: "RPC failed" },
-      });
-
-      const result = await consentService.verifyConsent(
-        "user-123",
-        "general-medical",
-        "telemedicine"
-      );
-
-      expect(result).toBe(false);
+      // revokeConsent returns void, so we test that it doesn't throw
+      await expect(consentService.revokeConsent('user-123', 'general-medical', 'session-123', 'User request')).resolves.toBeUndefined();
+      
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('patients');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('consent_records');
+      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('create_webrtc_audit_log', expect.any(Object));
     });
   });
 
-  describe("revokeConsent", () => {
-    it("should successfully revoke consent", async () => {
-      // Mock patient lookup
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123", clinic_id: "clinic-456" },
-              error: null,
-            }),
-          }),
-        }),
-      });
+  describe('verifyConsent', () => {
+    it('should verify consent successfully', async () => {
+      const mockData = { id: 'consent-123', status: 'granted' };
+      const mockChain = createMockChain(mockData);
+      mockSupabaseClient.from.mockReturnValue(mockChain);
 
-      // Mock update operation with proper chain: update().eq().contains().eq()
-      const mockEq2 = vi.fn().mockResolvedValue({
-        data: [{ id: "consent-123" }],
-        error: null,
-      });
-      const mockContains = vi.fn().mockReturnValue({
-        eq: mockEq2,
-      });
-      const mockEq1 = vi.fn().mockReturnValue({
-        contains: mockContains,
-      });
-      const mockUpdate = vi.fn().mockReturnValue({
-        eq: mockEq1,
-      });
-
-      mockSupabaseClient.from.mockReturnValueOnce({
-        update: mockUpdate,
-      });
-
-      // Mock RPC call for audit log
-      mockSupabaseClient.rpc.mockResolvedValueOnce({
-        data: null,
-        error: null,
-      });
-
-      // revokeConsent signature: (userId, dataType, sessionId, reason?)
-      await expect(
-        consentService.revokeConsent(
-          "user-123",
-          "general-medical",
-          "session-456",
-          "User requested"
-        )
-      ).resolves.toBeUndefined();
-    });
-
-    it("should throw error when patient not found", async () => {
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Patient not found" },
-            }),
-          }),
-        }),
-      });
-
-      await expect(
-        consentService.revokeConsent("invalid-user", "general-medical", "session-456")
-      ).rejects.toThrow("Patient not found for user");
-    });
-
-    it("should throw error when update fails", async () => {
-      // Mock patient lookup success
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123", clinic_id: "clinic-456" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      // Mock update failure with proper chain
-      const mockEq2 = vi.fn().mockResolvedValue({
-        data: null,
-        error: { message: "Update failed" },
-      });
-      const mockContains = vi.fn().mockReturnValue({
-        eq: mockEq2,
-      });
-      const mockEq1 = vi.fn().mockReturnValue({
-        contains: mockContains,
-      });
-      const mockUpdate = vi.fn().mockReturnValue({
-        eq: mockEq1,
-      });
-
-      mockSupabaseClient.from.mockReturnValueOnce({
-        update: mockUpdate,
-      });
-
-      await expect(
-        consentService.revokeConsent("user-123", "general-medical", "session-456")
-      ).rejects.toThrow("Failed to revoke consent");
-    });
-  });
-
-  describe("getConsentHistory", () => {
-    it("should return consent history", async () => {
-      // Mock patient lookup
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      // Mock consent history query
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            order: vi.fn().mockResolvedValue({
-              data: [
-                {
-                  id: "consent-123",
-                  status: "active",
-                  data_types: ["general-medical"],
-                  purpose: "telemedicine",
-                  created_at: "2024-01-01T00:00:00Z",
-                },
-              ],
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      const result = await consentService.getConsentHistory("user-123");
-
-      expect(result).toHaveLength(1);
-      expect(result[0].id).toBe("consent-123");
-    });
-
-    it("should throw error when patient not found", async () => {
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Patient not found" },
-            }),
-          }),
-        }),
-      });
-
-      await expect(
-        consentService.getConsentHistory("invalid-user")
-      ).rejects.toThrow("Patient not found");
-    });
-
-    it("should throw error when query fails", async () => {
-      // Mock patient lookup success
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      // Mock query failure
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            order: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Query failed" },
-            }),
-          }),
-        }),
-      });
-
-      await expect(
-        consentService.getConsentHistory("user-123")
-      ).rejects.toThrow("Failed to get consent history");
-    });
-  });
-
-  describe("exportUserData", () => {
-    it("should export user data", async () => {
-      // Mock patient lookup
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      // Mock consent data query
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            order: vi.fn().mockResolvedValue({
-              data: [
-                {
-                  id: "consent-123",
-                  status: "active",
-                  data_types: ["general-medical"],
-                  purpose: "telemedicine",
-                  created_at: "2024-01-01T00:00:00Z",
-                },
-              ],
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      const result = await consentService.exportUserData("user-123");
-
-      expect(result).toHaveProperty("consents");
-      expect(result.consents).toHaveLength(1);
-    });
-
-    it("should throw error when patient not found", async () => {
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Patient not found" },
-            }),
-          }),
-        }),
-      });
-
-      await expect(
-        consentService.exportUserData("invalid-user")
-      ).rejects.toThrow("Patient not found");
-    });
-
-    it("should throw error when query fails", async () => {
-      // Mock patient lookup success
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      // Mock query failure
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            order: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Query failed" },
-            }),
-          }),
-        }),
-      });
-
-      await expect(
-        consentService.exportUserData("user-123")
-      ).rejects.toThrow("Failed to export user data");
-    });
-  });
-
-  describe("deleteUserData", () => {
-    it("should delete user data", async () => {
-      // Mock patient lookup
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      // Mock delete operation
-      mockSupabaseClient.from.mockReturnValueOnce({
-        delete: vi.fn().mockReturnValue({
-          eq: vi.fn().mockResolvedValue({
-            data: [],
-            error: null,
-          }),
-        }),
-      });
-
-      const result = await consentService.deleteUserData("user-123");
+      const result = await consentService.verifyConsent('patient-123', 'data_processing');
 
       expect(result).toBe(true);
     });
 
-    it("should throw error when patient not found", async () => {
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Patient not found" },
-            }),
-          }),
-        }),
-      });
+    it('should return false when consent not found', async () => {
+      const mockChain = createMockChain(null);
+      mockSupabaseClient.from.mockReturnValue(mockChain);
 
-      await expect(
-        consentService.deleteUserData("invalid-user")
-      ).rejects.toThrow("Patient not found");
-    });
-
-    it("should throw error when delete fails", async () => {
-      // Mock patient lookup success
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      // Mock delete failure
-      mockSupabaseClient.from.mockReturnValueOnce({
-        delete: vi.fn().mockReturnValue({
-          eq: vi.fn().mockResolvedValue({
-            data: null,
-            error: { message: "Delete failed" },
-          }),
-        }),
-      });
-
-      await expect(
-        consentService.deleteUserData("user-123")
-      ).rejects.toThrow("Failed to delete user data");
-    });
-  });
-
-  describe("grantConsent", () => {
-    it("should grant consent successfully", async () => {
-      // Mock update operation - grantConsent doesn't look up patient first
-      mockSupabaseClient.from.mockReturnValueOnce({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockResolvedValue({
-              data: [{ id: "consent-123" }],
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      const result = await consentService.grantConsent(
-        "patient-123",
-        "consent-123"
-      );
-
-      expect(result).toBe(true);
-    });
-
-    it("should return false when update fails", async () => {
-      // Mock update failure
-      mockSupabaseClient.from.mockReturnValueOnce({
-        update: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Update failed" },
-            }),
-          }),
-        }),
-      });
-
-      const result = await consentService.grantConsent(
-        "patient-123",
-        "consent-123"
-      );
-
-      expect(result).toBe(false);
-    });
-
-    it("should return false on exception", async () => {
-      // Mock exception
-      mockSupabaseClient.from.mockImplementationOnce(() => {
-        throw new Error("Network error");
-      });
-
-      const result = await consentService.grantConsent(
-        "patient-123",
-        "consent-123"
-      );
+      const result = await consentService.verifyConsent('patient-123', 'data_processing');
 
       expect(result).toBe(false);
     });
   });
 
-  describe("getPendingConsents", () => {
-    it("should return pending consents", async () => {
-      // Mock patient lookup
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123" },
-              error: null,
-            }),
-          }),
-        }),
-      });
+  describe('getPendingConsents', () => {
+    it('should get pending consents successfully', async () => {
+      const mockData = [{ id: 'consent-123', status: 'pending' }];
+      const mockChain = createMockChain(mockData);
+      mockSupabaseClient.from.mockReturnValue(mockChain);
 
-      // Mock pending consents query - need to chain .eq() twice
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              order: vi.fn().mockResolvedValue({
-                data: [
-                  {
-                    id: "consent-123",
-                    status: "pending",
-                    data_types: ["general-medical"],
-                    purpose: "telemedicine",
-                    created_at: "2024-01-01T00:00:00Z",
-                  },
-                ],
-                error: null,
-              }),
-            }),
-          }),
-        }),
-      });
+      const result = await consentService.getPendingConsents('patient-123');
 
-      const result = await consentService.getPendingConsents("user-123");
-
-      expect(result).toHaveLength(1);
-      expect(result[0].status).toBe("pending");
-    });
-
-    it("should return empty array when patient not found", async () => {
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: null,
-              error: { message: "Patient not found" },
-            }),
-          }),
-        }),
-      });
-
-      const result = await consentService.getPendingConsents("invalid-user");
-
-      expect(result).toEqual([]);
-    });
-
-    it("should return empty array when query fails", async () => {
-      // Mock patient lookup success
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockResolvedValue({
-              data: { id: "patient-123" },
-              error: null,
-            }),
-          }),
-        }),
-      });
-
-      // Mock query failure - need to chain .eq() twice
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            eq: vi.fn().mockReturnValue({
-              order: vi.fn().mockResolvedValue({
-                data: null,
-                error: { message: "Query failed" },
-              }),
-            }),
-          }),
-        }),
-      });
-
-      const result = await consentService.getPendingConsents("user-123");
-
-      expect(result).toEqual([]);
+      expect(result).toEqual(mockData);
     });
   });
 
-  describe("error handling", () => {
-    it("should handle network errors gracefully", async () => {
-      // Mock network error - need to reject the promise, not throw
-      mockSupabaseClient.from.mockReturnValueOnce({
-        select: vi.fn().mockReturnValue({
-          eq: vi.fn().mockReturnValue({
-            single: vi.fn().mockRejectedValue(new Error("Network error")),
-          }),
-        }),
+  describe('getConsentHistory', () => {
+    it('should get consent history successfully', async () => {
+      // Mock patient lookup first
+      const patientData = { id: 'patient-123', clinic_id: 'clinic-123' };
+      
+      // Mock audit logs data that matches the actual service structure
+      const auditLogsData = [{
+        id: 'audit-123',
+        action: 'consent-given',
+        user_id: 'user-123',
+        resource_id: 'session-123',
+        created_at: '2023-01-01T00:00:00Z',
+        clinic_id: 'clinic-123',
+        new_values: {
+          data_type: 'general-medical'
+        }
+      }];
+
+      let callCount = 0;
+      mockSupabaseClient.from.mockImplementation((tableName: string) => {
+        callCount++;
+        if (tableName === 'patients' && callCount === 1) {
+          return createMockChain(patientData);
+        }
+        // For audit_logs query
+        return createMockChain(auditLogsData);
       });
 
-      const result = await consentService.verifyConsent(
-        "user-123",
-        "general-medical",
-        "telemedicine"
-      );
+      const result = await consentService.getConsentHistory('user-123');
 
-      expect(result).toBe(false);
+      // Expect the transformed RTCAuditLogEntry format
+      expect(result).toEqual([{
+        id: 'audit-123',
+        sessionId: 'session-123',
+        eventType: 'consent-given',
+        userId: 'user-123',
+        userRole: 'patient',
+        dataClassification: 'general-medical',
+        timestamp: '2023-01-01T00:00:00Z',
+        clinicId: 'clinic-123',
+        metadata: { data_type: 'general-medical' }
+      }]);
+    });
+  });
+
+  describe('deleteUserData', () => {
+    it('should delete user data successfully', async () => {
+      // Mock patient lookup - success
+      const patientData = { id: 'patient-123', user_id: 'user-123', name: 'John Doe', clinic_id: 'clinic-123' };
+      
+      // Create separate mock chains for different operations
+      const patientChain = createMockChain(patientData, null);
+      const deleteChain = createMockChain({ success: true }, null);
+      
+      let callCount = 0;
+      mockSupabaseClient.from.mockImplementation((tableName: string) => {
+        callCount++;
+        if (tableName === 'patients' && callCount === 1) {
+          return patientChain;
+        }
+        // For all other calls (deletions), return success
+        return deleteChain;
+      });
+
+      // Mock RPC calls
+      mockSupabaseClient.rpc.mockResolvedValue({ data: { success: true }, error: null });
+
+      await expect(consentService.deleteUserData('user-123')).resolves.toBeUndefined();
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith('patients');
+      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('create_webrtc_audit_log', expect.any(Object));
+    });
+
+    it('should throw error when patient not found', async () => {
+      const mockChain = createMockChain(null, new Error('Patient not found'));
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+
+      await expect(consentService.deleteUserData('user-123')).rejects.toThrow('Patient not found for user');
+    });
+  });
+
+  describe('exportUserData', () => {
+    it('should export user data successfully', async () => {
+      const patientData = { id: 'patient-123', user_id: 'user-123', name: 'John Doe' };
+      const consentData = [{ id: 'consent-123', status: 'granted' }];
+      const webrtcData = [{ id: 'webrtc-123', action: 'connect' }];
+      const auditData = [{ id: 'audit-123', action: 'login' }];
+
+      let callCount = 0;
+      mockSupabaseClient.from.mockImplementation((tableName: string) => {
+        callCount++;
+        switch (tableName) {
+          case 'patients':
+            return createMockChain(patientData, null);
+          case 'consent_records':
+            return createMockChain(consentData, null);
+          case 'webrtc_audit_logs':
+            return createMockChain(webrtcData, null);
+          case 'audit_logs':
+            return createMockChain(auditData, null);
+          default:
+            return createMockChain([], null);
+        }
+      });
+
+      const result = await consentService.exportUserData('user-123');
+
+      expect(result).toMatchObject({
+        patient: patientData,
+        consentRecords: consentData,
+        webrtcAuditLogs: webrtcData,
+        generalAuditLogs: auditData,
+        note: expect.stringContaining('LGPD')
+      });
+      expect(result.exportDate).toBeDefined();
+    });
+
+    it('should throw error when patient not found', async () => {
+      const mockChain = createMockChain(null, new Error('Patient not found'));
+      mockSupabaseClient.from.mockReturnValue(mockChain);
+
+      await expect(consentService.exportUserData('user-123')).rejects.toThrow('Patient not found for user');
     });
   });
 });

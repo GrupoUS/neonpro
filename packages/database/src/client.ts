@@ -15,7 +15,7 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
   if (process.env.NODE_ENV === 'test') {
     // Return a mock client for testing
     return {
-      from: () => ({
+      from: (_table: string) => ({
         select: () => Promise.resolve({ data: [], error: null }),
         insert: () => Promise.resolve({ data: [], error: null }),
         update: () => Promise.resolve({ data: [], error: null }),

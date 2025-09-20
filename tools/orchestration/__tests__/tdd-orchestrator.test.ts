@@ -148,21 +148,15 @@ describe("TDDOrchestrator", () => {
         requirements: [], // Invalid requirements to trigger failure
       };
 
-      // Mock the workflow to simulate failure
-      vi.spyOn(workflowEngine, "selectWorkflow").mockImplementation(
-        async () => {
-          const workflow = new StandardTDDWorkflow();
-          vi.spyOn(workflow, "executeAgent").mockRejectedValueOnce(
-            new Error("Test failure in RED phase"),
-          );
-          return workflow;
-        },
+      // Mock the RED phase execution to simulate failure
+      vi.spyOn(orchestrator as any, "executeRedPhase").mockRejectedValueOnce(
+        new Error("Test failure in RED phase"),
       );
 
       const result = await orchestrator.executeFullTDDCycle(failingContext);
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain("red");
+      expect(result.error).toContain("Test failure in RED phase");
     });
 
     it("should update metrics after successful cycle", async () => {

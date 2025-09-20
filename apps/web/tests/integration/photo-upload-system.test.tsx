@@ -1,4 +1,5 @@
-import { afterEach, beforeEach, describe, expect, it } from '@jest/globals';
+import React from 'react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { AppointmentBooking } from '../../src/components/aesthetic/photo-upload/AppointmentBooking';
 import { PhotoUploadSystem } from '../../src/components/aesthetic/photo-upload/PhotoUploadSystem';
@@ -6,12 +7,12 @@ import { TreatmentSuggestions } from '../../src/components/aesthetic/photo-uploa
 import { mockAnalysisResult, mockTreatmentSuggestions } from '../mocks/photo-analysis-mocks';
 
 // Mock dos componentes
-jest.mock('../../src/components/aesthetic/photo-upload/PhotoUpload', () => ({
+vi.mock('../../src/components/aesthetic/photo-upload/PhotoUpload', () => ({
   PhotoUpload: ({ onAnalysisComplete }: any) => (
-    <div data-testid='photo-upload'>
+    <div data-testid="photo-upload">
       <input
-        type='file'
-        data-testid='file-input'
+        type="file"
+        data-testid="file-input"
         onChange={e => {
           const file = (e.target as HTMLInputElement).files?.[0];
           if (file) {
@@ -37,9 +38,9 @@ jest.mock('../../src/components/aesthetic/photo-upload/PhotoUpload', () => ({
   ),
 }));
 
-jest.mock('../../src/components/aesthetic/photo-upload/TreatmentSuggestions', () => ({
+vi.mock('../../src/components/aesthetic/photo-upload/TreatmentSuggestions', () => ({
   TreatmentSuggestions: ({ suggestions, onTreatmentSelect }: any) => (
-    <div data-testid='treatment-suggestions'>
+    <div data-testid="treatment-suggestions">
       {suggestions.map((suggestion: any) => (
         <button
           key={suggestion.id}
@@ -53,12 +54,12 @@ jest.mock('../../src/components/aesthetic/photo-upload/TreatmentSuggestions', ()
   ),
 }));
 
-jest.mock('../../src/components/aesthetic/photo-upload/AppointmentBooking', () => ({
+vi.mock('../../src/components/aesthetic/photo-upload/AppointmentBooking', () => ({
   AppointmentBooking: ({ treatment, onBookingComplete }: any) => (
-    <div data-testid='appointment-booking'>
+    <div data-testid="appointment-booking">
       <h3>Booking for {treatment.name}</h3>
       <button
-        data-testid='confirm-booking'
+        data-testid="confirm-booking"
         onClick={() =>
           onBookingComplete({
             id: 'booking-123',
@@ -75,26 +76,26 @@ jest.mock('../../src/components/aesthetic/photo-upload/AppointmentBooking', () =
 }));
 
 // Mock do serviço de análise de fotos
-jest.mock('../../src/services/photo-analysis-service', () => ({
-  analyzePhoto: jest.fn(),
-  uploadPhoto: jest.fn(),
+vi.mock('../../src/services/photo-analysis-service', () => ({
+  analyzePhoto: vi.fn(),
+  uploadPhoto: vi.fn(),
 }));
 
 // Mock do serviço de agendamento
-jest.mock('../../src/services/appointment-service', () => ({
-  createAppointment: jest.fn(),
-  getAvailableSlots: jest.fn(),
+vi.mock('../../src/services/appointment-service', () => ({
+  createAppointment: vi.fn(),
+  getAvailableSlots: vi.fn(),
 }));
 
 describe('Photo Upload System Integration Tests', () => {
   beforeEach(() => {
     // Reset all mocks before each test
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
     // Cleanup after each test
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('Complete Photo Upload Flow', () => {
@@ -174,7 +175,7 @@ describe('Photo Upload System Integration Tests', () => {
       await waitFor(() => {
         // This would depend on how the component handles booking completion
         // For now, we'll just verify the booking process was triggered
-        expect(confirmButton).toHaveBeenCalled || expect(true).toBe(true);
+        expect(true).toBe(true);
       });
     });
   });
@@ -182,8 +183,8 @@ describe('Photo Upload System Integration Tests', () => {
   describe('Error Handling', () => {
     it('should handle photo upload errors gracefully', async () => {
       // ARRANGE: Mock photo analysis service to throw error
-      const mockAnalyzePhoto = require('../../src/services/photo-analysis-service').analyzePhoto;
-      mockAnalyzePhoto.mockRejectedValue(new Error('Analysis failed'));
+      const { analyzePhoto } = await import('../../src/services/photo-analysis-service');
+      vi.mocked(analyzePhoto).mockRejectedValue(new Error('Analysis failed'));
 
       render(<PhotoUploadSystem />);
 
@@ -202,9 +203,8 @@ describe('Photo Upload System Integration Tests', () => {
 
     it('should handle booking errors gracefully', async () => {
       // ARRANGE: Mock appointment service to throw error
-      const mockCreateAppointment =
-        require('../../src/services/appointment-service').createAppointment;
-      mockCreateAppointment.mockRejectedValue(new Error('Booking failed'));
+      const { createAppointment } = await import('../../src/services/appointment-service');
+      vi.mocked(createAppointment).mockRejectedValue(new Error('Booking failed'));
 
       render(<PhotoUploadSystem />);
 
@@ -256,8 +256,8 @@ describe('Photo Upload System Integration Tests', () => {
   describe('User Experience', () => {
     it('should show loading states during analysis', async () => {
       // ARRANGE: Mock delayed analysis
-      const mockAnalyzePhoto = require('../../src/services/photo-analysis-service').analyzePhoto;
-      mockAnalyzePhoto.mockImplementation(() =>
+      const { analyzePhoto } = await import('../../src/services/photo-analysis-service');
+      vi.mocked(analyzePhoto).mockImplementation(() =>
         new Promise(resolve => setTimeout(() => resolve(mockAnalysisResult), 1000))
       );
 

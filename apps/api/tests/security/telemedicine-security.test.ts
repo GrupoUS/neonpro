@@ -3,7 +3,7 @@
  * Testing security vulnerabilities identified in PR 40
  */
 
-import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
 import TelemedicineService from '../../src/services/telemedicine';
@@ -51,7 +51,7 @@ describe('Telemedicine Service Security Tests', () => {
 
     it('should FAIL: validate secure memory storage', async () => {
       // This test should FAIL because insecure memory storage exists
-      const memoryAnalysis = await analyzeMemorySecurityy();
+      const memoryAnalysis = await analyzeMemorySecurity();
 
       expect(memoryAnalysis.hasInsecureStorage).toBe(false); // This WILL FAIL
       expect(memoryAnalysis.insecureStorageAreas).toHaveLength(0); // This WILL FAIL
@@ -182,7 +182,7 @@ async function analyzeSensitiveLogging(): Promise<{
   };
 }
 
-async function analyzeMemorySecurityy(): Promise<{
+async function analyzeMemorySecurity(): Promise<{
   hasInsecureStorage: boolean;
   insecureStorageAreas: string[];
 }> {
