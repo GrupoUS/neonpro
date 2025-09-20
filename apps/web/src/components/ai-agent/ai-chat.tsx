@@ -3,20 +3,15 @@
  * Healthcare professional conversational interface using CopilotKit
  */
 
-"use client";
+'use client';
 
-import React, { useState, useCallback, useRef } from "react";
-import { useCopilotChat } from "@copilotkit/react-core";
-import { CopilotChat } from "@copilotkit/react-ui";
-import { useToast } from "@/hooks/use-toast";
-import { useAuth } from "@/hooks/use-auth";
-import {
-  ChatMessage,
-  AgentResponse,
-  AgentAction,
-  ChatState,
-} from "@neonpro/types";
-import { cn } from "@/lib/utils";
+import { useAuth } from '@/hooks/use-auth';
+import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+import { useCopilotChat } from '@copilotkit/react-core';
+import { CopilotChat } from '@copilotkit/react-ui';
+import { AgentAction, AgentResponse, ChatMessage, ChatState } from '@neonpro/types';
+import React, { useCallback, useRef, useState } from 'react';
 
 interface AIChatProps {
   className?: string;
@@ -33,8 +28,8 @@ export function AIChat({ className, initialContext }: AIChatProps) {
     messages: [],
     isLoading: false,
     context: {
-      userId: user?.id || "",
-      userRole: user?.role || "",
+      userId: user?.id || '',
+      userRole: user?.role || '',
       domain: initialContext?.domain,
     },
   });
@@ -71,20 +66,20 @@ export function AIChat({ className, initialContext }: AIChatProps) {
     async (message: string) => {
       if (!user) {
         toast({
-          title: "Erro de autenticação",
-          description: "Por favor, faça login para usar o assistente",
-          variant: "destructive",
+          title: 'Erro de autenticação',
+          description: 'Por favor, faça login para usar o assistente',
+          variant: 'destructive',
         });
         return;
       }
 
-      setChatState((prev) => ({ ...prev, isLoading: true }));
+      setChatState(prev => ({ ...prev, isLoading: true }));
 
       try {
-        const response = await fetch("/api/ai/data-agent", {
-          method: "POST",
+        const response = await fetch('/api/ai/data-agent', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${await user.getIdToken()}`,
           },
           body: JSON.stringify({
@@ -101,21 +96,21 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
         if (!data.success) {
           throw new Error(
-            data.error?.message || "Falha ao processar sua solicitação",
+            data.error?.message || 'Falha ao processar sua solicitação',
           );
         }
 
         // Add assistant response to chat
         const assistantMessage: ChatMessage = {
           id: `msg_${Date.now()}_assistant`,
-          role: "assistant",
+          role: 'assistant',
           content: data.response.message,
           timestamp: new Date().toISOString(),
           data: data.response.data,
           actions: data.response.actions,
         };
 
-        setChatState((prev) => ({
+        setChatState(prev => ({
           ...prev,
           messages: [...prev.messages, assistantMessage],
           isLoading: false,
@@ -126,25 +121,24 @@ export function AIChat({ className, initialContext }: AIChatProps) {
           handleActions(data.response.actions);
         }
       } catch (error) {
-        console.error("Chat error:", error);
+        console.error('Chat error:', error);
         toast({
-          title: "Erro",
-          description:
-            error instanceof Error
-              ? error.message
-              : "Falha ao processar mensagem",
-          variant: "destructive",
+          title: 'Erro',
+          description: error instanceof Error
+            ? error.message
+            : 'Falha ao processar mensagem',
+          variant: 'destructive',
         });
 
         const errorMessage: ChatMessage = {
           id: `msg_${Date.now()}_error`,
-          role: "assistant",
+          role: 'assistant',
           content:
-            "Desculpe, ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.",
+            'Desculpe, ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.',
           timestamp: new Date().toISOString(),
         };
 
-        setChatState((prev) => ({
+        setChatState(prev => ({
           ...prev,
           messages: [...prev.messages, errorMessage],
           isLoading: false,
@@ -156,27 +150,27 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Handle agent actions
   const handleActions = useCallback((actions: AgentAction[]) => {
-    actions.forEach((action) => {
+    actions.forEach(action => {
       switch (action.type) {
-        case "view_details":
+        case 'view_details':
           if (action.payload?.clientId) {
             // Navigate to patient details
             window.location.href = `/pacientes/${action.payload.clientId}`;
           }
           break;
-        case "create_appointment":
+        case 'create_appointment':
           // Navigate to appointment creation
-          window.location.href = "/agendamentos/novo";
+          window.location.href = '/agendamentos/novo';
           break;
-        case "navigate":
+        case 'navigate':
           if (action.payload?.path) {
             window.location.href = action.payload.path;
           }
           break;
-        case "export_data":
+        case 'export_data':
           handleExportData(action.payload);
           break;
-        case "refresh":
+        case 'refresh':
           // Refresh current view
           window.location.reload();
           break;
@@ -188,10 +182,10 @@ export function AIChat({ className, initialContext }: AIChatProps) {
   const handleExportData = useCallback(
     async (payload: any) => {
       try {
-        const response = await fetch("/api/ai/export", {
-          method: "POST",
+        const response = await fetch('/api/ai/export', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${await user?.getIdToken()}`,
           },
           body: JSON.stringify(payload),
@@ -200,24 +194,24 @@ export function AIChat({ className, initialContext }: AIChatProps) {
         if (response.ok) {
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
+          const a = document.createElement('a');
           a.href = url;
-          a.download = `relatorio-${new Date().toISOString().split("T")[0]}.xlsx`;
+          a.download = `relatorio-${new Date().toISOString().split('T')[0]}.xlsx`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
 
           toast({
-            title: "Exportação concluída",
-            description: "Seu relatório foi baixado com sucesso",
+            title: 'Exportação concluída',
+            description: 'Seu relatório foi baixado com sucesso',
           });
         }
       } catch (error) {
         toast({
-          title: "Erro de exportação",
-          description: "Não foi possível exportar os dados",
-          variant: "destructive",
+          title: 'Erro de exportação',
+          description: 'Não foi possível exportar os dados',
+          variant: 'destructive',
         });
       }
     },
@@ -227,34 +221,34 @@ export function AIChat({ className, initialContext }: AIChatProps) {
   // Custom message renderer
   const renderMessage = useCallback(
     (message: ChatMessage) => {
-      if (message.role === "system") return null;
+      if (message.role === 'system') return null;
 
       return (
         <div
           key={message.id}
           className={cn(
-            "flex gap-3 p-4 rounded-lg",
-            message.role === "user"
-              ? "bg-primary/5 ml-auto max-w-[80%]"
-              : "bg-muted/50 mr-auto max-w-[85%]",
+            'flex gap-3 p-4 rounded-lg',
+            message.role === 'user'
+              ? 'bg-primary/5 ml-auto max-w-[80%]'
+              : 'bg-muted/50 mr-auto max-w-[85%]',
           )}
         >
-          <div className="flex-1 space-y-2">
-            <p className="text-sm leading-relaxed">{message.content}</p>
+          <div className='flex-1 space-y-2'>
+            <p className='text-sm leading-relaxed'>{message.content}</p>
 
             {/* Render structured data */}
             {message.data && (
-              <div className="mt-3 space-y-2">
+              <div className='mt-3 space-y-2'>
                 {message.data.clients && (
-                  <div className="bg-white rounded-md p-3 border">
-                    <h4 className="font-medium text-sm mb-2">
+                  <div className='bg-white rounded-md p-3 border'>
+                    <h4 className='font-medium text-sm mb-2'>
                       Pacientes encontrados:
                     </h4>
-                    <ul className="space-y-1">
+                    <ul className='space-y-1'>
                       {message.data.clients.slice(0, 5).map((client: any) => (
                         <li
                           key={client.id}
-                          className="text-sm text-muted-foreground"
+                          className='text-sm text-muted-foreground'
                         >
                           {client.name} - {client.phone}
                         </li>
@@ -264,16 +258,15 @@ export function AIChat({ className, initialContext }: AIChatProps) {
                 )}
 
                 {message.data.appointments && (
-                  <div className="bg-white rounded-md p-3 border">
-                    <h4 className="font-medium text-sm mb-2">Agendamentos:</h4>
-                    <ul className="space-y-1">
+                  <div className='bg-white rounded-md p-3 border'>
+                    <h4 className='font-medium text-sm mb-2'>Agendamentos:</h4>
+                    <ul className='space-y-1'>
                       {message.data.appointments.slice(0, 5).map((apt: any) => (
                         <li
                           key={apt.id}
-                          className="text-sm text-muted-foreground"
+                          className='text-sm text-muted-foreground'
                         >
-                          {new Date(apt.scheduledAt).toLocaleString("pt-BR")} -{" "}
-                          {apt.clientName}
+                          {new Date(apt.scheduledAt).toLocaleString('pt-BR')} - {apt.clientName}
                         </li>
                       ))}
                     </ul>
@@ -281,15 +274,14 @@ export function AIChat({ className, initialContext }: AIChatProps) {
                 )}
 
                 {message.data.financial && (
-                  <div className="bg-white rounded-md p-3 border">
-                    <h4 className="font-medium text-sm mb-2">
+                  <div className='bg-white rounded-md p-3 border'>
+                    <h4 className='font-medium text-sm mb-2'>
                       Resumo Financeiro:
                     </h4>
-                    <p className="text-sm">
-                      Total:{" "}
-                      {new Intl.NumberFormat("pt-BR", {
-                        style: "currency",
-                        currency: "BRL",
+                    <p className='text-sm'>
+                      Total: {new Intl.NumberFormat('pt-BR', {
+                        style: 'currency',
+                        currency: 'BRL',
                       }).format(message.data.summary?.total || 0)}
                     </p>
                   </div>
@@ -299,16 +291,16 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
             {/* Render action buttons */}
             {message.actions && message.actions.length > 0 && (
-              <div className="flex gap-2 mt-3">
-                {message.actions.map((action) => (
+              <div className='flex gap-2 mt-3'>
+                {message.actions.map(action => (
                   <button
                     key={action.id}
                     onClick={() => handleActions([action])}
                     className={cn(
-                      "px-3 py-1.5 text-xs rounded-md transition-colors",
+                      'px-3 py-1.5 text-xs rounded-md transition-colors',
                       action.primary
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80",
+                        ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                        : 'bg-secondary text-secondary-foreground hover:bg-secondary/80',
                     )}
                   >
                     {action.label}
@@ -317,8 +309,8 @@ export function AIChat({ className, initialContext }: AIChatProps) {
               </div>
             )}
 
-            <p className="text-xs text-muted-foreground mt-2">
-              {new Date(message.timestamp).toLocaleTimeString("pt-BR")}
+            <p className='text-xs text-muted-foreground mt-2'>
+              {new Date(message.timestamp).toLocaleTimeString('pt-BR')}
             </p>
           </div>
         </div>
@@ -329,30 +321,31 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Auto-scroll to bottom
   React.useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatState.messages]);
 
   return (
-    <div className={cn("w-full h-full flex flex-col", className)}>
+    <div className={cn('w-full h-full flex flex-col', className)}>
       {/* Custom CopilotKit UI with healthcare styling */}
       <CopilotChat
         instructions={instructions}
         labels={{
-          initial: "Olá! Como posso ajudar você hoje?",
-          placeholder: "Ex: Quais meus agendamentos para hoje?",
-          title: "Assistente NeonPro",
+          initial: 'Olá! Como posso ajudar você hoje?',
+          placeholder: 'Ex: Quais meus agendamentos para hoje?',
+          title: 'Assistente NeonPro',
         }}
-        className="h-full"
+        className='h-full'
         sendMessage={handleSubmit}
         renderMessages={() => (
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          <div className='flex-1 overflow-y-auto p-4 space-y-4'>
             {chatState.messages.map(renderMessage)}
             {chatState.isLoading && (
-              <div className="flex gap-3 p-4">
-                <div className="bg-muted/50 rounded-lg p-3">
-                  <div className="flex items-center gap-2">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                    <span className="text-sm">Processando...</span>
+              <div className='flex gap-3 p-4'>
+                <div className='bg-muted/50 rounded-lg p-3'>
+                  <div className='flex items-center gap-2'>
+                    <div className='animate-spin rounded-full h-4 w-4 border-b-2 border-primary'>
+                    </div>
+                    <span className='text-sm'>Processando...</span>
                   </div>
                 </div>
               </div>

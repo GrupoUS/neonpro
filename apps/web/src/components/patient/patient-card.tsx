@@ -11,9 +11,9 @@
  * - Integration with Patient Management API endpoints (T043-T050)
  */
 
-"use client";
+'use client';
 
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate } from '@tanstack/react-router';
 import {
   Calendar,
   Mail,
@@ -25,8 +25,8 @@ import {
   Stethoscope,
   User,
   UserCheck,
-} from "lucide-react";
-import { memo, useCallback, useMemo } from "react";
+} from 'lucide-react';
+import { memo, useCallback, useMemo } from 'react';
 
 import {
   Badge,
@@ -39,24 +39,24 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui";
-import { formatCEP } from "@/utils/brazilian-formatters";
-import { Patient } from "@neonpro/shared/types/patient";
-import { cn } from "@neonpro/ui";
-import { formatBRPhone, formatCPF } from "@neonpro/utils";
+} from '@/components/ui';
+import { formatCEP } from '@/utils/brazilian-formatters';
+import { Patient } from '@neonpro/shared/types/patient';
+import { cn } from '@neonpro/ui';
+import { formatBRPhone, formatCPF } from '@neonpro/utils';
 
 export interface PatientCardProps {
   /** Patient data */
   patient: Patient;
   /** Card variant for different contexts */
-  variant?: "default" | "compact" | "detailed";
+  variant?: 'default' | 'compact' | 'detailed';
   /** Show actions (view, edit, delete) */
   showActions?: boolean;
   /** LGPD consent status affects data display */
   lgpdConsent?: {
     canShowFullData: boolean;
     canShowSensitiveData: boolean;
-    consentLevel: "basic" | "full" | "restricted";
+    consentLevel: 'basic' | 'full' | 'restricted';
   };
   /** Mobile optimization settings */
   mobileOptimized?: boolean;
@@ -83,12 +83,12 @@ export interface PatientCardProps {
 export const PatientCard = memo<PatientCardProps>(
   ({
     patient,
-    variant = "default",
+    variant = 'default',
     showActions = true,
     lgpdConsent = {
       canShowFullData: true,
       canShowSensitiveData: false,
-      consentLevel: "basic",
+      consentLevel: 'basic',
     },
     mobileOptimized = true,
     onClick,
@@ -98,7 +98,7 @@ export const PatientCard = memo<PatientCardProps>(
     isLoading = false,
     error = null,
     ariaLabel,
-    testId = "patient-card",
+    testId = 'patient-card',
   }) => {
     const navigate = useNavigate();
 
@@ -111,7 +111,7 @@ export const PatientCard = memo<PatientCardProps>(
       } else {
         // Default navigation to patient profile
         navigate({
-          to: "/patients/$patientId",
+          to: '/patients/$patientId',
           params: { patientId: patient.id },
         });
       }
@@ -125,7 +125,7 @@ export const PatientCard = memo<PatientCardProps>(
           onView(patient);
         } else {
           navigate({
-            to: "/patients/$patientId",
+            to: '/patients/$patientId',
             params: { patientId: patient.id },
           });
         }
@@ -140,7 +140,7 @@ export const PatientCard = memo<PatientCardProps>(
           onEdit(patient);
         } else {
           navigate({
-            to: "/patients/$patientId/edit",
+            to: '/patients/$patientId/edit',
             params: { patientId: patient.id },
           });
         }
@@ -165,62 +165,57 @@ export const PatientCard = memo<PatientCardProps>(
       return {
         name: canShowFullData
           ? patient.name
-          : patient.name?.split(" ")[0] || "Paciente",
-        cpf: canShowSensitiveData ? formatCPF(patient.cpf) : "***.***.***-**",
-        phone:
-          canShowFullData && patient.phone
-            ? formatBRPhone(patient.phone)
-            : canShowFullData
-              ? "Não informado"
-              : "(**) ****-****",
-        email:
-          canShowFullData && patient.email
-            ? patient.email
-            : canShowFullData
-              ? "Não informado"
-              : "***@***.***",
-        address:
-          canShowFullData && patient.address
-            ? `${patient.address.street}, ${patient.address.number} - ${patient.address.neighborhood}`
-            : canShowFullData
-              ? "Não informado"
-              : "Endereço restrito",
-        cep:
-          canShowFullData && patient.address?.cep
-            ? formatCEP(patient.address.cep)
-            : "****-***",
+          : patient.name?.split(' ')[0] || 'Paciente',
+        cpf: canShowSensitiveData ? formatCPF(patient.cpf) : '***.***.***-**',
+        phone: canShowFullData && patient.phone
+          ? formatBRPhone(patient.phone)
+          : canShowFullData
+          ? 'Não informado'
+          : '(**) ****-****',
+        email: canShowFullData && patient.email
+          ? patient.email
+          : canShowFullData
+          ? 'Não informado'
+          : '***@***.***',
+        address: canShowFullData && patient.address
+          ? `${patient.address.street}, ${patient.address.number} - ${patient.address.neighborhood}`
+          : canShowFullData
+          ? 'Não informado'
+          : 'Endereço restrito',
+        cep: canShowFullData && patient.address?.cep
+          ? formatCEP(patient.address.cep)
+          : '****-***',
       };
     }, [patient, lgpdConsent]);
 
     // Get patient status badge
     const statusBadge = useMemo(() => {
-      const status = patient.status || "active";
+      const status = patient.status || 'active';
       const statusConfig = {
         active: {
-          label: "Ativo",
-          variant: "default" as const,
+          label: 'Ativo',
+          variant: 'default' as const,
           icon: UserCheck,
         },
         inactive: {
-          label: "Inativo",
-          variant: "secondary" as const,
+          label: 'Inativo',
+          variant: 'secondary' as const,
           icon: User,
         },
         suspended: {
-          label: "Suspenso",
-          variant: "destructive" as const,
+          label: 'Suspenso',
+          variant: 'destructive' as const,
           icon: ShieldX,
         },
       };
 
-      const config =
-        statusConfig[status as keyof typeof statusConfig] ||
-        statusConfig.active;
+      const config = statusConfig[status as keyof typeof statusConfig]
+        || statusConfig.active;
       const Icon = config.icon;
 
       return (
-        <Badge variant={config.variant} className="flex items-center gap-1">
-          <Icon className="h-3 w-3" />
+        <Badge variant={config.variant} className='flex items-center gap-1'>
+          <Icon className='h-3 w-3' />
           {config.label}
         </Badge>
       );
@@ -231,18 +226,18 @@ export const PatientCard = memo<PatientCardProps>(
       const { consentLevel } = lgpdConsent;
       const consentConfig = {
         full: {
-          label: "Consentimento Completo",
-          variant: "default" as const,
+          label: 'Consentimento Completo',
+          variant: 'default' as const,
           icon: ShieldCheck,
         },
         basic: {
-          label: "Consentimento Básico",
-          variant: "secondary" as const,
+          label: 'Consentimento Básico',
+          variant: 'secondary' as const,
           icon: Shield,
         },
         restricted: {
-          label: "Acesso Restrito",
-          variant: "destructive" as const,
+          label: 'Acesso Restrito',
+          variant: 'destructive' as const,
           icon: ShieldX,
         },
       };
@@ -256,9 +251,9 @@ export const PatientCard = memo<PatientCardProps>(
             <TooltipTrigger asChild>
               <Badge
                 variant={config.variant}
-                className="flex items-center gap-1"
+                className='flex items-center gap-1'
               >
-                <Icon className="h-3 w-3" />
+                <Icon className='h-3 w-3' />
                 LGPD
               </Badge>
             </TooltipTrigger>
@@ -272,32 +267,32 @@ export const PatientCard = memo<PatientCardProps>(
 
     // Card classes based on variant and mobile optimization
     const cardClasses = cn(
-      "group cursor-pointer transition-all duration-200 hover:shadow-md",
-      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+      'group cursor-pointer transition-all duration-200 hover:shadow-md',
+      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
       {
-        "h-auto": variant === "compact",
-        "min-h-[200px]": variant === "default",
-        "min-h-[300px]": variant === "detailed",
+        'h-auto': variant === 'compact',
+        'min-h-[200px]': variant === 'default',
+        'min-h-[300px]': variant === 'detailed',
         // Mobile optimizations
-        "touch-manipulation": mobileOptimized,
-        "active:scale-[0.98]": mobileOptimized,
-        "hover:scale-[1.02]": !mobileOptimized,
+        'touch-manipulation': mobileOptimized,
+        'active:scale-[0.98]': mobileOptimized,
+        'hover:scale-[1.02]': !mobileOptimized,
       },
     );
 
     if (isLoading) {
       return (
         <Card
-          className={cn(cardClasses, "animate-pulse")}
+          className={cn(cardClasses, 'animate-pulse')}
           data-testid={`${testId}-loading`}
         >
-          <CardHeader className="space-y-2">
-            <div className="h-4 bg-muted rounded w-3/4" />
-            <div className="h-3 bg-muted rounded w-1/2" />
+          <CardHeader className='space-y-2'>
+            <div className='h-4 bg-muted rounded w-3/4' />
+            <div className='h-3 bg-muted rounded w-1/2' />
           </CardHeader>
-          <CardContent className="space-y-2">
-            <div className="h-3 bg-muted rounded w-full" />
-            <div className="h-3 bg-muted rounded w-2/3" />
+          <CardContent className='space-y-2'>
+            <div className='h-3 bg-muted rounded w-full' />
+            <div className='h-3 bg-muted rounded w-2/3' />
           </CardContent>
         </Card>
       );
@@ -306,13 +301,13 @@ export const PatientCard = memo<PatientCardProps>(
     if (error) {
       return (
         <Card
-          className={cn(cardClasses, "border-destructive")}
+          className={cn(cardClasses, 'border-destructive')}
           data-testid={`${testId}-error`}
         >
-          <CardContent className="flex items-center justify-center p-6">
-            <div className="text-center text-destructive">
-              <p className="text-sm">Erro ao carregar paciente</p>
-              <p className="text-xs text-muted-foreground mt-1">{error}</p>
+          <CardContent className='flex items-center justify-center p-6'>
+            <div className='text-center text-destructive'>
+              <p className='text-sm'>Erro ao carregar paciente</p>
+              <p className='text-xs text-muted-foreground mt-1'>{error}</p>
             </div>
           </CardContent>
         </Card>
@@ -323,106 +318,104 @@ export const PatientCard = memo<PatientCardProps>(
       <Card
         className={cardClasses}
         onClick={handleCardClick}
-        role="button"
+        role='button'
         tabIndex={0}
         aria-label={ariaLabel || `Cartão do paciente ${displayData.name}`}
         data-testid={testId}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
+        onKeyDown={e => {
+          if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             handleCardClick();
           }
         }}
       >
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between">
-            <div className="space-y-1 flex-1 min-w-0">
-              <h3 className="font-semibold text-lg leading-tight truncate">
+        <CardHeader className='pb-3'>
+          <div className='flex items-start justify-between'>
+            <div className='space-y-1 flex-1 min-w-0'>
+              <h3 className='font-semibold text-lg leading-tight truncate'>
                 {displayData.name}
               </h3>
-              <p className="text-sm text-muted-foreground">
+              <p className='text-sm text-muted-foreground'>
                 CPF: {displayData.cpf}
               </p>
             </div>
-            <div className="flex flex-col gap-2 ml-2">
+            <div className='flex flex-col gap-2 ml-2'>
               {statusBadge}
               {lgpdBadge}
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-3">
+        <CardContent className='space-y-3'>
           {/* Contact Information */}
-          <div className="space-y-2">
-            {displayData.phone !== "(**) ****-****" && (
-              <div className="flex items-center gap-2 text-sm">
-                <Phone className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <span className="truncate">{displayData.phone}</span>
+          <div className='space-y-2'>
+            {displayData.phone !== '(**) ****-****' && (
+              <div className='flex items-center gap-2 text-sm'>
+                <Phone className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                <span className='truncate'>{displayData.phone}</span>
               </div>
             )}
 
-            {displayData.email !== "***@***.***" && (
-              <div className="flex items-center gap-2 text-sm">
-                <Mail className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <span className="truncate">{displayData.email}</span>
+            {displayData.email !== '***@***.***' && (
+              <div className='flex items-center gap-2 text-sm'>
+                <Mail className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                <span className='truncate'>{displayData.email}</span>
               </div>
             )}
 
-            {displayData.address !== "Endereço restrito" && (
-              <div className="flex items-center gap-2 text-sm">
-                <MapPin className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                <span className="truncate">{displayData.address}</span>
+            {displayData.address !== 'Endereço restrito' && (
+              <div className='flex items-center gap-2 text-sm'>
+                <MapPin className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                <span className='truncate'>{displayData.address}</span>
               </div>
             )}
           </div>
 
           {/* Additional Info for detailed variant */}
-          {variant === "detailed" && (
-            <div className="space-y-2 pt-2 border-t">
+          {variant === 'detailed' && (
+            <div className='space-y-2 pt-2 border-t'>
               {patient.birthDate && (
-                <div className="flex items-center gap-2 text-sm">
-                  <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                <div className='flex items-center gap-2 text-sm'>
+                  <Calendar className='h-4 w-4 text-muted-foreground flex-shrink-0' />
                   <span>
-                    Nascimento:{" "}
-                    {new Date(patient.birthDate).toLocaleDateString("pt-BR")}
+                    Nascimento: {new Date(patient.birthDate).toLocaleDateString('pt-BR')}
                   </span>
                 </div>
               )}
 
-              {patient.healthcareInfo?.allergies &&
-                patient.healthcareInfo.allergies.length > 0 && (
-                  <div className="flex items-center gap-2 text-sm">
-                    <Stethoscope className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                    <span className="truncate">
-                      Alergias:{" "}
-                      {patient.healthcareInfo.allergies.slice(0, 2).join(", ")}
-                      {patient.healthcareInfo.allergies.length > 2 && "..."}
-                    </span>
-                  </div>
-                )}
+              {patient.healthcareInfo?.allergies
+                && patient.healthcareInfo.allergies.length > 0 && (
+                <div className='flex items-center gap-2 text-sm'>
+                  <Stethoscope className='h-4 w-4 text-muted-foreground flex-shrink-0' />
+                  <span className='truncate'>
+                    Alergias: {patient.healthcareInfo.allergies.slice(0, 2).join(', ')}
+                    {patient.healthcareInfo.allergies.length > 2 && '...'}
+                  </span>
+                </div>
+              )}
             </div>
           )}
         </CardContent>
 
         {showActions && (
-          <CardFooter className="pt-3 border-t">
-            <div className="flex gap-2 w-full">
+          <CardFooter className='pt-3 border-t'>
+            <div className='flex gap-2 w-full'>
               <Button
-                variant="outline"
-                size="sm"
+                variant='outline'
+                size='sm'
                 onClick={handleView}
-                className="flex-1"
+                className='flex-1'
                 aria-label={`Ver detalhes de ${displayData.name}`}
               >
-                <User className="h-4 w-4 mr-1" />
+                <User className='h-4 w-4 mr-1' />
                 Ver
               </Button>
 
               <Button
-                variant="outline"
-                size="sm"
+                variant='outline'
+                size='sm'
                 onClick={handleEdit}
-                className="flex-1"
+                className='flex-1'
                 aria-label={`Editar ${displayData.name}`}
               >
                 Editar
@@ -430,10 +423,10 @@ export const PatientCard = memo<PatientCardProps>(
 
               {onDelete && (
                 <Button
-                  variant="outline"
-                  size="sm"
+                  variant='outline'
+                  size='sm'
                   onClick={handleDelete}
-                  className="text-destructive hover:text-destructive"
+                  className='text-destructive hover:text-destructive'
                   aria-label={`Excluir ${displayData.name}`}
                 >
                   Excluir
@@ -447,6 +440,6 @@ export const PatientCard = memo<PatientCardProps>(
   },
 );
 
-PatientCard.displayName = "PatientCard";
+PatientCard.displayName = 'PatientCard';
 
 export default PatientCard;

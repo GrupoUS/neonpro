@@ -10,32 +10,32 @@
  * - Offline functionality
  */
 
-import { devices, expect, test } from "@playwright/test";
+import { devices, expect, test } from '@playwright/test';
 
 // Brazilian mobile device configurations
 const brazilianMobileDevices = [
   {
-    name: "Samsung Galaxy A14 (Popular in Brazil)",
+    name: 'Samsung Galaxy A14 (Popular in Brazil)',
     viewport: { width: 412, height: 915 },
     userAgent:
-      "Mozilla/5.0 (Linux; Android 13; SM-A145M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+      'Mozilla/5.0 (Linux; Android 13; SM-A145M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
     deviceScaleFactor: 2.75,
     isMobile: true,
     hasTouch: true,
   },
   {
-    name: "iPhone 13 (Popular premium device)",
-    ...devices["iPhone 13"],
+    name: 'iPhone 13 (Popular premium device)',
+    ...devices['iPhone 13'],
   },
   {
-    name: "Samsung Galaxy S21 (Android flagship)",
-    ...devices["Galaxy S21"],
+    name: 'Samsung Galaxy S21 (Android flagship)',
+    ...devices['Galaxy S21'],
   },
   {
-    name: "Budget Android Device",
+    name: 'Budget Android Device',
     viewport: { width: 360, height: 640 },
     userAgent:
-      "Mozilla/5.0 (Linux; Android 11; SM-A125M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36",
+      'Mozilla/5.0 (Linux; Android 11; SM-A125M) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36',
     deviceScaleFactor: 2,
     isMobile: true,
     hasTouch: true,
@@ -44,15 +44,15 @@ const brazilianMobileDevices = [
 
 // Test helper to simulate Brazilian healthcare professional login
 async function loginAsBrazilianHealthcareProfessional(page: any) {
-  await page.goto("/login");
-  await page.fill('[data-testid="email-input"]', "dr.silva@clinica.com.br");
-  await page.fill('[data-testid="password-input"]', "senha123");
-  await page.fill('[data-testid="crm-input"]', "CRM-SP-123456");
+  await page.goto('/login');
+  await page.fill('[data-testid="email-input"]', 'dr.silva@clinica.com.br');
+  await page.fill('[data-testid="password-input"]', 'senha123');
+  await page.fill('[data-testid="crm-input"]', 'CRM-SP-123456');
   await page.click('[data-testid="login-button"]');
-  await page.waitForURL("/dashboard");
+  await page.waitForURL('/dashboard');
 }
 
-brazilianMobileDevices.forEach((device) => {
+brazilianMobileDevices.forEach(device => {
   test.describe(`Patient Dashboard Mobile - ${device.name}`, () => {
     test.use(device);
 
@@ -60,9 +60,7 @@ brazilianMobileDevices.forEach((device) => {
       await loginAsBrazilianHealthcareProfessional(page);
     });
 
-    test("should display patient dashboard with mobile-optimized layout", async ({
-      page,
-    }) => {
+    test('should display patient dashboard with mobile-optimized layout', async ({ page }) => {
       // Check if dashboard loads properly on mobile
       await expect(
         page.locator('[data-testid="patient-dashboard"]'),
@@ -96,9 +94,7 @@ brazilianMobileDevices.forEach((device) => {
       expect(boundingBox!.width).toBeGreaterThan(viewportSize!.width * 0.85);
     });
 
-    test("should support touch interactions for patient management", async ({
-      page,
-    }) => {
+    test('should support touch interactions for patient management', async ({ page }) => {
       // Test touch tap on patient card
       const firstPatientCard = page
         .locator('[data-testid="patient-card"]')
@@ -142,9 +138,7 @@ brazilianMobileDevices.forEach((device) => {
       await page.mouse.up();
     });
 
-    test("should display patient search with mobile-optimized input", async ({
-      page,
-    }) => {
+    test('should display patient search with mobile-optimized input', async ({ page }) => {
       // Verify search input is properly sized for mobile
       const searchInput = page.locator('[data-testid="patient-search-input"]');
       await expect(searchInput).toBeVisible();
@@ -154,7 +148,7 @@ brazilianMobileDevices.forEach((device) => {
       await expect(searchInput).toBeFocused();
 
       // Verify virtual keyboard doesn't break layout
-      await searchInput.fill("João Silva");
+      await searchInput.fill('João Silva');
 
       // Check that search results are mobile-friendly
       const searchResults = page.locator('[data-testid="search-results"]');
@@ -162,16 +156,14 @@ brazilianMobileDevices.forEach((device) => {
 
       // Verify CPF input with Brazilian format
       await searchInput.clear();
-      await searchInput.fill("123.456.789-00");
+      await searchInput.fill('123.456.789-00');
 
       // Check auto-formatting for Brazilian CPF
       const inputValue = await searchInput.inputValue();
       expect(inputValue).toMatch(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/);
     });
 
-    test("should handle Brazilian mobile data entry patterns", async ({
-      page,
-    }) => {
+    test('should handle Brazilian mobile data entry patterns', async ({ page }) => {
       // Navigate to patient registration
       await page.click('[data-testid="add-patient-button"]');
       await expect(
@@ -181,7 +173,7 @@ brazilianMobileDevices.forEach((device) => {
       // Test Brazilian mobile number input
       const phoneInput = page.locator('[data-testid="phone-input"]');
       await phoneInput.tap();
-      await phoneInput.fill("11999887766");
+      await phoneInput.fill('11999887766');
 
       // Should auto-format to Brazilian mobile format
       const phoneValue = await phoneInput.inputValue();
@@ -190,7 +182,7 @@ brazilianMobileDevices.forEach((device) => {
       // Test CEP (postal code) input
       const cepInput = page.locator('[data-testid="cep-input"]');
       await cepInput.tap();
-      await cepInput.fill("01234567");
+      await cepInput.fill('01234567');
 
       // Should auto-format CEP
       const cepValue = await cepInput.inputValue();
@@ -206,11 +198,11 @@ brazilianMobileDevices.forEach((device) => {
       ).toBeVisible();
     });
 
-    test("should provide accessible mobile navigation", async ({ page }) => {
+    test('should provide accessible mobile navigation', async ({ page }) => {
       // Test mobile menu accessibility
       const menuToggle = page.locator('[data-testid="mobile-menu-toggle"]');
       await expect(menuToggle).toBeVisible();
-      await expect(menuToggle).toHaveAttribute("aria-label");
+      await expect(menuToggle).toHaveAttribute('aria-label');
 
       // Open mobile menu
       await menuToggle.tap();
@@ -218,8 +210,8 @@ brazilianMobileDevices.forEach((device) => {
       await expect(mobileMenu).toBeVisible();
 
       // Test keyboard navigation on mobile menu
-      await page.keyboard.press("Tab");
-      await page.keyboard.press("Enter");
+      await page.keyboard.press('Tab');
+      await page.keyboard.press('Enter');
 
       // Verify menu items are touchable and properly sized
       const menuItems = page.locator('[data-testid="mobile-menu-item"]');
@@ -234,18 +226,16 @@ brazilianMobileDevices.forEach((device) => {
       }
     });
 
-    test("should optimize performance for mobile connections", async ({
-      page,
-    }) => {
+    test('should optimize performance for mobile connections', async ({ page }) => {
       // Simulate slower mobile connection
-      await page.route("**/*", async (route) => {
-        await new Promise((resolve) => setTimeout(resolve, 100));
+      await page.route('**/*', async route => {
+        await new Promise(resolve => setTimeout(resolve, 100));
         await route.continue();
       });
 
       const startTime = Date.now();
-      await page.goto("/dashboard");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/dashboard');
+      await page.waitForLoadState('networkidle');
       const loadTime = Date.now() - startTime;
 
       // Should load within acceptable time for mobile (5 seconds)
@@ -267,7 +257,7 @@ brazilianMobileDevices.forEach((device) => {
       expect(cardCount).toBeGreaterThan(5);
     });
 
-    test("should handle offline scenarios gracefully", async ({ page }) => {
+    test('should handle offline scenarios gracefully', async ({ page }) => {
       // Go offline
       await page.context().setOffline(true);
 
@@ -304,13 +294,11 @@ brazilianMobileDevices.forEach((device) => {
       await expect(page.locator('[data-testid="patient-list"]')).toBeVisible();
     });
 
-    test("should support Brazilian healthcare workflow on mobile", async ({
-      page,
-    }) => {
+    test('should support Brazilian healthcare workflow on mobile', async ({ page }) => {
       // Test quick patient lookup with CRM
       const quickSearch = page.locator('[data-testid="quick-crm-search"]');
       await quickSearch.tap();
-      await quickSearch.fill("CRM-SP-123456");
+      await quickSearch.fill('CRM-SP-123456');
 
       // Should show patients for this CRM
       await expect(page.locator('[data-testid="crm-patients"]')).toBeVisible();
@@ -329,7 +317,7 @@ brazilianMobileDevices.forEach((device) => {
         const emergencyCpfInput = page.locator(
           '[data-testid="emergency-cpf-input"]',
         );
-        await emergencyCpfInput.fill("123.456.789-00");
+        await emergencyCpfInput.fill('123.456.789-00');
 
         await page.click('[data-testid="emergency-search-button"]');
         await expect(
@@ -351,7 +339,7 @@ brazilianMobileDevices.forEach((device) => {
         '[data-testid="medication-search-input"]',
       );
       await medicationSearch.tap();
-      await medicationSearch.fill("Losartana");
+      await medicationSearch.fill('Losartana');
 
       // Should show medication suggestions
       await expect(
@@ -359,10 +347,10 @@ brazilianMobileDevices.forEach((device) => {
       ).toBeVisible();
     });
 
-    test("should handle mobile-specific error scenarios", async ({ page }) => {
+    test('should handle mobile-specific error scenarios', async ({ page }) => {
       // Test network timeout handling
-      await page.route("**/api/patients", async (route) => {
-        await new Promise((resolve) => setTimeout(resolve, 10000));
+      await page.route('**/api/patients', async route => {
+        await new Promise(resolve => setTimeout(resolve, 10000));
         await route.continue();
       });
 
@@ -380,8 +368,9 @@ brazilianMobileDevices.forEach((device) => {
       await expect(loadingIndicator).toBeVisible();
 
       // Test mobile-specific error messages
-      await page.route("**/api/patients", (route) =>
-        route.fulfill({ status: 500, body: "Server Error" }),
+      await page.route(
+        '**/api/patients',
+        route => route.fulfill({ status: 500, body: 'Server Error' }),
       );
 
       await page.reload();
@@ -392,20 +381,20 @@ brazilianMobileDevices.forEach((device) => {
       // Error message should be mobile-friendly
       const errorMessage = page.locator('[data-testid="mobile-error-message"]');
       const errorText = await errorMessage.textContent();
-      expect(errorText).toContain("Problema de conexão");
+      expect(errorText).toContain('Problema de conexão');
     });
   });
 });
 
 // Tablet-specific tests
-test.describe("Patient Dashboard Tablet", () => {
-  test.use({ ...devices["iPad Pro"] });
+test.describe('Patient Dashboard Tablet', () => {
+  test.use({ ...devices['iPad Pro'] });
 
   test.beforeEach(async ({ page }) => {
     await loginAsBrazilianHealthcareProfessional(page);
   });
 
-  test("should adapt layout for tablet screen size", async ({ page }) => {
+  test('should adapt layout for tablet screen size', async ({ page }) => {
     // Should show hybrid mobile/desktop layout
     await expect(page.locator('[data-testid="tablet-layout"]')).toBeVisible();
 
@@ -429,9 +418,7 @@ test.describe("Patient Dashboard Tablet", () => {
     ).toBeVisible();
   });
 
-  test("should optimize for Brazilian healthcare tablet usage", async ({
-    page,
-  }) => {
+  test('should optimize for Brazilian healthcare tablet usage', async ({ page }) => {
     // Test split-screen patient view for tablets
     const patientList = page.locator('[data-testid="tablet-patient-list"]');
     const patientDetails = page.locator(

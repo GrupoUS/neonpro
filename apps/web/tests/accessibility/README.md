@@ -136,7 +136,7 @@ AXECORE_TIMEOUT=10000            # Test timeout in milliseconds
 ```typescript
 export const ACCESSIBILITY_CONFIG = {
   compliance: {
-    wcag: { level: "AA", version: "2.1" },
+    wcag: { level: 'AA', version: '2.1' },
     healthcare: { anvisa: true, cfm: true, lgpd: true },
   },
   performance: {
@@ -205,10 +205,9 @@ if (global.gc) {
 }
 
 // Memory usage estimation per component
-const estimatedMemory =
-  baseMemory *
-  complexityMultiplier[component.complexity] *
-  categoryMultiplier[component.category];
+const estimatedMemory = baseMemory
+  * complexityMultiplier[component.complexity]
+  * categoryMultiplier[component.category];
 ```
 
 ## 🎯 Quality Gates

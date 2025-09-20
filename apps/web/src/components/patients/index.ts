@@ -15,19 +15,19 @@
  */
 
 // Core Patient Management Components
-export { default as ConsentManagementDialog } from "./ConsentManagementDialog";
-export { default as EnhancedPatientRegistrationForm } from "./EnhancedPatientRegistrationForm";
-export { default as GlobalPatientSearch } from "./GlobalPatientSearch";
-export { default as HealthcareSearch } from "./HealthcareSearch";
-export { default as MobilePatientCard } from "./MobilePatientCard";
-export { default as MobilePatientList } from "./MobilePatientList";
+export { default as ConsentManagementDialog } from './ConsentManagementDialog';
+export { default as EnhancedPatientRegistrationForm } from './EnhancedPatientRegistrationForm';
+export { default as GlobalPatientSearch } from './GlobalPatientSearch';
+export { default as HealthcareSearch } from './HealthcareSearch';
+export { default as MobilePatientCard } from './MobilePatientCard';
+export { default as MobilePatientList } from './MobilePatientList';
 
 // Error Handling & Safety
 export {
   PatientErrorBoundary as default,
   usePatientErrorHandler,
   withPatientErrorBoundary,
-} from "./PatientErrorBoundary";
+} from './PatientErrorBoundary';
 
 // Accessibility & Compliance
 export {
@@ -36,7 +36,7 @@ export {
   useFocusManagement,
   useKeyboardNavigation,
   withAccessibility,
-} from "./AccessibilityProvider";
+} from './AccessibilityProvider';
 
 // Brazilian Healthcare Validation
 export {
@@ -60,11 +60,11 @@ export {
   // Validation functions
   validateCpf,
   validatePatientData,
-} from "./validation/brazilian-healthcare-schemas";
+} from './validation/brazilian-healthcare-schemas';
 
 // Component Props Types
 export interface PatientComponentProps {
-  userRole: "admin" | "aesthetician" | "coordinator";
+  userRole: 'admin' | 'aesthetician' | 'coordinator';
   className?: string;
 }
 
@@ -75,21 +75,21 @@ export interface MobilePatientData {
   phone: string;
   email: string;
   birthDate: Date;
-  status: "active" | "inactive" | "pending";
+  status: 'active' | 'inactive' | 'pending';
   lastVisit?: Date;
-  consentStatus: "granted" | "pending" | "withdrawn";
-  dataVisibilityLevel: "minimal" | "standard" | "full";
+  consentStatus: 'granted' | 'pending' | 'withdrawn';
+  dataVisibilityLevel: 'minimal' | 'standard' | 'full';
 }
 
 export interface ConsentRecord {
   id: string;
   patientId: string;
   consentType:
-    | "data_processing"
-    | "marketing"
-    | "third_party_sharing"
-    | "research"
-    | "telehealth";
+    | 'data_processing'
+    | 'marketing'
+    | 'third_party_sharing'
+    | 'research'
+    | 'telehealth';
   granted: boolean;
   purpose: string;
   dataCategories: string[];
@@ -98,10 +98,10 @@ export interface ConsentRecord {
   revokedAt?: Date;
   lastUpdated: Date;
   legalBasis:
-    | "consent"
-    | "legitimate_interest"
-    | "legal_obligation"
-    | "vital_interests";
+    | 'consent'
+    | 'legitimate_interest'
+    | 'legal_obligation'
+    | 'vital_interests';
   processingDetails?: string;
 }
 
@@ -119,9 +119,9 @@ export interface PatientSearchResult {
     state: string;
     zipCode: string;
   };
-  status: "active" | "inactive" | "pending";
+  status: 'active' | 'inactive' | 'pending';
   lastVisit?: Date;
-  consentStatus: "granted" | "pending" | "withdrawn";
+  consentStatus: 'granted' | 'pending' | 'withdrawn';
   matchScore: number;
   matchReasons: string[];
 }
@@ -129,92 +129,91 @@ export interface PatientSearchResult {
 // Utility functions for Brazilian formatting
 export const formatters = {
   cpf: (value: string) => {
-    const numbers = value.replace(/\D/g, "");
-    return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   },
 
   cns: (value: string) => {
-    const numbers = value.replace(/\D/g, "");
-    return numbers.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, "$1 $2 $3 $4");
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
   },
 
   phone: (value: string) => {
-    const numbers = value.replace(/\D/g, "");
+    const numbers = value.replace(/\D/g, '');
     if (numbers.length === 11) {
-      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+      return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
     } else if (numbers.length === 10) {
-      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+      return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
     }
     return value;
   },
 
   cep: (value: string) => {
-    const numbers = value.replace(/\D/g, "");
-    return numbers.replace(/(\d{5})(\d{3})/, "$1-$2");
+    const numbers = value.replace(/\D/g, '');
+    return numbers.replace(/(\d{5})(\d{3})/, '$1-$2');
   },
 };
 
 // Brazilian states list
 export const BRAZILIAN_STATES = [
-  "AC",
-  "AL",
-  "AP",
-  "AM",
-  "BA",
-  "CE",
-  "DF",
-  "ES",
-  "GO",
-  "MA",
-  "MT",
-  "MS",
-  "MG",
-  "PA",
-  "PB",
-  "PR",
-  "PE",
-  "PI",
-  "RJ",
-  "RN",
-  "RS",
-  "RO",
-  "RR",
-  "SC",
-  "SP",
-  "SE",
-  "TO",
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
 ] as const;
 
 // LGPD consent purposes for aesthetic clinics
 export const LGPD_CONSENT_PURPOSES = {
   data_processing: {
-    title: "Processamento de Dados Pessoais",
+    title: 'Processamento de Dados Pessoais',
     description:
-      "Coleta, armazenamento e processamento de dados pessoais para prestação de serviços estéticos",
+      'Coleta, armazenamento e processamento de dados pessoais para prestação de serviços estéticos',
     required: true,
   },
   marketing: {
-    title: "Marketing e Comunicação",
-    description:
-      "Envio de materiais promocionais, novidades sobre tratamentos e ofertas especiais",
+    title: 'Marketing e Comunicação',
+    description: 'Envio de materiais promocionais, novidades sobre tratamentos e ofertas especiais',
     required: false,
   },
   third_party_sharing: {
-    title: "Compartilhamento com Terceiros",
+    title: 'Compartilhamento com Terceiros',
     description:
-      "Compartilhamento de dados com parceiros, laboratórios e fornecedores de equipamentos",
+      'Compartilhamento de dados com parceiros, laboratórios e fornecedores de equipamentos',
     required: false,
   },
   research: {
-    title: "Pesquisa e Desenvolvimento",
+    title: 'Pesquisa e Desenvolvimento',
     description:
-      "Uso de dados anonimizados para pesquisas científicas e desenvolvimento de novos tratamentos",
+      'Uso de dados anonimizados para pesquisas científicas e desenvolvimento de novos tratamentos',
     required: false,
   },
   telehealth: {
-    title: "Telemedicina",
+    title: 'Telemedicina',
     description:
-      "Consultas online, monitoramento remoto e acompanhamento de tratamentos à distância",
+      'Consultas online, monitoramento remoto e acompanhamento de tratamentos à distância',
     required: false,
   },
 } as const;
@@ -222,30 +221,30 @@ export const LGPD_CONSENT_PURPOSES = {
 // Performance and accessibility standards
 export const NEONPRO_STANDARDS = {
   performance: {
-    LCP: "≤2.5s", // Largest Contentful Paint
-    INP: "≤200ms", // Interaction to Next Paint
-    CLS: "≤0.1", // Cumulative Layout Shift
-    mobileLoadTime: "<2s on 3G networks",
-    bundleSize: "<650kB initial bundle",
+    LCP: '≤2.5s', // Largest Contentful Paint
+    INP: '≤200ms', // Interaction to Next Paint
+    CLS: '≤0.1', // Cumulative Layout Shift
+    mobileLoadTime: '<2s on 3G networks',
+    bundleSize: '<650kB initial bundle',
   },
   accessibility: {
-    wcagLevel: "AA", // WCAG 2.1 AA minimum
-    touchTargets: "≥44px for mobile",
-    contrastRatio: "4.5:1 minimum",
-    keyboardNavigation: "100% accessible",
-    screenReaderSupport: "Complete ARIA implementation",
+    wcagLevel: 'AA', // WCAG 2.1 AA minimum
+    touchTargets: '≥44px for mobile',
+    contrastRatio: '4.5:1 minimum',
+    keyboardNavigation: '100% accessible',
+    screenReaderSupport: 'Complete ARIA implementation',
   },
   compliance: {
-    lgpd: "100% compliance with progressive disclosure",
-    anvisa: "Brazilian healthcare regulation compliance",
-    cfm: "Medical council standards adherence",
-    auditTrail: "Complete interaction logging",
+    lgpd: '100% compliance with progressive disclosure',
+    anvisa: 'Brazilian healthcare regulation compliance',
+    cfm: 'Medical council standards adherence',
+    auditTrail: 'Complete interaction logging',
   },
   mobile: {
-    responsiveBreakpoints: "Mobile-first design approach",
-    touchOptimization: "Gesture support and haptic feedback",
-    offlineCapability: "PWA features for appointment booking",
-    performanceTarget: "Optimized for 3G/4G networks",
+    responsiveBreakpoints: 'Mobile-first design approach',
+    touchOptimization: 'Gesture support and haptic feedback',
+    offlineCapability: 'PWA features for appointment booking',
+    performanceTarget: 'Optimized for 3G/4G networks',
   },
 } as const;
 

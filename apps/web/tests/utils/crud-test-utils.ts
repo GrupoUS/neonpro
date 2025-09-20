@@ -5,6 +5,7 @@
  */
 
 import { rest } from 'msw';
+import { TEST_BASE_URL } from './test-config';
 
 // Types for CRUD testing
 export interface CrudIntentRequest {
@@ -51,61 +52,61 @@ export interface CrudExecuteRequest {
 // Validation functions
 export function validateIntentRequest(request: any): request is CrudIntentRequest {
   return (
-    request &&
-    typeof request.entity === 'string' &&
-    typeof request.operation === 'string' &&
-    typeof request.data === 'object' &&
-    request.context &&
-    typeof request.context.userId === 'string' &&
-    typeof request.context.sessionId === 'string'
+    request
+    && typeof request.entity === 'string'
+    && typeof request.operation === 'string'
+    && typeof request.data === 'object'
+    && request.context
+    && typeof request.context.userId === 'string'
+    && typeof request.context.sessionId === 'string'
   );
 }
 
 export function validateConfirmRequest(request: any): request is CrudConfirmRequest {
   return (
-    request &&
-    typeof request.intentId === 'string' &&
-    typeof request.token === 'string' &&
-    request.confirmation &&
-    typeof request.confirmation.validated === 'boolean' &&
-    request.context &&
-    typeof request.context.userId === 'string' &&
-    typeof request.context.sessionId === 'string'
+    request
+    && typeof request.intentId === 'string'
+    && typeof request.token === 'string'
+    && request.confirmation
+    && typeof request.confirmation.validated === 'boolean'
+    && request.context
+    && typeof request.context.userId === 'string'
+    && typeof request.context.sessionId === 'string'
   );
 }
 
 export function validateExecuteRequest(request: any): request is CrudExecuteRequest {
   return (
-    request &&
-    typeof request.confirmId === 'string' &&
-    typeof request.executionToken === 'string' &&
-    request.operation &&
-    typeof request.operation.entity === 'string' &&
-    typeof request.operation.action === 'string' &&
-    typeof request.operation.data === 'object' &&
-    request.context &&
-    typeof request.context.userId === 'string' &&
-    typeof request.context.sessionId === 'string'
+    request
+    && typeof request.confirmId === 'string'
+    && typeof request.executionToken === 'string'
+    && request.operation
+    && typeof request.operation.entity === 'string'
+    && typeof request.operation.action === 'string'
+    && typeof request.operation.data === 'object'
+    && request.context
+    && typeof request.context.userId === 'string'
+    && typeof request.context.sessionId === 'string'
   );
 }
 
 // API client functions
 export async function createCrudIntent(
   request: CrudIntentRequest,
-  timeout: number = 5000
+  timeout: number = 5000,
 ): Promise<any> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {
-    const response = await fetch('/api/v1/ai/crud/intent', {
+    const response = await fetch(`${TEST_BASE_URL}/api/v1/ai/crud/intent`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer test-token'
+        Authorization: 'Bearer test-token',
       },
       body: JSON.stringify(request),
-      signal: controller.signal
+      signal: controller.signal,
     });
 
     clearTimeout(timeoutId);
@@ -124,20 +125,20 @@ export async function createCrudIntent(
 
 export async function confirmCrudIntent(
   request: CrudConfirmRequest,
-  timeout: number = 5000
+  timeout: number = 5000,
 ): Promise<any> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {
-    const response = await fetch('/api/v1/ai/crud/confirm', {
+    const response = await fetch(`${TEST_BASE_URL}/api/v1/ai/crud/confirm`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer test-token'
+        Authorization: 'Bearer test-token',
       },
       body: JSON.stringify(request),
-      signal: controller.signal
+      signal: controller.signal,
     });
 
     clearTimeout(timeoutId);
@@ -156,20 +157,20 @@ export async function confirmCrudIntent(
 
 export async function executeCrudOperation(
   request: CrudExecuteRequest,
-  timeout: number = 5000
+  timeout: number = 5000,
 ): Promise<any> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
   try {
-    const response = await fetch('/api/v1/ai/crud/execute', {
+    const response = await fetch(`${TEST_BASE_URL}/api/v1/ai/crud/execute`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer test-token'
+        Authorization: 'Bearer test-token',
       },
       body: JSON.stringify(request),
-      signal: controller.signal
+      signal: controller.signal,
     });
 
     clearTimeout(timeoutId);
@@ -194,7 +195,7 @@ export function generateMockPatientData(overrides = {}): Record<string, any> {
     phone: '+5511999999999',
     dateOfBirth: '1990-01-01',
     gender: 'M',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -206,7 +207,7 @@ export function generateMockAppointmentData(overrides = {}): Record<string, any>
     duration: 30,
     type: 'CONSULTATION',
     status: 'SCHEDULED',
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -240,7 +241,7 @@ export function validateLGPDCompliance(data: Record<string, any>): {
   return {
     valid: violations.length === 0,
     score: Math.max(0, score),
-    violations
+    violations,
   };
 }
 
@@ -273,7 +274,7 @@ export function validateCFMCompliance(data: Record<string, any>): {
   return {
     valid: violations.length === 0,
     score: Math.max(0, score),
-    violations
+    violations,
   };
 }
 
@@ -306,7 +307,7 @@ export function validateANVISACompliance(data: Record<string, any>): {
   return {
     valid: violations.length === 0,
     score: Math.max(0, score),
-    violations
+    violations,
   };
 }
 
@@ -321,13 +322,13 @@ export async function measureExecutionTime<T>(fn: () => Promise<T>): Promise<{
     const endTime = performance.now();
     return {
       result,
-      executionTime: endTime - startTime
+      executionTime: endTime - startTime,
     };
   } catch (error) {
     const endTime = performance.now();
     throw {
       error,
-      executionTime: endTime - startTime
+      executionTime: endTime - startTime,
     };
   }
 }
@@ -374,7 +375,7 @@ export class TestDataBuilder {
 // Mock response builders
 export class MockResponseBuilder {
   private response: Record<string, any> = {
-    success: true
+    success: true,
   };
 
   static success(): MockResponseBuilder {
@@ -445,26 +446,26 @@ export function generateTestScenarios() {
     happyPath: {
       description: 'Successful CRUD operation',
       setup: () => generateMockPatientData(),
-      expect: { success: true, compliance: { lgpd: { valid: true } } }
+      expect: { success: true, compliance: { lgpd: { valid: true } } },
     },
     invalidInput: {
       description: 'Invalid input data',
       setup: () => ({ name: 123 }), // Invalid type
-      expect: { success: false, error: 'Validation failed' }
+      expect: { success: false, error: 'Validation failed' },
     },
     missingRequired: {
       description: 'Missing required fields',
       setup: () => ({}),
-      expect: { success: false, error: 'Missing required fields' }
+      expect: { success: false, error: 'Missing required fields' },
     },
     complianceViolation: {
       description: 'LGPD compliance violation',
       setup: () => ({
         name: 'Real Patient Name',
-        healthHistory: 'sensitive-data-without-consent'
+        healthHistory: 'sensitive-data-without-consent',
       }),
-      expect: { success: false, error: 'Compliance violation' }
-    }
+      expect: { success: false, error: 'Compliance violation' },
+    },
   };
 }
 

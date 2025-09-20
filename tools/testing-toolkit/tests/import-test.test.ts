@@ -1,8 +1,8 @@
-import { describe, expect, it } from "vitest";
-import { createTDDSuite } from "@neonpro/testing-toolkit";
+import { createTDDSuite } from '@neonpro/testing-toolkit';
+import { describe, expect, it } from 'vitest';
 
-describe("TDD Suite Test", () => {
-  createTDDSuite("Example TDD Cycle", {
+describe('TDD Suite Test', () => {
+  createTDDSuite('Example TDD Cycle', {
     redPhase: () => {
       // This should fail initially
       expect(false).toBe(true);

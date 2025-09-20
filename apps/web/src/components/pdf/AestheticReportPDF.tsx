@@ -1,26 +1,22 @@
-import { Document, Page, Text, View } from "@react-pdf/renderer";
-import {
-  type ClinicBrandingData,
-  ClinicHeader,
-  DocumentInfo,
-} from "./ClinicBranding";
-import styles from "./pdf-styles";
+import { Document, Page, Text, View } from '@react-pdf/renderer';
+import { type ClinicBrandingData, ClinicHeader, DocumentInfo } from './ClinicBranding';
+import styles from './pdf-styles';
 
 // Tipos baseados no schema do formulário
 export interface AestheticAssessmentData {
   patientData: {
     name: string;
     age: number;
-    skinType: "1" | "2" | "3" | "4" | "5" | "6";
-    gender: "masculino" | "feminino" | "outro";
+    skinType: '1' | '2' | '3' | '4' | '5' | '6';
+    gender: 'masculino' | 'feminino' | 'outro';
   };
   skinAnalysis: {
     primaryConcerns: string[];
-    skinCondition: "seca" | "oleosa" | "mista" | "sensivel" | "normal";
+    skinCondition: 'seca' | 'oleosa' | 'mista' | 'sensivel' | 'normal';
     acnePresent: boolean;
     melasmaPresent: boolean;
     wrinklesPresent: boolean;
-    sunDamage: "nenhum" | "leve" | "moderado" | "severo";
+    sunDamage: 'nenhum' | 'leve' | 'moderado' | 'severo';
   };
   medicalHistory: {
     isPregnant: boolean;
@@ -32,10 +28,10 @@ export interface AestheticAssessmentData {
     previousTreatments: string;
   };
   lifestyle: {
-    sunExposure: "baixa" | "moderada" | "alta";
+    sunExposure: 'baixa' | 'moderada' | 'alta';
     smoking: boolean;
-    alcoholConsumption: "nenhum" | "social" | "moderado" | "frequente";
-    exerciseFrequency: "sedentario" | "leve" | "moderado" | "intenso";
+    alcoholConsumption: 'nenhum' | 'social' | 'moderado' | 'frequente';
+    exerciseFrequency: 'sedentario' | 'leve' | 'moderado' | 'intenso';
   };
   lgpdConsent: {
     dataProcessing: boolean;
@@ -67,64 +63,62 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
   clinicData,
   generatedAt = new Date(),
 }) => {
-  const { patientData, skinAnalysis, medicalHistory, lifestyle, lgpdConsent } =
-    assessmentData;
+  const { patientData, skinAnalysis, medicalHistory, lifestyle, lgpdConsent } = assessmentData;
 
   // Mapear valores para texto legível
   const skinTypeLabels = {
-    "1": "Tipo I (Muito clara, sempre queima)",
-    "2": "Tipo II (Clara, queima facilmente)",
-    "3": "Tipo III (Morena clara, bronzeia gradualmente)",
-    "4": "Tipo IV (Morena, bronzeia facilmente)",
-    "5": "Tipo V (Morena escura, raramente queima)",
-    "6": "Tipo VI (Negra, nunca queima)",
+    '1': 'Tipo I (Muito clara, sempre queima)',
+    '2': 'Tipo II (Clara, queima facilmente)',
+    '3': 'Tipo III (Morena clara, bronzeia gradualmente)',
+    '4': 'Tipo IV (Morena, bronzeia facilmente)',
+    '5': 'Tipo V (Morena escura, raramente queima)',
+    '6': 'Tipo VI (Negra, nunca queima)',
   };
 
   const skinConditionLabels = {
-    seca: "Seca",
-    oleosa: "Oleosa",
-    mista: "Mista",
-    sensivel: "Sensível",
-    normal: "Normal",
+    seca: 'Seca',
+    oleosa: 'Oleosa',
+    mista: 'Mista',
+    sensivel: 'Sensível',
+    normal: 'Normal',
   };
 
   const sunDamageLabels = {
-    nenhum: "Nenhum",
-    leve: "Leve",
-    moderado: "Moderado",
-    severo: "Severo",
+    nenhum: 'Nenhum',
+    leve: 'Leve',
+    moderado: 'Moderado',
+    severo: 'Severo',
   };
 
   return (
     <Document
       title={`Avaliação Estética - ${patientData.name}`}
       author={clinicData.name}
-      subject="Relatório de Avaliação Estética"
-      creator="NeonPro - Sistema de Gestão Estética"
+      subject='Relatório de Avaliação Estética'
+      creator='NeonPro - Sistema de Gestão Estética'
     >
-      <Page size="A4" style={styles.page}>
+      <Page size='A4' style={styles.page}>
         {/* Header da clínica */}
         <ClinicHeader
           clinicData={clinicData}
-          documentTitle="Relatório de Avaliação Estética"
+          documentTitle='Relatório de Avaliação Estética'
           patientName={patientData.name}
           generatedAt={generatedAt}
         />
         {/* Informações do documento */}
         <DocumentInfo
-          title="Relatório de Avaliação Estética"
+          title='Relatório de Avaliação Estética'
           patientName={patientData.name}
           generatedAt={generatedAt}
         />
         {/* Disclaimer médico */}
         <View style={styles.medicalDisclaimer}>
           <Text style={styles.disclaimerText}>
-            ⚠️ AVISO MÉDICO: Este documento contém informações confidenciais de
-            avaliação estética. Destinado exclusivamente para fins médicos e de
-            tratamento. Manter sigilo conforme legislação vigente (CFM, ANVISA,
-            LGPD).
+            ⚠️ AVISO MÉDICO: Este documento contém informações confidenciais de avaliação estética.
+            Destinado exclusivamente para fins médicos e de tratamento. Manter sigilo conforme
+            legislação vigente (CFM, ANVISA, LGPD).
           </Text>
-        </View>{" "}
+        </View>{' '}
         {/* Seção 1: Dados do Paciente */}
         <View style={styles.section}>
           <Text style={styles.subtitle}>1. DADOS DO PACIENTE</Text>
@@ -186,15 +180,15 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
           </Text>
           <CheckboxComponent
             checked={skinAnalysis.acnePresent}
-            label="Presença de Acne"
+            label='Presença de Acne'
           />
           <CheckboxComponent
             checked={skinAnalysis.melasmaPresent}
-            label="Presença de Melasma"
+            label='Presença de Melasma'
           />
           <CheckboxComponent
             checked={skinAnalysis.wrinklesPresent}
-            label="Presença de Rugas"
+            label='Presença de Rugas'
           />
         </View>
         {/* Seção 3: Histórico Médico */}
@@ -206,19 +200,19 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
           </Text>
           <CheckboxComponent
             checked={medicalHistory.isPregnant}
-            label="Gravidez"
+            label='Gravidez'
           />
           <CheckboxComponent
             checked={medicalHistory.isBreastfeeding}
-            label="Amamentação"
+            label='Amamentação'
           />
           <CheckboxComponent
             checked={medicalHistory.hasDiabetes}
-            label="Diabetes"
+            label='Diabetes'
           />
           <CheckboxComponent
             checked={medicalHistory.hasAutoimmune}
-            label="Doença Autoimune"
+            label='Doença Autoimune'
           />
 
           {medicalHistory.currentMedications && (
@@ -245,7 +239,7 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
               </Text>
             </View>
           )}
-        </View>{" "}
+        </View>{' '}
         {/* Seção 4: Estilo de Vida */}
         <View style={styles.section}>
           <Text style={styles.subtitle}>4. ESTILO DE VIDA</Text>
@@ -265,7 +259,7 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
             <Text style={styles.value}>{lifestyle.exerciseFrequency}</Text>
           </View>
 
-          <CheckboxComponent checked={lifestyle.smoking} label="Fumante" />
+          <CheckboxComponent checked={lifestyle.smoking} label='Fumante' />
         </View>
         {/* Seção 5: Consentimento LGPD */}
         <View style={styles.lgpdSection}>
@@ -275,22 +269,21 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
 
           <CheckboxComponent
             checked={lgpdConsent.dataProcessing}
-            label="Autorizo o processamento dos meus dados pessoais para fins de tratamento médico-estético"
+            label='Autorizo o processamento dos meus dados pessoais para fins de tratamento médico-estético'
           />
           <CheckboxComponent
             checked={lgpdConsent.imageAnalysis}
-            label="Autorizo o uso das minhas imagens para análise de IA e documentação médica"
+            label='Autorizo o uso das minhas imagens para análise de IA e documentação médica'
           />
           <CheckboxComponent
             checked={lgpdConsent.marketingCommunication}
-            label="Autorizo o recebimento de comunicações de marketing da clínica"
+            label='Autorizo o recebimento de comunicações de marketing da clínica'
           />
 
           <Text style={[styles.lgpdText, { marginTop: 10 }]}>
-            Declaro estar ciente dos meus direitos conforme a LGPD (Lei
-            13.709/2018), incluindo acesso, retificação, exclusão e
-            portabilidade dos dados. Posso revogar este consentimento a qualquer
-            momento.
+            Declaro estar ciente dos meus direitos conforme a LGPD (Lei 13.709/2018), incluindo
+            acesso, retificação, exclusão e portabilidade dos dados. Posso revogar este
+            consentimento a qualquer momento.
           </Text>
         </View>
         {/* Seção de Assinaturas */}
@@ -311,23 +304,20 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
           <View style={[styles.row, { marginTop: 20 }]}>
             <Text style={styles.label}>Data:</Text>
             <Text style={styles.value}>
-              {generatedAt.toLocaleDateString("pt-BR")}
+              {generatedAt.toLocaleDateString('pt-BR')}
             </Text>
           </View>
         </View>
         {/* Footer */}
         <Text style={styles.footer}>
-          Este documento foi gerado automaticamente pelo sistema NeonPro em
-          {"  "}
-          {generatedAt.toLocaleDateString("pt-BR")} às{" "}
-          {generatedAt.toLocaleTimeString("pt-BR")}.{"\n"}Documento confidencial
-          - Manter sigilo médico conforme legislação vigente.
+          Este documento foi gerado automaticamente pelo sistema NeonPro em{'  '}
+          {generatedAt.toLocaleDateString('pt-BR')} às{' '}
+          {generatedAt.toLocaleTimeString('pt-BR')}.{'\n'}Documento confidencial - Manter sigilo
+          médico conforme legislação vigente.
         </Text>
         <Text
           style={styles.pageNumber}
-          render={({ pageNumber, totalPages }) =>
-            `Página ${pageNumber} de ${totalPages}`
-          }
+          render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`}
           fixed
         />
       </Page>

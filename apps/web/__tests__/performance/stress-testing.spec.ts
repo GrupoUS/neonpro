@@ -10,7 +10,7 @@
  * - System limits and capacity planning
  */
 
-import { chromium, expect, test } from "@playwright/test";
+import { chromium, expect, test } from '@playwright/test';
 
 // Stress testing configuration
 const STRESS_TEST_CONFIG = {
@@ -25,17 +25,17 @@ const STRESS_TEST_CONFIG = {
 // Brazilian healthcare emergency scenarios
 const EMERGENCY_SCENARIOS = {
   PANDEMIC_SURGE: {
-    description: "COVID-19 surge with 10x normal traffic",
+    description: 'COVID-19 surge with 10x normal traffic',
     multiplier: 10,
     duration: 5 * 60 * 1000, // 5 minutes
   },
   HOSPITAL_EMERGENCY: {
-    description: "Mass casualty event requiring rapid patient processing",
+    description: 'Mass casualty event requiring rapid patient processing',
     multiplier: 5,
     duration: 10 * 60 * 1000, // 10 minutes
   },
   SYSTEM_MIGRATION: {
-    description: "System migration with all users switching simultaneously",
+    description: 'System migration with all users switching simultaneously',
     multiplier: 3,
     duration: 15 * 60 * 1000, // 15 minutes
   },
@@ -73,7 +73,7 @@ class StressTester {
           try {
             const browser = await chromium.launch({
               headless: true,
-              args: ["--memory-pressure-off", "--max_old_space_size=256"],
+              args: ['--memory-pressure-off', '--max_old_space_size=256'],
             });
 
             const context = await browser.newContext({
@@ -84,12 +84,12 @@ class StressTester {
             const page = await context.newPage();
 
             // Monitor errors and performance
-            page.on("pageerror", (error) => {
-              this.recordError("page_error", error.message);
+            page.on('pageerror', error => {
+              this.recordError('page_error', error.message);
             });
 
-            page.on("response", (response) => {
-              if (response.url().includes("/api/")) {
+            page.on('response', response => {
+              if (response.url().includes('/api/')) {
                 const timing = response.timing();
                 if (timing) {
                   this.responseTimes.push(timing.responseEnd);
@@ -97,7 +97,7 @@ class StressTester {
 
                 if (response.status() >= 400) {
                   this.recordError(
-                    "api_error",
+                    'api_error',
                     `${response.status()} ${response.url()}`,
                   );
                 }
@@ -111,7 +111,7 @@ class StressTester {
             // Login immediately
             await this.loginUser(page, this.browsers.length - 1);
           } catch (error) {
-            this.recordError("user_creation", error.message);
+            this.recordError('user_creation', error.message);
             console.warn(`Failed to create user: ${error.message}`);
           }
         },
@@ -121,7 +121,7 @@ class StressTester {
 
       // Wait between batches
       if (batch < userBatches - 1) {
-        await new Promise((resolve) => setTimeout(resolve, batchInterval));
+        await new Promise(resolve => setTimeout(resolve, batchInterval));
       }
     }
 
@@ -132,27 +132,27 @@ class StressTester {
     try {
       const startTime = Date.now();
 
-      await page.goto("/login");
+      await page.goto('/login');
       await page.fill(
         '[data-testid="email-input"]',
         `stresstest${userIndex}@clinic.com.br`,
       );
-      await page.fill('[data-testid="password-input"]', "StressTest123!");
+      await page.fill('[data-testid="password-input"]', 'StressTest123!');
       await page.fill(
         '[data-testid="crm-input"]',
-        `CRM-SP-${String(userIndex + 300000).padStart(6, "0")}`,
+        `CRM-SP-${String(userIndex + 300000).padStart(6, '0')}`,
       );
       await page.click('[data-testid="login-button"]');
-      await page.waitForURL("/dashboard", { timeout: 30000 });
+      await page.waitForURL('/dashboard', { timeout: 30000 });
 
       const loginTime = Date.now() - startTime;
       this.responseTimes.push(loginTime);
 
       if (loginTime > STRESS_TEST_CONFIG.RESPONSE_TIME_THRESHOLD_MS) {
-        this.recordError("slow_login", `Login took ${loginTime}ms`);
+        this.recordError('slow_login', `Login took ${loginTime}ms`);
       }
     } catch (error) {
-      this.recordError("login_failure", error.message);
+      this.recordError('login_failure', error.message);
       throw error;
     }
   }
@@ -201,8 +201,7 @@ class StressTester {
           () => this.emergencyPatientAccess(page),
         ];
 
-        const randomAction =
-          actions[Math.floor(Math.random() * actions.length)];
+        const randomAction = actions[Math.floor(Math.random() * actions.length)];
         const actionStartTime = Date.now();
 
         await randomAction();
@@ -212,7 +211,7 @@ class StressTester {
 
         if (actionDuration > STRESS_TEST_CONFIG.RESPONSE_TIME_THRESHOLD_MS) {
           this.recordError(
-            "slow_action",
+            'slow_action',
             `Action took ${actionDuration}ms for user ${userIndex}`,
           );
         }
@@ -221,17 +220,17 @@ class StressTester {
         await page.waitForTimeout(Math.random() * actionFrequencyMs);
       } catch (error) {
         this.recordError(
-          "action_failure",
+          'action_failure',
           `User ${userIndex}: ${error.message}`,
         );
 
         // Try to recover
         try {
-          await page.goto("/dashboard");
-          await page.waitForLoadState("domcontentloaded", { timeout: 10000 });
+          await page.goto('/dashboard');
+          await page.waitForLoadState('domcontentloaded', { timeout: 10000 });
         } catch (recoveryError) {
           this.recordError(
-            "recovery_failure",
+            'recovery_failure',
             `User ${userIndex} recovery failed`,
           );
           // If recovery fails, stop executing actions for this user.
@@ -243,13 +242,13 @@ class StressTester {
 
   private async rapidPatientSearch(page: any) {
     const searchTerms = [
-      "João",
-      "Maria",
-      "Silva",
-      "Santos",
-      "Ana",
-      "Carlos",
-      "Fernanda",
+      'João',
+      'Maria',
+      'Silva',
+      'Santos',
+      'Ana',
+      'Carlos',
+      'Fernanda',
     ];
 
     for (let i = 0; i < 5; i++) {
@@ -258,7 +257,7 @@ class StressTester {
       await page.waitForTimeout(100);
     }
 
-    await page.fill('[data-testid="patient-search-input"]', "");
+    await page.fill('[data-testid="patient-search-input"]', '');
   }
 
   private async rapidPatientViewing(page: any) {
@@ -280,11 +279,11 @@ class StressTester {
     const formFields = [
       {
         selector: '[data-testid="name-input"]',
-        value: "Paciente Teste Stress",
+        value: 'Paciente Teste Stress',
       },
-      { selector: '[data-testid="cpf-input"]', value: "123.456.789-00" },
-      { selector: '[data-testid="phone-input"]', value: "(11) 99999-9999" },
-      { selector: '[data-testid="email-input"]', value: "stress@test.com" },
+      { selector: '[data-testid="cpf-input"]', value: '123.456.789-00' },
+      { selector: '[data-testid="phone-input"]', value: '(11) 99999-9999' },
+      { selector: '[data-testid="email-input"]', value: 'stress@test.com' },
     ];
 
     // Fill all fields rapidly
@@ -312,7 +311,7 @@ class StressTester {
 
   private async emergencyPatientAccess(page: any) {
     // Simulate emergency patient lookup pattern
-    await page.fill('[data-testid="patient-search-input"]', "123.456.789-00");
+    await page.fill('[data-testid="patient-search-input"]', '123.456.789-00');
     await page.waitForTimeout(300);
 
     const searchResults = page.locator('[data-testid="search-result"]');
@@ -325,7 +324,7 @@ class StressTester {
       await page.waitForTimeout(300);
     }
 
-    await page.fill('[data-testid="patient-search-input"]', "");
+    await page.fill('[data-testid="patient-search-input"]', '');
   }
 
   private async monitorSystemResources(endTime: number) {
@@ -352,17 +351,17 @@ class StressTester {
       this.memoryUsages.push(totalMemory / 1024 / 1024); // Convert to MB
 
       // Check for users exceeding memory limits
-      memoryResults.forEach((result) => {
+      memoryResults.forEach(result => {
         const memoryMB = result.memory / 1024 / 1024;
         if (memoryMB > STRESS_TEST_CONFIG.MEMORY_LIMIT_MB) {
           this.recordError(
-            "memory_limit",
+            'memory_limit',
             `User ${result.userIndex} using ${memoryMB.toFixed(2)}MB`,
           );
         }
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 5000)); // Check every 5 seconds
+      await new Promise(resolve => setTimeout(resolve, 5000)); // Check every 5 seconds
     }
   }
 
@@ -380,25 +379,22 @@ class StressTester {
     );
     const errorRate = totalActions > 0 ? (totalErrors / totalActions) * 100 : 0;
 
-    const avgResponseTime =
-      this.responseTimes.length > 0
-        ? this.responseTimes.reduce((sum, time) => sum + time, 0) /
-          this.responseTimes.length
-        : 0;
+    const avgResponseTime = this.responseTimes.length > 0
+      ? this.responseTimes.reduce((sum, time) => sum + time, 0)
+        / this.responseTimes.length
+      : 0;
 
-    const p95ResponseTime =
-      this.responseTimes.length > 0
-        ? this.responseTimes.sort((a, b) => a - b)[
-            Math.floor(this.responseTimes.length * 0.95)
-          ]
-        : 0;
+    const p95ResponseTime = this.responseTimes.length > 0
+      ? this.responseTimes.sort((a, b) => a - b)[
+        Math.floor(this.responseTimes.length * 0.95)
+      ]
+      : 0;
 
     const maxMemoryUsage = Math.max(...this.memoryUsages, 0);
-    const avgMemoryUsage =
-      this.memoryUsages.length > 0
-        ? this.memoryUsages.reduce((sum, usage) => sum + usage, 0) /
-          this.memoryUsages.length
-        : 0;
+    const avgMemoryUsage = this.memoryUsages.length > 0
+      ? this.memoryUsages.reduce((sum, usage) => sum + usage, 0)
+        / this.memoryUsages.length
+      : 0;
 
     return {
       totalUsers: this.browsers.length,
@@ -414,7 +410,7 @@ class StressTester {
   }
 
   async cleanup() {
-    console.log("Cleaning up stress test resources...");
+    console.log('Cleaning up stress test resources...');
 
     const cleanupPromises = this.browsers.map(async (browser, index) => {
       try {
@@ -435,7 +431,7 @@ class StressTester {
   }
 }
 
-test.describe("Patient Dashboard Stress Testing", () => {
+test.describe('Patient Dashboard Stress Testing', () => {
   let stressTester: StressTester;
 
   test.afterEach(async () => {
@@ -444,10 +440,10 @@ test.describe("Patient Dashboard Stress Testing", () => {
     }
   });
 
-  test("should identify breaking point with incremental load", async () => {
+  test('should identify breaking point with incremental load', async () => {
     stressTester = new StressTester();
 
-    console.log("Starting incremental stress test...");
+    console.log('Starting incremental stress test...');
 
     for (const userCount of STRESS_TEST_CONFIG.RAMP_UP_STEPS) {
       console.log(`\n=== Testing with ${userCount} concurrent users ===`);
@@ -474,30 +470,33 @@ test.describe("Patient Dashboard Stress Testing", () => {
         );
 
         // Check if system is still performing acceptably
-        const systemHealthy =
-          results.errorRate < STRESS_TEST_CONFIG.ERROR_THRESHOLD_PERCENT &&
-          results.p95ResponseTime <
-            STRESS_TEST_CONFIG.RESPONSE_TIME_THRESHOLD_MS &&
-          results.maxMemoryUsage < 1000; // 1GB total memory limit
+        const systemHealthy = results.errorRate < STRESS_TEST_CONFIG.ERROR_THRESHOLD_PERCENT
+          && results.p95ResponseTime
+            < STRESS_TEST_CONFIG.RESPONSE_TIME_THRESHOLD_MS
+          && results.maxMemoryUsage < 1000; // 1GB total memory limit
 
         if (!systemHealthy) {
           console.log(
             `\n🚨 BREAKING POINT IDENTIFIED: System degraded at ${userCount} concurrent users`,
           );
           console.log(
-            `- Error rate: ${results.errorRate.toFixed(
-              2,
-            )}% (threshold: ${STRESS_TEST_CONFIG.ERROR_THRESHOLD_PERCENT}%)`,
+            `- Error rate: ${
+              results.errorRate.toFixed(
+                2,
+              )
+            }% (threshold: ${STRESS_TEST_CONFIG.ERROR_THRESHOLD_PERCENT}%)`,
           );
           console.log(
-            `- P95 response time: ${results.p95ResponseTime.toFixed(
-              0,
-            )}ms (threshold: ${STRESS_TEST_CONFIG.RESPONSE_TIME_THRESHOLD_MS}ms)`,
+            `- P95 response time: ${
+              results.p95ResponseTime.toFixed(
+                0,
+              )
+            }ms (threshold: ${STRESS_TEST_CONFIG.RESPONSE_TIME_THRESHOLD_MS}ms)`,
           );
 
           // Log error breakdown
           if (Object.keys(results.errorBreakdown).length > 0) {
-            console.log("Error breakdown:");
+            console.log('Error breakdown:');
             Object.entries(results.errorBreakdown).forEach(([type, count]) => {
               console.log(`  - ${type}: ${count}`);
             });
@@ -510,10 +509,10 @@ test.describe("Patient Dashboard Stress Testing", () => {
 
         // Clean up before next iteration (except for the last one)
         if (
-          userCount !==
-          STRESS_TEST_CONFIG.RAMP_UP_STEPS[
-            STRESS_TEST_CONFIG.RAMP_UP_STEPS.length - 1
-          ]
+          userCount
+            !== STRESS_TEST_CONFIG.RAMP_UP_STEPS[
+              STRESS_TEST_CONFIG.RAMP_UP_STEPS.length - 1
+            ]
         ) {
           await stressTester.cleanup();
           stressTester = new StressTester();
@@ -525,7 +524,7 @@ test.describe("Patient Dashboard Stress Testing", () => {
     }
   });
 
-  test("should handle pandemic surge scenario", async () => {
+  test('should handle pandemic surge scenario', async () => {
     stressTester = new StressTester();
     const scenario = EMERGENCY_SCENARIOS.PANDEMIC_SURGE;
 
@@ -552,7 +551,7 @@ test.describe("Patient Dashboard Stress Testing", () => {
 
     const results = stressTester.getStressTestResults();
 
-    console.log("\n=== Pandemic Surge Results ===");
+    console.log('\n=== Pandemic Surge Results ===');
     console.log(`- Total users simulated: ${results.totalUsers}`);
     console.log(`- Error rate: ${results.errorRate.toFixed(2)}%`);
     console.log(
@@ -567,17 +566,17 @@ test.describe("Patient Dashboard Stress Testing", () => {
     expect(results.avgResponseTime).toBeLessThan(5000); // 5 second average threshold
   });
 
-  test("should handle resource exhaustion gracefully", async () => {
+  test('should handle resource exhaustion gracefully', async () => {
     stressTester = new StressTester();
 
-    console.log("\n=== Resource Exhaustion Test ===");
+    console.log('\n=== Resource Exhaustion Test ===');
 
     // Create maximum load
     const maxUsers = 75;
     await stressTester.rampUpUsers(maxUsers, 45000); // 45 second ramp-up
 
     // Execute intensive operations to exhaust resources
-    console.log("Executing resource-intensive operations...");
+    console.log('Executing resource-intensive operations...');
 
     const intensiveActions = async (page: any) => {
       try {
@@ -612,7 +611,7 @@ test.describe("Patient Dashboard Stress Testing", () => {
           await page.waitForTimeout(100);
         }
       } catch (error) {
-        console.warn("Intensive operation failed:", error.message);
+        console.warn('Intensive operation failed:', error.message);
       }
     };
 
@@ -625,7 +624,7 @@ test.describe("Patient Dashboard Stress Testing", () => {
 
     const results = stressTester.getStressTestResults();
 
-    console.log("\n=== Resource Exhaustion Results ===");
+    console.log('\n=== Resource Exhaustion Results ===');
     console.log(`- Error rate: ${results.errorRate.toFixed(2)}%`);
     console.log(`- Peak memory usage: ${results.maxMemoryUsage.toFixed(2)}MB`);
     console.log(`- System recovery capability assessed`);
@@ -636,16 +635,16 @@ test.describe("Patient Dashboard Stress Testing", () => {
 
     // Check error distribution
     const errorTypes = Object.keys(results.errorBreakdown);
-    console.log("Error types encountered:", errorTypes);
+    console.log('Error types encountered:', errorTypes);
 
     // Should not have critical system failures
-    expect(results.errorBreakdown["recovery_failure"] || 0).toBeLessThan(10);
+    expect(results.errorBreakdown['recovery_failure'] || 0).toBeLessThan(10);
   });
 
-  test("should validate system recovery after stress", async () => {
+  test('should validate system recovery after stress', async () => {
     stressTester = new StressTester();
 
-    console.log("\n=== System Recovery Test ===");
+    console.log('\n=== System Recovery Test ===');
 
     // Apply heavy stress
     await stressTester.rampUpUsers(50, 30000);
@@ -660,7 +659,7 @@ test.describe("Patient Dashboard Stress Testing", () => {
     await stressTester.cleanup();
     stressTester = new StressTester();
 
-    console.log("Testing system recovery...");
+    console.log('Testing system recovery...');
 
     // Light load after stress
     await stressTester.rampUpUsers(5, 10000);
@@ -668,7 +667,7 @@ test.describe("Patient Dashboard Stress Testing", () => {
 
     const recoveryResults = stressTester.getStressTestResults();
 
-    console.log("\n=== Recovery Results ===");
+    console.log('\n=== Recovery Results ===');
     console.log(
       `- Recovery error rate: ${recoveryResults.errorRate.toFixed(2)}%`,
     );
@@ -684,23 +683,23 @@ test.describe("Patient Dashboard Stress Testing", () => {
     expect(recoveryResults.avgResponseTime).toBeLessThan(2000); // Normal response times
     expect(recoveryResults.avgMemoryUsage).toBeLessThan(200); // Normal memory usage
 
-    console.log("✅ System recovery validated");
+    console.log('✅ System recovery validated');
   });
 
-  test("should test Brazilian healthcare peak hours simulation", async () => {
+  test('should test Brazilian healthcare peak hours simulation', async () => {
     stressTester = new StressTester();
 
-    console.log("\n=== Brazilian Healthcare Peak Hours Simulation ===");
+    console.log('\n=== Brazilian Healthcare Peak Hours Simulation ===');
 
     // Simulate morning peak (8-11 AM)
-    console.log("Simulating morning peak hours...");
+    console.log('Simulating morning peak hours...');
     await stressTester.rampUpUsers(30, 20000); // Gradual morning ramp-up
     await stressTester.executeStressScenario(120000, 1500); // 2 minutes
 
     const morningResults = stressTester.getStressTestResults();
 
     // Simulate lunch break (low activity)
-    console.log("Simulating lunch break...");
+    console.log('Simulating lunch break...');
     await stressTester.cleanup();
     stressTester = new StressTester();
     await stressTester.rampUpUsers(8, 10000);
@@ -709,13 +708,13 @@ test.describe("Patient Dashboard Stress Testing", () => {
     const lunchResults = stressTester.getStressTestResults();
 
     // Simulate afternoon peak (2-5 PM)
-    console.log("Simulating afternoon peak hours...");
+    console.log('Simulating afternoon peak hours...');
     await stressTester.rampUpUsers(40, 25000); // Higher afternoon load
     await stressTester.executeStressScenario(180000, 1200); // 3 minutes
 
     const afternoonResults = stressTester.getStressTestResults();
 
-    console.log("\n=== Brazilian Peak Hours Results ===");
+    console.log('\n=== Brazilian Peak Hours Results ===');
     console.log(`Morning peak (${morningResults.totalUsers} users):`);
     console.log(`  - Error rate: ${morningResults.errorRate.toFixed(2)}%`);
     console.log(

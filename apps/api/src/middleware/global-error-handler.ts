@@ -1,6 +1,6 @@
 /**
  * 🚨 GLOBAL ERROR HANDLER - Centralized Error Management
- * 
+ *
  * Features:
  * - LGPD-compliant error responses
  * - Structured error logging
@@ -9,7 +9,7 @@
  * - Audit trail integration
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { logger } from '../utils/secure-logger';
 
 interface AppError extends Error {
@@ -49,35 +49,35 @@ class GlobalErrorHandler {
     UNAUTHORIZED: { status: 401, message: 'Authentication required' },
     FORBIDDEN: { status: 403, message: 'Access denied' },
     INVALID_TOKEN: { status: 401, message: 'Invalid or expired token' },
-    
+
     // Validation Errors
     VALIDATION_ERROR: { status: 400, message: 'Invalid input data' },
     MISSING_REQUIRED_FIELD: { status: 400, message: 'Required field missing' },
     INVALID_FORMAT: { status: 400, message: 'Invalid data format' },
-    
+
     // Business Logic Errors
     PATIENT_NOT_FOUND: { status: 404, message: 'Patient not found' },
     APPOINTMENT_NOT_FOUND: { status: 404, message: 'Appointment not found' },
     DUPLICATE_RECORD: { status: 409, message: 'Record already exists' },
-    
+
     // LGPD Compliance Errors
     CONSENT_REQUIRED: { status: 403, message: 'Patient consent required for this operation' },
     DATA_ACCESS_DENIED: { status: 403, message: 'Access to this data is not permitted' },
     RETENTION_PERIOD_EXPIRED: { status: 410, message: 'Data retention period has expired' },
-    
+
     // System Errors
     DATABASE_ERROR: { status: 500, message: 'Database operation failed' },
     EXTERNAL_SERVICE_ERROR: { status: 502, message: 'External service unavailable' },
     RATE_LIMIT_EXCEEDED: { status: 429, message: 'Rate limit exceeded' },
-    
+
     // Security Errors
     SQL_INJECTION_DETECTED: { status: 400, message: 'Invalid query detected' },
     SUSPICIOUS_ACTIVITY: { status: 403, message: 'Suspicious activity detected' },
-    
+
     // Generic
     INTERNAL_ERROR: { status: 500, message: 'Internal server error' },
     NOT_FOUND: { status: 404, message: 'Resource not found' },
-    BAD_REQUEST: { status: 400, message: 'Bad request' }
+    BAD_REQUEST: { status: 400, message: 'Bad request' },
   };
 
   private static readonly SENSITIVE_ERROR_PATTERNS = [
@@ -89,7 +89,7 @@ class GlobalErrorHandler {
     /cnpj/gi,
     /rg/gi,
     /medical.record/gi,
-    /diagnosis/gi
+    /diagnosis/gi,
   ];
 
   /**
@@ -128,10 +128,10 @@ class GlobalErrorHandler {
     code: keyof typeof GlobalErrorHandler.ERROR_CODES,
     details?: any,
     userId?: string,
-    patientId?: string
+    patientId?: string,
   ): AppError {
     const errorConfig = this.ERROR_CODES[code];
-    
+
     const error = new Error(errorConfig.message) as AppError;
     error.statusCode = errorConfig.status;
     error.code = code;
@@ -152,7 +152,7 @@ class GlobalErrorHandler {
       ip: req.ip || req.connection.remoteAddress || 'unknown',
       userAgent: req.get('User-Agent') || 'unknown',
       correlationId: req.headers['x-correlation-id'] as string || this.generateCorrelationId(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -205,14 +205,12 @@ class GlobalErrorHandler {
     }
 
     const sanitized: any = {};
-    
+
     Object.entries(obj).forEach(([key, value]) => {
       const lowerKey = key.toLowerCase();
-      
+
       // Check if key contains sensitive information
-      const isSensitive = this.SENSITIVE_ERROR_PATTERNS.some(pattern => 
-        pattern.test(lowerKey)
-      );
+      const isSensitive = this.SENSITIVE_ERROR_PATTERNS.some(pattern => pattern.test(lowerKey));
 
       if (isSensitive) {
         sanitized[key] = '[REDACTED]';
@@ -234,8 +232,8 @@ class GlobalErrorHandler {
         code: error.code || 'INTERNAL_ERROR',
         message: error.message || 'An unexpected error occurred',
         timestamp: context.timestamp,
-        correlationId: context.correlationId
-      }
+        correlationId: context.correlationId,
+      },
     };
 
     // Include details only in development or for operational errors
@@ -254,7 +252,7 @@ class GlobalErrorHandler {
       errorCode: error.code,
       statusCode: error.statusCode,
       isOperational: error.isOperational,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
     };
 
     if (error.statusCode && error.statusCode >= 500) {
@@ -273,7 +271,7 @@ class GlobalErrorHandler {
       dataType: 'security_event',
       endpoint: context.endpoint,
       ip: context.ip,
-      userAgent: context.userAgent
+      userAgent: context.userAgent,
     });
 
     // Additional security logging
@@ -284,7 +282,7 @@ class GlobalErrorHandler {
       ip: context.ip,
       userAgent: context.userAgent,
       userId: context.userId,
-      correlationId: context.correlationId
+      correlationId: context.correlationId,
     });
   }
 
@@ -296,7 +294,7 @@ class GlobalErrorHandler {
       'SQL_INJECTION_DETECTED',
       'SUSPICIOUS_ACTIVITY',
       'CONSENT_REQUIRED',
-      'DATA_ACCESS_DENIED'
+      'DATA_ACCESS_DENIED',
     ];
 
     return securityCodes.includes(error.code || '');
@@ -313,7 +311,7 @@ class GlobalErrorHandler {
     logger.error('Unhandled Promise Rejection', new Error(reason), {
       type: 'unhandled_rejection',
       reason: reason?.toString(),
-      promise: promise?.toString()
+      promise: promise?.toString(),
     });
 
     // In production, you might want to gracefully shutdown
@@ -327,7 +325,7 @@ class GlobalErrorHandler {
    */
   static handleUncaughtException(error: Error): void {
     logger.error('Uncaught Exception', error, {
-      type: 'uncaught_exception'
+      type: 'uncaught_exception',
     });
 
     // Graceful shutdown
@@ -349,7 +347,7 @@ class GlobalErrorHandler {
     return this.createError('CONSENT_REQUIRED', {
       patientId,
       operation,
-      message: `Patient consent required for ${operation}`
+      message: `Patient consent required for ${operation}`,
     });
   }
 
@@ -357,7 +355,7 @@ class GlobalErrorHandler {
     return this.createError('DATA_ACCESS_DENIED', {
       userId,
       dataType,
-      message: `Access denied to ${dataType} data`
+      message: `Access denied to ${dataType} data`,
     });
   }
 }
@@ -366,4 +364,4 @@ class GlobalErrorHandler {
 process.on('unhandledRejection', GlobalErrorHandler.handleUnhandledRejection);
 process.on('uncaughtException', GlobalErrorHandler.handleUncaughtException);
 
-export { GlobalErrorHandler, type AppError, type ErrorContext, type ErrorResponse };
+export { type AppError, type ErrorContext, type ErrorResponse, GlobalErrorHandler };

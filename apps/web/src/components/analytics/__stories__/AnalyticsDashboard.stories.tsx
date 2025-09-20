@@ -1,22 +1,22 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { AnalyticsDashboard } from "../AnalyticsDashboard";
+import type { Meta, StoryObj } from '@storybook/react';
+import { AnalyticsDashboard } from '../AnalyticsDashboard';
 
 const meta: Meta<typeof AnalyticsDashboard> = {
-  title: "Analytics/AnalyticsDashboard",
+  title: 'Analytics/AnalyticsDashboard',
   component: AnalyticsDashboard,
   parameters: {
-    layout: "fullscreen",
+    layout: 'fullscreen',
     docs: {
       description: {
         component:
-          "Dashboard de analytics com métricas, insights de IA e visualizações de dados da clínica de estética.",
+          'Dashboard de analytics com métricas, insights de IA e visualizações de dados da clínica de estética.',
       },
     },
   },
   argTypes: {
     className: {
-      control: "text",
-      description: "CSS classes adicionais para customização",
+      control: 'text',
+      description: 'CSS classes adicionais para customização',
     },
   },
 };
@@ -29,8 +29,7 @@ export const Default: Story = {
   parameters: {
     docs: {
       description: {
-        story:
-          "Estado padrão do dashboard analytics com placeholders e skeleton loading.",
+        story: 'Estado padrão do dashboard analytics com placeholders e skeleton loading.',
       },
     },
   },
@@ -38,13 +37,13 @@ export const Default: Story = {
 
 export const WithCustomClass: Story = {
   args: {
-    className: "bg-slate-50 p-6 rounded-lg",
+    className: 'bg-slate-50 p-6 rounded-lg',
   },
   parameters: {
     docs: {
       description: {
         story:
-          "Dashboard analytics com classe CSS customizada para demonstrar flexibilidade de styling.",
+          'Dashboard analytics com classe CSS customizada para demonstrar flexibilidade de styling.',
       },
     },
   },
@@ -52,12 +51,12 @@ export const WithCustomClass: Story = {
 
 export const Compact: Story = {
   args: {
-    className: "max-w-4xl",
+    className: 'max-w-4xl',
   },
   parameters: {
     docs: {
       description: {
-        story: "Versão compacta do dashboard analytics com largura limitada.",
+        story: 'Versão compacta do dashboard analytics com largura limitada.',
       },
     },
   },

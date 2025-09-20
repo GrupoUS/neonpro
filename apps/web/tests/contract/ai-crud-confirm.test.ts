@@ -1,14 +1,14 @@
 /**
  * AI CRUD Confirm Phase Contract Tests
  * T027: AI-assisted CRUD operations with intent→confirm→execute flow
- * 
+ *
  * Testing the confirm phase of the 3-step AI CRUD flow
  * Following RED-GREEN-REFACTOR methodology
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { server } from '../mocks/server';
 import { http, HttpResponse } from 'msw';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { server } from '../mocks/server';
 import { confirmCrudIntent, validateConfirmRequest } from '../utils/crud-test-utils';
 
 // Mock data for testing
@@ -20,25 +20,25 @@ const mockConfirmRequest = {
     transformations: {
       dataNormalization: true,
       privacyFiltering: true,
-      formatStandardization: true
+      formatStandardization: true,
     },
     compliance: {
       lgpdValidated: true,
       cfmValidated: true,
-      riskLevel: 'LOW'
-    }
+      riskLevel: 'LOW',
+    },
   },
   context: {
     userId: 'user-123',
-    sessionId: 'session-456'
-  }
+    sessionId: 'session-456',
+  },
 };
 
 const invalidConfirmRequest = {
   intentId: 'invalid-intent',
   token: 'invalid-token',
   confirmation: {},
-  context: {}
+  context: {},
 };
 
 describe('AI CRUD Confirm Phase - Contract Tests', () => {
@@ -47,40 +47,40 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
     server.use(
       http.post('/api/v1/ai/crud/confirm', async ({ request }) => {
         const body = await request.json();
-        
+
         // Validate request format
         if (!validateConfirmRequest(body)) {
           return new HttpResponse(
-            JSON.stringify({ 
+            JSON.stringify({
               error: 'Invalid confirm request format',
-              code: 'INVALID_REQUEST' 
+              code: 'INVALID_REQUEST',
             }),
-            { status: 400 }
+            { status: 400 },
           );
         }
-        
+
         // Validate intent ID and token
         if (body.intentId === 'invalid-intent') {
           return new HttpResponse(
-            JSON.stringify({ 
+            JSON.stringify({
               error: 'Invalid intent ID',
-              code: 'INVALID_INTENT' 
+              code: 'INVALID_INTENT',
             }),
-            { status: 404 }
+            { status: 404 },
           );
         }
-        
+
         // Validate token
         if (body.token === 'invalid-token') {
           return new HttpResponse(
-            JSON.stringify({ 
+            JSON.stringify({
               error: 'Invalid or expired token',
-              code: 'INVALID_TOKEN' 
+              code: 'INVALID_TOKEN',
             }),
-            { status: 401 }
+            { status: 401 },
           );
         }
-        
+
         // Return success response
         return HttpResponse.json({
           success: true,
@@ -92,25 +92,25 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
             transformations: {
               normalized: true,
               privacyFiltered: true,
-              standardized: true
+              standardized: true,
             },
             compliance: {
               lgpd: { valid: true, score: 95 },
               cfm: { valid: true, score: 98 },
-              anvisa: { valid: true, score: 92 }
-            }
+              anvisa: { valid: true, score: 92 },
+            },
           },
           auditTrail: {
             intentId: body.intentId,
             confirmId: 'confirm-123',
             timestamp: new Date().toISOString(),
             validations: ['data_schema', 'privacy', 'compliance'],
-            riskLevel: 'LOW'
+            riskLevel: 'LOW',
           },
           readyForExecution: true,
-          expiresAt: new Date(Date.now() + 300000).toISOString()
+          expiresAt: new Date(Date.now() + 300000).toISOString(),
         });
-      })
+      }),
     );
   });
 
@@ -123,7 +123,7 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
     it('should accept valid confirm requests', async () => {
       // RED: Test expects valid request to be accepted
       const response = await confirmCrudIntent(mockConfirmRequest);
-      
+
       expect(response.success).toBe(true);
       expect(response.confirmId).toBeDefined();
       expect(response.executionToken).toBeDefined();
@@ -134,21 +134,21 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
     it('should reject requests with invalid intent ID', async () => {
       // RED: Test expects invalid intent ID to be rejected
       const invalidRequest = { ...mockConfirmRequest, intentId: 'invalid-intent' };
-      
+
       await expect(confirmCrudIntent(invalidRequest)).rejects.toThrow('Invalid intent ID');
     });
 
     it('should reject requests with invalid token', async () => {
       // RED: Test expects invalid token to be rejected
       const invalidRequest = { ...mockConfirmRequest, token: 'invalid-token' };
-      
+
       await expect(confirmCrudIntent(invalidRequest)).rejects.toThrow('Invalid token');
     });
 
     it('should reject requests missing required fields', async () => {
       // RED: Test expects missing fields to be rejected
       const incompleteRequest = { intentId: 'intent-123', token: 'secure-token-123' };
-      
+
       await expect(confirmCrudIntent(incompleteRequest)).rejects.toThrow('Missing required fields');
     });
 
@@ -156,10 +156,12 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
       // RED: Test expects confirmation data validation
       const invalidConfirmation = {
         ...mockConfirmRequest,
-        confirmation: { validated: 'invalid' } // Should be boolean
+        confirmation: { validated: 'invalid' }, // Should be boolean
       };
-      
-      await expect(confirmCrudIntent(invalidConfirmation)).rejects.toThrow('Invalid confirmation data');
+
+      await expect(confirmCrudIntent(invalidConfirmation)).rejects.toThrow(
+        'Invalid confirmation data',
+      );
     });
   });
 
@@ -173,13 +175,13 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
           transformations: {
             dataNormalization: true,
             privacyFiltering: true,
-            formatStandardization: true
-          }
-        }
+            formatStandardization: true,
+          },
+        },
       };
-      
+
       const response = await confirmCrudIntent(requestWithNormalization);
-      
+
       expect(response.validationResult.transformations.normalized).toBe(true);
       expect(response.validationResult.transformations.privacyFiltered).toBe(true);
       expect(response.validationResult.transformations.standardized).toBe(true);
@@ -193,13 +195,13 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
           ...mockConfirmRequest.confirmation,
           data: {
             patientName: 'Test Patient',
-            sensitiveInfo: 'should-be-filtered'
-          }
-        }
+            sensitiveInfo: 'should-be-filtered',
+          },
+        },
       };
-      
+
       const response = await confirmCrudIntent(sensitiveDataRequest);
-      
+
       expect(response.validationResult.transformations.privacyFiltered).toBe(true);
       // Sensitive data should be filtered from response
       expect(response.validationResult.data).not.toContain('should-be-filtered');
@@ -214,13 +216,13 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
           data: {
             phone: '(11) 99999-9999', // Should be standardized
             email: 'TEST@EXAMPLE.COM', // Should be lowercased
-            date: '20/09/2025' // Should be ISO format
-          }
-        }
+            date: '20/09/2025', // Should be ISO format
+          },
+        },
       };
-      
+
       const response = await confirmCrudIntent(unformattedDataRequest);
-      
+
       expect(response.validationResult.transformations.standardized).toBe(true);
       expect(response.validationResult.data?.phone).toMatch(/^\+55\d{2}\d{8,9}$/);
     });
@@ -230,7 +232,7 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
     it('should validate LGPD compliance requirements', async () => {
       // RED: Test expects LGPD compliance validation
       const response = await confirmCrudIntent(mockConfirmRequest);
-      
+
       expect(response.validationResult.compliance.lgpd).toBeDefined();
       expect(response.validationResult.compliance.lgpd.valid).toBe(true);
       expect(response.validationResult.compliance.lgpd.score).toBeGreaterThanOrEqual(90);
@@ -239,7 +241,7 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
     it('should validate CFM compliance requirements', async () => {
       // RED: Test expects CFM compliance validation
       const response = await confirmCrudIntent(mockConfirmRequest);
-      
+
       expect(response.validationResult.compliance.cfm).toBeDefined();
       expect(response.validationResult.compliance.cfm.valid).toBe(true);
       expect(response.validationResult.compliance.cfm.score).toBeGreaterThanOrEqual(95);
@@ -249,11 +251,11 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
       // RED: Test expects ANVISA compliance validation
       const medicalDataRequest = {
         ...mockConfirmRequest,
-        entity: 'medical_records'
+        entity: 'medical_records',
       };
-      
+
       const response = await confirmCrudIntent(medicalDataRequest);
-      
+
       expect(response.validationResult.compliance.anvisa).toBeDefined();
       expect(response.validationResult.compliance.anvisa.valid).toBe(true);
       expect(response.validationResult.compliance.anvisa.score).toBeGreaterThanOrEqual(90);
@@ -267,12 +269,14 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
           ...mockConfirmRequest.confirmation,
           data: {
             // Data that violates LGPD
-            patientData: 'sensitive-info-without-consent'
-          }
-        }
+            patientData: 'sensitive-info-without-consent',
+          },
+        },
       };
-      
-      await expect(confirmCrudIntent(nonCompliantRequest)).rejects.toThrow('Compliance validation failed');
+
+      await expect(confirmCrudIntent(nonCompliantRequest)).rejects.toThrow(
+        'Compliance validation failed',
+      );
     });
   });
 
@@ -280,14 +284,14 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
     it('should include comprehensive audit trail', async () => {
       // RED: Test expects comprehensive audit trail
       const response = await confirmCrudIntent(mockConfirmRequest);
-      
+
       expect(response.auditTrail).toBeDefined();
       expect(response.auditTrail).toHaveProperty('intentId');
       expect(response.auditTrail).toHaveProperty('confirmId');
       expect(response.auditTrail).toHaveProperty('timestamp');
       expect(response.auditTrail).toHaveProperty('validations');
       expect(response.auditTrail).toHaveProperty('riskLevel');
-      
+
       expect(Array.isArray(response.auditTrail.validations)).toBe(true);
       expect(response.auditTrail.validations.length).toBeGreaterThan(0);
     });
@@ -295,7 +299,7 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
     it('should track all validation steps', async () => {
       // RED: Test expects validation step tracking
       const response = await confirmCrudIntent(mockConfirmRequest);
-      
+
       const expectedValidations = ['data_schema', 'privacy', 'compliance'];
       expect(response.auditTrail.validations).toEqual(expect.arrayContaining(expectedValidations));
     });
@@ -303,14 +307,14 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
     it('should include risk assessment in audit trail', async () => {
       // RED: Test expects risk assessment in audit trail
       const response = await confirmCrudIntent(mockConfirmRequest);
-      
+
       expect(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).toContain(response.auditTrail.riskLevel);
     });
 
     it('should maintain audit trail integrity', async () => {
       // RED: Test expects audit trail integrity
       const response = await confirmCrudIntent(mockConfirmRequest);
-      
+
       expect(response.auditTrail.intentId).toBe(mockConfirmRequest.intentId);
       expect(response.auditTrail.timestamp).toBeDefined();
       expect(new Date(response.auditTrail.timestamp)).toBeInstanceOf(Date);
@@ -321,7 +325,7 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
     it('should validate token security', async () => {
       // RED: Test expects token security validation
       const response = await confirmCrudIntent(mockConfirmRequest);
-      
+
       expect(response.executionToken).toBeDefined();
       expect(response.executionToken).toMatch(/^[a-zA-Z0-9\-_]+$/);
       expect(response.executionToken.length).toBeGreaterThan(16);
@@ -335,13 +339,13 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
           ...mockConfirmRequest.confirmation,
           data: {
             patientSSN: '123-45-6789', // Should be masked
-            creditCard: '4111111111111111' // Should be filtered
-          }
-        }
+            creditCard: '4111111111111111', // Should be filtered
+          },
+        },
       };
-      
+
       const response = await confirmCrudIntent(sensitiveRequest);
-      
+
       // Sensitive data should not be exposed in response
       const responseStr = JSON.stringify(response);
       expect(responseStr).not.toContain('123-45-6789');
@@ -354,10 +358,10 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
         ...mockConfirmRequest,
         context: {
           ...mockConfirmRequest.context,
-          sessionId: 'different-session'
-        }
+          sessionId: 'different-session',
+        },
       };
-      
+
       await expect(confirmCrudIntent(sessionMismatchRequest)).rejects.toThrow('Session mismatch');
     });
   });
@@ -367,24 +371,24 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
       // RED: Test expects expired token handling
       const expiredTokenRequest = {
         ...mockConfirmRequest,
-        token: 'expired-token-123'
+        token: 'expired-token-123',
       };
-      
+
       await expect(confirmCrudIntent(expiredTokenRequest)).rejects.toThrow('Token expired');
     });
 
     it('should handle concurrent confirmation attempts', async () => {
       // RED: Test expects concurrent attempt handling
-      const concurrentRequests = Array(3).fill(null).map(() => 
+      const concurrentRequests = Array(3).fill(null).map(() =>
         confirmCrudIntent(mockConfirmRequest)
       );
-      
+
       const results = await Promise.allSettled(concurrentRequests);
-      
+
       // Only one should succeed, others should fail
       const successful = results.filter(r => r.status === 'fulfilled');
       const failed = results.filter(r => r.status === 'rejected');
-      
+
       expect(successful.length).toBeLessThanOrEqual(1);
       expect(failed.length).toBeGreaterThanOrEqual(2);
     });
@@ -408,7 +412,7 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
       const startTime = performance.now();
       await confirmCrudIntent(mockConfirmRequest);
       const endTime = performance.now();
-      
+
       expect(endTime - startTime).toBeLessThan(300);
     });
 
@@ -423,16 +427,16 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
             records: Array(1000).fill(null).map((_, i) => ({
               id: i,
               name: `Record ${i}`,
-              value: Math.random()
-            }))
-          }
-        }
+              value: Math.random(),
+            })),
+          },
+        },
       };
-      
+
       const startTime = performance.now();
       await confirmCrudIntent(largeDataRequest);
       const endTime = performance.now();
-      
+
       expect(endTime - startTime).toBeLessThan(1000); // 1 second for large data
     });
   });
@@ -444,33 +448,18 @@ describe('AI CRUD Confirm Phase - Contract Tests', () => {
         entity: 'patients',
         operation: 'create',
         data: { name: 'Test Patient' },
-        context: mockConfirmRequest.context
+        context: mockConfirmRequest.context,
       });
-      
+
       const confirmResponse = await confirmCrudIntent({
         intentId: intentResponse.intentId,
         token: intentResponse.token,
         confirmation: mockConfirmRequest.confirmation,
-        context: mockConfirmRequest.context
+        context: mockConfirmRequest.context,
       });
-      
+
       expect(confirmResponse.success).toBe(true);
       expect(confirmResponse.auditTrail.intentId).toBe(intentResponse.intentId);
     });
   });
 });
-
-// Helper function (would be in crud-test-utils)
-async function createCrudIntent(request: any) {
-  const response = await fetch('/api/v1/ai/crud/intent', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(request)
-  });
-  
-  if (!response.ok) {
-    throw new Error(`Intent request failed: ${response.status}`);
-  }
-  
-  return response.json();
-}

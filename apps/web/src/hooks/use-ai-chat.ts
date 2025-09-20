@@ -13,37 +13,36 @@
  * - Voice input/output support for accessibility
  */
 
-import { trpc } from "@/lib/trpc";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React from "react";
-import { toast } from "sonner";
+import { trpc } from '@/lib/trpc';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import React from 'react';
+import { toast } from 'sonner';
 
 // Enhanced AI Chat Query Keys for tRPC integration
 export const aiChatKeys = {
-  all: ["trpc-ai-chat"] as const,
-  conversations: () => [...aiChatKeys.all, "conversations"] as const,
+  all: ['trpc-ai-chat'] as const,
+  conversations: () => [...aiChatKeys.all, 'conversations'] as const,
   conversation: (id: string) => [...aiChatKeys.conversations(), id] as const,
-  messages: (conversationId: string) =>
-    [...aiChatKeys.all, "messages", conversationId] as const,
-  insights: (type: string) => [...aiChatKeys.all, "insights", type] as const,
-  models: () => [...aiChatKeys.all, "models"] as const,
-  usage: () => [...aiChatKeys.all, "usage"] as const,
-  predictions: () => [...aiChatKeys.all, "predictions"] as const,
+  messages: (conversationId: string) => [...aiChatKeys.all, 'messages', conversationId] as const,
+  insights: (type: string) => [...aiChatKeys.all, 'insights', type] as const,
+  models: () => [...aiChatKeys.all, 'models'] as const,
+  usage: () => [...aiChatKeys.all, 'usage'] as const,
+  predictions: () => [...aiChatKeys.all, 'predictions'] as const,
 };
 
 // Types for AI Chat functionality
 export interface ChatMessage {
   id: string;
   content: string;
-  role: "user" | "assistant" | "system";
+  role: 'user' | 'assistant' | 'system';
   timestamp: Date;
   metadata?: {
-    provider?: "openai" | "anthropic";
+    provider?: 'openai' | 'anthropic';
     model?: string;
     cost?: number;
     tokens?: number;
     confidence?: number;
-    language?: "pt" | "en";
+    language?: 'pt' | 'en';
     anonymized?: boolean;
   };
 }
@@ -56,26 +55,26 @@ export interface Conversation {
   updatedAt: Date;
   patientId?: string;
   context:
-    | "general"
-    | "patient_analysis"
-    | "appointment_booking"
-    | "medical_consultation";
-  language: "pt" | "en";
+    | 'general'
+    | 'patient_analysis'
+    | 'appointment_booking'
+    | 'medical_consultation';
+  language: 'pt' | 'en';
   totalCost: number;
   messageCount: number;
 }
 
 export interface AIInsight {
   type:
-    | "no_show_prediction"
-    | "patient_analysis"
-    | "treatment_suggestion"
-    | "risk_assessment";
+    | 'no_show_prediction'
+    | 'patient_analysis'
+    | 'treatment_suggestion'
+    | 'risk_assessment';
   content: string;
   confidence: number;
   evidence: string[];
   recommendations: string[];
-  riskLevel?: "low" | "medium" | "high";
+  riskLevel?: 'low' | 'medium' | 'high';
   timestamp: Date;
 }
 
@@ -88,23 +87,23 @@ export function useAIChat(conversationId?: string) {
   // Get or create conversation
   const conversation = trpc.ai.chat.useQuery(
     {
-      conversationId: conversationId || "new",
-      language: "pt",
-      context: "general",
+      conversationId: conversationId || 'new',
+      language: 'pt',
+      context: 'general',
     },
     {
       enabled: true,
       staleTime: 30 * 1000, // 30 seconds for chat data
       gcTime: 5 * 60 * 1000, // 5 minutes cache
 
-      onSuccess: (data) => {
+      onSuccess: data => {
         // LGPD Compliance: Log AI conversation access
-        console.log("[LGPD Audit] AI conversation accessed", {
+        console.log('[LGPD Audit] AI conversation accessed', {
           conversationId: data.id,
           messageCount: data.messages.length,
           hasPatientContext: !!data.patientId,
           timestamp: new Date().toISOString(),
-          compliance: "LGPD_AI_CONVERSATION_ACCESS",
+          compliance: 'LGPD_AI_CONVERSATION_ACCESS',
         });
       },
     },
@@ -122,26 +121,25 @@ export function useAIChat(conversationId?: string) {
       }
 
       // LGPD Compliance: Log message sending with anonymization
-      console.log("[LGPD Audit] AI message sent", {
+      console.log('[LGPD Audit] AI message sent', {
         conversationId: convId,
         messageLength: message.length,
-        hasPatientData:
-          message.toLowerCase().includes("cpf") ||
-          message.toLowerCase().includes("telefone") ||
-          message.toLowerCase().includes("email"),
+        hasPatientData: message.toLowerCase().includes('cpf')
+          || message.toLowerCase().includes('telefone')
+          || message.toLowerCase().includes('email'),
         anonymizationRequired: true,
         timestamp: new Date().toISOString(),
-        compliance: "LGPD_AI_DATA_PROCESSING",
+        compliance: 'LGPD_AI_DATA_PROCESSING',
       });
 
       // Optimistically add user message
       const optimisticMessage: ChatMessage = {
         id: `temp-${Date.now()}`,
         content: message,
-        role: "user",
+        role: 'user',
         timestamp: new Date(),
         metadata: {
-          language: "pt",
+          language: 'pt',
           anonymized: true,
         },
       };
@@ -177,7 +175,7 @@ export function useAIChat(conversationId?: string) {
             const updatedMessages = old.messages.map((msg: ChatMessage) =>
               msg.id === context?.optimisticMessage.id
                 ? { ...context.optimisticMessage, id: data.userMessageId }
-                : msg,
+                : msg
             );
 
             // Add AI response
@@ -188,7 +186,7 @@ export function useAIChat(conversationId?: string) {
                 {
                   id: data.aiMessageId,
                   content: data.response,
-                  role: "assistant" as const,
+                  role: 'assistant' as const,
                   timestamp: new Date(),
                   metadata: {
                     provider: data.provider,
@@ -196,7 +194,7 @@ export function useAIChat(conversationId?: string) {
                     cost: data.cost,
                     tokens: data.tokens,
                     confidence: data.confidence,
-                    language: "pt",
+                    language: 'pt',
                   },
                 },
               ],
@@ -237,17 +235,17 @@ export function useAIChat(conversationId?: string) {
         );
       }
 
-      console.error("[AI Chat Error]", error);
+      console.error('[AI Chat Error]', error);
 
       // Portuguese error messages
-      if (error.message.includes("rate_limit")) {
-        toast.error("Limite de uso atingido. Aguarde alguns minutos.");
-      } else if (error.message.includes("cost_limit")) {
-        toast.error("Limite de custo atingido. Verifique sua conta.");
-      } else if (error.message.includes("content_policy")) {
-        toast.error("Conteúdo não permitido. Revise sua mensagem.");
+      if (error.message.includes('rate_limit')) {
+        toast.error('Limite de uso atingido. Aguarde alguns minutos.');
+      } else if (error.message.includes('cost_limit')) {
+        toast.error('Limite de custo atingido. Verifique sua conta.');
+      } else if (error.message.includes('content_policy')) {
+        toast.error('Conteúdo não permitido. Revise sua mensagem.');
       } else {
-        toast.error("Erro na IA. Tentando provedor alternativo...");
+        toast.error('Erro na IA. Tentando provedor alternativo...');
       }
     },
   });
@@ -270,11 +268,11 @@ export function useAINoShowPrediction() {
   return trpc.ai.predictNoShow.useMutation({
     onMutate: async ({ patientId, appointmentData }) => {
       // LGPD Compliance: Log prediction request
-      console.log("[LGPD Audit] No-show prediction requested", {
+      console.log('[LGPD Audit] No-show prediction requested', {
         patientId,
         hasAppointmentData: !!appointmentData,
         timestamp: new Date().toISOString(),
-        compliance: "LGPD_AI_PREDICTION_REQUEST",
+        compliance: 'LGPD_AI_PREDICTION_REQUEST',
       });
     },
 
@@ -308,9 +306,9 @@ export function useAINoShowPrediction() {
       toast.info(riskMessages[data.riskLevel as keyof typeof riskMessages]);
     },
 
-    onError: (error) => {
-      console.error("[AI Prediction Error]", error);
-      toast.error("Erro na predição de falta. Tente novamente.");
+    onError: error => {
+      console.error('[AI Prediction Error]', error);
+      toast.error('Erro na predição de falta. Tente novamente.');
     },
   });
 }
@@ -322,12 +320,12 @@ export function useAIHealthcareInsights() {
   return trpc.ai.generateInsights.useMutation({
     onMutate: async ({ data, type, context }) => {
       // LGPD Compliance: Log insight generation
-      console.log("[LGPD Audit] Healthcare insights requested", {
+      console.log('[LGPD Audit] Healthcare insights requested', {
         insightType: type,
-        hasPatientData: context === "patient_analysis",
+        hasPatientData: context === 'patient_analysis',
         dataAnonymized: true,
         timestamp: new Date().toISOString(),
-        compliance: "LGPD_AI_INSIGHT_GENERATION",
+        compliance: 'LGPD_AI_INSIGHT_GENERATION',
       });
     },
 
@@ -348,9 +346,9 @@ export function useAIHealthcareInsights() {
       );
     },
 
-    onError: (error) => {
-      console.error("[AI Insights Error]", error);
-      toast.error("Erro ao gerar insights. Tente novamente.");
+    onError: error => {
+      console.error('[AI Insights Error]', error);
+      toast.error('Erro ao gerar insights. Tente novamente.');
     },
   });
 }
@@ -360,14 +358,14 @@ export function useAIHealthcareInsights() {
  */
 export function useAIProviderRouting() {
   const [currentProvider, setCurrentProvider] = React.useState<
-    "openai" | "anthropic"
-  >("openai");
+    'openai' | 'anthropic'
+  >('openai');
   const [failoverCount, setFailoverCount] = React.useState(0);
 
   const routeProvider = trpc.ai.routeProvider.useMutation({
     onMutate: async ({ preferredProvider, operation, estimatedCost }) => {
       // Log provider routing decision
-      console.log("[AI Provider Routing]", {
+      console.log('[AI Provider Routing]', {
         currentProvider,
         preferredProvider,
         operation,
@@ -377,7 +375,7 @@ export function useAIProviderRouting() {
       });
     },
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       setCurrentProvider(data.selectedProvider);
 
       // Reset failover count on success
@@ -389,19 +387,18 @@ export function useAIProviderRouting() {
       }
     },
 
-    onError: (error) => {
+    onError: error => {
       // Implement failover logic
-      const nextProvider =
-        currentProvider === "openai" ? "anthropic" : "openai";
+      const nextProvider = currentProvider === 'openai' ? 'anthropic' : 'openai';
       setCurrentProvider(nextProvider);
-      setFailoverCount((prev) => prev + 1);
+      setFailoverCount(prev => prev + 1);
 
       if (failoverCount < 2) {
         toast.warning(
           `Tentando provedor alternativo: ${nextProvider.toUpperCase()}`,
         );
       } else {
-        toast.error("Todos os provedores de IA estão indisponíveis.");
+        toast.error('Todos os provedores de IA estão indisponíveis.');
       }
     },
   });
@@ -420,7 +417,7 @@ export function useAIProviderRouting() {
 export function useAIUsageMonitoring() {
   const usage = trpc.ai.getUsage.useQuery(
     {
-      period: "month",
+      period: 'month',
       includeBreakdown: true,
     },
     {
@@ -428,15 +425,13 @@ export function useAIUsageMonitoring() {
       gcTime: 10 * 60 * 1000,
       refetchInterval: 5 * 60 * 1000, // Update every 5 minutes
 
-      select: (data) => ({
+      select: data => ({
         ...data,
-        costPercentage:
-          data.monthlyLimit > 0
-            ? (data.currentCost / data.monthlyLimit) * 100
-            : 0,
+        costPercentage: data.monthlyLimit > 0
+          ? (data.currentCost / data.monthlyLimit) * 100
+          : 0,
         isNearLimit: data.currentCost > data.monthlyLimit * 0.8,
-        averageCostPerRequest:
-          data.totalRequests > 0 ? data.currentCost / data.totalRequests : 0,
+        averageCostPerRequest: data.totalRequests > 0 ? data.currentCost / data.totalRequests : 0,
         projectedMonthlyCost: data.currentCost * (30 / new Date().getDate()),
       }),
     },
@@ -446,9 +441,11 @@ export function useAIUsageMonitoring() {
   React.useEffect(() => {
     if (usage.data?.isNearLimit) {
       toast.warning(
-        `⚠️ Uso de IA próximo do limite: R$ ${usage.data.currentCost.toFixed(2)} / R$ ${usage.data.monthlyLimit.toFixed(
-          2,
-        )}`,
+        `⚠️ Uso de IA próximo do limite: R$ ${usage.data.currentCost.toFixed(2)} / R$ ${
+          usage.data.monthlyLimit.toFixed(
+            2,
+          )
+        }`,
       );
     }
   }, [
@@ -473,7 +470,7 @@ export function useAIModelConfiguration() {
   );
 
   const updateConfiguration = trpc.ai.updateModelConfiguration.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Update models cache
       const queryClient = useQueryClient();
       queryClient.invalidateQueries({ queryKey: aiChatKeys.models() });
@@ -481,9 +478,9 @@ export function useAIModelConfiguration() {
       toast.success(`Configuração do modelo ${data.model} atualizada!`);
     },
 
-    onError: (error) => {
-      console.error("[AI Configuration Error]", error);
-      toast.error("Erro ao atualizar configuração. Tente novamente.");
+    onError: error => {
+      console.error('[AI Configuration Error]', error);
+      toast.error('Erro ao atualizar configuração. Tente novamente.');
     },
   });
 
@@ -507,26 +504,26 @@ export function useAIVoiceChat() {
       setIsListening(true);
     },
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       setIsListening(false);
 
       // Log voice interaction for healthcare compliance
-      console.log("[Healthcare Audit] Voice input processed", {
+      console.log('[Healthcare Audit] Voice input processed', {
         recognizedText: data.recognizedText,
         confidence: data.confidence,
-        language: "pt",
+        language: 'pt',
         medicalTermsDetected: data.medicalTermsDetected,
         timestamp: new Date().toISOString(),
-        compliance: "HEALTHCARE_VOICE_INTERACTION",
+        compliance: 'HEALTHCARE_VOICE_INTERACTION',
       });
 
-      toast.success("Voz processada com sucesso!");
+      toast.success('Voz processada com sucesso!');
     },
 
-    onError: (error) => {
+    onError: error => {
       setIsListening(false);
-      console.error("[Voice Input Error]", error);
-      toast.error("Erro no reconhecimento de voz. Tente novamente.");
+      console.error('[Voice Input Error]', error);
+      toast.error('Erro no reconhecimento de voz. Tente novamente.');
     },
   });
 
@@ -535,7 +532,7 @@ export function useAIVoiceChat() {
       setIsSpeaking(true);
     },
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       setIsSpeaking(false);
 
       // Play audio response
@@ -545,10 +542,10 @@ export function useAIVoiceChat() {
       }
     },
 
-    onError: (error) => {
+    onError: error => {
       setIsSpeaking(false);
-      console.error("[Voice Output Error]", error);
-      toast.error("Erro na síntese de voz. Tente novamente.");
+      console.error('[Voice Output Error]', error);
+      toast.error('Erro na síntese de voz. Tente novamente.');
     },
   });
 
@@ -564,7 +561,7 @@ export function useAIVoiceChat() {
  * Hook for real-time AI streaming responses
  */
 export function useAIStreamingChat(conversationId: string) {
-  const [streamingMessage, setStreamingMessage] = React.useState<string>("");
+  const [streamingMessage, setStreamingMessage] = React.useState<string>('');
   const [isStreaming, setIsStreaming] = React.useState(false);
 
   React.useEffect(() => {
@@ -574,29 +571,29 @@ export function useAIStreamingChat(conversationId: string) {
     const unsubscribe = trpc.ai.streamResponse.subscribe(
       { conversationId },
       {
-        onData: (chunk) => {
-          if (chunk.type === "start") {
+        onData: chunk => {
+          if (chunk.type === 'start') {
             setIsStreaming(true);
-            setStreamingMessage("");
-          } else if (chunk.type === "chunk") {
-            setStreamingMessage((prev) => prev + chunk.content);
-          } else if (chunk.type === "end") {
+            setStreamingMessage('');
+          } else if (chunk.type === 'chunk') {
+            setStreamingMessage(prev => prev + chunk.content);
+          } else if (chunk.type === 'end') {
             setIsStreaming(false);
 
             // Log streaming completion
-            console.log("[Healthcare Audit] AI streaming response completed", {
+            console.log('[Healthcare Audit] AI streaming response completed', {
               conversationId,
               responseLength: streamingMessage.length,
               timestamp: new Date().toISOString(),
-              compliance: "HEALTHCARE_AI_STREAMING",
+              compliance: 'HEALTHCARE_AI_STREAMING',
             });
           }
         },
 
-        onError: (error) => {
+        onError: error => {
           setIsStreaming(false);
-          console.error("[AI Streaming Error]", error);
-          toast.error("Erro na resposta em tempo real.");
+          console.error('[AI Streaming Error]', error);
+          toast.error('Erro na resposta em tempo real.');
         },
       },
     );
@@ -641,18 +638,18 @@ export function useAIConversationHistory() {
       });
 
       // LGPD Compliance: Log conversation deletion
-      console.log("[LGPD Audit] AI conversation deleted", {
+      console.log('[LGPD Audit] AI conversation deleted', {
         conversationId: variables.conversationId,
         timestamp: new Date().toISOString(),
-        compliance: "LGPD_DATA_DELETION",
+        compliance: 'LGPD_DATA_DELETION',
       });
 
-      toast.success("Conversa excluída com sucesso.");
+      toast.success('Conversa excluída com sucesso.');
     },
 
-    onError: (error) => {
-      console.error("[Delete Conversation Error]", error);
-      toast.error("Erro ao excluir conversa.");
+    onError: error => {
+      console.error('[Delete Conversation Error]', error);
+      toast.error('Erro ao excluir conversa.');
     },
   });
 
@@ -671,20 +668,20 @@ export const aiChatUtils = {
   // Anonymize patient data before sending to AI
   anonymizePatientData: (text: string): string => {
     return text
-      .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, "[CPF_REDACTED]")
-      .replace(/\(\d{2}\)\s\d{4,5}-\d{4}/g, "[PHONE_REDACTED]")
+      .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, '[CPF_REDACTED]')
+      .replace(/\(\d{2}\)\s\d{4,5}-\d{4}/g, '[PHONE_REDACTED]')
       .replace(
         /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
-        "[EMAIL_REDACTED]",
+        '[EMAIL_REDACTED]',
       )
-      .replace(/\b\d{4}\s\d{4}\s\d{4}\s\d{4}\b/g, "[CARD_REDACTED]");
+      .replace(/\b\d{4}\s\d{4}\s\d{4}\s\d{4}\b/g, '[CARD_REDACTED]');
   },
 
   // Format cost for display
   formatCost: (cost: number): string => {
-    return new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
       minimumFractionDigits: 4,
     }).format(cost);
   },
@@ -692,35 +689,35 @@ export const aiChatUtils = {
   // Detect medical terms in Portuguese
   detectMedicalTerms: (text: string): string[] => {
     const medicalTerms = [
-      "sintoma",
-      "diagnóstico",
-      "tratamento",
-      "medicamento",
-      "receita",
-      "consulta",
-      "exame",
-      "cirurgia",
-      "dor",
-      "febre",
-      "pressão",
-      "diabetes",
-      "hipertensão",
-      "alergia",
-      "vacina",
-      "internação",
+      'sintoma',
+      'diagnóstico',
+      'tratamento',
+      'medicamento',
+      'receita',
+      'consulta',
+      'exame',
+      'cirurgia',
+      'dor',
+      'febre',
+      'pressão',
+      'diabetes',
+      'hipertensão',
+      'alergia',
+      'vacina',
+      'internação',
     ];
 
-    return medicalTerms.filter((term) => text.toLowerCase().includes(term));
+    return medicalTerms.filter(term => text.toLowerCase().includes(term));
   },
 
   // Get risk level color
   getRiskLevelColor: (level: string): string => {
     const colors = {
-      high: "#ef4444",
-      medium: "#f59e0b",
-      low: "#22c55e",
+      high: '#ef4444',
+      medium: '#f59e0b',
+      low: '#22c55e',
     };
-    return colors[level as keyof typeof colors] || "#6b7280";
+    return colors[level as keyof typeof colors] || '#6b7280';
   },
 
   // Format confidence percentage

@@ -1,6 +1,6 @@
 /**
  * 🔒 SECURE LOGGER - LGPD Compliant Logging System
- * 
+ *
  * Features:
  * - Automatic sensitive data masking
  * - LGPD compliance built-in
@@ -24,9 +24,23 @@ const SENSITIVE_PATTERNS = {
 };
 
 const SENSITIVE_KEYS = [
-  'password', 'senha', 'token', 'secret', 'key', 'authorization', 
-  'bearer', 'cpf', 'cnpj', 'rg', 'passport', 'credit_card',
-  'card_number', 'cvv', 'pin', 'otp', 'medical_record'
+  'password',
+  'senha',
+  'token',
+  'secret',
+  'key',
+  'authorization',
+  'bearer',
+  'cpf',
+  'cnpj',
+  'rg',
+  'passport',
+  'credit_card',
+  'card_number',
+  'cvv',
+  'pin',
+  'otp',
+  'medical_record',
 ];
 
 interface LoggerConfig {
@@ -58,7 +72,7 @@ class SecureLogger {
       maskSensitiveData: config.maskSensitiveData ?? true,
       lgpdCompliant: config.lgpdCompliant ?? true,
       auditTrail: config.auditTrail ?? true,
-      service: config.service || 'neonpro-api'
+      service: config.service || 'neonpro-api',
     };
 
     this.logger = winston.createLogger({
@@ -67,42 +81,44 @@ class SecureLogger {
         format.timestamp(),
         format.errors({ stack: true }),
         format.json(),
-        format.printf(this.formatLog.bind(this))
+        format.printf(this.formatLog.bind(this)),
       ),
-      defaultMeta: { 
+      defaultMeta: {
         service: this.config.service,
-        environment: process.env.NODE_ENV || 'development'
+        environment: process.env.NODE_ENV || 'development',
       },
       transports: [
         new winston.transports.Console({
           format: format.combine(
             format.colorize(),
-            format.simple()
-          )
+            format.simple(),
+          ),
         }),
-        ...(process.env.NODE_ENV === 'production' ? [
-          new winston.transports.File({ 
-            filename: 'logs/error.log', 
-            level: 'error' 
-          }),
-          new winston.transports.File({ 
-            filename: 'logs/combined.log' 
-          })
-        ] : [])
-      ]
+        ...(process.env.NODE_ENV === 'production'
+          ? [
+            new winston.transports.File({
+              filename: 'logs/error.log',
+              level: 'error',
+            }),
+            new winston.transports.File({
+              filename: 'logs/combined.log',
+            }),
+          ]
+          : []),
+      ],
     });
   }
 
   private formatLog(info: any): string {
     const { timestamp, level, message, service, environment, ...meta } = info;
-    
+
     const logEntry = {
       timestamp,
       level,
       service,
       environment,
       message: this.config.maskSensitiveData ? this.maskSensitiveData(message) : message,
-      ...this.maskObjectData(meta)
+      ...this.maskObjectData(meta),
     };
 
     return JSON.stringify(logEntry);
@@ -117,7 +133,7 @@ class SecureLogger {
 
     // Apply pattern-based masking
     Object.entries(SENSITIVE_PATTERNS).forEach(([, pattern]) => {
-      maskedText = maskedText.replace(pattern, (match) => {
+      maskedText = maskedText.replace(pattern, match => {
         const visibleChars = Math.min(3, Math.floor(match.length * 0.3));
         return match.substring(0, visibleChars) + '*'.repeat(match.length - visibleChars);
       });
@@ -136,10 +152,10 @@ class SecureLogger {
     }
 
     const masked: any = {};
-    
+
     Object.entries(obj).forEach(([key, value]) => {
       const lowerKey = key.toLowerCase();
-      
+
       if (SENSITIVE_KEYS.some(sensitiveKey => lowerKey.includes(sensitiveKey))) {
         masked[key] = this.maskValue(value);
       } else if (typeof value === 'object' && value !== null) {
@@ -158,11 +174,11 @@ class SecureLogger {
     if (typeof value !== 'string') {
       return '[MASKED]';
     }
-    
+
     if (value.length <= 3) {
       return '*'.repeat(value.length);
     }
-    
+
     const visibleChars = Math.min(3, Math.floor(value.length * 0.3));
     return value.substring(0, visibleChars) + '*'.repeat(value.length - visibleChars);
   }
@@ -182,12 +198,14 @@ class SecureLogger {
 
   error(message: string, error?: Error, context?: LogContext): void {
     const enrichedContext = this.enrichContext(context);
-    
+
     if (error) {
-      enrichedContext.error = {
+      (enrichedContext as any).error = {
         name: error.name,
-        message: this.config.maskSensitiveData ? this.maskSensitiveData(error.message) : error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        message: this.config.maskSensitiveData
+          ? this.maskSensitiveData(error.message)
+          : error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
       };
     }
 
@@ -210,7 +228,7 @@ class SecureLogger {
       ...context,
       auditType: 'data_access',
       timestamp: new Date().toISOString(),
-      compliance: 'LGPD'
+      compliance: 'LGPD',
     });
   }
 
@@ -228,7 +246,7 @@ class SecureLogger {
       ...context,
       auditType: 'data_modification',
       timestamp: new Date().toISOString(),
-      compliance: 'LGPD'
+      compliance: 'LGPD',
     });
   }
 
@@ -245,7 +263,7 @@ class SecureLogger {
       ...context,
       auditType: 'consent_change',
       timestamp: new Date().toISOString(),
-      compliance: 'LGPD'
+      compliance: 'LGPD',
     });
   }
 
@@ -253,7 +271,7 @@ class SecureLogger {
     return {
       ...context,
       timestamp: new Date().toISOString(),
-      correlationId: context?.correlationId || this.generateCorrelationId()
+      correlationId: context?.correlationId || this.generateCorrelationId(),
     };
   }
 
@@ -272,9 +290,9 @@ export const logger = createLogger({
   service: 'neonpro-api',
   maskSensitiveData: true,
   lgpdCompliant: true,
-  auditTrail: true
+  auditTrail: true,
 });
 
 // Export types for TypeScript support
-export type { LoggerConfig, LogContext };
+export type { LogContext, LoggerConfig };
 export { SecureLogger };

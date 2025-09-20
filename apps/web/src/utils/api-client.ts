@@ -3,13 +3,12 @@
  * Handles authentication headers, error responses, and LGPD compliance
  */
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 
 // API Configuration
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  import.meta.env.NEXT_PUBLIC_API_URL ||
-  (import.meta.env.DEV ? "http://localhost:3000" : "/api");
+const API_BASE_URL = import.meta.env.VITE_API_URL
+  || import.meta.env.NEXT_PUBLIC_API_URL
+  || (import.meta.env.DEV ? 'http://localhost:3000' : '/api');
 
 // API Response types
 export interface ApiResponse<T = any> {
@@ -23,16 +22,18 @@ export interface ApiResponse<T = any> {
 
 export interface PaginatedResponse<T> {
   success: boolean;
-  data: {
-    [K in keyof T]: T[K];
-  } & {
-    pagination: {
-      page: number;
-      limit: number;
-      total: number;
-      totalPages: number;
+  data:
+    & {
+      [K in keyof T]: T[K];
+    }
+    & {
+      pagination: {
+        page: number;
+        limit: number;
+        total: number;
+        totalPages: number;
+      };
     };
-  };
   metadata?: Record<string, any>;
 }
 
@@ -45,14 +46,14 @@ export class ApiError extends Error {
     public errors?: Array<{ field: string; message: string }>,
   ) {
     super(message);
-    this.name = "ApiError";
+    this.name = 'ApiError';
   }
 }
 
 export class AuthenticationError extends ApiError {
-  constructor(message: string = "Authentication required") {
-    super(message, "AUTH_REQUIRED", 401);
-    this.name = "AuthenticationError";
+  constructor(message: string = 'Authentication required') {
+    super(message, 'AUTH_REQUIRED', 401);
+    this.name = 'AuthenticationError';
   }
 }
 
@@ -61,15 +62,15 @@ export class ValidationError extends ApiError {
     message: string,
     errors?: Array<{ field: string; message: string }>,
   ) {
-    super(message, "VALIDATION_ERROR", 400, errors);
-    this.name = "ValidationError";
+    super(message, 'VALIDATION_ERROR', 400, errors);
+    this.name = 'ValidationError';
   }
 }
 
 export class LGPDComplianceError extends ApiError {
-  constructor(message: string = "LGPD compliance violation") {
-    super(message, "LGPD_VIOLATION", 403);
-    this.name = "LGPDComplianceError";
+  constructor(message: string = 'LGPD compliance violation') {
+    super(message, 'LGPD_VIOLATION', 403);
+    this.name = 'LGPDComplianceError';
   }
 }
 
@@ -82,14 +83,14 @@ async function getAuthHeaders(): Promise<Record<string, string>> {
   } = await supabase.auth.getSession();
 
   if (!session?.access_token) {
-    throw new AuthenticationError("No valid session found");
+    throw new AuthenticationError('No valid session found');
   }
 
   return {
     Authorization: `Bearer ${session.access_token}`,
-    "Content-Type": "application/json",
-    "X-Client-Version": "1.0.0",
-    "X-Request-Source": "web-app",
+    'Content-Type': 'application/json',
+    'X-Client-Version': '1.0.0',
+    'X-Request-Source': 'web-app',
   };
 }
 
@@ -114,9 +115,9 @@ async function makeRequest<T = any>(
 
     // Handle non-JSON responses (e.g., 204 No Content)
     let responseData: ApiResponse<T>;
-    const contentType = response.headers.get("content-type");
+    const contentType = response.headers.get('content-type');
 
-    if (contentType && contentType.includes("application/json")) {
+    if (contentType && contentType.includes('application/json')) {
       responseData = await response.json();
     } else {
       responseData = {
@@ -127,8 +128,7 @@ async function makeRequest<T = any>(
 
     // Handle error responses
     if (!response.ok) {
-      const errorMessage =
-        responseData.error || `HTTP ${response.status}: ${response.statusText}`;
+      const errorMessage = responseData.error || `HTTP ${response.status}: ${response.statusText}`;
 
       switch (response.status) {
         case 400:
@@ -137,16 +137,16 @@ async function makeRequest<T = any>(
           throw new AuthenticationError(errorMessage);
         case 403:
           if (
-            responseData.code === "LGPD_ACCESS_DENIED" ||
-            responseData.code === "LGPD_VIOLATION"
+            responseData.code === 'LGPD_ACCESS_DENIED'
+            || responseData.code === 'LGPD_VIOLATION'
           ) {
             throw new LGPDComplianceError(errorMessage);
           }
           throw new ApiError(errorMessage, responseData.code, 403);
         case 404:
-          throw new ApiError(errorMessage, "NOT_FOUND", 404);
+          throw new ApiError(errorMessage, 'NOT_FOUND', 404);
         case 500:
-          throw new ApiError("Internal server error", "INTERNAL_ERROR", 500);
+          throw new ApiError('Internal server error', 'INTERNAL_ERROR', 500);
         default:
           throw new ApiError(errorMessage, responseData.code, response.status);
       }
@@ -160,17 +160,17 @@ async function makeRequest<T = any>(
     }
 
     // Handle network errors, JSON parse errors, etc.
-    if (error instanceof TypeError && error.message.includes("fetch")) {
+    if (error instanceof TypeError && error.message.includes('fetch')) {
       throw new ApiError(
-        "Network error: Unable to connect to server",
-        "NETWORK_ERROR",
+        'Network error: Unable to connect to server',
+        'NETWORK_ERROR',
       );
     }
 
     // Generic error fallback
     throw new ApiError(
-      error instanceof Error ? error.message : "Unknown error occurred",
-      "UNKNOWN_ERROR",
+      error instanceof Error ? error.message : 'Unknown error occurred',
+      'UNKNOWN_ERROR',
     );
   }
 }
@@ -186,11 +186,11 @@ export const apiClient = {
     endpoint: string,
     params?: Record<string, any>,
   ): Promise<ApiResponse<T>> {
-    const searchParams = params ? new URLSearchParams(params).toString() : "";
+    const searchParams = params ? new URLSearchParams(params).toString() : '';
     const url = searchParams ? `${endpoint}?${searchParams}` : endpoint;
 
     return makeRequest<T>(url, {
-      method: "GET",
+      method: 'GET',
     });
   },
 
@@ -199,7 +199,7 @@ export const apiClient = {
    */
   post<T = any>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
     return makeRequest<T>(endpoint, {
-      method: "POST",
+      method: 'POST',
       body: body ? JSON.stringify(body) : undefined,
     });
   },
@@ -209,7 +209,7 @@ export const apiClient = {
    */
   put<T = any>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
     return makeRequest<T>(endpoint, {
-      method: "PUT",
+      method: 'PUT',
       body: body ? JSON.stringify(body) : undefined,
     });
   },
@@ -219,7 +219,7 @@ export const apiClient = {
    */
   delete<T = any>(endpoint: string): Promise<ApiResponse<T>> {
     return makeRequest<T>(endpoint, {
-      method: "DELETE",
+      method: 'DELETE',
     });
   },
 
@@ -228,7 +228,7 @@ export const apiClient = {
    */
   patch<T = any>(endpoint: string, body?: any): Promise<ApiResponse<T>> {
     return makeRequest<T>(endpoint, {
-      method: "PATCH",
+      method: 'PATCH',
       body: body ? JSON.stringify(body) : undefined,
     });
   },

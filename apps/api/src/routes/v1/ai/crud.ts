@@ -4,14 +4,14 @@
  * Integrates with tRPC router for healthcare-compliant CRUD operations
  */
 
-import { zValidator } from '@hono/zod-validator';
 import { trpcServer } from '@hono/trpc-server';
+import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
 import { appRouter } from '../../../trpc/router';
 
 // Import middleware and utilities
-import { requireAuth, requireAIAccess } from '../../../middleware/auth';
+import { requireAIAccess, requireAuth } from '../../../middleware/auth';
 import { getServices } from '../../../services/shared-services';
 import { mockAuthMiddleware } from '../../../test-setup';
 

@@ -4,10 +4,10 @@
  * Includes database connectivity, service availability, and compliance checks
  */
 
-import { NextRequest } from 'next/server';
 import { createHealthcareResponse } from '@/lib/healthcare-response';
 import { supabase } from '@/lib/supabase';
 import { logger } from '@/utils/secure-logger';
+import { NextRequest } from 'next/server';
 
 /**
  * GET /api/health/check
@@ -15,7 +15,7 @@ import { logger } from '@/utils/secure-logger';
  */
 export async function GET(request: NextRequest) {
   const startTime = Date.now();
-  
+
   try {
     // Database connectivity check
     const { data: dbCheck, error: dbError } = await supabase
@@ -35,13 +35,13 @@ export async function GET(request: NextRequest) {
       memory: process.memoryUsage(),
       database: {
         status: 'connected',
-        responseTime: Date.now() - startTime
+        responseTime: Date.now() - startTime,
       },
       compliance: {
         lgpd: 'active',
         cfm: 'compliant',
-        anvisa: 'validated'
-      }
+        anvisa: 'validated',
+      },
     };
 
     const processingTime = Date.now() - startTime;
@@ -54,18 +54,17 @@ export async function GET(request: NextRequest) {
         compliance: {
           lgpd: true,
           cfm: true,
-          anvisa: true
-        }
+          anvisa: true,
+        },
       },
       {
         status: 200,
         headers: {
           'Cache-Control': 'no-cache, must-revalidate',
-          'X-Health-Check': 'passed'
-        }
-      }
+          'X-Health-Check': 'passed',
+        },
+      },
     );
-
   } catch (error) {
     logger.error('Health check failed', error);
 
@@ -79,16 +78,16 @@ export async function GET(request: NextRequest) {
         compliance: {
           lgpd: true,
           cfm: true,
-          anvisa: true
-        }
+          anvisa: true,
+        },
       },
       {
         status: 503,
         headers: {
           'Cache-Control': 'no-cache, must-revalidate',
-          'X-Health-Check': 'failed'
-        }
-      }
+          'X-Health-Check': 'failed',
+        },
+      },
     );
   }
 }

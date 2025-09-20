@@ -1,12 +1,12 @@
-import { supabase } from "@/lib/supabase";
+import { supabase } from '@/lib/supabase';
 
 export interface SecurityEvent {
   id: string;
   userId: string;
-  eventType: "access" | "modification" | "export" | "login" | "logout" | "failure";
-  resourceType: "financial_data" | "patient_data" | "reports" | "system";
+  eventType: 'access' | 'modification' | 'export' | 'login' | 'logout' | 'failure';
+  resourceType: 'financial_data' | 'patient_data' | 'reports' | 'system';
   resourceId?: string;
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   ipAddress: string;
   userAgent: string;
@@ -49,30 +49,30 @@ export interface ComplianceRule {
   id: string;
   name: string;
   description: string;
-  type: "lgpd" | "anvisa" | "cfm" | "internal";
-  severity: "info" | "warning" | "error" | "critical";
+  type: 'lgpd' | 'anvisa' | 'cfm' | 'internal';
+  severity: 'info' | 'warning' | 'error' | 'critical';
   isActive: boolean;
   conditions: Array<{
     field: string;
-    operator: "equals" | "contains" | "greater_than" | "less_than" | "regex";
+    operator: 'equals' | 'contains' | 'greater_than' | 'less_than' | 'regex';
     value: any;
   }>;
   actions: Array<{
-    type: "log" | "alert" | "block" | "encrypt";
+    type: 'log' | 'alert' | 'block' | 'encrypt';
     parameters?: Record<string, any>;
   }>;
 }
 
 export interface SecurityAlert {
   id: string;
-  type: "suspicious_access" | "data_breach" | "compliance_violation" | "failed_login";
-  severity: "low" | "medium" | "high" | "critical";
+  type: 'suspicious_access' | 'data_breach' | 'compliance_violation' | 'failed_login';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
   description: string;
   affectedUsers: string[];
   affectedResources: string[];
   timestamp: Date;
-  status: "open" | "investigating" | "resolved" | "false_positive";
+  status: 'open' | 'investigating' | 'resolved' | 'false_positive';
   investigator?: string;
   resolution?: string;
 }
@@ -89,7 +89,7 @@ export class FinancialSecurityService {
       ipAddress?: string;
       userAgent?: string;
       resourceId?: string;
-    }
+    },
   ): Promise<{
     allowed: boolean;
     reason?: string;
@@ -108,19 +108,19 @@ export class FinancialSecurityService {
       if (!accessData || accessData.length === 0) {
         await this.logSecurityEvent({
           userId,
-          eventType: "failure",
-          resourceType: "financial_data",
+          eventType: 'failure',
+          resourceType: 'financial_data',
           resourceId: context?.resourceId,
-          severity: "medium",
+          severity: 'medium',
           description: `Access denied: No permissions found for resource ${resource}`,
-          ipAddress: context?.ipAddress || "unknown",
-          userAgent: context?.userAgent || "unknown",
-          timestamp: new Date()
+          ipAddress: context?.ipAddress || 'unknown',
+          userAgent: context?.userAgent || 'unknown',
+          timestamp: new Date(),
         });
 
         return {
           allowed: false,
-          reason: "No permissions found for this resource"
+          reason: 'No permissions found for this resource',
         };
       }
 
@@ -130,19 +130,19 @@ export class FinancialSecurityService {
       if (!accessControl.permissions.includes(action)) {
         await this.logSecurityEvent({
           userId,
-          eventType: "failure",
-          resourceType: "financial_data",
+          eventType: 'failure',
+          resourceType: 'financial_data',
           resourceId: context?.resourceId,
-          severity: "medium",
+          severity: 'medium',
           description: `Access denied: Missing permission ${action} for resource ${resource}`,
-          ipAddress: context?.ipAddress || "unknown",
-          userAgent: context?.userAgent || "unknown",
-          timestamp: new Date()
+          ipAddress: context?.ipAddress || 'unknown',
+          userAgent: context?.userAgent || 'unknown',
+          timestamp: new Date(),
         });
 
         return {
           allowed: false,
-          reason: `Missing permission: ${action}`
+          reason: `Missing permission: ${action}`,
         };
       }
 
@@ -159,7 +159,7 @@ export class FinancialSecurityService {
         if (!daysOfWeek.includes(currentDay) || currentTime < start || currentTime > end) {
           return {
             allowed: false,
-            reason: "Access not allowed at this time"
+            reason: 'Access not allowed at this time',
           };
         }
       }
@@ -169,19 +169,19 @@ export class FinancialSecurityService {
         if (!accessControl.restrictions.ipRestrictions.includes(context.ipAddress)) {
           await this.logSecurityEvent({
             userId,
-            eventType: "failure",
-            resourceType: "financial_data",
+            eventType: 'failure',
+            resourceType: 'financial_data',
             resourceId: context?.resourceId,
-            severity: "high",
+            severity: 'high',
             description: `Access denied: IP ${context.ipAddress} not in allowed list`,
             ipAddress: context.ipAddress,
-            userAgent: context?.userAgent || "unknown",
-            timestamp: new Date()
+            userAgent: context?.userAgent || 'unknown',
+            timestamp: new Date(),
           });
 
           return {
             allowed: false,
-            reason: "IP address not authorized"
+            reason: 'IP address not authorized',
           };
         }
       }
@@ -189,25 +189,25 @@ export class FinancialSecurityService {
       // Log successful access
       await this.logSecurityEvent({
         userId,
-        eventType: "access",
-        resourceType: "financial_data",
+        eventType: 'access',
+        resourceType: 'financial_data',
         resourceId: context?.resourceId,
-        severity: "low",
+        severity: 'low',
         description: `Access granted to ${resource} for action ${action}`,
-        ipAddress: context?.ipAddress || "unknown",
-        userAgent: context?.userAgent || "unknown",
-        timestamp: new Date()
+        ipAddress: context?.ipAddress || 'unknown',
+        userAgent: context?.userAgent || 'unknown',
+        timestamp: new Date(),
       });
 
       return {
         allowed: true,
-        restrictions: accessControl.restrictions
+        restrictions: accessControl.restrictions,
       };
     } catch (error) {
       console.error('Error checking access:', error);
       return {
         allowed: false,
-        reason: "Security check failed"
+        reason: 'Security check failed',
       };
     }
   }
@@ -229,7 +229,7 @@ export class FinancialSecurityService {
           ip_address: event.ipAddress,
           user_agent: event.userAgent,
           timestamp: event.timestamp.toISOString(),
-          metadata: event.metadata
+          metadata: event.metadata,
         });
 
       if (error) throw error;
@@ -259,7 +259,7 @@ export class FinancialSecurityService {
           ip_address: audit.ipAddress,
           user_agent: audit.userAgent,
           success: audit.success,
-          failure_reason: audit.failureReason
+          failure_reason: audit.failureReason,
         });
 
       if (error) throw error;
@@ -274,36 +274,36 @@ export class FinancialSecurityService {
   static async encryptData(data: any, dataType: string): Promise<string> {
     try {
       const crypto = await import('crypto');
-      
+
       // Generate a random IV for each encryption
       const iv = crypto.randomBytes(16);
       const key = crypto.scryptSync(process.env.ENCRYPTION_KEY || 'default-secret-key', 'salt', 32);
-      
+
       // Create cipher
       const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
-      
+
       // Encrypt the data
       const jsonString = JSON.stringify(data);
       let encrypted = cipher.update(jsonString, 'utf8', 'hex');
       encrypted += cipher.final('hex');
-      
+
       // Get authentication tag
       const authTag = cipher.getAuthTag();
-      
+
       // Combine IV + encrypted data + auth tag
       const result = iv.toString('hex') + ':' + encrypted + ':' + authTag.toString('hex');
-      
+
       // Log encryption event
       await this.logSecurityEvent({
-        userId: "system",
-        eventType: "modification",
-        resourceType: "financial_data",
-        severity: "low",
+        userId: 'system',
+        eventType: 'modification',
+        resourceType: 'financial_data',
+        severity: 'low',
         description: `Data encrypted: ${dataType}`,
-        ipAddress: "system",
-        userAgent: "encryption-service",
+        ipAddress: 'system',
+        userAgent: 'encryption-service',
         timestamp: new Date(),
-        metadata: { dataType, size: jsonString.length }
+        metadata: { dataType, size: jsonString.length },
       });
 
       return result;
@@ -319,39 +319,39 @@ export class FinancialSecurityService {
   static async decryptData(encryptedData: string, userId: string): Promise<any> {
     try {
       const crypto = await import('crypto');
-      
+
       // Parse the encrypted data
       const parts = encryptedData.split(':');
       if (parts.length !== 3) {
         throw new Error('Invalid encrypted data format');
       }
-      
+
       const iv = Buffer.from(parts[0], 'hex');
       const encrypted = parts[1];
       const authTag = Buffer.from(parts[2], 'hex');
-      
+
       // Create decipher
       const key = crypto.scryptSync(process.env.ENCRYPTION_KEY || 'default-secret-key', 'salt', 32);
       const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
       decipher.setAuthTag(authTag);
-      
+
       // Decrypt the data
       let decrypted = decipher.update(encrypted, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
-      
+
       const data = JSON.parse(decrypted);
 
       // Log decryption event
       await this.logSecurityEvent({
         userId,
-        eventType: "access",
-        resourceType: "financial_data",
-        severity: "low",
-        description: "Data decrypted for access",
-        ipAddress: "system",
-        userAgent: "decryption-service",
+        eventType: 'access',
+        resourceType: 'financial_data',
+        severity: 'low',
+        description: 'Data decrypted for access',
+        ipAddress: 'system',
+        userAgent: 'decryption-service',
         timestamp: new Date(),
-        metadata: { size: decrypted.length }
+        metadata: { size: decrypted.length },
       });
 
       return data;
@@ -367,7 +367,7 @@ export class FinancialSecurityService {
   static async validateCompliance(
     data: any,
     operation: string,
-    userId: string
+    userId: string,
   ): Promise<{
     compliant: boolean;
     violations: Array<{
@@ -396,37 +396,37 @@ export class FinancialSecurityService {
           violations.push({
             rule: rule.name,
             severity: rule.severity,
-            description: rule.description
+            description: rule.description,
           });
 
           // Log compliance violation
           await this.logSecurityEvent({
             userId,
-            eventType: "failure",
-            resourceType: "financial_data",
+            eventType: 'failure',
+            resourceType: 'financial_data',
             severity: rule.severity as any,
             description: `Compliance violation: ${rule.name}`,
-            ipAddress: "system",
-            userAgent: "compliance-checker",
+            ipAddress: 'system',
+            userAgent: 'compliance-checker',
             timestamp: new Date(),
-            metadata: { rule: rule.name, operation }
+            metadata: { rule: rule.name, operation },
           });
         }
       }
 
       return {
         compliant: violations.length === 0,
-        violations
+        violations,
       };
     } catch (error) {
       console.error('Error validating compliance:', error);
       return {
         compliant: false,
         violations: [{
-          rule: "system_error",
-          severity: "critical",
-          description: "Compliance validation system error"
-        }]
+          rule: 'system_error',
+          severity: 'critical',
+          description: 'Compliance validation system error',
+        }],
       };
     }
   }
@@ -436,10 +436,10 @@ export class FinancialSecurityService {
    */
   static async getSecurityAlerts(
     filters?: {
-      severity?: SecurityAlert["severity"];
-      status?: SecurityAlert["status"];
+      severity?: SecurityAlert['severity'];
+      status?: SecurityAlert['status'];
       limit?: number;
-    }
+    },
   ): Promise<SecurityAlert[]> {
     try {
       let query = supabase
@@ -472,7 +472,7 @@ export class FinancialSecurityService {
         timestamp: new Date(alert.timestamp),
         status: alert.status,
         investigator: alert.investigator,
-        resolution: alert.resolution
+        resolution: alert.resolution,
       }));
     } catch (error) {
       console.error('Error getting security alerts:', error);
@@ -487,14 +487,14 @@ export class FinancialSecurityService {
     // Check for suspicious patterns
     if (event.severity === 'high' || event.severity === 'critical') {
       await this.createSecurityAlert({
-        type: "suspicious_access",
+        type: 'suspicious_access',
         severity: event.severity,
         title: `High severity security event: ${event.eventType}`,
         description: event.description,
         affectedUsers: [event.userId],
         affectedResources: event.resourceId ? [event.resourceId] : [],
         timestamp: new Date(),
-        status: "open"
+        status: 'open',
       });
     }
 
@@ -503,14 +503,15 @@ export class FinancialSecurityService {
       const recentFailures = await this.getRecentFailures(event.userId, 15); // Last 15 minutes
       if (recentFailures >= 5) {
         await this.createSecurityAlert({
-          type: "failed_login",
-          severity: "high",
-          title: "Multiple failed access attempts",
-          description: `User ${event.userId} has ${recentFailures} failed access attempts in the last 15 minutes`,
+          type: 'failed_login',
+          severity: 'high',
+          title: 'Multiple failed access attempts',
+          description:
+            `User ${event.userId} has ${recentFailures} failed access attempts in the last 15 minutes`,
           affectedUsers: [event.userId],
           affectedResources: [],
           timestamp: new Date(),
-          status: "open"
+          status: 'open',
         });
       }
     }
@@ -531,7 +532,7 @@ export class FinancialSecurityService {
           affected_users: alert.affectedUsers,
           affected_resources: alert.affectedResources,
           timestamp: alert.timestamp.toISOString(),
-          status: alert.status
+          status: alert.status,
         });
 
       if (error) throw error;
@@ -546,7 +547,7 @@ export class FinancialSecurityService {
   private static async getRecentFailures(userId: string, minutes: number): Promise<number> {
     try {
       const since = new Date(Date.now() - minutes * 60 * 1000);
-      
+
       const { data, error } = await supabase
         .from('security_events')
         .select('id')
@@ -569,13 +570,13 @@ export class FinancialSecurityService {
   private static async checkComplianceRule(
     data: any,
     operation: string,
-    rule: ComplianceRule
+    rule: ComplianceRule,
   ): Promise<boolean> {
     // Simplified compliance rule checking
     // In a real implementation, this would be more sophisticated
     for (const condition of rule.conditions) {
       const fieldValue = this.getNestedValue(data, condition.field);
-      
+
       switch (condition.operator) {
         case 'equals':
           if (fieldValue !== condition.value) return true;
@@ -590,11 +591,13 @@ export class FinancialSecurityService {
           if (typeof fieldValue === 'number' && fieldValue >= condition.value) return true;
           break;
         case 'regex':
-          if (typeof fieldValue === 'string' && !new RegExp(condition.value).test(fieldValue)) return true;
+          if (typeof fieldValue === 'string' && !new RegExp(condition.value).test(fieldValue)) {
+            return true;
+          }
           break;
       }
     }
-    
+
     return false;
   }
 

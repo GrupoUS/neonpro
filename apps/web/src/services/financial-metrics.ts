@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 
 export interface FinancialMetric {
   id: string;
@@ -7,15 +7,15 @@ export interface FinancialMetric {
   previousValue: number;
   change: number;
   changePercentage: number;
-  period: "daily" | "weekly" | "monthly" | "yearly";
-  category: "revenue" | "expenses" | "profit" | "patients" | "appointments";
+  period: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  category: 'revenue' | 'expenses' | 'profit' | 'patients' | 'appointments';
   formattedValue: string;
-  trend: "up" | "down" | "stable";
+  trend: 'up' | 'down' | 'stable';
   timestamp: Date;
 }
 
 export interface MetricsCalculationOptions {
-  period: "daily" | "weekly" | "monthly" | "yearly";
+  period: 'daily' | 'weekly' | 'monthly' | 'yearly';
   startDate: Date;
   endDate: Date;
   categories?: string[];
@@ -36,7 +36,7 @@ export class FinancialMetricsService {
    * Calculate financial metrics for the specified period
    */
   static async calculateMetrics(
-    options: MetricsCalculationOptions
+    options: MetricsCalculationOptions,
   ): Promise<FinancialMetric[]> {
     try {
       const { data, error } = await supabase
@@ -74,7 +74,7 @@ export class FinancialMetricsService {
         .rpc('calculate_financial_aggregates', {
           start_date: options.startDate.toISOString(),
           end_date: options.endDate.toISOString(),
-          period: options.period
+          period: options.period,
         });
 
       if (error) throw error;
@@ -85,7 +85,7 @@ export class FinancialMetricsService {
         netProfit: 0,
         patientCount: 0,
         appointmentCount: 0,
-        averageTransactionValue: 0
+        averageTransactionValue: 0,
       };
     } catch (error) {
       console.error('Error aggregating financial data:', error);
@@ -98,10 +98,10 @@ export class FinancialMetricsService {
    */
   static async exportMetrics(
     options: MetricsCalculationOptions,
-    format: 'csv' | 'excel' | 'pdf' = 'csv'
+    format: 'csv' | 'excel' | 'pdf' = 'csv',
   ): Promise<Blob> {
     const metrics = await this.calculateMetrics(options);
-    
+
     switch (format) {
       case 'csv':
         return this.exportToCsv(metrics);
@@ -119,8 +119,8 @@ export class FinancialMetricsService {
    */
   static async getMetricsHistory(
     metricName: string,
-    period: "daily" | "weekly" | "monthly" | "yearly",
-    months: number = 12
+    period: 'daily' | 'weekly' | 'monthly' | 'yearly',
+    months: number = 12,
   ): Promise<MetricsHistory> {
     const endDate = new Date();
     const startDate = new Date();
@@ -141,7 +141,7 @@ export class FinancialMetricsService {
       const currentMetric = await this.calculateSingleMetric(metricName, {
         period,
         startDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
-        endDate: new Date()
+        endDate: new Date(),
       });
 
       return {
@@ -149,8 +149,8 @@ export class FinancialMetricsService {
         history: (data || []).map(record => ({
           period: record.period_start,
           value: record.value,
-          timestamp: new Date(record.period_start)
-        }))
+          timestamp: new Date(record.period_start),
+        })),
       };
     } catch (error) {
       console.error('Error getting metrics history:', error);
@@ -163,7 +163,7 @@ export class FinancialMetricsService {
    */
   private static processTransactionsToMetrics(
     transactions: any[],
-    options: MetricsCalculationOptions
+    options: MetricsCalculationOptions,
   ): FinancialMetric[] {
     const metrics: FinancialMetric[] = [];
 
@@ -190,10 +190,10 @@ export class FinancialMetricsService {
       category: 'revenue',
       formattedValue: new Intl.NumberFormat('pt-BR', {
         style: 'currency',
-        currency: 'BRL'
+        currency: 'BRL',
       }).format(revenue),
       trend: 'up',
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     // Create expenses metric
@@ -208,10 +208,10 @@ export class FinancialMetricsService {
       category: 'expenses',
       formattedValue: new Intl.NumberFormat('pt-BR', {
         style: 'currency',
-        currency: 'BRL'
+        currency: 'BRL',
       }).format(expenses),
       trend: 'down',
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     // Create profit metric
@@ -226,10 +226,10 @@ export class FinancialMetricsService {
       category: 'profit',
       formattedValue: new Intl.NumberFormat('pt-BR', {
         style: 'currency',
-        currency: 'BRL'
+        currency: 'BRL',
       }).format(profit),
       trend: profit > 0 ? 'up' : 'down',
-      timestamp: new Date()
+      timestamp: new Date(),
     });
 
     return metrics;
@@ -240,15 +240,15 @@ export class FinancialMetricsService {
    */
   private static async calculateSingleMetric(
     metricName: string,
-    options: MetricsCalculationOptions
+    options: MetricsCalculationOptions,
   ): Promise<FinancialMetric> {
     const metrics = await this.calculateMetrics(options);
     const metric = metrics.find(m => m.id === metricName);
-    
+
     if (!metric) {
       throw new Error(`Metric not found: ${metricName}`);
     }
-    
+
     return metric;
   }
 
@@ -264,7 +264,7 @@ export class FinancialMetricsService {
       metric.change.toString(),
       metric.changePercentage.toString(),
       metric.trend,
-      metric.category
+      metric.category,
     ]);
 
     const csvContent = [headers, ...rows]
@@ -281,8 +281,8 @@ export class FinancialMetricsService {
     // For now, return CSV format with Excel MIME type
     // In a real implementation, you'd use a library like xlsx
     const csvBlob = this.exportToCsv(metrics);
-    return new Blob([csvBlob], { 
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    return new Blob([csvBlob], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
   }
 
@@ -292,8 +292,10 @@ export class FinancialMetricsService {
   private static exportToPdf(metrics: FinancialMetric[]): Blob {
     // For now, return a simple text format
     // In a real implementation, you'd use a library like jsPDF
-    const content = metrics.map(metric => 
-      `${metric.name}: ${metric.formattedValue} (${metric.changePercentage > 0 ? '+' : ''}${metric.changePercentage}%)`
+    const content = metrics.map(metric =>
+      `${metric.name}: ${metric.formattedValue} (${
+        metric.changePercentage > 0 ? '+' : ''
+      }${metric.changePercentage}%)`
     ).join('\n');
 
     return new Blob([content], { type: 'application/pdf' });

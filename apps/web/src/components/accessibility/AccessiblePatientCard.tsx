@@ -11,19 +11,16 @@
  * - LGPD compliant data display
  */
 
-"use client";
+'use client';
 
-import { Card, CardContent, CardHeader } from "@neonpro/ui";
-import { Calendar, Phone, User } from "lucide-react";
-import React, { useCallback } from "react";
+import { Card, CardContent, CardHeader } from '@neonpro/ui';
+import { Calendar, Phone, User } from 'lucide-react';
+import React, { useCallback } from 'react';
 import {
   useAccessibilityPreferences,
   useScreenReaderAnnouncement,
-} from "../../hooks/useAccessibility";
-import {
-  ACCESSIBILITY_LABELS_PT_BR,
-  ScreenReaderUtils,
-} from "../../utils/accessibility";
+} from '../../hooks/useAccessibility';
+import { ACCESSIBILITY_LABELS_PT_BR, ScreenReaderUtils } from '../../utils/accessibility';
 
 interface PatientData {
   id: string;
@@ -32,7 +29,7 @@ interface PatientData {
   phone?: string;
   birthDate?: Date;
   lastAppointment?: Date;
-  status: "active" | "inactive" | "pending";
+  status: 'active' | 'inactive' | 'pending';
   lgpdConsent: boolean;
 }
 
@@ -53,8 +50,7 @@ export function AccessiblePatientCard({
   showSensitiveData = false,
   className,
 }: AccessiblePatientCardProps) {
-  const { prefersHighContrast, prefersReducedMotion } =
-    useAccessibilityPreferences();
+  const { prefersHighContrast, prefersReducedMotion } = useAccessibilityPreferences();
   const { announceHealthcareData } = useScreenReaderAnnouncement();
 
   // Format patient data for screen readers
@@ -80,23 +76,23 @@ export function AccessiblePatientCard({
       parts.push(`Idade: ${age} anos`);
     }
 
-    parts.push(`Consentimento LGPD: ${patient.lgpdConsent ? "Sim" : "Não"}`);
+    parts.push(`Consentimento LGPD: ${patient.lgpdConsent ? 'Sim' : 'Não'}`);
 
-    return parts.join(". ");
+    return parts.join('. ');
   }, [patient, showSensitiveData]);
 
   const handleClick = useCallback(() => {
     onClick?.(patient);
-    announceHealthcareData("Paciente selecionado", patient.name);
+    announceHealthcareData('Paciente selecionado', patient.name);
   }, [onClick, patient, announceHealthcareData]);
 
   const handleKeyDown = useCallback(
     (event: React.KeyboardEvent) => {
-      if (event.key === "Enter" || event.key === " ") {
+      if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault();
         onKeyboardSelect?.(patient);
         announceHealthcareData(
-          "Paciente selecionado via teclado",
+          'Paciente selecionado via teclado',
           patient.name,
         );
       }
@@ -104,11 +100,11 @@ export function AccessiblePatientCard({
     [onKeyboardSelect, patient, announceHealthcareData],
   );
 
-  const getStatusLabel = (status: PatientData["status"]): string => {
+  const getStatusLabel = (status: PatientData['status']): string => {
     const statusLabels = {
-      active: "Ativo",
-      inactive: "Inativo",
-      pending: "Pendente",
+      active: 'Ativo',
+      inactive: 'Inativo',
+      pending: 'Pendente',
     };
     return statusLabels[status];
   };
@@ -120,8 +116,8 @@ export function AccessiblePatientCard({
     const monthDiff = today.getMonth() - birth.getMonth();
 
     if (
-      monthDiff < 0 ||
-      (monthDiff === 0 && today.getDate() < birth.getDate())
+      monthDiff < 0
+      || (monthDiff === 0 && today.getDate() < birth.getDate())
     ) {
       age--;
     }
@@ -129,17 +125,17 @@ export function AccessiblePatientCard({
     return age;
   };
 
-  const getStatusColor = (status: PatientData["status"]): string => {
+  const getStatusColor = (status: PatientData['status']): string => {
     const colors = {
       active: prefersHighContrast
-        ? "text-green-900 bg-green-100"
-        : "text-green-700 bg-green-50",
+        ? 'text-green-900 bg-green-100'
+        : 'text-green-700 bg-green-50',
       inactive: prefersHighContrast
-        ? "text-gray-900 bg-gray-100"
-        : "text-gray-600 bg-gray-50",
+        ? 'text-gray-900 bg-gray-100'
+        : 'text-gray-600 bg-gray-50',
       pending: prefersHighContrast
-        ? "text-yellow-900 bg-yellow-100"
-        : "text-yellow-700 bg-yellow-50",
+        ? 'text-yellow-900 bg-yellow-100'
+        : 'text-yellow-700 bg-yellow-50',
     };
     return colors[status];
   };
@@ -148,36 +144,36 @@ export function AccessiblePatientCard({
     <Card
       className={`
         cursor-pointer transition-all duration-200 
-        ${prefersReducedMotion ? "" : "hover:shadow-md hover:scale-[1.02]"}
-        ${isSelected ? "ring-2 ring-primary ring-offset-2" : ""}
-        ${prefersHighContrast ? "border-2 border-gray-900" : "border border-gray-200"}
+        ${prefersReducedMotion ? '' : 'hover:shadow-md hover:scale-[1.02]'}
+        ${isSelected ? 'ring-2 ring-primary ring-offset-2' : ''}
+        ${prefersHighContrast ? 'border-2 border-gray-900' : 'border border-gray-200'}
         focus-within:ring-2 focus-within:ring-primary focus-within:ring-offset-2
         ${className}
       `}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       tabIndex={0}
-      role="button"
+      role='button'
       aria-label={formatPatientForScreenReader()}
       aria-selected={isSelected}
       aria-describedby={`patient-${patient.id}-details`}
     >
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+      <CardHeader className='pb-3'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center space-x-3'>
             <div
               className={`
                 w-10 h-10 rounded-full flex items-center justify-center
-                ${prefersHighContrast ? "bg-gray-900 text-white" : "bg-primary/10 text-primary"}
+                ${prefersHighContrast ? 'bg-gray-900 text-white' : 'bg-primary/10 text-primary'}
               `}
-              aria-hidden="true"
+              aria-hidden='true'
             >
-              <User className="w-5 h-5" />
+              <User className='w-5 h-5' />
             </div>
             <div>
               <h3
                 className={`font-semibold ${
-                  prefersHighContrast ? "text-gray-900" : "text-gray-900"
+                  prefersHighContrast ? 'text-gray-900' : 'text-gray-900'
                 }`}
               >
                 {patient.name}
@@ -187,7 +183,7 @@ export function AccessiblePatientCard({
                   inline-flex items-center px-2 py-1 rounded-full text-xs font-medium
                   ${getStatusColor(patient.status)}
                 `}
-                role="status"
+                role='status'
                 aria-label={`Status do paciente: ${getStatusLabel(patient.status)}`}
               >
                 {getStatusLabel(patient.status)}
@@ -200,30 +196,30 @@ export function AccessiblePatientCard({
             className={`
               w-3 h-3 rounded-full
               ${
-                patient.lgpdConsent
-                  ? prefersHighContrast
-                    ? "bg-green-900"
-                    : "bg-green-500"
-                  : prefersHighContrast
-                    ? "bg-red-900"
-                    : "bg-red-500"
-              }
+              patient.lgpdConsent
+                ? prefersHighContrast
+                  ? 'bg-green-900'
+                  : 'bg-green-500'
+                : prefersHighContrast
+                ? 'bg-red-900'
+                : 'bg-red-500'
+            }
             `}
-            role="img"
+            role='img'
             aria-label={`Consentimento LGPD: ${
-              patient.lgpdConsent ? "Concedido" : "Não concedido"
+              patient.lgpdConsent ? 'Concedido' : 'Não concedido'
             }`}
-            title={`Consentimento LGPD: ${patient.lgpdConsent ? "Concedido" : "Não concedido"}`}
+            title={`Consentimento LGPD: ${patient.lgpdConsent ? 'Concedido' : 'Não concedido'}`}
           />
         </div>
       </CardHeader>
 
-      <CardContent className="pt-0">
-        <div id={`patient-${patient.id}-details`} className="space-y-2">
+      <CardContent className='pt-0'>
+        <div id={`patient-${patient.id}-details`} className='space-y-2'>
           {/* Contact Information */}
           {showSensitiveData && patient.phone && (
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <Phone className="w-4 h-4" aria-hidden="true" />
+            <div className='flex items-center space-x-2 text-sm text-gray-600'>
+              <Phone className='w-4 h-4' aria-hidden='true' />
               <span aria-label={`Telefone: ${patient.phone}`}>
                 {patient.phone}
               </span>
@@ -232,8 +228,8 @@ export function AccessiblePatientCard({
 
           {/* Age Information */}
           {patient.birthDate && (
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <Calendar className="w-4 h-4" aria-hidden="true" />
+            <div className='flex items-center space-x-2 text-sm text-gray-600'>
+              <Calendar className='w-4 h-4' aria-hidden='true' />
               <span
                 aria-label={`Idade: ${calculateAge(patient.birthDate)} anos`}
               >
@@ -244,28 +240,29 @@ export function AccessiblePatientCard({
 
           {/* Last Appointment */}
           {patient.lastAppointment && (
-            <div className="text-sm text-gray-500">
-              <span className="sr-only">Último agendamento:</span>
+            <div className='text-sm text-gray-500'>
+              <span className='sr-only'>Último agendamento:</span>
               <span
-                aria-label={`Último agendamento: ${ScreenReaderUtils.formatDateForScreenReader(
-                  patient.lastAppointment,
-                )}`}
+                aria-label={`Último agendamento: ${
+                  ScreenReaderUtils.formatDateForScreenReader(
+                    patient.lastAppointment,
+                  )
+                }`}
               >
-                Último agendamento:{" "}
-                {new Intl.DateTimeFormat("pt-BR", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
+                Último agendamento: {new Intl.DateTimeFormat('pt-BR', {
+                  day: '2-digit',
+                  month: '2-digit',
+                  year: 'numeric',
                 }).format(patient.lastAppointment)}
               </span>
             </div>
           )}
 
           {/* Accessibility Information for Screen Readers */}
-          <div className="sr-only">
-            {ACCESSIBILITY_LABELS_PT_BR.patientData}. Pressione Enter ou Espaço
-            para selecionar este paciente.
-            {isSelected && " Paciente atualmente selecionado."}
+          <div className='sr-only'>
+            {ACCESSIBILITY_LABELS_PT_BR.patientData}. Pressione Enter ou Espaço para selecionar este
+            paciente.
+            {isSelected && ' Paciente atualmente selecionado.'}
           </div>
         </div>
       </CardContent>
@@ -296,7 +293,7 @@ export function AccessiblePatientList({
   const handlePatientSelect = useCallback(
     (patient: PatientData) => {
       onPatientSelect(patient);
-      announce(`Paciente ${patient.name} selecionado`, "polite");
+      announce(`Paciente ${patient.name} selecionado`, 'polite');
     },
     [onPatientSelect, announce],
   );
@@ -304,13 +301,13 @@ export function AccessiblePatientList({
   return (
     <div
       className={className}
-      role="list"
+      role='list'
       aria-label={`Lista de pacientes. ${patients.length} pacientes encontrados.`}
     >
       {patients.map((patient, index) => (
         <div
           key={patient.id}
-          role="listitem"
+          role='listitem'
           aria-setsize={patients.length}
           aria-posinset={index + 1}
         >
@@ -320,16 +317,16 @@ export function AccessiblePatientList({
             onKeyboardSelect={handlePatientSelect}
             isSelected={patient.id === selectedPatientId}
             showSensitiveData={showSensitiveData}
-            className="mb-4"
+            className='mb-4'
           />
         </div>
       ))}
 
       {patients.length === 0 && (
         <div
-          role="status"
-          aria-live="polite"
-          className="text-center py-8 text-gray-500"
+          role='status'
+          aria-live='polite'
+          className='text-center py-8 text-gray-500'
         >
           Nenhum paciente encontrado.
         </div>

@@ -3,14 +3,14 @@
  * Service for aggregating multiple data sources into unified dashboard views
  */
 
-import { supabase } from "@/integrations/supabase/client";
-import { FinancialMetricsService } from "./financial-metrics";
-import type { FinancialMetric, MetricsCalculationOptions } from "./financial-metrics";
+import { supabase } from '@/integrations/supabase/client';
+import { FinancialMetricsService } from './financial-metrics';
+import type { FinancialMetric, MetricsCalculationOptions } from './financial-metrics';
 
 export interface DashboardData {
   id: string;
   clinicId: string;
-  period: "daily" | "weekly" | "monthly" | "yearly";
+  period: 'daily' | 'weekly' | 'monthly' | 'yearly';
   timestamp: Date;
   financialMetrics: FinancialMetric[];
   aggregates: {
@@ -33,13 +33,13 @@ export interface DashboardData {
 
 export interface DashboardInsight {
   id: string;
-  type: "positive" | "warning" | "negative" | "info";
+  type: 'positive' | 'warning' | 'negative' | 'info';
   title: string;
   description: string;
   value?: number;
   formattedValue?: string;
-  trend?: "up" | "down" | "stable";
-  priority: "high" | "medium" | "low";
+  trend?: 'up' | 'down' | 'stable';
+  priority: 'high' | 'medium' | 'low';
   actionable: boolean;
   recommendations?: string[];
 }
@@ -51,14 +51,15 @@ export interface RealTimeMetrics {
   pendingPayments: number;
   urgentTasks: number;
   lastUpdated: Date;
-}export interface DashboardFilters {
-  period: "daily" | "weekly" | "monthly" | "yearly";
+}
+export interface DashboardFilters {
+  period: 'daily' | 'weekly' | 'monthly' | 'yearly';
   startDate: Date;
   endDate: Date;
   clinicId: string;
   includeComparisons?: boolean;
   includeRealTime?: boolean;
-  metricCategories?: ("revenue" | "expenses" | "profit" | "patients" | "appointments")[];
+  metricCategories?: ('revenue' | 'expenses' | 'profit' | 'patients' | 'appointments')[];
 }
 
 export class DashboardDataService {
@@ -66,7 +67,7 @@ export class DashboardDataService {
    * Get comprehensive dashboard data for a clinic
    */
   static async getDashboardData(
-    filters: DashboardFilters
+    filters: DashboardFilters,
   ): Promise<DashboardData> {
     try {
       // Parallel data fetching for performance
@@ -101,7 +102,7 @@ export class DashboardDataService {
    */
   static async getDashboardSummary(
     clinicId: string,
-    period: "daily" | "weekly" | "monthly" | "yearly" = "monthly"
+    period: 'daily' | 'weekly' | 'monthly' | 'yearly' = 'monthly',
   ): Promise<{
     totalRevenue: number;
     totalExpenses: number;
@@ -113,19 +114,19 @@ export class DashboardDataService {
     try {
       const endDate = new Date();
       const startDate = new Date();
-      
+
       // Calculate date range based on period
       switch (period) {
-        case "daily":
+        case 'daily':
           startDate.setHours(0, 0, 0, 0);
           break;
-        case "weekly":
+        case 'weekly':
           startDate.setDate(endDate.getDate() - 7);
           break;
-        case "monthly":
+        case 'monthly':
           startDate.setMonth(endDate.getMonth() - 1);
           break;
-        case "yearly":
+        case 'yearly':
           startDate.setFullYear(endDate.getFullYear() - 1);
           break;
       }
@@ -135,7 +136,7 @@ export class DashboardDataService {
           p_clinic_id: clinicId,
           p_start_date: startDate.toISOString(),
           p_end_date: endDate.toISOString(),
-          p_period: period
+          p_period: period,
         });
 
       if (error) throw error;
@@ -152,9 +153,10 @@ export class DashboardDataService {
       console.error('Error fetching dashboard summary:', error);
       throw new Error('Failed to fetch dashboard summary');
     }
-  }  /**
+  } /**
    * Get real-time metrics for live dashboard updates
    */
+
   static async getRealTimeMetrics(clinicId: string): Promise<RealTimeMetrics> {
     try {
       const today = new Date();
@@ -163,7 +165,7 @@ export class DashboardDataService {
       const { data, error } = await supabase
         .rpc('get_realtime_metrics', {
           p_clinic_id: clinicId,
-          p_date: today.toISOString()
+          p_date: today.toISOString(),
         });
 
       if (error) throw error;
@@ -186,7 +188,7 @@ export class DashboardDataService {
    * Private helper methods
    */
   private static async getFinancialMetrics(
-    filters: DashboardFilters
+    filters: DashboardFilters,
   ): Promise<FinancialMetric[]> {
     const options: MetricsCalculationOptions = {
       period: filters.period,
@@ -211,7 +213,7 @@ export class DashboardDataService {
   }
 
   private static async getInsights(
-    filters: DashboardFilters
+    filters: DashboardFilters,
   ): Promise<DashboardInsight[]> {
     try {
       const { data, error } = await supabase
@@ -219,7 +221,7 @@ export class DashboardDataService {
           p_clinic_id: filters.clinicId,
           p_start_date: filters.startDate.toISOString(),
           p_end_date: filters.endDate.toISOString(),
-          p_period: filters.period
+          p_period: filters.period,
         });
 
       if (error) throw error;
@@ -261,19 +263,19 @@ export class DashboardDataService {
       return {
         revenueGrowth: this.calculateGrowthRate(
           currentAggregates.totalRevenue,
-          previousAggregates.totalRevenue
+          previousAggregates.totalRevenue,
         ),
         expenseGrowth: this.calculateGrowthRate(
           currentAggregates.totalExpenses,
-          previousAggregates.totalExpenses
+          previousAggregates.totalExpenses,
         ),
         profitGrowth: this.calculateGrowthRate(
           currentAggregates.netProfit,
-          previousAggregates.netProfit
+          previousAggregates.netProfit,
         ),
         patientGrowth: this.calculateGrowthRate(
           currentAggregates.patientCount,
-          previousAggregates.patientCount
+          previousAggregates.patientCount,
         ),
       };
     } catch (error) {

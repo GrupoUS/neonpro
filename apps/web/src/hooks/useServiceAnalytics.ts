@@ -3,28 +3,28 @@
  * React Query hooks for analytics and reporting
  */
 
-import { serviceAnalyticsService } from "@/services/service-analytics.service";
+import { serviceAnalyticsService } from '@/services/service-analytics.service';
 import type {
   AnalyticsExportRequest,
   AnalyticsFilters,
   AnalyticsTimeRange,
-} from "@/types/service-analytics";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+} from '@/types/service-analytics';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 // Query Keys
 export const analyticsKeys = {
-  all: ["analytics"] as const,
-  service: () => [...analyticsKeys.all, "service"] as const,
+  all: ['analytics'] as const,
+  service: () => [...analyticsKeys.all, 'service'] as const,
   serviceAnalytics: (clinicId: string, filters?: AnalyticsFilters) =>
     [...analyticsKeys.service(), clinicId, filters] as const,
-  revenue: () => [...analyticsKeys.all, "revenue"] as const,
+  revenue: () => [...analyticsKeys.all, 'revenue'] as const,
   revenueAnalytics: (clinicId: string, filters?: AnalyticsFilters) =>
     [...analyticsKeys.revenue(), clinicId, filters] as const,
-  usage: () => [...analyticsKeys.all, "usage"] as const,
+  usage: () => [...analyticsKeys.all, 'usage'] as const,
   usageStatistics: (clinicId: string, filters?: AnalyticsFilters) =>
     [...analyticsKeys.usage(), clinicId, filters] as const,
-  professional: () => [...analyticsKeys.all, "professional"] as const,
+  professional: () => [...analyticsKeys.all, 'professional'] as const,
   professionalPerformance: (
     clinicId: string,
     professionalId?: string,
@@ -37,13 +37,12 @@ export const analyticsKeys = {
       filters,
     ] as const,
   dashboard: (clinicId: string, filters?: AnalyticsFilters) =>
-    [...analyticsKeys.all, "dashboard", clinicId, filters] as const,
-  realtime: (clinicId: string) =>
-    [...analyticsKeys.all, "realtime", clinicId] as const,
+    [...analyticsKeys.all, 'dashboard', clinicId, filters] as const,
+  realtime: (clinicId: string) => [...analyticsKeys.all, 'realtime', clinicId] as const,
   trends: (clinicId: string, granularity: string, filters?: AnalyticsFilters) =>
-    [...analyticsKeys.all, "trends", clinicId, granularity, filters] as const,
+    [...analyticsKeys.all, 'trends', clinicId, granularity, filters] as const,
   insights: (clinicId: string, filters?: AnalyticsFilters) =>
-    [...analyticsKeys.all, "insights", clinicId, filters] as const,
+    [...analyticsKeys.all, 'insights', clinicId, filters] as const,
 };
 
 /**
@@ -55,8 +54,7 @@ export function useServiceAnalytics(
 ) {
   return useQuery({
     queryKey: analyticsKeys.serviceAnalytics(clinicId, filters),
-    queryFn: () =>
-      serviceAnalyticsService.getServiceAnalytics(clinicId, filters),
+    queryFn: () => serviceAnalyticsService.getServiceAnalytics(clinicId, filters),
     enabled: !!clinicId,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -71,8 +69,7 @@ export function useRevenueAnalytics(
 ) {
   return useQuery({
     queryKey: analyticsKeys.revenueAnalytics(clinicId, filters),
-    queryFn: () =>
-      serviceAnalyticsService.getRevenueAnalytics(clinicId, filters),
+    queryFn: () => serviceAnalyticsService.getRevenueAnalytics(clinicId, filters),
     enabled: !!clinicId,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -87,8 +84,7 @@ export function useUsageStatistics(
 ) {
   return useQuery({
     queryKey: analyticsKeys.usageStatistics(clinicId, filters),
-    queryFn: () =>
-      serviceAnalyticsService.getUsageStatistics(clinicId, filters),
+    queryFn: () => serviceAnalyticsService.getUsageStatistics(clinicId, filters),
     enabled: !!clinicId,
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
@@ -128,8 +124,7 @@ export function useAnalyticsDashboard(
 ) {
   return useQuery({
     queryKey: analyticsKeys.dashboard(clinicId, filters),
-    queryFn: () =>
-      serviceAnalyticsService.getAnalyticsDashboard(clinicId, filters),
+    queryFn: () => serviceAnalyticsService.getAnalyticsDashboard(clinicId, filters),
     enabled: !!clinicId,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -153,13 +148,12 @@ export function useRealTimeAnalytics(clinicId: string) {
  */
 export function useRevenueTrends(
   clinicId: string,
-  granularity: "daily" | "weekly" | "monthly" = "daily",
+  granularity: 'daily' | 'weekly' | 'monthly' = 'daily',
   filters?: AnalyticsFilters,
 ) {
   return useQuery({
     queryKey: analyticsKeys.trends(clinicId, granularity, filters),
-    queryFn: () =>
-      serviceAnalyticsService.getRevenueTrends(clinicId, granularity, filters),
+    queryFn: () => serviceAnalyticsService.getRevenueTrends(clinicId, granularity, filters),
     enabled: !!clinicId,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -174,8 +168,7 @@ export function useAnalyticsInsights(
 ) {
   return useQuery({
     queryKey: analyticsKeys.insights(clinicId, filters),
-    queryFn: () =>
-      serviceAnalyticsService.getAnalyticsInsights(clinicId, filters),
+    queryFn: () => serviceAnalyticsService.getAnalyticsInsights(clinicId, filters),
     enabled: !!clinicId,
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
@@ -192,7 +185,7 @@ export function useServiceComparison(
   return useQuery({
     queryKey: [
       ...analyticsKeys.service(),
-      "comparison",
+      'comparison',
       clinicId,
       serviceIds,
       filters,
@@ -219,13 +212,12 @@ export function useExportAnalytics() {
     onSuccess: (blob, variables) => {
       // Create download link
       const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = url;
 
-      const extension =
-        variables.format === "excel" ? "xlsx" : variables.format;
+      const extension = variables.format === 'excel' ? 'xlsx' : variables.format;
       link.download = `analytics-${variables.report_type}-${
-        new Date().toISOString().split("T")[0]
+        new Date().toISOString().split('T')[0]
       }.${extension}`;
 
       document.body.appendChild(link);
@@ -233,11 +225,11 @@ export function useExportAnalytics() {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success("Relatório exportado com sucesso!");
+      toast.success('Relatório exportado com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error exporting analytics:", error);
+      console.error('Error exporting analytics:', error);
       toast.error(`Erro ao exportar relatório: ${error.message}`);
     },
   });
@@ -254,11 +246,11 @@ export function useAnalyticsByTimeRange(
 ) {
   const filters: AnalyticsFilters = {};
 
-  if (timeRange === "custom" && customStart && customEnd) {
+  if (timeRange === 'custom' && customStart && customEnd) {
     filters.start_date = customStart.toISOString();
     filters.end_date = customEnd.toISOString();
-  } else if (timeRange !== "custom") {
-    const { getTimeRangeDates } = require("@/types/service-analytics");
+  } else if (timeRange !== 'custom') {
+    const { getTimeRangeDates } = require('@/types/service-analytics');
     const { start, end } = getTimeRangeDates(timeRange);
     filters.start_date = start.toISOString();
     filters.end_date = end.toISOString();
@@ -283,12 +275,12 @@ export function useRefreshAnalytics() {
     },
 
     onSuccess: () => {
-      toast.success("Dados de analytics atualizados!");
+      toast.success('Dados de analytics atualizados!');
     },
 
     onError: (error: Error) => {
-      console.error("Error refreshing analytics:", error);
-      toast.error("Erro ao atualizar dados de analytics");
+      console.error('Error refreshing analytics:', error);
+      toast.error('Erro ao atualizar dados de analytics');
     },
   });
 }

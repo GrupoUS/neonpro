@@ -10,7 +10,8 @@ import { z } from 'zod';
 export const ContactSchema = z.object({
   email: z.string().email('Email inválido').optional().nullable(),
   phone: z.string().regex(/^\d{10,11}$/, 'Telefone deve ter 10-11 dígitos').optional().nullable(),
-  emergencyPhone: z.string().regex(/^\d{10,11}$/, 'Telefone de emergência deve ter 10-11 dígitos').optional().nullable(),
+  emergencyPhone: z.string().regex(/^\d{10,11}$/, 'Telefone de emergência deve ter 10-11 dígitos')
+    .optional().nullable(),
 });
 
 /**
@@ -22,7 +23,10 @@ export const AddressSchema = z.object({
   complement: z.string().optional(),
   neighborhood: z.string().min(3, 'Bairro deve ter pelo menos 3 caracteres'),
   city: z.string().min(3, 'Cidade deve ter pelo menos 3 caracteres'),
-  state: z.string().length(2, 'Estado deve ter 2 caracteres').regex(/^[A-Z]{2}$/, 'Estado inválido'),
+  state: z.string().length(2, 'Estado deve ter 2 caracteres').regex(
+    /^[A-Z]{2}$/,
+    'Estado inválido',
+  ),
   cep: z.string().regex(/^\d{8}$/, 'CEP deve ter 8 dígitos'),
   country: z.string().default('Brasil'),
 });
@@ -58,7 +62,8 @@ export const PatientSchema = z.object({
     relationship: z.string().min(3, 'Parentesco é obrigatório'),
     phone: z.string().regex(/^\d{10,11}$/, 'Telefone deve ter 10-11 dígitos'),
   }).optional(),
-  medicalHistory: z.string().max(2000, 'Histórico médico não pode exceder 2000 caracteres').optional(),
+  medicalHistory: z.string().max(2000, 'Histórico médico não pode exceder 2000 caracteres')
+    .optional(),
   allergies: z.array(z.string()).optional(),
   medications: z.array(z.string()).optional(),
   consentimentoLGPDPaciente: z.boolean().default(false),
@@ -95,10 +100,23 @@ export const AppointmentSchema = z.object({
   duration: z.number().min(5, 'Duração mínima é 5 minutos')
     .max(180, 'Duração máxima é 180 minutos').optional(),
   appointmentType: z.enum([
-    'CONSULTA_INICIAL', 'CONSULTA_RETORNO', 'EXAME', 'PROCEDIMENTO',
-    'CIRURGIA', 'TELEMEDICINA', 'URGENCIA', 'FOLLOW_UP'
+    'CONSULTA_INICIAL',
+    'CONSULTA_RETORNO',
+    'EXAME',
+    'PROCEDIMENTO',
+    'CIRURGIA',
+    'TELEMEDICINA',
+    'URGENCIA',
+    'FOLLOW_UP',
   ], 'Tipo de consulta inválido'),
-  status: z.enum(['AGENDADO', 'CONFIRMADO', 'EM_ANDAMENTO', 'CONCLUIDO', 'CANCELADO', 'NAO_COMPARECEU']).default('AGENDADO'),
+  status: z.enum([
+    'AGENDADO',
+    'CONFIRMADO',
+    'EM_ANDAMENTO',
+    'CONCLUIDO',
+    'CANCELADO',
+    'NAO_COMPARECEU',
+  ]).default('AGENDADO'),
   reason: z.string().min(5, 'Motivo da consulta deve ter pelo menos 5 caracteres')
     .max(500, 'Motivo não pode exceder 500 caracteres'),
   notes: z.string().max(1000, 'Observações não podem exceder 1000 caracteres').optional(),
@@ -134,8 +152,15 @@ export const MedicalRecordSchema = z.object({
   patientId: z.string().min(1, 'ID do paciente é obrigatório'),
   professionalId: z.string().min(1, 'ID do profissional é obrigatório'),
   recordType: z.enum([
-    'ANAMNESE', 'EVOLUCAO', 'PRESCRICAO', 'EXAME', 'RESULTADO',
-    'ALTA', 'ENCAMINHAMENTO', 'ATESTADO', 'DECLARACAO'
+    'ANAMNESE',
+    'EVOLUCAO',
+    'PRESCRICAO',
+    'EXAME',
+    'RESULTADO',
+    'ALTA',
+    'ENCAMINHAMENTO',
+    'ATESTADO',
+    'DECLARACAO',
   ], 'Tipo de registro inválido'),
   content: z.string().min(10, 'Conteúdo deve ter pelo menos 10 caracteres')
     .max(10000, 'Conteúdo não pode exceder 10000 caracteres'),
@@ -152,19 +177,27 @@ export const MedicalRecordSchema = z.object({
   })).optional(),
   vitalSigns: z.object({
     bloodPressure: z.string().optional(),
-    heartRate: z.number().min(40, 'Frequência cardíaca inválida').max(200, 'Frequência cardíaca inválida').optional(),
-    temperature: z.number().min(35, 'Temperatura inválida').max(42, 'Temperatura inválida').optional(),
-    oxygenSaturation: z.number().min(70, 'Saturação inválida').max(100, 'Saturação inválida').optional(),
-    respiratoryRate: z.number().min(8, 'Frequência respiratória inválida').max(40, 'Frequência respiratória inválida').optional(),
+    heartRate: z.number().min(40, 'Frequência cardíaca inválida').max(
+      200,
+      'Frequência cardíaca inválida',
+    ).optional(),
+    temperature: z.number().min(35, 'Temperatura inválida').max(42, 'Temperatura inválida')
+      .optional(),
+    oxygenSaturation: z.number().min(70, 'Saturação inválida').max(100, 'Saturação inválida')
+      .optional(),
+    respiratoryRate: z.number().min(8, 'Frequência respiratória inválida').max(
+      40,
+      'Frequência respiratória inválida',
+    ).optional(),
   }).optional(),
   isConfidential: z.boolean().default(false),
 }).refine(data => {
   // Validate sensitive content marking
   const sensitiveKeywords = ['hiv', 'aids', 'câncer', 'doença terminal', 'psiquiátrico'];
-  const hasSensitiveContent = sensitiveKeywords.some(keyword => 
+  const hasSensitiveContent = sensitiveKeywords.some(keyword =>
     data.content.toLowerCase().includes(keyword)
   );
-  
+
   if (hasSensitiveContent && !data.isConfidential) {
     return false;
   }
@@ -223,11 +256,25 @@ export const ProfessionalSchema = z.object({
     .max(100, 'Nome completo não pode exceder 100 caracteres'),
   licenseNumber: z.string()
     .regex(/^(CRM|CRO|CRF|COREN)\/[A-Z]{2}\s*\d{6}$/, 'Número de registro profissional inválido'),
-  licenseState: z.string().length(2, 'Estado deve ter 2 caracteres').regex(/^[A-Z]{2}$/, 'Estado inválido'),
+  licenseState: z.string().length(2, 'Estado deve ter 2 caracteres').regex(
+    /^[A-Z]{2}$/,
+    'Estado inválido',
+  ),
   specialty: z.enum([
-    'CLINICA_GERAL', 'PEDIATRIA', 'CARDIOLOGIA', 'ORTOPEDIA', 'GINECOLOGIA',
-    'OFTALMOLOGIA', 'DERMATOLOGIA', 'PSIQUIATRIA', 'NEUROLOGIA', 'UROLOGIA',
-    'CIRURGIA_GERAL', 'ANESTESIOLOGIA', 'RADIOLOGIA', 'PATOLOGIA'
+    'CLINICA_GERAL',
+    'PEDIATRIA',
+    'CARDIOLOGIA',
+    'ORTOPEDIA',
+    'GINECOLOGIA',
+    'OFTALMOLOGIA',
+    'DERMATOLOGIA',
+    'PSIQUIATRIA',
+    'NEUROLOGIA',
+    'UROLOGIA',
+    'CIRURGIA_GERAL',
+    'ANESTESIOLOGIA',
+    'RADIOLOGIA',
+    'PATOLOGIA',
   ], 'Especialidade inválida'),
   email: z.string().email('Email inválido'),
   phone: z.string().regex(/^\d{10,11}$/, 'Telefone deve ter 10-11 dígitos'),
@@ -278,7 +325,7 @@ export function validateEntityData(entity: string, data: any): {
   try {
     const schema = getEntitySchema(entity);
     const result = schema.safeParse(data);
-    
+
     if (result.success) {
       return {
         isValid: true,
@@ -287,10 +334,8 @@ export function validateEntityData(entity: string, data: any): {
         sanitizedData: result.data,
       };
     } else {
-      const errors = result.error.errors.map(err => 
-        `${err.path.join('.')}: ${err.message}`
-      );
-      
+      const errors = result.error.errors.map(err => `${err.path.join('.')}: ${err.message}`);
+
       return {
         isValid: false,
         errors,
@@ -317,11 +362,11 @@ export function validateEntityData(entity: string, data: any): {
  */
 function validateCPF(cpf: string): boolean {
   cpf = cpf.replace(/\D/g, '');
-  
+
   if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
     return false;
   }
-  
+
   let sum = 0;
   for (let i = 0; i < 9; i++) {
     sum += parseInt(cpf[i]) * (10 - i);
@@ -329,7 +374,7 @@ function validateCPF(cpf: string): boolean {
   let remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
   if (remainder !== parseInt(cpf[9])) return false;
-  
+
   sum = 0;
   for (let i = 0; i < 10; i++) {
     sum += parseInt(cpf[i]) * (11 - i);
@@ -337,7 +382,7 @@ function validateCPF(cpf: string): boolean {
   remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
   if (remainder !== parseInt(cpf[10])) return false;
-  
+
   return true;
 }
 
@@ -348,11 +393,11 @@ function calculateAge(birthDate: Date): number {
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const monthDiff = today.getMonth() - birthDate.getMonth();
-  
+
   if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
     age--;
   }
-  
+
   return age;
 }
 

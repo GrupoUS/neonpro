@@ -1,47 +1,44 @@
 // Updated to use new healthcare database schema
-import { createClient } from "@supabase/supabase-js";
-import type { SupabaseClient } from "@supabase/supabase-js";
-import type { Database } from "../../lib/supabase/types/database";
+import { createClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import type { Database } from '../../lib/supabase/types/database';
 
 // Get Supabase credentials from environment variables
-const SUPABASE_URL =
-  import.meta.env.VITE_SUPABASE_URL || import.meta.env.NEXT_PUBLIC_SUPABASE_URL;
-const SUPABASE_PUBLISHABLE_KEY =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const IS_TEST =
-  typeof import.meta !== "undefined" &&
-  (import.meta as any).env?.MODE === "test";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || import.meta.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY
+  || import.meta.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const IS_TEST = typeof import.meta !== 'undefined'
+  && (import.meta as any).env?.MODE === 'test';
 
 // Validate required environment variables
 if (!SUPABASE_URL && !IS_TEST) {
   throw new Error(
-    "Missing required environment variable: VITE_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_URL",
+    'Missing required environment variable: VITE_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_URL',
   );
 }
 
 if (!SUPABASE_PUBLISHABLE_KEY && !IS_TEST) {
   throw new Error(
-    "Missing required environment variable: VITE_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY",
+    'Missing required environment variable: VITE_SUPABASE_ANON_KEY or NEXT_PUBLIC_SUPABASE_ANON_KEY',
   );
 }
 
-import { getSiteUrl } from "@/lib/site-url";
+import { getSiteUrl } from '@/lib/site-url';
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
 const SUPABASE_URL_RESOLVED = IS_TEST
-  ? SUPABASE_URL || "http://localhost:54321"
+  ? SUPABASE_URL || 'http://localhost:54321'
   : SUPABASE_URL;
 
 const SUPABASE_KEY_RESOLVED = IS_TEST
-  ? SUPABASE_PUBLISHABLE_KEY || "test-anon-key"
+  ? SUPABASE_PUBLISHABLE_KEY || 'test-anon-key'
   : SUPABASE_PUBLISHABLE_KEY;
 
 if (!IS_TEST && (!SUPABASE_URL_RESOLVED || !SUPABASE_KEY_RESOLVED)) {
   throw new Error(
-    "Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (or NEXT_PUBLIC_ equivalents) in Vercel envs.",
+    'Supabase not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (or NEXT_PUBLIC_ equivalents) in Vercel envs.',
   );
 }
 
@@ -50,10 +47,9 @@ export const supabase: SupabaseClient<Database> = createClient<Database>(
   SUPABASE_KEY_RESOLVED as string,
   {
     auth: {
-      storage:
-        typeof globalThis !== "undefined" && "localStorage" in globalThis
-          ? (globalThis.localStorage as Storage)
-          : undefined,
+      storage: typeof globalThis !== 'undefined' && 'localStorage' in globalThis
+        ? (globalThis.localStorage as Storage)
+        : undefined,
       persistSession: true,
       autoRefreshToken: true,
     },
@@ -63,7 +59,7 @@ export const supabase: SupabaseClient<Database> = createClient<Database>(
 
 // Helper para login com OAuth providers
 export const signInWithProvider = async (
-  provider: "google" | "github" | "apple",
+  provider: 'google' | 'github' | 'apple',
   redirectTo?: string,
 ) => {
   const baseUrl = getSiteUrl();

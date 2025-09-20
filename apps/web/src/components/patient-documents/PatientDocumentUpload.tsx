@@ -13,13 +13,13 @@
  * - Audit trail integration
  */
 
-"use client";
+'use client';
 
-import { useAuth } from "@/hooks/useAuth";
-import { cn } from "@/lib/utils";
-import { DndContext, DragOverlay, useDndContext } from "@dnd-kit/core";
-import type { UniqueIdentifier } from "@dnd-kit/core";
-import { Badge, Button, Progress } from "@neonpro/ui";
+import { useAuth } from '@/hooks/useAuth';
+import { cn } from '@/lib/utils';
+import { DndContext, DragOverlay, useDndContext } from '@dnd-kit/core';
+import type { UniqueIdentifier } from '@dnd-kit/core';
+import { Badge, Button, Progress } from '@neonpro/ui';
 import {
   IconAlertCircle,
   IconCheck,
@@ -31,9 +31,9 @@ import {
   IconPhoto,
   IconTrash,
   IconX,
-} from "@tabler/icons-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+} from '@tabler/icons-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 // Types aligned with backend service
 export interface PatientDocument {
@@ -50,18 +50,18 @@ export interface PatientDocument {
 }
 
 export type DocumentCategory =
-  | "identity" // RG, CPF, CNH
-  | "medical" // Exames, laudos, receitas
-  | "insurance" // Carteirinha do plano
-  | "consent" // Termos de consentimento LGPD
-  | "aesthetic" // Documentos estéticos
-  | "other"; // Outros documentos
+  | 'identity' // RG, CPF, CNH
+  | 'medical' // Exames, laudos, receitas
+  | 'insurance' // Carteirinha do plano
+  | 'consent' // Termos de consentimento LGPD
+  | 'aesthetic' // Documentos estéticos
+  | 'other'; // Outros documentos
 
 interface UploadState {
   readonly id: string;
   readonly file: File;
   readonly progress: number;
-  readonly status: "queued" | "uploading" | "completed" | "error";
+  readonly status: 'queued' | 'uploading' | 'completed' | 'error';
   readonly error?: string;
   readonly uploadedDocument?: PatientDocument;
 }
@@ -82,61 +82,61 @@ interface PatientDocumentUploadProps {
 // Brazilian healthcare document types with enhanced metadata
 const HEALTHCARE_FILE_TYPES = {
   // Medical images
-  "image/jpeg": {
+  'image/jpeg': {
     icon: IconPhoto,
-    label: "Imagem JPEG",
-    color: "bg-blue-100 text-blue-800",
+    label: 'Imagem JPEG',
+    color: 'bg-blue-100 text-blue-800',
     maxSize: 15, // MB
   },
-  "image/png": {
+  'image/png': {
     icon: IconPhoto,
-    label: "Imagem PNG",
-    color: "bg-blue-100 text-blue-800",
+    label: 'Imagem PNG',
+    color: 'bg-blue-100 text-blue-800',
     maxSize: 15,
   },
-  "image/webp": {
+  'image/webp': {
     icon: IconPhoto,
-    label: "Imagem WebP",
-    color: "bg-blue-100 text-blue-800",
+    label: 'Imagem WebP',
+    color: 'bg-blue-100 text-blue-800',
     maxSize: 15,
   },
 
   // Documents
-  "application/pdf": {
+  'application/pdf': {
     icon: IconFileText,
-    label: "Documento PDF",
-    color: "bg-red-100 text-red-800",
+    label: 'Documento PDF',
+    color: 'bg-red-100 text-red-800',
     maxSize: 25,
   },
-  "application/msword": {
+  'application/msword': {
     icon: IconFileText,
-    label: "Documento Word",
-    color: "bg-blue-100 text-blue-800",
+    label: 'Documento Word',
+    color: 'bg-blue-100 text-blue-800',
     maxSize: 10,
   },
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": {
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
     icon: IconFileText,
-    label: "Documento Word",
-    color: "bg-blue-100 text-blue-800",
+    label: 'Documento Word',
+    color: 'bg-blue-100 text-blue-800',
     maxSize: 10,
   },
 
   // Default
   default: {
     icon: IconFile,
-    label: "Arquivo",
-    color: "bg-gray-100 text-gray-800",
+    label: 'Arquivo',
+    color: 'bg-gray-100 text-gray-800',
     maxSize: 10,
   },
 } as const;
 
 const DEFAULT_ACCEPTED_TYPES = [
-  "image/jpeg",
-  "image/png",
-  "image/webp",
-  "application/pdf",
-  "application/msword",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ] as const;
 
 const DEFAULT_MAX_FILE_SIZE = 15; // 15MB
@@ -144,7 +144,7 @@ const DEFAULT_MAX_FILES = 10;
 
 export function PatientDocumentUpload({
   patientId,
-  category = "medical",
+  category = 'medical',
   maxFiles = DEFAULT_MAX_FILES,
   maxFileSize = DEFAULT_MAX_FILE_SIZE,
   acceptedTypes = DEFAULT_ACCEPTED_TYPES,
@@ -175,12 +175,12 @@ export function PatientDocumentUpload({
   const loadExistingDocuments = async () => {
     try {
       // TODO: Integrate with actual API endpoint
-      console.log("Loading existing documents for patient:", patientId);
+      console.log('Loading existing documents for patient:', patientId);
       // Mock data for now
       setExistingDocuments([]);
     } catch (error) {
-      console.error("Error loading existing documents:", error);
-      toast.error("Erro ao carregar documentos existentes");
+      console.error('Error loading existing documents:', error);
+      toast.error('Erro ao carregar documentos existentes');
     }
   };
 
@@ -189,20 +189,21 @@ export function PatientDocumentUpload({
     (file: File): string | null => {
       // Check file type
       if (!acceptedTypes.includes(file.type as any)) {
-        return `Tipo de arquivo não suportado. Aceito: ${acceptedTypes
-          .map(
-            (type) =>
-              HEALTHCARE_FILE_TYPES[type as keyof typeof HEALTHCARE_FILE_TYPES]
-                ?.label || type,
-          )
-          .join(", ")}`;
+        return `Tipo de arquivo não suportado. Aceito: ${
+          acceptedTypes
+            .map(
+              type =>
+                HEALTHCARE_FILE_TYPES[type as keyof typeof HEALTHCARE_FILE_TYPES]
+                  ?.label || type,
+            )
+            .join(', ')
+        }`;
       }
 
       // Check file size with type-specific limits
-      const typeInfo =
-        HEALTHCARE_FILE_TYPES[
-          file.type as keyof typeof HEALTHCARE_FILE_TYPES
-        ] || HEALTHCARE_FILE_TYPES.default;
+      const typeInfo = HEALTHCARE_FILE_TYPES[
+        file.type as keyof typeof HEALTHCARE_FILE_TYPES
+      ] || HEALTHCARE_FILE_TYPES.default;
       const typeMaxSize = typeInfo.maxSize;
       const effectiveMaxSize = Math.min(maxFileSize, typeMaxSize);
 
@@ -219,13 +220,13 @@ export function PatientDocumentUpload({
 
       // Healthcare-specific validation
       if (
-        category === "identity" &&
-        !file.name.toLowerCase().includes("rg") &&
-        !file.name.toLowerCase().includes("cpf") &&
-        !file.name.toLowerCase().includes("cnh")
+        category === 'identity'
+        && !file.name.toLowerCase().includes('rg')
+        && !file.name.toLowerCase().includes('cpf')
+        && !file.name.toLowerCase().includes('cnh')
       ) {
         console.warn(
-          "Identity document should contain identifying keywords in filename",
+          'Identity document should contain identifying keywords in filename',
         );
       }
 
@@ -247,18 +248,18 @@ export function PatientDocumentUpload({
     uploadId: string,
   ): Promise<PatientDocument> => {
     if (!user) {
-      throw new Error("Usuário não autenticado");
+      throw new Error('Usuário não autenticado');
     }
 
     const formData = new FormData();
-    formData.append("file", file);
-    formData.append("patient_id", patientId);
-    formData.append("document_category", category);
-    formData.append("uploaded_by", user.id);
+    formData.append('file', file);
+    formData.append('patient_id', patientId);
+    formData.append('document_category', category);
+    formData.append('uploaded_by', user.id);
 
     // Simulate progress updates
     const updateProgress = (progress: number) => {
-      setUploadQueue((prev) => {
+      setUploadQueue(prev => {
         const newMap = new Map(prev);
         const state = newMap.get(uploadId);
         if (state) {
@@ -272,8 +273,8 @@ export function PatientDocumentUpload({
       // Simulate progress
       updateProgress(10);
 
-      const response = await fetch("/api/v1/patient-documents/upload", {
-        method: "POST",
+      const response = await fetch('/api/v1/patient-documents/upload', {
+        method: 'POST',
         body: formData,
         // Add auth headers when available
       });
@@ -282,7 +283,7 @@ export function PatientDocumentUpload({
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Erro no upload");
+        throw new Error(errorData.message || 'Erro no upload');
       }
 
       updateProgress(90);
@@ -292,7 +293,7 @@ export function PatientDocumentUpload({
 
       return result.document as PatientDocument;
     } catch (error) {
-      console.error("Upload error:", error);
+      console.error('Upload error:', error);
       throw error;
     }
   };
@@ -314,13 +315,13 @@ export function PatientDocumentUpload({
         const uploadId = `upload-${Date.now()}-${Math.random().toString(36).substring(2)}`;
 
         // Add to upload queue
-        setUploadQueue((prev) =>
+        setUploadQueue(prev =>
           new Map(prev).set(uploadId, {
             id: uploadId,
             file,
             progress: 0,
-            status: "uploading",
-          }),
+            status: 'uploading',
+          })
         );
 
         try {
@@ -328,24 +329,24 @@ export function PatientDocumentUpload({
           const uploadedDocument = await uploadDocument(file, uploadId);
 
           // Update state to completed
-          setUploadQueue((prev) => {
+          setUploadQueue(prev => {
             const newMap = new Map(prev);
             newMap.set(uploadId, {
               id: uploadId,
               file,
               progress: 100,
-              status: "completed",
+              status: 'completed',
               uploadedDocument,
             });
             return newMap;
           });
 
           // Add to existing documents
-          setExistingDocuments((prev) => [...prev, uploadedDocument]);
+          setExistingDocuments(prev => [...prev, uploadedDocument]);
 
           // Remove from upload queue after delay
           setTimeout(() => {
-            setUploadQueue((prev) => {
+            setUploadQueue(prev => {
               const newMap = new Map(prev);
               newMap.delete(uploadId);
               return newMap;
@@ -355,23 +356,23 @@ export function PatientDocumentUpload({
           toast.success(`Documento "${file.name}" enviado com sucesso!`);
           onDocumentsUploaded?.([uploadedDocument]);
         } catch (error) {
-          console.error("Upload error:", error);
+          console.error('Upload error:', error);
 
-          setUploadQueue((prev) => {
+          setUploadQueue(prev => {
             const newMap = new Map(prev);
             newMap.set(uploadId, {
               id: uploadId,
               file,
               progress: 0,
-              status: "error",
-              error: error instanceof Error ? error.message : "Erro no upload",
+              status: 'error',
+              error: error instanceof Error ? error.message : 'Erro no upload',
             });
             return newMap;
           });
 
           toast.error(
             `Erro ao enviar "${file.name}": ${
-              error instanceof Error ? error.message : "Erro desconhecido"
+              error instanceof Error ? error.message : 'Erro desconhecido'
             }`,
           );
         }
@@ -434,7 +435,7 @@ export function PatientDocumentUpload({
         handleFiles(e.target.files);
       }
       // Reset input to allow same file re-selection
-      e.target.value = "";
+      e.target.value = '';
     },
     [handleFiles],
   );
@@ -443,39 +444,37 @@ export function PatientDocumentUpload({
   const handleRemoveDocument = async (documentId: string) => {
     try {
       const response = await fetch(`/api/v1/patient-documents/${documentId}`, {
-        method: "DELETE",
+        method: 'DELETE',
       });
 
       if (!response.ok) {
-        throw new Error("Erro ao remover documento");
+        throw new Error('Erro ao remover documento');
       }
 
-      setExistingDocuments((prev) =>
-        prev.filter((doc) => doc.id !== documentId),
-      );
+      setExistingDocuments(prev => prev.filter(doc => doc.id !== documentId));
       onDocumentRemoved?.(documentId);
-      toast.success("Documento removido com sucesso!");
+      toast.success('Documento removido com sucesso!');
     } catch (error) {
-      console.error("Error removing document:", error);
-      toast.error("Erro ao remover documento");
+      console.error('Error removing document:', error);
+      toast.error('Erro ao remover documento');
     }
   };
 
   // Get file type info with enhanced styling
   const getFileTypeInfo = (mimeType: string) => {
     return (
-      HEALTHCARE_FILE_TYPES[mimeType as keyof typeof HEALTHCARE_FILE_TYPES] ||
-      HEALTHCARE_FILE_TYPES.default
+      HEALTHCARE_FILE_TYPES[mimeType as keyof typeof HEALTHCARE_FILE_TYPES]
+      || HEALTHCARE_FILE_TYPES.default
     );
   };
 
   // Format file size
   const formatFileSize = (bytes: number): string => {
-    if (bytes === 0) return "0 Bytes";
+    if (bytes === 0) return '0 Bytes';
     const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
   };
 
   const totalDocuments = existingDocuments.length + uploadQueue.size;
@@ -487,35 +486,33 @@ export function PatientDocumentUpload({
       onDragEnd={() => setActiveId(null)}
     >
       <div
-        className={cn("space-y-6", className)}
-        role="region"
-        aria-label="Upload de documentos do paciente"
+        className={cn('space-y-6', className)}
+        role='region'
+        aria-label='Upload de documentos do paciente'
       >
         {/* Upload Area */}
         <div
           className={cn(
-            "relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200",
-            "hover:border-primary/50 hover:bg-accent/30",
-            isDragOver && "border-primary bg-primary/10 scale-[1.02]",
-            disabled && "opacity-50 cursor-not-allowed",
-            !disabled && canUpload && "cursor-pointer",
-            !canUpload && "border-gray-300 bg-gray-50 cursor-not-allowed",
+            'relative border-2 border-dashed rounded-xl p-8 text-center transition-all duration-200',
+            'hover:border-primary/50 hover:bg-accent/30',
+            isDragOver && 'border-primary bg-primary/10 scale-[1.02]',
+            disabled && 'opacity-50 cursor-not-allowed',
+            !disabled && canUpload && 'cursor-pointer',
+            !canUpload && 'border-gray-300 bg-gray-50 cursor-not-allowed',
           )}
           onDragOver={handleDragOver}
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           onClick={() => canUpload && fileInputRef.current?.click()}
-          role="button"
+          role='button'
           tabIndex={disabled || !canUpload ? -1 : 0}
-          aria-label={
-            canUpload
-              ? "Área de upload de documentos"
-              : "Limite de documentos atingido"
-          }
-          aria-describedby="upload-instructions"
-          onKeyDown={(e) => {
-            if ((e.key === "Enter" || e.key === " ") && canUpload) {
+          aria-label={canUpload
+            ? 'Área de upload de documentos'
+            : 'Limite de documentos atingido'}
+          aria-describedby='upload-instructions'
+          onKeyDown={e => {
+            if ((e.key === 'Enter' || e.key === ' ') && canUpload) {
               e.preventDefault();
               fileInputRef.current?.click();
             }
@@ -523,36 +520,36 @@ export function PatientDocumentUpload({
         >
           <input
             ref={fileInputRef}
-            type="file"
+            type='file'
             multiple
-            accept={acceptedTypes.join(",")}
+            accept={acceptedTypes.join(',')}
             onChange={handleFileInputChange}
-            className="hidden"
+            className='hidden'
             disabled={disabled || !canUpload}
-            aria-label="Selecionar arquivos de documentos"
+            aria-label='Selecionar arquivos de documentos'
           />
 
-          <div className="space-y-4">
+          <div className='space-y-4'>
             <IconCloudUpload
               className={cn(
-                "mx-auto h-16 w-16 transition-colors",
-                isDragOver ? "text-primary" : "text-muted-foreground",
+                'mx-auto h-16 w-16 transition-colors',
+                isDragOver ? 'text-primary' : 'text-muted-foreground',
               )}
             />
 
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold">
+            <div className='space-y-2'>
+              <h3 className='text-xl font-semibold'>
                 {canUpload
-                  ? "Arraste documentos aqui ou clique para selecionar"
-                  : "Limite de documentos atingido"}
+                  ? 'Arraste documentos aqui ou clique para selecionar'
+                  : 'Limite de documentos atingido'}
               </h3>
               <p
-                className="text-sm text-muted-foreground"
-                id="upload-instructions"
+                className='text-sm text-muted-foreground'
+                id='upload-instructions'
               >
                 Tipos aceitos: PDF, Imagens (JPEG, PNG, WebP), Documentos Word
               </p>
-              <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+              <div className='flex items-center justify-center gap-4 text-xs text-muted-foreground'>
                 <span>Tamanho máximo: {maxFileSize}MB</span>
                 <span>•</span>
                 <span>
@@ -562,10 +559,10 @@ export function PatientDocumentUpload({
             </div>
 
             {/* Progress indicator for files limit */}
-            <div className="mx-auto w-48">
+            <div className='mx-auto w-48'>
               <Progress
                 value={(totalDocuments / maxFiles) * 100}
-                className="h-2"
+                className='h-2'
                 aria-label={`${totalDocuments} de ${maxFiles} documentos enviados`}
               />
             </div>
@@ -575,74 +572,71 @@ export function PatientDocumentUpload({
         {/* Upload Queue */}
         {uploadQueue.size > 0 && (
           <div
-            className="space-y-3"
-            role="region"
-            aria-label="Progresso de upload"
+            className='space-y-3'
+            role='region'
+            aria-label='Progresso de upload'
           >
-            <h4 className="text-sm font-medium flex items-center gap-2">
-              <IconCloudUpload className="h-4 w-4" />
+            <h4 className='text-sm font-medium flex items-center gap-2'>
+              <IconCloudUpload className='h-4 w-4' />
               Enviando documentos... ({uploadQueue.size})
             </h4>
-            {Array.from(uploadQueue.values()).map((state) => {
+            {Array.from(uploadQueue.values()).map(state => {
               const typeInfo = getFileTypeInfo(state.file.type);
               const IconComponent = typeInfo.icon;
 
               return (
                 <div
                   key={state.id}
-                  className="flex items-center gap-3 p-4 border rounded-lg bg-card"
-                  role="status"
+                  className='flex items-center gap-3 p-4 border rounded-lg bg-card'
+                  role='status'
                   aria-label={`Upload de ${state.file.name}: ${state.status}`}
                 >
-                  <div className="flex-shrink-0">
-                    {state.status === "completed" ? (
-                      <IconCheck className="h-5 w-5 text-green-500" />
-                    ) : state.status === "error" ? (
-                      <IconAlertCircle className="h-5 w-5 text-red-500" />
-                    ) : (
-                      <IconComponent className="h-5 w-5 text-muted-foreground animate-pulse" />
-                    )}
+                  <div className='flex-shrink-0'>
+                    {state.status === 'completed'
+                      ? <IconCheck className='h-5 w-5 text-green-500' />
+                      : state.status === 'error'
+                      ? <IconAlertCircle className='h-5 w-5 text-red-500' />
+                      : <IconComponent className='h-5 w-5 text-muted-foreground animate-pulse' />}
                   </div>
 
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium truncate">
+                  <div className='flex-1 min-w-0 space-y-1'>
+                    <div className='flex items-center justify-between'>
+                      <p className='text-sm font-medium truncate'>
                         {state.file.name}
                       </p>
-                      <Badge variant="outline" className={typeInfo.color}>
+                      <Badge variant='outline' className={typeInfo.color}>
                         {typeInfo.label}
                       </Badge>
                     </div>
 
-                    {state.status === "uploading" && (
-                      <div className="space-y-1">
-                        <Progress value={state.progress} className="h-2" />
-                        <p className="text-xs text-muted-foreground">
-                          {state.progress.toFixed(0)}% •{" "}
-                          {formatFileSize(state.file.size)}
+                    {state.status === 'uploading' && (
+                      <div className='space-y-1'>
+                        <Progress value={state.progress} className='h-2' />
+                        <p className='text-xs text-muted-foreground'>
+                          {state.progress.toFixed(0)}% • {formatFileSize(state.file.size)}
                         </p>
                       </div>
                     )}
 
-                    {state.status === "error" && (
-                      <p className="text-xs text-red-500" role="alert">
+                    {state.status === 'error' && (
+                      <p className='text-xs text-red-500' role='alert'>
                         {state.error}
                       </p>
                     )}
 
-                    {state.status === "completed" && (
-                      <p className="text-xs text-green-600">
+                    {state.status === 'completed' && (
+                      <p className='text-xs text-green-600'>
                         Upload concluído com sucesso!
                       </p>
                     )}
                   </div>
 
-                  {state.status === "error" && (
+                  {state.status === 'error' && (
                     <Button
-                      variant="ghost"
-                      size="sm"
+                      variant='ghost'
+                      size='sm'
                       onClick={() => {
-                        setUploadQueue((prev) => {
+                        setUploadQueue(prev => {
                           const newMap = new Map(prev);
                           newMap.delete(state.id);
                           return newMap;
@@ -650,7 +644,7 @@ export function PatientDocumentUpload({
                       }}
                       aria-label={`Remover ${state.file.name} da fila`}
                     >
-                      <IconX className="h-4 w-4" />
+                      <IconX className='h-4 w-4' />
                     </Button>
                   )}
                 </div>
@@ -662,76 +656,76 @@ export function PatientDocumentUpload({
         {/* Existing Documents */}
         {showExisting && existingDocuments.length > 0 && (
           <div
-            className="space-y-3"
-            role="region"
-            aria-label="Documentos existentes"
+            className='space-y-3'
+            role='region'
+            aria-label='Documentos existentes'
           >
-            <h4 className="text-sm font-medium flex items-center gap-2">
-              <IconFile className="h-4 w-4" />
+            <h4 className='text-sm font-medium flex items-center gap-2'>
+              <IconFile className='h-4 w-4' />
               Documentos do Paciente ({existingDocuments.length})
             </h4>
-            {existingDocuments.map((document) => {
+            {existingDocuments.map(document => {
               const typeInfo = getFileTypeInfo(document.document_type);
               const IconComponent = typeInfo.icon;
 
               return (
                 <div
                   key={document.id}
-                  className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors"
+                  className='flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors'
                 >
-                  <div className="flex-shrink-0">
-                    <IconComponent className="h-5 w-5 text-muted-foreground" />
+                  <div className='flex-shrink-0'>
+                    <IconComponent className='h-5 w-5 text-muted-foreground' />
                   </div>
 
-                  <div className="flex-1 min-w-0 space-y-1">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium truncate">
+                  <div className='flex-1 min-w-0 space-y-1'>
+                    <div className='flex items-center justify-between'>
+                      <p className='text-sm font-medium truncate'>
                         {document.document_name}
                       </p>
-                      <Badge variant="outline" className={typeInfo.color}>
+                      <Badge variant='outline' className={typeInfo.color}>
                         {typeInfo.label}
                       </Badge>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      {formatFileSize(document.file_size)} • Enviado em{" "}
+                    <p className='text-xs text-muted-foreground'>
+                      {formatFileSize(document.file_size)} • Enviado em{' '}
                       {new Date(document.upload_date).toLocaleDateString(
-                        "pt-BR",
+                        'pt-BR',
                       )}
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className='flex items-center gap-2'>
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => window.open(document.file_path, "_blank")}
+                      variant='ghost'
+                      size='sm'
+                      onClick={() => window.open(document.file_path, '_blank')}
                       aria-label={`Visualizar ${document.document_name}`}
                     >
-                      <IconEye className="h-4 w-4" />
+                      <IconEye className='h-4 w-4' />
                     </Button>
 
                     <Button
-                      variant="ghost"
-                      size="sm"
+                      variant='ghost'
+                      size='sm'
                       onClick={() => {
-                        const link = globalThis.document.createElement("a");
+                        const link = globalThis.document.createElement('a');
                         link.href = document.file_path;
                         link.download = document.document_name;
                         link.click();
                       }}
                       aria-label={`Baixar ${document.document_name}`}
                     >
-                      <IconDownload className="h-4 w-4" />
+                      <IconDownload className='h-4 w-4' />
                     </Button>
 
                     <Button
-                      variant="ghost"
-                      size="sm"
+                      variant='ghost'
+                      size='sm'
                       onClick={() => handleRemoveDocument(document.id)}
-                      className="text-red-500 hover:text-red-700"
+                      className='text-red-500 hover:text-red-700'
                       aria-label={`Remover ${document.document_name}`}
                     >
-                      <IconTrash className="h-4 w-4" />
+                      <IconTrash className='h-4 w-4' />
                     </Button>
                   </div>
                 </div>
@@ -741,26 +735,28 @@ export function PatientDocumentUpload({
         )}
 
         {/* Empty state */}
-        {showExisting &&
-          existingDocuments.length === 0 &&
-          uploadQueue.size === 0 && (
-            <div className="text-center py-8 text-muted-foreground">
-              <IconFile className="mx-auto h-12 w-12 mb-4 opacity-50" />
-              <p>Nenhum documento enviado ainda</p>
-              <p className="text-sm">
-                Faça upload dos primeiros documentos do paciente
-              </p>
-            </div>
-          )}
+        {showExisting
+          && existingDocuments.length === 0
+          && uploadQueue.size === 0 && (
+          <div className='text-center py-8 text-muted-foreground'>
+            <IconFile className='mx-auto h-12 w-12 mb-4 opacity-50' />
+            <p>Nenhum documento enviado ainda</p>
+            <p className='text-sm'>
+              Faça upload dos primeiros documentos do paciente
+            </p>
+          </div>
+        )}
       </div>
 
       {/* DnD Overlay */}
       <DragOverlay>
-        {activeId ? (
-          <div className="p-2 bg-background border rounded shadow-lg">
-            <IconFile className="h-4 w-4" />
-          </div>
-        ) : null}
+        {activeId
+          ? (
+            <div className='p-2 bg-background border rounded shadow-lg'>
+              <IconFile className='h-4 w-4' />
+            </div>
+          )
+          : null}
       </DragOverlay>
     </DndContext>
   );

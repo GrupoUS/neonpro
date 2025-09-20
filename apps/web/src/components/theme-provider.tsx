@@ -1,57 +1,57 @@
-import * as React from "react";
+import * as React from 'react';
 
-type Theme = "light" | "dark" | "system";
+type Theme = 'light' | 'dark' | 'system';
 
-type ThemeProviderProps = React.ComponentProps<"div"> & {
-  attribute?: "class" | "data-theme";
+type ThemeProviderProps = React.ComponentProps<'div'> & {
+  attribute?: 'class' | 'data-theme';
   defaultTheme?: Theme;
   enableSystem?: boolean;
   disableTransitionOnChange?: boolean;
 };
 
-const THEME_STORAGE_KEY = "neonpro-theme";
+const THEME_STORAGE_KEY = 'neonpro-theme';
 
-function getSystemTheme(): "light" | "dark" {
-  if (typeof window === "undefined") return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
-    ? "dark"
-    : "light";
+function getSystemTheme(): 'light' | 'dark' {
+  if (typeof window === 'undefined') return 'light';
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
 }
 
-function applyThemeToDocument(theme: Theme, attribute: "class" | "data-theme") {
+function applyThemeToDocument(theme: Theme, attribute: 'class' | 'data-theme') {
   const root = document.documentElement;
-  const resolved = theme === "system" ? getSystemTheme() : theme;
+  const resolved = theme === 'system' ? getSystemTheme() : theme;
 
-  if (attribute === "class") {
-    root.classList.remove("light", "dark");
+  if (attribute === 'class') {
+    root.classList.remove('light', 'dark');
     root.classList.add(resolved);
     // Debug: Log theme application
     console.log(`🎨 Theme applied: ${resolved}`, {
       theme,
       resolved,
       classList: Array.from(root.classList),
-      hasLight: root.classList.contains("light"),
-      hasDark: root.classList.contains("dark"),
+      hasLight: root.classList.contains('light'),
+      hasDark: root.classList.contains('dark'),
     });
   } else {
-    root.setAttribute("data-theme", resolved);
+    root.setAttribute('data-theme', resolved);
   }
 }
 
-import { ThemeProviderBridge } from "@neonpro/ui";
+import { ThemeProviderBridge } from '@neonpro/ui';
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
-  attribute = "class",
-  defaultTheme = "system",
+  attribute = 'class',
+  defaultTheme = 'system',
   enableSystem = true,
   disableTransitionOnChange = true,
   children,
   ...divProps
 }) => {
   const [theme, setThemeState] = React.useState<Theme>(defaultTheme);
-  const [resolvedTheme, setResolvedTheme] = React.useState<"light" | "dark">(
-    defaultTheme === "system"
+  const [resolvedTheme, setResolvedTheme] = React.useState<'light' | 'dark'>(
+    defaultTheme === 'system'
       ? getSystemTheme()
-      : (defaultTheme as "light" | "dark"),
+      : (defaultTheme as 'light' | 'dark'),
   );
 
   React.useEffect(() => {
@@ -64,41 +64,40 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   }, [defaultTheme]);
 
   React.useEffect(() => {
-    const resolved =
-      theme === "system" && enableSystem
-        ? getSystemTheme()
-        : (theme as "light" | "dark");
+    const resolved = theme === 'system' && enableSystem
+      ? getSystemTheme()
+      : (theme as 'light' | 'dark');
     const restore = disableTransitionOnChange
       ? (() => {
-          const css = document.createElement("style");
-          css.appendChild(
-            document.createTextNode("*{transition:none !important}"),
-          );
-          document.head.appendChild(css);
-          return () => {
-            // force reflow then remove
-            void window.getComputedStyle(document.body);
-            document.head.removeChild(css);
-          };
-        })()
+        const css = document.createElement('style');
+        css.appendChild(
+          document.createTextNode('*{transition:none !important}'),
+        );
+        document.head.appendChild(css);
+        return () => {
+          // force reflow then remove
+          void window.getComputedStyle(document.body);
+          document.head.removeChild(css);
+        };
+      })()
       : () => {};
 
     applyThemeToDocument(theme, attribute);
     setResolvedTheme(resolved);
     localStorage.setItem(THEME_STORAGE_KEY, theme);
 
-    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    const mql = window.matchMedia('(prefers-color-scheme: dark)');
     const onChange = () => {
-      if (theme === "system" && enableSystem) {
+      if (theme === 'system' && enableSystem) {
         const sys = getSystemTheme();
         setResolvedTheme(sys);
-        applyThemeToDocument("system", attribute);
+        applyThemeToDocument('system', attribute);
       }
     };
-    mql.addEventListener("change", onChange);
+    mql.addEventListener('change', onChange);
 
     return () => {
-      mql.removeEventListener("change", onChange);
+      mql.removeEventListener('change', onChange);
       restore();
     };
   }, [theme, attribute, enableSystem, disableTransitionOnChange]);

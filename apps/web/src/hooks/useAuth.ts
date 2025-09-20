@@ -1,10 +1,7 @@
-import { getCurrentSession, supabase } from "@/integrations/supabase/client";
-import {
-  type UserProfile,
-  userProfileService,
-} from "@/services/user-profile.service";
-import type { Session, User } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import { getCurrentSession, supabase } from '@/integrations/supabase/client';
+import { type UserProfile, userProfileService } from '@/services/user-profile.service';
+import type { Session, User } from '@supabase/supabase-js';
+import { useEffect, useState } from 'react';
 
 export interface AuthState {
   user: User | null;
@@ -12,8 +9,8 @@ export interface AuthState {
   profile: UserProfile | null;
   loading: boolean;
   isAuthenticated: boolean;
-  hasPermission: (permission: keyof UserProfile["permissions"]) => boolean;
-  isRole: (role: UserProfile["role"]) => boolean;
+  hasPermission: (permission: keyof UserProfile['permissions']) => boolean;
+  isRole: (role: UserProfile['role']) => boolean;
 }
 
 export function useAuth(): AuthState {
@@ -25,12 +22,12 @@ export function useAuth(): AuthState {
   useEffect(() => {
     // Get initial session and profile
     const getInitialSession = async () => {
-      console.log("🔍 useAuth: Getting initial session...");
+      console.log('🔍 useAuth: Getting initial session...');
       try {
         // Add timeout to prevent hanging
         const sessionPromise = getCurrentSession();
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Session timeout")), 3000),
+          setTimeout(() => reject(new Error('Session timeout')), 3000)
         );
 
         const currentSession = (await Promise.race([
@@ -38,8 +35,8 @@ export function useAuth(): AuthState {
           timeoutPromise,
         ])) as any;
         console.log(
-          "🔍 useAuth: Current session:",
-          currentSession ? "Found" : "None",
+          '🔍 useAuth: Current session:',
+          currentSession ? 'Found' : 'None',
         );
         setSession(currentSession);
         setUser(currentSession?.user || null);
@@ -47,7 +44,7 @@ export function useAuth(): AuthState {
         // Load user profile if authenticated
         if (currentSession?.user) {
           console.log(
-            "🔍 useAuth: Loading profile for user:",
+            '🔍 useAuth: Loading profile for user:',
             currentSession.user.id,
           );
           try {
@@ -56,9 +53,9 @@ export function useAuth(): AuthState {
             );
             const profileTimeoutPromise = new Promise((_, reject) =>
               setTimeout(
-                () => reject(new Error("Profile loading timeout")),
+                () => reject(new Error('Profile loading timeout')),
                 3000,
-              ),
+              )
             );
 
             const userProfile = (await Promise.race([
@@ -66,13 +63,13 @@ export function useAuth(): AuthState {
               profileTimeoutPromise,
             ])) as any;
             console.log(
-              "✅ useAuth: Profile loaded:",
-              userProfile ? "Success" : "Failed",
+              '✅ useAuth: Profile loaded:',
+              userProfile ? 'Success' : 'Failed',
             );
             setProfile(userProfile);
           } catch (profileError) {
             console.error(
-              "❌ useAuth: Error loading user profile:",
+              '❌ useAuth: Error loading user profile:',
               profileError,
             );
             // Set null profile instead of trying fallback to prevent infinite loading
@@ -80,18 +77,18 @@ export function useAuth(): AuthState {
           }
         } else {
           console.log(
-            "⚠️ useAuth: No authenticated user, setting null profile",
+            '⚠️ useAuth: No authenticated user, setting null profile',
           );
           // Don't create fallback profile - just set null to allow app to work
           setProfile(null);
         }
       } catch (error) {
-        console.error("❌ useAuth: Error getting initial session:", error);
+        console.error('❌ useAuth: Error getting initial session:', error);
         setSession(null);
         setUser(null);
         setProfile(null);
       } finally {
-        console.log("✅ useAuth: Initial session loading complete");
+        console.log('✅ useAuth: Initial session loading complete');
         setLoading(false);
       }
     };
@@ -102,7 +99,7 @@ export function useAuth(): AuthState {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session?.user?.email);
+      console.log('Auth state changed:', event, session?.user?.email);
 
       setSession(session);
       setUser(session?.user || null);
@@ -115,9 +112,9 @@ export function useAuth(): AuthState {
           );
           const profileTimeoutPromise = new Promise((_, reject) =>
             setTimeout(
-              () => reject(new Error("Profile loading timeout")),
+              () => reject(new Error('Profile loading timeout')),
               3000,
-            ),
+            )
           );
 
           const userProfile = (await Promise.race([
@@ -126,7 +123,7 @@ export function useAuth(): AuthState {
           ])) as any;
           setProfile(userProfile);
         } catch (profileError) {
-          console.error("Error loading user profile:", profileError);
+          console.error('Error loading user profile:', profileError);
           setProfile(null);
         }
       } else {
@@ -137,18 +134,18 @@ export function useAuth(): AuthState {
 
       // Handle specific auth events
       switch (event) {
-        case "SIGNED_IN":
-          console.log("User signed in:", session?.user?.email);
+        case 'SIGNED_IN':
+          console.log('User signed in:', session?.user?.email);
           break;
-        case "SIGNED_OUT":
-          console.log("User signed out");
+        case 'SIGNED_OUT':
+          console.log('User signed out');
           setProfile(null);
           break;
-        case "TOKEN_REFRESHED":
-          console.log("Token refreshed for user:", session?.user?.email);
+        case 'TOKEN_REFRESHED':
+          console.log('Token refreshed for user:', session?.user?.email);
           break;
-        case "USER_UPDATED":
-          console.log("User updated:", session?.user?.email);
+        case 'USER_UPDATED':
+          console.log('User updated:', session?.user?.email);
           break;
       }
     });
@@ -160,12 +157,12 @@ export function useAuth(): AuthState {
 
   // Helper functions
   const hasPermission = (
-    permission: keyof UserProfile["permissions"],
+    permission: keyof UserProfile['permissions'],
   ): boolean => {
     return profile?.permissions[permission] || false;
   };
 
-  const isRole = (role: UserProfile["role"]): boolean => {
+  const isRole = (role: UserProfile['role']): boolean => {
     return profile?.role === role;
   };
 

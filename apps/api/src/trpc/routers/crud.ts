@@ -14,17 +14,17 @@
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
-import { healthcareProcedure, protectedProcedure, router } from '../trpc';
-import { createOperationStateService } from '../../services/operation-state-service';
-import { HealthcareValidationService } from '../../services/healthcare-validation-service';
-import { 
-  getEntitySchema,
-  PatientSchema,
+import {
   AppointmentSchema,
-  ProfessionalSchema,
+  getEntitySchema,
   MedicalRecordSchema,
+  PatientSchema,
   PrescriptionSchema,
+  ProfessionalSchema,
 } from '../../schemas/healthcare-validation-schemas';
+import { HealthcareValidationService } from '../../services/healthcare-validation-service';
+import { createOperationStateService } from '../../services/operation-state-service';
+import { healthcareProcedure, protectedProcedure, router } from '../trpc';
 
 // =====================================
 // TYPE DEFINITIONS & SCHEMAS
@@ -60,7 +60,7 @@ const crudIntentSchema = v.object({
   step: v.literal('intent'),
   operation: v.string([v.picklist(CRUD_OPERATIONS)]),
   entity: v.string([v.picklist(SUPPORTED_ENTITIES)]),
-  data: v.lazy(() => 
+  data: v.lazy(() =>
     v.union([
       PatientSchema,
       AppointmentSchema,
@@ -95,7 +95,7 @@ const crudConfirmSchema = v.object({
   step: v.literal('confirm'),
   intentId: v.string([v.uuid('Invalid intent ID')]),
   confirmed: v.boolean(),
-  modifications: v.optional(v.lazy(() => 
+  modifications: v.optional(v.lazy(() =>
     v.object({
       patientData: v.optional(PatientSchema.partial()),
       appointmentData: v.optional(AppointmentSchema.partial()),
@@ -103,7 +103,9 @@ const crudConfirmSchema = v.object({
       medicalRecordData: v.optional(MedicalRecordSchema.partial()),
       prescriptionData: v.optional(PrescriptionSchema.partial()),
       operation: v.optional(v.enum(['create', 'update', 'delete'])),
-      entity: v.optional(v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions'])),
+      entity: v.optional(
+        v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions']),
+      ),
     })
   )), // Optional modifications before execution
   reason: v.optional(v.string()),
@@ -116,7 +118,7 @@ const crudExecuteSchema = v.object({
   step: v.literal('execute'),
   intentId: v.string([v.uuid('Invalid intent ID')]),
   confirmationId: v.string([v.uuid('Invalid confirmation ID')]),
-  finalData: v.optional(v.lazy(() => 
+  finalData: v.optional(v.lazy(() =>
     v.object({
       patientData: v.optional(PatientSchema.partial()),
       appointmentData: v.optional(AppointmentSchema.partial()),
@@ -124,7 +126,9 @@ const crudExecuteSchema = v.object({
       medicalRecordData: v.optional(MedicalRecordSchema.partial()),
       prescriptionData: v.optional(PrescriptionSchema.partial()),
       operation: v.optional(v.enum(['create', 'update', 'delete'])),
-      entity: v.optional(v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions'])),
+      entity: v.optional(
+        v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions']),
+      ),
     })
   )), // Final data with validated modifications
 });
@@ -155,23 +159,29 @@ const crudIntentResponseSchema = v.object({
   }),
   preview: v.optional(v.object({
     operation: v.enum(['create', 'read', 'update', 'delete']),
-    entity: v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions']),
+    entity: v.enum([
+      'patients',
+      'appointments',
+      'professionals',
+      'medical_records',
+      'prescriptions',
+    ]),
     summary: v.string(),
     affectedRecords: v.number(),
     changes: v.optional(v.array(v.object({
       field: v.string(),
       oldValue: v.optional(v.union([
-      v.string(),
-      v.number(),
-      v.boolean(),
-      v.null(),
-    ])),
+        v.string(),
+        v.number(),
+        v.boolean(),
+        v.null(),
+      ])),
       newValue: v.optional(v.union([
-      v.string(),
-      v.number(),
-      v.boolean(),
-      v.null(),
-    ])),
+        v.string(),
+        v.number(),
+        v.boolean(),
+        v.null(),
+      ])),
     }))),
     complianceChecks: v.array(v.string()),
   })),
@@ -209,7 +219,9 @@ const crudConfirmResponseSchema = v.object({
     medicalRecordData: v.optional(MedicalRecordSchema.partial()),
     prescriptionData: v.optional(PrescriptionSchema.partial()),
     operation: v.optional(v.enum(['create', 'update', 'delete'])),
-    entity: v.optional(v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions'])),
+    entity: v.optional(
+      v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions']),
+    ),
   })),
   executionPlan: v.optional(
     v.object({
@@ -292,7 +304,7 @@ async function validateWithAI(
       operation,
       entity,
       data,
-      validationContext
+      validationContext,
     );
 
     // Transform the result to match expected interface
@@ -303,20 +315,19 @@ async function validateWithAI(
       aiScore: validationResult.aiScore,
       transformedData: validationResult.transformedData || data,
     };
-
   } catch (error) {
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'VALIDATION_ERROR',
-      { 
+      {
         operation,
         entity,
-        validationFailed: true 
+        validationFailed: true,
       },
       ctx.user?.id,
-      data.patientId
+      data.patientId,
     );
-    
+
     return {
       isValid: false,
       errors: [appError.message],
@@ -369,23 +380,23 @@ async function generatePreview(
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
-      { 
+      {
         operation,
         entity,
-        previewFailed: true 
+        previewFailed: true,
       },
       ctx.user?.id,
-      data.patientId
+      data.patientId,
     );
-    
+
     // Log sanitized error for debugging
     logger.warn('Preview generation failed', {
       error: appError.message,
       operation,
       entity,
-      userId: ctx.user?.id
+      userId: ctx.user?.id,
     });
-    
+
     return null;
   }
 }
@@ -415,22 +426,22 @@ async function getCurrentData(
     // Use global error handler for consistent sanitization
     const appError = GlobalErrorHandler.createError(
       'INTERNAL_ERROR',
-      { 
+      {
         entity,
         operation: 'read',
-        currentDataFailed: true 
+        currentDataFailed: true,
       },
-      ctx.user?.id
+      ctx.user?.id,
     );
-    
+
     // Log sanitized error for debugging
     logger.warn('Failed to get current data', {
       error: appError.message,
       entity,
       id,
-      userId: ctx.user?.id
+      userId: ctx.user?.id,
     });
-    
+
     return null;
   }
 }
@@ -602,24 +613,24 @@ async function handleIntentStep(
   // Runtime validation with proper Zod schemas (replaces v.any() security vulnerability)
   const schema = getEntitySchema(input.entity);
   const schemaValidation = schema.safeParse(input.data);
-  
+
   if (!schemaValidation.success) {
-    const errors = schemaValidation.error.errors.map(err => 
+    const errors = schemaValidation.error.errors.map(err =>
       `Campo ${err.path.join('.')}: ${err.message}`
     );
-    
+
     // Create sanitized error without exposing internal validation details
     const appError = GlobalErrorHandler.createError(
       'VALIDATION_ERROR',
-      { 
+      {
         entity: input.entity,
         operation: input.operation,
-        validationErrors: errors.length
+        validationErrors: errors.length,
       },
       ctx.userId,
-      input.metadata?.patientId
+      input.metadata?.patientId,
     );
-    
+
     throw new TRPCError({
       code: 'BAD_REQUEST',
       message: appError.message,
@@ -960,14 +971,19 @@ async function handleExecuteStep(
     };
   } catch (executionError) {
     // Sanitize error message to prevent information disclosure
-    const appError = executionError instanceof Error 
-      ? GlobalErrorHandler.createError('INTERNAL_ERROR', {
+    const appError = executionError instanceof Error
+      ? GlobalErrorHandler.createError(
+        'INTERNAL_ERROR',
+        {
           operation: intentData.operation,
           entity: intentData.entity,
-          executionStep: 'execute'
-        }, ctx.userId, intentAudit.patientId)
+          executionStep: 'execute',
+        },
+        ctx.userId,
+        intentAudit.patientId,
+      )
       : GlobalErrorHandler.createError('INTERNAL_ERROR');
-    
+
     error = appError.message;
 
     // Create audit trail for failed execution

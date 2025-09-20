@@ -3,11 +3,7 @@
  * Ensures LGPD compliance, proper RLS enforcement, audit trails, and authentication context
  */
 
-import {
-  apiClient,
-  type ApiResponse,
-  type PaginatedResponse,
-} from "@/utils/api-client";
+import { apiClient, type ApiResponse, type PaginatedResponse } from '@/utils/api-client';
 
 // Patient data types (maintaining existing interfaces)
 export interface Patient {
@@ -72,14 +68,14 @@ export interface PatientListResponse {
 }
 
 export interface PatientSearchFilters {
-  gender?: "male" | "female" | "other";
+  gender?: 'male' | 'female' | 'other';
   status?: string | string[];
   ageRange?: {
     min?: number;
     max?: number;
   };
   dateRange?: {
-    field?: "createdAt" | "updatedAt" | "birthDate";
+    field?: 'createdAt' | 'updatedAt' | 'birthDate';
     start?: string;
     end?: string;
   };
@@ -92,7 +88,7 @@ export interface PatientSearchFilters {
 
 export interface PatientSearchCriteria {
   query?: string;
-  searchType?: "fulltext" | "structured" | "fuzzy" | "advanced";
+  searchType?: 'fulltext' | 'structured' | 'fuzzy' | 'advanced';
   filters?: PatientSearchFilters;
   fuzzyOptions?: {
     threshold?: number;
@@ -103,8 +99,8 @@ export interface PatientSearchCriteria {
     limit?: number;
   };
   sorting?: {
-    field?: "name" | "createdAt" | "updatedAt" | "birthDate";
-    order?: "asc" | "desc";
+    field?: 'name' | 'createdAt' | 'updatedAt' | 'birthDate';
+    order?: 'asc' | 'desc';
   };
   includeInactive?: boolean;
 }
@@ -113,7 +109,7 @@ export interface PatientSearchCriteria {
  * Patient Service class with API integration
  */
 class PatientService {
-  private readonly baseEndpoint = "/api/v2/patients";
+  private readonly baseEndpoint = '/api/v2/patients';
 
   /**
    * Search patients by name or phone
@@ -126,9 +122,9 @@ class PatientService {
     try {
       const searchCriteria: PatientSearchCriteria = {
         query,
-        searchType: "fulltext",
+        searchType: 'fulltext',
         pagination: { page: 1, limit },
-        sorting: { field: "name", order: "asc" },
+        sorting: { field: 'name', order: 'asc' },
       };
 
       const response = await apiClient.post<{
@@ -138,12 +134,12 @@ class PatientService {
       }>(`${this.baseEndpoint}/search`, searchCriteria);
 
       if (!response.success) {
-        throw new Error(response.error || "Failed to search patients");
+        throw new Error(response.error || 'Failed to search patients');
       }
 
       return response.data?.patients || [];
     } catch (error) {
-      console.error("Error searching patients:", error);
+      console.error('Error searching patients:', error);
       throw error;
     }
   }
@@ -158,15 +154,15 @@ class PatientService {
       );
 
       if (!response.success) {
-        if (response.code === "NOT_FOUND") {
+        if (response.code === 'NOT_FOUND') {
           return null;
         }
-        throw new Error(response.error || "Failed to get patient");
+        throw new Error(response.error || 'Failed to get patient');
       }
 
       return response.data || null;
     } catch (error) {
-      console.error("Error getting patient:", error);
+      console.error('Error getting patient:', error);
 
       // Handle 404 errors gracefully
       if (error.status === 404) {
@@ -198,8 +194,8 @@ class PatientService {
         ...(params.search && { search: params.search }),
         ...(params.status && { status: params.status }),
         ...(params.gender && { gender: params.gender }),
-        sortBy: params.sortBy || "name",
-        sortOrder: params.sortOrder || "asc",
+        sortBy: params.sortBy || 'name',
+        sortOrder: params.sortOrder || 'asc',
       };
 
       const response = await apiClient.get<PatientListResponse>(
@@ -208,7 +204,7 @@ class PatientService {
       );
 
       if (!response.success) {
-        throw new Error(response.error || "Failed to list patients");
+        throw new Error(response.error || 'Failed to list patients');
       }
 
       return (
@@ -218,7 +214,7 @@ class PatientService {
         }
       );
     } catch (error) {
-      console.error("Error listing patients:", error);
+      console.error('Error listing patients:', error);
       throw error;
     }
   }
@@ -235,16 +231,16 @@ class PatientService {
       const response = await apiClient.post<Patient>(this.baseEndpoint, data);
 
       if (!response.success) {
-        throw new Error(response.error || "Failed to create patient");
+        throw new Error(response.error || 'Failed to create patient');
       }
 
       if (!response.data) {
-        throw new Error("No patient data returned from API");
+        throw new Error('No patient data returned from API');
       }
 
       return response.data;
     } catch (error) {
-      console.error("Error creating patient:", error);
+      console.error('Error creating patient:', error);
       throw error;
     }
   }
@@ -263,16 +259,16 @@ class PatientService {
       );
 
       if (!response.success) {
-        throw new Error(response.error || "Failed to update patient");
+        throw new Error(response.error || 'Failed to update patient');
       }
 
       if (!response.data) {
-        throw new Error("No patient data returned from API");
+        throw new Error('No patient data returned from API');
       }
 
       return response.data;
     } catch (error) {
-      console.error("Error updating patient:", error);
+      console.error('Error updating patient:', error);
       throw error;
     }
   }
@@ -287,10 +283,10 @@ class PatientService {
       );
 
       if (!response.success) {
-        throw new Error(response.error || "Failed to delete patient");
+        throw new Error(response.error || 'Failed to delete patient');
       }
     } catch (error) {
-      console.error("Error deleting patient:", error);
+      console.error('Error deleting patient:', error);
       throw error;
     }
   }
@@ -310,13 +306,13 @@ class PatientService {
 
       if (!response.success) {
         throw new Error(
-          response.error || "Failed to get patient appointment history",
+          response.error || 'Failed to get patient appointment history',
         );
       }
 
       return response.data || [];
     } catch (error) {
-      console.error("Error getting patient appointment history:", error);
+      console.error('Error getting patient appointment history:', error);
       throw error;
     }
   }
@@ -337,14 +333,14 @@ class PatientService {
       }>(`${this.baseEndpoint}/search`, criteria);
 
       if (!response.success) {
-        throw new Error(response.error || "Failed to perform advanced search");
+        throw new Error(response.error || 'Failed to perform advanced search');
       }
 
       return (
         response.data || { patients: [], pagination: {}, searchMetadata: {} }
       );
     } catch (error) {
-      console.error("Error performing advanced search:", error);
+      console.error('Error performing advanced search:', error);
       throw error;
     }
   }
@@ -368,12 +364,12 @@ class PatientService {
       );
 
       if (!response.success) {
-        throw new Error(response.error || "Failed to perform bulk action");
+        throw new Error(response.error || 'Failed to perform bulk action');
       }
 
       return response.data;
     } catch (error) {
-      console.error("Error performing bulk action:", error);
+      console.error('Error performing bulk action:', error);
       throw error;
     }
   }
@@ -382,7 +378,7 @@ class PatientService {
    * Export patients data
    */
   async exportPatients(
-    format: "csv" | "excel" | "pdf",
+    format: 'csv' | 'excel' | 'pdf',
     filters?: any,
   ): Promise<Blob> {
     try {
@@ -394,15 +390,15 @@ class PatientService {
       });
 
       if (!response.success) {
-        throw new Error(response.error || "Failed to export patients");
+        throw new Error(response.error || 'Failed to export patients');
       }
 
       // Return blob or handle download URL as appropriate
       return new Blob([JSON.stringify(response.data)], {
-        type: "application/json",
+        type: 'application/json',
       });
     } catch (error) {
-      console.error("Error exporting patients:", error);
+      console.error('Error exporting patients:', error);
       throw error;
     }
   }

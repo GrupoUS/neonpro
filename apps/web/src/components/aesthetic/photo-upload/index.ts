@@ -10,33 +10,26 @@
  */
 
 // Main Components
-export { LGPDConsentManager } from "./LGPDConsentManager";
-export { PhotoUpload } from "./PhotoUpload";
-export {
-  TreatmentComparison,
-  TreatmentSuggestions,
-} from "./TreatmentSuggestions";
+export { LGPDConsentManager } from './LGPDConsentManager';
+export { PhotoUpload } from './PhotoUpload';
+export { TreatmentComparison, TreatmentSuggestions } from './TreatmentSuggestions';
 
 // Types
-export type {
-  AestheticAnalysis,
-  AestheticPhoto,
-  TreatmentSuggestion,
-} from "./PhotoUpload";
+export type { AestheticAnalysis, AestheticPhoto, TreatmentSuggestion } from './PhotoUpload';
 
-export type { ConsentHistory, LGPDConsentData } from "./LGPDConsentManager";
+export type { ConsentHistory, LGPDConsentData } from './LGPDConsentManager';
 
 // Services
 export {
   AestheticAIAnalysisService,
   aestheticAIAnalysisService,
-} from "@/services/aesthetic/ai-analysis";
+} from '@/services/aesthetic/ai-analysis';
 
 // Utils and helpers
-export { TREATMENT_DATABASE } from "@/services/aesthetic/ai-analysis";
+export { TREATMENT_DATABASE } from '@/services/aesthetic/ai-analysis';
 
 // Version
-export const PHOTO_UPLOAD_VERSION = "1.0.0";
+export const PHOTO_UPLOAD_VERSION = '1.0.0';
 
 // Feature flags
 export const PHOTO_UPLOAD_FEATURES = {
@@ -54,8 +47,8 @@ export const PHOTO_UPLOAD_FEATURES = {
 export const DEFAULT_PHOTO_UPLOAD_CONFIG = {
   maxPhotos: 5,
   maxFileSize: 20, // MB
-  acceptedTypes: ["image/jpeg", "image/png", "image/webp"],
+  acceptedTypes: ['image/jpeg', 'image/png', 'image/webp'],
   maxResolution: 4096,
   minResolution: 512,
-  storagePath: "aesthetic",
+  storagePath: 'aesthetic',
 } as const;

@@ -1,11 +1,11 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 // import type { Database } from '@/lib/supabase/types/database';
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 // Hook genérico para queries do Supabase
-import { patientService } from "@/services/patients.service";
+import { patientService } from '@/services/patients.service';
 
 export function useSupabaseQuery<T = any>(
   queryKey: string[],
@@ -37,10 +37,10 @@ export function useSupabaseRealTimeQuery<T = any>(
     const channel = supabase
       .channel(`${table}-realtime`)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
+          event: '*',
+          schema: 'public',
           table: table,
         },
         () => {
@@ -68,13 +68,13 @@ export function useSupabaseRealTimeQuery<T = any>(
 // Hook para queries de pacientes
 export function usePatients(options = {}) {
   return useQuery({
-    queryKey: ["patients"],
+    queryKey: ['patients'],
     queryFn: async () => {
       const result = await patientService.listPatients({
         page: 1,
         limit: 100, // Get more patients by default
-        sortBy: "name",
-        sortOrder: "asc",
+        sortBy: 'name',
+        sortOrder: 'asc',
       });
 
       return result.patients;
@@ -88,10 +88,10 @@ export function usePatients(options = {}) {
 // Hook para queries de agendamentos
 export function useAppointments(options = {}): any {
   return useSupabaseQuery(
-    ["appointments"],
+    ['appointments'],
     async () => {
       const { data, error } = await supabase
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           *,
@@ -100,7 +100,7 @@ export function useAppointments(options = {}): any {
           service:services(*)
         `,
         )
-        .order("start_time", { ascending: true });
+        .order('start_time', { ascending: true });
 
       return { data, error };
     },
@@ -114,13 +114,13 @@ export function useAppointments(options = {}): any {
 // Hook para agendamentos do dia com real-time
 export function useTodayAppointments(professionalId: string | undefined): any {
   return useSupabaseRealTimeQuery(
-    ["appointments", "today", professionalId ?? "all"],
-    "appointments",
+    ['appointments', 'today', professionalId ?? 'all'],
+    'appointments',
     async () => {
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toISOString().split('T')[0];
 
       let query = supabase
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           *,
@@ -129,12 +129,12 @@ export function useTodayAppointments(professionalId: string | undefined): any {
           service:services(*)
         `,
         )
-        .gte("start_time", `${today}T00:00:00`)
-        .lte("start_time", `${today}T23:59:59`)
-        .order("start_time", { ascending: true });
+        .gte('start_time', `${today}T00:00:00`)
+        .lte('start_time', `${today}T23:59:59`)
+        .order('start_time', { ascending: true });
 
       if (professionalId) {
-        query = query.eq("professional_id", professionalId);
+        query = query.eq('professional_id', professionalId);
       }
 
       const { data, error } = await query;
@@ -151,24 +151,24 @@ export function useTodayAppointments(professionalId: string | undefined): any {
 // Hook para estatísticas com real-time
 export function useStats() {
   return useSupabaseRealTimeQuery(
-    ["stats"],
-    "patients",
+    ['stats'],
+    'patients',
     async () => {
       const [
         { count: totalPatients },
         { count: totalAppointments },
         { count: todayAppointments },
       ] = await Promise.all([
-        supabase.from("patients").select("*", { count: "exact", head: true }),
+        supabase.from('patients').select('*', { count: 'exact', head: true }),
         supabase
-          .from("appointments")
-          .select("*", { count: "exact", head: true }),
+          .from('appointments')
+          .select('*', { count: 'exact', head: true }),
         supabase
-          .from("appointments")
-          .select("*", { count: "exact", head: true })
+          .from('appointments')
+          .select('*', { count: 'exact', head: true })
           .gte(
-            "start_time",
-            new Date().toISOString().split("T")[0] + "T00:00:00",
+            'start_time',
+            new Date().toISOString().split('T')[0] + 'T00:00:00',
           ),
       ]);
 
@@ -206,33 +206,33 @@ export function useSupabaseMutation(
     }: {
       data?: any;
       id?: string;
-      action: "create" | "update" | "delete";
+      action: 'create' | 'update' | 'delete';
     }) => {
       let result;
 
       switch (action) {
-        case "create":
+        case 'create':
           result = await (supabase as any)
             .from(table)
             .insert([data])
             .select()
             .single();
           break;
-        case "update":
-          if (!id) throw new Error("ID is required for update");
+        case 'update':
+          if (!id) throw new Error('ID is required for update');
           result = await (supabase as any)
             .from(table)
             .update(data)
-            .eq("id", id)
+            .eq('id', id)
             .select()
             .single();
           break;
-        case "delete":
-          if (!id) throw new Error("ID is required for delete");
-          result = await (supabase as any).from(table).delete().eq("id", id);
+        case 'delete':
+          if (!id) throw new Error('ID is required for delete');
+          result = await (supabase as any).from(table).delete().eq('id', id);
           break;
         default:
-          throw new Error("Invalid action");
+          throw new Error('Invalid action');
       }
 
       if (result.error) throw result.error;
@@ -241,18 +241,18 @@ export function useSupabaseMutation(
     onSuccess: (data, variables) => {
       // Invalidar queries relacionadas
       if (options.invalidateQueries) {
-        options.invalidateQueries.forEach((queryKey) => {
+        options.invalidateQueries.forEach(queryKey => {
           queryClient.invalidateQueries({ queryKey });
         });
       }
 
       // Mostrar toast de sucesso
-      if (variables.action === "create") {
-        toast.success("Registro criado com sucesso!");
-      } else if (variables.action === "update") {
-        toast.success("Registro atualizado com sucesso!");
-      } else if (variables.action === "delete") {
-        toast.success("Registro excluído com sucesso!");
+      if (variables.action === 'create') {
+        toast.success('Registro criado com sucesso!');
+      } else if (variables.action === 'update') {
+        toast.success('Registro atualizado com sucesso!');
+      } else if (variables.action === 'delete') {
+        toast.success('Registro excluído com sucesso!');
       }
 
       options.onSuccess?.(data);
@@ -261,16 +261,16 @@ export function useSupabaseMutation(
       console.error(`Error in ${table} mutation:`, error);
 
       // Mostrar toast de erro
-      if (error.code === "PGRST116") {
+      if (error.code === 'PGRST116') {
         toast.error(
-          "Erro de permissão. Você não tem acesso para esta operação.",
+          'Erro de permissão. Você não tem acesso para esta operação.',
         );
-      } else if (error.code === "PGRST301") {
+      } else if (error.code === 'PGRST301') {
         toast.error(
-          "Erro de restrição de linha. Verifique as políticas de acesso.",
+          'Erro de restrição de linha. Verifique as políticas de acesso.',
         );
       } else {
-        toast.error(`Erro: ${error.message || "Ocorreu um erro inesperado"}`);
+        toast.error(`Erro: ${error.message || 'Ocorreu um erro inesperado'}`);
       }
 
       options.onError?.(error);
@@ -284,32 +284,34 @@ export function usePatientMutation(options = {}) {
 
   return useMutation({
     mutationFn: async (data: {
-      action: "create" | "update" | "delete";
+      action: 'create' | 'update' | 'delete';
       patientData?: any;
       patientId?: string;
     }) => {
       switch (data.action) {
-        case "create":
-          if (!data.patientData)
-            throw new Error("Patient data required for creation");
+        case 'create':
+          if (!data.patientData) {
+            throw new Error('Patient data required for creation');
+          }
           return await patientService.createPatient(
             data.patientData,
-            "current-clinic-id",
-            "current-user-id",
+            'current-clinic-id',
+            'current-user-id',
           );
 
-        case "update":
+        case 'update':
           if (!data.patientId || !data.patientData) {
-            throw new Error("Patient ID and data required for update");
+            throw new Error('Patient ID and data required for update');
           }
           return await patientService.updatePatient(
             data.patientId,
             data.patientData,
           );
 
-        case "delete":
-          if (!data.patientId)
-            throw new Error("Patient ID required for deletion");
+        case 'delete':
+          if (!data.patientId) {
+            throw new Error('Patient ID required for deletion');
+          }
           await patientService.deletePatient(data.patientId);
           return { success: true };
 
@@ -319,8 +321,8 @@ export function usePatientMutation(options = {}) {
     },
     onSuccess: () => {
       // Invalidate and refetch patient queries
-      queryClient.invalidateQueries({ queryKey: ["patients"] });
-      queryClient.invalidateQueries({ queryKey: ["stats"] });
+      queryClient.invalidateQueries({ queryKey: ['patients'] });
+      queryClient.invalidateQueries({ queryKey: ['stats'] });
     },
     ...options,
   });
@@ -328,8 +330,8 @@ export function usePatientMutation(options = {}) {
 
 // Hook específico para mutations de agendamentos
 export function useAppointmentMutation(options = {}) {
-  return useSupabaseMutation("appointments", {
-    invalidateQueries: [["appointments"], ["stats"], ["appointments", "today"]],
+  return useSupabaseMutation('appointments', {
+    invalidateQueries: [['appointments'], ['stats'], ['appointments', 'today']],
     ...options,
   });
 }
@@ -348,24 +350,24 @@ export function useRealTimeSubscription(
     const channel = supabase
       .channel(`${table}-subscription`)
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
+          event: '*',
+          schema: 'public',
           table: table as any,
           ...filters,
         },
-        (payload) => {
+        payload => {
           console.log(`Real-time update on ${table}:`, payload);
 
           switch (payload.eventType) {
-            case "INSERT":
+            case 'INSERT':
               callbacks.onInsert?.(payload);
               break;
-            case "UPDATE":
+            case 'UPDATE':
               callbacks.onUpdate?.(payload);
               break;
-            case "DELETE":
+            case 'DELETE':
               callbacks.onDelete?.(payload);
               break;
           }
@@ -385,12 +387,12 @@ export function useSupabasePrefetch() {
 
   const prefetchPatients = () => {
     return queryClient.prefetchQuery({
-      queryKey: ["patients"],
+      queryKey: ['patients'],
       queryFn: async () => {
         const { data, error } = await supabase
-          .from("patients")
-          .select("*")
-          .order("created_at", { ascending: false });
+          .from('patients')
+          .select('*')
+          .order('created_at', { ascending: false });
 
         if (error) throw error;
         return data;
@@ -401,10 +403,10 @@ export function useSupabasePrefetch() {
 
   const prefetchAppointments = () => {
     return queryClient.prefetchQuery({
-      queryKey: ["appointments"],
+      queryKey: ['appointments'],
       queryFn: async () => {
         const { data, error } = await supabase
-          .from("appointments")
+          .from('appointments')
           .select(
             `
             *,
@@ -412,7 +414,7 @@ export function useSupabasePrefetch() {
             professional:professionals(*)
           `,
           )
-          .order("start_time", { ascending: true });
+          .order('start_time', { ascending: true });
 
         if (error) throw error;
         return data;

@@ -11,13 +11,8 @@
  * The endpoint /api/financial/metrics/calculate does NOT exist yet
  */
 
-import { describe, it, expect, beforeAll, afterEach, afterAll } from "vitest";
-import type {
-  FinancialMetrics,
-  MonetaryValue,
-  Currency,
-  Period,
-} from "@/types/financial";
+import type { Currency, FinancialMetrics, MonetaryValue, Period } from '@/types/financial';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 import { server } from '../mocks/server';
 
 // Setup MSW server
@@ -35,18 +30,18 @@ afterAll(() => {
   server.close();
 });
 
-describe("Contract: Financial Metrics Calculate API", () => {
-  describe("POST /api/financial/metrics/calculate", () => {
-    it("should calculate custom period metrics", async () => {
+describe('Contract: Financial Metrics Calculate API', () => {
+  describe('POST /api/financial/metrics/calculate', () => {
+    it('should calculate custom period metrics', async () => {
       // TDD RED PHASE: Test custom period calculation
 
       const requestBody = {
         period: {
-          start: "2024-01-01",
-          end: "2024-03-31",
-          type: "custom",
+          start: '2024-01-01',
+          end: '2024-03-31',
+          type: 'custom',
         },
-        metrics: ["mrr", "arr", "churn", "growth"],
+        metrics: ['mrr', 'arr', 'churn', 'growth'],
         includeComparisons: true,
       };
 
@@ -55,7 +50,7 @@ describe("Contract: Financial Metrics Calculate API", () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-test-token'
+          Authorization: 'Bearer valid-test-token',
         },
         body: JSON.stringify(requestBody),
       });
@@ -71,28 +66,28 @@ describe("Contract: Financial Metrics Calculate API", () => {
       expect(data.data.calculation.metrics).toBeDefined();
 
       // Validate calculated period matches request
-      expect(data.data.calculation.period.start).toBe("2024-01-01");
-      expect(data.data.calculation.period.end).toBe("2024-03-31");
-      expect(data.data.calculation.period.type).toBe("custom");
+      expect(data.data.calculation.period.start).toBe('2024-01-01');
+      expect(data.data.calculation.period.end).toBe('2024-03-31');
+      expect(data.data.calculation.period.type).toBe('custom');
     });
 
-    it("should validate calculation request structure", async () => {
+    it('should validate calculation request structure', async () => {
       // TDD RED PHASE: Test request validation
 
       const invalidRequestBody = {
         period: {
-          start: "invalid-date",
-          end: "2024-03-31",
+          start: 'invalid-date',
+          end: '2024-03-31',
         },
-        metrics: ["invalid-metric"],
+        metrics: ['invalid-metric'],
       };
 
       // ACT: Call endpoint with invalid request
-      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/api/financial/metrics/calculate', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer valid-test-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer valid-test-token',
         },
         body: JSON.stringify(invalidRequestBody),
       });
@@ -103,31 +98,31 @@ describe("Contract: Financial Metrics Calculate API", () => {
 
       const data = await response.json();
       expect(data.success).toBe(false);
-      expect(data.error.code).toBe("VALIDATION_ERROR");
+      expect(data.error.code).toBe('VALIDATION_ERROR');
       expect(data.error.details).toBeDefined();
-      expect(data.error.details.field).toBe("period.start");
+      expect(data.error.details.field).toBe('period.start');
     });
 
-    it("should calculate real-time metrics with high accuracy", async () => {
+    it('should calculate real-time metrics with high accuracy', async () => {
       // TDD RED PHASE: Test real-time calculation accuracy
 
       const requestBody = {
         period: {
-          start: "2024-01-01",
-          end: "2024-01-31",
-          type: "month",
+          start: '2024-01-01',
+          end: '2024-01-31',
+          type: 'month',
         },
-        metrics: ["mrr", "arr"],
+        metrics: ['mrr', 'arr'],
         realTime: true,
-        precision: "high",
+        precision: 'high',
       };
 
       // ACT: Call endpoint for real-time calculation
-      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/api/financial/metrics/calculate', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer valid-test-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer valid-test-token',
         },
         body: JSON.stringify(requestBody),
       });
@@ -144,40 +139,40 @@ describe("Contract: Financial Metrics Calculate API", () => {
       expect(new Date(calculation.calculatedAt)).toBeInstanceOf(Date);
 
       // Validate high precision calculations
-      expect(calculation.precision).toBe("high");
-      expect(calculation.metrics.mrr.amount).toBeTypeOf("number");
+      expect(calculation.precision).toBe('high');
+      expect(calculation.metrics.mrr.amount).toBeTypeOf('number');
       expect(calculation.metrics.arr.amount).toBeCloseTo(
         calculation.metrics.mrr.amount * 12,
         4,
       ); // 4 decimal precision
     });
-    it("should handle bulk calculations for multiple periods", async () => {
+    it('should handle bulk calculations for multiple periods', async () => {
       // TDD RED PHASE: Test bulk calculation capabilities
 
       const requestBody = {
         calculations: [
           {
-            period: { start: "2024-01-01", end: "2024-01-31", type: "month" },
-            metrics: ["mrr", "churn"],
+            period: { start: '2024-01-01', end: '2024-01-31', type: 'month' },
+            metrics: ['mrr', 'churn'],
           },
           {
-            period: { start: "2024-02-01", end: "2024-02-29", type: "month" },
-            metrics: ["mrr", "churn"],
+            period: { start: '2024-02-01', end: '2024-02-29', type: 'month' },
+            metrics: ['mrr', 'churn'],
           },
           {
-            period: { start: "2024-03-01", end: "2024-03-31", type: "month" },
-            metrics: ["mrr", "churn"],
+            period: { start: '2024-03-01', end: '2024-03-31', type: 'month' },
+            metrics: ['mrr', 'churn'],
           },
         ],
         compareResults: true,
       };
 
       // ACT: Call endpoint for bulk calculations
-      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/api/financial/metrics/calculate', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer valid-test-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer valid-test-token',
         },
         body: JSON.stringify(requestBody),
       });
@@ -201,25 +196,25 @@ describe("Contract: Financial Metrics Calculate API", () => {
       expect(data.data.comparison.trends).toBeDefined();
     });
 
-    it("should handle calculation timeout scenarios", async () => {
+    it('should handle calculation timeout scenarios', async () => {
       // TDD RED PHASE: Test timeout handling
 
       const requestBody = {
         period: {
-          start: "2020-01-01",
-          end: "2024-12-31",
-          type: "custom",
+          start: '2020-01-01',
+          end: '2024-12-31',
+          type: 'custom',
         },
-        metrics: ["mrr", "arr", "churn", "growth", "cohort_analysis"],
+        metrics: ['mrr', 'arr', 'churn', 'growth', 'cohort_analysis'],
         timeout: 5000, // 5 seconds timeout
       };
 
       // ACT: Call endpoint with potentially long calculation
-      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/api/financial/metrics/calculate', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer valid-test-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer valid-test-token',
         },
         body: JSON.stringify(requestBody),
       });
@@ -229,8 +224,8 @@ describe("Contract: Financial Metrics Calculate API", () => {
         // Timeout response
         expect(response.ok).toBe(false);
         const data = await response.json();
-        expect(data.error.code).toBe("CALCULATION_TIMEOUT");
-        expect(data.error.message).toContain("timeout");
+        expect(data.error.code).toBe('CALCULATION_TIMEOUT');
+        expect(data.error.message).toContain('timeout');
       } else {
         // Successful response within timeout
         expect(response.ok).toBe(true);
@@ -239,25 +234,25 @@ describe("Contract: Financial Metrics Calculate API", () => {
       }
     });
 
-    it("should validate calculation performance metrics", async () => {
+    it('should validate calculation performance metrics', async () => {
       // TDD RED PHASE: Test performance monitoring
 
       const requestBody = {
         period: {
-          start: "2024-01-01",
-          end: "2024-01-31",
-          type: "month",
+          start: '2024-01-01',
+          end: '2024-01-31',
+          type: 'month',
         },
-        metrics: ["mrr"],
+        metrics: ['mrr'],
         includePerformance: true,
       };
 
       // ACT: Call endpoint with performance monitoring
-      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/api/financial/metrics/calculate', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer valid-test-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer valid-test-token',
         },
         body: JSON.stringify(requestBody),
       });
@@ -267,26 +262,26 @@ describe("Contract: Financial Metrics Calculate API", () => {
 
       const data = await response.json();
       expect(data.data.performance).toBeDefined();
-      expect(data.data.performance.executionTime).toBeTypeOf("number");
+      expect(data.data.performance.executionTime).toBeTypeOf('number');
       expect(data.data.performance.executionTime).toBeGreaterThan(0);
       expect(data.data.performance.memoryUsage).toBeDefined();
-      expect(data.data.performance.cacheHit).toBeTypeOf("boolean");
+      expect(data.data.performance.cacheHit).toBeTypeOf('boolean');
     });
 
-    it("should handle missing required fields validation", async () => {
+    it('should handle missing required fields validation', async () => {
       // TDD RED PHASE: Test required fields validation
 
       const invalidRequestBody = {
         // Missing period
-        metrics: ["mrr"],
+        metrics: ['mrr'],
       };
 
       // ACT: Call endpoint with missing required fields
-      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/api/financial/metrics/calculate', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer valid-test-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer valid-test-token',
         },
         body: JSON.stringify(invalidRequestBody),
       });
@@ -297,20 +292,20 @@ describe("Contract: Financial Metrics Calculate API", () => {
 
       const data = await response.json();
       expect(data.success).toBe(false);
-      expect(data.error.code).toBe("MISSING_REQUIRED_FIELDS");
-      expect(data.error.details.missingFields).toContain("period");
+      expect(data.error.code).toBe('MISSING_REQUIRED_FIELDS');
+      expect(data.error.details.missingFields).toContain('period');
     });
 
-    it("should validate calculation accuracy with known data", async () => {
+    it('should validate calculation accuracy with known data', async () => {
       // TDD RED PHASE: Test calculation accuracy with predictable results
 
       const requestBody = {
         period: {
-          start: "2024-01-01",
-          end: "2024-01-31",
-          type: "month",
+          start: '2024-01-01',
+          end: '2024-01-31',
+          type: 'month',
         },
-        metrics: ["mrr", "arr"],
+        metrics: ['mrr', 'arr'],
         testMode: true, // Use test data for predictable results
         expectedResults: {
           mrr: 10000.0,
@@ -319,11 +314,11 @@ describe("Contract: Financial Metrics Calculate API", () => {
       };
 
       // ACT: Call endpoint with test data
-      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/api/financial/metrics/calculate', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer valid-test-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer valid-test-token',
         },
         body: JSON.stringify(requestBody),
       });

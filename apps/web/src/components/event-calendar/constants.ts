@@ -1,37 +1,37 @@
-import { type EventColor } from "./types";
+import { type EventColor } from './types';
 
 export const EventHeight = 24;
 
 // Etiquettes for calendar filtering
 export const etiquettes = [
   {
-    id: "my-events",
-    name: "My Events",
-    color: "emerald" as EventColor,
+    id: 'my-events',
+    name: 'My Events',
+    color: 'emerald' as EventColor,
     isActive: true,
   },
   {
-    id: "marketing-team",
-    name: "Marketing Team",
-    color: "orange" as EventColor,
+    id: 'marketing-team',
+    name: 'Marketing Team',
+    color: 'orange' as EventColor,
     isActive: true,
   },
   {
-    id: "interviews",
-    name: "Interviews",
-    color: "violet" as EventColor,
+    id: 'interviews',
+    name: 'Interviews',
+    color: 'violet' as EventColor,
     isActive: true,
   },
   {
-    id: "events-planning",
-    name: "Events Planning",
-    color: "blue" as EventColor,
+    id: 'events-planning',
+    name: 'Events Planning',
+    color: 'blue' as EventColor,
     isActive: true,
   },
   {
-    id: "holidays",
-    name: "Holidays",
-    color: "rose" as EventColor,
+    id: 'holidays',
+    name: 'Holidays',
+    color: 'rose' as EventColor,
     isActive: true,
   },
 ];

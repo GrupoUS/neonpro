@@ -1,14 +1,14 @@
-import { promises as fs } from "fs";
-import path from "path";
-import { DependencySummary, ScannedFile } from "../types.js";
+import { promises as fs } from 'fs';
+import path from 'path';
+import { DependencySummary, ScannedFile } from '../types.js';
 
 const SUPPORTED_EXTENSIONS = new Set([
-  ".ts",
-  ".tsx",
-  ".js",
-  ".jsx",
-  ".mjs",
-  ".cjs",
+  '.ts',
+  '.tsx',
+  '.js',
+  '.jsx',
+  '.mjs',
+  '.cjs',
 ]);
 
 export async function analyseDependencies(
@@ -29,7 +29,7 @@ export async function analyseDependencies(
     }
 
     try {
-      const content = await fs.readFile(file.path, "utf-8");
+      const content = await fs.readFile(file.path, 'utf-8');
       const importMatches = content.match(
         /^(import\s.+|const\s.+?=\srequire\()/gm,
       );

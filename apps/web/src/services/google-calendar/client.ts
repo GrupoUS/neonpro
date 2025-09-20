@@ -1,4 +1,4 @@
-import { google } from "googleapis";
+import { google } from 'googleapis';
 
 export interface GoogleCalendarConfig {
   clientId: string;
@@ -30,9 +30,9 @@ export interface CalendarEvent {
   attendees?: Array<{
     email: string;
     displayName?: string;
-    responseStatus?: "needsAction" | "declined" | "tentative" | "accepted";
+    responseStatus?: 'needsAction' | 'declined' | 'tentative' | 'accepted';
   }>;
-  visibility?: "default" | "public" | "private" | "confidential";
+  visibility?: 'default' | 'public' | 'private' | 'confidential';
   colorId?: string;
 }
 
@@ -47,7 +47,7 @@ export class GoogleCalendarClient {
       config.redirectUri,
     );
 
-    this.calendar = google.calendar({ version: "v3", auth: this.oauth2Client });
+    this.calendar = google.calendar({ version: 'v3', auth: this.oauth2Client });
   }
 
   /**
@@ -56,15 +56,15 @@ export class GoogleCalendarClient {
   getAuthUrl(
     state: string,
     scopes: string[] = [
-      "https://www.googleapis.com/auth/calendar",
-      "https://www.googleapis.com/auth/calendar.events",
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.events',
     ],
   ): string {
     return this.oauth2Client.generateAuthUrl({
-      access_type: "offline",
+      access_type: 'offline',
       scope: scopes,
       state,
-      prompt: "consent",
+      prompt: 'consent',
     });
   }
 
@@ -101,7 +101,7 @@ export class GoogleCalendarClient {
     }
 
     if (!tokens.refresh_token) {
-      throw new Error("No refresh token available");
+      throw new Error('No refresh token available');
     }
 
     return await this.refreshToken(tokens.refresh_token);
@@ -118,7 +118,7 @@ export class GoogleCalendarClient {
   /**
    * Get calendar by ID
    */
-  async getCalendar(calendarId: string = "primary"): Promise<any> {
+  async getCalendar(calendarId: string = 'primary'): Promise<any> {
     const response = await this.calendar.calendars.get({ calendarId });
     return response.data;
   }
@@ -181,7 +181,7 @@ export class GoogleCalendarClient {
       timeMax?: string;
       maxResults?: number;
       singleEvents?: boolean;
-      orderBy?: "startTime" | "updated";
+      orderBy?: 'startTime' | 'updated';
     } = {},
   ): Promise<any[]> {
     const response = await this.calendar.events.list({
@@ -227,7 +227,7 @@ export class GoogleCalendarClient {
       calendarId,
       requestBody: {
         id: `neonpro-${Date.now()}`,
-        type: "web_hook",
+        type: 'web_hook',
         address: webhookUrl,
       },
     });

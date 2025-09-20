@@ -1,14 +1,14 @@
 /**
  * AI CRUD Intent Phase Contract Tests
  * T027: AI-assisted CRUD operations with intent→confirm→execute flow
- * 
+ *
  * Testing the intent phase of the 3-step AI CRUD flow
  * Following RED-GREEN-REFACTOR methodology
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { server } from '../mocks/server';
 import { http, HttpResponse } from 'msw';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { server } from '../mocks/server';
 import { createCrudIntent, validateIntentRequest } from '../utils/crud-test-utils';
 
 // Mock data for testing
@@ -18,20 +18,20 @@ const mockIntentRequest = {
   data: {
     name: 'Test Patient',
     email: 'test@example.com',
-    phone: '+5511999999999'
+    phone: '+5511999999999',
   },
   context: {
     userId: 'user-123',
     sessionId: 'session-456',
-    timestamp: new Date().toISOString()
-  }
+    timestamp: new Date().toISOString(),
+  },
 };
 
 const invalidIntentRequest = {
   entity: 'invalid_entity',
   operation: 'invalid_operation',
   data: {},
-  context: {}
+  context: {},
 };
 
 describe('AI CRUD Intent Phase - Contract Tests', () => {
@@ -40,29 +40,29 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
     server.use(
       http.post('/api/v1/ai/crud/intent', async ({ request }) => {
         const body = await request.json();
-        
+
         // Validate request format
         if (!validateIntentRequest(body)) {
           return new HttpResponse(
-            JSON.stringify({ 
+            JSON.stringify({
               error: 'Invalid intent request format',
-              code: 'INVALID_REQUEST' 
+              code: 'INVALID_REQUEST',
             }),
-            { status: 400 }
+            { status: 400 },
           );
         }
-        
+
         // Validate entity and operation
         if (body.entity === 'invalid_entity') {
           return new HttpResponse(
-            JSON.stringify({ 
+            JSON.stringify({
               error: 'Unsupported entity type',
-              code: 'INVALID_ENTITY' 
+              code: 'INVALID_ENTITY',
             }),
-            { status: 400 }
+            { status: 400 },
           );
         }
-        
+
         // Return success response
         return HttpResponse.json({
           success: true,
@@ -72,12 +72,12 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
             entityValid: true,
             operationValid: true,
             dataSchema: 'valid',
-            riskLevel: 'LOW'
+            riskLevel: 'LOW',
           },
           nextStep: 'confirm',
-          expiresAt: new Date(Date.now() + 300000).toISOString() // 5 minutes
+          expiresAt: new Date(Date.now() + 300000).toISOString(), // 5 minutes
         });
-      })
+      }),
     );
   });
 
@@ -90,7 +90,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
     it('should accept valid intent requests', async () => {
       // RED: Test expects valid request to be accepted
       const response = await createCrudIntent(mockIntentRequest);
-      
+
       expect(response.success).toBe(true);
       expect(response.intentId).toBeDefined();
       expect(response.token).toBeDefined();
@@ -102,21 +102,21 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
     it('should reject requests with invalid entity', async () => {
       // RED: Test expects invalid entity to be rejected
       const invalidRequest = { ...mockIntentRequest, entity: 'invalid_entity' };
-      
+
       await expect(createCrudIntent(invalidRequest)).rejects.toThrow('Invalid entity');
     });
 
     it('should reject requests with invalid operation', async () => {
       // RED: Test expects invalid operation to be rejected
       const invalidRequest = { ...mockIntentRequest, operation: 'invalid_operation' };
-      
+
       await expect(createCrudIntent(invalidRequest)).rejects.toThrow('Invalid operation');
     });
 
     it('should reject requests missing required fields', async () => {
       // RED: Test expects missing fields to be rejected
       const incompleteRequest = { entity: 'patients', operation: 'create' };
-      
+
       await expect(createCrudIntent(incompleteRequest)).rejects.toThrow('Missing required fields');
     });
 
@@ -124,9 +124,9 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // RED: Test expects data schema validation
       const requestWithInvalidData = {
         ...mockIntentRequest,
-        data: { name: 123 } // Invalid type
+        data: { name: 123 }, // Invalid type
       };
-      
+
       await expect(createCrudIntent(requestWithInvalidData)).rejects.toThrow('Invalid data schema');
     });
   });
@@ -135,14 +135,14 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
     it('should return proper response format for successful requests', async () => {
       // RED: Test expects proper response structure
       const response = await createCrudIntent(mockIntentRequest);
-      
+
       expect(response).toHaveProperty('success', true);
       expect(response).toHaveProperty('intentId');
       expect(response).toHaveProperty('token');
       expect(response).toHaveProperty('validation');
       expect(response).toHaveProperty('nextStep');
       expect(response).toHaveProperty('expiresAt');
-      
+
       expect(typeof response.intentId).toBe('string');
       expect(typeof response.token).toBe('string');
       expect(typeof response.nextStep).toBe('string');
@@ -152,12 +152,12 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
     it('should include validation details in response', async () => {
       // RED: Test expects validation details
       const response = await createCrudIntent(mockIntentRequest);
-      
+
       expect(response.validation).toHaveProperty('entityValid');
       expect(response.validation).toHaveProperty('operationValid');
       expect(response.validation).toHaveProperty('dataSchema');
       expect(response.validation).toHaveProperty('riskLevel');
-      
+
       expect(typeof response.validation.entityValid).toBe('boolean');
       expect(typeof response.validation.operationValid).toBe('boolean');
       expect(typeof response.validation.dataSchema).toBe('string');
@@ -169,7 +169,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       const response = await createCrudIntent(mockIntentRequest);
       const expiresAt = new Date(response.expiresAt);
       const now = new Date();
-      
+
       expect(expiresAt.getTime()).toBeGreaterThan(now.getTime());
       expect(expiresAt.getTime() - now.getTime()).toBeLessThanOrEqual(300000); // 5 minutes
     });
@@ -180,7 +180,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // RED: Test expects authentication validation
       const requestWithoutAuth = { ...mockIntentRequest };
       delete requestWithoutAuth.context.userId;
-      
+
       await expect(createCrudIntent(requestWithoutAuth)).rejects.toThrow('Authentication required');
     });
 
@@ -188,14 +188,14 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // RED: Test expects session tracking
       const requestWithoutSession = { ...mockIntentRequest };
       delete requestWithoutSession.context.sessionId;
-      
+
       await expect(createCrudIntent(requestWithoutSession)).rejects.toThrow('Session required');
     });
 
     it('should generate secure tokens with proper entropy', async () => {
       // RED: Test expects secure token generation
       const response = await createCrudIntent(mockIntentRequest);
-      
+
       expect(response.token).toMatch(/^[a-zA-Z0-9\-_]+$/);
       expect(response.token.length).toBeGreaterThan(16); // Minimum secure length
     });
@@ -203,7 +203,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
     it('should include risk assessment in response', async () => {
       // RED: Test expects risk assessment
       const response = await createCrudIntent(mockIntentRequest);
-      
+
       expect(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']).toContain(response.validation.riskLevel);
     });
   });
@@ -218,12 +218,12 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
           name: 'Test Patient',
           email: 'test@example.com',
           // Should not include sensitive personal data without consent
-          medicalHistory: [] // This should be flagged
-        }
+          medicalHistory: [], // This should be flagged
+        },
       };
-      
+
       const response = await createCrudIntent(patientRequest);
-      
+
       expect(response.validation.lgpdCompliant).toBeDefined();
       if (response.validation.riskLevel === 'HIGH') {
         expect(response.validation.consentRequired).toBe(true);
@@ -237,12 +237,12 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
         entity: 'patients',
         data: {
           name: 'Test Patient',
-          healthData: 'sensitive' // Should trigger consent requirement
-        }
+          healthData: 'sensitive', // Should trigger consent requirement
+        },
       };
-      
+
       const response = await createCrudIntent(sensitiveDataRequest);
-      
+
       expect(response.validation.consentRequired).toBeDefined();
       if (response.validation.consentRequired) {
         expect(response.nextStep).toBe('consent_validation');
@@ -252,7 +252,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
     it('should include audit trail information', async () => {
       // RED: Test expects audit trail inclusion
       const response = await createCrudIntent(mockIntentRequest);
-      
+
       expect(response.auditTrail).toBeDefined();
       expect(response.auditTrail).toHaveProperty('requestId');
       expect(response.auditTrail).toHaveProperty('timestamp');
@@ -274,9 +274,9 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
         http.post('/api/v1/ai/crud/intent', async () => {
           await new Promise(resolve => setTimeout(resolve, 100));
           return HttpResponse.json({ success: true });
-        })
+        }),
       );
-      
+
       await expect(createCrudIntent(mockIntentRequest, 50)).rejects.toThrow('Request timeout');
     });
 
@@ -285,9 +285,9 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       server.use(
         http.post('/api/v1/ai/crud/intent', () => {
           return new HttpResponse(null, { status: 500 });
-        })
+        }),
       );
-      
+
       await expect(createCrudIntent(mockIntentRequest)).rejects.toThrow('Server error');
     });
 
@@ -309,7 +309,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       const startTime = performance.now();
       await createCrudIntent(mockIntentRequest);
       const endTime = performance.now();
-      
+
       expect(endTime - startTime).toBeLessThan(500);
     });
 
@@ -317,7 +317,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // RED: Test expects concurrent request handling
       const requests = Array(10).fill(null).map(() => createCrudIntent(mockIntentRequest));
       const results = await Promise.allSettled(requests);
-      
+
       const successful = results.filter(r => r.status === 'fulfilled');
       expect(successful.length).toBe(10);
     });

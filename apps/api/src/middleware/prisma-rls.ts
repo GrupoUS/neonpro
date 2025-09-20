@@ -6,6 +6,7 @@
  * and audit trail integration.
  */
 
+import { logger } from '@/utils/secure-logger';
 import { Context, Next } from 'hono';
 import {
   createHealthcareContextFromRequest,
@@ -16,7 +17,6 @@ import {
   UnauthorizedHealthcareAccessError,
 } from '../clients/prisma';
 import { healthcareRLS } from '../clients/supabase.js';
-import { logger } from '@/utils/secure-logger';
 
 // Middleware configuration options
 interface PrismaRLSOptions {

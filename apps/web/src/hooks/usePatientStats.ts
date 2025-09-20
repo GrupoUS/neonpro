@@ -1,5 +1,5 @@
-import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { supabase } from '@/integrations/supabase/client';
+import { useQuery } from '@tanstack/react-query';
 
 export type PatientStats = {
   totalPatients: number;
@@ -44,7 +44,7 @@ async function countUpcomingAppointments(clinicId: string, fromISO: string, toIS
 
 export function usePatientStats(clinicId?: string) {
   return useQuery({
-    queryKey: ["patient-stats", clinicId],
+    queryKey: ['patient-stats', clinicId],
     queryFn: async () => {
       // Since the RPC function is not available, we perform the queries separately
       const today = new Date();
@@ -61,28 +61,28 @@ export function usePatientStats(clinicId?: string) {
         appointmentsResult,
         revenueResult,
       ] = await Promise.all([
-        supabase.from("patients").select("id, is_active"),
+        supabase.from('patients').select('id, is_active'),
         supabase
-          .from("patients")
-          .select("id")
-          .gte("created_at", firstDayOfMonth.toISOString()),
+          .from('patients')
+          .select('id')
+          .gte('created_at', firstDayOfMonth.toISOString()),
         supabase
-          .from("appointments")
-          .select("id")
+          .from('appointments')
+          .select('id')
           .gte(
-            "start_time",
-            tomorrow.toISOString().split("T")[0] + "T00:00:00Z",
+            'start_time',
+            tomorrow.toISOString().split('T')[0] + 'T00:00:00Z',
           ),
         supabase
-          .from("financial_transactions")
-          .select("amount")
+          .from('financial_transactions')
+          .select('amount')
           .gte(
-            "transaction_date",
-            today.toISOString().split("T")[0] + "T00:00:00Z",
+            'transaction_date',
+            today.toISOString().split('T')[0] + 'T00:00:00Z',
           )
           .lt(
-            "transaction_date",
-            tomorrow.toISOString().split("T")[0] + "T00:00:00Z",
+            'transaction_date',
+            tomorrow.toISOString().split('T')[0] + 'T00:00:00Z',
           ),
       ]);
 
@@ -92,15 +92,13 @@ export function usePatientStats(clinicId?: string) {
       if (revenueResult.error) throw revenueResult.error;
 
       const totalPatients = patientsResult.data?.length || 0;
-      const activePatients =
-        patientsResult.data?.filter((p) => p.is_active)?.length || 0;
+      const activePatients = patientsResult.data?.filter(p => p.is_active)?.length || 0;
       const newThisMonth = newPatientsResult.data?.length || 0;
       const upcomingAppointments = appointmentsResult.data?.length || 0;
-      const revenueToday =
-        revenueResult.data?.reduce(
-          (sum, t) => sum + (Number(t.amount) || 0),
-          0,
-        ) || 0;
+      const revenueToday = revenueResult.data?.reduce(
+        (sum, t) => sum + (Number(t.amount) || 0),
+        0,
+      ) || 0;
 
       return {
         totalPatients,

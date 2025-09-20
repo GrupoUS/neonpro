@@ -6,13 +6,13 @@
  * with actual healthcare regulatory compliance checking.
  *
  * @critical SECURITY CVSS: 7.5 - Replaces mock authorization with real RBAC
- * @author AI Development Agent  
+ * @author AI Development Agent
  * @compliance CFM Resolution 2,314/2022, LGPD, ANVISA, NGS2 Level 2
  * @performance <150ms validation target
  */
 
-import { TRPCError } from '@trpc/server';
 import { PrismaClient } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
 
 export interface ProfessionalAuthorizationResult {
   isAuthorized: boolean;
@@ -30,7 +30,7 @@ export interface ProfessionalAuthorizationResult {
   validationSource: 'database' | 'cfm_api' | 'cache';
 }
 
-export type ProfessionalRole = 
+export type ProfessionalRole =
   | 'medical_doctor'
   | 'specialist'
   | 'resident'
@@ -39,7 +39,7 @@ export type ProfessionalRole =
   | 'technician'
   | 'administrator';
 
-export type Permission = 
+export type Permission =
   | 'read_patient_data'
   | 'write_patient_data'
   | 'create_appointments'
@@ -74,7 +74,7 @@ const ROLE_CONFIG: Record<ProfessionalRole, {
   medical_doctor: {
     permissions: [
       'read_patient_data',
-      'write_patient_data', 
+      'write_patient_data',
       'create_appointments',
       'modify_appointments',
       'cancel_appointments',
@@ -182,7 +182,7 @@ const SPECIALTY_PERMISSIONS: Record<string, SpecialtyPermission> = {
     maxComplexity: 8,
   },
   '02': {
-    specialtyCode: '02', 
+    specialtyCode: '02',
     specialtyName: 'Cirurgia Geral',
     allowedOperations: [
       'surgical_procedures',
@@ -195,7 +195,7 @@ const SPECIALTY_PERMISSIONS: Record<string, SpecialtyPermission> = {
   },
   '03': {
     specialtyCode: '03',
-    specialtyName: 'Pediatria', 
+    specialtyName: 'Pediatria',
     allowedOperations: [
       'pediatric_diagnosis',
       'pediatric_treatment',
@@ -244,7 +244,7 @@ export class HealthcareProfessionalAuthorizationService {
       patientId?: string;
       clinicId?: string;
       emergency?: boolean;
-    }
+    },
   ): Promise<ProfessionalAuthorizationResult> {
     // Check cache first
     const cachedResult = this.getCachedAuthorization(professionalId);
@@ -289,7 +289,7 @@ export class HealthcareProfessionalAuthorizationService {
     // Validate CFM license (real implementation)
     const cfmValidation = await this.validateCFMLicense(
       professional.crmNumber,
-      professional.crmState
+      professional.crmState,
     );
 
     if (!cfmValidation.isValid) {
@@ -302,7 +302,7 @@ export class HealthcareProfessionalAuthorizationService {
     // Determine professional role and permissions
     const role = this.determineProfessionalRole(professional);
     const roleConfig = ROLE_CONFIG[role];
-    
+
     // Check specialty permissions
     const specialtyPermissions = professional.specialties
       .map(specialty => SPECIALTY_PERMISSIONS[specialty])
@@ -328,7 +328,10 @@ export class HealthcareProfessionalAuthorizationService {
     // Add specialty-specific restrictions
     if (specialtyPermissions.length > 0) {
       specialtyPermissions.forEach(sp => {
-        if (sp.requiresSupervision && !authorizationResult.restrictions.includes('requires_supervision')) {
+        if (
+          sp.requiresSupervision
+          && !authorizationResult.restrictions.includes('requires_supervision')
+        ) {
           authorizationResult.restrictions.push('requires_supervision');
         }
       });
@@ -346,7 +349,7 @@ export class HealthcareProfessionalAuthorizationService {
    */
   private async validateCFMLicense(
     crmNumber: string,
-    state: string
+    state: string,
   ): Promise<{
     isValid: boolean;
     status: 'active' | 'suspended' | 'cancelled' | 'inactive';
@@ -373,8 +376,8 @@ export class HealthcareProfessionalAuthorizationService {
 
       // Check if validation is recent (within 24 hours)
       const validationExpiry = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      const needsRevalidation = !professional.cfmLastValidated ||
-        professional.cfmLastValidated < validationExpiry;
+      const needsRevalidation = !professional.cfmLastValidated
+        || professional.cfmLastValidated < validationExpiry;
 
       if (needsRevalidation) {
         // TODO: Implement real CFM API integration
@@ -406,7 +409,7 @@ export class HealthcareProfessionalAuthorizationService {
    */
   private determineProfessionalRole(professional: any): ProfessionalRole {
     const userRole = professional.user.role;
-    
+
     // Map user roles to professional roles
     switch (userRole) {
       case 'admin':
@@ -433,7 +436,7 @@ export class HealthcareProfessionalAuthorizationService {
     authorization: ProfessionalAuthorizationResult,
     operation: string,
     entityType?: string,
-    context?: { patientId?: string; clinicId?: string; emergency?: boolean }
+    context?: { patientId?: string; clinicId?: string; emergency?: boolean },
   ): ProfessionalAuthorizationResult {
     const { permissions, restrictions, role } = authorization;
 
@@ -445,21 +448,21 @@ export class HealthcareProfessionalAuthorizationService {
 
     // Map operations to required permissions
     const operationPermissions: Record<string, Permission> = {
-      'create_patient': 'write_patient_data',
-      'read_patient': 'read_patient_data',
-      'update_patient': 'write_patient_data',
-      'delete_patient': 'write_patient_data',
-      'create_appointment': 'create_appointments',
-      'update_appointment': 'modify_appointments',
-      'cancel_appointment': 'cancel_appointments',
-      'create_prescription': 'prescribe_medication',
-      'read_medical_record': 'view_medical_records',
-      'create_medical_record': 'create_medical_records',
-      'telemedicine_consult': 'telemedicine_consultation',
+      create_patient: 'write_patient_data',
+      read_patient: 'read_patient_data',
+      update_patient: 'write_patient_data',
+      delete_patient: 'write_patient_data',
+      create_appointment: 'create_appointments',
+      update_appointment: 'modify_appointments',
+      cancel_appointment: 'cancel_appointments',
+      create_prescription: 'prescribe_medication',
+      read_medical_record: 'view_medical_records',
+      create_medical_record: 'create_medical_records',
+      telemedicine_consult: 'telemedicine_consultation',
     };
 
     const requiredPermission = operationPermissions[operation];
-    
+
     if (!requiredPermission) {
       authorization.isAuthorized = false;
       return authorization;
@@ -474,7 +477,7 @@ export class HealthcareProfessionalAuthorizationService {
       if (restrictions.includes('no_prescribing') && operation === 'create_prescription') {
         authorization.isAuthorized = false;
       }
-      
+
       if (restrictions.includes('no_diagnosis') && operation.includes('medical_record')) {
         authorization.isAuthorized = false;
       }
@@ -495,7 +498,10 @@ export class HealthcareProfessionalAuthorizationService {
     return null;
   }
 
-  private setCachedAuthorization(professionalId: string, result: ProfessionalAuthorizationResult): void {
+  private setCachedAuthorization(
+    professionalId: string,
+    result: ProfessionalAuthorizationResult,
+  ): void {
     this.cache.set(professionalId, {
       result,
       expiry: Date.now() + this.CACHE_DURATION,

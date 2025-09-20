@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useCreateService } from "@/hooks/useServices";
-import { Button } from "@neonpro/ui";
-import { Input } from "@neonpro/ui";
-import { Label } from "@neonpro/ui";
-import { Textarea } from "@neonpro/ui";
-import { Switch } from "@neonpro/ui";
+import { useCreateService } from '@/hooks/useServices';
+import { Button } from '@neonpro/ui';
+import { Input } from '@neonpro/ui';
+import { Label } from '@neonpro/ui';
+import { Textarea } from '@neonpro/ui';
+import { Switch } from '@neonpro/ui';
 import {
   Dialog,
   DialogContent,
@@ -13,10 +13,10 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@neonpro/ui";
-import { Clock, FileText, Loader2, Settings } from "lucide-react"; // Removed DollarSign
-import { useState } from "react";
-import { toast } from "sonner";
+} from '@neonpro/ui';
+import { Clock, FileText, Loader2, Settings } from 'lucide-react'; // Removed DollarSign
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface ServiceCreationFormProps {
   open: boolean;
@@ -53,8 +53,8 @@ export function ServiceCreationForm({
   onServiceCreated,
 }: ServiceCreationFormProps) {
   const [formData, setFormData] = useState<ServiceFormData>({
-    name: "",
-    description: "",
+    name: '',
+    description: '',
     duration_minutes: 60,
     price: 0,
     is_active: true,
@@ -70,22 +70,21 @@ export function ServiceCreationForm({
 
     // Required field validations
     if (!formData.name.trim()) {
-      newErrors.name = "Nome do serviço é obrigatório";
+      newErrors.name = 'Nome do serviço é obrigatório';
     } else if (formData.name.trim().length < 2) {
-      newErrors.name = "Nome deve ter pelo menos 2 caracteres";
+      newErrors.name = 'Nome deve ter pelo menos 2 caracteres';
     }
 
     if (formData.duration_minutes <= 0) {
-      newErrors.duration_minutes = "Duração deve ser maior que 0 minutos";
+      newErrors.duration_minutes = 'Duração deve ser maior que 0 minutos';
     } else if (formData.duration_minutes > 480) {
-      newErrors.duration_minutes =
-        "Duração não pode ser maior que 8 horas (480 minutos)";
+      newErrors.duration_minutes = 'Duração não pode ser maior que 8 horas (480 minutos)';
     }
 
     if (formData.price < 0) {
-      newErrors.price = "Preço não pode ser negativo";
+      newErrors.price = 'Preço não pode ser negativo';
     } else if (formData.price > 10000) {
-      newErrors.price = "Preço não pode ser maior que R$ 10.000,00";
+      newErrors.price = 'Preço não pode ser maior que R$ 10.000,00';
     }
 
     setErrors(newErrors);
@@ -96,17 +95,17 @@ export function ServiceCreationForm({
     field: keyof ServiceFormData,
     value: string | number | boolean,
   ) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
 
     // Clear error when user starts typing
     if (errors[field as keyof ServiceFormErrors]) {
-      setErrors((prev) => ({ ...prev, [field]: undefined }));
+      setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
   const handleSubmit = async () => {
     if (!validateForm()) {
-      toast.error("Por favor, corrija os erros no formulário");
+      toast.error('Por favor, corrija os erros no formulário');
       return;
     }
 
@@ -137,8 +136,8 @@ export function ServiceCreationForm({
 
       // Reset form
       setFormData({
-        name: "",
-        description: "",
+        name: '',
+        description: '',
         duration_minutes: 60,
         price: 0,
         is_active: true,
@@ -148,10 +147,10 @@ export function ServiceCreationForm({
       // Close dialog
       onOpenChange(false);
 
-      toast.success("Serviço criado com sucesso!");
+      toast.success('Serviço criado com sucesso!');
     } catch (error) {
-      console.error("Error creating service:", error);
-      toast.error("Erro ao criar serviço. Tente novamente.");
+      console.error('Error creating service:', error);
+      toast.error('Erro ao criar serviço. Tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
@@ -159,8 +158,8 @@ export function ServiceCreationForm({
 
   const handleCancel = () => {
     setFormData({
-      name: "",
-      description: "",
+      name: '',
+      description: '',
       duration_minutes: 60,
       price: 0,
       is_active: true,
@@ -171,10 +170,10 @@ export function ServiceCreationForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto'>
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Settings className="h-5 w-5 text-primary" />
+          <DialogTitle className='flex items-center gap-2'>
+            <Settings className='h-5 w-5 text-primary' />
             Criar Novo Serviço
           </DialogTitle>
           <DialogDescription>
@@ -182,31 +181,29 @@ export function ServiceCreationForm({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6">
+        <div className='space-y-6'>
           {/* Basic Information */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <Settings className="h-4 w-4" />
+          <div className='space-y-4'>
+            <h4 className='text-sm font-medium text-muted-foreground flex items-center gap-2'>
+              <Settings className='h-4 w-4' />
               Informações Básicas
             </h4>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className='grid grid-cols-1 gap-4'>
               <div>
-                <Label htmlFor="serviceName">Nome do Serviço *</Label>
+                <Label htmlFor='serviceName'>Nome do Serviço *</Label>
                 <Input
-                  id="serviceName"
+                  id='serviceName'
                   value={formData.name}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  placeholder="Ex: Limpeza de Pele, Botox, Preenchimento..."
-                  className={errors.name ? "border-destructive" : ""}
-                  aria-describedby={
-                    errors.name ? "serviceName-error" : undefined
-                  }
+                  onChange={e => handleInputChange('name', e.target.value)}
+                  placeholder='Ex: Limpeza de Pele, Botox, Preenchimento...'
+                  className={errors.name ? 'border-destructive' : ''}
+                  aria-describedby={errors.name ? 'serviceName-error' : undefined}
                 />
                 {errors.name && (
                   <p
-                    id="serviceName-error"
-                    className="text-sm text-destructive mt-1"
+                    id='serviceName-error'
+                    className='text-sm text-destructive mt-1'
                   >
                     {errors.name}
                   </p>
@@ -214,87 +211,78 @@ export function ServiceCreationForm({
               </div>
 
               <div>
-                <Label htmlFor="serviceDescription">Descrição</Label>
+                <Label htmlFor='serviceDescription'>Descrição</Label>
                 <Textarea
-                  id="serviceDescription"
+                  id='serviceDescription'
                   value={formData.description}
-                  onChange={(e) =>
-                    handleInputChange("description", e.target.value)
-                  }
-                  placeholder="Descreva o serviço, procedimentos incluídos, benefícios..."
+                  onChange={e => handleInputChange('description', e.target.value)}
+                  placeholder='Descreva o serviço, procedimentos incluídos, benefícios...'
                   rows={3}
-                  className={errors.description ? "border-destructive" : ""}
+                  className={errors.description ? 'border-destructive' : ''}
                 />
               </div>
             </div>
           </div>
 
           {/* Service Details */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <Clock className="h-4 w-4" />
+          <div className='space-y-4'>
+            <h4 className='text-sm font-medium text-muted-foreground flex items-center gap-2'>
+              <Clock className='h-4 w-4' />
               Detalhes do Serviço
             </h4>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
               <div>
-                <Label htmlFor="duration">Duração (minutos) *</Label>
+                <Label htmlFor='duration'>Duração (minutos) *</Label>
                 <Input
-                  id="duration"
-                  type="number"
-                  min="15"
-                  max="480"
-                  step="15"
+                  id='duration'
+                  type='number'
+                  min='15'
+                  max='480'
+                  step='15'
                   value={formData.duration_minutes}
-                  onChange={(e) =>
+                  onChange={e =>
                     handleInputChange(
-                      "duration_minutes",
+                      'duration_minutes',
                       parseInt(e.target.value) || 0,
-                    )
-                  }
-                  placeholder="60"
-                  className={
-                    errors.duration_minutes ? "border-destructive" : ""
-                  }
-                  aria-describedby={
-                    errors.duration_minutes ? "duration-error" : undefined
-                  }
+                    )}
+                  placeholder='60'
+                  className={errors.duration_minutes ? 'border-destructive' : ''}
+                  aria-describedby={errors.duration_minutes ? 'duration-error' : undefined}
                 />
                 {errors.duration_minutes && (
                   <p
-                    id="duration-error"
-                    className="text-sm text-destructive mt-1"
+                    id='duration-error'
+                    className='text-sm text-destructive mt-1'
                   >
                     {errors.duration_minutes}
                   </p>
                 )}
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className='text-xs text-muted-foreground mt-1'>
                   Duração em minutos (15 min - 8 horas)
                 </p>
               </div>
 
               <div>
-                <Label htmlFor="price">Preço (R$) *</Label>
+                <Label htmlFor='price'>Preço (R$) *</Label>
                 <Input
-                  id="price"
-                  type="number"
-                  min="0"
-                  max="10000"
-                  step="0.01"
+                  id='price'
+                  type='number'
+                  min='0'
+                  max='10000'
+                  step='0.01'
                   value={formData.price}
-                  onChange={(e) =>
-                    handleInputChange("price", parseFloat(e.target.value) || 0)
-                  }
-                  placeholder="150.00"
-                  className={errors.price ? "border-destructive" : ""}
-                  aria-describedby={errors.price ? "price-error" : undefined}
+                  onChange={e => handleInputChange('price', parseFloat(e.target.value) || 0)}
+                  placeholder='150.00'
+                  className={errors.price ? 'border-destructive' : ''}
+                  aria-describedby={errors.price ? 'price-error' : undefined}
                 />
                 {errors.price && (
-                  <p id="price-error" className="text-sm text-destructive mt-1">
+                  <p id='price-error' className='text-sm text-destructive mt-1'>
                     {errors.price}
                   </p>
                 )}
-                <p className="text-xs text-muted-foreground mt-1">
+                <p className='text-xs text-muted-foreground mt-1'>
                   Preço em reais (R$ 0,00 - R$ 10.000,00)
                 </p>
               </div>
@@ -302,63 +290,61 @@ export function ServiceCreationForm({
           </div>
 
           {/* Service Status */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-              <FileText className="h-4 w-4" />
+          <div className='space-y-4'>
+            <h4 className='text-sm font-medium text-muted-foreground flex items-center gap-2'>
+              <FileText className='h-4 w-4' />
               Status do Serviço
             </h4>
 
-            <div className="flex items-center space-x-2">
+            <div className='flex items-center space-x-2'>
               <Switch
-                id="isActive"
+                id='isActive'
                 checked={formData.is_active}
-                onCheckedChange={(checked) =>
-                  handleInputChange("is_active", checked)
-                }
+                onCheckedChange={checked => handleInputChange('is_active', checked)}
               />
-              <Label htmlFor="isActive" className="text-sm">
+              <Label htmlFor='isActive' className='text-sm'>
                 Serviço ativo (disponível para agendamento)
               </Label>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className='text-xs text-muted-foreground'>
               Serviços inativos não aparecerão na lista de agendamentos
             </p>
           </div>
 
           {/* Preview */}
           {formData.name && (
-            <div className="space-y-4">
-              <h4 className="text-sm font-medium text-muted-foreground">
+            <div className='space-y-4'>
+              <h4 className='text-sm font-medium text-muted-foreground'>
                 Pré-visualização
               </h4>
-              <div className="p-4 border rounded-lg bg-muted/50">
-                <div className="flex justify-between items-start mb-2">
-                  <h5 className="font-medium">{formData.name}</h5>
-                  <span className="text-sm font-medium text-primary">
-                    {formData.price.toLocaleString("pt-BR", {
-                      style: "currency",
-                      currency: "BRL",
+              <div className='p-4 border rounded-lg bg-muted/50'>
+                <div className='flex justify-between items-start mb-2'>
+                  <h5 className='font-medium'>{formData.name}</h5>
+                  <span className='text-sm font-medium text-primary'>
+                    {formData.price.toLocaleString('pt-BR', {
+                      style: 'currency',
+                      currency: 'BRL',
                     })}
                   </span>
                 </div>
                 {formData.description && (
-                  <p className="text-sm text-muted-foreground mb-2">
+                  <p className='text-sm text-muted-foreground mb-2'>
                     {formData.description}
                   </p>
                 )}
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
+                <div className='flex items-center gap-4 text-xs text-muted-foreground'>
+                  <span className='flex items-center gap-1'>
+                    <Clock className='h-3 w-3' />
                     {formData.duration_minutes} min
                   </span>
                   <span
                     className={`px-2 py-1 rounded-full text-xs ${
                       formData.is_active
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-800"
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
                     }`}
                   >
-                    {formData.is_active ? "Ativo" : "Inativo"}
+                    {formData.is_active ? 'Ativo' : 'Inativo'}
                   </span>
                 </div>
               </div>
@@ -368,14 +354,14 @@ export function ServiceCreationForm({
 
         <DialogFooter>
           <Button
-            variant="outline"
+            variant='outline'
             onClick={handleCancel}
             disabled={isSubmitting}
           >
             Cancelar
           </Button>
           <Button onClick={handleSubmit} disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isSubmitting && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
             Criar Serviço
           </Button>
         </DialogFooter>

@@ -154,16 +154,28 @@ class ErrorLogger {
     // Secure logging based on severity
     switch (error.severity) {
       case ErrorSeverity.CRITICAL:
-        logger.error('CRITICAL ERROR', logEntry, { severity: 'critical', component: 'error-handler' });
+        logger.error('CRITICAL ERROR', logEntry, {
+          severity: 'critical',
+          component: 'error-handler',
+        });
         break;
       case ErrorSeverity.HIGH:
-        logger.error('HIGH SEVERITY ERROR', logEntry, { severity: 'high', component: 'error-handler' });
+        logger.error('HIGH SEVERITY ERROR', logEntry, {
+          severity: 'high',
+          component: 'error-handler',
+        });
         break;
       case ErrorSeverity.MEDIUM:
-        logger.warn('MEDIUM SEVERITY ERROR', logEntry, { severity: 'medium', component: 'error-handler' });
+        logger.warn('MEDIUM SEVERITY ERROR', logEntry, {
+          severity: 'medium',
+          component: 'error-handler',
+        });
         break;
       case ErrorSeverity.LOW:
-        logger.info('LOW SEVERITY ERROR', logEntry, { severity: 'low', component: 'error-handler' });
+        logger.info('LOW SEVERITY ERROR', logEntry, {
+          severity: 'low',
+          component: 'error-handler',
+        });
         break;
     }
 

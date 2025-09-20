@@ -14,16 +14,6 @@ Use this prompt as the single source of truth for multi-agent orchestrated audit
 
 ## 🤖 Agent Registry & Capabilities Matrix
 
-### Core Code Review Agents
-
-| Agent                    | Primary Focus                          | Execution Phase         | Parallel Capable | Dependencies     | TDD Integration         |
-| ------------------------ | -------------------------------------- | ----------------------- | ---------------- | ---------------- | ----------------------- |
-| **architect-review**     | System design, patterns, scalability   | Architecture validation | ✅               | None             | RED/GREEN/REFACTOR      |
-| **security-auditor**     | DevSecOps, compliance, vulnerabilities | Security analysis       | ✅               | None             | ALL phases (healthcare) |
-| **code-reviewer**        | Quality, maintainability, performance  | Code analysis           | ✅               | architect-review | GREEN/REFACTOR          |
-| **test**                 | TDD patterns, coverage, test quality   | Test orchestration      | ✅               | code-reviewer    | RED (primary)           |
-| **compliance-validator** | Healthcare regulatory validation       | Compliance checking     | ✅               | security-auditor | ALL phases (mandatory)  |
-
 ### Enhanced Agent Activation Triggers
 
 ```yaml
@@ -62,12 +52,6 @@ AGENT_TRIGGERS:
     always_active: true
     tdd_integration: "Quality gates enforcement during GREEN/REFACTOR phases"
 
-  test:
-    keywords: ["tdd", "testing", "coverage", "test patterns"]
-    file_patterns: ["**/*.test.*", "**/*.spec.*", "**/tests/**"]
-    always_active: true
-    tdd_integration: "Primary coordinator for RED phase with test structure definition"
-
   compliance-validator:
     keywords:
       [
@@ -92,10 +76,9 @@ AGENT_TRIGGERS:
 ```yaml
 TDD_PHASE_COORDINATION:
   RED_PHASE:
-    primary_agent: test
+    primary_agent: security-auditor
     support_agents:
       - architect-review    # Design validation
-      - security-auditor   # Security requirements (if triggered)
       - compliance-validator # Healthcare compliance (if applicable)
     mandatory_tools:
       - "sequential-thinking"
@@ -113,7 +96,7 @@ TDD_PHASE_COORDINATION:
     support_agents:
       - architect-review    # Pattern compliance
       - security-auditor   # Vulnerability scanning
-      - test              # Test validation
+      - security-auditor   # Test validation
       - compliance-validator # Implementation compliance
     mandatory_tools:
       - "desktop-commander"
@@ -133,7 +116,7 @@ TDD_PHASE_COORDINATION:
       - code-reviewer     # Code quality improvements
       - architect-review  # Design optimization
       - security-auditor  # Security hardening
-      - test             # Test optimization
+      - security-auditor  # Test optimization
       - compliance-validator # Compliance optimization
     mandatory_tools:
       - "sequential-thinking"
@@ -179,8 +162,8 @@ agent_assignment:
     primary: architect-review
     support: [code-reviewer]
   unified_testing_toolkit:
-    primary: test
-    support: [architect-review, code-reviewer, security-auditor]
+    primary: security-auditor
+    support: [architect-review, code-reviewer]
   backend_tools:
     primary: code-reviewer
     support: [architect-review, security-auditor, compliance-validator]
@@ -188,14 +171,14 @@ agent_assignment:
     primary: security-auditor
     support: [architect-review, compliance-validator]
   frontend_tools:
-    primary: test
+    primary: security-auditor
     support: [code-reviewer, architect-review]
   quality_tools:
     primary: tdd-orchestrator
-    support: [test, code-reviewer]
+    support: [security-auditor, code-reviewer]
   orchestration_framework:
     primary: tdd-orchestrator
-    support: [architect-review, security-auditor, test]
+    support: [architect-review, security-auditor]
 
 notes:
   - "Follow .claude/agents/code-review/tdd-orchestrator.md for phase-by-phase agent choreography"
@@ -344,13 +327,12 @@ graph TD
 
 ```yaml
 phase: RED
-primary_agent: test
+primary_agent: security-auditor
 support_agents:
   - architect-review # Design test validation
-  - security-auditor # Security test requirements (if triggered)
 
 parallel_execution:
-  - test: "Define test structure and patterns"
+  - security-auditor: "Define test structure and patterns (primary testing authority)"
   - architect-review: "Validate architectural test approach"
   - security-auditor: "Ensure security test coverage"
 
@@ -645,23 +627,30 @@ parallel_execution:
     - "TDD pattern validation"
 ```
 
-### 3.2 Build & Quality Commands (Agent-Coordinated)
+### 3.2 Build & Quality Commands (Agent-Coordinated) - Updated with Test Results
 
 ```bash
-# TypeScript type check (strict)
-pnpm --filter ./ type-check
+# ❌ TypeScript type check (FAILS - no projects matched filters)
+# pnpm --filter ./ type-check
 
-# Oxlint fast lint (quiet). Use package scripts where available
-pnpm --filter @neonpro/api lint
-pnpm --filter @neonpro/web lint
+# ✅ WORKING: Oxlint fast lint (with known issues documented)
+pnpm --filter @neonpro/api lint     # ✅ Works: 305 warnings, 0 errors
+pnpm --filter @neonpro/web lint     # ❌ Fails: 1003 warnings, 3 errors
 
-# Format (non-blocking but recommended)
+# Format (non-blocking but recommended) - NOT TESTED
 pnpm --filter @neonpro/api format
 pnpm --filter @neonpro/web format
 
-# Security advisory scan (deps)
-pnpm audit --json > audit-report.json || true
+# ✅ WORKING: Security advisory scan
+pnpm audit --audit-level moderate   # ✅ Works: Found 2 moderate vulnerabilities
+pnpm audit --fix                    # ✅ Works: Fixed 1 vulnerability with overrides
 ```
+
+**Known Issues:**
+
+- Web package has 3 syntax errors and 1003 warnings requiring immediate attention
+- API package has 305 unused variable/import warnings (non-blocking)
+- TypeScript type-check command needs investigation for proper filter configuration
 
 Optional VS Code tasks (fast):
 
@@ -701,31 +690,29 @@ quality_gates:
 
 ## 🧭 Phase 4 — Intelligent Test Orchestration (Agent-Coordinated)
 
-**Agent Coordination**: `test` (primary) + `architect-review` + `code-reviewer` + `security-auditor`
+**Agent Coordination**: `security-auditor` (primary - testing authority) + `architect-review` + `code-reviewer`
 
 ### 4.1 Intelligent Test Selection (Multi-Agent Analysis)
 
 ```yaml
 agent_analysis:
-  test:
-    - "Analyze changed files and determine test scope"
+  security-auditor:
+    - "Analyze changed files and determine test scope (primary testing authority)"
     - "Select appropriate test strategies based on file patterns"
     - "Coordinate test execution across different domains"
-
-  architect-review:
     - "Validate test architecture and patterns"
     - "Review integration test strategies"
     - "Ensure test coverage aligns with system boundaries"
+
+  architect-review:
+    - "Validate test architecture design"
+    - "Review system-level test strategies"
+    - "Ensure test patterns follow architectural standards"
 
   code-reviewer:
     - "Analyze code changes for test impact"
     - "Review test quality and maintainability"
     - "Validate test performance and efficiency"
-
-  security-auditor:
-    - "Ensure security test coverage for sensitive changes"
-    - "Validate compliance test execution"
-    - "Review test data security and PHI handling"
 ```
 
 ### 4.2 Intelligent Routing Rules (Agent-Driven)
@@ -754,7 +741,7 @@ routing_strategy:
       tests: ["routing", "api-integration", "navigation"]
 
     "apps/web/src/components|hooks/**":
-      primary_agent: test
+      primary_agent: security-auditor
       strategy: "Unit tests + Supabase client usage"
       tests: ["component", "hook", "client-integration"]
 
@@ -764,18 +751,28 @@ routing_strategy:
       tests: ["compliance", "data-protection", "audit-trails"]
 ```
 
-### 4.3 Test Execution Commands (Agent-Coordinated)
+### 4.3 Test Execution Commands (Agent-Coordinated) - Updated with Test Results
 
 ```bash
-# Agent: architect-review + code-reviewer
-pnpm --filter @neonpro/api test
+# ✅ WORKING: Agent: architect-review + code-reviewer
+pnpm --filter @neonpro/api test     # ✅ Works but has multiple test failures
 
-# Agent: test + code-reviewer
+# Agent: test + code-reviewer (NOT TESTED)
 pnpm --filter @neonpro/web test
 
-# Agent: test + security-auditor (E2E with compliance validation)
+# Agent: test + security-auditor (E2E with compliance validation) (NOT TESTED)
 pnpm --filter @neonpro/web e2e
 ```
+
+**Test Results Summary:**
+
+- **API Tests**: 15 failed test files, 6 failed tests out of 69 total
+- **Major Issues Found**:
+  - Missing `@trpc/server/adapters/hono` specifier (3 test failures)
+  - `vi` is not defined in integration tests (2 test failures)
+  - `bun:test` imports incompatible with Vitest (3 test failures)
+  - Missing modules and incorrect import paths (7 test failures)
+  - Runtime errors in AI chat functionality
 
 ### 4.4 Coverage Policy & Quality Gates
 
@@ -977,9 +974,10 @@ validation_agents:
     - "RLS architecture design validation"
     - "Tenant isolation architecture review"
 
-  test:
+  security-auditor:
     - "RLS test execution and validation"
     - "Cross-tenant leakage test verification"
+    - "Security boundary test verification"
 
 blocking_criteria:
   - "Queries enforce tenant + role context: ≥100%"
@@ -1017,18 +1015,16 @@ blocking_criteria:
 
 ```yaml
 validation_agents:
-  test:
-    - "Test coverage validation (primary)"
+  security-auditor:
+    - "Test coverage validation (primary - testing authority)"
     - "Test quality assessment"
     - "TDD pattern compliance"
+    - "Security test coverage validation"
+    - "Compliance test execution verification"
 
   code-reviewer:
     - "Test maintainability review"
     - "Test performance validation"
-
-  security-auditor:
-    - "Security test coverage validation"
-    - "Compliance test execution verification"
 
 blocking_criteria:
   - "Critical path coverage: ≥95%"
@@ -1071,16 +1067,14 @@ reporting_coordination:
     - "Security vulnerability assessment"
     - "LGPD compliance validation report"
     - "RLS policy effectiveness analysis"
+    - "Test coverage and quality report (primary - testing authority)"
+    - "TDD compliance validation"
+    - "Test execution results"
 
   code-reviewer:
     - "Code quality metrics and analysis"
     - "Type safety validation results"
     - "Performance optimization recommendations"
-
-  test:
-    - "Test coverage and quality report"
-    - "TDD compliance validation"
-    - "Test execution results"
 ```
 
 ### Consolidated Reporting
@@ -1088,7 +1082,7 @@ reporting_coordination:
 - **Quality Report**: `quality-report.txt` (aggregated from all agents)
 - **Security Report**: `security-report.json` (security-auditor primary)
 - **Architecture Report**: `architecture-analysis.md` (architect-review primary)
-- **Test Report**: `test-coverage-report.json` (test agent primary)
+- **Test Report**: `test-coverage-report.json` (security-auditor primary - testing authority)
 - **Archon Tasks**: Update with agent decisions and evidence
 - **Documentation**: Append findings to `docs/mistakes/*.md` when applicable
 
@@ -1136,16 +1130,16 @@ Type safety
 // Before
 type Handler = (c: any) => any;
 // After
-type Handler = (c: import("hono").Context) => Response | Promise<Response>;
+type Handler = (c: import('hono').Context) => Response | Promise<Response>;
 ```
 
 ESM imports
 
 ```ts
 // Before
-const { execSync } = require("node:child_process");
+const { execSync } = require('node:child_process');
 // After
-import { execSync } from "node:child_process";
+import { execSync } from 'node:child_process';
 ```
 
 ---
@@ -1159,18 +1153,56 @@ Use workspace tasks for speed:
 - “📈 Performance Benchmark” → perf checks
 - “🏥 Healthcare Compliance Check” → LGPD/ANVISA heuristics
 
-CLI fallbacks
+CLI fallbacks (Updated with Working Commands)
 
 ```bash
-# Root helpers
-pnpm quality:full
-pnpm workflow:ci
+# ❌ NON-WORKING COMMANDS (documented for reference)
+# pnpm quality:full          # Script does not exist
+# pnpm workflow:ci           # Script does not exist
+# pnpm constitutional:quick  # Script does not exist
 
-# Tools/audit
-pnpm constitutional:quick
-pnpm constitutional:full
-pnpm constitutional:benchmark
+# ✅ WORKING ALTERNATIVES
+# Full quality check pipeline
+pnpm --filter @neonpro/api test && pnpm --filter @neonpro/api lint
+
+# Security audit
+pnpm audit --audit-level moderate
+
+# Dependency updates
+pnpm update --latest && pnpm install
+
+# Individual package validation
+pnpm --filter @neonpro/api lint    # Works with 305 warnings
+pnpm --filter @neonpro/web lint    # Fails with 1003 warnings, 3 errors
 ```
+
+---
+
+## 📊 Command Verification Results Summary
+
+### ✅ Working Commands
+
+- `pnpm --filter @neonpro/api lint` - Works with 305 warnings, 0 errors
+- `pnpm --filter @neonpro/api test` - Works but has test failures (15 failed files)
+- `pnpm audit --audit-level moderate` - Works, found 2 moderate vulnerabilities
+- `pnpm audit --fix` - Works, fixed 1 vulnerability with overrides
+- `pnpm update --latest` - Works, updated dependencies successfully
+- `pnpm install` - Works, installs dependencies correctly
+
+### ❌ Failing Commands
+
+- `pnpm --filter ./ type-check` - Fails: "No projects matched the filters"
+- `pnpm --filter @neonpro/web lint` - Fails: 1003 warnings, 3 errors
+- `pnpm quality:full` - Script does not exist
+- `pnpm workflow:ci` - Script does not exist
+- `pnpm constitutional:quick` - Script does not exist
+
+### 🔧 Priority Fixes Required
+
+1. **P0 - Critical**: Fix web package syntax errors (3 errors blocking builds)
+2. **P1 - High**: Resolve TypeScript type-check filter configuration
+3. **P2 - Medium**: Address test infrastructure issues (vi, bun:test imports)
+4. **P3 - Low**: Clean up unused variables/imports (305 warnings in API)
 
 ---
 

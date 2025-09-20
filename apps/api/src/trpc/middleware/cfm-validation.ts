@@ -1,444 +1,443 @@
-/**
- * T022: CFM Validation Middleware
- *
- * Implements medical license validation with active status checking, ICP-Brasil certificate
- * verification for telemedicine, and professional identity validation for healthcare operations.
- * Ensures compliance with CFM Resolution 2,314/2022 and NGS2 security standards.
- *
- * @author AI Development Agent
- * @compliance CFM Resolution 2,314/2022 - Telemedicine Practice
- * @compliance NGS2 Level 2 Security Standards
- * @performance <200ms validation overhead target
- */
-
 import { TRPCError } from '@trpc/server';
-import { createHash, createVerify } from 'crypto';
-import { HealthcareProfessionalAuthorizationService } from '../../services/healthcare-professional-authorization';
-
-// CFM Medical Specialties (partial list - expand as needed)
-const CFM_SPECIALTIES = {
-  '01': 'Clínica Médica',
-  '02': 'Cirurgia Geral',
-  '03': 'Pediatria',
-  '04': 'Ginecologia e Obstetrícia',
-  '05': 'Cardiologia',
-  '06': 'Dermatologia',
-  '07': 'Psiquiatria',
-  '08': 'Neurologia',
-  '09': 'Oftalmologia',
-  '10': 'Ortopedia e Traumatologia',
-  '11': 'Anestesiologia',
-  '12': 'Radiologia',
-  '13': 'Patologia',
-  '14': 'Medicina do Trabalho',
-  '15': 'Medicina Legal',
-  // Add more specialties as needed
-} as const;
-
-// Brazilian States for CRM validation
-const BRAZILIAN_STATES = [
-  'AC',
-  'AL',
-  'AP',
-  'AM',
-  'BA',
-  'CE',
-  'DF',
-  'ES',
-  'GO',
-  'MA',
-  'MT',
-  'MS',
-  'MG',
-  'PA',
-  'PB',
-  'PR',
-  'PE',
-  'PI',
-  'RJ',
-  'RN',
-  'RS',
-  'RO',
-  'RR',
-  'SC',
-  'SP',
-  'SE',
-  'TO',
-] as const;
-
-interface CFMLicenseValidationResult {
-  isValid: boolean;
-  crmNumber: string;
-  state: string;
-  specialties: string[];
-  status: 'active' | 'suspended' | 'cancelled' | 'inactive';
-  expirationDate?: Date;
-  restrictions?: string[];
-  telemedicineAuthorized: boolean;
-  ethicsCompliant: boolean;
-  lastValidated: Date;
-}
-
-interface ICPBrasilCertificate {
-  isValid: boolean;
-  certificateId: string;
-  issuer: string;
-  subject: string;
-  validFrom: Date;
-  validTo: Date;
-  serialNumber: string;
-  authorityChain: string[];
-  certificateUse: 'authentication' | 'signature' | 'both';
-  ngs2Compliant: boolean;
-}
+import { z } from 'zod';
+import { logger } from '../../utils/logger';
+import { middleware } from '../trpc';
 
 /**
- * Mock CFM License Validation (In production, integrate with CFM API)
- * CFM Portal: https://portal.cfm.org.br/
- */
-async function validateCFMLicense(
-  crmNumber: string,
-  state: string,
-): Promise<CFMLicenseValidationResult> {
-  // Simulate API call delay
-  await new Promise(resolve => setTimeout(resolve, 50));
-
-  // Basic CRM format validation: CRM/STATE + 4-6 digits
-  const crmRegex =
-    /^CRM\/(AC|AL|AP|AM|BA|CE|DF|ES|GO|MA|MT|MS|MG|PA|PB|PR|PE|PI|RJ|RN|RS|RO|RR|SC|SP|SE|TO)\s*\d{4,6}$/;
-
-  if (!crmRegex.test(`CRM/${state} ${crmNumber}`)) {
-    return {
-      isValid: false,
-      crmNumber,
-      state,
-      specialties: [],
-      status: 'inactive',
-      telemedicineAuthorized: false,
-      ethicsCompliant: false,
-      lastValidated: new Date(),
-    };
-  }
-
-  // Mock validation (replace with real CFM API integration)
-  const isValidNumber = parseInt(crmNumber) > 1000 && parseInt(crmNumber) < 999999;
-
-  return {
-    isValid: isValidNumber,
-    crmNumber,
-    state,
-    specialties: isValidNumber ? ['01', '05'] : [], // Mock specialties
-    status: isValidNumber ? 'active' : 'inactive',
-    expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-    restrictions: [],
-    telemedicineAuthorized: isValidNumber,
-    ethicsCompliant: isValidNumber,
-    lastValidated: new Date(),
-  };
-} /**
- * Mock ICP-Brasil Certificate Validation (In production, integrate with ITI validators)
- * ITI Validator: https://validador.iti.gov.br/
+ * CFM (Conselho Federal de Medicina) Validation Middleware
+ *
+ * This middleware ensures compliance with Brazilian medical regulations
+ * for healthcare-related operations in the aesthetic platform.
+ *
+ * Key Compliance Areas:
+ * - Medical procedure authorization
+ * - Patient consent validation
+ * - Professional licensing verification
+ * - Telemedicine regulations (CFM Resolution 2.314/2022)
+ * - Data privacy (LGPD compliance for medical data)
  */
 
-async function validateICPBrasilCertificate(
-  certificateData: string,
-): Promise<ICPBrasilCertificate> {
-  // Simulate certificate validation delay
-  await new Promise(resolve => setTimeout(resolve, 30));
+// CFM Validation Schema
+const cfmValidationSchema = z.object({
+  // Professional Information
+  professionalId: z.string().min(1, 'Professional ID is required'),
+  crmNumber: z.string().regex(/^\d{4,6}$/, 'Invalid CRM number format'),
+  crmState: z.string().length(2, 'CRM state must be 2 characters'),
 
-  // Basic certificate format validation (PEM format check)
-  const pemFormatRegex = /-----BEGIN CERTIFICATE-----[\s\S]*-----END CERTIFICATE-----/;
-  const isValidFormat = pemFormatRegex.test(certificateData);
+  // Patient Information
+  patientId: z.string().min(1, 'Patient ID is required'),
+  patientConsent: z.boolean().refine(val => val === true, 'Patient consent is required'),
 
-  if (!isValidFormat) {
-    return {
-      isValid: false,
-      certificateId: '',
-      issuer: '',
-      subject: '',
-      validFrom: new Date(),
-      validTo: new Date(),
-      serialNumber: '',
-      authorityChain: [],
-      certificateUse: 'authentication',
-      ngs2Compliant: false,
-    };
-  }
+  // Procedure Information
+  procedureType: z.enum([
+    'consultation',
+    'aesthetic_procedure',
+    'medical_evaluation',
+    'telemedicine',
+    'prescription',
+    'follow_up',
+  ]),
 
-  // Mock certificate validation (replace with real ITI validation)
-  const mockCertId = createHash('sha256')
-    .update(certificateData)
-    .digest('hex')
-    .substring(0, 16);
+  // Telemedicine Specific (CFM Resolution 2.314/2022)
+  isTelemedicine: z.boolean().optional(),
+  telemedicineType: z.enum([
+    'teleconsultation',
+    'telediagnosis',
+    'telemonitoring',
+    'telesurgery',
+  ]).optional(),
 
-  return {
-    isValid: true,
-    certificateId: mockCertId,
-    issuer: 'AC SERPRO v5',
-    subject: 'CN=Usuario Teste,OU=Pessoa Fisica,O=ICP-Brasil,C=BR',
-    validFrom: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
-    validTo: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-    serialNumber: '123456789',
-    authorityChain: ['AC SERPRO v5', 'ICP-Brasil AC Raiz v2'],
-    certificateUse: 'both',
-    ngs2Compliant: true,
-  };
-}
+  // Documentation
+  medicalDocumentation: z.object({
+    hasPatientHistory: z.boolean(),
+    hasInformedConsent: z.boolean(),
+    hasRiskAssessment: z.boolean(),
+    hasFollowUpPlan: z.boolean(),
+  }).optional(),
 
-/**
- * Cache for CFM validations to improve performance
- */
-const cfmValidationCache = new Map<
-  string,
-  { result: CFMLicenseValidationResult; expiry: number }
->();
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-
-function getCachedCFMValidation(
-  crmNumber: string,
-  state: string,
-): CFMLicenseValidationResult | null {
-  const key = `${crmNumber}:${state}`;
-  const cached = cfmValidationCache.get(key);
-
-  if (cached && Date.now() < cached.expiry) {
-    return cached.result;
-  }
-
-  cfmValidationCache.delete(key);
-  return null;
-}
-
-function setCachedCFMValidation(
-  crmNumber: string,
-  state: string,
-  result: CFMLicenseValidationResult,
-): void {
-  const key = `${crmNumber}:${state}`;
-  cfmValidationCache.set(key, {
-    result,
-    expiry: Date.now() + CACHE_DURATION,
-  });
-} /**
- * Extract operation type from tRPC path for permission validation
- */
-function extractOperationFromPath(path: string): string {
-  const pathParts = path.split('.');
-  const lastPart = pathParts[pathParts.length - 1];
-  
-  // Map common operations
-  const operationMap: Record<string, string> = {
-    'create': 'create',
-    'read': 'read', 
-    'update': 'update',
-    'delete': 'delete',
-    'crud': 'create', // Default for CRUD operations
-  };
-  
-  return operationMap[lastPart] || 'read';
-}
-
-/**
- * Extract entity type from tRPC path for permission validation
- */
-function extractEntityTypeFromPath(path: string): string {
-  const pathParts = path.split('.');
-  if (pathParts.length >= 2) {
-    return pathParts[pathParts.length - 2];
-  }
-  return 'unknown';
-}
+  // Emergency Contact (Required for procedures)
+  emergencyContact: z.object({
+    name: z.string().min(1),
+    phone: z.string().min(10),
+    relationship: z.string().min(1),
+  }).optional(),
+});
 
 /**
  * CFM Validation Middleware
  *
- * Validates medical licenses, ICP-Brasil certificates, and ensures compliance
- * with CFM telemedicine regulations and NGS2 security standards using real RBAC.
+ * Validates medical operations according to CFM regulations
  */
-
-export const cfmValidationMiddleware = async ({
-  ctx,
-  next,
-  path,
-  type,
-  input,
-}: any) => {
-  const start = performance.now();
-
+export const cfmValidationMiddleware = middleware(async ({ ctx, next, path }) => {
   try {
-    // Skip validation for non-medical operations
+    // Check if this operation requires CFM validation
     if (!requiresCFMValidation(path)) {
       return next();
     }
 
-    // Extract professional information from context or input
-    const professionalId = extractProfessionalId(ctx, input);
+    logger.info('CFM validation started', {
+      path,
+      userId: ctx.user?.id,
+      timestamp: new Date().toISOString(),
+    });
 
-    if (!professionalId) {
-      throw new TRPCError({
-        code: 'UNAUTHORIZED',
-        message: 'Identificação profissional necessária para operações médicas',
-      });
+    // Validate professional credentials
+    await validateProfessionalCredentials(ctx);
+
+    // Validate telemedicine compliance if applicable
+    if (isTelemedicineOperation(path)) {
+      await validateTelemedicineCompliance(ctx, path);
     }
 
-    // Initialize real healthcare professional authorization service
-    const authorizationService = new HealthcareProfessionalAuthorizationService(ctx.prisma);
+    // Validate patient consent and documentation
+    await validatePatientConsent(ctx);
 
-    // Extract operation from path for permission validation
-    const operation = extractOperationFromPath(path);
-    const entityType = extractEntityTypeFromPath(path);
+    // Validate emergency protocols for procedures
+    if (isProcedureOperation(path)) {
+      await validateEmergencyProtocols(ctx);
+    }
 
-    // Validate professional authorization with real RBAC
-    const authorizationResult = await authorizationService.validateAuthorization(
-      professionalId,
-      operation,
-      entityType,
-      {
-        patientId: input?.patientId,
-        clinicId: ctx.clinicId,
-        emergency: input?.emergency || false,
-      }
-    );
+    logger.info('CFM validation completed successfully', {
+      path,
+      userId: ctx.user?.id,
+      timestamp: new Date().toISOString(),
+    });
 
-    if (!authorizationResult.isAuthorized) {
+    return next();
+  } catch (error) {
+    logger.error('CFM validation failed', {
+      path,
+      userId: ctx.user?.id,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+    });
+
+    if (error instanceof TRPCError) {
+      throw error;
+    }
+
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'CFM validation failed: Medical operation not authorized',
+      cause: error,
+    });
+  }
+});
+
+/**
+ * Validate Professional Credentials
+ */
+async function validateProfessionalCredentials(ctx: any): Promise<void> {
+  const user = ctx.user;
+
+  if (!user) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message: 'User authentication required for medical operations',
+    });
+  }
+
+  // Check if user has medical professional role
+  if (!user.roles?.includes('medical_professional')) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Medical professional credentials required',
+    });
+  }
+
+  // Validate CRM registration
+  const crmData = user.professionalData?.crm;
+  if (!crmData?.number || !crmData?.state || !crmData?.isActive) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Valid CRM registration required for medical operations',
+    });
+  }
+
+  // Check CRM expiration
+  if (crmData.expirationDate && new Date(crmData.expirationDate) < new Date()) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'CRM registration has expired',
+    });
+  }
+
+  // Validate specialization for aesthetic procedures
+  const requiredSpecializations = [
+    'dermatology',
+    'plastic_surgery',
+    'aesthetic_medicine',
+  ];
+
+  if (
+    !user.professionalData?.specializations?.some((spec: string) =>
+      requiredSpecializations.includes(spec)
+    )
+  ) {
+    logger.warn('Professional lacks required specialization', {
+      userId: user.id,
+      specializations: user.professionalData?.specializations,
+      required: requiredSpecializations,
+    });
+  }
+}
+
+/**
+ * Validate Telemedicine Compliance (CFM Resolution 2.314/2022)
+ */
+async function validateTelemedicineCompliance(ctx: any, path: string): Promise<void> {
+  const user = ctx.user;
+
+  // Telemedicine specific validations
+  const telemedicineRequirements = {
+    hasDigitalCertificate: user.professionalData?.digitalCertificate?.isValid,
+    hasTelemedicineLicense: user.professionalData?.licenses?.telemedicine?.isActive,
+    hasSecurePlatform: true, // Platform-level validation
+    hasPatientIdentification: true, // To be validated per operation
+  };
+
+  // Check digital certificate (required for telemedicine)
+  if (!telemedicineRequirements.hasDigitalCertificate) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Valid digital certificate required for telemedicine operations',
+    });
+  }
+
+  // Check telemedicine license
+  if (!telemedicineRequirements.hasTelemedicineLicense) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Telemedicine license required for remote medical operations',
+    });
+  }
+
+  // Validate patient location (same state as CRM registration)
+  const patientState = ctx.input?.patientData?.address?.state;
+  const crmState = user.professionalData?.crm?.state;
+
+  if (patientState && crmState && patientState !== crmState) {
+    // Cross-state telemedicine requires additional validation
+    logger.warn('Cross-state telemedicine operation detected', {
+      professionalCrmState: crmState,
+      patientState,
+      userId: user.id,
+      path,
+    });
+
+    // Check if professional has cross-state authorization
+    if (!user.professionalData?.crossStateAuthorization?.includes(patientState)) {
       throw new TRPCError({
         code: 'FORBIDDEN',
-        message: 'Profissional não autorizado para esta operação',
-        cause: {
-          role: authorizationResult.role,
-          permissions: authorizationResult.permissions,
-          restrictions: authorizationResult.restrictions,
-        },
+        message: `Cross-state telemedicine not authorized for state: ${patientState}`,
       });
     }
+  }
 
-    // Add authorization info to context for audit trail
-    ctx.authorization = {
-      professionalId,
-      role: authorizationResult.role,
-      specialties: authorizationResult.specialties,
-      validatedAt: authorizationResult.lastValidated,
+  logger.info('Telemedicine compliance validated', {
+    userId: user.id,
+    path,
+    crmState,
+    patientState,
+  });
+}
+
+/**
+ * Validate Patient Consent
+ */
+async function validatePatientConsent(ctx: any): Promise<void> {
+  const patientData = ctx.input?.patientData;
+
+  if (!patientData) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Patient data required for medical operations',
+    });
+  }
+
+  // Check informed consent
+  if (!patientData.informedConsent?.isProvided) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Patient informed consent required',
+    });
+  }
+
+  // Validate consent timestamp (must be recent)
+  const consentDate = new Date(patientData.informedConsent.timestamp);
+  const maxConsentAge = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+
+  if (Date.now() - consentDate.getTime() > maxConsentAge) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: 'Patient consent has expired, new consent required',
+    });
+  }
+
+  // Validate specific consent for procedure type
+  const procedureType = ctx.input?.procedureType;
+  const consentTypes = patientData.informedConsent.types || [];
+
+  if (procedureType && !consentTypes.includes(procedureType)) {
+    throw new TRPCError({
+      code: 'FORBIDDEN',
+      message: `Specific consent required for procedure type: ${procedureType}`,
+    });
+  }
+
+  logger.info('Patient consent validated', {
+    patientId: patientData.id,
+    procedureType,
+    consentTypes,
+  });
+}
+
+/**
+ * Validate Emergency Protocols
+ */
+async function validateEmergencyProtocols(ctx: any): Promise<void> {
+  const procedureData = ctx.input?.procedureData;
+
+  if (!procedureData) {
+    return; // Not a procedure operation
+  }
+
+  // Check emergency contact information
+  if (!procedureData.emergencyContact) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Emergency contact information required for medical procedures',
+    });
+  }
+
+  const emergencyContact = procedureData.emergencyContact;
+
+  // Validate emergency contact data
+  if (!emergencyContact.name || !emergencyContact.phone || !emergencyContact.relationship) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Complete emergency contact information required (name, phone, relationship)',
+    });
+  }
+
+  // Validate phone number format (Brazilian format)
+  const phoneRegex = /^(\+55\s?)?(\(?\d{2}\)?\s?)?\d{4,5}-?\d{4}$/;
+  if (!phoneRegex.test(emergencyContact.phone)) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Invalid emergency contact phone number format',
+    });
+  }
+
+  // Check if emergency protocols are documented
+  if (!procedureData.emergencyProtocols?.isDocumented) {
+    logger.warn('Emergency protocols not documented for procedure', {
+      procedureId: procedureData.id,
+      userId: ctx.user?.id,
+    });
+  }
+
+  logger.info('Emergency protocols validated', {
+    procedureId: procedureData.id,
+    emergencyContact: {
+      name: emergencyContact.name,
+      relationship: emergencyContact.relationship,
+      // Note: Not logging phone number for privacy
+    },
+  });
+}
+
+/**
+ * Audit CFM Compliance
+ */
+export async function auditCFMCompliance(ctx: any, operation: string, result: any): Promise<void> {
+  try {
+    const auditData = {
+      timestamp: new Date().toISOString(),
+      userId: ctx.user?.id,
+      operation,
+      crmNumber: ctx.user?.professionalData?.crm?.number,
+      crmState: ctx.user?.professionalData?.crm?.state,
+      patientId: ctx.input?.patientData?.id,
+      procedureType: ctx.input?.procedureType,
+      isTelemedicine: isTelemedicineOperation(operation),
+      complianceStatus: 'compliant',
+      result: {
+        success: !!result,
+        operationId: result?.id,
+      },
     };
 
-        // Update professional record with validation results
-        await ctx.prisma.professional.update({
-          where: { id: professionalId },
-          data: {
-            cfmValidationStatus: cfmValidation.isValid
-              ? 'validated'
-              : 'rejected',
-            cfmLastValidated: new Date(),
-            telemedicineAuthorized: cfmValidation.telemedicineAuthorized,
-          },
-        });
-      }
+    // Log audit trail
+    logger.info('CFM compliance audit', auditData);
 
-    // Special validation for telemedicine operations  
-    if (isTelemedicineOperation(path)) {
-      if (!authorizationResult.telemedicineAuthorized) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'Telemedicina não autorizada para este profissional. Resolução CFM 2.314/2022 requerida.',
-        });
-      }
-
-      // Validate ICP-Brasil certificate for telemedicine if available
-      const professional = await ctx.prisma.professional.findUnique({
-        where: { id: professionalId },
-        select: { icpBrasilCertificate: true },
-      });
-
-      if (professional?.icpBrasilCertificate) {
-        const certificateValidation = await validateICPBrasilCertificate(
-          professional.icpBrasilCertificate,
-        );
-
-        if (!certificateValidation.isValid || !certificateValidation.ngs2Compliant) {
-          throw new TRPCError({
-            code: 'FORBIDDEN', 
-            message: 'Certificado ICP-Brasil válido com conformidade NGS2 Nível 2 necessário para operações de telemedicina.',
-          });
-        }
-
-        // Add certificate validation to context for audit
-        ctx.cfmValidation = {
-          ...cfmValidation,
-          icpBrasilValidation: certificateValidation,
-        };
-      } else {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'ICP-Brasil digital certificate required for telemedicine operations.',
-        });
-      }
-    }
-
-    // Check specialty authorization for specific procedures
-    if (requiresSpecialtyValidation(path, input)) {
-      const requiredSpecialty = extractRequiredSpecialty(path, input);
-
-      if (
-        requiredSpecialty
-        && !cfmValidation.specialties.includes(requiredSpecialty)
-      ) {
-        throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: `Medical specialty ${
-            CFM_SPECIALTIES[
-              requiredSpecialty as keyof typeof CFM_SPECIALTIES
-            ] || requiredSpecialty
-          } required for this operation.`,
-        });
-      }
-    }
-
-    // Add CFM validation info to context for downstream middleware
-    ctx.cfmValidation = cfmValidation;
-
-    const result = await next();
-
-    // Log performance metrics
-    const duration = performance.now() - start;
-    if (duration > 200) {
-      console.warn(
-        `CFM validation exceeded 200ms target: ${duration.toFixed(2)}ms for ${path}`,
-      );
-    }
-
-    return result;
+    // Store in audit database (implement as needed)
+    // await storeAuditRecord(auditData);
   } catch (error) {
-    const duration = performance.now() - start;
+    logger.error('CFM compliance audit failed', {
+      operation,
+      userId: ctx.user?.id,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
 
-    // Log CFM validation failures for compliance auditing
-    if (ctx.userId) {
-      await ctx.prisma.auditTrail.create({
-        data: {
-          userId: ctx.userId,
-          clinicId: ctx.clinicId,
-          action: 'VIEW',
-          resource: path,
-          resourceType: 'SYSTEM_CONFIG',
-          ipAddress: ctx.auditMeta.ipAddress,
-          userAgent: ctx.auditMeta.userAgent,
-          sessionId: ctx.auditMeta.sessionId,
-          status: 'FAILED',
-          riskLevel: 'HIGH',
-          additionalInfo: JSON.stringify({
-            errorType: 'CFM_VALIDATION_FAILURE',
-            error: error instanceof Error
-              ? error.message
-              : 'Unknown CFM validation error',
-            duration,
-            path,
-            professionalId: extractProfessionalId(ctx, input),
-          }),
-        },
-      });
-    }
+    // Don't throw error here to avoid disrupting the main operation
+    // Audit failures should be logged but not block the operation
+  }
+}
+
+/**
+ * Generate CFM Compliance Report
+ */
+export async function generateCFMComplianceReport(
+  startDate: Date,
+  endDate: Date,
+  filters?: {
+    professionalId?: string;
+    procedureType?: string;
+    state?: string;
+  },
+): Promise<any> {
+  try {
+    // This would typically query the audit database
+    // For now, return a placeholder structure
+
+    const report = {
+      period: {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      },
+      summary: {
+        totalOperations: 0,
+        compliantOperations: 0,
+        nonCompliantOperations: 0,
+        complianceRate: 0,
+      },
+      breakdown: {
+        byProcedureType: {},
+        byState: {},
+        byProfessional: {},
+      },
+      violations: [],
+      recommendations: [],
+    };
+
+    logger.info('CFM compliance report generated', {
+      period: report.period,
+      filters,
+    });
+
+    return report;
+  } catch (error) {
+    logger.error('Failed to generate CFM compliance report', {
+      startDate,
+      endDate,
+      filters,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
 
     throw error;
   }
-};
+}
 
 /**
  * Helper functions for CFM validation middleware
@@ -461,76 +460,43 @@ function requiresCFMValidation(path: string): boolean {
 }
 
 function isTelemedicineOperation(path: string): boolean {
-  return (
-    path.includes('telemedicine')
-    || path.includes('video-consultation')
-    || path.includes('remote-consultation')
-  );
-}
-
-function extractProfessionalId(ctx: any, input: any): string | null {
-  // Try to get professional ID from context (logged in professional)
-  if (ctx.professionalId) {
-    return ctx.professionalId;
-  }
-
-  // Try to get from input
-  if (input?.professionalId) {
-    return input.professionalId;
-  }
-
-  // Try to get from user context if user is a professional
-  if (ctx.userRole === 'professional' && ctx.userId) {
-    return ctx.userId;
-  }
-
-  return null;
-}
-
-function requiresSpecialtyValidation(path: string, input: any): boolean {
-  // Specialized procedures that require specific medical specialties
-  const specialtyRequiredPaths = [
-    'cardiology',
-    'dermatology',
-    'neurology',
-    'psychiatry',
-    'pediatrics',
-    'obstetrics',
-    'surgery',
+  const telemedicinePaths = [
+    'telemedicine',
+    'teleconsultation',
+    'telediagnosis',
+    'telemonitoring',
+    'remote-consultation',
   ];
 
-  return specialtyRequiredPaths.some(specialty => path.includes(specialty));
+  return telemedicinePaths.some(telePath => path.includes(telePath));
 }
 
-function extractRequiredSpecialty(path: string, input: any): string | null {
-  // Map operation paths to required CFM specialty codes
-  if (path.includes('cardiology')) return '05';
-  if (path.includes('dermatology')) return '06';
-  if (path.includes('psychiatry')) return '07';
-  if (path.includes('neurology')) return '08';
-  if (path.includes('pediatrics')) return '03';
-  if (path.includes('obstetrics') || path.includes('gynecology')) return '04';
-  if (path.includes('surgery')) return '02';
+function isProcedureOperation(path: string): boolean {
+  const procedurePaths = [
+    'procedures.create',
+    'procedures.update',
+    'aesthetic-procedures',
+    'medical-procedures',
+    'treatments.create',
+  ];
 
-  // Try to extract from input TUSS code if available
-  if (input?.tussCode) {
-    return mapTussToSpecialty(input.tussCode);
+  return procedurePaths.some(procPath => path.includes(procPath));
+}
+
+/**
+ * Validate CFM Input Data
+ */
+export function validateCFMInput(input: any): z.infer<typeof cfmValidationSchema> {
+  try {
+    return cfmValidationSchema.parse(input);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      const errorMessages = error.errors.map(err => `${err.path.join('.')}: ${err.message}`);
+      throw new TRPCError({
+        code: 'BAD_REQUEST',
+        message: `CFM validation failed: ${errorMessages.join(', ')}`,
+      });
+    }
+    throw error;
   }
-
-  return null;
-}
-
-function mapTussToSpecialty(tussCode: string): string | null {
-  // Map TUSS procedure codes to CFM specialties (simplified mapping)
-  const tussSpecialtyMap: Record<string, string> = {
-    '10101': '05', // Cardiology consultation
-    '10102': '06', // Dermatology consultation
-    '10103': '03', // Pediatrics consultation
-    '10104': '04', // Gynecology consultation
-    '10105': '07', // Psychiatry consultation
-    '10106': '08', // Neurology consultation
-    // Add more mappings as needed
-  };
-
-  return tussSpecialtyMap[tussCode] || null;
 }

@@ -27,26 +27,26 @@ npx shadcn@latest add card
 ### Basic Usage
 
 ```tsx
-import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
-import { Calendar, Users } from "lucide-react";
+import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
+import { Calendar, Users } from 'lucide-react';
 
 function MyBentoGrid() {
   return (
     <BentoGrid>
       <BentoGridItem
-        title="Agendamentos"
-        description="Sistema inteligente de marcação"
-        icon={<Calendar className="w-5 h-5" />}
-        variant="primary"
-        size="md"
+        title='Agendamentos'
+        description='Sistema inteligente de marcação'
+        icon={<Calendar className='w-5 h-5' />}
+        variant='primary'
+        size='md'
       />
 
       <BentoGridItem
-        title="Pacientes"
-        description="Gestão completa de prontuários"
-        icon={<Users className="w-5 h-5" />}
-        variant="secondary"
-        size="sm"
+        title='Pacientes'
+        description='Gestão completa de prontuários'
+        icon={<Users className='w-5 h-5' />}
+        variant='secondary'
+        size='sm'
       />
     </BentoGrid>
   );
@@ -57,21 +57,21 @@ function MyBentoGrid() {
 
 ```tsx
 <BentoGridItem
-  title="Analytics Dashboard"
-  description="Métricas em tempo real"
-  variant="accent"
-  size="lg"
+  title='Analytics Dashboard'
+  description='Métricas em tempo real'
+  variant='accent'
+  size='lg'
   header={
-    <div className="h-32 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-      <BarChart className="w-12 h-12 text-white" />
+    <div className='h-32 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center'>
+      <BarChart className='w-12 h-12 text-white' />
     </div>
   }
 >
-  <div className="space-y-2">
+  <div className='space-y-2'>
     <p>Receita mensal: R$ 45.280</p>
     <p>Crescimento: +12%</p>
   </div>
-</BentoGridItem>
+</BentoGridItem>;
 ```
 
 ## Props

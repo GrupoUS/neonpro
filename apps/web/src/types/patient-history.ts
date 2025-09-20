@@ -4,34 +4,34 @@
  */
 
 export type MedicalRecordType =
-  | "consultation"
-  | "treatment"
-  | "procedure"
-  | "follow_up"
-  | "emergency"
-  | "referral"
-  | "lab_result"
-  | "imaging"
-  | "prescription"
-  | "allergy"
-  | "vaccination"
-  | "surgery"
-  | "note";
+  | 'consultation'
+  | 'treatment'
+  | 'procedure'
+  | 'follow_up'
+  | 'emergency'
+  | 'referral'
+  | 'lab_result'
+  | 'imaging'
+  | 'prescription'
+  | 'allergy'
+  | 'vaccination'
+  | 'surgery'
+  | 'note';
 
 export type TreatmentStatus =
-  | "planned"
-  | "in_progress"
-  | "completed"
-  | "cancelled"
-  | "postponed"
-  | "on_hold";
+  | 'planned'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled'
+  | 'postponed'
+  | 'on_hold';
 
 export type ProgressIndicator =
-  | "excellent"
-  | "good"
-  | "satisfactory"
-  | "poor"
-  | "concerning";
+  | 'excellent'
+  | 'good'
+  | 'satisfactory'
+  | 'poor'
+  | 'concerning';
 
 export interface MedicalRecord {
   id: string;
@@ -177,8 +177,8 @@ export interface PatientAllergy {
 
   // Allergy details
   allergen: string;
-  allergy_type: "medication" | "food" | "environmental" | "contact" | "other";
-  severity: "mild" | "moderate" | "severe" | "life_threatening";
+  allergy_type: 'medication' | 'food' | 'environmental' | 'contact' | 'other';
+  severity: 'mild' | 'moderate' | 'severe' | 'life_threatening';
 
   // Reaction details
   reactions: string[];
@@ -205,7 +205,7 @@ export interface PatientCondition {
   condition_name: string;
   icd_code?: string;
   category: string;
-  severity: "mild" | "moderate" | "severe";
+  severity: 'mild' | 'moderate' | 'severe';
 
   // Timeline
   onset_date?: string;
@@ -213,7 +213,7 @@ export interface PatientCondition {
   resolution_date?: string;
 
   // Status
-  status: "active" | "resolved" | "chronic" | "in_remission";
+  status: 'active' | 'resolved' | 'chronic' | 'in_remission';
 
   // Treatment
   current_treatments: string[];
@@ -232,19 +232,19 @@ export interface PatientTimeline {
     id: string;
     date: string;
     type:
-      | "appointment"
-      | "treatment"
-      | "medication"
-      | "condition"
-      | "allergy"
-      | "note"
-      | "milestone";
+      | 'appointment'
+      | 'treatment'
+      | 'medication'
+      | 'condition'
+      | 'allergy'
+      | 'note'
+      | 'milestone';
     title: string;
     description: string;
     professional_name?: string;
     service_name?: string;
     status?: string;
-    importance: "low" | "medium" | "high" | "critical";
+    importance: 'low' | 'medium' | 'high' | 'critical';
     attachments?: {
       filename: string;
       url: string;
@@ -282,7 +282,7 @@ export interface PatientSummary {
   // Risk factors
   risk_factors: {
     factor: string;
-    level: "low" | "medium" | "high";
+    level: 'low' | 'medium' | 'high';
     description: string;
   }[];
 
@@ -304,27 +304,25 @@ export interface CreateMedicalRecordRequest {
   symptoms?: string[];
   diagnosis?: string[];
   treatment_plan?: string;
-  medications?: MedicalRecord["medications"];
-  vital_signs?: MedicalRecord["vital_signs"];
+  medications?: MedicalRecord['medications'];
+  vital_signs?: MedicalRecord['vital_signs'];
   record_date: string;
 }
 
-export interface UpdateMedicalRecordRequest
-  extends Partial<CreateMedicalRecordRequest> {}
+export interface UpdateMedicalRecordRequest extends Partial<CreateMedicalRecordRequest> {}
 
 export interface CreateTreatmentPlanRequest {
   professional_id: string;
   name: string;
   description: string;
   objectives: string[];
-  phases: TreatmentPlan["phases"];
+  phases: TreatmentPlan['phases'];
   start_date: string;
   expected_end_date: string;
-  success_metrics: TreatmentPlan["success_metrics"];
+  success_metrics: TreatmentPlan['success_metrics'];
 }
 
-export interface UpdateTreatmentPlanRequest
-  extends Partial<CreateTreatmentPlanRequest> {
+export interface UpdateTreatmentPlanRequest extends Partial<CreateTreatmentPlanRequest> {
   overall_status?: TreatmentStatus;
   progress_percentage?: number;
   actual_end_date?: string;
@@ -338,7 +336,7 @@ export interface CreateProgressNoteRequest {
   progress_indicator: ProgressIndicator;
   summary: string;
   detailed_notes: string;
-  measurements?: ProgressNote["measurements"];
+  measurements?: ProgressNote['measurements'];
   before_photos?: string[];
   after_photos?: string[];
   recommendations: string[];
@@ -375,31 +373,31 @@ export function calculateBMI(weight: number, height: number): number {
 }
 
 export function getBMICategory(bmi: number): string {
-  if (bmi < 18.5) return "Abaixo do peso";
-  if (bmi < 25) return "Peso normal";
-  if (bmi < 30) return "Sobrepeso";
-  return "Obesidade";
+  if (bmi < 18.5) return 'Abaixo do peso';
+  if (bmi < 25) return 'Peso normal';
+  if (bmi < 30) return 'Sobrepeso';
+  return 'Obesidade';
 }
 
 export function getProgressColor(indicator: ProgressIndicator): string {
   switch (indicator) {
-    case "excellent":
-      return "green";
-    case "good":
-      return "blue";
-    case "satisfactory":
-      return "yellow";
-    case "poor":
-      return "orange";
-    case "concerning":
-      return "red";
+    case 'excellent':
+      return 'green';
+    case 'good':
+      return 'blue';
+    case 'satisfactory':
+      return 'yellow';
+    case 'poor':
+      return 'orange';
+    case 'concerning':
+      return 'red';
     default:
-      return "gray";
+      return 'gray';
   }
 }
 
 export function formatVitalSigns(
-  vitalSigns: MedicalRecord["vital_signs"],
+  vitalSigns: MedicalRecord['vital_signs'],
 ): string[] {
   if (!vitalSigns) return [];
 

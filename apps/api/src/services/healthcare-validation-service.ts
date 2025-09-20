@@ -1,6 +1,6 @@
-import { LGPDService } from './lgpd-service';
-import { ANVISAComplianceService } from './anvisa-compliance';
 import { z } from 'zod';
+import { ANVISAComplianceService } from './anvisa-compliance';
+import { LGPDService } from './lgpd-service';
 
 export interface HealthcareValidationResult {
   isValid: boolean;
@@ -42,7 +42,7 @@ export class HealthcareValidationService {
       professionalId?: string;
       patientId?: string;
       organizationId?: string;
-    }
+    },
   ): Promise<HealthcareValidationResult> {
     try {
       const errors: string[] = [];
@@ -62,11 +62,11 @@ export class HealthcareValidationService {
         const professionalAuth = await this.validateProfessionalAuthorization(
           context.professionalId,
           operation,
-          entity
+          entity,
         );
-        
+
         result.professionalAuthorization = professionalAuth.authorized;
-        
+
         if (!professionalAuth.authorized) {
           errors.push(`Profissional não autorizado para ${operation} em ${entity}`);
           result.isValid = false;
@@ -81,13 +81,13 @@ export class HealthcareValidationService {
       try {
         const lgpdValidation = await this.validateLGPDCompliance(operation, entity, data);
         result.lgpdCompliance = lgpdValidation;
-        
+
         if (!lgpdValidation.isValid) {
           errors.push(...lgpdValidation.errors);
           result.isValid = false;
           aiScore -= lgpdValidation.errors.length * 0.1;
         }
-        
+
         if (lgpdValidation.warnings.length > 0) {
           warnings.push(...lgpdValidation.warnings);
           aiScore -= lgpdValidation.warnings.length * 0.05;
@@ -105,7 +105,7 @@ export class HealthcareValidationService {
         result.isValid = false;
         aiScore -= entityValidation.errors.length * 0.1;
       }
-      
+
       if (entityValidation.warnings.length > 0) {
         warnings.push(...entityValidation.warnings);
         aiScore -= entityValidation.warnings.length * 0.05;
@@ -116,7 +116,7 @@ export class HealthcareValidationService {
         try {
           const anvisaCompliance = await this.anvisaService.validateCompliance();
           result.anvisaCompliance = anvisaCompliance;
-          
+
           if (anvisaCompliance.score < 70) {
             errors.push('Conformidade ANVISA insuficiente');
             result.isValid = false;
@@ -173,7 +173,7 @@ export class HealthcareValidationService {
   private async validateProfessionalAuthorization(
     professionalId: string,
     operation: string,
-    entity: string
+    entity: string,
   ): Promise<{ authorized: boolean; licenseInfo?: HealthcareProfessional }> {
     try {
       // In a real implementation, this would query the database for professional license
@@ -210,7 +210,7 @@ export class HealthcareValidationService {
   private async validateLGPDCompliance(
     operation: string,
     entity: string,
-    data: any
+    data: any,
   ): Promise<{ isValid: boolean; errors: string[]; warnings: string[] }> {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -259,7 +259,7 @@ export class HealthcareValidationService {
   private async validateEntitySpecific(
     operation: string,
     entity: string,
-    data: any
+    data: any,
   ): Promise<{ isValid: boolean; errors: string[]; warnings: string[] }> {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -267,16 +267,16 @@ export class HealthcareValidationService {
     switch (entity) {
       case 'patients':
         return this.validatePatientData(operation, data);
-      
+
       case 'appointments':
         return this.validateAppointmentData(operation, data);
-      
+
       case 'medical_records':
         return this.validateMedicalRecordData(operation, data);
-      
+
       case 'prescriptions':
         return this.validatePrescriptionData(operation, data);
-      
+
       default:
         // Generic validation for unknown entities
         if (operation === 'create' && !data.id) {
@@ -297,7 +297,7 @@ export class HealthcareValidationService {
    */
   private validatePatientData(
     operation: string,
-    data: any
+    data: any,
   ): { isValid: boolean; errors: string[]; warnings: string[] } {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -307,11 +307,11 @@ export class HealthcareValidationService {
       if (!data.fullName || data.fullName.trim().length < 3) {
         errors.push('Nome completo do paciente é obrigatório (mínimo 3 caracteres)');
       }
-      
+
       if (!data.cpf || !this.validateCPF(data.cpf)) {
         errors.push('CPF inválido ou ausente');
       }
-      
+
       if (!data.dateOfBirth) {
         errors.push('Data de nascimento é obrigatória');
       } else {
@@ -350,7 +350,7 @@ export class HealthcareValidationService {
    */
   private validateAppointmentData(
     operation: string,
-    data: any
+    data: any,
   ): { isValid: boolean; errors: string[]; warnings: string[] } {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -359,26 +359,26 @@ export class HealthcareValidationService {
       if (!data.patientId) {
         errors.push('ID do paciente é obrigatório');
       }
-      
+
       if (!data.professionalId) {
         errors.push('ID do profissional é obrigatório');
       }
-      
+
       if (!data.startTime) {
         errors.push('Horário de início é obrigatório');
       } else {
         const startTime = new Date(data.startTime);
         const now = new Date();
-        
+
         if (startTime < now) {
           errors.push('Horário da consulta não pode estar no passado');
         }
-        
+
         if (startTime > new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000)) {
           warnings.push('Agendamento com mais de 90 dias de antecedência');
         }
       }
-      
+
       if (!data.appointmentType) {
         errors.push('Tipo de consulta é obrigatório');
       }
@@ -401,7 +401,7 @@ export class HealthcareValidationService {
    */
   private validateMedicalRecordData(
     operation: string,
-    data: any
+    data: any,
   ): { isValid: boolean; errors: string[]; warnings: string[] } {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -410,15 +410,15 @@ export class HealthcareValidationService {
       if (!data.patientId) {
         errors.push('ID do paciente é obrigatório');
       }
-      
+
       if (!data.professionalId) {
         errors.push('ID do profissional é obrigatório');
       }
-      
+
       if (!data.recordType) {
         errors.push('Tipo de registro é obrigatório');
       }
-      
+
       if (!data.content || data.content.trim().length < 10) {
         errors.push('Conteúdo do registro deve ter pelo menos 10 caracteres');
       }
@@ -441,7 +441,7 @@ export class HealthcareValidationService {
    */
   private validatePrescriptionData(
     operation: string,
-    data: any
+    data: any,
   ): { isValid: boolean; errors: string[]; warnings: string[] } {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -450,25 +450,25 @@ export class HealthcareValidationService {
       if (!data.patientId) {
         errors.push('ID do paciente é obrigatório');
       }
-      
+
       if (!data.professionalId) {
         errors.push('ID do profissional é obrigatório');
       }
-      
+
       if (!data.medications || !Array.isArray(data.medications) || data.medications.length === 0) {
         errors.push('Prescrição deve conter pelo menos um medicamento');
       }
-      
+
       // Validate each medication
       data.medications?.forEach((med: any, index: number) => {
         if (!med.name || med.name.trim().length < 3) {
           errors.push(`Medicamento ${index + 1}: nome é obrigatório`);
         }
-        
+
         if (!med.dosage || med.dosage.trim().length < 1) {
           errors.push(`Medicamento ${index + 1}: dosagem é obrigatória`);
         }
-        
+
         if (!med.frequency) {
           errors.push(`Medicamento ${index + 1}: frequência é obrigatória`);
         }
@@ -513,7 +513,7 @@ export class HealthcareValidationService {
   private validateBusinessRules(
     operation: string,
     entity: string,
-    data: any
+    data: any,
   ): { isValid: boolean; errors: string[] } {
     const errors: string[] = [];
 
@@ -527,7 +527,7 @@ export class HealthcareValidationService {
     if (entity === 'appointments' && data.startTime) {
       const startTime = new Date(data.startTime);
       const hours = startTime.getHours();
-      
+
       if (hours < 7 || hours > 22) {
         warnings.push('Agendamento fora do horário comercial padrão (7h-22h)');
       }
@@ -546,16 +546,16 @@ export class HealthcareValidationService {
       /^CRM\/[A-Z]{2}\s*\d{6}$/, // CRM/SP 123456
       /^CRO\/[A-Z]{2}\s*\d{6}$/, // CRO/SP 123456
     ];
-    
+
     return patterns.some(pattern => pattern.test(licenseNumber));
   }
 
   private validateProfessionalScope(specialty: string, entity: string): boolean {
     // Validate if professional specialty allows operations on entity
     const scopeMap: Record<string, string[]> = {
-      'CLINICA_GERAL': ['patients', 'appointments', 'medical_records'],
-      'PEDIATRIA': ['patients', 'appointments', 'medical_records', 'prescriptions'],
-      'CARDIOLOGIA': ['patients', 'appointments', 'medical_records', 'prescriptions'],
+      CLINICA_GERAL: ['patients', 'appointments', 'medical_records'],
+      PEDIATRIA: ['patients', 'appointments', 'medical_records', 'prescriptions'],
+      CARDIOLOGIA: ['patients', 'appointments', 'medical_records', 'prescriptions'],
     };
 
     return scopeMap[specialty]?.includes(entity) ?? false;
@@ -607,18 +607,16 @@ export class HealthcareValidationService {
     const today = new Date();
     let age = today.getFullYear() - birthDate.getFullYear();
     const monthDiff = today.getMonth() - birthDate.getMonth();
-    
+
     if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
       age--;
     }
-    
+
     return age;
   }
 
   private thisContainsSensitiveKeywords(content: string): boolean {
     const sensitiveKeywords = ['hiv', 'aids', 'câncer', 'doença terminal'];
-    return sensitiveKeywords.some(keyword => 
-      content.toLowerCase().includes(keyword)
-    );
+    return sensitiveKeywords.some(keyword => content.toLowerCase().includes(keyword));
   }
 }

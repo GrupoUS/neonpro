@@ -1,25 +1,29 @@
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { RefreshCw, Download, Calendar } from "lucide-react";
-import { FinancialMetricsService, type FinancialMetric, type MetricsCalculationOptions } from "@/services/financial-metrics";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  type FinancialMetric,
+  FinancialMetricsService,
+  type MetricsCalculationOptions,
+} from '@/services/financial-metrics';
+import { Calendar, Download, RefreshCw } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
 
 export interface FinancialMetricsProps {
-  period?: "daily" | "weekly" | "monthly" | "yearly";
+  period?: 'daily' | 'weekly' | 'monthly' | 'yearly';
   autoRefresh?: boolean;
   refreshInterval?: number;
   onMetricsUpdate?: (metrics: FinancialMetric[]) => void;
   className?: string;
-  "data-testid"?: string;
+  'data-testid'?: string;
 }
 
 export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
-  period = "monthly",
+  period = 'monthly',
   autoRefresh = false,
   refreshInterval = 5 * 60 * 1000, // 5 minutes
   onMetricsUpdate,
   className,
-  "data-testid": testId,
+  'data-testid': testId,
 }) => {
   const [metrics, setMetrics] = useState<FinancialMetric[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +37,7 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
     try {
       const endDate = new Date();
       const startDate = new Date();
-      
+
       // Calculate start date based on period
       switch (period) {
         case 'daily':
@@ -54,13 +58,13 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
         period,
         startDate,
         endDate,
-        includeComparisons: true
+        includeComparisons: true,
       };
 
       const result = await FinancialMetricsService.calculateMetrics(options);
       setMetrics(result);
       setLastUpdated(new Date());
-      
+
       if (onMetricsUpdate) {
         onMetricsUpdate(result);
       }
@@ -80,7 +84,7 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
       const options: MetricsCalculationOptions = {
         period,
         startDate,
-        endDate
+        endDate,
       };
 
       const blob = await FinancialMetricsService.exportMetrics(options, 'csv');
@@ -124,10 +128,10 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
   if (error) {
     return (
       <Card className={className} data-testid={testId}>
-        <CardContent className="p-6">
-          <div className="text-center text-red-600">
+        <CardContent className='p-6'>
+          <div className='text-center text-red-600'>
             <p>Error loading metrics: {error}</p>
-            <Button onClick={loadMetrics} className="mt-4">
+            <Button onClick={loadMetrics} className='mt-4'>
               Try Again
             </Button>
           </div>
@@ -139,27 +143,27 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
   return (
     <Card className={className} data-testid={testId}>
       <CardHeader>
-        <CardTitle className="flex items-center justify-between">
+        <CardTitle className='flex items-center justify-between'>
           <span>Financial Metrics - {period.charAt(0).toUpperCase() + period.slice(1)}</span>
-          <div className="flex items-center gap-2">
+          <div className='flex items-center gap-2'>
             {lastUpdated && (
-              <span className="text-sm text-gray-500">
-                <Calendar className="h-4 w-4 inline mr-1" />
+              <span className='text-sm text-gray-500'>
+                <Calendar className='h-4 w-4 inline mr-1' />
                 {lastUpdated.toLocaleTimeString('pt-BR')}
               </span>
             )}
             <Button
-              variant="outline"
-              size="sm"
+              variant='outline'
+              size='sm'
               onClick={handleExport}
               disabled={isLoading || metrics.length === 0}
             >
-              <Download className="h-4 w-4 mr-1" />
+              <Download className='h-4 w-4 mr-1' />
               Export
             </Button>
             <Button
-              variant="outline"
-              size="sm"
+              variant='outline'
+              size='sm'
               onClick={loadMetrics}
               disabled={isLoading}
             >
@@ -169,34 +173,37 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
-                <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {metrics.map((metric) => (
-              <div
-                key={metric.id}
-                className="p-4 border rounded-lg hover:shadow-md transition-shadow"
-              >
-                <div className="text-sm text-gray-600 mb-1">{metric.name}</div>
-                <div className="text-2xl font-bold mb-2">
-                  {formatCurrency(metric.value)}
+        {isLoading
+          ? (
+            <div className='space-y-4'>
+              {[1, 2, 3].map(i => (
+                <div key={i} className='animate-pulse'>
+                  <div className='h-4 bg-gray-200 rounded w-1/4 mb-2'></div>
+                  <div className='h-8 bg-gray-200 rounded w-1/2'></div>
                 </div>
-                <div className={`text-sm font-medium ${getChangeColor(metric.change)}`}>
-                  {metric.change > 0 ? '+' : ''}{metric.changePercentage.toFixed(1)}%
-                  <span className="text-gray-500 ml-1">vs. previous {metric.period}</span>
+              ))}
+            </div>
+          )
+          : (
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+              {metrics.map(metric => (
+                <div
+                  key={metric.id}
+                  className='p-4 border rounded-lg hover:shadow-md transition-shadow'
+                >
+                  <div className='text-sm text-gray-600 mb-1'>{metric.name}</div>
+                  <div className='text-2xl font-bold mb-2'>
+                    {formatCurrency(metric.value)}
+                  </div>
+                  <div className={`text-sm font-medium ${getChangeColor(metric.change)}`}>
+                    {metric.change > 0 ? '+' : ''}
+                    {metric.changePercentage.toFixed(1)}%
+                    <span className='text-gray-500 ml-1'>vs. previous {metric.period}</span>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        )}
+              ))}
+            </div>
+          )}
       </CardContent>
     </Card>
   );

@@ -3,12 +3,12 @@
  * Handles professional management, availability, and specialization matching
  */
 
-import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/lib/supabase/types/database";
-import { addMinutes, isAfter, isBefore, parseISO } from "date-fns";
+import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/lib/supabase/types/database';
+import { addMinutes, isAfter, isBefore, parseISO } from 'date-fns';
 
 // Type definitions
-type ProfessionalRow = Database["public"]["Tables"]["professionals"]["Row"];
+type ProfessionalRow = Database['public']['Tables']['professionals']['Row'];
 
 export interface Professional {
   id: string;
@@ -56,17 +56,17 @@ class ProfessionalService {
   async getProfessionalsByClinic(clinicId: string): Promise<Professional[]> {
     try {
       const { data, error } = await supabase
-        .from("professionals")
-        .select("*")
-        .eq("clinic_id", clinicId)
-        .eq("is_active", true)
-        .order("full_name");
+        .from('professionals')
+        .select('*')
+        .eq('clinic_id', clinicId)
+        .eq('is_active', true)
+        .order('full_name');
 
       if (error) throw error;
 
       return data.map(this.transformProfessional);
     } catch (error) {
-      console.error("Error fetching professionals:", error);
+      console.error('Error fetching professionals:', error);
       throw error;
     }
   }
@@ -80,18 +80,18 @@ class ProfessionalService {
   ): Promise<Professional[]> {
     try {
       const { data, error } = await supabase
-        .from("professionals")
-        .select("*")
-        .eq("clinic_id", clinicId)
-        .eq("is_active", true)
-        .contains("service_type_ids", [serviceTypeId])
-        .order("full_name");
+        .from('professionals')
+        .select('*')
+        .eq('clinic_id', clinicId)
+        .eq('is_active', true)
+        .contains('service_type_ids', [serviceTypeId])
+        .order('full_name');
 
       if (error) throw error;
 
       return data.map(this.transformProfessional);
     } catch (error) {
-      console.error("Error fetching professionals by service type:", error);
+      console.error('Error fetching professionals by service type:', error);
       throw error;
     }
   }
@@ -107,9 +107,9 @@ class ProfessionalService {
     try {
       // Get professional info
       const { data: professional, error: profError } = await supabase
-        .from("professionals")
-        .select("*")
-        .eq("id", professionalId)
+        .from('professionals')
+        .select('*')
+        .eq('id', professionalId)
         .single();
 
       if (profError) throw profError;
@@ -121,34 +121,33 @@ class ProfessionalService {
       endOfDay.setHours(23, 59, 59, 999);
 
       const { data: appointments, error: apptError } = await supabase
-        .from("appointments")
-        .select("start_time, end_time, status")
-        .eq("professional_id", professionalId)
-        .gte("start_time", startOfDay.toISOString())
-        .lte("start_time", endOfDay.toISOString())
-        .neq("status", "cancelled");
+        .from('appointments')
+        .select('start_time, end_time, status')
+        .eq('professional_id', professionalId)
+        .gte('start_time', startOfDay.toISOString())
+        .lte('start_time', endOfDay.toISOString())
+        .neq('status', 'cancelled');
 
       if (apptError) throw apptError;
 
       // Calculate availability
       const workingHours = {
-        start: professional.default_start_time || "09:00",
-        end: professional.default_end_time || "18:00",
+        start: professional.default_start_time || '09:00',
+        end: professional.default_end_time || '18:00',
         breakStart: professional.default_break_start || undefined,
         breakEnd: professional.default_break_end || undefined,
       };
 
-      const bookedSlots = appointments.map((apt) => ({
+      const bookedSlots = appointments.map(apt => ({
         start: apt.start_time ? parseISO(apt.start_time) : new Date(),
         end: apt.end_time ? parseISO(apt.end_time) : new Date(),
-        duration:
-          apt.start_time && apt.end_time
-            ? Math.round(
-                (parseISO(apt.end_time).getTime() -
-                  parseISO(apt.start_time).getTime()) /
-                  (1000 * 60),
-              )
-            : 0,
+        duration: apt.start_time && apt.end_time
+          ? Math.round(
+            (parseISO(apt.end_time).getTime()
+              - parseISO(apt.start_time).getTime())
+              / (1000 * 60),
+          )
+          : 0,
       }));
 
       const availableSlots = this.calculateAvailableSlots(
@@ -166,7 +165,7 @@ class ProfessionalService {
         workingHours,
       };
     } catch (error) {
-      console.error("Error getting professional availability:", error);
+      console.error('Error getting professional availability:', error);
       throw error;
     }
   }
@@ -182,10 +181,10 @@ class ProfessionalService {
     try {
       // Check for conflicting appointments
       const { data: conflicts, error } = await supabase
-        .from("appointments")
-        .select("id")
-        .eq("professional_id", professionalId)
-        .neq("status", "cancelled")
+        .from('appointments')
+        .select('id')
+        .eq('professional_id', professionalId)
+        .neq('status', 'cancelled')
         .or(
           `and(start_time.lte.${startTime.toISOString()},end_time.gt.${startTime.toISOString()}),and(start_time.lt.${endTime.toISOString()},end_time.gte.${endTime.toISOString()}),and(start_time.gte.${startTime.toISOString()},end_time.lte.${endTime.toISOString()})`,
         );
@@ -194,7 +193,7 @@ class ProfessionalService {
 
       return conflicts.length === 0;
     } catch (error) {
-      console.error("Error checking professional availability:", error);
+      console.error('Error checking professional availability:', error);
       return false;
     }
   }
@@ -207,9 +206,9 @@ class ProfessionalService {
     return {
       id: anyRow.id,
       fullName: anyRow.full_name,
-      email: anyRow.email || "",
-      phone: anyRow.phone || "",
-      specialization: anyRow.specialization || "",
+      email: anyRow.email || '',
+      phone: anyRow.phone || '',
+      specialization: anyRow.specialization || '',
       licenseNumber: anyRow.license_number,
       serviceTypeIds: anyRow.service_type_ids || [],
       workingHours: {
@@ -219,7 +218,7 @@ class ProfessionalService {
         breakEnd: anyRow.default_break_end,
       },
       canWorkWeekends: anyRow.can_work_weekends || false,
-      color: anyRow.color || "#3B82F6",
+      color: anyRow.color || '#3B82F6',
       isActive: anyRow.is_active || false,
       clinicId: anyRow.clinic_id,
     };
@@ -242,8 +241,8 @@ class ProfessionalService {
     const availableSlots: TimeSlot[] = [];
 
     // Parse working hours
-    const [startHour, startMinute] = workingHours.start.split(":").map(Number);
-    const [endHour, endMinute] = workingHours.end.split(":").map(Number);
+    const [startHour, startMinute] = workingHours.start.split(':').map(Number);
+    const [endHour, endMinute] = workingHours.end.split(':').map(Number);
 
     const workStart = new Date(date);
     workStart.setHours(startHour, startMinute, 0, 0);
@@ -257,10 +256,10 @@ class ProfessionalService {
 
     if (workingHours.breakStart && workingHours.breakEnd) {
       const [breakStartHour, breakStartMinute] = workingHours.breakStart
-        .split(":")
+        .split(':')
         .map(Number);
       const [breakEndHour, breakEndMinute] = workingHours.breakEnd
-        .split(":")
+        .split(':')
         .map(Number);
 
       breakStart = new Date(date);
@@ -274,22 +273,20 @@ class ProfessionalService {
     let currentTime = new Date(workStart);
 
     while (
-      isBefore(addMinutes(currentTime, serviceDuration), workEnd) ||
-      addMinutes(currentTime, serviceDuration).getTime() === workEnd.getTime()
+      isBefore(addMinutes(currentTime, serviceDuration), workEnd)
+      || addMinutes(currentTime, serviceDuration).getTime() === workEnd.getTime()
     ) {
       const slotEnd = addMinutes(currentTime, serviceDuration);
 
       // Check if slot conflicts with break time
-      const conflictsWithBreak =
-        breakStart &&
-        breakEnd &&
-        isBefore(currentTime, breakEnd) &&
-        isAfter(slotEnd, breakStart);
+      const conflictsWithBreak = breakStart
+        && breakEnd
+        && isBefore(currentTime, breakEnd)
+        && isAfter(slotEnd, breakStart);
 
       // Check if slot conflicts with booked appointments
       const conflictsWithBooking = bookedSlots.some(
-        (booked) =>
-          isBefore(currentTime, booked.end) && isAfter(slotEnd, booked.start),
+        booked => isBefore(currentTime, booked.end) && isAfter(slotEnd, booked.start),
       );
 
       if (!conflictsWithBreak && !conflictsWithBooking) {

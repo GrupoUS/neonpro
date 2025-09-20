@@ -1,31 +1,21 @@
-"use client";
+'use client';
 
-import { AccessiblePatientCard } from "@/components/accessibility/AccessiblePatientCard";
-import { MobilePatientCard } from "@/components/patients/MobilePatientCard";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { UniversalButton } from "@/components/ui/universal-button";
-import { useToast } from "@/hooks/use-toast";
-import { useRealtimeSubscription } from "@/hooks/useRealtimeSubscription";
-import {
-  createFileRoute,
-  useNavigate,
-  useParams,
-} from "@tanstack/react-router";
-import { format, isThisMonth, isThisWeek, isToday, parseISO } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
+import { MobilePatientCard } from '@/components/patients/MobilePatientCard';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { UniversalButton } from '@/components/ui/universal-button';
+import { useToast } from '@/hooks/use-toast';
+import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
+import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
+import { format, isThisMonth, isThisWeek, isToday, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   Activity,
   AlertCircle,
@@ -58,10 +48,10 @@ import {
   User,
   UserPlus,
   Video,
-} from "lucide-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+} from 'lucide-react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-export const Route = createFileRoute("/patients/id")({
+export const Route = createFileRoute('/patients/id')({
   component: PatientDetailPage,
 });
 
@@ -74,7 +64,7 @@ interface Patient {
   cpf: string;
   rg: string;
   birthDate: string;
-  gender: "M" | "F" | "Other";
+  gender: 'M' | 'F' | 'Other';
   bloodType: string;
   height?: number;
   weight?: number;
@@ -108,7 +98,7 @@ interface Patient {
     cardNumber: string;
     validity: string;
   };
-  status: "active" | "inactive" | "pending";
+  status: 'active' | 'inactive' | 'pending';
   riskScore: number;
   lastVisit?: string;
   nextAppointment?: {
@@ -133,7 +123,7 @@ interface Appointment {
   type: string;
   date: string;
   time: string;
-  status: "scheduled" | "completed" | "cancelled" | "no-show" | "in-progress";
+  status: 'scheduled' | 'completed' | 'cancelled' | 'no-show' | 'in-progress';
   doctor: string;
   specialty: string;
   duration: number;
@@ -150,7 +140,7 @@ interface Appointment {
 interface MedicalRecord {
   id: string;
   date: string;
-  type: "consultation" | "exam" | "procedure" | "surgery";
+  type: 'consultation' | 'exam' | 'procedure' | 'surgery';
   doctor: string;
   specialty: string;
   diagnosis: string;
@@ -173,18 +163,18 @@ interface MedicalRecord {
 interface AIInsight {
   id: string;
   type:
-    | "risk_assessment"
-    | "treatment_recommendation"
-    | "lifestyle_suggestion"
-    | "follow_up_alert";
+    | 'risk_assessment'
+    | 'treatment_recommendation'
+    | 'lifestyle_suggestion'
+    | 'follow_up_alert';
   title: string;
   description: string;
   confidence: number;
-  priority: "low" | "medium" | "high" | "critical";
+  priority: 'low' | 'medium' | 'high' | 'critical';
   actionable: boolean;
   actionLabel?: string;
   timestamp: Date;
-  category: "health" | "treatment" | "prevention" | "administrative";
+  category: 'health' | 'treatment' | 'prevention' | 'administrative';
 }
 
 interface TreatmentPlan {
@@ -192,7 +182,7 @@ interface TreatmentPlan {
   name: string;
   startDate: string;
   endDate?: string;
-  status: "active" | "completed" | "paused" | "cancelled";
+  status: 'active' | 'completed' | 'paused' | 'cancelled';
   progress: number;
   procedures: string[];
   goals: string[];
@@ -202,119 +192,118 @@ interface TreatmentPlan {
 // Mock data generator for development
 const generateMockPatient = (id: string): Patient => ({
   id,
-  name: "João Silva Santos",
-  email: "joao.silva@email.com",
-  phone: "+55 11 99999-8888",
-  cpf: "123.456.789-00",
-  rg: "12.345.678-9",
-  birthDate: "1980-03-15",
-  gender: "M",
-  bloodType: "O+",
+  name: 'João Silva Santos',
+  email: 'joao.silva@email.com',
+  phone: '+55 11 99999-8888',
+  cpf: '123.456.789-00',
+  rg: '12.345.678-9',
+  birthDate: '1980-03-15',
+  gender: 'M',
+  bloodType: 'O+',
   height: 175,
   weight: 75,
-  allergies: ["Penicilina", "Amoxicilina"],
+  allergies: ['Penicilina', 'Amoxicilina'],
   medications: [
     {
-      name: "Losartana",
-      dosage: "50mg",
-      frequency: "2x ao dia",
-      startDate: "2024-01-01",
+      name: 'Losartana',
+      dosage: '50mg',
+      frequency: '2x ao dia',
+      startDate: '2024-01-01',
     },
     {
-      name: "Atorvastatina",
-      dosage: "20mg",
-      frequency: "1x ao dia",
-      startDate: "2024-01-01",
+      name: 'Atorvastatina',
+      dosage: '20mg',
+      frequency: '1x ao dia',
+      startDate: '2024-01-01',
     },
   ],
-  chronicConditions: ["Hipertensão", "Dislipidemia"],
+  chronicConditions: ['Hipertensão', 'Dislipidemia'],
   emergencyContact: {
-    name: "Maria Silva Santos",
-    relationship: "Esposa",
-    phone: "+55 11 98888-7777",
-    email: "maria.santos@email.com",
+    name: 'Maria Silva Santos',
+    relationship: 'Esposa',
+    phone: '+55 11 98888-7777',
+    email: 'maria.santos@email.com',
   },
   address: {
-    street: "Rua das Flores",
-    number: "123",
-    complement: "Apto 45",
-    neighborhood: "Jardins",
-    city: "São Paulo",
-    state: "SP",
-    zipCode: "01434-000",
+    street: 'Rua das Flores',
+    number: '123',
+    complement: 'Apto 45',
+    neighborhood: 'Jardins',
+    city: 'São Paulo',
+    state: 'SP',
+    zipCode: '01434-000',
   },
   healthInsurance: {
-    provider: "Unimed",
-    plan: "Plano Diamond",
-    cardNumber: "**** **** **** 1234",
-    validity: "2025-12-31",
+    provider: 'Unimed',
+    plan: 'Plano Diamond',
+    cardNumber: '**** **** **** 1234',
+    validity: '2025-12-31',
   },
-  status: "active",
+  status: 'active',
   riskScore: 0.4,
-  lastVisit: "2024-01-15",
+  lastVisit: '2024-01-15',
   nextAppointment: {
-    date: "2024-02-01",
-    time: "14:30",
-    type: "Consulta de retorno",
-    doctor: "Dr. Carlos Oliveira",
+    date: '2024-02-01',
+    time: '14:30',
+    type: 'Consulta de retorno',
+    doctor: 'Dr. Carlos Oliveira',
   },
-  createdAt: "2023-06-15",
-  updatedAt: "2024-01-15",
+  createdAt: '2023-06-15',
+  updatedAt: '2024-01-15',
   lgpdConsent: {
     dataProcessing: true,
     marketing: false,
     aiProcessing: true,
-    consentDate: "2023-06-15",
-    lastUpdate: "2024-01-10",
+    consentDate: '2023-06-15',
+    lastUpdate: '2024-01-10',
   },
 });
 
 const generateMockAppointments = (patientId: string): Appointment[] => [
   {
-    id: "1",
-    type: "Consulta inicial",
-    date: "2024-01-15",
-    time: "09:00",
-    status: "completed",
-    doctor: "Dr. Carlos Oliveira",
-    specialty: "Clínico Geral",
+    id: '1',
+    type: 'Consulta inicial',
+    date: '2024-01-15',
+    time: '09:00',
+    status: 'completed',
+    doctor: 'Dr. Carlos Oliveira',
+    specialty: 'Clínico Geral',
     duration: 30,
-    notes: "Consulta de rotina, paciente estável",
+    notes: 'Consulta de rotina, paciente estável',
   },
   {
-    id: "2",
-    type: "Retorno",
-    date: "2024-02-01",
-    time: "14:30",
-    status: "scheduled",
-    doctor: "Dr. Carlos Oliveira",
-    specialty: "Clínico Geral",
+    id: '2',
+    type: 'Retorno',
+    date: '2024-02-01',
+    time: '14:30',
+    status: 'scheduled',
+    doctor: 'Dr. Carlos Oliveira',
+    specialty: 'Clínico Geral',
     duration: 30,
     aiPrediction: {
       noShowRisk: 0.15,
       confidence: 0.82,
-      factors: ["Histórico de comparecimento", "Consulta de retorno"],
+      factors: ['Histórico de comparecimento', 'Consulta de retorno'],
     },
   },
 ];
 
 const generateMockMedicalRecords = (patientId: string): MedicalRecord[] => [
   {
-    id: "1",
-    date: "2024-01-15",
-    type: "consultation",
-    doctor: "Dr. Carlos Oliveira",
-    specialty: "Clínico Geral",
-    diagnosis: "Hipertensão controlada",
+    id: '1',
+    date: '2024-01-15',
+    type: 'consultation',
+    doctor: 'Dr. Carlos Oliveira',
+    specialty: 'Clínico Geral',
+    diagnosis: 'Hipertensão controlada',
     prescription: [
-      { medication: "Losartana", dosage: "50mg", duration: "30 dias" },
-      { medication: "Atorvastatina", dosage: "20mg", duration: "30 dias" },
+      { medication: 'Losartana', dosage: '50mg', duration: '30 dias' },
+      { medication: 'Atorvastatina', dosage: '20mg', duration: '30 dias' },
     ],
-    notes:
-      "Paciente apresenta boa evolução. Pressão arterial controlada. Manter tratamento.",
-    attachments: ["exame_sangue_2024-01-15.pdf"],
+    notes: 'Paciente apresenta boa evolução. Pressão arterial controlada. Manter tratamento.',
+    attachments: ['exame_sangue_2024-01-15.pdf'],
     vitalSigns: {
-      bloodPressure: "120/80",
+      bloodPressure: '120/80',
       heartRate: 72,
       temperature: 36.5,
       weight: 75,
@@ -325,40 +314,40 @@ const generateMockMedicalRecords = (patientId: string): MedicalRecord[] => [
 
 const generateMockAIInsights = (patientId: string): AIInsight[] => [
   {
-    id: "1",
-    type: "treatment_recommendation",
-    title: "Otimização de medicação",
+    id: '1',
+    type: 'treatment_recommendation',
+    title: 'Otimização de medicação',
     description:
-      "Baseado nos padrões de resposta, sugere-se ajuste na dosagem de Losartana para melhor controle pressórico",
+      'Baseado nos padrões de resposta, sugere-se ajuste na dosagem de Losartana para melhor controle pressórico',
     confidence: 0.85,
-    priority: "medium",
+    priority: 'medium',
     actionable: true,
-    actionLabel: "Revisar prescrição",
+    actionLabel: 'Revisar prescrição',
     timestamp: new Date(),
-    category: "treatment",
+    category: 'treatment',
   },
   {
-    id: "2",
-    type: "lifestyle_suggestion",
-    title: "Recomendação de atividade física",
+    id: '2',
+    type: 'lifestyle_suggestion',
+    title: 'Recomendação de atividade física',
     description:
-      "Paciente se beneficiaria de caminhadas diárias de 30 minutos para melhorar controle cardiovascular",
+      'Paciente se beneficiaria de caminhadas diárias de 30 minutos para melhorar controle cardiovascular',
     confidence: 0.92,
-    priority: "medium",
+    priority: 'medium',
     actionable: true,
-    actionLabel: "Recomendar exercícios",
+    actionLabel: 'Recomendar exercícios',
     timestamp: new Date(),
-    category: "prevention",
+    category: 'prevention',
   },
 ];
 
 // Utility functions
 const maskCPF = (cpf: string): string => {
-  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 };
 
 const maskCardNumber = (cardNumber: string): string => {
-  return cardNumber.replace(/(\d{4})\d{8}(\d{4})/, "$1 **** **** $2");
+  return cardNumber.replace(/(\d{4})\d{8}(\d{4})/, '$1 **** **** $2');
 };
 
 const getAge = (birthDate: string): number => {
@@ -375,45 +364,45 @@ const getAge = (birthDate: string): number => {
 };
 
 const getRiskColor = (riskScore: number) => {
-  if (riskScore >= 0.8) return "text-red-600 bg-red-50 border-red-200";
-  if (riskScore >= 0.6) return "text-orange-600 bg-orange-50 border-orange-200";
-  return "text-green-600 bg-green-50 border-green-200";
+  if (riskScore >= 0.8) return 'text-red-600 bg-red-50 border-red-200';
+  if (riskScore >= 0.6) return 'text-orange-600 bg-orange-50 border-orange-200';
+  return 'text-green-600 bg-green-50 border-green-200';
 };
 
 const getRiskLabel = (riskScore: number) => {
-  if (riskScore >= 0.8) return "Alto Risco";
-  if (riskScore >= 0.6) return "Médio Risco";
-  return "Baixo Risco";
+  if (riskScore >= 0.8) return 'Alto Risco';
+  if (riskScore >= 0.6) return 'Médio Risco';
+  return 'Baixo Risco';
 };
 
 const getStatusColor = (status: string) => {
   switch (status) {
-    case "active":
-      return "text-green-600 bg-green-50 border-green-200";
-    case "inactive":
-      return "text-gray-600 bg-gray-50 border-gray-200";
-    case "pending":
-      return "text-yellow-600 bg-yellow-50 border-yellow-200";
+    case 'active':
+      return 'text-green-600 bg-green-50 border-green-200';
+    case 'inactive':
+      return 'text-gray-600 bg-gray-50 border-gray-200';
+    case 'pending':
+      return 'text-yellow-600 bg-yellow-50 border-yellow-200';
     default:
-      return "text-gray-600 bg-gray-50 border-gray-200";
+      return 'text-gray-600 bg-gray-50 border-gray-200';
   }
 };
 
 const getStatusLabel = (status: string) => {
   switch (status) {
-    case "active":
-      return "Ativo";
-    case "inactive":
-      return "Inativo";
-    case "pending":
-      return "Pendente";
+    case 'active':
+      return 'Ativo';
+    case 'inactive':
+      return 'Inativo';
+    case 'pending':
+      return 'Pendente';
     default:
       return status;
   }
 };
 
 function PatientDetailPage() {
-  const { patientId } = useParams({ from: "/patients/$patientId" });
+  const { patientId } = useParams({ from: '/patients/$patientId' });
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -423,7 +412,7 @@ function PatientDetailPage() {
   const [aiInsights, setAiInsights] = useState<AIInsight[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSensitiveData, setShowSensitiveData] = useState(false);
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState('overview');
 
   // Initialize mock data
   useEffect(() => {
@@ -443,51 +432,51 @@ function PatientDetailPage() {
 
   const handleEditPatient = () => {
     navigate({
-      to: "/patients/$patientId/edit",
+      to: '/patients/$patientId/edit',
       params: { patientId: patientId! },
     });
   };
 
   const handleScheduleAppointment = () => {
-    navigate({ to: "/appointments/new", search: { patientId } });
+    navigate({ to: '/appointments/new', search: { patientId } });
   };
 
   const handleExportData = () => {
     toast({
-      title: "Exportação iniciada",
-      description: "Os dados do paciente estão sendo exportados conforme LGPD.",
+      title: 'Exportação iniciada',
+      description: 'Os dados do paciente estão sendo exportados conforme LGPD.',
     });
   };
 
   const handleAIInsightAction = (insight: AIInsight) => {
     toast({
-      title: "Ação executada",
+      title: 'Ação executada',
       description: `${insight.actionLabel} foi realizada com sucesso.`,
     });
   };
 
   if (loading) {
     return (
-      <div className="container mx-auto p-4 sm:p-6 max-w-6xl">
-        <div className="space-y-6">
+      <div className='container mx-auto p-4 sm:p-6 max-w-6xl'>
+        <div className='space-y-6'>
           {/* Header skeleton */}
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-10 w-10" />
-            <div className="space-y-2">
-              <Skeleton className="h-6 w-48" />
-              <Skeleton className="h-4 w-32" />
+          <div className='flex items-center gap-4'>
+            <Skeleton className='h-10 w-10' />
+            <div className='space-y-2'>
+              <Skeleton className='h-6 w-48' />
+              <Skeleton className='h-4 w-32' />
             </div>
           </div>
 
           {/* Content skeleton */}
-          <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
-            <div className="lg:col-span-1 space-y-4">
-              <Skeleton className="h-64" />
-              <Skeleton className="h-48" />
+          <div className='grid gap-6 grid-cols-1 lg:grid-cols-3'>
+            <div className='lg:col-span-1 space-y-4'>
+              <Skeleton className='h-64' />
+              <Skeleton className='h-48' />
             </div>
-            <div className="lg:col-span-2 space-y-4">
-              <Skeleton className="h-96" />
-              <Skeleton className="h-64" />
+            <div className='lg:col-span-2 space-y-4'>
+              <Skeleton className='h-96' />
+              <Skeleton className='h-64' />
             </div>
           </div>
         </div>
@@ -497,9 +486,9 @@ function PatientDetailPage() {
 
   if (!patient) {
     return (
-      <div className="container mx-auto p-4 sm:p-6 max-w-6xl">
+      <div className='container mx-auto p-4 sm:p-6 max-w-6xl'>
         <Alert>
-          <AlertTriangle className="h-4 w-4" />
+          <AlertTriangle className='h-4 w-4' />
           <AlertDescription>
             Paciente não encontrado. Verifique o ID e tente novamente.
           </AlertDescription>
@@ -509,21 +498,21 @@ function PatientDetailPage() {
   }
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 max-w-6xl">
+    <div className='container mx-auto p-4 sm:p-6 max-w-6xl'>
       {/* Header with CFM compliance */}
-      <header className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
+      <header className='space-y-4 sm:space-y-6 mb-6 sm:mb-8'>
         {/* CFM Header */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-blue-600" />
-              <span className="text-sm sm:text-base font-medium text-blue-900">
+        <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+            <div className='flex items-center gap-2'>
+              <Shield className='h-5 w-5 text-blue-600' />
+              <span className='text-sm sm:text-base font-medium text-blue-900'>
                 CRM/SP 123456 - Dr. João Silva
               </span>
             </div>
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-blue-600" />
-              <span className="text-xs sm:text-sm text-blue-700">
+            <div className='flex items-center gap-2'>
+              <FileText className='h-4 w-4 text-blue-600' />
+              <span className='text-xs sm:text-sm text-blue-700'>
                 Acesso conforme LGPD - Resolução CFM 2.314/2022
               </span>
             </div>
@@ -531,25 +520,24 @@ function PatientDetailPage() {
         </div>
 
         {/* Patient Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-4">
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+          <div className='flex items-center gap-4'>
             <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate({ to: "/patients/dashboard" })}
-              className="h-10 w-10 p-0"
-              aria-label="Voltar para dashboard de pacientes"
+              variant='ghost'
+              size='sm'
+              onClick={() => navigate({ to: '/patients/dashboard' })}
+              className='h-10 w-10 p-0'
+              aria-label='Voltar para dashboard de pacientes'
             >
-              <ArrowLeft className="h-4 w-4" />
+              <ArrowLeft className='h-4 w-4' />
             </Button>
 
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+              <h1 className='text-2xl sm:text-3xl font-bold tracking-tight text-gray-900'>
                 {patient.name}
               </h1>
-              <p className="text-sm sm:text-base text-muted-foreground mt-1">
-                Paciente desde{" "}
-                {format(new Date(patient.createdAt), "dd/MM/yyyy", {
+              <p className='text-sm sm:text-base text-muted-foreground mt-1'>
+                Paciente desde {format(new Date(patient.createdAt), 'dd/MM/yyyy', {
                   locale: ptBR,
                 })}
               </p>
@@ -557,7 +545,7 @@ function PatientDetailPage() {
           </div>
 
           {/* Status and Risk */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className='flex flex-wrap items-center gap-2'>
             <Badge className={getStatusColor(patient.status)}>
               {getStatusLabel(patient.status)}
             </Badge>
@@ -568,110 +556,106 @@ function PatientDetailPage() {
         </div>
 
         {/* Quick Actions */}
-        <div className="flex flex-wrap gap-3">
+        <div className='flex flex-wrap gap-3'>
           <UniversalButton
-            variant="outline"
+            variant='outline'
             onClick={handleEditPatient}
-            className="h-11 sm:h-10 text-base sm:text-sm font-medium"
+            className='h-11 sm:h-10 text-base sm:text-sm font-medium'
             aria-label={`Editar paciente ${patient.name}`}
           >
-            <Edit className="h-4 w-4 mr-2" />
+            <Edit className='h-4 w-4 mr-2' />
             Editar
           </UniversalButton>
 
           <UniversalButton
-            variant="primary"
+            variant='primary'
             onClick={handleScheduleAppointment}
-            className="h-11 sm:h-10 text-base sm:text-sm font-medium"
+            className='h-11 sm:h-10 text-base sm:text-sm font-medium'
             aria-label={`Agendar consulta para ${patient.name}`}
           >
-            <Calendar className="h-4 w-4 mr-2" />
+            <Calendar className='h-4 w-4 mr-2' />
             Agendar Consulta
           </UniversalButton>
 
           <UniversalButton
-            variant="outline"
+            variant='outline'
             onClick={handleExportData}
-            className="h-11 sm:h-10 text-base sm:text-sm font-medium"
+            className='h-11 sm:h-10 text-base sm:text-sm font-medium'
             aria-label={`Exportar dados do paciente ${patient.name}`}
           >
-            <Download className="h-4 w-4 mr-2" />
+            <Download className='h-4 w-4 mr-2' />
             Exportar Dados
           </UniversalButton>
 
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={() => setShowSensitiveData(!showSensitiveData)}
-            className="h-11 sm:h-10 text-base sm:text-sm font-medium"
-            aria-label={
-              showSensitiveData
-                ? "Ocultar dados sensíveis"
-                : "Mostrar dados sensíveis"
-            }
+            className='h-11 sm:h-10 text-base sm:text-sm font-medium'
+            aria-label={showSensitiveData
+              ? 'Ocultar dados sensíveis'
+              : 'Mostrar dados sensíveis'}
           >
-            {showSensitiveData ? (
-              <EyeOff className="h-4 w-4 mr-2" />
-            ) : (
-              <Eye className="h-4 w-4 mr-2" />
-            )}
-            {showSensitiveData ? "Ocultar Dados" : "Mostrar Dados"}
+            {showSensitiveData
+              ? <EyeOff className='h-4 w-4 mr-2' />
+              : <Eye className='h-4 w-4 mr-2' />}
+            {showSensitiveData ? 'Ocultar Dados' : 'Mostrar Dados'}
           </Button>
         </div>
       </header>
 
       {/* Main Content */}
-      <div className="grid gap-6 grid-cols-1 lg:grid-cols-3">
+      <div className='grid gap-6 grid-cols-1 lg:grid-cols-3'>
         {/* Sidebar */}
-        <div className="lg:col-span-1 space-y-6">
+        <div className='lg:col-span-1 space-y-6'>
           {/* Patient Overview Card */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <User className="h-5 w-5 text-blue-600" />
+              <CardTitle className='flex items-center gap-2'>
+                <User className='h-5 w-5 text-blue-600' />
                 Informações Básicas
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Idade:</span>
-                  <span className="font-medium">
+            <CardContent className='space-y-4'>
+              <div className='space-y-3'>
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>Idade:</span>
+                  <span className='font-medium'>
                     {getAge(patient.birthDate)} anos
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Gênero:</span>
-                  <span className="font-medium">
-                    {patient.gender === "M"
-                      ? "Masculino"
-                      : patient.gender === "F"
-                        ? "Feminino"
-                        : "Outro"}
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>Gênero:</span>
+                  <span className='font-medium'>
+                    {patient.gender === 'M'
+                      ? 'Masculino'
+                      : patient.gender === 'F'
+                      ? 'Feminino'
+                      : 'Outro'}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Tipo Sanguíneo:</span>
-                  <span className="font-medium">{patient.bloodType}</span>
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>Tipo Sanguíneo:</span>
+                  <span className='font-medium'>{patient.bloodType}</span>
                 </div>
                 {patient.height && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Altura:</span>
-                    <span className="font-medium">{patient.height} cm</span>
+                  <div className='flex justify-between text-sm'>
+                    <span className='text-muted-foreground'>Altura:</span>
+                    <span className='font-medium'>{patient.height} cm</span>
                   </div>
                 )}
                 {patient.weight && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Peso:</span>
-                    <span className="font-medium">{patient.weight} kg</span>
+                  <div className='flex justify-between text-sm'>
+                    <span className='text-muted-foreground'>Peso:</span>
+                    <span className='font-medium'>{patient.weight} kg</span>
                   </div>
                 )}
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">CPF:</span>
-                  <span className="font-medium font-mono">
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>CPF:</span>
+                  <span className='font-medium font-mono'>
                     {showSensitiveData
                       ? maskCPF(patient.cpf)
-                      : "***.***.***-**"}
+                      : '***.***.***-**'}
                   </span>
                 </div>
               </div>
@@ -681,38 +665,38 @@ function PatientDetailPage() {
           {/* Contact Information */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Phone className="h-5 w-5 text-green-600" />
+              <CardTitle className='flex items-center gap-2'>
+                <Phone className='h-5 w-5 text-green-600' />
                 Contato
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex items-start gap-2">
-                  <Mail className="h-4 w-4 text-muted-foreground mt-0.5" />
+            <CardContent className='space-y-4'>
+              <div className='space-y-3'>
+                <div className='flex items-start gap-2'>
+                  <Mail className='h-4 w-4 text-muted-foreground mt-0.5' />
                   <div>
-                    <div className="text-sm font-medium">{patient.email}</div>
+                    <div className='text-sm font-medium'>{patient.email}</div>
                   </div>
                 </div>
-                <div className="flex items-start gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <div className='flex items-start gap-2'>
+                  <Phone className='h-4 w-4 text-muted-foreground mt-0.5' />
                   <div>
-                    <div className="text-sm font-medium">{patient.phone}</div>
+                    <div className='text-sm font-medium'>{patient.phone}</div>
                   </div>
                 </div>
-                <div className="flex items-start gap-2">
-                  <MapPin className="h-4 w-4 text-muted-foreground mt-0.5" />
+                <div className='flex items-start gap-2'>
+                  <MapPin className='h-4 w-4 text-muted-foreground mt-0.5' />
                   <div>
-                    <div className="text-sm font-medium">
+                    <div className='text-sm font-medium'>
                       {patient.address.street}, {patient.address.number}
-                      {patient.address.complement &&
-                        ` - ${patient.address.complement}`}
+                      {patient.address.complement
+                        && ` - ${patient.address.complement}`}
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {patient.address.neighborhood}, {patient.address.city} -{" "}
+                    <div className='text-sm text-muted-foreground'>
+                      {patient.address.neighborhood}, {patient.address.city} -{' '}
                       {patient.address.state}
                     </div>
-                    <div className="text-sm text-muted-foreground font-mono">
+                    <div className='text-sm text-muted-foreground font-mono'>
                       {patient.address.zipCode}
                     </div>
                   </div>
@@ -722,37 +706,37 @@ function PatientDetailPage() {
           </Card>
 
           {/* Emergency Contact */}
-          <Card className="border-red-200">
+          <Card className='border-red-200'>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-600">
-                <AlertTriangle className="h-5 w-5" />
+              <CardTitle className='flex items-center gap-2 text-red-600'>
+                <AlertTriangle className='h-5 w-5' />
                 Contato de Emergência
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Nome:</span>
-                  <span className="font-medium">
+            <CardContent className='space-y-4'>
+              <div className='space-y-3'>
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>Nome:</span>
+                  <span className='font-medium'>
                     {patient.emergencyContact.name}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Relação:</span>
-                  <span className="font-medium">
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>Relação:</span>
+                  <span className='font-medium'>
                     {patient.emergencyContact.relationship}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Telefone:</span>
-                  <span className="font-medium">
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>Telefone:</span>
+                  <span className='font-medium'>
                     {patient.emergencyContact.phone}
                   </span>
                 </div>
                 {patient.emergencyContact.email && (
-                  <div className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">Email:</span>
-                    <span className="font-medium">
+                  <div className='flex justify-between text-sm'>
+                    <span className='text-muted-foreground'>Email:</span>
+                    <span className='font-medium'>
                       {patient.emergencyContact.email}
                     </span>
                   </div>
@@ -764,39 +748,39 @@ function PatientDetailPage() {
           {/* Health Insurance */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-purple-600" />
+              <CardTitle className='flex items-center gap-2'>
+                <Shield className='h-5 w-5 text-purple-600' />
                 Plano de Saúde
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-3">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Operadora:</span>
-                  <span className="font-medium">
+            <CardContent className='space-y-4'>
+              <div className='space-y-3'>
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>Operadora:</span>
+                  <span className='font-medium'>
                     {patient.healthInsurance.provider}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Plano:</span>
-                  <span className="font-medium">
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>Plano:</span>
+                  <span className='font-medium'>
                     {patient.healthInsurance.plan}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Cartão:</span>
-                  <span className="font-medium font-mono">
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>Cartão:</span>
+                  <span className='font-medium font-mono'>
                     {showSensitiveData
                       ? maskCardNumber(patient.healthInsurance.cardNumber)
-                      : "**** **** **** ****"}
+                      : '**** **** **** ****'}
                   </span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Validade:</span>
-                  <span className="font-medium">
+                <div className='flex justify-between text-sm'>
+                  <span className='text-muted-foreground'>Validade:</span>
+                  <span className='font-medium'>
                     {format(
                       new Date(patient.healthInsurance.validity),
-                      "dd/MM/yyyy",
+                      'dd/MM/yyyy',
                       {
                         locale: ptBR,
                       },
@@ -809,52 +793,52 @@ function PatientDetailPage() {
         </div>
 
         {/* Main Content Area */}
-        <div className="lg:col-span-2">
+        <div className='lg:col-span-2'>
           <Tabs
             value={activeTab}
             onValueChange={setActiveTab}
-            className="space-y-6"
+            className='space-y-6'
           >
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="overview" className="text-sm sm:text-base">
+            <TabsList className='grid w-full grid-cols-4'>
+              <TabsTrigger value='overview' className='text-sm sm:text-base'>
                 Visão Geral
               </TabsTrigger>
               <TabsTrigger
-                value="appointments"
-                className="text-sm sm:text-base"
+                value='appointments'
+                className='text-sm sm:text-base'
               >
                 Consultas
               </TabsTrigger>
-              <TabsTrigger value="medical" className="text-sm sm:text-base">
+              <TabsTrigger value='medical' className='text-sm sm:text-base'>
                 Histórico
               </TabsTrigger>
-              <TabsTrigger value="insights" className="text-sm sm:text-base">
+              <TabsTrigger value='insights' className='text-sm sm:text-base'>
                 Insights
               </TabsTrigger>
             </TabsList>
 
             {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-6">
+            <TabsContent value='overview' className='space-y-6'>
               {/* Health Summary */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Heart className="h-5 w-5 text-red-600" />
+                  <CardTitle className='flex items-center gap-2'>
+                    <Heart className='h-5 w-5 text-red-600' />
                     Resumo da Saúde
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
+                <CardContent className='space-y-4'>
+                  <div className='grid gap-4 grid-cols-1 sm:grid-cols-2'>
                     <div>
-                      <h4 className="font-medium text-sm mb-2">
+                      <h4 className='font-medium text-sm mb-2'>
                         Condições Crônicas
                       </h4>
-                      <div className="space-y-1">
+                      <div className='space-y-1'>
                         {patient.chronicConditions.map((condition, index) => (
                           <Badge
                             key={index}
-                            variant="outline"
-                            className="text-xs"
+                            variant='outline'
+                            className='text-xs'
                           >
                             {condition}
                           </Badge>
@@ -863,13 +847,13 @@ function PatientDetailPage() {
                     </div>
 
                     <div>
-                      <h4 className="font-medium text-sm mb-2">Alergias</h4>
-                      <div className="space-y-1">
+                      <h4 className='font-medium text-sm mb-2'>Alergias</h4>
+                      <div className='space-y-1'>
                         {patient.allergies.map((allergy, index) => (
                           <Badge
                             key={index}
-                            variant="destructive"
-                            className="text-xs"
+                            variant='destructive'
+                            className='text-xs'
                           >
                             {allergy}
                           </Badge>
@@ -879,24 +863,24 @@ function PatientDetailPage() {
                   </div>
 
                   <div>
-                    <h4 className="font-medium text-sm mb-2">
+                    <h4 className='font-medium text-sm mb-2'>
                       Medicações Atuais
                     </h4>
-                    <div className="space-y-2">
+                    <div className='space-y-2'>
                       {patient.medications.map((medication, index) => (
                         <div
                           key={index}
-                          className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm"
+                          className='flex items-center justify-between p-2 bg-gray-50 rounded text-sm'
                         >
                           <div>
-                            <span className="font-medium">
+                            <span className='font-medium'>
                               {medication.name}
                             </span>
-                            <span className="text-muted-foreground ml-2">
+                            <span className='text-muted-foreground ml-2'>
                               {medication.dosage} - {medication.frequency}
                             </span>
                           </div>
-                          <Pill className="h-4 w-4 text-blue-600" />
+                          <Pill className='h-4 w-4 text-blue-600' />
                         </div>
                       ))}
                     </div>
@@ -906,54 +890,54 @@ function PatientDetailPage() {
 
               {/* Next Appointment */}
               {patient.nextAppointment && (
-                <Card className="border-blue-200">
+                <Card className='border-blue-200'>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Calendar className="h-5 w-5 text-blue-600" />
+                    <CardTitle className='flex items-center gap-2'>
+                      <Calendar className='h-5 w-5 text-blue-600' />
                       Próxima Consulta
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <div className="text-sm text-muted-foreground">
+                  <CardContent className='space-y-4'>
+                    <div className='grid gap-4 grid-cols-1 sm:grid-cols-2'>
+                      <div className='space-y-2'>
+                        <div className='text-sm text-muted-foreground'>
                           Data e Hora
                         </div>
-                        <div className="font-medium">
+                        <div className='font-medium'>
                           {format(
                             new Date(patient.nextAppointment.date),
-                            "dd/MM/yyyy HH:mm",
+                            'dd/MM/yyyy HH:mm',
                             {
                               locale: ptBR,
                             },
                           )}
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <div className="text-sm text-muted-foreground">
+                      <div className='space-y-2'>
+                        <div className='text-sm text-muted-foreground'>
                           Tipo
                         </div>
-                        <div className="font-medium">
+                        <div className='font-medium'>
                           {patient.nextAppointment.type}
                         </div>
                       </div>
-                      <div className="space-y-2">
-                        <div className="text-sm text-muted-foreground">
+                      <div className='space-y-2'>
+                        <div className='text-sm text-muted-foreground'>
                           Médico
                         </div>
-                        <div className="font-medium">
+                        <div className='font-medium'>
                           {patient.nextAppointment.doctor}
                         </div>
                       </div>
                     </div>
 
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Video className="h-4 w-4 mr-2" />
+                    <div className='flex gap-2'>
+                      <Button variant='outline' size='sm'>
+                        <Video className='h-4 w-4 mr-2' />
                         Teleconsulta
                       </Button>
-                      <Button variant="outline" size="sm">
-                        <MessageCircle className="h-4 w-4 mr-2" />
+                      <Button variant='outline' size='sm'>
+                        <MessageCircle className='h-4 w-4 mr-2' />
                         Enviar Mensagem
                       </Button>
                     </div>
@@ -965,44 +949,42 @@ function PatientDetailPage() {
               {aiInsights.length > 0 && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Brain className="h-5 w-5 text-purple-600" />
+                    <CardTitle className='flex items-center gap-2'>
+                      <Brain className='h-5 w-5 text-purple-600' />
                       Insights de IA
                     </CardTitle>
                     <CardDescription>
                       Recomendações baseadas em análise dos dados do paciente
                     </CardDescription>
                   </CardHeader>
-                  <CardContent className="space-y-4">
-                    {aiInsights.slice(0, 2).map((insight) => (
-                      <div key={insight.id} className="p-3 border rounded-lg">
-                        <div className="flex items-center justify-between mb-2">
-                          <h4 className="font-medium text-sm">
+                  <CardContent className='space-y-4'>
+                    {aiInsights.slice(0, 2).map(insight => (
+                      <div key={insight.id} className='p-3 border rounded-lg'>
+                        <div className='flex items-center justify-between mb-2'>
+                          <h4 className='font-medium text-sm'>
                             {insight.title}
                           </h4>
                           <Badge
-                            variant={
-                              insight.priority === "high"
-                                ? "destructive"
-                                : insight.priority === "medium"
-                                  ? "warning"
-                                  : "default"
-                            }
+                            variant={insight.priority === 'high'
+                              ? 'destructive'
+                              : insight.priority === 'medium'
+                              ? 'warning'
+                              : 'default'}
                           >
-                            {insight.priority === "high"
-                              ? "Alto"
-                              : insight.priority === "medium"
-                                ? "Médio"
-                                : "Baixo"}
+                            {insight.priority === 'high'
+                              ? 'Alto'
+                              : insight.priority === 'medium'
+                              ? 'Médio'
+                              : 'Baixo'}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground mb-2">
+                        <p className='text-sm text-muted-foreground mb-2'>
                           {insight.description}
                         </p>
                         {insight.actionable && (
                           <Button
-                            variant="outline"
-                            size="sm"
+                            variant='outline'
+                            size='sm'
                             onClick={() => handleAIInsightAction(insight)}
                           >
                             {insight.actionLabel}
@@ -1012,9 +994,9 @@ function PatientDetailPage() {
                     ))}
                     {aiInsights.length > 2 && (
                       <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setActiveTab("insights")}
+                        variant='outline'
+                        size='sm'
+                        onClick={() => setActiveTab('insights')}
                       >
                         Ver todos os insights ({aiInsights.length})
                       </Button>
@@ -1025,10 +1007,10 @@ function PatientDetailPage() {
             </TabsContent>
 
             {/* Appointments Tab */}
-            <TabsContent value="appointments" className="space-y-6">
+            <TabsContent value='appointments' className='space-y-6'>
               <Card>
                 <CardHeader>
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                  <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
                     <div>
                       <CardTitle>Agendamentos</CardTitle>
                       <CardDescription>
@@ -1036,132 +1018,130 @@ function PatientDetailPage() {
                       </CardDescription>
                     </div>
                     <Button onClick={handleScheduleAppointment}>
-                      <Calendar className="h-4 w-4 mr-2" />
+                      <Calendar className='h-4 w-4 mr-2' />
                       Nova Consulta
                     </Button>
                   </div>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {appointments.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-medium mb-2">
-                        Nenhuma consulta agendada
-                      </h3>
-                      <p className="text-muted-foreground mb-4">
-                        Agende a primeira consulta para este paciente.
-                      </p>
-                      <Button onClick={handleScheduleAppointment}>
-                        Agendar Consulta
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {appointments.map((appointment) => (
-                        <div
-                          key={appointment.id}
-                          className="p-4 border rounded-lg"
-                        >
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-medium">
-                                  {appointment.type}
-                                </h4>
-                                <Badge
-                                  variant={
-                                    appointment.status === "completed"
-                                      ? "default"
-                                      : appointment.status === "scheduled"
-                                        ? "secondary"
-                                        : appointment.status === "no-show"
-                                          ? "destructive"
-                                          : appointment.status === "cancelled"
-                                            ? "outline"
-                                            : "default"
-                                  }
-                                >
-                                  {appointment.status === "completed"
-                                    ? "Concluída"
-                                    : appointment.status === "scheduled"
-                                      ? "Agendada"
-                                      : appointment.status === "no-show"
-                                        ? "Não compareceu"
-                                        : appointment.status === "cancelled"
-                                          ? "Cancelada"
-                                          : "Em andamento"}
-                                </Badge>
+                <CardContent className='space-y-4'>
+                  {appointments.length === 0
+                    ? (
+                      <div className='text-center py-8'>
+                        <Calendar className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
+                        <h3 className='text-lg font-medium mb-2'>
+                          Nenhuma consulta agendada
+                        </h3>
+                        <p className='text-muted-foreground mb-4'>
+                          Agende a primeira consulta para este paciente.
+                        </p>
+                        <Button onClick={handleScheduleAppointment}>
+                          Agendar Consulta
+                        </Button>
+                      </div>
+                    )
+                    : (
+                      <div className='space-y-3'>
+                        {appointments.map(appointment => (
+                          <div
+                            key={appointment.id}
+                            className='p-4 border rounded-lg'
+                          >
+                            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+                              <div className='space-y-1'>
+                                <div className='flex items-center gap-2'>
+                                  <h4 className='font-medium'>
+                                    {appointment.type}
+                                  </h4>
+                                  <Badge
+                                    variant={appointment.status === 'completed'
+                                      ? 'default'
+                                      : appointment.status === 'scheduled'
+                                      ? 'secondary'
+                                      : appointment.status === 'no-show'
+                                      ? 'destructive'
+                                      : appointment.status === 'cancelled'
+                                      ? 'outline'
+                                      : 'default'}
+                                  >
+                                    {appointment.status === 'completed'
+                                      ? 'Concluída'
+                                      : appointment.status === 'scheduled'
+                                      ? 'Agendada'
+                                      : appointment.status === 'no-show'
+                                      ? 'Não compareceu'
+                                      : appointment.status === 'cancelled'
+                                      ? 'Cancelada'
+                                      : 'Em andamento'}
+                                  </Badge>
+                                </div>
+                                <div className='text-sm text-muted-foreground'>
+                                  {format(
+                                    new Date(appointment.date),
+                                    'dd/MM/yyyy HH:mm',
+                                    {
+                                      locale: ptBR,
+                                    },
+                                  )} • {appointment.duration} min
+                                </div>
+                                <div className='text-sm'>
+                                  <span className='text-muted-foreground'>
+                                    Médico:
+                                  </span>{' '}
+                                  {appointment.doctor} • {appointment.specialty}
+                                </div>
                               </div>
-                              <div className="text-sm text-muted-foreground">
-                                {format(
-                                  new Date(appointment.date),
-                                  "dd/MM/yyyy HH:mm",
-                                  {
-                                    locale: ptBR,
-                                  },
-                                )}{" "}
-                                • {appointment.duration} min
-                              </div>
-                              <div className="text-sm">
-                                <span className="text-muted-foreground">
-                                  Médico:
-                                </span>{" "}
-                                {appointment.doctor} • {appointment.specialty}
+
+                              <div className='flex gap-2'>
+                                {appointment.status === 'scheduled' && (
+                                  <>
+                                    <Button variant='outline' size='sm'>
+                                      <Video className='h-4 w-4 mr-1' />
+                                      Teleconsulta
+                                    </Button>
+                                    <Button variant='outline' size='sm'>
+                                      <MessageCircle className='h-4 w-4 mr-1' />
+                                      Mensagem
+                                    </Button>
+                                  </>
+                                )}
+                                <Button variant='outline' size='sm'>
+                                  <MoreVertical className='h-4 w-4' />
+                                </Button>
                               </div>
                             </div>
 
-                            <div className="flex gap-2">
-                              {appointment.status === "scheduled" && (
-                                <>
-                                  <Button variant="outline" size="sm">
-                                    <Video className="h-4 w-4 mr-1" />
-                                    Teleconsulta
-                                  </Button>
-                                  <Button variant="outline" size="sm">
-                                    <MessageCircle className="h-4 w-4 mr-1" />
-                                    Mensagem
-                                  </Button>
-                                </>
-                              )}
-                              <Button variant="outline" size="sm">
-                                <MoreVertical className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-
-                          {appointment.aiPrediction && (
-                            <div className="mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm">
-                              <div className="flex items-center gap-2">
-                                <Brain className="h-4 w-4 text-yellow-600" />
-                                <span className="font-medium">
-                                  Previsão de não comparecimento:
-                                </span>
-                                <span className="text-yellow-700">
-                                  {(
-                                    appointment.aiPrediction.noShowRisk * 100
+                            {appointment.aiPrediction && (
+                              <div className='mt-3 p-2 bg-yellow-50 border border-yellow-200 rounded text-sm'>
+                                <div className='flex items-center gap-2'>
+                                  <Brain className='h-4 w-4 text-yellow-600' />
+                                  <span className='font-medium'>
+                                    Previsão de não comparecimento:
+                                  </span>
+                                  <span className='text-yellow-700'>
+                                    {(
+                                      appointment.aiPrediction.noShowRisk * 100
+                                    ).toFixed(0)}
+                                    % de risco
+                                  </span>
+                                </div>
+                                <div className='text-xs text-yellow-600 mt-1'>
+                                  Confiança: {(
+                                    appointment.aiPrediction.confidence * 100
                                   ).toFixed(0)}
-                                  % de risco
-                                </span>
+                                  %
+                                </div>
                               </div>
-                              <div className="text-xs text-yellow-600 mt-1">
-                                Confiança:{" "}
-                                {(
-                                  appointment.aiPrediction.confidence * 100
-                                ).toFixed(0)}
-                                %
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
                 </CardContent>
               </Card>
             </TabsContent>
 
             {/* Medical History Tab */}
-            <TabsContent value="medical" className="space-y-6">
+            <TabsContent value='medical' className='space-y-6'>
               <Card>
                 <CardHeader>
                   <CardTitle>Histórico Médico</CardTitle>
@@ -1169,220 +1149,219 @@ function PatientDetailPage() {
                     Registros de consultas, exames e procedimentos
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {medicalRecords.length === 0 ? (
-                    <div className="text-center py-8">
-                      <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-medium mb-2">
-                        Nenhum registro médico
-                      </h3>
-                      <p className="text-muted-foreground">
-                        Nenhum registro médico encontrado para este paciente.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {medicalRecords.map((record) => (
-                        <div key={record.id} className="p-4 border rounded-lg">
-                          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-medium">{record.type}</h4>
-                                <Badge variant="outline">
-                                  {format(new Date(record.date), "dd/MM/yyyy", {
-                                    locale: ptBR,
-                                  })}
-                                </Badge>
+                <CardContent className='space-y-4'>
+                  {medicalRecords.length === 0
+                    ? (
+                      <div className='text-center py-8'>
+                        <FileText className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
+                        <h3 className='text-lg font-medium mb-2'>
+                          Nenhum registro médico
+                        </h3>
+                        <p className='text-muted-foreground'>
+                          Nenhum registro médico encontrado para este paciente.
+                        </p>
+                      </div>
+                    )
+                    : (
+                      <div className='space-y-4'>
+                        {medicalRecords.map(record => (
+                          <div key={record.id} className='p-4 border rounded-lg'>
+                            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3'>
+                              <div>
+                                <div className='flex items-center gap-2'>
+                                  <h4 className='font-medium'>{record.type}</h4>
+                                  <Badge variant='outline'>
+                                    {format(new Date(record.date), 'dd/MM/yyyy', {
+                                      locale: ptBR,
+                                    })}
+                                  </Badge>
+                                </div>
+                                <div className='text-sm text-muted-foreground'>
+                                  {record.doctor} • {record.specialty}
+                                </div>
                               </div>
-                              <div className="text-sm text-muted-foreground">
-                                {record.doctor} • {record.specialty}
-                              </div>
-                            </div>
-                            <Button variant="outline" size="sm">
-                              <Printer className="h-4 w-4 mr-2" />
-                              Imprimir
-                            </Button>
-                          </div>
-
-                          <div className="space-y-3">
-                            <div>
-                              <div className="text-sm font-medium mb-1">
-                                Diagnóstico
-                              </div>
-                              <div className="text-sm text-muted-foreground">
-                                {record.diagnosis}
-                              </div>
+                              <Button variant='outline' size='sm'>
+                                <Printer className='h-4 w-4 mr-2' />
+                                Imprimir
+                              </Button>
                             </div>
 
-                            {record.prescription.length > 0 && (
+                            <div className='space-y-3'>
                               <div>
-                                <div className="text-sm font-medium mb-1">
-                                  Prescrição
+                                <div className='text-sm font-medium mb-1'>
+                                  Diagnóstico
                                 </div>
-                                <div className="space-y-1">
-                                  {record.prescription.map((presc, index) => (
-                                    <div
-                                      key={index}
-                                      className="text-sm text-muted-foreground"
-                                    >
-                                      • {presc.medication} {presc.dosage} -{" "}
-                                      {presc.duration}
-                                    </div>
-                                  ))}
+                                <div className='text-sm text-muted-foreground'>
+                                  {record.diagnosis}
                                 </div>
                               </div>
-                            )}
 
-                            {record.vitalSigns && (
-                              <div>
-                                <div className="text-sm font-medium mb-1">
-                                  Sinais Vitais
+                              {record.prescription.length > 0 && (
+                                <div>
+                                  <div className='text-sm font-medium mb-1'>
+                                    Prescrição
+                                  </div>
+                                  <div className='space-y-1'>
+                                    {record.prescription.map((presc, index) => (
+                                      <div
+                                        key={index}
+                                        className='text-sm text-muted-foreground'
+                                      >
+                                        • {presc.medication} {presc.dosage} - {presc.duration}
+                                      </div>
+                                    ))}
+                                  </div>
                                 </div>
-                                <div className="grid gap-2 grid-cols-2 sm:grid-cols-4 text-sm">
-                                  <div>
-                                    <span className="text-muted-foreground">
-                                      PA:
-                                    </span>
-                                    <span className="ml-1 font-medium">
-                                      {record.vitalSigns.bloodPressure}
-                                    </span>
+                              )}
+
+                              {record.vitalSigns && (
+                                <div>
+                                  <div className='text-sm font-medium mb-1'>
+                                    Sinais Vitais
                                   </div>
-                                  <div>
-                                    <span className="text-muted-foreground">
-                                      FC:
-                                    </span>
-                                    <span className="ml-1 font-medium">
-                                      {record.vitalSigns.heartRate} bpm
-                                    </span>
-                                  </div>
-                                  <div>
-                                    <span className="text-muted-foreground">
-                                      Temp:
-                                    </span>
-                                    <span className="ml-1 font-medium">
-                                      {record.vitalSigns.temperature}°C
-                                    </span>
-                                  </div>
-                                  {record.vitalSigns.weight && (
+                                  <div className='grid gap-2 grid-cols-2 sm:grid-cols-4 text-sm'>
                                     <div>
-                                      <span className="text-muted-foreground">
-                                        Peso:
+                                      <span className='text-muted-foreground'>
+                                        PA:
                                       </span>
-                                      <span className="ml-1 font-medium">
-                                        {record.vitalSigns.weight} kg
+                                      <span className='ml-1 font-medium'>
+                                        {record.vitalSigns.bloodPressure}
                                       </span>
                                     </div>
-                                  )}
+                                    <div>
+                                      <span className='text-muted-foreground'>
+                                        FC:
+                                      </span>
+                                      <span className='ml-1 font-medium'>
+                                        {record.vitalSigns.heartRate} bpm
+                                      </span>
+                                    </div>
+                                    <div>
+                                      <span className='text-muted-foreground'>
+                                        Temp:
+                                      </span>
+                                      <span className='ml-1 font-medium'>
+                                        {record.vitalSigns.temperature}°C
+                                      </span>
+                                    </div>
+                                    {record.vitalSigns.weight && (
+                                      <div>
+                                        <span className='text-muted-foreground'>
+                                          Peso:
+                                        </span>
+                                        <span className='ml-1 font-medium'>
+                                          {record.vitalSigns.weight} kg
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
-                              </div>
-                            )}
+                              )}
 
-                            {record.notes && (
-                              <div>
-                                <div className="text-sm font-medium mb-1">
-                                  Observações
+                              {record.notes && (
+                                <div>
+                                  <div className='text-sm font-medium mb-1'>
+                                    Observações
+                                  </div>
+                                  <div className='text-sm text-muted-foreground'>
+                                    {record.notes}
+                                  </div>
                                 </div>
-                                <div className="text-sm text-muted-foreground">
-                                  {record.notes}
-                                </div>
-                              </div>
-                            )}
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    )}
                 </CardContent>
               </Card>
             </TabsContent>
 
             {/* AI Insights Tab */}
-            <TabsContent value="insights" className="space-y-6">
+            <TabsContent value='insights' className='space-y-6'>
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Brain className="h-5 w-5 text-purple-600" />
+                  <CardTitle className='flex items-center gap-2'>
+                    <Brain className='h-5 w-5 text-purple-600' />
                     Insights de Inteligência Artificial
                   </CardTitle>
                   <CardDescription>
                     Análises personalizadas e recomendações para o paciente
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  {aiInsights.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Brain className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-medium mb-2">
-                        Nenhum insight disponível
-                      </h3>
-                      <p className="text-muted-foreground">
-                        Os insights de IA serão gerados conforme mais dados
-                        forem coletados.
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {aiInsights.map((insight) => (
-                        <div key={insight.id} className="p-4 border rounded-lg">
-                          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-3">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-2">
-                                <h4 className="font-medium">{insight.title}</h4>
-                                <Badge
-                                  variant={
-                                    insight.priority === "critical"
-                                      ? "destructive"
-                                      : insight.priority === "high"
-                                        ? "destructive"
-                                        : insight.priority === "medium"
-                                          ? "warning"
-                                          : "default"
-                                  }
-                                >
-                                  {insight.priority === "critical"
-                                    ? "Crítico"
-                                    : insight.priority === "high"
-                                      ? "Alto"
-                                      : insight.priority === "medium"
-                                        ? "Médio"
-                                        : "Baixo"}
-                                </Badge>
-                                <Badge variant="outline">
-                                  {insight.category === "health"
-                                    ? "Saúde"
-                                    : insight.category === "treatment"
-                                      ? "Tratamento"
-                                      : insight.category === "prevention"
-                                        ? "Prevenção"
-                                        : "Administrativo"}
-                                </Badge>
+                <CardContent className='space-y-4'>
+                  {aiInsights.length === 0
+                    ? (
+                      <div className='text-center py-8'>
+                        <Brain className='h-12 w-12 text-muted-foreground mx-auto mb-4' />
+                        <h3 className='text-lg font-medium mb-2'>
+                          Nenhum insight disponível
+                        </h3>
+                        <p className='text-muted-foreground'>
+                          Os insights de IA serão gerados conforme mais dados forem coletados.
+                        </p>
+                      </div>
+                    )
+                    : (
+                      <div className='space-y-4'>
+                        {aiInsights.map(insight => (
+                          <div key={insight.id} className='p-4 border rounded-lg'>
+                            <div className='flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-3'>
+                              <div className='flex-1'>
+                                <div className='flex items-center gap-2 mb-2'>
+                                  <h4 className='font-medium'>{insight.title}</h4>
+                                  <Badge
+                                    variant={insight.priority === 'critical'
+                                      ? 'destructive'
+                                      : insight.priority === 'high'
+                                      ? 'destructive'
+                                      : insight.priority === 'medium'
+                                      ? 'warning'
+                                      : 'default'}
+                                  >
+                                    {insight.priority === 'critical'
+                                      ? 'Crítico'
+                                      : insight.priority === 'high'
+                                      ? 'Alto'
+                                      : insight.priority === 'medium'
+                                      ? 'Médio'
+                                      : 'Baixo'}
+                                  </Badge>
+                                  <Badge variant='outline'>
+                                    {insight.category === 'health'
+                                      ? 'Saúde'
+                                      : insight.category === 'treatment'
+                                      ? 'Tratamento'
+                                      : insight.category === 'prevention'
+                                      ? 'Prevenção'
+                                      : 'Administrativo'}
+                                  </Badge>
+                                </div>
+                                <p className='text-sm text-muted-foreground mb-2'>
+                                  {insight.description}
+                                </p>
+                                <div className='text-xs text-muted-foreground'>
+                                  Confiança: {(insight.confidence * 100).toFixed(0)}% •
+                                  {format(insight.timestamp, 'dd/MM/yyyy HH:mm', {
+                                    locale: ptBR,
+                                  })}
+                                </div>
                               </div>
-                              <p className="text-sm text-muted-foreground mb-2">
-                                {insight.description}
-                              </p>
-                              <div className="text-xs text-muted-foreground">
-                                Confiança:{" "}
-                                {(insight.confidence * 100).toFixed(0)}% •
-                                {format(insight.timestamp, "dd/MM/yyyy HH:mm", {
-                                  locale: ptBR,
-                                })}
-                              </div>
-                            </div>
 
-                            {insight.actionable && (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => handleAIInsightAction(insight)}
-                              >
-                                {insight.actionLabel}
-                              </Button>
-                            )}
+                              {insight.actionable && (
+                                <Button
+                                  variant='outline'
+                                  size='sm'
+                                  onClick={() => handleAIInsightAction(insight)}
+                                >
+                                  {insight.actionLabel}
+                                </Button>
+                              )}
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    )}
                 </CardContent>
               </Card>
             </TabsContent>
@@ -1391,33 +1370,31 @@ function PatientDetailPage() {
       </div>
 
       {/* LGPD Compliance Footer */}
-      <footer className="mt-8 sm:mt-12">
-        <Card className="bg-gray-50">
-          <CardContent className="p-4 sm:p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <div className="flex items-center gap-3">
-                <Shield className="h-6 w-6 text-blue-600" />
+      <footer className='mt-8 sm:mt-12'>
+        <Card className='bg-gray-50'>
+          <CardContent className='p-4 sm:p-6'>
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+              <div className='flex items-center gap-3'>
+                <Shield className='h-6 w-6 text-blue-600' />
                 <div>
-                  <h3 className="text-sm font-medium text-gray-900">
+                  <h3 className='text-sm font-medium text-gray-900'>
                     Conformidade LGPD
                   </h3>
-                  <p className="text-xs text-gray-600">
-                    Acesso autorizado • Dados criptografados • Audit trail
-                    registrado
+                  <p className='text-xs text-gray-600'>
+                    Acesso autorizado • Dados criptografados • Audit trail registrado
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">
-                  Consentimento:{" "}
-                  {patient.lgpdConsent.dataProcessing ? "Sim" : "Não"}
+              <div className='flex items-center gap-2'>
+                <Badge variant='outline' className='text-xs'>
+                  Consentimento: {patient.lgpdConsent.dataProcessing ? 'Sim' : 'Não'}
                 </Badge>
-                <Badge variant="outline" className="text-xs">
-                  IA: {patient.lgpdConsent.aiProcessing ? "Sim" : "Não"}
+                <Badge variant='outline' className='text-xs'>
+                  IA: {patient.lgpdConsent.aiProcessing ? 'Sim' : 'Não'}
                 </Badge>
-                <Badge variant="outline" className="text-xs">
-                  Marketing: {patient.lgpdConsent.marketing ? "Sim" : "Não"}
+                <Badge variant='outline' className='text-xs'>
+                  Marketing: {patient.lgpdConsent.marketing ? 'Sim' : 'Não'}
                 </Badge>
               </div>
             </div>

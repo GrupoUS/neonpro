@@ -3,28 +3,27 @@
  * React Query hooks for dynamic pricing engine
  */
 
-import { pricingRulesService } from "@/services/pricing-rules.service";
+import { pricingRulesService } from '@/services/pricing-rules.service';
 import type {
   CreatePricingRuleRequest,
   PricingRuleFilters,
   UpdatePricingRuleRequest,
-} from "@/types/pricing-rules";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+} from '@/types/pricing-rules';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 // Query Keys
 export const pricingRuleKeys = {
-  all: ["pricingRules"] as const,
-  lists: () => [...pricingRuleKeys.all, "list"] as const,
+  all: ['pricingRules'] as const,
+  lists: () => [...pricingRuleKeys.all, 'list'] as const,
   list: (clinicId: string, filters?: PricingRuleFilters) =>
     [...pricingRuleKeys.lists(), clinicId, filters] as const,
-  details: () => [...pricingRuleKeys.all, "detail"] as const,
+  details: () => [...pricingRuleKeys.all, 'detail'] as const,
   detail: (id: string) => [...pricingRuleKeys.details(), id] as const,
-  calculations: () => [...pricingRuleKeys.all, "calculation"] as const,
+  calculations: () => [...pricingRuleKeys.all, 'calculation'] as const,
   calculation: (clinicId: string, serviceId: string, context: any) =>
     [...pricingRuleKeys.calculations(), clinicId, serviceId, context] as const,
-  stats: (clinicId: string) =>
-    [...pricingRuleKeys.all, "stats", clinicId] as const,
+  stats: (clinicId: string) => [...pricingRuleKeys.all, 'stats', clinicId] as const,
 };
 
 /**
@@ -67,7 +66,7 @@ export function useCreatePricingRule() {
       request: CreatePricingRuleRequest;
     }) => pricingRulesService.createPricingRule(clinicId, request),
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Invalidate and refetch pricing rules list
       queryClient.invalidateQueries({
         queryKey: pricingRuleKeys.lists(),
@@ -76,11 +75,11 @@ export function useCreatePricingRule() {
       // Add the new rule to the cache
       queryClient.setQueryData(pricingRuleKeys.detail(data.id), data);
 
-      toast.success("Regra de preço criada com sucesso!");
+      toast.success('Regra de preço criada com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error creating pricing rule:", error);
+      console.error('Error creating pricing rule:', error);
       toast.error(`Erro ao criar regra de preço: ${error.message}`);
     },
   });
@@ -101,7 +100,7 @@ export function useUpdatePricingRule() {
       request: UpdatePricingRuleRequest;
     }) => pricingRulesService.updatePricingRule(id, request),
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Update the specific rule in cache
       queryClient.setQueryData(pricingRuleKeys.detail(data.id), data);
 
@@ -110,11 +109,11 @@ export function useUpdatePricingRule() {
         queryKey: pricingRuleKeys.lists(),
       });
 
-      toast.success("Regra de preço atualizada com sucesso!");
+      toast.success('Regra de preço atualizada com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error updating pricing rule:", error);
+      console.error('Error updating pricing rule:', error);
       toast.error(`Erro ao atualizar regra de preço: ${error.message}`);
     },
   });
@@ -140,11 +139,11 @@ export function useDeletePricingRule() {
         queryKey: pricingRuleKeys.lists(),
       });
 
-      toast.success("Regra de preço excluída com sucesso!");
+      toast.success('Regra de preço excluída com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error deleting pricing rule:", error);
+      console.error('Error deleting pricing rule:', error);
       toast.error(`Erro ao excluir regra de preço: ${error.message}`);
     },
   });
@@ -160,7 +159,7 @@ export function useTogglePricingRule() {
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
       pricingRulesService.togglePricingRule(id, isActive),
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Update the specific rule in cache
       queryClient.setQueryData(pricingRuleKeys.detail(data.id), data);
 
@@ -169,12 +168,12 @@ export function useTogglePricingRule() {
         queryKey: pricingRuleKeys.lists(),
       });
 
-      const status = data.is_active ? "ativada" : "desativada";
+      const status = data.is_active ? 'ativada' : 'desativada';
       toast.success(`Regra de preço ${status} com sucesso!`);
     },
 
     onError: (error: Error) => {
-      console.error("Error toggling pricing rule:", error);
+      console.error('Error toggling pricing rule:', error);
       toast.error(`Erro ao alterar status da regra: ${error.message}`);
     },
   });
@@ -195,8 +194,7 @@ export function useServicePricingCalculation(
 ) {
   return useQuery({
     queryKey: pricingRuleKeys.calculation(clinicId, serviceId, context),
-    queryFn: () =>
-      pricingRulesService.calculateServicePricing(clinicId, serviceId, context),
+    queryFn: () => pricingRulesService.calculateServicePricing(clinicId, serviceId, context),
     enabled: !!clinicId && !!serviceId,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
@@ -207,9 +205,8 @@ export function useServicePricingCalculation(
  */
 export function useServicePricingRules(clinicId: string, serviceId: string) {
   return useQuery({
-    queryKey: [...pricingRuleKeys.lists(), "service", serviceId],
-    queryFn: () =>
-      pricingRulesService.getServicePricingRules(clinicId, serviceId),
+    queryKey: [...pricingRuleKeys.lists(), 'service', serviceId],
+    queryFn: () => pricingRulesService.getServicePricingRules(clinicId, serviceId),
     enabled: !!clinicId && !!serviceId,
   });
 }
@@ -222,9 +219,8 @@ export function useProfessionalPricingRules(
   professionalId: string,
 ) {
   return useQuery({
-    queryKey: [...pricingRuleKeys.lists(), "professional", professionalId],
-    queryFn: () =>
-      pricingRulesService.getProfessionalPricingRules(clinicId, professionalId),
+    queryKey: [...pricingRuleKeys.lists(), 'professional', professionalId],
+    queryFn: () => pricingRulesService.getProfessionalPricingRules(clinicId, professionalId),
     enabled: !!clinicId && !!professionalId,
   });
 }
@@ -245,11 +241,11 @@ export function useUpdatePricingRulePriorities() {
         queryKey: pricingRuleKeys.lists(),
       });
 
-      toast.success("Prioridades das regras atualizadas com sucesso!");
+      toast.success('Prioridades das regras atualizadas com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error updating pricing rule priorities:", error);
+      console.error('Error updating pricing rule priorities:', error);
       toast.error(`Erro ao atualizar prioridades: ${error.message}`);
     },
   });

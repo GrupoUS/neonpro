@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
-import { GoogleCalendarService } from "./service";
+import { PrismaClient } from '@prisma/client';
+import { GoogleCalendarService } from './service';
 
 export interface SyncOptions {
   bidirectional?: boolean;
-  conflictResolution?: "google_wins" | "local_wins" | "manual";
+  conflictResolution?: 'google_wins' | 'local_wins' | 'manual';
   batchSize?: number;
   dryRun?: boolean;
 }
@@ -60,19 +60,18 @@ export class GoogleCalendarSyncService {
 
     try {
       // Get user's Google Calendar integration
-      const integration =
-        await this.prisma.googleCalendarIntegration.findUnique({
-          where: {
-            userId_clinicId: { userId, clinicId },
-          },
-        });
+      const integration = await this.prisma.googleCalendarIntegration.findUnique({
+        where: {
+          userId_clinicId: { userId, clinicId },
+        },
+      });
 
       if (!integration || !integration.syncEnabled) {
         return {
           ...result,
           success: false,
           errors: [
-            { error: "Google Calendar integration not found or disabled" },
+            { error: 'Google Calendar integration not found or disabled' },
           ],
         };
       }
@@ -94,13 +93,13 @@ export class GoogleCalendarSyncService {
           );
 
           if (syncResult.success) {
-            if (syncResult.operation === "created") result.created++;
-            else if (syncResult.operation === "updated") result.updated++;
-            else if (syncResult.operation === "deleted") result.deleted++;
+            if (syncResult.operation === 'created') result.created++;
+            else if (syncResult.operation === 'updated') result.updated++;
+            else if (syncResult.operation === 'deleted') result.deleted++;
           } else {
             result.errors.push({
               appointmentId: appointment.id,
-              error: syncResult.error || "Unknown error",
+              error: syncResult.error || 'Unknown error',
             });
           }
         } catch (error) {
@@ -126,7 +125,7 @@ export class GoogleCalendarSyncService {
         },
       });
     } catch (error) {
-      console.error("Error syncing appointments:", error);
+      console.error('Error syncing appointments:', error);
       result.success = false;
       result.errors.push({
         error: error instanceof Error ? error.message : String(error),
@@ -163,9 +162,9 @@ export class GoogleCalendarSyncService {
         AND: [
           {
             OR: [
-              { status: { not: "cancelled" } },
+              { status: { not: 'cancelled' } },
               {
-                status: "cancelled",
+                status: 'cancelled',
                 googleCalendarEvent: { some: {} },
               },
             ],
@@ -178,7 +177,7 @@ export class GoogleCalendarSyncService {
         googleCalendarEvent: true,
       },
       orderBy: {
-        updatedAt: "asc",
+        updatedAt: 'asc',
       },
     });
   }
@@ -193,21 +192,21 @@ export class GoogleCalendarSyncService {
   ): Promise<{ success: boolean; operation?: string; error?: string }> {
     // Don't sync if this is a dry run
     if (options.dryRun) {
-      return { success: true, operation: "dry_run" };
+      return { success: true, operation: 'dry_run' };
     }
 
     // Handle cancelled appointments
-    if (appointment.status === "cancelled") {
+    if (appointment.status === 'cancelled') {
       if (appointment.googleCalendarEvent) {
         await this.calendarService.syncAppointment(
           {
             id: appointment.id,
             title: appointment.patient?.name
               ? `Consulta: ${appointment.patient.name}`
-              : "Consulta Agendada",
+              : 'Consulta Agendada',
             startTime: appointment.startTime,
             endTime: appointment.endTime,
-            timeZone: appointment.timeZone || "America/Sao_Paulo",
+            timeZone: appointment.timeZone || 'America/Sao_Paulo',
             location: appointment.appointmentLocation,
             patientEmail: appointment.patient?.email,
             patientName: appointment.patient?.name,
@@ -216,23 +215,23 @@ export class GoogleCalendarSyncService {
           },
           integration.userId,
           integration.clinicId,
-          "DELETE",
+          'DELETE',
         );
-        return { success: true, operation: "deleted" };
+        return { success: true, operation: 'deleted' };
       }
-      return { success: true, operation: "ignored" };
+      return { success: true, operation: 'ignored' };
     }
 
     // Determine operation type
-    let operation: "CREATE" | "UPDATE" = "CREATE";
+    let operation: 'CREATE' | 'UPDATE' = 'CREATE';
     if (appointment.googleCalendarEvent) {
       // Check if appointment has been modified since last sync
       const lastSync = appointment.googleCalendarEvent.lastSyncAt;
       if (appointment.updatedAt > lastSync) {
-        operation = "UPDATE";
+        operation = 'UPDATE';
       } else {
         // No changes needed
-        return { success: true, operation: "ignored" };
+        return { success: true, operation: 'ignored' };
       }
     }
 
@@ -242,11 +241,11 @@ export class GoogleCalendarSyncService {
         id: appointment.id,
         title: appointment.patient?.name
           ? `Consulta: ${appointment.patient.name}`
-          : "Consulta Agendada",
+          : 'Consulta Agendada',
         description: appointment.chiefComplaint || appointment.notes,
         startTime: appointment.startTime,
         endTime: appointment.endTime,
-        timeZone: appointment.timeZone || "America/Sao_Paulo",
+        timeZone: appointment.timeZone || 'America/Sao_Paulo',
         location: appointment.appointmentLocation,
         patientEmail: appointment.patient?.email,
         patientName: appointment.patient?.name,
@@ -285,28 +284,26 @@ export class GoogleCalendarSyncService {
           change.eventId,
         );
 
-        if (change.operation === "deleted") {
+        if (change.operation === 'deleted') {
           // Mark corresponding appointment as cancelled
-          const existingMapping =
-            await this.prisma.googleCalendarEvent.findUnique({
-              where: { googleEventId: change.eventId },
-            });
+          const existingMapping = await this.prisma.googleCalendarEvent.findUnique({
+            where: { googleEventId: change.eventId },
+          });
 
           if (existingMapping) {
             await this.prisma.appointment.update({
               where: { id: existingMapping.appointmentId },
-              data: { status: "cancelled" },
+              data: { status: 'cancelled' },
             });
           }
         } else if (
-          change.operation === "created" ||
-          change.operation === "updated"
+          change.operation === 'created'
+          || change.operation === 'updated'
         ) {
           // Find or create appointment from Google event
-          const existingMapping =
-            await this.prisma.googleCalendarEvent.findUnique({
-              where: { googleEventId: change.eventId },
-            });
+          const existingMapping = await this.prisma.googleCalendarEvent.findUnique({
+            where: { googleEventId: change.eventId },
+          });
 
           if (existingMapping) {
             // Update existing appointment
@@ -322,7 +319,7 @@ export class GoogleCalendarSyncService {
         }
       }
     } catch (error) {
-      console.error("Error syncing from Google:", error);
+      console.error('Error syncing from Google:', error);
       result.errors.push({
         error: `Sync from Google failed: ${error instanceof Error ? error.message : String(error)}`,
       });

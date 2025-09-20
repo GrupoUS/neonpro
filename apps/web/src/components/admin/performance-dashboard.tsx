@@ -14,27 +14,18 @@
  * - Real-time alerts and notifications
  */
 
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@neonpro/ui/components/ui/alert";
-import { Badge } from "@neonpro/ui/components/ui/badge";
-import { Button } from "@neonpro/ui/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from '@neonpro/ui/components/ui/alert';
+import { Badge } from '@neonpro/ui/components/ui/badge';
+import { Button } from '@neonpro/ui/components/ui/button';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@neonpro/ui/components/ui/card";
-import { Progress } from "@neonpro/ui/components/ui/progress";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@neonpro/ui/components/ui/tabs";
+} from '@neonpro/ui/components/ui/card';
+import { Progress } from '@neonpro/ui/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@neonpro/ui/components/ui/tabs';
 import {
   Activity,
   AlertTriangle,
@@ -50,8 +41,8 @@ import {
   TrendingUp,
   Wifi,
   Zap,
-} from "lucide-react";
-import React, { useEffect, useMemo, useState } from "react";
+} from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 // Performance metrics interfaces
 interface PerformanceMetrics {
@@ -91,7 +82,7 @@ interface PerformanceMetrics {
 
 interface PerformanceAlert {
   id: string;
-  type: "error" | "warning" | "info";
+  type: 'error' | 'warning' | 'info';
   title: string;
   message: string;
   timestamp: Date;
@@ -160,9 +151,9 @@ const PerformanceDashboard: React.FC = () => {
     // Core Web Vitals alerts
     if (metrics.webVitals.lcp > 2500) {
       newAlerts.push({
-        id: "lcp-slow",
-        type: "warning",
-        title: "Slow Page Load",
+        id: 'lcp-slow',
+        type: 'warning',
+        title: 'Slow Page Load',
         message: `LCP is ${Math.round(metrics.webVitals.lcp)}ms (target: <2.5s)`,
         timestamp: new Date(),
         resolved: false,
@@ -171,9 +162,9 @@ const PerformanceDashboard: React.FC = () => {
 
     if (metrics.webVitals.cls > 0.1) {
       newAlerts.push({
-        id: "cls-high",
-        type: "warning",
-        title: "Layout Instability",
+        id: 'cls-high',
+        type: 'warning',
+        title: 'Layout Instability',
         message: `CLS score is ${metrics.webVitals.cls.toFixed(3)} (target: <0.1)`,
         timestamp: new Date(),
         resolved: false,
@@ -183,9 +174,9 @@ const PerformanceDashboard: React.FC = () => {
     // API performance alerts
     if (metrics.api.errorRate > 1) {
       newAlerts.push({
-        id: "api-errors",
-        type: "error",
-        title: "High API Error Rate",
+        id: 'api-errors',
+        type: 'error',
+        title: 'High API Error Rate',
         message: `Error rate is ${metrics.api.errorRate.toFixed(1)}% (target: <1%)`,
         timestamp: new Date(),
         resolved: false,
@@ -194,12 +185,14 @@ const PerformanceDashboard: React.FC = () => {
 
     if (metrics.api.avgResponseTime > 2000) {
       newAlerts.push({
-        id: "api-slow",
-        type: "warning",
-        title: "Slow API Response",
-        message: `Average response time is ${Math.round(
-          metrics.api.avgResponseTime,
-        )}ms (target: <2s)`,
+        id: 'api-slow',
+        type: 'warning',
+        title: 'Slow API Response',
+        message: `Average response time is ${
+          Math.round(
+            metrics.api.avgResponseTime,
+          )
+        }ms (target: <2s)`,
         timestamp: new Date(),
         resolved: false,
       });
@@ -208,12 +201,14 @@ const PerformanceDashboard: React.FC = () => {
     // Healthcare compliance alerts
     if (metrics.healthcare.complianceScore < 95) {
       newAlerts.push({
-        id: "compliance-low",
-        type: "error",
-        title: "Healthcare Compliance Issue",
-        message: `Compliance score is ${metrics.healthcare.complianceScore.toFixed(
-          1,
-        )}% (target: >95%)`,
+        id: 'compliance-low',
+        type: 'error',
+        title: 'Healthcare Compliance Issue',
+        message: `Compliance score is ${
+          metrics.healthcare.complianceScore.toFixed(
+            1,
+          )
+        }% (target: >95%)`,
         timestamp: new Date(),
         resolved: false,
       });
@@ -225,7 +220,7 @@ const PerformanceDashboard: React.FC = () => {
   const refreshMetrics = async () => {
     setIsRefreshing(true);
     // Simulate API call delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 1000));
     setMetrics(generateMockMetrics());
     setIsRefreshing(false);
   };
@@ -234,18 +229,18 @@ const PerformanceDashboard: React.FC = () => {
     value: number,
     thresholds: { good: number; warning: number },
   ) => {
-    if (value <= thresholds.good) return "bg-green-500";
-    if (value <= thresholds.warning) return "bg-yellow-500";
-    return "bg-red-500";
+    if (value <= thresholds.good) return 'bg-green-500';
+    if (value <= thresholds.warning) return 'bg-yellow-500';
+    return 'bg-red-500';
   };
 
   const getStatusText = (
     value: number,
     thresholds: { good: number; warning: number },
   ) => {
-    if (value <= thresholds.good) return "Excellent";
-    if (value <= thresholds.warning) return "Good";
-    return "Needs Attention";
+    if (value <= thresholds.good) return 'Excellent';
+    if (value <= thresholds.warning) return 'Good';
+    return 'Needs Attention';
   };
 
   const webVitalsStatus = useMemo(() => {
@@ -253,20 +248,17 @@ const PerformanceDashboard: React.FC = () => {
     const inp = metrics.webVitals.inp;
     const cls = metrics.webVitals.cls;
 
-    const lcpStatus =
-      lcp <= 2500 ? "good" : lcp <= 4000 ? "needs-improvement" : "poor";
-    const inpStatus =
-      inp <= 200 ? "good" : inp <= 500 ? "needs-improvement" : "poor";
-    const clsStatus =
-      cls <= 0.1 ? "good" : cls <= 0.25 ? "needs-improvement" : "poor";
+    const lcpStatus = lcp <= 2500 ? 'good' : lcp <= 4000 ? 'needs-improvement' : 'poor';
+    const inpStatus = inp <= 200 ? 'good' : inp <= 500 ? 'needs-improvement' : 'poor';
+    const clsStatus = cls <= 0.1 ? 'good' : cls <= 0.25 ? 'needs-improvement' : 'poor';
 
     const overallStatus = [lcpStatus, inpStatus, clsStatus].every(
-      (s) => s === "good",
-    )
-      ? "good"
-      : [lcpStatus, inpStatus, clsStatus].some((s) => s === "poor")
-        ? "poor"
-        : "needs-improvement";
+        s => s === 'good',
+      )
+      ? 'good'
+      : [lcpStatus, inpStatus, clsStatus].some(s => s === 'poor')
+      ? 'poor'
+      : 'needs-improvement';
 
     return {
       overall: overallStatus,
@@ -277,37 +269,36 @@ const PerformanceDashboard: React.FC = () => {
   }, [metrics.webVitals]);
 
   return (
-    <div className="space-y-6 p-6">
+    <div className='space-y-6 p-6'>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between'>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">
+          <h1 className='text-3xl font-bold tracking-tight'>
             Performance Monitoring
           </h1>
-          <p className="text-muted-foreground">
-            Real-time healthcare platform performance and system health
-            monitoring
+          <p className='text-muted-foreground'>
+            Real-time healthcare platform performance and system health monitoring
           </p>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className='flex items-center space-x-2'>
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={() => setAutoRefresh(!autoRefresh)}
           >
             <Wifi
-              className={`h-4 w-4 mr-2 ${autoRefresh ? "text-green-500" : "text-gray-400"}`}
+              className={`h-4 w-4 mr-2 ${autoRefresh ? 'text-green-500' : 'text-gray-400'}`}
             />
             Auto Refresh
           </Button>
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={refreshMetrics}
             disabled={isRefreshing}
           >
             <RefreshCw
-              className={`h-4 w-4 mr-2 ${isRefreshing ? "animate-spin" : ""}`}
+              className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`}
             />
             Refresh
           </Button>
@@ -317,102 +308,100 @@ const PerformanceDashboard: React.FC = () => {
       {/* Alert Bar */}
       {alerts.length > 0 && (
         <Alert
-          variant={
-            alerts.some((a) => a.type === "error") ? "destructive" : "default"
-          }
+          variant={alerts.some(a => a.type === 'error') ? 'destructive' : 'default'}
         >
-          <AlertTriangle className="h-4 w-4" />
+          <AlertTriangle className='h-4 w-4' />
           <AlertTitle>Performance Alerts ({alerts.length})</AlertTitle>
           <AlertDescription>
             {alerts
               .slice(0, 2)
-              .map((alert) => alert.message)
-              .join("; ")}
+              .map(alert => alert.message)
+              .join('; ')}
             {alerts.length > 2 && ` +${alerts.length - 2} more`}
           </AlertDescription>
         </Alert>
       )}
 
-      <Tabs defaultValue="overview" className="space-y-6">
+      <Tabs defaultValue='overview' className='space-y-6'>
         <TabsList>
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="web-vitals">Core Web Vitals</TabsTrigger>
-          <TabsTrigger value="api">API Performance</TabsTrigger>
-          <TabsTrigger value="database">Database</TabsTrigger>
-          <TabsTrigger value="healthcare">Healthcare Metrics</TabsTrigger>
+          <TabsTrigger value='overview'>Overview</TabsTrigger>
+          <TabsTrigger value='web-vitals'>Core Web Vitals</TabsTrigger>
+          <TabsTrigger value='api'>API Performance</TabsTrigger>
+          <TabsTrigger value='database'>Database</TabsTrigger>
+          <TabsTrigger value='healthcare'>Healthcare Metrics</TabsTrigger>
         </TabsList>
 
         {/* Overview Tab */}
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <TabsContent value='overview' className='space-y-6'>
+          <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                <CardTitle className='text-sm font-medium'>
                   System Health
                 </CardTitle>
-                <Heart className="h-4 w-4 text-muted-foreground" />
+                <Heart className='h-4 w-4 text-muted-foreground' />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">Healthy</div>
-                <p className="text-xs text-muted-foreground">
+                <div className='text-2xl font-bold text-green-600'>Healthy</div>
+                <p className='text-xs text-muted-foreground'>
                   All systems operational
                 </p>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                <CardTitle className='text-sm font-medium'>
                   API Response
                 </CardTitle>
-                <Zap className="h-4 w-4 text-muted-foreground" />
+                <Zap className='h-4 w-4 text-muted-foreground' />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className='text-2xl font-bold'>
                   {Math.round(metrics.api.avgResponseTime)}ms
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className='text-xs text-muted-foreground'>
                   Average response time
                 </p>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                <CardTitle className='text-sm font-medium'>
                   Cache Hit Rate
                 </CardTitle>
-                <Database className="h-4 w-4 text-muted-foreground" />
+                <Database className='h-4 w-4 text-muted-foreground' />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className='text-2xl font-bold'>
                   {metrics.database.cacheHitRate.toFixed(1)}%
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className='text-xs text-muted-foreground'>
                   Database cache efficiency
                 </p>
               </CardContent>
             </Card>
 
             <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">
+              <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+                <CardTitle className='text-sm font-medium'>
                   Compliance Score
                 </CardTitle>
-                <CheckCircle className="h-4 w-4 text-muted-foreground" />
+                <CheckCircle className='h-4 w-4 text-muted-foreground' />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">
+                <div className='text-2xl font-bold text-green-600'>
                   {metrics.healthcare.complianceScore.toFixed(1)}%
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className='text-xs text-muted-foreground'>
                   Healthcare compliance
                 </p>
               </CardContent>
             </Card>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className='grid gap-4 md:grid-cols-2'>
             <Card>
               <CardHeader>
                 <CardTitle>Core Web Vitals Status</CardTitle>
@@ -420,68 +409,62 @@ const PerformanceDashboard: React.FC = () => {
                   User experience performance metrics
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
+              <CardContent className='space-y-4'>
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center space-x-2'>
                     <div
                       className={`w-3 h-3 rounded-full ${
-                        webVitalsStatus.lcp === "good"
-                          ? "bg-green-500"
-                          : webVitalsStatus.lcp === "needs-improvement"
-                            ? "bg-yellow-500"
-                            : "bg-red-500"
+                        webVitalsStatus.lcp === 'good'
+                          ? 'bg-green-500'
+                          : webVitalsStatus.lcp === 'needs-improvement'
+                          ? 'bg-yellow-500'
+                          : 'bg-red-500'
                       }`}
                     />
                     <span>LCP (Largest Contentful Paint)</span>
                   </div>
                   <Badge
-                    variant={
-                      webVitalsStatus.lcp === "good" ? "default" : "destructive"
-                    }
+                    variant={webVitalsStatus.lcp === 'good' ? 'default' : 'destructive'}
                   >
                     {(metrics.webVitals.lcp / 1000).toFixed(1)}s
                   </Badge>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center space-x-2'>
                     <div
                       className={`w-3 h-3 rounded-full ${
-                        webVitalsStatus.inp === "good"
-                          ? "bg-green-500"
-                          : webVitalsStatus.inp === "needs-improvement"
-                            ? "bg-yellow-500"
-                            : "bg-red-500"
+                        webVitalsStatus.inp === 'good'
+                          ? 'bg-green-500'
+                          : webVitalsStatus.inp === 'needs-improvement'
+                          ? 'bg-yellow-500'
+                          : 'bg-red-500'
                       }`}
                     />
                     <span>INP (Interaction to Next Paint)</span>
                   </div>
                   <Badge
-                    variant={
-                      webVitalsStatus.inp === "good" ? "default" : "destructive"
-                    }
+                    variant={webVitalsStatus.inp === 'good' ? 'default' : 'destructive'}
                   >
                     {Math.round(metrics.webVitals.inp)}ms
                   </Badge>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-2">
+                <div className='flex items-center justify-between'>
+                  <div className='flex items-center space-x-2'>
                     <div
                       className={`w-3 h-3 rounded-full ${
-                        webVitalsStatus.cls === "good"
-                          ? "bg-green-500"
-                          : webVitalsStatus.cls === "needs-improvement"
-                            ? "bg-yellow-500"
-                            : "bg-red-500"
+                        webVitalsStatus.cls === 'good'
+                          ? 'bg-green-500'
+                          : webVitalsStatus.cls === 'needs-improvement'
+                          ? 'bg-yellow-500'
+                          : 'bg-red-500'
                       }`}
                     />
                     <span>CLS (Cumulative Layout Shift)</span>
                   </div>
                   <Badge
-                    variant={
-                      webVitalsStatus.cls === "good" ? "default" : "destructive"
-                    }
+                    variant={webVitalsStatus.cls === 'good' ? 'default' : 'destructive'}
                   >
                     {metrics.webVitals.cls.toFixed(3)}
                   </Badge>
@@ -496,32 +479,32 @@ const PerformanceDashboard: React.FC = () => {
                   Infrastructure performance metrics
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className='space-y-4'>
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className='flex justify-between text-sm mb-1'>
                     <span>CPU Usage</span>
                     <span>{metrics.system.cpuUsage.toFixed(1)}%</span>
                   </div>
-                  <Progress value={metrics.system.cpuUsage} className="h-2" />
+                  <Progress value={metrics.system.cpuUsage} className='h-2' />
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className='flex justify-between text-sm mb-1'>
                     <span>Memory Usage</span>
                     <span>{metrics.system.memoryUsage.toFixed(1)}%</span>
                   </div>
                   <Progress
                     value={metrics.system.memoryUsage}
-                    className="h-2"
+                    className='h-2'
                   />
                 </div>
 
                 <div>
-                  <div className="flex justify-between text-sm mb-1">
+                  <div className='flex justify-between text-sm mb-1'>
                     <span>Disk Usage</span>
                     <span>{metrics.system.diskUsage.toFixed(1)}%</span>
                   </div>
-                  <Progress value={metrics.system.diskUsage} className="h-2" />
+                  <Progress value={metrics.system.diskUsage} className='h-2' />
                 </div>
               </CardContent>
             </Card>
@@ -529,12 +512,12 @@ const PerformanceDashboard: React.FC = () => {
         </TabsContent>
 
         {/* Core Web Vitals Tab */}
-        <TabsContent value="web-vitals" className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-3">
+        <TabsContent value='web-vitals' className='space-y-6'>
+          <div className='grid gap-4 md:grid-cols-3'>
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Monitor className="h-5 w-5" />
+                <CardTitle className='flex items-center space-x-2'>
+                  <Monitor className='h-5 w-5' />
                   <span>Largest Contentful Paint</span>
                 </CardTitle>
                 <CardDescription>
@@ -542,20 +525,18 @@ const PerformanceDashboard: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold mb-2">
+                <div className='text-3xl font-bold mb-2'>
                   {(metrics.webVitals.lcp / 1000).toFixed(2)}s
                 </div>
                 <Badge
-                  variant={
-                    webVitalsStatus.lcp === "good" ? "default" : "destructive"
-                  }
+                  variant={webVitalsStatus.lcp === 'good' ? 'default' : 'destructive'}
                 >
                   {getStatusText(metrics.webVitals.lcp, {
                     good: 2500,
                     warning: 4000,
                   })}
                 </Badge>
-                <div className="mt-4 text-sm text-muted-foreground">
+                <div className='mt-4 text-sm text-muted-foreground'>
                   Target: ≤ 2.5s (Good), ≤ 4.0s (Needs Improvement)
                 </div>
               </CardContent>
@@ -563,8 +544,8 @@ const PerformanceDashboard: React.FC = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Activity className="h-5 w-5" />
+                <CardTitle className='flex items-center space-x-2'>
+                  <Activity className='h-5 w-5' />
                   <span>Interaction to Next Paint</span>
                 </CardTitle>
                 <CardDescription>
@@ -572,20 +553,18 @@ const PerformanceDashboard: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold mb-2">
+                <div className='text-3xl font-bold mb-2'>
                   {Math.round(metrics.webVitals.inp)}ms
                 </div>
                 <Badge
-                  variant={
-                    webVitalsStatus.inp === "good" ? "default" : "destructive"
-                  }
+                  variant={webVitalsStatus.inp === 'good' ? 'default' : 'destructive'}
                 >
                   {getStatusText(metrics.webVitals.inp, {
                     good: 200,
                     warning: 500,
                   })}
                 </Badge>
-                <div className="mt-4 text-sm text-muted-foreground">
+                <div className='mt-4 text-sm text-muted-foreground'>
                   Target: ≤ 200ms (Good), ≤ 500ms (Needs Improvement)
                 </div>
               </CardContent>
@@ -593,8 +572,8 @@ const PerformanceDashboard: React.FC = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <TrendingUp className="h-5 w-5" />
+                <CardTitle className='flex items-center space-x-2'>
+                  <TrendingUp className='h-5 w-5' />
                   <span>Cumulative Layout Shift</span>
                 </CardTitle>
                 <CardDescription>
@@ -602,20 +581,18 @@ const PerformanceDashboard: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-3xl font-bold mb-2">
+                <div className='text-3xl font-bold mb-2'>
                   {metrics.webVitals.cls.toFixed(3)}
                 </div>
                 <Badge
-                  variant={
-                    webVitalsStatus.cls === "good" ? "default" : "destructive"
-                  }
+                  variant={webVitalsStatus.cls === 'good' ? 'default' : 'destructive'}
                 >
                   {getStatusText(metrics.webVitals.cls * 1000, {
                     good: 100,
                     warning: 250,
                   })}
                 </Badge>
-                <div className="mt-4 text-sm text-muted-foreground">
+                <div className='mt-4 text-sm text-muted-foreground'>
                   Target: ≤ 0.1 (Good), ≤ 0.25 (Needs Improvement)
                 </div>
               </CardContent>
@@ -624,21 +601,21 @@ const PerformanceDashboard: React.FC = () => {
         </TabsContent>
 
         {/* Healthcare Metrics Tab */}
-        <TabsContent value="healthcare" className="space-y-6">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <TabsContent value='healthcare' className='space-y-6'>
+          <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
             <Card>
               <CardHeader>
                 <CardTitle>Patient Data Access</CardTitle>
                 <CardDescription>Average access time</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className='text-2xl font-bold'>
                   {Math.round(metrics.healthcare.patientDataAccess)}ms
                 </div>
-                <Badge variant="default">
+                <Badge variant='default'>
                   {metrics.healthcare.patientDataAccess < 1000
-                    ? "Fast"
-                    : "Needs Optimization"}
+                    ? 'Fast'
+                    : 'Needs Optimization'}
                 </Badge>
               </CardContent>
             </Card>
@@ -649,19 +626,17 @@ const PerformanceDashboard: React.FC = () => {
                 <CardDescription>Connection success rate</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className='text-2xl font-bold'>
                   {metrics.healthcare.videoCallQuality.toFixed(1)}%
                 </div>
                 <Badge
-                  variant={
-                    metrics.healthcare.videoCallQuality > 95
-                      ? "default"
-                      : "destructive"
-                  }
+                  variant={metrics.healthcare.videoCallQuality > 95
+                    ? 'default'
+                    : 'destructive'}
                 >
                   {metrics.healthcare.videoCallQuality > 95
-                    ? "Excellent"
-                    : "Needs Attention"}
+                    ? 'Excellent'
+                    : 'Needs Attention'}
                 </Badge>
               </CardContent>
             </Card>
@@ -672,12 +647,12 @@ const PerformanceDashboard: React.FC = () => {
                 <CardDescription>Current system capacity</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className='text-2xl font-bold'>
                   {metrics.healthcare.consultationLoad.toFixed(0)}%
                 </div>
                 <Progress
                   value={metrics.healthcare.consultationLoad}
-                  className="mt-2"
+                  className='mt-2'
                 />
               </CardContent>
             </Card>
@@ -690,19 +665,17 @@ const PerformanceDashboard: React.FC = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold text-green-600">
+                <div className='text-2xl font-bold text-green-600'>
                   {metrics.healthcare.complianceScore.toFixed(1)}%
                 </div>
                 <Badge
-                  variant={
-                    metrics.healthcare.complianceScore > 95
-                      ? "default"
-                      : "destructive"
-                  }
+                  variant={metrics.healthcare.complianceScore > 95
+                    ? 'default'
+                    : 'destructive'}
                 >
                   {metrics.healthcare.complianceScore > 95
-                    ? "Compliant"
-                    : "Action Required"}
+                    ? 'Compliant'
+                    : 'Action Required'}
                 </Badge>
               </CardContent>
             </Card>

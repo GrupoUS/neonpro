@@ -206,12 +206,12 @@ export interface AnalyticsFilters {
   service_ids?: string[];
   category_ids?: string[];
   professional_ids?: string[];
-  appointment_status?: ("scheduled" | "completed" | "cancelled" | "no_show")[];
+  appointment_status?: ('scheduled' | 'completed' | 'cancelled' | 'no_show')[];
   comparison_period?:
-    | "previous_month"
-    | "previous_quarter"
-    | "previous_year"
-    | "same_period_last_year";
+    | 'previous_month'
+    | 'previous_quarter'
+    | 'previous_year'
+    | 'same_period_last_year';
 }
 
 export interface AnalyticsDashboard {
@@ -251,7 +251,7 @@ export interface AnalyticsDashboard {
 
   // Insights and Recommendations
   insights: {
-    type: "growth" | "decline" | "opportunity" | "warning";
+    type: 'growth' | 'decline' | 'opportunity' | 'warning';
     title: string;
     description: string;
     metric_value?: number;
@@ -260,28 +260,28 @@ export interface AnalyticsDashboard {
 }
 
 export type AnalyticsTimeRange =
-  | "today"
-  | "yesterday"
-  | "last_7_days"
-  | "last_30_days"
-  | "last_90_days"
-  | "this_month"
-  | "last_month"
-  | "this_quarter"
-  | "last_quarter"
-  | "this_year"
-  | "last_year"
-  | "custom";
+  | 'today'
+  | 'yesterday'
+  | 'last_7_days'
+  | 'last_30_days'
+  | 'last_90_days'
+  | 'this_month'
+  | 'last_month'
+  | 'this_quarter'
+  | 'last_quarter'
+  | 'this_year'
+  | 'last_year'
+  | 'custom';
 
 export interface AnalyticsExportRequest {
   clinic_id: string;
   report_type:
-    | "service_analytics"
-    | "revenue_report"
-    | "usage_statistics"
-    | "professional_performance";
+    | 'service_analytics'
+    | 'revenue_report'
+    | 'usage_statistics'
+    | 'professional_performance';
   filters: AnalyticsFilters;
-  format: "csv" | "excel" | "pdf";
+  format: 'csv' | 'excel' | 'pdf';
   include_charts?: boolean;
 }
 
@@ -299,9 +299,9 @@ export function calculateCompletionRate(
   return (completed / total) * 100;
 }
 
-import { formatBRL } from "@neonpro/utils";
+import { formatBRL } from '@neonpro/utils';
 
-export function formatCurrency(amount: number, _currency = "BRL"): string {
+export function formatCurrency(amount: number, _currency = 'BRL'): string {
   // Standardize on BRL formatting across the app for now
   return formatBRL(amount);
 }
@@ -318,34 +318,34 @@ export function getTimeRangeDates(range: AnalyticsTimeRange): {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
   switch (range) {
-    case "today":
+    case 'today':
       return { start: today, end: now };
 
-    case "yesterday":
+    case 'yesterday':
       const yesterday = new Date(today);
       yesterday.setDate(yesterday.getDate() - 1);
       return { start: yesterday, end: today };
 
-    case "last_7_days":
+    case 'last_7_days':
       const week = new Date(today);
       week.setDate(week.getDate() - 7);
       return { start: week, end: now };
 
-    case "last_30_days":
+    case 'last_30_days':
       const month = new Date(today);
       month.setDate(month.getDate() - 30);
       return { start: month, end: now };
 
-    case "last_90_days":
+    case 'last_90_days':
       const quarter = new Date(today);
       quarter.setDate(quarter.getDate() - 90);
       return { start: quarter, end: now };
 
-    case "this_month":
+    case 'this_month':
       const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
       return { start: monthStart, end: now };
 
-    case "last_month":
+    case 'last_month':
       const lastMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
       const lastMonthEnd = new Date(now.getFullYear(), now.getMonth(), 0);
       return { start: lastMonthStart, end: lastMonthEnd };

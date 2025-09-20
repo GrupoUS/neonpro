@@ -1,4 +1,4 @@
-export type CalendarView = "month" | "week" | "day" | "agenda";
+export type CalendarView = 'month' | 'week' | 'day' | 'agenda';
 
 export interface CalendarEvent {
   id: string;
@@ -25,13 +25,13 @@ export interface CalendarEventExtended extends CalendarEvent {
   updatedAt?: Date;
 }
 
-export type EventColor = "blue" | "orange" | "violet" | "rose" | "emerald" | "sky";
+export type EventColor = 'blue' | 'orange' | 'violet' | 'rose' | 'emerald' | 'sky';
 
 // Export types from event service for convenience
 export type {
+  CreateEventData,
   EventFilterOptions,
   EventSearchOptions,
-  CreateEventData,
-  UpdateEventData,
   EventValidationResult,
-} from "@/services/event.service";
+  UpdateEventData,
+} from '@/services/event.service';

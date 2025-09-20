@@ -16,20 +16,16 @@
  */
 
 // Main Components
-export { AppointmentBooking } from "./AppointmentBooking";
-export { AppointmentManagement } from "./AppointmentManagement";
+export { AppointmentBooking } from './AppointmentBooking';
+export { AppointmentManagement } from './AppointmentManagement';
 
 // T041: Phase 3.5 New Components
-export { NoShowRiskDisplay } from "./NoShowRiskDisplay";
-export { ReminderManagement } from "./ReminderManagement";
+export { NoShowRiskDisplay } from './NoShowRiskDisplay';
+export { ReminderManagement } from './ReminderManagement';
 
 // Types and Utilities (to be created)
-export type { AppointmentFormData, TimeSlot } from "./types";
-export {
-  appointmentUtils,
-  formatAppointmentTime,
-  getNoShowRiskColor,
-} from "./utils";
+export type { AppointmentFormData, TimeSlot } from './types';
+export { appointmentUtils, formatAppointmentTime, getNoShowRiskColor } from './utils';
 
 // Re-export hooks for convenience
 export {
@@ -41,7 +37,7 @@ export {
   useCreateAppointment,
   useSendAppointmentReminder,
   useUpdateAppointmentStatus,
-} from "@/hooks/use-appointments";
+} from '@/hooks/use-appointments';
 
 /**
  * Usage Examples:

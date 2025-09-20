@@ -1,6 +1,6 @@
 /**
  * 🔐 SECRET MANAGER - Secure Configuration Management
- * 
+ *
  * Features:
  * - Environment-based secret loading
  * - Encryption at rest
@@ -40,9 +40,10 @@ class SecretManager {
       provider: config.provider,
       encryption: config.encryption ?? true,
       auditTrail: config.auditTrail ?? true,
-      encryptionKey: config.encryptionKey || process.env.SECRET_ENCRYPTION_KEY || this.generateEncryptionKey(),
+      encryptionKey: config.encryptionKey || process.env.SECRET_ENCRYPTION_KEY
+        || this.generateEncryptionKey(),
       vaultUrl: config.vaultUrl || process.env.VAULT_URL || '',
-      vaultToken: config.vaultToken || process.env.VAULT_TOKEN || ''
+      vaultToken: config.vaultToken || process.env.VAULT_TOKEN || '',
     };
 
     this.encryptionKey = Buffer.from(this.config.encryptionKey, 'hex');
@@ -70,14 +71,14 @@ class SecretManager {
         default:
           throw new Error(`Unsupported secret provider: ${this.config.provider}`);
       }
-      
-      logger.info('Secrets loaded successfully', { 
+
+      logger.info('Secrets loaded successfully', {
         provider: this.config.provider,
-        secretCount: this.secrets.size 
+        secretCount: this.secrets.size,
       });
     } catch (error) {
-      logger.error('Failed to load secrets', error as Error, { 
-        provider: this.config.provider 
+      logger.error('Failed to load secrets', error as Error, {
+        provider: this.config.provider,
       });
       throw error;
     }
@@ -96,7 +97,7 @@ class SecretManager {
       'WEBHOOK_SECRET',
       'OAUTH_CLIENT_SECRET',
       'SUPABASE_SERVICE_ROLE_KEY',
-      'SUPABASE_ANON_KEY'
+      'SUPABASE_ANON_KEY',
     ];
 
     secretKeys.forEach(key => {
@@ -130,12 +131,12 @@ class SecretManager {
 
     const iv = crypto.randomBytes(16);
     const cipher = crypto.createCipher('aes-256-gcm', this.encryptionKey);
-    
+
     let encrypted = cipher.update(value, 'utf8', 'hex');
     encrypted += cipher.final('hex');
-    
+
     const authTag = cipher.getAuthTag();
-    
+
     return iv.toString('hex') + ':' + authTag.toString('hex') + ':' + encrypted;
   }
 
@@ -150,25 +151,25 @@ class SecretManager {
     const [ivHex, authTagHex, encrypted] = parts;
     const iv = Buffer.from(ivHex, 'hex');
     const authTag = Buffer.from(authTagHex, 'hex');
-    
+
     const decipher = crypto.createDecipher('aes-256-gcm', this.encryptionKey);
     decipher.setAuthTag(authTag);
-    
+
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return decrypted;
   }
 
   private setSecret(name: string, value: string, audit: boolean = true): void {
     const encryptedValue = this.encrypt(value);
     this.secrets.set(name, encryptedValue);
-    
+
     this.metadata.set(name, {
       name,
       accessed: new Date(),
       accessCount: 0,
-      encrypted: this.config.encryption
+      encrypted: this.config.encryption,
     });
 
     if (audit && this.config.auditTrail) {
@@ -176,7 +177,7 @@ class SecretManager {
         userId: 'system',
         operation: 'CREATE',
         dataType: 'secret',
-        recordId: name
+        recordId: name,
       });
     }
   }
@@ -204,16 +205,16 @@ class SecretManager {
         dataType: 'secret',
         endpoint: 'secret-manager',
         ip: 'internal',
-        userAgent: 'secret-manager'
+        userAgent: 'secret-manager',
       });
     }
 
     try {
       return this.decrypt(encryptedValue);
     } catch (error) {
-      logger.error('Failed to decrypt secret', error as Error, { 
-        secretName: name, 
-        accessedBy 
+      logger.error('Failed to decrypt secret', error as Error, {
+        secretName: name,
+        accessedBy,
       });
       return undefined;
     }
@@ -237,20 +238,20 @@ class SecretManager {
     }
 
     this.setSecret(name, newValue);
-    
+
     if (this.config.auditTrail) {
       logger.auditDataModification({
         userId: rotatedBy || 'system',
         operation: 'UPDATE',
         dataType: 'secret',
         recordId: name,
-        changes: ['value_rotated']
+        changes: ['value_rotated'],
       });
     }
 
-    logger.info('Secret rotated successfully', { 
-      secretName: name, 
-      rotatedBy 
+    logger.info('Secret rotated successfully', {
+      secretName: name,
+      rotatedBy,
     });
   }
 
@@ -263,7 +264,7 @@ class SecretManager {
         userId: deletedBy || 'system',
         operation: 'DELETE',
         dataType: 'secret',
-        recordId: name
+        recordId: name,
       });
     }
 
@@ -286,7 +287,7 @@ class SecretManager {
   public getSupabaseKeys(): { serviceRole?: string; anon?: string } {
     return {
       serviceRole: this.getSecret('SUPABASE_SERVICE_ROLE_KEY', 'supabase-service'),
-      anon: this.getSecret('SUPABASE_ANON_KEY', 'supabase-client')
+      anon: this.getSecret('SUPABASE_ANON_KEY', 'supabase-client'),
     };
   }
 
@@ -301,8 +302,8 @@ class SecretManager {
         details: {
           missingSecrets,
           totalSecrets: this.secrets.size,
-          provider: this.config.provider
-        }
+          provider: this.config.provider,
+        },
       };
     }
 
@@ -311,8 +312,8 @@ class SecretManager {
       details: {
         totalSecrets: this.secrets.size,
         provider: this.config.provider,
-        encryption: this.config.encryption
-      }
+        encryption: this.config.encryption,
+      },
     };
   }
 }
@@ -323,7 +324,7 @@ export function createSecretManager(config?: Partial<SecretConfig>): SecretManag
     provider: 'env',
     encryption: true,
     auditTrail: true,
-    ...config
+    ...config,
   });
 }
 

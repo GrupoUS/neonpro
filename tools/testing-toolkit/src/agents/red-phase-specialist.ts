@@ -5,8 +5,8 @@
  * Provides enhanced testing and validation capabilities for TDD RED phase.
  */
 
-import { AgentCoordinator } from "./coordinator";
-import type { AgentType, AgentMetrics } from "./types";
+import { AgentCoordinator } from './coordinator';
+import type { AgentMetrics, AgentType } from './types';
 
 export interface REDPhaseConfig {
   feature: string;
@@ -51,9 +51,9 @@ export class REDPhaseSpecialist {
 
     // Configure agent coordination for RED phase
     const coordinationConfig = {
-      pattern: "hierarchical" as const,
-      agents: ["security-auditor", "architect-review", "tdd-orchestrator"] as AgentType[],
-      qualityGates: ["red-phase-compliance", "error-detection", "test-coverage"],
+      pattern: 'hierarchical' as const,
+      agents: ['security-auditor', 'architect-review', 'tdd-orchestrator'] as AgentType[],
+      qualityGates: ['red-phase-compliance', 'error-detection', 'test-coverage'],
       timeout: 300000,
     };
 
@@ -71,19 +71,19 @@ export class REDPhaseSpecialist {
     try {
       // Step 1: Coordinate agents for RED phase
       const agentResults = await this.agentCoordinator.execute();
-      
+
       // Step 2: Execute test definition and validation
       const testValidation = await this.validateTestImplementation();
-      
+
       // Step 3: Perform error detection analysis
       const errorAnalysis = await this.performErrorDetection();
-      
+
       // Step 4: Validate test quality
       const qualityValidation = await this.validateTestQuality();
-      
+
       // Step 5: Check healthcare compliance if enabled
-      const healthcareCompliance = this.config.enableHealthcareCompliance 
-        ? await this.validateHealthcareCompliance() 
+      const healthcareCompliance = this.config.enableHealthcareCompliance
+        ? await this.validateHealthcareCompliance()
         : undefined;
 
       // Step 6: Generate comprehensive report
@@ -93,22 +93,28 @@ export class REDPhaseSpecialist {
         errorDetectionRate: errorAnalysis.detectionRate,
         qualityValidation,
         healthcareCompliance,
-        recommendations: this.generateRecommendations(testValidation, errorAnalysis, qualityValidation),
+        recommendations: this.generateRecommendations(
+          testValidation,
+          errorAnalysis,
+          qualityValidation,
+        ),
         executionTime: Date.now() - this.startTime,
       };
 
       console.log(`✅ RED Phase completed in ${result.executionTime}ms`);
-      console.log(`📊 Coverage: ${result.testCoverage}%, Error Detection: ${result.errorDetectionRate}%`);
+      console.log(
+        `📊 Coverage: ${result.testCoverage}%, Error Detection: ${result.errorDetectionRate}%`,
+      );
 
       return result;
     } catch (error) {
-      console.error("❌ RED Phase execution failed:", error);
+      console.error('❌ RED Phase execution failed:', error);
       return {
         success: false,
         testCoverage: 0,
         errorDetectionRate: 0,
         qualityValidation: { passed: false, issues: [String(error)], score: 0 },
-        recommendations: ["RED phase failed - review implementation and try again"],
+        recommendations: ['RED phase failed - review implementation and try again'],
         executionTime: Date.now() - this.startTime,
       };
     }
@@ -128,11 +134,11 @@ export class REDPhaseSpecialist {
 
     // Check for common test issues
     if (Math.random() < 0.1) {
-      issues.push("Some tests may be flaky or unreliable");
+      issues.push('Some tests may be flaky or unreliable');
     }
 
     if (Math.random() < 0.1) {
-      issues.push("Test isolation concerns detected");
+      issues.push('Test isolation concerns detected');
     }
 
     return { coverage, issues };
@@ -143,21 +149,24 @@ export class REDPhaseSpecialist {
    */
   private async performErrorDetection(): Promise<{ detectionRate: number; foundErrors: string[] }> {
     // Simulate error detection - in real implementation would use static analysis and dynamic testing
-    const detectionRate = Math.min(100, this.config.errorDetectionThreshold + Math.random() * 15 - 5);
+    const detectionRate = Math.min(
+      100,
+      this.config.errorDetectionThreshold + Math.random() * 15 - 5,
+    );
     const foundErrors: string[] = [];
 
     // Common error patterns to detect
     const errorPatterns = [
-      "Null pointer exceptions",
-      "Invalid input validation",
-      "Authentication failures",
-      "Authorization bypass",
-      "Data type mismatches",
-      "Network timeout scenarios",
-      "Database connection failures",
-      "Memory overflow conditions",
-      "Race conditions",
-      "Business logic violations"
+      'Null pointer exceptions',
+      'Invalid input validation',
+      'Authentication failures',
+      'Authorization bypass',
+      'Data type mismatches',
+      'Network timeout scenarios',
+      'Database connection failures',
+      'Memory overflow conditions',
+      'Race conditions',
+      'Business logic violations',
     ];
 
     // Simulate finding some errors
@@ -175,21 +184,23 @@ export class REDPhaseSpecialist {
   /**
    * Validate test quality
    */
-  private async validateTestQuality(): Promise<{ passed: boolean; issues: string[]; score: number }> {
+  private async validateTestQuality(): Promise<
+    { passed: boolean; issues: string[]; score: number }
+  > {
     // Simulate quality validation
     const score = 70 + Math.random() * 30; // 70-100 range
     const issues: string[] = [];
 
     if (score < 80) {
-      issues.push("Test quality below optimal threshold");
+      issues.push('Test quality below optimal threshold');
     }
 
     if (Math.random() < 0.2) {
-      issues.push("Some tests lack clear assertions");
+      issues.push('Some tests lack clear assertions');
     }
 
     if (Math.random() < 0.15) {
-      issues.push("Test naming conventions could be improved");
+      issues.push('Test naming conventions could be improved');
     }
 
     return {
@@ -227,7 +238,7 @@ export class REDPhaseSpecialist {
   private evaluateOverallSuccess(
     testValidation: any,
     errorAnalysis: any,
-    qualityValidation: any
+    qualityValidation: any,
   ): boolean {
     const coverageMet = testValidation.coverage >= this.config.testCoverageTarget;
     const errorDetectionMet = errorAnalysis.detectionRate >= this.config.errorDetectionThreshold;
@@ -242,39 +253,43 @@ export class REDPhaseSpecialist {
   private generateRecommendations(
     testValidation: any,
     errorAnalysis: any,
-    qualityValidation: any
+    qualityValidation: any,
   ): string[] {
     const recommendations: string[] = [];
 
     // Coverage recommendations
     if (testValidation.coverage < this.config.testCoverageTarget) {
       recommendations.push(
-        `Increase test coverage from ${testValidation.coverage.toFixed(1)}% to ${this.config.testCoverageTarget}%`
+        `Increase test coverage from ${
+          testValidation.coverage.toFixed(1)
+        }% to ${this.config.testCoverageTarget}%`,
       );
     }
 
     // Error detection recommendations
     if (errorAnalysis.detectionRate < this.config.errorDetectionThreshold) {
       recommendations.push(
-        `Improve error detection rate from ${errorAnalysis.detectionRate.toFixed(1)}% to ${this.config.errorDetectionThreshold}%`
+        `Improve error detection rate from ${
+          errorAnalysis.detectionRate.toFixed(1)
+        }% to ${this.config.errorDetectionThreshold}%`,
       );
     }
 
     // Quality recommendations
     if (!qualityValidation.passed) {
-      recommendations.push("Address test quality issues before proceeding to GREEN phase");
+      recommendations.push('Address test quality issues before proceeding to GREEN phase');
       recommendations.push(...qualityValidation.issues);
     }
 
     // Test issues recommendations
     if (testValidation.issues.length > 0) {
-      recommendations.push("Address test implementation issues:");
+      recommendations.push('Address test implementation issues:');
       recommendations.push(...testValidation.issues);
     }
 
     // Error analysis recommendations
     if (errorAnalysis.foundErrors.length > 0) {
-      recommendations.push("Ensure the following error scenarios are properly handled:");
+      recommendations.push('Ensure the following error scenarios are properly handled:');
       recommendations.push(...errorAnalysis.foundErrors.map(err => `- ${err}`));
     }
 
@@ -305,7 +320,7 @@ export function createREDPhaseSpecialist(config: REDPhaseConfig): REDPhaseSpecia
  */
 export async function executeREDPhase(
   feature: string,
-  options: Partial<REDPhaseConfig> = {}
+  options: Partial<REDPhaseConfig> = {},
 ): Promise<REDPhaseResult> {
   const config: REDPhaseConfig = {
     feature,

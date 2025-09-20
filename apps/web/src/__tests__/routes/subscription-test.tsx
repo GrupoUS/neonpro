@@ -1,12 +1,12 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute("/__tests/subscription-test")({
+export const Route = createFileRoute('/__tests/subscription-test')({
   component: SubscriptionTestPage,
 });
 
 function SubscriptionTestPage() {
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+    <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>🧪 TESTE SUBSCRIPTION PAGE</h1>
       <p>
         Se você está vendo esta mensagem, a rota subscription está funcionando!
@@ -14,15 +14,15 @@ function SubscriptionTestPage() {
 
       <div
         style={{
-          marginTop: "20px",
-          padding: "20px",
-          backgroundColor: "#f8f9fa",
-          borderRadius: "8px",
-          border: "1px solid #dee2e6",
+          marginTop: '20px',
+          padding: '20px',
+          backgroundColor: '#f8f9fa',
+          borderRadius: '8px',
+          border: '1px solid #dee2e6',
         }}
       >
         <h2>📋 Status da Subscription</h2>
-        <div style={{ marginTop: "10px" }}>
+        <div style={{ marginTop: '10px' }}>
           <p>
             <strong>Status:</strong> Free (Teste)
           </p>
@@ -40,11 +40,11 @@ function SubscriptionTestPage() {
 
       <div
         style={{
-          marginTop: "20px",
-          padding: "20px",
-          backgroundColor: "#e7f3ff",
-          borderRadius: "8px",
-          border: "1px solid #b3d9ff",
+          marginTop: '20px',
+          padding: '20px',
+          backgroundColor: '#e7f3ff',
+          borderRadius: '8px',
+          border: '1px solid #b3d9ff',
         }}
       >
         <h2>🚀 Upgrade para Pro</h2>
@@ -54,20 +54,19 @@ function SubscriptionTestPage() {
         <button
           onClick={() =>
             window.open(
-              "https://buy.stripe.com/6oU3cw8Tz0IZ4mW2bFgYU02",
-              "_blank",
-            )
-          }
+              'https://buy.stripe.com/6oU3cw8Tz0IZ4mW2bFgYU02',
+              '_blank',
+            )}
           style={{
-            marginTop: "10px",
-            padding: "12px 24px",
-            backgroundColor: "#007bff",
-            color: "white",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-            fontSize: "16px",
-            fontWeight: "bold",
+            marginTop: '10px',
+            padding: '12px 24px',
+            backgroundColor: '#007bff',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
           }}
         >
           Upgrade para Pro →
@@ -76,11 +75,11 @@ function SubscriptionTestPage() {
 
       <div
         style={{
-          marginTop: "20px",
-          padding: "15px",
-          backgroundColor: "#fff3cd",
-          borderRadius: "8px",
-          border: "1px solid #ffeaa7",
+          marginTop: '20px',
+          padding: '15px',
+          backgroundColor: '#fff3cd',
+          borderRadius: '8px',
+          border: '1px solid #ffeaa7',
         }}
       >
         <h3>🔧 Informações de Debug</h3>

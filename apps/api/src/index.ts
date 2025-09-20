@@ -16,10 +16,10 @@ async function startServer() {
     if (process.env.VERCEL === undefined) {
       // Only start a local server when not running on Vercel
       serve({ fetch: app.fetch, port });
-      secureLogger.info(`API server listening`, { 
-        port, 
+      secureLogger.info(`API server listening`, {
+        port,
         url: `http://localhost:${port}`,
-        component: 'server-startup'
+        component: 'server-startup',
       });
     }
   } catch (error) {
@@ -54,9 +54,9 @@ process.on('uncaughtException', error => {
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (reason, promise) => {
-  secureLogger.error('Unhandled Rejection', reason, { 
+  secureLogger.error('Unhandled Rejection', reason, {
     promise: promise.toString(),
-    component: 'server-error'
+    component: 'server-error',
   });
 });
 

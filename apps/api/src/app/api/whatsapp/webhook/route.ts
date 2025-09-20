@@ -5,8 +5,8 @@
  * and patient message responses with LGPD compliance.
  */
 
-import { NextRequest } from 'next/server';
 import { logger } from '@/utils/secure-logger';
+import { NextRequest } from 'next/server';
 import { createHealthcareResponse } from '../../../../middleware/edge-runtime';
 import { whatsappReminderService } from '../../../../services/whatsapp-reminder-service';
 
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
     const webhookData = await request.json();
 
     logger.info('WhatsApp webhook received', {
-      webhookData: JSON.stringify(webhookData, null, 2)
+      webhookData: JSON.stringify(webhookData, null, 2),
     });
 
     // Process webhook data

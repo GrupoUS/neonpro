@@ -4,7 +4,7 @@
  * React Query hooks for advanced patient medical history and treatment tracking
  */
 
-import { patientHistoryService } from "@/services/patient-history.service";
+import { patientHistoryService } from '@/services/patient-history.service';
 import type {
   CreateMedicalRecordRequest,
   CreateProgressNoteRequest,
@@ -14,37 +14,34 @@ import type {
   PatientHistoryFilters,
   UpdateMedicalRecordRequest,
   UpdateTreatmentPlanRequest,
-} from "@/types/patient-history";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+} from '@/types/patient-history';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 // Query Keys
 export const patientHistoryKeys = {
-  all: ["patientHistory"] as const,
-  patient: (patientId: string) =>
-    [...patientHistoryKeys.all, patientId] as const,
+  all: ['patientHistory'] as const,
+  patient: (patientId: string) => [...patientHistoryKeys.all, patientId] as const,
   medicalRecords: (patientId: string, filters?: PatientHistoryFilters) =>
     [
       ...patientHistoryKeys.patient(patientId),
-      "medicalRecords",
+      'medicalRecords',
       filters,
     ] as const,
   treatmentPlans: (patientId: string) =>
-    [...patientHistoryKeys.patient(patientId), "treatmentPlans"] as const,
+    [...patientHistoryKeys.patient(patientId), 'treatmentPlans'] as const,
   progressNotes: (patientId: string, treatmentPlanId?: string) =>
     [
       ...patientHistoryKeys.patient(patientId),
-      "progressNotes",
+      'progressNotes',
       treatmentPlanId,
     ] as const,
   allergies: (patientId: string) =>
-    [...patientHistoryKeys.patient(patientId), "allergies"] as const,
+    [...patientHistoryKeys.patient(patientId), 'allergies'] as const,
   conditions: (patientId: string) =>
-    [...patientHistoryKeys.patient(patientId), "conditions"] as const,
-  timeline: (patientId: string) =>
-    [...patientHistoryKeys.patient(patientId), "timeline"] as const,
-  summary: (patientId: string) =>
-    [...patientHistoryKeys.patient(patientId), "summary"] as const,
+    [...patientHistoryKeys.patient(patientId), 'conditions'] as const,
+  timeline: (patientId: string) => [...patientHistoryKeys.patient(patientId), 'timeline'] as const,
+  summary: (patientId: string) => [...patientHistoryKeys.patient(patientId), 'summary'] as const,
 };
 
 /**
@@ -76,10 +73,9 @@ export function useCreateMedicalRecord() {
       patientId: string;
       clinicId: string;
       request: CreateMedicalRecordRequest;
-    }) =>
-      patientHistoryService.createMedicalRecord(patientId, clinicId, request),
+    }) => patientHistoryService.createMedicalRecord(patientId, clinicId, request),
 
-    onSuccess: (_data) => {
+    onSuccess: _data => {
       // Invalidate medical records for this patient
       queryClient.invalidateQueries({
         queryKey: patientHistoryKeys.all,
@@ -93,11 +89,11 @@ export function useCreateMedicalRecord() {
         queryKey: patientHistoryKeys.timeline(variables.patientId),
       });
 
-      toast.success("Registro médico criado com sucesso!");
+      toast.success('Registro médico criado com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error creating medical record:", error);
+      console.error('Error creating medical record:', error);
       toast.error(`Erro ao criar registro médico: ${error.message}`);
     },
   });
@@ -124,11 +120,11 @@ export function useUpdateMedicalRecord() {
         queryKey: patientHistoryKeys.all,
       });
 
-      toast.success("Registro médico atualizado com sucesso!");
+      toast.success('Registro médico atualizado com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error updating medical record:", error);
+      console.error('Error updating medical record:', error);
       toast.error(`Erro ao atualizar registro médico: ${error.message}`);
     },
   });
@@ -160,8 +156,7 @@ export function useCreateTreatmentPlan() {
       patientId: string;
       clinicId: string;
       request: CreateTreatmentPlanRequest;
-    }) =>
-      patientHistoryService.createTreatmentPlan(patientId, clinicId, request),
+    }) => patientHistoryService.createTreatmentPlan(patientId, clinicId, request),
 
     onSuccess: () => {
       // Invalidate treatment plans and summary
@@ -174,11 +169,11 @@ export function useCreateTreatmentPlan() {
         queryKey: patientHistoryKeys.summary(variables.patientId),
       });
 
-      toast.success("Plano de tratamento criado com sucesso!");
+      toast.success('Plano de tratamento criado com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error creating treatment plan:", error);
+      console.error('Error creating treatment plan:', error);
       toast.error(`Erro ao criar plano de tratamento: ${error.message}`);
     },
   });
@@ -205,11 +200,11 @@ export function useUpdateTreatmentPlan() {
         queryKey: patientHistoryKeys.all,
       });
 
-      toast.success("Plano de tratamento atualizado com sucesso!");
+      toast.success('Plano de tratamento atualizado com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error updating treatment plan:", error);
+      console.error('Error updating treatment plan:', error);
       toast.error(`Erro ao atualizar plano de tratamento: ${error.message}`);
     },
   });
@@ -221,8 +216,7 @@ export function useUpdateTreatmentPlan() {
 export function useProgressNotes(patientId: string, treatmentPlanId?: string) {
   return useQuery({
     queryKey: patientHistoryKeys.progressNotes(patientId, treatmentPlanId),
-    queryFn: () =>
-      patientHistoryService.getProgressNotes(patientId, treatmentPlanId),
+    queryFn: () => patientHistoryService.getProgressNotes(patientId, treatmentPlanId),
     enabled: !!patientId,
   });
 }
@@ -253,11 +247,11 @@ export function useCreateProgressNote() {
         queryKey: patientHistoryKeys.timeline(variables.patientId),
       });
 
-      toast.success("Nota de progresso criada com sucesso!");
+      toast.success('Nota de progresso criada com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error creating progress note:", error);
+      console.error('Error creating progress note:', error);
       toast.error(`Erro ao criar nota de progresso: ${error.message}`);
     },
   });
@@ -288,7 +282,7 @@ export function useAddPatientAllergy() {
       patientId: string;
       allergy: Omit<
         PatientAllergy,
-        "id" | "patient_id" | "created_at" | "updated_at"
+        'id' | 'patient_id' | 'created_at' | 'updated_at'
       >;
     }) => patientHistoryService.addPatientAllergy(patientId, allergy),
 
@@ -304,11 +298,11 @@ export function useAddPatientAllergy() {
         queryKey: patientHistoryKeys.summary(variables.patientId),
       });
 
-      toast.success("Alergia adicionada com sucesso!");
+      toast.success('Alergia adicionada com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error adding patient allergy:", error);
+      console.error('Error adding patient allergy:', error);
       toast.error(`Erro ao adicionar alergia: ${error.message}`);
     },
   });
@@ -339,7 +333,7 @@ export function useAddPatientCondition() {
       patientId: string;
       condition: Omit<
         PatientCondition,
-        "id" | "patient_id" | "created_at" | "updated_at"
+        'id' | 'patient_id' | 'created_at' | 'updated_at'
       >;
     }) => patientHistoryService.addPatientCondition(patientId, condition),
 
@@ -355,11 +349,11 @@ export function useAddPatientCondition() {
         queryKey: patientHistoryKeys.summary(variables.patientId),
       });
 
-      toast.success("Condição médica adicionada com sucesso!");
+      toast.success('Condição médica adicionada com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error adding patient condition:", error);
+      console.error('Error adding patient condition:', error);
       toast.error(`Erro ao adicionar condição médica: ${error.message}`);
     },
   });
@@ -412,11 +406,11 @@ export function useUploadAttachment() {
         queryKey: patientHistoryKeys.all,
       });
 
-      toast.success("Anexo enviado com sucesso!");
+      toast.success('Anexo enviado com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error uploading attachment:", error);
+      console.error('Error uploading attachment:', error);
       toast.error(`Erro ao enviar anexo: ${error.message}`);
     },
   });

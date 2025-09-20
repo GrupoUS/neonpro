@@ -5,21 +5,21 @@
  * of the NeonPro testing toolkit.
  */
 
-export * from "./quality-gates";
-export * from "./setup";
-export * from "./tdd-cycle";
-export * from "./tdd-orchestrator";
-export * from "./test-runner";
-export * from "./types";
+export * from './quality-gates';
+export * from './setup';
+export * from './tdd-cycle';
+export * from './tdd-orchestrator';
+export * from './test-runner';
+export * from './types';
 
 // Core testing patterns
 export const TEST_CATEGORIES = {
-  UNIT: "unit",
-  INTEGRATION: "integration",
-  E2E: "e2e",
-  SECURITY: "security",
-  PERFORMANCE: "performance",
-  COMPLIANCE: "compliance",
+  UNIT: 'unit',
+  INTEGRATION: 'integration',
+  E2E: 'e2e',
+  SECURITY: 'security',
+  PERFORMANCE: 'performance',
+  COMPLIANCE: 'compliance',
 } as const;
 
 export const COVERAGE_THRESHOLDS = {
@@ -29,7 +29,7 @@ export const COVERAGE_THRESHOLDS = {
 } as const;
 
 export const TEST_ENVIRONMENTS = {
-  JSDOM: "jsdom",
-  NODE: "node",
-  HAPPY_DOM: "happy-dom",
+  JSDOM: 'jsdom',
+  NODE: 'node',
+  HAPPY_DOM: 'happy-dom',
 } as const;

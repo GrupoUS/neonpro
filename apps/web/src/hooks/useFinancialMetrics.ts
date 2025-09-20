@@ -3,28 +3,28 @@
  * React Query hooks for financial analytics and reporting
  */
 
-import { FinancialMetricsService } from "@/services/financial-metrics";
+import { FinancialMetricsService } from '@/services/financial-metrics';
 import type {
   FinancialMetric,
   MetricsCalculationOptions,
   MetricsHistory,
-} from "@/services/financial-metrics";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+} from '@/services/financial-metrics';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 // Query Keys
 export const financialKeys = {
-  all: ["financial"] as const,
-  metrics: () => [...financialKeys.all, "metrics"] as const,
+  all: ['financial'] as const,
+  metrics: () => [...financialKeys.all, 'metrics'] as const,
   metricsCalculation: (options: MetricsCalculationOptions) =>
-    [...financialKeys.metrics(), "calculation", options] as const,
-  aggregates: () => [...financialKeys.all, "aggregates"] as const,
+    [...financialKeys.metrics(), 'calculation', options] as const,
+  aggregates: () => [...financialKeys.all, 'aggregates'] as const,
   aggregateData: (options: MetricsCalculationOptions) =>
     [...financialKeys.aggregates(), options] as const,
-  history: () => [...financialKeys.all, "history"] as const,
+  history: () => [...financialKeys.all, 'history'] as const,
   metricsHistory: (metricName: string, period: string, months: number) =>
     [...financialKeys.history(), metricName, period, months] as const,
-  exports: () => [...financialKeys.all, "exports"] as const,
+  exports: () => [...financialKeys.all, 'exports'] as const,
   export: (options: MetricsCalculationOptions, format: string) =>
     [...financialKeys.exports(), options, format] as const,
 };
@@ -39,9 +39,10 @@ export function useFinancialMetrics(options: MetricsCalculationOptions) {
     enabled: !!(options.startDate && options.endDate),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
-}/**
+} /**
  * Hook to get aggregated financial data
  */
+
 export function useFinancialAggregates(options: MetricsCalculationOptions) {
   return useQuery({
     queryKey: financialKeys.aggregateData(options),
@@ -56,13 +57,12 @@ export function useFinancialAggregates(options: MetricsCalculationOptions) {
  */
 export function useMetricsHistory(
   metricName: string,
-  period: "daily" | "weekly" | "monthly" | "yearly",
+  period: 'daily' | 'weekly' | 'monthly' | 'yearly',
   months: number = 12,
 ) {
   return useQuery({
     queryKey: financialKeys.metricsHistory(metricName, period, months),
-    queryFn: () =>
-      FinancialMetricsService.getMetricsHistory(metricName, period, months),
+    queryFn: () => FinancialMetricsService.getMetricsHistory(metricName, period, months),
     enabled: !!metricName,
     staleTime: 1000 * 60 * 10, // 10 minutes
   });
@@ -80,24 +80,24 @@ export function useExportMetrics() {
       format,
     }: {
       options: MetricsCalculationOptions;
-      format: "csv" | "excel" | "pdf";
+      format: 'csv' | 'excel' | 'pdf';
     }): Promise<Blob> => {
       return FinancialMetricsService.exportMetrics(options, format);
     },
     onSuccess: (blob, variables) => {
       // Create download link
       const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
+      const link = document.createElement('a');
       link.href = url;
-      link.download = `financial-metrics-${new Date().toISOString().split("T")[0]}.${
-        variables.format === "excel" ? "xlsx" : variables.format
+      link.download = `financial-metrics-${new Date().toISOString().split('T')[0]}.${
+        variables.format === 'excel' ? 'xlsx' : variables.format
       }`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
 
-      toast.success("Relatório exportado com sucesso!");
+      toast.success('Relatório exportado com sucesso!');
 
       // Invalidate export queries
       queryClient.invalidateQueries({
@@ -105,8 +105,8 @@ export function useExportMetrics() {
       });
     },
     onError: (error: any) => {
-      console.error("Error exporting metrics:", error);
-      toast.error("Erro ao exportar relatório. Tente novamente.");
+      console.error('Error exporting metrics:', error);
+      toast.error('Erro ao exportar relatório. Tente novamente.');
     },
   });
 }
@@ -126,11 +126,11 @@ export function useRefreshFinancialMetrics() {
       return true;
     },
     onSuccess: () => {
-      toast.success("Dados financeiros atualizados!");
+      toast.success('Dados financeiros atualizados!');
     },
     onError: (error: any) => {
-      console.error("Error refreshing financial metrics:", error);
-      toast.error("Erro ao atualizar dados. Tente novamente.");
+      console.error('Error refreshing financial metrics:', error);
+      toast.error('Erro ao atualizar dados. Tente novamente.');
     },
   });
 }

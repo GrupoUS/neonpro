@@ -3,28 +3,28 @@
  * Types for SMS/Email notifications, appointment confirmations, reminders, and cancellations
  */
 
-export type CommunicationType = "sms" | "email" | "whatsapp" | "push";
+export type CommunicationType = 'sms' | 'email' | 'whatsapp' | 'push';
 
 export type MessageType =
-  | "appointment_confirmation"
-  | "appointment_reminder"
-  | "appointment_cancellation"
-  | "appointment_rescheduled"
-  | "payment_reminder"
-  | "follow_up"
-  | "birthday_greeting"
-  | "promotional"
-  | "survey_request"
-  | "treatment_instructions"
-  | "custom";
+  | 'appointment_confirmation'
+  | 'appointment_reminder'
+  | 'appointment_cancellation'
+  | 'appointment_rescheduled'
+  | 'payment_reminder'
+  | 'follow_up'
+  | 'birthday_greeting'
+  | 'promotional'
+  | 'survey_request'
+  | 'treatment_instructions'
+  | 'custom';
 
 export type MessageStatus =
-  | "pending"
-  | "sent"
-  | "delivered"
-  | "read"
-  | "failed"
-  | "cancelled";
+  | 'pending'
+  | 'sent'
+  | 'delivered'
+  | 'read'
+  | 'failed'
+  | 'cancelled';
 
 export interface CommunicationTemplate {
   id: string;
@@ -47,16 +47,16 @@ export interface CommunicationTemplate {
 
   // Scheduling
   send_timing: {
-    type: "immediate" | "scheduled" | "relative";
+    type: 'immediate' | 'scheduled' | 'relative';
     // For scheduled: specific date/time
     scheduled_at?: string;
     // For relative: time before/after appointment
     relative_to?:
-      | "appointment_date"
-      | "appointment_created"
-      | "appointment_completed";
+      | 'appointment_date'
+      | 'appointment_created'
+      | 'appointment_completed';
     relative_amount?: number; // in minutes
-    relative_unit?: "minutes" | "hours" | "days";
+    relative_unit?: 'minutes' | 'hours' | 'days';
   };
 
   // Conditions for sending
@@ -122,7 +122,7 @@ export interface CommunicationSettings {
   // Provider configurations
   sms_provider: {
     enabled: boolean;
-    provider: "twilio" | "aws_sns" | "custom";
+    provider: 'twilio' | 'aws_sns' | 'custom';
     api_key?: string;
     sender_id?: string;
     webhook_url?: string;
@@ -130,7 +130,7 @@ export interface CommunicationSettings {
 
   email_provider: {
     enabled: boolean;
-    provider: "sendgrid" | "aws_ses" | "smtp" | "custom";
+    provider: 'sendgrid' | 'aws_ses' | 'smtp' | 'custom';
     api_key?: string;
     sender_email?: string;
     sender_name?: string;
@@ -145,7 +145,7 @@ export interface CommunicationSettings {
 
   whatsapp_provider: {
     enabled: boolean;
-    provider: "whatsapp_business" | "twilio" | "custom";
+    provider: 'whatsapp_business' | 'twilio' | 'custom';
     api_key?: string;
     phone_number?: string;
     webhook_url?: string;
@@ -182,13 +182,13 @@ export interface CommunicationLog {
   message_id: string;
 
   event_type:
-    | "sent"
-    | "delivered"
-    | "read"
-    | "failed"
-    | "bounced"
-    | "complained"
-    | "unsubscribed";
+    | 'sent'
+    | 'delivered'
+    | 'read'
+    | 'failed'
+    | 'bounced'
+    | 'complained'
+    | 'unsubscribed';
   event_data: Record<string, any>;
   provider_data?: Record<string, any>;
 
@@ -224,13 +224,14 @@ export interface CreateCommunicationTemplateRequest {
   communication_type: CommunicationType;
   subject?: string;
   content: string;
-  variables: CommunicationTemplate["variables"];
-  send_timing: CommunicationTemplate["send_timing"];
-  conditions?: CommunicationTemplate["conditions"];
+  variables: CommunicationTemplate['variables'];
+  send_timing: CommunicationTemplate['send_timing'];
+  conditions?: CommunicationTemplate['conditions'];
 }
 
 export interface UpdateCommunicationTemplateRequest
-  extends Partial<CreateCommunicationTemplateRequest> {
+  extends Partial<CreateCommunicationTemplateRequest>
+{
   is_active?: boolean;
 }
 
@@ -311,9 +312,10 @@ export interface CommunicationStats {
 // Predefined message templates
 export const DEFAULT_TEMPLATES = {
   APPOINTMENT_CONFIRMATION: {
-    sms: "Olá {{patient_name}}! Sua consulta está confirmada para {{appointment_date}} às {{appointment_time}} com {{professional_name}}. Clínica {{clinic_name}}.",
+    sms:
+      'Olá {{patient_name}}! Sua consulta está confirmada para {{appointment_date}} às {{appointment_time}} com {{professional_name}}. Clínica {{clinic_name}}.',
     email: {
-      subject: "Consulta Confirmada - {{clinic_name}}",
+      subject: 'Consulta Confirmada - {{clinic_name}}',
       content: `
         <h2>Consulta Confirmada</h2>
         <p>Olá {{patient_name}},</p>
@@ -331,9 +333,10 @@ export const DEFAULT_TEMPLATES = {
   },
 
   APPOINTMENT_REMINDER: {
-    sms: "Lembrete: Você tem consulta amanhã às {{appointment_time}} com {{professional_name}}. Clínica {{clinic_name}}. Para cancelar, responda CANCELAR.",
+    sms:
+      'Lembrete: Você tem consulta amanhã às {{appointment_time}} com {{professional_name}}. Clínica {{clinic_name}}. Para cancelar, responda CANCELAR.',
     email: {
-      subject: "Lembrete de Consulta - {{clinic_name}}",
+      subject: 'Lembrete de Consulta - {{clinic_name}}',
       content: `
         <h2>Lembrete de Consulta</h2>
         <p>Olá {{patient_name}},</p>
@@ -349,9 +352,10 @@ export const DEFAULT_TEMPLATES = {
   },
 
   APPOINTMENT_CANCELLATION: {
-    sms: "Sua consulta de {{appointment_date}} às {{appointment_time}} foi cancelada. Entre em contato para reagendar: {{clinic_phone}}",
+    sms:
+      'Sua consulta de {{appointment_date}} às {{appointment_time}} foi cancelada. Entre em contato para reagendar: {{clinic_phone}}',
     email: {
-      subject: "Consulta Cancelada - {{clinic_name}}",
+      subject: 'Consulta Cancelada - {{clinic_name}}',
       content: `
         <h2>Consulta Cancelada</h2>
         <p>Olá {{patient_name}},</p>

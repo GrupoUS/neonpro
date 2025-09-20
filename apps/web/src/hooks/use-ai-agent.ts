@@ -3,17 +3,12 @@
  * Custom hook for interacting with the AI agent service
  */
 
-"use client";
+'use client';
 
-import { useState, useCallback } from "react";
-import { useAuth } from "./use-auth";
-import { useToast } from "./use-toast";
-import {
-  DataAgentRequest,
-  DataAgentResponse,
-  ChatMessage,
-  AgentAction,
-} from "@neonpro/types";
+import { AgentAction, ChatMessage, DataAgentRequest, DataAgentResponse } from '@neonpro/types';
+import { useCallback, useState } from 'react';
+import { useAuth } from './use-auth';
+import { useToast } from './use-toast';
 
 interface UseAIAgentOptions {
   initialContext?: {
@@ -42,7 +37,7 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
   const sendMessage = useCallback(
     async (message: string) => {
       if (!user) {
-        setError("Usuário não autenticado");
+        setError('Usuário não autenticado');
         return;
       }
 
@@ -52,12 +47,12 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
       // Add user message to chat
       const userMessage: ChatMessage = {
         id: `msg_${Date.now()}_user`,
-        role: "user",
+        role: 'user',
         content: message,
         timestamp: new Date().toISOString(),
       };
 
-      setMessages((prev) => [...prev, userMessage]);
+      setMessages(prev => [...prev, userMessage]);
 
       try {
         const request: DataAgentRequest = {
@@ -69,10 +64,10 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
           },
         };
 
-        const response = await fetch("/api/ai/data-agent", {
-          method: "POST",
+        const response = await fetch('/api/ai/data-agent', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${await user.getIdToken()}`,
           },
           body: JSON.stringify(request),
@@ -82,46 +77,45 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
 
         if (!data.success) {
           throw new Error(
-            data.error?.message || "Falha ao processar solicitação",
+            data.error?.message || 'Falha ao processar solicitação',
           );
         }
 
         // Add assistant response to chat
         const assistantMessage: ChatMessage = {
           id: `msg_${Date.now()}_assistant`,
-          role: "assistant",
+          role: 'assistant',
           content: data.response!.message,
           timestamp: new Date().toISOString(),
           data: data.response!.data,
           actions: data.response!.actions,
         };
 
-        setMessages((prev) => [...prev, assistantMessage]);
+        setMessages(prev => [...prev, assistantMessage]);
 
         // Handle actions if any
         if (data.response?.actions && data.response.actions.length > 0) {
           handleActions(data.response.actions);
         }
       } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Erro desconhecido";
+        const errorMessage = err instanceof Error ? err.message : 'Erro desconhecido';
         setError(errorMessage);
 
         // Add error message to chat
         const errorMessageObj: ChatMessage = {
           id: `msg_${Date.now()}_error`,
-          role: "assistant",
+          role: 'assistant',
           content:
-            "Desculpe, ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.",
+            'Desculpe, ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.',
           timestamp: new Date().toISOString(),
         };
 
-        setMessages((prev) => [...prev, errorMessageObj]);
+        setMessages(prev => [...prev, errorMessageObj]);
 
         toast({
-          title: "Erro no assistente",
+          title: 'Erro no assistente',
           description: errorMessage,
-          variant: "destructive",
+          variant: 'destructive',
         });
       } finally {
         setIsLoading(false);
@@ -132,25 +126,25 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
 
   // Handle agent actions
   const handleActions = useCallback((actions: AgentAction[]) => {
-    actions.forEach((action) => {
+    actions.forEach(action => {
       switch (action.type) {
-        case "view_details":
+        case 'view_details':
           if (action.payload?.clientId) {
             window.location.href = `/pacientes/${action.payload.clientId}`;
           }
           break;
-        case "create_appointment":
-          window.location.href = "/agendamentos/novo";
+        case 'create_appointment':
+          window.location.href = '/agendamentos/novo';
           break;
-        case "navigate":
+        case 'navigate':
           if (action.payload?.path) {
             window.location.href = action.payload.path;
           }
           break;
-        case "export_data":
+        case 'export_data':
           exportData(action.payload);
           break;
-        case "refresh":
+        case 'refresh':
           window.location.reload();
           break;
       }
@@ -161,10 +155,10 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
   const exportData = useCallback(
     async (payload: any) => {
       try {
-        const response = await fetch("/api/ai/export", {
-          method: "POST",
+        const response = await fetch('/api/ai/export', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${await user?.getIdToken()}`,
           },
           body: JSON.stringify(payload),
@@ -173,24 +167,24 @@ export function useAIAgent(options: UseAIAgentOptions = {}): UseAIAgentReturn {
         if (response.ok) {
           const blob = await response.blob();
           const url = window.URL.createObjectURL(blob);
-          const a = document.createElement("a");
+          const a = document.createElement('a');
           a.href = url;
-          a.download = `relatorio-${new Date().toISOString().split("T")[0]}.xlsx`;
+          a.download = `relatorio-${new Date().toISOString().split('T')[0]}.xlsx`;
           document.body.appendChild(a);
           a.click();
           document.body.removeChild(a);
           window.URL.revokeObjectURL(url);
 
           toast({
-            title: "Exportação concluída",
-            description: "Seu relatório foi baixado com sucesso",
+            title: 'Exportação concluída',
+            description: 'Seu relatório foi baixado com sucesso',
           });
         }
       } catch (error) {
         toast({
-          title: "Erro de exportação",
-          description: "Não foi possível exportar os dados",
-          variant: "destructive",
+          title: 'Erro de exportação',
+          description: 'Não foi possível exportar os dados',
+          variant: 'destructive',
         });
       }
     },
@@ -221,7 +215,7 @@ export function useAIAgentConfig() {
   }>({});
 
   const updateContext = useCallback((newContext: Partial<typeof context>) => {
-    setContext((prev) => ({ ...prev, ...newContext }));
+    setContext(prev => ({ ...prev, ...newContext }));
   }, []);
 
   const clearContext = useCallback(() => {
@@ -238,16 +232,16 @@ export function useAIAgentConfig() {
 // Hook for AI agent suggestions
 export function useAIAgentSuggestions(query: string): string[] {
   const suggestions = [
-    "Quais meus agendamentos para hoje?",
-    "Buscar paciente João Silva",
-    "Resumo financeiro deste mês",
-    "Agendar nova consulta",
-    "Ver próximos horários disponíveis",
+    'Quais meus agendamentos para hoje?',
+    'Buscar paciente João Silva',
+    'Resumo financeiro deste mês',
+    'Agendar nova consulta',
+    'Ver próximos horários disponíveis',
   ];
 
   // Filter suggestions based on query
-  const filtered = suggestions.filter((suggestion) =>
-    suggestion.toLowerCase().includes(query.toLowerCase()),
+  const filtered = suggestions.filter(suggestion =>
+    suggestion.toLowerCase().includes(query.toLowerCase())
   );
 
   return filtered.slice(0, 3);

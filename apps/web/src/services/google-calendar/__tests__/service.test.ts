@@ -1,13 +1,13 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { GoogleCalendarService } from "../service";
-import { GoogleCalendarCompliance } from "../compliance";
-import { createClient } from "@supabase/supabase-js";
+import { createClient } from '@supabase/supabase-js';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { GoogleCalendarCompliance } from '../compliance';
+import { GoogleCalendarService } from '../service';
 
 // Mock dependencies
-vi.mock("../client");
-vi.mock("../compliance");
-vi.mock("@supabase/supabase-js");
-vi.mock("@/utils/logger", () => ({
+vi.mock('../client');
+vi.mock('../compliance');
+vi.mock('@supabase/supabase-js');
+vi.mock('@/utils/logger', () => ({
   logger: {
     info: vi.fn(),
     error: vi.fn(),
@@ -15,32 +15,32 @@ vi.mock("@/utils/logger", () => ({
   },
 }));
 
-describe("GoogleCalendarService", () => {
+describe('GoogleCalendarService', () => {
   let service: GoogleCalendarService;
   let mockSupabase: any;
   let mockClient: any;
   let mockCompliance: any;
 
   const mockUser = {
-    id: "user-123",
-    email: "doctor@neonpro.com.br",
+    id: 'user-123',
+    email: 'doctor@neonpro.com.br',
   };
 
   const mockAppointment = {
-    id: "appt-123",
-    patientId: "patient-456",
-    doctorId: "doctor-789",
-    clinicId: "clinic-101",
-    title: "Consulta de Rotina",
-    description: "Consulta de acompanhamento",
-    startTime: new Date("2024-01-15T10:00:00"),
-    endTime: new Date("2024-01-15T11:00:00"),
-    location: "Sala 101",
-    status: "SCHEDULED",
-    type: "CONSULTATION",
+    id: 'appt-123',
+    patientId: 'patient-456',
+    doctorId: 'doctor-789',
+    clinicId: 'clinic-101',
+    title: 'Consulta de Rotina',
+    description: 'Consulta de acompanhamento',
+    startTime: new Date('2024-01-15T10:00:00'),
+    endTime: new Date('2024-01-15T11:00:00'),
+    location: 'Sala 101',
+    status: 'SCHEDULED',
+    type: 'CONSULTATION',
     virtual: false,
     metadata: {
-      specialty: "Cardiologia",
+      specialty: 'Cardiologia',
       confidential: true,
     },
   };
@@ -63,7 +63,7 @@ describe("GoogleCalendarService", () => {
         })),
         insert: vi.fn(() => ({
           select: vi.fn(() => ({
-            data: [{ id: "integration-123" }],
+            data: [{ id: 'integration-123' }],
             error: null,
           })),
         })),
@@ -81,13 +81,13 @@ describe("GoogleCalendarService", () => {
     mockClient = {
       getAuthUrl: vi
         .fn()
-        .mockReturnValue("https://accounts.google.com/o/oauth2/auth"),
+        .mockReturnValue('https://accounts.google.com/o/oauth2/auth'),
       exchangeCodeForTokens: vi.fn(),
       listCalendars: vi
         .fn()
-        .mockResolvedValue([{ id: "primary", summary: "Primary Calendar" }]),
-      createEvent: vi.fn().mockResolvedValue({ id: "event-123" }),
-      updateEvent: vi.fn().mockResolvedValue({ id: "event-123" }),
+        .mockResolvedValue([{ id: 'primary', summary: 'Primary Calendar' }]),
+      createEvent: vi.fn().mockResolvedValue({ id: 'event-123' }),
+      updateEvent: vi.fn().mockResolvedValue({ id: 'event-123' }),
       deleteEvent: vi.fn(),
       listEvents: vi.fn().mockResolvedValue([]),
       setTokens: vi.fn(),
@@ -99,42 +99,42 @@ describe("GoogleCalendarService", () => {
       logDataAccess: vi.fn(),
       logDataDeletion: vi.fn(),
       validateConsent: vi.fn().mockResolvedValue(true),
-      encryptSensitiveData: vi.fn((data) => `encrypted:${data}`),
-      decryptSensitiveData: vi.fn((data) => data.replace("encrypted:", "")),
+      encryptSensitiveData: vi.fn(data => `encrypted:${data}`),
+      decryptSensitiveData: vi.fn(data => data.replace('encrypted:', '')),
     };
 
-    const { GoogleCalendarClient } = require("../client");
+    const { GoogleCalendarClient } = require('../client');
     GoogleCalendarClient.mockImplementation(() => mockClient);
 
-    const { GoogleCalendarCompliance } = require("../compliance");
+    const { GoogleCalendarCompliance } = require('../compliance');
     GoogleCalendarCompliance.mockImplementation(() => mockCompliance);
 
     service = new GoogleCalendarService();
   });
 
-  describe("Integration Management", () => {
-    it("should create new integration", async () => {
+  describe('Integration Management', () => {
+    it('should create new integration', async () => {
       const integration = await service.createIntegration({
         userId: mockUser.id,
-        clinicId: "clinic-101",
-        calendarId: "primary",
+        clinicId: 'clinic-101',
+        calendarId: 'primary',
       });
 
       expect(mockSupabase.from).toHaveBeenCalledWith(
-        "google_calendar_integrations",
+        'google_calendar_integrations',
       );
-      expect(integration).toEqual([{ id: "integration-123" }]);
+      expect(integration).toEqual([{ id: 'integration-123' }]);
     });
 
-    it("should get user integration", async () => {
+    it('should get user integration', async () => {
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: "integration-123",
+                id: 'integration-123',
                 user_id: mockUser.id,
-                calendar_id: "primary",
+                calendar_id: 'primary',
                 sync_enabled: true,
               },
               error: null,
@@ -146,32 +146,32 @@ describe("GoogleCalendarService", () => {
       const integration = await service.getUserIntegration(mockUser.id);
 
       expect(integration).toEqual({
-        id: "integration-123",
+        id: 'integration-123',
         user_id: mockUser.id,
-        calendar_id: "primary",
+        calendar_id: 'primary',
         sync_enabled: true,
       });
     });
 
-    it("should update integration settings", async () => {
-      await service.updateIntegration("integration-123", {
+    it('should update integration settings', async () => {
+      await service.updateIntegration('integration-123', {
         syncEnabled: false,
         autoSync: false,
       });
 
       expect(mockSupabase.from).toHaveBeenCalledWith(
-        "google_calendar_integrations",
+        'google_calendar_integrations',
       );
     });
 
-    it("should delete integration", async () => {
-      await service.deleteIntegration("integration-123");
+    it('should delete integration', async () => {
+      await service.deleteIntegration('integration-123');
 
       expect(mockCompliance.logDataDeletion).toHaveBeenCalled();
     });
   });
 
-  describe("Event Synchronization", () => {
+  describe('Event Synchronization', () => {
     beforeEach(async () => {
       // Setup integration
       mockSupabase.from.mockReturnValueOnce({
@@ -179,11 +179,11 @@ describe("GoogleCalendarService", () => {
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: "integration-123",
+                id: 'integration-123',
                 user_id: mockUser.id,
-                calendar_id: "primary",
-                access_token: "encrypted:token",
-                refresh_token: "encrypted:refresh",
+                calendar_id: 'primary',
+                access_token: 'encrypted:token',
+                refresh_token: 'encrypted:refresh',
                 sync_enabled: true,
               },
               error: null,
@@ -195,18 +195,18 @@ describe("GoogleCalendarService", () => {
       await service.syncAppointmentToCalendar(mockAppointment);
     });
 
-    it("should sync appointment to calendar", async () => {
+    it('should sync appointment to calendar', async () => {
       expect(mockClient.setTokens).toHaveBeenCalledWith({
-        access_token: "token",
-        refresh_token: "refresh",
+        access_token: 'token',
+        refresh_token: 'refresh',
       });
 
-      expect(mockClient.createEvent).toHaveBeenCalledWith("primary", {
-        summary: "Consulta de Rotina",
-        description: "Consulta de acompanhamento",
+      expect(mockClient.createEvent).toHaveBeenCalledWith('primary', {
+        summary: 'Consulta de Rotina',
+        description: 'Consulta de acompanhamento',
         start: mockAppointment.startTime,
         end: mockAppointment.endTime,
-        location: "Sala 101",
+        location: 'Sala 101',
         attendees: expect.arrayContaining([
           expect.objectContaining({
             email: mockUser.email,
@@ -226,12 +226,12 @@ describe("GoogleCalendarService", () => {
       expect(mockCompliance.validateDataProcessing).toHaveBeenCalled();
     });
 
-    it("should update synced appointment", async () => {
+    it('should update synced appointment', async () => {
       const updatedAppointment = {
         ...mockAppointment,
-        title: "Consulta Remarcada",
-        startTime: new Date("2024-01-15T14:00:00"),
-        endTime: new Date("2024-01-15T15:00:00"),
+        title: 'Consulta Remarcada',
+        startTime: new Date('2024-01-15T14:00:00'),
+        endTime: new Date('2024-01-15T15:00:00'),
       };
 
       // Mock existing sync record
@@ -240,8 +240,8 @@ describe("GoogleCalendarService", () => {
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: "sync-123",
-                google_event_id: "event-123",
+                id: 'sync-123',
+                google_event_id: 'event-123',
               },
               error: null,
             }),
@@ -252,20 +252,20 @@ describe("GoogleCalendarService", () => {
       await service.syncAppointmentToCalendar(updatedAppointment);
 
       expect(mockClient.updateEvent).toHaveBeenCalledWith(
-        "primary",
-        "event-123",
+        'primary',
+        'event-123',
         {
-          summary: "Consulta Remarcada",
+          summary: 'Consulta Remarcada',
           start: updatedAppointment.startTime,
           end: updatedAppointment.endTime,
         },
       );
     });
 
-    it("should cancel appointment in calendar", async () => {
+    it('should cancel appointment in calendar', async () => {
       const cancelledAppointment = {
         ...mockAppointment,
-        status: "CANCELLED",
+        status: 'CANCELLED',
       };
 
       // Mock existing sync record
@@ -274,8 +274,8 @@ describe("GoogleCalendarService", () => {
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: "sync-123",
-                google_event_id: "event-123",
+                id: 'sync-123',
+                google_event_id: 'event-123',
               },
               error: null,
             }),
@@ -286,45 +286,45 @@ describe("GoogleCalendarService", () => {
       await service.syncAppointmentToCalendar(cancelledAppointment);
 
       expect(mockClient.deleteEvent).toHaveBeenCalledWith(
-        "primary",
-        "event-123",
+        'primary',
+        'event-123',
       );
     });
 
-    it("should handle sync conflicts", async () => {
+    it('should handle sync conflicts', async () => {
       // Mock conflicting event in Google Calendar
       mockClient.listEvents.mockResolvedValueOnce([
         {
-          id: "event-conflict",
-          summary: "Other Appointment",
-          start: { dateTime: "2024-01-15T10:30:00-03:00" },
-          end: { dateTime: "2024-01-15T11:30:00-03:00" },
+          id: 'event-conflict',
+          summary: 'Other Appointment',
+          start: { dateTime: '2024-01-15T10:30:00-03:00' },
+          end: { dateTime: '2024-01-15T11:30:00-03:00' },
         },
       ]);
 
       const conflict = await service.checkForConflicts(
         mockAppointment.startTime,
         mockAppointment.endTime,
-        "primary",
+        'primary',
       );
 
       expect(conflict).toHaveLength(1);
-      expect(conflict[0].id).toBe("event-conflict");
+      expect(conflict[0].id).toBe('event-conflict');
     });
   });
 
-  describe("Bidirectional Sync", () => {
-    it("should sync Google events to appointments", async () => {
+  describe('Bidirectional Sync', () => {
+    it('should sync Google events to appointments', async () => {
       const googleEvents = [
         {
-          id: "google-event-123",
-          summary: "Patient Meeting",
-          description: "Follow up consultation",
-          start: { dateTime: "2024-01-16T10:00:00-03:00" },
-          end: { dateTime: "2024-01-16T11:00:00-03:00" },
+          id: 'google-event-123',
+          summary: 'Patient Meeting',
+          description: 'Follow up consultation',
+          start: { dateTime: '2024-01-16T10:00:00-03:00' },
+          end: { dateTime: '2024-01-16T11:00:00-03:00' },
           extendedProperties: {
             private: {
-              appointmentId: "appt-456",
+              appointmentId: 'appt-456',
             },
           },
         },
@@ -332,19 +332,19 @@ describe("GoogleCalendarService", () => {
 
       mockClient.listEvents.mockResolvedValueOnce(googleEvents);
 
-      const synced = await service.syncFromGoogle("primary");
+      const synced = await service.syncFromGoogle('primary');
 
       expect(synced).toHaveLength(1);
       expect(mockCompliance.validateDataProcessing).toHaveBeenCalled();
     });
 
-    it("should handle webhook events", async () => {
+    it('should handle webhook events', async () => {
       const webhookEvent = {
-        kind: "event#sync",
-        id: "webhook-123",
-        resourceId: "resource-123",
-        channelId: "channel-123",
-        resourceState: "exists",
+        kind: 'event#sync',
+        id: 'webhook-123',
+        resourceId: 'resource-123',
+        channelId: 'channel-123',
+        resourceState: 'exists',
         changed: true,
       };
 
@@ -354,31 +354,31 @@ describe("GoogleCalendarService", () => {
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle authentication errors", async () => {
+  describe('Error Handling', () => {
+    it('should handle authentication errors', async () => {
       mockClient.listCalendars.mockRejectedValue({
         code: 401,
-        message: "Token expired",
+        message: 'Token expired',
       });
 
       await expect(service.getCalendars(mockUser.id)).rejects.toThrow(
-        "Calendar authentication failed",
+        'Calendar authentication failed',
       );
     });
 
-    it("should handle rate limit errors", async () => {
+    it('should handle rate limit errors', async () => {
       mockClient.createEvent.mockRejectedValue({
         code: 429,
-        message: "Rate limit exceeded",
+        message: 'Rate limit exceeded',
       });
 
       await expect(
         service.syncAppointmentToCalendar(mockAppointment),
-      ).rejects.toThrow("Calendar API rate limit exceeded");
+      ).rejects.toThrow('Calendar API rate limit exceeded');
     });
 
-    it("should handle network errors gracefully", async () => {
-      mockClient.createEvent.mockRejectedValue(new Error("Network error"));
+    it('should handle network errors gracefully', async () => {
+      mockClient.createEvent.mockRejectedValue(new Error('Network error'));
 
       const result = await service.syncAppointmentToCalendar(mockAppointment);
 
@@ -387,61 +387,61 @@ describe("GoogleCalendarService", () => {
     });
   });
 
-  describe("Healthcare Compliance", () => {
-    it("should validate consent before syncing", async () => {
+  describe('Healthcare Compliance', () => {
+    it('should validate consent before syncing', async () => {
       mockCompliance.validateConsent.mockResolvedValueOnce(false);
 
       await expect(
         service.syncAppointmentToCalendar(mockAppointment),
-      ).rejects.toThrow("Patient consent required");
+      ).rejects.toThrow('Patient consent required');
     });
 
-    it("should encrypt sensitive data", async () => {
+    it('should encrypt sensitive data', async () => {
       await service.syncAppointmentToCalendar(mockAppointment);
 
-      expect(mockCompliance.encryptSensitiveData).toHaveBeenCalledWith("token");
+      expect(mockCompliance.encryptSensitiveData).toHaveBeenCalledWith('token');
       expect(mockCompliance.encryptSensitiveData).toHaveBeenCalledWith(
-        "refresh",
+        'refresh',
       );
     });
 
-    it("should log all data access", async () => {
+    it('should log all data access', async () => {
       await service.syncAppointmentToCalendar(mockAppointment);
 
       expect(mockCompliance.logDataAccess).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: mockUser.id,
-          action: "SYNC_APPOINTMENT",
-          dataType: "CALENDAR_EVENT",
+          action: 'SYNC_APPOINTMENT',
+          dataType: 'CALENDAR_EVENT',
         }),
       );
     });
 
-    it("should handle data retention policies", async () => {
+    it('should handle data retention policies', async () => {
       const oldAppointment = {
         ...mockAppointment,
-        startTime: new Date("2020-01-15T10:00:00"), // 4 years ago
+        startTime: new Date('2020-01-15T10:00:00'), // 4 years ago
       };
 
       await service.syncAppointmentToCalendar(oldAppointment);
 
       expect(mockCompliance.validateDataProcessing).toHaveBeenCalledWith(
         expect.objectContaining({
-          retentionPeriod: "10-years",
+          retentionPeriod: '10-years',
         }),
       );
     });
   });
 
-  describe("Batch Operations", () => {
-    it("should sync multiple appointments", async () => {
+  describe('Batch Operations', () => {
+    it('should sync multiple appointments', async () => {
       const appointments = [
         mockAppointment,
         {
           ...mockAppointment,
-          id: "appt-124",
-          startTime: new Date("2024-01-15T14:00:00"),
-          endTime: new Date("2024-01-15T15:00:00"),
+          id: 'appt-124',
+          startTime: new Date('2024-01-15T14:00:00'),
+          endTime: new Date('2024-01-15T15:00:00'),
         },
       ];
 
@@ -451,20 +451,20 @@ describe("GoogleCalendarService", () => {
       expect(mockClient.createEvent).toHaveBeenCalledTimes(2);
     });
 
-    it("should handle partial failures in batch sync", async () => {
+    it('should handle partial failures in batch sync', async () => {
       const appointments = [
         mockAppointment,
         {
           ...mockAppointment,
-          id: "appt-124",
-          startTime: new Date("2024-01-15T14:00:00"),
-          endTime: new Date("2024-01-15T15:00:00"),
+          id: 'appt-124',
+          startTime: new Date('2024-01-15T14:00:00'),
+          endTime: new Date('2024-01-15T15:00:00'),
         },
       ];
 
       mockClient.createEvent
-        .mockResolvedValueOnce({ id: "event-123" })
-        .mockRejectedValueOnce(new Error("API Error"));
+        .mockResolvedValueOnce({ id: 'event-123' })
+        .mockRejectedValueOnce(new Error('API Error'));
 
       const results = await service.batchSyncAppointments(appointments);
 
