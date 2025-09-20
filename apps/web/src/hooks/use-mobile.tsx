@@ -8,14 +8,14 @@ export function useIsMobile() {
   useEffect(() => {
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
     const onChange = () => {
-      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+      setIsMobile(mql.matches);
     };
     if (typeof mql.addEventListener === "function") {
       mql.addEventListener("change", onChange);
     } else if (typeof mql.addListener === "function") {
       mql.addListener(onChange);
     }
-    setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
+    setIsMobile(mql.matches);
     return () => {
       if (typeof mql.removeEventListener === "function") {
         mql.removeEventListener("change", onChange);
