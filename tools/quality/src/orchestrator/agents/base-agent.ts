@@ -1,16 +1,16 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 import type {
   AgentName,
   TDDPhase,
   AgentResult,
   FeatureContext,
   Finding,
-  Recommendation
-} from '../types';
+  Recommendation,
+} from "../types";
 
 // Extended agent state for individual agent tracking
 interface ExtendedAgentState {
-  status: 'idle' | 'running' | 'error';
+  status: "idle" | "running" | "error";
   currentPhase: TDDPhase | null;
   lastExecution: string | null;
   metrics: Record<string, any>;
@@ -37,11 +37,11 @@ export abstract class BaseAgent extends EventEmitter {
     super();
     this.agentType = agentType;
     this.state = {
-      status: 'idle',
+      status: "idle",
       currentPhase: null,
       lastExecution: null,
       metrics: {},
-      errors: []
+      errors: [],
     };
   }
 
@@ -67,13 +67,16 @@ export abstract class BaseAgent extends EventEmitter {
   /**
    * Execute agent for the given phase and context
    */
-  async execute(phase: TDDPhase, context: FeatureContext): Promise<AgentResult> {
+  async execute(
+    phase: TDDPhase,
+    context: FeatureContext,
+  ): Promise<AgentResult> {
     this.startTime = Date.now();
     this.context = context;
-    
+
     try {
-      this.updateState('running', phase);
-      this.emit('execution:started', { agent: this.agentType, phase, context });
+      this.updateState("running", phase);
+      this.emit("execution:started", { agent: this.agentType, phase, context });
 
       // Validate prerequisites
       await this.validatePrerequisites(phase, context);
@@ -84,36 +87,47 @@ export abstract class BaseAgent extends EventEmitter {
       // Post-process results
       const processedResult = await this.postProcess(result, phase, context);
 
-      this.updateState('idle', null);
-      this.emit('execution:completed', { agent: this.agentType, phase, result: processedResult });
+      this.updateState("idle", null);
+      this.emit("execution:completed", {
+        agent: this.agentType,
+        phase,
+        result: processedResult,
+      });
 
       return processedResult;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       this.state.errors.push({
         message: errorMessage,
         timestamp: new Date().toISOString(),
         phase,
-        context: context.name
+        context: context.name,
       });
 
-      this.updateState('error', phase);
-      this.emit('execution:failed', { agent: this.agentType, phase, error: errorMessage });
+      this.updateState("error", phase);
+      this.emit("execution:failed", {
+        agent: this.agentType,
+        phase,
+        error: errorMessage,
+      });
 
       return {
         agent: this.agentType,
         phase,
-        status: 'failure',
+        status: "failure",
         findings: [],
-        recommendations: [{
-          type: 'error',
-          description: `Agent execution failed: ${errorMessage}`,
-          priority: 'high',
-          action: 'Review and fix the underlying issue'
-        }],
+        recommendations: [
+          {
+            type: "error",
+            description: `Agent execution failed: ${errorMessage}`,
+            priority: "high",
+            action: "Review and fix the underlying issue",
+          },
+        ],
         metrics: this.collectMetrics(),
         duration: Date.now() - this.startTime,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -121,14 +135,20 @@ export abstract class BaseAgent extends EventEmitter {
   /**
    * Abstract method for phase-specific execution
    */
-  protected abstract executePhase(phase: TDDPhase, context: FeatureContext): Promise<AgentResult>;
+  protected abstract executePhase(
+    phase: TDDPhase,
+    context: FeatureContext,
+  ): Promise<AgentResult>;
 
   /**
    * Validate prerequisites before execution
    */
-  protected async validatePrerequisites(phase: TDDPhase, context: FeatureContext): Promise<void> {
+  protected async validatePrerequisites(
+    phase: TDDPhase,
+    context: FeatureContext,
+  ): Promise<void> {
     if (!context.name || !context.description) {
-      throw new Error('Invalid context: name and description are required');
+      throw new Error("Invalid context: name and description are required");
     }
 
     if (!this.canHandle(phase, context)) {
@@ -139,11 +159,15 @@ export abstract class BaseAgent extends EventEmitter {
   /**
    * Post-process results after execution
    */
-  protected async postProcess(result: AgentResult, _phase: TDDPhase, _context: FeatureContext): Promise<AgentResult> {
+  protected async postProcess(
+    result: AgentResult,
+    _phase: TDDPhase,
+    _context: FeatureContext,
+  ): Promise<AgentResult> {
     // Add execution metrics
     result.metrics = {
       ...result.metrics,
-      ...this.collectMetrics()
+      ...this.collectMetrics(),
     };
 
     // Validate result structure
@@ -158,7 +182,7 @@ export abstract class BaseAgent extends EventEmitter {
   protected validateResult(result: AgentResult): boolean {
     try {
       // Validate basic structure
-      if (!result || typeof result !== 'object') {
+      if (!result || typeof result !== "object") {
         return false;
       }
 
@@ -168,7 +192,7 @@ export abstract class BaseAgent extends EventEmitter {
       }
 
       // Validate status values
-      const validStatuses = ['success', 'failure', 'skipped'];
+      const validStatuses = ["success", "failure", "skipped"];
       if (!validStatuses.includes(result.status)) {
         return false;
       }
@@ -193,7 +217,7 @@ export abstract class BaseAgent extends EventEmitter {
 
       return true;
     } catch (error) {
-      this.emit('error', new Error(`Result validation failed: ${error}`));
+      this.emit("error", new Error(`Result validation failed: ${error}`));
       return false;
     }
   }
@@ -201,12 +225,16 @@ export abstract class BaseAgent extends EventEmitter {
   /**
    * Update agent state
    */
-  protected updateState(status: ExtendedAgentState['status'], phase: TDDPhase | null): void {
+  protected updateState(
+    status: ExtendedAgentState["status"],
+    phase: TDDPhase | null,
+  ): void {
     this.state = {
       ...this.state,
       status,
       currentPhase: phase,
-      lastExecution: status === 'idle' ? new Date().toISOString() : this.state.lastExecution
+      lastExecution:
+        status === "idle" ? new Date().toISOString() : this.state.lastExecution,
     };
   }
 
@@ -215,12 +243,12 @@ export abstract class BaseAgent extends EventEmitter {
    */
   protected collectMetrics(): Record<string, any> {
     const executionTime = Date.now() - this.startTime;
-    
+
     return {
       executionTime,
       memoryUsage: process.memoryUsage(),
       timestamp: new Date().toISOString(),
-      ...this.metrics
+      ...this.metrics,
     };
   }
 
@@ -228,18 +256,18 @@ export abstract class BaseAgent extends EventEmitter {
    * Create a standardized finding
    */
   protected createFinding(
-    type: Finding['type'],
+    type: Finding["type"],
     description: string,
-    severity: Finding['severity'] = 'medium',
-    location: string = '',
-    suggestion: string = ''
+    severity: Finding["severity"] = "medium",
+    location: string = "",
+    suggestion: string = "",
   ): Finding {
     return {
       type,
       severity,
       description,
       location,
-      suggestion
+      suggestion,
     };
   }
 
@@ -247,16 +275,16 @@ export abstract class BaseAgent extends EventEmitter {
    * Create a standardized recommendation
    */
   protected createRecommendation(
-    type: Recommendation['type'],
+    type: Recommendation["type"],
     description: string,
-    priority: Recommendation['priority'] = 'medium',
-    action: string = 'Review and implement suggested changes'
+    priority: Recommendation["priority"] = "medium",
+    action: string = "Review and implement suggested changes",
   ): Recommendation {
     return {
       type,
       priority,
       description,
-      action
+      action,
     };
   }
 
@@ -265,11 +293,11 @@ export abstract class BaseAgent extends EventEmitter {
    */
   reset(): void {
     this.state = {
-      status: 'idle',
+      status: "idle",
       currentPhase: null,
       lastExecution: null,
       metrics: {},
-      errors: []
+      errors: [],
     };
     this.context = null;
     this.metrics = {};

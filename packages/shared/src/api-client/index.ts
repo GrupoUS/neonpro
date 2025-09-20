@@ -3,21 +3,33 @@ export const apiClient = {
   api: {
     v1: {
       patients: {
-        $get: async (_opts: any) => ({ json: async () => ({ success: true, data: [] }) }),
-        ':id': {
-          $get: async (_opts: any) => ({ json: async () => ({ success: true, data: {} }) }),
+        $get: async (_opts: any) => ({
+          json: async () => ({ success: true, data: [] }),
+        }),
+        ":id": {
+          $get: async (_opts: any) => ({
+            json: async () => ({ success: true, data: {} }),
+          }),
           appointments: {
-            $get: async (_opts: any) => ({ json: async () => ({ success: true, data: [] }) }),
+            $get: async (_opts: any) => ({
+              json: async () => ({ success: true, data: [] }),
+            }),
           },
-          'medical-records': {
-            $get: async (_opts: any) => ({ json: async () => ({ success: true, data: [] }) }),
+          "medical-records": {
+            $get: async (_opts: any) => ({
+              json: async () => ({ success: true, data: [] }),
+            }),
           },
         },
       },
       appointments: {
-        $get: async (_opts: any) => ({ json: async () => ({ success: true, data: [] }) }),
-        ':id': {
-          $get: async (_opts: any) => ({ json: async () => ({ success: true, data: {} }) }),
+        $get: async (_opts: any) => ({
+          json: async () => ({ success: true, data: [] }),
+        }),
+        ":id": {
+          $get: async (_opts: any) => ({
+            json: async () => ({ success: true, data: {} }),
+          }),
         },
       },
     },

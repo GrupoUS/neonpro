@@ -1,15 +1,19 @@
 # Repository Cleanup Workflow
 
 ## Description
+
 Safe repository cleanup system with validation, backup, and healthcare compliance for NeonPro platform. Supports both analysis (dry-run) and execution modes.
 
 ## Category
+
 Operations
 
 ## Complexity
+
 High
 
 ## MCP Tools Required
+
 - sequential-thinking
 - archon
 - serena
@@ -18,6 +22,7 @@ High
 ## Execution Flow
 
 ### Phase 1: Analysis
+
 1. **Architecture Document Loading**
    - Read docs/AGENTS.md
    - Read docs/architecture/AGENTS.md
@@ -33,6 +38,7 @@ High
    - Generate repository state analysis and architecture validation
 
 ### Phase 2: Classification
+
 1. **Candidate Scanning**
    - Scan repository for cleanup candidates
    - Apply include/exclude patterns and gitignore rules
@@ -46,6 +52,7 @@ High
    - Assess risk and impact of orphan removal
 
 ### Phase 3: Validation
+
 1. **Safety Checks**
    - Verify never_delete rules (code-source, configuration, environment, documentation)
    - Ensure Git-tracked files are never removed
@@ -59,6 +66,7 @@ High
    - Generate compliance validation report
 
 ### Phase 4: Planning
+
 1. **Manifest Generation**
    - Create detailed cleanup manifest in JSON format
    - Include mode, root_path, timestamp, phases with items
@@ -72,6 +80,7 @@ High
    - Ensure report is comprehensive and actionable
 
 ### Phase 5: Execution (Apply Mode Only)
+
 1. **Backup Creation**
    - Create complete backup of items before removal
    - Store backup in log directory with timestamp
@@ -91,6 +100,7 @@ High
    - Validate repository functionality and health
 
 ## Input Parameters
+
 - **dry_run**: Analysis mode only (true) or execution mode (false)
 - **root_path**: Repository root path for cleanup operations
 - **include**: File patterns to include in cleanup scan
@@ -105,6 +115,7 @@ High
 - **log_dir**: Directory for logs and manifests
 
 ## Output Requirements
+
 - **manifest-[timestamp].json**: Detailed cleanup manifest with all items
 - **report-[timestamp].md**: Human-readable cleanup report
 - **errors-[timestamp].log**: Error log with detailed information
@@ -112,6 +123,7 @@ High
 - **validation_report**: Post-execution validation results
 
 ## Quality Gates
+
 - **Architecture Compliance**: 100% alignment with source-tree.md
 - **Safety Compliance**: No protected files in candidate list
 - **Git Safety**: Only untracked and ignored files affected
@@ -120,6 +132,7 @@ High
 - **Backup Completeness**: Complete backup available for rollback (apply mode)
 
 ## Error Handling
+
 - **Architecture Mismatch**: Abort with detailed divergence report
 - **Command Failure**: Abort with command error details and recovery steps
 - **Protected File Access**: Abort with protection violation details
@@ -127,6 +140,7 @@ High
 - **Compliance Violations**: Report specific violations and halt execution
 
 ## Success Criteria
+
 - **Dry Run Mode**:
   - Repository structure analyzed and understood
   - All candidates properly classified and validated
@@ -140,6 +154,7 @@ High
   - Backup information available for rollback
 
 ## Constitutional Compliance
+
 - **KISS/YAGNI**: Cleanup operations are simple and necessary
 - **Test-First**: Validation steps ensure repository health before and after
 - **Architecture**: Strict adherence to source-tree.md boundaries and structure
@@ -147,10 +162,11 @@ High
 - **Observability**: Complete logging and monitoring of all operations
 
 ## Safety Guards
+
 - **Never Delete Protected**:
   - Code-source: apps/, packages/, src/
   - Configuration: package.json, tsconfig.json, turbo.json, pnpm-workspace.yaml
-  - Environment: .env*, .npmrc
+  - Environment: .env\*, .npmrc
   - Documentation: docs/, README.md, CHANGELOG.md, .github/, .gitignore, .git/
   - Lockfiles: pnpm-lock.yaml, bun.lockb, package-lock.json
   - Templates: templates/, .github/prompts/
@@ -162,12 +178,14 @@ High
 - **Scope Limitation**: Limit to safe categories only
 
 ## Confirmation Protocol
+
 - **Apply Mode**: Requires explicit "CONFIRMO LIMPAR" phrase
 - **Category Confirmation**: Ask before each category: "Remover [category]? (sim/nao)"
 - **Extra Confirmation**: Required for potentially destructive actions (directory removal)
 - **Pre-Execution Display**: Show item count, estimated size, categories, and risks
 
 ## Integration Points
+
 - **Sequential Thinking**: Structured analysis and validation process
 - **Archon**: Architecture document loading and knowledge management
 - **Serena**: Code analysis and repository structure validation

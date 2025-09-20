@@ -1,5 +1,5 @@
-import { performance } from 'perf_hooks';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { performance } from "perf_hooks";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
  * T044: Performance Testing for Edge Runtime Optimization
@@ -18,7 +18,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 global.EdgeRuntime = {
   memory: { limit: 256 * 1024 * 1024 }, // 256MB limit
   duration: { max: 15000 }, // 15s max duration
-  regions: ['sao1', 'gru1'], // São Paulo regions
+  regions: ["sao1", "gru1"], // São Paulo regions
 };
 
 // Mock Prisma Accelerate for connection pooling
@@ -36,7 +36,7 @@ const mockPrismaAccelerate = {
 
 // Mock Valibot validation performance
 const mockValibotSchema = {
-  parse: vi.fn().mockImplementation(data => {
+  parse: vi.fn().mockImplementation((data) => {
     const startTime = performance.now();
     // Simulate validation time
     const validationTime = Math.random() * 10; // 0-10ms
@@ -47,7 +47,7 @@ const mockValibotSchema = {
   }),
 };
 
-describe('T044: Edge Runtime Performance Tests', () => {
+describe("T044: Edge Runtime Performance Tests", () => {
   let memoryUsageStart: number;
   let coldStartMetrics: Record<string, number> = {};
 
@@ -71,77 +71,81 @@ describe('T044: Edge Runtime Performance Tests', () => {
     vi.restoreAllMocks();
   });
 
-  describe('Cold Start Performance for Patient Lookup Operations', () => {
-    it('should achieve cold start under 100ms for patient search', async () => {
+  describe("Cold Start Performance for Patient Lookup Operations", () => {
+    it("should achieve cold start under 100ms for patient search", async () => {
       const coldStartTime = performance.now();
 
       // Simulate edge function cold start
       const mockEdgeFunction = async (patientCPF: string) => {
         // Simulate module loading time
-        await new Promise(resolve => setTimeout(resolve, 20));
+        await new Promise((resolve) => setTimeout(resolve, 20));
 
         // Simulate database connection establishment
         await mockPrismaAccelerate.connect();
 
         // Simulate patient lookup
         const patient = await mockPrismaAccelerate.query(
-          'SELECT * FROM patients WHERE cpf = $1',
+          "SELECT * FROM patients WHERE cpf = $1",
           [patientCPF],
         );
 
         return {
           patient: {
-            id: '123',
-            name: 'João Silva',
+            id: "123",
+            name: "João Silva",
             cpf: patientCPF,
-            phone: '+5511999887766',
+            phone: "+5511999887766",
           },
           coldStart: true,
         };
       };
 
-      const result = await mockEdgeFunction('123.456.789-01');
+      const result = await mockEdgeFunction("123.456.789-01");
       const totalColdStartTime = performance.now() - coldStartTime;
 
       // CRITICAL: Cold start must be under 100ms for clinical workflow
       expect(totalColdStartTime).toBeLessThan(100);
-      expect(result.patient.cpf).toBe('123.456.789-01');
+      expect(result.patient.cpf).toBe("123.456.789-01");
       expect(result.coldStart).toBe(true);
 
       coldStartMetrics.patientLookup = totalColdStartTime;
     });
 
-    it('should optimize appointment scheduling cold start', async () => {
+    it("should optimize appointment scheduling cold start", async () => {
       const coldStartTime = performance.now();
 
       const mockSchedulingFunction = async (appointmentData: any) => {
         // Simulate edge runtime initialization
-        await new Promise(resolve => setTimeout(resolve, 15));
+        await new Promise((resolve) => setTimeout(resolve, 15));
 
         // Simulate validation with Valibot
         const validatedData = mockValibotSchema.parse(appointmentData);
 
         // Simulate database transaction
         await mockPrismaAccelerate.query(
-          'INSERT INTO appointments (patient_id, doctor_id, datetime) VALUES ($1, $2, $3)',
-          [appointmentData.patient_id, appointmentData.doctor_id, appointmentData.datetime],
+          "INSERT INTO appointments (patient_id, doctor_id, datetime) VALUES ($1, $2, $3)",
+          [
+            appointmentData.patient_id,
+            appointmentData.doctor_id,
+            appointmentData.datetime,
+          ],
         );
 
         return {
           appointment: {
-            id: 'apt_' + Date.now(),
+            id: "apt_" + Date.now(),
             ...validatedData.data,
-            status: 'scheduled',
+            status: "scheduled",
           },
           validationTime: validatedData.validationTime,
         };
       };
 
       const appointmentData = {
-        patient_id: '123',
-        doctor_id: '456',
-        datetime: '2025-09-25T14:30:00Z',
-        procedure: 'Harmonização Facial',
+        patient_id: "123",
+        doctor_id: "456",
+        datetime: "2025-09-25T14:30:00Z",
+        procedure: "Harmonização Facial",
       };
 
       const result = await mockSchedulingFunction(appointmentData);
@@ -155,43 +159,46 @@ describe('T044: Edge Runtime Performance Tests', () => {
       coldStartMetrics.appointmentScheduling = totalColdStartTime;
     });
 
-    it('should handle emergency lookup with ultra-fast cold start', async () => {
+    it("should handle emergency lookup with ultra-fast cold start", async () => {
       const coldStartTime = performance.now();
 
       const mockEmergencyFunction = async (emergencyCode: string) => {
         // Emergency lookups must be fastest
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         // Minimal processing for emergencies
         const emergencyData = await mockPrismaAccelerate.query(
-          'SELECT * FROM emergency_contacts WHERE code = $1',
+          "SELECT * FROM emergency_contacts WHERE code = $1",
           [emergencyCode],
         );
 
         return {
           emergency: {
             code: emergencyCode,
-            contacts: ['Dr. Silva: +5511999887766', 'Enfermeira Ana: +5511888776655'],
-            protocols: ['Código Azul', 'Suporte Avançado'],
+            contacts: [
+              "Dr. Silva: +5511999887766",
+              "Enfermeira Ana: +5511888776655",
+            ],
+            protocols: ["Código Azul", "Suporte Avançado"],
           },
-          priority: 'CRITICAL',
+          priority: "CRITICAL",
         };
       };
 
-      const result = await mockEmergencyFunction('EMRG_001');
+      const result = await mockEmergencyFunction("EMRG_001");
       const totalColdStartTime = performance.now() - coldStartTime;
 
       // CRITICAL: Emergency functions must be ultra-fast
       expect(totalColdStartTime).toBeLessThan(50); // Even faster for emergencies
-      expect(result.priority).toBe('CRITICAL');
+      expect(result.priority).toBe("CRITICAL");
       expect(result.emergency.contacts).toHaveLength(2);
 
       coldStartMetrics.emergencyLookup = totalColdStartTime;
     });
   });
 
-  describe('Connection Pooling Efficiency with Prisma Accelerate', () => {
-    it('should maintain efficient connection pool utilization', async () => {
+  describe("Connection Pooling Efficiency with Prisma Accelerate", () => {
+    it("should maintain efficient connection pool utilization", async () => {
       // Simulate multiple concurrent requests
       const concurrentRequests = 5;
       const promises: Promise<any>[] = [];
@@ -202,7 +209,7 @@ describe('T044: Edge Runtime Performance Tests', () => {
 
           // Mock connection acquisition
           mockPrismaAccelerate.connectionPool.active++;
-          await mockPrismaAccelerate.query('SELECT NOW()');
+          await mockPrismaAccelerate.query("SELECT NOW()");
 
           const queryTime = performance.now() - startTime;
 
@@ -223,12 +230,12 @@ describe('T044: Edge Runtime Performance Tests', () => {
       expect(mockPrismaAccelerate.connectionPool.idle).toBe(concurrentRequests);
 
       // All queries should complete quickly with pooling
-      results.forEach(result => {
+      results.forEach((result) => {
         expect(result.queryTime).toBeLessThan(50); // Pool should be fast
       });
     });
 
-    it('should handle connection pool saturation gracefully', async () => {
+    it("should handle connection pool saturation gracefully", async () => {
       const poolSize = mockPrismaAccelerate.connectionPool.size;
       const oversaturatedRequests = poolSize + 3; // Exceed pool size
 
@@ -246,7 +253,7 @@ describe('T044: Edge Runtime Performance Tests', () => {
           mockPrismaAccelerate.connectionPool.waiting++;
 
           // Simulate wait time for available connection
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
           connectionTimes.push(performance.now() - startTime);
         }
       }
@@ -256,17 +263,17 @@ describe('T044: Edge Runtime Performance Tests', () => {
       expect(Math.max(...connectionTimes)).toBeLessThan(100); // Max wait reasonable
     });
 
-    it('should optimize connection pooling for Brazilian healthcare regions', async () => {
+    it("should optimize connection pooling for Brazilian healthcare regions", async () => {
       const regionTests = [
-        { region: 'sao1', latency: 15 }, // São Paulo
-        { region: 'gru1', latency: 18 }, // Guarulhos
+        { region: "sao1", latency: 15 }, // São Paulo
+        { region: "gru1", latency: 18 }, // Guarulhos
       ];
 
       for (const { region, latency } of regionTests) {
         const startTime = performance.now();
 
         // Mock regional database connection
-        await new Promise(resolve => setTimeout(resolve, latency));
+        await new Promise((resolve) => setTimeout(resolve, latency));
 
         const connectionTime = performance.now() - startTime;
 
@@ -277,20 +284,31 @@ describe('T044: Edge Runtime Performance Tests', () => {
     });
   });
 
-  describe('Bundle Size Optimization with Valibot Validation', () => {
-    it('should keep healthcare validation bundles minimal', async () => {
+  describe("Bundle Size Optimization with Valibot Validation", () => {
+    it("should keep healthcare validation bundles minimal", async () => {
       const healthcareSchemas = {
         patient: {
           bundleSize: 12000, // 12KB
-          validationFields: ['name', 'cpf', 'phone', 'email', 'birth_date'],
+          validationFields: ["name", "cpf", "phone", "email", "birth_date"],
         },
         appointment: {
           bundleSize: 8000, // 8KB
-          validationFields: ['patient_id', 'doctor_id', 'datetime', 'procedure'],
+          validationFields: [
+            "patient_id",
+            "doctor_id",
+            "datetime",
+            "procedure",
+          ],
         },
         procedure: {
           bundleSize: 15000, // 15KB
-          validationFields: ['name', 'category', 'duration', 'price', 'anvisa_code'],
+          validationFields: [
+            "name",
+            "category",
+            "duration",
+            "price",
+            "anvisa_code",
+          ],
         },
       };
 
@@ -300,33 +318,35 @@ describe('T044: Edge Runtime Performance Tests', () => {
         expect(config.validationFields.length).toBeGreaterThan(3); // Comprehensive validation
       });
 
-      const totalBundleSize = Object.values(healthcareSchemas)
-        .reduce((sum, schema) => sum + schema.bundleSize, 0);
+      const totalBundleSize = Object.values(healthcareSchemas).reduce(
+        (sum, schema) => sum + schema.bundleSize,
+        0,
+      );
 
       // Total validation bundle should be minimal
       expect(totalBundleSize).toBeLessThan(50000); // <50KB total
     });
 
-    it('should validate Brazilian healthcare data efficiently', async () => {
+    it("should validate Brazilian healthcare data efficiently", async () => {
       const testData = [
         {
-          type: 'cpf',
-          value: '123.456.789-01',
+          type: "cpf",
+          value: "123.456.789-01",
           expected: true,
         },
         {
-          type: 'phone',
-          value: '+5511999887766',
+          type: "phone",
+          value: "+5511999887766",
           expected: true,
         },
         {
-          type: 'crm',
-          value: 'CRM/SP 123456',
+          type: "crm",
+          value: "CRM/SP 123456",
           expected: true,
         },
         {
-          type: 'anvisa_code',
-          value: 'ANVISA_80149018001',
+          type: "anvisa_code",
+          value: "ANVISA_80149018001",
           expected: true,
         },
       ];
@@ -344,35 +364,50 @@ describe('T044: Edge Runtime Performance Tests', () => {
       }
 
       // Valibot validations should be extremely fast
-      const avgValidationTime = validationTimes.reduce((a, b) => a + b, 0) / validationTimes.length;
+      const avgValidationTime =
+        validationTimes.reduce((a, b) => a + b, 0) / validationTimes.length;
       expect(avgValidationTime).toBeLessThan(2); // <2ms average
     });
 
-    it('should tree-shake unused validation code effectively', async () => {
+    it("should tree-shake unused validation code effectively", async () => {
       const availableValidators = [
-        'cpf',
-        'cnpj',
-        'phone',
-        'email',
-        'cep',
-        'crm',
-        'anvisa_code',
-        'procedure_code',
-        'icd10',
-        'medication_code',
+        "cpf",
+        "cnpj",
+        "phone",
+        "email",
+        "cep",
+        "crm",
+        "anvisa_code",
+        "procedure_code",
+        "icd10",
+        "medication_code",
       ];
 
-      const usedValidators = ['cpf', 'phone', 'email', 'crm'];
-      const unusedValidators = availableValidators.filter(v => !usedValidators.includes(v));
+      const usedValidators = ["cpf", "phone", "email", "crm"];
+      const unusedValidators = availableValidators.filter(
+        (v) => !usedValidators.includes(v),
+      );
 
       // Simulate tree-shaking analysis
       const bundleAnalysis = {
-        included: usedValidators.map(v => ({ validator: v, size: Math.random() * 2000 + 1000 })),
-        excluded: unusedValidators.map(v => ({ validator: v, size: Math.random() * 2000 + 1000 })),
+        included: usedValidators.map((v) => ({
+          validator: v,
+          size: Math.random() * 2000 + 1000,
+        })),
+        excluded: unusedValidators.map((v) => ({
+          validator: v,
+          size: Math.random() * 2000 + 1000,
+        })),
       };
 
-      const includedSize = bundleAnalysis.included.reduce((sum, v) => sum + v.size, 0);
-      const excludedSize = bundleAnalysis.excluded.reduce((sum, v) => sum + v.size, 0);
+      const includedSize = bundleAnalysis.included.reduce(
+        (sum, v) => sum + v.size,
+        0,
+      );
+      const excludedSize = bundleAnalysis.excluded.reduce(
+        (sum, v) => sum + v.size,
+        0,
+      );
 
       // Tree-shaking should significantly reduce bundle size
       expect(includedSize).toBeLessThan(10000); // <10KB for used validators
@@ -381,16 +416,25 @@ describe('T044: Edge Runtime Performance Tests', () => {
     });
   });
 
-  describe('Memory Usage Optimization for Healthcare Service Scaling', () => {
-    it('should maintain memory usage within edge runtime limits', async () => {
+  describe("Memory Usage Optimization for Healthcare Service Scaling", () => {
+    it("should maintain memory usage within edge runtime limits", async () => {
       const memoryLimit = 256 * 1024 * 1024; // 256MB edge limit
       const initialMemory = process.memoryUsage().heapUsed;
 
       // Simulate healthcare service operations
       const operations = [
-        () => ({ type: 'patient_lookup', data: Array(1000).fill({ name: 'Test Patient' }) }),
-        () => ({ type: 'appointment_list', data: Array(500).fill({ appointment: 'Test Apt' }) }),
-        () => ({ type: 'procedure_catalog', data: Array(200).fill({ procedure: 'Test Proc' }) }),
+        () => ({
+          type: "patient_lookup",
+          data: Array(1000).fill({ name: "Test Patient" }),
+        }),
+        () => ({
+          type: "appointment_list",
+          data: Array(500).fill({ appointment: "Test Apt" }),
+        }),
+        () => ({
+          type: "procedure_catalog",
+          data: Array(200).fill({ procedure: "Test Proc" }),
+        }),
       ];
 
       const results: any[] = [];
@@ -415,7 +459,7 @@ describe('T044: Edge Runtime Performance Tests', () => {
       expect(finalMemory).toBeLessThan(memoryLimit * 0.7); // <70% of edge limit
     });
 
-    it('should handle memory-intensive healthcare analytics efficiently', async () => {
+    it("should handle memory-intensive healthcare analytics efficiently", async () => {
       const patientDataSize = 10000; // 10k patients
       const appointmentDataSize = 50000; // 50k appointments
 
@@ -424,25 +468,32 @@ describe('T044: Edge Runtime Performance Tests', () => {
         const startMemory = process.memoryUsage().heapUsed;
 
         // Mock processing patient analytics
-        const patients = Array(patientDataSize).fill(null).map((_, i) => ({
-          id: i,
-          procedures: Math.floor(Math.random() * 10),
-          revenue: Math.random() * 5000,
-        }));
+        const patients = Array(patientDataSize)
+          .fill(null)
+          .map((_, i) => ({
+            id: i,
+            procedures: Math.floor(Math.random() * 10),
+            revenue: Math.random() * 5000,
+          }));
 
         // Mock processing appointment analytics
-        const appointments = Array(appointmentDataSize).fill(null).map((_, i) => ({
-          id: i,
-          patient_id: Math.floor(Math.random() * patientDataSize),
-          status: ['completed', 'cancelled', 'no-show'][Math.floor(Math.random() * 3)],
-        }));
+        const appointments = Array(appointmentDataSize)
+          .fill(null)
+          .map((_, i) => ({
+            id: i,
+            patient_id: Math.floor(Math.random() * patientDataSize),
+            status: ["completed", "cancelled", "no-show"][
+              Math.floor(Math.random() * 3)
+            ],
+          }));
 
         // Simulate analytics computation
         const analytics = {
           totalPatients: patients.length,
           totalRevenue: patients.reduce((sum, p) => sum + p.revenue, 0),
-          completionRate: appointments.filter(a => a.status === 'completed').length
-            / appointments.length,
+          completionRate:
+            appointments.filter((a) => a.status === "completed").length /
+            appointments.length,
         };
 
         const endMemory = process.memoryUsage().heapUsed;
@@ -462,7 +513,7 @@ describe('T044: Edge Runtime Performance Tests', () => {
       expect(result.memoryUsed).toBeLessThan(100 * 1024 * 1024); // <100MB for analytics
     });
 
-    it('should optimize garbage collection for sustained performance', async () => {
+    it("should optimize garbage collection for sustained performance", async () => {
       const gcMetrics: number[] = [];
 
       // Simulate sustained healthcare operations
@@ -470,14 +521,16 @@ describe('T044: Edge Runtime Performance Tests', () => {
         const beforeGC = process.memoryUsage().heapUsed;
 
         // Create temporary objects (simulate healthcare operations)
-        const tempData = Array(1000).fill(null).map(() => ({
-          patient: `patient_${Math.random()}`,
-          appointment: `apt_${Math.random()}`,
-          timestamp: new Date(),
-        }));
+        const tempData = Array(1000)
+          .fill(null)
+          .map(() => ({
+            patient: `patient_${Math.random()}`,
+            appointment: `apt_${Math.random()}`,
+            timestamp: new Date(),
+          }));
 
         // Force garbage collection simulation
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
 
         // Clear references
         tempData.length = 0;
@@ -489,20 +542,21 @@ describe('T044: Edge Runtime Performance Tests', () => {
       }
 
       // Garbage collection should be effective
-      const avgGCEfficiency = gcMetrics.reduce((a, b) => a + b, 0) / gcMetrics.length;
+      const avgGCEfficiency =
+        gcMetrics.reduce((a, b) => a + b, 0) / gcMetrics.length;
       expect(Math.abs(avgGCEfficiency)).toBeLessThan(0.5); // Reasonable GC impact
     });
   });
 
-  describe('Edge Deployment Performance Metrics', () => {
-    it('should achieve optimal performance in São Paulo regions', async () => {
+  describe("Edge Deployment Performance Metrics", () => {
+    it("should achieve optimal performance in São Paulo regions", async () => {
       const regionMetrics = {
         sao1: { latency: 0, throughput: 0, errors: 0 },
         gru1: { latency: 0, throughput: 0, errors: 0 },
       };
 
       // Simulate regional performance testing
-      for (const region of ['sao1', 'gru1']) {
+      for (const region of ["sao1", "gru1"]) {
         const requests = 100;
         const latencies: number[] = [];
 
@@ -510,7 +564,9 @@ describe('T044: Edge Runtime Performance Tests', () => {
           const startTime = performance.now();
 
           // Simulate edge function execution
-          await new Promise(resolve => setTimeout(resolve, Math.random() * 20 + 10));
+          await new Promise((resolve) =>
+            setTimeout(resolve, Math.random() * 20 + 10),
+          );
 
           const latency = performance.now() - startTime;
           latencies.push(latency);
@@ -531,7 +587,7 @@ describe('T044: Edge Runtime Performance Tests', () => {
       });
     });
 
-    it('should scale efficiently under Brazilian healthcare load patterns', async () => {
+    it("should scale efficiently under Brazilian healthcare load patterns", async () => {
       const loadPatterns = [
         { hour: 8, load: 0.3 }, // Morning clinic opening
         { hour: 10, load: 0.7 }, // Peak morning appointments
@@ -540,23 +596,32 @@ describe('T044: Edge Runtime Performance Tests', () => {
         { hour: 22, load: 0.1 }, // Night emergencies only
       ];
 
-      const scalingMetrics: Array<{ hour: number; responseTime: number; errorRate: number }> = [];
+      const scalingMetrics: Array<{
+        hour: number;
+        responseTime: number;
+        errorRate: number;
+      }> = [];
 
       for (const { hour, load } of loadPatterns) {
         const requests = Math.floor(load * 1000); // Scale requests by load
         const startTime = performance.now();
 
         // Simulate concurrent requests
-        const promises = Array(requests).fill(null).map(async () => {
-          const requestStart = performance.now();
-          await new Promise(resolve => setTimeout(resolve, Math.random() * 30 + 5));
-          return performance.now() - requestStart;
-        });
+        const promises = Array(requests)
+          .fill(null)
+          .map(async () => {
+            const requestStart = performance.now();
+            await new Promise((resolve) =>
+              setTimeout(resolve, Math.random() * 30 + 5),
+            );
+            return performance.now() - requestStart;
+          });
 
         const responseTimes = await Promise.all(promises);
         const totalTime = performance.now() - startTime;
 
-        const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
+        const avgResponseTime =
+          responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
         const errorRate = 0; // Simulate no errors
 
         scalingMetrics.push({

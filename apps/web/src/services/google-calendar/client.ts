@@ -1,4 +1,4 @@
-import { google } from 'googleapis';
+import { google } from "googleapis";
 
 export interface GoogleCalendarConfig {
   clientId: string;
@@ -30,9 +30,9 @@ export interface CalendarEvent {
   attendees?: Array<{
     email: string;
     displayName?: string;
-    responseStatus?: 'needsAction' | 'declined' | 'tentative' | 'accepted';
+    responseStatus?: "needsAction" | "declined" | "tentative" | "accepted";
   }>;
-  visibility?: 'default' | 'public' | 'private' | 'confidential';
+  visibility?: "default" | "public" | "private" | "confidential";
   colorId?: string;
 }
 
@@ -44,24 +44,27 @@ export class GoogleCalendarClient {
     this.oauth2Client = new google.auth.OAuth2(
       config.clientId,
       config.clientSecret,
-      config.redirectUri
+      config.redirectUri,
     );
 
-    this.calendar = google.calendar({ version: 'v3', auth: this.oauth2Client });
+    this.calendar = google.calendar({ version: "v3", auth: this.oauth2Client });
   }
 
   /**
    * Generate OAuth2 consent URL
    */
-  getAuthUrl(state: string, scopes: string[] = [
-    'https://www.googleapis.com/auth/calendar',
-    'https://www.googleapis.com/auth/calendar.events'
-  ]): string {
+  getAuthUrl(
+    state: string,
+    scopes: string[] = [
+      "https://www.googleapis.com/auth/calendar",
+      "https://www.googleapis.com/auth/calendar.events",
+    ],
+  ): string {
     return this.oauth2Client.generateAuthUrl({
-      access_type: 'offline',
+      access_type: "offline",
       scope: scopes,
       state,
-      prompt: 'consent',
+      prompt: "consent",
     });
   }
 
@@ -98,7 +101,7 @@ export class GoogleCalendarClient {
     }
 
     if (!tokens.refresh_token) {
-      throw new Error('No refresh token available');
+      throw new Error("No refresh token available");
     }
 
     return await this.refreshToken(tokens.refresh_token);
@@ -115,7 +118,7 @@ export class GoogleCalendarClient {
   /**
    * Get calendar by ID
    */
-  async getCalendar(calendarId: string = 'primary'): Promise<any> {
+  async getCalendar(calendarId: string = "primary"): Promise<any> {
     const response = await this.calendar.calendars.get({ calendarId });
     return response.data;
   }
@@ -134,7 +137,11 @@ export class GoogleCalendarClient {
   /**
    * Update event
    */
-  async updateEvent(calendarId: string, eventId: string, event: CalendarEvent): Promise<any> {
+  async updateEvent(
+    calendarId: string,
+    eventId: string,
+    event: CalendarEvent,
+  ): Promise<any> {
     const response = await this.calendar.events.update({
       calendarId,
       eventId,
@@ -167,13 +174,16 @@ export class GoogleCalendarClient {
   /**
    * List events
    */
-  async listEvents(calendarId: string, options: {
-    timeMin?: string;
-    timeMax?: string;
-    maxResults?: number;
-    singleEvents?: boolean;
-    orderBy?: 'startTime' | 'updated';
-  } = {}): Promise<any[]> {
+  async listEvents(
+    calendarId: string,
+    options: {
+      timeMin?: string;
+      timeMax?: string;
+      maxResults?: number;
+      singleEvents?: boolean;
+      orderBy?: "startTime" | "updated";
+    } = {},
+  ): Promise<any[]> {
     const response = await this.calendar.events.list({
       calendarId,
       ...options,
@@ -184,7 +194,10 @@ export class GoogleCalendarClient {
   /**
    * Sync events (incremental sync)
    */
-  async syncEvents(calendarId: string, syncToken?: string): Promise<{
+  async syncEvents(
+    calendarId: string,
+    syncToken?: string,
+  ): Promise<{
     nextSyncToken: string;
     items: any[];
   }> {
@@ -202,7 +215,10 @@ export class GoogleCalendarClient {
   /**
    * Watch for changes to calendar
    */
-  async watchCalendar(calendarId: string, webhookUrl: string): Promise<{
+  async watchCalendar(
+    calendarId: string,
+    webhookUrl: string,
+  ): Promise<{
     id: string;
     resourceUri: string;
     expiration: number;
@@ -211,7 +227,7 @@ export class GoogleCalendarClient {
       calendarId,
       requestBody: {
         id: `neonpro-${Date.now()}`,
-        type: 'web_hook',
+        type: "web_hook",
         address: webhookUrl,
       },
     });

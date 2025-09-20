@@ -4,6 +4,7 @@
 **Input**: Feature specification from `/specs/005-financial-dashboard-enhancement/spec.md`
 
 ## Execution Flow (/plan command scope)
+
 ```
 1. Load feature spec from Input path ✓
    → Loaded: Financial Dashboard Enhancement for NeonPro
@@ -25,9 +26,11 @@
 ```
 
 ## Summary
+
 Transform NeonPro's basic Financeiro page into a sophisticated, interactive financial dashboard using Shadcn MCP components based on experiment-03 design patterns. The enhancement provides comprehensive financial visualization, real-time metrics, export capabilities, and mobile-optimized experience while maintaining full Brazilian healthcare compliance (LGPD, ANVISA, CFM).
 
 ## Technical Context
+
 **Language/Version**: TypeScript 5.0+, Node.js 18+  
 **Primary Dependencies**: Next.js 14+, Shadcn MCP (experiment-03), Recharts, TanStack Query, Zustand  
 **Storage**: Supabase PostgreSQL with row-level security, materialized views for performance  
@@ -39,15 +42,18 @@ Transform NeonPro's basic Financeiro page into a sophisticated, interactive fina
 **Scale/Scope**: 15+ chart components, 5-tier permission system, 10k+ financial records
 
 ## Constitution Check
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 **I. Compliance-First Development**: ✅
+
 - LGPD data protection implemented? ✅ (comprehensive data encryption, consent management, audit trails)
 - ANVISA compliance verified? ✅ (medical device cost tracking, equipment compliance reporting)
 - CFM professional standards met? ✅ (financial transparency, professional disclosure requirements)
 - Patient data anonymization on consent withdrawal? ✅ (automated data lifecycle management)
 
 **II. Test-Driven Development (NON-NEGOTIABLE)**: ✅
+
 - RED-GREEN-Refactor cycle enforced? ✅ (mandatory failing tests before implementation)
 - 90% test coverage for healthcare components? ✅ (95% target for financial components)
 - Git commits show tests before implementation? ✅ (enforced via pre-commit hooks)
@@ -56,27 +62,32 @@ Transform NeonPro's basic Financeiro page into a sophisticated, interactive fina
 - FORBIDDEN: Implementation before test, skipping RED phase ✅
 
 **III. AI-Enhanced Architecture**: ✅
+
 - Conversational AI integration planned? ✅ (AI-driven financial insights and recommendations)
 - Predictive analytics included? ✅ (revenue forecasting, trend analysis, anomaly detection)
 - AI automation throughout platform? ✅ (automated report generation, smart notifications)
 - Portuguese language support for AI features? ✅ (localized financial terminology)
 
 **IV. Mobile-First Design**: ✅
+
 - Mobile-optimized for 70%+ usage? ✅ (touch-optimized charts, mobile-specific layouts)
 - Responsive design mandatory? ✅ (progressive enhancement approach)
 - Performance targets met? ✅ (<500ms financial data access, mobile-optimized animations)
 
 **V. Real-Time Operations**: ✅
+
 - WebSocket subscriptions for live updates? ✅ (real-time financial metric updates)
 - Performance targets: 99.9% uptime, <2s responses? ✅ (cached aggregations, CDN delivery)
 - Critical healthcare operations prioritized? ✅ (financial data for operational decisions)
 
 **Healthcare Standards**: ✅
+
 - Branded types for medical identifiers? ✅ (PatientId, ClinicId, FinancialRecordId)
 - Healthcare-specific error handling? ✅ (financial severity levels, patient impact assessment)
 - Comprehensive audit logging? ✅ (all financial data access and modifications tracked)
 
 **Technology Governance**: ✅
+
 - Required tech stack used? ✅ (Next.js, Supabase, TanStack stack)
 - MCP tools integration? ✅ (archon, serena, desktop-commander, shadcn MCP)
 - Quality standard ≥9.5/10 maintained? ✅ (comprehensive testing and validation)
@@ -84,6 +95,7 @@ Transform NeonPro's basic Financeiro page into a sophisticated, interactive fina
 ## Project Structure
 
 ### Documentation (this feature)
+
 ```
 specs/005-financial-dashboard-enhancement/
 ├── plan.md              # This file (/plan command output) ✓
@@ -95,6 +107,7 @@ specs/005-financial-dashboard-enhancement/
 ```
 
 ### Source Code (repository root)
+
 ```
 # Option 2: Web application (frontend + backend integration)
 apps/web/
@@ -137,9 +150,11 @@ supabase/
 **Structure Decision**: Option 2 (Web application) - integrates with existing NeonPro web structure
 
 ## Phase 0: Outline & Research ✅
+
 **Status**: COMPLETED via apex-researcher agent
 
 **Research Completed**:
+
 - ✅ **Shadcn MCP Integration**: experiment-03 registry analysis, component compatibility
 - ✅ **Financial KPIs for Aesthetic Clinics**: client lifetime value, conversion rates, utilization metrics
 - ✅ **User Permission System**: 5-tier LGPD-compliant access control
@@ -150,6 +165,7 @@ supabase/
 **Output**: research.md with all NEEDS CLARIFICATION resolved ✅
 
 ## Phase 1: Design & Contracts ✅
+
 **Status**: COMPLETED via apex-researcher agent
 
 **Artifacts Created**:
@@ -179,7 +195,9 @@ supabase/
 **Output**: Complete design artifacts with failing tests ready for implementation ✅
 
 ## Phase 2: Task Planning Approach
+
 **Task Generation Strategy**:
+
 - Load `/templates/tasks-template.md` as base structure
 - Generate 40+ granular tasks from Phase 1 design documents
 - Each API contract → contract test task [P] (parallel execution)
@@ -188,12 +206,14 @@ supabase/
 - Constitutional compliance tasks → LGPD audit, ANVISA validation, CFM standards
 
 **Ordering Strategy**:
+
 - **TDD Strict Order**: Tests written and failing before any implementation
 - **Dependency Hierarchy**: Database migrations → API contracts → chart components → dashboard integration
 - **Parallel Execution**: Mark [P] for independent tasks (component development, test creation)
 - **Quality Gates**: Performance testing, accessibility validation, compliance audits
 
 **Task Categories**:
+
 1. **Foundation Setup** (Days 1-2): Shadcn MCP, database schema, authentication integration
 2. **Core Components** (Days 3-5): Chart components with Recharts, interactive features
 3. **Dashboard Integration** (Days 6-7): Layout system, real-time updates, mobile optimization
@@ -205,21 +225,26 @@ supabase/
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
 
 ## Phase 3+: Future Implementation
+
 **Phase 3**: Task execution (/tasks command creates tasks.md with detailed breakdown)  
 **Phase 4**: Implementation (TDD cycle execution following constitutional principles)  
 **Phase 5**: Validation (comprehensive testing, performance benchmarks, compliance audit)
 
 ## Complexity Tracking
-*No constitutional violations requiring justification*
+
+_No constitutional violations requiring justification_
 
 All complexity decisions align with constitutional principles:
+
 - Shadcn MCP components chosen for proven compatibility and performance
 - Multi-tier permission system required for LGPD compliance
 - Real-time updates necessary for operational decision-making
 - Mobile-first approach mandatory for 70%+ mobile usage compliance
 
 ## Progress Tracking
+
 **Phase Status**:
+
 - [x] Phase 0: Research complete (/plan command) ✅
 - [x] Phase 1: Design complete (/plan command) ✅
 - [x] Phase 2: Task planning approach defined (/plan command) ✅
@@ -228,6 +253,7 @@ All complexity decisions align with constitutional principles:
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
+
 - [x] Initial Constitution Check: PASS ✅
 - [x] Post-Design Constitution Check: PASS ✅
 - [x] All NEEDS CLARIFICATION resolved ✅
@@ -236,5 +262,6 @@ All complexity decisions align with constitutional principles:
 **Implementation Readiness**: 98% - Ready for /tasks command execution
 
 ---
+
 **Template Version**: 1.1.0 | **Constitution Version**: 1.0.0 | **Last Updated**: 2025-01-15
-*Based on NeonPro Constitution v1.0.0 - See `.specify/memory/constitution.md`*
+_Based on NeonPro Constitution v1.0.0 - See `.specify/memory/constitution.md`_

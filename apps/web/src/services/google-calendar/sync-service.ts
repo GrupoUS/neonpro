@@ -1,9 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-import { GoogleCalendarService } from './service';
+import { PrismaClient } from "@prisma/client";
+import { GoogleCalendarService } from "./service";
 
 export interface SyncOptions {
   bidirectional?: boolean;
-  conflictResolution?: 'google_wins' | 'local_wins' | 'manual';
+  conflictResolution?: "google_wins" | "local_wins" | "manual";
   batchSize?: number;
   dryRun?: boolean;
 }
@@ -31,11 +31,14 @@ export class GoogleCalendarSyncService {
 
   constructor(prisma?: PrismaClient) {
     this.prisma = prisma || new PrismaClient();
-    this.calendarService = new GoogleCalendarService({
-      clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID!,
-      clientSecret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET!,
-      redirectUri: `${window.location.origin}/google-calendar/auth`,
-    }, this.prisma);
+    this.calendarService = new GoogleCalendarService(
+      {
+        clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID!,
+        clientSecret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET!,
+        redirectUri: `${window.location.origin}/google-calendar/auth`,
+      },
+      this.prisma,
+    );
   }
 
   /**
@@ -44,7 +47,7 @@ export class GoogleCalendarSyncService {
   async syncUserAppointments(
     userId: string,
     clinicId: string,
-    options: SyncOptions = {}
+    options: SyncOptions = {},
   ): Promise<SyncResult> {
     const result: SyncResult = {
       success: true,
@@ -57,22 +60,29 @@ export class GoogleCalendarSyncService {
 
     try {
       // Get user's Google Calendar integration
-      const integration = await this.prisma.googleCalendarIntegration.findUnique({
-        where: {
-          userId_clinicId: { userId, clinicId },
-        },
-      });
+      const integration =
+        await this.prisma.googleCalendarIntegration.findUnique({
+          where: {
+            userId_clinicId: { userId, clinicId },
+          },
+        });
 
       if (!integration || !integration.syncEnabled) {
         return {
           ...result,
           success: false,
-          errors: [{ error: 'Google Calendar integration not found or disabled' }],
+          errors: [
+            { error: "Google Calendar integration not found or disabled" },
+          ],
         };
       }
 
       // Get appointments that need syncing
-      const appointments = await this.getAppointmentsToSync(userId, clinicId, integration);
+      const appointments = await this.getAppointmentsToSync(
+        userId,
+        clinicId,
+        integration,
+      );
 
       // Sync each appointment
       for (const appointment of appointments) {
@@ -80,17 +90,17 @@ export class GoogleCalendarSyncService {
           const syncResult = await this.syncAppointment(
             appointment,
             integration,
-            options
+            options,
           );
 
           if (syncResult.success) {
-            if (syncResult.operation === 'created') result.created++;
-            else if (syncResult.operation === 'updated') result.updated++;
-            else if (syncResult.operation === 'deleted') result.deleted++;
+            if (syncResult.operation === "created") result.created++;
+            else if (syncResult.operation === "updated") result.updated++;
+            else if (syncResult.operation === "deleted") result.deleted++;
           } else {
             result.errors.push({
               appointmentId: appointment.id,
-              error: syncResult.error || 'Unknown error',
+              error: syncResult.error || "Unknown error",
             });
           }
         } catch (error) {
@@ -115,9 +125,8 @@ export class GoogleCalendarSyncService {
           lastError: result.errors.length > 0 ? result.errors[0].error : null,
         },
       });
-
     } catch (error) {
-      console.error('Error syncing appointments:', error);
+      console.error("Error syncing appointments:", error);
       result.success = false;
       result.errors.push({
         error: error instanceof Error ? error.message : String(error),
@@ -130,10 +139,14 @@ export class GoogleCalendarSyncService {
   /**
    * Get appointments that need to be synced
    */
-  private async getAppointmentsToSync(userId: string, clinicId: string, integration: any) {
+  private async getAppointmentsToSync(
+    userId: string,
+    clinicId: string,
+    integration: any,
+  ) {
     // Get appointments modified since last sync or new appointments
     const lastSyncAt = integration.lastSyncAt || new Date(0);
-    
+
     return await this.prisma.appointment.findMany({
       where: {
         clinicId,
@@ -150,9 +163,9 @@ export class GoogleCalendarSyncService {
         AND: [
           {
             OR: [
-              { status: { not: 'cancelled' } },
+              { status: { not: "cancelled" } },
               {
-                status: 'cancelled',
+                status: "cancelled",
                 googleCalendarEvent: { some: {} },
               },
             ],
@@ -165,7 +178,7 @@ export class GoogleCalendarSyncService {
         googleCalendarEvent: true,
       },
       orderBy: {
-        updatedAt: 'asc',
+        updatedAt: "asc",
       },
     });
   }
@@ -176,25 +189,25 @@ export class GoogleCalendarSyncService {
   private async syncAppointment(
     appointment: any,
     integration: any,
-    options: SyncOptions
+    options: SyncOptions,
   ): Promise<{ success: boolean; operation?: string; error?: string }> {
     // Don't sync if this is a dry run
     if (options.dryRun) {
-      return { success: true, operation: 'dry_run' };
+      return { success: true, operation: "dry_run" };
     }
 
     // Handle cancelled appointments
-    if (appointment.status === 'cancelled') {
+    if (appointment.status === "cancelled") {
       if (appointment.googleCalendarEvent) {
         await this.calendarService.syncAppointment(
           {
             id: appointment.id,
-            title: appointment.patient?.name 
+            title: appointment.patient?.name
               ? `Consulta: ${appointment.patient.name}`
-              : 'Consulta Agendada',
+              : "Consulta Agendada",
             startTime: appointment.startTime,
             endTime: appointment.endTime,
-            timeZone: appointment.timeZone || 'America/Sao_Paulo',
+            timeZone: appointment.timeZone || "America/Sao_Paulo",
             location: appointment.appointmentLocation,
             patientEmail: appointment.patient?.email,
             patientName: appointment.patient?.name,
@@ -203,23 +216,23 @@ export class GoogleCalendarSyncService {
           },
           integration.userId,
           integration.clinicId,
-          'DELETE'
+          "DELETE",
         );
-        return { success: true, operation: 'deleted' };
+        return { success: true, operation: "deleted" };
       }
-      return { success: true, operation: 'ignored' };
+      return { success: true, operation: "ignored" };
     }
 
     // Determine operation type
-    let operation: 'CREATE' | 'UPDATE' = 'CREATE';
+    let operation: "CREATE" | "UPDATE" = "CREATE";
     if (appointment.googleCalendarEvent) {
       // Check if appointment has been modified since last sync
       const lastSync = appointment.googleCalendarEvent.lastSyncAt;
       if (appointment.updatedAt > lastSync) {
-        operation = 'UPDATE';
+        operation = "UPDATE";
       } else {
         // No changes needed
-        return { success: true, operation: 'ignored' };
+        return { success: true, operation: "ignored" };
       }
     }
 
@@ -227,13 +240,13 @@ export class GoogleCalendarSyncService {
     const result = await this.calendarService.syncAppointment(
       {
         id: appointment.id,
-        title: appointment.patient?.name 
+        title: appointment.patient?.name
           ? `Consulta: ${appointment.patient.name}`
-          : 'Consulta Agendada',
+          : "Consulta Agendada",
         description: appointment.chiefComplaint || appointment.notes,
         startTime: appointment.startTime,
         endTime: appointment.endTime,
-        timeZone: appointment.timeZone || 'America/Sao_Paulo',
+        timeZone: appointment.timeZone || "America/Sao_Paulo",
         location: appointment.appointmentLocation,
         patientEmail: appointment.patient?.email,
         patientName: appointment.patient?.name,
@@ -242,7 +255,7 @@ export class GoogleCalendarSyncService {
       },
       integration.userId,
       integration.clinicId,
-      operation
+      operation,
     );
 
     return {
@@ -255,41 +268,52 @@ export class GoogleCalendarSyncService {
   /**
    * Sync changes from Google Calendar to local appointments
    */
-  private async syncFromGoogle(integration: any, result: SyncResult): Promise<void> {
+  private async syncFromGoogle(
+    integration: any,
+    result: SyncResult,
+  ): Promise<void> {
     try {
       const syncResult = await this.calendarService.syncFromGoogle(
         integration.userId,
-        integration.clinicId
+        integration.clinicId,
       );
 
       // Process changes from Google
       for (const change of syncResult.changes) {
         const googleEvent = await this.calendarService.client.getEvent(
           integration.syncCalendarId,
-          change.eventId
+          change.eventId,
         );
 
-        if (change.operation === 'deleted') {
+        if (change.operation === "deleted") {
           // Mark corresponding appointment as cancelled
-          const existingMapping = await this.prisma.googleCalendarEvent.findUnique({
-            where: { googleEventId: change.eventId },
-          });
+          const existingMapping =
+            await this.prisma.googleCalendarEvent.findUnique({
+              where: { googleEventId: change.eventId },
+            });
 
           if (existingMapping) {
             await this.prisma.appointment.update({
               where: { id: existingMapping.appointmentId },
-              data: { status: 'cancelled' },
+              data: { status: "cancelled" },
             });
           }
-        } else if (change.operation === 'created' || change.operation === 'updated') {
+        } else if (
+          change.operation === "created" ||
+          change.operation === "updated"
+        ) {
           // Find or create appointment from Google event
-          const existingMapping = await this.prisma.googleCalendarEvent.findUnique({
-            where: { googleEventId: change.eventId },
-          });
+          const existingMapping =
+            await this.prisma.googleCalendarEvent.findUnique({
+              where: { googleEventId: change.eventId },
+            });
 
           if (existingMapping) {
             // Update existing appointment
-            await this.updateAppointmentFromGoogleEvent(existingMapping.appointmentId, googleEvent);
+            await this.updateAppointmentFromGoogleEvent(
+              existingMapping.appointmentId,
+              googleEvent,
+            );
           } else {
             // This is a new event created in Google Calendar
             // In a healthcare context, we might want to ignore these or create them
@@ -298,7 +322,7 @@ export class GoogleCalendarSyncService {
         }
       }
     } catch (error) {
-      console.error('Error syncing from Google:', error);
+      console.error("Error syncing from Google:", error);
       result.errors.push({
         error: `Sync from Google failed: ${error instanceof Error ? error.message : String(error)}`,
       });
@@ -308,9 +332,14 @@ export class GoogleCalendarSyncService {
   /**
    * Update appointment based on Google Calendar event
    */
-  private async updateAppointmentFromGoogleEvent(appointmentId: string, googleEvent: any): Promise<void> {
+  private async updateAppointmentFromGoogleEvent(
+    appointmentId: string,
+    googleEvent: any,
+  ): Promise<void> {
     // Extract appointment details from Google event
-    const startTime = new Date(googleEvent.start.dateTime || googleEvent.start.date);
+    const startTime = new Date(
+      googleEvent.start.dateTime || googleEvent.start.date,
+    );
     const endTime = new Date(googleEvent.end.dateTime || googleEvent.end.date);
 
     // Update appointment
@@ -334,7 +363,7 @@ export class GoogleCalendarSyncService {
    */
   async batchSync(
     userClinicPairs: Array<{ userId: string; clinicId: string }>,
-    options: SyncOptions = {}
+    options: SyncOptions = {},
   ): Promise<Map<string, SyncResult>> {
     const results = new Map<string, SyncResult>();
 
@@ -343,7 +372,7 @@ export class GoogleCalendarSyncService {
       const result = await this.syncUserAppointments(
         pair.userId,
         pair.clinicId,
-        options
+        options,
       );
       results.set(key, result);
     }
@@ -357,7 +386,7 @@ export class GoogleCalendarSyncService {
   async scheduleAutoSync(
     userId: string,
     clinicId: string,
-    intervalMinutes: number = 30
+    intervalMinutes: number = 30,
   ): Promise<string> {
     // In a real implementation, this would set up a cron job or similar
     // For now, return a mock schedule ID

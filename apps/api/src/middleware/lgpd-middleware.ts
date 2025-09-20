@@ -1,6 +1,6 @@
 // LGPD (Lei Geral de Proteção de Dados) Compliance Middleware
 // Comprehensive implementation for Brazilian healthcare data protection
-import { Context, Next } from 'hono';
+import { Context, Next } from "hono";
 
 export interface DataProtectionOptions {
   purpose: string;
@@ -10,7 +10,7 @@ export interface DataProtectionOptions {
   enforceDataProtectionHeaders?: boolean;
   retentionPeriodDays?: number;
   allowDataTransfer?: boolean;
-  minimumConsentLevel?: 'basic' | 'explicit' | 'granular';
+  minimumConsentLevel?: "basic" | "explicit" | "granular";
 }
 
 export interface ConsentRecord {
@@ -21,7 +21,7 @@ export interface ConsentRecord {
   consentDate: Date;
   ipAddress?: string;
   userAgent?: string;
-  consentLevel: 'basic' | 'explicit' | 'granular';
+  consentLevel: "basic" | "explicit" | "granular";
   expiresAt?: Date;
 }
 
@@ -42,17 +42,20 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
             userId,
             options.purpose,
             options.dataCategories,
-            options.minimumConsentLevel || 'basic',
+            options.minimumConsentLevel || "basic",
           );
 
           if (!hasValidConsent) {
-            return c.json({
-              error: 'LGPD_CONSENT_REQUIRED',
-              message: 'Consentimento LGPD necessário para esta operação',
-              purpose: options.purpose,
-              dataCategories: options.dataCategories,
-              consentUrl: '/api/lgpd/consent',
-            }, 403);
+            return c.json(
+              {
+                error: "LGPD_CONSENT_REQUIRED",
+                message: "Consentimento LGPD necessário para esta operação",
+                purpose: options.purpose,
+                dataCategories: options.dataCategories,
+                consentUrl: "/api/lgpd/consent",
+              },
+              403,
+            );
           }
         }
       }
@@ -67,36 +70,45 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
           dataCategories: options.dataCategories,
           userId: await getCurrentUserId(c),
           ipAddress: getClientIP(c),
-          userAgent: c.req.header('User-Agent'),
-          sessionId: c.req.header('X-Session-ID') || 'anonymous',
+          userAgent: c.req.header("User-Agent"),
+          sessionId: c.req.header("X-Session-ID") || "anonymous",
           requestId: generateRequestId(),
         };
 
         // Log to structured audit system (not console in production)
-        if (process.env.NODE_ENV === 'production') {
-          await logAuditEvent('LGPD_DATA_ACCESS', auditData);
+        if (process.env.NODE_ENV === "production") {
+          await logAuditEvent("LGPD_DATA_ACCESS", auditData);
         } else {
-          console.log(`[LGPD AUDIT] ${auditData.method} ${auditData.path}`, auditData);
+          console.log(
+            `[LGPD AUDIT] ${auditData.method} ${auditData.path}`,
+            auditData,
+          );
         }
       }
 
       // 3. LGPD Article 47 - Data protection headers
       if (options.enforceDataProtectionHeaders) {
         // Identify this as LGPD-compliant endpoint
-        c.header('X-Data-Protection', 'LGPD-Compliant');
-        c.header('X-Data-Purpose', options.purpose);
-        c.header('X-Data-Categories', options.dataCategories.join(','));
+        c.header("X-Data-Protection", "LGPD-Compliant");
+        c.header("X-Data-Purpose", options.purpose);
+        c.header("X-Data-Categories", options.dataCategories.join(","));
 
         // Security headers for PHI protection
-        c.header('X-Content-Type-Options', 'nosniff');
-        c.header('X-Frame-Options', 'DENY');
-        c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
-        c.header('Cache-Control', 'no-cache, no-store, must-revalidate, private');
-        c.header('Pragma', 'no-cache');
+        c.header("X-Content-Type-Options", "nosniff");
+        c.header("X-Frame-Options", "DENY");
+        c.header("Referrer-Policy", "strict-origin-when-cross-origin");
+        c.header(
+          "Cache-Control",
+          "no-cache, no-store, must-revalidate, private",
+        );
+        c.header("Pragma", "no-cache");
 
         // Data retention information
         if (options.retentionPeriodDays) {
-          c.header('X-Data-Retention-Days', options.retentionPeriodDays.toString());
+          c.header(
+            "X-Data-Retention-Days",
+            options.retentionPeriodDays.toString(),
+          );
         }
       }
 
@@ -114,21 +126,24 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
       // 6. LGPD Article 48 - Security incident logging
       const errorData = {
         timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
         method: c.req.method,
         path: c.req.path,
         purpose: options.purpose,
-        userId: await getCurrentUserId(c).catch(_error => null),
+        userId: await getCurrentUserId(c).catch((_error) => null),
         ipAddress: getClientIP(c),
       };
 
-      console.error('[LGPD ERROR]', errorData);
+      console.error("[LGPD ERROR]", errorData);
 
       // Don't expose internal errors to client
-      return c.json({
-        error: 'LGPD_PROCESSING_ERROR',
-        message: 'Erro no processamento dos dados pessoais',
-      }, 500);
+      return c.json(
+        {
+          error: "LGPD_PROCESSING_ERROR",
+          message: "Erro no processamento dos dados pessoais",
+        },
+        500,
+      );
     }
   };
 }
@@ -137,12 +152,12 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
 async function getCurrentUserId(c: Context): Promise<string | null> {
   try {
     // Get user ID from auth context or JWT token
-    const userId = c.get('userId') || c.req.header('x-user-id');
+    const userId = c.get("userId") || c.req.header("x-user-id");
     if (userId) return userId;
 
     // Extract from Authorization header (JWT)
-    const authHeader = c.req.header('Authorization');
-    if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
+    const authHeader = c.req.header("Authorization");
+    if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
 
     // For now, we'll rely on the auth middleware to set the userId
     // In a full implementation, you would decode and validate the JWT here
@@ -156,11 +171,11 @@ async function validateUserConsent(
   userId: string,
   purpose: string,
   dataCategories: string[],
-  minimumLevel: 'basic' | 'explicit' | 'granular',
+  minimumLevel: "basic" | "explicit" | "granular",
 ): Promise<boolean> {
   try {
     // Import Supabase client for consent validation
-    const { createServerClient } = await import('../clients/supabase.js');
+    const { createServerClient } = await import("../clients/supabase.js");
     const supabase = createServerClient();
 
     // Get the clinic context for multi-tenant validation
@@ -168,8 +183,9 @@ async function validateUserConsent(
 
     // Query active consent records for the user
     const { data: consentRecords, error } = await supabase
-      .from('consent_records')
-      .select(`
+      .from("consent_records")
+      .select(
+        `
         id,
         status,
         consent_type,
@@ -180,15 +196,16 @@ async function validateUserConsent(
         given_at,
         expires_at,
         withdrawn_at
-      `)
-      .eq('patient_id', userId)
-      .eq('clinic_id', clinicId)
-      .eq('status', 'active')
-      .eq('purpose', purpose)
-      .overlaps('data_categories', dataCategories);
+      `,
+      )
+      .eq("patient_id", userId)
+      .eq("clinic_id", clinicId)
+      .eq("status", "active")
+      .eq("purpose", purpose)
+      .overlaps("data_categories", dataCategories);
 
     if (error) {
-      console.error('Error validating consent:', error);
+      console.error("Error validating consent:", error);
       return false;
     }
 
@@ -216,7 +233,9 @@ async function validateUserConsent(
       };
 
       const currentLevel =
-        consentLevelHierarchy[consent.consent_type as keyof typeof consentLevelHierarchy] || 1;
+        consentLevelHierarchy[
+          consent.consent_type as keyof typeof consentLevelHierarchy
+        ] || 1;
       const requiredLevel = consentLevelHierarchy[minimumLevel];
 
       if (currentLevel >= requiredLevel) {
@@ -227,7 +246,7 @@ async function validateUserConsent(
 
     return false;
   } catch (error) {
-    console.error('Error in consent validation:', error);
+    console.error("Error in consent validation:", error);
     return false;
   }
 }
@@ -236,14 +255,16 @@ function getCurrentClinicId(): string {
   // This should be extracted from the request context
   // For now, we'll use a placeholder that needs to be implemented
   // based on your auth system
-  return process.env.DEFAULT_CLINIC_ID || 'clinic-default';
+  return process.env.DEFAULT_CLINIC_ID || "clinic-default";
 }
 
 function getClientIP(c: Context): string {
-  return c.req.header('X-Forwarded-For')
-    || c.req.header('X-Real-IP')
-    || c.req.header('CF-Connecting-IP')
-    || 'unknown';
+  return (
+    c.req.header("X-Forwarded-For") ||
+    c.req.header("X-Real-IP") ||
+    c.req.header("CF-Connecting-IP") ||
+    "unknown"
+  );
 }
 
 function generateRequestId(): string {
@@ -253,7 +274,7 @@ function generateRequestId(): string {
 async function logAuditEvent(eventType: string, data: any): Promise<void> {
   try {
     // Import Supabase client for audit logging
-    const { createServerClient } = await import('../clients/supabase.js');
+    const { createServerClient } = await import("../clients/supabase.js");
     const supabase = createServerClient();
 
     // Prepare audit log entry
@@ -263,29 +284,27 @@ async function logAuditEvent(eventType: string, data: any): Promise<void> {
       timestamp: new Date().toISOString(),
       user_id: data.userId || null,
       clinic_id: data.clinicId || getCurrentClinicId(),
-      ip_address: data.ipAddress || 'unknown',
-      user_agent: data.userAgent || 'unknown',
+      ip_address: data.ipAddress || "unknown",
+      user_agent: data.userAgent || "unknown",
       session_id: data.sessionId || null,
       request_id: data.requestId || generateRequestId(),
       compliance_flags: {
         lgpd_compliant: true,
-        purpose: data.purpose || 'system_operation',
+        purpose: data.purpose || "system_operation",
         data_categories: data.dataCategories || [],
       },
     };
 
     // Insert into audit_logs table (this table should be created)
-    const { error } = await supabase
-      .from('audit_logs')
-      .insert(auditEntry);
+    const { error } = await supabase.from("audit_logs").insert(auditEntry);
 
     if (error) {
-      console.error('Failed to log audit event to database:', error);
+      console.error("Failed to log audit event to database:", error);
       // Fallback to console logging if database fails
       console.log(`[AUDIT EVENT FALLBACK] ${eventType}`, data);
     }
   } catch (error) {
-    console.error('Error in audit logging:', error);
+    console.error("Error in audit logging:", error);
     // Fallback to console logging
     console.log(`[AUDIT EVENT FALLBACK] ${eventType}`, data);
   }
@@ -295,78 +314,78 @@ async function logAuditEvent(eventType: string, data: any): Promise<void> {
 export const dataProtection = {
   // Basic patient info access - LGPD Article 7(I)
   patientView: dataProtectionMiddleware({
-    purpose: 'visualizacao_dados_paciente',
-    dataCategories: ['dados_basicos', 'contato'],
+    purpose: "visualizacao_dados_paciente",
+    dataCategories: ["dados_basicos", "contato"],
     requireActiveConsent: true,
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 1825, // 5 years for medical records
-    minimumConsentLevel: 'explicit',
+    minimumConsentLevel: "explicit",
   }),
 
   // Treatment and procedure data - LGPD Article 11 (Health data)
   treatments: dataProtectionMiddleware({
-    purpose: 'tratamento_medico',
-    dataCategories: ['dados_basicos', 'dados_saude', 'fotos_medicas'],
+    purpose: "tratamento_medico",
+    dataCategories: ["dados_basicos", "dados_saude", "fotos_medicas"],
     requireActiveConsent: true,
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 7300, // 20 years for aesthetic procedures
-    minimumConsentLevel: 'granular',
+    minimumConsentLevel: "granular",
   }),
 
   // Appointment scheduling - LGPD Article 7(III)
   appointments: dataProtectionMiddleware({
-    purpose: 'agendamento_consultas',
-    dataCategories: ['dados_basicos', 'contato', 'disponibilidade'],
+    purpose: "agendamento_consultas",
+    dataCategories: ["dados_basicos", "contato", "disponibilidade"],
     requireActiveConsent: true,
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 365,
-    minimumConsentLevel: 'explicit',
+    minimumConsentLevel: "explicit",
   }),
 
   // Billing and payment operations - LGPD Article 7(II)
   billing: dataProtectionMiddleware({
-    purpose: 'faturamento_pagamento',
-    dataCategories: ['dados_basicos', 'dados_financeiros'],
+    purpose: "faturamento_pagamento",
+    dataCategories: ["dados_basicos", "dados_financeiros"],
     requireActiveConsent: true,
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 1825, // 5 years for tax compliance
-    minimumConsentLevel: 'explicit',
+    minimumConsentLevel: "explicit",
   }),
 
   // Marketing communications - LGPD Article 7(IX)
   marketing: dataProtectionMiddleware({
-    purpose: 'marketing_comunicacao',
-    dataCategories: ['dados_basicos', 'contato', 'preferencias'],
+    purpose: "marketing_comunicacao",
+    dataCategories: ["dados_basicos", "contato", "preferencias"],
     requireActiveConsent: true,
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 730, // 2 years for marketing
-    minimumConsentLevel: 'granular',
+    minimumConsentLevel: "granular",
   }),
 
   // AI and analytics - LGPD Article 20 (Automated decisions)
   aiAnalytics: dataProtectionMiddleware({
-    purpose: 'analise_ia_decisoes_automatizadas',
-    dataCategories: ['dados_comportamentais', 'dados_saude', 'fotos_medicas'],
+    purpose: "analise_ia_decisoes_automatizadas",
+    dataCategories: ["dados_comportamentais", "dados_saude", "fotos_medicas"],
     requireActiveConsent: true,
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
     retentionPeriodDays: 1095, // 3 years for AI model training
-    minimumConsentLevel: 'granular',
+    minimumConsentLevel: "granular",
   }),
 
   // Administrative access - LGPD Article 37 (Data controller duties)
   admin: dataProtectionMiddleware({
-    purpose: 'administracao_sistema',
-    dataCategories: ['todos_dados'],
+    purpose: "administracao_sistema",
+    dataCategories: ["todos_dados"],
     requireActiveConsent: false, // Admin access for legitimate interest
     auditAllRequests: true,
     enforceDataProtectionHeaders: true,
-    minimumConsentLevel: 'basic',
+    minimumConsentLevel: "basic",
   }),
 };
 

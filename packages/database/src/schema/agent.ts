@@ -68,11 +68,15 @@ export type ChatRequest = z.infer<typeof ChatRequestSchema>;
 export const ChatResponseSchema = z.object({
   response: z.string().min(1),
   sessionId: z.string().uuid(),
-  sources: z.array(z.object({
-    type: z.string(),
-    content: z.string(),
-    confidence: z.number().min(0).max(1).optional(),
-  })).default([]),
+  sources: z
+    .array(
+      z.object({
+        type: z.string(),
+        content: z.string(),
+        confidence: z.number().min(0).max(1).optional(),
+      }),
+    )
+    .default([]),
   metadata: z.record(z.unknown()).default({}),
 });
 
@@ -92,7 +96,9 @@ export const KnowledgeEntryResponseSchema = AgentKnowledgeBaseSchema.omit({
   embedding: true,
 });
 
-export type KnowledgeEntryResponse = z.infer<typeof KnowledgeEntryResponseSchema>;
+export type KnowledgeEntryResponse = z.infer<
+  typeof KnowledgeEntryResponseSchema
+>;
 
 // Agent Types
 export type AgentType = "client" | "financial" | "appointment";

@@ -9,9 +9,12 @@ import type {
   UserSubscription,
   QuotaStatus,
   AuditTrail,
-} from '@neonpro/types';
-import { Plan } from './plan';
-import { calculateQuotaStatus, createQuotaAuditTrail } from '@neonpro/config/quotas';
+} from "@neonpro/types";
+import { Plan } from "./plan";
+import {
+  calculateQuotaStatus,
+  createQuotaAuditTrail,
+} from "@neonpro/config/quotas";
 
 // ================================================
 // USER PLAN MODEL CLASS
@@ -31,12 +34,15 @@ export class UserPlan {
     concurrentRequests: number;
   };
 
-  constructor(subscription: UserSubscription, currentUsage?: {
-    monthlyQueries: number;
-    dailyQueries: number;
-    currentCostUsd: number;
-    concurrentRequests: number;
-  }) {
+  constructor(
+    subscription: UserSubscription,
+    currentUsage?: {
+      monthlyQueries: number;
+      dailyQueries: number;
+      currentCostUsd: number;
+      concurrentRequests: number;
+    },
+  ) {
     this._subscription = subscription;
     this._plan = new Plan(subscription.planCode);
     this._currentUsage = currentUsage || {
@@ -76,11 +82,14 @@ export class UserPlan {
   }
 
   get isActive(): boolean {
-    return this._subscription.status === 'active';
+    return this._subscription.status === "active";
   }
 
   get isTrial(): boolean {
-    return this._subscription.status === 'trial' || this._subscription.planCode === 'trial';
+    return (
+      this._subscription.status === "trial" ||
+      this._subscription.planCode === "trial"
+    );
   }
 
   // ================================================
@@ -106,7 +115,7 @@ export class UserPlan {
   get daysUntilExpiry(): number | null {
     const endDate = this.subscriptionEnd || this.trialEndDate;
     if (!endDate) return null;
-    
+
     const now = new Date();
     const diffTime = endDate.getTime() - now.getTime();
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -115,7 +124,7 @@ export class UserPlan {
   get isExpired(): boolean {
     const endDate = this.subscriptionEnd || this.trialEndDate;
     if (!endDate) return false;
-    
+
     return new Date() > endDate;
   }
 
@@ -152,7 +161,10 @@ export class UserPlan {
    * Gets current quota status
    */
   getQuotaStatus(): QuotaStatus {
-    return calculateQuotaStatus(this._subscription.planCode, this._currentUsage);
+    return calculateQuotaStatus(
+      this._subscription.planCode,
+      this._currentUsage,
+    );
   }
 
   /**
@@ -174,23 +186,23 @@ export class UserPlan {
     if (this.isExpired) {
       return {
         canMake: false,
-        reason: 'Assinatura expirada',
+        reason: "Assinatura expirada",
         quotaStatus: this.getQuotaStatus(),
       };
     }
 
     const quotaStatus = this.getQuotaStatus();
-    
+
     if (!quotaStatus.canMakeRequest) {
-      let reason = 'Limite de uso excedido: ';
+      let reason = "Limite de uso excedido: ";
       if (quotaStatus.monthlyQuotaRemaining <= 0) {
-        reason += 'cota mensal esgotada';
+        reason += "cota mensal esgotada";
       } else if (quotaStatus.dailyQuotaRemaining <= 0) {
-        reason += 'limite diário esgotado';
+        reason += "limite diário esgotado";
       } else if (quotaStatus.costBudgetRemaining < requestCostUsd) {
-        reason += 'orçamento mensal esgotado';
+        reason += "orçamento mensal esgotado";
       }
-      
+
       return {
         canMake: false,
         reason,
@@ -219,22 +231,18 @@ export class UserPlan {
     if (usage.concurrent) {
       this._currentUsage.concurrentRequests++;
     }
-    
+
     this._currentUsage.monthlyQueries++;
     this._currentUsage.dailyQueries++;
     this._currentUsage.currentCostUsd += usage.costUsd;
 
-    return createQuotaAuditTrail(
-      'usage_recorded',
-      this._subscription.userId,
-      {
-        planCode: this._subscription.planCode,
-        tokens: usage.tokens,
-        costUsd: usage.costUsd,
-        newMonthlyTotal: this._currentUsage.monthlyQueries,
-        newCostTotal: this._currentUsage.currentCostUsd,
-      }
-    );
+    return createQuotaAuditTrail("usage_recorded", this._subscription.userId, {
+      planCode: this._subscription.planCode,
+      tokens: usage.tokens,
+      costUsd: usage.costUsd,
+      newMonthlyTotal: this._currentUsage.monthlyQueries,
+      newCostTotal: this._currentUsage.currentCostUsd,
+    });
   }
 
   /**
@@ -254,13 +262,13 @@ export class UserPlan {
     this._currentUsage.dailyQueries = 0;
 
     return createQuotaAuditTrail(
-      'daily_quota_reset',
+      "daily_quota_reset",
       this._subscription.userId,
       {
         planCode: this._subscription.planCode,
         previousDailyQueries: previousDaily,
         resetDate: new Date().toISOString(),
-      }
+      },
     );
   }
 
@@ -270,20 +278,20 @@ export class UserPlan {
   resetMonthlyUsage(): AuditTrail {
     const previousMonthly = this._currentUsage.monthlyQueries;
     const previousCost = this._currentUsage.currentCostUsd;
-    
+
     this._currentUsage.monthlyQueries = 0;
     this._currentUsage.currentCostUsd = 0;
     this._currentUsage.dailyQueries = 0;
 
     return createQuotaAuditTrail(
-      'monthly_quota_reset',
+      "monthly_quota_reset",
       this._subscription.userId,
       {
         planCode: this._subscription.planCode,
         previousMonthlyQueries: previousMonthly,
         previousCostUsd: previousCost,
         resetDate: new Date().toISOString(),
-      }
+      },
     );
   }
 
@@ -328,7 +336,7 @@ export class UserPlan {
       return {
         canUpgrade: false,
         benefits: [],
-        warnings: ['Você já está neste plano'],
+        warnings: ["Você já está neste plano"],
       };
     }
 
@@ -352,23 +360,29 @@ export class UserPlan {
 
     // Check usage benefits
     if (targetPlan.monthlyQueryLimit > this._plan.monthlyQueryLimit) {
-      benefits.push(`Mais consultas mensais: ${targetPlan.monthlyQueryLimit === -1 ? 'ilimitadas' : targetPlan.monthlyQueryLimit}`);
+      benefits.push(
+        `Mais consultas mensais: ${targetPlan.monthlyQueryLimit === -1 ? "ilimitadas" : targetPlan.monthlyQueryLimit}`,
+      );
     }
 
     // Check for warnings
     if (this.isExpiringSoon) {
-      warnings.push('Assinatura atual expira em breve');
+      warnings.push("Assinatura atual expira em breve");
     }
 
-    if (this._currentUsage.monthlyQueries > this._plan.monthlyQueryLimit * 0.8) {
-      warnings.push('Uso elevado detectado - upgrade recomendado');
+    if (
+      this._currentUsage.monthlyQueries >
+      this._plan.monthlyQueryLimit * 0.8
+    ) {
+      warnings.push("Uso elevado detectado - upgrade recomendado");
     }
 
     return {
       canUpgrade: true,
       benefits,
       warnings,
-      estimatedCostSavings: benefits.length > 0 ? 'Consulte o painel de preços' : undefined,
+      estimatedCostSavings:
+        benefits.length > 0 ? "Consulte o painel de preços" : undefined,
     };
   }
 
@@ -395,12 +409,19 @@ export class UserPlan {
     const issues: string[] = [];
 
     // Check if current usage exceeds new plan limits
-    if (newPlan.monthlyQueryLimit !== -1 && this._currentUsage.monthlyQueries > newPlan.monthlyQueryLimit) {
-      issues.push(`Uso mensal atual (${this._currentUsage.monthlyQueries}) excede novo limite (${newPlan.monthlyQueryLimit})`);
+    if (
+      newPlan.monthlyQueryLimit !== -1 &&
+      this._currentUsage.monthlyQueries > newPlan.monthlyQueryLimit
+    ) {
+      issues.push(
+        `Uso mensal atual (${this._currentUsage.monthlyQueries}) excede novo limite (${newPlan.monthlyQueryLimit})`,
+      );
     }
 
     if (this._currentUsage.currentCostUsd > newPlan.costBudgetUsdMonthly) {
-      issues.push(`Custo mensal atual ($${this._currentUsage.currentCostUsd}) excede novo orçamento ($${newPlan.costBudgetUsdMonthly})`);
+      issues.push(
+        `Custo mensal atual ($${this._currentUsage.currentCostUsd}) excede novo orçamento ($${newPlan.costBudgetUsdMonthly})`,
+      );
     }
 
     return {
@@ -429,13 +450,13 @@ export class UserPlan {
    * Gets important notifications for the user
    */
   getNotifications(): Array<{
-    type: 'info' | 'warning' | 'critical';
+    type: "info" | "warning" | "critical";
     title: string;
     message: string;
     actionRequired: boolean;
   }> {
     const notifications: Array<{
-      type: 'info' | 'warning' | 'critical';
+      type: "info" | "warning" | "critical";
       title: string;
       message: string;
       actionRequired: boolean;
@@ -444,17 +465,18 @@ export class UserPlan {
     // Expiration warnings
     if (this.isExpired) {
       notifications.push({
-        type: 'critical',
-        title: 'Assinatura Expirada',
-        message: 'Sua assinatura expirou. Renove para continuar usando os recursos de IA.',
+        type: "critical",
+        title: "Assinatura Expirada",
+        message:
+          "Sua assinatura expirou. Renove para continuar usando os recursos de IA.",
         actionRequired: true,
       });
     } else if (this.isExpiringSoon) {
       const days = this.daysUntilExpiry!;
       notifications.push({
-        type: 'warning',
-        title: 'Assinatura Expirando',
-        message: `Sua assinatura expira em ${days} dia${days > 1 ? 's' : ''}. Configure renovação automática.`,
+        type: "warning",
+        title: "Assinatura Expirando",
+        message: `Sua assinatura expira em ${days} dia${days > 1 ? "s" : ""}. Configure renovação automática.`,
         actionRequired: true,
       });
     }
@@ -463,19 +485,21 @@ export class UserPlan {
     const quotaStatus = this.getQuotaStatus();
     if (quotaStatus.monthlyUsagePercentage > 80) {
       notifications.push({
-        type: quotaStatus.monthlyUsagePercentage > 95 ? 'critical' : 'warning',
-        title: 'Limite de Uso',
+        type: quotaStatus.monthlyUsagePercentage > 95 ? "critical" : "warning",
+        title: "Limite de Uso",
         message: `Você usou ${quotaStatus.monthlyUsagePercentage.toFixed(1)}% da sua cota mensal.`,
         actionRequired: quotaStatus.monthlyUsagePercentage > 95,
       });
     }
 
     // Cost warnings
-    const costPercentage = (this._currentUsage.currentCostUsd / this._plan.costBudgetUsdMonthly) * 100;
+    const costPercentage =
+      (this._currentUsage.currentCostUsd / this._plan.costBudgetUsdMonthly) *
+      100;
     if (costPercentage > 80) {
       notifications.push({
-        type: costPercentage > 95 ? 'critical' : 'warning',
-        title: 'Orçamento de IA',
+        type: costPercentage > 95 ? "critical" : "warning",
+        title: "Orçamento de IA",
         message: `Você usou ${costPercentage.toFixed(1)}% do seu orçamento mensal de IA.`,
         actionRequired: costPercentage > 95,
       });
@@ -486,9 +510,9 @@ export class UserPlan {
       const trialDays = this.daysUntilExpiry;
       if (trialDays !== null && trialDays <= 3) {
         notifications.push({
-          type: 'warning',
-          title: 'Trial Encerrando',
-          message: `Seu período de trial encerra em ${trialDays} dia${trialDays > 1 ? 's' : ''}. Escolha um plano para continuar.`,
+          type: "warning",
+          title: "Trial Encerrando",
+          message: `Seu período de trial encerra em ${trialDays} dia${trialDays > 1 ? "s" : ""}. Escolha um plano para continuar.`,
           actionRequired: true,
         });
       }
@@ -505,9 +529,9 @@ export class UserPlan {
    * Converts UserPlan to a serializable object
    */
   toJSON(): UserSubscription & {
-    planDetails: ReturnType<Plan['toJSON']>;
+    planDetails: ReturnType<Plan["toJSON"]>;
     quotaStatus: QuotaStatus;
-    notifications: ReturnType<UserPlan['getNotifications']>;
+    notifications: ReturnType<UserPlan["getNotifications"]>;
   } {
     return {
       ...this._subscription,
@@ -522,33 +546,40 @@ export class UserPlan {
   /**
    * Creates a UserPlan instance from subscription data
    */
-  static fromSubscription(subscription: UserSubscription, currentUsage?: {
-    monthlyQueries: number;
-    dailyQueries: number;
-    currentCostUsd: number;
-    concurrentRequests: number;
-  }): UserPlan {
+  static fromSubscription(
+    subscription: UserSubscription,
+    currentUsage?: {
+      monthlyQueries: number;
+      dailyQueries: number;
+      currentCostUsd: number;
+      concurrentRequests: number;
+    },
+  ): UserPlan {
     return new UserPlan(subscription, currentUsage);
   }
 
   /**
    * Creates a new trial subscription
    */
-  static createTrial(clinicId: string, userId: string, trialDays: number = 30): UserPlan {
+  static createTrial(
+    clinicId: string,
+    userId: string,
+    trialDays: number = 30,
+  ): UserPlan {
     const now = new Date();
-    const trialEnd = new Date(now.getTime() + (trialDays * 24 * 60 * 60 * 1000));
+    const trialEnd = new Date(now.getTime() + trialDays * 24 * 60 * 60 * 1000);
 
     const subscription: UserSubscription = {
       id: `trial-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
       clinicId,
       userId,
-      planCode: 'trial',
+      planCode: "trial",
       subscriptionStart: now,
       autoRenew: false,
       currentMonthQueries: 0,
       currentMonthCostUsd: 0,
       lastUsageReset: now,
-      status: 'trial',
+      status: "trial",
       trialEndDate: trialEnd,
       marketingConsent: false,
       createdAt: now,

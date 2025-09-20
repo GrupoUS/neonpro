@@ -29,7 +29,7 @@ Complete database architecture for NeonPro aesthetic clinic management platform.
 
 ```typescript
 // lib/supabase/client.ts - Browser client with RLS
-import { createBrowserClient } from '@supabase/ssr';
+import { createBrowserClient } from "@supabase/ssr";
 
 export function createClient() {
   return createBrowserClient(
@@ -39,7 +39,7 @@ export function createClient() {
 }
 
 // lib/supabase/server.ts - Server client with RLS
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient } from "@supabase/ssr";
 
 export async function createClient() {
   return createServerClient(
@@ -50,7 +50,7 @@ export async function createClient() {
 }
 
 // lib/supabase/admin.ts - Service role client (bypasses RLS)
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 export function createAdminClient() {
   return createClient(

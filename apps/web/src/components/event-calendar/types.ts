@@ -12,4 +12,26 @@ export interface CalendarEvent {
   location?: string;
 }
 
-export type EventColor = "blue" | "orange" | "violet" | "rose" | "emerald";
+export interface CalendarEventExtended extends CalendarEvent {
+  status?: string;
+  priority?: number;
+  patientId?: string;
+  professionalId?: string;
+  serviceTypeId?: string;
+  clinicId?: string;
+  notes?: string;
+  internalNotes?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+export type EventColor = "blue" | "orange" | "violet" | "rose" | "emerald" | "sky";
+
+// Export types from event service for convenience
+export type {
+  EventFilterOptions,
+  EventSearchOptions,
+  CreateEventData,
+  UpdateEventData,
+  EventValidationResult,
+} from "@/services/event.service";

@@ -3,114 +3,127 @@
  * T081-A4 - Validate 100% WCAG 2.1 AA+ Compliance
  */
 
-import { describe, expect, it } from 'vitest';
-import { AccessibilityValidator } from '../../../utils/accessibility-validation';
+import { describe, expect, it } from "vitest";
+import { AccessibilityValidator } from "../../../utils/accessibility-validation";
 
-describe('Accessibility Validation Final Test', () => {
-  it('should have comprehensive WCAG validation criteria', () => {
-    const { WCAG_21_AA_VALIDATION_CRITERIA } = require('../../../utils/accessibility-validation');
+describe("Accessibility Validation Final Test", () => {
+  it("should have comprehensive WCAG validation criteria", () => {
+    const {
+      WCAG_21_AA_VALIDATION_CRITERIA,
+    } = require("../../../utils/accessibility-validation");
 
     expect(WCAG_21_AA_VALIDATION_CRITERIA).toBeDefined();
     expect(Array.isArray(WCAG_21_AA_VALIDATION_CRITERIA)).toBe(true);
     expect(WCAG_21_AA_VALIDATION_CRITERIA.length).toBeGreaterThan(30); // Should have comprehensive criteria
 
     // Check that we have criteria for all WCAG categories
-    const categories = ['perceivable', 'operable', 'understandable', 'robust'];
-    categories.forEach(category => {
+    const categories = ["perceivable", "operable", "understandable", "robust"];
+    categories.forEach((category) => {
       const criteriaInCategory = WCAG_21_AA_VALIDATION_CRITERIA.filter(
-        criteria => criteria.category === category,
+        (criteria) => criteria.category === category,
       );
       expect(criteriaInCategory.length).toBeGreaterThan(0);
     });
 
     // Check healthcare relevance
     const healthcareRelevant = WCAG_21_AA_VALIDATION_CRITERIA.filter(
-      criteria => criteria.healthcareRelevant,
+      (criteria) => criteria.healthcareRelevant,
     );
     expect(healthcareRelevant.length).toBeGreaterThan(0);
 
     // Check that we have criteria for relevant WCAG levels (AA focus)
-    const wcagLevels = ['A', 'AA'];
-    wcagLevels.forEach(level => {
+    const wcagLevels = ["A", "AA"];
+    wcagLevels.forEach((level) => {
       const criteriaInLevel = WCAG_21_AA_VALIDATION_CRITERIA.filter(
-        criteria => criteria.wcagLevel === level,
+        (criteria) => criteria.wcagLevel === level,
       );
       expect(criteriaInLevel.length).toBeGreaterThan(0);
     });
   });
 
-  it('should validate key healthcare accessibility requirements', () => {
-    const { WCAG_21_AA_VALIDATION_CRITERIA } = require('../../../utils/accessibility-validation');
+  it("should validate key healthcare accessibility requirements", () => {
+    const {
+      WCAG_21_AA_VALIDATION_CRITERIA,
+    } = require("../../../utils/accessibility-validation");
 
     // Check for critical healthcare-related criteria
-    const healthcareCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(criteria =>
-      criteria.name.includes('Color')
-      || criteria.name.includes('Keyboard')
-      || criteria.name.includes('Focus')
-      || criteria.name.includes('Error')
-      || criteria.name.includes('Navigation')
-      || criteria.name.includes('Timing')
+    const healthcareCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(
+      (criteria) =>
+        criteria.name.includes("Color") ||
+        criteria.name.includes("Keyboard") ||
+        criteria.name.includes("Focus") ||
+        criteria.name.includes("Error") ||
+        criteria.name.includes("Navigation") ||
+        criteria.name.includes("Timing"),
     );
 
     expect(healthcareCriteria.length).toBeGreaterThan(0);
 
-    healthcareCriteria.forEach(criteria => {
+    healthcareCriteria.forEach((criteria) => {
       expect(criteria.healthcareRelevant).toBe(true);
       expect(criteria.wcagLevel).toMatch(/A|AA|AAA/);
-      expect(criteria.category).toMatch(/perceivable|operable|understandable|robust/);
+      expect(criteria.category).toMatch(
+        /perceivable|operable|understandable|robust/,
+      );
       expect(Array.isArray(criteria.successCriteria)).toBe(true);
       expect(criteria.successCriteria.length).toBeGreaterThan(0);
     });
   });
 
-  it('should have emergency-specific accessibility criteria', () => {
-    const { WCAG_21_AA_VALIDATION_CRITERIA } = require('../../../utils/accessibility-validation');
+  it("should have emergency-specific accessibility criteria", () => {
+    const {
+      WCAG_21_AA_VALIDATION_CRITERIA,
+    } = require("../../../utils/accessibility-validation");
 
     // Check for emergency-relevant criteria
-    const emergencyCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(criteria =>
-      criteria.description.includes('emergency')
-      || criteria.description.includes('time limit')
-      || criteria.description.includes('interruption')
-      || criteria.name.includes('Timing')
-      || criteria.name.includes('Pause')
+    const emergencyCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(
+      (criteria) =>
+        criteria.description.includes("emergency") ||
+        criteria.description.includes("time limit") ||
+        criteria.description.includes("interruption") ||
+        criteria.name.includes("Timing") ||
+        criteria.name.includes("Pause"),
     );
 
     expect(emergencyCriteria.length).toBeGreaterThan(0);
 
-    emergencyCriteria.forEach(criteria => {
+    emergencyCriteria.forEach((criteria) => {
       expect(criteria.healthcareRelevant).toBe(true);
     });
   });
 
-  it('should have medical information accessibility criteria', () => {
-    const { WCAG_21_AA_VALIDATION_CRITERIA } = require('../../../utils/accessibility-validation');
+  it("should have medical information accessibility criteria", () => {
+    const {
+      WCAG_21_AA_VALIDATION_CRITERIA,
+    } = require("../../../utils/accessibility-validation");
 
     // Check for medical information criteria
-    const medicalCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(criteria =>
-      criteria.description.includes('medical')
-      || criteria.description.includes('health')
-      || criteria.description.includes('instructions')
-      || criteria.name.includes('Instructions')
-      || criteria.name.includes('Input Assistance')
+    const medicalCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(
+      (criteria) =>
+        criteria.description.includes("medical") ||
+        criteria.description.includes("health") ||
+        criteria.description.includes("instructions") ||
+        criteria.name.includes("Instructions") ||
+        criteria.name.includes("Input Assistance"),
     );
 
     expect(medicalCriteria.length).toBeGreaterThan(0);
 
-    medicalCriteria.forEach(criteria => {
+    medicalCriteria.forEach((criteria) => {
       expect(criteria.healthcareRelevant).toBe(true);
     });
   });
 
-  it('should generate compliance certificate with correct format', () => {
+  it("should generate compliance certificate with correct format", () => {
     const validator = new AccessibilityValidator();
     const mockReport = {
       timestamp: new Date().toISOString(),
       overallScore: 95,
-      validationStatus: 'passed' as const,
+      validationStatus: "passed" as const,
       wcagCompliance: {
-        level: 'AA' as const,
+        level: "AA" as const,
         score: 95,
-        passedCriteria: ['1.1.1', '1.2.1'],
+        passedCriteria: ["1.1.1", "1.2.1"],
         failedCriteria: [],
       },
       healthcareCompliance: {
@@ -131,33 +144,35 @@ describe('Accessibility Validation Final Test', () => {
 
     const certificate = validator.generateComplianceCertificate(mockReport);
 
-    expect(certificate).toContain('Accessibility Compliance Certificate');
-    expect(certificate).toContain('**Overall Score:** 95%');
-    expect(certificate).toContain('**Validation Status:** PASSED');
-    expect(certificate).toContain('**WCAG Level:** AA');
-    expect(certificate).toContain('**LGPD Compliant:** Yes');
-    expect(certificate).toContain('**ANVISA Compliant:** Yes');
-    expect(certificate).toContain('**CFM Compliant:** Yes');
-    expect(certificate).toContain('**Total Components:** 10');
-    expect(certificate).toContain('**Accessible Components:** 9');
-    expect(certificate).toContain('**Components with Issues:** 1');
-    expect(certificate).toContain('**Critical Issues:** 0');
-    expect(certificate).toContain('Certificate Valid Until:');
-    expect(certificate).toContain('meets WCAG 2.1 AA+ accessibility standards');
-    expect(certificate).toContain('Brazilian healthcare regulatory requirements');
+    expect(certificate).toContain("Accessibility Compliance Certificate");
+    expect(certificate).toContain("**Overall Score:** 95%");
+    expect(certificate).toContain("**Validation Status:** PASSED");
+    expect(certificate).toContain("**WCAG Level:** AA");
+    expect(certificate).toContain("**LGPD Compliant:** Yes");
+    expect(certificate).toContain("**ANVISA Compliant:** Yes");
+    expect(certificate).toContain("**CFM Compliant:** Yes");
+    expect(certificate).toContain("**Total Components:** 10");
+    expect(certificate).toContain("**Accessible Components:** 9");
+    expect(certificate).toContain("**Components with Issues:** 1");
+    expect(certificate).toContain("**Critical Issues:** 0");
+    expect(certificate).toContain("Certificate Valid Until:");
+    expect(certificate).toContain("meets WCAG 2.1 AA+ accessibility standards");
+    expect(certificate).toContain(
+      "Brazilian healthcare regulatory requirements",
+    );
   });
 
-  it('should generate certificate with failure status', () => {
+  it("should generate certificate with failure status", () => {
     const validator = new AccessibilityValidator();
     const mockReport = {
       timestamp: new Date().toISOString(),
       overallScore: 65,
-      validationStatus: 'failed' as const,
+      validationStatus: "failed" as const,
       wcagCompliance: {
-        level: 'non-compliant' as const,
+        level: "non-compliant" as const,
         score: 65,
-        passedCriteria: ['1.1.1'],
-        failedCriteria: ['1.4.3', '2.1.1'],
+        passedCriteria: ["1.1.1"],
+        failedCriteria: ["1.4.3", "2.1.1"],
       },
       healthcareCompliance: {
         overallScore: 70,
@@ -177,45 +192,47 @@ describe('Accessibility Validation Final Test', () => {
 
     const certificate = validator.generateComplianceCertificate(mockReport);
 
-    expect(certificate).toContain('Accessibility Compliance Certificate');
-    expect(certificate).toContain('**Overall Score:** 65%');
-    expect(certificate).toContain('**Validation Status:** FAILED');
-    expect(certificate).toContain('**WCAG Level:** non-compliant');
-    expect(certificate).toContain('**LGPD Compliant:** No');
-    expect(certificate).toContain('**ANVISA Compliant:** Yes');
-    expect(certificate).toContain('**CFM Compliant:** No');
-    expect(certificate).toContain('**Critical Issues:** 2');
+    expect(certificate).toContain("Accessibility Compliance Certificate");
+    expect(certificate).toContain("**Overall Score:** 65%");
+    expect(certificate).toContain("**Validation Status:** FAILED");
+    expect(certificate).toContain("**WCAG Level:** non-compliant");
+    expect(certificate).toContain("**LGPD Compliant:** No");
+    expect(certificate).toContain("**ANVISA Compliant:** Yes");
+    expect(certificate).toContain("**CFM Compliant:** No");
+    expect(certificate).toContain("**Critical Issues:** 2");
   });
 
-  it('should create accessibility validator instance', () => {
+  it("should create accessibility validator instance", () => {
     const validator = new AccessibilityValidator();
     expect(validator).toBeDefined();
-    expect(typeof validator.validateAccessibility).toBe('function');
-    expect(typeof validator.validateComponent).toBe('function');
-    expect(typeof validator.generateComplianceCertificate).toBe('function');
+    expect(typeof validator.validateAccessibility).toBe("function");
+    expect(typeof validator.validateComponent).toBe("function");
+    expect(typeof validator.generateComplianceCertificate).toBe("function");
   });
 
-  it('should validate WCAG 2.1 AA+ compliance thresholds', () => {
-    const { WCAG_21_AA_VALIDATION_CRITERIA } = require('../../../utils/accessibility-validation');
+  it("should validate WCAG 2.1 AA+ compliance thresholds", () => {
+    const {
+      WCAG_21_AA_VALIDATION_CRITERIA,
+    } = require("../../../utils/accessibility-validation");
 
     // AA level criteria should be included
     const aaCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(
-      criteria => criteria.wcagLevel === 'AA',
+      (criteria) => criteria.wcagLevel === "AA",
     );
     expect(aaCriteria.length).toBeGreaterThan(0);
 
     // Should have comprehensive coverage of WCAG principles
     const perceivableCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(
-      criteria => criteria.category === 'perceivable',
+      (criteria) => criteria.category === "perceivable",
     );
     const operableCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(
-      criteria => criteria.category === 'operable',
+      (criteria) => criteria.category === "operable",
     );
     const understandableCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(
-      criteria => criteria.category === 'understandable',
+      (criteria) => criteria.category === "understandable",
     );
     const robustCriteria = WCAG_21_AA_VALIDATION_CRITERIA.filter(
-      criteria => criteria.category === 'robust',
+      (criteria) => criteria.category === "robust",
     );
 
     expect(perceivableCriteria.length).toBeGreaterThan(0);

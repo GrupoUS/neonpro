@@ -1,61 +1,64 @@
 // Vercel API OpenAPI JSON Endpoint
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 
 function getBaseUrl(req: VercelRequest): string {
   // Try to get from environment variable first
   if (process.env.API_URL) {
     const url = process.env.API_URL;
     // Ensure it has protocol
-    return url.startsWith('http') ? `${url}/api` : `https://${url}/api`;
+    return url.startsWith("http") ? `${url}/api` : `https://${url}/api`;
   }
 
   // Fallback to constructing from request headers
   const host = req.headers.host;
-  const protocol = req.headers['x-forwarded-proto'] || 'https';
+  const protocol = req.headers["x-forwarded-proto"] || "https";
 
   return `${protocol}://${host}/api`;
 }
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS",
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
   // Handle preflight requests
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     res.status(200).end();
     return;
   }
 
   return res.status(200).json({
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'NeonPro API',
-      version: '2.0.0',
-      description: 'Fresh deployment API - caching issues resolved',
+      title: "NeonPro API",
+      version: "2.0.0",
+      description: "Fresh deployment API - caching issues resolved",
     },
     servers: [
       {
         url: getBaseUrl(req),
-        description: 'API server',
+        description: "API server",
       },
     ],
     paths: {
-      '/health': {
+      "/health": {
         get: {
-          summary: 'Health check endpoint',
+          summary: "Health check endpoint",
           responses: {
-            '200': {
-              description: 'API is healthy',
+            "200": {
+              description: "API is healthy",
               content: {
-                'application/json': {
+                "application/json": {
                   schema: {
-                    type: 'object',
+                    type: "object",
                     properties: {
-                      status: { type: 'string' },
-                      message: { type: 'string' },
-                      timestamp: { type: 'string' },
+                      status: { type: "string" },
+                      message: { type: "string" },
+                      timestamp: { type: "string" },
                     },
                   },
                 },
@@ -64,12 +67,12 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
           },
         },
       },
-      '/v1/health': {
+      "/v1/health": {
         get: {
-          summary: 'API v1 health check endpoint',
+          summary: "API v1 health check endpoint",
           responses: {
-            '200': {
-              description: 'API v1 is healthy',
+            "200": {
+              description: "API v1 is healthy",
             },
           },
         },

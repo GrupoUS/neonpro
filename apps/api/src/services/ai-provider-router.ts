@@ -1,585 +1,770 @@
 /**
  * Multi-Provider AI Routing Service
- * Healthcare platform AI provider management with cost optimization
- * LGPD/ANVISA/CFM compliance for healthcare AI operations
+ * T038 - Create multi-provider AI routing service
+ *
+ * Intelligent AI provider routing with healthcare-specific logic, LGPD compliance,
+ * cost optimization, and integration with semantic caching system.
+ *
+ * Features:
+ * - Multi-provider support (OpenAI, Anthropic, Google, Azure, AWS Bedrock)
+ * - Healthcare-specific routing logic with LGPD compliance
+ * - Cost optimization and load balancing
+ * - Integration with semantic caching and audit trail
+ * - Fallback mechanisms and error handling
+ * - PII protection and data sanitization
  */
 
 import {
-  AIModelConfig,
-  AIOptimizationConfig,
-  AIPerformanceMetrics,
-  AIProvider,
-  CostOptimizationStrategy,
+  AIModelCategory,
+  AIModelConfigOpt,
+  AIPerformanceMetricsOpt,
+  AIProviderOpt,
+  HealthcareAIOptimizationUtils,
   HealthcareAIUseCase,
-} from '@neonpro/shared';
-import { AuditTrailService } from './audit-trail';
-import { SemanticCacheService } from './semantic-cache';
+  HealthcareDataClassification,
+  LGPDDataCategory,
+} from "@neonpro/shared";
+import { z } from "zod";
+import { AuditTrailService } from "./audit-trail";
+import { SemanticCacheService } from "./semantic-cache";
 
-// Provider response interface
-interface AIProviderResponse {
-  content: string;
-  tokens_used: number;
-  cost: number;
-  latency_ms: number;
-  provider: AIProvider;
-  model: string;
-  quality_score?: number;
-  cached: boolean;
+// Import modular components
+import { ProviderConfigManager } from "./ai-provider/config";
+import { ProviderHealthMonitor } from "./ai-provider/health-check";
+import { AISecurityManager } from "./ai-provider/security";
+import {
+  RoutingStrategy,
+  ProviderStatus,
+  ProviderHealthCheck,
+  RoutingRequest,
+  RoutingResponse,
+  ProviderConfig,
+} from "./ai-provider/types";
+
+// ============================================================================
+// Circuit Breaker Implementation
+// ============================================================================
+
+class CircuitBreaker {
+  private failures = 0;
+  private lastFailureTime = 0;
+  private state: "closed" | "open" | "half-open" = "closed";
+  private readonly failureThreshold = 5;
+  private readonly timeoutMs = 60000; // 1 minute
+
+  constructor(private provider: AIProvider) {}
+
+  isOpen(): boolean {
+    if (this.state === "open") {
+      // Check if timeout has elapsed
+      if (Date.now() - this.lastFailureTime >= this.timeoutMs) {
+        this.state = "half-open";
+        return false;
+      }
+      return true;
+    }
+    return false;
+  }
+
+  recordSuccess(): void {
+    this.failures = 0;
+    this.state = "closed";
+  }
+
+  recordFailure(): void {
+    this.failures++;
+    this.lastFailureTime = Date.now();
+
+    if (this.state === "half-open") {
+      this.state = "open";
+    } else if (this.failures >= this.failureThreshold) {
+      this.state = "open";
+    }
+  }
+
+  getState(): string {
+    return this.state;
+  }
 }
 
-// Request interface
-interface AIRoutingRequest {
-  prompt: string;
-  patient_id?: string;
-  healthcare_context: HealthcareAIUseCase;
-  max_cost?: number;
-  max_latency_ms?: number;
-  min_quality_score?: number;
-  require_healthcare_compliant?: boolean;
-  emergency?: boolean;
-}
+// ============================================================================
+// AI Provider Router Service
+// ============================================================================
 
-// Provider configuration
-interface ProviderConfig {
-  provider: AIProvider;
-  api_key: string;
-  base_url?: string;
-  models: AIModelConfig[];
-  enabled: boolean;
-  healthcare_certified: boolean;
-  lgpd_compliant: boolean;
-  anvisa_approved: boolean;
-  cfm_certified: boolean;
-  cost_tier: 'budget' | 'standard' | 'premium';
-  reliability_score: number; // 0-1
-  average_latency_ms: number;
-  rate_limit_rpm: number;
-  current_load: number; // 0-1
-}
+export class AIProviderRouterService {
+  private semantic_cache: SemanticCacheService;
+  private audit_service: AuditTrailService;
+  private health_check_interval?: NodeJS.Timeout;
+  private request_queue: Map<string, Promise<RoutingResponse>> = new Map();
+  private performance_metrics: Map<AIProvider, AIPerformanceMetrics> =
+    new Map();
 
-// Routing decision criteria
-interface RoutingCriteria {
-  cost_weight: number; // 0-1
-  latency_weight: number; // 0-1
-  quality_weight: number; // 0-1
-  healthcare_compliance_weight: number; // 0-1
-  reliability_weight: number; // 0-1
-}
-
-// Provider health status
-interface ProviderHealth {
-  provider: AIProvider;
-  healthy: boolean;
-  last_success: Date;
-  last_failure: Date;
-  consecutive_failures: number;
-  average_response_time: number;
-  error_rate: number;
-  uptime_percentage: number;
-}
-
-export class AIProviderRouter {
-  private providers: Map<AIProvider, ProviderConfig> = new Map();
-  private healthStatus: Map<AIProvider, ProviderHealth> = new Map();
-  private routingCriteria: RoutingCriteria;
-  private auditService: AuditTrailService;
-  private cacheService: SemanticCacheService;
-  private performanceMetrics: Map<AIProvider, AIPerformanceMetrics> = new Map();
-  private circuitBreakers: Map<AIProvider, { open: boolean; openedAt?: Date }> = new Map();
+  // Modular components
+  private config_manager: ProviderConfigManager;
+  private health_monitor: ProviderHealthMonitor;
+  private security_manager: AISecurityManager;
 
   constructor(
-    auditService: AuditTrailService,
-    cacheService: SemanticCacheService,
-    routingCriteria?: Partial<RoutingCriteria>,
+    semantic_cache: SemanticCacheService,
+    audit_service: AuditTrailService,
+    provider_configs: ProviderConfig[] = [],
   ) {
-    this.auditService = auditService;
-    this.cacheService = cacheService;
+    this.semantic_cache = semantic_cache;
+    this.audit_service = audit_service;
 
-    // Default routing criteria for healthcare
-    this.routingCriteria = {
-      cost_weight: 0.2,
-      latency_weight: 0.3,
-      quality_weight: 0.25,
-      healthcare_compliance_weight: 0.15,
-      reliability_weight: 0.1,
-      ...routingCriteria,
-    };
+    // Initialize modular components
+    this.config_manager = new ProviderConfigManager();
+    this.health_monitor = new ProviderHealthMonitor();
+    this.security_manager = new AISecurityManager(audit_service);
 
-    this.initializeProviders();
-    this.startHealthMonitoring();
+    // Initialize providers
+    this.config_manager.initializeProviders(provider_configs);
+
+    // Initialize health monitoring for each provider
+    provider_configs.forEach((config) => {
+      this.health_monitor.initializeProviderHealth(config.provider, config);
+      this.initializeProviderMetrics(config.provider);
+    });
+
+    // Add default healthcare-compliant providers if none provided
+    if (provider_configs.length === 0) {
+      this.config_manager.initializeDefaultProviders();
+      // Initialize health for default providers
+      const default_configs = this.config_manager.getAllProviderConfigs();
+      default_configs.forEach((config) => {
+        this.health_monitor.initializeProviderHealth(config.provider, config);
+        this.initializeProviderMetrics(config.provider);
+      });
+    }
+
+    // Start health checking
+    this.startHealthChecking();
   }
 
   /**
-   * Initialize healthcare-certified AI providers
+   * Initialize performance metrics for provider
    */
-  private initializeProviders(): void {
-    // OpenAI - Healthcare compliant configuration
-    this.addProvider({
-      provider: AIProvider.OPENAI,
-      api_key: process.env.OPENAI_API_KEY || '',
-      models: [
-        {
-          provider: AIProvider.OPENAI,
-          model_name: 'gpt-4-turbo',
-          category: 'chat' as any,
-          cost_config: {
-            input_cost_per_1k_tokens: 0.01,
-            output_cost_per_1k_tokens: 0.03,
-            max_tokens: 4096,
-            max_monthly_budget: 1000,
-          },
-          performance_config: {
-            max_latency_ms: 5000,
-            timeout_ms: 30000,
-            retry_attempts: 3,
-            rate_limit_rpm: 3500,
-          },
-          healthcare_config: {
-            pii_redaction_enabled: true,
-            lgpd_compliant: true,
-            anvisa_approved: true,
-            cfm_professional_use: true,
-            patient_data_processing: true,
-            audit_logging_required: true,
-          },
-        },
-        {
-          provider: AIProvider.OPENAI,
-          model_name: 'gpt-3.5-turbo',
-          category: 'chat' as any,
-          cost_config: {
-            input_cost_per_1k_tokens: 0.0015,
-            output_cost_per_1k_tokens: 0.002,
-            max_tokens: 4096,
-            max_monthly_budget: 500,
-          },
-          performance_config: {
-            max_latency_ms: 3000,
-            timeout_ms: 20000,
-            retry_attempts: 3,
-            rate_limit_rpm: 3500,
-          },
-          healthcare_config: {
-            pii_redaction_enabled: true,
-            lgpd_compliant: true,
-            anvisa_approved: true,
-            cfm_professional_use: true,
-            patient_data_processing: true,
-            audit_logging_required: true,
-          },
-        },
-      ],
-      enabled: true,
-      healthcare_certified: true,
-      lgpd_compliant: true,
-      anvisa_approved: true,
-      cfm_certified: true,
-      cost_tier: 'standard',
-      reliability_score: 0.95,
-      average_latency_ms: 2500,
-      rate_limit_rpm: 3500,
-      current_load: 0.3,
-    });
-
-    // Anthropic - Claude models
-    this.addProvider({
-      provider: AIProvider.ANTHROPIC,
-      api_key: process.env.ANTHROPIC_API_KEY || '',
-      models: [
-        {
-          provider: AIProvider.ANTHROPIC,
-          model_name: 'claude-3-haiku',
-          category: 'chat' as any,
-          cost_config: {
-            input_cost_per_1k_tokens: 0.00025,
-            output_cost_per_1k_tokens: 0.00125,
-            max_tokens: 4096,
-            max_monthly_budget: 300,
-          },
-          performance_config: {
-            max_latency_ms: 2000,
-            timeout_ms: 15000,
-            retry_attempts: 3,
-            rate_limit_rpm: 1000,
-          },
-          healthcare_config: {
-            pii_redaction_enabled: true,
-            lgpd_compliant: true,
-            anvisa_approved: true,
-            cfm_professional_use: true,
-            patient_data_processing: true,
-            audit_logging_required: true,
-          },
-        },
-      ],
-      enabled: true,
-      healthcare_certified: true,
-      lgpd_compliant: true,
-      anvisa_approved: true,
-      cfm_certified: true,
-      cost_tier: 'budget',
-      reliability_score: 0.92,
-      average_latency_ms: 1800,
-      rate_limit_rpm: 1000,
-      current_load: 0.2,
-    });
-
-    // Google AI
-    this.addProvider({
-      provider: AIProvider.GOOGLE,
-      api_key: process.env.GOOGLE_AI_API_KEY || '',
-      models: [
-        {
-          provider: AIProvider.GOOGLE,
-          model_name: 'gemini-pro',
-          category: 'chat' as any,
-          cost_config: {
-            input_cost_per_1k_tokens: 0.0005,
-            output_cost_per_1k_tokens: 0.0015,
-            max_tokens: 4096,
-            max_monthly_budget: 400,
-          },
-          performance_config: {
-            max_latency_ms: 3500,
-            timeout_ms: 25000,
-            retry_attempts: 3,
-            rate_limit_rpm: 60,
-          },
-          healthcare_config: {
-            pii_redaction_enabled: true,
-            lgpd_compliant: true,
-            anvisa_approved: false, // Pending certification
-            cfm_professional_use: false,
-            patient_data_processing: false,
-            audit_logging_required: true,
-          },
-        },
-      ],
-      enabled: true,
-      healthcare_certified: false,
-      lgpd_compliant: true,
-      anvisa_approved: false,
-      cfm_certified: false,
-      cost_tier: 'budget',
-      reliability_score: 0.88,
-      average_latency_ms: 3200,
-      rate_limit_rpm: 60,
-      current_load: 0.1,
+  private initializeProviderMetrics(provider: AIProvider): void {
+    this.performance_metrics.set(provider, {
+      latency: {
+        p50: 1000,
+        p95: 3000,
+        p99: 5000,
+        average: 1500,
+        timeout_rate: 0,
+      },
+      cost: {
+        input_tokens: 0,
+        output_tokens: 0,
+        total_cost_usd: 0,
+        cost_per_request: 0,
+        monthly_budget_used: 0,
+      },
+      quality: {
+        cache_hit_rate: 0,
+        success_rate: 100,
+        error_rate: 0,
+        user_satisfaction: 4.5,
+      },
+      healthcare_compliance: {
+        pii_redaction_rate: 100,
+        lgpd_compliance_score: 100,
+        anvisa_security_score: 95,
+        cfm_professional_standards: true,
+      },
     });
   }
 
   /**
-   * Add or update provider configuration
+   * Route AI request through optimal provider with healthcare compliance
    */
-  addProvider(config: ProviderConfig): void {
-    this.providers.set(config.provider, config);
-
-    // Initialize health status
-    this.healthStatus.set(config.provider, {
-      provider: config.provider,
-      healthy: true,
-      last_success: new Date(),
-      last_failure: new Date(0),
-      consecutive_failures: 0,
-      average_response_time: config.average_latency_ms,
-      error_rate: 0,
-      uptime_percentage: 100,
-    });
-
-    // Initialize circuit breaker
-    this.circuitBreakers.set(config.provider, { open: false });
-
-    console.log(`Provider ${config.provider} added to routing pool`);
-  }
-
-  /**
-   * Route AI request to optimal provider
-   */
-  async routeRequest(request: AIRoutingRequest): Promise<AIProviderResponse> {
-    const startTime = Date.now();
+  async routeRequest(request: RoutingRequest): Promise<RoutingResponse> {
+    const start_time = Date.now();
 
     try {
-      // Audit request
-      await this.auditService.logAIRoutingRequest({
-        patient_id: request.patient_id,
-        healthcare_context: request.healthcare_context,
-        emergency: request.emergency || false,
-        timestamp: new Date(),
-      });
+      // 🔒 SECURITY: Validate and sanitize request
+      const validated_request =
+        this.security_manager.validateAndSanitizeRequest(request);
 
-      // Check semantic cache first
-      if (request.patient_id) {
-        const cachedResponse = await this.cacheService.findSimilarEntry(
-          request.prompt,
-          {
-            patientId: request.patient_id,
-            isEmergency: request.emergency || false,
-            containsUrgentSymptoms: request.emergency || false,
-            requiredCompliance: [],
-          } as any,
-        );
+      // 🚨 HEALTHCARE: Check emergency bypass conditions
+      if (validated_request.healthcare_context.is_emergency) {
+        return await this.handleEmergencyRequest(validated_request, start_time);
+      }
 
-        if (cachedResponse) {
-          return {
-            content: cachedResponse.response,
-            tokens_used: 0,
-            cost: 0,
-            latency_ms: Date.now() - startTime,
-            provider: AIProvider.LOCAL,
-            model: 'semantic-cache',
-            cached: true,
-          };
+      // 🔒 LGPD: Audit request initiation
+      await this.security_manager.auditRequestStart(validated_request);
+
+      // Check semantic cache first (if enabled)
+      if (validated_request.ai_config.cache_enabled) {
+        const cache_result = await this.checkSemanticCache(validated_request);
+        if (cache_result) {
+          await this.security_manager.auditCacheHit(
+            validated_request,
+            cache_result.metrics.cache_latency_ms || 0,
+          );
+          return cache_result;
         }
       }
 
       // Select optimal provider
-      const selectedProvider = await this.selectOptimalProvider(request);
-      if (!selectedProvider) {
-        throw new Error('No suitable AI provider available');
+      const selected_provider = await this.selectProvider(validated_request);
+
+      // Route to provider with fallback
+      const response = await this.executeProviderRequest(
+        validated_request,
+        selected_provider,
+        start_time,
+      );
+
+      // Cache successful response (if enabled and appropriate)
+      if (
+        validated_request.ai_config.cache_enabled &&
+        this.shouldCacheResponse(validated_request, response)
+      ) {
+        await this.cacheResponse(validated_request, response);
       }
 
-      // Make request to selected provider
-      const response = await this.makeProviderRequest(selectedProvider, request);
-
-      // Cache response if applicable
-      if (request.patient_id && !request.emergency) {
-        await this.cacheService.addEntry(
-          request.prompt,
-          response.content,
-          {
-            patientId: request.patient_id,
-            cost: response.cost,
-            provider: response.provider,
-            model: response.model,
-            healthcare_context: request.healthcare_context,
-            ttlMs: this.getCacheTTL(request.healthcare_context),
-          } as any,
-        );
-      }
-
-      // Update provider metrics
-      await this.updateProviderMetrics(selectedProvider.provider, response, true);
-
-      // Audit successful response
-      await this.auditService.logAIProviderResponse({
-        patient_id: request.patient_id,
-        provider: response.provider,
-        model: response.model,
-        cost: response.cost,
-        tokens_used: response.tokens_used,
-        latency_ms: response.latency_ms,
-        cached: response.cached,
-        success: true,
-        timestamp: new Date(),
-      });
+      // 🔒 LGPD: Audit successful completion
+      await this.security_manager.auditRequestComplete(
+        validated_request,
+        response.provider_used,
+        response.model_used,
+        response.metrics,
+        response.compliance,
+      );
 
       return response;
     } catch (error) {
-      const latency = Date.now() - startTime;
-
-      // Audit failed request
-      await this.auditService.logAIProviderError({
-        patient_id: request.patient_id,
-        error_message: (error as Error).message,
-        latency_ms: latency,
-        timestamp: new Date(),
-      });
-
-      console.error('AI routing failed:', error);
+      await this.security_manager.auditRequestError(
+        request,
+        error as Error,
+        Date.now() - start_time,
+      );
       throw error;
     }
   }
 
   /**
-   * Select optimal provider based on criteria
+   * 🚨 EMERGENCY: Handle emergency requests with special routing
    */
-  private async selectOptimalProvider(request: AIRoutingRequest): Promise<ProviderConfig | null> {
-    const availableProviders = this.getAvailableProviders(request);
+  private async handleEmergencyRequest(
+    request: RoutingRequest,
+    start_time: number,
+  ): Promise<RoutingResponse> {
+    const all_configs = this.config_manager.getAllProviderConfigs();
+    const emergency_providers =
+      this.health_monitor.getEmergencyCapableProviders(all_configs);
 
-    if (availableProviders.length === 0) {
-      return null;
+    if (emergency_providers.length === 0) {
+      throw new Error("No emergency-capable providers available");
     }
 
-    // Emergency requests always use fastest, most reliable provider
-    if (request.emergency) {
-      return availableProviders
-        .filter(p => p.healthcare_certified)
-        .sort((a, b) => a.average_latency_ms - b.average_latency_ms)[0] || null;
-    }
+    // Sort by latency for fastest response
+    emergency_providers.sort((a, b) => {
+      const health_a = this.health_monitor.getProviderHealth(
+        a.provider,
+      ) as ProviderHealthCheck;
+      const health_b = this.health_monitor.getProviderHealth(
+        b.provider,
+      ) as ProviderHealthCheck;
+      return (health_a?.latency || Infinity) - (health_b?.latency || Infinity);
+    });
 
-    // Calculate scores for each provider
-    const scores = availableProviders.map(provider => ({
-      provider,
-      score: this.calculateProviderScore(provider, request),
-    }));
+    const selected_provider = emergency_providers[0];
 
-    // Sort by score (highest first)
-    scores.sort((a, b) => b.score - a.score);
+    // Audit emergency access
+    await this.security_manager.auditEmergencyAccess(
+      request.request_metadata.user_id,
+      request.request_metadata.request_id,
+      selected_provider.provider,
+      request.healthcare_context,
+    );
 
-    return scores[0]?.provider || null;
+    return await this.executeProviderRequest(
+      request,
+      selected_provider,
+      start_time,
+    );
   }
 
   /**
-   * Get available providers for request
+   * Select optimal provider based on routing strategy and constraints
    */
-  private getAvailableProviders(request: AIRoutingRequest): ProviderConfig[] {
-    return Array.from(this.providers.values()).filter(provider => {
-      // Must be enabled
-      if (!provider.enabled) return false;
+  private async selectProvider(
+    request: RoutingRequest,
+  ): Promise<ProviderConfig> {
+    const available_providers = this.getAvailableProviders(request);
 
-      // Circuit breaker check
-      const circuitBreaker = this.circuitBreakers.get(provider.provider);
-      if (circuitBreaker?.open) {
-        // Check if we should try to close the circuit breaker
-        if (
-          circuitBreaker.openedAt
-          && Date.now() - circuitBreaker.openedAt.getTime() > 60000
-        ) { // 1 minute
-          circuitBreaker.open = false;
-          delete circuitBreaker.openedAt;
-        } else {
-          return false;
+    if (available_providers.length === 0) {
+      throw new Error("No available providers for this request");
+    }
+
+    switch (request.routing_config.strategy) {
+      case RoutingStrategy.COST_OPTIMIZED:
+        return this.selectCostOptimizedProvider(available_providers, request);
+
+      case RoutingStrategy.LATENCY_OPTIMIZED:
+        return this.selectLatencyOptimizedProvider(
+          available_providers,
+          request,
+        );
+
+      case RoutingStrategy.QUALITY_OPTIMIZED:
+        return this.selectQualityOptimizedProvider(
+          available_providers,
+          request,
+        );
+
+      case RoutingStrategy.HEALTHCARE_SPECIFIC:
+        return this.selectHealthcareSpecificProvider(
+          available_providers,
+          request,
+        );
+
+      case RoutingStrategy.EMERGENCY_PRIORITY:
+        return this.selectEmergencyProvider(available_providers, request);
+
+      case RoutingStrategy.LOAD_BALANCED:
+        return this.selectLoadBalancedProvider(available_providers, request);
+
+      default:
+        return available_providers[0]; // Default to first available
+    }
+  }
+
+  /**
+   * Get providers available for healthcare context
+   */
+  private getAvailableProviders(request: RoutingRequest): ProviderConfig[] {
+    const all_configs = this.config_manager.getAllProviderConfigs();
+    const providers: ProviderConfig[] = [];
+
+    for (const config of all_configs) {
+      // Check if provider is enabled
+      if (!config.enabled) continue;
+
+      // Check healthcare compliance requirements
+      if (
+        !this.security_manager.isHealthcareCompliant(
+          config,
+          request.healthcare_context,
+        )
+      ) {
+        continue;
+      }
+
+      // Check provider health via health monitor
+      if (!this.health_monitor.isProviderAvailable(config.provider)) {
+        continue;
+      }
+
+      // Check cost constraints
+      if (request.routing_config.max_cost_usd) {
+        const estimated_cost = this.estimateProviderCost(config, request);
+        if (estimated_cost > request.routing_config.max_cost_usd) {
+          continue;
         }
       }
 
-      // Health check
-      const health = this.healthStatus.get(provider.provider);
-      if (!health?.healthy) return false;
-
-      // Healthcare compliance requirements
-      if (request.require_healthcare_compliant && !provider.healthcare_certified) {
-        return false;
+      // Check preferred providers
+      if (
+        request.ai_config.preferred_providers &&
+        request.ai_config.preferred_providers.length > 0
+      ) {
+        if (!request.ai_config.preferred_providers.includes(config.provider)) {
+          continue;
+        }
       }
 
-      // Patient data processing requirements
-      if (request.patient_id) {
-        const hasPatientCapableModel = provider.models.some(
-          model => model.healthcare_config.patient_data_processing,
-        );
-        if (!hasPatientCapableModel) return false;
-      }
+      providers.push(config);
+    }
 
-      // LGPD compliance is mandatory for Brazilian healthcare
-      if (!provider.lgpd_compliant) return false;
-
-      return true;
-    });
+    return providers;
   }
 
   /**
-   * Calculate provider score based on routing criteria
+   * Estimate cost for provider request
    */
-  private calculateProviderScore(provider: ProviderConfig, request: AIRoutingRequest): number {
-    const criteria = this.routingCriteria;
+  private estimateProviderCost(
+    provider: ProviderConfig,
+    request: RoutingRequest,
+  ): number {
+    // Get the best model for this request
+    const model = this.selectBestModelForProvider(provider, request);
+    if (!model) return Infinity;
+
+    // Estimate tokens
+    const input_tokens = Math.ceil(request.prompt.length / 4);
+    const estimated_output_tokens = Math.min(
+      request.ai_config.max_tokens || 1000,
+      model.cost_config.max_tokens,
+    );
+
+    return HealthcareAIOptimizationUtils.estimateRequestCost(
+      input_tokens,
+      estimated_output_tokens,
+      model,
+    ).estimated_cost;
+  }
+
+  /**
+   * Select cost-optimized provider
+   */
+  private selectCostOptimizedProvider(
+    providers: ProviderConfig[],
+    request: RoutingRequest,
+  ): ProviderConfig {
+    let best_provider = providers[0];
+    let lowest_cost = this.estimateProviderCost(best_provider, request);
+
+    for (const provider of providers.slice(1)) {
+      const cost = this.estimateProviderCost(provider, request);
+      if (cost < lowest_cost) {
+        lowest_cost = cost;
+        best_provider = provider;
+      }
+    }
+
+    return best_provider;
+  }
+
+  /**
+   * Select latency-optimized provider
+   */
+  private selectLatencyOptimizedProvider(
+    providers: ProviderConfig[],
+    request: RoutingRequest,
+  ): ProviderConfig {
+    let best_provider = providers[0];
+    let lowest_latency =
+      (
+        this.health_monitor.getProviderHealth(
+          best_provider.provider,
+        ) as ProviderHealthCheck
+      )?.latency || Infinity;
+
+    for (const provider of providers.slice(1)) {
+      const latency =
+        (
+          this.health_monitor.getProviderHealth(
+            provider.provider,
+          ) as ProviderHealthCheck
+        )?.latency || Infinity;
+      if (latency < lowest_latency) {
+        lowest_latency = latency;
+        best_provider = provider;
+      }
+    }
+
+    return best_provider;
+  }
+
+  /**
+   * Select quality-optimized provider
+   */
+  private selectQualityOptimizedProvider(
+    providers: ProviderConfig[],
+    request: RoutingRequest,
+  ): ProviderConfig {
+    let best_provider = providers[0];
+    let best_quality =
+      (
+        this.health_monitor.getProviderHealth(
+          best_provider.provider,
+        ) as ProviderHealthCheck
+      )?.success_rate || 0;
+
+    for (const provider of providers.slice(1)) {
+      const quality =
+        (
+          this.health_monitor.getProviderHealth(
+            provider.provider,
+          ) as ProviderHealthCheck
+        )?.success_rate || 0;
+      if (quality > best_quality) {
+        best_quality = quality;
+        best_provider = provider;
+      }
+    }
+
+    return best_provider;
+  }
+
+  /**
+   * Select healthcare-specific optimized provider
+   */
+  private selectHealthcareSpecificProvider(
+    providers: ProviderConfig[],
+    request: RoutingRequest,
+  ): ProviderConfig {
+    // Healthcare-specific scoring based on use case and compliance
+    let best_provider = providers[0];
+    let best_score = this.calculateHealthcareScore(best_provider, request);
+
+    for (const provider of providers.slice(1)) {
+      const score = this.calculateHealthcareScore(provider, request);
+      if (score > best_score) {
+        best_score = score;
+        best_provider = provider;
+      }
+    }
+
+    return best_provider;
+  }
+
+  /**
+   * Select emergency-priority provider
+   */
+  private selectEmergencyProvider(
+    providers: ProviderConfig[],
+    request: RoutingRequest,
+  ): ProviderConfig {
+    // For emergency, prioritize fastest response with highest compliance
+    return this.selectLatencyOptimizedProvider(
+      providers.filter(
+        (p) =>
+          p.healthcare_compliance.lgpd_approved &&
+          p.healthcare_compliance.anvisa_certified,
+      ),
+      request,
+    );
+  }
+
+  /**
+   * Select load-balanced provider
+   */
+  private selectLoadBalancedProvider(
+    providers: ProviderConfig[],
+    request: RoutingRequest,
+  ): ProviderConfig {
+    // Simple round-robin based on current health metrics
+    const sorted_providers = providers.sort((a, b) => {
+      const health_a = this.health_monitor.getProviderHealth(
+        a.provider,
+      ) as ProviderHealthCheck;
+      const health_b = this.health_monitor.getProviderHealth(
+        b.provider,
+      ) as ProviderHealthCheck;
+
+      // Sort by success rate and inverse latency
+      const score_a =
+        (health_a?.success_rate || 0) - (health_a?.latency || 1000) / 1000;
+      const score_b =
+        (health_b?.success_rate || 0) - (health_b?.latency || 1000) / 1000;
+
+      return score_b - score_a;
+    });
+
+    return sorted_providers[0];
+  }
+
+  /**
+   * Calculate healthcare-specific provider score
+   */
+  private calculateHealthcareScore(
+    provider: ProviderConfig,
+    request: RoutingRequest,
+  ): number {
     let score = 0;
 
-    // Cost score (lower cost = higher score)
-    const avgCost = this.getAverageModelCost(provider);
-    const costScore = Math.max(0, 1 - (avgCost / 0.05)); // Normalize to 0.05 as max
-    score += costScore * criteria.cost_weight;
+    // Compliance score (40% weight)
+    if (provider.healthcare_compliance.lgpd_approved) score += 20;
+    if (provider.healthcare_compliance.anvisa_certified) score += 10;
+    if (provider.healthcare_compliance.cfm_approved) score += 10;
 
-    // Latency score (lower latency = higher score)
-    const latencyScore = Math.max(0, 1 - (provider.average_latency_ms / 10000)); // Normalize to 10s
-    score += latencyScore * criteria.latency_weight;
+    // Performance score (30% weight)
+    const health = this.health_monitor.getProviderHealth(
+      provider.provider,
+    ) as ProviderHealthCheck;
+    if (health) {
+      score += (health.success_rate / 100) * 15;
+      score += Math.max(0, (1000 - health.latency) / 1000) * 15;
+    }
 
-    // Quality score (reliability as proxy)
-    score += provider.reliability_score * criteria.quality_weight;
+    // Cost efficiency score (20% weight)
+    const cost = this.estimateProviderCost(provider, request);
+    score += Math.max(0, (0.1 - cost) / 0.1) * 20;
 
-    // Healthcare compliance score
-    let complianceScore = 0;
-    if (provider.healthcare_certified) complianceScore += 0.3;
-    if (provider.lgpd_compliant) complianceScore += 0.3;
-    if (provider.anvisa_approved) complianceScore += 0.2;
-    if (provider.cfm_certified) complianceScore += 0.2;
-    score += complianceScore * criteria.healthcare_compliance_weight;
-
-    // Reliability score
-    const health = this.healthStatus.get(provider.provider);
-    const reliabilityScore = health ? (health.uptime_percentage / 100) : 0.5;
-    score += reliabilityScore * criteria.reliability_weight;
-
-    // Load balancing penalty
-    score *= 1 - provider.current_load * 0.5;
+    // Use case specific bonus (10% weight)
+    score += this.getUseCaseBonus(
+      provider,
+      request.healthcare_context.use_case,
+    );
 
     return score;
   }
 
   /**
-   * Get average cost for provider models
+   * Get use case specific bonus points
    */
-  private getAverageModelCost(provider: ProviderConfig): number {
-    if (provider.models.length === 0) return 0;
+  private getUseCaseBonus(
+    provider: ProviderConfig,
+    use_case: HealthcareAIUseCase,
+  ): number {
+    // Provider-specific bonuses for different use cases
+    const bonuses: Record<
+      AIProvider,
+      Partial<Record<HealthcareAIUseCase, number>>
+    > = {
+      [AIProvider.OPENAI]: {
+        [HealthcareAIUseCase.PATIENT_COMMUNICATION]: 5,
+        [HealthcareAIUseCase.DOCUMENTATION]: 3,
+      },
+      [AIProvider.ANTHROPIC]: {
+        [HealthcareAIUseCase.SYMPTOMS_ANALYSIS]: 5,
+        [HealthcareAIUseCase.TREATMENT_PLANNING]: 4,
+      },
+      [AIProvider.GOOGLE]: {
+        [HealthcareAIUseCase.MEDICAL_TRANSCRIPTION]: 5,
+        [HealthcareAIUseCase.PATIENT_EDUCATION]: 3,
+      },
+      [AIProvider.AZURE]: {
+        [HealthcareAIUseCase.COMPLIANCE_CHECK]: 5,
+        [HealthcareAIUseCase.DOCUMENTATION]: 4,
+      },
+      [AIProvider.AWS_BEDROCK]: {
+        [HealthcareAIUseCase.SYMPTOMS_ANALYSIS]: 4,
+        [HealthcareAIUseCase.APPOINTMENT_SCHEDULING]: 3,
+      },
+      [AIProvider.LOCAL]: {
+        [HealthcareAIUseCase.PATIENT_COMMUNICATION]: 2,
+      },
+    };
 
-    const totalCost = provider.models.reduce((sum, model) => {
-      return sum + model.cost_config.input_cost_per_1k_tokens
-        + model.cost_config.output_cost_per_1k_tokens;
-    }, 0);
-
-    return totalCost / provider.models.length;
+    return bonuses[provider.provider]?.[use_case] || 0;
   }
 
   /**
-   * Make request to selected provider
+   * Execute provider request with fallback handling
    */
-  private async makeProviderRequest(
+  private async executeProviderRequest(
+    request: RoutingRequest,
     provider: ProviderConfig,
-    request: AIRoutingRequest,
-  ): Promise<AIProviderResponse> {
-    const startTime = Date.now();
+    start_time: number,
+  ): Promise<RoutingResponse> {
+    const providers_to_try = [provider];
 
-    try {
-      // Select best model for this provider
-      const model = this.selectModelForRequest(provider, request);
-      if (!model) {
-        throw new Error(`No suitable model found for provider ${provider.provider}`);
+    // Add fallback providers if enabled
+    if (request.ai_config.fallback_enabled) {
+      const fallback_providers = this.getAvailableProviders(request)
+        .filter((p) => p.provider !== provider.provider)
+        .slice(0, 2); // Maximum 2 fallback providers
+
+      providers_to_try.push(...fallback_providers);
+    }
+
+    let last_error: Error | null = null;
+    let fallback_used = false;
+
+    for (let i = 0; i < providers_to_try.length; i++) {
+      const current_provider = providers_to_try[i];
+
+      if (i > 0) {
+        fallback_used = true;
+        await this.security_manager.auditProviderFallback(
+          request.request_metadata.user_id,
+          request.request_metadata.request_id,
+          provider.provider,
+          current_provider.provider,
+          i + 1,
+        );
       }
 
-      // Mock AI request - in production, implement actual provider APIs
-      const response = await this.mockProviderRequest(provider, model, request);
+      try {
+        const model = this.selectBestModelForProvider(
+          current_provider,
+          request,
+        );
+        if (!model) {
+          throw new Error(
+            `No suitable model for provider ${current_provider.provider}`,
+          );
+        }
 
-      const latency = Date.now() - startTime;
+        const response = await this.callProviderAPI(
+          current_provider,
+          model,
+          request,
+        );
 
-      // Update provider health
-      await this.updateProviderHealth(provider.provider, true, latency);
+        // Update circuit breaker on success
+        this.health_monitor.recordSuccess(current_provider.provider);
 
-      return {
-        ...response,
-        latency_ms: latency,
-        cached: false,
-      };
-    } catch (error) {
-      const latency = Date.now() - startTime;
+        // Update provider health
+        await this.health_monitor.updateProviderHealth(
+          current_provider.provider,
+          true,
+          response.metrics.provider_latency_ms,
+        );
 
-      // Update provider health
-      await this.updateProviderHealth(provider.provider, false, latency);
+        return {
+          ...response,
+          metrics: {
+            ...response.metrics,
+            total_latency_ms: Date.now() - start_time,
+            fallback_used,
+          },
+        };
+      } catch (error) {
+        last_error = error as Error;
 
-      throw error;
+        // Update circuit breaker on failure
+        this.health_monitor.recordFailure(current_provider.provider);
+
+        // Update provider health
+        await this.health_monitor.updateProviderHealth(
+          current_provider.provider,
+          false,
+          Date.now() - start_time,
+        );
+
+        console.warn(`Provider ${current_provider.provider} failed:`, error);
+
+        // Continue to next provider if available
+        if (i < providers_to_try.length - 1) {
+          continue;
+        }
+      }
     }
+
+    // All providers failed
+    throw new Error(`All providers failed. Last error: ${last_error?.message}`);
   }
 
   /**
-   * Select best model for request
+   * Select best model for provider based on request requirements
    */
-  private selectModelForRequest(
+  private selectBestModelForProvider(
     provider: ProviderConfig,
-    request: AIRoutingRequest,
+    request: RoutingRequest,
   ): AIModelConfig | null {
-    const eligibleModels = provider.models.filter(model => {
-      // Patient data processing check
-      if (request.patient_id && !model.healthcare_config.patient_data_processing) {
+    const eligible_models = provider.models.filter((model) => {
+      // Check model category
+      if (model.category !== request.ai_config.model_category) {
         return false;
       }
 
-      // Cost constraint
-      if (request.max_cost) {
-        const estimatedCost = (model.cost_config.input_cost_per_1k_tokens
-          + model.cost_config.output_cost_per_1k_tokens) * 2; // Rough estimate
-        if (estimatedCost > request.max_cost) return false;
+      // Check healthcare compliance
+      if (
+        request.healthcare_context.contains_pii &&
+        !model.healthcare_config.patient_data_processing
+      ) {
+        return false;
       }
 
-      // Latency constraint
+      // Check cost constraints
+      if (request.routing_config.max_cost_usd) {
+        const estimated_cost = this.estimateModelCost(model, request);
+        if (estimated_cost > request.routing_config.max_cost_usd) {
+          return false;
+        }
+      }
+
+      // Check latency constraints
       if (
-        request.max_latency_ms && model.performance_config.max_latency_ms > request.max_latency_ms
+        request.routing_config.max_latency_ms &&
+        model.performance_config.max_latency_ms >
+          request.routing_config.max_latency_ms
       ) {
         return false;
       }
@@ -587,267 +772,406 @@ export class AIProviderRouter {
       return true;
     });
 
-    if (eligibleModels.length === 0) return null;
+    if (eligible_models.length === 0) return null;
 
-    // Select model with best cost/performance ratio
-    return eligibleModels.sort((a, b) => {
-      const aCost = a.cost_config.input_cost_per_1k_tokens
-        + a.cost_config.output_cost_per_1k_tokens;
-      const bCost = b.cost_config.input_cost_per_1k_tokens
-        + b.cost_config.output_cost_per_1k_tokens;
-      const aLatency = a.performance_config.max_latency_ms;
-      const bLatency = b.performance_config.max_latency_ms;
+    // Select best model based on cost-performance ratio
+    return eligible_models.sort((a, b) => {
+      const cost_a = this.estimateModelCost(a, request);
+      const cost_b = this.estimateModelCost(b, request);
+      const latency_a = a.performance_config.max_latency_ms;
+      const latency_b = b.performance_config.max_latency_ms;
 
-      // Prioritize lower cost and latency
-      const aScore = aCost + (aLatency / 1000);
-      const bScore = bCost + (bLatency / 1000);
+      // Score: lower cost and latency is better
+      const score_a = cost_a + latency_a / 1000;
+      const score_b = cost_b + latency_b / 1000;
 
-      return aScore - bScore;
+      return score_a - score_b;
     })[0];
   }
 
   /**
-   * Mock provider request (replace with actual implementations)
+   * Estimate cost for specific model
    */
-  private async mockProviderRequest(
+  private estimateModelCost(
+    model: AIModelConfig,
+    request: RoutingRequest,
+  ): number {
+    const input_tokens = Math.ceil(request.prompt.length / 4);
+    const estimated_output_tokens = Math.min(
+      request.ai_config.max_tokens || 1000,
+      model.cost_config.max_tokens,
+    );
+
+    return HealthcareAIOptimizationUtils.estimateRequestCost(
+      input_tokens,
+      estimated_output_tokens,
+      model,
+    ).estimated_cost;
+  }
+
+  /**
+   * Call provider API (mock implementation)
+   */
+  private async callProviderAPI(
     provider: ProviderConfig,
     model: AIModelConfig,
-    request: AIRoutingRequest,
-  ): Promise<Omit<AIProviderResponse, 'latency_ms' | 'cached'>> {
-    // Simulate processing time
-    await new Promise(resolve => setTimeout(resolve, Math.random() * 1000 + 500));
+    request: RoutingRequest,
+  ): Promise<RoutingResponse> {
+    const api_start = Date.now();
 
-    // Mock response based on healthcare context
-    let response = '';
-    switch (request.healthcare_context) {
-      case HealthcareAIUseCase.PATIENT_COMMUNICATION:
-        response =
-          'Olá! Como posso ajudá-lo hoje? Estou aqui para esclarecer suas dúvidas sobre saúde.';
-        break;
-      case HealthcareAIUseCase.APPOINTMENT_SCHEDULING:
-        response =
-          'Vou verificar os horários disponíveis para sua consulta. Qual especialidade você precisa?';
-        break;
-      case HealthcareAIUseCase.SYMPTOMS_ANALYSIS:
-        response =
-          'Com base nos sintomas descritos, recomendo agendar uma consulta médica para avaliação adequada.';
-        break;
-      default:
-        response = 'Resposta gerada pelo sistema de IA para contexto de saúde.';
-    }
+    // Simulate API call latency
+    const latency_simulation = Math.random() * 1000 + 500;
+    await new Promise((resolve) => setTimeout(resolve, latency_simulation));
 
-    // Calculate costs
-    const inputTokens = Math.ceil(request.prompt.length / 4); // Rough token estimate
-    const outputTokens = Math.ceil(response.length / 4);
-    const cost = (inputTokens / 1000) * model.cost_config.input_cost_per_1k_tokens
-      + (outputTokens / 1000) * model.cost_config.output_cost_per_1k_tokens;
+    // Generate mock response based on healthcare context
+    const response_content = this.generateMockResponse(
+      request.healthcare_context.use_case,
+      request.prompt,
+    );
+
+    // Calculate tokens and cost
+    const input_tokens = Math.ceil(request.prompt.length / 4);
+    const output_tokens = Math.ceil(response_content.length / 4);
+    const total_cost = HealthcareAIOptimizationUtils.estimateRequestCost(
+      input_tokens,
+      output_tokens,
+      model,
+    ).estimated_cost;
 
     return {
-      content: response,
-      tokens_used: inputTokens + outputTokens,
-      cost: cost,
-      provider: provider.provider,
-      model: model.model_name,
-      quality_score: 0.85 + Math.random() * 0.15, // Mock quality score
+      content: response_content,
+      provider_used: provider.provider,
+      model_used: model.model_name,
+      metrics: {
+        total_latency_ms: 0, // Will be set by caller
+        provider_latency_ms: Date.now() - api_start,
+        total_cost_usd: total_cost,
+        tokens_used: {
+          input: input_tokens,
+          output: output_tokens,
+          total: input_tokens + output_tokens,
+        },
+        cache_hit: false,
+        fallback_used: false,
+      },
+      compliance: {
+        pii_redacted: request.healthcare_context.contains_pii,
+        lgpd_compliant: true,
+        audit_logged: true,
+        data_sanitized: true,
+      },
+      response_metadata: {
+        response_id: `resp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        request_id: request.request_metadata.request_id,
+        timestamp: new Date(),
+        processing_time_ms: Date.now() - api_start,
+      },
     };
   }
 
   /**
-   * Update provider health status
+   * Generate mock response for healthcare use cases
    */
-  private async updateProviderHealth(
-    provider: AIProvider,
-    success: boolean,
-    latency: number,
+  private generateMockResponse(
+    use_case: HealthcareAIUseCase,
+    prompt: string,
+  ): string {
+    const responses: Record<HealthcareAIUseCase, string> = {
+      [HealthcareAIUseCase.PATIENT_COMMUNICATION]:
+        "Olá! Entendo sua preocupação. Com base nas informações fornecidas, recomendo que você consulte um profissional de saúde para uma avaliação adequada. Este sistema segue todas as diretrizes LGPD e CFM.",
+      [HealthcareAIUseCase.APPOINTMENT_SCHEDULING]:
+        "Verificando disponibilidade de horários... Encontrei os seguintes horários disponíveis para consulta: Segunda-feira às 14h, Terça-feira às 10h, ou Quinta-feira às 16h. Qual prefere?",
+      [HealthcareAIUseCase.SYMPTOMS_ANALYSIS]:
+        "Com base nos sintomas relatados, é importante procurar avaliação médica presencial. Não posso fornecer diagnósticos, mas posso ajudar a organizar as informações para sua consulta.",
+      [HealthcareAIUseCase.TREATMENT_PLANNING]:
+        "Para um plano de tratamento adequado, é necessária avaliação médica presencial. Posso ajudar a compilar informações relevantes para discussão com seu médico.",
+      [HealthcareAIUseCase.DOCUMENTATION]:
+        "Documento gerado conforme padrões CFM e LGPD. Todas as informações foram processadas de forma segura e em conformidade com as regulamentações brasileiras de saúde.",
+      [HealthcareAIUseCase.COMPLIANCE_CHECK]:
+        "Verificação de conformidade realizada. Processo em compliance com LGPD, ANVISA e diretrizes CFM. Todas as medidas de proteção de dados foram aplicadas.",
+      [HealthcareAIUseCase.MEDICAL_TRANSCRIPTION]:
+        "Transcrição médica realizada seguindo padrões de confidencialidade e proteção de dados. Informações sensíveis foram adequadamente protegidas.",
+      [HealthcareAIUseCase.PATIENT_EDUCATION]:
+        "Material educativo gerado com base em evidências científicas e diretrizes médicas brasileiras. Recomendo sempre consultar profissionais de saúde para orientações específicas.",
+    };
+
+    return (
+      responses[use_case] ||
+      "Resposta gerada pelo sistema de IA para contexto de saúde, em conformidade com LGPD e regulamentações brasileiras."
+    );
+  }
+
+  /**
+   * Check semantic cache for similar requests
+   */
+  private async checkSemanticCache(
+    request: RoutingRequest,
+  ): Promise<RoutingResponse | null> {
+    if (!request.healthcare_context.patient_id) {
+      return null; // Cannot cache without patient context
+    }
+
+    try {
+      const cache_entry = await this.semantic_cache.findSimilarEntry(
+        request.prompt,
+        {
+          patientId: request.healthcare_context.patient_id,
+          isEmergency: request.healthcare_context.is_emergency,
+          containsUrgentSymptoms: request.healthcare_context.is_emergency,
+          requiredCompliance: [],
+          category: request.healthcare_context.use_case,
+        } as any,
+      );
+
+      if (cache_entry) {
+        return {
+          content: cache_entry.response,
+          provider_used: AIProvider.LOCAL,
+          model_used: "semantic-cache",
+          metrics: {
+            total_latency_ms: 50, // Cache lookup time
+            provider_latency_ms: 0,
+            cache_latency_ms: 50,
+            total_cost_usd: 0,
+            tokens_used: {
+              input: 0,
+              output: 0,
+              total: 0,
+            },
+            cache_hit: true,
+            fallback_used: false,
+          },
+          compliance: {
+            pii_redacted: true,
+            lgpd_compliant: true,
+            audit_logged: true,
+            data_sanitized: true,
+          },
+          response_metadata: {
+            response_id: `cache_${Date.now()}`,
+            request_id: request.request_metadata.request_id,
+            timestamp: new Date(),
+            processing_time_ms: 50,
+          },
+        };
+      }
+    } catch (error) {
+      console.warn("Cache lookup failed:", error);
+    }
+
+    return null;
+  }
+
+  /**
+   * Cache successful response
+   */
+  private async cacheResponse(
+    request: RoutingRequest,
+    response: RoutingResponse,
   ): Promise<void> {
-    const health = this.healthStatus.get(provider);
-    if (!health) return;
-
-    const now = new Date();
-
-    if (success) {
-      health.last_success = now;
-      health.consecutive_failures = 0;
-      health.healthy = true;
-
-      // Update average response time (exponential moving average)
-      health.average_response_time = health.average_response_time * 0.9 + latency * 0.1;
-
-      // Close circuit breaker if it was open
-      const circuitBreaker = this.circuitBreakers.get(provider);
-      if (circuitBreaker?.open) {
-        circuitBreaker.open = false;
-        delete circuitBreaker.openedAt;
-        console.log(`Circuit breaker closed for provider ${provider}`);
-      }
-    } else {
-      health.last_failure = now;
-      health.consecutive_failures++;
-
-      // Mark unhealthy after 3 consecutive failures
-      if (health.consecutive_failures >= 3) {
-        health.healthy = false;
-
-        // Open circuit breaker after 5 consecutive failures
-        if (health.consecutive_failures >= 5) {
-          const circuitBreaker = this.circuitBreakers.get(provider);
-          if (circuitBreaker && !circuitBreaker.open) {
-            circuitBreaker.open = true;
-            circuitBreaker.openedAt = now;
-            console.log(`Circuit breaker opened for provider ${provider}`);
-          }
-        }
-      }
+    if (
+      !request.healthcare_context.patient_id ||
+      request.healthcare_context.is_emergency
+    ) {
+      return; // Don't cache emergency data
     }
 
-    // Update error rate
-    const totalRequests = health.consecutive_failures + 1;
-    health.error_rate = health.consecutive_failures / totalRequests;
-
-    // Update uptime percentage (simplified calculation)
-    const hoursSinceLastFailure = (now.getTime() - health.last_failure.getTime())
-      / (1000 * 60 * 60);
-    health.uptime_percentage = Math.min(100, 95 + hoursSinceLastFailure);
-
-    this.healthStatus.set(provider, health);
-  }
-
-  /**
-   * Update provider performance metrics
-   */
-  private async updateProviderMetrics(
-    provider: AIProvider,
-    response: AIProviderResponse,
-    success: boolean,
-  ): Promise<void> {
-    // Implementation would update detailed metrics
-    console.log(`Metrics updated for ${provider}: ${success ? 'success' : 'failure'}`);
-  }
-
-  /**
-   * Get cache TTL based on healthcare context
-   */
-  private getCacheTTL(context: HealthcareAIUseCase): number {
-    switch (context) {
-      case HealthcareAIUseCase.PATIENT_COMMUNICATION:
-        return 4 * 60 * 60 * 1000; // 4 hours
-      case HealthcareAIUseCase.APPOINTMENT_SCHEDULING:
-        return 1 * 60 * 60 * 1000; // 1 hour
-      case HealthcareAIUseCase.SYMPTOMS_ANALYSIS:
-        return 30 * 60 * 1000; // 30 minutes
-      case HealthcareAIUseCase.TREATMENT_PLANNING:
-        return 24 * 60 * 60 * 1000; // 24 hours
-      default:
-        return 2 * 60 * 60 * 1000; // 2 hours
+    try {
+      await this.semantic_cache.addEntry(request.prompt, response.content, {
+        patientId: request.healthcare_context.patient_id,
+        cost: response.metrics.total_cost_usd,
+        provider: response.provider_used,
+        model: response.model_used,
+        healthcare_context: request.healthcare_context.use_case,
+        ttlMs: this.getCacheTTLForUseCase(request.healthcare_context.use_case),
+        compliance: [],
+      } as any);
+    } catch (error) {
+      console.warn("Failed to cache response:", error);
     }
   }
 
   /**
-   * Start health monitoring
+   * Determine if response should be cached
    */
-  private startHealthMonitoring(): void {
-    setInterval(() => {
-      this.performHealthChecks();
-    }, 60000); // Every minute
-  }
-
-  /**
-   * Perform health checks on all providers
-   */
-  private async performHealthChecks(): Promise<void> {
-    for (const [provider, config] of this.providers.entries()) {
-      if (!config.enabled) continue;
-
-      try {
-        // Mock health check - in production, make actual health check requests
-        const healthy = Math.random() > 0.05; // 95% uptime simulation
-
-        if (!healthy) {
-          await this.updateProviderHealth(provider, false, 0);
-        }
-      } catch (error) {
-        console.error(`Failed to evaluate provider ${provider.name} health:`, error);
-        await this.updateProviderHealth(provider, false, 0);
-      }
+  private shouldCacheResponse(
+    request: RoutingRequest,
+    response: RoutingResponse,
+  ): boolean {
+    // Don't cache emergency requests
+    if (request.healthcare_context.is_emergency) {
+      return false;
     }
+
+    // Don't cache if no patient ID
+    if (!request.healthcare_context.patient_id) {
+      return false;
+    }
+
+    // Don't cache error responses
+    if (response.metrics.fallback_used) {
+      return false;
+    }
+
+    // Don't cache expensive responses (they might be unique)
+    if (response.metrics.total_cost_usd > 0.1) {
+      return false;
+    }
+
+    return true;
   }
 
   /**
-   * Get provider statistics
+   * Get cache TTL based on healthcare use case
    */
-  getProviderStats(): {
-    providers: Array<{
-      provider: AIProvider;
-      enabled: boolean;
-      healthy: boolean;
-      healthcare_certified: boolean;
-      current_load: number;
-      average_latency_ms: number;
-      error_rate: number;
-      uptime_percentage: number;
-    }>;
-    total_requests: number;
-    total_cost: number;
-    average_latency: number;
-  } {
-    const providers = Array.from(this.providers.entries()).map(([provider, config]) => {
-      const health = this.healthStatus.get(provider);
-      return {
-        provider,
-        enabled: config.enabled,
-        healthy: health?.healthy || false,
-        healthcare_certified: config.healthcare_certified,
-        current_load: config.current_load,
-        average_latency_ms: config.average_latency_ms,
-        error_rate: health?.error_rate || 0,
-        uptime_percentage: health?.uptime_percentage || 0,
-      };
+  private getCacheTTLForUseCase(use_case: HealthcareAIUseCase): number {
+    const ttl_map: Record<HealthcareAIUseCase, number> = {
+      [HealthcareAIUseCase.PATIENT_COMMUNICATION]: 4 * 60 * 60 * 1000, // 4 hours
+      [HealthcareAIUseCase.APPOINTMENT_SCHEDULING]: 1 * 60 * 60 * 1000, // 1 hour
+      [HealthcareAIUseCase.SYMPTOMS_ANALYSIS]: 2 * 60 * 60 * 1000, // 2 hours
+      [HealthcareAIUseCase.TREATMENT_PLANNING]: 24 * 60 * 60 * 1000, // 24 hours
+      [HealthcareAIUseCase.DOCUMENTATION]: 24 * 60 * 60 * 1000, // 24 hours
+      [HealthcareAIUseCase.COMPLIANCE_CHECK]: 12 * 60 * 60 * 1000, // 12 hours
+      [HealthcareAIUseCase.MEDICAL_TRANSCRIPTION]: 7 * 24 * 60 * 60 * 1000, // 7 days
+      [HealthcareAIUseCase.PATIENT_EDUCATION]: 7 * 24 * 60 * 60 * 1000, // 7 days
+    };
+
+    return ttl_map[use_case] || 4 * 60 * 60 * 1000; // Default 4 hours
+  }
+
+  /**
+   * Start health checking for all providers
+   */
+  private startHealthChecking(): void {
+    // Initial health check
+    this.performHealthCheck();
+
+    // Schedule periodic health checks
+    this.health_check_interval = setInterval(() => {
+      this.performHealthCheck();
+    }, 30000); // Check every 30 seconds
+  }
+
+  /**
+   * Perform health check on all providers
+   */
+  private async performHealthCheck(): Promise<void> {
+    const all_configs = this.config_manager.getAllProviderConfigs();
+    const health_promises = all_configs.map(async (config) => {
+      await this.health_monitor.performProviderHealthCheck(
+        config.provider,
+        config,
+      );
     });
 
-    return {
-      providers,
-      total_requests: 0, // Would be tracked in production
-      total_cost: 0, // Would be tracked in production
-      average_latency: 0, // Would be calculated in production
-    };
+    await Promise.all(health_promises);
   }
 
   /**
-   * Update routing criteria
+   * Get provider health status
    */
-  updateRoutingCriteria(criteria: Partial<RoutingCriteria>): void {
-    this.routingCriteria = { ...this.routingCriteria, ...criteria };
-    console.log('Routing criteria updated:', this.routingCriteria);
+  getProviderHealth(
+    provider?: AIProvider,
+  ): ProviderHealthCheck | ProviderHealthCheck[] {
+    return this.health_monitor.getProviderHealth(provider);
+  }
+
+  /**
+   * Get performance metrics for provider
+   */
+  getProviderMetrics(
+    provider?: AIProvider,
+  ): AIPerformanceMetrics | AIPerformanceMetrics[] {
+    if (provider) {
+      return (
+        this.performance_metrics.get(provider) || this.createDefaultMetrics()
+      );
+    }
+
+    return Array.from(this.performance_metrics.values());
+  }
+
+  /**
+   * Create default performance metrics
+   */
+  private createDefaultMetrics(): AIPerformanceMetrics {
+    return {
+      latency: {
+        p50: 0,
+        p95: 0,
+        p99: 0,
+        average: 0,
+        timeout_rate: 0,
+      },
+      cost: {
+        input_tokens: 0,
+        output_tokens: 0,
+        total_cost_usd: 0,
+        cost_per_request: 0,
+        monthly_budget_used: 0,
+      },
+      quality: {
+        cache_hit_rate: 0,
+        success_rate: 0,
+        error_rate: 0,
+        user_satisfaction: 4.5,
+      },
+      healthcare_compliance: {
+        pii_redaction_rate: 0,
+        lgpd_compliance_score: 0,
+        anvisa_security_score: 0,
+        cfm_professional_standards: false,
+      },
+    };
   }
 
   /**
    * Enable/disable provider
    */
-  setProviderEnabled(provider: AIProvider, enabled: boolean): void {
-    const config = this.providers.get(provider);
-    if (config) {
-      config.enabled = enabled;
-      this.providers.set(provider, config);
-      console.log(`Provider ${provider} ${enabled ? 'enabled' : 'disabled'}`);
-    }
+  setProviderEnabled(provider: AIProvider, enabled: boolean): boolean {
+    return this.config_manager.setProviderEnabled(provider, enabled);
   }
 
   /**
-   * Get detailed health status
+   * Get available providers list
    */
-  getHealthStatus(): Map<AIProvider, ProviderHealth> {
-    return new Map(this.healthStatus);
+  getAvailableProvidersList(): AIProvider[] {
+    const enabled_configs = this.config_manager.getEnabledProviders();
+    return enabled_configs
+      .map((config) => config.provider)
+      .filter((provider) => {
+        return this.health_monitor.isProviderAvailable(provider);
+      });
   }
 
   /**
-   * Force circuit breaker reset
+   * Add or update provider configuration
    */
-  resetCircuitBreaker(provider: AIProvider): void {
-    const circuitBreaker = this.circuitBreakers.get(provider);
-    if (circuitBreaker) {
-      circuitBreaker.open = false;
-      delete circuitBreaker.openedAt;
-      console.log(`Circuit breaker manually reset for provider ${provider}`);
+  addProviderConfig(config: ProviderConfig): void {
+    this.config_manager.addProviderConfig(config);
+    this.health_monitor.initializeProviderHealth(config.provider, config);
+    this.initializeProviderMetrics(config.provider);
+  }
+
+  /**
+   * Cleanup resources
+   */
+  destroy(): void {
+    if (this.health_check_interval) {
+      clearInterval(this.health_check_interval);
     }
+
+    this.health_monitor.destroy();
+    this.performance_metrics.clear();
+    this.request_queue.clear();
   }
 }
+
+// Export the service and types for external use
+export default AIProviderRouterService;
+export type {
+  ProviderConfig,
+  ProviderHealthCheck,
+  RoutingRequest,
+  RoutingResponse,
+};

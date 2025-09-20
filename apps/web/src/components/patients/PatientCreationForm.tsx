@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { PatientRegistrationWizard } from './PatientRegistrationWizard';
+import { PatientRegistrationWizard } from "./PatientRegistrationWizard";
 
 interface PatientCreationFormProps {
   open: boolean;

@@ -4,7 +4,7 @@
  * Utilities for performance testing and benchmarking.
  */
 
-import { describe, it } from 'vitest';
+import { describe, it } from "vitest";
 
 // Healthcare-specific performance budget interface
 export interface HealthcarePerformanceBudget {
@@ -45,7 +45,7 @@ export class PerformanceMeasurer {
    * Start measuring performance
    */
   start(): void {
-    if (typeof process !== 'undefined' && process.memoryUsage) {
+    if (typeof process !== "undefined" && process.memoryUsage) {
       this.startMemory = process.memoryUsage();
     }
     this.startTime = performance.now();
@@ -61,7 +61,11 @@ export class PerformanceMeasurer {
       executionTime,
     };
 
-    if (this.startMemory && typeof process !== 'undefined' && process.memoryUsage) {
+    if (
+      this.startMemory &&
+      typeof process !== "undefined" &&
+      process.memoryUsage
+    ) {
       const endMemory = process.memoryUsage();
       metrics.memoryUsage = {
         heapUsed: endMemory.heapUsed - this.startMemory.heapUsed,
@@ -139,7 +143,10 @@ export class PerformanceBudgetValidator {
   /**
    * Validate performance metrics against budget
    */
-  static validate(metrics: PerformanceMetrics, budget: PerformanceBudget): {
+  static validate(
+    metrics: PerformanceMetrics,
+    budget: PerformanceBudget,
+  ): {
     passed: boolean;
     violations: string[];
     summary: string;
@@ -167,20 +174,24 @@ export class PerformanceBudgetValidator {
     }
 
     // Check iterations per second
-    if (budget.minIterationsPerSecond && metrics.iterations && metrics.averageTime) {
+    if (
+      budget.minIterationsPerSecond &&
+      metrics.iterations &&
+      metrics.averageTime
+    ) {
       const iterationsPerSecond = 1000 / metrics.averageTime;
       if (iterationsPerSecond < budget.minIterationsPerSecond) {
         violations.push(
-          `Performance ${
-            iterationsPerSecond.toFixed(2)
-          } iterations/sec below budget of ${budget.minIterationsPerSecond} iterations/sec`,
+          `Performance ${iterationsPerSecond.toFixed(
+            2,
+          )} iterations/sec below budget of ${budget.minIterationsPerSecond} iterations/sec`,
         );
       }
     }
 
     const passed = violations.length === 0;
     const summary = passed
-      ? 'All performance budgets met'
+      ? "All performance budgets met"
       : `${violations.length} performance budget violations`;
 
     return { passed, violations, summary };
@@ -198,7 +209,9 @@ export async function expectPerformance<T>(
   const validation = PerformanceBudgetValidator.validate(metrics, budget);
 
   if (!validation.passed) {
-    throw new Error(`Performance budget failed: ${validation.violations.join(', ')}`);
+    throw new Error(
+      `Performance budget failed: ${validation.violations.join(", ")}`,
+    );
   }
 
   return result;
@@ -239,7 +252,7 @@ export function createPerformanceTestSuite(
   }>,
 ) {
   describe(`Performance: ${name}`, () => {
-    tests.forEach(test => {
+    tests.forEach((test) => {
       it(`should meet performance budget for ${test.name}`, async () => {
         await expectPerformance(test.fn, test.budget);
       });
@@ -253,28 +266,30 @@ export function createPerformanceTestSuite(
 export const HEALTHCARE_PERFORMANCE_BUDGETS: HealthcarePerformanceBudget = {
   LCP: {
     budget: 2500,
-    unit: 'ms',
-    description: 'Largest Contentful Paint - Healthcare compliance requires ≤2.5s',
+    unit: "ms",
+    description:
+      "Largest Contentful Paint - Healthcare compliance requires ≤2.5s",
   },
   CLS: {
     budget: 0.1,
-    unit: 'score',
-    description: 'Cumulative Layout Shift - Medical interfaces require stability',
+    unit: "score",
+    description:
+      "Cumulative Layout Shift - Medical interfaces require stability",
   },
   TTFB: {
     budget: 600,
-    unit: 'ms',
-    description: 'Time to First Byte - Critical for healthcare data access',
+    unit: "ms",
+    description: "Time to First Byte - Critical for healthcare data access",
   },
   FID: {
     budget: 100,
-    unit: 'ms',
-    description: 'First Input Delay - Medical form responsiveness',
+    unit: "ms",
+    description: "First Input Delay - Medical form responsiveness",
   },
   TBT: {
     budget: 300,
-    unit: 'ms',
-    description: 'Total Blocking Time - Healthcare workflow efficiency',
+    unit: "ms",
+    description: "Total Blocking Time - Healthcare workflow efficiency",
   },
 };
 
@@ -297,7 +312,7 @@ export function createHealthcarePerformanceBudget(
  */
 export function validateHealthcarePerformance<T>(
   fn: () => Promise<T> | T,
-  metric: keyof HealthcarePerformanceBudget = 'LCP',
+  metric: keyof HealthcarePerformanceBudget = "LCP",
 ): Promise<T> {
   const budget = HEALTHCARE_PERFORMANCE_BUDGETS[metric];
   return expectPerformance(fn, {
@@ -318,8 +333,8 @@ export function createHealthcarePerformanceTestSuite(
   }>,
 ) {
   describe(`Healthcare Performance: ${name}`, () => {
-    tests.forEach(test => {
-      const metric = test.metric || 'LCP';
+    tests.forEach((test) => {
+      const metric = test.metric || "LCP";
       const budget = HEALTHCARE_PERFORMANCE_BUDGETS[metric];
 
       it(`should meet ${metric} budget for ${test.name} (≤${budget.budget}${budget.unit})`, async () => {

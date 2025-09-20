@@ -7,8 +7,8 @@ import {
   createClient,
   RealtimeChannel,
   RealtimePostgresChangesPayload,
-} from '@supabase/supabase-js';
-import { QueryClient } from '@tanstack/react-query';
+} from "@supabase/supabase-js";
+import { QueryClient } from "@tanstack/react-query";
 
 export interface RealtimeSubscriptionOptions<T = any> {
   onInsert?: (payload: T) => void;
@@ -47,7 +47,7 @@ export class RealtimeManager {
     filter?: string,
     options: RealtimeSubscriptionOptions<T> = {},
   ): RealtimeChannel {
-    const channelName = `${tableName}-${filter || 'all'}`;
+    const channelName = `${tableName}-${filter || "all"}`;
 
     if (this.channels.has(channelName)) {
       return this.channels.get(channelName)!;
@@ -56,14 +56,16 @@ export class RealtimeManager {
     const channel = this.supabase
       .channel(channelName)
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
+          event: "*",
+          schema: "public",
           table: tableName,
           filter,
         },
-        async (payload: RealtimePostgresChangesPayload<Record<string, any>>) => {
+        async (
+          payload: RealtimePostgresChangesPayload<Record<string, any>>,
+        ) => {
           // Rate limiting for healthcare data
           if (this.shouldRateLimit(channelName, options.rateLimitMs || 100)) {
             return;
@@ -72,12 +74,12 @@ export class RealtimeManager {
           await this.handleRealtimeEvent(payload, tableName, options);
         },
       )
-      .subscribe(status => {
+      .subscribe((status) => {
         console.log(`Realtime subscription ${channelName} status:`, status);
 
-        if (status === 'SUBSCRIBED') {
+        if (status === "SUBSCRIBED") {
           console.log(`✅ Successfully subscribed to ${tableName} changes`);
-        } else if (status === 'CHANNEL_ERROR') {
+        } else if (status === "CHANNEL_ERROR") {
           console.error(`❌ Error subscribing to ${tableName}`);
           // Implement retry logic
           setTimeout(() => {
@@ -109,19 +111,19 @@ export class RealtimeManager {
   ) {
     try {
       switch (payload.eventType) {
-        case 'INSERT':
+        case "INSERT":
           options.onInsert?.(payload.new as T);
           if (options.optimisticUpdates !== false) {
             await this.optimisticInsert(tableName, payload.new as T);
           }
           break;
-        case 'UPDATE':
+        case "UPDATE":
           options.onUpdate?.(payload.new as T);
           if (options.optimisticUpdates !== false) {
             await this.optimisticUpdate(tableName, payload.new as T);
           }
           break;
-        case 'DELETE':
+        case "DELETE":
           options.onDelete?.({ old: payload.old as T });
           if (options.optimisticUpdates !== false) {
             await this.optimisticDelete(tableName, payload.old as T);
@@ -132,11 +134,13 @@ export class RealtimeManager {
       // Invalidate related queries for data consistency
       if (options.queryKeys) {
         await Promise.all(
-          options.queryKeys.map(queryKey => this.queryClient.invalidateQueries({ queryKey })),
+          options.queryKeys.map((queryKey) =>
+            this.queryClient.invalidateQueries({ queryKey }),
+          ),
         );
       }
     } catch (error) {
-      console.error('Error handling realtime event:', error);
+      console.error("Error handling realtime event:", error);
     }
   }
   private async optimisticInsert<T extends { id: string }>(
@@ -163,7 +167,11 @@ export class RealtimeManager {
 
     // Update list cache
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return old?.map(item => item.id === updatedRecord.id ? updatedRecord : item) || [];
+      return (
+        old?.map((item) =>
+          item.id === updatedRecord.id ? updatedRecord : item,
+        ) || []
+      );
     });
 
     // Update specific record cache
@@ -178,7 +186,7 @@ export class RealtimeManager {
 
     // Remove from list cache
     this.queryClient.setQueryData([tableName], (old: T[] | undefined) => {
-      return old?.filter(item => item.id !== deletedRecord.id) || [];
+      return old?.filter((item) => item.id !== deletedRecord.id) || [];
     });
 
     // Remove specific record cache
@@ -198,10 +206,12 @@ export class RealtimeManager {
       return;
     }
 
-    console.log(`Retrying subscription to ${tableName} (attempt ${retryCount + 1})`);
+    console.log(
+      `Retrying subscription to ${tableName} (attempt ${retryCount + 1})`,
+    );
 
     // Remove failed channel
-    const channelName = `${tableName}-${filter || 'all'}`;
+    const channelName = `${tableName}-${filter || "all"}`;
     const existingChannel = this.channels.get(channelName);
     if (existingChannel) {
       this.supabase.removeChannel(existingChannel);
@@ -209,7 +219,9 @@ export class RealtimeManager {
     }
 
     // Wait before retry with exponential backoff
-    await new Promise(resolve => setTimeout(resolve, Math.pow(2, retryCount) * 1000));
+    await new Promise((resolve) =>
+      setTimeout(resolve, Math.pow(2, retryCount) * 1000),
+    );
 
     // Retry subscription
     this.subscribeToTable(tableName, filter, options);
@@ -228,18 +240,18 @@ export class RealtimeManager {
 
     const channel = this.supabase
       .channel(channelName)
-      .on('presence', { event: 'sync' }, () => {
+      .on("presence", { event: "sync" }, () => {
         const state = channel.presenceState();
-        console.log('Presence sync:', state);
+        console.log("Presence sync:", state);
       })
-      .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        console.log('User joined:', key, newPresences);
+      .on("presence", { event: "join" }, ({ key, newPresences }) => {
+        console.log("User joined:", key, newPresences);
       })
-      .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-        console.log('User left:', key, leftPresences);
+      .on("presence", { event: "leave" }, ({ key, leftPresences }) => {
+        console.log("User left:", key, leftPresences);
       })
-      .subscribe(async status => {
-        if (status === 'SUBSCRIBED') {
+      .subscribe(async (status) => {
+        if (status === "SUBSCRIBED") {
           await channel.track(initialState);
         }
       });
@@ -278,7 +290,7 @@ export class RealtimeManager {
    */
   getConnectionStatus(): string {
     // Note: connection property may not be available in all versions
-    return 'connected'; // Simplified for now
+    return "connected"; // Simplified for now
   }
 
   /**

@@ -7,12 +7,14 @@
 
 ---
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### Primary User Story
+
 As a healthcare professional, I want to conversationaly ask questions about my clients, appointments, and financial data through an AI chat interface, so I can quickly access and analyze information without navigating through multiple screens.
 
 ### Acceptance Scenarios
+
 1. **Given** I am a logged-in user with appropriate permissions, **When** I ask "Quais os próximos agendamentos?", **Then** the system displays a list of upcoming appointments in the chat interface
 2. **Given** I am a logged-in user with appropriate permissions, **When** I ask "Me mostre os clientes cadastrados", **Then** the system displays a list of all accessible clients in the chat interface
 3. **Given** I am a logged-in user with appropriate permissions, **When** I ask "Como está o faturamento?", **Then** the system displays a financial summary in the chat interface
@@ -20,15 +22,17 @@ As a healthcare professional, I want to conversationaly ask questions about my c
 5. **Given** I attempt to access data outside my permissions, **When** I make the request, **Then** the system responds with an appropriate access denied message
 
 ### Edge Cases
+
 - What happens when the user asks a question about data that doesn't exist? (e.g., appointments for a non-existent client)
 - How does the system handle ambiguous queries where the intent is unclear?
 - What happens when the database connection is temporarily unavailable?
 - How does the system handle requests for extremely large datasets?
 - What happens when the user's session has expired during a conversation?
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
+
 - **FR-001**: System MUST provide a conversational chat interface for users to interact with their data
 - **FR-002**: System MUST understand and process natural language queries about clients, appointments, and financial data
 - **FR-003**: System MUST enforce role-based access control on all data requests
@@ -40,7 +44,8 @@ As a healthcare professional, I want to conversationaly ask questions about my c
 - **FR-009**: System MUST support interactive elements in responses (e.g., "Ver detalhes" buttons)
 - **FR-010**: System MUST ensure all database access respects Row Level Security (RLS) policies
 
-### Key Entities *(include if feature involves data)*
+### Key Entities _(include if feature involves data)_
+
 - **User Query**: Natural language input from user requesting data or actions
 - **AI Agent Response**: Structured response containing data, visualizations, and interactive elements
 - **Client Data**: Personal and contact information of patients/clients
@@ -51,17 +56,20 @@ As a healthcare professional, I want to conversationaly ask questions about my c
 ---
 
 ## Review & Acceptance Checklist
-*GATE: Automated checks run during main() execution*
+
+_GATE: Automated checks run during main() execution_
 
 ### Content Quality
+
 - [ ] No implementation details (languages, frameworks, APIs)
 - [x] Focused on user value and business needs
 - [x] Written for non-technical stakeholders
 - [x] All mandatory sections completed
 
 ### Requirement Completeness
+
 - [x] No [NEEDS CLARIFICATION] markers remain
-- [x] Requirements are testable and unambiguous  
+- [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Scope is clearly bounded
 - [x] Dependencies and assumptions identified
@@ -69,7 +77,8 @@ As a healthcare professional, I want to conversationaly ask questions about my c
 ---
 
 ## Execution Status
-*Updated by main() during processing*
+
+_Updated by main() during processing_
 
 - [x] User description parsed
 - [x] Key concepts extracted

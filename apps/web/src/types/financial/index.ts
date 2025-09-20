@@ -4,7 +4,7 @@
  */
 
 // Currency handling with Brazilian Real support
-export type Currency = 'BRL' | 'USD' | 'EUR';
+export type Currency = "BRL" | "USD" | "EUR";
 
 export interface MonetaryValue {
   readonly amount: number;
@@ -28,7 +28,7 @@ export interface FinancialMetrics {
 export interface GrowthMetrics {
   readonly mrrGrowth: number; // Percentage
   readonly customerGrowth: number; // Percentage
-  readonly periodComparison: 'month' | 'quarter' | 'year';
+  readonly periodComparison: "month" | "quarter" | "year";
 }
 
 export interface DatePeriod {
@@ -108,11 +108,11 @@ export interface AuditInfo {
 
 // Export options
 export interface ExportOptions {
-  readonly format: 'PDF' | 'Excel' | 'CSV';
+  readonly format: "PDF" | "Excel" | "CSV";
   readonly period: DatePeriod;
   readonly includeCharts: boolean;
   readonly clinicBranding: boolean;
-  readonly complianceLevel: 'summary' | 'detailed' | 'full';
+  readonly complianceLevel: "summary" | "detailed" | "full";
 }
 
 // Error types for financial operations
@@ -120,10 +120,10 @@ export class FinancialDataError extends Error {
   constructor(
     message: string,
     public readonly code: string,
-    public readonly context?: Record<string, unknown>
+    public readonly context?: Record<string, unknown>,
   ) {
     super(message);
-    this.name = 'FinancialDataError';
+    this.name = "FinancialDataError";
   }
 }
 
@@ -131,32 +131,32 @@ export class LGPDComplianceError extends Error {
   constructor(
     message: string,
     public readonly violation: string,
-    public readonly requiredConsent?: readonly string[]
+    public readonly requiredConsent?: readonly string[],
   ) {
     super(message);
-    this.name = 'LGPDComplianceError';
+    this.name = "LGPDComplianceError";
   }
 }
 
 // Type guards for runtime validation
 export function isMonetaryValue(value: unknown): value is MonetaryValue {
   return (
-    typeof value === 'object' &&
+    typeof value === "object" &&
     value !== null &&
-    'amount' in value &&
-    'currency' in value &&
-    typeof (value as MonetaryValue).amount === 'number' &&
-    typeof (value as MonetaryValue).currency === 'string'
+    "amount" in value &&
+    "currency" in value &&
+    typeof (value as MonetaryValue).amount === "number" &&
+    typeof (value as MonetaryValue).currency === "string"
   );
 }
 
 export function isFinancialMetrics(value: unknown): value is FinancialMetrics {
   return (
-    typeof value === 'object' &&
+    typeof value === "object" &&
     value !== null &&
-    'id' in value &&
-    'mrr' in value &&
-    'arr' in value &&
+    "id" in value &&
+    "mrr" in value &&
+    "arr" in value &&
     isMonetaryValue((value as FinancialMetrics).mrr) &&
     isMonetaryValue((value as FinancialMetrics).arr)
   );
@@ -167,7 +167,7 @@ export type StrictFinancialData<T> = {
   readonly [K in keyof T]: T[K] extends number
     ? T[K] extends infer U
       ? U extends number
-        ? number & { readonly __brand: 'FinancialNumber' }
+        ? number & { readonly __brand: "FinancialNumber" }
         : T[K]
       : never
     : T[K];

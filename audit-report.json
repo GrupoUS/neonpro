@@ -201,9 +201,7 @@
         "score": 0,
         "vectorString": null
       },
-      "cwe": [
-        "CWE-400"
-      ],
+      "cwe": ["CWE-400"],
       "url": "https://github.com/advisories/GHSA-36jr-mh4h-2g58"
     },
     "1088948": {
@@ -225,9 +223,7 @@
       "reported_by": null,
       "title": "Got allows a redirect to a UNIX socket",
       "metadata": null,
-      "cves": [
-        "CVE-2022-33987"
-      ],
+      "cves": ["CVE-2022-33987"],
       "access": "public",
       "severity": "moderate",
       "module_name": "got",
@@ -262,9 +258,7 @@
       "reported_by": null,
       "title": "Server-Side Request Forgery in Request",
       "metadata": null,
-      "cves": [
-        "CVE-2023-28155"
-      ],
+      "cves": ["CVE-2023-28155"],
       "access": "public",
       "severity": "moderate",
       "module_name": "request",
@@ -277,9 +271,7 @@
         "score": 6.1,
         "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N"
       },
-      "cwe": [
-        "CWE-918"
-      ],
+      "cwe": ["CWE-918"],
       "url": "https://github.com/advisories/GHSA-p8p7-x288-28g6"
     },
     "1097682": {
@@ -301,9 +293,7 @@
       "reported_by": null,
       "title": "tough-cookie Prototype Pollution vulnerability",
       "metadata": null,
-      "cves": [
-        "CVE-2023-26136"
-      ],
+      "cves": ["CVE-2023-26136"],
       "access": "public",
       "severity": "moderate",
       "module_name": "tough-cookie",
@@ -316,9 +306,7 @@
         "score": 6.5,
         "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:L/I:L/A:N"
       },
-      "cwe": [
-        "CWE-1321"
-      ],
+      "cwe": ["CWE-1321"],
       "url": "https://github.com/advisories/GHSA-72xf-g2v4-qvf3"
     },
     "1098392": {
@@ -341,9 +329,7 @@
       "reported_by": null,
       "title": "ws affected by a DoS when handling a request with many HTTP headers",
       "metadata": null,
-      "cves": [
-        "CVE-2024-37890"
-      ],
+      "cves": ["CVE-2024-37890"],
       "access": "public",
       "severity": "high",
       "module_name": "ws",
@@ -356,9 +342,7 @@
         "score": 7.5,
         "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
       },
-      "cwe": [
-        "CWE-476"
-      ],
+      "cwe": ["CWE-476"],
       "url": "https://github.com/advisories/GHSA-3h5v-q93c-6h6q"
     },
     "1102341": {
@@ -438,9 +422,7 @@
         "score": 5.3,
         "vectorString": "CVSS:3.1/AV:N/AC:H/PR:N/UI:R/S:U/C:H/I:N/A:N"
       },
-      "cwe": [
-        "CWE-346"
-      ],
+      "cwe": ["CWE-346"],
       "url": "https://github.com/advisories/GHSA-67mh-4wv8-2f99"
     },
     "1103907": {
@@ -464,9 +446,7 @@
       "reported_by": null,
       "title": "cookie accepts cookie name, path, and domain with out of bounds characters",
       "metadata": null,
-      "cves": [
-        "CVE-2024-47764"
-      ],
+      "cves": ["CVE-2024-47764"],
       "access": "public",
       "severity": "low",
       "module_name": "cookie",
@@ -479,9 +459,7 @@
         "score": 0,
         "vectorString": null
       },
-      "cwe": [
-        "CWE-74"
-      ],
+      "cwe": ["CWE-74"],
       "url": "https://github.com/advisories/GHSA-pxg6-pf52-xh8x"
     },
     "1104677": {
@@ -506,9 +484,7 @@
       "reported_by": null,
       "title": "tar-fs Vulnerable to Link Following and Path Traversal via Extracting a Crafted tar File",
       "metadata": null,
-      "cves": [
-        "CVE-2024-12905"
-      ],
+      "cves": ["CVE-2024-12905"],
       "access": "public",
       "severity": "high",
       "module_name": "tar-fs",
@@ -521,9 +497,7 @@
         "score": 7.5,
         "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N"
       },
-      "cwe": [
-        "CWE-22"
-      ],
+      "cwe": ["CWE-22"],
       "url": "https://github.com/advisories/GHSA-pq67-2wwv-3xjx"
     },
     "1106509": {
@@ -545,9 +519,7 @@
       "reported_by": null,
       "title": "form-data uses unsafe random function in form-data for choosing boundary",
       "metadata": null,
-      "cves": [
-        "CVE-2025-7783"
-      ],
+      "cves": ["CVE-2025-7783"],
       "access": "public",
       "severity": "critical",
       "module_name": "form-data",
@@ -560,9 +532,7 @@
         "score": 0,
         "vectorString": null
       },
-      "cwe": [
-        "CWE-330"
-      ],
+      "cwe": ["CWE-330"],
       "url": "https://github.com/advisories/GHSA-fjxv-7rqg-78g4"
     },
     "1106849": {
@@ -576,9 +546,7 @@
         },
         {
           "version": "0.1.0",
-          "paths": [
-            "tools/performance > @lhci/cli@0.12.0 > tmp@0.1.0"
-          ]
+          "paths": ["tools/performance > @lhci/cli@0.12.0 > tmp@0.1.0"]
         }
       ],
       "found_by": null,
@@ -591,9 +559,7 @@
       "reported_by": null,
       "title": "tmp allows arbitrary temporary file / directory write via symbolic link `dir` parameter",
       "metadata": null,
-      "cves": [
-        "CVE-2025-54798"
-      ],
+      "cves": ["CVE-2025-54798"],
       "access": "public",
       "severity": "low",
       "module_name": "tmp",
@@ -606,9 +572,7 @@
         "score": 2.5,
         "vectorString": "CVSS:3.1/AV:L/AC:H/PR:L/UI:N/S:U/C:N/I:L/A:N"
       },
-      "cwe": [
-        "CWE-59"
-      ],
+      "cwe": ["CWE-59"],
       "url": "https://github.com/advisories/GHSA-52f5-9888-hmc6"
     },
     "1106930": {
@@ -633,9 +597,7 @@
       "reported_by": null,
       "title": "tar-fs can extract outside the specified dir with a specific tarball",
       "metadata": null,
-      "cves": [
-        "CVE-2025-48387"
-      ],
+      "cves": ["CVE-2025-48387"],
       "access": "public",
       "severity": "high",
       "module_name": "tar-fs",
@@ -648,9 +610,7 @@
         "score": 0,
         "vectorString": null
       },
-      "cwe": [
-        "CWE-22"
-      ],
+      "cwe": ["CWE-22"],
       "url": "https://github.com/advisories/GHSA-8cj5-5rvv-wf4v"
     }
   },

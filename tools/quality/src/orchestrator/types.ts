@@ -1,43 +1,61 @@
 /**
  * 🎭 TDD Orchestrator Types
  * ========================
- * 
+ *
  * Core type definitions for the multi-agent TDD orchestration system
  */
 
 // Agent Types
-export type AgentName = 'apex-dev' | 'test' | 'compliance-validator' | 'code-reviewer' | 'architect-review' | 'security-auditor';
+export type AgentName =
+  | "apex-dev"
+  | "test"
+  | "compliance-validator"
+  | "code-reviewer"
+  | "architect-review"
+  | "security-auditor";
 
-export type TDDPhase = 'red' | 'green' | 'refactor';
+export type TDDPhase = "red" | "green" | "refactor";
 
-export type WorkflowType = 'standard' | 'security-critical' | 'microservices' | 'legacy';
+export type WorkflowType =
+  | "standard"
+  | "security-critical"
+  | "microservices"
+  | "legacy";
 
-export type ComplexityLevel = 'low' | 'medium' | 'high';
+export type ComplexityLevel = "low" | "medium" | "high";
 
-export type QualityGateStatus = 'pending' | 'passed' | 'failed' | 'skipped';
+export type QualityGateStatus = "pending" | "passed" | "failed" | "skipped";
 
 // Complexity Level Utilities
-export function normalizeComplexity(complexity: number | ComplexityLevel): number {
-  if (typeof complexity === 'number') {
+export function normalizeComplexity(
+  complexity: number | ComplexityLevel,
+): number {
+  if (typeof complexity === "number") {
     return complexity;
   }
-  
+
   switch (complexity) {
-    case 'low': return 1;
-    case 'medium': return 5;
-    case 'high': return 9;
-    default: return 1;
+    case "low":
+      return 1;
+    case "medium":
+      return 5;
+    case "high":
+      return 9;
+    default:
+      return 1;
   }
 }
 
-export function getComplexityLevel(complexity: number | ComplexityLevel): ComplexityLevel {
-  if (typeof complexity === 'string') {
+export function getComplexityLevel(
+  complexity: number | ComplexityLevel,
+): ComplexityLevel {
+  if (typeof complexity === "string") {
     return complexity;
   }
-  
-  if (complexity <= 3) return 'low';
-  if (complexity <= 7) return 'medium';
-  return 'high';
+
+  if (complexity <= 3) return "low";
+  if (complexity <= 7) return "medium";
+  return "high";
 }
 
 // Domain Utilities
@@ -45,9 +63,13 @@ export function normalizeDomain(domain: string | string[]): string[] {
   return Array.isArray(domain) ? domain : [domain];
 }
 
-export type MessageType = 'analysis' | 'recommendation' | 'validation' | 'error';
+export type MessageType =
+  | "analysis"
+  | "recommendation"
+  | "validation"
+  | "error";
 
-export type Priority = 'low' | 'medium' | 'high' | 'critical';
+export type Priority = "low" | "medium" | "high" | "critical";
 
 // Feature Context
 export interface FeatureContext {
@@ -55,7 +77,7 @@ export interface FeatureContext {
   description: string;
   domain: string | string[];
   complexity: number | ComplexityLevel;
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  priority: "low" | "medium" | "high" | "critical";
   estimatedEffort: number;
   dependencies: string[];
   requirements?: string[];
@@ -73,7 +95,7 @@ export interface FeatureContext {
 export interface TDDCycleState {
   phase: TDDPhase;
   iteration: number;
-  testStatus: 'failing' | 'passing' | 'optimizing';
+  testStatus: "failing" | "passing" | "optimizing";
   startTime: Date;
   phaseStartTime: Date;
 }
@@ -112,8 +134,8 @@ export interface OrchestrationState {
 // Agent Communication
 export interface AgentMessage {
   id: string;
-  sender: AgentName | 'orchestrator';
-  receiver: AgentName | 'orchestrator' | 'broadcast';
+  sender: AgentName | "orchestrator";
+  receiver: AgentName | "orchestrator" | "broadcast";
   type: MessageType;
   priority: Priority;
   context: {
@@ -152,26 +174,40 @@ export interface WorkflowConfig {
 /**
  * Finding types for agent results
  */
-export type FindingType = 
-  | 'test-creation' | 'test-validation' | 'test-stability' | 'test-quality'
-  | 'code-quality' | 'refactoring-quality' 
-  | 'architecture-design' | 'architecture-implementation' | 'architecture-improvement'
-  | 'security-test-requirements' | 'security-implementation' | 'security-refactoring'
-  | 'performance' | 'compliance';
+export type FindingType =
+  | "test-creation"
+  | "test-validation"
+  | "test-stability"
+  | "test-quality"
+  | "code-quality"
+  | "refactoring-quality"
+  | "architecture-design"
+  | "architecture-implementation"
+  | "architecture-improvement"
+  | "security-test-requirements"
+  | "security-implementation"
+  | "security-refactoring"
+  | "performance"
+  | "compliance";
 
 /**
  * Recommendation types for agent results
  */
-export type RecommendationType = 
-  | 'test-strategy' | 'code-improvement' | 'security-testing' 
-  | 'architecture' | 'performance' | 'compliance' | 'error';
+export type RecommendationType =
+  | "test-strategy"
+  | "code-improvement"
+  | "security-testing"
+  | "architecture"
+  | "performance"
+  | "compliance"
+  | "error";
 
 /**
  * Finding from agent analysis
  */
 export interface Finding {
   type: FindingType;
-  severity: 'low' | 'medium' | 'high' | 'critical' | 'info';
+  severity: "low" | "medium" | "high" | "critical" | "info";
   description: string;
   location: string;
   suggestion: string;
@@ -182,7 +218,7 @@ export interface Finding {
  */
 export interface Recommendation {
   type: RecommendationType;
-  priority: 'low' | 'medium' | 'high' | 'critical';
+  priority: "low" | "medium" | "high" | "critical";
   description: string;
   action: string;
 }
@@ -215,7 +251,7 @@ export interface PhaseConfig {
 export interface AgentResult {
   agent: AgentName;
   phase: TDDPhase;
-  status: 'success' | 'failure' | 'warning' | 'skipped';
+  status: "success" | "failure" | "warning" | "skipped";
   findings: Finding[];
   recommendations: Recommendation[];
   metrics: Record<string, number>;
@@ -258,13 +294,18 @@ export interface OrchestratorConfig {
   monitoring: {
     enabled: boolean;
     metricsEndpoint?: string;
-    logLevel: 'debug' | 'info' | 'warn' | 'error';
+    logLevel: "debug" | "info" | "warn" | "error";
   };
 }
 
 // Event Types
 export interface OrchestratorEvent {
-  type: 'workflow-started' | 'phase-changed' | 'agent-completed' | 'quality-gate-failed' | 'workflow-completed';
+  type:
+    | "workflow-started"
+    | "phase-changed"
+    | "agent-completed"
+    | "quality-gate-failed"
+    | "workflow-completed";
   orchestrationId: string;
   timestamp: Date;
   data: Record<string, any>;

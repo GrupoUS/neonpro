@@ -10,26 +10,26 @@
  * - Error monitoring and alerting integration
  */
 
-import { type HealthcarePrismaClient } from '../clients/prisma';
+import { type HealthcarePrismaClient } from "../clients/prisma";
 
 // Healthcare error severity levels
 export enum HealthcareErrorSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical',
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 
 // Healthcare error categories
 export enum HealthcareErrorCategory {
-  AUTHENTICATION = 'authentication',
-  AUTHORIZATION = 'authorization',
-  VALIDATION = 'validation',
-  COMPLIANCE = 'compliance',
-  DATA_INTEGRITY = 'data_integrity',
-  SYSTEM = 'system',
-  NETWORK = 'network',
-  EXTERNAL_SERVICE = 'external_service',
+  AUTHENTICATION = "authentication",
+  AUTHORIZATION = "authorization",
+  VALIDATION = "validation",
+  COMPLIANCE = "compliance",
+  DATA_INTEGRITY = "data_integrity",
+  SYSTEM = "system",
+  NETWORK = "network",
+  EXTERNAL_SERVICE = "external_service",
 }
 
 // Base healthcare error interface
@@ -69,7 +69,7 @@ export class HealthcareError extends Error {
 
   constructor(errorDetails: HealthcareErrorDetails) {
     super(errorDetails.message);
-    this.name = 'HealthcareError';
+    this.name = "HealthcareError";
     this.code = errorDetails.code;
     this.category = errorDetails.category;
     this.severity = errorDetails.severity;
@@ -126,14 +126,14 @@ export class HealthcareError extends Error {
 
     // Sanitize details object
     if (sanitized.details) {
-      Object.keys(sanitized.details).forEach(key => {
+      Object.keys(sanitized.details).forEach((key) => {
         if (
-          key.toLowerCase().includes('email')
-          || key.toLowerCase().includes('phone')
-          || key.toLowerCase().includes('cpf')
-          || key.toLowerCase().includes('address')
+          key.toLowerCase().includes("email") ||
+          key.toLowerCase().includes("phone") ||
+          key.toLowerCase().includes("cpf") ||
+          key.toLowerCase().includes("address")
         ) {
-          sanitized.details[key] = '[SANITIZED]';
+          sanitized.details[key] = "[SANITIZED]";
         }
       });
     }
@@ -150,7 +150,7 @@ export class HealthcareAuthenticationError extends HealthcareError {
     context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
-      code: 'HEALTHCARE_AUTH_ERROR',
+      code: "HEALTHCARE_AUTH_ERROR",
       category: HealthcareErrorCategory.AUTHENTICATION,
       severity: HealthcareErrorSeverity.HIGH,
       message,
@@ -158,7 +158,7 @@ export class HealthcareAuthenticationError extends HealthcareError {
       timestamp: new Date(),
       ...context,
     });
-    this.name = 'HealthcareAuthenticationError';
+    this.name = "HealthcareAuthenticationError";
   }
 }
 
@@ -171,7 +171,7 @@ export class HealthcareAuthorizationError extends HealthcareError {
     context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
-      code: 'HEALTHCARE_AUTHZ_ERROR',
+      code: "HEALTHCARE_AUTHZ_ERROR",
       category: HealthcareErrorCategory.AUTHORIZATION,
       severity: HealthcareErrorSeverity.HIGH,
       message,
@@ -180,7 +180,7 @@ export class HealthcareAuthorizationError extends HealthcareError {
       timestamp: new Date(),
       ...context,
     });
-    this.name = 'HealthcareAuthorizationError';
+    this.name = "HealthcareAuthorizationError";
   }
 }
 
@@ -196,7 +196,7 @@ export class LGPDComplianceError extends HealthcareError {
     context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
-      code: 'LGPD_COMPLIANCE_ERROR',
+      code: "LGPD_COMPLIANCE_ERROR",
       category: HealthcareErrorCategory.COMPLIANCE,
       severity: HealthcareErrorSeverity.CRITICAL,
       message,
@@ -204,7 +204,7 @@ export class LGPDComplianceError extends HealthcareError {
       timestamp: new Date(),
       ...context,
     });
-    this.name = 'LGPDComplianceError';
+    this.name = "LGPDComplianceError";
     this.lgpdArticle = lgpdArticle;
     this.dataCategory = dataCategory;
   }
@@ -212,12 +212,12 @@ export class LGPDComplianceError extends HealthcareError {
 
 // Brazilian healthcare regulatory errors
 export class BrazilianRegulatoryError extends HealthcareError {
-  public readonly regulatoryBody: 'ANVISA' | 'CFM' | 'CFF' | 'CREF';
+  public readonly regulatoryBody: "ANVISA" | "CFM" | "CFF" | "CREF";
   public readonly regulation?: string;
 
   constructor(
     message: string,
-    regulatoryBody: 'ANVISA' | 'CFM' | 'CFF' | 'CREF',
+    regulatoryBody: "ANVISA" | "CFM" | "CFF" | "CREF",
     regulation?: string,
     context?: Partial<HealthcareErrorDetails>,
   ) {
@@ -230,7 +230,7 @@ export class BrazilianRegulatoryError extends HealthcareError {
       timestamp: new Date(),
       ...context,
     });
-    this.name = 'BrazilianRegulatoryError';
+    this.name = "BrazilianRegulatoryError";
     this.regulatoryBody = regulatoryBody;
     this.regulation = regulation;
   }
@@ -238,18 +238,22 @@ export class BrazilianRegulatoryError extends HealthcareError {
 
 // Patient data validation errors
 export class PatientDataValidationError extends HealthcareError {
-  public readonly validationErrors: Array<{ field: string; message: string; value?: any }>;
+  public readonly validationErrors: Array<{
+    field: string;
+    message: string;
+    value?: any;
+  }>;
 
   constructor(
     validationErrors: Array<{ field: string; message: string; value?: any }>,
     context?: Partial<HealthcareErrorDetails>,
   ) {
-    const message = `Patient data validation failed: ${
-      validationErrors.map(e => e.field).join(', ')
-    }`;
+    const message = `Patient data validation failed: ${validationErrors
+      .map((e) => e.field)
+      .join(", ")}`;
 
     super({
-      code: 'PATIENT_DATA_VALIDATION_ERROR',
+      code: "PATIENT_DATA_VALIDATION_ERROR",
       category: HealthcareErrorCategory.VALIDATION,
       severity: HealthcareErrorSeverity.MEDIUM,
       message,
@@ -257,22 +261,28 @@ export class PatientDataValidationError extends HealthcareError {
       timestamp: new Date(),
       ...context,
     });
-    this.name = 'PatientDataValidationError';
+    this.name = "PatientDataValidationError";
     this.validationErrors = validationErrors;
   }
 }
 
 // Appointment scheduling errors
 export class AppointmentSchedulingError extends HealthcareError {
-  public readonly conflictType?: 'time_conflict' | 'resource_unavailable' | 'policy_violation';
+  public readonly conflictType?:
+    | "time_conflict"
+    | "resource_unavailable"
+    | "policy_violation";
 
   constructor(
     message: string,
-    conflictType?: 'time_conflict' | 'resource_unavailable' | 'policy_violation',
+    conflictType?:
+      | "time_conflict"
+      | "resource_unavailable"
+      | "policy_violation",
     context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
-      code: 'APPOINTMENT_SCHEDULING_ERROR',
+      code: "APPOINTMENT_SCHEDULING_ERROR",
       category: HealthcareErrorCategory.VALIDATION,
       severity: HealthcareErrorSeverity.MEDIUM,
       message,
@@ -280,16 +290,20 @@ export class AppointmentSchedulingError extends HealthcareError {
       timestamp: new Date(),
       ...context,
     });
-    this.name = 'AppointmentSchedulingError';
+    this.name = "AppointmentSchedulingError";
     this.conflictType = conflictType;
   }
 }
 
 // Database integrity errors
 export class HealthcareDataIntegrityError extends HealthcareError {
-  constructor(message: string, operation?: string, context?: Partial<HealthcareErrorDetails>) {
+  constructor(
+    message: string,
+    operation?: string,
+    context?: Partial<HealthcareErrorDetails>,
+  ) {
     super({
-      code: 'HEALTHCARE_DATA_INTEGRITY_ERROR',
+      code: "HEALTHCARE_DATA_INTEGRITY_ERROR",
       category: HealthcareErrorCategory.DATA_INTEGRITY,
       severity: HealthcareErrorSeverity.HIGH,
       message,
@@ -297,7 +311,7 @@ export class HealthcareDataIntegrityError extends HealthcareError {
       timestamp: new Date(),
       ...context,
     });
-    this.name = 'HealthcareDataIntegrityError';
+    this.name = "HealthcareDataIntegrityError";
   }
 }
 
@@ -313,7 +327,7 @@ export class ExternalHealthcareServiceError extends HealthcareError {
     context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
-      code: 'EXTERNAL_HEALTHCARE_SERVICE_ERROR',
+      code: "EXTERNAL_HEALTHCARE_SERVICE_ERROR",
       category: HealthcareErrorCategory.EXTERNAL_SERVICE,
       severity: HealthcareErrorSeverity.MEDIUM,
       message,
@@ -321,7 +335,7 @@ export class ExternalHealthcareServiceError extends HealthcareError {
       timestamp: new Date(),
       ...context,
     });
-    this.name = 'ExternalHealthcareServiceError';
+    this.name = "ExternalHealthcareServiceError";
     this.serviceName = serviceName;
     this.serviceResponse = serviceResponse;
   }
@@ -341,7 +355,7 @@ export class HealthcareLogger {
   async logError(error: HealthcareError): Promise<void> {
     try {
       // Console logging with structured format
-      console.error('Healthcare Error:', {
+      console.error("Healthcare Error:", {
         timestamp: error.timestamp.toISOString(),
         code: error.code,
         category: error.category,
@@ -356,9 +370,9 @@ export class HealthcareLogger {
       // Log to database audit trail if Prisma client available
       if (this.prisma && error.userId) {
         await this.prisma.createAuditLog(
-          'ERROR',
-          error.resourceType || 'SYSTEM',
-          error.resourceId || 'unknown',
+          "ERROR",
+          error.resourceType || "SYSTEM",
+          error.resourceId || "unknown",
           {
             errorCode: error.code,
             errorCategory: error.category,
@@ -379,7 +393,7 @@ export class HealthcareLogger {
         await this.sendCriticalAlert(error);
       }
     } catch (loggingError) {
-      console.error('Failed to log healthcare error:', loggingError);
+      console.error("Failed to log healthcare error:", loggingError);
     }
   }
 
@@ -398,7 +412,7 @@ export class HealthcareLogger {
     },
   ): Promise<void> {
     try {
-      console.info('Healthcare Operation Success:', {
+      console.info("Healthcare Operation Success:", {
         timestamp: new Date().toISOString(),
         operation,
         resourceType,
@@ -408,19 +422,14 @@ export class HealthcareLogger {
       });
 
       if (this.prisma && context?.userId) {
-        await this.prisma.createAuditLog(
-          'SUCCESS',
-          resourceType,
-          resourceId,
-          {
-            operation,
-            duration: context.duration,
-            details: context.details,
-          },
-        );
+        await this.prisma.createAuditLog("SUCCESS", resourceType, resourceId, {
+          operation,
+          duration: context.duration,
+          details: context.details,
+        });
       }
     } catch (loggingError) {
-      console.error('Failed to log healthcare success:', loggingError);
+      console.error("Failed to log healthcare success:", loggingError);
     }
   }
 
@@ -428,12 +437,12 @@ export class HealthcareLogger {
    * Sanitizes stack trace for logging (removes sensitive paths)
    */
   private sanitizeStackTrace(stackTrace?: string): string {
-    if (!stackTrace) return '';
+    if (!stackTrace) return "";
 
     return stackTrace
-      .replace(/\/home\/[^/]+/g, '/home/[USER]')
-      .replace(/\/Users\/[^/]+/g, '/Users/[USER]')
-      .replace(/C:\\Users\\[^\\]+/g, 'C:\\Users\\[USER]');
+      .replace(/\/home\/[^/]+/g, "/home/[USER]")
+      .replace(/\/Users\/[^/]+/g, "/Users/[USER]")
+      .replace(/C:\\Users\\[^\\]+/g, "C:\\Users\\[USER]");
   }
 
   /**
@@ -446,7 +455,7 @@ export class HealthcareLogger {
 
       if (process.env.SENTRY_DSN) {
         // Log the error for future monitoring implementation
-        console.warn('Monitoring integration not yet implemented for error:', {
+        console.warn("Monitoring integration not yet implemented for error:", {
           code: error.code,
           category: error.category,
           severity: error.severity,
@@ -463,7 +472,7 @@ export class HealthcareLogger {
         // });
       }
     } catch (monitoringError) {
-      console.error('Failed to send to monitoring:', monitoringError);
+      console.error("Failed to send to monitoring:", monitoringError);
     }
   }
 
@@ -485,11 +494,11 @@ Resource: ${error.resourceType}:${error.resourceId}
 Time: ${error.timestamp.toISOString()}
 `;
 
-      console.error('CRITICAL ALERT:', alertMessage);
+      console.error("CRITICAL ALERT:", alertMessage);
 
       // Email/Slack notification would be implemented here
     } catch (alertError) {
-      console.error('Failed to send critical alert:', alertError);
+      console.error("Failed to send critical alert:", alertError);
     }
   }
 }
@@ -516,7 +525,7 @@ export class HealthcareErrorHandler {
     } else if (error instanceof Error) {
       // Convert generic errors to healthcare errors
       healthcareError = new HealthcareError({
-        code: 'UNKNOWN_ERROR',
+        code: "UNKNOWN_ERROR",
         category: HealthcareErrorCategory.SYSTEM,
         severity: HealthcareErrorSeverity.MEDIUM,
         message: error.message,
@@ -527,7 +536,7 @@ export class HealthcareErrorHandler {
     } else {
       // Handle non-Error objects
       healthcareError = new HealthcareError({
-        code: 'UNKNOWN_ERROR',
+        code: "UNKNOWN_ERROR",
         category: HealthcareErrorCategory.SYSTEM,
         severity: HealthcareErrorSeverity.MEDIUM,
         message: String(error),
@@ -592,7 +601,7 @@ export class HealthcareTRPCError extends HealthcareError {
     message: string,
     category: HealthcareErrorCategory = HealthcareErrorCategory.SYSTEM,
     severity: HealthcareErrorSeverity = HealthcareErrorSeverity.MEDIUM,
-    context?: Partial<HealthcareErrorDetails>
+    context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code,

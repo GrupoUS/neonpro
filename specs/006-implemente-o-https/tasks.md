@@ -4,39 +4,41 @@
 **Prerequisites**: plan.md (required), research.md, data-model.md, contracts/
 
 # Task Generation for AI Agent Database Integration
+
 - Implementar o https://github.com/CopilotKit/CopilotKit e https://github.com/ag-ui-protocol/ag-ui para aprimorar nossos agents do neonpro para interagir e ler totalmente os dados da nossa database, de clientes e financeiro e agendamentos usando o https://github.com/coleam00/ottomator-agents/tree/main/ag-ui-rag-agent para implementar no nosso projeto neonpro seguindo a sequencia abaixo:
 
 METHODOLOGY: Analyze → Research → Think → Elaborate (A.P.T.E)
 process:
-  - Analyze explicit and implicit requirements
-  - Research domain, standards, and constraints
-  - Think with layered reasoning and validation gates
-  - Elaborate a complete, testable specification
-Prompt_MUST_INCLUDE:
-  - Clear objective and scope boundaries
-  - Technical/environmental context
-  - Input/output structure with examples when needed
-  - Quality gates and measurable success criteria
-  - Non-negotiable constraints
-  - Hierarchical structure: context → requirements → validation
-PRINCIPLES:
-  - "KISS: Keep It Simple — choose the simplest viable solution"
-  - "YAGNI: Build only what's needed now"
-  - "Chain of Thought: Step-by-step reasoning"
 
+- Analyze explicit and implicit requirements
+- Research domain, standards, and constraints
+- Think with layered reasoning and validation gates
+- Elaborate a complete, testable specification
+  Prompt_MUST_INCLUDE:
+- Clear objective and scope boundaries
+- Technical/environmental context
+- Input/output structure with examples when needed
+- Quality gates and measurable success criteria
+- Non-negotiable constraints
+- Hierarchical structure: context → requirements → validation
+  PRINCIPLES:
+- "KISS: Keep It Simple — choose the simplest viable solution"
+- "YAGNI: Build only what's needed now"
+- "Chain of Thought: Step-by-step reasoning"
 
 ## 🎯 OBJECTIVE
 
-Transform NeonPro by empowering its agents to conversationally interact with the full database—reading and presenting clients, finance, and scheduling data—with a modern stack:  
-- **CopilotKit** (UI+infra) for chat and generative UI  
-- **AG-UI Protocol** for real-time agent communication  
-- **ottomator-agents/ag-ui-rag-agent** as agent logic + RAG skeleton  
+Transform NeonPro by empowering its agents to conversationally interact with the full database—reading and presenting clients, finance, and scheduling data—with a modern stack:
+
+- **CopilotKit** (UI+infra) for chat and generative UI
+- **AG-UI Protocol** for real-time agent communication
+- **ottomator-agents/ag-ui-rag-agent** as agent logic + RAG skeleton
 - Secure and organized direct access to Supabase
 
 Focus on delivering a high-fidelity, real-world database interaction experience, ensuring a production-ready user experience.
 
-
 ## 🌐 CONTEXT
+
 ```yaml
 project: "Conversational AI agent for NeonPro with direct database integration"
 environment:
@@ -60,20 +62,19 @@ hierarchy: "context → requirements → validation"
 
 ## ✅ QUALITY CHECKLIST
 
-
 PRE:
-  - [ ] Explicit functional and non-functional requirements
-  - [ ] Security: No service keys in code, RLS enforced
-  - [ ] UI/UX and accessibility reviewed
-DURING:
-  - [ ] Each feature implemented as per testable acceptance criteria
-  - [ ] Agent responses correct, protected, friendly
-  - [ ] Real database reads validated end-to-end
-POST:
-  - [ ] ≥9.5/10 in UX feedback from user testing
-  - [ ] All critical workflows (list/query/summary) function as spec’d
-  - [ ] Integration points between CopilotKit, AG-UI, Backend, and DB are robust and observable
 
+- [ ] Explicit functional and non-functional requirements
+- [ ] Security: No service keys in code, RLS enforced
+- [ ] UI/UX and accessibility reviewed
+      DURING:
+- [ ] Each feature implemented as per testable acceptance criteria
+- [ ] Agent responses correct, protected, friendly
+- [ ] Real database reads validated end-to-end
+      POST:
+- [ ] ≥9.5/10 in UX feedback from user testing
+- [ ] All critical workflows (list/query/summary) function as spec’d
+- [ ] Integration points between CopilotKit, AG-UI, Backend, and DB are robust and observable
 
 ## 📄 IMPLEMENTATION PLAN & PROMPT
 
@@ -92,72 +93,81 @@ POST:
 
 #### **FASE 1: INFRA & POC**
 
-**Backend**:  
+**Backend**:
+
 - Path: `apps/api/src/routes/ai/data-agent.ts`
 - Install `ag-ui`, `pydantic` (or preferred agent infra)
 - Create endpoint: `/api/ai/data-agent` using Hono.js
-- Implement agent logic (mock returns for now):  
-  - Example queries:  
+- Implement agent logic (mock returns for now):
+  - Example queries:
     - "Quais os próximos agendamentos?"
     - "Me mostre os clientes cadastrados"
     - "Como está o faturamento?"
 - Expose via AG-UI protocol (`toAGUI`, etc.)
 
-**Frontend**:  
+**Frontend**:
+
 - Path: `apps/web/src/components/ai/DataAgentChat.tsx`
 - Install `@copilotkit/react-core`, `@copilotkit/react-ui`
 - Make new Chat component using CopilotKit
 - Connect CopilotKitProvider to `/api/ai/data-agent`
 - POC: Send queries, receive/display mock results
 
-**Test Criteria**:  
+**Test Criteria**:
+
 - User sees chat, types a question, gets a list/answer (even if mock) live in the UI
 
 ---
 
 #### **FASE 2: DATABASE INTEGRATION**
 
-**Backend**:  
+**Backend**:
+
 - Path: `apps/api/src/services/ai-data-service.ts`
 - Build data service to safely read from Supabase
   - `getClientByName(name: string)`
   - `getAppointmentsByDate(date: string)`
   - `getFinancialSummary(period: string)`
-- Use Supabase client with RLS (“Row Level Security”)  
+- Use Supabase client with RLS (“Row Level Security”)
 - NEVER store/expose the Supabase service key in agent code
 - Update agent endpoint to return real DB results
 
-**Frontend**:  
+**Frontend**:
+
 - Path: `apps/web/src/components/ai/DataAgentChat.tsx`
 - Refine chat UI to render answers as lists, tables, or simple chart components (React)
-- Example:  
+- Example:
   - Schedule as list or mini-calendar
   - Financial summary as table/bar chart
   - Clickable details for clients/appointments
 
-**Validation**:  
+**Validation**:
+
 - Database queries return correct, permissioned data to UI, with proper feedback for empty/error/denied requests
 
 ---
 
 #### **FASE 3: UX & INTELLIGENCE BOOST**
 
-**Backend**:  
+**Backend**:
+
 - Path: `apps/api/src/routes/ai/data-agent.ts`
-- Improve agent “system prompt” for natural language understanding (NLU):  
+- Improve agent “system prompt” for natural language understanding (NLU):
   - Understand variations: "Agendamentos da Maria amanhã?", "Resumo financeiro semanal"
 - Enable “function/tool calling” linking AI intent parsing to the right DB read methods
 
-**Frontend**:  
+**Frontend**:
+
 - Path: `apps/web/src/components/ai/`
 - Use CopilotKit advanced features:
-  - Rich answer rendering:  
+  - Rich answer rendering:
     - Custom React for lists/tables/charts in chat
     - Buttons for "Ver detalhes", "Filtrar", etc.
 - Enable agent-driven UI (agent can return “render this chart/table” instructions)
 - Rapid actions: e.g., “marcar como concluído”, etc via UI buttons
 
-**Validation**:  
+**Validation**:
+
 - User can ask complex, real-world queries and see accurate, well-formatted answers
 - Edge: Proper error messages and access-control in all flows
 
@@ -212,12 +222,14 @@ constraints:
 "Quais os próximos agendamentos da Maria da Silva para amanhã?"
 
 **Backend agent:**
+
 - Receives query → parses intent (user wants tomorrow's appointments for 'Maria da Silva')
 - Calls `getClientByName("Maria da Silva")` → gets client ID
 - Calls `getAppointmentsByDate("YYYY-MM-DD", clientId)`
 - Returns structured list for chat rendering
 
-**Output (Frontend):**  
+**Output (Frontend):**
+
 - Responds with list of appointments for Maria da Silva, properly formatted and accessible in a chat, possibly with a quick-action button "Ver detalhes" for each item.
 
 ---
@@ -237,7 +249,6 @@ constraints:
 - [ ] CopilotKit and AG-UI protocol fully wired (bi-directional, state sync)
 - [ ] Code is clean, modular, documented, and testable (unit/integration/regression)
 - [ ] ≥9.5 UX rating from trial users in test group
-
 
 ## Execution Flow (main)
 
@@ -267,22 +278,26 @@ constraints:
    → All endpoints implemented?
 9. Return: SUCCESS (tasks ready for execution)
 
-
 ## Format: `[ID] [P?] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 - Include exact file paths in descriptions
 
 ## Path Conventions
+
 - **Web app**: `apps/api/src/`, `apps/web/src/`
 
 ## Phase 3.1: Setup
+
 - [ ] T001 Install CopilotKit dependencies in apps/web/package.json
 - [ ] T002 Install AG-UI Protocol and runtime dependencies in apps/api/package.json
 - [ ] T003 [P] Configure environment variables for Supabase service key and OpenAI API
 - [ ] T004 Set up Python environment for ottomator-agents in apps/api/agents/
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
+
 **CRITICAL: These tests MUST be written and MUST FAIL before ANY implementation**
+
 - [ ] T005 [P] Contract test POST /api/ai/data-agent in tests/unit/agent-endpoint.test.ts
 - [ ] T006 [P] Contract test GET /api/ai/sessions/{sessionId} in tests/unit/sessions.test.ts
 - [ ] T007 [P] Contract test POST /api/ai/sessions/{sessionId}/feedback in tests/unit/feedback.test.ts
@@ -292,6 +307,7 @@ constraints:
 - [ ] T011 [P] Integration test access control in tests/integration/access-control.test.ts
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
+
 - [ ] T012 [P] Data types and interfaces in apps/web/src/types/ai-agent.ts
 - [ ] T013 [P] UserQuery and AgentResponse interfaces in apps/web/src/types/ai-agent.ts
 - [ ] T014 [P] Data access entities (ClientData, AppointmentData, FinancialData) in apps/web/src/types/ai-agent.ts
@@ -309,6 +325,7 @@ constraints:
 - [ ] T026 Frontend agent service in apps/web/src/services/ai-agent.ts
 
 ## Phase 3.4: Integration
+
 - [ ] T027 Connect AIDataService to Supabase with RLS enforcement
 - [ ] T028 Implement AG-UI Protocol communication layer
 - [ ] T029 Integrate ottomator-agents with custom data retrieval functions
@@ -321,6 +338,7 @@ constraints:
 - [ ] T036 Add logging and monitoring for agent interactions
 
 ## Phase 3.5: Polish
+
 - [ ] T037 [P] Unit tests for AIDataService in tests/unit/ai-data-service.test.ts
 - [ ] T038 [P] Unit tests for intent parser in tests/unit/intent-parser.test.ts
 - [ ] T039 [P] Unit tests for response formatting in tests/unit/response-formatter.test.ts
@@ -332,6 +350,7 @@ constraints:
 - [ ] T045 Run quickstart.md validation scenarios
 
 ## Dependencies
+
 - Tests (T005-T011) before implementation (T012-T026)
 - T016 blocks T017-T019
 - T020 blocks T021
@@ -343,6 +362,7 @@ constraints:
 ## Parallel Examples
 
 ### Phase 3.1 - Setup (Parallel)
+
 ```bash
 # Launch T001-T004 together:
 Task: "Install CopilotKit dependencies in apps/web/package.json"
@@ -352,6 +372,7 @@ Task: "Set up Python environment for ottomator-agents in apps/api/agents/"
 ```
 
 ### Phase 3.2 - Tests (Parallel)
+
 ```bash
 # Launch T005-T011 together:
 Task: "Contract test POST /api/ai/data-agent in tests/unit/agent-endpoint.test.ts"
@@ -364,6 +385,7 @@ Task: "Integration test access control in tests/integration/access-control.test.
 ```
 
 ### Phase 3.3 - Types and Interfaces (Parallel)
+
 ```bash
 # Launch T012-T015 together:
 Task: "Data types and interfaces in apps/web/src/types/ai-agent.ts"
@@ -373,6 +395,7 @@ Task: "QueryIntent model in apps/web/src/types/ai-agent.ts"
 ```
 
 ### Phase 3.3 - Data Service Methods (Parallel)
+
 ```bash
 # Launch T017-T019 together:
 Task: "getClientsByName method in apps/api/src/services/ai-data-service.ts"
@@ -381,6 +404,7 @@ Task: "getFinancialSummary method in apps/api/src/services/ai-data-service.ts"
 ```
 
 ### Phase 3.3 - Frontend Components (Parallel)
+
 ```bash
 # Launch T024-T026 together:
 Task: "DataAgentChat React component in apps/web/src/components/ai/DataAgentChat.tsx"
@@ -389,22 +413,22 @@ Task: "Frontend agent service in apps/web/src/services/ai-agent.ts"
 ```
 
 ## Notes
+
 - [P] tasks = different files, no dependencies
 - Verify tests fail before implementing
 - Commit after each task
 - Avoid: vague tasks, same file conflicts
 
 ## Task Generation Rules
-*Applied during main() execution*
+
+_Applied during main() execution_
 
 1. **From Contracts**:
    - api.yaml → 3 contract test tasks [P]
    - 3 endpoints → implementation tasks
-   
 2. **From Data Model**:
    - 5 entities → type/interface tasks [P]
    - 3 data access methods → service tasks [P]
-   
 3. **From User Stories**:
    - 5 acceptance scenarios → 5 integration test tasks [P]
    - Quickstart scenarios → validation tasks
@@ -414,7 +438,8 @@ Task: "Frontend agent service in apps/web/src/services/ai-agent.ts"
    - Dependencies block parallel execution
 
 ## Validation Checklist
-*GATE: Checked by main() before returning*
+
+_GATE: Checked by main() before returning_
 
 - [x] All contracts have corresponding tests
 - [x] All entities have model tasks

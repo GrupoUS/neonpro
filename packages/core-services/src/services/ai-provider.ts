@@ -2,7 +2,7 @@
 
 export interface GenerateAnswerInput {
   prompt: string;
-  locale?: 'pt-BR' | 'en-US';
+  locale?: "pt-BR" | "en-US";
   system?: string;
   stream?: boolean;
   maxTokens?: number;
@@ -13,14 +13,14 @@ export interface GenerateAnswerResult {
   content: string;
   tokensUsed?: number;
   model?: string;
-  finishReason?: 'stop' | 'length' | 'content_filter' | 'function_call';
+  finishReason?: "stop" | "length" | "content_filter" | "function_call";
 }
 
 export interface StreamChunk {
   content: string;
   delta?: string;
   finished: boolean;
-  finishReason?: 'stop' | 'length' | 'content_filter' | 'function_call';
+  finishReason?: "stop" | "length" | "content_filter" | "function_call";
 }
 
 export interface AIProvider {

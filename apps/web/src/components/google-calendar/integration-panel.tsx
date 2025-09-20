@@ -1,22 +1,28 @@
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { GoogleCalendarConnectButton } from './connect-button';
-import { SyncSettings } from './sync-settings';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Calendar, 
-  Sync, 
-  Activity, 
-  AlertTriangle, 
+import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GoogleCalendarConnectButton } from "./connect-button";
+import { SyncSettings } from "./sync-settings";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Calendar,
+  Sync,
+  Activity,
+  AlertTriangle,
   CheckCircle,
   BarChart3,
   Download,
-  RefreshCw
-} from 'lucide-react';
+  RefreshCw,
+} from "lucide-react";
 
 interface GoogleCalendarIntegrationPanelProps {
   userId: string;
@@ -35,11 +41,11 @@ export function GoogleCalendarIntegrationPanel({
   userId,
   clinicId,
 }: GoogleCalendarIntegrationPanelProps) {
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState("overview");
 
   // Query for integration status
   const { data: integrationStatus, isLoading } = useQuery({
-    queryKey: ['gcal-status', userId, clinicId],
+    queryKey: ["gcal-status", userId, clinicId],
     queryFn: async (): Promise<IntegrationStatus> => {
       // In real app, fetch from API
       return {
@@ -53,23 +59,23 @@ export function GoogleCalendarIntegrationPanel({
 
   // Query for recent sync activity
   const { data: syncActivity } = useQuery({
-    queryKey: ['gcal-activity', userId, clinicId],
+    queryKey: ["gcal-activity", userId, clinicId],
     queryFn: async () => {
       // In real app, fetch from API
       return [
         {
-          id: '1',
-          operation: 'SYNC',
-          direction: 'TO_GOOGLE',
-          status: 'SUCCESS',
+          id: "1",
+          operation: "SYNC",
+          direction: "TO_GOOGLE",
+          status: "SUCCESS",
           timestamp: new Date(),
           appointmentCount: 5,
         },
         {
-          id: '2',
-          operation: 'CREATE',
-          direction: 'TO_GOOGLE',
-          status: 'SUCCESS',
+          id: "2",
+          operation: "CREATE",
+          direction: "TO_GOOGLE",
+          status: "SUCCESS",
           timestamp: new Date(Date.now() - 3600000), // 1 hour ago
           appointmentCount: 1,
         },
@@ -90,7 +96,7 @@ export function GoogleCalendarIntegrationPanel({
   });
 
   const handleDisconnect = () => {
-    if (confirm('Tem certeza que deseja desconectar o Google Calendar?')) {
+    if (confirm("Tem certeza que deseja desconectar o Google Calendar?")) {
       disconnectMutation.mutate();
     }
   };
@@ -156,7 +162,9 @@ export function GoogleCalendarIntegrationPanel({
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4 text-blue-600" />
-                        <span className="text-sm font-medium">Total de Eventos</span>
+                        <span className="text-sm font-medium">
+                          Total de Eventos
+                        </span>
                       </div>
                       <p className="text-2xl font-bold mt-1">
                         {integrationStatus.totalEvents}
@@ -168,7 +176,9 @@ export function GoogleCalendarIntegrationPanel({
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-2">
                         <Sync className="h-4 w-4 text-green-600" />
-                        <span className="text-sm font-medium">Sincronizações</span>
+                        <span className="text-sm font-medium">
+                          Sincronizações
+                        </span>
                       </div>
                       <p className="text-2xl font-bold mt-1">
                         {syncActivity?.length || 0}
@@ -195,13 +205,18 @@ export function GoogleCalendarIntegrationPanel({
                     <div className="p-4 bg-gray-50 rounded-lg space-y-2">
                       <div className="flex items-center justify-between">
                         <span className="text-sm">Conectado com:</span>
-                        <Badge variant="outline">{integrationStatus.calendarName || 'Calendário Principal'}</Badge>
+                        <Badge variant="outline">
+                          {integrationStatus.calendarName ||
+                            "Calendário Principal"}
+                        </Badge>
                       </div>
                       {integrationStatus.lastSyncAt && (
                         <div className="flex items-center justify-between">
                           <span className="text-sm">Última sincronização:</span>
                           <span className="text-sm text-gray-600">
-                            {integrationStatus.lastSyncAt.toLocaleString('pt-BR')}
+                            {integrationStatus.lastSyncAt.toLocaleString(
+                              "pt-BR",
+                            )}
                           </span>
                         </div>
                       )}
@@ -211,8 +226,9 @@ export function GoogleCalendarIntegrationPanel({
                   <Alert>
                     <CheckCircle className="h-4 w-4" />
                     <AlertDescription>
-                      Sua integração está funcionando corretamente. Os compromissos estão sendo 
-                      sincronizados automaticamente entre o NeonPro e seu Google Calendar.
+                      Sua integração está funcionando corretamente. Os
+                      compromissos estão sendo sincronizados automaticamente
+                      entre o NeonPro e seu Google Calendar.
                     </AlertDescription>
                   </Alert>
 
@@ -220,7 +236,7 @@ export function GoogleCalendarIntegrationPanel({
                     <Button variant="outline" onClick={handleDisconnect}>
                       Desconectar
                     </Button>
-                    <Button onClick={() => setActiveTab('settings')}>
+                    <Button onClick={() => setActiveTab("settings")}>
                       Configurações Avançadas
                     </Button>
                   </div>
@@ -247,14 +263,19 @@ export function GoogleCalendarIntegrationPanel({
                     {syncActivity && syncActivity.length > 0 ? (
                       <div className="space-y-3">
                         {syncActivity.map((activity) => (
-                          <div key={activity.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                          <div
+                            key={activity.id}
+                            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                          >
                             <div className="flex items-center space-x-3">
-                              <div className={`p-1 rounded ${
-                                activity.status === 'SUCCESS' 
-                                  ? 'bg-green-100' 
-                                  : 'bg-red-100'
-                              }`}>
-                                {activity.status === 'SUCCESS' ? (
+                              <div
+                                className={`p-1 rounded ${
+                                  activity.status === "SUCCESS"
+                                    ? "bg-green-100"
+                                    : "bg-red-100"
+                                }`}
+                              >
+                                {activity.status === "SUCCESS" ? (
                                   <CheckCircle className="h-4 w-4 text-green-600" />
                                 ) : (
                                   <AlertTriangle className="h-4 w-4 text-red-600" />
@@ -262,16 +283,20 @@ export function GoogleCalendarIntegrationPanel({
                               </div>
                               <div>
                                 <p className="font-medium text-sm">
-                                  {activity.operation === 'SYNC' ? 'Sincronização' : 'Criar Evento'}
+                                  {activity.operation === "SYNC"
+                                    ? "Sincronização"
+                                    : "Criar Evento"}
                                 </p>
                                 <p className="text-xs text-gray-500">
-                                  {activity.timestamp.toLocaleString('pt-BR')}
+                                  {activity.timestamp.toLocaleString("pt-BR")}
                                 </p>
                               </div>
                             </div>
                             <div className="text-right">
                               <Badge variant="outline">
-                                {activity.direction === 'TO_GOOGLE' ? 'Para Google' : 'Do Google'}
+                                {activity.direction === "TO_GOOGLE"
+                                  ? "Para Google"
+                                  : "Do Google"}
                               </Badge>
                               {activity.appointmentCount > 0 && (
                                 <p className="text-xs text-gray-500 mt-1">
@@ -313,11 +338,17 @@ export function GoogleCalendarIntegrationPanel({
                       <div className="grid grid-cols-2 gap-4">
                         <div className="text-center p-4 bg-blue-50 rounded-lg">
                           <p className="text-2xl font-bold text-blue-600">24</p>
-                          <p className="text-sm text-gray-600">Eventos este mês</p>
+                          <p className="text-sm text-gray-600">
+                            Eventos este mês
+                          </p>
                         </div>
                         <div className="text-center p-4 bg-green-50 rounded-lg">
-                          <p className="text-2xl font-bold text-green-600">98%</p>
-                          <p className="text-sm text-gray-600">Taxa de sucesso</p>
+                          <p className="text-2xl font-bold text-green-600">
+                            98%
+                          </p>
+                          <p className="text-sm text-gray-600">
+                            Taxa de sucesso
+                          </p>
                         </div>
                       </div>
                       <Button variant="outline" className="w-full">

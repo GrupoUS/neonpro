@@ -14,12 +14,12 @@
  * - Brazilian healthcare compliance
  */
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 // Types for WhatsApp messaging
 export interface WhatsAppMessage {
   to: string;
-  type: 'text' | 'template' | 'interactive';
+  type: "text" | "template" | "interactive";
   text?: {
     body: string;
   };
@@ -31,7 +31,7 @@ export interface WhatsAppMessage {
     components: any[];
   };
   interactive?: {
-    type: 'button' | 'list';
+    type: "button" | "list";
     body: {
       text: string;
     };
@@ -50,26 +50,26 @@ export interface AppointmentReminder {
   clinicAddress: string;
   patientName: string;
   patientPhone: string;
-  reminderType: 'confirmation' | 'reminder_24h' | 'reminder_2h' | 'follow_up';
-  language: 'pt-BR' | 'en-US';
+  reminderType: "confirmation" | "reminder_24h" | "reminder_2h" | "follow_up";
+  language: "pt-BR" | "en-US";
   consentGiven: boolean;
-  preferredChannel: 'whatsapp' | 'sms' | 'email';
+  preferredChannel: "whatsapp" | "sms" | "email";
 }
 
 export interface DeliveryStatus {
   messageId: string;
-  status: 'sent' | 'delivered' | 'read' | 'failed' | 'rejected';
+  status: "sent" | "delivered" | "read" | "failed" | "rejected";
   timestamp: string;
   errorCode?: string;
   errorMessage?: string;
   fallbackUsed?: boolean;
-  channel: 'whatsapp' | 'sms' | 'email';
+  channel: "whatsapp" | "sms" | "email";
 }
 
 export interface LgpdConsentRecord {
   patientId: string;
   clinicId: string;
-  consentType: 'whatsapp_messaging' | 'sms_messaging' | 'email_messaging';
+  consentType: "whatsapp_messaging" | "sms_messaging" | "email_messaging";
   consentGiven: boolean;
   consentDate: string;
   ipAddress?: string;
@@ -79,9 +79,9 @@ export interface LgpdConsentRecord {
 
 // Brazilian healthcare message templates
 const HEALTHCARE_TEMPLATES = {
-  'pt-BR': {
+  "pt-BR": {
     appointment_confirmation: {
-      subject: '📅 Confirmação de Consulta - {clinicName}',
+      subject: "📅 Confirmação de Consulta - {clinicName}",
       body: `Olá {patientName}! 👋
 
 🏥 *{clinicName}*
@@ -102,13 +102,13 @@ Dúvidas? Entre em contato conosco.
 
 _Esta é uma mensagem automática conforme sua autorização LGPD._`,
       buttons: [
-        { id: 'confirm', title: '✅ Confirmar' },
-        { id: 'cancel', title: '❌ Cancelar' },
-        { id: 'reschedule', title: '📞 Reagendar' },
+        { id: "confirm", title: "✅ Confirmar" },
+        { id: "cancel", title: "❌ Cancelar" },
+        { id: "reschedule", title: "📞 Reagendar" },
       ],
     },
     reminder_24h: {
-      subject: '⏰ Lembrete: Consulta amanhã - {clinicName}',
+      subject: "⏰ Lembrete: Consulta amanhã - {clinicName}",
       body: `Olá {patientName}! 👋
 
 🔔 *Lembrete de consulta*
@@ -131,7 +131,7 @@ _Esta é uma mensagem automática conforme sua autorização LGPD._`,
 _Mensagem automática - LGPD._`,
     },
     reminder_2h: {
-      subject: '🚨 Consulta em 2 horas - {clinicName}',
+      subject: "🚨 Consulta em 2 horas - {clinicName}",
       body: `{patientName}, sua consulta é em 2 horas! ⏰
 
 🏥 {clinicName}
@@ -152,7 +152,7 @@ _Mensagem automática - LGPD._`,
 Boa consulta! 🩺`,
     },
     follow_up: {
-      subject: '💊 Acompanhamento Pós-Consulta - {clinicName}',
+      subject: "💊 Acompanhamento Pós-Consulta - {clinicName}",
       body: `Olá {patientName}! 👋
 
 Como você está se sentindo após a consulta com Dr(a). {doctorName}?
@@ -176,9 +176,9 @@ Como você está se sentindo após a consulta com Dr(a). {doctorName}?
 Estamos aqui para cuidar de você! 💙`,
     },
   },
-  'en-US': {
+  "en-US": {
     appointment_confirmation: {
-      subject: '📅 Appointment Confirmation - {clinicName}',
+      subject: "📅 Appointment Confirmation - {clinicName}",
       body: `Hello {patientName}! 👋
 
 🏥 *{clinicName}*
@@ -217,7 +217,8 @@ export class WhatsAppReminderService {
     );
 
     // WhatsApp Business API configuration
-    this.whatsappApiUrl = process.env.WHATSAPP_API_URL || 'https://graph.facebook.com/v18.0';
+    this.whatsappApiUrl =
+      process.env.WHATSAPP_API_URL || "https://graph.facebook.com/v18.0";
     this.whatsappToken = process.env.WHATSAPP_ACCESS_TOKEN!;
     this.whatsappPhoneId = process.env.WHATSAPP_PHONE_NUMBER_ID!;
     this.webhookVerifyToken = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN!;
@@ -239,15 +240,17 @@ export class WhatsAppReminderService {
       const consentValid = await this.validateLgpdConsent(
         reminder.patientId,
         reminder.clinicId,
-        'whatsapp_messaging',
+        "whatsapp_messaging",
       );
 
       if (!consentValid) {
-        throw new Error('LGPD consent not given for WhatsApp messaging');
+        throw new Error("LGPD consent not given for WhatsApp messaging");
       }
 
       // 2. Format phone number for WhatsApp
-      const formattedPhone = this.formatBrazilianPhoneNumber(reminder.patientPhone);
+      const formattedPhone = this.formatBrazilianPhoneNumber(
+        reminder.patientPhone,
+      );
 
       // 3. Generate message content
       const messageContent = this.generateMessageContent(reminder);
@@ -260,7 +263,7 @@ export class WhatsAppReminderService {
       try {
         const whatsappResult = await this.sendWhatsAppMessage({
           to: formattedPhone,
-          type: 'text',
+          type: "text",
           text: {
             body: messageContent.body,
           },
@@ -269,36 +272,48 @@ export class WhatsAppReminderService {
         messageId = whatsappResult.messageId;
         deliveryStatus = {
           messageId: messageId!,
-          status: 'sent',
+          status: "sent",
           timestamp: new Date().toISOString(),
-          channel: 'whatsapp',
+          channel: "whatsapp",
         };
       } catch (whatsappError) {
-        console.warn('WhatsApp delivery failed, attempting fallback:', whatsappError);
+        console.warn(
+          "WhatsApp delivery failed, attempting fallback:",
+          whatsappError,
+        );
 
         // 5. Fallback to SMS if WhatsApp fails
-        if (reminder.preferredChannel === 'sms' || reminder.preferredChannel === 'whatsapp') {
+        if (
+          reminder.preferredChannel === "sms" ||
+          reminder.preferredChannel === "whatsapp"
+        ) {
           try {
-            const smsResult = await this.sendSmsMessage(formattedPhone, messageContent.body);
+            const smsResult = await this.sendSmsMessage(
+              formattedPhone,
+              messageContent.body,
+            );
             messageId = smsResult.messageId;
             fallbackUsed = true;
             deliveryStatus = {
               messageId: messageId!,
-              status: 'sent',
+              status: "sent",
               timestamp: new Date().toISOString(),
-              channel: 'sms',
+              channel: "sms",
               fallbackUsed: true,
             };
           } catch (smsError) {
             // 6. Final fallback to email
-            const emailResult = await this.sendEmailMessage(reminder, messageContent);
+            const emailResult = await this.sendEmailMessage(
+              reminder,
+              messageContent,
+            );
             messageId = emailResult.messageId;
             fallbackUsed = true;
             deliveryStatus = {
               messageId: messageId!,
-              status: 'sent',
+              status: "sent",
               timestamp: new Date().toISOString(),
-              channel: 'email',
+              channel: "email",
               fallbackUsed: true,
             };
           }
@@ -308,14 +323,18 @@ export class WhatsAppReminderService {
       }
 
       // 7. Log delivery attempt
-      await this.logDeliveryAttempt(reminder, deliveryStatus, Date.now() - startTime);
+      await this.logDeliveryAttempt(
+        reminder,
+        deliveryStatus,
+        Date.now() - startTime,
+      );
 
       // 8. Store audit record
       await this.createAuditRecord({
         appointmentId: reminder.appointmentId,
         patientId: reminder.patientId,
         clinicId: reminder.clinicId,
-        action: 'reminder_sent',
+        action: "reminder_sent",
         channel: deliveryStatus.channel,
         messageId: messageId!,
         consentValidated: true,
@@ -330,18 +349,22 @@ export class WhatsAppReminderService {
         fallbackUsed,
       };
     } catch (error) {
-      console.error('WhatsApp reminder service error:', error);
+      console.error("WhatsApp reminder service error:", error);
 
       const errorDeliveryStatus: DeliveryStatus = {
-        messageId: '',
-        status: 'failed',
+        messageId: "",
+        status: "failed",
         timestamp: new Date().toISOString(),
-        errorMessage: error instanceof Error ? error.message : 'Unknown error',
-        channel: 'whatsapp',
+        errorMessage: error instanceof Error ? error.message : "Unknown error",
+        channel: "whatsapp",
       };
 
       // Log failed delivery attempt
-      await this.logDeliveryAttempt(reminder, errorDeliveryStatus, Date.now() - startTime);
+      await this.logDeliveryAttempt(
+        reminder,
+        errorDeliveryStatus,
+        Date.now() - startTime,
+      );
 
       return {
         success: false,
@@ -357,17 +380,17 @@ export class WhatsAppReminderService {
   private async validateLgpdConsent(
     patientId: string,
     clinicId: string,
-    consentType: 'whatsapp_messaging' | 'sms_messaging' | 'email_messaging',
+    consentType: "whatsapp_messaging" | "sms_messaging" | "email_messaging",
   ): Promise<boolean> {
     try {
       const { data: consent, error } = await this.supabase
-        .from('patient_consent')
-        .select('*')
-        .eq('patient_id', patientId)
-        .eq('clinic_id', clinicId)
-        .eq('consent_type', consentType)
-        .eq('consent_given', true)
-        .order('consent_date', { ascending: false })
+        .from("patient_consent")
+        .select("*")
+        .eq("patient_id", patientId)
+        .eq("clinic_id", clinicId)
+        .eq("consent_type", consentType)
+        .eq("consent_given", true)
+        .order("consent_date", { ascending: false })
         .limit(1)
         .single();
 
@@ -381,19 +404,20 @@ export class WhatsAppReminderService {
       // Check if consent is still valid (not revoked)
       const consentDate = new Date(consent.consent_date);
       const now = new Date();
-      const monthsSinceConsent = (now.getTime() - consentDate.getTime())
-        / (1000 * 60 * 60 * 24 * 30);
+      const monthsSinceConsent =
+        (now.getTime() - consentDate.getTime()) / (1000 * 60 * 60 * 24 * 30);
 
       // LGPD requires periodic consent revalidation for marketing communications
       // For healthcare reminders, consent is generally valid until explicitly revoked
-      if (monthsSinceConsent > 24) { // 2 years
+      if (monthsSinceConsent > 24) {
+        // 2 years
         console.warn(`LGPD consent may be stale for patient ${patientId}`);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Error validating LGPD consent:', error);
+      console.error("Error validating LGPD consent:", error);
       return false;
     }
   } /**
@@ -402,10 +426,10 @@ export class WhatsAppReminderService {
 
   private formatBrazilianPhoneNumber(phone: string): string {
     // Remove all non-numeric characters
-    const cleanPhone = phone.replace(/\D/g, '');
+    const cleanPhone = phone.replace(/\D/g, "");
 
     // Brazilian phone number validation and formatting
-    if (cleanPhone.length === 11 && cleanPhone.startsWith('55')) {
+    if (cleanPhone.length === 11 && cleanPhone.startsWith("55")) {
       // Already has country code
       return cleanPhone;
     } else if (cleanPhone.length === 11) {
@@ -434,29 +458,32 @@ export class WhatsAppReminderService {
     body: string;
     buttons?: any[];
   } {
-    const templates = HEALTHCARE_TEMPLATES[reminder.language] || HEALTHCARE_TEMPLATES['pt-BR'];
+    const templates =
+      HEALTHCARE_TEMPLATES[reminder.language] || HEALTHCARE_TEMPLATES["pt-BR"];
     const template = templates[reminder.reminderType];
 
     if (!template) {
-      throw new Error(`Template not found for reminder type: ${reminder.reminderType}`);
+      throw new Error(
+        `Template not found for reminder type: ${reminder.reminderType}`,
+      );
     }
 
     // Replace placeholders in template
     const replacements = {
-      '{patientName}': reminder.patientName,
-      '{clinicName}': reminder.clinicName,
-      '{doctorName}': reminder.doctorName,
-      '{appointmentDate}': this.formatBrazilianDate(reminder.appointmentDate),
-      '{appointmentTime}': reminder.appointmentTime,
-      '{clinicAddress}': reminder.clinicAddress,
+      "{patientName}": reminder.patientName,
+      "{clinicName}": reminder.clinicName,
+      "{doctorName}": reminder.doctorName,
+      "{appointmentDate}": this.formatBrazilianDate(reminder.appointmentDate),
+      "{appointmentTime}": reminder.appointmentTime,
+      "{clinicAddress}": reminder.clinicAddress,
     };
 
     let subject = template.subject;
     let body = template.body;
 
     Object.entries(replacements).forEach(([placeholder, value]) => {
-      subject = subject.replace(new RegExp(placeholder, 'g'), value);
-      body = body.replace(new RegExp(placeholder, 'g'), value);
+      subject = subject.replace(new RegExp(placeholder, "g"), value);
+      body = body.replace(new RegExp(placeholder, "g"), value);
     });
 
     return {
@@ -469,32 +496,39 @@ export class WhatsAppReminderService {
   /**
    * Send WhatsApp message via Business API
    */
-  private async sendWhatsAppMessage(message: WhatsAppMessage): Promise<{ messageId: string }> {
+  private async sendWhatsAppMessage(
+    message: WhatsAppMessage,
+  ): Promise<{ messageId: string }> {
     try {
-      const response = await fetch(`${this.whatsappApiUrl}/${this.whatsappPhoneId}/messages`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${this.whatsappToken}`,
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${this.whatsappApiUrl}/${this.whatsappPhoneId}/messages`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${this.whatsappToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            messaging_product: "whatsapp",
+            recipient_type: "individual",
+            to: message.to,
+            type: message.type,
+            text: message.text,
+          }),
         },
-        body: JSON.stringify({
-          messaging_product: 'whatsapp',
-          recipient_type: 'individual',
-          to: message.to,
-          type: message.type,
-          text: message.text,
-        }),
-      });
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(`WhatsApp API error: ${errorData.error?.message || response.statusText}`);
+        throw new Error(
+          `WhatsApp API error: ${errorData.error?.message || response.statusText}`,
+        );
       }
 
       const result = await response.json();
       return { messageId: result.messages[0].id };
     } catch (error) {
-      console.error('WhatsApp message send error:', error);
+      console.error("WhatsApp message send error:", error);
       throw error;
     }
   }
@@ -502,19 +536,22 @@ export class WhatsAppReminderService {
   /**
    * Send SMS message as fallback
    */
-  private async sendSmsMessage(phone: string, message: string): Promise<{ messageId: string }> {
+  private async sendSmsMessage(
+    phone: string,
+    message: string,
+  ): Promise<{ messageId: string }> {
     // Integration with Brazilian SMS provider (e.g., Zenvia, TotalVoice)
     try {
       const response = await fetch(process.env.SMS_API_URL!, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.SMS_API_TOKEN}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           to: phone,
           text: message,
-          from: process.env.SMS_SENDER_ID || 'NEONPRO',
+          from: process.env.SMS_SENDER_ID || "NEONPRO",
         }),
       });
 
@@ -525,7 +562,7 @@ export class WhatsAppReminderService {
       const result = await response.json();
       return { messageId: result.id || result.messageId };
     } catch (error) {
-      console.error('SMS send error:', error);
+      console.error("SMS send error:", error);
       throw error;
     }
   }
@@ -540,36 +577,40 @@ export class WhatsAppReminderService {
     try {
       // Get patient email from database
       const { data: patient, error } = await this.supabase
-        .from('patients')
-        .select('email')
-        .eq('id', reminder.patientId)
-        .eq('clinic_id', reminder.clinicId)
+        .from("patients")
+        .select("email")
+        .eq("id", reminder.patientId)
+        .eq("clinic_id", reminder.clinicId)
         .single();
 
       if (error || !patient?.email) {
-        throw new Error('Patient email not found for fallback delivery');
+        throw new Error("Patient email not found for fallback delivery");
       }
 
       // Send via email service (e.g., SendGrid, Amazon SES)
       const response = await fetch(process.env.EMAIL_API_URL!, {
-        method: 'POST',
+        method: "POST",
         headers: {
           Authorization: `Bearer ${process.env.EMAIL_API_TOKEN}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          personalizations: [{
-            to: [{ email: patient.email, name: reminder.patientName }],
-            subject: content.subject,
-          }],
+          personalizations: [
+            {
+              to: [{ email: patient.email, name: reminder.patientName }],
+              subject: content.subject,
+            },
+          ],
           from: {
-            email: process.env.EMAIL_FROM_ADDRESS || 'noreply@neonpro.com.br',
+            email: process.env.EMAIL_FROM_ADDRESS || "noreply@neonpro.com.br",
             name: reminder.clinicName,
           },
-          content: [{
-            type: 'text/plain',
-            value: content.body,
-          }],
+          content: [
+            {
+              type: "text/plain",
+              value: content.body,
+            },
+          ],
         }),
       });
 
@@ -578,9 +619,9 @@ export class WhatsAppReminderService {
       }
 
       const result = await response.json();
-      return { messageId: result.messageId || 'email-' + Date.now() };
+      return { messageId: result.messageId || "email-" + Date.now() };
     } catch (error) {
-      console.error('Email send error:', error);
+      console.error("Email send error:", error);
       throw error;
     }
   }
@@ -594,24 +635,22 @@ export class WhatsAppReminderService {
     processingTime: number,
   ): Promise<void> {
     try {
-      await this.supabase
-        .from('message_delivery_log')
-        .insert({
-          appointment_id: reminder.appointmentId,
-          patient_id: reminder.patientId,
-          clinic_id: reminder.clinicId,
-          message_id: deliveryStatus.messageId,
-          channel: deliveryStatus.channel,
-          status: deliveryStatus.status,
-          reminder_type: reminder.reminderType,
-          processing_time_ms: processingTime,
-          fallback_used: deliveryStatus.fallbackUsed || false,
-          error_message: deliveryStatus.errorMessage,
-          sent_at: deliveryStatus.timestamp,
-          created_at: new Date().toISOString(),
-        });
+      await this.supabase.from("message_delivery_log").insert({
+        appointment_id: reminder.appointmentId,
+        patient_id: reminder.patientId,
+        clinic_id: reminder.clinicId,
+        message_id: deliveryStatus.messageId,
+        channel: deliveryStatus.channel,
+        status: deliveryStatus.status,
+        reminder_type: reminder.reminderType,
+        processing_time_ms: processingTime,
+        fallback_used: deliveryStatus.fallbackUsed || false,
+        error_message: deliveryStatus.errorMessage,
+        sent_at: deliveryStatus.timestamp,
+        created_at: new Date().toISOString(),
+      });
     } catch (error) {
-      console.error('Failed to log delivery attempt:', error);
+      console.error("Failed to log delivery attempt:", error);
     }
   }
 
@@ -630,27 +669,25 @@ export class WhatsAppReminderService {
     fallbackUsed: boolean;
   }): Promise<void> {
     try {
-      await this.supabase
-        .from('audit_logs')
-        .insert({
-          patient_id: audit.patientId,
-          clinic_id: audit.clinicId,
-          action: audit.action,
-          resource_type: 'appointment_reminder',
-          resource_id: audit.appointmentId,
-          metadata: {
-            channel: audit.channel,
-            messageId: audit.messageId,
-            consentValidated: audit.consentValidated,
-            processingTime: audit.processingTime,
-            fallbackUsed: audit.fallbackUsed,
-          },
-          ip_address: '0.0.0.0', // Edge function IP
-          user_agent: 'NeonPro-WhatsApp-Service/1.0',
-          created_at: new Date().toISOString(),
-        });
+      await this.supabase.from("audit_logs").insert({
+        patient_id: audit.patientId,
+        clinic_id: audit.clinicId,
+        action: audit.action,
+        resource_type: "appointment_reminder",
+        resource_id: audit.appointmentId,
+        metadata: {
+          channel: audit.channel,
+          messageId: audit.messageId,
+          consentValidated: audit.consentValidated,
+          processingTime: audit.processingTime,
+          fallbackUsed: audit.fallbackUsed,
+        },
+        ip_address: "0.0.0.0", // Edge function IP
+        user_agent: "NeonPro-WhatsApp-Service/1.0",
+        created_at: new Date().toISOString(),
+      });
     } catch (error) {
-      console.error('Failed to create audit record:', error);
+      console.error("Failed to create audit record:", error);
     }
   }
 
@@ -666,13 +703,13 @@ export class WhatsAppReminderService {
 
       // Verify webhook authenticity
       if (!this.verifyWebhookSignature(webhookData)) {
-        throw new Error('Invalid webhook signature');
+        throw new Error("Invalid webhook signature");
       }
 
       // Process webhook entries
       for (const entry of webhookData.entry || []) {
         for (const change of entry.changes || []) {
-          if (change.field === 'messages') {
+          if (change.field === "messages") {
             const messages = change.value.messages || [];
             const statuses = change.value.statuses || [];
 
@@ -693,7 +730,7 @@ export class WhatsAppReminderService {
 
       return { success: true, processed };
     } catch (error) {
-      console.error('Webhook processing error:', error);
+      console.error("Webhook processing error:", error);
       return { success: false, processed: 0 };
     }
   }
@@ -704,73 +741,86 @@ export class WhatsAppReminderService {
   private async processIncomingMessage(message: any): Promise<void> {
     try {
       const fromPhone = message.from;
-      const messageText = message.text?.body?.toLowerCase() || '';
+      const messageText = message.text?.body?.toLowerCase() || "";
       const messageId = message.id;
 
       // Find appointment based on recent reminders sent to this phone
       const { data: recentReminder, error } = await this.supabase
-        .from('message_delivery_log')
-        .select(`
+        .from("message_delivery_log")
+        .select(
+          `
           appointment_id,
           patient_id,
           clinic_id,
           appointments!inner(*)
-        `)
-        .eq('channel', 'whatsapp')
-        .ilike('patient_phone', `%${fromPhone.slice(-9)}%`) // Match last 9 digits
-        .gte('sent_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()) // Last 7 days
-        .order('sent_at', { ascending: false })
+        `,
+        )
+        .eq("channel", "whatsapp")
+        .ilike("patient_phone", `%${fromPhone.slice(-9)}%`) // Match last 9 digits
+        .gte(
+          "sent_at",
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+        ) // Last 7 days
+        .order("sent_at", { ascending: false })
         .limit(1)
         .single();
 
       if (error || !recentReminder) {
-        console.warn('No recent appointment found for phone:', fromPhone);
+        console.warn("No recent appointment found for phone:", fromPhone);
         return;
       }
 
       // Process appointment confirmation responses
       let responseAction = null;
-      if (messageText.includes('confirmar') || messageText.includes('confirm')) {
-        responseAction = 'confirmed';
-      } else if (messageText.includes('cancelar') || messageText.includes('cancel')) {
-        responseAction = 'cancelled';
-      } else if (messageText.includes('reagendar') || messageText.includes('reschedule')) {
-        responseAction = 'reschedule_requested';
+      if (
+        messageText.includes("confirmar") ||
+        messageText.includes("confirm")
+      ) {
+        responseAction = "confirmed";
+      } else if (
+        messageText.includes("cancelar") ||
+        messageText.includes("cancel")
+      ) {
+        responseAction = "cancelled";
+      } else if (
+        messageText.includes("reagendar") ||
+        messageText.includes("reschedule")
+      ) {
+        responseAction = "reschedule_requested";
       }
 
       if (responseAction) {
         // Update appointment status
         await this.supabase
-          .from('appointments')
+          .from("appointments")
           .update({
-            status: responseAction === 'confirmed'
-              ? 'confirmed'
-              : responseAction === 'cancelled'
-              ? 'cancelled'
-              : 'reschedule_requested',
+            status:
+              responseAction === "confirmed"
+                ? "confirmed"
+                : responseAction === "cancelled"
+                  ? "cancelled"
+                  : "reschedule_requested",
             updated_at: new Date().toISOString(),
           })
-          .eq('id', recentReminder.appointment_id);
+          .eq("id", recentReminder.appointment_id);
 
         // Log patient response
-        await this.supabase
-          .from('patient_responses')
-          .insert({
-            appointment_id: recentReminder.appointment_id,
-            patient_id: recentReminder.patient_id,
-            clinic_id: recentReminder.clinic_id,
-            message_id: messageId,
-            response_text: messageText,
-            response_action: responseAction,
-            channel: 'whatsapp',
-            received_at: new Date().toISOString(),
-          });
+        await this.supabase.from("patient_responses").insert({
+          appointment_id: recentReminder.appointment_id,
+          patient_id: recentReminder.patient_id,
+          clinic_id: recentReminder.clinic_id,
+          message_id: messageId,
+          response_text: messageText,
+          response_action: responseAction,
+          channel: "whatsapp",
+          received_at: new Date().toISOString(),
+        });
 
         // Send confirmation message
         await this.sendConfirmationResponse(fromPhone, responseAction);
       }
     } catch (error) {
-      console.error('Error processing incoming message:', error);
+      console.error("Error processing incoming message:", error);
     }
   }
 
@@ -784,43 +834,48 @@ export class WhatsAppReminderService {
 
       // Update delivery status in database
       await this.supabase
-        .from('message_delivery_log')
+        .from("message_delivery_log")
         .update({
           status: deliveryStatus,
-          delivered_at: deliveryStatus === 'delivered' ? new Date().toISOString() : null,
-          read_at: deliveryStatus === 'read' ? new Date().toISOString() : null,
+          delivered_at:
+            deliveryStatus === "delivered" ? new Date().toISOString() : null,
+          read_at: deliveryStatus === "read" ? new Date().toISOString() : null,
           updated_at: new Date().toISOString(),
         })
-        .eq('message_id', messageId);
+        .eq("message_id", messageId);
     } catch (error) {
-      console.error('Error processing delivery status:', error);
+      console.error("Error processing delivery status:", error);
     }
   }
 
   /**
    * Send confirmation response to patient
    */
-  private async sendConfirmationResponse(phone: string, action: string): Promise<void> {
+  private async sendConfirmationResponse(
+    phone: string,
+    action: string,
+  ): Promise<void> {
     const confirmationMessages = {
       confirmed:
-        'Perfeito! ✅ Sua consulta foi confirmada. Aguardamos você no horário marcado. Até breve! 👋',
+        "Perfeito! ✅ Sua consulta foi confirmada. Aguardamos você no horário marcado. Até breve! 👋",
       cancelled:
-        'Consulta cancelada. ❌ Entre em contato conosco para reagendar quando possível. 📞',
+        "Consulta cancelada. ❌ Entre em contato conosco para reagendar quando possível. 📞",
       reschedule_requested:
-        'Entendido! 📞 Nossa equipe entrará em contato em breve para reagendarmos sua consulta.',
+        "Entendido! 📞 Nossa equipe entrará em contato em breve para reagendarmos sua consulta.",
     };
 
-    const message = confirmationMessages[action as keyof typeof confirmationMessages];
+    const message =
+      confirmationMessages[action as keyof typeof confirmationMessages];
 
     if (message) {
       try {
         await this.sendWhatsAppMessage({
           to: phone,
-          type: 'text',
+          type: "text",
           text: { body: message },
         });
       } catch (error) {
-        console.error('Failed to send confirmation response:', error);
+        console.error("Failed to send confirmation response:", error);
       }
     }
   }
@@ -839,11 +894,11 @@ export class WhatsAppReminderService {
    */
   private formatBrazilianDate(dateString: string): string {
     const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR', {
-      weekday: 'long',
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
+    return date.toLocaleDateString("pt-BR", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   }
 
@@ -865,11 +920,11 @@ export class WhatsAppReminderService {
       const batch = reminders.slice(i, i + batchSize);
 
       const batchResults = await Promise.allSettled(
-        batch.map(reminder => this.sendAppointmentReminder(reminder)),
+        batch.map((reminder) => this.sendAppointmentReminder(reminder)),
       );
 
       batchResults.forEach((result, index) => {
-        if (result.status === 'fulfilled') {
+        if (result.status === "fulfilled") {
           success++;
           results.push({
             appointmentId: batch[index].appointmentId,
@@ -888,7 +943,7 @@ export class WhatsAppReminderService {
 
       // Rate limiting: wait between batches
       if (i + batchSize < reminders.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000)); // 1 second delay
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // 1 second delay
       }
     }
 
@@ -912,17 +967,20 @@ export class WhatsAppReminderService {
     try {
       // Validate input
       if (!Array.isArray(reminders) || reminders.length === 0) {
-        throw new Error('Invalid reminders array provided');
+        throw new Error("Invalid reminders array provided");
       }
 
       // Log bulk operation start
-      console.log(`Starting bulk reminder processing for ${reminders.length} reminders`);
+      console.log(
+        `Starting bulk reminder processing for ${reminders.length} reminders`,
+      );
 
       // Use existing batch processing logic
       const batchResult = await this.sendBatchReminders(reminders);
 
       const processingTime = Date.now() - startTime;
-      const averageProcessingTimePerReminder = processingTime / reminders.length;
+      const averageProcessingTimePerReminder =
+        processingTime / reminders.length;
 
       // Enhanced logging for monitoring
       console.log(`Bulk reminder processing completed:`, {
@@ -935,23 +993,24 @@ export class WhatsAppReminderService {
 
       // Create audit log for bulk operation
       try {
-        await this.supabase
-          .from('audit_logs')
-          .insert({
-            action: 'bulk_reminder_sent',
-            entity_type: 'appointment_reminders',
-            entity_id: `bulk_${Date.now()}`,
-            details: {
-              total_reminders: reminders.length,
-              successful: batchResult.success,
-              failed: batchResult.failed,
-              processing_time_ms: processingTime,
-              clinic_ids: [...new Set(reminders.map(r => r.clinicId))],
-            },
-            created_at: new Date().toISOString(),
-          });
+        await this.supabase.from("audit_logs").insert({
+          action: "bulk_reminder_sent",
+          entity_type: "appointment_reminders",
+          entity_id: `bulk_${Date.now()}`,
+          details: {
+            total_reminders: reminders.length,
+            successful: batchResult.success,
+            failed: batchResult.failed,
+            processing_time_ms: processingTime,
+            clinic_ids: [...new Set(reminders.map((r) => r.clinicId))],
+          },
+          created_at: new Date().toISOString(),
+        });
       } catch (auditError) {
-        console.warn('Failed to create audit log for bulk operation:', auditError);
+        console.warn(
+          "Failed to create audit log for bulk operation:",
+          auditError,
+        );
       }
 
       return {
@@ -963,25 +1022,24 @@ export class WhatsAppReminderService {
     } catch (error) {
       const processingTime = Date.now() - startTime;
 
-      console.error('Bulk reminder processing failed:', error);
+      console.error("Bulk reminder processing failed:", error);
 
       // Log error for monitoring
       try {
-        await this.supabase
-          .from('audit_logs')
-          .insert({
-            action: 'bulk_reminder_failed',
-            entity_type: 'appointment_reminders',
-            entity_id: `bulk_error_${Date.now()}`,
-            details: {
-              error_message: error instanceof Error ? error.message : 'Unknown error',
-              total_reminders: reminders?.length || 0,
-              processing_time_ms: processingTime,
-            },
-            created_at: new Date().toISOString(),
-          });
+        await this.supabase.from("audit_logs").insert({
+          action: "bulk_reminder_failed",
+          entity_type: "appointment_reminders",
+          entity_id: `bulk_error_${Date.now()}`,
+          details: {
+            error_message:
+              error instanceof Error ? error.message : "Unknown error",
+            total_reminders: reminders?.length || 0,
+            processing_time_ms: processingTime,
+          },
+          created_at: new Date().toISOString(),
+        });
       } catch (auditError) {
-        console.warn('Failed to create error audit log:', auditError);
+        console.warn("Failed to create error audit log:", auditError);
       }
 
       throw error;
@@ -991,7 +1049,10 @@ export class WhatsAppReminderService {
   /**
    * Get delivery statistics for clinic
    */
-  async getDeliveryStatistics(clinicId: string, days = 30): Promise<{
+  async getDeliveryStatistics(
+    clinicId: string,
+    days = 30,
+  ): Promise<{
     totalSent: number;
     deliveryRate: number;
     readRate: number;
@@ -1000,37 +1061,42 @@ export class WhatsAppReminderService {
     fallbackRate: number;
   }> {
     try {
-      const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+      const since = new Date(
+        Date.now() - days * 24 * 60 * 60 * 1000,
+      ).toISOString();
 
       const { data: logs, error } = await this.supabase
-        .from('message_delivery_log')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .gte('sent_at', since);
+        .from("message_delivery_log")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .gte("sent_at", since);
 
       if (error) throw error;
 
       const totalSent = logs.length;
-      const delivered = logs.filter(log =>
-        log.status === 'delivered' || log.status === 'read'
+      const delivered = logs.filter(
+        (log) => log.status === "delivered" || log.status === "read",
       ).length;
-      const read = logs.filter(log => log.status === 'read').length;
-      const fallbackUsed = logs.filter(log => log.fallback_used).length;
+      const read = logs.filter((log) => log.status === "read").length;
+      const fallbackUsed = logs.filter((log) => log.fallback_used).length;
 
       // Get response count
       const { data: responses, error: responseError } = await this.supabase
-        .from('patient_responses')
-        .select('appointment_id')
-        .eq('clinic_id', clinicId)
-        .gte('received_at', since);
+        .from("patient_responses")
+        .select("appointment_id")
+        .eq("clinic_id", clinicId)
+        .gte("received_at", since);
 
       const responseCount = responses?.length || 0;
 
       // Channel breakdown
-      const channelBreakdown = logs.reduce((acc, log) => {
-        acc[log.channel] = (acc[log.channel] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      const channelBreakdown = logs.reduce(
+        (acc, log) => {
+          acc[log.channel] = (acc[log.channel] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
       return {
         totalSent,
@@ -1041,7 +1107,7 @@ export class WhatsAppReminderService {
         fallbackRate: totalSent > 0 ? (fallbackUsed / totalSent) * 100 : 0,
       };
     } catch (error) {
-      console.error('Error getting delivery statistics:', error);
+      console.error("Error getting delivery statistics:", error);
       throw error;
     }
   }
@@ -1051,4 +1117,9 @@ export class WhatsAppReminderService {
 export const whatsappReminderService = new WhatsAppReminderService();
 
 // Export types for use in other modules
-export type { AppointmentReminder, DeliveryStatus, LgpdConsentRecord, WhatsAppMessage };
+export type {
+  AppointmentReminder,
+  DeliveryStatus,
+  LgpdConsentRecord,
+  WhatsAppMessage,
+};

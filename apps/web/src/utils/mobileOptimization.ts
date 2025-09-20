@@ -3,26 +3,27 @@
  * Comprehensive mobile-first performance enhancements
  */
 
-'use client';
+"use client";
 
 // Mobile device detection
 export const isMobileDevice = (): boolean => {
-  if (typeof window === 'undefined') return false;
+  if (typeof window === "undefined") return false;
 
   const userAgent = navigator.userAgent;
-  const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+  const mobileRegex =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
   return mobileRegex.test(userAgent) || window.innerWidth < 768;
 };
 
 // Network connection detection
 export const getNetworkInfo = () => {
-  if (typeof navigator === 'undefined' || !('connection' in navigator)) {
-    return { effectiveType: '4g', downlink: 10, rtt: 100 };
+  if (typeof navigator === "undefined" || !("connection" in navigator)) {
+    return { effectiveType: "4g", downlink: 10, rtt: 100 };
   }
 
   const connection = (navigator as any).connection;
   return {
-    effectiveType: connection.effectiveType || '4g',
+    effectiveType: connection.effectiveType || "4g",
     downlink: connection.downlink || 10,
     rtt: connection.rtt || 100,
   };
@@ -31,7 +32,9 @@ export const getNetworkInfo = () => {
 // Check if connection is slow
 export const isSlowConnection = (): boolean => {
   const { effectiveType, downlink } = getNetworkInfo();
-  return effectiveType === 'slow-2g' || effectiveType === '2g' || downlink < 1.5;
+  return (
+    effectiveType === "slow-2g" || effectiveType === "2g" || downlink < 1.5
+  );
 };
 
 // Lazy loading utility
@@ -51,9 +54,14 @@ export const getOptimizedImageSrc = (
     isSlowConnection?: boolean;
   } = {},
 ): string => {
-  const { quality = 75, width, isMobile = false, isSlowConnection = false } = options;
+  const {
+    quality = 75,
+    width,
+    isMobile = false,
+    isSlowConnection = false,
+  } = options;
 
-  if (src.startsWith('data:') || src.startsWith('blob:')) return src;
+  if (src.startsWith("data:") || src.startsWith("blob:")) return src;
 
   // Adjust quality based on device and connection
   let adjustedQuality = quality;
@@ -62,10 +70,10 @@ export const getOptimizedImageSrc = (
 
   try {
     const url = new URL(src, window.location.origin);
-    url.searchParams.set('q', adjustedQuality.toString());
+    url.searchParams.set("q", adjustedQuality.toString());
 
     if (isMobile && width) {
-      url.searchParams.set('w', Math.min(width, 800).toString());
+      url.searchParams.set("w", Math.min(width, 800).toString());
     }
 
     return url.toString();
@@ -76,23 +84,23 @@ export const getOptimizedImageSrc = (
 
 // Preload critical resources
 export const preloadCriticalResources = (resources: string[]) => {
-  if (typeof document === 'undefined') return;
+  if (typeof document === "undefined") return;
 
-  resources.forEach(resource => {
-    const link = document.createElement('link');
-    link.rel = 'preload';
+  resources.forEach((resource) => {
+    const link = document.createElement("link");
+    link.rel = "preload";
     link.href = resource;
 
     // Determine resource type
-    if (resource.endsWith('.css')) {
-      link.as = 'style';
-    } else if (resource.endsWith('.js')) {
-      link.as = 'script';
+    if (resource.endsWith(".css")) {
+      link.as = "style";
+    } else if (resource.endsWith(".js")) {
+      link.as = "script";
     } else if (resource.match(/\.(jpg|jpeg|png|webp|svg)$/i)) {
-      link.as = 'image';
+      link.as = "image";
     } else if (resource.match(/\.(woff|woff2|ttf|otf)$/i)) {
-      link.as = 'font';
-      link.crossOrigin = 'anonymous';
+      link.as = "font";
+      link.crossOrigin = "anonymous";
     }
 
     document.head.appendChild(link);
@@ -101,17 +109,19 @@ export const preloadCriticalResources = (resources: string[]) => {
 
 // Defer non-critical resources
 export const deferNonCriticalResources = () => {
-  if (typeof document === 'undefined') return;
+  if (typeof document === "undefined") return;
 
   // Defer non-critical CSS
-  const nonCriticalStyles = document.querySelectorAll('link[rel="stylesheet"][data-defer]');
-  nonCriticalStyles.forEach(link => {
-    const newLink = document.createElement('link');
-    newLink.rel = 'stylesheet';
+  const nonCriticalStyles = document.querySelectorAll(
+    'link[rel="stylesheet"][data-defer]',
+  );
+  nonCriticalStyles.forEach((link) => {
+    const newLink = document.createElement("link");
+    newLink.rel = "stylesheet";
     newLink.href = (link as HTMLLinkElement).href;
-    newLink.media = 'print';
+    newLink.media = "print";
     newLink.onload = () => {
-      newLink.media = 'all';
+      newLink.media = "all";
     };
     document.head.appendChild(newLink);
     link.remove();
@@ -125,7 +135,7 @@ export const usePerformanceAwareLoading = () => {
 
 // Bundle size monitoring
 export const getBundleSize = async (): Promise<number> => {
-  if (typeof navigator === 'undefined' || !('storage' in navigator)) {
+  if (typeof navigator === "undefined" || !("storage" in navigator)) {
     return 0;
   }
 
@@ -139,7 +149,7 @@ export const getBundleSize = async (): Promise<number> => {
 
 // Memory usage monitoring
 export const getMemoryUsage = (): number => {
-  if (typeof performance === 'undefined' || !('memory' in performance)) {
+  if (typeof performance === "undefined" || !("memory" in performance)) {
     return 0;
   }
 
@@ -149,33 +159,33 @@ export const getMemoryUsage = (): number => {
 
 // Critical resource hints
 export const addResourceHints = () => {
-  if (typeof document === 'undefined') return;
+  if (typeof document === "undefined") return;
 
   // DNS prefetch for external domains
   const externalDomains = [
-    'fonts.googleapis.com',
-    'fonts.gstatic.com',
-    'api.supabase.co',
+    "fonts.googleapis.com",
+    "fonts.gstatic.com",
+    "api.supabase.co",
   ];
 
-  externalDomains.forEach(domain => {
-    const link = document.createElement('link');
-    link.rel = 'dns-prefetch';
+  externalDomains.forEach((domain) => {
+    const link = document.createElement("link");
+    link.rel = "dns-prefetch";
     link.href = `//${domain}`;
     document.head.appendChild(link);
   });
 
   // Preconnect to critical origins
   const criticalOrigins = [
-    'https://fonts.googleapis.com',
-    'https://api.supabase.co',
+    "https://fonts.googleapis.com",
+    "https://api.supabase.co",
   ];
 
-  criticalOrigins.forEach(origin => {
-    const link = document.createElement('link');
-    link.rel = 'preconnect';
+  criticalOrigins.forEach((origin) => {
+    const link = document.createElement("link");
+    link.rel = "preconnect";
     link.href = origin;
-    link.crossOrigin = 'anonymous';
+    link.crossOrigin = "anonymous";
     document.head.appendChild(link);
   });
 };
@@ -185,24 +195,24 @@ export const applyMobileOptimizations = () => {
   if (!isMobileDevice()) return;
 
   // Reduce animations on mobile
-  document.documentElement.style.setProperty('--animation-duration', '0.2s');
+  document.documentElement.style.setProperty("--animation-duration", "0.2s");
 
   // Optimize touch interactions
-  document.documentElement.style.setProperty('touch-action', 'manipulation');
+  document.documentElement.style.setProperty("touch-action", "manipulation");
 
   // Reduce motion for better performance
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    document.documentElement.style.setProperty('--animation-duration', '0.01s');
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    document.documentElement.style.setProperty("--animation-duration", "0.01s");
   }
 };
 
 // Initialize mobile optimizations
 export const initializeMobileOptimizations = () => {
-  if (typeof window === 'undefined') return;
+  if (typeof window === "undefined") return;
 
   // Apply optimizations when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
       addResourceHints();
       applyMobileOptimizations();
       deferNonCriticalResources();

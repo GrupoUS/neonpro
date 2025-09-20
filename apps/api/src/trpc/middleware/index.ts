@@ -5,9 +5,9 @@
  * for Brazilian healthcare platform with LGPD, CFM, and ANVISA compliance.
  */
 
-export { cfmValidationMiddleware } from './cfm-validation';
-export { lgpdAuditMiddleware } from './lgpd-audit';
-export { prismaRLSMiddleware } from './prisma-rls';
+export { cfmValidationMiddleware } from "./cfm-validation";
+export { lgpdAuditMiddleware } from "./lgpd-audit";
+export { prismaRLSMiddleware } from "./prisma-rls";
 
 /**
  * Middleware Usage Guidelines:

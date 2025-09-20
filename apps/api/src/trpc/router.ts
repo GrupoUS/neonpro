@@ -3,18 +3,18 @@
  * Combines all domain routers with healthcare compliance
  */
 
-import { aiRouter } from './routers/ai';
-import { agentRouter } from './routers/agent';
-import { appointmentsRouter } from './routers/appointments';
-import { crudRouter } from './routers/crud';
-import { healthcareServicesRouter } from './routers/healthcare-services';
-import { patientsRouter } from './routers/patients';
-import { realtimeTelemedicineRouter } from './routers/realtime-telemedicine';
-import { telemedicineRouter } from './routers/telemedicine';
-import { router } from './trpc';
+import { aiRouter } from "./routers/ai";
+import { agentRouter } from "./routers/agent";
+import { appointmentsRouter } from "./routers/appointments";
+import { crudRouter } from "./routers/crud";
+import { healthcareServicesRouter } from "./routers/healthcare-services";
+import { patientsRouter } from "./routers/patients";
+import { realtimeTelemedicineRouter } from "./routers/realtime-telemedicine";
+import { telemedicineRouter } from "./routers/telemedicine";
+import { router } from "./trpc";
 
 // Import comprehensive API contracts from T016
-import { apiRouter } from './contracts';
+import { apiRouter } from "./contracts";
 
 /**
  * App Router - Main tRPC router for the healthcare platform

@@ -18,7 +18,7 @@ export const validateCPF = (cpf: string): boolean => {
   if (!cpf) return false;
 
   // Remove non-numeric characters
-  const cleanCPF = cpf.replace(/\D/g, '');
+  const cleanCPF = cpf.replace(/\D/g, "");
 
   // Check basic length
   if (cleanCPF.length !== 11) return false;
@@ -56,7 +56,7 @@ export const validatePhone = (phone: string): boolean => {
   if (!phone) return false;
 
   // Remove non-numeric characters
-  const cleanPhone = phone.replace(/\D/g, '');
+  const cleanPhone = phone.replace(/\D/g, "");
 
   // Check valid lengths (10 or 11 digits)
   if (cleanPhone.length !== 10 && cleanPhone.length !== 11) return false;
@@ -145,7 +145,7 @@ export const validateCEP = (cep: string): boolean => {
   if (!cep) return false;
 
   // Remove non-numeric characters
-  const cleanCEP = cep.replace(/\D/g, '');
+  const cleanCEP = cep.replace(/\D/g, "");
 
   // Check length
   if (cleanCEP.length !== 8) return false;
@@ -163,7 +163,7 @@ export const validateCRM = (crm: string): boolean => {
   if (!crm) return false;
 
   // Remove spaces and special characters
-  const cleanCRM = crm.replace(/[\s-]/g, '');
+  const cleanCRM = crm.replace(/[\s-]/g, "");
 
   // Extract number and state
   const match = cleanCRM.match(/^(\d+)([A-Z]{2})$/i);
@@ -176,33 +176,33 @@ export const validateCRM = (crm: string): boolean => {
 
   // Validate Brazilian state codes
   const validStates = [
-    'AC',
-    'AL',
-    'AP',
-    'AM',
-    'BA',
-    'CE',
-    'DF',
-    'ES',
-    'GO',
-    'MA',
-    'MT',
-    'MS',
-    'MG',
-    'PA',
-    'PB',
-    'PR',
-    'PE',
-    'PI',
-    'RJ',
-    'RN',
-    'RS',
-    'RO',
-    'RR',
-    'SC',
-    'SP',
-    'SE',
-    'TO',
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
   ];
 
   return validStates.includes(state.toUpperCase());
@@ -217,13 +217,13 @@ export const validateCNS = (cns: string): boolean => {
   if (!cns) return false;
 
   // Remove non-numeric characters
-  const cleanCNS = cns.replace(/\D/g, '');
+  const cleanCNS = cns.replace(/\D/g, "");
 
   // Check length
   if (cleanCNS.length !== 15) return false;
 
   // Check if starts with valid digits (1 or 2 for Brazil)
-  if (!['1', '2', '7', '8', '9'].includes(cleanCNS[0])) return false;
+  if (!["1", "2", "7", "8", "9"].includes(cleanCNS[0])) return false;
 
   // Basic validation algorithm for CNS
   let sum = 0;
@@ -288,10 +288,12 @@ export const validateRG = (rg: string): boolean => {
   if (!rg) return false;
 
   // Remove non-alphanumeric characters
-  const cleanRG = rg.replace(/[\W_]/g, '');
+  const cleanRG = rg.replace(/[\W_]/g, "");
 
   // RG formats vary by state, basic length validation
-  return cleanRG.length >= 7 && cleanRG.length <= 14 && /^[0-9A-Z]+$/i.test(cleanRG);
+  return (
+    cleanRG.length >= 7 && cleanRG.length <= 14 && /^[0-9A-Z]+$/i.test(cleanRG)
+  );
 };
 
 /**
@@ -303,10 +305,14 @@ export const validateBankAccount = (bankAccount: string): boolean => {
   if (!bankAccount) return false;
 
   // Remove non-numeric characters
-  const cleanAccount = bankAccount.replace(/\D/g, '');
+  const cleanAccount = bankAccount.replace(/\D/g, "");
 
   // Basic validation (account numbers vary by bank)
-  return cleanAccount.length >= 3 && cleanAccount.length <= 12 && /^\d+$/.test(cleanAccount);
+  return (
+    cleanAccount.length >= 3 &&
+    cleanAccount.length <= 12 &&
+    /^\d+$/.test(cleanAccount)
+  );
 };
 
 /**
@@ -315,10 +321,10 @@ export const validateBankAccount = (bankAccount: string): boolean => {
  * @returns Formatted CPF string
  */
 export const formatCPF = (cpf: string): string => {
-  const cleanCPF = cpf.replace(/\D/g, '');
+  const cleanCPF = cpf.replace(/\D/g, "");
   if (cleanCPF.length !== 11) return cpf;
 
-  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  return cleanCPF.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
 };
 
 /**
@@ -327,12 +333,12 @@ export const formatCPF = (cpf: string): string => {
  * @returns Formatted phone string
  */
 export const formatPhone = (phone: string): string => {
-  const cleanPhone = phone.replace(/\D/g, '');
+  const cleanPhone = phone.replace(/\D/g, "");
 
   if (cleanPhone.length === 10) {
-    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    return cleanPhone.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
   } else if (cleanPhone.length === 11) {
-    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    return cleanPhone.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
   }
 
   return phone;
@@ -344,10 +350,10 @@ export const formatPhone = (phone: string): string => {
  * @returns Formatted CEP string
  */
 export const formatCEP = (cep: string): string => {
-  const cleanCEP = cep.replace(/\D/g, '');
+  const cleanCEP = cep.replace(/\D/g, "");
   if (cleanCEP.length !== 8) return cep;
 
-  return cleanCEP.replace(/(\d{5})(\d{3})/, '$1-$2');
+  return cleanCEP.replace(/(\d{5})(\d{3})/, "$1-$2");
 };
 
 /**
@@ -356,7 +362,7 @@ export const formatCEP = (cep: string): string => {
  */
 export const generateTestCPF = (): string => {
   // Generate 9 random digits
-  let cpf = '';
+  let cpf = "";
   for (let i = 0; i < 9; i++) {
     cpf += Math.floor(Math.random() * 10);
   }
@@ -394,7 +400,7 @@ export const generateTestPhone = (): string => {
 
   if (Math.random() > 0.5) {
     // Mobile number (9 digits after DDD)
-    phone += '9';
+    phone += "9";
     for (let i = 0; i < 8; i++) {
       phone += Math.floor(Math.random() * 10);
     }
@@ -415,11 +421,11 @@ export const generateTestPhone = (): string => {
 export const generateTestCEP = (): string => {
   // Generate realistic CEP ranges for major Brazilian cities
   const cepRanges = [
-    { start: '01000000', end: '05999999' }, // São Paulo
-    { start: '20000000', end: '23999999' }, // Rio de Janeiro
-    { start: '30000000', end: '31999999' }, // Belo Horizonte
-    { start: '40000000', end: '41999999' }, // Salvador
-    { start: '70000000', end: '70999999' }, // Brasília
+    { start: "01000000", end: "05999999" }, // São Paulo
+    { start: "20000000", end: "23999999" }, // Rio de Janeiro
+    { start: "30000000", end: "31999999" }, // Belo Horizonte
+    { start: "40000000", end: "41999999" }, // Salvador
+    { start: "70000000", end: "70999999" }, // Brasília
   ];
 
   const range = cepRanges[Math.floor(Math.random() * cepRanges.length)];
@@ -427,7 +433,7 @@ export const generateTestCEP = (): string => {
   const endNum = parseInt(range.end);
 
   const cepNum = Math.floor(Math.random() * (endNum - startNum + 1)) + startNum;
-  const cep = cepNum.toString().padStart(8, '0');
+  const cep = cepNum.toString().padStart(8, "0");
 
   return formatCEP(cep);
 };

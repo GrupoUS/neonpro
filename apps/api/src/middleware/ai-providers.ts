@@ -10,15 +10,15 @@
  * - Integration with completed AI chat endpoint (T051)
  */
 
-import { Context, Next } from 'hono';
-import { z } from 'zod';
+import { Context, Next } from "hono";
+import { z } from "zod";
 
 // AI Provider types
 export enum AIProvider {
-  OPENAI = 'openai',
-  ANTHROPIC = 'anthropic',
-  GOOGLE = 'google',
-  LOCAL = 'local',
+  OPENAI = "openai",
+  ANTHROPIC = "anthropic",
+  GOOGLE = "google",
+  LOCAL = "local",
 }
 
 // AI Model configuration
@@ -69,16 +69,20 @@ const healthcareContextSchema = z.object({
   isHealthcareProfessional: z.boolean().default(false),
   crmNumber: z.string().optional(),
   specialty: z.string().optional(),
-  patientContext: z.object({
-    patientId: z.string().optional(),
-    hasConsent: z.boolean().default(false),
-    dataCategories: z.array(z.string()).default([]),
-  }).optional(),
-  complianceRequirements: z.object({
-    lgpd: z.boolean().default(true),
-    anvisa: z.boolean().default(false),
-    cfm: z.boolean().default(false),
-  }).default({}),
+  patientContext: z
+    .object({
+      patientId: z.string().optional(),
+      hasConsent: z.boolean().default(false),
+      dataCategories: z.array(z.string()).default([]),
+    })
+    .optional(),
+  complianceRequirements: z
+    .object({
+      lgpd: z.boolean().default(true),
+      anvisa: z.boolean().default(false),
+      cfm: z.boolean().default(false),
+    })
+    .default({}),
 });
 
 export type HealthcareContext = z.infer<typeof healthcareContextSchema>;
@@ -88,7 +92,8 @@ class AIProviderManager {
   private models: Map<string, AIModel> = new Map();
   private providerHealth: Map<AIProvider, ProviderHealth> = new Map();
   private requestMetrics: RequestMetrics[] = [];
-  private rateLimits: Map<AIProvider, { requests: number; resetTime: Date }> = new Map();
+  private rateLimits: Map<AIProvider, { requests: number; resetTime: Date }> =
+    new Map();
 
   constructor() {
     this.initializeModels();
@@ -100,10 +105,10 @@ class AIProviderManager {
     const models: AIModel[] = [
       // OpenAI Models
       {
-        id: 'gpt-4',
+        id: "gpt-4",
         provider: AIProvider.OPENAI,
-        name: 'GPT-4',
-        description: 'Modelo avançado da OpenAI para análise médica',
+        name: "GPT-4",
+        description: "Modelo avançado da OpenAI para análise médica",
         maxTokens: 8192,
         costPerToken: 0.00003,
         healthcareOptimized: true,
@@ -113,10 +118,10 @@ class AIProviderManager {
         priority: 9,
       },
       {
-        id: 'gpt-3.5-turbo',
+        id: "gpt-3.5-turbo",
         provider: AIProvider.OPENAI,
-        name: 'GPT-3.5 Turbo',
-        description: 'Modelo rápido e eficiente da OpenAI',
+        name: "GPT-3.5 Turbo",
+        description: "Modelo rápido e eficiente da OpenAI",
         maxTokens: 4096,
         costPerToken: 0.000002,
         healthcareOptimized: false,
@@ -127,10 +132,10 @@ class AIProviderManager {
       },
       // Anthropic Models
       {
-        id: 'claude-3-opus',
+        id: "claude-3-opus",
         provider: AIProvider.ANTHROPIC,
-        name: 'Claude 3 Opus',
-        description: 'Modelo mais avançado da Anthropic para análise complexa',
+        name: "Claude 3 Opus",
+        description: "Modelo mais avançado da Anthropic para análise complexa",
         maxTokens: 200000,
         costPerToken: 0.000015,
         healthcareOptimized: true,
@@ -140,10 +145,10 @@ class AIProviderManager {
         priority: 10,
       },
       {
-        id: 'claude-3-sonnet',
+        id: "claude-3-sonnet",
         provider: AIProvider.ANTHROPIC,
-        name: 'Claude 3 Sonnet',
-        description: 'Modelo balanceado da Anthropic',
+        name: "Claude 3 Sonnet",
+        description: "Modelo balanceado da Anthropic",
         maxTokens: 200000,
         costPerToken: 0.000003,
         healthcareOptimized: true,
@@ -154,10 +159,10 @@ class AIProviderManager {
       },
       // Google Models
       {
-        id: 'gemini-pro',
+        id: "gemini-pro",
         provider: AIProvider.GOOGLE,
-        name: 'Gemini Pro',
-        description: 'Modelo avançado do Google para análise multimodal',
+        name: "Gemini Pro",
+        description: "Modelo avançado do Google para análise multimodal",
         maxTokens: 32768,
         costPerToken: 0.0000005,
         healthcareOptimized: false,
@@ -168,10 +173,10 @@ class AIProviderManager {
       },
       // Local Models
       {
-        id: 'local-llama',
+        id: "local-llama",
         provider: AIProvider.LOCAL,
-        name: 'Llama Local',
-        description: 'Modelo local para máxima privacidade',
+        name: "Llama Local",
+        description: "Modelo local para máxima privacidade",
         maxTokens: 4096,
         costPerToken: 0,
         healthcareOptimized: false,
@@ -182,14 +187,14 @@ class AIProviderManager {
       },
     ];
 
-    models.forEach(model => {
+    models.forEach((model) => {
       this.models.set(model.id, model);
     });
   }
 
   // Initialize provider health tracking
   private initializeProviderHealth() {
-    Object.values(AIProvider).forEach(provider => {
+    Object.values(AIProvider).forEach((provider) => {
       this.providerHealth.set(provider, {
         provider,
         isHealthy: true,
@@ -210,22 +215,30 @@ class AIProviderManager {
     supportsBrazilianPortuguese?: boolean;
     supportsStreaming?: boolean;
   }): AIModel[] {
-    let models = Array.from(this.models.values()).filter(model => model.isAvailable);
+    let models = Array.from(this.models.values()).filter(
+      (model) => model.isAvailable,
+    );
 
     if (filters) {
       if (filters.provider) {
-        models = models.filter(model => model.provider === filters.provider);
+        models = models.filter((model) => model.provider === filters.provider);
       }
       if (filters.healthcareOptimized !== undefined) {
-        models = models.filter(model => model.healthcareOptimized === filters.healthcareOptimized);
+        models = models.filter(
+          (model) => model.healthcareOptimized === filters.healthcareOptimized,
+        );
       }
       if (filters.supportsBrazilianPortuguese !== undefined) {
-        models = models.filter(model =>
-          model.supportsBrazilianPortuguese === filters.supportsBrazilianPortuguese
+        models = models.filter(
+          (model) =>
+            model.supportsBrazilianPortuguese ===
+            filters.supportsBrazilianPortuguese,
         );
       }
       if (filters.supportsStreaming !== undefined) {
-        models = models.filter(model => model.supportsStreaming === filters.supportsStreaming);
+        models = models.filter(
+          (model) => model.supportsStreaming === filters.supportsStreaming,
+        );
       }
     }
 
@@ -256,11 +269,13 @@ class AIProviderManager {
 
     // Filter by token requirements
     if (requirements.maxTokens) {
-      availableModels = availableModels.filter(model => model.maxTokens >= requirements.maxTokens);
+      availableModels = availableModels.filter(
+        (model) => model.maxTokens >= requirements.maxTokens,
+      );
     }
 
     // Filter by provider health
-    availableModels = availableModels.filter(model => {
+    availableModels = availableModels.filter((model) => {
       const health = this.providerHealth.get(model.provider);
       return health?.isHealthy && health.errorRate < 0.1; // Less than 10% error rate
     });
@@ -287,7 +302,10 @@ class AIProviderManager {
     const now = new Date();
     if (now > limit.resetTime) {
       // Reset the limit
-      this.rateLimits.set(provider, { requests: 0, resetTime: new Date(now.getTime() + 60000) }); // 1 minute window
+      this.rateLimits.set(provider, {
+        requests: 0,
+        resetTime: new Date(now.getTime() + 60000),
+      }); // 1 minute window
       return true;
     }
 
@@ -308,7 +326,8 @@ class AIProviderManager {
       if (metrics.success) {
         health.successCount++;
         if (metrics.responseTime) {
-          health.responseTime = (health.responseTime + metrics.responseTime) / 2; // Moving average
+          health.responseTime =
+            (health.responseTime + metrics.responseTime) / 2; // Moving average
         }
       } else {
         health.failureCount++;
@@ -320,8 +339,10 @@ class AIProviderManager {
 
     // Update rate limits
     const provider = metrics.provider;
-    const limit = this.rateLimits.get(provider)
-      || { requests: 0, resetTime: new Date(Date.now() + 60000) };
+    const limit = this.rateLimits.get(provider) || {
+      requests: 0,
+      resetTime: new Date(Date.now() + 60000),
+    };
     limit.requests++;
     this.rateLimits.set(provider, limit);
 
@@ -341,11 +362,14 @@ class AIProviderManager {
   }
 
   // Get request metrics
-  getRequestMetrics(provider?: AIProvider, limit: number = 100): RequestMetrics[] {
+  getRequestMetrics(
+    provider?: AIProvider,
+    limit: number = 100,
+  ): RequestMetrics[] {
     let metrics = this.requestMetrics;
 
     if (provider) {
-      metrics = metrics.filter(m => m.provider === provider);
+      metrics = metrics.filter((m) => m.provider === provider);
     }
 
     return metrics.slice(-limit);
@@ -358,7 +382,7 @@ class AIProviderManager {
     try {
       // TODO: Implement actual health check for each provider
       // For now, simulate health check
-      await new Promise(resolve => setTimeout(resolve, Math.random() * 1000));
+      await new Promise((resolve) => setTimeout(resolve, Math.random() * 1000));
 
       const responseTime = Date.now() - startTime;
       const health = this.providerHealth.get(provider);
@@ -388,10 +412,10 @@ export const aiProviderManager = new AIProviderManager();
 export function aiProviderSelection() {
   return async (c: Context, next: Next) => {
     // Extract requirements from request
-    const healthcareContext = c.get('isHealthcareProfessional') || false;
-    const streaming = c.req.query('streaming') === 'true';
-    const maxTokens = parseInt(c.req.query('maxTokens') || '0') || undefined;
-    const costOptimized = c.req.query('costOptimized') === 'true';
+    const healthcareContext = c.get("isHealthcareProfessional") || false;
+    const streaming = c.req.query("streaming") === "true";
+    const maxTokens = parseInt(c.req.query("maxTokens") || "0") || undefined;
+    const costOptimized = c.req.query("costOptimized") === "true";
 
     // Select best model
     const selectedModel = aiProviderManager.selectBestModel({
@@ -402,25 +426,32 @@ export function aiProviderSelection() {
     });
 
     if (!selectedModel) {
-      return c.json({
-        success: false,
-        error: 'Nenhum modelo de IA disponível para os requisitos especificados',
-        code: 'NO_AVAILABLE_MODEL',
-      }, 503);
+      return c.json(
+        {
+          success: false,
+          error:
+            "Nenhum modelo de IA disponível para os requisitos especificados",
+          code: "NO_AVAILABLE_MODEL",
+        },
+        503,
+      );
     }
 
     // Check rate limits
     if (!aiProviderManager.checkRateLimit(selectedModel.provider)) {
-      return c.json({
-        success: false,
-        error: 'Limite de taxa excedido para o provedor de IA',
-        code: 'RATE_LIMIT_EXCEEDED',
-      }, 429);
+      return c.json(
+        {
+          success: false,
+          error: "Limite de taxa excedido para o provedor de IA",
+          code: "RATE_LIMIT_EXCEEDED",
+        },
+        429,
+      );
     }
 
     // Add selected model to context
-    c.set('selectedAIModel', selectedModel);
-    c.set('aiProviderManager', aiProviderManager);
+    c.set("selectedAIModel", selectedModel);
+    c.set("aiProviderManager", aiProviderManager);
 
     return next();
   };
@@ -429,9 +460,9 @@ export function aiProviderSelection() {
 // Brazilian healthcare context injection middleware
 export function healthcareContextInjection() {
   return async (c: Context, next: Next) => {
-    const healthcareProfessional = c.get('healthcareProfessional');
-    const lgpdConsent = c.get('lgpdConsent');
-    const patientId = c.req.param('patientId') || c.req.query('patientId');
+    const healthcareProfessional = c.get("healthcareProfessional");
+    const lgpdConsent = c.get("lgpdConsent");
+    const patientId = c.req.param("patientId") || c.req.query("patientId");
 
     // Build healthcare context
     const healthcareContext: HealthcareContext = {
@@ -440,10 +471,10 @@ export function healthcareContextInjection() {
       specialty: healthcareProfessional?.specialty,
       patientContext: patientId
         ? {
-          patientId,
-          hasConsent: !!lgpdConsent,
-          dataCategories: lgpdConsent?.dataCategories || [],
-        }
+            patientId,
+            hasConsent: !!lgpdConsent,
+            dataCategories: lgpdConsent?.dataCategories || [],
+          }
         : undefined,
       complianceRequirements: {
         lgpd: true,
@@ -456,7 +487,7 @@ export function healthcareContextInjection() {
     const validatedContext = healthcareContextSchema.parse(healthcareContext);
 
     // Add to context
-    c.set('healthcareContext', validatedContext);
+    c.set("healthcareContext", validatedContext);
 
     return next();
   };
@@ -465,7 +496,7 @@ export function healthcareContextInjection() {
 // Request metrics tracking middleware
 export function aiRequestMetrics() {
   return async (c: Context, next: Next) => {
-    const selectedModel = c.get('selectedAIModel') as AIModel;
+    const selectedModel = c.get("selectedAIModel") as AIModel;
     if (!selectedModel) {
       return next();
     }
@@ -474,8 +505,8 @@ export function aiRequestMetrics() {
     const startTime = new Date();
 
     // Add request tracking to context
-    c.set('aiRequestId', requestId);
-    c.set('aiRequestStartTime', startTime);
+    c.set("aiRequestId", requestId);
+    c.set("aiRequestStartTime", startTime);
 
     try {
       await next();
@@ -506,7 +537,7 @@ export function aiRequestMetrics() {
         endTime,
         responseTime,
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error',
+        error: error instanceof Error ? error.message : "Unknown error",
       });
 
       throw error; // Re-throw the error

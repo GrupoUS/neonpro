@@ -1,15 +1,19 @@
 # Spec-Driven Development Workflow
 
 ## Description
+
 Transform user requests into structured PRDs, implementation plans, and atomic tasks with constitutional compliance for NeonPro healthcare platform.
 
 ## Category
+
 Development
 
 ## Complexity
+
 High
 
 ## MCP Tools Required
+
 - sequential-thinking
 - archon
 - tavily
@@ -18,6 +22,7 @@ High
 ## Execution Flow
 
 ### Phase 1: Request Analysis and Understanding
+
 1. **User Request Processing**
    - Parse natural language user request
    - Extract key requirements and constraints
@@ -31,6 +36,7 @@ High
    - Research healthcare compliance requirements
 
 ### Phase 2: PRD Generation
+
 1. **Structured PRD Creation**
    - Create comprehensive Product Requirements Document
    - Define feature objectives and success criteria
@@ -50,6 +56,7 @@ High
    - Enable knowledge base integration
 
 ### Phase 3: Implementation Planning
+
 1. **Technical Architecture Design**
    - Define system architecture and components
    - Design database schema and relationships
@@ -69,6 +76,7 @@ High
    - Document healthcare security considerations
 
 ### Phase 4: Task Generation and Planning
+
 1. **Atomic Task Creation**
    - Break down implementation into executable tasks
    - Define task dependencies and sequencing
@@ -88,6 +96,7 @@ High
    - Set up monitoring and reporting
 
 ### Phase 5: Validation and Quality Assurance
+
 1. **Requirements Validation**
    - Review PRD completeness and clarity
    - Validate technical feasibility
@@ -107,6 +116,7 @@ High
    - Verify test coverage and quality
 
 ### Phase 6: Documentation and Handoff
+
 1. **Comprehensive Documentation**
    - Create detailed implementation documentation
    - Document API specifications and contracts
@@ -120,12 +130,14 @@ High
    - Establish communication channels
 
 ## Input Parameters
+
 - **user_request**: Natural language description of the requested feature
 - **priority_level**: Development priority (low, medium, high, critical)
 - **compliance_requirements**: Specific healthcare compliance needs
 - **timeline_constraints**: Development timeline and deadlines
 
 ## Output Requirements
+
 - **prd_document**: Complete Product Requirements Document in Archon
 - **implementation_plan**: Detailed technical implementation plan
 - **task_list**: Atomic task list with dependencies and estimates
@@ -133,6 +145,7 @@ High
 - **test_plan**: Comprehensive testing strategy and requirements
 
 ## Quality Gates
+
 - **Requirements Completeness**: All user needs addressed and documented
 - **Technical Feasibility**: Implementation is technically achievable
 - **Compliance Coverage**: All healthcare compliance requirements addressed
@@ -140,12 +153,14 @@ High
 - **Architectural Alignment**: Design follows established patterns and boundaries
 
 ## Error Handling
+
 - **Ambiguous Requirements**: Request clarification and document assumptions
 - **Technical Constraints**: Identify alternatives and document limitations
 - **Compliance Issues**: Highlight risks and propose mitigation strategies
 - **Resource Limitations**: Adjust scope and timeline accordingly
 
 ## Success Criteria
+
 - **Clear Requirements**: Comprehensive PRD with unambiguous requirements
 - **Feasible Plan**: Implementation plan that is technically achievable
 - **Compliance Ready**: All healthcare compliance requirements addressed
@@ -153,6 +168,7 @@ High
 - **Team Ready**: Development team has all necessary information and resources
 
 ## Constitutional Compliance
+
 - **KISS/YAGNI**: Requirements are simple and necessary, no over-engineering
 - **Test-First**: All requirements have corresponding test definitions
 - **Architecture**: Design follows established monorepo patterns and boundaries
@@ -160,6 +176,7 @@ High
 - **Observability**: Requirements include monitoring and logging needs
 
 ## Integration Points
+
 - **Archon**: Persistent storage of PRDs, plans, and related documents
 - **Tavily**: External research and validation of requirements
 - **Context7**: Official documentation and API references

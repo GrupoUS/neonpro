@@ -59,8 +59,8 @@ Validation: Zod schemas
 ## Authentication Setup
 
 ```typescript
-import { createClient } from '@supabase/supabase-js';
-import { Hono } from 'hono';
+import { createClient } from "@supabase/supabase-js";
+import { Hono } from "hono";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -69,25 +69,28 @@ const supabase = createClient(
 
 // Auth middleware
 const authMiddleware = async (c, next) => {
-  const token = c.req.header('authorization')?.replace('Bearer ', '');
-  if (!token) return c.json({ error: 'Unauthorized' }, 401);
+  const token = c.req.header("authorization")?.replace("Bearer ", "");
+  if (!token) return c.json({ error: "Unauthorized" }, 401);
 
-  const { data: { user }, error } = await supabase.auth.getUser(token);
-  if (error || !user) return c.json({ error: 'Invalid token' }, 401);
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(token);
+  if (error || !user) return c.json({ error: "Invalid token" }, 401);
 
-  c.set('user', user);
+  c.set("user", user);
   await next();
 };
 
 const app = new Hono();
-app.use('/api/*', authMiddleware);
+app.use("/api/*", authMiddleware);
 ```
 
 ## Patient Management
 
 ```typescript
-import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
 
 const CreatePatientSchema = z.object({
   name: z.string().min(2).max(100),
@@ -98,29 +101,33 @@ const CreatePatientSchema = z.object({
 });
 
 // Create patient
-app.post('/api/patients', zValidator('json', CreatePatientSchema), async c => {
-  const data = c.req.valid('json');
-  const user = c.get('user');
+app.post(
+  "/api/patients",
+  zValidator("json", CreatePatientSchema),
+  async (c) => {
+    const data = c.req.valid("json");
+    const user = c.get("user");
 
-  const { data: patient, error } = await supabase
-    .from('patients')
-    .insert({ ...data, id: crypto.randomUUID(), created_by: user.id })
-    .select()
-    .single();
+    const { data: patient, error } = await supabase
+      .from("patients")
+      .insert({ ...data, id: crypto.randomUUID(), created_by: user.id })
+      .select()
+      .single();
 
-  if (error) return c.json({ error: 'Failed to create patient' }, 500);
-  return c.json({ data: patient });
-});
+    if (error) return c.json({ error: "Failed to create patient" }, 500);
+    return c.json({ data: patient });
+  },
+);
 
 // Get patient with history
-app.get('/api/patients/:id', async c => {
+app.get("/api/patients/:id", async (c) => {
   const { data, error } = await supabase
-    .from('patients')
-    .select('*, appointments(id, scheduled_at, procedure_type)')
-    .eq('id', c.req.param('id'))
+    .from("patients")
+    .select("*, appointments(id, scheduled_at, procedure_type)")
+    .eq("id", c.req.param("id"))
     .single();
 
-  if (error) return c.json({ error: 'Patient not found' }, 404);
+  if (error) return c.json({ error: "Patient not found" }, 404);
   return c.json({ data });
 });
 ```
@@ -132,49 +139,55 @@ const AppointmentSchema = z.object({
   patient_id: z.string().uuid(),
   professional_id: z.string().uuid(),
   scheduled_at: z.string().datetime(),
-  procedure_type: z.enum(['consultation', 'botox_treatment', 'dermal_filler']),
+  procedure_type: z.enum(["consultation", "botox_treatment", "dermal_filler"]),
   duration_minutes: z.number().min(15).max(240).default(60),
 });
 
 // Schedule appointment with conflict detection
-app.post('/api/appointments', zValidator('json', AppointmentSchema), async c => {
-  const data = c.req.valid('json');
+app.post(
+  "/api/appointments",
+  zValidator("json", AppointmentSchema),
+  async (c) => {
+    const data = c.req.valid("json");
 
-  // Check conflicts
-  const endTime = new Date(
-    new Date(data.scheduled_at).getTime() + data.duration_minutes * 60000,
-  ).toISOString();
+    // Check conflicts
+    const endTime = new Date(
+      new Date(data.scheduled_at).getTime() + data.duration_minutes * 60000,
+    ).toISOString();
 
-  const { data: conflicts } = await supabase
-    .from('appointments')
-    .select('id')
-    .eq('professional_id', data.professional_id)
-    .eq('status', 'scheduled')
-    .overlaps('time_slot', `[${data.scheduled_at}, ${endTime}]`);
+    const { data: conflicts } = await supabase
+      .from("appointments")
+      .select("id")
+      .eq("professional_id", data.professional_id)
+      .eq("status", "scheduled")
+      .overlaps("time_slot", `[${data.scheduled_at}, ${endTime}]`);
 
-  if (conflicts?.length) {
-    return c.json({ error: 'Time slot unavailable' }, 409);
-  }
+    if (conflicts?.length) {
+      return c.json({ error: "Time slot unavailable" }, 409);
+    }
 
-  const { data: appointment, error } = await supabase
-    .from('appointments')
-    .insert({ ...data, id: crypto.randomUUID(), status: 'scheduled' })
-    .select()
-    .single();
+    const { data: appointment, error } = await supabase
+      .from("appointments")
+      .insert({ ...data, id: crypto.randomUUID(), status: "scheduled" })
+      .select()
+      .single();
 
-  if (error) return c.json({ error: 'Failed to create appointment' }, 500);
-  return c.json({ data: appointment });
-});
+    if (error) return c.json({ error: "Failed to create appointment" }, 500);
+    return c.json({ data: appointment });
+  },
+);
 
 // List appointments with pagination
-app.get('/api/appointments', async c => {
-  const page = parseInt(c.req.query('page') || '1');
-  const per_page = Math.min(parseInt(c.req.query('per_page') || '20'), 50);
+app.get("/api/appointments", async (c) => {
+  const page = parseInt(c.req.query("page") || "1");
+  const per_page = Math.min(parseInt(c.req.query("per_page") || "20"), 50);
   const from = (page - 1) * per_page;
 
   const { data, count } = await supabase
-    .from('appointments')
-    .select('*, patient:patients(name), professional:professionals(name)', { count: 'exact' })
+    .from("appointments")
+    .select("*, patient:patients(name), professional:professionals(name)", {
+      count: "exact",
+    })
     .range(from, from + per_page - 1);
 
   return c.json({
@@ -193,13 +206,13 @@ const withConsent = async (c, next) => {
 
   if (patient_id) {
     const { data } = await supabase
-      .from('patients')
-      .select('consent_given')
-      .eq('id', patient_id)
+      .from("patients")
+      .select("consent_given")
+      .eq("id", patient_id)
       .single();
 
     if (!data?.consent_given) {
-      return c.json({ error: 'Patient consent required' }, 403);
+      return c.json({ error: "Patient consent required" }, 403);
     }
   }
 
@@ -208,7 +221,7 @@ const withConsent = async (c, next) => {
 
 // Audit logging
 const logAccess = async (user_id, resource, action, resource_id) => {
-  await supabase.from('audit_logs').insert({
+  await supabase.from("audit_logs").insert({
     user_id,
     resource,
     action,
@@ -285,7 +298,7 @@ const PatientSchema = z.object({
 const AppointmentSchema = z.object({
   patient_id: z.string().uuid(),
   scheduled_at: z.string().datetime(),
-  procedure_type: z.enum(['consultation', 'botox_treatment']),
+  procedure_type: z.enum(["consultation", "botox_treatment"]),
 });
 ```
 
@@ -301,8 +314,8 @@ const AppointmentSchema = z.object({
 
 ## Essential Endpoints
 
-| Endpoint                  | Method   | Purpose                | Status |
-| ------------------------- | -------- | ---------------------- | ------ |
+| Endpoint                  | Method   | Purpose                | Status         |
+| ------------------------- | -------- | ---------------------- | -------------- |
 | `/api/patients`           | GET/POST | Patient management     | ✅ Implemented |
 | `/api/appointments`       | GET/POST | Appointment scheduling | ✅ Implemented |
 | `/api/auth/login`         | POST     | CFM authentication     | ✅ Implemented |
@@ -314,6 +327,7 @@ const AppointmentSchema = z.object({
 ## Production Integration Status
 
 ### ✅ Completed Integrations
+
 - **OpenAPI 3.0 Documentation**: Complete with interactive Swagger UI
 - **Healthcare Query Optimizer**: Advanced performance optimization tools
 - **LGPD Compliance Middleware**: Automated consent and audit trails
@@ -323,6 +337,7 @@ const AppointmentSchema = z.object({
 - **Performance Monitoring**: Vercel Analytics and custom metrics
 
 ### 📊 API Performance Metrics
+
 - **Average Response Time**: <200ms (95th percentile)
 - **Error Rate**: <0.1% in production
 - **Uptime**: 99.9% availability target
@@ -330,6 +345,7 @@ const AppointmentSchema = z.object({
 - **Database Query Performance**: Sub-100ms average
 
 ### 🔒 Security Implementation
+
 - **Authentication**: Supabase Auth with MFA support
 - **Authorization**: Role-based access control (RBAC)
 - **Data Encryption**: AES-256 at rest, TLS 1.3 in transit
@@ -338,6 +354,7 @@ const AppointmentSchema = z.object({
 - **Security Headers**: Complete CSP, HSTS, and hardening
 
 ### 🏥 Healthcare Compliance Features
+
 - **LGPD (Brazilian GDPR)**: Complete compliance implementation
 - **ANVISA Medical Device**: SaMD Class I software compliance
 - **CFM Professional Standards**: Digital prescription and telemedicine
@@ -372,6 +389,7 @@ const AppointmentSchema = z.object({
 ## Deployment & Operations
 
 ### Health Monitoring
+
 ```bash
 # Production health check
 curl -f https://your-api.vercel.app/api/health
@@ -383,19 +401,21 @@ curl -f https://your-api.vercel.app/api/health
   "version": "v2.1.0",
   "checks": {
     "database": "connected",
-    "redis": "connected", 
+    "redis": "connected",
     "external_apis": "operational"
   }
 }
 ```
 
 ### Error Tracking
+
 - **Sentry Integration**: Real-time error monitoring
 - **LGPD Compliant**: PII automatically redacted from error reports
 - **Performance Tracking**: Transaction performance monitoring
 - **Custom Dashboards**: Healthcare-specific metrics
 
 ### API Documentation
+
 - **Interactive Docs**: Available at `/api/docs` (OpenAPI/Swagger)
 - **Postman Collection**: Available for download
 - **SDK Generation**: Auto-generated TypeScript SDK

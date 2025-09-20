@@ -264,13 +264,13 @@ import {
   HealthcareSearch,
   MobilePatientCard,
   MobilePatientList,
-} from '@/components/patients';
+} from "@/components/patients";
 ```
 
 2. **Apply Styling**:
 
 ```css
-@import '@/components/patients/styles/mobile-optimization.css';
+@import "@/components/patients/styles/mobile-optimization.css";
 ```
 
 3. **Run Tests**:

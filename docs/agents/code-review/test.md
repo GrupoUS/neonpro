@@ -19,7 +19,8 @@
     ```yaml
     role: "React Testing Patterns"
     triggers: ["react", "component", "hook", "a11y", "integration"]
-    outputs: ["test structure", "mocks/fixtures", "a11y checks", "performance tests"]
+    outputs:
+      ["test structure", "mocks/fixtures", "a11y checks", "performance tests"]
     ```
 
 ### End-to-End (E2E) Testing
@@ -110,8 +111,7 @@ references:
 
 ```yaml
 workflow: "Pre-merge Quality"
-sequence:
-  1. Unit/Integration tests passing
+sequence: 1. Unit/Integration tests passing
   2. Coverage thresholds met (see @code-review)
   3. A11y checks for UI components (@react-tests)
   4. Security/compliance checklist (@code-review)
@@ -217,41 +217,41 @@ Defines Test-Driven Development workflow for TypeScript/Jest projects. Follow th
 ## Test Structure Template
 
 ```typescript
-import { functionToTest } from '@/path/to/module';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { functionToTest } from "@/path/to/module";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock dependencies with Vitest
-vi.mock('@/lib/external-service', () => ({
+vi.mock("@/lib/external-service", () => ({
   method: vi.fn(),
 }));
 
-describe('ModuleName', () => {
+describe("ModuleName", () => {
   beforeEach(() => {
     // Reset mocks before each test
     vi.clearAllMocks();
   });
 
-  describe('Success Cases', () => {
-    it('should handle valid input', () => {
+  describe("Success Cases", () => {
+    it("should handle valid input", () => {
       // Arrange
-      const input = 'valid';
+      const input = "valid";
 
       // Act
       const result = functionToTest(input);
 
       // Assert
-      expect(result).toBe('expected');
+      expect(result).toBe("expected");
     });
   });
 
-  describe('Error Cases', () => {
-    it('should throw on invalid input', () => {
+  describe("Error Cases", () => {
+    it("should throw on invalid input", () => {
       expect(() => functionToTest(null)).toThrow();
     });
   });
 
-  describe('Edge Cases', () => {
-    it('should handle boundary values', () => {
+  describe("Edge Cases", () => {
+    it("should handle boundary values", () => {
       // Test edge cases
     });
   });
@@ -285,12 +285,12 @@ tools/
 ### Vitest Unit Test Mocks
 
 ```typescript
-import { vi } from 'vitest';
+import { vi } from "vitest";
 
 // External service mock
-vi.mock('@/lib/service', () => ({
+vi.mock("@/lib/service", () => ({
   method: vi.fn(),
-  asyncMethod: vi.fn().mockResolvedValue('success'),
+  asyncMethod: vi.fn().mockResolvedValue("success"),
 }));
 
 // Supabase mock
@@ -304,13 +304,13 @@ const mockSupabase = {
   }),
 };
 
-vi.mock('@/lib/supabase', () => ({
+vi.mock("@/lib/supabase", () => ({
   supabase: mockSupabase,
 }));
 
 // React hooks mock
-vi.mock('react', async () => {
-  const actual = await vi.importActual('react');
+vi.mock("react", async () => {
+  const actual = await vi.importActual("react");
   return {
     ...actual,
     useState: vi.fn(),
@@ -319,13 +319,13 @@ vi.mock('react', async () => {
 });
 
 // Next.js router mock
-vi.mock('next/navigation', () => ({
+vi.mock("next/navigation", () => ({
   useRouter: vi.fn(() => ({
     push: vi.fn(),
     replace: vi.fn(),
     back: vi.fn(),
   })),
-  usePathname: vi.fn(() => '/'),
+  usePathname: vi.fn(() => "/"),
   useSearchParams: vi.fn(() => new URLSearchParams()),
 }));
 ```
@@ -333,14 +333,14 @@ vi.mock('next/navigation', () => ({
 ### Playwright E2E Test Patterns
 
 ```typescript
-import { expect, Page, test } from '@playwright/test';
+import { expect, Page, test } from "@playwright/test";
 
 // Page Object Model
 class PatientPage {
   constructor(private page: Page) {}
 
   async navigateToPatients() {
-    await this.page.goto('/patients');
+    await this.page.goto("/patients");
   }
 
   async createPatient(data: PatientData) {
@@ -355,16 +355,16 @@ class PatientPage {
 }
 
 // Usage in test
-test('should create new patient', async ({ page }) => {
+test("should create new patient", async ({ page }) => {
   const patientPage = new PatientPage(page);
 
   await patientPage.navigateToPatients();
   await patientPage.createPatient({
-    name: 'João Silva',
-    cpf: '123.456.789-00',
+    name: "João Silva",
+    cpf: "123.456.789-00",
   });
 
-  await patientPage.expectPatientVisible('João Silva');
+  await patientPage.expectPatientVisible("João Silva");
 });
 ```
 
@@ -390,8 +390,8 @@ test('should create new patient', async ({ page }) => {
 export default defineConfig({
   test: {
     coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      provider: "v8",
+      reporter: ["text", "json", "html"],
       thresholds: {
         global: {
           branches: 80,
@@ -399,7 +399,7 @@ export default defineConfig({
           lines: 90,
           statements: 90,
         },
-        'packages/patient-management/**': {
+        "packages/patient-management/**": {
           branches: 95,
           functions: 95,
           lines: 95,
@@ -540,24 +540,24 @@ export default defineConfig({
 
 ```typescript
 // vitest.config.ts
-import path from 'path';
-import { defineConfig } from 'vitest/config';
+import path from "path";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'happy-dom',
-    setupFiles: ['./tools/tests/setup.ts'],
+    environment: "happy-dom",
+    setupFiles: ["./tools/tests/setup.ts"],
     include: [
-      'tools/tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
-      'packages/patient-management/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      "tools/tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}",
+      "packages/patient-management/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}",
     ],
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, './'),
-      '@/lib': path.resolve(__dirname, './lib'),
-      '@/components': path.resolve(__dirname, './components'),
+      "@": path.resolve(__dirname, "./"),
+      "@/lib": path.resolve(__dirname, "./lib"),
+      "@/components": path.resolve(__dirname, "./components"),
     },
   },
 });
@@ -567,22 +567,22 @@ export default defineConfig({
 
 ```typescript
 // ❌ Wrong - Jest syntax
-jest.mock('module', () => ({}));
+jest.mock("module", () => ({}));
 
 // ✅ Correct - Vitest syntax
-vi.mock('module', () => ({
+vi.mock("module", () => ({
   default: vi.fn(),
   namedExport: vi.fn(),
 }));
 
 // ❌ Wrong - Missing async for dynamic imports
-vi.mock('react', () => ({
+vi.mock("react", () => ({
   useState: vi.fn(),
 }));
 
 // ✅ Correct - Proper async handling
-vi.mock('react', async () => {
-  const actual = await vi.importActual('react');
+vi.mock("react", async () => {
+  const actual = await vi.importActual("react");
   return {
     ...actual,
     useState: vi.fn(),
@@ -594,19 +594,19 @@ vi.mock('react', async () => {
 
 ```typescript
 // ❌ Wrong - Flaky selectors
-await page.click('button');
+await page.click("button");
 
 // ✅ Correct - Specific test IDs
 await page.click('[data-testid="submit-button"]');
 
 // ❌ Wrong - No wait for navigation
 await page.click('[data-testid="login"]');
-await page.fill('[data-testid="username"]', 'user');
+await page.fill('[data-testid="username"]', "user");
 
 // ✅ Correct - Wait for navigation
 await page.click('[data-testid="login"]');
-await page.waitForURL('/dashboard');
-await page.fill('[data-testid="username"]', 'user');
+await page.waitForURL("/dashboard");
+await page.fill('[data-testid="username"]', "user");
 ```
 
 ### OXC Oxlint Configuration Issues
@@ -658,7 +658,7 @@ await page.fill('[data-testid="username"]', 'user');
 export default defineConfig({
   test: {
     // Enable parallel execution
-    pool: 'threads',
+    pool: "threads",
     poolOptions: {
       threads: {
         singleThread: false,
@@ -669,8 +669,8 @@ export default defineConfig({
     passWithNoTests: true,
     // Optimize coverage
     coverage: {
-      provider: 'v8', // Faster than c8
-      reporter: ['text-summary', 'html'],
+      provider: "v8", // Faster than c8
+      reporter: ["text-summary", "html"],
       skipFull: true,
     },
   },
@@ -693,8 +693,8 @@ export default defineConfig({
     // Disable animations
     launchOptions: {
       args: [
-        '--disable-web-security',
-        '--disable-features=VizDisplayCompositor',
+        "--disable-web-security",
+        "--disable-features=VizDisplayCompositor",
       ],
     },
   },
@@ -702,17 +702,17 @@ export default defineConfig({
   // Optimize projects
   projects: [
     {
-      name: 'chromium-desktop',
-      use: { ...devices['Desktop Chrome'] },
+      name: "chromium-desktop",
+      use: { ...devices["Desktop Chrome"] },
     },
     // Only run mobile tests when needed
     ...(process.env.MOBILE_TESTS
       ? [
-        {
-          name: 'mobile-android',
-          use: { ...devices['Pixel 5'] },
-        },
-      ]
+          {
+            name: "mobile-android",
+            use: { ...devices["Pixel 5"] },
+          },
+        ]
       : []),
   ],
 });
@@ -729,7 +729,7 @@ export default defineConfig({
 
 ```typescript
 // Fast test example
-test('should calculate total quickly', () => {
+test("should calculate total quickly", () => {
   // Arrange - minimal setup
   const items = [{ price: 10 }, { price: 20 }];
 
@@ -741,7 +741,7 @@ test('should calculate total quickly', () => {
 });
 
 // Slow test - avoid in unit tests
-test.skip('should handle large dataset', async () => {
+test.skip("should handle large dataset", async () => {
   const largeDataset = Array.from({ length: 10000 }, (_, i) => ({ id: i }));
   const result = await processLargeDataset(largeDataset);
   expect(result).toBeDefined();

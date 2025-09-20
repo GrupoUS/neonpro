@@ -1,1 +1,1 @@
-export { RevenueChart } from './revenue-chart';
+export { RevenueChart } from "./revenue-chart";

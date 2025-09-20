@@ -1,20 +1,37 @@
-'use client';
+"use client";
 
 /**
  * AI Chat Demo Component
- * 
+ *
  * Demonstration and testing component for AI chat features.
  * Shows all capabilities in a controlled environment.
  */
 
-import React, { useState } from 'react';
-import { EnhancedAIChat, ChatSession, PatientInfo, ProfessionalInfo } from './index';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Stethoscope, Brain, Settings, MessageSquare } from 'lucide-react';
+import React, { useState } from "react";
+import {
+  EnhancedAIChat,
+  ChatSession,
+  PatientInfo,
+  ProfessionalInfo,
+} from "./index";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  User,
+  Stethoscope,
+  Brain,
+  Settings,
+  MessageSquare,
+} from "lucide-react";
 
 export interface AIChatDemoProps {
   /** Show different demo scenarios */
@@ -26,80 +43,80 @@ export interface AIChatDemoProps {
 // Demo patient data
 const demoPatients: PatientInfo[] = [
   {
-    id: '1',
-    name: 'Maria Silva',
-    cpf: '123.456.789-00',
-    dateOfBirth: new Date('1980-05-15'),
-    gender: 'Feminino',
-    medicalConditions: ['Hipertensão', 'Diabetes Tipo 2'],
-    allergies: ['Penicilina'],
-    currentMedications: ['Losartana', 'Metformina'],
-    lastVisitDate: new Date('2024-01-15'),
-    notes: 'Paciente estável, needs acompanhamento regular',
+    id: "1",
+    name: "Maria Silva",
+    cpf: "123.456.789-00",
+    dateOfBirth: new Date("1980-05-15"),
+    gender: "Feminino",
+    medicalConditions: ["Hipertensão", "Diabetes Tipo 2"],
+    allergies: ["Penicilina"],
+    currentMedications: ["Losartana", "Metformina"],
+    lastVisitDate: new Date("2024-01-15"),
+    notes: "Paciente estável, needs acompanhamento regular",
   },
   {
-    id: '2',
-    name: 'João Santos',
-    cpf: '987.654.321-00',
-    dateOfBirth: new Date('1992-12-03'),
-    gender: 'Masculino',
-    medicalConditions: ['Asma'],
+    id: "2",
+    name: "João Santos",
+    cpf: "987.654.321-00",
+    dateOfBirth: new Date("1992-12-03"),
+    gender: "Masculino",
+    medicalConditions: ["Asma"],
     allergies: [],
-    currentMedications: ['Salbutamol'],
-    lastVisitDate: new Date('2024-02-20'),
-    notes: 'Crises asmáticas controladas',
+    currentMedications: ["Salbutamol"],
+    lastVisitDate: new Date("2024-02-20"),
+    notes: "Crises asmáticas controladas",
   },
   {
-    id: '3',
-    name: 'Ana Oliveira',
-    cpf: '456.789.123-00',
-    dateOfBirth: new Date('1975-08-22'),
-    gender: 'Feminino',
+    id: "3",
+    name: "Ana Oliveira",
+    cpf: "456.789.123-00",
+    dateOfBirth: new Date("1975-08-22"),
+    gender: "Feminino",
     medicalConditions: [],
-    allergies: ['Ibuprofeno'],
+    allergies: ["Ibuprofeno"],
     currentMedications: [],
-    lastVisitDate: new Date('2024-03-10'),
-    notes: 'Check-up anual, paciente saudável',
+    lastVisitDate: new Date("2024-03-10"),
+    notes: "Check-up anual, paciente saudável",
   },
 ];
 
 // Demo professional data
 const demoProfessionals: ProfessionalInfo[] = [
   {
-    id: '1',
-    name: 'Dr. Carlos Mendes',
-    specialty: 'Clínico Geral',
-    crmNumber: '12345-SP',
-    licenseNumber: '67890',
-    department: 'Clínica Médica',
+    id: "1",
+    name: "Dr. Carlos Mendes",
+    specialty: "Clínico Geral",
+    crmNumber: "12345-SP",
+    licenseNumber: "67890",
+    department: "Clínica Médica",
     contact: {
-      email: 'carlos.mendes@neonpro.com.br',
-      phone: '(11) 98765-4321',
-      extension: '1234',
+      email: "carlos.mendes@neonpro.com.br",
+      phone: "(11) 98765-4321",
+      extension: "1234",
     },
   },
   {
-    id: '2',
-    name: 'Dra. Fernanda Lima',
-    specialty: 'Dermatologia',
-    crmNumber: '54321-SP',
-    licenseNumber: '09876',
-    department: 'Dermatologia',
+    id: "2",
+    name: "Dra. Fernanda Lima",
+    specialty: "Dermatologia",
+    crmNumber: "54321-SP",
+    licenseNumber: "09876",
+    department: "Dermatologia",
     contact: {
-      email: 'fernanda.lima@neonpro.com.br',
-      phone: '(11) 91234-5678',
+      email: "fernanda.lima@neonpro.com.br",
+      phone: "(11) 91234-5678",
     },
   },
   {
-    id: '3',
-    name: 'Dr. Roberto Costa',
-    specialty: 'Cardiologia',
-    crmNumber: '67890-SP',
-    licenseNumber: '13579',
-    department: 'Cardiologia',
+    id: "3",
+    name: "Dr. Roberto Costa",
+    specialty: "Cardiologia",
+    crmNumber: "67890-SP",
+    licenseNumber: "13579",
+    department: "Cardiologia",
     contact: {
-      email: 'roberto.costa@neonpro.com.br',
-      phone: '(11) 99876-5432',
+      email: "roberto.costa@neonpro.com.br",
+      phone: "(11) 99876-5432",
     },
   },
 ];
@@ -107,34 +124,34 @@ const demoProfessionals: ProfessionalInfo[] = [
 // Demo scenarios
 const demoScenarios = [
   {
-    id: 'general',
-    name: 'Consulta Geral',
-    description: 'Chat geral sem contexto específico',
-    sessionType: 'general' as const,
+    id: "general",
+    name: "Consulta Geral",
+    description: "Chat geral sem contexto específico",
+    sessionType: "general" as const,
     patientContext: undefined,
     professionalContext: undefined,
   },
   {
-    id: 'client',
-    name: 'Atendimento ao Cliente',
-    description: 'Chat com contexto do paciente',
-    sessionType: 'client' as const,
+    id: "client",
+    name: "Atendimento ao Cliente",
+    description: "Chat com contexto do paciente",
+    sessionType: "client" as const,
     patientContext: demoPatients[0],
     professionalContext: demoProfessionals[0],
   },
   {
-    id: 'appointment',
-    name: 'Agendamento',
-    description: 'Chat focado em agendamento de consultas',
-    sessionType: 'appointment' as const,
+    id: "appointment",
+    name: "Agendamento",
+    description: "Chat focado em agendamento de consultas",
+    sessionType: "appointment" as const,
     patientContext: demoPatients[1],
     professionalContext: demoProfessionals[1],
   },
   {
-    id: 'financial',
-    name: 'Financeiro',
-    description: 'Chat com questões financeiras',
-    sessionType: 'financial' as const,
+    id: "financial",
+    name: "Financeiro",
+    description: "Chat com questões financeiras",
+    sessionType: "financial" as const,
     patientContext: demoPatients[2],
     professionalContext: undefined,
   },
@@ -148,17 +165,24 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
   testMode = false,
 }) => {
   // State
-  const [selectedScenario, setSelectedScenario] = useState('general');
-  const [selectedPatient, setSelectedPatient] = useState<PatientInfo | undefined>();
-  const [selectedProfessional, setSelectedProfessional] = useState<ProfessionalInfo | undefined>();
-  const [sessionType, setSessionType] = useState<'client' | 'financial' | 'appointment' | 'general'>('general');
+  const [selectedScenario, setSelectedScenario] = useState("general");
+  const [selectedPatient, setSelectedPatient] = useState<
+    PatientInfo | undefined
+  >();
+  const [selectedProfessional, setSelectedProfessional] = useState<
+    ProfessionalInfo | undefined
+  >();
+  const [sessionType, setSessionType] = useState<
+    "client" | "financial" | "appointment" | "general"
+  >("general");
 
   // Get current scenario
-  const currentScenario = demoScenarios.find(s => s.id === selectedScenario) || demoScenarios[0];
+  const currentScenario =
+    demoScenarios.find((s) => s.id === selectedScenario) || demoScenarios[0];
 
   // Handle scenario change
   const handleScenarioChange = (scenarioId: string) => {
-    const scenario = demoScenarios.find(s => s.id === scenarioId);
+    const scenario = demoScenarios.find((s) => s.id === scenarioId);
     if (scenario) {
       setSelectedScenario(scenarioId);
       setSelectedPatient(scenario.patientContext);
@@ -169,13 +193,19 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
 
   // Handle manual patient selection
   const handlePatientChange = (patientId: string) => {
-    const patient = patientId === 'none' ? undefined : demoPatients.find(p => p.id === patientId);
+    const patient =
+      patientId === "none"
+        ? undefined
+        : demoPatients.find((p) => p.id === patientId);
     setSelectedPatient(patient);
   };
 
   // Handle manual professional selection
   const handleProfessionalChange = (professionalId: string) => {
-    const professional = professionalId === 'none' ? undefined : demoProfessionals.find(p => p.id === professionalId);
+    const professional =
+      professionalId === "none"
+        ? undefined
+        : demoProfessionals.find((p) => p.id === professionalId);
     setSelectedProfessional(professional);
   };
 
@@ -227,12 +257,15 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
               {showScenarios && (
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Cenário</label>
-                  <Select value={selectedScenario} onValueChange={handleScenarioChange}>
+                  <Select
+                    value={selectedScenario}
+                    onValueChange={handleScenarioChange}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {demoScenarios.map(scenario => (
+                      {demoScenarios.map((scenario) => (
                         <SelectItem key={scenario.id} value={scenario.id}>
                           {scenario.name}
                         </SelectItem>
@@ -250,7 +283,10 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
               {/* Session Type */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Tipo de Sessão</label>
-                <Select value={sessionType} onValueChange={handleSessionTypeChange}>
+                <Select
+                  value={sessionType}
+                  onValueChange={handleSessionTypeChange}
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -266,8 +302,8 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
               {/* Patient Selection */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Paciente</label>
-                <Select 
-                  value={selectedPatient?.id || 'none'} 
+                <Select
+                  value={selectedPatient?.id || "none"}
                   onValueChange={handlePatientChange}
                 >
                   <SelectTrigger>
@@ -275,7 +311,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Nenhum paciente</SelectItem>
-                    {demoPatients.map(patient => (
+                    {demoPatients.map((patient) => (
                       <SelectItem key={patient.id} value={patient.id}>
                         {patient.name}
                       </SelectItem>
@@ -287,8 +323,8 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
               {/* Professional Selection */}
               <div className="space-y-2">
                 <label className="text-sm font-medium">Profissional</label>
-                <Select 
-                  value={selectedProfessional?.id || 'none'} 
+                <Select
+                  value={selectedProfessional?.id || "none"}
                   onValueChange={handleProfessionalChange}
                 >
                   <SelectTrigger>
@@ -296,7 +332,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Nenhum profissional</SelectItem>
-                    {demoProfessionals.map(professional => (
+                    {demoProfessionals.map((professional) => (
                       <SelectItem key={professional.id} value={professional.id}>
                         {professional.name}
                       </SelectItem>
@@ -373,15 +409,20 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
                     <div className="text-muted-foreground">
                       {selectedPatient.cpf}
                     </div>
-                    {selectedPatient.medicalConditions && selectedPatient.medicalConditions.length > 0 && (
-                      <div>
-                        <span className="text-muted-foreground">Condições:</span>
-                        <span className="ml-1">{selectedPatient.medicalConditions.join(', ')}</span>
-                      </div>
-                    )}
+                    {selectedPatient.medicalConditions &&
+                      selectedPatient.medicalConditions.length > 0 && (
+                        <div>
+                          <span className="text-muted-foreground">
+                            Condições:
+                          </span>
+                          <span className="ml-1">
+                            {selectedPatient.medicalConditions.join(", ")}
+                          </span>
+                        </div>
+                      )}
                   </div>
                 )}
-                
+
                 {selectedProfessional && (
                   <div className="space-y-1">
                     <div className="font-medium flex items-center gap-1">
@@ -412,9 +453,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
                 <div className="flex items-center gap-2">
                   <Brain className="h-5 w-5 text-primary" />
                   <span>Assistente NeonPro</span>
-                  <Badge variant="outline">
-                    {sessionType}
-                  </Badge>
+                  <Badge variant="outline">{sessionType}</Badge>
                 </div>
                 <div className="flex items-center gap-2">
                   {selectedPatient && (
@@ -469,7 +508,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
               <TabsTrigger value="integration">Integração</TabsTrigger>
               <TabsTrigger value="accessibility">Acessibilidade</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="features" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -496,7 +535,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
                 </div>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="compliance" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -523,7 +562,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
                 </div>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="integration" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -550,7 +589,7 @@ export const AIChatDemo: React.FC<AIChatDemoProps> = ({
                 </div>
               </div>
             </TabsContent>
-            
+
             <TabsContent value="accessibility" className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">

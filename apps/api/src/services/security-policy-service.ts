@@ -7,21 +7,29 @@
  * @compliance LGPD, ANVISA, CFM
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // Security Policy Schema
 export const SecurityPolicySchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  type: z.enum(['authentication', 'authorization', 'data_protection', 'audit', 'compliance']),
+  type: z.enum([
+    "authentication",
+    "authorization",
+    "data_protection",
+    "audit",
+    "compliance",
+  ]),
   enabled: z.boolean().default(true),
-  rules: z.array(z.object({
-    id: z.string(),
-    condition: z.string(),
-    action: z.enum(['allow', 'deny', 'require_mfa', 'audit', 'encrypt']),
-    parameters: z.record(z.unknown()).optional(),
-  })),
+  rules: z.array(
+    z.object({
+      id: z.string(),
+      condition: z.string(),
+      action: z.enum(["allow", "deny", "require_mfa", "audit", "encrypt"]),
+      parameters: z.record(z.unknown()).optional(),
+    }),
+  ),
   metadata: z.object({
     clinicId: z.string().optional(),
     createdBy: z.string(),
@@ -48,7 +56,7 @@ export type SecurityPolicyConfig = z.infer<typeof SecurityPolicyConfigSchema>;
 
 // In-memory storage for TDD (will be replaced with database)
 const securityPolicies = new Map<string, SecurityPolicy>();
-let globalConfig: SecurityPolicyConfig['globalSettings'] = {
+let globalConfig: SecurityPolicyConfig["globalSettings"] = {
   enforceStrictMode: true,
   auditAllActions: true,
   encryptSensitiveData: true,
@@ -59,7 +67,7 @@ let globalConfig: SecurityPolicyConfig['globalSettings'] = {
  * Create a new security policy
  */
 export async function createSecurityPolicy(
-  policy: Omit<SecurityPolicy, 'id' | 'metadata'>,
+  policy: Omit<SecurityPolicy, "id" | "metadata">,
 ): Promise<SecurityPolicy> {
   const id = crypto.randomUUID();
 
@@ -67,7 +75,7 @@ export async function createSecurityPolicy(
     ...policy,
     id,
     metadata: {
-      createdBy: 'system', // Will be replaced with actual user
+      createdBy: "system", // Will be replaced with actual user
       createdAt: new Date(),
       updatedAt: new Date(),
       version: 1,
@@ -82,7 +90,9 @@ export async function createSecurityPolicy(
 /**
  * Get a security policy by ID
  */
-export async function getSecurityPolicy(id: string): Promise<SecurityPolicy | null> {
+export async function getSecurityPolicy(
+  id: string,
+): Promise<SecurityPolicy | null> {
   return securityPolicies.get(id) || null;
 }
 
@@ -91,7 +101,7 @@ export async function getSecurityPolicy(id: string): Promise<SecurityPolicy | nu
  */
 export async function updateSecurityPolicy(
   id: string,
-  updates: Partial<Omit<SecurityPolicy, 'id' | 'metadata'>>,
+  updates: Partial<Omit<SecurityPolicy, "id" | "metadata">>,
 ): Promise<SecurityPolicy | null> {
   const existing = securityPolicies.get(id);
 
@@ -131,21 +141,21 @@ export async function listSecurityPolicies(): Promise<SecurityPolicy[]> {
 /**
  * Evaluate security policies for a given context
  */
-export async function evaluateSecurityPolicies(
-  context: {
-    userId?: string;
-    patientId?: string;
-    clinicId?: string;
-    action: string;
-    resource: string;
-    metadata?: Record<string, unknown>;
-  },
-): Promise<{
+export async function evaluateSecurityPolicies(context: {
+  userId?: string;
+  patientId?: string;
+  clinicId?: string;
+  action: string;
+  resource: string;
+  metadata?: Record<string, unknown>;
+}): Promise<{
   allowed: boolean;
   appliedPolicies: string[];
   requiredActions: string[];
 }> {
-  const policies = Array.from(securityPolicies.values()).filter(p => p.enabled);
+  const policies = Array.from(securityPolicies.values()).filter(
+    (p) => p.enabled,
+  );
   const appliedPolicies: string[] = [];
   const requiredActions: string[] = [];
   let allowed = true;
@@ -153,21 +163,21 @@ export async function evaluateSecurityPolicies(
   for (const policy of policies) {
     // Simple rule evaluation (will be enhanced)
     for (const rule of policy.rules) {
-      if (rule.condition === 'always' || rule.condition === context.action) {
+      if (rule.condition === "always" || rule.condition === context.action) {
         appliedPolicies.push(policy.id);
 
         switch (rule.action) {
-          case 'deny':
+          case "deny":
             allowed = false;
             break;
-          case 'require_mfa':
-            requiredActions.push('mfa_required');
+          case "require_mfa":
+            requiredActions.push("mfa_required");
             break;
-          case 'audit':
-            requiredActions.push('audit_required');
+          case "audit":
+            requiredActions.push("audit_required");
             break;
-          case 'encrypt':
-            requiredActions.push('encryption_required');
+          case "encrypt":
+            requiredActions.push("encryption_required");
             break;
         }
       }
@@ -184,7 +194,9 @@ export async function evaluateSecurityPolicies(
 /**
  * Get global security configuration
  */
-export async function getGlobalSecurityConfig(): Promise<SecurityPolicyConfig['globalSettings']> {
+export async function getGlobalSecurityConfig(): Promise<
+  SecurityPolicyConfig["globalSettings"]
+> {
   return { ...globalConfig };
 }
 
@@ -192,8 +204,8 @@ export async function getGlobalSecurityConfig(): Promise<SecurityPolicyConfig['g
  * Update global security configuration
  */
 export async function updateGlobalSecurityConfig(
-  updates: Partial<SecurityPolicyConfig['globalSettings']>,
-): Promise<SecurityPolicyConfig['globalSettings']> {
+  updates: Partial<SecurityPolicyConfig["globalSettings"]>,
+): Promise<SecurityPolicyConfig["globalSettings"]> {
   globalConfig = { ...globalConfig, ...updates };
   return { ...globalConfig };
 }

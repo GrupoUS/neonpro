@@ -15,45 +15,53 @@
  * - WCAG 2.1 AA+ compliance
  */
 
-'use client';
+"use client";
 
-import { ErrorBoundary } from '@/components/ui/error-boundary';
-import { Toaster } from '@/components/ui/sonner';
-import { useAuth } from '@/hooks/useAuth';
-import { useCompliantLocalStorage } from '@/hooks/useLocalStorage';
-import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
-import { supabase } from '@/integrations/supabase/client';
-import { queryClient } from '@/lib/query-client';
-import React, { Suspense, useEffect, useState } from 'react';
-import { toast } from 'sonner';
-import { EnhancedSidebar } from './EnhancedSidebar';
+import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { Toaster } from "@/components/ui/sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { useCompliantLocalStorage } from "@/hooks/useLocalStorage";
+import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
+import { supabase } from "@/integrations/supabase/client";
+import { queryClient } from "@/lib/query-client";
+import React, { Suspense, useEffect, useState } from "react";
+import { toast } from "sonner";
+import { EnhancedSidebar } from "./EnhancedSidebar";
 
 // Loading component
 const LoadingFallback = () => (
-  <div className='flex items-center justify-center min-h-screen'>
-    <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-primary'></div>
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
   </div>
 );
 
 // Error fallback component
-const ErrorFallback = ({ error, resetError }: { error: Error; resetError: () => void }) => (
-  <div className='flex flex-col items-center justify-center min-h-screen p-4'>
-    <div className='text-center max-w-md'>
-      <h1 className='text-2xl font-bold text-destructive mb-4'>Ops! Algo deu errado</h1>
-      <p className='text-muted-foreground mb-6'>
-        Ocorreu um erro inesperado. Nossa equipe foi notificada e está trabalhando para resolver o
-        problema.
+const ErrorFallback = ({
+  error,
+  resetError,
+}: {
+  error: Error;
+  resetError: () => void;
+}) => (
+  <div className="flex flex-col items-center justify-center min-h-screen p-4">
+    <div className="text-center max-w-md">
+      <h1 className="text-2xl font-bold text-destructive mb-4">
+        Ops! Algo deu errado
+      </h1>
+      <p className="text-muted-foreground mb-6">
+        Ocorreu um erro inesperado. Nossa equipe foi notificada e está
+        trabalhando para resolver o problema.
       </p>
-      <div className='space-y-2'>
+      <div className="space-y-2">
         <button
           onClick={resetError}
-          className='px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors'
+          className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
         >
           Tentar novamente
         </button>
         <button
-          onClick={() => window.location.href = '/'}
-          className='px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors ml-2'
+          onClick={() => (window.location.href = "/")}
+          className="px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors ml-2"
         >
           Voltar ao início
         </button>
@@ -65,24 +73,26 @@ const ErrorFallback = ({ error, resetError }: { error: Error; resetError: () => 
 // Real-time connection status indicator
 const ConnectionStatus = () => {
   const [connectionStatus, setConnectionStatus] = useState<
-    'connected' | 'disconnected' | 'connecting'
-  >('connecting');
+    "connected" | "disconnected" | "connecting"
+  >("connecting");
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
 
   useEffect(() => {
     // Monitor Supabase connection
-    const channel = supabase.channel('connection-status');
+    const channel = supabase.channel("connection-status");
 
     channel
-      .on('system', { event: 'connection' }, status => {
-        setConnectionStatus(status === 'SUBSCRIBED' ? 'connected' : 'connecting');
+      .on("system", { event: "connection" }, (status) => {
+        setConnectionStatus(
+          status === "SUBSCRIBED" ? "connected" : "connecting",
+        );
         setLastUpdate(new Date());
       })
-      .subscribe(status => {
-        if (status === 'SUBSCRIBED') {
-          setConnectionStatus('connected');
-        } else if (status === 'CHANNEL_ERROR') {
-          setConnectionStatus('disconnected');
+      .subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          setConnectionStatus("connected");
+        } else if (status === "CHANNEL_ERROR") {
+          setConnectionStatus("disconnected");
         }
       });
 
@@ -92,29 +102,33 @@ const ConnectionStatus = () => {
   }, []);
 
   const statusColors = {
-    connected: 'bg-green-500',
-    disconnected: 'bg-red-500',
-    connecting: 'bg-yellow-500',
+    connected: "bg-green-500",
+    disconnected: "bg-red-500",
+    connecting: "bg-yellow-500",
   };
 
   const statusText = {
-    connected: 'Conectado',
-    disconnected: 'Desconectado',
-    connecting: 'Conectando...',
+    connected: "Conectado",
+    disconnected: "Desconectado",
+    connecting: "Conectando...",
   };
 
   return (
-    <div className='fixed bottom-4 left-4 z-50'>
-      <div className='flex items-center gap-2 bg-background border rounded-lg px-3 py-2 shadow-lg'>
+    <div className="fixed bottom-4 left-4 z-50">
+      <div className="flex items-center gap-2 bg-background border rounded-lg px-3 py-2 shadow-lg">
         <div
           className={`w-2 h-2 rounded-full ${statusColors[connectionStatus]} ${
-            connectionStatus === 'connected' ? 'animate-pulse' : ''
+            connectionStatus === "connected" ? "animate-pulse" : ""
           }`}
-        >
-        </div>
-        <span className='text-xs font-medium'>{statusText[connectionStatus]}</span>
-        <span className='text-xs text-muted-foreground'>
-          {lastUpdate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+        ></div>
+        <span className="text-xs font-medium">
+          {statusText[connectionStatus]}
+        </span>
+        <span className="text-xs text-muted-foreground">
+          {lastUpdate.toLocaleTimeString("pt-BR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </span>
       </div>
     </div>
@@ -125,14 +139,14 @@ const ConnectionStatus = () => {
 const PerformanceMetrics = () => {
   const metrics = usePerformanceMonitor();
 
-  if (process.env.NODE_ENV !== 'development') {
+  if (process.env.NODE_ENV !== "development") {
     return null;
   }
 
   return (
-    <div className='fixed top-4 right-4 z-50'>
-      <div className='bg-background border rounded-lg p-3 shadow-lg text-xs font-mono'>
-        <div className='space-y-1'>
+    <div className="fixed top-4 right-4 z-50">
+      <div className="bg-background border rounded-lg p-3 shadow-lg text-xs font-mono">
+        <div className="space-y-1">
           <div>FPS: {metrics.fps}</div>
           <div>Memory: {metrics.memoryUsage}MB</div>
           <div>Load Time: {metrics.pageLoadTime}ms</div>
@@ -151,32 +165,34 @@ const useHealthcareRealtimeSubscriptions = () => {
 
     // Patient data changes
     const patientChannel = supabase
-      .channel('patient-healthcare-updates')
+      .channel("patient-healthcare-updates")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'patients',
+          event: "*",
+          schema: "public",
+          table: "patients",
           filter: `clinic_id=eq.${user.id}`,
         },
-        payload => {
-          console.log('Patient healthcare update:', payload);
+        (payload) => {
+          console.log("Patient healthcare update:", payload);
 
           // Invalidate relevant queries
-          queryClient.invalidateQueries({ queryKey: ['patients'] });
-          queryClient.invalidateQueries({ queryKey: ['patient-stats'] });
+          queryClient.invalidateQueries({ queryKey: ["patients"] });
+          queryClient.invalidateQueries({ queryKey: ["patient-stats"] });
 
           // Show contextual notifications
-          if (payload.eventType === 'INSERT') {
-            toast.success('Novo paciente registrado no sistema!');
-          } else if (payload.eventType === 'UPDATE') {
+          if (payload.eventType === "INSERT") {
+            toast.success("Novo paciente registrado no sistema!");
+          } else if (payload.eventType === "UPDATE") {
             const oldData = payload.old as any;
             const newData = payload.new as any;
 
             // Check for critical healthcare data changes
             if (oldData.health_status !== newData.health_status) {
-              toast.warning(`Status de saúde do paciente atualizado: ${newData.health_status}`);
+              toast.warning(
+                `Status de saúde do paciente atualizado: ${newData.health_status}`,
+              );
             }
           }
         },
@@ -185,39 +201,39 @@ const useHealthcareRealtimeSubscriptions = () => {
 
     // Appointment healthcare updates
     const appointmentChannel = supabase
-      .channel('appointment-healthcare-updates')
+      .channel("appointment-healthcare-updates")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'appointments',
+          event: "*",
+          schema: "public",
+          table: "appointments",
           filter: `clinic_id=eq.${user.id}`,
         },
-        payload => {
-          console.log('Appointment healthcare update:', payload);
+        (payload) => {
+          console.log("Appointment healthcare update:", payload);
 
-          queryClient.invalidateQueries({ queryKey: ['appointments'] });
-          queryClient.invalidateQueries({ queryKey: ['appointment-stats'] });
+          queryClient.invalidateQueries({ queryKey: ["appointments"] });
+          queryClient.invalidateQueries({ queryKey: ["appointment-stats"] });
 
-          if (payload.eventType === 'UPDATE') {
+          if (payload.eventType === "UPDATE") {
             const newData = payload.new as any;
             const oldData = payload.old as any;
 
             // Healthcare-critical appointment changes
             if (oldData.status !== newData.status) {
               switch (newData.status) {
-                case 'confirmed':
-                  toast.success('Consulta confirmada com sucesso!');
+                case "confirmed":
+                  toast.success("Consulta confirmada com sucesso!");
                   break;
-                case 'cancelled':
-                  toast.error('Consulta cancelada');
+                case "cancelled":
+                  toast.error("Consulta cancelada");
                   break;
-                case 'completed':
-                  toast.success('Consulta concluída');
+                case "completed":
+                  toast.success("Consulta concluída");
                   break;
-                case 'no_show':
-                  toast.warning('Paciente não compareceu à consulta');
+                case "no_show":
+                  toast.warning("Paciente não compareceu à consulta");
                   break;
               }
             }
@@ -228,24 +244,29 @@ const useHealthcareRealtimeSubscriptions = () => {
 
     // Medical records updates (LGPD compliance)
     const medicalRecordsChannel = supabase
-      .channel('medical-records-updates')
+      .channel("medical-records-updates")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'medical_records',
+          event: "*",
+          schema: "public",
+          table: "medical_records",
           filter: `clinic_id=eq.${user.id}`,
         },
-        payload => {
-          console.log('Medical records update:', payload);
+        (payload) => {
+          console.log("Medical records update:", payload);
 
           // Sensitive data - invalidate with compliance
-          queryClient.invalidateQueries({ queryKey: ['medical-records'] });
+          queryClient.invalidateQueries({ queryKey: ["medical-records"] });
 
           // Audit logging for sensitive data access
-          if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-            console.log('Medical record accessed - LGPD compliance audit trail');
+          if (
+            payload.eventType === "INSERT" ||
+            payload.eventType === "UPDATE"
+          ) {
+            console.log(
+              "Medical record accessed - LGPD compliance audit trail",
+            );
           }
         },
       )
@@ -265,14 +286,14 @@ const useHealthcareRoutePrefetch = () => {
 
   useEffect(() => {
     // Prefetch based on healthcare-specific routes
-    if (location.startsWith('/patients')) {
+    if (location.startsWith("/patients")) {
       // Prefetch patient-related data
       queryClient.prefetchQuery({
-        queryKey: ['patients', 'health-stats'],
+        queryKey: ["patients", "health-stats"],
         queryFn: async () => {
           const { data } = await supabase
-            .from('patient_health_stats')
-            .select('*')
+            .from("patient_health_stats")
+            .select("*")
             .limit(1);
           return data;
         },
@@ -280,32 +301,32 @@ const useHealthcareRoutePrefetch = () => {
       });
     }
 
-    if (location.startsWith('/appointments')) {
+    if (location.startsWith("/appointments")) {
       // Prefetch appointment data
       queryClient.prefetchQuery({
-        queryKey: ['appointments', 'healthcare-metrics'],
+        queryKey: ["appointments", "healthcare-metrics"],
         queryFn: async () => {
-          const today = new Date().toISOString().split('T')[0];
+          const today = new Date().toISOString().split("T")[0];
           const { data } = await supabase
-            .from('appointments')
-            .select('*, patients(*)')
-            .gte('start_time', `${today}T00:00:00`)
-            .lte('start_time', `${today}T23:59:59`);
+            .from("appointments")
+            .select("*, patients(*)")
+            .gte("start_time", `${today}T00:00:00`)
+            .lte("start_time", `${today}T23:59:59`);
           return data;
         },
         staleTime: 2 * 60 * 1000, // 2 minutes
       });
     }
 
-    if (location.startsWith('/services')) {
+    if (location.startsWith("/services")) {
       // Prefetch healthcare services
       queryClient.prefetchQuery({
-        queryKey: ['services', 'healthcare-procedures'],
+        queryKey: ["services", "healthcare-procedures"],
         queryFn: async () => {
           const { data } = await supabase
-            .from('healthcare_services')
-            .select('*')
-            .eq('active', true);
+            .from("healthcare_services")
+            .select("*")
+            .eq("active", true);
           return data;
         },
         staleTime: 10 * 60 * 1000, // 10 minutes
@@ -318,7 +339,7 @@ const useHealthcareRoutePrefetch = () => {
 const useSessionMonitoring = () => {
   const { user } = useAuth();
   const [sessionActivity, setSessionActivity] = useCompliantLocalStorage(
-    'user-session-activity',
+    "user-session-activity",
     { lastActivity: new Date().toISOString(), sessionDuration: 0 },
     { retentionDays: 30, isSensitiveData: true },
   );
@@ -328,7 +349,7 @@ const useSessionMonitoring = () => {
 
     // Update activity timestamp
     const updateActivity = () => {
-      setSessionActivity(prev => ({
+      setSessionActivity((prev) => ({
         lastActivity: new Date().toISOString(),
         sessionDuration: prev.sessionDuration + 1, // Increment by minute
       }));
@@ -338,21 +359,28 @@ const useSessionMonitoring = () => {
 
     // Activity detection
     const handleActivity = () => {
-      setSessionActivity(prev => ({
+      setSessionActivity((prev) => ({
         ...prev,
         lastActivity: new Date().toISOString(),
       }));
     };
 
     // Listen for user activity
-    const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
-    activityEvents.forEach(event => {
+    const activityEvents = [
+      "mousedown",
+      "mousemove",
+      "keypress",
+      "scroll",
+      "touchstart",
+      "click",
+    ];
+    activityEvents.forEach((event) => {
       window.addEventListener(event, handleActivity, { passive: true });
     });
 
     return () => {
       clearInterval(interval);
-      activityEvents.forEach(event => {
+      activityEvents.forEach((event) => {
         window.removeEventListener(event, handleActivity);
       });
     };
@@ -399,14 +427,14 @@ export function EnhancedAppShell({
     <ErrorBoundary
       fallback={
         <ErrorFallback
-          error={new Error('Application error')}
+          error={new Error("Application error")}
           resetError={() => window.location.reload()}
         />
       }
     >
       <EnhancedSidebar sections={customSidebarSections}>
         <Suspense fallback={<LoadingFallback />}>
-          <div className='min-h-screen bg-background'>
+          <div className="min-h-screen bg-background">
             {children}
 
             {/* Global UI elements */}
@@ -427,7 +455,7 @@ export { ConnectionStatus, ErrorFallback, LoadingFallback, PerformanceMetrics };
 // Hook for accessing enhanced app shell features
 export function useEnhancedAppShell() {
   return {
-    showPerformanceMetrics: process.env.NODE_ENV === 'development',
+    showPerformanceMetrics: process.env.NODE_ENV === "development",
     enableRealtime: true,
     enableSessionMonitoring: true,
     enableRoutePrefetch: true,

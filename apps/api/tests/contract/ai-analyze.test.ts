@@ -13,39 +13,42 @@
  * - CPF/CNPJ patient identification
  */
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createTestClient } from '../helpers/auth';
-import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { createTestClient } from "../helpers/auth";
+import { cleanupTestDatabase, setupTestDatabase } from "../helpers/database";
 
-describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
+// Import test setup to configure mocks
+import "../../src/test-setup";
+
+describe("Contract Test T008: POST /api/v1/ai/analyze", () => {
   let testClient: any;
   let patientId: string;
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: 'admin' });
-    patientId = 'test-patient-123';
+    testClient = createTestClient({ role: "admin" });
+    patientId = "test-patient-123";
   });
 
   afterEach(async () => {
     await cleanupTestDatabase();
   });
 
-  describe('Healthcare AI Analysis Contract', () => {
-    it('should accept medical data analysis request with Brazilian context', async () => {
+  describe("Healthcare AI Analysis Contract", () => {
+    it("should accept medical data analysis request with Brazilian context", async () => {
       const analysisRequest = {
         patientId,
-        analysisType: 'aesthetic_consultation',
+        analysisType: "aesthetic_consultation",
         medicalData: {
-          symptoms: 'Preocupações com linhas de expressão e flacidez facial',
-          clinicalHistory: 'Paciente sem histórico de procedimentos estéticos',
-          medications: 'Sem medicações contínuas',
-          allergies: 'Nenhuma alergia conhecida',
+          symptoms: "Preocupações com linhas de expressão e flacidez facial",
+          clinicalHistory: "Paciente sem histórico de procedimentos estéticos",
+          medications: "Sem medicações contínuas",
+          allergies: "Nenhuma alergia conhecida",
         },
         brazilianContext: {
-          cpf: '123.456.789-01',
-          healthInsurance: 'particular',
-          region: 'sudeste',
+          cpf: "123.456.789-01",
+          healthInsurance: "particular",
+          region: "sudeste",
           culturalConsiderations: true,
         },
         compliance: {
@@ -56,10 +59,10 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       };
 
       // TDD RED: This endpoint doesn't exist yet - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/analyze", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(analysisRequest),
@@ -77,9 +80,9 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
             reasoning: expect.any(String),
             contraindications: expect.any(Array),
             estimatedCost: expect.objectContaining({
-              currency: 'BRL',
+              currency: "BRL",
               amount: expect.any(Number),
-              paymentMethods: expect.arrayContaining(['PIX']),
+              paymentMethods: expect.arrayContaining(["PIX"]),
             }),
           }),
         ]),
@@ -93,28 +96,28 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       });
     });
 
-    it('should handle multi-model AI routing for complex cases', async () => {
+    it("should handle multi-model AI routing for complex cases", async () => {
       const complexAnalysisRequest = {
         patientId,
-        analysisType: 'complex_aesthetic_case',
+        analysisType: "complex_aesthetic_case",
         requiresMultipleModels: true,
-        primaryModel: 'gpt-4',
-        fallbackModels: ['claude-3', 'gemini-pro'],
+        primaryModel: "gpt-4",
+        fallbackModels: ["claude-3", "gemini-pro"],
         medicalData: {
           complexCase: true,
           multipleSymptoms: [
-            'Assimetria facial',
-            'Flacidez severa',
-            'Manchas pigmentares',
+            "Assimetria facial",
+            "Flacidez severa",
+            "Manchas pigmentares",
           ],
         },
       };
 
       // TDD RED: Multi-model routing not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/analyze", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(complexAnalysisRequest),
@@ -131,22 +134,22 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       });
     });
 
-    it('should enforce LGPD data protection during analysis', async () => {
+    it("should enforce LGPD data protection during analysis", async () => {
       const lgpdAnalysisRequest = {
         patientId,
-        analysisType: 'lgpd_compliant_analysis',
+        analysisType: "lgpd_compliant_analysis",
         dataMinimization: true,
         pseudonymization: true,
         medicalData: {
-          symptoms: 'Sintomas dermatológicos gerais',
+          symptoms: "Sintomas dermatológicos gerais",
         },
       };
 
       // TDD RED: LGPD enforcement not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/analyze", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(lgpdAnalysisRequest),
@@ -164,11 +167,11 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       });
     });
 
-    it('should validate CFM medical ethics compliance', async () => {
+    it("should validate CFM medical ethics compliance", async () => {
       const cfmAnalysisRequest = {
         patientId,
-        analysisType: 'cfm_ethical_analysis',
-        medicalProfessionalCRM: 'CRM/SP 123456',
+        analysisType: "cfm_ethical_analysis",
+        medicalProfessionalCRM: "CRM/SP 123456",
         ethicalConsiderations: {
           patientAutonomy: true,
           beneficence: true,
@@ -178,10 +181,10 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       };
 
       // TDD RED: CFM compliance validation not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/analyze", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(cfmAnalysisRequest),
@@ -198,17 +201,17 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       });
     });
 
-    it('should handle Portuguese error messages for Brazilian users', async () => {
+    it("should handle Portuguese error messages for Brazilian users", async () => {
       const invalidRequest = {
-        patientId: 'invalid-patient',
-        analysisType: 'invalid_type',
+        patientId: "invalid-patient",
+        analysisType: "invalid_type",
       };
 
       // TDD RED: Portuguese error handling not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/analyze", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(invalidRequest),
@@ -218,28 +221,28 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
       const error = await response.json();
       expect(error).toMatchObject({
-        error: expect.stringContaining('Paciente'),
+        error: expect.stringContaining("Paciente"),
         message: expect.stringMatching(/português/i),
-        code: 'INVALID_PATIENT_DATA',
-        locale: 'pt-BR',
+        code: "INVALID_PATIENT_DATA",
+        locale: "pt-BR",
       });
     });
   });
 
-  describe('Performance and Quality Requirements', () => {
-    it('should complete analysis within 5 seconds for standard cases', async () => {
+  describe("Performance and Quality Requirements", () => {
+    it("should complete analysis within 5 seconds for standard cases", async () => {
       const startTime = Date.now();
 
       const standardRequest = {
         patientId,
-        analysisType: 'standard_aesthetic_analysis',
+        analysisType: "standard_aesthetic_analysis",
       };
 
       // TDD RED: Performance optimization not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/analyze", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(standardRequest),
@@ -251,19 +254,19 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
       expect(processingTime).toBeLessThan(5000); // 5 seconds max
     });
 
-    it('should provide cost estimates in Brazilian Reais with PIX payment option', async () => {
+    it("should provide cost estimates in Brazilian Reais with PIX payment option", async () => {
       const costAnalysisRequest = {
         patientId,
-        analysisType: 'cost_estimate_analysis',
+        analysisType: "cost_estimate_analysis",
         includePricing: true,
-        paymentPreferences: ['PIX', 'cartao_credito', 'cartao_debito'],
+        paymentPreferences: ["PIX", "cartao_credito", "cartao_debito"],
       };
 
       // TDD RED: Brazilian payment integration not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analyze', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/analyze", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(costAnalysisRequest),
@@ -273,13 +276,13 @@ describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
 
       const result = await response.json();
       expect(result.costEstimate).toMatchObject({
-        currency: 'BRL',
+        currency: "BRL",
         totalAmount: expect.any(Number),
         breakdown: expect.any(Array),
         paymentOptions: expect.arrayContaining([
           expect.objectContaining({
-            method: 'PIX',
-            processingTime: 'instantaneo',
+            method: "PIX",
+            processingTime: "instantaneo",
             fees: expect.any(Number),
           }),
         ]),

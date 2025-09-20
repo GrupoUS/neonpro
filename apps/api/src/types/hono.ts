@@ -1,9 +1,9 @@
 /**
  * Hono context variable declarations for NeonPro API
  */
-import type { Environment } from './environment';
+import type { Environment } from "./environment";
 
-declare module 'hono' {
+declare module "hono" {
   interface ContextVariableMap {
     userId?: string;
     userRole?: string;

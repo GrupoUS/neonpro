@@ -1,15 +1,20 @@
 /**
  * AI Agents tRPC Router
- * 
+ *
  * Implements AI Agent Database Integration with CopilotKit, AG-UI Protocol, and RAG
  * Full LGPD/ANVISA/CFM compliance for healthcare data interactions
  */
 
-import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
-import { TRPCError } from '@trpc/server';
-import { z } from 'zod';
-import { protectedProcedure, router } from '../trpc';
-import { HealthcareTRPCError } from '@/utils/healthcare-errors';
+import {
+  AuditAction,
+  AuditStatus,
+  ResourceType,
+  RiskLevel,
+} from "@prisma/client";
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { protectedProcedure, router } from "../trpc";
+import { HealthcareTRPCError } from "@/utils/healthcare-errors";
 import {
   CreateAgentSessionSchema,
   CreateAgentMessageSchema,
@@ -24,7 +29,7 @@ import {
   RAGResponseSchema,
   AgentTypeSchema,
   AgentStatusSchema,
-} from '../contracts/agent';
+} from "../contracts/agent";
 
 // =====================================
 // AGENT TYPES AND INTERFACES
@@ -53,27 +58,27 @@ interface RAGResult {
 
 const AGENT_PROVIDERS: Record<string, AgentProvider> = {
   openai: {
-    name: 'OpenAI',
-    endpoint: 'https://api.openai.com/v1/chat/completions',
+    name: "OpenAI",
+    endpoint: "https://api.openai.com/v1/chat/completions",
     apiKey: process.env.OPENAI_API_KEY,
     maxTokens: 4000,
     temperature: 0.3,
-    capabilities: ['chat', 'analysis', 'prediction'],
+    capabilities: ["chat", "analysis", "prediction"],
   },
   anthropic: {
-    name: 'Anthropic',
-    endpoint: 'https://api.anthropic.com/v1/messages',
+    name: "Anthropic",
+    endpoint: "https://api.anthropic.com/v1/messages",
     apiKey: process.env.ANTHROPIC_API_KEY,
     maxTokens: 4000,
     temperature: 0.3,
-    capabilities: ['chat', 'analysis'],
+    capabilities: ["chat", "analysis"],
   },
   local: {
-    name: 'Local Model',
-    endpoint: process.env.LOCAL_AI_ENDPOINT || 'http://localhost:8000/v1/chat',
+    name: "Local Model",
+    endpoint: process.env.LOCAL_AI_ENDPOINT || "http://localhost:8000/v1/chat",
     maxTokens: 2000,
     temperature: 0.2,
-    capabilities: ['chat'],
+    capabilities: ["chat"],
   },
 };
 
@@ -131,11 +136,19 @@ function sanitizeDataForAI(data: any, agentType: string): any {
 
   // Remove direct identifiers
   const sensitiveFields = [
-    'fullName', 'cpf', 'rg', 'email', 'phonePrimary', 'phoneSecondary',
-    'addressLine1', 'addressLine2', 'passportNumber', 'id'
+    "fullName",
+    "cpf",
+    "rg",
+    "email",
+    "phonePrimary",
+    "phoneSecondary",
+    "addressLine1",
+    "addressLine2",
+    "passportNumber",
+    "id",
   ];
 
-  sensitiveFields.forEach(field => {
+  sensitiveFields.forEach((field) => {
     delete sanitized[field];
   });
 
@@ -149,12 +162,19 @@ function sanitizeDataForAI(data: any, agentType: string): any {
 
   // Keep agent-specific relevant data
   const allowedFieldsByType = {
-    client: ['allergies', 'chronicConditions', 'bloodType', 'gender', 'ageGroup'],
-    financial: ['insurancePlan', 'paymentHistory', 'outstandingBalance'],
-    appointment: ['appointmentHistory', 'noShowCount', 'preferredTimes'],
+    client: [
+      "allergies",
+      "chronicConditions",
+      "bloodType",
+      "gender",
+      "ageGroup",
+    ],
+    financial: ["insurancePlan", "paymentHistory", "outstandingBalance"],
+    appointment: ["appointmentHistory", "noShowCount", "preferredTimes"],
   };
 
-  const allowedFields = allowedFieldsByType[agentType as keyof typeof allowedFieldsByType] || [];
+  const allowedFields =
+    allowedFieldsByType[agentType as keyof typeof allowedFieldsByType] || [];
 
   return Object.keys(sanitized).reduce((acc, key) => {
     if (allowedFields.includes(key)) {
@@ -179,7 +199,7 @@ async function createAgentAuditTrail(
       userId: ctx.userId,
       clinicId: ctx.clinicId,
       action: AuditAction.CREATE,
-      resource: 'agent_operation',
+      resource: "agent_operation",
       resourceType: ResourceType.SYSTEM_CONFIG,
       ipAddress: ctx.auditMeta.ipAddress,
       userAgent: ctx.auditMeta.userAgent,
@@ -205,61 +225,69 @@ async function performRAGSearch(
   limit: number = 10,
 ): Promise<RAGResult[]> {
   // Simulate RAG search delay
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise((resolve) => setTimeout(resolve, 100));
 
   // Mock results based on agent type
   const mockResults = {
     client: [
       {
-        id: 'doc1',
-        content: 'Pacientes com alergias a penicilina devem ser identificados com alerta vermelho no prontuário',
-        source: 'Protocolos Clínicos',
+        id: "doc1",
+        content:
+          "Pacientes com alergias a penicilina devem ser identificados com alerta vermelho no prontuário",
+        source: "Protocolos Clínicos",
         score: 0.95,
-        metadata: { type: 'protocol', category: 'safety' },
+        metadata: { type: "protocol", category: "safety" },
       },
       {
-        id: 'doc2',
-        content: 'LGPD exige consentimento explícito para compartilhamento de dados médicos',
-        source: 'LGPD Guidelines',
-        score: 0.90,
-        metadata: { type: 'regulation', category: 'compliance' },
+        id: "doc2",
+        content:
+          "LGPD exige consentimento explícito para compartilhamento de dados médicos",
+        source: "LGPD Guidelines",
+        score: 0.9,
+        metadata: { type: "regulation", category: "compliance" },
       },
     ],
     financial: [
       {
-        id: 'doc3',
-        content: 'Tabela AMB 2024: consulta clínica geral - R$ 150,00',
-        source: 'Tabela AMB',
+        id: "doc3",
+        content: "Tabela AMB 2024: consulta clínica geral - R$ 150,00",
+        source: "Tabela AMB",
         score: 0.98,
-        metadata: { type: 'pricing', category: 'standard' },
+        metadata: { type: "pricing", category: "standard" },
       },
       {
-        id: 'doc4',
-        content: 'Pacientes particulares têm 10% de desconto para pagamentos à vista',
-        source: 'Políticas da Clínica',
+        id: "doc4",
+        content:
+          "Pacientes particulares têm 10% de desconto para pagamentos à vista",
+        source: "Políticas da Clínica",
         score: 0.85,
-        metadata: { type: 'policy', category: 'discount' },
+        metadata: { type: "policy", category: "discount" },
       },
     ],
     appointment: [
       {
-        id: 'doc5',
-        content: 'Horário de almoço: 12:00-14:00, consultas apenas em casos de emergência',
-        source: 'Horários de Funcionamento',
+        id: "doc5",
+        content:
+          "Horário de almoço: 12:00-14:00, consultas apenas em casos de emergência",
+        source: "Horários de Funcionamento",
         score: 0.92,
-        metadata: { type: 'schedule', category: 'operational' },
+        metadata: { type: "schedule", category: "operational" },
       },
       {
-        id: 'doc6',
-        content: 'Confirmar consultas 24h antes via WhatsApp reduz no-show em 40%',
-        source: 'Best Practices',
+        id: "doc6",
+        content:
+          "Confirmar consultas 24h antes via WhatsApp reduz no-show em 40%",
+        source: "Best Practices",
         score: 0.88,
-        metadata: { type: 'recommendation', category: 'efficiency' },
+        metadata: { type: "recommendation", category: "efficiency" },
       },
     ],
   };
 
-  return (mockResults[agentType as keyof typeof mockResults] || []).slice(0, limit);
+  return (mockResults[agentType as keyof typeof mockResults] || []).slice(
+    0,
+    limit,
+  );
 }
 
 // =====================================
@@ -273,22 +301,27 @@ export const agentRouter = router({
    */
   createSession: protectedProcedure
     .input(CreateAgentSessionSchema)
-    .output(z.object({
-      success: z.literal(true),
-      data: AgentSessionResponseSchema,
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: AgentSessionResponseSchema,
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         // Validate user has permission for this agent type
-        if (input.agent_type === 'client' && !ctx.user.permissions?.includes('patient:read')) {
+        if (
+          input.agent_type === "client" &&
+          !ctx.user.permissions?.includes("patient:read")
+        ) {
           throw new HealthcareTRPCError(
-            'FORBIDDEN',
-            'Insufficient permissions for client agent',
-            'INSUFFICIENT_PERMISSIONS',
-            { required: 'patient:read' }
+            "FORBIDDEN",
+            "Insufficient permissions for client agent",
+            "INSUFFICIENT_PERMISSIONS",
+            { required: "patient:read" },
           );
         }
 
@@ -297,20 +330,26 @@ export const agentRouter = router({
           data: {
             userId: ctx.user.id,
             agentType: input.agent_type,
-            status: 'active',
+            status: "active",
             metadata: {
               ...input.metadata,
               initial_context: input.initial_context,
-              created_via: 'api',
+              created_via: "api",
             },
           },
         });
 
         // Create audit trail
-        await createAgentAuditTrail(ctx, 'session_created', input.agent_type, session.id, {
-          session_id: session.id,
-          initial_context: input.initial_context,
-        });
+        await createAgentAuditTrail(
+          ctx,
+          "session_created",
+          input.agent_type,
+          session.id,
+          {
+            session_id: session.id,
+            initial_context: input.initial_context,
+          },
+        );
 
         return {
           success: true,
@@ -323,7 +362,7 @@ export const agentRouter = router({
             created_at: session.createdAt,
             updated_at: session.updatedAt,
           },
-          message: 'Agent session created successfully',
+          message: "Agent session created successfully",
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
@@ -332,8 +371,8 @@ export const agentRouter = router({
           throw error;
         }
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to create agent session',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to create agent session",
           cause: error,
         });
       }
@@ -345,20 +384,22 @@ export const agentRouter = router({
    */
   listSessions: protectedProcedure
     .input(ListAgentSessionsSchema)
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        sessions: z.array(AgentSessionResponseSchema),
-        pagination: z.object({
-          page: z.number(),
-          limit: z.number(),
-          total: z.number(),
-          total_pages: z.number(),
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          sessions: z.array(AgentSessionResponseSchema),
+          pagination: z.object({
+            page: z.number(),
+            limit: z.number(),
+            total: z.number(),
+            total_pages: z.number(),
+          }),
         }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
     .query(async ({ ctx, input }) => {
       try {
         const where = {
@@ -382,7 +423,7 @@ export const agentRouter = router({
         return {
           success: true,
           data: {
-            sessions: sessions.map(session => ({
+            sessions: sessions.map((session) => ({
               id: session.id,
               user_id: session.userId,
               agent_type: session.agentType as any,
@@ -403,8 +444,8 @@ export const agentRouter = router({
         };
       } catch (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to list agent sessions',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to list agent sessions",
           cause: error,
         });
       }
@@ -415,19 +456,23 @@ export const agentRouter = router({
    * Retrieve session details with message history
    */
   getSession: protectedProcedure
-    .input(z.object({
-      session_id: z.string().uuid(),
-      include_messages: z.boolean().default(false),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        session: AgentSessionResponseSchema,
-        messages: z.array(AgentMessageResponseSchema).optional(),
+    .input(
+      z.object({
+        session_id: z.string().uuid(),
+        include_messages: z.boolean().default(false),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          session: AgentSessionResponseSchema,
+          messages: z.array(AgentMessageResponseSchema).optional(),
+        }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       try {
         const session = await ctx.prisma.agentSession.findFirst({
@@ -439,10 +484,10 @@ export const agentRouter = router({
 
         if (!session) {
           throw new HealthcareTRPCError(
-            'NOT_FOUND',
-            'Agent session not found',
-            'SESSION_NOT_FOUND',
-            { session_id: input.session_id }
+            "NOT_FOUND",
+            "Agent session not found",
+            "SESSION_NOT_FOUND",
+            { session_id: input.session_id },
           );
         }
 
@@ -450,7 +495,7 @@ export const agentRouter = router({
         if (input.include_messages) {
           messages = await ctx.prisma.agentMessage.findMany({
             where: { sessionId: input.session_id },
-            orderBy: { createdAt: 'asc' },
+            orderBy: { createdAt: "asc" },
           });
         }
 
@@ -466,7 +511,7 @@ export const agentRouter = router({
               created_at: session.createdAt,
               updated_at: session.updatedAt,
             },
-            messages: messages.map(msg => ({
+            messages: messages.map((msg) => ({
               id: msg.id,
               session_id: msg.sessionId,
               role: msg.role as any,
@@ -484,8 +529,8 @@ export const agentRouter = router({
           throw error;
         }
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to get agent session',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to get agent session",
           cause: error,
         });
       }
@@ -497,19 +542,21 @@ export const agentRouter = router({
    */
   sendMessage: protectedProcedure
     .input(CreateAgentMessageSchema)
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        message: AgentMessageResponseSchema,
-        agent_response: z.object({
-          content: z.string(),
-          actions: z.array(z.any()).optional(),
-          processing_time: z.number(),
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          message: AgentMessageResponseSchema,
+          agent_response: z.object({
+            content: z.string(),
+            actions: z.array(z.any()).optional(),
+            processing_time: z.number(),
+          }),
         }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         // Verify session exists and belongs to user
@@ -517,16 +564,16 @@ export const agentRouter = router({
           where: {
             id: input.session_id,
             userId: ctx.user.id,
-            status: 'active',
+            status: "active",
           },
         });
 
         if (!session) {
           throw new HealthcareTRPCError(
-            'NOT_FOUND',
-            'Active agent session not found',
-            'SESSION_NOT_FOUND',
-            { session_id: input.session_id }
+            "NOT_FOUND",
+            "Active agent session not found",
+            "SESSION_NOT_FOUND",
+            { session_id: input.session_id },
           );
         }
 
@@ -543,27 +590,31 @@ export const agentRouter = router({
 
         // Process message with RAG
         const startTime = Date.now();
-        
+
         // Perform RAG search for relevant context
-        const ragResults = await performRAGSearch(input.content, session.agentType, 5);
-        
+        const ragResults = await performRAGSearch(
+          input.content,
+          session.agentType,
+          5,
+        );
+
         // Build context for AI
         const context = HEALTHCARE_CONTEXTS[session.agentType];
         const ragContext = ragResults
-          .map(r => `${r.content} (Fonte: ${r.source})`)
-          .join('\n\n');
+          .map((r) => `${r.content} (Fonte: ${r.source})`)
+          .join("\n\n");
 
         // Select AI provider
         const provider = AGENT_PROVIDERS.local; // Default to local for now
 
         // Mock AI response (replace with real AI call)
-        const aiResponse = `Entendi sua mensagem. Como assistente de ${session.agentType === 'client' ? 'pacientes' : session.agentType === 'financial' ? 'finanças' : 'agendamento'}, estou aqui para ajudar.`;
+        const aiResponse = `Entendi sua mensagem. Como assistente de ${session.agentType === "client" ? "pacientes" : session.agentType === "financial" ? "finanças" : "agendamento"}, estou aqui para ajudar.`;
 
         // Save agent response
         const agentMessage = await ctx.prisma.agentMessage.create({
           data: {
             sessionId: input.session_id,
-            role: 'assistant',
+            role: "assistant",
             content: aiResponse,
             metadata: {
               provider: provider.name,
@@ -580,11 +631,17 @@ export const agentRouter = router({
         });
 
         // Create audit trail
-        await createAgentAuditTrail(ctx, 'message_sent', session.agentType, input.session_id, {
-          message_id: userMessage.id,
-          rag_results_count: ragResults.length,
-          processing_time: Date.now() - startTime,
-        });
+        await createAgentAuditTrail(
+          ctx,
+          "message_sent",
+          session.agentType,
+          input.session_id,
+          {
+            message_id: userMessage.id,
+            rag_results_count: ragResults.length,
+            processing_time: Date.now() - startTime,
+          },
+        );
 
         return {
           success: true,
@@ -612,8 +669,8 @@ export const agentRouter = router({
           throw error;
         }
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to send message to agent',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to send message to agent",
           cause: error,
         });
       }
@@ -625,13 +682,15 @@ export const agentRouter = router({
    */
   addKnowledge: protectedProcedure
     .input(CreateKnowledgeEntrySchema)
-    .output(z.object({
-      success: z.literal(true),
-      data: KnowledgeEntryResponseSchema,
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: KnowledgeEntryResponseSchema,
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         // Create knowledge entry
@@ -648,11 +707,17 @@ export const agentRouter = router({
         });
 
         // Create audit trail
-        await createAgentAuditTrail(ctx, 'knowledge_added', input.agent_type, undefined, {
-          knowledge_id: entry.id,
-          title: input.title,
-          tags: input.tags,
-        });
+        await createAgentAuditTrail(
+          ctx,
+          "knowledge_added",
+          input.agent_type,
+          undefined,
+          {
+            knowledge_id: entry.id,
+            title: input.title,
+            tags: input.tags,
+          },
+        );
 
         return {
           success: true,
@@ -668,14 +733,14 @@ export const agentRouter = router({
             created_at: entry.createdAt,
             updated_at: entry.updatedAt,
           },
-          message: 'Knowledge entry added successfully',
+          message: "Knowledge entry added successfully",
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
       } catch (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to add knowledge entry',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to add knowledge entry",
           cause: error,
         });
       }
@@ -687,16 +752,18 @@ export const agentRouter = router({
    */
   searchKnowledge: protectedProcedure
     .input(SearchKnowledgeBaseSchema)
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        results: z.array(KnowledgeEntryResponseSchema),
-        query: z.string(),
-        total_matches: z.number(),
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          results: z.array(KnowledgeEntryResponseSchema),
+          query: z.string(),
+          total_matches: z.number(),
+        }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
     .query(async ({ ctx, input }) => {
       try {
         // Mock semantic search (replace with vector search)
@@ -704,8 +771,8 @@ export const agentRouter = router({
           where: {
             agentType: input.agent_type,
             OR: [
-              { title: { contains: input.query, mode: 'insensitive' } },
-              { content: { contains: input.query, mode: 'insensitive' } },
+              { title: { contains: input.query, mode: "insensitive" } },
+              { content: { contains: input.query, mode: "insensitive" } },
               { tags: { has: input.query } },
             ],
           },
@@ -715,7 +782,7 @@ export const agentRouter = router({
         return {
           success: true,
           data: {
-            results: results.map(entry => ({
+            results: results.map((entry) => ({
               id: entry.id,
               agent_type: entry.agentType as any,
               title: entry.title,
@@ -735,8 +802,8 @@ export const agentRouter = router({
         };
       } catch (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to search knowledge base',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to search knowledge base",
           cause: error,
         });
       }
@@ -763,20 +830,22 @@ export const agentRouter = router({
 
         if (!session) {
           throw new HealthcareTRPCError(
-            'NOT_FOUND',
-            'Agent session not found',
-            'SESSION_NOT_FOUND',
-            { session_id: input.session_id }
+            "NOT_FOUND",
+            "Agent session not found",
+            "SESSION_NOT_FOUND",
+            { session_id: input.session_id },
           );
         }
 
         // Perform RAG search
-        const ragResults = await performRAGSearch(input.query, session.agentType, input.max_results);
+        const ragResults = await performRAGSearch(
+          input.query,
+          session.agentType,
+          input.max_results,
+        );
 
         // Build context
-        const context = ragResults
-          .map(r => r.content)
-          .join('\n\n');
+        const context = ragResults.map((r) => r.content).join("\n\n");
 
         // Generate response (mock implementation)
         const response = `Com base nas informações disponíveis: ${context.substring(0, 200)}...`;
@@ -794,8 +863,8 @@ export const agentRouter = router({
           throw error;
         }
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to perform RAG query',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to perform RAG query",
           cause: error,
         });
       }
@@ -806,16 +875,20 @@ export const agentRouter = router({
    * Soft delete session for audit compliance
    */
   archiveSession: protectedProcedure
-    .input(z.object({
-      session_id: z.string().uuid(),
-      reason: z.string().min(10).max(500),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        session_id: z.string().uuid(),
+        reason: z.string().min(10).max(500),
+      }),
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         const session = await ctx.prisma.agentSession.findFirst({
@@ -827,10 +900,10 @@ export const agentRouter = router({
 
         if (!session) {
           throw new HealthcareTRPCError(
-            'NOT_FOUND',
-            'Agent session not found',
-            'SESSION_NOT_FOUND',
-            { session_id: input.session_id }
+            "NOT_FOUND",
+            "Agent session not found",
+            "SESSION_NOT_FOUND",
+            { session_id: input.session_id },
           );
         }
 
@@ -838,7 +911,7 @@ export const agentRouter = router({
         await ctx.prisma.agentSession.update({
           where: { id: input.session_id },
           data: {
-            status: 'archived',
+            status: "archived",
             metadata: {
               ...session.metadata,
               archived_at: new Date(),
@@ -849,13 +922,19 @@ export const agentRouter = router({
         });
 
         // Create audit trail
-        await createAgentAuditTrail(ctx, 'session_archived', session.agentType, input.session_id, {
-          reason: input.reason,
-        });
+        await createAgentAuditTrail(
+          ctx,
+          "session_archived",
+          session.agentType,
+          input.session_id,
+          {
+            reason: input.reason,
+          },
+        );
 
         return {
           success: true,
-          message: 'Agent session archived successfully',
+          message: "Agent session archived successfully",
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
@@ -864,8 +943,8 @@ export const agentRouter = router({
           throw error;
         }
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to archive agent session',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to archive agent session",
           cause: error,
         });
       }
@@ -876,26 +955,32 @@ export const agentRouter = router({
    * Retrieve usage statistics and performance metrics
    */
   getAnalytics: protectedProcedure
-    .input(z.object({
-      agent_type: AgentTypeSchema.optional(),
-      start_date: z.string().date().optional(),
-      end_date: z.string().date().optional(),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        total_sessions: z.number(),
-        total_messages: z.number(),
-        average_response_time: z.number(),
-        user_satisfaction: z.number().optional(),
-        top_queries: z.array(z.object({
-          query: z.string(),
-          count: z.number(),
-        })),
+    .input(
+      z.object({
+        agent_type: AgentTypeSchema.optional(),
+        start_date: z.string().date().optional(),
+        end_date: z.string().date().optional(),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          total_sessions: z.number(),
+          total_messages: z.number(),
+          average_response_time: z.number(),
+          user_satisfaction: z.number().optional(),
+          top_queries: z.array(
+            z.object({
+              query: z.string(),
+              count: z.number(),
+            }),
+          ),
+        }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       try {
         const where = {
@@ -925,9 +1010,9 @@ export const agentRouter = router({
           average_response_time: 1.2, // seconds
           user_satisfaction: 4.5,
           top_queries: [
-            { query: 'agendar consulta', count: 15 },
-            { query: 'valor da consulta', count: 12 },
-            { query: 'horário de funcionamento', count: 8 },
+            { query: "agendar consulta", count: 15 },
+            { query: "valor da consulta", count: 12 },
+            { query: "horário de funcionamento", count: 8 },
           ],
         };
 
@@ -939,8 +1024,8 @@ export const agentRouter = router({
         };
       } catch (error) {
         throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Failed to get agent analytics',
+          code: "INTERNAL_SERVER_ERROR",
+          message: "Failed to get agent analytics",
           cause: error,
         });
       }

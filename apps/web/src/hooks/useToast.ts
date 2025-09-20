@@ -1,4 +1,4 @@
-import { toast } from 'sonner';
+import { toast } from "sonner";
 
 /**
  * Simple hook wrapper for consistent toast usage across the app.
@@ -10,11 +10,14 @@ export function useToast() {
     error: (message: string) => toast.error(message),
     info: (message: string) => toast(message),
     // For compatibility with existing showToast API
-    toast: (message: string, variant: 'success' | 'error' | 'info' = 'info') => {
+    toast: (
+      message: string,
+      variant: "success" | "error" | "info" = "info",
+    ) => {
       switch (variant) {
-        case 'success':
+        case "success":
           return toast.success(message);
-        case 'error':
+        case "error":
           return toast.error(message);
         default:
           return toast(message);

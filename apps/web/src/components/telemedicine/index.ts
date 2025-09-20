@@ -20,15 +20,15 @@
  */
 
 // Main Existing Components
-export { ConsentDialog } from './ConsentDialog';
-export { SchedulingUI } from './SchedulingUI';
-export { VideoConsultation } from './VideoConsultation';
-export { WaitingRoom } from './WaitingRoom';
+export { ConsentDialog } from "./ConsentDialog";
+export { SchedulingUI } from "./SchedulingUI";
+export { VideoConsultation } from "./VideoConsultation";
+export { WaitingRoom } from "./WaitingRoom";
 
 // T042: Phase 3.5 New Components
-export { EmergencyEscalation } from './EmergencyEscalation';
-export { RealTimeChat } from './RealTimeChat';
-export { SessionConsent } from './SessionConsent';
+export { EmergencyEscalation } from "./EmergencyEscalation";
+export { RealTimeChat } from "./RealTimeChat";
+export { SessionConsent } from "./SessionConsent";
 
 // Types and Utilities (to be created)
 export type {
@@ -37,14 +37,14 @@ export type {
   EmergencyData,
   SessionConsentData,
   TelemedicineSessionData,
-} from './types';
+} from "./types";
 export {
   formatSessionTime,
   getEmergencyPriorityColor,
   processAITranscription,
   telemedicineUtils,
   validateMedicalTerms,
-} from './utils';
+} from "./utils";
 
 // Re-export hooks for convenience
 export {
@@ -58,7 +58,7 @@ export {
   useTelemedicineAvailability,
   useTelemedicineSession,
   useVideoCall,
-} from '@/hooks/use-telemedicine'; /**
+} from "@/hooks/use-telemedicine"; /**
  * Usage Examples:
  *
  * // Video consultation with medical protocols

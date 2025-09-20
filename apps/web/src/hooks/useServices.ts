@@ -3,7 +3,7 @@
  * React Query hooks for service CRUD operations and data fetching
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from "@/integrations/supabase/client";
 import type {
   AvailabilityCheck,
   AvailabilityResult,
@@ -14,17 +14,17 @@ import type {
   ServicesResponse,
   TimeSlot,
   UpdateServiceRequest,
-} from '@/types/service';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+} from "@/types/service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Query Keys
 export const serviceKeys = {
-  all: ['services'] as const,
-  lists: () => [...serviceKeys.all, 'list'] as const,
+  all: ["services"] as const,
+  lists: () => [...serviceKeys.all, "list"] as const,
   list: (filters: ServiceFilters) => [...serviceKeys.lists(), filters] as const,
-  details: () => [...serviceKeys.all, 'detail'] as const,
+  details: () => [...serviceKeys.all, "detail"] as const,
   detail: (id: string) => [...serviceKeys.details(), id] as const,
-  availability: () => [...serviceKeys.all, 'availability'] as const,
+  availability: () => [...serviceKeys.all, "availability"] as const,
   timeSlots: (serviceId: string, date: string) =>
     [...serviceKeys.availability(), serviceId, date] as const,
 };
@@ -37,27 +37,27 @@ export function useServices(filters: ServiceFilters = {}) {
     queryKey: serviceKeys.list(filters),
     queryFn: async (): Promise<ServicesResponse> => {
       let query = supabase
-        .from('service_types')
-        .select('*')
-        .order('name', { ascending: true });
+        .from("service_types")
+        .select("*")
+        .order("name", { ascending: true });
 
       // Apply filters
       if (filters.search) {
-        query = query.ilike('name', `%${filters.search}%`);
+        query = query.ilike("name", `%${filters.search}%`);
       }
 
       if (filters.is_active !== undefined) {
-        query = query.eq('is_active', filters.is_active);
+        query = query.eq("is_active", filters.is_active);
       }
 
       if (filters.clinic_id) {
-        query = query.eq('clinic_id', filters.clinic_id);
+        query = query.eq("clinic_id", filters.clinic_id);
       }
 
       const { data, error, count } = await query;
 
       if (error) {
-        console.error('Error fetching services:', error);
+        console.error("Error fetching services:", error);
         throw new Error(`Failed to fetch services: ${error.message}`);
       }
 
@@ -81,13 +81,13 @@ export function useService(id: string) {
     queryKey: serviceKeys.detail(id),
     queryFn: async (): Promise<Service> => {
       const { data, error } = await supabase
-        .from('service_types')
-        .select('*')
-        .eq('id', id)
+        .from("service_types")
+        .select("*")
+        .eq("id", id)
         .single();
 
       if (error) {
-        console.error('Error fetching service:', error);
+        console.error("Error fetching service:", error);
         throw new Error(`Failed to fetch service: ${error.message}`);
       }
 
@@ -104,25 +104,27 @@ export function useCreateService() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (serviceData: CreateServiceRequest): Promise<ServiceMutationResponse> => {
-      console.log('🔧 Creating service:', serviceData);
+    mutationFn: async (
+      serviceData: CreateServiceRequest,
+    ): Promise<ServiceMutationResponse> => {
+      console.log("🔧 Creating service:", serviceData);
 
       const { data, error } = await supabase
-        .from('service_types')
+        .from("service_types")
         .insert([serviceData])
-        .select('*')
+        .select("*")
         .single();
 
       if (error) {
-        console.error('❌ Error creating service:', error);
+        console.error("❌ Error creating service:", error);
         throw new Error(`Failed to create service: ${error.message}`);
       }
 
-      console.log('✅ Service created successfully:', data);
+      console.log("✅ Service created successfully:", data);
       return {
         success: true,
         data: data as unknown as Service,
-        message: 'Serviço criado com sucesso!',
+        message: "Serviço criado com sucesso!",
       };
     },
     onSuccess: () => {
@@ -139,43 +141,49 @@ export function useUpdateService() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (serviceData: UpdateServiceRequest): Promise<ServiceMutationResponse> => {
-      console.log('🔧 Updating service:', serviceData);
+    mutationFn: async (
+      serviceData: UpdateServiceRequest,
+    ): Promise<ServiceMutationResponse> => {
+      console.log("🔧 Updating service:", serviceData);
 
       const { id, ...updateData } = serviceData;
 
       const { data, error } = await supabase
-        .from('service_types')
+        .from("service_types")
         .update({
           ...updateData,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', id)
-        .select(`
+        .eq("id", id)
+        .select(
+          `
           *,
           clinics (
             id,
             clinic_name
           )
-        `)
+        `,
+        )
         .single();
 
       if (error) {
-        console.error('❌ Error updating service:', error);
+        console.error("❌ Error updating service:", error);
         throw new Error(`Failed to update service: ${error.message}`);
       }
 
-      console.log('✅ Service updated successfully:', data);
+      console.log("✅ Service updated successfully:", data);
       return {
         success: true,
         data: data as unknown as Service,
-        message: 'Serviço atualizado com sucesso!',
+        message: "Serviço atualizado com sucesso!",
       };
     },
     onSuccess: (_, variables) => {
       // Invalidate and refetch services
       queryClient.invalidateQueries({ queryKey: serviceKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: serviceKeys.detail(variables.id) });
+      queryClient.invalidateQueries({
+        queryKey: serviceKeys.detail(variables.id),
+      });
     },
   });
 }
@@ -188,22 +196,22 @@ export function useDeleteService() {
 
   return useMutation({
     mutationFn: async (id: string): Promise<ServiceMutationResponse> => {
-      console.log('🔧 Deleting service:', id);
+      console.log("🔧 Deleting service:", id);
 
       const { error } = await supabase
-        .from('service_types')
+        .from("service_types")
         .delete()
-        .eq('id', id);
+        .eq("id", id);
 
       if (error) {
-        console.error('❌ Error deleting service:', error);
+        console.error("❌ Error deleting service:", error);
         throw new Error(`Failed to delete service: ${error.message}`);
       }
 
-      console.log('✅ Service deleted successfully');
+      console.log("✅ Service deleted successfully");
       return {
         success: true,
-        message: 'Serviço excluído com sucesso!',
+        message: "Serviço excluído com sucesso!",
       };
     },
     onSuccess: () => {
@@ -218,14 +226,21 @@ export function useDeleteService() {
  */
 export function useCheckAvailability() {
   return useMutation({
-    mutationFn: async (check: AvailabilityCheck): Promise<AvailabilityResult> => {
-      console.log('🔍 Checking availability:', check);
+    mutationFn: async (
+      check: AvailabilityCheck,
+    ): Promise<AvailabilityResult> => {
+      console.log("🔍 Checking availability:", check);
 
-      const conflicts: Array<
-        { type: 'appointment'; start_time: string; end_time: string; description: string }
-      > = [];
-      const warnings: Array<{ type: 'short_break' | 'late_hour' | 'early_hour'; message: string }> =
-        [];
+      const conflicts: Array<{
+        type: "appointment";
+        start_time: string;
+        end_time: string;
+        description: string;
+      }> = [];
+      const warnings: Array<{
+        type: "short_break" | "late_hour" | "early_hour";
+        message: string;
+      }> = [];
 
       try {
         // Parse the date and time
@@ -234,8 +249,9 @@ export function useCheckAvailability() {
 
         // Check for existing appointments that conflict
         const { data: existingAppointments, error } = await supabase
-          .from('appointments')
-          .select(`
+          .from("appointments")
+          .select(
+            `
             id,
             start_time,
             end_time,
@@ -245,39 +261,40 @@ export function useCheckAvailability() {
             service_types!fk_appointments_service_type (
               name
             )
-          `)
-          .eq('professional_id', check.professional_id)
-          .in('status', ['scheduled', 'confirmed'])
+          `,
+          )
+          .eq("professional_id", check.professional_id)
+          .in("status", ["scheduled", "confirmed"])
           .or(
             `start_time.lt.${endDateTime.toISOString()},end_time.gt.${startDateTime.toISOString()}`,
           );
 
         if (error) {
-          console.error('Error checking availability:', error);
+          console.error("Error checking availability:", error);
           throw new Error(`Failed to check availability: ${error.message}`);
         }
 
         // Add conflicts for existing appointments
         if (existingAppointments && existingAppointments.length > 0) {
-          existingAppointments.forEach(appointment => {
+          existingAppointments.forEach((appointment) => {
             const patient = appointment.patients as any;
             const service = appointment.service_types as any;
             conflicts.push({
-              type: 'appointment' as const,
+              type: "appointment" as const,
               start_time: appointment.start_time
-                ? new Date(appointment.start_time).toLocaleTimeString('pt-BR', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })
-                : '00:00',
+                ? new Date(appointment.start_time).toLocaleTimeString("pt-BR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "00:00",
               end_time: appointment.end_time
-                ? new Date(appointment.end_time).toLocaleTimeString('pt-BR', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })
-                : '00:00',
-              description: `Agendamento existente: ${patient?.full_name || 'Paciente'} - ${
-                service?.name || 'Serviço'
+                ? new Date(appointment.end_time).toLocaleTimeString("pt-BR", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
+                : "00:00",
+              description: `Agendamento existente: ${patient?.full_name || "Paciente"} - ${
+                service?.name || "Serviço"
               }`,
             });
           });
@@ -287,23 +304,26 @@ export function useCheckAvailability() {
         const hour = startDateTime.getHours();
         if (hour < 8) {
           warnings.push({
-            type: 'early_hour' as const,
-            message: 'Agendamento muito cedo. Horário de funcionamento inicia às 08:00.',
+            type: "early_hour" as const,
+            message:
+              "Agendamento muito cedo. Horário de funcionamento inicia às 08:00.",
           });
         } else if (hour >= 18) {
           warnings.push({
-            type: 'late_hour' as const,
-            message: 'Agendamento tardio. Horário de funcionamento termina às 18:00.',
+            type: "late_hour" as const,
+            message:
+              "Agendamento tardio. Horário de funcionamento termina às 18:00.",
           });
         }
 
         // Check for short break between appointments
         const now = new Date();
-        const hoursUntilAppointment = (startDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+        const hoursUntilAppointment =
+          (startDateTime.getTime() - now.getTime()) / (1000 * 60 * 60);
         if (hoursUntilAppointment < 2) {
           warnings.push({
-            type: 'short_break' as const,
-            message: 'Agendamento com menos de 2 horas de antecedência.',
+            type: "short_break" as const,
+            message: "Agendamento com menos de 2 horas de antecedência.",
           });
         }
 
@@ -313,7 +333,7 @@ export function useCheckAvailability() {
           warnings,
         };
       } catch (error) {
-        console.error('Error in availability check:', error);
+        console.error("Error in availability check:", error);
         throw error;
       }
     },
@@ -323,22 +343,31 @@ export function useCheckAvailability() {
 /**
  * Get available time slots for a service on a specific date
  */
-export function useServiceTimeSlots(serviceId: string, date: string, professionalId?: string) {
+export function useServiceTimeSlots(
+  serviceId: string,
+  date: string,
+  professionalId?: string,
+) {
   return useQuery({
     queryKey: serviceKeys.timeSlots(serviceId, date),
     queryFn: async (): Promise<TimeSlot[]> => {
-      console.log('🔍 Fetching time slots for service:', serviceId, 'on date:', date);
+      console.log(
+        "🔍 Fetching time slots for service:",
+        serviceId,
+        "on date:",
+        date,
+      );
 
       try {
         // Get service duration
         const { data: service, error: serviceError } = await supabase
-          .from('service_types')
-          .select('duration_minutes')
-          .eq('id', serviceId)
+          .from("service_types")
+          .select("duration_minutes")
+          .eq("id", serviceId)
           .single();
 
         if (serviceError) {
-          console.error('Error fetching service:', serviceError);
+          console.error("Error fetching service:", serviceError);
           throw new Error(`Failed to fetch service: ${serviceError.message}`);
         }
 
@@ -349,21 +378,27 @@ export function useServiceTimeSlots(serviceId: string, date: string, professiona
         const endOfDay = new Date(`${date}T23:59:59`);
 
         let appointmentsQuery = supabase
-          .from('appointments')
-          .select('start_time, end_time')
-          .gte('start_time', startOfDay.toISOString())
-          .lte('start_time', endOfDay.toISOString())
-          .in('status', ['scheduled', 'confirmed']);
+          .from("appointments")
+          .select("start_time, end_time")
+          .gte("start_time", startOfDay.toISOString())
+          .lte("start_time", endOfDay.toISOString())
+          .in("status", ["scheduled", "confirmed"]);
 
         if (professionalId) {
-          appointmentsQuery = appointmentsQuery.eq('professional_id', professionalId);
+          appointmentsQuery = appointmentsQuery.eq(
+            "professional_id",
+            professionalId,
+          );
         }
 
-        const { data: appointments, error: appointmentsError } = await appointmentsQuery;
+        const { data: appointments, error: appointmentsError } =
+          await appointmentsQuery;
 
         if (appointmentsError) {
-          console.error('Error fetching appointments:', appointmentsError);
-          throw new Error(`Failed to fetch appointments: ${appointmentsError.message}`);
+          console.error("Error fetching appointments:", appointmentsError);
+          throw new Error(
+            `Failed to fetch appointments: ${appointmentsError.message}`,
+          );
         }
 
         // Generate time slots from 8:00 to 18:00 with 30-minute intervals
@@ -374,36 +409,39 @@ export function useServiceTimeSlots(serviceId: string, date: string, professiona
 
         for (let hour = startHour; hour < endHour; hour++) {
           for (let minute = 0; minute < 60; minute += intervalMinutes) {
-            const timeString = `${hour.toString().padStart(2, '0')}:${
-              minute.toString().padStart(2, '0')
-            }`;
+            const timeString = `${hour.toString().padStart(2, "0")}:${minute
+              .toString()
+              .padStart(2, "0")}`;
             const slotStart = new Date(`${date}T${timeString}:00`);
-            const slotEnd = new Date(slotStart.getTime() + serviceDuration * 60 * 1000);
+            const slotEnd = new Date(
+              slotStart.getTime() + serviceDuration * 60 * 1000,
+            );
 
             // Check if this slot conflicts with existing appointments
-            const hasConflict = appointments?.some(appointment => {
-              if (!appointment.start_time || !appointment.end_time) return false;
+            const hasConflict = appointments?.some((appointment) => {
+              if (!appointment.start_time || !appointment.end_time)
+                return false;
               const appointmentStart = new Date(appointment.start_time);
               const appointmentEnd = new Date(appointment.end_time);
 
               return (
-                (slotStart >= appointmentStart && slotStart < appointmentEnd)
-                || (slotEnd > appointmentStart && slotEnd <= appointmentEnd)
-                || (slotStart <= appointmentStart && slotEnd >= appointmentEnd)
+                (slotStart >= appointmentStart && slotStart < appointmentEnd) ||
+                (slotEnd > appointmentStart && slotEnd <= appointmentEnd) ||
+                (slotStart <= appointmentStart && slotEnd >= appointmentEnd)
               );
             });
 
             slots.push({
               time: timeString,
               available: !hasConflict,
-              reason: hasConflict ? 'Agendado' : undefined,
+              reason: hasConflict ? "Agendado" : undefined,
             });
           }
         }
 
         return slots;
       } catch (error) {
-        console.error('Error generating time slots:', error);
+        console.error("Error generating time slots:", error);
         throw error;
       }
     },

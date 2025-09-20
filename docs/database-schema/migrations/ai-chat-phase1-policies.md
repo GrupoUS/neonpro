@@ -3,16 +3,19 @@
 This migration adds helpful indexes and Row Level Security (RLS) policies for the AI Chat tables created in Phase 1.
 
 ## Tables
+
 - `ai_chat_sessions`
 - `ai_chat_messages`
 - `ai_audit_events`
 
 ## Indexes
+
 - `ai_chat_sessions (clinic_id, user_id)`
 - `ai_chat_messages (session_id, created_at)`
 - `ai_audit_events (clinic_id, user_id, created_at)`
 
 ## RLS Policies
+
 - Sessions: select/insert allowed when `clinic_id` and `user_id` match the request context
 - Messages: select/insert allowed when the owning session matches the request context
 - Audit events: select/insert allowed for matching `clinic_id` + `user_id`

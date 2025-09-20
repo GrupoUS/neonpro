@@ -23,11 +23,11 @@ const CNPJ_REGEX = /\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g;
 
 export function redact(input: string, opts: RedactOptions = {}): string {
   if (!input) return input;
-  const emailRepl = opts.emailReplacement || '[REDACTED_EMAIL]';
-  const cpfRepl = opts.cpfReplacement || '[REDACTED_CPF]';
-  const phoneRepl = opts.phoneReplacement || '[REDACTED_PHONE]';
-  const rgRepl = opts.rgReplacement || '[REDACTED_RG]';
-  const cnpjRepl = opts.cnpjReplacement || '[REDACTED_CNPJ]';
+  const emailRepl = opts.emailReplacement || "[REDACTED_EMAIL]";
+  const cpfRepl = opts.cpfReplacement || "[REDACTED_CPF]";
+  const phoneRepl = opts.phoneReplacement || "[REDACTED_PHONE]";
+  const rgRepl = opts.rgReplacement || "[REDACTED_RG]";
+  const cnpjRepl = opts.cnpjReplacement || "[REDACTED_CNPJ]";
 
   let out = input
     .replace(EMAIL_REGEX, emailRepl)

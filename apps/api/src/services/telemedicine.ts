@@ -13,61 +13,64 @@
  * - Emergency escalation protocols
  */
 
-import type { PrismaClient } from '@prisma/client';
-import * as crypto from 'crypto';
-import { z } from 'zod';
+import type { PrismaClient } from "@prisma/client";
+import * as crypto from "crypto";
+import { z } from "zod";
 
 // NGS2 Security Standards
 export const NGS2_SECURITY_LEVELS = {
-  LEVEL_1: 'level_1', // Basic authentication
-  LEVEL_2: 'level_2', // Two-factor authentication
-  LEVEL_3: 'level_3', // Digital certificate + biometrics
-  LEVEL_4: 'level_4', // High-security government
+  LEVEL_1: "level_1", // Basic authentication
+  LEVEL_2: "level_2", // Two-factor authentication
+  LEVEL_3: "level_3", // Digital certificate + biometrics
+  LEVEL_4: "level_4", // High-security government
 } as const;
 
-export type NGS2SecurityLevel = typeof NGS2_SECURITY_LEVELS[keyof typeof NGS2_SECURITY_LEVELS];
+export type NGS2SecurityLevel =
+  (typeof NGS2_SECURITY_LEVELS)[keyof typeof NGS2_SECURITY_LEVELS];
 
 // ICP-Brasil Certificate Types
 export const ICP_BRASIL_CERT_TYPES = {
-  A1: 'a1', // Software certificate (1 year)
-  A3: 'a3', // Hardware certificate (3 years)
-  S1: 's1', // Software signature (1 year)
-  S3: 's3', // Hardware signature (3 years)
-  T3: 't3', // Time stamping (3 years)
+  A1: "a1", // Software certificate (1 year)
+  A3: "a3", // Hardware certificate (3 years)
+  S1: "s1", // Software signature (1 year)
+  S3: "s3", // Hardware signature (3 years)
+  T3: "t3", // Time stamping (3 years)
 } as const;
 
-export type ICPBrasilCertType = typeof ICP_BRASIL_CERT_TYPES[keyof typeof ICP_BRASIL_CERT_TYPES];
+export type ICPBrasilCertType =
+  (typeof ICP_BRASIL_CERT_TYPES)[keyof typeof ICP_BRASIL_CERT_TYPES];
 
 // Telemedicine Session Types
 export const TELEMEDICINE_SESSION_TYPES = {
-  TELECONSULTATION: 'teleconsultation', // Remote consultation
-  TELEDIAGNOSIS: 'telediagnosis', // Remote diagnosis
-  TELEMONITORING: 'telemonitoring', // Remote monitoring
-  TELESURGERY: 'telesurgery', // Remote surgery assistance
-  TELEDUCATION: 'teleducation', // Medical education
-  EMERGENCY_TELECONSULT: 'emergency_teleconsult', // Emergency consultation
+  TELECONSULTATION: "teleconsultation", // Remote consultation
+  TELEDIAGNOSIS: "telediagnosis", // Remote diagnosis
+  TELEMONITORING: "telemonitoring", // Remote monitoring
+  TELESURGERY: "telesurgery", // Remote surgery assistance
+  TELEDUCATION: "teleducation", // Medical education
+  EMERGENCY_TELECONSULT: "emergency_teleconsult", // Emergency consultation
 } as const;
 
 export type TelemedicineSessionType =
-  typeof TELEMEDICINE_SESSION_TYPES[keyof typeof TELEMEDICINE_SESSION_TYPES];
+  (typeof TELEMEDICINE_SESSION_TYPES)[keyof typeof TELEMEDICINE_SESSION_TYPES];
 
 // Session Status
 export const SESSION_STATUS = {
-  SCHEDULED: 'scheduled',
-  CONNECTING: 'connecting',
-  ACTIVE: 'active',
-  ON_HOLD: 'on_hold',
-  COMPLETED: 'completed',
-  CANCELLED: 'cancelled',
-  FAILED: 'failed',
-  EMERGENCY_ESCALATED: 'emergency_escalated',
+  SCHEDULED: "scheduled",
+  CONNECTING: "connecting",
+  ACTIVE: "active",
+  ON_HOLD: "on_hold",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+  FAILED: "failed",
+  EMERGENCY_ESCALATED: "emergency_escalated",
 } as const;
 
-export type SessionStatus = typeof SESSION_STATUS[keyof typeof SESSION_STATUS];
+export type SessionStatus =
+  (typeof SESSION_STATUS)[keyof typeof SESSION_STATUS];
 
 // Communication Quality Metrics
 export const QUALITY_THRESHOLDS = {
-  VIDEO_RESOLUTION_MIN: '720p',
+  VIDEO_RESOLUTION_MIN: "720p",
   AUDIO_QUALITY_MIN: 48000, // Hz
   LATENCY_MAX: 150, // milliseconds
   PACKET_LOSS_MAX: 0.01, // 1%
@@ -77,11 +80,11 @@ export const QUALITY_THRESHOLDS = {
 
 // CFM Professional Validation Schema
 export const CFMProfessionalValidationSchema = z.object({
-  crmNumber: z.string().regex(/^\d{4,6}$/, 'CRM deve ter 4-6 dígitos'),
-  crmState: z.string().length(2, 'Estado deve ter 2 letras'),
+  crmNumber: z.string().regex(/^\d{4,6}$/, "CRM deve ter 4-6 dígitos"),
+  crmState: z.string().length(2, "Estado deve ter 2 letras"),
   fullName: z.string().min(3),
   specialties: z.array(z.string()),
-  licenseStatus: z.enum(['active', 'suspended', 'revoked', 'expired']),
+  licenseStatus: z.enum(["active", "suspended", "revoked", "expired"]),
   licenseExpiryDate: z.date(),
   telemedicineAuthorization: z.boolean(),
   digitalCertificate: z.object({
@@ -102,7 +105,9 @@ export const CFMProfessionalValidationSchema = z.object({
   lastValidated: z.date(),
 });
 
-export type CFMProfessionalValidation = z.infer<typeof CFMProfessionalValidationSchema>;
+export type CFMProfessionalValidation = z.infer<
+  typeof CFMProfessionalValidationSchema
+>;
 
 // Telemedicine Session Schema
 export const TelemedicineSessionSchema = z.object({
@@ -120,13 +125,15 @@ export const TelemedicineSessionSchema = z.object({
   securityLevel: z.nativeEnum(NGS2_SECURITY_LEVELS),
   encryptionKey: z.string(),
   sessionToken: z.string(),
-  digitalSignatures: z.array(z.object({
-    signerId: z.string(),
-    signerRole: z.enum(['patient', 'professional', 'witness']),
-    signature: z.string(),
-    timestamp: z.date(),
-    certificateFingerprint: z.string(),
-  })),
+  digitalSignatures: z.array(
+    z.object({
+      signerId: z.string(),
+      signerRole: z.enum(["patient", "professional", "witness"]),
+      signature: z.string(),
+      timestamp: z.date(),
+      certificateFingerprint: z.string(),
+    }),
+  ),
 
   // Communication Infrastructure
   communicationChannel: z.object({
@@ -152,18 +159,22 @@ export const TelemedicineSessionSchema = z.object({
   // Medical Content
   clinicalNotes: z.string().optional(),
   diagnosis: z.string().optional(),
-  prescription: z.object({
-    medications: z.array(z.object({
-      name: z.string(),
-      dosage: z.string(),
-      frequency: z.string(),
-      duration: z.string(),
-      instructions: z.string(),
-    })),
-    digitalSignature: z.string().optional(),
-    prescriptionId: z.string().optional(),
-    issuedAt: z.date().optional(),
-  }).optional(),
+  prescription: z
+    .object({
+      medications: z.array(
+        z.object({
+          name: z.string(),
+          dosage: z.string(),
+          frequency: z.string(),
+          duration: z.string(),
+          instructions: z.string(),
+        }),
+      ),
+      digitalSignature: z.string().optional(),
+      prescriptionId: z.string().optional(),
+      issuedAt: z.date().optional(),
+    })
+    .optional(),
 
   // Compliance and Audit
   cfmCompliance: z.object({
@@ -174,32 +185,38 @@ export const TelemedicineSessionSchema = z.object({
     complianceScore: z.number().min(0).max(100),
   }),
 
-  auditTrail: z.array(z.object({
-    action: z.string(),
-    timestamp: z.date(),
-    userId: z.string(),
-    userRole: z.string(),
-    ipAddress: z.string(),
-    details: z.record(z.any()),
-  })),
+  auditTrail: z.array(
+    z.object({
+      action: z.string(),
+      timestamp: z.date(),
+      userId: z.string(),
+      userRole: z.string(),
+      ipAddress: z.string(),
+      details: z.record(z.any()),
+    }),
+  ),
 
   // Emergency Escalation
   emergencyEscalation: z.object({
     isActive: z.boolean(),
-    escalationLevel: z.enum(['none', 'urgent', 'critical', 'emergency']),
-    emergencyContacts: z.array(z.object({
-      name: z.string(),
-      phone: z.string(),
-      role: z.string(),
-      hospital: z.string().optional(),
-    })),
-    nearestHospital: z.object({
-      name: z.string(),
-      address: z.string(),
-      phone: z.string(),
-      distance: z.number(), // km
-      estimatedArrival: z.number(), // minutes
-    }).optional(),
+    escalationLevel: z.enum(["none", "urgent", "critical", "emergency"]),
+    emergencyContacts: z.array(
+      z.object({
+        name: z.string(),
+        phone: z.string(),
+        role: z.string(),
+        hospital: z.string().optional(),
+      }),
+    ),
+    nearestHospital: z
+      .object({
+        name: z.string(),
+        address: z.string(),
+        phone: z.string(),
+        distance: z.number(), // km
+        estimatedArrival: z.number(), // minutes
+      })
+      .optional(),
   }),
 
   metadata: z.record(z.any()).optional(),
@@ -213,26 +230,32 @@ export type TelemedicineSession = z.infer<typeof TelemedicineSessionSchema>;
 export const NGS2AuthContextSchema = z.object({
   userId: z.string(),
   securityLevel: z.nativeEnum(NGS2_SECURITY_LEVELS),
-  authenticationMethods: z.array(z.enum([
-    'password',
-    'two_factor',
-    'digital_certificate',
-    'biometric',
-    'smart_card',
-  ])),
-  certificateValidation: z.object({
-    isValid: z.boolean(),
-    serialNumber: z.string(),
-    issuer: z.string(),
-    validUntil: z.date(),
-    chainValid: z.boolean(),
-    revocationChecked: z.boolean(),
-  }).optional(),
-  biometricValidation: z.object({
-    type: z.enum(['fingerprint', 'facial_recognition', 'voice_recognition']),
-    score: z.number().min(0).max(100),
-    isValid: z.boolean(),
-  }).optional(),
+  authenticationMethods: z.array(
+    z.enum([
+      "password",
+      "two_factor",
+      "digital_certificate",
+      "biometric",
+      "smart_card",
+    ]),
+  ),
+  certificateValidation: z
+    .object({
+      isValid: z.boolean(),
+      serialNumber: z.string(),
+      issuer: z.string(),
+      validUntil: z.date(),
+      chainValid: z.boolean(),
+      revocationChecked: z.boolean(),
+    })
+    .optional(),
+  biometricValidation: z
+    .object({
+      type: z.enum(["fingerprint", "facial_recognition", "voice_recognition"]),
+      score: z.number().min(0).max(100),
+      isValid: z.boolean(),
+    })
+    .optional(),
   sessionExpiry: z.date(),
   lastActivity: z.date(),
   riskScore: z.number().min(0).max(100),
@@ -268,18 +291,24 @@ export class TelemedicineService {
   ): Promise<TelemedicineSession> {
     try {
       // Validate CFM professional credentials
-      const professionalValidation = await this.validateCFMProfessional(professionalId);
+      const professionalValidation =
+        await this.validateCFMProfessional(professionalId);
       if (!professionalValidation.telemedicineAuthorization) {
-        throw new Error('Professional not authorized for telemedicine');
+        throw new Error("Professional not authorized for telemedicine");
       }
 
       // Generate secure session credentials
       const sessionId = crypto.randomUUID();
-      const encryptionKey = crypto.randomBytes(32).toString('hex');
-      const sessionToken = this.generateSecureToken(sessionId, patientId, professionalId);
+      const encryptionKey = crypto.randomBytes(32).toString("hex");
+      const sessionToken = this.generateSecureToken(
+        sessionId,
+        patientId,
+        professionalId,
+      );
 
       // Determine security level
-      const securityLevel = options.securityLevel || NGS2_SECURITY_LEVELS.LEVEL_2;
+      const securityLevel =
+        options.securityLevel || NGS2_SECURITY_LEVELS.LEVEL_2;
 
       // Create session object
       const session: TelemedicineSession = {
@@ -298,13 +327,14 @@ export class TelemedicineService {
           videoEnabled: true,
           audioEnabled: true,
           chatEnabled: true,
-          screenShareEnabled: sessionType !== TELEMEDICINE_SESSION_TYPES.EMERGENCY_TELECONSULT,
+          screenShareEnabled:
+            sessionType !== TELEMEDICINE_SESSION_TYPES.EMERGENCY_TELECONSULT,
           recordingEnabled: options.recordingConsent || false,
           recordingConsent: options.recordingConsent || false,
         },
 
         qualityMetrics: {
-          videoResolution: '0p', // Will be set during connection
+          videoResolution: "0p", // Will be set during connection
           audioQuality: 0,
           averageLatency: 0,
           packetLoss: 0,
@@ -323,11 +353,11 @@ export class TelemedicineService {
 
         auditTrail: [
           {
-            action: 'session_created',
+            action: "session_created",
             timestamp: new Date(),
             userId: professionalId,
-            userRole: 'professional',
-            ipAddress: '0.0.0.0', // Will be set from request
+            userRole: "professional",
+            ipAddress: "0.0.0.0", // Will be set from request
             details: {
               sessionType,
               securityLevel,
@@ -338,7 +368,7 @@ export class TelemedicineService {
 
         emergencyEscalation: {
           isActive: false,
-          escalationLevel: 'none',
+          escalationLevel: "none",
           emergencyContacts: [],
         },
 
@@ -350,7 +380,7 @@ export class TelemedicineService {
       this.activeSessions.set(sessionId, session);
 
       // Log audit event
-      await this.logAuditEvent(sessionId, 'session_created', {
+      await this.logAuditEvent(sessionId, "session_created", {
         patientId,
         professionalId,
         sessionType,
@@ -359,7 +389,8 @@ export class TelemedicineService {
 
       return session;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to create telemedicine session: ${errorMessage}`);
     }
   }
@@ -389,7 +420,7 @@ export class TelemedicineService {
     try {
       const session = this.activeSessions.get(sessionId);
       if (!session) {
-        throw new Error('Session not found');
+        throw new Error("Session not found");
       }
 
       // Validate authentication context
@@ -397,7 +428,7 @@ export class TelemedicineService {
 
       // Validate patient consent
       if (!patientConsent.telemedicineConsent) {
-        throw new Error('Patient consent required for telemedicine session');
+        throw new Error("Patient consent required for telemedicine session");
       }
 
       // Update session status
@@ -407,19 +438,19 @@ export class TelemedicineService {
 
       // Generate connection details
       const connectionDetails = {
-        videoUrl: this.generateSecureMediaUrl(sessionId, 'video'),
-        audioUrl: this.generateSecureMediaUrl(sessionId, 'audio'),
-        chatUrl: this.generateSecureMediaUrl(sessionId, 'chat'),
+        videoUrl: this.generateSecureMediaUrl(sessionId, "video"),
+        audioUrl: this.generateSecureMediaUrl(sessionId, "audio"),
+        chatUrl: this.generateSecureMediaUrl(sessionId, "chat"),
         encryptionKey: session.encryptionKey,
       };
 
       // Add audit trail
       session.auditTrail.push({
-        action: 'session_started',
+        action: "session_started",
         timestamp: new Date(),
         userId: authContext.userId,
-        userRole: 'user',
-        ipAddress: '0.0.0.0',
+        userRole: "user",
+        ipAddress: "0.0.0.0",
         details: {
           consent: patientConsent,
           securityLevel: authContext.securityLevel,
@@ -440,7 +471,8 @@ export class TelemedicineService {
         qualityRequirements: QUALITY_THRESHOLDS,
       };
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to start session: ${errorMessage}`);
     }
   }
@@ -466,7 +498,7 @@ export class TelemedicineService {
   }> {
     const session = this.activeSessions.get(sessionId);
     if (!session) {
-      throw new Error('Session not found');
+      throw new Error("Session not found");
     }
 
     // Update quality metrics
@@ -486,39 +518,54 @@ export class TelemedicineService {
     let shouldEscalate = false;
 
     // Video quality check
-    if (qualityMetrics.videoResolution !== '720p' && qualityMetrics.videoResolution !== '1080p') {
-      recommendations.push('Melhorar qualidade de vídeo para pelo menos 720p');
+    if (
+      qualityMetrics.videoResolution !== "720p" &&
+      qualityMetrics.videoResolution !== "1080p"
+    ) {
+      recommendations.push("Melhorar qualidade de vídeo para pelo menos 720p");
       if (session.sessionType === TELEMEDICINE_SESSION_TYPES.TELEDIAGNOSIS) {
-        complianceIssues.push('Resolução de vídeo abaixo do padrão para telediagnóstico');
+        complianceIssues.push(
+          "Resolução de vídeo abaixo do padrão para telediagnóstico",
+        );
       }
     }
 
     // Audio quality check
     if (qualityMetrics.audioQuality < QUALITY_THRESHOLDS.AUDIO_QUALITY_MIN) {
-      recommendations.push('Melhorar qualidade de áudio para comunicação médica');
-      complianceIssues.push('Qualidade de áudio abaixo do padrão médico');
+      recommendations.push(
+        "Melhorar qualidade de áudio para comunicação médica",
+      );
+      complianceIssues.push("Qualidade de áudio abaixo do padrão médico");
     }
 
     // Latency check
     if (qualityMetrics.latency > QUALITY_THRESHOLDS.LATENCY_MAX) {
-      recommendations.push('Reduzir latência para comunicação em tempo real');
-      if (session.sessionType === TELEMEDICINE_SESSION_TYPES.EMERGENCY_TELECONSULT) {
+      recommendations.push("Reduzir latência para comunicação em tempo real");
+      if (
+        session.sessionType === TELEMEDICINE_SESSION_TYPES.EMERGENCY_TELECONSULT
+      ) {
         shouldEscalate = true;
-        complianceIssues.push('Latência crítica para consulta de emergência');
+        complianceIssues.push("Latência crítica para consulta de emergência");
       }
     }
 
     // Packet loss check
     if (qualityMetrics.packetLoss > QUALITY_THRESHOLDS.PACKET_LOSS_MAX) {
-      recommendations.push('Estabilizar conexão de rede para reduzir perda de pacotes');
-      complianceIssues.push('Perda de pacotes afetando qualidade da comunicação');
+      recommendations.push(
+        "Estabilizar conexão de rede para reduzir perda de pacotes",
+      );
+      complianceIssues.push(
+        "Perda de pacotes afetando qualidade da comunicação",
+      );
     }
 
     // Bandwidth check
     if (qualityMetrics.bandwidth < QUALITY_THRESHOLDS.BANDWIDTH_MIN_MBPS) {
-      recommendations.push('Aumentar largura de banda para telemedicina');
+      recommendations.push("Aumentar largura de banda para telemedicina");
       if (session.communicationChannel.videoEnabled) {
-        complianceIssues.push('Largura de banda insuficiente para vídeo médico');
+        complianceIssues.push(
+          "Largura de banda insuficiente para vídeo médico",
+        );
       }
     }
 
@@ -561,13 +608,13 @@ export class TelemedicineService {
     try {
       const session = this.activeSessions.get(sessionId);
       if (!session) {
-        throw new Error('Session not found');
+        throw new Error("Session not found");
       }
 
       // Validate professional authorization
       const professional = await this.validateCFMProfessional(professionalId);
       if (!professional.digitalCertificate.isValid) {
-        throw new Error('Invalid digital certificate');
+        throw new Error("Invalid digital certificate");
       }
 
       // Generate prescription ID
@@ -604,7 +651,7 @@ export class TelemedicineService {
       // Add digital signature to session
       session.digitalSignatures.push({
         signerId: professionalId,
-        signerRole: 'professional',
+        signerRole: "professional",
         signature: digitalSignature,
         timestamp: new Date(),
         certificateFingerprint: professional.digitalCertificate.fingerprint,
@@ -614,7 +661,7 @@ export class TelemedicineService {
       this.activeSessions.set(sessionId, session);
 
       // Log audit event
-      await this.logAuditEvent(sessionId, 'prescription_created', {
+      await this.logAuditEvent(sessionId, "prescription_created", {
         prescriptionId,
         professionalId,
         medicationCount: medications.length,
@@ -628,7 +675,8 @@ export class TelemedicineService {
         isValid: true,
       };
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to create digital prescription: ${errorMessage}`);
     }
   } /**
@@ -637,7 +685,7 @@ export class TelemedicineService {
 
   async activateEmergencyEscalation(
     sessionId: string,
-    escalationLevel: 'urgent' | 'critical' | 'emergency',
+    escalationLevel: "urgent" | "critical" | "emergency",
     reason: string,
     location?: {
       latitude: number;
@@ -664,7 +712,7 @@ export class TelemedicineService {
     try {
       const session = this.activeSessions.get(sessionId);
       if (!session) {
-        throw new Error('Session not found');
+        throw new Error("Session not found");
       }
 
       const escalationId = `EMG-${Date.now()}-${sessionId.substring(0, 8)}`;
@@ -677,31 +725,34 @@ export class TelemedicineService {
       // Get emergency contacts (would query database)
       const emergencyContacts = [
         {
-          name: 'SAMU 192',
-          phone: '192',
-          role: 'emergency_medical_service',
+          name: "SAMU 192",
+          phone: "192",
+          role: "emergency_medical_service",
           notified: false,
         },
         {
-          name: 'Bombeiros',
-          phone: '193',
-          role: 'fire_department',
+          name: "Bombeiros",
+          phone: "193",
+          role: "fire_department",
           notified: false,
         },
         {
-          name: 'Hospital de Referência',
-          phone: '+55 11 1234-5678',
-          role: 'reference_hospital',
+          name: "Hospital de Referência",
+          phone: "+55 11 1234-5678",
+          role: "reference_hospital",
           notified: false,
         },
       ];
 
-      session.emergencyEscalation.emergencyContacts = emergencyContacts.map(contact => ({
-        name: contact.name,
-        phone: contact.phone,
-        role: contact.role,
-        hospital: contact.role === 'reference_hospital' ? contact.name : undefined,
-      }));
+      session.emergencyEscalation.emergencyContacts = emergencyContacts.map(
+        (contact) => ({
+          name: contact.name,
+          phone: contact.phone,
+          role: contact.role,
+          hospital:
+            contact.role === "reference_hospital" ? contact.name : undefined,
+        }),
+      );
 
       // Find nearest hospital if location provided
       let nearestHospital;
@@ -712,11 +763,11 @@ export class TelemedicineService {
 
       // Add audit trail
       session.auditTrail.push({
-        action: 'emergency_escalation_activated',
+        action: "emergency_escalation_activated",
         timestamp: new Date(),
-        userId: 'system',
-        userRole: 'system',
-        ipAddress: '0.0.0.0',
+        userId: "system",
+        userRole: "system",
+        ipAddress: "0.0.0.0",
         details: {
           escalationId,
           escalationLevel,
@@ -744,7 +795,8 @@ export class TelemedicineService {
         nearestHospital,
       };
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Emergency escalation failed: ${errorMessage}`);
     }
   }
@@ -780,12 +832,15 @@ export class TelemedicineService {
     try {
       const session = this.activeSessions.get(sessionId);
       if (!session) {
-        throw new Error('Session not found');
+        throw new Error("Session not found");
       }
 
       const endTime = new Date();
       const duration = session.actualStartTime
-        ? Math.round((endTime.getTime() - session.actualStartTime.getTime()) / (1000 * 60))
+        ? Math.round(
+            (endTime.getTime() - session.actualStartTime.getTime()) /
+              (1000 * 60),
+          )
         : 0;
 
       // Update session
@@ -797,11 +852,11 @@ export class TelemedicineService {
 
       // Add final audit entry
       session.auditTrail.push({
-        action: 'session_ended',
+        action: "session_ended",
         timestamp: endTime,
         userId: endingUserId,
-        userRole: 'user',
-        ipAddress: '0.0.0.0',
+        userRole: "user",
+        ipAddress: "0.0.0.0",
         details: {
           duration,
           followUpRequired: sessionSummary.followUpRequired,
@@ -832,7 +887,8 @@ export class TelemedicineService {
         archivalDetails,
       };
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`Failed to end session: ${errorMessage}`);
     }
   }
@@ -848,7 +904,7 @@ export class TelemedicineService {
     // Check cache first
     if (this.cfmCache.has(professionalId)) {
       const cached = this.cfmCache.get(professionalId)!;
-      if (cached.lastValidated.getTime() > Date.now() - (24 * 60 * 60 * 1000)) {
+      if (cached.lastValidated.getTime() > Date.now() - 24 * 60 * 60 * 1000) {
         return cached;
       }
     }
@@ -857,25 +913,25 @@ export class TelemedicineService {
       // In real implementation, this would call CFM API
       // For now, return mock validation
       const validation: CFMProfessionalValidation = {
-        crmNumber: '123456',
-        crmState: 'SP',
-        fullName: 'Dr. João da Silva',
-        specialties: ['Clínica Médica', 'Telemedicina'],
-        licenseStatus: 'active',
-        licenseExpiryDate: new Date(Date.now() + (365 * 24 * 60 * 60 * 1000)),
+        crmNumber: "123456",
+        crmState: "SP",
+        fullName: "Dr. João da Silva",
+        specialties: ["Clínica Médica", "Telemedicina"],
+        licenseStatus: "active",
+        licenseExpiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
         telemedicineAuthorization: true,
         digitalCertificate: {
           type: ICP_BRASIL_CERT_TYPES.A3,
-          serialNumber: 'ABC123456789',
-          issuer: 'AC Serasa v5',
-          validFrom: new Date(Date.now() - (30 * 24 * 60 * 60 * 1000)),
-          validUntil: new Date(Date.now() + (3 * 365 * 24 * 60 * 60 * 1000)),
-          fingerprint: 'SHA256:1234567890abcdef',
+          serialNumber: "ABC123456789",
+          issuer: "AC Serasa v5",
+          validFrom: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+          validUntil: new Date(Date.now() + 3 * 365 * 24 * 60 * 60 * 1000),
+          fingerprint: "SHA256:1234567890abcdef",
           isValid: true,
         },
         ethicsCompliance: {
           trainingCompleted: true,
-          lastEthicsUpdate: new Date(Date.now() - (180 * 24 * 60 * 60 * 1000)),
+          lastEthicsUpdate: new Date(Date.now() - 180 * 24 * 60 * 60 * 1000),
           ethicsViolations: [],
           complianceScore: 95,
         },
@@ -885,7 +941,8 @@ export class TelemedicineService {
       this.cfmCache.set(professionalId, validation);
       return validation;
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       throw new Error(`CFM validation failed: ${errorMessage}`);
     }
   }
@@ -893,16 +950,20 @@ export class TelemedicineService {
   /**
    * Validate NGS2 authentication context
    */
-  private async validateNGS2Authentication(authContext: NGS2AuthContext): Promise<boolean> {
+  private async validateNGS2Authentication(
+    authContext: NGS2AuthContext,
+  ): Promise<boolean> {
     // Check session expiry
     if (authContext.sessionExpiry < new Date()) {
-      throw new Error('Authentication session expired');
+      throw new Error("Authentication session expired");
     }
 
     // Validate required security level
-    const requiredMethods = this.getRequiredAuthMethods(authContext.securityLevel);
-    const hasRequiredMethods = requiredMethods.every(method =>
-      authContext.authenticationMethods.includes(method as any)
+    const requiredMethods = this.getRequiredAuthMethods(
+      authContext.securityLevel,
+    );
+    const hasRequiredMethods = requiredMethods.every((method) =>
+      authContext.authenticationMethods.includes(method as any),
     );
 
     if (!hasRequiredMethods) {
@@ -914,19 +975,19 @@ export class TelemedicineService {
     // Validate digital certificate if required
     if (authContext.certificateValidation) {
       if (!authContext.certificateValidation.isValid) {
-        throw new Error('Invalid digital certificate');
+        throw new Error("Invalid digital certificate");
       }
       if (!authContext.certificateValidation.chainValid) {
-        throw new Error('Certificate chain validation failed');
+        throw new Error("Certificate chain validation failed");
       }
       if (!authContext.certificateValidation.revocationChecked) {
-        throw new Error('Certificate revocation status not verified');
+        throw new Error("Certificate revocation status not verified");
       }
     }
 
     // Check risk score
     if (authContext.riskScore > 70) {
-      throw new Error('Authentication risk score too high');
+      throw new Error("Authentication risk score too high");
     }
 
     return true;
@@ -935,15 +996,15 @@ export class TelemedicineService {
   private getRequiredAuthMethods(securityLevel: NGS2SecurityLevel): string[] {
     switch (securityLevel) {
       case NGS2_SECURITY_LEVELS.LEVEL_1:
-        return ['password'];
+        return ["password"];
       case NGS2_SECURITY_LEVELS.LEVEL_2:
-        return ['password', 'two_factor'];
+        return ["password", "two_factor"];
       case NGS2_SECURITY_LEVELS.LEVEL_3:
-        return ['password', 'two_factor', 'digital_certificate'];
+        return ["password", "two_factor", "digital_certificate"];
       case NGS2_SECURITY_LEVELS.LEVEL_4:
-        return ['password', 'two_factor', 'digital_certificate', 'biometric'];
+        return ["password", "two_factor", "digital_certificate", "biometric"];
       default:
-        return ['password'];
+        return ["password"];
     }
   }
 
@@ -956,8 +1017,10 @@ export class TelemedicineService {
     professionalId: string,
   ): string {
     const tokenData = `${sessionId}|${patientId}|${professionalId}|${Date.now()}`;
-    return crypto.createHmac('sha256', process.env.SESSION_SECRET || 'default-secret')
-      .update(tokenData).digest('hex');
+    return crypto
+      .createHmac("sha256", process.env.SESSION_SECRET || "default-secret")
+      .update(tokenData)
+      .digest("hex");
   }
 
   /**
@@ -965,8 +1028,10 @@ export class TelemedicineService {
    */
   private generateSecureMediaUrl(sessionId: string, mediaType: string): string {
     const timestamp = Date.now();
-    const token = crypto.createHmac('sha256', process.env.MEDIA_SECRET || 'default-secret')
-      .update(`${sessionId}|${mediaType}|${timestamp}`).digest('hex');
+    const token = crypto
+      .createHmac("sha256", process.env.MEDIA_SECRET || "default-secret")
+      .update(`${sessionId}|${mediaType}|${timestamp}`)
+      .digest("hex");
 
     return `wss://telemedicine.neonpro.com.br/${mediaType}/${sessionId}?token=${token}&t=${timestamp}`;
   }
@@ -986,11 +1051,11 @@ export class TelemedicineService {
 
     // Video resolution score
     const resolutionScore: Record<string, number> = {
-      '1080p': 100,
-      '720p': 90,
-      '480p': 70,
-      '360p': 50,
-      '240p': 30,
+      "1080p": 100,
+      "720p": 90,
+      "480p": 70,
+      "360p": 50,
+      "240p": 30,
     };
     score *= (resolutionScore[metrics.videoResolution] || 50) / 100;
 
@@ -1008,7 +1073,7 @@ export class TelemedicineService {
 
     // Packet loss penalty
     if (metrics.packetLoss > QUALITY_THRESHOLDS.PACKET_LOSS_MAX) {
-      score *= Math.max(0.5, 1 - (metrics.packetLoss * 10));
+      score *= Math.max(0.5, 1 - metrics.packetLoss * 10);
     }
 
     // Jitter penalty
@@ -1035,8 +1100,10 @@ export class TelemedicineService {
   ): string {
     // In real implementation, this would use proper cryptographic libraries
     // For now, generate a mock signature
-    const signature = crypto.createHmac('sha256', privateKey)
-      .update(data + certType).digest('hex');
+    const signature = crypto
+      .createHmac("sha256", privateKey)
+      .update(data + certType)
+      .digest("hex");
 
     return `ICP-BRASIL:${certType}:${signature}`;
   }
@@ -1057,9 +1124,9 @@ export class TelemedicineService {
   }> {
     // Mock implementation - would integrate with hospital directory
     return {
-      name: 'Hospital São Paulo',
-      address: 'Rua Napoleão de Barros, 715 - Vila Clementino, São Paulo - SP',
-      phone: '+55 11 5576-4000',
+      name: "Hospital São Paulo",
+      address: "Rua Napoleão de Barros, 715 - Vila Clementino, São Paulo - SP",
+      phone: "+55 11 5576-4000",
       distance: 5.2, // km
       estimatedArrival: 15, // minutes
     };
@@ -1087,7 +1154,7 @@ export class TelemedicineService {
     }>
   > {
     // Mock implementation - would integrate with notification services
-    return contacts.map(contact => ({
+    return contacts.map((contact) => ({
       ...contact,
       notified: true, // Simulate successful notification
     }));
@@ -1096,7 +1163,9 @@ export class TelemedicineService {
   /**
    * Validate session compliance
    */
-  private async validateSessionCompliance(session: TelemedicineSession): Promise<{
+  private async validateSessionCompliance(
+    session: TelemedicineSession,
+  ): Promise<{
     cfmCompliant: boolean;
     lgpdCompliant: boolean;
     qualityCompliant: boolean;
@@ -1110,45 +1179,47 @@ export class TelemedicineService {
     // CFM compliance checks
     if (!session.cfmCompliance.professionalValidated) {
       cfmCompliant = false;
-      issues.push('Professional not validated with CFM');
+      issues.push("Professional not validated with CFM");
     }
 
     if (!session.cfmCompliance.patientConsentObtained) {
       cfmCompliant = false;
-      issues.push('Patient consent not properly obtained');
+      issues.push("Patient consent not properly obtained");
     }
 
     if (
-      session.sessionType === TELEMEDICINE_SESSION_TYPES.TELEDIAGNOSIS
-      && session.qualityMetrics.qualityScore < 80
+      session.sessionType === TELEMEDICINE_SESSION_TYPES.TELEDIAGNOSIS &&
+      session.qualityMetrics.qualityScore < 80
     ) {
       cfmCompliant = false;
-      issues.push('Quality standards not met for telediagnosis');
+      issues.push("Quality standards not met for telediagnosis");
     }
 
     // LGPD compliance checks
     if (
-      session.communicationChannel.recordingEnabled
-      && !session.communicationChannel.recordingConsent
+      session.communicationChannel.recordingEnabled &&
+      !session.communicationChannel.recordingConsent
     ) {
       lgpdCompliant = false;
-      issues.push('Recording without explicit consent violates LGPD');
+      issues.push("Recording without explicit consent violates LGPD");
     }
 
     if (session.auditTrail.length === 0) {
       lgpdCompliant = false;
-      issues.push('Insufficient audit trail for LGPD compliance');
+      issues.push("Insufficient audit trail for LGPD compliance");
     }
 
     // Quality compliance checks
     if (session.qualityMetrics.qualityScore < 70) {
       qualityCompliant = false;
-      issues.push('Overall quality score below healthcare standards');
+      issues.push("Overall quality score below healthcare standards");
     }
 
-    if (session.qualityMetrics.averageLatency > QUALITY_THRESHOLDS.LATENCY_MAX) {
+    if (
+      session.qualityMetrics.averageLatency > QUALITY_THRESHOLDS.LATENCY_MAX
+    ) {
       qualityCompliant = false;
-      issues.push('Latency exceeded healthcare communication standards');
+      issues.push("Latency exceeded healthcare communication standards");
     }
 
     return {
@@ -1202,12 +1273,16 @@ export class TelemedicineService {
   private encryptSessionData(session: TelemedicineSession): string {
     // In real implementation, use proper encryption
     const sessionData = JSON.stringify(session);
-    const key = crypto.scryptSync(process.env.ARCHIVE_ENCRYPTION_KEY || 'default-key', 'salt', 32);
+    const key = crypto.scryptSync(
+      process.env.ARCHIVE_ENCRYPTION_KEY || "default-key",
+      "salt",
+      32,
+    );
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
-    let encrypted = cipher.update(sessionData, 'utf8', 'hex');
-    encrypted += cipher.final('hex');
-    return iv.toString('hex') + ':' + encrypted;
+    const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+    let encrypted = cipher.update(sessionData, "utf8", "hex");
+    encrypted += cipher.final("hex");
+    return iv.toString("hex") + ":" + encrypted;
   }
 
   /**
@@ -1219,7 +1294,10 @@ export class TelemedicineService {
     details: Record<string, any>,
   ): Promise<void> {
     // In real implementation, this would log to secure audit database
-    console.log(`Telemedicine Audit: ${action} for session ${sessionId}`, details);
+    console.log(
+      `Telemedicine Audit: ${action} for session ${sessionId}`,
+      details,
+    );
   }
 
   /**
@@ -1234,26 +1312,35 @@ export class TelemedicineService {
   }> {
     const activeSessions = Array.from(this.activeSessions.values());
 
-    const sessionsByType = activeSessions.reduce((acc, session) => {
-      acc[session.sessionType] = (acc[session.sessionType] || 0) + 1;
-      return acc;
-    }, {} as Record<TelemedicineSessionType, number>);
+    const sessionsByType = activeSessions.reduce(
+      (acc, session) => {
+        acc[session.sessionType] = (acc[session.sessionType] || 0) + 1;
+        return acc;
+      },
+      {} as Record<TelemedicineSessionType, number>,
+    );
 
-    const sessionsByStatus = activeSessions.reduce((acc, session) => {
-      acc[session.status] = (acc[session.status] || 0) + 1;
-      return acc;
-    }, {} as Record<SessionStatus, number>);
+    const sessionsByStatus = activeSessions.reduce(
+      (acc, session) => {
+        acc[session.status] = (acc[session.status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<SessionStatus, number>,
+    );
 
-    const averageQualityScore = activeSessions.length > 0
-      ? activeSessions.reduce((sum, session) => sum + session.qualityMetrics.qualityScore, 0)
-        / activeSessions.length
-      : 0;
+    const averageQualityScore =
+      activeSessions.length > 0
+        ? activeSessions.reduce(
+            (sum, session) => sum + session.qualityMetrics.qualityScore,
+            0,
+          ) / activeSessions.length
+        : 0;
 
-    const complianceIssues =
-      activeSessions.filter(session =>
-        session.cfmCompliance.complianceScore < 80
-        || session.qualityMetrics.qualityScore < 70
-      ).length;
+    const complianceIssues = activeSessions.filter(
+      (session) =>
+        session.cfmCompliance.complianceScore < 80 ||
+        session.qualityMetrics.qualityScore < 70,
+    ).length;
 
     return {
       totalActiveSessions: activeSessions.length,

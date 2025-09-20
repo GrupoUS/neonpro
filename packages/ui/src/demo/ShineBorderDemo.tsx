@@ -4,7 +4,7 @@ export function ShineBorderDemo() {
   return (
     <div className="flex flex-col gap-8 p-8">
       <h1 className="text-2xl font-bold">ShineBorder Component Demo</h1>
-      
+
       {/* Basic Example */}
       <div className="space-y-4">
         <h2 className="text-xl font-semibold">Basic Example</h2>
@@ -62,33 +62,45 @@ export function ShineBorderDemo() {
 
       {/* NeonPro Aesthetic Clinic Examples */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">NeonPro Aesthetic Clinic Examples</h2>
+        <h2 className="text-xl font-semibold">
+          NeonPro Aesthetic Clinic Examples
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <ShineBorder 
-            theme="aesthetic-gold" 
+          <ShineBorder
+            theme="aesthetic-gold"
             pattern="wave"
             intensity="vibrant"
             duration={8}
             className="w-full h-40 bg-gradient-to-br from-amber-50 to-orange-50"
           >
             <div className="text-center p-4">
-              <h3 className="text-lg font-bold text-amber-800">Tratamento Premium</h3>
-              <p className="text-sm text-amber-700">Realce sua beleza natural</p>
-              <div className="mt-2 text-2xl font-bold text-amber-900">R$ 299</div>
+              <h3 className="text-lg font-bold text-amber-800">
+                Tratamento Premium
+              </h3>
+              <p className="text-sm text-amber-700">
+                Realce sua beleza natural
+              </p>
+              <div className="mt-2 text-2xl font-bold text-amber-900">
+                R$ 299
+              </div>
             </div>
           </ShineBorder>
-          
-          <ShineBorder 
-            theme="beauty-rainbow" 
+
+          <ShineBorder
+            theme="beauty-rainbow"
             pattern="orbital"
             intensity="normal"
             speed="slow"
             className="w-full h-40 bg-gradient-to-br from-pink-50 to-purple-50"
           >
             <div className="text-center p-4">
-              <h3 className="text-lg font-bold text-purple-800">Pacote Completo</h3>
+              <h3 className="text-lg font-bold text-purple-800">
+                Pacote Completo
+              </h3>
               <p className="text-sm text-purple-700">Cuidado total da pele</p>
-              <div className="mt-2 text-2xl font-bold text-purple-900">R$ 599</div>
+              <div className="mt-2 text-2xl font-bold text-purple-900">
+                R$ 599
+              </div>
             </div>
           </ShineBorder>
         </div>

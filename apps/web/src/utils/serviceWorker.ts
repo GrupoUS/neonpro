@@ -5,30 +5,33 @@
 
 // Service worker registration
 export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
-  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
-    console.log('[SW] Service workers not supported');
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
+    console.log("[SW] Service workers not supported");
     return null;
   }
 
   // Only register in production or when explicitly enabled
-  if (process.env.NODE_ENV !== 'production' && !process.env.VITE_ENABLE_SW) {
-    console.log('[SW] Service worker disabled in development');
+  if (process.env.NODE_ENV !== "production" && !process.env.VITE_ENABLE_SW) {
+    console.log("[SW] Service worker disabled in development");
     return null;
   }
 
   try {
-    const registration = await navigator.serviceWorker.register('/sw.js', {
-      scope: '/',
+    const registration = await navigator.serviceWorker.register("/sw.js", {
+      scope: "/",
     });
 
-    console.log('[SW] Service worker registered:', registration.scope);
+    console.log("[SW] Service worker registered:", registration.scope);
 
     // Handle updates
-    registration.addEventListener('updatefound', () => {
+    registration.addEventListener("updatefound", () => {
       const newWorker = registration.installing;
       if (newWorker) {
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+        newWorker.addEventListener("statechange", () => {
+          if (
+            newWorker.state === "installed" &&
+            navigator.serviceWorker.controller
+          ) {
             // New service worker available
             showUpdateNotification();
           }
@@ -38,14 +41,14 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
 
     return registration;
   } catch (error) {
-    console.error('[SW] Service worker registration failed:', error);
+    console.error("[SW] Service worker registration failed:", error);
     return null;
   }
 }
 
 // Unregister service worker
 export async function unregisterServiceWorker(): Promise<boolean> {
-  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
     return false;
   }
 
@@ -53,19 +56,19 @@ export async function unregisterServiceWorker(): Promise<boolean> {
     const registration = await navigator.serviceWorker.getRegistration();
     if (registration) {
       const result = await registration.unregister();
-      console.log('[SW] Service worker unregistered:', result);
+      console.log("[SW] Service worker unregistered:", result);
       return result;
     }
     return false;
   } catch (error) {
-    console.error('[SW] Service worker unregistration failed:', error);
+    console.error("[SW] Service worker unregistration failed:", error);
     return false;
   }
 }
 
 // Update service worker
 export async function updateServiceWorker(): Promise<void> {
-  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
     return;
   }
 
@@ -73,62 +76,61 @@ export async function updateServiceWorker(): Promise<void> {
     const registration = await navigator.serviceWorker.getRegistration();
     if (registration) {
       await registration.update();
-      console.log('[SW] Service worker update triggered');
+      console.log("[SW] Service worker update triggered");
     }
   } catch (error) {
-    console.error('[SW] Service worker update failed:', error);
+    console.error("[SW] Service worker update failed:", error);
   }
 }
 
 // Skip waiting and activate new service worker
 export async function skipWaiting(): Promise<void> {
-  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
     return;
   }
 
   const registration = await navigator.serviceWorker.getRegistration();
   if (registration && registration.waiting) {
-    registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+    registration.waiting.postMessage({ type: "SKIP_WAITING" });
   }
 }
 
 // Clear all caches
 export async function clearCaches(): Promise<void> {
-  if (typeof window === 'undefined') {
+  if (typeof window === "undefined") {
     return;
   }
 
   try {
     // Clear service worker caches
-    if ('serviceWorker' in navigator) {
+    if ("serviceWorker" in navigator) {
       const registration = await navigator.serviceWorker.getRegistration();
       if (registration && registration.active) {
         const messageChannel = new MessageChannel();
 
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
           messageChannel.port1.onmessage = () => resolve();
-          registration.active!.postMessage(
-            { type: 'CLEAR_CACHE' },
-            [messageChannel.port2],
-          );
+          registration.active!.postMessage({ type: "CLEAR_CACHE" }, [
+            messageChannel.port2,
+          ]);
         });
       }
     }
 
     // Clear browser caches
-    if ('caches' in window) {
+    if ("caches" in window) {
       const cacheNames = await caches.keys();
-      await Promise.all(cacheNames.map(name => caches.delete(name)));
-      console.log('[SW] Browser caches cleared');
+      await Promise.all(cacheNames.map((name) => caches.delete(name)));
+      console.log("[SW] Browser caches cleared");
     }
   } catch (error) {
-    console.error('[SW] Failed to clear caches:', error);
+    console.error("[SW] Failed to clear caches:", error);
   }
 }
 
 // Preload critical resources
 export async function preloadCriticalResources(urls: string[]): Promise<void> {
-  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
     return;
   }
 
@@ -137,22 +139,21 @@ export async function preloadCriticalResources(urls: string[]): Promise<void> {
     if (registration && registration.active) {
       const messageChannel = new MessageChannel();
 
-      return new Promise(resolve => {
+      return new Promise((resolve) => {
         messageChannel.port1.onmessage = () => resolve();
-        registration.active!.postMessage(
-          { type: 'CACHE_URLS', urls },
-          [messageChannel.port2],
-        );
+        registration.active!.postMessage({ type: "CACHE_URLS", urls }, [
+          messageChannel.port2,
+        ]);
       });
     }
   } catch (error) {
-    console.error('[SW] Failed to preload resources:', error);
+    console.error("[SW] Failed to preload resources:", error);
   }
 }
 
 // Check if service worker is supported and active
 export function isServiceWorkerSupported(): boolean {
-  return typeof window !== 'undefined' && 'serviceWorker' in navigator;
+  return typeof window !== "undefined" && "serviceWorker" in navigator;
 }
 
 export function isServiceWorkerActive(): boolean {
@@ -185,7 +186,7 @@ export async function getServiceWorkerStatus(): Promise<{
       waiting: !!registration?.waiting,
     };
   } catch (error) {
-    console.error('[SW] Failed to get service worker status:', error);
+    console.error("[SW] Failed to get service worker status:", error);
     return {
       supported: true,
       registered: false,
@@ -199,15 +200,15 @@ export async function getServiceWorkerStatus(): Promise<{
 function showUpdateNotification(): void {
   // This would typically show a toast or modal to the user
   // For now, we'll just log it
-  console.log('[SW] New version available! Please refresh the page.');
+  console.log("[SW] New version available! Please refresh the page.");
 
   // You can integrate with your notification system here
-  if (typeof window !== 'undefined' && 'Notification' in window) {
-    if (Notification.permission === 'granted') {
-      new Notification('NeonPro Update Available', {
-        body: 'A new version of NeonPro is available. Please refresh the page.',
-        icon: '/neonpro-favicon.svg',
-        tag: 'app-update',
+  if (typeof window !== "undefined" && "Notification" in window) {
+    if (Notification.permission === "granted") {
+      new Notification("NeonPro Update Available", {
+        body: "A new version of NeonPro is available. Please refresh the page.",
+        icon: "/neonpro-favicon.svg",
+        tag: "app-update",
       });
     }
   }
@@ -215,11 +216,11 @@ function showUpdateNotification(): void {
 
 // Request notification permission
 export async function requestNotificationPermission(): Promise<NotificationPermission> {
-  if (typeof window === 'undefined' || !('Notification' in window)) {
-    return 'denied';
+  if (typeof window === "undefined" || !("Notification" in window)) {
+    return "denied";
   }
 
-  if (Notification.permission === 'default') {
+  if (Notification.permission === "default") {
     return await Notification.requestPermission();
   }
 
@@ -233,14 +234,14 @@ export function setupServiceWorkerListeners(): void {
   }
 
   // Listen for service worker updates
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    console.log('[SW] Controller changed - reloading page');
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    console.log("[SW] Controller changed - reloading page");
     window.location.reload();
   });
 
   // Listen for messages from service worker
-  navigator.serviceWorker.addEventListener('message', event => {
-    console.log('[SW] Message from service worker:', event.data);
+  navigator.serviceWorker.addEventListener("message", (event) => {
+    console.log("[SW] Message from service worker:", event.data);
   });
 }
 
@@ -253,16 +254,16 @@ export async function initializeServiceWorker(): Promise<void> {
 
     // Preload critical resources
     const criticalResources = [
-      '/assets/index.css',
-      '/assets/index.js',
-      '/brand/iconeneonpro.svg',
+      "/assets/index.css",
+      "/assets/index.js",
+      "/brand/iconeneonpro.svg",
     ];
 
     await preloadCriticalResources(criticalResources);
 
-    console.log('[SW] Service worker initialized successfully');
+    console.log("[SW] Service worker initialized successfully");
   } catch (error) {
-    console.error('[SW] Service worker initialization failed:', error);
+    console.error("[SW] Service worker initialization failed:", error);
   }
 }
 

@@ -11,55 +11,57 @@
  * - Automated ANVISA compliance reporting
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // ANVISA Compliance Levels
 export const ANVISA_COMPLIANCE_LEVELS = {
-  COMPLIANT: 'compliant',
-  PARTIAL: 'partial',
-  NON_COMPLIANT: 'non_compliant',
-  PENDING_REVIEW: 'pending_review',
+  COMPLIANT: "compliant",
+  PARTIAL: "partial",
+  NON_COMPLIANT: "non_compliant",
+  PENDING_REVIEW: "pending_review",
 } as const;
 
 export type ANVISAComplianceLevel =
-  typeof ANVISA_COMPLIANCE_LEVELS[keyof typeof ANVISA_COMPLIANCE_LEVELS];
+  (typeof ANVISA_COMPLIANCE_LEVELS)[keyof typeof ANVISA_COMPLIANCE_LEVELS];
 
 // ANVISA Medical Device Classes
 export const ANVISA_DEVICE_CLASSES = {
-  CLASS_I: 'class_i', // Low risk
-  CLASS_II: 'class_ii', // Medium risk
-  CLASS_III: 'class_iii', // High risk
-  CLASS_IV: 'class_iv', // Very high risk
+  CLASS_I: "class_i", // Low risk
+  CLASS_II: "class_ii", // Medium risk
+  CLASS_III: "class_iii", // High risk
+  CLASS_IV: "class_iv", // Very high risk
 } as const;
 
-export type ANVISADeviceClass = typeof ANVISA_DEVICE_CLASSES[keyof typeof ANVISA_DEVICE_CLASSES];
+export type ANVISADeviceClass =
+  (typeof ANVISA_DEVICE_CLASSES)[keyof typeof ANVISA_DEVICE_CLASSES];
 
 // ANVISA Medical Software Categories
 export const ANVISA_SOFTWARE_CATEGORIES = {
-  CLINICAL_DECISION_SUPPORT: 'clinical_decision_support',
-  PATIENT_MANAGEMENT: 'patient_management',
-  DIAGNOSTIC_IMAGING: 'diagnostic_imaging',
-  TELEMEDICINE: 'telemedicine',
-  ELECTRONIC_HEALTH_RECORD: 'electronic_health_record',
-  MEDICAL_DEVICE_CONTROL: 'medical_device_control',
+  CLINICAL_DECISION_SUPPORT: "clinical_decision_support",
+  PATIENT_MANAGEMENT: "patient_management",
+  DIAGNOSTIC_IMAGING: "diagnostic_imaging",
+  TELEMEDICINE: "telemedicine",
+  ELECTRONIC_HEALTH_RECORD: "electronic_health_record",
+  MEDICAL_DEVICE_CONTROL: "medical_device_control",
 } as const;
 
 export type ANVISASoftwareCategory =
-  typeof ANVISA_SOFTWARE_CATEGORIES[keyof typeof ANVISA_SOFTWARE_CATEGORIES];
+  (typeof ANVISA_SOFTWARE_CATEGORIES)[keyof typeof ANVISA_SOFTWARE_CATEGORIES];
 
 // ANVISA Compliance Requirements
 export const ANVISA_REQUIREMENTS = {
-  ACCESSIBILITY: 'accessibility',
-  TERMINOLOGY: 'terminology',
-  WORKFLOW: 'workflow',
-  INTEROPERABILITY: 'interoperability',
-  SAFETY: 'safety',
-  EFFICACY: 'efficacy',
-  DOCUMENTATION: 'documentation',
-  TRACEABILITY: 'traceability',
+  ACCESSIBILITY: "accessibility",
+  TERMINOLOGY: "terminology",
+  WORKFLOW: "workflow",
+  INTEROPERABILITY: "interoperability",
+  SAFETY: "safety",
+  EFFICACY: "efficacy",
+  DOCUMENTATION: "documentation",
+  TRACEABILITY: "traceability",
 } as const;
 
-export type ANVISARequirement = typeof ANVISA_REQUIREMENTS[keyof typeof ANVISA_REQUIREMENTS];
+export type ANVISARequirement =
+  (typeof ANVISA_REQUIREMENTS)[keyof typeof ANVISA_REQUIREMENTS];
 
 // ANVISA Medical Device Registration Schema
 export const ANVISADeviceRegistrationSchema = z.object({
@@ -69,9 +71,9 @@ export const ANVISADeviceRegistrationSchema = z.object({
   deviceClass: z.nativeEnum(ANVISA_DEVICE_CLASSES),
   softwareCategory: z.nativeEnum(ANVISA_SOFTWARE_CATEGORIES),
   registrationNumber: z.string().optional(),
-  registrationStatus: z.enum(['registered', 'pending', 'expired', 'rejected']),
+  registrationStatus: z.enum(["registered", "pending", "expired", "rejected"]),
   intendedUse: z.string(),
-  riskClassification: z.enum(['low', 'medium', 'high', 'very_high']),
+  riskClassification: z.enum(["low", "medium", "high", "very_high"]),
   clinicalEvidence: z.boolean(),
   qualityManagementSystem: z.boolean(),
   postMarketSurveillance: z.boolean(),
@@ -81,13 +83,15 @@ export const ANVISADeviceRegistrationSchema = z.object({
   updatedAt: z.date(),
 });
 
-export type ANVISADeviceRegistration = z.infer<typeof ANVISADeviceRegistrationSchema>;
+export type ANVISADeviceRegistration = z.infer<
+  typeof ANVISADeviceRegistrationSchema
+>;
 
 // ANVISA Compliance Issue
 export interface ANVISAComplianceIssue {
   id: string;
   requirement: ANVISARequirement;
-  severity: 'critical' | 'high' | 'medium' | 'low';
+  severity: "critical" | "high" | "medium" | "low";
   title: string;
   description: string;
   recommendation: string;
@@ -97,7 +101,7 @@ export interface ANVISAComplianceIssue {
     steps: string[];
     timeframe: string;
     responsible: string;
-    cost: 'low' | 'medium' | 'high';
+    cost: "low" | "medium" | "high";
   };
   detectedAt: Date;
 }
@@ -146,7 +150,7 @@ export interface ANVISAComplianceReport {
   };
   recommendations: string[];
   nextAuditDate: Date;
-  registrationStatus: 'required' | 'not_required' | 'pending' | 'approved';
+  registrationStatus: "required" | "not_required" | "pending" | "approved";
 }
 
 /**
@@ -203,7 +207,10 @@ export class ANVISAComplianceService {
       safetyCompliance,
       recommendations: this.generateRecommendations(),
       nextAuditDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
-      registrationStatus: this.determineRegistrationStatus(deviceClass, softwareCategory),
+      registrationStatus: this.determineRegistrationStatus(
+        deviceClass,
+        softwareCategory,
+      ),
     };
   }
 
@@ -221,26 +228,26 @@ export class ANVISAComplianceService {
     // Check for missing professional accessibility features
     if (!professionalAccessibility) {
       issues.push({
-        id: 'missing-professional-accessibility',
+        id: "missing-professional-accessibility",
         requirement: ANVISA_REQUIREMENTS.ACCESSIBILITY,
-        severity: 'high',
-        title: 'Recursos de acessibilidade profissional ausentes',
+        severity: "high",
+        title: "Recursos de acessibilidade profissional ausentes",
         description:
-          'Sistema não atende aos requisitos de acessibilidade para profissionais de saúde',
+          "Sistema não atende aos requisitos de acessibilidade para profissionais de saúde",
         recommendation:
-          'Implementar recursos de acessibilidade específicos para profissionais de saúde',
-        affectedComponents: ['user_interface', 'navigation', 'forms'],
-        anvisaReference: 'RDC 185/2001 - Acessibilidade',
+          "Implementar recursos de acessibilidade específicos para profissionais de saúde",
+        affectedComponents: ["user_interface", "navigation", "forms"],
+        anvisaReference: "RDC 185/2001 - Acessibilidade",
         remediation: {
           steps: [
-            'Implementar navegação por teclado para workflows clínicos',
-            'Adicionar suporte a tecnologias assistivas',
-            'Criar atalhos de teclado para funções críticas',
-            'Implementar feedback sonoro para alertas críticos',
+            "Implementar navegação por teclado para workflows clínicos",
+            "Adicionar suporte a tecnologias assistivas",
+            "Criar atalhos de teclado para funções críticas",
+            "Implementar feedback sonoro para alertas críticos",
           ],
-          timeframe: '60 dias',
-          responsible: 'Equipe de Desenvolvimento',
-          cost: 'medium',
+          timeframe: "60 dias",
+          responsible: "Equipe de Desenvolvimento",
+          cost: "medium",
         },
         detectedAt: new Date(),
       });
@@ -248,11 +255,13 @@ export class ANVISAComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
-      : ANVISA_COMPLIANCE_LEVELS.COMPLIANT;
+        ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
+        : ANVISA_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -277,24 +286,25 @@ export class ANVISAComplianceService {
     // Check for non-standardized terminology
     if (!standardizedTerminology) {
       issues.push({
-        id: 'non-standard-terminology',
+        id: "non-standard-terminology",
         requirement: ANVISA_REQUIREMENTS.TERMINOLOGY,
-        severity: 'medium',
-        title: 'Terminologia médica não padronizada',
-        description: 'Sistema utiliza terminologia médica não padronizada',
-        recommendation: 'Implementar terminologia médica padronizada (CID-10, TUSS)',
-        affectedComponents: ['medical_records', 'diagnoses', 'procedures'],
-        anvisaReference: 'RDC 302/2005 - Terminologia Médica',
+        severity: "medium",
+        title: "Terminologia médica não padronizada",
+        description: "Sistema utiliza terminologia médica não padronizada",
+        recommendation:
+          "Implementar terminologia médica padronizada (CID-10, TUSS)",
+        affectedComponents: ["medical_records", "diagnoses", "procedures"],
+        anvisaReference: "RDC 302/2005 - Terminologia Médica",
         remediation: {
           steps: [
-            'Mapear terminologia atual',
-            'Implementar padrões CID-10 e TUSS',
-            'Validar terminologia com profissionais médicos',
-            'Criar dicionário de termos padronizados',
+            "Mapear terminologia atual",
+            "Implementar padrões CID-10 e TUSS",
+            "Validar terminologia com profissionais médicos",
+            "Criar dicionário de termos padronizados",
           ],
-          timeframe: '90 dias',
-          responsible: 'Equipe Médica + Desenvolvimento',
-          cost: 'high',
+          timeframe: "90 dias",
+          responsible: "Equipe Médica + Desenvolvimento",
+          cost: "high",
         },
         detectedAt: new Date(),
       });
@@ -302,11 +312,13 @@ export class ANVISAComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
-      : ANVISA_COMPLIANCE_LEVELS.COMPLIANT;
+        ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
+        : ANVISA_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -331,24 +343,30 @@ export class ANVISAComplianceService {
     // Check for missing safety measures
     if (!userSafetyMeasures) {
       issues.push({
-        id: 'missing-safety-measures',
+        id: "missing-safety-measures",
         requirement: ANVISA_REQUIREMENTS.WORKFLOW,
-        severity: 'critical',
-        title: 'Medidas de segurança do usuário ausentes',
-        description: 'Sistema não implementa medidas adequadas de segurança do usuário',
-        recommendation: 'Implementar medidas de segurança para prevenção de erros médicos',
-        affectedComponents: ['medication_management', 'patient_identification', 'critical_alerts'],
-        anvisaReference: 'RDC 36/2013 - Segurança do Paciente',
+        severity: "critical",
+        title: "Medidas de segurança do usuário ausentes",
+        description:
+          "Sistema não implementa medidas adequadas de segurança do usuário",
+        recommendation:
+          "Implementar medidas de segurança para prevenção de erros médicos",
+        affectedComponents: [
+          "medication_management",
+          "patient_identification",
+          "critical_alerts",
+        ],
+        anvisaReference: "RDC 36/2013 - Segurança do Paciente",
         remediation: {
           steps: [
-            'Implementar verificação dupla para medicamentos críticos',
-            'Adicionar alertas de segurança do paciente',
-            'Criar workflows de confirmação para ações críticas',
-            'Implementar rastreabilidade de ações médicas',
+            "Implementar verificação dupla para medicamentos críticos",
+            "Adicionar alertas de segurança do paciente",
+            "Criar workflows de confirmação para ações críticas",
+            "Implementar rastreabilidade de ações médicas",
           ],
-          timeframe: '45 dias',
-          responsible: 'Equipe Médica + Desenvolvimento',
-          cost: 'high',
+          timeframe: "45 dias",
+          responsible: "Equipe Médica + Desenvolvimento",
+          cost: "high",
         },
         detectedAt: new Date(),
       });
@@ -356,11 +374,13 @@ export class ANVISAComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
-      : ANVISA_COMPLIANCE_LEVELS.COMPLIANT;
+        ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
+        : ANVISA_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -385,24 +405,30 @@ export class ANVISAComplianceService {
     // Check for missing HL7 FHIR support (intentionally set to false for testing)
     if (!hl7FhirSupport) {
       issues.push({
-        id: 'missing-hl7-fhir',
+        id: "missing-hl7-fhir",
         requirement: ANVISA_REQUIREMENTS.INTEROPERABILITY,
-        severity: 'medium',
-        title: 'Suporte HL7 FHIR ausente',
-        description: 'Sistema não implementa padrões HL7 FHIR para interoperabilidade',
-        recommendation: 'Implementar suporte a HL7 FHIR para interoperabilidade de dados de saúde',
-        affectedComponents: ['data_exchange', 'api_endpoints', 'patient_records'],
-        anvisaReference: 'Portaria 2.073/2011 - Interoperabilidade',
+        severity: "medium",
+        title: "Suporte HL7 FHIR ausente",
+        description:
+          "Sistema não implementa padrões HL7 FHIR para interoperabilidade",
+        recommendation:
+          "Implementar suporte a HL7 FHIR para interoperabilidade de dados de saúde",
+        affectedComponents: [
+          "data_exchange",
+          "api_endpoints",
+          "patient_records",
+        ],
+        anvisaReference: "Portaria 2.073/2011 - Interoperabilidade",
         remediation: {
           steps: [
-            'Implementar recursos HL7 FHIR R4',
-            'Criar endpoints de interoperabilidade',
-            'Validar conformidade com perfis brasileiros',
-            'Testar integração com sistemas SUS',
+            "Implementar recursos HL7 FHIR R4",
+            "Criar endpoints de interoperabilidade",
+            "Validar conformidade com perfis brasileiros",
+            "Testar integração com sistemas SUS",
           ],
-          timeframe: '120 dias',
-          responsible: 'Equipe de Integração',
-          cost: 'high',
+          timeframe: "120 dias",
+          responsible: "Equipe de Integração",
+          cost: "high",
         },
         detectedAt: new Date(),
       });
@@ -410,11 +436,13 @@ export class ANVISAComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
-      : ANVISA_COMPLIANCE_LEVELS.COMPLIANT;
+        ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
+        : ANVISA_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -433,30 +461,35 @@ export class ANVISAComplianceService {
 
     // Mock validation - would check safety requirements based on device class
     const riskManagement = true;
-    const clinicalEvaluation = deviceClass === ANVISA_DEVICE_CLASSES.CLASS_I ? false : true;
+    const clinicalEvaluation =
+      deviceClass === ANVISA_DEVICE_CLASSES.CLASS_I ? false : true;
     const postMarketSurveillance = true;
 
     // Check for missing clinical evaluation (required for Class II and above)
     if (!clinicalEvaluation && deviceClass !== ANVISA_DEVICE_CLASSES.CLASS_I) {
       issues.push({
-        id: 'missing-clinical-evaluation',
+        id: "missing-clinical-evaluation",
         requirement: ANVISA_REQUIREMENTS.SAFETY,
-        severity: 'critical',
-        title: 'Avaliação clínica ausente',
+        severity: "critical",
+        title: "Avaliação clínica ausente",
         description: `Dispositivo Classe ${deviceClass} requer avaliação clínica`,
-        recommendation: 'Realizar avaliação clínica conforme requisitos ANVISA',
-        affectedComponents: ['clinical_features', 'safety_measures', 'efficacy_validation'],
-        anvisaReference: 'RDC 185/2001 - Avaliação Clínica',
+        recommendation: "Realizar avaliação clínica conforme requisitos ANVISA",
+        affectedComponents: [
+          "clinical_features",
+          "safety_measures",
+          "efficacy_validation",
+        ],
+        anvisaReference: "RDC 185/2001 - Avaliação Clínica",
         remediation: {
           steps: [
-            'Planejar estudos clínicos',
-            'Obter aprovação do CEP',
-            'Executar avaliação clínica',
-            'Documentar resultados',
+            "Planejar estudos clínicos",
+            "Obter aprovação do CEP",
+            "Executar avaliação clínica",
+            "Documentar resultados",
           ],
-          timeframe: '180 dias',
-          responsible: 'Equipe Regulatória',
-          cost: 'high',
+          timeframe: "180 dias",
+          responsible: "Equipe Regulatória",
+          cost: "high",
         },
         detectedAt: new Date(),
       });
@@ -464,11 +497,13 @@ export class ANVISAComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+      (i) => i.severity === "critical" || i.severity === "high",
+    )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
-      ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
-      : ANVISA_COMPLIANCE_LEVELS.COMPLIANT;
+        ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
+        : ANVISA_COMPLIANCE_LEVELS.COMPLIANT;
 
     return {
       level,
@@ -482,7 +517,9 @@ export class ANVISAComplianceService {
   /**
    * Calculate overall compliance level
    */
-  private calculateOverallCompliance(levels: ANVISAComplianceLevel[]): ANVISAComplianceLevel {
+  private calculateOverallCompliance(
+    levels: ANVISAComplianceLevel[],
+  ): ANVISAComplianceLevel {
     if (levels.includes(ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT)) {
       return ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT;
     }
@@ -496,14 +533,18 @@ export class ANVISAComplianceService {
    * Calculate compliance score
    */
   private calculateComplianceScore(): number {
-    const criticalIssues = this.issues.filter(i => i.severity === 'critical').length;
-    const highIssues = this.issues.filter(i => i.severity === 'high').length;
-    const mediumIssues = this.issues.filter(i => i.severity === 'medium').length;
-    const lowIssues = this.issues.filter(i => i.severity === 'low').length;
+    const criticalIssues = this.issues.filter(
+      (i) => i.severity === "critical",
+    ).length;
+    const highIssues = this.issues.filter((i) => i.severity === "high").length;
+    const mediumIssues = this.issues.filter(
+      (i) => i.severity === "medium",
+    ).length;
+    const lowIssues = this.issues.filter((i) => i.severity === "low").length;
 
     // Calculate penalty based on issue severity
-    const penalty = (criticalIssues * 30) + (highIssues * 20) + (mediumIssues * 10)
-      + (lowIssues * 5);
+    const penalty =
+      criticalIssues * 30 + highIssues * 20 + mediumIssues * 10 + lowIssues * 5;
 
     return Math.max(0, 100 - penalty);
   }
@@ -515,16 +556,21 @@ export class ANVISAComplianceService {
     const recommendations: string[] = [];
 
     // Group issues by requirement and generate recommendations
-    const issuesByRequirement = this.issues.reduce((acc, issue) => {
-      if (!acc[issue.requirement]) acc[issue.requirement] = [];
-      acc[issue.requirement].push(issue);
-      return acc;
-    }, {} as Record<string, ANVISAComplianceIssue[]>);
+    const issuesByRequirement = this.issues.reduce(
+      (acc, issue) => {
+        if (!acc[issue.requirement]) acc[issue.requirement] = [];
+        acc[issue.requirement].push(issue);
+        return acc;
+      },
+      {} as Record<string, ANVISAComplianceIssue[]>,
+    );
 
     Object.entries(issuesByRequirement).forEach(([requirement, issues]) => {
-      const criticalCount = issues.filter(i => i.severity === 'critical').length;
-      const highCount = issues.filter(i => i.severity === 'high').length;
-      const mediumCount = issues.filter(i => i.severity === 'medium').length;
+      const criticalCount = issues.filter(
+        (i) => i.severity === "critical",
+      ).length;
+      const highCount = issues.filter((i) => i.severity === "high").length;
+      const mediumCount = issues.filter((i) => i.severity === "medium").length;
 
       if (criticalCount > 0) {
         recommendations.push(
@@ -545,9 +591,11 @@ export class ANVISAComplianceService {
 
     // Add general recommendations
     if (this.issues.length === 0) {
-      recommendations.push('Manter monitoramento contínuo da conformidade ANVISA');
-      recommendations.push('Realizar auditorias regulares de conformidade');
-      recommendations.push('Manter documentação atualizada');
+      recommendations.push(
+        "Manter monitoramento contínuo da conformidade ANVISA",
+      );
+      recommendations.push("Realizar auditorias regulares de conformidade");
+      recommendations.push("Manter documentação atualizada");
     }
 
     return recommendations;
@@ -559,14 +607,14 @@ export class ANVISAComplianceService {
   private determineRegistrationStatus(
     deviceClass: ANVISADeviceClass,
     _softwareCategory: ANVISASoftwareCategory,
-  ): 'required' | 'not_required' | 'pending' | 'approved' {
+  ): "required" | "not_required" | "pending" | "approved" {
     // Class I devices typically don't require registration
     if (deviceClass === ANVISA_DEVICE_CLASSES.CLASS_I) {
-      return 'not_required';
+      return "not_required";
     }
 
     // Class II and above require registration
-    return 'required';
+    return "required";
   }
 }
 

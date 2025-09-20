@@ -12,9 +12,9 @@
  * - Performance impact monitoring
  */
 
-import { SpanStatusCode, trace } from '@opentelemetry/api';
-import * as Sentry from '@sentry/node';
-import { z } from 'zod';
+import { SpanStatusCode, trace } from "@opentelemetry/api";
+import * as Sentry from "@sentry/node";
+import { z } from "zod";
 
 // Healthcare data patterns for redaction
 const HEALTHCARE_PATTERNS = {
@@ -31,7 +31,7 @@ const HEALTHCARE_PATTERNS = {
 } as const;
 
 // Error severity levels
-const ErrorSeveritySchema = z.enum(['low', 'medium', 'high', 'critical']);
+const ErrorSeveritySchema = z.enum(["low", "medium", "high", "critical"]);
 type ErrorSeverity = z.infer<typeof ErrorSeveritySchema>;
 
 // Error context schema
@@ -39,7 +39,9 @@ const ErrorContextSchema = z.object({
   userId: z.string().optional(),
   patientId: z.string().optional(),
   clinicId: z.string().optional(),
-  operationType: z.enum(['create', 'read', 'update', 'delete', 'export']).optional(),
+  operationType: z
+    .enum(["create", "read", "update", "delete", "export"])
+    .optional(),
   endpoint: z.string().optional(),
   userAgent: z.string().optional(),
   ipAddress: z.string().optional(),
@@ -53,21 +55,21 @@ type ErrorContext = z.infer<typeof ErrorContextSchema>;
 
 // Healthcare error classification
 const HealthcareErrorTypeSchema = z.enum([
-  'data_access_violation',
-  'lgpd_compliance_issue',
-  'patient_data_exposure',
-  'unauthorized_access',
-  'data_integrity_violation',
-  'performance_degradation',
-  'service_unavailable',
-  'validation_error',
-  'business_logic_error',
-  'external_service_error',
-  'database_error',
-  'authentication_error',
-  'authorization_error',
-  'rate_limit_exceeded',
-  'configuration_error',
+  "data_access_violation",
+  "lgpd_compliance_issue",
+  "patient_data_exposure",
+  "unauthorized_access",
+  "data_integrity_violation",
+  "performance_degradation",
+  "service_unavailable",
+  "validation_error",
+  "business_logic_error",
+  "external_service_error",
+  "database_error",
+  "authentication_error",
+  "authorization_error",
+  "rate_limit_exceeded",
+  "configuration_error",
 ]);
 
 type HealthcareErrorType = z.infer<typeof HealthcareErrorTypeSchema>;
@@ -96,7 +98,7 @@ interface ErrorMetrics {
 
 class HealthcareErrorTracker {
   private static instance: HealthcareErrorTracker;
-  private tracer = trace.getTracer('healthcare-error-tracker');
+  private tracer = trace.getTracer("healthcare-error-tracker");
   private errorMetrics: ErrorMetrics = {
     totalErrors: 0,
     errorCount: 0,
@@ -110,12 +112,12 @@ class HealthcareErrorTracker {
 
   private constructor() {
     // Initialize error type counters
-    Object.values(HealthcareErrorTypeSchema.enum).forEach(type => {
+    Object.values(HealthcareErrorTypeSchema.enum).forEach((type) => {
       this.errorMetrics.errorsByType[type] = 0;
     });
 
     // Initialize severity counters
-    Object.values(ErrorSeveritySchema.enum).forEach(severity => {
+    Object.values(ErrorSeveritySchema.enum).forEach((severity) => {
       this.errorMetrics.errorsBySeverity[severity] = 0;
     });
   }
@@ -130,14 +132,20 @@ class HealthcareErrorTracker {
   /**
    * Redacts healthcare data from error messages and context
    */
-  private redactHealthcareData(text: string): { redacted: string; fields: string[] } {
+  private redactHealthcareData(text: string): {
+    redacted: string;
+    fields: string[];
+  } {
     let redactedText = text;
     const redactedFields: string[] = [];
 
     Object.entries(HEALTHCARE_PATTERNS).forEach(([field, pattern]) => {
       if (pattern.test(redactedText)) {
         redactedFields.push(field);
-        redactedText = redactedText.replace(pattern, `[REDACTED_${field.toUpperCase()}]`);
+        redactedText = redactedText.replace(
+          pattern,
+          `[REDACTED_${field.toUpperCase()}]`,
+        );
       }
     });
 
@@ -147,113 +155,141 @@ class HealthcareErrorTracker {
   /**
    * Classifies error type based on message and context
    */
-  private classifyError(error: Error, context: ErrorContext): HealthcareErrorType {
+  private classifyError(
+    error: Error,
+    context: ErrorContext,
+  ): HealthcareErrorType {
     const message = error.message.toLowerCase();
-    const stack = error.stack?.toLowerCase() || '';
+    const stack = error.stack?.toLowerCase() || "";
 
     // Patient data exposure detection
     if (
-      message.includes('patient')
-      && (message.includes('unauthorized') || message.includes('forbidden'))
+      message.includes("patient") &&
+      (message.includes("unauthorized") || message.includes("forbidden"))
     ) {
-      return 'patient_data_exposure';
+      return "patient_data_exposure";
     }
 
     // LGPD compliance issues
-    if (message.includes('lgpd') || message.includes('consent') || message.includes('privacy')) {
-      return 'lgpd_compliance_issue';
+    if (
+      message.includes("lgpd") ||
+      message.includes("consent") ||
+      message.includes("privacy")
+    ) {
+      return "lgpd_compliance_issue";
     }
 
     // Authentication errors
     if (
-      message.includes('authentication') || message.includes('login') || message.includes('token')
+      message.includes("authentication") ||
+      message.includes("login") ||
+      message.includes("token")
     ) {
-      return 'authentication_error';
+      return "authentication_error";
     }
 
     // Authorization errors
     if (
-      message.includes('authorization') || message.includes('permission')
-      || message.includes('access denied')
+      message.includes("authorization") ||
+      message.includes("permission") ||
+      message.includes("access denied")
     ) {
-      return 'authorization_error';
+      return "authorization_error";
     }
 
     // Database errors
-    if (stack.includes('prisma') || stack.includes('supabase') || message.includes('database')) {
-      return 'database_error';
+    if (
+      stack.includes("prisma") ||
+      stack.includes("supabase") ||
+      message.includes("database")
+    ) {
+      return "database_error";
     }
 
     // Validation errors
-    if (message.includes('validation') || message.includes('invalid') || stack.includes('zod')) {
-      return 'validation_error';
+    if (
+      message.includes("validation") ||
+      message.includes("invalid") ||
+      stack.includes("zod")
+    ) {
+      return "validation_error";
     }
 
     // Rate limiting
-    if (message.includes('rate limit') || message.includes('too many requests')) {
-      return 'rate_limit_exceeded';
+    if (
+      message.includes("rate limit") ||
+      message.includes("too many requests")
+    ) {
+      return "rate_limit_exceeded";
     }
 
     // Performance issues
     if (
-      message.includes('timeout') || message.includes('slow') || message.includes('performance')
+      message.includes("timeout") ||
+      message.includes("slow") ||
+      message.includes("performance")
     ) {
-      return 'performance_degradation';
+      return "performance_degradation";
     }
 
     // Service availability
     if (
-      message.includes('unavailable') || message.includes('service down')
-      || message.includes('connection')
+      message.includes("unavailable") ||
+      message.includes("service down") ||
+      message.includes("connection")
     ) {
-      return 'service_unavailable';
+      return "service_unavailable";
     }
 
     // External service errors
     if (
-      context.endpoint?.includes('external') || message.includes('third party')
-      || message.includes('api error')
+      context.endpoint?.includes("external") ||
+      message.includes("third party") ||
+      message.includes("api error")
     ) {
-      return 'external_service_error';
+      return "external_service_error";
     }
 
     // Default to business logic error
-    return 'business_logic_error';
+    return "business_logic_error";
   }
 
   /**
    * Determines error severity based on type and context
    */
-  private determineSeverity(errorType: HealthcareErrorType, _context: ErrorContext): ErrorSeverity {
+  private determineSeverity(
+    errorType: HealthcareErrorType,
+    _context: ErrorContext,
+  ): ErrorSeverity {
     // Critical errors - immediate attention required
     if (
-      errorType === 'patient_data_exposure'
-      || errorType === 'data_access_violation'
-      || errorType === 'lgpd_compliance_issue'
+      errorType === "patient_data_exposure" ||
+      errorType === "data_access_violation" ||
+      errorType === "lgpd_compliance_issue"
     ) {
-      return 'critical';
+      return "critical";
     }
 
     // High severity - significant impact
     if (
-      errorType === 'unauthorized_access'
-      || errorType === 'data_integrity_violation'
-      || errorType === 'service_unavailable'
+      errorType === "unauthorized_access" ||
+      errorType === "data_integrity_violation" ||
+      errorType === "service_unavailable"
     ) {
-      return 'high';
+      return "high";
     }
 
     // Medium severity - moderate impact
     if (
-      errorType === 'performance_degradation'
-      || errorType === 'database_error'
-      || errorType === 'external_service_error'
+      errorType === "performance_degradation" ||
+      errorType === "database_error" ||
+      errorType === "external_service_error"
     ) {
-      return 'medium';
+      return "medium";
     }
 
     // Low severity - minimal impact
-    return 'low';
+    return "low";
   }
 
   /**
@@ -264,7 +300,7 @@ class HealthcareErrorTracker {
 
     // Redact IP address (keep only first two octets)
     if (redactedContext.ipAddress) {
-      const ipParts = redactedContext.ipAddress.split('.');
+      const ipParts = redactedContext.ipAddress.split(".");
       if (ipParts.length === 4) {
         redactedContext.ipAddress = `${ipParts[0]}.${ipParts[1]}.xxx.xxx`;
       }
@@ -272,8 +308,12 @@ class HealthcareErrorTracker {
 
     // Redact user agent (keep only browser info)
     if (redactedContext.userAgent) {
-      const browserMatch = redactedContext.userAgent.match(/(Chrome|Firefox|Safari|Edge)\/[\d.]+/);
-      redactedContext.userAgent = browserMatch ? browserMatch[0] : '[REDACTED_USER_AGENT]';
+      const browserMatch = redactedContext.userAgent.match(
+        /(Chrome|Firefox|Safari|Edge)\/[\d.]+/,
+      );
+      redactedContext.userAgent = browserMatch
+        ? browserMatch[0]
+        : "[REDACTED_USER_AGENT]";
     }
 
     // Redact metadata recursively
@@ -287,14 +327,16 @@ class HealthcareErrorTracker {
   /**
    * Redacts sensitive data from metadata objects
    */
-  private redactMetadata(metadata: Record<string, unknown>): Record<string, unknown> {
+  private redactMetadata(
+    metadata: Record<string, unknown>,
+  ): Record<string, unknown> {
     const redacted: Record<string, unknown> = {};
 
     Object.entries(metadata).forEach(([key, value]) => {
-      if (typeof value === 'string') {
+      if (typeof value === "string") {
         const { redacted: redactedValue } = this.redactHealthcareData(value);
         redacted[key] = redactedValue;
-      } else if (typeof value === 'object' && value !== null) {
+      } else if (typeof value === "object" && value !== null) {
         redacted[key] = this.redactMetadata(value as Record<string, unknown>);
       } else {
         redacted[key] = value;
@@ -315,9 +357,8 @@ class HealthcareErrorTracker {
     const validatedContext = ErrorContextSchema.parse(context);
 
     // Redact healthcare data from error message
-    const { redacted: redactedMessage, fields: redactedFields } = this.redactHealthcareData(
-      error.message,
-    );
+    const { redacted: redactedMessage, fields: redactedFields } =
+      this.redactHealthcareData(error.message);
 
     // Classify error type and determine severity
     const errorType = this.classifyError(error, validatedContext);
@@ -341,7 +382,10 @@ class HealthcareErrorTracker {
       type: errorType,
       context: redactedContext,
       stack: redactedStack,
-      cause: (error as any).cause instanceof Error ? (error as any).cause : undefined,
+      cause:
+        (error as any).cause instanceof Error
+          ? (error as any).cause
+          : undefined,
     };
   }
 
@@ -352,65 +396,71 @@ class HealthcareErrorTracker {
     error: Error,
     context: Partial<ErrorContext> = {},
   ): Promise<void> {
-    return this.tracer.startActiveSpan('track-healthcare-error', async span => {
-      try {
-        // Create redacted error
-        const redactedError = this.createRedactedError(error, context);
+    return this.tracer.startActiveSpan(
+      "track-healthcare-error",
+      async (span) => {
+        try {
+          // Create redacted error
+          const redactedError = this.createRedactedError(error, context);
 
-        // Update metrics
-        this.updateMetrics(redactedError);
+          // Update metrics
+          this.updateMetrics(redactedError);
 
-        // Set span attributes
-        span.setAttributes({
-          'error.type': redactedError.type,
-          'error.severity': redactedError.severity,
-          'error.redacted_fields': redactedError.redactedFields.join(','),
-          'healthcare.patient_id': redactedError.context.patientId || 'none',
-          'healthcare.clinic_id': redactedError.context.clinicId || 'none',
-          'healthcare.operation': redactedError.context.operationType || 'unknown',
-        });
-
-        // Send to Sentry with redacted data
-        Sentry.withScope(scope => {
-          scope.setLevel(this.mapSeverityToSentryLevel(redactedError.severity));
-          scope.setTag('error.type', redactedError.type);
-          scope.setTag('healthcare.compliant', 'true');
-
-          // Add redacted context
-          scope.setContext('healthcare_context', {
-            clinicId: redactedError.context.clinicId,
-            operationType: redactedError.context.operationType,
-            endpoint: redactedError.context.endpoint,
-            redactedFields: redactedError.redactedFields,
+          // Set span attributes
+          span.setAttributes({
+            "error.type": redactedError.type,
+            "error.severity": redactedError.severity,
+            "error.redacted_fields": redactedError.redactedFields.join(","),
+            "healthcare.patient_id": redactedError.context.patientId || "none",
+            "healthcare.clinic_id": redactedError.context.clinicId || "none",
+            "healthcare.operation":
+              redactedError.context.operationType || "unknown",
           });
 
-          // Add performance context
-          scope.setContext('performance', {
-            requestId: redactedError.context.requestId,
-            timestamp: redactedError.context.timestamp.toISOString(),
+          // Send to Sentry with redacted data
+          Sentry.withScope((scope) => {
+            scope.setLevel(
+              this.mapSeverityToSentryLevel(redactedError.severity),
+            );
+            scope.setTag("error.type", redactedError.type);
+            scope.setTag("healthcare.compliant", "true");
+
+            // Add redacted context
+            scope.setContext("healthcare_context", {
+              clinicId: redactedError.context.clinicId,
+              operationType: redactedError.context.operationType,
+              endpoint: redactedError.context.endpoint,
+              redactedFields: redactedError.redactedFields,
+            });
+
+            // Add performance context
+            scope.setContext("performance", {
+              requestId: redactedError.context.requestId,
+              timestamp: redactedError.context.timestamp.toISOString(),
+            });
+
+            Sentry.captureException(new Error(redactedError.message));
           });
 
-          Sentry.captureException(new Error(redactedError.message));
-        });
+          // Log structured error
+          this.logStructuredError(redactedError);
 
-        // Log structured error
-        this.logStructuredError(redactedError);
+          span.setStatus({ code: SpanStatusCode.OK });
+        } catch (trackingError) {
+          span.recordException(trackingError as Error);
+          span.setStatus({
+            code: SpanStatusCode.ERROR,
+            message: "Failed to track error",
+          });
 
-        span.setStatus({ code: SpanStatusCode.OK });
-      } catch (trackingError) {
-        span.recordException(trackingError as Error);
-        span.setStatus({
-          code: SpanStatusCode.ERROR,
-          message: 'Failed to track error',
-        });
-
-        // Fallback logging
-        console.error('Error tracking failed:', trackingError);
-        console.error('Original error:', error.message);
-      } finally {
-        span.end();
-      }
-    });
+          // Fallback logging
+          console.error("Error tracking failed:", trackingError);
+          console.error("Original error:", error.message);
+        } finally {
+          span.end();
+        }
+      },
+    );
   }
 
   /**
@@ -418,18 +468,18 @@ class HealthcareErrorTracker {
    */
   private mapSeverityToSentryLevel(
     severity: ErrorSeverity,
-  ): 'debug' | 'info' | 'warning' | 'error' | 'fatal' {
+  ): "debug" | "info" | "warning" | "error" | "fatal" {
     switch (severity) {
-      case 'low':
-        return 'info';
-      case 'medium':
-        return 'warning';
-      case 'high':
-        return 'error';
-      case 'critical':
-        return 'fatal';
+      case "low":
+        return "info";
+      case "medium":
+        return "warning";
+      case "high":
+        return "error";
+      case "critical":
+        return "fatal";
       default:
-        return 'error';
+        return "error";
     }
   }
 
@@ -447,7 +497,8 @@ class HealthcareErrorTracker {
     // Calculate error rate (errors per minute over last hour)
     // This would typically use a more sophisticated time-window calculation
     const timeWindow = 60 * 60 * 1000; // 1 hour in milliseconds
-    this.errorMetrics.errorRate = this.errorMetrics.errorCount / (timeWindow / (60 * 1000));
+    this.errorMetrics.errorRate =
+      this.errorMetrics.errorCount / (timeWindow / (60 * 1000));
   }
 
   /**
@@ -496,11 +547,11 @@ class HealthcareErrorTracker {
     };
 
     // Reinitialize counters
-    Object.values(HealthcareErrorTypeSchema.enum).forEach(type => {
+    Object.values(HealthcareErrorTypeSchema.enum).forEach((type) => {
       this.errorMetrics.errorsByType[type] = 0;
     });
 
-    Object.values(ErrorSeveritySchema.enum).forEach(severity => {
+    Object.values(ErrorSeveritySchema.enum).forEach((severity) => {
       this.errorMetrics.errorsBySeverity[severity] = 0;
     });
   }
@@ -512,11 +563,11 @@ class HealthcareErrorTracker {
     return async (error: Error, c: any) => {
       const context: Partial<ErrorContext> = {
         endpoint: `${c.req.method} ${c.req.path}`,
-        userAgent: c.req.header('user-agent'),
-        ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
-        requestId: c.req.header('x-request-id'),
-        userId: c.get('userId'),
-        clinicId: c.get('clinicId'),
+        userAgent: c.req.header("user-agent"),
+        ipAddress: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
+        requestId: c.req.header("x-request-id"),
+        userId: c.get("userId"),
+        clinicId: c.get("clinicId"),
       };
 
       await this.trackError(error, context);
@@ -524,15 +575,19 @@ class HealthcareErrorTracker {
       // Don't expose internal error details to client
       const redactedError = this.createRedactedError(error, context);
 
-      return c.json({
-        error: {
-          message: redactedError.severity === 'critical'
-            ? 'Sistema temporariamente indisponível'
-            : 'Erro interno do servidor',
-          type: 'internal_error',
-          requestId: context.requestId,
+      return c.json(
+        {
+          error: {
+            message:
+              redactedError.severity === "critical"
+                ? "Sistema temporariamente indisponível"
+                : "Erro interno do servidor",
+            type: "internal_error",
+            requestId: context.requestId,
+          },
         },
-      }, 500);
+        500,
+      );
     };
   }
 }
@@ -541,13 +596,22 @@ class HealthcareErrorTracker {
 export const errorTracker = HealthcareErrorTracker.getInstance();
 
 // Export types for external use
-export type { ErrorContext, ErrorMetrics, ErrorSeverity, HealthcareErrorType, RedactedError };
+export type {
+  ErrorContext,
+  ErrorMetrics,
+  ErrorSeverity,
+  HealthcareErrorType,
+  RedactedError,
+};
 
 // Export enums
 export { ErrorSeveritySchema, HealthcareErrorTypeSchema };
 
 // Export utility functions
-export function trackError(error: Error, context?: Partial<ErrorContext>): Promise<void> {
+export function trackError(
+  error: Error,
+  context?: Partial<ErrorContext>,
+): Promise<void> {
   return errorTracker.trackError(error, context);
 }
 

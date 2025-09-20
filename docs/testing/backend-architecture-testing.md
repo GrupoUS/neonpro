@@ -27,7 +27,7 @@ Comprehensive backend testing strategy for Hono.dev APIs, service integration, a
 
 - Hono.dev framework for edge/server APIs
 - Turborepo monorepo setup
-- Vitest testing framework  
+- Vitest testing framework
 - Zod for validation schemas
 - Supabase for database integration
 - Healthcare compliance requirements (LGPD, ANVISA)
@@ -35,38 +35,39 @@ Comprehensive backend testing strategy for Hono.dev APIs, service integration, a
 ## Quick Start
 
 ### Basic API Route Testing
+
 ```typescript
 // apps/api/src/__tests__/patients.get.test.ts
-import { describe, expect, it } from 'vitest';
-import { app } from '../app'; // Your Hono app
-import { createTestContext } from '../test/utils';
+import { describe, expect, it } from "vitest";
+import { app } from "../app"; // Your Hono app
+import { createTestContext } from "../test/utils";
 
-describe('GET /patients', () => {
-  it('returns 200 with patients list', async () => {
-    const res = await app.request('/patients', { 
-      method: 'GET',
-      headers: { 'Authorization': 'Bearer valid-token' }
+describe("GET /patients", () => {
+  it("returns 200 with patients list", async () => {
+    const res = await app.request("/patients", {
+      method: "GET",
+      headers: { Authorization: "Bearer valid-token" },
     });
-    
+
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(Array.isArray(data.patients)).toBe(true);
-    expect(data).toHaveProperty('total');
-    expect(data).toHaveProperty('page');
+    expect(data).toHaveProperty("total");
+    expect(data).toHaveProperty("page");
   });
 
-  it('validates authentication', async () => {
-    const res = await app.request('/patients', { method: 'GET' });
+  it("validates authentication", async () => {
+    const res = await app.request("/patients", { method: "GET" });
     expect(res.status).toBe(401);
-    
+
     const error = await res.json();
     expect(error.message).toMatch(/unauthorized|token/i);
   });
 
-  it('handles query parameters correctly', async () => {
-    const res = await app.request('/patients?search=João&page=2&limit=5', {
-      method: 'GET',
-      headers: { 'Authorization': 'Bearer valid-token' }
+  it("handles query parameters correctly", async () => {
+    const res = await app.request("/patients?search=João&page=2&limit=5", {
+      method: "GET",
+      headers: { Authorization: "Bearer valid-token" },
     });
 
     expect(res.status).toBe(200);
@@ -83,9 +84,9 @@ describe('GET /patients', () => {
 
 ```typescript
 // Comprehensive route testing patterns
-import { Hono } from 'hono';
-import { zValidator } from '@hono/zod-validator';
-import { z } from 'zod';
+import { Hono } from "hono";
+import { zValidator } from "@hono/zod-validator";
+import { z } from "zod";
 
 const patientSchema = z.object({
   name: z.string().min(2),
@@ -94,22 +95,22 @@ const patientSchema = z.object({
   condition: z.string().optional(),
 });
 
-describe('POST /patients - Create Patient', () => {
-  it('creates patient with valid data', async () => {
+describe("POST /patients - Create Patient", () => {
+  it("creates patient with valid data", async () => {
     const validPatient = {
-      name: 'João Silva',
-      cpf: '123.456.789-00',
-      birthDate: '1985-03-15',
-      condition: 'Diabetes'
+      name: "João Silva",
+      cpf: "123.456.789-00",
+      birthDate: "1985-03-15",
+      condition: "Diabetes",
     };
 
-    const res = await app.request('/patients', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer valid-token'
+    const res = await app.request("/patients", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer valid-token",
       },
-      body: JSON.stringify(validPatient)
+      body: JSON.stringify(validPatient),
     });
 
     expect(res.status).toBe(201);
@@ -118,20 +119,20 @@ describe('POST /patients - Create Patient', () => {
     expect(data.patient.id).toBeDefined();
   });
 
-  it('validates request body with Zod', async () => {
+  it("validates request body with Zod", async () => {
     const invalidPatient = {
-      name: 'A', // Too short
-      cpf: '123', // Invalid format
-      birthDate: 'not-a-date',
+      name: "A", // Too short
+      cpf: "123", // Invalid format
+      birthDate: "not-a-date",
     };
 
-    const res = await app.request('/patients', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer valid-token'
+    const res = await app.request("/patients", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer valid-token",
       },
-      body: JSON.stringify(invalidPatient)
+      body: JSON.stringify(invalidPatient),
     });
 
     expect(res.status).toBe(400);
@@ -146,49 +147,51 @@ describe('POST /patients - Create Patient', () => {
 
 ```typescript
 // Test authentication and logging middleware
-describe('Authentication Middleware', () => {
-  it('validates JWT tokens', async () => {
-    const validToken = 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...';
-    const res = await app.request('/protected-route', {
-      headers: { 'Authorization': validToken }
+describe("Authentication Middleware", () => {
+  it("validates JWT tokens", async () => {
+    const validToken = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...";
+    const res = await app.request("/protected-route", {
+      headers: { Authorization: validToken },
     });
-    
+
     expect(res.status).not.toBe(401);
   });
 
-  it('rejects expired tokens', async () => {
-    const expiredToken = 'Bearer expired.jwt.token';
-    const res = await app.request('/protected-route', {
-      headers: { 'Authorization': expiredToken }
+  it("rejects expired tokens", async () => {
+    const expiredToken = "Bearer expired.jwt.token";
+    const res = await app.request("/protected-route", {
+      headers: { Authorization: expiredToken },
     });
-    
+
     expect(res.status).toBe(401);
     const error = await res.json();
-    expect(error.code).toBe('TOKEN_EXPIRED');
+    expect(error.code).toBe("TOKEN_EXPIRED");
   });
 
-  it('handles missing authorization header', async () => {
-    const res = await app.request('/protected-route');
+  it("handles missing authorization header", async () => {
+    const res = await app.request("/protected-route");
     expect(res.status).toBe(401);
   });
 });
 
-describe('CORS Middleware', () => {
-  it('sets correct CORS headers', async () => {
-    const res = await app.request('/', { 
-      method: 'OPTIONS',
-      headers: { 'Origin': 'https://neonpro.app' }
+describe("CORS Middleware", () => {
+  it("sets correct CORS headers", async () => {
+    const res = await app.request("/", {
+      method: "OPTIONS",
+      headers: { Origin: "https://neonpro.app" },
     });
-    
-    expect(res.headers.get('Access-Control-Allow-Origin')).toBe('https://neonpro.app');
-    expect(res.headers.get('Access-Control-Allow-Methods')).toContain('POST');
+
+    expect(res.headers.get("Access-Control-Allow-Origin")).toBe(
+      "https://neonpro.app",
+    );
+    expect(res.headers.get("Access-Control-Allow-Methods")).toContain("POST");
   });
 });
 ```
 
 ### 3. Error Handling Testing
 
-```typescript
+````typescript
 // Test comprehensive error handling
 describe('Error Handling', () => {
   it('handles database connection errors', async () => {
@@ -198,7 +201,7 @@ describe('Error Handling', () => {
     });
 
     const res = await app.request('/patients');
-    
+
     expect(res.status).toBe(500);
     const error = await res.json();
     expect(error.message).toBe('Internal server error');
@@ -207,7 +210,7 @@ describe('Error Handling', () => {
 
   it('handles resource not found', async () => {
     const res = await app.request('/patients/nonexistent-id');
-    
+
     expect(res.status).toBe(404);
     const error = await res.json();
     expect(error.message).toMatch(/not found/i);
@@ -215,7 +218,7 @@ describe('Error Handling', () => {
 
   it('handles rate limiting', async () => {
     // Simulate multiple rapid requests
-    const requests = Array(10).fill(null).map(() => 
+    const requests = Array(10).fill(null).map(() =>
       app.request('/patients', {
         headers: { 'Authorization': 'Bearer valid-token' }
       })
@@ -223,7 +226,7 @@ describe('Error Handling', () => {
 
     const responses = await Promise.all(requests);
     const rateLimited = responses.find(res => res.status === 429);
-    
+
     if (rateLimited) {
       expect(rateLimited.headers.get('Retry-After')).toBeDefined();
     }
@@ -286,15 +289,15 @@ describe('Patient-Appointment Integration', () => {
     expect(error.message).toMatch(/patient.*not found/i);
   });
 });
-```
+````
 
 ### 2. External Service Integration Testing
 
 ```typescript
 // Test integration with external services (email, AI, payments)
-import { MockAgent, setGlobalDispatcher } from 'undici';
+import { MockAgent, setGlobalDispatcher } from "undici";
 
-describe('External Service Integration', () => {
+describe("External Service Integration", () => {
   let mockAgent: MockAgent;
 
   beforeEach(() => {
@@ -306,55 +309,65 @@ describe('External Service Integration', () => {
     await mockAgent.close();
   });
 
-  it('sends email notification on patient registration', async () => {
+  it("sends email notification on patient registration", async () => {
     // Mock email service
-    const mockPool = mockAgent.get('https://api.emailprovider.com');
-    mockPool.intercept({
-      path: '/send',
-      method: 'POST',
-    }).reply(200, { messageId: 'msg-123', status: 'sent' });
+    const mockPool = mockAgent.get("https://api.emailprovider.com");
+    mockPool
+      .intercept({
+        path: "/send",
+        method: "POST",
+      })
+      .reply(200, { messageId: "msg-123", status: "sent" });
 
     // Register patient
-    const res = await app.request('/patients', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer valid-token' },
+    const res = await app.request("/patients", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer valid-token",
+      },
       body: JSON.stringify({
-        name: 'João Silva',
-        email: 'joao@email.com',
-        cpf: '123.456.789-00',
-        birthDate: '1985-03-15',
-      })
+        name: "João Silva",
+        email: "joao@email.com",
+        cpf: "123.456.789-00",
+        birthDate: "1985-03-15",
+      }),
     });
 
     expect(res.status).toBe(201);
-    
+
     // Verify email was sent (check logs or mock calls)
     // This would depend on your email service implementation
   });
 
-  it('handles external service failures gracefully', async () => {
+  it("handles external service failures gracefully", async () => {
     // Mock email service failure
-    const mockPool = mockAgent.get('https://api.emailprovider.com');
-    mockPool.intercept({
-      path: '/send',
-      method: 'POST',
-    }).reply(500, { error: 'Service temporarily unavailable' });
+    const mockPool = mockAgent.get("https://api.emailprovider.com");
+    mockPool
+      .intercept({
+        path: "/send",
+        method: "POST",
+      })
+      .reply(500, { error: "Service temporarily unavailable" });
 
     // Register patient - should still succeed even if email fails
-    const res = await app.request('/patients', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer valid-token' },
+    const res = await app.request("/patients", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer valid-token",
+      },
       body: JSON.stringify({
-        name: 'João Silva',
-        email: 'joao@email.com',
-        cpf: '123.456.789-00',
-        birthDate: '1985-03-15',
-      })
+        name: "João Silva",
+        email: "joao@email.com",
+        cpf: "123.456.789-00",
+        birthDate: "1985-03-15",
+      }),
     });
 
     // Patient creation should succeed
     expect(res.status).toBe(201);
-    
+
     // But email failure should be logged
     // Check logs for email failure notification
   });
@@ -365,7 +378,7 @@ describe('External Service Integration', () => {
 
 ```typescript
 // Test database operations and transactions
-describe('Database Integration', () => {
+describe("Database Integration", () => {
   beforeEach(async () => {
     // Setup test database
     await setupTestDatabase();
@@ -376,18 +389,33 @@ describe('Database Integration', () => {
     await cleanupTestDatabase();
   });
 
-  it('handles database transactions correctly', async () => {
+  it("handles database transactions correctly", async () => {
     // Test that creates multiple related records in a transaction
-    const res = await app.request('/patients/bulk', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer valid-token' },
+    const res = await app.request("/patients/bulk", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer valid-token",
+      },
       body: JSON.stringify({
         patients: [
-          { name: 'João Silva', cpf: '123.456.789-00', birthDate: '1985-03-15' },
-          { name: 'Maria Santos', cpf: '987.654.321-00', birthDate: '1990-08-22' },
-          { name: 'Pedro Costa', cpf: '456.789.123-00', birthDate: '1978-12-05' },
-        ]
-      })
+          {
+            name: "João Silva",
+            cpf: "123.456.789-00",
+            birthDate: "1985-03-15",
+          },
+          {
+            name: "Maria Santos",
+            cpf: "987.654.321-00",
+            birthDate: "1990-08-22",
+          },
+          {
+            name: "Pedro Costa",
+            cpf: "456.789.123-00",
+            birthDate: "1978-12-05",
+          },
+        ],
+      }),
     });
 
     expect(res.status).toBe(201);
@@ -396,24 +424,39 @@ describe('Database Integration', () => {
     expect(data.created).toBe(3);
   });
 
-  it('rolls back transaction on partial failure', async () => {
+  it("rolls back transaction on partial failure", async () => {
     // Include one invalid record that should cause rollback
-    const res = await app.request('/patients/bulk', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer valid-token' },
+    const res = await app.request("/patients/bulk", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: "Bearer valid-token",
+      },
       body: JSON.stringify({
         patients: [
-          { name: 'João Silva', cpf: '123.456.789-00', birthDate: '1985-03-15' },
-          { name: 'Invalid Patient', cpf: 'invalid-cpf', birthDate: '1990-08-22' }, // Invalid CPF
-          { name: 'Pedro Costa', cpf: '456.789.123-00', birthDate: '1978-12-05' },
-        ]
-      })
+          {
+            name: "João Silva",
+            cpf: "123.456.789-00",
+            birthDate: "1985-03-15",
+          },
+          {
+            name: "Invalid Patient",
+            cpf: "invalid-cpf",
+            birthDate: "1990-08-22",
+          }, // Invalid CPF
+          {
+            name: "Pedro Costa",
+            cpf: "456.789.123-00",
+            birthDate: "1978-12-05",
+          },
+        ],
+      }),
     });
 
     expect(res.status).toBe(400);
-    
+
     // Verify no patients were created (transaction rolled back)
-    const checkRes = await app.request('/patients');
+    const checkRes = await app.request("/patients");
     const checkData = await checkRes.json();
     expect(checkData.total).toBe(0);
   });
@@ -485,7 +528,7 @@ neonpro/
 
 ```typescript
 // packages/test-utils/src/api-testing.ts
-import type { Hono } from 'hono';
+import type { Hono } from "hono";
 
 export interface TestApiOptions {
   authToken?: string;
@@ -494,33 +537,38 @@ export interface TestApiOptions {
 }
 
 export class TestApiClient {
-  constructor(private app: Hono, private options: TestApiOptions = {}) {}
+  constructor(
+    private app: Hono,
+    private options: TestApiOptions = {},
+  ) {}
 
   async get(path: string, headers: Record<string, string> = {}) {
-    return this.request('GET', path, undefined, headers);
+    return this.request("GET", path, undefined, headers);
   }
 
   async post(path: string, body?: any, headers: Record<string, string> = {}) {
-    return this.request('POST', path, body, headers);
+    return this.request("POST", path, body, headers);
   }
 
   async put(path: string, body?: any, headers: Record<string, string> = {}) {
-    return this.request('PUT', path, body, headers);
+    return this.request("PUT", path, body, headers);
   }
 
   async delete(path: string, headers: Record<string, string> = {}) {
-    return this.request('DELETE', path, undefined, headers);
+    return this.request("DELETE", path, undefined, headers);
   }
 
   private async request(
-    method: string, 
-    path: string, 
-    body?: any, 
-    headers: Record<string, string> = {}
+    method: string,
+    path: string,
+    body?: any,
+    headers: Record<string, string> = {},
   ) {
     const defaultHeaders = {
-      'Content-Type': 'application/json',
-      ...(this.options.authToken && { 'Authorization': `Bearer ${this.options.authToken}` }),
+      "Content-Type": "application/json",
+      ...(this.options.authToken && {
+        Authorization: `Bearer ${this.options.authToken}`,
+      }),
       ...headers,
     };
 
@@ -556,7 +604,7 @@ export class TestApiClient {
 
 ### 4. Test Execution Order & Dependencies
 
-```typescript
+````typescript
 // tests/integration/test-order.config.ts
 export const testExecutionOrder = {
   // Core infrastructure tests first
@@ -565,14 +613,14 @@ export const testExecutionOrder = {
     'authentication-setup',
     'middleware-initialization'
   ],
-  
+
   // Service layer tests
   phase2: [
     'patient-service',
     'appointment-service',
     'notification-service'
   ],
-  
+
   // Integration tests last
   phase3: [
     'patient-appointment-flow',
@@ -585,7 +633,7 @@ export const testExecutionOrder = {
 export async function runOrderedTests() {
   for (const [phase, tests] of Object.entries(testExecutionOrder)) {
     console.log(`Running ${phase} tests...`);
-    
+
     for (const testSuite of tests) {
       await import(`./suites/${testSuite}.test.ts`);
     }
@@ -644,7 +692,7 @@ export default defineConfig({
     },
   },
 });
-```
+````
 
 ### 2. Merge Coverage Reports
 
@@ -672,20 +720,20 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
-      
+          node-version: "20"
+          cache: "pnpm"
+
       - run: pnpm install
-      
+
       - name: Run API Tests
         run: pnpm --filter @neonpro/api test:coverage
         env:
           DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
           JWT_SECRET: test-secret
-      
+
       - name: Check Coverage Thresholds
         run: pnpm --filter @neonpro/api coverage:check
-      
+
       - name: Upload Coverage
         uses: codecov/codecov-action@v3
         with:
@@ -700,12 +748,12 @@ jobs:
 
 ```typescript
 // Test service architecture patterns
-describe('Service Layer Architecture', () => {
-  it('maintains proper service separation', async () => {
+describe("Service Layer Architecture", () => {
+  it("maintains proper service separation", async () => {
     // Test that patient service doesn't directly access appointment data
     const patientService = new PatientService();
     const appointmentService = new AppointmentService();
-    
+
     // Services should communicate through defined interfaces
     expect(patientService.getAppointments).toBeUndefined();
     expect(() => {
@@ -714,17 +762,17 @@ describe('Service Layer Architecture', () => {
     }).toThrow();
   });
 
-  it('enforces dependency injection patterns', () => {
+  it("enforces dependency injection patterns", () => {
     // Test that services receive dependencies rather than creating them
     const mockDb = vi.fn();
     const mockLogger = vi.fn();
-    
+
     const service = new PatientService({
       database: mockDb,
       logger: mockLogger,
       emailService: vi.fn(),
     });
-    
+
     expect(service.dependencies.database).toBe(mockDb);
     expect(service.dependencies.logger).toBe(mockLogger);
   });
@@ -735,12 +783,12 @@ describe('Service Layer Architecture', () => {
 
 ```typescript
 // Test API contracts and backward compatibility
-describe('API Contract Validation', () => {
-  it('maintains backward compatibility', async () => {
+describe("API Contract Validation", () => {
+  it("maintains backward compatibility", async () => {
     // Test that API responses match expected schema
-    const res = await app.request('/patients/123');
+    const res = await app.request("/patients/123");
     const data = await res.json();
-    
+
     // Use schema validation to ensure contract compliance
     const patientSchema = z.object({
       id: z.string(),
@@ -753,18 +801,18 @@ describe('API Contract Validation', () => {
       email: z.string().optional(),
       phone: z.string().optional(),
     });
-    
+
     expect(() => patientSchema.parse(data.patient)).not.toThrow();
   });
 
-  it('validates request/response schemas', async () => {
+  it("validates request/response schemas", async () => {
     // Test schema evolution and versioning
-    const v1Response = await app.request('/v1/patients/123');
-    const v2Response = await app.request('/v2/patients/123');
-    
+    const v1Response = await app.request("/v1/patients/123");
+    const v2Response = await app.request("/v2/patients/123");
+
     const v1Data = await v1Response.json();
     const v2Data = await v2Response.json();
-    
+
     // V2 should be superset of V1
     expect(v2Data.patient).toMatchObject(v1Data.patient);
     expect(v2Data.patient.metadata).toBeDefined(); // New field in v2
@@ -776,30 +824,30 @@ describe('API Contract Validation', () => {
 
 ```typescript
 // Test API performance characteristics
-describe('API Performance', () => {
-  it('responds within acceptable time limits', async () => {
+describe("API Performance", () => {
+  it("responds within acceptable time limits", async () => {
     const start = Date.now();
-    
-    const res = await app.request('/patients?limit=100');
-    
+
+    const res = await app.request("/patients?limit=100");
+
     const duration = Date.now() - start;
     expect(duration).toBeLessThan(500); // 500ms SLA
     expect(res.status).toBe(200);
   });
 
-  it('handles high concurrent load', async () => {
+  it("handles high concurrent load", async () => {
     const concurrentRequests = 50;
-    const requests = Array(concurrentRequests).fill(null).map(() => 
-      app.request('/patients/123')
-    );
-    
+    const requests = Array(concurrentRequests)
+      .fill(null)
+      .map(() => app.request("/patients/123"));
+
     const start = Date.now();
     const responses = await Promise.all(requests);
     const duration = Date.now() - start;
-    
+
     // All requests should succeed
-    expect(responses.every(r => r.status === 200)).toBe(true);
-    
+    expect(responses.every((r) => r.status === 200)).toBe(true);
+
     // Should handle concurrent load efficiently
     expect(duration).toBeLessThan(2000); // 2s for 50 concurrent requests
   });
@@ -826,11 +874,17 @@ describe('API Performance', () => {
 
 ```typescript
 // Optimize test performance
-describe.concurrent('Patient API Endpoints', () => {
+describe.concurrent("Patient API Endpoints", () => {
   // Run independent tests in parallel
-  test('GET /patients', async () => { /* test implementation */ });
-  test('GET /patients/:id', async () => { /* test implementation */ });
-  test('POST /patients', async () => { /* test implementation */ });
+  test("GET /patients", async () => {
+    /* test implementation */
+  });
+  test("GET /patients/:id", async () => {
+    /* test implementation */
+  });
+  test("POST /patients", async () => {
+    /* test implementation */
+  });
 });
 
 // Use test database transactions for isolation
@@ -847,27 +901,29 @@ afterEach(async () => {
 
 ```typescript
 // Debug integration test failures
-import { createLogger } from '@/utils/logger';
+import { createLogger } from "@/utils/logger";
 
-const testLogger = createLogger('integration-test', 'debug');
+const testLogger = createLogger("integration-test", "debug");
 
-describe('Patient-Appointment Integration', () => {
-  it('debugs complex integration flow', async () => {
-    testLogger.info('Starting patient creation');
-    
-    const patientRes = await app.request('/patients', {
-      method: 'POST',
-      body: JSON.stringify({ /* patient data */ }),
+describe("Patient-Appointment Integration", () => {
+  it("debugs complex integration flow", async () => {
+    testLogger.info("Starting patient creation");
+
+    const patientRes = await app.request("/patients", {
+      method: "POST",
+      body: JSON.stringify({
+        /* patient data */
+      }),
     });
-    
-    testLogger.info('Patient created', { status: patientRes.status });
-    
+
+    testLogger.info("Patient created", { status: patientRes.status });
+
     if (patientRes.status !== 201) {
       const error = await patientRes.json();
-      testLogger.error('Patient creation failed', { error });
+      testLogger.error("Patient creation failed", { error });
       throw new Error(`Patient creation failed: ${JSON.stringify(error)}`);
     }
-    
+
     // Continue with appointment creation...
   });
 });
@@ -879,43 +935,49 @@ describe('Patient-Appointment Integration', () => {
 
 ```typescript
 // Complete example combining all patterns
-import { TestApiClient } from '@neonpro/test-utils';
-import { setupTestDatabase, cleanupTestDatabase } from './helpers/database';
-import { createMockPatient, createMockAppointment } from './fixtures';
+import { TestApiClient } from "@neonpro/test-utils";
+import { setupTestDatabase, cleanupTestDatabase } from "./helpers/database";
+import { createMockPatient, createMockAppointment } from "./fixtures";
 
-describe('Healthcare API Integration', () => {
+describe("Healthcare API Integration", () => {
   let client: TestApiClient;
-  
+
   beforeAll(async () => {
     await setupTestDatabase();
-    client = new TestApiClient(app, { authToken: 'valid-doctor-token' });
+    client = new TestApiClient(app, { authToken: "valid-doctor-token" });
   });
 
   afterAll(async () => {
     await cleanupTestDatabase();
   });
 
-  it('handles complete patient care workflow', async () => {
+  it("handles complete patient care workflow", async () => {
     // 1. Register new patient
     const patientData = createMockPatient();
-    const createPatientRes = await client.post('/patients', patientData);
+    const createPatientRes = await client.post("/patients", patientData);
     const patient = await client.expectSuccess(createPatientRes, 201);
 
     // 2. Schedule appointment
     const appointmentData = createMockAppointment({
       patientId: patient.patient.id,
-      doctorId: 'doctor-123'
+      doctorId: "doctor-123",
     });
-    const createAppointmentRes = await client.post('/appointments', appointmentData);
+    const createAppointmentRes = await client.post(
+      "/appointments",
+      appointmentData,
+    );
     const appointment = await client.expectSuccess(createAppointmentRes, 201);
 
     // 3. Update patient medical history
     const medicalUpdate = {
-      conditions: ['Diabetes Tipo 2'],
-      medications: ['Metformina 500mg'],
-      allergies: ['Penicilina']
+      conditions: ["Diabetes Tipo 2"],
+      medications: ["Metformina 500mg"],
+      allergies: ["Penicilina"],
     };
-    const updateRes = await client.put(`/patients/${patient.patient.id}/medical`, medicalUpdate);
+    const updateRes = await client.put(
+      `/patients/${patient.patient.id}/medical`,
+      medicalUpdate,
+    );
     const updatedPatient = await client.expectSuccess(updateRes);
 
     // 4. Verify integration
@@ -927,7 +989,9 @@ describe('Healthcare API Integration', () => {
     await client.expectSuccess(deleteRes);
 
     // Verify appointment was also handled appropriately
-    const appointmentCheckRes = await client.get(`/appointments/${appointment.appointment.id}`);
+    const appointmentCheckRes = await client.get(
+      `/appointments/${appointment.appointment.id}`,
+    );
     const appointmentData = await client.expectError(appointmentCheckRes, 404);
     expect(appointmentData.message).toMatch(/appointment.*not found/i);
   });
@@ -937,6 +1001,6 @@ describe('Healthcare API Integration', () => {
 ## See Also
 
 - [Frontend Testing](./front-end-testing.md) - Frontend integration patterns
-- [Database Security Testing](./database-security-testing.md) - Database and RLS patterns  
+- [Database Security Testing](./database-security-testing.md) - Database and RLS patterns
 - [Code Review & Audit](./code-review-auditfix.md) - Quality gates and reviews
 - [AGENTS.md](./AGENTS.md) - Testing orchestration guide

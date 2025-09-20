@@ -1,138 +1,131 @@
 /**
  * Contract Test: Financial Dashboard API
- * 
+ *
  * Tests the GET /api/financial/dashboard endpoint for:
  * - Response structure validation
- * - Brazilian currency formatting 
+ * - Brazilian currency formatting
  * - Error handling scenarios
  * - LGPD compliance in responses
- * 
+ *
  * CRITICAL: These tests MUST FAIL initially (TDD Red phase)
+ * The endpoint /api/financial/dashboard does NOT exist yet
  */
 
-import { describe, it, expect, beforeAll, afterAll, vi } from 'vitest';
-import type { 
-  FinancialDashboardResponse, 
+import { describe, it, expect } from "vitest";
+import type {
+  FinancialDashboardResponse,
   FinancialMetrics,
   MonetaryValue,
-  Currency 
-} from '@/types/financial';
+  Currency,
+} from "@/types/financial";
 
-// Mock the API client since endpoints don't exist yet
-const mockFetch = vi.fn();
-global.fetch = mockFetch;
+describe("Contract: Financial Dashboard API", () => {
+  describe("GET /api/financial/dashboard", () => {
+    it("should return valid financial dashboard structure", async () => {
+      // TDD RED PHASE: Test actual endpoint that doesn't exist yet
 
-describe('Contract: Financial Dashboard API', () => {
-  beforeAll(() => {
-    // Set up Brazilian locale for currency formatting tests
-    vi.stubGlobal('Intl', {
-      ...Intl,
-      NumberFormat: vi.fn().mockImplementation((locale, options) => ({
-        format: (value: number) => {
-          if (locale === 'pt-BR' && options?.style === 'currency') {
-            return `R$ ${value.toFixed(2).replace('.', ',')}`;
-          }
-          return value.toString();
-        }
-      }))
-    });
-  });
+      // ACT: Call the REAL API endpoint (will fail until implemented)
+      const response = await fetch(
+        "/api/financial/dashboard?period=current_month",
+      );
 
-  afterAll(() => {
-    vi.restoreAllMocks();
-  });
-
-  describe('GET /api/financial/dashboard', () => {
-    it('should return valid financial dashboard structure', async () => {
-      // ARRANGE: Mock successful response (this will fail until endpoint exists)
-      const mockResponse: FinancialDashboardResponse = {
-        success: true,
-        data: {
-          metrics: {
-            id: 'test-metrics-id',
-            period: {
-              start: new Date('2024-01-01'),
-              end: new Date('2024-01-31'),
-              label: 'Janeiro 2024'
-            },
-            mrr: {
-              amount: 15000.50,
-              currency: 'BRL' as Currency,
-              formatted: 'R$ 15.000,50'
-            },
-            arr: {
-              amount: 180006.00,
-              currency: 'BRL' as Currency, 
-              formatted: 'R$ 180.006,00'
-            },
-            churnRate: 5.2,
-            customerCount: 125,
-            averageTicket: {
-              amount: 120.00,
-              currency: 'BRL' as Currency,
-              formatted: 'R$ 120,00'
-            },
-            growth: {
-              mrrGrowth: 8.5,
-              customerGrowth: 12.3,
-              ticketGrowth: -2.1
-            },
-            updatedAt: new Date()
-          },
-          charts: {
-            mrrTrend: [],
-            churnAnalysis: [],
-            revenueSegments: []
-          },
-          summary: {
-            totalRevenue: {
-              amount: 45000.75,
-              currency: 'BRL' as Currency,
-              formatted: 'R$ 45.000,75'
-            },
-            totalCustomers: 125,
-            activeSubscriptions: 118
-          }
-        },
-        meta: {
-          generatedAt: new Date(),
-          cacheTtl: 300,
-          lgpdCompliant: true
-        }
-      };
-      
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        json: async () => mockResponse
-      });
-
-      // ACT: Call the API endpoint (this should fail initially)
-      const response = await fetch('/api/financial/dashboard?period=current_month');
-      const data = await response.json();
-
-      // ASSERT: Validate response structure
+      // ASSERT: These will FAIL until the endpoint is implemented
       expect(response.ok).toBe(true);
+      expect(response.status).toBe(200);
+
+      const data = await response.json();
       expect(data.success).toBe(true);
       expect(data.data).toBeDefined();
       expect(data.meta).toBeDefined();
-      
+
       // Validate financial metrics structure
       const metrics = data.data.metrics;
       expect(metrics).toBeDefined();
-      expect(metrics.id).toBeTypeOf('string');
+      expect(metrics.id).toBeTypeOf("string");
       expect(metrics.period).toBeDefined();
       expect(metrics.mrr).toBeDefined();
       expect(metrics.arr).toBeDefined();
-      expect(metrics.churnRate).toBeTypeOf('number');
-      expect(metrics.customerCount).toBeTypeOf('number');
-      
+      expect(metrics.churnRate).toBeTypeOf("number");
+      expect(metrics.customerCount).toBeTypeOf("number");
+
       // Validate monetary values have proper structure
-      expect(metrics.mrr.amount).toBeTypeOf('number');
-      expect(metrics.mrr.currency).toBe('BRL');
+      expect(metrics.mrr.amount).toBeTypeOf("number");
+      expect(metrics.mrr.currency).toBe("BRL");
       expect(metrics.mrr.formatted).toMatch(/^R\$ [\d.,]+$/);
-      
-      expect(metrics.arr.amount).toBeTypeOf('number');
-      expect(metrics.arr.currency).toBe('BRL');
+
+      expect(metrics.arr.amount).toBeTypeOf("number");
+      expect(metrics.arr.currency).toBe("BRL");
       expect(metrics.arr.formatted).toMatch(/^R\$ [\d.,]+$/);
     });
+    it("should handle authentication errors appropriately", async () => {
+      // TDD RED PHASE: Call real endpoint without proper auth
+
+      // ACT: Call endpoint without authentication (will fail until implemented)
+      const response = await fetch("/api/financial/dashboard");
+
+      // ASSERT: Should return 401 when not authenticated
+      expect(response.ok).toBe(false);
+      expect(response.status).toBe(401);
+
+      const data = await response.json();
+      expect(data.success).toBe(false);
+      expect(data.error.code).toBe("UNAUTHORIZED");
+    });
+
+    it("should validate LGPD compliance in responses", async () => {
+      // TDD RED PHASE: Test real endpoint for LGPD compliance
+
+      // ACT: Call real endpoint (will fail until implemented)
+      const response = await fetch("/api/financial/dashboard");
+
+      // ASSERT: LGPD compliance indicators should be present
+      expect(response.ok).toBe(true);
+
+      const data = await response.json();
+      expect(data.meta.lgpdCompliant).toBe(true);
+      expect(data.meta.dataAnonymized).toBeDefined();
+      expect(data.meta.consentStatus).toBeDefined();
+      expect(data.meta.retentionPeriod).toBeDefined();
+    });
+
+    it("should handle server errors gracefully", async () => {
+      // TDD RED PHASE: This will fail until error handling is implemented
+
+      // ACT: This call should return structured error when endpoint fails
+      const response = await fetch("/api/financial/dashboard/invalid");
+
+      // ASSERT: Error structure validation
+      expect(response.ok).toBe(false);
+      expect(response.status).toBe(500);
+
+      const data = await response.json();
+      expect(data.success).toBe(false);
+      expect(data.error.code).toBe("INTERNAL_SERVER_ERROR");
+      expect(data.error.requestId).toBeDefined();
+    });
+
+    it("should validate Brazilian currency formatting", async () => {
+      // TDD RED PHASE: Test real endpoint currency formatting
+
+      // ACT: Call real endpoint (will fail until implemented)
+      const response = await fetch("/api/financial/dashboard");
+
+      // ASSERT: Brazilian currency formatting patterns
+      expect(response.ok).toBe(true);
+
+      const data = await response.json();
+      const metrics = data.data.metrics;
+
+      // Validate BRL currency formatting
+      expect(metrics.mrr.formatted).toMatch(/^R\$ [\d.,]+$/);
+      expect(metrics.arr.formatted).toMatch(/^R\$ [\d.,]+$/);
+      expect(metrics.averageTicket.formatted).toMatch(/^R\$ [\d.,]+$/);
+      expect(data.data.summary.totalRevenue.formatted).toMatch(/^R\$ [\d.,]+$/);
+
+      // All should use BRL currency
+      expect(metrics.mrr.currency).toBe("BRL");
+      expect(metrics.arr.currency).toBe("BRL");
+      expect(metrics.averageTicket.currency).toBe("BRL");
+    });
+  });
+});

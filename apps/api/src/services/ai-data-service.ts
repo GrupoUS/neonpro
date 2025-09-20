@@ -3,19 +3,20 @@
  * Handles database operations for AI agent queries with RLS enforcement
  */
 
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { 
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import {
   ClientData,
   AppointmentData,
   FinancialData,
   QueryIntent,
   AgentError,
-  DataAccessError
-} from '@neonpro/types';
+  DataAccessError,
+} from "@neonpro/types";
 
 export class AIDataService {
   private supabase: SupabaseClient;
-  private cache: Map<string, { data: any; timestamp: number; ttl: number }> = new Map();
+  private cache: Map<string, { data: any; timestamp: number; ttl: number }> =
+    new Map();
 
   constructor() {
     this.supabase = createClient(
@@ -23,9 +24,9 @@ export class AIDataService {
       process.env.SUPABASE_SERVICE_KEY!,
       {
         auth: {
-          persistSession: false
-        }
-      }
+          persistSession: false,
+        },
+      },
     );
   }
 
@@ -37,11 +38,11 @@ export class AIDataService {
    * Search patients by name with fuzzy matching
    */
   async getClientsByName(
-    name: string, 
-    context?: { userId?: string; domain?: string; limit?: number }
+    name: string,
+    context?: { userId?: string; domain?: string; limit?: number },
   ): Promise<ClientData[]> {
-    const cacheKey = `patients:${name}:${context?.domain || 'default'}:${context?.limit || 10}`;
-    
+    const cacheKey = `patients:${name}:${context?.domain || "default"}:${context?.limit || 10}`;
+
     // Check cache first
     const cached = this.getFromCache(cacheKey);
     if (cached) {
@@ -50,8 +51,9 @@ export class AIDataService {
 
     try {
       let query = this.supabase
-        .from('patients')
-        .select(`
+        .from("patients")
+        .select(
+          `
           id,
           full_name,
           email,
@@ -62,13 +64,14 @@ export class AIDataService {
           lgpd_consent_given,
           created_at,
           updated_at
-        `)
-        .ilike('full_name', `%${name}%`)
+        `,
+        )
+        .ilike("full_name", `%${name}%`)
         .limit(context?.limit || 10);
 
       // Apply clinic filter (domain maps to clinic_id in multi-tenant setup)
       if (context?.domain) {
-        query = query.eq('clinic_id', context.domain);
+        query = query.eq("clinic_id", context.domain);
       }
 
       const { data, error } = await query;
@@ -76,7 +79,7 @@ export class AIDataService {
       if (error) {
         throw new DataAccessError(
           `Failed to fetch patients: ${error.message}`,
-          'patients'
+          "patients",
         );
       }
 
@@ -93,9 +96,9 @@ export class AIDataService {
         document: patient.cpf,
         birthDate: patient.birth_date,
         healthPlan: undefined, // Will be added to schema later
-        status: patient.lgpd_consent_given ? 'active' : 'inactive',
+        status: patient.lgpd_consent_given ? "active" : "inactive",
         createdAt: patient.created_at,
-        updatedAt: patient.updated_at
+        updatedAt: patient.updated_at,
       }));
 
       // Cache result
@@ -108,7 +111,7 @@ export class AIDataService {
       }
       throw new DataAccessError(
         `Unexpected error fetching patients: ${error}`,
-        'patients'
+        "patients",
       );
     }
   }
@@ -118,7 +121,7 @@ export class AIDataService {
    */
   async getClientById(id: string): Promise<ClientData | null> {
     const cacheKey = `client:${id}`;
-    
+
     // Check cache first
     const cached = this.getFromCache(cacheKey);
     if (cached) {
@@ -127,8 +130,9 @@ export class AIDataService {
 
     try {
       const { data, error } = await this.supabase
-        .from('clients')
-        .select(`
+        .from("clients")
+        .select(
+          `
           id,
           name,
           email,
@@ -150,17 +154,18 @@ export class AIDataService {
             state,
             zip_code
           )
-        `)
-        .eq('id', id)
+        `,
+        )
+        .eq("id", id)
         .single();
 
       if (error) {
-        if (error.code === 'PGRST116') {
+        if (error.code === "PGRST116") {
           return null;
         }
         throw new DataAccessError(
           `Failed to fetch client: ${error.message}`,
-          'client'
+          "client",
         );
       }
 
@@ -181,15 +186,17 @@ export class AIDataService {
         status: data.status,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
-        address: data.addresses?.[0] ? {
-          street: data.addresses[0].street,
-          number: data.addresses[0].number,
-          complement: data.addresses[0].complement,
-          neighborhood: data.addresses[0].neighborhood,
-          city: data.addresses[0].city,
-          state: data.addresses[0].state,
-          zipCode: data.addresses[0].zip_code,
-        } : undefined
+        address: data.addresses?.[0]
+          ? {
+              street: data.addresses[0].street,
+              number: data.addresses[0].number,
+              complement: data.addresses[0].complement,
+              neighborhood: data.addresses[0].neighborhood,
+              city: data.addresses[0].city,
+              state: data.addresses[0].state,
+              zipCode: data.addresses[0].zip_code,
+            }
+          : undefined,
       };
 
       // Cache result
@@ -202,7 +209,7 @@ export class AIDataService {
       }
       throw new DataAccessError(
         `Unexpected error fetching client: ${error}`,
-        'client'
+        "client",
       );
     }
   }
@@ -217,10 +224,10 @@ export class AIDataService {
   async getAppointmentsByDate(
     startDate: string,
     endDate: string,
-    context?: { userId?: string; domain?: string; limit?: number }
+    context?: { userId?: string; domain?: string; limit?: number },
   ): Promise<AppointmentData[]> {
-    const cacheKey = `appointments:${startDate}:${endDate}:${context?.domain || 'default'}:${context?.limit || 50}`;
-    
+    const cacheKey = `appointments:${startDate}:${endDate}:${context?.domain || "default"}:${context?.limit || 50}`;
+
     // Check cache first
     const cached = this.getFromCache(cacheKey);
     if (cached) {
@@ -229,8 +236,9 @@ export class AIDataService {
 
     try {
       let query = this.supabase
-        .from('appointments')
-        .select(`
+        .from("appointments")
+        .select(
+          `
           id,
           client_id,
           client:clients(name),
@@ -247,15 +255,16 @@ export class AIDataService {
           telemedicine,
           created_at,
           updated_at
-        `)
-        .gte('scheduled_at', startDate)
-        .lte('scheduled_at', endDate)
-        .order('scheduled_at', { ascending: true })
+        `,
+        )
+        .gte("scheduled_at", startDate)
+        .lte("scheduled_at", endDate)
+        .order("scheduled_at", { ascending: true })
         .limit(context?.limit || 50);
 
       // Apply domain filter if provided
       if (context?.domain) {
-        query = query.eq('domain', context.domain);
+        query = query.eq("domain", context.domain);
       }
 
       const { data, error } = await query;
@@ -263,7 +272,7 @@ export class AIDataService {
       if (error) {
         throw new DataAccessError(
           `Failed to fetch appointments: ${error.message}`,
-          'appointments'
+          "appointments",
         );
       }
 
@@ -275,11 +284,11 @@ export class AIDataService {
       const appointments: AppointmentData[] = data.map((apt: any) => ({
         id: apt.id,
         clientId: apt.client_id,
-        clientName: apt.client?.name || 'Unknown',
+        clientName: apt.client?.name || "Unknown",
         professionalId: apt.professional_id,
-        professionalName: apt.professional?.name || 'Unknown',
+        professionalName: apt.professional?.name || "Unknown",
         serviceId: apt.service_id,
-        serviceName: apt.service?.name || 'Unknown',
+        serviceName: apt.service?.name || "Unknown",
         scheduledAt: apt.scheduled_at,
         duration: apt.duration,
         status: apt.status,
@@ -288,7 +297,7 @@ export class AIDataService {
         location: apt.location,
         telemedicine: apt.telemedicine,
         createdAt: apt.created_at,
-        updatedAt: apt.updated_at
+        updatedAt: apt.updated_at,
       }));
 
       // Cache result
@@ -301,7 +310,7 @@ export class AIDataService {
       }
       throw new DataAccessError(
         `Unexpected error fetching appointments: ${error}`,
-        'appointments'
+        "appointments",
       );
     }
   }
@@ -311,15 +320,15 @@ export class AIDataService {
    */
   async getAppointmentsByClient(
     clientId: string,
-    context?: { 
-      userId?: string; 
-      domain?: string; 
+    context?: {
+      userId?: string;
+      domain?: string;
       limit?: number;
       upcoming?: boolean;
-    }
+    },
   ): Promise<AppointmentData[]> {
-    const cacheKey = `client-appointments:${clientId}:${context?.upcoming ? 'upcoming' : 'all'}:${context?.domain || 'default'}`;
-    
+    const cacheKey = `client-appointments:${clientId}:${context?.upcoming ? "upcoming" : "all"}:${context?.domain || "default"}`;
+
     // Check cache first
     const cached = this.getFromCache(cacheKey);
     if (cached) {
@@ -328,8 +337,9 @@ export class AIDataService {
 
     try {
       let query = this.supabase
-        .from('appointments')
-        .select(`
+        .from("appointments")
+        .select(
+          `
           id,
           client_id,
           client:clients(name),
@@ -346,19 +356,20 @@ export class AIDataService {
           telemedicine,
           created_at,
           updated_at
-        `)
-        .eq('client_id', clientId)
-        .order('scheduled_at', { ascending: false })
+        `,
+        )
+        .eq("client_id", clientId)
+        .order("scheduled_at", { ascending: false })
         .limit(context?.limit || 20);
 
       // Filter for upcoming appointments if requested
       if (context?.upcoming) {
-        query = query.gte('scheduled_at', new Date().toISOString());
+        query = query.gte("scheduled_at", new Date().toISOString());
       }
 
       // Apply domain filter if provided
       if (context?.domain) {
-        query = query.eq('domain', context.domain);
+        query = query.eq("domain", context.domain);
       }
 
       const { data, error } = await query;
@@ -366,7 +377,7 @@ export class AIDataService {
       if (error) {
         throw new DataAccessError(
           `Failed to fetch client appointments: ${error.message}`,
-          'appointments'
+          "appointments",
         );
       }
 
@@ -378,11 +389,11 @@ export class AIDataService {
       const appointments: AppointmentData[] = data.map((apt: any) => ({
         id: apt.id,
         clientId: apt.client_id,
-        clientName: apt.client?.name || 'Unknown',
+        clientName: apt.client?.name || "Unknown",
         professionalId: apt.professional_id,
-        professionalName: apt.professional?.name || 'Unknown',
+        professionalName: apt.professional?.name || "Unknown",
         serviceId: apt.service_id,
-        serviceName: apt.service?.name || 'Unknown',
+        serviceName: apt.service?.name || "Unknown",
         scheduledAt: apt.scheduled_at,
         duration: apt.duration,
         status: apt.status,
@@ -391,7 +402,7 @@ export class AIDataService {
         location: apt.location,
         telemedicine: apt.telemedicine,
         createdAt: apt.created_at,
-        updatedAt: apt.updated_at
+        updatedAt: apt.updated_at,
       }));
 
       // Cache result
@@ -404,7 +415,7 @@ export class AIDataService {
       }
       throw new DataAccessError(
         `Unexpected error fetching client appointments: ${error}`,
-        'appointments'
+        "appointments",
       );
     }
   }
@@ -424,7 +435,7 @@ export class AIDataService {
       clientId?: string;
       professionalId?: string;
     },
-    context?: { userId?: string; domain?: string }
+    context?: { userId?: string; domain?: string },
   ): Promise<{
     summary: {
       total: number;
@@ -435,8 +446,8 @@ export class AIDataService {
     };
     transactions: FinancialData[];
   }> {
-    const cacheKey = `financial:${JSON.stringify(filters)}:${context?.domain || 'default'}`;
-    
+    const cacheKey = `financial:${JSON.stringify(filters)}:${context?.domain || "default"}`;
+
     // Check cache first
     const cached = this.getFromCache(cacheKey);
     if (cached) {
@@ -445,8 +456,9 @@ export class AIDataService {
 
     try {
       let query = this.supabase
-        .from('financial_transactions')
-        .select(`
+        .from("financial_transactions")
+        .select(
+          `
           id,
           appointment_id,
           patient_id,
@@ -464,29 +476,30 @@ export class AIDataService {
           description,
           created_at,
           updated_at
-        `)
-        .order('created_at', { ascending: false });
+        `,
+        )
+        .order("created_at", { ascending: false });
 
       // Apply filters
       if (filters.startDate) {
-        query = query.gte('created_at', filters.startDate);
+        query = query.gte("created_at", filters.startDate);
       }
       if (filters.endDate) {
-        query = query.lte('created_at', filters.endDate);
+        query = query.lte("created_at", filters.endDate);
       }
       if (filters.status) {
-        query = query.eq('status', filters.status);
+        query = query.eq("status", filters.status);
       }
       if (filters.clientId) {
-        query = query.eq('patient_id', filters.clientId);
+        query = query.eq("patient_id", filters.clientId);
       }
       if (filters.professionalId) {
-        query = query.eq('professional_id', filters.professionalId);
+        query = query.eq("professional_id", filters.professionalId);
       }
 
       // Apply clinic filter if provided
       if (context?.domain) {
-        query = query.eq('clinic_id', context.domain);
+        query = query.eq("clinic_id", context.domain);
       }
 
       const { data, error } = await query;
@@ -494,14 +507,14 @@ export class AIDataService {
       if (error) {
         throw new DataAccessError(
           `Failed to fetch financial data: ${error.message}`,
-          'financial'
+          "financial",
         );
       }
 
       if (!data) {
         return {
           summary: { total: 0, count: 0, paid: 0, pending: 0, overdue: 0 },
-          transactions: []
+          transactions: [],
         };
       }
 
@@ -509,34 +522,34 @@ export class AIDataService {
       const transactions: FinancialData[] = data.map((record: any) => ({
         appointmentId: record.appointment_id,
         clientId: record.patient_id,
-        clientName: record.patient?.full_name || 'Unknown',
+        clientName: record.patient?.full_name || "Unknown",
         serviceId: record.service_id,
-        serviceName: record.service?.name || 'Unknown',
+        serviceName: record.service?.name || "Unknown",
         professionalId: record.professional_id,
-        professionalName: record.professional?.full_name || 'Unknown',
+        professionalName: record.professional?.full_name || "Unknown",
         amount: record.amount,
-        currency: 'BRL',
+        currency: "BRL",
         status: record.status,
         paymentMethod: record.payment_method,
         paymentDate: record.payment_date,
         dueDate: record.due_date,
         invoiceId: record.invoice_id,
         createdAt: record.created_at,
-        updatedAt: record.updated_at
+        updatedAt: record.updated_at,
       }));
 
       const summary = {
         total: transactions.reduce((sum, t) => sum + t.amount, 0),
         count: transactions.length,
         paid: transactions
-          .filter(t => t.status === 'paid')
+          .filter((t) => t.status === "paid")
           .reduce((sum, t) => sum + t.amount, 0),
         pending: transactions
-          .filter(t => t.status === 'pending')
+          .filter((t) => t.status === "pending")
           .reduce((sum, t) => sum + t.amount, 0),
         overdue: transactions
-          .filter(t => t.status === 'overdue')
-          .reduce((sum, t) => sum + t.amount, 0)
+          .filter((t) => t.status === "overdue")
+          .reduce((sum, t) => sum + t.amount, 0),
       };
 
       const result = { summary, transactions };
@@ -551,7 +564,7 @@ export class AIDataService {
       }
       throw new DataAccessError(
         `Unexpected error fetching financial data: ${error}`,
-        'financial'
+        "financial",
       );
     }
   }
@@ -561,10 +574,10 @@ export class AIDataService {
    */
   async getFinancialByClient(
     clientId: string,
-    context?: { userId?: string; domain?: string; limit?: number }
+    context?: { userId?: string; domain?: string; limit?: number },
   ): Promise<FinancialData[]> {
-    const cacheKey = `client-financial:${clientId}:${context?.domain || 'default'}:${context?.limit || 50}`;
-    
+    const cacheKey = `client-financial:${clientId}:${context?.domain || "default"}:${context?.limit || 50}`;
+
     // Check cache first
     const cached = this.getFromCache(cacheKey);
     if (cached) {
@@ -573,8 +586,9 @@ export class AIDataService {
 
     try {
       let query = this.supabase
-        .from('financial_records')
-        .select(`
+        .from("financial_records")
+        .select(
+          `
           id,
           appointment_id,
           client_id,
@@ -591,14 +605,15 @@ export class AIDataService {
           invoice_id,
           created_at,
           updated_at
-        `)
-        .eq('client_id', clientId)
-        .order('created_at', { ascending: false })
+        `,
+        )
+        .eq("client_id", clientId)
+        .order("created_at", { ascending: false })
         .limit(context?.limit || 50);
 
       // Apply domain filter if provided
       if (context?.domain) {
-        query = query.eq('domain', context.domain);
+        query = query.eq("domain", context.domain);
       }
 
       const { data, error } = await query;
@@ -606,7 +621,7 @@ export class AIDataService {
       if (error) {
         throw new DataAccessError(
           `Failed to fetch client financial records: ${error.message}`,
-          'financial'
+          "financial",
         );
       }
 
@@ -618,20 +633,20 @@ export class AIDataService {
       const transactions: FinancialData[] = data.map((record: any) => ({
         appointmentId: record.appointment_id,
         clientId: record.client_id,
-        clientName: record.client?.name || 'Unknown',
+        clientName: record.client?.name || "Unknown",
         serviceId: record.service_id,
-        serviceName: record.service?.name || 'Unknown',
+        serviceName: record.service?.name || "Unknown",
         professionalId: record.professional_id,
-        professionalName: record.professional?.name || 'Unknown',
+        professionalName: record.professional?.name || "Unknown",
         amount: record.amount,
-        currency: 'BRL',
+        currency: "BRL",
         status: record.status,
         paymentMethod: record.payment_method,
         paymentDate: record.payment_date,
         dueDate: record.due_date,
         invoiceId: record.invoice_id,
         createdAt: record.created_at,
-        updatedAt: record.updated_at
+        updatedAt: record.updated_at,
       }));
 
       // Cache result
@@ -644,7 +659,7 @@ export class AIDataService {
       }
       throw new DataAccessError(
         `Unexpected error fetching client financial records: ${error}`,
-        'financial'
+        "financial",
       );
     }
   }
@@ -675,7 +690,7 @@ export class AIDataService {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     });
   }
 
@@ -696,18 +711,18 @@ export class AIDataService {
   async healthCheck(): Promise<boolean> {
     try {
       const { data, error } = await this.supabase
-        .from('clients')
-        .select('count', { count: 'exact', head: true })
+        .from("clients")
+        .select("count", { count: "exact", head: true })
         .limit(1);
 
       if (error) {
-        console.error('Database health check failed:', error);
+        console.error("Database health check failed:", error);
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Database health check error:', error);
+      console.error("Database health check error:", error);
       return false;
     }
   }

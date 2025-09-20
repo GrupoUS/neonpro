@@ -24,6 +24,7 @@ The system uses predefined templates for consistent command parsing:
 ### Built-in Templates
 
 #### 1. Analyze Command
+
 ```typescript
 {
   name: 'analyze',
@@ -39,6 +40,7 @@ The system uses predefined templates for consistent command parsing:
 ```
 
 **Usage Examples:**
+
 ```bash
 # Security analysis with L7 depth
 analyze --type security --depth L7
@@ -51,6 +53,7 @@ analyze --type architecture --depth L9 --agents architect-review,code-reviewer -
 ```
 
 #### 2. Test Command
+
 ```typescript
 {
   name: 'test',
@@ -66,6 +69,7 @@ analyze --type architecture --depth L9 --agents architect-review,code-reviewer -
 ```
 
 **Usage Examples:**
+
 ```bash
 # Unit testing with 90% coverage requirement
 test --type unit --scope frontend --coverage 90
@@ -78,6 +82,7 @@ test --type compliance --scope full --healthcare --parallel
 ```
 
 #### 3. Validate Command
+
 ```typescript
 {
   name: 'validate',
@@ -93,6 +98,7 @@ test --type compliance --scope full --healthcare --parallel
 ```
 
 **Usage Examples:**
+
 ```bash
 # LGPD compliance validation
 validate --target compliance --standard lgpd --strict
@@ -105,6 +111,7 @@ validate --target architecture --standard anvisa --healthcare
 ```
 
 #### 4. Review Command
+
 ```typescript
 {
   name: 'review',
@@ -120,6 +127,7 @@ validate --target architecture --standard anvisa --healthcare
 ```
 
 **Usage Examples:**
+
 ```bash
 # Code review with L3 depth
 review --type code --depth L3
@@ -132,6 +140,7 @@ review --type performance --depth L5 --autoApprove
 ```
 
 #### 5. Execute Command
+
 ```typescript
 {
   name: 'execute',
@@ -147,6 +156,7 @@ review --type performance --depth L5 --autoApprove
 ```
 
 **Usage Examples:**
+
 ```bash
 # Sequential TDD workflow
 execute --workflow sequential --pattern tdd
@@ -226,13 +236,13 @@ private validateParameter(value: string, parameter: ParameterDefinition): any {
         throw new Error(`Value ${num} is above maximum ${parameter.max}`);
       }
       return num;
-    
+
     case 'boolean':
       return value.toLowerCase() === 'true' || value === '1';
-    
+
     case 'array':
       return value.split(',').map(item => item.trim());
-    
+
     default:
       return value;
   }
@@ -245,11 +255,11 @@ private validateParameter(value: string, parameter: ParameterDefinition): any {
 private validateEnum(value: string, allowedValues: string[]): string {
   const normalizedValue = value.toLowerCase();
   const validValue = allowedValues.find(v => v.toLowerCase() === normalizedValue);
-  
+
   if (!validValue) {
     throw new Error(`Invalid value '${value}'. Allowed values: ${allowedValues.join(', ')}`);
   }
-  
+
   return validValue;
 }
 ```
@@ -257,26 +267,27 @@ private validateEnum(value: string, allowedValues: string[]): string {
 ## Command Execution Flow
 
 ### 1. Command Parsing
+
 ```typescript
 async executeCommand(command: string): Promise<CommandExecutionResult> {
   try {
     // Parse command
     const parsed = this.parseCommand(command);
-    
+
     // Validate parameters
     this.validateCommand(parsed);
-    
+
     // Apply healthcare compliance if required
     if (parsed.options.healthcare) {
       await this.validateHealthcareCompliance(parsed);
     }
-    
+
     // Execute command
     const result = await this.executeParsedCommand(parsed);
-    
+
     // Log execution
     this.logCommandExecution(parsed, result);
-    
+
     return result;
   } catch (error) {
     return this.handleCommandError(error, command);
@@ -289,11 +300,11 @@ async executeCommand(command: string): Promise<CommandExecutionResult> {
 ```typescript
 private async validateHealthcareCompliance(parsed: ParsedCommand): Promise<void> {
   const compliance = await this.healthcareValidator.validateCommand(parsed);
-  
+
   if (!compliance.compliant) {
     throw new Error(`Healthcare compliance validation failed: ${compliance.violations.join(', ')}`);
   }
-  
+
   parsed.compliance = compliance;
 }
 ```
@@ -316,11 +327,11 @@ private async executeParsedCommand(parsed: ParsedCommand): Promise<CommandExecut
 
 ```typescript
 export enum CommandErrorType {
-  SYNTAX_ERROR = 'SYNTAX_ERROR',
-  VALIDATION_ERROR = 'VALIDATION_ERROR',
-  EXECUTION_ERROR = 'EXECUTION_ERROR',
-  COMPLIANCE_ERROR = 'COMPLIANCE_ERROR',
-  TIMEOUT_ERROR = 'TIMEOUT_ERROR'
+  SYNTAX_ERROR = "SYNTAX_ERROR",
+  VALIDATION_ERROR = "VALIDATION_ERROR",
+  EXECUTION_ERROR = "EXECUTION_ERROR",
+  COMPLIANCE_ERROR = "COMPLIANCE_ERROR",
+  TIMEOUT_ERROR = "TIMEOUT_ERROR",
 }
 ```
 
@@ -381,7 +392,7 @@ private async routeToAgents(parsed: ParsedCommand): Promise<CommandExecutionResu
   const results = await Promise.allSettled(
     agents.map(agent => agent.executeCommand(parsed))
   );
-  
+
   return this.aggregateAgentResults(results, agents);
 }
 ```
@@ -392,7 +403,7 @@ private async routeToAgents(parsed: ParsedCommand): Promise<CommandExecutionResu
 private selectAgentsForCommand(parsed: ParsedCommand): TDDAgent[] {
   const capabilities = this.getRequiredCapabilities(parsed.action);
   const availableAgents = this.agentRegistry.getAgentsByCapabilities(capabilities);
-  
+
   return availableAgents
     .filter(agent => agent.isAvailable())
     .sort((a, b) => b.getPriority() - a.getPriority())
@@ -420,9 +431,9 @@ interface CustomCommandTemplate {
 function addCustomCommand(template: CustomCommandTemplate): void {
   this.commandTemplates.set(template.name, {
     ...template,
-    parameters: new Map(Object.entries(template.parameters))
+    parameters: new Map(Object.entries(template.parameters)),
   });
-  
+
   this.customHandlers.set(template.name, template.handler);
 }
 ```
@@ -436,21 +447,21 @@ private commandCache: Map<string, CachedCommandResult>;
 
 private async executeWithCache(parsed: ParsedCommand): Promise<CommandExecutionResult> {
   const cacheKey = this.generateCacheKey(parsed);
-  
+
   if (this.commandCache.has(cacheKey)) {
     const cached = this.commandCache.get(cacheKey)!;
     if (this.isCacheValid(cached)) {
       return cached.result;
     }
   }
-  
+
   const result = await this.executeWithoutCache(parsed);
   this.commandCache.set(cacheKey, {
     result,
     timestamp: new Date(),
     ttl: this.getCacheTTL(parsed.action)
   });
-  
+
   return result;
 }
 ```
@@ -461,11 +472,11 @@ private async executeWithCache(parsed: ParsedCommand): Promise<CommandExecutionR
 async executeBatch(commands: string[]): Promise<BatchCommandResult> {
   const parsedCommands = commands.map(cmd => this.parseCommand(cmd));
   const groups = this.groupCommandsForBatchExecution(parsedCommands);
-  
+
   const results = await Promise.allSettled(
     groups.map(group => this.executeCommandGroup(group))
   );
-  
+
   return this.aggregateBatchResults(results, commands);
 }
 ```
@@ -529,30 +540,35 @@ private validatePermissions(parsed: ParsedCommand, user: User): boolean {
 ## Best Practices
 
 ### 1. Command Design
+
 - Use clear, action-oriented names
 - Provide consistent parameter naming
 - Include comprehensive help text
 - Support both short and long parameter formats
 
 ### 2. Error Handling
+
 - Provide clear error messages
 - Include suggestions for correction
 - Log errors with appropriate context
 - Implement graceful degradation
 
 ### 3. Performance
+
 - Implement command caching where appropriate
 - Use parallel execution for independent operations
 - Monitor command execution times
 - Optimize frequently used commands
 
 ### 4. Security
+
 - Validate all input parameters
 - Implement proper permission checks
 - Sanitize user input
 - Log security-relevant events
 
 ### 5. Healthcare Compliance
+
 - Always validate healthcare commands
 - Maintain detailed audit trails
 - Implement proper data handling
@@ -563,24 +579,24 @@ private validatePermissions(parsed: ParsedCommand, user: User): boolean {
 ### Unit Tests
 
 ```typescript
-describe('QualityControlBridge', () => {
+describe("QualityControlBridge", () => {
   let bridge: QualityControlBridge;
-  
+
   beforeEach(() => {
     bridge = new QualityControlBridge();
   });
-  
-  it('should parse analyze command correctly', () => {
-    const parsed = bridge.parseCommand('analyze --type security --depth L7');
-    expect(parsed.action).toBe('analyze');
-    expect(parsed.parameters.type).toBe('security');
-    expect(parsed.parameters.depth).toBe('L7');
+
+  it("should parse analyze command correctly", () => {
+    const parsed = bridge.parseCommand("analyze --type security --depth L7");
+    expect(parsed.action).toBe("analyze");
+    expect(parsed.parameters.type).toBe("security");
+    expect(parsed.parameters.depth).toBe("L7");
   });
-  
-  it('should validate required parameters', () => {
+
+  it("should validate required parameters", () => {
     expect(() => {
-      bridge.parseCommand('analyze --type security');
-    }).toThrow('Missing required parameter: depth');
+      bridge.parseCommand("analyze --type security");
+    }).toThrow("Missing required parameter: depth");
   });
 });
 ```
@@ -588,12 +604,12 @@ describe('QualityControlBridge', () => {
 ### Integration Tests
 
 ```typescript
-describe('Command Execution Integration', () => {
-  it('should execute healthcare compliant commands', async () => {
+describe("Command Execution Integration", () => {
+  it("should execute healthcare compliant commands", async () => {
     const result = await bridge.executeCommand(
-      'analyze --type security --depth L7 --healthcare'
+      "analyze --type security --depth L7 --healthcare",
     );
-    
+
     expect(result.success).toBe(true);
     expect(result.compliance).toBeDefined();
     expect(result.compliance?.compliant).toBe(true);
@@ -604,21 +620,25 @@ describe('Command Execution Integration', () => {
 ## Future Enhancements
 
 ### 1. Natural Language Processing
+
 - Add NLP command interpretation
 - Support voice commands
 - Implement command suggestion system
 
 ### 2. Advanced Analytics
+
 - Real-time command usage analytics
 - Performance trend analysis
 - Predictive command optimization
 
 ### 3. Extended Compliance
+
 - Additional healthcare standards
 - International compliance support
 - Automated compliance reporting
 
 ### 4. AI-Powered Features
+
 - Intelligent command optimization
 - Automatic parameter suggestion
 - Predictive error prevention

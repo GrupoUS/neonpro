@@ -1,20 +1,25 @@
 # Prompt Enhancement Workflow
 
 ## Description
+
 Enhance prompts with layered reasoning, validation gates, and constitutional compliance for NeonPro healthcare platform.
 
 ## Category
+
 Optimization
 
 ## Complexity
+
 Medium
 
 ## MCP Tools Required
+
 - None (static analysis workflow)
 
 ## Execution Flow
 
 ### Phase 1: Analysis
+
 1. **Explicit Requirements Extraction**
    - Identify stated goals, constraints, and success criteria
    - Extract specific technical requirements
@@ -28,6 +33,7 @@ Medium
    - Generate implicit requirements mapping with confidence levels
 
 ### Phase 2: Enhancement
+
 1. **Layered Reasoning Application**
    - **Input Validation**: Add explicit input validation and error handling
    - **Output Validation**: Define clear output contracts and validation gates
@@ -51,6 +57,7 @@ Medium
    - Generate prompt with comprehensive validation gate structure
 
 ### Phase 3: Constitutional Compliance
+
 1. **KISS/YAGNI Principles Application**
    - Remove unnecessary complexity and abstractions
    - Verify all components serve essential purposes
@@ -70,6 +77,7 @@ Medium
    - Generate prompt with healthcare compliance validation
 
 ### Phase 4: Optimization
+
 1. **Performance Optimization**
    - Remove redundant instructions and checks
    - Improve readability and maintainability
@@ -83,6 +91,7 @@ Medium
    - Generate well-documented prompt with usage guidance
 
 ### Phase 5: Validation
+
 1. **Quality Assessment**
    - **Completeness**: All requirements addressed
    - **Clarity**: Instructions are clear and unambiguous
@@ -98,12 +107,14 @@ Medium
    - Generate compliance validation report with certification status
 
 ## Input Parameters
+
 - **original_prompt**: The original prompt to be enhanced
 - **enhancement_level**: Level of enhancement (basic, standard, comprehensive)
 - **compliance_requirements**: Specific compliance requirements (constitutional, healthcare, both)
 - **optimization_focus**: Focus area for optimization (performance, maintainability, both)
 
 ## Output Requirements
+
 - **enhanced_prompt**: The enhanced prompt with layered reasoning and validation gates
 - **enhancement_report**: List of specific improvements made
 - **quality_metrics**: Before/after quality comparison
@@ -111,6 +122,7 @@ Medium
 - **recommendations**: Further improvement suggestions
 
 ## Quality Criteria
+
 - **Functional**:
   - **Completeness**: All requirements fully addressed
   - **Correctness**: Logic and reasoning are sound
@@ -128,6 +140,7 @@ Medium
   - **Technical**: Follows technical standards and best practices
 
 ## Enhancement Patterns
+
 - **Layered Reasoning**:
   - **Input Layer**: Validate and preprocess inputs
   - **Logic Layer**: Execute core reasoning and processing
@@ -148,6 +161,7 @@ Medium
   - **Architecture Gate**: Follow established patterns and standards
 
 ## Validation Gates
+
 - **Pre-Enhancement**:
   - **Input Validation**: Original prompt is complete and understandable (Critical)
   - **Requirements Analysis**: All requirements identified and categorized (Critical)
@@ -158,6 +172,7 @@ Medium
   - **Performance Validation**: Enhanced prompt is efficient and maintainable (Optional)
 
 ## Error Handling
+
 - **Invalid Input**:
   - **Detection**: Original prompt is incomplete or malformed
   - **Action**: Reject with specific error details and improvement suggestions
@@ -171,6 +186,7 @@ Medium
   - **Action**: Provide detailed failure report with specific improvement recommendations
 
 ## Success Criteria
+
 - **Enhancement Quality**: Prompt is significantly improved in clarity, structure, and effectiveness
 - **Validation Comprehensive**: All validation gates pass with appropriate checks
 - **Compliance Complete**: Enhanced prompt meets all constitutional and regulatory requirements
@@ -178,6 +194,7 @@ Medium
 - **Maintainability Achieved**: Enhanced prompt is easy to understand, modify, and extend
 
 ## Constitutional Compliance
+
 - **KISS/YAGNI**: Enhanced prompt is simple and necessary, no over-engineering
 - **Test-First**: All requirements have corresponding test definitions and validation
 - **Architecture**: Enhanced prompt follows established patterns and boundaries
@@ -185,6 +202,7 @@ Medium
 - **Observability**: Enhanced prompt includes monitoring and logging requirements
 
 ## Integration Points
+
 - **Archon**: Potential integration for prompt persistence and knowledge management
 - **Serena**: Code analysis and validation for prompt quality and compliance
 - **Desktop Commander**: File system operations for prompt documentation and management

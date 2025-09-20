@@ -11,7 +11,7 @@
  * - Cross-device accessibility testing
  */
 
-import { generateAccessibilityReport } from './axe-core-integration';
+import { generateAccessibilityReport } from "./axe-core-integration";
 
 // Type guards and utilities
 function isHTMLElement(element: Element | Node): element is HTMLElement {
@@ -26,10 +26,10 @@ function getErrorMessage(error: unknown): string {
   if (error instanceof Error) {
     return error.message;
   }
-  if (typeof error === 'string') {
+  if (typeof error === "string") {
     return error;
   }
-  return 'Unknown error occurred';
+  return "Unknown error occurred";
 }
 
 // Mobile-specific accessibility requirements
@@ -37,35 +37,35 @@ export const MOBILE_ACCESSIBILITY_REQUIREMENTS = {
   TOUCH_TARGETS: {
     minimumSize: 44, // WCAG 2.1 requirement (44px minimum)
     recommendedSize: 48, // Apple HIG recommendation
-    description: 'Minimum touch target size for mobile devices',
+    description: "Minimum touch target size for mobile devices",
   },
   SCREEN_READERS: {
-    supported: ['VoiceOver', 'TalkBack', 'NVDA Mobile'],
-    description: 'Supported mobile screen readers',
+    supported: ["VoiceOver", "TalkBack", "NVDA Mobile"],
+    description: "Supported mobile screen readers",
   },
   RESPONSIVE_BREAKPOINTS: {
     mobile: 320,
     tablet: 768,
     desktop: 1024,
-    description: 'Responsive design breakpoints',
+    description: "Responsive design breakpoints",
   },
   PERFORMANCE_THRESHOLDS: {
     firstContentfulPaint: 1500, // 1.5 seconds
     largestContentfulPaint: 2500, // 2.5 seconds
     cumulativeLayoutShift: 0.1, // Layout stability
     firstInputDelay: 100, // Input responsiveness
-    description: 'Mobile performance thresholds',
+    description: "Mobile performance thresholds",
   },
   NETWORK_CONDITIONS: {
     slow3g: {
       rtt: 2000, // 2 seconds RTT
       throughput: 250, // 250 Kbps
-      description: 'Slow 3G network conditions',
+      description: "Slow 3G network conditions",
     },
     fast3g: {
       rtt: 400, // 400ms RTT
       throughput: 750, // 750 Kbps
-      description: 'Fast 3G network conditions',
+      description: "Fast 3G network conditions",
     },
   },
 };
@@ -73,54 +73,65 @@ export const MOBILE_ACCESSIBILITY_REQUIREMENTS = {
 // Mobile healthcare-specific accessibility rules
 export const MOBILE_HEALTHCARE_RULES = {
   EMERGENCY_TOUCH_TARGETS: {
-    id: 'emergency-touch-targets',
-    name: 'emergency-interface-touch-targets',
-    description: 'Emergency interfaces must have enhanced touch targets',
-    severity: 'critical',
+    id: "emergency-touch-targets",
+    name: "emergency-interface-touch-targets",
+    description: "Emergency interfaces must have enhanced touch targets",
+    severity: "critical",
     check: (element: Element) => {
-      const emergencyElements = element.querySelectorAll('[data-emergency="true"], .emergency');
-      return Array.from(emergencyElements).every(el => {
+      const emergencyElements = element.querySelectorAll(
+        '[data-emergency="true"], .emergency',
+      );
+      return Array.from(emergencyElements).every((el) => {
         const rect = el.getBoundingClientRect();
         return rect.width >= 48 && rect.height >= 48; // Enhanced size for emergencies
       });
     },
     fix: (element: Element) => {
-      const emergencyElements = element.querySelectorAll('[data-emergency="true"], .emergency');
-      emergencyElements.forEach(el => {
+      const emergencyElements = element.querySelectorAll(
+        '[data-emergency="true"], .emergency',
+      );
+      emergencyElements.forEach((el) => {
         if (isHTMLElement(el)) {
-          el.style.minWidth = '48px';
-          el.style.minHeight = '48px';
+          el.style.minWidth = "48px";
+          el.style.minHeight = "48px";
         }
-        el.setAttribute('aria-label', el.getAttribute('aria-label') || 'Emergency control');
+        el.setAttribute(
+          "aria-label",
+          el.getAttribute("aria-label") || "Emergency control",
+        );
       });
     },
   },
 
   MEDICAL_FORM_TOUCH_TARGETS: {
-    id: 'medical-form-touch-targets',
-    name: 'Medical Form Touch Targets',
-    description: 'Medical form inputs must have adequate touch targets',
-    severity: 'serious',
+    id: "medical-form-touch-targets",
+    name: "Medical Form Touch Targets",
+    description: "Medical form inputs must have adequate touch targets",
+    severity: "serious",
     check: (element: Element) => {
-      const medicalForms = element.querySelectorAll('form[data-medical="true"], .medical-form');
-      return Array.from(medicalForms).every(form => {
-        const inputs = form.querySelectorAll('input, select, textarea, button');
-        return Array.from(inputs).every(input => {
+      const medicalForms = element.querySelectorAll(
+        'form[data-medical="true"], .medical-form',
+      );
+      return Array.from(medicalForms).every((form) => {
+        const inputs = form.querySelectorAll("input, select, textarea, button");
+        return Array.from(inputs).every((input) => {
           const rect = input.getBoundingClientRect();
           return rect.width >= 44 && rect.height >= 44;
         });
       });
     },
     fix: (element: Element) => {
-      const medicalForms = element.querySelectorAll('form[data-medical="true"], .medical-form');
-      medicalForms.forEach(form => {
-        const inputs = form.querySelectorAll('input, select, textarea, button');
-        inputs.forEach(input => {
+      const medicalForms = element.querySelectorAll(
+        'form[data-medical="true"], .medical-form',
+      );
+      medicalForms.forEach((form) => {
+        const inputs = form.querySelectorAll("input, select, textarea, button");
+        inputs.forEach((input) => {
           const rect = input.getBoundingClientRect();
           if (rect.width < 44 || rect.height < 44) {
             if (isHTMLElement(input)) {
-              input.style.minWidth = '44px';
-              input.style.minHeight = '44px';
+              input.style.minWidth = "44px";
+              input.style.minHeight = "44px";
             }
           }
         });
@@ -129,27 +140,34 @@ export const MOBILE_HEALTHCARE_RULES = {
   },
 
   MOBILE_SCREEN_READER_SUPPORT: {
-    id: 'mobile-screen-reader',
-    name: 'Mobile Screen Reader Support',
-    description: 'Content must be accessible to mobile screen readers',
-    severity: 'critical',
+    id: "mobile-screen-reader",
+    name: "Mobile Screen Reader Support",
+    description: "Content must be accessible to mobile screen readers",
+    severity: "critical",
     check: (element: Element) => {
-      const interactiveElements = element.querySelectorAll('button, input, select, textarea, a');
-      return Array.from(interactiveElements).every(el => {
+      const interactiveElements = element.querySelectorAll(
+        "button, input, select, textarea, a",
+      );
+      return Array.from(interactiveElements).every((el) => {
         return (
-          el.hasAttribute('aria-label')
-          || el.hasAttribute('aria-labelledby')
-          || el.textContent?.trim().length > 0
+          el.hasAttribute("aria-label") ||
+          el.hasAttribute("aria-labelledby") ||
+          el.textContent?.trim().length > 0
         );
       });
     },
     fix: (element: Element) => {
-      const interactiveElements = element.querySelectorAll('button, input, select, textarea, a');
-      interactiveElements.forEach(el => {
-        if (!el.hasAttribute('aria-label') && !el.hasAttribute('aria-labelledby')) {
+      const interactiveElements = element.querySelectorAll(
+        "button, input, select, textarea, a",
+      );
+      interactiveElements.forEach((el) => {
+        if (
+          !el.hasAttribute("aria-label") &&
+          !el.hasAttribute("aria-labelledby")
+        ) {
           const text = el.textContent?.trim();
           if (text) {
-            el.setAttribute('aria-label', text);
+            el.setAttribute("aria-label", text);
           }
         }
       });
@@ -157,41 +175,46 @@ export const MOBILE_HEALTHCARE_RULES = {
   },
 
   RESPONSIVE_MEDICAL_CONTENT: {
-    id: 'responsive-medical-content',
-    name: 'Responsive Medical Content',
-    description: 'Medical content must be readable across all device sizes',
-    severity: 'serious',
+    id: "responsive-medical-content",
+    name: "Responsive Medical Content",
+    description: "Medical content must be readable across all device sizes",
+    severity: "serious",
     check: (element: Element) => {
-      const medicalContent = element.querySelectorAll('[data-medical="true"], .medical-content');
-      return Array.from(medicalContent).every(content => {
+      const medicalContent = element.querySelectorAll(
+        '[data-medical="true"], .medical-content',
+      );
+      return Array.from(medicalContent).every((content) => {
         const computedStyle = window.getComputedStyle(content);
         return (
-          parseInt(computedStyle.fontSize) >= 16 // Minimum readable font size
-          && parseInt(computedStyle.lineHeight) >= 1.5 * parseInt(computedStyle.fontSize) // Adequate line height
+          parseInt(computedStyle.fontSize) >= 16 && // Minimum readable font size
+          parseInt(computedStyle.lineHeight) >=
+            1.5 * parseInt(computedStyle.fontSize) // Adequate line height
         );
       });
     },
     fix: (element: Element) => {
-      const medicalContent = element.querySelectorAll('[data-medical="true"], .medical-content');
-      medicalContent.forEach(content => {
+      const medicalContent = element.querySelectorAll(
+        '[data-medical="true"], .medical-content',
+      );
+      medicalContent.forEach((content) => {
         if (isHTMLElement(content)) {
-          content.style.fontSize = '16px';
-          content.style.lineHeight = '1.5';
+          content.style.fontSize = "16px";
+          content.style.lineHeight = "1.5";
         }
       });
     },
   },
 
   MOBILE_NAVIGATION_ACCESSIBILITY: {
-    id: 'mobile-nav-accessibility',
-    name: 'Mobile Navigation Accessibility',
-    description: 'Mobile navigation must be accessible and touch-friendly',
-    severity: 'serious',
+    id: "mobile-nav-accessibility",
+    name: "Mobile Navigation Accessibility",
+    description: "Mobile navigation must be accessible and touch-friendly",
+    severity: "serious",
     check: (element: Element) => {
       const navElements = element.querySelectorAll('nav, [role="navigation"]');
-      return Array.from(navElements).every(nav => {
-        const navItems = nav.querySelectorAll('a, button');
-        return Array.from(navItems).every(item => {
+      return Array.from(navElements).every((nav) => {
+        const navItems = nav.querySelectorAll("a, button");
+        return Array.from(navItems).every((item) => {
           const rect = item.getBoundingClientRect();
           return rect.width >= 44 && rect.height >= 44;
         });
@@ -199,14 +222,14 @@ export const MOBILE_HEALTHCARE_RULES = {
     },
     fix: (element: Element) => {
       const navElements = element.querySelectorAll('nav, [role="navigation"]');
-      navElements.forEach(nav => {
-        const navItems = nav.querySelectorAll('a, button');
-        navItems.forEach(item => {
+      navElements.forEach((nav) => {
+        const navItems = nav.querySelectorAll("a, button");
+        navItems.forEach((item) => {
           const rect = item.getBoundingClientRect();
           if (rect.width < 44 || rect.height < 44) {
             if (isHTMLElement(item)) {
-              item.style.minWidth = '44px';
-              item.style.minHeight = '44px';
+              item.style.minWidth = "44px";
+              item.style.minHeight = "44px";
             }
           }
         });
@@ -215,27 +238,30 @@ export const MOBILE_HEALTHCARE_RULES = {
   },
 
   OFFLINE_HEALTHCARE_FUNCTIONALITY: {
-    id: 'offline-healthcare-functionality',
-    name: 'Offline Healthcare Functionality',
-    description: 'Critical healthcare features must work offline',
-    severity: 'critical',
+    id: "offline-healthcare-functionality",
+    name: "Offline Healthcare Functionality",
+    description: "Critical healthcare features must work offline",
+    severity: "critical",
     check: (element: Element) => {
-      const offlineElements = element.querySelectorAll('[data-offline="true"], .offline-capable');
-      return Array.from(offlineElements).every(el => {
+      const offlineElements = element.querySelectorAll(
+        '[data-offline="true"], .offline-capable',
+      );
+      return Array.from(offlineElements).every((el) => {
         return (
-          el.hasAttribute('aria-label')
-          && el.getAttribute('role') === 'region'
+          el.hasAttribute("aria-label") && el.getAttribute("role") === "region"
         );
       });
     },
     fix: (element: Element) => {
-      const offlineElements = element.querySelectorAll('[data-offline="true"], .offline-capable');
-      offlineElements.forEach(el => {
+      const offlineElements = element.querySelectorAll(
+        '[data-offline="true"], .offline-capable',
+      );
+      offlineElements.forEach((el) => {
         el.setAttribute(
-          'aria-label',
-          el.getAttribute('aria-label') || 'Offline healthcare feature',
+          "aria-label",
+          el.getAttribute("aria-label") || "Offline healthcare feature",
         );
-        el.setAttribute('role', 'region');
+        el.setAttribute("role", "region");
       });
     },
   },
@@ -252,9 +278,7 @@ export class MobileAccessibilityOptimizer {
   /**
    * Perform comprehensive mobile accessibility optimization
    */
-  async optimizeMobileAccessibility(
-    context?: Element | string,
-  ): Promise<{
+  async optimizeMobileAccessibility(context?: Element | string): Promise<{
     summary: {
       overallScore: number;
       touchTargetsOptimized: number;
@@ -279,16 +303,19 @@ export class MobileAccessibilityOptimizer {
     recommendations: string[];
     offlineCapabilities: string[];
   }> {
-    const auditContext = typeof context === 'string'
-      ? document.querySelector(context)
-      : context || document;
+    const auditContext =
+      typeof context === "string"
+        ? document.querySelector(context)
+        : context || document;
 
     if (!auditContext) {
-      throw new Error('Mobile optimization context not found');
+      throw new Error("Mobile optimization context not found");
     }
 
     // Ensure we have an Element, not Document
-    const elementContext = isElement(auditContext) ? auditContext : document.documentElement;
+    const elementContext = isElement(auditContext)
+      ? auditContext
+      : document.documentElement;
 
     const results = {
       summary: {
@@ -318,10 +345,10 @@ export class MobileAccessibilityOptimizer {
 
     // Test across different device types
     const deviceTypes = [
-      { type: 'mobile', screen: '320x568' },
-      { type: 'mobile', screen: '375x667' },
-      { type: 'tablet', screen: '768x1024' },
-      { type: 'desktop', screen: '1024x768' },
+      { type: "mobile", screen: "320x568" },
+      { type: "mobile", screen: "375x667" },
+      { type: "tablet", screen: "768x1024" },
+      { type: "desktop", screen: "1024x768" },
     ];
 
     for (const device of deviceTypes) {
@@ -344,7 +371,8 @@ export class MobileAccessibilityOptimizer {
     results.recommendations = this.generateMobileRecommendations(results);
 
     // Identify offline capabilities
-    results.offlineCapabilities = this.identifyOfflineCapabilities(elementContext);
+    results.offlineCapabilities =
+      this.identifyOfflineCapabilities(elementContext);
 
     return results;
   }
@@ -368,7 +396,7 @@ export class MobileAccessibilityOptimizer {
     let totalChecks = 0;
 
     // Simulate device viewport
-    const [width, height] = device.screen.split('x').map(Number);
+    const [width, height] = device.screen.split("x").map(Number);
 
     // Test each mobile accessibility rule
     for (const [ruleId, rule] of Object.entries(this.rules)) {
@@ -406,7 +434,11 @@ export class MobileAccessibilityOptimizer {
     }
 
     // Test responsive design
-    const responsiveIssues = await this.testResponsiveDesign(context, width, height);
+    const responsiveIssues = await this.testResponsiveDesign(
+      context,
+      width,
+      height,
+    );
     issues.push(...responsiveIssues);
 
     const score = Math.round((passedChecks / totalChecks) * 100);
@@ -431,7 +463,9 @@ export class MobileAccessibilityOptimizer {
     const issues = [];
 
     // Test if content is readable at this size
-    const textElements = context.querySelectorAll('p, span, label, h1, h2, h3, h4, h5, h6');
+    const textElements = context.querySelectorAll(
+      "p, span, label, h1, h2, h3, h4, h5, h6",
+    );
 
     for (const element of Array.from(textElements)) {
       const computedStyle = window.getComputedStyle(element);
@@ -439,31 +473,33 @@ export class MobileAccessibilityOptimizer {
 
       if (fontSize < 14 && width < 768) {
         issues.push({
-          ruleId: 'mobile-text-size',
-          description: 'Text too small for mobile devices',
-          severity: 'moderate',
+          ruleId: "mobile-text-size",
+          description: "Text too small for mobile devices",
+          severity: "moderate",
           element: element.tagName,
           fontSize,
-          requiredSize: '14px',
+          requiredSize: "14px",
         });
       }
     }
 
     // Test touch target sizes for mobile
     if (width < 768) {
-      const touchElements = context.querySelectorAll('button, input, select, textarea, a');
+      const touchElements = context.querySelectorAll(
+        "button, input, select, textarea, a",
+      );
 
       for (const element of Array.from(touchElements)) {
         const rect = element.getBoundingClientRect();
 
         if (rect.width < 44 || rect.height < 44) {
           issues.push({
-            ruleId: 'mobile-touch-target',
-            description: 'Touch target too small for mobile devices',
-            severity: 'serious',
+            ruleId: "mobile-touch-target",
+            description: "Touch target too small for mobile devices",
+            severity: "serious",
             element: element.tagName,
             currentSize: `${rect.width}x${rect.height}`,
-            requiredSize: '44x44',
+            requiredSize: "44x44",
           });
         }
       }
@@ -475,9 +511,7 @@ export class MobileAccessibilityOptimizer {
   /**
    * Apply mobile accessibility optimizations
    */
-  private async applyOptimizations(
-    context: Element,
-  ): Promise<{
+  private async applyOptimizations(context: Element): Promise<{
     touchTargetsOptimized: number;
     screenReaderEnhancements: number;
     responsiveImprovements: number;
@@ -493,51 +527,60 @@ export class MobileAccessibilityOptimizer {
     };
 
     // Optimize touch targets
-    const touchElements = context.querySelectorAll('button, input, select, textarea, a');
-    touchElements.forEach(element => {
+    const touchElements = context.querySelectorAll(
+      "button, input, select, textarea, a",
+    );
+    touchElements.forEach((element) => {
       const rect = element.getBoundingClientRect();
 
       if (rect.width < 44 || rect.height < 44) {
         if (isHTMLElement(element)) {
-          element.style.minWidth = '44px';
-          element.style.minHeight = '44px';
+          element.style.minWidth = "44px";
+          element.style.minHeight = "44px";
           stats.touchTargetsOptimized++;
         }
       }
     });
 
     // Enhance screen reader support
-    const interactiveElements = context.querySelectorAll('button, input, select, textarea, a');
-    interactiveElements.forEach(element => {
-      if (!element.hasAttribute('aria-label') && !element.hasAttribute('aria-labelledby')) {
+    const interactiveElements = context.querySelectorAll(
+      "button, input, select, textarea, a",
+    );
+    interactiveElements.forEach((element) => {
+      if (
+        !element.hasAttribute("aria-label") &&
+        !element.hasAttribute("aria-labelledby")
+      ) {
         const text = element.textContent?.trim();
         if (text) {
-          element.setAttribute('aria-label', text);
+          element.setAttribute("aria-label", text);
           stats.screenReaderEnhancements++;
         }
       }
     });
 
     // Improve responsive design
-    const textElements = context.querySelectorAll('p, span, label');
-    textElements.forEach(element => {
+    const textElements = context.querySelectorAll("p, span, label");
+    textElements.forEach((element) => {
       const computedStyle = window.getComputedStyle(element);
       const fontSize = parseInt(computedStyle.fontSize);
 
       if (fontSize < 14) {
         if (isHTMLElement(element)) {
-          element.style.fontSize = '16px';
-          element.style.lineHeight = '1.5';
+          element.style.fontSize = "16px";
+          element.style.lineHeight = "1.5";
           stats.responsiveImprovements++;
         }
       }
     });
 
     // Enhance offline capabilities
-    const offlineElements = context.querySelectorAll('[data-offline="true"], .offline-capable');
-    offlineElements.forEach(element => {
-      if (!element.hasAttribute('aria-label')) {
-        element.setAttribute('aria-label', 'Offline healthcare feature');
+    const offlineElements = context.querySelectorAll(
+      '[data-offline="true"], .offline-capable',
+    );
+    offlineElements.forEach((element) => {
+      if (!element.hasAttribute("aria-label")) {
+        element.setAttribute("aria-label", "Offline healthcare feature");
         stats.offlineOptimizations++;
       }
     });
@@ -545,7 +588,7 @@ export class MobileAccessibilityOptimizer {
     // Calculate overall score
     const totalPossible = Object.keys(stats).length - 1; // Exclude overallScore
     const totalAchieved = Object.values(stats).reduce(
-      (sum, val) => typeof val === 'number' && val > 0 ? sum + 1 : sum,
+      (sum, val) => (typeof val === "number" && val > 0 ? sum + 1 : sum),
       0,
     );
 
@@ -570,29 +613,31 @@ export class MobileAccessibilityOptimizer {
     let firstInputDelay = 0;
 
     // First Contentful Paint
-    const paintEntries = performance.getEntriesByType('paint');
-    const fcpEntry = paintEntries.find((entry: any) => entry.name === 'first-contentful-paint');
+    const paintEntries = performance.getEntriesByType("paint");
+    const fcpEntry = paintEntries.find(
+      (entry: any) => entry.name === "first-contentful-paint",
+    );
     if (fcpEntry) {
       firstContentfulPaint = fcpEntry.startTime;
     }
 
     // Largest Contentful Paint
     const lcpEntries = performance.getEntriesByType(
-      'largest-contentful-paint',
+      "largest-contentful-paint",
     ) as PerformanceEntry[];
     if (lcpEntries.length > 0) {
       largestContentfulPaint = lcpEntries[lcpEntries.length - 1].startTime;
     }
 
     // Cumulative Layout Shift
-    const clsEntries = performance.getEntriesByType('layout-shift') as any[];
+    const clsEntries = performance.getEntriesByType("layout-shift") as any[];
     cumulativeLayoutShift = clsEntries.reduce(
-      (sum, entry) => entry.hadRecentInput ? sum : sum + entry.value,
+      (sum, entry) => (entry.hadRecentInput ? sum : sum + entry.value),
       0,
     );
 
     // First Input Delay
-    const fidEntries = performance.getEntriesByType('first-input') as any[];
+    const fidEntries = performance.getEntriesByType("first-input") as any[];
     if (fidEntries.length > 0) {
       firstInputDelay = fidEntries[0].processingStart - fidEntries[0].startTime;
     }
@@ -615,7 +660,10 @@ export class MobileAccessibilityOptimizer {
    * Calculate overall score across all devices
    */
   private calculateOverallScore(deviceResults: any[]): number {
-    const totalScore = deviceResults.reduce((sum, result) => sum + result.score, 0);
+    const totalScore = deviceResults.reduce(
+      (sum, result) => sum + result.score,
+      0,
+    );
     return Math.round(totalScore / deviceResults.length);
   }
 
@@ -628,45 +676,45 @@ export class MobileAccessibilityOptimizer {
     // Overall score recommendations
     if (results.summary.overallScore < 80) {
       recommendations.push(
-        '🚨 Critical mobile accessibility issues detected',
-        'Prioritize mobile accessibility improvements for healthcare applications',
-        'Conduct comprehensive mobile device testing',
+        "🚨 Critical mobile accessibility issues detected",
+        "Prioritize mobile accessibility improvements for healthcare applications",
+        "Conduct comprehensive mobile device testing",
       );
     }
 
     // Touch target recommendations
     if (results.summary.touchTargetsOptimized > 10) {
       recommendations.push(
-        '👆 Multiple touch targets optimized for mobile',
-        'Consider implementing mobile-first design patterns',
-        'Test touch interactions on actual mobile devices',
+        "👆 Multiple touch targets optimized for mobile",
+        "Consider implementing mobile-first design patterns",
+        "Test touch interactions on actual mobile devices",
       );
     }
 
     // Performance recommendations
     if (results.performanceMetrics.firstContentfulPaint > 1500) {
       recommendations.push(
-        '⚡ Performance optimization needed for mobile devices',
-        'Optimize images and assets for mobile networks',
-        'Implement lazy loading for non-critical content',
+        "⚡ Performance optimization needed for mobile devices",
+        "Optimize images and assets for mobile networks",
+        "Implement lazy loading for non-critical content",
       );
     }
 
     // Screen reader recommendations
     if (results.summary.screenReaderEnhancements > 5) {
       recommendations.push(
-        '🔊 Screen reader support enhanced for mobile',
-        'Test with VoiceOver and TalkBack screen readers',
-        'Ensure proper ARIA labeling for all interactive elements',
+        "🔊 Screen reader support enhanced for mobile",
+        "Test with VoiceOver and TalkBack screen readers",
+        "Ensure proper ARIA labeling for all interactive elements",
       );
     }
 
     // Offline capability recommendations
     if (results.offlineCapabilities.length > 0) {
       recommendations.push(
-        '📱 Offline capabilities identified for healthcare features',
-        'Implement service workers for critical healthcare functionality',
-        'Ensure offline data synchronization and conflict resolution',
+        "📱 Offline capabilities identified for healthcare features",
+        "Implement service workers for critical healthcare functionality",
+        "Ensure offline data synchronization and conflict resolution",
       );
     }
 
@@ -679,11 +727,14 @@ export class MobileAccessibilityOptimizer {
   private identifyOfflineCapabilities(context: Element): string[] {
     const capabilities: string[] = [];
 
-    const offlineElements = context.querySelectorAll('[data-offline="true"], .offline-capable');
-    offlineElements.forEach(element => {
-      const capability = element.getAttribute('data-offline-capability')
-        || element.getAttribute('data-feature')
-        || 'Generic healthcare feature';
+    const offlineElements = context.querySelectorAll(
+      '[data-offline="true"], .offline-capable',
+    );
+    offlineElements.forEach((element) => {
+      const capability =
+        element.getAttribute("data-offline-capability") ||
+        element.getAttribute("data-feature") ||
+        "Generic healthcare feature";
       capabilities.push(capability);
     });
 
@@ -731,7 +782,8 @@ export class MobileAccessibilityOptimizer {
     accessibilityScore: number;
     issues: string[];
   }> {
-    const condition = MOBILE_ACCESSIBILITY_REQUIREMENTS.NETWORK_CONDITIONS[networkCondition];
+    const condition =
+      MOBILE_ACCESSIBILITY_REQUIREMENTS.NETWORK_CONDITIONS[networkCondition];
 
     let loadTime = 0;
     let accessibilityScore = 0;
@@ -743,11 +795,18 @@ export class MobileAccessibilityOptimizer {
       const connection = nav.connection;
       // Estimate load time based on effectiveType and downlink
       loadTime = 3000 / (connection.downlink || 1); // crude estimate
-      if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
-        issues.push('Detected very slow network: optimize all assets aggressively.');
+      if (
+        connection.effectiveType === "slow-2g" ||
+        connection.effectiveType === "2g"
+      ) {
+        issues.push(
+          "Detected very slow network: optimize all assets aggressively.",
+        );
         accessibilityScore = 80;
-      } else if (connection.effectiveType === '3g') {
-        issues.push('Detected 3G network: optimize images and reduce requests.');
+      } else if (connection.effectiveType === "3g") {
+        issues.push(
+          "Detected 3G network: optimize images and reduce requests.",
+        );
         accessibilityScore = 85;
       } else {
         accessibilityScore = 95;
@@ -756,14 +815,16 @@ export class MobileAccessibilityOptimizer {
       // Simulate if API is unavailable
       loadTime = Math.random() * 3000 + 2000;
       accessibilityScore = Math.random() * 20 + 80;
-      issues.push('Network Information API not available; using simulated data.');
+      issues.push(
+        "Network Information API not available; using simulated data.",
+      );
     }
 
     // Add generic recommendations
     issues.push(
-      'Consider optimizing images for slow networks',
-      'Implement progressive loading for healthcare content',
-      'Add loading indicators for network-dependent features',
+      "Consider optimizing images for slow networks",
+      "Implement progressive loading for healthcare content",
+      "Add loading indicators for network-dependent features",
     );
 
     return {
@@ -802,14 +863,16 @@ export async function quickMobileAccessibilityCheck(
       touchTargets: 0,
       screenReaderSupport: false,
       responsiveDesign: false,
-      issues: ['Context not found for mobile accessibility check'],
+      issues: ["Context not found for mobile accessibility check"],
     };
   }
 
   try {
     const optimizer = new MobileAccessibilityOptimizer();
     // Ensure we have an Element, not Document
-    const elementContext = isElement(context) ? context : document.documentElement;
+    const elementContext = isElement(context)
+      ? context
+      : document.documentElement;
     const results = await optimizer.optimizeMobileAccessibility(elementContext);
 
     return {
@@ -821,7 +884,7 @@ export async function quickMobileAccessibilityCheck(
       issues: results.recommendations,
     };
   } catch (error) {
-    console.error('Quick mobile accessibility check failed:', error);
+    console.error("Quick mobile accessibility check failed:", error);
     return {
       passed: false,
       score: 0,
@@ -837,4 +900,5 @@ export async function quickMobileAccessibilityCheck(
 export type MobileOptimizationResults = ReturnType<
   typeof mobileAccessibilityOptimizer.optimizeMobileAccessibility
 >;
-export type NetworkCondition = keyof typeof MOBILE_ACCESSIBILITY_REQUIREMENTS.NETWORK_CONDITIONS;
+export type NetworkCondition =
+  keyof typeof MOBILE_ACCESSIBILITY_REQUIREMENTS.NETWORK_CONDITIONS;

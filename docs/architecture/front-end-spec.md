@@ -2,7 +2,8 @@
 title: "NeonPro Frontend Implementation Specification"
 last_updated: 2025-12-12
 form: how-to
-tags: [frontend, healthcare, implementation, components, monorepo, atomic-design]
+tags:
+  [frontend, healthcare, implementation, components, monorepo, atomic-design]
 related:
   - ./frontend-architecture.md
   - ./tech-stack.md
@@ -32,10 +33,10 @@ This document defines **healthcare-specific frontend implementation patterns** f
 
 ```typescript
 // PROVEN PATTERN - Use this exact hierarchy
-import { HealthcareSpecificComponent } from '@/components/healthcare'; // ✅ Domain-specific last
-import { AppointmentForm, PatientCard } from '@/components/molecules'; // ✅ Molecules second
-import { DashboardLayout } from '@/components/organisms'; // ✅ Organisms third
-import { Alert, Badge, Button, Card } from '@neonpro/ui'; // ✅ Shared components first
+import { HealthcareSpecificComponent } from "@/components/healthcare"; // ✅ Domain-specific last
+import { AppointmentForm, PatientCard } from "@/components/molecules"; // ✅ Molecules second
+import { DashboardLayout } from "@/components/organisms"; // ✅ Organisms third
+import { Alert, Badge, Button, Card } from "@neonpro/ui"; // ✅ Shared components first
 ```
 
 ### NeonPro Brand Standards (Production-Ready)
@@ -43,14 +44,14 @@ import { Alert, Badge, Button, Card } from '@neonpro/ui'; // ✅ Shared componen
 ```css
 /* Validated Color Scheme - Grade A- (9.2/10) */
 :root {
-  --neonpro-primary: #AC9469;    /* Golden primary - tested in production */
-  --neonpro-deep-blue: #112031;  /* Deep blue - healthcare professional */
-  --neonpro-accent: #D4AF37;     /* Gold accent - luxury aesthetic */
+  --neonpro-primary: #ac9469; /* Golden primary - tested in production */
+  --neonpro-deep-blue: #112031; /* Deep blue - healthcare professional */
+  --neonpro-accent: #d4af37; /* Gold accent - luxury aesthetic */
 
   /* Neumorphic Effects - Validated */
-  --neonpro-shadow-inset: inset 2px 2px 4px rgba(0,0,0,0.1);
-  --neonpro-shadow-raised: 4px 4px 8px rgba(0,0,0,0.15);
-  --neonpro-border-radius: 8px;  /* Reduced for neumorphic effect */
+  --neonpro-shadow-inset: inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+  --neonpro-shadow-raised: 4px 4px 8px rgba(0, 0, 0, 0.15);
+  --neonpro-border-radius: 8px; /* Reduced for neumorphic effect */
 }
 ```
 
@@ -62,16 +63,30 @@ import { Alert, Badge, Button, Card } from '@neonpro/ui'; // ✅ Shared componen
 
 ```typescript
 // ✅ ATOMS - Basic UI elements (from @neonpro/ui)
-export { Button, NeumorphButton } from '@neonpro/ui';
-export { Badge, badgeVariants } from '@neonpro/ui';
-export { Alert, AlertDescription, AlertTitle } from '@neonpro/ui';
-export { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+export { Button, NeumorphButton } from "@neonpro/ui";
+export { Badge, badgeVariants } from "@neonpro/ui";
+export { Alert, AlertDescription, AlertTitle } from "@neonpro/ui";
+export {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@neonpro/ui";
 
 // ✅ MOLECULES - Simple combinations (app-specific)
-export { AppointmentForm, PatientCard, SearchBox } from '@/components/molecules';
+export {
+  AppointmentForm,
+  PatientCard,
+  SearchBox,
+} from "@/components/molecules";
 
 // ✅ ORGANISMS - Complex components (feature-specific)
-export { AppointmentScheduler, Dashboard, GovernanceDashboard } from '@/components/organisms';
+export {
+  AppointmentScheduler,
+  Dashboard,
+  GovernanceDashboard,
+} from "@/components/organisms";
 ```
 
 **Performance Metrics (Validated)**
@@ -86,7 +101,7 @@ export { AppointmentScheduler, Dashboard, GovernanceDashboard } from '@/componen
 ```typescript
 interface HealthcareComponentProps {
   readonly patientId?: string;
-  readonly userRole: 'admin' | 'professional' | 'coordinator';
+  readonly userRole: "admin" | "professional" | "coordinator";
   readonly lgpdCompliant: boolean;
   readonly onAuditLog?: (action: string, details?: Record<string, any>) => void;
 }
@@ -327,8 +342,12 @@ export function AestheticScheduler({
 
 ```typescript
 export const patientsAPI = {
-  getPatientWithHistory: async (patientId: string): Promise<PatientWithHistory> => {
-    const response = await api.get(`/patients/${patientId}?include=aesthetic_history`);
+  getPatientWithHistory: async (
+    patientId: string,
+  ): Promise<PatientWithHistory> => {
+    const response = await api.get(
+      `/patients/${patientId}?include=aesthetic_history`,
+    );
     return response.data;
   },
 
@@ -336,11 +355,14 @@ export const patientsAPI = {
     patientId: string,
     preferences: AestheticPreferences,
   ): Promise<Patient> => {
-    const response = await api.patch(`/patients/${patientId}/aesthetic-preferences`, {
-      preferences,
-      updatedBy: getCurrentUser().id,
-      lgpdConsent: true,
-    });
+    const response = await api.patch(
+      `/patients/${patientId}/aesthetic-preferences`,
+      {
+        preferences,
+        updatedBy: getCurrentUser().id,
+        lgpdConsent: true,
+      },
+    );
     return response.data;
   },
 
@@ -363,12 +385,12 @@ export const aestheticAI = {
       clinicSpecialization: string[];
     },
   ): Promise<AIChatResponse> => {
-    const response = await api.post('/ai/aesthetic-chat', {
+    const response = await api.post("/ai/aesthetic-chat", {
       messages,
       context: {
         ...context,
-        language: 'pt-BR',
-        domain: 'aesthetic_procedures',
+        language: "pt-BR",
+        domain: "aesthetic_procedures",
       },
     });
     return response.data;
@@ -377,7 +399,7 @@ export const aestheticAI = {
   getProcedureRecommendations: async (
     patientProfile: PatientProfile,
   ): Promise<ProcedureRecommendation[]> => {
-    const response = await api.post('/ai/procedure-recommendations', {
+    const response = await api.post("/ai/procedure-recommendations", {
       patientProfile,
       clinicCapabilities: getCurrentClinic().capabilities,
     });
@@ -404,57 +426,64 @@ interface AestheticPatientStore {
   calculateNoShowRisk: (patientId: string) => Promise<void>;
 }
 
-export const useAestheticPatientStore = create<AestheticPatientStore>((set, get) => ({
-  patients: [],
-  selectedPatient: null,
-  riskAssessments: {},
+export const useAestheticPatientStore = create<AestheticPatientStore>(
+  (set, get) => ({
+    patients: [],
+    selectedPatient: null,
+    riskAssessments: {},
 
-  loadPatientWithHistory: async (patientId: string) => {
-    try {
-      const patient = await patientsAPI.getPatientWithHistory(patientId);
-      const riskScore = await patientsAPI.getNoShowRisk(patientId);
+    loadPatientWithHistory: async (patientId: string) => {
+      try {
+        const patient = await patientsAPI.getPatientWithHistory(patientId);
+        const riskScore = await patientsAPI.getNoShowRisk(patientId);
 
-      set(state => ({
-        selectedPatient: patient,
-        riskAssessments: {
-          ...state.riskAssessments,
-          [patientId]: riskScore,
-        },
-      }));
-    } catch (error) {
-      console.error('Failed to load patient:', error);
-    }
-  },
+        set((state) => ({
+          selectedPatient: patient,
+          riskAssessments: {
+            ...state.riskAssessments,
+            [patientId]: riskScore,
+          },
+        }));
+      } catch (error) {
+        console.error("Failed to load patient:", error);
+      }
+    },
 
-  updateAestheticPreferences: async (patientId: string, preferences: AestheticPreferences) => {
-    try {
-      await patientsAPI.updateAestheticPreferences(patientId, preferences);
+    updateAestheticPreferences: async (
+      patientId: string,
+      preferences: AestheticPreferences,
+    ) => {
+      try {
+        await patientsAPI.updateAestheticPreferences(patientId, preferences);
 
-      set(state => ({
-        patients: state.patients.map(p =>
-          p.id === patientId ? { ...p, aestheticPreferences: preferences } : p
-        ),
-      }));
-    } catch (error) {
-      console.error('Failed to update preferences:', error);
-    }
-  },
+        set((state) => ({
+          patients: state.patients.map((p) =>
+            p.id === patientId
+              ? { ...p, aestheticPreferences: preferences }
+              : p,
+          ),
+        }));
+      } catch (error) {
+        console.error("Failed to update preferences:", error);
+      }
+    },
 
-  calculateNoShowRisk: async (patientId: string) => {
-    try {
-      const riskScore = await patientsAPI.getNoShowRisk(patientId);
+    calculateNoShowRisk: async (patientId: string) => {
+      try {
+        const riskScore = await patientsAPI.getNoShowRisk(patientId);
 
-      set(state => ({
-        riskAssessments: {
-          ...state.riskAssessments,
-          [patientId]: riskScore,
-        },
-      }));
-    } catch (error) {
-      console.error('Failed to calculate risk:', error);
-    }
-  },
-}));
+        set((state) => ({
+          riskAssessments: {
+            ...state.riskAssessments,
+            [patientId]: riskScore,
+          },
+        }));
+      } catch (error) {
+        console.error("Failed to calculate risk:", error);
+      }
+    },
+  }),
+);
 ```
 
 ## Mobile-First Patterns
@@ -565,15 +594,15 @@ export function useHighContrastMode() {
   const [isHighContrast, setIsHighContrast] = useState(false);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-contrast: high)');
+    const mediaQuery = window.matchMedia("(prefers-contrast: high)");
     setIsHighContrast(mediaQuery.matches);
 
     const handleChange = (e: MediaQueryListEvent) => {
       setIsHighContrast(e.matches);
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, []);
 
   return { isHighContrast };
@@ -585,17 +614,19 @@ export function useHighContrastMode() {
 ### Mock Data Utilities
 
 ```typescript
-export const createMockPatient = (overrides: Partial<Patient> = {}): Patient => ({
-  id: 'patient-123',
-  name: 'João Silva',
-  cpf: '123.456.789-01',
+export const createMockPatient = (
+  overrides: Partial<Patient> = {},
+): Patient => ({
+  id: "patient-123",
+  name: "João Silva",
+  cpf: "123.456.789-01",
   lgpdCompliant: true,
-  noShowRisk: 'low',
-  lastProcedure: 'Botox',
-  nextAppointment: '2025-09-15T14:00:00Z',
+  noShowRisk: "low",
+  lastProcedure: "Botox",
+  nextAppointment: "2025-09-15T14:00:00Z",
   aestheticPreferences: {
-    preferredProcedures: ['botox', 'preenchimento'],
-    skinType: 'oleosa',
+    preferredProcedures: ["botox", "preenchimento"],
+    skinType: "oleosa",
     allergies: [],
   },
   ...overrides,
@@ -603,7 +634,7 @@ export const createMockPatient = (overrides: Partial<Patient> = {}): Patient => 
 
 export const createMockRiskScore = (score: number = 0.3): NoShowRiskScore => ({
   score,
-  factors: ['historical_no_shows', 'appointment_frequency'],
+  factors: ["historical_no_shows", "appointment_frequency"],
   historicalNoShows: Math.floor(score * 10),
   lastCalculated: new Date().toISOString(),
 });
@@ -654,11 +685,14 @@ export function LazyAestheticScheduler(props: AestheticSchedulerProps) {
 ```typescript
 export function useMobilePerformance() {
   useEffect(() => {
-    if ('connection' in navigator) {
+    if ("connection" in navigator) {
       const connection = (navigator as any).connection;
 
-      if (connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
-        console.warn('Slow connection detected');
+      if (
+        connection.effectiveType === "slow-2g" ||
+        connection.effectiveType === "2g"
+      ) {
+        console.warn("Slow connection detected");
         // Enable performance mode
       }
     }
@@ -687,12 +721,12 @@ packages/
 
 ```typescript
 // ✅ OPTIMAL IMPORTS - Enables tree-shaking for 603.49 kB bundle
-import type { Patient } from '@neonpro/database'; // ✅ Type-only imports
-import { Badge, Button, Card } from '@neonpro/ui'; // ✅ Named imports
+import type { Patient } from "@neonpro/database"; // ✅ Type-only imports
+import { Badge, Button, Card } from "@neonpro/ui"; // ✅ Named imports
 
 // ❌ AVOID - Prevents tree-shaking
-import * as UI from '@neonpro/ui'; // ❌ Namespace imports
-import '@neonpro/ui'; // ❌ Side-effect imports
+import * as UI from "@neonpro/ui"; // ❌ Namespace imports
+import "@neonpro/ui"; // ❌ Side-effect imports
 ```
 
 ### LGPD Compliance Patterns (Healthcare-Validated)
@@ -798,7 +832,14 @@ const loadGovernanceModule = () => import('@/components/organisms/governance');
 
 ```typescript
 // ✅ ENHANCED PATTERN - Improved by user feedback
-import { Alert, AlertDescription, Badge, Button, Card, UniversalButton } from '@neonpro/ui';
+import {
+  Alert,
+  AlertDescription,
+  Badge,
+  Button,
+  Card,
+  UniversalButton,
+} from "@neonpro/ui";
 
 // Instead of multiple import statements
 // import { Badge } from '@neonpro/ui';

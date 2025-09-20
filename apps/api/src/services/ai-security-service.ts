@@ -5,8 +5,8 @@
  * ensuring LGPD compliance, data protection, and medical safety.
  */
 
-import { auditLogger } from '@neonpro/security';
-import { z } from 'zod';
+import { auditLogger } from "@neonpro/security";
+import { z } from "zod";
 
 // Security validation schemas
 const SensitiveDataSchema = z.object({
@@ -19,7 +19,7 @@ const SensitiveDataSchema = z.object({
 
 const MedicalTermSchema = z.object({
   term: z.string(),
-  category: z.enum(['symptom', 'diagnosis', 'treatment', 'medication']),
+  category: z.enum(["symptom", "diagnosis", "treatment", "medication"]),
   isValid: z.boolean(),
 });
 
@@ -32,9 +32,9 @@ function getEnvInt(varName: string, defaultValue: number): number {
 }
 
 const RATE_LIMITS = {
-  requestsPerMinute: getEnvInt('AI_RATE_LIMIT_REQUESTS_PER_MINUTE', 100),
-  requestsPerHour: getEnvInt('AI_RATE_LIMIT_REQUESTS_PER_HOUR', 1000),
-  burstLimit: getEnvInt('AI_RATE_LIMIT_BURST_LIMIT', 50),
+  requestsPerMinute: getEnvInt("AI_RATE_LIMIT_REQUESTS_PER_MINUTE", 100),
+  requestsPerHour: getEnvInt("AI_RATE_LIMIT_REQUESTS_PER_HOUR", 1000),
+  burstLimit: getEnvInt("AI_RATE_LIMIT_BURST_LIMIT", 50),
 } as const;
 
 // API key rotation configuration
@@ -46,7 +46,7 @@ const API_KEY_ROTATION_DAYS = 90;
  */
 export function sanitizeForAI(data: any): string {
   try {
-    if (typeof data !== 'object' || data === null) {
+    if (typeof data !== "object" || data === null) {
       return JSON.stringify(data);
     }
 
@@ -58,19 +58,19 @@ export function sanitizeForAI(data: any): string {
     }
 
     if (sanitized.cpf) {
-      sanitized.cpf = '***.***.***-**';
+      sanitized.cpf = "***.***.***-**";
     }
 
     if (sanitized.medicalRecord) {
-      sanitized.medicalRecord = 'MR-****';
+      sanitized.medicalRecord = "MR-****";
     }
 
     if (sanitized.phone) {
-      sanitized.phone = '(**) ****-****';
+      sanitized.phone = "(**) ****-****";
     }
 
     if (sanitized.email) {
-      sanitized.email = '***@***.***';
+      sanitized.email = "***@***.***";
     }
 
     // Keep medical information but ensure it's properly formatted
@@ -84,11 +84,11 @@ export function sanitizeForAI(data: any): string {
 
     return JSON.stringify(sanitized);
   } catch (error) {
-    auditLogger.logError('ai_sanitization_error', {
-      error: error instanceof Error ? error.message : 'Unknown error',
+    auditLogger.logError("ai_sanitization_error", {
+      error: error instanceof Error ? error.message : "Unknown error",
       dataSize: JSON.stringify(data).length,
     });
-    return '{}';
+    return "{}";
   }
 }
 
@@ -110,18 +110,13 @@ export function validatePromptSecurity(prompt: string): boolean {
     /confidential/i,
   ];
 
-  const xmlInjectionPatterns = [
-    /<\?xml/i,
-    /<!DOCTYPE/i,
-    /<attack/i,
-    /<xss/i,
-  ];
+  const xmlInjectionPatterns = [/<\?xml/i, /<!DOCTYPE/i, /<attack/i, /<xss/i];
 
   // Check for common injection patterns
   for (const pattern of [...injectionPatterns, ...xmlInjectionPatterns]) {
     if (pattern.test(prompt)) {
       auditLogger.logSecurityEvent({
-        event: 'prompt_injection_attempt',
+        event: "prompt_injection_attempt",
         pattern: pattern.source,
         promptLength: prompt.length,
         timestamp: new Date().toISOString(),
@@ -133,7 +128,7 @@ export function validatePromptSecurity(prompt: string): boolean {
   // Check for extremely long prompts (potential DoS)
   if (prompt.length > 10000) {
     auditLogger.logSecurityEvent({
-      event: 'prompt_too_long',
+      event: "prompt_too_long",
       length: prompt.length,
       timestamp: new Date().toISOString(),
     });
@@ -150,36 +145,37 @@ export function validateMedicalTerminology(term: string): boolean {
   // Common Brazilian medical terms and abbreviations
   const validTerms = [
     // Common symptoms
-    'hipertensão arterial sistêmica',
-    'diabetes mellitus tipo 2',
-    'infarto agudo do miocárdio',
-    'acidente vascular cerebral',
-    'insuficiência cardíaca',
-    'asma brônquica',
-    'doença pulmonar obstrutiva crônica',
-    'artrite reumatoide',
-    'lúpus eritematoso sistêmico',
+    "hipertensão arterial sistêmica",
+    "diabetes mellitus tipo 2",
+    "infarto agudo do miocárdio",
+    "acidente vascular cerebral",
+    "insuficiência cardíaca",
+    "asma brônquica",
+    "doença pulmonar obstrutiva crônica",
+    "artrite reumatoide",
+    "lúpus eritematoso sistêmico",
 
     // Vital signs
-    'pressão arterial',
-    'frequência cardíaca',
-    'saturação de oxigênio',
-    'temperatura corporal',
-    'frequência respiratória',
+    "pressão arterial",
+    "frequência cardíaca",
+    "saturação de oxigênio",
+    "temperatura corporal",
+    "frequência respiratória",
 
     // Medical procedures
-    'eletrocardiograma',
-    'radiografia de tórax',
-    'hemograma completo',
-    'glicemia de jejum',
-    'colesterol total',
-    'triglicerídeos',
+    "eletrocardiograma",
+    "radiografia de tórax",
+    "hemograma completo",
+    "glicemia de jejum",
+    "colesterol total",
+    "triglicerídeos",
   ];
 
   const normalizedTerm = term.toLowerCase().trim();
-  return validTerms.some(validTerm =>
-    validTerm.toLowerCase().includes(normalizedTerm)
-    || normalizedTerm.includes(validTerm.toLowerCase())
+  return validTerms.some(
+    (validTerm) =>
+      validTerm.toLowerCase().includes(normalizedTerm) ||
+      normalizedTerm.includes(validTerm.toLowerCase()),
   );
 }
 
@@ -211,7 +207,7 @@ export function validateAIOutputSafety(response: string): boolean {
   for (const pattern of dangerousPatterns) {
     if (pattern.test(response)) {
       auditLogger.logSecurityEvent({
-        event: 'dangerous_medical_advice',
+        event: "dangerous_medical_advice",
         pattern: pattern.source,
         responseLength: response.length,
         timestamp: new Date().toISOString(),
@@ -221,11 +217,13 @@ export function validateAIOutputSafety(response: string): boolean {
   }
 
   // Check for required medical disclaimers
-  const hasDisclaimer = missingDisclaimerPatterns.some(pattern => pattern.test(response));
+  const hasDisclaimer = missingDisclaimerPatterns.some((pattern) =>
+    pattern.test(response),
+  );
 
   if (!hasDisclaimer && response.length > 100) {
     auditLogger.logSecurityEvent({
-      event: 'missing_medical_disclaimer',
+      event: "missing_medical_disclaimer",
       responseLength: response.length,
       timestamp: new Date().toISOString(),
     });
@@ -255,14 +253,18 @@ export class AIRateLimiter {
     const userRequests = this.requests.get(key) || [];
 
     // Remove requests older than 1 hour
-    const recentRequests = userRequests.filter(time => now - time < 60 * 60 * 1000);
+    const recentRequests = userRequests.filter(
+      (time) => now - time < 60 * 60 * 1000,
+    );
 
     // Check minute limit
-    const minuteRequests = recentRequests.filter(time => now - time < 60 * 1000);
+    const minuteRequests = recentRequests.filter(
+      (time) => now - time < 60 * 1000,
+    );
 
     if (minuteRequests.length >= RATE_LIMITS.requestsPerMinute) {
       auditLogger.logSecurityEvent({
-        event: 'ai_rate_limit_exceeded_minute',
+        event: "ai_rate_limit_exceeded_minute",
         userId,
         clinicId,
         requestsInMinute: minuteRequests.length,
@@ -274,7 +276,7 @@ export class AIRateLimiter {
     // Check hour limit
     if (recentRequests.length >= RATE_LIMITS.requestsPerHour) {
       auditLogger.logSecurityEvent({
-        event: 'ai_rate_limit_exceeded_hour',
+        event: "ai_rate_limit_exceeded_hour",
         userId,
         clinicId,
         requestsInHour: recentRequests.length,
@@ -293,7 +295,9 @@ export class AIRateLimiter {
   private cleanupOldRequests(): void {
     const now = Date.now();
     for (const [key, requests] of this.requests.entries()) {
-      const recentRequests = requests.filter(time => now - time < 60 * 60 * 1000);
+      const recentRequests = requests.filter(
+        (time) => now - time < 60 * 60 * 1000,
+      );
 
       if (recentRequests.length === 0) {
         this.requests.delete(key);
@@ -319,12 +323,13 @@ export function validateApiKeyRotation(apiKeyInfo: {
   createdAt: number;
   lastRotated: number;
 }): boolean {
-  const daysSinceRotation = (Date.now() - apiKeyInfo.lastRotated) / (24 * 60 * 60 * 1000);
+  const daysSinceRotation =
+    (Date.now() - apiKeyInfo.lastRotated) / (24 * 60 * 60 * 1000);
   const needsRotation = daysSinceRotation > API_KEY_ROTATION_DAYS;
 
   if (needsRotation) {
     auditLogger.logSecurityEvent({
-      event: 'api_key_rotation_required',
+      event: "api_key_rotation_required",
       daysSinceRotation,
       apiKeyAge: daysSinceRotation,
       timestamp: new Date().toISOString(),
@@ -347,7 +352,7 @@ export function logAIInteraction(interaction: {
   timestamp: number;
 }): void {
   auditLogger.logSecurityEvent({
-    event: 'ai_interaction',
+    event: "ai_interaction",
     userId: interaction.userId,
     patientId: interaction.patientId,
     clinicId: interaction.clinicId,
@@ -361,7 +366,10 @@ export function logAIInteraction(interaction: {
 /**
  * Checks if data should be retained based on LGPD policies
  */
-export function shouldRetainAIData(createdAt: number, dataCategory: string): boolean {
+export function shouldRetainAIData(
+  createdAt: number,
+  dataCategory: string,
+): boolean {
   const daysOld = (Date.now() - createdAt) / (24 * 60 * 60 * 1000);
 
   // Different retention periods for different data types
@@ -372,11 +380,12 @@ export function shouldRetainAIData(createdAt: number, dataCategory: string): boo
     AUDIT_LOG: 2555, // 7 years
   };
 
-  const retentionDays = retentionPolicies[dataCategory as keyof typeof retentionPolicies] || 365;
+  const retentionDays =
+    retentionPolicies[dataCategory as keyof typeof retentionPolicies] || 365;
 
   if (daysOld > retentionDays) {
     auditLogger.logSecurityEvent({
-      event: 'ai_data_retention_expired',
+      event: "ai_data_retention_expired",
       dataCategory,
       daysOld,
       retentionDays,
@@ -390,21 +399,21 @@ export function shouldRetainAIData(createdAt: number, dataCategory: string): boo
 
 // Helper functions
 function anonymizeName(name: string): string {
-  const parts = name.trim().split(' ');
+  const parts = name.trim().split(" ");
   if (parts.length === 1) {
-    return parts[0][0] + '***';
+    return parts[0][0] + "***";
   }
 
-  return parts[0][0] + '*** ' + parts[parts.length - 1][0] + '***';
+  return parts[0][0] + "*** " + parts[parts.length - 1][0] + "***";
 }
 
 function sanitizeMedicalText(text: string): string {
   // Remove potentially sensitive information while keeping medical context
   return text
-    .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, '[CPF]')
-    .replace(/\(\d{2}\)\s*\d{4,5}-\d{4}/g, '[Telefone]')
-    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/g, '[Email]')
-    .replace(/MR-\d+/g, '[Prontuário]');
+    .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, "[CPF]")
+    .replace(/\(\d{2}\)\s*\d{4,5}-\d{4}/g, "[Telefone]")
+    .replace(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/g, "[Email]")
+    .replace(/MR-\d+/g, "[Prontuário]");
 }
 
 // Export singleton instance

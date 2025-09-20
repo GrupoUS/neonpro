@@ -3,21 +3,26 @@
  * Optimized for healthcare workloads with connection pooling and performance monitoring
  */
 
-import { PrismaClient } from '@prisma/client';
-import { createClient as createSupabaseClient, type SupabaseClient } from '@supabase/supabase-js';
+import { PrismaClient } from "@prisma/client";
+import {
+  createClient as createSupabaseClient,
+  type SupabaseClient,
+} from "@supabase/supabase-js";
 
 // Connection pool configuration optimized for healthcare workloads
 const createOptimizedSupabaseClient = (): SupabaseClient => {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    throw new Error('Missing required Supabase environment variables for optimized client');
+    throw new Error(
+      "Missing required Supabase environment variables for optimized client",
+    );
   }
-  
+
   return createSupabaseClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     {
       db: {
-        schema: 'public',
+        schema: "public",
       },
       auth: {
         persistSession: false, // Server-side optimization
@@ -30,7 +35,7 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
       },
       global: {
         headers: {
-          'x-application-name': 'neonpro-healthcare',
+          "x-application-name": "neonpro-healthcare",
         },
       },
     },
@@ -40,8 +45,8 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
 // Browser client for client-side operations with RLS
 const createBrowserSupabaseClient = (): SupabaseClient => {
   return createSupabaseClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
+    process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
     {
       auth: {
         persistSession: true,
@@ -60,49 +65,50 @@ const createBrowserSupabaseClient = (): SupabaseClient => {
 // Prisma client for healthcare workloads
 const createPrismaClient = (): PrismaClient => {
   return new PrismaClient({
-    log: process.env.NODE_ENV === 'development'
-      ? ['query', 'error', 'warn']
-      : ['error'],
-    errorFormat: 'pretty',
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
+    errorFormat: "pretty",
   });
 };
 
 // Client creation functions for testing
 export const createNodeSupabaseClient = (): SupabaseClient => {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    throw new Error('Missing Supabase environment variables');
+    throw new Error("Missing Supabase environment variables");
   }
   return createSupabaseClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     {
       db: {
-        schema: 'public',
+        schema: "public",
       },
       auth: {
         persistSession: false,
         autoRefreshToken: false,
       },
-    }
+    },
   );
 };
 
 export const createServiceSupabaseClient = (): SupabaseClient => {
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-    throw new Error('Missing Supabase service role environment variables');
+    throw new Error("Missing Supabase service role environment variables");
   }
   return createSupabaseClient(
     process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY,
     {
       db: {
-        schema: 'public',
+        schema: "public",
       },
       auth: {
         persistSession: false,
         autoRefreshToken: false,
       },
-    }
+    },
   );
 };
 
@@ -122,23 +128,20 @@ export const checkDatabaseHealth = async () => {
     await prisma.$queryRaw`SELECT 1`;
 
     // Test Supabase connection
-    const { error } = await supabase
-      .from('clinics')
-      .select('id')
-      .limit(1);
+    const { error } = await supabase.from("clinics").select("id").limit(1);
 
     if (error) throw error;
 
     return {
-      status: 'healthy',
+      status: "healthy",
       prisma: true,
       supabase: true,
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
     return {
-      status: 'unhealthy',
-      error: error instanceof Error ? error.message : 'Unknown error',
+      status: "unhealthy",
+      error: error instanceof Error ? error.message : "Unknown error",
       timestamp: new Date().toISOString(),
     };
   }
@@ -148,14 +151,17 @@ export const checkDatabaseHealth = async () => {
 export const closeDatabaseConnections = async () => {
   try {
     await prisma.$disconnect();
-    console.log('Database connections closed successfully');
+    console.log("Database connections closed successfully");
   } catch (error) {
-    console.error('Error closing database connections:', error);
+    console.error("Error closing database connections:", error);
   }
 };
 
 // Handle process termination
-if (typeof process !== 'undefined' && typeof (process as any).on === 'function') {
-  process.on('SIGINT', closeDatabaseConnections);
-  process.on('SIGTERM', closeDatabaseConnections);
+if (
+  typeof process !== "undefined" &&
+  typeof (process as any).on === "function"
+) {
+  process.on("SIGINT", closeDatabaseConnections);
+  process.on("SIGTERM", closeDatabaseConnections);
 }

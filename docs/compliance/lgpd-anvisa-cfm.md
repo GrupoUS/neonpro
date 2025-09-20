@@ -136,14 +136,14 @@ const LGPDConsentForm: React.FC = () => {
 ```typescript
 // Mask sensitive data
 export function maskCPF(cpf: string): string {
-  if (!cpf) return '';
+  if (!cpf) return "";
   const clean = cleanDocument(cpf);
   return `${clean.substring(0, 3)}.***.${clean.substring(6, 9)}-**`;
 }
 
 export function maskEmail(email: string): string {
-  if (!email) return '';
-  const [username, domain] = email.split('@');
+  if (!email) return "";
+  const [username, domain] = email.split("@");
   return `${username.substring(0, 2)}***@${domain}`;
 }
 ```
@@ -203,7 +203,7 @@ interface AuditLog {
   resource: string;
   resourceId: string;
   changes?: Record<string, any>;
-  result: 'success' | 'failure';
+  result: "success" | "failure";
   ipAddress: string;
   userAgent: string;
 }
@@ -215,7 +215,7 @@ class AuditService {
     resource: string;
     resourceId: string;
     changes?: Record<string, any>;
-    result: 'success' | 'failure';
+    result: "success" | "failure";
   }) {
     const audit: AuditLog = {
       id: generateUUID(),
@@ -225,7 +225,7 @@ class AuditService {
       cfmNumber: getCurrentUser().cfmNumber,
       ...params,
       ipAddress: getClientIP(),
-      userAgent: navigator.userAgent
+      userAgent: navigator.userAgent,
     };
 
     await this.saveToDatabase(audit);
@@ -239,18 +239,18 @@ class AuditService {
 ```typescript
 // Validation matrix
 const VALIDATION_MATRIX = {
-  'patient-registration': {
-    requirements: ['REQ-PAT-001', 'REQ-PAT-002'],
-    testCases: ['TC-PAT-001', 'TC-PAT-002'],
-    risks: ['RISK-001'],
-    mitigations: ['MIT-001']
+  "patient-registration": {
+    requirements: ["REQ-PAT-001", "REQ-PAT-002"],
+    testCases: ["TC-PAT-001", "TC-PAT-002"],
+    risks: ["RISK-001"],
+    mitigations: ["MIT-001"],
   },
-  'ai-diagnosis': {
-    requirements: ['REQ-AI-001'],
-    testCases: ['TC-AI-001', 'TC-AI-002'],
-    risks: ['RISK-002', 'RISK-003'],
-    mitigations: ['MIT-002', 'MIT-003']
-  }
+  "ai-diagnosis": {
+    requirements: ["REQ-AI-001"],
+    testCases: ["TC-AI-001", "TC-AI-002"],
+    risks: ["RISK-002", "RISK-003"],
+    mitigations: ["MIT-002", "MIT-003"],
+  },
 };
 ```
 
@@ -298,25 +298,28 @@ The system follows CFM Resolution 2.314/2022 for telemedicine:
 
 ```typescript
 // CFM number validation
-export async function validateCFMNumber(cfm: string, state: string): Promise<boolean> {
+export async function validateCFMNumber(
+  cfm: string,
+  state: string,
+): Promise<boolean> {
   // Check CFM database
   const response = await fetch(`https://portal.cfm.org.br/api/medicos/${cfm}`);
   const data = await response.json();
-  
-  return data.situacao === 'Ativo' && data.uf === state;
+
+  return data.situacao === "Ativo" && data.uf === state;
 }
 
 // Professional scope check
 export function validateScopeOfPractice(
   specialty: string,
-  procedure: string
+  procedure: string,
 ): boolean {
   const SCOPE_MATRIX = {
-    'Cardiologia': ['Eletrocardiograma', 'Teste de esforço'],
-    'Dermatologia': ['Dermatoscopia', 'Biópsia'],
+    Cardiologia: ["Eletrocardiograma", "Teste de esforço"],
+    Dermatologia: ["Dermatoscopia", "Biópsia"],
     // ... other specialties
   };
-  
+
   return SCOPE_MATRIX[specialty]?.includes(procedure) ?? false;
 }
 ```
@@ -338,13 +341,13 @@ interface ElectronicSignature {
 class SignatureService {
   async signDocument(
     documentId: string,
-    professional: MedicalProfessional
+    professional: MedicalProfessional,
   ): Promise<ElectronicSignature> {
     // Create cryptographic signature
     const signature = await crypto.subtle.sign(
-      'RSASSA-PKCS1-v1_5',
+      "RSASSA-PKCS1-v1_5",
       professional.privateKey,
-      new TextEncoder().encode(documentId)
+      new TextEncoder().encode(documentId),
     );
 
     const electronicSignature: ElectronicSignature = {
@@ -354,7 +357,7 @@ class SignatureService {
       cfmNumber: professional.cfmNumber,
       signature: arrayBufferToBase64(signature),
       timestamp: new Date(),
-      ipAddress: getClientIP()
+      ipAddress: getClientIP(),
     };
 
     return this.saveSignature(electronicSignature);
@@ -379,12 +382,13 @@ class SignatureService {
 ### Access Controls
 
 1. **Role-Based Access Control (RBAC)**
+
    ```typescript
    const ROLES = {
-     ADMIN: ['read', 'write', 'delete', 'manage'],
-     DOCTOR: ['read', 'write', 'diagnose'],
-     NURSE: ['read', 'write-notes'],
-     RECEPTIONIST: ['read', 'create-appointments']
+     ADMIN: ["read", "write", "delete", "manage"],
+     DOCTOR: ["read", "write", "diagnose"],
+     NURSE: ["read", "write-notes"],
+     RECEPTIONIST: ["read", "create-appointments"],
    };
    ```
 
@@ -423,12 +427,12 @@ class SignatureService {
 
 ### Patient Data
 
-| Data Type | Retention Period | Legal Basis |
-|-----------|------------------|-------------|
-| Clinical Data | 25 years | CFM Resolution |
-| Financial Data | 10 years | Tax Law |
-| Contact Data | 5 years | LGPD |
-| Audit Logs | 25 years | CFM Resolution |
+| Data Type      | Retention Period | Legal Basis    |
+| -------------- | ---------------- | -------------- |
+| Clinical Data  | 25 years         | CFM Resolution |
+| Financial Data | 10 years         | Tax Law        |
+| Contact Data   | 5 years          | LGPD           |
+| Audit Logs     | 25 years         | CFM Resolution |
 
 ### Data Deletion
 
@@ -447,14 +451,17 @@ class SignatureService {
 ### Compliance Testing
 
 1. **Unit Tests**
+
    ```typescript
-   describe('LGPD Compliance', () => {
-     it('should mask CPF correctly', () => {
-       expect(maskCPF('123.456.789-09')).toBe('123.***.789-**');
+   describe("LGPD Compliance", () => {
+     it("should mask CPF correctly", () => {
+       expect(maskCPF("123.456.789-09")).toBe("123.***.789-**");
      });
-     
-     it('should require valid consent', async () => {
-       await expect(savePatientData({})).rejects.toThrow('LGPD consent required');
+
+     it("should require valid consent", async () => {
+       await expect(savePatientData({})).rejects.toThrow(
+         "LGPD consent required",
+       );
      });
    });
    ```

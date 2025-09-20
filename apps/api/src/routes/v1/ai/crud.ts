@@ -12,8 +12,8 @@ import { createTRPCHandle } from '@trpc/server/adapters/hono';
 
 // Import middleware and utilities
 import { mockAuthMiddleware, mockLGPDMiddleware } from '../../../middleware/auth-middleware';
-import { ComprehensiveAuditService } from '../../../services/audit-service.js';
-import { LGPDService } from '../../../services/lgpd-service.js';
+import { ComprehensiveAuditService } from '../../../services/audit-service';
+import { LGPDService } from '../../../services/lgpd-service';
 
 // Request validation schema - matches the 3-step flow
 const crudRequestSchema = z.object({
@@ -63,7 +63,9 @@ const tRPCHandle = createTRPCHandle({
       },
       // Add other necessary context properties
       prisma: null, // Will be handled by tRPC context
-    };
+   };
+ },
+});
 const app = new Hono();
 
 // Main CRUD endpoint

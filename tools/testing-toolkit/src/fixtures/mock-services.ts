@@ -4,8 +4,8 @@
  * Provides mock implementations of services for testing.
  */
 
-import type { MockClinic, MockPatient } from './healthcare-data';
-import type { MockSession, MockUser } from './user-data';
+import type { MockClinic, MockPatient } from "./healthcare-data";
+import type { MockSession, MockUser } from "./user-data";
 
 export class MockAuthService {
   private users: Map<string, MockUser> = new Map();
@@ -15,7 +15,10 @@ export class MockAuthService {
     this.users.set(user.email, user);
   }
 
-  async login(email: string, password: string): Promise<{ user: MockUser; token: string } | null> {
+  async login(
+    email: string,
+    password: string,
+  ): Promise<{ user: MockUser; token: string } | null> {
     const user = this.users.get(email);
 
     if (!user || !user.active) {
@@ -23,7 +26,7 @@ export class MockAuthService {
     }
 
     // Simple password validation for testing
-    if (password === 'password' || password === 'test123') {
+    if (password === "password" || password === "test123") {
       const token = `mock-token-${Date.now()}`;
       const session: MockSession = {
         id: `session-${Date.now()}`,
@@ -47,7 +50,11 @@ export class MockAuthService {
       return null;
     }
 
-    return Array.from(this.users.values()).find(user => user.id === session.userId) || null;
+    return (
+      Array.from(this.users.values()).find(
+        (user) => user.id === session.userId,
+      ) || null
+    );
   }
 
   async logout(token: string): Promise<boolean> {
@@ -72,19 +79,21 @@ export class MockPatientService {
   }
 
   async getPatientsByClinic(clinicId: string): Promise<MockPatient[]> {
-    return Array.from(this.patients.values()).filter(p => p.clinicId === clinicId);
+    return Array.from(this.patients.values()).filter(
+      (p) => p.clinicId === clinicId,
+    );
   }
 
   async createPatient(patientData: Partial<MockPatient>): Promise<MockPatient> {
     const patient: MockPatient = {
       id: `patient-${Date.now()}`,
-      name: '',
-      email: '',
-      cpf: '',
+      name: "",
+      email: "",
+      cpf: "",
       birthDate: new Date(),
-      clinicId: '',
+      clinicId: "",
       consentGiven: false,
-      dataProcessingPurpose: '',
+      dataProcessingPurpose: "",
       auditTrail: [],
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -95,7 +104,10 @@ export class MockPatientService {
     return patient;
   }
 
-  async updatePatient(id: string, updates: Partial<MockPatient>): Promise<MockPatient | null> {
+  async updatePatient(
+    id: string,
+    updates: Partial<MockPatient>,
+  ): Promise<MockPatient | null> {
     const patient = this.patients.get(id);
 
     if (!patient) {

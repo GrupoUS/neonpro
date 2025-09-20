@@ -4,7 +4,7 @@ import type {
   AppointmentTemplateFilters,
   CreateAppointmentTemplateData,
   UpdateAppointmentTemplateData,
-} from '@/types/appointment-templates';
+} from "@/types/appointment-templates";
 
 class AppointmentTemplatesServiceStub {
   async getAppointmentTemplates(
@@ -13,7 +13,9 @@ class AppointmentTemplatesServiceStub {
     return [];
   }
 
-  async getAppointmentTemplate(_templateId: string): Promise<AppointmentTemplate | null> {
+  async getAppointmentTemplate(
+    _templateId: string,
+  ): Promise<AppointmentTemplate | null> {
     return null;
   }
 
@@ -22,7 +24,9 @@ class AppointmentTemplatesServiceStub {
     _clinicId: string,
     _userId: string,
   ): Promise<AppointmentTemplate> {
-    throw new Error('appointmentTemplatesService.createAppointmentTemplate not implemented');
+    throw new Error(
+      "appointmentTemplatesService.createAppointmentTemplate not implemented",
+    );
   }
 
   async updateAppointmentTemplate(
@@ -30,7 +34,9 @@ class AppointmentTemplatesServiceStub {
     _updateData: UpdateAppointmentTemplateData,
     _userId: string,
   ): Promise<AppointmentTemplate> {
-    throw new Error('appointmentTemplatesService.updateAppointmentTemplate not implemented');
+    throw new Error(
+      "appointmentTemplatesService.updateAppointmentTemplate not implemented",
+    );
   }
 
   async deleteAppointmentTemplate(_templateId: string): Promise<void> {
@@ -45,9 +51,12 @@ class AppointmentTemplatesServiceStub {
     return [];
   }
 
-  async getDefaultTemplates(_clinicId?: string): Promise<AppointmentTemplate[]> {
+  async getDefaultTemplates(
+    _clinicId?: string,
+  ): Promise<AppointmentTemplate[]> {
     return [];
   }
 }
 
-export const appointmentTemplatesService = new AppointmentTemplatesServiceStub();
+export const appointmentTemplatesService =
+  new AppointmentTemplatesServiceStub();

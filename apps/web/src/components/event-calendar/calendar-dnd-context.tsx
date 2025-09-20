@@ -23,7 +23,10 @@ import {
 } from "@dnd-kit/core";
 import { addMinutes, differenceInMinutes } from "date-fns";
 
-import { EventItem, type CalendarEvent } from "@/components/event-calendar/index";
+import {
+  EventItem,
+  type CalendarEvent,
+} from "@/components/event-calendar/index";
 
 // Define the context type
 type CalendarDndContextType = {

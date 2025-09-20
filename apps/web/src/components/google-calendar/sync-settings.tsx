@@ -1,21 +1,33 @@
-import { useState } from 'react';
-import { useQuery, useMutation } from '@tanstack/react-query';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Sync, 
-  Clock, 
-  CheckCircle, 
-  AlertCircle, 
-  Settings, 
+import { useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import {
+  Sync,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Settings,
   RefreshCw,
-  Shield
-} from 'lucide-react';
+  Shield,
+} from "lucide-react";
 
 interface SyncSettingsProps {
   userId: string;
@@ -23,22 +35,26 @@ interface SyncSettingsProps {
   integrationId?: string;
 }
 
-export function SyncSettings({ userId, clinicId, integrationId }: SyncSettingsProps) {
+export function SyncSettings({
+  userId,
+  clinicId,
+  integrationId,
+}: SyncSettingsProps) {
   const [autoSync, setAutoSync] = useState(true);
   const [bidirectional, setBidirectional] = useState(true);
-  const [syncInterval, setSyncInterval] = useState('30');
+  const [syncInterval, setSyncInterval] = useState("30");
 
   // Mock query for integration settings
   const { data: integration, isLoading } = useQuery({
-    queryKey: ['google-calendar-integration', userId, clinicId],
+    queryKey: ["google-calendar-integration", userId, clinicId],
     queryFn: async () => {
       // In real app, fetch from API
       return {
         syncEnabled: true,
         autoSync: true,
         bidirectional: true,
-        syncCalendarId: 'primary',
-        syncTimezone: 'America/Sao_Paulo',
+        syncCalendarId: "primary",
+        syncTimezone: "America/Sao_Paulo",
         lastSyncAt: new Date(),
         lastError: null,
         errorCount: 0,
@@ -105,16 +121,19 @@ export function SyncSettings({ userId, clinicId, integrationId }: SyncSettingsPr
           <span>Configurações de Sincronização</span>
         </CardTitle>
         <CardDescription>
-          Configure como seus compromissos são sincronizados com o Google Calendar
+          Configure como seus compromissos são sincronizados com o Google
+          Calendar
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Sync Status */}
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
           <div className="flex items-center space-x-3">
-            <div className={`p-2 rounded-full ${
-              integration?.syncEnabled ? 'bg-green-100' : 'bg-gray-100'
-            }`}>
+            <div
+              className={`p-2 rounded-full ${
+                integration?.syncEnabled ? "bg-green-100" : "bg-gray-100"
+              }`}
+            >
               {integration?.syncEnabled ? (
                 <Sync className="h-4 w-4 text-green-600" />
               ) : (
@@ -123,12 +142,15 @@ export function SyncSettings({ userId, clinicId, integrationId }: SyncSettingsPr
             </div>
             <div>
               <p className="font-medium">
-                {integration?.syncEnabled ? 'Sincronização Ativa' : 'Sincronização Inativa'}
+                {integration?.syncEnabled
+                  ? "Sincronização Ativa"
+                  : "Sincronização Inativa"}
               </p>
               {integration?.lastSyncAt && (
                 <p className="text-sm text-gray-500 flex items-center">
                   <Clock className="h-3 w-3 mr-1" />
-                  Última sincronização: {integration.lastSyncAt.toLocaleString('pt-BR')}
+                  Última sincronização:{" "}
+                  {integration.lastSyncAt.toLocaleString("pt-BR")}
                 </p>
               )}
             </div>
@@ -202,13 +224,13 @@ export function SyncSettings({ userId, clinicId, integrationId }: SyncSettingsPr
             <div className="space-y-2">
               <Label>Calendário de Destino</Label>
               <div className="p-2 bg-gray-50 rounded text-sm">
-                {integration?.syncCalendarId || 'Calendário Principal'}
+                {integration?.syncCalendarId || "Calendário Principal"}
               </div>
             </div>
             <div className="space-y-2">
               <Label>Fuso Horário</Label>
               <div className="p-2 bg-gray-50 rounded text-sm">
-                {integration?.syncTimezone || 'America/Sao_Paulo'}
+                {integration?.syncTimezone || "America/Sao_Paulo"}
               </div>
             </div>
           </div>
@@ -218,8 +240,9 @@ export function SyncSettings({ userId, clinicId, integrationId }: SyncSettingsPr
         <Alert>
           <Shield className="h-4 w-4" />
           <AlertDescription>
-            Todos os dados são sincronizados de forma segura e em conformidade com a LGPD. 
-            Os compromissos são marcados como privados no Google Calendar.
+            Todos os dados são sincronizados de forma segura e em conformidade
+            com a LGPD. Os compromissos são marcados como privados no Google
+            Calendar.
           </AlertDescription>
         </Alert>
 
@@ -252,7 +275,7 @@ export function SyncSettings({ userId, clinicId, integrationId }: SyncSettingsPr
           <Alert>
             <CheckCircle className="h-4 w-4" />
             <AlertDescription>
-              Sincronização concluída com sucesso! 
+              Sincronização concluída com sucesso!
               {syncNowMutation.data?.synced && (
                 <Badge variant="secondary" className="ml-2">
                   {syncNowMutation.data.synced} compromissos sincronizados

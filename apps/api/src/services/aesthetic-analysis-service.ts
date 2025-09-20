@@ -16,59 +16,59 @@
  * @updated 2025-09-16 - Refactored for aesthetic procedures
  */
 
-import { SupabaseClient } from '@supabase/supabase-js';
-import crypto from 'crypto';
-import { logger } from '../lib/logger';
-import { AuditService } from './audit-service';
+import { SupabaseClient } from "@supabase/supabase-js";
+import crypto from "crypto";
+import { logger } from "../lib/logger";
+import { AuditService } from "./audit-service";
 
 // Aesthetic Analysis Types
 export interface PatientAge {
   value: number;
-  unit: 'year' | 'month';
+  unit: "year" | "month";
 }
 
 export interface SkinAnalysisData {
   id: string;
   condition_id:
-    | 'aging'
-    | 'wrinkles'
-    | 'pigmentation'
-    | 'acne_scars'
-    | 'volume_loss'
-    | 'skin_texture'
-    | 'hydration';
-  severity: 'mild' | 'moderate' | 'severe';
+    | "aging"
+    | "wrinkles"
+    | "pigmentation"
+    | "acne_scars"
+    | "volume_loss"
+    | "skin_texture"
+    | "hydration";
+  severity: "mild" | "moderate" | "severe";
   facial_area:
-    | 'forehead'
-    | 'periorbital'
-    | 'nasolabial'
-    | 'marionette'
-    | 'lips'
-    | 'cheeks'
-    | 'jaw'
-    | 'neck';
-  confidence: 'high' | 'medium' | 'low';
+    | "forehead"
+    | "periorbital"
+    | "nasolabial"
+    | "marionette"
+    | "lips"
+    | "cheeks"
+    | "jaw"
+    | "neck";
+  confidence: "high" | "medium" | "low";
 }
 
 export interface AestheticPatient {
-  sex: 'male' | 'female';
+  sex: "male" | "female";
   age: PatientAge;
-  skin_type: 'I' | 'II' | 'III' | 'IV' | 'V' | 'VI'; // Fitzpatrick skin type
+  skin_type: "I" | "II" | "III" | "IV" | "V" | "VI"; // Fitzpatrick skin type
   analysis_data: SkinAnalysisData[];
   lifestyle_factors?: {
-    sun_exposure: 'minimal' | 'moderate' | 'high';
+    sun_exposure: "minimal" | "moderate" | "high";
     smoking: boolean;
-    skincare_routine: 'basic' | 'moderate' | 'advanced';
+    skincare_routine: "basic" | "moderate" | "advanced";
     previous_procedures: string[];
   };
 }
 
 export interface AestheticAssessmentRequest extends AestheticPatient {
-  assessment_type?: 'comprehensive' | 'targeted' | 'follow_up';
+  assessment_type?: "comprehensive" | "targeted" | "follow_up";
   max_recommendations?: number;
   include_contraindications?: boolean;
   focus_areas?: string[];
-  budget_range?: 'basic' | 'moderate' | 'premium';
+  budget_range?: "basic" | "moderate" | "premium";
 }
 
 export interface AestheticProcedure {
@@ -76,18 +76,18 @@ export interface AestheticProcedure {
   name: string;
   common_name: string;
   category:
-    | 'neurotoxin'
-    | 'filler'
-    | 'laser'
-    | 'peeling'
-    | 'radiofrequency'
-    | 'microneedling'
-    | 'threads';
+    | "neurotoxin"
+    | "filler"
+    | "laser"
+    | "peeling"
+    | "radiofrequency"
+    | "microneedling"
+    | "threads";
   effectiveness_score: number;
-  safety_profile: 'minimal' | 'low' | 'moderate' | 'high';
+  safety_profile: "minimal" | "low" | "moderate" | "high";
   downtime: {
     duration: string;
-    severity: 'none' | 'minimal' | 'moderate' | 'significant';
+    severity: "none" | "minimal" | "moderate" | "significant";
   };
   contraindications: string[];
   anvisa_approved: boolean;
@@ -101,7 +101,7 @@ export interface AestheticProcedure {
 export interface AestheticAssessmentResult {
   recommended_procedures: Array<{
     procedure: AestheticProcedure;
-    priority: 'high' | 'medium' | 'low';
+    priority: "high" | "medium" | "low";
     rationale: string;
     estimated_cost_brl: {
       min: number;
@@ -113,7 +113,7 @@ export interface AestheticAssessmentResult {
   contraindications: Array<{
     procedure_id: string;
     contraindication: string;
-    severity: 'absolute' | 'relative';
+    severity: "absolute" | "relative";
     explanation: string;
   }>;
   educational_content: {
@@ -183,9 +183,12 @@ export class AestheticAnalysisService {
   private auditService: AuditService;
 
   // Brazilian aesthetic clinic API endpoints (mock endpoints for this example)
-  private readonly SKIN_ANALYSIS_API = 'https://api.aesthetic-ai.com.br/v1/skin-analysis';
-  private readonly PROCEDURE_DATABASE_API = 'https://api.aesthetic-ai.com.br/v1/procedures';
-  private readonly CONTRAINDICATION_API = 'https://api.aesthetic-ai.com.br/v1/contraindications';
+  private readonly SKIN_ANALYSIS_API =
+    "https://api.aesthetic-ai.com.br/v1/skin-analysis";
+  private readonly PROCEDURE_DATABASE_API =
+    "https://api.aesthetic-ai.com.br/v1/procedures";
+  private readonly CONTRAINDICATION_API =
+    "https://api.aesthetic-ai.com.br/v1/contraindications";
 
   constructor(supabase: SupabaseClient, auditService: AuditService) {
     this.supabase = supabase;
@@ -206,10 +209,13 @@ export class AestheticAnalysisService {
 
     try {
       // Validate LGPD consent
-      await this.validatePatientConsent(patientId, ['skin_analysis', 'procedure_recommendation']);
+      await this.validatePatientConsent(patientId, [
+        "skin_analysis",
+        "procedure_recommendation",
+      ]);
 
       // Log assessment start
-      logger.info('Starting aesthetic assessment', {
+      logger.info("Starting aesthetic assessment", {
         sessionId,
         patientId,
         assessmentType: request.assessment_type,
@@ -219,10 +225,8 @@ export class AestheticAnalysisService {
       const skinAnalysis = await this.analyzeSkinConditions(request);
 
       // Get procedure recommendations based on analysis
-      const procedureRecommendations = await this.generateProcedureRecommendations(
-        request,
-        skinAnalysis,
-      );
+      const procedureRecommendations =
+        await this.generateProcedureRecommendations(request, skinAnalysis);
 
       // Check contraindications
       const contraindications = await this.assessContraindications(
@@ -255,24 +259,27 @@ export class AestheticAnalysisService {
         patient_id: patientId,
         professional_id: professionalId,
         clinic_id: clinicId,
-        assessment_type: request.assessment_type || 'comprehensive',
+        assessment_type: request.assessment_type || "comprehensive",
         timestamp: new Date(),
         input_data: this.sanitizeInputForAudit(request),
         output_data: this.sanitizeOutputForAudit(result),
         ai_confidence_scores: this.extractConfidenceScores(result),
         data_processing_consent: true,
-        purpose_limitation: ['aesthetic_assessment', 'procedure_recommendation'],
-        retention_period: '5_years',
+        purpose_limitation: [
+          "aesthetic_assessment",
+          "procedure_recommendation",
+        ],
+        retention_period: "5_years",
       });
 
-      logger.info('Aesthetic assessment completed successfully', {
+      logger.info("Aesthetic assessment completed successfully", {
         sessionId,
         recommendationCount: result.recommended_procedures.length,
       });
 
       return result;
     } catch (error) {
-      logger.error('Aesthetic assessment failed', {
+      logger.error("Aesthetic assessment failed", {
         sessionId,
         error: error.message,
       });
@@ -281,7 +288,7 @@ export class AestheticAnalysisService {
       await this.auditService.logError({
         session_id: sessionId,
         patient_id: patientId,
-        error_type: 'assessment_failure',
+        error_type: "assessment_failure",
         error_message: error.message,
         timestamp: new Date(),
       });
@@ -299,29 +306,29 @@ export class AestheticAnalysisService {
     // Mock AI skin analysis - in production, would integrate with actual AI service
     const mockAnalysis: SkinAnalysisData[] = [
       {
-        id: 'wrinkles_001',
-        condition_id: 'wrinkles',
-        severity: 'moderate',
-        facial_area: 'periorbital',
-        confidence: 'high',
+        id: "wrinkles_001",
+        condition_id: "wrinkles",
+        severity: "moderate",
+        facial_area: "periorbital",
+        confidence: "high",
       },
       {
-        id: 'volume_loss_001',
-        condition_id: 'volume_loss',
-        severity: 'mild',
-        facial_area: 'cheeks',
-        confidence: 'medium',
+        id: "volume_loss_001",
+        condition_id: "volume_loss",
+        severity: "mild",
+        facial_area: "cheeks",
+        confidence: "medium",
       },
     ];
 
     // Add age-related adjustments
     if (request.age.value > 40) {
       mockAnalysis.push({
-        id: 'aging_001',
-        condition_id: 'aging',
-        severity: request.age.value > 50 ? 'moderate' : 'mild',
-        facial_area: 'forehead',
-        confidence: 'high',
+        id: "aging_001",
+        condition_id: "aging",
+        severity: request.age.value > 50 ? "moderate" : "mild",
+        facial_area: "forehead",
+        confidence: "high",
       });
     }
 
@@ -334,8 +341,9 @@ export class AestheticAnalysisService {
   private async generateProcedureRecommendations(
     request: AestheticAssessmentRequest,
     skinAnalysis: SkinAnalysisData[],
-  ): Promise<AestheticAssessmentResult['recommended_procedures']> {
-    const recommendations: AestheticAssessmentResult['recommended_procedures'] = [];
+  ): Promise<AestheticAssessmentResult["recommended_procedures"]> {
+    const recommendations: AestheticAssessmentResult["recommended_procedures"] =
+      [];
 
     // Process each identified condition
     for (const condition of skinAnalysis) {
@@ -346,8 +354,14 @@ export class AestheticAnalysisService {
           procedure,
           priority: this.calculatePriority(condition, request),
           rationale: this.generateRationale(condition, procedure),
-          estimated_cost_brl: this.estimateCostBRL(procedure, condition.severity),
-          sessions_required: this.calculateSessionsRequired(procedure, condition.severity),
+          estimated_cost_brl: this.estimateCostBRL(
+            procedure,
+            condition.severity,
+          ),
+          sessions_required: this.calculateSessionsRequired(
+            procedure,
+            condition.severity,
+          ),
           expected_results: this.generateExpectedResults(procedure, condition),
         });
       }
@@ -355,7 +369,10 @@ export class AestheticAnalysisService {
 
     // Sort by priority and limit results
     return recommendations
-      .sort((a, b) => this.priorityToNumber(a.priority) - this.priorityToNumber(b.priority))
+      .sort(
+        (a, b) =>
+          this.priorityToNumber(a.priority) - this.priorityToNumber(b.priority),
+      )
       .slice(0, request.max_recommendations || 5);
   }
 
@@ -364,41 +381,49 @@ export class AestheticAnalysisService {
    */
   private async assessContraindications(
     request: AestheticAssessmentRequest,
-    procedures: AestheticAssessmentResult['recommended_procedures'],
-  ): Promise<AestheticAssessmentResult['contraindications']> {
-    const contraindications: AestheticAssessmentResult['contraindications'] = [];
+    procedures: AestheticAssessmentResult["recommended_procedures"],
+  ): Promise<AestheticAssessmentResult["contraindications"]> {
+    const contraindications: AestheticAssessmentResult["contraindications"] =
+      [];
 
     for (const recommendation of procedures) {
       // Check age-related contraindications
       if (request.age.value < 18) {
         contraindications.push({
           procedure_id: recommendation.procedure.id,
-          contraindication: 'patient_under_18',
-          severity: 'absolute',
+          contraindication: "patient_under_18",
+          severity: "absolute",
           explanation:
-            'Procedimentos estéticos não são recomendados para menores de 18 anos conforme regulamentação ANVISA',
+            "Procedimentos estéticos não são recomendados para menores de 18 anos conforme regulamentação ANVISA",
         });
       }
 
       // Check pregnancy/breastfeeding (would be in patient history)
-      if (request.lifestyle_factors?.smoking && recommendation.procedure.category === 'laser') {
+      if (
+        request.lifestyle_factors?.smoking &&
+        recommendation.procedure.category === "laser"
+      ) {
         contraindications.push({
           procedure_id: recommendation.procedure.id,
-          contraindication: 'smoking_laser_therapy',
-          severity: 'relative',
+          contraindication: "smoking_laser_therapy",
+          severity: "relative",
           explanation:
-            'Tabagismo pode afetar cicatrização e resultados de tratamentos a laser. Recomenda-se cessação antes do procedimento.',
+            "Tabagismo pode afetar cicatrização e resultados de tratamentos a laser. Recomenda-se cessação antes do procedimento.",
         });
       }
 
       // Check skin type contraindications
-      if (this.isSkinTypeContraindicated(request.skin_type, recommendation.procedure)) {
+      if (
+        this.isSkinTypeContraindicated(
+          request.skin_type,
+          recommendation.procedure,
+        )
+      ) {
         contraindications.push({
           procedure_id: recommendation.procedure.id,
-          contraindication: 'skin_type_incompatible',
-          severity: 'relative',
-          explanation:
-            `Fototipo ${request.skin_type} requer cuidados especiais para este procedimento. Avaliação detalhada necessária.`,
+          contraindication: "skin_type_incompatible",
+          severity: "relative",
+          explanation: `Fototipo ${request.skin_type} requer cuidados especiais para este procedimento. Avaliação detalhada necessária.`,
         });
       }
     }
@@ -410,42 +435,41 @@ export class AestheticAnalysisService {
    * Generate educational content for patient
    */
   private async generateEducationalContent(
-    procedures: AestheticAssessmentResult['recommended_procedures'],
+    procedures: AestheticAssessmentResult["recommended_procedures"],
     skinType: string,
-  ): Promise<AestheticAssessmentResult['educational_content']> {
+  ): Promise<AestheticAssessmentResult["educational_content"]> {
     // Generate educational content based on procedures and skin type
-    const content = procedures.map(procedure => ({
+    const content = procedures.map((procedure) => ({
       title: `Understanding ${procedure.name}`,
-      description:
-        `Educational content for ${procedure.name} treatment suitable for ${skinType} skin type`,
+      description: `Educational content for ${procedure.name} treatment suitable for ${skinType} skin type`,
       risks: procedure.contraindications || [],
-      benefits: [`Improves ${procedure.target_area}`, 'Professional treatment'],
+      benefits: [`Improves ${procedure.target_area}`, "Professional treatment"],
       aftercare: [
-        'Follow post-treatment instructions',
-        'Avoid sun exposure',
-        'Use recommended skincare',
+        "Follow post-treatment instructions",
+        "Avoid sun exposure",
+        "Use recommended skincare",
       ],
     }));
 
     return content;
     return {
       pre_treatment: [
-        'Evitar exposição solar direta 2 semanas antes do procedimento',
-        'Suspender medicamentos fotossensibilizantes se prescritos',
-        'Manter pele hidratada e limpa',
-        'Não realizar esfoliação 1 semana antes',
+        "Evitar exposição solar direta 2 semanas antes do procedimento",
+        "Suspender medicamentos fotossensibilizantes se prescritos",
+        "Manter pele hidratada e limpa",
+        "Não realizar esfoliação 1 semana antes",
       ],
       post_treatment: [
-        'Aplicar protetor solar FPS 50+ diariamente',
-        'Evitar exercícios intensos nas primeiras 24-48h',
-        'Não massagear área tratada por 2 semanas',
-        'Hidratar pele conforme orientação profissional',
+        "Aplicar protetor solar FPS 50+ diariamente",
+        "Evitar exercícios intensos nas primeiras 24-48h",
+        "Não massagear área tratada por 2 semanas",
+        "Hidratar pele conforme orientação profissional",
       ],
       maintenance: [
-        'Retornos conforme cronograma estabelecido',
-        'Cuidados domiciliares personalizados',
-        'Proteção solar contínua',
-        'Avaliação anual para manutenção de resultados',
+        "Retornos conforme cronograma estabelecido",
+        "Cuidados domiciliares personalizados",
+        "Proteção solar contínua",
+        "Avaliação anual para manutenção de resultados",
       ],
     };
   }
@@ -454,47 +478,56 @@ export class AestheticAnalysisService {
    * Generate follow-up recommendations
    */
   private generateFollowUpRecommendations(
-    procedures: AestheticAssessmentResult['recommended_procedures'],
+    procedures: AestheticAssessmentResult["recommended_procedures"],
     age: PatientAge,
-  ): AestheticAssessmentResult['follow_up_recommendations'] {
+  ): AestheticAssessmentResult["follow_up_recommendations"] {
     return {
-      initial_follow_up: '7-14 dias após procedimento inicial',
-      maintenance_schedule: age.value > 40 ? 'Avaliação trimestral' : 'Avaliação semestral',
+      initial_follow_up: "7-14 dias após procedimento inicial",
+      maintenance_schedule:
+        age.value > 40 ? "Avaliação trimestral" : "Avaliação semestral",
       red_flags: [
-        'Dor intensa ou persistente',
-        'Sinais de infecção (vermelhidão, calor, secreção)',
-        'Assimetria significativa',
-        'Reações alérgicas (urticária, inchaço excessivo)',
+        "Dor intensa ou persistente",
+        "Sinais de infecção (vermelhidão, calor, secreção)",
+        "Assimetria significativa",
+        "Reações alérgicas (urticária, inchaço excessivo)",
       ],
     };
   }
 
   // Helper methods for business logic
-  private getProceduresForCondition(condition: SkinAnalysisData): Promise<AestheticProcedure[]> {
+  private getProceduresForCondition(
+    condition: SkinAnalysisData,
+  ): Promise<AestheticProcedure[]> {
     // Mock procedure database - in production would query actual database
     const mockProcedures: AestheticProcedure[] = [
       {
-        id: 'botox_001',
-        name: 'Toxina Botulínica Tipo A',
-        common_name: 'Botox',
-        category: 'neurotoxin',
+        id: "botox_001",
+        name: "Toxina Botulínica Tipo A",
+        common_name: "Botox",
+        category: "neurotoxin",
         effectiveness_score: 0.92,
-        safety_profile: 'minimal',
-        downtime: { duration: '0-2 dias', severity: 'minimal' },
-        contraindications: ['pregnancy', 'breastfeeding', 'neuromuscular_disorders'],
+        safety_profile: "minimal",
+        downtime: { duration: "0-2 dias", severity: "minimal" },
+        contraindications: [
+          "pregnancy",
+          "breastfeeding",
+          "neuromuscular_disorders",
+        ],
         anvisa_approved: true,
         typical_results: {
-          onset: '3-7 dias',
-          duration: '4-6 meses',
+          onset: "3-7 dias",
+          duration: "4-6 meses",
           satisfaction_rate: 0.89,
         },
       },
     ];
 
     return Promise.resolve(
-      mockProcedures.filter(p =>
-        (condition.condition_id === 'wrinkles' && p.category === 'neurotoxin')
-        || (condition.condition_id === 'volume_loss' && p.category === 'filler')
+      mockProcedures.filter(
+        (p) =>
+          (condition.condition_id === "wrinkles" &&
+            p.category === "neurotoxin") ||
+          (condition.condition_id === "volume_loss" && p.category === "filler"),
       ),
     );
   }
@@ -502,27 +535,30 @@ export class AestheticAnalysisService {
   private calculatePriority(
     condition: SkinAnalysisData,
     request: AestheticAssessmentRequest,
-  ): 'high' | 'medium' | 'low' {
+  ): "high" | "medium" | "low" {
     // Calculate severity based on condition and patient request context
     const patientAge = request.patient_data?.age || 25;
     const hasAllergies = request.patient_data?.allergies?.length > 0;
 
     if (condition.severity_score > 0.8 || hasAllergies || patientAge > 65) {
-      return 'high';
+      return "high";
     } else if (condition.severity_score > 0.5 || patientAge > 45) {
-      return 'medium';
+      return "medium";
     }
-    return 'low';
-    if (condition.severity === 'severe' || condition.confidence === 'high') {
-      return 'high';
+    return "low";
+    if (condition.severity === "severe" || condition.confidence === "high") {
+      return "high";
     }
-    if (condition.severity === 'moderate') {
-      return 'medium';
+    if (condition.severity === "moderate") {
+      return "medium";
     }
-    return 'low';
+    return "low";
   }
 
-  private generateRationale(condition: SkinAnalysisData, procedure: AestheticProcedure): string {
+  private generateRationale(
+    condition: SkinAnalysisData,
+    procedure: AestheticProcedure,
+  ): string {
     return `Baseado na análise de ${condition.condition_id} com severidade ${condition.severity} na área ${condition.facial_area}, ${procedure.common_name} apresenta alta efetividade (${
       procedure.effectiveness_score * 100
     }%) para este caso específico.`;
@@ -541,7 +577,8 @@ export class AestheticAnalysisService {
     };
 
     const basePrice = basePrices[procedure.category] || { min: 500, max: 1000 };
-    const multiplier = severity === 'severe' ? 1.5 : severity === 'moderate' ? 1.2 : 1.0;
+    const multiplier =
+      severity === "severe" ? 1.5 : severity === "moderate" ? 1.2 : 1.0;
 
     return {
       min: Math.round(basePrice.min * multiplier),
@@ -549,7 +586,10 @@ export class AestheticAnalysisService {
     };
   }
 
-  private calculateSessionsRequired(procedure: AestheticProcedure, severity: string): number {
+  private calculateSessionsRequired(
+    procedure: AestheticProcedure,
+    severity: string,
+  ): number {
     const baseSessions = {
       neurotoxin: 1,
       filler: 1,
@@ -558,7 +598,7 @@ export class AestheticAnalysisService {
     };
 
     const base = baseSessions[procedure.category] || 1;
-    return severity === 'severe' ? base + 1 : base;
+    return severity === "severe" ? base + 1 : base;
   }
 
   private generateExpectedResults(
@@ -570,13 +610,18 @@ export class AestheticAnalysisService {
     }%.`;
   }
 
-  private priorityToNumber(priority: 'high' | 'medium' | 'low'): number {
+  private priorityToNumber(priority: "high" | "medium" | "low"): number {
     return { high: 1, medium: 2, low: 3 }[priority];
   }
 
-  private isSkinTypeContraindicated(skinType: string, procedure: AestheticProcedure): boolean {
+  private isSkinTypeContraindicated(
+    skinType: string,
+    procedure: AestheticProcedure,
+  ): boolean {
     // Darker skin types (V, VI) have higher risks with certain laser procedures
-    return (skinType === 'V' || skinType === 'VI') && procedure.category === 'laser';
+    return (
+      (skinType === "V" || skinType === "VI") && procedure.category === "laser"
+    );
   }
 
   // LGPD Compliance Methods
@@ -585,41 +630,43 @@ export class AestheticAnalysisService {
     requiredPermissions: string[],
   ): Promise<void> {
     const { data: consent } = await this.supabase
-      .from('patient_consents')
-      .select('granted_permissions')
-      .eq('patient_id', patientId)
-      .eq('is_active', true)
+      .from("patient_consents")
+      .select("granted_permissions")
+      .eq("patient_id", patientId)
+      .eq("is_active", true)
       .single();
 
     if (!consent) {
-      throw new Error('LGPD_CONSENT_REQUIRED');
+      throw new Error("LGPD_CONSENT_REQUIRED");
     }
 
-    const granted = Array.isArray(consent.granted_permissions) ? consent.granted_permissions : [];
-    const hasAllPermissions = requiredPermissions.every(permission => granted.includes(permission));
+    const granted = Array.isArray(consent.granted_permissions)
+      ? consent.granted_permissions
+      : [];
+    const hasAllPermissions = requiredPermissions.every((permission) =>
+      granted.includes(permission),
+    );
 
     if (!hasAllPermissions) {
-      throw new Error('LGPD_INSUFFICIENT_CONSENT');
+      throw new Error("LGPD_INSUFFICIENT_CONSENT");
     }
   }
 
   private async createAuditRecord(record: AestheticAuditRecord): Promise<void> {
-    await this.supabase
-      .from('aesthetic_audit_logs')
-      .insert({
-        session_id: record.session_id,
-        patient_id: record.patient_id,
-        professional_id: record.professional_id,
-        clinic_id: record.clinic_id,
-        assessment_type: record.assessment_type,
-        timestamp: record.timestamp.toISOString(),
-        input_data_hash: this.hashSensitiveData(record.input_data),
-        output_data_hash: this.hashSensitiveData(record.output_data),
-        ai_confidence_scores: record.ai_confidence_scores,
-        data_processing_consent: record.data_processing_consent,
-        purpose_limitation: record.purpose_limitation,
-        retention_period: record.retention_period,
-      });
+    await this.supabase.from("aesthetic_audit_logs").insert({
+      session_id: record.session_id,
+      patient_id: record.patient_id,
+      professional_id: record.professional_id,
+      clinic_id: record.clinic_id,
+      assessment_type: record.assessment_type,
+      timestamp: record.timestamp.toISOString(),
+      input_data_hash: this.hashSensitiveData(record.input_data),
+      output_data_hash: this.hashSensitiveData(record.output_data),
+      ai_confidence_scores: record.ai_confidence_scores,
+      data_processing_consent: record.data_processing_consent,
+      purpose_limitation: record.purpose_limitation,
+      retention_period: record.retention_period,
+    });
   }
 
   private sanitizeInputForAudit(
@@ -639,29 +686,35 @@ export class AestheticAnalysisService {
   ): Partial<AestheticAssessmentResult> {
     // Keep only procedure IDs and recommendation counts for audit
     return {
-      recommended_procedures: result.recommended_procedures.map(r => ({
+      recommended_procedures: result.recommended_procedures.map((r) => ({
         procedure: { id: r.procedure.id, category: r.procedure.category },
         priority: r.priority,
       })) as any,
-      contraindications: result.contraindications.map(c => ({
+      contraindications: result.contraindications.map((c) => ({
         procedure_id: c.procedure_id,
         severity: c.severity,
       })) as any,
     };
   }
 
-  private extractConfidenceScores(result: AestheticAssessmentResult): Record<string, number> {
-    return result.recommended_procedures.reduce((acc, recommendation) => {
-      acc[recommendation.procedure.id] = recommendation.procedure.effectiveness_score;
-      return acc;
-    }, {} as Record<string, number>);
+  private extractConfidenceScores(
+    result: AestheticAssessmentResult,
+  ): Record<string, number> {
+    return result.recommended_procedures.reduce(
+      (acc, recommendation) => {
+        acc[recommendation.procedure.id] =
+          recommendation.procedure.effectiveness_score;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
   }
 
   private hashSensitiveData(data: any): string {
     return crypto
-      .createHash('sha256')
+      .createHash("sha256")
       .update(JSON.stringify(data))
-      .digest('hex');
+      .digest("hex");
   }
 
   private generateSessionId(): string {
@@ -683,23 +736,23 @@ export class AestheticAnalysisService {
       protocol_steps: [
         {
           step: 1,
-          action: 'Limpeza e assepsia da área',
-          technique: 'Solução antisséptica + gaze estéril',
-          precautions: ['Verificar alergias', 'Técnica asséptica rigorosa'],
+          action: "Limpeza e assepsia da área",
+          technique: "Solução antisséptica + gaze estéril",
+          precautions: ["Verificar alergias", "Técnica asséptica rigorosa"],
         },
         {
           step: 2,
-          action: 'Marcação dos pontos de aplicação',
-          technique: 'Lápis dermográfico + análise anatômica',
-          precautions: ['Respeitar anatomia facial', 'Pontos de segurança'],
+          action: "Marcação dos pontos de aplicação",
+          technique: "Lápis dermográfico + análise anatômica",
+          precautions: ["Respeitar anatomia facial", "Pontos de segurança"],
         },
       ],
       recovery_timeline: [
         {
-          timeframe: '0-24h',
-          expected_symptoms: ['Leve vermelhidão', 'Edema mínimo'],
-          care_instructions: ['Aplicar gelo 10min 3x/dia', 'Evitar maquiagem'],
-          warning_signs: ['Dor intensa', 'Edema excessivo'],
+          timeframe: "0-24h",
+          expected_symptoms: ["Leve vermelhidão", "Edema mínimo"],
+          care_instructions: ["Aplicar gelo 10min 3x/dia", "Evitar maquiagem"],
+          warning_signs: ["Dor intensa", "Edema excessivo"],
         },
       ],
     };
@@ -716,16 +769,16 @@ export class AestheticAnalysisService {
     data_usage: any[];
   }> {
     const { data: assessments } = await this.supabase
-      .from('aesthetic_audit_logs')
-      .select('*')
-      .eq('patient_id', patientId)
-      .order('timestamp', { ascending: false });
+      .from("aesthetic_audit_logs")
+      .select("*")
+      .eq("patient_id", patientId)
+      .order("timestamp", { ascending: false });
 
     const { data: consents } = await this.supabase
-      .from('patient_consents')
-      .select('*')
-      .eq('patient_id', patientId)
-      .order('consent_timestamp', { ascending: false });
+      .from("patient_consents")
+      .select("*")
+      .eq("patient_id", patientId)
+      .order("consent_timestamp", { ascending: false });
 
     return {
       assessments: assessments || [],

@@ -3,7 +3,7 @@
  * Provides tamper-proof audit logging with hash chaining and digital signatures
  */
 
-import { createHash, createHmac, randomBytes } from 'crypto';
+import { createHash, createHmac, randomBytes } from "crypto";
 
 export interface AuditLogEntry {
   id: string;
@@ -115,15 +115,18 @@ export class CryptographicAuditLogger {
 
       return auditEntry;
     } catch (error) {
-      console.error('Error creating audit entry:', error);
-      throw new Error('Failed to create secure audit entry');
+      console.error("Error creating audit entry:", error);
+      throw new Error("Failed to create secure audit entry");
     }
   }
 
   /**
    * Validate the integrity of an audit log entry
    */
-  validateAuditEntry(entry: AuditLogEntry, previousEntry?: AuditLogEntry): boolean {
+  validateAuditEntry(
+    entry: AuditLogEntry,
+    previousEntry?: AuditLogEntry,
+  ): boolean {
     try {
       // Validate signature
       const expectedSignature = this.createSignature(
@@ -173,13 +176,16 @@ export class CryptographicAuditLogger {
       }
 
       // Validate sequence number
-      if (previousEntry && entry.sequenceNumber !== previousEntry.sequenceNumber + 1) {
+      if (
+        previousEntry &&
+        entry.sequenceNumber !== previousEntry.sequenceNumber + 1
+      ) {
         return false;
       }
 
       return true;
     } catch (error) {
-      console.error('Error validating audit entry:', error);
+      console.error("Error validating audit entry:", error);
       return false;
     }
   }
@@ -187,7 +193,9 @@ export class CryptographicAuditLogger {
   /**
    * Validate the integrity of an entire audit chain
    */
-  async validateAuditChain(entries: AuditLogEntry[]): Promise<AuditChainValidation> {
+  async validateAuditChain(
+    entries: AuditLogEntry[],
+  ): Promise<AuditChainValidation> {
     const result: AuditChainValidation = {
       isValid: true,
       totalEntries: entries.length,
@@ -200,7 +208,9 @@ export class CryptographicAuditLogger {
     }
 
     // Sort entries by sequence number
-    const sortedEntries = entries.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
+    const sortedEntries = entries.sort(
+      (a, b) => a.sequenceNumber - b.sequenceNumber,
+    );
 
     for (let i = 0; i < sortedEntries.length; i++) {
       const currentEntry = sortedEntries[i];
@@ -275,16 +285,19 @@ export class CryptographicAuditLogger {
       categories: {} as Record<string, any>,
       expiredEntries: [],
       retainedEntries: [],
-      complianceStatus: 'COMPLIANT',
+      complianceStatus: "COMPLIANT",
     };
 
     for (const entry of entries) {
       const entryDate = new Date(entry.timestamp);
-      const ageInDays = Math.floor((now.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
+      const ageInDays = Math.floor(
+        (now.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24),
+      );
 
       const category = this.categorizeAuditEvent(entry.eventType);
-      const retentionDays = retentionPeriods[category as keyof typeof retentionPeriods]
-        || retentionPeriods.system;
+      const retentionDays =
+        retentionPeriods[category as keyof typeof retentionPeriods] ||
+        retentionPeriods.system;
 
       if (!retentionAnalysis.categories[category]) {
         retentionAnalysis.categories[category] = {
@@ -319,11 +332,11 @@ export class CryptographicAuditLogger {
   // Private helper methods
 
   private generateSecretKey(): string {
-    return randomBytes(32).toString('hex');
+    return randomBytes(32).toString("hex");
   }
 
   private generateAuditId(): string {
-    return `audit_${Date.now()}_${randomBytes(8).toString('hex')}`;
+    return `audit_${Date.now()}_${randomBytes(8).toString("hex")}`;
   }
 
   private async initializeSequenceCounter(): Promise<void> {
@@ -340,24 +353,33 @@ export class CryptographicAuditLogger {
   }
 
   private calculateDataHash(data: any, previousHash?: string | null): string {
-    const dataString = JSON.stringify(data) + (previousHash || '');
-    return createHash('sha256').update(dataString).digest('hex');
+    const dataString = JSON.stringify(data) + (previousHash || "");
+    return createHash("sha256").update(dataString).digest("hex");
   }
 
   private createSignature(data: any, dataHash: string): string {
     const payload = JSON.stringify(data) + dataHash;
-    return createHmac('sha256', this.secretKey).update(payload).digest('hex');
+    return createHmac("sha256", this.secretKey).update(payload).digest("hex");
   }
 
   private signReport(reportData: any): string {
-    return createHmac('sha256', this.secretKey).update(JSON.stringify(reportData)).digest('hex');
+    return createHmac("sha256", this.secretKey)
+      .update(JSON.stringify(reportData))
+      .digest("hex");
   }
 
   private sanitizeEventData(eventData: any): any {
     // Remove sensitive information that shouldn't be logged
-    const sensitiveFields = ['password', 'token', 'secret', 'key', 'ssn', 'cpf'];
+    const sensitiveFields = [
+      "password",
+      "token",
+      "secret",
+      "key",
+      "ssn",
+      "cpf",
+    ];
 
-    if (typeof eventData !== 'object' || eventData === null) {
+    if (typeof eventData !== "object" || eventData === null) {
       return eventData;
     }
 
@@ -365,7 +387,7 @@ export class CryptographicAuditLogger {
 
     for (const field of sensitiveFields) {
       if (field in sanitized) {
-        sanitized[field] = '[REDACTED]';
+        sanitized[field] = "[REDACTED]";
       }
     }
 
@@ -400,12 +422,16 @@ export class CryptographicAuditLogger {
 
     return {
       ...metrics,
-      lgpdComplianceRate: metrics.total > 0 ? (metrics.lgpdCompliant / metrics.total) * 100 : 0,
-      rlsEnforcementRate: metrics.total > 0 ? (metrics.rlsEnforced / metrics.total) * 100 : 0,
-      consentValidationRate: metrics.total > 0
-        ? (metrics.consentValidated / metrics.total) * 100
-        : 0,
-      emergencyAccessRate: metrics.total > 0 ? (metrics.emergencyAccess / metrics.total) * 100 : 0,
+      lgpdComplianceRate:
+        metrics.total > 0 ? (metrics.lgpdCompliant / metrics.total) * 100 : 0,
+      rlsEnforcementRate:
+        metrics.total > 0 ? (metrics.rlsEnforced / metrics.total) * 100 : 0,
+      consentValidationRate:
+        metrics.total > 0
+          ? (metrics.consentValidated / metrics.total) * 100
+          : 0,
+      emergencyAccessRate:
+        metrics.total > 0 ? (metrics.emergencyAccess / metrics.total) * 100 : 0,
     };
   }
 
@@ -436,12 +462,13 @@ export class CryptographicAuditLogger {
     }
 
     // Flag users with excessive access
-    const averageUserAccess = Object.values(userAccess).reduce((a, b) => a + b, 0)
-      / Object.keys(userAccess).length;
+    const averageUserAccess =
+      Object.values(userAccess).reduce((a, b) => a + b, 0) /
+      Object.keys(userAccess).length;
     for (const [userId, count] of Object.entries(userAccess)) {
       if (count > averageUserAccess * 3) {
         anomalies.push({
-          type: 'EXCESSIVE_USER_ACCESS',
+          type: "EXCESSIVE_USER_ACCESS",
           userId,
           accessCount: count,
           averageAccess: averageUserAccess,
@@ -450,12 +477,13 @@ export class CryptographicAuditLogger {
     }
 
     // Flag IPs with excessive access
-    const averageIpAccess = Object.values(ipAccess).reduce((a, b) => a + b, 0)
-      / Object.keys(ipAccess).length;
+    const averageIpAccess =
+      Object.values(ipAccess).reduce((a, b) => a + b, 0) /
+      Object.keys(ipAccess).length;
     for (const [ip, count] of Object.entries(ipAccess)) {
       if (count > averageIpAccess * 5) {
         anomalies.push({
-          type: 'EXCESSIVE_IP_ACCESS',
+          type: "EXCESSIVE_IP_ACCESS",
           ipAddress: ip,
           accessCount: count,
           averageAccess: averageIpAccess,
@@ -466,7 +494,7 @@ export class CryptographicAuditLogger {
     // Flag excessive emergency access
     if (emergencyAccess.length > entries.length * 0.05) {
       anomalies.push({
-        type: 'EXCESSIVE_EMERGENCY_ACCESS',
+        type: "EXCESSIVE_EMERGENCY_ACCESS",
         emergencyAccessCount: emergencyAccess.length,
         totalAccess: entries.length,
         rate: (emergencyAccess.length / entries.length) * 100,
@@ -478,19 +506,19 @@ export class CryptographicAuditLogger {
 
   private categorizeAuditEvent(eventType: string): string {
     const categories: Record<string, string> = {
-      EMERGENCY_ACCESS: 'emergency_access',
-      PATIENT_DATA_ACCESS: 'patient_data',
-      MEDICAL_RECORD_ACCESS: 'patient_data',
-      CONSENT_CREATED: 'consent_changes',
-      CONSENT_WITHDRAWN: 'consent_changes',
-      BILLING_ACCESS: 'financial',
-      PAYMENT_PROCESSED: 'financial',
-      USER_LOGIN: 'administrative',
-      USER_LOGOUT: 'administrative',
-      SYSTEM_ERROR: 'system',
+      EMERGENCY_ACCESS: "emergency_access",
+      PATIENT_DATA_ACCESS: "patient_data",
+      MEDICAL_RECORD_ACCESS: "patient_data",
+      CONSENT_CREATED: "consent_changes",
+      CONSENT_WITHDRAWN: "consent_changes",
+      BILLING_ACCESS: "financial",
+      PAYMENT_PROCESSED: "financial",
+      USER_LOGIN: "administrative",
+      USER_LOGOUT: "administrative",
+      SYSTEM_ERROR: "system",
     };
 
-    return categories[eventType] || 'system';
+    return categories[eventType] || "system";
   }
 }
 

@@ -1,6 +1,6 @@
 // AI Provider Types - Shared across packages
 
-export type AIProvider = 'openai' | 'anthropic' | 'google' | 'mock';
+export type AIProvider = "openai" | "anthropic" | "google" | "mock";
 
 export interface AIProviderRateLimits {
   requestsPerMinute?: number;
@@ -27,7 +27,7 @@ export interface AIProviderConfig {
 
 export interface GenerateAnswerInput {
   prompt: string;
-  locale?: 'pt-BR' | 'en-US';
+  locale?: "pt-BR" | "en-US";
   system?: string;
   stream?: boolean;
   maxTokens?: number;
@@ -39,7 +39,7 @@ export interface GenerateAnswerResult {
   tokensUsed?: number;
   model?: string;
   provider?: AIProvider;
-  finishReason?: 'stop' | 'length' | 'content_filter' | 'function_call';
+  finishReason?: "stop" | "length" | "content_filter" | "function_call";
   metadata?: Record<string, any>;
 }
 
@@ -48,7 +48,7 @@ export interface StreamChunk {
   delta?: string;
   finished: boolean;
   provider?: AIProvider;
-  finishReason?: 'stop' | 'length' | 'content_filter' | 'function_call';
+  finishReason?: "stop" | "length" | "content_filter" | "function_call";
   metadata?: Record<string, any>;
 }
 
@@ -59,7 +59,7 @@ export interface AIProviderInterface {
 
 // Message types for AI interactions
 export interface AIMessage {
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   metadata?: Record<string, any>;
 }
@@ -68,7 +68,7 @@ export interface AIMessage {
 export interface ChatResponse {
   id: string;
   content: string;
-  role: 'assistant';
+  role: "assistant";
   model?: string;
   provider: AIProvider;
   tokens?: {
@@ -82,7 +82,7 @@ export interface ChatResponse {
     total: number;
   };
   metadata?: {
-    finishReason?: 'stop' | 'length' | 'content_filter' | 'function_call';
+    finishReason?: "stop" | "length" | "content_filter" | "function_call";
     processingTime?: number;
     [key: string]: any;
   };
@@ -91,21 +91,23 @@ export interface ChatResponse {
 
 export interface StreamingChatResponse {
   id: string;
-  stream: ReadableStream<any> | AsyncIterable<{
-    content: string;
-    delta?: string;
-    finished: boolean;
-    tokens?: {
-      input: number;
-      output: number;
-      total: number;
-    };
-    metadata?: {
-      finishReason?: 'stop' | 'length' | 'content_filter' | 'function_call';
-      processingTime?: number;
-      [key: string]: any;
-    };
-  }>;
+  stream:
+    | ReadableStream<any>
+    | AsyncIterable<{
+        content: string;
+        delta?: string;
+        finished: boolean;
+        tokens?: {
+          input: number;
+          output: number;
+          total: number;
+        };
+        metadata?: {
+          finishReason?: "stop" | "length" | "content_filter" | "function_call";
+          processingTime?: number;
+          [key: string]: any;
+        };
+      }>;
   provider: AIProvider;
   model?: string;
   timestamp?: Date;

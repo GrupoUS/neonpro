@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
@@ -6,8 +6,8 @@ export default defineConfig({
     passWithNoTests: true,
     // Don't include any plugins that might interfere
     globals: false,
-    environment: 'node',
+    environment: "node",
   },
   // Explicitly exclude any vite plugins that might be inherited
   plugins: [],
-})
+});

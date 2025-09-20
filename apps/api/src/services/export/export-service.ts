@@ -1,4 +1,4 @@
-import { ExportLGPDCompliance } from './lgpd-compliance';
+import { ExportLGPDCompliance } from "./lgpd-compliance";
 import {
   ExportConfig,
   ExportFilter,
@@ -7,8 +7,8 @@ import {
   ExportPagination,
   LGPDComplianceOptions,
   PatientExportField,
-} from './types';
-import { DEFAULT_EXPORT_FIELDS } from './types';
+} from "./types";
+import { DEFAULT_EXPORT_FIELDS } from "./types";
 
 export class ExportService {
   private static readonly DEFAULT_CONFIG: ExportConfig = {
@@ -22,7 +22,7 @@ export class ExportService {
 
   static async createExportJob(
     userId: string,
-    format: 'csv' | 'xlsx',
+    format: "csv" | "xlsx",
     filters: ExportFilter,
     pagination: ExportPagination,
     lgpdOptions: LGPDComplianceOptions,
@@ -35,7 +35,7 @@ export class ExportService {
       format,
       filters,
       pagination,
-      status: 'pending',
+      status: "pending",
       progress: {
         processed: 0,
         total: 0,
@@ -56,15 +56,18 @@ export class ExportService {
     return this.ACTIVE_JOBS.get(jobId) || null;
   }
 
-  static async cancelExportJob(jobId: string, userId: string): Promise<boolean> {
+  static async cancelExportJob(
+    jobId: string,
+    userId: string,
+  ): Promise<boolean> {
     const job = this.ACTIVE_JOBS.get(jobId);
 
     if (!job || job.userId !== userId) {
       return false;
     }
 
-    if (job.status === 'processing') {
-      job.status = 'cancelled';
+    if (job.status === "processing") {
+      job.status = "cancelled";
       job.updatedAt = new Date();
       return true;
     }
@@ -72,15 +75,17 @@ export class ExportService {
     return false;
   }
 
-  static async getExportFormats(): Promise<Array<{ format: string; description: string }>> {
+  static async getExportFormats(): Promise<
+    Array<{ format: string; description: string }>
+  > {
     return [
       {
-        format: 'csv',
-        description: 'Valores separados por vírgula, compatível com Excel',
+        format: "csv",
+        description: "Valores separados por vírgula, compatível com Excel",
       },
       {
-        format: 'xlsx',
-        description: 'Formato Excel nativo com múltiplas planilhas',
+        format: "xlsx",
+        description: "Formato Excel nativo com múltiplas planilhas",
       },
     ];
   }
@@ -89,9 +94,12 @@ export class ExportService {
     return DEFAULT_EXPORT_FIELDS;
   }
 
-  static async getExportHistory(userId: string, limit: number = 10): Promise<ExportJob[]> {
+  static async getExportHistory(
+    userId: string,
+    limit: number = 10,
+  ): Promise<ExportJob[]> {
     const userJobs = Array.from(this.ACTIVE_JOBS.values())
-      .filter(job => job.userId === userId)
+      .filter((job) => job.userId === userId)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(0, limit);
 
@@ -106,10 +114,13 @@ export class ExportService {
     if (!job) return;
 
     try {
-      job.status = 'processing';
+      job.status = "processing";
       job.updatedAt = new Date();
 
-      const { data, total } = await this.fetchPatientData(job.filters, job.pagination);
+      const { data, total } = await this.fetchPatientData(
+        job.filters,
+        job.pagination,
+      );
 
       job.progress.total = total;
 
@@ -135,7 +146,7 @@ export class ExportService {
         job.id,
       );
 
-      job.status = 'completed';
+      job.status = "completed";
       job.result = {
         url: exportUrl,
         size: this.calculateFileSize(processedData, job.format),
@@ -151,8 +162,8 @@ export class ExportService {
         processedData.length,
       );
     } catch (error) {
-      job.status = 'failed';
-      job.error = error instanceof Error ? error.message : 'Erro desconhecido';
+      job.status = "failed";
+      job.error = error instanceof Error ? error.message : "Erro desconhecido";
       job.updatedAt = new Date();
     } finally {
       job.progress.processed = job.progress.total;
@@ -192,17 +203,29 @@ export class ExportService {
           Math.floor(Math.random() * 12),
           Math.floor(Math.random() * 28) + 1,
         ),
-        gender: ['Masculino', 'Feminino', 'Outro'][Math.floor(Math.random() * 3)],
-        bloodType:
-          ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'][Math.floor(Math.random() * 8)],
-        allergies: ['Penicilina', 'Látex', 'Amendoim'][Math.floor(Math.random() * 3)] || [],
-        medications: ['Dipirona', 'Paracetamol', 'Ibuprofeno'][Math.floor(Math.random() * 3)] || [],
+        gender: ["Masculino", "Feminino", "Outro"][
+          Math.floor(Math.random() * 3)
+        ],
+        bloodType: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"][
+          Math.floor(Math.random() * 8)
+        ],
+        allergies:
+          ["Penicilina", "Látex", "Amendoim"][Math.floor(Math.random() * 3)] ||
+          [],
+        medications:
+          ["Dipirona", "Paracetamol", "Ibuprofeno"][
+            Math.floor(Math.random() * 3)
+          ] || [],
         emergencyContact: `(11) 9${Math.floor(Math.random() * 9000) + 1000}-${
           Math.floor(Math.random() * 9000) + 1000
         }`,
-        status: ['ativo', 'inativo', 'pendente'][Math.floor(Math.random() * 3)],
-        createdAt: new Date(Date.now() - Math.floor(Math.random() * 365) * 24 * 60 * 60 * 1000),
-        updatedAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000),
+        status: ["ativo", "inativo", "pendente"][Math.floor(Math.random() * 3)],
+        createdAt: new Date(
+          Date.now() - Math.floor(Math.random() * 365) * 24 * 60 * 60 * 1000,
+        ),
+        updatedAt: new Date(
+          Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000,
+        ),
       });
     }
 
@@ -211,26 +234,29 @@ export class ExportService {
 
   private static async generateExportFile(
     data: any[],
-    format: 'csv' | 'xlsx',
+    format: "csv" | "xlsx",
     jobId: string,
   ): Promise<string> {
-    if (format === 'csv') {
+    if (format === "csv") {
       return this.generateCSV(data, jobId);
     } else {
       return this.generateXLSX(data, jobId);
     }
   }
 
-  private static async generateCSV(data: any[], jobId: string): Promise<string> {
-    const Papa = await import('papaparse');
+  private static async generateCSV(
+    data: any[],
+    jobId: string,
+  ): Promise<string> {
+    const Papa = await import("papaparse");
 
-    const fields = DEFAULT_EXPORT_FIELDS.filter(f => f.required);
-    const headers = fields.map(f => f.label);
+    const fields = DEFAULT_EXPORT_FIELDS.filter((f) => f.required);
+    const headers = fields.map((f) => f.label);
 
-    const csvData = data.map(record => {
-      return fields.map(field => {
+    const csvData = data.map((record) => {
+      return fields.map((field) => {
         const value = record[field.field];
-        return field.formatter ? field.formatter(value) : (value || '');
+        return field.formatter ? field.formatter(value) : value || "";
       });
     });
 
@@ -242,13 +268,19 @@ export class ExportService {
     return `/api/exports/${jobId}/data.csv`;
   }
 
-  private static async generateXLSX(data: any[], jobId: string): Promise<string> {
+  private static async generateXLSX(
+    data: any[],
+    jobId: string,
+  ): Promise<string> {
     return `/api/exports/${jobId}/data.xlsx`;
   }
 
-  private static calculateFileSize(data: any[], format: 'csv' | 'xlsx'): number {
+  private static calculateFileSize(
+    data: any[],
+    format: "csv" | "xlsx",
+  ): number {
     const estimatedSize = data.length * 500; // rough estimate
-    return format === 'csv' ? estimatedSize : estimatedSize * 1.2;
+    return format === "csv" ? estimatedSize : estimatedSize * 1.2;
   }
 
   private static generateJobId(): string {
@@ -262,11 +294,15 @@ export class ExportService {
     return {
       totalRecords: job.progress.total,
       exportedRecords: job.progress.processed,
-      processingTime: job.completedAt ? job.completedAt.getTime() - job.createdAt.getTime() : 0,
-      fileSize: job.result?.size || 0,
-      averageSpeed: job.progress.processed > 0
-        ? job.progress.processed / ((job.updatedAt.getTime() - job.createdAt.getTime()) / 1000)
+      processingTime: job.completedAt
+        ? job.completedAt.getTime() - job.createdAt.getTime()
         : 0,
+      fileSize: job.result?.size || 0,
+      averageSpeed:
+        job.progress.processed > 0
+          ? job.progress.processed /
+            ((job.updatedAt.getTime() - job.createdAt.getTime()) / 1000)
+          : 0,
     };
   }
 

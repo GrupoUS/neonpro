@@ -27,11 +27,17 @@ ShineBorderProps {
 ```css
 @theme inline {
   --animate-shine: shine var(--duration) infinite linear;
-  
+
   @keyframes shine {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    to { background-position: 0% 0%; }
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    to {
+      background-position: 0% 0%;
+    }
   }
 }
 ```
@@ -41,18 +47,17 @@ ShineBorderProps {
 ```tsx
 <div
   style={{
-    backgroundImage:
-      `radial-gradient(transparent,transparent, ${shineColor},transparent,transparent)`,
-    backgroundSize: '300% 300%',
+    backgroundImage: `radial-gradient(transparent,transparent, ${shineColor},transparent,transparent)`,
+    backgroundSize: "300% 300%",
     mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
     WebkitMask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
-    maskComposite: 'exclude',
-    WebkitMaskComposite: 'xor',
+    maskComposite: "exclude",
+    WebkitMaskComposite: "xor",
     padding: `${borderWidth}px`,
-    willChange: 'background-position',
+    willChange: "background-position",
     animation: `shine ${duration}s infinite linear`,
   }}
-/>;
+/>
 ```
 
 ---
@@ -126,6 +131,7 @@ ShineBorderProps {
 ### **Discrepâncias Identificadas e Corrigidas:**
 
 1. **CSS Variable Usage:**
+
    ```css
    /* Anterior */
    animation: spin 14s linear infinite;
@@ -135,22 +141,35 @@ ShineBorderProps {
    ```
 
 2. **Gradient Definition:**
+
    ```css
    /* Anterior */
-   background: conic-gradient(from 0deg, transparent 0%, #AC9469 10%, transparent 20%);
+   background: conic-gradient(
+     from 0deg,
+     transparent 0%,
+     #ac9469 10%,
+     transparent 20%
+   );
 
    /* Oficial */
-   backgroundImage: radial-gradient(transparent,transparent, #AC9469,transparent,transparent);
+   backgroundimage: radial-gradient(
+     transparent,
+     transparent,
+     #ac9469,
+     transparent,
+     transparent
+   );
    ```
 
 3. **Browser Compatibility:**
+
    ```css
    /* Anterior */
-   maskComposite: 'exclude';
+   maskcomposite: "exclude";
 
    /* Oficial */
-   maskComposite: 'exclude';
-   WebkitMaskComposite: 'xor';
+   maskcomposite: "exclude";
+   webkitmaskcomposite: "xor";
    ```
 
 ---
@@ -163,51 +182,56 @@ ShineBorderProps {
 export function ShineBorder({
   borderWidth = 1,
   duration = 14,
-  shineColor = '#AC9469',
+  shineColor = "#AC9469",
   className,
   style,
   ...props
 }: ShineBorderProps) {
-  const colorValue = Array.isArray(shineColor) ? shineColor.join(',') : shineColor;
+  const colorValue = Array.isArray(shineColor)
+    ? shineColor.join(",")
+    : shineColor;
 
   return (
     <div
-      className={cn('pointer-events-none absolute inset-0 rounded-[inherit]', className)}
-      style={{
-        '--border-width': `${borderWidth}px`,
-        '--duration': `${duration}s`,
-        '--shine-color': colorValue,
-        backgroundImage:
-          `radial-gradient(transparent,transparent, ${colorValue},transparent,transparent)`,
-        backgroundSize: '300% 300%',
-        backgroundPosition: '0% 0%',
-        mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
-        WebkitMask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
-        maskComposite: 'exclude',
-        WebkitMaskComposite: 'xor',
-        padding: `${borderWidth}px`,
-        willChange: 'background-position',
-        ...style,
-      } as React.CSSProperties}
+      className={cn(
+        "pointer-events-none absolute inset-0 rounded-[inherit]",
+        className,
+      )}
+      style={
+        {
+          "--border-width": `${borderWidth}px`,
+          "--duration": `${duration}s`,
+          "--shine-color": colorValue,
+          backgroundImage: `radial-gradient(transparent,transparent, ${colorValue},transparent,transparent)`,
+          backgroundSize: "300% 300%",
+          backgroundPosition: "0% 0%",
+          mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
+          WebkitMask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
+          maskComposite: "exclude",
+          WebkitMaskComposite: "xor",
+          padding: `${borderWidth}px`,
+          willChange: "background-position",
+          ...style,
+        } as React.CSSProperties
+      }
       {...props}
     >
       <div
         className={cn(
-          'absolute inset-0 size-full rounded-[inherit]',
-          'motion-safe:animate-shine',
-          'motion-reduce:animate-none',
+          "absolute inset-0 size-full rounded-[inherit]",
+          "motion-safe:animate-shine",
+          "motion-reduce:animate-none",
         )}
         style={{
-          backgroundImage:
-            `radial-gradient(transparent,transparent, ${colorValue},transparent,transparent)`,
-          backgroundSize: '300% 300%',
-          backgroundPosition: '0% 0%',
+          backgroundImage: `radial-gradient(transparent,transparent, ${colorValue},transparent,transparent)`,
+          backgroundSize: "300% 300%",
+          backgroundPosition: "0% 0%",
           mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
           WebkitMask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
-          maskComposite: 'exclude',
-          WebkitMaskComposite: 'xor',
+          maskComposite: "exclude",
+          WebkitMaskComposite: "xor",
           padding: `${borderWidth}px`,
-          willChange: 'background-position',
+          willChange: "background-position",
           animation: `shine ${duration}s infinite linear`,
         }}
       />
@@ -221,11 +245,17 @@ export function ShineBorder({
 ```css
 @theme inline {
   --animate-shine: shine var(--duration) infinite linear;
-  
+
   @keyframes shine {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    to { background-position: 0% 0%; }
+    0% {
+      background-position: 0% 0%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    to {
+      background-position: 0% 0%;
+    }
   }
 }
 ```

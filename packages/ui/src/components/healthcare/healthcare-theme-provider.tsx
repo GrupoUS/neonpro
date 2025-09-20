@@ -1,36 +1,46 @@
 /**
  * Healthcare Theme Provider
- * 
+ *
  * Provides healthcare-specific theming, accessibility context, and design system
  * foundations for medical applications with LGPD compliance and patient safety considerations.
- * 
+ *
  * @fileoverview Healthcare theme provider and context
  */
 
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
-import { HealthcareA11yContext, HealthcarePriority, announceToScreenReader } from '../../utils/accessibility';
-import { DataSensitivity } from '../../utils/healthcare-validation';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import {
+  HealthcareA11yContext,
+  HealthcarePriority,
+  announceToScreenReader,
+} from "../../utils/accessibility";
+import { DataSensitivity } from "../../utils/healthcare-validation";
 
 // Healthcare theme configuration
 export interface HealthcareThemeConfig {
   // Visual theme settings
-  colorMode: 'light' | 'dark' | 'high-contrast';
-  fontSize: 'small' | 'medium' | 'large' | 'extra-large';
-  animations: 'full' | 'reduced' | 'none';
-  
+  colorMode: "light" | "dark" | "high-contrast";
+  fontSize: "small" | "medium" | "large" | "extra-large";
+  animations: "full" | "reduced" | "none";
+
   // Healthcare-specific settings
   emergencyMode: boolean;
   patientDataMode: boolean;
   compactMode: boolean;
-  
+
   // Accessibility settings
   screenReaderOptimized: boolean;
   keyboardNavigationOnly: boolean;
   highContrast: boolean;
   reduceMotion: boolean;
-  
+
   // LGPD and compliance settings
   dataSensitivityLevel: DataSensitivity;
   auditMode: boolean;
@@ -39,9 +49,9 @@ export interface HealthcareThemeConfig {
 
 // Default healthcare theme configuration
 export const defaultHealthcareTheme: HealthcareThemeConfig = {
-  colorMode: 'light',
-  fontSize: 'medium',
-  animations: 'reduced', // Conservative default for healthcare
+  colorMode: "light",
+  fontSize: "medium",
+  animations: "reduced", // Conservative default for healthcare
   emergencyMode: false,
   patientDataMode: false,
   compactMode: false,
@@ -51,7 +61,7 @@ export const defaultHealthcareTheme: HealthcareThemeConfig = {
   reduceMotion: true, // Default to reduced motion for healthcare
   dataSensitivityLevel: DataSensitivity.CONFIDENTIAL,
   auditMode: true, // Default to audit mode for healthcare
-  consentRequired: true
+  consentRequired: true,
 };
 
 // Healthcare theme context
@@ -64,7 +74,8 @@ export interface HealthcareThemeContextValue {
   accessibility: HealthcareA11yContext;
 }
 
-const HealthcareThemeContext = createContext<HealthcareThemeContextValue | null>(null);
+const HealthcareThemeContext =
+  createContext<HealthcareThemeContextValue | null>(null);
 
 // Healthcare theme provider props
 export interface HealthcareThemeProviderProps {
@@ -76,7 +87,7 @@ export interface HealthcareThemeProviderProps {
 
 /**
  * Healthcare Theme Provider Component
- * 
+ *
  * Provides theme context for healthcare applications with accessibility,
  * emergency mode, and patient data sensitivity handling.
  */
@@ -84,16 +95,16 @@ export function HealthcareThemeProvider({
   children,
   initialTheme = {},
   onThemeChange,
-  persistTheme = true
+  persistTheme = true,
 }: HealthcareThemeProviderProps) {
   // Initialize theme from localStorage or defaults
   const [theme, setTheme] = useState<HealthcareThemeConfig>(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return { ...defaultHealthcareTheme, ...initialTheme };
     }
 
     try {
-      const stored = localStorage.getItem('healthcare-theme');
+      const stored = localStorage.getItem("healthcare-theme");
       const storedTheme = stored ? JSON.parse(stored) : {};
       return { ...defaultHealthcareTheme, ...storedTheme, ...initialTheme };
     } catch {
@@ -107,127 +118,138 @@ export function HealthcareThemeProvider({
     patientDataVisible: theme.patientDataMode,
     highContrastMode: theme.highContrast,
     reduceMotion: theme.reduceMotion,
-    screenReaderMode: theme.screenReaderOptimized
+    screenReaderMode: theme.screenReaderOptimized,
   };
 
   // Update theme function
   const updateTheme = (updates: Partial<HealthcareThemeConfig>) => {
     const newTheme = { ...theme, ...updates };
     setTheme(newTheme);
-    
+
     // Persist to localStorage if enabled
-    if (persistTheme && typeof window !== 'undefined') {
+    if (persistTheme && typeof window !== "undefined") {
       try {
-        localStorage.setItem('healthcare-theme', JSON.stringify(newTheme));
+        localStorage.setItem("healthcare-theme", JSON.stringify(newTheme));
       } catch (error) {
-        console.warn('Failed to persist healthcare theme:', error);
+        console.warn("Failed to persist healthcare theme:", error);
       }
     }
-    
+
     // Notify parent component
     onThemeChange?.(newTheme);
-    
+
     // Announce significant changes to screen readers
     if (updates.emergencyMode !== undefined) {
       announceToScreenReader(
-        updates.emergencyMode 
-          ? 'Modo de emergência ativado. Interface otimizada para situações críticas.'
-          : 'Modo de emergência desativado.',
-        HealthcarePriority.HIGH
+        updates.emergencyMode
+          ? "Modo de emergência ativado. Interface otimizada para situações críticas."
+          : "Modo de emergência desativado.",
+        HealthcarePriority.HIGH,
       );
     }
-    
+
     if (updates.highContrast !== undefined) {
       announceToScreenReader(
-        updates.highContrast 
-          ? 'Modo de alto contraste ativado para melhor visibilidade.'
-          : 'Modo de alto contraste desativado.',
-        HealthcarePriority.MEDIUM
+        updates.highContrast
+          ? "Modo de alto contraste ativado para melhor visibilidade."
+          : "Modo de alto contraste desativado.",
+        HealthcarePriority.MEDIUM,
       );
     }
   };
 
   // Emergency mode toggle
   const toggleEmergencyMode = () => {
-    updateTheme({ 
+    updateTheme({
       emergencyMode: !theme.emergencyMode,
       // Auto-enable helpful settings in emergency mode
-      ...(theme.emergencyMode ? {} : {
-        highContrast: true,
-        reduceMotion: false, // Allow animations for emergency alerts
-        screenReaderOptimized: true
-      })
+      ...(theme.emergencyMode
+        ? {}
+        : {
+            highContrast: true,
+            reduceMotion: false, // Allow animations for emergency alerts
+            screenReaderOptimized: true,
+          }),
     });
   };
 
   // Patient data mode toggle
   const togglePatientDataMode = () => {
-    updateTheme({ 
+    updateTheme({
       patientDataMode: !theme.patientDataMode,
       // Ensure audit mode is enabled when viewing patient data
-      auditMode: !theme.patientDataMode ? true : theme.auditMode
+      auditMode: !theme.patientDataMode ? true : theme.auditMode,
     });
   };
 
   // Data sensitivity setter
   const setDataSensitivity = (level: DataSensitivity) => {
-    updateTheme({ 
+    updateTheme({
       dataSensitivityLevel: level,
       // Auto-enable audit mode for sensitive data
-      auditMode: level === DataSensitivity.RESTRICTED || level === DataSensitivity.CONFIDENTIAL
+      auditMode:
+        level === DataSensitivity.RESTRICTED ||
+        level === DataSensitivity.CONFIDENTIAL,
     });
   };
 
   // Apply theme to document element
   useEffect(() => {
-    if (typeof document === 'undefined') return;
+    if (typeof document === "undefined") return;
 
     const root = document.documentElement;
-    
+
     // Apply color mode
-    root.classList.remove('light', 'dark', 'high-contrast');
+    root.classList.remove("light", "dark", "high-contrast");
     root.classList.add(theme.colorMode);
-    
+
     // Apply accessibility classes
-    root.classList.toggle('emergency-mode', theme.emergencyMode);
-    root.classList.toggle('patient-data-mode', theme.patientDataMode);
-    root.classList.toggle('high-contrast', theme.highContrast);
-    root.classList.toggle('reduce-motion', theme.reduceMotion);
-    root.classList.toggle('screen-reader-optimized', theme.screenReaderOptimized);
-    root.classList.toggle('keyboard-navigation', theme.keyboardNavigationOnly);
-    root.classList.toggle('compact-mode', theme.compactMode);
-    
-    // Apply font size
-    root.style.setProperty('--healthcare-font-scale', 
-      theme.fontSize === 'small' ? '0.875' :
-      theme.fontSize === 'large' ? '1.125' :
-      theme.fontSize === 'extra-large' ? '1.25' : '1'
+    root.classList.toggle("emergency-mode", theme.emergencyMode);
+    root.classList.toggle("patient-data-mode", theme.patientDataMode);
+    root.classList.toggle("high-contrast", theme.highContrast);
+    root.classList.toggle("reduce-motion", theme.reduceMotion);
+    root.classList.toggle(
+      "screen-reader-optimized",
+      theme.screenReaderOptimized,
     );
-    
+    root.classList.toggle("keyboard-navigation", theme.keyboardNavigationOnly);
+    root.classList.toggle("compact-mode", theme.compactMode);
+
+    // Apply font size
+    root.style.setProperty(
+      "--healthcare-font-scale",
+      theme.fontSize === "small"
+        ? "0.875"
+        : theme.fontSize === "large"
+          ? "1.125"
+          : theme.fontSize === "extra-large"
+            ? "1.25"
+            : "1",
+    );
+
     // Apply data sensitivity styling
-    root.setAttribute('data-sensitivity', theme.dataSensitivityLevel);
-    
+    root.setAttribute("data-sensitivity", theme.dataSensitivityLevel);
+
     // Set up emergency mode styles
     if (theme.emergencyMode) {
-      root.style.setProperty('--healthcare-emergency-bg', 'hsl(0 84% 60%)');
-      root.style.setProperty('--healthcare-emergency-fg', 'hsl(0 0% 100%)');
+      root.style.setProperty("--healthcare-emergency-bg", "hsl(0 84% 60%)");
+      root.style.setProperty("--healthcare-emergency-fg", "hsl(0 0% 100%)");
     }
-    
   }, [theme]);
 
   // Listen for system preference changes
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     const handleChange = (e: MediaQueryListEvent) => {
       if (!theme.reduceMotion !== !e.matches) {
         updateTheme({ reduceMotion: e.matches });
       }
     };
 
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
   }, [theme.reduceMotion]);
 
   // Context value
@@ -237,7 +259,7 @@ export function HealthcareThemeProvider({
     toggleEmergencyMode,
     togglePatientDataMode,
     setDataSensitivity,
-    accessibility
+    accessibility,
   };
 
   return (
@@ -252,11 +274,13 @@ export function HealthcareThemeProvider({
  */
 export function useHealthcareTheme(): HealthcareThemeContextValue {
   const context = useContext(HealthcareThemeContext);
-  
+
   if (!context) {
-    throw new Error('useHealthcareTheme must be used within a HealthcareThemeProvider');
+    throw new Error(
+      "useHealthcareTheme must be used within a HealthcareThemeProvider",
+    );
   }
-  
+
   return context;
 }
 
@@ -403,16 +427,16 @@ export const healthcareThemeStyles = `
  * Install healthcare theme styles in document head
  */
 export function installHealthcareThemeStyles(target?: Document) {
-  if (typeof document === 'undefined') return;
-  
+  if (typeof document === "undefined") return;
+
   const head = (target ?? document).head;
   if (!head) return;
-  
+
   // Avoid duplicate injection
-  if (head.querySelector('style[data-healthcare-theme]')) return;
-  
-  const style = document.createElement('style');
-  style.setAttribute('data-healthcare-theme', 'true');
+  if (head.querySelector("style[data-healthcare-theme]")) return;
+
+  const style = document.createElement("style");
+  style.setAttribute("data-healthcare-theme", "true");
   style.textContent = healthcareThemeStyles;
   head.appendChild(style);
 }

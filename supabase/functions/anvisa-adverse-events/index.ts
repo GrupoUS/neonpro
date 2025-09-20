@@ -1,7 +1,7 @@
 /**
  * Supabase Edge Function: ANVISA Adverse Event Reporting
  * Phase 3.4: T032 - ANVISA compliance for adverse event reporting
- * 
+ *
  * Features:
  * - ANVISA RDC 657/2022 medical device software compliance
  * - Automated adverse event detection and reporting
@@ -12,48 +12,50 @@
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.38.4';
-import { corsHeaders } from '../_shared/cors.ts';
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
+import { corsHeaders } from "../_shared/cors.ts";
 
 // Environment validation
-const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
-const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
-const ANVISA_API_KEY = Deno.env.get('ANVISA_API_KEY');
-const ANVISA_ENDPOINT = Deno.env.get('ANVISA_NOTIFICATION_ENDPOINT') || 'https://notificacoes.anvisa.gov.br/api';
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+const ANVISA_API_KEY = Deno.env.get("ANVISA_API_KEY");
+const ANVISA_ENDPOINT =
+  Deno.env.get("ANVISA_NOTIFICATION_ENDPOINT") ||
+  "https://notificacoes.anvisa.gov.br/api";
 
 if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  throw new Error('Missing required Supabase environment variables');
+  throw new Error("Missing required Supabase environment variables");
 }
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
 // ANVISA adverse event types according to RDC 657/2022
 enum AdverseEventType {
-  SOFTWARE_MALFUNCTION = 'software_malfunction',
-  DATA_INTEGRITY_ISSUE = 'data_integrity_issue',
-  SECURITY_VULNERABILITY = 'security_vulnerability',
-  PERFORMANCE_DEGRADATION = 'performance_degradation',
-  USER_INTERFACE_ERROR = 'user_interface_error',
-  INTEGRATION_FAILURE = 'integration_failure',
-  CALCULATION_ERROR = 'calculation_error',
-  ALERT_SYSTEM_FAILURE = 'alert_system_failure',
-  DATA_LOSS = 'data_loss',
-  UNAUTHORIZED_ACCESS = 'unauthorized_access',
+  SOFTWARE_MALFUNCTION = "software_malfunction",
+  DATA_INTEGRITY_ISSUE = "data_integrity_issue",
+  SECURITY_VULNERABILITY = "security_vulnerability",
+  PERFORMANCE_DEGRADATION = "performance_degradation",
+  USER_INTERFACE_ERROR = "user_interface_error",
+  INTEGRATION_FAILURE = "integration_failure",
+  CALCULATION_ERROR = "calculation_error",
+  ALERT_SYSTEM_FAILURE = "alert_system_failure",
+  DATA_LOSS = "data_loss",
+  UNAUTHORIZED_ACCESS = "unauthorized_access",
 }
 
 // Risk classification according to ANVISA standards
 enum RiskClassification {
-  NEGLIGIBLE = 'negligible', // Classe I
-  LOW = 'low', // Classe IIa
-  MODERATE = 'moderate', // Classe IIb
-  HIGH = 'high', // Classe III
-  CRITICAL = 'critical', // Classe IV
+  NEGLIGIBLE = "negligible", // Classe I
+  LOW = "low", // Classe IIa
+  MODERATE = "moderate", // Classe IIb
+  HIGH = "high", // Classe III
+  CRITICAL = "critical", // Classe IV
 }
 
 // Adverse event request schema
 interface AdverseEventRequest {
   eventType: AdverseEventType;
-  severity: 'minor' | 'moderate' | 'major' | 'critical';
+  severity: "minor" | "moderate" | "major" | "critical";
   description: string;
   clinicId: string;
   patientId?: string;
@@ -104,7 +106,7 @@ interface AdverseEventResponse {
 
 // ANVISA notification payload structure
 interface ANVISANotificationPayload {
-  notificationType: 'adverse_event' | 'malfunction' | 'security_issue';
+  notificationType: "adverse_event" | "malfunction" | "security_issue";
   productInfo: {
     softwareName: string;
     version: string;
@@ -148,34 +150,42 @@ interface ANVISANotificationPayload {
 function classifyRisk(
   eventType: AdverseEventType,
   severity: string,
-  affectedFunctionality: string[]
+  affectedFunctionality: string[],
 ): RiskClassification {
   // Critical risks - immediate ANVISA notification required
-  if (severity === 'critical' || 
-      eventType === AdverseEventType.DATA_LOSS ||
-      eventType === AdverseEventType.SECURITY_VULNERABILITY ||
-      eventType === AdverseEventType.UNAUTHORIZED_ACCESS) {
+  if (
+    severity === "critical" ||
+    eventType === AdverseEventType.DATA_LOSS ||
+    eventType === AdverseEventType.SECURITY_VULNERABILITY ||
+    eventType === AdverseEventType.UNAUTHORIZED_ACCESS
+  ) {
     return RiskClassification.CRITICAL;
   }
 
   // High risks - 24-48h notification required
-  if (severity === 'major' ||
-      eventType === AdverseEventType.CALCULATION_ERROR ||
-      eventType === AdverseEventType.ALERT_SYSTEM_FAILURE ||
-      affectedFunctionality.includes('patient_safety')) {
+  if (
+    severity === "major" ||
+    eventType === AdverseEventType.CALCULATION_ERROR ||
+    eventType === AdverseEventType.ALERT_SYSTEM_FAILURE ||
+    affectedFunctionality.includes("patient_safety")
+  ) {
     return RiskClassification.HIGH;
   }
 
   // Moderate risks - 7 days notification
-  if (severity === 'moderate' ||
-      eventType === AdverseEventType.DATA_INTEGRITY_ISSUE ||
-      eventType === AdverseEventType.PERFORMANCE_DEGRADATION) {
+  if (
+    severity === "moderate" ||
+    eventType === AdverseEventType.DATA_INTEGRITY_ISSUE ||
+    eventType === AdverseEventType.PERFORMANCE_DEGRADATION
+  ) {
     return RiskClassification.MODERATE;
   }
 
   // Low risks - monthly reporting
-  if (eventType === AdverseEventType.USER_INTERFACE_ERROR ||
-      eventType === AdverseEventType.INTEGRATION_FAILURE) {
+  if (
+    eventType === AdverseEventType.USER_INTERFACE_ERROR ||
+    eventType === AdverseEventType.INTEGRATION_FAILURE
+  ) {
     return RiskClassification.LOW;
   }
 
@@ -188,7 +198,9 @@ function classifyRisk(
 function generateANVISAProtocol(): string {
   const year = new Date().getFullYear();
   const timestamp = Date.now().toString().slice(-6);
-  const random = Math.floor(Math.random() * 100).toString().padStart(2, '0');
+  const random = Math.floor(Math.random() * 100)
+    .toString()
+    .padStart(2, "0");
   return `ANVISA.${year}.${timestamp}.${random}`;
 }
 
@@ -245,21 +257,21 @@ async function getClinicInfo(clinicId: string): Promise<{
   phone: string;
 }> {
   const { data: clinic, error } = await supabase
-    .from('clinics')
-    .select('name, cnpj, responsible_person, email, phone_primary')
-    .eq('id', clinicId)
+    .from("clinics")
+    .select("name, cnpj, responsible_person, email, phone_primary")
+    .eq("id", clinicId)
     .single();
 
   if (error || !clinic) {
-    throw new Error('Clinic information not found');
+    throw new Error("Clinic information not found");
   }
 
   return {
-    cnpj: clinic.cnpj || '',
+    cnpj: clinic.cnpj || "",
     name: clinic.name,
-    responsiblePerson: clinic.responsible_person || '',
-    email: clinic.email || '',
-    phone: clinic.phone_primary || '',
+    responsiblePerson: clinic.responsible_person || "",
+    email: clinic.email || "",
+    phone: clinic.phone_primary || "",
   };
 }
 
@@ -278,20 +290,20 @@ async function submitToANVISA(payload: ANVISANotificationPayload): Promise<{
       success: true,
       protocolNumber: generateANVISAProtocol(),
       anvisaResponse: {
-        status: 'received',
-        message: 'Adverse event notification received and under review',
-        estimatedProcessingTime: '5-10 business days',
+        status: "received",
+        message: "Adverse event notification received and under review",
+        estimatedProcessingTime: "5-10 business days",
       },
     };
   }
 
   try {
     const response = await fetch(`${ANVISA_ENDPOINT}/adverse-events`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Authorization': `Bearer ${ANVISA_API_KEY}`,
-        'Content-Type': 'application/json',
-        'X-API-Version': '2.0',
+        Authorization: `Bearer ${ANVISA_API_KEY}`,
+        "Content-Type": "application/json",
+        "X-API-Version": "2.0",
       },
       body: JSON.stringify(payload),
     });
@@ -307,14 +319,14 @@ async function submitToANVISA(payload: ANVISANotificationPayload): Promise<{
       const error = await response.text();
       return {
         success: false,
-        protocolNumber: '',
+        protocolNumber: "",
         error: `ANVISA API error: ${error}`,
       };
     }
   } catch (error: any) {
     return {
       success: false,
-      protocolNumber: '',
+      protocolNumber: "",
       error: error.message,
     };
   }
@@ -326,38 +338,36 @@ async function submitToANVISA(payload: ANVISANotificationPayload): Promise<{
 async function storeAdverseEvent(
   eventData: AdverseEventRequest,
   anvisaProtocol: string,
-  riskClassification: RiskClassification
+  riskClassification: RiskClassification,
 ): Promise<string> {
   const eventId = crypto.randomUUID();
 
-  const { error } = await supabase
-    .from('adverse_events')
-    .insert({
-      id: eventId,
-      clinic_id: eventData.clinicId,
-      patient_id: eventData.patientId,
-      user_id: eventData.userId,
-      event_type: eventData.eventType,
-      severity: eventData.severity,
-      description: eventData.description,
-      software_version: eventData.softwareVersion,
-      system_component: eventData.systemComponent,
-      anvisa_protocol: anvisaProtocol,
-      risk_classification: riskClassification,
-      affected_functionality: eventData.affectedFunctionality,
-      potential_impact: eventData.potentialImpact,
-      immediate_mitigation: eventData.immediateMitigation,
-      reproduction_steps: eventData.reproductionSteps,
-      error_logs: eventData.errorLogs,
-      metadata: eventData.metadata,
-      status: 'reported',
-      reported_at: new Date().toISOString(),
-      created_at: new Date().toISOString(),
-    });
+  const { error } = await supabase.from("adverse_events").insert({
+    id: eventId,
+    clinic_id: eventData.clinicId,
+    patient_id: eventData.patientId,
+    user_id: eventData.userId,
+    event_type: eventData.eventType,
+    severity: eventData.severity,
+    description: eventData.description,
+    software_version: eventData.softwareVersion,
+    system_component: eventData.systemComponent,
+    anvisa_protocol: anvisaProtocol,
+    risk_classification: riskClassification,
+    affected_functionality: eventData.affectedFunctionality,
+    potential_impact: eventData.potentialImpact,
+    immediate_mitigation: eventData.immediateMitigation,
+    reproduction_steps: eventData.reproductionSteps,
+    error_logs: eventData.errorLogs,
+    metadata: eventData.metadata,
+    status: "reported",
+    reported_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  });
 
   if (error) {
-    console.error('Failed to store adverse event:', error);
-    throw new Error('Failed to store adverse event in database');
+    console.error("Failed to store adverse event:", error);
+    throw new Error("Failed to store adverse event in database");
   }
 
   return eventId;
@@ -371,34 +381,32 @@ async function logAuditEvent(
   userId: string,
   eventId: string,
   anvisaProtocol: string,
-  metadata: any
+  metadata: any,
 ): Promise<string> {
   const auditId = crypto.randomUUID();
 
-  const { error } = await supabase
-    .from('audit_logs')
-    .insert({
-      id: auditId,
-      clinic_id: clinicId,
-      user_id: userId,
-      action: 'adverse_event_reported',
-      resource_type: 'adverse_event',
-      resource_id: eventId,
-      details: {
-        anvisa_protocol: anvisaProtocol,
-        event_type: metadata.eventType,
-        severity: metadata.severity,
-        risk_classification: metadata.riskClassification,
-        immediate_notification: metadata.immediateNotification,
-        compliance_framework: 'ANVISA_RDC_657_2022',
-        ...metadata,
-      },
-      lgpd_basis: 'legal_obligation',
-      created_at: new Date().toISOString(),
-    });
+  const { error } = await supabase.from("audit_logs").insert({
+    id: auditId,
+    clinic_id: clinicId,
+    user_id: userId,
+    action: "adverse_event_reported",
+    resource_type: "adverse_event",
+    resource_id: eventId,
+    details: {
+      anvisa_protocol: anvisaProtocol,
+      event_type: metadata.eventType,
+      severity: metadata.severity,
+      risk_classification: metadata.riskClassification,
+      immediate_notification: metadata.immediateNotification,
+      compliance_framework: "ANVISA_RDC_657_2022",
+      ...metadata,
+    },
+    lgpd_basis: "legal_obligation",
+    created_at: new Date().toISOString(),
+  });
 
   if (error) {
-    console.error('Audit logging failed:', error);
+    console.error("Audit logging failed:", error);
   }
 
   return auditId;
@@ -410,62 +418,62 @@ async function logAuditEvent(
 function generateRequiredActions(
   eventType: AdverseEventType,
   riskClassification: RiskClassification,
-  severity: string
+  severity: string,
 ): string[] {
   const actions: string[] = [];
 
   // Common actions for all events
-  actions.push('Document complete event details');
-  actions.push('Preserve system logs and evidence');
-  actions.push('Notify quality management system');
+  actions.push("Document complete event details");
+  actions.push("Preserve system logs and evidence");
+  actions.push("Notify quality management system");
 
   // Risk-specific actions
   switch (riskClassification) {
     case RiskClassification.CRITICAL:
-      actions.push('IMMEDIATE: Stop affected system operations');
-      actions.push('IMMEDIATE: Notify ANVISA within 2 hours');
-      actions.push('IMMEDIATE: Inform all affected users');
-      actions.push('Activate emergency response protocol');
-      actions.push('Prepare detailed root cause analysis');
+      actions.push("IMMEDIATE: Stop affected system operations");
+      actions.push("IMMEDIATE: Notify ANVISA within 2 hours");
+      actions.push("IMMEDIATE: Inform all affected users");
+      actions.push("Activate emergency response protocol");
+      actions.push("Prepare detailed root cause analysis");
       break;
 
     case RiskClassification.HIGH:
-      actions.push('Notify ANVISA within 24 hours');
-      actions.push('Implement immediate workaround if available');
-      actions.push('Schedule emergency system review');
-      actions.push('Prepare risk mitigation plan');
+      actions.push("Notify ANVISA within 24 hours");
+      actions.push("Implement immediate workaround if available");
+      actions.push("Schedule emergency system review");
+      actions.push("Prepare risk mitigation plan");
       break;
 
     case RiskClassification.MODERATE:
-      actions.push('Submit ANVISA report within 7 days');
-      actions.push('Plan corrective actions');
-      actions.push('Update risk management documentation');
+      actions.push("Submit ANVISA report within 7 days");
+      actions.push("Plan corrective actions");
+      actions.push("Update risk management documentation");
       break;
 
     case RiskClassification.LOW:
-      actions.push('Include in monthly ANVISA report');
-      actions.push('Schedule preventive maintenance');
+      actions.push("Include in monthly ANVISA report");
+      actions.push("Schedule preventive maintenance");
       break;
   }
 
   // Event-specific actions
   switch (eventType) {
     case AdverseEventType.SECURITY_VULNERABILITY:
-      actions.push('Conduct security assessment');
-      actions.push('Update security protocols');
-      actions.push('Review access controls');
+      actions.push("Conduct security assessment");
+      actions.push("Update security protocols");
+      actions.push("Review access controls");
       break;
 
     case AdverseEventType.DATA_LOSS:
-      actions.push('Activate data recovery procedures');
-      actions.push('Assess data integrity impact');
-      actions.push('Review backup systems');
+      actions.push("Activate data recovery procedures");
+      actions.push("Assess data integrity impact");
+      actions.push("Review backup systems");
       break;
 
     case AdverseEventType.CALCULATION_ERROR:
-      actions.push('Validate all calculation algorithms');
-      actions.push('Review affected patient records');
-      actions.push('Update calculation logic');
+      actions.push("Validate all calculation algorithms");
+      actions.push("Review affected patient records");
+      actions.push("Update calculation logic");
       break;
   }
 
@@ -479,26 +487,34 @@ serve(async (req) => {
   const startTime = Date.now();
 
   // Handle CORS preflight
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    if (req.method !== 'POST') {
-      return new Response(
-        JSON.stringify({ error: 'Method not allowed' }),
-        { status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    if (req.method !== "POST") {
+      return new Response(JSON.stringify({ error: "Method not allowed" }), {
+        status: 405,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const eventData: AdverseEventRequest = await req.json();
 
     // Validate required fields
-    if (!eventData.eventType || !eventData.severity || !eventData.description || 
-        !eventData.clinicId || !eventData.userId) {
+    if (
+      !eventData.eventType ||
+      !eventData.severity ||
+      !eventData.description ||
+      !eventData.clinicId ||
+      !eventData.userId
+    ) {
       return new Response(
-        JSON.stringify({ error: 'Missing required fields' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: "Missing required fields" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
       );
     }
 
@@ -506,7 +522,7 @@ serve(async (req) => {
     const riskClassification = classifyRisk(
       eventData.eventType,
       eventData.severity,
-      eventData.affectedFunctionality
+      eventData.affectedFunctionality,
     );
 
     // Calculate reporting timeline
@@ -517,12 +533,15 @@ serve(async (req) => {
 
     // Prepare ANVISA notification payload
     const anvisaPayload: ANVISANotificationPayload = {
-      notificationType: eventData.eventType.includes('security') ? 'security_issue' : 
-                       eventData.eventType.includes('malfunction') ? 'malfunction' : 'adverse_event',
+      notificationType: eventData.eventType.includes("security")
+        ? "security_issue"
+        : eventData.eventType.includes("malfunction")
+          ? "malfunction"
+          : "adverse_event",
       productInfo: {
-        softwareName: 'NeonPro Healthcare Platform',
+        softwareName: "NeonPro Healthcare Platform",
         version: eventData.softwareVersion,
-        classification: 'Medical Device Software',
+        classification: "Medical Device Software",
         registrationNumber: process.env.ANVISA_REGISTRATION_NUMBER,
       },
       eventDetails: {
@@ -545,35 +564,42 @@ serve(async (req) => {
       riskAssessment: {
         classification: riskClassification,
         potentialImpact: eventData.potentialImpact,
-        mitigationActions: eventData.immediateMitigation ? [eventData.immediateMitigation] : [],
+        mitigationActions: eventData.immediateMitigation
+          ? [eventData.immediateMitigation]
+          : [],
         preventiveMeasures: [], // Would be filled based on analysis
       },
       technicalDetails: {
         reproductionSteps: eventData.reproductionSteps || [],
-        errorLogs: eventData.errorLogs || '',
-        systemLogs: '', // Would include relevant system logs
+        errorLogs: eventData.errorLogs || "",
+        systemLogs: "", // Would include relevant system logs
         affectedFunctionality: eventData.affectedFunctionality,
       },
     };
 
     // Submit to ANVISA
     const anvisaSubmission = await submitToANVISA(anvisaPayload);
-    
+
     if (!anvisaSubmission.success) {
-      console.error('ANVISA submission failed:', anvisaSubmission.error);
+      console.error("ANVISA submission failed:", anvisaSubmission.error);
       // Continue with local storage even if ANVISA submission fails
     }
 
-    const anvisaProtocol = anvisaSubmission.protocolNumber || generateANVISAProtocol();
+    const anvisaProtocol =
+      anvisaSubmission.protocolNumber || generateANVISAProtocol();
 
     // Store adverse event in local database
-    const eventId = await storeAdverseEvent(eventData, anvisaProtocol, riskClassification);
+    const eventId = await storeAdverseEvent(
+      eventData,
+      anvisaProtocol,
+      riskClassification,
+    );
 
     // Generate required actions
     const requiredActions = generateRequiredActions(
       eventData.eventType,
       riskClassification,
-      eventData.severity
+      eventData.severity,
     );
 
     // Log audit event
@@ -589,7 +615,7 @@ serve(async (req) => {
         immediateNotification: reportingTimeline.immediateNotification,
         anvisaSubmissionSuccess: anvisaSubmission.success,
         responseTime: Date.now() - startTime,
-      }
+      },
     );
 
     const responseTime = Date.now() - startTime;
@@ -604,49 +630,46 @@ serve(async (req) => {
       complianceStatus: {
         rdc657Compliant: true,
         postMarketSurveillance: true,
-        riskManagementUpdated: riskClassification !== RiskClassification.NEGLIGIBLE,
+        riskManagementUpdated:
+          riskClassification !== RiskClassification.NEGLIGIBLE,
         qualitySystemNotified: true,
       },
       responseTime,
       auditTrailId,
     };
 
-    return new Response(
-      JSON.stringify(response),
-      {
-        status: 200,
-        headers: {
-          ...corsHeaders,
-          'Content-Type': 'application/json',
-          'X-Response-Time': `${responseTime}ms`,
-          'X-ANVISA-Protocol': anvisaProtocol,
-          'X-Risk-Classification': riskClassification,
-          'X-RDC-657-Compliant': 'true',
-        },
-      }
-    );
-
+    return new Response(JSON.stringify(response), {
+      status: 200,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+        "X-Response-Time": `${responseTime}ms`,
+        "X-ANVISA-Protocol": anvisaProtocol,
+        "X-Risk-Classification": riskClassification,
+        "X-RDC-657-Compliant": "true",
+      },
+    });
   } catch (error: any) {
-    console.error('ANVISA adverse event reporting error:', error);
-    
+    console.error("ANVISA adverse event reporting error:", error);
+
     const responseTime = Date.now() - startTime;
-    
+
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || 'Internal server error',
+        error: error.message || "Internal server error",
         responseTime,
         timestamp: new Date().toISOString(),
-        complianceNote: 'Event logged locally despite processing error',
+        complianceNote: "Event logged locally despite processing error",
       }),
       {
         status: 500,
         headers: {
           ...corsHeaders,
-          'Content-Type': 'application/json',
-          'X-Response-Time': `${responseTime}ms`,
+          "Content-Type": "application/json",
+          "X-Response-Time": `${responseTime}ms`,
         },
-      }
+      },
     );
   }
 });

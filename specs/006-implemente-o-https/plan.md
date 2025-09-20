@@ -4,6 +4,7 @@
 **Input**: Feature specification from `/specs/006-implemente-o-https/spec.md`
 
 ## Execution Flow (/plan command scope)
+
 ```
 1. Load feature spec from Input path
    → If not found: ERROR "No feature spec at {path}"
@@ -26,13 +27,16 @@
 ```
 
 **IMPORTANT**: The /plan command STOPS at step 7. Phases 2-4 are executed by other commands:
+
 - Phase 2: /tasks command creates tasks.md
 - Phase 3-4: Implementation execution (manual or via tools)
 
 ## Summary
+
 Create a conversational AI interface for NeonPro that allows healthcare professionals to query client data, appointments, and financial information through natural language. The solution uses CopilotKit for the chat UI, AG-UI Protocol for real-time communication, and ottomator-agents as the backend logic base, with secure integration to Supabase database.
 
 ## Technical Context
+
 **Language/Version**: TypeScript 5.0+, Python 3.11+  
 **Primary Dependencies**: CopilotKit, AG-UI Protocol, ottomator-agents, Supabase  
 **Storage**: Supabase (PostgreSQL) with RLS policies  
@@ -44,14 +48,17 @@ Create a conversational AI interface for NeonPro that allows healthcare professi
 **Project Type**: web (frontend + backend)
 
 ## Constitution Check
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 ### Core Principles from Constitution
+
 - **KISS Principle**: Using existing stack patterns, minimal custom implementation
 - **YAGNI Principle**: Building only conversational query interface, not full CRUD operations
 - **Chain of Thought**: Clear phased approach with validation at each step
 
 ### Constitution Compliance
+
 - ✅ No unnecessary complexity - using proven frameworks
 - ✅ Focused on user value - quick data access without navigation
 - ✅ Testable requirements - clear acceptance criteria defined
@@ -60,6 +67,7 @@ Create a conversational AI interface for NeonPro that allows healthcare professi
 ## Project Structure
 
 ### Documentation (this feature)
+
 ```
 specs/006-implemente-o-https/
 ├── plan.md              # This file (/plan command output)
@@ -72,6 +80,7 @@ specs/006-implemente-o-https/
 ```
 
 ### Source Code (repository root)
+
 ```
 # Web application structure (existing)
 apps/web/src/
@@ -107,6 +116,7 @@ tests/
 **Structure Decision**: Web application structure - matches existing NeonPro monorepo pattern
 
 ## Phase 0: Outline & Research ✓
+
 1. **Extract unknowns from Technical Context** above:
    - ✅ Resolved: CopilotKit integration patterns
    - ✅ Resolved: AG-UI Protocol implementation
@@ -126,7 +136,8 @@ tests/
 **Output**: research.md with all NEEDS CLARIFICATION resolved ✓
 
 ## Phase 1: Design & Contracts ✓
-*Prerequisites: research.md complete*
+
+_Prerequisites: research.md complete_
 
 1. **Extract entities from feature spec** → `data-model.md`:
    - ✅ Entity name, fields, relationships
@@ -152,25 +163,29 @@ tests/
    - ✅ Preserve manual additions between markers
    - ✅ Keep under 150 lines for token efficiency
 
-**Output**: data-model.md, /contracts/*, failing tests, quickstart.md, AGENTS.md ✓
+**Output**: data-model.md, /contracts/\*, failing tests, quickstart.md, AGENTS.md ✓
 
 ## Phase 2: Task Planning Approach
-*This section describes what the /tasks command will do - DO NOT execute during /plan*
+
+_This section describes what the /tasks command will do - DO NOT execute during /plan_
 
 **Task Generation Strategy**:
+
 - Load `.specify/templates/tasks-template.md` as base
 - Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
 - Each contract → contract test task [P]
-- Each entity → model creation task [P] 
+- Each entity → model creation task [P]
 - Each user story → integration test task
 - Implementation tasks to make tests pass
 
 **Ordering Strategy**:
-- TDD order: Tests before implementation 
+
+- TDD order: Tests before implementation
 - Dependency order: Models before services before UI
 - Mark [P] for parallel execution (independent files)
 
 **Specific Tasks to Generate**:
+
 1. Setup backend agent endpoint
 2. Implement data service with Supabase integration
 3. Create frontend chat component with CopilotKit
@@ -185,19 +200,23 @@ tests/
 **IMPORTANT**: This phase is executed by the /tasks command, NOT by /plan
 
 ## Phase 3+: Future Implementation
-*These phases are beyond the scope of the /plan command*
+
+_These phases are beyond the scope of the /plan command_
 
 **Phase 3**: Task execution (/tasks command creates tasks.md)  
 **Phase 4**: Implementation (execute tasks.md following constitutional principles)  
 **Phase 5**: Validation (run tests, execute quickstart.md, performance validation)
 
 ## Complexity Tracking
-*No constitution violations detected - design follows KISS and YAGNI principles*
+
+_No constitution violations detected - design follows KISS and YAGNI principles_
 
 ## Progress Tracking ✓
-*This checklist is updated during execution flow*
+
+_This checklist is updated during execution flow_
 
 **Phase Status**:
+
 - [x] Phase 0: Research complete (/plan command)
 - [x] Phase 1: Design complete (/plan command)
 - [ ] Phase 2: Task planning complete (/plan command - describe approach only)
@@ -206,10 +225,12 @@ tests/
 - [ ] Phase 5: Validation passed
 
 **Gate Status**:
+
 - [x] Initial Constitution Check: PASS
 - [x] Post-Design Constitution Check: PASS
 - [x] All NEEDS CLARIFICATION resolved
 - [x] No complexity deviations documented
 
 ---
-*Based on Constitution v2.1.1 - See `/memory/constitution.md`*
+
+_Based on Constitution v2.1.1 - See `/memory/constitution.md`_

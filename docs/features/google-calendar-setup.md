@@ -37,12 +37,14 @@
 #### Scopes Configuration
 
 In the "Scopes" section, add the following scopes:
+
 - `https://www.googleapis.com/auth/calendar` (Google Calendar API)
 - `https://www.googleapis.com/auth/calendar.events` (Calendar Events)
 
 #### Test Users
 
 Add test users for development:
+
 - Click "+ ADD USERS"
 - Enter email addresses of test accounts
 - Click "ADD"
@@ -107,6 +109,7 @@ pnpm db:migrate
 ### 3.2 Verify Schema
 
 The following tables should be created:
+
 - `google_calendar_integrations`
 - `google_calendar_events`
 - `google_calendar_sync_logs`
@@ -143,7 +146,7 @@ The React components are located in `/components/google-calendar/`:
 ### Add to Settings Page
 
 ```tsx
-import { IntegrationPanel } from '@/components/google-calendar/integration-panel';
+import { IntegrationPanel } from "@/components/google-calendar/integration-panel";
 
 export default function Settings() {
   return (
@@ -167,6 +170,7 @@ pnpm test:unit google-calendar
 ### 7.2 Manual Testing
 
 1. Start the development server:
+
    ```bash
    pnpm dev
    ```
@@ -205,6 +209,7 @@ pnpm test:unit google-calendar
 ### 8.3 Monitoring
 
 Set up monitoring for:
+
 - Sync success rates
 - API error rates
 - Authentication failures
@@ -219,6 +224,7 @@ Set up monitoring for:
 **Problem**: OAuth callback fails with redirect URI mismatch
 
 **Solution**:
+
 - Verify redirect URI in Google Cloud Console exactly matches
 - Check for trailing slashes
 - Ensure HTTP vs HTTPS matches
@@ -228,6 +234,7 @@ Set up monitoring for:
 **Problem**: User denies access or scopes not configured
 
 **Solution**:
+
 - Verify OAuth consent screen is configured
 - Check that required scopes are added
 - Ensure user is in test users list (for development)
@@ -237,6 +244,7 @@ Set up monitoring for:
 **Problem**: Appointments not syncing to Google Calendar
 
 **Solution**:
+
 - Check if integration is enabled
 - Verify sync settings
 - Review sync logs for errors
@@ -247,6 +255,7 @@ Set up monitoring for:
 **Problem**: Google Calendar API returns 429 errors
 
 **Solution**:
+
 - Implement batch operations
 - Add delays between syncs
 - Use exponential backoff
@@ -259,7 +268,7 @@ Enable debug logging:
 ```typescript
 // In development
 const service = new GoogleCalendarService({
-  debug: true
+  debug: true,
 });
 ```
 

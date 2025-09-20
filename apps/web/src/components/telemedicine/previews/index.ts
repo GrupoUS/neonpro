@@ -18,12 +18,16 @@
  * ```
  */
 
-export { SchedulingUIPreview } from './SchedulingUIPreview';
-export { WaitingRoomPreview } from './WaitingRoomPreview';
+export { SchedulingUIPreview } from "./SchedulingUIPreview";
+export { WaitingRoomPreview } from "./WaitingRoomPreview";
 
 // Re-export the main components for convenience
-export { SchedulingUI } from '../SchedulingUI';
-export { WaitingRoom } from '../WaitingRoom';
+export { SchedulingUI } from "../SchedulingUI";
+export { WaitingRoom } from "../WaitingRoom";
 
 // Export component types for developers
-export type { Patient, Professional, TelemedicineAppointment } from '../SchedulingUI';
+export type {
+  Patient,
+  Professional,
+  TelemedicineAppointment,
+} from "../SchedulingUI";

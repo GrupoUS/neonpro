@@ -47,13 +47,13 @@ All logic is intentionally minimal—focused on passing contract, scenario, unit
 
 ### InMemoryRiskService
 
-- Computes exposure = probability * impact.
+- Computes exposure = probability \* impact.
 
 ## Helper Functions
 
 | Helper                 | Description                                               |
 | ---------------------- | --------------------------------------------------------- |
-| `computeRiskExposure`  | exposure = probability * impact                           |
+| `computeRiskExposure`  | exposure = probability \* impact                          |
 | `evaluateKPIValue`     | Determines within/breach & delta given direction & target |
 | `scorePriority`        | Raw priority weighting before tier mapping                |
 | `aggregatePolicyRules` | Boolean rule aggregation into final status                |
@@ -78,17 +78,17 @@ All logic is intentionally minimal—focused on passing contract, scenario, unit
 ## Usage
 
 ```ts
-import { InMemoryKPIService } from '@neonpro/core-services';
+import { InMemoryKPIService } from "@neonpro/core-services";
 
 const kpis = new InMemoryKPIService();
 await kpis.register({
-  id: 'KPI-LAT',
-  name: 'Latency',
+  id: "KPI-LAT",
+  name: "Latency",
   target: 200,
-  direction: 'lower-better',
-  unit: 'ms',
+  direction: "lower-better",
+  unit: "ms",
 });
-const result = await kpis.evaluate('KPI-LAT', { value: 250 });
+const result = await kpis.evaluate("KPI-LAT", { value: 250 });
 ```
 
 ## Quality Gates (Met)

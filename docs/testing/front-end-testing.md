@@ -25,7 +25,7 @@ Comprehensive frontend testing strategy for React 19 applications with TanStack 
 ## Prerequisites
 
 - React 19 with TypeScript
-- TanStack Router v1.x 
+- TanStack Router v1.x
 - Vitest + Testing Library
 - Playwright for E2E
 - Healthcare UI compliance (WCAG 2.1 AA+)
@@ -34,6 +34,7 @@ Comprehensive frontend testing strategy for React 19 applications with TanStack 
 ## Quick Start
 
 ### Basic Component Test Setup
+
 ```typescript
 // apps/web/src/components/Button/Button.test.tsx
 import { render, screen, fireEvent } from '@testing-library/react';
@@ -49,7 +50,7 @@ describe('Button Component', () => {
   it('handles click events', () => {
     const handleClick = vi.fn();
     render(<Button onClick={handleClick}>Click me</Button>);
-    
+
     fireEvent.click(screen.getByRole('button'));
     expect(handleClick).toHaveBeenCalledOnce();
   });
@@ -90,7 +91,7 @@ apps/web/src/
 
 ### 3. Healthcare Component Testing
 
-```typescript
+````typescript
 // Healthcare-specific component testing patterns
 import { render, screen } from '@testing-library/react';
 import { PatientCard } from './PatientCard';
@@ -105,7 +106,7 @@ describe('PatientCard - Healthcare Compliance', () => {
 
   it('displays patient info with LGPD compliance', () => {
     render(<PatientCard patient={mockPatient} />);
-    
+
     // Verify sensitive data is properly masked
     expect(screen.getByText(/\*\*\*\.\*\*\*\.\*\*\*-12/)).toBeInTheDocument();
     expect(screen.queryByText(/\d{3}\.\d{3}\.\d{3}-\d{2}/)).not.toBeInTheDocument();
@@ -113,11 +114,11 @@ describe('PatientCard - Healthcare Compliance', () => {
 
   it('meets accessibility requirements', async () => {
     render(<PatientCard patient={mockPatient} />);
-    
+
     // WCAG compliance checks
     expect(screen.getByRole('article')).toHaveAttribute('aria-label');
     expect(screen.getByText('João Silva')).toBeInTheDocument();
-    
+
     // Color contrast and focus management
     const card = screen.getByRole('article');
     expect(card).toHaveClass('focus-visible:ring-2');
@@ -144,7 +145,7 @@ describe('Patient Detail Route', () => {
   it('renders patient detail data', async () => {
     const router = createTestRouter('123');
     render(<RouterProvider router={router} />);
-    
+
     expect(await screen.findByText(/Paciente/)).toBeInTheDocument();
     expect(screen.getByText(/Detalhes/)).toBeInTheDocument();
   });
@@ -152,36 +153,36 @@ describe('Patient Detail Route', () => {
   it('handles invalid patient ID', async () => {
     const router = createTestRouter('invalid');
     render(<RouterProvider router={router} />);
-    
+
     expect(await screen.findByText(/Paciente não encontrado/)).toBeInTheDocument();
   });
 });
-```
+````
 
 ### 2. Loader & Search Params Testing
 
 ```typescript
 // Test route loaders and search parameters
-import { Route } from './patients/index';
+import { Route } from "./patients/index";
 
-describe('Patients List Route', () => {
-  it('validates search params schema', () => {
-    const validParams = { search: 'João', page: '1' };
+describe("Patients List Route", () => {
+  it("validates search params schema", () => {
+    const validParams = { search: "João", page: "1" };
     const result = Route.validateSearch(validParams);
-    
-    expect(result.search).toBe('João');
+
+    expect(result.search).toBe("João");
     expect(result.page).toBe(1);
   });
 
-  it('handles loader with mock data', async () => {
+  it("handles loader with mock data", async () => {
     const mockLoader = vi.fn().mockResolvedValue({
-      patients: [{ id: '1', name: 'João Silva' }],
-      total: 1
+      patients: [{ id: "1", name: "João Silva" }],
+      total: 1,
     });
 
     Route.loader = mockLoader;
     const result = await Route.loader({ params: {}, search: {} });
-    
+
     expect(result.patients).toHaveLength(1);
     expect(mockLoader).toHaveBeenCalledOnce();
   });
@@ -200,22 +201,22 @@ describe('Navigation Tests', () => {
   it('navigates to patient detail on card click', async () => {
     const mockNavigate = vi.fn();
     render(
-      <PatientsList 
-        patients={mockPatients} 
+      <PatientsList
+        patients={mockPatients}
         onNavigate={mockNavigate}
       />
     );
 
     const patientCard = screen.getByTestId('patient-card-1');
     fireEvent.click(patientCard);
-    
+
     expect(mockNavigate).toHaveBeenCalledWith('/patients/1');
   });
 
   it('preserves search params during navigation', () => {
     render(
-      <Link 
-        to="/patients/$patientId" 
+      <Link
+        to="/patients/$patientId"
         params={{ patientId: '1' }}
         search={{ from: 'dashboard' }}
       >
@@ -235,40 +236,40 @@ describe('Navigation Tests', () => {
 
 ```typescript
 // playwright.config.ts - Healthcare optimized
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './tests/e2e',
+  testDir: "./tests/e2e",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: 'html',
-  
+  reporter: "html",
+
   // Healthcare-specific settings
   use: {
-    baseURL: 'http://localhost:3000',
-    trace: 'on-first-retry',
-    screenshot: 'only-on-failure',
+    baseURL: "http://localhost:3000",
+    trace: "on-first-retry",
+    screenshot: "only-on-failure",
     // LGPD compliance - no sensitive data in screenshots
-    video: 'retain-on-failure',
+    video: "retain-on-failure",
     actionTimeout: 15000, // Healthcare apps can be slower
   },
 
   projects: [
     {
-      name: 'healthcare-chrome',
-      use: { 
-        ...devices['Desktop Chrome'],
+      name: "healthcare-chrome",
+      use: {
+        ...devices["Desktop Chrome"],
         // Simulate healthcare professional environment
         viewport: { width: 1440, height: 900 },
         deviceScaleFactor: 1,
       },
     },
     {
-      name: 'healthcare-mobile',
-      use: { 
-        ...devices['iPhone 13'],
+      name: "healthcare-mobile",
+      use: {
+        ...devices["iPhone 13"],
         // Mobile healthcare scenarios
       },
     },
@@ -278,7 +279,7 @@ export default defineConfig({
 
 ### 2. Patient Management E2E Flow
 
-```typescript
+````typescript
 // tests/e2e/patient-management.e2e.test.ts
 import { test, expect } from '@playwright/test';
 
@@ -289,7 +290,7 @@ test.describe('Patient Management Flow', () => {
     await page.fill('[data-testid="email"]', 'doctor@clinic.com');
     await page.fill('[data-testid="password"]', 'secure-password');
     await page.click('[data-testid="login-button"]');
-    
+
     // Verify login success
     await expect(page.locator('[data-testid="dashboard"]')).toBeVisible();
   });
@@ -297,20 +298,20 @@ test.describe('Patient Management Flow', () => {
   test('complete patient registration flow', async ({ page }) => {
     // Navigate to patient registration
     await page.click('[data-testid="new-patient-button"]');
-    
+
     // Fill patient form
     await page.fill('[data-testid="patient-name"]', 'Maria Santos');
     await page.fill('[data-testid="patient-cpf"]', '123.456.789-00');
     await page.selectOption('[data-testid="patient-gender"]', 'F');
     await page.fill('[data-testid="patient-birthdate"]', '1985-06-15');
-    
+
     // Healthcare-specific fields
     await page.fill('[data-testid="patient-condition"]', 'Hipertensão');
     await page.selectOption('[data-testid="patient-priority"]', 'high');
-    
+
     // Submit form
     await page.click('[data-testid="save-patient"]');
-    
+
     // Verify success
     await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
     await expect(page.locator('text=Maria Santos')).toBeVisible();
@@ -318,14 +319,14 @@ test.describe('Patient Management Flow', () => {
 
   test('search and filter patients', async ({ page }) => {
     await page.goto('/patients');
-    
+
     // Search functionality
     await page.fill('[data-testid="search-input"]', 'Maria');
     await page.click('[data-testid="search-button"]');
-    
+
     // Verify search results
     await expect(page.locator('[data-testid="patient-card"]')).toContainText('Maria');
-    
+
     // Filter by condition
     await page.selectOption('[data-testid="condition-filter"]', 'diabetes');
     await expect(page.locator('[data-testid="patient-count"]')).toContainText('diabetes');
@@ -333,15 +334,15 @@ test.describe('Patient Management Flow', () => {
 
   test('accessibility compliance in patient forms', async ({ page }) => {
     await page.goto('/patients/new');
-    
+
     // Keyboard navigation test
     await page.keyboard.press('Tab');
     await expect(page.locator('[data-testid="patient-name"]')).toBeFocused();
-    
+
     // Screen reader labels
     const nameInput = page.locator('[data-testid="patient-name"]');
     await expect(nameInput).toHaveAttribute('aria-label', /nome do paciente/i);
-    
+
     // Error handling accessibility
     await page.click('[data-testid="save-patient"]'); // Submit empty form
     const errorMessage = page.locator('[data-testid="error-message"]');
@@ -370,27 +371,27 @@ describe('PatientForm Accessibility', () => {
 
   it('supports keyboard navigation', async () => {
     render(<PatientForm />);
-    
+
     // Test tab order
     const inputs = screen.getAllByRole('textbox');
     inputs[0].focus();
-    
+
     await user.keyboard('[Tab]');
     expect(inputs[1]).toHaveFocus();
-    
+
     await user.keyboard('[Shift>][Tab][/Shift]');
     expect(inputs[0]).toHaveFocus();
   });
 
   it('provides proper ARIA labels for healthcare data', () => {
     render(<PatientForm />);
-    
+
     expect(screen.getByLabelText(/nome completo do paciente/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/cpf do paciente/i)).toBeInTheDocument();
     expect(screen.getByRole('combobox', { name: /condição médica/i })).toBeInTheDocument();
   });
 });
-```
+````
 
 ### 2. Screen Reader Compatibility
 
@@ -399,10 +400,10 @@ describe('PatientForm Accessibility', () => {
 describe('Screen Reader Support', () => {
   it('announces form errors correctly', async () => {
     render(<PatientForm />);
-    
+
     // Submit invalid form
     await user.click(screen.getByRole('button', { name: /salvar/i }));
-    
+
     // Verify error announcements
     const errorRegion = screen.getByRole('alert');
     expect(errorRegion).toHaveTextContent(/nome é obrigatório/i);
@@ -411,13 +412,13 @@ describe('Screen Reader Support', () => {
 
   it('provides status updates for async operations', async () => {
     render(<PatientForm />);
-    
+
     // Start save operation
     await user.click(screen.getByRole('button', { name: /salvar/i }));
-    
+
     // Loading state
     expect(screen.getByText(/salvando paciente/i)).toHaveAttribute('aria-live', 'polite');
-    
+
     // Success state
     await waitFor(() => {
       expect(screen.getByText(/paciente salvo com sucesso/i))
@@ -448,15 +449,15 @@ const customRender = (
   ui: ReactElement,
   options: CustomRenderOptions = {}
 ) => {
-  const { 
-    initialEntries = ['/'], 
+  const {
+    initialEntries = ['/'],
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
         mutations: { retry: false },
       },
     }),
-    ...renderOptions 
+    ...renderOptions
   } = options;
 
   const router = createMemoryRouter({
@@ -483,45 +484,47 @@ export { customRender as render };
 
 ```typescript
 // apps/web/src/test/fixtures/patient.ts
-import type { Patient } from '@/types/patient';
+import type { Patient } from "@/types/patient";
 
-export const createMockPatient = (overrides: Partial<Patient> = {}): Patient => ({
-  id: '1',
-  name: 'João Silva',
-  cpf: '***.***.***-12', // LGPD compliant masking
-  email: 'joao.silva@email.com',
-  phone: '+55 11 99999-9999',
-  birthDate: '1985-03-15',
-  gender: 'M',
+export const createMockPatient = (
+  overrides: Partial<Patient> = {},
+): Patient => ({
+  id: "1",
+  name: "João Silva",
+  cpf: "***.***.***-12", // LGPD compliant masking
+  email: "joao.silva@email.com",
+  phone: "+55 11 99999-9999",
+  birthDate: "1985-03-15",
+  gender: "M",
   address: {
-    street: 'Rua das Flores, 123',
-    city: 'São Paulo',
-    state: 'SP',
-    zipCode: '01234-567',
+    street: "Rua das Flores, 123",
+    city: "São Paulo",
+    state: "SP",
+    zipCode: "01234-567",
   },
   medicalInfo: {
-    conditions: ['Diabetes Tipo 2'],
-    allergies: ['Penicilina'],
-    medications: ['Metformina 500mg'],
+    conditions: ["Diabetes Tipo 2"],
+    allergies: ["Penicilina"],
+    medications: ["Metformina 500mg"],
     emergencyContact: {
-      name: 'Maria Silva',
-      phone: '+55 11 88888-8888',
-      relationship: 'Esposa',
+      name: "Maria Silva",
+      phone: "+55 11 88888-8888",
+      relationship: "Esposa",
     },
   },
-  clinicId: 'clinic-123',
-  createdAt: '2024-01-15T10:30:00Z',
-  updatedAt: '2024-01-15T10:30:00Z',
+  clinicId: "clinic-123",
+  createdAt: "2024-01-15T10:30:00Z",
+  updatedAt: "2024-01-15T10:30:00Z",
   ...overrides,
 });
 
 export const createMockPatients = (count: number = 5): Patient[] => {
-  return Array.from({ length: count }, (_, index) => 
+  return Array.from({ length: count }, (_, index) =>
     createMockPatient({
       id: `patient-${index + 1}`,
       name: `Paciente ${index + 1}`,
-      cpf: `***.***.***-${String(index + 10).padStart(2, '0')}`,
-    })
+      cpf: `***.***.***-${String(index + 10).padStart(2, "0")}`,
+    }),
   );
 };
 ```
@@ -530,17 +533,19 @@ export const createMockPatients = (count: number = 5): Patient[] => {
 
 ```typescript
 // apps/web/src/test/mocks/api.ts
-import { rest } from 'msw';
-import { createMockPatients } from '../fixtures/patient';
+import { rest } from "msw";
+import { createMockPatients } from "../fixtures/patient";
 
 export const patientHandlers = [
   // Get patients list
-  rest.get('/api/patients', (req, res, ctx) => {
-    const search = req.url.searchParams.get('search');
+  rest.get("/api/patients", (req, res, ctx) => {
+    const search = req.url.searchParams.get("search");
     const patients = createMockPatients(10);
-    
-    const filtered = search 
-      ? patients.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
+
+    const filtered = search
+      ? patients.filter((p) =>
+          p.name.toLowerCase().includes(search.toLowerCase()),
+        )
       : patients;
 
     return res(
@@ -550,26 +555,26 @@ export const patientHandlers = [
         total: filtered.length,
         page: 1,
         pageSize: 10,
-      })
+      }),
     );
   }),
 
   // Get single patient
-  rest.get('/api/patients/:id', (req, res, ctx) => {
+  rest.get("/api/patients/:id", (req, res, ctx) => {
     const { id } = req.params;
     const patient = createMockPatient({ id: id as string });
-    
+
     return res(ctx.status(200), ctx.json({ data: patient }));
   }),
 
   // Create patient
-  rest.post('/api/patients', (req, res, ctx) => {
+  rest.post("/api/patients", (req, res, ctx) => {
     return res(
       ctx.status(201),
       ctx.json({
-        data: createMockPatient({ id: 'new-patient-id' }),
-        message: 'Paciente criado com sucesso',
-      })
+        data: createMockPatient({ id: "new-patient-id" }),
+        message: "Paciente criado com sucesso",
+      }),
     );
   }),
 ];
@@ -595,26 +600,27 @@ export const patientHandlers = [
 
 ```typescript
 // Optimize test performance
-describe.concurrent('Patient Components', () => {
-  test('renders patient card', async () => {
+describe.concurrent("Patient Components", () => {
+  test("renders patient card", async () => {
     // Run tests in parallel when possible
   });
 });
 
 // Use test.each for similar test cases
 test.each([
-  ['João Silva', 'valid'],
-  ['', 'invalid'],
-  ['Maria Santos', 'valid'],
-])('validates patient name: %s (%s)', (name, expected) => {
+  ["João Silva", "valid"],
+  ["", "invalid"],
+  ["Maria Santos", "valid"],
+])("validates patient name: %s (%s)", (name, expected) => {
   const result = validatePatientName(name);
-  expect(result.isValid).toBe(expected === 'valid');
+  expect(result.isValid).toBe(expected === "valid");
 });
 ```
 
 ## Examples
 
 ### Complete Patient Component Test
+
 ```typescript
 // Complete example combining all patterns
 import { render, screen, fireEvent, waitFor } from '@/test/utils';
@@ -624,14 +630,14 @@ import { axe } from 'jest-axe';
 
 describe('PatientCard Integration', () => {
   const mockPatient = createMockPatient();
-  
+
   it('renders and handles all interactions', async () => {
     const onEdit = vi.fn();
     const onDelete = vi.fn();
-    
+
     const { container } = render(
-      <PatientCard 
-        patient={mockPatient} 
+      <PatientCard
+        patient={mockPatient}
         onEdit={onEdit}
         onDelete={onDelete}
       />
@@ -652,7 +658,7 @@ describe('PatientCard Integration', () => {
     fireEvent.click(screen.getByRole('button', { name: /excluir/i }));
     const confirmButton = await screen.findByRole('button', { name: /confirmar/i });
     fireEvent.click(confirmButton);
-    
+
     await waitFor(() => {
       expect(onDelete).toHaveBeenCalledWith(mockPatient.id);
     });

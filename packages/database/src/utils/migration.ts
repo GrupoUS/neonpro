@@ -1,14 +1,14 @@
-import { PrismaClient } from '@prisma/client';
-import * as fs from 'fs';
-import * as path from 'path';
+import { PrismaClient } from "@prisma/client";
+import * as fs from "fs";
+import * as path from "path";
 
 /**
  * Data migration utilities for Supabase
  */
 
 // Migration version tracking
-const SCHEMA_VERSION = '1.0.0';
-const MIGRATION_TABLE = '_migrations';
+const SCHEMA_VERSION = "1.0.0";
+const MIGRATION_TABLE = "_migrations";
 
 /**
  * Migrate data between schema versions
@@ -28,26 +28,26 @@ export async function migrateData(): Promise<void> {
     // Define migration steps
     const migrations = [
       {
-        version: '1.0.0',
-        description: 'Initial schema setup',
+        version: "1.0.0",
+        description: "Initial schema setup",
         up: async () => {
           // This would contain actual migration logic
           // For now, just log that migration would occur
-          console.log('Running initial schema setup migration...');
+          console.log("Running initial schema setup migration...");
         },
       },
       {
-        version: '1.0.1',
-        description: 'Add indexes for performance',
+        version: "1.0.1",
+        description: "Add indexes for performance",
         up: async () => {
-          console.log('Adding performance indexes...');
+          console.log("Adding performance indexes...");
         },
       },
       {
-        version: '1.1.0',
-        description: 'Add new healthcare fields',
+        version: "1.1.0",
+        description: "Add new healthcare fields",
         up: async () => {
-          console.log('Adding new healthcare-specific fields...');
+          console.log("Adding new healthcare-specific fields...");
         },
       },
     ];
@@ -55,17 +55,19 @@ export async function migrateData(): Promise<void> {
     // Apply pending migrations
     for (const migration of migrations) {
       if (isMigrationPending(currentVersion, migration.version)) {
-        console.log(`Applying migration ${migration.version}: ${migration.description}`);
+        console.log(
+          `Applying migration ${migration.version}: ${migration.description}`,
+        );
         await migration.up();
         await recordMigration(prisma, migration.version, migration.description);
       }
     }
 
-    console.log('Data migration completed successfully');
+    console.log("Data migration completed successfully");
 
     await prisma.$disconnect();
   } catch (error) {
-    console.error('Data migration error:', error);
+    console.error("Data migration error:", error);
     throw error;
   }
 }
@@ -77,13 +79,13 @@ export async function migrateData(): Promise<void> {
 export async function backupData(): Promise<string> {
   try {
     // Create backup directory if it doesn't exist
-    const backupDir = path.join(process.cwd(), 'backups');
+    const backupDir = path.join(process.cwd(), "backups");
     if (!fs.existsSync(backupDir)) {
       fs.mkdirSync(backupDir, { recursive: true });
     }
 
     // Generate backup filename
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const backupFilename = `backup-${timestamp}.json`;
     const backupPath = path.join(backupDir, backupFilename);
 
@@ -137,7 +139,7 @@ export async function backupData(): Promise<string> {
     await prisma.$disconnect();
     return backupPath;
   } catch (error) {
-    console.error('Backup error:', error);
+    console.error("Backup error:", error);
     throw error;
   }
 }
@@ -147,13 +149,13 @@ export async function backupData(): Promise<string> {
 async function ensureMigrationsTable(prisma: PrismaClient): Promise<void> {
   try {
     // Check if migrations table exists
-    const result = await prisma.$queryRaw`
+    const result = (await prisma.$queryRaw`
       SELECT EXISTS (
         SELECT FROM information_schema.tables 
         WHERE table_schema = 'public' 
         AND table_name = ${MIGRATION_TABLE}
       )
-    ` as any[];
+    `) as any[];
 
     if (!result[0]?.exists) {
       // Create migrations table
@@ -165,30 +167,33 @@ async function ensureMigrationsTable(prisma: PrismaClient): Promise<void> {
           applied_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
         )
       `;
-      console.log('Created migrations table');
+      console.log("Created migrations table");
     }
   } catch (error) {
-    console.error('Error ensuring migrations table:', error);
+    console.error("Error ensuring migrations table:", error);
     throw error;
   }
 }
 
 async function getCurrentSchemaVersion(prisma: PrismaClient): Promise<string> {
   try {
-    const result = await prisma.$queryRaw`
+    const result = (await prisma.$queryRaw`
       SELECT version FROM ${MIGRATION_TABLE} 
       ORDER BY applied_at DESC 
       LIMIT 1
-    ` as any[];
+    `) as any[];
 
-    return result[0]?.version || '0.0.0';
+    return result[0]?.version || "0.0.0";
   } catch (error) {
-    console.error('Error getting current schema version:', error);
-    return '0.0.0';
+    console.error("Error getting current schema version:", error);
+    return "0.0.0";
   }
 }
 
-function isMigrationPending(currentVersion: string, migrationVersion: string): boolean {
+function isMigrationPending(
+  currentVersion: string,
+  migrationVersion: string,
+): boolean {
   // Simple version comparison (in a real app, use semver library)
   return migrationVersion > currentVersion;
 }
@@ -204,7 +209,7 @@ async function recordMigration(
       VALUES (${version}, ${description})
     `;
   } catch (error) {
-    console.error('Error recording migration:', error);
+    console.error("Error recording migration:", error);
     throw error;
   }
 }

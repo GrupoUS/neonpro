@@ -2,11 +2,11 @@
 // Integrates with existing consent-service.ts and redaction patterns
 // Date: 2025-09-15
 
-import type { 
-  AIUsageRecord, 
-  AuditTrail, 
-  MedicalSpecialty 
-} from '@neonpro/types';
+import type {
+  AIUsageRecord,
+  AuditTrail,
+  MedicalSpecialty,
+} from "@neonpro/types";
 
 // ================================================
 // LGPD COMPLIANCE INTERFACES
@@ -16,12 +16,18 @@ import type {
  * LGPD-compliant CRUD operation options
  */
 export interface LGPDCRUDOptions {
-  readonly purpose: 'analytics' | 'diagnosis' | 'training' | 'audit';
+  readonly purpose: "analytics" | "diagnosis" | "training" | "audit";
   readonly retentionDays: number;
-  readonly anonymizationLevel: 'none' | 'pseudonymized' | 'anonymized';
+  readonly anonymizationLevel: "none" | "pseudonymized" | "anonymized";
   readonly consentRequired: boolean;
   readonly consentId?: string;
-  readonly legalBasis: 'consent' | 'legitimate_interest' | 'legal_obligation' | 'vital_interest' | 'public_task' | 'contract';
+  readonly legalBasis:
+    | "consent"
+    | "legitimate_interest"
+    | "legal_obligation"
+    | "vital_interest"
+    | "public_task"
+    | "contract";
   readonly dataMinimization: boolean;
   readonly auditTrailRequired: boolean;
 }
@@ -38,16 +44,21 @@ export interface DataProcessingContext {
   readonly medicalSpecialty?: MedicalSpecialty;
   readonly ipAddress?: string;
   readonly userAgent?: string;
-  readonly processingLocation: 'brazil' | 'international';
+  readonly processingLocation: "brazil" | "international";
 }
 
 /**
  * LGPD-compliant data classification
  */
 export interface LGPDDataClassification {
-  readonly category: 'personal' | 'sensitive' | 'health' | 'biometric' | 'anonymous';
+  readonly category:
+    | "personal"
+    | "sensitive"
+    | "health"
+    | "biometric"
+    | "anonymous";
   readonly subcategory?: string;
-  readonly sensitivity: 'low' | 'medium' | 'high' | 'critical';
+  readonly sensitivity: "low" | "medium" | "high" | "critical";
   readonly requiresExplicitConsent: boolean;
   readonly restrictedProcessing: boolean;
   readonly dataResidencyRequired: boolean;
@@ -60,7 +71,7 @@ export interface AnonymizationConfig {
   readonly preserveFields?: string[];
   readonly redactFields?: string[];
   readonly aggregateFields?: string[];
-  readonly hashingAlgorithm: 'sha256' | 'sha512' | 'argon2';
+  readonly hashingAlgorithm: "sha256" | "sha512" | "argon2";
   readonly saltLength: number;
   readonly preserveStructure: boolean;
 }
@@ -72,7 +83,7 @@ export interface DataRetentionPolicy {
   readonly defaultRetentionDays: number;
   readonly purposeSpecificRetention: Record<string, number>;
   readonly automaticDeletion: boolean;
-  readonly deletionMethod: 'hard_delete' | 'soft_delete' | 'anonymize';
+  readonly deletionMethod: "hard_delete" | "soft_delete" | "anonymize";
   readonly archivalRequired: boolean;
   readonly complianceReporting: boolean;
 }
@@ -88,10 +99,10 @@ export interface DataRetentionPolicy {
 export class LGPDComplianceService {
   private readonly dataRetentionPolicy: DataRetentionPolicy;
   private readonly anonymizationConfig: AnonymizationConfig;
-  
+
   constructor(
     dataRetentionPolicyParam?: Partial<DataRetentionPolicy>,
-    anonymizationConfigParam?: Partial<AnonymizationConfig>
+    anonymizationConfigParam?: Partial<AnonymizationConfig>,
   ) {
     this.dataRetentionPolicy = {
       defaultRetentionDays: 90,
@@ -102,17 +113,17 @@ export class LGPDComplianceService {
         audit: 2555, // 7 years for audit compliance
       },
       automaticDeletion: true,
-      deletionMethod: 'anonymize',
+      deletionMethod: "anonymize",
       archivalRequired: true,
       complianceReporting: true,
       ...dataRetentionPolicyParam,
     };
-    
+
     this.anonymizationConfig = {
-      preserveFields: ['id', 'created_at', 'clinic_id'],
-      redactFields: ['session_id', 'user_id', 'patient_id'],
-      aggregateFields: ['cost_usd', 'tokens_used', 'latency_ms'],
-      hashingAlgorithm: 'sha256',
+      preserveFields: ["id", "created_at", "clinic_id"],
+      redactFields: ["session_id", "user_id", "patient_id"],
+      aggregateFields: ["cost_usd", "tokens_used", "latency_ms"],
+      hashingAlgorithm: "sha256",
       saltLength: 32,
       preserveStructure: true,
       ...anonymizationConfigParam,
@@ -131,29 +142,33 @@ export class LGPDComplianceService {
    * Creates AI usage record with LGPD compliance checks
    */
   async createAIUsageRecord(
-    usageData: Omit<AIUsageRecord, 'id' | 'createdAt' | 'auditTrail'>,
+    usageData: Omit<AIUsageRecord, "id" | "createdAt" | "auditTrail">,
     context: DataProcessingContext,
-    options: LGPDCRUDOptions
-  ): Promise<{ success: boolean; record?: AIUsageRecord; violations?: string[] }> {
+    options: LGPDCRUDOptions,
+  ): Promise<{
+    success: boolean;
+    record?: AIUsageRecord;
+    violations?: string[];
+  }> {
     const violations: string[] = [];
-    
+
     // 1. Consent validation
     if (options.consentRequired && !options.consentId) {
-      violations.push('Consent required but not provided');
+      violations.push("Consent required but not provided");
     }
-    
+
     if (violations.length > 0) {
       return { success: false, violations };
     }
-    
+
     // 2. Generate LGPD-compliant audit trail
     const auditTrail = this.createAuditTrail(
-      'create_ai_usage',
+      "create_ai_usage",
       context,
       options,
-      { dataProcessed: true, patientInvolved: usageData.patientInvolved }
+      { dataProcessed: true, patientInvolved: usageData.patientInvolved },
     );
-    
+
     // 3. Create final record
     const record: AIUsageRecord = {
       ...usageData,
@@ -162,7 +177,7 @@ export class LGPDComplianceService {
       auditTrail,
       createdAt: new Date(),
     };
-    
+
     return { success: true, record };
   }
 
@@ -177,7 +192,7 @@ export class LGPDComplianceService {
     action: string,
     context: DataProcessingContext,
     options: LGPDCRUDOptions,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, any> = {},
   ): AuditTrail {
     return {
       action,
@@ -186,7 +201,9 @@ export class LGPDComplianceService {
       userRole: metadata.userRole,
       ipAddress: context.ipAddress,
       userAgent: context.userAgent,
-      consentStatus: options.consentId ? 'valid' as const : 'missing' as const,
+      consentStatus: options.consentId
+        ? ("valid" as const)
+        : ("missing" as const),
       dataProcessingPurpose: options.purpose,
       anonymizationLevel: options.anonymizationLevel,
       metadata: {
@@ -232,8 +249,9 @@ export class LGPDComplianceService {
    * Validates data processing against current retention policy
    */
   validateDataRetention(dataAge: number, purpose: string): boolean {
-    const retentionDays = this.dataRetentionPolicy.purposeSpecificRetention[purpose] || 
-                         this.dataRetentionPolicy.defaultRetentionDays;
+    const retentionDays =
+      this.dataRetentionPolicy.purposeSpecificRetention[purpose] ||
+      this.dataRetentionPolicy.defaultRetentionDays;
     return dataAge <= retentionDays * 24 * 60 * 60 * 1000; // Convert days to milliseconds
   }
 
@@ -242,19 +260,19 @@ export class LGPDComplianceService {
    */
   applyAnonymization(data: Record<string, any>): Record<string, any> {
     const result = { ...data };
-    
+
     // Remove redacted fields
-    this.anonymizationConfig.redactFields?.forEach(field => {
+    this.anonymizationConfig.redactFields?.forEach((field) => {
       delete result[field];
     });
-    
+
     // Aggregate numeric fields
-    this.anonymizationConfig.aggregateFields?.forEach(field => {
-      if (typeof result[field] === 'number') {
+    this.anonymizationConfig.aggregateFields?.forEach((field) => {
+      if (typeof result[field] === "number") {
         result[field] = Math.round(result[field]); // Simple aggregation
       }
     });
-    
+
     return result;
   }
 }

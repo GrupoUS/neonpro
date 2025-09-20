@@ -29,7 +29,7 @@ export interface ConstitutionalContext {
   compliance: boolean;
   requirement?: string;
   impact?: string;
-  standard?: 'LGPD' | 'ANVISA' | 'CFM' | 'HIPAA' | 'GDPR' | 'ISO27001';
+  standard?: "LGPD" | "ANVISA" | "CFM" | "HIPAA" | "GDPR" | "ISO27001";
   [key: string]: unknown;
 }
 
@@ -106,7 +106,7 @@ export interface AuditRule {
   id: string;
   name: string;
   description: string;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   category: string;
   enabled: boolean;
 }
@@ -132,7 +132,7 @@ export interface PackageInfo {
 export interface DependencyInfo {
   name: string;
   version: string;
-  type: 'production' | 'development' | 'peer' | 'optional';
+  type: "production" | "development" | "peer" | "optional";
   resolved: string;
   integrity?: string;
   vulnerabilities?: number;
@@ -167,7 +167,7 @@ export interface Metric {
 
 export interface HealthCheck {
   name: string;
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   message?: string;
   duration: number;
   timestamp: number;
@@ -180,7 +180,7 @@ export class ToolError extends Error {
 
   constructor(message: string, code: string, details?: Record<string, any>) {
     super(message);
-    this.name = 'ToolError';
+    this.name = "ToolError";
     this.code = code;
     this.details = details;
     Error.captureStackTrace(this, ToolError);
@@ -189,15 +189,15 @@ export class ToolError extends Error {
 
 export class ValidationError extends ToolError {
   constructor(message: string, details?: Record<string, any>) {
-    super(message, 'VALIDATION_ERROR', details);
-    this.name = 'ValidationError';
+    super(message, "VALIDATION_ERROR", details);
+    this.name = "ValidationError";
   }
 }
 
 export class ConfigurationError extends ToolError {
   constructor(message: string, details?: Record<string, any>) {
-    super(message, 'CONFIGURATION_ERROR', details);
-    this.name = 'ConfigurationError';
+    super(message, "CONFIGURATION_ERROR", details);
+    this.name = "ConfigurationError";
   }
 }
 
@@ -205,27 +205,23 @@ export class ConfigurationError extends ToolError {
 export function isLogEntry(obj: any): obj is LogEntry {
   return (
     obj &&
-    typeof obj === 'object' &&
-    typeof obj.timestamp === 'string' &&
-    typeof obj.level === 'number' &&
-    typeof obj.message === 'string' &&
-    typeof obj.context === 'object'
+    typeof obj === "object" &&
+    typeof obj.timestamp === "string" &&
+    typeof obj.level === "number" &&
+    typeof obj.message === "string" &&
+    typeof obj.context === "object"
   );
 }
 
 export function isResult<T>(obj: any): obj is Result<T> {
-  return (
-    obj &&
-    typeof obj === 'object' &&
-    typeof obj.success === 'boolean'
-  );
+  return obj && typeof obj === "object" && typeof obj.success === "boolean";
 }
 
 export function isValidationResult(obj: any): obj is ValidationResult {
   return (
     obj &&
-    typeof obj === 'object' &&
-    typeof obj.valid === 'boolean' &&
+    typeof obj === "object" &&
+    typeof obj.valid === "boolean" &&
     Array.isArray(obj.errors) &&
     Array.isArray(obj.warnings)
   );

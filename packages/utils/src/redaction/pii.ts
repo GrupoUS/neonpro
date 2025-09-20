@@ -1,8 +1,8 @@
 // Phase 3.3 — T012: Redaction utility wrapper
 // Leverages existing logging/redact and LGPD helpers to provide a single entry point.
 
-import { redact as baseRedact } from '../logging/redact';
-import { lgpdCompliance } from '../lgpd';
+import { redact as baseRedact } from "../logging/redact";
+import { lgpdCompliance } from "../lgpd";
 
 export interface RedactionResult {
   text: string;
@@ -21,7 +21,7 @@ export function redactPII(input: string): RedactionResult {
   const text = lgpdCompliance(pass1);
   // Flags are best-effort; in Phase 1 we return a coarse list.
   const flags: string[] = [];
-  if (input !== text) flags.push('lgpd');
+  if (input !== text) flags.push("lgpd");
   return { text, flags };
 }
 

@@ -1,4 +1,10 @@
-import React, { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 
 // LGPD-compliant consent categories
 export interface ConsentPreferences {
@@ -22,7 +28,11 @@ export interface ConsentContextValue {
   // Settings and configuration
   consentSettings: ConsentPreferences;
   updateConsentSettings: (settings: Partial<ConsentPreferences>) => void;
-  consentHistory: Array<{ timestamp: string; action: string; preferences: ConsentPreferences }>;
+  consentHistory: Array<{
+    timestamp: string;
+    action: string;
+    preferences: ConsentPreferences;
+  }>;
 
   // UI state
   showConsentBanner: boolean;
@@ -31,16 +41,20 @@ export interface ConsentContextValue {
   isConsentBannerVisible: boolean;
 }
 
-const ConsentContext = createContext<ConsentContextValue | undefined>(undefined);
+const ConsentContext = createContext<ConsentContextValue | undefined>(
+  undefined,
+);
 
-const CONSENT_STORAGE_KEY = 'neonpro-consent-preferences';
-const CONSENT_VERSION = '1.0'; // Increment when consent requirements change
+const CONSENT_STORAGE_KEY = "neonpro-consent-preferences";
+const CONSENT_VERSION = "1.0"; // Increment when consent requirements change
 
 interface ConsentProviderProps {
   children: ReactNode;
 }
 
-export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.Element {
+export function ConsentProvider({
+  children,
+}: ConsentProviderProps): React.JSX.Element {
   const [preferences, setPreferences] = useState<ConsentPreferences>({
     necessary: true, // Always required for app functionality
     analytics: false, // Requires explicit consent under LGPD
@@ -62,14 +76,14 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
 
         // Check if consent version matches current requirements
         if (parsed.version === CONSENT_VERSION) {
-          setPreferences(prev => ({ ...prev, ...parsed.preferences }));
+          setPreferences((prev) => ({ ...prev, ...parsed.preferences }));
           setConsentVersion(parsed.version);
         } else {
           // Consent version changed - show banner again
           setShowConsentBanner(true);
         }
       } catch (error) {
-        console.warn('Failed to parse consent preferences:', error);
+        console.warn("Failed to parse consent preferences:", error);
         setShowConsentBanner(true);
       }
     } else {
@@ -90,7 +104,7 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
       localStorage.setItem(CONSENT_STORAGE_KEY, JSON.stringify(dataToSave));
       setConsentVersion(CONSENT_VERSION);
     } catch (error) {
-      console.error('Failed to save consent preferences:', error);
+      console.error("Failed to save consent preferences:", error);
     }
   };
 
@@ -112,7 +126,7 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
 
     // Trigger analytics initialization if analytics was just enabled
     if (!preferences.analytics) {
-      dispatchConsentEvent('analytics', true);
+      dispatchConsentEvent("analytics", true);
     }
   };
 
@@ -130,7 +144,7 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
 
     // Trigger analytics cleanup if analytics was previously enabled
     if (preferences.analytics) {
-      dispatchConsentEvent('analytics', false);
+      dispatchConsentEvent("analytics", false);
     }
   };
 
@@ -149,14 +163,14 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
 
     // Trigger analytics events if consent changed
     if (analyticsChanged) {
-      dispatchConsentEvent('analytics', newPreferences.analytics);
+      dispatchConsentEvent("analytics", newPreferences.analytics);
     }
   };
 
   // Dispatch custom events for consent changes
   const dispatchConsentEvent = (category: string, granted: boolean) => {
     window.dispatchEvent(
-      new CustomEvent('consent-changed', {
+      new CustomEvent("consent-changed", {
         detail: { category, granted, timestamp: Date.now() },
       }),
     );
@@ -172,9 +186,11 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
   };
 
   // Mock consent history for now (TODO: implement proper history tracking)
-  const consentHistory: Array<
-    { timestamp: string; action: string; preferences: ConsentPreferences }
-  > = [];
+  const consentHistory: Array<{
+    timestamp: string;
+    action: string;
+    preferences: ConsentPreferences;
+  }> = [];
 
   const contextValue: ConsentContextValue = {
     preferences,
@@ -202,7 +218,7 @@ export function ConsentProvider({ children }: ConsentProviderProps): React.JSX.E
 export function useConsent(): ConsentContextValue {
   const context = useContext(ConsentContext);
   if (!context) {
-    throw new Error('useConsent must be used within a ConsentProvider');
+    throw new Error("useConsent must be used within a ConsentProvider");
   }
   return context;
 }
@@ -214,8 +230,10 @@ export function canTrackAnalytics(): boolean {
     const savedData = localStorage.getItem(CONSENT_STORAGE_KEY);
     if (savedData) {
       const parsed = JSON.parse(savedData);
-      return parsed.version === CONSENT_VERSION
-        && parsed.preferences?.analytics === true;
+      return (
+        parsed.version === CONSENT_VERSION &&
+        parsed.preferences?.analytics === true
+      );
     }
   } catch {
     // If consent data is invalid, default to no tracking

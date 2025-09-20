@@ -3,16 +3,16 @@
  * T080 - Database Performance Tuning
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   createDatabaseHealthDashboardMiddleware,
   createDatabaseHealthMiddleware,
   DatabaseHealthMonitor,
   HEALTHCARE_HEALTH_THRESHOLDS,
-} from '../database-health';
+} from "../database-health";
 
 // Mock services
-vi.mock('../services/database-performance', () => ({
+vi.mock("../services/database-performance", () => ({
   default: class MockDatabasePerformanceService {
     async analyzePerformance() {
       return {
@@ -26,7 +26,7 @@ vi.mock('../services/database-performance', () => ({
         indexUsage: {
           totalIndexes: 20,
           unusedIndexes: 2,
-          missingIndexes: ['test'],
+          missingIndexes: ["test"],
           indexEfficiency: 85,
         },
         healthcareCompliance: {
@@ -40,13 +40,17 @@ vi.mock('../services/database-performance', () => ({
     getQueryMonitor() {
       return {
         recordQuery: vi.fn(),
-        getStats: () => ({ averageDuration: 75, slowQueries: 2, totalQueries: 100 }),
+        getStats: () => ({
+          averageDuration: 75,
+          slowQueries: 2,
+          totalQueries: 100,
+        }),
       };
     }
   },
 }));
 
-vi.mock('../services/connection-pool-manager', () => ({
+vi.mock("../services/connection-pool-manager", () => ({
   default: class MockConnectionPoolManager {
     getMetrics() {
       return {
@@ -66,35 +70,35 @@ vi.mock('../services/connection-pool-manager', () => ({
   },
 }));
 
-describe('DatabaseHealthMonitor', () => {
+describe("DatabaseHealthMonitor", () => {
   let monitor: DatabaseHealthMonitor;
 
   beforeEach(() => {
     monitor = new DatabaseHealthMonitor();
   });
 
-  describe('getCurrentHealth', () => {
-    it('should return comprehensive health status', async () => {
+  describe("getCurrentHealth", () => {
+    it("should return comprehensive health status", async () => {
       const health = await monitor.getCurrentHealth();
 
-      expect(health).toHaveProperty('status');
-      expect(health).toHaveProperty('score');
-      expect(health).toHaveProperty('timestamp');
-      expect(health).toHaveProperty('components');
-      expect(health).toHaveProperty('alerts');
+      expect(health).toHaveProperty("status");
+      expect(health).toHaveProperty("score");
+      expect(health).toHaveProperty("timestamp");
+      expect(health).toHaveProperty("components");
+      expect(health).toHaveProperty("alerts");
 
       // Status should be valid
-      expect(['healthy', 'warning', 'critical']).toContain(health.status);
+      expect(["healthy", "warning", "critical"]).toContain(health.status);
 
       // Score should be 0-100
       expect(health.score).toBeGreaterThanOrEqual(0);
       expect(health.score).toBeLessThanOrEqual(100);
 
       // Should have all components
-      expect(health.components).toHaveProperty('connectionPool');
-      expect(health.components).toHaveProperty('queryPerformance');
-      expect(health.components).toHaveProperty('indexOptimization');
-      expect(health.components).toHaveProperty('healthcareCompliance');
+      expect(health.components).toHaveProperty("connectionPool");
+      expect(health.components).toHaveProperty("queryPerformance");
+      expect(health.components).toHaveProperty("indexOptimization");
+      expect(health.components).toHaveProperty("healthcareCompliance");
 
       // Timestamp should be recent
       expect(health.timestamp).toBeInstanceOf(Date);
@@ -104,24 +108,24 @@ describe('DatabaseHealthMonitor', () => {
       expect(health.alerts).toBeInstanceOf(Array);
     });
 
-    it('should assess component health correctly', async () => {
+    it("should assess component health correctly", async () => {
       const health = await monitor.getCurrentHealth();
 
       Object.values(health.components).forEach((component: any) => {
-        expect(component).toHaveProperty('status');
-        expect(component).toHaveProperty('score');
-        expect(component).toHaveProperty('metrics');
-        expect(component).toHaveProperty('issues');
+        expect(component).toHaveProperty("status");
+        expect(component).toHaveProperty("score");
+        expect(component).toHaveProperty("metrics");
+        expect(component).toHaveProperty("issues");
 
-        expect(['healthy', 'warning', 'critical']).toContain(component.status);
+        expect(["healthy", "warning", "critical"]).toContain(component.status);
         expect(component.score).toBeGreaterThanOrEqual(0);
         expect(component.score).toBeLessThanOrEqual(100);
-        expect(component.metrics).toBeTypeOf('object');
+        expect(component.metrics).toBeTypeOf("object");
         expect(component.issues).toBeInstanceOf(Array);
       });
     });
 
-    it('should store health history', async () => {
+    it("should store health history", async () => {
       await monitor.getCurrentHealth();
       await monitor.getCurrentHealth();
       await monitor.getCurrentHealth();
@@ -129,14 +133,14 @@ describe('DatabaseHealthMonitor', () => {
       const history = monitor.getHealthHistory();
       expect(history.length).toBe(3);
 
-      history.forEach(healthStatus => {
-        expect(healthStatus).toHaveProperty('status');
-        expect(healthStatus).toHaveProperty('score');
-        expect(healthStatus).toHaveProperty('timestamp');
+      history.forEach((healthStatus) => {
+        expect(healthStatus).toHaveProperty("status");
+        expect(healthStatus).toHaveProperty("score");
+        expect(healthStatus).toHaveProperty("timestamp");
       });
     });
 
-    it('should limit history size', async () => {
+    it("should limit history size", async () => {
       // Add more than max history size
       for (let i = 0; i < 300; i++) {
         await monitor.getCurrentHealth();
@@ -147,61 +151,62 @@ describe('DatabaseHealthMonitor', () => {
     });
   });
 
-  describe('component health assessment', () => {
-    it('should assess connection pool health', async () => {
+  describe("component health assessment", () => {
+    it("should assess connection pool health", async () => {
       const health = await monitor.getCurrentHealth();
       const poolHealth = health.components.connectionPool;
 
-      expect(poolHealth.metrics).toHaveProperty('utilization');
-      expect(poolHealth.metrics).toHaveProperty('waitTime');
-      expect(poolHealth.metrics).toHaveProperty('errors');
-      expect(poolHealth.metrics).toHaveProperty('active');
-      expect(poolHealth.metrics).toHaveProperty('idle');
+      expect(poolHealth.metrics).toHaveProperty("utilization");
+      expect(poolHealth.metrics).toHaveProperty("waitTime");
+      expect(poolHealth.metrics).toHaveProperty("errors");
+      expect(poolHealth.metrics).toHaveProperty("active");
+      expect(poolHealth.metrics).toHaveProperty("idle");
 
       // With good metrics, should be healthy
-      expect(poolHealth.status).toBe('healthy');
+      expect(poolHealth.status).toBe("healthy");
       expect(poolHealth.score).toBeGreaterThan(80);
       expect(poolHealth.issues.length).toBe(0);
     });
 
-    it('should assess query performance health', async () => {
+    it("should assess query performance health", async () => {
       const health = await monitor.getCurrentHealth();
       const queryHealth = health.components.queryPerformance;
 
-      expect(queryHealth.metrics).toHaveProperty('averageResponseTime');
-      expect(queryHealth.metrics).toHaveProperty('errorRate');
-      expect(queryHealth.metrics).toHaveProperty('slowQueries');
-      expect(queryHealth.metrics).toHaveProperty('totalQueries');
-      expect(queryHealth.metrics).toHaveProperty('slowQueryRate');
+      expect(queryHealth.metrics).toHaveProperty("averageResponseTime");
+      expect(queryHealth.metrics).toHaveProperty("errorRate");
+      expect(queryHealth.metrics).toHaveProperty("slowQueries");
+      expect(queryHealth.metrics).toHaveProperty("totalQueries");
+      expect(queryHealth.metrics).toHaveProperty("slowQueryRate");
 
       // Should calculate slow query rate
       const expectedSlowQueryRate =
-        (queryHealth.metrics.slowQueries / queryHealth.metrics.totalQueries) * 100;
+        (queryHealth.metrics.slowQueries / queryHealth.metrics.totalQueries) *
+        100;
       expect(queryHealth.metrics.slowQueryRate).toBe(expectedSlowQueryRate);
     });
 
-    it('should assess index optimization health', async () => {
+    it("should assess index optimization health", async () => {
       const health = await monitor.getCurrentHealth();
       const indexHealth = health.components.indexOptimization;
 
-      expect(indexHealth.metrics).toHaveProperty('efficiency');
-      expect(indexHealth.metrics).toHaveProperty('total');
-      expect(indexHealth.metrics).toHaveProperty('unused');
-      expect(indexHealth.metrics).toHaveProperty('missing');
+      expect(indexHealth.metrics).toHaveProperty("efficiency");
+      expect(indexHealth.metrics).toHaveProperty("total");
+      expect(indexHealth.metrics).toHaveProperty("unused");
+      expect(indexHealth.metrics).toHaveProperty("missing");
 
       // Should have reasonable metrics
       expect(indexHealth.metrics.efficiency).toBeGreaterThan(0);
       expect(indexHealth.metrics.total).toBeGreaterThan(0);
     });
 
-    it('should assess healthcare compliance health', async () => {
+    it("should assess healthcare compliance health", async () => {
       const health = await monitor.getCurrentHealth();
       const complianceHealth = health.components.healthcareCompliance;
 
-      expect(complianceHealth.metrics).toHaveProperty('patientQueryTime');
-      expect(complianceHealth.metrics).toHaveProperty('lgpdCompliance');
-      expect(complianceHealth.metrics).toHaveProperty('patientQueries');
-      expect(complianceHealth.metrics).toHaveProperty('auditQueries');
+      expect(complianceHealth.metrics).toHaveProperty("patientQueryTime");
+      expect(complianceHealth.metrics).toHaveProperty("lgpdCompliance");
+      expect(complianceHealth.metrics).toHaveProperty("patientQueries");
+      expect(complianceHealth.metrics).toHaveProperty("auditQueries");
 
       // LGPD compliance should be calculated correctly
       // The actual calculation uses lgpdCompliantQueries / patientDataQueries from the mock
@@ -209,8 +214,8 @@ describe('DatabaseHealthMonitor', () => {
     });
   });
 
-  describe('alert generation', () => {
-    it('should generate alerts for critical issues', async () => {
+  describe("alert generation", () => {
+    it("should generate alerts for critical issues", async () => {
       // Mock critical metrics
       const mockService = {
         analyzePerformance: async () => ({
@@ -224,7 +229,7 @@ describe('DatabaseHealthMonitor', () => {
           indexUsage: {
             totalIndexes: 20,
             unusedIndexes: 8,
-            missingIndexes: ['test1', 'test2'],
+            missingIndexes: ["test1", "test2"],
             indexEfficiency: 60,
           },
           healthcareCompliance: {
@@ -236,35 +241,43 @@ describe('DatabaseHealthMonitor', () => {
         }),
         getQueryMonitor: () => ({
           recordQuery: vi.fn(),
-          getStats: () => ({ averageDuration: 250, slowQueries: 20, totalQueries: 100 }),
+          getStats: () => ({
+            averageDuration: 250,
+            slowQueries: 20,
+            totalQueries: 100,
+          }),
         }),
       };
 
-      monitor['performanceService'] = mockService as any;
+      monitor["performanceService"] = mockService as any;
 
       const health = await monitor.getCurrentHealth();
 
-      expect(health.status).toBe('critical');
+      expect(health.status).toBe("critical");
       expect(health.alerts.length).toBeGreaterThan(0);
 
-      const criticalAlerts = health.alerts.filter(alert => alert.severity === 'critical');
+      const criticalAlerts = health.alerts.filter(
+        (alert) => alert.severity === "critical",
+      );
       expect(criticalAlerts.length).toBeGreaterThan(0);
 
-      health.alerts.forEach(alert => {
-        expect(alert).toHaveProperty('type');
-        expect(alert).toHaveProperty('severity');
-        expect(alert).toHaveProperty('message');
-        expect(alert).toHaveProperty('component');
-        expect(alert).toHaveProperty('timestamp');
-        expect(alert).toHaveProperty('healthcareImpact');
+      health.alerts.forEach((alert) => {
+        expect(alert).toHaveProperty("type");
+        expect(alert).toHaveProperty("severity");
+        expect(alert).toHaveProperty("message");
+        expect(alert).toHaveProperty("component");
+        expect(alert).toHaveProperty("timestamp");
+        expect(alert).toHaveProperty("healthcareImpact");
 
-        expect(['performance', 'compliance', 'connection', 'query']).toContain(alert.type);
-        expect(['warning', 'critical']).toContain(alert.severity);
-        expect(typeof alert.healthcareImpact).toBe('string');
+        expect(["performance", "compliance", "connection", "query"]).toContain(
+          alert.type,
+        );
+        expect(["warning", "critical"]).toContain(alert.severity);
+        expect(typeof alert.healthcareImpact).toBe("string");
       });
     });
 
-    it('should provide healthcare-specific alert messages', async () => {
+    it("should provide healthcare-specific alert messages", async () => {
       // Mock poor healthcare compliance
       const mockService = {
         analyzePerformance: async () => ({
@@ -278,7 +291,7 @@ describe('DatabaseHealthMonitor', () => {
           indexUsage: {
             totalIndexes: 20,
             unusedIndexes: 2,
-            missingIndexes: ['test'],
+            missingIndexes: ["test"],
             indexEfficiency: 85,
           },
           healthcareCompliance: {
@@ -290,27 +303,33 @@ describe('DatabaseHealthMonitor', () => {
         }),
         getQueryMonitor: () => ({
           recordQuery: vi.fn(),
-          getStats: () => ({ averageDuration: 75, slowQueries: 2, totalQueries: 100 }),
+          getStats: () => ({
+            averageDuration: 75,
+            slowQueries: 2,
+            totalQueries: 100,
+          }),
         }),
       };
 
-      monitor['performanceService'] = mockService as any;
+      monitor["performanceService"] = mockService as any;
 
       const health = await monitor.getCurrentHealth();
-      const complianceAlerts = health.alerts.filter(alert => alert.type === 'compliance');
+      const complianceAlerts = health.alerts.filter(
+        (alert) => alert.type === "compliance",
+      );
 
       if (complianceAlerts.length > 0) {
-        complianceAlerts.forEach(alert => {
-          expect(alert.healthcareImpact).toContain('LGPD');
+        complianceAlerts.forEach((alert) => {
+          expect(alert.healthcareImpact).toContain("LGPD");
         });
       }
     });
   });
 
-  describe('alert callbacks', () => {
-    it('should trigger alert callbacks', async () => {
+  describe("alert callbacks", () => {
+    it("should trigger alert callbacks", async () => {
       const alerts: any[] = [];
-      monitor.onAlert(alert => alerts.push(alert));
+      monitor.onAlert((alert) => alerts.push(alert));
 
       // Mock critical condition to trigger alerts
       const mockService = {
@@ -325,7 +344,7 @@ describe('DatabaseHealthMonitor', () => {
           indexUsage: {
             totalIndexes: 20,
             unusedIndexes: 8,
-            missingIndexes: ['test1', 'test2'],
+            missingIndexes: ["test1", "test2"],
             indexEfficiency: 60,
           },
           healthcareCompliance: {
@@ -337,11 +356,15 @@ describe('DatabaseHealthMonitor', () => {
         }),
         getQueryMonitor: () => ({
           recordQuery: vi.fn(),
-          getStats: () => ({ averageDuration: 250, slowQueries: 20, totalQueries: 100 }),
+          getStats: () => ({
+            averageDuration: 250,
+            slowQueries: 20,
+            totalQueries: 100,
+          }),
         }),
       };
 
-      monitor['performanceService'] = mockService as any;
+      monitor["performanceService"] = mockService as any;
 
       await monitor.getCurrentHealth();
 
@@ -349,8 +372,8 @@ describe('DatabaseHealthMonitor', () => {
     });
   });
 
-  describe('clearHistory', () => {
-    it('should clear health history', async () => {
+  describe("clearHistory", () => {
+    it("should clear health history", async () => {
       await monitor.getCurrentHealth();
       await monitor.getCurrentHealth();
 
@@ -362,13 +385,13 @@ describe('DatabaseHealthMonitor', () => {
   });
 });
 
-describe('Database Health Middleware', () => {
-  describe('createDatabaseHealthMiddleware', () => {
-    it('should create middleware that records query metrics', async () => {
+describe("Database Health Middleware", () => {
+  describe("createDatabaseHealthMiddleware", () => {
+    it("should create middleware that records query metrics", async () => {
       const middleware = createDatabaseHealthMiddleware();
 
       const mockContext = {
-        req: { path: '/api/patients', method: 'GET' },
+        req: { path: "/api/patients", method: "GET" },
         set: vi.fn(),
       } as any;
 
@@ -376,17 +399,20 @@ describe('Database Health Middleware', () => {
 
       await middleware(mockContext, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('databaseHealthMonitor', expect.any(Object));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        "databaseHealthMonitor",
+        expect.any(Object),
+      );
       expect(mockNext).toHaveBeenCalled();
     });
   });
 
-  describe('createDatabaseHealthDashboardMiddleware', () => {
-    it('should handle health endpoint', async () => {
+  describe("createDatabaseHealthDashboardMiddleware", () => {
+    it("should handle health endpoint", async () => {
       const middleware = createDatabaseHealthDashboardMiddleware();
 
       const mockContext = {
-        req: { path: '/v1/database/health' },
+        req: { path: "/v1/database/health" },
         json: vi.fn(),
       } as any;
 
@@ -402,11 +428,11 @@ describe('Database Health Middleware', () => {
       expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it('should handle health history endpoint', async () => {
+    it("should handle health history endpoint", async () => {
       const middleware = createDatabaseHealthDashboardMiddleware();
 
       const mockContext = {
-        req: { path: '/v1/database/health/history' },
+        req: { path: "/v1/database/health/history" },
         json: vi.fn(),
       } as any;
 
@@ -423,11 +449,11 @@ describe('Database Health Middleware', () => {
       expect(mockNext).not.toHaveBeenCalled();
     });
 
-    it('should pass through non-health endpoints', async () => {
+    it("should pass through non-health endpoints", async () => {
       const middleware = createDatabaseHealthDashboardMiddleware();
 
       const mockContext = {
-        req: { path: '/api/patients' },
+        req: { path: "/api/patients" },
       } as any;
 
       const mockNext = vi.fn();
@@ -439,32 +465,32 @@ describe('Database Health Middleware', () => {
   });
 });
 
-describe('Healthcare Health Thresholds', () => {
-  it('should define comprehensive healthcare thresholds', () => {
-    expect(HEALTHCARE_HEALTH_THRESHOLDS).toHaveProperty('queryPerformance');
-    expect(HEALTHCARE_HEALTH_THRESHOLDS).toHaveProperty('connectionPool');
-    expect(HEALTHCARE_HEALTH_THRESHOLDS).toHaveProperty('compliance');
+describe("Healthcare Health Thresholds", () => {
+  it("should define comprehensive healthcare thresholds", () => {
+    expect(HEALTHCARE_HEALTH_THRESHOLDS).toHaveProperty("queryPerformance");
+    expect(HEALTHCARE_HEALTH_THRESHOLDS).toHaveProperty("connectionPool");
+    expect(HEALTHCARE_HEALTH_THRESHOLDS).toHaveProperty("compliance");
 
     // Query performance thresholds
     const queryThresholds = HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance;
-    expect(queryThresholds).toHaveProperty('patientQueries');
-    expect(queryThresholds).toHaveProperty('appointmentQueries');
-    expect(queryThresholds).toHaveProperty('generalQueries');
-    expect(queryThresholds).toHaveProperty('errorRate');
+    expect(queryThresholds).toHaveProperty("patientQueries");
+    expect(queryThresholds).toHaveProperty("appointmentQueries");
+    expect(queryThresholds).toHaveProperty("generalQueries");
+    expect(queryThresholds).toHaveProperty("errorRate");
 
     // Connection pool thresholds
     const poolThresholds = HEALTHCARE_HEALTH_THRESHOLDS.connectionPool;
-    expect(poolThresholds).toHaveProperty('utilization');
-    expect(poolThresholds).toHaveProperty('waitTime');
-    expect(poolThresholds).toHaveProperty('errors');
+    expect(poolThresholds).toHaveProperty("utilization");
+    expect(poolThresholds).toHaveProperty("waitTime");
+    expect(poolThresholds).toHaveProperty("errors");
 
     // Compliance thresholds
     const complianceThresholds = HEALTHCARE_HEALTH_THRESHOLDS.compliance;
-    expect(complianceThresholds).toHaveProperty('lgpdQueries');
-    expect(complianceThresholds).toHaveProperty('auditCoverage');
+    expect(complianceThresholds).toHaveProperty("lgpdQueries");
+    expect(complianceThresholds).toHaveProperty("auditCoverage");
   });
 
-  it('should have appropriate threshold values', () => {
+  it("should have appropriate threshold values", () => {
     const queryThresholds = HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance;
 
     // Patient queries should have strictest thresholds (most critical)
@@ -485,19 +511,27 @@ describe('Healthcare Health Thresholds', () => {
 
     // All thresholds should be reasonable for healthcare
     expect(queryThresholds.patientQueries.critical).toBeLessThanOrEqual(100); // Sub-100ms for critical
-    expect(queryThresholds.appointmentQueries.critical).toBeLessThanOrEqual(150);
+    expect(queryThresholds.appointmentQueries.critical).toBeLessThanOrEqual(
+      150,
+    );
     expect(queryThresholds.generalQueries.critical).toBeLessThanOrEqual(200);
   });
 
-  it('should have high compliance requirements', () => {
+  it("should have high compliance requirements", () => {
     const complianceThresholds = HEALTHCARE_HEALTH_THRESHOLDS.compliance;
 
     // LGPD compliance should be very high
     expect(complianceThresholds.lgpdQueries.warning).toBeGreaterThanOrEqual(90);
-    expect(complianceThresholds.lgpdQueries.critical).toBeGreaterThanOrEqual(80);
+    expect(complianceThresholds.lgpdQueries.critical).toBeGreaterThanOrEqual(
+      80,
+    );
 
     // Audit coverage should be comprehensive
-    expect(complianceThresholds.auditCoverage.warning).toBeGreaterThanOrEqual(95);
-    expect(complianceThresholds.auditCoverage.critical).toBeGreaterThanOrEqual(90);
+    expect(complianceThresholds.auditCoverage.warning).toBeGreaterThanOrEqual(
+      95,
+    );
+    expect(complianceThresholds.auditCoverage.critical).toBeGreaterThanOrEqual(
+      90,
+    );
   });
 });

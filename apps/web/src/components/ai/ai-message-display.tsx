@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 /**
  * AI Message Display Component
- * 
+ *
  * Enhanced message display component with streaming support,
  * healthcare context, and accessibility features.
- * 
+ *
  * Features:
  * - Real-time streaming text display
  * - Markdown rendering with safety
@@ -16,7 +16,7 @@
  * - Mobile-optimized design
  */
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from "react";
 import {
   Bot,
   User,
@@ -32,21 +32,13 @@ import {
   Edit3,
   Trash2,
   Flag,
-} from 'lucide-react';
+} from "lucide-react";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import {
-  Badge,
-} from '@/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 
-import {
-  Button,
-} from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 
 import {
   DropdownMenu,
@@ -54,28 +46,25 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from "@/components/ui/tooltip";
 
-import {
-  Card,
-  CardContent,
-} from '@/components/ui/card';
+import { Card, CardContent } from "@/components/ui/card";
 
-import { cn } from '@neonpro/ui';
-import { formatDateTime } from '@/utils/brazilian-formatters';
+import { cn } from "@neonpro/ui";
+import { formatDateTime } from "@/utils/brazilian-formatters";
 
 export interface AIMessageDisplayProps {
   /** Message content */
   content: string;
   /** Message role */
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   /** Message timestamp */
   timestamp: Date;
   /** Message ID */
@@ -99,7 +88,7 @@ export interface AIMessageDisplayProps {
     url?: string;
     content: string;
     relevance: number;
-    type: 'document' | 'database' | 'knowledge_base' | 'external';
+    type: "document" | "database" | "knowledge_base" | "external";
   }>;
   /** Metadata */
   metadata?: Record<string, any>;
@@ -138,20 +127,29 @@ const renderMarkdown = (content: string, isStreaming = false) => {
   // Basic markdown processing - replace with a proper markdown library in production
   const processedContent = content
     // Bold
-    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
     // Italic
-    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/\*(.*?)\*/g, "<em>$1</em>")
     // Code blocks
-    .replace(/```([\s\S]*?)```/g, '<pre class="bg-muted p-2 rounded text-xs overflow-x-auto"><code>$1</code></pre>')
+    .replace(
+      /```([\s\S]*?)```/g,
+      '<pre class="bg-muted p-2 rounded text-xs overflow-x-auto"><code>$1</code></pre>',
+    )
     // Inline code
-    .replace(/`([^`]+)`/g, '<code class="bg-muted px-1 py-0.5 rounded text-xs">$1</code>')
+    .replace(
+      /`([^`]+)`/g,
+      '<code class="bg-muted px-1 py-0.5 rounded text-xs">$1</code>',
+    )
     // Links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">$1</a>')
+    .replace(
+      /\[([^\]]+)\]\(([^)]+)\)/g,
+      '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline">$1</a>',
+    )
     // Line breaks
-    .replace(/\n/g, '<br />');
+    .replace(/\n/g, "<br />");
 
   return (
-    <div 
+    <div
       className="prose prose-sm max-w-none dark:prose-invert [&_pre]:whitespace-pre-wrap [&_code]:whitespace-pre-wrap"
       dangerouslySetInnerHTML={{ __html: processedContent }}
     />
@@ -159,8 +157,11 @@ const renderMarkdown = (content: string, isStreaming = false) => {
 };
 
 // Streaming text component
-const StreamingText: React.FC<{ content: string; isComplete?: boolean }> = ({ content, isComplete }) => {
-  const [displayedContent, setDisplayedContent] = useState('');
+const StreamingText: React.FC<{ content: string; isComplete?: boolean }> = ({
+  content,
+  isComplete,
+}) => {
+  const [displayedContent, setDisplayedContent] = useState("");
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -180,7 +181,13 @@ const StreamingText: React.FC<{ content: string; isComplete?: boolean }> = ({ co
   }, [content, currentIndex, isComplete]);
 
   return (
-    <span className={isComplete ? '' : 'after:content-["|"] after:animate-pulse after:inline-block after:ml-1'}>
+    <span
+      className={
+        isComplete
+          ? ""
+          : 'after:content-["|"] after:animate-pulse after:inline-block after:ml-1'
+      }
+    >
       {displayedContent}
     </span>
   );
@@ -195,7 +202,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
   timestamp,
   messageId,
   isStreaming = false,
-  streamingContent = '',
+  streamingContent = "",
   model,
   confidence,
   processingTime,
@@ -208,7 +215,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
   showModelInfo = true,
   showActions = true,
   compact = false,
-  testId = 'ai-message-display',
+  testId = "ai-message-display",
   onMessageAction,
   onCopy,
   onSpeak,
@@ -233,15 +240,15 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
       setTimeout(() => setIsCopied(false), 2000);
       onCopy?.(content);
     } catch (error) {
-      console.error('Failed to copy text:', error);
+      console.error("Failed to copy text:", error);
     }
   }, [content, onCopy]);
 
   // Handle speak (text-to-speech)
   const handleSpeak = useCallback(() => {
-    if ('speechSynthesis' in window) {
+    if ("speechSynthesis" in window) {
       const utterance = new SpeechSynthesisUtterance(content);
-      utterance.lang = 'pt-BR';
+      utterance.lang = "pt-BR";
       utterance.rate = 1;
       utterance.pitch = 1;
       speechSynthesis.speak(utterance);
@@ -251,7 +258,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
 
   // Handle edit
   const handleEdit = useCallback(() => {
-    if (role === 'user') {
+    if (role === "user") {
       setIsEditing(true);
       setEditContent(content);
     }
@@ -273,7 +280,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
 
   // Handle delete
   const handleDelete = useCallback(() => {
-    if (onDelete && confirm('Tem certeza que deseja excluir esta mensagem?')) {
+    if (onDelete && confirm("Tem certeza que deseja excluir esta mensagem?")) {
       onDelete(messageId);
     }
   }, [onDelete, messageId]);
@@ -285,15 +292,15 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
 
   // Display content
   const displayContent = isStreaming ? streamingContent : content;
-  const isAssistant = role === 'assistant';
-  const isUser = role === 'user';
+  const isAssistant = role === "assistant";
+  const isUser = role === "user";
 
   // Get confidence color
   const getConfidenceColor = (score?: number) => {
-    if (!score) return 'text-muted-foreground';
-    if (score >= 0.8) return 'text-green-600';
-    if (score >= 0.6) return 'text-yellow-600';
-    return 'text-red-600';
+    if (!score) return "text-muted-foreground";
+    if (score >= 0.8) return "text-green-600";
+    if (score >= 0.6) return "text-yellow-600";
+    return "text-red-600";
   };
 
   // Get avatar
@@ -318,10 +325,12 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
           {assistantAvatar ? (
             <AvatarImage src={assistantAvatar} alt="Assistant" />
           ) : (
-            <AvatarFallback className={cn(
-              'bg-primary/10 text-primary',
-              healthcareContext && 'bg-green-500/10 text-green-600'
-            )}>
+            <AvatarFallback
+              className={cn(
+                "bg-primary/10 text-primary",
+                healthcareContext && "bg-green-500/10 text-green-600",
+              )}
+            >
               {healthcareContext ? (
                 <Stethoscope className="h-4 w-4" />
               ) : (
@@ -340,9 +349,9 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
     <div
       ref={messageRef}
       className={cn(
-        'flex gap-3 group/message',
-        isUser ? 'justify-end' : 'justify-start',
-        compact && 'gap-2',
+        "flex gap-3 group/message",
+        isUser ? "justify-end" : "justify-start",
+        compact && "gap-2",
       )}
       data-testid={testId}
       data-message-id={messageId}
@@ -352,21 +361,20 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
       {isAssistant && !compact && getAvatar()}
 
       {/* Message Content */}
-      <div className={cn(
-        'max-w-[85%] flex flex-col',
-        isUser && 'items-end',
-      )}>
+      <div className={cn("max-w-[85%] flex flex-col", isUser && "items-end")}>
         {/* Message Bubble */}
-        <div className={cn(
-          'rounded-lg px-4 py-3',
-          isUser
-            ? 'bg-primary text-primary-foreground'
-            : healthcareContext
-              ? 'bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800'
-              : 'bg-muted',
-          compact && 'px-3 py-2',
-          isStreaming && 'animate-pulse',
-        )}>
+        <div
+          className={cn(
+            "rounded-lg px-4 py-3",
+            isUser
+              ? "bg-primary text-primary-foreground"
+              : healthcareContext
+                ? "bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800"
+                : "bg-muted",
+            compact && "px-3 py-2",
+            isStreaming && "animate-pulse",
+          )}
+        >
           {/* Edit Mode */}
           {isEditing && isUser ? (
             <div className="space-y-2">
@@ -389,7 +397,10 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
             /* Message Content */
             <div className="text-sm">
               {isStreaming ? (
-                <StreamingText content={displayContent} isComplete={!isStreaming} />
+                <StreamingText
+                  content={displayContent}
+                  isComplete={!isStreaming}
+                />
               ) : (
                 renderMarkdown(displayContent)
               )}
@@ -408,16 +419,19 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
                 <FileText className="h-3 w-3 mr-1" />
                 Fontes ({sources.length})
               </Button>
-              
+
               {showSources && (
                 <div className="mt-2 space-y-1">
                   {sources.map((source, index) => (
-                    <div key={source.id} className="flex items-start gap-2 p-2 rounded bg-background/50 text-xs">
+                    <div
+                      key={source.id}
+                      className="flex items-start gap-2 p-2 rounded bg-background/50 text-xs"
+                    >
                       <Badge variant="outline" className="text-xs">
-                        {source.type === 'document' && '📄'}
-                        {source.type === 'database' && '🗄️'}
-                        {source.type === 'knowledge_base' && '🧠'}
-                        {source.type === 'external' && '🌐'}
+                        {source.type === "document" && "📄"}
+                        {source.type === "database" && "🗄️"}
+                        {source.type === "knowledge_base" && "🧠"}
+                        {source.type === "external" && "🌐"}
                       </Badge>
                       <div className="flex-1">
                         <div className="font-medium">{source.title}</div>
@@ -450,11 +464,13 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
         </div>
 
         {/* Message Metadata */}
-        <div className={cn(
-          'flex items-center gap-2 mt-1 text-xs opacity-70',
-          isUser ? 'justify-end' : 'justify-start',
-          compact && 'text-[10px]',
-        )}>
+        <div
+          className={cn(
+            "flex items-center gap-2 mt-1 text-xs opacity-70",
+            isUser ? "justify-end" : "justify-start",
+            compact && "text-[10px]",
+          )}
+        >
           {/* Timestamp */}
           {showTimestamp && (
             <div className="flex items-center gap-1">
@@ -473,7 +489,9 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
           {/* Confidence Score */}
           {isAssistant && confidence && (
             <div className="flex items-center gap-1">
-              <CheckCircle className={cn('h-3 w-3', getConfidenceColor(confidence))} />
+              <CheckCircle
+                className={cn("h-3 w-3", getConfidenceColor(confidence))}
+              />
               <span className={getConfidenceColor(confidence)}>
                 {Math.round(confidence * 100)}%
               </span>
@@ -481,9 +499,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
           )}
 
           {/* Processing Time */}
-          {isAssistant && processingTime && (
-            <span>{processingTime}ms</span>
-          )}
+          {isAssistant && processingTime && <span>{processingTime}ms</span>}
 
           {/* Healthcare Context */}
           {healthcareContext && (
@@ -500,10 +516,12 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
 
       {/* Actions */}
       {showActions && !compact && (
-        <div className={cn(
-          'opacity-0 group-hover/message:opacity-100 transition-opacity',
-          isUser ? 'order-first' : 'order-last',
-        )}>
+        <div
+          className={cn(
+            "opacity-0 group-hover/message:opacity-100 transition-opacity",
+            isUser ? "order-first" : "order-last",
+          )}
+        >
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
@@ -515,7 +533,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
                 <Copy className="h-4 w-4 mr-2" />
                 Copiar
               </DropdownMenuItem>
-              
+
               <DropdownMenuItem onClick={handleSpeak}>
                 <Volume2 className="h-4 w-4 mr-2" />
                 Ler em voz alta
@@ -532,14 +550,17 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
               )}
 
               <DropdownMenuSeparator />
-              
+
               <DropdownMenuItem onClick={handleFlag}>
                 <Flag className="h-4 w-4 mr-2" />
                 Reportar
               </DropdownMenuItem>
 
               {isUser && (
-                <DropdownMenuItem onClick={handleDelete} className="text-destructive">
+                <DropdownMenuItem
+                  onClick={handleDelete}
+                  className="text-destructive"
+                >
                   <Trash2 className="h-4 w-4 mr-2" />
                   Excluir
                 </DropdownMenuItem>

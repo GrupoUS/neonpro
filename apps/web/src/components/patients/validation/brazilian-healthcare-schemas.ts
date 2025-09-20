@@ -4,7 +4,7 @@
  * Using Valibot for type-safe validation with Brazilian standards
  */
 
-import * as v from 'valibot';
+import * as v from "valibot";
 
 // =============================================
 // BRAZILIAN DOCUMENT VALIDATION FUNCTIONS
@@ -15,7 +15,7 @@ import * as v from 'valibot';
  * Implements the official CPF validation algorithm
  */
 export const validateCpf = (cpf: string): boolean => {
-  const numbers = cpf.replace(/\D/g, '');
+  const numbers = cpf.replace(/\D/g, "");
 
   // Check basic format
   if (numbers.length !== 11) return false;
@@ -39,7 +39,9 @@ export const validateCpf = (cpf: string): boolean => {
   let secondDigit = 11 - (sum % 11);
   if (secondDigit >= 10) secondDigit = 0;
 
-  return parseInt(numbers[9]) === firstDigit && parseInt(numbers[10]) === secondDigit;
+  return (
+    parseInt(numbers[9]) === firstDigit && parseInt(numbers[10]) === secondDigit
+  );
 };
 
 /**
@@ -47,7 +49,7 @@ export const validateCpf = (cpf: string): boolean => {
  * National Health Card validation according to official algorithm
  */
 export const validateCns = (cns: string): boolean => {
-  const numbers = cns.replace(/\D/g, '');
+  const numbers = cns.replace(/\D/g, "");
 
   if (numbers.length !== 15) return false;
 
@@ -79,7 +81,7 @@ export const validateCns = (cns: string): boolean => {
  * Supports both 10 and 11 digit formats
  */
 export const validateBrazilianPhone = (phone: string): boolean => {
-  const numbers = phone.replace(/\D/g, '');
+  const numbers = phone.replace(/\D/g, "");
 
   // Must have 10 or 11 digits
   if (numbers.length !== 10 && numbers.length !== 11) return false;
@@ -111,67 +113,79 @@ export const validateBrazilianPhone = (phone: string): boolean => {
 export const CpfSchema = v.pipe(
   v.string(),
   v.trim(),
-  v.nonEmpty('CPF é obrigatório'),
-  v.regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF deve estar no formato 000.000.000-00'),
-  v.check(validateCpf, 'CPF inválido'),
+  v.nonEmpty("CPF é obrigatório"),
+  v.regex(
+    /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
+    "CPF deve estar no formato 000.000.000-00",
+  ),
+  v.check(validateCpf, "CPF inválido"),
 );
 
 // CNS Schema with custom validation
 export const CnsSchema = v.pipe(
   v.string(),
   v.trim(),
-  v.nonEmpty('CNS é obrigatório'),
-  v.regex(/^\d{3} \d{4} \d{4} \d{4}$/, 'CNS deve estar no formato 000 0000 0000 0000'),
-  v.check(validateCns, 'CNS inválido'),
+  v.nonEmpty("CNS é obrigatório"),
+  v.regex(
+    /^\d{3} \d{4} \d{4} \d{4}$/,
+    "CNS deve estar no formato 000 0000 0000 0000",
+  ),
+  v.check(validateCns, "CNS inválido"),
 );
 
 // Brazilian phone schema
 export const BrazilianPhoneSchema = v.pipe(
   v.string(),
   v.trim(),
-  v.nonEmpty('Telefone é obrigatório'),
-  v.regex(/^\(\d{2}\) \d{4,5}-\d{4}$/, 'Telefone deve estar no formato (00) 00000-0000'),
-  v.check(validateBrazilianPhone, 'Número de telefone inválido'),
+  v.nonEmpty("Telefone é obrigatório"),
+  v.regex(
+    /^\(\d{2}\) \d{4,5}-\d{4}$/,
+    "Telefone deve estar no formato (00) 00000-0000",
+  ),
+  v.check(validateBrazilianPhone, "Número de telefone inválido"),
 );
 
 // Brazilian postal code (CEP)
 export const CepSchema = v.pipe(
   v.string(),
   v.trim(),
-  v.nonEmpty('CEP é obrigatório'),
-  v.regex(/^\d{5}-\d{3}$/, 'CEP deve estar no formato 00000-000'),
+  v.nonEmpty("CEP é obrigatório"),
+  v.regex(/^\d{5}-\d{3}$/, "CEP deve estar no formato 00000-000"),
 );
 
 // Brazilian states enum
-export const BrazilianStateSchema = v.picklist([
-  'AC',
-  'AL',
-  'AP',
-  'AM',
-  'BA',
-  'CE',
-  'DF',
-  'ES',
-  'GO',
-  'MA',
-  'MT',
-  'MS',
-  'MG',
-  'PA',
-  'PB',
-  'PR',
-  'PE',
-  'PI',
-  'RJ',
-  'RN',
-  'RS',
-  'RO',
-  'RR',
-  'SC',
-  'SP',
-  'SE',
-  'TO',
-], 'Estado inválido');
+export const BrazilianStateSchema = v.picklist(
+  [
+    "AC",
+    "AL",
+    "AP",
+    "AM",
+    "BA",
+    "CE",
+    "DF",
+    "ES",
+    "GO",
+    "MA",
+    "MT",
+    "MS",
+    "MG",
+    "PA",
+    "PB",
+    "PR",
+    "PE",
+    "PI",
+    "RJ",
+    "RN",
+    "RS",
+    "RO",
+    "RR",
+    "SC",
+    "SP",
+    "SE",
+    "TO",
+  ],
+  "Estado inválido",
+);
 
 // =============================================
 // PATIENT DATA SCHEMAS
@@ -182,36 +196,36 @@ export const BasicPatientSchema = v.object({
   name: v.pipe(
     v.string(),
     v.trim(),
-    v.nonEmpty('Nome é obrigatório'),
-    v.minLength(2, 'Nome deve ter pelo menos 2 caracteres'),
-    v.maxLength(100, 'Nome não pode ter mais de 100 caracteres'),
-    v.regex(/^[a-zA-ZÀ-ÿ\s]+$/, 'Nome deve conter apenas letras'),
+    v.nonEmpty("Nome é obrigatório"),
+    v.minLength(2, "Nome deve ter pelo menos 2 caracteres"),
+    v.maxLength(100, "Nome não pode ter mais de 100 caracteres"),
+    v.regex(/^[a-zA-ZÀ-ÿ\s]+$/, "Nome deve conter apenas letras"),
   ),
 
   cpf: CpfSchema,
 
   birthDate: v.pipe(
     v.string(),
-    v.nonEmpty('Data de nascimento é obrigatória'),
-    v.isoDate('Data deve estar no formato YYYY-MM-DD'),
-    v.check(date => {
+    v.nonEmpty("Data de nascimento é obrigatória"),
+    v.isoDate("Data deve estar no formato YYYY-MM-DD"),
+    v.check((date) => {
       const birthDate = new Date(date);
       const today = new Date();
       const age = today.getFullYear() - birthDate.getFullYear();
       return age >= 0 && age <= 120;
-    }, 'Data de nascimento inválida'),
+    }, "Data de nascimento inválida"),
   ),
 
-  gender: v.picklist(['masculino', 'feminino', 'outro'], 'Gênero inválido'),
+  gender: v.picklist(["masculino", "feminino", "outro"], "Gênero inválido"),
 
   phone: BrazilianPhoneSchema,
 
   email: v.pipe(
     v.string(),
     v.trim(),
-    v.nonEmpty('E-mail é obrigatório'),
-    v.email('E-mail inválido'),
-    v.maxLength(100, 'E-mail não pode ter mais de 100 caracteres'),
+    v.nonEmpty("E-mail é obrigatório"),
+    v.email("E-mail inválido"),
+    v.maxLength(100, "E-mail não pode ter mais de 100 caracteres"),
   ),
 });
 
@@ -220,35 +234,37 @@ export const BrazilianAddressSchema = v.object({
   street: v.pipe(
     v.string(),
     v.trim(),
-    v.nonEmpty('Endereço é obrigatório'),
-    v.maxLength(200, 'Endereço não pode ter mais de 200 caracteres'),
+    v.nonEmpty("Endereço é obrigatório"),
+    v.maxLength(200, "Endereço não pode ter mais de 200 caracteres"),
   ),
 
   number: v.pipe(
     v.string(),
     v.trim(),
-    v.nonEmpty('Número é obrigatório'),
-    v.maxLength(10, 'Número não pode ter mais de 10 caracteres'),
+    v.nonEmpty("Número é obrigatório"),
+    v.maxLength(10, "Número não pode ter mais de 10 caracteres"),
   ),
 
-  complement: v.optional(v.pipe(
-    v.string(),
-    v.trim(),
-    v.maxLength(50, 'Complemento não pode ter mais de 50 caracteres'),
-  )),
+  complement: v.optional(
+    v.pipe(
+      v.string(),
+      v.trim(),
+      v.maxLength(50, "Complemento não pode ter mais de 50 caracteres"),
+    ),
+  ),
 
   neighborhood: v.pipe(
     v.string(),
     v.trim(),
-    v.nonEmpty('Bairro é obrigatório'),
-    v.maxLength(100, 'Bairro não pode ter mais de 100 caracteres'),
+    v.nonEmpty("Bairro é obrigatório"),
+    v.maxLength(100, "Bairro não pode ter mais de 100 caracteres"),
   ),
 
   city: v.pipe(
     v.string(),
     v.trim(),
-    v.nonEmpty('Cidade é obrigatória'),
-    v.maxLength(100, 'Cidade não pode ter mais de 100 caracteres'),
+    v.nonEmpty("Cidade é obrigatória"),
+    v.maxLength(100, "Cidade não pode ter mais de 100 caracteres"),
   ),
 
   state: BrazilianStateSchema,
@@ -276,21 +292,23 @@ export const CompletePatientRegistrationSchema = v.object({
 
   // Optional health system information
   cns: v.optional(CnsSchema),
-  rg: v.optional(v.pipe(
-    v.string(),
-    v.trim(),
-    v.maxLength(20, 'RG não pode ter mais de 20 caracteres'),
-  )),
+  rg: v.optional(
+    v.pipe(
+      v.string(),
+      v.trim(),
+      v.maxLength(20, "RG não pode ter mais de 20 caracteres"),
+    ),
+  ),
 
   // Terms acceptance
   termsAccepted: v.pipe(
     v.boolean(),
-    v.literal(true, 'Aceitar os termos é obrigatório'),
+    v.literal(true, "Aceitar os termos é obrigatório"),
   ),
 
   privacyPolicyAccepted: v.pipe(
     v.boolean(),
-    v.literal(true, 'Aceitar a política de privacidade é obrigatório'),
+    v.literal(true, "Aceitar a política de privacidade é obrigatório"),
   ),
 });
 
@@ -302,14 +320,17 @@ export const CompletePatientRegistrationSchema = v.object({
 export type BasicPatient = v.InferInput<typeof BasicPatientSchema>;
 export type BrazilianAddress = v.InferInput<typeof BrazilianAddressSchema>;
 export type PatientConsent = v.InferInput<typeof PatientConsentSchema>;
-export type CompletePatientRegistration = v.InferInput<typeof CompletePatientRegistrationSchema>;
+export type CompletePatientRegistration = v.InferInput<
+  typeof CompletePatientRegistrationSchema
+>;
 
 // Validation helper functions
 export const validatePatientData = {
   basic: (data: unknown) => v.safeParse(BasicPatientSchema, data),
   address: (data: unknown) => v.safeParse(BrazilianAddressSchema, data),
   consent: (data: unknown) => v.safeParse(PatientConsentSchema, data),
-  complete: (data: unknown) => v.safeParse(CompletePatientRegistrationSchema, data),
+  complete: (data: unknown) =>
+    v.safeParse(CompletePatientRegistrationSchema, data),
 };
 
 export default {

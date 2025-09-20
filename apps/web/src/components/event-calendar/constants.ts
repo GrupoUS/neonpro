@@ -1,4 +1,4 @@
-import { type EventColor } from './types';
+import { type EventColor } from "./types";
 
 export const EventHeight = 24;
 

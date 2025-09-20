@@ -1,6 +1,6 @@
-import { zValidator } from '@hono/zod-validator';
-import { Hono } from 'hono';
-import { z } from 'zod';
+import { zValidator } from "@hono/zod-validator";
+import { Hono } from "hono";
+import { z } from "zod";
 
 const metricsApi = new Hono();
 
@@ -16,7 +16,7 @@ const webVitalSchema = z.object({
   name: z.string(),
   value: z.number(),
   delta: z.number(),
-  rating: z.enum(['good', 'needs-improvement', 'poor']),
+  rating: z.enum(["good", "needs-improvement", "poor"]),
   timestamp: z.number(),
   url: z.string(),
   sessionId: z.string(),
@@ -26,85 +26,103 @@ const webVitalSchema = z.object({
 
 // Server metrics schema
 const serverMetricSchema = z.object({
-  type: z.enum(['cold-start', 'execution-time', 'memory-usage', 'bundle-size']),
+  type: z.enum(["cold-start", "execution-time", "memory-usage", "bundle-size"]),
   value: z.number(),
   timestamp: z.number(),
   metadata: z.record(z.any()).optional(),
 });
 
 // Collect Web Vitals
-metricsApi.post('/web-vitals', zValidator('json', webVitalSchema), async c => {
-  const metric = c.req.valid('json');
+metricsApi.post(
+  "/web-vitals",
+  zValidator("json", webVitalSchema),
+  async (c) => {
+    const metric = c.req.valid("json");
 
-  // Store metric
-  metrics.webVitals.push({
-    ...metric,
-    receivedAt: Date.now(),
-  });
+    // Store metric
+    metrics.webVitals.push({
+      ...metric,
+      receivedAt: Date.now(),
+    });
 
-  // Keep only last 10,000 metrics
-  if (metrics.webVitals.length > 10000) {
-    metrics.webVitals = metrics.webVitals.slice(-10000);
-  }
+    // Keep only last 10,000 metrics
+    if (metrics.webVitals.length > 10000) {
+      metrics.webVitals = metrics.webVitals.slice(-10000);
+    }
 
-  return c.json({ success: true });
-});
+    return c.json({ success: true });
+  },
+);
 
 // Collect server metrics
-metricsApi.post('/server', zValidator('json', serverMetricSchema), async c => {
-  const metric = c.req.valid('json');
+metricsApi.post(
+  "/server",
+  zValidator("json", serverMetricSchema),
+  async (c) => {
+    const metric = c.req.valid("json");
 
-  metrics.serverMetrics.push({
-    ...metric,
-    receivedAt: Date.now(),
-  });
+    metrics.serverMetrics.push({
+      ...metric,
+      receivedAt: Date.now(),
+    });
 
-  if (metrics.serverMetrics.length > 5000) {
-    metrics.serverMetrics = metrics.serverMetrics.slice(-5000);
-  }
+    if (metrics.serverMetrics.length > 5000) {
+      metrics.serverMetrics = metrics.serverMetrics.slice(-5000);
+    }
 
-  return c.json({ success: true });
-});
+    return c.json({ success: true });
+  },
+);
 
 // Get performance dashboard data
-metricsApi.get('/dashboard', async c => {
+metricsApi.get("/dashboard", async (c) => {
   const now = Date.now();
-  const last24Hours = now - (24 * 60 * 60 * 1000);
+  const last24Hours = now - 24 * 60 * 60 * 1000;
   // const last1Hour = now - (60 * 60 * 1000); // unused
 
   // Filter recent metrics
-  const recentWebVitals = metrics.webVitals.filter(m => m.timestamp > last24Hours);
-  const recentServerMetrics = metrics.serverMetrics.filter(m => m.timestamp > last24Hours);
+  const recentWebVitals = metrics.webVitals.filter(
+    (m) => m.timestamp > last24Hours,
+  );
+  const recentServerMetrics = metrics.serverMetrics.filter(
+    (m) => m.timestamp > last24Hours,
+  );
 
   // Calculate Core Web Vitals averages
-  const webVitalsByName = recentWebVitals.reduce((acc, metric) => {
-    if (!acc[metric.name]) acc[metric.name] = [];
-    acc[metric.name].push(metric.value);
-    return acc;
-  }, {} as Record<string, number[]>);
+  const webVitalsByName = recentWebVitals.reduce(
+    (acc, metric) => {
+      if (!acc[metric.name]) acc[metric.name] = [];
+      acc[metric.name].push(metric.value);
+      return acc;
+    },
+    {} as Record<string, number[]>,
+  );
 
-  const webVitalsAverages = Object.entries(webVitalsByName).reduce((acc, [name, values]) => {
-    acc[name] = {
-      average: values.reduce((sum, val) => sum + val, 0) / values.length,
-      p95: percentile(values, 95),
-      p99: percentile(values, 99),
-      count: values.length,
-    };
-    return acc;
-  }, {} as Record<string, any>);
+  const webVitalsAverages = Object.entries(webVitalsByName).reduce(
+    (acc, [name, values]) => {
+      acc[name] = {
+        average: values.reduce((sum, val) => sum + val, 0) / values.length,
+        p95: percentile(values, 95),
+        p99: percentile(values, 99),
+        count: values.length,
+      };
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
 
   // Calculate server metrics
   const coldStarts = recentServerMetrics
-    .filter(m => m.type === 'cold-start')
-    .map(m => m.value);
+    .filter((m) => m.type === "cold-start")
+    .map((m) => m.value);
 
   const executionTimes = recentServerMetrics
-    .filter(m => m.type === 'execution-time')
-    .map(m => m.value);
+    .filter((m) => m.type === "execution-time")
+    .map((m) => m.value);
 
   const dashboard = {
     timestamp: now,
-    period: '24h',
+    period: "24h",
 
     webVitals: webVitalsAverages,
 
@@ -124,8 +142,8 @@ metricsApi.get('/dashboard', async c => {
     alerts: generateAlerts(webVitalsAverages, recentServerMetrics),
 
     summary: {
-      totalSessions: new Set(recentWebVitals.map(m => m.sessionId)).size,
-      totalPageViews: recentWebVitals.filter(m => m.name === 'FCP').length,
+      totalSessions: new Set(recentWebVitals.map((m) => m.sessionId)).size,
+      totalPageViews: recentWebVitals.filter((m) => m.name === "FCP").length,
       averageRating: calculateAverageRating(recentWebVitals),
     },
   };
@@ -134,18 +152,18 @@ metricsApi.get('/dashboard', async c => {
 });
 
 // Get real-time metrics (last 5 minutes)
-metricsApi.get('/realtime', async c => {
+metricsApi.get("/realtime", async (c) => {
   const now = Date.now();
-  const last5Minutes = now - (5 * 60 * 1000);
+  const last5Minutes = now - 5 * 60 * 1000;
 
   const recentMetrics = {
-    webVitals: metrics.webVitals.filter(m => m.timestamp > last5Minutes),
-    server: metrics.serverMetrics.filter(m => m.timestamp > last5Minutes),
+    webVitals: metrics.webVitals.filter((m) => m.timestamp > last5Minutes),
+    server: metrics.serverMetrics.filter((m) => m.timestamp > last5Minutes),
   };
 
   return c.json({
     timestamp: now,
-    period: '5m',
+    period: "5m",
     metrics: recentMetrics,
     counts: {
       webVitals: recentMetrics.webVitals.length,
@@ -172,19 +190,19 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
 
   // Web Vitals alerts
   Object.entries(webVitals).forEach(([name, data]: [string, any]) => {
-    if (name === 'LCP' && data.average > 2500) {
+    if (name === "LCP" && data.average > 2500) {
       alerts.push({
-        type: 'warning',
-        metric: 'LCP',
+        type: "warning",
+        metric: "LCP",
         message: `Largest Contentful Paint is ${Math.round(data.average)}ms (target: <2.5s)`,
         value: data.average,
       });
     }
 
-    if (name === 'FID' && data.average > 100) {
+    if (name === "FID" && data.average > 100) {
       alerts.push({
-        type: 'warning',
-        metric: 'FID',
+        type: "warning",
+        metric: "FID",
         message: `First Input Delay is ${Math.round(data.average)}ms (target: <100ms)`,
         value: data.average,
       });
@@ -192,13 +210,13 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
   });
 
   // Server alerts
-  const coldStarts = serverMetrics.filter(m => m.type === 'cold-start');
-  const avgColdStart = average(coldStarts.map(m => m.value));
+  const coldStarts = serverMetrics.filter((m) => m.type === "cold-start");
+  const avgColdStart = average(coldStarts.map((m) => m.value));
 
   if (avgColdStart > 1000) {
     alerts.push({
-      type: 'error',
-      metric: 'cold-start',
+      type: "error",
+      metric: "cold-start",
       message: `Average cold start time is ${Math.round(avgColdStart)}ms (target: <1s)`,
       value: avgColdStart,
     });
@@ -208,8 +226,11 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
 }
 
 function calculateAverageRating(metrics: any[]): number {
-  const ratings = { good: 3, 'needs-improvement': 2, poor: 1 };
-  const total = metrics.reduce((sum, metric) => sum + (ratings[metric.rating] || 0), 0);
+  const ratings = { good: 3, "needs-improvement": 2, poor: 1 };
+  const total = metrics.reduce(
+    (sum, metric) => sum + (ratings[metric.rating] || 0),
+    0,
+  );
   return total / metrics.length || 0;
 }
 

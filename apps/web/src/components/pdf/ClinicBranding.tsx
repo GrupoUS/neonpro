@@ -1,5 +1,5 @@
-import { Text, View } from '@react-pdf/renderer';
-import styles from './pdf-styles';
+import { Text, View } from "@react-pdf/renderer";
+import styles from "./pdf-styles";
 
 export interface ClinicBrandingData {
   name: string;
@@ -29,9 +29,7 @@ export const ClinicHeader: React.FC<ClinicHeaderProps> = ({
     <View style={styles.header}>
       <View style={styles.clinicInfo}>
         <Text style={styles.clinicName}>{clinicData.name}</Text>
-        <Text style={styles.clinicAddress}>
-          {clinicData.address}
-        </Text>
+        <Text style={styles.clinicAddress}>{clinicData.address}</Text>
         <Text style={styles.clinicAddress}>
           Tel: {clinicData.phone} | Email: {clinicData.email}
         </Text>
@@ -45,13 +43,16 @@ export const ClinicHeader: React.FC<ClinicHeaderProps> = ({
         <View>
           {/* Logo será implementado quando tivermos uma URL válida */}
           <View
-            style={[styles.logo, {
-              backgroundColor: '#f3f4f6',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }]}
+            style={[
+              styles.logo,
+              {
+                backgroundColor: "#f3f4f6",
+                alignItems: "center",
+                justifyContent: "center",
+              },
+            ]}
           >
-            <Text style={{ fontSize: 8, color: '#6b7280' }}>LOGO</Text>
+            <Text style={{ fontSize: 8, color: "#6b7280" }}>LOGO</Text>
           </View>
         </View>
       )}
@@ -80,12 +81,12 @@ export const DocumentInfo: React.FC<DocumentInfoProps> = ({
       <View style={styles.row}>
         <Text style={styles.label}>Data de Geração:</Text>
         <Text style={styles.value}>
-          {generatedAt.toLocaleDateString('pt-BR', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
+          {generatedAt.toLocaleDateString("pt-BR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
           })}
         </Text>
       </View>

@@ -3,74 +3,78 @@
  * Following TDD methodology - MUST FAIL FIRST
  */
 
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it } from "vitest";
 
-describe('AI Insights Model (T035)', () => {
-  it('should export AIInsight type', () => {
+describe("AI Insights Model (T035)", () => {
+  it("should export AIInsight type", () => {
     expect(() => {
-      const module = require('../ai-insights');
+      const module = require("../ai-insights");
       expect(module.createAIInsight).toBeDefined();
     }).not.toThrow();
   });
 
-  it('should have required AI insight fields', () => {
-    const { AIInsight } = require('../ai-insights');
+  it("should have required AI insight fields", () => {
+    const { AIInsight } = require("../ai-insights");
     const insight: AIInsight = {
-      id: 'insight-123',
-      patientId: 'patient-123',
-      type: 'health_analysis',
-      title: 'Análise de Saúde Geral',
-      description: 'Paciente apresenta indicadores saudáveis',
+      id: "insight-123",
+      patientId: "patient-123",
+      type: "health_analysis",
+      title: "Análise de Saúde Geral",
+      description: "Paciente apresenta indicadores saudáveis",
       content: {
-        summary: 'Análise completa dos dados do paciente',
-        recommendations: ['Manter exercícios regulares', 'Dieta balanceada'],
-        riskFactors: ['Histórico familiar de diabetes'],
-        keyFindings: ['Pressão arterial normal', 'IMC adequado'],
+        summary: "Análise completa dos dados do paciente",
+        recommendations: ["Manter exercícios regulares", "Dieta balanceada"],
+        riskFactors: ["Histórico familiar de diabetes"],
+        keyFindings: ["Pressão arterial normal", "IMC adequado"],
       },
       confidence: 0.85,
-      model: 'gpt-4',
-      provider: 'openai',
+      model: "gpt-4",
+      provider: "openai",
       generatedAt: new Date(),
       validatedAt: new Date(),
-      validatedBy: 'doctor-123',
-      status: 'validated',
+      validatedBy: "doctor-123",
+      status: "validated",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    
-    expect(insight.id).toBe('insight-123');
-    expect(insight.type).toBe('health_analysis');
+
+    expect(insight.id).toBe("insight-123");
+    expect(insight.type).toBe("health_analysis");
     expect(insight.confidence).toBe(0.85);
   });
 
-  it('should support AI insight types', () => {
-    const { AIInsightType } = require('../ai-insights');
-    expect(AIInsightType.HEALTH_ANALYSIS).toBe('health_analysis');
-    expect(AIInsightType.RISK_ASSESSMENT).toBe('risk_assessment');
-    expect(AIInsightType.TREATMENT_RECOMMENDATION).toBe('treatment_recommendation');
-    expect(AIInsightType.APPOINTMENT_OPTIMIZATION).toBe('appointment_optimization');
-    expect(AIInsightType.MEDICATION_REVIEW).toBe('medication_review');
+  it("should support AI insight types", () => {
+    const { AIInsightType } = require("../ai-insights");
+    expect(AIInsightType.HEALTH_ANALYSIS).toBe("health_analysis");
+    expect(AIInsightType.RISK_ASSESSMENT).toBe("risk_assessment");
+    expect(AIInsightType.TREATMENT_RECOMMENDATION).toBe(
+      "treatment_recommendation",
+    );
+    expect(AIInsightType.APPOINTMENT_OPTIMIZATION).toBe(
+      "appointment_optimization",
+    );
+    expect(AIInsightType.MEDICATION_REVIEW).toBe("medication_review");
   });
 
-  it('should support AI providers', () => {
-    const { AIProvider } = require('../ai-insights');
-    expect(AIProvider.OPENAI).toBe('openai');
-    expect(AIProvider.ANTHROPIC).toBe('anthropic');
-    expect(AIProvider.GOOGLE).toBe('google');
-    expect(AIProvider.LOCAL).toBe('local');
-    expect(AIProvider.AZURE).toBe('azure');
+  it("should support AI providers", () => {
+    const { AIProvider } = require("../ai-insights");
+    expect(AIProvider.OPENAI).toBe("openai");
+    expect(AIProvider.ANTHROPIC).toBe("anthropic");
+    expect(AIProvider.GOOGLE).toBe("google");
+    expect(AIProvider.LOCAL).toBe("local");
+    expect(AIProvider.AZURE).toBe("azure");
   });
 
-  it('should support insight status', () => {
-    const { InsightStatus } = require('../ai-insights');
-    expect(InsightStatus.GENERATED).toBe('generated');
-    expect(InsightStatus.VALIDATED).toBe('validated');
-    expect(InsightStatus.REJECTED).toBe('rejected');
-    expect(InsightStatus.ARCHIVED).toBe('archived');
+  it("should support insight status", () => {
+    const { InsightStatus } = require("../ai-insights");
+    expect(InsightStatus.GENERATED).toBe("generated");
+    expect(InsightStatus.VALIDATED).toBe("validated");
+    expect(InsightStatus.REJECTED).toBe("rejected");
+    expect(InsightStatus.ARCHIVED).toBe("archived");
   });
 
-  it('should validate confidence scores', () => {
-    const { validateConfidenceScore } = require('../ai-insights');
+  it("should validate confidence scores", () => {
+    const { validateConfidenceScore } = require("../ai-insights");
     expect(validateConfidenceScore(0.85)).toBe(true);
     expect(validateConfidenceScore(1.0)).toBe(true);
     expect(validateConfidenceScore(0.0)).toBe(true);
@@ -78,173 +82,178 @@ describe('AI Insights Model (T035)', () => {
     expect(validateConfidenceScore(1.1)).toBe(false);
   });
 
-  it('should support multi-model AI configuration', () => {
-    const { AIModelConfig } = require('../ai-insights');
+  it("should support multi-model AI configuration", () => {
+    const { AIModelConfig } = require("../ai-insights");
     const config: AIModelConfig = {
-      provider: 'openai',
-      model: 'gpt-4',
+      provider: "openai",
+      model: "gpt-4",
       temperature: 0.3,
       maxTokens: 2000,
-      systemPrompt: 'Você é um assistente médico especializado em análise de dados de pacientes.',
-      language: 'pt-BR',
+      systemPrompt:
+        "Você é um assistente médico especializado em análise de dados de pacientes.",
+      language: "pt-BR",
       healthcareContext: true,
     };
-    
-    expect(config.provider).toBe('openai');
-    expect(config.language).toBe('pt-BR');
+
+    expect(config.provider).toBe("openai");
+    expect(config.language).toBe("pt-BR");
     expect(config.healthcareContext).toBe(true);
   });
 
-  it('should generate patient analysis', () => {
-    const { generatePatientAnalysis } = require('../ai-insights');
-    
+  it("should generate patient analysis", () => {
+    const { generatePatientAnalysis } = require("../ai-insights");
+
     const patientData = {
-      id: 'patient-123',
+      id: "patient-123",
       age: 45,
-      vitalSigns: { bloodPressure: '120/80', heartRate: 72 },
-      medications: ['Losartana 50mg'],
-      conditions: ['Hipertensão'],
+      vitalSigns: { bloodPressure: "120/80", heartRate: 72 },
+      medications: ["Losartana 50mg"],
+      conditions: ["Hipertensão"],
     };
-    
+
     const analysis = generatePatientAnalysis(patientData, {
-      provider: 'openai',
-      model: 'gpt-4',
-      language: 'pt-BR',
+      provider: "openai",
+      model: "gpt-4",
+      language: "pt-BR",
     });
-    
-    expect(analysis.patientId).toBe('patient-123');
-    expect(analysis.type).toBe('health_analysis');
+
+    expect(analysis.patientId).toBe("patient-123");
+    expect(analysis.type).toBe("health_analysis");
     expect(analysis.confidence).toBeGreaterThan(0);
   });
 
-  it('should validate AI insights', () => {
-    const { validateAIInsight } = require('../ai-insights');
-    
+  it("should validate AI insights", () => {
+    const { validateAIInsight } = require("../ai-insights");
+
     const validInsight = {
-      patientId: 'patient-123',
-      type: 'health_analysis',
-      title: 'Análise válida',
+      patientId: "patient-123",
+      type: "health_analysis",
+      title: "Análise válida",
       confidence: 0.8,
-      model: 'gpt-4',
-      provider: 'openai',
+      model: "gpt-4",
+      provider: "openai",
     };
-    
+
     const invalidInsight = {
-      patientId: '',
+      patientId: "",
       confidence: 1.5, // invalid confidence
     };
-    
+
     expect(validateAIInsight(validInsight)).toBe(true);
     expect(validateAIInsight(invalidInsight)).toBe(false);
   });
 
-  it('should support Brazilian healthcare context', () => {
-    const { BrazilianHealthcareContext } = require('../ai-insights');
+  it("should support Brazilian healthcare context", () => {
+    const { BrazilianHealthcareContext } = require("../ai-insights");
     const context: BrazilianHealthcareContext = {
       anvisa: {
-        medicationCodes: ['123456789'],
-        deviceCodes: ['987654321'],
+        medicationCodes: ["123456789"],
+        deviceCodes: ["987654321"],
       },
       cfm: {
-        specialties: ['Clínica Médica', 'Cardiologia'],
-        procedures: ['Consulta médica', 'Eletrocardiograma'],
+        specialties: ["Clínica Médica", "Cardiologia"],
+        procedures: ["Consulta médica", "Eletrocardiograma"],
       },
       sus: {
-        cid10Codes: ['I10', 'E11'],
-        procedureCodes: ['0301010026'],
+        cid10Codes: ["I10", "E11"],
+        procedureCodes: ["0301010026"],
       },
       lgpd: {
-        dataCategories: ['health_data', 'personal_data'],
-        legalBasis: 'consent',
+        dataCategories: ["health_data", "personal_data"],
+        legalBasis: "consent",
       },
     };
-    
-    expect(context.cfm.specialties).toContain('Cardiologia');
-    expect(context.lgpd.legalBasis).toBe('consent');
+
+    expect(context.cfm.specialties).toContain("Cardiologia");
+    expect(context.lgpd.legalBasis).toBe("consent");
   });
 
-  it('should handle insight approval workflow', () => {
-    const { approveInsight, rejectInsight } = require('../ai-insights');
-    
+  it("should handle insight approval workflow", () => {
+    const { approveInsight, rejectInsight } = require("../ai-insights");
+
     const insight = {
-      id: 'insight-123',
-      status: 'generated',
+      id: "insight-123",
+      status: "generated",
       validatedAt: null,
       validatedBy: null,
     };
-    
-    const approved = approveInsight(insight, 'doctor-123', 'Análise precisa e útil');
-    expect(approved.status).toBe('validated');
-    expect(approved.validatedBy).toBe('doctor-123');
+
+    const approved = approveInsight(
+      insight,
+      "doctor-123",
+      "Análise precisa e útil",
+    );
+    expect(approved.status).toBe("validated");
+    expect(approved.validatedBy).toBe("doctor-123");
     expect(approved.validatedAt).toBeInstanceOf(Date);
-    
-    const rejected = rejectInsight(insight, 'doctor-123', 'Análise imprecisa');
-    expect(rejected.status).toBe('rejected');
-    expect(rejected.rejectionReason).toBe('Análise imprecisa');
+
+    const rejected = rejectInsight(insight, "doctor-123", "Análise imprecisa");
+    expect(rejected.status).toBe("rejected");
+    expect(rejected.rejectionReason).toBe("Análise imprecisa");
   });
 
-  it('should support LGPD compliance for AI data', () => {
-    const { anonymizeAIInsight } = require('../ai-insights');
-    
+  it("should support LGPD compliance for AI data", () => {
+    const { anonymizeAIInsight } = require("../ai-insights");
+
     const insight = {
-      id: 'insight-123',
-      title: 'Análise específica do João Silva',
-      description: 'Paciente João apresenta...',
+      id: "insight-123",
+      title: "Análise específica do João Silva",
+      description: "Paciente João apresenta...",
       content: {
-        summary: 'Dados específicos do paciente',
-        recommendations: ['Tratamento personalizado'],
+        summary: "Dados específicos do paciente",
+        recommendations: ["Tratamento personalizado"],
       },
     };
-    
+
     const anonymized = anonymizeAIInsight(insight);
     expect(anonymized.title).toMatch(/^ANÁLISE ANONIMIZADA/);
     expect(anonymized.description).toMatch(/^DESCRIÇÃO ANONIMIZADA/);
     expect(anonymized.content.summary).toMatch(/^RESUMO ANONIMIZADO/);
   });
 
-  it('should calculate insight reliability score', () => {
-    const { calculateReliabilityScore } = require('../ai-insights');
-    
+  it("should calculate insight reliability score", () => {
+    const { calculateReliabilityScore } = require("../ai-insights");
+
     const insight = {
       confidence: 0.9,
-      model: 'gpt-4',
-      provider: 'openai',
-      validatedBy: 'doctor-123',
-      status: 'validated',
+      model: "gpt-4",
+      provider: "openai",
+      validatedBy: "doctor-123",
+      status: "validated",
       dataQuality: 0.8,
     };
-    
+
     const score = calculateReliabilityScore(insight);
     expect(score).toBeGreaterThan(0);
     expect(score).toBeLessThanOrEqual(1);
   });
 
-  it('should support insight templates', () => {
-    const { InsightTemplate } = require('../ai-insights');
+  it("should support insight templates", () => {
+    const { InsightTemplate } = require("../ai-insights");
     const template: InsightTemplate = {
-      id: 'template-health-analysis',
-      name: 'Análise de Saúde Geral',
-      type: 'health_analysis',
-      prompt: 'Analise os dados de saúde do paciente e forneça recomendações.',
+      id: "template-health-analysis",
+      name: "Análise de Saúde Geral",
+      type: "health_analysis",
+      prompt: "Analise os dados de saúde do paciente e forneça recomendações.",
       outputFormat: {
-        summary: 'string',
-        recommendations: 'array',
-        riskFactors: 'array',
-        confidence: 'number',
+        summary: "string",
+        recommendations: "array",
+        riskFactors: "array",
+        confidence: "number",
       },
-      language: 'pt-BR',
+      language: "pt-BR",
       healthcareSpecific: true,
     };
-    
-    expect(template.language).toBe('pt-BR');
+
+    expect(template.language).toBe("pt-BR");
     expect(template.healthcareSpecific).toBe(true);
   });
 
-  it('should track AI model performance', () => {
-    const { AIModelPerformance } = require('../ai-insights');
+  it("should track AI model performance", () => {
+    const { AIModelPerformance } = require("../ai-insights");
     const performance: AIModelPerformance = {
-      modelId: 'gpt-4-healthcare',
-      provider: 'openai',
+      modelId: "gpt-4-healthcare",
+      provider: "openai",
       totalInsights: 1000,
       validatedInsights: 850,
       rejectedInsights: 150,
@@ -253,7 +262,7 @@ describe('AI Insights Model (T035)', () => {
       responseTime: 2.5, // seconds
       lastUpdated: new Date(),
     };
-    
+
     expect(performance.validatedInsights).toBe(850);
     expect(performance.averageConfidence).toBe(0.82);
   });

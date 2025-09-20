@@ -17,8 +17,8 @@ This guide helps developers troubleshoot common issues with the optimized TanSta
 ```typescript
 // Check current cache configuration
 const patientQuery = patientQueries.detail(patientId);
-console.log('Stale time:', patientQuery.staleTime); // Should be 2 minutes for patients
-console.log('GC time:', patientQuery.gcTime); // Should be 5 minutes for patients
+console.log("Stale time:", patientQuery.staleTime); // Should be 2 minutes for patients
+console.log("GC time:", patientQuery.gcTime); // Should be 5 minutes for patients
 ```
 
 **Solutions**:
@@ -28,7 +28,7 @@ console.log('GC time:', patientQuery.gcTime); // Should be 5 minutes for patient
 const { data: auditData } = useQuery(patientQueries.audit(patientId)); // Always fresh
 
 // 2. Force refresh when needed
-queryClient.invalidateQueries({ queryKey: ['patients', 'detail', patientId] });
+queryClient.invalidateQueries({ queryKey: ["patients", "detail", patientId] });
 
 // 3. Check if data is within healthcare compliance limits
 // Patient data: 2min stale (LGPD requirement)
@@ -42,21 +42,26 @@ queryClient.invalidateQueries({ queryKey: ['patients', 'detail', patientId] });
 **Diagnosis**:
 
 ```typescript
-import { createPerformanceMonitor } from '@/lib/performance/healthcare-performance-monitor';
+import { createPerformanceMonitor } from "@/lib/performance/healthcare-performance-monitor";
 
 const performanceMonitor = createPerformanceMonitor(queryClient);
 const report = performanceMonitor.reporting.generate();
-console.log('Cache hit rate:', report.summary.cacheHitRate);
+console.log("Cache hit rate:", report.summary.cacheHitRate);
 ```
 
 **Solutions**:
 
 ```typescript
 // 1. Implement prefetching for common workflows
-await healthcarePrefetchStrategy.prefetchPatientWorkflow(queryClient, patientId) // 2. Check query key consistency
+await healthcarePrefetchStrategy.prefetchPatientWorkflow(
+  queryClient,
+  patientId,
+)[ // 2. Check query key consistency
   // ❌ Inconsistent keys
-  ['patient', patientId]['patients', patientId] // ✅ Consistent keys
-  ['patients', 'detail', patientId]['patients', 'detail', patientId];
+  ("patient", patientId)
+][("patients", patientId)][("patients", "detail", patientId)][ // ✅ Consistent keys
+  ("patients", "detail", patientId)
+];
 
 // 3. Verify cache configuration
 expect(patientQuery.staleTime).toBe(2 * 60 * 1000); // 2 minutes
@@ -75,7 +80,7 @@ expect(patientQuery.staleTime).toBe(2 * 60 * 1000); // 2 minutes
 const start = performance.now();
 await queryClient.fetchQuery(patientQueries.detail(patientId));
 const end = performance.now();
-console.log('Query time:', end - start, 'ms');
+console.log("Query time:", end - start, "ms");
 ```
 
 **Solutions**:
@@ -99,15 +104,15 @@ useEffect(() => {
 
 // 3. Optimize query functions
 // ❌ Heavy processing in queryFn
-queryFn: ;
-(async () => {
+queryFn:;
+async () => {
   const data = await fetchPatient(patientId);
   return processHeavyData(data); // Move this to component
-});
+};
 
 // ✅ Lightweight queryFn
-queryFn: ;
-(async () => fetchPatient(patientId));
+queryFn:;
+async () => fetchPatient(patientId);
 ```
 
 #### Issue: Bundle Size Too Large
@@ -140,8 +145,8 @@ import { useQuery, useMutation, queryOptions } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
 // ✅ Conditional import
-const ReactQueryDevtools = process.env.NODE_ENV === 'development' 
-  ? require('@tanstack/react-query-devtools').ReactQueryDevtools 
+const ReactQueryDevtools = process.env.NODE_ENV === 'development'
+  ? require('@tanstack/react-query-devtools').ReactQueryDevtools
   : () => null
 
 // 3. Check for duplicate dependencies
@@ -161,19 +166,19 @@ bun pm ls | grep tanstack
 const patientQuery = patientQueries.detail(patientId);
 const isLGPDCompliant = patientQuery.gcTime <= 5 * 60 * 1000; // ≤5 minutes
 
-console.log('LGPD Compliant:', isLGPDCompliant);
-console.log('Cache time:', patientQuery.gcTime / 1000 / 60, 'minutes');
+console.log("LGPD Compliant:", isLGPDCompliant);
+console.log("Cache time:", patientQuery.gcTime / 1000 / 60, "minutes");
 ```
 
 **Solutions**:
 
 ```typescript
 // 1. Use healthcare-compliant configuration
-import { healthcareQueryConfig } from '@/lib/config/healthcare-query-config';
+import { healthcareQueryConfig } from "@/lib/config/healthcare-query-config";
 
 // Ensure all patient queries use compliant cache times
 const patientQuery = queryOptions({
-  queryKey: ['patients', 'detail', patientId],
+  queryKey: ["patients", "detail", patientId],
   queryFn: fetchPatient,
   staleTime: healthcareQueryConfig.patient.staleTime, // 2 minutes
   gcTime: healthcareQueryConfig.patient.gcTime, // 5 minutes
@@ -199,12 +204,12 @@ queryClient.setDefaultOptions({
 ```typescript
 // 1. Validate professional access
 const professionalQuery = queryOptions({
-  queryKey: ['professionals', 'detail', professionalId],
+  queryKey: ["professionals", "detail", professionalId],
   queryFn: async () => {
     const response = await fetchProfessional(professionalId);
     // ANVISA: Validate professional license
     if (!response.licenseValid) {
-      throw new Error('Professional license invalid');
+      throw new Error("Professional license invalid");
     }
     return response;
   },
@@ -213,7 +218,7 @@ const professionalQuery = queryOptions({
 
 // 2. Implement medical data validation
 const appointmentQuery = queryOptions({
-  queryKey: ['appointments', 'detail', appointmentId],
+  queryKey: ["appointments", "detail", appointmentId],
   queryFn: async () => {
     const appointment = await fetchAppointment(appointmentId);
     // ANVISA: Validate medical procedure codes
@@ -238,14 +243,14 @@ afterEach(() => {
 });
 
 // 2. Use isolated test query clients
-import { createTestQueryClient } from '@/test-utils/query-client';
+import { createTestQueryClient } from "@/test-utils/query-client";
 
 beforeEach(() => {
   queryClient = createTestQueryClient();
 });
 
 // 3. Mock time-sensitive operations
-vi.spyOn(Date, 'now').mockReturnValue(1234567890);
+vi.spyOn(Date, "now").mockReturnValue(1234567890);
 ```
 
 #### Issue: Performance Tests Inconsistent
@@ -256,7 +261,7 @@ vi.spyOn(Date, 'now').mockReturnValue(1234567890);
 
 ```typescript
 // 1. Use consistent timing
-vi.spyOn(performance, 'now').mockImplementation(() => Date.now());
+vi.spyOn(performance, "now").mockImplementation(() => Date.now());
 
 // 2. Account for test environment overhead
 const performanceThreshold = process.env.CI ? 200 : 100; // Higher threshold in CI
@@ -278,23 +283,24 @@ expect(improvement).toBeGreaterThan(0.25); // 25% improvement
 
 ```typescript
 // 1. Ensure proper typing
-import { queryOptions } from '@tanstack/react-query';
+import { queryOptions } from "@tanstack/react-query";
 
 export const patientQueries = {
   detail: (patientId: string) =>
     queryOptions({
-      queryKey: ['patients', 'detail', patientId] as const, // 'as const' is important
-      queryFn: async (): Promise<Patient> => { // Explicit return type
+      queryKey: ["patients", "detail", patientId] as const, // 'as const' is important
+      queryFn: async (): Promise<Patient> => {
+        // Explicit return type
         // ...
       },
     }),
 };
 
 // 2. Use type-safe query keys
-type PatientQueryKey = ['patients', 'detail', string];
+type PatientQueryKey = ["patients", "detail", string];
 
 // 3. Extend types if needed
-declare module '@tanstack/react-query' {
+declare module "@tanstack/react-query" {
   interface Register {
     defaultError: ApiError;
   }
@@ -309,7 +315,7 @@ declare module '@tanstack/react-query' {
 
 ```typescript
 // 1. Clear cache on hot reload
-if (process.env.NODE_ENV === 'development') {
+if (process.env.NODE_ENV === "development") {
   if (module.hot) {
     module.hot.accept(() => {
       queryClient.clear();
@@ -322,7 +328,7 @@ if (process.env.NODE_ENV === 'development') {
 const queryKey = [Math.random(), patientId];
 
 // ✅ Stable keys
-const queryKey = ['patients', 'detail', patientId] as const;
+const queryKey = ["patients", "detail", patientId] as const;
 ```
 
 ## Debugging Tools
@@ -330,7 +336,7 @@ const queryKey = ['patients', 'detail', patientId] as const;
 ### 1. Performance Monitoring
 
 ```typescript
-import { createPerformanceMonitor } from '@/lib/performance/healthcare-performance-monitor';
+import { createPerformanceMonitor } from "@/lib/performance/healthcare-performance-monitor";
 
 const performanceMonitor = createPerformanceMonitor(queryClient);
 
@@ -339,22 +345,22 @@ performanceMonitor.monitoring.start();
 
 // Generate reports
 const report = performanceMonitor.reporting.generate();
-console.log('Performance Report:', report);
+console.log("Performance Report:", report);
 ```
 
 ### 2. Cache Inspection
 
 ```typescript
 // Inspect cache contents
-console.log('Cache:', queryClient.getQueryCache().getAll());
+console.log("Cache:", queryClient.getQueryCache().getAll());
 
 // Check specific query
-const queryData = queryClient.getQueryData(['patients', 'detail', patientId]);
-console.log('Patient data:', queryData);
+const queryData = queryClient.getQueryData(["patients", "detail", patientId]);
+console.log("Patient data:", queryData);
 
 // Check query state
-const queryState = queryClient.getQueryState(['patients', 'detail', patientId]);
-console.log('Query state:', queryState);
+const queryState = queryClient.getQueryState(["patients", "detail", patientId]);
+console.log("Query state:", queryState);
 ```
 
 ### 3. Development Tools

@@ -3,7 +3,7 @@
  * Comprehensive test suite for Supabase real-time subscriptions
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   type LGPDFilter,
   patientDataSubscription,
@@ -11,12 +11,12 @@ import {
   realtimeManager,
   realtimeSubscription,
   type SubscriptionConfig,
-} from '../realtime-db';
+} from "../realtime-db";
 
 // Mock crypto.randomUUID
-Object.defineProperty(global, 'crypto', {
+Object.defineProperty(global, "crypto", {
   value: {
-    randomUUID: () => '550e8400-e29b-41d4-a716-446655440000',
+    randomUUID: () => "550e8400-e29b-41d4-a716-446655440000",
   },
 });
 
@@ -31,7 +31,7 @@ const mockSupabase = {
   removeChannel: vi.fn(),
 };
 
-describe('Database Real-time Subscriptions Middleware (T074)', () => {
+describe("Database Real-time Subscriptions Middleware (T074)", () => {
   let mockContext: any;
   let mockNext: any;
 
@@ -46,8 +46,8 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
     mockNext = vi.fn();
 
     // Set environment variables
-    process.env.SUPABASE_URL = 'https://test.supabase.co';
-    process.env.SUPABASE_ANON_KEY = 'test-key';
+    process.env.SUPABASE_URL = "https://test.supabase.co";
+    process.env.SUPABASE_ANON_KEY = "test-key";
 
     // Reset mocks
     vi.clearAllMocks();
@@ -62,90 +62,107 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
     vi.clearAllMocks();
   });
 
-  describe('Realtime Subscription Manager', () => {
-    it('should create subscription successfully', async () => {
+  describe("Realtime Subscription Manager", () => {
+    it("should create subscription successfully", async () => {
       const config: SubscriptionConfig = {
-        table: 'patients',
-        event: '*',
+        table: "patients",
+        event: "*",
         lgpdCompliant: true,
         auditEnabled: true,
-        userId: 'user-123',
+        userId: "user-123",
       };
 
       const callback = vi.fn();
-      const subscriptionId = 'test-subscription';
+      const subscriptionId = "test-subscription";
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(true);
       expect(mockSupabase.channel).toHaveBeenCalledWith(
-        expect.stringContaining('public:patients:test-subscription'),
+        expect.stringContaining("public:patients:test-subscription"),
       );
       expect(mockChannel.on).toHaveBeenCalledWith(
-        'postgres_changes',
+        "postgres_changes",
         expect.objectContaining({
-          event: '*',
-          schema: 'public',
-          table: 'patients',
+          event: "*",
+          schema: "public",
+          table: "patients",
         }),
         expect.any(Function),
       );
       expect(mockChannel.subscribe).toHaveBeenCalled();
     });
 
-    it('should handle subscription with filter', async () => {
+    it("should handle subscription with filter", async () => {
       const config: SubscriptionConfig = {
-        table: 'patients',
-        event: 'UPDATE',
-        filter: 'id=eq.123',
+        table: "patients",
+        event: "UPDATE",
+        filter: "id=eq.123",
         lgpdCompliant: true,
-        userId: 'user-123',
+        userId: "user-123",
       };
 
       const callback = vi.fn();
-      const subscriptionId = 'filtered-subscription';
+      const subscriptionId = "filtered-subscription";
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(true);
       expect(mockChannel.on).toHaveBeenCalledWith(
-        'postgres_changes',
+        "postgres_changes",
         expect.objectContaining({
-          event: 'UPDATE',
-          filter: 'id=eq.123',
+          event: "UPDATE",
+          filter: "id=eq.123",
         }),
         expect.any(Function),
       );
     });
 
-    it('should track user subscriptions', async () => {
+    it("should track user subscriptions", async () => {
       const config: SubscriptionConfig = {
-        table: 'patients',
-        event: '*',
-        userId: 'user-123',
+        table: "patients",
+        event: "*",
+        userId: "user-123",
       };
 
       const callback = vi.fn();
-      const subscriptionId = 'user-subscription';
+      const subscriptionId = "user-subscription";
 
-      await realtimeManager.createSubscription(subscriptionId, config, callback);
+      await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
-      const userSubscriptions = realtimeManager.getUserSubscriptions('user-123');
+      const userSubscriptions =
+        realtimeManager.getUserSubscriptions("user-123");
       expect(userSubscriptions).toContain(subscriptionId);
     });
 
-    it('should remove subscription successfully', async () => {
+    it("should remove subscription successfully", async () => {
       const config: SubscriptionConfig = {
-        table: 'patients',
-        event: '*',
-        userId: 'user-123',
+        table: "patients",
+        event: "*",
+        userId: "user-123",
       };
 
       const callback = vi.fn();
-      const subscriptionId = 'removable-subscription';
+      const subscriptionId = "removable-subscription";
 
       // Create subscription first
-      await realtimeManager.createSubscription(subscriptionId, config, callback);
+      await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       // Remove subscription
       const result = await realtimeManager.removeSubscription(subscriptionId);
@@ -154,30 +171,30 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       expect(mockSupabase.removeChannel).toHaveBeenCalledWith(mockChannel);
     });
 
-    it('should return false when removing non-existent subscription', async () => {
-      const result = await realtimeManager.removeSubscription('non-existent');
+    it("should return false when removing non-existent subscription", async () => {
+      const result = await realtimeManager.removeSubscription("non-existent");
       expect(result).toBe(false);
     });
 
-    it('should get subscriptions count', async () => {
+    it("should get subscriptions count", async () => {
       const initialCount = realtimeManager.getSubscriptionsCount();
 
       const config: SubscriptionConfig = {
-        table: 'patients',
-        event: '*',
+        table: "patients",
+        event: "*",
       };
 
-      await realtimeManager.createSubscription('count-test', config, vi.fn());
+      await realtimeManager.createSubscription("count-test", config, vi.fn());
 
       const newCount = realtimeManager.getSubscriptionsCount();
       expect(newCount).toBe(initialCount + 1);
     });
 
-    it('should set and remove LGPD filter', () => {
-      const userId = 'user-123';
+    it("should set and remove LGPD filter", () => {
+      const userId = "user-123";
       const lgpdFilter: LGPDFilter = {
         userId,
-        consentedDataCategories: ['personal_data', 'health_data'],
+        consentedDataCategories: ["personal_data", "health_data"],
         canViewPersonalData: true,
         canViewHealthData: true,
         canViewContactData: false,
@@ -188,21 +205,23 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
 
       // Test that filter is set (we can't directly access private methods,
       // but we can test the public interface)
-      expect(() => realtimeManager.setLGPDFilter(userId, lgpdFilter)).not.toThrow();
+      expect(() =>
+        realtimeManager.setLGPDFilter(userId, lgpdFilter),
+      ).not.toThrow();
 
       realtimeManager.removeLGPDFilter(userId);
       expect(() => realtimeManager.removeLGPDFilter(userId)).not.toThrow();
     });
 
-    it('should cleanup all subscriptions', async () => {
+    it("should cleanup all subscriptions", async () => {
       const config: SubscriptionConfig = {
-        table: 'patients',
-        event: '*',
+        table: "patients",
+        event: "*",
       };
 
       // Create multiple subscriptions
-      await realtimeManager.createSubscription('cleanup-1', config, vi.fn());
-      await realtimeManager.createSubscription('cleanup-2', config, vi.fn());
+      await realtimeManager.createSubscription("cleanup-1", config, vi.fn());
+      await realtimeManager.createSubscription("cleanup-2", config, vi.fn());
 
       const initialCount = realtimeManager.getSubscriptionsCount();
       expect(initialCount).toBeGreaterThan(0);
@@ -214,43 +233,49 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
     });
   });
 
-  describe('Realtime Subscription Middleware', () => {
-    it('should add realtime utilities to context', async () => {
+  describe("Realtime Subscription Middleware", () => {
+    it("should add realtime utilities to context", async () => {
       const middleware = realtimeSubscription();
       await middleware(mockContext, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('realtimeManager', realtimeManager);
-      expect(mockContext.set).toHaveBeenCalledWith('createSubscription', expect.any(Function));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        "realtimeManager",
+        realtimeManager,
+      );
+      expect(mockContext.set).toHaveBeenCalledWith(
+        "createSubscription",
+        expect.any(Function),
+      );
       expect(mockNext).toHaveBeenCalled();
     });
 
-    it('should provide createSubscription helper', async () => {
+    it("should provide createSubscription helper", async () => {
       const middleware = realtimeSubscription();
       await middleware(mockContext, mockNext);
 
       // Get the createSubscription function from the context
       const createSubscriptionCall = mockContext.set.mock.calls.find(
-        (call: any) => call[0] === 'createSubscription',
+        (call: any) => call[0] === "createSubscription",
       );
       expect(createSubscriptionCall).toBeDefined();
 
       const createSubscription = createSubscriptionCall[1];
-      expect(typeof createSubscription).toBe('function');
+      expect(typeof createSubscription).toBe("function");
 
       // Test the helper function
       const config: SubscriptionConfig = {
-        table: 'test_table',
-        event: '*',
+        table: "test_table",
+        event: "*",
       };
       const callback = vi.fn();
 
       const result = await createSubscription(config, callback);
-      expect(typeof result).toBe('boolean');
+      expect(typeof result).toBe("boolean");
     });
   });
 
-  describe('Patient Data Subscription Middleware', () => {
-    it('should skip when no userId', async () => {
+  describe("Patient Data Subscription Middleware", () => {
+    it("should skip when no userId", async () => {
       mockContext.get.mockReturnValue(undefined);
 
       const middleware = patientDataSubscription();
@@ -258,21 +283,21 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
 
       expect(mockNext).toHaveBeenCalled();
       expect(mockContext.set).not.toHaveBeenCalledWith(
-        expect.stringContaining('subscribeToPatientData'),
+        expect.stringContaining("subscribeToPatientData"),
         expect.any(Function),
       );
     });
 
-    it('should set LGPD filter when consent available', async () => {
-      const userId = 'user-123';
+    it("should set LGPD filter when consent available", async () => {
+      const userId = "user-123";
       const lgpdConsent = {
-        dataCategories: ['personal_data', 'health_data'],
+        dataCategories: ["personal_data", "health_data"],
         retentionPeriod: 365,
       };
 
       mockContext.get.mockImplementation((key: string) => {
-        if (key === 'userId') return userId;
-        if (key === 'lgpdConsent') return lgpdConsent;
+        if (key === "userId") return userId;
+        if (key === "lgpdConsent") return lgpdConsent;
         return undefined;
       });
 
@@ -281,18 +306,18 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
 
       expect(mockNext).toHaveBeenCalled();
       expect(mockContext.set).toHaveBeenCalledWith(
-        'subscribeToPatientData',
+        "subscribeToPatientData",
         expect.any(Function),
       );
     });
 
-    it('should provide subscribeToPatientData helper', async () => {
-      const userId = 'user-123';
-      const healthcareProfessional = { id: 'prof-123' };
+    it("should provide subscribeToPatientData helper", async () => {
+      const userId = "user-123";
+      const healthcareProfessional = { id: "prof-123" };
 
       mockContext.get.mockImplementation((key: string) => {
-        if (key === 'userId') return userId;
-        if (key === 'healthcareProfessional') return healthcareProfessional;
+        if (key === "userId") return userId;
+        if (key === "healthcareProfessional") return healthcareProfessional;
         return undefined;
       });
 
@@ -301,32 +326,32 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
 
       // Get the subscribeToPatientData function from the context
       const subscribeCall = mockContext.set.mock.calls.find(
-        (call: any) => call[0] === 'subscribeToPatientData',
+        (call: any) => call[0] === "subscribeToPatientData",
       );
       expect(subscribeCall).toBeDefined();
 
       const subscribeToPatientData = subscribeCall[1];
-      expect(typeof subscribeToPatientData).toBe('function');
+      expect(typeof subscribeToPatientData).toBe("function");
 
       // Test the helper function
-      const patientId = 'patient-456';
+      const patientId = "patient-456";
       const callback = vi.fn();
 
       const result = await subscribeToPatientData(patientId, callback);
-      expect(typeof result).toBe('boolean');
+      expect(typeof result).toBe("boolean");
     });
 
-    it('should handle healthcare professional context', async () => {
-      const userId = 'user-123';
+    it("should handle healthcare professional context", async () => {
+      const userId = "user-123";
       const healthcareProfessional = {
-        id: 'prof-123',
-        crmNumber: '12345-SP',
-        specialty: 'Dermatologia',
+        id: "prof-123",
+        crmNumber: "12345-SP",
+        specialty: "Dermatologia",
       };
 
       mockContext.get.mockImplementation((key: string) => {
-        if (key === 'userId') return userId;
-        if (key === 'healthcareProfessional') return healthcareProfessional;
+        if (key === "userId") return userId;
+        if (key === "healthcareProfessional") return healthcareProfessional;
         return undefined;
       });
 
@@ -335,16 +360,16 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
 
       expect(mockNext).toHaveBeenCalled();
       expect(mockContext.set).toHaveBeenCalledWith(
-        'subscribeToPatientData',
+        "subscribeToPatientData",
         expect.any(Function),
       );
     });
 
-    it('should handle missing LGPD consent gracefully', async () => {
-      const userId = 'user-123';
+    it("should handle missing LGPD consent gracefully", async () => {
+      const userId = "user-123";
 
       mockContext.get.mockImplementation((key: string) => {
-        if (key === 'userId') return userId;
+        if (key === "userId") return userId;
         return undefined;
       });
 
@@ -353,77 +378,89 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
 
       expect(mockNext).toHaveBeenCalled();
       expect(mockContext.set).toHaveBeenCalledWith(
-        'subscribeToPatientData',
+        "subscribeToPatientData",
         expect.any(Function),
       );
     });
   });
 
-  describe('LGPD Compliance', () => {
-    it('should handle LGPD compliant subscriptions', async () => {
+  describe("LGPD Compliance", () => {
+    it("should handle LGPD compliant subscriptions", async () => {
       const config: SubscriptionConfig = {
-        table: 'patients',
-        event: '*',
+        table: "patients",
+        event: "*",
         lgpdCompliant: true,
-        userId: 'user-123',
+        userId: "user-123",
       };
 
       const callback = vi.fn();
-      const subscriptionId = 'lgpd-subscription';
+      const subscriptionId = "lgpd-subscription";
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(true);
       expect(mockChannel.on).toHaveBeenCalledWith(
-        'postgres_changes',
+        "postgres_changes",
         expect.objectContaining({
-          event: '*',
-          table: 'patients',
+          event: "*",
+          table: "patients",
         }),
         expect.any(Function),
       );
     });
 
-    it('should handle audit enabled subscriptions', async () => {
+    it("should handle audit enabled subscriptions", async () => {
       const config: SubscriptionConfig = {
-        table: 'patients',
-        event: 'INSERT',
+        table: "patients",
+        event: "INSERT",
         auditEnabled: true,
-        userId: 'user-123',
+        userId: "user-123",
       };
 
       const callback = vi.fn();
-      const subscriptionId = 'audit-subscription';
+      const subscriptionId = "audit-subscription";
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(true);
       expect(mockChannel.on).toHaveBeenCalledWith(
-        'postgres_changes',
+        "postgres_changes",
         expect.objectContaining({
-          event: 'INSERT',
-          table: 'patients',
+          event: "INSERT",
+          table: "patients",
         }),
         expect.any(Function),
       );
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle Supabase client initialization failure', async () => {
+  describe("Error Handling", () => {
+    it("should handle Supabase client initialization failure", async () => {
       // Temporarily remove the mock Supabase client
       const originalSupabase = (realtimeManager as any).supabase;
       (realtimeManager as any).supabase = null;
 
       const config: SubscriptionConfig = {
-        table: 'patients',
-        event: '*',
+        table: "patients",
+        event: "*",
       };
 
       const callback = vi.fn();
-      const subscriptionId = 'error-subscription';
+      const subscriptionId = "error-subscription";
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(false);
 
@@ -431,14 +468,14 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       (realtimeManager as any).supabase = originalSupabase;
     });
 
-    it('should handle invalid subscription configuration', async () => {
+    it("should handle invalid subscription configuration", async () => {
       const invalidConfig = {
-        table: '', // Invalid empty table name
-        event: '*',
+        table: "", // Invalid empty table name
+        event: "*",
       } as SubscriptionConfig;
 
       const callback = vi.fn();
-      const subscriptionId = 'invalid-subscription';
+      const subscriptionId = "invalid-subscription";
 
       const result = await realtimeManager.createSubscription(
         subscriptionId,
@@ -449,21 +486,25 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       expect(result).toBe(false);
     });
 
-    it('should handle subscription creation errors gracefully', async () => {
+    it("should handle subscription creation errors gracefully", async () => {
       // Mock channel creation to throw error
       mockSupabase.channel.mockImplementation(() => {
-        throw new Error('Channel creation failed');
+        throw new Error("Channel creation failed");
       });
 
       const config: SubscriptionConfig = {
-        table: 'patients',
-        event: '*',
+        table: "patients",
+        event: "*",
       };
 
       const callback = vi.fn();
-      const subscriptionId = 'error-subscription';
+      const subscriptionId = "error-subscription";
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(false);
 

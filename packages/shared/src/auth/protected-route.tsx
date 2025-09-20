@@ -4,13 +4,13 @@
  * This component is kept for backward compatibility but not used in current app
  */
 
-'use client';
+"use client";
 
 // NOTE: Using TanStack Router for protected routes
 // import { useRouter, } from 'next/navigation'
-import type React from 'react';
-import type { ReactNode } from 'react';
-import { useAuth } from './auth-provider';
+import type React from "react";
+import type { ReactNode } from "react";
+import { useAuth } from "./auth-provider";
 
 export interface ProtectedRouteProps {
   children: ReactNode;
@@ -26,8 +26,8 @@ export interface ProtectedRouteProps {
  */
 function DefaultLoadingFallback() {
   return (
-    <div className='flex min-h-screen items-center justify-center'>
-      <div className='h-8 w-8 animate-spin rounded-full border-primary border-b-2' />
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="h-8 w-8 animate-spin rounded-full border-primary border-b-2" />
     </div>
   );
 }
@@ -37,10 +37,10 @@ function DefaultLoadingFallback() {
  */
 function DefaultUnauthorizedFallback() {
   return (
-    <div className='flex min-h-screen items-center justify-center'>
-      <div className='text-center'>
-        <h1 className='mb-2 font-bold text-2xl text-gray-900'>Acesso Negado</h1>
-        <p className='text-gray-600'>
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="text-center">
+        <h1 className="mb-2 font-bold text-2xl text-gray-900">Acesso Negado</h1>
+        <p className="text-gray-600">
           Você não tem permissão para acessar esta página.
         </p>
       </div>
@@ -54,7 +54,7 @@ function DefaultUnauthorizedFallback() {
 export function ProtectedRoute({
   children,
   fallback = <DefaultLoadingFallback />,
-  redirectTo = '/login',
+  redirectTo = "/login",
   requireAuth = true,
   requiredRole,
   requiredPermissions = [],
@@ -80,7 +80,7 @@ export function ProtectedRoute({
   if (!(isAuthenticated && user)) {
     // NOTE: Using TanStack Router for protected routes router
     // router.push(redirectTo,)
-    console.warn('User not authenticated, redirect to:', redirectTo);
+    console.warn("User not authenticated, redirect to:", redirectTo);
     return <>{fallback}</>;
   }
 
@@ -93,8 +93,9 @@ export function ProtectedRoute({
   if (requiredPermissions.length > 0) {
     // TODO: Implementar sistema de permissões mais robusto
     // Por enquanto, apenas verifica se é admin para qualquer permissão especial
-    const hasPermissions = user.role === 'admin'
-      || requiredPermissions.every(_permission => {
+    const hasPermissions =
+      user.role === "admin" ||
+      requiredPermissions.every((_permission) => {
         // Lógica de permissões específica pode ser implementada aqui
         return true; // Placeholder
       });
@@ -113,7 +114,7 @@ export function ProtectedRoute({
  */
 export function withAuth<P extends object>(
   Component: React.ComponentType<P>,
-  options?: Omit<ProtectedRouteProps, 'children'>,
+  options?: Omit<ProtectedRouteProps, "children">,
 ) {
   const WrappedComponent = (props: P) => {
     return (
@@ -141,7 +142,7 @@ export function usePermissions() {
   const hasPermission = (_permission: string): boolean => {
     // TODO: Implementar lógica de permissões mais sofisticada
     // Por enquanto, admin tem todas as permissões
-    if (user?.role === 'admin') {
+    if (user?.role === "admin") {
       return true;
     }
 
@@ -150,11 +151,11 @@ export function usePermissions() {
   };
 
   const hasAnyPermission = (permissions: string[]): boolean => {
-    return permissions.some(permission => hasPermission(permission));
+    return permissions.some((permission) => hasPermission(permission));
   };
 
   const hasAllPermissions = (permissions: string[]): boolean => {
-    return permissions.every(permission => hasPermission(permission));
+    return permissions.every((permission) => hasPermission(permission));
   };
 
   return {
@@ -162,8 +163,8 @@ export function usePermissions() {
     hasPermission,
     hasAnyPermission,
     hasAllPermissions,
-    isAdmin: hasRole('admin'),
-    isUser: hasRole('user'),
-    isHealthcareProfessional: hasRole('healthcare_professional'),
+    isAdmin: hasRole("admin"),
+    isUser: hasRole("user"),
+    isHealthcareProfessional: hasRole("healthcare_professional"),
   };
 }

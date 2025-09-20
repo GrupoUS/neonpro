@@ -3,8 +3,8 @@
  * Comprehensive test suite for real-time WebSocket functionality
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { WebSocket } from 'ws';
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { WebSocket } from "ws";
 import {
   type ConnectionMetadata,
   handleWebSocketConnection,
@@ -13,7 +13,7 @@ import {
   wsManager,
   type WSMessage,
   WSMessageType,
-} from '../websocket';
+} from "../websocket";
 
 // Mock WebSocket
 class MockWebSocket extends WebSocket {
@@ -22,7 +22,7 @@ class MockWebSocket extends WebSocket {
   public eventHandlers: { [key: string]: Function[] } = {};
 
   constructor() {
-    super('ws://localhost');
+    super("ws://localhost");
     this.readyState = WebSocket.OPEN;
   }
 
@@ -40,36 +40,37 @@ class MockWebSocket extends WebSocket {
 
   emit(event: string, ...args: any[]) {
     const handlers = this.eventHandlers[event] || [];
-    handlers.forEach(handler => handler(...args));
+    handlers.forEach((handler) => handler(...args));
   }
 
   close(code?: number, reason?: string) {
     this.readyState = WebSocket.CLOSED;
-    this.emit('close', code, reason);
+    this.emit("close", code, reason);
   }
 }
 
 // Mock crypto.randomUUID
 let uuidCounter = 0;
-Object.defineProperty(global, 'crypto', {
+Object.defineProperty(global, "crypto", {
   value: {
-    randomUUID: () => `550e8400-e29b-41d4-a716-44665544${String(uuidCounter++).padStart(4, '0')}`,
+    randomUUID: () =>
+      `550e8400-e29b-41d4-a716-44665544${String(uuidCounter++).padStart(4, "0")}`,
   },
 });
 
-describe('WebSocket Integration Middleware (T070)', () => {
+describe("WebSocket Integration Middleware (T070)", () => {
   let mockWs: MockWebSocket;
   let testMetadata: ConnectionMetadata;
 
   beforeEach(() => {
     mockWs = new MockWebSocket();
     testMetadata = {
-      userId: 'user-123',
-      sessionId: 'session-123',
+      userId: "user-123",
+      sessionId: "session-123",
       healthcareProfessional: {
-        id: 'prof-123',
-        crmNumber: '12345-SP',
-        specialty: 'Dermatologia',
+        id: "prof-123",
+        crmNumber: "12345-SP",
+        specialty: "Dermatologia",
       },
       lgpdConsent: {
         canReceiveNotifications: true,
@@ -90,16 +91,19 @@ describe('WebSocket Integration Middleware (T070)', () => {
     vi.clearAllMocks();
   });
 
-  describe('Connection Management', () => {
-    it('should add and track WebSocket connections', () => {
-      const connectionId = handleWebSocketConnection(mockWs as any, testMetadata);
+  describe("Connection Management", () => {
+    it("should add and track WebSocket connections", () => {
+      const connectionId = handleWebSocketConnection(
+        mockWs as any,
+        testMetadata,
+      );
 
       expect(connectionId).toBeDefined();
       expect(wsManager.getTotalConnectionsCount()).toBe(1);
-      expect(wsManager.getUserConnectionsCount('user-123')).toBe(1);
+      expect(wsManager.getUserConnectionsCount("user-123")).toBe(1);
     });
 
-    it('should remove connections on close', () => {
+    it("should remove connections on close", () => {
       handleWebSocketConnection(mockWs as any, testMetadata);
 
       expect(wsManager.getTotalConnectionsCount()).toBe(1);
@@ -107,45 +111,47 @@ describe('WebSocket Integration Middleware (T070)', () => {
       mockWs.close();
 
       expect(wsManager.getTotalConnectionsCount()).toBe(0);
-      expect(wsManager.getUserConnectionsCount('user-123')).toBe(0);
+      expect(wsManager.getUserConnectionsCount("user-123")).toBe(0);
     });
 
-    it('should handle multiple connections for same user', () => {
+    it("should handle multiple connections for same user", () => {
       const mockWs2 = new MockWebSocket();
 
       handleWebSocketConnection(mockWs as any, testMetadata);
       handleWebSocketConnection(mockWs2 as any, testMetadata);
 
       expect(wsManager.getTotalConnectionsCount()).toBe(2);
-      expect(wsManager.getUserConnectionsCount('user-123')).toBe(2);
+      expect(wsManager.getUserConnectionsCount("user-123")).toBe(2);
     });
 
-    it('should send welcome message on connection', () => {
+    it("should send welcome message on connection", () => {
       handleWebSocketConnection(mockWs as any, testMetadata);
 
       expect(mockWs.messages).toHaveLength(1);
 
       const welcomeMessage = JSON.parse(mockWs.messages[0]);
       expect(welcomeMessage.type).toBe(WSMessageType.STATUS);
-      expect(welcomeMessage.data.status).toBe('connected');
-      expect(welcomeMessage.data.message).toBe('Conectado ao NeonPro em tempo real');
-      expect(welcomeMessage.metadata.userId).toBe('user-123');
+      expect(welcomeMessage.data.status).toBe("connected");
+      expect(welcomeMessage.data.message).toBe(
+        "Conectado ao NeonPro em tempo real",
+      );
+      expect(welcomeMessage.metadata.userId).toBe("user-123");
     });
   });
 
-  describe('Message Handling', () => {
+  describe("Message Handling", () => {
     beforeEach(() => {
       handleWebSocketConnection(mockWs as any, testMetadata);
       mockWs.messages = []; // Clear welcome message
     });
 
-    it('should handle ping/pong messages', () => {
+    it("should handle ping/pong messages", () => {
       const pingMessage: WSMessage = {
         type: WSMessageType.PING,
         data: {},
       };
 
-      mockWs.emit('message', JSON.stringify(pingMessage));
+      mockWs.emit("message", JSON.stringify(pingMessage));
 
       expect(mockWs.messages).toHaveLength(1);
 
@@ -154,26 +160,26 @@ describe('WebSocket Integration Middleware (T070)', () => {
       expect(pongMessage.data.timestamp).toBeDefined();
     });
 
-    it('should handle chat start messages with LGPD consent', () => {
+    it("should handle chat start messages with LGPD consent", () => {
       const chatStartMessage: WSMessage = {
         type: WSMessageType.CHAT_START,
         data: {
-          message: 'Olá, preciso de ajuda',
-          conversationId: 'conv-123',
+          message: "Olá, preciso de ajuda",
+          conversationId: "conv-123",
         },
       };
 
-      mockWs.emit('message', JSON.stringify(chatStartMessage));
+      mockWs.emit("message", JSON.stringify(chatStartMessage));
 
       expect(mockWs.messages).toHaveLength(1);
 
       const response = JSON.parse(mockWs.messages[0]);
       expect(response.type).toBe(WSMessageType.CHAT_START);
-      expect(response.data.status).toBe('started');
+      expect(response.data.status).toBe("started");
       expect(response.data.conversationId).toBeDefined();
     });
 
-    it('should reject chat start without LGPD consent', () => {
+    it("should reject chat start without LGPD consent", () => {
       // Update metadata to deny AI responses
       testMetadata.lgpdConsent.canReceiveAIResponses = false;
       handleWebSocketConnection(mockWs as any, testMetadata);
@@ -182,40 +188,40 @@ describe('WebSocket Integration Middleware (T070)', () => {
       const chatStartMessage: WSMessage = {
         type: WSMessageType.CHAT_START,
         data: {
-          message: 'Olá, preciso de ajuda',
+          message: "Olá, preciso de ajuda",
         },
       };
 
-      mockWs.emit('message', JSON.stringify(chatStartMessage));
+      mockWs.emit("message", JSON.stringify(chatStartMessage));
 
       // Should have at least one message (the error)
       expect(mockWs.messages.length).toBeGreaterThan(0);
 
       const response = JSON.parse(mockWs.messages[mockWs.messages.length - 1]);
       expect(response.type).toBe(WSMessageType.CHAT_ERROR);
-      expect(response.data.error).toContain('Consentimento LGPD necessário');
-      expect(response.data.code).toBe('LGPD_CONSENT_REQUIRED');
+      expect(response.data.error).toContain("Consentimento LGPD necessário");
+      expect(response.data.code).toBe("LGPD_CONSENT_REQUIRED");
     });
 
-    it('should handle invalid JSON messages gracefully', () => {
-      mockWs.emit('message', 'invalid json');
+    it("should handle invalid JSON messages gracefully", () => {
+      mockWs.emit("message", "invalid json");
 
       expect(mockWs.messages).toHaveLength(1);
 
       const errorMessage = JSON.parse(mockWs.messages[0]);
       expect(errorMessage.type).toBe(WSMessageType.ERROR);
-      expect(errorMessage.data.error).toBe('Mensagem inválida');
+      expect(errorMessage.data.error).toBe("Mensagem inválida");
     });
   });
 
-  describe('Message Broadcasting', () => {
+  describe("Message Broadcasting", () => {
     let mockWs2: MockWebSocket;
 
     beforeEach(() => {
       handleWebSocketConnection(mockWs as any, testMetadata);
 
       mockWs2 = new MockWebSocket();
-      const testMetadata2 = { ...testMetadata, userId: 'user-456' };
+      const testMetadata2 = { ...testMetadata, userId: "user-456" };
       handleWebSocketConnection(mockWs2 as any, testMetadata2);
 
       // Clear welcome messages
@@ -223,17 +229,17 @@ describe('WebSocket Integration Middleware (T070)', () => {
       mockWs2.messages = [];
     });
 
-    it('should send message to specific user', () => {
+    it("should send message to specific user", () => {
       const message: WSMessage = {
         type: WSMessageType.NOTIFICATION,
-        data: { message: 'Teste de notificação' },
+        data: { message: "Teste de notificação" },
       };
 
       // Clear welcome messages first
       mockWs.messages = [];
       mockWs2.messages = [];
 
-      const sentCount = wsManager.sendToUser('user-123', message);
+      const sentCount = wsManager.sendToUser("user-123", message);
 
       expect(sentCount).toBe(1);
       expect(mockWs.messages).toHaveLength(1);
@@ -241,13 +247,13 @@ describe('WebSocket Integration Middleware (T070)', () => {
 
       const receivedMessage = JSON.parse(mockWs.messages[0]);
       expect(receivedMessage.type).toBe(WSMessageType.NOTIFICATION);
-      expect(receivedMessage.data.message).toBe('Teste de notificação');
+      expect(receivedMessage.data.message).toBe("Teste de notificação");
     });
 
-    it('should broadcast to all connections', () => {
+    it("should broadcast to all connections", () => {
       const message: WSMessage = {
         type: WSMessageType.ALERT,
-        data: { message: 'Alerta geral' },
+        data: { message: "Alerta geral" },
       };
 
       // Clear welcome messages first
@@ -267,17 +273,18 @@ describe('WebSocket Integration Middleware (T070)', () => {
       expect(receivedMessage2.type).toBe(WSMessageType.ALERT);
     });
 
-    it('should broadcast with filter', () => {
+    it("should broadcast with filter", () => {
       const message: WSMessage = {
         type: WSMessageType.NOTIFICATION,
-        data: { message: 'Notificação para profissionais' },
+        data: { message: "Notificação para profissionais" },
       };
 
       // Clear welcome messages first
       mockWs.messages = [];
       mockWs2.messages = [];
 
-      const filter = (metadata: ConnectionMetadata) => !!metadata.healthcareProfessional;
+      const filter = (metadata: ConnectionMetadata) =>
+        !!metadata.healthcareProfessional;
       const sentCount = wsManager.broadcast(message, filter);
 
       expect(sentCount).toBe(2); // Both connections have healthcare professional
@@ -286,9 +293,12 @@ describe('WebSocket Integration Middleware (T070)', () => {
     });
   });
 
-  describe('Connection Cleanup', () => {
-    it('should clean up inactive connections', () => {
-      const connectionId = handleWebSocketConnection(mockWs as any, testMetadata);
+  describe("Connection Cleanup", () => {
+    it("should clean up inactive connections", () => {
+      const connectionId = handleWebSocketConnection(
+        mockWs as any,
+        testMetadata,
+      );
 
       // Simulate old last activity
       const connection = (wsManager as any).connections.get(connectionId);
@@ -301,7 +311,7 @@ describe('WebSocket Integration Middleware (T070)', () => {
       expect(mockWs.readyState).toBe(WebSocket.CLOSED);
     });
 
-    it('should not clean up active connections', () => {
+    it("should not clean up active connections", () => {
       handleWebSocketConnection(mockWs as any, testMetadata);
 
       const cleanedCount = wsManager.cleanupInactiveConnections(30);
@@ -312,18 +322,18 @@ describe('WebSocket Integration Middleware (T070)', () => {
     });
   });
 
-  describe('Middleware Integration', () => {
-    it('should create websocket upgrade middleware', () => {
+  describe("Middleware Integration", () => {
+    it("should create websocket upgrade middleware", () => {
       const middleware = websocketUpgrade();
       expect(middleware).toBeInstanceOf(Function);
     });
 
-    it('should create websocket utilities middleware', () => {
+    it("should create websocket utilities middleware", () => {
       const middleware = websocketMiddleware();
       expect(middleware).toBeInstanceOf(Function);
     });
 
-    it('should add WebSocket utilities to context', async () => {
+    it("should add WebSocket utilities to context", async () => {
       const middleware = websocketMiddleware();
       const mockContext = {
         set: vi.fn(),
@@ -332,15 +342,21 @@ describe('WebSocket Integration Middleware (T070)', () => {
 
       await middleware(mockContext as any, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('wsManager', wsManager);
-      expect(mockContext.set).toHaveBeenCalledWith('sendToUser', expect.any(Function));
-      expect(mockContext.set).toHaveBeenCalledWith('broadcast', expect.any(Function));
+      expect(mockContext.set).toHaveBeenCalledWith("wsManager", wsManager);
+      expect(mockContext.set).toHaveBeenCalledWith(
+        "sendToUser",
+        expect.any(Function),
+      );
+      expect(mockContext.set).toHaveBeenCalledWith(
+        "broadcast",
+        expect.any(Function),
+      );
       expect(mockNext).toHaveBeenCalled();
     });
   });
 
-  describe('LGPD Compliance', () => {
-    it('should respect LGPD consent for notifications', () => {
+  describe("LGPD Compliance", () => {
+    it("should respect LGPD consent for notifications", () => {
       testMetadata.lgpdConsent.canReceiveNotifications = false;
       handleWebSocketConnection(mockWs as any, testMetadata);
 
@@ -348,33 +364,36 @@ describe('WebSocket Integration Middleware (T070)', () => {
       expect(welcomeMessage.metadata.lgpdConsent).toBe(true); // Still shows AI consent status
     });
 
-    it('should include LGPD metadata in messages', () => {
+    it("should include LGPD metadata in messages", () => {
       handleWebSocketConnection(mockWs as any, testMetadata);
 
       const welcomeMessage = JSON.parse(mockWs.messages[0]);
       expect(welcomeMessage.metadata).toBeDefined();
-      expect(welcomeMessage.metadata.userId).toBe('user-123');
+      expect(welcomeMessage.metadata.userId).toBe("user-123");
       expect(welcomeMessage.metadata.healthcareContext).toBe(true);
       expect(welcomeMessage.metadata.lgpdConsent).toBe(true);
     });
   });
 
-  describe('Healthcare Professional Context', () => {
-    it('should preserve healthcare professional information', () => {
-      const connectionId = handleWebSocketConnection(mockWs as any, testMetadata);
+  describe("Healthcare Professional Context", () => {
+    it("should preserve healthcare professional information", () => {
+      const connectionId = handleWebSocketConnection(
+        mockWs as any,
+        testMetadata,
+      );
       const metadata = wsManager.getConnectionMetadata(connectionId);
 
       expect(metadata?.healthcareProfessional).toBeDefined();
-      expect(metadata?.healthcareProfessional?.crmNumber).toBe('12345-SP');
-      expect(metadata?.healthcareProfessional?.specialty).toBe('Dermatologia');
+      expect(metadata?.healthcareProfessional?.crmNumber).toBe("12345-SP");
+      expect(metadata?.healthcareProfessional?.specialty).toBe("Dermatologia");
     });
 
-    it('should include healthcare context in welcome message', () => {
+    it("should include healthcare context in welcome message", () => {
       handleWebSocketConnection(mockWs as any, testMetadata);
 
       const welcomeMessage = JSON.parse(mockWs.messages[0]);
       expect(welcomeMessage.metadata.healthcareContext).toBe(true);
-      expect(welcomeMessage.data.features).toContain('ai_chat');
+      expect(welcomeMessage.data.features).toContain("ai_chat");
     });
   });
 });

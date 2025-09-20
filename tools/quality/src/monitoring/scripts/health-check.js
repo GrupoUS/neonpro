@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import https from 'https';
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import https from "https";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -15,55 +15,55 @@ class HealthChecker {
   }
 
   loadConfig() {
-    const configPath = path.join(__dirname, '../config/health-checks.json');
-    return JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    const configPath = path.join(__dirname, "../config/health-checks.json");
+    return JSON.parse(fs.readFileSync(configPath, "utf8"));
   }
 
   async checkEndpoint(name, config) {
     const startTime = Date.now();
-    
+
     return new Promise((resolve) => {
       const options = {
-        hostname: process.env.DEPLOYMENT_URL || 'localhost',
+        hostname: process.env.DEPLOYMENT_URL || "localhost",
         port: 443,
         path: config.endpoint,
-        method: 'GET',
-        timeout: config.timeout * 1000
+        method: "GET",
+        timeout: config.timeout * 1000,
       };
 
       const req = https.request(options, (res) => {
         const responseTime = Date.now() - startTime;
         const success = res.statusCode === config.expectedStatus;
-        
+
         resolve({
           name,
           endpoint: config.endpoint,
           success,
           statusCode: res.statusCode,
           responseTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       });
 
-      req.on('error', (error) => {
+      req.on("error", (error) => {
         resolve({
           name,
           endpoint: config.endpoint,
           success: false,
           error: error.message,
           responseTime: Date.now() - startTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       });
 
-      req.on('timeout', () => {
+      req.on("timeout", () => {
         resolve({
           name,
           endpoint: config.endpoint,
           success: false,
-          error: 'Timeout',
+          error: "Timeout",
           responseTime: config.timeout * 1000,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       });
 
@@ -72,18 +72,18 @@ class HealthChecker {
   }
 
   async runHealthChecks() {
-    console.log('🏥 Running Health Checks...');
-    console.log('============================');
+    console.log("🏥 Running Health Checks...");
+    console.log("============================");
 
     for (const [name, config] of Object.entries(this.config.healthChecks)) {
       const result = await this.checkEndpoint(name, config);
       this.results.push(result);
-      
-      const status = result.success ? '✅' : '❌';
-      const time = result.responseTime ? `(${result.responseTime}ms)` : '';
-      
+
+      const status = result.success ? "✅" : "❌";
+      const time = result.responseTime ? `(${result.responseTime}ms)` : "";
+
       console.log(`${status} ${name}: ${result.endpoint} ${time}`);
-      
+
       if (!result.success && result.error) {
         console.log(`   Error: ${result.error}`);
       }
@@ -94,16 +94,16 @@ class HealthChecker {
   }
 
   saveResults() {
-    const logPath = path.join(__dirname, '../logs/health-check-results.json');
+    const logPath = path.join(__dirname, "../logs/health-check-results.json");
     const logEntry = {
       timestamp: new Date().toISOString(),
-      results: this.results
+      results: this.results,
     };
 
     // Append to log file
     const logs = this.loadExistingLogs(logPath);
     logs.push(logEntry);
-    
+
     // Keep only last 1000 entries
     if (logs.length > 1000) {
       logs.splice(0, logs.length - 1000);
@@ -114,23 +114,23 @@ class HealthChecker {
 
   loadExistingLogs(logPath) {
     try {
-      return JSON.parse(fs.readFileSync(logPath, 'utf8'));
+      return JSON.parse(fs.readFileSync(logPath, "utf8"));
     } catch {
       return [];
     }
   }
 
   checkAlerts() {
-    const failedChecks = this.results.filter(r => !r.success);
-    
+    const failedChecks = this.results.filter((r) => !r.success);
+
     if (failedChecks.length > 0) {
-      console.log('🚨 ALERT: Health check failures detected!');
-      console.log('Failed checks:', failedChecks.map(f => f.name).join(', '));
-      
+      console.log("🚨 ALERT: Health check failures detected!");
+      console.log("Failed checks:", failedChecks.map((f) => f.name).join(", "));
+
       // Here you would integrate with your alerting system
       // this.sendAlert(failedChecks);
     } else {
-      console.log('✅ All health checks passed!');
+      console.log("✅ All health checks passed!");
     }
   }
 }

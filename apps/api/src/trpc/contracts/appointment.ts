@@ -10,9 +10,9 @@ import {
   HealthcareTRPCError,
   PaginationSchema,
   UpdateAppointmentRequestSchema,
-} from '@neonpro/types';
-import { z } from 'zod';
-import { protectedProcedure, router } from '../trpc';
+} from "@neonpro/types";
+import { z } from "zod";
+import { protectedProcedure, router } from "../trpc";
 
 export const appointmentRouter = router({
   /**
@@ -20,9 +20,10 @@ export const appointmentRouter = router({
    */
   create: protectedProcedure
     .meta({
-      description: 'Create new appointment with conflict detection and AI no-show prediction',
-      tags: ['appointment', 'create', 'ai-prediction'],
-      requiresPermission: 'appointment:create',
+      description:
+        "Create new appointment with conflict detection and AI no-show prediction",
+      tags: ["appointment", "create", "ai-prediction"],
+      requiresPermission: "appointment:create",
     })
     .input(CreateAppointmentRequestSchema)
     .output(AppointmentResponseSchema)
@@ -38,9 +39,9 @@ export const appointmentRouter = router({
 
       if (!patient) {
         throw new HealthcareTRPCError(
-          'NOT_FOUND',
-          'Patient not found or inactive',
-          'PATIENT_NOT_FOUND',
+          "NOT_FOUND",
+          "Patient not found or inactive",
+          "PATIENT_NOT_FOUND",
           { patientId: input.patientId },
         );
       }
@@ -56,21 +57,23 @@ export const appointmentRouter = router({
 
       if (!professional) {
         throw new HealthcareTRPCError(
-          'NOT_FOUND',
-          'Professional not found or unavailable',
-          'PROFESSIONAL_UNAVAILABLE',
+          "NOT_FOUND",
+          "Professional not found or unavailable",
+          "PROFESSIONAL_UNAVAILABLE",
           { professionalId: input.professionalId },
         );
       }
 
       // Check for appointment conflicts
       const appointmentDate = new Date(input.scheduledDate);
-      const endDate = new Date(appointmentDate.getTime() + input.duration * 60000);
+      const endDate = new Date(
+        appointmentDate.getTime() + input.duration * 60000,
+      );
 
       const conflictingAppointment = await ctx.prisma.appointment.findFirst({
         where: {
           professionalId: input.professionalId,
-          status: { in: ['scheduled', 'confirmed', 'in_progress'] },
+          status: { in: ["scheduled", "confirmed", "in_progress"] },
           OR: [
             {
               startTime: { lte: appointmentDate },
@@ -90,9 +93,9 @@ export const appointmentRouter = router({
 
       if (conflictingAppointment) {
         throw new HealthcareTRPCError(
-          'BAD_REQUEST',
-          'Appointment conflicts with existing booking',
-          'APPOINTMENT_CONFLICT',
+          "BAD_REQUEST",
+          "Appointment conflicts with existing booking",
+          "APPOINTMENT_CONFLICT",
           {
             conflictingAppointmentId: conflictingAppointment.id,
             conflictDate: conflictingAppointment.startTime,
@@ -101,11 +104,11 @@ export const appointmentRouter = router({
       }
 
       // Validate appointment is not in the past (except for emergency)
-      if (appointmentDate < new Date() && input.priority !== 'emergency') {
+      if (appointmentDate < new Date() && input.priority !== "emergency") {
         throw new HealthcareTRPCError(
-          'BAD_REQUEST',
-          'Cannot schedule appointment in the past',
-          'APPOINTMENT_PAST_DUE',
+          "BAD_REQUEST",
+          "Cannot schedule appointment in the past",
+          "APPOINTMENT_PAST_DUE",
           { scheduledDate: input.scheduledDate },
         );
       }
@@ -124,7 +127,7 @@ export const appointmentRouter = router({
         data: {
           ...input,
           endDate: endDate,
-          status: 'scheduled',
+          status: "scheduled",
           noShowRisk: noShowPrediction.risk,
           riskFactors: noShowPrediction.factors,
           createdBy: ctx.user.id,
@@ -147,7 +150,7 @@ export const appointmentRouter = router({
       });
 
       // Send notifications based on priority
-      if (input.priority === 'emergency') {
+      if (input.priority === "emergency") {
         await sendEmergencyNotification(appointment);
       } else {
         await scheduleAppointmentReminders(appointment);
@@ -156,8 +159,8 @@ export const appointmentRouter = router({
       // Audit log
       await ctx.prisma.auditLog.create({
         data: {
-          action: 'appointment_created',
-          entityType: 'appointment',
+          action: "appointment_created",
+          entityType: "appointment",
           entityId: appointment.id,
           details: {
             patientId: input.patientId,
@@ -173,7 +176,7 @@ export const appointmentRouter = router({
       return {
         success: true,
         data: appointment,
-        message: 'Appointment created successfully',
+        message: "Appointment created successfully",
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
       };
@@ -184,16 +187,18 @@ export const appointmentRouter = router({
    */
   getById: protectedProcedure
     .meta({
-      description: 'Get appointment by ID with related data',
-      tags: ['appointment', 'read'],
-      requiresPermission: 'appointment:read',
+      description: "Get appointment by ID with related data",
+      tags: ["appointment", "read"],
+      requiresPermission: "appointment:read",
     })
-    .input(z.object({
-      id: z.string().uuid(),
-      includePatient: z.boolean().default(true),
-      includeProfessional: z.boolean().default(true),
-      includeMedicalHistory: z.boolean().default(false),
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        includePatient: z.boolean().default(true),
+        includeProfessional: z.boolean().default(true),
+        includeMedicalHistory: z.boolean().default(false),
+      }),
+    )
     .output(AppointmentResponseSchema)
     .query(async ({ input, ctx }) => {
       const appointment = await ctx.prisma.appointment.findUnique({
@@ -201,26 +206,26 @@ export const appointmentRouter = router({
         include: {
           patient: input.includePatient
             ? {
-              select: {
-                id: true,
-                fullName: true,
-                cpf: input.includeMedicalHistory,
-                phone: true,
-                email: true,
-                dateOfBirth: input.includeMedicalHistory,
-              },
-            }
+                select: {
+                  id: true,
+                  fullName: true,
+                  cpf: input.includeMedicalHistory,
+                  phone: true,
+                  email: true,
+                  dateOfBirth: input.includeMedicalHistory,
+                },
+              }
             : false,
           professional: input.includeProfessional
             ? {
-              select: {
-                id: true,
-                fullName: true,
-                specialization: true,
-                licenseNumber: true,
-                licenseType: true,
-              },
-            }
+                select: {
+                  id: true,
+                  fullName: true,
+                  specialization: true,
+                  licenseNumber: true,
+                  licenseType: true,
+                },
+              }
             : false,
           medicalHistory: input.includeMedicalHistory,
         },
@@ -228,9 +233,9 @@ export const appointmentRouter = router({
 
       if (!appointment) {
         throw new HealthcareTRPCError(
-          'NOT_FOUND',
-          'Appointment not found',
-          'APPOINTMENT_NOT_FOUND',
+          "NOT_FOUND",
+          "Appointment not found",
+          "APPOINTMENT_NOT_FOUND",
           { appointmentId: input.id },
         );
       }
@@ -251,26 +256,36 @@ export const appointmentRouter = router({
    */
   list: protectedProcedure
     .meta({
-      description: 'List appointments with filtering, search, and pagination',
-      tags: ['appointment', 'list', 'filter'],
-      requiresPermission: 'appointment:list',
+      description: "List appointments with filtering, search, and pagination",
+      tags: ["appointment", "list", "filter"],
+      requiresPermission: "appointment:list",
     })
-    .input(PaginationSchema.extend({
-      clinicId: z.string().uuid(),
-      patientId: z.string().uuid().optional(),
-      professionalId: z.string().uuid().optional(),
-      status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'])
-        .optional(),
-      priority: z.enum(['routine', 'urgent', 'emergency']).optional(),
-      dateFrom: z.string().datetime().optional(),
-      dateTo: z.string().datetime().optional(),
-      treatmentType: z.string().optional(),
-      highNoShowRisk: z.boolean().default(false),
-      sortBy: z.enum(['scheduledDate', 'createdAt', 'noShowRisk', 'priority']).default(
-        'scheduledDate',
-      ),
-      sortOrder: z.enum(['asc', 'desc']).default('asc'),
-    }))
+    .input(
+      PaginationSchema.extend({
+        clinicId: z.string().uuid(),
+        patientId: z.string().uuid().optional(),
+        professionalId: z.string().uuid().optional(),
+        status: z
+          .enum([
+            "scheduled",
+            "confirmed",
+            "in_progress",
+            "completed",
+            "cancelled",
+            "no_show",
+          ])
+          .optional(),
+        priority: z.enum(["routine", "urgent", "emergency"]).optional(),
+        dateFrom: z.string().datetime().optional(),
+        dateTo: z.string().datetime().optional(),
+        treatmentType: z.string().optional(),
+        highNoShowRisk: z.boolean().default(false),
+        sortBy: z
+          .enum(["scheduledDate", "createdAt", "noShowRisk", "priority"])
+          .default("scheduledDate"),
+        sortOrder: z.enum(["asc", "desc"]).default("asc"),
+      }),
+    )
     .output(AppointmentsListResponseSchema)
     .query(async ({ input, ctx }) => {
       // Validate clinic access
@@ -283,15 +298,15 @@ export const appointmentRouter = router({
         ...(input.status && { status: input.status }),
         ...(input.priority && { priority: input.priority }),
         ...(input.treatmentType && {
-          treatmentType: { contains: input.treatmentType, mode: 'insensitive' },
+          treatmentType: { contains: input.treatmentType, mode: "insensitive" },
         }),
         ...(input.highNoShowRisk && { noShowRisk: { gte: 0.7 } }),
-        ...(input.dateFrom || input.dateTo) && {
+        ...((input.dateFrom || input.dateTo) && {
           scheduledDate: {
             ...(input.dateFrom && { gte: new Date(input.dateFrom) }),
             ...(input.dateTo && { lte: new Date(input.dateTo) }),
           },
-        },
+        }),
       };
 
       const [appointments, total] = await Promise.all([
@@ -341,9 +356,9 @@ export const appointmentRouter = router({
    */
   update: protectedProcedure
     .meta({
-      description: 'Update appointment with status change tracking',
-      tags: ['appointment', 'update', 'status'],
-      requiresPermission: 'appointment:update',
+      description: "Update appointment with status change tracking",
+      tags: ["appointment", "update", "status"],
+      requiresPermission: "appointment:update",
     })
     .input(UpdateAppointmentRequestSchema)
     .output(AppointmentResponseSchema)
@@ -354,9 +369,9 @@ export const appointmentRouter = router({
 
       if (!currentAppointment) {
         throw new HealthcareTRPCError(
-          'NOT_FOUND',
-          'Appointment not found',
-          'APPOINTMENT_NOT_FOUND',
+          "NOT_FOUND",
+          "Appointment not found",
+          "APPOINTMENT_NOT_FOUND",
           { appointmentId: input.id },
         );
       }
@@ -365,11 +380,14 @@ export const appointmentRouter = router({
       await validateClinicAccess(ctx.user.id, currentAppointment.clinicId);
 
       // Check if status change is valid
-      if (input.status && !isValidStatusTransition(currentAppointment.status, input.status)) {
+      if (
+        input.status &&
+        !isValidStatusTransition(currentAppointment.status, input.status)
+      ) {
         throw new HealthcareTRPCError(
-          'BAD_REQUEST',
+          "BAD_REQUEST",
           `Invalid status transition from ${currentAppointment.status} to ${input.status}`,
-          'INVALID_STATUS_TRANSITION',
+          "INVALID_STATUS_TRANSITION",
           {
             currentStatus: currentAppointment.status,
             requestedStatus: input.status,
@@ -379,8 +397,8 @@ export const appointmentRouter = router({
 
       // Handle rescheduling conflicts
       if (
-        input.scheduledDate
-        && input.scheduledDate !== currentAppointment.scheduledDate.toISOString()
+        input.scheduledDate &&
+        input.scheduledDate !== currentAppointment.scheduledDate.toISOString()
       ) {
         await checkRescheduleConflicts(
           input.id,
@@ -397,8 +415,8 @@ export const appointmentRouter = router({
           ...input,
           ...(input.scheduledDate && {
             endDate: new Date(
-              new Date(input.scheduledDate).getTime()
-                + (input.duration || currentAppointment.duration) * 60000,
+              new Date(input.scheduledDate).getTime() +
+                (input.duration || currentAppointment.duration) * 60000,
             ),
           }),
           updatedAt: new Date(),
@@ -423,14 +441,19 @@ export const appointmentRouter = router({
 
       // Handle status-specific actions
       if (input.status) {
-        await handleStatusChange(updatedAppointment, currentAppointment.status, input.status, ctx);
+        await handleStatusChange(
+          updatedAppointment,
+          currentAppointment.status,
+          input.status,
+          ctx,
+        );
       }
 
       // Audit log
       await ctx.prisma.auditLog.create({
         data: {
-          action: 'appointment_updated',
-          entityType: 'appointment',
+          action: "appointment_updated",
+          entityType: "appointment",
           entityId: input.id,
           details: {
             changes: getChanges(currentAppointment, input),
@@ -444,7 +467,7 @@ export const appointmentRouter = router({
       return {
         success: true,
         data: updatedAppointment,
-        message: 'Appointment updated successfully',
+        message: "Appointment updated successfully",
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
       };
@@ -455,21 +478,25 @@ export const appointmentRouter = router({
    */
   cancel: protectedProcedure
     .meta({
-      description: 'Cancel appointment with reason tracking and notifications',
-      tags: ['appointment', 'cancel'],
-      requiresPermission: 'appointment:cancel',
+      description: "Cancel appointment with reason tracking and notifications",
+      tags: ["appointment", "cancel"],
+      requiresPermission: "appointment:cancel",
     })
-    .input(z.object({
-      id: z.string().uuid(),
-      reason: z.string().min(5).max(500),
-      notifyPatient: z.boolean().default(true),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        reason: z.string().min(5).max(500),
+        notifyPatient: z.boolean().default(true),
+      }),
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const appointment = await ctx.prisma.appointment.findUnique({
         where: { id: input.id },
@@ -482,9 +509,9 @@ export const appointmentRouter = router({
 
       if (!appointment) {
         throw new HealthcareTRPCError(
-          'NOT_FOUND',
-          'Appointment not found',
-          'APPOINTMENT_NOT_FOUND',
+          "NOT_FOUND",
+          "Appointment not found",
+          "APPOINTMENT_NOT_FOUND",
           { appointmentId: input.id },
         );
       }
@@ -493,11 +520,11 @@ export const appointmentRouter = router({
       await validateClinicAccess(ctx.user.id, appointment.clinicId);
 
       // Check if appointment can be cancelled
-      if (!['scheduled', 'confirmed'].includes(appointment.status)) {
+      if (!["scheduled", "confirmed"].includes(appointment.status)) {
         throw new HealthcareTRPCError(
-          'BAD_REQUEST',
+          "BAD_REQUEST",
           `Cannot cancel appointment with status: ${appointment.status}`,
-          'INVALID_CANCELLATION',
+          "INVALID_CANCELLATION",
           { currentStatus: appointment.status },
         );
       }
@@ -506,7 +533,7 @@ export const appointmentRouter = router({
       await ctx.prisma.appointment.update({
         where: { id: input.id },
         data: {
-          status: 'cancelled',
+          status: "cancelled",
           cancellationReason: input.reason,
           cancelledAt: new Date(),
           cancelledBy: ctx.user.id,
@@ -521,8 +548,8 @@ export const appointmentRouter = router({
       // Audit log
       await ctx.prisma.auditLog.create({
         data: {
-          action: 'appointment_cancelled',
-          entityType: 'appointment',
+          action: "appointment_cancelled",
+          entityType: "appointment",
           entityId: input.id,
           details: {
             reason: input.reason,
@@ -535,7 +562,7 @@ export const appointmentRouter = router({
 
       return {
         success: true,
-        message: 'Appointment cancelled successfully',
+        message: "Appointment cancelled successfully",
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
       };
@@ -554,15 +581,15 @@ async function calculateNoShowRisk(params: {
   // This would integrate with your ML model
   return {
     risk: 0.2,
-    factors: ['no_previous_no_shows', 'confirmed_appointment'],
+    factors: ["no_previous_no_shows", "confirmed_appointment"],
   };
 }
 
 function isValidStatusTransition(current: string, next: string): boolean {
   const validTransitions = {
-    scheduled: ['confirmed', 'cancelled', 'no_show'],
-    confirmed: ['in_progress', 'cancelled', 'no_show'],
-    in_progress: ['completed', 'cancelled'],
+    scheduled: ["confirmed", "cancelled", "no_show"],
+    confirmed: ["in_progress", "cancelled", "no_show"],
+    in_progress: ["completed", "cancelled"],
     completed: [], // Terminal state
     cancelled: [], // Terminal state
     no_show: [], // Terminal state
@@ -589,13 +616,13 @@ async function handleStatusChange(
 ): Promise<void> {
   // Handle status-specific notifications and actions
   switch (newStatus) {
-    case 'confirmed':
+    case "confirmed":
       await sendConfirmationNotification(appointment);
       break;
-    case 'completed':
+    case "completed":
       await scheduleFollowUpReminder(appointment);
       break;
-    case 'no_show':
+    case "no_show":
       await updateNoShowStatistics(appointment.patientId);
       break;
   }
@@ -603,8 +630,12 @@ async function handleStatusChange(
 
 function getChanges(current: any, input: any): Record<string, any> {
   const changes = {};
-  Object.keys(input).forEach(key => {
-    if (key !== 'id' && input[key] !== undefined && input[key] !== current[key]) {
+  Object.keys(input).forEach((key) => {
+    if (
+      key !== "id" &&
+      input[key] !== undefined &&
+      input[key] !== current[key]
+    ) {
       changes[key] = {
         from: current[key],
         to: input[key],
@@ -627,7 +658,10 @@ async function sendConfirmationNotification(_appointment: any): Promise<void> {
   // Implementation for confirmation notifications
 }
 
-async function sendCancellationNotification(_appointment: any, _reason: string): Promise<void> {
+async function sendCancellationNotification(
+  _appointment: any,
+  _reason: string,
+): Promise<void> {
   // Implementation for cancellation notifications
 }
 
@@ -639,7 +673,10 @@ async function updateNoShowStatistics(_patientId: string): Promise<void> {
   // Implementation for no-show statistics tracking
 }
 
-async function validateClinicAccess(_userId: string, _clinicId: string): Promise<void> {
+async function validateClinicAccess(
+  _userId: string,
+  _clinicId: string,
+): Promise<void> {
   // Implementation for clinic access validation
   return Promise.resolve();
 }

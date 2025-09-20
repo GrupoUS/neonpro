@@ -7,6 +7,7 @@ Based on the PRD for AI Agent Database Integration, this plan outlines the imple
 ## 2. Technical Context
 
 ### Language & Frameworks
+
 - **Frontend**: React 19 + TypeScript + Vite
 - **Backend**: Node.js + tRPC + TypeScript
 - **Database**: Supabase (PostgreSQL) with RLS
@@ -14,6 +15,7 @@ Based on the PRD for AI Agent Database Integration, this plan outlines the imple
 - **RAG**: ottomator-agents patterns
 
 ### Dependencies
+
 ```json
 {
   "copilotkit": "^1.3.0",
@@ -27,12 +29,14 @@ Based on the PRD for AI Agent Database Integration, this plan outlines the imple
 ```
 
 ### Testing Strategy
+
 - **Unit**: Jest + React Testing Library
 - **Integration**: Playwright for E2E
 - **Contract**: OpenAPI validation
 - **Security**: OWASP ZAP scans
 
 ### Platform Constraints
+
 - **Deployment**: Vercel (frontend) + Supabase Edge Functions
 - **Compliance**: LGPD/ANVISA/CFM requirements
 - **Performance**: <2s response time for agents
@@ -41,26 +45,31 @@ Based on the PRD for AI Agent Database Integration, this plan outlines the imple
 ## 3. Constitution Check
 
 ### ✓ Simplicity (KISS)
+
 - Using established patterns from existing codebase
 - Leveraging existing Supabase integration
 - Minimal abstraction layers
 
 ### ✓ Architecture
+
 - Follows monorepo structure
 - Uses existing tRPC patterns
 - Maintains separation of concerns
 
 ### ✓ Testing
+
 - TDD approach mandated
 - Test coverage ≥90%
 - Security testing included
 
 ### ✓ Observability
+
 - Integration with existing metrics service
 - Agent performance tracking
 - Error boundary implementation
 
 ### ✓ Versioning
+
 - Semantic versioning for new packages
 - API versioning through tRPC
 - Database migration versioning
@@ -68,6 +77,7 @@ Based on the PRD for AI Agent Database Integration, this plan outlines the imple
 ## 4. Phase 0: Outline & Research
 
 ### Outputs:
+
 - [x] `docs/features/ai-agent-database-integration.md` (Feature documentation)
 - [x] `docs/features/ai-agent-database-integration-research.md` (Research findings)
 - [x] `specs/ai-agent-database-integration/prd.md` (Product requirements)
@@ -77,14 +87,16 @@ Based on the PRD for AI Agent Database Integration, this plan outlines the imple
 ## 5. Phase 1: Design & Contracts
 
 ### 5.1 Data Model Design
+
 #### File: `specs/ai-agent-database-integration/data-model.md`
 
-```markdown
+````markdown
 # AI Agent Database Integration - Data Model
 
 ## Core Tables
 
 ### agent_sessions
+
 ```sql
 CREATE TABLE agent_sessions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -101,8 +113,10 @@ CREATE POLICY "Users can access their own sessions" ON agent_sessions
   FOR ALL TO authenticated
   USING (auth.uid() = user_id);
 ```
+````
 
 ### agent_messages
+
 ```sql
 CREATE TABLE agent_messages (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -118,13 +132,14 @@ CREATE POLICY "Users can access their session messages" ON agent_messages
   FOR ALL TO authenticated
   USING (
     session_id IN (
-      SELECT id FROM agent_sessions 
+      SELECT id FROM agent_sessions
       WHERE user_id = auth.uid()
     )
   );
 ```
 
 ### agent_knowledge_base
+
 ```sql
 CREATE TABLE agent_knowledge_base (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -145,9 +160,10 @@ CREATE POLICY "Enable read for all users" ON agent_knowledge_base
 ## Enhanced Views
 
 ### client_agent_view
+
 ```sql
 CREATE VIEW client_agent_view AS
-SELECT 
+SELECT
   c.id,
   c.name,
   c.email,
@@ -161,9 +177,10 @@ GROUP BY c.id, c.name, c.email, c.phone, c.status;
 ```
 
 ### financial_agent_view
+
 ```sql
 CREATE VIEW financial_agent_view AS
-SELECT 
+SELECT
   i.id,
   i.patient_id,
   p.name as patient_name,
@@ -171,7 +188,7 @@ SELECT
   i.status,
   i.due_date,
   i.paid_at,
-  CASE 
+  CASE
     WHEN i.status = 'paid' THEN 'Pago'
     WHEN i.due_date < NOW() THEN 'Vencido'
     ELSE 'Pendente'
@@ -186,7 +203,8 @@ JOIN patients p ON i.patient_id = p.id;
 2. Sensitive data encrypted at rest
 3. Audit logging for all agent actions
 4. Data retention policies compliant with LGPD
-```
+
+````
 
 ### 5.2 API Contracts
 #### Directory: `specs/ai-agent-database-integration/contracts/`
@@ -319,76 +337,98 @@ components:
           type: string
         source:
           type: string
-```
+````
 
 ##### tRPC Router Definition: `agent-router.ts`
+
 ```typescript
 import { z } from "zod";
 import { router, protectedProcedure } from "../trpc";
 
 export const agentRouter = router({
   chat: protectedProcedure
-    .input(z.object({
-      agentType: z.enum(["client", "financial", "appointment"]),
-      message: z.string(),
-      sessionId: z.string().uuid().optional()
-    }))
-    .output(z.object({
-      response: z.string(),
-      sessionId: z.string().uuid(),
-      sources: z.array(z.object({
-        type: z.string(),
-        content: z.string()
-      }))
-    }))
+    .input(
+      z.object({
+        agentType: z.enum(["client", "financial", "appointment"]),
+        message: z.string(),
+        sessionId: z.string().uuid().optional(),
+      }),
+    )
+    .output(
+      z.object({
+        response: z.string(),
+        sessionId: z.string().uuid(),
+        sources: z.array(
+          z.object({
+            type: z.string(),
+            content: z.string(),
+          }),
+        ),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       // Implementation
     }),
 
   getSession: protectedProcedure
-    .input(z.object({
-      sessionId: z.string().uuid()
-    }))
-    .output(z.object({
-      messages: z.array(z.object({
-        id: z.string().uuid(),
-        role: z.enum(["user", "assistant", "system"]),
-        content: z.string(),
-        createdAt: z.date()
-      }))
-    }))
+    .input(
+      z.object({
+        sessionId: z.string().uuid(),
+      }),
+    )
+    .output(
+      z.object({
+        messages: z.array(
+          z.object({
+            id: z.string().uuid(),
+            role: z.enum(["user", "assistant", "system"]),
+            content: z.string(),
+            createdAt: z.date(),
+          }),
+        ),
+      }),
+    )
     .query(async ({ input, ctx }) => {
       // Implementation
     }),
 
   getKnowledge: protectedProcedure
-    .input(z.object({
-      agentType: z.enum(["client", "financial", "appointment"])
-    }))
-    .output(z.array(z.object({
-      id: z.string().uuid(),
-      agentType: z.string(),
-      content: z.string(),
-      source: z.string()
-    })))
+    .input(
+      z.object({
+        agentType: z.enum(["client", "financial", "appointment"]),
+      }),
+    )
+    .output(
+      z.array(
+        z.object({
+          id: z.string().uuid(),
+          agentType: z.string(),
+          content: z.string(),
+          source: z.string(),
+        }),
+      ),
+    )
     .query(async ({ input, ctx }) => {
       // Implementation
-    })
+    }),
 });
 ```
 
 ### 5.3 Quick Start Guide
+
 #### File: `specs/ai-agent-database-integration/quickstart.md`
 
-```markdown
+````markdown
 # AI Agent Integration Quick Start
 
 ## Prerequisites
+
 1. Node.js 18+
 2. Supabase project with migrations applied
 3. OpenAI API key
 
 ## Setup
+
 ```bash
 # Install dependencies
 pnpm add copilotkit @copilotkit/react @copilotkit/runtime
@@ -400,8 +440,10 @@ pnpm db:push
 # Build the project
 pnpm build
 ```
+````
 
 ## Basic Usage
+
 ```tsx
 // In your React component
 import { CopilotKit } from "@copilotkit/react";
@@ -410,7 +452,7 @@ import { useCoAgent } from "@copilotkit/react";
 function AgentChat() {
   const { agentState, addMessage } = useCoAgent({
     name: "client_agent",
-    initialState: { input: "" }
+    initialState: { input: "" },
   });
 
   return (
@@ -422,6 +464,7 @@ function AgentChat() {
 ```
 
 ## Testing
+
 ```bash
 # Run tests
 pnpm test
@@ -431,9 +474,11 @@ pnpm test:e2e
 ```
 
 ## Deployment
+
 1. Set environment variables
 2. Deploy to Vercel
 3. Configure Supabase Edge Functions
+
 ```
 
 ## 6. Phase 2: Task Planning
@@ -480,3 +525,4 @@ pnpm test:e2e
 3. Zero security vulnerabilities
 4. User satisfaction score ≥ 4.5/5
 5. Compliance audit pass rate 100%
+```

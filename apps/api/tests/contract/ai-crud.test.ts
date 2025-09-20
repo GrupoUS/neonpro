@@ -17,63 +17,66 @@
  * - ANVISA data integrity standards
  */
 
-import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { createTestClient } from '../helpers/auth';
-import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { createTestClient } from "../helpers/auth";
+import { cleanupTestDatabase, setupTestDatabase } from "../helpers/database";
 
-describe('Contract Test T009: POST /api/v1/ai/crud', () => {
+// Import test setup to configure mocks
+import "../../src/test-setup";
+
+describe("Contract Test T009: POST /api/v1/ai/crud", () => {
   let testClient: any;
   let patientId: string;
   let recordId: string;
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: 'admin' });
-    patientId = 'test-patient-lgpd-123';
-    recordId = 'test-record-456';
+    testClient = createTestClient({ role: "admin" });
+    patientId = "test-patient-lgpd-123";
+    recordId = "test-record-456";
   });
 
   afterEach(async () => {
     await cleanupTestDatabase();
   });
 
-  describe('CREATE Operations with LGPD Compliance', () => {
-    it('should create patient AI record with data minimization', async () => {
+  describe("CREATE Operations with LGPD Compliance", () => {
+    it("should create patient AI record with data minimization", async () => {
       const createRequest = {
-        operation: 'CREATE',
-        entityType: 'ai_patient_record',
+        operation: "CREATE",
+        entityType: "ai_patient_record",
         data: {
           patientId,
           personalData: {
-            nome: 'Maria Silva Santos',
-            cpf: '123.456.789-01',
-            dataNascimento: '1985-05-15',
-            telefone: '(11) 98765-4321',
+            nome: "Maria Silva Santos",
+            cpf: "123.456.789-01",
+            dataNascimento: "1985-05-15",
+            telefone: "(11) 98765-4321",
           },
           medicalData: {
-            alergias: ['penicilina'],
-            medicamentos: ['losartana 50mg'],
-            historico: 'Hipertensão controlada',
+            alergias: ["penicilina"],
+            medicamentos: ["losartana 50mg"],
+            historico: "Hipertensão controlada",
           },
           consentData: {
             lgpdConsent: true,
             consentDate: new Date().toISOString(),
-            purposeLimitation: ['treatment', 'ai_analysis'],
-            dataRetentionPeriod: '5_anos',
+            purposeLimitation: ["treatment", "ai_analysis"],
+            dataRetentionPeriod: "5_anos",
           },
           brazilianContext: {
-            region: 'sudeste',
-            healthInsurance: 'particular',
+            region: "sudeste",
+            healthInsurance: "particular",
             culturalFactors: true,
           },
         },
       };
 
       // TDD RED: CRUD endpoint doesn't exist yet - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/crud", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(createRequest),
@@ -84,7 +87,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       const result = await response.json();
       expect(result).toMatchObject({
         recordId: expect.any(String),
-        operation: 'CREATE',
+        operation: "CREATE",
         lgpdCompliance: {
           dataMinimized: true,
           purposeLimited: true,
@@ -94,20 +97,20 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
         metadata: {
           createdAt: expect.any(String),
           version: 1,
-          dataClassification: 'sensitive_personal',
+          dataClassification: "sensitive_personal",
         },
       });
     });
 
-    it('should enforce consent requirements during creation', async () => {
+    it("should enforce consent requirements during creation", async () => {
       const createWithoutConsentRequest = {
-        operation: 'CREATE',
-        entityType: 'ai_patient_record',
+        operation: "CREATE",
+        entityType: "ai_patient_record",
         data: {
           patientId,
           personalData: {
-            nome: 'João Santos',
-            cpf: '987.654.321-01',
+            nome: "João Santos",
+            cpf: "987.654.321-01",
           },
           // Missing LGPD consent - should fail
           consentData: {
@@ -117,10 +120,10 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: Consent validation not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/crud", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(createWithoutConsentRequest),
@@ -130,36 +133,36 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       const error = await response.json();
       expect(error).toMatchObject({
-        error: 'LGPD_CONSENT_REQUIRED',
-        message: expect.stringContaining('consentimento'),
-        code: 'LGPD_001',
-        locale: 'pt-BR',
+        error: "LGPD_CONSENT_REQUIRED",
+        message: expect.stringContaining("consentimento"),
+        code: "LGPD_001",
+        locale: "pt-BR",
       });
     });
   });
 
-  describe('READ Operations with Access Control', () => {
-    it('should read patient data with audit logging', async () => {
+  describe("READ Operations with Access Control", () => {
+    it("should read patient data with audit logging", async () => {
       const readRequest = {
-        operation: 'READ',
-        entityType: 'ai_patient_record',
+        operation: "READ",
+        entityType: "ai_patient_record",
         filters: {
           recordId,
-          accessPurpose: 'medical_consultation',
-          requestingProfessional: 'CRM/SP 123456',
+          accessPurpose: "medical_consultation",
+          requestingProfessional: "CRM/SP 123456",
         },
         lgpdOptions: {
           logAccess: true,
           pseudonymize: false,
-          dataFields: ['personalData', 'medicalData'],
+          dataFields: ["personalData", "medicalData"],
         },
       };
 
       // TDD RED: READ with audit logging not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/crud", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(readRequest),
@@ -172,8 +175,8 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
         data: expect.any(Object),
         accessLog: {
           timestamp: expect.any(String),
-          purpose: 'medical_consultation',
-          professional: 'CRM/SP 123456',
+          purpose: "medical_consultation",
+          professional: "CRM/SP 123456",
           fieldsAccessed: expect.any(Array),
         },
         lgpdCompliance: {
@@ -184,26 +187,26 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       });
     });
 
-    it('should return pseudonymized data when requested', async () => {
+    it("should return pseudonymized data when requested", async () => {
       const pseudonymizedReadRequest = {
-        operation: 'READ',
-        entityType: 'ai_patient_record',
+        operation: "READ",
+        entityType: "ai_patient_record",
         filters: {
           recordId,
-          accessPurpose: 'research_analytics',
+          accessPurpose: "research_analytics",
         },
         lgpdOptions: {
           pseudonymize: true,
           removeDirectIdentifiers: true,
-          dataFields: ['medicalData'],
+          dataFields: ["medicalData"],
         },
       };
 
       // TDD RED: Pseudonymization not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/crud", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(pseudonymizedReadRequest),
@@ -225,25 +228,25 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
         },
       });
 
-      expect(result.data).not.toHaveProperty('personalData');
+      expect(result.data).not.toHaveProperty("personalData");
     });
   });
 
-  describe('UPDATE Operations with Versioning', () => {
-    it('should update record with version control and consent validation', async () => {
+  describe("UPDATE Operations with Versioning", () => {
+    it("should update record with version control and consent validation", async () => {
       const updateRequest = {
-        operation: 'UPDATE',
-        entityType: 'ai_patient_record',
+        operation: "UPDATE",
+        entityType: "ai_patient_record",
         filters: {
           recordId,
         },
         data: {
           medicalData: {
-            alergias: ['penicilina', 'dipirona'],
-            novasMedicacoes: ['enalapril 10mg'],
+            alergias: ["penicilina", "dipirona"],
+            novasMedicacoes: ["enalapril 10mg"],
           },
-          updateReason: 'Atualização de alergias e medicamentos',
-          professionalCRM: 'CRM/SP 123456',
+          updateReason: "Atualização de alergias e medicamentos",
+          professionalCRM: "CRM/SP 123456",
         },
         lgpdOptions: {
           validateConsent: true,
@@ -253,10 +256,10 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: Versioned updates not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/crud", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(updateRequest),
@@ -267,7 +270,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       const result = await response.json();
       expect(result).toMatchObject({
         recordId,
-        operation: 'UPDATE',
+        operation: "UPDATE",
         previousVersion: expect.any(Number),
         newVersion: expect.any(Number),
         lgpdCompliance: {
@@ -277,32 +280,32 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           dataIntegrityMaintained: true,
         },
         updateMetadata: {
-          updatedBy: 'CRM/SP 123456',
+          updatedBy: "CRM/SP 123456",
           updateReason: expect.any(String),
           timestamp: expect.any(String),
         },
       });
     });
 
-    it('should reject updates without valid consent', async () => {
+    it("should reject updates without valid consent", async () => {
       const invalidUpdateRequest = {
-        operation: 'UPDATE',
-        entityType: 'ai_patient_record',
+        operation: "UPDATE",
+        entityType: "ai_patient_record",
         filters: {
-          recordId: 'record-without-consent',
+          recordId: "record-without-consent",
         },
         data: {
           medicalData: {
-            newInfo: 'Tentativa de atualização sem consentimento',
+            newInfo: "Tentativa de atualização sem consentimento",
           },
         },
       };
 
       // TDD RED: Consent validation for updates not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/crud", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(invalidUpdateRequest),
@@ -312,40 +315,40 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
 
       const error = await response.json();
       expect(error).toMatchObject({
-        error: 'LGPD_CONSENT_INVALID',
-        message: expect.stringContaining('consentimento'),
-        code: 'LGPD_002',
-        locale: 'pt-BR',
+        error: "LGPD_CONSENT_INVALID",
+        message: expect.stringContaining("consentimento"),
+        code: "LGPD_002",
+        locale: "pt-BR",
       });
     });
   });
 
-  describe('DELETE Operations with Right to Erasure', () => {
-    it('should implement LGPD right to erasure (Art. 18, V)', async () => {
+  describe("DELETE Operations with Right to Erasure", () => {
+    it("should implement LGPD right to erasure (Art. 18, V)", async () => {
       const deleteRequest = {
-        operation: 'DELETE',
-        entityType: 'ai_patient_record',
+        operation: "DELETE",
+        entityType: "ai_patient_record",
         filters: {
           recordId,
         },
         lgpdOptions: {
           rightToErasure: true,
-          erasureReason: 'patient_request',
+          erasureReason: "patient_request",
           retainAuditTrail: true,
           anonymizeBeforeDelete: true,
         },
         patientRequest: {
           requestDate: new Date().toISOString(),
-          verificationMethod: 'cpf_validation',
-          requestedBy: 'titular_dados',
+          verificationMethod: "cpf_validation",
+          requestedBy: "titular_dados",
         },
       };
 
       // TDD RED: Right to erasure not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/crud", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(deleteRequest),
@@ -356,7 +359,7 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       const result = await response.json();
       expect(result).toMatchObject({
         recordId,
-        operation: 'DELETE',
+        operation: "DELETE",
         lgpdCompliance: {
           rightToErasureExercised: true,
           dataAnonymized: true,
@@ -365,20 +368,20 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
         },
         deletionMetadata: {
           deletedAt: expect.any(String),
-          reason: 'patient_request',
-          verification: 'cpf_validation',
+          reason: "patient_request",
+          verification: "cpf_validation",
           retentionPeriodExpired: expect.any(Boolean),
         },
       });
     });
 
-    it('should handle selective deletion with data preservation requirements', async () => {
+    it("should handle selective deletion with data preservation requirements", async () => {
       const selectiveDeleteRequest = {
-        operation: 'DELETE',
-        entityType: 'ai_patient_record',
+        operation: "DELETE",
+        entityType: "ai_patient_record",
         filters: {
           recordId,
-          dataTypes: ['personalData'], // Keep medical data for legal requirements
+          dataTypes: ["personalData"], // Keep medical data for legal requirements
         },
         lgpdOptions: {
           selectiveDeletion: true,
@@ -386,16 +389,16 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
           anonymizePersonalData: true,
         },
         legalBasis: {
-          medicalRecordRetention: 'cfm_resolution_1997',
-          retentionPeriod: '20_anos',
+          medicalRecordRetention: "cfm_resolution_1997",
+          retentionPeriod: "20_anos",
         },
       };
 
       // TDD RED: Selective deletion not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/crud", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(selectiveDeleteRequest),
@@ -406,9 +409,9 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       const result = await response.json();
       expect(result).toMatchObject({
         recordId,
-        operation: 'SELECTIVE_DELETE',
-        deletedFields: ['personalData'],
-        preservedFields: ['medicalData'],
+        operation: "SELECTIVE_DELETE",
+        deletedFields: ["personalData"],
+        preservedFields: ["medicalData"],
         lgpdCompliance: {
           personalDataDeleted: true,
           medicalDataPreserved: true,
@@ -418,11 +421,11 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
     });
   });
 
-  describe('Cross-operation LGPD Compliance', () => {
-    it('should maintain complete audit trail across all operations', async () => {
+  describe("Cross-operation LGPD Compliance", () => {
+    it("should maintain complete audit trail across all operations", async () => {
       const auditRequest = {
-        operation: 'AUDIT_TRAIL',
-        entityType: 'ai_patient_record',
+        operation: "AUDIT_TRAIL",
+        entityType: "ai_patient_record",
         filters: {
           recordId,
           timeRange: {
@@ -433,10 +436,10 @@ describe('Contract Test T009: POST /api/v1/ai/crud', () => {
       };
 
       // TDD RED: Comprehensive audit trail not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/crud', {
-        method: 'POST',
+      const response = await fetch("/api/v1/ai/crud", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           ...testClient.headers,
         },
         body: JSON.stringify(auditRequest),

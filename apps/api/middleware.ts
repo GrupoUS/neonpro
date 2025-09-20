@@ -5,18 +5,14 @@
  * compliance for all API requests, including LGPD, CFM, and ANVISA requirements.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { brazilianHealthcareEdge } from './src/middleware/edge-runtime';
+import { NextRequest, NextResponse } from "next/server";
+import { brazilianHealthcareEdge } from "./src/middleware/edge-runtime";
 
 // Configure edge runtime
 export const config = {
-  matcher: [
-    '/api/:path*',
-    '/health/:path*',
-    '/compliance/:path*',
-  ],
-  runtime: 'edge',
-  regions: ['sao1', 'gru1'], // São Paulo and Guarulhos, Brazil only
+  matcher: ["/api/:path*", "/health/:path*", "/compliance/:path*"],
+  runtime: "edge",
+  regions: ["sao1", "gru1"], // São Paulo and Guarulhos, Brazil only
 };
 
 export async function middleware(request: NextRequest) {
@@ -24,8 +20,10 @@ export async function middleware(request: NextRequest) {
 
   try {
     // Validate edge runtime environment on startup
-    if (process.env.NODE_ENV === 'production') {
-      const { BrazilianHealthcareEdgeRuntime } = await import('./src/middleware/edge-runtime');
+    if (process.env.NODE_ENV === "production") {
+      const { BrazilianHealthcareEdgeRuntime } = await import(
+        "./src/middleware/edge-runtime"
+      );
       BrazilianHealthcareEdgeRuntime.validateEdgeEnvironment();
     }
 
@@ -34,32 +32,34 @@ export async function middleware(request: NextRequest) {
 
     // Add performance metrics
     const responseTime = Date.now() - startTime;
-    response.headers.set('X-Edge-Processing-Time', `${responseTime}ms`);
-    response.headers.set('X-Processed-At', new Date().toISOString());
+    response.headers.set("X-Edge-Processing-Time", `${responseTime}ms`);
+    response.headers.set("X-Processed-At", new Date().toISOString());
 
     // Log compliance metrics
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`Healthcare Edge Runtime: ${request.url} processed in ${responseTime}ms`);
+    if (process.env.NODE_ENV === "development") {
+      console.log(
+        `Healthcare Edge Runtime: ${request.url} processed in ${responseTime}ms`,
+      );
     }
 
     return response;
   } catch (error) {
-    console.error('Middleware error:', error);
+    console.error("Middleware error:", error);
 
     // Return compliance error with proper headers
     return new NextResponse(
       JSON.stringify({
-        error: 'Healthcare compliance middleware failed',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        error: "Healthcare compliance middleware failed",
+        message: error instanceof Error ? error.message : "Unknown error",
         timestamp: new Date().toISOString(),
         processing_time: Date.now() - startTime,
       }),
       {
         status: 500,
         headers: {
-          'Content-Type': 'application/json',
-          'X-Error-Type': 'middleware-compliance-failure',
-          'X-Processing-Time': `${Date.now() - startTime}ms`,
+          "Content-Type": "application/json",
+          "X-Error-Type": "middleware-compliance-failure",
+          "X-Processing-Time": `${Date.now() - startTime}ms`,
         },
       },
     );
@@ -69,5 +69,5 @@ export async function middleware(request: NextRequest) {
 /**
  * Export runtime configuration for Vercel
  */
-export const runtime = 'edge';
-export const regions = ['sao1', 'gru1'];
+export const runtime = "edge";
+export const regions = ["sao1", "gru1"];

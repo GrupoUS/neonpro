@@ -24,6 +24,7 @@ CFM-Number: <professional-license>
 Retrieve a paginated list of patients with filtering and search capabilities.
 
 **Query Parameters**:
+
 - `page` (number, default: 1) - Page number
 - `limit` (number, default: 20) - Items per page
 - `search` (string) - Search term for name, CPF, or email
@@ -32,6 +33,7 @@ Retrieve a paginated list of patients with filtering and search capabilities.
 - `dateTo` (string) - Filter by registration date (ISO format)
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -65,6 +67,7 @@ Retrieve a paginated list of patients with filtering and search capabilities.
 Register a new patient with comprehensive validation and LGPD consent.
 
 **Request Body**:
+
 ```json
 {
   "name": "Maria Silva",
@@ -101,6 +104,7 @@ Register a new patient with comprehensive validation and LGPD consent.
 ```
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -121,6 +125,7 @@ Register a new patient with comprehensive validation and LGPD consent.
 Retrieve detailed information about a specific patient.
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -163,6 +168,7 @@ Retrieve detailed information about a specific patient.
 Update patient information with audit trail.
 
 **Request Body**:
+
 ```json
 {
   "name": "Maria Silva Santos",
@@ -185,6 +191,7 @@ Update patient information with audit trail.
 Soft delete a patient with LGPD compliance.
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -203,6 +210,7 @@ Soft delete a patient with LGPD compliance.
 Advanced patient search with multiple filters.
 
 **Request Body**:
+
 ```json
 {
   "filters": {
@@ -232,6 +240,7 @@ Advanced patient search with multiple filters.
 Perform bulk operations on multiple patients.
 
 **Request Body**:
+
 ```json
 {
   "action": "export",
@@ -248,6 +257,7 @@ Perform bulk operations on multiple patients.
 Retrieve patient audit trail and history.
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -283,6 +293,7 @@ Retrieve patient audit trail and history.
 Initiate or continue a chat session with AI assistant.
 
 **Request Body**:
+
 ```json
 {
   "sessionId": "optional-session-id",
@@ -298,6 +309,7 @@ Initiate or continue a chat session with AI assistant.
 ```
 
 **Response** (Streaming):
+
 ```json
 {
   "type": "message",
@@ -315,6 +327,7 @@ Initiate or continue a chat session with AI assistant.
 Retrieve AI-generated insights for a patient.
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -344,6 +357,7 @@ Retrieve AI-generated insights for a patient.
 Perform multi-modal AI analysis.
 
 **Request Body**:
+
 ```json
 {
   "type": "text",
@@ -360,6 +374,7 @@ Perform multi-modal AI analysis.
 Retrieve available AI models.
 
 **Response**:
+
 ```json
 {
   "success": true,
@@ -422,6 +437,7 @@ All endpoints return standardized error responses:
 ## WebSockets
 
 Real-time features available at:
+
 - `wss://api.example.com/ws/chat` - AI chat streaming
 - `wss://api.example.com/ws/patients` - Patient data updates
 - `wss://api.example.com/ws/notifications` - Real-time notifications
@@ -431,37 +447,38 @@ Real-time features available at:
 ### JavaScript/TypeScript
 
 ```typescript
-import { PatientAPI } from '@neonpro/api';
+import { PatientAPI } from "@neonpro/api";
 
 const api = new PatientAPI({
-  baseURL: 'https://api.example.com/api/v2',
-  token: 'your-jwt-token',
-  cfmNumber: '123456/SP'
+  baseURL: "https://api.example.com/api/v2",
+  token: "your-jwt-token",
+  cfmNumber: "123456/SP",
 });
 
 // List patients
 const patients = await api.patients.list({
-  search: 'Maria',
-  limit: 10
+  search: "Maria",
+  limit: 10,
 });
 
 // Create patient
 const patient = await api.patients.create({
-  name: 'Maria Silva',
-  cpf: '123.456.789-09',
-  email: 'maria.silva@email.com'
+  name: "Maria Silva",
+  cpf: "123.456.789-09",
+  email: "maria.silva@email.com",
 });
 
 // Chat with AI
 const response = await api.ai.chat({
-  message: 'Paciente apresenta dor abdominal',
-  context: { patientId: patient.id }
+  message: "Paciente apresenta dor abdominal",
+  context: { patientId: patient.id },
 });
 ```
 
 ## Testing
 
 Contract tests available in `/apps/api/tests/contract/`:
+
 - Patient API tests: `test_patients_*.ts`
 - AI API tests: `test_ai_*.ts`
 - Integration tests: `/tests/integration/`

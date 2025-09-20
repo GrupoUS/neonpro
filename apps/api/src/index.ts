@@ -1,6 +1,9 @@
-import { serve } from '@hono/node-server';
-import app from './app';
-import { initializeErrorTracking, shutdownErrorTracking } from './services/error-tracking-init';
+import { serve } from "@hono/node-server";
+import app from "./app";
+import {
+  initializeErrorTracking,
+  shutdownErrorTracking,
+} from "./services/error-tracking-init";
 
 // This is the Node entrypoint for the API. In serverless/Vercel, we use files under vercel/.
 const port = Number(process.env.PORT || 3005);
@@ -10,7 +13,7 @@ async function startServer() {
   try {
     // Initialize error tracking systems
     await initializeErrorTracking();
-    console.log('✅ Error tracking initialized');
+    console.log("✅ Error tracking initialized");
 
     if (process.env.VERCEL === undefined) {
       // Only start a local server when not running on Vercel
@@ -19,7 +22,7 @@ async function startServer() {
       console.log(`[api] listening on http://localhost:${port}`);
     }
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    console.error("❌ Failed to start server:", error);
     process.exit(1);
   }
 }
@@ -30,27 +33,27 @@ const gracefulShutdown = async (signal: string) => {
 
   try {
     await shutdownErrorTracking();
-    console.log('✅ Error tracking shutdown complete');
+    console.log("✅ Error tracking shutdown complete");
     process.exit(0);
   } catch (error) {
-    console.error('❌ Error during shutdown:', error);
+    console.error("❌ Error during shutdown:", error);
     process.exit(1);
   }
 };
 
 // Handle shutdown signals
-process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
-process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
 // Handle uncaught exceptions
-process.on('uncaughtException', error => {
-  console.error('❌ Uncaught Exception:', error);
-  gracefulShutdown('uncaughtException');
+process.on("uncaughtException", (error) => {
+  console.error("❌ Uncaught Exception:", error);
+  gracefulShutdown("uncaughtException");
 });
 
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('❌ Unhandled Rejection at:', promise, 'reason:', reason);
-  gracefulShutdown('unhandledRejection');
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
+  gracefulShutdown("unhandledRejection");
 });
 
 // Start the server

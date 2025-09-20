@@ -7,6 +7,7 @@ This document outlines the comprehensive frontend implementation strategy for in
 ## Architecture Overview
 
 ### Current State Analysis
+
 - **Backend**: Complete tRPC agent router with 10 endpoints (`/apps/api/src/trpc/routers/agent.ts`)
 - **Frontend**: Existing AI chat component (`apps/web/src/components/ai/ai-chat.tsx`)
 - **UI System**: shadcn/ui + custom KokonutUI components
@@ -14,6 +15,7 @@ This document outlines the comprehensive frontend implementation strategy for in
 - **AI SDK**: Vercel AI SDK integration partially implemented
 
 ### Target Architecture
+
 ```
 Frontend Layer
 ├── AI SDK Core (Vercel)
@@ -33,6 +35,7 @@ Backend Layer
 ### Phase 1: Core Setup & Configuration
 
 #### 1.1 Package Installation
+
 ```bash
 # Install required packages
 pnpm add @ai-sdk/react @ai-sdk/openai @ai-sdk/anthropic ai
@@ -41,6 +44,7 @@ pnpm add framer-motion lucide-react date-fns
 ```
 
 #### 1.2 Environment Configuration
+
 ```typescript
 // apps/web/src/config/ai.ts
 export const AI_CONFIG = {
@@ -53,11 +57,12 @@ export const AI_CONFIG = {
       apiKey: process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY,
     },
     local: {
-      baseUrl: process.env.NEXT_PUBLIC_LOCAL_AI_ENDPOINT || 'http://localhost:8000/v1',
+      baseUrl:
+        process.env.NEXT_PUBLIC_LOCAL_AI_ENDPOINT || "http://localhost:8000/v1",
     },
   },
   defaults: {
-    model: 'gpt-4',
+    model: "gpt-4",
     temperature: 0.3,
     maxTokens: 4000,
     streaming: true,
@@ -71,14 +76,15 @@ export const AI_CONFIG = {
 ```
 
 #### 1.3 TypeScript Types
+
 ```typescript
 // apps/web/src/types/ai-agent.ts
-import { z } from 'zod';
+import { z } from "zod";
 
-export const AgentTypeSchema = z.enum(['client', 'financial', 'appointment']);
+export const AgentTypeSchema = z.enum(["client", "financial", "appointment"]);
 export type AgentType = z.infer<typeof AgentTypeSchema>;
 
-export const AgentStatusSchema = z.enum(['active', 'archived', 'pending']);
+export const AgentStatusSchema = z.enum(["active", "archived", "pending"]);
 export type AgentStatus = z.infer<typeof AgentStatusSchema>;
 
 export interface AgentProvider {
@@ -87,7 +93,7 @@ export interface AgentProvider {
   endpoint: string;
   capabilities: string[];
   healthcareOptimized: boolean;
-  status: 'available' | 'limited' | 'unavailable';
+  status: "available" | "limited" | "unavailable";
 }
 
 export interface AgentSession {
@@ -103,7 +109,7 @@ export interface AgentSession {
 export interface AgentMessage {
   id: string;
   sessionId: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   metadata?: Record<string, any>;
   attachments?: any[];
@@ -134,10 +140,11 @@ export interface RAGResult {
 ### Phase 2: Backend Adapter Integration
 
 #### 2.1 tRPC Integration Setup
+
 ```typescript
 // apps/web/src/trpc/agent.ts
-import { createTRPCReact } from '@trpc/react-query';
-import type { AppRouter } from '@neonpro/api';
+import { createTRPCReact } from "@trpc/react-query";
+import type { AppRouter } from "@neonpro/api";
 
 export const agentTRPC = createTRPCReact<AppRouter>();
 
@@ -149,7 +156,7 @@ export const useAgentSession = () => {
 export const useAgentMessages = (sessionId?: string) => {
   return agentTRPC.agent.getSession.useQuery(
     { session_id: sessionId!, include_messages: true },
-    { enabled: !!sessionId }
+    { enabled: !!sessionId },
   );
 };
 
@@ -160,39 +167,40 @@ export const useAgentSendMessage = () => {
 export const useAgentKnowledge = () => {
   const search = agentTRPC.agent.searchKnowledge.useMutation();
   const add = agentTRPC.agent.addKnowledge.useMutation();
-  
+
   return { search, add };
 };
 ```
 
 #### 2.2 AI Service Adapter
+
 ```typescript
 // apps/web/src/services/ai/agent-service.ts
-import { AI_CONFIG } from '@/config/ai';
-import { openai } from '@ai-sdk/openai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { streamText } from 'ai';
-import { AgentType, RAGResult } from '@/types/ai-agent';
+import { AI_CONFIG } from "@/config/ai";
+import { openai } from "@ai-sdk/openai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { streamText } from "ai";
+import { AgentType, RAGResult } from "@/types/ai-agent";
 
 export class AgentService {
   async streamResponse(
     message: string,
     agentType: AgentType,
     sessionId: string,
-    context?: any
+    context?: any,
   ) {
     const provider = this.getProviderForAgent(agentType);
-    
+
     return streamText({
       model: provider.model,
       messages: [
         {
-          role: 'system',
+          role: "system",
           content: this.getHealthcareContext(agentType),
         },
-        ...context?.messages || [],
+        ...(context?.messages || []),
         {
-          role: 'user',
+          role: "user",
           content: message,
         },
       ],
@@ -201,13 +209,16 @@ export class AgentService {
     });
   }
 
-  async performRAGSearch(query: string, agentType: AgentType): Promise<RAGResult[]> {
+  async performRAGSearch(
+    query: string,
+    agentType: AgentType,
+  ): Promise<RAGResult[]> {
     // Call tRPC endpoint for RAG search
-    const response = await fetch('/api/trpc/agent.ragQuery', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/trpc/agent.ragQuery", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        session_id: 'current-session',
+        session_id: "current-session",
         query,
         max_results: 10,
       }),
@@ -219,12 +230,15 @@ export class AgentService {
 
   private getProviderForAgent(agentType: AgentType) {
     switch (agentType) {
-      case 'client':
-        return { model: openai('gpt-4'), name: 'OpenAI GPT-4' };
-      case 'financial':
-        return { model: anthropic('claude-3-sonnet'), name: 'Anthropic Claude' };
+      case "client":
+        return { model: openai("gpt-4"), name: "OpenAI GPT-4" };
+      case "financial":
+        return {
+          model: anthropic("claude-3-sonnet"),
+          name: "Anthropic Claude",
+        };
       default:
-        return { model: openai('gpt-3.5-turbo'), name: 'OpenAI GPT-3.5' };
+        return { model: openai("gpt-3.5-turbo"), name: "OpenAI GPT-3.5" };
     }
   }
 
@@ -234,7 +248,7 @@ export class AgentService {
       financial: `Você é um assistente financeiro especializado em gestão de clínicas médicas no Brasil...`,
       appointment: `Você é um assistente de agendamento especializado em clínicas médicas brasileiras...`,
     };
-    
+
     return contexts[agentType];
   }
 }
@@ -243,6 +257,7 @@ export class AgentService {
 ### Phase 3: UI Component Implementation
 
 #### 3.1 Agent Selection Component
+
 ```typescript
 // apps/web/src/components/ai/agent-selector.tsx
 'use client';
@@ -251,13 +266,13 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Users, 
-  DollarSign, 
-  Calendar, 
-  Bot, 
+import {
+  Users,
+  DollarSign,
+  Calendar,
+  Bot,
   Check,
-  Stethoscope 
+  Stethoscope
 } from 'lucide-react';
 import { AgentType } from '@/types/ai-agent';
 
@@ -294,19 +309,19 @@ const AGENT_TYPES = [
   },
 ];
 
-export function AgentSelector({ 
-  selectedAgent, 
-  onAgentSelect, 
-  disabled 
+export function AgentSelector({
+  selectedAgent,
+  onAgentSelect,
+  disabled
 }: AgentSelectorProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {AGENT_TYPES.map((agent) => {
         const Icon = agent.icon;
         const isSelected = selectedAgent === agent.type;
-        
+
         return (
-          <Card 
+          <Card
             key={agent.type}
             className={`cursor-pointer transition-all hover:shadow-md ${
               isSelected ? 'ring-2 ring-primary' : ''
@@ -331,14 +346,14 @@ export function AgentSelector({
                 )}
               </div>
             </CardHeader>
-            
+
             <CardContent className="pt-0">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Stethoscope className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm">Otimizado para saúde</span>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-1">
                   {agent.capabilities.map((capability) => (
                     <Badge key={capability} variant="secondary" className="text-xs">
@@ -346,9 +361,9 @@ export function AgentSelector({
                     </Badge>
                   ))}
                 </div>
-                
-                <Button 
-                  size="sm" 
+
+                <Button
+                  size="sm"
                   className="w-full mt-3"
                   variant={isSelected ? "default" : "outline"}
                   disabled={disabled}
@@ -366,6 +381,7 @@ export function AgentSelector({
 ```
 
 #### 3.2 Enhanced Chat Interface
+
 ```typescript
 // apps/web/src/components/ai/agent-chat.tsx
 'use client';
@@ -377,11 +393,11 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
-import { 
-  Send, 
-  Bot, 
-  User, 
-  Paperclip, 
+import {
+  Send,
+  Bot,
+  User,
+  Paperclip,
   Mic,
   Settings,
   Clock,
@@ -399,22 +415,22 @@ interface AgentChatProps {
   healthcareProfessionalId?: string;
 }
 
-export function AgentChat({ 
-  patientId, 
-  healthcareProfessionalId 
+export function AgentChat({
+  patientId,
+  healthcareProfessionalId
 }: AgentChatProps) {
   const [selectedAgent, setSelectedAgent] = useState<AgentType>('client');
   const [sessionId, setSessionId] = useState<string>();
   const [message, setMessage] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const agentService = new AgentService();
-  
+
   const createSession = useAgentSession();
   const sendMessage = useAgentSendMessage();
   const { data: sessionData } = useAgentMessages(sessionId);
-  
+
   const messages = sessionData?.data?.messages || [];
 
   // Create session when agent is selected
@@ -542,7 +558,7 @@ export function AgentChat({
                 </CardTitle>
                 <div className="flex items-center gap-2 mt-1">
                   <Badge variant="secondary">
-                    {selectedAgent === 'client' ? 'Pacientes' : 
+                    {selectedAgent === 'client' ? 'Pacientes' :
                      selectedAgent === 'financial' ? 'Financeiro' : 'Agendamento'}
                   </Badge>
                   {sessionId && (
@@ -554,7 +570,7 @@ export function AgentChat({
                 </div>
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="sm">
                 <Settings className="h-4 w-4" />
@@ -591,7 +607,7 @@ export function AgentChat({
                 >
                   {msg.role === 'assistant' && (
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 
+                      <div className="w-8 h-8 rounded-full bg-primary/10
                                    flex items-center justify-center">
                         <Bot className="h-4 w-4 text-primary" />
                       </div>
@@ -608,8 +624,8 @@ export function AgentChat({
                     <p className="text-sm whitespace-pre-wrap">
                       {msg.content}
                     </p>
-                    
-                    <div className="flex items-center justify-between mt-2 
+
+                    <div className="flex items-center justify-between mt-2
                                 text-xs opacity-70">
                       <span>{formatDateTime(msg.createdAt)}</span>
                       {msg.metadata?.provider && (
@@ -622,7 +638,7 @@ export function AgentChat({
 
                   {msg.role === 'user' && (
                     <div className="flex-shrink-0">
-                      <div className="w-8 h-8 rounded-full bg-primary 
+                      <div className="w-8 h-8 rounded-full bg-primary
                                    flex items-center justify-center">
                         <User className="h-4 w-4 text-primary-foreground" />
                       </div>
@@ -634,18 +650,18 @@ export function AgentChat({
               {isStreaming && (
                 <div className="flex gap-3 justify-start">
                   <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 
+                    <div className="w-8 h-8 rounded-full bg-primary/10
                                  flex items-center justify-center">
                       <Bot className="h-4 w-4 text-primary animate-pulse" />
                     </div>
                   </div>
                   <div className="bg-muted rounded-lg px-4 py-2">
                     <div className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-muted-foreground rounded-full 
+                      <div className="w-2 h-2 bg-muted-foreground rounded-full
                                   animate-bounce" />
-                      <div className="w-2 h-2 bg-muted-foreground rounded-full 
+                      <div className="w-2 h-2 bg-muted-foreground rounded-full
                                   animate-bounce" style={{ animationDelay: '0.1s' }} />
-                      <div className="w-2 h-2 bg-muted-foreground rounded-full 
+                      <div className="w-2 h-2 bg-muted-foreground rounded-full
                                   animate-bounce" style={{ animationDelay: '0.2s' }} />
                     </div>
                   </div>
@@ -667,7 +683,7 @@ export function AgentChat({
                 disabled={!sessionId || isStreaming}
                 className="flex-1"
               />
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -675,7 +691,7 @@ export function AgentChat({
               >
                 <Paperclip className="h-4 w-4" />
               </Button>
-              
+
               <Button
                 variant="ghost"
                 size="sm"
@@ -683,7 +699,7 @@ export function AgentChat({
               >
                 <Mic className="h-4 w-4" />
               </Button>
-              
+
               <Button
                 onClick={handleSendMessage}
                 disabled={!message.trim() || !sessionId || isStreaming}
@@ -697,7 +713,7 @@ export function AgentChat({
             <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
               <Database className="h-3 w-3" />
               <span>
-                Conforme LGPD • Conversa armazenada com segurança • 
+                Conforme LGPD • Conversa armazenada com segurança •
                 Dados criptografados
               </span>
             </div>
@@ -710,6 +726,7 @@ export function AgentChat({
 ```
 
 #### 3.3 Knowledge Base Management
+
 ```typescript
 // apps/web/src/components/ai/knowledge-base.tsx
 'use client';
@@ -723,11 +740,11 @@ import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { 
-  Plus, 
-  Search, 
-  BookOpen, 
-  Tag, 
+import {
+  Plus,
+  Search,
+  BookOpen,
+  Tag,
   Calendar,
   Edit,
   Trash2,
@@ -741,7 +758,7 @@ export function KnowledgeBaseManager() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState<AgentType>('client');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  
+
   const { search, add } = useAgentKnowledge();
   const [newEntry, setNewEntry] = useState({
     title: '',
@@ -752,7 +769,7 @@ export function KnowledgeBaseManager() {
 
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
-    
+
     try {
       await search.mutateAsync({
         agent_type: selectedType,
@@ -766,7 +783,7 @@ export function KnowledgeBaseManager() {
 
   const handleAddEntry = async () => {
     if (!newEntry.title || !newEntry.content) return;
-    
+
     try {
       await add.mutateAsync({
         agent_type: selectedType,
@@ -779,7 +796,7 @@ export function KnowledgeBaseManager() {
           createdAt: new Date().toISOString(),
         },
       });
-      
+
       setNewEntry({ title: '', content: '', source: '', tags: [] });
       setIsAddDialogOpen(false);
     } catch (error) {
@@ -807,7 +824,7 @@ export function KnowledgeBaseManager() {
                 onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
               />
             </div>
-            
+
             <Select value={selectedType} onValueChange={(value: AgentType) => setSelectedType(value)}>
               <SelectTrigger className="w-40">
                 <SelectValue />
@@ -818,12 +835,12 @@ export function KnowledgeBaseManager() {
                 <SelectItem value="appointment">Agendamento</SelectItem>
               </SelectContent>
             </Select>
-            
+
             <Button onClick={handleSearch}>
               <Search className="h-4 w-4 mr-2" />
               Buscar
             </Button>
-            
+
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
@@ -841,23 +858,23 @@ export function KnowledgeBaseManager() {
                     value={newEntry.title}
                     onChange={(e) => setNewEntry(prev => ({ ...prev, title: e.target.value }))}
                   />
-                  
+
                   <Textarea
                     placeholder="Conteúdo"
                     rows={6}
                     value={newEntry.content}
                     onChange={(e) => setNewEntry(prev => ({ ...prev, content: e.target.value }))}
                   />
-                  
+
                   <Input
                     placeholder="Fonte"
                     value={newEntry.source}
                     onChange={(e) => setNewEntry(prev => ({ ...prev, source: e.target.value }))}
                   />
-                  
+
                   <div className="flex justify-end gap-2">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       onClick={() => setIsAddDialogOpen(false)}
                     >
                       Cancelar
@@ -897,11 +914,11 @@ export function KnowledgeBaseManager() {
                         </span>
                       </div>
                     </div>
-                    
+
                     <p className="text-sm text-muted-foreground mb-3">
                       {entry.content.substring(0, 200)}...
                     </p>
-                    
+
                     <div className="flex items-center justify-between">
                       <div className="flex flex-wrap gap-1">
                         {entry.tags.map((tag) => (
@@ -911,7 +928,7 @@ export function KnowledgeBaseManager() {
                           </Badge>
                         ))}
                       </div>
-                      
+
                       <div className="flex items-center gap-1 text-xs text-muted-foreground">
                         <FileText className="h-3 w-3" />
                         {entry.source}
@@ -932,19 +949,27 @@ export function KnowledgeBaseManager() {
 ### Phase 4: Healthcare Compliance & Security
 
 #### 4.1 LGPD Compliance Layer
+
 ```typescript
 // apps/web/src/compliance/ai-compliance.ts
 export class AIComplianceManager {
   static sanitizeDataForAI(data: any, agentType: string): any {
     const sensitiveFields = [
-      'fullName', 'cpf', 'rg', 'email', 'phonePrimary', 'phoneSecondary',
-      'addressLine1', 'addressLine2', 'passportNumber'
+      "fullName",
+      "cpf",
+      "rg",
+      "email",
+      "phonePrimary",
+      "phoneSecondary",
+      "addressLine1",
+      "addressLine2",
+      "passportNumber",
     ];
 
     const sanitized = { ...data };
-    
+
     // Remove direct identifiers
-    sensitiveFields.forEach(field => {
+    sensitiveFields.forEach((field) => {
       delete sanitized[field];
     });
 
@@ -964,12 +989,12 @@ export class AIComplianceManager {
     userMessage: string,
     aiResponse: string,
     userId: string,
-    metadata?: any
+    metadata?: any,
   ) {
     // Send to audit trail
-    await fetch('/api/audit/ai-interaction', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    await fetch("/api/audit/ai-interaction", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         sessionId,
         userMessage,
@@ -987,29 +1012,32 @@ export class AIComplianceManager {
   }
 
   static validateDataSharing(
-    data: any, 
+    data: any,
     userPermissions: string[],
-    agentType: string
+    agentType: string,
   ): { valid: boolean; reasons: string[] } {
     const reasons: string[] = [];
-    
+
     // Check if user has permissions for this agent type
     const requiredPermissions = {
-      client: ['patient:read'],
-      financial: ['billing:read'],
-      appointment: ['appointment:read'],
+      client: ["patient:read"],
+      financial: ["billing:read"],
+      appointment: ["appointment:read"],
     };
 
-    const required = requiredPermissions[agentType as keyof typeof requiredPermissions] || [];
-    const hasPermission = required.some(perm => userPermissions.includes(perm));
-    
+    const required =
+      requiredPermissions[agentType as keyof typeof requiredPermissions] || [];
+    const hasPermission = required.some((perm) =>
+      userPermissions.includes(perm),
+    );
+
     if (!hasPermission) {
-      reasons.push('Insufficient permissions for agent type');
+      reasons.push("Insufficient permissions for agent type");
     }
 
     // Validate data sensitivity
-    if (data.includes('cpf') || data.includes('rg')) {
-      reasons.push('Direct identifiers cannot be shared');
+    if (data.includes("cpf") || data.includes("rg")) {
+      reasons.push("Direct identifiers cannot be shared");
     }
 
     return {
@@ -1021,26 +1049,25 @@ export class AIComplianceManager {
 ```
 
 #### 4.2 Security Middleware
+
 ```typescript
 // apps/web/src/middleware/ai-security.ts
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from "next/server";
 
 export function aiSecurityMiddleware(request: NextRequest) {
   // Rate limiting check
-  const clientIp = request.ip || 'unknown';
-  const userAgent = request.headers.get('user-agent') || 'unknown';
-  
+  const clientIp = request.ip || "unknown";
+  const userAgent = request.headers.get("user-agent") || "unknown";
+
   // Validate request size
-  const contentLength = request.headers.get('content-length');
-  if (contentLength && parseInt(contentLength) > 1024 * 1024) { // 1MB limit
-    return NextResponse.json(
-      { error: 'Request too large' },
-      { status: 413 }
-    );
+  const contentLength = request.headers.get("content-length");
+  if (contentLength && parseInt(contentLength) > 1024 * 1024) {
+    // 1MB limit
+    return NextResponse.json({ error: "Request too large" }, { status: 413 });
   }
 
   // Check for suspicious patterns
-  const body = request.body?.toString() || '';
+  const body = request.body?.toString() || "";
   const suspiciousPatterns = [
     /<script/i,
     /javascript:/i,
@@ -1051,8 +1078,8 @@ export function aiSecurityMiddleware(request: NextRequest) {
   for (const pattern of suspiciousPatterns) {
     if (pattern.test(body)) {
       return NextResponse.json(
-        { error: 'Suspicious content detected' },
-        { status: 400 }
+        { error: "Suspicious content detected" },
+        { status: 400 },
       );
     }
   }
@@ -1064,6 +1091,7 @@ export function aiSecurityMiddleware(request: NextRequest) {
 ### Phase 5: Testing & Deployment
 
 #### 5.1 Test Suite
+
 ```typescript
 // apps/web/src/__tests__/ai/agent-chat.test.tsx
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -1104,21 +1132,21 @@ describe('AgentChat Component', () => {
     renderComponent();
     const clientAgent = screen.getByText('Assistente de Pacientes');
     fireEvent.click(clientAgent);
-    
+
     expect(screen.getByText('Selecionado')).toBeInTheDocument();
   });
 
   test('handles message sending', async () => {
     renderComponent();
-    
+
     // Select agent first
     fireEvent.click(screen.getByText('Assistente de Pacientes'));
-    
+
     // Type and send message
     const input = screen.getByPlaceholderText('Digite sua mensagem...');
     fireEvent.change(input, { target: { value: 'Hello' } });
     fireEvent.keyDown(input, { key: 'Enter' });
-    
+
     await waitFor(() => {
       expect(screen.getByText('Hello')).toBeInTheDocument();
     });
@@ -1132,6 +1160,7 @@ describe('AgentChat Component', () => {
 ```
 
 #### 5.2 Performance Monitoring
+
 ```typescript
 // apps/web/src/monitoring/ai-performance.ts
 export class AIPerformanceMonitor {
@@ -1143,7 +1172,7 @@ export class AIPerformanceMonitor {
 
   static trackResponseTime(responseTime: number) {
     this.metrics.responseTimes.push(responseTime);
-    
+
     // Keep only last 100 measurements
     if (this.metrics.responseTimes.length > 100) {
       this.metrics.responseTimes.shift();
@@ -1152,7 +1181,7 @@ export class AIPerformanceMonitor {
 
   static trackError() {
     this.metrics.errorRates.push(1);
-    
+
     // Keep only last 100 measurements
     if (this.metrics.errorRates.length > 100) {
       this.metrics.errorRates.shift();
@@ -1161,14 +1190,14 @@ export class AIPerformanceMonitor {
 
   static getAverageResponseTime(): number {
     if (this.metrics.responseTimes.length === 0) return 0;
-    
+
     const sum = this.metrics.responseTimes.reduce((a, b) => a + b, 0);
     return sum / this.metrics.responseTimes.length;
   }
 
   static getErrorRate(): number {
     if (this.metrics.errorRates.length === 0) return 0;
-    
+
     const errors = this.metrics.errorRates.reduce((a, b) => a + b, 0);
     return (errors / this.metrics.errorRates.length) * 100;
   }
@@ -1187,30 +1216,35 @@ export class AIPerformanceMonitor {
 ## Implementation Checklist
 
 ### Phase 1: Core Setup
+
 - [ ] Install required packages
 - [ ] Configure environment variables
 - [ ] Set up TypeScript types
 - [ ] Create AI configuration
 
 ### Phase 2: Backend Integration
+
 - [ ] Implement tRPC hooks
 - [ ] Create AI service adapter
 - [ ] Set up RAG integration
 - [ ] Implement streaming responses
 
 ### Phase 3: UI Components
+
 - [ ] Build agent selector
 - [ ] Create enhanced chat interface
 - [ ] Implement knowledge base manager
 - [ ] Add Portuguese healthcare context
 
 ### Phase 4: Compliance & Security
+
 - [ ] Implement LGPD compliance
 - [ ] Add security middleware
 - [ ] Set up audit logging
 - [ ] Validate data sharing
 
 ### Phase 5: Testing & Deployment
+
 - [ ] Write comprehensive tests
 - [ ] Set up performance monitoring
 - [ ] Create deployment pipeline
@@ -1219,6 +1253,7 @@ export class AIPerformanceMonitor {
 ## Deployment Strategy
 
 ### Environment Setup
+
 ```bash
 # Development
 pnpm dev
@@ -1229,16 +1264,18 @@ pnpm start
 ```
 
 ### Feature Flags
+
 ```typescript
 const AI_FEATURES = {
-  enableAgentChat: process.env.NEXT_PUBLIC_ENABLE_AI_CHAT === 'true',
-  enableKnowledgeBase: process.env.NEXT_PUBLIC_ENABLE_KB === 'true',
-  enableVoiceInput: process.env.NEXT_PUBLIC_ENABLE_VOICE === 'true',
-  enableFileAttachments: process.env.NEXT_PUBLIC_ENABLE_ATTACHMENTS === 'true',
+  enableAgentChat: process.env.NEXT_PUBLIC_ENABLE_AI_CHAT === "true",
+  enableKnowledgeBase: process.env.NEXT_PUBLIC_ENABLE_KB === "true",
+  enableVoiceInput: process.env.NEXT_PUBLIC_ENABLE_VOICE === "true",
+  enableFileAttachments: process.env.NEXT_PUBLIC_ENABLE_ATTACHMENTS === "true",
 };
 ```
 
 ### Monitoring & Analytics
+
 - Response time tracking
 - Error rate monitoring
 - User satisfaction metrics
@@ -1247,18 +1284,21 @@ const AI_FEATURES = {
 ## Success Metrics
 
 ### Technical Metrics
+
 - Response time < 2 seconds
 - Error rate < 1%
 - Uptime > 99.9%
 - Mobile performance score > 90
 
 ### User Experience Metrics
+
 - User satisfaction > 4.5/5
 - Task completion rate > 85%
 - Session duration optimization
 - Mobile usage compatibility
 
 ### Compliance Metrics
+
 - LGPD compliance 100%
 - Data encryption 100%
 - Audit trail completeness

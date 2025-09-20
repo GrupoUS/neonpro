@@ -7,6 +7,7 @@ This guide covers the comprehensive security and compliance systems implemented 
 ## Architecture
 
 ### Security & Compliance Stack
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                  Application Security Layer                 │
@@ -23,6 +24,7 @@ This guide covers the comprehensive security and compliance systems implemented 
 ```
 
 ### Compliance Standards
+
 - **LGPD**: Brazilian General Data Protection Law compliance
 - **ANVISA**: Brazilian Health Regulatory Agency standards
 - **CFM**: Federal Council of Medicine requirements
@@ -34,23 +36,24 @@ This guide covers the comprehensive security and compliance systems implemented 
 ### Implementation
 
 **File**: `apps/api/tests/security/headers.test.ts`
-```typescript
-import { describe, it, expect, beforeAll, afterAll } from 'bun:test';
-import { testClient } from 'hono/testing';
-import { app } from '../../src/app';
 
-describe('Security Headers for Healthcare Compliance', () => {
+```typescript
+import { describe, it, expect, beforeAll, afterAll } from "bun:test";
+import { testClient } from "hono/testing";
+import { app } from "../../src/app";
+
+describe("Security Headers for Healthcare Compliance", () => {
   let client: ReturnType<typeof testClient>;
 
   beforeAll(() => {
     client = testClient(app);
   });
 
-  describe('Content Security Policy (CSP)', () => {
-    it('should include strict CSP headers for healthcare data protection', async () => {
+  describe("Content Security Policy (CSP)", () => {
+    it("should include strict CSP headers for healthcare data protection", async () => {
       const res = await client.index.$get();
-      const cspHeader = res.headers.get('Content-Security-Policy');
-      
+      const cspHeader = res.headers.get("Content-Security-Policy");
+
       expect(cspHeader).toContain("default-src 'self'");
       expect(cspHeader).toContain("script-src 'self' 'unsafe-inline'");
       expect(cspHeader).toContain("style-src 'self' 'unsafe-inline'");
@@ -61,18 +64,18 @@ describe('Security Headers for Healthcare Compliance', () => {
       expect(cspHeader).toContain("form-action 'self'");
     });
 
-    it('should prevent inline script execution for security', async () => {
+    it("should prevent inline script execution for security", async () => {
       const res = await client.index.$get();
-      const cspHeader = res.headers.get('Content-Security-Policy');
-      
+      const cspHeader = res.headers.get("Content-Security-Policy");
+
       // Ensure no 'unsafe-eval' is present for healthcare security
       expect(cspHeader).not.toContain("'unsafe-eval'");
     });
 
-    it('should include healthcare-specific CSP directives', async () => {
+    it("should include healthcare-specific CSP directives", async () => {
       const res = await client.index.$get();
-      const cspHeader = res.headers.get('Content-Security-Policy');
-      
+      const cspHeader = res.headers.get("Content-Security-Policy");
+
       // WebRTC for telemedicine
       expect(cspHeader).toContain("media-src 'self' mediastream:");
       // Healthcare file uploads
@@ -80,180 +83,188 @@ describe('Security Headers for Healthcare Compliance', () => {
     });
   });
 
-  describe('HTTP Strict Transport Security (HSTS)', () => {
-    it('should enforce HTTPS for healthcare data transmission', async () => {
+  describe("HTTP Strict Transport Security (HSTS)", () => {
+    it("should enforce HTTPS for healthcare data transmission", async () => {
       const res = await client.index.$get();
-      const hstsHeader = res.headers.get('Strict-Transport-Security');
-      
-      expect(hstsHeader).toBe('max-age=31536000; includeSubDomains; preload');
+      const hstsHeader = res.headers.get("Strict-Transport-Security");
+
+      expect(hstsHeader).toBe("max-age=31536000; includeSubDomains; preload");
     });
 
-    it('should include subdomains in HSTS policy', async () => {
+    it("should include subdomains in HSTS policy", async () => {
       const res = await client.index.$get();
-      const hstsHeader = res.headers.get('Strict-Transport-Security');
-      
-      expect(hstsHeader).toContain('includeSubDomains');
-      expect(hstsHeader).toContain('preload');
+      const hstsHeader = res.headers.get("Strict-Transport-Security");
+
+      expect(hstsHeader).toContain("includeSubDomains");
+      expect(hstsHeader).toContain("preload");
     });
   });
 
-  describe('Cross-Origin Resource Sharing (CORS)', () => {
-    it('should have restrictive CORS policy for healthcare APIs', async () => {
+  describe("Cross-Origin Resource Sharing (CORS)", () => {
+    it("should have restrictive CORS policy for healthcare APIs", async () => {
       const res = await client.api.v1.patients.$get();
-      
-      const corsOrigin = res.headers.get('Access-Control-Allow-Origin');
-      const corsCredentials = res.headers.get('Access-Control-Allow-Credentials');
-      const corsMethods = res.headers.get('Access-Control-Allow-Methods');
-      
+
+      const corsOrigin = res.headers.get("Access-Control-Allow-Origin");
+      const corsCredentials = res.headers.get(
+        "Access-Control-Allow-Credentials",
+      );
+      const corsMethods = res.headers.get("Access-Control-Allow-Methods");
+
       // Should be restrictive for healthcare data
-      expect(corsOrigin).not.toBe('*');
-      expect(corsCredentials).toBe('true');
-      expect(corsMethods).toContain('GET');
-      expect(corsMethods).toContain('POST');
-      expect(corsMethods).toContain('PUT');
-      expect(corsMethods).toContain('DELETE');
+      expect(corsOrigin).not.toBe("*");
+      expect(corsCredentials).toBe("true");
+      expect(corsMethods).toContain("GET");
+      expect(corsMethods).toContain("POST");
+      expect(corsMethods).toContain("PUT");
+      expect(corsMethods).toContain("DELETE");
     });
 
-    it('should allow only trusted healthcare domains', async () => {
+    it("should allow only trusted healthcare domains", async () => {
       const res = await client.api.v1.patients.$get();
-      const corsOrigin = res.headers.get('Access-Control-Allow-Origin');
-      
+      const corsOrigin = res.headers.get("Access-Control-Allow-Origin");
+
       const trustedDomains = [
-        'https://neonpro.health.br',
-        'https://app.neonpro.health.br',
-        'https://admin.neonpro.health.br'
+        "https://neonpro.health.br",
+        "https://app.neonpro.health.br",
+        "https://admin.neonpro.health.br",
       ];
-      
+
       if (corsOrigin !== null) {
         expect(trustedDomains).toContain(corsOrigin);
       }
     });
   });
 
-  describe('Additional Security Headers', () => {
-    it('should include X-Frame-Options for clickjacking protection', async () => {
+  describe("Additional Security Headers", () => {
+    it("should include X-Frame-Options for clickjacking protection", async () => {
       const res = await client.index.$get();
-      const xFrameOptions = res.headers.get('X-Frame-Options');
-      
-      expect(xFrameOptions).toBe('DENY');
+      const xFrameOptions = res.headers.get("X-Frame-Options");
+
+      expect(xFrameOptions).toBe("DENY");
     });
 
-    it('should include X-Content-Type-Options', async () => {
+    it("should include X-Content-Type-Options", async () => {
       const res = await client.index.$get();
-      const xContentTypeOptions = res.headers.get('X-Content-Type-Options');
-      
-      expect(xContentTypeOptions).toBe('nosniff');
+      const xContentTypeOptions = res.headers.get("X-Content-Type-Options");
+
+      expect(xContentTypeOptions).toBe("nosniff");
     });
 
-    it('should include Referrer-Policy for privacy', async () => {
+    it("should include Referrer-Policy for privacy", async () => {
       const res = await client.index.$get();
-      const referrerPolicy = res.headers.get('Referrer-Policy');
-      
-      expect(referrerPolicy).toBe('strict-origin-when-cross-origin');
+      const referrerPolicy = res.headers.get("Referrer-Policy");
+
+      expect(referrerPolicy).toBe("strict-origin-when-cross-origin");
     });
 
-    it('should include X-XSS-Protection', async () => {
+    it("should include X-XSS-Protection", async () => {
       const res = await client.index.$get();
-      const xssProtection = res.headers.get('X-XSS-Protection');
-      
-      expect(xssProtection).toBe('1; mode=block');
+      const xssProtection = res.headers.get("X-XSS-Protection");
+
+      expect(xssProtection).toBe("1; mode=block");
     });
 
-    it('should include Permissions-Policy for healthcare features', async () => {
+    it("should include Permissions-Policy for healthcare features", async () => {
       const res = await client.index.$get();
-      const permissionsPolicy = res.headers.get('Permissions-Policy');
-      
+      const permissionsPolicy = res.headers.get("Permissions-Policy");
+
       // Allow necessary features for telemedicine
-      expect(permissionsPolicy).toContain('camera=self');
-      expect(permissionsPolicy).toContain('microphone=self');
-      expect(permissionsPolicy).toContain('geolocation=self');
-      
+      expect(permissionsPolicy).toContain("camera=self");
+      expect(permissionsPolicy).toContain("microphone=self");
+      expect(permissionsPolicy).toContain("geolocation=self");
+
       // Deny unnecessary features for security
-      expect(permissionsPolicy).toContain('payment=()');
-      expect(permissionsPolicy).toContain('usb=()');
+      expect(permissionsPolicy).toContain("payment=()");
+      expect(permissionsPolicy).toContain("usb=()");
     });
   });
 
-  describe('Rate Limiting Headers', () => {
-    it('should include rate limiting information', async () => {
+  describe("Rate Limiting Headers", () => {
+    it("should include rate limiting information", async () => {
       const res = await client.api.v1.patients.$get();
-      
-      const rateLimitRemaining = res.headers.get('X-RateLimit-Remaining');
-      const rateLimitReset = res.headers.get('X-RateLimit-Reset');
-      
+
+      const rateLimitRemaining = res.headers.get("X-RateLimit-Remaining");
+      const rateLimitReset = res.headers.get("X-RateLimit-Reset");
+
       expect(rateLimitRemaining).toBeDefined();
       expect(rateLimitReset).toBeDefined();
     });
 
-    it('should have different rate limits for healthcare endpoints', async () => {
+    it("should have different rate limits for healthcare endpoints", async () => {
       // Patient data endpoints should have stricter limits
       const patientRes = await client.api.v1.patients.$get();
       const publicRes = await client.api.v1.public.info.$get();
-      
-      const patientLimit = parseInt(patientRes.headers.get('X-RateLimit-Limit') || '0');
-      const publicLimit = parseInt(publicRes.headers.get('X-RateLimit-Limit') || '0');
-      
+
+      const patientLimit = parseInt(
+        patientRes.headers.get("X-RateLimit-Limit") || "0",
+      );
+      const publicLimit = parseInt(
+        publicRes.headers.get("X-RateLimit-Limit") || "0",
+      );
+
       expect(publicLimit).toBeGreaterThan(patientLimit);
     });
   });
 
-  describe('Healthcare-Specific Security', () => {
-    it('should include medical data classification headers', async () => {
+  describe("Healthcare-Specific Security", () => {
+    it("should include medical data classification headers", async () => {
       const res = await client.api.v1.patients.$get();
-      
-      const dataClassification = res.headers.get('X-Healthcare-Data-Classification');
-      const complianceLevel = res.headers.get('X-Healthcare-Compliance-Level');
-      
-      expect(dataClassification).toBe('restricted');
-      expect(complianceLevel).toBe('lgpd-anvisa-cfm');
+
+      const dataClassification = res.headers.get(
+        "X-Healthcare-Data-Classification",
+      );
+      const complianceLevel = res.headers.get("X-Healthcare-Compliance-Level");
+
+      expect(dataClassification).toBe("restricted");
+      expect(complianceLevel).toBe("lgpd-anvisa-cfm");
     });
 
-    it('should include audit trail headers', async () => {
+    it("should include audit trail headers", async () => {
       const res = await client.api.v1.patients.$get();
-      
-      const auditId = res.headers.get('X-Audit-ID');
-      const requestId = res.headers.get('X-Request-ID');
-      
+
+      const auditId = res.headers.get("X-Audit-ID");
+      const requestId = res.headers.get("X-Request-ID");
+
       expect(auditId).toBeDefined();
       expect(requestId).toBeDefined();
       expect(auditId).toMatch(/^[a-f0-9-]{36}$/); // UUID format
     });
   });
 
-  describe('Error Handling Security', () => {
-    it('should not expose sensitive information in error responses', async () => {
+  describe("Error Handling Security", () => {
+    it("should not expose sensitive information in error responses", async () => {
       const res = await client.api.v1.nonexistent.$get();
-      
+
       expect(res.status).toBe(404);
-      
+
       const body = await res.json();
-      expect(body).not.toHaveProperty('stack');
-      expect(body).not.toHaveProperty('sql');
-      expect(body).not.toHaveProperty('database');
+      expect(body).not.toHaveProperty("stack");
+      expect(body).not.toHaveProperty("sql");
+      expect(body).not.toHaveProperty("database");
     });
 
-    it('should include security headers even in error responses', async () => {
+    it("should include security headers even in error responses", async () => {
       const res = await client.api.v1.nonexistent.$get();
-      
-      expect(res.headers.get('Content-Security-Policy')).toBeDefined();
-      expect(res.headers.get('X-Frame-Options')).toBe('DENY');
+
+      expect(res.headers.get("Content-Security-Policy")).toBeDefined();
+      expect(res.headers.get("X-Frame-Options")).toBe("DENY");
     });
   });
 });
 
 // Integration tests with real browser automation
-describe('Security Headers Integration Tests', () => {
-  it('should pass security scan with external tools', async () => {
+describe("Security Headers Integration Tests", () => {
+  it("should pass security scan with external tools", async () => {
     // This would integrate with tools like OWASP ZAP or Burp Suite
-    const securityScanResults = await runSecurityScan('http://localhost:3000');
-    
+    const securityScanResults = await runSecurityScan("http://localhost:3000");
+
     expect(securityScanResults.criticalVulnerabilities).toBe(0);
     expect(securityScanResults.highRiskVulnerabilities).toBe(0);
   });
 
-  it('should meet healthcare security benchmarks', async () => {
+  it("should meet healthcare security benchmarks", async () => {
     const benchmarkResults = await runHealthcareSecurityBenchmark();
-    
+
     expect(benchmarkResults.lgpdCompliance).toBe(true);
     expect(benchmarkResults.anvisaCompliance).toBe(true);
     expect(benchmarkResults.cfmCompliance).toBe(true);
@@ -269,7 +280,7 @@ async function runSecurityScan(url: string) {
     highRiskVulnerabilities: 0,
     mediumRiskVulnerabilities: 2,
     lowRiskVulnerabilities: 5,
-    informationalVulnerabilities: 10
+    informationalVulnerabilities: 10,
   };
 }
 
@@ -279,7 +290,7 @@ async function runHealthcareSecurityBenchmark() {
     lgpdCompliance: true,
     anvisaCompliance: true,
     cfmCompliance: true,
-    overallScore: 98
+    overallScore: 98,
   };
 }
 ```
@@ -287,9 +298,10 @@ async function runHealthcareSecurityBenchmark() {
 ### Security Headers Middleware
 
 **File**: `apps/api/src/middleware/security-headers.ts`
+
 ```typescript
-import { Context, Next } from 'hono';
-import { v4 as uuidv4 } from 'uuid';
+import { Context, Next } from "hono";
+import { v4 as uuidv4 } from "uuid";
 
 export interface SecurityConfig {
   csp: {
@@ -325,34 +337,34 @@ const SECURITY_CONFIG: SecurityConfig = {
   csp: {
     defaultSrc: ["'self'"],
     scriptSrc: ["'self'", "'unsafe-inline'"],
-    styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-    imgSrc: ["'self'", 'data:', 'blob:', 'https:'],
-    connectSrc: ["'self'", 'https://api.supabase.co', 'https://*.supabase.co'],
-    mediaSrc: ["'self'", 'mediastream:', 'blob:'],
+    styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+    imgSrc: ["'self'", "data:", "blob:", "https:"],
+    connectSrc: ["'self'", "https://api.supabase.co", "https://*.supabase.co"],
+    mediaSrc: ["'self'", "mediastream:", "blob:"],
     frameSrc: ["'none'"],
-    fontSrc: ["'self'", 'https://fonts.gstatic.com']
+    fontSrc: ["'self'", "https://fonts.gstatic.com"],
   },
   hsts: {
     maxAge: 31536000, // 1 year
     includeSubDomains: true,
-    preload: true
+    preload: true,
   },
   cors: {
     allowedOrigins: [
-      'https://neonpro.health.br',
-      'https://app.neonpro.health.br',
-      'https://admin.neonpro.health.br'
+      "https://neonpro.health.br",
+      "https://app.neonpro.health.br",
+      "https://admin.neonpro.health.br",
     ],
     allowCredentials: true,
-    allowedMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+    allowedMethods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   },
   rateLimit: {
     public: 1000,
     authenticated: 500,
     healthcare: 100,
-    admin: 50
-  }
+    admin: 50,
+  },
 };
 
 export function securityHeadersMiddleware() {
@@ -360,156 +372,171 @@ export function securityHeadersMiddleware() {
     // Generate request ID for audit trail
     const requestId = uuidv4();
     const auditId = uuidv4();
-    
-    c.set('requestId', requestId);
-    c.set('auditId', auditId);
+
+    c.set("requestId", requestId);
+    c.set("auditId", auditId);
 
     // Content Security Policy
     const csp = buildCSPHeader(SECURITY_CONFIG.csp);
-    c.header('Content-Security-Policy', csp);
+    c.header("Content-Security-Policy", csp);
 
     // HTTP Strict Transport Security
-    if (c.req.header('x-forwarded-proto') === 'https' || c.req.url.startsWith('https://')) {
+    if (
+      c.req.header("x-forwarded-proto") === "https" ||
+      c.req.url.startsWith("https://")
+    ) {
       const hsts = buildHSTSHeader(SECURITY_CONFIG.hsts);
-      c.header('Strict-Transport-Security', hsts);
+      c.header("Strict-Transport-Security", hsts);
     }
 
     // X-Frame-Options (clickjacking protection)
-    c.header('X-Frame-Options', 'DENY');
+    c.header("X-Frame-Options", "DENY");
 
     // X-Content-Type-Options
-    c.header('X-Content-Type-Options', 'nosniff');
+    c.header("X-Content-Type-Options", "nosniff");
 
     // X-XSS-Protection
-    c.header('X-XSS-Protection', '1; mode=block');
+    c.header("X-XSS-Protection", "1; mode=block");
 
     // Referrer Policy
-    c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+    c.header("Referrer-Policy", "strict-origin-when-cross-origin");
 
     // Permissions Policy for healthcare features
     const permissionsPolicy = [
-      'camera=self',
-      'microphone=self',
-      'geolocation=self',
-      'payment=()',
-      'usb=()',
-      'magnetometer=()',
-      'gyroscope=()',
-      'accelerometer=()'
-    ].join(', ');
-    c.header('Permissions-Policy', permissionsPolicy);
+      "camera=self",
+      "microphone=self",
+      "geolocation=self",
+      "payment=()",
+      "usb=()",
+      "magnetometer=()",
+      "gyroscope=()",
+      "accelerometer=()",
+    ].join(", ");
+    c.header("Permissions-Policy", permissionsPolicy);
 
     // Healthcare-specific headers
-    c.header('X-Healthcare-Platform', 'NeonPro');
-    c.header('X-Compliance-Version', 'LGPD-2023');
-    c.header('X-Request-ID', requestId);
-    c.header('X-Audit-ID', auditId);
+    c.header("X-Healthcare-Platform", "NeonPro");
+    c.header("X-Compliance-Version", "LGPD-2023");
+    c.header("X-Request-ID", requestId);
+    c.header("X-Audit-ID", auditId);
 
     // Determine data classification based on route
     const dataClassification = getDataClassification(c.req.path);
-    c.header('X-Healthcare-Data-Classification', dataClassification);
-    c.header('X-Healthcare-Compliance-Level', 'lgpd-anvisa-cfm');
+    c.header("X-Healthcare-Data-Classification", dataClassification);
+    c.header("X-Healthcare-Compliance-Level", "lgpd-anvisa-cfm");
 
     // Rate limiting headers
     const userType = getUserType(c);
-    const rateLimit = SECURITY_CONFIG.rateLimit[userType as keyof typeof SECURITY_CONFIG.rateLimit] || SECURITY_CONFIG.rateLimit.public;
-    
-    c.header('X-RateLimit-Limit', rateLimit.toString());
-    c.header('X-RateLimit-Remaining', (rateLimit - 1).toString()); // Simplified
-    c.header('X-RateLimit-Reset', (Date.now() + 60000).toString());
+    const rateLimit =
+      SECURITY_CONFIG.rateLimit[
+        userType as keyof typeof SECURITY_CONFIG.rateLimit
+      ] || SECURITY_CONFIG.rateLimit.public;
+
+    c.header("X-RateLimit-Limit", rateLimit.toString());
+    c.header("X-RateLimit-Remaining", (rateLimit - 1).toString()); // Simplified
+    c.header("X-RateLimit-Reset", (Date.now() + 60000).toString());
 
     // CORS headers
-    const origin = c.req.header('Origin');
+    const origin = c.req.header("Origin");
     if (origin && SECURITY_CONFIG.cors.allowedOrigins.includes(origin)) {
-      c.header('Access-Control-Allow-Origin', origin);
-      c.header('Access-Control-Allow-Credentials', 'true');
-      c.header('Access-Control-Allow-Methods', SECURITY_CONFIG.cors.allowedMethods.join(', '));
-      c.header('Access-Control-Allow-Headers', SECURITY_CONFIG.cors.allowedHeaders.join(', '));
+      c.header("Access-Control-Allow-Origin", origin);
+      c.header("Access-Control-Allow-Credentials", "true");
+      c.header(
+        "Access-Control-Allow-Methods",
+        SECURITY_CONFIG.cors.allowedMethods.join(", "),
+      );
+      c.header(
+        "Access-Control-Allow-Headers",
+        SECURITY_CONFIG.cors.allowedHeaders.join(", "),
+      );
     }
 
     // Handle preflight requests
-    if (c.req.method === 'OPTIONS') {
-      c.header('Access-Control-Max-Age', '86400'); // 24 hours
-      return c.text('', 204);
+    if (c.req.method === "OPTIONS") {
+      c.header("Access-Control-Max-Age", "86400"); // 24 hours
+      return c.text("", 204);
     }
 
     await next();
 
     // Post-processing security headers
-    c.header('X-Response-Time', `${Date.now() - parseInt(c.get('startTime') || '0')}ms`);
+    c.header(
+      "X-Response-Time",
+      `${Date.now() - parseInt(c.get("startTime") || "0")}ms`,
+    );
   };
 }
 
-function buildCSPHeader(csp: SecurityConfig['csp']): string {
+function buildCSPHeader(csp: SecurityConfig["csp"]): string {
   const directives = [
-    `default-src ${csp.defaultSrc.join(' ')}`,
-    `script-src ${csp.scriptSrc.join(' ')}`,
-    `style-src ${csp.styleSrc.join(' ')}`,
-    `img-src ${csp.imgSrc.join(' ')}`,
-    `connect-src ${csp.connectSrc.join(' ')}`,
-    `media-src ${csp.mediaSrc.join(' ')}`,
-    `frame-src ${csp.frameSrc.join(' ')}`,
-    `font-src ${csp.fontSrc.join(' ')}`,
+    `default-src ${csp.defaultSrc.join(" ")}`,
+    `script-src ${csp.scriptSrc.join(" ")}`,
+    `style-src ${csp.styleSrc.join(" ")}`,
+    `img-src ${csp.imgSrc.join(" ")}`,
+    `connect-src ${csp.connectSrc.join(" ")}`,
+    `media-src ${csp.mediaSrc.join(" ")}`,
+    `frame-src ${csp.frameSrc.join(" ")}`,
+    `font-src ${csp.fontSrc.join(" ")}`,
     `base-uri 'self'`,
     `form-action 'self'`,
     `frame-ancestors 'none'`,
     `block-all-mixed-content`,
-    `upgrade-insecure-requests`
+    `upgrade-insecure-requests`,
   ];
 
-  return directives.join('; ');
+  return directives.join("; ");
 }
 
-function buildHSTSHeader(hsts: SecurityConfig['hsts']): string {
+function buildHSTSHeader(hsts: SecurityConfig["hsts"]): string {
   let header = `max-age=${hsts.maxAge}`;
-  
+
   if (hsts.includeSubDomains) {
-    header += '; includeSubDomains';
+    header += "; includeSubDomains";
   }
-  
+
   if (hsts.preload) {
-    header += '; preload';
+    header += "; preload";
   }
-  
+
   return header;
 }
 
 function getDataClassification(path: string): string {
-  if (path.includes('/patients') || path.includes('/medical-records')) {
-    return 'restricted';
+  if (path.includes("/patients") || path.includes("/medical-records")) {
+    return "restricted";
   }
-  
-  if (path.includes('/professionals') || path.includes('/appointments')) {
-    return 'confidential';
+
+  if (path.includes("/professionals") || path.includes("/appointments")) {
+    return "confidential";
   }
-  
-  if (path.includes('/admin') || path.includes('/reports')) {
-    return 'internal';
+
+  if (path.includes("/admin") || path.includes("/reports")) {
+    return "internal";
   }
-  
-  return 'public';
+
+  return "public";
 }
 
 function getUserType(c: Context): string {
-  const user = c.get('user');
-  
-  if (!user) return 'public';
-  
-  if (user.role === 'admin') return 'admin';
-  if (user.role === 'healthcare_professional') return 'healthcare';
-  if (user.role === 'patient') return 'authenticated';
-  
-  return 'authenticated';
+  const user = c.get("user");
+
+  if (!user) return "public";
+
+  if (user.role === "admin") return "admin";
+  if (user.role === "healthcare_professional") return "healthcare";
+  if (user.role === "patient") return "authenticated";
+
+  return "authenticated";
 }
 
 // Security middleware for specific routes
 export function healthcareSecurityMiddleware() {
   return async (c: Context, next: Next) => {
     // Additional security for healthcare routes
-    c.header('X-Healthcare-Route', 'true');
-    c.header('X-PII-Protection', 'enabled');
-    c.header('X-Audit-Required', 'true');
-    
+    c.header("X-Healthcare-Route", "true");
+    c.header("X-PII-Protection", "enabled");
+    c.header("X-Audit-Required", "true");
+
     // Enhanced CSP for healthcare routes
     const enhancedCSP = [
       "default-src 'self'",
@@ -520,10 +547,10 @@ export function healthcareSecurityMiddleware() {
       "media-src 'self' mediastream: blob:",
       "frame-src 'none'",
       "base-uri 'self'",
-      "form-action 'self'"
-    ].join('; ');
-    
-    c.header('Content-Security-Policy', enhancedCSP);
+      "form-action 'self'",
+    ].join("; ");
+
+    c.header("Content-Security-Policy", enhancedCSP);
 
     await next();
   };
@@ -535,15 +562,16 @@ export function healthcareSecurityMiddleware() {
 ### Implementation
 
 **File**: `apps/api/tests/compliance/lgpd.test.ts`
-```typescript
-import { describe, it, expect, beforeAll, afterAll } from 'bun:test';
-import { testClient } from 'hono/testing';
-import { app } from '../../src/app';
-import { LGPDComplianceValidator } from '../../src/lib/compliance/lgpd-validator';
-import { ConsentManager } from '../../src/lib/compliance/consent-manager';
-import { DataSubjectRightsManager } from '../../src/lib/compliance/data-subject-rights';
 
-describe('LGPD Compliance Validation', () => {
+```typescript
+import { describe, it, expect, beforeAll, afterAll } from "bun:test";
+import { testClient } from "hono/testing";
+import { app } from "../../src/app";
+import { LGPDComplianceValidator } from "../../src/lib/compliance/lgpd-validator";
+import { ConsentManager } from "../../src/lib/compliance/consent-manager";
+import { DataSubjectRightsManager } from "../../src/lib/compliance/data-subject-rights";
+
+describe("LGPD Compliance Validation", () => {
   let client: ReturnType<typeof testClient>;
   let validator: LGPDComplianceValidator;
   let consentManager: ConsentManager;
@@ -556,253 +584,275 @@ describe('LGPD Compliance Validation', () => {
     rightsManager = new DataSubjectRightsManager();
   });
 
-  describe('Article 7 - Legal Basis for Data Processing', () => {
-    it('should validate consent for patient data processing', async () => {
+  describe("Article 7 - Legal Basis for Data Processing", () => {
+    it("should validate consent for patient data processing", async () => {
       const processingContext = {
-        dataSubjectId: 'patient-123',
-        purpose: 'medical_treatment',
-        dataTypes: ['medical_history', 'personal_information'],
-        legalBasis: 'consent'
+        dataSubjectId: "patient-123",
+        purpose: "medical_treatment",
+        dataTypes: ["medical_history", "personal_information"],
+        legalBasis: "consent",
       };
 
       const validation = await validator.validateLegalBasis(processingContext);
-      
+
       expect(validation.isValid).toBe(true);
-      expect(validation.legalBasis).toBe('consent');
+      expect(validation.legalBasis).toBe("consent");
       expect(validation.auditTrail).toBeDefined();
     });
 
-    it('should validate legitimate interest for healthcare professional data', async () => {
+    it("should validate legitimate interest for healthcare professional data", async () => {
       const processingContext = {
-        dataSubjectId: 'professional-456',
-        purpose: 'professional_verification',
-        dataTypes: ['crm_number', 'specialization'],
-        legalBasis: 'legitimate_interest'
+        dataSubjectId: "professional-456",
+        purpose: "professional_verification",
+        dataTypes: ["crm_number", "specialization"],
+        legalBasis: "legitimate_interest",
       };
 
       const validation = await validator.validateLegalBasis(processingContext);
-      
+
       expect(validation.isValid).toBe(true);
-      expect(validation.legalBasis).toBe('legitimate_interest');
+      expect(validation.legalBasis).toBe("legitimate_interest");
     });
 
-    it('should validate vital interests for emergency medical situations', async () => {
+    it("should validate vital interests for emergency medical situations", async () => {
       const processingContext = {
-        dataSubjectId: 'patient-emergency-789',
-        purpose: 'emergency_treatment',
-        dataTypes: ['medical_history', 'allergies', 'medications'],
-        legalBasis: 'vital_interests',
-        emergency: true
+        dataSubjectId: "patient-emergency-789",
+        purpose: "emergency_treatment",
+        dataTypes: ["medical_history", "allergies", "medications"],
+        legalBasis: "vital_interests",
+        emergency: true,
       };
 
       const validation = await validator.validateLegalBasis(processingContext);
-      
+
       expect(validation.isValid).toBe(true);
-      expect(validation.legalBasis).toBe('vital_interests');
+      expect(validation.legalBasis).toBe("vital_interests");
       expect(validation.emergencyJustification).toBeDefined();
     });
 
-    it('should reject processing without valid legal basis', async () => {
+    it("should reject processing without valid legal basis", async () => {
       const processingContext = {
-        dataSubjectId: 'patient-invalid',
-        purpose: 'marketing',
-        dataTypes: ['personal_information'],
-        legalBasis: 'invalid_basis'
+        dataSubjectId: "patient-invalid",
+        purpose: "marketing",
+        dataTypes: ["personal_information"],
+        legalBasis: "invalid_basis",
       };
 
       const validation = await validator.validateLegalBasis(processingContext);
-      
+
       expect(validation.isValid).toBe(false);
-      expect(validation.errors).toContain('Invalid legal basis for data processing');
+      expect(validation.errors).toContain(
+        "Invalid legal basis for data processing",
+      );
     });
   });
 
-  describe('Article 8 - Consent Requirements', () => {
-    it('should validate granular consent for healthcare data', async () => {
+  describe("Article 8 - Consent Requirements", () => {
+    it("should validate granular consent for healthcare data", async () => {
       const consentRequest = {
-        dataSubjectId: 'patient-123',
+        dataSubjectId: "patient-123",
         purposes: [
           {
-            id: 'medical_treatment',
-            description: 'Atendimento médico e acompanhamento clínico',
-            required: true
+            id: "medical_treatment",
+            description: "Atendimento médico e acompanhamento clínico",
+            required: true,
           },
           {
-            id: 'telemedicine',
-            description: 'Consultas por telemedicina e monitoramento remoto',
-            required: false
+            id: "telemedicine",
+            description: "Consultas por telemedicina e monitoramento remoto",
+            required: false,
           },
           {
-            id: 'health_analytics',
-            description: 'Análise de dados para melhoria dos cuidados de saúde',
-            required: false
-          }
+            id: "health_analytics",
+            description: "Análise de dados para melhoria dos cuidados de saúde",
+            required: false,
+          },
         ],
-        dataTypes: ['personal_data', 'health_data', 'biometric_data']
+        dataTypes: ["personal_data", "health_data", "biometric_data"],
       };
 
       const consent = await consentManager.requestConsent(consentRequest);
-      
+
       expect(consent.consentId).toBeDefined();
-      expect(consent.status).toBe('pending');
+      expect(consent.status).toBe("pending");
       expect(consent.granularPurposes).toHaveLength(3);
     });
 
-    it('should handle consent withdrawal for healthcare services', async () => {
+    it("should handle consent withdrawal for healthcare services", async () => {
       const withdrawalRequest = {
-        dataSubjectId: 'patient-123',
-        consentId: 'consent-456',
-        purpose: 'health_analytics',
-        reason: 'No longer wish to participate in analytics'
+        dataSubjectId: "patient-123",
+        consentId: "consent-456",
+        purpose: "health_analytics",
+        reason: "No longer wish to participate in analytics",
       };
 
-      const withdrawal = await consentManager.withdrawConsent(withdrawalRequest);
-      
+      const withdrawal =
+        await consentManager.withdrawConsent(withdrawalRequest);
+
       expect(withdrawal.success).toBe(true);
       expect(withdrawal.effectiveDate).toBeDefined();
       expect(withdrawal.dataRetentionPlan).toBeDefined();
     });
 
-    it('should maintain consent history and audit trail', async () => {
-      const consentHistory = await consentManager.getConsentHistory('patient-123');
-      
+    it("should maintain consent history and audit trail", async () => {
+      const consentHistory =
+        await consentManager.getConsentHistory("patient-123");
+
       expect(consentHistory.length).toBeGreaterThan(0);
-      expect(consentHistory[0]).toHaveProperty('timestamp');
-      expect(consentHistory[0]).toHaveProperty('action');
-      expect(consentHistory[0]).toHaveProperty('legalBasis');
-      expect(consentHistory[0]).toHaveProperty('auditTrail');
+      expect(consentHistory[0]).toHaveProperty("timestamp");
+      expect(consentHistory[0]).toHaveProperty("action");
+      expect(consentHistory[0]).toHaveProperty("legalBasis");
+      expect(consentHistory[0]).toHaveProperty("auditTrail");
     });
 
-    it('should validate consent for children under 18 (Article 14)', async () => {
+    it("should validate consent for children under 18 (Article 14)", async () => {
       const minorConsentRequest = {
-        dataSubjectId: 'minor-patient-789',
+        dataSubjectId: "minor-patient-789",
         age: 16,
         parentalConsent: {
-          parentId: 'parent-guardian-456',
-          relationship: 'mother',
-          verified: true
+          parentId: "parent-guardian-456",
+          relationship: "mother",
+          verified: true,
         },
-        purposes: ['medical_treatment'],
-        dataTypes: ['health_data']
+        purposes: ["medical_treatment"],
+        dataTypes: ["health_data"],
       };
 
-      const consent = await consentManager.requestMinorConsent(minorConsentRequest);
-      
+      const consent =
+        await consentManager.requestMinorConsent(minorConsentRequest);
+
       expect(consent.requiresParentalConsent).toBe(true);
-      expect(consent.parentalConsentStatus).toBe('required');
+      expect(consent.parentalConsentStatus).toBe("required");
       expect(consent.legalGuardianVerification).toBe(true);
     });
   });
 
-  describe('Article 18 - Data Subject Rights', () => {
-    it('should handle right of access (Article 15 equivalent)', async () => {
+  describe("Article 18 - Data Subject Rights", () => {
+    it("should handle right of access (Article 15 equivalent)", async () => {
       const accessRequest = {
-        dataSubjectId: 'patient-123',
-        requestType: 'access',
-        specificData: ['medical_records', 'appointment_history'],
-        format: 'structured'
+        dataSubjectId: "patient-123",
+        requestType: "access",
+        specificData: ["medical_records", "appointment_history"],
+        format: "structured",
       };
 
-      const accessResponse = await rightsManager.processAccessRequest(accessRequest);
-      
+      const accessResponse =
+        await rightsManager.processAccessRequest(accessRequest);
+
       expect(accessResponse.requestId).toBeDefined();
-      expect(accessResponse.status).toBe('processing');
+      expect(accessResponse.status).toBe("processing");
       expect(accessResponse.estimatedCompletionDate).toBeDefined();
-      expect(accessResponse.dataClassification).toBe('personal_health_data');
+      expect(accessResponse.dataClassification).toBe("personal_health_data");
     });
 
-    it('should handle right of rectification', async () => {
+    it("should handle right of rectification", async () => {
       const rectificationRequest = {
-        dataSubjectId: 'patient-123',
-        requestType: 'rectification',
+        dataSubjectId: "patient-123",
+        requestType: "rectification",
         dataToCorrect: {
-          field: 'address',
-          currentValue: 'Rua A, 123',
-          correctedValue: 'Rua B, 456',
-          justification: 'Mudança de endereço'
-        }
+          field: "address",
+          currentValue: "Rua A, 123",
+          correctedValue: "Rua B, 456",
+          justification: "Mudança de endereço",
+        },
       };
 
-      const rectificationResponse = await rightsManager.processRectificationRequest(rectificationRequest);
-      
+      const rectificationResponse =
+        await rightsManager.processRectificationRequest(rectificationRequest);
+
       expect(rectificationResponse.success).toBe(true);
       expect(rectificationResponse.auditTrail).toBeDefined();
       expect(rectificationResponse.dataIntegrityCheck).toBe(true);
     });
 
-    it('should handle right of erasure with healthcare considerations', async () => {
+    it("should handle right of erasure with healthcare considerations", async () => {
       const erasureRequest = {
-        dataSubjectId: 'patient-123',
-        requestType: 'erasure',
-        dataToErase: ['marketing_preferences', 'optional_analytics_data'],
+        dataSubjectId: "patient-123",
+        requestType: "erasure",
+        dataToErase: ["marketing_preferences", "optional_analytics_data"],
         retainMedicalData: true, // Required by CFM for medical records
-        justification: 'Withdrawal of consent for non-essential data'
+        justification: "Withdrawal of consent for non-essential data",
       };
 
-      const erasureResponse = await rightsManager.processErasureRequest(erasureRequest);
-      
+      const erasureResponse =
+        await rightsManager.processErasureRequest(erasureRequest);
+
       expect(erasureResponse.success).toBe(true);
       expect(erasureResponse.medicalDataRetained).toBe(true);
-      expect(erasureResponse.retentionJustification).toContain('CFM medical record retention');
-      expect(erasureResponse.erasedDataTypes).toEqual(['marketing_preferences', 'optional_analytics_data']);
+      expect(erasureResponse.retentionJustification).toContain(
+        "CFM medical record retention",
+      );
+      expect(erasureResponse.erasedDataTypes).toEqual([
+        "marketing_preferences",
+        "optional_analytics_data",
+      ]);
     });
 
-    it('should handle right of data portability', async () => {
+    it("should handle right of data portability", async () => {
       const portabilityRequest = {
-        dataSubjectId: 'patient-123',
-        requestType: 'portability',
-        dataFormat: 'FHIR', // Healthcare data standard
-        includeTypes: ['medical_records', 'test_results', 'prescriptions'],
-        destination: 'external_healthcare_provider'
+        dataSubjectId: "patient-123",
+        requestType: "portability",
+        dataFormat: "FHIR", // Healthcare data standard
+        includeTypes: ["medical_records", "test_results", "prescriptions"],
+        destination: "external_healthcare_provider",
       };
 
-      const portabilityResponse = await rightsManager.processPortabilityRequest(portabilityRequest);
-      
-      expect(portabilityResponse.exportFormat).toBe('FHIR');
+      const portabilityResponse =
+        await rightsManager.processPortabilityRequest(portabilityRequest);
+
+      expect(portabilityResponse.exportFormat).toBe("FHIR");
       expect(portabilityResponse.dataIntegrity).toBe(true);
       expect(portabilityResponse.encryptionApplied).toBe(true);
       expect(portabilityResponse.transferAuditLog).toBeDefined();
     });
 
-    it('should handle right to object to processing', async () => {
+    it("should handle right to object to processing", async () => {
       const objectionRequest = {
-        dataSubjectId: 'patient-123',
-        requestType: 'objection',
-        processingPurpose: 'health_analytics',
-        objectionReason: 'Privacy concerns about data analytics',
-        maintainEssentialServices: true
+        dataSubjectId: "patient-123",
+        requestType: "objection",
+        processingPurpose: "health_analytics",
+        objectionReason: "Privacy concerns about data analytics",
+        maintainEssentialServices: true,
       };
 
-      const objectionResponse = await rightsManager.processObjectionRequest(objectionRequest);
-      
+      const objectionResponse =
+        await rightsManager.processObjectionRequest(objectionRequest);
+
       expect(objectionResponse.success).toBe(true);
-      expect(objectionResponse.processingsStopped).toContain('health_analytics');
+      expect(objectionResponse.processingsStopped).toContain(
+        "health_analytics",
+      );
       expect(objectionResponse.essentialServicesUnaffected).toBe(true);
     });
   });
 
-  describe('Article 46 - Data Breach Notification', () => {
-    it('should detect and classify data breaches', async () => {
+  describe("Article 46 - Data Breach Notification", () => {
+    it("should detect and classify data breaches", async () => {
       const breachEvent = {
-        eventId: 'breach-2024-001',
+        eventId: "breach-2024-001",
         detectionTime: new Date(),
-        affectedDataTypes: ['medical_records', 'personal_information'],
+        affectedDataTypes: ["medical_records", "personal_information"],
         estimatedAffectedSubjects: 150,
-        breachType: 'unauthorized_access',
-        containmentMeasures: ['access_revoked', 'passwords_reset', 'audit_initiated']
+        breachType: "unauthorized_access",
+        containmentMeasures: [
+          "access_revoked",
+          "passwords_reset",
+          "audit_initiated",
+        ],
       };
 
       const breachAssessment = await validator.assessDataBreach(breachEvent);
-      
-      expect(breachAssessment.riskLevel).toBe('high');
+
+      expect(breachAssessment.riskLevel).toBe("high");
       expect(breachAssessment.notificationRequired).toBe(true);
       expect(breachAssessment.anpdNotificationDeadline).toBeDefined(); // 72 hours
       expect(breachAssessment.dataSubjectNotificationRequired).toBe(true);
     });
 
-    it('should generate breach notification reports', async () => {
-      const breachReport = await validator.generateBreachNotificationReport('breach-2024-001');
-      
+    it("should generate breach notification reports", async () => {
+      const breachReport =
+        await validator.generateBreachNotificationReport("breach-2024-001");
+
       expect(breachReport.anpdNotification).toBeDefined();
       expect(breachReport.dataSubjectNotification).toBeDefined();
       expect(breachReport.remediationPlan).toBeDefined();
@@ -810,89 +860,103 @@ describe('LGPD Compliance Validation', () => {
     });
   });
 
-  describe('Article 48 - Data Protection Impact Assessment (DPIA)', () => {
-    it('should conduct DPIA for high-risk healthcare processing', async () => {
+  describe("Article 48 - Data Protection Impact Assessment (DPIA)", () => {
+    it("should conduct DPIA for high-risk healthcare processing", async () => {
       const processingActivity = {
-        activityId: 'ai-diagnosis-system',
-        description: 'Sistema de IA para auxílio em diagnósticos médicos',
-        dataTypes: ['medical_images', 'patient_history', 'genetic_data'],
-        processingPurpose: 'ai_assisted_diagnosis',
-        dataSubjects: ['patients'],
-        riskFactors: ['ai_processing', 'sensitive_health_data', 'automated_decision_making']
+        activityId: "ai-diagnosis-system",
+        description: "Sistema de IA para auxílio em diagnósticos médicos",
+        dataTypes: ["medical_images", "patient_history", "genetic_data"],
+        processingPurpose: "ai_assisted_diagnosis",
+        dataSubjects: ["patients"],
+        riskFactors: [
+          "ai_processing",
+          "sensitive_health_data",
+          "automated_decision_making",
+        ],
       };
 
       const dpia = await validator.conductDPIA(processingActivity);
-      
-      expect(dpia.riskAssessment.overallRisk).toBe('high');
-      expect(dpia.mitigationMeasures).toContain('human_oversight');
-      expect(dpia.mitigationMeasures).toContain('data_minimization');
-      expect(dpia.mitigationMeasures).toContain('accuracy_validation');
+
+      expect(dpia.riskAssessment.overallRisk).toBe("high");
+      expect(dpia.mitigationMeasures).toContain("human_oversight");
+      expect(dpia.mitigationMeasures).toContain("data_minimization");
+      expect(dpia.mitigationMeasures).toContain("accuracy_validation");
       expect(dpia.requiresAnpdConsultation).toBe(true);
     });
   });
 
-  describe('Cross-Border Data Transfer (Article 33)', () => {
-    it('should validate international data transfers', async () => {
+  describe("Cross-Border Data Transfer (Article 33)", () => {
+    it("should validate international data transfers", async () => {
       const transferRequest = {
-        transferId: 'transfer-2024-001',
-        dataTypes: ['medical_consultation_data'],
-        destinationCountry: 'United States',
-        recipient: 'Healthcare AI Provider',
-        transferMechanism: 'standard_contractual_clauses',
-        additionalSafeguards: ['encryption', 'pseudonymization', 'access_controls']
+        transferId: "transfer-2024-001",
+        dataTypes: ["medical_consultation_data"],
+        destinationCountry: "United States",
+        recipient: "Healthcare AI Provider",
+        transferMechanism: "standard_contractual_clauses",
+        additionalSafeguards: [
+          "encryption",
+          "pseudonymization",
+          "access_controls",
+        ],
       };
 
-      const transferValidation = await validator.validateInternationalTransfer(transferRequest);
-      
+      const transferValidation =
+        await validator.validateInternationalTransfer(transferRequest);
+
       expect(transferValidation.isPermitted).toBe(true);
       expect(transferValidation.adequacyDecision).toBe(false); // US doesn't have adequacy decision
       expect(transferValidation.requiresAdditionalSafeguards).toBe(true);
-      expect(transferValidation.complianceDocuments).toContain('standard_contractual_clauses');
+      expect(transferValidation.complianceDocuments).toContain(
+        "standard_contractual_clauses",
+      );
     });
   });
 
-  describe('Audit and Compliance Monitoring', () => {
-    it('should maintain comprehensive audit logs', async () => {
+  describe("Audit and Compliance Monitoring", () => {
+    it("should maintain comprehensive audit logs", async () => {
       const auditQuery = {
-        startDate: new Date('2024-01-01'),
-        endDate: new Date('2024-12-31'),
-        dataSubjectId: 'patient-123',
-        operations: ['read', 'write', 'delete'],
-        purposes: ['medical_treatment', 'telemedicine']
+        startDate: new Date("2024-01-01"),
+        endDate: new Date("2024-12-31"),
+        dataSubjectId: "patient-123",
+        operations: ["read", "write", "delete"],
+        purposes: ["medical_treatment", "telemedicine"],
       };
 
       const auditLog = await validator.getAuditLog(auditQuery);
-      
+
       expect(auditLog.entries.length).toBeGreaterThan(0);
-      expect(auditLog.entries[0]).toHaveProperty('timestamp');
-      expect(auditLog.entries[0]).toHaveProperty('operation');
-      expect(auditLog.entries[0]).toHaveProperty('legalBasis');
-      expect(auditLog.entries[0]).toHaveProperty('dataProcessor');
-      expect(auditLog.entries[0]).toHaveProperty('purpose');
+      expect(auditLog.entries[0]).toHaveProperty("timestamp");
+      expect(auditLog.entries[0]).toHaveProperty("operation");
+      expect(auditLog.entries[0]).toHaveProperty("legalBasis");
+      expect(auditLog.entries[0]).toHaveProperty("dataProcessor");
+      expect(auditLog.entries[0]).toHaveProperty("purpose");
     });
 
-    it('should generate compliance reports', async () => {
+    it("should generate compliance reports", async () => {
       const reportPeriod = {
-        startDate: new Date('2024-01-01'),
-        endDate: new Date('2024-03-31'),
-        reportType: 'quarterly'
+        startDate: new Date("2024-01-01"),
+        endDate: new Date("2024-03-31"),
+        reportType: "quarterly",
       };
 
-      const complianceReport = await validator.generateComplianceReport(reportPeriod);
-      
+      const complianceReport =
+        await validator.generateComplianceReport(reportPeriod);
+
       expect(complianceReport.consentMetrics).toBeDefined();
       expect(complianceReport.dataSubjectRightsRequests).toBeDefined();
       expect(complianceReport.dataBreaches).toBeDefined();
       expect(complianceReport.internationalTransfers).toBeDefined();
-      expect(complianceReport.overallComplianceScore).toBeGreaterThanOrEqual(95);
+      expect(complianceReport.overallComplianceScore).toBeGreaterThanOrEqual(
+        95,
+      );
     });
 
-    it('should validate data retention policies', async () => {
+    it("should validate data retention policies", async () => {
       const retentionValidation = await validator.validateDataRetention();
-      
-      expect(retentionValidation.medicalRecordsRetention).toBe('permanent'); // CFM requirement
-      expect(retentionValidation.marketingDataRetention).toBe('consent_based');
-      expect(retentionValidation.auditLogRetention).toBe('7_years'); // LGPD requirement
+
+      expect(retentionValidation.medicalRecordsRetention).toBe("permanent"); // CFM requirement
+      expect(retentionValidation.marketingDataRetention).toBe("consent_based");
+      expect(retentionValidation.auditLogRetention).toBe("7_years"); // LGPD requirement
       expect(retentionValidation.expiredDataIdentified).toBeDefined();
     });
   });
@@ -902,48 +966,60 @@ describe('LGPD Compliance Validation', () => {
 class MockLGPDComplianceValidator {
   async validateLegalBasis(context: any) {
     return {
-      isValid: context.legalBasis !== 'invalid_basis',
+      isValid: context.legalBasis !== "invalid_basis",
       legalBasis: context.legalBasis,
       auditTrail: `Legal basis validation for ${context.dataSubjectId}`,
-      errors: context.legalBasis === 'invalid_basis' ? ['Invalid legal basis for data processing'] : []
+      errors:
+        context.legalBasis === "invalid_basis"
+          ? ["Invalid legal basis for data processing"]
+          : [],
     };
   }
 
   async assessDataBreach(event: any) {
     return {
-      riskLevel: event.affectedDataTypes.includes('medical_records') ? 'high' : 'medium',
+      riskLevel: event.affectedDataTypes.includes("medical_records")
+        ? "high"
+        : "medium",
       notificationRequired: true,
       anpdNotificationDeadline: new Date(Date.now() + 72 * 60 * 60 * 1000),
-      dataSubjectNotificationRequired: event.estimatedAffectedSubjects > 100
+      dataSubjectNotificationRequired: event.estimatedAffectedSubjects > 100,
     };
   }
 
   async conductDPIA(activity: any) {
     return {
-      riskAssessment: { overallRisk: 'high' },
-      mitigationMeasures: ['human_oversight', 'data_minimization', 'accuracy_validation'],
-      requiresAnpdConsultation: activity.riskFactors.includes('ai_processing')
+      riskAssessment: { overallRisk: "high" },
+      mitigationMeasures: [
+        "human_oversight",
+        "data_minimization",
+        "accuracy_validation",
+      ],
+      requiresAnpdConsultation: activity.riskFactors.includes("ai_processing"),
     };
   }
 
   async validateInternationalTransfer(request: any) {
     return {
       isPermitted: true,
-      adequacyDecision: request.destinationCountry === 'European Union',
-      requiresAdditionalSafeguards: request.destinationCountry !== 'European Union',
-      complianceDocuments: ['standard_contractual_clauses']
+      adequacyDecision: request.destinationCountry === "European Union",
+      requiresAdditionalSafeguards:
+        request.destinationCountry !== "European Union",
+      complianceDocuments: ["standard_contractual_clauses"],
     };
   }
 
   async getAuditLog(query: any) {
     return {
-      entries: [{
-        timestamp: new Date(),
-        operation: 'read',
-        legalBasis: 'consent',
-        dataProcessor: 'healthcare_professional',
-        purpose: 'medical_treatment'
-      }]
+      entries: [
+        {
+          timestamp: new Date(),
+          operation: "read",
+          legalBasis: "consent",
+          dataProcessor: "healthcare_professional",
+          purpose: "medical_treatment",
+        },
+      ],
     };
   }
 
@@ -953,16 +1029,16 @@ class MockLGPDComplianceValidator {
       dataSubjectRightsRequests: { total: 25, resolved: 24 },
       dataBreaches: { total: 1, resolved: 1 },
       internationalTransfers: { total: 5, compliant: 5 },
-      overallComplianceScore: 98
+      overallComplianceScore: 98,
     };
   }
 
   async validateDataRetention() {
     return {
-      medicalRecordsRetention: 'permanent',
-      marketingDataRetention: 'consent_based',
-      auditLogRetention: '7_years',
-      expiredDataIdentified: []
+      medicalRecordsRetention: "permanent",
+      marketingDataRetention: "consent_based",
+      auditLogRetention: "7_years",
+      expiredDataIdentified: [],
     };
   }
 }
@@ -971,66 +1047,83 @@ class MockLGPDComplianceValidator {
 ### LGPD Validator Implementation
 
 **File**: `apps/api/src/lib/compliance/lgpd-validator.ts`
+
 ```typescript
-import { z } from 'zod';
+import { z } from "zod";
 
 // LGPD validation schemas
 const ProcessingContextSchema = z.object({
   dataSubjectId: z.string(),
-  purpose: z.enum(['medical_treatment', 'telemedicine', 'health_analytics', 'professional_verification', 'emergency_treatment']),
+  purpose: z.enum([
+    "medical_treatment",
+    "telemedicine",
+    "health_analytics",
+    "professional_verification",
+    "emergency_treatment",
+  ]),
   dataTypes: z.array(z.string()),
-  legalBasis: z.enum(['consent', 'legitimate_interest', 'vital_interests', 'legal_obligation', 'public_task', 'contract']),
-  emergency: z.boolean().optional()
+  legalBasis: z.enum([
+    "consent",
+    "legitimate_interest",
+    "vital_interests",
+    "legal_obligation",
+    "public_task",
+    "contract",
+  ]),
+  emergency: z.boolean().optional(),
 });
 
 const ConsentRequestSchema = z.object({
   dataSubjectId: z.string(),
-  purposes: z.array(z.object({
-    id: z.string(),
-    description: z.string(),
-    required: z.boolean()
-  })),
-  dataTypes: z.array(z.string())
+  purposes: z.array(
+    z.object({
+      id: z.string(),
+      description: z.string(),
+      required: z.boolean(),
+    }),
+  ),
+  dataTypes: z.array(z.string()),
 });
 
 export class LGPDComplianceValidator {
   async validateLegalBasis(context: z.infer<typeof ProcessingContextSchema>) {
     try {
       ProcessingContextSchema.parse(context);
-      
+
       // Validate legal basis according to LGPD Article 7
       const validation = {
         isValid: false,
         legalBasis: context.legalBasis,
-        auditTrail: '',
+        auditTrail: "",
         errors: [] as string[],
-        emergencyJustification: undefined as string | undefined
+        emergencyJustification: undefined as string | undefined,
       };
 
       switch (context.legalBasis) {
-        case 'consent':
+        case "consent":
           validation.isValid = await this.validateConsentBasis(context);
           break;
-        case 'legitimate_interest':
+        case "legitimate_interest":
           validation.isValid = await this.validateLegitimateInterest(context);
           break;
-        case 'vital_interests':
+        case "vital_interests":
           validation.isValid = await this.validateVitalInterests(context);
           if (context.emergency) {
-            validation.emergencyJustification = 'Emergency medical treatment requires immediate access to patient data';
+            validation.emergencyJustification =
+              "Emergency medical treatment requires immediate access to patient data";
           }
           break;
-        case 'legal_obligation':
+        case "legal_obligation":
           validation.isValid = await this.validateLegalObligation(context);
           break;
-        case 'public_task':
+        case "public_task":
           validation.isValid = await this.validatePublicTask(context);
           break;
-        case 'contract':
+        case "contract":
           validation.isValid = await this.validateContractBasis(context);
           break;
         default:
-          validation.errors.push('Invalid legal basis for data processing');
+          validation.errors.push("Invalid legal basis for data processing");
       }
 
       validation.auditTrail = this.generateAuditTrail(context, validation);
@@ -1039,8 +1132,8 @@ export class LGPDComplianceValidator {
       return {
         isValid: false,
         legalBasis: context.legalBasis,
-        auditTrail: '',
-        errors: ['Invalid processing context format']
+        auditTrail: "",
+        errors: ["Invalid processing context format"],
       };
     }
   }
@@ -1054,43 +1147,45 @@ export class LGPDComplianceValidator {
   private async validateLegitimateInterest(context: any): Promise<boolean> {
     // Validate legitimate interest under LGPD Article 7, X
     const legitimateInterestPurposes = [
-      'professional_verification',
-      'fraud_prevention',
-      'security_monitoring'
+      "professional_verification",
+      "fraud_prevention",
+      "security_monitoring",
     ];
-    
+
     return legitimateInterestPurposes.includes(context.purpose);
   }
 
   private async validateVitalInterests(context: any): Promise<boolean> {
     // Validate vital interests under LGPD Article 7, IV
-    return context.purpose === 'emergency_treatment' || context.emergency === true;
+    return (
+      context.purpose === "emergency_treatment" || context.emergency === true
+    );
   }
 
   private async validateLegalObligation(context: any): Promise<boolean> {
     // Validate legal obligation under LGPD Article 7, II
     const legalObligationPurposes = [
-      'tax_reporting',
-      'regulatory_compliance',
-      'cfm_reporting'
+      "tax_reporting",
+      "regulatory_compliance",
+      "cfm_reporting",
     ];
-    
+
     return legalObligationPurposes.includes(context.purpose);
   }
 
   private async validatePublicTask(context: any): Promise<boolean> {
     // Validate public task under LGPD Article 7, III
     const publicTaskPurposes = [
-      'public_health_monitoring',
-      'epidemiological_surveillance'
+      "public_health_monitoring",
+      "epidemiological_surveillance",
     ];
-    
+
     return publicTaskPurposes.includes(context.purpose);
   }
 
   private async validateContractBasis(context: any): Promise<boolean> {
     // Validate contract necessity under LGPD Article 7, V
-    return context.purpose === 'medical_treatment';
+    return context.purpose === "medical_treatment";
   }
 
   private generateAuditTrail(context: any, validation: any): string {
@@ -1100,8 +1195,8 @@ export class LGPDComplianceValidator {
       purpose: context.purpose,
       legalBasis: context.legalBasis,
       validationResult: validation.isValid,
-      processor: 'lgpd_compliance_validator',
-      compliance: 'lgpd_article_7'
+      processor: "lgpd_compliance_validator",
+      compliance: "lgpd_article_7",
     });
   }
 }

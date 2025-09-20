@@ -141,8 +141,7 @@ QUANDO_USAR_AGENTES:
 ### 1. Desenvolvimento Completo de Feature
 
 ```yaml
-sequence:
-  1. apex-researcher → "Validação tecnológica e best practices"
+sequence: 1. apex-researcher → "Validação tecnológica e best practices"
   2. apex-dev → "Implementação core + architecture mode se necessário"
   3. apex-ui-ux-designer → "Interface otimizada (se aplicável)"
   4. code-reviewer → "Validação final de qualidade"
@@ -152,8 +151,7 @@ output: "Feature production-ready com qualidade validada"
 ### 2. Research-Driven Implementation
 
 ```yaml
-sequence:
-  1. apex-researcher → "Multi-source research e compliance"
+sequence: 1. apex-researcher → "Multi-source research e compliance"
   2. apex-dev → "Implementação baseada em evidências"
   3. code-reviewer → "Quality gates e security check"
 output: "Implementação evidence-based com qualidade garantida"
@@ -172,8 +170,7 @@ output: "Código seguro e otimizado"
 ### 4. Arquitetura & Sistema
 
 ```yaml
-sequence:
-  1. architect-review → "Design e padrões arquiteturais"
+sequence: 1. architect-review → "Design e padrões arquiteturais"
   2. apex-dev → "Implementação seguindo architecture mode"
   3. security-auditor → "Validação segurança arquitetural"
 output: "Sistema bem arquitetado e seguro"

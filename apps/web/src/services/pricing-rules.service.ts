@@ -4,14 +4,14 @@
  * Service layer for dynamic pricing engine operations
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from "@/integrations/supabase/client";
 import type {
   CreatePricingRuleRequest,
   PricingCalculation,
   PricingRule,
   PricingRuleFilters,
   UpdatePricingRuleRequest,
-} from '@/types/pricing-rules';
+} from "@/types/pricing-rules";
 
 export class PricingRulesService {
   private static sb: any = supabase;
@@ -23,27 +23,29 @@ export class PricingRulesService {
     filters?: PricingRuleFilters,
   ): Promise<PricingRule[]> {
     let query = this.sb
-      .from('pricing_rules')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .order('priority', { ascending: false });
+      .from("pricing_rules")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .order("priority", { ascending: false });
 
     if (filters?.rule_type) {
-      query = query.eq('rule_type', filters.rule_type);
+      query = query.eq("rule_type", filters.rule_type);
     }
 
     if (filters?.is_active !== undefined) {
-      query = query.eq('is_active', filters.is_active);
+      query = query.eq("is_active", filters.is_active);
     }
 
     if (filters?.search) {
-      query = query.or(`name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`);
+      query = query.or(
+        `name.ilike.%${filters.search}%,description.ilike.%${filters.search}%`,
+      );
     }
 
     const { data, error } = await query;
 
     if (error) {
-      console.error('Error fetching pricing rules:', error);
+      console.error("Error fetching pricing rules:", error);
       throw new Error(`Failed to fetch pricing rules: ${error.message}`);
     }
 
@@ -55,16 +57,16 @@ export class PricingRulesService {
    */
   static async getPricingRule(id: string): Promise<PricingRule | null> {
     const { data, error } = await this.sb
-      .from('pricing_rules')
-      .select('*')
-      .eq('id', id)
+      .from("pricing_rules")
+      .select("*")
+      .eq("id", id)
       .single();
 
     if (error) {
-      if (error.code === 'PGRST116') {
+      if (error.code === "PGRST116") {
         return null; // Not found
       }
-      console.error('Error fetching pricing rule:', error);
+      console.error("Error fetching pricing rule:", error);
       throw new Error(`Failed to fetch pricing rule: ${error.message}`);
     }
 
@@ -79,7 +81,7 @@ export class PricingRulesService {
     request: CreatePricingRuleRequest,
   ): Promise<PricingRule> {
     const { data, error } = await this.sb
-      .from('pricing_rules')
+      .from("pricing_rules")
       .insert({
         clinic_id: clinicId,
         ...request,
@@ -88,7 +90,7 @@ export class PricingRulesService {
       .single();
 
     if (error) {
-      console.error('Error creating pricing rule:', error);
+      console.error("Error creating pricing rule:", error);
       throw new Error(`Failed to create pricing rule: ${error.message}`);
     }
 
@@ -103,17 +105,17 @@ export class PricingRulesService {
     request: UpdatePricingRuleRequest,
   ): Promise<PricingRule> {
     const { data, error } = await this.sb
-      .from('pricing_rules')
+      .from("pricing_rules")
       .update({
         ...request,
         updated_at: new Date().toISOString(),
       })
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
     if (error) {
-      console.error('Error updating pricing rule:', error);
+      console.error("Error updating pricing rule:", error);
       throw new Error(`Failed to update pricing rule: ${error.message}`);
     }
 
@@ -125,12 +127,12 @@ export class PricingRulesService {
    */
   static async deletePricingRule(id: string): Promise<void> {
     const { error } = await supabase
-      .from('pricing_rules')
+      .from("pricing_rules")
       .delete()
-      .eq('id', id);
+      .eq("id", id);
 
     if (error) {
-      console.error('Error deleting pricing rule:', error);
+      console.error("Error deleting pricing rule:", error);
       throw new Error(`Failed to delete pricing rule: ${error.message}`);
     }
   }
@@ -138,7 +140,10 @@ export class PricingRulesService {
   /**
    * Toggle pricing rule active status
    */
-  static async togglePricingRule(id: string, isActive: boolean): Promise<PricingRule> {
+  static async togglePricingRule(
+    id: string,
+    isActive: boolean,
+  ): Promise<PricingRule> {
     return this.updatePricingRule(id, { is_active: isActive });
   }
 
@@ -157,9 +162,9 @@ export class PricingRulesService {
   ): Promise<PricingCalculation> {
     // Get base price from service
     const { data: service, error: serviceError } = await supabase
-      .from('service_types')
-      .select('price')
-      .eq('id', serviceId)
+      .from("service_types")
+      .select("price")
+      .eq("id", serviceId)
       .single();
 
     if (serviceError) {
@@ -172,7 +177,7 @@ export class PricingRulesService {
     const rules = await this.getPricingRules(clinicId, { is_active: true });
 
     // Calculate pricing with rules
-    const { calculatePricing } = await import('@/types/pricing-rules');
+    const { calculatePricing } = await import("@/types/pricing-rules");
     return calculatePricing(basePrice, rules, {
       service_id: serviceId,
       ...context,
@@ -187,16 +192,18 @@ export class PricingRulesService {
     serviceId: string,
   ): Promise<PricingRule[]> {
     const { data, error } = await this.sb
-      .from('pricing_rules')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .eq('is_active', true)
+      .from("pricing_rules")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .eq("is_active", true)
       .or(`service_ids.cs.{${serviceId}},service_ids.is.null`)
-      .order('priority', { ascending: false });
+      .order("priority", { ascending: false });
 
     if (error) {
-      console.error('Error fetching service pricing rules:', error);
-      throw new Error(`Failed to fetch service pricing rules: ${error.message}`);
+      console.error("Error fetching service pricing rules:", error);
+      throw new Error(
+        `Failed to fetch service pricing rules: ${error.message}`,
+      );
     }
 
     return data || [];
@@ -210,16 +217,18 @@ export class PricingRulesService {
     professionalId: string,
   ): Promise<PricingRule[]> {
     const { data, error } = await this.sb
-      .from('pricing_rules')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .eq('is_active', true)
+      .from("pricing_rules")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .eq("is_active", true)
       .or(`professional_ids.cs.{${professionalId}},professional_ids.is.null`)
-      .order('priority', { ascending: false });
+      .order("priority", { ascending: false });
 
     if (error) {
-      console.error('Error fetching professional pricing rules:', error);
-      throw new Error(`Failed to fetch professional pricing rules: ${error.message}`);
+      console.error("Error fetching professional pricing rules:", error);
+      throw new Error(
+        `Failed to fetch professional pricing rules: ${error.message}`,
+      );
     }
 
     return data || [];
@@ -231,13 +240,18 @@ export class PricingRulesService {
   static async updatePricingRulePriorities(
     updates: { id: string; priority: number }[],
   ): Promise<void> {
-    const { error } = await (this.sb as any).rpc('bulk_update_pricing_rule_priorities', {
-      updates,
-    });
+    const { error } = await (this.sb as any).rpc(
+      "bulk_update_pricing_rule_priorities",
+      {
+        updates,
+      },
+    );
 
     if (error) {
-      console.error('Error updating pricing rule priorities:', error);
-      throw new Error(`Failed to update pricing rule priorities: ${error.message}`);
+      console.error("Error updating pricing rule priorities:", error);
+      throw new Error(
+        `Failed to update pricing rule priorities: ${error.message}`,
+      );
     }
   }
 
@@ -251,22 +265,24 @@ export class PricingRulesService {
     avg_discount: number;
     total_savings: number;
   }> {
-    const { data, error } = await (this.sb as any).rpc('get_pricing_stats', {
+    const { data, error } = await (this.sb as any).rpc("get_pricing_stats", {
       p_clinic_id: clinicId,
     });
 
     if (error) {
-      console.error('Error fetching pricing stats:', error);
+      console.error("Error fetching pricing stats:", error);
       throw new Error(`Failed to fetch pricing stats: ${error.message}`);
     }
 
-    return data || {
-      total_rules: 0,
-      active_rules: 0,
-      rules_by_type: {},
-      avg_discount: 0,
-      total_savings: 0,
-    };
+    return (
+      data || {
+        total_rules: 0,
+        active_rules: 0,
+        rules_by_type: {},
+        avg_discount: 0,
+        total_savings: 0,
+      }
+    );
   }
 }
 

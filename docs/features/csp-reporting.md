@@ -45,6 +45,7 @@ Headers are injected via Vercel configuration files:
 **Purpose**: Receives and logs CSP violation reports from browsers
 
 **Sample Payload**:
+
 ```json
 {
   "csp-report": {
@@ -62,24 +63,26 @@ Headers are injected via Vercel configuration files:
 
 ## CSP Policy Breakdown
 
-| Directive | Policy | Rationale |
-|-----------|--------|-----------|
-| `default-src` | `'self'` | Only allow resources from same origin by default |
-| `script-src` | `'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://js.stripe.com` | Allow app scripts, Vercel live reload, Stripe payments |
-| `style-src` | `'self' 'unsafe-inline' https://fonts.googleapis.com` | Allow app styles and Google Fonts |
-| `font-src` | `'self' https://fonts.gstatic.com` | Allow app fonts and Google Fonts |
-| `img-src` | `'self' data: https:` | Allow app images, data URIs, and HTTPS images |
-| `connect-src` | `'self' https://api.stripe.com https://*.supabase.co wss://*.supabase.co` | Allow API calls to Stripe and Supabase |
-| `report-uri` | `/api/csp-report` | Send violation reports to our endpoint |
+| Directive     | Policy                                                                           | Rationale                                              |
+| ------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `default-src` | `'self'`                                                                         | Only allow resources from same origin by default       |
+| `script-src`  | `'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://js.stripe.com` | Allow app scripts, Vercel live reload, Stripe payments |
+| `style-src`   | `'self' 'unsafe-inline' https://fonts.googleapis.com`                            | Allow app styles and Google Fonts                      |
+| `font-src`    | `'self' https://fonts.gstatic.com`                                               | Allow app fonts and Google Fonts                       |
+| `img-src`     | `'self' data: https:`                                                            | Allow app images, data URIs, and HTTPS images          |
+| `connect-src` | `'self' https://api.stripe.com https://*.supabase.co wss://*.supabase.co`        | Allow API calls to Stripe and Supabase                 |
+| `report-uri`  | `/api/csp-report`                                                                | Send violation reports to our endpoint                 |
 
 ## Security Benefits
 
 ### LGPD Compliance
+
 - **Data Protection**: CSP helps prevent XSS attacks that could expose patient data
 - **Audit Trail**: CSP reports provide security audit logs
 - **Privacy by Design**: Proactive security monitoring aligns with LGPD principles
 
 ### Healthcare Security
+
 - **Patient Data Protection**: Prevents malicious script injection
 - **Compliance Monitoring**: CSP reports help maintain security standards
 - **Incident Response**: Early warning system for potential security threats
@@ -87,11 +90,13 @@ Headers are injected via Vercel configuration files:
 ## Monitoring & Alerting
 
 ### Report Processing
+
 1. **Immediate Logging**: All CSP reports are logged for analysis
 2. **Threat Detection**: Patterns in reports may indicate security threats
 3. **Policy Refinement**: Reports help optimize CSP policies before enforcement
 
 ### Future Implementation
+
 - **Alert System**: Integrate CSP reports with monitoring stack
 - **Policy Enforcement**: Transition from Report-Only to enforcing mode
 - **Automated Response**: Block suspicious sources based on report patterns
@@ -112,11 +117,13 @@ Headers are injected via Vercel configuration files:
 ## Troubleshooting
 
 ### Common Issues
+
 - **False Positives**: Browser extensions may trigger CSP violations
 - **Third-party Services**: New integrations may require CSP policy updates
 - **Development Mode**: Consider relaxed policies for development environments
 
 ### Report Analysis
+
 - Monitor `/api/csp-report` logs for violation patterns
 - Investigate unexpected `blocked-uri` values
 - Review `violated-directive` for policy optimization opportunities

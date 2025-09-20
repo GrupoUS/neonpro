@@ -4,7 +4,7 @@
  * Factory functions for creating mock data for testing.
  */
 
-import { randomDate, randomEmail, randomString } from './index';
+import { randomDate, randomEmail, randomString } from "./index";
 
 /**
  * Factory for creating mock API responses
@@ -14,7 +14,7 @@ export class MockAPIResponseFactory {
     return {
       success: true,
       data,
-      message: message || 'Operation successful',
+      message: message || "Operation successful",
       timestamp: new Date().toISOString(),
     };
   }
@@ -24,7 +24,7 @@ export class MockAPIResponseFactory {
       success: false,
       error: {
         message,
-        code: code || 'GENERIC_ERROR',
+        code: code || "GENERIC_ERROR",
         statusCode,
       },
       timestamp: new Date().toISOString(),
@@ -68,7 +68,7 @@ export class MockUserFactory {
       id: randomString(12),
       email: randomEmail(),
       name: `User ${randomString(6)}`,
-      role: 'user',
+      role: "user",
       active: true,
       createdAt: randomDate(),
       updatedAt: new Date(),
@@ -82,15 +82,15 @@ export class MockUserFactory {
 
   static createAdmin(overrides: Record<string, any> = {}) {
     return this.create({
-      role: 'admin',
-      permissions: ['read', 'write', 'delete'],
+      role: "admin",
+      permissions: ["read", "write", "delete"],
       ...overrides,
     });
   }
 
   static createPatient(overrides: Record<string, any> = {}) {
     return this.create({
-      role: 'patient',
+      role: "patient",
       patientId: randomString(10),
       ...overrides,
     });
@@ -98,9 +98,9 @@ export class MockUserFactory {
 
   static createProfessional(overrides: Record<string, any> = {}) {
     return this.create({
-      role: 'professional',
+      role: "professional",
       crm: `CRM/SP ${Math.floor(Math.random() * 999999)}`,
-      specialty: 'General Medicine',
+      specialty: "General Medicine",
       ...overrides,
     });
   }
@@ -116,13 +116,13 @@ export class MockHealthcareFactory {
       name: `Patient ${randomString(6)}`,
       email: randomEmail(),
       cpf: this.generateCPF(),
-      birthDate: randomDate(new Date('1950-01-01'), new Date('2010-01-01')),
+      birthDate: randomDate(new Date("1950-01-01"), new Date("2010-01-01")),
       phone: this.generatePhone(),
       address: {
         street: `Rua ${randomString(8)}`,
         number: Math.floor(Math.random() * 9999) + 1,
-        city: 'São Paulo',
-        state: 'SP',
+        city: "São Paulo",
+        state: "SP",
         zipCode: this.generateZipCode(),
       },
       medicalHistory: [],
@@ -131,10 +131,10 @@ export class MockHealthcareFactory {
       emergencyContact: {
         name: `Contact ${randomString(6)}`,
         phone: this.generatePhone(),
-        relationship: 'Family',
+        relationship: "Family",
       },
       consentGiven: true,
-      dataProcessingPurpose: 'Prestação de serviços de saúde',
+      dataProcessingPurpose: "Prestação de serviços de saúde",
       createdAt: randomDate(),
       updatedAt: new Date(),
       ...overrides,
@@ -151,19 +151,19 @@ export class MockHealthcareFactory {
       address: {
         street: `Rua ${randomString(10)}`,
         number: Math.floor(Math.random() * 9999) + 1,
-        city: 'São Paulo',
-        state: 'SP',
+        city: "São Paulo",
+        state: "SP",
         zipCode: this.generateZipCode(),
       },
-      specialties: ['General Medicine', 'Cardiology'],
+      specialties: ["General Medicine", "Cardiology"],
       operatingHours: {
-        monday: '08:00-18:00',
-        tuesday: '08:00-18:00',
-        wednesday: '08:00-18:00',
-        thursday: '08:00-18:00',
-        friday: '08:00-18:00',
-        saturday: '08:00-12:00',
-        sunday: 'Closed',
+        monday: "08:00-18:00",
+        tuesday: "08:00-18:00",
+        wednesday: "08:00-18:00",
+        thursday: "08:00-18:00",
+        friday: "08:00-18:00",
+        saturday: "08:00-12:00",
+        sunday: "Closed",
       },
       createdAt: randomDate(),
       updatedAt: new Date(),
@@ -172,7 +172,10 @@ export class MockHealthcareFactory {
   }
 
   static createAppointment(overrides: Record<string, any> = {}) {
-    const appointmentDate = randomDate(new Date(), new Date(Date.now() + 30 * 24 * 60 * 60 * 1000));
+    const appointmentDate = randomDate(
+      new Date(),
+      new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    );
 
     return {
       id: randomString(12),
@@ -181,11 +184,11 @@ export class MockHealthcareFactory {
       clinicId: randomString(12),
       date: appointmentDate,
       duration: 30, // minutes
-      type: 'consultation',
-      status: 'scheduled',
-      notes: '',
+      type: "consultation",
+      status: "scheduled",
+      notes: "",
       symptoms: [],
-      diagnosis: '',
+      diagnosis: "",
       prescription: [],
       followUp: null,
       createdAt: randomDate(),
@@ -195,30 +198,42 @@ export class MockHealthcareFactory {
   }
 
   private static generateCPF(): string {
-    const digits = Array.from({ length: 9 }, () => Math.floor(Math.random() * 10));
+    const digits = Array.from({ length: 9 }, () =>
+      Math.floor(Math.random() * 10),
+    );
 
     // Calculate first check digit
-    let sum = digits.reduce((acc, digit, index) => acc + digit * (10 - index), 0);
+    let sum = digits.reduce(
+      (acc, digit, index) => acc + digit * (10 - index),
+      0,
+    );
     let checkDigit1 = 11 - (sum % 11);
     if (checkDigit1 >= 10) checkDigit1 = 0;
 
     // Calculate second check digit
-    sum = digits.reduce((acc, digit, index) => acc + digit * (11 - index), 0) + checkDigit1 * 2;
+    sum =
+      digits.reduce((acc, digit, index) => acc + digit * (11 - index), 0) +
+      checkDigit1 * 2;
     let checkDigit2 = 11 - (sum % 11);
     if (checkDigit2 >= 10) checkDigit2 = 0;
 
     const allDigits = [...digits, checkDigit1, checkDigit2];
-    return `${allDigits.slice(0, 3).join('')}.${allDigits.slice(3, 6).join('')}.${
-      allDigits.slice(6, 9).join('')
-    }-${allDigits.slice(9).join('')}`;
+    return `${allDigits.slice(0, 3).join("")}.${allDigits.slice(3, 6).join("")}.${allDigits
+      .slice(6, 9)
+      .join("")}-${allDigits.slice(9).join("")}`;
   }
 
   private static generateCNPJ(): string {
-    const digits = Array.from({ length: 12 }, () => Math.floor(Math.random() * 10));
+    const digits = Array.from({ length: 12 }, () =>
+      Math.floor(Math.random() * 10),
+    );
 
     // Calculate first check digit
     const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
-    let sum = digits.reduce((acc, digit, index) => acc + digit * (weights1[index] || 0), 0);
+    let sum = digits.reduce(
+      (acc, digit, index) => acc + digit * (weights1[index] || 0),
+      0,
+    );
     let checkDigit1 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
 
     // Calculate second check digit
@@ -230,9 +245,11 @@ export class MockHealthcareFactory {
     let checkDigit2 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
 
     const allDigits = [...digits, checkDigit1, checkDigit2];
-    return `${allDigits.slice(0, 2).join('')}.${allDigits.slice(2, 5).join('')}.${
-      allDigits.slice(5, 8).join('')
-    }/${allDigits.slice(8, 12).join('')}-${allDigits.slice(12).join('')}`;
+    return `${allDigits.slice(0, 2).join("")}.${allDigits.slice(2, 5).join("")}.${allDigits
+      .slice(5, 8)
+      .join(
+        "",
+      )}/${allDigits.slice(8, 12).join("")}-${allDigits.slice(12).join("")}`;
   }
 
   private static generatePhone(): string {

@@ -1,4 +1,5 @@
 # NeonPro Healthcare Platform - Deployment Guide
+
 ## Production Deployment and Operations Manual
 
 **Platform Version**: v2.0.0  
@@ -8,6 +9,7 @@
 ## 🚀 QUICK START DEPLOYMENT
 
 ### Prerequisites
+
 ```bash
 # Required tools
 node --version    # v18.0.0+
@@ -63,6 +65,7 @@ pnpm dlx supabase db seed
 ### 3. Application Deployment
 
 #### Option A: Vercel Deployment (Recommended)
+
 ```bash
 # Install Vercel CLI
 pnpm dlx vercel --version
@@ -75,6 +78,7 @@ pnpm dlx vercel --prod
 ```
 
 #### Option B: Docker Deployment
+
 ```bash
 # Build Docker image
 docker build -t neonpro-healthcare .
@@ -97,7 +101,7 @@ graph TB
     API --> DB[(Supabase DB)]
     API --> Cache[(Redis Cache)]
     API --> Jobs[Background Jobs]
-    
+
     DB --> RLS[Row Level Security]
     DB --> Audit[Audit Trails]
     Jobs --> Medical[Medical Records]
@@ -106,6 +110,7 @@ graph TB
 ```
 
 ### Technology Stack
+
 - **Frontend**: React 19 + TanStack Router + Vite
 - **Backend**: Hono + Supabase + PostgreSQL
 - **Authentication**: Supabase Auth with RBAC
@@ -145,7 +150,7 @@ USING (
 ```typescript
 // Security middleware configuration
 const securityHeaders = {
-  'Content-Security-Policy': `
+  "Content-Security-Policy": `
     default-src 'self';
     script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
@@ -153,10 +158,10 @@ const securityHeaders = {
     img-src 'self' data: https:;
     connect-src 'self' https://*.supabase.co;
   `,
-  'X-Frame-Options': 'DENY',
-  'X-Content-Type-Options': 'nosniff',
-  'Referrer-Policy': 'strict-origin-when-cross-origin',
-  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()'
+  "X-Frame-Options": "DENY",
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "Permissions-Policy": "camera=(), microphone=(), geolocation=()",
 };
 ```
 
@@ -166,17 +171,17 @@ const securityHeaders = {
 
 ```typescript
 // API health endpoint
-app.get('/api/health', async (c) => {
+app.get("/api/health", async (c) => {
   const checks = {
     database: await checkDatabaseConnection(),
     redis: await checkRedisConnection(),
-    external_apis: await checkExternalAPIs()
+    external_apis: await checkExternalAPIs(),
   };
-  
+
   return c.json({
-    status: 'healthy',
+    status: "healthy",
     timestamp: new Date().toISOString(),
-    checks
+    checks,
   });
 });
 ```
@@ -203,19 +208,22 @@ export function reportWebVitals(metric) {
 ```typescript
 // Global error handler
 app.onError((err, c) => {
-  console.error('Application error:', {
+  console.error("Application error:", {
     error: err.message,
     stack: err.stack,
     path: c.req.path,
     method: c.req.method,
-    user: c.get('user')?.id,
-    timestamp: new Date().toISOString()
+    user: c.get("user")?.id,
+    timestamp: new Date().toISOString(),
   });
-  
-  return c.json({
-    error: 'Internal server error',
-    requestId: c.get('requestId')
-  }, 500);
+
+  return c.json(
+    {
+      error: "Internal server error",
+      requestId: c.get("requestId"),
+    },
+    500,
+  );
 });
 ```
 
@@ -225,18 +233,18 @@ app.onError((err, c) => {
 
 ```sql
 -- Create indexes for healthcare queries
-CREATE INDEX idx_medical_records_patient_date 
+CREATE INDEX idx_medical_records_patient_date
 ON medical_records(patient_id, created_at DESC);
 
-CREATE INDEX idx_billing_records_status_date 
+CREATE INDEX idx_billing_records_status_date
 ON billing_records(status, created_at DESC);
 
-CREATE INDEX idx_patients_organization 
+CREATE INDEX idx_patients_organization
 ON patients(organization_id, created_at DESC);
 
 -- Optimize RLS policies with indexes
-CREATE INDEX idx_patients_rls 
-ON patients(organization_id, id) 
+CREATE INDEX idx_patients_rls
+ON patients(organization_id, id)
 WHERE deleted_at IS NULL;
 ```
 
@@ -246,16 +254,16 @@ WHERE deleted_at IS NULL;
 // Redis caching configuration
 const cacheConfig = {
   // Patient data cache (30 minutes)
-  patient_data: { ttl: 1800, prefix: 'patient:' },
-  
+  patient_data: { ttl: 1800, prefix: "patient:" },
+
   // Medical records cache (15 minutes)
-  medical_records: { ttl: 900, prefix: 'records:' },
-  
+  medical_records: { ttl: 900, prefix: "records:" },
+
   // Billing data cache (1 hour)
-  billing_data: { ttl: 3600, prefix: 'billing:' },
-  
+  billing_data: { ttl: 3600, prefix: "billing:" },
+
   // Static data cache (24 hours)
-  static_data: { ttl: 86400, prefix: 'static:' }
+  static_data: { ttl: 86400, prefix: "static:" },
 };
 ```
 
@@ -265,17 +273,17 @@ const cacheConfig = {
 // Job queue configuration
 const jobConfig = {
   concurrency: {
-    'medical-records-archival': 2,
-    'billing-reconciliation': 5,
-    'lgpd-compliance-check': 1,
-    'audit-trail-cleanup': 1
+    "medical-records-archival": 2,
+    "billing-reconciliation": 5,
+    "lgpd-compliance-check": 1,
+    "audit-trail-cleanup": 1,
   },
-  
+
   retry: {
     attempts: 3,
-    delay: '30s',
-    backoff: 'exponential'
-  }
+    delay: "30s",
+    backoff: "exponential",
+  },
 };
 ```
 
@@ -286,15 +294,15 @@ const jobConfig = {
 ```typescript
 // Data retention policy implementation
 const retentionPolicies = {
-  medical_records: '7 years',      // ANVISA requirement
-  billing_records: '5 years',     // Tax law requirement
-  audit_logs: '10 years',         // Compliance requirement
-  consent_records: '7 years',     // LGPD requirement
-  deleted_data: '30 days'         // Recovery period
+  medical_records: "7 years", // ANVISA requirement
+  billing_records: "5 years", // Tax law requirement
+  audit_logs: "10 years", // Compliance requirement
+  consent_records: "7 years", // LGPD requirement
+  deleted_data: "30 days", // Recovery period
 };
 
 // Automated compliance jobs
-schedule.every('1 day').do(async () => {
+schedule.every("1 day").do(async () => {
   await cleanupExpiredData();
   await anonymizeOldRecords();
   await generateComplianceReport();
@@ -312,7 +320,7 @@ const medicalRecordSchema = z.object({
   procedure_codes: z.array(z.string().regex(/^\d{8}$/)), // TUSS codes
   medications: z.array(medicationSchema),
   created_at: z.date(),
-  digital_signature: z.string().min(1) // Required for legal validity
+  digital_signature: z.string().min(1), // Required for legal validity
 });
 ```
 
@@ -382,36 +390,39 @@ node scripts/maintenance-report.js
 // Automated health monitoring
 const healthChecks = {
   async database() {
-    const result = await supabase.from('health_check').select('*').limit(1);
+    const result = await supabase.from("health_check").select("*").limit(1);
     return result.error === null;
   },
-  
+
   async redis() {
     const result = await redis.ping();
-    return result === 'PONG';
+    return result === "PONG";
   },
-  
+
   async externalAPIs() {
     const checks = await Promise.all([
-      fetch('https://consultas.anvisa.gov.br/api/health'),
-      fetch('https://sis.saude.gov.br/api/health')
+      fetch("https://consultas.anvisa.gov.br/api/health"),
+      fetch("https://sis.saude.gov.br/api/health"),
     ]);
-    return checks.every(response => response.ok);
-  }
+    return checks.every((response) => response.ok);
+  },
 };
 
 // Run health checks every 5 minutes
-setInterval(async () => {
-  const results = await Promise.all([
-    healthChecks.database(),
-    healthChecks.redis(),
-    healthChecks.externalAPIs()
-  ]);
-  
-  if (results.some(result => !result)) {
-    await sendAlert('Health check failed', results);
-  }
-}, 5 * 60 * 1000);
+setInterval(
+  async () => {
+    const results = await Promise.all([
+      healthChecks.database(),
+      healthChecks.redis(),
+      healthChecks.externalAPIs(),
+    ]);
+
+    if (results.some((result) => !result)) {
+      await sendAlert("Health check failed", results);
+    }
+  },
+  5 * 60 * 1000,
+);
 ```
 
 ## 🚨 TROUBLESHOOTING GUIDE
@@ -419,6 +430,7 @@ setInterval(async () => {
 ### Common Issues and Solutions
 
 #### 1. Database Connection Issues
+
 ```bash
 # Check connection
 psql $DATABASE_URL -c "SELECT 1;"
@@ -431,24 +443,26 @@ echo "SHOW max_connections;" | psql $DATABASE_URL
 ```
 
 #### 2. Authentication Problems
+
 ```typescript
 // Debug auth issues
 const debugAuth = async (token) => {
   try {
     const { data, error } = await supabase.auth.getUser(token);
-    console.log('Auth debug:', { data, error });
+    console.log("Auth debug:", { data, error });
     return data.user;
   } catch (error) {
-    console.error('Auth error:', error);
+    console.error("Auth error:", error);
     return null;
   }
 };
 ```
 
 #### 3. Performance Issues
+
 ```bash
 # Check slow queries
-echo "SELECT query, mean_time, calls FROM pg_stat_statements 
+echo "SELECT query, mean_time, calls FROM pg_stat_statements
       WHERE mean_time > 1000 ORDER BY mean_time DESC LIMIT 10;" | psql $DATABASE_URL
 
 # Monitor Redis performance
@@ -459,12 +473,14 @@ redis-cli slowlog get 10
 ## 📞 SUPPORT & CONTACTS
 
 ### Emergency Contacts
+
 - **Platform Team**: platform-team@neonpro.com.br
 - **Database Team**: database@neonpro.com.br
 - **Security Team**: security@neonpro.com.br
 - **Compliance Officer**: compliance@neonpro.com.br
 
 ### Documentation Resources
+
 - **API Documentation**: `/api/docs` (OpenAPI)
 - **Database Schema**: `/docs/database-schema/`
 - **Security Policies**: `/docs/security/`

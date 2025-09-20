@@ -13,26 +13,25 @@
  */
 
 // Import types needed for configurations
-import { LogLevel } from './types';
+import { LogLevel } from "./types";
 
 // Export logger system
-export * from './logger';
+export * from "./logger";
 
 // Export utilities
-export * from './utils';
+export * from "./utils";
 
 // Export types
-export * from './types';
+export * from "./types";
 
 // Version information
-export const VERSION = '1.0.0';
-export const PACKAGE_NAME = '@neonpro/tools-shared';
-
+export const VERSION = "1.0.0";
+export const PACKAGE_NAME = "@neonpro/tools-shared";
 
 // Default configurations
 export const DEFAULT_LOGGER_CONFIG = {
   level: LogLevel.INFO,
-  format: 'pretty' as const,
+  format: "pretty" as const,
   enableConsole: true,
   enableFile: true,
   enablePerformance: true,
@@ -40,12 +39,12 @@ export const DEFAULT_LOGGER_CONFIG = {
 };
 
 export const HEALTHCARE_COMPLIANCE_STANDARDS = {
-  LGPD: 'Lei Geral de Proteção de Dados',
-  ANVISA: 'Agência Nacional de Vigilância Sanitária',
-  CFM: 'Conselho Federal de Medicina',
-  HIPAA: 'Health Insurance Portability and Accountability Act',
-  GDPR: 'General Data Protection Regulation',
-  ISO27001: 'ISO/IEC 27001 Information Security',
+  LGPD: "Lei Geral de Proteção de Dados",
+  ANVISA: "Agência Nacional de Vigilância Sanitária",
+  CFM: "Conselho Federal de Medicina",
+  HIPAA: "Health Insurance Portability and Accountability Act",
+  GDPR: "General Data Protection Regulation",
+  ISO27001: "ISO/IEC 27001 Information Security",
 } as const;
 
 export const QUALITY_THRESHOLDS = {

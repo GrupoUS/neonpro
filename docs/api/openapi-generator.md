@@ -7,6 +7,7 @@ This guide covers the comprehensive API documentation system for the NeonPro hea
 ## Architecture
 
 ### Documentation Stack
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                  Documentation Generation                   │
@@ -27,6 +28,7 @@ This guide covers the comprehensive API documentation system for the NeonPro hea
 ### Core Endpoints
 
 #### Patient Management API
+
 - **GET /api/patients** - List patients with LGPD consent filtering
 - **POST /api/patients** - Create new patient with consent validation
 - **GET /api/patients/{id}** - Retrieve patient details (audit logged)
@@ -34,6 +36,7 @@ This guide covers the comprehensive API documentation system for the NeonPro hea
 - **DELETE /api/patients/{id}** - Soft delete patient (LGPD compliant)
 
 #### Appointment Management API
+
 - **GET /api/appointments** - List appointments with multi-tenant scoping
 - **POST /api/appointments** - Schedule new appointment
 - **GET /api/appointments/{id}** - Retrieve appointment details
@@ -41,18 +44,21 @@ This guide covers the comprehensive API documentation system for the NeonPro hea
 - **DELETE /api/appointments/{id}** - Cancel appointment
 
 #### Healthcare Professional API
+
 - **GET /api/professionals** - List healthcare professionals
 - **POST /api/professionals** - Register new professional
 - **GET /api/professionals/{id}** - Professional profile details
 - **PUT /api/professionals/{id}** - Update professional information
 
 #### Medical Records API
+
 - **GET /api/medical-records** - List medical records (restricted access)
 - **POST /api/medical-records** - Create medical record
 - **GET /api/medical-records/{id}** - Retrieve specific record
 - **PUT /api/medical-records/{id}** - Update medical record
 
 #### AI and Analytics API
+
 - **POST /api/ai/chat** - AI-powered healthcare assistance
 - **POST /api/ai/diagnosis-support** - AI diagnostic assistance
 - **GET /api/analytics/performance** - Performance metrics
@@ -61,6 +67,7 @@ This guide covers the comprehensive API documentation system for the NeonPro hea
 ### Healthcare Compliance Documentation
 
 Each endpoint includes:
+
 - **Data Classification**: public, internal, personal, medical, financial
 - **LGPD Requirements**: Consent validation, audit logging, data retention
 - **CFM Compliance**: Professional verification, telemedicine standards
@@ -71,9 +78,13 @@ Each endpoint includes:
 ### OpenAPI Route Definitions
 
 **File**: `apps/api/src/routes/documented/patients.ts`
+
 ```typescript
-import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
-import { z } from 'zod';
+import {
+  createHealthcareRoute,
+  HealthcareSchemas,
+} from "../../lib/openapi-generator";
+import { z } from "zod";
 
 // Patient schemas
 const PatientSchema = z.object({
@@ -89,22 +100,23 @@ const PatientSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
-const PatientCreateSchema = PatientSchema.omit({ 
-  id: true, 
-  createdAt: true, 
-  updatedAt: true 
+const PatientCreateSchema = PatientSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 const PatientUpdateSchema = PatientCreateSchema.partial();
 
 // List patients route
 export const listPatientsRoute = createHealthcareRoute({
-  method: 'get',
-  path: '/api/patients',
-  tags: ['Patients'],
-  summary: 'List patients',
-  description: 'Retrieve a paginated list of patients with LGPD consent filtering and multi-tenant scoping.',
-  dataClassification: 'personal',
+  method: "get",
+  path: "/api/patients",
+  tags: ["Patients"],
+  summary: "List patients",
+  description:
+    "Retrieve a paginated list of patients with LGPD consent filtering and multi-tenant scoping.",
+  dataClassification: "personal",
   auditRequired: true,
   request: {
     query: z.object({
@@ -117,9 +129,9 @@ export const listPatientsRoute = createHealthcareRoute({
   },
   responses: {
     200: {
-      description: 'List of patients',
+      description: "List of patients",
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             success: z.literal(true),
             data: z.array(PatientSchema),
@@ -143,17 +155,18 @@ export const listPatientsRoute = createHealthcareRoute({
 
 // Create patient route
 export const createPatientRoute = createHealthcareRoute({
-  method: 'post',
-  path: '/api/patients',
-  tags: ['Patients'],
-  summary: 'Create patient',
-  description: 'Create a new patient with LGPD consent validation and healthcare data protection.',
-  dataClassification: 'personal',
+  method: "post",
+  path: "/api/patients",
+  tags: ["Patients"],
+  summary: "Create patient",
+  description:
+    "Create a new patient with LGPD consent validation and healthcare data protection.",
+  dataClassification: "personal",
   auditRequired: true,
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: PatientCreateSchema,
         },
       },
@@ -161,9 +174,9 @@ export const createPatientRoute = createHealthcareRoute({
   },
   responses: {
     201: {
-      description: 'Patient created successfully',
+      description: "Patient created successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             success: z.literal(true),
             data: PatientSchema,
@@ -179,12 +192,13 @@ export const createPatientRoute = createHealthcareRoute({
 
 // Get patient route
 export const getPatientRoute = createHealthcareRoute({
-  method: 'get',
-  path: '/api/patients/{id}',
-  tags: ['Patients'],
-  summary: 'Get patient',
-  description: 'Retrieve detailed patient information. Requires LGPD consent and generates audit log.',
-  dataClassification: 'personal',
+  method: "get",
+  path: "/api/patients/{id}",
+  tags: ["Patients"],
+  summary: "Get patient",
+  description:
+    "Retrieve detailed patient information. Requires LGPD consent and generates audit log.",
+  dataClassification: "personal",
   auditRequired: true,
   request: {
     params: z.object({
@@ -196,9 +210,9 @@ export const getPatientRoute = createHealthcareRoute({
   },
   responses: {
     200: {
-      description: 'Patient details',
+      description: "Patient details",
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             success: z.literal(true),
             data: PatientSchema,
@@ -210,19 +224,20 @@ export const getPatientRoute = createHealthcareRoute({
       },
     },
     404: {
-      $ref: '#/components/responses/NotFoundError',
+      $ref: "#/components/responses/NotFoundError",
     },
   },
 });
 
 // Update patient route
 export const updatePatientRoute = createHealthcareRoute({
-  method: 'put',
-  path: '/api/patients/{id}',
-  tags: ['Patients'],
-  summary: 'Update patient',
-  description: 'Update patient information with LGPD compliance validation and audit logging.',
-  dataClassification: 'personal',
+  method: "put",
+  path: "/api/patients/{id}",
+  tags: ["Patients"],
+  summary: "Update patient",
+  description:
+    "Update patient information with LGPD compliance validation and audit logging.",
+  dataClassification: "personal",
   auditRequired: true,
   request: {
     params: z.object({
@@ -230,7 +245,7 @@ export const updatePatientRoute = createHealthcareRoute({
     }),
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: PatientUpdateSchema,
         },
       },
@@ -238,9 +253,9 @@ export const updatePatientRoute = createHealthcareRoute({
   },
   responses: {
     200: {
-      description: 'Patient updated successfully',
+      description: "Patient updated successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             success: z.literal(true),
             data: PatientSchema,
@@ -256,12 +271,13 @@ export const updatePatientRoute = createHealthcareRoute({
 
 // Delete patient route
 export const deletePatientRoute = createHealthcareRoute({
-  method: 'delete',
-  path: '/api/patients/{id}',
-  tags: ['Patients'],
-  summary: 'Delete patient',
-  description: 'Soft delete patient with LGPD right to erasure compliance. Medical records are retained per CFM requirements.',
-  dataClassification: 'personal',
+  method: "delete",
+  path: "/api/patients/{id}",
+  tags: ["Patients"],
+  summary: "Delete patient",
+  description:
+    "Soft delete patient with LGPD right to erasure compliance. Medical records are retained per CFM requirements.",
+  dataClassification: "personal",
   auditRequired: true,
   request: {
     params: z.object({
@@ -274,9 +290,9 @@ export const deletePatientRoute = createHealthcareRoute({
   },
   responses: {
     200: {
-      description: 'Patient deleted successfully',
+      description: "Patient deleted successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             success: z.literal(true),
             data: z.object({
@@ -298,9 +314,13 @@ export const deletePatientRoute = createHealthcareRoute({
 ### Appointment API Documentation
 
 **File**: `apps/api/src/routes/documented/appointments.ts`
+
 ```typescript
-import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
-import { z } from 'zod';
+import {
+  createHealthcareRoute,
+  HealthcareSchemas,
+} from "../../lib/openapi-generator";
+import { z } from "zod";
 
 // Appointment schemas
 const AppointmentSchema = z.object({
@@ -308,8 +328,15 @@ const AppointmentSchema = z.object({
   patientId: z.string().uuid(),
   professionalId: z.string().uuid(),
   clinicId: z.string().uuid(),
-  type: z.enum(['consultation', 'followup', 'procedure', 'telemedicine']),
-  status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']),
+  type: z.enum(["consultation", "followup", "procedure", "telemedicine"]),
+  status: z.enum([
+    "scheduled",
+    "confirmed",
+    "in_progress",
+    "completed",
+    "cancelled",
+    "no_show",
+  ]),
   startTime: z.string().datetime(),
   endTime: z.string().datetime(),
   duration: z.number().min(15).max(480), // 15 minutes to 8 hours
@@ -320,27 +347,37 @@ const AppointmentSchema = z.object({
   updatedAt: z.string().datetime(),
 });
 
-const AppointmentCreateSchema = AppointmentSchema.omit({ 
-  id: true, 
-  createdAt: true, 
-  updatedAt: true 
+const AppointmentCreateSchema = AppointmentSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
 });
 
 // List appointments route
 export const listAppointmentsRoute = createHealthcareRoute({
-  method: 'get',
-  path: '/api/appointments',
-  tags: ['Appointments'],
-  summary: 'List appointments',
-  description: 'Retrieve appointments with multi-tenant scoping and LGPD consent filtering.',
-  dataClassification: 'medical',
+  method: "get",
+  path: "/api/appointments",
+  tags: ["Appointments"],
+  summary: "List appointments",
+  description:
+    "Retrieve appointments with multi-tenant scoping and LGPD consent filtering.",
+  dataClassification: "medical",
   auditRequired: true,
   request: {
     query: z.object({
       clinicId: z.string().uuid(),
       page: z.coerce.number().min(1).default(1),
       limit: z.coerce.number().min(1).max(100).default(20),
-      status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show']).optional(),
+      status: z
+        .enum([
+          "scheduled",
+          "confirmed",
+          "in_progress",
+          "completed",
+          "cancelled",
+          "no_show",
+        ])
+        .optional(),
       startDate: z.string().datetime().optional(),
       endDate: z.string().datetime().optional(),
       professionalId: z.string().uuid().optional(),
@@ -349,23 +386,25 @@ export const listAppointmentsRoute = createHealthcareRoute({
   },
   responses: {
     200: {
-      description: 'List of appointments',
+      description: "List of appointments",
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             success: z.literal(true),
-            data: z.array(AppointmentSchema.extend({
-              patient: z.object({
-                id: z.string().uuid(),
-                fullName: z.string(),
-                lgpdConsentGiven: z.boolean(),
+            data: z.array(
+              AppointmentSchema.extend({
+                patient: z.object({
+                  id: z.string().uuid(),
+                  fullName: z.string(),
+                  lgpdConsentGiven: z.boolean(),
+                }),
+                professional: z.object({
+                  id: z.string().uuid(),
+                  fullName: z.string(),
+                  specialization: z.string().optional(),
+                }),
               }),
-              professional: z.object({
-                id: z.string().uuid(),
-                fullName: z.string(),
-                specialization: z.string().optional(),
-              }),
-            })),
+            ),
             pagination: z.object({
               page: z.number(),
               limit: z.number(),
@@ -383,17 +422,18 @@ export const listAppointmentsRoute = createHealthcareRoute({
 
 // Create appointment route
 export const createAppointmentRoute = createHealthcareRoute({
-  method: 'post',
-  path: '/api/appointments',
-  tags: ['Appointments'],
-  summary: 'Schedule appointment',
-  description: 'Schedule a new appointment with healthcare professional verification and patient consent validation.',
-  dataClassification: 'medical',
+  method: "post",
+  path: "/api/appointments",
+  tags: ["Appointments"],
+  summary: "Schedule appointment",
+  description:
+    "Schedule a new appointment with healthcare professional verification and patient consent validation.",
+  dataClassification: "medical",
   auditRequired: true,
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: AppointmentCreateSchema,
         },
       },
@@ -401,9 +441,9 @@ export const createAppointmentRoute = createHealthcareRoute({
   },
   responses: {
     201: {
-      description: 'Appointment scheduled successfully',
+      description: "Appointment scheduled successfully",
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             success: z.literal(true),
             data: AppointmentSchema,
@@ -421,9 +461,13 @@ export const createAppointmentRoute = createHealthcareRoute({
 ### AI & Analytics API Documentation
 
 **File**: `apps/api/src/routes/documented/ai-analytics.ts`
+
 ```typescript
-import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
-import { z } from 'zod';
+import {
+  createHealthcareRoute,
+  HealthcareSchemas,
+} from "../../lib/openapi-generator";
+import { z } from "zod";
 
 // AI Chat schemas
 const AIChatRequestSchema = z.object({
@@ -432,8 +476,8 @@ const AIChatRequestSchema = z.object({
     patientId: z.string().uuid().optional(),
     professionalId: z.string().uuid(),
     specialization: z.string().optional(),
-    urgency: z.enum(['routine', 'urgent', 'emergency']).default('routine'),
-    language: z.string().default('pt-BR'),
+    urgency: z.enum(["routine", "urgent", "emergency"]).default("routine"),
+    language: z.string().default("pt-BR"),
   }),
   preferences: z.object({
     includeReferences: z.boolean().default(true),
@@ -446,11 +490,15 @@ const AIChatResponseSchema = z.object({
   response: z.string(),
   confidence: z.number().min(0).max(1),
   cached: z.boolean(),
-  references: z.array(z.object({
-    title: z.string(),
-    source: z.string(),
-    url: z.string().url().optional(),
-  })).optional(),
+  references: z
+    .array(
+      z.object({
+        title: z.string(),
+        source: z.string(),
+        url: z.string().url().optional(),
+      }),
+    )
+    .optional(),
   metadata: z.object({
     model: z.string(),
     tokens_used: z.number(),
@@ -461,17 +509,18 @@ const AIChatResponseSchema = z.object({
 
 // AI Chat route
 export const aiChatRoute = createHealthcareRoute({
-  method: 'post',
-  path: '/api/ai/chat',
-  tags: ['AI & Analytics'],
-  summary: 'AI Healthcare Assistant',
-  description: 'AI-powered healthcare assistance with semantic caching, PII redaction, and CFM compliance.',
-  dataClassification: 'medical',
+  method: "post",
+  path: "/api/ai/chat",
+  tags: ["AI & Analytics"],
+  summary: "AI Healthcare Assistant",
+  description:
+    "AI-powered healthcare assistance with semantic caching, PII redaction, and CFM compliance.",
+  dataClassification: "medical",
   auditRequired: true,
   request: {
     body: {
       content: {
-        'application/json': {
+        "application/json": {
           schema: AIChatRequestSchema,
         },
       },
@@ -479,9 +528,9 @@ export const aiChatRoute = createHealthcareRoute({
   },
   responses: {
     200: {
-      description: 'AI response with healthcare compliance',
+      description: "AI response with healthcare compliance",
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             success: z.literal(true),
             data: AIChatResponseSchema,
@@ -497,25 +546,30 @@ export const aiChatRoute = createHealthcareRoute({
 
 // Performance Analytics route
 export const performanceAnalyticsRoute = createHealthcareRoute({
-  method: 'get',
-  path: '/api/analytics/performance',
-  tags: ['AI & Analytics'],
-  summary: 'Performance Analytics',
-  description: 'Retrieve healthcare platform performance metrics and Core Web Vitals.',
-  dataClassification: 'internal',
+  method: "get",
+  path: "/api/analytics/performance",
+  tags: ["AI & Analytics"],
+  summary: "Performance Analytics",
+  description:
+    "Retrieve healthcare platform performance metrics and Core Web Vitals.",
+  dataClassification: "internal",
   auditRequired: false,
   request: {
     query: z.object({
       clinicId: z.string().uuid(),
-      timeframe: z.enum(['hour', 'day', 'week', 'month']).default('day'),
-      metrics: z.array(z.enum(['response_time', 'error_rate', 'throughput', 'availability'])).optional(),
+      timeframe: z.enum(["hour", "day", "week", "month"]).default("day"),
+      metrics: z
+        .array(
+          z.enum(["response_time", "error_rate", "throughput", "availability"]),
+        )
+        .optional(),
     }),
   },
   responses: {
     200: {
-      description: 'Performance metrics',
+      description: "Performance metrics",
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             success: z.literal(true),
             data: z.object({
@@ -550,25 +604,25 @@ export const performanceAnalyticsRoute = createHealthcareRoute({
 
 // Compliance Analytics route
 export const complianceAnalyticsRoute = createHealthcareRoute({
-  method: 'get',
-  path: '/api/analytics/compliance',
-  tags: ['AI & Analytics'],
-  summary: 'Compliance Analytics',
-  description: 'LGPD, ANVISA, and CFM compliance metrics and audit reports.',
-  dataClassification: 'internal',
+  method: "get",
+  path: "/api/analytics/compliance",
+  tags: ["AI & Analytics"],
+  summary: "Compliance Analytics",
+  description: "LGPD, ANVISA, and CFM compliance metrics and audit reports.",
+  dataClassification: "internal",
   auditRequired: true,
   request: {
     query: z.object({
       clinicId: z.string().uuid(),
-      timeframe: z.enum(['week', 'month', 'quarter', 'year']).default('month'),
-      complianceType: z.array(z.enum(['lgpd', 'anvisa', 'cfm'])).optional(),
+      timeframe: z.enum(["week", "month", "quarter", "year"]).default("month"),
+      complianceType: z.array(z.enum(["lgpd", "anvisa", "cfm"])).optional(),
     }),
   },
   responses: {
     200: {
-      description: 'Compliance metrics and reports',
+      description: "Compliance metrics and reports",
       content: {
-        'application/json': {
+        "application/json": {
           schema: z.object({
             success: z.literal(true),
             data: z.object({
@@ -607,67 +661,91 @@ export const complianceAnalyticsRoute = createHealthcareRoute({
 ### OpenAPI Generator Script
 
 **File**: `scripts/generate-api-docs.ts`
+
 ```typescript
 #!/usr/bin/env bun
 
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from '../apps/api/src/lib/openapi-generator';
+import { writeFile, mkdir } from "fs/promises";
+import { join } from "path";
+import {
+  createHealthcareOpenAPIApp,
+  setupHealthcareSwaggerUI,
+} from "../apps/api/src/lib/openapi-generator";
 
 // Import all documented routes
-import { 
-  listPatientsRoute, 
-  createPatientRoute, 
-  getPatientRoute, 
-  updatePatientRoute, 
-  deletePatientRoute 
-} from '../apps/api/src/routes/documented/patients';
+import {
+  listPatientsRoute,
+  createPatientRoute,
+  getPatientRoute,
+  updatePatientRoute,
+  deletePatientRoute,
+} from "../apps/api/src/routes/documented/patients";
 
-import { 
-  listAppointmentsRoute, 
-  createAppointmentRoute 
-} from '../apps/api/src/routes/documented/appointments';
+import {
+  listAppointmentsRoute,
+  createAppointmentRoute,
+} from "../apps/api/src/routes/documented/appointments";
 
-import { 
-  aiChatRoute, 
-  performanceAnalyticsRoute, 
-  complianceAnalyticsRoute 
-} from '../apps/api/src/routes/documented/ai-analytics';
+import {
+  aiChatRoute,
+  performanceAnalyticsRoute,
+  complianceAnalyticsRoute,
+} from "../apps/api/src/routes/documented/ai-analytics";
 
 async function generateAPIDocs() {
-  console.log('🔄 Generating NeonPro Healthcare API Documentation...');
-  
+  console.log("🔄 Generating NeonPro Healthcare API Documentation...");
+
   try {
     // Create OpenAPI app
     const app = createHealthcareOpenAPIApp();
-    
+
     // Register all healthcare routes
-    console.log('📋 Registering Patient Management routes...');
-    app.openapi(listPatientsRoute, async (c) => c.json({ message: 'Implementation in main app' }));
-    app.openapi(createPatientRoute, async (c) => c.json({ message: 'Implementation in main app' }));
-    app.openapi(getPatientRoute, async (c) => c.json({ message: 'Implementation in main app' }));
-    app.openapi(updatePatientRoute, async (c) => c.json({ message: 'Implementation in main app' }));
-    app.openapi(deletePatientRoute, async (c) => c.json({ message: 'Implementation in main app' }));
-    
-    console.log('📅 Registering Appointment Management routes...');
-    app.openapi(listAppointmentsRoute, async (c) => c.json({ message: 'Implementation in main app' }));
-    app.openapi(createAppointmentRoute, async (c) => c.json({ message: 'Implementation in main app' }));
-    
-    console.log('🤖 Registering AI & Analytics routes...');
-    app.openapi(aiChatRoute, async (c) => c.json({ message: 'Implementation in main app' }));
-    app.openapi(performanceAnalyticsRoute, async (c) => c.json({ message: 'Implementation in main app' }));
-    app.openapi(complianceAnalyticsRoute, async (c) => c.json({ message: 'Implementation in main app' }));
-    
+    console.log("📋 Registering Patient Management routes...");
+    app.openapi(listPatientsRoute, async (c) =>
+      c.json({ message: "Implementation in main app" }),
+    );
+    app.openapi(createPatientRoute, async (c) =>
+      c.json({ message: "Implementation in main app" }),
+    );
+    app.openapi(getPatientRoute, async (c) =>
+      c.json({ message: "Implementation in main app" }),
+    );
+    app.openapi(updatePatientRoute, async (c) =>
+      c.json({ message: "Implementation in main app" }),
+    );
+    app.openapi(deletePatientRoute, async (c) =>
+      c.json({ message: "Implementation in main app" }),
+    );
+
+    console.log("📅 Registering Appointment Management routes...");
+    app.openapi(listAppointmentsRoute, async (c) =>
+      c.json({ message: "Implementation in main app" }),
+    );
+    app.openapi(createAppointmentRoute, async (c) =>
+      c.json({ message: "Implementation in main app" }),
+    );
+
+    console.log("🤖 Registering AI & Analytics routes...");
+    app.openapi(aiChatRoute, async (c) =>
+      c.json({ message: "Implementation in main app" }),
+    );
+    app.openapi(performanceAnalyticsRoute, async (c) =>
+      c.json({ message: "Implementation in main app" }),
+    );
+    app.openapi(complianceAnalyticsRoute, async (c) =>
+      c.json({ message: "Implementation in main app" }),
+    );
+
     // Setup Swagger UI
     setupHealthcareSwaggerUI(app);
-    
+
     // Generate OpenAPI specification
-    console.log('📝 Generating OpenAPI specification...');
+    console.log("📝 Generating OpenAPI specification...");
     const openAPISpec = app.getOpenAPIDocument({
-      openapi: '3.0.0',
+      openapi: "3.0.0",
       info: {
-        title: 'NeonPro Healthcare Platform API',
-        version: '1.0.0',
+        title: "NeonPro Healthcare Platform API",
+        version: "1.0.0",
         description: `
           # NeonPro Healthcare Platform API
           
@@ -707,65 +785,64 @@ async function generateAPIDocs() {
           For detailed implementation guides, see our [comprehensive documentation](https://docs.neonpro.com.br).
         `,
         contact: {
-          name: 'NeonPro Development Team',
-          email: 'dev@neonpro.com.br',
-          url: 'https://neonpro.com.br'
+          name: "NeonPro Development Team",
+          email: "dev@neonpro.com.br",
+          url: "https://neonpro.com.br",
         },
         license: {
-          name: 'Proprietary',
-          url: 'https://neonpro.com.br/license'
-        }
+          name: "Proprietary",
+          url: "https://neonpro.com.br/license",
+        },
       },
       servers: [
         {
-          url: 'https://api.neonpro.com.br',
-          description: 'Production API'
+          url: "https://api.neonpro.com.br",
+          description: "Production API",
         },
         {
-          url: 'https://staging-api.neonpro.com.br', 
-          description: 'Staging API'
+          url: "https://staging-api.neonpro.com.br",
+          description: "Staging API",
         },
         {
-          url: 'http://localhost:3001',
-          description: 'Development API'
-        }
+          url: "http://localhost:3001",
+          description: "Development API",
+        },
       ],
     });
-    
+
     // Ensure docs directory exists
-    const docsDir = join(process.cwd(), 'docs', 'api');
+    const docsDir = join(process.cwd(), "docs", "api");
     await mkdir(docsDir, { recursive: true });
-    
+
     // Write OpenAPI specification
-    const specPath = join(docsDir, 'openapi.json');
+    const specPath = join(docsDir, "openapi.json");
     await writeFile(specPath, JSON.stringify(openAPISpec, null, 2));
     console.log(`✅ OpenAPI specification written to: ${specPath}`);
-    
+
     // Generate human-readable documentation
     await generateMarkdownDocs(openAPISpec, docsDir);
-    
-    console.log('🎉 API documentation generation completed successfully!');
-    console.log('📖 Documentation available at:');
+
+    console.log("🎉 API documentation generation completed successfully!");
+    console.log("📖 Documentation available at:");
     console.log(`   - OpenAPI Spec: ${specPath}`);
-    console.log(`   - Markdown Docs: ${join(docsDir, 'README.md')}`);
+    console.log(`   - Markdown Docs: ${join(docsDir, "README.md")}`);
     console.log(`   - Swagger UI: http://localhost:3001/swagger`);
-    
   } catch (error) {
-    console.error('❌ Error generating API documentation:', error);
+    console.error("❌ Error generating API documentation:", error);
     process.exit(1);
   }
 }
 
 async function generateMarkdownDocs(spec: any, docsDir: string) {
-  console.log('📄 Generating Markdown documentation...');
-  
+  console.log("📄 Generating Markdown documentation...");
+
   const markdown = `# ${spec.info.title}
 
 ${spec.info.description}
 
 ## Base URLs
 
-${spec.servers.map((server: any) => `- **${server.description}**: \`${server.url}\``).join('\n')}
+${spec.servers.map((server: any) => `- **${server.description}**: \`${server.url}\``).join("\n")}
 
 ## Authentication
 
@@ -974,7 +1051,7 @@ const aiResponse = await api.ai.chat({
 *This API documentation is automatically generated from OpenAPI specifications and is kept up-to-date with the latest implementation.*
 `;
 
-  const markdownPath = join(docsDir, 'README.md');
+  const markdownPath = join(docsDir, "README.md");
   await writeFile(markdownPath, markdown);
   console.log(`✅ Markdown documentation written to: ${markdownPath}`);
 }
@@ -990,6 +1067,7 @@ if (import.meta.main) {
 ### Vercel Deployment
 
 **File**: `docs/api/vercel.json`
+
 ```json
 {
   "version": 2,
@@ -1030,7 +1108,7 @@ if (import.meta.main) {
           "value": "nosniff"
         },
         {
-          "key": "X-Frame-Options", 
+          "key": "X-Frame-Options",
           "value": "DENY"
         },
         {
@@ -1046,6 +1124,7 @@ if (import.meta.main) {
 ### Package Scripts
 
 **File**: `package.json` (excerpt)
+
 ```json
 {
   "scripts": {
@@ -1062,7 +1141,7 @@ if (import.meta.main) {
 This comprehensive API documentation system provides:
 
 1. **Complete OpenAPI Specification** with healthcare compliance details
-2. **Automated Documentation Generation** from code annotations  
+2. **Automated Documentation Generation** from code annotations
 3. **Healthcare-Specific Schemas** for LGPD, CFM, and ANVISA compliance
 4. **Interactive Swagger UI** with healthcare branding
 5. **Markdown Documentation** for easy reading and integration

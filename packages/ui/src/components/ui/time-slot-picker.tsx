@@ -1,7 +1,13 @@
 "use client";
 
-import * as React from 'react';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';
+import * as React from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
 
 export interface TimeSlotPickerProps {
   value: number; // minutes
@@ -11,7 +17,7 @@ export interface TimeSlotPickerProps {
   step?: number; // default 15
   placeholder?: string;
   id?: string;
-  'aria-describedby'?: string;
+  "aria-describedby"?: string;
 }
 
 function labelFor(minutes: number) {
@@ -28,7 +34,7 @@ export function TimeSlotPicker({
   min = 15,
   max = 480,
   step = 15,
-  placeholder = 'Selecione a duração',
+  placeholder = "Selecione a duração",
   id,
   ...rest
 }: TimeSlotPickerProps) {
@@ -43,7 +49,7 @@ export function TimeSlotPicker({
       value={String(value)}
       onValueChange={(v) => onChange(parseInt(v, 10))}
     >
-      <SelectTrigger id={id} aria-describedby={rest['aria-describedby']}>
+      <SelectTrigger id={id} aria-describedby={rest["aria-describedby"]}>
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>

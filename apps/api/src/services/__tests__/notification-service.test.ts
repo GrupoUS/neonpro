@@ -4,9 +4,9 @@
  * CRITICAL: All notification data must be persisted to Supabase PostgreSQL
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe('Real-time Notification Service (T042)', () => {
+describe("Real-time Notification Service (T042)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -15,159 +15,159 @@ describe('Real-time Notification Service (T042)', () => {
     vi.restoreAllMocks();
   });
 
-  it('should export NotificationService class', async () => {
-    const module = await import('../notification-service');
+  it("should export NotificationService class", async () => {
+    const module = await import("../notification-service");
     expect(module.NotificationService).toBeDefined();
   });
 
-  describe('Multi-channel Notification Delivery', () => {
-    it('should send email notification', async () => {
-      const { NotificationService } = await import('../notification-service');
+  describe("Multi-channel Notification Delivery", () => {
+    it("should send email notification", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.sendNotification({
-        recipientId: 'patient-123',
-        channel: 'email',
-        templateId: 'appointment_reminder',
+        recipientId: "patient-123",
+        channel: "email",
+        templateId: "appointment_reminder",
         data: {
-          patientName: 'João Silva',
-          appointmentDate: '2024-02-15',
-          appointmentTime: '14:30',
-          doctorName: 'Dr. Maria Santos',
+          patientName: "João Silva",
+          appointmentDate: "2024-02-15",
+          appointmentTime: "14:30",
+          doctorName: "Dr. Maria Santos",
         },
-        priority: 'high',
+        priority: "high",
         scheduledFor: new Date(Date.now() + 3600000), // 1 hour from now
       });
 
       expect(result.success).toBe(true);
       expect(result.data.notificationId).toBeDefined();
-      expect(result.data.channel).toBe('email');
-      expect(result.data.status).toBe('queued');
+      expect(result.data.channel).toBe("email");
+      expect(result.data.status).toBe("queued");
       expect(result.data.persisted).toBe(true);
     });
 
-    it('should send SMS notification', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should send SMS notification", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.sendNotification({
-        recipientId: 'patient-123',
-        channel: 'sms',
-        templateId: 'appointment_confirmation',
+        recipientId: "patient-123",
+        channel: "sms",
+        templateId: "appointment_confirmation",
         data: {
-          patientName: 'João Silva',
-          appointmentDate: '15/02/2024',
-          clinicName: 'NeonPro Estética',
+          patientName: "João Silva",
+          appointmentDate: "15/02/2024",
+          clinicName: "NeonPro Estética",
         },
-        priority: 'medium',
+        priority: "medium",
         lgpdConsent: true,
       });
 
       expect(result.success).toBe(true);
-      expect(result.data.channel).toBe('sms');
+      expect(result.data.channel).toBe("sms");
       expect(result.data.lgpdCompliant).toBe(true);
       expect(result.data.persisted).toBe(true);
     });
 
-    it('should send WhatsApp notification', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should send WhatsApp notification", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.sendNotification({
-        recipientId: 'patient-123',
-        channel: 'whatsapp',
-        templateId: 'treatment_followup',
+        recipientId: "patient-123",
+        channel: "whatsapp",
+        templateId: "treatment_followup",
         data: {
-          patientName: 'João Silva',
-          treatmentName: 'Limpeza de Pele',
-          followupInstructions: 'Evitar exposição solar por 48h',
+          patientName: "João Silva",
+          treatmentName: "Limpeza de Pele",
+          followupInstructions: "Evitar exposição solar por 48h",
         },
-        priority: 'low',
+        priority: "low",
         metadata: {
-          treatmentId: 'treatment-456',
-          doctorId: 'doctor-123',
+          treatmentId: "treatment-456",
+          doctorId: "doctor-123",
         },
       });
 
       expect(result.success).toBe(true);
-      expect(result.data.channel).toBe('whatsapp');
+      expect(result.data.channel).toBe("whatsapp");
       expect(result.data.metadata).toBeDefined();
       expect(result.data.persisted).toBe(true);
     });
 
-    it('should send push notification', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should send push notification", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.sendNotification({
-        recipientId: 'patient-123',
-        channel: 'push',
-        templateId: 'appointment_reminder_push',
+        recipientId: "patient-123",
+        channel: "push",
+        templateId: "appointment_reminder_push",
         data: {
-          title: 'Lembrete de Consulta',
-          body: 'Sua consulta é amanhã às 14:30',
-          icon: 'appointment-icon',
-          clickAction: '/appointments/123',
+          title: "Lembrete de Consulta",
+          body: "Sua consulta é amanhã às 14:30",
+          icon: "appointment-icon",
+          clickAction: "/appointments/123",
         },
-        priority: 'high',
-        deviceTokens: ['token1', 'token2'],
+        priority: "high",
+        deviceTokens: ["token1", "token2"],
       });
 
       expect(result.success).toBe(true);
-      expect(result.data.channel).toBe('push');
+      expect(result.data.channel).toBe("push");
       expect(result.data.deviceCount).toBe(2);
       expect(result.data.persisted).toBe(true);
     });
   });
 
-  describe('Real-time Notification Streaming', () => {
-    it('should start notification stream', async () => {
-      const { NotificationService } = await import('../notification-service');
+  describe("Real-time Notification Streaming", () => {
+    it("should start notification stream", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.startNotificationStream({
-        streamId: 'stream-123',
-        recipientId: 'patient-123',
-        channels: ['email', 'sms', 'push'],
+        streamId: "stream-123",
+        recipientId: "patient-123",
+        channels: ["email", "sms", "push"],
         filters: {
-          priority: ['high', 'critical'],
-          categories: ['appointment', 'treatment'],
+          priority: ["high", "critical"],
+          categories: ["appointment", "treatment"],
         },
       });
 
       expect(result.success).toBe(true);
-      expect(result.data.streamId).toBe('stream-123');
+      expect(result.data.streamId).toBe("stream-123");
       expect(result.data.isActive).toBe(true);
       expect(result.data.channelCount).toBe(3);
     });
 
-    it('should stop notification stream', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should stop notification stream", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
-      const result = await service.stopNotificationStream('stream-123');
+      const result = await service.stopNotificationStream("stream-123");
 
       expect(result.success).toBe(true);
-      expect(result.data.streamId).toBe('stream-123');
+      expect(result.data.streamId).toBe("stream-123");
       expect(result.data.isActive).toBe(false);
       expect(result.data.finalNotificationCount).toBeGreaterThanOrEqual(0);
     });
 
-    it('should get real-time notification status', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should get real-time notification status", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
-      const result = await service.getNotificationStatus('notification-123');
+      const result = await service.getNotificationStatus("notification-123");
 
       expect(result.success).toBe(true);
-      expect(result.data.notificationId).toBe('notification-123');
+      expect(result.data.notificationId).toBe("notification-123");
       expect(result.data.status).toBeDefined();
       expect(result.data.deliveryAttempts).toBeGreaterThanOrEqual(0);
       expect(result.data.lastUpdated).toBeDefined();
     });
 
-    it('should list active notification streams', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should list active notification streams", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.listActiveStreams();
@@ -178,84 +178,85 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe('Brazilian Healthcare Context', () => {
-    it('should send LGPD compliant notification', async () => {
-      const { NotificationService } = await import('../notification-service');
+  describe("Brazilian Healthcare Context", () => {
+    it("should send LGPD compliant notification", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.sendNotification({
-        recipientId: 'patient-123',
-        channel: 'email',
-        templateId: 'lgpd_consent_update',
+        recipientId: "patient-123",
+        channel: "email",
+        templateId: "lgpd_consent_update",
         data: {
-          patientName: 'João Silva',
-          consentType: 'marketing',
-          updateReason: 'Solicitação do titular dos dados',
-          rightsInformation: 'Você pode revogar este consentimento a qualquer momento',
+          patientName: "João Silva",
+          consentType: "marketing",
+          updateReason: "Solicitação do titular dos dados",
+          rightsInformation:
+            "Você pode revogar este consentimento a qualquer momento",
         },
         lgpdContext: {
-          legalBasis: 'consent',
-          dataCategories: ['personal_data'],
-          retentionPeriod: '5 years',
+          legalBasis: "consent",
+          dataCategories: ["personal_data"],
+          retentionPeriod: "5 years",
         },
-        priority: 'high',
+        priority: "high",
       });
 
       expect(result.success).toBe(true);
       expect(result.data.lgpdCompliant).toBe(true);
-      expect(result.data.legalBasis).toBe('consent');
+      expect(result.data.legalBasis).toBe("consent");
       expect(result.data.auditLogged).toBe(true);
     });
 
-    it('should send ANVISA compliant medical notification', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should send ANVISA compliant medical notification", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.sendNotification({
-        recipientId: 'patient-123',
-        channel: 'sms',
-        templateId: 'medical_device_alert',
+        recipientId: "patient-123",
+        channel: "sms",
+        templateId: "medical_device_alert",
         data: {
-          deviceName: 'Laser CO2 Fracionado',
-          alertType: 'maintenance_required',
-          complianceCode: 'ANVISA-2024-001',
-          actionRequired: 'Agendar manutenção preventiva',
+          deviceName: "Laser CO2 Fracionado",
+          alertType: "maintenance_required",
+          complianceCode: "ANVISA-2024-001",
+          actionRequired: "Agendar manutenção preventiva",
         },
         anvisaContext: {
-          deviceRegistration: 'REG-12345',
-          complianceLevel: 'high',
+          deviceRegistration: "REG-12345",
+          complianceLevel: "high",
           reportingRequired: true,
         },
-        priority: 'critical',
+        priority: "critical",
       });
 
       expect(result.success).toBe(true);
       expect(result.data.anvisaCompliant).toBe(true);
       expect(result.data.complianceReported).toBe(true);
-      expect(result.data.priority).toBe('critical');
+      expect(result.data.priority).toBe("critical");
     });
 
-    it('should send CFM compliant professional notification', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should send CFM compliant professional notification", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.sendNotification({
-        recipientId: 'doctor-123',
-        channel: 'email',
-        templateId: 'cfm_professional_update',
+        recipientId: "doctor-123",
+        channel: "email",
+        templateId: "cfm_professional_update",
         data: {
-          doctorName: 'Dr. Maria Santos',
-          crmNumber: 'CRM-SP 123456',
-          updateType: 'continuing_education',
-          requirement: 'Atualização em Dermatologia Estética',
-          deadline: '31/12/2024',
+          doctorName: "Dr. Maria Santos",
+          crmNumber: "CRM-SP 123456",
+          updateType: "continuing_education",
+          requirement: "Atualização em Dermatologia Estética",
+          deadline: "31/12/2024",
         },
         cfmContext: {
-          professionalCategory: 'dermatologist',
-          specialtyCode: 'DER-001',
+          professionalCategory: "dermatologist",
+          specialtyCode: "DER-001",
           complianceRequired: true,
         },
-        priority: 'medium',
+        priority: "medium",
       });
 
       expect(result.success).toBe(true);
@@ -264,38 +265,38 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.specialtyValidated).toBe(true);
     });
 
-    it('should validate Brazilian phone number format', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should validate Brazilian phone number format", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.validateRecipientContact({
-        recipientId: 'patient-123',
-        channel: 'sms',
+        recipientId: "patient-123",
+        channel: "sms",
         contactInfo: {
-          phone: '(11) 99999-9999',
-          countryCode: '+55',
+          phone: "(11) 99999-9999",
+          countryCode: "+55",
         },
       });
 
       expect(result.success).toBe(true);
       expect(result.data.isValid).toBe(true);
-      expect(result.data.format).toBe('brazilian_mobile');
+      expect(result.data.format).toBe("brazilian_mobile");
       expect(result.data.carrier).toBeDefined();
     });
   });
 
-  describe('Template Management', () => {
-    it('should create notification template', async () => {
-      const { NotificationService } = await import('../notification-service');
+  describe("Template Management", () => {
+    it("should create notification template", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.createTemplate({
-        templateId: 'custom_reminder',
-        name: 'Lembrete Personalizado',
-        description: 'Template para lembretes personalizados',
-        channel: 'email',
-        language: 'pt-BR',
-        subject: 'Lembrete: {{appointmentType}} em {{clinicName}}',
+        templateId: "custom_reminder",
+        name: "Lembrete Personalizado",
+        description: "Template para lembretes personalizados",
+        channel: "email",
+        language: "pt-BR",
+        subject: "Lembrete: {{appointmentType}} em {{clinicName}}",
         content: `
           Olá {{patientName}},
           
@@ -310,72 +311,72 @@ describe('Real-time Notification Service (T042)', () => {
           Equipe {{clinicName}}
         `,
         variables: [
-          'patientName',
-          'appointmentType',
-          'appointmentDate',
-          'appointmentTime',
-          'clinicName',
+          "patientName",
+          "appointmentType",
+          "appointmentDate",
+          "appointmentTime",
+          "clinicName",
         ],
-        category: 'appointment',
+        category: "appointment",
       });
 
       expect(result.success).toBe(true);
-      expect(result.data.templateId).toBe('custom_reminder');
-      expect(result.data.language).toBe('pt-BR');
+      expect(result.data.templateId).toBe("custom_reminder");
+      expect(result.data.language).toBe("pt-BR");
       expect(result.data.variableCount).toBe(5);
       expect(result.data.persisted).toBe(true);
     });
 
-    it('should render template with dynamic content', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should render template with dynamic content", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.renderTemplate({
-        templateId: 'appointment_reminder',
+        templateId: "appointment_reminder",
         data: {
-          patientName: 'João Silva',
-          appointmentType: 'Consulta Dermatológica',
-          appointmentDate: '15/02/2024',
-          appointmentTime: '14:30',
-          clinicName: 'NeonPro Estética',
-          doctorName: 'Dr. Maria Santos',
+          patientName: "João Silva",
+          appointmentType: "Consulta Dermatológica",
+          appointmentDate: "15/02/2024",
+          appointmentTime: "14:30",
+          clinicName: "NeonPro Estética",
+          doctorName: "Dr. Maria Santos",
         },
-        language: 'pt-BR',
+        language: "pt-BR",
       });
 
       expect(result.success).toBe(true);
-      expect(result.data.renderedSubject).toContain('João Silva');
-      expect(result.data.renderedContent).toContain('Consulta Dermatológica');
-      expect(result.data.renderedContent).toContain('15/02/2024');
+      expect(result.data.renderedSubject).toContain("João Silva");
+      expect(result.data.renderedContent).toContain("Consulta Dermatológica");
+      expect(result.data.renderedContent).toContain("15/02/2024");
       expect(result.data.missingVariables).toEqual([]);
     });
 
-    it('should update notification template', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should update notification template", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
-      const result = await service.updateTemplate('custom_reminder', {
-        subject: 'ATUALIZADO: {{appointmentType}} em {{clinicName}}',
-        content: 'Conteúdo atualizado do template...',
-        variables: ['patientName', 'appointmentType', 'clinicName'],
-        lastModifiedBy: 'admin-123',
+      const result = await service.updateTemplate("custom_reminder", {
+        subject: "ATUALIZADO: {{appointmentType}} em {{clinicName}}",
+        content: "Conteúdo atualizado do template...",
+        variables: ["patientName", "appointmentType", "clinicName"],
+        lastModifiedBy: "admin-123",
       });
 
       expect(result.success).toBe(true);
-      expect(result.data.templateId).toBe('custom_reminder');
-      expect(result.data.subject).toContain('ATUALIZADO:');
-      expect(result.data.lastModifiedBy).toBe('admin-123');
+      expect(result.data.templateId).toBe("custom_reminder");
+      expect(result.data.subject).toContain("ATUALIZADO:");
+      expect(result.data.lastModifiedBy).toBe("admin-123");
       expect(result.data.version).toBeGreaterThan(1);
     });
 
-    it('should list available templates', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should list available templates", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.listTemplates({
-        channel: 'email',
-        language: 'pt-BR',
-        category: 'appointment',
+        channel: "email",
+        language: "pt-BR",
+        category: "appointment",
         includeInactive: false,
       });
 
@@ -386,48 +387,48 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe('Delivery Tracking and Status Monitoring', () => {
-    it('should track notification delivery', async () => {
-      const { NotificationService } = await import('../notification-service');
+  describe("Delivery Tracking and Status Monitoring", () => {
+    it("should track notification delivery", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
-      const result = await service.trackDelivery('notification-123');
+      const result = await service.trackDelivery("notification-123");
 
       expect(result.success).toBe(true);
-      expect(result.data.notificationId).toBe('notification-123');
+      expect(result.data.notificationId).toBe("notification-123");
       expect(result.data.deliveryStatus).toBeDefined();
       expect(result.data.deliveryAttempts).toBeGreaterThanOrEqual(0);
       expect(result.data.lastAttempt).toBeDefined();
       expect(result.data.nextRetry).toBeDefined();
     });
 
-    it('should retry failed notification', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should retry failed notification", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
-      const result = await service.retryNotification('notification-123', {
-        reason: 'Temporary delivery failure',
+      const result = await service.retryNotification("notification-123", {
+        reason: "Temporary delivery failure",
         maxRetries: 3,
         retryDelay: 300, // 5 minutes
         escalateAfter: 3,
       });
 
       expect(result.success).toBe(true);
-      expect(result.data.notificationId).toBe('notification-123');
+      expect(result.data.notificationId).toBe("notification-123");
       expect(result.data.retryScheduled).toBe(true);
       expect(result.data.nextRetryAt).toBeDefined();
       expect(result.data.remainingRetries).toBeLessThanOrEqual(3);
     });
 
-    it('should get delivery statistics', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should get delivery statistics", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.getDeliveryStatistics({
-        startDate: new Date('2024-01-01'),
-        endDate: new Date('2024-01-31'),
-        channels: ['email', 'sms', 'whatsapp'],
-        groupBy: 'channel',
+        startDate: new Date("2024-01-01"),
+        endDate: new Date("2024-01-31"),
+        channels: ["email", "sms", "whatsapp"],
+        groupBy: "channel",
       });
 
       expect(result.success).toBe(true);
@@ -437,45 +438,48 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.byChannel).toBeDefined();
     });
 
-    it('should update notification status', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should update notification status", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
-      const result = await service.updateNotificationStatus('notification-123', {
-        status: 'delivered',
-        deliveredAt: new Date(),
-        providerResponse: {
-          messageId: 'msg-456',
-          status: 'delivered',
-          timestamp: new Date(),
+      const result = await service.updateNotificationStatus(
+        "notification-123",
+        {
+          status: "delivered",
+          deliveredAt: new Date(),
+          providerResponse: {
+            messageId: "msg-456",
+            status: "delivered",
+            timestamp: new Date(),
+          },
+          metadata: {
+            deliveryTime: 1500, // ms
+            provider: "twilio",
+          },
         },
-        metadata: {
-          deliveryTime: 1500, // ms
-          provider: 'twilio',
-        },
-      });
+      );
 
       expect(result.success).toBe(true);
-      expect(result.data.notificationId).toBe('notification-123');
-      expect(result.data.status).toBe('delivered');
+      expect(result.data.notificationId).toBe("notification-123");
+      expect(result.data.status).toBe("delivered");
       expect(result.data.deliveredAt).toBeDefined();
       expect(result.data.updated).toBe(true);
     });
   });
 
-  describe('Priority-based Queuing and Rate Limiting', () => {
-    it('should queue high priority notification', async () => {
-      const { NotificationService } = await import('../notification-service');
+  describe("Priority-based Queuing and Rate Limiting", () => {
+    it("should queue high priority notification", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.queueNotification({
-        recipientId: 'patient-123',
-        channel: 'sms',
-        templateId: 'emergency_alert',
-        priority: 'critical',
+        recipientId: "patient-123",
+        channel: "sms",
+        templateId: "emergency_alert",
+        priority: "critical",
         data: {
-          alertType: 'Emergência Médica',
-          message: 'Procure atendimento médico imediatamente',
+          alertType: "Emergência Médica",
+          message: "Procure atendimento médico imediatamente",
         },
         bypassRateLimit: true,
       });
@@ -486,14 +490,14 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.rateLimitBypassed).toBe(true);
     });
 
-    it('should apply rate limiting', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should apply rate limiting", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.checkRateLimit({
-        recipientId: 'patient-123',
-        channel: 'sms',
-        timeWindow: '1 hour',
+        recipientId: "patient-123",
+        channel: "sms",
+        timeWindow: "1 hour",
       });
 
       expect(result.success).toBe(true);
@@ -503,13 +507,13 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.currentCount).toBeGreaterThanOrEqual(0);
     });
 
-    it('should process notification queue', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should process notification queue", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.processNotificationQueue({
         batchSize: 10,
-        priorityOrder: ['critical', 'high', 'medium', 'low'],
+        priorityOrder: ["critical", "high", "medium", "low"],
         respectRateLimits: true,
       });
 
@@ -520,8 +524,8 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.nextProcessAt).toBeDefined();
     });
 
-    it('should get queue status', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should get queue status", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.getQueueStatus();
@@ -534,35 +538,35 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe('Integration with Existing Data Models', () => {
-    it('should integrate with Patient model', async () => {
-      const { NotificationService } = await import('../notification-service');
+  describe("Integration with Existing Data Models", () => {
+    it("should integrate with Patient model", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.sendPatientNotification({
-        patientId: 'patient-123',
-        notificationType: 'appointment_reminder',
-        appointmentId: 'appointment-456',
-        preferredChannels: ['email', 'sms'],
-        urgency: 'high',
+        patientId: "patient-123",
+        notificationType: "appointment_reminder",
+        appointmentId: "appointment-456",
+        preferredChannels: ["email", "sms"],
+        urgency: "high",
       });
 
       expect(result.success).toBe(true);
-      expect(result.data.patientId).toBe('patient-123');
-      expect(result.data.channelsUsed).toContain('email');
+      expect(result.data.patientId).toBe("patient-123");
+      expect(result.data.channelsUsed).toContain("email");
       expect(result.data.lgpdValidated).toBe(true);
       expect(result.data.auditLogged).toBe(true);
     });
 
-    it('should validate LGPD consent before sending', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should validate LGPD consent before sending", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.validateLGPDConsent({
-        patientId: 'patient-123',
-        channel: 'email',
-        purpose: 'marketing',
-        dataCategories: ['personal_data', 'contact_data'],
+        patientId: "patient-123",
+        channel: "email",
+        purpose: "marketing",
+        dataCategories: ["personal_data", "contact_data"],
       });
 
       expect(result.success).toBe(true);
@@ -572,62 +576,62 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.canSend).toBeDefined();
     });
 
-    it('should log notification to audit trail', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should log notification to audit trail", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.logNotificationToAudit({
-        notificationId: 'notification-123',
-        recipientId: 'patient-123',
-        channel: 'email',
-        templateId: 'appointment_reminder',
-        status: 'delivered',
+        notificationId: "notification-123",
+        recipientId: "patient-123",
+        channel: "email",
+        templateId: "appointment_reminder",
+        status: "delivered",
         auditContext: {
-          userId: 'system',
-          action: 'notification_sent',
-          ipAddress: '127.0.0.1',
+          userId: "system",
+          action: "notification_sent",
+          ipAddress: "127.0.0.1",
         },
       });
 
       expect(result.success).toBe(true);
       expect(result.data.auditId).toBeDefined();
       expect(result.data.logged).toBe(true);
-      expect(result.data.complianceFlags).toContain('notification_delivery');
+      expect(result.data.complianceFlags).toContain("notification_delivery");
     });
 
-    it('should sync with notification preferences', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should sync with notification preferences", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
-      const result = await service.syncNotificationPreferences('patient-123');
+      const result = await service.syncNotificationPreferences("patient-123");
 
       expect(result.success).toBe(true);
-      expect(result.data.patientId).toBe('patient-123');
+      expect(result.data.patientId).toBe("patient-123");
       expect(result.data.preferences).toBeDefined();
       expect(result.data.enabledChannels).toBeDefined();
       expect(result.data.lastSynced).toBeDefined();
     });
   });
 
-  describe('Database Integration', () => {
-    it('should handle database connection errors gracefully', async () => {
-      const { NotificationService } = await import('../notification-service');
+  describe("Database Integration", () => {
+    it("should handle database connection errors gracefully", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.sendNotification({
-        recipientId: 'patient-123',
-        channel: 'email',
-        templateId: 'test_template',
-        data: { test: 'data' },
+        recipientId: "patient-123",
+        channel: "email",
+        templateId: "test_template",
+        data: { test: "data" },
         simulateDbError: true,
       });
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain('Erro de conexão com banco de dados');
+      expect(result.error).toContain("Erro de conexão com banco de dados");
     });
 
-    it('should validate database schema', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should validate database schema", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.validateDatabaseSchema();
@@ -638,12 +642,12 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.data.indexesOptimal).toBeDefined();
     });
 
-    it('should perform database maintenance', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should perform database maintenance", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.performDatabaseMaintenance({
-        operation: 'cleanup_old_notifications',
+        operation: "cleanup_old_notifications",
         retentionDays: 90,
         dryRun: true,
       });
@@ -654,15 +658,15 @@ describe('Real-time Notification Service (T042)', () => {
     });
   });
 
-  describe('Error Handling and Validation', () => {
-    it('should handle invalid notification parameters', async () => {
-      const { NotificationService } = await import('../notification-service');
+  describe("Error Handling and Validation", () => {
+    it("should handle invalid notification parameters", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const result = await service.sendNotification({
-        recipientId: '',
-        channel: '',
-        templateId: '',
+        recipientId: "",
+        channel: "",
+        templateId: "",
         data: {},
       });
 
@@ -671,8 +675,8 @@ describe('Real-time Notification Service (T042)', () => {
       expect(result.errors.length).toBeGreaterThan(0);
     });
 
-    it('should validate service configuration', async () => {
-      const { NotificationService } = await import('../notification-service');
+    it("should validate service configuration", async () => {
+      const { NotificationService } = await import("../notification-service");
       const service = new NotificationService();
 
       const config = service.getServiceConfiguration();

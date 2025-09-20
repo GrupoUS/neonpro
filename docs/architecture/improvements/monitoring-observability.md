@@ -7,6 +7,7 @@ This guide covers the comprehensive monitoring and observability system implemen
 ## Architecture
 
 ### Component Overview
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Application Layer                        │
@@ -23,6 +24,7 @@ This guide covers the comprehensive monitoring and observability system implemen
 ```
 
 ### Data Flow
+
 1. **Application Events** → Healthcare PII Redaction → Telemetry Processing
 2. **Error Events** → Sentry Middleware → Context Enrichment → Sentry SaaS
 3. **Database Operations** → OpenTelemetry Spans → Trace Collection → Monitoring Dashboard
@@ -33,30 +35,31 @@ This guide covers the comprehensive monitoring and observability system implemen
 ### Configuration
 
 **File**: `apps/api/src/lib/sentry.ts`
+
 ```typescript
-import * as Sentry from '@sentry/node';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
+import * as Sentry from "@sentry/node";
+import { nodeProfilingIntegration } from "@sentry/profiling-node";
 
 export function initializeSentry() {
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
-    environment: process.env.NODE_ENV || 'development',
-    
+    environment: process.env.NODE_ENV || "development",
+
     // Healthcare compliance settings
     beforeSend: (event, hint) => {
       // Redact PII from healthcare data
       return redactHealthcarePII(event);
     },
-    
+
     beforeSendTransaction: (event) => {
       // Sanitize transaction data for healthcare compliance
       return sanitizeTransactionData(event);
     },
-    
+
     // Performance monitoring
-    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
-    profilesSampleRate: process.env.NODE_ENV === 'production' ? 0.1 : 1.0,
-    
+    tracesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+    profilesSampleRate: process.env.NODE_ENV === "production" ? 0.1 : 1.0,
+
     // Integrations
     integrations: [
       nodeProfilingIntegration(),
@@ -64,22 +67,22 @@ export function initializeSentry() {
         tracing: {
           shouldCreateSpanForRequest: (url) => {
             // Skip health check endpoints from tracing
-            return !url.includes('/health');
-          }
-        }
+            return !url.includes("/health");
+          },
+        },
       }),
-      Sentry.prismaIntegration()
+      Sentry.prismaIntegration(),
     ],
-    
+
     // Release tracking
     release: process.env.SENTRY_RELEASE,
-    
+
     // Error filtering
     ignoreErrors: [
-      'Non-Error promise rejection captured',
-      'ResizeObserver loop limit exceeded',
-      'AbortError'
-    ]
+      "Non-Error promise rejection captured",
+      "ResizeObserver loop limit exceeded",
+      "AbortError",
+    ],
   });
 }
 ```
@@ -87,6 +90,7 @@ export function initializeSentry() {
 ### Healthcare PII Redaction
 
 **File**: `apps/api/src/lib/sentry-healthcare.ts`
+
 ```typescript
 interface HealthcarePIIPatterns {
   cpf: RegExp;
@@ -101,7 +105,7 @@ const PII_PATTERNS: HealthcarePIIPatterns = {
   phone: /\(\d{2}\)\s*\d{4,5}-?\d{4}/g,
   email: /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
   medicalRecord: /MR-\d{6,10}/g,
-  patientId: /PAT-[A-Z0-9]{8,12}/g
+  patientId: /PAT-[A-Z0-9]{8,12}/g,
 };
 
 export function redactHealthcarePII(event: Sentry.Event): Sentry.Event | null {
@@ -110,40 +114,44 @@ export function redactHealthcarePII(event: Sentry.Event): Sentry.Event | null {
     if (event.message) {
       event.message = redactString(event.message);
     }
-    
+
     // Redact from exception messages
     if (event.exception?.values) {
-      event.exception.values = event.exception.values.map(exception => ({
+      event.exception.values = event.exception.values.map((exception) => ({
         ...exception,
-        value: exception.value ? redactString(exception.value) : exception.value
+        value: exception.value
+          ? redactString(exception.value)
+          : exception.value,
       }));
     }
-    
+
     // Redact from breadcrumbs
     if (event.breadcrumbs) {
-      event.breadcrumbs = event.breadcrumbs.map(breadcrumb => ({
+      event.breadcrumbs = event.breadcrumbs.map((breadcrumb) => ({
         ...breadcrumb,
-        message: breadcrumb.message ? redactString(breadcrumb.message) : breadcrumb.message,
-        data: breadcrumb.data ? redactObject(breadcrumb.data) : breadcrumb.data
+        message: breadcrumb.message
+          ? redactString(breadcrumb.message)
+          : breadcrumb.message,
+        data: breadcrumb.data ? redactObject(breadcrumb.data) : breadcrumb.data,
       }));
     }
-    
+
     // Redact from extra context
     if (event.extra) {
       event.extra = redactObject(event.extra);
     }
-    
+
     // Add healthcare compliance tags
     event.tags = {
       ...event.tags,
-      'healthcare.pii_redacted': 'true',
-      'compliance.lgpd': 'compliant',
-      'healthcare.data_classification': 'redacted'
+      "healthcare.pii_redacted": "true",
+      "compliance.lgpd": "compliant",
+      "healthcare.data_classification": "redacted",
     };
-    
+
     return event;
   } catch (error) {
-    console.error('Error redacting PII from Sentry event:', error);
+    console.error("Error redacting PII from Sentry event:", error);
     // Return null to drop the event if redaction fails
     return null;
   }
@@ -151,43 +159,53 @@ export function redactHealthcarePII(event: Sentry.Event): Sentry.Event | null {
 
 function redactString(text: string): string {
   let redactedText = text;
-  
+
   Object.entries(PII_PATTERNS).forEach(([type, pattern]) => {
-    redactedText = redactedText.replace(pattern, `[REDACTED_${type.toUpperCase()}]`);
+    redactedText = redactedText.replace(
+      pattern,
+      `[REDACTED_${type.toUpperCase()}]`,
+    );
   });
-  
+
   return redactedText;
 }
 
 function redactObject(obj: any): any {
-  if (typeof obj !== 'object' || obj === null) {
-    return typeof obj === 'string' ? redactString(obj) : obj;
+  if (typeof obj !== "object" || obj === null) {
+    return typeof obj === "string" ? redactString(obj) : obj;
   }
-  
+
   if (Array.isArray(obj)) {
-    return obj.map(item => redactObject(item));
+    return obj.map((item) => redactObject(item));
   }
-  
+
   const redactedObj: any = {};
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     if (isPIIField(key)) {
-      redactedObj[key] = '[REDACTED_PII]';
+      redactedObj[key] = "[REDACTED_PII]";
     } else {
       redactedObj[key] = redactObject(obj[key]);
     }
   });
-  
+
   return redactedObj;
 }
 
 function isPIIField(fieldName: string): boolean {
   const piiFields = [
-    'cpf', 'email', 'phone', 'address', 'medical_record',
-    'patient_id', 'full_name', 'birth_date', 'social_security'
+    "cpf",
+    "email",
+    "phone",
+    "address",
+    "medical_record",
+    "patient_id",
+    "full_name",
+    "birth_date",
+    "social_security",
   ];
-  
-  return piiFields.some(field => 
-    fieldName.toLowerCase().includes(field.toLowerCase())
+
+  return piiFields.some((field) =>
+    fieldName.toLowerCase().includes(field.toLowerCase()),
   );
 }
 ```
@@ -195,9 +213,10 @@ function isPIIField(fieldName: string): boolean {
 ### Middleware Integration
 
 **File**: `apps/api/src/app.ts`
+
 ```typescript
-import { initializeSentry, sentryMiddleware } from './lib/sentry';
-import { Hono } from 'hono';
+import { initializeSentry, sentryMiddleware } from "./lib/sentry";
+import { Hono } from "hono";
 
 // Initialize Sentry before app creation
 initializeSentry();
@@ -205,24 +224,24 @@ initializeSentry();
 const app = new Hono();
 
 // Sentry middleware for error tracking and performance monitoring
-app.use('*', sentryMiddleware());
+app.use("*", sentryMiddleware());
 
 // Healthcare context middleware
-app.use('*', async (c, next) => {
+app.use("*", async (c, next) => {
   // Add healthcare context to Sentry scope
-  Sentry.withScope(scope => {
-    scope.setTag('healthcare.app', 'neonpro');
-    scope.setTag('healthcare.environment', process.env.NODE_ENV);
-    
-    if (c.get('user')) {
+  Sentry.withScope((scope) => {
+    scope.setTag("healthcare.app", "neonpro");
+    scope.setTag("healthcare.environment", process.env.NODE_ENV);
+
+    if (c.get("user")) {
       scope.setUser({
-        id: c.get('user').id,
+        id: c.get("user").id,
         // Don't include PII in user context
-        role: c.get('user').role
+        role: c.get("user").role,
       });
-      scope.setTag('healthcare.user_type', c.get('user').role);
+      scope.setTag("healthcare.user_type", c.get("user").role);
     }
-    
+
     return next();
   });
 });
@@ -233,15 +252,16 @@ app.use('*', async (c, next) => {
 ### Supabase Telemetry Client
 
 **File**: `apps/api/src/lib/supabase-telemetry.ts`
+
 ```typescript
-import { trace, SpanStatusCode, SpanKind } from '@opentelemetry/api';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { createHash } from 'crypto';
+import { trace, SpanStatusCode, SpanKind } from "@opentelemetry/api";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createHash } from "crypto";
 
 export interface SupabaseTelemetryContext {
   operation: string;
   table?: string;
-  dataClassification: 'public' | 'internal' | 'confidential' | 'restricted';
+  dataClassification: "public" | "internal" | "confidential" | "restricted";
   patientId?: string;
   professionalId?: string;
   complianceRequired?: boolean;
@@ -249,7 +269,7 @@ export interface SupabaseTelemetryContext {
 
 export class TelemetryEnabledSupabaseClient {
   private client: SupabaseClient;
-  private tracer = trace.getTracer('supabase-healthcare');
+  private tracer = trace.getTracer("supabase-healthcare");
 
   constructor(url: string, key: string) {
     this.client = createClient(url, key);
@@ -257,59 +277,58 @@ export class TelemetryEnabledSupabaseClient {
 
   async executeWithTelemetry<T>(
     queryFn: () => Promise<T>,
-    context: SupabaseTelemetryContext
+    context: SupabaseTelemetryContext,
   ): Promise<T> {
     const span = this.tracer.startSpan(`supabase.${context.operation}`, {
       kind: SpanKind.CLIENT,
       attributes: {
-        'db.system': 'postgresql',
-        'db.name': 'supabase',
-        'db.operation': context.operation,
-        'db.sql.table': context.table || 'unknown',
-        
+        "db.system": "postgresql",
+        "db.name": "supabase",
+        "db.operation": context.operation,
+        "db.sql.table": context.table || "unknown",
+
         // Healthcare-specific attributes
-        'healthcare.data_classification': context.dataClassification,
-        'healthcare.compliance_required': context.complianceRequired || false,
-        
+        "healthcare.data_classification": context.dataClassification,
+        "healthcare.compliance_required": context.complianceRequired || false,
+
         // Privacy-compliant identifiers (hashed)
         ...(context.patientId && {
-          'healthcare.patient_context': this.hashIdentifier(context.patientId)
+          "healthcare.patient_context": this.hashIdentifier(context.patientId),
         }),
         ...(context.professionalId && {
-          'healthcare.professional_id': context.professionalId
-        })
-      }
+          "healthcare.professional_id": context.professionalId,
+        }),
+      },
     });
 
     const startTime = Date.now();
 
     try {
       const result = await queryFn();
-      
+
       const duration = Date.now() - startTime;
       span.setAttributes({
-        'db.duration_ms': duration,
-        'healthcare.operation_success': true
+        "db.duration_ms": duration,
+        "healthcare.operation_success": true,
       });
-      
+
       span.setStatus({ code: SpanStatusCode.OK });
       return result;
-      
     } catch (error) {
       const duration = Date.now() - startTime;
       span.setAttributes({
-        'db.duration_ms': duration,
-        'healthcare.operation_success': false,
-        'error.type': (error as Error).constructor.name,
-        'error.message': this.sanitizeErrorMessage((error as Error).message)
+        "db.duration_ms": duration,
+        "healthcare.operation_success": false,
+        "error.type": (error as Error).constructor.name,
+        "error.message": this.sanitizeErrorMessage((error as Error).message),
       });
-      
+
       span.recordException(error as Error);
-      span.setStatus({ 
-        code: SpanStatusCode.ERROR, 
-        message: 'Database operation failed'
+      span.setStatus({
+        code: SpanStatusCode.ERROR,
+        message: "Database operation failed",
       });
-      
+
       throw error;
     } finally {
       span.end();
@@ -320,33 +339,33 @@ export class TelemetryEnabledSupabaseClient {
   async selectWithTelemetry<T>(
     table: string,
     query: any,
-    context: Partial<SupabaseTelemetryContext> = {}
+    context: Partial<SupabaseTelemetryContext> = {},
   ): Promise<T> {
     return this.executeWithTelemetry(
       () => this.client.from(table).select(query),
       {
-        operation: 'select',
+        operation: "select",
         table,
-        dataClassification: 'confidential',
-        ...context
-      }
+        dataClassification: "confidential",
+        ...context,
+      },
     );
   }
 
   async insertWithTelemetry<T>(
     table: string,
     data: any,
-    context: Partial<SupabaseTelemetryContext> = {}
+    context: Partial<SupabaseTelemetryContext> = {},
   ): Promise<T> {
     return this.executeWithTelemetry(
       () => this.client.from(table).insert(data),
       {
-        operation: 'insert',
+        operation: "insert",
         table,
-        dataClassification: 'confidential',
+        dataClassification: "confidential",
         complianceRequired: true,
-        ...context
-      }
+        ...context,
+      },
     );
   }
 
@@ -354,33 +373,36 @@ export class TelemetryEnabledSupabaseClient {
     table: string,
     data: any,
     filter: any,
-    context: Partial<SupabaseTelemetryContext> = {}
+    context: Partial<SupabaseTelemetryContext> = {},
   ): Promise<T> {
     return this.executeWithTelemetry(
       () => this.client.from(table).update(data).match(filter),
       {
-        operation: 'update',
+        operation: "update",
         table,
-        dataClassification: 'confidential',
+        dataClassification: "confidential",
         complianceRequired: true,
-        ...context
-      }
+        ...context,
+      },
     );
   }
 
   private hashIdentifier(identifier: string): string {
-    return createHash('sha256')
+    return createHash("sha256")
       .update(identifier)
-      .digest('hex')
+      .digest("hex")
       .substring(0, 16); // First 16 chars for brevity
   }
 
   private sanitizeErrorMessage(message: string): string {
     // Remove potential PII from error messages
     return message
-      .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, '[REDACTED_CPF]')
-      .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[REDACTED_EMAIL]')
-      .replace(/\(\d{2}\)\s*\d{4,5}-?\d{4}/g, '[REDACTED_PHONE]');
+      .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, "[REDACTED_CPF]")
+      .replace(
+        /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+        "[REDACTED_EMAIL]",
+      )
+      .replace(/\(\d{2}\)\s*\d{4,5}-?\d{4}/g, "[REDACTED_PHONE]");
   }
 }
 
@@ -388,7 +410,7 @@ export class TelemetryEnabledSupabaseClient {
 export function createTelemetrySupabaseClient(): TelemetryEnabledSupabaseClient {
   const supabaseUrl = process.env.SUPABASE_URL!;
   const supabaseKey = process.env.SUPABASE_ANON_KEY!;
-  
+
   return new TelemetryEnabledSupabaseClient(supabaseUrl, supabaseKey);
 }
 ```
@@ -396,44 +418,48 @@ export function createTelemetrySupabaseClient(): TelemetryEnabledSupabaseClient 
 ### Service Integration Example
 
 **File**: `packages/database/src/services/patient.service.ts`
+
 ```typescript
-import { createTelemetrySupabaseClient } from '../lib/supabase-telemetry';
+import { createTelemetrySupabaseClient } from "../lib/supabase-telemetry";
 
 export class PatientService {
   private supabase = createTelemetrySupabaseClient();
 
-  async getPatient(patientId: string, professionalId: string): Promise<Patient> {
+  async getPatient(
+    patientId: string,
+    professionalId: string,
+  ): Promise<Patient> {
     return this.supabase.selectWithTelemetry(
-      'patients',
-      '*, medical_records(*)',
+      "patients",
+      "*, medical_records(*)",
       {
-        operation: 'get_patient',
-        table: 'patients',
-        dataClassification: 'restricted',
+        operation: "get_patient",
+        table: "patients",
+        dataClassification: "restricted",
         patientId,
         professionalId,
-        complianceRequired: true
-      }
+        complianceRequired: true,
+      },
     );
   }
 
   async updatePatientRecord(
     patientId: string,
     updates: Partial<Patient>,
-    professionalId: string
+    professionalId: string,
   ): Promise<Patient> {
     return this.supabase.updateWithTelemetry(
-      'patients',
+      "patients",
       updates,
       { id: patientId },
       {
-        operation: 'update_patient',
-        table: 'patients',
-        dataClassification: 'restricted',
+        operation: "update_patient",
+        table: "patients",
+        dataClassification: "restricted",
         patientId,
         professionalId,
-        complianceRequired: true
-      }
+        complianceRequired: true,
+      },
     );
   }
 }
@@ -471,12 +497,12 @@ services:
       - SENTRY_DSN=${SENTRY_DSN}
       - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4317
       - HEALTHCARE_PII_REDACTION_ENABLED=true
-    
+
   otel-collector:
     image: otel/opentelemetry-collector-contrib:latest
     ports:
-      - "4317:4317"   # OTLP gRPC receiver
-      - "4318:4318"   # OTLP HTTP receiver
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP HTTP receiver
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
     command: ["--config=/etc/otel-collector-config.yaml"]
@@ -487,6 +513,7 @@ services:
 ### Performance Dashboards
 
 Create Sentry dashboards for:
+
 - **Error Rate**: Monitor error rates by healthcare module
 - **Response Time**: Track API response times for critical healthcare operations
 - **User Experience**: Monitor real user performance for healthcare interfaces
@@ -498,24 +525,24 @@ Create Sentry dashboards for:
 // Example alert rules for Sentry
 const alertRules = {
   highErrorRate: {
-    condition: 'error_rate > 1%',
-    timeWindow: '5m',
-    channels: ['slack', 'email'],
-    severity: 'critical'
+    condition: "error_rate > 1%",
+    timeWindow: "5m",
+    channels: ["slack", "email"],
+    severity: "critical",
   },
   slowHealthcareAPI: {
-    condition: 'avg_response_time > 2s',
-    filter: 'transaction:/api/healthcare/*',
-    timeWindow: '10m',
-    channels: ['slack'],
-    severity: 'warning'
+    condition: "avg_response_time > 2s",
+    filter: "transaction:/api/healthcare/*",
+    timeWindow: "10m",
+    channels: ["slack"],
+    severity: "warning",
   },
   piiRedactionFailure: {
-    condition: 'tag:healthcare.pii_redacted != true',
-    timeWindow: '1m',
-    channels: ['security-team', 'compliance-team'],
-    severity: 'critical'
-  }
+    condition: "tag:healthcare.pii_redacted != true",
+    timeWindow: "1m",
+    channels: ["security-team", "compliance-team"],
+    severity: "critical",
+  },
 };
 ```
 
@@ -524,29 +551,34 @@ const alertRules = {
 ### Unit Tests
 
 **File**: `apps/api/tests/monitoring/sentry.test.ts`
+
 ```typescript
-describe('Sentry Healthcare Integration', () => {
-  describe('PII Redaction', () => {
-    it('should redact CPF from error messages', () => {
+describe("Sentry Healthcare Integration", () => {
+  describe("PII Redaction", () => {
+    it("should redact CPF from error messages", () => {
       const event = {
-        message: 'Error processing patient 123.456.789-01'
+        message: "Error processing patient 123.456.789-01",
       };
-      
+
       const redacted = redactHealthcarePII(event);
-      expect(redacted.message).toBe('Error processing patient [REDACTED_CPF]');
+      expect(redacted.message).toBe("Error processing patient [REDACTED_CPF]");
     });
 
-    it('should redact email addresses from breadcrumbs', () => {
+    it("should redact email addresses from breadcrumbs", () => {
       const event = {
-        breadcrumbs: [{
-          message: 'User login: patient@hospital.com',
-          data: { email: 'patient@hospital.com' }
-        }]
+        breadcrumbs: [
+          {
+            message: "User login: patient@hospital.com",
+            data: { email: "patient@hospital.com" },
+          },
+        ],
       };
-      
+
       const redacted = redactHealthcarePII(event);
-      expect(redacted.breadcrumbs[0].message).toBe('User login: [REDACTED_EMAIL]');
-      expect(redacted.breadcrumbs[0].data.email).toBe('[REDACTED_PII]');
+      expect(redacted.breadcrumbs[0].message).toBe(
+        "User login: [REDACTED_EMAIL]",
+      );
+      expect(redacted.breadcrumbs[0].data.email).toBe("[REDACTED_PII]");
     });
   });
 });
@@ -555,8 +587,9 @@ describe('Sentry Healthcare Integration', () => {
 ### Integration Tests
 
 **File**: `apps/api/tests/monitoring/telemetry.test.ts`
+
 ```typescript
-describe('OpenTelemetry Supabase Integration', () => {
+describe("OpenTelemetry Supabase Integration", () => {
   let telemetryClient: TelemetryEnabledSupabaseClient;
   let mockTracer: any;
 
@@ -565,25 +598,21 @@ describe('OpenTelemetry Supabase Integration', () => {
     mockTracer = createMockTracer();
   });
 
-  it('should create spans for database operations', async () => {
-    await telemetryClient.selectWithTelemetry(
-      'patients',
-      '*',
-      {
-        operation: 'test_select',
-        dataClassification: 'confidential',
-        patientId: 'test-patient-123'
-      }
-    );
+  it("should create spans for database operations", async () => {
+    await telemetryClient.selectWithTelemetry("patients", "*", {
+      operation: "test_select",
+      dataClassification: "confidential",
+      patientId: "test-patient-123",
+    });
 
     expect(mockTracer.startSpan).toHaveBeenCalledWith(
-      'supabase.test_select',
+      "supabase.test_select",
       expect.objectContaining({
         attributes: expect.objectContaining({
-          'healthcare.data_classification': 'confidential',
-          'healthcare.patient_context': expect.any(String)
-        })
-      })
+          "healthcare.data_classification": "confidential",
+          "healthcare.patient_context": expect.any(String),
+        }),
+      }),
     );
   });
 });
@@ -594,6 +623,7 @@ describe('OpenTelemetry Supabase Integration', () => {
 ### Common Issues
 
 **1. PII Not Being Redacted**
+
 ```bash
 # Check Sentry configuration
 curl -H "Authorization: Bearer ${SENTRY_AUTH_TOKEN}" \
@@ -604,6 +634,7 @@ grep -r "beforeSend" apps/api/src/lib/sentry.ts
 ```
 
 **2. Missing Telemetry Data**
+
 ```bash
 # Check OpenTelemetry configuration
 export OTEL_LOG_LEVEL=debug
@@ -616,13 +647,14 @@ curl -X POST ${OTEL_EXPORTER_OTLP_ENDPOINT}/v1/traces \
 ```
 
 **3. High Memory Usage**
+
 ```typescript
 // Monitor telemetry overhead
 const memUsage = process.memoryUsage();
-console.log('Telemetry memory usage:', {
+console.log("Telemetry memory usage:", {
   rss: memUsage.rss / 1024 / 1024,
   heapUsed: memUsage.heapUsed / 1024 / 1024,
-  external: memUsage.external / 1024 / 1024
+  external: memUsage.external / 1024 / 1024,
 });
 ```
 
@@ -656,14 +688,14 @@ curl -X POST http://localhost:3000/api/test/pii \
 // Optimize telemetry for high-traffic operations
 const telemetryConfig = {
   // Sample 10% of read operations, 100% of writes
-  sampleRate: operation.includes('select') ? 0.1 : 1.0,
-  
+  sampleRate: operation.includes("select") ? 0.1 : 1.0,
+
   // Batch spans for better performance
   batchSize: 100,
   batchTimeout: 5000,
-  
+
   // Reduce attribute verbosity for frequent operations
-  verboseAttributes: !operation.includes('health_check')
+  verboseAttributes: !operation.includes("health_check"),
 };
 ```
 

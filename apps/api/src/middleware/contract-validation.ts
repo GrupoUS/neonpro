@@ -1,16 +1,16 @@
 import {
   APIContract,
   HealthcareValidationError,
-} from '@neonpro/shared/models/api-contract';
-import { Context, Next } from 'hono';
-import type { OpenAPIV3_1 } from '../../types/openapi';
+} from "@neonpro/shared/models/api-contract";
+import { Context, Next } from "hono";
+import type { OpenAPIV3_1 } from "../../types/openapi";
 // Removed unused import: import * as v from 'valibot';
 import {
   createHealthcareError,
   ErrorCategory as HealthcareErrorCategory,
   ErrorSeverity as HealthcareErrorSeverity,
-} from '../services/error-tracking-bridge';
-import { structuredLogger } from '../services/structured-logging';
+} from "../services/error-tracking-bridge";
+import { structuredLogger } from "../services/structured-logging";
 
 /**
  * Configuration for contract validation middleware
@@ -47,7 +47,10 @@ export interface HealthcareValidationRule {
   /** Rule description */
   description: string;
   /** Validation function */
-  validate: (data: any, context: ValidationContext) => HealthcareValidationError[];
+  validate: (
+    data: any,
+    context: ValidationContext,
+  ) => HealthcareValidationError[];
   /** Severity level */
   severity: HealthcareErrorSeverity;
   /** Applicable data classifications */
@@ -110,7 +113,11 @@ export interface ContractValidationResult {
  */
 export interface AuditTrailEntry {
   /** Entry type */
-  type: 'validation_start' | 'validation_success' | 'validation_failure' | 'performance_alert';
+  type:
+    | "validation_start"
+    | "validation_success"
+    | "validation_failure"
+    | "performance_alert";
   /** Timestamp */
   timestamp: Date;
   /** Request identifier */
@@ -130,7 +137,8 @@ class ValidationCache {
   private cache = new Map<string, { result: any; timestamp: number }>();
   private ttl: number;
 
-  constructor(ttl: number = 300) { // 5 minutes default
+  constructor(ttl: number = 300) {
+    // 5 minutes default
     this.ttl = ttl * 1000;
   }
 
@@ -160,21 +168,23 @@ class ValidationCache {
  */
 const HEALTHCARE_VALIDATION_RULES: HealthcareValidationRule[] = [
   {
-    id: 'lgpd_consent_check',
-    name: 'LGPD Consent Verification',
-    description: 'Verify proper consent for personal data processing',
+    id: "lgpd_consent_check",
+    name: "LGPD Consent Verification",
+    description: "Verify proper consent for personal data processing",
     validate: (data, _context) => {
       const errors: HealthcareValidationError[] = [];
 
       // Check if personal data is present without consent
       if (data.patient && !data.consentRecords) {
         errors.push({
-          id: 'missing_consent',
-          message: 'Dados pessoais encontrados sem registro de consentimento LGPD',
-          field: 'patient',
+          id: "missing_consent",
+          message:
+            "Dados pessoais encontrados sem registro de consentimento LGPD",
+          field: "patient",
           severity: HealthcareErrorSeverity.HIGH,
           category: HealthcareErrorCategory.COMPLIANCE,
-          suggestion: 'Adicionar verificação de consentimento LGPD para dados pessoais',
+          suggestion:
+            "Adicionar verificação de consentimento LGPD para dados pessoais",
           timestamp: new Date(),
         });
       }
@@ -182,25 +192,25 @@ const HEALTHCARE_VALIDATION_RULES: HealthcareValidationRule[] = [
       return errors;
     },
     severity: HealthcareErrorSeverity.HIGH,
-    applicableClassifications: ['personal', 'medical'],
+    applicableClassifications: ["personal", "medical"],
     category: HealthcareErrorCategory.COMPLIANCE,
   },
   {
-    id: 'medical_data_validation',
-    name: 'Medical Data Integrity',
-    description: 'Validate medical data integrity and healthcare standards',
+    id: "medical_data_validation",
+    name: "Medical Data Integrity",
+    description: "Validate medical data integrity and healthcare standards",
     validate: (data, _context) => {
       const errors: HealthcareValidationError[] = [];
 
       // Validate medical record format
       if (data.medicalRecord && !data.medicalRecord.recordId) {
         errors.push({
-          id: 'invalid_medical_record',
-          message: 'Registro médico inválido - ID do registro ausente',
-          field: 'medicalRecord.recordId',
+          id: "invalid_medical_record",
+          message: "Registro médico inválido - ID do registro ausente",
+          field: "medicalRecord.recordId",
           severity: HealthcareErrorSeverity.HIGH,
           category: HealthcareErrorCategory.VALIDATION,
-          suggestion: 'Adicionar ID válido para registro médico',
+          suggestion: "Adicionar ID válido para registro médico",
           timestamp: new Date(),
         });
       }
@@ -208,12 +218,12 @@ const HEALTHCARE_VALIDATION_RULES: HealthcareValidationRule[] = [
       // Validate date formats for medical data
       if (data.appointmentDate && !isValidBrazilianDate(data.appointmentDate)) {
         errors.push({
-          id: 'invalid_medical_date',
-          message: 'Data médica inválida ou fora do padrão brasileiro',
-          field: 'appointmentDate',
+          id: "invalid_medical_date",
+          message: "Data médica inválida ou fora do padrão brasileiro",
+          field: "appointmentDate",
           severity: HealthcareErrorSeverity.MEDIUM,
           category: HealthcareErrorCategory.VALIDATION,
-          suggestion: 'Usar formato de data brasileiro (DD/MM/YYYY)',
+          suggestion: "Usar formato de data brasileiro (DD/MM/YYYY)",
           timestamp: new Date(),
         });
       }
@@ -221,28 +231,28 @@ const HEALTHCARE_VALIDATION_RULES: HealthcareValidationRule[] = [
       return errors;
     },
     severity: HealthcareErrorSeverity.MEDIUM,
-    applicableClassifications: ['medical', 'sensitive'],
+    applicableClassifications: ["medical", "sensitive"],
     category: HealthcareErrorCategory.VALIDATION,
   },
   {
-    id: 'healthcare_data_classification',
-    name: 'Healthcare Data Classification',
-    description: 'Verify proper data classification and handling',
+    id: "healthcare_data_classification",
+    name: "Healthcare Data Classification",
+    description: "Verify proper data classification and handling",
     validate: (data, context) => {
       const errors: HealthcareValidationError[] = [];
 
       // Check for sensitive data without proper classification
-      const sensitiveFields = ['cpf', 'cns', 'crm', 'medicalRecord'];
-      const hasSensitiveData = sensitiveFields.some(field => data[field]);
+      const sensitiveFields = ["cpf", "cns", "crm", "medicalRecord"];
+      const hasSensitiveData = sensitiveFields.some((field) => data[field]);
 
       if (hasSensitiveData && !context.contract.dataClassification) {
         errors.push({
-          id: 'missing_data_classification',
-          message: 'Dados sensíveis encontrados sem classificação adequada',
-          field: 'dataClassification',
+          id: "missing_data_classification",
+          message: "Dados sensíveis encontrados sem classificação adequada",
+          field: "dataClassification",
           severity: HealthcareErrorSeverity.HIGH,
           category: HealthcareErrorCategory.SECURITY,
-          suggestion: 'Classificar dados sensíveis conforme normas LGPD',
+          suggestion: "Classificar dados sensíveis conforme normas LGPD",
           timestamp: new Date(),
         });
       }
@@ -250,7 +260,7 @@ const HEALTHCARE_VALIDATION_RULES: HealthcareValidationRule[] = [
       return errors;
     },
     severity: HealthcareErrorSeverity.HIGH,
-    applicableClassifications: ['personal', 'medical', 'sensitive'],
+    applicableClassifications: ["personal", "medical", "sensitive"],
     category: HealthcareErrorCategory.SECURITY,
   },
 ];
@@ -268,22 +278,26 @@ function isValidBrazilianDate(dateString: string): boolean {
   const [, day, month, year] = dateString.match(brazilianDateRegex)!;
   const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 
-  return date.getFullYear() === parseInt(year)
-    && date.getMonth() === parseInt(month) - 1
-    && date.getDate() === parseInt(day);
+  return (
+    date.getFullYear() === parseInt(year) &&
+    date.getMonth() === parseInt(month) - 1 &&
+    date.getDate() === parseInt(day)
+  );
 }
 
 /**
  * Create contract validation middleware
  */
 export function contractValidation(config: ContractValidationConfig) {
-  const cache = config.enableCaching ? new ValidationCache(config.cacheTtl) : null;
+  const cache = config.enableCaching
+    ? new ValidationCache(config.cacheTtl)
+    : null;
   const customRules = config.customRules || [];
   const allRules = [...HEALTHCARE_VALIDATION_RULES, ...customRules];
 
   return async (c: Context, next: Next) => {
     const startTime = Date.now();
-    const requestId = c.req.header('x-request-id') || crypto.randomUUID();
+    const requestId = c.req.header("x-request-id") || crypto.randomUUID();
 
     try {
       // Create validation context
@@ -292,8 +306,8 @@ export function contractValidation(config: ContractValidationConfig) {
           method: c.req.method,
           path: c.req.path,
           headers: c.req.header(),
-          userId: c.req.header('x-user-id'),
-          clinicId: c.req.header('x-clinic-id'),
+          userId: c.req.header("x-user-id"),
+          clinicId: c.req.header("x-clinic-id"),
           requestId,
         },
         contract: {
@@ -307,11 +321,11 @@ export function contractValidation(config: ContractValidationConfig) {
 
       // Log validation start
       if (config.enableAuditTrail) {
-        logAuditTrail('validation_start', validationContext, {
+        logAuditTrail("validation_start", validationContext, {
           config: {
             enableLogging: config.enableLogging,
             enableMonitoring: config.enableMonitoring,
-            rules: allRules.map(r => r.id),
+            rules: allRules.map((r) => r.id),
           },
         });
       }
@@ -320,14 +334,16 @@ export function contractValidation(config: ContractValidationConfig) {
       const requestData = await getRequestData(c);
 
       // Check cache first
-      const cacheKey = cache ? generateCacheKey(c.req.method, c.req.path, requestData) : null;
+      const cacheKey = cache
+        ? generateCacheKey(c.req.method, c.req.path, requestData)
+        : null;
       let cachedResult: ContractValidationResult | null = null;
 
       if (cache && cacheKey) {
         cachedResult = cache.get(cacheKey);
         if (cachedResult) {
           if (config.enableLogging) {
-            structuredLogger.info('Contract validation cache hit', {
+            structuredLogger.info("Contract validation cache hit", {
               requestId,
               method: c.req.method,
               path: c.req.path,
@@ -337,7 +353,7 @@ export function contractValidation(config: ContractValidationConfig) {
 
           // Update metrics for cache hit
           cachedResult.metrics.cacheHits++;
-          c.set('contractValidation', cachedResult);
+          c.set("contractValidation", cachedResult);
           await next();
           return;
         }
@@ -367,7 +383,8 @@ export function contractValidation(config: ContractValidationConfig) {
         c.req.path,
       );
       validationResult.openapiErrors = openapiErrors;
-      validationResult.metrics.openapiValidationTime = Date.now() - openapiStartTime;
+      validationResult.metrics.openapiValidationTime =
+        Date.now() - openapiStartTime;
 
       // Healthcare-Specific Validation
       const healthcareStartTime = Date.now();
@@ -378,10 +395,12 @@ export function contractValidation(config: ContractValidationConfig) {
         allRules,
       );
       validationResult.healthcareErrors = healthcareErrors;
-      validationResult.metrics.healthcareValidationTime = Date.now() - healthcareStartTime;
+      validationResult.metrics.healthcareValidationTime =
+        Date.now() - healthcareStartTime;
 
       // Determine overall validity
-      validationResult.isValid = openapiErrors.length === 0 && healthcareErrors.length === 0;
+      validationResult.isValid =
+        openapiErrors.length === 0 && healthcareErrors.length === 0;
 
       // Calculate total validation time
       validationResult.metrics.validationTime = Date.now() - startTime;
@@ -394,7 +413,10 @@ export function contractValidation(config: ContractValidationConfig) {
 
       // Performance monitoring
       if (config.enableMonitoring) {
-        monitorValidationPerformance(validationResult, config.performanceThreshold);
+        monitorValidationPerformance(
+          validationResult,
+          config.performanceThreshold,
+        );
       }
 
       // Log validation results
@@ -408,11 +430,11 @@ export function contractValidation(config: ContractValidationConfig) {
       }
 
       // Store validation result in context
-      c.set('contractValidation', validationResult);
+      c.set("contractValidation", validationResult);
 
       // Log success
       if (config.enableAuditTrail) {
-        logAuditTrail('validation_success', validationContext, {
+        logAuditTrail("validation_success", validationContext, {
           validationResult: {
             isValid: validationResult.isValid,
             openapiErrorsCount: validationResult.openapiErrors.length,
@@ -426,7 +448,7 @@ export function contractValidation(config: ContractValidationConfig) {
     } catch (error) {
       // Handle unexpected errors
       if (config.enableLogging) {
-        structuredLogger.error('Contract validation error', {
+        structuredLogger.error("Contract validation error", {
           requestId,
           method: c.req.method,
           path: c.req.path,
@@ -435,7 +457,7 @@ export function contractValidation(config: ContractValidationConfig) {
       }
 
       throw createHealthcareError(
-        'Erro na validação do contrato da API',
+        "Erro na validação do contrato da API",
         HealthcareErrorCategory.SYSTEM,
         HealthcareErrorSeverity.HIGH,
         500,
@@ -482,7 +504,7 @@ function generateCacheKey(method: string, path: string, data: any): string {
     params: data.params,
   });
 
-  return `contract_validation:${Buffer.from(normalizedData).toString('base64')}`;
+  return `contract_validation:${Buffer.from(normalizedData).toString("base64")}`;
 }
 
 /**
@@ -501,12 +523,12 @@ async function validateOpenAPIContract(
     const pathItem = openApiSpec.paths[path];
     if (!pathItem) {
       errors.push({
-        id: 'path_not_found',
+        id: "path_not_found",
         message: `Endpoint não encontrado na especificação OpenAPI: ${method} ${path}`,
-        field: 'path',
+        field: "path",
         severity: HealthcareErrorSeverity.HIGH,
         category: HealthcareErrorCategory.VALIDATION,
-        suggestion: 'Adicionar endpoint à especificação OpenAPI',
+        suggestion: "Adicionar endpoint à especificação OpenAPI",
         timestamp: new Date(),
       });
       return errors;
@@ -516,12 +538,12 @@ async function validateOpenAPIContract(
     const operation = pathItem[method.toLowerCase() as keyof typeof pathItem];
     if (!operation) {
       errors.push({
-        id: 'method_not_allowed',
+        id: "method_not_allowed",
         message: `Método não permitido para o endpoint: ${method} ${path}`,
-        field: 'method',
+        field: "method",
         severity: HealthcareErrorSeverity.HIGH,
         category: HealthcareErrorCategory.VALIDATION,
-        suggestion: 'Adicionar método à especificação OpenAPI',
+        suggestion: "Adicionar método à especificação OpenAPI",
         timestamp: new Date(),
       });
       return errors;
@@ -529,31 +551,31 @@ async function validateOpenAPIContract(
 
     // Validate request body if present
     if (data.body && operation.requestBody) {
-      const contentType = operation.requestBody.content?.['application/json'];
+      const contentType = operation.requestBody.content?.["application/json"];
       if (contentType && contentType.schema) {
         // Note: This is a simplified validation
         // In a real implementation, you would use a proper OpenAPI validator
         errors.push({
-          id: 'schema_validation_pending',
-          message: 'Validação de schema OpenAPI não implementada',
-          field: 'body',
+          id: "schema_validation_pending",
+          message: "Validação de schema OpenAPI não implementada",
+          field: "body",
           severity: HealthcareErrorSeverity.LOW,
           category: HealthcareErrorCategory.VALIDATION,
-          suggestion: 'Implementar validação completa de schema OpenAPI',
+          suggestion: "Implementar validação completa de schema OpenAPI",
           timestamp: new Date(),
         });
       }
     }
   } catch (error) {
     errors.push({
-      id: 'openapi_validation_error',
+      id: "openapi_validation_error",
       message: `Erro na validação OpenAPI: ${
         error instanceof Error ? error.message : String(error)
       }`,
-      field: 'openapi',
+      field: "openapi",
       severity: HealthcareErrorSeverity.HIGH,
       category: HealthcareErrorCategory.SYSTEM,
-      suggestion: 'Verificar especificação OpenAPI',
+      suggestion: "Verificar especificação OpenAPI",
       timestamp: new Date(),
     });
   }
@@ -575,7 +597,9 @@ async function validateHealthcareContract(
   try {
     // Apply all applicable validation rules
     for (const rule of rules) {
-      if (rule.applicableClassifications.includes(apiContract.dataClassification)) {
+      if (
+        rule.applicableClassifications.includes(apiContract.dataClassification)
+      ) {
         const ruleErrors = rule.validate(data, context);
         errors.push(...ruleErrors);
       }
@@ -592,14 +616,14 @@ async function validateHealthcareContract(
     }
   } catch (error) {
     errors.push({
-      id: 'healthcare_validation_error',
+      id: "healthcare_validation_error",
       message: `Erro na validação de requisitos de saúde: ${
         error instanceof Error ? error.message : String(error)
       }`,
-      field: 'healthcare',
+      field: "healthcare",
       severity: HealthcareErrorSeverity.HIGH,
       category: HealthcareErrorCategory.SYSTEM,
-      suggestion: 'Verificar requisitos de conformidade de saúde',
+      suggestion: "Verificar requisitos de conformidade de saúde",
       timestamp: new Date(),
     });
   }
@@ -618,46 +642,46 @@ function validateComplianceRequirement(
   const errors: HealthcareValidationError[] = [];
 
   switch (requirement) {
-    case 'lgpd':
+    case "lgpd":
       // Validate LGPD compliance
       if (data.personalData && !data.lgpdConsent) {
         errors.push({
-          id: 'lgpd_consent_missing',
-          message: 'Dados pessoais encontrados sem consentimento LGPD',
-          field: 'lgpdConsent',
+          id: "lgpd_consent_missing",
+          message: "Dados pessoais encontrados sem consentimento LGPD",
+          field: "lgpdConsent",
           severity: HealthcareErrorSeverity.HIGH,
           category: HealthcareErrorCategory.COMPLIANCE,
-          suggestion: 'Adicionar verificação de consentimento LGPD',
+          suggestion: "Adicionar verificação de consentimento LGPD",
           timestamp: new Date(),
         });
       }
       break;
 
-    case 'anvisa':
+    case "anvisa":
       // Validate ANVISA compliance
       if (data.medicalDevice && !data.anvisaRegistration) {
         errors.push({
-          id: 'anvisa_registration_missing',
-          message: 'Dispositivo médico sem registro ANVISA',
-          field: 'anvisaRegistration',
+          id: "anvisa_registration_missing",
+          message: "Dispositivo médico sem registro ANVISA",
+          field: "anvisaRegistration",
           severity: HealthcareErrorSeverity.HIGH,
           category: HealthcareErrorCategory.COMPLIANCE,
-          suggestion: 'Adicionar registro ANVISA para dispositivo médico',
+          suggestion: "Adicionar registro ANVISA para dispositivo médico",
           timestamp: new Date(),
         });
       }
       break;
 
-    case 'cfm':
+    case "cfm":
       // Validate CFM compliance
       if (data.medicalProfessional && !data.crm) {
         errors.push({
-          id: 'crm_missing',
-          message: 'Profissional médico sem CRM válido',
-          field: 'crm',
+          id: "crm_missing",
+          message: "Profissional médico sem CRM válido",
+          field: "crm",
           severity: HealthcareErrorSeverity.HIGH,
           category: HealthcareErrorCategory.COMPLIANCE,
-          suggestion: 'Adicionar validação de CRM para profissional médico',
+          suggestion: "Adicionar validação de CRM para profissional médico",
           timestamp: new Date(),
         });
       }
@@ -674,7 +698,10 @@ function handleValidationFailure(
   validationResult: ContractValidationResult,
   context: ValidationContext,
 ): void {
-  const allErrors = [...validationResult.openapiErrors, ...validationResult.healthcareErrors];
+  const allErrors = [
+    ...validationResult.openapiErrors,
+    ...validationResult.healthcareErrors,
+  ];
 
   // Sort errors by severity
   const sortedErrors = allErrors.sort((a, b) => {
@@ -688,11 +715,11 @@ function handleValidationFailure(
   });
 
   // Log validation failure
-  structuredLogger.warn('Contract validation failed', {
+  structuredLogger.warn("Contract validation failed", {
     requestId: context.request.requestId,
     method: context.request.method,
     path: context.request.path,
-    errors: sortedErrors.map(e => ({
+    errors: sortedErrors.map((e) => ({
       id: e.id,
       message: e.message,
       field: e.field,
@@ -707,7 +734,7 @@ function handleValidationFailure(
   const statusCode = getStatusCodeFromSeverity(highestSeverityError.severity);
 
   throw createHealthcareError(
-    'Falha na validação do contrato da API',
+    "Falha na validação do contrato da API",
     highestSeverityError.category,
     highestSeverityError.severity,
     statusCode,
@@ -747,12 +774,15 @@ function monitorValidationPerformance(
   threshold?: number,
 ): void {
   if (threshold && result.metrics.validationTime > threshold) {
-    structuredLogger.warn('Contract validation performance threshold exceeded', {
-      validationTime: result.metrics.validationTime,
-      threshold,
-      method: 'unknown', // Would be passed from context
-      path: 'unknown', // Would be passed from context
-    });
+    structuredLogger.warn(
+      "Contract validation performance threshold exceeded",
+      {
+        validationTime: result.metrics.validationTime,
+        threshold,
+        method: "unknown", // Would be passed from context
+        path: "unknown", // Would be passed from context
+      },
+    );
   }
 }
 
@@ -763,7 +793,7 @@ function logValidationResults(
   result: ContractValidationResult,
   context: ValidationContext,
 ): void {
-  structuredLogger.info('Contract validation completed', {
+  structuredLogger.info("Contract validation completed", {
     requestId: context.request.requestId,
     method: context.request.method,
     path: context.request.path,
@@ -778,11 +808,11 @@ function logValidationResults(
  * Log audit trail entry
  */
 function logAuditTrail(
-  type: AuditTrailEntry['type'],
+  type: AuditTrailEntry["type"],
   context: ValidationContext,
   details: Record<string, any>,
 ): void {
-  structuredLogger.info('Contract validation audit', {
+  structuredLogger.info("Contract validation audit", {
     type,
     timestamp: context.timestamp,
     requestId: context.request.requestId,
@@ -802,4 +832,4 @@ export type {
 };
 
 // Export validation result utilities
-export * from '@neonpro/shared/models/api-contract';
+export * from "@neonpro/shared/models/api-contract";

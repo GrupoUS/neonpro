@@ -176,7 +176,11 @@ Return a single JSON block under a fenced code block for machine consumption AND
       "notes": "..."
     },
     "phases": [
-      { "phase": 0, "outputs": ["specs/<feature>/research.md"], "status": "pending|done" },
+      {
+        "phase": 0,
+        "outputs": ["specs/<feature>/research.md"],
+        "status": "pending|done"
+      },
       {
         "phase": 1,
         "outputs": [

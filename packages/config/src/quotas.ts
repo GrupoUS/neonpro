@@ -3,13 +3,13 @@
 // Integrates with plan gating configuration for comprehensive quota management
 // Date: 2025-09-15
 
-import type { 
-  SubscriptionTier, 
-  EnhancedAIModel, 
+import type {
+  SubscriptionTier,
+  EnhancedAIModel,
   QuotaStatus,
-  AuditTrail
-} from '@neonpro/types';
-import { PLAN_CONFIG } from './plans';
+  AuditTrail,
+} from "@neonpro/types";
+import { PLAN_CONFIG } from "./plans";
 
 // ================================================
 // QUOTA CONFIGURATION INTERFACES
@@ -37,7 +37,7 @@ export interface ModelCostConfig {
   readonly costPer1kOutputTokens: number;
   readonly averageLatencyMs: number;
   readonly cacheTtlMinutes: number;
-  readonly costTier: 'low' | 'medium' | 'high' | 'premium';
+  readonly costTier: "low" | "medium" | "high" | "premium";
 }
 
 /**
@@ -47,7 +47,7 @@ export interface UsageAlertConfig {
   readonly quotaWarningThreshold: number; // 0.0-1.0 (80% = 0.8)
   readonly costWarningThreshold: number; // 0.0-1.0
   readonly dailyLimitWarningThreshold: number; // 0.0-1.0
-  readonly alertChannels: ('email' | 'dashboard' | 'webhook')[];
+  readonly alertChannels: ("email" | "dashboard" | "webhook")[];
   readonly escalationThresholds: number[]; // [0.9, 0.95, 1.0]
 }
 
@@ -69,7 +69,7 @@ export const QUOTA_CONFIGURATION: Record<SubscriptionTier, QuotaConfig> = {
     burstAllowance: 5, // Allow small burst for free users
     resetDay: 1, // Monthly reset on 1st
   },
-  
+
   pro: {
     monthlyQueries: PLAN_CONFIG.pro.monthlyQueryLimit,
     dailyRateLimit: PLAN_CONFIG.pro.dailyRateLimit,
@@ -79,7 +79,7 @@ export const QUOTA_CONFIGURATION: Record<SubscriptionTier, QuotaConfig> = {
     burstAllowance: 20, // Reasonable burst for pro users
     resetDay: 1,
   },
-  
+
   enterprise: {
     monthlyQueries: PLAN_CONFIG.enterprise.monthlyQueryLimit, // -1 (unlimited)
     dailyRateLimit: PLAN_CONFIG.enterprise.dailyRateLimit,
@@ -89,7 +89,7 @@ export const QUOTA_CONFIGURATION: Record<SubscriptionTier, QuotaConfig> = {
     burstAllowance: 50, // Large burst allowance for enterprise
     resetDay: 1,
   },
-  
+
   trial: {
     monthlyQueries: PLAN_CONFIG.trial.monthlyQueryLimit,
     dailyRateLimit: PLAN_CONFIG.trial.dailyRateLimit,
@@ -110,58 +110,58 @@ export const QUOTA_CONFIGURATION: Record<SubscriptionTier, QuotaConfig> = {
  * Updated with latest pricing as of 2025-09-15
  */
 export const MODEL_COST_CONFIG: Record<EnhancedAIModel, ModelCostConfig> = {
-  'gpt-4o-mini': {
-    modelCode: 'gpt-4o-mini',
-    costPer1kInputTokens: 0.000150, // $0.15 per 1M input tokens
-    costPer1kOutputTokens: 0.000600, // $0.60 per 1M output tokens
+  "gpt-4o-mini": {
+    modelCode: "gpt-4o-mini",
+    costPer1kInputTokens: 0.00015, // $0.15 per 1M input tokens
+    costPer1kOutputTokens: 0.0006, // $0.60 per 1M output tokens
     averageLatencyMs: 800,
     cacheTtlMinutes: 60,
-    costTier: 'low',
+    costTier: "low",
   },
-  
-  'gpt-4o': {
-    modelCode: 'gpt-4o',
-    costPer1kInputTokens: 0.002500, // $2.50 per 1M input tokens
-    costPer1kOutputTokens: 0.010000, // $10.00 per 1M output tokens
+
+  "gpt-4o": {
+    modelCode: "gpt-4o",
+    costPer1kInputTokens: 0.0025, // $2.50 per 1M input tokens
+    costPer1kOutputTokens: 0.01, // $10.00 per 1M output tokens
     averageLatencyMs: 1500,
     cacheTtlMinutes: 120,
-    costTier: 'high',
+    costTier: "high",
   },
-  
-  'claude-3.5-sonnet': {
-    modelCode: 'claude-3.5-sonnet',
-    costPer1kInputTokens: 0.003000, // $3.00 per 1M input tokens
-    costPer1kOutputTokens: 0.015000, // $15.00 per 1M output tokens
+
+  "claude-3.5-sonnet": {
+    modelCode: "claude-3.5-sonnet",
+    costPer1kInputTokens: 0.003, // $3.00 per 1M input tokens
+    costPer1kOutputTokens: 0.015, // $15.00 per 1M output tokens
     averageLatencyMs: 2000,
     cacheTtlMinutes: 180,
-    costTier: 'premium',
+    costTier: "premium",
   },
-  
-  'gemini-pro': {
-    modelCode: 'gemini-pro',
-    costPer1kInputTokens: 0.001250, // $1.25 per 1M input tokens
-    costPer1kOutputTokens: 0.005000, // $5.00 per 1M output tokens
+
+  "gemini-pro": {
+    modelCode: "gemini-pro",
+    costPer1kInputTokens: 0.00125, // $1.25 per 1M input tokens
+    costPer1kOutputTokens: 0.005, // $5.00 per 1M output tokens
     averageLatencyMs: 1200,
     cacheTtlMinutes: 90,
-    costTier: 'medium',
+    costTier: "medium",
   },
-  
-  'healthcare-pt-br': {
-    modelCode: 'healthcare-pt-br',
-    costPer1kInputTokens: 0.002000, // Custom pricing for healthcare model
-    costPer1kOutputTokens: 0.008000,
+
+  "healthcare-pt-br": {
+    modelCode: "healthcare-pt-br",
+    costPer1kInputTokens: 0.002, // Custom pricing for healthcare model
+    costPer1kOutputTokens: 0.008,
     averageLatencyMs: 1000,
     cacheTtlMinutes: 240, // Longer cache for specialized healthcare model
-    costTier: 'high',
+    costTier: "high",
   },
-  
-  'experimental-ai': {
-    modelCode: 'experimental-ai',
-    costPer1kInputTokens: 0.001000, // Lower cost for experimental model
-    costPer1kOutputTokens: 0.004000,
+
+  "experimental-ai": {
+    modelCode: "experimental-ai",
+    costPer1kInputTokens: 0.001, // Lower cost for experimental model
+    costPer1kOutputTokens: 0.004,
     averageLatencyMs: 800,
     cacheTtlMinutes: 30, // Shorter cache for experimental features
-    costTier: 'medium',
+    costTier: "medium",
   },
 } as const;
 
@@ -177,31 +177,31 @@ export const USAGE_ALERT_CONFIG: Record<SubscriptionTier, UsageAlertConfig> = {
     quotaWarningThreshold: 0.8, // 80% usage warning
     costWarningThreshold: 0.9, // 90% cost warning (more critical for free)
     dailyLimitWarningThreshold: 0.7, // 70% daily limit warning
-    alertChannels: ['dashboard'],
+    alertChannels: ["dashboard"],
     escalationThresholds: [0.9, 0.95, 1.0],
   },
-  
+
   pro: {
     quotaWarningThreshold: 0.75,
     costWarningThreshold: 0.85,
     dailyLimitWarningThreshold: 0.8,
-    alertChannels: ['email', 'dashboard'],
+    alertChannels: ["email", "dashboard"],
     escalationThresholds: [0.85, 0.95, 1.0],
   },
-  
+
   enterprise: {
     quotaWarningThreshold: 0.9, // Higher threshold for enterprise
     costWarningThreshold: 0.8,
     dailyLimitWarningThreshold: 0.9,
-    alertChannels: ['email', 'dashboard', 'webhook'],
+    alertChannels: ["email", "dashboard", "webhook"],
     escalationThresholds: [0.8, 0.9, 0.95],
   },
-  
+
   trial: {
     quotaWarningThreshold: 0.7, // Earlier warning for trial users
     costWarningThreshold: 0.8,
     dailyLimitWarningThreshold: 0.75,
-    alertChannels: ['email', 'dashboard'],
+    alertChannels: ["email", "dashboard"],
     escalationThresholds: [0.8, 0.9, 1.0],
   },
 } as const;
@@ -216,7 +216,7 @@ export const USAGE_ALERT_CONFIG: Record<SubscriptionTier, UsageAlertConfig> = {
  */
 export const SEMANTIC_CACHE_CONFIG = {
   enabled: true,
-  
+
   // Cache similarity thresholds
   similarityThresholds: {
     exact: 1.0, // Exact match
@@ -224,7 +224,7 @@ export const SEMANTIC_CACHE_CONFIG = {
     medium: 0.85, // Moderately similar queries
     low: 0.75, // Loosely similar queries (cache but flag for review)
   },
-  
+
   // Cache TTL based on content type
   cacheTtl: {
     generalQueries: 60, // 1 hour for general queries
@@ -232,7 +232,7 @@ export const SEMANTIC_CACHE_CONFIG = {
     diagnosticAnalysis: 15, // 15 minutes for diagnostic content
     prescriptionAdvice: 5, // 5 minutes for prescription-related content
   },
-  
+
   // Cache invalidation rules
   invalidationRules: {
     patientDataChange: true, // Invalidate when patient data changes
@@ -240,16 +240,16 @@ export const SEMANTIC_CACHE_CONFIG = {
     regulatoryChange: true, // Invalidate when CFM/ANVISA regulations change
     modelUpdate: true, // Invalidate when AI model is updated
   },
-  
+
   // Cost savings tracking
   costSavingsTracking: {
     enabled: true,
-    reportingInterval: 'daily',
+    reportingInterval: "daily",
     targetSavingsPercentage: 80, // 80% cost reduction goal
     alertOnLowSavings: true,
     lowSavingsThreshold: 60, // Alert if savings below 60%
   },
-  
+
   // LGPD compliance for cached data
   lgpdCompliance: {
     anonymizePatientData: true,
@@ -274,7 +274,7 @@ export const HEALTHCARE_COMPLIANCE_CONFIG = {
     auditTrailRequired: true,
     dataRetentionPolicyEnforced: true,
   },
-  
+
   // ANVISA oversight requirements
   anvisaCompliance: {
     deviceRegistrationRequired: true, // AI as medical device
@@ -282,7 +282,7 @@ export const HEALTHCARE_COMPLIANCE_CONFIG = {
     adverseEventReporting: true,
     postMarketSurveillance: true,
   },
-  
+
   // LGPD data protection
   lgpdCompliance: {
     explicitConsentRequired: true,
@@ -292,7 +292,7 @@ export const HEALTHCARE_COMPLIANCE_CONFIG = {
     rightToErasure: true,
     auditLogging: true,
   },
-  
+
   // Billing compliance for Brazilian market
   billingCompliance: {
     fiscalDocumentRequired: true, // Nota fiscal
@@ -303,8 +303,8 @@ export const HEALTHCARE_COMPLIANCE_CONFIG = {
       irRate: 0.015, // 1.5% IR (withholding tax)
       csllRate: 0.01, // 1% CSLL
     },
-    currencySupport: ['BRL', 'USD'],
-    paymentMethods: ['credit_card', 'bank_transfer', 'pix'],
+    currencySupport: ["BRL", "USD"],
+    paymentMethods: ["credit_card", "bank_transfer", "pix"],
   },
 } as const;
 
@@ -322,27 +322,35 @@ export function calculateQuotaStatus(
     dailyQueries: number;
     currentCostUsd: number;
     concurrentRequests: number;
-  }
+  },
 ): QuotaStatus {
   const quotaConfig = QUOTA_CONFIGURATION[plan];
-  
-  const monthlyRemaining = quotaConfig.monthlyQueries === -1 
-    ? Number.MAX_SAFE_INTEGER 
-    : Math.max(0, quotaConfig.monthlyQueries - currentUsage.monthlyQueries);
-  
-  const dailyRemaining = Math.max(0, quotaConfig.dailyRateLimit - currentUsage.dailyQueries);
-  const costRemaining = Math.max(0, quotaConfig.costBudgetUsd - currentUsage.currentCostUsd);
-  
-  const monthlyUsagePercentage = quotaConfig.monthlyQueries === -1 
-    ? 0 
-    : (currentUsage.monthlyQueries / quotaConfig.monthlyQueries) * 100;
-  
-  const canMakeRequest = 
+
+  const monthlyRemaining =
+    quotaConfig.monthlyQueries === -1
+      ? Number.MAX_SAFE_INTEGER
+      : Math.max(0, quotaConfig.monthlyQueries - currentUsage.monthlyQueries);
+
+  const dailyRemaining = Math.max(
+    0,
+    quotaConfig.dailyRateLimit - currentUsage.dailyQueries,
+  );
+  const costRemaining = Math.max(
+    0,
+    quotaConfig.costBudgetUsd - currentUsage.currentCostUsd,
+  );
+
+  const monthlyUsagePercentage =
+    quotaConfig.monthlyQueries === -1
+      ? 0
+      : (currentUsage.monthlyQueries / quotaConfig.monthlyQueries) * 100;
+
+  const canMakeRequest =
     monthlyRemaining > 0 &&
     dailyRemaining > 0 &&
     costRemaining > 0 &&
     currentUsage.concurrentRequests < quotaConfig.concurrentRequests;
-  
+
   return {
     monthlyQuotaRemaining: monthlyRemaining,
     dailyQuotaRemaining: dailyRemaining,
@@ -367,19 +375,19 @@ export function calculateRequestCost(
   modelCode: EnhancedAIModel,
   inputTokens: number,
   outputTokens: number,
-  cacheHit: boolean = false
+  cacheHit: boolean = false,
 ): number {
   const modelConfig = MODEL_COST_CONFIG[modelCode];
-  
+
   const inputCost = (inputTokens / 1000) * modelConfig.costPer1kInputTokens;
   const outputCost = (outputTokens / 1000) * modelConfig.costPer1kOutputTokens;
   const totalCost = inputCost + outputCost;
-  
+
   // Apply cache savings if applicable
   if (cacheHit) {
     return totalCost * 0.1; // 90% savings on cache hits
   }
-  
+
   return totalCost;
 }
 
@@ -389,21 +397,28 @@ export function calculateRequestCost(
 export function shouldApplySemanticCache(
   query: string,
   previousQueries: string[],
-  contextType: 'general' | 'medical' | 'diagnostic' | 'prescription' = 'general'
+  contextType:
+    | "general"
+    | "medical"
+    | "diagnostic"
+    | "prescription" = "general",
 ): { shouldCache: boolean; similarity: number; ttlMinutes: number } {
   if (!SEMANTIC_CACHE_CONFIG.enabled) {
     return { shouldCache: false, similarity: 0, ttlMinutes: 0 };
   }
-  
+
   // Simple similarity check (in production, use more sophisticated NLP)
-  const maxSimilarity = Math.max(...previousQueries.map(prev => 
-    calculateStringSimilarity(query.toLowerCase(), prev.toLowerCase())
-  ));
-  
-  const shouldCache = maxSimilarity >= SEMANTIC_CACHE_CONFIG.similarityThresholds.medium;
+  const maxSimilarity = Math.max(
+    ...previousQueries.map((prev) =>
+      calculateStringSimilarity(query.toLowerCase(), prev.toLowerCase()),
+    ),
+  );
+
+  const shouldCache =
+    maxSimilarity >= SEMANTIC_CACHE_CONFIG.similarityThresholds.medium;
   const ttlMap = SEMANTIC_CACHE_CONFIG.cacheTtl as Record<string, number>;
   const ttlMinutes = ttlMap[contextType] ?? ttlMap.generalQueries;
-  
+
   return {
     shouldCache,
     similarity: maxSimilarity,
@@ -416,55 +431,57 @@ export function shouldApplySemanticCache(
  */
 export function generateUsageAlerts(
   plan: SubscriptionTier,
-  quotaStatus: QuotaStatus
+  quotaStatus: QuotaStatus,
 ): Array<{
-  type: 'warning' | 'critical' | 'info';
+  type: "warning" | "critical" | "info";
   message: string;
   threshold: number;
   currentUsage: number;
 }> {
   const alertConfig = USAGE_ALERT_CONFIG[plan]; // keep reference for future enhancements
   const alerts: Array<{
-    type: 'warning' | 'critical' | 'info';
+    type: "warning" | "critical" | "info";
     message: string;
     threshold: number;
     currentUsage: number;
   }> = [];
-  
+
   const usagePercentage = quotaStatus.monthlyUsagePercentage / 100;
-  
+
   // Check quota warnings
   if (usagePercentage >= alertConfig.quotaWarningThreshold) {
     alerts.push({
-      type: usagePercentage >= 0.95 ? 'critical' : 'warning',
+      type: usagePercentage >= 0.95 ? "critical" : "warning",
       message: `Você utilizou ${quotaStatus.monthlyUsagePercentage.toFixed(1)}% da sua cota mensal de consultas IA`,
       threshold: alertConfig.quotaWarningThreshold,
       currentUsage: usagePercentage,
     });
   }
-  
+
   // Check cost warnings
-  const costUsagePercentage = 1 - (quotaStatus.costBudgetRemaining / quotaStatus.planLimits.costBudgetUsd);
+  const costUsagePercentage =
+    1 - quotaStatus.costBudgetRemaining / quotaStatus.planLimits.costBudgetUsd;
   if (costUsagePercentage >= alertConfig.costWarningThreshold) {
     alerts.push({
-      type: costUsagePercentage >= 0.95 ? 'critical' : 'warning',
+      type: costUsagePercentage >= 0.95 ? "critical" : "warning",
       message: `Você utilizou ${(costUsagePercentage * 100).toFixed(1)}% do seu orçamento mensal de IA`,
       threshold: alertConfig.costWarningThreshold,
       currentUsage: costUsagePercentage,
     });
   }
-  
+
   // Check daily limit warnings
-  const dailyUsagePercentage = 1 - (quotaStatus.dailyQuotaRemaining / quotaStatus.planLimits.dailyRateLimit);
+  const dailyUsagePercentage =
+    1 - quotaStatus.dailyQuotaRemaining / quotaStatus.planLimits.dailyRateLimit;
   if (dailyUsagePercentage >= alertConfig.dailyLimitWarningThreshold) {
     alerts.push({
-      type: dailyUsagePercentage >= 0.95 ? 'critical' : 'warning',
+      type: dailyUsagePercentage >= 0.95 ? "critical" : "warning",
       message: `Você utilizou ${(dailyUsagePercentage * 100).toFixed(1)}% do seu limite diário de consultas IA`,
       threshold: alertConfig.dailyLimitWarningThreshold,
       currentUsage: dailyUsagePercentage,
     });
   }
-  
+
   return alerts;
 }
 
@@ -478,12 +495,12 @@ export function generateUsageAlerts(
 function getNextQuotaResetDate(resetDay: number): Date {
   const now = new Date();
   const nextReset = new Date(now.getFullYear(), now.getMonth() + 1, resetDay);
-  
+
   // If we're past the reset day this month, move to next month
   if (now.getDate() >= resetDay) {
     nextReset.setMonth(nextReset.getMonth() + 1);
   }
-  
+
   return nextReset;
 }
 
@@ -492,12 +509,12 @@ function getNextQuotaResetDate(resetDay: number): Date {
  * In production, use more sophisticated NLP similarity measures
  */
 function calculateStringSimilarity(str1: string, str2: string): number {
-  const set1 = new Set(str1.split(' '));
-  const set2 = new Set(str2.split(' '));
-  
-  const intersection = new Set([...set1].filter(x => set2.has(x)));
+  const set1 = new Set(str1.split(" "));
+  const set2 = new Set(str2.split(" "));
+
+  const intersection = new Set([...set1].filter((x) => set2.has(x)));
   const union = new Set([...set1, ...set2]);
-  
+
   return intersection.size / union.size;
 }
 
@@ -507,15 +524,15 @@ function calculateStringSimilarity(str1: string, str2: string): number {
 export function createQuotaAuditTrail(
   action: string,
   userId: string,
-  details: Record<string, any>
+  details: Record<string, any>,
 ): AuditTrail {
   return {
     action,
     timestamp: new Date(),
     userId,
-    consentStatus: 'valid', // Assume valid for quota operations
-    dataProcessingPurpose: 'audit',
-    anonymizationLevel: 'none',
+    consentStatus: "valid", // Assume valid for quota operations
+    dataProcessingPurpose: "audit",
+    anonymizationLevel: "none",
     metadata: {
       quotaAction: true,
       ...details,

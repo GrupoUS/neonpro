@@ -1,9 +1,7 @@
 {
   "projectType": "openSource",
   "incremental": true,
-  "includes": [
-    "**/*.{ts,tsx,js,jsx,json,md}"
-  ],
+  "includes": ["**/*.{ts,tsx,js,jsx,json,md}"],
   "excludes": [
     "**/node_modules",
     "**/dist",

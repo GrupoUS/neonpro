@@ -10,8 +10,8 @@
  * - Performance monitoring and alerting
  */
 
-import { type HealthcarePrismaClient } from '../clients/prisma';
-import { HealthcareLogger } from './healthcare-errors.js';
+import { type HealthcarePrismaClient } from "../clients/prisma";
+import { HealthcareLogger } from "./healthcare-errors.js";
 
 // Performance metrics interface
 interface PerformanceMetrics {
@@ -83,7 +83,7 @@ class InMemoryQueryCache implements QueryCache {
   async set(key: string, value: any, ttl = 300): Promise<void> {
     this.cache.set(key, {
       value,
-      expires: Date.now() + (ttl * 1000),
+      expires: Date.now() + ttl * 1000,
     });
   }
 
@@ -124,7 +124,7 @@ export class HealthcareQueryOptimizer {
       cacheTTL: 300, // 5 minutes default
       slowQueryThreshold: 1000, // 1 second
       maxBatchSize: 100,
-      enableQueryLogging: process.env.NODE_ENV === 'development',
+      enableQueryLogging: process.env.NODE_ENV === "development",
       enablePerformanceMonitoring: true,
       ...config,
     };
@@ -164,7 +164,7 @@ export class HealthcareQueryOptimizer {
       page?: number;
       limit?: number;
       sortBy?: string;
-      sortOrder?: 'asc' | 'desc';
+      sortOrder?: "asc" | "desc";
       filters?: Record<string, any>;
     },
   ): Promise<{
@@ -175,8 +175,14 @@ export class HealthcareQueryOptimizer {
     fromCache: boolean;
   }> {
     const startTime = Date.now();
-    const { query, page = 1, limit = 20, sortBy = 'updatedAt', sortOrder = 'desc', filters } =
-      searchParams;
+    const {
+      query,
+      page = 1,
+      limit = 20,
+      sortBy = "updatedAt",
+      sortOrder = "desc",
+      filters,
+    } = searchParams;
 
     // Create cache key
     const cacheKey = `patients:${clinicId}:${JSON.stringify(searchParams)}`;
@@ -201,8 +207,8 @@ export class HealthcareQueryOptimizer {
       // Add search conditions
       if (query) {
         whereClause.OR = [
-          { fullName: { contains: query, mode: 'insensitive' } },
-          { email: { contains: query, mode: 'insensitive' } },
+          { fullName: { contains: query, mode: "insensitive" } },
+          { email: { contains: query, mode: "insensitive" } },
           { phonePrimary: { contains: query } },
           { medicalRecordNumber: { contains: query } },
         ];
@@ -352,7 +358,7 @@ export class HealthcareQueryOptimizer {
         this.prisma.appointment.findMany({
           where: whereClause,
           include,
-          orderBy: { startTime: 'asc' },
+          orderBy: { startTime: "asc" },
           skip: (page - 1) * limit,
           take: limit,
         }),
@@ -380,10 +386,16 @@ export class HealthcareQueryOptimizer {
   async batchCreatePatients(
     clinicId: string,
     patientsData: Array<Record<string, any>>,
-  ): Promise<{ created: number; errors: Array<{ index: number; error: string }> }> {
+  ): Promise<{
+    created: number;
+    errors: Array<{ index: number; error: string }>;
+  }> {
     const startTime = Date.now();
     const batchSize = Math.min(this.config.maxBatchSize, patientsData.length);
-    const results = { created: 0, errors: [] as Array<{ index: number; error: string }> };
+    const results = {
+      created: 0,
+      errors: [] as Array<{ index: number; error: string }>,
+    };
 
     try {
       // Process in batches to avoid overwhelming the database
@@ -405,15 +417,15 @@ export class HealthcareQueryOptimizer {
               return {
                 success: false,
                 index: actualIndex,
-                error: error instanceof Error ? error.message : 'Unknown error',
+                error: error instanceof Error ? error.message : "Unknown error",
               };
             }
           }),
         );
 
         // Process batch results
-        batchResults.forEach(result => {
-          if (result.status === 'fulfilled') {
+        batchResults.forEach((result) => {
+          if (result.status === "fulfilled") {
             if (result.value.success) {
               results.created++;
             } else {
@@ -425,7 +437,7 @@ export class HealthcareQueryOptimizer {
           } else {
             results.errors.push({
               index: -1,
-              error: result.reason?.message || 'Batch processing failed',
+              error: result.reason?.message || "Batch processing failed",
             });
           }
         });
@@ -460,7 +472,11 @@ export class HealthcareQueryOptimizer {
 
     try {
       const today = new Date();
-      const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const startOfDay = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+      );
       const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
       // Execute all queries in parallel for maximum performance
@@ -481,34 +497,36 @@ export class HealthcareQueryOptimizer {
           where: {
             clinicId,
             isActive: true,
-            lastVisitDate: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+            lastVisitDate: {
+              gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+            },
           },
         }),
         this.prisma.appointment.count({
           where: {
             clinicId,
             startTime: { gte: startOfDay },
-            status: { not: 'cancelled' },
+            status: { not: "cancelled" },
           },
         }),
         this.prisma.appointment.count({
           where: {
             clinicId,
             startTime: { gte: startOfMonth },
-            status: { not: 'cancelled' },
+            status: { not: "cancelled" },
           },
         }),
         this.prisma.appointment.count({
           where: {
             clinicId,
-            status: 'completed',
+            status: "completed",
             startTime: { gte: startOfMonth },
           },
         }),
         this.prisma.appointment.count({
           where: {
             clinicId,
-            status: 'cancelled',
+            status: "cancelled",
             startTime: { gte: startOfMonth },
           },
         }),
@@ -525,21 +543,24 @@ export class HealthcareQueryOptimizer {
         patients: {
           total: totalPatients,
           active: activePatients,
-          inactiveRate: totalPatients > 0
-            ? ((totalPatients - activePatients) / totalPatients) * 100
-            : 0,
+          inactiveRate:
+            totalPatients > 0
+              ? ((totalPatients - activePatients) / totalPatients) * 100
+              : 0,
         },
         appointments: {
           today: todayAppointments,
           thisMonth: monthlyAppointments,
           completed: completedAppointments,
           cancelled: cancelledAppointments,
-          completionRate: monthlyAppointments > 0
-            ? (completedAppointments / monthlyAppointments) * 100
-            : 0,
-          cancellationRate: monthlyAppointments > 0
-            ? (cancelledAppointments / monthlyAppointments) * 100
-            : 0,
+          completionRate:
+            monthlyAppointments > 0
+              ? (completedAppointments / monthlyAppointments) * 100
+              : 0,
+          cancellationRate:
+            monthlyAppointments > 0
+              ? (cancelledAppointments / monthlyAppointments) * 100
+              : 0,
         },
         professionals: {
           active: activeProfessionals,
@@ -566,19 +587,24 @@ export class HealthcareQueryOptimizer {
   /**
    * Query performance monitoring
    */
-  private updateMetrics(duration: number, isError: boolean, isFromCache: boolean): void {
+  private updateMetrics(
+    duration: number,
+    isError: boolean,
+    isFromCache: boolean,
+  ): void {
     if (!this.config.enablePerformanceMonitoring) return;
 
     this.metrics.queryCount++;
 
     if (!isFromCache) {
       this.metrics.totalQueryTime += duration;
-      this.metrics.avgQueryTime = this.metrics.totalQueryTime / this.metrics.queryCount;
+      this.metrics.avgQueryTime =
+        this.metrics.totalQueryTime / this.metrics.queryCount;
 
       // Track slow queries
       if (duration > this.config.slowQueryThreshold) {
         this.metrics.slowQueries.push({
-          query: 'Query details would be captured here',
+          query: "Query details would be captured here",
           duration,
           timestamp: new Date(),
         });
@@ -593,9 +619,8 @@ export class HealthcareQueryOptimizer {
     // Update cache hit rate
     const cacheStats = this.cache.getStats();
     const totalCacheRequests = cacheStats.hits + cacheStats.misses;
-    this.metrics.cacheHitRate = totalCacheRequests > 0
-      ? (cacheStats.hits / totalCacheRequests) * 100
-      : 0;
+    this.metrics.cacheHitRate =
+      totalCacheRequests > 0 ? (cacheStats.hits / totalCacheRequests) * 100 : 0;
 
     // Update memory usage
     const memUsage = process.memoryUsage();
@@ -607,7 +632,10 @@ export class HealthcareQueryOptimizer {
     };
 
     // Log slow queries
-    if (duration > this.config.slowQueryThreshold && this.config.enableQueryLogging) {
+    if (
+      duration > this.config.slowQueryThreshold &&
+      this.config.enableQueryLogging
+    ) {
       console.warn(`Slow query detected: ${duration}ms`);
     }
   }
@@ -655,14 +683,17 @@ export class ConnectionPoolMonitor {
         const metrics = await this.getConnectionMetrics();
 
         // Log connection pool status
-        console.info('Connection Pool Status:', metrics);
+        console.info("Connection Pool Status:", metrics);
 
         // Alert if connection pool is under stress
         if (metrics.utilization > 80) {
-          console.warn('High connection pool utilization:', metrics.utilization + '%');
+          console.warn(
+            "High connection pool utilization:",
+            metrics.utilization + "%",
+          );
         }
       } catch (error) {
-        console.error('Connection pool monitoring failed:', error);
+        console.error("Connection pool monitoring failed:", error);
       }
     }, intervalMs);
   }
@@ -686,7 +717,7 @@ export class ConnectionPoolMonitor {
     total: number;
     maxConnections: number;
     utilization: number;
-    status: 'healthy' | 'warning' | 'critical';
+    status: "healthy" | "warning" | "critical";
   }> {
     // This would need to be implemented based on your Prisma setup
     // For now, return mock data
@@ -696,7 +727,7 @@ export class ConnectionPoolMonitor {
       total: 8,
       maxConnections: 20,
       utilization: 40,
-      status: 'healthy' as const,
+      status: "healthy" as const,
     };
 
     return mockMetrics;

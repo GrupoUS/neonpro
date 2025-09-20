@@ -31,23 +31,23 @@ This document describes the implementation of Sentry error tracking integration 
 
 ```typescript
 export enum ErrorCategory {
-  AUTHENTICATION = 'authentication',
-  AUTHORIZATION = 'authorization',
-  VALIDATION = 'validation',
-  BUSINESS_LOGIC = 'business_logic',
-  DATABASE = 'database',
-  EXTERNAL_SERVICE = 'external_service',
-  CONFIGURATION = 'configuration',
-  HEALTHCARE_COMPLIANCE = 'healthcare_compliance',
-  PATIENT_DATA = 'patient_data',
-  SYSTEM = 'system',
+  AUTHENTICATION = "authentication",
+  AUTHORIZATION = "authorization",
+  VALIDATION = "validation",
+  BUSINESS_LOGIC = "business_logic",
+  DATABASE = "database",
+  EXTERNAL_SERVICE = "external_service",
+  CONFIGURATION = "configuration",
+  HEALTHCARE_COMPLIANCE = "healthcare_compliance",
+  PATIENT_DATA = "patient_data",
+  SYSTEM = "system",
 }
 
 export enum ErrorSeverity {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-  CRITICAL = 'critical',
+  LOW = "low",
+  MEDIUM = "medium",
+  HIGH = "high",
+  CRITICAL = "critical",
 }
 ```
 
@@ -82,44 +82,48 @@ interface HealthcareApiErrorContext {
 ### Basic Error Handling
 
 ```typescript
-import { errorTrackingMiddleware } from './middleware/error-tracking';
+import { errorTrackingMiddleware } from "./middleware/error-tracking";
 
 const app = new Hono();
-app.use('*', errorTrackingMiddleware());
+app.use("*", errorTrackingMiddleware());
 ```
 
 ### Custom Healthcare Errors
 
 ```typescript
-import { HealthcareError, ErrorCategory, ErrorSeverity } from './middleware/error-tracking';
+import {
+  HealthcareError,
+  ErrorCategory,
+  ErrorSeverity,
+} from "./middleware/error-tracking";
 
 throw new HealthcareError(
-  'Patient data access denied',
+  "Patient data access denied",
   ErrorCategory.PATIENT_DATA,
   ErrorSeverity.HIGH,
   403,
   {
     isPatientDataInvolved: true,
     complianceImpact: true,
-    metadata: { patientId: 'redacted' }
-  }
+    metadata: { patientId: "redacted" },
+  },
 );
 ```
 
 ### Manual Error Capture
 
 ```typescript
-import { captureHealthcareApiError } from './lib/sentry';
+import { captureHealthcareApiError } from "./lib/sentry";
 
 captureHealthcareApiError(error, {
-  route: '/api/patients',
-  method: 'GET',
+  route: "/api/patients",
+  method: "GET",
   status: 500,
-  requestId: 'req-123',
+  requestId: "req-123",
   hasPatientData: true,
   durationMs: 150,
-  feature: 'patient-search',
-  clinicId: 'clinic-456'
+  feature: "patient-search",
+  clinicId: "clinic-456",
 });
 ```
 
@@ -141,7 +145,7 @@ LGPD_COMPLIANT=true
 ### Sentry Initialization
 
 ```typescript
-import { initializeSentry } from './lib/sentry';
+import { initializeSentry } from "./lib/sentry";
 
 // Initialize Sentry with healthcare-specific configuration
 initializeSentry();
@@ -245,7 +249,7 @@ import { errorTrackingMiddleware } from './src/middleware/error-tracking.ts';
 
 ```typescript
 // Enable debug logging
-process.env.SENTRY_DEBUG = 'true';
+process.env.SENTRY_DEBUG = "true";
 ```
 
 ## Related Documentation

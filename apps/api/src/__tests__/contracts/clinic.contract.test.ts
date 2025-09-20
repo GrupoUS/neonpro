@@ -1,9 +1,9 @@
-import { appRouter } from '@/trpc/router';
-import type { AppRouter } from '@/trpc/router';
-import type { Clinic, ClinicInput, ClinicOutput } from '@/types/api/contracts';
-import { httpLink } from '@trpc/client';
-import { createTRPCMsw } from 'msw-trpc';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { appRouter } from "@/trpc/router";
+import type { AppRouter } from "@/trpc/router";
+import type { Clinic, ClinicInput, ClinicOutput } from "@/types/api/contracts";
+import { httpLink } from "@trpc/client";
+import { createTRPCMsw } from "msw-trpc";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 /**
  * Clinic Contract Tests
@@ -11,10 +11,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
  * Ensures type safety, input validation, and output conformity
  */
 
-describe('Clinic Contract Testing', () => {
+describe("Clinic Contract Testing", () => {
   const mockContext = {
-    user: { id: 'user-123', role: 'admin' },
-    auth: { userId: 'user-123', isAuthenticated: true },
+    user: { id: "user-123", role: "admin" },
+    auth: { userId: "user-123", isAuthenticated: true },
     prisma: {
       clinic: {
         create: vi.fn(),
@@ -57,58 +57,66 @@ describe('Clinic Contract Testing', () => {
     vi.clearAllMocks();
   });
 
-  describe('Clinic Creation Contract', () => {
-    it('should validate clinic creation input and output', async () => {
-      const createInput: ClinicInput['create'] = {
+  describe("Clinic Creation Contract", () => {
+    it("should validate clinic creation input and output", async () => {
+      const createInput: ClinicInput["create"] = {
         basicInfo: {
-          name: 'Clínica Estética NeonPro',
-          tradeName: 'NeonPro Estética',
-          cnpj: '12.345.678/0001-90',
-          email: 'contato@neonpro.com',
-          phone: '+5511999888777',
-          website: 'https://neonpro.com',
+          name: "Clínica Estética NeonPro",
+          tradeName: "NeonPro Estética",
+          cnpj: "12.345.678/0001-90",
+          email: "contato@neonpro.com",
+          phone: "+5511999888777",
+          website: "https://neonpro.com",
         },
         address: {
-          street: 'Rua das Flores, 123',
-          neighborhood: 'Jardim Paulista',
-          city: 'São Paulo',
-          state: 'SP',
-          zipCode: '01234-567',
-          complement: 'Sala 101',
+          street: "Rua das Flores, 123",
+          neighborhood: "Jardim Paulista",
+          city: "São Paulo",
+          state: "SP",
+          zipCode: "01234-567",
+          complement: "Sala 101",
           coordinates: {
             lat: -23.5505,
             lng: -46.6333,
           },
         },
         businessInfo: {
-          anvisaRegistration: 'ANVISA-REG-2024-001',
-          municipalLicense: 'LIC-SP-2024-001',
-          specializations: ['aesthetic_medicine', 'dermatology', 'plastic_surgery'],
+          anvisaRegistration: "ANVISA-REG-2024-001",
+          municipalLicense: "LIC-SP-2024-001",
+          specializations: [
+            "aesthetic_medicine",
+            "dermatology",
+            "plastic_surgery",
+          ],
           businessHours: {
-            monday: { start: '08:00', end: '18:00' },
-            tuesday: { start: '08:00', end: '18:00' },
-            wednesday: { start: '08:00', end: '18:00' },
-            thursday: { start: '08:00', end: '18:00' },
-            friday: { start: '08:00', end: '17:00' },
-            saturday: { start: '08:00', end: '12:00' },
+            monday: { start: "08:00", end: "18:00" },
+            tuesday: { start: "08:00", end: "18:00" },
+            wednesday: { start: "08:00", end: "18:00" },
+            thursday: { start: "08:00", end: "18:00" },
+            friday: { start: "08:00", end: "17:00" },
+            saturday: { start: "08:00", end: "12:00" },
           },
         },
         configuration: {
           appointmentDuration: 60,
           maxAdvanceBookingDays: 90,
-          cancellationPolicy: '24h',
-          paymentMethods: ['cash', 'credit_card', 'debit_card', 'pix'],
-          timezone: 'America/Sao_Paulo',
+          cancellationPolicy: "24h",
+          paymentMethods: ["cash", "credit_card", "debit_card", "pix"],
+          timezone: "America/Sao_Paulo",
         },
       };
 
       const mockClinic = {
-        id: 'clinic-789',
-        name: 'Clínica Estética NeonPro',
-        cnpj: '12.345.678/0001-90',
-        email: 'contato@neonpro.com',
-        anvisaRegistration: 'ANVISA-REG-2024-001',
-        specializations: ['aesthetic_medicine', 'dermatology', 'plastic_surgery'],
+        id: "clinic-789",
+        name: "Clínica Estética NeonPro",
+        cnpj: "12.345.678/0001-90",
+        email: "contato@neonpro.com",
+        anvisaRegistration: "ANVISA-REG-2024-001",
+        specializations: [
+          "aesthetic_medicine",
+          "dermatology",
+          "plastic_surgery",
+        ],
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -116,12 +124,16 @@ describe('Clinic Contract Testing', () => {
 
       mockContext.anvisa.validateClinicRegistration.mockResolvedValue({
         valid: true,
-        status: 'active',
-        registrationDate: '2024-01-15',
+        status: "active",
+        registrationDate: "2024-01-15",
       });
       mockContext.compliance.validateLGPDCompliance.mockResolvedValue({
         compliant: true,
-        requirements: ['data_protection_officer', 'privacy_policy', 'consent_management'],
+        requirements: [
+          "data_protection_officer",
+          "privacy_policy",
+          "consent_management",
+        ],
       });
       mockContext.prisma.clinic.create.mockResolvedValue(mockClinic);
 
@@ -130,114 +142,118 @@ describe('Clinic Contract Testing', () => {
       expect(result).toMatchObject({
         success: true,
         data: expect.objectContaining({
-          id: 'clinic-789',
-          name: 'Clínica Estética NeonPro',
-          cnpj: '12.345.678/0001-90',
-          specializations: expect.arrayContaining(['aesthetic_medicine']),
+          id: "clinic-789",
+          name: "Clínica Estética NeonPro",
+          cnpj: "12.345.678/0001-90",
+          specializations: expect.arrayContaining(["aesthetic_medicine"]),
         }),
       });
 
       // Verify ANVISA validation was called
-      expect(mockContext.anvisa.validateClinicRegistration).toHaveBeenCalledWith({
-        anvisaRegistration: 'ANVISA-REG-2024-001',
-        cnpj: '12.345.678/0001-90',
+      expect(
+        mockContext.anvisa.validateClinicRegistration,
+      ).toHaveBeenCalledWith({
+        anvisaRegistration: "ANVISA-REG-2024-001",
+        cnpj: "12.345.678/0001-90",
       });
 
       // Verify audit logging
       expect(mockContext.audit.logClinicAction).toHaveBeenCalledWith({
-        action: 'create',
-        clinicId: 'clinic-789',
+        action: "create",
+        clinicId: "clinic-789",
         userId: mockContext.user.id,
         timestamp: expect.any(Date),
       });
     });
 
-    it('should reject invalid ANVISA registration', async () => {
-      const invalidInput: ClinicInput['create'] = {
+    it("should reject invalid ANVISA registration", async () => {
+      const invalidInput: ClinicInput["create"] = {
         basicInfo: {
-          name: 'Invalid Clinic',
-          cnpj: '12.345.678/0001-90',
-          email: 'invalid@clinic.com',
-          phone: '+5511999888777',
+          name: "Invalid Clinic",
+          cnpj: "12.345.678/0001-90",
+          email: "invalid@clinic.com",
+          phone: "+5511999888777",
         },
         address: {
-          street: 'Rua Teste, 123',
-          city: 'São Paulo',
-          state: 'SP',
-          zipCode: '01234-567',
+          street: "Rua Teste, 123",
+          city: "São Paulo",
+          state: "SP",
+          zipCode: "01234-567",
         },
         businessInfo: {
-          anvisaRegistration: 'INVALID-REG',
-          specializations: ['aesthetic_medicine'],
+          anvisaRegistration: "INVALID-REG",
+          specializations: ["aesthetic_medicine"],
         },
       };
 
       mockContext.anvisa.validateClinicRegistration.mockResolvedValue({
         valid: false,
-        error: 'Invalid ANVISA registration format',
+        error: "Invalid ANVISA registration format",
       });
 
-      await expect(caller.api.clinic.create(invalidInput))
-        .rejects.toThrow('Invalid ANVISA registration: Invalid ANVISA registration format');
+      await expect(caller.api.clinic.create(invalidInput)).rejects.toThrow(
+        "Invalid ANVISA registration: Invalid ANVISA registration format",
+      );
     });
 
-    it('should enforce LGPD compliance requirements', async () => {
-      const nonCompliantInput: ClinicInput['create'] = {
+    it("should enforce LGPD compliance requirements", async () => {
+      const nonCompliantInput: ClinicInput["create"] = {
         basicInfo: {
-          name: 'Non-Compliant Clinic',
-          cnpj: '12.345.678/0001-90',
-          email: 'noncompliant@clinic.com',
-          phone: '+5511999888777',
+          name: "Non-Compliant Clinic",
+          cnpj: "12.345.678/0001-90",
+          email: "noncompliant@clinic.com",
+          phone: "+5511999888777",
         },
         address: {
-          street: 'Rua Teste, 123',
-          city: 'São Paulo',
-          state: 'SP',
-          zipCode: '01234-567',
+          street: "Rua Teste, 123",
+          city: "São Paulo",
+          state: "SP",
+          zipCode: "01234-567",
         },
         businessInfo: {
-          anvisaRegistration: 'ANVISA-REG-2024-001',
-          specializations: ['aesthetic_medicine'],
+          anvisaRegistration: "ANVISA-REG-2024-001",
+          specializations: ["aesthetic_medicine"],
         },
       };
 
       mockContext.anvisa.validateClinicRegistration.mockResolvedValue({
         valid: true,
-        status: 'active',
+        status: "active",
       });
       mockContext.compliance.validateLGPDCompliance.mockResolvedValue({
         compliant: false,
-        missingRequirements: ['data_protection_officer', 'privacy_policy'],
+        missingRequirements: ["data_protection_officer", "privacy_policy"],
       });
 
-      await expect(caller.api.clinic.create(nonCompliantInput))
-        .rejects.toThrow('LGPD compliance requirements not met');
+      await expect(caller.api.clinic.create(nonCompliantInput)).rejects.toThrow(
+        "LGPD compliance requirements not met",
+      );
     });
   });
 
-  describe('Clinic Retrieval Contract', () => {
-    it('should validate clinic retrieval by ID', async () => {
-      const clinicId = 'clinic-789';
+  describe("Clinic Retrieval Contract", () => {
+    it("should validate clinic retrieval by ID", async () => {
+      const clinicId = "clinic-789";
       const mockClinic = {
         id: clinicId,
-        name: 'Clínica Estética NeonPro',
-        tradeName: 'NeonPro Estética',
-        cnpj: '12.345.678/0001-90',
-        email: 'contato@neonpro.com',
-        phone: '+5511999888777',
-        website: 'https://neonpro.com',
+        name: "Clínica Estética NeonPro",
+        tradeName: "NeonPro Estética",
+        cnpj: "12.345.678/0001-90",
+        email: "contato@neonpro.com",
+        phone: "+5511999888777",
+        website: "https://neonpro.com",
         address: {
-          street: 'Rua das Flores, 123',
-          neighborhood: 'Jardim Paulista',
-          city: 'São Paulo',
-          state: 'SP',
-          zipCode: '01234-567',
+          street: "Rua das Flores, 123",
+          neighborhood: "Jardim Paulista",
+          city: "São Paulo",
+          state: "SP",
+          zipCode: "01234-567",
         },
         businessInfo: {
-          anvisaRegistration: 'ANVISA-REG-2024-001',
-          specializations: ['aesthetic_medicine', 'dermatology'],
+          anvisaRegistration: "ANVISA-REG-2024-001",
+          specializations: ["aesthetic_medicine", "dermatology"],
           businessHours: {
-            monday: { start: '08:00', end: '18:00' },
+            monday: { start: "08:00", end: "18:00" },
           },
         },
         statistics: {
@@ -262,9 +278,9 @@ describe('Clinic Contract Testing', () => {
         success: true,
         data: expect.objectContaining({
           id: clinicId,
-          name: 'Clínica Estética NeonPro',
-          cnpj: '12.345.678/0001-90',
-          specializations: expect.arrayContaining(['aesthetic_medicine']),
+          name: "Clínica Estética NeonPro",
+          cnpj: "12.345.678/0001-90",
+          specializations: expect.arrayContaining(["aesthetic_medicine"]),
           statistics: expect.objectContaining({
             totalProfessionals: 15,
             totalPatients: 1250,
@@ -273,57 +289,68 @@ describe('Clinic Contract Testing', () => {
       });
     });
 
-    it('should handle clinic not found', async () => {
-      const clinicId = 'nonexistent-clinic';
+    it("should handle clinic not found", async () => {
+      const clinicId = "nonexistent-clinic";
 
       mockContext.prisma.clinic.findUnique.mockResolvedValue(null);
 
-      await expect(caller.api.clinic.getById({ id: clinicId }))
-        .rejects.toThrow('Clinic not found');
+      await expect(caller.api.clinic.getById({ id: clinicId })).rejects.toThrow(
+        "Clinic not found",
+      );
     });
   });
 
-  describe('Clinic Update Contract', () => {
-    it('should validate clinic information updates', async () => {
-      const clinicId = 'clinic-789';
-      const updateInput: ClinicInput['update'] = {
+  describe("Clinic Update Contract", () => {
+    it("should validate clinic information updates", async () => {
+      const clinicId = "clinic-789";
+      const updateInput: ClinicInput["update"] = {
         id: clinicId,
         basicInfo: {
-          phone: '+5511777666555',
-          email: 'novo-contato@neonpro.com',
-          website: 'https://neonpro.com.br',
+          phone: "+5511777666555",
+          email: "novo-contato@neonpro.com",
+          website: "https://neonpro.com.br",
         },
         businessInfo: {
-          specializations: ['aesthetic_medicine', 'dermatology', 'laser_therapy'],
+          specializations: [
+            "aesthetic_medicine",
+            "dermatology",
+            "laser_therapy",
+          ],
           businessHours: {
-            monday: { start: '09:00', end: '19:00' },
-            tuesday: { start: '09:00', end: '19:00' },
-            wednesday: { start: '09:00', end: '19:00' },
-            thursday: { start: '09:00', end: '19:00' },
-            friday: { start: '09:00', end: '18:00' },
-            saturday: { start: '08:00', end: '14:00' },
+            monday: { start: "09:00", end: "19:00" },
+            tuesday: { start: "09:00", end: "19:00" },
+            wednesday: { start: "09:00", end: "19:00" },
+            thursday: { start: "09:00", end: "19:00" },
+            friday: { start: "09:00", end: "18:00" },
+            saturday: { start: "08:00", end: "14:00" },
           },
         },
         configuration: {
           appointmentDuration: 90,
           maxAdvanceBookingDays: 120,
-          paymentMethods: ['cash', 'credit_card', 'debit_card', 'pix', 'installments'],
+          paymentMethods: [
+            "cash",
+            "credit_card",
+            "debit_card",
+            "pix",
+            "installments",
+          ],
         },
       };
 
       const existingClinic = {
         id: clinicId,
-        name: 'Clínica Estética NeonPro',
-        cnpj: '12.345.678/0001-90',
+        name: "Clínica Estética NeonPro",
+        cnpj: "12.345.678/0001-90",
         isActive: true,
       };
 
       const updatedClinic = {
         ...existingClinic,
-        phone: '+5511777666555',
-        email: 'novo-contato@neonpro.com',
-        website: 'https://neonpro.com.br',
-        specializations: ['aesthetic_medicine', 'dermatology', 'laser_therapy'],
+        phone: "+5511777666555",
+        email: "novo-contato@neonpro.com",
+        website: "https://neonpro.com.br",
+        specializations: ["aesthetic_medicine", "dermatology", "laser_therapy"],
         updatedAt: new Date(),
       };
 
@@ -336,52 +363,53 @@ describe('Clinic Contract Testing', () => {
         success: true,
         data: expect.objectContaining({
           id: clinicId,
-          phone: '+5511777666555',
-          email: 'novo-contato@neonpro.com',
-          specializations: expect.arrayContaining(['laser_therapy']),
+          phone: "+5511777666555",
+          email: "novo-contato@neonpro.com",
+          specializations: expect.arrayContaining(["laser_therapy"]),
         }),
       });
 
       // Verify audit logging for update
       expect(mockContext.audit.logClinicAction).toHaveBeenCalledWith({
-        action: 'update',
+        action: "update",
         clinicId,
         userId: mockContext.user.id,
         changes: expect.objectContaining({
-          phone: '+5511777666555',
-          email: 'novo-contato@neonpro.com',
+          phone: "+5511777666555",
+          email: "novo-contato@neonpro.com",
         }),
         timestamp: expect.any(Date),
       });
     });
 
-    it('should prevent unauthorized updates to critical fields', async () => {
-      const clinicId = 'clinic-789';
-      const unauthorizedUpdate: ClinicInput['update'] = {
+    it("should prevent unauthorized updates to critical fields", async () => {
+      const clinicId = "clinic-789";
+      const unauthorizedUpdate: ClinicInput["update"] = {
         id: clinicId,
         basicInfo: {
-          cnpj: '99.888.777/0001-66', // Changing CNPJ should require special authorization
-          name: 'Completely New Name',
+          cnpj: "99.888.777/0001-66", // Changing CNPJ should require special authorization
+          name: "Completely New Name",
         },
       };
 
       const existingClinic = {
         id: clinicId,
-        cnpj: '12.345.678/0001-90',
-        name: 'Original Clinic Name',
+        cnpj: "12.345.678/0001-90",
+        name: "Original Clinic Name",
       };
 
       mockContext.prisma.clinic.findUnique.mockResolvedValue(existingClinic);
 
-      await expect(caller.api.clinic.update(unauthorizedUpdate))
-        .rejects.toThrow('Unauthorized to modify CNPJ information');
+      await expect(
+        caller.api.clinic.update(unauthorizedUpdate),
+      ).rejects.toThrow("Unauthorized to modify CNPJ information");
     });
   });
 
-  describe('Clinic Statistics Contract', () => {
-    it('should validate clinic statistics retrieval', async () => {
-      const clinicId = 'clinic-789';
-      const period = 'monthly';
+  describe("Clinic Statistics Contract", () => {
+    it("should validate clinic statistics retrieval", async () => {
+      const clinicId = "clinic-789";
+      const period = "monthly";
 
       const mockStatistics = {
         overview: {
@@ -394,9 +422,9 @@ describe('Clinic Contract Testing', () => {
           cancelledAppointments: 480,
         },
         revenue: {
-          totalRevenue: 850000.50,
+          totalRevenue: 850000.5,
           monthlyRevenue: 125000.75,
-          averageTicket: 245.30,
+          averageTicket: 245.3,
           paymentMethods: {
             cash: 25.5,
             credit_card: 45.2,
@@ -413,29 +441,31 @@ describe('Clinic Contract Testing', () => {
         },
         professionals: [
           {
-            id: 'prof-1',
-            name: 'Dr. Ana Silva',
+            id: "prof-1",
+            name: "Dr. Ana Silva",
             appointmentsCompleted: 156,
-            revenue: 38500.00,
+            revenue: 38500.0,
             rating: 4.8,
           },
         ],
         period: {
-          start: '2024-01-01',
-          end: '2024-01-31',
-          type: 'monthly',
+          start: "2024-01-01",
+          end: "2024-01-31",
+          type: "monthly",
         },
       };
 
       mockContext.prisma.appointment.count.mockResolvedValue(5680);
       mockContext.prisma.appointment.findMany.mockResolvedValue([]);
-      mockContext.prisma.professional.findMany.mockResolvedValue(mockStatistics.professionals);
+      mockContext.prisma.professional.findMany.mockResolvedValue(
+        mockStatistics.professionals,
+      );
 
       const result = await caller.api.clinic.getStatistics({
         clinicId,
         period,
-        startDate: '2024-01-01',
-        endDate: '2024-01-31',
+        startDate: "2024-01-01",
+        endDate: "2024-01-31",
       });
 
       expect(result).toMatchObject({
@@ -455,22 +485,22 @@ describe('Clinic Contract Testing', () => {
             cancellationRate: expect.any(Number),
           }),
           period: expect.objectContaining({
-            type: 'monthly',
+            type: "monthly",
           }),
         }),
       });
     });
   });
 
-  describe('Clinic Configuration Contract', () => {
-    it('should validate clinic configuration updates', async () => {
-      const configInput: ClinicInput['updateConfiguration'] = {
-        clinicId: 'clinic-789',
+  describe("Clinic Configuration Contract", () => {
+    it("should validate clinic configuration updates", async () => {
+      const configInput: ClinicInput["updateConfiguration"] = {
+        clinicId: "clinic-789",
         configuration: {
           appointmentDuration: 75,
           maxAdvanceBookingDays: 60,
-          cancellationPolicy: '48h',
-          paymentMethods: ['credit_card', 'debit_card', 'pix'],
+          cancellationPolicy: "48h",
+          paymentMethods: ["credit_card", "debit_card", "pix"],
           autoConfirmAppointments: true,
           reminderSettings: {
             email: {
@@ -488,20 +518,20 @@ describe('Clinic Contract Testing', () => {
           workflowAutomation: {
             patientFollowUp: true,
             appointmentConfirmation: true,
-            noShowHandling: 'automatic_reschedule',
+            noShowHandling: "automatic_reschedule",
           },
         },
       };
 
       const updatedConfig = {
-        clinicId: 'clinic-789',
+        clinicId: "clinic-789",
         ...configInput.configuration,
         updatedAt: new Date(),
         updatedBy: mockContext.user.id,
       };
 
       mockContext.prisma.clinic.update.mockResolvedValue({
-        id: 'clinic-789',
+        id: "clinic-789",
         configuration: updatedConfig,
       });
 
@@ -522,49 +552,52 @@ describe('Clinic Contract Testing', () => {
       });
     });
 
-    it('should validate configuration constraints', async () => {
-      const invalidConfig: ClinicInput['updateConfiguration'] = {
-        clinicId: 'clinic-789',
+    it("should validate configuration constraints", async () => {
+      const invalidConfig: ClinicInput["updateConfiguration"] = {
+        clinicId: "clinic-789",
         configuration: {
           appointmentDuration: 15, // Too short
           maxAdvanceBookingDays: 365, // Too long
         },
       };
 
-      await expect(caller.api.clinic.updateConfiguration(invalidConfig))
-        .rejects.toThrow('Invalid configuration: appointment duration must be at least 30 minutes');
+      await expect(
+        caller.api.clinic.updateConfiguration(invalidConfig),
+      ).rejects.toThrow(
+        "Invalid configuration: appointment duration must be at least 30 minutes",
+      );
     });
   });
 
-  describe('Clinic List Contract', () => {
-    it('should validate clinic listing with filters', async () => {
-      const listInput: ClinicInput['list'] = {
+  describe("Clinic List Contract", () => {
+    it("should validate clinic listing with filters", async () => {
+      const listInput: ClinicInput["list"] = {
         page: 1,
         limit: 10,
         filters: {
-          state: 'SP',
-          specializations: ['aesthetic_medicine'],
+          state: "SP",
+          specializations: ["aesthetic_medicine"],
           isActive: true,
         },
-        orderBy: 'name',
-        orderDirection: 'asc',
+        orderBy: "name",
+        orderDirection: "asc",
       };
 
       const mockClinics = [
         {
-          id: 'clinic-1',
-          name: 'Clínica A',
-          city: 'São Paulo',
-          state: 'SP',
-          specializations: ['aesthetic_medicine'],
+          id: "clinic-1",
+          name: "Clínica A",
+          city: "São Paulo",
+          state: "SP",
+          specializations: ["aesthetic_medicine"],
           isActive: true,
         },
         {
-          id: 'clinic-2',
-          name: 'Clínica B',
-          city: 'Santos',
-          state: 'SP',
-          specializations: ['aesthetic_medicine', 'dermatology'],
+          id: "clinic-2",
+          name: "Clínica B",
+          city: "Santos",
+          state: "SP",
+          specializations: ["aesthetic_medicine", "dermatology"],
           isActive: true,
         },
       ];
@@ -579,9 +612,9 @@ describe('Clinic Contract Testing', () => {
         data: {
           clinics: expect.arrayContaining([
             expect.objectContaining({
-              id: 'clinic-1',
-              name: 'Clínica A',
-              specializations: expect.arrayContaining(['aesthetic_medicine']),
+              id: "clinic-1",
+              name: "Clínica A",
+              specializations: expect.arrayContaining(["aesthetic_medicine"]),
             }),
           ]),
           pagination: {
@@ -591,47 +624,47 @@ describe('Clinic Contract Testing', () => {
             totalPages: 3,
           },
           filters: expect.objectContaining({
-            state: 'SP',
-            specializations: ['aesthetic_medicine'],
+            state: "SP",
+            specializations: ["aesthetic_medicine"],
           }),
         },
       });
     });
   });
 
-  describe('Contract Type Safety', () => {
-    it('should enforce input type constraints at compile time', () => {
-      const validInput: ClinicInput['create'] = {
+  describe("Contract Type Safety", () => {
+    it("should enforce input type constraints at compile time", () => {
+      const validInput: ClinicInput["create"] = {
         basicInfo: {
-          name: 'Test Clinic',
-          cnpj: '12.345.678/0001-90',
-          email: 'test@clinic.com',
-          phone: '+5511999888777',
+          name: "Test Clinic",
+          cnpj: "12.345.678/0001-90",
+          email: "test@clinic.com",
+          phone: "+5511999888777",
         },
         address: {
-          street: 'Rua Teste, 123',
-          city: 'São Paulo',
-          state: 'SP',
-          zipCode: '01234-567',
+          street: "Rua Teste, 123",
+          city: "São Paulo",
+          state: "SP",
+          zipCode: "01234-567",
         },
         businessInfo: {
-          anvisaRegistration: 'ANVISA-REG-2024-001',
-          specializations: ['aesthetic_medicine'],
+          anvisaRegistration: "ANVISA-REG-2024-001",
+          specializations: ["aesthetic_medicine"],
         },
       };
 
       expect(validInput).toBeDefined();
     });
 
-    it('should enforce output type constraints', () => {
-      const mockOutput: ClinicOutput['getById'] = {
+    it("should enforce output type constraints", () => {
+      const mockOutput: ClinicOutput["getById"] = {
         success: true,
         data: {
-          id: 'clinic-789',
-          name: 'Clínica Estética NeonPro',
-          cnpj: '12.345.678/0001-90',
-          email: 'contato@neonpro.com',
-          specializations: ['aesthetic_medicine'],
+          id: "clinic-789",
+          name: "Clínica Estética NeonPro",
+          cnpj: "12.345.678/0001-90",
+          email: "contato@neonpro.com",
+          specializations: ["aesthetic_medicine"],
           isActive: true,
           createdAt: new Date(),
           updatedAt: new Date(),
@@ -640,7 +673,7 @@ describe('Clinic Contract Testing', () => {
 
       expect(mockOutput).toBeDefined();
       expect(mockOutput.success).toBe(true);
-      expect(mockOutput.data.name).toBe('Clínica Estética NeonPro');
+      expect(mockOutput.data.name).toBe("Clínica Estética NeonPro");
     });
   });
 });

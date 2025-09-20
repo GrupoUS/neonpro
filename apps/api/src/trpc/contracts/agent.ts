@@ -1,21 +1,21 @@
 /**
  * AI Agents API Contracts
- * 
+ *
  * OpenAPI 3.0 specifications for AI Agent Database Integration
  * Following healthcare compliance standards (LGPD/ANVISA/CFM)
  */
 
-import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
-import { HealthcareTRPCError } from '@neonpro/types/api/contracts';
+import { z } from "zod";
+import { router, protectedProcedure } from "../trpc";
+import { HealthcareTRPCError } from "@neonpro/types/api/contracts";
 
 /**
  * Core Agent Types
  */
-export const AgentTypeSchema = z.enum(['client', 'financial', 'appointment']);
+export const AgentTypeSchema = z.enum(["client", "financial", "appointment"]);
 export type AgentType = z.infer<typeof AgentTypeSchema>;
 
-export const AgentStatusSchema = z.enum(['active', 'inactive', 'archived']);
+export const AgentStatusSchema = z.enum(["active", "inactive", "archived"]);
 export type AgentStatus = z.infer<typeof AgentStatusSchema>;
 
 /**
@@ -40,7 +40,7 @@ export const AgentSessionResponseSchema = z.object({
 /**
  * Agent Message Schemas
  */
-export const AgentMessageRoleSchema = z.enum(['user', 'assistant', 'system']);
+export const AgentMessageRoleSchema = z.enum(["user", "assistant", "system"]);
 export type AgentMessageRole = z.infer<typeof AgentMessageRoleSchema>;
 
 export const CreateAgentMessageSchema = z.object({
@@ -48,12 +48,16 @@ export const CreateAgentMessageSchema = z.object({
   role: AgentMessageRoleSchema,
   content: z.string(),
   metadata: z.record(z.unknown()).optional(),
-  attachments: z.array(z.object({
-    filename: z.string(),
-    type: z.string(),
-    size: z.number(),
-    url: z.string().url().optional(),
-  })).optional(),
+  attachments: z
+    .array(
+      z.object({
+        filename: z.string(),
+        type: z.string(),
+        size: z.number(),
+        url: z.string().url().optional(),
+      }),
+    )
+    .optional(),
 });
 
 export const AgentMessageResponseSchema = z.object({
@@ -62,12 +66,14 @@ export const AgentMessageResponseSchema = z.object({
   role: AgentMessageRoleSchema,
   content: z.string(),
   metadata: z.record(z.unknown()),
-  attachments: z.array(z.object({
-    filename: z.string(),
-    type: z.string(),
-    size: z.number(),
-    url: z.string().url().optional(),
-  })),
+  attachments: z.array(
+    z.object({
+      filename: z.string(),
+      type: z.string(),
+      size: z.number(),
+      url: z.string().url().optional(),
+    }),
+  ),
   created_at: z.date(),
 });
 
@@ -121,8 +127,8 @@ export const ListAgentSessionsSchema = z.object({
   status: AgentStatusSchema.optional(),
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(20),
-  sort_by: z.enum(['created_at', 'updated_at']).default('created_at'),
-  sort_order: z.enum(['asc', 'desc']).default('desc'),
+  sort_by: z.enum(["created_at", "updated_at"]).default("created_at"),
+  sort_order: z.enum(["asc", "desc"]).default("desc"),
 });
 
 export const ListAgentMessagesSchema = z.object({
@@ -145,26 +151,32 @@ export const SearchKnowledgeBaseSchema = z.object({
 export const RAGQuerySchema = z.object({
   session_id: z.string().uuid(),
   query: z.string().min(1),
-  context_filter: z.object({
-    date_range: z.object({
-      start: z.date().optional(),
-      end: z.date().optional(),
-    }).optional(),
-    data_types: z.array(z.string()).optional(),
-    agent_types: z.array(AgentTypeSchema).optional(),
-  }).optional(),
+  context_filter: z
+    .object({
+      date_range: z
+        .object({
+          start: z.date().optional(),
+          end: z.date().optional(),
+        })
+        .optional(),
+      data_types: z.array(z.string()).optional(),
+      agent_types: z.array(AgentTypeSchema).optional(),
+    })
+    .optional(),
   max_results: z.number().int().min(1).max(50).default(10),
 });
 
 export const RAGResponseSchema = z.object({
   query: z.string(),
-  results: z.array(z.object({
-    id: z.string(),
-    content: z.string(),
-    source: z.string().optional(),
-    score: z.number().min(0).max(1),
-    metadata: z.record(z.unknown()),
-  })),
+  results: z.array(
+    z.object({
+      id: z.string(),
+      content: z.string(),
+      source: z.string().optional(),
+      score: z.number().min(0).max(1),
+      metadata: z.record(z.unknown()),
+    }),
+  ),
   context: z.string(),
   response: z.string(),
   tokens_used: z.number().int().min(0),
@@ -175,7 +187,7 @@ export const RAGResponseSchema = z.object({
  * Agent Action Schemas (for AG-UI Protocol)
  */
 export const AgentActionSchema = z.object({
-  type: z.enum(['message', 'action', 'navigation', 'data_request']),
+  type: z.enum(["message", "action", "navigation", "data_request"]),
   payload: z.record(z.unknown()),
   timestamp: z.date(),
 });
@@ -252,12 +264,20 @@ export const AgentErrorResponseSchema = z.object({
 /**
  * Export all types
  */
-export type CreateAgentSessionRequest = z.infer<typeof CreateAgentSessionSchema>;
-export type CreateAgentMessageRequest = z.infer<typeof CreateAgentMessageSchema>;
-export type CreateKnowledgeEntryRequest = z.infer<typeof CreateKnowledgeEntrySchema>;
+export type CreateAgentSessionRequest = z.infer<
+  typeof CreateAgentSessionSchema
+>;
+export type CreateAgentMessageRequest = z.infer<
+  typeof CreateAgentMessageSchema
+>;
+export type CreateKnowledgeEntryRequest = z.infer<
+  typeof CreateKnowledgeEntrySchema
+>;
 export type ListAgentSessionsRequest = z.infer<typeof ListAgentSessionsSchema>;
 export type ListAgentMessagesRequest = z.infer<typeof ListAgentMessagesSchema>;
-export type SearchKnowledgeBaseRequest = z.infer<typeof SearchKnowledgeBaseSchema>;
+export type SearchKnowledgeBaseRequest = z.infer<
+  typeof SearchKnowledgeBaseSchema
+>;
 export type RAGQueryRequest = z.infer<typeof RAGQuerySchema>;
 export type AgentAction = z.infer<typeof AgentActionSchema>;
 export type AgentEvent = z.infer<typeof AgentEventSchema>;

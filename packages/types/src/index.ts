@@ -1,10 +1,10 @@
-export * from './aesthetic-data';
-export * from './ai-chat';
-export * from './ai-provider';
-export * from './webrtc';
-export * from './healthcare-governance.types';
-export * from './governance.types';
-export * from './enhanced-ai';
+export * from "./aesthetic-data";
+export * from "./ai-chat";
+export * from "./ai-provider";
+export * from "./webrtc";
+export * from "./healthcare-governance.types";
+export * from "./governance.types";
+export * from "./enhanced-ai";
 
 // Export specific types from ai-enhanced to avoid conflicts
 export type {
@@ -32,14 +32,14 @@ export type {
   AIRecommendationsResponse,
   AIModelsResponse,
   AIEnhancedError,
-  AIEnhancedErrorCode
-} from './ai-enhanced';
+  AIEnhancedErrorCode,
+} from "./ai-enhanced";
 
 // Valibot Validation Schemas for Brazilian Healthcare
-export * from './patient.valibot';
-export * from './lgpd.valibot';
-export * from './appointment.valibot';
-export * from './prescription.valibot';
+export * from "./patient.valibot";
+export * from "./lgpd.valibot";
+export * from "./appointment.valibot";
+export * from "./prescription.valibot";
 // Healthcare types
 export interface Patient {
   id: string;

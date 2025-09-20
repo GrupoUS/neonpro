@@ -27,26 +27,26 @@ npx shadcn@latest add card
 ### Basic Usage
 
 ```tsx
-import { BentoGrid, BentoGridItem } from '@/components/ui/bento-grid';
-import { Calendar, Users } from 'lucide-react';
+import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { Calendar, Users } from "lucide-react";
 
 function MyBentoGrid() {
   return (
     <BentoGrid>
       <BentoGridItem
-        title='Agendamentos'
-        description='Sistema inteligente de marcação'
-        icon={<Calendar className='w-5 h-5' />}
-        variant='primary'
-        size='md'
+        title="Agendamentos"
+        description="Sistema inteligente de marcação"
+        icon={<Calendar className="w-5 h-5" />}
+        variant="primary"
+        size="md"
       />
 
       <BentoGridItem
-        title='Pacientes'
-        description='Gestão completa de prontuários'
-        icon={<Users className='w-5 h-5' />}
-        variant='secondary'
-        size='sm'
+        title="Pacientes"
+        description="Gestão completa de prontuários"
+        icon={<Users className="w-5 h-5" />}
+        variant="secondary"
+        size="sm"
       />
     </BentoGrid>
   );
@@ -57,21 +57,21 @@ function MyBentoGrid() {
 
 ```tsx
 <BentoGridItem
-  title='Analytics Dashboard'
-  description='Métricas em tempo real'
-  variant='accent'
-  size='lg'
+  title="Analytics Dashboard"
+  description="Métricas em tempo real"
+  variant="accent"
+  size="lg"
   header={
-    <div className='h-32 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center'>
-      <BarChart className='w-12 h-12 text-white' />
+    <div className="h-32 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+      <BarChart className="w-12 h-12 text-white" />
     </div>
   }
 >
-  <div className='space-y-2'>
+  <div className="space-y-2">
     <p>Receita mensal: R$ 45.280</p>
     <p>Crescimento: +12%</p>
   </div>
-</BentoGridItem>;
+</BentoGridItem>
 ```
 
 ## Props
@@ -120,7 +120,7 @@ import { BentoGridLayouts } from '@/components/ui/bento-grid';
 // Dashboard layout: 1 large + 3 medium cards
 <BentoGrid>{BentoGridLayouts.dashboard}</BentoGrid>
 
-// Features layout: 4 equal cards  
+// Features layout: 4 equal cards
 <BentoGrid>{BentoGridLayouts.features}</BentoGrid>
 
 // Hero layout: 1 extra large + 2 small cards
@@ -171,10 +171,9 @@ xl:grid-cols-4                 /* Large: 4 columns */
 The component uses the official NeonPro color palette:
 
 ```css
---neonpro-primary: #112031     /* Deep Green */
---neonpro-secondary: #294359   /* Petrol Blue */
---neonpro-accent: #AC9469      /* Aesthetic Gold */
---neonpro-neutral: #B4AC9C     /* Light Beige */
+--neonpro-primary: #112031 /* Deep Green */ --neonpro-secondary: #294359
+  /* Petrol Blue */ --neonpro-accent: #ac9469 /* Aesthetic Gold */
+  --neonpro-neutral: #b4ac9c /* Light Beige */;
 ```
 
 ### Healthcare Context

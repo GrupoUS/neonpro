@@ -16,8 +16,8 @@ import {
   RiskAssessment,
   UpdateEscalationWorkflow,
   UpdateKPIMetric,
-} from '@neonpro/types/governance.types';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+} from "@neonpro/types/governance.types";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 export class SupabaseGovernanceService implements GovernanceService {
   protected supabase: SupabaseClient;
@@ -27,29 +27,34 @@ export class SupabaseGovernanceService implements GovernanceService {
   }
 
   // Audit Trail Methods
-  async createAuditEntry(entry: CreateAuditTrailEntry): Promise<AuditTrailEntry> {
+  async createAuditEntry(
+    entry: CreateAuditTrailEntry,
+  ): Promise<AuditTrailEntry> {
     const { data, error } = await this.supabase
-      .from('audit_trail')
-      .insert([{
-        user_id: entry.userId,
-        clinic_id: entry.clinicId,
-        patient_id: entry.patientId,
-        action: entry.action,
-        resource: entry.resource,
-        resource_type: entry.resourceType,
-        resource_id: entry.resourceId,
-        ip_address: entry.ipAddress,
-        user_agent: entry.userAgent,
-        session_id: entry.sessionId,
-        status: entry.status,
-        risk_level: entry.riskLevel || 'LOW',
-        additional_info: entry.additionalInfo,
-        encrypted_details: entry.encryptedDetails,
-      }])
+      .from("audit_trail")
+      .insert([
+        {
+          user_id: entry.userId,
+          clinic_id: entry.clinicId,
+          patient_id: entry.patientId,
+          action: entry.action,
+          resource: entry.resource,
+          resource_type: entry.resourceType,
+          resource_id: entry.resourceId,
+          ip_address: entry.ipAddress,
+          user_agent: entry.userAgent,
+          session_id: entry.sessionId,
+          status: entry.status,
+          risk_level: entry.riskLevel || "LOW",
+          additional_info: entry.additionalInfo,
+          encrypted_details: entry.encryptedDetails,
+        },
+      ])
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create audit entry: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to create audit entry: ${error.message}`);
 
     return this.mapAuditTrailFromDb(data);
   }
@@ -60,18 +65,20 @@ export class SupabaseGovernanceService implements GovernanceService {
     filteredCount: number;
   }> {
     let query = this.supabase
-      .from('audit_trail')
-      .select('*, users(email)', { count: 'exact' })
-      .order('created_at', { ascending: false });
+      .from("audit_trail")
+      .select("*, users(email)", { count: "exact" })
+      .order("created_at", { ascending: false });
 
     // Apply filters
-    if (filters?.userId) query = query.eq('user_id', filters.userId);
-    if (filters?.clinicId) query = query.eq('clinic_id', filters.clinicId);
-    if (filters?.action) query = query.eq('action', filters.action);
-    if (filters?.status) query = query.eq('status', filters.status);
-    if (filters?.riskLevel) query = query.eq('risk_level', filters.riskLevel);
-    if (filters?.dateFrom) query = query.gte('created_at', filters.dateFrom.toISOString());
-    if (filters?.dateTo) query = query.lte('created_at', filters.dateTo.toISOString());
+    if (filters?.userId) query = query.eq("user_id", filters.userId);
+    if (filters?.clinicId) query = query.eq("clinic_id", filters.clinicId);
+    if (filters?.action) query = query.eq("action", filters.action);
+    if (filters?.status) query = query.eq("status", filters.status);
+    if (filters?.riskLevel) query = query.eq("risk_level", filters.riskLevel);
+    if (filters?.dateFrom)
+      query = query.gte("created_at", filters.dateFrom.toISOString());
+    if (filters?.dateTo)
+      query = query.lte("created_at", filters.dateTo.toISOString());
     if (filters?.searchTerm) {
       query = query.or(
         `resource.ilike.%${filters.searchTerm}%,additional_info.ilike.%${filters.searchTerm}%`,
@@ -82,7 +89,7 @@ export class SupabaseGovernanceService implements GovernanceService {
 
     if (error) throw new Error(`Failed to get audit trail: ${error.message}`);
 
-    const entries = data?.map(item => this.mapAuditTrailFromDb(item)) || [];
+    const entries = data?.map((item) => this.mapAuditTrailFromDb(item)) || [];
 
     return {
       entries,
@@ -92,27 +99,29 @@ export class SupabaseGovernanceService implements GovernanceService {
   } // KPI Metrics Methods
   async getKPIMetrics(): Promise<KPIMetric[]> {
     const { data, error } = await this.supabase
-      .from('kpi_metrics')
-      .select('*')
-      .eq('status', 'ACTIVE')
-      .order('category', { ascending: true });
+      .from("kpi_metrics")
+      .select("*")
+      .eq("status", "ACTIVE")
+      .order("category", { ascending: true });
 
     if (error) throw new Error(`Failed to get KPI metrics: ${error.message}`);
 
-    return data?.map(item => this.mapKPIMetricFromDb(item)) || [];
+    return data?.map((item) => this.mapKPIMetricFromDb(item)) || [];
   }
 
   async updateKPIMetric(update: UpdateKPIMetric): Promise<KPIMetric> {
     const updateData: Record<string, unknown> = {};
-    if (update.currentValue !== undefined) updateData.current_value = update.currentValue;
-    if (update.targetValue !== undefined) updateData.target_value = update.targetValue;
+    if (update.currentValue !== undefined)
+      updateData.current_value = update.currentValue;
+    if (update.targetValue !== undefined)
+      updateData.target_value = update.targetValue;
     if (update.threshold !== undefined) updateData.threshold = update.threshold;
     if (update.status !== undefined) updateData.status = update.status;
 
     const { data, error } = await this.supabase
-      .from('kpi_metrics')
+      .from("kpi_metrics")
       .update(updateData)
-      .eq('id', update.id)
+      .eq("id", update.id)
       .select()
       .single();
 
@@ -124,14 +133,15 @@ export class SupabaseGovernanceService implements GovernanceService {
   // Compliance Status Methods
   async getComplianceStatus(clinicId: string): Promise<ComplianceStatus[]> {
     const { data, error } = await this.supabase
-      .from('compliance_status')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .order('framework', { ascending: true });
+      .from("compliance_status")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .order("framework", { ascending: true });
 
-    if (error) throw new Error(`Failed to get compliance status: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to get compliance status: ${error.message}`);
 
-    return data?.map(item => this.mapComplianceStatusFromDb(item)) || [];
+    return data?.map((item) => this.mapComplianceStatusFromDb(item)) || [];
   }
 
   async updateComplianceStatus(
@@ -141,55 +151,65 @@ export class SupabaseGovernanceService implements GovernanceService {
     const updateData: Record<string, unknown> = {};
     if (updates.score !== undefined) updateData.score = updates.score;
     if (updates.status !== undefined) updateData.status = updates.status;
-    if (updates.violations !== undefined) updateData.violations = updates.violations;
-    if (updates.lastAudit !== undefined) updateData.last_audit = updates.lastAudit;
-    if (updates.nextAudit !== undefined) updateData.next_audit = updates.nextAudit;
+    if (updates.violations !== undefined)
+      updateData.violations = updates.violations;
+    if (updates.lastAudit !== undefined)
+      updateData.last_audit = updates.lastAudit;
+    if (updates.nextAudit !== undefined)
+      updateData.next_audit = updates.nextAudit;
     if (updates.details !== undefined) updateData.details = updates.details;
 
     const { data, error } = await this.supabase
-      .from('compliance_status')
+      .from("compliance_status")
       .update(updateData)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to update compliance status: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to update compliance status: ${error.message}`);
 
     return this.mapComplianceStatusFromDb(data);
   } // Risk Assessment Methods
   async getRiskAssessments(clinicId: string): Promise<RiskAssessment[]> {
     const { data, error } = await this.supabase
-      .from('risk_assessments')
-      .select('*')
-      .eq('clinic_id', clinicId)
-      .order('severity', { ascending: false });
+      .from("risk_assessments")
+      .select("*")
+      .eq("clinic_id", clinicId)
+      .order("severity", { ascending: false });
 
-    if (error) throw new Error(`Failed to get risk assessments: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to get risk assessments: ${error.message}`);
 
-    return data?.map(item => this.mapRiskAssessmentFromDb(item)) || [];
+    return data?.map((item) => this.mapRiskAssessmentFromDb(item)) || [];
   }
 
-  async createRiskAssessment(assessment: CreateRiskAssessment): Promise<RiskAssessment> {
+  async createRiskAssessment(
+    assessment: CreateRiskAssessment,
+  ): Promise<RiskAssessment> {
     const { data, error } = await this.supabase
-      .from('risk_assessments')
-      .insert([{
-        clinic_id: assessment.clinicId,
-        category: assessment.category,
-        title: assessment.title,
-        description: assessment.description,
-        severity: assessment.severity,
-        likelihood: assessment.likelihood,
-        impact: assessment.impact,
-        status: assessment.status || 'Open',
-        mitigation: assessment.mitigation,
-        owner: assessment.owner,
-        due_date: assessment.dueDate,
-        metadata: assessment.metadata,
-      }])
+      .from("risk_assessments")
+      .insert([
+        {
+          clinic_id: assessment.clinicId,
+          category: assessment.category,
+          title: assessment.title,
+          description: assessment.description,
+          severity: assessment.severity,
+          likelihood: assessment.likelihood,
+          impact: assessment.impact,
+          status: assessment.status || "Open",
+          mitigation: assessment.mitigation,
+          owner: assessment.owner,
+          due_date: assessment.dueDate,
+          metadata: assessment.metadata,
+        },
+      ])
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to create risk assessment: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to create risk assessment: ${error.message}`);
 
     return this.mapRiskAssessmentFromDb(data);
   }
@@ -197,14 +217,15 @@ export class SupabaseGovernanceService implements GovernanceService {
   // AI Governance Methods
   async getAIGovernanceMetrics(): Promise<AIGovernanceMetric[]> {
     const { data, error } = await this.supabase
-      .from('ai_governance_metrics')
-      .select('*')
-      .eq('status', 'ACTIVE')
-      .order('model_name', { ascending: true });
+      .from("ai_governance_metrics")
+      .select("*")
+      .eq("status", "ACTIVE")
+      .order("model_name", { ascending: true });
 
-    if (error) throw new Error(`Failed to get AI governance metrics: ${error.message}`);
+    if (error)
+      throw new Error(`Failed to get AI governance metrics: ${error.message}`);
 
-    return data?.map(item => this.mapAIGovernanceFromDb(item)) || [];
+    return data?.map((item) => this.mapAIGovernanceFromDb(item)) || [];
   }
 
   async updateAIGovernanceMetric(
@@ -215,8 +236,10 @@ export class SupabaseGovernanceService implements GovernanceService {
     if (updates.hallucinationRate !== undefined) {
       updateData.hallucination_rate = updates.hallucinationRate;
     }
-    if (updates.accuracyScore !== undefined) updateData.accuracy_score = updates.accuracyScore;
-    if (updates.biasScore !== undefined) updateData.bias_score = updates.biasScore;
+    if (updates.accuracyScore !== undefined)
+      updateData.accuracy_score = updates.accuracyScore;
+    if (updates.biasScore !== undefined)
+      updateData.bias_score = updates.biasScore;
     if (updates.complianceScore !== undefined) {
       updateData.compliance_score = updates.complianceScore;
     }
@@ -226,48 +249,58 @@ export class SupabaseGovernanceService implements GovernanceService {
     if (updates.averageResponseTime !== undefined) {
       updateData.average_response_time = updates.averageResponseTime;
     }
-    if (updates.errorRate !== undefined) updateData.error_rate = updates.errorRate;
+    if (updates.errorRate !== undefined)
+      updateData.error_rate = updates.errorRate;
     if (updates.status !== undefined) updateData.status = updates.status;
 
     const { data, error } = await this.supabase
-      .from('ai_governance_metrics')
+      .from("ai_governance_metrics")
       .update(updateData)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
-    if (error) throw new Error(`Failed to update AI governance metric: ${error.message}`);
+    if (error)
+      throw new Error(
+        `Failed to update AI governance metric: ${error.message}`,
+      );
 
     return this.mapAIGovernanceFromDb(data);
   } // Policy Management Methods
   async getPolicies(): Promise<PolicyManagement[]> {
     const { data, error } = await this.supabase
-      .from('policy_management')
-      .select('*')
-      .in('status', ['ACTIVE', 'UNDER_REVIEW'])
-      .order('framework', { ascending: true });
+      .from("policy_management")
+      .select("*")
+      .in("status", ["ACTIVE", "UNDER_REVIEW"])
+      .order("framework", { ascending: true });
 
     if (error) throw new Error(`Failed to get policies: ${error.message}`);
 
-    return data?.map(item => this.mapPolicyFromDb(item)) || [];
+    return data?.map((item) => this.mapPolicyFromDb(item)) || [];
   }
 
-  async updatePolicy(id: string, updates: Partial<PolicyManagement>): Promise<PolicyManagement> {
+  async updatePolicy(
+    id: string,
+    updates: Partial<PolicyManagement>,
+  ): Promise<PolicyManagement> {
     const updateData: Record<string, unknown> = {};
     if (updates.status !== undefined) updateData.status = updates.status;
     if (updates.enforcementRate !== undefined) {
       updateData.enforcement_rate = updates.enforcementRate;
     }
-    if (updates.violationCount !== undefined) updateData.violation_count = updates.violationCount;
-    if (updates.lastReview !== undefined) updateData.last_review = updates.lastReview;
-    if (updates.nextReview !== undefined) updateData.next_review = updates.nextReview;
+    if (updates.violationCount !== undefined)
+      updateData.violation_count = updates.violationCount;
+    if (updates.lastReview !== undefined)
+      updateData.last_review = updates.lastReview;
+    if (updates.nextReview !== undefined)
+      updateData.next_review = updates.nextReview;
     if (updates.content !== undefined) updateData.content = updates.content;
     if (updates.metadata !== undefined) updateData.metadata = updates.metadata;
 
     const { data, error } = await this.supabase
-      .from('policy_management')
+      .from("policy_management")
       .update(updateData)
-      .eq('id', id)
+      .eq("id", id)
       .select()
       .single();
 
@@ -277,40 +310,47 @@ export class SupabaseGovernanceService implements GovernanceService {
   }
 
   // Escalation Workflow Methods
-  async getEscalations(filters?: EscalationFilters): Promise<EscalationWorkflow[]> {
+  async getEscalations(
+    filters?: EscalationFilters,
+  ): Promise<EscalationWorkflow[]> {
     let query = this.supabase
-      .from('escalation_workflows')
-      .select('*')
-      .order('priority', { ascending: false })
-      .order('created_at', { ascending: false });
+      .from("escalation_workflows")
+      .select("*")
+      .order("priority", { ascending: false })
+      .order("created_at", { ascending: false });
 
-    if (filters?.status) query = query.eq('status', filters.status);
-    if (filters?.priority) query = query.eq('priority', filters.priority);
-    if (filters?.assignedTo) query = query.eq('assigned_to', filters.assignedTo);
-    if (filters?.category) query = query.eq('category', filters.category);
+    if (filters?.status) query = query.eq("status", filters.status);
+    if (filters?.priority) query = query.eq("priority", filters.priority);
+    if (filters?.assignedTo)
+      query = query.eq("assigned_to", filters.assignedTo);
+    if (filters?.category) query = query.eq("category", filters.category);
 
     const { data, error } = await query.limit(500);
 
     if (error) throw new Error(`Failed to get escalations: ${error.message}`);
 
-    return data?.map(item => this.mapEscalationFromDb(item)) || [];
+    return data?.map((item) => this.mapEscalationFromDb(item)) || [];
   }
-  async createEscalation(escalation: CreateEscalationWorkflow): Promise<EscalationWorkflow> {
+  async createEscalation(
+    escalation: CreateEscalationWorkflow,
+  ): Promise<EscalationWorkflow> {
     const { data, error } = await this.supabase
-      .from('escalation_workflows')
-      .insert([{
-        user_id: escalation.userId,
-        title: escalation.title,
-        description: escalation.description,
-        category: escalation.category,
-        source: escalation.source,
-        priority: escalation.priority,
-        status: escalation.status || 'OPEN',
-        assigned_to: escalation.assignedTo,
-        deadline: escalation.deadline,
-        notes: escalation.notes,
-        metadata: escalation.metadata,
-      }])
+      .from("escalation_workflows")
+      .insert([
+        {
+          user_id: escalation.userId,
+          title: escalation.title,
+          description: escalation.description,
+          category: escalation.category,
+          source: escalation.source,
+          priority: escalation.priority,
+          status: escalation.status || "OPEN",
+          assigned_to: escalation.assignedTo,
+          deadline: escalation.deadline,
+          notes: escalation.notes,
+          metadata: escalation.metadata,
+        },
+      ])
       .select()
       .single();
 
@@ -319,22 +359,29 @@ export class SupabaseGovernanceService implements GovernanceService {
     return this.mapEscalationFromDb(data);
   }
 
-  async updateEscalation(update: UpdateEscalationWorkflow): Promise<EscalationWorkflow> {
+  async updateEscalation(
+    update: UpdateEscalationWorkflow,
+  ): Promise<EscalationWorkflow> {
     const updateData: Record<string, unknown> = {};
     if (update.status !== undefined) updateData.status = update.status;
-    if (update.assignedTo !== undefined) updateData.assigned_to = update.assignedTo;
+    if (update.assignedTo !== undefined)
+      updateData.assigned_to = update.assignedTo;
     if (update.deadline !== undefined) updateData.deadline = update.deadline;
-    if (update.escalatedAt !== undefined) updateData.escalated_at = update.escalatedAt;
-    if (update.resolvedAt !== undefined) updateData.resolved_at = update.resolvedAt;
-    if (update.responseTime !== undefined) updateData.response_time = update.responseTime;
-    if (update.resolutionTime !== undefined) updateData.resolution_time = update.resolutionTime;
+    if (update.escalatedAt !== undefined)
+      updateData.escalated_at = update.escalatedAt;
+    if (update.resolvedAt !== undefined)
+      updateData.resolved_at = update.resolvedAt;
+    if (update.responseTime !== undefined)
+      updateData.response_time = update.responseTime;
+    if (update.resolutionTime !== undefined)
+      updateData.resolution_time = update.resolutionTime;
     if (update.notes !== undefined) updateData.notes = update.notes;
     if (update.metadata !== undefined) updateData.metadata = update.metadata;
 
     const { data, error } = await this.supabase
-      .from('escalation_workflows')
+      .from("escalation_workflows")
       .update(updateData)
-      .eq('id', update.id)
+      .eq("id", update.id)
       .select()
       .single();
 
@@ -432,7 +479,9 @@ export class SupabaseGovernanceService implements GovernanceService {
         ? parseFloat(data.average_response_time)
         : undefined,
       errorRate: parseFloat(data.error_rate),
-      lastTrainingDate: data.last_training_date ? new Date(data.last_training_date) : undefined,
+      lastTrainingDate: data.last_training_date
+        ? new Date(data.last_training_date)
+        : undefined,
       modelSize: data.model_size,
       metadata: data.metadata,
       createdAt: new Date(data.created_at),
@@ -486,14 +535,17 @@ export class SupabaseGovernanceService implements GovernanceService {
   async getKPIOverviewData(): Promise<KPIOverviewData> {
     const metrics = await this.getKPIMetrics();
     const totalKPIs = metrics.length;
-    const normalizedKPIs = metrics.filter(m => m.status === 'ACTIVE').length;
-    const criticalKPIs = metrics.filter(m => m.threshold && m.currentValue < m.threshold).length;
+    const normalizedKPIs = metrics.filter((m) => m.status === "ACTIVE").length;
+    const criticalKPIs = metrics.filter(
+      (m) => m.threshold && m.currentValue < m.threshold,
+    ).length;
 
     // Calculate aggregated scores
-    const qualityMetric = metrics.find(m => m.name === 'Data Quality Score');
+    const qualityMetric = metrics.find((m) => m.name === "Data Quality Score");
     const dataQualityScore = qualityMetric?.currentValue || 0;
 
-    const normalizationRate = totalKPIs > 0 ? (normalizedKPIs / totalKPIs) * 100 : 0;
+    const normalizationRate =
+      totalKPIs > 0 ? (normalizedKPIs / totalKPIs) * 100 : 0;
 
     return {
       totalKPIs,
@@ -502,48 +554,55 @@ export class SupabaseGovernanceService implements GovernanceService {
       dataQualityScore,
       criticalKPIs,
       trends: {
-        normalizationTrend: '+2.3%',
-        qualityTrend: '+0.8%',
-        criticalTrend: criticalKPIs > 0 ? `-${criticalKPIs}` : '0',
+        normalizationTrend: "+2.3%",
+        qualityTrend: "+0.8%",
+        criticalTrend: criticalKPIs > 0 ? `-${criticalKPIs}` : "0",
       },
     };
   }
 
-  async getComplianceStatusData(clinicId: string): Promise<ComplianceStatusData> {
+  async getComplianceStatusData(
+    clinicId: string,
+  ): Promise<ComplianceStatusData> {
     const statuses = await this.getComplianceStatus(clinicId);
 
-    const hipaaCompliance = statuses.find(s => s.framework === 'HIPAA');
-    const lgpdCompliance = statuses.find(s => s.framework === 'LGPD');
+    const hipaaCompliance = statuses.find((s) => s.framework === "HIPAA");
+    const lgpdCompliance = statuses.find((s) => s.framework === "LGPD");
 
-    const overallScore = statuses.length > 0
-      ? statuses.reduce((sum, s) => sum + s.score, 0) / statuses.length
-      : 0;
+    const overallScore =
+      statuses.length > 0
+        ? statuses.reduce((sum, s) => sum + s.score, 0) / statuses.length
+        : 0;
 
     const criticalViolations = statuses.reduce(
-      (sum, s) => s.status === 'CRITICAL' ? sum + s.violations : sum,
+      (sum, s) => (s.status === "CRITICAL" ? sum + s.violations : sum),
       0,
     );
 
     return {
       hipaaCompliance: {
         score: hipaaCompliance?.score || 0,
-        status: hipaaCompliance?.status || 'UNDER_REVIEW',
+        status: hipaaCompliance?.status || "UNDER_REVIEW",
         violations: hipaaCompliance?.violations || 0,
-        lastAudit: hipaaCompliance?.lastAudit?.toISOString().split('T')[0] || 'Never',
+        lastAudit:
+          hipaaCompliance?.lastAudit?.toISOString().split("T")[0] || "Never",
       },
       lgpdCompliance: {
         score: lgpdCompliance?.score || 0,
-        status: lgpdCompliance?.status || 'UNDER_REVIEW',
+        status: lgpdCompliance?.status || "UNDER_REVIEW",
         violations: lgpdCompliance?.violations || 0,
-        lastAudit: lgpdCompliance?.lastAudit?.toISOString().split('T')[0] || 'Never',
+        lastAudit:
+          lgpdCompliance?.lastAudit?.toISOString().split("T")[0] || "Never",
       },
       overallScore,
       criticalViolations,
-      upcomingDeadlines: statuses.filter(s =>
-        s.nextAudit && s.nextAudit > new Date()
-        && s.nextAudit < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+      upcomingDeadlines: statuses.filter(
+        (s) =>
+          s.nextAudit &&
+          s.nextAudit > new Date() &&
+          s.nextAudit < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       ).length,
-      auditStatus: criticalViolations > 0 ? 'critical' : 'current',
+      auditStatus: criticalViolations > 0 ? "critical" : "current",
     };
   }
 }

@@ -14,26 +14,26 @@ export {
   prisma,
   supabase,
   supabaseBrowser,
-} from './client.js';
+} from "./client.js";
 
 // Import prisma for internal use
-import { prisma } from './client.js';
+import { prisma } from "./client.js";
 
 // Export Database type from Supabase types
-export type { Database } from './types/supabase.js';
+export type { Database } from "./types/supabase.js";
 
 // Base service class and utilities
-export type { AuditLogData } from './services/base.service';
-export { BaseService } from './services/base.service.js';
+export type { AuditLogData } from "./services/base.service";
+export { BaseService } from "./services/base.service.js";
 
 // LGPD Consent and Audit Services
-export { ConsentService, AuditService } from './services/index.js';
-export type { 
-  ConsentRequest, 
-  ConsentRecord, 
-  AuditLogRequest, 
-  ComplianceCheck 
-} from './services/index.js';
+export { ConsentService, AuditService } from "./services/index.js";
+export type {
+  ConsentRequest,
+  ConsentRecord,
+  AuditLogRequest,
+  ComplianceCheck,
+} from "./services/index.js";
 
 // Re-export Prisma types for type sharing across packages
 export type {
@@ -43,7 +43,7 @@ export type {
   Patient,
   Professional,
   User,
-} from '@prisma/client';
+} from "@prisma/client";
 
 // Agent schemas and types
 export {
@@ -71,18 +71,18 @@ export {
   type AgentContext,
   type AgentType,
   AgentErrorType,
-} from './schema/agent.js';
+} from "./schema/agent.js";
 
 // Healthcare-specific utilities
 
 /**
  * Validates a Brazilian CPF (Cadastro de Pessoas Físicas) number
- * 
+ *
  * @param cpf - The CPF string to validate
  * @returns True if the CPF is valid, false otherwise
  */
 export const validateCPF = (cpf: string): boolean => {
-  cpf = cpf.replace(/[^\d]/g, '');
+  cpf = cpf.replace(/[^\d]/g, "");
 
   if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
     return false;
@@ -109,7 +109,7 @@ export const validateCPF = (cpf: string): boolean => {
 
 /**
  * Sanitizes text for AI processing by removing personally identifiable information
- * 
+ *
  * @param text - The input text to sanitize
  * @returns Text with PII removed and replaced with placeholders
  */
@@ -117,30 +117,35 @@ export const sanitizeForAI = (text: string): string => {
   if (!text) return text;
 
   // Remove CPF patterns (Brazilian tax ID)
-  let sanitized = text.replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, '[CPF_REMOVED]');
+  let sanitized = text.replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, "[CPF_REMOVED]");
 
   // Remove phone patterns
-  sanitized = sanitized.replace(/\(\d{2}\)\s*\d{4,5}-\d{4}/g, '[PHONE_REMOVED]');
+  sanitized = sanitized.replace(
+    /\(\d{2}\)\s*\d{4,5}-\d{4}/g,
+    "[PHONE_REMOVED]",
+  );
 
   // Remove email patterns
   sanitized = sanitized.replace(
     /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/g,
-    '[EMAIL_REMOVED]',
+    "[EMAIL_REMOVED]",
   );
 
   // Remove RG patterns (Brazilian ID)
-  sanitized = sanitized.replace(/\d{1,2}\.\d{3}\.\d{3}-\d{1}/g, '[RG_REMOVED]');
+  sanitized = sanitized.replace(/\d{1,2}\.\d{3}\.\d{3}-\d{1}/g, "[RG_REMOVED]");
 
   return sanitized;
 };
 
 /**
  * Calculates the risk of a patient not showing up for an appointment
- * 
+ *
  * @param appointmentId - The ID of the appointment to analyze
  * @returns Risk score from 0-100 indicating likelihood of no-show
  */
-export const calculateNoShowRisk = async (appointmentId: string): Promise<number> => {
+export const calculateNoShowRisk = async (
+  appointmentId: string,
+): Promise<number> => {
   const appointment = await prisma.appointment.findUnique({
     where: { id: appointmentId },
     include: {
@@ -148,8 +153,10 @@ export const calculateNoShowRisk = async (appointmentId: string): Promise<number
         include: {
           appointments: {
             where: {
-              status: 'no_show',
-              createdAt: { gte: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000) }, // Last 6 months
+              status: "no_show",
+              createdAt: {
+                gte: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000),
+              }, // Last 6 months
             },
           },
         },
@@ -178,8 +185,8 @@ export const calculateNoShowRisk = async (appointmentId: string): Promise<number
   }
 
   // Short notice appointments (+15 points)
-  const hoursUntilAppointment = (new Date(appointment.startTime).getTime() - Date.now())
-    / (1000 * 60 * 60);
+  const hoursUntilAppointment =
+    (new Date(appointment.startTime).getTime() - Date.now()) / (1000 * 60 * 60);
   if (hoursUntilAppointment < 24) {
     riskScore += 15;
   }
@@ -199,22 +206,18 @@ export const calculateNoShowRisk = async (appointmentId: string): Promise<number
 
 /**
  * Retrieves database health and usage metrics
- * 
+ *
  * @returns Object containing counts of patients, appointments, professionals, and clinics
  */
 export const getDatabaseMetrics = async () => {
   try {
-    const [
-      patientCount,
-      appointmentCount,
-      professionalCount,
-      clinicCount,
-    ] = await Promise.all([
-      prisma.patient.count(),
-      prisma.appointment.count(),
-      prisma.professional.count(),
-      prisma.clinic.count(),
-    ]);
+    const [patientCount, appointmentCount, professionalCount, clinicCount] =
+      await Promise.all([
+        prisma.patient.count(),
+        prisma.appointment.count(),
+        prisma.professional.count(),
+        prisma.clinic.count(),
+      ]);
 
     return {
       patients: patientCount,
@@ -232,14 +235,14 @@ export const getDatabaseMetrics = async () => {
 
 /**
  * Gets the current status of database connection pools
- * 
+ *
  * @returns Object containing connection pool status information
  */
 export const getConnectionPoolStatus = () => {
   // This would be implemented based on your specific Prisma setup
   return {
-    active: 'N/A', // Would show active connections
-    idle: 'N/A', // Would show idle connections
-    total: 'N/A', // Would show total connections
+    active: "N/A", // Would show active connections
+    idle: "N/A", // Would show idle connections
+    total: "N/A", // Would show total connections
   };
 };

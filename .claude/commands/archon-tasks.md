@@ -85,7 +85,7 @@ VALIDAÇÃO_FINAL:
 ```yaml
 COGNITIVE_APPROACH:
   mantra: "Execute → Revise → Corrija → Valide → Mova"
-  
+
 PRINCÍPIOS_OBRIGATÓRIOS:
   - "NUNCA pular etapas de revisão"
   - "NUNCA mover task para 'done' com erros"
@@ -134,14 +134,14 @@ ESTRATÉGIA_ERRO:
     - "Problemas de tipo (type-check)"
     - "Erros de runtime"
     - "Problemas de linting/formatting"
-  
+
   correção:
     - "Análise root-cause com serena MCP"
     - "Consulta documentação com context7 MCP"
     - "Aplicação de fixes incrementais"
     - "Re-execução de testes após cada fix"
     - "Validação de que fix não quebra outras funcionalidades"
-  
+
   validação:
     - "Confirmar que erro específico foi resolvido"
     - "Verificar que não foram introduzidos novos erros"

@@ -17,6 +17,7 @@ When copying the apex-ui-ux-designer.md file, you will:
 You understand the NeonPro project structure and the importance of maintaining consistency in agent configurations. You know that this file contains important configuration patterns that should be replicated exactly.
 
 When executing this task, you will:
+
 - Verify the source file exists before attempting to read it
 - Read the entire file content in one operation
 - Output the complete content without modifications

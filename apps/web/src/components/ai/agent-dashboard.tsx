@@ -1,9 +1,9 @@
 /**
  * AI Agent Dashboard Component
- * 
+ *
  * Comprehensive dashboard for managing AI agent interactions
  * Integrates agent selection, chat interface, and knowledge base
- * 
+ *
  * Features:
  * - Multi-agent support (Client, Financial, Appointment)
  * - Real-time chat with streaming responses
@@ -12,37 +12,41 @@
  * - LGPD compliance
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Bot, 
-  Users, 
-  DollarSign, 
-  Calendar, 
-  BarChart3, 
-  Settings, 
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Separator } from "@/components/ui/separator";
+import {
+  Bot,
+  Users,
+  DollarSign,
+  Calendar,
+  BarChart3,
+  Settings,
   BookOpen,
   MessageSquare,
   TrendingUp,
   Clock,
   CheckCircle,
   AlertTriangle,
-  Database
-} from 'lucide-react';
+  Database,
+} from "lucide-react";
 
-import { AgentSelector } from './agent-selector';
-import { AgentChat } from './agent-chat';
-import { KnowledgeBaseManager } from './knowledge-base';
-import { useAgentSessionManager, useAgentAnalytics, useKnowledgeBaseManager } from '@/trpc/agent';
-import { AgentType } from '@/types/ai-agent';
-import { formatDateTime } from '@/utils/brazilian-formatters';
+import { AgentSelector } from "./agent-selector";
+import { AgentChat } from "./agent-chat";
+import { KnowledgeBaseManager } from "./knowledge-base";
+import {
+  useAgentSessionManager,
+  useAgentAnalytics,
+  useKnowledgeBaseManager,
+} from "@/trpc/agent";
+import { AgentType } from "@/types/ai-agent";
+import { formatDateTime } from "@/utils/brazilian-formatters";
 
 interface AgentDashboardProps {
   patientId?: string;
@@ -55,17 +59,17 @@ export function AgentDashboard({
   healthcareProfessionalId,
   clinicId,
 }: AgentDashboardProps) {
-  const [selectedAgent, setSelectedAgent] = useState<AgentType>('client');
-  const [activeTab, setActiveTab] = useState('chat');
-  
-  const { 
-    currentSessionId, 
-    startNewSession, 
+  const [selectedAgent, setSelectedAgent] = useState<AgentType>("client");
+  const [activeTab, setActiveTab] = useState("chat");
+
+  const {
+    currentSessionId,
+    startNewSession,
     endCurrentSession,
     isCreating,
-    isArchiving 
+    isArchiving,
   } = useAgentSessionManager();
-  
+
   const { data: analytics } = useAgentAnalytics();
   const { searchEntries, isSearching } = useKnowledgeBaseManager();
 
@@ -74,7 +78,7 @@ export function AgentDashboard({
     if (selectedAgent && !currentSessionId) {
       startNewSession({
         agent_type: selectedAgent,
-        initial_context: patientId ? 'patient_context' : 'general',
+        initial_context: patientId ? "patient_context" : "general",
         metadata: {
           patientId,
           healthcareProfessionalId,
@@ -82,13 +86,20 @@ export function AgentDashboard({
         },
       });
     }
-  }, [selectedAgent, currentSessionId, startNewSession, patientId, healthcareProfessionalId, clinicId]);
+  }, [
+    selectedAgent,
+    currentSessionId,
+    startNewSession,
+    patientId,
+    healthcareProfessionalId,
+    clinicId,
+  ]);
 
   // End session when switching agents
   useEffect(() => {
     return () => {
       if (currentSessionId) {
-        endCurrentSession('User switched agents');
+        endCurrentSession("User switched agents");
       }
     };
   }, [currentSessionId, endCurrentSession]);
@@ -99,9 +110,9 @@ export function AgentDashboard({
 
   const getAgentStats = (agentType: AgentType) => {
     const agentAnalytics = analytics?.data?.agent_usage?.find(
-      usage => usage.agent_type === agentType
+      (usage) => usage.agent_type === agentType,
     );
-    
+
     return {
       sessions: agentAnalytics?.session_count || 0,
       messages: agentAnalytics?.message_count || 0,
@@ -122,7 +133,7 @@ export function AgentDashboard({
             Gerencie interações com assistentes inteligentes especializados
           </p>
         </div>
-        
+
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="flex items-center gap-1">
             <Database className="h-3 w-3" />
@@ -151,47 +162,55 @@ export function AgentDashboard({
             onAgentSelect={handleAgentSelect}
             disabled={isCreating || isArchiving}
           />
-          
+
           {/* Quick Stats */}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
             <Card className="p-4">
               <div className="flex items-center gap-2">
                 <MessageSquare className="h-4 w-4 text-blue-500" />
                 <div>
-                  <p className="text-2xl font-bold">{selectedAgentStats.sessions}</p>
+                  <p className="text-2xl font-bold">
+                    {selectedAgentStats.sessions}
+                  </p>
                   <p className="text-xs text-muted-foreground">Sessões</p>
                 </div>
               </div>
             </Card>
-            
+
             <Card className="p-4">
               <div className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4 text-green-500" />
                 <div>
-                  <p className="text-2xl font-bold">{selectedAgentStats.messages}</p>
+                  <p className="text-2xl font-bold">
+                    {selectedAgentStats.messages}
+                  </p>
                   <p className="text-xs text-muted-foreground">Mensagens</p>
                 </div>
               </div>
             </Card>
-            
+
             <Card className="p-4">
               <div className="flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-purple-500" />
                 <div>
                   <p className="text-2xl font-bold">
-                    {selectedAgentStats.satisfaction > 0 ? selectedAgentStats.satisfaction.toFixed(1) : 'N/A'}
+                    {selectedAgentStats.satisfaction > 0
+                      ? selectedAgentStats.satisfaction.toFixed(1)
+                      : "N/A"}
                   </p>
                   <p className="text-xs text-muted-foreground">Satisfação</p>
                 </div>
               </div>
             </Card>
-            
+
             <Card className="p-4">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 text-orange-500" />
                 <div>
                   <p className="text-2xl font-bold">
-                    {selectedAgentStats.avgDuration > 0 ? `${Math.round(selectedAgentStats.avgDuration / 60)}min` : 'N/A'}
+                    {selectedAgentStats.avgDuration > 0
+                      ? `${Math.round(selectedAgentStats.avgDuration / 60)}min`
+                      : "N/A"}
                   </p>
                   <p className="text-xs text-muted-foreground">Duração Média</p>
                 </div>
@@ -245,28 +264,34 @@ export function AgentDashboard({
                   <div className="flex items-center justify-between">
                     <span>Tempo Médio de Resposta</span>
                     <span className="font-mono">
-                      {analytics?.data?.average_response_time?.toFixed(2) || '0.00'}s
+                      {analytics?.data?.average_response_time?.toFixed(2) ||
+                        "0.00"}
+                      s
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <span>Total de Sessões</span>
                     <span className="font-mono">
                       {analytics?.data?.total_sessions || 0}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <span>Total de Mensagens</span>
                     <span className="font-mono">
                       {analytics?.data?.total_messages || 0}
                     </span>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <span>Taxa de Erro</span>
                     <span className="font-mono">
-                      {((1 - (analytics?.data?.user_satisfaction || 0) / 5) * 100).toFixed(1)}%
+                      {(
+                        (1 - (analytics?.data?.user_satisfaction || 0) / 5) *
+                        100
+                      ).toFixed(1)}
+                      %
                     </span>
                   </div>
                 </div>
@@ -282,7 +307,10 @@ export function AgentDashboard({
                 <ScrollArea className="max-h-64">
                   <div className="space-y-2">
                     {analytics?.data?.top_queries?.map((query, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 rounded bg-muted">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-2 rounded bg-muted"
+                      >
                         <span className="text-sm">{query.query}</span>
                         <Badge variant="outline">{query.count}</Badge>
                       </div>
@@ -312,10 +340,10 @@ export function AgentDashboard({
                         </Badge>
                       </div>
                       <div className="w-full bg-muted rounded-full h-2">
-                        <div 
+                        <div
                           className="bg-primary h-2 rounded-full"
-                          style={{ 
-                            width: `${(usage.session_count / Math.max(...analytics.data.agent_usage.map(u => u.session_count))) * 100}%` 
+                          style={{
+                            width: `${(usage.session_count / Math.max(...analytics.data.agent_usage.map((u) => u.session_count))) * 100}%`,
                           }}
                         />
                       </div>
@@ -341,19 +369,19 @@ export function AgentDashboard({
                     <span>API de Agentes</span>
                     <Badge variant="secondary">Online</Badge>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
                     <span>Base de Conhecimento</span>
                     <Badge variant="secondary">Ativa</Badge>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-500" />
                     <span>LGPD Compliance</span>
                     <Badge variant="secondary">OK</Badge>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     <AlertTriangle className="h-4 w-4 text-yellow-500" />
                     <span>Entrada de Voz</span>
@@ -383,7 +411,7 @@ export function AgentDashboard({
                     </div>
                     <Badge variant="secondary">GPT-4</Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Temperatura</p>
@@ -393,7 +421,7 @@ export function AgentDashboard({
                     </div>
                     <Badge variant="secondary">0.3</Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Tokens Máximos</p>
@@ -403,9 +431,9 @@ export function AgentDashboard({
                     </div>
                     <Badge variant="secondary">4000</Badge>
                   </div>
-                  
+
                   <Separator />
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Compliance LGPD</p>
@@ -417,7 +445,7 @@ export function AgentDashboard({
                       Ativo
                     </Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Criptografia</p>
@@ -449,7 +477,7 @@ export function AgentDashboard({
                     </div>
                     <Badge variant="secondary">30 dias</Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Anonimização</p>
@@ -459,7 +487,7 @@ export function AgentDashboard({
                     </div>
                     <Badge variant="secondary">Estrito</Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Auditoria</p>
@@ -471,9 +499,9 @@ export function AgentDashboard({
                       Ativo
                     </Badge>
                   </div>
-                  
+
                   <Separator />
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Consentimento</p>
@@ -485,7 +513,7 @@ export function AgentDashboard({
                       Obrigatório
                     </Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Localização</p>
@@ -519,7 +547,7 @@ export function AgentDashboard({
                       Ativo
                     </Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Cache</p>
@@ -531,7 +559,7 @@ export function AgentDashboard({
                       Ativo
                     </Badge>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Rate Limiting</p>
@@ -558,27 +586,29 @@ export function AgentDashboard({
                     <div>
                       <p className="font-medium">Sessão Atual</p>
                       <p className="text-sm text-muted-foreground">
-                        {currentSessionId ? 'Ativa' : 'Inativa'}
+                        {currentSessionId ? "Ativa" : "Inativa"}
                       </p>
                     </div>
-                    <Badge variant={currentSessionId ? 'default' : 'secondary'}>
-                      {currentSessionId ? 'ID: ' + currentSessionId.substring(0, 8) : 'N/A'}
+                    <Badge variant={currentSessionId ? "default" : "secondary"}>
+                      {currentSessionId
+                        ? "ID: " + currentSessionId.substring(0, 8)
+                        : "N/A"}
                     </Badge>
                   </div>
-                  
+
                   {currentSessionId && (
-                    <Button 
-                      variant="outline" 
-                      onClick={() => endCurrentSession('User ended session')}
+                    <Button
+                      variant="outline"
+                      onClick={() => endCurrentSession("User ended session")}
                       disabled={isArchiving}
                       className="w-full"
                     >
                       Encerrar Sessão Atual
                     </Button>
                   )}
-                  
+
                   <Separator />
-                  
+
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="font-medium">Limpar Histórico</p>

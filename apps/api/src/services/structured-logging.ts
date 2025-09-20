@@ -5,10 +5,10 @@
 
 // Define log levels that match common logging standards
 export enum LogLevel {
-  DEBUG = 'debug',
-  INFO = 'info',
-  WARN = 'warn',
-  ERROR = 'error',
+  DEBUG = "debug",
+  INFO = "info",
+  WARN = "warn",
+  ERROR = "error",
 }
 
 // Define structured log entry interface
@@ -36,7 +36,8 @@ const HEALTHCARE_PATTERNS: Record<string, RegExp> = {
   cpf: /\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g,
   cns: /\b\d{3}\s\d{4}\s\d{4}\s\d{4}\b/g,
   crm: /\bCRM\s*\d{4,6}\b/gi,
-  patientName: /\b(patient\s+name|nome\s+do\s+paciente):\s*[A-Z][a-z]+\s+[A-Z][a-z]+\b/gi,
+  patientName:
+    /\b(patient\s+name|nome\s+do\s+paciente):\s*[A-Z][a-z]+\s+[A-Z][a-z]+\b/gi,
   medicalRecord: /\b(medical\s+record|prontuário):\s*[A-Z0-9-]+\b/gi,
   diagnosis: /\b(diagnosis|diagnóstico):\s*[^.,]+/gi,
   treatment: /\b(treatment|tratamento):\s*[^.,]+/gi,
@@ -45,14 +46,20 @@ const HEALTHCARE_PATTERNS: Record<string, RegExp> = {
 /**
  * Redacts sensitive healthcare data from log messages
  */
-function redactSensitiveData(text: string): { redacted: string; fields: string[] } {
+function redactSensitiveData(text: string): {
+  redacted: string;
+  fields: string[];
+} {
   let redactedText = text;
   const redactedFields: string[] = [];
 
   Object.entries(HEALTHCARE_PATTERNS).forEach(([field, pattern]) => {
     if (pattern.test(redactedText)) {
       redactedFields.push(field);
-      redactedText = redactedText.replace(pattern, `[REDACTED_${field.toUpperCase()}]`);
+      redactedText = redactedText.replace(
+        pattern,
+        `[REDACTED_${field.toUpperCase()}]`,
+      );
     }
   });
 
@@ -66,10 +73,10 @@ function redactMetadata(metadata: Record<string, any>): Record<string, any> {
   const redacted: Record<string, any> = {};
 
   Object.entries(metadata).forEach(([key, value]) => {
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       const { redacted: redactedValue } = redactSensitiveData(value);
       redacted[key] = redactedValue;
-    } else if (typeof value === 'object' && value !== null) {
+    } else if (typeof value === "object" && value !== null) {
       redacted[key] = redactMetadata(value);
     } else {
       redacted[key] = value;
@@ -97,7 +104,8 @@ function createLogEntry(
   } = {},
 ): LogEntry {
   // Redact sensitive data from message
-  const { redacted: redactedMessage, fields: redactedFields } = redactSensitiveData(message);
+  const { redacted: redactedMessage, fields: redactedFields } =
+    redactSensitiveData(message);
 
   // Process metadata if provided
   const processedMetadata = context.metadata
@@ -121,7 +129,9 @@ function createLogEntry(
 
   // Add error information if provided
   if (context.error) {
-    const { redacted: redactedErrorMessage } = redactSensitiveData(context.error.message);
+    const { redacted: redactedErrorMessage } = redactSensitiveData(
+      context.error.message,
+    );
     logEntry.error = {
       message: redactedErrorMessage,
       type: context.error.name,
@@ -140,14 +150,23 @@ class StructuredLogger {
   private serviceName: string;
   private serviceVersion: string;
 
-  private constructor(serviceName: string = 'api', serviceVersion: string = '1.0.0') {
+  private constructor(
+    serviceName: string = "api",
+    serviceVersion: string = "1.0.0",
+  ) {
     this.serviceName = serviceName;
     this.serviceVersion = serviceVersion;
   }
 
-  public static getInstance(serviceName?: string, serviceVersion?: string): StructuredLogger {
+  public static getInstance(
+    serviceName?: string,
+    serviceVersion?: string,
+  ): StructuredLogger {
     if (!StructuredLogger.instance) {
-      StructuredLogger.instance = new StructuredLogger(serviceName, serviceVersion);
+      StructuredLogger.instance = new StructuredLogger(
+        serviceName,
+        serviceVersion,
+      );
     }
     return StructuredLogger.instance;
   }
@@ -155,28 +174,40 @@ class StructuredLogger {
   /**
    * Logs a debug message
    */
-  public debug(message: string, context?: Parameters<typeof createLogEntry>[1]): void {
+  public debug(
+    message: string,
+    context?: Parameters<typeof createLogEntry>[1],
+  ): void {
     this.log(LogLevel.DEBUG, message, context);
   }
 
   /**
    * Logs an info message
    */
-  public info(message: string, context?: Parameters<typeof createLogEntry>[1]): void {
+  public info(
+    message: string,
+    context?: Parameters<typeof createLogEntry>[1],
+  ): void {
     this.log(LogLevel.INFO, message, context);
   }
 
   /**
    * Logs a warning message
    */
-  public warn(message: string, context?: Parameters<typeof createLogEntry>[1]): void {
+  public warn(
+    message: string,
+    context?: Parameters<typeof createLogEntry>[1],
+  ): void {
     this.log(LogLevel.WARN, message, context);
   }
 
   /**
    * Logs an error message
    */
-  public error(message: string, context?: Parameters<typeof createLogEntry>[1]): void {
+  public error(
+    message: string,
+    context?: Parameters<typeof createLogEntry>[1],
+  ): void {
     this.log(LogLevel.ERROR, message, context);
   }
 
@@ -220,7 +251,9 @@ class StructuredLogger {
   /**
    * Creates a child logger with additional context
    */
-  public child(context: Parameters<typeof createLogEntry>[1]): StructuredLogger {
+  public child(
+    context: Parameters<typeof createLogEntry>[1],
+  ): StructuredLogger {
     const childLogger = Object.create(this);
     childLogger.context = context;
     return childLogger;
@@ -228,7 +261,10 @@ class StructuredLogger {
 }
 
 // Export singleton instance
-export const structuredLogger = StructuredLogger.getInstance('neonpro-api', '1.0.0');
+export const structuredLogger = StructuredLogger.getInstance(
+  "neonpro-api",
+  "1.0.0",
+);
 
 // Export types and utilities for external use
 export type { LogEntry };

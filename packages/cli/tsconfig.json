@@ -24,12 +24,6 @@
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "dist",
-    "node_modules",
-    "__tests__"
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules", "__tests__"]
 }

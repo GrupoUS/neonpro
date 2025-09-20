@@ -67,16 +67,16 @@ class HealthcareError extends Error {
       appointmentId?: string;
       clinicId?: string;
       action?: string;
-      severity: 'low' | 'medium' | 'high' | 'critical';
+      severity: "low" | "medium" | "high" | "critical";
     },
   ) {
     super(message);
-    this.name = 'HealthcareError';
+    this.name = "HealthcareError";
   }
 }
 
 // ❌ INCORRECT - Generic error
-throw new Error('Something went wrong');
+throw new Error("Something went wrong");
 ```
 
 ## 🔧 TypeScript 5.7.2 Standards
@@ -91,16 +91,19 @@ type AppointmentId = string & { readonly __brand: unique symbol };
 
 // Utility types for sensitive data
 type SensitiveData<T> = T & { readonly __sensitive: true };
-type AuditableAction = 'create' | 'read' | 'update' | 'delete' | 'export';
+type AuditableAction = "create" | "read" | "update" | "delete" | "export";
 
 // Zod schema for runtime validation
 const PatientSchema = z.object({
   id: z.string().transform((val): PatientId => val as PatientId),
   personalInfo: z.object({
     fullName: z.string().min(2).max(100),
-    cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/).transform((val): CPF => val as CPF),
-    dateOfBirth: z.date().refine(date => date < new Date(), {
-      message: 'Data de nascimento deve ser no passado',
+    cpf: z
+      .string()
+      .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/)
+      .transform((val): CPF => val as CPF),
+    dateOfBirth: z.date().refine((date) => date < new Date(), {
+      message: "Data de nascimento deve ser no passado",
     }),
   }),
   privacy: z.object({
@@ -128,10 +131,10 @@ type AuditLog<T> = {
 
 // Discriminated unions for user types
 type HealthcareUser =
-  | { role: 'doctor'; crm: string; specialization: string }
-  | { role: 'nurse'; coren: string; department: string }
-  | { role: 'admin'; permissions: string[] }
-  | { role: 'receptionist'; clinicId: string };
+  | { role: "doctor"; crm: string; specialization: string }
+  | { role: "nurse"; coren: string; department: string }
+  | { role: "admin"; permissions: string[] }
+  | { role: "receptionist"; clinicId: string };
 
 // Type guards for runtime validation
 function isPatient(obj: unknown): obj is Patient {
@@ -171,15 +174,15 @@ function getDate(date, options) {
 ```typescript
 // ✅ CORRECT - Healthcare route structure
 // src/routes/patients/$patientId.tsx
-export const Route = createFileRoute('/patients/$patientId')({
+export const Route = createFileRoute("/patients/$patientId")({
   component: PatientDetailPage,
   beforeLoad: ({ params, context }) => {
     // Healthcare permission check required
     if (!hasPatientAccess(context.user.id, params.patientId)) {
-      throw new HealthcareError('Acesso negado ao prontuário', {
+      throw new HealthcareError("Acesso negado ao prontuário", {
         patientId: params.patientId,
-        action: 'view_patient',
-        severity: 'high',
+        action: "view_patient",
+        severity: "high",
       });
     }
   },
@@ -187,7 +190,7 @@ export const Route = createFileRoute('/patients/$patientId')({
     // LGPD audit required
     await logPatientAccess({
       patientId: params.patientId,
-      action: 'view',
+      action: "view",
       timestamp: new Date(),
     });
     return await getPatientData(params.patientId);
@@ -205,10 +208,10 @@ function usePatientNavigation() {
 
   const goToPatient = (patientId: PatientId) => {
     navigate({
-      to: '/patients/$patientId',
+      to: "/patients/$patientId",
       params: { patientId },
       search: {
-        referrer: 'patient-list',
+        referrer: "patient-list",
         timestamp: Date.now(),
         auditTrail: true,
       },
@@ -223,18 +226,18 @@ function usePatientNavigation() {
 
 ```typescript
 // ✅ CORRECT - Route protection with healthcare context
-export const protectedPatientRoute = createFileRoute('/patients/$patientId')({
+export const protectedPatientRoute = createFileRoute("/patients/$patientId")({
   beforeLoad: ({ params, context }) => {
     if (!context.user) {
-      throw redirect({ to: '/auth/login' });
+      throw redirect({ to: "/auth/login" });
     }
 
     if (!hasPatientAccess(context.user.id, params.patientId)) {
-      throw new HealthcareError('Acesso negado ao prontuário', {
+      throw new HealthcareError("Acesso negado ao prontuário", {
         patientId: params.patientId,
         userId: context.user.id,
-        action: 'view_patient',
-        severity: 'high',
+        action: "view_patient",
+        severity: "high",
       });
     }
   },
@@ -243,7 +246,7 @@ export const protectedPatientRoute = createFileRoute('/patients/$patientId')({
     await logPatientAccess({
       patientId: params.patientId,
       userId: context.user.id,
-      action: 'view',
+      action: "view",
       timestamp: new Date(),
     });
     return await getPatientData(params.patientId);
@@ -260,27 +263,24 @@ export const protectedPatientRoute = createFileRoute('/patients/$patientId')({
 export default defineConfig({
   plugins: [react()],
   build: {
-    target: 'es2020', // Clinic devices compatibility
+    target: "es2020", // Clinic devices compatibility
     rollupOptions: {
       output: {
         manualChunks: {
-          'healthcare-core': [
-            'src/components/patient',
-            'src/components/appointment',
-            'src/components/emergency',
+          "healthcare-core": [
+            "src/components/patient",
+            "src/components/appointment",
+            "src/components/emergency",
           ],
-          admin: [
-            'src/components/admin',
-            'src/components/reports',
-          ],
-          vendor: ['react', 'react-dom', '@tanstack/react-router'],
+          admin: ["src/components/admin", "src/components/reports"],
+          vendor: ["react", "react-dom", "@tanstack/react-router"],
         },
       },
     },
     chunkSizeWarningLimit: 1000, // 1MB for critical features
   },
   server: {
-    host: '0.0.0.0', // Local network access
+    host: "0.0.0.0", // Local network access
     port: 3000,
   },
 });
@@ -291,23 +291,23 @@ export default defineConfig({
 ```typescript
 // ✅ CORRECT - Healthcare-critical performance monitoring
 function initHealthcareMetrics() {
-  onLCP(metric => {
+  onLCP((metric) => {
     // LCP < 2.5s critical for emergency forms
     if (metric.value > 2500) {
-      reportHealthcareMetric('lcp_slow', {
+      reportHealthcareMetric("lcp_slow", {
         value: metric.value,
         page: window.location.pathname,
-        severity: 'critical',
-        impact: 'emergency_response_delay',
+        severity: "critical",
+        impact: "emergency_response_delay",
       });
     }
   });
 
   // Patient record loading SLA: < 1.5s
-  performance.mark('patient-load-start');
+  performance.mark("patient-load-start");
   // ... data loading
-  performance.mark('patient-load-end');
-  performance.measure('patient-load', 'patient-load-start', 'patient-load-end');
+  performance.mark("patient-load-end");
+  performance.measure("patient-load", "patient-load-start", "patient-load-end");
 }
 ```
 
@@ -336,13 +336,13 @@ function usePatientUpdates(patientId: PatientId) {
           changes: updates,
           timestamp: new Date(),
         });
-        setPatient(prev => ({ ...prev, ...updates }));
+        setPatient((prev) => ({ ...prev, ...updates }));
       } catch (error) {
         setPatient(patient); // Revert optimistic update
-        throw new HealthcareError('Falha ao atualizar prontuário', {
+        throw new HealthcareError("Falha ao atualizar prontuário", {
           patientId,
-          action: 'update',
-          severity: 'high',
+          action: "update",
+          severity: "high",
         });
       }
     });
@@ -495,8 +495,8 @@ export const supabase = createClient(
     },
     global: {
       headers: {
-        'X-Healthcare-App': 'NeonPro',
-        'X-Compliance': 'LGPD-ANVISA',
+        "X-Healthcare-App": "NeonPro",
+        "X-Compliance": "LGPD-ANVISA",
       },
     },
   },
@@ -506,20 +506,14 @@ export const supabase = createClient(
 export const healthcareQueries = {
   async getPatientWithAudit(patientId: string) {
     // Automatic audit
-    await supabase
-      .from('patient_audit_log')
-      .insert({
-        patient_id: patientId,
-        action: 'view',
-        timestamp: new Date().toISOString(),
-        user_id: (await supabase.auth.getUser()).data.user?.id,
-      });
+    await supabase.from("patient_audit_log").insert({
+      patient_id: patientId,
+      action: "view",
+      timestamp: new Date().toISOString(),
+      user_id: (await supabase.auth.getUser()).data.user?.id,
+    });
 
-    return supabase
-      .from('patients')
-      .select('*')
-      .eq('id', patientId)
-      .single();
+    return supabase.from("patients").select("*").eq("id", patientId).single();
   },
 };
 ```
@@ -533,42 +527,47 @@ function useAppointmentUpdates(clinicId: string) {
 
   useEffect(() => {
     const subscription = supabase
-      .channel('appointments')
+      .channel("appointments")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'appointments',
+          event: "*",
+          schema: "public",
+          table: "appointments",
           filter: `clinic_id=eq.${clinicId}`,
         },
-        payload => {
-          if (payload.eventType === 'INSERT') {
+        (payload) => {
+          if (payload.eventType === "INSERT") {
             showHealthcareNotification({
-              type: 'new_appointment',
-              message: 'Novo agendamento recebido',
-              priority: 'medium',
+              type: "new_appointment",
+              message: "Novo agendamento recebido",
+              priority: "medium",
             });
           }
 
-          if (payload.eventType === 'UPDATE' && payload.new.status === 'emergency') {
+          if (
+            payload.eventType === "UPDATE" &&
+            payload.new.status === "emergency"
+          ) {
             showHealthcareNotification({
-              type: 'emergency',
-              message: 'Agendamento de emergência!',
-              priority: 'critical',
+              type: "emergency",
+              message: "Agendamento de emergência!",
+              priority: "critical",
             });
           }
 
-          setAppointments(prev => {
+          setAppointments((prev) => {
             switch (payload.eventType) {
-              case 'INSERT':
+              case "INSERT":
                 return [...prev, payload.new as Appointment];
-              case 'UPDATE':
-                return prev.map(apt =>
-                  apt.id === payload.new.id ? payload.new as Appointment : apt
+              case "UPDATE":
+                return prev.map((apt) =>
+                  apt.id === payload.new.id
+                    ? (payload.new as Appointment)
+                    : apt,
                 );
-              case 'DELETE':
-                return prev.filter(apt => apt.id !== payload.old.id);
+              case "DELETE":
+                return prev.filter((apt) => apt.id !== payload.old.id);
               default:
                 return prev;
             }
@@ -593,26 +592,29 @@ function useAppointmentUpdates(clinicId: string) {
 ```typescript
 // ✅ CORRECT - Healthcare-specific button variants
 const buttonVariants = cva(
-  'inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none',
+  "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
   {
     variants: {
       variant: {
         emergency:
-          'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 font-semibold',
-        healthcare: 'bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500',
-        patient: 'bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-500',
-        warning: 'bg-amber-500 text-white hover:bg-amber-600 focus-visible:ring-amber-500',
+          "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500 font-semibold",
+        healthcare:
+          "bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500",
+        patient:
+          "bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-500",
+        warning:
+          "bg-amber-500 text-white hover:bg-amber-600 focus-visible:ring-amber-500",
       },
       size: {
-        sm: 'h-8 px-3 text-xs',
-        md: 'h-10 px-4 py-2',
-        lg: 'h-12 px-6 text-base', // Larger for clinic tablets
-        xl: 'h-14 px-8 text-lg', // Extra large for emergencies
+        sm: "h-8 px-3 text-xs",
+        md: "h-10 px-4 py-2",
+        lg: "h-12 px-6 text-base", // Larger for clinic tablets
+        xl: "h-14 px-8 text-lg", // Extra large for emergencies
       },
     },
     defaultVariants: {
-      variant: 'healthcare',
-      size: 'md',
+      variant: "healthcare",
+      size: "md",
     },
   },
 );
@@ -752,60 +754,63 @@ export function EmergencyAlert({
 
 ```typescript
 // ✅ CORRECT - Healthcare tests with Vitest
-describe('PatientService - Healthcare Security', () => {
+describe("PatientService - Healthcare Security", () => {
   let patientService: PatientService;
   let mockAuditLog: any;
 
   beforeEach(() => {
     patientService = new PatientService();
-    mockAuditLog = vi.spyOn(patientService, 'logPatientAccess');
+    mockAuditLog = vi.spyOn(patientService, "logPatientAccess");
   });
 
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
-  describe('createPatient', () => {
-    it('should create patient with valid data and log audit', async () => {
-      const authorizedUser = createMockUser({ role: 'doctor' });
+  describe("createPatient", () => {
+    it("should create patient with valid data and log audit", async () => {
+      const authorizedUser = createMockUser({ role: "doctor" });
       const validPatientData = createMockPatient({
-        fullName: 'João Silva',
-        cpf: '123.456.789-00',
-        dateOfBirth: new Date('1990-01-01'),
+        fullName: "João Silva",
+        cpf: "123.456.789-00",
+        dateOfBirth: new Date("1990-01-01"),
       });
 
-      const result = await patientService.createPatient(validPatientData, authorizedUser);
+      const result = await patientService.createPatient(
+        validPatientData,
+        authorizedUser,
+      );
 
       expect(result.success).toBe(true);
-      expect(result.data).toHaveProperty('id');
+      expect(result.data).toHaveProperty("id");
       expect(result.data?.fullName).toBe(validPatientData.fullName);
 
       expect(mockAuditLog).toHaveBeenCalledWith({
-        action: 'create_patient',
+        action: "create_patient",
         patientId: result.data?.id,
         userId: authorizedUser.id,
         timestamp: expect.any(Date),
       });
     });
 
-    it('should reject patient creation without proper authorization', async () => {
-      const unauthorizedUser = createMockUser({ role: 'receptionist' });
+    it("should reject patient creation without proper authorization", async () => {
+      const unauthorizedUser = createMockUser({ role: "receptionist" });
       const patientData = createMockPatient();
 
       await expect(
         patientService.createPatient(patientData, unauthorizedUser),
-      ).rejects.toThrow('Permissão insuficiente para criar pacientes');
+      ).rejects.toThrow("Permissão insuficiente para criar pacientes");
     });
 
-    it('should validate CPF format and reject invalid CPF', async () => {
-      const user = createMockUser({ role: 'doctor' });
+    it("should validate CPF format and reject invalid CPF", async () => {
+      const user = createMockUser({ role: "doctor" });
       const invalidPatientData = createMockPatient({
-        cpf: '111.111.111-11', // Invalid CPF
+        cpf: "111.111.111-11", // Invalid CPF
       });
 
       await expect(
         patientService.createPatient(invalidPatientData, user),
-      ).rejects.toThrow('CPF inválido');
+      ).rejects.toThrow("CPF inválido");
     });
   });
 });
@@ -816,25 +821,25 @@ describe('PatientService - Healthcare Security', () => {
 ```typescript
 // ✅ CORRECT - Integration tests with API mocking
 const server = setupServer(
-  http.post('/auth/v1/token', () => {
+  http.post("/auth/v1/token", () => {
     return HttpResponse.json({
-      access_token: 'mock-token',
+      access_token: "mock-token",
       user: {
-        id: 'mock-user-id',
-        email: 'doctor@clinic.com',
-        role: 'doctor',
+        id: "mock-user-id",
+        email: "doctor@clinic.com",
+        role: "doctor",
       },
     });
   }),
-  http.get('/rest/v1/patients', ({ request }) => {
+  http.get("/rest/v1/patients", ({ request }) => {
     const url = new URL(request.url);
-    const select = url.searchParams.get('select');
+    const select = url.searchParams.get("select");
 
     return HttpResponse.json([
       {
-        id: 'patient-1',
-        name: 'João Silva',
-        ...(select?.includes('cpf') ? { cpf: '123.456.789-00' } : {}),
+        id: "patient-1",
+        name: "João Silva",
+        ...(select?.includes("cpf") ? { cpf: "123.456.789-00" } : {}),
       },
     ]);
   }),
@@ -849,30 +854,38 @@ afterAll(() => server.close());
 
 ```typescript
 // ✅ CORRECT - E2E tests for critical healthcare flows
-test.describe('Emergency Patient Registration', () => {
-  test('should allow quick patient registration in emergency scenarios', async ({ page }) => {
-    await page.goto('/emergency/register');
+test.describe("Emergency Patient Registration", () => {
+  test("should allow quick patient registration in emergency scenarios", async ({
+    page,
+  }) => {
+    await page.goto("/emergency/register");
 
-    await page.fill('[data-testid="patient-name"]', 'Maria Silva');
-    await page.fill('[data-testid="patient-cpf"]', '987.654.321-00');
-    await page.selectOption('[data-testid="emergency-level"]', 'high');
+    await page.fill('[data-testid="patient-name"]', "Maria Silva");
+    await page.fill('[data-testid="patient-cpf"]', "987.654.321-00");
+    await page.selectOption('[data-testid="emergency-level"]', "high");
 
     await page.click('[data-testid="emergency-submit"]');
 
     await expect(page.locator('[data-testid="success-message"]')).toBeVisible();
     await expect(page).toHaveURL(/\/patients\/.*\/emergency/);
 
-    const auditLogs = await page.request.get('/api/audit-logs?action=emergency_registration');
+    const auditLogs = await page.request.get(
+      "/api/audit-logs?action=emergency_registration",
+    );
     expect(auditLogs.ok()).toBeTruthy();
   });
 
-  test('should handle LGPD consent flow during registration', async ({ page }) => {
-    await page.goto('/patients/register');
+  test("should handle LGPD consent flow during registration", async ({
+    page,
+  }) => {
+    await page.goto("/patients/register");
 
-    await page.fill('[data-testid="patient-name"]', 'Pedro Santos');
-    await page.fill('[data-testid="patient-email"]', 'pedro@email.com');
+    await page.fill('[data-testid="patient-name"]', "Pedro Santos");
+    await page.fill('[data-testid="patient-email"]', "pedro@email.com");
 
-    await expect(page.locator('[data-testid="lgpd-consent-dialog"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="lgpd-consent-dialog"]'),
+    ).toBeVisible();
 
     await page.check('[data-testid="consent-data-processing"]');
     await page.check('[data-testid="consent-medical-records"]');
@@ -880,7 +893,9 @@ test.describe('Emergency Patient Registration', () => {
 
     await page.click('[data-testid="register-patient"]');
 
-    await expect(page.locator('[data-testid="consent-confirmation"]')).toBeVisible();
+    await expect(
+      page.locator('[data-testid="consent-confirmation"]'),
+    ).toBeVisible();
   });
 });
 ```
@@ -902,7 +917,7 @@ interface PatientPublicView {
 function getPatientPublicView(patient: Patient): PatientPublicView {
   return {
     id: patient.id,
-    firstName: patient.personalInfo.fullName.split(' ')[0],
+    firstName: patient.personalInfo.fullName.split(" ")[0],
     appointmentCount: patient.appointments.length,
     lastVisit: patient.lastAppointment?.date ?? new Date(),
   };
@@ -919,8 +934,15 @@ function getPatientData(patient: Patient) {
 ```typescript
 // ✅ CORRECT - Comprehensive input validation
 const validatePatientInput = z.object({
-  fullName: z.string().min(2).max(100).regex(/^[a-zA-ZÀ-ÿ\s]+$/),
-  cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/).refine(validateCPF),
+  fullName: z
+    .string()
+    .min(2)
+    .max(100)
+    .regex(/^[a-zA-ZÀ-ÿ\s]+$/),
+  cpf: z
+    .string()
+    .regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/)
+    .refine(validateCPF),
   email: z.string().email(),
   phone: z.string().regex(/^\+55\d{2}\d{8,9}$/),
 });
@@ -937,18 +959,18 @@ function createPatient(data: any) {
 
 ```typescript
 // ✅ CORRECT - Specific imports
-import { formatDate } from '@neonpro/utils/date';
-import { validateCPF } from '@neonpro/utils/validation';
+import { formatDate } from "@neonpro/utils/date";
+import { validateCPF } from "@neonpro/utils/validation";
 
 // ❌ INCORRECT - Full import
-import * as utils from '@neonpro/utils';
+import * as utils from "@neonpro/utils";
 ```
 
 ### Component Lazy Loading
 
 ```typescript
 // ✅ CORRECT - Lazy loading for heavy components
-const PatientReportsModal = lazy(() => 
+const PatientReportsModal = lazy(() =>
   import('@/components/PatientReportsModal').then(module => ({
     default: module.PatientReportsModal
   }))

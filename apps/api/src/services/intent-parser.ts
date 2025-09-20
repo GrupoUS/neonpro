@@ -3,14 +3,14 @@
  * Analyzes user queries to determine intent and extract entities
  */
 
-import { 
-  QueryIntent, 
-  UserQuery, 
+import {
+  QueryIntent,
+  UserQuery,
   ValidUserQuery,
   IntentParsingError,
   safeValidate,
-  UserQuerySchema
-} from '@neonpro/web/types';
+  UserQuerySchema,
+} from "@neonpro/web/types";
 
 // Keywords and patterns for intent classification
 const INTENT_PATTERNS = {
@@ -21,7 +21,7 @@ const INTENT_PATTERNS = {
     /quem\s+é\s+(o|a)?\s*(cliente|paciente)/i,
     /(cliente|paciente)\s+com\s+nome/i,
     /dados\s+do\s+(cliente|paciente)/i,
-    /informações\s+do\s+(cliente|paciente)/i
+    /informações\s+do\s+(cliente|paciente)/i,
   ],
   [QueryIntent.APPOINTMENT_QUERY]: [
     /agendamentos?\s*(de|para)?/i,
@@ -33,7 +33,7 @@ const INTENT_PATTERNS = {
     /quais?\s+(agendamentos?|consultas?)\s+(do|da)\s+(dia|semana)/i,
     /hor[áa]rios?\s+(marcados|agendados)/i,
     /hist[óo]rico\s+de\s+(agendamentos?|consultas?)/i,
-    /[uú]ltimas?\s+(consultas?|agendamentos?)/i
+    /[uú]ltimas?\s+(consultas?|agendamentos?)/i,
   ],
   [QueryIntent.FINANCIAL_QUERY]: [
     /resumo\s+financeiro/i,
@@ -44,7 +44,7 @@ const INTENT_PATTERNS = {
     /saldo/i,
     /financeiro\s+(do|da)\s+(cliente|paciente)/i,
     /contas?\s+(a\s+receber|pagas)/i,
-    /situação\s+financeira/i
+    /situação\s+financeira/i,
   ],
   [QueryIntent.APPOINTMENT_CREATION]: [
     /agendar\s+(uma\s+)?(consulta|retorno)/i,
@@ -53,8 +53,8 @@ const INTENT_PATTERNS = {
     /criar\s+(uma\s+)?(consulta|agendamento)/i,
     /quero\s+agendar/i,
     /gostaria\s+de\s+agendar/i,
-    /marcar\s+(para|com)/i
-  ]
+    /marcar\s+(para|com)/i,
+  ],
 };
 
 // Date extraction patterns
@@ -62,96 +62,124 @@ const DATE_PATTERNS = [
   // Relative dates
   {
     pattern: /hoje/i,
-    type: 'relative',
-    getDate: () => new Date()
+    type: "relative",
+    getDate: () => new Date(),
   },
   {
     pattern: /amanh[ãa]/i,
-    type: 'relative',
+    type: "relative",
     getDate: () => {
       const date = new Date();
       date.setDate(date.getDate() + 1);
       return date;
-    }
+    },
   },
   {
     pattern: /depois\s+de\s+amanh[ãa]/i,
-    type: 'relative',
+    type: "relative",
     getDate: () => {
       const date = new Date();
       date.setDate(date.getDate() + 2);
       return date;
-    }
+    },
   },
   {
     pattern: /ontem/i,
-    type: 'relative',
+    type: "relative",
     getDate: () => {
       const date = new Date();
       date.setDate(date.getDate() - 1);
       return date;
-    }
+    },
   },
   {
     pattern: /pr[oó]xima\s+semana/i,
-    type: 'relative',
+    type: "relative",
     getDate: () => {
       const date = new Date();
       date.setDate(date.getDate() + 7);
       return date;
-    }
+    },
   },
   {
     pattern: /pr[oó]ximo\s+m[êe]s/i,
-    type: 'relative',
+    type: "relative",
     getDate: () => {
       const date = new Date();
       date.setMonth(date.getMonth() + 1);
       return date;
-    }
+    },
   },
   // Week days
   {
     pattern: /(segunda|terç|quart|quint|sexta|s[áa]bado|domingo)/i,
-    type: 'relative',
+    type: "relative",
     getDate: (match: string) => {
-      const days = ['domingo', 'segunda', 'terça', 'quarta', 'quinta', 'sexta', 'sábado'];
-      const targetDay = days.findIndex(day => match.toLowerCase().includes(day));
+      const days = [
+        "domingo",
+        "segunda",
+        "terça",
+        "quarta",
+        "quinta",
+        "sexta",
+        "sábado",
+      ];
+      const targetDay = days.findIndex((day) =>
+        match.toLowerCase().includes(day),
+      );
       if (targetDay === -1) return null;
-      
+
       const date = new Date();
       const currentDay = date.getDay();
       const daysUntilTarget = (targetDay - currentDay + 7) % 7;
       date.setDate(date.getDate() + daysUntilTarget);
       return date;
-    }
+    },
   },
   // Absolute dates (Brazilian format)
   {
     pattern: /(\d{2})[/-](\d{2})[/-](\d{4})/i,
-    type: 'absolute',
+    type: "absolute",
     getDate: (_, d: string, m: string, y: string) => {
       return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
-    }
+    },
   },
   {
-    pattern: /(\d{1,2})\s+de\s+(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+(\d{4})/i,
-    type: 'absolute',
+    pattern:
+      /(\d{1,2})\s+de\s+(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+(\d{4})/i,
+    type: "absolute",
     getDate: (_, d: string, m: string, y: string) => {
       const months = {
-        'janeiro': 0, 'fevereiro': 1, 'março': 2, 'abril': 3,
-        'maio': 4, 'junho': 5, 'julho': 6, 'agosto': 7,
-        'setembro': 8, 'outubro': 9, 'novembro': 10, 'dezembro': 11
+        janeiro: 0,
+        fevereiro: 1,
+        março: 2,
+        abril: 3,
+        maio: 4,
+        junho: 5,
+        julho: 6,
+        agosto: 7,
+        setembro: 8,
+        outubro: 9,
+        novembro: 10,
+        dezembro: 11,
       };
       return new Date(parseInt(y), months[m.toLowerCase()], parseInt(d));
-    }
-  }
+    },
+  },
 ];
 
 // Service keywords
 const SERVICE_KEYWORDS = [
-  'consulta', 'retorno', 'exame', 'procedimento', 'avaliação',
-  'acompanhamento', 'cirurgia', 'triagem', 'urgência', 'emergência'
+  "consulta",
+  "retorno",
+  "exame",
+  "procedimento",
+  "avaliação",
+  "acompanhamento",
+  "cirurgia",
+  "triagem",
+  "urgência",
+  "emergência",
 ];
 
 export class IntentParser {
@@ -167,7 +195,7 @@ export class IntentParser {
       userRole?: string;
       domain?: string;
       session?: string;
-    }
+    },
   ): Promise<ValidUserQuery> {
     try {
       // Clean and normalize text
@@ -185,13 +213,15 @@ export class IntentParser {
         text,
         intent,
         entities,
-        context: context ? {
-          userId: context.userId || '',
-          userRole: context.userRole || '',
-          domain: context.domain,
-          session: context.session
-        } : undefined,
-        timestamp: new Date().toISOString()
+        context: context
+          ? {
+              userId: context.userId || "",
+              userRole: context.userRole || "",
+              domain: context.domain,
+              session: context.session,
+            }
+          : undefined,
+        timestamp: new Date().toISOString(),
       };
 
       // Validate and return
@@ -199,7 +229,7 @@ export class IntentParser {
       if (!result.success) {
         throw new IntentParsingError(
           `Invalid query structure: ${result.error.message}`,
-          text
+          text,
         );
       }
 
@@ -208,10 +238,7 @@ export class IntentParser {
       if (error instanceof IntentParsingError) {
         throw error;
       }
-      throw new IntentParsingError(
-        `Failed to parse query: ${error}`,
-        text
-      );
+      throw new IntentParsingError(`Failed to parse query: ${error}`, text);
     }
   }
 
@@ -246,9 +273,9 @@ export class IntentParser {
    */
   private async extractEntities(
     text: string,
-    intent: QueryIntent
-  ): Promise<UserQuery['entities']> {
-    const entities: UserQuery['entities'] = {};
+    intent: QueryIntent,
+  ): Promise<UserQuery["entities"]> {
+    const entities: UserQuery["entities"] = {};
 
     // Extract client names
     entities.clients = this.extractNames(text);
@@ -257,7 +284,10 @@ export class IntentParser {
     entities.dates = this.extractDates(text);
 
     // Extract services based on intent
-    if (intent === QueryIntent.APPOINTMENT_QUERY || intent === QueryIntent.APPOINTMENT_CREATION) {
+    if (
+      intent === QueryIntent.APPOINTMENT_QUERY ||
+      intent === QueryIntent.APPOINTMENT_CREATION
+    ) {
       entities.services = this.extractServices(text);
     }
 
@@ -270,34 +300,48 @@ export class IntentParser {
   /**
    * Extract potential client names from text
    */
-  private extractNames(text: string): Array<{ name: string; confidence: number }> {
+  private extractNames(
+    text: string,
+  ): Array<{ name: string; confidence: number }> {
     const names: Array<{ name: string; confidence: number }> = [];
-    
+
     // Look for name patterns (capitalized words)
     const namePattern = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/g;
     let match;
-    
+
     while ((match = namePattern.exec(text)) !== null) {
       const name = match[1];
-      
+
       // Filter out common words that aren't names
-      const commonWords = ['O', 'A', 'Os', 'As', 'Do', 'Da', 'Dos', 'Das', 'De', 'E'];
+      const commonWords = [
+        "O",
+        "A",
+        "Os",
+        "As",
+        "Do",
+        "Da",
+        "Dos",
+        "Das",
+        "De",
+        "E",
+      ];
       if (!commonWords.includes(name.toUpperCase()) && name.length > 2) {
         names.push({
           name,
-          confidence: Math.min(0.9, 0.3 + (name.length * 0.1))
+          confidence: Math.min(0.9, 0.3 + name.length * 0.1),
         });
       }
     }
 
     // Look for "cliente/paciente X" patterns
-    const clientPattern = /(cliente|paciente)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi;
+    const clientPattern =
+      /(cliente|paciente)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi;
     while ((match = clientPattern.exec(text)) !== null) {
       const name = match[2];
-      if (!names.find(n => n.name === name)) {
+      if (!names.find((n) => n.name === name)) {
         names.push({
           name,
-          confidence: 0.95
+          confidence: 0.95,
         });
       }
     }
@@ -308,8 +352,16 @@ export class IntentParser {
   /**
    * Extract dates from text
    */
-  private extractDates(text: string): Array<{ date: string; type: 'absolute' | 'relative'; confidence: number }> {
-    const dates: Array<{ date: string; type: 'absolute' | 'relative'; confidence: number }> = [];
+  private extractDates(text: string): Array<{
+    date: string;
+    type: "absolute" | "relative";
+    confidence: number;
+  }> {
+    const dates: Array<{
+      date: string;
+      type: "absolute" | "relative";
+      confidence: number;
+    }> = [];
 
     for (const patternInfo of DATE_PATTERNS) {
       const match = text.match(patternInfo.pattern);
@@ -320,7 +372,7 @@ export class IntentParser {
             dates.push({
               date: date.toISOString(),
               type: patternInfo.type,
-              confidence: 0.9
+              confidence: 0.9,
             });
           }
         } catch (error) {
@@ -335,14 +387,16 @@ export class IntentParser {
   /**
    * Extract service types from text
    */
-  private extractServices(text: string): Array<{ name: string; confidence: number }> {
+  private extractServices(
+    text: string,
+  ): Array<{ name: string; confidence: number }> {
     const services: Array<{ name: string; confidence: number }> = [];
 
     for (const keyword of SERVICE_KEYWORDS) {
       if (text.includes(keyword)) {
         services.push({
           name: keyword,
-          confidence: 0.8
+          confidence: 0.8,
         });
       }
     }
@@ -353,18 +407,21 @@ export class IntentParser {
   /**
    * Extract professional names from text
    */
-  private extractProfessionals(text: string): Array<{ name: string; confidence: number }> {
+  private extractProfessionals(
+    text: string,
+  ): Array<{ name: string; confidence: number }> {
     const professionals: Array<{ name: string; confidence: number }> = [];
-    
+
     // Look for "dr/dra" patterns
-    const doctorPattern = /(dr\.?|dra\.?|doutor|doutora)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi;
+    const doctorPattern =
+      /(dr\.?|dra\.?|doutor|doutora)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi;
     let match;
-    
+
     while ((match = doctorPattern.exec(text)) !== null) {
       const name = match[2];
       professionals.push({
         name,
-        confidence: 0.95
+        confidence: 0.95,
       });
     }
 
@@ -377,7 +434,7 @@ export class IntentParser {
   private looksLikeName(text: string): boolean {
     // Count capitalized words (potential names)
     const capitalizedWords = text.match(/\b[A-Z][a-z]+\b/g) || [];
-    
+
     // If there are 2-3 capitalized words, it's likely a name
     if (capitalizedWords.length >= 2 && capitalizedWords.length <= 3) {
       return true;
@@ -387,10 +444,10 @@ export class IntentParser {
     const nameSearchPatterns = [
       /buscar\s+[A-Z]/i,
       /procurar\s+[A-Z]/i,
-      /[A-Z][a-z]+\s+[A-Z][a-z]+/ // Two capitalized words
+      /[A-Z][a-z]+\s+[A-Z][a-z]+/, // Two capitalized words
     ];
 
-    return nameSearchPatterns.some(pattern => pattern.test(text));
+    return nameSearchPatterns.some((pattern) => pattern.test(text));
   }
 
   /**
@@ -407,7 +464,7 @@ export class IntentParser {
     this.contextCache.set(sessionId, {
       ...this.contextCache.get(sessionId),
       ...context,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
   }
 

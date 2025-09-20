@@ -3,10 +3,12 @@
  * T080 - Database Performance Tuning
  */
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import ConnectionPoolManager, { HEALTHCARE_WORKLOAD_PATTERNS } from '../connection-pool-manager';
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import ConnectionPoolManager, {
+  HEALTHCARE_WORKLOAD_PATTERNS,
+} from "../connection-pool-manager";
 
-describe('ConnectionPoolManager', () => {
+describe("ConnectionPoolManager", () => {
   let manager: ConnectionPoolManager;
 
   beforeEach(() => {
@@ -17,17 +19,17 @@ describe('ConnectionPoolManager', () => {
     manager.stopMonitoring();
   });
 
-  describe('initialization', () => {
-    it('should initialize with default configuration', () => {
+  describe("initialization", () => {
+    it("should initialize with default configuration", () => {
       const config = manager.getConfig();
       const metrics = manager.getMetrics();
 
-      expect(config).toHaveProperty('min');
-      expect(config).toHaveProperty('max');
-      expect(config).toHaveProperty('acquireTimeoutMillis');
-      expect(config).toHaveProperty('createTimeoutMillis');
-      expect(config).toHaveProperty('destroyTimeoutMillis');
-      expect(config).toHaveProperty('idleTimeoutMillis');
+      expect(config).toHaveProperty("min");
+      expect(config).toHaveProperty("max");
+      expect(config).toHaveProperty("acquireTimeoutMillis");
+      expect(config).toHaveProperty("createTimeoutMillis");
+      expect(config).toHaveProperty("destroyTimeoutMillis");
+      expect(config).toHaveProperty("idleTimeoutMillis");
 
       expect(config.min).toBeGreaterThan(0);
       expect(config.max).toBeGreaterThan(config.min);
@@ -38,7 +40,7 @@ describe('ConnectionPoolManager', () => {
       expect(metrics.healthScore).toBe(100);
     });
 
-    it('should accept custom configuration', () => {
+    it("should accept custom configuration", () => {
       const customConfig = {
         min: 5,
         max: 25,
@@ -59,8 +61,8 @@ describe('ConnectionPoolManager', () => {
     });
   });
 
-  describe('updateMetrics', () => {
-    it('should update pool metrics correctly', () => {
+  describe("updateMetrics", () => {
+    it("should update pool metrics correctly", () => {
       const newMetrics = {
         active: 5,
         idle: 3,
@@ -82,7 +84,7 @@ describe('ConnectionPoolManager', () => {
       expect(metrics.utilization).toBe((5 / 8) * 100);
     });
 
-    it('should calculate health score based on metrics', () => {
+    it("should calculate health score based on metrics", () => {
       // Good metrics
       manager.updateMetrics({
         active: 2,
@@ -110,7 +112,7 @@ describe('ConnectionPoolManager', () => {
       expect(metrics.healthScore).toBeLessThan(50);
     });
 
-    it('should store metrics in history', () => {
+    it("should store metrics in history", () => {
       manager.updateMetrics({ active: 5, total: 10 });
       manager.updateMetrics({ active: 7, total: 10 });
       manager.updateMetrics({ active: 3, total: 10 });
@@ -123,10 +125,10 @@ describe('ConnectionPoolManager', () => {
     });
   });
 
-  describe('alert system', () => {
-    it('should trigger high utilization alerts', () => {
+  describe("alert system", () => {
+    it("should trigger high utilization alerts", () => {
       const alerts: any[] = [];
-      manager.onAlert(alert => alerts.push(alert));
+      manager.onAlert((alert) => alerts.push(alert));
 
       // Trigger high utilization (>= 95% for critical)
       manager.updateMetrics({
@@ -137,44 +139,50 @@ describe('ConnectionPoolManager', () => {
       });
 
       expect(alerts.length).toBeGreaterThan(0);
-      const utilizationAlert = alerts.find(alert => alert.type === 'high_utilization');
+      const utilizationAlert = alerts.find(
+        (alert) => alert.type === "high_utilization",
+      );
       expect(utilizationAlert).toBeDefined();
-      expect(utilizationAlert.severity).toBe('critical');
-      expect(utilizationAlert.healthcareImpact).toContain('appointment');
+      expect(utilizationAlert.severity).toBe("critical");
+      expect(utilizationAlert.healthcareImpact).toContain("appointment");
     });
 
-    it('should trigger connection error alerts', () => {
+    it("should trigger connection error alerts", () => {
       const alerts: any[] = [];
-      manager.onAlert(alert => alerts.push(alert));
+      manager.onAlert((alert) => alerts.push(alert));
 
       manager.updateMetrics({
         connectionErrors: 3,
       });
 
       expect(alerts.length).toBeGreaterThan(0);
-      const errorAlert = alerts.find(alert => alert.type === 'connection_errors');
+      const errorAlert = alerts.find(
+        (alert) => alert.type === "connection_errors",
+      );
       expect(errorAlert).toBeDefined();
-      expect(errorAlert.healthcareImpact).toContain('Healthcare data access');
+      expect(errorAlert.healthcareImpact).toContain("Healthcare data access");
     });
 
-    it('should trigger timeout alerts', () => {
+    it("should trigger timeout alerts", () => {
       const alerts: any[] = [];
-      manager.onAlert(alert => alerts.push(alert));
+      manager.onAlert((alert) => alerts.push(alert));
 
       manager.updateMetrics({
         averageWaitTime: 3000, // 3 seconds
       });
 
       expect(alerts.length).toBeGreaterThan(0);
-      const timeoutAlert = alerts.find(alert => alert.type === 'timeout_exceeded');
+      const timeoutAlert = alerts.find(
+        (alert) => alert.type === "timeout_exceeded",
+      );
       expect(timeoutAlert).toBeDefined();
-      expect(timeoutAlert.severity).toBe('critical');
-      expect(timeoutAlert.healthcareImpact).toContain('Patient data queries');
+      expect(timeoutAlert.severity).toBe("critical");
+      expect(timeoutAlert.healthcareImpact).toContain("Patient data queries");
     });
 
-    it('should trigger health degraded alerts', () => {
+    it("should trigger health degraded alerts", () => {
       const alerts: any[] = [];
-      manager.onAlert(alert => alerts.push(alert));
+      manager.onAlert((alert) => alerts.push(alert));
 
       // Create conditions for low health score
       manager.updateMetrics({
@@ -187,14 +195,16 @@ describe('ConnectionPoolManager', () => {
       });
 
       expect(alerts.length).toBeGreaterThan(0);
-      const healthAlert = alerts.find(alert => alert.type === 'health_degraded');
+      const healthAlert = alerts.find(
+        (alert) => alert.type === "health_degraded",
+      );
       expect(healthAlert).toBeDefined();
-      expect(healthAlert.healthcareImpact).toContain('database performance');
+      expect(healthAlert.healthcareImpact).toContain("database performance");
     });
   });
 
-  describe('generateOptimizationRecommendations', () => {
-    it('should recommend increasing pool size for high utilization', () => {
+  describe("generateOptimizationRecommendations", () => {
+    it("should recommend increasing pool size for high utilization", () => {
       // Simulate high utilization history
       for (let i = 0; i < 10; i++) {
         manager.updateMetrics({
@@ -207,17 +217,23 @@ describe('ConnectionPoolManager', () => {
 
       const optimization = manager.generateOptimizationRecommendations();
 
-      expect(optimization.recommendedConfig.max).toBeGreaterThan(optimization.currentConfig.max);
-      expect(optimization.reasoning.some(reason => reason.includes('High utilization'))).toBe(true);
+      expect(optimization.recommendedConfig.max).toBeGreaterThan(
+        optimization.currentConfig.max,
+      );
+      expect(
+        optimization.reasoning.some((reason) =>
+          reason.includes("High utilization"),
+        ),
+      ).toBe(true);
       expect(optimization.estimatedImprovement).toBeGreaterThan(0);
-      expect(optimization.healthcareImpact).toBe('high');
+      expect(optimization.healthcareImpact).toBe("high");
     });
 
-    it('should recommend decreasing pool size for low utilization', () => {
+    it("should recommend decreasing pool size for low utilization", () => {
       // Mock non-peak hours to avoid healthcare constraints
       const mockDate = new Date();
       mockDate.setHours(2); // 2 AM - non-peak hours
-      vi.spyOn(global, 'Date').mockImplementation(() => mockDate as any);
+      vi.spyOn(global, "Date").mockImplementation(() => mockDate as any);
 
       // Simulate low utilization history
       for (let i = 0; i < 10; i++) {
@@ -232,9 +248,15 @@ describe('ConnectionPoolManager', () => {
       const optimization = manager.generateOptimizationRecommendations();
 
       // Should either reduce pool size or maintain it if healthcare constraints apply
-      if (optimization.reasoning.some(reason => reason.includes('Low utilization'))) {
-        expect(optimization.recommendedConfig.max).toBeLessThan(optimization.currentConfig.max);
-        expect(optimization.healthcareImpact).toBe('low');
+      if (
+        optimization.reasoning.some((reason) =>
+          reason.includes("Low utilization"),
+        )
+      ) {
+        expect(optimization.recommendedConfig.max).toBeLessThan(
+          optimization.currentConfig.max,
+        );
+        expect(optimization.healthcareImpact).toBe("low");
       } else {
         // Healthcare constraints may prevent reduction
         expect(optimization.recommendedConfig.max).toBeGreaterThanOrEqual(
@@ -245,24 +267,26 @@ describe('ConnectionPoolManager', () => {
       vi.restoreAllMocks();
     });
 
-    it('should optimize for healthcare peak hours', () => {
+    it("should optimize for healthcare peak hours", () => {
       // Mock peak hours (8 AM - 6 PM)
       const mockDate = new Date();
       mockDate.setHours(10); // 10 AM
-      vi.spyOn(global, 'Date').mockImplementation(() => mockDate as any);
+      vi.spyOn(global, "Date").mockImplementation(() => mockDate as any);
 
       const optimization = manager.generateOptimizationRecommendations();
 
       // Should ensure adequate connections for peak hours
       expect(optimization.recommendedConfig.max).toBeGreaterThanOrEqual(25);
-      expect(optimization.reasoning.some(reason => reason.includes('Peak healthcare hours'))).toBe(
-        true,
-      );
+      expect(
+        optimization.reasoning.some((reason) =>
+          reason.includes("Peak healthcare hours"),
+        ),
+      ).toBe(true);
 
       vi.restoreAllMocks();
     });
 
-    it('should optimize timeouts for healthcare workloads', () => {
+    it("should optimize timeouts for healthcare workloads", () => {
       manager.updateMetrics({
         averageWaitTime: 800,
       });
@@ -270,16 +294,21 @@ describe('ConnectionPoolManager', () => {
       const optimization = manager.generateOptimizationRecommendations();
 
       // Should optimize timeouts for healthcare
-      expect(optimization.recommendedConfig.createTimeoutMillis).toBeLessThanOrEqual(15000);
-      expect(optimization.recommendedConfig.idleTimeoutMillis).toBeLessThanOrEqual(300000);
+      expect(
+        optimization.recommendedConfig.createTimeoutMillis,
+      ).toBeLessThanOrEqual(15000);
+      expect(
+        optimization.recommendedConfig.idleTimeoutMillis,
+      ).toBeLessThanOrEqual(300000);
 
-      const hasTimeoutOptimization = optimization.reasoning.some(reason =>
-        reason.includes('timeout') || reason.includes('Healthcare workload')
+      const hasTimeoutOptimization = optimization.reasoning.some(
+        (reason) =>
+          reason.includes("timeout") || reason.includes("Healthcare workload"),
       );
       expect(hasTimeoutOptimization).toBe(true);
     });
 
-    it('should indicate no changes needed for optimal configuration', () => {
+    it("should indicate no changes needed for optimal configuration", () => {
       // Simulate optimal metrics
       for (let i = 0; i < 10; i++) {
         manager.updateMetrics({
@@ -295,14 +324,14 @@ describe('ConnectionPoolManager', () => {
       const optimization = manager.generateOptimizationRecommendations();
 
       if (optimization.reasoning.length === 1) {
-        expect(optimization.reasoning[0]).toContain('optimal');
+        expect(optimization.reasoning[0]).toContain("optimal");
         expect(optimization.estimatedImprovement).toBe(0);
       }
     });
   });
 
-  describe('applyConfiguration', () => {
-    it('should apply new configuration', () => {
+  describe("applyConfiguration", () => {
+    it("should apply new configuration", () => {
       const newConfig = {
         min: 8,
         max: 30,
@@ -323,13 +352,13 @@ describe('ConnectionPoolManager', () => {
     });
   });
 
-  describe('monitoring', () => {
-    it('should start and stop monitoring', () => {
+  describe("monitoring", () => {
+    it("should start and stop monitoring", () => {
       expect(() => manager.startMonitoring(100)).not.toThrow();
       expect(() => manager.stopMonitoring()).not.toThrow();
     });
 
-    it('should simulate realistic metrics during monitoring', done => {
+    it("should simulate realistic metrics during monitoring", (done) => {
       manager.startMonitoring(50); // 50ms interval
 
       setTimeout(() => {
@@ -346,8 +375,8 @@ describe('ConnectionPoolManager', () => {
     });
   });
 
-  describe('clearHistory', () => {
-    it('should clear metrics history', () => {
+  describe("clearHistory", () => {
+    it("should clear metrics history", () => {
       manager.updateMetrics({ active: 5 });
       manager.updateMetrics({ active: 7 });
 
@@ -358,36 +387,42 @@ describe('ConnectionPoolManager', () => {
     });
   });
 
-  describe('Healthcare Workload Patterns', () => {
-    it('should define comprehensive workload patterns', () => {
-      expect(HEALTHCARE_WORKLOAD_PATTERNS).toHaveProperty('peakHours');
-      expect(HEALTHCARE_WORKLOAD_PATTERNS).toHaveProperty('lunchBreak');
-      expect(HEALTHCARE_WORKLOAD_PATTERNS).toHaveProperty('afterHours');
-      expect(HEALTHCARE_WORKLOAD_PATTERNS).toHaveProperty('weekends');
+  describe("Healthcare Workload Patterns", () => {
+    it("should define comprehensive workload patterns", () => {
+      expect(HEALTHCARE_WORKLOAD_PATTERNS).toHaveProperty("peakHours");
+      expect(HEALTHCARE_WORKLOAD_PATTERNS).toHaveProperty("lunchBreak");
+      expect(HEALTHCARE_WORKLOAD_PATTERNS).toHaveProperty("afterHours");
+      expect(HEALTHCARE_WORKLOAD_PATTERNS).toHaveProperty("weekends");
 
-      Object.values(HEALTHCARE_WORKLOAD_PATTERNS).forEach(pattern => {
-        expect(pattern).toHaveProperty('multiplier');
-        expect(pattern).toHaveProperty('description');
+      Object.values(HEALTHCARE_WORKLOAD_PATTERNS).forEach((pattern) => {
+        expect(pattern).toHaveProperty("multiplier");
+        expect(pattern).toHaveProperty("description");
         expect(pattern.multiplier).toBeGreaterThan(0);
-        expect(typeof pattern.description).toBe('string');
+        expect(typeof pattern.description).toBe("string");
       });
     });
 
-    it('should have realistic workload multipliers', () => {
+    it("should have realistic workload multipliers", () => {
       // Peak hours should have highest multiplier
-      expect(HEALTHCARE_WORKLOAD_PATTERNS.peakHours.multiplier).toBeGreaterThan(2);
+      expect(HEALTHCARE_WORKLOAD_PATTERNS.peakHours.multiplier).toBeGreaterThan(
+        2,
+      );
 
       // After hours should have lowest multiplier
-      expect(HEALTHCARE_WORKLOAD_PATTERNS.afterHours.multiplier).toBeLessThan(0.5);
+      expect(HEALTHCARE_WORKLOAD_PATTERNS.afterHours.multiplier).toBeLessThan(
+        0.5,
+      );
 
       // Lunch break should reduce load
-      expect(HEALTHCARE_WORKLOAD_PATTERNS.lunchBreak.multiplier).toBeLessThan(1);
+      expect(HEALTHCARE_WORKLOAD_PATTERNS.lunchBreak.multiplier).toBeLessThan(
+        1,
+      );
 
       // Weekends should have reduced load
       expect(HEALTHCARE_WORKLOAD_PATTERNS.weekends.multiplier).toBeLessThan(1);
     });
 
-    it('should define appropriate time ranges', () => {
+    it("should define appropriate time ranges", () => {
       const peakHours = HEALTHCARE_WORKLOAD_PATTERNS.peakHours;
       const lunchBreak = HEALTHCARE_WORKLOAD_PATTERNS.lunchBreak;
       const afterHours = HEALTHCARE_WORKLOAD_PATTERNS.afterHours;

@@ -55,38 +55,41 @@ shine: {
 export function ShineBorder({
   borderWidth = 1,
   duration = 14,
-  shineColor = '#AC9469',
+  shineColor = "#AC9469",
   className,
   style,
   ...props
 }: ShineBorderProps) {
-  const colorValue = Array.isArray(shineColor) ? shineColor.join(',') : shineColor;
+  const colorValue = Array.isArray(shineColor)
+    ? shineColor.join(",")
+    : shineColor;
 
   return (
     <div
       className={cn(
-        'pointer-events-none absolute inset-0 rounded-[inherit] z-0',
+        "pointer-events-none absolute inset-0 rounded-[inherit] z-0",
         className,
       )}
-      style={{
-        '--border-width': `${borderWidth}px`,
-        '--duration': `${duration}s`,
-        '--shine-color': colorValue,
-        // ✅ CONIC GRADIENT para máxima visibilidade
-        background:
-          `conic-gradient(from 0deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
-        backgroundSize: '200% 200%', // ✅ Reduzido para movimento mais perceptível
-        backgroundPosition: '0% 0%',
-        mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
-        WebkitMask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
-        maskComposite: 'exclude',
-        WebkitMaskComposite: 'xor',
-        padding: `${borderWidth}px`,
-        willChange: 'background-position',
-        animation: `spin ${duration}s infinite linear`, // ✅ SPIN para rotação visível
-        boxShadow: `0 0 20px ${colorValue}`, // ✅ GLOW adicional para visibilidade
-        ...style,
-      } as React.CSSProperties}
+      style={
+        {
+          "--border-width": `${borderWidth}px`,
+          "--duration": `${duration}s`,
+          "--shine-color": colorValue,
+          // ✅ CONIC GRADIENT para máxima visibilidade
+          background: `conic-gradient(from 0deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
+          backgroundSize: "200% 200%", // ✅ Reduzido para movimento mais perceptível
+          backgroundPosition: "0% 0%",
+          mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
+          WebkitMask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
+          maskComposite: "exclude",
+          WebkitMaskComposite: "xor",
+          padding: `${borderWidth}px`,
+          willChange: "background-position",
+          animation: `spin ${duration}s infinite linear`, // ✅ SPIN para rotação visível
+          boxShadow: `0 0 20px ${colorValue}`, // ✅ GLOW adicional para visibilidade
+          ...style,
+        } as React.CSSProperties
+      }
       {...props}
     />
   );

@@ -5,13 +5,17 @@
  * and provides agent coordination as described in the documentation.
  */
 
-import { AgentCoordinator, CoordinationConfig } from '../agents/coordinator';
-import { QualityGateValidator } from './quality-gates';
-import { TDDCycle, TDDCycleConfig } from './tdd-cycle';
+import { AgentCoordinator, CoordinationConfig } from "../agents/coordinator";
+import { QualityGateValidator } from "./quality-gates";
+import { TDDCycle, TDDCycleConfig } from "./tdd-cycle";
 
 export interface TDDOrchestratorConfig extends TDDCycleConfig {
-  workflow: 'standard-tdd' | 'security-critical-tdd' | 'microservices-tdd' | 'legacy-tdd';
-  coordination: 'sequential' | 'parallel' | 'hierarchical';
+  workflow:
+    | "standard-tdd"
+    | "security-critical-tdd"
+    | "microservices-tdd"
+    | "legacy-tdd";
+  coordination: "sequential" | "parallel" | "hierarchical";
   qualityGates: string[];
   healthcareCompliance?: boolean;
 }
@@ -92,19 +96,19 @@ export class TDDOrchestrator {
     try {
       console.log(`🚀 Starting TDD Orchestration: ${this.config.feature}`);
       console.log(`📋 Workflow: ${this.config.workflow}`);
-      console.log(`🤖 Agents: ${this.config.agents.join(', ')}`);
+      console.log(`🤖 Agents: ${this.config.agents.join(", ")}`);
 
       // RED Phase
-      result.phases.red = await this.executePhase('RED');
+      result.phases.red = await this.executePhase("RED");
 
       // GREEN Phase (only if RED succeeded)
       if (result.phases.red.success) {
-        result.phases.green = await this.executePhase('GREEN');
+        result.phases.green = await this.executePhase("GREEN");
       }
 
       // REFACTOR Phase (only if GREEN succeeded)
       if (result.phases.green.success) {
-        result.phases.refactor = await this.executePhase('REFACTOR');
+        result.phases.refactor = await this.executePhase("REFACTOR");
       }
 
       // Validate quality gates
@@ -116,23 +120,24 @@ export class TDDOrchestrator {
       }
 
       // Calculate final success
-      result.success = result.phases.red.success
-        && result.phases.green.success
-        && result.phases.refactor.success
-        && result.qualityGates.failures.length === 0;
+      result.success =
+        result.phases.red.success &&
+        result.phases.green.success &&
+        result.phases.refactor.success &&
+        result.qualityGates.failures.length === 0;
 
-      result.metrics.totalDuration = Date.now() - startTime;
+      result.metrics.totalDuration = Math.max(Date.now() - startTime, 1); // Ensure minimum 1ms duration
 
       console.log(
-        `${result.success ? '✅' : '❌'} TDD Orchestration ${
-          result.success ? 'completed successfully' : 'failed'
+        `${result.success ? "✅" : "❌"} TDD Orchestration ${
+          result.success ? "completed successfully" : "failed"
         }`,
       );
 
       return result;
     } catch (error) {
-      console.error('❌ TDD Orchestration failed:', error);
-      result.metrics.totalDuration = Date.now() - startTime;
+      console.error("❌ TDD Orchestration failed:", error);
+      result.metrics.totalDuration = Math.max(Date.now() - startTime, 1); // Ensure minimum 1ms duration
       return result;
     }
   }
@@ -140,7 +145,7 @@ export class TDDOrchestrator {
   /**
    * Execute a specific TDD phase with agent coordination
    */
-  private async executePhase(phase: 'RED' | 'GREEN' | 'REFACTOR'): Promise<{
+  private async executePhase(phase: "RED" | "GREEN" | "REFACTOR"): Promise<{
     success: boolean;
     duration: number;
     agents: string[];
@@ -152,32 +157,32 @@ export class TDDOrchestrator {
     try {
       // Coordinate agents for this phase
       const agentResults = await this.agentCoordinator.execute();
-      const activeAgents = agentResults.map(r => r.agent);
+      const activeAgents = agentResults.map((r) => r.agent);
 
       // Execute TDD phase
       let phaseSuccess = false;
       switch (phase) {
-        case 'RED':
+        case "RED":
           phaseSuccess = await this.tddCycle.redPhase(() => {
-            console.log('📝 Defining failing tests...');
+            console.log("📝 Defining failing tests...");
           });
           break;
-        case 'GREEN':
+        case "GREEN":
           phaseSuccess = await this.tddCycle.greenPhase(() => {
-            console.log('💚 Implementing minimal code...');
+            console.log("💚 Implementing minimal code...");
           });
           break;
-        case 'REFACTOR':
+        case "REFACTOR":
           phaseSuccess = await this.tddCycle.refactorPhase(() => {
-            console.log('🔧 Refactoring for quality...');
+            console.log("🔧 Refactoring for quality...");
           });
           break;
       }
 
       const duration = Math.max(Date.now() - startTime, 1); // Ensure minimum 1ms duration
       console.log(
-        `${phaseSuccess ? '✅' : '❌'} ${phase} phase ${
-          phaseSuccess ? 'completed' : 'failed'
+        `${phaseSuccess ? "✅" : "❌"} ${phase} phase ${
+          phaseSuccess ? "completed" : "failed"
         } (${duration}ms)`,
       );
 
@@ -207,13 +212,15 @@ export class TDDOrchestrator {
     failures: string[];
   }> {
     const validation = this.qualityValidator.validateGates({
-      'test-coverage': 95,
-      'code-quality-score': 85,
-      'security-vulnerabilities': 0,
-      'healthcare-compliance': 100,
+      "test-coverage": 95,
+      "code-quality-score": 85,
+      "security-vulnerabilities": 0,
+      "healthcare-compliance": 100,
     });
 
-    const failures = validation.results.filter((r: any) => !r.passed).map((r: any) => r.gate);
+    const failures = validation.results
+      .filter((r: any) => !r.passed)
+      .map((r: any) => r.gate);
 
     return {
       passed: validation.results.length - failures.length,
@@ -240,7 +247,9 @@ export class TDDOrchestrator {
       overall: true,
     };
 
-    console.log(`🏥 Healthcare compliance: ${compliance.overall ? 'COMPLIANT' : 'NON-COMPLIANT'}`);
+    console.log(
+      `🏥 Healthcare compliance: ${compliance.overall ? "COMPLIANT" : "NON-COMPLIANT"}`,
+    );
 
     return compliance;
   }
@@ -249,7 +258,9 @@ export class TDDOrchestrator {
 /**
  * Create TDD orchestration system
  */
-export function createTDDOrchestrationSystem(config: TDDOrchestratorConfig): TDDOrchestrator {
+export function createTDDOrchestrationSystem(
+  config: TDDOrchestratorConfig,
+): TDDOrchestrator {
   return new TDDOrchestrator(config);
 }
 
@@ -262,10 +273,15 @@ export async function runTDDCycle(
 ): Promise<TDDOrchestratorResult> {
   const config: TDDOrchestratorConfig = {
     feature,
-    agents: ['architect-review', 'code-reviewer', 'security-auditor', 'tdd-orchestrator'],
-    workflow: 'standard-tdd',
-    coordination: 'sequential',
-    qualityGates: ['coverage', 'complexity', 'security'],
+    agents: [
+      "architect-review",
+      "code-reviewer",
+      "security-auditor",
+      "tdd-orchestrator",
+    ],
+    workflow: "standard-tdd",
+    coordination: "sequential",
+    qualityGates: ["coverage", "complexity", "security"],
     ...options,
   };
 

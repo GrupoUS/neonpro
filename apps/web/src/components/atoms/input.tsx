@@ -1,9 +1,10 @@
-'use client';
-import { cn } from '@neonpro/ui';
-import { motion, useMotionTemplate, useMotionValue } from 'motion/react';
-import * as React from 'react';
+"use client";
+import { cn } from "@neonpro/ui";
+import { motion, useMotionTemplate, useMotionValue } from "motion/react";
+import * as React from "react";
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+export interface InputProps
+  extends React.InputHTMLAttributes<HTMLInputElement> {}
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, type, ...props }, ref) => {
@@ -24,7 +25,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         style={{
           background: useMotionTemplate`
         radial-gradient(
-          ${visible ? radius + 'px' : '0px'} circle at ${mouseX}px ${mouseY}px,
+          ${visible ? radius + "px" : "0px"} circle at ${mouseX}px ${mouseY}px,
           #3b82f6,
           transparent 80%
         )
@@ -33,7 +34,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setVisible(true)}
         onMouseLeave={() => setVisible(false)}
-        className='group/input rounded-lg p-[2px] transition duration-300'
+        className="group/input rounded-lg p-[2px] transition duration-300"
       >
         <input
           type={type}
@@ -48,6 +49,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
   },
 );
-Input.displayName = 'Input';
+Input.displayName = "Input";
 
 export { Input };

@@ -1,5 +1,5 @@
-import type { MedicalDataClassification } from '@neonpro/types';
-import { useCallback, useEffect, useState } from 'react';
+import type { MedicalDataClassification } from "@neonpro/types";
+import { useCallback, useEffect, useState } from "react";
 
 // Mock services for now - these would be replaced with actual API calls
 interface ConsentService {
@@ -35,7 +35,7 @@ interface AuditService {
   logSessionEnd: (
     sessionId: string,
     userId: string,
-    userRole: 'doctor' | 'patient',
+    userRole: "doctor" | "patient",
     clinicId: string,
     duration: number,
   ) => Promise<void>;
@@ -94,7 +94,11 @@ export interface UseLGPDConsentOptions {
   sessionId: string;
   clinicId: string;
   dataTypes: MedicalDataClassification[];
-  purpose: 'telemedicine' | 'medical_treatment' | 'ai_assistance' | 'communication';
+  purpose:
+    | "telemedicine"
+    | "medical_treatment"
+    | "ai_assistance"
+    | "communication";
   autoCheck?: boolean;
 }
 
@@ -128,12 +132,14 @@ export function useLGPDConsent({
    * Check if user has valid consent for all required data types
    */
   const checkConsent = useCallback(async () => {
-    setConsentState(prev => ({ ...prev, isLoading: true, error: null }));
+    setConsentState((prev) => ({ ...prev, isLoading: true, error: null }));
 
     try {
       // Check consent for each data type
       const consentChecks = await Promise.all(
-        dataTypes.map(dataType => consentService.verifyConsent(userId, dataType, sessionId)),
+        dataTypes.map((dataType) =>
+          consentService.verifyConsent(userId, dataType, sessionId),
+        ),
       );
 
       const hasValidConsent = consentChecks.every(Boolean);
@@ -152,8 +158,8 @@ export function useLGPDConsent({
       await auditService.logDataAccess(
         sessionId,
         userId,
-        'patient',
-        'general-medical',
+        "patient",
+        "general-medical",
         `Consent verification for ${purpose}`,
         clinicId,
         { dataTypes, hasValidConsent },
@@ -161,15 +167,24 @@ export function useLGPDConsent({
 
       return hasValidConsent;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      setConsentState(prev => ({
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      setConsentState((prev) => ({
         ...prev,
         isLoading: false,
         error: errorMessage,
       }));
       return false;
     }
-  }, [userId, sessionId, dataTypes, purpose, clinicId, consentService, auditService]);
+  }, [
+    userId,
+    sessionId,
+    dataTypes,
+    purpose,
+    clinicId,
+    consentService,
+    auditService,
+  ]);
 
   /**
    * Request consent for specified data types
@@ -190,10 +205,11 @@ export function useLGPDConsent({
 
       return success;
     } catch (error) {
-      console.error('Failed to request consent:', error);
-      setConsentState(prev => ({
+      console.error("Failed to request consent:", error);
+      setConsentState((prev) => ({
         ...prev,
-        error: error instanceof Error ? error.message : 'Failed to request consent',
+        error:
+          error instanceof Error ? error.message : "Failed to request consent",
       }));
       return false;
     }
@@ -202,100 +218,114 @@ export function useLGPDConsent({
   /**
    * Grant consent (when user accepts in dialog)
    */
-  const grantConsent = useCallback(async (consentId: string): Promise<boolean> => {
-    try {
-      const success = await consentService.grantConsent(patientId || userId, consentId);
+  const grantConsent = useCallback(
+    async (consentId: string): Promise<boolean> => {
+      try {
+        const success = await consentService.grantConsent(
+          patientId || userId,
+          consentId,
+        );
 
-      if (success) {
-        // Log consent given
-        await auditService.logConsentGiven(
+        if (success) {
+          // Log consent given
+          await auditService.logConsentGiven(
+            sessionId,
+            userId,
+            dataTypes,
+            purpose,
+            clinicId,
+          );
+
+          // Refresh consent state
+          await checkConsent();
+        }
+
+        return success;
+      } catch (error) {
+        console.error("Failed to grant consent:", error);
+        setConsentState((prev) => ({
+          ...prev,
+          error:
+            error instanceof Error ? error.message : "Failed to grant consent",
+        }));
+        return false;
+      }
+    },
+    [
+      patientId,
+      userId,
+      sessionId,
+      dataTypes,
+      purpose,
+      clinicId,
+      checkConsent,
+      consentService,
+      auditService,
+    ],
+  );
+
+  /**
+   * Revoke consent for specific data type
+   */
+  const revokeConsent = useCallback(
+    async (
+      dataType: MedicalDataClassification,
+      reason: string = "User request",
+    ): Promise<void> => {
+      try {
+        await consentService.revokeConsent(userId, dataType, sessionId, reason);
+
+        // Log consent revocation
+        await auditService.logConsentRevoked(
           sessionId,
           userId,
-          dataTypes,
-          purpose,
+          dataType,
+          reason,
           clinicId,
         );
 
         // Refresh consent state
         await checkConsent();
+      } catch (error) {
+        console.error("Failed to revoke consent:", error);
+        setConsentState((prev) => ({
+          ...prev,
+          error:
+            error instanceof Error ? error.message : "Failed to revoke consent",
+        }));
       }
-
-      return success;
-    } catch (error) {
-      console.error('Failed to grant consent:', error);
-      setConsentState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Failed to grant consent',
-      }));
-      return false;
-    }
-  }, [
-    patientId,
-    userId,
-    sessionId,
-    dataTypes,
-    purpose,
-    clinicId,
-    checkConsent,
-    consentService,
-    auditService,
-  ]);
-
-  /**
-   * Revoke consent for specific data type
-   */
-  const revokeConsent = useCallback(async (
-    dataType: MedicalDataClassification,
-    reason: string = 'User request',
-  ): Promise<void> => {
-    try {
-      await consentService.revokeConsent(userId, dataType, sessionId, reason);
-
-      // Log consent revocation
-      await auditService.logConsentRevoked(
-        sessionId,
-        userId,
-        dataType,
-        reason,
-        clinicId,
-      );
-
-      // Refresh consent state
-      await checkConsent();
-    } catch (error) {
-      console.error('Failed to revoke consent:', error);
-      setConsentState(prev => ({
-        ...prev,
-        error: error instanceof Error ? error.message : 'Failed to revoke consent',
-      }));
-    }
-  }, [userId, sessionId, clinicId, checkConsent, consentService, auditService]);
+    },
+    [userId, sessionId, clinicId, checkConsent, consentService, auditService],
+  );
 
   /**
    * Start telemedicine session with audit logging
    */
-  const startSession = useCallback(async (doctorId: string): Promise<void> => {
-    try {
-      const startTime = Date.now();
-      setSessionStartTime(startTime);
+  const startSession = useCallback(
+    async (doctorId: string): Promise<void> => {
+      try {
+        const startTime = Date.now();
+        setSessionStartTime(startTime);
 
-      await auditService.logSessionStart(
-        sessionId,
-        doctorId,
-        patientId || userId,
-        clinicId,
-        { purpose, dataTypes, startTime },
-      );
-    } catch (error) {
-      console.error('Failed to log session start:', error);
-    }
-  }, [sessionId, patientId, userId, clinicId, purpose, dataTypes, auditService]);
+        await auditService.logSessionStart(
+          sessionId,
+          doctorId,
+          patientId || userId,
+          clinicId,
+          { purpose, dataTypes, startTime },
+        );
+      } catch (error) {
+        console.error("Failed to log session start:", error);
+      }
+    },
+    [sessionId, patientId, userId, clinicId, purpose, dataTypes, auditService],
+  );
 
   /**
    * End telemedicine session with audit logging
    */
   const endSession = useCallback(
-    async (userRole: 'doctor' | 'patient' = 'patient'): Promise<void> => {
+    async (userRole: "doctor" | "patient" = "patient"): Promise<void> => {
       try {
         const endTime = Date.now();
         const duration = sessionStartTime ? endTime - sessionStartTime : 0;
@@ -310,7 +340,7 @@ export function useLGPDConsent({
 
         setSessionStartTime(null);
       } catch (error) {
-        console.error('Failed to log session end:', error);
+        console.error("Failed to log session end:", error);
       }
     },
     [sessionId, userId, clinicId, sessionStartTime, auditService],
@@ -319,26 +349,29 @@ export function useLGPDConsent({
   /**
    * Log data access during session
    */
-  const logDataAccess = useCallback(async (
-    dataClassification: MedicalDataClassification,
-    description: string,
-    userRole: string = 'patient',
-    metadata?: any,
-  ): Promise<void> => {
-    try {
-      await auditService.logDataAccess(
-        sessionId,
-        userId,
-        userRole,
-        dataClassification,
-        description,
-        clinicId,
-        metadata,
-      );
-    } catch (error) {
-      console.error('Failed to log data access:', error);
-    }
-  }, [sessionId, userId, clinicId, auditService]);
+  const logDataAccess = useCallback(
+    async (
+      dataClassification: MedicalDataClassification,
+      description: string,
+      userRole: string = "patient",
+      metadata?: any,
+    ): Promise<void> => {
+      try {
+        await auditService.logDataAccess(
+          sessionId,
+          userId,
+          userRole,
+          dataClassification,
+          description,
+          clinicId,
+          metadata,
+        );
+      } catch (error) {
+        console.error("Failed to log data access:", error);
+      }
+    },
+    [sessionId, userId, clinicId, auditService],
+  );
 
   // Auto-check consent on mount if enabled
   useEffect(() => {

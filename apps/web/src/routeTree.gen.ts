@@ -51,6 +51,7 @@ import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AppointmentsNewRouteImport } from './routes/appointments/new'
 import { Route as AiInsightsEnhancedRouteImport } from './routes/ai/insights-enhanced'
 import { Route as AiInsightsRouteImport } from './routes/ai/insights'
+import { Route as AiAgentPageRouteImport } from './routes/ai-agent/page'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminGovernanceRouteImport } from './routes/admin/governance'
@@ -278,6 +279,11 @@ const AiInsightsRoute = AiInsightsRouteImport.update({
   path: '/ai/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AiAgentPageRoute = AiAgentPageRouteImport.update({
+  id: '/ai-agent/page',
+  path: '/ai-agent/page',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
   id: '/admin/settings',
   path: '/admin/settings',
@@ -348,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/ai-agent/page': typeof AiAgentPageRoute
   '/ai/insights': typeof AiInsightsRoute
   '/ai/insights-enhanced': typeof AiInsightsEnhancedRoute
   '/appointments/new': typeof AppointmentsNewRoute
@@ -402,6 +409,7 @@ export interface FileRoutesByTo {
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/ai-agent/page': typeof AiAgentPageRoute
   '/ai/insights': typeof AiInsightsRoute
   '/ai/insights-enhanced': typeof AiInsightsEnhancedRoute
   '/appointments/new': typeof AppointmentsNewRoute
@@ -458,6 +466,7 @@ export interface FileRoutesById {
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/ai-agent/page': typeof AiAgentPageRoute
   '/ai/insights': typeof AiInsightsRoute
   '/ai/insights-enhanced': typeof AiInsightsEnhancedRoute
   '/appointments/new': typeof AppointmentsNewRoute
@@ -515,6 +524,7 @@ export interface FileRouteTypes {
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
+    | '/ai-agent/page'
     | '/ai/insights'
     | '/ai/insights-enhanced'
     | '/appointments/new'
@@ -569,6 +579,7 @@ export interface FileRouteTypes {
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
+    | '/ai-agent/page'
     | '/ai/insights'
     | '/ai/insights-enhanced'
     | '/appointments/new'
@@ -624,6 +635,7 @@ export interface FileRouteTypes {
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
+    | '/ai-agent/page'
     | '/ai/insights'
     | '/ai/insights-enhanced'
     | '/appointments/new'
@@ -680,6 +692,7 @@ export interface RootRouteChildren {
   AdminGovernanceRoute: typeof AdminGovernanceRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AiAgentPageRoute: typeof AiAgentPageRoute
   AiInsightsRoute: typeof AiInsightsRoute
   AiInsightsEnhancedRoute: typeof AiInsightsEnhancedRoute
   AppointmentsNewRoute: typeof AppointmentsNewRoute
@@ -1016,6 +1029,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AiInsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ai-agent/page': {
+      id: '/ai-agent/page'
+      path: '/ai-agent/page'
+      fullPath: '/ai-agent/page'
+      preLoaderRoute: typeof AiAgentPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/settings': {
       id: '/admin/settings'
       path: '/admin/settings'
@@ -1139,6 +1159,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminGovernanceRoute: AdminGovernanceRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AiAgentPageRoute: AiAgentPageRoute,
   AiInsightsRoute: AiInsightsRoute,
   AiInsightsEnhancedRoute: AiInsightsEnhancedRoute,
   AppointmentsNewRoute: AppointmentsNewRoute,

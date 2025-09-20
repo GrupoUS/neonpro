@@ -6,9 +6,9 @@
 import {
   notificationSchedulerService,
   type ReminderSettings,
-} from '@/services/notification-scheduler.service';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+} from "@/services/notification-scheduler.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 /**
  * Hook to schedule notifications for an appointment
@@ -36,13 +36,13 @@ export function useScheduleAppointmentNotifications() {
       );
     },
     onSuccess: () => {
-      toast.success('Notificações agendadas com sucesso');
-      queryClient.invalidateQueries({ queryKey: ['notification-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['scheduled-notifications'] });
+      toast.success("Notificações agendadas com sucesso");
+      queryClient.invalidateQueries({ queryKey: ["notification-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["scheduled-notifications"] });
     },
-    onError: error => {
-      console.error('Error scheduling notifications:', error);
-      toast.error('Erro ao agendar notificações');
+    onError: (error) => {
+      console.error("Error scheduling notifications:", error);
+      toast.error("Erro ao agendar notificações");
     },
   });
 }
@@ -54,15 +54,16 @@ export function useProcessPendingNotifications() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: () => notificationSchedulerService.processPendingNotifications(),
+    mutationFn: () =>
+      notificationSchedulerService.processPendingNotifications(),
     onSuccess: () => {
-      toast.success('Notificações pendentes processadas');
-      queryClient.invalidateQueries({ queryKey: ['notification-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['scheduled-notifications'] });
+      toast.success("Notificações pendentes processadas");
+      queryClient.invalidateQueries({ queryKey: ["notification-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["scheduled-notifications"] });
     },
-    onError: error => {
-      console.error('Error processing pending notifications:', error);
-      toast.error('Erro ao processar notificações pendentes');
+    onError: (error) => {
+      console.error("Error processing pending notifications:", error);
+      toast.error("Erro ao processar notificações pendentes");
     },
   });
 }
@@ -75,15 +76,17 @@ export function useCancelAppointmentNotifications() {
 
   return useMutation({
     mutationFn: (appointmentId: string) =>
-      notificationSchedulerService.cancelAppointmentNotifications(appointmentId),
+      notificationSchedulerService.cancelAppointmentNotifications(
+        appointmentId,
+      ),
     onSuccess: () => {
-      toast.success('Notificações canceladas');
-      queryClient.invalidateQueries({ queryKey: ['notification-stats'] });
-      queryClient.invalidateQueries({ queryKey: ['scheduled-notifications'] });
+      toast.success("Notificações canceladas");
+      queryClient.invalidateQueries({ queryKey: ["notification-stats"] });
+      queryClient.invalidateQueries({ queryKey: ["scheduled-notifications"] });
     },
-    onError: error => {
-      console.error('Error cancelling notifications:', error);
-      toast.error('Erro ao cancelar notificações');
+    onError: (error) => {
+      console.error("Error cancelling notifications:", error);
+      toast.error("Erro ao cancelar notificações");
     },
   });
 }
@@ -93,7 +96,7 @@ export function useCancelAppointmentNotifications() {
  */
 export function useNotificationStats(clinicId?: string) {
   return useQuery({
-    queryKey: ['notification-stats', clinicId],
+    queryKey: ["notification-stats", clinicId],
     queryFn: () => notificationSchedulerService.getNotificationStats(clinicId),
     staleTime: 5 * 60 * 1000, // 5 minutes
     refetchInterval: 5 * 60 * 1000, // Refetch every 5 minutes
@@ -105,7 +108,7 @@ export function useNotificationStats(clinicId?: string) {
  */
 export function useScheduledNotifications(appointmentId?: string) {
   return useQuery({
-    queryKey: ['scheduled-notifications', appointmentId],
+    queryKey: ["scheduled-notifications", appointmentId],
     queryFn: async () => {
       // This would fetch from the scheduled_notifications table
       // For now, return empty array as placeholder
@@ -120,13 +123,13 @@ export function useScheduledNotifications(appointmentId?: string) {
  * Hook to get all scheduled notifications with filters
  */
 export function useAllScheduledNotifications(filters?: {
-  status?: 'pending' | 'sent' | 'failed' | 'cancelled';
+  status?: "pending" | "sent" | "failed" | "cancelled";
   clinicId?: string;
   patientId?: string;
   limit?: number;
 }) {
   return useQuery({
-    queryKey: ['all-scheduled-notifications', filters],
+    queryKey: ["all-scheduled-notifications", filters],
     queryFn: async () => {
       // This would fetch from the scheduled_notifications table with filters
       // For now, return empty array as placeholder
@@ -141,15 +144,16 @@ export function useAllScheduledNotifications(filters?: {
  */
 export function useNotificationProcessor(enabled: boolean = false) {
   return useQuery({
-    queryKey: ['notification-processor'],
+    queryKey: ["notification-processor"],
     queryFn: async () => {
       if (!enabled) return null;
 
       try {
         await notificationSchedulerService.processPendingNotifications();
         return { lastProcessed: new Date(), success: true } as const;
-      } catch { // ignore error for UX
-        console.error('Background notification processing failed');
+      } catch {
+        // ignore error for UX
+        console.error("Background notification processing failed");
         return { lastProcessed: new Date(), success: false } as const;
       }
     },

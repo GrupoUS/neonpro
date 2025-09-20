@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 /**
  * AI Chat Demo Page
- * 
+ *
  * Comprehensive demonstration page for AI chat functionality in NeonPro.
  * Showcases multiple use cases and scenarios for the AI assistant.
- * 
+ *
  * Features:
  * - Multiple demo scenarios (general, client data, appointments, financial)
  * - Interactive AI chat interface
@@ -14,34 +14,34 @@
  * - Accessibility compliance (WCAG 2.1 AA+)
  */
 
-import React, { useState } from 'react';
-import { createFileRoute } from '@tanstack/react-router';
-import { AIChatDemo } from '@/components/ai/ai-chat-demo';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Brain, 
-  MessageSquare, 
-  Stethoscope, 
-  Calendar, 
-  TrendingUp, 
-  Users, 
+import React, { useState } from "react";
+import { createFileRoute } from "@tanstack/react-router";
+import { AIChatDemo } from "@/components/ai/ai-chat-demo";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Brain,
+  MessageSquare,
+  Stethoscope,
+  Calendar,
+  TrendingUp,
+  Users,
   Shield,
   Smartphone,
   Accessibility,
   BookOpen,
-  ArrowLeft
-} from 'lucide-react';
-import { Link } from '@tanstack/react-router';
+  ArrowLeft,
+} from "lucide-react";
+import { Link } from "@tanstack/react-router";
 
-export const Route = createFileRoute('/ai-chat-demo')({
+export const Route = createFileRoute("/ai-chat-demo")({
   component: AIChatDemoPage,
 });
 
 function AIChatDemoPage() {
-  const [activeTab, setActiveTab] = useState('demo');
+  const [activeTab, setActiveTab] = useState("demo");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
@@ -65,7 +65,8 @@ function AIChatDemoPage() {
                     AI Chat Demo
                   </h1>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
-                    Explore the power of AI in NeonPro's aesthetic clinic platform
+                    Explore the power of AI in NeonPro's aesthetic clinic
+                    platform
                   </p>
                 </div>
               </div>
@@ -92,7 +93,9 @@ function AIChatDemoPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">AI Models</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    AI Models
+                  </p>
                   <p className="text-2xl font-bold">4+</p>
                 </div>
                 <Brain className="h-8 w-8 text-blue-500" />
@@ -104,7 +107,9 @@ function AIChatDemoPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Use Cases</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Use Cases
+                  </p>
                   <p className="text-2xl font-bold">6+</p>
                 </div>
                 <MessageSquare className="h-8 w-8 text-green-500" />
@@ -116,7 +121,9 @@ function AIChatDemoPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Healthcare</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Healthcare
+                  </p>
                   <p className="text-2xl font-bold">100%</p>
                 </div>
                 <Stethoscope className="h-8 w-8 text-purple-500" />
@@ -128,7 +135,9 @@ function AIChatDemoPage() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Mobile</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    Mobile
+                  </p>
                   <p className="text-2xl font-bold">95%</p>
                 </div>
                 <Smartphone className="h-8 w-8 text-orange-500" />
@@ -138,7 +147,11 @@ function AIChatDemoPage() {
         </div>
 
         {/* Main Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-4 max-w-2xl mx-auto">
             <TabsTrigger value="demo" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
@@ -152,7 +165,10 @@ function AIChatDemoPage() {
               <BookOpen className="h-4 w-4" />
               Features
             </TabsTrigger>
-            <TabsTrigger value="documentation" className="flex items-center gap-2">
+            <TabsTrigger
+              value="documentation"
+              className="flex items-center gap-2"
+            >
               <BookOpen className="h-4 w-4" />
               Docs
             </TabsTrigger>
@@ -170,8 +186,9 @@ function AIChatDemoPage() {
               <CardContent>
                 <div className="mb-6">
                   <p className="text-slate-600 dark:text-slate-400 mb-4">
-                    Experience the full power of NeonPro's AI assistant. Try different scenarios 
-                    and see how it can help with various tasks in your aesthetic clinic.
+                    Experience the full power of NeonPro's AI assistant. Try
+                    different scenarios and see how it can help with various
+                    tasks in your aesthetic clinic.
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <Badge variant="secondary">
@@ -216,9 +233,13 @@ function AIChatDemoPage() {
                   <div className="space-y-2">
                     <h4 className="font-medium">Try asking:</h4>
                     <ul className="text-sm space-y-1 text-slate-600 dark:text-slate-400">
-                      <li>• "What are the most popular aesthetic treatments?"</li>
+                      <li>
+                        • "What are the most popular aesthetic treatments?"
+                      </li>
                       <li>• "How can I improve patient satisfaction?"</li>
-                      <li>• "What are the latest trends in cosmetic procedures?"</li>
+                      <li>
+                        • "What are the latest trends in cosmetic procedures?"
+                      </li>
                     </ul>
                   </div>
                   <Button variant="outline" className="w-full">
@@ -236,7 +257,8 @@ function AIChatDemoPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-slate-600 dark:text-slate-400">
-                    AI assistant with access to patient information and medical history.
+                    AI assistant with access to patient information and medical
+                    history.
                   </p>
                   <div className="space-y-2">
                     <h4 className="font-medium">Try asking:</h4>
@@ -261,7 +283,8 @@ function AIChatDemoPage() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-slate-600 dark:text-slate-400">
-                    Smart scheduling assistant with availability and conflict detection.
+                    Smart scheduling assistant with availability and conflict
+                    detection.
                   </p>
                   <div className="space-y-2">
                     <h4 className="font-medium">Try asking:</h4>
@@ -369,7 +392,9 @@ function AIChatDemoPage() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-lg">Compliance & Security</CardTitle>
+                  <CardTitle className="text-lg">
+                    Compliance & Security
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 text-sm">
@@ -501,7 +526,7 @@ function AIChatDemoPage() {
                     <div>
                       <h4 className="font-medium mb-2">1. Basic Usage</h4>
                       <pre className="bg-slate-100 dark:bg-slate-800 p-3 rounded text-xs overflow-x-auto">
-{`import { EnhancedAIChat } from '@/components/ai';
+                        {`import { EnhancedAIChat } from '@/components/ai';
 
 <EnhancedAIChat
   sessionType="general"
@@ -514,11 +539,13 @@ function AIChatDemoPage() {
 />`}
                       </pre>
                     </div>
-                    
+
                     <div>
-                      <h4 className="font-medium mb-2">2. With Patient Context</h4>
+                      <h4 className="font-medium mb-2">
+                        2. With Patient Context
+                      </h4>
                       <pre className="bg-slate-100 dark:bg-slate-800 p-3 rounded text-xs overflow-x-auto">
-{`<EnhancedAIChat
+                        {`<EnhancedAIChat
   sessionType="client"
   patientContext={{
     patientId: "123",
@@ -544,20 +571,36 @@ function AIChatDemoPage() {
                     <h4 className="font-medium mb-2">Props</h4>
                     <div className="space-y-2 text-sm">
                       <div>
-                        <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">sessionType</code>
-                        <span className="text-slate-600 dark:text-slate-400 ml-2">- 'general' | 'client' | 'appointment' | 'financial'</span>
+                        <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
+                          sessionType
+                        </code>
+                        <span className="text-slate-600 dark:text-slate-400 ml-2">
+                          - 'general' | 'client' | 'appointment' | 'financial'
+                        </span>
                       </div>
                       <div>
-                        <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">patientContext</code>
-                        <span className="text-slate-600 dark:text-slate-400 ml-2">- Patient information object</span>
+                        <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
+                          patientContext
+                        </code>
+                        <span className="text-slate-600 dark:text-slate-400 ml-2">
+                          - Patient information object
+                        </span>
                       </div>
                       <div>
-                        <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">healthcareProfessional</code>
-                        <span className="text-slate-600 dark:text-slate-400 ml-2">- Professional context object</span>
+                        <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
+                          healthcareProfessional
+                        </code>
+                        <span className="text-slate-600 dark:text-slate-400 ml-2">
+                          - Professional context object
+                        </span>
                       </div>
                       <div>
-                        <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">lgpdConsent</code>
-                        <span className="text-slate-600 dark:text-slate-400 ml-2">- LGPD compliance settings</span>
+                        <code className="bg-slate-100 dark:bg-slate-800 px-1 rounded">
+                          lgpdConsent
+                        </code>
+                        <span className="text-slate-600 dark:text-slate-400 ml-2">
+                          - LGPD compliance settings
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -570,13 +613,20 @@ function AIChatDemoPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <ul className="text-sm space-y-2">
-                    <li>• Always obtain explicit consent before accessing patient data</li>
-                    <li>• Use appropriate session types for different contexts</li>
+                    <li>
+                      • Always obtain explicit consent before accessing patient
+                      data
+                    </li>
+                    <li>
+                      • Use appropriate session types for different contexts
+                    </li>
                     <li>• Implement proper error handling for AI responses</li>
                     <li>• Follow WCAG guidelines for accessibility</li>
                     <li>• Test thoroughly on mobile devices</li>
                     <li>• Monitor AI usage and costs</li>
-                    <li>• Keep conversation history within retention policies</li>
+                    <li>
+                      • Keep conversation history within retention policies
+                    </li>
                   </ul>
                 </CardContent>
               </Card>
@@ -617,17 +667,17 @@ function AIChatDemoPage() {
       <div className="bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 mt-12">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center space-y-4">
-            <h3 className="text-lg font-semibold">Ready to Transform Your Clinic?</h3>
+            <h3 className="text-lg font-semibold">
+              Ready to Transform Your Clinic?
+            </h3>
             <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Experience the power of AI in aesthetic clinic management. 
-              Our AI assistant is designed to streamline operations, improve patient care, 
-              and boost your clinic's efficiency.
+              Experience the power of AI in aesthetic clinic management. Our AI
+              assistant is designed to streamline operations, improve patient
+              care, and boost your clinic's efficiency.
             </p>
             <div className="flex justify-center gap-4">
               <Link to="/">
-                <Button size="lg">
-                  Back to Dashboard
-                </Button>
+                <Button size="lg">Back to Dashboard</Button>
               </Link>
               <Button variant="outline" size="lg">
                 Contact Sales

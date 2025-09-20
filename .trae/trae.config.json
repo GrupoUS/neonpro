@@ -15,9 +15,7 @@
     }
   },
   "tasks": {
-    "configFiles": [
-      ".trae/tasks.json"
-    ],
+    "configFiles": [".trae/tasks.json"],
     "defaultGroup": "build",
     "archonIntegration": {
       "enabled": true,
@@ -114,9 +112,6 @@
   "builders": {
     "primary": "vibecoder",
     "configPath": ".trae/builders/vibecoder.md",
-    "specializations": [
-      "full-stack",
-      "compliance-driven"
-    ]
+    "specializations": ["full-stack", "compliance-driven"]
   }
 }

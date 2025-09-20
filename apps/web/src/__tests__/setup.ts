@@ -1,8 +1,8 @@
-import '@testing-library/jest-dom';
-import { vi } from 'vitest';
+import "@testing-library/jest-dom";
+import { vi } from "vitest";
 
 // Mock matchMedia globally
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query: any) => ({
     matches: false,
@@ -19,7 +19,7 @@ Object.defineProperty(window, 'matchMedia', {
 // Quiet jsdom navigation not implemented warnings during tests
 // This prevents noisy errors from anchor auto-navigation in timers
 // and won't affect application logic in our unit tests.
-Object.defineProperty(globalThis, 'navigation', {
+Object.defineProperty(globalThis, "navigation", {
   configurable: true,
   value: {
     navigate: vi.fn(),

@@ -10,9 +10,9 @@ import {
   HealthcareTRPCError,
   PaginationSchema,
   UpdateClinicRequestSchema,
-} from '@neonpro/types/api/contracts';
-import { z } from 'zod';
-import { protectedProcedure, router } from '../trpc';
+} from "@neonpro/types/api/contracts";
+import { z } from "zod";
+import { protectedProcedure, router } from "../trpc";
 
 export const clinicRouter = router({
   /**
@@ -20,9 +20,9 @@ export const clinicRouter = router({
    */
   create: protectedProcedure
     .meta({
-      description: 'Create new clinic with automated compliance verification',
-      tags: ['clinic', 'create', 'compliance'],
-      requiresPermission: 'clinic:create',
+      description: "Create new clinic with automated compliance verification",
+      tags: ["clinic", "create", "compliance"],
+      requiresPermission: "clinic:create",
     })
     .input(CreateClinicRequestSchema)
     .output(ClinicResponseSchema)
@@ -30,19 +30,19 @@ export const clinicRouter = router({
       // Validate user has permission to create clinics
       if (!hasSystemAdminRole(ctx.user.role)) {
         throw new HealthcareTRPCError(
-          'FORBIDDEN',
-          'Insufficient permissions to create clinic',
-          'INSUFFICIENT_PERMISSIONS',
-          { requiredRole: 'system_admin', currentRole: ctx.user.role },
+          "FORBIDDEN",
+          "Insufficient permissions to create clinic",
+          "INSUFFICIENT_PERMISSIONS",
+          { requiredRole: "system_admin", currentRole: ctx.user.role },
         );
       }
 
       // Validate CNPJ format and uniqueness
       if (!isValidCNPJ(input.cnpj)) {
         throw new HealthcareTRPCError(
-          'BAD_REQUEST',
-          'Invalid CNPJ format',
-          'INVALID_CNPJ_FORMAT',
+          "BAD_REQUEST",
+          "Invalid CNPJ format",
+          "INVALID_CNPJ_FORMAT",
           { cnpj: input.cnpj },
         );
       }
@@ -57,9 +57,9 @@ export const clinicRouter = router({
 
       if (existingClinic) {
         throw new HealthcareTRPCError(
-          'CONFLICT',
-          'Clinic with this CNPJ already exists',
-          'CNPJ_ALREADY_EXISTS',
+          "CONFLICT",
+          "Clinic with this CNPJ already exists",
+          "CNPJ_ALREADY_EXISTS",
           {
             existingClinicId: existingClinic.id,
             cnpj: input.cnpj,
@@ -71,9 +71,9 @@ export const clinicRouter = router({
       const businessValidation = await validateBusinessLicense(input.cnpj);
       if (!businessValidation.isValid) {
         throw new HealthcareTRPCError(
-          'BAD_REQUEST',
-          'Business license validation failed',
-          'BUSINESS_LICENSE_VALIDATION_FAILED',
+          "BAD_REQUEST",
+          "Business license validation failed",
+          "BUSINESS_LICENSE_VALIDATION_FAILED",
           {
             cnpj: input.cnpj,
             validationErrors: businessValidation.errors,
@@ -90,9 +90,9 @@ export const clinicRouter = router({
 
       if (!healthLicenseValidation.isValid) {
         throw new HealthcareTRPCError(
-          'BAD_REQUEST',
-          'Healthcare license validation failed',
-          'HEALTHCARE_LICENSE_VALIDATION_FAILED',
+          "BAD_REQUEST",
+          "Healthcare license validation failed",
+          "HEALTHCARE_LICENSE_VALIDATION_FAILED",
           {
             licenseNumber: input.healthLicenseNumber,
             validationErrors: healthLicenseValidation.errors,
@@ -107,18 +107,18 @@ export const clinicRouter = router({
           isActive: true,
           businessLicenseValidatedAt: new Date(),
           healthLicenseValidatedAt: new Date(),
-          complianceStatus: 'compliant',
+          complianceStatus: "compliant",
           createdBy: ctx.user.id,
           // Initialize default settings
           settings: {
             workingHours: {
-              monday: { start: '08:00', end: '18:00', isOpen: true },
-              tuesday: { start: '08:00', end: '18:00', isOpen: true },
-              wednesday: { start: '08:00', end: '18:00', isOpen: true },
-              thursday: { start: '08:00', end: '18:00', isOpen: true },
-              friday: { start: '08:00', end: '18:00', isOpen: true },
-              saturday: { start: '08:00', end: '13:00', isOpen: true },
-              sunday: { start: '08:00', end: '13:00', isOpen: false },
+              monday: { start: "08:00", end: "18:00", isOpen: true },
+              tuesday: { start: "08:00", end: "18:00", isOpen: true },
+              wednesday: { start: "08:00", end: "18:00", isOpen: true },
+              thursday: { start: "08:00", end: "18:00", isOpen: true },
+              friday: { start: "08:00", end: "18:00", isOpen: true },
+              saturday: { start: "08:00", end: "13:00", isOpen: true },
+              sunday: { start: "08:00", end: "13:00", isOpen: false },
             },
             appointmentDuration: 30,
             bookingAdvanceLimit: 90,
@@ -147,8 +147,8 @@ export const clinicRouter = router({
       await ctx.prisma.complianceTracking.create({
         data: {
           clinicId: clinic.id,
-          complianceType: 'initial_setup',
-          status: 'compliant',
+          complianceType: "initial_setup",
+          status: "compliant",
           checkDate: new Date(),
           details: {
             businessLicenseValid: true,
@@ -169,8 +169,8 @@ export const clinicRouter = router({
       // Audit log
       await ctx.prisma.auditLog.create({
         data: {
-          action: 'clinic_created',
-          entityType: 'clinic',
+          action: "clinic_created",
+          entityType: "clinic",
           entityId: clinic.id,
           details: {
             cnpj: input.cnpj,
@@ -185,7 +185,7 @@ export const clinicRouter = router({
       return {
         success: true,
         data: clinic,
-        message: 'Clinic created successfully with compliance verification',
+        message: "Clinic created successfully with compliance verification",
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
       };
@@ -196,20 +196,24 @@ export const clinicRouter = router({
    */
   getById: protectedProcedure
     .meta({
-      description: 'Get clinic by ID with compliance status and metrics',
-      tags: ['clinic', 'read', 'compliance', 'metrics'],
-      requiresPermission: 'clinic:read',
+      description: "Get clinic by ID with compliance status and metrics",
+      tags: ["clinic", "read", "compliance", "metrics"],
+      requiresPermission: "clinic:read",
     })
-    .input(z.object({
-      id: z.string().uuid(),
-      includeMetrics: z.boolean().default(false),
-      includeCompliance: z.boolean().default(true),
-      includeSettings: z.boolean().default(false),
-      metricsDateRange: z.object({
-        from: z.string().datetime(),
-        to: z.string().datetime(),
-      }).optional(),
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        includeMetrics: z.boolean().default(false),
+        includeCompliance: z.boolean().default(true),
+        includeSettings: z.boolean().default(false),
+        metricsDateRange: z
+          .object({
+            from: z.string().datetime(),
+            to: z.string().datetime(),
+          })
+          .optional(),
+      }),
+    )
     .output(ClinicResponseSchema)
     .query(async ({ input, ctx }) => {
       const clinic = await ctx.prisma.clinic.findUnique({
@@ -230,7 +234,7 @@ export const clinicRouter = router({
           },
           ...(input.includeCompliance && {
             complianceTracking: {
-              orderBy: { checkDate: 'desc' },
+              orderBy: { checkDate: "desc" },
               take: 5,
             },
           }),
@@ -239,9 +243,9 @@ export const clinicRouter = router({
 
       if (!clinic) {
         throw new HealthcareTRPCError(
-          'NOT_FOUND',
-          'Clinic not found',
-          'CLINIC_NOT_FOUND',
+          "NOT_FOUND",
+          "Clinic not found",
+          "CLINIC_NOT_FOUND",
           { clinicId: input.id },
         );
       }
@@ -260,9 +264,10 @@ export const clinicRouter = router({
       }
 
       // Filter settings based on user permissions
-      const settings = input.includeSettings && hasClinicAdminAccess(ctx.user.id, input.id)
-        ? clinic.settings
-        : null;
+      const settings =
+        input.includeSettings && hasClinicAdminAccess(ctx.user.id, input.id)
+          ? clinic.settings
+          : null;
 
       return {
         success: true,
@@ -281,20 +286,26 @@ export const clinicRouter = router({
    */
   list: protectedProcedure
     .meta({
-      description: 'List clinics with filtering and search capabilities',
-      tags: ['clinic', 'list', 'search'],
-      requiresPermission: 'clinic:list',
+      description: "List clinics with filtering and search capabilities",
+      tags: ["clinic", "list", "search"],
+      requiresPermission: "clinic:list",
     })
-    .input(PaginationSchema.extend({
-      search: z.string().optional(),
-      state: z.string().length(2).optional(),
-      city: z.string().optional(),
-      isActive: z.boolean().default(true),
-      complianceStatus: z.enum(['compliant', 'non_compliant', 'pending_review']).optional(),
-      sortBy: z.enum(['name', 'createdAt', 'complianceStatus']).default('name'),
-      sortOrder: z.enum(['asc', 'desc']).default('asc'),
-      userAccessOnly: z.boolean().default(false),
-    }))
+    .input(
+      PaginationSchema.extend({
+        search: z.string().optional(),
+        state: z.string().length(2).optional(),
+        city: z.string().optional(),
+        isActive: z.boolean().default(true),
+        complianceStatus: z
+          .enum(["compliant", "non_compliant", "pending_review"])
+          .optional(),
+        sortBy: z
+          .enum(["name", "createdAt", "complianceStatus"])
+          .default("name"),
+        sortOrder: z.enum(["asc", "desc"]).default("asc"),
+        userAccessOnly: z.boolean().default(false),
+      }),
+    )
     .output(ClinicsListResponseSchema)
     .query(async ({ input, ctx }) => {
       let clinicIds = null;
@@ -302,7 +313,7 @@ export const clinicRouter = router({
       // Filter by user access if requested
       if (input.userAccessOnly) {
         const userClinics = await getUserAccessibleClinics(ctx.user.id);
-        clinicIds = userClinics.map(c => c.clinicId);
+        clinicIds = userClinics.map((c) => c.clinicId);
       }
 
       const where = {
@@ -310,18 +321,20 @@ export const clinicRouter = router({
         isActive: input.isActive,
         ...(input.search && {
           OR: [
-            { name: { contains: input.search, mode: 'insensitive' } },
-            { cnpj: { contains: input.search, mode: 'insensitive' } },
-            { address: { path: ['city'], string_contains: input.search } },
+            { name: { contains: input.search, mode: "insensitive" } },
+            { cnpj: { contains: input.search, mode: "insensitive" } },
+            { address: { path: ["city"], string_contains: input.search } },
           ],
         }),
         ...(input.state && {
-          address: { path: ['state'], equals: input.state },
+          address: { path: ["state"], equals: input.state },
         }),
         ...(input.city && {
-          address: { path: ['city'], string_contains: input.city },
+          address: { path: ["city"], string_contains: input.city },
         }),
-        ...(input.complianceStatus && { complianceStatus: input.complianceStatus }),
+        ...(input.complianceStatus && {
+          complianceStatus: input.complianceStatus,
+        }),
       };
 
       const [clinics, total] = await Promise.all([
@@ -352,7 +365,7 @@ export const clinicRouter = router({
                   gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
                 },
               },
-              orderBy: { checkDate: 'desc' },
+              orderBy: { checkDate: "desc" },
               take: 1,
             },
           },
@@ -381,9 +394,9 @@ export const clinicRouter = router({
    */
   update: protectedProcedure
     .meta({
-      description: 'Update clinic information with compliance re-validation',
-      tags: ['clinic', 'update', 'compliance'],
-      requiresPermission: 'clinic:update',
+      description: "Update clinic information with compliance re-validation",
+      tags: ["clinic", "update", "compliance"],
+      requiresPermission: "clinic:update",
     })
     .input(UpdateClinicRequestSchema)
     .output(ClinicResponseSchema)
@@ -394,9 +407,9 @@ export const clinicRouter = router({
 
       if (!currentClinic) {
         throw new HealthcareTRPCError(
-          'NOT_FOUND',
-          'Clinic not found',
-          'CLINIC_NOT_FOUND',
+          "NOT_FOUND",
+          "Clinic not found",
+          "CLINIC_NOT_FOUND",
           { clinicId: input.id },
         );
       }
@@ -406,16 +419,17 @@ export const clinicRouter = router({
 
       // Check if critical information is being updated
       const cnpjChanged = input.cnpj && input.cnpj !== currentClinic.cnpj;
-      const healthLicenseChanged = input.healthLicenseNumber
-        && input.healthLicenseNumber !== currentClinic.healthLicenseNumber;
+      const healthLicenseChanged =
+        input.healthLicenseNumber &&
+        input.healthLicenseNumber !== currentClinic.healthLicenseNumber;
 
       // Re-validate if critical info changed
       if (cnpjChanged) {
         if (!isValidCNPJ(input.cnpj)) {
           throw new HealthcareTRPCError(
-            'BAD_REQUEST',
-            'Invalid CNPJ format',
-            'INVALID_CNPJ_FORMAT',
+            "BAD_REQUEST",
+            "Invalid CNPJ format",
+            "INVALID_CNPJ_FORMAT",
             { cnpj: input.cnpj },
           );
         }
@@ -430,9 +444,9 @@ export const clinicRouter = router({
 
         if (existingClinic) {
           throw new HealthcareTRPCError(
-            'CONFLICT',
-            'Another clinic with this CNPJ already exists',
-            'CNPJ_ALREADY_EXISTS',
+            "CONFLICT",
+            "Another clinic with this CNPJ already exists",
+            "CNPJ_ALREADY_EXISTS",
             {
               existingClinicId: existingClinic.id,
               cnpj: input.cnpj,
@@ -443,9 +457,9 @@ export const clinicRouter = router({
         const businessValidation = await validateBusinessLicense(input.cnpj);
         if (!businessValidation.isValid) {
           throw new HealthcareTRPCError(
-            'BAD_REQUEST',
-            'Business license validation failed for new CNPJ',
-            'BUSINESS_LICENSE_VALIDATION_FAILED',
+            "BAD_REQUEST",
+            "Business license validation failed for new CNPJ",
+            "BUSINESS_LICENSE_VALIDATION_FAILED",
             {
               cnpj: input.cnpj,
               validationErrors: businessValidation.errors,
@@ -463,9 +477,9 @@ export const clinicRouter = router({
 
         if (!healthLicenseValidation.isValid) {
           throw new HealthcareTRPCError(
-            'BAD_REQUEST',
-            'Healthcare license validation failed',
-            'HEALTHCARE_LICENSE_VALIDATION_FAILED',
+            "BAD_REQUEST",
+            "Healthcare license validation failed",
+            "HEALTHCARE_LICENSE_VALIDATION_FAILED",
             {
               licenseNumber: input.healthLicenseNumber,
               validationErrors: healthLicenseValidation.errors,
@@ -503,8 +517,8 @@ export const clinicRouter = router({
         await ctx.prisma.complianceTracking.create({
           data: {
             clinicId: input.id,
-            complianceType: 'license_update',
-            status: 'compliant',
+            complianceType: "license_update",
+            status: "compliant",
             checkDate: new Date(),
             details: {
               cnpjChanged,
@@ -520,8 +534,8 @@ export const clinicRouter = router({
       // Audit log
       await ctx.prisma.auditLog.create({
         data: {
-          action: 'clinic_updated',
-          entityType: 'clinic',
+          action: "clinic_updated",
+          entityType: "clinic",
           entityId: input.id,
           details: {
             changes: getChanges(currentClinic, input),
@@ -534,7 +548,7 @@ export const clinicRouter = router({
       return {
         success: true,
         data: updatedClinic,
-        message: 'Clinic updated successfully',
+        message: "Clinic updated successfully",
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
       };
@@ -545,53 +559,65 @@ export const clinicRouter = router({
    */
   getCompliance: protectedProcedure
     .meta({
-      description: 'Get clinic compliance status with detailed history',
-      tags: ['clinic', 'compliance', 'audit'],
-      requiresPermission: 'clinic:compliance',
+      description: "Get clinic compliance status with detailed history",
+      tags: ["clinic", "compliance", "audit"],
+      requiresPermission: "clinic:compliance",
     })
-    .input(z.object({
-      clinicId: z.string().uuid(),
-      includeHistory: z.boolean().default(true),
-      historyLimit: z.number().min(1).max(100).default(20),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        clinicId: z.string(),
-        currentStatus: z.enum(['compliant', 'non_compliant', 'pending_review']),
-        lastCheckDate: z.string().datetime(),
-        nextCheckDate: z.string().datetime(),
-        complianceAreas: z.object({
-          businessLicense: z.object({
-            isValid: z.boolean(),
-            validatedAt: z.string().datetime().nullable(),
-            expiresAt: z.string().datetime().nullable(),
-          }),
-          healthLicense: z.object({
-            isValid: z.boolean(),
-            validatedAt: z.string().datetime().nullable(),
-            expiresAt: z.string().datetime().nullable(),
-          }),
-          lgpdCompliance: z.object({
-            isCompliant: z.boolean(),
-            lastAssessment: z.string().datetime().nullable(),
-          }),
-          anvisaCompliance: z.object({
-            isCompliant: z.boolean(),
-            lastAssessment: z.string().datetime().nullable(),
-          }),
-        }),
-        complianceHistory: z.array(z.object({
-          id: z.string(),
-          complianceType: z.string(),
-          status: z.string(),
-          checkDate: z.string().datetime(),
-          details: z.record(z.any()),
-        })).optional(),
+    .input(
+      z.object({
+        clinicId: z.string().uuid(),
+        includeHistory: z.boolean().default(true),
+        historyLimit: z.number().min(1).max(100).default(20),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          clinicId: z.string(),
+          currentStatus: z.enum([
+            "compliant",
+            "non_compliant",
+            "pending_review",
+          ]),
+          lastCheckDate: z.string().datetime(),
+          nextCheckDate: z.string().datetime(),
+          complianceAreas: z.object({
+            businessLicense: z.object({
+              isValid: z.boolean(),
+              validatedAt: z.string().datetime().nullable(),
+              expiresAt: z.string().datetime().nullable(),
+            }),
+            healthLicense: z.object({
+              isValid: z.boolean(),
+              validatedAt: z.string().datetime().nullable(),
+              expiresAt: z.string().datetime().nullable(),
+            }),
+            lgpdCompliance: z.object({
+              isCompliant: z.boolean(),
+              lastAssessment: z.string().datetime().nullable(),
+            }),
+            anvisaCompliance: z.object({
+              isCompliant: z.boolean(),
+              lastAssessment: z.string().datetime().nullable(),
+            }),
+          }),
+          complianceHistory: z
+            .array(
+              z.object({
+                id: z.string(),
+                complianceType: z.string(),
+                status: z.string(),
+                checkDate: z.string().datetime(),
+                details: z.record(z.any()),
+              }),
+            )
+            .optional(),
+        }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .query(async ({ input, ctx }) => {
       // Validate clinic access
       await validateClinicAccess(ctx.user.id, input.clinicId);
@@ -607,9 +633,9 @@ export const clinicRouter = router({
 
       if (!clinic) {
         throw new HealthcareTRPCError(
-          'NOT_FOUND',
-          'Clinic not found',
-          'CLINIC_NOT_FOUND',
+          "NOT_FOUND",
+          "Clinic not found",
+          "CLINIC_NOT_FOUND",
           { clinicId: input.clinicId },
         );
       }
@@ -617,7 +643,7 @@ export const clinicRouter = router({
       // Get latest compliance tracking
       const latestCompliance = await ctx.prisma.complianceTracking.findFirst({
         where: { clinicId: input.clinicId },
-        orderBy: { checkDate: 'desc' },
+        orderBy: { checkDate: "desc" },
       });
 
       // Get compliance history if requested
@@ -625,7 +651,7 @@ export const clinicRouter = router({
       if (input.includeHistory) {
         complianceHistory = await ctx.prisma.complianceTracking.findMany({
           where: { clinicId: input.clinicId },
-          orderBy: { checkDate: 'desc' },
+          orderBy: { checkDate: "desc" },
           take: input.historyLimit,
         });
       }
@@ -635,17 +661,23 @@ export const clinicRouter = router({
         data: {
           clinicId: input.clinicId,
           currentStatus: clinic.complianceStatus,
-          lastCheckDate: latestCompliance?.checkDate.toISOString() || new Date().toISOString(),
-          nextCheckDate: latestCompliance?.nextCheckDate.toISOString() || new Date().toISOString(),
+          lastCheckDate:
+            latestCompliance?.checkDate.toISOString() ||
+            new Date().toISOString(),
+          nextCheckDate:
+            latestCompliance?.nextCheckDate.toISOString() ||
+            new Date().toISOString(),
           complianceAreas: {
             businessLicense: {
               isValid: !!clinic.businessLicenseValidatedAt,
-              validatedAt: clinic.businessLicenseValidatedAt?.toISOString() || null,
+              validatedAt:
+                clinic.businessLicenseValidatedAt?.toISOString() || null,
               expiresAt: null, // Would be calculated based on business rules
             },
             healthLicense: {
               isValid: !!clinic.healthLicenseValidatedAt,
-              validatedAt: clinic.healthLicenseValidatedAt?.toISOString() || null,
+              validatedAt:
+                clinic.healthLicenseValidatedAt?.toISOString() || null,
               expiresAt: null, // Would be calculated based on business rules
             },
             lgpdCompliance: {
@@ -669,41 +701,53 @@ export const clinicRouter = router({
    */
   updateSettings: protectedProcedure
     .meta({
-      description: 'Update clinic operational settings',
-      tags: ['clinic', 'settings'],
-      requiresPermission: 'clinic:settings',
+      description: "Update clinic operational settings",
+      tags: ["clinic", "settings"],
+      requiresPermission: "clinic:settings",
     })
-    .input(z.object({
-      clinicId: z.string().uuid(),
-      settings: z.object({
-        workingHours: z.record(z.object({
-          start: z.string(),
-          end: z.string(),
-          isOpen: z.boolean(),
-        })).optional(),
-        appointmentDuration: z.number().min(15).max(180).optional(),
-        bookingAdvanceLimit: z.number().min(1).max(365).optional(),
-        cancellationPolicy: z.object({
-          allowedHours: z.number().min(0).max(168),
-          chargePercentage: z.number().min(0).max(100),
-        }).optional(),
-        notifications: z.object({
-          emailEnabled: z.boolean(),
-          smsEnabled: z.boolean(),
-          whatsappEnabled: z.boolean(),
-        }).optional(),
+    .input(
+      z.object({
+        clinicId: z.string().uuid(),
+        settings: z.object({
+          workingHours: z
+            .record(
+              z.object({
+                start: z.string(),
+                end: z.string(),
+                isOpen: z.boolean(),
+              }),
+            )
+            .optional(),
+          appointmentDuration: z.number().min(15).max(180).optional(),
+          bookingAdvanceLimit: z.number().min(1).max(365).optional(),
+          cancellationPolicy: z
+            .object({
+              allowedHours: z.number().min(0).max(168),
+              chargePercentage: z.number().min(0).max(100),
+            })
+            .optional(),
+          notifications: z
+            .object({
+              emailEnabled: z.boolean(),
+              smsEnabled: z.boolean(),
+              whatsappEnabled: z.boolean(),
+            })
+            .optional(),
+        }),
       }),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        clinicId: z.string(),
-        settings: z.record(z.any()),
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          clinicId: z.string(),
+          settings: z.record(z.any()),
+        }),
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
       }),
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
     .mutation(async ({ input, ctx }) => {
       // Validate clinic admin access
       await validateClinicAdminAccess(ctx.user.id, input.clinicId);
@@ -715,9 +759,9 @@ export const clinicRouter = router({
 
       if (!currentClinic) {
         throw new HealthcareTRPCError(
-          'NOT_FOUND',
-          'Clinic not found',
-          'CLINIC_NOT_FOUND',
+          "NOT_FOUND",
+          "Clinic not found",
+          "CLINIC_NOT_FOUND",
           { clinicId: input.clinicId },
         );
       }
@@ -740,8 +784,8 @@ export const clinicRouter = router({
       // Audit log
       await ctx.prisma.auditLog.create({
         data: {
-          action: 'clinic_settings_updated',
-          entityType: 'clinic',
+          action: "clinic_settings_updated",
+          entityType: "clinic",
           entityId: input.clinicId,
           details: {
             changedSettings: input.settings,
@@ -756,7 +800,7 @@ export const clinicRouter = router({
           clinicId: input.clinicId,
           settings: updatedSettings,
         },
-        message: 'Clinic settings updated successfully',
+        message: "Clinic settings updated successfully",
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
       };
@@ -765,7 +809,7 @@ export const clinicRouter = router({
 
 // Helper functions
 function isValidCNPJ(cnpj: string): boolean {
-  const cleanCNPJ = cnpj.replace(/[^\d]/g, '');
+  const cleanCNPJ = cnpj.replace(/[^\d]/g, "");
 
   if (cleanCNPJ.length !== 14) return false;
 
@@ -831,10 +875,13 @@ async function calculateClinicMetrics(
 }
 
 function hasSystemAdminRole(role: string): boolean {
-  return role === 'system_admin';
+  return role === "system_admin";
 }
 
-async function createClinicAdminUser(clinicId: string, createdBy: string): Promise<void> {
+async function createClinicAdminUser(
+  clinicId: string,
+  createdBy: string,
+): Promise<void> {
   // Placeholder for clinic admin user creation
 }
 
@@ -844,10 +891,11 @@ async function sendClinicSetupNotification(clinic: any): Promise<void> {
 
 function getChanges(current: any, input: any): Record<string, any> {
   const changes = {};
-  Object.keys(input).forEach(key => {
+  Object.keys(input).forEach((key) => {
     if (
-      key !== 'id' && input[key] !== undefined
-      && JSON.stringify(input[key]) !== JSON.stringify(current[key])
+      key !== "id" &&
+      input[key] !== undefined &&
+      JSON.stringify(input[key]) !== JSON.stringify(current[key])
     ) {
       changes[key] = {
         from: current[key],
@@ -858,12 +906,18 @@ function getChanges(current: any, input: any): Record<string, any> {
   return changes;
 }
 
-async function validateClinicAccess(userId: string, clinicId: string): Promise<void> {
+async function validateClinicAccess(
+  userId: string,
+  clinicId: string,
+): Promise<void> {
   // Implementation for clinic access validation
   return Promise.resolve();
 }
 
-async function validateClinicAdminAccess(userId: string, clinicId: string): Promise<void> {
+async function validateClinicAdminAccess(
+  userId: string,
+  clinicId: string,
+): Promise<void> {
   // Implementation for clinic admin access validation
   return Promise.resolve();
 }
@@ -873,7 +927,9 @@ function hasClinicAdminAccess(userId: string, clinicId: string): boolean {
   return true;
 }
 
-async function getUserAccessibleClinics(userId: string): Promise<Array<{ clinicId: string }>> {
+async function getUserAccessibleClinics(
+  userId: string,
+): Promise<Array<{ clinicId: string }>> {
   // Implementation for getting user accessible clinics
   return [];
 }

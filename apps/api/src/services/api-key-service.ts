@@ -7,8 +7,8 @@
  * @compliance LGPD, ANVISA, CFM
  */
 
-import crypto from 'crypto';
-import { z } from 'zod';
+import crypto from "crypto";
+import { z } from "zod";
 
 // API Key Permissions Schema
 export const ApiKeyPermissionsSchema = z.object({
@@ -32,11 +32,13 @@ export const ApiKeyMetadataSchema = z.object({
   lastUsedAt: z.date().optional(),
   expiresAt: z.date().optional(),
   isActive: z.boolean().default(true),
-  rateLimit: z.object({
-    requestsPerMinute: z.number().default(60),
-    requestsPerHour: z.number().default(1000),
-    requestsPerDay: z.number().default(10000),
-  }).optional(),
+  rateLimit: z
+    .object({
+      requestsPerMinute: z.number().default(60),
+      requestsPerHour: z.number().default(1000),
+      requestsPerDay: z.number().default(10000),
+    })
+    .optional(),
 });
 
 export type ApiKeyMetadata = z.infer<typeof ApiKeyMetadataSchema>;
@@ -59,7 +61,7 @@ const apiKeys = new Map<string, ApiKey>();
  */
 export async function createApiKey(
   permissions: ApiKeyPermissions,
-  metadata: Omit<ApiKeyMetadata, 'createdAt' | 'isActive'>,
+  metadata: Omit<ApiKeyMetadata, "createdAt" | "isActive">,
 ): Promise<ApiKey> {
   const id = crypto.randomUUID();
   const key = generateSecureApiKey();
@@ -146,9 +148,9 @@ export async function rotateApiKey(oldKey: string): Promise<ApiKey | null> {
  * Generate a secure API key
  */
 function generateSecureApiKey(): string {
-  const prefix = 'neonpro_';
+  const prefix = "neonpro_";
   const randomBytes = crypto.randomBytes(32);
-  const key = randomBytes.toString('base64url');
+  const key = randomBytes.toString("base64url");
 
   return `${prefix}${key}`;
 }

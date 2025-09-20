@@ -3,21 +3,21 @@
  * Healthcare-compliant API contracts for NeonPro Platform
  */
 
-export { aiRouter } from './ai';
-export { agentRouter } from './agent';
-export { appointmentRouter } from './appointment';
-export { clinicRouter } from './clinic';
-export { patientRouter } from './patient';
-export { professionalRouter } from './professional';
+export { aiRouter } from "./ai";
+export { agentRouter } from "./agent";
+export { appointmentRouter } from "./appointment";
+export { clinicRouter } from "./clinic";
+export { patientRouter } from "./patient";
+export { professionalRouter } from "./professional";
 
 // Main API router combining all contracts
-import { router } from '../trpc';
-import { aiRouter } from './ai';
-import { agentRouter } from './agent';
-import { appointmentRouter } from './appointment';
-import { clinicRouter } from './clinic';
-import { patientRouter } from './patient';
-import { professionalRouter } from './professional';
+import { router } from "../trpc";
+import { aiRouter } from "./ai";
+import { agentRouter } from "./agent";
+import { appointmentRouter } from "./appointment";
+import { clinicRouter } from "./clinic";
+import { patientRouter } from "./patient";
+import { professionalRouter } from "./professional";
 
 /**
  * Comprehensive API router for NeonPro Platform

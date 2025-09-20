@@ -6,12 +6,12 @@
  * Brazilian healthcare compliance with medical record history requirements
  */
 
-import { Hono } from 'hono';
-import { z } from 'zod';
+import { Hono } from "hono";
+import { z } from "zod";
 
 // Mock middleware for testing - will be replaced with actual middleware
 const requireAuth = async (c: any, next: any) => {
-  c.set('user', { id: 'user-123' });
+  c.set("user", { id: "user-123" });
   return next();
 };
 
@@ -27,92 +27,92 @@ const AuditService = {
     return {
       success: true,
       data: {
-        patientId: 'patient-123',
+        patientId: "patient-123",
         timeline: [
           {
-            id: 'event-1',
-            timestamp: '2024-01-15T10:30:00Z',
-            eventType: 'patient_created',
-            category: 'data_change',
-            severity: 'info',
+            id: "event-1",
+            timestamp: "2024-01-15T10:30:00Z",
+            eventType: "patient_created",
+            category: "data_change",
+            severity: "info",
             actor: {
-              userId: 'user-456',
-              name: 'Dr. João Silva',
-              role: 'healthcare_professional',
-              crm: 'CRM-SP-123456',
+              userId: "user-456",
+              name: "Dr. João Silva",
+              role: "healthcare_professional",
+              crm: "CRM-SP-123456",
             },
             details: {
-              action: 'create',
-              resourceType: 'patient',
+              action: "create",
+              resourceType: "patient",
               changes: {
-                name: { new: 'Maria Santos' },
-                email: { new: 'maria@example.com' },
-                status: { new: 'active' },
+                name: { new: "Maria Santos" },
+                email: { new: "maria@example.com" },
+                status: { new: "active" },
               },
             },
             metadata: {
-              ipAddress: '192.168.1.100',
-              userAgent: 'Mozilla/5.0',
-              sessionId: 'session-789',
+              ipAddress: "192.168.1.100",
+              userAgent: "Mozilla/5.0",
+              sessionId: "session-789",
             },
           },
           {
-            id: 'event-2',
-            timestamp: '2024-01-15T14:20:00Z',
-            eventType: 'patient_updated',
-            category: 'data_change',
-            severity: 'info',
+            id: "event-2",
+            timestamp: "2024-01-15T14:20:00Z",
+            eventType: "patient_updated",
+            category: "data_change",
+            severity: "info",
             actor: {
-              userId: 'user-456',
-              name: 'Dr. João Silva',
-              role: 'healthcare_professional',
-              crm: 'CRM-SP-123456',
+              userId: "user-456",
+              name: "Dr. João Silva",
+              role: "healthcare_professional",
+              crm: "CRM-SP-123456",
             },
             details: {
-              action: 'update',
-              resourceType: 'patient',
+              action: "update",
+              resourceType: "patient",
               changes: {
                 phone: {
-                  old: '(11) 99999-9999',
-                  new: '(11) 88888-8888',
+                  old: "(11) 99999-9999",
+                  new: "(11) 88888-8888",
                 },
                 address: {
-                  old: 'Rua A, 123',
-                  new: 'Rua B, 456',
+                  old: "Rua A, 123",
+                  new: "Rua B, 456",
                 },
               },
             },
             metadata: {
-              ipAddress: '192.168.1.100',
-              userAgent: 'Mozilla/5.0',
-              sessionId: 'session-789',
+              ipAddress: "192.168.1.100",
+              userAgent: "Mozilla/5.0",
+              sessionId: "session-789",
             },
           },
           {
-            id: 'event-3',
-            timestamp: '2024-01-16T09:15:00Z',
-            eventType: 'lgpd_consent_updated',
-            category: 'consent_change',
-            severity: 'high',
+            id: "event-3",
+            timestamp: "2024-01-16T09:15:00Z",
+            eventType: "lgpd_consent_updated",
+            category: "consent_change",
+            severity: "high",
             actor: {
-              userId: 'patient-123',
-              name: 'Maria Santos',
-              role: 'data_subject',
+              userId: "patient-123",
+              name: "Maria Santos",
+              role: "data_subject",
             },
             details: {
-              action: 'consent_update',
-              resourceType: 'lgpd_consent',
+              action: "consent_update",
+              resourceType: "lgpd_consent",
               changes: {
                 marketingConsent: {
                   old: true,
                   new: false,
                 },
                 consentDate: {
-                  new: '2024-01-16T09:15:00Z',
+                  new: "2024-01-16T09:15:00Z",
                 },
               },
             },
-            complianceContext: 'LGPD',
+            complianceContext: "LGPD",
           },
         ],
         pagination: {
@@ -129,8 +129,8 @@ const AuditService = {
             lgpd_consent_updated: 1,
           },
           dateRange: {
-            earliest: '2024-01-15T10:30:00Z',
-            latest: '2024-01-16T09:15:00Z',
+            earliest: "2024-01-15T10:30:00Z",
+            latest: "2024-01-16T09:15:00Z",
           },
         },
       },
@@ -139,7 +139,7 @@ const AuditService = {
   async logHistoryAccess(_params: any) {
     return {
       success: true,
-      data: { auditId: 'history-audit-123' },
+      data: { auditId: "history-audit-123" },
     };
   },
 };
@@ -148,7 +148,7 @@ const LGPDService = {
   async validateHistoryAccess(_params: any) {
     return {
       success: true,
-      data: { canAccess: true, accessLevel: 'full' },
+      data: { canAccess: true, accessLevel: "full" },
     };
   },
   maskHistoryData(data: any) {
@@ -160,7 +160,7 @@ const PatientService = {
   async validatePatientExists(_params: any) {
     return {
       success: true,
-      data: { exists: true, patientId: 'patient-123' },
+      data: { exists: true, patientId: "patient-123" },
     };
   },
 };
@@ -169,35 +169,41 @@ const PatientService = {
 const historyQuerySchema = z.object({
   page: z.coerce.number().min(1).optional().default(1),
   limit: z.coerce.number().min(1).max(100).optional().default(20),
-  eventTypes: z.string().optional().transform(val => val ? val.split(',') : undefined),
+  eventTypes: z
+    .string()
+    .optional()
+    .transform((val) => (val ? val.split(",") : undefined)),
   startDate: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
-  severity: z.string().optional().transform(val => val ? val.split(',') : undefined),
+  severity: z
+    .string()
+    .optional()
+    .transform((val) => (val ? val.split(",") : undefined)),
   category: z.string().optional(),
   actorId: z.string().optional(),
 });
 
 const app = new Hono();
 
-app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
+app.get("/:id/history", requireAuth, dataProtection.clientView, async (c) => {
   const startTime = Date.now();
 
   try {
     // Get user context
-    const user = c.get('user');
-    const userId = user?.id || 'user-123';
-    const patientId = c.req.param('id');
+    const user = c.get("user");
+    const userId = user?.id || "user-123";
+    const patientId = c.req.param("id");
 
     // Parse and validate query parameters
     const queryParams = historyQuerySchema.parse({
-      page: c.req.query('page'),
-      limit: c.req.query('limit'),
-      eventTypes: c.req.query('eventTypes'),
-      startDate: c.req.query('startDate'),
-      endDate: c.req.query('endDate'),
-      severity: c.req.query('severity'),
-      category: c.req.query('category'),
-      actorId: c.req.query('actorId'),
+      page: c.req.query("page"),
+      limit: c.req.query("limit"),
+      eventTypes: c.req.query("eventTypes"),
+      startDate: c.req.query("startDate"),
+      endDate: c.req.query("endDate"),
+      severity: c.req.query("severity"),
+      category: c.req.query("category"),
+      actorId: c.req.query("actorId"),
     });
 
     // Validate patient exists
@@ -207,33 +213,41 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
     });
 
     if (!patientValidation.success) {
-      return c.json({
-        success: false,
-        error: patientValidation.error || 'Paciente não encontrado',
-        code: patientValidation.code || 'PATIENT_NOT_FOUND',
-      }, 404);
+      return c.json(
+        {
+          success: false,
+          error: patientValidation.error || "Paciente não encontrado",
+          code: patientValidation.code || "PATIENT_NOT_FOUND",
+        },
+        404,
+      );
     }
 
     // Validate LGPD history access permissions
     const lgpdValidation = await LGPDService.validateHistoryAccess({
       userId,
       patientId,
-      dataType: 'patient_history',
-      purpose: 'healthcare_management',
-      legalBasis: 'legitimate_interest',
+      dataType: "patient_history",
+      purpose: "healthcare_management",
+      legalBasis: "legitimate_interest",
     });
 
     if (!lgpdValidation.success) {
-      return c.json({
-        success: false,
-        error: lgpdValidation.error || 'Acesso ao histórico negado por política LGPD',
-        code: lgpdValidation.code || 'LGPD_HISTORY_ACCESS_DENIED',
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          error:
+            lgpdValidation.error ||
+            "Acesso ao histórico negado por política LGPD",
+          code: lgpdValidation.code || "LGPD_HISTORY_ACCESS_DENIED",
+        },
+        403,
+      );
     }
 
     // Get healthcare professional context from headers
-    const healthcareProfessional = c.req.header('X-Healthcare-Professional');
-    const healthcareContext = c.req.header('X-Healthcare-Context');
+    const healthcareProfessional = c.req.header("X-Healthcare-Professional");
+    const healthcareContext = c.req.header("X-Healthcare-Context");
 
     // Build filters object
     const filters: any = {};
@@ -258,28 +272,32 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
     });
 
     if (!historyResult.success) {
-      return c.json({
-        success: false,
-        error: historyResult.error || 'Erro interno do serviço de auditoria',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: historyResult.error || "Erro interno do serviço de auditoria",
+        },
+        500,
+      );
     }
 
     // Mask sensitive data based on access level
-    const accessLevel = lgpdValidation.data?.accessLevel || 'full';
+    const accessLevel = lgpdValidation.data?.accessLevel || "full";
     let maskedTimeline = historyResult.data.timeline;
 
-    if (accessLevel === 'limited') {
+    if (accessLevel === "limited") {
       maskedTimeline = LGPDService.maskHistoryData(historyResult.data.timeline);
     }
 
     // Log history access for audit trail
-    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
-    const userAgent = c.req.header('User-Agent') || 'unknown';
+    const ipAddress =
+      c.req.header("X-Real-IP") || c.req.header("X-Forwarded-For") || "unknown";
+    const userAgent = c.req.header("User-Agent") || "unknown";
 
     await AuditService.logHistoryAccess({
       userId,
-      action: 'patient_history_access',
-      resourceType: 'patient_history',
+      action: "patient_history_access",
+      resourceType: "patient_history",
       resourceId: patientId,
       details: {
         filters,
@@ -291,29 +309,35 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
       },
       ipAddress,
       userAgent,
-      complianceContext: 'LGPD',
-      sensitivityLevel: 'high',
+      complianceContext: "LGPD",
+      sensitivityLevel: "high",
     });
 
     const executionTime = Date.now() - startTime;
 
     // Set response headers
-    c.header('X-Total-Events', historyResult.data.summary.totalEvents.toString());
-    c.header('X-Date-Range-Start', historyResult.data.summary.dateRange.earliest);
-    c.header('X-Date-Range-End', historyResult.data.summary.dateRange.latest);
-    c.header('X-History-Access-Logged', 'true');
-    c.header('X-Response-Time', `${executionTime}ms`);
-    c.header('Cache-Control', 'private, max-age=300');
-    c.header('X-Database-Queries', '3');
-    c.header('X-CFM-Compliant', 'true');
-    c.header('X-Medical-Record-History', 'accessed');
-    c.header('X-LGPD-Compliant', 'true');
-    c.header('X-Audit-Trail-Complete', 'true');
-    c.header('X-Data-Retention-Policy', '7-years-standard-20-years-medical');
-    c.header('X-Legal-Basis', 'legitimate_interest');
+    c.header(
+      "X-Total-Events",
+      historyResult.data.summary.totalEvents.toString(),
+    );
+    c.header(
+      "X-Date-Range-Start",
+      historyResult.data.summary.dateRange.earliest,
+    );
+    c.header("X-Date-Range-End", historyResult.data.summary.dateRange.latest);
+    c.header("X-History-Access-Logged", "true");
+    c.header("X-Response-Time", `${executionTime}ms`);
+    c.header("Cache-Control", "private, max-age=300");
+    c.header("X-Database-Queries", "3");
+    c.header("X-CFM-Compliant", "true");
+    c.header("X-Medical-Record-History", "accessed");
+    c.header("X-LGPD-Compliant", "true");
+    c.header("X-Audit-Trail-Complete", "true");
+    c.header("X-Data-Retention-Policy", "7-years-standard-20-years-medical");
+    c.header("X-Legal-Basis", "legitimate_interest");
 
-    if (accessLevel === 'limited') {
-      c.header('X-Access-Level', 'limited');
+    if (accessLevel === "limited") {
+      c.header("X-Access-Level", "limited");
     }
 
     return c.json({
@@ -326,24 +350,30 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
       },
     });
   } catch (error) {
-    console.error('History endpoint error:', error);
+    console.error("History endpoint error:", error);
 
     // Handle validation errors
     if (error instanceof z.ZodError) {
-      return c.json({
-        success: false,
-        error: 'Parâmetros de consulta inválidos',
-        errors: error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-        })),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: "Parâmetros de consulta inválidos",
+          errors: error.errors.map((err) => ({
+            field: err.path.join("."),
+            message: err.message,
+          })),
+        },
+        400,
+      );
     }
 
-    return c.json({
-      success: false,
-      error: 'Erro interno do servidor',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: "Erro interno do servidor",
+      },
+      500,
+    );
   }
 });
 

@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 /**
  * AI Chat Input Component
- * 
+ *
  * Enhanced input component with voice capability, search functionality,
  * and healthcare compliance features. Based on KokonutUI patterns.
- * 
+ *
  * Features:
  * - Auto-resizing textarea
  * - Voice input with Brazilian Portuguese support
@@ -15,7 +15,7 @@
  * - Mobile-optimized design
  */
 
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   Paperclip,
   Mic,
@@ -31,16 +31,27 @@ import {
   Globe,
   Bot,
   Stethoscope,
-} from 'lucide-react';
+} from "lucide-react";
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { cn } from '@neonpro/ui';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { cn } from "@neonpro/ui";
 
 export interface AIChatInputProps {
   /** Input value */
@@ -74,7 +85,7 @@ export interface AIChatInputProps {
     icon?: React.ReactNode;
   }>;
   /** Voice recognition state */
-  voiceState?: 'idle' | 'listening' | 'processing' | 'error';
+  voiceState?: "idle" | "listening" | "processing" | "error";
   /** On voice toggle */
   onVoiceToggle?: () => void;
   /** Attached files */
@@ -109,19 +120,19 @@ export interface AIChatInputProps {
 
 // File type icons
 const getFileIcon = (type: string) => {
-  if (type.startsWith('image/')) return <Image className="h-4 w-4" />;
-  if (type.startsWith('video/')) return <Video className="h-4 w-4" />;
-  if (type.startsWith('audio/')) return <Music className="h-4 w-4" />;
+  if (type.startsWith("image/")) return <Image className="h-4 w-4" />;
+  if (type.startsWith("video/")) return <Video className="h-4 w-4" />;
+  if (type.startsWith("audio/")) return <Music className="h-4 w-4" />;
   return <FileText className="h-4 w-4" />;
 };
 
 // Format file size
 const formatFileSize = (bytes: number) => {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
   const k = 1024;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const sizes = ["Bytes", "KB", "MB", "GB"];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
 /**
@@ -131,16 +142,16 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
   value,
   onChange,
   onSubmit,
-  placeholder = 'Digite sua mensagem...',
+  placeholder = "Digite sua mensagem...",
   disabled = false,
   showVoiceInput = true,
   showFileAttachment = true,
   showSearch = true,
   showModelSelection = true,
-  selectedModel = 'gpt-4o',
+  selectedModel = "gpt-4o",
   onModelChange,
   availableModels = [],
-  voiceState = 'idle',
+  voiceState = "idle",
   onVoiceToggle,
   attachments = [],
   onFileAttach,
@@ -150,14 +161,14 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
   isLoading = false,
   minHeight = 44,
   maxHeight = 200,
-  testId = 'ai-chat-input',
+  testId = "ai-chat-input",
 }) => {
   // State
   const [isFocused, setIsFocused] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [showSearchPanel, setShowSearchPanel] = useState(false);
   const [showModelDropdown, setShowModelDropdown] = useState(false);
-  
+
   // Refs
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -168,32 +179,39 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
     const textarea = textareaRef.current;
     if (!textarea) return;
 
-    textarea.style.height = 'auto';
+    textarea.style.height = "auto";
     const scrollHeight = textarea.scrollHeight;
-    textarea.style.height = Math.min(Math.max(scrollHeight, minHeight), maxHeight) + 'px';
+    textarea.style.height =
+      Math.min(Math.max(scrollHeight, minHeight), maxHeight) + "px";
   }, [value, minHeight, maxHeight]);
 
   // Handle key press
-  const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      if (value.trim() && !disabled) {
-        onSubmit(e);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        if (value.trim() && !disabled) {
+          onSubmit(e);
+        }
       }
-    }
-  }, [value, disabled, onSubmit]);
+    },
+    [value, disabled, onSubmit],
+  );
 
   // Handle file attachment
-  const handleFileAttach = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || []);
-    if (files.length > 0 && onFileAttach) {
-      onFileAttach(files);
-      // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
+  const handleFileAttach = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(e.target.files || []);
+      if (files.length > 0 && onFileAttach) {
+        onFileAttach(files);
+        // Reset file input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       }
-    }
-  }, [onFileAttach]);
+    },
+    [onFileAttach],
+  );
 
   // Handle search
   const handleSearch = useCallback(() => {
@@ -203,22 +221,28 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
   }, [searchQuery, onSearch]);
 
   // Handle search key down
-  const handleSearchKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleSearch();
-    }
-  }, [handleSearch]);
+  const handleSearchKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleSearch();
+      }
+    },
+    [handleSearch],
+  );
 
   // Remove attachment
-  const handleRemoveAttachment = useCallback((fileId: string) => {
-    if (onFileRemove) {
-      onFileRemove(fileId);
-    }
-  }, [onFileRemove]);
+  const handleRemoveAttachment = useCallback(
+    (fileId: string) => {
+      if (onFileRemove) {
+        onFileRemove(fileId);
+      }
+    },
+    [onFileRemove],
+  );
 
   // Get selected model info
-  const selectedModelInfo = availableModels.find(m => m.id === selectedModel);
+  const selectedModelInfo = availableModels.find((m) => m.id === selectedModel);
 
   return (
     <div className="relative w-full">
@@ -258,10 +282,10 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
       {/* Main Input Container */}
       <div
         className={cn(
-          'relative flex flex-col rounded-xl transition-all duration-200 w-full',
-          'border border-input bg-background',
-          isFocused && 'ring-2 ring-ring ring-offset-2',
-          disabled && 'opacity-50 cursor-not-allowed',
+          "relative flex flex-col rounded-xl transition-all duration-200 w-full",
+          "border border-input bg-background",
+          isFocused && "ring-2 ring-ring ring-offset-2",
+          disabled && "opacity-50 cursor-not-allowed",
         )}
       >
         {/* Attachments */}
@@ -300,12 +324,12 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
             placeholder={placeholder}
             disabled={disabled}
             className={cn(
-              'w-full resize-none border-none rounded-t-xl',
-              'min-h-[44px] max-h-32',
-              'px-4 py-3',
-              'focus-visible:outline-none focus-visible:ring-0',
-              'placeholder:text-muted-foreground',
-              attachments.length > 0 && 'rounded-t-none',
+              "w-full resize-none border-none rounded-t-xl",
+              "min-h-[44px] max-h-32",
+              "px-4 py-3",
+              "focus-visible:outline-none focus-visible:ring-0",
+              "placeholder:text-muted-foreground",
+              attachments.length > 0 && "rounded-t-none",
             )}
             rows={1}
             onFocus={() => setIsFocused(true)}
@@ -328,7 +352,11 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
                       </SelectTrigger>
                       <SelectContent align="end" className="min-w-48">
                         {availableModels.map((model) => (
-                          <SelectItem key={model.id} value={model.id} className="text-xs">
+                          <SelectItem
+                            key={model.id}
+                            value={model.id}
+                            className="text-xs"
+                          >
                             <div className="flex items-center gap-2">
                               {model.icon || <Bot className="h-3 w-3" />}
                               <div className="flex-1">
@@ -407,14 +435,14 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
                       variant="ghost"
                       size="sm"
                       className={cn(
-                        'h-8 w-8 p-0',
-                        voiceState === 'listening' && 'text-red-500 bg-red-50',
-                        voiceState === 'error' && 'text-red-500',
+                        "h-8 w-8 p-0",
+                        voiceState === "listening" && "text-red-500 bg-red-50",
+                        voiceState === "error" && "text-red-500",
                       )}
                       onClick={onVoiceToggle}
                       disabled={disabled}
                     >
-                      {voiceState === 'listening' ? (
+                      {voiceState === "listening" ? (
                         <MicOff className="h-4 w-4" />
                       ) : (
                         <Mic className="h-4 w-4" />
@@ -423,11 +451,11 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>
-                      {voiceState === 'listening'
-                        ? 'Parar gravação'
-                        : voiceState === 'error'
-                        ? 'Erro no reconhecimento'
-                        : 'Gravar áudio'}
+                      {voiceState === "listening"
+                        ? "Parar gravação"
+                        : voiceState === "error"
+                          ? "Erro no reconhecimento"
+                          : "Gravar áudio"}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -441,10 +469,10 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
               disabled={!value.trim() || disabled || isLoading}
               size="sm"
               className={cn(
-                'h-8 w-8 p-0',
+                "h-8 w-8 p-0",
                 value.trim() && !disabled && !isLoading
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground',
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground",
               )}
             >
               <Send className="h-4 w-4" />
@@ -456,14 +484,14 @@ export const AIChatInput: React.FC<AIChatInputProps> = ({
         <div className="flex items-center justify-between px-4 py-2 bg-muted/30 border-t">
           <div className="flex items-center gap-2">
             {/* Voice State Indicator */}
-            {voiceState === 'listening' && (
+            {voiceState === "listening" && (
               <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                 <span className="text-xs text-red-600">Ouvindo...</span>
               </div>
             )}
 
-            {voiceState === 'error' && (
+            {voiceState === "error" && (
               <div className="flex items-center gap-1">
                 <div className="w-2 h-2 bg-red-500 rounded-full" />
                 <span className="text-xs text-red-600">Erro no microfone</span>

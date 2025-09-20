@@ -80,13 +80,13 @@ export interface AvailabilityCheck {
 export interface AvailabilityResult {
   available: boolean;
   conflicts: Array<{
-    type: 'appointment' | 'blocked' | 'outside_hours';
+    type: "appointment" | "blocked" | "outside_hours";
     start_time: string;
     end_time: string;
     description: string;
   }>;
   warnings: Array<{
-    type: 'short_break' | 'late_hour' | 'early_hour';
+    type: "short_break" | "late_hour" | "early_hour";
     message: string;
   }>;
 }

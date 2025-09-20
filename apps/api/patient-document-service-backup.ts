@@ -1,16 +1,16 @@
-import { randomUUID } from 'crypto';
-import { createHash } from 'crypto';
-import crypto from 'node:crypto';
+import { randomUUID } from "crypto";
+import { createHash } from "crypto";
+import crypto from "node:crypto";
 
 /** Minimal implementation for TDD GREEN phase.
  * NOTE: Persistence (Supabase storage + DB insert + audit event) will be added in next iterations.
  */
 
 const ALLOWED_MIME = [
-  'application/pdf',
-  'image/jpeg',
-  'image/png',
-  'image/webp',
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
 ];
 
 export interface UploadPatientDocumentParams {
@@ -50,8 +50,8 @@ export class PatientDocumentService {
 
   constructor(options: PatientDocumentServiceOptions = {}) {
     this.supabase = options.supabaseClient;
-    this.bucket = options.bucketName || 'patient-documents';
-    this.table = options.tableName || 'patient_documents';
+    this.bucket = options.bucketName || "patient-documents";
+    this.table = options.tableName || "patient_documents";
     this.audit = options.auditService;
     // persist only if both flag true (default true) and client provided
     this.persist = options.enablePersistence !== false && !!this.supabase;
@@ -68,11 +68,11 @@ export class PatientDocumentService {
 
     // Basic size sanity (future: configurable limit already enforced at route level)
     if (size !== data.byteLength) {
-      throw new Error('Size mismatch');
+      throw new Error("Size mismatch");
     }
 
     const documentId = randomUUID();
-    const checksum_sha256 = createHash('sha256').update(data).digest('hex');
+    const checksum_sha256 = createHash("sha256").update(data).digest("hex");
     const storage_path = `${patientId}/${documentId}-${originalName}`; // normalized path inside bucket
     const created_at = new Date().toISOString();
 
@@ -99,12 +99,14 @@ export class PatientDocumentService {
       .from(this.bucket)
       .upload(storage_path, data, {
         contentType: mimeType,
-        cacheControl: '3600',
+        cacheControl: "3600",
         upsert: false,
       });
 
     if (uploadRes.error) {
-      throw new Error(`Falha ao armazenar documento: ${uploadRes.error.message}`);
+      throw new Error(
+        `Falha ao armazenar documento: ${uploadRes.error.message}`,
+      );
     }
 
     // 2. Insert metadata row
@@ -142,34 +144,41 @@ export class PatientDocumentService {
 
     // 3. Audit trail (non-blocking)
     if (this.audit) {
-      this.audit.logActivity({
-        userId: params.uploadedBy,
-        action: 'upload',
-        resourceType: 'patient_document',
-        resourceId: documentId,
-        details: {
-          patientId,
-          mimeType,
-          sizeBytes: size,
-          checksum: checksum_sha256,
-        },
-      }).catch(_error => {/* swallow audit errors */});
+      this.audit
+        .logActivity({
+          userId: params.uploadedBy,
+          action: "upload",
+          resourceType: "patient_document",
+          resourceId: documentId,
+          details: {
+            patientId,
+            mimeType,
+            sizeBytes: size,
+            checksum: checksum_sha256,
+          },
+        })
+        .catch((_error) => {
+          /* swallow audit errors */
+        });
     }
 
     return { success: true, data: dto };
   }
 
-  async getDocument(documentId: string, userId: string): Promise<PatientDocumentDTO | null> {
+  async getDocument(
+    documentId: string,
+    userId: string,
+  ): Promise<PatientDocumentDTO | null> {
     try {
       if (this.persist && this.supabase) {
         const { data, error } = await this.supabase
           .from(this.table)
-          .select('*')
-          .eq('id', documentId)
+          .select("*")
+          .eq("id", documentId)
           .single();
 
         if (error) {
-          if (error.code === 'PGRST116') {
+          if (error.code === "PGRST116") {
             return null; // Document not found or no access
           }
           throw error;
@@ -188,19 +197,19 @@ export class PatientDocumentService {
         };
       } else {
         // In-memory fallback - return null for now
-        console.warn('In-memory mode: getDocument not implemented');
+        console.warn("In-memory mode: getDocument not implemented");
         return null;
       }
     } catch (error) {
-      console.error('Error getting document:', error);
-      throw new Error('Failed to retrieve document');
+      console.error("Error getting document:", error);
+      throw new Error("Failed to retrieve document");
     }
   }
 
   async getFileContent(storagePath: string): Promise<ArrayBuffer> {
     try {
       // Extract the actual path from the full storage path
-      const actualPath = storagePath.replace(`supabase://${this.bucket}/`, '');
+      const actualPath = storagePath.replace(`supabase://${this.bucket}/`, "");
 
       if (this.persist && this.supabase) {
         // Get file from Supabase Storage
@@ -215,13 +224,13 @@ export class PatientDocumentService {
         return await data.arrayBuffer();
       } else {
         // In-memory fallback - return mock content for testing
-        console.warn('In-memory mode: returning mock file content');
+        console.warn("In-memory mode: returning mock file content");
         const encoder = new TextEncoder();
-        return encoder.encode('Mock file content for testing').buffer;
+        return encoder.encode("Mock file content for testing").buffer;
       }
     } catch (error) {
-      console.error('Error getting file content:', error);
-      throw new Error('Failed to retrieve file content');
+      console.error("Error getting file content:", error);
+      throw new Error("Failed to retrieve file content");
     }
   }
 }

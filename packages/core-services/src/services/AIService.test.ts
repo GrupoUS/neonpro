@@ -1,38 +1,38 @@
-import { AIService } from './AIService';
+import { AIService } from "./AIService";
 
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from "vitest";
 
-import type { ServiceContext } from '../types';
+import type { ServiceContext } from "../types";
 
 // Mock types and dependencies if needed
-describe('Enhanced No-Show Prediction', () => {
-  const mockContext: ServiceContext = { userId: 'test' };
+describe("Enhanced No-Show Prediction", () => {
+  const mockContext: ServiceContext = { userId: "test" };
 
-  describe('preprocessNoShowData', () => {
-    it('should bin patientAge in preprocessNoShowData', async () => {
+  describe("preprocessNoShowData", () => {
+    it("should bin patientAge in preprocessNoShowData", async () => {
       // Note: To test private method, we can use (aiService as any)['preprocessNoShowData'] or expose it for testing
       // For now, test via public API once implemented
       const data = {
         daysSinceScheduled: 7,
-        appointmentType: 'consultation',
+        appointmentType: "consultation",
         patientAge: 25,
         previousNoShows: 0,
       };
 
       const aiService = new AIService();
-      const processed = (aiService as any)['preprocessNoShowData'](data); // Temporary for RED phase; later use public method
+      const processed = (aiService as any)["preprocessNoShowData"](data); // Temporary for RED phase; later use public method
 
-      expect(processed.patientAge).toBe('0-30'); // Binned as per design (will fail until implemented)
+      expect(processed.patientAge).toBe("0-30"); // Binned as per design (will fail until implemented)
     });
   });
 
-  describe('makePrediction', () => {
-    it('should use enhanced logic with flag true and achieve confidence >0.8', async () => {
+  describe("makePrediction", () => {
+    it("should use enhanced logic with flag true and achieve confidence >0.8", async () => {
       const request = {
-        type: 'appointment_noshow',
+        type: "appointment_noshow",
         data: {
           daysSinceScheduled: 1,
-          appointmentType: 'consultation',
+          appointmentType: "consultation",
           patientAge: 25,
           previousNoShows: 1,
         },
@@ -43,16 +43,16 @@ describe('Enhanced No-Show Prediction', () => {
       const response = await aiService.makePrediction(request, mockContext);
 
       expect(response.confidence).toBeGreaterThan(0.8);
-      expect(response).toHaveProperty('enhanced', true);
-      expect(response).toHaveProperty('anonymizedFeatures');
+      expect(response).toHaveProperty("enhanced", true);
+      expect(response).toHaveProperty("anonymizedFeatures");
     });
 
-    it('should fallback to mock logic with flag false', async () => {
+    it("should fallback to mock logic with flag false", async () => {
       const request = {
-        type: 'appointment_noshow',
+        type: "appointment_noshow",
         data: {
           daysSinceScheduled: 7,
-          appointmentType: 'consultation',
+          appointmentType: "consultation",
           patientAge: 65,
           previousNoShows: 0,
         },
@@ -63,14 +63,14 @@ describe('Enhanced No-Show Prediction', () => {
       const response = await aiService.makePrediction(request, mockContext);
 
       expect(response.confidence).toBe(0.89); // Existing mock confidence
-      expect(response).not.toHaveProperty('enhanced');
+      expect(response).not.toHaveProperty("enhanced");
     });
 
-    it('should not leak PII in output for LGPD compliance', async () => {
+    it("should not leak PII in output for LGPD compliance", async () => {
       const request = {
-        type: 'appointment_noshow',
+        type: "appointment_noshow",
         data: {
-          patientId: 'sensitive-id',
+          patientId: "sensitive-id",
           patientAge: 25,
         },
         // enhanced: true, // Will fail until implemented
@@ -79,16 +79,16 @@ describe('Enhanced No-Show Prediction', () => {
       const aiService = new AIService();
       const response = await aiService.makePrediction(request, mockContext);
 
-      expect(response).not.toHaveProperty('patientId');
-      expect(response).not.toHaveProperty('patientAge'); // Should be binned or omitted (will fail until implemented)
+      expect(response).not.toHaveProperty("patientId");
+      expect(response).not.toHaveProperty("patientAge"); // Should be binned or omitted (will fail until implemented)
     });
 
-    it('should handle edge case for new patient with no history', async () => {
+    it("should handle edge case for new patient with no history", async () => {
       const request = {
-        type: 'appointment_noshow',
+        type: "appointment_noshow",
         data: {
           daysSinceScheduled: 1,
-          appointmentType: 'first-consult',
+          appointmentType: "first-consult",
           patientAge: 18,
           previousNoShows: 0, // No history
         },

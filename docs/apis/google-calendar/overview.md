@@ -27,6 +27,7 @@ Authorization: Bearer <supabase-jwt-token>
 Initiates the Google OAuth 2.0 flow.
 
 **Request Body:**
+
 ```json
 {
   "clinicId": "string",
@@ -35,6 +36,7 @@ Initiates the Google OAuth 2.0 flow.
 ```
 
 **Response:**
+
 ```json
 {
   "authUrl": "https://accounts.google.com/o/oauth2/auth?...",
@@ -49,11 +51,13 @@ Initiates the Google OAuth 2.0 flow.
 Handles the OAuth callback from Google.
 
 **Query Parameters:**
+
 - `code`: Authorization code from Google
 - `state`: State parameter for CSRF protection
 - `error`: Error message (if authorization failed)
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -68,6 +72,7 @@ Handles the OAuth callback from Google.
 Retrieves the user's Google Calendar integration status.
 
 **Response:**
+
 ```json
 {
   "id": "integration-123",
@@ -89,6 +94,7 @@ Retrieves the user's Google Calendar integration status.
 Lists the user's available Google Calendars.
 
 **Response:**
+
 ```json
 {
   "calendars": [
@@ -117,6 +123,7 @@ Lists the user's available Google Calendars.
 Creates a new Google Calendar integration.
 
 **Request Body:**
+
 ```json
 {
   "calendarId": "primary",
@@ -126,6 +133,7 @@ Creates a new Google Calendar integration.
 ```
 
 **Response:**
+
 ```json
 {
   "id": "integration-123",
@@ -143,6 +151,7 @@ Creates a new Google Calendar integration.
 Updates integration settings.
 
 **Request Body:**
+
 ```json
 {
   "syncEnabled": false,
@@ -158,6 +167,7 @@ Updates integration settings.
 Deletes a Google Calendar integration.
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -172,6 +182,7 @@ Deletes a Google Calendar integration.
 Syncs a specific appointment to Google Calendar.
 
 **Request Body:**
+
 ```json
 {
   "appointmentId": "appt-123"
@@ -179,6 +190,7 @@ Syncs a specific appointment to Google Calendar.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -194,6 +206,7 @@ Syncs a specific appointment to Google Calendar.
 Syncs multiple appointments to Google Calendar.
 
 **Request Body:**
+
 ```json
 {
   "appointmentIds": ["appt-123", "appt-124", "appt-125"]
@@ -201,6 +214,7 @@ Syncs multiple appointments to Google Calendar.
 ```
 
 **Response:**
+
 ```json
 {
   "results": [
@@ -225,6 +239,7 @@ Syncs multiple appointments to Google Calendar.
 Manually triggers sync from Google Calendar to NeonPro.
 
 **Request Body:**
+
 ```json
 {
   "calendarId": "primary",
@@ -234,6 +249,7 @@ Manually triggers sync from Google Calendar to NeonPro.
 ```
 
 **Response:**
+
 ```json
 {
   "syncedEvents": 5,
@@ -250,6 +266,7 @@ Manually triggers sync from Google Calendar to NeonPro.
 Checks for scheduling conflicts in Google Calendar.
 
 **Request Body:**
+
 ```json
 {
   "start": "2024-01-15T10:00:00Z",
@@ -259,6 +276,7 @@ Checks for scheduling conflicts in Google Calendar.
 ```
 
 **Response:**
+
 ```json
 {
   "hasConflicts": true,
@@ -280,12 +298,14 @@ Checks for scheduling conflicts in Google Calendar.
 Retrieves synchronization activity logs.
 
 **Query Parameters:**
+
 - `page`: Page number (default: 1)
 - `limit`: Items per page (default: 20)
 - `action`: Filter by action (optional)
 - `status`: Filter by status (optional)
 
 **Response:**
+
 ```json
 {
   "logs": [
@@ -323,6 +343,7 @@ Retrieves synchronization activity logs.
 Retrieves integration statistics.
 
 **Response:**
+
 ```json
 {
   "totalEventsSynced": 150,
@@ -348,11 +369,13 @@ Retrieves integration statistics.
 Handles webhook notifications from Google Calendar.
 
 **Request Headers:**
+
 - `X-Goog-Channel-ID`: Channel identifier
 - `X-Goog-Channel-Token`: Channel token
 - `X-Goog-Resource-State`: Resource state (sync, exists, not_exists)
 
 **Response:**
+
 ```json
 {
   "success": true
@@ -376,15 +399,15 @@ All endpoints return standardized error responses:
 
 ### Error Codes
 
-| Code | HTTP Status | Description |
-|------|-------------|-------------|
-| AUTH_ERROR | 401 | Authentication failed |
-| FORBIDDEN | 403 | Access denied |
-| NOT_FOUND | 404 | Resource not found |
-| VALIDATION_ERROR | 422 | Invalid request data |
-| RATE_LIMITED | 429 | Too many requests |
-| INTEGRATION_ERROR | 500 | Google Calendar API error |
-| SYNC_ERROR | 500 | Synchronization failed |
+| Code              | HTTP Status | Description               |
+| ----------------- | ----------- | ------------------------- |
+| AUTH_ERROR        | 401         | Authentication failed     |
+| FORBIDDEN         | 403         | Access denied             |
+| NOT_FOUND         | 404         | Resource not found        |
+| VALIDATION_ERROR  | 422         | Invalid request data      |
+| RATE_LIMITED      | 429         | Too many requests         |
+| INTEGRATION_ERROR | 500         | Google Calendar API error |
+| SYNC_ERROR        | 500         | Synchronization failed    |
 
 ## Rate Limiting
 
@@ -487,6 +510,7 @@ curl -X POST \
 ## Version History
 
 ### v1.0.0
+
 - Initial API release
 - Basic CRUD operations
 - Sync functionality

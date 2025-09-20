@@ -4,9 +4,12 @@
  */
 
 // Main services
-export { calendarLGPDConsentService } from './calendar-consent.service';
-export { calendarDataMinimizationService } from './data-minimization.service';
-export { calendarLGPDAuditService, CALENDAR_LGPD_PURPOSES } from './audit-logging.service';
+export { calendarLGPDConsentService } from "./calendar-consent.service";
+export { calendarDataMinimizationService } from "./data-minimization.service";
+export {
+  calendarLGPDAuditService,
+  CALENDAR_LGPD_PURPOSES,
+} from "./audit-logging.service";
 
 // Type definitions
 export type {
@@ -14,14 +17,14 @@ export type {
   DataMinimizationLevel,
   CalendarLGPDPurpose,
   MinimizedCalendarAppointment,
-} from './calendar-consent.service';
+} from "./calendar-consent.service";
 
 export type {
   PatientDataSensitivity,
   LGPDDataCategory,
   DataMinimizationConfig,
   MinimizationResult,
-} from './data-minimization.service';
+} from "./data-minimization.service";
 
 export type {
   LGPDAuditLog,
@@ -29,10 +32,10 @@ export type {
   AuditDetails,
   AuditFilter,
   AuditReport,
-} from './audit-logging.service';
+} from "./audit-logging.service";
 
 // Constants
-export { CALENDAR_LGPD_PURPOSES } from './audit-logging.service';
+export { CALENDAR_LGPD_PURPOSES } from "./audit-logging.service";
 
 // Default configurations
 export const DEFAULT_LGPD_CONFIG = {
@@ -41,44 +44,44 @@ export const DEFAULT_LGPD_CONFIG = {
   dataMinimizationEnabled: true,
   auditLoggingEnabled: true,
   riskAssessmentEnabled: true,
-  defaultMinimizationLevel: 'standard' as const,
+  defaultMinimizationLevel: "standard" as const,
   healthcareRoles: [
-    'doctor',
-    'nurse',
-    'healthcare_professional',
-    'medical_staff',
-    'clinician',
-    'therapist',
-    'specialist',
+    "doctor",
+    "nurse",
+    "healthcare_professional",
+    "medical_staff",
+    "clinician",
+    "therapist",
+    "specialist",
   ],
 };
 
 // Utility functions
 export const isHealthcareRole = (userRole: string): boolean => {
-  return DEFAULT_LGPD_CONFIG.healthcareRoles.some(role =>
-    userRole.toLowerCase().includes(role.toLowerCase())
+  return DEFAULT_LGPD_CONFIG.healthcareRoles.some((role) =>
+    userRole.toLowerCase().includes(role.toLowerCase()),
   );
 };
 
 export const getLegalBasisText = (basis: string): string => {
   const legalBases: Record<string, string> = {
-    'consent': 'LGPD Art. 7º, I - Consentimento do titular',
-    'contract': 'LGPD Art. 7º, V - Execução de contrato',
-    'legal_obligation': 'LGPD Art. 7º, II - Obrigação legal',
-    'vital_interests': 'LGPD Art. 7º, IX - Proteção da vida ou segurança física',
-    'public_interest': 'LGPD Art. 7º, III - Administração pública',
-    'legitimate_interests': 'LGPD Art. 7º, IX - Legítimo interesse',
+    consent: "LGPD Art. 7º, I - Consentimento do titular",
+    contract: "LGPD Art. 7º, V - Execução de contrato",
+    legal_obligation: "LGPD Art. 7º, II - Obrigação legal",
+    vital_interests: "LGPD Art. 7º, IX - Proteção da vida ou segurança física",
+    public_interest: "LGPD Art. 7º, III - Administração pública",
+    legitimate_interests: "LGPD Art. 7º, IX - Legítimo interesse",
   };
-  
-  return legalBases[basis] || 'LGPD Art. 7º';
+
+  return legalBases[basis] || "LGPD Art. 7º";
 };
 
 export const formatComplianceScore = (score: number): string => {
-  if (score >= 95) return 'Excelente';
-  if (score >= 80) return 'Bom';
-  if (score >= 60) return 'Regular';
-  if (score >= 40) return 'Ruim';
-  return 'Crítico';
+  if (score >= 95) return "Excelente";
+  if (score >= 80) return "Bom";
+  if (score >= 60) return "Regular";
+  if (score >= 40) return "Ruim";
+  return "Crítico";
 };
 
 // React hooks for easy integration
@@ -91,7 +94,13 @@ export const useLGPDCompliance = () => {
     lastAudit: new Date(),
     validateConsent: async (patientId: string, purpose: string) => {
       // Implementation would call the actual consent service
-      return { isValid: true, purpose, patientId, isExplicit: true, legalBasis: 'consent' };
+      return {
+        isValid: true,
+        purpose,
+        patientId,
+        isExplicit: true,
+        legalBasis: "consent",
+      };
     },
     minimizeData: async (data: any, level: string) => {
       // Implementation would call the actual minimization service

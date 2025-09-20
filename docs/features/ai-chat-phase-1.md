@@ -75,15 +75,15 @@ graph TB
     API --> AI[AI Service]
     API --> DB[Database]
     API --> Audit[Audit Logger]
-    
+
     AI --> OpenAI[OpenAI Provider]
     AI --> Anthropic[Anthropic Provider]
     AI --> Google[Google AI Provider]
-    
+
     DB --> Sessions[Chat Sessions]
     DB --> Messages[Chat Messages]
     DB --> Users[User Data]
-    
+
     Audit --> Logs[Audit Logs]
     Audit --> Compliance[LGPD Compliance]
 ```
@@ -168,7 +168,7 @@ All API requests require session-based authentication:
 // Set up authenticated client
 const chatClient = new ChatAPI({
   baseURL: process.env.API_BASE_URL,
-  sessionToken: userSession.token
+  sessionToken: userSession.token,
 });
 ```
 
@@ -178,7 +178,7 @@ const chatClient = new ChatAPI({
 // Initialize chat session
 const session = await chatClient.createSession({
   userId: user.id,
-  context: 'medical_consultation'
+  context: "medical_consultation",
 });
 
 // Send message with consent
@@ -188,8 +188,8 @@ const response = await chatClient.sendMessage({
   consent: {
     dataProcessing: true,
     aiInteraction: true,
-    timestamp: new Date().toISOString()
-  }
+    timestamp: new Date().toISOString(),
+  },
 });
 
 // Handle streaming response
@@ -207,9 +207,9 @@ try {
   const response = await chatClient.sendMessage(messageData);
   handleSuccess(response);
 } catch (error) {
-  if (error.code === 'RATE_LIMIT_EXCEEDED') {
+  if (error.code === "RATE_LIMIT_EXCEEDED") {
     showRateLimitMessage(error.details.resetTime);
-  } else if (error.code === 'MISSING_CONSENT') {
+  } else if (error.code === "MISSING_CONSENT") {
     showConsentDialog();
   } else {
     showGenericError(error.message);
@@ -267,7 +267,7 @@ export function ConsentDialog({ onConsent, onDecline }) {
           <li>Armazenar o histórico da conversa</li>
           <li>Registrar interações para auditoria</li>
         </ul>
-        
+
         <div className="consent-options">
           <Checkbox id="data-processing">
             Autorizo o processamento dos meus dados
@@ -276,7 +276,7 @@ export function ConsentDialog({ onConsent, onDecline }) {
             Autorizo interação com IA
           </Checkbox>
         </div>
-        
+
         <DialogActions>
           <Button onClick={onDecline} variant="outline">
             Recusar
@@ -300,33 +300,33 @@ export const useChatStore = create<ChatState>((set, get) => ({
   activeSession: null,
   messages: [],
   consent: null,
-  
+
   actions: {
     createSession: async (userId: string) => {
       const session = await chatAPI.createSession({ userId });
-      set(state => ({
+      set((state) => ({
         sessions: { ...state.sessions, [session.id]: session },
-        activeSession: session.id
+        activeSession: session.id,
       }));
     },
-    
+
     sendMessage: async (message: string) => {
       const state = get();
       if (!state.consent) {
-        throw new Error('MISSING_CONSENT');
+        throw new Error("MISSING_CONSENT");
       }
-      
+
       const response = await chatAPI.sendMessage({
         sessionId: state.activeSession,
         message,
-        consent: state.consent
+        consent: state.consent,
       });
-      
-      set(state => ({
-        messages: [...state.messages, response]
+
+      set((state) => ({
+        messages: [...state.messages, response],
       }));
-    }
-  }
+    },
+  },
 }));
 ```
 
@@ -347,20 +347,23 @@ export const useChatStore = create<ChatState>((set, get) => ({
 ### Data Subject Rights
 
 1. **Right to Access (Art. 9)**
+
    ```typescript
-   GET /api/v1/data/user/{userId}
+   GET / api / v1 / data / user / { userId };
    // Returns all stored user data
    ```
 
 2. **Right to Rectification (Art. 16)**
+
    ```typescript
-   PUT /api/v1/data/user/{userId}
+   PUT / api / v1 / data / user / { userId };
    // Updates incorrect personal data
    ```
 
 3. **Right to Deletion (Art. 18)**
+
    ```typescript
-   DELETE /api/v1/data/user/{userId}
+   DELETE / api / v1 / data / user / { userId };
    // Removes all user data (with legal retention exceptions)
    ```
 
@@ -494,6 +497,7 @@ Every interaction is logged with:
 ### Alerting
 
 Critical alerts for:
+
 - API response time > 2 seconds
 - Error rate > 5%
 - AI provider failures
@@ -570,12 +574,14 @@ PII_REDACTION_ENABLED=true
 ### Deployment Steps
 
 1. **Database Setup**
+
    ```bash
    npm run db:migrate
    npm run db:seed
    ```
 
 2. **Service Deployment**
+
    ```bash
    npm run build
    npm run start:prod

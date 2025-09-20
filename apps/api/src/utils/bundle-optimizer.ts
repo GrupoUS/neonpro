@@ -27,26 +27,26 @@ export const HEALTHCARE_BUNDLE_CONFIG: HealthcareBundleConfig = {
 
   // Critical modules that must load immediately
   criticalModules: [
-    'healthcare-middleware',
-    'lgpd-compliance',
-    'emergency-protocols',
-    'patient-safety',
+    "healthcare-middleware",
+    "lgpd-compliance",
+    "emergency-protocols",
+    "patient-safety",
   ],
 
   // Modules that can be loaded on demand
   deferredModules: [
-    'report-generation',
-    'analytics',
-    'audit-logging',
-    'backup-systems',
+    "report-generation",
+    "analytics",
+    "audit-logging",
+    "backup-systems",
   ],
 
   // Brazilian compliance modules
   complianceModules: [
-    'lgpd-validation',
-    'cfm-certification',
-    'anvisa-reporting',
-    'brazilian-standards',
+    "lgpd-validation",
+    "cfm-certification",
+    "anvisa-reporting",
+    "brazilian-standards",
   ],
 };
 
@@ -68,7 +68,10 @@ export async function importHealthcareModule<T = any>(
     // Create timeout promise for non-critical modules
     const timeoutPromise = new Promise<never>((_, reject) => {
       if (!critical) {
-        setTimeout(() => reject(new Error(`Module ${modulePath} load timeout`)), timeout);
+        setTimeout(
+          () => reject(new Error(`Module ${modulePath} load timeout`)),
+          timeout,
+        );
       }
     });
 
@@ -80,7 +83,9 @@ export async function importHealthcareModule<T = any>(
     const loadTime = performance.now() - startTime;
 
     // Log performance metrics for healthcare optimization
-    console.log(`Healthcare module loaded: ${modulePath} in ${Math.round(loadTime)}ms`);
+    console.log(
+      `Healthcare module loaded: ${modulePath} in ${Math.round(loadTime)}ms`,
+    );
 
     return module.default || module;
   } catch (error) {
@@ -94,7 +99,9 @@ export async function importHealthcareModule<T = any>(
 
     // For critical healthcare modules, throw error
     if (critical) {
-      throw new Error(`Critical healthcare module ${modulePath} failed to load: ${error}`);
+      throw new Error(
+        `Critical healthcare module ${modulePath} failed to load: ${error}`,
+      );
     }
 
     throw error;
@@ -105,22 +112,22 @@ export async function importHealthcareModule<T = any>(
  * Lazy load Brazilian compliance modules
  */
 export const loadLgpdCompliance = () =>
-  importHealthcareModule(
-    '../middleware/lgpd-compliance',
-    { critical: true, timeout: 3000 },
-  );
+  importHealthcareModule("../middleware/lgpd-compliance", {
+    critical: true,
+    timeout: 3000,
+  });
 
 export const loadCfmValidation = () =>
-  importHealthcareModule(
-    '../services/cfm-validation',
-    { critical: true, timeout: 3000 },
-  );
+  importHealthcareModule("../services/cfm-validation", {
+    critical: true,
+    timeout: 3000,
+  });
 
 export const loadAnvisaReporting = () =>
-  importHealthcareModule(
-    '../services/anvisa-reporting',
-    { critical: false, timeout: 5000 },
-  );
+  importHealthcareModule("../services/anvisa-reporting", {
+    critical: false,
+    timeout: 5000,
+  });
 
 /**
  * Preload critical healthcare modules for edge runtime
@@ -133,26 +140,36 @@ export async function preloadCriticalHealthcareModules(): Promise<void> {
     const criticalModules = await Promise.allSettled([
       loadLgpdCompliance(),
       loadCfmValidation(),
-      importHealthcareModule('../utils/emergency-protocols', { critical: true }),
-      importHealthcareModule('../utils/patient-safety', { critical: true }),
+      importHealthcareModule("../utils/emergency-protocols", {
+        critical: true,
+      }),
+      importHealthcareModule("../utils/patient-safety", { critical: true }),
     ]);
 
     // Check if any critical modules failed
     const failedModules = criticalModules
-      .map((result, index) => ({ result, module: HEALTHCARE_BUNDLE_CONFIG.criticalModules[index] }))
-      .filter(({ result }) => result.status === 'rejected');
+      .map((result, index) => ({
+        result,
+        module: HEALTHCARE_BUNDLE_CONFIG.criticalModules[index],
+      }))
+      .filter(({ result }) => result.status === "rejected");
 
     if (failedModules.length > 0) {
-      console.error('Critical healthcare modules failed to preload:', failedModules);
+      console.error(
+        "Critical healthcare modules failed to preload:",
+        failedModules,
+      );
       throw new Error(
-        `Critical healthcare modules failed: ${failedModules.map(f => f.module).join(', ')}`,
+        `Critical healthcare modules failed: ${failedModules.map((f) => f.module).join(", ")}`,
       );
     }
 
     const loadTime = performance.now() - startTime;
-    console.log(`Critical healthcare modules preloaded in ${Math.round(loadTime)}ms`);
+    console.log(
+      `Critical healthcare modules preloaded in ${Math.round(loadTime)}ms`,
+    );
   } catch (error) {
-    console.error('Failed to preload critical healthcare modules:', error);
+    console.error("Failed to preload critical healthcare modules:", error);
     throw error;
   }
 }
@@ -166,7 +183,12 @@ export class HealthcareBundleAnalyzer {
   /**
    * Track module loading metrics
    */
-  trackModuleLoad(moduleName: string, size: number, loadTime: number, cached = false): void {
+  trackModuleLoad(
+    moduleName: string,
+    size: number,
+    loadTime: number,
+    cached = false,
+  ): void {
     this.metrics.set(moduleName, {
       size,
       loadTime,
@@ -180,8 +202,10 @@ export class HealthcareBundleAnalyzer {
    * Get total bundle size
    */
   getTotalBundleSize(): number {
-    return Array.from(this.metrics.values())
-      .reduce((total, metric) => total + metric.size, 0);
+    return Array.from(this.metrics.values()).reduce(
+      (total, metric) => total + metric.size,
+      0,
+    );
   }
 
   /**
@@ -205,7 +229,7 @@ export class HealthcareBundleAnalyzer {
     const withinLimits = this.isWithinHealthcareLimits();
 
     const criticalModuleMetrics = HEALTHCARE_BUNDLE_CONFIG.criticalModules
-      .map(module => this.metrics.get(module))
+      .map((module) => this.metrics.get(module))
       .filter(Boolean) as BundleMetrics[];
 
     const recommendations = this.generateOptimizationRecommendations();
@@ -226,36 +250,38 @@ export class HealthcareBundleAnalyzer {
     const totalSize = this.getTotalBundleSize();
 
     if (totalSize > HEALTHCARE_BUNDLE_CONFIG.maxSize * 0.9) {
-      recommendations.push('Bundle size approaching edge runtime limit - consider code splitting');
+      recommendations.push(
+        "Bundle size approaching edge runtime limit - consider code splitting",
+      );
     }
 
     // Check for slow loading critical modules
-    const slowCriticalModules = Array.from(this.metrics.values())
-      .filter(metric =>
-        HEALTHCARE_BUNDLE_CONFIG.criticalModules.includes(metric.module)
-        && metric.loadTime > 100
-      );
+    const slowCriticalModules = Array.from(this.metrics.values()).filter(
+      (metric) =>
+        HEALTHCARE_BUNDLE_CONFIG.criticalModules.includes(metric.module) &&
+        metric.loadTime > 100,
+    );
 
     if (slowCriticalModules.length > 0) {
       recommendations.push(
-        `Critical healthcare modules loading slowly: ${
-          slowCriticalModules.map(m => m.module).join(', ')
-        }`,
+        `Critical healthcare modules loading slowly: ${slowCriticalModules
+          .map((m) => m.module)
+          .join(", ")}`,
       );
     }
 
     // Check for large non-critical modules
-    const largeNonCriticalModules = Array.from(this.metrics.values())
-      .filter(metric =>
-        !HEALTHCARE_BUNDLE_CONFIG.criticalModules.includes(metric.module)
-        && metric.size > 50000
-      );
+    const largeNonCriticalModules = Array.from(this.metrics.values()).filter(
+      (metric) =>
+        !HEALTHCARE_BUNDLE_CONFIG.criticalModules.includes(metric.module) &&
+        metric.size > 50000,
+    );
 
     if (largeNonCriticalModules.length > 0) {
       recommendations.push(
-        `Consider lazy loading large modules: ${
-          largeNonCriticalModules.map(m => m.module).join(', ')
-        }`,
+        `Consider lazy loading large modules: ${largeNonCriticalModules
+          .map((m) => m.module)
+          .join(", ")}`,
       );
     }
 
@@ -268,7 +294,7 @@ export class HealthcareBundleAnalyzer {
   private calculateCompressionRatio(size: number): number {
     // Estimate compression ratio based on typical JavaScript compression
     // Healthcare modules typically compress well due to repetitive patterns
-    return Math.round((size * 0.3) / size * 100) / 100; // ~70% compression typical
+    return Math.round(((size * 0.3) / size) * 100) / 100; // ~70% compression typical
   }
 }
 
@@ -286,9 +312,9 @@ export function createHealthcareRouteLoader<T>(
   const { preload = false, fallback, errorBoundary } = options;
 
   // Preload if specified (for critical healthcare routes)
-  if (preload && typeof window !== 'undefined') {
-    routeImport().catch(error => {
-      console.error('Failed to preload healthcare route:', error);
+  if (preload && typeof window !== "undefined") {
+    routeImport().catch((error) => {
+      console.error("Failed to preload healthcare route:", error);
     });
   }
 
@@ -327,9 +353,8 @@ export class HealthcareEdgePerformanceMonitor {
     const bundleCompliance = this.bundleAnalyzer.isWithinHealthcareLimits();
 
     // Healthcare readiness requires all systems to be optimal
-    const healthcareReadiness = memoryUsage < 100
-      && responseTime < 100
-      && bundleCompliance;
+    const healthcareReadiness =
+      memoryUsage < 100 && responseTime < 100 && bundleCompliance;
 
     return {
       memoryUsage,
@@ -346,13 +371,16 @@ export class HealthcareEdgePerformanceMonitor {
 
   private getAverageResponseTime(): number {
     // Calculate average response time from tracked metrics
-    const metrics = Array.from(this.bundleAnalyzer['metrics'].values());
+    const metrics = Array.from(this.bundleAnalyzer["metrics"].values());
     if (metrics.length === 0) return 0;
 
-    return metrics.reduce((sum, metric) => sum + metric.loadTime, 0) / metrics.length;
+    return (
+      metrics.reduce((sum, metric) => sum + metric.loadTime, 0) / metrics.length
+    );
   }
 }
 
 // Export singleton instances
 export const healthcareBundleAnalyzer = new HealthcareBundleAnalyzer();
-export const healthcarePerformanceMonitor = HealthcareEdgePerformanceMonitor.getInstance();
+export const healthcarePerformanceMonitor =
+  HealthcareEdgePerformanceMonitor.getInstance();

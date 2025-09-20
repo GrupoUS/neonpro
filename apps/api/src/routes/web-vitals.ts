@@ -3,15 +3,15 @@
  * Handles web vitals data collection and analysis
  */
 
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
+import { Hono } from "hono";
+import { cors } from "hono/cors";
 import type {
   MetricAnalysis,
   MetricEntry,
   PerformanceThresholds,
   SessionInfo,
   WebVitalMetric,
-} from '../types/web-vitals';
+} from "../types/web-vitals";
 
 const webVitalsRouter = new Hono();
 
@@ -20,16 +20,24 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   process.env.NEXT_PUBLIC_APP_URL,
 ].filter(Boolean) as string[];
-if (process.env.NODE_ENV !== 'production') {
-  allowedOrigins.push('http://localhost:3000', 'http://localhost:5173', 'http://localhost:8081');
+if (process.env.NODE_ENV !== "production") {
+  allowedOrigins.push(
+    "http://localhost:3000",
+    "http://localhost:5173",
+    "http://localhost:8081",
+  );
 }
 webVitalsRouter.use(
-  '*',
+  "*",
   cors({
-    origin:
-      origin => (!origin ? undefined : (allowedOrigins.includes(origin) ? origin : undefined)),
-    allowMethods: ['GET', 'POST'],
-    allowHeaders: ['Content-Type', 'Authorization'],
+    origin: (origin) =>
+      !origin
+        ? undefined
+        : allowedOrigins.includes(origin)
+          ? origin
+          : undefined,
+    allowMethods: ["GET", "POST"],
+    allowHeaders: ["Content-Type", "Authorization"],
   }),
 );
 
@@ -38,10 +46,15 @@ const metricsStore = new Map<string, MetricEntry[]>();
 const sessionsStore = new Map<string, SessionInfo>();
 
 // Core Web Vitals reporting endpoint
-webVitalsRouter.post('/api/analytics/web-vitals', async c => {
+webVitalsRouter.post("/api/analytics/web-vitals", async (c) => {
   try {
     const body = await c.req.json();
-    const { metric, data, sessionId, userId }: {
+    const {
+      metric,
+      data,
+      sessionId,
+      userId,
+    }: {
       metric: string;
       data: WebVitalMetric;
       sessionId?: string;
@@ -49,8 +62,8 @@ webVitalsRouter.post('/api/analytics/web-vitals', async c => {
     } = body;
 
     // Validate required fields
-    if (!metric || !data || typeof data.value === 'undefined') {
-      return c.json({ error: 'Invalid metric data' }, 400);
+    if (!metric || !data || typeof data.value === "undefined") {
+      return c.json({ error: "Invalid metric data" }, 400);
     }
 
     // Create metric entry
@@ -61,7 +74,7 @@ webVitalsRouter.post('/api/analytics/web-vitals', async c => {
       value: data.value,
       delta: data.delta,
       originId: data.id,
-      sessionId: sessionId || 'anonymous',
+      sessionId: sessionId || "anonymous",
       userId: userId || null,
       timestamp: new Date().toISOString(),
       url: data.url,
@@ -80,13 +93,13 @@ webVitalsRouter.post('/api/analytics/web-vitals', async c => {
     };
 
     // Store metric
-    if (!metricsStore.has(sessionId || 'anonymous')) {
-      metricsStore.set(sessionId || 'anonymous', []);
+    if (!metricsStore.has(sessionId || "anonymous")) {
+      metricsStore.set(sessionId || "anonymous", []);
     }
-    metricsStore.get(sessionId || 'anonymous')!.push(metricEntry);
+    metricsStore.get(sessionId || "anonymous")!.push(metricEntry);
 
     // Update session info
-    const currentSessionId = sessionId || 'anonymous';
+    const currentSessionId = sessionId || "anonymous";
     if (!sessionsStore.has(currentSessionId)) {
       sessionsStore.set(currentSessionId, {
         sessionId: currentSessionId,
@@ -101,27 +114,33 @@ webVitalsRouter.post('/api/analytics/web-vitals', async c => {
     const session = sessionsStore.get(currentSessionId)!;
     session.lastActivity = new Date().toISOString();
     session.metricsCount++;
-    session.urls.add(data.pathname || data.url || '');
+    session.urls.add(data.pathname || data.url || "");
 
     // Check for performance issues
     await checkPerformanceThresholds(metricEntry);
 
     return c.json({
-      status: 'recorded',
+      status: "recorded",
       metricId: metricEntry.id,
       timestamp: metricEntry.timestamp,
     });
   } catch (error) {
-    console.error('Web vitals recording error:', error);
-    return c.json({ error: 'Failed to record metric' }, 500);
+    console.error("Web vitals recording error:", error);
+    return c.json({ error: "Failed to record metric" }, 500);
   }
 });
 
 // Batch metrics endpoint (beacon)
-webVitalsRouter.post('/api/analytics/web-vitals/beacon', async c => {
+webVitalsRouter.post("/api/analytics/web-vitals/beacon", async (c) => {
   try {
     const body = await c.req.json();
-    const { metrics, sessionId, userId, url, timestamp }: {
+    const {
+      metrics,
+      sessionId,
+      userId,
+      url,
+      timestamp,
+    }: {
       metrics: Record<string, any>;
       sessionId?: string;
       userId?: string;
@@ -129,7 +148,7 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async c => {
       timestamp?: string;
     } = body;
 
-    if (!metrics || typeof metrics !== 'object') {
+    if (!metrics || typeof metrics !== "object") {
       return new Response(null, { status: 204 });
     }
 
@@ -145,7 +164,7 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async c => {
         value: typedMetricData.value,
         delta: typedMetricData.delta,
         originId: typedMetricData.id,
-        sessionId: sessionId || 'anonymous',
+        sessionId: sessionId || "anonymous",
         userId: userId || null,
         timestamp: new Date(timestamp || Date.now()).toISOString(),
         url: typedMetricData.url || url,
@@ -165,7 +184,7 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async c => {
     }
 
     // Store all metrics
-    const sessionKey = sessionId || 'anonymous';
+    const sessionKey = sessionId || "anonymous";
     if (!metricsStore.has(sessionKey)) {
       metricsStore.set(sessionKey, []);
     }
@@ -174,22 +193,24 @@ webVitalsRouter.post('/api/analytics/web-vitals/beacon', async c => {
     // Return empty response for beacon (standard)
     return new Response(null, { status: 204 });
   } catch (error) {
-    console.error('Web vitals beacon error:', error);
+    console.error("Web vitals beacon error:", error);
     return new Response(null, { status: 204 });
   }
 });
 
 // Analytics dashboard endpoint
-webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async c => {
+webVitalsRouter.get("/api/analytics/web-vitals/dashboard", async (c) => {
   try {
     // Get time range from query params
-    const timeRange = c.req.query('timeRange') || '24h';
+    const timeRange = c.req.query("timeRange") || "24h";
     const since = getTimeRangeStart(timeRange);
 
     // Filter metrics by time range
     const allMetrics: MetricEntry[] = [];
     for (const [, metrics] of metricsStore.entries()) {
-      const filteredMetrics = metrics.filter(m => new Date(m.timestamp) >= since);
+      const filteredMetrics = metrics.filter(
+        (m) => new Date(m.timestamp) >= since,
+      );
       allMetrics.push(...filteredMetrics);
     }
 
@@ -197,9 +218,10 @@ webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async c => {
       timeRange,
       generatedAt: new Date().toISOString(),
       summary: {
-        totalSessions: new Set(allMetrics.map(m => m.sessionId)).size,
+        totalSessions: new Set(allMetrics.map((m) => m.sessionId)).size,
         totalMetrics: allMetrics.length,
-        uniqueUsers: new Set(allMetrics.map(m => m.userId).filter(Boolean)).size,
+        uniqueUsers: new Set(allMetrics.map((m) => m.userId).filter(Boolean))
+          .size,
         timeRangeStart: since.toISOString(),
       },
       coreWebVitals: calculateCoreWebVitals(allMetrics),
@@ -212,28 +234,28 @@ webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async c => {
 
     return c.json(dashboard);
   } catch (error) {
-    console.error('Dashboard generation error:', error);
-    return c.json({ error: 'Failed to generate dashboard' }, 500);
+    console.error("Dashboard generation error:", error);
+    return c.json({ error: "Failed to generate dashboard" }, 500);
   }
 });
 
 // Helper functions
 function generateMetricId(): string {
-  return 'metric-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+  return "metric-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
 }
 
 function getTimeRangeStart(timeRange: string): Date {
   const now = new Date();
   switch (timeRange) {
-    case '1h':
+    case "1h":
       return new Date(now.getTime() - 1 * 60 * 60 * 1000);
-    case '6h':
+    case "6h":
       return new Date(now.getTime() - 6 * 60 * 60 * 1000);
-    case '24h':
+    case "24h":
       return new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    case '7d':
+    case "7d":
       return new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-    case '30d':
+    case "30d":
       return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     default:
       return new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -252,17 +274,19 @@ async function checkPerformanceThresholds(metric: MetricEntry): Promise<void> {
   const threshold = thresholds[metric.metric as keyof PerformanceThresholds];
   if (!threshold) return;
 
-  let performanceLevel = 'good';
+  let performanceLevel = "good";
   if (metric.value > threshold.poor) {
-    performanceLevel = 'poor';
+    performanceLevel = "poor";
   } else if (metric.value > threshold.good) {
-    performanceLevel = 'needs-improvement';
+    performanceLevel = "needs-improvement";
   }
 
   // Healthcare-specific alerting
   if (
-    performanceLevel === 'poor'
-    && (metric.isPatientView || metric.isAppointmentView || metric.isMedicalRecordView)
+    performanceLevel === "poor" &&
+    (metric.isPatientView ||
+      metric.isAppointmentView ||
+      metric.isMedicalRecordView)
   ) {
     console.warn(
       `🏥 Healthcare performance issue: ${metric.metric} = ${metric.value} on ${metric.pathname}`,
@@ -273,12 +297,14 @@ async function checkPerformanceThresholds(metric: MetricEntry): Promise<void> {
   }
 }
 
-function calculateCoreWebVitals(metrics: MetricEntry[]): Record<string, MetricAnalysis> {
-  const vitals = ['LCP', 'FID', 'CLS', 'FCP', 'TTFB'];
+function calculateCoreWebVitals(
+  metrics: MetricEntry[],
+): Record<string, MetricAnalysis> {
+  const vitals = ["LCP", "FID", "CLS", "FCP", "TTFB"];
   const results: Record<string, MetricAnalysis> = {};
 
-  vitals.forEach(vital => {
-    const vitalMetrics = metrics.filter(m => m.metric === vital);
+  vitals.forEach((vital) => {
+    const vitalMetrics = metrics.filter((m) => m.metric === vital);
     if (vitalMetrics.length === 0) {
       results[vital] = {
         metric: vital,
@@ -291,9 +317,9 @@ function calculateCoreWebVitals(metrics: MetricEntry[]): Record<string, MetricAn
       return;
     }
 
-    const values = vitalMetrics.map(m => m.value).sort((a, b) => a - b);
-    const p50 = values[Math.floor(values.length * 0.50)] || 0;
-    const p90 = values[Math.floor(values.length * 0.90)] || 0;
+    const values = vitalMetrics.map((m) => m.value).sort((a, b) => a - b);
+    const p50 = values[Math.floor(values.length * 0.5)] || 0;
+    const p90 = values[Math.floor(values.length * 0.9)] || 0;
     const p95 = values[Math.floor(values.length * 0.95)] || 0;
     const avg = values.reduce((sum, v) => sum + v, 0) / values.length;
 
@@ -326,7 +352,7 @@ function calculatePerformanceGrade(metrics: MetricEntry[]): {
   let goodCount = 0;
   let totalCount = 0;
 
-  ['LCP', 'FID', 'CLS'].forEach(vital => {
+  ["LCP", "FID", "CLS"].forEach((vital) => {
     const metric = coreVitals[vital];
     if (metric && metric.count > 0) {
       totalCount++;
@@ -337,12 +363,12 @@ function calculatePerformanceGrade(metrics: MetricEntry[]): {
   });
 
   const score = totalCount > 0 ? (goodCount / totalCount) * 100 : 0;
-  let grade = 'F';
+  let grade = "F";
 
-  if (score >= 90) grade = 'A';
-  else if (score >= 80) grade = 'B';
-  else if (score >= 70) grade = 'C';
-  else if (score >= 60) grade = 'D';
+  if (score >= 90) grade = "A";
+  else if (score >= 80) grade = "B";
+  else if (score >= 70) grade = "C";
+  else if (score >= 60) grade = "D";
 
   return {
     score: Math.round(score),
@@ -361,24 +387,28 @@ function calculateHealthcareMetrics(metrics: MetricEntry[]): {
   complianceStatus?: string;
   complianceThreshold?: number;
 } {
-  const healthcareMetrics = metrics.filter(m =>
-    m.isPatientView || m.isAppointmentView || m.isMedicalRecordView
+  const healthcareMetrics = metrics.filter(
+    (m) => m.isPatientView || m.isAppointmentView || m.isMedicalRecordView,
   );
 
   if (healthcareMetrics.length === 0) {
     return { count: 0 };
   }
 
-  const avgResponseTime = healthcareMetrics.reduce((sum, m) => sum + m.value, 0)
-    / healthcareMetrics.length;
+  const avgResponseTime =
+    healthcareMetrics.reduce((sum, m) => sum + m.value, 0) /
+    healthcareMetrics.length;
 
   return {
     count: healthcareMetrics.length,
     averageResponseTime: Math.round(avgResponseTime),
-    patientViews: healthcareMetrics.filter(m => m.isPatientView).length,
-    appointmentViews: healthcareMetrics.filter(m => m.isAppointmentView).length,
-    medicalRecordViews: healthcareMetrics.filter(m => m.isMedicalRecordView).length,
-    complianceStatus: avgResponseTime <= 2000 ? 'compliant' : 'needs-improvement',
+    patientViews: healthcareMetrics.filter((m) => m.isPatientView).length,
+    appointmentViews: healthcareMetrics.filter((m) => m.isAppointmentView)
+      .length,
+    medicalRecordViews: healthcareMetrics.filter((m) => m.isMedicalRecordView)
+      .length,
+    complianceStatus:
+      avgResponseTime <= 2000 ? "compliant" : "needs-improvement",
     complianceThreshold: 2000,
   };
 }
@@ -390,10 +420,10 @@ function calculateDeviceBreakdown(metrics: MetricEntry[]): Array<{
 }> {
   const devices: Record<string, { count: number; sessions: Set<string> }> = {};
 
-  metrics.forEach(metric => {
-    const memory = metric.deviceMemory || 'unknown';
-    const cores = metric.hardwareConcurrency || 'unknown';
-    const connection = metric.connectionType || 'unknown';
+  metrics.forEach((metric) => {
+    const memory = metric.deviceMemory || "unknown";
+    const cores = metric.hardwareConcurrency || "unknown";
+    const connection = metric.connectionType || "unknown";
     const key = `${memory}GB-${cores}cores-${connection}`;
 
     if (!devices[key]) {
@@ -419,10 +449,13 @@ function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
   sessions: number;
   avgValue: number;
 }> {
-  const urls: Record<string, { metrics: MetricEntry[]; sessions: Set<string> }> = {};
+  const urls: Record<
+    string,
+    { metrics: MetricEntry[]; sessions: Set<string> }
+  > = {};
 
-  metrics.forEach(metric => {
-    const pathname = metric.pathname || metric.url || 'unknown';
+  metrics.forEach((metric) => {
+    const pathname = metric.pathname || metric.url || "unknown";
     if (!urls[pathname]) {
       urls[pathname] = { metrics: [], sessions: new Set() };
     }
@@ -435,7 +468,9 @@ function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
       url,
       metrics: data.metrics.length,
       sessions: data.sessions.size,
-      avgValue: Math.round(data.metrics.reduce((sum, m) => sum + m.value, 0) / data.metrics.length),
+      avgValue: Math.round(
+        data.metrics.reduce((sum, m) => sum + m.value, 0) / data.metrics.length,
+      ),
     }))
     .sort((a, b) => b.metrics - a.metrics);
 }
@@ -447,7 +482,7 @@ function calculateTrends(metrics: MetricEntry[]): Array<{
 }> {
   const trends: Record<number, MetricEntry[]> = {};
 
-  metrics.forEach(metric => {
+  metrics.forEach((metric) => {
     const hour = new Date(metric.timestamp).getHours();
     if (!trends[hour]) {
       trends[hour] = [];
@@ -459,7 +494,9 @@ function calculateTrends(metrics: MetricEntry[]): Array<{
     .map(([hour, hourMetrics]) => ({
       hour: parseInt(hour),
       count: hourMetrics.length,
-      avgValue: Math.round(hourMetrics.reduce((sum, m) => sum + m.value, 0) / hourMetrics.length),
+      avgValue: Math.round(
+        hourMetrics.reduce((sum, m) => sum + m.value, 0) / hourMetrics.length,
+      ),
     }))
     .sort((a, b) => a.hour - b.hour);
 }

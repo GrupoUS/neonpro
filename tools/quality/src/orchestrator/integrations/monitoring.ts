@@ -1,18 +1,18 @@
 /**
  * 📊 Monitoring Integration for TDD Orchestrator
  * ==============================================
- * 
+ *
  * Integrates the TDD Orchestrator with the monitoring package to track
  * performance metrics, execution times, and orchestration health.
  */
 
-import { globalPerformanceTracker } from '../../../../../packages/monitoring/src/performance/tracker';
-import { 
-  OrchestrationState, 
-  TDDPhase, 
-  AgentName, 
-  OrchestrationMetrics
-} from '../types';
+import { globalPerformanceTracker } from "../../../../../packages/monitoring/src/performance/tracker";
+import {
+  OrchestrationState,
+  TDDPhase,
+  AgentName,
+  OrchestrationMetrics,
+} from "../types";
 
 export interface OrchestrationMonitoringConfig {
   enablePerformanceTracking: boolean;
@@ -32,7 +32,10 @@ export class OrchestrationMonitoring {
   /**
    * Start tracking an orchestration workflow
    */
-  startOrchestrationTracking(orchestrationId: string, _workflowType: string): void {
+  startOrchestrationTracking(
+    orchestrationId: string,
+    _workflowType: string,
+  ): void {
     if (!this.config.enablePerformanceTracking) return;
 
     const timerKey = `orchestration-${orchestrationId}`;
@@ -44,8 +47,8 @@ export class OrchestrationMonitoring {
    * End tracking an orchestration workflow
    */
   endOrchestrationTracking(
-    orchestrationId: string, 
-    state: OrchestrationState
+    orchestrationId: string,
+    state: OrchestrationState,
   ): number {
     if (!this.config.enablePerformanceTracking) return 0;
 
@@ -57,7 +60,7 @@ export class OrchestrationMonitoring {
       feature_name: state.feature.name,
       feature_complexity: state.feature.complexity.toString(),
       total_agents: state.agents.completed.length.toString(),
-      final_phase: state.tddCycle.phase
+      final_phase: state.tddCycle.phase,
     });
 
     this.activeTimers.delete(orchestrationId);
@@ -70,21 +73,17 @@ export class OrchestrationMonitoring {
   trackPhaseExecution(
     orchestrationId: string,
     phase: TDDPhase,
-    callback: () => Promise<void>
+    callback: () => Promise<void>,
   ): Promise<void> {
     if (!this.config.trackPhaseTransitions) {
       return callback();
     }
 
     const timerKey = `phase-${orchestrationId}-${phase}`;
-    return globalPerformanceTracker.measureAsync(
-      timerKey,
-      callback,
-      {
-        orchestration_id: orchestrationId,
-        phase: phase
-      }
-    );
+    return globalPerformanceTracker.measureAsync(timerKey, callback, {
+      orchestration_id: orchestrationId,
+      phase: phase,
+    });
   }
 
   /**
@@ -94,28 +93,26 @@ export class OrchestrationMonitoring {
     orchestrationId: string,
     agentName: AgentName,
     phase: TDDPhase,
-    callback: () => Promise<T>
+    callback: () => Promise<T>,
   ): Promise<T> {
     if (!this.config.trackAgentExecution) {
       return callback();
     }
 
     const timerKey = `agent-${agentName}-${phase}`;
-    return globalPerformanceTracker.measureAsync(
-      timerKey,
-      callback,
-      {
-        orchestration_id: orchestrationId,
-        agent_name: agentName,
-        phase: phase
-      }
-    );
+    return globalPerformanceTracker.measureAsync(timerKey, callback, {
+      orchestration_id: orchestrationId,
+      agent_name: agentName,
+      phase: phase,
+    });
   }
 
   /**
    * Generate orchestration metrics
    */
-  generateOrchestrationMetrics(state: OrchestrationState): OrchestrationMetrics {
+  generateOrchestrationMetrics(
+    state: OrchestrationState,
+  ): OrchestrationMetrics {
     const now = new Date();
     const totalDuration = now.getTime() - state.createdAt.getTime();
 
@@ -130,7 +127,7 @@ export class OrchestrationMonitoring {
       findingsCount: this.countFindings(state),
       recommendationsCount: this.countRecommendations(state),
       success: this.isOrchestrationSuccessful(state),
-      timestamp: now
+      timestamp: now,
     };
   }
 
@@ -148,31 +145,39 @@ export class OrchestrationMonitoring {
   }
 
   private countPassedQualityGates(state: OrchestrationState): number {
-    return Object.values(state.qualityGates).filter(status => status === 'passed').length;
+    return Object.values(state.qualityGates).filter(
+      (status) => status === "passed",
+    ).length;
   }
 
   private countFailedQualityGates(state: OrchestrationState): number {
-    return Object.values(state.qualityGates).filter(status => status === 'failed').length;
+    return Object.values(state.qualityGates).filter(
+      (status) => status === "failed",
+    ).length;
   }
 
-  private calculatePhaseDurations(_state: OrchestrationState): Record<TDDPhase, number> {
+  private calculatePhaseDurations(
+    _state: OrchestrationState,
+  ): Record<TDDPhase, number> {
     // For now, return empty durations - this would need to be tracked during execution
     return {
       red: 0,
       green: 0,
-      refactor: 0
+      refactor: 0,
     };
   }
 
-  private calculateAgentDurations(_state: OrchestrationState): Record<AgentName, number> {
+  private calculateAgentDurations(
+    _state: OrchestrationState,
+  ): Record<AgentName, number> {
     // For now, return empty durations - this would need to be tracked during execution
     return {
-      'apex-dev': 0,
-      'test': 0,
-      'compliance-validator': 0,
-      'code-reviewer': 0,
-      'architect-review': 0,
-      'security-auditor': 0
+      "apex-dev": 0,
+      test: 0,
+      "compliance-validator": 0,
+      "code-reviewer": 0,
+      "architect-review": 0,
+      "security-auditor": 0,
     };
   }
 
@@ -181,7 +186,9 @@ export class OrchestrationMonitoring {
     return {};
   }
 
-  private countRecommendations(_state: OrchestrationState): Record<string, number> {
+  private countRecommendations(
+    _state: OrchestrationState,
+  ): Record<string, number> {
     // For now, return empty counts - this would need to be aggregated from agent results
     return {};
   }
@@ -189,10 +196,10 @@ export class OrchestrationMonitoring {
   private isOrchestrationSuccessful(state: OrchestrationState): boolean {
     // Check if all quality gates passed and no agents failed
     const allQualityGatesPassed = Object.values(state.qualityGates).every(
-      status => status === 'passed' || status === 'skipped'
+      (status) => status === "passed" || status === "skipped",
     );
     const noFailedAgents = state.agents.failed.length === 0;
-    
+
     return allQualityGatesPassed && noFailedAgents;
   }
 }
@@ -202,8 +209,10 @@ export const defaultMonitoringConfig: OrchestrationMonitoringConfig = {
   enablePerformanceTracking: true,
   enableMetricsCollection: true,
   trackAgentExecution: true,
-  trackPhaseTransitions: true
+  trackPhaseTransitions: true,
 };
 
 // Singleton instance
-export const orchestrationMonitoring = new OrchestrationMonitoring(defaultMonitoringConfig);
+export const orchestrationMonitoring = new OrchestrationMonitoring(
+  defaultMonitoringConfig,
+);

@@ -1,19 +1,19 @@
-import type { ChatMessage, ChatState } from '@/components/ui/ai-chat/types';
-import { useAuth } from '@/hooks/useAuth';
+import type { ChatMessage, ChatState } from "@/components/ui/ai-chat/types";
+import { useAuth } from "@/hooks/useAuth";
 import {
   generateSearchSuggestions,
   generateVoiceOutput,
   logAIInteraction,
   processVoiceInput,
   streamAestheticResponse,
-} from '@/lib/ai/ai-chat-service'; // path confirmed
-import { fetchDefaultChatModel } from '@/services/chat-settings.service';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { nanoid } from 'nanoid';
-import { useCallback, useEffect, useState } from 'react';
+} from "@/lib/ai/ai-chat-service"; // path confirmed
+import { fetchDefaultChatModel } from "@/services/chat-settings.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { nanoid } from "nanoid";
+import { useCallback, useEffect, useState } from "react";
 
 // Session storage key for persistence
-const CHAT_SESSION_KEY = 'neonpro-ai-chat-session';
+const CHAT_SESSION_KEY = "neonpro-ai-chat-session";
 
 /**
  * AI Chat Hook for NeonPro Aesthetic Clinic
@@ -27,7 +27,7 @@ export function useAIChat(clientId?: string) {
   // Chat state management
   const [chatState, setChatState] = useState<ChatState>(() => {
     // Load from session storage on mount
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const saved = sessionStorage.getItem(CHAT_SESSION_KEY);
       if (saved) {
         try {
@@ -39,9 +39,10 @@ export function useAIChat(clientId?: string) {
     }
 
     // Read persisted default model if available
-    const persistedDefault = typeof window !== 'undefined'
-      ? localStorage.getItem('neonpro-default-chat-model') || 'gpt-5-mini'
-      : 'gpt-5-mini';
+    const persistedDefault =
+      typeof window !== "undefined"
+        ? localStorage.getItem("neonpro-default-chat-model") || "gpt-5-mini"
+        : "gpt-5-mini";
 
     return {
       messages: [],
@@ -59,7 +60,7 @@ export function useAIChat(clientId?: string) {
       if (!user?.id) return;
       const serverModel = await fetchDefaultChatModel(user.id);
       if (serverModel) {
-        setChatState(prev => {
+        setChatState((prev) => {
           const next = {
             ...(prev as ChatState & { model?: string }),
             model: serverModel,
@@ -68,7 +69,7 @@ export function useAIChat(clientId?: string) {
           return next;
         });
         try {
-          localStorage.setItem('neonpro-default-chat-model', serverModel);
+          localStorage.setItem("neonpro-default-chat-model", serverModel);
         } catch {}
       }
     })();
@@ -77,30 +78,38 @@ export function useAIChat(clientId?: string) {
 
   // Persist chat state to session storage
   const persistChatState = useCallback((state: ChatState) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       sessionStorage.setItem(CHAT_SESSION_KEY, JSON.stringify(state));
     }
   }, []);
 
   // Model selection setter
-  const setModel = useCallback((model: string) => {
-    setChatState(prev => {
-      const next = { ...(prev as ChatState & { model?: string }), model } as ChatState;
-      persistChatState(next);
-      return next;
-    });
-  }, [persistChatState]);
+  const setModel = useCallback(
+    (model: string) => {
+      setChatState((prev) => {
+        const next = {
+          ...(prev as ChatState & { model?: string }),
+          model,
+        } as ChatState;
+        persistChatState(next);
+        return next;
+      });
+    },
+    [persistChatState],
+  );
 
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: async (content: string) => {
       const userMessage: ChatMessage = {
         id: nanoid(),
-        role: 'user',
+        role: "user",
         content,
         timestamp: new Date(),
         clientId,
-        metadata: { model: (chatState as ChatState & { model?: string }).model },
+        metadata: {
+          model: (chatState as ChatState & { model?: string }).model,
+        },
       };
 
       // Add user message immediately
@@ -115,10 +124,7 @@ export function useAIChat(clientId?: string) {
 
       // Stream AI response
       const stream = await streamAestheticResponse(
-        [
-          ...chatState.messages,
-          userMessage,
-        ],
+        [...chatState.messages, userMessage],
         clientId,
         (chatState as ChatState & { model?: string }).model,
         chatState.sessionId,
@@ -129,7 +135,7 @@ export function useAIChat(clientId?: string) {
     onSuccess: async ({ userMessage, stream }) => {
       // Process streaming response
       const reader = stream.getReader();
-      let aiContent = '';
+      let aiContent = "";
 
       try {
         while (true) {
@@ -143,7 +149,7 @@ export function useAIChat(clientId?: string) {
           // Update UI with partial response
           const aiMessage: ChatMessage = {
             id: nanoid(),
-            role: 'assistant',
+            role: "assistant",
             content: aiContent,
             timestamp: new Date(),
             clientId,
@@ -160,7 +166,7 @@ export function useAIChat(clientId?: string) {
         // Final state when streaming is complete
         const finalAiMessage: ChatMessage = {
           id: nanoid(),
-          role: 'assistant',
+          role: "assistant",
           content: aiContent,
           timestamp: new Date(),
           clientId,
@@ -179,42 +185,43 @@ export function useAIChat(clientId?: string) {
         // Log interaction for compliance
         logAIInteraction(sessionId, userMessage.content, aiContent, clientId);
       } catch (error) {
-        console.error('Error processing AI stream:', error);
-        setChatState(prev => ({
+        console.error("Error processing AI stream:", error);
+        setChatState((prev) => ({
           ...prev,
           isLoading: false,
-          error: 'Erro ao processar resposta da IA',
+          error: "Erro ao processar resposta da IA",
         }));
       }
     },
-    onError: error => {
-      console.error('Send message error:', error);
-      setChatState(prev => ({
+    onError: (error) => {
+      console.error("Send message error:", error);
+      setChatState((prev) => ({
         ...prev,
         isLoading: false,
-        error: error instanceof Error ? error.message : 'Erro desconhecido',
+        error: error instanceof Error ? error.message : "Erro desconhecido",
       }));
     },
   });
 
   // Search suggestions query
-  const {
-    data: searchSuggestions = [],
-    isLoading: suggestionsLoading,
-  } = useQuery({
-    queryKey: ['search-suggestions', chatState.messages.length],
-    queryFn: async () => {
-      const lastUserMessage = chatState.messages
-        .filter(m => m.role === 'user')
-        .pop();
+  const { data: searchSuggestions = [], isLoading: suggestionsLoading } =
+    useQuery({
+      queryKey: ["search-suggestions", chatState.messages.length],
+      queryFn: async () => {
+        const lastUserMessage = chatState.messages
+          .filter((m) => m.role === "user")
+          .pop();
 
-      if (!lastUserMessage) return [];
+        if (!lastUserMessage) return [];
 
-      return generateSearchSuggestions(lastUserMessage.content, chatState.sessionId);
-    },
-    enabled: chatState.messages.length > 0,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
+        return generateSearchSuggestions(
+          lastUserMessage.content,
+          chatState.sessionId,
+        );
+      },
+      enabled: chatState.messages.length > 0,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    });
 
   // Voice input processing
   const processVoiceMutation = useMutation<string, Error, Blob>({
@@ -237,21 +244,23 @@ export function useAIChat(clientId?: string) {
 
     setChatState(clearedState);
     persistChatState(clearedState);
-    queryClient.invalidateQueries({ queryKey: ['search-suggestions'] });
+    queryClient.invalidateQueries({ queryKey: ["search-suggestions"] });
   }, [queryClient, persistChatState]);
 
   // Retry last message
   const retryLastMessage = useCallback(() => {
     const lastUserMessage = chatState.messages
-      .filter(m => m.role === 'user')
+      .filter((m) => m.role === "user")
       .pop();
 
     if (lastUserMessage) {
       // Remove messages after the last user message
-      const messageIndex = chatState.messages.findIndex(m => m.id === lastUserMessage.id);
+      const messageIndex = chatState.messages.findIndex(
+        (m) => m.id === lastUserMessage.id,
+      );
       const newMessages = chatState.messages.slice(0, messageIndex + 1);
 
-      setChatState(prev => ({
+      setChatState((prev) => ({
         ...prev,
         messages: newMessages,
         error: null,

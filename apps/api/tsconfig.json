@@ -4,56 +4,23 @@
     "outDir": "./dist",
     "baseUrl": "./src",
     "paths": {
-      "@/*": [
-        "./*"
-      ],
-      "@/lib/*": [
-        "./lib/*"
-      ],
-      "@/middleware/*": [
-        "./middleware/*"
-      ],
-      "@/routes/*": [
-        "./routes/*"
-      ],
-      "@/services/*": [
-        "./services/*"
-      ],
-      "@/types/*": [
-        "./types/*"
-      ],
-      "@/utils/*": [
-        "./utils/*"
-      ],
-      "@neonpro/security": [
-        "../../packages/security/src"
-      ],
-      "@neonpro/security/*": [
-        "../../packages/security/src/*"
-      ],
-      "@neonpro/shared": [
-        "../../packages/shared/src"
-      ],
-      "@neonpro/shared/*": [
-        "../../packages/shared/src/*"
-      ],
-      "@neonpro/database": [
-        "../../packages/database/src"
-      ],
-      "@neonpro/database/*": [
-        "../../packages/database/src/*"
-      ],
-      "@neonpro/types": [
-        "../../packages/types/src"
-      ],
-      "@neonpro/types/*": [
-        "../../packages/types/src/*"
-      ]
+      "@/*": ["./*"],
+      "@/lib/*": ["./lib/*"],
+      "@/middleware/*": ["./middleware/*"],
+      "@/routes/*": ["./routes/*"],
+      "@/services/*": ["./services/*"],
+      "@/types/*": ["./types/*"],
+      "@/utils/*": ["./utils/*"],
+      "@neonpro/security": ["../../packages/security/src"],
+      "@neonpro/security/*": ["../../packages/security/src/*"],
+      "@neonpro/shared": ["../../packages/shared/src"],
+      "@neonpro/shared/*": ["../../packages/shared/src/*"],
+      "@neonpro/database": ["../../packages/database/src"],
+      "@neonpro/database/*": ["../../packages/database/src/*"],
+      "@neonpro/types": ["../../packages/types/src"],
+      "@neonpro/types/*": ["../../packages/types/src/*"]
     },
-    "types": [
-      "node",
-      "vitest/globals"
-    ],
+    "types": ["node", "vitest/globals"],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -69,10 +36,7 @@
       }
     ]
   },
-  "include": [
-    "src/**/*",
-    ".next/types/**/*.ts"
-  ],
+  "include": ["src/**/*", ".next/types/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",

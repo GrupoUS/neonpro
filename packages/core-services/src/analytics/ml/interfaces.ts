@@ -1,6 +1,6 @@
 /**
  * @fileoverview ML Pipeline Interfaces for Healthcare Analytics
- * 
+ *
  * Defines the core interfaces for machine learning model providers
  * and prediction services in the healthcare analytics system.
  */
@@ -12,20 +12,20 @@
 /**
  * Supported prediction types for healthcare analytics
  */
-export type PredictionType = 
-  | 'patient_outcome'
-  | 'readmission_risk'
-  | 'treatment_effectiveness'
-  | 'cost_prediction'
-  | 'no_show_risk'
-  | 'resource_utilization'
-  | 'clinical_deterioration'
-  | 'medication_adherence';
+export type PredictionType =
+  | "patient_outcome"
+  | "readmission_risk"
+  | "treatment_effectiveness"
+  | "cost_prediction"
+  | "no_show_risk"
+  | "resource_utilization"
+  | "clinical_deterioration"
+  | "medication_adherence";
 
 /**
  * Model confidence levels
  */
-export type ConfidenceLevel = 'low' | 'medium' | 'high';
+export type ConfidenceLevel = "low" | "medium" | "high";
 
 /**
  * Feature importance for model interpretability
@@ -141,7 +141,7 @@ export interface BatchPredictionResult {
 
 /**
  * Core interface for ML model providers
- * 
+ *
  * This interface defines the contract that all ML model providers
  * must implement to be compatible with the healthcare analytics system.
  */
@@ -153,7 +153,7 @@ export interface ModelProvider {
 
   /**
    * Initialize the model provider
-   * 
+   *
    * @param config - Provider-specific configuration
    * @returns Promise that resolves when initialization is complete
    */
@@ -161,7 +161,7 @@ export interface ModelProvider {
 
   /**
    * Make a single prediction
-   * 
+   *
    * @param input - Prediction input data
    * @returns Promise with prediction result
    * @throws Error if prediction fails or input is invalid
@@ -170,7 +170,7 @@ export interface ModelProvider {
 
   /**
    * Make batch predictions
-   * 
+   *
    * @param input - Batch prediction input
    * @returns Promise with batch prediction results
    */
@@ -178,7 +178,7 @@ export interface ModelProvider {
 
   /**
    * Validate input features
-   * 
+   *
    * @param input - Input to validate
    * @returns True if input is valid, throws error with details if not
    */
@@ -186,17 +186,17 @@ export interface ModelProvider {
 
   /**
    * Get model health status
-   * 
+   *
    * @returns Promise with health check result
    */
   healthCheck(): Promise<{
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     details?: Record<string, unknown>;
   }>;
 
   /**
    * Cleanup resources
-   * 
+   *
    * @returns Promise that resolves when cleanup is complete
    */
   dispose(): Promise<void>;
@@ -212,14 +212,14 @@ export interface ModelProvider {
 export interface ModelManager {
   /**
    * Register a model provider
-   * 
+   *
    * @param provider - Model provider to register
    */
   registerProvider(provider: ModelProvider): Promise<void>;
 
   /**
    * Get a model provider by ID
-   * 
+   *
    * @param modelId - Model identifier
    * @returns Model provider or null if not found
    */
@@ -227,14 +227,14 @@ export interface ModelManager {
 
   /**
    * Get all registered providers
-   * 
+   *
    * @returns Array of registered providers
    */
   getAllProviders(): ModelProvider[];
 
   /**
    * Get providers by prediction type
-   * 
+   *
    * @param type - Prediction type
    * @returns Array of compatible providers
    */
@@ -242,7 +242,7 @@ export interface ModelManager {
 
   /**
    * Make prediction using best available model
-   * 
+   *
    * @param input - Prediction input
    * @returns Promise with prediction result
    */
@@ -250,13 +250,18 @@ export interface ModelManager {
 
   /**
    * Health check for all registered providers
-   * 
+   *
    * @returns Promise with health status of all providers
    */
-  healthCheck(): Promise<Record<string, {
-    status: 'healthy' | 'degraded' | 'unhealthy';
-    details?: Record<string, unknown>;
-  }>>;
+  healthCheck(): Promise<
+    Record<
+      string,
+      {
+        status: "healthy" | "degraded" | "unhealthy";
+        details?: Record<string, unknown>;
+      }
+    >
+  >;
 }
 
 // ============================================================================
@@ -270,10 +275,10 @@ export class MLError extends Error {
   constructor(
     message: string,
     public readonly code: string,
-    public readonly details?: Record<string, unknown>
+    public readonly details?: Record<string, unknown>,
   ) {
     super(message);
-    this.name = 'MLError';
+    this.name = "MLError";
   }
 }
 
@@ -282,8 +287,8 @@ export class MLError extends Error {
  */
 export class InvalidInputError extends MLError {
   constructor(message: string, details?: Record<string, unknown>) {
-    super(message, 'INVALID_INPUT', details);
-    this.name = 'InvalidInputError';
+    super(message, "INVALID_INPUT", details);
+    this.name = "InvalidInputError";
   }
 }
 
@@ -292,8 +297,8 @@ export class InvalidInputError extends MLError {
  */
 export class ModelInitializationError extends MLError {
   constructor(message: string, details?: Record<string, unknown>) {
-    super(message, 'MODEL_INITIALIZATION_FAILED', details);
-    this.name = 'ModelInitializationError';
+    super(message, "MODEL_INITIALIZATION_FAILED", details);
+    this.name = "ModelInitializationError";
   }
 }
 
@@ -302,7 +307,7 @@ export class ModelInitializationError extends MLError {
  */
 export class PredictionError extends MLError {
   constructor(message: string, details?: Record<string, unknown>) {
-    super(message, 'PREDICTION_FAILED', details);
-    this.name = 'PredictionError';
+    super(message, "PREDICTION_FAILED", details);
+    this.name = "PredictionError";
   }
 }

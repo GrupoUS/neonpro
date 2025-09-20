@@ -3,7 +3,7 @@
  * Using Valibot for type-safe validation with Brazilian healthcare standards
  */
 
-import * as v from 'valibot';
+import * as v from "valibot";
 
 // Brazilian CPF validation regex
 const CPF_REGEX = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
@@ -17,16 +17,22 @@ const PHONE_REGEX = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
  */
 export const CreatePatientSchema = v.object({
   // Basic patient information
-  medicalRecordNumber: v.string([v.minLength(1, 'Medical record number is required')]),
+  medicalRecordNumber: v.string([
+    v.minLength(1, "Medical record number is required"),
+  ]),
   givenNames: v.array(v.string([v.minLength(1)])),
-  familyName: v.string([v.minLength(1, 'Family name is required')]),
-  fullName: v.string([v.minLength(1, 'Full name is required')]),
+  familyName: v.string([v.minLength(1, "Family name is required")]),
+  fullName: v.string([v.minLength(1, "Full name is required")]),
   preferredName: v.optional(v.string()),
 
   // Contact information
-  phonePrimary: v.optional(v.string([v.regex(PHONE_REGEX, 'Invalid phone format')])),
-  phoneSecondary: v.optional(v.string([v.regex(PHONE_REGEX, 'Invalid phone format')])),
-  email: v.optional(v.string([v.email('Invalid email format')])),
+  phonePrimary: v.optional(
+    v.string([v.regex(PHONE_REGEX, "Invalid phone format")]),
+  ),
+  phoneSecondary: v.optional(
+    v.string([v.regex(PHONE_REGEX, "Invalid phone format")]),
+  ),
+  email: v.optional(v.string([v.email("Invalid email format")])),
 
   // Address information
   addressLine1: v.optional(v.string()),
@@ -34,7 +40,7 @@ export const CreatePatientSchema = v.object({
   city: v.optional(v.string()),
   state: v.optional(v.string()),
   postalCode: v.optional(v.string()),
-  country: v.optional(v.string([v.value('BR')])),
+  country: v.optional(v.string([v.value("BR")])),
 
   // Personal information
   birthDate: v.optional(v.date()),
@@ -42,7 +48,7 @@ export const CreatePatientSchema = v.object({
   maritalStatus: v.optional(v.string()),
 
   // Brazilian documents
-  cpf: v.optional(v.string([v.regex(CPF_REGEX, 'Invalid CPF format')])),
+  cpf: v.optional(v.string([v.regex(CPF_REGEX, "Invalid CPF format")])),
   rg: v.optional(v.string()),
   passportNumber: v.optional(v.string()),
 
@@ -63,7 +69,7 @@ export const CreatePatientSchema = v.object({
   emergencyContactRelationship: v.optional(v.string()),
 
   // LGPD Consent (required for patient creation)
-  lgpdConsentGiven: v.boolean([v.literal(true, 'LGPD consent is required')]),
+  lgpdConsentGiven: v.boolean([v.literal(true, "LGPD consent is required")]),
   lgpdConsentVersion: v.string([v.minLength(1)]),
   dataSharingConsent: v.optional(v.any()),
   marketingConsent: v.optional(v.boolean()),
@@ -83,7 +89,7 @@ export const UpdatePatientSchema = v.partial(CreatePatientSchema);
  * Patient Query Schema
  */
 export const GetPatientSchema = v.object({
-  id: v.string([v.uuid('Invalid patient ID format')]),
+  id: v.string([v.uuid("Invalid patient ID format")]),
 });
 
 /**
@@ -101,9 +107,9 @@ export const ListPatientsSchema = v.object({
  * Includes CFM validation and no-show prediction fields
  */
 export const CreateAppointmentSchema = v.object({
-  patientId: v.string([v.uuid('Invalid patient ID')]),
-  professionalId: v.string([v.uuid('Invalid professional ID')]),
-  serviceTypeId: v.string([v.uuid('Invalid service type ID')]),
+  patientId: v.string([v.uuid("Invalid patient ID")]),
+  professionalId: v.string([v.uuid("Invalid professional ID")]),
+  serviceTypeId: v.string([v.uuid("Invalid service type ID")]),
   startTime: v.date(),
   endTime: v.date(),
   notes: v.optional(v.string()),
@@ -118,7 +124,7 @@ export const UpdateAppointmentSchema = v.partial(CreateAppointmentSchema);
  * Appointment Query Schema
  */
 export const GetAppointmentSchema = v.object({
-  id: v.string([v.uuid('Invalid appointment ID format')]),
+  id: v.string([v.uuid("Invalid appointment ID format")]),
 });
 
 /**
@@ -138,7 +144,7 @@ export const ListAppointmentsSchema = v.object({
  * LGPD Consent Schema
  */
 export const CreateConsentSchema = v.object({
-  patientId: v.string([v.uuid('Invalid patient ID')]),
+  patientId: v.string([v.uuid("Invalid patient ID")]),
   consentType: v.string([v.minLength(1)]),
   purpose: v.string([v.minLength(1)]),
   legalBasis: v.string([v.minLength(1)]),

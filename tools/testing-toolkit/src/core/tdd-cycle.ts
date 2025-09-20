@@ -5,17 +5,22 @@
  * following the patterns defined in the testing documentation.
  */
 
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from "vitest";
 
 export interface TDDCycleConfig {
   feature: string;
-  agents: Array<'architect-review' | 'code-reviewer' | 'security-auditor' | 'tdd-orchestrator'>;
-  compliance?: Array<'LGPD' | 'ANVISA' | 'CFM'>;
+  agents: Array<
+    | "architect-review"
+    | "code-reviewer"
+    | "security-auditor"
+    | "tdd-orchestrator"
+  >;
+  compliance?: Array<"LGPD" | "ANVISA" | "CFM">;
   coverageThreshold?: number;
 }
 
 export interface TDDPhase {
-  name: 'RED' | 'GREEN' | 'REFACTOR';
+  name: "RED" | "GREEN" | "REFACTOR";
   primaryAgent: string;
   supportAgents: string[];
   qualityGates: string[];
@@ -40,28 +45,30 @@ export class TDDCycle {
    */
   async redPhase(testDefinition: () => void): Promise<boolean> {
     this.currentPhase = {
-      name: 'RED',
-      primaryAgent: 'tdd-orchestrator',
-      supportAgents: ['architect-review', 'security-auditor'],
+      name: "RED",
+      primaryAgent: "tdd-orchestrator",
+      supportAgents: ["architect-review", "security-auditor"],
       qualityGates: [
-        'Test patterns compliance ≥95%',
-        'Architecture alignment ≥90%',
-        'Security coverage ≥100%',
+        "Test patterns compliance ≥95%",
+        "Architecture alignment ≥90%",
+        "Security coverage ≥100%",
       ],
     };
 
     console.log(`🔴 RED Phase: ${this.config.feature}`);
     console.log(`Primary Agent: ${this.currentPhase.primaryAgent}`);
-    console.log(`Support Agents: ${this.currentPhase.supportAgents.join(', ')}`);
+    console.log(
+      `Support Agents: ${this.currentPhase.supportAgents.join(", ")}`,
+    );
 
     try {
       // Execute test definition - should fail initially
       testDefinition();
-      this.testResults.set('red-phase', false);
+      this.testResults.set("red-phase", false);
       return false; // Tests should fail in RED phase
     } catch {
-      this.testResults.set('red-phase', true);
-      console.log('✅ RED Phase complete - Tests failing as expected');
+      this.testResults.set("red-phase", true);
+      console.log("✅ RED Phase complete - Tests failing as expected");
       return true;
     }
   }
@@ -71,30 +78,36 @@ export class TDDCycle {
    */
   async greenPhase(implementation: () => void): Promise<boolean> {
     this.currentPhase = {
-      name: 'GREEN',
-      primaryAgent: 'code-reviewer',
-      supportAgents: ['architect-review', 'security-auditor', 'tdd-orchestrator'],
+      name: "GREEN",
+      primaryAgent: "code-reviewer",
+      supportAgents: [
+        "architect-review",
+        "security-auditor",
+        "tdd-orchestrator",
+      ],
       qualityGates: [
-        'All tests passing ≥100%',
-        'Code quality metrics ≥85%',
-        'Security validation ≥100%',
-        'Pattern compliance ≥90%',
+        "All tests passing ≥100%",
+        "Code quality metrics ≥85%",
+        "Security validation ≥100%",
+        "Pattern compliance ≥90%",
       ],
     };
 
     console.log(`🟢 GREEN Phase: ${this.config.feature}`);
     console.log(`Primary Agent: ${this.currentPhase.primaryAgent}`);
-    console.log(`Support Agents: ${this.currentPhase.supportAgents.join(', ')}`);
+    console.log(
+      `Support Agents: ${this.currentPhase.supportAgents.join(", ")}`,
+    );
 
     try {
       // Execute implementation
       implementation();
-      this.testResults.set('green-phase', true);
-      console.log('✅ GREEN Phase complete - Tests passing');
+      this.testResults.set("green-phase", true);
+      console.log("✅ GREEN Phase complete - Tests passing");
       return true;
     } catch (error) {
-      this.testResults.set('green-phase', false);
-      console.error('❌ GREEN Phase failed:', error);
+      this.testResults.set("green-phase", false);
+      console.error("❌ GREEN Phase failed:", error);
       return false;
     }
   }
@@ -104,30 +117,34 @@ export class TDDCycle {
    */
   async refactorPhase(refactoring: () => void): Promise<boolean> {
     this.currentPhase = {
-      name: 'REFACTOR',
-      primaryAgent: 'code-reviewer',
-      supportAgents: ['architect-review', 'security-auditor', 'tdd-orchestrator'],
+      name: "REFACTOR",
+      primaryAgent: "code-reviewer",
+      supportAgents: [
+        "architect-review",
+        "security-auditor",
+        "tdd-orchestrator",
+      ],
       qualityGates: [
-        'Quality metrics improved ≥10%',
-        'Architecture score maintained ≥90%',
-        'Security posture improved ≥100%',
-        'Test performance improved ≥5%',
+        "Quality metrics improved ≥10%",
+        "Architecture score maintained ≥90%",
+        "Security posture improved ≥100%",
+        "Test performance improved ≥5%",
       ],
     };
 
     console.log(`🔄 REFACTOR Phase: ${this.config.feature}`);
     console.log(`Coordination: parallel execution`);
-    console.log(`Agents: ${this.currentPhase.supportAgents.join(', ')}`);
+    console.log(`Agents: ${this.currentPhase.supportAgents.join(", ")}`);
 
     try {
       // Execute refactoring
       refactoring();
-      this.testResults.set('refactor-phase', true);
-      console.log('✅ REFACTOR Phase complete - Code improved');
+      this.testResults.set("refactor-phase", true);
+      console.log("✅ REFACTOR Phase complete - Code improved");
       return true;
     } catch (error) {
-      this.testResults.set('refactor-phase', false);
-      console.error('❌ REFACTOR Phase failed:', error);
+      this.testResults.set("refactor-phase", false);
+      console.error("❌ REFACTOR Phase failed:", error);
       return false;
     }
   }
@@ -140,8 +157,8 @@ export class TDDCycle {
       feature: this.config.feature,
       agents: this.config.agents,
       phases: Object.fromEntries(this.testResults),
-      success: Array.from(this.testResults.values()).every(result => result),
-      currentPhase: this.currentPhase?.name || 'COMPLETE',
+      success: Array.from(this.testResults.values()).every((result) => result),
+      currentPhase: this.currentPhase?.name || "COMPLETE",
     };
   }
 }
@@ -149,11 +166,14 @@ export class TDDCycle {
 /**
  * Helper function to create a TDD test suite
  */
-export function createTDDSuite(config: TDDCycleConfig, implementation: {
-  redPhase: () => void;
-  greenPhase: () => void;
-  refactorPhase: () => void;
-}) {
+export function createTDDSuite(
+  config: TDDCycleConfig,
+  implementation: {
+    redPhase: () => void;
+    greenPhase: () => void;
+    refactorPhase: () => void;
+  },
+) {
   describe(`TDD: ${config.feature}`, () => {
     let cycle: TDDCycle;
 
@@ -161,25 +181,25 @@ export function createTDDSuite(config: TDDCycleConfig, implementation: {
       cycle = new TDDCycle(config);
     });
 
-    it('should complete RED phase (failing tests)', async () => {
+    it("should complete RED phase (failing tests)", async () => {
       const result = await cycle.redPhase(implementation.redPhase);
       expect(result).toBe(true);
     });
 
-    it('should complete GREEN phase (passing tests)', async () => {
+    it("should complete GREEN phase (passing tests)", async () => {
       await cycle.redPhase(implementation.redPhase);
       const result = await cycle.greenPhase(implementation.greenPhase);
       expect(result).toBe(true);
     });
 
-    it('should complete REFACTOR phase (improved code)', async () => {
+    it("should complete REFACTOR phase (improved code)", async () => {
       await cycle.redPhase(implementation.redPhase);
       await cycle.greenPhase(implementation.greenPhase);
       const result = await cycle.refactorPhase(implementation.refactorPhase);
       expect(result).toBe(true);
     });
 
-    it('should validate agent coordination', () => {
+    it("should validate agent coordination", () => {
       const results = cycle.getResults();
       expect(results.agents).toEqual(config.agents);
       expect(results.feature).toBe(config.feature);

@@ -12,24 +12,24 @@
  * - Rate limiting and batch processing
  */
 
-'use client';
+"use client";
 
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
-import { useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 
 // Real-time connection states
 export type ConnectionStatus =
-  | 'connecting'
-  | 'connected'
-  | 'disconnected'
-  | 'error'
-  | 'reconnecting';
+  | "connecting"
+  | "connected"
+  | "disconnected"
+  | "error"
+  | "reconnecting";
 
 // Real-time event types
-export type RealTimeEventType = 'INSERT' | 'UPDATE' | 'DELETE';
+export type RealTimeEventType = "INSERT" | "UPDATE" | "DELETE";
 
 // Real-time subscription options
 export interface RealTimeSubscriptionOptions {
@@ -70,9 +70,10 @@ export interface NotificationPreferences {
 export function useEnhancedRealTime() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
+  const [connectionStatus, setConnectionStatus] =
+    useState<ConnectionStatus>("disconnected");
   const [metrics, setMetrics] = useState<RealTimeMetrics>({
-    connectionStatus: 'disconnected',
+    connectionStatus: "disconnected",
     latency: 0,
     messagesReceived: 0,
     messagesPerSecond: 0,
@@ -107,29 +108,32 @@ export function useEnhancedRealTime() {
   }, [updateMetrics]);
 
   // Handle connection status changes
-  const handleConnectionChange = useCallback((status: ConnectionStatus) => {
-    setConnectionStatus(status);
-    updateMetrics({ connectionStatus: status });
+  const handleConnectionChange = useCallback(
+    (status: ConnectionStatus) => {
+      setConnectionStatus(status);
+      updateMetrics({ connectionStatus: status });
 
-    switch (status) {
-      case 'connected':
-        toast.success('Conexão em tempo real estabelecida!');
-        updateMetrics({ reconnectAttempts: 0 });
-        break;
-      case 'disconnected':
-        toast.warning('Conexão em tempo real perdida');
-        break;
-      case 'error':
-        toast.error('Erro na conexão em tempo real');
-        break;
-      case 'reconnecting':
-        toast.info('Reconectando...');
-        updateMetrics({
-          reconnectAttempts: metricsRef.current.reconnectAttempts + 1,
-        });
-        break;
-    }
-  }, [updateMetrics]);
+      switch (status) {
+        case "connected":
+          toast.success("Conexão em tempo real estabelecida!");
+          updateMetrics({ reconnectAttempts: 0 });
+          break;
+        case "disconnected":
+          toast.warning("Conexão em tempo real perdida");
+          break;
+        case "error":
+          toast.error("Erro na conexão em tempo real");
+          break;
+        case "reconnecting":
+          toast.info("Reconectando...");
+          updateMetrics({
+            reconnectAttempts: metricsRef.current.reconnectAttempts + 1,
+          });
+          break;
+      }
+    },
+    [updateMetrics],
+  );
 
   // Reconnection logic with exponential backoff
   const attemptReconnection = useCallback(() => {
@@ -137,10 +141,13 @@ export function useEnhancedRealTime() {
       clearTimeout(reconnectTimeoutRef.current);
     }
 
-    const backoffDelay = Math.min(1000 * Math.pow(2, metricsRef.current.reconnectAttempts), 30000);
+    const backoffDelay = Math.min(
+      1000 * Math.pow(2, metricsRef.current.reconnectAttempts),
+      30000,
+    );
 
     reconnectTimeoutRef.current = setTimeout(() => {
-      handleConnectionChange('reconnecting');
+      handleConnectionChange("reconnecting");
       // Trigger reconnection by re-establishing subscriptions
       subscriptionsRef.current.forEach((subscription, key) => {
         subscription.unsubscribe();
@@ -150,98 +157,109 @@ export function useEnhancedRealTime() {
   }, [handleConnectionChange]);
 
   // Subscribe to table changes
-  const subscribe = useCallback((options: RealTimeSubscriptionOptions) => {
-    if (!user) return null;
+  const subscribe = useCallback(
+    (options: RealTimeSubscriptionOptions) => {
+      if (!user) return null;
 
-    const { tableName, filter, onInsert, onUpdate, onDelete, rateLimitMs = 100 } = options;
-    const subscriptionKey = `${tableName}-${filter || 'all'}`;
+      const {
+        tableName,
+        filter,
+        onInsert,
+        onUpdate,
+        onDelete,
+        rateLimitMs = 100,
+      } = options;
+      const subscriptionKey = `${tableName}-${filter || "all"}`;
 
-    // Check if subscription already exists
-    if (subscriptionsRef.current.has(subscriptionKey)) {
-      return subscriptionsRef.current.get(subscriptionKey);
-    }
+      // Check if subscription already exists
+      if (subscriptionsRef.current.has(subscriptionKey)) {
+        return subscriptionsRef.current.get(subscriptionKey);
+      }
 
-    measureLatency();
-    handleConnectionChange('connecting');
+      measureLatency();
+      handleConnectionChange("connecting");
 
-    const channel = supabase
-      .channel(subscriptionKey)
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: tableName,
-          filter: filter || undefined,
-        },
-        payload => {
-          recordLatency();
+      const channel = supabase
+        .channel(subscriptionKey)
+        .on(
+          "postgres_changes",
+          {
+            event: "*",
+            schema: "public",
+            table: tableName,
+            filter: filter || undefined,
+          },
+          (payload) => {
+            recordLatency();
 
-          // Update metrics
-          const now = Date.now();
-          updateMetrics({
-            messagesReceived: metricsRef.current.messagesReceived + 1,
-            lastEventTimestamp: now,
-            messagesPerSecond: calculateMessagesPerSecond(now),
-          });
+            // Update metrics
+            const now = Date.now();
+            updateMetrics({
+              messagesReceived: metricsRef.current.messagesReceived + 1,
+              lastEventTimestamp: now,
+              messagesPerSecond: calculateMessagesPerSecond(now),
+            });
 
-          // Rate limiting
-          const lastEventTime = metricsRef.current.lastEventTimestamp;
-          if (now - lastEventTime < rateLimitMs) {
-            return;
+            // Rate limiting
+            const lastEventTime = metricsRef.current.lastEventTimestamp;
+            if (now - lastEventTime < rateLimitMs) {
+              return;
+            }
+
+            // Handle different event types
+            switch (payload.eventType) {
+              case "INSERT":
+                onInsert?.(payload);
+                break;
+              case "UPDATE":
+                onUpdate?.(payload);
+                break;
+              case "DELETE":
+                onDelete?.(payload);
+                break;
+            }
+
+            // Invalidate relevant queries
+            queryClient.invalidateQueries({ queryKey: [tableName] });
+          },
+        )
+        .subscribe((status) => {
+          if (status === "SUBSCRIBED") {
+            handleConnectionChange("connected");
+          } else if (status === "CHANNEL_ERROR") {
+            handleConnectionChange("error");
+            attemptReconnection();
           }
+        });
 
-          // Handle different event types
-          switch (payload.eventType) {
-            case 'INSERT':
-              onInsert?.(payload);
-              break;
-            case 'UPDATE':
-              onUpdate?.(payload);
-              break;
-            case 'DELETE':
-              onDelete?.(payload);
-              break;
-          }
+      subscriptionsRef.current.set(subscriptionKey, channel);
+      updateMetrics({ subscriptionCount: subscriptionsRef.current.size });
 
-          // Invalidate relevant queries
-          queryClient.invalidateQueries({ queryKey: [tableName] });
-        },
-      )
-      .subscribe(status => {
-        if (status === 'SUBSCRIBED') {
-          handleConnectionChange('connected');
-        } else if (status === 'CHANNEL_ERROR') {
-          handleConnectionChange('error');
-          attemptReconnection();
-        }
-      });
-
-    subscriptionsRef.current.set(subscriptionKey, channel);
-    updateMetrics({ subscriptionCount: subscriptionsRef.current.size });
-
-    return channel;
-  }, [
-    user,
-    queryClient,
-    measureLatency,
-    recordLatency,
-    updateMetrics,
-    handleConnectionChange,
-    attemptReconnection,
-  ]);
+      return channel;
+    },
+    [
+      user,
+      queryClient,
+      measureLatency,
+      recordLatency,
+      updateMetrics,
+      handleConnectionChange,
+      attemptReconnection,
+    ],
+  );
 
   // Calculate messages per second
   const calculateMessagesPerSecond = useCallback((currentTime: number) => {
     const timeWindow = 60000; // 1 minute
     const messagesInWindow = metricsRef.current.messagesReceived;
-    const timeElapsed = currentTime - (metricsRef.current.lastEventTimestamp - timeWindow);
+    const timeElapsed =
+      currentTime - (metricsRef.current.lastEventTimestamp - timeWindow);
     return timeElapsed > 0 ? (messagesInWindow / timeElapsed) * 1000 : 0;
   }, []);
 
   // Cleanup subscriptions
   const cleanup = useCallback(() => {
-    subscriptionsRef.current.forEach(subscription => {
+    subscriptionsRef.current.forEach((subscription) => {
       subscription.unsubscribe();
     });
     subscriptionsRef.current.clear();
@@ -251,7 +269,7 @@ export function useEnhancedRealTime() {
     }
 
     updateMetrics({ subscriptionCount: 0 });
-    handleConnectionChange('disconnected');
+    handleConnectionChange("disconnected");
   }, [updateMetrics, handleConnectionChange]);
 
   // Cleanup on unmount
@@ -264,9 +282,9 @@ export function useEnhancedRealTime() {
     metrics,
     subscribe,
     cleanup,
-    isConnected: connectionStatus === 'connected',
-    isConnecting: connectionStatus === 'connecting',
-    hasError: connectionStatus === 'error',
+    isConnected: connectionStatus === "connected",
+    isConnecting: connectionStatus === "connecting",
+    hasError: connectionStatus === "error",
   };
 }
 
@@ -274,7 +292,9 @@ export function useEnhancedRealTime() {
  * Real-Time Notifications Hook
  * Handles toast notifications for real-time events with Brazilian context
  */
-export function useRealTimeNotifications(preferences: Partial<NotificationPreferences> = {}) {
+export function useRealTimeNotifications(
+  preferences: Partial<NotificationPreferences> = {},
+) {
   const defaultPreferences: NotificationPreferences = {
     enablePatientNotifications: true,
     enableAppointmentNotifications: true,
@@ -286,43 +306,47 @@ export function useRealTimeNotifications(preferences: Partial<NotificationPrefer
   const settings = { ...defaultPreferences, ...preferences };
   const lastNotificationRef = useRef<number>(0);
 
-  const showNotification = useCallback((
-    type: 'success' | 'info' | 'warning' | 'error',
-    message: string,
-    category: 'patient' | 'appointment' | 'system' = 'system',
-  ) => {
-    // Check preferences
-    if (
-      (category === 'patient' && !settings.enablePatientNotifications)
-      || (category === 'appointment' && !settings.enableAppointmentNotifications)
-      || (category === 'system' && !settings.enableSystemNotifications)
-    ) {
-      return;
-    }
-
-    // Rate limiting
-    const now = Date.now();
-    if (now - lastNotificationRef.current < settings.rateLimitMs) {
-      return;
-    }
-    lastNotificationRef.current = now;
-
-    // Show toast notification
-    toast[type](message);
-
-    // Play sound if enabled
-    if (settings.notificationSound && 'Audio' in window) {
-      try {
-        const audio = new Audio('/sounds/notification.mp3');
-        audio.volume = 0.3;
-        audio.play().catch(() => {
-          // Ignore audio play errors (user interaction required)
-        });
-      } catch {
-        // Ignore audio errors
+  const showNotification = useCallback(
+    (
+      type: "success" | "info" | "warning" | "error",
+      message: string,
+      category: "patient" | "appointment" | "system" = "system",
+    ) => {
+      // Check preferences
+      if (
+        (category === "patient" && !settings.enablePatientNotifications) ||
+        (category === "appointment" &&
+          !settings.enableAppointmentNotifications) ||
+        (category === "system" && !settings.enableSystemNotifications)
+      ) {
+        return;
       }
-    }
-  }, [settings]);
+
+      // Rate limiting
+      const now = Date.now();
+      if (now - lastNotificationRef.current < settings.rateLimitMs) {
+        return;
+      }
+      lastNotificationRef.current = now;
+
+      // Show toast notification
+      toast[type](message);
+
+      // Play sound if enabled
+      if (settings.notificationSound && "Audio" in window) {
+        try {
+          const audio = new Audio("/sounds/notification.mp3");
+          audio.volume = 0.3;
+          audio.play().catch(() => {
+            // Ignore audio play errors (user interaction required)
+          });
+        } catch {
+          // Ignore audio errors
+        }
+      }
+    },
+    [settings],
+  );
 
   return {
     showNotification,
@@ -343,39 +367,51 @@ export function useRealTimePatientSync(clinicId: string) {
     if (!clinicId) return;
 
     const subscription = subscribe({
-      tableName: 'patients',
+      tableName: "patients",
       filter: `clinic_id=eq.${clinicId}`,
       enableNotifications: true,
       enableOptimisticUpdates: true,
       rateLimitMs: 500, // 500ms for patient updates
-      onInsert: payload => {
-        const patientName = payload.new?.full_name || 'Paciente';
-        showNotification('success', `Novo paciente cadastrado: ${patientName}`, 'patient');
+      onInsert: (payload) => {
+        const patientName = payload.new?.full_name || "Paciente";
+        showNotification(
+          "success",
+          `Novo paciente cadastrado: ${patientName}`,
+          "patient",
+        );
 
         // Invalidate patient queries
-        queryClient.invalidateQueries({ queryKey: ['patients'] });
+        queryClient.invalidateQueries({ queryKey: ["patients"] });
       },
-      onUpdate: payload => {
-        const patientName = payload.new?.full_name || 'Paciente';
-        showNotification('info', `Dados atualizados: ${patientName}`, 'patient');
+      onUpdate: (payload) => {
+        const patientName = payload.new?.full_name || "Paciente";
+        showNotification(
+          "info",
+          `Dados atualizados: ${patientName}`,
+          "patient",
+        );
 
         // Update specific patient in cache if possible
         const patientId = payload.new?.id;
         if (patientId) {
-          queryClient.invalidateQueries({ queryKey: ['patients', patientId] });
+          queryClient.invalidateQueries({ queryKey: ["patients", patientId] });
         }
-        queryClient.invalidateQueries({ queryKey: ['patients'] });
+        queryClient.invalidateQueries({ queryKey: ["patients"] });
       },
-      onDelete: payload => {
-        const patientName = payload.old?.full_name || 'Paciente';
-        showNotification('warning', `Paciente removido: ${patientName}`, 'patient');
+      onDelete: (payload) => {
+        const patientName = payload.old?.full_name || "Paciente";
+        showNotification(
+          "warning",
+          `Paciente removido: ${patientName}`,
+          "patient",
+        );
 
         // Remove from cache
         const patientId = payload.old?.id;
         if (patientId) {
-          queryClient.removeQueries({ queryKey: ['patients', patientId] });
+          queryClient.removeQueries({ queryKey: ["patients", patientId] });
         }
-        queryClient.invalidateQueries({ queryKey: ['patients'] });
+        queryClient.invalidateQueries({ queryKey: ["patients"] });
       },
     });
 

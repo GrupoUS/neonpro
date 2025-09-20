@@ -15,61 +15,61 @@
  * - Data Protection Impact Assessment (DPIA) support
  */
 
-import { type HealthcarePrismaClient } from '../clients/prisma';
-import { LGPDComplianceError } from './healthcare-errors.js';
+import { type HealthcarePrismaClient } from "../clients/prisma";
+import { LGPDComplianceError } from "./healthcare-errors.js";
 
 // LGPD Legal Basis types
 export enum LGPDLegalBasis {
-  CONSENT = 'consent',
-  LEGAL_OBLIGATION = 'legal_obligation',
-  PUBLIC_INTEREST = 'public_interest',
-  VITAL_INTERESTS = 'vital_interests',
-  LEGITIMATE_INTERESTS = 'legitimate_interests',
-  CONTRACT_PERFORMANCE = 'contract_performance',
-  PRE_CONTRACT = 'pre_contract',
-  CREDIT_PROTECTION = 'credit_protection',
-  HEALTH_PROTECTION = 'health_protection',
+  CONSENT = "consent",
+  LEGAL_OBLIGATION = "legal_obligation",
+  PUBLIC_INTEREST = "public_interest",
+  VITAL_INTERESTS = "vital_interests",
+  LEGITIMATE_INTERESTS = "legitimate_interests",
+  CONTRACT_PERFORMANCE = "contract_performance",
+  PRE_CONTRACT = "pre_contract",
+  CREDIT_PROTECTION = "credit_protection",
+  HEALTH_PROTECTION = "health_protection",
 }
 
 // LGPD Data Categories
 export enum LGPDDataCategory {
-  PERSONAL_DATA = 'personal_data',
-  SENSITIVE_DATA = 'sensitive_data',
-  HEALTH_DATA = 'health_data',
-  BIOMETRIC_DATA = 'biometric_data',
-  GENETIC_DATA = 'genetic_data',
-  RACIAL_DATA = 'racial_data',
-  POLITICAL_DATA = 'political_data',
-  RELIGIOUS_DATA = 'religious_data',
-  SEXUAL_DATA = 'sexual_data',
-  LOCATION_DATA = 'location_data',
+  PERSONAL_DATA = "personal_data",
+  SENSITIVE_DATA = "sensitive_data",
+  HEALTH_DATA = "health_data",
+  BIOMETRIC_DATA = "biometric_data",
+  GENETIC_DATA = "genetic_data",
+  RACIAL_DATA = "racial_data",
+  POLITICAL_DATA = "political_data",
+  RELIGIOUS_DATA = "religious_data",
+  SEXUAL_DATA = "sexual_data",
+  LOCATION_DATA = "location_data",
 }
 
 // LGPD Data Subject Rights
 export enum LGPDDataSubjectRights {
-  ACCESS = 'access', // Art. 18, I
-  RECTIFICATION = 'rectification', // Art. 18, III
-  DELETION = 'deletion', // Art. 18, VI
-  PORTABILITY = 'portability', // Art. 18, V
-  INFORMATION = 'information', // Art. 18, II
-  ANONYMIZATION = 'anonymization', // Art. 18, IV
-  BLOCKING = 'blocking', // Art. 18, IV
-  CONSENT_WITHDRAWAL = 'consent_withdrawal', // Art. 18, IX
-  OBJECTION = 'objection', // Art. 18, §2º
+  ACCESS = "access", // Art. 18, I
+  RECTIFICATION = "rectification", // Art. 18, III
+  DELETION = "deletion", // Art. 18, VI
+  PORTABILITY = "portability", // Art. 18, V
+  INFORMATION = "information", // Art. 18, II
+  ANONYMIZATION = "anonymization", // Art. 18, IV
+  BLOCKING = "blocking", // Art. 18, IV
+  CONSENT_WITHDRAWAL = "consent_withdrawal", // Art. 18, IX
+  OBJECTION = "objection", // Art. 18, §2º
 }
 
 // LGPD Processing Purposes
 export enum LGPDProcessingPurpose {
-  HEALTHCARE_TREATMENT = 'healthcare_treatment',
-  PREVENTIVE_MEDICINE = 'preventive_medicine',
-  MEDICAL_DIAGNOSIS = 'medical_diagnosis',
-  HEALTHCARE_MANAGEMENT = 'healthcare_management',
-  APPOINTMENT_SCHEDULING = 'appointment_scheduling',
-  PATIENT_COMMUNICATION = 'patient_communication',
-  BILLING_INSURANCE = 'billing_insurance',
-  REGULATORY_COMPLIANCE = 'regulatory_compliance',
-  QUALITY_IMPROVEMENT = 'quality_improvement',
-  RESEARCH_ANONYMIZED = 'research_anonymized',
+  HEALTHCARE_TREATMENT = "healthcare_treatment",
+  PREVENTIVE_MEDICINE = "preventive_medicine",
+  MEDICAL_DIAGNOSIS = "medical_diagnosis",
+  HEALTHCARE_MANAGEMENT = "healthcare_management",
+  APPOINTMENT_SCHEDULING = "appointment_scheduling",
+  PATIENT_COMMUNICATION = "patient_communication",
+  BILLING_INSURANCE = "billing_insurance",
+  REGULATORY_COMPLIANCE = "regulatory_compliance",
+  QUALITY_IMPROVEMENT = "quality_improvement",
+  RESEARCH_ANONYMIZED = "research_anonymized",
 }
 
 // LGPD Compliance Status
@@ -78,7 +78,7 @@ export interface LGPDComplianceStatus {
   violations: Array<{
     article: string;
     description: string;
-    severity: 'low' | 'medium' | 'high' | 'critical';
+    severity: "low" | "medium" | "high" | "critical";
     recommendation: string;
   }>;
   score: number; // 0-100
@@ -106,12 +106,12 @@ export interface DataProcessingRecord {
 export interface LGPDAuditEvent {
   eventId: string;
   eventType:
-    | 'data_access'
-    | 'data_modification'
-    | 'consent_given'
-    | 'consent_withdrawn'
-    | 'data_export'
-    | 'data_deletion';
+    | "data_access"
+    | "data_modification"
+    | "consent_given"
+    | "consent_withdrawn"
+    | "data_export"
+    | "data_deletion";
   dataSubjectId: string;
   userId: string;
   clinicId: string;
@@ -178,17 +178,19 @@ export class LGPDComplianceValidator {
         LGPDDataCategory.GENETIC_DATA,
       ];
 
-      const hasSensitiveData = dataCategories.some(cat => sensitiveCategories.includes(cat));
+      const hasSensitiveData = dataCategories.some((cat) =>
+        sensitiveCategories.includes(cat),
+      );
 
       if (hasSensitiveData) {
         // Sensitive data requires specific consent or legal authorization
         if (
-          legalBasis !== LGPDLegalBasis.CONSENT
-          && legalBasis !== LGPDLegalBasis.HEALTH_PROTECTION
-          && legalBasis !== LGPDLegalBasis.LEGAL_OBLIGATION
+          legalBasis !== LGPDLegalBasis.CONSENT &&
+          legalBasis !== LGPDLegalBasis.HEALTH_PROTECTION &&
+          legalBasis !== LGPDLegalBasis.LEGAL_OBLIGATION
         ) {
           violations.push(
-            'Sensitive data processing requires consent or legal authorization (LGPD Art. 11)',
+            "Sensitive data processing requires consent or legal authorization (LGPD Art. 11)",
           );
         }
       }
@@ -197,28 +199,40 @@ export class LGPDComplianceValidator {
       const isValidPurpose = await this.validatePurpose(dataSubjectId, purpose);
       if (!isValidPurpose) {
         violations.push(
-          'Data processing purpose not aligned with original collection purpose (LGPD Art. 6, I)',
+          "Data processing purpose not aligned with original collection purpose (LGPD Art. 6, I)",
         );
       }
 
       // Validate data minimization (LGPD Art. 6, III)
-      const isMinimized = await this.validateDataMinimization(dataCategories, purpose);
+      const isMinimized = await this.validateDataMinimization(
+        dataCategories,
+        purpose,
+      );
       if (!isMinimized) {
-        violations.push('Data processing violates data minimization principle (LGPD Art. 6, III)');
+        violations.push(
+          "Data processing violates data minimization principle (LGPD Art. 6, III)",
+        );
       }
 
       return {
         isValid: violations.length === 0,
         requiredConsent,
-        missingConsents: missingConsents.length > 0 ? missingConsents : undefined,
+        missingConsents:
+          missingConsents.length > 0 ? missingConsents : undefined,
         violations: violations.length > 0 ? violations : undefined,
       };
     } catch (error) {
       throw new LGPDComplianceError(
-        'LGPD compliance validation failed',
-        'Art. 6',
-        'data_processing',
-        { dataSubjectId, purpose, dataCategories, legalBasis, error: error.message },
+        "LGPD compliance validation failed",
+        "Art. 6",
+        "data_processing",
+        {
+          dataSubjectId,
+          purpose,
+          dataCategories,
+          legalBasis,
+          error: error.message,
+        },
       );
     }
   }
@@ -236,14 +250,11 @@ export class LGPDComplianceValidator {
         where: {
           patientId: dataSubjectId,
           purpose: purpose.toString(),
-          status: 'given',
+          status: "given",
           dataCategories: {
             has: dataCategory,
           },
-          OR: [
-            { expiresAt: null },
-            { expiresAt: { gte: new Date() } },
-          ],
+          OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }],
         },
       });
 
@@ -257,7 +268,7 @@ export class LGPDComplianceValidator {
 
       return isGranular && isSpecific;
     } catch (error) {
-      console.error('Consent validation failed:', error);
+      console.error("Consent validation failed:", error);
       return false;
     }
   }
@@ -274,7 +285,7 @@ export class LGPDComplianceValidator {
       const originalConsents = await this.prisma.consentRecord.findMany({
         where: {
           patientId: dataSubjectId,
-          status: 'given',
+          status: "given",
         },
         select: {
           purpose: true,
@@ -283,7 +294,7 @@ export class LGPDComplianceValidator {
 
       if (originalConsents.length === 0) return false;
 
-      const originalPurposes = originalConsents.map(c => c.purpose);
+      const originalPurposes = originalConsents.map((c) => c.purpose);
 
       // Define compatible purposes
       const compatiblePurposes: Record<string, string[]> = {
@@ -302,14 +313,16 @@ export class LGPDComplianceValidator {
       };
 
       // Check if current purpose is original or compatible
-      const isOriginalPurpose = originalPurposes.includes(currentPurpose.toString());
-      const isCompatiblePurpose = originalPurposes.some(original =>
-        compatiblePurposes[original]?.includes(currentPurpose)
+      const isOriginalPurpose = originalPurposes.includes(
+        currentPurpose.toString(),
+      );
+      const isCompatiblePurpose = originalPurposes.some((original) =>
+        compatiblePurposes[original]?.includes(currentPurpose),
       );
 
       return isOriginalPurpose || isCompatiblePurpose;
     } catch (error) {
-      console.error('Purpose validation failed:', error);
+      console.error("Purpose validation failed:", error);
       return false;
     }
   }
@@ -342,7 +355,9 @@ export class LGPDComplianceValidator {
     const necessaryCategories = necessaryData[purpose] || [];
 
     // Check if all requested categories are necessary for the purpose
-    return dataCategories.every(category => necessaryCategories.includes(category));
+    return dataCategories.every((category) =>
+      necessaryCategories.includes(category),
+    );
   }
 
   /**
@@ -373,27 +388,36 @@ export class LGPDComplianceValidator {
       switch (right) {
         case LGPDDataSubjectRights.ACCESS:
           result = await this.handleDataAccess(dataSubjectId);
-          message = 'Data access request completed successfully';
+          message = "Data access request completed successfully";
           break;
 
         case LGPDDataSubjectRights.RECTIFICATION:
-          result = await this.handleDataRectification(dataSubjectId, requestDetails.specificData);
-          message = 'Data rectification request initiated';
+          result = await this.handleDataRectification(
+            dataSubjectId,
+            requestDetails.specificData,
+          );
+          message = "Data rectification request initiated";
           break;
 
         case LGPDDataSubjectRights.DELETION:
-          result = await this.handleDataDeletion(dataSubjectId, requestDetails.reason);
-          message = 'Data deletion request completed successfully';
+          result = await this.handleDataDeletion(
+            dataSubjectId,
+            requestDetails.reason,
+          );
+          message = "Data deletion request completed successfully";
           break;
 
         case LGPDDataSubjectRights.PORTABILITY:
           result = await this.handleDataPortability(dataSubjectId);
-          message = 'Data portability request completed successfully';
+          message = "Data portability request completed successfully";
           break;
 
         case LGPDDataSubjectRights.CONSENT_WITHDRAWAL:
-          result = await this.handleConsentWithdrawal(dataSubjectId, requestDetails.specificData);
-          message = 'Consent withdrawal processed successfully';
+          result = await this.handleConsentWithdrawal(
+            dataSubjectId,
+            requestDetails.specificData,
+          );
+          message = "Consent withdrawal processed successfully";
           break;
 
         default:
@@ -403,15 +427,15 @@ export class LGPDComplianceValidator {
       // Create audit event
       await this.createLGPDAuditEvent({
         eventId: auditEventId,
-        eventType: 'data_access', // This would vary based on the right
+        eventType: "data_access", // This would vary based on the right
         dataSubjectId,
         userId: requestDetails.requestedBy,
-        clinicId: this.prisma.currentContext?.clinicId || '',
+        clinicId: this.prisma.currentContext?.clinicId || "",
         purpose: LGPDProcessingPurpose.REGULATORY_COMPLIANCE,
         legalBasis: LGPDLegalBasis.LEGAL_OBLIGATION,
         dataCategories: [LGPDDataCategory.PERSONAL_DATA],
-        ipAddress: requestDetails.ipAddress || 'unknown',
-        userAgent: requestDetails.userAgent || 'unknown',
+        ipAddress: requestDetails.ipAddress || "unknown",
+        userAgent: requestDetails.userAgent || "unknown",
         timestamp: new Date(),
         details: {
           right,
@@ -430,15 +454,15 @@ export class LGPDComplianceValidator {
       // Create audit event for failed request
       await this.createLGPDAuditEvent({
         eventId: auditEventId,
-        eventType: 'data_access',
+        eventType: "data_access",
         dataSubjectId,
         userId: requestDetails.requestedBy,
-        clinicId: this.prisma.currentContext?.clinicId || '',
+        clinicId: this.prisma.currentContext?.clinicId || "",
         purpose: LGPDProcessingPurpose.REGULATORY_COMPLIANCE,
         legalBasis: LGPDLegalBasis.LEGAL_OBLIGATION,
         dataCategories: [LGPDDataCategory.PERSONAL_DATA],
-        ipAddress: requestDetails.ipAddress || 'unknown',
-        userAgent: requestDetails.userAgent || 'unknown',
+        ipAddress: requestDetails.ipAddress || "unknown",
+        userAgent: requestDetails.userAgent || "unknown",
         timestamp: new Date(),
         details: {
           right,
@@ -449,8 +473,8 @@ export class LGPDComplianceValidator {
 
       throw new LGPDComplianceError(
         `Failed to exercise data subject right: ${right}`,
-        'Art. 18',
-        'data_subject_rights',
+        "Art. 18",
+        "data_subject_rights",
         { dataSubjectId, right, error: error.message },
       );
     }
@@ -462,8 +486,8 @@ export class LGPDComplianceValidator {
   private async handleDataAccess(dataSubjectId: string): Promise<any> {
     return await this.prisma.exportPatientData(
       dataSubjectId,
-      'data_subject_request',
-      'LGPD Art. 18, I - Right of access',
+      "data_subject_request",
+      "LGPD Art. 18, I - Right of access",
     );
   }
 
@@ -477,26 +501,30 @@ export class LGPDComplianceValidator {
     // This would typically involve creating a rectification request
     // that needs to be reviewed and processed by authorized personnel
     return {
-      status: 'pending_review',
+      status: "pending_review",
       fields: specificData,
-      instructions: 'Rectification request will be reviewed within 15 days as per LGPD Art. 18',
+      instructions:
+        "Rectification request will be reviewed within 15 days as per LGPD Art. 18",
     };
   }
 
   /**
    * Handles data deletion requests (LGPD Art. 18, VI)
    */
-  private async handleDataDeletion(dataSubjectId: string, reason?: string): Promise<any> {
+  private async handleDataDeletion(
+    dataSubjectId: string,
+    reason?: string,
+  ): Promise<any> {
     await this.prisma.deletePatientData(dataSubjectId, {
       cascadeDelete: true,
       retainAuditTrail: true,
-      reason: reason || 'LGPD Art. 18, VI - Right of deletion',
+      reason: reason || "LGPD Art. 18, VI - Right of deletion",
     });
 
     return {
-      status: 'completed',
+      status: "completed",
       deletedAt: new Date().toISOString(),
-      retainedData: 'Audit trails retained for legal compliance',
+      retainedData: "Audit trails retained for legal compliance",
     };
   }
 
@@ -506,17 +534,17 @@ export class LGPDComplianceValidator {
   private async handleDataPortability(dataSubjectId: string): Promise<any> {
     const exportData = await this.prisma.exportPatientData(
       dataSubjectId,
-      'data_portability_request',
-      'LGPD Art. 18, V - Right of data portability',
+      "data_portability_request",
+      "LGPD Art. 18, V - Right of data portability",
     );
 
     // Format data for portability (structured, machine-readable format)
     return {
-      format: 'JSON',
-      encoding: 'UTF-8',
+      format: "JSON",
+      encoding: "UTF-8",
       dataExport: exportData,
       exportedAt: new Date().toISOString(),
-      instructions: 'Data exported in structured format for portability',
+      instructions: "Data exported in structured format for portability",
     };
   }
 
@@ -533,7 +561,7 @@ export class LGPDComplianceValidator {
         await this.prisma.consentRecord.update({
           where: { id: consentId },
           data: {
-            status: 'withdrawn',
+            status: "withdrawn",
             withdrawnAt: new Date(),
           },
         });
@@ -543,19 +571,19 @@ export class LGPDComplianceValidator {
       await this.prisma.consentRecord.updateMany({
         where: {
           patientId: dataSubjectId,
-          status: 'given',
+          status: "given",
         },
         data: {
-          status: 'withdrawn',
+          status: "withdrawn",
           withdrawnAt: new Date(),
         },
       });
     }
 
     return {
-      status: 'completed',
+      status: "completed",
       withdrawnAt: new Date().toISOString(),
-      affectedConsents: specificConsents || 'all_active_consents',
+      affectedConsents: specificConsents || "all_active_consents",
     };
   }
 
@@ -565,7 +593,7 @@ export class LGPDComplianceValidator {
   private async createLGPDAuditEvent(event: LGPDAuditEvent): Promise<void> {
     await this.prisma.createAuditLog(
       event.eventType.toUpperCase(),
-      'LGPD_COMPLIANCE',
+      "LGPD_COMPLIANCE",
       event.dataSubjectId,
       {
         eventId: event.eventId,
@@ -632,16 +660,16 @@ export class LGPDComplianceValidator {
         },
         violations: [],
         recommendations: [
-          'Continue regular LGPD compliance monitoring',
-          'Review consent collection processes quarterly',
-          'Update privacy notices as needed',
+          "Continue regular LGPD compliance monitoring",
+          "Review consent collection processes quarterly",
+          "Update privacy notices as needed",
         ],
       };
     } catch (error) {
       throw new LGPDComplianceError(
-        'Failed to generate LGPD compliance report',
-        'Art. 37',
-        'compliance_reporting',
+        "Failed to generate LGPD compliance report",
+        "Art. 37",
+        "compliance_reporting",
         { clinicId, startDate, endDate, error: error.message },
       );
     }

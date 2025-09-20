@@ -4,7 +4,7 @@
  * Service layer for analytics, reporting, and statistics
  */
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from "@/integrations/supabase/client";
 import type {
   AnalyticsDashboard,
   AnalyticsExportRequest,
@@ -13,7 +13,7 @@ import type {
   RevenueAnalytics,
   ServiceAnalytics,
   UsageStatistics,
-} from '@/types/service-analytics';
+} from "@/types/service-analytics";
 
 export class ServiceAnalyticsService {
   private static sb: any = supabase;
@@ -24,18 +24,21 @@ export class ServiceAnalyticsService {
     clinicId: string,
     filters?: AnalyticsFilters,
   ): Promise<ServiceAnalytics[]> {
-    const { data, error } = await (this.sb as any).rpc('get_service_analytics', {
-      p_clinic_id: clinicId,
-      p_start_date: filters?.start_date,
-      p_end_date: filters?.end_date,
-      p_service_ids: filters?.service_ids,
-      p_category_ids: filters?.category_ids,
-      p_professional_ids: filters?.professional_ids,
-      p_appointment_status: filters?.appointment_status,
-    });
+    const { data, error } = await (this.sb as any).rpc(
+      "get_service_analytics",
+      {
+        p_clinic_id: clinicId,
+        p_start_date: filters?.start_date,
+        p_end_date: filters?.end_date,
+        p_service_ids: filters?.service_ids,
+        p_category_ids: filters?.category_ids,
+        p_professional_ids: filters?.professional_ids,
+        p_appointment_status: filters?.appointment_status,
+      },
+    );
 
     if (error) {
-      console.error('Error fetching service analytics:', error);
+      console.error("Error fetching service analytics:", error);
       throw new Error(`Failed to fetch service analytics: ${error.message}`);
     }
 
@@ -49,32 +52,37 @@ export class ServiceAnalyticsService {
     clinicId: string,
     filters?: AnalyticsFilters,
   ): Promise<RevenueAnalytics> {
-    const { data, error } = await (this.sb as any).rpc('get_revenue_analytics', {
-      p_clinic_id: clinicId,
-      p_start_date: filters?.start_date,
-      p_end_date: filters?.end_date,
-      p_comparison_period: filters?.comparison_period,
-    });
+    const { data, error } = await (this.sb as any).rpc(
+      "get_revenue_analytics",
+      {
+        p_clinic_id: clinicId,
+        p_start_date: filters?.start_date,
+        p_end_date: filters?.end_date,
+        p_comparison_period: filters?.comparison_period,
+      },
+    );
 
     if (error) {
-      console.error('Error fetching revenue analytics:', error);
+      console.error("Error fetching revenue analytics:", error);
       throw new Error(`Failed to fetch revenue analytics: ${error.message}`);
     }
 
-    return data || {
-      clinic_id: clinicId,
-      total_revenue: 0,
-      total_appointments: 0,
-      average_appointment_value: 0,
-      current_period_revenue: 0,
-      previous_period_revenue: 0,
-      revenue_growth_rate: 0,
-      revenue_by_category: [],
-      revenue_by_professional: [],
-      top_services: [],
-      daily_revenue: [],
-      monthly_revenue: [],
-    };
+    return (
+      data || {
+        clinic_id: clinicId,
+        total_revenue: 0,
+        total_appointments: 0,
+        average_appointment_value: 0,
+        current_period_revenue: 0,
+        previous_period_revenue: 0,
+        revenue_growth_rate: 0,
+        revenue_by_category: [],
+        revenue_by_professional: [],
+        top_services: [],
+        daily_revenue: [],
+        monthly_revenue: [],
+      }
+    );
   }
 
   /**
@@ -84,29 +92,31 @@ export class ServiceAnalyticsService {
     clinicId: string,
     filters?: AnalyticsFilters,
   ): Promise<UsageStatistics> {
-    const { data, error } = await (this.sb as any).rpc('get_usage_statistics', {
+    const { data, error } = await (this.sb as any).rpc("get_usage_statistics", {
       p_clinic_id: clinicId,
       p_start_date: filters?.start_date,
       p_end_date: filters?.end_date,
     });
 
     if (error) {
-      console.error('Error fetching usage statistics:', error);
+      console.error("Error fetching usage statistics:", error);
       throw new Error(`Failed to fetch usage statistics: ${error.message}`);
     }
 
-    return data || {
-      clinic_id: clinicId,
-      total_services: 0,
-      active_services: 0,
-      total_appointments: 0,
-      most_popular_services: [],
-      least_popular_services: [],
-      category_performance: [],
-      peak_hours: [],
-      peak_days: [],
-      seasonal_trends: [],
-    };
+    return (
+      data || {
+        clinic_id: clinicId,
+        total_services: 0,
+        active_services: 0,
+        total_appointments: 0,
+        most_popular_services: [],
+        least_popular_services: [],
+        category_performance: [],
+        peak_hours: [],
+        peak_days: [],
+        seasonal_trends: [],
+      }
+    );
   }
 
   /**
@@ -117,16 +127,21 @@ export class ServiceAnalyticsService {
     professionalId?: string,
     filters?: AnalyticsFilters,
   ): Promise<ProfessionalPerformance[]> {
-    const { data, error } = await (this.sb as any).rpc('get_professional_performance', {
-      p_clinic_id: clinicId,
-      p_professional_id: professionalId,
-      p_start_date: filters?.start_date,
-      p_end_date: filters?.end_date,
-    });
+    const { data, error } = await (this.sb as any).rpc(
+      "get_professional_performance",
+      {
+        p_clinic_id: clinicId,
+        p_professional_id: professionalId,
+        p_start_date: filters?.start_date,
+        p_end_date: filters?.end_date,
+      },
+    );
 
     if (error) {
-      console.error('Error fetching professional performance:', error);
-      throw new Error(`Failed to fetch professional performance: ${error.message}`);
+      console.error("Error fetching professional performance:", error);
+      throw new Error(
+        `Failed to fetch professional performance: ${error.message}`,
+      );
     }
 
     return data || [];
@@ -139,39 +154,44 @@ export class ServiceAnalyticsService {
     clinicId: string,
     filters?: AnalyticsFilters,
   ): Promise<AnalyticsDashboard> {
-    const { data, error } = await (this.sb as any).rpc('get_analytics_dashboard', {
-      p_clinic_id: clinicId,
-      p_start_date: filters?.start_date,
-      p_end_date: filters?.end_date,
-      p_comparison_period: filters?.comparison_period,
-    });
+    const { data, error } = await (this.sb as any).rpc(
+      "get_analytics_dashboard",
+      {
+        p_clinic_id: clinicId,
+        p_start_date: filters?.start_date,
+        p_end_date: filters?.end_date,
+        p_comparison_period: filters?.comparison_period,
+      },
+    );
 
     if (error) {
-      console.error('Error fetching analytics dashboard:', error);
+      console.error("Error fetching analytics dashboard:", error);
       throw new Error(`Failed to fetch analytics dashboard: ${error.message}`);
     }
 
-    return data || {
-      clinic_id: clinicId,
-      period: {
-        start_date: filters?.start_date || new Date().toISOString(),
-        end_date: filters?.end_date || new Date().toISOString(),
-        label: 'Custom Period',
-      },
-      kpis: {
-        total_revenue: 0,
-        total_appointments: 0,
-        average_appointment_value: 0,
-        completion_rate: 0,
-        growth_rate: 0,
-        client_satisfaction: null,
-      },
-      revenue_trend: [],
-      service_performance: [],
-      category_breakdown: [],
-      professional_performance: [],
-      insights: [],
-    };
+    return (
+      data || {
+        clinic_id: clinicId,
+        period: {
+          start_date: filters?.start_date || new Date().toISOString(),
+          end_date: filters?.end_date || new Date().toISOString(),
+          label: "Custom Period",
+        },
+        kpis: {
+          total_revenue: 0,
+          total_appointments: 0,
+          average_appointment_value: 0,
+          completion_rate: 0,
+          growth_rate: 0,
+          client_satisfaction: null,
+        },
+        revenue_trend: [],
+        service_performance: [],
+        category_breakdown: [],
+        professional_performance: [],
+        insights: [],
+      }
+    );
   }
 
   /**
@@ -182,15 +202,18 @@ export class ServiceAnalyticsService {
     serviceIds: string[],
     filters?: AnalyticsFilters,
   ): Promise<ServiceAnalytics[]> {
-    const { data, error } = await (this.sb as any).rpc('get_service_comparison', {
-      p_clinic_id: clinicId,
-      p_service_ids: serviceIds,
-      p_start_date: filters?.start_date,
-      p_end_date: filters?.end_date,
-    });
+    const { data, error } = await (this.sb as any).rpc(
+      "get_service_comparison",
+      {
+        p_clinic_id: clinicId,
+        p_service_ids: serviceIds,
+        p_start_date: filters?.start_date,
+        p_end_date: filters?.end_date,
+      },
+    );
 
     if (error) {
-      console.error('Error fetching service comparison:', error);
+      console.error("Error fetching service comparison:", error);
       throw new Error(`Failed to fetch service comparison: ${error.message}`);
     }
 
@@ -202,10 +225,10 @@ export class ServiceAnalyticsService {
    */
   static async getRevenueTrends(
     clinicId: string,
-    granularity: 'daily' | 'weekly' | 'monthly' = 'daily',
+    granularity: "daily" | "weekly" | "monthly" = "daily",
     filters?: AnalyticsFilters,
   ): Promise<{ date: string; revenue: number; appointments: number }[]> {
-    const { data, error } = await (this.sb as any).rpc('get_revenue_trends', {
+    const { data, error } = await (this.sb as any).rpc("get_revenue_trends", {
       p_clinic_id: clinicId,
       p_granularity: granularity,
       p_start_date: filters?.start_date,
@@ -213,7 +236,7 @@ export class ServiceAnalyticsService {
     });
 
     if (error) {
-      console.error('Error fetching revenue trends:', error);
+      console.error("Error fetching revenue trends:", error);
       throw new Error(`Failed to fetch revenue trends: ${error.message}`);
     }
 
@@ -224,7 +247,7 @@ export class ServiceAnalyticsService {
    * Export analytics data
    */
   static async exportAnalytics(request: AnalyticsExportRequest): Promise<Blob> {
-    const { data, error } = await (this.sb as any).rpc('export_analytics', {
+    const { data, error } = await (this.sb as any).rpc("export_analytics", {
       p_clinic_id: request.clinic_id,
       p_report_type: request.report_type,
       p_filters: request.filters,
@@ -233,7 +256,7 @@ export class ServiceAnalyticsService {
     });
 
     if (error) {
-      console.error('Error exporting analytics:', error);
+      console.error("Error exporting analytics:", error);
       throw new Error(`Failed to export analytics: ${error.message}`);
     }
 
@@ -245,9 +268,10 @@ export class ServiceAnalyticsService {
     }
 
     const mimeType = {
-      csv: 'text/csv',
-      excel: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-      pdf: 'application/pdf',
+      csv: "text/csv",
+      excel:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      pdf: "application/pdf",
     }[request.format];
 
     return new Blob([bytes], { type: mimeType });
@@ -259,15 +283,18 @@ export class ServiceAnalyticsService {
   static async getAnalyticsInsights(
     clinicId: string,
     filters?: AnalyticsFilters,
-  ): Promise<AnalyticsDashboard['insights']> {
-    const { data, error } = await (this.sb as any).rpc('get_analytics_insights', {
-      p_clinic_id: clinicId,
-      p_start_date: filters?.start_date,
-      p_end_date: filters?.end_date,
-    });
+  ): Promise<AnalyticsDashboard["insights"]> {
+    const { data, error } = await (this.sb as any).rpc(
+      "get_analytics_insights",
+      {
+        p_clinic_id: clinicId,
+        p_start_date: filters?.start_date,
+        p_end_date: filters?.end_date,
+      },
+    );
 
     if (error) {
-      console.error('Error fetching analytics insights:', error);
+      console.error("Error fetching analytics insights:", error);
       throw new Error(`Failed to fetch analytics insights: ${error.message}`);
     }
 
@@ -284,22 +311,27 @@ export class ServiceAnalyticsService {
     pending_appointments: number;
     completion_rate_today: number;
   }> {
-    const { data, error } = await (this.sb as any).rpc('get_realtime_analytics', {
-      p_clinic_id: clinicId,
-    });
+    const { data, error } = await (this.sb as any).rpc(
+      "get_realtime_analytics",
+      {
+        p_clinic_id: clinicId,
+      },
+    );
 
     if (error) {
-      console.error('Error fetching real-time analytics:', error);
+      console.error("Error fetching real-time analytics:", error);
       throw new Error(`Failed to fetch real-time analytics: ${error.message}`);
     }
 
-    return data || {
-      today_revenue: 0,
-      today_appointments: 0,
-      active_appointments: 0,
-      pending_appointments: 0,
-      completion_rate_today: 0,
-    };
+    return (
+      data || {
+        today_revenue: 0,
+        today_appointments: 0,
+        active_appointments: 0,
+        pending_appointments: 0,
+        completion_rate_today: 0,
+      }
+    );
   }
 }
 
