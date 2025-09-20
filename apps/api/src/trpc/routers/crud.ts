@@ -709,8 +709,14 @@ async function handleExecuteStep(ctx: any, input: v.InferOutput<typeof crudExecu
   const intentData = JSON.parse(intentAudit.additionalInfo || '{}');
   const confirmData = JSON.parse(confirmAudit.additionalInfo || '{}');
 
-  // Get the data to execute (use finalData if provided, otherwise use original)
-  const executionData = input.finalData || intentData.data;
+  // Get the data to execute (require finalData explicitly)
+  const executionData = input.finalData;
+  if (!executionData) {
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: 'Missing required finalData for execution step',
+    });
+  }
 
   let result;
   let recordsAffected = 0;
