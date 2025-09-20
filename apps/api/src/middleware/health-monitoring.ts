@@ -10,23 +10,23 @@
  * - Real-time metrics dashboard endpoints
  */
 
-import { Context, Next } from "hono";
-import { z } from "zod";
+import { Context, Next } from 'hono';
+import { z } from 'zod';
 
 // Health status levels
 export enum HealthStatus {
-  HEALTHY = "healthy",
-  WARNING = "warning",
-  CRITICAL = "critical",
-  DOWN = "down",
+  HEALTHY = 'healthy',
+  WARNING = 'warning',
+  CRITICAL = 'critical',
+  DOWN = 'down',
 }
 
 // Metric types
 export enum MetricType {
-  COUNTER = "counter",
-  GAUGE = "gauge",
-  HISTOGRAM = "histogram",
-  TIMER = "timer",
+  COUNTER = 'counter',
+  GAUGE = 'gauge',
+  HISTOGRAM = 'histogram',
+  TIMER = 'timer',
 }
 
 // Health check configuration
@@ -188,7 +188,7 @@ class HealthMonitor {
       const results = await Promise.allSettled(checks);
 
       results.forEach((result, _index) => {
-        if (result.status === "fulfilled") {
+        if (result.status === 'fulfilled') {
           this.healthChecks.set(result.value.name, result.value);
         } else {
           console.error(`Health check failed:`, result.reason);
@@ -200,7 +200,7 @@ class HealthMonitor {
       await this.updateComplianceMetrics();
       await this.updatePerformanceMetrics();
     } catch (error) {
-      console.error("Error running health checks:", error);
+      console.error('Error running health checks:', error);
     }
   }
 
@@ -211,16 +211,15 @@ class HealthMonitor {
     try {
       // TODO: Implement actual database health check
       // For now, simulate database check
-      await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
 
       const responseTime = Date.now() - startTime;
 
       return {
-        name: "database",
-        status:
-          responseTime < 1000 ? HealthStatus.HEALTHY : HealthStatus.WARNING,
+        name: 'database',
+        status: responseTime < 1000 ? HealthStatus.HEALTHY : HealthStatus.WARNING,
         responseTime,
-        message: "Database connection successful",
+        message: 'Database connection successful',
         details: {
           connectionCount: 10,
           activeQueries: 2,
@@ -229,7 +228,7 @@ class HealthMonitor {
       };
     } catch (error) {
       return {
-        name: "database",
+        name: 'database',
         status: HealthStatus.CRITICAL,
         responseTime: Date.now() - startTime,
         message: `Database connection failed: ${error}`,
@@ -245,25 +244,25 @@ class HealthMonitor {
     try {
       // TODO: Integrate with AI provider manager from T072
       // For now, simulate AI provider check
-      await new Promise((resolve) => setTimeout(resolve, Math.random() * 200));
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 200));
 
       const responseTime = Date.now() - startTime;
 
       return {
-        name: "ai_providers",
+        name: 'ai_providers',
         status: HealthStatus.HEALTHY,
         responseTime,
-        message: "AI providers operational",
+        message: 'AI providers operational',
         details: {
-          openai: "healthy",
-          anthropic: "healthy",
-          google: "healthy",
+          openai: 'healthy',
+          anthropic: 'healthy',
+          google: 'healthy',
         },
         timestamp: new Date(),
       };
     } catch (error) {
       return {
-        name: "ai_providers",
+        name: 'ai_providers',
         status: HealthStatus.WARNING,
         responseTime: Date.now() - startTime,
         message: `AI provider issues detected: ${error}`,
@@ -278,25 +277,25 @@ class HealthMonitor {
 
     try {
       // Check external services (email, SMS, etc.)
-      await new Promise((resolve) => setTimeout(resolve, Math.random() * 150));
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 150));
 
       const responseTime = Date.now() - startTime;
 
       return {
-        name: "external_services",
+        name: 'external_services',
         status: HealthStatus.HEALTHY,
         responseTime,
-        message: "External services operational",
+        message: 'External services operational',
         details: {
-          email: "healthy",
-          sms: "healthy",
-          whatsapp: "healthy",
+          email: 'healthy',
+          sms: 'healthy',
+          whatsapp: 'healthy',
         },
         timestamp: new Date(),
       };
     } catch (error) {
       return {
-        name: "external_services",
+        name: 'external_services',
         status: HealthStatus.WARNING,
         responseTime: Date.now() - startTime,
         message: `External service issues: ${error}`,
@@ -311,25 +310,25 @@ class HealthMonitor {
 
     try {
       // Check LGPD, ANVISA, CFM compliance
-      await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
+      await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
 
       const responseTime = Date.now() - startTime;
 
       return {
-        name: "healthcare_compliance",
+        name: 'healthcare_compliance',
         status: HealthStatus.HEALTHY,
         responseTime,
-        message: "Healthcare compliance checks passed",
+        message: 'Healthcare compliance checks passed',
         details: {
-          lgpd: "compliant",
-          anvisa: "compliant",
-          cfm: "compliant",
+          lgpd: 'compliant',
+          anvisa: 'compliant',
+          cfm: 'compliant',
         },
         timestamp: new Date(),
       };
     } catch (error) {
       return {
-        name: "healthcare_compliance",
+        name: 'healthcare_compliance',
         status: HealthStatus.CRITICAL,
         responseTime: Date.now() - startTime,
         message: `Compliance issues detected: ${error}`,
@@ -347,8 +346,7 @@ class HealthMonitor {
       const memoryUsage = process.memoryUsage();
       const uptime = process.uptime();
 
-      const memoryPercentage =
-        (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
+      const memoryPercentage = (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100;
 
       let status = HealthStatus.HEALTHY;
       if (memoryPercentage > 90) {
@@ -360,7 +358,7 @@ class HealthMonitor {
       const responseTime = Date.now() - startTime;
 
       return {
-        name: "system_resources",
+        name: 'system_resources',
         status,
         responseTime,
         message: `Memory usage: ${memoryPercentage.toFixed(1)}%`,
@@ -376,7 +374,7 @@ class HealthMonitor {
       };
     } catch (error) {
       return {
-        name: "system_resources",
+        name: 'system_resources',
         status: HealthStatus.CRITICAL,
         responseTime: Date.now() - startTime,
         message: `System resource check failed: ${error}`,
@@ -398,10 +396,10 @@ class HealthMonitor {
         percentage: (memoryUsage.heapUsed / memoryUsage.heapTotal) * 100,
       },
       cpuUsage: 0, // TODO: Implement CPU usage calculation
-      requestCount: this.getMetricValue("http_requests_total") || 0,
-      errorCount: this.getMetricValue("http_errors_total") || 0,
-      averageResponseTime: this.getMetricValue("http_response_time_avg") || 0,
-      activeConnections: this.getMetricValue("active_connections") || 0,
+      requestCount: this.getMetricValue('http_requests_total') || 0,
+      errorCount: this.getMetricValue('http_errors_total') || 0,
+      averageResponseTime: this.getMetricValue('http_response_time_avg') || 0,
+      activeConnections: this.getMetricValue('active_connections') || 0,
       timestamp: new Date(),
     };
   }
@@ -431,7 +429,7 @@ class HealthMonitor {
     this.performanceMetrics = {
       endpoints: new Map([
         [
-          "/api/v2/patients",
+          '/api/v2/patients',
           {
             requestCount: 1250,
             averageResponseTime: 145,
@@ -441,7 +439,7 @@ class HealthMonitor {
           },
         ],
         [
-          "/api/v2/ai/chat",
+          '/api/v2/ai/chat',
           {
             requestCount: 890,
             averageResponseTime: 2100,
@@ -465,7 +463,7 @@ class HealthMonitor {
       },
       aiProviders: new Map([
         [
-          "openai",
+          'openai',
           {
             requestCount: 450,
             successRate: 97.8,
@@ -474,7 +472,7 @@ class HealthMonitor {
           },
         ],
         [
-          "anthropic",
+          'anthropic',
           {
             requestCount: 320,
             successRate: 98.5,
@@ -542,8 +540,8 @@ class HealthMonitor {
         status = HealthStatus.CRITICAL;
         break;
       } else if (
-        check.status === HealthStatus.WARNING &&
-        status === HealthStatus.HEALTHY
+        check.status === HealthStatus.WARNING
+        && status === HealthStatus.HEALTHY
       ) {
         status = HealthStatus.WARNING;
       }
@@ -589,10 +587,10 @@ export function healthMonitoring(config: Partial<HealthCheckConfig> = {}) {
     const startTime = Date.now();
 
     // Add health monitor to context
-    c.set("healthMonitor", monitor);
+    c.set('healthMonitor', monitor);
 
     // Record request metric
-    monitor.recordMetric("http_requests_total", MetricType.COUNTER, 1, {
+    monitor.recordMetric('http_requests_total', MetricType.COUNTER, 1, {
       method: c.req.method,
       endpoint: c.req.path,
     });
@@ -603,7 +601,7 @@ export function healthMonitoring(config: Partial<HealthCheckConfig> = {}) {
       // Record response time
       const responseTime = Date.now() - startTime;
       monitor.recordMetric(
-        "http_response_time",
+        'http_response_time',
         MetricType.TIMER,
         responseTime,
         {
@@ -614,7 +612,7 @@ export function healthMonitoring(config: Partial<HealthCheckConfig> = {}) {
       );
     } catch (error) {
       // Record error metric
-      monitor.recordMetric("http_errors_total", MetricType.COUNTER, 1, {
+      monitor.recordMetric('http_errors_total', MetricType.COUNTER, 1, {
         method: c.req.method,
         endpoint: c.req.path,
       });
@@ -654,7 +652,7 @@ export function metricsEndpoint() {
     const metricsData: Record<string, any> = {};
 
     for (const [name, entries] of metrics) {
-      metricsData[name] = entries.map((entry) => ({
+      metricsData[name] = entries.map(entry => ({
         value: entry.value,
         labels: entry.labels,
         timestamp: entry.timestamp,

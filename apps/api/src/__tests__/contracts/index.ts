@@ -4,11 +4,11 @@
  * Ensures type safety, input validation, and output conformity
  */
 
-export { default as aiContractTests } from "./ai.contract.test";
-export { default as appointmentContractTests } from "./appointment.contract.test";
-export { default as clinicContractTests } from "./clinic.contract.test";
-export { default as patientContractTests } from "./patient.contract.test";
-export { default as professionalContractTests } from "./professional.contract.test";
+export { default as aiContractTests } from './ai.contract.test';
+export { default as appointmentContractTests } from './appointment.contract.test';
+export { default as clinicContractTests } from './clinic.contract.test';
+export { default as patientContractTests } from './patient.contract.test';
+export { default as professionalContractTests } from './professional.contract.test';
 
 /**
  * Contract Test Configuration
@@ -17,8 +17,8 @@ export { default as professionalContractTests } from "./professional.contract.te
 export const contractTestConfig = {
   timeout: 10000,
   retries: 2,
-  testEnvironment: "node",
-  setupFilesAfterEnv: ["<rootDir>/src/__tests__/setup/contract-setup.ts"],
+  testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/src/__tests__/setup/contract-setup.ts'],
 
   // Mock configurations
   mocks: {
@@ -39,11 +39,11 @@ export const contractTestConfig = {
 
   // Test data factories
   factories: {
-    patient: "src/__tests__/factories/patient.factory.ts",
-    appointment: "src/__tests__/factories/appointment.factory.ts",
-    professional: "src/__tests__/factories/professional.factory.ts",
-    clinic: "src/__tests__/factories/clinic.factory.ts",
-    ai: "src/__tests__/factories/ai.factory.ts",
+    patient: 'src/__tests__/factories/patient.factory.ts',
+    appointment: 'src/__tests__/factories/appointment.factory.ts',
+    professional: 'src/__tests__/factories/professional.factory.ts',
+    clinic: 'src/__tests__/factories/clinic.factory.ts',
+    ai: 'src/__tests__/factories/ai.factory.ts',
   },
 };
 
@@ -54,37 +54,37 @@ export const contractTestConfig = {
 export const contractValidationRules = {
   // Input validation requirements
   inputValidation: {
-    required: ["zod_schema", "type_safety", "sanitization"],
-    optional: ["custom_validators", "business_rules"],
+    required: ['zod_schema', 'type_safety', 'sanitization'],
+    optional: ['custom_validators', 'business_rules'],
   },
 
   // Output validation requirements
   outputValidation: {
-    required: ["success_flag", "data_structure", "error_handling"],
-    optional: ["metadata", "pagination", "links"],
+    required: ['success_flag', 'data_structure', 'error_handling'],
+    optional: ['metadata', 'pagination', 'links'],
   },
 
   // Authentication & Authorization
   authRequirements: {
-    endpoints: "all_protected_endpoints",
-    methods: ["session_validation", "role_checking", "permission_verification"],
-    audit: ["request_logging", "action_tracking", "compliance_validation"],
+    endpoints: 'all_protected_endpoints',
+    methods: ['session_validation', 'role_checking', 'permission_verification'],
+    audit: ['request_logging', 'action_tracking', 'compliance_validation'],
   },
 
   // Healthcare compliance
   healthcareCompliance: {
-    phi_handling: "mandatory_sanitization",
-    audit_logging: "comprehensive",
-    data_retention: "policy_compliant",
-    lgpd_compliance: "full",
+    phi_handling: 'mandatory_sanitization',
+    audit_logging: 'comprehensive',
+    data_retention: 'policy_compliant',
+    lgpd_compliance: 'full',
   },
 
   // Performance requirements
   performance: {
-    response_time: "< 2000ms",
-    memory_usage: "< 100MB",
-    cpu_usage: "< 50%",
-    database_queries: "< 10_per_request",
+    response_time: '< 2000ms',
+    memory_usage: '< 100MB',
+    cpu_usage: '< 50%',
+    database_queries: '< 10_per_request',
   },
 };
 
@@ -136,19 +136,19 @@ export class ContractTestReporter {
         coverage: results.coverageMap,
       },
       compliance: {
-        phi_handling: "validated",
-        audit_logging: "comprehensive",
-        lgpd_compliance: "verified",
+        phi_handling: 'validated',
+        audit_logging: 'comprehensive',
+        lgpd_compliance: 'verified',
       },
       performance: {
-        avg_response_time: "< 500ms",
-        memory_efficiency: "optimal",
-        database_efficiency: "optimized",
+        avg_response_time: '< 500ms',
+        memory_efficiency: 'optimal',
+        database_efficiency: 'optimized',
       },
       recommendations: [
-        "All contract tests passing",
-        "Healthcare compliance verified",
-        "Performance requirements met",
+        'All contract tests passing',
+        'Healthcare compliance verified',
+        'Performance requirements met',
       ],
     };
   }

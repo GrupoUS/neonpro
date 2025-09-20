@@ -7,7 +7,7 @@
  */
 export async function setupTestDb() {
   // Mock database setup
-  console.log("📦 Setting up test database (mocked)");
+  console.log('📦 Setting up test database (mocked)');
   return Promise.resolve();
 }
 
@@ -16,7 +16,7 @@ export async function setupTestDb() {
  */
 export async function clearTestData(table?: string) {
   // Mock data clearing
-  console.log(`🧹 Clearing test data${table ? ` from ${table}` : ""} (mocked)`);
+  console.log(`🧹 Clearing test data${table ? ` from ${table}` : ''} (mocked)`);
   return Promise.resolve();
 }
 
@@ -25,7 +25,7 @@ export async function clearTestData(table?: string) {
  */
 export async function createTestTables() {
   // Mock table creation
-  console.log("🏗️  Creating test tables (mocked)");
+  console.log('🏗️  Creating test tables (mocked)');
   return Promise.resolve();
 }
 
@@ -34,7 +34,7 @@ export async function createTestTables() {
  */
 export async function dropTestTables() {
   // Mock table dropping
-  console.log("🗑️  Dropping test tables (mocked)");
+  console.log('🗑️  Dropping test tables (mocked)');
   return Promise.resolve();
 }
 
@@ -43,6 +43,6 @@ export async function dropTestTables() {
  */
 export async function seedTestData() {
   // Mock data seeding
-  console.log("🌱 Seeding test data (mocked)");
+  console.log('🌱 Seeding test data (mocked)');
   return Promise.resolve();
 }

@@ -17,7 +17,7 @@ import {
   AIInsightType,
   AIProvider,
   createAIInsight,
-} from "../../../../packages/shared/src/types/ai-insights";
+} from '../../../../packages/shared/src/types/ai-insights';
 
 // Service response interface
 export interface ServiceResponse<T = any> {
@@ -31,7 +31,7 @@ export interface ServiceResponse<T = any> {
 // Chat message interface
 export interface ChatMessage {
   id?: string;
-  role: "user" | "assistant" | "system";
+  role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   metadata?: Record<string, any>;
@@ -46,7 +46,7 @@ export interface Conversation {
   messages: ChatMessage[];
   createdAt: Date;
   updatedAt: Date;
-  status: "active" | "archived" | "anonymized";
+  status: 'active' | 'archived' | 'anonymized';
   metadata?: Record<string, any>;
 }
 
@@ -109,7 +109,7 @@ export interface ConversationCreation {
 // Message addition interface
 export interface MessageAddition {
   conversationId: string;
-  role: "user" | "assistant" | "system";
+  role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
   metadata?: Record<string, any>;
@@ -147,7 +147,7 @@ export interface AccessTracking {
 // Data export interface
 export interface DataExport {
   patientId: string;
-  format: "json" | "pdf" | "csv";
+  format: 'json' | 'pdf' | 'csv';
   includeMetadata?: boolean;
   dateRange?: {
     start: Date;
@@ -165,7 +165,7 @@ export interface RateLimit {
 
 // Health status interface
 export interface HealthStatus {
-  status: "healthy" | "degraded" | "unhealthy";
+  status: 'healthy' | 'degraded' | 'unhealthy';
   providers: Record<string, boolean>;
   uptime: number;
   lastCheck: Date;
@@ -191,34 +191,34 @@ export class AIChatService {
   private initialize(): void {
     // Mock conversation data for testing
     const mockConversation: Conversation = {
-      id: "conv-123",
-      patientId: "patient-123",
-      title: "Consulta sobre sintomas",
-      context: "medical_consultation",
+      id: 'conv-123',
+      patientId: 'patient-123',
+      title: 'Consulta sobre sintomas',
+      context: 'medical_consultation',
       messages: [
         {
-          id: "msg-1",
-          role: "user",
-          content: "Estou sentindo dor de cabeça",
+          id: 'msg-1',
+          role: 'user',
+          content: 'Estou sentindo dor de cabeça',
           timestamp: new Date(),
         },
         {
-          id: "msg-2",
-          role: "assistant",
+          id: 'msg-2',
+          role: 'assistant',
           content:
-            "Entendo sua preocupação. Há quanto tempo você está sentindo essa dor de cabeça?",
+            'Entendo sua preocupação. Há quanto tempo você está sentindo essa dor de cabeça?',
           timestamp: new Date(),
         },
       ],
       createdAt: new Date(),
       updatedAt: new Date(),
-      status: "active",
+      status: 'active',
     };
 
-    this.conversations.set("conv-123", mockConversation);
+    this.conversations.set('conv-123', mockConversation);
 
     // Initialize rate limits
-    this.rateLimits.set("patient-123", {
+    this.rateLimits.set('patient-123', {
       allowed: true,
       remaining: 100,
       resetTime: new Date(Date.now() + 3600000), // 1 hour from now
@@ -247,31 +247,26 @@ export class AIChatService {
       }
 
       // Check provider support
-      const supportedProviders = ["openai", "anthropic", "google", "local"];
+      const supportedProviders = ['openai', 'anthropic', 'google', 'local'];
       if (!supportedProviders.includes(request.provider)) {
         return {
           success: false,
-          error: "Provedor de IA não suportado",
+          error: 'Provedor de IA não suportado',
         };
       }
 
       // Mock AI response generation
       const mockResponses = {
-        openai:
-          "Resposta gerada pelo OpenAI GPT-4 em português para contexto médico brasileiro.",
-        anthropic:
-          "Resposta gerada pelo Claude-3 com foco em saúde e conformidade ANVISA.",
-        google:
-          "Resposta do Gemini Pro adaptada para o sistema de saúde brasileiro.",
-        local:
-          "Resposta do modelo local Llama-2 com contexto de saúde brasileiro.",
+        openai: 'Resposta gerada pelo OpenAI GPT-4 em português para contexto médico brasileiro.',
+        anthropic: 'Resposta gerada pelo Claude-3 com foco em saúde e conformidade ANVISA.',
+        google: 'Resposta do Gemini Pro adaptada para o sistema de saúde brasileiro.',
+        local: 'Resposta do modelo local Llama-2 com contexto de saúde brasileiro.',
       };
 
       const responseTime = Date.now() - startTime;
       const response: AIResponse = {
-        response:
-          mockResponses[request.provider as keyof typeof mockResponses] ||
-          "Resposta padrão",
+        response: mockResponses[request.provider as keyof typeof mockResponses]
+          || 'Resposta padrão',
         provider: request.provider,
         model: request.model,
         responseTime,
@@ -287,7 +282,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -302,12 +297,13 @@ export class AIChatService {
   }): Promise<ServiceResponse<HealthcareResponse>> {
     try {
       const response: HealthcareResponse = {
-        response: `Resposta médica sobre ${params.query} adaptada para o contexto brasileiro de saúde. Esta informação é baseada em diretrizes da ANVISA e protocolos do SUS.`,
-        language: "pt-BR",
+        response:
+          `Resposta médica sobre ${params.query} adaptada para o contexto brasileiro de saúde. Esta informação é baseada em diretrizes da ANVISA e protocolos do SUS.`,
+        language: 'pt-BR',
         context: params.context,
         disclaimer:
-          "Esta informação não substitui consulta médica profissional. Procure sempre orientação médica qualificada.",
-        sources: ["ANVISA", "Ministério da Saúde", "SUS"],
+          'Esta informação não substitui consulta médica profissional. Procure sempre orientação médica qualificada.',
+        sources: ['ANVISA', 'Ministério da Saúde', 'SUS'],
       };
 
       return {
@@ -317,7 +313,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -332,13 +328,14 @@ export class AIChatService {
   }): Promise<ServiceResponse<PersonalizedResponse>> {
     try {
       const response: PersonalizedResponse = {
-        response: `Resposta personalizada para o paciente ${params.patientId}: Com base no seu histórico médico e perfil de saúde, posso fornecer informações específicas sobre ${params.query}.`,
+        response:
+          `Resposta personalizada para o paciente ${params.patientId}: Com base no seu histórico médico e perfil de saúde, posso fornecer informações específicas sobre ${params.query}.`,
         personalized: true,
         patientId: params.patientId,
         patientContext: {
           hasHistory: params.includeHistory || false,
           lastConsultation: new Date(),
-          riskFactors: ["diabetes", "hipertensão"],
+          riskFactors: ['diabetes', 'hipertensão'],
         },
       };
 
@@ -349,7 +346,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -364,11 +361,12 @@ export class AIChatService {
   }): Promise<ServiceResponse<MedicalInfo>> {
     try {
       const response: MedicalInfo = {
-        response: `Informações médicas sobre ${params.query} em conformidade com regulamentações da ANVISA. Este conteúdo segue as diretrizes brasileiras de informação médica.`,
+        response:
+          `Informações médicas sobre ${params.query} em conformidade com regulamentações da ANVISA. Este conteúdo segue as diretrizes brasileiras de informação médica.`,
         compliance: params.complianceLevel,
         disclaimer:
-          "Informação regulamentada pela ANVISA. Não substitui prescrição médica. Consulte sempre um profissional de saúde.",
-        sources: ["ANVISA", "Bulário Eletrônico", "RDC ANVISA"],
+          'Informação regulamentada pela ANVISA. Não substitui prescrição médica. Consulte sempre um profissional de saúde.',
+        sources: ['ANVISA', 'Bulário Eletrônico', 'RDC ANVISA'],
         lastUpdated: new Date(),
       };
 
@@ -379,7 +377,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -399,7 +397,7 @@ export class AIChatService {
         messages: [],
         createdAt: new Date(),
         updatedAt: new Date(),
-        status: "active",
+        status: 'active',
         metadata: params.metadata,
       };
 
@@ -412,7 +410,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -429,7 +427,7 @@ export class AIChatService {
       if (!conversation) {
         return {
           success: false,
-          error: "Conversa não encontrada",
+          error: 'Conversa não encontrada',
         };
       }
 
@@ -452,7 +450,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -472,7 +470,7 @@ export class AIChatService {
       if (!conversation) {
         return {
           success: false,
-          error: "Conversa não encontrada",
+          error: 'Conversa não encontrada',
         };
       }
 
@@ -486,7 +484,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -502,7 +500,7 @@ export class AIChatService {
   > {
     try {
       const patientConversations = Array.from(this.conversations.values())
-        .filter((conv) => conv.patientId === patientId)
+        .filter(conv => conv.patientId === patientId)
         .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
 
       return {
@@ -515,7 +513,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -535,7 +533,7 @@ export class AIChatService {
       if (!conversation) {
         return {
           success: false,
-          error: "Conversa não encontrada",
+          error: 'Conversa não encontrada',
         };
       }
 
@@ -544,14 +542,14 @@ export class AIChatService {
         createAIInsight({
           patientId: conversation.patientId,
           type: AIInsightType.HEALTH_ANALYSIS,
-          title: "Análise de Sintomas",
+          title: 'Análise de Sintomas',
           content: {
-            summary: "Análise baseada na conversa do paciente",
-            recommendations: ["Consultar médico", "Monitorar sintomas"],
+            summary: 'Análise baseada na conversa do paciente',
+            recommendations: ['Consultar médico', 'Monitorar sintomas'],
             confidence: 0.8,
           },
           confidence: 0.8,
-          model: "gpt-4",
+          model: 'gpt-4',
           provider: AIProvider.OPENAI,
         }),
       ];
@@ -566,7 +564,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -581,11 +579,11 @@ export class AIChatService {
   > {
     try {
       const suggestions = [
-        "Há quanto tempo você está sentindo esses sintomas?",
-        "Os sintomas pioram em algum momento específico do dia?",
-        "Você está tomando algum medicamento atualmente?",
-        "Já teve sintomas similares antes?",
-        "Gostaria de agendar uma consulta médica?",
+        'Há quanto tempo você está sentindo esses sintomas?',
+        'Os sintomas pioram em algum momento específico do dia?',
+        'Você está tomando algum medicamento atualmente?',
+        'Já teve sintomas similares antes?',
+        'Gostaria de agendar uma consulta médica?',
       ];
 
       return {
@@ -597,7 +595,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -608,38 +606,36 @@ export class AIChatService {
   async detectUrgentSymptoms(params: UrgentSymptomsDetection): Promise<
     ServiceResponse<{
       urgent: boolean;
-      urgencyLevel: "low" | "medium" | "high" | "critical";
+      urgencyLevel: 'low' | 'medium' | 'high' | 'critical';
       recommendation: string;
     }>
   > {
     try {
       // Mock urgent symptom detection
       const urgentKeywords = [
-        "dor no peito",
-        "falta de ar",
-        "desmaio",
-        "sangramento",
+        'dor no peito',
+        'falta de ar',
+        'desmaio',
+        'sangramento',
       ];
-      const hasUrgentSymptoms = params.messages.some((msg) =>
-        urgentKeywords.some((keyword) =>
-          msg.content.toLowerCase().includes(keyword),
-        ),
+      const hasUrgentSymptoms = params.messages.some(msg =>
+        urgentKeywords.some(keyword => msg.content.toLowerCase().includes(keyword))
       );
 
       return {
         success: true,
         data: {
           urgent: hasUrgentSymptoms,
-          urgencyLevel: hasUrgentSymptoms ? "high" : "low",
+          urgencyLevel: hasUrgentSymptoms ? 'high' : 'low',
           recommendation: hasUrgentSymptoms
-            ? "Procure atendimento médico imediatamente ou ligue para o SAMU (192)"
-            : "Continue monitorando os sintomas e agende consulta se necessário",
+            ? 'Procure atendimento médico imediatamente ou ligue para o SAMU (192)'
+            : 'Continue monitorando os sintomas e agende consulta se necessário',
         },
       };
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -658,7 +654,7 @@ export class AIChatService {
       if (!conversation) {
         return {
           success: false,
-          error: "Conversa não encontrada",
+          error: 'Conversa não encontrada',
         };
       }
 
@@ -688,7 +684,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -707,17 +703,17 @@ export class AIChatService {
       if (!conversation) {
         return {
           success: false,
-          error: "Conversa não encontrada",
+          error: 'Conversa não encontrada',
         };
       }
 
       // Anonymize conversation data
       conversation.title = `CONVERSA ANONIMIZADA - ${Date.now()}`;
-      conversation.messages = conversation.messages.map((msg) => ({
+      conversation.messages = conversation.messages.map(msg => ({
         ...msg,
         content: `MENSAGEM ANONIMIZADA - ${Date.now()}`,
       }));
-      conversation.status = "anonymized";
+      conversation.status = 'anonymized';
       conversation.updatedAt = new Date();
 
       this.conversations.set(conversationId, conversation);
@@ -725,12 +721,12 @@ export class AIChatService {
       return {
         success: true,
         data: { anonymized: true },
-        message: "Conversa anonimizada com sucesso",
+        message: 'Conversa anonimizada com sucesso',
       };
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -758,7 +754,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -782,7 +778,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -797,7 +793,7 @@ export class AIChatService {
       if (request.timeout < 100) {
         return {
           success: false,
-          error: "Timeout na requisição para o provedor de IA",
+          error: 'Timeout na requisição para o provedor de IA',
         };
       }
 
@@ -805,7 +801,7 @@ export class AIChatService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -817,7 +813,7 @@ export class AIChatService {
     const uptime = Date.now() - this.startTime.getTime();
 
     return {
-      status: "healthy",
+      status: 'healthy',
       providers: {
         openai: true,
         anthropic: true,
@@ -838,35 +834,35 @@ export class AIChatService {
   } {
     const errors: Array<{ field: string; message: string; code: string }> = [];
 
-    if (!request.provider || request.provider.trim() === "") {
+    if (!request.provider || request.provider.trim() === '') {
       errors.push({
-        field: "provider",
-        message: "Provedor de IA é obrigatório",
-        code: "REQUIRED",
+        field: 'provider',
+        message: 'Provedor de IA é obrigatório',
+        code: 'REQUIRED',
       });
     }
 
-    if (!request.model || request.model.trim() === "") {
+    if (!request.model || request.model.trim() === '') {
       errors.push({
-        field: "model",
-        message: "Modelo de IA é obrigatório",
-        code: "REQUIRED",
+        field: 'model',
+        message: 'Modelo de IA é obrigatório',
+        code: 'REQUIRED',
       });
     }
 
     if (!request.messages || request.messages.length === 0) {
       errors.push({
-        field: "messages",
-        message: "Mensagens são obrigatórias",
-        code: "REQUIRED",
+        field: 'messages',
+        message: 'Mensagens são obrigatórias',
+        code: 'REQUIRED',
       });
     }
 
-    if (!request.patientId || request.patientId.trim() === "") {
+    if (!request.patientId || request.patientId.trim() === '') {
       errors.push({
-        field: "patientId",
-        message: "ID do paciente é obrigatório",
-        code: "REQUIRED",
+        field: 'patientId',
+        message: 'ID do paciente é obrigatório',
+        code: 'REQUIRED',
       });
     }
 

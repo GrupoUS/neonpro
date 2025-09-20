@@ -11,8 +11,8 @@
  */
 
 /* eslint-disable no-unused-vars */
-import type { Context } from "hono";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { Context } from 'hono';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the Hono app and auth routes
 // Mock authentication service
@@ -50,16 +50,16 @@ const mockJWT = {
   decode: vi.fn(),
 };
 
-describe("authentication API Endpoints - NeonPro Healthcare", () => {
+describe('authentication API Endpoints - NeonPro Healthcare', () => {
   // Test data
   const mockUser = {
-    id: "user-123",
-    email: "doctor@neonpro.com.br",
-    name: "Dr. Maria Silva",
-    role: "DOCTOR",
-    tenantId: "clinic-abc",
+    id: 'user-123',
+    email: 'doctor@neonpro.com.br',
+    name: 'Dr. Maria Silva',
+    role: 'DOCTOR',
+    tenantId: 'clinic-abc',
     isEmailVerified: true,
-    professionalLicense: "CRM-SP-123456",
+    professionalLicense: 'CRM-SP-123456',
     isActive: true,
     lgpdConsent: true,
     createdAt: new Date(),
@@ -67,8 +67,8 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
   };
 
   const mockTokens = {
-    accessToken: "mock-access-token",
-    refreshToken: "mock-refresh-token",
+    accessToken: 'mock-access-token',
+    refreshToken: 'mock-refresh-token',
     expiresAt: Date.now() + 3_600_000,
   };
 
@@ -79,8 +79,8 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
-  describe("pOST /auth/login - Healthcare Professional Login", () => {
-    it("should authenticate doctor with valid credentials", async () => {
+  describe('pOST /auth/login - Healthcare Professional Login', () => {
+    it('should authenticate doctor with valid credentials', async () => {
       // Mock successful database lookup
       mockPrisma.user.findUnique.mockResolvedValue(mockUser);
       mockAuthService.login.mockResolvedValue({
@@ -95,9 +95,9 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       const mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
-            email: "doctor@neonpro.com.br",
-            password: "validpassword",
-            tenantId: "clinic-abc",
+            email: 'doctor@neonpro.com.br',
+            password: 'validpassword',
+            tenantId: 'clinic-abc',
           }),
         },
         json: vi.fn(),
@@ -115,14 +115,14 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         if (user) {
           const tokens = await mockAuthService.login({
             email,
-            password: "validpassword",
+            password: 'validpassword',
             tenantId,
           });
 
           // Create audit log for successful login
           await mockPrisma.auditLog.create({
             data: {
-              action: "LOGIN_SUCCESS",
+              action: 'LOGIN_SUCCESS',
               userId: user.id,
               metadata: { email },
               timestamp: new Date(),
@@ -136,31 +136,31 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
           });
         }
 
-        return c.json({ success: false, error: "User not found" }, 404);
+        return c.json({ success: false, error: 'User not found' }, 404);
       };
 
       await loginHandler(mockContext);
 
       expect(mockPrisma.user.findUnique).toHaveBeenCalledWith({
         where: {
-          email: "doctor@neonpro.com.br",
-          tenantId: "clinic-abc",
+          email: 'doctor@neonpro.com.br',
+          tenantId: 'clinic-abc',
           isActive: true,
         },
       });
       expect(mockPrisma.auditLog.create).toHaveBeenCalled();
     });
 
-    it("should reject login with invalid credentials", async () => {
+    it('should reject login with invalid credentials', async () => {
       // Mock user not found
       mockPrisma.user.findUnique.mockResolvedValue(undefined);
 
       const mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
-            email: "invalid@example.com",
-            password: "wrongpassword",
-            tenantId: "clinic-abc",
+            email: 'invalid@example.com',
+            password: 'wrongpassword',
+            tenantId: 'clinic-abc',
           }),
         },
         json: vi.fn(),
@@ -178,8 +178,8 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
           // Log failed attempt
           await mockPrisma.auditLog.create({
             data: {
-              action: "LOGIN_FAILED",
-              metadata: { email, reason: "USER_NOT_FOUND" },
+              action: 'LOGIN_FAILED',
+              metadata: { email, reason: 'USER_NOT_FOUND' },
               timestamp: new Date(),
             },
           });
@@ -187,7 +187,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
           return c.json(
             {
               success: false,
-              error: "Credenciais inválidas",
+              error: 'Credenciais inválidas',
             },
             401,
           );
@@ -201,14 +201,14 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       expect(mockPrisma.user.findUnique).toHaveBeenCalled();
       expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
         data: {
-          action: "LOGIN_FAILED",
-          metadata: { email: "invalid@example.com", reason: "USER_NOT_FOUND" },
+          action: 'LOGIN_FAILED',
+          metadata: { email: 'invalid@example.com', reason: 'USER_NOT_FOUND' },
           timestamp: expect.any(Date),
         },
       });
     });
 
-    it("should validate healthcare professional license", async () => {
+    it('should validate healthcare professional license', async () => {
       const userWithoutLicense = {
         ...mockUser,
         professionalLicense: undefined,
@@ -217,15 +217,15 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       mockPrisma.user.findUnique.mockResolvedValue(userWithoutLicense);
       mockAuthService.validateHealthcareProfessional.mockResolvedValue({
         isValid: false,
-        reason: "NO_PROFESSIONAL_LICENSE",
+        reason: 'NO_PROFESSIONAL_LICENSE',
       });
 
       const mockContext = {
         req: {
           json: vi.fn().mockResolvedValue({
-            email: "doctor@neonpro.com.br",
-            password: "password",
-            tenantId: "clinic-abc",
+            email: 'doctor@neonpro.com.br',
+            password: 'password',
+            tenantId: 'clinic-abc',
           }),
         },
         json: vi.fn(),
@@ -238,14 +238,13 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
           where: { email, tenantId, isActive: true },
         });
 
-        if (user && user.role === "DOCTOR") {
-          const validation =
-            await mockAuthService.validateHealthcareProfessional(user);
+        if (user && user.role === 'DOCTOR') {
+          const validation = await mockAuthService.validateHealthcareProfessional(user);
           if (!validation.isValid) {
             return c.json(
               {
                 success: false,
-                error: "Licença profissional requerida para médicos",
+                error: 'Licença profissional requerida para médicos',
               },
               403,
             );
@@ -262,22 +261,22 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       ).toHaveBeenCalledWith(userWithoutLicense);
     });
   });
-  describe("pOST /auth/refresh - Token Refresh", () => {
-    it("should refresh valid access token", async () => {
-      const mockRefreshToken = "valid-refresh-token";
+  describe('pOST /auth/refresh - Token Refresh', () => {
+    it('should refresh valid access token', async () => {
+      const mockRefreshToken = 'valid-refresh-token';
       const newTokens = {
-        accessToken: "new-access-token",
-        refreshToken: "new-refresh-token",
+        accessToken: 'new-access-token',
+        refreshToken: 'new-refresh-token',
         expiresAt: Date.now() + 3_600_000,
       };
 
       mockJWT.verify.mockReturnValue({
-        userId: "user-123",
-        tenantId: "clinic-abc",
+        userId: 'user-123',
+        tenantId: 'clinic-abc',
       });
       mockPrisma.session.findUnique.mockResolvedValue({
-        id: "session-123",
-        userId: "user-123",
+        id: 'session-123',
+        userId: 'user-123',
         refreshToken: mockRefreshToken,
         expiresAt: new Date(Date.now() + 86_400_000), // 24h
         isActive: true,
@@ -312,7 +311,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         });
 
         if (!session) {
-          return c.json({ error: "Invalid refresh token" }, 401);
+          return c.json({ error: 'Invalid refresh token' }, 401);
         }
 
         // Generate new tokens
@@ -342,8 +341,8 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       );
     });
 
-    it("should reject expired refresh token", async () => {
-      const expiredRefreshToken = "expired-refresh-token";
+    it('should reject expired refresh token', async () => {
+      const expiredRefreshToken = 'expired-refresh-token';
 
       mockPrisma.session.findUnique.mockResolvedValue(undefined); // Expired session not found
 
@@ -370,8 +369,8 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         if (!session) {
           await mockPrisma.auditLog.create({
             data: {
-              action: "TOKEN_REFRESH_FAILED",
-              metadata: { reason: "EXPIRED_TOKEN" },
+              action: 'TOKEN_REFRESH_FAILED',
+              metadata: { reason: 'EXPIRED_TOKEN' },
               timestamp: new Date(),
             },
           });
@@ -379,7 +378,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
           return c.json(
             {
               success: false,
-              error: "Token de refresh expirado",
+              error: 'Token de refresh expirado',
             },
             401,
           );
@@ -392,23 +391,23 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
 
       expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
         data: {
-          action: "TOKEN_REFRESH_FAILED",
-          metadata: { reason: "EXPIRED_TOKEN" },
+          action: 'TOKEN_REFRESH_FAILED',
+          metadata: { reason: 'EXPIRED_TOKEN' },
           timestamp: expect.any(Date),
         },
       });
     });
   });
 
-  describe("pOST /auth/logout - Session Termination", () => {
-    it("should successfully logout user and invalidate session", async () => {
-      const accessToken = "valid-access-token";
+  describe('pOST /auth/logout - Session Termination', () => {
+    it('should successfully logout user and invalidate session', async () => {
+      const accessToken = 'valid-access-token';
 
       mockJWT.verify.mockReturnValue({
-        userId: "user-123",
-        sessionId: "session-123",
+        userId: 'user-123',
+        sessionId: 'session-123',
       });
-      mockPrisma.session.delete.mockResolvedValue({ id: "session-123" });
+      mockPrisma.session.delete.mockResolvedValue({ id: 'session-123' });
 
       const mockContext = {
         req: {
@@ -418,11 +417,11 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
       } as unknown as Context;
 
       const logoutHandler = async (c: Context) => {
-        const authHeader = c.req.header("Authorization");
-        const token = authHeader?.replace("Bearer ", "");
+        const authHeader = c.req.header('Authorization');
+        const token = authHeader?.replace('Bearer ', '');
 
         if (!token) {
-          return c.json({ error: "No token provided" }, 401);
+          return c.json({ error: 'No token provided' }, 401);
         }
 
         const decoded = mockJWT.verify(token);
@@ -435,7 +434,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
         // Create logout audit log
         await mockPrisma.auditLog.create({
           data: {
-            action: "LOGOUT",
+            action: 'LOGOUT',
             userId: decoded.userId,
             timestamp: new Date(),
           },
@@ -443,7 +442,7 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
 
         return c.json({
           success: true,
-          message: "Logout realizado com sucesso",
+          message: 'Logout realizado com sucesso',
         });
       };
 
@@ -451,12 +450,12 @@ describe("authentication API Endpoints - NeonPro Healthcare", () => {
 
       expect(mockJWT.verify).toHaveBeenCalledWith(accessToken);
       expect(mockPrisma.session.delete).toHaveBeenCalledWith({
-        where: { id: "session-123" },
+        where: { id: 'session-123' },
       });
       expect(mockPrisma.auditLog.create).toHaveBeenCalledWith({
         data: {
-          action: "LOGOUT",
-          userId: "user-123",
+          action: 'LOGOUT',
+          userId: 'user-123',
           timestamp: expect.any(Date),
         },
       });

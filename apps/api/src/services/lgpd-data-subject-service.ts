@@ -1,34 +1,31 @@
-import { z } from "zod";
-import {
-  getHealthcarePrismaClient,
-  type HealthcarePrismaClient,
-} from "../clients/prisma";
-import { type LGPDOperationResult, type ExportOptions } from "../types/lgpd.js";
-import { lgpdAuditService } from "./lgpd-audit-service.js";
-import { lgpdConsentService } from "./lgpd-consent-service.js";
-import { createHealthcareError } from "./createHealthcareError.js";
+import { z } from 'zod';
+import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
+import { type ExportOptions, type LGPDOperationResult } from '../types/lgpd.js';
+import { createHealthcareError } from './createHealthcareError.js';
+import { lgpdAuditService } from './lgpd-audit-service.js';
+import { lgpdConsentService } from './lgpd-consent-service.js';
 
 // Data Subject Request Types
 export const RequestType = z.enum([
-  "ACCESS",
-  "DELETION",
-  "CORRECTION",
-  "PORTABILITY",
-  "OBJECTION",
-  "RESTRICTION",
-  "AUTOMATED_DECISION_EXPLANATION",
+  'ACCESS',
+  'DELETION',
+  'CORRECTION',
+  'PORTABILITY',
+  'OBJECTION',
+  'RESTRICTION',
+  'AUTOMATED_DECISION_EXPLANATION',
 ]);
 
 export const RequestStatus = z.enum([
-  "PENDING",
-  "PROCESSING",
-  "REVIEW_REQUIRED",
-  "COMPLETED",
-  "REJECTED",
-  "ESCALATED",
+  'PENDING',
+  'PROCESSING',
+  'REVIEW_REQUIRED',
+  'COMPLETED',
+  'REJECTED',
+  'ESCALATED',
 ]);
 
-export const ProcessingPriority = z.enum(["LOW", "MEDIUM", "HIGH", "URGENT"]);
+export const ProcessingPriority = z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']);
 
 export interface DataSubjectRequest {
   id: string;
@@ -95,8 +92,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult & { requestId?: string }> {
     try {
       const requestId = this.generateRequestId();
-      const priority =
-        options.priority || this.assessRequestPriority(requestType);
+      const priority = options.priority || this.assessRequestPriority(requestType);
 
       // Validate patient exists
       const patient = await this.prisma.patient.findUnique({
@@ -105,7 +101,7 @@ export class LGPDDataSubjectService {
 
       if (!patient) {
         throw createHealthcareError(
-          "PATIENT_NOT_FOUND",
+          'PATIENT_NOT_FOUND',
           `Patient not found: ${patientId}`,
           { patientId },
         );
@@ -115,12 +111,12 @@ export class LGPDDataSubjectService {
       const requestEntry = await this.prisma.auditTrail.create({
         data: {
           userId: patientId,
-          action: "DATA_SUBJECT_REQUEST_CREATED",
-          entityType: "DATA_SUBJECT_RIGHTS",
+          action: 'DATA_SUBJECT_REQUEST_CREATED',
+          entityType: 'DATA_SUBJECT_RIGHTS',
           entityId: requestId,
           metadata: {
             requestType,
-            status: "PENDING",
+            status: 'PENDING',
             priority,
             description,
             requestData: options.requestData,
@@ -134,11 +130,11 @@ export class LGPDDataSubjectService {
       // Create audit trail for request creation
       await lgpdAuditService.recordAudit({
         patientId,
-        action: "RIGHT_REQUEST",
-        entityType: "DATA_SUBJECT_RIGHTS",
+        action: 'RIGHT_REQUEST',
+        entityType: 'DATA_SUBJECT_RIGHTS',
         entityId: requestId,
-        dataCategory: "PERSONAL",
-        severity: "MEDIUM",
+        dataCategory: 'PERSONAL',
+        severity: 'MEDIUM',
         description: `Data subject request created: ${requestType}`,
         metadata: {
           requestType,
@@ -167,7 +163,7 @@ export class LGPDDataSubjectService {
         recordsProcessed: 0,
         operationId: `request_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -184,11 +180,11 @@ export class LGPDDataSubjectService {
       const request = await this.validateRequest(
         requestId,
         patientId,
-        "ACCESS",
+        'ACCESS',
       );
 
       // Update request status to processing
-      await this.updateRequestStatus(requestId, "PROCESSING");
+      await this.updateRequestStatus(requestId, 'PROCESSING');
 
       // Gather all patient data
       const accessData = await this.gatherPatientData(patientId);
@@ -210,12 +206,12 @@ export class LGPDDataSubjectService {
       // Create audit entry for access completion
       await lgpdAuditService.recordAudit({
         patientId,
-        action: "DATA_ACCESS_GRANTED",
-        entityType: "DATA_SUBJECT_RIGHTS",
+        action: 'DATA_ACCESS_GRANTED',
+        entityType: 'DATA_SUBJECT_RIGHTS',
         entityId: requestId,
-        dataCategory: "PERSONAL",
-        severity: "MEDIUM",
-        description: "Data access request processed and data provided",
+        dataCategory: 'PERSONAL',
+        severity: 'MEDIUM',
+        description: 'Data access request processed and data provided',
         metadata: {
           requestId,
           dataSummary: accessReport.dataSummary,
@@ -223,8 +219,8 @@ export class LGPDDataSubjectService {
       });
 
       // Update request status to completed
-      await this.updateRequestStatus(requestId, "COMPLETED", {
-        response: "Access request completed. Data has been provided.",
+      await this.updateRequestStatus(requestId, 'COMPLETED', {
+        response: 'Access request completed. Data has been provided.',
         responseData: accessReport,
         processedAt: new Date(),
       });
@@ -243,7 +239,7 @@ export class LGPDDataSubjectService {
         recordsProcessed: 0,
         operationId: `access_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -255,7 +251,7 @@ export class LGPDDataSubjectService {
     requestId: string,
     patientId: string,
     scope: DeletionScope = {
-      dataTypes: ["ALL"],
+      dataTypes: ['ALL'],
       thirdPartyServices: [],
       backupSystems: [],
     },
@@ -265,11 +261,11 @@ export class LGPDDataSubjectService {
       const request = await this.validateRequest(
         requestId,
         patientId,
-        "DELETION",
+        'DELETION',
       );
 
       // Update request status to processing
-      await this.updateRequestStatus(requestId, "PROCESSING");
+      await this.updateRequestStatus(requestId, 'PROCESSING');
 
       // Check for legal retention requirements
       const retentionCheck = await this.checkRetentionRequirements(
@@ -279,8 +275,8 @@ export class LGPDDataSubjectService {
 
       if (retentionCheck.hasLegalObligation) {
         throw createHealthcareError(
-          "LEGAL_RETENTION_REQUIRED",
-          "Data cannot be deleted due to legal retention requirements",
+          'LEGAL_RETENTION_REQUIRED',
+          'Data cannot be deleted due to legal retention requirements',
           { patientId, legalBasis: retentionCheck.legalBasis },
         );
       }
@@ -299,12 +295,12 @@ export class LGPDDataSubjectService {
       // Create audit entry for deletion completion
       await lgpdAuditService.recordAudit({
         patientId,
-        action: "DATA_DELETED",
-        entityType: "DATA_SUBJECT_RIGHTS",
+        action: 'DATA_DELETED',
+        entityType: 'DATA_SUBJECT_RIGHTS',
         entityId: requestId,
-        dataCategory: "PERSONAL",
-        severity: "HIGH",
-        description: "Data deletion request processed",
+        dataCategory: 'PERSONAL',
+        severity: 'HIGH',
+        description: 'Data deletion request processed',
         metadata: {
           requestId,
           deletionScope: scope,
@@ -314,9 +310,8 @@ export class LGPDDataSubjectService {
       });
 
       // Update request status to completed
-      await this.updateRequestStatus(requestId, "COMPLETED", {
-        response:
-          "Deletion request completed. Data has been removed from all systems.",
+      await this.updateRequestStatus(requestId, 'COMPLETED', {
+        response: 'Deletion request completed. Data has been removed from all systems.',
         processedAt: new Date(),
       });
 
@@ -333,7 +328,7 @@ export class LGPDDataSubjectService {
         recordsProcessed: 0,
         operationId: `deletion_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -351,11 +346,11 @@ export class LGPDDataSubjectService {
       const request = await this.validateRequest(
         requestId,
         patientId,
-        "PORTABILITY",
+        'PORTABILITY',
       );
 
       // Update request status to processing
-      await this.updateRequestStatus(requestId, "PROCESSING");
+      await this.updateRequestStatus(requestId, 'PROCESSING');
 
       // Gather patient data for export
       const patientData = await this.gatherPatientData(patientId);
@@ -369,12 +364,12 @@ export class LGPDDataSubjectService {
       // Create audit entry for portability completion
       await lgpdAuditService.recordAudit({
         patientId,
-        action: "DATA_EXPORTED",
-        entityType: "DATA_SUBJECT_RIGHTS",
+        action: 'DATA_EXPORTED',
+        entityType: 'DATA_SUBJECT_RIGHTS',
         entityId: requestId,
-        dataCategory: "PERSONAL",
-        severity: "MEDIUM",
-        description: "Data portability request processed",
+        dataCategory: 'PERSONAL',
+        severity: 'MEDIUM',
+        description: 'Data portability request processed',
         metadata: {
           requestId,
           exportFormat: exportOptions.format,
@@ -383,8 +378,8 @@ export class LGPDDataSubjectService {
       });
 
       // Update request status to completed
-      await this.updateRequestStatus(requestId, "COMPLETED", {
-        response: "Portability request completed. Data export is available.",
+      await this.updateRequestStatus(requestId, 'COMPLETED', {
+        response: 'Portability request completed. Data export is available.',
         responseData: { exportUrl: exportResult.exportUrl },
         processedAt: new Date(),
       });
@@ -404,7 +399,7 @@ export class LGPDDataSubjectService {
         recordsProcessed: 0,
         operationId: `portability_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -422,11 +417,11 @@ export class LGPDDataSubjectService {
       const request = await this.validateRequest(
         requestId,
         patientId,
-        "AUTOMATED_DECISION_EXPLANATION",
+        'AUTOMATED_DECISION_EXPLANATION',
       );
 
       // Update request status to processing
-      await this.updateRequestStatus(requestId, "PROCESSING");
+      await this.updateRequestStatus(requestId, 'PROCESSING');
 
       // Find automated decisions affecting the patient
       const automatedDecisions = await this.findAutomatedDecisions(
@@ -436,9 +431,7 @@ export class LGPDDataSubjectService {
 
       // Generate explanations for each decision
       const explanations = await Promise.all(
-        automatedDecisions.map((decision) =>
-          this.generateDecisionExplanation(decision),
-        ),
+        automatedDecisions.map(decision => this.generateDecisionExplanation(decision)),
       );
 
       const explanationReport = {
@@ -448,23 +441,21 @@ export class LGPDDataSubjectService {
         decisionsExplained: explanations.length,
         explanations,
         patientRights: {
-          humanReview:
-            "You have the right to request human review of automated decisions",
-          contestation:
-            "You can contest automated decisions that affect your interests",
-          clarification: "You can request clarification of decision logic",
+          humanReview: 'You have the right to request human review of automated decisions',
+          contestation: 'You can contest automated decisions that affect your interests',
+          clarification: 'You can request clarification of decision logic',
         },
       };
 
       // Create audit entry for explanation completion
       await lgpdAuditService.recordAudit({
         patientId,
-        action: "AUTOMATED_DECISION_EXPLAINED",
-        entityType: "DATA_SUBJECT_RIGHTS",
+        action: 'AUTOMATED_DECISION_EXPLAINED',
+        entityType: 'DATA_SUBJECT_RIGHTS',
         entityId: requestId,
-        dataCategory: "PERSONAL",
-        severity: "MEDIUM",
-        description: "Automated decision explanation request processed",
+        dataCategory: 'PERSONAL',
+        severity: 'MEDIUM',
+        description: 'Automated decision explanation request processed',
         metadata: {
           requestId,
           decisionsExplained: explanations.length,
@@ -472,8 +463,8 @@ export class LGPDDataSubjectService {
       });
 
       // Update request status to completed
-      await this.updateRequestStatus(requestId, "COMPLETED", {
-        response: "Automated decision explanation provided.",
+      await this.updateRequestStatus(requestId, 'COMPLETED', {
+        response: 'Automated decision explanation provided.',
         responseData: explanationReport,
         processedAt: new Date(),
       });
@@ -492,7 +483,7 @@ export class LGPDDataSubjectService {
         recordsProcessed: 0,
         operationId: `explanation_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -509,13 +500,13 @@ export class LGPDDataSubjectService {
         where: {
           entityId: requestId,
           userId: patientId,
-          action: "DATA_SUBJECT_REQUEST_CREATED",
+          action: 'DATA_SUBJECT_REQUEST_CREATED',
         },
       });
 
       if (!requestEntry) {
         throw createHealthcareError(
-          "REQUEST_NOT_FOUND",
+          'REQUEST_NOT_FOUND',
           `Request not found: ${requestId}`,
           { requestId, patientId },
         );
@@ -536,7 +527,7 @@ export class LGPDDataSubjectService {
         recordsProcessed: 0,
         operationId: `status_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -557,7 +548,7 @@ export class LGPDDataSubjectService {
 
       const whereClause: any = {
         userId: patientId,
-        action: "DATA_SUBJECT_REQUEST_CREATED",
+        action: 'DATA_SUBJECT_REQUEST_CREATED',
       };
 
       if (status || requestType) {
@@ -572,13 +563,11 @@ export class LGPDDataSubjectService {
 
       const requests = await this.prisma.auditTrail.findMany({
         where: whereClause,
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
         take: limit,
       });
 
-      const formattedRequests = requests.map((request) =>
-        this.mapToDataSubjectRequest(request),
-      );
+      const formattedRequests = requests.map(request => this.mapToDataSubjectRequest(request));
 
       return {
         success: true,
@@ -593,7 +582,7 @@ export class LGPDDataSubjectService {
         recordsProcessed: 0,
         operationId: `list_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -608,13 +597,13 @@ export class LGPDDataSubjectService {
       where: {
         entityId: requestId,
         userId: patientId,
-        action: "DATA_SUBJECT_REQUEST_CREATED",
+        action: 'DATA_SUBJECT_REQUEST_CREATED',
       },
     });
 
     if (!request) {
       throw createHealthcareError(
-        "REQUEST_NOT_FOUND",
+        'REQUEST_NOT_FOUND',
         `Request not found: ${requestId}`,
         { requestId, patientId },
       );
@@ -622,7 +611,7 @@ export class LGPDDataSubjectService {
 
     if (request.metadata?.requestType !== expectedType) {
       throw createHealthcareError(
-        "INVALID_REQUEST_TYPE",
+        'INVALID_REQUEST_TYPE',
         `Expected ${expectedType} but got ${request.metadata?.requestType}`,
         { requestId, expectedType, actualType: request.metadata?.requestType },
       );
@@ -639,11 +628,11 @@ export class LGPDDataSubjectService {
     await this.prisma.auditTrail.updateMany({
       where: {
         entityId: requestId,
-        action: "DATA_SUBJECT_REQUEST_CREATED",
+        action: 'DATA_SUBJECT_REQUEST_CREATED',
       },
       data: {
         metadata: {
-          path: ["status"],
+          path: ['status'],
           equals: status,
         },
       },
@@ -652,8 +641,8 @@ export class LGPDDataSubjectService {
     // Create status update entry
     await this.prisma.auditTrail.create({
       data: {
-        action: "DATA_SUBJECT_REQUEST_UPDATED",
-        entityType: "DATA_SUBJECT_RIGHTS",
+        action: 'DATA_SUBJECT_REQUEST_UPDATED',
+        entityType: 'DATA_SUBJECT_RIGHTS',
         entityId: requestId,
         metadata: {
           status,
@@ -694,13 +683,13 @@ export class LGPDDataSubjectService {
 
     // Process each data type
     for (const dataType of scope.dataTypes) {
-      if (dataType === "ALL" || dataType === "PERSONAL") {
+      if (dataType === 'ALL' || dataType === 'PERSONAL') {
         // Delete or anonymize personal data
         const result = await this.deletePersonalData(patientId);
         recordsDeleted += result;
       }
 
-      if (dataType === "ALL" || dataType === "HEALTH") {
+      if (dataType === 'ALL' || dataType === 'HEALTH') {
         // Delete or anonymize health data
         const result = await this.deleteHealthData(patientId);
         recordsDeleted += result;
@@ -718,7 +707,7 @@ export class LGPDDataSubjectService {
     const legalBasis: string[] = [];
 
     // Medical records have retention requirements (usually 20+ years)
-    if (dataTypes.includes("HEALTH") || dataTypes.includes("ALL")) {
+    if (dataTypes.includes('HEALTH') || dataTypes.includes('ALL')) {
       const hasRecentMedicalData = await this.prisma.appointment.findFirst({
         where: {
           patientId,
@@ -729,7 +718,7 @@ export class LGPDDataSubjectService {
       });
 
       if (hasRecentMedicalData) {
-        legalBasis.push("Medical record retention requirements");
+        legalBasis.push('Medical record retention requirements');
       }
     }
 
@@ -737,13 +726,13 @@ export class LGPDDataSubjectService {
     const hasLegalProceedings = await this.prisma.auditTrail.findFirst({
       where: {
         userId: patientId,
-        action: "LEGAL_PROCEEDING",
-        metadata: { path: ["status"], equals: "ACTIVE" },
+        action: 'LEGAL_PROCEEDING',
+        metadata: { path: ['status'], equals: 'ACTIVE' },
       },
     });
 
     if (hasLegalProceedings) {
-      legalBasis.push("Active legal proceedings");
+      legalBasis.push('Active legal proceedings');
     }
 
     return {
@@ -760,14 +749,14 @@ export class LGPDDataSubjectService {
     for (const thirdParty of thirdParties) {
       await this.prisma.auditTrail.create({
         data: {
-          action: "THIRD_PARTY_DELETION_NOTIFICATION",
-          entityType: "DATA_SUBJECT_RIGHTS",
+          action: 'THIRD_PARTY_DELETION_NOTIFICATION',
+          entityType: 'DATA_SUBJECT_RIGHTS',
           entityId: `thirdparty_${Date.now()}`,
           metadata: {
             patientId,
             thirdParty,
             notificationDate: new Date().toISOString(),
-            status: "SENT",
+            status: 'SENT',
           },
         },
       });
@@ -782,7 +771,7 @@ export class LGPDDataSubjectService {
     // For now, return mock export data
     return {
       exportData: patientData,
-      exportUrl: `https://api.neonpro.com.br/exports/${Date.now()}.${options.format || "json"}`,
+      exportUrl: `https://api.neonpro.com.br/exports/${Date.now()}.${options.format || 'json'}`,
     };
   }
 
@@ -792,7 +781,7 @@ export class LGPDDataSubjectService {
   ): Promise<any[]> {
     const whereClause: any = {
       userId: patientId,
-      metadata: { path: ["automatedDecision"], equals: true },
+      metadata: { path: ['automatedDecision'], equals: true },
     };
 
     if (decisionId) {
@@ -801,7 +790,7 @@ export class LGPDDataSubjectService {
 
     return this.prisma.auditTrail.findMany({
       where: whereClause,
-      orderBy: { createdAt: "desc" },
+      orderBy: { createdAt: 'desc' },
     });
   }
 
@@ -810,12 +799,11 @@ export class LGPDDataSubjectService {
       decisionId: decision.entityId,
       decisionDate: decision.createdAt,
       decisionType: decision.action,
-      logic: decision.metadata?.decisionLogic || "Automated processing logic",
-      impact:
-        decision.metadata?.impactAssessment ||
-        "No significant impact identified",
+      logic: decision.metadata?.decisionLogic || 'Automated processing logic',
+      impact: decision.metadata?.impactAssessment
+        || 'No significant impact identified',
       humanReviewAvailable: true,
-      contestationProcess: "Contact support to contest this decision",
+      contestationProcess: 'Contact support to contest this decision',
       factors: decision.metadata?.factors || [],
     };
   }
@@ -828,9 +816,9 @@ export class LGPDDataSubjectService {
   private async getDataRetentionInfo(patientId: string): Promise<any> {
     // Return data retention information
     return {
-      personalDataRetention: "10 years after last contact",
-      healthDataRetention: "20 years after last appointment",
-      legalRetentionExceptions: "Active legal proceedings extend retention",
+      personalDataRetention: '10 years after last contact',
+      healthDataRetention: '20 years after last appointment',
+      legalRetentionExceptions: 'Active legal proceedings extend retention',
     };
   }
 
@@ -850,7 +838,7 @@ export class LGPDDataSubjectService {
       });
       deletedCount++;
     } catch (error) {
-      console.error("Error deleting personal data:", error);
+      console.error('Error deleting personal data:', error);
     }
 
     return deletedCount;
@@ -872,7 +860,7 @@ export class LGPDDataSubjectService {
         `Would process ${appointments.length} health records for deletion`,
       );
     } catch (error) {
-      console.error("Error deleting health data:", error);
+      console.error('Error deleting health data:', error);
     }
 
     return deletedCount;
@@ -882,18 +870,20 @@ export class LGPDDataSubjectService {
     requestId: string,
     error: any,
   ): Promise<void> {
-    await this.updateRequestStatus(requestId, "REJECTED", {
-      rejectionReason: error instanceof Error ? error.message : "Unknown error",
+    await this.updateRequestStatus(requestId, 'REJECTED', {
+      rejectionReason: error instanceof Error ? error.message : 'Unknown error',
       processedAt: new Date(),
     });
 
     await lgpdAuditService.recordAudit({
-      action: "REQUEST_FAILED",
-      entityType: "DATA_SUBJECT_RIGHTS",
+      action: 'REQUEST_FAILED',
+      entityType: 'DATA_SUBJECT_RIGHTS',
       entityId: requestId,
-      dataCategory: "PERSONAL",
-      severity: "HIGH",
-      description: `Data subject request failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+      dataCategory: 'PERSONAL',
+      severity: 'HIGH',
+      description: `Data subject request failed: ${
+        error instanceof Error ? error.message : 'Unknown error'
+      }`,
     });
   }
 
@@ -905,16 +895,16 @@ export class LGPDDataSubjectService {
     requestType: z.infer<typeof RequestType>,
   ): z.infer<typeof ProcessingPriority> {
     const priorityMap: Record<string, z.infer<typeof ProcessingPriority>> = {
-      DELETION: "HIGH",
-      OBJECTION: "HIGH",
-      CORRECTION: "MEDIUM",
-      ACCESS: "MEDIUM",
-      PORTABILITY: "MEDIUM",
-      AUTOMATED_DECISION_EXPLANATION: "MEDIUM",
-      RESTRICTION: "LOW",
+      DELETION: 'HIGH',
+      OBJECTION: 'HIGH',
+      CORRECTION: 'MEDIUM',
+      ACCESS: 'MEDIUM',
+      PORTABILITY: 'MEDIUM',
+      AUTOMATED_DECISION_EXPLANATION: 'MEDIUM',
+      RESTRICTION: 'LOW',
     };
 
-    return priorityMap[requestType] || "MEDIUM";
+    return priorityMap[requestType] || 'MEDIUM';
   }
 
   private calculateEstimatedCompletion(
@@ -938,8 +928,7 @@ export class LGPDDataSubjectService {
       URGENT: 0.25,
     };
 
-    const days =
-      (baseDays[requestType] || 10) * (priorityMultiplier[priority] || 1.0);
+    const days = (baseDays[requestType] || 10) * (priorityMultiplier[priority] || 1.0);
     return new Date(Date.now() + days * 24 * 60 * 60 * 1000);
   }
 

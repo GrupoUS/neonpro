@@ -12,33 +12,33 @@
  * - CFM (Conselho Federal de Medicina) - Professional data handling
  */
 
-import { describe, expect, it, test } from "vitest";
+import { describe, expect, it, test } from 'vitest';
 
-describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
-  describe("JSON Payload Processing", () => {
-    it("should import bulk operations route correctly", async () => {
+describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
+  describe('JSON Payload Processing', () => {
+    it('should import bulk operations route correctly', async () => {
       // This may FAIL if route export is not properly configured
       expect(async () => {
-        const bulkModule = await import("../bulk");
+        const bulkModule = await import('../bulk');
 
         expect(bulkModule.default).toBeDefined();
-        expect(typeof bulkModule.default).toBe("object"); // Hono app
+        expect(typeof bulkModule.default).toBe('object'); // Hono app
 
         return true;
       }).not.toThrow();
     });
 
-    it("should process valid bulk JSON payload correctly", async () => {
+    it('should process valid bulk JSON payload correctly', async () => {
       // This will FAIL due to JSON processing issues
-      const bulkModule = await import("../bulk");
+      const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
 
       const validBulkPayload = {
-        operationId: "bulk-op-123",
-        action: "update",
-        patientIds: ["patient-1", "patient-2", "patient-3"],
+        operationId: 'bulk-op-123',
+        action: 'update',
+        patientIds: ['patient-1', 'patient-2', 'patient-3'],
         data: {
-          status: "active",
+          status: 'active',
           lastUpdated: new Date().toISOString(),
         },
         options: {
@@ -49,12 +49,12 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
       };
 
       const mockRequest = new Request(
-        "http://localhost:3000/api/v2/patients/bulk-actions",
+        'http://localhost:3000/api/v2/patients/bulk-actions',
         {
-          method: "POST",
+          method: 'POST',
           headers: new Headers({
-            authorization: "Bearer test-token",
-            "content-type": "application/json",
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
           }),
           body: JSON.stringify(validBulkPayload),
         },
@@ -63,37 +63,37 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
       const response = await bulkRoute.request(mockRequest);
 
       // Should return valid JSON response, not parsing errors
-      expect(response.headers.get("content-type")).toContain(
-        "application/json",
+      expect(response.headers.get('content-type')).toContain(
+        'application/json',
       );
 
       const data = await response.json();
       expect(data).toBeDefined();
-      expect(typeof data).toBe("object");
+      expect(typeof data).toBe('object');
     });
 
-    it("should handle malformed JSON payload gracefully", async () => {
+    it('should handle malformed JSON payload gracefully', async () => {
       // This will FAIL due to poor error handling
-      const bulkModule = await import("../bulk");
+      const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
 
       const malformedPayloads = [
         '{ "action": "update", "patientIds": [', // Incomplete JSON
-        "{ action: update }", // Invalid JSON syntax
+        '{ action: update }', // Invalid JSON syntax
         '{ "action": "update", "patientIds": "not-an-array" }', // Wrong data types
-        "", // Empty payload
-        "null", // Null payload
-        "[]", // Array instead of object
+        '', // Empty payload
+        'null', // Null payload
+        '[]', // Array instead of object
       ];
 
       for (const payload of malformedPayloads) {
         const mockRequest = new Request(
-          "http://localhost:3000/api/v2/patients/bulk-actions",
+          'http://localhost:3000/api/v2/patients/bulk-actions',
           {
-            method: "POST",
+            method: 'POST',
             headers: new Headers({
-              authorization: "Bearer test-token",
-              "content-type": "application/json",
+              authorization: 'Bearer test-token',
+              'content-type': 'application/json',
             }),
             body: payload,
           },
@@ -106,31 +106,31 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
 
         const errorData = await response.json();
         expect(errorData.error).toBeDefined();
-        expect(errorData.error.type).toBe("validation_error");
+        expect(errorData.error.type).toBe('validation_error');
       }
     });
 
-    it("should validate required JSON fields for bulk operations", async () => {
+    it('should validate required JSON fields for bulk operations', async () => {
       // This will FAIL due to insufficient validation
-      const bulkModule = await import("../bulk");
+      const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
 
       const incompletePayloads = [
-        { action: "update" }, // Missing patientIds
-        { patientIds: ["patient-1"] }, // Missing action
-        { action: "invalid_action", patientIds: ["patient-1"] }, // Invalid action
-        { action: "update", patientIds: [] }, // Empty patientIds
-        { action: "update", patientIds: ["patient-1"], data: null }, // Invalid data for update
+        { action: 'update' }, // Missing patientIds
+        { patientIds: ['patient-1'] }, // Missing action
+        { action: 'invalid_action', patientIds: ['patient-1'] }, // Invalid action
+        { action: 'update', patientIds: [] }, // Empty patientIds
+        { action: 'update', patientIds: ['patient-1'], data: null }, // Invalid data for update
       ];
 
       for (const payload of incompletePayloads) {
         const mockRequest = new Request(
-          "http://localhost:3000/api/v2/patients/bulk-actions",
+          'http://localhost:3000/api/v2/patients/bulk-actions',
           {
-            method: "POST",
+            method: 'POST',
             headers: new Headers({
-              authorization: "Bearer test-token",
-              "content-type": "application/json",
+              authorization: 'Bearer test-token',
+              'content-type': 'application/json',
             }),
             body: JSON.stringify(payload),
           },
@@ -142,43 +142,43 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
 
         const errorData = await response.json();
         expect(errorData.error).toBeDefined();
-        expect(errorData.error.details).toContain("validation");
+        expect(errorData.error.details).toContain('validation');
       }
     });
   });
 
-  describe("Healthcare-Specific JSON Validation", () => {
-    it("should validate LGPD consent fields in JSON payload", async () => {
+  describe('Healthcare-Specific JSON Validation', () => {
+    it('should validate LGPD consent fields in JSON payload', async () => {
       // This will FAIL due to missing LGPD validation
-      const bulkModule = await import("../bulk");
+      const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
 
       const lgpdRequiredPayload = {
-        operationId: "bulk-lgpd-123",
-        action: "update",
-        patientIds: ["patient-1", "patient-2"],
+        operationId: 'bulk-lgpd-123',
+        action: 'update',
+        patientIds: ['patient-1', 'patient-2'],
         data: {
           personalData: {
-            email: "patient@example.com",
-            phone: "+5511999999999",
+            email: 'patient@example.com',
+            phone: '+5511999999999',
           },
         },
         lgpdConsent: {
           dataProcessingConsent: true,
-          consentVersion: "2.0",
+          consentVersion: '2.0',
           consentDate: new Date().toISOString(),
-          legalBasis: "legitimate_interest",
-          processingPurpose: "healthcare_management",
+          legalBasis: 'legitimate_interest',
+          processingPurpose: 'healthcare_management',
         },
       };
 
       const mockRequest = new Request(
-        "http://localhost:3000/api/v2/patients/bulk-actions",
+        'http://localhost:3000/api/v2/patients/bulk-actions',
         {
-          method: "POST",
+          method: 'POST',
           headers: new Headers({
-            authorization: "Bearer test-token",
-            "content-type": "application/json",
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
           }),
           body: JSON.stringify(lgpdRequiredPayload),
         },
@@ -193,37 +193,37 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
       expect(data.consentValidated).toBe(true);
     });
 
-    it("should validate Brazilian healthcare professional fields", async () => {
+    it('should validate Brazilian healthcare professional fields', async () => {
       // This will FAIL due to missing CFM validation
-      const bulkModule = await import("../bulk");
+      const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
 
       const healthcareProfessionalPayload = {
-        operationId: "bulk-cfm-123",
-        action: "update",
-        patientIds: ["patient-1"],
+        operationId: 'bulk-cfm-123',
+        action: 'update',
+        patientIds: ['patient-1'],
         data: {
           treatingPhysician: {
-            name: "Dr. João Silva",
-            crm: "CRM-SP-123456",
-            specialtyArea: "dermatology",
+            name: 'Dr. João Silva',
+            crm: 'CRM-SP-123456',
+            specialtyArea: 'dermatology',
             licenseVerified: true,
           },
         },
         professionalContext: {
-          clinicId: "clinic-123",
-          professionalId: "doc-456",
+          clinicId: 'clinic-123',
+          professionalId: 'doc-456',
           medicalRecordAccess: true,
         },
       };
 
       const mockRequest = new Request(
-        "http://localhost:3000/api/v2/patients/bulk-actions",
+        'http://localhost:3000/api/v2/patients/bulk-actions',
         {
-          method: "POST",
+          method: 'POST',
           headers: new Headers({
-            authorization: "Bearer test-token",
-            "content-type": "application/json",
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
           }),
           body: JSON.stringify(healthcareProfessionalPayload),
         },
@@ -232,47 +232,47 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
       const response = await bulkRoute.request(mockRequest);
 
       expect(response.status).toBe(200);
-      expect(response.headers.get("X-CFM-Compliant")).toBe("true");
+      expect(response.headers.get('X-CFM-Compliant')).toBe('true');
 
       const data = await response.json();
       expect(data.professionalValidation).toBe(true);
     });
 
-    it("should validate medical data classification in JSON", async () => {
+    it('should validate medical data classification in JSON', async () => {
       // This will FAIL due to missing medical data validation
-      const bulkModule = await import("../bulk");
+      const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
 
       const medicalDataPayload = {
-        operationId: "bulk-medical-123",
-        action: "update",
-        patientIds: ["patient-1"],
+        operationId: 'bulk-medical-123',
+        action: 'update',
+        patientIds: ['patient-1'],
         data: {
           medicalHistory: {
-            allergies: ["penicillin", "shellfish"],
-            currentMedications: ["medication-a", "medication-b"],
-            diagnostics: ["diagnosis-x", "diagnosis-y"],
+            allergies: ['penicillin', 'shellfish'],
+            currentMedications: ['medication-a', 'medication-b'],
+            diagnostics: ['diagnosis-x', 'diagnosis-y'],
           },
           treatmentPlan: {
-            procedures: ["procedure-1"],
-            followUpDate: "2024-02-15",
-            notes: "Patient showing improvement",
+            procedures: ['procedure-1'],
+            followUpDate: '2024-02-15',
+            notes: 'Patient showing improvement',
           },
         },
         dataClassification: {
-          sensitivityLevel: "high",
-          medicalDataType: "clinical_records",
+          sensitivityLevel: 'high',
+          medicalDataType: 'clinical_records',
           requiresSpecialHandling: true,
         },
       };
 
       const mockRequest = new Request(
-        "http://localhost:3000/api/v2/patients/bulk-actions",
+        'http://localhost:3000/api/v2/patients/bulk-actions',
         {
-          method: "POST",
+          method: 'POST',
           headers: new Headers({
-            authorization: "Bearer test-token",
-            "content-type": "application/json",
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
           }),
           body: JSON.stringify(medicalDataPayload),
         },
@@ -284,23 +284,23 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
 
       const data = await response.json();
       expect(data.medicalDataValidated).toBe(true);
-      expect(data.sensitivityLevelConfirmed).toBe("high");
+      expect(data.sensitivityLevelConfirmed).toBe('high');
     });
   });
 
-  describe("Large JSON Payload Handling", () => {
-    it("should handle large bulk operations JSON efficiently", async () => {
+  describe('Large JSON Payload Handling', () => {
+    it('should handle large bulk operations JSON efficiently', async () => {
       // This will FAIL due to performance/memory issues
-      const bulkModule = await import("../bulk");
+      const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
 
       // Generate large payload (1000 patient IDs)
       const largeBulkPayload = {
-        operationId: "bulk-large-123",
-        action: "update",
+        operationId: 'bulk-large-123',
+        action: 'update',
         patientIds: Array.from({ length: 1000 }, (_, i) => `patient-${i + 1}`),
         data: {
-          status: "active",
+          status: 'active',
           batchProcessing: true,
         },
         options: {
@@ -311,12 +311,12 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
       };
 
       const mockRequest = new Request(
-        "http://localhost:3000/api/v2/patients/bulk-actions",
+        'http://localhost:3000/api/v2/patients/bulk-actions',
         {
-          method: "POST",
+          method: 'POST',
           headers: new Headers({
-            authorization: "Bearer test-token",
-            "content-type": "application/json",
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
           }),
           body: JSON.stringify(largeBulkPayload),
         },
@@ -335,15 +335,15 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
       expect(data.totalProcessed).toBe(1000);
     });
 
-    it("should enforce JSON payload size limits", async () => {
+    it('should enforce JSON payload size limits', async () => {
       // This will FAIL due to missing size validation
-      const bulkModule = await import("../bulk");
+      const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
 
       // Generate excessively large payload (10MB+)
       const massiveData = Array.from({ length: 10000 }, (_, i) => ({
         patientId: `patient-${i}`,
-        massiveField: "x".repeat(1000), // 1KB per patient
+        massiveField: 'x'.repeat(1000), // 1KB per patient
         medicalHistory: Array.from(
           { length: 100 },
           (_, j) => `history-item-${j}`,
@@ -351,19 +351,19 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
       }));
 
       const massivePayload = {
-        operationId: "bulk-massive-123",
-        action: "update",
-        patientIds: massiveData.map((d) => d.patientId),
+        operationId: 'bulk-massive-123',
+        action: 'update',
+        patientIds: massiveData.map(d => d.patientId),
         data: massiveData,
       };
 
       const mockRequest = new Request(
-        "http://localhost:3000/api/v2/patients/bulk-actions",
+        'http://localhost:3000/api/v2/patients/bulk-actions',
         {
-          method: "POST",
+          method: 'POST',
           headers: new Headers({
-            authorization: "Bearer test-token",
-            "content-type": "application/json",
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
           }),
           body: JSON.stringify(massivePayload),
         },
@@ -375,42 +375,42 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
       expect(response.status).toBe(413); // Payload Too Large
 
       const errorData = await response.json();
-      expect(errorData.error.type).toBe("payload_too_large");
+      expect(errorData.error.type).toBe('payload_too_large');
     });
   });
 
-  describe("JSON Content-Type Validation", () => {
-    it("should require application/json content-type header", async () => {
+  describe('JSON Content-Type Validation', () => {
+    it('should require application/json content-type header', async () => {
       // This will FAIL if content-type validation is missing
-      const bulkModule = await import("../bulk");
+      const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
 
       const validPayload = {
-        action: "update",
-        patientIds: ["patient-1"],
+        action: 'update',
+        patientIds: ['patient-1'],
       };
 
       const invalidContentTypes = [
-        "text/plain",
-        "application/xml",
-        "application/x-www-form-urlencoded",
-        "", // No content-type
+        'text/plain',
+        'application/xml',
+        'application/x-www-form-urlencoded',
+        '', // No content-type
         undefined, // Missing header
       ];
 
       for (const contentType of invalidContentTypes) {
         const headers = new Headers({
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         });
 
         if (contentType !== undefined) {
-          headers.set("content-type", contentType);
+          headers.set('content-type', contentType);
         }
 
         const mockRequest = new Request(
-          "http://localhost:3000/api/v2/patients/bulk-actions",
+          'http://localhost:3000/api/v2/patients/bulk-actions',
           {
-            method: "POST",
+            method: 'POST',
             headers,
             body: JSON.stringify(validPayload),
           },
@@ -421,33 +421,33 @@ describe("Bulk Operations JSON Handling Test (TDD RED Phase)", () => {
         expect(response.status).toBe(415); // Unsupported Media Type
 
         const errorData = await response.json();
-        expect(errorData.error.type).toBe("unsupported_media_type");
+        expect(errorData.error.type).toBe('unsupported_media_type');
       }
     });
 
-    it("should handle JSON with different character encodings", async () => {
+    it('should handle JSON with different character encodings', async () => {
       // This will FAIL if encoding is not properly handled
-      const bulkModule = await import("../bulk");
+      const bulkModule = await import('../bulk');
       const bulkRoute = bulkModule.default;
 
       const payloadWithUnicode = {
-        operationId: "bulk-unicode-123",
-        action: "update",
-        patientIds: ["patient-1"],
+        operationId: 'bulk-unicode-123',
+        action: 'update',
+        patientIds: ['patient-1'],
         data: {
-          name: "José María González", // Spanish characters
-          notes: "Paciente com histórico de alergia à penicilina", // Portuguese with accents
-          emoji: "🏥👨‍⚕️💊", // Medical emojis
+          name: 'José María González', // Spanish characters
+          notes: 'Paciente com histórico de alergia à penicilina', // Portuguese with accents
+          emoji: '🏥👨‍⚕️💊', // Medical emojis
         },
       };
 
       const mockRequest = new Request(
-        "http://localhost:3000/api/v2/patients/bulk-actions",
+        'http://localhost:3000/api/v2/patients/bulk-actions',
         {
-          method: "POST",
+          method: 'POST',
           headers: new Headers({
-            authorization: "Bearer test-token",
-            "content-type": "application/json; charset=utf-8",
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json; charset=utf-8',
           }),
           body: JSON.stringify(payloadWithUnicode),
         },

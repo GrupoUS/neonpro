@@ -3,25 +3,25 @@
  * Handles conversational queries for healthcare data using Hono.js
  */
 
-import { Hono } from "hono";
-import { cors } from "hono/cors";
-import { validator } from "@hono/zod-validator";
-import { HTTPException } from "hono/http-exception";
-import { AIDataService } from "@/services/ai-data-service";
-import { intentParser } from "@/services/intent-parser";
+import { AIDataService } from '@/services/ai-data-service';
+import { intentParser } from '@/services/intent-parser';
+import { validator } from '@hono/zod-validator';
 import {
-  QueryIntent,
-  AgentResponse,
   AgentAction,
+  AgentError,
+  AgentResponse,
+  AgentResponseSchema,
   DataAgentRequest,
+  DataAgentRequestSchema,
   DataAgentResponse,
+  QueryIntent,
+  safeValidate,
   ValidDataAgentRequest,
   ValidDataAgentResponse,
-  safeValidate,
-  DataAgentRequestSchema,
-  AgentError,
-  AgentResponseSchema,
-} from "@neonpro/types";
+} from '@neonpro/types';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import { HTTPException } from 'hono/http-exception';
 
 // Initialize Hono app
 const app = new Hono<{
@@ -40,19 +40,19 @@ const app = new Hono<{
 
 // Middleware
 app.use(
-  "*",
+  '*',
   cors({
-    origin: (origin) => {
+    origin: origin => {
       // Allow specific origins in production
       const allowedOrigins = [
-        "http://localhost:3000",
-        "http://localhost:5173",
-        "https://neonpro.app",
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'https://neonpro.app',
       ];
       return allowedOrigins.includes(origin) || origin === undefined;
     },
-    allowMethods: ["POST", "GET", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ['POST', 'GET', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization'],
   }),
 );
 
@@ -68,8 +68,8 @@ const dataService = new AIDataService();
  * Main endpoint for AI agent queries
  */
 app.post(
-  "/api/ai/data-agent",
-  validator("json", (value, c) => {
+  '/api/ai/data-agent',
+  validator('json', (value, c) => {
     const result = safeValidate(DataAgentRequestSchema, value);
     if (!result.success) {
       throw new HTTPException(400, {
@@ -79,12 +79,12 @@ app.post(
     }
     return result.data;
   }),
-  async (c) => {
+  async c => {
     const startTime = Date.now();
 
     try {
-      const request: ValidDataAgentRequest = c.req.valid("json");
-      const user = c.get("user");
+      const request: ValidDataAgentRequest = c.req.valid('json');
+      const user = c.get('user');
 
       // Parse user intent
       const userQuery = await intentParser.parseQuery(request.query, {
@@ -119,7 +119,7 @@ app.post(
         agentResponse,
       );
       if (!validatedResponse.success) {
-        console.error("Response validation failed:", validatedResponse.error);
+        console.error('Response validation failed:', validatedResponse.error);
         // Continue with response anyway for debugging
       }
 
@@ -130,16 +130,15 @@ app.post(
 
       return c.json(apiResponse);
     } catch (error) {
-      console.error("Agent endpoint error:", error);
+      console.error('Agent endpoint error:', error);
 
       const processingTime = Date.now() - startTime;
 
       const errorResponse: DataAgentResponse = {
         success: false,
         error: {
-          code: error instanceof AgentError ? error.code : "INTERNAL_ERROR",
-          message:
-            error instanceof Error ? error.message : "Unknown error occurred",
+          code: error instanceof AgentError ? error.code : 'INTERNAL_ERROR',
+          message: error instanceof Error ? error.message : 'Unknown error occurred',
           details: error instanceof AgentError ? error.details : undefined,
         },
       };
@@ -182,8 +181,8 @@ async function processQuery(
 
     default:
       throw new AgentError(
-        "Unable to determine query intent",
-        "UNKNOWN_INTENT",
+        'Unable to determine query intent',
+        'UNKNOWN_INTENT',
       );
   }
 }
@@ -218,28 +217,26 @@ async function processClientSearch(
 
   // Remove duplicates
   const uniqueClients = allClients.filter(
-    (client, index, self) =>
-      index === self.findIndex((c) => c.id === client.id),
+    (client, index, self) => index === self.findIndex(c => c.id === client.id),
   );
 
-  const actions: AgentAction[] = uniqueClients.slice(0, 5).map((client) => ({
+  const actions: AgentAction[] = uniqueClients.slice(0, 5).map(client => ({
     id: `view_client_${client.id}`,
-    type: "view_details" as const,
+    type: 'view_details' as const,
     label: `Ver detalhes de ${client.name}`,
     payload: { clientId: client.id },
-    icon: "user",
+    icon: 'user',
   }));
 
   return {
     data: {
       clients: uniqueClients.slice(0, context?.limit || 10),
-      summary:
-        uniqueClients.length > 0
-          ? {
-              total: uniqueClients.length,
-              count: uniqueClients.length,
-            }
-          : undefined,
+      summary: uniqueClients.length > 0
+        ? {
+          total: uniqueClients.length,
+          count: uniqueClients.length,
+        }
+        : undefined,
     },
     actions,
     confidence: Math.min(0.95, 0.5 + names[0].length * 0.05),
@@ -307,17 +304,17 @@ async function processAppointmentQuery(
 
   const actions: AgentAction[] = [
     {
-      id: "create_appointment",
-      type: "create_appointment" as const,
-      label: "Novo Agendamento",
-      icon: "plus",
+      id: 'create_appointment',
+      type: 'create_appointment' as const,
+      label: 'Novo Agendamento',
+      icon: 'plus',
       primary: true,
     },
     {
-      id: "refresh_appointments",
-      type: "refresh" as const,
-      label: "Atualizar",
-      icon: "refresh",
+      id: 'refresh_appointments',
+      type: 'refresh' as const,
+      label: 'Atualizar',
+      icon: 'refresh',
     },
   ];
 
@@ -325,14 +322,13 @@ async function processAppointmentQuery(
     data: {
       appointments: appointments.slice(0, context?.limit || 20),
       groupedByDate: groupedAppointments,
-      summary:
-        appointments.length > 0
-          ? {
-              total: appointments.length,
-              count: appointments.filter((a) => a.status === "scheduled")
-                .length,
-            }
-          : undefined,
+      summary: appointments.length > 0
+        ? {
+          total: appointments.length,
+          count: appointments.filter(a => a.status === 'scheduled')
+            .length,
+        }
+        : undefined,
     },
     actions,
     confidence: 0.8,
@@ -375,17 +371,17 @@ async function processFinancialQuery(
 
   const actions: AgentAction[] = [
     {
-      id: "export_financial",
-      type: "export_data" as const,
-      label: "Exportar Relatório",
-      icon: "download",
+      id: 'export_financial',
+      type: 'export_data' as const,
+      label: 'Exportar Relatório',
+      icon: 'download',
     },
     {
-      id: "view_financial_details",
-      type: "navigate" as const,
-      label: "Ver Detalhes Financeiros",
-      payload: { path: "/financeiro" },
-      icon: "chart-bar",
+      id: 'view_financial_details',
+      type: 'navigate' as const,
+      label: 'Ver Detalhes Financeiros',
+      payload: { path: '/financeiro' },
+      icon: 'chart-bar',
     },
   ];
 
@@ -413,16 +409,16 @@ async function processAppointmentCreation(
   // For now, return a response indicating this feature is coming soon
   return {
     data: {
-      message: "A criação de agendamentos estará disponível em breve.",
+      message: 'A criação de agendamentos estará disponível em breve.',
       entities: userQuery.entities,
     },
     actions: [
       {
-        id: "navigate_to_scheduling",
-        type: "navigate" as const,
-        label: "Ir para Agenda",
-        payload: { path: "/agendamentos/novo" },
-        icon: "calendar",
+        id: 'navigate_to_scheduling',
+        type: 'navigate' as const,
+        label: 'Ir para Agenda',
+        payload: { path: '/agendamentos/novo' },
+        icon: 'calendar',
         primary: true,
       },
     ],
@@ -444,7 +440,7 @@ async function processGeneralInquiry(
   // Try to understand what the user wants based on context
   const text = userQuery.text.toLowerCase();
 
-  if (text.includes("ajuda") || text.includes("help")) {
+  if (text.includes('ajuda') || text.includes('help')) {
     return {
       data: {
         message: `Posso ajudar você a:
@@ -457,11 +453,11 @@ Como posso ajudar?`,
       },
       actions: [
         {
-          id: "show_examples",
-          type: "navigate" as const,
-          label: "Ver Exemplos",
-          payload: { path: "/ajuda/exemplos" },
-          icon: "help",
+          id: 'show_examples',
+          type: 'navigate' as const,
+          label: 'Ver Exemplos',
+          payload: { path: '/ajuda/exemplos' },
+          icon: 'help',
         },
       ],
       confidence: 0.9,
@@ -471,11 +467,11 @@ Como posso ajudar?`,
   // Default response
   return {
     data: {
-      message: "Não entendi completamente. Pode reformular sua pergunta?",
+      message: 'Não entendi completamente. Pode reformular sua pergunta?',
       suggestions: [
-        "Buscar cliente João Silva",
-        "Quais agendamentos para hoje?",
-        "Resumo financeiro deste mês",
+        'Buscar cliente João Silva',
+        'Quais agendamentos para hoje?',
+        'Resumo financeiro deste mês',
       ],
     },
     actions: [],
@@ -491,27 +487,27 @@ function generateSuccessMessage(intent: QueryIntent, result: any): string {
     case QueryIntent.CLIENT_SEARCH:
       const clientCount = result.data?.clients?.length || 0;
       return clientCount > 0
-        ? `Encontrei ${clientCount} cliente${clientCount > 1 ? "s" : ""}`
-        : "Nenhum cliente encontrado com esses critérios";
+        ? `Encontrei ${clientCount} cliente${clientCount > 1 ? 's' : ''}`
+        : 'Nenhum cliente encontrado com esses critérios';
 
     case QueryIntent.APPOINTMENT_QUERY:
       const aptCount = result.data?.appointments?.length || 0;
       return aptCount > 0
-        ? `Encontrei ${aptCount} agendamento${aptCount > 1 ? "s" : ""}`
-        : "Nenhum agendamento encontrado para este período";
+        ? `Encontrei ${aptCount} agendamento${aptCount > 1 ? 's' : ''}`
+        : 'Nenhum agendamento encontrado para este período';
 
     case QueryIntent.FINANCIAL_QUERY:
       const summary = result.data?.summary;
       if (summary) {
         return `Resumo financeiro: ${formatCurrency(summary.total)} em ${summary.count} transações`;
       }
-      return "Nenhum dado financeiro encontrado";
+      return 'Nenhum dado financeiro encontrado';
 
     case QueryIntent.APPOINTMENT_CREATION:
-      return "Entendi que você quer agendar uma consulta";
+      return 'Entendi que você quer agendar uma consulta';
 
     default:
-      return "Consulta processada com sucesso";
+      return 'Consulta processada com sucesso';
   }
 }
 
@@ -522,23 +518,23 @@ function generateSuggestions(intent: QueryIntent, result: any): string[] {
   switch (intent) {
     case QueryIntent.CLIENT_SEARCH:
       return [
-        "Ver histórico do cliente",
-        "Agendar consulta",
-        "Ver financeiro do cliente",
+        'Ver histórico do cliente',
+        'Agendar consulta',
+        'Ver financeiro do cliente',
       ];
 
     case QueryIntent.APPOINTMENT_QUERY:
       return [
-        "Agendar nova consulta",
-        "Ver agenda completa",
-        "Consultar agendamentos de amanhã",
+        'Agendar nova consulta',
+        'Ver agenda completa',
+        'Consultar agendamentos de amanhã',
       ];
 
     case QueryIntent.FINANCIAL_QUERY:
       return [
-        "Exportar relatório",
-        "Ver contas a receber",
-        "Consultar pagamentos do mês",
+        'Exportar relatório',
+        'Ver contas a receber',
+        'Consultar pagamentos do mês',
       ];
 
     default:
@@ -552,7 +548,7 @@ function generateSuggestions(intent: QueryIntent, result: any): string[] {
 function groupAppointmentsByDate(appointments: any[]): Record<string, any[]> {
   return appointments.reduce(
     (groups, apt) => {
-      const date = apt.scheduledAt.split("T")[0];
+      const date = apt.scheduledAt.split('T')[0];
       if (!groups[date]) {
         groups[date] = [];
       }
@@ -567,21 +563,21 @@ function groupAppointmentsByDate(appointments: any[]): Record<string, any[]> {
  * Format currency for display
  */
 function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
   }).format(amount);
 }
 
 // Health check endpoint
-app.get("/api/ai/health", async (c) => {
+app.get('/api/ai/health', async c => {
   const isHealthy = await dataService.healthCheck();
 
   return c.json(
     {
-      status: isHealthy ? "healthy" : "unhealthy",
+      status: isHealthy ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
-      version: "1.0.0",
+      version: '1.0.0',
     },
     isHealthy ? 200 : 503,
   );

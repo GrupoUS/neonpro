@@ -1,38 +1,38 @@
-import { Hono } from "hono";
-import { describe, expect, it } from "vitest";
+import { Hono } from 'hono';
+import { describe, expect, it } from 'vitest';
 
 // Contract for Security Policies API endpoints
 // Source: /home/vibecode/neonpro/specs/002-platform-architecture-improvements/contracts/security-policies.openapi.yaml
 
 async function api(path: string, init?: RequestInit) {
   // Use main app which includes security policy routes
-  const { default: app } = await import("../../src/app");
+  const { default: app } = await import('../../src/app');
   const url = new URL(`http://local.test${path}`);
   return app.request(url, init);
 }
 
-describe("Contract: Security Policies API", () => {
-  describe("CSP Validation Endpoints", () => {
-    it("should validate CSP configuration", async () => {
+describe('Contract: Security Policies API', () => {
+  describe('CSP Validation Endpoints', () => {
+    it('should validate CSP configuration', async () => {
       const cspConfig = {
-        "default-src": ["'self'"],
-        "script-src": ["'self'", "'unsafe-inline'"],
-        "style-src": ["'self'", "'unsafe-inline'"],
-        "img-src": ["'self'", "data:", "https:"],
-        "connect-src": ["'self'", "wss:", "https:"],
-        "font-src": ["'self'", "data:"],
-        "object-src": ["'none'"],
-        "base-uri": ["'self'"],
-        "form-action": ["'self'"],
-        "frame-ancestors": ["'none'"],
-        "report-uri": "/api/v1/security/csp-report",
+        'default-src': ['\'self\''],
+        'script-src': ['\'self\'', '\'unsafe-inline\''],
+        'style-src': ['\'self\'', '\'unsafe-inline\''],
+        'img-src': ['\'self\'', 'data:', 'https:'],
+        'connect-src': ['\'self\'', 'wss:', 'https:'],
+        'font-src': ['\'self\'', 'data:'],
+        'object-src': ['\'none\''],
+        'base-uri': ['\'self\''],
+        'form-action': ['\'self\''],
+        'frame-ancestors': ['\'none\''],
+        'report-uri': '/api/v1/security/csp-report',
       };
 
-      const res = await api("/api/v1/security/csp/validate", {
-        method: "POST",
+      const res = await api('/api/v1/security/csp/validate', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(cspConfig),
       });
@@ -53,11 +53,11 @@ describe("Contract: Security Policies API", () => {
       });
     });
 
-    it("should generate healthcare-optimized CSP headers", async () => {
-      const res = await api("/api/v1/security/csp/healthcare-headers", {
-        method: "GET",
+    it('should generate healthcare-optimized CSP headers', async () => {
+      const res = await api('/api/v1/security/csp/healthcare-headers', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -67,8 +67,8 @@ describe("Contract: Security Policies API", () => {
       const data = await res.json();
       expect(data).toMatchObject({
         headers: expect.objectContaining({
-          "Content-Security-Policy": expect.stringContaining("default-src"),
-          "Content-Security-Policy-Report-Only": expect.any(String),
+          'Content-Security-Policy': expect.stringContaining('default-src'),
+          'Content-Security-Policy-Report-Only': expect.any(String),
         }),
         security_level: expect.any(String),
         compliance: expect.objectContaining({
@@ -80,22 +80,22 @@ describe("Contract: Security Policies API", () => {
     });
   });
 
-  describe("Rate Limiting API", () => {
-    it("should configure rate limiting rules", async () => {
+  describe('Rate Limiting API', () => {
+    it('should configure rate limiting rules', async () => {
       const rateLimitConfig = {
-        endpoint: "/api/v1/patients",
+        endpoint: '/api/v1/patients',
         window_ms: 60000,
         max_requests: 100,
         healthcare_priority: true,
         emergency_override: false,
-        bypass_tokens: ["emergency-access", "system-integration"],
+        bypass_tokens: ['emergency-access', 'system-integration'],
       };
 
-      const res = await api("/api/v1/security/rate-limit/configure", {
-        method: "POST",
+      const res = await api('/api/v1/security/rate-limit/configure', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer admin-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(rateLimitConfig),
       });
@@ -106,7 +106,7 @@ describe("Contract: Security Policies API", () => {
       const data = await res.json();
       expect(data).toMatchObject({
         rule_id: expect.any(String),
-        status: "active",
+        status: 'active',
         configuration: expect.objectContaining({
           endpoint: rateLimitConfig.endpoint,
           window_ms: rateLimitConfig.window_ms,
@@ -120,11 +120,11 @@ describe("Contract: Security Policies API", () => {
       });
     });
 
-    it("should return current rate limiting status", async () => {
-      const res = await api("/api/v1/security/rate-limit/status", {
-        method: "GET",
+    it('should return current rate limiting status', async () => {
+      const res = await api('/api/v1/security/rate-limit/status', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -152,18 +152,18 @@ describe("Contract: Security Policies API", () => {
     });
   });
 
-  describe("Security Policy Management", () => {
-    it("should create security policy", async () => {
+  describe('Security Policy Management', () => {
+    it('should create security policy', async () => {
       const securityPolicy = {
-        name: "Patient Data Protection Policy",
-        level: "RESTRICTED",
-        data_classification: "SENSITIVE_HEALTH",
-        lgpd_compliance_categories: ["PERSONAL_DATA", "HEALTH_DATA"],
+        name: 'Patient Data Protection Policy',
+        level: 'RESTRICTED',
+        data_classification: 'SENSITIVE_HEALTH',
+        lgpd_compliance_categories: ['PERSONAL_DATA', 'HEALTH_DATA'],
         csp_configuration: {
-          "default-src": ["'self'"],
-          "script-src": ["'self'"],
+          'default-src': ['\'self\''],
+          'script-src': ['\'self\''],
         },
-        rls_policies: ["patient_access_control", "data_encryption"],
+        rls_policies: ['patient_access_control', 'data_encryption'],
         audit_requirements: {
           log_all_access: true,
           retention_days: 365,
@@ -171,11 +171,11 @@ describe("Contract: Security Policies API", () => {
         },
       };
 
-      const res = await api("/api/v1/security/policies", {
-        method: "POST",
+      const res = await api('/api/v1/security/policies', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer admin-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(securityPolicy),
       });
@@ -189,7 +189,7 @@ describe("Contract: Security Policies API", () => {
         name: securityPolicy.name,
         level: securityPolicy.level,
         data_classification: securityPolicy.data_classification,
-        status: "active",
+        status: 'active',
         compliance: expect.objectContaining({
           lgpd: expect.any(Boolean),
           anvisa: expect.any(Boolean),
@@ -200,11 +200,11 @@ describe("Contract: Security Policies API", () => {
       });
     });
 
-    it("should list security policies", async () => {
-      const res = await api("/api/v1/security/policies", {
-        method: "GET",
+    it('should list security policies', async () => {
+      const res = await api('/api/v1/security/policies', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -239,19 +239,19 @@ describe("Contract: Security Policies API", () => {
       }
     });
 
-    it("should validate security policy compliance", async () => {
-      const res = await api("/api/v1/security/policies/validate", {
-        method: "POST",
+    it('should validate security policy compliance', async () => {
+      const res = await api('/api/v1/security/policies/validate', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          policy_id: "test-policy-id",
+          policy_id: 'test-policy-id',
           context: {
-            data_type: "patient_records",
-            access_level: "restricted",
-            user_role: "healthcare_provider",
+            data_type: 'patient_records',
+            access_level: 'restricted',
+            user_role: 'healthcare_provider',
           },
         }),
       });
@@ -274,19 +274,19 @@ describe("Contract: Security Policies API", () => {
     });
   });
 
-  describe("Authentication/Authorization APIs", () => {
-    it("should validate authentication token", async () => {
-      const res = await api("/api/v1/security/auth/validate", {
-        method: "POST",
+  describe('Authentication/Authorization APIs', () => {
+    it('should validate authentication token', async () => {
+      const res = await api('/api/v1/security/auth/validate', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+          token: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...',
           context: {
-            endpoint: "/api/v1/patients",
-            method: "GET",
+            endpoint: '/api/v1/patients',
+            method: 'GET',
           },
         }),
       });
@@ -308,19 +308,19 @@ describe("Contract: Security Policies API", () => {
       });
     });
 
-    it("should check authorization permissions", async () => {
-      const res = await api("/api/v1/security/auth/permissions", {
-        method: "POST",
+    it('should check authorization permissions', async () => {
+      const res = await api('/api/v1/security/auth/permissions', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          user_id: "test-user-id",
-          resource: "/api/v1/patients/123",
-          action: "read",
+          user_id: 'test-user-id',
+          resource: '/api/v1/patients/123',
+          action: 'read',
           context: {
-            patient_id: "123",
+            patient_id: '123',
             emergency_access: false,
           },
         }),
@@ -334,33 +334,33 @@ describe("Contract: Security Policies API", () => {
         allowed: expect.any(Boolean),
         reason: expect.any(String),
         healthcare_rules: expect.arrayContaining([
-          "patient_consent",
-          "professional_relationship",
-          "data_sensitivity",
-          "emergency_override",
+          'patient_consent',
+          'professional_relationship',
+          'data_sensitivity',
+          'emergency_override',
         ]),
         audit_required: expect.any(Boolean),
       });
     });
   });
 
-  describe("LGPD Compliance Endpoints", () => {
-    it("should validate LGPD compliance for data processing", async () => {
+  describe('LGPD Compliance Endpoints', () => {
+    it('should validate LGPD compliance for data processing', async () => {
       const lgpdValidation = {
-        data_type: "patient_medical_records",
-        processing_basis: "treatment_consent",
-        data_subject_id: "patient-123",
+        data_type: 'patient_medical_records',
+        processing_basis: 'treatment_consent',
+        data_subject_id: 'patient-123',
         retention_period: 365,
-        sharing_purposes: ["treatment", "billing"],
+        sharing_purposes: ['treatment', 'billing'],
         international_transfer: false,
         automated_decision: false,
       };
 
-      const res = await api("/api/v1/security/lgpd/validate", {
-        method: "POST",
+      const res = await api('/api/v1/security/lgpd/validate', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(lgpdValidation),
       });
@@ -389,11 +389,11 @@ describe("Contract: Security Policies API", () => {
       });
     });
 
-    it("should generate LGPD compliance report", async () => {
-      const res = await api("/api/v1/security/lgpd/report", {
-        method: "GET",
+    it('should generate LGPD compliance report', async () => {
+      const res = await api('/api/v1/security/lgpd/report', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -423,25 +423,25 @@ describe("Contract: Security Policies API", () => {
       });
     });
 
-    it("should handle data subject request (DSR)", async () => {
+    it('should handle data subject request (DSR)', async () => {
       const dsrRequest = {
-        type: "access_request",
-        data_subject_id: "patient-123",
+        type: 'access_request',
+        data_subject_id: 'patient-123',
         identity_verification: {
-          cpf: "123.456.789-00",
-          full_name: "João da Silva",
-          date_of_birth: "1980-01-01",
+          cpf: '123.456.789-00',
+          full_name: 'João da Silva',
+          date_of_birth: '1980-01-01',
         },
-        scope: ["medical_records", "appointment_history", "billing_data"],
-        format: "digital",
-        delivery_method: "secure_portal",
+        scope: ['medical_records', 'appointment_history', 'billing_data'],
+        format: 'digital',
+        delivery_method: 'secure_portal',
       };
 
-      const res = await api("/api/v1/security/lgpd/dsr", {
-        method: "POST",
+      const res = await api('/api/v1/security/lgpd/dsr', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(dsrRequest),
       });
@@ -452,7 +452,7 @@ describe("Contract: Security Policies API", () => {
       const data = await res.json();
       expect(data).toMatchObject({
         request_id: expect.any(String),
-        status: "processing",
+        status: 'processing',
         estimated_completion: expect.any(String),
         data_handler: expect.objectContaining({
           name: expect.any(String),
@@ -468,31 +468,31 @@ describe("Contract: Security Policies API", () => {
     });
   });
 
-  describe("Security Audit Trail", () => {
-    it("should log security events with healthcare context", async () => {
+  describe('Security Audit Trail', () => {
+    it('should log security events with healthcare context', async () => {
       const securityEvent = {
-        event_type: "data_access",
-        severity: "medium",
-        user_id: "professional-123",
-        resource: "/api/v1/patients/456",
-        action: "read",
-        result: "success",
-        ip_address: "192.168.1.100",
-        user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+        event_type: 'data_access',
+        severity: 'medium',
+        user_id: 'professional-123',
+        resource: '/api/v1/patients/456',
+        action: 'read',
+        result: 'success',
+        ip_address: '192.168.1.100',
+        user_agent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
         healthcare_context: {
-          patient_id: "456",
-          professional_id: "professional-123",
-          clinic_id: "clinic-789",
-          access_reason: "routine_consultation",
+          patient_id: '456',
+          professional_id: 'professional-123',
+          clinic_id: 'clinic-789',
+          access_reason: 'routine_consultation',
           emergency_access: false,
         },
       };
 
-      const res = await api("/api/v1/security/audit/log", {
-        method: "POST",
+      const res = await api('/api/v1/security/audit/log', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(securityEvent),
       });
@@ -516,11 +516,11 @@ describe("Contract: Security Policies API", () => {
       });
     });
 
-    it("should retrieve security audit trail", async () => {
-      const res = await api("/api/v1/security/audit/trail", {
-        method: "GET",
+    it('should retrieve security audit trail', async () => {
+      const res = await api('/api/v1/security/audit/trail', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -549,18 +549,18 @@ describe("Contract: Security Policies API", () => {
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle invalid CSP configuration", async () => {
+  describe('Error Handling', () => {
+    it('should handle invalid CSP configuration', async () => {
       const invalidCsp = {
-        "default-src": "unsafe-eval",
-        "script-src": ["unsafe-inline", "http://malicious.com"],
+        'default-src': 'unsafe-eval',
+        'script-src': ['unsafe-inline', 'http://malicious.com'],
       };
 
-      const res = await api("/api/v1/security/csp/validate", {
-        method: "POST",
+      const res = await api('/api/v1/security/csp/validate', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(invalidCsp),
       });
@@ -575,11 +575,11 @@ describe("Contract: Security Policies API", () => {
       });
     });
 
-    it("should handle unauthorized access attempts", async () => {
-      const res = await api("/api/v1/security/policies", {
-        method: "GET",
+    it('should handle unauthorized access attempts', async () => {
+      const res = await api('/api/v1/security/policies', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer invalid-token",
+          authorization: 'Bearer invalid-token',
         },
       });
 
@@ -587,32 +587,32 @@ describe("Contract: Security Policies API", () => {
 
       const data = await res.json();
       expect(data).toMatchObject({
-        error: "Unauthorized",
+        error: 'Unauthorized',
         security_event_logged: expect.any(Boolean),
         retry_after: expect.any(Number),
       });
     });
 
-    it("should handle rate limit exceeded", async () => {
+    it('should handle rate limit exceeded', async () => {
       // Simulate rate limit by making multiple rapid requests
       const requests = Array(10)
         .fill(null)
         .map(() =>
-          api("/api/v1/security/rate-limit/status", {
-            method: "GET",
+          api('/api/v1/security/rate-limit/status', {
+            method: 'GET',
             headers: {
-              authorization: "Bearer test-token",
+              authorization: 'Bearer test-token',
             },
-          }),
+          })
         );
 
       const responses = await Promise.all(requests);
-      const rateLimitedResponse = responses.find((res) => res.status === 429);
+      const rateLimitedResponse = responses.find(res => res.status === 429);
 
       if (rateLimitedResponse) {
         const data = await rateLimitedResponse.json();
         expect(data).toMatchObject({
-          error: "Rate limit exceeded",
+          error: 'Rate limit exceeded',
           retry_after: expect.any(Number),
           healthcare_priority_access: expect.any(Boolean),
         });
@@ -620,14 +620,14 @@ describe("Contract: Security Policies API", () => {
     });
   });
 
-  describe("Healthcare Security Requirements", () => {
-    it("should validate healthcare-specific security policies", async () => {
+  describe('Healthcare Security Requirements', () => {
+    it('should validate healthcare-specific security policies', async () => {
       const healthcarePolicy = {
         patient_data_protection: {
           encryption_at_rest: true,
           encryption_in_transit: true,
           access_logging: true,
-          retention_policy: "10_years",
+          retention_policy: '10_years',
         },
         professional_confidentiality: {
           doctor_patient_privilege: true,
@@ -648,11 +648,11 @@ describe("Contract: Security Policies API", () => {
         },
       };
 
-      const res = await api("/api/v1/security/healthcare/validate", {
-        method: "POST",
+      const res = await api('/api/v1/security/healthcare/validate', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(healthcarePolicy),
       });
@@ -678,11 +678,11 @@ describe("Contract: Security Policies API", () => {
       });
     });
 
-    it("should generate healthcare security audit report", async () => {
-      const res = await api("/api/v1/security/healthcare/audit-report", {
-        method: "GET",
+    it('should generate healthcare security audit report', async () => {
+      const res = await api('/api/v1/security/healthcare/audit-report', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
       });
 

@@ -3,10 +3,10 @@
 
 export function sseHeaders(extra?: Record<string, string>) {
   return new Headers({
-    "Content-Type": "text/event-stream; charset=utf-8",
-    "Cache-Control": "no-cache, no-transform",
-    Connection: "keep-alive",
-    "X-Chat-Started-At": new Date().toISOString(),
+    'Content-Type': 'text/event-stream; charset=utf-8',
+    'Cache-Control': 'no-cache, no-transform',
+    Connection: 'keep-alive',
+    'X-Chat-Started-At': new Date().toISOString(),
     ...extra,
   });
 }
@@ -21,13 +21,13 @@ export function sseStreamFromChunks(
       const enc = new TextEncoder();
       let i = 0;
       const id = setInterval(() => {
-        const line = `data: ${JSON.stringify({ type: "text", delta: chunks[i] })}\n\n`;
+        const line = `data: ${JSON.stringify({ type: 'text', delta: chunks[i] })}\n\n`;
         controller.enqueue(enc.encode(line));
         i++;
         if (i >= chunks.length) {
           clearInterval(id);
           controller.enqueue(
-            enc.encode(`data: ${JSON.stringify({ type: "done" })}\n\n`),
+            enc.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`),
           );
           controller.close();
         }

@@ -1,13 +1,13 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { Hono } from "hono";
-import { serve } from "@hono/node-server";
-import { createServer } from "http";
-import { fetch } from "undici";
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
+import { createServer } from 'http';
+import { fetch } from 'undici';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // Import the sessions route
-import { sessionsRouter } from "../../src/routes/ai/sessions";
+import { sessionsRouter } from '../../src/routes/ai/sessions';
 
-describe("Contract Tests: AI Sessions Endpoint", () => {
+describe('Contract Tests: AI Sessions Endpoint', () => {
   let server: any;
   let baseUrl: string;
   let app: Hono;
@@ -15,7 +15,7 @@ describe("Contract Tests: AI Sessions Endpoint", () => {
   beforeAll(async () => {
     // Create Hono app with sessions route
     app = new Hono();
-    app.route("/api/ai/sessions", sessionsRouter);
+    app.route('/api/ai/sessions', sessionsRouter);
 
     // Start test server
     server = createServer({
@@ -23,10 +23,10 @@ describe("Contract Tests: AI Sessions Endpoint", () => {
       port: 0,
     });
 
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       server.listen(0, () => {
         const address = server.address();
-        if (address && typeof address === "object") {
+        if (address && typeof address === 'object') {
           baseUrl = `http://localhost:${address.port}`;
         }
         resolve(true);
@@ -36,25 +36,25 @@ describe("Contract Tests: AI Sessions Endpoint", () => {
 
   afterAll(async () => {
     if (server) {
-      await new Promise((resolve) => server.close(resolve));
+      await new Promise(resolve => server.close(resolve));
     }
   });
 
-  describe("GET /api/ai/sessions/{sessionId}", () => {
-    it("should return 400 for missing sessionId", async () => {
+  describe('GET /api/ai/sessions/{sessionId}', () => {
+    it('should return 400 for missing sessionId', async () => {
       const response = await fetch(`${baseUrl}/api/ai/sessions/`, {
-        method: "GET",
+        method: 'GET',
       });
 
       expect(response.status).toBe(404); // Route not found without sessionId
     });
 
-    it("should return 404 for non-existent session", async () => {
-      const sessionId = "non-existent-session-123";
+    it('should return 404 for non-existent session', async () => {
+      const sessionId = 'non-existent-session-123';
       const response = await fetch(`${baseUrl}/api/ai/sessions/${sessionId}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          Authorization: "Bearer test-token",
+          Authorization: 'Bearer test-token',
         },
       });
 
@@ -63,12 +63,12 @@ describe("Contract Tests: AI Sessions Endpoint", () => {
       expect(data.error).toBeDefined();
     });
 
-    it("should return 200 for valid session", async () => {
-      const sessionId = "test-session-123";
+    it('should return 200 for valid session', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(`${baseUrl}/api/ai/sessions/${sessionId}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          Authorization: "Bearer test-token",
+          Authorization: 'Bearer test-token',
         },
       });
 
@@ -89,12 +89,12 @@ describe("Contract Tests: AI Sessions Endpoint", () => {
       }
     });
 
-    it("should return session with messages", async () => {
-      const sessionId = "session-with-messages-456";
+    it('should return session with messages', async () => {
+      const sessionId = 'session-with-messages-456';
       const response = await fetch(`${baseUrl}/api/ai/sessions/${sessionId}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          Authorization: "Bearer test-token",
+          Authorization: 'Bearer test-token',
         },
       });
 
@@ -106,11 +106,11 @@ describe("Contract Tests: AI Sessions Endpoint", () => {
 
         if (data.messages.length > 0) {
           const message = data.messages[0];
-          expect(message).toHaveProperty("id");
-          expect(message).toHaveProperty("role");
-          expect(["user", "assistant"]).toContain(message.role);
-          expect(message).toHaveProperty("content");
-          expect(message).toHaveProperty("timestamp");
+          expect(message).toHaveProperty('id');
+          expect(message).toHaveProperty('role');
+          expect(['user', 'assistant']).toContain(message.role);
+          expect(message).toHaveProperty('content');
+          expect(message).toHaveProperty('timestamp');
 
           // Verify timestamp format
           expect(new Date(message.timestamp)).toBeInstanceOf(Date);
@@ -118,12 +118,12 @@ describe("Contract Tests: AI Sessions Endpoint", () => {
       }
     });
 
-    it("should handle malformed sessionId", async () => {
-      const sessionId = "invalid-session-id!";
+    it('should handle malformed sessionId', async () => {
+      const sessionId = 'invalid-session-id!';
       const response = await fetch(`${baseUrl}/api/ai/sessions/${sessionId}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          Authorization: "Bearer test-token",
+          Authorization: 'Bearer test-token',
         },
       });
 
@@ -132,21 +132,21 @@ describe("Contract Tests: AI Sessions Endpoint", () => {
       expect(data.error).toBeDefined();
     });
 
-    it("should require authentication", async () => {
-      const sessionId = "test-session-123";
+    it('should require authentication', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(`${baseUrl}/api/ai/sessions/${sessionId}`, {
-        method: "GET",
+        method: 'GET',
       });
 
       expect(response.status).toBe(401);
     });
 
-    it("should return properly formatted timestamps", async () => {
-      const sessionId = "test-session-timestamps";
+    it('should return properly formatted timestamps', async () => {
+      const sessionId = 'test-session-timestamps';
       const response = await fetch(`${baseUrl}/api/ai/sessions/${sessionId}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          Authorization: "Bearer test-token",
+          Authorization: 'Bearer test-token',
         },
       });
 
@@ -164,19 +164,19 @@ describe("Contract Tests: AI Sessions Endpoint", () => {
       }
     });
 
-    it("should include data field in messages when present", async () => {
-      const sessionId = "session-with-data-789";
+    it('should include data field in messages when present', async () => {
+      const sessionId = 'session-with-data-789';
       const response = await fetch(`${baseUrl}/api/ai/sessions/${sessionId}`, {
-        method: "GET",
+        method: 'GET',
         headers: {
-          Authorization: "Bearer test-token",
+          Authorization: 'Bearer test-token',
         },
       });
 
       if (response.status === 200 && data.messages.length > 0) {
         const messageWithDate = data.messages.find((m: any) => m.data);
         if (messageWithDate) {
-          expect(typeof messageWithDate.data).toBe("object");
+          expect(typeof messageWithDate.data).toBe('object');
         }
       }
     });

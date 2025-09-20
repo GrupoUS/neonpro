@@ -10,38 +10,28 @@
  * - Brazilian healthcare compliance (CPF, CNS, CFM integration)
  */
 
-import {
-  AuditAction,
-  AuditStatus,
-  ResourceType,
-  RiskLevel,
-} from "@prisma/client";
-import { TRPCError } from "@trpc/server";
-import * as v from "valibot";
+import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
+import { TRPCError } from '@trpc/server';
+import * as v from 'valibot';
 import {
   ConsentVerificationValibot,
   ConsentWithdrawalValibot,
   CreateLGPDConsentValibot,
-} from "../../../../../../packages/types/src/lgpd.valibot";
+} from '../../../../../../packages/types/src/lgpd.valibot';
 import {
   CreatePatientValibot,
   PatientConsentWithdrawalValibot,
   PatientExportValibot,
   PatientSearchValibot,
-} from "../../../../../../packages/types/src/patient.valibot";
+} from '../../../../../../packages/types/src/patient.valibot';
 import {
   CreateConsentSchema,
   CreatePatientSchema,
   GetPatientSchema,
   ListPatientsSchema,
   UpdatePatientSchema,
-} from "../schemas";
-import {
-  healthcareProcedure,
-  patientProcedure,
-  protectedProcedure,
-  router,
-} from "../trpc";
+} from '../schemas';
+import { healthcareProcedure, patientProcedure, protectedProcedure, router } from '../trpc';
 
 // =====================================
 // LGPD COMPLIANCE UTILITIES
@@ -65,7 +55,7 @@ function minimizePatientData(
   };
 
   // Add fields based on consent level and user role
-  if (consentLevel === "full" || userRole === "doctor") {
+  if (consentLevel === 'full' || userRole === 'doctor') {
     return {
       ...baseFields,
       givenNames: patient.givenNames,
@@ -81,7 +71,7 @@ function minimizePatientData(
     };
   }
 
-  if (consentLevel === "basic" || userRole === "nurse") {
+  if (consentLevel === 'basic' || userRole === 'nurse') {
     return {
       ...baseFields,
       phonePrimary: patient.phonePrimary,
@@ -109,13 +99,13 @@ async function validateConsent(
         gt: new Date(),
       },
     },
-    orderBy: { createdAt: "desc" },
+    orderBy: { createdAt: 'desc' },
   });
 
   if (!consent) {
     throw new TRPCError({
-      code: "FORBIDDEN",
-      message: "Valid LGPD consent required for this operation",
+      code: 'FORBIDDEN',
+      message: 'Valid LGPD consent required for this operation',
     });
   }
 
@@ -123,7 +113,7 @@ async function validateConsent(
   const allowedOperations = consent.allowedOperations || [];
   if (!allowedOperations.includes(operation)) {
     throw new TRPCError({
-      code: "FORBIDDEN",
+      code: 'FORBIDDEN',
       message: `Consent does not cover operation: ${operation}`,
     });
   }
@@ -136,13 +126,13 @@ async function validateConsent(
  */
 function generateCryptographicProof(operation: string, data: any) {
   const timestamp = new Date().toISOString();
-  const dataHash = Buffer.from(JSON.stringify(data)).toString("base64");
+  const dataHash = Buffer.from(JSON.stringify(data)).toString('base64');
 
   return {
     timestamp,
     operation,
     dataHash,
-    integrity: `sha256:${Buffer.from(`${timestamp}:${operation}:${dataHash}`).toString("base64")}`,
+    integrity: `sha256:${Buffer.from(`${timestamp}:${operation}:${dataHash}`).toString('base64')}`,
   };
 }
 
@@ -152,9 +142,9 @@ function generateCryptographicProof(operation: string, data: any) {
  */
 async function anonymizePatientData(patientId: string, prisma: any) {
   const anonymizedData = {
-    givenNames: ["[ANONIMIZADO]"],
-    familyName: "[ANONIMIZADO]",
-    fullName: "[PACIENTE ANONIMIZADO]",
+    givenNames: ['[ANONIMIZADO]'],
+    familyName: '[ANONIMIZADO]',
+    fullName: '[PACIENTE ANONIMIZADO]',
     phonePrimary: null,
     phoneSecondary: null,
     email: null,
@@ -169,9 +159,9 @@ async function anonymizePatientData(patientId: string, prisma: any) {
     emergencyContactName: null,
     emergencyContactPhone: null,
     emergencyContactRelationship: null,
-    dataConsentStatus: "withdrawn",
+    dataConsentStatus: 'withdrawn',
     anonymizedAt: new Date(),
-    anonymizedReason: "LGPD_CONSENT_WITHDRAWAL",
+    anonymizedReason: 'LGPD_CONSENT_WITHDRAWAL',
   };
 
   return await prisma.patient.update({
@@ -196,26 +186,26 @@ export const patientsRouter = router({
         // Validate LGPD consent is properly provided
         if (!input.lgpdConsentGiven || !input.lgpdConsentVersion) {
           throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "LGPD consent is required for patient creation",
+            code: 'BAD_REQUEST',
+            message: 'LGPD consent is required for patient creation',
           });
         }
 
         // Generate cryptographic proof for consent
         const consentProof = generateCryptographicProof(
-          "patient_creation",
+          'patient_creation',
           input,
         );
 
         // Create patient with LGPD compliance
-        const patient = await ctx.prisma.$transaction(async (prisma) => {
+        const patient = await ctx.prisma.$transaction(async prisma => {
           // Create patient record
           const newPatient = await prisma.patient.create({
             data: {
               ...input,
               clinicId: ctx.clinicId,
               createdBy: ctx.userId,
-              dataConsentStatus: "active",
+              dataConsentStatus: 'active',
               dataConsentDate: new Date(),
               isActive: true,
             },
@@ -226,26 +216,26 @@ export const patientsRouter = router({
             data: {
               patientId: newPatient.id,
               clinicId: ctx.clinicId,
-              consentType: "patient_data_processing",
-              purpose: "Healthcare services and medical treatment",
-              legalBasis: "legitimate_interest_healthcare",
+              consentType: 'patient_data_processing',
+              purpose: 'Healthcare services and medical treatment',
+              legalBasis: 'legitimate_interest_healthcare',
               dataCategories: [
-                "personal_identification",
-                "health_data",
-                "contact_information",
-                "emergency_contacts",
+                'personal_identification',
+                'health_data',
+                'contact_information',
+                'emergency_contacts',
               ],
-              collectionMethod: "digital_form",
+              collectionMethod: 'digital_form',
               consentVersion: input.lgpdConsentVersion,
               isActive: true,
               grantedAt: new Date(),
               expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
               allowedOperations: [
-                "view",
-                "update",
-                "schedule_appointments",
-                "medical_treatment",
-                "contact_patient",
+                'view',
+                'update',
+                'schedule_appointments',
+                'medical_treatment',
+                'contact_patient',
               ],
               cryptographicProof: JSON.stringify(consentProof),
               evidence: JSON.stringify({
@@ -267,7 +257,7 @@ export const patientsRouter = router({
             clinicId: ctx.clinicId,
             patientId: patient.id,
             action: AuditAction.CREATE,
-            resource: "patient",
+            resource: 'patient',
             resourceType: ResourceType.PATIENT_DATA,
             resourceId: patient.id,
             ipAddress: ctx.auditMeta.ipAddress,
@@ -276,11 +266,11 @@ export const patientsRouter = router({
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.MEDIUM,
             dataAccessed: JSON.stringify([
-              "patient_creation",
-              "consent_management",
+              'patient_creation',
+              'consent_management',
             ]),
             additionalInfo: JSON.stringify({
-              action: "patient_created_with_lgpd_consent",
+              action: 'patient_created_with_lgpd_consent',
               consentVersion: input.lgpdConsentVersion,
               cryptographicProof: consentProof.integrity,
             }),
@@ -289,7 +279,7 @@ export const patientsRouter = router({
 
         return {
           ...patient,
-          consentStatus: "active",
+          consentStatus: 'active',
           consentProof: consentProof.integrity,
         };
       } catch (error) {
@@ -299,7 +289,7 @@ export const patientsRouter = router({
             userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.CREATE,
-            resource: "patient",
+            resource: 'patient',
             resourceType: ResourceType.PATIENT_DATA,
             ipAddress: ctx.auditMeta.ipAddress,
             userAgent: ctx.auditMeta.userAgent,
@@ -307,28 +297,28 @@ export const patientsRouter = router({
             status: AuditStatus.FAILURE,
             riskLevel: RiskLevel.HIGH,
             additionalInfo: JSON.stringify({
-              error: error instanceof Error ? error.message : "Unknown error",
-              action: "patient_creation_failed",
+              error: error instanceof Error ? error.message : 'Unknown error',
+              action: 'patient_creation_failed',
             }),
           },
         });
 
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to create patient with LGPD compliance",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to create patient with LGPD compliance',
           cause: error,
         });
       }
-    }) /**
+    }), /**
    * Get Patient with LGPD Data Minimization
    * Returns only data authorized by consent and user role
-   */,
+   */
   get: patientProcedure
     .input(GetPatientSchema)
     .query(async ({ ctx, input }) => {
       try {
         // Validate consent for data access
-        const consent = await validateConsent(input.id, "view", ctx.prisma);
+        const consent = await validateConsent(input.id, 'view', ctx.prisma);
 
         // Fetch patient data
         const patient = await ctx.prisma.patient.findFirst({
@@ -340,7 +330,7 @@ export const patientsRouter = router({
           include: {
             lgpdConsents: {
               where: { isActive: true },
-              orderBy: { createdAt: "desc" },
+              orderBy: { createdAt: 'desc' },
               take: 1,
             },
           },
@@ -348,16 +338,16 @@ export const patientsRouter = router({
 
         if (!patient) {
           throw new TRPCError({
-            code: "NOT_FOUND",
-            message: "Patient not found or access denied",
+            code: 'NOT_FOUND',
+            message: 'Patient not found or access denied',
           });
         }
 
         // Apply data minimization based on consent and user role
         const minimizedData = minimizePatientData(
           patient,
-          ctx.userRole || "user",
-          consent.consentType || "basic",
+          ctx.userRole || 'user',
+          consent.consentType || 'basic',
         );
 
         // Create audit trail for data access
@@ -367,7 +357,7 @@ export const patientsRouter = router({
             clinicId: ctx.clinicId,
             patientId: patient.id,
             action: AuditAction.READ,
-            resource: "patient",
+            resource: 'patient',
             resourceType: ResourceType.PATIENT_DATA,
             resourceId: patient.id,
             ipAddress: ctx.auditMeta.ipAddress,
@@ -377,8 +367,8 @@ export const patientsRouter = router({
             riskLevel: RiskLevel.LOW,
             dataAccessed: JSON.stringify(Object.keys(minimizedData)),
             additionalInfo: JSON.stringify({
-              action: "patient_data_accessed",
-              dataMinimization: "applied",
+              action: 'patient_data_accessed',
+              dataMinimization: 'applied',
               consentLevel: consent.consentType,
               fieldsReturned: Object.keys(minimizedData).length,
             }),
@@ -387,7 +377,7 @@ export const patientsRouter = router({
 
         return {
           ...minimizedData,
-          consentStatus: consent.isActive ? "active" : "inactive",
+          consentStatus: consent.isActive ? 'active' : 'inactive',
           consentExpiresAt: consent.expirationDate,
           dataMinimizationApplied: true,
         };
@@ -399,7 +389,7 @@ export const patientsRouter = router({
             clinicId: ctx.clinicId,
             patientId: input.id,
             action: AuditAction.READ,
-            resource: "patient",
+            resource: 'patient',
             resourceType: ResourceType.PATIENT_DATA,
             resourceId: input.id,
             ipAddress: ctx.auditMeta.ipAddress,
@@ -408,18 +398,18 @@ export const patientsRouter = router({
             status: AuditStatus.FAILURE,
             riskLevel: RiskLevel.HIGH,
             additionalInfo: JSON.stringify({
-              error: error instanceof Error ? error.message : "Unknown error",
-              action: "patient_access_denied",
+              error: error instanceof Error ? error.message : 'Unknown error',
+              action: 'patient_access_denied',
             }),
           },
         });
 
         throw error;
       }
-    }) /**
+    }), /**
    * List Patients with LGPD-compliant Search
    * Includes data minimization and consent filtering
-   */,
+   */
   list: protectedProcedure
     .input(ListPatientsSchema)
     .query(async ({ ctx, input }) => {
@@ -432,11 +422,11 @@ export const patientsRouter = router({
           isActive,
           ...(search && {
             OR: [
-              { fullName: { contains: search, mode: "insensitive" } },
+              { fullName: { contains: search, mode: 'insensitive' } },
               {
-                medicalRecordNumber: { contains: search, mode: "insensitive" },
+                medicalRecordNumber: { contains: search, mode: 'insensitive' },
               },
-              { email: { contains: search, mode: "insensitive" } },
+              { email: { contains: search, mode: 'insensitive' } },
             ],
           }),
         };
@@ -447,11 +437,11 @@ export const patientsRouter = router({
             where: searchConditions,
             take: limit,
             skip: offset,
-            orderBy: { createdAt: "desc" },
+            orderBy: { createdAt: 'desc' },
             include: {
               lgpdConsents: {
                 where: { isActive: true },
-                orderBy: { createdAt: "desc" },
+                orderBy: { createdAt: 'desc' },
                 take: 1,
               },
             },
@@ -460,12 +450,12 @@ export const patientsRouter = router({
         ]);
 
         // Apply data minimization to each patient
-        const minimizedPatients = patients.map((patient) => {
+        const minimizedPatients = patients.map(patient => {
           const consent = patient.lgpdConsents[0];
           return minimizePatientData(
             patient,
-            ctx.userRole || "user",
-            consent?.consentType || "basic",
+            ctx.userRole || 'user',
+            consent?.consentType || 'basic',
           );
         });
 
@@ -475,7 +465,7 @@ export const patientsRouter = router({
             userId: ctx.userId,
             clinicId: ctx.clinicId,
             action: AuditAction.READ,
-            resource: "patient_list",
+            resource: 'patient_list',
             resourceType: ResourceType.PATIENT_DATA,
             ipAddress: ctx.auditMeta.ipAddress,
             userAgent: ctx.auditMeta.userAgent,
@@ -483,10 +473,10 @@ export const patientsRouter = router({
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.LOW,
             additionalInfo: JSON.stringify({
-              action: "patient_list_accessed",
-              searchQuery: search || "none",
+              action: 'patient_list_accessed',
+              searchQuery: search || 'none',
               resultsCount: patients.length,
-              dataMinimization: "applied",
+              dataMinimization: 'applied',
             }),
           },
         });
@@ -507,15 +497,15 @@ export const patientsRouter = router({
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to retrieve patient list",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to retrieve patient list',
           cause: error,
         });
       }
-    }) /**
+    }), /**
    * Update Patient with Consent Validation
    * Validates consent before allowing updates
-   */,
+   */
   update: patientProcedure
     .input(UpdatePatientSchema)
     .mutation(async ({ ctx, input }) => {
@@ -523,11 +513,11 @@ export const patientsRouter = router({
 
       try {
         // Validate consent for data modification
-        await validateConsent(id, "update", ctx.prisma);
+        await validateConsent(id, 'update', ctx.prisma);
 
         // Generate cryptographic proof for update
         const updateProof = generateCryptographicProof(
-          "patient_update",
+          'patient_update',
           updateData,
         );
 
@@ -549,7 +539,7 @@ export const patientsRouter = router({
             clinicId: ctx.clinicId,
             patientId: id,
             action: AuditAction.UPDATE,
-            resource: "patient",
+            resource: 'patient',
             resourceType: ResourceType.PATIENT_DATA,
             resourceId: id,
             ipAddress: ctx.auditMeta.ipAddress,
@@ -559,7 +549,7 @@ export const patientsRouter = router({
             riskLevel: RiskLevel.MEDIUM,
             dataAccessed: JSON.stringify(Object.keys(updateData)),
             additionalInfo: JSON.stringify({
-              action: "patient_updated",
+              action: 'patient_updated',
               fieldsModified: Object.keys(updateData),
               cryptographicProof: updateProof.integrity,
             }),
@@ -572,8 +562,8 @@ export const patientsRouter = router({
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to update patient",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to update patient',
           cause: error,
         });
       }
@@ -586,9 +576,9 @@ export const patientsRouter = router({
   withdrawConsent: patientProcedure
     .input(
       v.object({
-        patientId: v.string([v.uuid("Invalid patient ID")]),
+        patientId: v.string([v.uuid('Invalid patient ID')]),
         reason: v.string([
-          v.minLength(10, "Reason must be at least 10 characters"),
+          v.minLength(10, 'Reason must be at least 10 characters'),
         ]),
         digitalSignature: v.optional(v.string()),
       }),
@@ -599,7 +589,7 @@ export const patientsRouter = router({
 
         // Generate cryptographic proof for consent withdrawal
         const withdrawalProof = generateCryptographicProof(
-          "consent_withdrawal",
+          'consent_withdrawal',
           {
             patientId,
             reason,
@@ -607,7 +597,7 @@ export const patientsRouter = router({
           },
         );
 
-        const result = await ctx.prisma.$transaction(async (prisma) => {
+        const result = await ctx.prisma.$transaction(async prisma => {
           // Update consent status
           await prisma.lGPDConsent.updateMany({
             where: {
@@ -639,7 +629,7 @@ export const patientsRouter = router({
             clinicId: ctx.clinicId,
             patientId,
             action: AuditAction.DELETE, // Represents data anonymization
-            resource: "patient_consent",
+            resource: 'patient_consent',
             resourceType: ResourceType.PATIENT_DATA,
             resourceId: patientId,
             ipAddress: ctx.auditMeta.ipAddress,
@@ -648,10 +638,10 @@ export const patientsRouter = router({
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.HIGH,
             additionalInfo: JSON.stringify({
-              action: "lgpd_consent_withdrawn_and_anonymized",
+              action: 'lgpd_consent_withdrawn_and_anonymized',
               reason,
               cryptographicProof: withdrawalProof.integrity,
-              compliance: "LGPD_Article_18_Right_to_be_Forgotten",
+              compliance: 'LGPD_Article_18_Right_to_be_Forgotten',
             }),
           },
         });
@@ -661,13 +651,12 @@ export const patientsRouter = router({
           patientId,
           anonymized: true,
           withdrawalProof: withdrawalProof.integrity,
-          message:
-            "Consent withdrawn and patient data anonymized per LGPD compliance",
+          message: 'Consent withdrawn and patient data anonymized per LGPD compliance',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Failed to withdraw consent and anonymize data",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Failed to withdraw consent and anonymize data',
           cause: error,
         });
       }
@@ -685,10 +674,10 @@ export const patientsRouter = router({
           patientId: input.id,
           clinicId: ctx.clinicId,
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
       });
 
-      const activeConsent = consents.find((c) => c.isActive);
+      const activeConsent = consents.find(c => c.isActive);
 
       return {
         patientId: input.id,

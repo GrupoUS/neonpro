@@ -1,44 +1,44 @@
-import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { app } from "../../index";
-import { createTestClient, generateTestCPF } from "../helpers/auth";
-import { cleanupTestDatabase, setupTestDatabase } from "../helpers/database";
+import { afterEach, beforeEach, describe, expect, it } from 'bun:test';
+import { app } from '../../index';
+import { createTestClient, generateTestCPF } from '../helpers/auth';
+import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
 
-describe("Patients Real-time Integration API", () => {
+describe('Patients Real-time Integration API', () => {
   let testClient: any;
   let patientId: string;
   let wsConnection: any;
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = await createTestClient({ role: "admin" });
+    testClient = await createTestClient({ role: 'admin' });
 
     // Create a test patient first
     const patientData = {
-      name: "Real-time Integration Test Patient",
-      email: "realtime.test@email.com",
-      phone: "+5511999999999",
+      name: 'Real-time Integration Test Patient',
+      email: 'realtime.test@email.com',
+      phone: '+5511999999999',
       cpf: generateTestCPF(),
-      birth_date: "1985-03-15",
-      gender: "M",
-      blood_type: "A+",
+      birth_date: '1985-03-15',
+      gender: 'M',
+      blood_type: 'A+',
       address: {
-        street: "Rua do Tempo Real",
-        number: "100",
-        neighborhood: "Centro",
-        city: "São Paulo",
-        state: "SP",
-        zip_code: "01001000",
+        street: 'Rua do Tempo Real',
+        number: '100',
+        neighborhood: 'Centro',
+        city: 'São Paulo',
+        state: 'SP',
+        zip_code: '01001000',
       },
       emergency_contact: {
-        name: "Maria Real-time",
-        phone: "+5511888888888",
-        relationship: "spouse",
+        name: 'Maria Real-time',
+        phone: '+5511888888888',
+        relationship: 'spouse',
       },
       health_insurance: {
-        provider: "Unimed",
-        plan_type: "comprehensive",
-        policy_number: "UNIRT123456",
-        valid_until: "2025-12-31",
+        provider: 'Unimed',
+        plan_type: 'comprehensive',
+        policy_number: 'UNIRT123456',
+        valid_until: '2025-12-31',
       },
       lgpd_consent: {
         data_processing: true,
@@ -46,15 +46,15 @@ describe("Patients Real-time Integration API", () => {
         storage: true,
         realtime_updates: true,
         consent_date: new Date().toISOString(),
-        ip_address: "127.0.0.1",
+        ip_address: '127.0.0.1',
       },
     };
 
-    const response = await app.request("/api/v2/patients", {
-      method: "POST",
+    const response = await app.request('/api/v2/patients', {
+      method: 'POST',
       headers: {
         Authorization: `Bearer ${testClient.token}`,
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(patientData),
     });
@@ -70,29 +70,29 @@ describe("Patients Real-time Integration API", () => {
     await cleanupTestDatabase();
   });
 
-  describe("WebSocket Connection Management", () => {
-    it("should establish WebSocket connection for real-time updates", async () => {
+  describe('WebSocket Connection Management', () => {
+    it('should establish WebSocket connection for real-time updates', async () => {
       const connectRequest = {
         patient_id: patientId,
-        connection_type: "realtime_updates",
+        connection_type: 'realtime_updates',
         device_info: {
-          device_id: "test-device-123",
-          device_type: "web",
-          user_agent: "Mozilla/5.0 (Test Browser)",
+          device_id: 'test-device-123',
+          device_type: 'web',
+          user_agent: 'Mozilla/5.0 (Test Browser)',
         },
         subscription_topics: [
-          "patient_updates",
-          "appointment_changes",
-          "test_results",
-          "critical_alerts",
+          'patient_updates',
+          'appointment_changes',
+          'test_results',
+          'critical_alerts',
         ],
       };
 
-      const response = await app.request("/api/v2/patients/websocket/connect", {
-        method: "POST",
+      const response = await app.request('/api/v2/patients/websocket/connect', {
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${testClient.token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(connectRequest),
       });
@@ -111,18 +111,18 @@ describe("Patients Real-time Integration API", () => {
       });
     });
 
-    it("should validate WebSocket connection permissions", async () => {
-      const unauthorizedClient = await createTestClient({ role: "staff" });
+    it('should validate WebSocket connection permissions', async () => {
+      const unauthorizedClient = await createTestClient({ role: 'staff' });
       const connectRequest = {
         patient_id: patientId,
-        connection_type: "realtime_updates",
+        connection_type: 'realtime_updates',
       };
 
-      const response = await app.request("/api/v2/patients/websocket/connect", {
-        method: "POST",
+      const response = await app.request('/api/v2/patients/websocket/connect', {
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${unauthorizedClient.token}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(connectRequest),
       });
@@ -131,58 +131,58 @@ describe("Patients Real-time Integration API", () => {
       const data = await response.json();
       expect(data).toMatchObject({
         success: false,
-        message: expect.stringContaining("unauthorized"),
+        message: expect.stringContaining('unauthorized'),
       });
     });
 
-    it("should handle WebSocket connection limits", async () => {
+    it('should handle WebSocket connection limits', async () => {
       // Create multiple connection requests to test limits
       const connectionRequests = Array.from({ length: 6 }, (_, i) => ({
         patient_id: patientId,
-        connection_type: "realtime_updates",
+        connection_type: 'realtime_updates',
         device_info: {
           device_id: `test-device-${i}`,
         },
       }));
 
-      const requests = connectionRequests.map((req) =>
-        app.request("/api/v2/patients/websocket/connect", {
-          method: "POST",
+      const requests = connectionRequests.map(req =>
+        app.request('/api/v2/patients/websocket/connect', {
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(req),
-        }),
+        })
       );
 
       const responses = await Promise.all(requests);
-      const limitedResponse = responses.find((r) => r.status === 429);
+      const limitedResponse = responses.find(r => r.status === 429);
 
       expect(limitedResponse).toBeDefined();
     });
   });
 
-  describe("POST /api/v2/patients/{id}/realtime-subscribe", () => {
-    it("should return 200 for successful subscription", async () => {
+  describe('POST /api/v2/patients/{id}/realtime-subscribe', () => {
+    it('should return 200 for successful subscription', async () => {
       const subscriptionRequest = {
         topics: [
           {
-            topic: "patient_updates",
-            event_types: ["data_changed", "status_updated"],
+            topic: 'patient_updates',
+            event_types: ['data_changed', 'status_updated'],
           },
           {
-            topic: "appointments",
-            event_types: ["created", "modified", "cancelled"],
+            topic: 'appointments',
+            event_types: ['created', 'modified', 'cancelled'],
           },
           {
-            topic: "medical_records",
-            event_types: ["new_result", "updated"],
+            topic: 'medical_records',
+            event_types: ['new_result', 'updated'],
           },
         ],
         filters: {
-          priority: "high",
-          data_types: ["critical"],
+          priority: 'high',
+          data_types: ['critical'],
         },
         delivery_preferences: {
           immediate: true,
@@ -193,10 +193,10 @@ describe("Patients Real-time Integration API", () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-subscribe`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(subscriptionRequest),
         },
@@ -211,17 +211,17 @@ describe("Patients Real-time Integration API", () => {
           subscription_id: expect.any(String),
           topics: expect.any(Array),
           created_at: expect.any(String),
-          status: "active",
+          status: 'active',
         }),
       });
     });
 
-    it("should validate subscription topics and permissions", async () => {
+    it('should validate subscription topics and permissions', async () => {
       const invalidSubscription = {
         topics: [
           {
-            topic: "unauthorized_topic",
-            event_types: ["sensitive_data"],
+            topic: 'unauthorized_topic',
+            event_types: ['sensitive_data'],
           },
         ],
       };
@@ -229,10 +229,10 @@ describe("Patients Real-time Integration API", () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-subscribe`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(invalidSubscription),
         },
@@ -242,85 +242,87 @@ describe("Patients Real-time Integration API", () => {
       const data = await response.json();
       expect(data).toMatchObject({
         success: false,
-        message: expect.stringContaining("invalid topic"),
+        message: expect.stringContaining('invalid topic'),
         invalid_topics: expect.any(Array),
       });
     });
 
-    it("should handle subscription rate limiting", async () => {
+    it('should handle subscription rate limiting', async () => {
       const subscriptionRequest = {
-        topics: [{ topic: "patient_updates", event_types: ["data_changed"] }],
+        topics: [{ topic: 'patient_updates', event_types: ['data_changed'] }],
       };
 
       // Make multiple subscription requests
-      const requests = Array.from({ length: 11 }, () =>
-        app.request(`/api/v2/patients/${patientId}/realtime-subscribe`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(subscriptionRequest),
-        }),
+      const requests = Array.from(
+        { length: 11 },
+        () =>
+          app.request(`/api/v2/patients/${patientId}/realtime-subscribe`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${testClient.token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(subscriptionRequest),
+          }),
       );
 
       const responses = await Promise.all(requests);
-      const limitedResponse = responses.find((r) => r.status === 429);
+      const limitedResponse = responses.find(r => r.status === 429);
 
       expect(limitedResponse).toBeDefined();
     });
   });
 
-  describe("GET /api/v2/patients/{id}/realtime-events", () => {
-    it("should return 200 with real-time event stream", async () => {
+  describe('GET /api/v2/patients/{id}/realtime-events', () => {
+    it('should return 200 with real-time event stream', async () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-events`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
-            Accept: "text/event-stream",
+            'Content-Type': 'application/json',
+            Accept: 'text/event-stream',
           },
         },
       );
 
       expect(response.status).toBe(200);
-      expect(response.headers.get("content-type")).toMatch(
+      expect(response.headers.get('content-type')).toMatch(
         /text\/event-stream/,
       );
-      expect(response.headers.get("cache-control")).toBe("no-cache");
-      expect(response.headers.get("connection")).toBe("keep-alive");
+      expect(response.headers.get('cache-control')).toBe('no-cache');
+      expect(response.headers.get('connection')).toBe('keep-alive');
     });
 
-    it("should support event filtering and pagination", async () => {
+    it('should support event filtering and pagination', async () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-events?limit=10&offset=0&priority=high`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
-            Accept: "text/event-stream",
+            'Content-Type': 'application/json',
+            Accept: 'text/event-stream',
           },
         },
       );
 
       expect(response.status).toBe(200);
       // The response should be a streaming response
-      expect(response.headers.get("content-type")).toMatch(
+      expect(response.headers.get('content-type')).toMatch(
         /text\/event-stream/,
       );
     });
 
-    it("should handle event history requests", async () => {
+    it('should handle event history requests', async () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-events/history?hours=24&include_resolved=true`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         },
       );
@@ -339,29 +341,29 @@ describe("Patients Real-time Integration API", () => {
     });
   });
 
-  describe("POST /api/v2/patients/{id}/realtime-events", () => {
-    it("should return 200 for successful event publishing", async () => {
+  describe('POST /api/v2/patients/{id}/realtime-events', () => {
+    it('should return 200 for successful event publishing', async () => {
       const eventRequest = {
-        event_type: "patient_status_update",
-        priority: "medium",
+        event_type: 'patient_status_update',
+        priority: 'medium',
         data: {
           patient_id: patientId,
-          status: "in_consultation",
-          location: "Consultation Room A",
+          status: 'in_consultation',
+          location: 'Consultation Room A',
           timestamp: new Date().toISOString(),
           updated_by: testClient.user_id,
         },
-        target_audience: ["clinicians", "staff"],
+        target_audience: ['clinicians', 'staff'],
         requires_acknowledgment: false,
       };
 
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-events`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(eventRequest),
         },
@@ -374,30 +376,30 @@ describe("Patients Real-time Integration API", () => {
         event_published: expect.objectContaining({
           event_id: expect.any(String),
           patient_id: patientId,
-          event_type: "patient_status_update",
+          event_type: 'patient_status_update',
           published_at: expect.any(String),
           delivered_to: expect.any(Number),
         }),
       });
     });
 
-    it("should validate event publishing permissions", async () => {
-      const unauthorizedClient = await createTestClient({ role: "staff" });
+    it('should validate event publishing permissions', async () => {
+      const unauthorizedClient = await createTestClient({ role: 'staff' });
       const sensitiveEvent = {
-        event_type: "critical_diagnosis",
-        priority: "high",
+        event_type: 'critical_diagnosis',
+        priority: 'high',
         data: {
-          sensitive_medical_information: "unauthorized",
+          sensitive_medical_information: 'unauthorized',
         },
       };
 
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-events`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${unauthorizedClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(sensitiveEvent),
         },
@@ -407,18 +409,18 @@ describe("Patients Real-time Integration API", () => {
       const data = await response.json();
       expect(data).toMatchObject({
         success: false,
-        message: expect.stringContaining("unauthorized"),
+        message: expect.stringContaining('unauthorized'),
       });
     });
 
-    it("should handle high-priority emergency events", async () => {
+    it('should handle high-priority emergency events', async () => {
       const emergencyEvent = {
-        event_type: "medical_emergency",
-        priority: "critical",
+        event_type: 'medical_emergency',
+        priority: 'critical',
         data: {
           patient_id: patientId,
-          emergency_type: "cardiac_arrest",
-          location: "Emergency Room",
+          emergency_type: 'cardiac_arrest',
+          location: 'Emergency Room',
           timestamp: new Date().toISOString(),
         },
         requires_immediate_attention: true,
@@ -428,10 +430,10 @@ describe("Patients Real-time Integration API", () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-events`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(emergencyEvent),
         },
@@ -448,34 +450,34 @@ describe("Patients Real-time Integration API", () => {
     });
   });
 
-  describe("Real-time Synchronization", () => {
-    it("should handle real-time data synchronization", async () => {
+  describe('Real-time Synchronization', () => {
+    it('should handle real-time data synchronization', async () => {
       const syncRequest = {
-        sync_type: "patient_data",
+        sync_type: 'patient_data',
         data_changes: [
           {
-            field: "phone",
-            old_value: "+5511999999999",
-            new_value: "+5511999999998",
+            field: 'phone',
+            old_value: '+5511999999999',
+            new_value: '+5511999999998',
             changed_at: new Date().toISOString(),
           },
           {
-            field: "address.city",
-            old_value: "São Paulo",
-            new_value: "Rio de Janeiro",
+            field: 'address.city',
+            old_value: 'São Paulo',
+            new_value: 'Rio de Janeiro',
             changed_at: new Date().toISOString(),
           },
         ],
-        conflict_resolution: "server_wins",
+        conflict_resolution: 'server_wins',
       };
 
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-sync`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(syncRequest),
         },
@@ -495,29 +497,29 @@ describe("Patients Real-time Integration API", () => {
       });
     });
 
-    it("should detect and resolve sync conflicts", async () => {
+    it('should detect and resolve sync conflicts', async () => {
       const conflictSyncRequest = {
-        sync_type: "patient_data",
+        sync_type: 'patient_data',
         data_changes: [
           {
-            field: "emergency_contact.phone",
+            field: 'emergency_contact.phone',
             conflicting_values: {
-              client_value: "+5511888888889",
-              server_value: "+5511888888888",
+              client_value: '+5511888888889',
+              server_value: '+5511888888888',
             },
             conflict_timestamp: new Date().toISOString(),
           },
         ],
-        conflict_resolution: "manual_review",
+        conflict_resolution: 'manual_review',
       };
 
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-sync`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(conflictSyncRequest),
         },
@@ -534,15 +536,15 @@ describe("Patients Real-time Integration API", () => {
     });
   });
 
-  describe("Real-time Analytics and Monitoring", () => {
-    it("should provide real-time connection monitoring", async () => {
+  describe('Real-time Analytics and Monitoring', () => {
+    it('should provide real-time connection monitoring', async () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-monitoring`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         },
       );
@@ -565,14 +567,14 @@ describe("Patients Real-time Integration API", () => {
       });
     });
 
-    it("should track real-time performance metrics", async () => {
+    it('should track real-time performance metrics', async () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-metrics`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         },
       );
@@ -603,10 +605,10 @@ describe("Patients Real-time Integration API", () => {
     });
   });
 
-  describe("Real-time Security and Compliance", () => {
-    it("should enforce real-time data access monitoring", async () => {
+  describe('Real-time Security and Compliance', () => {
+    it('should enforce real-time data access monitoring', async () => {
       const monitoringRequest = {
-        monitor_type: "access_patterns",
+        monitor_type: 'access_patterns',
         duration_minutes: 60,
         alert_thresholds: {
           unusual_access: 10,
@@ -617,10 +619,10 @@ describe("Patients Real-time Integration API", () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-security`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(monitoringRequest),
         },
@@ -639,9 +641,9 @@ describe("Patients Real-time Integration API", () => {
       });
     });
 
-    it("should handle real-time compliance validation", async () => {
+    it('should handle real-time compliance validation', async () => {
       const complianceCheck = {
-        frameworks: ["lgpd", "hipaa"],
+        frameworks: ['lgpd', 'hipaa'],
         real_time_validation: true,
         alert_on_violation: true,
       };
@@ -649,10 +651,10 @@ describe("Patients Real-time Integration API", () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-compliance`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(complianceCheck),
         },
@@ -669,14 +671,14 @@ describe("Patients Real-time Integration API", () => {
       });
     });
 
-    it("should provide audit trail for real-time operations", async () => {
+    it('should provide audit trail for real-time operations', async () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/realtime-audit`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         },
       );
@@ -696,14 +698,14 @@ describe("Patients Real-time Integration API", () => {
     });
   });
 
-  describe("Real-time Emergency Handling", () => {
-    it("should handle emergency broadcast protocols", async () => {
+  describe('Real-time Emergency Handling', () => {
+    it('should handle emergency broadcast protocols', async () => {
       const emergencyBroadcast = {
-        emergency_type: "patient_critical_condition",
-        severity: "life_threatening",
+        emergency_type: 'patient_critical_condition',
+        severity: 'life_threatening',
         patient_id: patientId,
-        message: "Patient requires immediate medical attention",
-        broadcast_to: ["emergency_team", "on_call_staff", "intensive_care"],
+        message: 'Patient requires immediate medical attention',
+        broadcast_to: ['emergency_team', 'on_call_staff', 'intensive_care'],
         auto_escalation: true,
         response_required: true,
       };
@@ -711,10 +713,10 @@ describe("Patients Real-time Integration API", () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/emergency-broadcast`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(emergencyBroadcast),
         },
@@ -734,14 +736,14 @@ describe("Patients Real-time Integration API", () => {
       });
     });
 
-    it("should track emergency response times", async () => {
+    it('should track emergency response times', async () => {
       const response = await app.request(
         `/api/v2/patients/${patientId}/emergency-metrics`,
         {
-          method: "GET",
+          method: 'GET',
           headers: {
             Authorization: `Bearer ${testClient.token}`,
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
         },
       );

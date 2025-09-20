@@ -10,9 +10,9 @@ import {
   ProfessionalResponseSchema,
   ProfessionalsListResponseSchema,
   UpdateProfessionalRequestSchema,
-} from "@neonpro/types/api/contracts";
-import { z } from "zod";
-import { protectedProcedure, router } from "../trpc";
+} from '@neonpro/types/api/contracts';
+import { z } from 'zod';
+import { protectedProcedure, router } from '../trpc';
 
 export const professionalRouter = router({
   /**
@@ -20,10 +20,9 @@ export const professionalRouter = router({
    */
   create: protectedProcedure
     .meta({
-      description:
-        "Register new healthcare professional with automated license validation",
-      tags: ["professional", "create", "license-validation"],
-      requiresPermission: "professional:create",
+      description: 'Register new healthcare professional with automated license validation',
+      tags: ['professional', 'create', 'license-validation'],
+      requiresPermission: 'professional:create',
     })
     .input(CreateProfessionalRequestSchema)
     .output(ProfessionalResponseSchema)
@@ -35,9 +34,9 @@ export const professionalRouter = router({
 
       if (!clinic) {
         throw new HealthcareTRPCError(
-          "NOT_FOUND",
-          "Clinic not found",
-          "CLINIC_NOT_FOUND",
+          'NOT_FOUND',
+          'Clinic not found',
+          'CLINIC_NOT_FOUND',
           { clinicId: input.clinicId },
         );
       }
@@ -48,9 +47,9 @@ export const professionalRouter = router({
       // Validate license number format and uniqueness
       if (!isValidLicenseFormat(input.licenseType, input.licenseNumber)) {
         throw new HealthcareTRPCError(
-          "BAD_REQUEST",
-          "Invalid license number format for the specified license type",
-          "INVALID_LICENSE_FORMAT",
+          'BAD_REQUEST',
+          'Invalid license number format for the specified license type',
+          'INVALID_LICENSE_FORMAT',
           {
             licenseType: input.licenseType,
             licenseNumber: input.licenseNumber,
@@ -69,9 +68,9 @@ export const professionalRouter = router({
 
       if (existingProfessional) {
         throw new HealthcareTRPCError(
-          "CONFLICT",
-          "Professional with this license number already exists",
-          "LICENSE_ALREADY_EXISTS",
+          'CONFLICT',
+          'Professional with this license number already exists',
+          'LICENSE_ALREADY_EXISTS',
           {
             existingProfessionalId: existingProfessional.id,
             licenseNumber: input.licenseNumber,
@@ -87,9 +86,9 @@ export const professionalRouter = router({
 
       if (!licenseValidation.isValid) {
         throw new HealthcareTRPCError(
-          "BAD_REQUEST",
-          "License validation failed with regulatory authority",
-          "LICENSE_VALIDATION_FAILED",
+          'BAD_REQUEST',
+          'License validation failed with regulatory authority',
+          'LICENSE_VALIDATION_FAILED',
           {
             licenseType: input.licenseType,
             licenseNumber: input.licenseNumber,
@@ -121,7 +120,7 @@ export const professionalRouter = router({
       // Create default working hours if not provided
       if (input.workingHours && input.workingHours.length > 0) {
         await ctx.prisma.professionalWorkingHours.createMany({
-          data: input.workingHours.map((wh) => ({
+          data: input.workingHours.map(wh => ({
             ...wh,
             professionalId: professional.id,
           })),
@@ -134,8 +133,8 @@ export const professionalRouter = router({
       // Audit log
       await ctx.prisma.auditLog.create({
         data: {
-          action: "professional_created",
-          entityType: "professional",
+          action: 'professional_created',
+          entityType: 'professional',
           entityId: professional.id,
           details: {
             clinicId: input.clinicId,
@@ -150,7 +149,7 @@ export const professionalRouter = router({
       return {
         success: true,
         data: professional,
-        message: "Professional registered successfully",
+        message: 'Professional registered successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
       };
@@ -161,10 +160,9 @@ export const professionalRouter = router({
    */
   getById: protectedProcedure
     .meta({
-      description:
-        "Get professional by ID with schedule and performance metrics",
-      tags: ["professional", "read", "metrics"],
-      requiresPermission: "professional:read",
+      description: 'Get professional by ID with schedule and performance metrics',
+      tags: ['professional', 'read', 'metrics'],
+      requiresPermission: 'professional:read',
     })
     .input(
       z.object({
@@ -196,7 +194,7 @@ export const professionalRouter = router({
           ...(input.includeRecentAppointments && {
             appointments: {
               take: 10,
-              orderBy: { scheduledDate: "desc" },
+              orderBy: { scheduledDate: 'desc' },
               include: {
                 patient: {
                   select: {
@@ -211,9 +209,9 @@ export const professionalRouter = router({
 
       if (!professional) {
         throw new HealthcareTRPCError(
-          "NOT_FOUND",
-          "Professional not found",
-          "PROFESSIONAL_NOT_FOUND",
+          'NOT_FOUND',
+          'Professional not found',
+          'PROFESSIONAL_NOT_FOUND',
           { professionalId: input.id },
         );
       }
@@ -247,17 +245,16 @@ export const professionalRouter = router({
    */
   list: protectedProcedure
     .meta({
-      description:
-        "List professionals with filtering, search, and availability status",
-      tags: ["professional", "list", "search", "availability"],
-      requiresPermission: "professional:list",
+      description: 'List professionals with filtering, search, and availability status',
+      tags: ['professional', 'list', 'search', 'availability'],
+      requiresPermission: 'professional:list',
     })
     .input(
       PaginationSchema.extend({
         clinicId: z.string().uuid(),
         search: z.string().optional(),
         specialization: z.string().optional(),
-        licenseType: z.enum(["CRM", "CRO", "CRF", "CREF", "CRP"]).optional(),
+        licenseType: z.enum(['CRM', 'CRO', 'CRF', 'CREF', 'CRP']).optional(),
         isActive: z.boolean().default(true),
         availableOn: z.string().datetime().optional(),
         availabilityTimeSlot: z
@@ -268,13 +265,13 @@ export const professionalRouter = router({
           .optional(),
         sortBy: z
           .enum([
-            "fullName",
-            "specialization",
-            "createdAt",
-            "licenseValidatedAt",
+            'fullName',
+            'specialization',
+            'createdAt',
+            'licenseValidatedAt',
           ])
-          .default("fullName"),
-        sortOrder: z.enum(["asc", "desc"]).default("asc"),
+          .default('fullName'),
+        sortOrder: z.enum(['asc', 'desc']).default('asc'),
       }),
     )
     .output(ProfessionalsListResponseSchema)
@@ -287,15 +284,15 @@ export const professionalRouter = router({
         isActive: input.isActive,
         ...(input.search && {
           OR: [
-            { fullName: { contains: input.search, mode: "insensitive" } },
-            { specialization: { contains: input.search, mode: "insensitive" } },
-            { licenseNumber: { contains: input.search, mode: "insensitive" } },
+            { fullName: { contains: input.search, mode: 'insensitive' } },
+            { specialization: { contains: input.search, mode: 'insensitive' } },
+            { licenseNumber: { contains: input.search, mode: 'insensitive' } },
           ],
         }),
         ...(input.specialization && {
           specialization: {
             contains: input.specialization,
-            mode: "insensitive",
+            mode: 'insensitive',
           },
         }),
         ...(input.licenseType && { licenseType: input.licenseType }),
@@ -323,7 +320,7 @@ export const professionalRouter = router({
           select: { id: true },
         });
 
-        professionalIds = availableProfessionals.map((p) => p.id);
+        professionalIds = availableProfessionals.map(p => p.id);
 
         // Filter out professionals with conflicting appointments
         const conflictingAppointments = await ctx.prisma.appointment.findMany({
@@ -331,26 +328,26 @@ export const professionalRouter = router({
             professionalId: { in: professionalIds },
             scheduledDate: {
               gte: new Date(
-                availableDate.toDateString() +
-                  " " +
-                  input.availabilityTimeSlot.startTime,
+                availableDate.toDateString()
+                  + ' '
+                  + input.availabilityTimeSlot.startTime,
               ),
               lt: new Date(
-                availableDate.toDateString() +
-                  " " +
-                  input.availabilityTimeSlot.endTime,
+                availableDate.toDateString()
+                  + ' '
+                  + input.availabilityTimeSlot.endTime,
               ),
             },
-            status: { in: ["scheduled", "confirmed", "in_progress"] },
+            status: { in: ['scheduled', 'confirmed', 'in_progress'] },
           },
           select: { professionalId: true },
         });
 
         const busyProfessionalIds = new Set(
-          conflictingAppointments.map((a) => a.professionalId),
+          conflictingAppointments.map(a => a.professionalId),
         );
         professionalIds = professionalIds.filter(
-          (id) => !busyProfessionalIds.has(id),
+          id => !busyProfessionalIds.has(id),
         );
       }
 
@@ -377,7 +374,7 @@ export const professionalRouter = router({
               select: {
                 appointments: {
                   where: {
-                    status: "completed",
+                    status: 'completed',
                     scheduledDate: {
                       gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // Last 30 days
                     },
@@ -411,10 +408,9 @@ export const professionalRouter = router({
    */
   update: protectedProcedure
     .meta({
-      description:
-        "Update professional information with re-validation if credentials change",
-      tags: ["professional", "update", "validation"],
-      requiresPermission: "professional:update",
+      description: 'Update professional information with re-validation if credentials change',
+      tags: ['professional', 'update', 'validation'],
+      requiresPermission: 'professional:update',
     })
     .input(UpdateProfessionalRequestSchema)
     .output(ProfessionalResponseSchema)
@@ -425,9 +421,9 @@ export const professionalRouter = router({
 
       if (!currentProfessional) {
         throw new HealthcareTRPCError(
-          "NOT_FOUND",
-          "Professional not found",
-          "PROFESSIONAL_NOT_FOUND",
+          'NOT_FOUND',
+          'Professional not found',
+          'PROFESSIONAL_NOT_FOUND',
           { professionalId: input.id },
         );
       }
@@ -436,25 +432,22 @@ export const professionalRouter = router({
       await validateClinicAccess(ctx.user.id, currentProfessional.clinicId);
 
       // Check if license information is being updated
-      const licenseChanged =
-        (input.licenseNumber &&
-          input.licenseNumber !== currentProfessional.licenseNumber) ||
-        (input.licenseType &&
-          input.licenseType !== currentProfessional.licenseType);
+      const licenseChanged = (input.licenseNumber
+        && input.licenseNumber !== currentProfessional.licenseNumber)
+        || (input.licenseType
+          && input.licenseType !== currentProfessional.licenseType);
 
       let licenseValidation = null;
       if (licenseChanged) {
         // Validate new license number format
-        const newLicenseType =
-          input.licenseType || currentProfessional.licenseType;
-        const newLicenseNumber =
-          input.licenseNumber || currentProfessional.licenseNumber;
+        const newLicenseType = input.licenseType || currentProfessional.licenseType;
+        const newLicenseNumber = input.licenseNumber || currentProfessional.licenseNumber;
 
         if (!isValidLicenseFormat(newLicenseType, newLicenseNumber)) {
           throw new HealthcareTRPCError(
-            "BAD_REQUEST",
-            "Invalid license number format for the specified license type",
-            "INVALID_LICENSE_FORMAT",
+            'BAD_REQUEST',
+            'Invalid license number format for the specified license type',
+            'INVALID_LICENSE_FORMAT',
             {
               licenseType: newLicenseType,
               licenseNumber: newLicenseNumber,
@@ -474,9 +467,9 @@ export const professionalRouter = router({
 
         if (existingProfessional) {
           throw new HealthcareTRPCError(
-            "CONFLICT",
-            "Another professional with this license number already exists",
-            "LICENSE_ALREADY_EXISTS",
+            'CONFLICT',
+            'Another professional with this license number already exists',
+            'LICENSE_ALREADY_EXISTS',
             {
               existingProfessionalId: existingProfessional.id,
               licenseNumber: newLicenseNumber,
@@ -492,9 +485,9 @@ export const professionalRouter = router({
 
         if (!licenseValidation.isValid) {
           throw new HealthcareTRPCError(
-            "BAD_REQUEST",
-            "License validation failed with regulatory authority",
-            "LICENSE_VALIDATION_FAILED",
+            'BAD_REQUEST',
+            'License validation failed with regulatory authority',
+            'LICENSE_VALIDATION_FAILED',
             {
               licenseType: newLicenseType,
               licenseNumber: newLicenseNumber,
@@ -536,7 +529,7 @@ export const professionalRouter = router({
 
         // Create new working hours
         await ctx.prisma.professionalWorkingHours.createMany({
-          data: input.workingHours.map((wh) => ({
+          data: input.workingHours.map(wh => ({
             ...wh,
             professionalId: input.id,
           })),
@@ -546,8 +539,8 @@ export const professionalRouter = router({
       // Audit log
       await ctx.prisma.auditLog.create({
         data: {
-          action: "professional_updated",
-          entityType: "professional",
+          action: 'professional_updated',
+          entityType: 'professional',
           entityId: input.id,
           details: {
             changes: getChanges(currentProfessional, input),
@@ -560,7 +553,7 @@ export const professionalRouter = router({
       return {
         success: true,
         data: updatedProfessional,
-        message: "Professional updated successfully",
+        message: 'Professional updated successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
       };
@@ -571,9 +564,9 @@ export const professionalRouter = router({
    */
   getAvailability: protectedProcedure
     .meta({
-      description: "Get professional availability with free time slots",
-      tags: ["professional", "availability", "schedule"],
-      requiresPermission: "professional:read",
+      description: 'Get professional availability with free time slots',
+      tags: ['professional', 'availability', 'schedule'],
+      requiresPermission: 'professional:read',
     })
     .input(
       z.object({
@@ -623,9 +616,9 @@ export const professionalRouter = router({
 
       if (!professional) {
         throw new HealthcareTRPCError(
-          "NOT_FOUND",
-          "Professional not found",
-          "PROFESSIONAL_NOT_FOUND",
+          'NOT_FOUND',
+          'Professional not found',
+          'PROFESSIONAL_NOT_FOUND',
           { professionalId: input.professionalId },
         );
       }
@@ -641,7 +634,7 @@ export const professionalRouter = router({
             gte: new Date(input.dateFrom),
             lte: new Date(input.dateTo),
           },
-          status: { in: ["scheduled", "confirmed", "in_progress"] },
+          status: { in: ['scheduled', 'confirmed', 'in_progress'] },
         },
         select: {
           scheduledDate: true,
@@ -677,17 +670,17 @@ export const professionalRouter = router({
    */
   deactivate: protectedProcedure
     .meta({
-      description: "Deactivate professional and handle active appointments",
-      tags: ["professional", "deactivate"],
-      requiresPermission: "professional:deactivate",
+      description: 'Deactivate professional and handle active appointments',
+      tags: ['professional', 'deactivate'],
+      requiresPermission: 'professional:deactivate',
     })
     .input(
       z.object({
         id: z.string().uuid(),
         reason: z.string().min(5).max(500),
         handleActiveAppointments: z
-          .enum(["cancel", "reassign", "keep"])
-          .default("keep"),
+          .enum(['cancel', 'reassign', 'keep'])
+          .default('keep'),
         reassignToProfessionalId: z.string().uuid().optional(),
       }),
     )
@@ -711,9 +704,9 @@ export const professionalRouter = router({
 
       if (!professional) {
         throw new HealthcareTRPCError(
-          "NOT_FOUND",
-          "Professional not found",
-          "PROFESSIONAL_NOT_FOUND",
+          'NOT_FOUND',
+          'Professional not found',
+          'PROFESSIONAL_NOT_FOUND',
           { professionalId: input.id },
         );
       }
@@ -725,7 +718,7 @@ export const professionalRouter = router({
       const activeAppointments = await ctx.prisma.appointment.findMany({
         where: {
           professionalId: input.id,
-          status: { in: ["scheduled", "confirmed"] },
+          status: { in: ['scheduled', 'confirmed'] },
           scheduledDate: { gte: new Date() },
         },
       });
@@ -733,15 +726,15 @@ export const professionalRouter = router({
       // Handle active appointments based on strategy
       let affectedAppointments = 0;
       switch (input.handleActiveAppointments) {
-        case "cancel":
+        case 'cancel':
           await ctx.prisma.appointment.updateMany({
             where: {
               professionalId: input.id,
-              status: { in: ["scheduled", "confirmed"] },
+              status: { in: ['scheduled', 'confirmed'] },
               scheduledDate: { gte: new Date() },
             },
             data: {
-              status: "cancelled",
+              status: 'cancelled',
               cancellationReason: `Professional deactivated: ${input.reason}`,
               cancelledAt: new Date(),
               cancelledBy: ctx.user.id,
@@ -750,19 +743,19 @@ export const professionalRouter = router({
           affectedAppointments = activeAppointments.length;
           break;
 
-        case "reassign":
+        case 'reassign':
           if (!input.reassignToProfessionalId) {
             throw new HealthcareTRPCError(
-              "BAD_REQUEST",
-              "Reassign target professional ID is required",
-              "REASSIGN_TARGET_REQUIRED",
+              'BAD_REQUEST',
+              'Reassign target professional ID is required',
+              'REASSIGN_TARGET_REQUIRED',
             );
           }
 
           await ctx.prisma.appointment.updateMany({
             where: {
               professionalId: input.id,
-              status: { in: ["scheduled", "confirmed"] },
+              status: { in: ['scheduled', 'confirmed'] },
               scheduledDate: { gte: new Date() },
             },
             data: {
@@ -773,7 +766,7 @@ export const professionalRouter = router({
           affectedAppointments = activeAppointments.length;
           break;
 
-        case "keep":
+        case 'keep':
           // Keep appointments as-is
           affectedAppointments = 0;
           break;
@@ -793,8 +786,8 @@ export const professionalRouter = router({
       // Audit log
       await ctx.prisma.auditLog.create({
         data: {
-          action: "professional_deactivated",
-          entityType: "professional",
+          action: 'professional_deactivated',
+          entityType: 'professional',
           entityId: input.id,
           details: {
             reason: input.reason,
@@ -813,7 +806,7 @@ export const professionalRouter = router({
           affectedAppointments,
           handlingMethod: input.handleActiveAppointments,
         },
-        message: "Professional deactivated successfully",
+        message: 'Professional deactivated successfully',
         timestamp: new Date().toISOString(),
         requestId: ctx.requestId,
       };
@@ -883,11 +876,11 @@ async function sendProfessionalWelcomeNotification(
 
 function getChanges(current: any, input: any): Record<string, any> {
   const changes = {} as Record<string, any>;
-  Object.keys(input).forEach((key) => {
+  Object.keys(input).forEach(key => {
     if (
-      key !== "id" &&
-      input[key] !== undefined &&
-      input[key] !== current[key]
+      key !== 'id'
+      && input[key] !== undefined
+      && input[key] !== current[key]
     ) {
       changes[key] = {
         from: current[key],

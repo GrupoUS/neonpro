@@ -1,13 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ExportService } from "../export-service";
-import { ExportLGPDCompliance } from "../lgpd-compliance";
-import {
-  ExportFilter,
-  ExportPagination,
-  LGPDComplianceOptions,
-} from "../types";
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ExportService } from '../export-service';
+import { ExportLGPDCompliance } from '../lgpd-compliance';
+import { ExportFilter, ExportPagination, LGPDComplianceOptions } from '../types';
 
-describe("ExportService", () => {
+describe('ExportService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
@@ -17,16 +13,16 @@ describe("ExportService", () => {
     vi.useRealTimers();
   });
 
-  describe("createExportJob", () => {
-    it("should create an export job with pending status", async () => {
-      const userId = "user123";
-      const format = "csv";
-      const filters: ExportFilter = { search: "test" };
+  describe('createExportJob', () => {
+    it('should create an export job with pending status', async () => {
+      const userId = 'user123';
+      const format = 'csv';
+      const filters: ExportFilter = { search: 'test' };
       const pagination: ExportPagination = { page: 1, limit: 100, offset: 0 };
       const lgpdOptions: LGPDComplianceOptions = {
         anonymizeSensitiveFields: true,
         excludeRestrictedFields: false,
-        purpose: "DATA_EXPORT",
+        purpose: 'DATA_EXPORT',
         retentionDays: 30,
         consentRequired: true,
       };
@@ -44,7 +40,7 @@ describe("ExportService", () => {
         format,
         filters,
         pagination,
-        status: "pending",
+        status: 'pending',
         progress: {
           processed: 0,
           total: 0,
@@ -57,22 +53,22 @@ describe("ExportService", () => {
       expect(job.updatedAt).toBeInstanceOf(Date);
     });
 
-    it("should process export job asynchronously", async () => {
-      const userId = "user123";
-      const format = "csv";
+    it('should process export job asynchronously', async () => {
+      const userId = 'user123';
+      const format = 'csv';
       const filters: ExportFilter = {};
       const pagination: ExportPagination = { page: 1, limit: 10, offset: 0 };
       const lgpdOptions: LGPDComplianceOptions = {
         anonymizeSensitiveFields: true,
         excludeRestrictedFields: false,
-        purpose: "DATA_EXPORT",
+        purpose: 'DATA_EXPORT',
         retentionDays: 30,
         consentRequired: false,
       };
 
       const validateSpy = vi.spyOn(
         ExportLGPDCompliance,
-        "validateExportRequest",
+        'validateExportRequest',
       );
       validateSpy.mockResolvedValue({ valid: true });
 
@@ -87,20 +83,20 @@ describe("ExportService", () => {
       await vi.advanceTimersByTimeAsync(100);
 
       const updatedJob = await ExportService.getExportJob(job.id);
-      expect(updatedJob?.status).toBe("processing");
+      expect(updatedJob?.status).toBe('processing');
     });
   });
 
-  describe("getExportJob", () => {
-    it("should return existing job", async () => {
-      const userId = "user123";
-      const format = "csv";
+  describe('getExportJob', () => {
+    it('should return existing job', async () => {
+      const userId = 'user123';
+      const format = 'csv';
       const filters: ExportFilter = {};
       const pagination: ExportPagination = { page: 1, limit: 10, offset: 0 };
       const lgpdOptions: LGPDComplianceOptions = {
         anonymizeSensitiveFields: true,
         excludeRestrictedFields: false,
-        purpose: "DATA_EXPORT",
+        purpose: 'DATA_EXPORT',
         retentionDays: 30,
         consentRequired: false,
       };
@@ -117,22 +113,22 @@ describe("ExportService", () => {
       expect(retrievedJob).toEqual(job);
     });
 
-    it("should return null for non-existent job", async () => {
-      const job = await ExportService.getExportJob("non-existent-id");
+    it('should return null for non-existent job', async () => {
+      const job = await ExportService.getExportJob('non-existent-id');
       expect(job).toBeNull();
     });
   });
 
-  describe("cancelExportJob", () => {
-    it("should cancel processing job", async () => {
-      const userId = "user123";
-      const format = "csv";
+  describe('cancelExportJob', () => {
+    it('should cancel processing job', async () => {
+      const userId = 'user123';
+      const format = 'csv';
       const filters: ExportFilter = {};
       const pagination: ExportPagination = { page: 1, limit: 10, offset: 0 };
       const lgpdOptions: LGPDComplianceOptions = {
         anonymizeSensitiveFields: true,
         excludeRestrictedFields: false,
-        purpose: "DATA_EXPORT",
+        purpose: 'DATA_EXPORT',
         retentionDays: 30,
         consentRequired: false,
       };
@@ -149,18 +145,18 @@ describe("ExportService", () => {
       expect(success).toBe(true);
 
       const cancelledJob = await ExportService.getExportJob(job.id);
-      expect(cancelledJob?.status).toBe("cancelled");
+      expect(cancelledJob?.status).toBe('cancelled');
     });
 
-    it("should not cancel job from different user", async () => {
-      const userId = "user123";
-      const format = "csv";
+    it('should not cancel job from different user', async () => {
+      const userId = 'user123';
+      const format = 'csv';
       const filters: ExportFilter = {};
       const pagination: ExportPagination = { page: 1, limit: 10, offset: 0 };
       const lgpdOptions: LGPDComplianceOptions = {
         anonymizeSensitiveFields: true,
         excludeRestrictedFields: false,
-        purpose: "DATA_EXPORT",
+        purpose: 'DATA_EXPORT',
         retentionDays: 30,
         consentRequired: false,
       };
@@ -175,57 +171,57 @@ describe("ExportService", () => {
 
       const success = await ExportService.cancelExportJob(
         job.id,
-        "different-user",
+        'different-user',
       );
       expect(success).toBe(false);
     });
   });
 
-  describe("getExportFormats", () => {
-    it("should return available export formats", async () => {
+  describe('getExportFormats', () => {
+    it('should return available export formats', async () => {
       const formats = await ExportService.getExportFormats();
 
       expect(formats).toEqual([
         {
-          format: "csv",
-          description: "Valores separados por vírgula, compatível com Excel",
+          format: 'csv',
+          description: 'Valores separados por vírgula, compatível com Excel',
         },
         {
-          format: "xlsx",
-          description: "Formato Excel nativo com múltiplas planilhas",
+          format: 'xlsx',
+          description: 'Formato Excel nativo com múltiplas planilhas',
         },
       ]);
     });
   });
 
-  describe("getExportFields", () => {
-    it("should return available export fields", async () => {
+  describe('getExportFields', () => {
+    it('should return available export fields', async () => {
       const fields = await ExportService.getExportFields();
 
       expect(fields).toHaveLength(15);
       expect(fields[0]).toMatchObject({
-        field: "id",
-        label: "ID",
-        type: "string",
+        field: 'id',
+        label: 'ID',
+        type: 'string',
         sensitive: false,
         required: true,
       });
     });
   });
 
-  describe("getExportHistory", () => {
-    it("should return user export history", async () => {
-      const userId = "user123";
+  describe('getExportHistory', () => {
+    it('should return user export history', async () => {
+      const userId = 'user123';
 
       await ExportService.createExportJob(
         userId,
-        "csv",
+        'csv',
         {},
         { page: 1, limit: 10, offset: 0 },
         {
           anonymizeSensitiveFields: true,
           excludeRestrictedFields: false,
-          purpose: "DATA_EXPORT",
+          purpose: 'DATA_EXPORT',
           retentionDays: 30,
           consentRequired: false,
         },
@@ -233,13 +229,13 @@ describe("ExportService", () => {
 
       await ExportService.createExportJob(
         userId,
-        "xlsx",
+        'xlsx',
         {},
         { page: 1, limit: 10, offset: 0 },
         {
           anonymizeSensitiveFields: true,
           excludeRestrictedFields: false,
-          purpose: "DATA_EXPORT",
+          purpose: 'DATA_EXPORT',
           retentionDays: 30,
           consentRequired: false,
         },
@@ -249,23 +245,23 @@ describe("ExportService", () => {
 
       expect(history).toHaveLength(2);
       expect(history[0].userId).toBe(userId);
-      expect(history[0].format).toBe("xlsx");
-      expect(history[1].format).toBe("csv");
+      expect(history[0].format).toBe('xlsx');
+      expect(history[1].format).toBe('csv');
     });
 
-    it("should respect limit parameter", async () => {
-      const userId = "user123";
+    it('should respect limit parameter', async () => {
+      const userId = 'user123';
 
       for (let i = 0; i < 5; i++) {
         await ExportService.createExportJob(
           userId,
-          "csv",
+          'csv',
           {},
           { page: 1, limit: 10, offset: 0 },
           {
             anonymizeSensitiveFields: true,
             excludeRestrictedFields: false,
-            purpose: "DATA_EXPORT",
+            purpose: 'DATA_EXPORT',
             retentionDays: 30,
             consentRequired: false,
           },
@@ -277,23 +273,23 @@ describe("ExportService", () => {
     });
   });
 
-  describe("getExportMetrics", () => {
-    it("should return metrics for completed job", async () => {
-      const userId = "user123";
-      const format = "csv";
+  describe('getExportMetrics', () => {
+    it('should return metrics for completed job', async () => {
+      const userId = 'user123';
+      const format = 'csv';
       const filters: ExportFilter = {};
       const pagination: ExportPagination = { page: 1, limit: 10, offset: 0 };
       const lgpdOptions: LGPDComplianceOptions = {
         anonymizeSensitiveFields: true,
         excludeRestrictedFields: false,
-        purpose: "DATA_EXPORT",
+        purpose: 'DATA_EXPORT',
         retentionDays: 30,
         consentRequired: false,
       };
 
       const validateSpy = vi.spyOn(
         ExportLGPDCompliance,
-        "validateExportRequest",
+        'validateExportRequest',
       );
       validateSpy.mockResolvedValue({ valid: true });
 
@@ -315,29 +311,29 @@ describe("ExportService", () => {
       expect(metrics?.processingTime).toBeGreaterThanOrEqual(0);
     });
 
-    it("should return null for non-existent job", async () => {
-      const metrics = await ExportService.getExportMetrics("non-existent-id");
+    it('should return null for non-existent job', async () => {
+      const metrics = await ExportService.getExportMetrics('non-existent-id');
       expect(metrics).toBeNull();
     });
   });
 
-  describe("cleanupExpiredJobs", () => {
-    it("should remove expired jobs", async () => {
-      const userId = "user123";
-      const format = "csv";
+  describe('cleanupExpiredJobs', () => {
+    it('should remove expired jobs', async () => {
+      const userId = 'user123';
+      const format = 'csv';
       const filters: ExportFilter = {};
       const pagination: ExportPagination = { page: 1, limit: 10, offset: 0 };
       const lgpdOptions: LGPDComplianceOptions = {
         anonymizeSensitiveFields: true,
         excludeRestrictedFields: false,
-        purpose: "DATA_EXPORT",
+        purpose: 'DATA_EXPORT',
         retentionDays: 30,
         consentRequired: false,
       };
 
       const validateSpy = vi.spyOn(
         ExportLGPDCompliance,
-        "validateExportRequest",
+        'validateExportRequest',
       );
       validateSpy.mockResolvedValue({ valid: true });
 

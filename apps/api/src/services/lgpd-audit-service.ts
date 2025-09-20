@@ -1,44 +1,41 @@
-import { z } from "zod";
-import {
-  getHealthcarePrismaClient,
-  type HealthcarePrismaClient,
-} from "../clients/prisma";
-import { type LGPDOperationResult } from "../types/lgpd.js";
-import { createHealthcareError } from "./createHealthcareError.js";
+import { z } from 'zod';
+import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clients/prisma';
+import { type LGPDOperationResult } from '../types/lgpd.js';
+import { createHealthcareError } from './createHealthcareError.js';
 
 // LGPD Audit Trail Types
 export const AuditAction = z.enum([
-  "DATA_ACCESS",
-  "DATA_CREATION",
-  "DATA_UPDATE",
-  "DATA_DELETION",
-  "DATA_EXPORT",
-  "DATA_SHARE",
-  "CONSENT_GRANTED",
-  "CONSENT_WITHDRAWN",
-  "DATA_BREACH",
-  "RIGHT_REQUEST",
-  "ANONYMIZATION",
-  "RETENTION_POLICY",
-  "THIRD_PARTY_TRANSFER",
-  "AUTOMATED_DECISION",
-  "PROFILE_CREATION",
-  "SENSITIVE_DATA_PROCESSING",
+  'DATA_ACCESS',
+  'DATA_CREATION',
+  'DATA_UPDATE',
+  'DATA_DELETION',
+  'DATA_EXPORT',
+  'DATA_SHARE',
+  'CONSENT_GRANTED',
+  'CONSENT_WITHDRAWN',
+  'DATA_BREACH',
+  'RIGHT_REQUEST',
+  'ANONYMIZATION',
+  'RETENTION_POLICY',
+  'THIRD_PARTY_TRANSFER',
+  'AUTOMATED_DECISION',
+  'PROFILE_CREATION',
+  'SENSITIVE_DATA_PROCESSING',
 ]);
 
-export const AuditSeverity = z.enum(["LOW", "MEDIUM", "HIGH", "CRITICAL"]);
+export const AuditSeverity = z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']);
 
 export const DataCategory = z.enum([
-  "PERSONAL",
-  "SENSITIVE",
-  "HEALTH",
-  "GENETIC",
-  "BIOMETRIC",
-  "FINANCIAL",
-  "IDENTIFICATION",
-  "CONTACT",
-  "LOCATION",
-  "PROFESSIONAL",
+  'PERSONAL',
+  'SENSITIVE',
+  'HEALTH',
+  'GENETIC',
+  'BIOMETRIC',
+  'FINANCIAL',
+  'IDENTIFICATION',
+  'CONTACT',
+  'LOCATION',
+  'PROFESSIONAL',
 ]);
 
 export interface AuditTrailEntry {
@@ -69,12 +66,12 @@ export interface DataSubjectRequest {
   id: string;
   patientId: string;
   requestType:
-    | "ACCESS"
-    | "DELETION"
-    | "CORRECTION"
-    | "PORTABILITY"
-    | "OBJECTION";
-  status: "PENDING" | "PROCESSING" | "COMPLETED" | "REJECTED";
+    | 'ACCESS'
+    | 'DELETION'
+    | 'CORRECTION'
+    | 'PORTABILITY'
+    | 'OBJECTION';
+  status: 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'REJECTED';
   description: string;
   requestData?: Record<string, any>;
   response?: string;
@@ -99,7 +96,7 @@ export interface DataBreachNotification {
   discoveryDate: Date;
   reportedToANPD?: boolean;
   anpdReportDate?: Date;
-  status: "DETECTED" | "INVESTIGATING" | "CONTAINED" | "RESOLVED";
+  status: 'DETECTED' | 'INVESTIGATING' | 'CONTAINED' | 'RESOLVED';
 }
 
 /**
@@ -119,22 +116,21 @@ export class LGPDAuditService {
    * Complies with LGPD Art. 37 (record keeping)
    */
   async recordAudit(
-    entry: Omit<AuditTrailEntry, "id" | "createdAt">,
+    entry: Omit<AuditTrailEntry, 'id' | 'createdAt'>,
   ): Promise<LGPDOperationResult> {
     try {
       // Validate required fields
       if (!entry.entityType || !entry.entityId) {
         throw createHealthcareError(
-          "INVALID_AUDIT_ENTRY",
-          "Entity type and ID are required",
+          'INVALID_AUDIT_ENTRY',
+          'Entity type and ID are required',
           { entry },
         );
       }
 
       // Assess risk level automatically if not provided
-      const riskLevel =
-        entry.riskLevel ||
-        this.assessRiskLevel(entry.action, entry.dataCategory);
+      const riskLevel = entry.riskLevel
+        || this.assessRiskLevel(entry.action, entry.dataCategory);
 
       // Create audit trail entry
       const auditEntry = await this.prisma.auditTrail.create({
@@ -169,8 +165,8 @@ export class LGPDAuditService {
         await this.prisma.auditTrail.create({
           data: {
             userId: entry.patientId,
-            action: "PATIENT_DATA_OPERATION",
-            entityType: "PATIENT_AUDIT",
+            action: 'PATIENT_DATA_OPERATION',
+            entityType: 'PATIENT_AUDIT',
             entityId: `${entry.entityType}_${entry.entityId}`,
             metadata: {
               originalAction: entry.action,
@@ -203,7 +199,7 @@ export class LGPDAuditService {
         recordsProcessed: 0,
         operationId: `audit_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -213,7 +209,7 @@ export class LGPDAuditService {
    */
   async createDataSubjectRequest(
     patientId: string,
-    requestType: DataSubjectRequest["requestType"],
+    requestType: DataSubjectRequest['requestType'],
     description: string,
     requestData?: Record<string, any>,
   ): Promise<LGPDOperationResult & { requestId?: string }> {
@@ -223,14 +219,14 @@ export class LGPDAuditService {
       const requestEntry = await this.prisma.auditTrail.create({
         data: {
           userId: patientId,
-          action: "DATA_SUBJECT_REQUEST",
-          entityType: "RIGHT_REQUEST",
+          action: 'DATA_SUBJECT_REQUEST',
+          entityType: 'RIGHT_REQUEST',
           entityId: requestId,
           metadata: {
             requestType,
             description,
             requestData,
-            status: "PENDING",
+            status: 'PENDING',
             createdAt: new Date().toISOString(),
             patientId,
           },
@@ -240,11 +236,11 @@ export class LGPDAuditService {
       // Create audit trail for request creation
       await this.recordAudit({
         patientId,
-        action: "RIGHT_REQUEST",
-        entityType: "DATA_SUBJECT_RIGHTS",
+        action: 'RIGHT_REQUEST',
+        entityType: 'DATA_SUBJECT_RIGHTS',
         entityId: requestId,
-        dataCategory: "PERSONAL",
-        severity: "MEDIUM",
+        dataCategory: 'PERSONAL',
+        severity: 'MEDIUM',
         description: `Data subject request created: ${requestType}`,
         metadata: {
           requestType,
@@ -265,7 +261,7 @@ export class LGPDAuditService {
         recordsProcessed: 0,
         operationId: `request_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -288,8 +284,8 @@ export class LGPDAuditService {
       const whereClause: any = {
         userId: patientId,
         OR: [
-          { action: { in: ["PATIENT_DATA_OPERATION"] } },
-          { action: { notIn: ["PATIENT_DATA_OPERATION"] } },
+          { action: { in: ['PATIENT_DATA_OPERATION'] } },
+          { action: { notIn: ['PATIENT_DATA_OPERATION'] } },
         ],
       };
 
@@ -305,13 +301,11 @@ export class LGPDAuditService {
 
       const auditEntries = await this.prisma.auditTrail.findMany({
         where: whereClause,
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
         take: limit,
       });
 
-      const formattedEntries = auditEntries.map((entry) =>
-        this.mapToAuditTrailEntry(entry),
-      );
+      const formattedEntries = auditEntries.map(entry => this.mapToAuditTrailEntry(entry));
 
       return {
         success: true,
@@ -326,7 +320,7 @@ export class LGPDAuditService {
         recordsProcessed: 0,
         operationId: `audit_trail_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -335,7 +329,7 @@ export class LGPDAuditService {
    * Records data breach notification (LGPD Art. 48)
    */
   async recordDataBreach(
-    breach: Omit<DataBreachNotification, "id" | "notificationDate">,
+    breach: Omit<DataBreachNotification, 'id' | 'notificationDate'>,
   ): Promise<LGPDOperationResult & { breachId?: string }> {
     try {
       const breachId = breach.breachId || this.generateBreachId();
@@ -343,8 +337,8 @@ export class LGPDAuditService {
 
       const breachEntry = await this.prisma.auditTrail.create({
         data: {
-          action: "DATA_BREACH",
-          entityType: "SECURITY_INCIDENT",
+          action: 'DATA_BREACH',
+          entityType: 'SECURITY_INCIDENT',
           entityId: breachId,
           metadata: {
             severity: breach.severity,
@@ -368,10 +362,10 @@ export class LGPDAuditService {
       for (const patientId of breach.affectedPatients) {
         await this.recordAudit({
           patientId,
-          action: "DATA_BREACH_AFFECTED",
-          entityType: "SECURITY_INCIDENT",
+          action: 'DATA_BREACH_AFFECTED',
+          entityType: 'SECURITY_INCIDENT',
           entityId: breachId,
-          dataCategory: "PERSONAL",
+          dataCategory: 'PERSONAL',
           severity: breach.severity,
           description: `Patient data affected by security breach: ${breach.description}`,
           metadata: {
@@ -400,7 +394,7 @@ export class LGPDAuditService {
         recordsProcessed: 0,
         operationId: `breach_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -466,7 +460,7 @@ export class LGPDAuditService {
         recordsProcessed: 0,
         operationId: `compliance_report_error_${Date.now()}`,
         timestamp: new Date().toISOString(),
-        errors: [error instanceof Error ? error.message : "Unknown error"],
+        errors: [error instanceof Error ? error.message : 'Unknown error'],
       };
     }
   }
@@ -509,13 +503,13 @@ export class LGPDAuditService {
 
   private async handleAutomatedDecisionAudit(
     auditId: string,
-    entry: Omit<AuditTrailEntry, "id" | "createdAt">,
+    entry: Omit<AuditTrailEntry, 'id' | 'createdAt'>,
   ): Promise<void> {
     // Create special audit entry for automated decisions
     await this.prisma.auditTrail.create({
       data: {
-        action: "AUTOMATED_DECISION_LOG",
-        entityType: "AI_GOVERNANCE",
+        action: 'AUTOMATED_DECISION_LOG',
+        entityType: 'AI_GOVERNANCE',
         entityId: auditId,
         metadata: {
           originalAuditId: auditId,
@@ -529,16 +523,16 @@ export class LGPDAuditService {
   }
 
   private requiresHumanReview(
-    entry: Omit<AuditTrailEntry, "id" | "createdAt">,
+    entry: Omit<AuditTrailEntry, 'id' | 'createdAt'>,
   ): boolean {
     // Determine if automated decision requires human review based on LGPD Art. 20
-    const highRiskActions = ["AUTOMATED_DECISION", "PROFILE_CREATION"];
-    const sensitiveCategories = ["SENSITIVE", "HEALTH", "GENETIC"];
+    const highRiskActions = ['AUTOMATED_DECISION', 'PROFILE_CREATION'];
+    const sensitiveCategories = ['SENSITIVE', 'HEALTH', 'GENETIC'];
 
     return (
-      highRiskActions.includes(entry.action) &&
-      sensitiveCategories.includes(entry.dataCategory) &&
-      (entry.riskLevel || 0) >= 7
+      highRiskActions.includes(entry.action)
+      && sensitiveCategories.includes(entry.dataCategory)
+      && (entry.riskLevel || 0) >= 7
     );
   }
 
@@ -578,26 +572,26 @@ export class LGPDAuditService {
   }
 
   private requiresANPDNotification(
-    breach: Omit<DataBreachNotification, "id" | "notificationDate">,
+    breach: Omit<DataBreachNotification, 'id' | 'notificationDate'>,
   ): boolean {
     // LGPD requires ANPD notification for breaches that may cause significant risk
     return (
-      breach.severity === "CRITICAL" ||
-      breach.affectedRecords > 100 ||
-      breach.dataCategories.includes("SENSITIVE") ||
-      breach.dataCategories.includes("HEALTH")
+      breach.severity === 'CRITICAL'
+      || breach.affectedRecords > 100
+      || breach.dataCategories.includes('SENSITIVE')
+      || breach.dataCategories.includes('HEALTH')
     );
   }
 
   private async notifyANPD(
     breachId: string,
-    breach: Omit<DataBreachNotification, "id" | "notificationDate">,
+    breach: Omit<DataBreachNotification, 'id' | 'notificationDate'>,
   ): Promise<void> {
     // Create audit entry for ANPD notification
     await this.prisma.auditTrail.create({
       data: {
-        action: "ANPD_NOTIFICATION",
-        entityType: "REGULATORY_COMPLIANCE",
+        action: 'ANPD_NOTIFICATION',
+        entityType: 'REGULATORY_COMPLIANCE',
         entityId: breachId,
         metadata: {
           breachId,
@@ -623,22 +617,21 @@ export class LGPDAuditService {
       if (endDate) whereClause.createdAt.lte = endDate;
     }
 
-    const [totalOperations, dataSubjectRequests, breaches, automatedDecisions] =
-      await Promise.all([
-        this.prisma.auditTrail.count({ where: whereClause }),
-        this.prisma.auditTrail.count({
-          where: { ...whereClause, action: "DATA_SUBJECT_REQUEST" },
-        }),
-        this.prisma.auditTrail.count({
-          where: { ...whereClause, action: "DATA_BREACH" },
-        }),
-        this.prisma.auditTrail.count({
-          where: {
-            ...whereClause,
-            metadata: { path: ["automatedDecision"], equals: true },
-          },
-        }),
-      ]);
+    const [totalOperations, dataSubjectRequests, breaches, automatedDecisions] = await Promise.all([
+      this.prisma.auditTrail.count({ where: whereClause }),
+      this.prisma.auditTrail.count({
+        where: { ...whereClause, action: 'DATA_SUBJECT_REQUEST' },
+      }),
+      this.prisma.auditTrail.count({
+        where: { ...whereClause, action: 'DATA_BREACH' },
+      }),
+      this.prisma.auditTrail.count({
+        where: {
+          ...whereClause,
+          metadata: { path: ['automatedDecision'], equals: true },
+        },
+      }),
+    ]);
 
     return {
       totalOperations,
@@ -656,7 +649,7 @@ export class LGPDAuditService {
     startDate?: Date,
     endDate?: Date,
   ): Promise<any> {
-    const whereClause: any = { action: "DATA_BREACH" };
+    const whereClause: any = { action: 'DATA_BREACH' };
     if (startDate || endDate) {
       whereClause.createdAt = {};
       if (startDate) whereClause.createdAt.gge = startDate;
@@ -686,19 +679,19 @@ export class LGPDAuditService {
 
     if (auditSummary.breaches > 0) {
       recommendations.push(
-        "Implement additional security controls to reduce data breach incidents",
+        'Implement additional security controls to reduce data breach incidents',
       );
     }
 
     if (auditSummary.dataSubjectRequests > 10) {
       recommendations.push(
-        "Consider automating data subject request processing",
+        'Consider automating data subject request processing',
       );
     }
 
     if (auditSummary.automatedDecisions > auditSummary.totalOperations * 0.5) {
       recommendations.push(
-        "Review automated decision processes for human oversight requirements",
+        'Review automated decision processes for human oversight requirements',
       );
     }
 
@@ -707,7 +700,7 @@ export class LGPDAuditService {
 
   private groupBySeverity(breaches: any[]): Record<string, number> {
     return breaches.reduce((acc, breach) => {
-      const severity = breach.metadata?.severity || "UNKNOWN";
+      const severity = breach.metadata?.severity || 'UNKNOWN';
       acc[severity] = (acc[severity] || 0) + 1;
       return acc;
     }, {});
@@ -722,7 +715,7 @@ export class LGPDAuditService {
     if (breaches.length === 0) return 0;
 
     const notified = breaches.filter(
-      (breach) => breach.metadata?.reportedToANPD,
+      breach => breach.metadata?.reportedToANPD,
     ).length;
     return (notified / breaches.length) * 100;
   }

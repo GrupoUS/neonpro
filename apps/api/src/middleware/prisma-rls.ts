@@ -6,7 +6,7 @@
  * and audit trail integration.
  */
 
-import { Context, Next } from "hono";
+import { Context, Next } from 'hono';
 import {
   createHealthcareContextFromRequest,
   createPrismaWithContext,
@@ -14,14 +14,14 @@ import {
   type HealthcareContext,
   type HealthcarePrismaClient,
   UnauthorizedHealthcareAccessError,
-} from "../clients/prisma";
-import { healthcareRLS } from "../clients/supabase.js";
+} from '../clients/prisma';
+import { healthcareRLS } from '../clients/supabase.js';
 
 // Middleware configuration options
 interface PrismaRLSOptions {
   requireAuth?: boolean;
   requireClinicAccess?: boolean;
-  requiredRole?: HealthcareContext["role"];
+  requiredRole?: HealthcareContext['role'];
   requiredPermissions?: string[];
   logAccess?: boolean;
   validateCFM?: boolean; // Brazilian healthcare professional validation
@@ -33,7 +33,7 @@ interface HealthcareRequestContext {
   healthcareContext: HealthcareContext;
   userId: string;
   clinicId: string;
-  userRole: HealthcareContext["role"];
+  userRole: HealthcareContext['role'];
   permissions: string[];
   cfmValidated: boolean;
 }
@@ -54,21 +54,20 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
   return async (c: Context, next: Next) => {
     try {
       // Extract authentication information
-      const userId = c.get("userId") || c.req.header("x-user-id");
-      const clinicId = c.get("clinicId") || c.req.header("x-clinic-id");
-      const userRole =
-        c.get("userRole") ||
-        (c.req.header("x-user-role") as HealthcareContext["role"]);
-      const permissions = c.get("permissions") || [];
-      const cfmValidated = c.get("cfmValidated") || false;
+      const userId = c.get('userId') || c.req.header('x-user-id');
+      const clinicId = c.get('clinicId') || c.req.header('x-clinic-id');
+      const userRole = c.get('userRole')
+        || (c.req.header('x-user-role') as HealthcareContext['role']);
+      const permissions = c.get('permissions') || [];
+      const cfmValidated = c.get('cfmValidated') || false;
 
       // Validate authentication requirements
       if (requireAuth && !userId) {
         return c.json(
           {
-            error: "Authentication required",
-            code: "AUTH_REQUIRED",
-            message: "User authentication is required to access this resource",
+            error: 'Authentication required',
+            code: 'AUTH_REQUIRED',
+            message: 'User authentication is required to access this resource',
           },
           401,
         );
@@ -77,9 +76,9 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       if (requireClinicAccess && !clinicId) {
         return c.json(
           {
-            error: "Clinic context required",
-            code: "CLINIC_CONTEXT_REQUIRED",
-            message: "Clinic context is required for this operation",
+            error: 'Clinic context required',
+            code: 'CLINIC_CONTEXT_REQUIRED',
+            message: 'Clinic context is required for this operation',
           },
           400,
         );
@@ -89,8 +88,8 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       if (requiredRole && userRole !== requiredRole) {
         return c.json(
           {
-            error: "Insufficient role permissions",
-            code: "ROLE_PERMISSION_DENIED",
+            error: 'Insufficient role permissions',
+            code: 'ROLE_PERMISSION_DENIED',
             message: `Role '${requiredRole}' required, but user has '${userRole}'`,
           },
           403,
@@ -99,16 +98,16 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
 
       // Validate specific permissions
       if (requiredPermissions.length > 0) {
-        const hasRequiredPermissions = requiredPermissions.every((permission) =>
-          permissions.includes(permission),
+        const hasRequiredPermissions = requiredPermissions.every(permission =>
+          permissions.includes(permission)
         );
 
         if (!hasRequiredPermissions) {
           return c.json(
             {
-              error: "Insufficient permissions",
-              code: "PERMISSION_DENIED",
-              message: `Required permissions: ${requiredPermissions.join(", ")}`,
+              error: 'Insufficient permissions',
+              code: 'PERMISSION_DENIED',
+              message: `Required permissions: ${requiredPermissions.join(', ')}`,
             },
             403,
           );
@@ -116,13 +115,12 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       }
 
       // Validate CFM (Brazilian healthcare professional license) if required
-      if (validateCFM && userRole === "professional" && !cfmValidated) {
+      if (validateCFM && userRole === 'professional' && !cfmValidated) {
         return c.json(
           {
-            error: "CFM validation required",
-            code: "CFM_VALIDATION_REQUIRED",
-            message:
-              "Brazilian healthcare professional license validation required",
+            error: 'CFM validation required',
+            code: 'CFM_VALIDATION_REQUIRED',
+            message: 'Brazilian healthcare professional license validation required',
           },
           403,
         );
@@ -138,9 +136,9 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
         if (!hasClinicAccess) {
           return c.json(
             {
-              error: "Clinic access denied",
-              code: "CLINIC_ACCESS_DENIED",
-              message: "User does not have access to the specified clinic",
+              error: 'Clinic access denied',
+              code: 'CLINIC_ACCESS_DENIED',
+              message: 'User does not have access to the specified clinic',
             },
             403,
           );
@@ -166,40 +164,39 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       if (!isContextValid) {
         return c.json(
           {
-            error: "Healthcare context validation failed",
-            code: "CONTEXT_VALIDATION_FAILED",
-            message: "Unable to validate healthcare access context",
+            error: 'Healthcare context validation failed',
+            code: 'CONTEXT_VALIDATION_FAILED',
+            message: 'Unable to validate healthcare access context',
           },
           403,
         );
       }
 
       // Store healthcare context and Prisma client in Hono context
-      c.set("prisma", prismaWithContext);
-      c.set("healthcareContext", healthcareContext);
-      c.set("userId", userId);
-      c.set("clinicId", clinicId);
-      c.set("userRole", userRole);
-      c.set("permissions", permissions);
-      c.set("cfmValidated", cfmValidated);
+      c.set('prisma', prismaWithContext);
+      c.set('healthcareContext', healthcareContext);
+      c.set('userId', userId);
+      c.set('clinicId', clinicId);
+      c.set('userRole', userRole);
+      c.set('permissions', permissions);
+      c.set('cfmValidated', cfmValidated);
 
       // Log access for audit trail
       if (logAccess && userId) {
         try {
           await prismaWithContext.createAuditLog(
-            "ACCESS",
-            "API_ENDPOINT",
+            'ACCESS',
+            'API_ENDPOINT',
             `${c.req.method}:${c.req.path}`,
             {
               method: c.req.method,
               path: c.req.path,
               query: c.req.query(),
-              ipAddress:
-                c.req.header("x-forwarded-for") ||
-                c.req.header("x-real-ip") ||
-                "unknown",
-              userAgent: c.req.header("user-agent") || "unknown",
-              referer: c.req.header("referer"),
+              ipAddress: c.req.header('x-forwarded-for')
+                || c.req.header('x-real-ip')
+                || 'unknown',
+              userAgent: c.req.header('user-agent') || 'unknown',
+              referer: c.req.header('referer'),
               clinicId,
               userRole,
               permissions,
@@ -207,7 +204,7 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
             },
           );
         } catch (auditError) {
-          console.error("Audit logging failed:", auditError);
+          console.error('Audit logging failed:', auditError);
           // Don't fail the request if audit logging fails
         }
       }
@@ -215,13 +212,13 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       // Continue to next middleware/handler
       await next();
     } catch (error) {
-      console.error("Prisma RLS middleware error:", error);
+      console.error('Prisma RLS middleware error:', error);
 
       // Handle specific healthcare compliance errors
       if (error instanceof HealthcareComplianceError) {
         return c.json(
           {
-            error: "Healthcare compliance violation",
+            error: 'Healthcare compliance violation',
             code: error.code,
             framework: error.complianceFramework,
             message: error.message,
@@ -233,7 +230,7 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       if (error instanceof UnauthorizedHealthcareAccessError) {
         return c.json(
           {
-            error: "Unauthorized healthcare access",
+            error: 'Unauthorized healthcare access',
             resourceType: error.resourceType,
             resourceId: error.resourceId,
             message: error.message,
@@ -245,9 +242,9 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       // Generic error handling
       return c.json(
         {
-          error: "Internal server error",
-          code: "INTERNAL_ERROR",
-          message: "An unexpected error occurred during request processing",
+          error: 'Internal server error',
+          code: 'INTERNAL_ERROR',
+          message: 'An unexpected error occurred during request processing',
         },
         500,
       );
@@ -259,13 +256,13 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
  * Specialized middleware for patient data access
  */
 export function patientAccessMiddleware(
-  options: Omit<PrismaRLSOptions, "requireClinicAccess"> = {},
+  options: Omit<PrismaRLSOptions, 'requireClinicAccess'> = {},
 ) {
   return prismaRLSMiddleware({
     ...options,
     requireClinicAccess: true,
     requiredPermissions: [
-      "patient_read",
+      'patient_read',
       ...(options.requiredPermissions || []),
     ],
   });
@@ -275,14 +272,14 @@ export function patientAccessMiddleware(
  * Specialized middleware for professional operations
  */
 export function professionalAccessMiddleware(
-  options: Omit<PrismaRLSOptions, "validateCFM"> = {},
+  options: Omit<PrismaRLSOptions, 'validateCFM'> = {},
 ) {
   return prismaRLSMiddleware({
     ...options,
-    requiredRole: "professional",
+    requiredRole: 'professional',
     validateCFM: true,
     requiredPermissions: [
-      "professional_operations",
+      'professional_operations',
       ...(options.requiredPermissions || []),
     ],
   });
@@ -294,9 +291,9 @@ export function professionalAccessMiddleware(
 export function clinicAdminMiddleware(options: PrismaRLSOptions = {}) {
   return prismaRLSMiddleware({
     ...options,
-    requiredRole: "admin",
+    requiredRole: 'admin',
     requiredPermissions: [
-      "clinic_admin",
+      'clinic_admin',
       ...(options.requiredPermissions || []),
     ],
   });
@@ -309,8 +306,8 @@ export function lgpdOperationsMiddleware(options: PrismaRLSOptions = {}) {
   return prismaRLSMiddleware({
     ...options,
     requiredPermissions: [
-      "lgpd_operations",
-      "data_export",
+      'lgpd_operations',
+      'data_export',
       ...(options.requiredPermissions || []),
     ],
     logAccess: true, // Always log LGPD operations
@@ -321,13 +318,13 @@ export function lgpdOperationsMiddleware(options: PrismaRLSOptions = {}) {
  * Helper function to extract healthcare context from Hono context
  */
 export function getHealthcareContext(c: Context): HealthcareRequestContext {
-  const prisma = c.get("prisma") as HealthcarePrismaClient;
-  const healthcareContext = c.get("healthcareContext") as HealthcareContext;
-  const userId = c.get("userId") as string;
-  const clinicId = c.get("clinicId") as string;
-  const userRole = c.get("userRole") as HealthcareContext["role"];
-  const permissions = c.get("permissions") as string[];
-  const cfmValidated = c.get("cfmValidated") as boolean;
+  const prisma = c.get('prisma') as HealthcarePrismaClient;
+  const healthcareContext = c.get('healthcareContext') as HealthcareContext;
+  const userId = c.get('userId') as string;
+  const clinicId = c.get('clinicId') as string;
+  const userRole = c.get('userRole') as HealthcareContext['role'];
+  const permissions = c.get('permissions') as string[];
+  const cfmValidated = c.get('cfmValidated') as boolean;
 
   return {
     prisma,

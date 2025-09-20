@@ -10,8 +10,8 @@
  * - Performance monitoring
  */
 
-import { createHash } from "crypto";
-import { Context, Next } from "hono";
+import { createHash } from 'crypto';
+import { Context, Next } from 'hono';
 
 // In-memory cache fallback (for development/testing)
 const memoryCache = new Map<
@@ -29,7 +29,7 @@ export interface CacheConfig {
   tags?: string[]; // Cache tags for invalidation
   varyBy?: string[]; // Headers to vary cache by
   skipSensitive?: boolean; // Skip caching for sensitive data
-  complianceLevel?: "public" | "private" | "sensitive";
+  complianceLevel?: 'public' | 'private' | 'sensitive';
 }
 
 // Default cache configurations for healthcare endpoints
@@ -37,50 +37,50 @@ export const CACHE_CONFIGS: Record<string, CacheConfig> = {
   // Public data - safe to cache
   services: {
     ttl: 3600, // 1 hour
-    tags: ["services"],
-    complianceLevel: "public",
+    tags: ['services'],
+    complianceLevel: 'public',
   },
-  "service-categories": {
+  'service-categories': {
     ttl: 7200, // 2 hours
-    tags: ["services", "categories"],
-    complianceLevel: "public",
+    tags: ['services', 'categories'],
+    complianceLevel: 'public',
   },
-  "professionals-public": {
+  'professionals-public': {
     ttl: 1800, // 30 minutes
-    tags: ["professionals"],
-    varyBy: ["X-Clinic-ID"],
-    complianceLevel: "public",
+    tags: ['professionals'],
+    varyBy: ['X-Clinic-ID'],
+    complianceLevel: 'public',
   },
 
   // Private data - limited caching
-  "appointments-list": {
+  'appointments-list': {
     ttl: 300, // 5 minutes
-    tags: ["appointments"],
-    varyBy: ["Authorization", "X-Clinic-ID"],
-    complianceLevel: "private",
+    tags: ['appointments'],
+    varyBy: ['Authorization', 'X-Clinic-ID'],
+    complianceLevel: 'private',
   },
-  "professionals-schedule": {
+  'professionals-schedule': {
     ttl: 600, // 10 minutes
-    tags: ["professionals", "schedule"],
-    varyBy: ["Authorization", "X-Clinic-ID"],
-    complianceLevel: "private",
+    tags: ['professionals', 'schedule'],
+    varyBy: ['Authorization', 'X-Clinic-ID'],
+    complianceLevel: 'private',
   },
 
   // Sensitive data - no caching
   patients: {
     ttl: 0, // No caching
     skipSensitive: true,
-    complianceLevel: "sensitive",
+    complianceLevel: 'sensitive',
   },
-  "patient-records": {
+  'patient-records': {
     ttl: 0, // No caching
     skipSensitive: true,
-    complianceLevel: "sensitive",
+    complianceLevel: 'sensitive',
   },
-  "ai-chat": {
+  'ai-chat': {
     ttl: 0, // No caching for AI interactions
     skipSensitive: true,
-    complianceLevel: "sensitive",
+    complianceLevel: 'sensitive',
   },
 };
 
@@ -90,7 +90,7 @@ export const CACHE_CONFIGS: Record<string, CacheConfig> = {
 function generateCacheKey(
   c: Context,
   config: CacheConfig,
-  prefix: string = "api",
+  prefix: string = 'api',
 ): string {
   const method = c.req.method;
   const path = c.req.path;
@@ -115,9 +115,9 @@ function generateCacheKey(
   };
 
   const keyString = JSON.stringify(keyData);
-  const hash = createHash("sha256")
+  const hash = createHash('sha256')
     .update(keyString)
-    .digest("hex")
+    .digest('hex')
     .substring(0, 16);
 
   return `${prefix}:${hash}`;
@@ -137,13 +137,13 @@ function shouldCacheResponse(
   }
 
   // Don't cache sensitive data
-  if (config.skipSensitive || config.complianceLevel === "sensitive") {
+  if (config.skipSensitive || config.complianceLevel === 'sensitive') {
     return false;
   }
 
   // Don't cache if explicitly disabled
-  const cacheControl = headers["cache-control"];
-  if (cacheControl && cacheControl.includes("no-cache")) {
+  const cacheControl = headers['cache-control'];
+  if (cacheControl && cacheControl.includes('no-cache')) {
     return false;
   }
 
@@ -153,10 +153,12 @@ function shouldCacheResponse(
 /**
  * Get cached response from memory cache
  */
-async function getFromMemoryCache(key: string): Promise<{
-  data: any;
-  headers: Record<string, string>;
-} | null> {
+async function getFromMemoryCache(key: string): Promise<
+  {
+    data: any;
+    headers: Record<string, string>;
+  } | null
+> {
   const cached = memoryCache.get(key);
 
   if (!cached) {
@@ -217,7 +219,7 @@ export function createCacheMiddleware(
     };
 
     // Skip caching for non-GET requests
-    if (c.req.method !== "GET") {
+    if (c.req.method !== 'GET') {
       await next();
       return;
     }
@@ -240,8 +242,8 @@ export function createCacheMiddleware(
       });
 
       // Add cache headers
-      c.header("X-Cache", "HIT");
-      c.header("X-Cache-Key", cacheKey);
+      c.header('X-Cache', 'HIT');
+      c.header('X-Cache-Key', cacheKey);
 
       return c.json(cached.data);
     }
@@ -267,22 +269,22 @@ export function createCacheMiddleware(
         await setInMemoryCache(cacheKey, data, responseHeaders, config.ttl);
 
         // Add cache headers
-        c.header("X-Cache", "MISS");
-        c.header("X-Cache-Key", cacheKey);
-        c.header("X-Cache-TTL", config.ttl.toString());
+        c.header('X-Cache', 'MISS');
+        c.header('X-Cache-Key', cacheKey);
+        c.header('X-Cache-TTL', config.ttl.toString());
 
         // Add compliance headers
-        if (config.complianceLevel === "private") {
-          c.header("Cache-Control", `private, max-age=${config.ttl}`);
-        } else if (config.complianceLevel === "public") {
-          c.header("Cache-Control", `public, max-age=${config.ttl}`);
+        if (config.complianceLevel === 'private') {
+          c.header('Cache-Control', `private, max-age=${config.ttl}`);
+        } else if (config.complianceLevel === 'public') {
+          c.header('Cache-Control', `public, max-age=${config.ttl}`);
         }
       } catch (error) {
-        console.warn("Failed to cache response:", error);
-        c.header("X-Cache", "ERROR");
+        console.warn('Failed to cache response:', error);
+        c.header('X-Cache', 'ERROR');
       }
     } else {
-      c.header("X-Cache", "SKIP");
+      c.header('X-Cache', 'SKIP');
     }
   };
 }
@@ -305,7 +307,7 @@ export class CacheInvalidator {
       keysToDelete.push(key);
     }
 
-    keysToDelete.forEach((key) => memoryCache.delete(key));
+    keysToDelete.forEach(key => memoryCache.delete(key));
 
     console.log(
       `Invalidated ${keysToDelete.length} cache entries for tags:`,
@@ -318,7 +320,7 @@ export class CacheInvalidator {
    */
   static async clearAll(): Promise<void> {
     memoryCache.clear();
-    console.log("All cache entries cleared");
+    console.log('All cache entries cleared');
   }
 
   /**
@@ -345,13 +347,13 @@ export function healthcareComplianceCacheHeaders() {
     await next();
 
     // Add LGPD compliance headers
-    c.header("X-Content-Type-Options", "nosniff");
-    c.header("X-Frame-Options", "DENY");
-    c.header("Referrer-Policy", "strict-origin-when-cross-origin");
+    c.header('X-Content-Type-Options', 'nosniff');
+    c.header('X-Frame-Options', 'DENY');
+    c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
 
     // Add healthcare-specific headers
-    c.header("X-Healthcare-Compliance", "LGPD,ANVISA,CFM");
-    c.header("X-Data-Classification", "healthcare");
+    c.header('X-Healthcare-Compliance', 'LGPD,ANVISA,CFM');
+    c.header('X-Data-Classification', 'healthcare');
   };
 }
 

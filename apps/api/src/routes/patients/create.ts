@@ -5,23 +5,16 @@
  * OpenAPI documented with healthcare compliance
  */
 
-import { OpenAPIHono } from "@hono/zod-openapi";
-import {
-  validateBrazilianPhone as validatePhone,
-  validateCEP,
-  validateCPF,
-} from "@neonpro/shared";
-import { z } from "zod";
-import {
-  createHealthcareRoute,
-  HealthcareSchemas,
-} from "../../lib/openapi-generator";
-import { requireAuth } from "../../middleware/authn";
-import { dataProtection } from "../../middleware/lgpd-middleware";
-import { ComprehensiveAuditService } from "../../services/audit-service";
-import { LGPDService } from "../../services/lgpd-service";
-import { NotificationService } from "../../services/notification-service";
-import { PatientService } from "../../services/patient-service";
+import { OpenAPIHono } from '@hono/zod-openapi';
+import { validateBrazilianPhone as validatePhone, validateCEP, validateCPF } from '@neonpro/shared';
+import { z } from 'zod';
+import { createHealthcareRoute, HealthcareSchemas } from '../../lib/openapi-generator';
+import { requireAuth } from '../../middleware/authn';
+import { dataProtection } from '../../middleware/lgpd-middleware';
+import { ComprehensiveAuditService } from '../../services/audit-service';
+import { LGPDService } from '../../services/lgpd-service';
+import { NotificationService } from '../../services/notification-service';
+import { PatientService } from '../../services/patient-service';
 
 const app = new OpenAPIHono();
 
@@ -30,7 +23,7 @@ const AddressSchema = z.object({
   street: z.string().min(5).max(200),
   city: z.string().min(2).max(100),
   state: z.string().length(2),
-  zipCode: z.string().refine(validateCEP, "CEP inválido"),
+  zipCode: z.string().refine(validateCEP, 'CEP inválido'),
   complement: z.string().max(100).optional(),
 });
 
@@ -42,7 +35,7 @@ const HealthcareInfoSchema = z.object({
   emergencyContact: z
     .object({
       name: z.string().min(2).max(100),
-      phone: z.string().refine(validatePhone, "Telefone inválido"),
+      phone: z.string().refine(validatePhone, 'Telefone inválido'),
       relationship: z.string().min(2).max(50),
     })
     .optional(),
@@ -53,8 +46,8 @@ const LGPDConsentSchema = z.object({
   dataProcessing: z
     .boolean()
     .refine(
-      (val) => val === true,
-      "Consentimento para processamento de dados é obrigatório",
+      val => val === true,
+      'Consentimento para processamento de dados é obrigatório',
     ),
   marketing: z.boolean().optional(),
   dataSharing: z.boolean().optional(),
@@ -64,11 +57,11 @@ const LGPDConsentSchema = z.object({
 // Patient creation validation schema
 const CreatePatientSchema = z.object({
   name: z.string().min(2).max(100),
-  cpf: z.string().refine(validateCPF, "CPF inválido").optional(),
-  email: z.string().email("Email inválido"),
-  phone: z.string().refine(validatePhone, "Telefone inválido").optional(),
+  cpf: z.string().refine(validateCPF, 'CPF inválido').optional(),
+  email: z.string().email('Email inválido'),
+  phone: z.string().refine(validatePhone, 'Telefone inválido').optional(),
   birthDate: z.string().datetime().optional(),
-  gender: z.enum(["male", "female", "other"]).optional(),
+  gender: z.enum(['male', 'female', 'other']).optional(),
   address: AddressSchema.optional(),
   healthcareInfo: HealthcareInfoSchema.optional(),
   lgpdConsent: LGPDConsentSchema,
@@ -83,7 +76,7 @@ const PatientResponseSchema = z.object({
   phone: z.string().optional(),
   cpf: z.string().optional(),
   birthDate: z.string().datetime().optional(),
-  gender: z.enum(["male", "female", "other"]).optional(),
+  gender: z.enum(['male', 'female', 'other']).optional(),
   address: AddressSchema.optional(),
   healthcareInfo: HealthcareInfoSchema.optional(),
   lgpdConsent: LGPDConsentSchema,
@@ -94,18 +87,17 @@ const PatientResponseSchema = z.object({
 
 // OpenAPI route definition
 const createPatientRoute = createHealthcareRoute({
-  method: "post",
-  path: "/",
-  tags: ["Patients"],
-  summary: "Create new patient",
-  description:
-    "Create a new patient record with comprehensive validation and LGPD compliance",
-  dataClassification: "medical",
+  method: 'post',
+  path: '/',
+  tags: ['Patients'],
+  summary: 'Create new patient',
+  description: 'Create a new patient record with comprehensive validation and LGPD compliance',
+  dataClassification: 'medical',
   auditRequired: true,
   request: {
     body: {
       content: {
-        "application/json": {
+        'application/json': {
           schema: CreatePatientSchema,
         },
       },
@@ -113,9 +105,9 @@ const createPatientRoute = createHealthcareRoute({
   },
   responses: {
     201: {
-      description: "Patient created successfully",
+      description: 'Patient created successfully',
       content: {
-        "application/json": {
+        'application/json': {
           schema: z.object({
             success: z.literal(true),
             data: PatientResponseSchema,
@@ -125,17 +117,17 @@ const createPatientRoute = createHealthcareRoute({
       },
     },
     400: {
-      description: "Validation error",
+      description: 'Validation error',
       content: {
-        "application/json": {
+        'application/json': {
           schema: HealthcareSchemas.ErrorResponse,
         },
       },
     },
     409: {
-      description: "Patient already exists (duplicate CPF)",
+      description: 'Patient already exists (duplicate CPF)',
       content: {
-        "application/json": {
+        'application/json': {
           schema: HealthcareSchemas.ErrorResponse,
         },
       },
@@ -147,36 +139,35 @@ app.openapi(
   createPatientRoute,
   requireAuth,
   dataProtection.clientView,
-  async (c) => {
+  async c => {
     try {
-      const userId = c.get("userId");
+      const userId = c.get('userId');
       // TODO: Implement patient creation logic
       // const body = await c.req.json();
 
       // Get validated data from OpenAPI request
-      const patientData = c.req.valid("json");
+      const patientData = c.req.valid('json');
 
       // Get client IP and User-Agent for audit logging
-      const ipAddress =
-        c.req.header("X-Real-IP") ||
-        c.req.header("X-Forwarded-For") ||
-        "unknown";
-      const userAgent = c.req.header("User-Agent") || "unknown";
-      const healthcareProfessional = c.req.header("X-Healthcare-Professional");
+      const ipAddress = c.req.header('X-Real-IP')
+        || c.req.header('X-Forwarded-For')
+        || 'unknown';
+      const userAgent = c.req.header('User-Agent') || 'unknown';
+      const healthcareProfessional = c.req.header('X-Healthcare-Professional');
 
       // Validate LGPD consent
       const lgpdService = new LGPDService();
       const consentValidation = await lgpdService.validateConsent({
         consentData: patientData.lgpdConsent,
-        dataCategories: ["personal_data", "health_data"],
-        purpose: "healthcare_management",
+        dataCategories: ['personal_data', 'health_data'],
+        purpose: 'healthcare_management',
       });
 
       if (!consentValidation.success) {
         return c.json(
           {
             success: false,
-            error: "Consentimento LGPD inválido",
+            error: 'Consentimento LGPD inválido',
             details: consentValidation.error,
           },
           400,
@@ -192,7 +183,7 @@ app.openapi(
       });
 
       if (!result.success) {
-        if (result.code === "DUPLICATE_CPF") {
+        if (result.code === 'DUPLICATE_CPF') {
           return c.json(
             {
               success: false,
@@ -206,7 +197,7 @@ app.openapi(
         return c.json(
           {
             success: false,
-            error: result.error || "Erro interno do serviço",
+            error: result.error || 'Erro interno do serviço',
           },
           500,
         );
@@ -219,24 +210,24 @@ app.openapi(
         .createConsentRecord({
           patientId: createdPatient.id,
           consentData: patientData.lgpdConsent,
-          legalBasis: "consent",
-          collectionMethod: "online_form",
+          legalBasis: 'consent',
+          collectionMethod: 'online_form',
         })
-        .catch((err) => {
-          console.error("Failed to create consent record:", err);
+        .catch(err => {
+          console.error('Failed to create consent record:', err);
         });
 
       // Log patient creation activity
       const auditService = new ComprehensiveAuditService();
       await auditService
         .logEvent(
-          "patient_create",
+          'patient_create',
           {
             patientName: createdPatient.name,
             dataCategories: [
-              "personal_data",
-              "contact_data",
-              ...(patientData.healthcareInfo ? ["health_data"] : []),
+              'personal_data',
+              'contact_data',
+              ...(patientData.healthcareInfo ? ['health_data'] : []),
             ],
             consentGiven: true,
             healthcareProfessional,
@@ -253,8 +244,8 @@ app.openapi(
             },
           },
         )
-        .catch((err) => {
-          console.error("Audit logging failed:", err);
+        .catch(err => {
+          console.error('Audit logging failed:', err);
         });
 
       // Send welcome notification
@@ -263,41 +254,41 @@ app.openapi(
         await notificationService
           .sendNotification({
             recipientId: createdPatient.id,
-            channel: "email",
-            templateId: "patient_welcome",
+            channel: 'email',
+            templateId: 'patient_welcome',
             data: {
               patientName: createdPatient.name,
-              clinicName: "NeonPro Clinic", // This should come from clinic settings
+              clinicName: 'NeonPro Clinic', // This should come from clinic settings
             },
-            priority: "medium",
+            priority: 'medium',
             lgpdConsent: true,
           })
-          .catch((err) => {
-            console.error("Welcome notification failed:", err);
+          .catch(err => {
+            console.error('Welcome notification failed:', err);
           });
       }
 
       // Set response headers
-      c.header("Location", `/api/v2/patients/${createdPatient.id}`);
-      c.header("X-CFM-Compliant", "true");
-      c.header("X-Medical-Record-Created", "true");
-      c.header("X-LGPD-Compliant", "true");
+      c.header('Location', `/api/v2/patients/${createdPatient.id}`);
+      c.header('X-CFM-Compliant', 'true');
+      c.header('X-Medical-Record-Created', 'true');
+      c.header('X-LGPD-Compliant', 'true');
 
       return c.json(
         {
           success: true,
           data: createdPatient,
-          message: "Paciente criado com sucesso",
+          message: 'Paciente criado com sucesso',
         },
         201,
       );
     } catch (error) {
-      console.error("Error creating patient:", error);
+      console.error('Error creating patient:', error);
 
       return c.json(
         {
           success: false,
-          error: "Erro interno do servidor",
+          error: 'Erro interno do servidor',
         },
         500,
       );

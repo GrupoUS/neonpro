@@ -1,5 +1,5 @@
-import { createHash } from "crypto";
-import { Context, MiddlewareHandler } from "hono";
+import { createHash } from 'crypto';
+import { Context, MiddlewareHandler } from 'hono';
 
 // Healthcare-specific rate limiting configuration
 export interface RateLimitConfig {
@@ -47,7 +47,7 @@ export class HealthcareRateLimitStore {
   // Increment request count
   increment(
     key: string,
-    healthcareContext?: RateLimitData["healthcareContext"],
+    healthcareContext?: RateLimitData['healthcareContext'],
   ): RateLimitData {
     const now = Date.now();
     const resetTime = now + this.config.windowMs;
@@ -88,18 +88,17 @@ export class HealthcareRateLimitStore {
 
 // Generate rate limiting key with healthcare compliance
 export function generateHealthcareRateLimitKey(c: Context): string {
-  const ip =
-    c.req.header("cf-connecting-ip") ||
-    c.req.header("x-forwarded-for") ||
-    c.req.header("x-real-ip") ||
-    "unknown";
+  const ip = c.req.header('cf-connecting-ip')
+    || c.req.header('x-forwarded-for')
+    || c.req.header('x-real-ip')
+    || 'unknown';
 
-  const userId = c.get("user")?.id || "anonymous";
+  const userId = c.get('user')?.id || 'anonymous';
   const path = c.req.path;
 
   // Hash for LGPD compliance (don't store raw IPs)
   const hashInput = `${ip}:${userId}:${path}:${new Date().getHours()}`;
-  const hash = createHash("sha256").update(hashInput).digest("hex");
+  const hash = createHash('sha256').update(hashInput).digest('hex');
 
   return `rl:${hash}`;
 }
@@ -113,13 +112,13 @@ export const healthcareRateLimitRules: Record<string, RateLimitConfig> = {
     skipSuccessfulRequests: false,
     healthcare: {
       sensitiveEndpoints: [
-        "/api/patients",
-        "/api/appointments",
-        "/api/medical-records",
+        '/api/patients',
+        '/api/appointments',
+        '/api/medical-records',
       ],
       patientDataEndpoints: [
-        "/api/patients/*/records",
-        "/api/patients/*/diagnostics",
+        '/api/patients/*/records',
+        '/api/patients/*/diagnostics',
       ],
       emergencyOverride: true,
     },
@@ -138,8 +137,8 @@ export const healthcareRateLimitRules: Record<string, RateLimitConfig> = {
     maxRequests: 20,
     skipSuccessfulRequests: false,
     healthcare: {
-      sensitiveEndpoints: ["/api/patients"],
-      patientDataEndpoints: ["/api/patients/*/records"],
+      sensitiveEndpoints: ['/api/patients'],
+      patientDataEndpoints: ['/api/patients/*/records'],
       emergencyOverride: true,
     },
   },
@@ -174,16 +173,14 @@ export function healthcareRateLimit(
 
       // Determine healthcare context
       const path = c.req.path;
-      const healthcareContext: RateLimitData["healthcareContext"] = {
-        isSensitiveEndpoint:
-          config.healthcare?.sensitiveEndpoints?.some((ep) =>
-            path.startsWith(ep.replace("*", "")),
-          ) || false,
-        isPatientDataEndpoint:
-          config.healthcare?.patientDataEndpoints?.some((ep) =>
-            path.startsWith(ep.replace("*", "")),
-          ) || false,
-        emergencyAccess: c.req.header("x-emergency-access") === "true" || false,
+      const healthcareContext: RateLimitData['healthcareContext'] = {
+        isSensitiveEndpoint: config.healthcare?.sensitiveEndpoints?.some(ep =>
+          path.startsWith(ep.replace('*', ''))
+        ) || false,
+        isPatientDataEndpoint: config.healthcare?.patientDataEndpoints?.some(ep =>
+          path.startsWith(ep.replace('*', ''))
+        ) || false,
+        emergencyAccess: c.req.header('x-emergency-access') === 'true' || false,
       };
 
       // Apply stricter limits for healthcare endpoints
@@ -197,8 +194,8 @@ export function healthcareRateLimit(
 
       // Allow emergency access override
       if (
-        healthcareContext.emergencyAccess &&
-        config.healthcare?.emergencyOverride
+        healthcareContext.emergencyAccess
+        && config.healthcare?.emergencyOverride
       ) {
         return next();
       }
@@ -207,25 +204,25 @@ export function healthcareRateLimit(
       const data = store.increment(key, healthcareContext);
 
       // Set rate limit headers
-      c.header("X-RateLimit-Limit", effectiveConfig.maxRequests.toString());
+      c.header('X-RateLimit-Limit', effectiveConfig.maxRequests.toString());
       c.header(
-        "X-RateLimit-Remaining",
+        'X-RateLimit-Remaining',
         Math.max(0, effectiveConfig.maxRequests - data.count).toString(),
       );
-      c.header("X-RateLimit-Reset", data.resetTime.toString());
-      c.header("X-RateLimit-Window", effectiveConfig.windowMs.toString());
+      c.header('X-RateLimit-Reset', data.resetTime.toString());
+      c.header('X-RateLimit-Window', effectiveConfig.windowMs.toString());
 
       // Healthcare-specific headers
       c.header(
-        "X-Healthcare-RateLimit-Sensitive",
+        'X-Healthcare-RateLimit-Sensitive',
         healthcareContext.isSensitiveEndpoint.toString(),
       );
       c.header(
-        "X-Healthcare-RateLimit-PatientData",
+        'X-Healthcare-RateLimit-PatientData',
         healthcareContext.isPatientDataEndpoint.toString(),
       );
       c.header(
-        "X-Healthcare-RateLimit-Emergency",
+        'X-Healthcare-RateLimit-Emergency',
         healthcareContext.emergencyAccess.toString(),
       );
 
@@ -240,8 +237,8 @@ export function healthcareRateLimit(
 
         return c.json(
           {
-            error: "Rate limit exceeded",
-            message: "Too many requests. Please try again later.",
+            error: 'Rate limit exceeded',
+            message: 'Too many requests. Please try again later.',
             retryAfter: Math.ceil((data.resetTime - Date.now()) / 1000),
             healthcare: {
               sensitiveEndpoint: healthcareContext.isSensitiveEndpoint,
@@ -257,8 +254,8 @@ export function healthcareRateLimit(
 
       // Skip counting based on configuration
       if (
-        (config.skipSuccessfulRequests && c.res.status < 400) ||
-        (config.skipFailedRequests && c.res.status >= 400)
+        (config.skipSuccessfulRequests && c.res.status < 400)
+        || (config.skipFailedRequests && c.res.status >= 400)
       ) {
         // Decrement count since we're not counting this request
         const currentData = store.get(key);
@@ -268,7 +265,7 @@ export function healthcareRateLimit(
         }
       }
     } catch (error) {
-      console.error("Rate limiting middleware error:", error);
+      console.error('Rate limiting middleware error:', error);
       // Fail open for healthcare safety
       await next();
     }
@@ -280,34 +277,34 @@ async function logRateLimitViolation(
   c: Context,
   key: string,
   data: RateLimitData,
-  healthcareContext: RateLimitData["healthcareContext"],
+  healthcareContext: RateLimitData['healthcareContext'],
 ): Promise<void> {
   try {
     const violation = {
       timestamp: new Date().toISOString(),
-      type: "RATE_LIMIT_VIOLATION",
-      key: key.substring(0, 16) + "...", // Don't log full key for privacy
+      type: 'RATE_LIMIT_VIOLATION',
+      key: key.substring(0, 16) + '...', // Don't log full key for privacy
       path: c.req.path,
       method: c.req.method,
-      userAgent: c.req.header("user-agent")?.substring(0, 100) || "unknown",
+      userAgent: c.req.header('user-agent')?.substring(0, 100) || 'unknown',
       rateLimitData: {
         count: data.count,
-        maxRequests: data.blocked ? "EXCEEDED" : "within limits",
+        maxRequests: data.blocked ? 'EXCEEDED' : 'within limits',
         resetTime: new Date(data.resetTime).toISOString(),
       },
       healthcareContext,
     };
 
     // Send to audit trail if available
-    if (c.get("auditService")) {
+    if (c.get('auditService')) {
       await c
-        .get("auditService")
-        .logSecurityEvent("RATE_LIMIT_VIOLATION", violation);
+        .get('auditService')
+        .logSecurityEvent('RATE_LIMIT_VIOLATION', violation);
     }
 
-    console.warn("🛡️ Rate Limit Violation:", violation);
+    console.warn('🛡️ Rate Limit Violation:', violation);
   } catch (error) {
-    console.error("Failed to log rate limit violation:", error);
+    console.error('Failed to log rate limit violation:', error);
   }
 }
 

@@ -8,8 +8,8 @@
  * - Sliding window accuracy
  */
 
-import { Context } from "hono";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Context } from 'hono';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_RATE_LIMIT_CONFIG,
   getRateLimitStats,
@@ -17,7 +17,7 @@ import {
   rateLimitMiddleware,
   type RateLimitRule,
   resetRateLimits,
-} from "../rate-limiting";
+} from '../rate-limiting';
 
 // Mock Hono Context
 function createMockContext(
@@ -33,14 +33,14 @@ function createMockContext(
   const headers = new Map(Object.entries(overrides.headers || {}));
   const variables = new Map();
 
-  if (overrides.userId) variables.set("userId", overrides.userId);
-  if (overrides.clinicId) variables.set("clinicId", overrides.clinicId);
-  if (overrides.userRole) variables.set("userRole", overrides.userRole);
+  if (overrides.userId) variables.set('userId', overrides.userId);
+  if (overrides.clinicId) variables.set('clinicId', overrides.clinicId);
+  if (overrides.userRole) variables.set('userRole', overrides.userRole);
 
   return {
     req: {
-      path: overrides.path || "/api/v1/test",
-      method: overrides.method || "GET",
+      path: overrides.path || '/api/v1/test',
+      method: overrides.method || 'GET',
       header: (key: string) => headers.get(key.toLowerCase()),
     },
     header: vi.fn(),
@@ -49,20 +49,20 @@ function createMockContext(
   } as any;
 }
 
-describe("Rate Limiting Middleware", () => {
+describe('Rate Limiting Middleware', () => {
   beforeEach(() => {
     resetRateLimits();
     vi.clearAllMocks();
   });
 
-  describe("Basic Rate Limiting", () => {
-    it("allows requests within limit", async () => {
+  describe('Basic Rate Limiting', () => {
+    it('allows requests within limit', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 5, windowMs: 60000 },
         endpoints: {},
       });
 
-      const context = createMockContext({ path: "/api/v1/test" });
+      const context = createMockContext({ path: '/api/v1/test' });
       const next = vi.fn();
 
       // Should allow first 5 requests
@@ -72,15 +72,15 @@ describe("Rate Limiting Middleware", () => {
       }
     });
 
-    it("blocks requests exceeding limit", async () => {
+    it('blocks requests exceeding limit', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 2, windowMs: 60000 },
         endpoints: {},
       });
 
       const context = createMockContext({
-        path: "/api/v1/test",
-        headers: { "x-forwarded-for": "192.168.1.100" },
+        path: '/api/v1/test',
+        headers: { 'x-forwarded-for': '192.168.1.100' },
       });
       const next = vi.fn();
 
@@ -94,7 +94,7 @@ describe("Rate Limiting Middleware", () => {
       expect(next).toHaveBeenCalledTimes(2); // Still only 2 calls
     });
 
-    it("sets correct rate limit headers", async () => {
+    it('sets correct rate limit headers', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 10, windowMs: 60000 },
         endpoints: {},
@@ -105,47 +105,47 @@ describe("Rate Limiting Middleware", () => {
 
       await middleware(context, next);
 
-      expect(context.header).toHaveBeenCalledWith("X-RateLimit-Limit", "10");
-      expect(context.header).toHaveBeenCalledWith("X-RateLimit-Remaining", "9");
+      expect(context.header).toHaveBeenCalledWith('X-RateLimit-Limit', '10');
+      expect(context.header).toHaveBeenCalledWith('X-RateLimit-Remaining', '9');
       expect(context.header).toHaveBeenCalledWith(
-        "X-RateLimit-Window",
-        "60000",
+        'X-RateLimit-Window',
+        '60000',
       );
     });
   });
 
-  describe("Healthcare-Specific Rules", () => {
-    it("applies emergency endpoint rules correctly", async () => {
+  describe('Healthcare-Specific Rules', () => {
+    it('applies emergency endpoint rules correctly', async () => {
       const middleware = rateLimitMiddleware(DEFAULT_RATE_LIMIT_CONFIG);
       const context = createMockContext({
-        path: "/api/v1/emergency/cardiac-alert",
+        path: '/api/v1/emergency/cardiac-alert',
       });
       const next = vi.fn();
 
       // Emergency endpoints should have higher limits (1000 requests/minute)
-      const emergencyRule = HEALTHCARE_RATE_LIMITS["/api/v1/emergency/"];
+      const emergencyRule = HEALTHCARE_RATE_LIMITS['/api/v1/emergency/'];
       expect(emergencyRule.maxRequests).toBe(1000);
-      expect(emergencyRule.priority).toBe("emergency");
+      expect(emergencyRule.priority).toBe('emergency');
 
       await middleware(context, next);
       expect(next).toHaveBeenCalled();
     });
 
-    it("bypasses rate limiting for emergency responders", async () => {
+    it('bypasses rate limiting for emergency responders', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 1, windowMs: 60000 },
         endpoints: {
-          "/api/v1/emergency/": {
+          '/api/v1/emergency/': {
             maxRequests: 1,
             windowMs: 60000,
-            skipRoles: ["emergency_responder"],
+            skipRoles: ['emergency_responder'],
           },
         },
       });
 
       const context = createMockContext({
-        path: "/api/v1/emergency/test",
-        userRole: "emergency_responder",
+        path: '/api/v1/emergency/test',
+        userRole: 'emergency_responder',
       });
       const next = vi.fn();
 
@@ -157,16 +157,16 @@ describe("Rate Limiting Middleware", () => {
       expect(next).toHaveBeenCalledTimes(3);
     });
 
-    it("applies strict limits to authentication endpoints", async () => {
+    it('applies strict limits to authentication endpoints', async () => {
       const middleware = rateLimitMiddleware(DEFAULT_RATE_LIMIT_CONFIG);
 
-      const authRule = HEALTHCARE_RATE_LIMITS["/api/v1/auth/"];
+      const authRule = HEALTHCARE_RATE_LIMITS['/api/v1/auth/'];
       expect(authRule.maxRequests).toBe(10); // Strict limit for auth
-      expect(authRule.priority).toBe("administrative");
+      expect(authRule.priority).toBe('administrative');
     });
 
-    it("handles patient data access with audit logging", async () => {
-      const consoleSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+    it('handles patient data access with audit logging', async () => {
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
       const middleware = rateLimitMiddleware({
         ...DEFAULT_RATE_LIMIT_CONFIG,
@@ -174,20 +174,20 @@ describe("Rate Limiting Middleware", () => {
       });
 
       const context = createMockContext({
-        path: "/api/v1/patients/12345",
-        userId: "doc123",
-        clinicId: "clinic456",
+        path: '/api/v1/patients/12345',
+        userId: 'doc123',
+        clinicId: 'clinic456',
       });
       const next = vi.fn();
 
       await middleware(context, next);
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        "RATE_LIMIT_AUDIT",
+        'RATE_LIMIT_AUDIT',
         expect.objectContaining({
-          endpoint: "/api/v1/patients/12345",
-          userId: "doc123",
-          clinicId: "clinic456",
+          endpoint: '/api/v1/patients/12345',
+          userId: 'doc123',
+          clinicId: 'clinic456',
           allowed: true,
         }),
       );
@@ -196,23 +196,23 @@ describe("Rate Limiting Middleware", () => {
     });
   });
 
-  describe("Multi-tenant Isolation", () => {
-    it("isolates rate limits by clinic ID", async () => {
+  describe('Multi-tenant Isolation', () => {
+    it('isolates rate limits by clinic ID', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 2, windowMs: 60000 },
         endpoints: {},
       });
 
       const clinic1Context = createMockContext({
-        path: "/api/v1/test",
-        clinicId: "clinic1",
-        headers: { "x-forwarded-for": "192.168.1.100" },
+        path: '/api/v1/test',
+        clinicId: 'clinic1',
+        headers: { 'x-forwarded-for': '192.168.1.100' },
       });
 
       const clinic2Context = createMockContext({
-        path: "/api/v1/test",
-        clinicId: "clinic2",
-        headers: { "x-forwarded-for": "192.168.1.100" }, // Same IP
+        path: '/api/v1/test',
+        clinicId: 'clinic2',
+        headers: { 'x-forwarded-for': '192.168.1.100' }, // Same IP
       });
 
       const next = vi.fn();
@@ -230,22 +230,22 @@ describe("Rate Limiting Middleware", () => {
       expect(next).toHaveBeenCalledTimes(3);
     });
 
-    it("isolates rate limits by user ID", async () => {
+    it('isolates rate limits by user ID', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 1, windowMs: 60000 },
         endpoints: {},
       });
 
       const user1Context = createMockContext({
-        path: "/api/v1/test",
-        userId: "user1",
-        headers: { "x-forwarded-for": "192.168.1.100" },
+        path: '/api/v1/test',
+        userId: 'user1',
+        headers: { 'x-forwarded-for': '192.168.1.100' },
       });
 
       const user2Context = createMockContext({
-        path: "/api/v1/test",
-        userId: "user2",
-        headers: { "x-forwarded-for": "192.168.1.100" }, // Same IP
+        path: '/api/v1/test',
+        userId: 'user2',
+        headers: { 'x-forwarded-for': '192.168.1.100' }, // Same IP
       });
 
       const next = vi.fn();
@@ -263,16 +263,16 @@ describe("Rate Limiting Middleware", () => {
     });
   });
 
-  describe("IP Allowlisting", () => {
-    it("bypasses rate limiting for allowlisted IPs", async () => {
+  describe('IP Allowlisting', () => {
+    it('bypasses rate limiting for allowlisted IPs', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 1, windowMs: 60000 },
         endpoints: {},
-        allowlistedIPs: ["192.168.1.100"],
+        allowlistedIPs: ['192.168.1.100'],
       });
 
       const context = createMockContext({
-        headers: { "x-forwarded-for": "192.168.1.100" },
+        headers: { 'x-forwarded-for': '192.168.1.100' },
       });
       const next = vi.fn();
 
@@ -284,15 +284,15 @@ describe("Rate Limiting Middleware", () => {
       expect(next).toHaveBeenCalledTimes(3);
     });
 
-    it("enforces rate limiting for non-allowlisted IPs", async () => {
+    it('enforces rate limiting for non-allowlisted IPs', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 1, windowMs: 60000 },
         endpoints: {},
-        allowlistedIPs: ["192.168.1.100"],
+        allowlistedIPs: ['192.168.1.100'],
       });
 
       const context = createMockContext({
-        headers: { "x-forwarded-for": "10.0.0.1" }, // Not allowlisted
+        headers: { 'x-forwarded-for': '10.0.0.1' }, // Not allowlisted
       });
       const next = vi.fn();
 
@@ -306,8 +306,8 @@ describe("Rate Limiting Middleware", () => {
     });
   });
 
-  describe("Sliding Window Behavior", () => {
-    it("resets count after window expires", async () => {
+  describe('Sliding Window Behavior', () => {
+    it('resets count after window expires', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 2, windowMs: 1000 }, // 1 second window
         endpoints: {},
@@ -325,14 +325,14 @@ describe("Rate Limiting Middleware", () => {
       await expect(middleware(context, next)).rejects.toThrow();
 
       // Wait for window to expire
-      await new Promise((resolve) => setTimeout(resolve, 1100));
+      await new Promise(resolve => setTimeout(resolve, 1100));
 
       // Should allow requests again
       await middleware(context, next);
       expect(next).toHaveBeenCalledTimes(3);
     });
 
-    it("maintains accurate counts during window", async () => {
+    it('maintains accurate counts during window', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 3, windowMs: 2000 },
         endpoints: {},
@@ -343,10 +343,10 @@ describe("Rate Limiting Middleware", () => {
 
       // Make requests with delays
       await middleware(context, next);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       await middleware(context, next);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       await middleware(context, next);
       expect(next).toHaveBeenCalledTimes(3);
@@ -356,22 +356,22 @@ describe("Rate Limiting Middleware", () => {
     });
   });
 
-  describe("Error Handling and Messages", () => {
-    it("provides healthcare-specific error messages", async () => {
+  describe('Error Handling and Messages', () => {
+    it('provides healthcare-specific error messages', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 1, windowMs: 60000 },
         endpoints: {
-          "/api/v1/emergency/": {
+          '/api/v1/emergency/': {
             maxRequests: 1,
             windowMs: 60000,
-            priority: "emergency",
+            priority: 'emergency',
             message:
-              "Emergency endpoint rate limit exceeded. Contact system administrator if this is a medical emergency.",
+              'Emergency endpoint rate limit exceeded. Contact system administrator if this is a medical emergency.',
           },
         },
       });
 
-      const context = createMockContext({ path: "/api/v1/emergency/test" });
+      const context = createMockContext({ path: '/api/v1/emergency/test' });
       const next = vi.fn();
 
       // Use up the limit
@@ -380,17 +380,17 @@ describe("Rate Limiting Middleware", () => {
       // Should throw with healthcare-specific message
       try {
         await middleware(context, next);
-        expect.fail("Should have thrown rate limit error");
+        expect.fail('Should have thrown rate limit error');
       } catch (error: any) {
         const errorData = JSON.parse(error.message);
-        expect(errorData.guidance).toContain("medical emergency");
+        expect(errorData.guidance).toContain('medical emergency');
         expect(errorData.compliance.standard).toBe(
-          "LGPD-Article-33-Security-Measures",
+          'LGPD-Article-33-Security-Measures',
         );
       }
     });
 
-    it("includes LGPD compliance information in errors", async () => {
+    it('includes LGPD compliance information in errors', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 1, windowMs: 60000 },
         endpoints: {},
@@ -404,29 +404,29 @@ describe("Rate Limiting Middleware", () => {
 
       try {
         await middleware(context, next);
-        expect.fail("Should have thrown rate limit error");
+        expect.fail('Should have thrown rate limit error');
       } catch (error: any) {
         const errorData = JSON.parse(error.message);
         expect(errorData.compliance).toEqual({
           logged: true,
-          standard: "LGPD-Article-33-Security-Measures",
+          standard: 'LGPD-Article-33-Security-Measures',
         });
       }
     });
   });
 
-  describe("Statistics and Monitoring", () => {
-    it("provides accurate statistics", async () => {
+  describe('Statistics and Monitoring', () => {
+    it('provides accurate statistics', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 10, windowMs: 60000 },
         endpoints: {},
       });
 
       const context1 = createMockContext({
-        headers: { "x-forwarded-for": "192.168.1.1" },
+        headers: { 'x-forwarded-for': '192.168.1.1' },
       });
       const context2 = createMockContext({
-        headers: { "x-forwarded-for": "192.168.1.2" },
+        headers: { 'x-forwarded-for': '192.168.1.2' },
       });
       const next = vi.fn();
 
@@ -441,7 +441,7 @@ describe("Rate Limiting Middleware", () => {
       expect(stats.config.endpointCount).toBeGreaterThan(0);
     });
 
-    it("tracks rate limit status in context", async () => {
+    it('tracks rate limit status in context', async () => {
       const middleware = rateLimitMiddleware({
         default: { maxRequests: 5, windowMs: 60000 },
         endpoints: {},
@@ -452,8 +452,8 @@ describe("Rate Limiting Middleware", () => {
 
       await middleware(context, next);
 
-      const status = context.get("rateLimitStatus");
-      const rule = context.get("rateLimitRule");
+      const status = context.get('rateLimitStatus');
+      const rule = context.get('rateLimitRule');
 
       expect(status).toBeDefined();
       expect(status.allowed).toBe(true);

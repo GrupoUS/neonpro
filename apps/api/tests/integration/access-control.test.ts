@@ -1,66 +1,66 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { Hono } from "hono";
-import { serve } from "@hono/node-server";
-import { createServer } from "http";
-import { fetch } from "undici";
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
+import { createServer } from 'http';
+import { fetch } from 'undici';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // Import the agent endpoint
-import { agentRouter } from "../../src/routes/ai/data-agent";
+import { agentRouter } from '../../src/routes/ai/data-agent';
 
 // Mock authentication and permission checking
-vi.mock("../../src/services/ai-data-service", () => ({
+vi.mock('../../src/services/ai-data-service', () => ({
   AIDataService: {
     getInstance: () => ({
       getClientsByName: async (name: string, userId: string) => {
         // Simulate RLS - only return data user has access to
-        if (userId === "admin-user") {
+        if (userId === 'admin-user') {
           return {
-            type: "list",
-            title: "Clientes Encontrados",
+            type: 'list',
+            title: 'Clientes Encontrados',
             data: [
-              { id: "client-1", name: "Maria Silva", email: "maria@email.com" },
-              { id: "client-2", name: "João Santos", email: "joao@email.com" },
+              { id: 'client-1', name: 'Maria Silva', email: 'maria@email.com' },
+              { id: 'client-2', name: 'João Santos', email: 'joao@email.com' },
             ],
             columns: [],
           };
-        } else if (userId === "regular-user") {
+        } else if (userId === 'regular-user') {
           return {
-            type: "list",
-            title: "Clientes Encontrados",
+            type: 'list',
+            title: 'Clientes Encontrados',
             data: [
-              { id: "client-1", name: "Maria Silva", email: "maria@email.com" },
+              { id: 'client-1', name: 'Maria Silva', email: 'maria@email.com' },
             ],
             columns: [],
           };
         } else {
-          throw new Error("Access denied");
+          throw new Error('Access denied');
         }
       },
       getAppointmentsByDate: async (date: string, userId: string) => {
         // Simulate RLS for appointments
-        if (userId === "admin-user" || userId === "regular-user") {
+        if (userId === 'admin-user' || userId === 'regular-user') {
           return {
-            type: "list",
-            title: "Agendamentos",
+            type: 'list',
+            title: 'Agendamentos',
             data: [
               {
-                id: "apt-1",
-                datetime: "2024-01-20T09:00:00Z",
-                clientName: "Maria Silva",
+                id: 'apt-1',
+                datetime: '2024-01-20T09:00:00Z',
+                clientName: 'Maria Silva',
               },
             ],
             columns: [],
           };
         } else {
-          throw new Error("Access denied");
+          throw new Error('Access denied');
         }
       },
       getFinancialSummary: async (period: string, userId: string) => {
         // Financial data restricted to admins
-        if (userId === "admin-user") {
+        if (userId === 'admin-user') {
           return {
-            type: "summary",
-            title: "Resumo Financeiro",
+            type: 'summary',
+            title: 'Resumo Financeiro',
             data: [],
             summary: {
               totalRevenue: 5000,
@@ -70,14 +70,14 @@ vi.mock("../../src/services/ai-data-service", () => ({
             columns: [],
           };
         } else {
-          throw new Error("Access denied: Insufficient permissions");
+          throw new Error('Access denied: Insufficient permissions');
         }
       },
     }),
   },
 }));
 
-describe("Integration Tests: Access Control", () => {
+describe('Integration Tests: Access Control', () => {
   let server: any;
   let baseUrl: string;
   let app: Hono;
@@ -85,7 +85,7 @@ describe("Integration Tests: Access Control", () => {
   beforeAll(async () => {
     // Create Hono app with agent route
     app = new Hono();
-    app.route("/api/ai/data-agent", agentRouter);
+    app.route('/api/ai/data-agent', agentRouter);
 
     // Start test server
     server = createServer({
@@ -93,10 +93,10 @@ describe("Integration Tests: Access Control", () => {
       port: 0,
     });
 
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       server.listen(0, () => {
         const address = server.address();
-        if (address && typeof address === "object") {
+        if (address && typeof address === 'object') {
           baseUrl = `http://localhost:${address.port}`;
         }
         resolve(true);
@@ -106,24 +106,24 @@ describe("Integration Tests: Access Control", () => {
 
   afterAll(async () => {
     if (server) {
-      await new Promise((resolve) => server.close(resolve));
+      await new Promise(resolve => server.close(resolve));
     }
   });
 
-  describe("Role-Based Access Control", () => {
-    it("should allow admin user to access all client data", async () => {
+  describe('Role-Based Access Control', () => {
+    it('should allow admin user to access all client data', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer admin-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer admin-token',
         },
         body: JSON.stringify({
-          query: "Me mostre todos os clientes",
-          sessionId: "test-session-admin-1",
+          query: 'Me mostre todos os clientes',
+          sessionId: 'test-session-admin-1',
           context: {
-            userId: "admin-user",
-            role: "admin",
+            userId: 'admin-user',
+            role: 'admin',
           },
         }),
       });
@@ -134,19 +134,19 @@ describe("Integration Tests: Access Control", () => {
       expect(data.response.data.length).toBe(2); // Admin sees all clients
     });
 
-    it("should restrict regular user to their assigned clients", async () => {
+    it('should restrict regular user to their assigned clients', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer user-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: "Me mostre os clientes",
-          sessionId: "test-session-user-1",
+          query: 'Me mostre os clientes',
+          sessionId: 'test-session-user-1',
           context: {
-            userId: "regular-user",
-            role: "user",
+            userId: 'regular-user',
+            role: 'user',
           },
         }),
       });
@@ -157,19 +157,19 @@ describe("Integration Tests: Access Control", () => {
       expect(data.response.data.length).toBe(1); // Regular user sees only their client
     });
 
-    it("should deny access to unauthorized user", async () => {
+    it('should deny access to unauthorized user', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer invalid-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer invalid-token',
         },
         body: JSON.stringify({
-          query: "Clientes",
-          sessionId: "test-session-unauth-1",
+          query: 'Clientes',
+          sessionId: 'test-session-unauth-1',
           context: {
-            userId: "unauthorized-user",
-            role: "guest",
+            userId: 'unauthorized-user',
+            role: 'guest',
           },
         }),
       });
@@ -177,22 +177,22 @@ describe("Integration Tests: Access Control", () => {
       expect(response.status).toBe(200); // Still 200, but with error
       const data = await response.json();
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain("Access denied");
+      expect(data.error.message).toContain('Access denied');
     });
 
-    it("should allow admin user to access financial data", async () => {
+    it('should allow admin user to access financial data', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer admin-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer admin-token',
         },
         body: JSON.stringify({
-          query: "Como está o faturamento?",
-          sessionId: "test-session-admin-2",
+          query: 'Como está o faturamento?',
+          sessionId: 'test-session-admin-2',
           context: {
-            userId: "admin-user",
-            role: "admin",
+            userId: 'admin-user',
+            role: 'admin',
           },
         }),
       });
@@ -200,23 +200,23 @@ describe("Integration Tests: Access Control", () => {
       expect(response.status).toBe(200);
       const data = await response.json();
       expect(data.success).toBe(true);
-      expect(data.response.type).toBe("summary");
+      expect(data.response.type).toBe('summary');
       expect(data.response.summary.totalRevenue).toBe(5000);
     });
 
-    it("should deny regular user access to financial data", async () => {
+    it('should deny regular user access to financial data', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer user-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: "Faturamento do mês",
-          sessionId: "test-session-user-2",
+          query: 'Faturamento do mês',
+          sessionId: 'test-session-user-2',
           context: {
-            userId: "regular-user",
-            role: "user",
+            userId: 'regular-user',
+            role: 'user',
           },
         }),
       });
@@ -224,23 +224,23 @@ describe("Integration Tests: Access Control", () => {
       expect(response.status).toBe(200);
       const data = await response.json();
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain("Insufficient permissions");
+      expect(data.error.message).toContain('Insufficient permissions');
     });
 
-    it("should allow both admin and regular users to access appointments", async () => {
+    it('should allow both admin and regular users to access appointments', async () => {
       // Admin user
       let response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer admin-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer admin-token',
         },
         body: JSON.stringify({
-          query: "Agendamentos de hoje",
-          sessionId: "test-session-admin-3",
+          query: 'Agendamentos de hoje',
+          sessionId: 'test-session-admin-3',
           context: {
-            userId: "admin-user",
-            role: "admin",
+            userId: 'admin-user',
+            role: 'admin',
           },
         }),
       });
@@ -251,17 +251,17 @@ describe("Integration Tests: Access Control", () => {
 
       // Regular user
       response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer user-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: "Meus agendamentos",
-          sessionId: "test-session-user-3",
+          query: 'Meus agendamentos',
+          sessionId: 'test-session-user-3',
           context: {
-            userId: "regular-user",
-            role: "user",
+            userId: 'regular-user',
+            role: 'user',
           },
         }),
       });
@@ -271,16 +271,16 @@ describe("Integration Tests: Access Control", () => {
       expect(data.success).toBe(true);
     });
 
-    it("should handle missing user context gracefully", async () => {
+    it('should handle missing user context gracefully', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer token',
         },
         body: JSON.stringify({
-          query: "Clientes",
-          sessionId: "test-session-no-context-1",
+          query: 'Clientes',
+          sessionId: 'test-session-no-context-1',
           // No context provided
         }),
       });
@@ -288,22 +288,22 @@ describe("Integration Tests: Access Control", () => {
       expect(response.status).toBe(200);
       const data = await response.json();
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain("Missing user context");
+      expect(data.error.message).toContain('Missing user context');
     });
 
-    it("should validate authentication token", async () => {
+    it('should validate authentication token', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           // No Authorization header
         },
         body: JSON.stringify({
-          query: "Clientes",
-          sessionId: "test-session-no-auth-1",
+          query: 'Clientes',
+          sessionId: 'test-session-no-auth-1',
           context: {
-            userId: "admin-user",
-            role: "admin",
+            userId: 'admin-user',
+            role: 'admin',
           },
         }),
       });
@@ -311,21 +311,21 @@ describe("Integration Tests: Access Control", () => {
       expect(response.status).toBe(401);
     });
 
-    it("should enforce domain-specific access", async () => {
+    it('should enforce domain-specific access', async () => {
       // User from different domain should not access data
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer other-domain-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer other-domain-token',
         },
         body: JSON.stringify({
-          query: "Clientes",
-          sessionId: "test-session-other-domain-1",
+          query: 'Clientes',
+          sessionId: 'test-session-other-domain-1',
           context: {
-            userId: "other-domain-user",
-            role: "admin",
-            domain: "other-clinic",
+            userId: 'other-domain-user',
+            role: 'admin',
+            domain: 'other-clinic',
           },
         }),
       });
@@ -333,24 +333,24 @@ describe("Integration Tests: Access Control", () => {
       expect(response.status).toBe(200);
       const data = await response.json();
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain("Domain access denied");
+      expect(data.error.message).toContain('Domain access denied');
     });
 
-    it("should audit access attempts", async () => {
+    it('should audit access attempts', async () => {
       // This test verifies that access attempts are logged
       // In a real implementation, we would check the audit logs
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer audit-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer audit-token',
         },
         body: JSON.stringify({
-          query: "Clientes",
-          sessionId: "test-session-audit-1",
+          query: 'Clientes',
+          sessionId: 'test-session-audit-1',
           context: {
-            userId: "audit-user",
-            role: "user",
+            userId: 'audit-user',
+            role: 'user',
           },
         }),
       });
@@ -360,20 +360,20 @@ describe("Integration Tests: Access Control", () => {
       // For test purposes, we just verify the request was processed
     });
 
-    it("should handle permission escalation attempts", async () => {
+    it('should handle permission escalation attempts', async () => {
       // Attempt to access admin data with regular user token
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer user-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: "Todos os dados financeiros", // Admin-only query
-          sessionId: "test-session-escalation-1",
+          query: 'Todos os dados financeiros', // Admin-only query
+          sessionId: 'test-session-escalation-1',
           context: {
-            userId: "regular-user",
-            role: "admin", // Trying to escalate role
+            userId: 'regular-user',
+            role: 'admin', // Trying to escalate role
           },
         }),
       });
@@ -382,24 +382,24 @@ describe("Integration Tests: Access Control", () => {
       const data = await response.json();
       expect(data.success).toBe(false);
       // Should detect token/role mismatch
-      expect(data.error.message).toContain("Role verification failed");
+      expect(data.error.message).toContain('Role verification failed');
     });
 
-    it("should respect Row Level Security (RLS) policies", async () => {
+    it('should respect Row Level Security (RLS) policies', async () => {
       // Test that RLS is enforced at the database level
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer user-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: "Clientes da clínica B", // User should not see other clinics
-          sessionId: "test-session-rls-1",
+          query: 'Clientes da clínica B', // User should not see other clinics
+          sessionId: 'test-session-rls-1',
           context: {
-            userId: "regular-user",
-            role: "user",
-            clinicId: "clinic-a",
+            userId: 'regular-user',
+            role: 'user',
+            clinicId: 'clinic-a',
           },
         }),
       });
@@ -409,25 +409,25 @@ describe("Integration Tests: Access Control", () => {
       expect(data.success).toBe(true);
       // Should return empty or only clinic-a clients
       expect(
-        data.response.data.every((c: any) => !c.name.includes("clínica B")),
+        data.response.data.every((c: any) => !c.name.includes('clínica B')),
       ).toBe(true);
     });
   });
 
-  describe("Session-based Access Control", () => {
-    it("should validate session integrity", async () => {
+  describe('Session-based Access Control', () => {
+    it('should validate session integrity', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer session-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer session-token',
         },
         body: JSON.stringify({
-          query: "Clientes",
-          sessionId: "invalid-session-xyz", // Invalid session format
+          query: 'Clientes',
+          sessionId: 'invalid-session-xyz', // Invalid session format
           context: {
-            userId: "admin-user",
-            role: "admin",
+            userId: 'admin-user',
+            role: 'admin',
           },
         }),
       });
@@ -438,19 +438,19 @@ describe("Integration Tests: Access Control", () => {
       expect(data.success).toBe(false);
     });
 
-    it("should prevent session hijacking", async () => {
+    it('should prevent session hijacking', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer user-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer user-token',
         },
         body: JSON.stringify({
-          query: "Clientes",
-          sessionId: "admin-session-123", // Using admin's session with user token
+          query: 'Clientes',
+          sessionId: 'admin-session-123', // Using admin's session with user token
           context: {
-            userId: "regular-user",
-            role: "user",
+            userId: 'regular-user',
+            role: 'user',
           },
         }),
       });
@@ -458,22 +458,22 @@ describe("Integration Tests: Access Control", () => {
       expect(response.status).toBe(200);
       const data = await response.json();
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain("Session mismatch");
+      expect(data.error.message).toContain('Session mismatch');
     });
 
-    it("should expire sessions after timeout", async () => {
+    it('should expire sessions after timeout', async () => {
       const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: "Bearer expired-token",
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer expired-token',
         },
         body: JSON.stringify({
-          query: "Clientes",
-          sessionId: "expired-session-123",
+          query: 'Clientes',
+          sessionId: 'expired-session-123',
           context: {
-            userId: "admin-user",
-            role: "admin",
+            userId: 'admin-user',
+            role: 'admin',
             sessionExpiry: new Date(Date.now() - 3600000).toISOString(), // Expired 1 hour ago
           },
         }),
@@ -482,7 +482,7 @@ describe("Integration Tests: Access Control", () => {
       expect(response.status).toBe(200);
       const data = await response.json();
       expect(data.success).toBe(false);
-      expect(data.error.message).toContain("Session expired");
+      expect(data.error.message).toContain('Session expired');
     });
   });
 });

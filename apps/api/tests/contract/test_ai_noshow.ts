@@ -10,12 +10,12 @@
  * - Actionable intervention recommendations
  */
 
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { z } from "zod";
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { z } from 'zod';
 
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
-  const { default: app } = await import("../../src/app");
+  const { default: app } = await import('../../src/app');
   const url = new URL(`http://local.test${path}`);
   return app.request(url, init);
 }
@@ -27,7 +27,7 @@ const NoShowRequestSchema = z.object({
       id: z.string().uuid(),
       patientId: z.string().uuid(),
       scheduledAt: z.string().datetime(),
-      type: z.enum(["consultation", "procedure", "follow_up", "emergency"]),
+      type: z.enum(['consultation', 'procedure', 'follow_up', 'emergency']),
       specialty: z.string(),
       provider: z.object({
         id: z.string().uuid(),
@@ -45,7 +45,7 @@ const NoShowRequestSchema = z.object({
     .object({
       weather: z
         .object({
-          forecast: z.enum(["sunny", "rainy", "cloudy", "stormy"]),
+          forecast: z.enum(['sunny', 'rainy', 'cloudy', 'stormy']),
           temperature: z.number(),
           precipitation: z.number().min(0).max(100),
         })
@@ -54,7 +54,7 @@ const NoShowRequestSchema = z.object({
       traffic: z
         .object({
           expectedDelay: z.number().min(0),
-          congestionLevel: z.enum(["light", "moderate", "heavy"]),
+          congestionLevel: z.enum(['light', 'moderate', 'heavy']),
         })
         .optional(),
     })
@@ -62,7 +62,7 @@ const NoShowRequestSchema = z.object({
   analysisOptions: z
     .object({
       includeInterventions: z.boolean().default(true),
-      timeHorizon: z.enum(["24h", "48h", "7d", "30d"]).default("24h"),
+      timeHorizon: z.enum(['24h', '48h', '7d', '30d']).default('24h'),
       confidenceThreshold: z.number().min(0).max(1).default(0.7),
     })
     .optional(),
@@ -75,7 +75,7 @@ const NoShowResponseSchema = z.object({
       appointmentId: z.string().uuid(),
       patientId: z.string().uuid(),
       riskScore: z.number().min(0).max(1),
-      riskLevel: z.enum(["low", "medium", "high", "very_high"]),
+      riskLevel: z.enum(['low', 'medium', 'high', 'very_high']),
       confidence: z.number().min(0).max(1),
       factors: z.object({
         patient: z.object({
@@ -83,14 +83,14 @@ const NoShowResponseSchema = z.object({
           communicationPreference: z.string(),
           ageGroup: z.string(),
           distanceFromClinic: z.number().min(0),
-          lastAppointmentOutcome: z.enum(["attended", "no_show", "cancelled"]),
+          lastAppointmentOutcome: z.enum(['attended', 'no_show', 'cancelled']),
         }),
         appointment: z.object({
           timeOfDay: z.string(),
           dayOfWeek: z.string(),
           advanceNotice: z.number().min(0),
           appointmentType: z.string(),
-          providerFamiliarity: z.enum(["first_time", "familiar", "preferred"]),
+          providerFamiliarity: z.enum(['first_time', 'familiar', 'preferred']),
         }),
         external: z.object({
           weatherImpact: z.number().min(0).max(1),
@@ -108,15 +108,15 @@ const NoShowResponseSchema = z.object({
       interventions: z.array(
         z.object({
           type: z.enum([
-            "sms",
-            "whatsapp",
-            "email",
-            "phone_call",
-            "push_notification",
+            'sms',
+            'whatsapp',
+            'email',
+            'phone_call',
+            'push_notification',
           ]),
           timing: z.string(),
           message: z.string(),
-          priority: z.enum(["low", "medium", "high"]),
+          priority: z.enum(['low', 'medium', 'high']),
           estimatedEffectiveness: z.number().min(0).max(1),
           cost: z.number().min(0),
         }),
@@ -136,7 +136,7 @@ const NoShowResponseSchema = z.object({
     dataProcessed: z.boolean(),
     processingBasis: z.array(z.string()),
     retentionPeriod: z.string(),
-    patientConsent: z.enum(["granted", "inferred", "required"]),
+    patientConsent: z.enum(['granted', 'inferred', 'required']),
     anonymizationApplied: z.boolean(),
   }),
   brazilianContext: z.object({
@@ -145,18 +145,18 @@ const NoShowResponseSchema = z.object({
     culturalFactors: z.array(z.string()),
     regionalPatterns: z.object({
       state: z.string(),
-      citySize: z.enum(["small", "medium", "large", "metropolitan"]),
+      citySize: z.enum(['small', 'medium', 'large', 'metropolitan']),
       socioeconomicFactors: z.array(z.string()),
     }),
   }),
 });
 
-describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
+describe('POST /api/v2/ai/insights/no-show-prediction - Contract Tests', () => {
   const testAuthHeaders = {
-    Authorization: "Bearer test-token",
-    "Content-Type": "application/json",
-    "X-Healthcare-Professional": "CRM-123456",
-    "X-CFM-License": "CFM-12345",
+    Authorization: 'Bearer test-token',
+    'Content-Type': 'application/json',
+    'X-Healthcare-Professional': 'CRM-123456',
+    'X-CFM-License': 'CFM-12345',
   };
 
   beforeAll(async () => {
@@ -168,39 +168,39 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
     // Cleanup test data
   });
 
-  describe("Basic Functionality", () => {
-    it("should predict no-show risk for single appointment", async () => {
+  describe('Basic Functionality', () => {
+    it('should predict no-show risk for single appointment', async () => {
       const predictionRequest = {
         appointments: [
           {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            patientId: "550e8400-e29b-41d4-a716-446655440001",
+            id: '550e8400-e29b-41d4-a716-446655440000',
+            patientId: '550e8400-e29b-41d4-a716-446655440001',
             scheduledAt: new Date(
               Date.now() + 24 * 60 * 60 * 1000,
             ).toISOString(),
-            type: "consultation",
-            specialty: "dermatologia",
+            type: 'consultation',
+            specialty: 'dermatologia',
             provider: {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              name: "Dr. Silva",
-              crmNumber: "CRM-123456",
+              id: '550e8400-e29b-41d4-a716-446655440002',
+              name: 'Dr. Silva',
+              crmNumber: 'CRM-123456',
             },
             location: {
-              clinic: "Clínica Estética São Paulo",
-              address: "Rua Augusta, 1000",
-              cep: "01305-100",
+              clinic: 'Clínica Estética São Paulo',
+              address: 'Rua Augusta, 1000',
+              cep: '01305-100',
             },
           },
         ],
         analysisOptions: {
           includeInterventions: true,
-          timeHorizon: "24h",
+          timeHorizon: '24h',
           confidenceThreshold: 0.7,
         },
       };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
@@ -212,52 +212,52 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
       expect(response).toBeDefined();
     });
 
-    it("should handle batch predictions for multiple appointments", async () => {
+    it('should handle batch predictions for multiple appointments', async () => {
       const predictionRequest = {
         appointments: [
           {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            patientId: "550e8400-e29b-41d4-a716-446655440001",
+            id: '550e8400-e29b-41d4-a716-446655440000',
+            patientId: '550e8400-e29b-41d4-a716-446655440001',
             scheduledAt: new Date(
               Date.now() + 24 * 60 * 60 * 1000,
             ).toISOString(),
-            type: "consultation",
-            specialty: "dermatologia",
+            type: 'consultation',
+            specialty: 'dermatologia',
             provider: {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              name: "Dr. Silva",
-              crmNumber: "CRM-123456",
+              id: '550e8400-e29b-41d4-a716-446655440002',
+              name: 'Dr. Silva',
+              crmNumber: 'CRM-123456',
             },
             location: {
-              clinic: "Clínica A",
-              address: "Rua A, 100",
-              cep: "01305-100",
+              clinic: 'Clínica A',
+              address: 'Rua A, 100',
+              cep: '01305-100',
             },
           },
           {
-            id: "550e8400-e29b-41d4-a716-446655440003",
-            patientId: "550e8400-e29b-41d4-a716-446655440004",
+            id: '550e8400-e29b-41d4-a716-446655440003',
+            patientId: '550e8400-e29b-41d4-a716-446655440004',
             scheduledAt: new Date(
               Date.now() + 48 * 60 * 60 * 1000,
             ).toISOString(),
-            type: "procedure",
-            specialty: "medicina_estetica",
+            type: 'procedure',
+            specialty: 'medicina_estetica',
             provider: {
-              id: "550e8400-e29b-41d4-a716-446655440005",
-              name: "Dr. Santos",
-              crmNumber: "CRM-789012",
+              id: '550e8400-e29b-41d4-a716-446655440005',
+              name: 'Dr. Santos',
+              crmNumber: 'CRM-789012',
             },
             location: {
-              clinic: "Clínica B",
-              address: "Rua B, 200",
-              cep: "01305-200",
+              clinic: 'Clínica B',
+              address: 'Rua B, 200',
+              cep: '01305-200',
             },
           },
         ],
       };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
@@ -266,45 +266,45 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
       // Contract validation would happen here
     });
 
-    it("should include contextual factors in prediction", async () => {
+    it('should include contextual factors in prediction', async () => {
       const predictionRequest = {
         appointments: [
           {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            patientId: "550e8400-e29b-41d4-a716-446655440001",
+            id: '550e8400-e29b-41d4-a716-446655440000',
+            patientId: '550e8400-e29b-41d4-a716-446655440001',
             scheduledAt: new Date(
               Date.now() + 24 * 60 * 60 * 1000,
             ).toISOString(),
-            type: "consultation",
-            specialty: "dermatologia",
+            type: 'consultation',
+            specialty: 'dermatologia',
             provider: {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              name: "Dr. Silva",
-              crmNumber: "CRM-123456",
+              id: '550e8400-e29b-41d4-a716-446655440002',
+              name: 'Dr. Silva',
+              crmNumber: 'CRM-123456',
             },
             location: {
-              clinic: "Clínica Centro",
-              address: "Av. Paulista, 1000",
-              cep: "01310-100",
+              clinic: 'Clínica Centro',
+              address: 'Av. Paulista, 1000',
+              cep: '01310-100',
             },
           },
         ],
         contextualFactors: {
           weather: {
-            forecast: "rainy",
+            forecast: 'rainy',
             temperature: 18,
             precipitation: 80,
           },
           traffic: {
             expectedDelay: 30,
-            congestionLevel: "heavy",
+            congestionLevel: 'heavy',
           },
-          holidays: ["Corpus Christi"],
+          holidays: ['Corpus Christi'],
         },
       };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
@@ -313,53 +313,53 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
 
       // Contract ensures contextual factors are considered
       const responseText = await response.text();
-      expect(responseText).toContain("weatherImpact");
-      expect(responseText).toContain("trafficImpact");
+      expect(responseText).toContain('weatherImpact');
+      expect(responseText).toContain('trafficImpact');
     });
   });
 
-  describe("Error Handling", () => {
-    it("should return 401 for missing authentication", async () => {
+  describe('Error Handling', () => {
+    it('should return 401 for missing authentication', async () => {
       const predictionRequest = {
         appointments: [
           {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            patientId: "550e8400-e29b-41d4-a716-446655440001",
+            id: '550e8400-e29b-41d4-a716-446655440000',
+            patientId: '550e8400-e29b-41d4-a716-446655440001',
             scheduledAt: new Date(
               Date.now() + 24 * 60 * 60 * 1000,
             ).toISOString(),
-            type: "consultation",
-            specialty: "dermatologia",
+            type: 'consultation',
+            specialty: 'dermatologia',
             provider: {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              name: "Dr. Silva",
-              crmNumber: "CRM-123456",
+              id: '550e8400-e29b-41d4-a716-446655440002',
+              name: 'Dr. Silva',
+              crmNumber: 'CRM-123456',
             },
             location: {
-              clinic: "Test Clinic",
-              address: "Test Address",
-              cep: "01305-100",
+              clinic: 'Test Clinic',
+              address: 'Test Address',
+              cep: '01305-100',
             },
           },
         ],
       };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(predictionRequest),
       });
 
       expect(response.status).toBe(401);
     });
 
-    it("should return 400 for empty appointments array", async () => {
+    it('should return 400 for empty appointments array', async () => {
       const predictionRequest = {
         appointments: [],
       };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
@@ -367,31 +367,31 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
       expect(response.status).toBe(400);
     });
 
-    it("should return 422 for invalid appointment data", async () => {
+    it('should return 422 for invalid appointment data', async () => {
       const predictionRequest = {
         appointments: [
           {
-            id: "invalid-uuid",
-            patientId: "550e8400-e29b-41d4-a716-446655440001",
-            scheduledAt: "invalid-date",
-            type: "invalid-type",
-            specialty: "",
+            id: 'invalid-uuid',
+            patientId: '550e8400-e29b-41d4-a716-446655440001',
+            scheduledAt: 'invalid-date',
+            type: 'invalid-type',
+            specialty: '',
             provider: {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              name: "",
-              crmNumber: "",
+              id: '550e8400-e29b-41d4-a716-446655440002',
+              name: '',
+              crmNumber: '',
             },
             location: {
-              clinic: "",
-              address: "",
-              cep: "invalid-cep",
+              clinic: '',
+              address: '',
+              cep: 'invalid-cep',
             },
           },
         ],
       };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
@@ -400,36 +400,36 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
     });
   });
 
-  describe("Performance Requirements", () => {
-    it("should generate predictions within 1 second", async () => {
+  describe('Performance Requirements', () => {
+    it('should generate predictions within 1 second', async () => {
       const startTime = Date.now();
 
       const predictionRequest = {
         appointments: [
           {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            patientId: "550e8400-e29b-41d4-a716-446655440001",
+            id: '550e8400-e29b-41d4-a716-446655440000',
+            patientId: '550e8400-e29b-41d4-a716-446655440001',
             scheduledAt: new Date(
               Date.now() + 24 * 60 * 60 * 1000,
             ).toISOString(),
-            type: "consultation",
-            specialty: "dermatologia",
+            type: 'consultation',
+            specialty: 'dermatologia',
             provider: {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              name: "Dr. Silva",
-              crmNumber: "CRM-123456",
+              id: '550e8400-e29b-41d4-a716-446655440002',
+              name: 'Dr. Silva',
+              crmNumber: 'CRM-123456',
             },
             location: {
-              clinic: "Performance Test Clinic",
-              address: "Test Address",
-              cep: "01305-100",
+              clinic: 'Performance Test Clinic',
+              address: 'Test Address',
+              cep: '01305-100',
             },
           },
         ],
       };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
@@ -439,7 +439,7 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
       expect(response.status).toBe(200);
     });
 
-    it("should handle batch processing efficiently", async () => {
+    it('should handle batch processing efficiently', async () => {
       const startTime = Date.now();
 
       // Create 10 test appointments
@@ -449,24 +449,24 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
         scheduledAt: new Date(
           Date.now() + (i + 1) * 24 * 60 * 60 * 1000,
         ).toISOString(),
-        type: "consultation" as const,
-        specialty: "dermatologia",
+        type: 'consultation' as const,
+        specialty: 'dermatologia',
         provider: {
-          id: "550e8400-e29b-41d4-a716-446655440002",
-          name: "Dr. Silva",
-          crmNumber: "CRM-123456",
+          id: '550e8400-e29b-41d4-a716-446655440002',
+          name: 'Dr. Silva',
+          crmNumber: 'CRM-123456',
         },
         location: {
-          clinic: "Batch Test Clinic",
-          address: "Test Address",
-          cep: "01305-100",
+          clinic: 'Batch Test Clinic',
+          address: 'Test Address',
+          cep: '01305-100',
         },
       }));
 
       const predictionRequest = { appointments };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
@@ -477,37 +477,37 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
     });
   });
 
-  describe("Brazilian Healthcare Context", () => {
-    it("should consider Brazilian cultural factors", async () => {
+  describe('Brazilian Healthcare Context', () => {
+    it('should consider Brazilian cultural factors', async () => {
       const predictionRequest = {
         appointments: [
           {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            patientId: "550e8400-e29b-41d4-a716-446655440001",
+            id: '550e8400-e29b-41d4-a716-446655440000',
+            patientId: '550e8400-e29b-41d4-a716-446655440001',
             scheduledAt: new Date(
               Date.now() + 24 * 60 * 60 * 1000,
             ).toISOString(),
-            type: "consultation",
-            specialty: "medicina_estetica",
+            type: 'consultation',
+            specialty: 'medicina_estetica',
             provider: {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              name: "Dr. Silva",
-              crmNumber: "CRM-123456",
+              id: '550e8400-e29b-41d4-a716-446655440002',
+              name: 'Dr. Silva',
+              crmNumber: 'CRM-123456',
             },
             location: {
-              clinic: "Clínica Rio de Janeiro",
-              address: "Copacabana, 100",
-              cep: "22070-000",
+              clinic: 'Clínica Rio de Janeiro',
+              address: 'Copacabana, 100',
+              cep: '22070-000',
             },
           },
         ],
         contextualFactors: {
-          holidays: ["Carnaval"],
+          holidays: ['Carnaval'],
         },
       };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
@@ -516,30 +516,30 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
 
       // Contract ensures Brazilian context is considered
       const responseText = await response.text();
-      expect(responseText).toContain("brazilianContext");
-      expect(responseText).toContain("carnivalSeason");
+      expect(responseText).toContain('brazilianContext');
+      expect(responseText).toContain('carnivalSeason');
     });
 
-    it("should provide appropriate intervention recommendations", async () => {
+    it('should provide appropriate intervention recommendations', async () => {
       const predictionRequest = {
         appointments: [
           {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            patientId: "550e8400-e29b-41d4-a716-446655440001",
+            id: '550e8400-e29b-41d4-a716-446655440000',
+            patientId: '550e8400-e29b-41d4-a716-446655440001',
             scheduledAt: new Date(
               Date.now() + 24 * 60 * 60 * 1000,
             ).toISOString(),
-            type: "procedure",
-            specialty: "medicina_estetica",
+            type: 'procedure',
+            specialty: 'medicina_estetica',
             provider: {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              name: "Dr. Silva",
-              crmNumber: "CRM-123456",
+              id: '550e8400-e29b-41d4-a716-446655440002',
+              name: 'Dr. Silva',
+              crmNumber: 'CRM-123456',
             },
             location: {
-              clinic: "Clínica São Paulo",
-              address: "Vila Olímpia, 500",
-              cep: "04551-060",
+              clinic: 'Clínica São Paulo',
+              address: 'Vila Olímpia, 500',
+              cep: '04551-060',
             },
           },
         ],
@@ -548,8 +548,8 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
         },
       };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
@@ -558,47 +558,47 @@ describe("POST /api/v2/ai/insights/no-show-prediction - Contract Tests", () => {
 
       // Contract ensures intervention recommendations
       const responseText = await response.text();
-      expect(responseText).toContain("interventions");
-      expect(responseText).toContain("whatsapp");
-      expect(responseText).toContain("sms");
+      expect(responseText).toContain('interventions');
+      expect(responseText).toContain('whatsapp');
+      expect(responseText).toContain('sms');
     });
 
-    it("should enforce LGPD compliance for predictive analytics", async () => {
+    it('should enforce LGPD compliance for predictive analytics', async () => {
       const predictionRequest = {
         appointments: [
           {
-            id: "550e8400-e29b-41d4-a716-446655440000",
-            patientId: "550e8400-e29b-41d4-a716-446655440001",
+            id: '550e8400-e29b-41d4-a716-446655440000',
+            patientId: '550e8400-e29b-41d4-a716-446655440001',
             scheduledAt: new Date(
               Date.now() + 24 * 60 * 60 * 1000,
             ).toISOString(),
-            type: "consultation",
-            specialty: "dermatologia",
+            type: 'consultation',
+            specialty: 'dermatologia',
             provider: {
-              id: "550e8400-e29b-41d4-a716-446655440002",
-              name: "Dr. Silva",
-              crmNumber: "CRM-123456",
+              id: '550e8400-e29b-41d4-a716-446655440002',
+              name: 'Dr. Silva',
+              crmNumber: 'CRM-123456',
             },
             location: {
-              clinic: "LGPD Compliance Test",
-              address: "Test Address",
-              cep: "01305-100",
+              clinic: 'LGPD Compliance Test',
+              address: 'Test Address',
+              cep: '01305-100',
             },
           },
         ],
       };
 
-      const response = await api("/api/v2/ai/insights/no-show-prediction", {
-        method: "POST",
+      const response = await api('/api/v2/ai/insights/no-show-prediction', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify(predictionRequest),
       });
 
-      expect(response.headers.get("X-LGPD-Processed")).toBeDefined();
+      expect(response.headers.get('X-LGPD-Processed')).toBeDefined();
       expect(
-        response.headers.get("X-Predictive-Analytics-Consent"),
+        response.headers.get('X-Predictive-Analytics-Consent'),
       ).toBeDefined();
-      expect(response.headers.get("X-Data-Retention-Policy")).toBeDefined();
+      expect(response.headers.get('X-Data-Retention-Policy')).toBeDefined();
       expect(response.status).toBe(200);
     });
   });

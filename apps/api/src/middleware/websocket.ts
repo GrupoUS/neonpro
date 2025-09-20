@@ -10,31 +10,31 @@
  * - Integration with completed AI chat endpoint (T051)
  */
 
-import { Context, Next } from "hono";
-import { WebSocket } from "ws";
-import { z } from "zod";
+import { Context, Next } from 'hono';
+import { WebSocket } from 'ws';
+import { z } from 'zod';
 
 // WebSocket message types
 export enum WSMessageType {
   // Connection management
-  CONNECT = "connect",
-  DISCONNECT = "disconnect",
-  PING = "ping",
-  PONG = "pong",
+  CONNECT = 'connect',
+  DISCONNECT = 'disconnect',
+  PING = 'ping',
+  PONG = 'pong',
 
   // AI Chat streaming
-  CHAT_START = "chat_start",
-  CHAT_CHUNK = "chat_chunk",
-  CHAT_END = "chat_end",
-  CHAT_ERROR = "chat_error",
+  CHAT_START = 'chat_start',
+  CHAT_CHUNK = 'chat_chunk',
+  CHAT_END = 'chat_end',
+  CHAT_ERROR = 'chat_error',
 
   // Notifications
-  NOTIFICATION = "notification",
-  ALERT = "alert",
+  NOTIFICATION = 'notification',
+  ALERT = 'alert',
 
   // System
-  ERROR = "error",
-  STATUS = "status",
+  ERROR = 'error',
+  STATUS = 'status',
 }
 
 // WebSocket message schema
@@ -142,7 +142,7 @@ class WebSocketManager {
 
       return true;
     } catch (error) {
-      console.error("Error sending WebSocket message:", error);
+      console.error('Error sending WebSocket message:', error);
       return false;
     }
   }
@@ -204,27 +204,27 @@ class WebSocketManager {
     metadata: ConnectionMetadata,
   ) {
     // Handle incoming messages
-    ws.on("message", async (data) => {
+    ws.on('message', async data => {
       try {
         const message = JSON.parse(data.toString()) as WSMessage;
         await this.handleIncomingMessage(connectionId, message);
       } catch (error) {
-        console.error("Error handling WebSocket message:", error);
+        console.error('Error handling WebSocket message:', error);
         this.sendToConnection(connectionId, {
           type: WSMessageType.ERROR,
-          data: { error: "Mensagem inválida" },
+          data: { error: 'Mensagem inválida' },
         });
       }
     });
 
     // Handle connection close
-    ws.on("close", () => {
+    ws.on('close', () => {
       this.removeConnection(connectionId);
     });
 
     // Handle connection error
-    ws.on("error", (error) => {
-      console.error("WebSocket error:", error);
+    ws.on('error', error => {
+      console.error('WebSocket error:', error);
       this.removeConnection(connectionId);
     });
 
@@ -232,9 +232,9 @@ class WebSocketManager {
     this.sendToConnection(connectionId, {
       type: WSMessageType.STATUS,
       data: {
-        status: "connected",
-        message: "Conectado ao NeonPro em tempo real",
-        features: ["ai_chat", "notifications", "alerts"],
+        status: 'connected',
+        message: 'Conectado ao NeonPro em tempo real',
+        features: ['ai_chat', 'notifications', 'alerts'],
       },
       metadata: {
         userId: metadata.userId,
@@ -267,7 +267,7 @@ class WebSocketManager {
         break;
 
       default:
-        console.warn("Unhandled WebSocket message type:", message.type);
+        console.warn('Unhandled WebSocket message type:', message.type);
     }
   }
 
@@ -283,8 +283,8 @@ class WebSocketManager {
       this.sendToConnection(connectionId, {
         type: WSMessageType.CHAT_ERROR,
         data: {
-          error: "Consentimento LGPD necessário para respostas de IA",
-          code: "LGPD_CONSENT_REQUIRED",
+          error: 'Consentimento LGPD necessário para respostas de IA',
+          code: 'LGPD_CONSENT_REQUIRED',
         },
       });
       return;
@@ -297,7 +297,7 @@ class WebSocketManager {
     this.sendToConnection(connectionId, {
       type: WSMessageType.CHAT_START,
       data: {
-        status: "started",
+        status: 'started',
         conversationId: message.data?.conversationId || crypto.randomUUID(),
       },
     });
@@ -317,7 +317,7 @@ class WebSocketManager {
     for (const connectionId of toRemove) {
       const connection = this.connections.get(connectionId);
       if (connection) {
-        connection.ws.close(1000, "Conexão inativa");
+        connection.ws.close(1000, 'Conexão inativa');
         this.removeConnection(connectionId);
       }
     }
@@ -332,14 +332,14 @@ export const wsManager = new WebSocketManager();
 // WebSocket upgrade middleware
 export function websocketUpgrade() {
   return async (c: Context, next: Next) => {
-    const upgrade = c.req.header("upgrade");
-    if (upgrade !== "websocket") {
+    const upgrade = c.req.header('upgrade');
+    if (upgrade !== 'websocket') {
       return next();
     }
 
     // Extract authentication token
-    const authHeader = c.req.header("authorization");
-    const token = authHeader?.startsWith("Bearer ")
+    const authHeader = c.req.header('authorization');
+    const token = authHeader?.startsWith('Bearer ')
       ? authHeader.slice(7).trim()
       : undefined;
 
@@ -347,7 +347,7 @@ export function websocketUpgrade() {
       return c.json(
         {
           success: false,
-          error: "Token de autenticação necessário para WebSocket",
+          error: 'Token de autenticação necessário para WebSocket',
         },
         401,
       );
@@ -357,16 +357,16 @@ export function websocketUpgrade() {
     // This will integrate with the existing auth middleware
 
     // For now, create mock user data
-    const userId = "user-" + crypto.randomUUID();
-    const sessionId = "session-" + crypto.randomUUID();
+    const userId = 'user-' + crypto.randomUUID();
+    const sessionId = 'session-' + crypto.randomUUID();
 
     const metadata: ConnectionMetadata = {
       userId,
       sessionId,
       healthcareProfessional: {
         id: userId,
-        crmNumber: "12345-SP",
-        specialty: "Dermatologia",
+        crmNumber: '12345-SP',
+        specialty: 'Dermatologia',
       },
       lgpdConsent: {
         canReceiveNotifications: true,
@@ -379,7 +379,7 @@ export function websocketUpgrade() {
     };
 
     // Store connection metadata in context for WebSocket upgrade
-    c.set("wsMetadata", metadata);
+    c.set('wsMetadata', metadata);
 
     return next();
   };
@@ -404,12 +404,13 @@ export function handleWebSocketConnection(
 export function websocketMiddleware() {
   return async (c: Context, next: Next) => {
     // Add WebSocket utilities to context
-    c.set("wsManager", wsManager);
-    c.set("sendToUser", (userId: string, message: WSMessage) =>
-      wsManager.sendToUser(userId, message),
+    c.set('wsManager', wsManager);
+    c.set(
+      'sendToUser',
+      (userId: string, message: WSMessage) => wsManager.sendToUser(userId, message),
     );
     c.set(
-      "broadcast",
+      'broadcast',
       (
         message: WSMessage,
         filter?: (metadata: ConnectionMetadata) => boolean,

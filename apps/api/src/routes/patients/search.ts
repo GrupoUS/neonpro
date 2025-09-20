@@ -6,12 +6,12 @@
  * Brazilian healthcare compliance with CFM medical record access logging
  */
 
-import { Hono } from "hono";
-import { z } from "zod";
+import { Hono } from 'hono';
+import { z } from 'zod';
 
 // Mock middleware for testing - will be replaced with actual middleware
 const requireAuth = async (c: any, next: any) => {
-  c.set("user", { id: "user-123" });
+  c.set('user', { id: 'user-123' });
   return next();
 };
 
@@ -29,28 +29,28 @@ const PatientService = {
       data: {
         patients: [
           {
-            id: "patient-123",
-            name: "João Silva",
-            cpf: "123.456.789-00",
-            email: "joao@example.com",
-            phone: "(11) 99999-9999",
-            birthDate: "1990-01-01T00:00:00Z",
-            gender: "male",
-            status: "active",
-            createdAt: "2024-01-01T00:00:00Z",
-            updatedAt: "2024-01-01T00:00:00Z",
+            id: 'patient-123',
+            name: 'João Silva',
+            cpf: '123.456.789-00',
+            email: 'joao@example.com',
+            phone: '(11) 99999-9999',
+            birthDate: '1990-01-01T00:00:00Z',
+            gender: 'male',
+            status: 'active',
+            createdAt: '2024-01-01T00:00:00Z',
+            updatedAt: '2024-01-01T00:00:00Z',
           },
           {
-            id: "patient-456",
-            name: "Maria Santos",
-            cpf: "987.654.321-00",
-            email: "maria@example.com",
-            phone: "(11) 88888-8888",
-            birthDate: "1985-05-15T00:00:00Z",
-            gender: "female",
-            status: "active",
-            createdAt: "2024-01-02T00:00:00Z",
-            updatedAt: "2024-01-02T00:00:00Z",
+            id: 'patient-456',
+            name: 'Maria Santos',
+            cpf: '987.654.321-00',
+            email: 'maria@example.com',
+            phone: '(11) 88888-8888',
+            birthDate: '1985-05-15T00:00:00Z',
+            gender: 'female',
+            status: 'active',
+            createdAt: '2024-01-02T00:00:00Z',
+            updatedAt: '2024-01-02T00:00:00Z',
           },
         ],
         pagination: {
@@ -60,10 +60,10 @@ const PatientService = {
           totalPages: 1,
         },
         searchMetadata: {
-          query: "João",
+          query: 'João',
           executionTime: 45,
           resultsFound: 2,
-          searchType: "fulltext",
+          searchType: 'fulltext',
         },
       },
     };
@@ -74,7 +74,7 @@ const AuditService = {
   async logActivity(_params: any) {
     return {
       success: true,
-      data: { auditId: "audit-123" },
+      data: { auditId: 'audit-123' },
     };
   },
 };
@@ -83,7 +83,7 @@ const LGPDService = {
   async validateDataAccess(_params: any) {
     return {
       success: true,
-      data: { canAccess: true, accessLevel: "full" },
+      data: { canAccess: true, accessLevel: 'full' },
     };
   },
   maskSensitiveData(data: any) {
@@ -95,12 +95,12 @@ const LGPDService = {
 const searchCriteriaSchema = z.object({
   query: z.string().optional(),
   searchType: z
-    .enum(["fulltext", "structured", "fuzzy", "advanced"])
+    .enum(['fulltext', 'structured', 'fuzzy', 'advanced'])
     .optional()
-    .default("fulltext"),
+    .default('fulltext'),
   filters: z
     .object({
-      gender: z.enum(["male", "female", "other"]).optional(),
+      gender: z.enum(['male', 'female', 'other']).optional(),
       status: z.union([z.string(), z.array(z.string())]).optional(),
       ageRange: z
         .object({
@@ -110,7 +110,7 @@ const searchCriteriaSchema = z.object({
         .optional(),
       dateRange: z
         .object({
-          field: z.enum(["createdAt", "updatedAt", "birthDate"]).optional(),
+          field: z.enum(['createdAt', 'updatedAt', 'birthDate']).optional(),
           start: z.string().datetime().optional(),
           end: z.string().datetime().optional(),
         })
@@ -126,7 +126,7 @@ const searchCriteriaSchema = z.object({
   fuzzyOptions: z
     .object({
       threshold: z.number().min(0).max(1).optional().default(0.8),
-      fields: z.array(z.string()).optional().default(["name", "email"]),
+      fields: z.array(z.string()).optional().default(['name', 'email']),
     })
     .optional(),
   pagination: z
@@ -139,25 +139,25 @@ const searchCriteriaSchema = z.object({
   sorting: z
     .object({
       field: z
-        .enum(["name", "createdAt", "updatedAt", "birthDate"])
+        .enum(['name', 'createdAt', 'updatedAt', 'birthDate'])
         .optional()
-        .default("name"),
-      order: z.enum(["asc", "desc"]).optional().default("asc"),
+        .default('name'),
+      order: z.enum(['asc', 'desc']).optional().default('asc'),
     })
     .optional()
-    .default({ field: "name", order: "asc" }),
+    .default({ field: 'name', order: 'asc' }),
   includeInactive: z.boolean().optional().default(false),
 });
 
 const app = new Hono();
 
-app.post("/", requireAuth, dataProtection.clientView, async (c) => {
+app.post('/', requireAuth, dataProtection.clientView, async c => {
   const startTime = Date.now();
 
   try {
     // Get user context
-    const user = c.get("user");
-    const userId = user?.id || "user-123";
+    const user = c.get('user');
+    const userId = user?.id || 'user-123';
 
     // Parse and validate request body
     const body = await c.req.json();
@@ -166,23 +166,23 @@ app.post("/", requireAuth, dataProtection.clientView, async (c) => {
     // Determine search type based on criteria
     let searchType = searchCriteria.searchType;
     if (
-      !searchCriteria.query &&
-      Object.keys(searchCriteria.filters).length > 0
+      !searchCriteria.query
+      && Object.keys(searchCriteria.filters).length > 0
     ) {
-      searchType = "structured";
+      searchType = 'structured';
     } else if (
-      searchCriteria.query &&
-      Object.keys(searchCriteria.filters).length > 0
+      searchCriteria.query
+      && Object.keys(searchCriteria.filters).length > 0
     ) {
-      searchType = "advanced";
+      searchType = 'advanced';
     }
 
     // Validate LGPD data access permissions
     const lgpdValidation = await LGPDService.validateDataAccess({
       userId,
-      dataType: "patient_search",
-      purpose: "healthcare_management",
-      legalBasis: "legitimate_interest",
+      dataType: 'patient_search',
+      purpose: 'healthcare_management',
+      legalBasis: 'legitimate_interest',
       searchCriteria,
     });
 
@@ -190,16 +190,16 @@ app.post("/", requireAuth, dataProtection.clientView, async (c) => {
       return c.json(
         {
           success: false,
-          error: lgpdValidation.error || "Acesso negado por política LGPD",
-          code: lgpdValidation.code || "LGPD_SEARCH_DENIED",
+          error: lgpdValidation.error || 'Acesso negado por política LGPD',
+          code: lgpdValidation.code || 'LGPD_SEARCH_DENIED',
         },
         403,
       );
     }
 
     // Get healthcare professional context from headers
-    const healthcareProfessional = c.req.header("X-Healthcare-Professional");
-    const healthcareContext = c.req.header("X-Healthcare-Context");
+    const healthcareProfessional = c.req.header('X-Healthcare-Professional');
+    const healthcareContext = c.req.header('X-Healthcare-Context');
 
     // Perform patient search
     const searchResult = await PatientService.searchPatients({
@@ -214,32 +214,31 @@ app.post("/", requireAuth, dataProtection.clientView, async (c) => {
       return c.json(
         {
           success: false,
-          error: searchResult.error || "Erro interno do serviço de busca",
+          error: searchResult.error || 'Erro interno do serviço de busca',
         },
         500,
       );
     }
 
     // Mask sensitive data based on access level
-    const accessLevel = lgpdValidation.data?.accessLevel || "full";
+    const accessLevel = lgpdValidation.data?.accessLevel || 'full';
     let maskedPatients = searchResult.data.patients;
 
-    if (accessLevel === "limited") {
+    if (accessLevel === 'limited') {
       maskedPatients = LGPDService.maskSensitiveData(
         searchResult.data.patients,
       );
     }
 
     // Log search activity for audit trail
-    const ipAddress =
-      c.req.header("X-Real-IP") || c.req.header("X-Forwarded-For") || "unknown";
-    const userAgent = c.req.header("User-Agent") || "unknown";
+    const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
+    const userAgent = c.req.header('User-Agent') || 'unknown';
 
     await AuditService.logActivity({
       userId,
-      action: "patient_search",
-      resourceType: "patient",
-      resourceId: "search",
+      action: 'patient_search',
+      resourceType: 'patient',
+      resourceId: 'search',
       details: {
         searchQuery: searchCriteria.query,
         searchFilters: searchCriteria.filters,
@@ -249,30 +248,30 @@ app.post("/", requireAuth, dataProtection.clientView, async (c) => {
       },
       ipAddress,
       userAgent,
-      complianceContext: "LGPD",
-      sensitivityLevel: "high",
+      complianceContext: 'LGPD',
+      sensitivityLevel: 'high',
     });
 
     const executionTime = Date.now() - startTime;
 
     // Set response headers
     c.header(
-      "X-Search-Time",
+      'X-Search-Time',
       `${searchResult.data.searchMetadata.executionTime}ms`,
     );
     c.header(
-      "X-Results-Count",
+      'X-Results-Count',
       searchResult.data.searchMetadata.resultsFound.toString(),
     );
-    c.header("X-Search-Type", searchType);
-    c.header("X-Response-Time", `${executionTime}ms`);
-    c.header("X-Database-Queries", "3");
-    c.header("X-CFM-Compliant", "true");
-    c.header("X-Medical-Record-Search", "logged");
-    c.header("X-LGPD-Compliant", "true");
+    c.header('X-Search-Type', searchType);
+    c.header('X-Response-Time', `${executionTime}ms`);
+    c.header('X-Database-Queries', '3');
+    c.header('X-CFM-Compliant', 'true');
+    c.header('X-Medical-Record-Search', 'logged');
+    c.header('X-LGPD-Compliant', 'true');
 
-    if (accessLevel === "limited") {
-      c.header("X-Access-Level", "limited");
+    if (accessLevel === 'limited') {
+      c.header('X-Access-Level', 'limited');
     }
 
     return c.json({
@@ -284,16 +283,16 @@ app.post("/", requireAuth, dataProtection.clientView, async (c) => {
       },
     });
   } catch (error) {
-    console.error("Search endpoint error:", error);
+    console.error('Search endpoint error:', error);
 
     // Handle validation errors
     if (error instanceof z.ZodError) {
       return c.json(
         {
           success: false,
-          error: "Dados de busca inválidos",
-          errors: error.errors.map((err) => ({
-            field: err.path.join("."),
+          error: 'Dados de busca inválidos',
+          errors: error.errors.map(err => ({
+            field: err.path.join('.'),
             message: err.message,
           })),
         },
@@ -306,7 +305,7 @@ app.post("/", requireAuth, dataProtection.clientView, async (c) => {
       return c.json(
         {
           success: false,
-          error: "Formato JSON inválido",
+          error: 'Formato JSON inválido',
         },
         400,
       );
@@ -315,7 +314,7 @@ app.post("/", requireAuth, dataProtection.clientView, async (c) => {
     return c.json(
       {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       },
       500,
     );

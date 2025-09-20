@@ -12,28 +12,28 @@
  * - CFM (Conselho Federal de Medicina) - Medical professional licensing
  */
 
-import { describe, expect, it, test } from "vitest";
+import { describe, expect, it, test } from 'vitest';
 
-describe("Brazilian Healthcare Validators Import Test (TDD RED Phase)", () => {
-  describe("Core Validator Imports", () => {
-    it("should import BrazilianHealthcareValidator class", async () => {
+describe('Brazilian Healthcare Validators Import Test (TDD RED Phase)', () => {
+  describe('Core Validator Imports', () => {
+    it('should import BrazilianHealthcareValidator class', async () => {
       // This may FAIL if export is not properly configured
       expect(async () => {
         const { BrazilianHealthcareValidator } = await import(
-          "../healthcare-helpers"
+          '../healthcare-helpers'
         );
 
         expect(BrazilianHealthcareValidator).toBeDefined();
-        expect(typeof BrazilianHealthcareValidator).toBe("function");
+        expect(typeof BrazilianHealthcareValidator).toBe('function');
 
         return true;
       }).not.toThrow();
     });
 
-    it("should import LGPD compliance validators", async () => {
+    it('should import LGPD compliance validators', async () => {
       // This may FAIL if imports are not properly resolved
       expect(async () => {
-        const lgpdModule = await import("../lgpd-compliance-validator");
+        const lgpdModule = await import('../lgpd-compliance-validator');
 
         expect(lgpdModule.LGPDLegalBasis).toBeDefined();
         expect(lgpdModule.LGPDDataCategory).toBeDefined();
@@ -44,67 +44,67 @@ describe("Brazilian Healthcare Validators Import Test (TDD RED Phase)", () => {
       }).not.toThrow();
     });
 
-    it("should have all required Brazilian validators accessible", async () => {
+    it('should have all required Brazilian validators accessible', async () => {
       // This will FAIL due to missing CNPJ validator and other gaps
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       // Test CPF validation exists
-      expect(typeof BrazilianHealthcareValidator.validateCPF).toBe("function");
+      expect(typeof BrazilianHealthcareValidator.validateCPF).toBe('function');
 
       // Test CNPJ validation - WILL FAIL (missing)
-      expect(typeof BrazilianHealthcareValidator.validateCNPJ).toBe("function");
+      expect(typeof BrazilianHealthcareValidator.validateCNPJ).toBe('function');
 
       // Test CFM validation exists
-      expect(typeof BrazilianHealthcareValidator.validateCFM).toBe("function");
+      expect(typeof BrazilianHealthcareValidator.validateCFM).toBe('function');
 
       // Test RG validation exists
-      expect(typeof BrazilianHealthcareValidator.validateRG).toBe("function");
+      expect(typeof BrazilianHealthcareValidator.validateRG).toBe('function');
 
       // Test Brazilian phone validation exists
       expect(typeof BrazilianHealthcareValidator.validateBrazilianPhone).toBe(
-        "function",
+        'function',
       );
     });
   });
 
-  describe("CPF Validation Functionality", () => {
-    it("should validate valid CPF numbers correctly", async () => {
+  describe('CPF Validation Functionality', () => {
+    it('should validate valid CPF numbers correctly', async () => {
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       // Valid CPF numbers for testing
       const validCPFs = [
-        "11144477735", // Valid CPF
-        "111.444.777-35", // Valid CPF with formatting
-        "12345678909", // Valid test CPF
-        "000.000.001-91", // Valid edge case
+        '11144477735', // Valid CPF
+        '111.444.777-35', // Valid CPF with formatting
+        '12345678909', // Valid test CPF
+        '000.000.001-91', // Valid edge case
       ];
 
-      validCPFs.forEach((cpf) => {
+      validCPFs.forEach(cpf => {
         expect(BrazilianHealthcareValidator.validateCPF(cpf)).toBe(true);
       });
     });
 
-    it("should reject invalid CPF numbers", async () => {
+    it('should reject invalid CPF numbers', async () => {
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       // Invalid CPF numbers
       const invalidCPFs = [
-        "11111111111", // Same digits
-        "123", // Too short
-        "12345678901234", // Too long
-        "123.456.789-00", // Invalid check digits
-        "", // Empty
+        '11111111111', // Same digits
+        '123', // Too short
+        '12345678901234', // Too long
+        '123.456.789-00', // Invalid check digits
+        '', // Empty
         null, // Null
         undefined, // Undefined
       ];
 
-      invalidCPFs.forEach((cpf) => {
+      invalidCPFs.forEach(cpf => {
         expect(BrazilianHealthcareValidator.validateCPF(cpf as string)).toBe(
           false,
         );
@@ -112,42 +112,42 @@ describe("Brazilian Healthcare Validators Import Test (TDD RED Phase)", () => {
     });
   });
 
-  describe("CNPJ Validation Functionality", () => {
-    it("should validate valid CNPJ numbers correctly", async () => {
+  describe('CNPJ Validation Functionality', () => {
+    it('should validate valid CNPJ numbers correctly', async () => {
       // This will FAIL - CNPJ validator is missing
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       // Valid CNPJ numbers for testing
       const validCNPJs = [
-        "11222333000181", // Valid CNPJ
-        "11.222.333/0001-81", // Valid CNPJ with formatting
-        "12345678000195", // Valid test CNPJ
+        '11222333000181', // Valid CNPJ
+        '11.222.333/0001-81', // Valid CNPJ with formatting
+        '12345678000195', // Valid test CNPJ
       ];
 
-      validCNPJs.forEach((cnpj) => {
+      validCNPJs.forEach(cnpj => {
         expect(BrazilianHealthcareValidator.validateCNPJ(cnpj)).toBe(true);
       });
     });
 
-    it("should reject invalid CNPJ numbers", async () => {
+    it('should reject invalid CNPJ numbers', async () => {
       // This will FAIL - CNPJ validator is missing
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       // Invalid CNPJ numbers
       const invalidCNPJs = [
-        "11111111111111", // Same digits
-        "123", // Too short
-        "12345678000199", // Invalid check digits
-        "", // Empty
+        '11111111111111', // Same digits
+        '123', // Too short
+        '12345678000199', // Invalid check digits
+        '', // Empty
         null, // Null
         undefined, // Undefined
       ];
 
-      invalidCNPJs.forEach((cnpj) => {
+      invalidCNPJs.forEach(cnpj => {
         expect(BrazilianHealthcareValidator.validateCNPJ(cnpj as string)).toBe(
           false,
         );
@@ -155,39 +155,39 @@ describe("Brazilian Healthcare Validators Import Test (TDD RED Phase)", () => {
     });
   });
 
-  describe("CFM Professional Registration Validation", () => {
-    it("should validate CFM registration numbers", async () => {
+  describe('CFM Professional Registration Validation', () => {
+    it('should validate CFM registration numbers', async () => {
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       // Test existing CFM validation
       const validCFMs = [
-        "123456/SP", // Valid format
-        "654321/RJ", // Valid format
-        "111111/MG", // Valid format
+        '123456/SP', // Valid format
+        '654321/RJ', // Valid format
+        '111111/MG', // Valid format
       ];
 
-      validCFMs.forEach((cfm) => {
+      validCFMs.forEach(cfm => {
         expect(BrazilianHealthcareValidator.validateCFM(cfm)).toBe(true);
       });
     });
 
-    it("should reject invalid CFM registration numbers", async () => {
+    it('should reject invalid CFM registration numbers', async () => {
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       const invalidCFMs = [
-        "123", // Too short
-        "123456", // Missing state
-        "123456/XX", // Invalid state
-        "", // Empty
+        '123', // Too short
+        '123456', // Missing state
+        '123456/XX', // Invalid state
+        '', // Empty
         null, // Null
         undefined, // Undefined
       ];
 
-      invalidCFMs.forEach((cfm) => {
+      invalidCFMs.forEach(cfm => {
         expect(BrazilianHealthcareValidator.validateCFM(cfm as string)).toBe(
           false,
         );
@@ -195,109 +195,109 @@ describe("Brazilian Healthcare Validators Import Test (TDD RED Phase)", () => {
     });
   });
 
-  describe("Healthcare Professional Registration Expansion", () => {
-    it("should validate CRO (Dentist) registration numbers", async () => {
+  describe('Healthcare Professional Registration Expansion', () => {
+    it('should validate CRO (Dentist) registration numbers', async () => {
       // This will FAIL - CRO validator is missing
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       const validCROs = [
-        "12345/SP", // Valid CRO format
-        "67890/RJ", // Valid CRO format
+        '12345/SP', // Valid CRO format
+        '67890/RJ', // Valid CRO format
       ];
 
-      expect(typeof BrazilianHealthcareValidator.validateCRO).toBe("function");
+      expect(typeof BrazilianHealthcareValidator.validateCRO).toBe('function');
 
-      validCROs.forEach((cro) => {
+      validCROs.forEach(cro => {
         expect(BrazilianHealthcareValidator.validateCRO(cro)).toBe(true);
       });
     });
 
-    it("should validate COREN (Nurse) registration numbers", async () => {
+    it('should validate COREN (Nurse) registration numbers', async () => {
       // This will FAIL - COREN validator is missing
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       const validCORENs = [
-        "123456/SP", // Valid COREN format
-        "789012/RJ", // Valid COREN format
+        '123456/SP', // Valid COREN format
+        '789012/RJ', // Valid COREN format
       ];
 
       expect(typeof BrazilianHealthcareValidator.validateCOREN).toBe(
-        "function",
+        'function',
       );
 
-      validCORENs.forEach((coren) => {
+      validCORENs.forEach(coren => {
         expect(BrazilianHealthcareValidator.validateCOREN(coren)).toBe(true);
       });
     });
 
-    it("should validate CRF (Pharmacist) registration numbers", async () => {
+    it('should validate CRF (Pharmacist) registration numbers', async () => {
       // This will FAIL - CRF validator is missing
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       const validCRFs = [
-        "12345/SP", // Valid CRF format
-        "67890/RJ", // Valid CRF format
+        '12345/SP', // Valid CRF format
+        '67890/RJ', // Valid CRF format
       ];
 
-      expect(typeof BrazilianHealthcareValidator.validateCRF).toBe("function");
+      expect(typeof BrazilianHealthcareValidator.validateCRF).toBe('function');
 
-      validCRFs.forEach((crf) => {
+      validCRFs.forEach(crf => {
         expect(BrazilianHealthcareValidator.validateCRF(crf)).toBe(true);
       });
     });
   });
 
-  describe("Brazilian Address and Geographic Validation", () => {
-    it("should validate Brazilian CEP (postal code)", async () => {
+  describe('Brazilian Address and Geographic Validation', () => {
+    it('should validate Brazilian CEP (postal code)', async () => {
       // This will FAIL - CEP validator is missing
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       const validCEPs = [
-        "01310-100", // São Paulo
-        "20040-020", // Rio de Janeiro
-        "70040-010", // Brasília
-        "01310100", // Without formatting
+        '01310-100', // São Paulo
+        '20040-020', // Rio de Janeiro
+        '70040-010', // Brasília
+        '01310100', // Without formatting
       ];
 
-      expect(typeof BrazilianHealthcareValidator.validateCEP).toBe("function");
+      expect(typeof BrazilianHealthcareValidator.validateCEP).toBe('function');
 
-      validCEPs.forEach((cep) => {
+      validCEPs.forEach(cep => {
         expect(BrazilianHealthcareValidator.validateCEP(cep)).toBe(true);
       });
     });
 
-    it("should validate Brazilian state codes", async () => {
+    it('should validate Brazilian state codes', async () => {
       // This will FAIL - State validator is missing
       const { BrazilianHealthcareValidator } = await import(
-        "../healthcare-helpers"
+        '../healthcare-helpers'
       );
 
       const validStates = [
-        "SP",
-        "RJ",
-        "MG",
-        "RS",
-        "PR",
-        "SC",
-        "BA",
-        "GO",
-        "PE",
-        "CE",
+        'SP',
+        'RJ',
+        'MG',
+        'RS',
+        'PR',
+        'SC',
+        'BA',
+        'GO',
+        'PE',
+        'CE',
       ];
 
       expect(typeof BrazilianHealthcareValidator.validateBrazilianState).toBe(
-        "function",
+        'function',
       );
 
-      validStates.forEach((state) => {
+      validStates.forEach(state => {
         expect(BrazilianHealthcareValidator.validateBrazilianState(state)).toBe(
           true,
         );
@@ -305,11 +305,11 @@ describe("Brazilian Healthcare Validators Import Test (TDD RED Phase)", () => {
     });
   });
 
-  describe("LGPD Compliance Integration", () => {
-    it("should integrate with LGPD compliance validator", async () => {
+  describe('LGPD Compliance Integration', () => {
+    it('should integrate with LGPD compliance validator', async () => {
       // This may FAIL due to integration issues
-      const healthcareModule = await import("../healthcare-helpers");
-      const lgpdModule = await import("../lgpd-compliance-validator");
+      const healthcareModule = await import('../healthcare-helpers');
+      const lgpdModule = await import('../lgpd-compliance-validator');
 
       // Test integration between validators
       expect(healthcareModule.BrazilianHealthcareValidator).toBeDefined();
@@ -318,20 +318,20 @@ describe("Brazilian Healthcare Validators Import Test (TDD RED Phase)", () => {
       // Test if there's a bridge between them
       expect(
         typeof lgpdModule.LGPDComplianceValidator.validateDataProcessing,
-      ).toBe("function");
+      ).toBe('function');
     });
 
-    it("should validate patient consent with Brazilian legal requirements", async () => {
+    it('should validate patient consent with Brazilian legal requirements', async () => {
       // This will likely FAIL due to missing consent validation
       const { LGPDComplianceValidator, LGPDLegalBasis } = await import(
-        "../lgpd-compliance-validator"
+        '../lgpd-compliance-validator'
       );
 
       const mockConsentData = {
-        patientId: "patient-123",
+        patientId: 'patient-123',
         legalBasis: LGPDLegalBasis.HEALTH_PROTECTION,
-        dataCategories: ["health_data", "personal_data"],
-        processingPurpose: "medical_consultation",
+        dataCategories: ['health_data', 'personal_data'],
+        processingPurpose: 'medical_consultation',
         consentDate: new Date().toISOString(),
         expirationDate: new Date(
           Date.now() + 365 * 24 * 60 * 60 * 1000,
@@ -339,18 +339,17 @@ describe("Brazilian Healthcare Validators Import Test (TDD RED Phase)", () => {
       };
 
       // Test consent validation
-      const isValid =
-        await LGPDComplianceValidator.validateConsent(mockConsentData);
-      expect(typeof isValid).toBe("boolean");
+      const isValid = await LGPDComplianceValidator.validateConsent(mockConsentData);
+      expect(typeof isValid).toBe('boolean');
     });
   });
 
-  describe("Module Export Structure", () => {
-    it("should export all validators through a unified interface", async () => {
+  describe('Module Export Structure', () => {
+    it('should export all validators through a unified interface', async () => {
       // This will FAIL if there's no unified export
       expect(async () => {
         // Test if there's a main validator export
-        const validators = await import("../brazilian-validators");
+        const validators = await import('../brazilian-validators');
 
         expect(validators.BrazilianHealthcareValidator).toBeDefined();
         expect(validators.validateCPF).toBeDefined();
@@ -361,10 +360,10 @@ describe("Brazilian Healthcare Validators Import Test (TDD RED Phase)", () => {
       }).not.toThrow();
     });
 
-    it("should be importable from the main utils index", async () => {
+    it('should be importable from the main utils index', async () => {
       // This will FAIL if not exported through main index
       expect(async () => {
-        const utilsIndex = await import("../index");
+        const utilsIndex = await import('../index');
 
         expect(utilsIndex.BrazilianHealthcareValidator).toBeDefined();
 

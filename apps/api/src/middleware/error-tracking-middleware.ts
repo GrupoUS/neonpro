@@ -5,10 +5,10 @@
  * Enhanced with Sentry integration for advanced monitoring
  */
 
-import type { Context, Next } from "hono";
-import { HTTPException } from "hono/http-exception";
-import { logger } from "../lib/logger";
-import { errorTracker } from "../lib/sentry.js";
+import type { Context, Next } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+import { logger } from '../lib/logger';
+import { errorTracker } from '../lib/sentry.js';
 
 /**
  * Global error handler middleware
@@ -41,7 +41,7 @@ export function errorTrackingMiddleware() {
           // Client errors are logged but not tracked as exceptions
           errorTracker.captureMessage(
             `Client error: ${error.status} - ${error.message}`,
-            "warning",
+            'warning',
             context,
           );
         }
@@ -63,7 +63,7 @@ export function errorTrackingMiddleware() {
       errorTracker.captureException(error as Error, context);
 
       // Log error locally as well
-      logger.error("Unhandled error caught by error tracking middleware", {
+      logger.error('Unhandled error caught by error tracking middleware', {
         ...context,
         error: {
           name: (error as Error).name,
@@ -76,10 +76,9 @@ export function errorTrackingMiddleware() {
       return c.json(
         {
           error: {
-            message:
-              process.env.NODE_ENV === "production"
-                ? "Internal server error"
-                : (error as Error).message,
+            message: process.env.NODE_ENV === 'production'
+              ? 'Internal server error'
+              : (error as Error).message,
             status: 500,
             requestId: context.requestId,
           },
@@ -101,7 +100,7 @@ export function requestContextMiddleware() {
     // Add breadcrumb for request start
     errorTracker.addBreadcrumb(
       `Request started: ${context.method} ${context.endpoint}`,
-      "request",
+      'request',
       {
         method: context.method,
         endpoint: context.endpoint,
@@ -116,7 +115,7 @@ export function requestContextMiddleware() {
       // Add breadcrumb for successful completion
       errorTracker.addBreadcrumb(
         `Request completed: ${context.method} ${context.endpoint}`,
-        "request",
+        'request',
         {
           status: c.res.status,
           method: context.method,
@@ -127,7 +126,7 @@ export function requestContextMiddleware() {
       // Add breadcrumb for error
       errorTracker.addBreadcrumb(
         `Request failed: ${context.method} ${context.endpoint}`,
-        "error",
+        'error',
         {
           error: (error as Error).message,
           method: context.method,
@@ -159,7 +158,7 @@ export function performanceTrackingMiddleware() {
       if (duration > 5000) {
         errorTracker.captureMessage(
           `Slow request detected: ${context.method} ${context.endpoint}`,
-          "warning",
+          'warning',
           {
             ...context,
             extra: {
@@ -175,7 +174,7 @@ export function performanceTrackingMiddleware() {
       if (duration > 30000) {
         errorTracker.captureMessage(
           `Very slow request: ${context.method} ${context.endpoint}`,
-          "error",
+          'error',
           {
             ...context,
             extra: {
@@ -188,11 +187,11 @@ export function performanceTrackingMiddleware() {
       }
     } catch (error) {
       // Log the error for observability
-      logger.error("Error in performanceTrackingMiddleware:", error);
+      logger.error('Error in performanceTrackingMiddleware:', error);
       errorTracker.captureException?.(error, {
         context: {
           ...context,
-          middleware: "performanceTrackingMiddleware",
+          middleware: 'performanceTrackingMiddleware',
         },
       });
       throw error;
@@ -209,32 +208,31 @@ export function healthcareAuditTrackingMiddleware() {
     const context = errorTracker.extractContextFromHono(c);
 
     // Check if this is a healthcare-related endpoint
-    const isHealthcareEndpoint =
-      context.endpoint.includes("/patients") ||
-      context.endpoint.includes("/appointments") ||
-      context.endpoint.includes("/medical-records") ||
-      context.patientId ||
-      context.clinicId;
+    const isHealthcareEndpoint = context.endpoint.includes('/patients')
+      || context.endpoint.includes('/appointments')
+      || context.endpoint.includes('/medical-records')
+      || context.patientId
+      || context.clinicId;
 
     if (isHealthcareEndpoint) {
       // Add healthcare audit breadcrumb
       errorTracker.addBreadcrumb(
         `Healthcare operation: ${context.method} ${context.endpoint}`,
-        "healthcare",
+        'healthcare',
         {
           method: context.method,
           endpoint: context.endpoint,
-          patientId: context.patientId ? "[PATIENT_ID]" : undefined, // Redacted for privacy
+          patientId: context.patientId ? '[PATIENT_ID]' : undefined, // Redacted for privacy
           clinicId: context.clinicId,
           userId: context.userId,
         },
       );
 
       // Track healthcare operations (for audit purposes)
-      if (context.method !== "GET") {
+      if (context.method !== 'GET') {
         errorTracker.captureMessage(
           `Healthcare data operation: ${context.method} ${context.endpoint}`,
-          "info",
+          'info',
           {
             ...context,
             extra: {
@@ -261,38 +259,38 @@ export function securityEventTrackingMiddleware() {
 
     // Check for suspicious patterns
     const suspiciousPatterns = [
-      { pattern: /\.\./g, name: "path_traversal" },
-      { pattern: /<script/gi, name: "xss_attempt" },
-      { pattern: /union.*select/gi, name: "sql_injection" },
-      { pattern: /drop.*table/gi, name: "sql_injection" },
-      { pattern: /\bor\b.*\b1\s*=\s*1\b/gi, name: "sql_injection" },
-      { pattern: /javascript:/gi, name: "javascript_injection" },
-      { pattern: /vbscript:/gi, name: "vbscript_injection" },
+      { pattern: /\.\./g, name: 'path_traversal' },
+      { pattern: /<script/gi, name: 'xss_attempt' },
+      { pattern: /union.*select/gi, name: 'sql_injection' },
+      { pattern: /drop.*table/gi, name: 'sql_injection' },
+      { pattern: /\bor\b.*\b1\s*=\s*1\b/gi, name: 'sql_injection' },
+      { pattern: /javascript:/gi, name: 'javascript_injection' },
+      { pattern: /vbscript:/gi, name: 'vbscript_injection' },
     ];
 
     const path = context.endpoint;
-    const query = c.req.url.split("?")[1] || "";
-    const userAgent = context.userAgent || "";
+    const query = c.req.url.split('?')[1] || '';
+    const userAgent = context.userAgent || '';
 
     for (const { pattern, name } of suspiciousPatterns) {
       if (
-        pattern.test(path) ||
-        pattern.test(query) ||
-        pattern.test(userAgent)
+        pattern.test(path)
+        || pattern.test(query)
+        || pattern.test(userAgent)
       ) {
         // Track security event
         errorTracker.captureMessage(
           `Security threat detected: ${name}`,
-          "warning",
+          'warning',
           {
             ...context,
             extra: {
               threatType: name,
               pattern: pattern.toString(),
               suspiciousContent: {
-                path: path.replace(pattern, "[REDACTED]"),
-                query: query.replace(pattern, "[REDACTED]"),
-                userAgent: userAgent.replace(pattern, "[REDACTED]"),
+                path: path.replace(pattern, '[REDACTED]'),
+                query: query.replace(pattern, '[REDACTED]'),
+                userAgent: userAgent.replace(pattern, '[REDACTED]'),
               },
             },
           },
@@ -301,7 +299,7 @@ export function securityEventTrackingMiddleware() {
         // Add security breadcrumb
         errorTracker.addBreadcrumb(
           `Security threat detected: ${name}`,
-          "security",
+          'security',
           {
             threatType: name,
             endpoint: context.endpoint,
@@ -314,8 +312,8 @@ export function securityEventTrackingMiddleware() {
     }
 
     // Track failed authentication attempts
-    if (context.endpoint.includes("/auth/") && c.res?.status === 401) {
-      errorTracker.captureMessage("Failed authentication attempt", "warning", {
+    if (context.endpoint.includes('/auth/') && c.res?.status === 401) {
+      errorTracker.captureMessage('Failed authentication attempt', 'warning', {
         ...context,
         extra: {
           endpoint: context.endpoint,
@@ -351,15 +349,15 @@ export function formatErrorResponse(
 
   return {
     error: {
-      message: isProduction ? "Internal server error" : error.message,
+      message: isProduction ? 'Internal server error' : error.message,
       status: 500,
       requestId,
       ...(isProduction
         ? {}
         : {
-            name: error.name,
-            stack: error.stack?.split("\n").slice(0, 3), // Limit stack trace
-          }),
+          name: error.name,
+          stack: error.stack?.split('\n').slice(0, 3), // Limit stack trace
+        }),
     },
   };
 }

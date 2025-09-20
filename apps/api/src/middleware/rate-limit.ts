@@ -1,7 +1,7 @@
 // Rate limiting wrapper (Phase 3.4 T030)
 // Adapts existing rate-limiting manager to provide simple presets for chat endpoints.
-import type { Context, Next } from "hono";
-import { healthcareRateLimit as baseRateLimit } from "./rate-limiting";
+import type { Context, Next } from 'hono';
+import { healthcareRateLimit as baseRateLimit } from './rate-limiting';
 
 // Preset: 10 requests per 5 minutes and 30 per hour per key (user/ip)
 // Properly chains two rate limiting middlewares: 5-minute window first, then 1-hour window

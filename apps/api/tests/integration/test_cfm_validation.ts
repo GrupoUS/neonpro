@@ -10,12 +10,12 @@
  * - Regulatory reporting
  */
 
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
-import { z } from "zod";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { z } from 'zod';
 
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
-  const { default: app } = await import("../../src/app");
+  const { default: app } = await import('../../src/app');
   const url = new URL(`http://local.test${path}`);
   return app.request(url, init);
 }
@@ -29,9 +29,9 @@ const CrmValidationSchema = z.object({
   validatedAt: z.string().datetime(),
   expiresAt: z.string().datetime(),
   validationSource: z.enum([
-    "cfm_api",
-    "crm_state_council",
-    "manual_verification",
+    'cfm_api',
+    'crm_state_council',
+    'manual_verification',
   ]),
 });
 
@@ -68,7 +68,7 @@ const DigitalPrescriptionSchema = z.object({
 
 const TelemedicineSessionSchema = z.object({
   id: z.string().uuid(),
-  type: z.enum(["consultation", "follow_up", "emergency", "second_opinion"]),
+  type: z.enum(['consultation', 'follow_up', 'emergency', 'second_opinion']),
   patientId: z.string().uuid(),
   physicianCrm: z.string(),
   startTime: z.string().datetime(),
@@ -85,13 +85,13 @@ const TelemedicineSessionSchema = z.object({
   }),
 });
 
-describe("CFM Validation Integration Tests", () => {
+describe('CFM Validation Integration Tests', () => {
   const testAuthHeaders = {
-    Authorization: "Bearer test-token",
-    "Content-Type": "application/json",
-    "X-Healthcare-Professional": "CRM-123456",
-    "X-User-Role": "physician",
-    "X-CRM-State": "SP",
+    Authorization: 'Bearer test-token',
+    'Content-Type': 'application/json',
+    'X-Healthcare-Professional': 'CRM-123456',
+    'X-User-Role': 'physician',
+    'X-CRM-State': 'SP',
   };
 
   let testPhysicianCrm: string;
@@ -103,22 +103,22 @@ describe("CFM Validation Integration Tests", () => {
   });
 
   beforeEach(async () => {
-    testPhysicianCrm = "CRM-123456";
-    testPatientId = "550e8400-e29b-41d4-a716-446655440000";
+    testPhysicianCrm = 'CRM-123456';
+    testPatientId = '550e8400-e29b-41d4-a716-446655440000';
   });
 
   afterAll(async () => {
     // Cleanup test data
   });
 
-  describe("CRM Number Validation", () => {
-    it("should validate CRM numbers against CFM database", async () => {
-      const crmValidationResponse = await api("/api/v2/cfm/validate-crm", {
-        method: "POST",
+  describe('CRM Number Validation', () => {
+    it('should validate CRM numbers against CFM database', async () => {
+      const crmValidationResponse = await api('/api/v2/cfm/validate-crm', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify({
-          crm: "CRM-123456",
-          state: "SP",
+          crm: 'CRM-123456',
+          state: 'SP',
           fullValidation: true,
         }),
       });
@@ -127,8 +127,8 @@ describe("CFM Validation Integration Tests", () => {
       const validation = await crmValidationResponse.json();
 
       expect(validation).toMatchObject({
-        crm: "CRM-123456",
-        state: "SP",
+        crm: 'CRM-123456',
+        state: 'SP',
         isActive: true,
         validatedAt: expect.any(String),
         validationSource: expect.any(String),
@@ -140,37 +140,37 @@ describe("CFM Validation Integration Tests", () => {
       });
     });
 
-    it("should reject invalid CRM formats", async () => {
+    it('should reject invalid CRM formats', async () => {
       const invalidCrmTests = [
-        "CRM123456", // Missing dash
-        "CRM-12", // Too short
-        "CRM-1234567890", // Too long
-        "XRM-123456", // Wrong prefix
-        "123456", // No prefix
+        'CRM123456', // Missing dash
+        'CRM-12', // Too short
+        'CRM-1234567890', // Too long
+        'XRM-123456', // Wrong prefix
+        '123456', // No prefix
       ];
 
       for (const invalidCrm of invalidCrmTests) {
-        const response = await api("/api/v2/cfm/validate-crm", {
-          method: "POST",
+        const response = await api('/api/v2/cfm/validate-crm', {
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify({
             crm: invalidCrm,
-            state: "SP",
+            state: 'SP',
           }),
         });
 
         expect(response.status).toBe(400);
         const error = await response.json();
-        expect(error.error).toBe("invalid_crm_format");
+        expect(error.error).toBe('invalid_crm_format');
       }
     });
 
-    it("should check CRM registration across different state councils", async () => {
-      const states = ["SP", "RJ", "MG", "RS", "PR"];
+    it('should check CRM registration across different state councils', async () => {
+      const states = ['SP', 'RJ', 'MG', 'RS', 'PR'];
 
       for (const state of states) {
-        const stateValidationResponse = await api("/api/v2/cfm/validate-crm", {
-          method: "POST",
+        const stateValidationResponse = await api('/api/v2/cfm/validate-crm', {
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify({
             crm: `CRM-${Math.floor(Math.random() * 100000) + 10000}`,
@@ -191,16 +191,16 @@ describe("CFM Validation Integration Tests", () => {
       }
     });
 
-    it("should verify physician specialties against CFM records", async () => {
+    it('should verify physician specialties against CFM records', async () => {
       const specialtyValidationResponse = await api(
-        "/api/v2/cfm/validate-specialty",
+        '/api/v2/cfm/validate-specialty',
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify({
             crm: testPhysicianCrm,
-            state: "SP",
-            claimedSpecialties: ["Cardiologia", "Medicina Interna"],
+            state: 'SP',
+            claimedSpecialties: ['Cardiologia', 'Medicina Interna'],
           }),
         },
       );
@@ -223,39 +223,38 @@ describe("CFM Validation Integration Tests", () => {
     });
   });
 
-  describe("Digital Prescription Compliance", () => {
-    it("should create CFM-compliant digital prescriptions", async () => {
+  describe('Digital Prescription Compliance', () => {
+    it('should create CFM-compliant digital prescriptions', async () => {
       const prescriptionData = {
         patientId: testPatientId,
         medications: [
           {
-            name: "Losartana Potássica 50mg",
-            activeIngredient: "Losartana Potássica",
-            dosage: "1 comprimido pela manhã",
+            name: 'Losartana Potássica 50mg',
+            activeIngredient: 'Losartana Potássica',
+            dosage: '1 comprimido pela manhã',
             quantity: 30,
-            instructions:
-              "Tomar com água, preferencialmente pela manhã em jejum",
+            instructions: 'Tomar com água, preferencialmente pela manhã em jejum',
             controlledSubstance: false,
           },
           {
-            name: "Metformina 850mg",
-            activeIngredient: "Cloridrato de Metformina",
-            dosage: "1 comprimido após o almoço e jantar",
+            name: 'Metformina 850mg',
+            activeIngredient: 'Cloridrato de Metformina',
+            dosage: '1 comprimido após o almoço e jantar',
             quantity: 60,
-            instructions: "Tomar após as principais refeições",
+            instructions: 'Tomar após as principais refeições',
             controlledSubstance: false,
           },
         ],
-        instructions: "Retorno em 30 dias para reavaliação",
+        instructions: 'Retorno em 30 dias para reavaliação',
         validityDays: 30,
       };
 
-      const prescriptionResponse = await api("/api/v2/prescriptions/digital", {
-        method: "POST",
+      const prescriptionResponse = await api('/api/v2/prescriptions/digital', {
+        method: 'POST',
         headers: {
           ...testAuthHeaders,
-          "X-Digital-Certificate": "physician-cert-hash",
-          "X-CFM-Compliance": "required",
+          'X-Digital-Certificate': 'physician-cert-hash',
+          'X-CFM-Compliance': 'required',
         },
         body: JSON.stringify(prescriptionData),
       });
@@ -269,11 +268,11 @@ describe("CFM Validation Integration Tests", () => {
         physicianCrm: testPhysicianCrm,
         digitalSignature: expect.objectContaining({
           certificate: expect.any(String),
-          algorithm: "SHA-256",
+          algorithm: 'SHA-256',
           isValid: true,
         }),
         cfmCompliance: expect.objectContaining({
-          prescriptionStandard: "CFM-2227/2018",
+          prescriptionStandard: 'CFM-2227/2018',
           digitalSignatureValid: true,
           physicianVerified: true,
           medicationValidation: true,
@@ -281,19 +280,19 @@ describe("CFM Validation Integration Tests", () => {
       });
     });
 
-    it("should handle controlled substance prescriptions with enhanced validation", async () => {
+    it('should handle controlled substance prescriptions with enhanced validation', async () => {
       const controlledSubstancePrescription = {
         patientId: testPatientId,
         medications: [
           {
-            name: "Morfina 10mg",
-            activeIngredient: "Sulfato de Morfina",
-            dosage: "1 comprimido a cada 8 horas",
+            name: 'Morfina 10mg',
+            activeIngredient: 'Sulfato de Morfina',
+            dosage: '1 comprimido a cada 8 horas',
             quantity: 30,
-            instructions: "Para dor intensa. Não exceder a dose prescrita.",
+            instructions: 'Para dor intensa. Não exceder a dose prescrita.',
             controlledSubstance: true,
-            controlledSubstanceCategory: "A1",
-            justification: "Paciente com dor oncológica refratária",
+            controlledSubstanceCategory: 'A1',
+            justification: 'Paciente com dor oncológica refratária',
           },
         ],
         specialRequirements: {
@@ -304,13 +303,13 @@ describe("CFM Validation Integration Tests", () => {
         validityDays: 7, // Shorter validity for controlled substances
       };
 
-      const controlledResponse = await api("/api/v2/prescriptions/controlled", {
-        method: "POST",
+      const controlledResponse = await api('/api/v2/prescriptions/controlled', {
+        method: 'POST',
         headers: {
           ...testAuthHeaders,
-          "X-Digital-Certificate": "physician-cert-hash",
-          "X-Controlled-Substance-Authorization": "valid",
-          "X-CFM-Compliance": "strict",
+          'X-Digital-Certificate': 'physician-cert-hash',
+          'X-Controlled-Substance-Authorization': 'valid',
+          'X-CFM-Compliance': 'strict',
         },
         body: JSON.stringify(controlledSubstancePrescription),
       });
@@ -323,7 +322,7 @@ describe("CFM Validation Integration Tests", () => {
         medications: expect.arrayContaining([
           expect.objectContaining({
             controlledSubstance: true,
-            controlledSubstanceCategory: "A1",
+            controlledSubstanceCategory: 'A1',
           }),
         ]),
         cfmCompliance: expect.objectContaining({
@@ -338,26 +337,26 @@ describe("CFM Validation Integration Tests", () => {
       });
     });
 
-    it("should validate prescription digital signatures", async () => {
+    it('should validate prescription digital signatures', async () => {
       // Create a prescription first
       const prescriptionData = {
         patientId: testPatientId,
         medications: [
           {
-            name: "Amoxicilina 500mg",
-            activeIngredient: "Amoxicilina",
-            dosage: "1 cápsula a cada 8 horas",
+            name: 'Amoxicilina 500mg',
+            activeIngredient: 'Amoxicilina',
+            dosage: '1 cápsula a cada 8 horas',
             quantity: 21,
-            instructions: "Tomar com água",
+            instructions: 'Tomar com água',
           },
         ],
       };
 
-      const createResponse = await api("/api/v2/prescriptions/digital", {
-        method: "POST",
+      const createResponse = await api('/api/v2/prescriptions/digital', {
+        method: 'POST',
         headers: {
           ...testAuthHeaders,
-          "X-Digital-Certificate": "valid-physician-cert",
+          'X-Digital-Certificate': 'valid-physician-cert',
         },
         body: JSON.stringify(prescriptionData),
       });
@@ -386,42 +385,42 @@ describe("CFM Validation Integration Tests", () => {
         validationDetails: expect.objectContaining({
           certificateIssuer: expect.any(String),
           certificateSerial: expect.any(String),
-          signatureAlgorithm: "SHA-256",
+          signatureAlgorithm: 'SHA-256',
         }),
       });
     });
   });
 
-  describe("Medical Record Compliance", () => {
-    it("should maintain CFM-compliant medical records", async () => {
+  describe('Medical Record Compliance', () => {
+    it('should maintain CFM-compliant medical records', async () => {
       const medicalRecordData = {
         patientId: testPatientId,
-        consultationType: "routine_consultation",
-        chiefComplaint: "Dor no peito há 2 dias",
-        historyOfPresentIllness: "Paciente relata dor precordial há 48h...",
+        consultationType: 'routine_consultation',
+        chiefComplaint: 'Dor no peito há 2 dias',
+        historyOfPresentIllness: 'Paciente relata dor precordial há 48h...',
         physicalExamination: {
-          generalAppearance: "Bom estado geral",
+          generalAppearance: 'Bom estado geral',
           vitalSigns: {
-            bloodPressure: "140/90 mmHg",
-            heartRate: "88 bpm",
-            temperature: "36.5°C",
-            oxygenSaturation: "98%",
+            bloodPressure: '140/90 mmHg',
+            heartRate: '88 bpm',
+            temperature: '36.5°C',
+            oxygenSaturation: '98%',
           },
-          cardiovascular: "Bulhas rítmicas, normofonéticas",
-          respiratory: "Murmúrio vesicular presente bilateralmente",
+          cardiovascular: 'Bulhas rítmicas, normofonéticas',
+          respiratory: 'Murmúrio vesicular presente bilateralmente',
         },
-        assessment: "Hipertensão arterial sistêmica",
-        plan: "Prescrição de anti-hipertensivo, retorno em 30 dias",
+        assessment: 'Hipertensão arterial sistêmica',
+        plan: 'Prescrição de anti-hipertensivo, retorno em 30 dias',
         followUpDate: new Date(
           Date.now() + 30 * 24 * 60 * 60 * 1000,
         ).toISOString(),
       };
 
-      const recordResponse = await api("/api/v2/medical-records", {
-        method: "POST",
+      const recordResponse = await api('/api/v2/medical-records', {
+        method: 'POST',
         headers: {
           ...testAuthHeaders,
-          "X-Medical-Record-Standard": "CFM-1821/2007",
+          'X-Medical-Record-Standard': 'CFM-1821/2007',
         },
         body: JSON.stringify(medicalRecordData),
       });
@@ -435,7 +434,7 @@ describe("CFM Validation Integration Tests", () => {
         patientId: testPatientId,
         physicianCrm: testPhysicianCrm,
         cfmCompliance: expect.objectContaining({
-          recordStandard: "CFM-1821/2007",
+          recordStandard: 'CFM-1821/2007',
           requiredFieldsComplete: true,
           digitalSignaturePresent: true,
           retentionPolicyApplied: true,
@@ -448,9 +447,9 @@ describe("CFM Validation Integration Tests", () => {
       });
     });
 
-    it("should enforce medical record retention policies", async () => {
+    it('should enforce medical record retention policies', async () => {
       const retentionPolicyResponse = await api(
-        "/api/v2/cfm/medical-records/retention",
+        '/api/v2/cfm/medical-records/retention',
         {
           headers: testAuthHeaders,
         },
@@ -462,17 +461,17 @@ describe("CFM Validation Integration Tests", () => {
       expect(retentionPolicy).toMatchObject({
         policies: expect.arrayContaining([
           expect.objectContaining({
-            recordType: "adult_medical_record",
-            retentionPeriod: "20y", // 20 years as per CFM guidelines
-            archiveAfter: "5y",
+            recordType: 'adult_medical_record',
+            retentionPeriod: '20y', // 20 years as per CFM guidelines
+            archiveAfter: '5y',
           }),
           expect.objectContaining({
-            recordType: "pediatric_medical_record",
-            retentionPeriod: "until_age_of_majority_plus_20y",
+            recordType: 'pediatric_medical_record',
+            retentionPeriod: 'until_age_of_majority_plus_20y',
           }),
           expect.objectContaining({
-            recordType: "prescription_record",
-            retentionPeriod: "2y",
+            recordType: 'prescription_record',
+            retentionPeriod: '2y',
           }),
         ]),
         complianceStatus: expect.objectContaining({
@@ -485,12 +484,12 @@ describe("CFM Validation Integration Tests", () => {
     });
   });
 
-  describe("Telemedicine Compliance", () => {
-    it("should validate telemedicine session compliance", async () => {
+  describe('Telemedicine Compliance', () => {
+    it('should validate telemedicine session compliance', async () => {
       const telemedicineSessionData = {
         patientId: testPatientId,
-        sessionType: "consultation",
-        platform: "secure_video_platform",
+        sessionType: 'consultation',
+        platform: 'secure_video_platform',
         patientConsent: {
           telemedicineConsent: true,
           recordingConsent: false,
@@ -498,19 +497,19 @@ describe("CFM Validation Integration Tests", () => {
           consentTimestamp: new Date().toISOString(),
         },
         patientVerification: {
-          documentType: "cpf",
-          documentNumber: "123.456.789-00",
-          verificationMethod: "document_photo",
+          documentType: 'cpf',
+          documentNumber: '123.456.789-00',
+          verificationMethod: 'document_photo',
           verified: true,
         },
       };
 
-      const sessionResponse = await api("/api/v2/telemedicine/sessions", {
-        method: "POST",
+      const sessionResponse = await api('/api/v2/telemedicine/sessions', {
+        method: 'POST',
         headers: {
           ...testAuthHeaders,
-          "X-Telemedicine-Platform": "certified",
-          "X-CFM-Telemedicine-Compliance": "required",
+          'X-Telemedicine-Platform': 'certified',
+          'X-CFM-Telemedicine-Compliance': 'required',
         },
         body: JSON.stringify(telemedicineSessionData),
       });
@@ -528,38 +527,38 @@ describe("CFM Validation Integration Tests", () => {
           medicalRecordRequired: true,
         }),
         regulatoryRequirements: expect.objectContaining({
-          cfmResolution: "CFM-2227/2018",
+          cfmResolution: 'CFM-2227/2018',
           platformCertified: true,
           dataProtectionCompliant: true,
         }),
       });
     });
 
-    it("should enforce telemedicine prescription limitations", async () => {
+    it('should enforce telemedicine prescription limitations', async () => {
       // Attempt to prescribe controlled substance via telemedicine
       const telemedicinePrescriptionData = {
-        sessionId: "tm-session-123",
+        sessionId: 'tm-session-123',
         patientId: testPatientId,
         medications: [
           {
-            name: "Diazepam 5mg",
-            activeIngredient: "Diazepam",
-            dosage: "1 comprimido ao deitar",
+            name: 'Diazepam 5mg',
+            activeIngredient: 'Diazepam',
+            dosage: '1 comprimido ao deitar',
             quantity: 30,
             controlledSubstance: true,
-            controlledSubstanceCategory: "B1",
+            controlledSubstanceCategory: 'B1',
           },
         ],
         isTelemedicineSession: true,
       };
 
       const telemedicinePrescriptionResponse = await api(
-        "/api/v2/prescriptions/telemedicine",
+        '/api/v2/prescriptions/telemedicine',
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             ...testAuthHeaders,
-            "X-Telemedicine-Session": "active",
+            'X-Telemedicine-Session': 'active',
           },
           body: JSON.stringify(telemedicinePrescriptionData),
         },
@@ -568,28 +567,28 @@ describe("CFM Validation Integration Tests", () => {
       // Should be rejected for controlled substances
       expect(telemedicinePrescriptionResponse.status).toBe(403);
       const error = await telemedicinePrescriptionResponse.json();
-      expect(error.error).toBe("controlled_substance_telemedicine_prohibited");
-      expect(error.cfmRegulation).toBe("CFM-2227/2018");
+      expect(error.error).toBe('controlled_substance_telemedicine_prohibited');
+      expect(error.cfmRegulation).toBe('CFM-2227/2018');
 
       // Test with non-controlled medication
       const allowedTelemedicinePrescription = {
         ...telemedicinePrescriptionData,
         medications: [
           {
-            name: "Paracetamol 500mg",
-            activeIngredient: "Paracetamol",
-            dosage: "1 comprimido a cada 6 horas",
+            name: 'Paracetamol 500mg',
+            activeIngredient: 'Paracetamol',
+            dosage: '1 comprimido a cada 6 horas',
             quantity: 20,
             controlledSubstance: false,
           },
         ],
       };
 
-      const allowedResponse = await api("/api/v2/prescriptions/telemedicine", {
-        method: "POST",
+      const allowedResponse = await api('/api/v2/prescriptions/telemedicine', {
+        method: 'POST',
         headers: {
           ...testAuthHeaders,
-          "X-Telemedicine-Session": "active",
+          'X-Telemedicine-Session': 'active',
         },
         body: JSON.stringify(allowedTelemedicinePrescription),
       });
@@ -598,27 +597,27 @@ describe("CFM Validation Integration Tests", () => {
     });
   });
 
-  describe("Professional Liability and Ethics", () => {
-    it("should track professional liability incidents", async () => {
+  describe('Professional Liability and Ethics', () => {
+    it('should track professional liability incidents', async () => {
       const incidentData = {
-        type: "medical_error",
-        severity: "moderate",
-        description: "Medication dosage error - corrected immediately",
+        type: 'medical_error',
+        severity: 'moderate',
+        description: 'Medication dosage error - corrected immediately',
         patientId: testPatientId,
         immediateActions: [
-          "Patient notified",
-          "Medication corrected",
-          "Additional monitoring implemented",
+          'Patient notified',
+          'Medication corrected',
+          'Additional monitoring implemented',
         ],
         reportingRequired: true,
         ethicsReviewRequired: false,
       };
 
-      const incidentResponse = await api("/api/v2/cfm/incidents", {
-        method: "POST",
+      const incidentResponse = await api('/api/v2/cfm/incidents', {
+        method: 'POST',
         headers: {
           ...testAuthHeaders,
-          "X-Incident-Reporting": "mandatory",
+          'X-Incident-Reporting': 'mandatory',
         },
         body: JSON.stringify(incidentData),
       });
@@ -632,18 +631,18 @@ describe("CFM Validation Integration Tests", () => {
         reportedBy: testPhysicianCrm,
         cfmNotificationRequired: expect.any(Boolean),
         crmStateNotificationRequired: expect.any(Boolean),
-        patientNotificationStatus: "completed",
-        investigationStatus: "pending",
+        patientNotificationStatus: 'completed',
+        investigationStatus: 'pending',
       });
     });
 
-    it("should validate continuing medical education compliance", async () => {
-      const cmeComplianceResponse = await api("/api/v2/cfm/cme-compliance", {
-        method: "POST",
+    it('should validate continuing medical education compliance', async () => {
+      const cmeComplianceResponse = await api('/api/v2/cfm/cme-compliance', {
+        method: 'POST',
         headers: testAuthHeaders,
         body: JSON.stringify({
           crm: testPhysicianCrm,
-          period: "2024",
+          period: '2024',
         }),
       });
 
@@ -652,13 +651,13 @@ describe("CFM Validation Integration Tests", () => {
 
       expect(cmeCompliance).toMatchObject({
         crm: testPhysicianCrm,
-        period: "2024",
+        period: '2024',
         requiredHours: 100, // CFM requirement
         completedHours: expect.any(Number),
         complianceStatus: expect.oneOf([
-          "compliant",
-          "non_compliant",
-          "pending",
+          'compliant',
+          'non_compliant',
+          'pending',
         ]),
         activitiesRecorded: expect.any(Array),
         certificatesValidated: expect.any(Number),
@@ -666,12 +665,12 @@ describe("CFM Validation Integration Tests", () => {
     });
   });
 
-  describe("Regulatory Reporting", () => {
-    it("should generate CFM compliance reports", async () => {
+  describe('Regulatory Reporting', () => {
+    it('should generate CFM compliance reports', async () => {
       const complianceReportResponse = await api(
-        "/api/v2/cfm/reports/compliance",
+        '/api/v2/cfm/reports/compliance',
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify({
             period: {
@@ -689,7 +688,7 @@ describe("CFM Validation Integration Tests", () => {
       const complianceReport = await complianceReportResponse.json();
 
       expect(complianceReport).toMatchObject({
-        reportType: "cfm_compliance",
+        reportType: 'cfm_compliance',
         period: expect.any(Object),
         physicians: expect.any(Array),
         prescriptions: expect.objectContaining({
@@ -712,24 +711,24 @@ describe("CFM Validation Integration Tests", () => {
       });
     });
 
-    it("should support automated CFM notification submissions", async () => {
+    it('should support automated CFM notification submissions', async () => {
       const notificationData = {
-        notificationType: "adverse_event",
-        severity: "moderate",
-        patientAgeGroup: "adult",
-        medications: ["Losartana", "Metformina"],
-        adverseEvent: "Mild hypoglycemia",
-        outcome: "recovered",
+        notificationType: 'adverse_event',
+        severity: 'moderate',
+        patientAgeGroup: 'adult',
+        medications: ['Losartana', 'Metformina'],
+        adverseEvent: 'Mild hypoglycemia',
+        outcome: 'recovered',
         reportingPhysician: testPhysicianCrm,
       };
 
       const notificationResponse = await api(
-        "/api/v2/cfm/notifications/adverse-event",
+        '/api/v2/cfm/notifications/adverse-event',
         {
-          method: "POST",
+          method: 'POST',
           headers: {
             ...testAuthHeaders,
-            "X-CFM-Notification": "automated",
+            'X-CFM-Notification': 'automated',
           },
           body: JSON.stringify(notificationData),
         },
@@ -741,7 +740,7 @@ describe("CFM Validation Integration Tests", () => {
       expect(notification).toMatchObject({
         notificationId: expect.any(String),
         cfmProtocol: expect.stringMatching(/^CFM-AE-\d{4}-\d{6}$/),
-        submissionStatus: "submitted",
+        submissionStatus: 'submitted',
         acknowledgmentExpected: true,
         followUpRequired: expect.any(Boolean),
         submittedAt: expect.any(String),

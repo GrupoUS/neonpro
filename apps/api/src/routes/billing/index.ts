@@ -5,25 +5,14 @@
  * tax compliance, SUS integration, and health plan support.
  */
 
-import { zValidator } from "@hono/zod-validator";
-import { Hono } from "hono";
-import { z } from "zod";
-import { auditLog } from "../../middleware/audit-log";
-import { requireAuth } from "../../middleware/authn";
-import { dataProtection } from "../../middleware/lgpd-middleware";
-import {
-  BillingService,
-  PaymentMethod,
-  PaymentStatus,
-} from "../../services/billing-service";
-import {
-  badRequest,
-  created,
-  forbidden,
-  notFound,
-  ok,
-  serverError,
-} from "../../utils/responses";
+import { zValidator } from '@hono/zod-validator';
+import { Hono } from 'hono';
+import { z } from 'zod';
+import { auditLog } from '../../middleware/audit-log';
+import { requireAuth } from '../../middleware/authn';
+import { dataProtection } from '../../middleware/lgpd-middleware';
+import { BillingService, PaymentMethod, PaymentStatus } from '../../services/billing-service';
+import { badRequest, created, forbidden, notFound, ok, serverError } from '../../utils/responses';
 
 // Initialize service
 const billingService = new BillingService();
@@ -32,9 +21,9 @@ const billingService = new BillingService();
 const billing = new Hono();
 
 // Apply middleware
-billing.use("*", requireAuth);
-billing.use("*", dataProtection.billing);
-billing.use("*", auditLog("billing"));
+billing.use('*', requireAuth);
+billing.use('*', dataProtection.billing);
+billing.use('*', auditLog('billing'));
 
 // Validation schemas
 const createInvoiceSchema = z.object({
@@ -81,18 +70,18 @@ const searchInvoicesSchema = z.object({
   dateFrom: z.string().datetime().optional(),
   dateTo: z.string().datetime().optional(),
   query: z.string().optional(),
-  page: z.string().transform(Number).default("1"),
-  limit: z.string().transform(Number).default("20"),
+  page: z.string().transform(Number).default('1'),
+  limit: z.string().transform(Number).default('20'),
   sortBy: z.string().optional(),
-  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
 
 const financialReportSchema = z.object({
   startDate: z.string().datetime(),
   endDate: z.string().datetime(),
   clinicId: z.string().uuid(),
-  reportType: z.enum(["revenue", "receivables", "taxes", "insurance"]),
-  groupBy: z.enum(["day", "week", "month"]).default("month"),
+  reportType: z.enum(['revenue', 'receivables', 'taxes', 'insurance']),
+  groupBy: z.enum(['day', 'week', 'month']).default('month'),
 });
 
 /**
@@ -100,27 +89,27 @@ const financialReportSchema = z.object({
  * Create a new invoice
  */
 billing.post(
-  "/invoices",
-  zValidator("json", createInvoiceSchema),
-  async (c) => {
+  '/invoices',
+  zValidator('json', createInvoiceSchema),
+  async c => {
     try {
-      const invoiceData = c.req.valid("json");
-      const userId = c.get("userId");
+      const invoiceData = c.req.valid('json');
+      const userId = c.get('userId');
 
       const result = await billingService.createInvoice(invoiceData, userId);
 
       if (!result.success) {
         return badRequest(
           c,
-          result.error || "Erro ao criar fatura",
+          result.error || 'Erro ao criar fatura',
           result.errors,
         );
       }
 
       return created(c, result.data, result.message);
     } catch (error) {
-      console.error("Error creating invoice:", error);
-      return serverError(c, "Erro interno do servidor");
+      console.error('Error creating invoice:', error);
+      return serverError(c, 'Erro interno do servidor');
     }
   },
 );
@@ -129,31 +118,31 @@ billing.post(
  * GET /billing/invoices/:id
  * Get a specific invoice by ID
  */
-billing.get("/invoices/:id", async (c) => {
+billing.get('/invoices/:id', async c => {
   try {
-    const invoiceId = c.req.param("id");
-    const userId = c.get("userId");
+    const invoiceId = c.req.param('id');
+    const userId = c.get('userId');
 
     if (!invoiceId) {
-      return badRequest(c, "ID da fatura é obrigatório");
+      return badRequest(c, 'ID da fatura é obrigatório');
     }
 
     const result = await billingService.getInvoice(invoiceId, userId);
 
     if (!result.success) {
-      if (result.error?.includes("não encontrada")) {
+      if (result.error?.includes('não encontrada')) {
         return notFound(c, result.error);
       }
-      if (result.error?.includes("Acesso negado")) {
+      if (result.error?.includes('Acesso negado')) {
         return forbidden(c, result.error);
       }
-      return badRequest(c, result.error || "Erro ao buscar fatura");
+      return badRequest(c, result.error || 'Erro ao buscar fatura');
     }
 
     return ok(c, result.data);
   } catch (error) {
-    console.error("Error fetching invoice:", error);
-    return serverError(c, "Erro interno do servidor");
+    console.error('Error fetching invoice:', error);
+    return serverError(c, 'Erro interno do servidor');
   }
 });
 
@@ -162,12 +151,12 @@ billing.get("/invoices/:id", async (c) => {
  * Search invoices with filters
  */
 billing.get(
-  "/invoices",
-  zValidator("query", searchInvoicesSchema),
-  async (c) => {
+  '/invoices',
+  zValidator('query', searchInvoicesSchema),
+  async c => {
     try {
-      const searchParams = c.req.valid("query");
-      const userId = c.get("userId");
+      const searchParams = c.req.valid('query');
+      const userId = c.get('userId');
 
       // Convert string dates to Date objects
       const options = {
@@ -181,13 +170,13 @@ billing.get(
       const result = await billingService.searchInvoices(options, userId);
 
       if (!result.success) {
-        return badRequest(c, result.error || "Erro ao buscar faturas");
+        return badRequest(c, result.error || 'Erro ao buscar faturas');
       }
 
       return ok(c, result.data);
     } catch (error) {
-      console.error("Error searching invoices:", error);
-      return serverError(c, "Erro interno do servidor");
+      console.error('Error searching invoices:', error);
+      return serverError(c, 'Erro interno do servidor');
     }
   },
 );
@@ -197,16 +186,16 @@ billing.get(
  * Update an invoice
  */
 billing.put(
-  "/invoices/:id",
-  zValidator("json", updateInvoiceSchema),
-  async (c) => {
+  '/invoices/:id',
+  zValidator('json', updateInvoiceSchema),
+  async c => {
     try {
-      const invoiceId = c.req.param("id");
-      const updateData = c.req.valid("json");
-      const userId = c.get("userId");
+      const invoiceId = c.req.param('id');
+      const updateData = c.req.valid('json');
+      const userId = c.get('userId');
 
       if (!invoiceId) {
-        return badRequest(c, "ID da fatura é obrigatório");
+        return badRequest(c, 'ID da fatura é obrigatório');
       }
 
       const result = await billingService.updateInvoice(
@@ -216,23 +205,23 @@ billing.put(
       );
 
       if (!result.success) {
-        if (result.error?.includes("não encontrada")) {
+        if (result.error?.includes('não encontrada')) {
           return notFound(c, result.error);
         }
-        if (result.error?.includes("Acesso negado")) {
+        if (result.error?.includes('Acesso negado')) {
           return forbidden(c, result.error);
         }
         return badRequest(
           c,
-          result.error || "Erro ao atualizar fatura",
+          result.error || 'Erro ao atualizar fatura',
           result.errors,
         );
       }
 
       return ok(c, result.data, result.message);
     } catch (error) {
-      console.error("Error updating invoice:", error);
-      return serverError(c, "Erro interno do servidor");
+      console.error('Error updating invoice:', error);
+      return serverError(c, 'Erro interno do servidor');
     }
   },
 );
@@ -241,31 +230,31 @@ billing.put(
  * DELETE /billing/invoices/:id
  * Cancel an invoice (soft delete with audit trail)
  */
-billing.delete("/invoices/:id", async (c) => {
+billing.delete('/invoices/:id', async c => {
   try {
-    const invoiceId = c.req.param("id");
-    const userId = c.get("userId");
+    const invoiceId = c.req.param('id');
+    const userId = c.get('userId');
 
     if (!invoiceId) {
-      return badRequest(c, "ID da fatura é obrigatório");
+      return badRequest(c, 'ID da fatura é obrigatório');
     }
 
     const result = await billingService.cancelInvoice(invoiceId, userId);
 
     if (!result.success) {
-      if (result.error?.includes("não encontrada")) {
+      if (result.error?.includes('não encontrada')) {
         return notFound(c, result.error);
       }
-      if (result.error?.includes("Acesso negado")) {
+      if (result.error?.includes('Acesso negado')) {
         return forbidden(c, result.error);
       }
-      return badRequest(c, result.error || "Erro ao cancelar fatura");
+      return badRequest(c, result.error || 'Erro ao cancelar fatura');
     }
 
     return ok(c, { cancelled: true }, result.message);
   } catch (error) {
-    console.error("Error cancelling invoice:", error);
-    return serverError(c, "Erro interno do servidor");
+    console.error('Error cancelling invoice:', error);
+    return serverError(c, 'Erro interno do servidor');
   }
 });
 
@@ -274,16 +263,16 @@ billing.delete("/invoices/:id", async (c) => {
  * Process a payment for an invoice
  */
 billing.post(
-  "/invoices/:id/payments",
-  zValidator("json", processPaymentSchema),
-  async (c) => {
+  '/invoices/:id/payments',
+  zValidator('json', processPaymentSchema),
+  async c => {
     try {
-      const invoiceId = c.req.param("id");
-      const paymentData = c.req.valid("json");
-      const userId = c.get("userId");
+      const invoiceId = c.req.param('id');
+      const paymentData = c.req.valid('json');
+      const userId = c.get('userId');
 
       if (!invoiceId) {
-        return badRequest(c, "ID da fatura é obrigatório");
+        return badRequest(c, 'ID da fatura é obrigatório');
       }
 
       const result = await billingService.processPayment(
@@ -293,20 +282,20 @@ billing.post(
       );
 
       if (!result.success) {
-        if (result.error?.includes("não encontrada")) {
+        if (result.error?.includes('não encontrada')) {
           return notFound(c, result.error);
         }
         return badRequest(
           c,
-          result.error || "Erro ao processar pagamento",
+          result.error || 'Erro ao processar pagamento',
           result.errors,
         );
       }
 
       return created(c, result.data, result.message);
     } catch (error) {
-      console.error("Error processing payment:", error);
-      return serverError(c, "Erro interno do servidor");
+      console.error('Error processing payment:', error);
+      return serverError(c, 'Erro interno do servidor');
     }
   },
 );
@@ -315,31 +304,31 @@ billing.post(
  * GET /billing/invoices/:id/payments
  * Get payment history for an invoice
  */
-billing.get("/invoices/:id/payments", async (c) => {
+billing.get('/invoices/:id/payments', async c => {
   try {
-    const invoiceId = c.req.param("id");
-    const userId = c.get("userId");
+    const invoiceId = c.req.param('id');
+    const userId = c.get('userId');
 
     if (!invoiceId) {
-      return badRequest(c, "ID da fatura é obrigatório");
+      return badRequest(c, 'ID da fatura é obrigatório');
     }
 
     const result = await billingService.getPaymentHistory(invoiceId, userId);
 
     if (!result.success) {
-      if (result.error?.includes("não encontrada")) {
+      if (result.error?.includes('não encontrada')) {
         return notFound(c, result.error);
       }
       return badRequest(
         c,
-        result.error || "Erro ao buscar histórico de pagamentos",
+        result.error || 'Erro ao buscar histórico de pagamentos',
       );
     }
 
     return ok(c, result.data);
   } catch (error) {
-    console.error("Error fetching payment history:", error);
-    return serverError(c, "Erro interno do servidor");
+    console.error('Error fetching payment history:', error);
+    return serverError(c, 'Erro interno do servidor');
   }
 });
 
@@ -348,12 +337,12 @@ billing.get("/invoices/:id/payments", async (c) => {
  * Generate financial reports
  */
 billing.get(
-  "/reports/financial",
-  zValidator("query", financialReportSchema),
-  async (c) => {
+  '/reports/financial',
+  zValidator('query', financialReportSchema),
+  async c => {
     try {
-      const reportParams = c.req.valid("query");
-      const userId = c.get("userId");
+      const reportParams = c.req.valid('query');
+      const userId = c.get('userId');
 
       // Convert string dates to Date objects
       const params = {
@@ -370,14 +359,14 @@ billing.get(
       if (!result.success) {
         return badRequest(
           c,
-          result.error || "Erro ao gerar relatório financeiro",
+          result.error || 'Erro ao gerar relatório financeiro',
         );
       }
 
       return ok(c, result.data);
     } catch (error) {
-      console.error("Error generating financial report:", error);
-      return serverError(c, "Erro interno do servidor");
+      console.error('Error generating financial report:', error);
+      return serverError(c, 'Erro interno do servidor');
     }
   },
 );
@@ -386,12 +375,11 @@ billing.get(
  * GET /billing/dashboard/stats
  * Get billing dashboard statistics
  */
-billing.get("/dashboard/stats", async (c) => {
+billing.get('/dashboard/stats', async c => {
   try {
-    const clinicId = c.get("clinicId");
-    const userId = c.get("userId");
-    const period =
-      (c.req.query("period") as "day" | "week" | "month" | "year") || "month";
+    const clinicId = c.get('clinicId');
+    const userId = c.get('userId');
+    const period = (c.req.query('period') as 'day' | 'week' | 'month' | 'year') || 'month';
 
     const result = await billingService.getBillingStats(
       clinicId,
@@ -400,13 +388,13 @@ billing.get("/dashboard/stats", async (c) => {
     );
 
     if (!result.success) {
-      return badRequest(c, result.error || "Erro ao buscar estatísticas");
+      return badRequest(c, result.error || 'Erro ao buscar estatísticas');
     }
 
     return ok(c, result.data);
   } catch (error) {
-    console.error("Error fetching billing stats:", error);
-    return serverError(c, "Erro interno do servidor");
+    console.error('Error fetching billing stats:', error);
+    return serverError(c, 'Erro interno do servidor');
   }
 });
 
@@ -414,21 +402,21 @@ billing.get("/dashboard/stats", async (c) => {
  * GET /billing/sus/procedures
  * Get SUS procedure codes
  */
-billing.get("/sus/procedures", async (c) => {
+billing.get('/sus/procedures', async c => {
   try {
-    const query = c.req.query("q") || "";
-    const limit = Number(c.req.query("limit")) || 50;
+    const query = c.req.query('q') || '';
+    const limit = Number(c.req.query('limit')) || 50;
 
     const result = await billingService.getSUSProcedures(query, limit);
 
     if (!result.success) {
-      return badRequest(c, result.error || "Erro ao buscar procedimentos SUS");
+      return badRequest(c, result.error || 'Erro ao buscar procedimentos SUS');
     }
 
     return ok(c, result.data);
   } catch (error) {
-    console.error("Error fetching SUS procedures:", error);
-    return serverError(c, "Erro interno do servidor");
+    console.error('Error fetching SUS procedures:', error);
+    return serverError(c, 'Erro interno do servidor');
   }
 });
 
@@ -436,14 +424,14 @@ billing.get("/sus/procedures", async (c) => {
  * POST /billing/insurance/verify
  * Verify insurance coverage
  */
-billing.post("/insurance/verify", async (c) => {
+billing.post('/insurance/verify', async c => {
   try {
     const { patientId, procedureCode, insuranceCard } = await c.req.json();
 
     if (!patientId || !procedureCode || !insuranceCard) {
       return badRequest(
         c,
-        "Dados de verificação obrigatórios: patientId, procedureCode, insuranceCard",
+        'Dados de verificação obrigatórios: patientId, procedureCode, insuranceCard',
       );
     }
 
@@ -454,13 +442,13 @@ billing.post("/insurance/verify", async (c) => {
     );
 
     if (!result.success) {
-      return badRequest(c, result.error || "Erro ao verificar cobertura");
+      return badRequest(c, result.error || 'Erro ao verificar cobertura');
     }
 
     return ok(c, result.data);
   } catch (error) {
-    console.error("Error verifying insurance coverage:", error);
-    return serverError(c, "Erro interno do servidor");
+    console.error('Error verifying insurance coverage:', error);
+    return serverError(c, 'Erro interno do servidor');
   }
 });
 
@@ -468,25 +456,25 @@ billing.post("/insurance/verify", async (c) => {
  * GET /billing/tax/calculation
  * Calculate taxes for billing amount
  */
-billing.get("/tax/calculation", async (c) => {
+billing.get('/tax/calculation', async c => {
   try {
-    const amount = Number(c.req.query("amount"));
-    const serviceType = c.req.query("serviceType") || "medical_consultation";
+    const amount = Number(c.req.query('amount'));
+    const serviceType = c.req.query('serviceType') || 'medical_consultation';
 
     if (!amount || amount <= 0) {
-      return badRequest(c, "Valor deve ser maior que zero");
+      return badRequest(c, 'Valor deve ser maior que zero');
     }
 
     const result = await billingService.calculateTaxes(amount, serviceType);
 
     if (!result.success) {
-      return badRequest(c, result.error || "Erro ao calcular impostos");
+      return badRequest(c, result.error || 'Erro ao calcular impostos');
     }
 
     return ok(c, result.data);
   } catch (error) {
-    console.error("Error calculating taxes:", error);
-    return serverError(c, "Erro interno do servidor");
+    console.error('Error calculating taxes:', error);
+    return serverError(c, 'Erro interno do servidor');
   }
 });
 

@@ -70,11 +70,11 @@ export interface Database {
           appointment_time: string;
           duration: number;
           status:
-            | "scheduled"
-            | "confirmed"
-            | "completed"
-            | "cancelled"
-            | "no_show";
+            | 'scheduled'
+            | 'confirmed'
+            | 'completed'
+            | 'cancelled'
+            | 'no_show';
           notes?: string;
           created_at: string;
           updated_at: string;
@@ -88,11 +88,11 @@ export interface Database {
           appointment_time: string;
           duration: number;
           status?:
-            | "scheduled"
-            | "confirmed"
-            | "completed"
-            | "cancelled"
-            | "no_show";
+            | 'scheduled'
+            | 'confirmed'
+            | 'completed'
+            | 'cancelled'
+            | 'no_show';
           notes?: string;
           created_at?: string;
           updated_at?: string;
@@ -106,11 +106,11 @@ export interface Database {
           appointment_time?: string;
           duration?: number;
           status?:
-            | "scheduled"
-            | "confirmed"
-            | "completed"
-            | "cancelled"
-            | "no_show";
+            | 'scheduled'
+            | 'confirmed'
+            | 'completed'
+            | 'cancelled'
+            | 'no_show';
           notes?: string;
           created_at?: string;
           updated_at?: string;
@@ -338,11 +338,10 @@ export type Json =
   | Json[];
 
 // Export convenience types
-export type Tables<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T];
-export type TableRow<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Row"];
-export type TableInsert<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Insert"];
-export type TableUpdate<T extends keyof Database["public"]["Tables"]> =
-  Database["public"]["Tables"][T]["Update"];
+export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T];
+export type TableRow<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Row'];
+export type TableInsert<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Insert'];
+export type TableUpdate<T extends keyof Database['public']['Tables']> =
+  Database['public']['Tables'][T]['Update'];

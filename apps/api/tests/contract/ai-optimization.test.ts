@@ -1,35 +1,35 @@
-import { Hono } from "hono";
-import { describe, expect, it } from "vitest";
+import { Hono } from 'hono';
+import { describe, expect, it } from 'vitest';
 
 // Contract for AI Optimization API endpoints
 // Source: /home/vibecode/neonpro/specs/002-platform-architecture-improvements/contracts/ai-optimization.openapi.yaml
 
 async function api(path: string, init?: RequestInit) {
   // Use main app which includes AI optimization routes
-  const { default: app } = await import("../../src/app");
+  const { default: app } = await import('../../src/app');
   const url = new URL(`http://local.test${path}`);
   return app.request(url, init);
 }
 
-describe("Contract: AI Optimization API", () => {
-  describe("Semantic Cache Endpoints", () => {
-    it("should find similar entries in semantic cache", async () => {
+describe('Contract: AI Optimization API', () => {
+  describe('Semantic Cache Endpoints', () => {
+    it('should find similar entries in semantic cache', async () => {
       const cacheQuery = {
-        prompt: "Patient with chest pain and shortness of breath",
+        prompt: 'Patient with chest pain and shortness of breath',
         context: {
-          patientId: "patient-123",
+          patientId: 'patient-123',
           isEmergency: false,
           isSensitiveData: true,
-          category: "cardiology",
-          requiredCompliance: ["LGPD_COMPLIANT", "HEALTHCARE_COMPLIANT"],
+          category: 'cardiology',
+          requiredCompliance: ['LGPD_COMPLIANT', 'HEALTHCARE_COMPLIANT'],
         },
       };
 
-      const res = await api("/api/v1/ai/cache/find-similar", {
-        method: "POST",
+      const res = await api('/api/v1/ai/cache/find-similar', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(cacheQuery),
       });
@@ -64,33 +64,33 @@ describe("Contract: AI Optimization API", () => {
             patientId: expect.any(String),
             cost: expect.any(Number),
             compliance: expect.arrayContaining([
-              expect.stringContaining("COMPLIANT"),
+              expect.stringContaining('COMPLIANT'),
             ]),
           }),
         });
       }
     });
 
-    it("should add entry to semantic cache", async () => {
+    it('should add entry to semantic cache', async () => {
       const cacheEntry = {
-        prompt: "Diagnosis recommendations for pediatric asthma",
-        response: "Based on pediatric asthma guidelines, recommend...",
+        prompt: 'Diagnosis recommendations for pediatric asthma',
+        response: 'Based on pediatric asthma guidelines, recommend...',
         metadata: {
-          patientId: "patient-456",
+          patientId: 'patient-456',
           cost: 0.02,
-          provider: "OPENAI",
-          model: "gpt-4",
+          provider: 'OPENAI',
+          model: 'gpt-4',
           ttlMs: 3600000,
-          category: "pediatrics",
-          compliance: ["LGPD_COMPLIANT", "HEALTHCARE_COMPLIANT"],
+          category: 'pediatrics',
+          compliance: ['LGPD_COMPLIANT', 'HEALTHCARE_COMPLIANT'],
         },
       };
 
-      const res = await api("/api/v1/ai/cache/add", {
-        method: "POST",
+      const res = await api('/api/v1/ai/cache/add', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(cacheEntry),
       });
@@ -101,7 +101,7 @@ describe("Contract: AI Optimization API", () => {
       const data = await res.json();
       expect(data).toMatchObject({
         entry_id: expect.any(String),
-        status: "cached",
+        status: 'cached',
         cache_size: expect.any(Number),
         healthcare_compliance: expect.objectContaining({
           lgpdVerified: expect.any(Boolean),
@@ -116,25 +116,25 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should optimize healthcare queries", async () => {
+    it('should optimize healthcare queries', async () => {
       const healthcareQuery = {
-        prompt: "Urgent: Patient showing signs of stroke",
-        patientId: "patient-789",
+        prompt: 'Urgent: Patient showing signs of stroke',
+        patientId: 'patient-789',
         context: {
           isEmergency: true,
           containsUrgentSymptoms: true,
           isSensitiveData: true,
-          category: "neurology",
+          category: 'neurology',
           requiresPrivacy: true,
         },
         maxAgeMs: 300000,
       };
 
-      const res = await api("/api/v1/ai/cache/optimize-query", {
-        method: "POST",
+      const res = await api('/api/v1/ai/cache/optimize-query', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(healthcareQuery),
       });
@@ -162,11 +162,11 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should retrieve cache statistics", async () => {
-      const res = await api("/api/v1/ai/cache/stats", {
-        method: "GET",
+    it('should retrieve cache statistics', async () => {
+      const res = await api('/api/v1/ai/cache/stats', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -197,17 +197,17 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should clear cache with healthcare safety checks", async () => {
-      const res = await api("/api/v1/ai/cache/clear", {
-        method: "POST",
+    it('should clear cache with healthcare safety checks', async () => {
+      const res = await api('/api/v1/ai/cache/clear', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer admin-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify({
           confirm_clear: true,
           healthcare_backup: true,
-          reason: "cache_maintenance",
+          reason: 'cache_maintenance',
         }),
       });
 
@@ -228,28 +228,28 @@ describe("Contract: AI Optimization API", () => {
     });
   });
 
-  describe("AI Provider Management", () => {
-    it("should configure AI provider settings", async () => {
+  describe('AI Provider Management', () => {
+    it('should configure AI provider settings', async () => {
       const providerConfig = {
-        provider: "OPENAI",
-        model: "gpt-4",
-        api_key: "test-key",
-        base_url: "https://api.openai.com/v1",
+        provider: 'OPENAI',
+        model: 'gpt-4',
+        api_key: 'test-key',
+        base_url: 'https://api.openai.com/v1',
         max_tokens: 4000,
         temperature: 0.1,
         healthcare_settings: {
           max_patient_tokens: 2000,
           emergency_priority: true,
-          privacy_mode: "enhanced",
-          compliance_level: "healthcare_strict",
+          privacy_mode: 'enhanced',
+          compliance_level: 'healthcare_strict',
         },
       };
 
-      const res = await api("/api/v1/ai/providers/configure", {
-        method: "POST",
+      const res = await api('/api/v1/ai/providers/configure', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer admin-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(providerConfig),
       });
@@ -260,7 +260,7 @@ describe("Contract: AI Optimization API", () => {
       const data = await res.json();
       expect(data).toMatchObject({
         provider_id: expect.any(String),
-        status: "configured",
+        status: 'configured',
         health_check: expect.objectContaining({
           available: expect.any(Boolean),
           response_time: expect.any(Number),
@@ -274,11 +274,11 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should list available AI providers", async () => {
-      const res = await api("/api/v1/ai/providers", {
-        method: "GET",
+    it('should list available AI providers', async () => {
+      const res = await api('/api/v1/ai/providers', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -312,13 +312,13 @@ describe("Contract: AI Optimization API", () => {
       }
     });
 
-    it("should route requests to optimal AI provider", async () => {
+    it('should route requests to optimal AI provider', async () => {
       const routingRequest = {
-        prompt: "Analyze patient lab results for cardiac markers",
+        prompt: 'Analyze patient lab results for cardiac markers',
         context: {
-          specialty: "cardiology",
-          urgency: "medium",
-          complexity: "high",
+          specialty: 'cardiology',
+          urgency: 'medium',
+          complexity: 'high',
           requires_citation: true,
         },
         preferences: {
@@ -328,11 +328,11 @@ describe("Contract: AI Optimization API", () => {
         },
       };
 
-      const res = await api("/api/v1/ai/providers/route", {
-        method: "POST",
+      const res = await api('/api/v1/ai/providers/route', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(routingRequest),
       });
@@ -359,28 +359,28 @@ describe("Contract: AI Optimization API", () => {
     });
   });
 
-  describe("Cost Tracking and Analytics", () => {
-    it("should track AI usage costs", async () => {
+  describe('Cost Tracking and Analytics', () => {
+    it('should track AI usage costs', async () => {
       const costEntry = {
-        provider: "OPENAI",
-        model: "gpt-4",
+        provider: 'OPENAI',
+        model: 'gpt-4',
         prompt_tokens: 500,
         completion_tokens: 200,
         total_cost: 0.035,
-        request_id: "req-123",
-        user_id: "user-456",
+        request_id: 'req-123',
+        user_id: 'user-456',
         context: {
-          feature: "patient_summary",
-          patient_id: "patient-789",
+          feature: 'patient_summary',
+          patient_id: 'patient-789',
           is_emergency: false,
         },
       };
 
-      const res = await api("/api/v1/ai/costs/track", {
-        method: "POST",
+      const res = await api('/api/v1/ai/costs/track', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(costEntry),
       });
@@ -391,7 +391,7 @@ describe("Contract: AI Optimization API", () => {
       const data = await res.json();
       expect(data).toMatchObject({
         entry_id: expect.any(String),
-        status: "recorded",
+        status: 'recorded',
         healthcare_compliance: expect.objectContaining({
           patientDataRecorded: expect.any(Boolean),
           costAttribution: expect.any(Boolean),
@@ -405,15 +405,15 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should generate cost analytics report", async () => {
-      const res = await api("/api/v1/ai/costs/analytics", {
-        method: "GET",
+    it('should generate cost analytics report', async () => {
+      const res = await api('/api/v1/ai/costs/analytics', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
         query: new URLSearchParams({
-          period: "30d",
-          group_by: "feature",
+          period: '30d',
+          group_by: 'feature',
         }).toString(),
       });
 
@@ -446,7 +446,7 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should manage cost budgets", async () => {
+    it('should manage cost budgets', async () => {
       const budgetConfig = {
         monthly_budget: 1000,
         feature_budgets: {
@@ -466,11 +466,11 @@ describe("Contract: AI Optimization API", () => {
         },
       };
 
-      const res = await api("/api/v1/ai/costs/budget", {
-        method: "POST",
+      const res = await api('/api/v1/ai/costs/budget', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer admin-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(budgetConfig),
       });
@@ -481,7 +481,7 @@ describe("Contract: AI Optimization API", () => {
       const data = await res.json();
       expect(data).toMatchObject({
         budget_id: expect.any(String),
-        status: "active",
+        status: 'active',
         healthcare_protections: expect.objectContaining({
           emergencyAccessGuaranteed: expect.any(Boolean),
           patientCarePrioritized: expect.any(Boolean),
@@ -496,10 +496,10 @@ describe("Contract: AI Optimization API", () => {
     });
   });
 
-  describe("AI Optimization Endpoints", () => {
-    it("should optimize AI model parameters", async () => {
+  describe('AI Optimization Endpoints', () => {
+    it('should optimize AI model parameters', async () => {
       const optimizationRequest = {
-        feature: "patient_triage",
+        feature: 'patient_triage',
         current_performance: {
           accuracy: 0.85,
           latency: 2000,
@@ -511,17 +511,17 @@ describe("Contract: AI Optimization API", () => {
           max_cost_per_request: 0.05,
         },
         healthcare_requirements: {
-          patient_safety_priority: "high",
+          patient_safety_priority: 'high',
           emergency_handling: true,
           regulatory_compliance: true,
         },
       };
 
-      const res = await api("/api/v1/ai/optimize/model", {
-        method: "POST",
+      const res = await api('/api/v1/ai/optimize/model', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(optimizationRequest),
       });
@@ -546,26 +546,26 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should perform A/B testing for AI models", async () => {
+    it('should perform A/B testing for AI models', async () => {
       const abTestConfig = {
-        test_name: "patient_summary_model_comparison",
-        models: ["gpt-4", "claude-3-opus"],
-        features: ["patient_summary", "treatment_recommendation"],
+        test_name: 'patient_summary_model_comparison',
+        models: ['gpt-4', 'claude-3-opus'],
+        features: ['patient_summary', 'treatment_recommendation'],
         sample_size: 1000,
         duration_days: 7,
         healthcare_metrics: [
-          "accuracy",
-          "patient_safety",
-          "professional_satisfaction",
-          "regulatory_compliance",
+          'accuracy',
+          'patient_safety',
+          'professional_satisfaction',
+          'regulatory_compliance',
         ],
       };
 
-      const res = await api("/api/v1/ai/optimize/ab-test", {
-        method: "POST",
+      const res = await api('/api/v1/ai/optimize/ab-test', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer admin-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer admin-token',
         },
         body: JSON.stringify(abTestConfig),
       });
@@ -576,7 +576,7 @@ describe("Contract: AI Optimization API", () => {
       const data = await res.json();
       expect(data).toMatchObject({
         test_id: expect.any(String),
-        status: "running",
+        status: 'running',
         healthcare_validation: expect.objectContaining({
           patientDataProtected: expect.any(Boolean),
           ethicalConsiderations: expect.any(Boolean),
@@ -590,15 +590,15 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should analyze AI performance and quality", async () => {
-      const res = await api("/api/v1/ai/optimize/performance", {
-        method: "GET",
+    it('should analyze AI performance and quality', async () => {
+      const res = await api('/api/v1/ai/optimize/performance', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
         query: new URLSearchParams({
-          period: "7d",
-          features: "patient_triage,diagnostic_support",
+          period: '7d',
+          features: 'patient_triage,diagnostic_support',
         }).toString(),
       });
 
@@ -629,14 +629,14 @@ describe("Contract: AI Optimization API", () => {
     });
   });
 
-  describe("Healthcare AI Compliance", () => {
-    it("should validate AI output for healthcare compliance", async () => {
+  describe('Healthcare AI Compliance', () => {
+    it('should validate AI output for healthcare compliance', async () => {
       const validationRequest = {
-        ai_output: "Based on the patient symptoms and lab results...",
+        ai_output: 'Based on the patient symptoms and lab results...',
         context: {
-          patient_id: "patient-123",
-          medical_specialty: "cardiology",
-          urgency_level: "medium",
+          patient_id: 'patient-123',
+          medical_specialty: 'cardiology',
+          urgency_level: 'medium',
         },
         requirements: {
           lgpd_compliance: true,
@@ -646,11 +646,11 @@ describe("Contract: AI Optimization API", () => {
         },
       };
 
-      const res = await api("/api/v1/ai/compliance/validate-output", {
-        method: "POST",
+      const res = await api('/api/v1/ai/compliance/validate-output', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(validationRequest),
       });
@@ -673,15 +673,15 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should generate AI compliance audit report", async () => {
-      const res = await api("/api/v1/ai/compliance/audit-report", {
-        method: "GET",
+    it('should generate AI compliance audit report', async () => {
+      const res = await api('/api/v1/ai/compliance/audit-report', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
         query: new URLSearchParams({
-          period: "30d",
-          include_patient_data: "true",
+          period: '30d',
+          include_patient_data: 'true',
         }).toString(),
       });
 
@@ -715,33 +715,33 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should manage AI consent and preferences", async () => {
+    it('should manage AI consent and preferences', async () => {
       const consentConfig = {
-        patient_id: "patient-123",
+        patient_id: 'patient-123',
         ai_features: [
-          "diagnostic_assistance",
-          "treatment_recommendation",
-          "patient_education",
+          'diagnostic_assistance',
+          'treatment_recommendation',
+          'patient_education',
         ],
-        consent_level: "informed",
+        consent_level: 'informed',
         preferences: {
-          language: "pt-BR",
-          complexity_level: "intermediate",
+          language: 'pt-BR',
+          complexity_level: 'intermediate',
           include_citations: true,
           emergency_contact_allowed: true,
         },
         healthcare_provider: {
-          professional_id: "prof-456",
-          clinic_id: "clinic-789",
-          relationship_type: "primary_care",
+          professional_id: 'prof-456',
+          clinic_id: 'clinic-789',
+          relationship_type: 'primary_care',
         },
       };
 
-      const res = await api("/api/v1/ai/compliance/patient-consent", {
-        method: "POST",
+      const res = await api('/api/v1/ai/compliance/patient-consent', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(consentConfig),
       });
@@ -752,7 +752,7 @@ describe("Contract: AI Optimization API", () => {
       const data = await res.json();
       expect(data).toMatchObject({
         consent_id: expect.any(String),
-        status: "active",
+        status: 'active',
         healthcare_protections: expect.objectContaining({
           patientAutonomyRespected: expect.any(Boolean),
           professionalRelationshipMaintained: expect.any(Boolean),
@@ -767,22 +767,22 @@ describe("Contract: AI Optimization API", () => {
     });
   });
 
-  describe("Error Handling", () => {
-    it("should handle invalid cache entries", async () => {
+  describe('Error Handling', () => {
+    it('should handle invalid cache entries', async () => {
       const invalidEntry = {
-        prompt: "", // Empty prompt should be invalid
-        response: "Some response",
+        prompt: '', // Empty prompt should be invalid
+        response: 'Some response',
         metadata: {
-          patientId: "invalid-patient-id",
+          patientId: 'invalid-patient-id',
           cost: -1, // Negative cost should be invalid
         },
       };
 
-      const res = await api("/api/v1/ai/cache/add", {
-        method: "POST",
+      const res = await api('/api/v1/ai/cache/add', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify(invalidEntry),
       });
@@ -797,16 +797,16 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should handle AI provider failures", async () => {
-      const res = await api("/api/v1/ai/providers/test-connection", {
-        method: "POST",
+    it('should handle AI provider failures', async () => {
+      const res = await api('/api/v1/ai/providers/test-connection', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          provider: "INVALID_PROVIDER",
-          api_key: "invalid-key",
+          provider: 'INVALID_PROVIDER',
+          api_key: 'invalid-key',
         }),
       });
 
@@ -815,7 +815,7 @@ describe("Contract: AI Optimization API", () => {
       const data = await res.json();
       expect(data).toMatchObject({
         error: expect.any(String),
-        provider_status: "unavailable",
+        provider_status: 'unavailable',
         fallback_options: expect.any(Array),
         healthcare_impact: expect.objectContaining({
           patientCareAffected: expect.any(Boolean),
@@ -825,22 +825,22 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should handle budget exceeded scenarios", async () => {
-      const res = await api("/api/v1/ai/costs/track", {
-        method: "POST",
+    it('should handle budget exceeded scenarios', async () => {
+      const res = await api('/api/v1/ai/costs/track', {
+        method: 'POST',
         headers: {
-          "content-type": "application/json",
-          authorization: "Bearer test-token",
+          'content-type': 'application/json',
+          authorization: 'Bearer test-token',
         },
         body: JSON.stringify({
-          provider: "OPENAI",
-          model: "gpt-4",
+          provider: 'OPENAI',
+          model: 'gpt-4',
           prompt_tokens: 100000, // Unusually high to trigger budget warning
           completion_tokens: 50000,
           total_cost: 9999, // Exceeds typical budget
           context: {
-            feature: "test",
-            budget_impact: "critical",
+            feature: 'test',
+            budget_impact: 'critical',
           },
         }),
       });
@@ -849,7 +849,7 @@ describe("Contract: AI Optimization API", () => {
 
       const data = await res.json();
       expect(data).toMatchObject({
-        error: expect.stringContaining("budget"),
+        error: expect.stringContaining('budget'),
         budget_exceeded: expect.any(Boolean),
         healthcare_override: expect.objectContaining({
           emergency_exception: expect.any(Boolean),
@@ -861,12 +861,12 @@ describe("Contract: AI Optimization API", () => {
     });
   });
 
-  describe("Performance and Monitoring", () => {
-    it("should return AI optimization health metrics", async () => {
-      const res = await api("/api/v1/ai/health", {
-        method: "GET",
+  describe('Performance and Monitoring', () => {
+    it('should return AI optimization health metrics', async () => {
+      const res = await api('/api/v1/ai/health', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
       });
 
@@ -905,11 +905,11 @@ describe("Contract: AI Optimization API", () => {
       });
     });
 
-    it("should provide real-time AI usage monitoring", async () => {
-      const res = await api("/api/v1/ai/monitoring/real-time", {
-        method: "GET",
+    it('should provide real-time AI usage monitoring', async () => {
+      const res = await api('/api/v1/ai/monitoring/real-time', {
+        method: 'GET',
         headers: {
-          authorization: "Bearer test-token",
+          authorization: 'Bearer test-token',
         },
       });
 

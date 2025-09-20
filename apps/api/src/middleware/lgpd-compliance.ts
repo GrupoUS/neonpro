@@ -6,29 +6,29 @@
  * for healthcare data processing with automated privacy protection
  */
 
-import { Context, Next } from "hono";
+import { Context, Next } from 'hono';
 
 // ============================================================================
 // LGPD Data Categories & Classification
 // ============================================================================
 
 export enum LGPDDataCategory {
-  PERSONAL = "personal", // CPF, nome, endereço
-  SENSITIVE = "sensitive", // Dados de saúde, biométricos
-  MEDICAL = "medical", // Prontuários, exames
-  FINANCIAL = "financial", // Dados de pagamento
-  BIOMETRIC = "biometric", // Impressões digitais, reconhecimento facial
-  BEHAVIORAL = "behavioral", // Padrões de uso, preferências
-  ANONYMOUS = "anonymous", // Dados anonimizados
+  PERSONAL = 'personal', // CPF, nome, endereço
+  SENSITIVE = 'sensitive', // Dados de saúde, biométricos
+  MEDICAL = 'medical', // Prontuários, exames
+  FINANCIAL = 'financial', // Dados de pagamento
+  BIOMETRIC = 'biometric', // Impressões digitais, reconhecimento facial
+  BEHAVIORAL = 'behavioral', // Padrões de uso, preferências
+  ANONYMOUS = 'anonymous', // Dados anonimizados
 }
 
 export enum LGPDLegalBasis {
-  CONSENT = "consent", // Consentimento (Art. 7, I)
-  CONTRACT = "contract", // Execução de contrato (Art. 7, V)
-  LEGAL_OBLIGATION = "legal_obligation", // Cumprimento de obrigação legal (Art. 7, II)
-  VITAL_INTERESTS = "vital_interests", // Proteção da vida (Art. 7, IV)
-  PUBLIC_INTEREST = "public_interest", // Execução de políticas públicas (Art. 7, III)
-  LEGITIMATE_INTERESTS = "legitimate_interests", // Interesse legítimo (Art. 7, IX)
+  CONSENT = 'consent', // Consentimento (Art. 7, I)
+  CONTRACT = 'contract', // Execução de contrato (Art. 7, V)
+  LEGAL_OBLIGATION = 'legal_obligation', // Cumprimento de obrigação legal (Art. 7, II)
+  VITAL_INTERESTS = 'vital_interests', // Proteção da vida (Art. 7, IV)
+  PUBLIC_INTEREST = 'public_interest', // Execução de políticas públicas (Art. 7, III)
+  LEGITIMATE_INTERESTS = 'legitimate_interests', // Interesse legítimo (Art. 7, IX)
 }
 
 // ============================================================================
@@ -39,10 +39,10 @@ export interface LGPDContext {
   // Data subject information
   dataSubjectId?: string;
   dataSubjectType:
-    | "patient"
-    | "healthcare_professional"
-    | "employee"
-    | "visitor";
+    | 'patient'
+    | 'healthcare_professional'
+    | 'employee'
+    | 'visitor';
 
   // Data processing details
   processingPurpose: string[];
@@ -71,7 +71,7 @@ export interface LGPDContext {
 
   // Audit information
   auditRequired: boolean;
-  auditLevel: "minimal" | "standard" | "detailed";
+  auditLevel: 'minimal' | 'standard' | 'detailed';
 }
 
 // ============================================================================
@@ -259,23 +259,23 @@ export class LGPDDataDetector {
 
     // Check for sensitive field names
     const sensitiveFieldNames = [
-      "cpf",
-      "rg",
-      "password",
-      "email",
-      "phone",
-      "address",
-      "medical_record",
-      "diagnosis",
-      "treatment",
-      "medication",
-      "allergy",
-      "biometric",
-      "financial_data",
-      "credit_card",
+      'cpf',
+      'rg',
+      'password',
+      'email',
+      'phone',
+      'address',
+      'medical_record',
+      'diagnosis',
+      'treatment',
+      'medication',
+      'allergy',
+      'biometric',
+      'financial_data',
+      'credit_card',
     ];
 
-    this.findSensitiveFields(data, sensitiveFieldNames, "", sensitiveFields);
+    this.findSensitiveFields(data, sensitiveFieldNames, '', sensitiveFields);
 
     return {
       detected: categories.length > 0 || sensitiveFields.length > 0,
@@ -294,22 +294,20 @@ export class LGPDDataDetector {
     path: string,
     found: string[],
   ): void {
-    if (typeof obj !== "object" || obj === null) return;
+    if (typeof obj !== 'object' || obj === null) return;
 
-    Object.keys(obj).forEach((key) => {
+    Object.keys(obj).forEach(key => {
       const fullPath = path ? `${path}.${key}` : key;
 
       // Check if field name indicates sensitive data
       if (
-        sensitiveNames.some((name) =>
-          key.toLowerCase().includes(name.toLowerCase()),
-        )
+        sensitiveNames.some(name => key.toLowerCase().includes(name.toLowerCase()))
       ) {
         found.push(fullPath);
       }
 
       // Recurse into nested objects
-      if (typeof obj[key] === "object" && obj[key] !== null) {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
         this.findSensitiveFields(obj[key], sensitiveNames, fullPath, found);
       }
     });
@@ -320,26 +318,26 @@ export class LGPDDataDetector {
    */
   static classifyDataSensitivity(
     categories: LGPDDataCategory[],
-  ): "low" | "medium" | "high" | "critical" {
+  ): 'low' | 'medium' | 'high' | 'critical' {
     if (
-      categories.includes(LGPDDataCategory.MEDICAL) ||
-      categories.includes(LGPDDataCategory.BIOMETRIC)
+      categories.includes(LGPDDataCategory.MEDICAL)
+      || categories.includes(LGPDDataCategory.BIOMETRIC)
     ) {
-      return "critical";
+      return 'critical';
     }
 
     if (
-      categories.includes(LGPDDataCategory.SENSITIVE) ||
-      categories.includes(LGPDDataCategory.FINANCIAL)
+      categories.includes(LGPDDataCategory.SENSITIVE)
+      || categories.includes(LGPDDataCategory.FINANCIAL)
     ) {
-      return "high";
+      return 'high';
     }
 
     if (categories.includes(LGPDDataCategory.PERSONAL)) {
-      return "medium";
+      return 'medium';
     }
 
-    return "low";
+    return 'low';
   }
 }
 
@@ -367,12 +365,12 @@ export class LGPDConsentManager {
     const violations: string[] = [];
 
     // Check if consent is required for the data categories
-    const requiresConsent = dataCategories.some((category) =>
+    const requiresConsent = dataCategories.some(category =>
       [
         LGPDDataCategory.PERSONAL,
         LGPDDataCategory.SENSITIVE,
         LGPDDataCategory.MEDICAL,
-      ].includes(category),
+      ].includes(category)
     );
 
     if (requiresConsent) {
@@ -380,32 +378,32 @@ export class LGPDConsentManager {
       const consentRecord = await this.lookupConsent(dataSubjectId);
 
       if (!consentRecord) {
-        violations.push("No consent found for data subject");
+        violations.push('No consent found for data subject');
         return { valid: false, scope: [], violations };
       }
 
       // Validate consent scope covers the processing purposes
       const uncoveredPurposes = processingPurpose.filter(
-        (purpose) => !consentRecord.scope.includes(purpose),
+        purpose => !consentRecord.scope.includes(purpose),
       );
 
       if (uncoveredPurposes.length > 0) {
         violations.push(
-          `Consent does not cover purposes: ${uncoveredPurposes.join(", ")}`,
+          `Consent does not cover purposes: ${uncoveredPurposes.join(', ')}`,
         );
       }
 
       // Check consent is not withdrawn
       if (consentRecord.withdrawn) {
-        violations.push("Consent has been withdrawn");
+        violations.push('Consent has been withdrawn');
       }
 
       // Check consent is not expired
       if (
-        consentRecord.expiresAt &&
-        new Date() > new Date(consentRecord.expiresAt)
+        consentRecord.expiresAt
+        && new Date() > new Date(consentRecord.expiresAt)
       ) {
-        violations.push("Consent has expired");
+        violations.push('Consent has expired');
       }
 
       return {
@@ -423,20 +421,22 @@ export class LGPDConsentManager {
   /**
    * Mock consent lookup - replace with actual database implementation
    */
-  private static async lookupConsent(dataSubjectId: string): Promise<{
-    id: string;
-    scope: string[];
-    obtainedAt: string;
-    expiresAt?: string;
-    withdrawn: boolean;
-  } | null> {
+  private static async lookupConsent(dataSubjectId: string): Promise<
+    {
+      id: string;
+      scope: string[];
+      obtainedAt: string;
+      expiresAt?: string;
+      withdrawn: boolean;
+    } | null
+  > {
     // Mock implementation - replace with actual database lookup
     return {
       id: `consent_${dataSubjectId}`,
       scope: [
-        "healthcare_treatment",
-        "appointment_management",
-        "communication",
+        'healthcare_treatment',
+        'appointment_management',
+        'communication',
       ],
       obtainedAt: new Date().toISOString(),
       expiresAt: undefined,
@@ -469,29 +469,29 @@ export class LGPDDataMinimizer {
     // Define fields necessary for each purpose
     const purposeFieldMap: Record<string, string[]> = {
       healthcare_treatment: [
-        "name",
-        "cpf",
-        "birth_date",
-        "medical_record",
-        "allergies",
-        "medications",
+        'name',
+        'cpf',
+        'birth_date',
+        'medical_record',
+        'allergies',
+        'medications',
       ],
-      appointment_management: ["name", "phone", "email", "preferred_time"],
-      communication: ["name", "email", "phone", "communication_preferences"],
-      billing: ["name", "cpf", "address", "payment_method"],
-      emergency_contact: ["name", "phone", "emergency_contact_info"],
+      appointment_management: ['name', 'phone', 'email', 'preferred_time'],
+      communication: ['name', 'email', 'phone', 'communication_preferences'],
+      billing: ['name', 'cpf', 'address', 'payment_method'],
+      emergency_contact: ['name', 'phone', 'emergency_contact_info'],
     };
 
     // Get all allowed fields for the given purposes
     const allowedFields = new Set<string>();
-    purpose.forEach((p) => {
-      purposeFieldMap[p]?.forEach((field) => allowedFields.add(field));
+    purpose.forEach(p => {
+      purposeFieldMap[p]?.forEach(field => allowedFields.add(field));
     });
 
     // Remove unnecessary fields and pseudonymize sensitive data
     this.processDataMinimization(
       minimizedData,
-      "",
+      '',
       allowedFields,
       sensitiveFields,
       removedFields,
@@ -516,9 +516,9 @@ export class LGPDDataMinimizer {
     removedFields: string[],
     pseudonymizedFields: string[],
   ): void {
-    if (typeof obj !== "object" || obj === null) return;
+    if (typeof obj !== 'object' || obj === null) return;
 
-    Object.keys(obj).forEach((key) => {
+    Object.keys(obj).forEach(key => {
       const fullPath = path ? `${path}.${key}` : key;
 
       // Check if field should be removed (not in allowed fields)
@@ -530,14 +530,14 @@ export class LGPDDataMinimizer {
 
       // Check if field should be pseudonymized
       if (sensitiveFields.includes(fullPath)) {
-        if (typeof obj[key] === "string") {
+        if (typeof obj[key] === 'string') {
           obj[key] = this.pseudonymize(obj[key]);
           pseudonymizedFields.push(fullPath);
         }
       }
 
       // Recurse into nested objects
-      if (typeof obj[key] === "object" && obj[key] !== null) {
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
         this.processDataMinimization(
           obj[key],
           fullPath,
@@ -555,11 +555,11 @@ export class LGPDDataMinimizer {
    */
   private static pseudonymize(value: string): string {
     // Simple pseudonymization - in production, use proper crypto libraries
-    if (value.length <= 4) return "***";
+    if (value.length <= 4) return '***';
 
     const start = value.substring(0, 2);
     const end = value.substring(value.length - 2);
-    const middle = "*".repeat(Math.max(1, value.length - 4));
+    const middle = '*'.repeat(Math.max(1, value.length - 4));
 
     return `${start}${middle}${end}`;
   }
@@ -575,11 +575,11 @@ export class LGPDAuditLogger {
    */
   static async logComplianceEvent(
     eventType:
-      | "data_access"
-      | "consent_validation"
-      | "data_processing"
-      | "violation"
-      | "emergency_access",
+      | 'data_access'
+      | 'consent_validation'
+      | 'data_processing'
+      | 'violation'
+      | 'emergency_access',
     context: LGPDContext,
     details: {
       userId?: string;
@@ -589,7 +589,7 @@ export class LGPDAuditLogger {
       endpoint?: string;
       dataCategories?: LGPDDataCategory[];
       action?: string;
-      result?: "allowed" | "blocked" | "warning";
+      result?: 'allowed' | 'blocked' | 'warning';
       violations?: string[];
       emergencyJustification?: string;
     },
@@ -615,13 +615,13 @@ export class LGPDAuditLogger {
       lgpdCompliance: {
         auditRequired: true,
         retentionPeriod: 1825, // 5 years
-        dataClassification: "internal",
+        dataClassification: 'internal',
         legalBasis: LGPDLegalBasis.LEGAL_OBLIGATION,
       },
     };
 
     // In production, this would write to your audit log system
-    console.log("[LGPD Audit]", JSON.stringify(auditEntry, null, 2));
+    console.log('[LGPD Audit]', JSON.stringify(auditEntry, null, 2));
   }
 
   /**
@@ -644,8 +644,8 @@ export class LGPDAuditLogger {
   private static sanitizeUserAgent(userAgent: string): string {
     // Remove potentially identifying information
     return userAgent
-      .replace(/\d+\.\d+\.\d+/g, "x.x.x") // Version numbers
-      .replace(/\([^)]+\)/g, "(...)"); // Detailed OS/browser info
+      .replace(/\d+\.\d+\.\d+/g, 'x.x.x') // Version numbers
+      .replace(/\([^)]+\)/g, '(...)'); // Detailed OS/browser info
   }
 }
 
@@ -665,7 +665,7 @@ export function lgpdComplianceMiddleware(
       // Extract request information
       const method = c.req.method;
       const url = c.req.url;
-      const body = method !== "GET" ? await c.req.json().catch(() => ({})) : {};
+      const body = method !== 'GET' ? await c.req.json().catch(() => ({})) : {};
       const query = Object.fromEntries(new URL(url).searchParams);
       const headers = Object.fromEntries(c.req.headers.entries());
 
@@ -677,20 +677,18 @@ export function lgpdComplianceMiddleware(
       const dataDetection = LGPDDataDetector.detectPersonalData(requestData);
 
       // Validate consent if required
-      const consentValidation =
-        lgpdContext.dataSubjectId && dataDetection.detected
-          ? await LGPDConsentManager.validateConsent(
-              lgpdContext.dataSubjectId,
-              lgpdContext.processingPurpose,
-              dataDetection.categories,
-            )
-          : { valid: true, scope: [], violations: [] };
+      const consentValidation = lgpdContext.dataSubjectId && dataDetection.detected
+        ? await LGPDConsentManager.validateConsent(
+          lgpdContext.dataSubjectId,
+          lgpdContext.processingPurpose,
+          dataDetection.categories,
+        )
+        : { valid: true, scope: [], violations: [] };
 
       // Check for emergency access
-      const isEmergencyAccess =
-        lgpdContext.healthcareContext?.emergencyAccess || false;
-      const emergencyOverrideAllowed =
-        mergedConfig.healthcare.enableEmergencyOverride && isEmergencyAccess;
+      const isEmergencyAccess = lgpdContext.healthcareContext?.emergencyAccess || false;
+      const emergencyOverrideAllowed = mergedConfig.healthcare.enableEmergencyOverride
+        && isEmergencyAccess;
 
       // Apply data minimization
       let minimizationResult = {
@@ -699,8 +697,8 @@ export function lgpdComplianceMiddleware(
         pseudonymizedFields: [],
       };
       if (
-        mergedConfig.dataMinimization.enableAutomaticMinimization &&
-        dataDetection.detected
+        mergedConfig.dataMinimization.enableAutomaticMinimization
+        && dataDetection.detected
       ) {
         minimizationResult = LGPDDataMinimizer.minimizeData(
           requestData,
@@ -710,11 +708,10 @@ export function lgpdComplianceMiddleware(
       }
 
       // Determine if request should be blocked
-      const shouldBlock =
-        mergedConfig.enforcement.blockNonCompliantRequests &&
-        !consentValidation.valid &&
-        !emergencyOverrideAllowed &&
-        dataDetection.detected;
+      const shouldBlock = mergedConfig.enforcement.blockNonCompliantRequests
+        && !consentValidation.valid
+        && !emergencyOverrideAllowed
+        && dataDetection.detected;
 
       // Create enriched request context
       const lgpdEnrichedRequest: LGPDEnrichedRequest = {
@@ -737,30 +734,29 @@ export function lgpdComplianceMiddleware(
       };
 
       // Add LGPD context to request
-      c.set("lgpdContext", lgpdEnrichedRequest);
+      c.set('lgpdContext', lgpdEnrichedRequest);
 
       // Log compliance event
       if (mergedConfig.audit.logAllDataAccess || dataDetection.detected) {
         await LGPDAuditLogger.logComplianceEvent(
-          dataDetection.detected ? "data_access" : "data_processing",
+          dataDetection.detected ? 'data_access' : 'data_processing',
           lgpdContext,
           {
-            userId: headers["x-user-id"] || "anonymous",
-            sessionId: headers["x-session-id"],
-            ipAddress:
-              c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
-            userAgent: headers["user-agent"],
+            userId: headers['x-user-id'] || 'anonymous',
+            sessionId: headers['x-session-id'],
+            ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+            userAgent: headers['user-agent'],
             endpoint: `${method} ${new URL(url).pathname}`,
             dataCategories: dataDetection.categories,
             action: method,
             result: shouldBlock
-              ? "blocked"
+              ? 'blocked'
               : consentValidation.violations.length > 0
-                ? "warning"
-                : "allowed",
+              ? 'warning'
+              : 'allowed',
             violations: consentValidation.violations,
             emergencyJustification: isEmergencyAccess
-              ? "Emergency medical access"
+              ? 'Emergency medical access'
               : undefined,
           },
         );
@@ -770,21 +766,20 @@ export function lgpdComplianceMiddleware(
       if (shouldBlock) {
         return c.json(
           {
-            error: "LGPD_COMPLIANCE_VIOLATION",
-            message: "Request blocked due to LGPD compliance violations",
+            error: 'LGPD_COMPLIANCE_VIOLATION',
+            message: 'Request blocked due to LGPD compliance violations',
             violations: consentValidation.violations,
             dataSubjectRights: {
-              access: "You can request access to your personal data",
-              rectification: "You can request correction of your personal data",
-              deletion: "You can request deletion of your personal data",
-              portability: "You can request a copy of your personal data",
-              objection:
-                "You can object to the processing of your personal data",
+              access: 'You can request access to your personal data',
+              rectification: 'You can request correction of your personal data',
+              deletion: 'You can request deletion of your personal data',
+              portability: 'You can request a copy of your personal data',
+              objection: 'You can object to the processing of your personal data',
             },
             contact: {
-              dpo: "dpo@neonpro.com.br",
-              phone: "+55 11 9999-9999",
-              address: "Data Protection Officer, NeonPro Healthcare Platform",
+              dpo: 'dpo@neonpro.com.br',
+              phone: '+55 11 9999-9999',
+              address: 'Data Protection Officer, NeonPro Healthcare Platform',
             },
           },
           403,
@@ -792,20 +787,20 @@ export function lgpdComplianceMiddleware(
       }
 
       // Add compliance headers
-      c.header("X-LGPD-Compliant", "true");
-      c.header("X-LGPD-Data-Detected", dataDetection.detected.toString());
+      c.header('X-LGPD-Compliant', 'true');
+      c.header('X-LGPD-Data-Detected', dataDetection.detected.toString());
       c.header(
-        "X-LGPD-Consent-Required",
+        'X-LGPD-Consent-Required',
         lgpdEnrichedRequest.consentRequired.toString(),
       );
       c.header(
-        "X-LGPD-Processing-Purpose",
-        lgpdContext.processingPurpose.join(","),
+        'X-LGPD-Processing-Purpose',
+        lgpdContext.processingPurpose.join(','),
       );
-      c.header("X-LGPD-Legal-Basis", lgpdContext.legalBasis);
+      c.header('X-LGPD-Legal-Basis', lgpdContext.legalBasis);
 
       if (emergencyOverrideAllowed) {
-        c.header("X-LGPD-Emergency-Access", "true");
+        c.header('X-LGPD-Emergency-Access', 'true');
       }
 
       // Proceed with request
@@ -816,14 +811,14 @@ export function lgpdComplianceMiddleware(
 
       if (lgpdEnrichedRequest.auditRequired) {
         await LGPDAuditLogger.logComplianceEvent(
-          "data_processing",
+          'data_processing',
           lgpdContext,
           {
-            userId: headers["x-user-id"] || "anonymous",
-            sessionId: headers["x-session-id"],
+            userId: headers['x-user-id'] || 'anonymous',
+            sessionId: headers['x-session-id'],
             endpoint: `${method} ${new URL(url).pathname}`,
-            action: "processing_completed",
-            result: "allowed",
+            action: 'processing_completed',
+            result: 'allowed',
             violations: [],
           },
         );
@@ -831,36 +826,36 @@ export function lgpdComplianceMiddleware(
     } catch (error) {
       // Log compliance error
       await LGPDAuditLogger.logComplianceEvent(
-        "violation",
+        'violation',
         {
-          dataSubjectType: "unknown",
-          processingPurpose: ["error_handling"],
+          dataSubjectType: 'unknown',
+          processingPurpose: ['error_handling'],
           legalBasis: LGPDLegalBasis.LEGITIMATE_INTERESTS,
           dataCategories: [],
           consentObtained: false,
-          dataController: "neonpro",
+          dataController: 'neonpro',
           retentionPeriod: 30,
           auditRequired: true,
-          auditLevel: "detailed",
+          auditLevel: 'detailed',
         },
         {
           endpoint: c.req.url,
-          action: "middleware_error",
-          result: "blocked",
+          action: 'middleware_error',
+          result: 'blocked',
           violations: [
-            error instanceof Error ? error.message : "Unknown error",
+            error instanceof Error ? error.message : 'Unknown error',
           ],
         },
       );
 
-      console.error("[LGPD Middleware Error]", error);
+      console.error('[LGPD Middleware Error]', error);
 
       // Don't block request on middleware errors unless configured to do so
       if (mergedConfig.enforcement.blockNonCompliantRequests) {
         return c.json(
           {
-            error: "LGPD_MIDDLEWARE_ERROR",
-            message: "LGPD compliance check failed",
+            error: 'LGPD_MIDDLEWARE_ERROR',
+            message: 'LGPD compliance check failed',
           },
           500,
         );
@@ -887,19 +882,18 @@ async function buildLGPDContext(
   const url = new URL(c.req.url);
 
   // Extract healthcare context
-  const patientId =
-    body.patientId || query.patientId || headers["x-patient-id"];
-  const clinicId = body.clinicId || query.clinicId || headers["x-clinic-id"];
-  const professionalId = headers["x-professional-id"] || headers["x-user-id"];
+  const patientId = body.patientId || query.patientId || headers['x-patient-id'];
+  const clinicId = body.clinicId || query.clinicId || headers['x-clinic-id'];
+  const professionalId = headers['x-professional-id'] || headers['x-user-id'];
 
   // Determine data subject type
   let dataSubjectType:
-    | "patient"
-    | "healthcare_professional"
-    | "employee"
-    | "visitor" = "visitor";
-  if (patientId) dataSubjectType = "patient";
-  else if (professionalId) dataSubjectType = "healthcare_professional";
+    | 'patient'
+    | 'healthcare_professional'
+    | 'employee'
+    | 'visitor' = 'visitor';
+  if (patientId) dataSubjectType = 'patient';
+  else if (professionalId) dataSubjectType = 'healthcare_professional';
 
   // Determine processing purpose based on endpoint
   const processingPurpose = determineProcessingPurpose(
@@ -920,19 +914,19 @@ async function buildLGPDContext(
     legalBasis,
     dataCategories,
     consentObtained: false, // Will be validated separately
-    dataController: "neonpro",
+    dataController: 'neonpro',
     retentionPeriod: getRetentionPeriod(dataCategories),
     healthcareContext: {
       clinicId,
       patientId,
       professionalId,
-      medicalPurpose: processingPurpose.includes("healthcare_treatment"),
-      emergencyAccess: headers["x-emergency-access"] === "true",
+      medicalPurpose: processingPurpose.includes('healthcare_treatment'),
+      emergencyAccess: headers['x-emergency-access'] === 'true',
     },
     auditRequired: true,
     auditLevel: dataCategories.includes(LGPDDataCategory.MEDICAL)
-      ? "detailed"
-      : "standard",
+      ? 'detailed'
+      : 'standard',
   };
 }
 
@@ -945,35 +939,35 @@ function determineProcessingPurpose(
 ): string[] {
   const purposes: string[] = [];
 
-  if (pathname.includes("/patients")) {
-    purposes.push("healthcare_treatment");
-    if (method === "POST" || method === "PUT") {
-      purposes.push("medical_record_management");
+  if (pathname.includes('/patients')) {
+    purposes.push('healthcare_treatment');
+    if (method === 'POST' || method === 'PUT') {
+      purposes.push('medical_record_management');
     }
   }
 
-  if (pathname.includes("/appointments")) {
-    purposes.push("appointment_management");
+  if (pathname.includes('/appointments')) {
+    purposes.push('appointment_management');
   }
 
-  if (pathname.includes("/billing") || pathname.includes("/payment")) {
-    purposes.push("billing");
+  if (pathname.includes('/billing') || pathname.includes('/payment')) {
+    purposes.push('billing');
   }
 
   if (
-    pathname.includes("/communication") ||
-    pathname.includes("/notification")
+    pathname.includes('/communication')
+    || pathname.includes('/notification')
   ) {
-    purposes.push("communication");
+    purposes.push('communication');
   }
 
-  if (pathname.includes("/emergency")) {
-    purposes.push("emergency_care");
+  if (pathname.includes('/emergency')) {
+    purposes.push('emergency_care');
   }
 
   // Default purpose
   if (purposes.length === 0) {
-    purposes.push("platform_operation");
+    purposes.push('platform_operation');
   }
 
   return purposes;
@@ -987,22 +981,22 @@ function determineLegalBasis(
   _dataSubjectType: string,
 ): LGPDLegalBasis {
   // Emergency care - vital interests
-  if (purposes.includes("emergency_care")) {
+  if (purposes.includes('emergency_care')) {
     return LGPDLegalBasis.VITAL_INTERESTS;
   }
 
   // Healthcare treatment - consent or vital interests
-  if (purposes.includes("healthcare_treatment")) {
+  if (purposes.includes('healthcare_treatment')) {
     return LGPDLegalBasis.CONSENT;
   }
 
   // Legal obligations for healthcare compliance
-  if (purposes.includes("medical_record_management")) {
+  if (purposes.includes('medical_record_management')) {
     return LGPDLegalBasis.LEGAL_OBLIGATION;
   }
 
   // Contract execution for billing
-  if (purposes.includes("billing")) {
+  if (purposes.includes('billing')) {
     return LGPDLegalBasis.CONTRACT;
   }
 
@@ -1021,12 +1015,12 @@ function determineDataCategories(
   const categories: LGPDDataCategory[] = [];
 
   // Medical endpoints always involve medical data
-  if (pathname.includes("/patients") || pathname.includes("/medical")) {
+  if (pathname.includes('/patients') || pathname.includes('/medical')) {
     categories.push(LGPDDataCategory.MEDICAL, LGPDDataCategory.SENSITIVE);
   }
 
   // Financial endpoints
-  if (pathname.includes("/billing") || pathname.includes("/payment")) {
+  if (pathname.includes('/billing') || pathname.includes('/payment')) {
     categories.push(LGPDDataCategory.FINANCIAL);
   }
 

@@ -11,58 +11,58 @@
  * @performance <200ms validation overhead target
  */
 
-import { TRPCError } from "@trpc/server";
-import { createHash, createVerify } from "crypto";
+import { TRPCError } from '@trpc/server';
+import { createHash, createVerify } from 'crypto';
 
 // CFM Medical Specialties (partial list - expand as needed)
 const CFM_SPECIALTIES = {
-  "01": "Clínica Médica",
-  "02": "Cirurgia Geral",
-  "03": "Pediatria",
-  "04": "Ginecologia e Obstetrícia",
-  "05": "Cardiologia",
-  "06": "Dermatologia",
-  "07": "Psiquiatria",
-  "08": "Neurologia",
-  "09": "Oftalmologia",
-  "10": "Ortopedia e Traumatologia",
-  "11": "Anestesiologia",
-  "12": "Radiologia",
-  "13": "Patologia",
-  "14": "Medicina do Trabalho",
-  "15": "Medicina Legal",
+  '01': 'Clínica Médica',
+  '02': 'Cirurgia Geral',
+  '03': 'Pediatria',
+  '04': 'Ginecologia e Obstetrícia',
+  '05': 'Cardiologia',
+  '06': 'Dermatologia',
+  '07': 'Psiquiatria',
+  '08': 'Neurologia',
+  '09': 'Oftalmologia',
+  '10': 'Ortopedia e Traumatologia',
+  '11': 'Anestesiologia',
+  '12': 'Radiologia',
+  '13': 'Patologia',
+  '14': 'Medicina do Trabalho',
+  '15': 'Medicina Legal',
   // Add more specialties as needed
 } as const;
 
 // Brazilian States for CRM validation
 const BRAZILIAN_STATES = [
-  "AC",
-  "AL",
-  "AP",
-  "AM",
-  "BA",
-  "CE",
-  "DF",
-  "ES",
-  "GO",
-  "MA",
-  "MT",
-  "MS",
-  "MG",
-  "PA",
-  "PB",
-  "PR",
-  "PE",
-  "PI",
-  "RJ",
-  "RN",
-  "RS",
-  "RO",
-  "RR",
-  "SC",
-  "SP",
-  "SE",
-  "TO",
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
 ] as const;
 
 interface CFMLicenseValidationResult {
@@ -70,7 +70,7 @@ interface CFMLicenseValidationResult {
   crmNumber: string;
   state: string;
   specialties: string[];
-  status: "active" | "suspended" | "cancelled" | "inactive";
+  status: 'active' | 'suspended' | 'cancelled' | 'inactive';
   expirationDate?: Date;
   restrictions?: string[];
   telemedicineAuthorized: boolean;
@@ -87,7 +87,7 @@ interface ICPBrasilCertificate {
   validTo: Date;
   serialNumber: string;
   authorityChain: string[];
-  certificateUse: "authentication" | "signature" | "both";
+  certificateUse: 'authentication' | 'signature' | 'both';
   ngs2Compliant: boolean;
 }
 
@@ -100,7 +100,7 @@ async function validateCFMLicense(
   state: string,
 ): Promise<CFMLicenseValidationResult> {
   // Simulate API call delay
-  await new Promise((resolve) => setTimeout(resolve, 50));
+  await new Promise(resolve => setTimeout(resolve, 50));
 
   // Basic CRM format validation: CRM/STATE + 4-6 digits
   const crmRegex =
@@ -112,7 +112,7 @@ async function validateCFMLicense(
       crmNumber,
       state,
       specialties: [],
-      status: "inactive",
+      status: 'inactive',
       telemedicineAuthorized: false,
       ethicsCompliant: false,
       lastValidated: new Date(),
@@ -120,15 +120,14 @@ async function validateCFMLicense(
   }
 
   // Mock validation (replace with real CFM API integration)
-  const isValidNumber =
-    parseInt(crmNumber) > 1000 && parseInt(crmNumber) < 999999;
+  const isValidNumber = parseInt(crmNumber) > 1000 && parseInt(crmNumber) < 999999;
 
   return {
     isValid: isValidNumber,
     crmNumber,
     state,
-    specialties: isValidNumber ? ["01", "05"] : [], // Mock specialties
-    status: isValidNumber ? "active" : "inactive",
+    specialties: isValidNumber ? ['01', '05'] : [], // Mock specialties
+    status: isValidNumber ? 'active' : 'inactive',
     expirationDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
     restrictions: [],
     telemedicineAuthorized: isValidNumber,
@@ -144,44 +143,43 @@ async function validateICPBrasilCertificate(
   certificateData: string,
 ): Promise<ICPBrasilCertificate> {
   // Simulate certificate validation delay
-  await new Promise((resolve) => setTimeout(resolve, 30));
+  await new Promise(resolve => setTimeout(resolve, 30));
 
   // Basic certificate format validation (PEM format check)
-  const pemFormatRegex =
-    /-----BEGIN CERTIFICATE-----[\s\S]*-----END CERTIFICATE-----/;
+  const pemFormatRegex = /-----BEGIN CERTIFICATE-----[\s\S]*-----END CERTIFICATE-----/;
   const isValidFormat = pemFormatRegex.test(certificateData);
 
   if (!isValidFormat) {
     return {
       isValid: false,
-      certificateId: "",
-      issuer: "",
-      subject: "",
+      certificateId: '',
+      issuer: '',
+      subject: '',
       validFrom: new Date(),
       validTo: new Date(),
-      serialNumber: "",
+      serialNumber: '',
       authorityChain: [],
-      certificateUse: "authentication",
+      certificateUse: 'authentication',
       ngs2Compliant: false,
     };
   }
 
   // Mock certificate validation (replace with real ITI validation)
-  const mockCertId = createHash("sha256")
+  const mockCertId = createHash('sha256')
     .update(certificateData)
-    .digest("hex")
+    .digest('hex')
     .substring(0, 16);
 
   return {
     isValid: true,
     certificateId: mockCertId,
-    issuer: "AC SERPRO v5",
-    subject: "CN=Usuario Teste,OU=Pessoa Fisica,O=ICP-Brasil,C=BR",
+    issuer: 'AC SERPRO v5',
+    subject: 'CN=Usuario Teste,OU=Pessoa Fisica,O=ICP-Brasil,C=BR',
     validFrom: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000), // 30 days ago
     validTo: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-    serialNumber: "123456789",
-    authorityChain: ["AC SERPRO v5", "ICP-Brasil AC Raiz v2"],
-    certificateUse: "both",
+    serialNumber: '123456789',
+    authorityChain: ['AC SERPRO v5', 'ICP-Brasil AC Raiz v2'],
+    certificateUse: 'both',
     ngs2Compliant: true,
   };
 }
@@ -247,8 +245,8 @@ export const cfmValidationMiddleware = async ({
 
     if (!professionalId) {
       throw new TRPCError({
-        code: "UNAUTHORIZED",
-        message: "Professional identification required for medical operations",
+        code: 'UNAUTHORIZED',
+        message: 'Professional identification required for medical operations',
       });
     }
 
@@ -268,16 +266,15 @@ export const cfmValidationMiddleware = async ({
 
     if (!professional) {
       throw new TRPCError({
-        code: "NOT_FOUND",
-        message: "Professional not found",
+        code: 'NOT_FOUND',
+        message: 'Professional not found',
       });
     }
 
     // Check if CFM validation is recent (within 24 hours)
     const validationExpiry = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const needsRevalidation =
-      !professional.cfmLastValidated ||
-      professional.cfmLastValidated < validationExpiry;
+    const needsRevalidation = !professional.cfmLastValidated
+      || professional.cfmLastValidated < validationExpiry;
 
     let cfmValidation: CFMLicenseValidationResult;
 
@@ -307,8 +304,8 @@ export const cfmValidationMiddleware = async ({
           where: { id: professionalId },
           data: {
             cfmValidationStatus: cfmValidation.isValid
-              ? "validated"
-              : "rejected",
+              ? 'validated'
+              : 'rejected',
             cfmLastValidated: new Date(),
             telemedicineAuthorized: cfmValidation.telemedicineAuthorized,
           },
@@ -317,34 +314,32 @@ export const cfmValidationMiddleware = async ({
     } else {
       // Use existing validation status
       cfmValidation = {
-        isValid: professional.cfmValidationStatus === "validated",
+        isValid: professional.cfmValidationStatus === 'validated',
         crmNumber: professional.crmNumber,
         state: professional.crmState,
         specialties: professional.specialties || [],
-        status:
-          professional.cfmValidationStatus === "validated"
-            ? "active"
-            : "inactive",
+        status: professional.cfmValidationStatus === 'validated'
+          ? 'active'
+          : 'inactive',
         telemedicineAuthorized: professional.telemedicineAuthorized || false,
-        ethicsCompliant: professional.cfmValidationStatus === "validated",
+        ethicsCompliant: professional.cfmValidationStatus === 'validated',
         lastValidated: professional.cfmLastValidated || new Date(),
       };
     }
 
     // Validate CFM license status
-    if (!cfmValidation.isValid || cfmValidation.status !== "active") {
+    if (!cfmValidation.isValid || cfmValidation.status !== 'active') {
       throw new TRPCError({
-        code: "FORBIDDEN",
-        message:
-          "Invalid or inactive CFM license. Medical operations not authorized.",
+        code: 'FORBIDDEN',
+        message: 'Invalid or inactive CFM license. Medical operations not authorized.',
       });
     } // Special validation for telemedicine operations
     if (isTelemedicineOperation(path)) {
       if (!cfmValidation.telemedicineAuthorized) {
         throw new TRPCError({
-          code: "FORBIDDEN",
+          code: 'FORBIDDEN',
           message:
-            "Telemedicine not authorized for this professional. CFM Resolution 2,314/2022 compliance required.",
+            'Telemedicine not authorized for this professional. CFM Resolution 2,314/2022 compliance required.',
         });
       }
 
@@ -355,13 +350,13 @@ export const cfmValidationMiddleware = async ({
         );
 
         if (
-          !certificateValidation.isValid ||
-          !certificateValidation.ngs2Compliant
+          !certificateValidation.isValid
+          || !certificateValidation.ngs2Compliant
         ) {
           throw new TRPCError({
-            code: "FORBIDDEN",
+            code: 'FORBIDDEN',
             message:
-              "Valid ICP-Brasil certificate with NGS2 Level 2 compliance required for telemedicine operations.",
+              'Valid ICP-Brasil certificate with NGS2 Level 2 compliance required for telemedicine operations.',
           });
         }
 
@@ -372,9 +367,8 @@ export const cfmValidationMiddleware = async ({
         };
       } else {
         throw new TRPCError({
-          code: "FORBIDDEN",
-          message:
-            "ICP-Brasil digital certificate required for telemedicine operations.",
+          code: 'FORBIDDEN',
+          message: 'ICP-Brasil digital certificate required for telemedicine operations.',
         });
       }
     }
@@ -384,11 +378,11 @@ export const cfmValidationMiddleware = async ({
       const requiredSpecialty = extractRequiredSpecialty(path, input);
 
       if (
-        requiredSpecialty &&
-        !cfmValidation.specialties.includes(requiredSpecialty)
+        requiredSpecialty
+        && !cfmValidation.specialties.includes(requiredSpecialty)
       ) {
         throw new TRPCError({
-          code: "FORBIDDEN",
+          code: 'FORBIDDEN',
           message: `Medical specialty ${
             CFM_SPECIALTIES[
               requiredSpecialty as keyof typeof CFM_SPECIALTIES
@@ -421,20 +415,19 @@ export const cfmValidationMiddleware = async ({
         data: {
           userId: ctx.userId,
           clinicId: ctx.clinicId,
-          action: "VIEW",
+          action: 'VIEW',
           resource: path,
-          resourceType: "SYSTEM_CONFIG",
+          resourceType: 'SYSTEM_CONFIG',
           ipAddress: ctx.auditMeta.ipAddress,
           userAgent: ctx.auditMeta.userAgent,
           sessionId: ctx.auditMeta.sessionId,
-          status: "FAILED",
-          riskLevel: "HIGH",
+          status: 'FAILED',
+          riskLevel: 'HIGH',
           additionalInfo: JSON.stringify({
-            errorType: "CFM_VALIDATION_FAILURE",
-            error:
-              error instanceof Error
-                ? error.message
-                : "Unknown CFM validation error",
+            errorType: 'CFM_VALIDATION_FAILURE',
+            error: error instanceof Error
+              ? error.message
+              : 'Unknown CFM validation error',
             duration,
             path,
             professionalId: extractProfessionalId(ctx, input),
@@ -453,25 +446,25 @@ export const cfmValidationMiddleware = async ({
 
 function requiresCFMValidation(path: string): boolean {
   const medicalPaths = [
-    "appointments.create",
-    "appointments.update",
-    "patients.create",
-    "patients.update",
-    "telemedicine",
-    "prescriptions",
-    "diagnosis",
-    "medical-records",
-    "procedures",
+    'appointments.create',
+    'appointments.update',
+    'patients.create',
+    'patients.update',
+    'telemedicine',
+    'prescriptions',
+    'diagnosis',
+    'medical-records',
+    'procedures',
   ];
 
-  return medicalPaths.some((medicalPath) => path.includes(medicalPath));
+  return medicalPaths.some(medicalPath => path.includes(medicalPath));
 }
 
 function isTelemedicineOperation(path: string): boolean {
   return (
-    path.includes("telemedicine") ||
-    path.includes("video-consultation") ||
-    path.includes("remote-consultation")
+    path.includes('telemedicine')
+    || path.includes('video-consultation')
+    || path.includes('remote-consultation')
   );
 }
 
@@ -487,7 +480,7 @@ function extractProfessionalId(ctx: any, input: any): string | null {
   }
 
   // Try to get from user context if user is a professional
-  if (ctx.userRole === "professional" && ctx.userId) {
+  if (ctx.userRole === 'professional' && ctx.userId) {
     return ctx.userId;
   }
 
@@ -497,27 +490,27 @@ function extractProfessionalId(ctx: any, input: any): string | null {
 function requiresSpecialtyValidation(path: string, input: any): boolean {
   // Specialized procedures that require specific medical specialties
   const specialtyRequiredPaths = [
-    "cardiology",
-    "dermatology",
-    "neurology",
-    "psychiatry",
-    "pediatrics",
-    "obstetrics",
-    "surgery",
+    'cardiology',
+    'dermatology',
+    'neurology',
+    'psychiatry',
+    'pediatrics',
+    'obstetrics',
+    'surgery',
   ];
 
-  return specialtyRequiredPaths.some((specialty) => path.includes(specialty));
+  return specialtyRequiredPaths.some(specialty => path.includes(specialty));
 }
 
 function extractRequiredSpecialty(path: string, input: any): string | null {
   // Map operation paths to required CFM specialty codes
-  if (path.includes("cardiology")) return "05";
-  if (path.includes("dermatology")) return "06";
-  if (path.includes("psychiatry")) return "07";
-  if (path.includes("neurology")) return "08";
-  if (path.includes("pediatrics")) return "03";
-  if (path.includes("obstetrics") || path.includes("gynecology")) return "04";
-  if (path.includes("surgery")) return "02";
+  if (path.includes('cardiology')) return '05';
+  if (path.includes('dermatology')) return '06';
+  if (path.includes('psychiatry')) return '07';
+  if (path.includes('neurology')) return '08';
+  if (path.includes('pediatrics')) return '03';
+  if (path.includes('obstetrics') || path.includes('gynecology')) return '04';
+  if (path.includes('surgery')) return '02';
 
   // Try to extract from input TUSS code if available
   if (input?.tussCode) {
@@ -530,12 +523,12 @@ function extractRequiredSpecialty(path: string, input: any): string | null {
 function mapTussToSpecialty(tussCode: string): string | null {
   // Map TUSS procedure codes to CFM specialties (simplified mapping)
   const tussSpecialtyMap: Record<string, string> = {
-    "10101": "05", // Cardiology consultation
-    "10102": "06", // Dermatology consultation
-    "10103": "03", // Pediatrics consultation
-    "10104": "04", // Gynecology consultation
-    "10105": "07", // Psychiatry consultation
-    "10106": "08", // Neurology consultation
+    '10101': '05', // Cardiology consultation
+    '10102': '06', // Dermatology consultation
+    '10103': '03', // Pediatrics consultation
+    '10104': '04', // Gynecology consultation
+    '10105': '07', // Psychiatry consultation
+    '10106': '08', // Neurology consultation
     // Add more mappings as needed
   };
 

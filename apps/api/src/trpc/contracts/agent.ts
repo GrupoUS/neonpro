@@ -5,17 +5,17 @@
  * Following healthcare compliance standards (LGPD/ANVISA/CFM)
  */
 
-import { z } from "zod";
-import { router, protectedProcedure } from "../trpc";
-import { HealthcareTRPCError } from "@neonpro/types/api/contracts";
+import { HealthcareTRPCError } from '@neonpro/types/api/contracts';
+import { z } from 'zod';
+import { protectedProcedure, router } from '../trpc';
 
 /**
  * Core Agent Types
  */
-export const AgentTypeSchema = z.enum(["client", "financial", "appointment"]);
+export const AgentTypeSchema = z.enum(['client', 'financial', 'appointment']);
 export type AgentType = z.infer<typeof AgentTypeSchema>;
 
-export const AgentStatusSchema = z.enum(["active", "inactive", "archived"]);
+export const AgentStatusSchema = z.enum(['active', 'inactive', 'archived']);
 export type AgentStatus = z.infer<typeof AgentStatusSchema>;
 
 /**
@@ -40,7 +40,7 @@ export const AgentSessionResponseSchema = z.object({
 /**
  * Agent Message Schemas
  */
-export const AgentMessageRoleSchema = z.enum(["user", "assistant", "system"]);
+export const AgentMessageRoleSchema = z.enum(['user', 'assistant', 'system']);
 export type AgentMessageRole = z.infer<typeof AgentMessageRoleSchema>;
 
 export const CreateAgentMessageSchema = z.object({
@@ -127,8 +127,8 @@ export const ListAgentSessionsSchema = z.object({
   status: AgentStatusSchema.optional(),
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(20),
-  sort_by: z.enum(["created_at", "updated_at"]).default("created_at"),
-  sort_order: z.enum(["asc", "desc"]).default("desc"),
+  sort_by: z.enum(['created_at', 'updated_at']).default('created_at'),
+  sort_order: z.enum(['asc', 'desc']).default('desc'),
 });
 
 export const ListAgentMessagesSchema = z.object({
@@ -187,7 +187,7 @@ export const RAGResponseSchema = z.object({
  * Agent Action Schemas (for AG-UI Protocol)
  */
 export const AgentActionSchema = z.object({
-  type: z.enum(["message", "action", "navigation", "data_request"]),
+  type: z.enum(['message', 'action', 'navigation', 'data_request']),
   payload: z.record(z.unknown()),
   timestamp: z.date(),
 });

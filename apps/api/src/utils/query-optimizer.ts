@@ -28,7 +28,7 @@ export interface QueryOptimization {
   issues: string[];
   recommendations: string[];
   estimatedImprovement: number; // Percentage
-  priority: "low" | "medium" | "high" | "critical";
+  priority: 'low' | 'medium' | 'high' | 'critical';
 }
 
 // Connection pool configuration
@@ -76,8 +76,8 @@ export class QueryPerformanceMonitor {
 
     // Log slow queries
     if (metrics.duration > this.slowQueryThreshold) {
-      console.warn("Slow query detected:", {
-        query: metrics.query.substring(0, 100) + "...",
+      console.warn('Slow query detected:', {
+        query: metrics.query.substring(0, 100) + '...',
         duration: metrics.duration,
         endpoint: metrics.endpoint,
         timestamp: metrics.timestamp,
@@ -97,16 +97,14 @@ export class QueryPerformanceMonitor {
     queryFrequency: Record<string, number>;
   } {
     const totalQueries = this.metrics.length;
-    const averageDuration =
-      totalQueries > 0
-        ? this.metrics.reduce((sum, m) => sum + m.duration, 0) / totalQueries
-        : 0;
+    const averageDuration = totalQueries > 0
+      ? this.metrics.reduce((sum, m) => sum + m.duration, 0) / totalQueries
+      : 0;
 
     const slowQueries = this.metrics.filter(
-      (m) => m.duration > this.slowQueryThreshold,
+      m => m.duration > this.slowQueryThreshold,
     );
-    const slowQueryRate =
-      totalQueries > 0 ? (slowQueries.length / totalQueries) * 100 : 0;
+    const slowQueryRate = totalQueries > 0 ? (slowQueries.length / totalQueries) * 100 : 0;
 
     // Top 10 slowest queries
     const topSlowQueries = [...this.metrics]
@@ -115,7 +113,7 @@ export class QueryPerformanceMonitor {
 
     // Query frequency analysis
     const queryFrequency: Record<string, number> = {};
-    this.metrics.forEach((m) => {
+    this.metrics.forEach(m => {
       const queryKey = m.query.substring(0, 50); // First 50 chars as key
       queryFrequency[queryKey] = (queryFrequency[queryKey] || 0) + 1;
     });
@@ -138,7 +136,7 @@ export class QueryPerformanceMonitor {
     const queryGroups = new Map<string, QueryMetrics[]>();
 
     // Group similar queries
-    this.metrics.forEach((metric) => {
+    this.metrics.forEach(metric => {
       const queryPattern = this.extractQueryPattern(metric.query);
       if (!queryGroups.has(queryPattern)) {
         queryGroups.set(queryPattern, []);
@@ -148,50 +146,49 @@ export class QueryPerformanceMonitor {
 
     // Analyze each query group
     queryGroups.forEach((queries, pattern) => {
-      const avgDuration =
-        queries.reduce((sum, q) => sum + q.duration, 0) / queries.length;
+      const avgDuration = queries.reduce((sum, q) => sum + q.duration, 0) / queries.length;
       const frequency = queries.length;
 
       const issues: string[] = [];
       const recommendations: string[] = [];
-      let priority: "low" | "medium" | "high" | "critical" = "low";
+      let priority: 'low' | 'medium' | 'high' | 'critical' = 'low';
       let estimatedImprovement = 0;
 
       // Analyze for common issues
       if (avgDuration > 2000) {
-        issues.push("High average execution time");
-        recommendations.push("Consider adding database indexes");
-        recommendations.push("Review query structure for optimization");
-        priority = "critical";
+        issues.push('High average execution time');
+        recommendations.push('Consider adding database indexes');
+        recommendations.push('Review query structure for optimization');
+        priority = 'critical';
         estimatedImprovement += 40;
       } else if (avgDuration > 1000) {
-        issues.push("Moderate execution time");
-        recommendations.push("Consider query optimization");
-        priority = priority === "low" ? "high" : priority;
+        issues.push('Moderate execution time');
+        recommendations.push('Consider query optimization');
+        priority = priority === 'low' ? 'high' : priority;
         estimatedImprovement += 25;
       }
 
       if (frequency > 100) {
-        issues.push("High frequency query");
-        recommendations.push("Consider caching results");
-        recommendations.push("Implement query result pagination");
-        priority = priority === "low" ? "medium" : priority;
+        issues.push('High frequency query');
+        recommendations.push('Consider caching results');
+        recommendations.push('Implement query result pagination');
+        priority = priority === 'low' ? 'medium' : priority;
         estimatedImprovement += 30;
       }
 
       // Check for N+1 query patterns
-      if (pattern.includes("SELECT") && frequency > 50) {
-        issues.push("Potential N+1 query pattern");
-        recommendations.push("Consider using JOIN or batch queries");
-        priority = "high";
+      if (pattern.includes('SELECT') && frequency > 50) {
+        issues.push('Potential N+1 query pattern');
+        recommendations.push('Consider using JOIN or batch queries');
+        priority = 'high';
         estimatedImprovement += 50;
       }
 
       // Check for missing WHERE clauses in healthcare queries
-      if (pattern.includes("patients") && !pattern.includes("WHERE")) {
-        issues.push("Missing WHERE clause on sensitive data");
-        recommendations.push("Add proper filtering for LGPD compliance");
-        priority = "critical";
+      if (pattern.includes('patients') && !pattern.includes('WHERE')) {
+        issues.push('Missing WHERE clause on sensitive data');
+        recommendations.push('Add proper filtering for LGPD compliance');
+        priority = 'critical';
         estimatedImprovement += 20;
       }
 
@@ -217,10 +214,10 @@ export class QueryPerformanceMonitor {
    */
   private extractQueryPattern(query: string): string {
     return query
-      .replace(/\$\d+/g, "?") // Replace parameters
-      .replace(/\d+/g, "N") // Replace numbers
-      .replace(/'[^']*'/g, "'STRING'") // Replace string literals
-      .replace(/\s+/g, " ") // Normalize whitespace
+      .replace(/\$\d+/g, '?') // Replace parameters
+      .replace(/\d+/g, 'N') // Replace numbers
+      .replace(/'[^']*'/g, '\'STRING\'') // Replace string literals
+      .replace(/\s+/g, ' ') // Normalize whitespace
       .trim()
       .substring(0, 200); // Limit length
   }
@@ -249,7 +246,7 @@ export class ConnectionPoolOptimizer {
    * Monitor connection pool health
    */
   monitorPool(): {
-    health: "healthy" | "warning" | "critical";
+    health: 'healthy' | 'warning' | 'critical';
     recommendations: string[];
     stats: typeof this.connectionStats;
   } {
@@ -260,32 +257,31 @@ export class ConnectionPoolOptimizer {
       connectionErrors,
     } = this.connectionStats;
 
-    let health: "healthy" | "warning" | "critical" = "healthy";
+    let health: 'healthy' | 'warning' | 'critical' = 'healthy';
     const recommendations: string[] = [];
 
     // Analyze connection pool health
-    const utilizationRate =
-      totalConnections > 0 ? (activeConnections / totalConnections) * 100 : 0;
+    const utilizationRate = totalConnections > 0 ? (activeConnections / totalConnections) * 100 : 0;
 
     if (utilizationRate > 90) {
-      health = "critical";
-      recommendations.push("Increase maximum pool size");
-      recommendations.push("Investigate long-running queries");
+      health = 'critical';
+      recommendations.push('Increase maximum pool size');
+      recommendations.push('Investigate long-running queries');
     } else if (utilizationRate > 75) {
-      health = "warning";
-      recommendations.push("Consider increasing pool size");
+      health = 'warning';
+      recommendations.push('Consider increasing pool size');
     }
 
     if (waitingRequests > 10) {
-      health = "critical";
-      recommendations.push("Reduce query execution time");
-      recommendations.push("Increase pool size or timeout settings");
+      health = 'critical';
+      recommendations.push('Reduce query execution time');
+      recommendations.push('Increase pool size or timeout settings');
     }
 
     if (connectionErrors > 5) {
-      health = "warning";
-      recommendations.push("Check database connectivity");
-      recommendations.push("Review connection timeout settings");
+      health = 'warning';
+      recommendations.push('Check database connectivity');
+      recommendations.push('Review connection timeout settings');
     }
 
     return {
@@ -298,25 +294,25 @@ export class ConnectionPoolOptimizer {
   /**
    * Get optimized pool configuration based on workload
    */
-  getOptimizedConfig(workloadType: "light" | "medium" | "heavy"): PoolConfig {
+  getOptimizedConfig(workloadType: 'light' | 'medium' | 'heavy'): PoolConfig {
     const baseConfig = { ...HEALTHCARE_POOL_CONFIG };
 
     switch (workloadType) {
-      case "light":
+      case 'light':
         return {
           ...baseConfig,
           min: 1,
           max: 10,
         };
 
-      case "medium":
+      case 'medium':
         return {
           ...baseConfig,
           min: 2,
           max: 20,
         };
 
-      case "heavy":
+      case 'heavy':
         return {
           ...baseConfig,
           min: 5,
@@ -345,23 +341,23 @@ export class HealthcareQueryOptimizer {
     let optimizedQuery = query;
 
     // Ensure proper filtering for patient data
-    if (query.includes("patients") && !query.includes("WHERE")) {
+    if (query.includes('patients') && !query.includes('WHERE')) {
       optimizedQuery = query.replace(
-        "FROM patients",
+        'FROM patients',
         `FROM patients WHERE clinic_id = '${clinicId}'`,
       );
     }
 
     // Add audit trail for sensitive queries
     if (
-      query.includes("patient_records") ||
-      query.includes("medical_history")
+      query.includes('patient_records')
+      || query.includes('medical_history')
     ) {
       // This would integrate with audit logging
-      console.log("Sensitive query executed:", {
+      console.log('Sensitive query executed:', {
         userId,
         clinicId,
-        queryType: "patient_data_access",
+        queryType: 'patient_data_access',
         timestamp: new Date().toISOString(),
       });
     }
@@ -374,11 +370,11 @@ export class HealthcareQueryOptimizer {
    */
   getIndexRecommendations(): string[] {
     return [
-      "CREATE INDEX CONCURRENTLY idx_patients_clinic_id ON patients(clinic_id);",
-      "CREATE INDEX CONCURRENTLY idx_appointments_date_professional ON appointments(appointment_date, professional_id);",
-      "CREATE INDEX CONCURRENTLY idx_patient_records_patient_date ON patient_records(patient_id, created_at);",
-      "CREATE INDEX CONCURRENTLY idx_audit_logs_timestamp ON audit_logs(timestamp) WHERE action_type IN ('patient_access', 'data_modification');",
-      "CREATE INDEX CONCURRENTLY idx_professionals_clinic_active ON professionals(clinic_id, is_active) WHERE is_active = true;",
+      'CREATE INDEX CONCURRENTLY idx_patients_clinic_id ON patients(clinic_id);',
+      'CREATE INDEX CONCURRENTLY idx_appointments_date_professional ON appointments(appointment_date, professional_id);',
+      'CREATE INDEX CONCURRENTLY idx_patient_records_patient_date ON patient_records(patient_id, created_at);',
+      'CREATE INDEX CONCURRENTLY idx_audit_logs_timestamp ON audit_logs(timestamp) WHERE action_type IN (\'patient_access\', \'data_modification\');',
+      'CREATE INDEX CONCURRENTLY idx_professionals_clinic_active ON professionals(clinic_id, is_active) WHERE is_active = true;',
     ];
   }
 }

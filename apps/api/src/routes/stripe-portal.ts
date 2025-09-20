@@ -3,9 +3,9 @@
  * Handles creation of customer portal sessions for subscription management
  */
 
-import { createClient } from "@supabase/supabase-js";
-import { Hono } from "hono";
-import { cors } from "hono/cors";
+import { createClient } from '@supabase/supabase-js';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
 const app = new Hono();
 
@@ -15,25 +15,25 @@ const allowedOrigins = [
   process.env.NEXT_PUBLIC_APP_URL,
 ].filter(Boolean) as string[];
 
-if (process.env.NODE_ENV !== "production") {
+if (process.env.NODE_ENV !== 'production') {
   allowedOrigins.push(
-    "http://localhost:3000",
-    "http://localhost:5173",
-    "http://localhost:8081",
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:8081',
   );
 }
 
 app.use(
-  "*",
+  '*',
   cors({
-    origin: (origin) =>
+    origin: origin =>
       !origin
         ? undefined
         : allowedOrigins.includes(origin)
-          ? origin
-          : undefined,
-    allowMethods: ["GET", "POST"],
-    allowHeaders: ["Content-Type", "Authorization"],
+        ? origin
+        : undefined,
+    allowMethods: ['GET', 'POST'],
+    allowHeaders: ['Content-Type', 'Authorization'],
   }),
 );
 
@@ -47,47 +47,47 @@ const supabase = createClient(
  * Create Stripe Customer Portal Session
  * POST /api/stripe/create-portal-session
  */
-app.post("/create-portal-session", async (c) => {
+app.post('/create-portal-session', async c => {
   try {
     // Get user ID from request body
     const { userId } = await c.req.json();
 
     if (!userId) {
-      return c.json({ error: "User ID is required" }, 400);
+      return c.json({ error: 'User ID is required' }, 400);
     }
 
     // Get user profile with Stripe customer ID
     const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("stripe_customer_id, email")
-      .eq("id", userId)
+      .from('profiles')
+      .select('stripe_customer_id, email')
+      .eq('id', userId)
       .single();
 
     if (profileError || !profile) {
-      console.error("Error fetching user profile:", profileError);
-      return c.json({ error: "User not found" }, 404);
+      console.error('Error fetching user profile:', profileError);
+      return c.json({ error: 'User not found' }, 404);
     }
 
     // Check if user has a Stripe customer ID
     if (!profile.stripe_customer_id) {
       return c.json(
         {
-          error: "No Stripe customer found. Please subscribe first.",
+          error: 'No Stripe customer found. Please subscribe first.',
         },
         400,
       );
     }
 
     // Import Stripe (dynamic import to avoid issues)
-    const Stripe = (await import("stripe")).default;
+    const Stripe = (await import('stripe')).default;
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: "2024-06-20",
+      apiVersion: '2024-06-20',
     });
 
     // Create customer portal session
     const session = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:8081"}/subscription`,
+      return_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:8081'}/subscription`,
     });
 
     return c.json({
@@ -95,11 +95,11 @@ app.post("/create-portal-session", async (c) => {
       portal_url: session.url,
     });
   } catch (error) {
-    console.error("Error creating customer portal session:", error);
+    console.error('Error creating customer portal session:', error);
     return c.json(
       {
-        error: "Failed to create customer portal session",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to create customer portal session',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       500,
     );
@@ -110,12 +110,12 @@ app.post("/create-portal-session", async (c) => {
  * Get Customer Portal Configuration
  * GET /api/stripe/portal-config
  */
-app.get("/portal-config", async (c) => {
+app.get('/portal-config', async c => {
   try {
     // Import Stripe
-    const Stripe = (await import("stripe")).default;
+    const Stripe = (await import('stripe')).default;
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: "2024-06-20",
+      apiVersion: '2024-06-20',
     });
 
     // Get portal configuration
@@ -134,11 +134,11 @@ app.get("/portal-config", async (c) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching portal configuration:", error);
+    console.error('Error fetching portal configuration:', error);
     return c.json(
       {
-        error: "Failed to fetch portal configuration",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to fetch portal configuration',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       500,
     );
@@ -149,18 +149,18 @@ app.get("/portal-config", async (c) => {
  * Create Customer in Stripe (if needed)
  * POST /api/stripe/create-customer
  */
-app.post("/create-customer", async (c) => {
+app.post('/create-customer', async c => {
   try {
     const { userId, email, name } = await c.req.json();
 
     if (!userId || !email) {
-      return c.json({ error: "User ID and email are required" }, 400);
+      return c.json({ error: 'User ID and email are required' }, 400);
     }
 
     // Import Stripe
-    const Stripe = (await import("stripe")).default;
+    const Stripe = (await import('stripe')).default;
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      apiVersion: "2024-06-20",
+      apiVersion: '2024-06-20',
     });
 
     // Create customer in Stripe
@@ -174,29 +174,29 @@ app.post("/create-customer", async (c) => {
 
     // Update user profile with Stripe customer ID
     const { error: updateError } = await supabase
-      .from("profiles")
+      .from('profiles')
       .update({ stripe_customer_id: customer.id })
-      .eq("id", userId);
+      .eq('id', userId);
 
     if (updateError) {
       console.error(
-        "Error updating user profile with customer ID:",
+        'Error updating user profile with customer ID:',
         updateError,
       );
-      return c.json({ error: "Failed to update user profile" }, 500);
+      return c.json({ error: 'Failed to update user profile' }, 500);
     }
 
     return c.json({
       success: true,
       customer_id: customer.id,
-      message: "Customer created successfully",
+      message: 'Customer created successfully',
     });
   } catch (error) {
-    console.error("Error creating Stripe customer:", error);
+    console.error('Error creating Stripe customer:', error);
     return c.json(
       {
-        error: "Failed to create customer",
-        details: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to create customer',
+        details: error instanceof Error ? error.message : 'Unknown error',
       },
       500,
     );
@@ -207,10 +207,10 @@ app.post("/create-customer", async (c) => {
  * Health check endpoint
  * GET /api/stripe/health
  */
-app.get("/health", (c) => {
+app.get('/health', c => {
   return c.json({
-    status: "healthy",
-    service: "stripe-portal",
+    status: 'healthy',
+    service: 'stripe-portal',
     timestamp: new Date().toISOString(),
   });
 });

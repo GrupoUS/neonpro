@@ -10,12 +10,12 @@
  * - Multi-modal support (text, images, documents)
  */
 
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { z } from "zod";
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { z } from 'zod';
 
 // Test helper for API calls
 async function api(path: string, init?: RequestInit) {
-  const { default: app } = await import("../../src/app");
+  const { default: app } = await import('../../src/app');
   const url = new URL(`http://local.test${path}`);
   return app.request(url, init);
 }
@@ -23,11 +23,11 @@ async function api(path: string, init?: RequestInit) {
 // Message request schema validation
 const MessageRequestSchema = z.object({
   content: z.string().min(1),
-  type: z.enum(["text", "image", "document"]).default("text"),
+  type: z.enum(['text', 'image', 'document']).default('text'),
   attachments: z
     .array(
       z.object({
-        type: z.enum(["image", "document", "medical_report"]),
+        type: z.enum(['image', 'document', 'medical_report']),
         url: z.string().url(),
         metadata: z.object({
           filename: z.string(),
@@ -41,7 +41,7 @@ const MessageRequestSchema = z.object({
   context: z
     .object({
       patientId: z.string().uuid().optional(),
-      urgency: z.enum(["low", "medium", "high", "emergency"]).default("medium"),
+      urgency: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
       specialty: z.string().optional(),
       medicalContext: z.string().optional(),
     })
@@ -50,7 +50,7 @@ const MessageRequestSchema = z.object({
     .object({
       stream: z.boolean().default(true),
       includeReferences: z.boolean().default(true),
-      language: z.enum(["pt-BR", "en-US"]).default("pt-BR"),
+      language: z.enum(['pt-BR', 'en-US']).default('pt-BR'),
     })
     .optional(),
 });
@@ -60,8 +60,8 @@ const MessageResponseSchema = z.object({
   id: z.string().uuid(),
   sessionId: z.string().uuid(),
   content: z.string(),
-  role: z.enum(["user", "assistant"]),
-  type: z.enum(["text", "analysis", "recommendation"]),
+  role: z.enum(['user', 'assistant']),
+  type: z.enum(['text', 'analysis', 'recommendation']),
   metadata: z.object({
     model: z.string(),
     provider: z.string(),
@@ -76,7 +76,7 @@ const MessageResponseSchema = z.object({
   healthcareContext: z.object({
     specialty: z.string(),
     medicalTerminology: z.array(z.string()),
-    clinicalRelevance: z.enum(["high", "medium", "low"]),
+    clinicalRelevance: z.enum(['high', 'medium', 'low']),
     recommendations: z.array(z.string()).optional(),
   }),
   lgpdCompliance: z.object({
@@ -88,13 +88,13 @@ const MessageResponseSchema = z.object({
   timestamp: z.string().datetime(),
 });
 
-describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
-  const testSessionId = "550e8400-e29b-41d4-a716-446655440000";
+describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
+  const testSessionId = '550e8400-e29b-41d4-a716-446655440000';
   const testAuthHeaders = {
-    Authorization: "Bearer test-token",
-    "Content-Type": "application/json",
-    "X-Healthcare-Professional": "CRM-123456",
-    "X-CFM-License": "CFM-12345",
+    Authorization: 'Bearer test-token',
+    'Content-Type': 'application/json',
+    'X-Healthcare-Professional': 'CRM-123456',
+    'X-CFM-License': 'CFM-12345',
   };
 
   beforeAll(async () => {
@@ -106,28 +106,27 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
     // Cleanup test messages and session data
   });
 
-  describe("Basic Functionality", () => {
-    it("should send message and receive AI response", async () => {
+  describe('Basic Functionality', () => {
+    it('should send message and receive AI response', async () => {
       const messageRequest = {
-        content:
-          "Quais são os principais cuidados pós-procedimento para preenchimento facial?",
-        type: "text",
+        content: 'Quais são os principais cuidados pós-procedimento para preenchimento facial?',
+        type: 'text',
         context: {
-          urgency: "medium",
-          specialty: "medicina_estetica",
-          medicalContext: "preenchimento_facial",
+          urgency: 'medium',
+          specialty: 'medicina_estetica',
+          medicalContext: 'preenchimento_facial',
         },
         settings: {
           stream: false,
           includeReferences: true,
-          language: "pt-BR",
+          language: 'pt-BR',
         },
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
@@ -140,56 +139,55 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
       expect(response).toBeDefined();
     });
 
-    it("should support streaming responses", async () => {
+    it('should support streaming responses', async () => {
       const messageRequest = {
-        content:
-          "Explique o protocolo de segurança para aplicação de toxina botulínica.",
+        content: 'Explique o protocolo de segurança para aplicação de toxina botulínica.',
         settings: {
           stream: true,
-          language: "pt-BR",
+          language: 'pt-BR',
         },
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
       );
 
       expect(response.status).toBe(201);
-      expect(response.headers.get("Content-Type")).toContain(
-        "text/event-stream",
+      expect(response.headers.get('Content-Type')).toContain(
+        'text/event-stream',
       );
     });
 
-    it("should handle multi-modal inputs (images)", async () => {
+    it('should handle multi-modal inputs (images)', async () => {
       const messageRequest = {
-        content: "Analise esta imagem dermatológica e forneça uma avaliação.",
-        type: "image",
+        content: 'Analise esta imagem dermatológica e forneça uma avaliação.',
+        type: 'image',
         attachments: [
           {
-            type: "image",
-            url: "https://example.com/test-image.jpg",
+            type: 'image',
+            url: 'https://example.com/test-image.jpg',
             metadata: {
-              filename: "lesao-dermatologica.jpg",
+              filename: 'lesao-dermatologica.jpg',
               size: 1024000,
-              mimeType: "image/jpeg",
+              mimeType: 'image/jpeg',
             },
           },
         ],
         context: {
-          specialty: "dermatologia",
-          urgency: "high",
+          specialty: 'dermatologia',
+          urgency: 'high',
         },
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
@@ -200,17 +198,17 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
     });
   });
 
-  describe("Error Handling", () => {
-    it("should return 401 for missing authentication", async () => {
+  describe('Error Handling', () => {
+    it('should return 401 for missing authentication', async () => {
       const messageRequest = {
-        content: "Test message without authentication",
+        content: 'Test message without authentication',
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(messageRequest),
         },
       );
@@ -218,16 +216,16 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
       expect(response.status).toBe(401);
     });
 
-    it("should return 404 for invalid session ID", async () => {
+    it('should return 404 for invalid session ID', async () => {
       const messageRequest = {
-        content: "Test message for invalid session",
+        content: 'Test message for invalid session',
       };
 
-      const invalidSessionId = "00000000-0000-0000-0000-000000000000";
+      const invalidSessionId = '00000000-0000-0000-0000-000000000000';
       const response = await api(
         `/api/v2/ai/chat/sessions/${invalidSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
@@ -236,15 +234,15 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
       expect(response.status).toBe(404);
     });
 
-    it("should return 400 for empty message content", async () => {
+    it('should return 400 for empty message content', async () => {
       const messageRequest = {
-        content: "",
+        content: '',
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
@@ -253,17 +251,17 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
       expect(response.status).toBe(400);
     });
 
-    it("should return 413 for oversized attachments", async () => {
+    it('should return 413 for oversized attachments', async () => {
       const messageRequest = {
-        content: "Attachment too large",
+        content: 'Attachment too large',
         attachments: [
           {
-            type: "document",
-            url: "https://example.com/large-file.pdf",
+            type: 'document',
+            url: 'https://example.com/large-file.pdf',
             metadata: {
-              filename: "large-document.pdf",
+              filename: 'large-document.pdf',
               size: 50000000, // 50MB - exceeds typical limits
-              mimeType: "application/pdf",
+              mimeType: 'application/pdf',
             },
           },
         ],
@@ -272,7 +270,7 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
@@ -282,19 +280,19 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
     });
   });
 
-  describe("Performance Requirements", () => {
-    it("should respond within 3 seconds for text messages", async () => {
+  describe('Performance Requirements', () => {
+    it('should respond within 3 seconds for text messages', async () => {
       const startTime = Date.now();
 
       const messageRequest = {
-        content: "Pergunta rápida sobre cuidados dermatológicos.",
+        content: 'Pergunta rápida sobre cuidados dermatológicos.',
         settings: { stream: false },
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
@@ -305,18 +303,18 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
       expect(response.status).toBe(201);
     });
 
-    it("should start streaming within 1 second", async () => {
+    it('should start streaming within 1 second', async () => {
       const startTime = Date.now();
 
       const messageRequest = {
-        content: "Pergunta para teste de streaming.",
+        content: 'Pergunta para teste de streaming.',
         settings: { stream: true },
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
@@ -328,70 +326,70 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
     });
   });
 
-  describe("Healthcare Compliance", () => {
-    it("should include medical terminology validation", async () => {
+  describe('Healthcare Compliance', () => {
+    it('should include medical terminology validation', async () => {
       const messageRequest = {
-        content: "Como tratar acne vulgar com tretinoin tópico 0.025%?",
+        content: 'Como tratar acne vulgar com tretinoin tópico 0.025%?',
         context: {
-          specialty: "dermatologia",
-          medicalContext: "acne_treatment",
+          specialty: 'dermatologia',
+          medicalContext: 'acne_treatment',
         },
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
       );
 
       expect(
-        response.headers.get("X-Medical-Terminology-Validated"),
+        response.headers.get('X-Medical-Terminology-Validated'),
       ).toBeDefined();
-      expect(response.headers.get("X-Clinical-Context")).toBeDefined();
+      expect(response.headers.get('X-Clinical-Context')).toBeDefined();
       expect(response.status).toBe(201);
     });
 
-    it("should enforce LGPD compliance for patient data", async () => {
+    it('should enforce LGPD compliance for patient data', async () => {
       const messageRequest = {
-        content: "Analise este caso clínico do paciente.",
+        content: 'Analise este caso clínico do paciente.',
         context: {
-          patientId: "550e8400-e29b-41d4-a716-446655440001",
-          specialty: "dermatologia",
+          patientId: '550e8400-e29b-41d4-a716-446655440001',
+          specialty: 'dermatologia',
         },
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
       );
 
-      expect(response.headers.get("X-LGPD-Processed")).toBeDefined();
-      expect(response.headers.get("X-Data-Retention-Policy")).toBeDefined();
+      expect(response.headers.get('X-LGPD-Processed')).toBeDefined();
+      expect(response.headers.get('X-Data-Retention-Policy')).toBeDefined();
       expect(response.status).toBe(201);
     });
 
-    it("should provide Brazilian healthcare context in responses", async () => {
+    it('should provide Brazilian healthcare context in responses', async () => {
       const messageRequest = {
-        content: "Quais medicamentos são aprovados pela ANVISA para melasma?",
+        content: 'Quais medicamentos são aprovados pela ANVISA para melasma?',
         context: {
-          specialty: "dermatologia",
+          specialty: 'dermatologia',
         },
         settings: {
-          language: "pt-BR",
+          language: 'pt-BR',
         },
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
@@ -401,31 +399,30 @@ describe("POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests", () => {
 
       // Contract ensures Brazilian regulatory context
       const responseText = await response.text();
-      expect(responseText).toContain("ANVISA");
+      expect(responseText).toContain('ANVISA');
       expect(responseText).toMatch(/pt-BR|português/);
     });
 
-    it("should handle emergency medical queries appropriately", async () => {
+    it('should handle emergency medical queries appropriately', async () => {
       const messageRequest = {
-        content:
-          "Paciente apresenta reação alérgica grave após preenchimento. O que fazer?",
+        content: 'Paciente apresenta reação alérgica grave após preenchimento. O que fazer?',
         context: {
-          urgency: "emergency",
-          specialty: "medicina_estetica",
+          urgency: 'emergency',
+          specialty: 'medicina_estetica',
         },
       };
 
       const response = await api(
         `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
         {
-          method: "POST",
+          method: 'POST',
           headers: testAuthHeaders,
           body: JSON.stringify(messageRequest),
         },
       );
 
-      expect(response.headers.get("X-Emergency-Protocol")).toBeDefined();
-      expect(response.headers.get("X-Priority-Level")).toBe("high");
+      expect(response.headers.get('X-Emergency-Protocol')).toBeDefined();
+      expect(response.headers.get('X-Priority-Level')).toBe('high');
       expect(response.status).toBe(201);
     });
   });

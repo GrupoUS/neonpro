@@ -9,21 +9,21 @@
  * - Error handling and partial failures
  */
 
-import request from "supertest";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { z } from "zod";
-import { app } from "../../src/app";
+import request from 'supertest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { z } from 'zod';
+import { app } from '../../src/app';
 
 // Bulk action request schema validation
 const BulkActionRequestSchema = z.object({
-  action: z.enum(["update", "delete", "updateStatus", "export", "merge"]),
+  action: z.enum(['update', 'delete', 'updateStatus', 'export', 'merge']),
   patientIds: z.array(z.string().uuid()).min(1).max(100),
   data: z
     .object({
       // For update actions
       updates: z
         .object({
-          status: z.enum(["active", "inactive", "archived"]).optional(),
+          status: z.enum(['active', 'inactive', 'archived']).optional(),
           emergencyContact: z
             .object({
               name: z.string().optional(),
@@ -43,11 +43,11 @@ const BulkActionRequestSchema = z.object({
         })
         .optional(),
       // For delete actions
-      deletionType: z.enum(["soft", "hard"]).optional(),
+      deletionType: z.enum(['soft', 'hard']).optional(),
       // For merge actions
       primaryPatientId: z.string().uuid().optional(),
       mergeStrategy: z
-        .enum(["prefer_primary", "prefer_recent", "manual"])
+        .enum(['prefer_primary', 'prefer_recent', 'manual'])
         .optional(),
     })
     .optional(),
@@ -73,7 +73,7 @@ const BulkActionResponseSchema = z.object({
   results: z.array(
     z.object({
       patientId: z.string().uuid(),
-      status: z.enum(["success", "error", "skipped"]),
+      status: z.enum(['success', 'error', 'skipped']),
       data: z.any().optional(), // Updated patient data or error details
       error: z.string().optional(),
     }),
@@ -91,10 +91,10 @@ const BulkActionResponseSchema = z.object({
   }),
 });
 
-describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
+describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
   const testAuthHeaders = {
-    Authorization: "Bearer test-token",
-    "Content-Type": "application/json",
+    Authorization: 'Bearer test-token',
+    'Content-Type': 'application/json',
   };
 
   let testPatientIds: string[] = [];
@@ -103,66 +103,66 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
     // Create multiple test patients for bulk operations
     const patientData = [
       {
-        name: "Bulk Test Patient 1",
-        cpf: "111.222.333-44",
-        email: "bulk1@example.com",
-        status: "active",
+        name: 'Bulk Test Patient 1',
+        cpf: '111.222.333-44',
+        email: 'bulk1@example.com',
+        status: 'active',
       },
       {
-        name: "Bulk Test Patient 2",
-        cpf: "222.333.444-55",
-        email: "bulk2@example.com",
-        status: "active",
+        name: 'Bulk Test Patient 2',
+        cpf: '222.333.444-55',
+        email: 'bulk2@example.com',
+        status: 'active',
       },
       {
-        name: "Bulk Test Patient 3",
-        cpf: "333.444.555-66",
-        email: "bulk3@example.com",
-        status: "inactive",
+        name: 'Bulk Test Patient 3',
+        cpf: '333.444.555-66',
+        email: 'bulk3@example.com',
+        status: 'inactive',
       },
       {
-        name: "Bulk Test Patient 4",
-        cpf: "444.555.666-77",
-        email: "bulk4@example.com",
-        status: "active",
+        name: 'Bulk Test Patient 4',
+        cpf: '444.555.666-77',
+        email: 'bulk4@example.com',
+        status: 'active',
       },
       {
-        name: "Bulk Test Patient 5",
-        cpf: "555.666.777-88",
-        email: "bulk5@example.com",
-        status: "archived",
+        name: 'Bulk Test Patient 5',
+        cpf: '555.666.777-88',
+        email: 'bulk5@example.com',
+        status: 'archived',
       },
     ];
 
     for (const patient of patientData) {
       const response = await request(app)
-        .post("/api/v2/patients")
+        .post('/api/v2/patients')
         .set(testAuthHeaders)
         .send({
           name: patient.name,
           cpf: patient.cpf,
-          phone: "(11) 99999-9999",
+          phone: '(11) 99999-9999',
           email: patient.email,
-          dateOfBirth: "1990-01-01T00:00:00.000Z",
-          gender: "male",
+          dateOfBirth: '1990-01-01T00:00:00.000Z',
+          gender: 'male',
           address: {
-            street: "Rua Bulk Test",
-            number: "123",
-            neighborhood: "Centro",
-            city: "São Paulo",
-            state: "SP",
-            zipCode: "01000-000",
+            street: 'Rua Bulk Test',
+            number: '123',
+            neighborhood: 'Centro',
+            city: 'São Paulo',
+            state: 'SP',
+            zipCode: '01000-000',
           },
           emergencyContact: {
-            name: "Bulk Emergency",
-            relationship: "Family",
-            phone: "(11) 88888-8888",
+            name: 'Bulk Emergency',
+            relationship: 'Family',
+            phone: '(11) 88888-8888',
           },
           lgpdConsent: {
             dataProcessing: true,
             marketingCommunications: false,
             consentDate: new Date().toISOString(),
-            ipAddress: "127.0.0.1",
+            ipAddress: '127.0.0.1',
           },
         });
 
@@ -174,14 +174,14 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
     // Cleanup test data
   });
 
-  describe("Bulk Status Updates", () => {
-    it("should update status for multiple patients with correct schema", async () => {
+  describe('Bulk Status Updates', () => {
+    it('should update status for multiple patients with correct schema', async () => {
       const bulkRequest = {
-        action: "updateStatus",
+        action: 'updateStatus',
         patientIds: testPatientIds.slice(0, 3),
         data: {
           updates: {
-            status: "inactive",
+            status: 'inactive',
           },
         },
         options: {
@@ -190,7 +190,7 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(200);
@@ -200,29 +200,29 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       expect(validatedData).toBeDefined();
 
       // Validate bulk operation results
-      expect(response.body.action).toBe("updateStatus");
+      expect(response.body.action).toBe('updateStatus');
       expect(response.body.summary.totalRequested).toBe(3);
       expect(response.body.summary.successful).toBe(3);
       expect(response.body.summary.failed).toBe(0);
 
       // Verify individual results
-      response.body.results.forEach((result) => {
-        expect(result.status).toBe("success");
-        expect(result.data.status).toBe("inactive");
+      response.body.results.forEach(result => {
+        expect(result.status).toBe('success');
+        expect(result.data.status).toBe('inactive');
       });
     });
 
-    it("should handle partial failures gracefully", async () => {
+    it('should handle partial failures gracefully', async () => {
       const bulkRequest = {
-        action: "updateStatus",
+        action: 'updateStatus',
         patientIds: [
           testPatientIds[0],
-          "123e4567-e89b-12d3-a456-426614174000", // Non-existent ID
+          '123e4567-e89b-12d3-a456-426614174000', // Non-existent ID
           testPatientIds[1],
         ],
         data: {
           updates: {
-            status: "active",
+            status: 'active',
           },
         },
         options: {
@@ -231,7 +231,7 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(200);
@@ -242,49 +242,49 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
 
       // Check that the failed result contains error details
       const failedResult = response.body.results.find(
-        (r) => r.status === "error",
+        r => r.status === 'error',
       );
       expect(failedResult).toBeDefined();
-      expect(failedResult.error).toContain("not found");
+      expect(failedResult.error).toContain('not found');
     });
   });
 
-  describe("Bulk Updates", () => {
-    it("should update emergency contact for multiple patients", async () => {
+  describe('Bulk Updates', () => {
+    it('should update emergency contact for multiple patients', async () => {
       const bulkRequest = {
-        action: "update",
+        action: 'update',
         patientIds: testPatientIds.slice(0, 2),
         data: {
           updates: {
             emergencyContact: {
-              name: "Updated Emergency Contact",
-              relationship: "Updated Relationship",
-              phone: "(11) 77777-7777",
+              name: 'Updated Emergency Contact',
+              relationship: 'Updated Relationship',
+              phone: '(11) 77777-7777',
             },
           },
         },
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(200);
 
       expect(response.body.summary.successful).toBe(2);
 
-      response.body.results.forEach((result) => {
-        expect(result.status).toBe("success");
+      response.body.results.forEach(result => {
+        expect(result.status).toBe('success');
         expect(result.data.emergencyContact.name).toBe(
-          "Updated Emergency Contact",
+          'Updated Emergency Contact',
         );
-        expect(result.data.emergencyContact.phone).toBe("(11) 77777-7777");
+        expect(result.data.emergencyContact.phone).toBe('(11) 77777-7777');
       });
     });
 
-    it("should update LGPD consent preferences in bulk", async () => {
+    it('should update LGPD consent preferences in bulk', async () => {
       const bulkRequest = {
-        action: "update",
+        action: 'update',
         patientIds: testPatientIds.slice(0, 3),
         data: {
           updates: {
@@ -297,73 +297,73 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(200);
 
       expect(response.body.summary.successful).toBe(3);
 
-      response.body.results.forEach((result) => {
-        expect(result.status).toBe("success");
+      response.body.results.forEach(result => {
+        expect(result.status).toBe('success');
         expect(result.data.lgpdConsent.marketingCommunications).toBe(true);
         expect(result.data.lgpdConsent.thirdPartySharing).toBe(false);
       });
     });
   });
 
-  describe("Bulk Deletions", () => {
-    it("should perform bulk soft deletion", async () => {
+  describe('Bulk Deletions', () => {
+    it('should perform bulk soft deletion', async () => {
       const bulkRequest = {
-        action: "delete",
+        action: 'delete',
         patientIds: [testPatientIds[4]], // Delete one patient
         data: {
-          deletionType: "soft",
+          deletionType: 'soft',
         },
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(200);
 
       expect(response.body.summary.successful).toBe(1);
-      expect(response.body.results[0].status).toBe("success");
-      expect(response.body.results[0].data.deletionType).toBe("soft");
+      expect(response.body.results[0].status).toBe('success');
+      expect(response.body.results[0].data.deletionType).toBe('soft');
     });
 
-    it("should require special authorization for bulk hard deletion", async () => {
+    it('should require special authorization for bulk hard deletion', async () => {
       const bulkRequest = {
-        action: "delete",
+        action: 'delete',
         patientIds: testPatientIds.slice(2, 4),
         data: {
-          deletionType: "hard",
+          deletionType: 'hard',
         },
       };
 
       // Should require higher authorization for hard deletion
       const restrictedHeaders = {
-        Authorization: "Bearer limited-token",
-        "Content-Type": "application/json",
+        Authorization: 'Bearer limited-token',
+        'Content-Type': 'application/json',
       };
 
       await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(restrictedHeaders)
         .send(bulkRequest)
         .expect(403);
     });
   });
 
-  describe("Validation Mode", () => {
-    it("should validate bulk operation without executing", async () => {
+  describe('Validation Mode', () => {
+    it('should validate bulk operation without executing', async () => {
       const bulkRequest = {
-        action: "updateStatus",
+        action: 'updateStatus',
         patientIds: testPatientIds.slice(0, 2),
         data: {
           updates: {
-            status: "archived",
+            status: 'archived',
           },
         },
         options: {
@@ -372,27 +372,27 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(200);
 
       expect(response.body.summary.totalRequested).toBe(2);
       // In validation mode, no actual changes are made
-      response.body.results.forEach((result) => {
-        expect(result.status).toBe("success");
+      response.body.results.forEach(result => {
+        expect(result.status).toBe('success');
         expect(result.data).toBeUndefined(); // No actual data changes
       });
     });
 
-    it("should detect validation errors before execution", async () => {
+    it('should detect validation errors before execution', async () => {
       const invalidBulkRequest = {
-        action: "update",
+        action: 'update',
         patientIds: testPatientIds.slice(0, 2),
         data: {
           updates: {
             emergencyContact: {
-              phone: "invalid-phone-format", // Invalid phone format
+              phone: 'invalid-phone-format', // Invalid phone format
             },
           },
         },
@@ -402,24 +402,24 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(invalidBulkRequest)
         .expect(400);
 
-      expect(response.body.error).toContain("validation");
+      expect(response.body.error).toContain('validation');
     });
   });
 
-  describe("Performance and Batching", () => {
-    it("should process large batches efficiently", async () => {
+  describe('Performance and Batching', () => {
+    it('should process large batches efficiently', async () => {
       // Use all test patients for performance test
       const bulkRequest = {
-        action: "updateStatus",
+        action: 'updateStatus',
         patientIds: testPatientIds,
         data: {
           updates: {
-            status: "active",
+            status: 'active',
           },
         },
         options: {
@@ -430,7 +430,7 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       const startTime = Date.now();
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(200);
@@ -446,13 +446,13 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       ).toBeLessThan(100); // <100ms per patient
     });
 
-    it("should respect batch size limits", async () => {
+    it('should respect batch size limits', async () => {
       const bulkRequest = {
-        action: "updateStatus",
+        action: 'updateStatus',
         patientIds: testPatientIds,
         data: {
           updates: {
-            status: "active",
+            status: 'active',
           },
         },
         options: {
@@ -461,7 +461,7 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(200);
@@ -473,65 +473,64 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
     });
   });
 
-  describe("Error Handling", () => {
-    it("should return 400 for too many patient IDs", async () => {
+  describe('Error Handling', () => {
+    it('should return 400 for too many patient IDs', async () => {
       const tooManyIds = Array(101)
         .fill()
         .map(
-          (_, i) =>
-            `123e4567-e89b-12d3-a456-42661417400${i.toString().padStart(1, "0")}`,
+          (_, i) => `123e4567-e89b-12d3-a456-42661417400${i.toString().padStart(1, '0')}`,
         );
 
       const bulkRequest = {
-        action: "updateStatus",
+        action: 'updateStatus',
         patientIds: tooManyIds,
         data: {
           updates: {
-            status: "active",
+            status: 'active',
           },
         },
       };
 
       await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(400);
     });
 
-    it("should return 400 for invalid action type", async () => {
+    it('should return 400 for invalid action type', async () => {
       const invalidRequest = {
-        action: "invalidAction",
+        action: 'invalidAction',
         patientIds: [testPatientIds[0]],
       };
 
       await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(invalidRequest)
         .expect(400);
     });
 
-    it("should return 401 for missing authentication", async () => {
+    it('should return 401 for missing authentication', async () => {
       const bulkRequest = {
-        action: "updateStatus",
+        action: 'updateStatus',
         patientIds: [testPatientIds[0]],
         data: {
           updates: {
-            status: "active",
+            status: 'active',
           },
         },
       };
 
       await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .send(bulkRequest)
         .expect(401);
     });
 
-    it("should handle transaction rollback on critical errors", async () => {
+    it('should handle transaction rollback on critical errors', async () => {
       const bulkRequest = {
-        action: "update",
+        action: 'update',
         patientIds: testPatientIds.slice(0, 3),
         data: {
           updates: {
@@ -547,20 +546,20 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(400);
 
-      expect(response.body.error).toContain("validation");
+      expect(response.body.error).toContain('validation');
       // All changes should be rolled back
     });
   });
 
-  describe("LGPD Compliance and Audit", () => {
-    it("should create comprehensive audit trail for bulk operations", async () => {
+  describe('LGPD Compliance and Audit', () => {
+    it('should create comprehensive audit trail for bulk operations', async () => {
       const bulkRequest = {
-        action: "update",
+        action: 'update',
         patientIds: testPatientIds.slice(0, 2),
         data: {
           updates: {
@@ -572,7 +571,7 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(200);
@@ -580,53 +579,53 @@ describe("POST /api/v2/patients/bulk-actions - Contract Tests", () => {
       expect(response.body.auditInfo).toBeDefined();
       expect(response.body.auditInfo.bulkOperationId).toBeDefined();
       expect(response.body.auditInfo.lgpdCompliant).toBe(true);
-      expect(response.headers["x-bulk-audit-id"]).toBeDefined();
+      expect(response.headers['x-bulk-audit-id']).toBeDefined();
     });
 
-    it("should enforce LGPD consent requirements for bulk operations", async () => {
+    it('should enforce LGPD consent requirements for bulk operations', async () => {
       const bulkRequest = {
-        action: "update",
+        action: 'update',
         patientIds: testPatientIds.slice(0, 2),
         data: {
           updates: {
             emergencyContact: {
-              name: "Updated Contact",
+              name: 'Updated Contact',
             },
           },
         },
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(bulkRequest)
         .expect(200);
 
       expect(response.body.auditInfo.lgpdCompliant).toBe(true);
-      expect(response.headers["x-lgpd-bulk-processed"]).toBe("true");
+      expect(response.headers['x-lgpd-bulk-processed']).toBe('true');
     });
   });
 
-  describe("Export Functionality", () => {
-    it("should handle bulk export requests", async () => {
+  describe('Export Functionality', () => {
+    it('should handle bulk export requests', async () => {
       const exportRequest = {
-        action: "export",
+        action: 'export',
         patientIds: testPatientIds.slice(0, 3),
         data: {
-          format: "csv",
-          fields: ["name", "cpf", "phone", "email"],
+          format: 'csv',
+          fields: ['name', 'cpf', 'phone', 'email'],
         },
       };
 
       const response = await request(app)
-        .post("/api/v2/patients/bulk-actions")
+        .post('/api/v2/patients/bulk-actions')
         .set(testAuthHeaders)
         .send(exportRequest)
         .expect(200);
 
       expect(response.body.summary.successful).toBe(3);
       expect(response.body.results[0].data.exportUrl).toBeDefined();
-      expect(response.headers["x-export-ready"]).toBe("true");
+      expect(response.headers['x-export-ready']).toBe('true');
     });
   });
 });

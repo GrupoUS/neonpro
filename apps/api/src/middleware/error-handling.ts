@@ -11,31 +11,31 @@
  * - Valibot validation error support
  */
 
-import { Context, Next } from "hono";
-import { HTTPException } from "hono/http-exception";
-import * as v from "valibot";
+import { Context, Next } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+import * as v from 'valibot';
 
 // Error severity levels
 export enum ErrorSeverity {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  CRITICAL = "critical",
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical',
 }
 
 // Error categories
 export enum ErrorCategory {
-  AUTHENTICATION = "authentication",
-  AUTHORIZATION = "authorization",
-  VALIDATION = "validation",
-  BUSINESS_LOGIC = "business_logic",
-  EXTERNAL_SERVICE = "external_service",
-  DATABASE = "database",
-  NETWORK = "network",
-  SYSTEM = "system",
-  LGPD_COMPLIANCE = "lgpd_compliance",
-  HEALTHCARE_COMPLIANCE = "healthcare_compliance",
-  AI_SERVICE = "ai_service",
+  AUTHENTICATION = 'authentication',
+  AUTHORIZATION = 'authorization',
+  VALIDATION = 'validation',
+  BUSINESS_LOGIC = 'business_logic',
+  EXTERNAL_SERVICE = 'external_service',
+  DATABASE = 'database',
+  NETWORK = 'network',
+  SYSTEM = 'system',
+  LGPD_COMPLIANCE = 'lgpd_compliance',
+  HEALTHCARE_COMPLIANCE = 'healthcare_compliance',
+  AI_SERVICE = 'ai_service',
 }
 
 // Error context
@@ -70,7 +70,7 @@ interface StructuredError {
 // Error configuration
 const errorConfigSchema = v.object({
   includeStack: v.optional(v.boolean(), false),
-  logLevel: v.optional(v.picklist(["error", "warn", "info", "debug"]), "error"),
+  logLevel: v.optional(v.picklist(['error', 'warn', 'info', 'debug']), 'error'),
   enableAuditLogging: v.optional(v.boolean(), true),
   enablePerformanceMonitoring: v.optional(v.boolean(), true),
   sanitizePersonalData: v.optional(v.boolean(), true),
@@ -83,58 +83,50 @@ export type ErrorConfig = v.InferOutput<typeof errorConfigSchema>;
 // Brazilian Portuguese error messages
 const errorMessages = {
   // Authentication errors
-  AUTHENTICATION_REQUIRED: "Autenticação necessária para acessar este recurso",
-  INVALID_TOKEN: "Token de autenticação inválido ou expirado",
-  INSUFFICIENT_PERMISSIONS:
-    "Permissões insuficientes para realizar esta operação",
+  AUTHENTICATION_REQUIRED: 'Autenticação necessária para acessar este recurso',
+  INVALID_TOKEN: 'Token de autenticação inválido ou expirado',
+  INSUFFICIENT_PERMISSIONS: 'Permissões insuficientes para realizar esta operação',
 
   // Healthcare professional errors
-  HEALTHCARE_PROFESSIONAL_REQUIRED:
-    "Acesso restrito a profissionais de saúde registrados",
-  INVALID_CRM_NUMBER: "Número do CRM inválido ou não verificado",
-  INACTIVE_LICENSE: "Licença profissional inativa ou suspensa",
+  HEALTHCARE_PROFESSIONAL_REQUIRED: 'Acesso restrito a profissionais de saúde registrados',
+  INVALID_CRM_NUMBER: 'Número do CRM inválido ou não verificado',
+  INACTIVE_LICENSE: 'Licença profissional inativa ou suspensa',
 
   // LGPD compliance errors
-  LGPD_CONSENT_REQUIRED:
-    "Consentimento LGPD necessário para processar dados pessoais",
-  LGPD_INSUFFICIENT_CONSENT:
-    "Consentimento LGPD insuficiente para a operação solicitada",
-  LGPD_DATA_RETENTION_VIOLATION:
-    "Violação das políticas de retenção de dados LGPD",
-  LGPD_ACCESS_DENIED: "Acesso negado por restrições de proteção de dados",
+  LGPD_CONSENT_REQUIRED: 'Consentimento LGPD necessário para processar dados pessoais',
+  LGPD_INSUFFICIENT_CONSENT: 'Consentimento LGPD insuficiente para a operação solicitada',
+  LGPD_DATA_RETENTION_VIOLATION: 'Violação das políticas de retenção de dados LGPD',
+  LGPD_ACCESS_DENIED: 'Acesso negado por restrições de proteção de dados',
 
   // Validation errors
-  INVALID_CPF: "CPF inválido ou mal formatado",
-  INVALID_PHONE: "Número de telefone brasileiro inválido",
-  INVALID_CEP: "CEP inválido ou não encontrado",
-  INVALID_EMAIL: "Endereço de email inválido",
-  REQUIRED_FIELD_MISSING: "Campo obrigatório não informado",
+  INVALID_CPF: 'CPF inválido ou mal formatado',
+  INVALID_PHONE: 'Número de telefone brasileiro inválido',
+  INVALID_CEP: 'CEP inválido ou não encontrado',
+  INVALID_EMAIL: 'Endereço de email inválido',
+  REQUIRED_FIELD_MISSING: 'Campo obrigatório não informado',
 
   // Business logic errors
-  PATIENT_NOT_FOUND: "Paciente não encontrado",
-  APPOINTMENT_CONFLICT: "Conflito de agendamento detectado",
-  MEDICAL_RECORD_LOCKED: "Prontuário médico bloqueado para edição",
-  TREATMENT_NOT_AUTHORIZED: "Tratamento não autorizado pelo plano de saúde",
+  PATIENT_NOT_FOUND: 'Paciente não encontrado',
+  APPOINTMENT_CONFLICT: 'Conflito de agendamento detectado',
+  MEDICAL_RECORD_LOCKED: 'Prontuário médico bloqueado para edição',
+  TREATMENT_NOT_AUTHORIZED: 'Tratamento não autorizado pelo plano de saúde',
 
   // AI service errors
-  AI_SERVICE_UNAVAILABLE: "Serviço de IA temporariamente indisponível",
-  AI_ANALYSIS_FAILED: "Falha na análise de IA - tente novamente",
-  AI_MODEL_NOT_FOUND: "Modelo de IA não encontrado ou indisponível",
-  AI_RATE_LIMIT_EXCEEDED: "Limite de uso do serviço de IA excedido",
+  AI_SERVICE_UNAVAILABLE: 'Serviço de IA temporariamente indisponível',
+  AI_ANALYSIS_FAILED: 'Falha na análise de IA - tente novamente',
+  AI_MODEL_NOT_FOUND: 'Modelo de IA não encontrado ou indisponível',
+  AI_RATE_LIMIT_EXCEEDED: 'Limite de uso do serviço de IA excedido',
 
   // System errors
-  INTERNAL_SERVER_ERROR:
-    "Erro interno do servidor - nossa equipe foi notificada",
-  DATABASE_CONNECTION_ERROR: "Erro de conexão com o banco de dados",
-  EXTERNAL_SERVICE_ERROR:
-    "Erro em serviço externo - tente novamente em alguns minutos",
-  RATE_LIMIT_EXCEEDED:
-    "Limite de requisições excedido - tente novamente em alguns minutos",
+  INTERNAL_SERVER_ERROR: 'Erro interno do servidor - nossa equipe foi notificada',
+  DATABASE_CONNECTION_ERROR: 'Erro de conexão com o banco de dados',
+  EXTERNAL_SERVICE_ERROR: 'Erro em serviço externo - tente novamente em alguns minutos',
+  RATE_LIMIT_EXCEEDED: 'Limite de requisições excedido - tente novamente em alguns minutos',
 
   // Generic errors
-  UNKNOWN_ERROR: "Erro desconhecido - nossa equipe foi notificada",
-  VALIDATION_ERROR: "Erro de validação nos dados fornecidos",
-  NETWORK_ERROR: "Erro de rede - verifique sua conexão",
+  UNKNOWN_ERROR: 'Erro desconhecido - nossa equipe foi notificada',
+  VALIDATION_ERROR: 'Erro de validação nos dados fornecidos',
+  NETWORK_ERROR: 'Erro de rede - verifique sua conexão',
 };
 
 // Error logger
@@ -161,16 +153,16 @@ class ErrorLogger {
     // Console logging based on severity
     switch (error.severity) {
       case ErrorSeverity.CRITICAL:
-        console.error("🚨 CRITICAL ERROR:", logEntry);
+        console.error('🚨 CRITICAL ERROR:', logEntry);
         break;
       case ErrorSeverity.HIGH:
-        console.error("❌ HIGH SEVERITY ERROR:", logEntry);
+        console.error('❌ HIGH SEVERITY ERROR:', logEntry);
         break;
       case ErrorSeverity.MEDIUM:
-        console.warn("⚠️ MEDIUM SEVERITY ERROR:", logEntry);
+        console.warn('⚠️ MEDIUM SEVERITY ERROR:', logEntry);
         break;
       case ErrorSeverity.LOW:
-        console.info("ℹ️ LOW SEVERITY ERROR:", logEntry);
+        console.info('ℹ️ LOW SEVERITY ERROR:', logEntry);
         break;
     }
 
@@ -214,7 +206,7 @@ class ErrorLogger {
     try {
       // TODO: Integrate with audit service from T041
       const auditEntry = {
-        action: "error_occurred",
+        action: 'error_occurred',
         userId: error.context.userId,
         sessionId: error.context.sessionId,
         timestamp: error.context.timestamp,
@@ -229,9 +221,9 @@ class ErrorLogger {
         },
       };
 
-      console.log("Audit trail logged:", auditEntry);
+      console.log('Audit trail logged:', auditEntry);
     } catch (auditError) {
-      console.error("Failed to log to audit trail:", auditError);
+      console.error('Failed to log to audit trail:', auditError);
     }
   }
 
@@ -247,9 +239,9 @@ class ErrorLogger {
         timestamp: error.context.timestamp,
       };
 
-      console.log("Performance metrics recorded:", metrics);
+      console.log('Performance metrics recorded:', metrics);
     } catch (metricsError) {
-      console.error("Failed to record performance metrics:", metricsError);
+      console.error('Failed to record performance metrics:', metricsError);
     }
   }
 }
@@ -333,80 +325,80 @@ class ErrorHandler {
           return {
             category: ErrorCategory.AUTHENTICATION,
             severity: ErrorSeverity.MEDIUM,
-            code: "AUTHENTICATION_REQUIRED",
+            code: 'AUTHENTICATION_REQUIRED',
           };
         case 403:
           return {
             category: ErrorCategory.AUTHORIZATION,
             severity: ErrorSeverity.MEDIUM,
-            code: "INSUFFICIENT_PERMISSIONS",
+            code: 'INSUFFICIENT_PERMISSIONS',
           };
         case 404:
           return {
             category: ErrorCategory.BUSINESS_LOGIC,
             severity: ErrorSeverity.LOW,
-            code: "RESOURCE_NOT_FOUND",
+            code: 'RESOURCE_NOT_FOUND',
           };
         case 429:
           return {
             category: ErrorCategory.SYSTEM,
             severity: ErrorSeverity.MEDIUM,
-            code: "RATE_LIMIT_EXCEEDED",
+            code: 'RATE_LIMIT_EXCEEDED',
           };
         default:
           return {
             category: ErrorCategory.SYSTEM,
             severity: ErrorSeverity.MEDIUM,
-            code: "HTTP_ERROR",
+            code: 'HTTP_ERROR',
           };
       }
     }
 
     // Database errors
     if (
-      error.message.includes("database") ||
-      error.message.includes("connection")
+      error.message.includes('database')
+      || error.message.includes('connection')
     ) {
       return {
         category: ErrorCategory.DATABASE,
         severity: ErrorSeverity.HIGH,
-        code: "DATABASE_CONNECTION_ERROR",
+        code: 'DATABASE_CONNECTION_ERROR',
       };
     }
 
     // Valibot validation errors
-    if (v.isValiError(error) || error.message.includes("validation")) {
+    if (v.isValiError(error) || error.message.includes('validation')) {
       return {
         category: ErrorCategory.VALIDATION,
         severity: ErrorSeverity.LOW,
-        code: "VALIDATION_ERROR",
+        code: 'VALIDATION_ERROR',
       };
     }
 
     // AI service errors
-    if (error.message.includes("AI") || error.message.includes("model")) {
+    if (error.message.includes('AI') || error.message.includes('model')) {
       return {
         category: ErrorCategory.AI_SERVICE,
         severity: ErrorSeverity.MEDIUM,
-        code: "AI_SERVICE_UNAVAILABLE",
+        code: 'AI_SERVICE_UNAVAILABLE',
       };
     }
 
     // LGPD compliance errors
-    if (error.message.includes("LGPD") || error.message.includes("consent")) {
+    if (error.message.includes('LGPD') || error.message.includes('consent')) {
       return {
         category: ErrorCategory.LGPD_COMPLIANCE,
         severity: ErrorSeverity.HIGH,
-        code: "LGPD_CONSENT_REQUIRED",
+        code: 'LGPD_CONSENT_REQUIRED',
       };
     }
 
     // Healthcare compliance errors
-    if (error.message.includes("CRM") || error.message.includes("healthcare")) {
+    if (error.message.includes('CRM') || error.message.includes('healthcare')) {
       return {
         category: ErrorCategory.HEALTHCARE_COMPLIANCE,
         severity: ErrorSeverity.HIGH,
-        code: "HEALTHCARE_PROFESSIONAL_REQUIRED",
+        code: 'HEALTHCARE_PROFESSIONAL_REQUIRED',
       };
     }
 
@@ -414,7 +406,7 @@ class ErrorHandler {
     return {
       category: ErrorCategory.SYSTEM,
       severity: ErrorSeverity.HIGH,
-      code: "INTERNAL_SERVER_ERROR",
+      code: 'INTERNAL_SERVER_ERROR',
     };
   }
 
@@ -446,13 +438,13 @@ class ErrorHandler {
   private getUserFriendlyMessage(error: StructuredError): string {
     if (this.config.brazilianPortuguese) {
       return (
-        errorMessages[error.code as keyof typeof errorMessages] ||
-        errorMessages.UNKNOWN_ERROR
+        errorMessages[error.code as keyof typeof errorMessages]
+        || errorMessages.UNKNOWN_ERROR
       );
     }
 
     // Fallback to English if Portuguese is disabled
-    return error.message || "An unknown error occurred";
+    return error.message || 'An unknown error occurred';
   }
 
   // Check if error is LGPD compliant
@@ -464,17 +456,17 @@ class ErrorHandler {
       /\b\(\d{2}\)\s?\d{4,5}-?\d{4}\b/, // Phone pattern
     ];
 
-    return !personalDataPatterns.some((pattern) => pattern.test(error.message));
+    return !personalDataPatterns.some(pattern => pattern.test(error.message));
   }
 
   // Check if error occurred in healthcare context
   private isHealthcareContext(context: ErrorContext): boolean {
     return !!(
-      context.healthcareProfessional ||
-      context.patientId ||
-      context.endpoint.includes("/patients/") ||
-      context.endpoint.includes("/medical/") ||
-      context.endpoint.includes("/ai/")
+      context.healthcareProfessional
+      || context.patientId
+      || context.endpoint.includes('/patients/')
+      || context.endpoint.includes('/medical/')
+      || context.endpoint.includes('/ai/')
     );
   }
 }
@@ -499,7 +491,7 @@ export function createHealthcareError(
   // Add healthcare-specific metadata
   (error as any).category = category;
   (error as any).severity = severity;
-  (error as any).code = options.code || "HEALTHCARE_ERROR";
+  (error as any).code = options.code || 'HEALTHCARE_ERROR';
   (error as any).metadata = options.metadata;
   (error as any).healthcareContext = true;
   (error as any).lgpdCompliant = !containsPersonalData(message);
@@ -516,7 +508,7 @@ function containsPersonalData(message: string): boolean {
     /\b\d{15}\b/, // SUS card pattern
   ];
 
-  return personalDataPatterns.some((pattern) => pattern.test(message));
+  return personalDataPatterns.some(pattern => pattern.test(message));
 }
 
 // Valibot error formatter for healthcare context
@@ -534,9 +526,9 @@ export function formatValibotError(error: v.ValiError<any>): {
   // Handle root errors
   if (flattened.root) {
     details.push({
-      field: "root",
-      message: flattened.root[0] || "Validation error",
-      code: "validation_error",
+      field: 'root',
+      message: flattened.root[0] || 'Validation error',
+      code: 'validation_error',
     });
   }
 
@@ -546,15 +538,15 @@ export function formatValibotError(error: v.ValiError<any>): {
       if (issues && issues.length > 0) {
         details.push({
           field,
-          message: issues[0] || "Validation error",
-          code: "field_validation_error",
+          message: issues[0] || 'Validation error',
+          code: 'field_validation_error',
         });
       }
     });
   }
 
   return {
-    message: "Dados de entrada inválidos",
+    message: 'Dados de entrada inválidos',
     details,
   };
 }
@@ -571,15 +563,15 @@ export function errorHandling(config: Partial<ErrorConfig> = {}) {
       await next();
     } catch (error) {
       const context: ErrorContext = {
-        userId: c.get("userId"),
-        sessionId: c.get("sessionId"),
-        requestId: c.get("requestId") || crypto.randomUUID(),
+        userId: c.get('userId'),
+        sessionId: c.get('sessionId'),
+        requestId: c.get('requestId') || crypto.randomUUID(),
         endpoint: c.req.path,
         method: c.req.method,
-        userAgent: c.req.header("user-agent"),
-        ipAddress: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
-        healthcareProfessional: !!c.get("healthcareProfessional"),
-        patientId: c.req.param("patientId") || c.req.param("id"),
+        userAgent: c.req.header('user-agent'),
+        ipAddress: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+        healthcareProfessional: !!c.get('healthcareProfessional'),
+        patientId: c.req.param('patientId') || c.req.param('id'),
         timestamp: new Date(),
       };
 
@@ -592,7 +584,7 @@ export function errorHandling(config: Partial<ErrorConfig> = {}) {
           ErrorSeverity.LOW,
           400,
           {
-            code: "VALIDATION_ERROR",
+            code: 'VALIDATION_ERROR',
             metadata: { validationDetails: formattedError.details },
           },
         );
@@ -622,9 +614,9 @@ export function errorHandling(config: Partial<ErrorConfig> = {}) {
 // Request ID middleware
 export function requestId() {
   return async (c: Context, next: Next) => {
-    const requestId = c.req.header("x-request-id") || crypto.randomUUID();
-    c.set("requestId", requestId);
-    c.header("x-request-id", requestId);
+    const requestId = c.req.header('x-request-id') || crypto.randomUUID();
+    c.set('requestId', requestId);
+    c.header('x-request-id', requestId);
     return next();
   };
 }

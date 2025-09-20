@@ -19,14 +19,14 @@ import {
   DataSubjectRequest,
   LegalBasis,
   LGPDConsentModel as LGPDConsent,
-} from "../../../../packages/shared/src/types/lgpd-consent";
+} from '../../../../packages/shared/src/types/lgpd-consent';
 
 // Define missing enums locally
 export enum ConsentStatus {
-  ACTIVE = "active",
-  REVOKED = "revoked",
-  EXPIRED = "expired",
-  PENDING = "pending",
+  ACTIVE = 'active',
+  REVOKED = 'revoked',
+  EXPIRED = 'expired',
+  PENDING = 'pending',
 }
 
 // Service response interface
@@ -71,15 +71,15 @@ export interface DataAccessRequest {
   requestType: string;
   requestedBy: string;
   description: string;
-  urgency?: "low" | "medium" | "high";
+  urgency?: 'low' | 'medium' | 'high';
 }
 
 // Data portability request interface
 export interface DataPortabilityRequest {
   patientId: string;
-  format: "json" | "csv" | "pdf";
+  format: 'json' | 'csv' | 'pdf';
   includeHistory: boolean;
-  deliveryMethod: "email" | "download" | "api";
+  deliveryMethod: 'email' | 'download' | 'api';
   encryptionRequired?: boolean;
 }
 
@@ -146,7 +146,7 @@ export interface RetentionPolicy {
 export interface RetentionReview {
   patientId: string;
   reviewedBy: string;
-  decision: "extend" | "delete" | "anonymize";
+  decision: 'extend' | 'delete' | 'anonymize';
   newRetentionDate?: Date;
   justification: string;
 }
@@ -155,7 +155,7 @@ export interface RetentionReview {
 export interface PrivacyImpactAssessment {
   projectName: string;
   dataTypes: string[];
-  riskLevel: "low" | "medium" | "high" | "critical";
+  riskLevel: 'low' | 'medium' | 'high' | 'critical';
   assessor: string;
   description: string;
   stakeholders?: string[];
@@ -163,16 +163,16 @@ export interface PrivacyImpactAssessment {
 
 // PIA update interface
 export interface PIAUpdate {
-  riskLevel?: "low" | "medium" | "high" | "critical";
+  riskLevel?: 'low' | 'medium' | 'high' | 'critical';
   mitigationMeasures?: string[];
-  status?: "draft" | "review" | "approved" | "rejected";
+  status?: 'draft' | 'review' | 'approved' | 'rejected';
   approvedBy?: string;
   reviewComments?: string;
 }
 
 // Compliance report interface
 export interface ComplianceReport {
-  reportType: "daily" | "weekly" | "monthly" | "quarterly" | "annual";
+  reportType: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'annual';
   period: {
     start: Date;
     end: Date;
@@ -185,7 +185,7 @@ export interface ComplianceReport {
 // Compliance violation interface
 export interface ComplianceViolation {
   violationType: string;
-  severity: "low" | "medium" | "high" | "critical";
+  severity: 'low' | 'medium' | 'high' | 'critical';
   description: string;
   affectedPatients: string[];
   detectedBy: string;
@@ -199,10 +199,10 @@ export interface DataAnonymization {
   dataCategories: string[];
   preserveStatistical: boolean;
   anonymizationMethod:
-    | "k-anonymity"
-    | "l-diversity"
-    | "t-closeness"
-    | "differential-privacy";
+    | 'k-anonymity'
+    | 'l-diversity'
+    | 't-closeness'
+    | 'differential-privacy';
   parameters?: Record<string, any>;
 }
 
@@ -235,41 +235,41 @@ export class LGPDService {
   private initialize(): void {
     // Mock consent data
     const mockConsent = createLGPDConsent({
-      patientId: "patient-123",
+      patientId: 'patient-123',
       dataProcessing: true,
       marketing: false,
       analytics: true,
       legalBasis: LegalBasis.CONSENT,
-      purpose: "Tratamento médico e gestão de consultas",
+      purpose: 'Tratamento médico e gestão de consultas',
     });
-    this.consents.set("consent-123", mockConsent);
+    this.consents.set('consent-123', mockConsent);
 
     // Default retention policies based on Brazilian healthcare regulations
-    this.retentionPolicies.set("medical_records", {
-      dataCategory: "medical_records",
+    this.retentionPolicies.set('medical_records', {
+      dataCategory: 'medical_records',
       retentionPeriod: 20, // CFM Resolution 1821/2007
-      legalBasis: "CFM Resolution 1821/2007",
+      legalBasis: 'CFM Resolution 1821/2007',
       autoDelete: false,
       reviewRequired: true,
     });
 
-    this.retentionPolicies.set("personal_data", {
-      dataCategory: "personal_data",
+    this.retentionPolicies.set('personal_data', {
+      dataCategory: 'personal_data',
       retentionPeriod: 5,
-      legalBasis: "LGPD Art. 16",
+      legalBasis: 'LGPD Art. 16',
       autoDelete: true,
       reviewRequired: false,
     });
 
     // Mock processing activities
-    this.processingActivities.set("patient-123", [
+    this.processingActivities.set('patient-123', [
       {
-        patientId: "patient-123",
-        activity: "data_access",
-        purpose: "Consulta médica",
-        legalBasis: "consent",
-        dataCategories: ["health_data", "personal_data"],
-        processor: "doctor-123",
+        patientId: 'patient-123',
+        activity: 'data_access',
+        purpose: 'Consulta médica',
+        legalBasis: 'consent',
+        dataCategories: ['health_data', 'personal_data'],
+        processor: 'doctor-123',
       },
     ]);
 
@@ -294,13 +294,13 @@ export class LGPDService {
 
       const consent = createLGPDConsent({
         patientId: params.patientId,
-        consentVersion: "1.0",
+        consentVersion: '1.0',
         consentDate: new Date(),
-        ipAddress: "127.0.0.1",
-        userAgent: "NeonPro/1.0",
+        ipAddress: '127.0.0.1',
+        userAgent: 'NeonPro/1.0',
         legalBasis: params.legalBasis as LegalBasis,
         processingPurposes: [params.purpose],
-        dataCategories: ["personal_data", "health_data"],
+        dataCategories: ['personal_data', 'health_data'],
         dataProcessing: params.dataProcessing,
         marketing: params.marketing,
         analytics: params.analytics,
@@ -317,7 +317,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -335,7 +335,7 @@ export class LGPDService {
       if (!existingConsent) {
         return {
           success: false,
-          error: "Consentimento não encontrado",
+          error: 'Consentimento não encontrado',
         };
       }
 
@@ -348,7 +348,7 @@ export class LGPDService {
         history: [
           ...(existingConsent.history || []),
           {
-            action: "updated",
+            action: 'updated',
             timestamp: new Date(),
             updatedBy: params.updatedBy,
             reason: params.reason,
@@ -370,7 +370,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -388,7 +388,7 @@ export class LGPDService {
       if (!existingConsent) {
         return {
           success: false,
-          error: "Consentimento não encontrado",
+          error: 'Consentimento não encontrado',
         };
       }
 
@@ -400,7 +400,7 @@ export class LGPDService {
         history: [
           ...(existingConsent.history || []),
           {
-            action: "revoked",
+            action: 'revoked',
             timestamp: new Date(),
             updatedBy: params.revokedBy,
             reason: params.reason,
@@ -417,12 +417,12 @@ export class LGPDService {
       return {
         success: true,
         data: revokedConsent,
-        message: "Consentimento revogado com sucesso",
+        message: 'Consentimento revogado com sucesso',
       };
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -439,13 +439,12 @@ export class LGPDService {
   > {
     try {
       const patientConsents = Array.from(this.consents.values())
-        .filter((consent) => consent.patientId === patientId)
+        .filter(consent => consent.patientId === patientId)
         .sort((a, b) => b.consentDate.getTime() - a.consentDate.getTime());
 
-      const currentConsent =
-        patientConsents.find((consent) => !consent.withdrawalDate) || null;
+      const currentConsent = patientConsents.find(consent => !consent.withdrawalDate) || null;
       const history = patientConsents.flatMap(
-        (consent) => consent.history || [],
+        consent => consent.history || [],
       );
 
       return {
@@ -459,7 +458,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -476,10 +475,10 @@ export class LGPDService {
   > {
     try {
       // Check if patient exists (mock validation)
-      if (params.patientId === "non-existent") {
+      if (params.patientId === 'non-existent') {
         return {
           success: false,
-          error: "Paciente não encontrado no sistema",
+          error: 'Paciente não encontrado no sistema',
         };
       }
 
@@ -501,14 +500,14 @@ export class LGPDService {
         success: true,
         data: {
           requestId,
-          status: "processing",
+          status: 'processing',
           estimatedCompletion,
         },
       };
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -538,7 +537,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -564,14 +563,14 @@ export class LGPDService {
         success: true,
         data: {
           requestId,
-          status: "approved",
+          status: 'approved',
           scheduledDeletion,
         },
       };
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -596,13 +595,13 @@ export class LGPDService {
         data: {
           requestId,
           field: params.field,
-          status: "approved",
+          status: 'approved',
         },
       };
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -639,7 +638,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -666,7 +665,7 @@ export class LGPDService {
       }
 
       // Filter by date range
-      activities = activities.filter((activity) => {
+      activities = activities.filter(activity => {
         const activityDate = (activity as any).timestamp || new Date();
         return (
           activityDate >= params.startDate && activityDate <= params.endDate
@@ -702,7 +701,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -722,11 +721,11 @@ export class LGPDService {
     try {
       // Mock validation logic
       const isLegal = true;
-      const legalBasis = "consent";
+      const legalBasis = 'consent';
       const requirements = [
-        "Consentimento válido do titular",
-        "Finalidade específica e legítima",
-        "Dados adequados e necessários",
+        'Consentimento válido do titular',
+        'Finalidade específica e legítima',
+        'Dados adequados e necessários',
       ];
 
       return {
@@ -740,7 +739,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -765,7 +764,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -788,12 +787,12 @@ export class LGPDService {
       const dataCategories = {
         medical_records: {
           retentionPeriod: 20,
-          status: "active",
+          status: 'active',
           expiryDate: new Date(Date.now() + 20 * 365 * 24 * 60 * 60 * 1000),
         },
         personal_data: {
           retentionPeriod: 5,
-          status: "active",
+          status: 'active',
           expiryDate: new Date(Date.now() + 5 * 365 * 24 * 60 * 60 * 1000),
         },
       };
@@ -802,7 +801,7 @@ export class LGPDService {
         success: true,
         data: {
           patientId,
-          retentionStatus: "compliant",
+          retentionStatus: 'compliant',
           dataCategories,
           nextReview,
         },
@@ -810,7 +809,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -839,7 +838,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -859,7 +858,7 @@ export class LGPDService {
       const assessment = {
         ...params,
         id: assessmentId,
-        status: "draft",
+        status: 'draft',
         createdAt: new Date(),
       };
 
@@ -870,13 +869,13 @@ export class LGPDService {
         data: {
           assessmentId,
           riskLevel: params.riskLevel,
-          status: "draft",
+          status: 'draft',
         },
       };
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -895,13 +894,12 @@ export class LGPDService {
     }>
   > {
     try {
-      const existingAssessment =
-        this.privacyImpactAssessments.get(assessmentId);
+      const existingAssessment = this.privacyImpactAssessments.get(assessmentId);
 
       if (!existingAssessment) {
         return {
           success: false,
-          error: "Avaliação de impacto não encontrada",
+          error: 'Avaliação de impacto não encontrada',
         };
       }
 
@@ -927,7 +925,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -949,12 +947,12 @@ export class LGPDService {
       let assessments = Array.from(this.privacyImpactAssessments.values());
 
       if (filters.status) {
-        assessments = assessments.filter((a) => a.status === filters.status);
+        assessments = assessments.filter(a => a.status === filters.status);
       }
 
       if (filters.riskLevel) {
         assessments = assessments.filter(
-          (a) => a.riskLevel === filters.riskLevel,
+          a => a.riskLevel === filters.riskLevel,
         );
       }
 
@@ -972,7 +970,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -994,10 +992,10 @@ export class LGPDService {
       const metrics = {
         totalConsents: this.consents.size,
         activeConsents: Array.from(this.consents.values()).filter(
-          (c) => c.status === ConsentStatus.ACTIVE,
+          c => c.status === ConsentStatus.ACTIVE,
         ).length,
         revokedConsents: Array.from(this.consents.values()).filter(
-          (c) => c.status === ConsentStatus.REVOKED,
+          c => c.status === ConsentStatus.REVOKED,
         ).length,
         dataSubjectRequests: this.dataSubjectRequests.size,
         processingActivities: Array.from(
@@ -1020,7 +1018,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -1040,7 +1038,7 @@ export class LGPDService {
       return {
         success: true,
         data: {
-          overallStatus: "compliant",
+          overallStatus: 'compliant',
           consentCompliance: 98.5,
           retentionCompliance: 96.2,
           securityCompliance: 99.1,
@@ -1049,7 +1047,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -1069,7 +1067,7 @@ export class LGPDService {
       const violation = {
         ...params,
         id: violationId,
-        status: "reported",
+        status: 'reported',
         reportedAt: new Date(),
       };
 
@@ -1080,13 +1078,13 @@ export class LGPDService {
         data: {
           violationId,
           severity: params.severity,
-          status: "reported",
+          status: 'reported',
         },
       };
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -1116,7 +1114,7 @@ export class LGPDService {
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -1138,18 +1136,18 @@ export class LGPDService {
         success: true,
         data: {
           qualityScore,
-          riskAssessment: qualityScore > 0.9 ? "low" : "medium",
+          riskAssessment: qualityScore > 0.9 ? 'low' : 'medium',
           recommendations: [
-            "Aumentar valor de k para maior anonimização",
-            "Verificar atributos quasi-identificadores",
-            "Considerar l-diversity para atributos sensíveis",
+            'Aumentar valor de k para maior anonimização',
+            'Verificar atributos quasi-identificadores',
+            'Considerar l-diversity para atributos sensíveis',
           ],
         },
       };
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -1165,17 +1163,17 @@ export class LGPDService {
     return {
       retentionPolicies: Object.fromEntries(this.retentionPolicies),
       anonymizationMethods: [
-        "k-anonymity",
-        "l-diversity",
-        "t-closeness",
-        "differential-privacy",
+        'k-anonymity',
+        'l-diversity',
+        't-closeness',
+        'differential-privacy',
       ],
       complianceChecks: [
-        "consent_validity",
-        "data_minimization",
-        "purpose_limitation",
-        "retention_compliance",
-        "security_measures",
+        'consent_validity',
+        'data_minimization',
+        'purpose_limitation',
+        'retention_compliance',
+        'security_measures',
       ],
     };
   }
@@ -1189,27 +1187,27 @@ export class LGPDService {
   } {
     const errors: Array<{ field: string; message: string; code: string }> = [];
 
-    if (!params.patientId || params.patientId.trim() === "") {
+    if (!params.patientId || params.patientId.trim() === '') {
       errors.push({
-        field: "patientId",
-        message: "ID do paciente é obrigatório",
-        code: "REQUIRED",
+        field: 'patientId',
+        message: 'ID do paciente é obrigatório',
+        code: 'REQUIRED',
       });
     }
 
     if (params.dataProcessing === null || params.dataProcessing === undefined) {
       errors.push({
-        field: "dataProcessing",
-        message: "Consentimento para processamento de dados é obrigatório",
-        code: "REQUIRED",
+        field: 'dataProcessing',
+        message: 'Consentimento para processamento de dados é obrigatório',
+        code: 'REQUIRED',
       });
     }
 
-    if (!params.legalBasis || params.legalBasis.trim() === "") {
+    if (!params.legalBasis || params.legalBasis.trim() === '') {
       errors.push({
-        field: "legalBasis",
-        message: "Base legal é obrigatória",
-        code: "REQUIRED",
+        field: 'legalBasis',
+        message: 'Base legal é obrigatória',
+        code: 'REQUIRED',
       });
     }
 
@@ -1238,13 +1236,13 @@ export class LGPDService {
       return {
         success: true,
         data: {
-          accessLevel: "full",
+          accessLevel: 'full',
         },
       };
     } catch {
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }

@@ -10,15 +10,15 @@
  */
 
 // import { createHash } from 'crypto';
-import { Context, Next } from "hono";
-import { compress } from "hono/compress";
+import { Context, Next } from 'hono';
+import { compress } from 'hono/compress';
 
 // Compression configuration
 export interface CompressionConfig {
   threshold: number; // Minimum bytes to compress
   level: number; // Compression level (1-9)
   memLevel: number; // Memory level (1-9)
-  strategy: "default" | "filtered" | "huffman" | "rle" | "fixed";
+  strategy: 'default' | 'filtered' | 'huffman' | 'rle' | 'fixed';
   enableBrotli: boolean;
   enableGzip: boolean;
   skipContentTypes: string[];
@@ -29,45 +29,45 @@ export const DEFAULT_COMPRESSION_CONFIG: CompressionConfig = {
   threshold: 1024, // 1KB minimum
   level: 6, // Balanced compression
   memLevel: 8, // Good memory usage
-  strategy: "default",
+  strategy: 'default',
   enableBrotli: true,
   enableGzip: true,
   skipContentTypes: [
-    "image/",
-    "video/",
-    "audio/",
-    "application/zip",
-    "application/gzip",
-    "application/x-rar",
-    "application/pdf", // Medical documents should not be compressed
+    'image/',
+    'video/',
+    'audio/',
+    'application/zip',
+    'application/gzip',
+    'application/x-rar',
+    'application/pdf', // Medical documents should not be compressed
   ],
 };
 
 // Content-type specific compression strategies
 const CONTENT_TYPE_STRATEGIES: Record<string, Partial<CompressionConfig>> = {
-  "application/json": {
+  'application/json': {
     level: 9, // High compression for JSON
-    strategy: "default",
+    strategy: 'default',
   },
-  "text/html": {
+  'text/html': {
     level: 8,
-    strategy: "default",
+    strategy: 'default',
   },
-  "text/css": {
+  'text/css': {
     level: 9,
-    strategy: "default",
+    strategy: 'default',
   },
-  "text/javascript": {
+  'text/javascript': {
     level: 8,
-    strategy: "default",
+    strategy: 'default',
   },
-  "application/xml": {
+  'application/xml': {
     level: 8,
-    strategy: "default",
+    strategy: 'default',
   },
-  "text/plain": {
+  'text/plain': {
     level: 6,
-    strategy: "default",
+    strategy: 'default',
   },
 };
 
@@ -116,7 +116,7 @@ function getCompressionStrategy(
  */
 function getBestEncoding(
   acceptEncoding: string,
-): "br" | "gzip" | "deflate" | null {
+): 'br' | 'gzip' | 'deflate' | null {
   if (!acceptEncoding) {
     return null;
   }
@@ -124,18 +124,18 @@ function getBestEncoding(
   const encodings = acceptEncoding.toLowerCase();
 
   // Prefer Brotli for better compression
-  if (encodings.includes("br")) {
-    return "br";
+  if (encodings.includes('br')) {
+    return 'br';
   }
 
   // Fallback to Gzip
-  if (encodings.includes("gzip")) {
-    return "gzip";
+  if (encodings.includes('gzip')) {
+    return 'gzip';
   }
 
   // Fallback to Deflate
-  if (encodings.includes("deflate")) {
-    return "deflate";
+  if (encodings.includes('deflate')) {
+    return 'deflate';
   }
 
   return null;
@@ -162,7 +162,7 @@ export function createAdvancedCompressionMiddleware(
 
   return async (c: Context, next: Next) => {
     const startTime = Date.now();
-    const acceptEncoding = c.req.header("accept-encoding") || "";
+    const acceptEncoding = c.req.header('accept-encoding') || '';
     const bestEncoding = getBestEncoding(acceptEncoding);
 
     // Skip compression if client doesn't support it
@@ -174,8 +174,8 @@ export function createAdvancedCompressionMiddleware(
     // Execute the request
     await next();
 
-    const contentType = c.res.headers.get("content-type") || "";
-    const contentLengthHeader = c.res.headers.get("content-length");
+    const contentType = c.res.headers.get('content-type') || '';
+    const contentLengthHeader = c.res.headers.get('content-length');
     const contentLength = contentLengthHeader
       ? parseInt(contentLengthHeader, 10)
       : 0;
@@ -183,8 +183,8 @@ export function createAdvancedCompressionMiddleware(
     // Check if we should compress (simulate content size for testing)
     const simulatedContentLength = contentLength || 2000; // Default to large content for testing
     if (!shouldCompress(contentType, simulatedContentLength, config)) {
-      c.header("X-Compression", "SKIP");
-      c.header("X-Compression-Reason", "below-threshold-or-excluded");
+      c.header('X-Compression', 'SKIP');
+      c.header('X-Compression-Reason', 'below-threshold-or-excluded');
       return;
     }
 
@@ -199,32 +199,32 @@ export function createAdvancedCompressionMiddleware(
       const compressionTime = Date.now() - startTime;
 
       // Simulate successful compression
-      const encoding = bestEncoding === "br" ? "br" : "gzip";
+      const encoding = bestEncoding === 'br' ? 'br' : 'gzip';
 
       // Update response headers
-      c.header("Content-Encoding", encoding);
-      c.header("Vary", "Accept-Encoding");
+      c.header('Content-Encoding', encoding);
+      c.header('Vary', 'Accept-Encoding');
 
       // Add compression metadata headers
-      c.header("X-Compression", "APPLIED");
-      c.header("X-Compression-Ratio", `${compressionRatio}%`);
-      c.header("X-Compression-Time", `${compressionTime}ms`);
-      c.header("X-Original-Size", originalSize.toString());
-      c.header("X-Compressed-Size", compressedSize.toString());
+      c.header('X-Compression', 'APPLIED');
+      c.header('X-Compression-Ratio', `${compressionRatio}%`);
+      c.header('X-Compression-Time', `${compressionTime}ms`);
+      c.header('X-Original-Size', originalSize.toString());
+      c.header('X-Compressed-Size', compressedSize.toString());
 
       // Healthcare compliance headers
-      c.header("X-Healthcare-Compression", "compliant");
+      c.header('X-Healthcare-Compression', 'compliant');
 
       // Log compression metrics for monitoring
-      if (process.env.NODE_ENV === "development") {
+      if (process.env.NODE_ENV === 'development') {
         console.log(
           `Compression applied: ${originalSize} -> ${compressedSize} bytes (${compressionRatio}% reduction) in ${compressionTime}ms`,
         );
       }
     } catch (error) {
-      console.error("Compression error:", error);
-      c.header("X-Compression", "ERROR");
-      c.header("X-Compression-Error", (error as Error).message);
+      console.error('Compression error:', error);
+      c.header('X-Compression', 'ERROR');
+      c.header('X-Compression-Error', (error as Error).message);
     }
   };
 }
@@ -234,7 +234,7 @@ export function createAdvancedCompressionMiddleware(
  */
 export function createHealthcareCompressionMiddleware() {
   return compress({
-    encoding: "gzip", // Primary encoding
+    encoding: 'gzip', // Primary encoding
     threshold: 1024, // 1KB minimum
   });
 }
@@ -259,20 +259,20 @@ export function compressionMonitoringMiddleware() {
       await next();
 
       // Collect compression statistics
-      const compressionHeader = c.res.headers.get("x-compression");
-      if (compressionHeader === "APPLIED") {
+      const compressionHeader = c.res.headers.get('x-compression');
+      if (compressionHeader === 'APPLIED') {
         compressionStats.compressedRequests++;
 
         const originalSize = parseInt(
-          c.res.headers.get("x-original-size") || "0",
+          c.res.headers.get('x-original-size') || '0',
           10,
         );
         const compressedSize = parseInt(
-          c.res.headers.get("x-compressed-size") || "0",
+          c.res.headers.get('x-compressed-size') || '0',
           10,
         );
         const _compressionTime = parseInt(
-          c.res.headers.get("x-compression-time")?.replace("ms", "") || "0",
+          c.res.headers.get('x-compression-time')?.replace('ms', '') || '0',
           10,
         );
 
@@ -280,9 +280,8 @@ export function compressionMonitoringMiddleware() {
         compressionStats.totalCompressedBytes += compressedSize;
 
         // Update averages
-        const totalSavings =
-          compressionStats.totalOriginalBytes -
-          compressionStats.totalCompressedBytes;
+        const totalSavings = compressionStats.totalOriginalBytes
+          - compressionStats.totalCompressedBytes;
         compressionStats.averageCompressionRatio = Math.round(
           (totalSavings / compressionStats.totalOriginalBytes) * 100,
         );
@@ -292,13 +291,13 @@ export function compressionMonitoringMiddleware() {
     getStats: () => ({
       ...compressionStats,
       compressionRate: Math.round(
-        (compressionStats.compressedRequests / compressionStats.totalRequests) *
-          100,
+        (compressionStats.compressedRequests / compressionStats.totalRequests)
+          * 100,
       ),
     }),
 
     resetStats: () => {
-      Object.keys(compressionStats).forEach((key) => {
+      Object.keys(compressionStats).forEach(key => {
         (compressionStats as any)[key] = 0;
       });
     },
@@ -312,21 +311,21 @@ export function createContentTypeCompressionMiddleware() {
   return async (c: Context, next: Next) => {
     await next();
 
-    const contentType = c.res.headers.get("content-type") || "";
+    const contentType = c.res.headers.get('content-type') || '';
 
     // Add content-type specific headers
-    if (contentType.includes("application/json")) {
-      c.header("X-Content-Optimization", "json-optimized");
-    } else if (contentType.includes("text/html")) {
-      c.header("X-Content-Optimization", "html-optimized");
-    } else if (contentType.includes("application/xml")) {
-      c.header("X-Content-Optimization", "xml-optimized");
+    if (contentType.includes('application/json')) {
+      c.header('X-Content-Optimization', 'json-optimized');
+    } else if (contentType.includes('text/html')) {
+      c.header('X-Content-Optimization', 'html-optimized');
+    } else if (contentType.includes('application/xml')) {
+      c.header('X-Content-Optimization', 'xml-optimized');
     }
 
     // Healthcare-specific content handling
-    if (contentType.includes("application/fhir+json")) {
-      c.header("X-Healthcare-Format", "FHIR");
-      c.header("X-Compression-Strategy", "healthcare-optimized");
+    if (contentType.includes('application/fhir+json')) {
+      c.header('X-Healthcare-Format', 'FHIR');
+      c.header('X-Compression-Strategy', 'healthcare-optimized');
     }
   };
 }

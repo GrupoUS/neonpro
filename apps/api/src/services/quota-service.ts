@@ -14,7 +14,7 @@ export interface QuotaResult {
   allowed: boolean;
   remaining: number;
   resetTime: Date;
-  quotaType: "daily" | "monthly" | "perMinute" | "perHour";
+  quotaType: 'daily' | 'monthly' | 'perMinute' | 'perHour';
 }
 
 export interface QuotaUsage {
@@ -36,7 +36,7 @@ export async function checkQuota(
     allowed: true,
     remaining: 1000,
     resetTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
-    quotaType: "daily",
+    quotaType: 'daily',
   };
 }
 
@@ -53,7 +53,7 @@ export async function applyQuota(
     allowed: true,
     remaining: 999,
     resetTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
-    quotaType: "daily",
+    quotaType: 'daily',
   };
 }
 
@@ -62,7 +62,7 @@ export async function applyQuota(
  */
 export async function getQuotaUsage(
   identifier: string,
-  period: "daily" | "monthly" | "perMinute" | "perHour" = "daily",
+  period: 'daily' | 'monthly' | 'perMinute' | 'perHour' = 'daily',
 ): Promise<QuotaUsage> {
   // Mock implementation for contract testing
   const limits = {
@@ -85,7 +85,7 @@ export async function getQuotaUsage(
  */
 export async function resetQuota(
   identifier: string,
-  period: "daily" | "monthly" | "perMinute" | "perHour" = "daily",
+  period: 'daily' | 'monthly' | 'perMinute' | 'perHour' = 'daily',
 ): Promise<void> {
   // Mock implementation for contract testing
   console.log(`Quota reset for ${identifier} (${period})`);

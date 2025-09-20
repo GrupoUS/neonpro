@@ -11,7 +11,7 @@
  * NOTE: Service layer (uploadPatientDocument) will be mocked in this test to isolate route validation concerns.
  */
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Prepare mocks for future service integration
 const mockDocumentService = {
@@ -25,14 +25,14 @@ function makeFile(name: string, type: string, sizeBytes: number) {
 }
 
 // Dynamic import inside tests to allow failing before implementation exists
-const ROUTE_PATH = "../documents-upload";
+const ROUTE_PATH = '../documents-upload';
 
-describe("POST /api/v2/patients/:id/documents (FR-003)", () => {
+describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("should export the upload documents route module (placeholder)", () => {
+  it('should export the upload documents route module (placeholder)', () => {
     // This will fail initially until the route file is created
     expect(() => {
       const module = require(ROUTE_PATH);
@@ -40,17 +40,17 @@ describe("POST /api/v2/patients/:id/documents (FR-003)", () => {
     }).not.toThrow();
   });
 
-  it("should reject unauthenticated request with 401", async () => {
+  it('should reject unauthenticated request with 401', async () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
-    const file = makeFile("test.pdf", "application/pdf", 1024);
+    const file = makeFile('test.pdf', 'application/pdf', 1024);
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
 
     const request = new Request(
-      "/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents",
+      '/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents',
       {
-        method: "POST",
+        method: 'POST',
         body: formData,
         // No auth header
       },
@@ -60,31 +60,31 @@ describe("POST /api/v2/patients/:id/documents (FR-003)", () => {
     expect(response.status).toBe(401);
   });
 
-  it("should reject unsupported MIME type with 415", async () => {
+  it('should reject unsupported MIME type with 415', async () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
     mockDocumentService.uploadPatientDocument.mockResolvedValue({
       success: true,
       data: {
-        id: "doc-123",
-        patientId: "123e4567-e89b-12d3-a456-426614174003",
-        filename: "malware.exe",
-        mimeType: "application/octet-stream",
+        id: 'doc-123',
+        patientId: '123e4567-e89b-12d3-a456-426614174003',
+        filename: 'malware.exe',
+        mimeType: 'application/octet-stream',
         size: 100,
       },
     });
 
-    const file = makeFile("malware.exe", "application/octet-stream", 100);
+    const file = makeFile('malware.exe', 'application/octet-stream', 100);
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
 
     const request = new Request(
-      "/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents",
+      '/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents',
       {
-        method: "POST",
+        method: 'POST',
         body: formData,
         headers: new Headers({
-          authorization: "Bearer valid-token",
+          authorization: 'Bearer valid-token',
         }),
       },
     );
@@ -93,25 +93,25 @@ describe("POST /api/v2/patients/:id/documents (FR-003)", () => {
     expect([400, 415]).toContain(response.status); // Allow 400 until strict 415 implemented
   });
 
-  it("should reject file exceeding 10MB with 413", async () => {
+  it('should reject file exceeding 10MB with 413', async () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
     // Create a 10.5MB file
     const file = makeFile(
-      "large.pdf",
-      "application/pdf",
+      'large.pdf',
+      'application/pdf',
       (10.5 * 1024 * 1024) | 0,
     );
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
 
     const request = new Request(
-      "/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents",
+      '/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents',
       {
-        method: "POST",
+        method: 'POST',
         body: formData,
         headers: new Headers({
-          authorization: "Bearer valid-token",
+          authorization: 'Bearer valid-token',
         }),
       },
     );
@@ -120,43 +120,43 @@ describe("POST /api/v2/patients/:id/documents (FR-003)", () => {
     expect([400, 413]).toContain(response.status); // Accept 400 until bodyLimit middleware added
   });
 
-  it("should upload a valid PDF document (happy path)", async () => {
+  it('should upload a valid PDF document (happy path)', async () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
     mockDocumentService.uploadPatientDocument.mockResolvedValue({
       success: true,
       data: {
-        id: "doc-abc",
-        patientId: "123e4567-e89b-12d3-a456-426614174003",
-        filename: "report.pdf",
-        mimeType: "application/pdf",
+        id: 'doc-abc',
+        patientId: '123e4567-e89b-12d3-a456-426614174003',
+        filename: 'report.pdf',
+        mimeType: 'application/pdf',
         size: 2048,
-        storagePath: "patient-documents/123/report.pdf",
+        storagePath: 'patient-documents/123/report.pdf',
         createdAt: new Date().toISOString(),
       },
     });
 
-    const file = makeFile("report.pdf", "application/pdf", 2048);
+    const file = makeFile('report.pdf', 'application/pdf', 2048);
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
 
     const request = new Request(
-      "/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents",
+      '/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents',
       {
-        method: "POST",
+        method: 'POST',
         body: formData,
         headers: new Headers({
-          authorization: "Bearer valid-token",
+          authorization: 'Bearer valid-token',
         }),
       },
     );
 
     const response = await uploadRoute.request(request);
-    const json = await response.json().catch((_error) => ({}));
+    const json = await response.json().catch(_error => ({}));
 
     // Final expectations (will fail until implemented)
     expect(response.status).toBe(201);
     expect(json.success).toBe(true);
-    expect(json.data.filename).toBe("report.pdf");
+    expect(json.data.filename).toBe('report.pdf');
   });
 });

@@ -23,23 +23,23 @@ import {
   HealthcareAIUseCase,
   HealthcareDataClassification,
   LGPDDataCategory,
-} from "@neonpro/shared";
-import { z } from "zod";
-import { AuditTrailService } from "./audit-trail";
-import { SemanticCacheService } from "./semantic-cache";
+} from '@neonpro/shared';
+import { z } from 'zod';
+import { AuditTrailService } from './audit-trail';
+import { SemanticCacheService } from './semantic-cache';
 
 // Import modular components
-import { ProviderConfigManager } from "./ai-provider/config";
-import { ProviderHealthMonitor } from "./ai-provider/health-check";
-import { AISecurityManager } from "./ai-provider/security";
+import { ProviderConfigManager } from './ai-provider/config';
+import { ProviderHealthMonitor } from './ai-provider/health-check';
+import { AISecurityManager } from './ai-provider/security';
 import {
-  RoutingStrategy,
-  ProviderStatus,
+  ProviderConfig,
   ProviderHealthCheck,
+  ProviderStatus,
   RoutingRequest,
   RoutingResponse,
-  ProviderConfig,
-} from "./ai-provider/types";
+  RoutingStrategy,
+} from './ai-provider/types';
 
 // ============================================================================
 // Circuit Breaker Implementation
@@ -48,17 +48,17 @@ import {
 class CircuitBreaker {
   private failures = 0;
   private lastFailureTime = 0;
-  private state: "closed" | "open" | "half-open" = "closed";
+  private state: 'closed' | 'open' | 'half-open' = 'closed';
   private readonly failureThreshold = 5;
   private readonly timeoutMs = 60000; // 1 minute
 
   constructor(private provider: AIProvider) {}
 
   isOpen(): boolean {
-    if (this.state === "open") {
+    if (this.state === 'open') {
       // Check if timeout has elapsed
       if (Date.now() - this.lastFailureTime >= this.timeoutMs) {
-        this.state = "half-open";
+        this.state = 'half-open';
         return false;
       }
       return true;
@@ -68,17 +68,17 @@ class CircuitBreaker {
 
   recordSuccess(): void {
     this.failures = 0;
-    this.state = "closed";
+    this.state = 'closed';
   }
 
   recordFailure(): void {
     this.failures++;
     this.lastFailureTime = Date.now();
 
-    if (this.state === "half-open") {
-      this.state = "open";
+    if (this.state === 'half-open') {
+      this.state = 'open';
     } else if (this.failures >= this.failureThreshold) {
-      this.state = "open";
+      this.state = 'open';
     }
   }
 
@@ -96,8 +96,7 @@ export class AIProviderRouterService {
   private audit_service: AuditTrailService;
   private health_check_interval?: NodeJS.Timeout;
   private request_queue: Map<string, Promise<RoutingResponse>> = new Map();
-  private performance_metrics: Map<AIProvider, AIPerformanceMetrics> =
-    new Map();
+  private performance_metrics: Map<AIProvider, AIPerformanceMetrics> = new Map();
 
   // Modular components
   private config_manager: ProviderConfigManager;
@@ -121,7 +120,7 @@ export class AIProviderRouterService {
     this.config_manager.initializeProviders(provider_configs);
 
     // Initialize health monitoring for each provider
-    provider_configs.forEach((config) => {
+    provider_configs.forEach(config => {
       this.health_monitor.initializeProviderHealth(config.provider, config);
       this.initializeProviderMetrics(config.provider);
     });
@@ -131,7 +130,7 @@ export class AIProviderRouterService {
       this.config_manager.initializeDefaultProviders();
       // Initialize health for default providers
       const default_configs = this.config_manager.getAllProviderConfigs();
-      default_configs.forEach((config) => {
+      default_configs.forEach(config => {
         this.health_monitor.initializeProviderHealth(config.provider, config);
         this.initializeProviderMetrics(config.provider);
       });
@@ -183,8 +182,7 @@ export class AIProviderRouterService {
 
     try {
       // 🔒 SECURITY: Validate and sanitize request
-      const validated_request =
-        this.security_manager.validateAndSanitizeRequest(request);
+      const validated_request = this.security_manager.validateAndSanitizeRequest(request);
 
       // 🚨 HEALTHCARE: Check emergency bypass conditions
       if (validated_request.healthcare_context.is_emergency) {
@@ -218,8 +216,8 @@ export class AIProviderRouterService {
 
       // Cache successful response (if enabled and appropriate)
       if (
-        validated_request.ai_config.cache_enabled &&
-        this.shouldCacheResponse(validated_request, response)
+        validated_request.ai_config.cache_enabled
+        && this.shouldCacheResponse(validated_request, response)
       ) {
         await this.cacheResponse(validated_request, response);
       }
@@ -252,11 +250,10 @@ export class AIProviderRouterService {
     start_time: number,
   ): Promise<RoutingResponse> {
     const all_configs = this.config_manager.getAllProviderConfigs();
-    const emergency_providers =
-      this.health_monitor.getEmergencyCapableProviders(all_configs);
+    const emergency_providers = this.health_monitor.getEmergencyCapableProviders(all_configs);
 
     if (emergency_providers.length === 0) {
-      throw new Error("No emergency-capable providers available");
+      throw new Error('No emergency-capable providers available');
     }
 
     // Sort by latency for fastest response
@@ -296,7 +293,7 @@ export class AIProviderRouterService {
     const available_providers = this.getAvailableProviders(request);
 
     if (available_providers.length === 0) {
-      throw new Error("No available providers for this request");
+      throw new Error('No available providers for this request');
     }
 
     switch (request.routing_config.strategy) {
@@ -368,8 +365,8 @@ export class AIProviderRouterService {
 
       // Check preferred providers
       if (
-        request.ai_config.preferred_providers &&
-        request.ai_config.preferred_providers.length > 0
+        request.ai_config.preferred_providers
+        && request.ai_config.preferred_providers.length > 0
       ) {
         if (!request.ai_config.preferred_providers.includes(config.provider)) {
           continue;
@@ -436,20 +433,18 @@ export class AIProviderRouterService {
     request: RoutingRequest,
   ): ProviderConfig {
     let best_provider = providers[0];
-    let lowest_latency =
-      (
-        this.health_monitor.getProviderHealth(
-          best_provider.provider,
-        ) as ProviderHealthCheck
-      )?.latency || Infinity;
+    let lowest_latency = (
+      this.health_monitor.getProviderHealth(
+        best_provider.provider,
+      ) as ProviderHealthCheck
+    )?.latency || Infinity;
 
     for (const provider of providers.slice(1)) {
-      const latency =
-        (
-          this.health_monitor.getProviderHealth(
-            provider.provider,
-          ) as ProviderHealthCheck
-        )?.latency || Infinity;
+      const latency = (
+        this.health_monitor.getProviderHealth(
+          provider.provider,
+        ) as ProviderHealthCheck
+      )?.latency || Infinity;
       if (latency < lowest_latency) {
         lowest_latency = latency;
         best_provider = provider;
@@ -467,20 +462,18 @@ export class AIProviderRouterService {
     request: RoutingRequest,
   ): ProviderConfig {
     let best_provider = providers[0];
-    let best_quality =
-      (
-        this.health_monitor.getProviderHealth(
-          best_provider.provider,
-        ) as ProviderHealthCheck
-      )?.success_rate || 0;
+    let best_quality = (
+      this.health_monitor.getProviderHealth(
+        best_provider.provider,
+      ) as ProviderHealthCheck
+    )?.success_rate || 0;
 
     for (const provider of providers.slice(1)) {
-      const quality =
-        (
-          this.health_monitor.getProviderHealth(
-            provider.provider,
-          ) as ProviderHealthCheck
-        )?.success_rate || 0;
+      const quality = (
+        this.health_monitor.getProviderHealth(
+          provider.provider,
+        ) as ProviderHealthCheck
+      )?.success_rate || 0;
       if (quality > best_quality) {
         best_quality = quality;
         best_provider = provider;
@@ -522,9 +515,9 @@ export class AIProviderRouterService {
     // For emergency, prioritize fastest response with highest compliance
     return this.selectLatencyOptimizedProvider(
       providers.filter(
-        (p) =>
-          p.healthcare_compliance.lgpd_approved &&
-          p.healthcare_compliance.anvisa_certified,
+        p =>
+          p.healthcare_compliance.lgpd_approved
+          && p.healthcare_compliance.anvisa_certified,
       ),
       request,
     );
@@ -547,10 +540,8 @@ export class AIProviderRouterService {
       ) as ProviderHealthCheck;
 
       // Sort by success rate and inverse latency
-      const score_a =
-        (health_a?.success_rate || 0) - (health_a?.latency || 1000) / 1000;
-      const score_b =
-        (health_b?.success_rate || 0) - (health_b?.latency || 1000) / 1000;
+      const score_a = (health_a?.success_rate || 0) - (health_a?.latency || 1000) / 1000;
+      const score_b = (health_b?.success_rate || 0) - (health_b?.latency || 1000) / 1000;
 
       return score_b - score_a;
     });
@@ -647,7 +638,7 @@ export class AIProviderRouterService {
     // Add fallback providers if enabled
     if (request.ai_config.fallback_enabled) {
       const fallback_providers = this.getAvailableProviders(request)
-        .filter((p) => p.provider !== provider.provider)
+        .filter(p => p.provider !== provider.provider)
         .slice(0, 2); // Maximum 2 fallback providers
 
       providers_to_try.push(...fallback_providers);
@@ -738,7 +729,7 @@ export class AIProviderRouterService {
     provider: ProviderConfig,
     request: RoutingRequest,
   ): AIModelConfig | null {
-    const eligible_models = provider.models.filter((model) => {
+    const eligible_models = provider.models.filter(model => {
       // Check model category
       if (model.category !== request.ai_config.model_category) {
         return false;
@@ -746,8 +737,8 @@ export class AIProviderRouterService {
 
       // Check healthcare compliance
       if (
-        request.healthcare_context.contains_pii &&
-        !model.healthcare_config.patient_data_processing
+        request.healthcare_context.contains_pii
+        && !model.healthcare_config.patient_data_processing
       ) {
         return false;
       }
@@ -762,9 +753,9 @@ export class AIProviderRouterService {
 
       // Check latency constraints
       if (
-        request.routing_config.max_latency_ms &&
-        model.performance_config.max_latency_ms >
-          request.routing_config.max_latency_ms
+        request.routing_config.max_latency_ms
+        && model.performance_config.max_latency_ms
+          > request.routing_config.max_latency_ms
       ) {
         return false;
       }
@@ -821,7 +812,7 @@ export class AIProviderRouterService {
 
     // Simulate API call latency
     const latency_simulation = Math.random() * 1000 + 500;
-    await new Promise((resolve) => setTimeout(resolve, latency_simulation));
+    await new Promise(resolve => setTimeout(resolve, latency_simulation));
 
     // Generate mock response based on healthcare context
     const response_content = this.generateMockResponse(
@@ -878,26 +869,26 @@ export class AIProviderRouterService {
   ): string {
     const responses: Record<HealthcareAIUseCase, string> = {
       [HealthcareAIUseCase.PATIENT_COMMUNICATION]:
-        "Olá! Entendo sua preocupação. Com base nas informações fornecidas, recomendo que você consulte um profissional de saúde para uma avaliação adequada. Este sistema segue todas as diretrizes LGPD e CFM.",
+        'Olá! Entendo sua preocupação. Com base nas informações fornecidas, recomendo que você consulte um profissional de saúde para uma avaliação adequada. Este sistema segue todas as diretrizes LGPD e CFM.',
       [HealthcareAIUseCase.APPOINTMENT_SCHEDULING]:
-        "Verificando disponibilidade de horários... Encontrei os seguintes horários disponíveis para consulta: Segunda-feira às 14h, Terça-feira às 10h, ou Quinta-feira às 16h. Qual prefere?",
+        'Verificando disponibilidade de horários... Encontrei os seguintes horários disponíveis para consulta: Segunda-feira às 14h, Terça-feira às 10h, ou Quinta-feira às 16h. Qual prefere?',
       [HealthcareAIUseCase.SYMPTOMS_ANALYSIS]:
-        "Com base nos sintomas relatados, é importante procurar avaliação médica presencial. Não posso fornecer diagnósticos, mas posso ajudar a organizar as informações para sua consulta.",
+        'Com base nos sintomas relatados, é importante procurar avaliação médica presencial. Não posso fornecer diagnósticos, mas posso ajudar a organizar as informações para sua consulta.',
       [HealthcareAIUseCase.TREATMENT_PLANNING]:
-        "Para um plano de tratamento adequado, é necessária avaliação médica presencial. Posso ajudar a compilar informações relevantes para discussão com seu médico.",
+        'Para um plano de tratamento adequado, é necessária avaliação médica presencial. Posso ajudar a compilar informações relevantes para discussão com seu médico.',
       [HealthcareAIUseCase.DOCUMENTATION]:
-        "Documento gerado conforme padrões CFM e LGPD. Todas as informações foram processadas de forma segura e em conformidade com as regulamentações brasileiras de saúde.",
+        'Documento gerado conforme padrões CFM e LGPD. Todas as informações foram processadas de forma segura e em conformidade com as regulamentações brasileiras de saúde.',
       [HealthcareAIUseCase.COMPLIANCE_CHECK]:
-        "Verificação de conformidade realizada. Processo em compliance com LGPD, ANVISA e diretrizes CFM. Todas as medidas de proteção de dados foram aplicadas.",
+        'Verificação de conformidade realizada. Processo em compliance com LGPD, ANVISA e diretrizes CFM. Todas as medidas de proteção de dados foram aplicadas.',
       [HealthcareAIUseCase.MEDICAL_TRANSCRIPTION]:
-        "Transcrição médica realizada seguindo padrões de confidencialidade e proteção de dados. Informações sensíveis foram adequadamente protegidas.",
+        'Transcrição médica realizada seguindo padrões de confidencialidade e proteção de dados. Informações sensíveis foram adequadamente protegidas.',
       [HealthcareAIUseCase.PATIENT_EDUCATION]:
-        "Material educativo gerado com base em evidências científicas e diretrizes médicas brasileiras. Recomendo sempre consultar profissionais de saúde para orientações específicas.",
+        'Material educativo gerado com base em evidências científicas e diretrizes médicas brasileiras. Recomendo sempre consultar profissionais de saúde para orientações específicas.',
     };
 
     return (
-      responses[use_case] ||
-      "Resposta gerada pelo sistema de IA para contexto de saúde, em conformidade com LGPD e regulamentações brasileiras."
+      responses[use_case]
+      || 'Resposta gerada pelo sistema de IA para contexto de saúde, em conformidade com LGPD e regulamentações brasileiras.'
     );
   }
 
@@ -927,7 +918,7 @@ export class AIProviderRouterService {
         return {
           content: cache_entry.response,
           provider_used: AIProvider.LOCAL,
-          model_used: "semantic-cache",
+          model_used: 'semantic-cache',
           metrics: {
             total_latency_ms: 50, // Cache lookup time
             provider_latency_ms: 0,
@@ -956,7 +947,7 @@ export class AIProviderRouterService {
         };
       }
     } catch (error) {
-      console.warn("Cache lookup failed:", error);
+      console.warn('Cache lookup failed:', error);
     }
 
     return null;
@@ -970,8 +961,8 @@ export class AIProviderRouterService {
     response: RoutingResponse,
   ): Promise<void> {
     if (
-      !request.healthcare_context.patient_id ||
-      request.healthcare_context.is_emergency
+      !request.healthcare_context.patient_id
+      || request.healthcare_context.is_emergency
     ) {
       return; // Don't cache emergency data
     }
@@ -987,7 +978,7 @@ export class AIProviderRouterService {
         compliance: [],
       } as any);
     } catch (error) {
-      console.warn("Failed to cache response:", error);
+      console.warn('Failed to cache response:', error);
     }
   }
 
@@ -1057,7 +1048,7 @@ export class AIProviderRouterService {
    */
   private async performHealthCheck(): Promise<void> {
     const all_configs = this.config_manager.getAllProviderConfigs();
-    const health_promises = all_configs.map(async (config) => {
+    const health_promises = all_configs.map(async config => {
       await this.health_monitor.performProviderHealthCheck(
         config.provider,
         config,
@@ -1138,8 +1129,8 @@ export class AIProviderRouterService {
   getAvailableProvidersList(): AIProvider[] {
     const enabled_configs = this.config_manager.getEnabledProviders();
     return enabled_configs
-      .map((config) => config.provider)
-      .filter((provider) => {
+      .map(config => config.provider)
+      .filter(provider => {
         return this.health_monitor.isProviderAvailable(provider);
       });
   }
@@ -1169,9 +1160,4 @@ export class AIProviderRouterService {
 
 // Export the service and types for external use
 export default AIProviderRouterService;
-export type {
-  ProviderConfig,
-  ProviderHealthCheck,
-  RoutingRequest,
-  RoutingResponse,
-};
+export type { ProviderConfig, ProviderHealthCheck, RoutingRequest, RoutingResponse };

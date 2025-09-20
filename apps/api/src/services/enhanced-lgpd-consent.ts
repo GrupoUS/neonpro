@@ -4,36 +4,33 @@
  * Implements LGPD Articles 7º, 11º, 18º with Brazilian healthcare compliance
  */
 
-import { z } from "zod";
-import { createAdminClient } from "../clients/supabase";
-import {
-  LGPDDataCategory,
-  LGPDLegalBasis,
-} from "../middleware/lgpd-compliance";
+import { z } from 'zod';
+import { createAdminClient } from '../clients/supabase';
+import { LGPDDataCategory, LGPDLegalBasis } from '../middleware/lgpd-compliance';
 
 // ============================================================================
 // Enhanced Consent Types & Schemas
 // ============================================================================
 
 export enum ConsentVersion {
-  V1_0 = "1.0", // Basic consent
-  V2_0 = "2.0", // Granular consent with data categories
-  V3_0 = "3.0", // Enhanced with withdrawal tracking and purpose limitation
+  V1_0 = '1.0', // Basic consent
+  V2_0 = '2.0', // Granular consent with data categories
+  V3_0 = '3.0', // Enhanced with withdrawal tracking and purpose limitation
 }
 
 export enum ConsentStatus {
-  ACTIVE = "active",
-  WITHDRAWN = "withdrawn",
-  EXPIRED = "expired",
-  REVOKED = "revoked",
-  PENDING = "pending",
+  ACTIVE = 'active',
+  WITHDRAWN = 'withdrawn',
+  EXPIRED = 'expired',
+  REVOKED = 'revoked',
+  PENDING = 'pending',
 }
 
 export enum WithdrawalMethod {
-  ELECTRONIC = "electronic",
-  WRITTEN = "written",
-  VERBAL = "verbal",
-  AUTOMATED = "automated",
+  ELECTRONIC = 'electronic',
+  WRITTEN = 'written',
+  VERBAL = 'verbal',
+  AUTOMATED = 'automated',
 }
 
 export interface ConsentGranularity {
@@ -62,11 +59,11 @@ export interface ConsentWithdrawalRecord {
   withdrawalDate: Date;
   method: WithdrawalMethod;
   reason: string;
-  requestedBy: "patient" | "guardian" | "legal_representative";
+  requestedBy: 'patient' | 'guardian' | 'legal_representative';
   ipAddress?: string;
   userAgent?: string;
   processedAt: Date;
-  dataAction: "immediate_deletion" | "anonymization" | "retention_until_expiry";
+  dataAction: 'immediate_deletion' | 'anonymization' | 'retention_until_expiry';
   affectedDataCategories: LGPDDataCategory[];
   confirmationSent: boolean;
   confirmationDate?: Date;
@@ -78,7 +75,7 @@ export interface DataRetentionPolicy {
   retentionPeriod: number; // days
   legalBasis: LGPDLegalBasis;
   automatedCleanup: boolean;
-  cleanupSchedule: "daily" | "weekly" | "monthly" | "yearly";
+  cleanupSchedule: 'daily' | 'weekly' | 'monthly' | 'yearly';
   archivalPeriod?: number; // days before deletion
   requiresExplicitConsentForExtension: boolean;
 }
@@ -86,7 +83,7 @@ export interface DataRetentionPolicy {
 export interface ConsentAuditTrail {
   id: string;
   consentId: string;
-  action: "created" | "updated" | "withdrawn" | "expired" | "version_migrated";
+  action: 'created' | 'updated' | 'withdrawn' | 'expired' | 'version_migrated';
   timestamp: Date;
   performedBy: string;
   performedByRole: string;
@@ -120,8 +117,8 @@ export const EnhancedConsentRecordSchema = z.object({
   consentDate: z.date(),
   expiryDate: z.date().optional(),
   lastModifiedDate: z.date(),
-  method: z.enum(["electronic", "written", "verbal", "digital_signature"]),
-  channel: z.enum(["web", "mobile", "in_person", "phone", "email"]),
+  method: z.enum(['electronic', 'written', 'verbal', 'digital_signature']),
+  channel: z.enum(['web', 'mobile', 'in_person', 'phone', 'email']),
 
   // Version tracking
   previousVersionId: z.string().optional(),
@@ -139,7 +136,7 @@ export const EnhancedConsentRecordSchema = z.object({
       withdrawalMethod: z.nativeEnum(WithdrawalMethod).optional(),
       withdrawalReason: z.string().optional(),
       dataAction: z
-        .enum(["immediate_deletion", "anonymization", "retention_until_expiry"])
+        .enum(['immediate_deletion', 'anonymization', 'retention_until_expiry'])
         .optional(),
     })
     .optional(),
@@ -199,22 +196,22 @@ export class EnhancedLGPDConsentService {
   > = {
     [ConsentVersion.V1_0]: {
       version: ConsentVersion.V1_0,
-      effectiveDate: new Date("2023-01-01"),
-      deprecatedDate: new Date("2024-06-01"),
+      effectiveDate: new Date('2023-01-01'),
+      deprecatedDate: new Date('2024-06-01'),
       migrationRequired: true,
-      migrationDeadline: new Date("2024-12-31"),
-      changes: ["Basic consent implementation", "Limited data categories"],
+      migrationDeadline: new Date('2024-12-31'),
+      changes: ['Basic consent implementation', 'Limited data categories'],
       legalBasisUpdates: [LGPDLegalBasis.CONSENT],
     },
     [ConsentVersion.V2_0]: {
       version: ConsentVersion.V2_0,
-      effectiveDate: new Date("2024-06-01"),
+      effectiveDate: new Date('2024-06-01'),
       migrationRequired: false,
       changes: [
-        "Granular data category selection",
-        "Purpose limitation",
-        "Third-party sharing controls",
-        "Automated decision-making consent",
+        'Granular data category selection',
+        'Purpose limitation',
+        'Third-party sharing controls',
+        'Automated decision-making consent',
       ],
       legalBasisUpdates: [
         LGPDLegalBasis.CONSENT,
@@ -223,14 +220,14 @@ export class EnhancedLGPDConsentService {
     },
     [ConsentVersion.V3_0]: {
       version: ConsentVersion.V3_0,
-      effectiveDate: new Date("2025-01-01"),
+      effectiveDate: new Date('2025-01-01'),
       migrationRequired: false,
       changes: [
-        "Enhanced withdrawal mechanisms",
-        "Detailed audit trail",
-        "Data retention automation",
-        "International transfer controls",
-        "Patient privacy dashboard integration",
+        'Enhanced withdrawal mechanisms',
+        'Detailed audit trail',
+        'Data retention automation',
+        'International transfer controls',
+        'Patient privacy dashboard integration',
       ],
       legalBasisUpdates: [
         LGPDLegalBasis.CONSENT,
@@ -245,7 +242,7 @@ export class EnhancedLGPDConsentService {
   async createConsent(
     consentData: Omit<
       EnhancedConsentRecord,
-      "id" | "createdAt" | "updatedAt" | "status"
+      'id' | 'createdAt' | 'updatedAt' | 'status'
     >,
   ): Promise<EnhancedConsentRecord> {
     try {
@@ -263,18 +260,17 @@ export class EnhancedLGPDConsentService {
       );
 
       // Check for overlapping consent purposes
-      const overlappingPurposes =
-        validatedData.granularity.processingPurposes.filter((purpose) =>
-          existingConsents.some(
-            (consent) =>
-              consent.granularity.processingPurposes.includes(purpose) &&
-              consent.status === ConsentStatus.ACTIVE,
-          ),
-        );
+      const overlappingPurposes = validatedData.granularity.processingPurposes.filter(purpose =>
+        existingConsents.some(
+          consent =>
+            consent.granularity.processingPurposes.includes(purpose)
+            && consent.status === ConsentStatus.ACTIVE,
+        )
+      );
 
       if (overlappingPurposes.length > 0) {
         throw new Error(
-          `Active consent already exists for purposes: ${overlappingPurposes.join(", ")}`,
+          `Active consent already exists for purposes: ${overlappingPurposes.join(', ')}`,
         );
       }
 
@@ -289,18 +285,18 @@ export class EnhancedLGPDConsentService {
 
       // Store in database
       const { data, error } = await this.supabase
-        .from("lgpd_enhanced_consents")
+        .from('lgpd_enhanced_consents')
         .insert(consentRecord)
         .select()
         .single();
 
       if (error) {
-        console.error("Error creating consent record:", error);
-        throw new Error("Failed to create consent record");
+        console.error('Error creating consent record:', error);
+        throw new Error('Failed to create consent record');
       }
 
       // Log consent creation
-      await this.logConsentActivity("created", data.id, consentRecord);
+      await this.logConsentActivity('created', data.id, consentRecord);
 
       // Schedule automated cleanup if retention period is set
       if (validatedData.granularity.retentionPeriod > 0) {
@@ -312,7 +308,7 @@ export class EnhancedLGPDConsentService {
 
       return data;
     } catch (error) {
-      console.error("Error in createConsent:", error);
+      console.error('Error in createConsent:', error);
       throw error;
     }
   }
@@ -325,11 +321,11 @@ export class EnhancedLGPDConsentService {
     withdrawalData: {
       method: WithdrawalMethod;
       reason: string;
-      requestedBy: "patient" | "guardian" | "legal_representative";
+      requestedBy: 'patient' | 'guardian' | 'legal_representative';
       dataAction:
-        | "immediate_deletion"
-        | "anonymization"
-        | "retention_until_expiry";
+        | 'immediate_deletion'
+        | 'anonymization'
+        | 'retention_until_expiry';
       ipAddress?: string;
       userAgent?: string;
     },
@@ -337,17 +333,17 @@ export class EnhancedLGPDConsentService {
     try {
       // Get current consent record
       const { data: consent, error: fetchError } = await this.supabase
-        .from("lgpd_enhanced_consents")
-        .select("*")
-        .eq("id", consentId)
+        .from('lgpd_enhanced_consents')
+        .select('*')
+        .eq('id', consentId)
         .single();
 
       if (fetchError || !consent) {
-        throw new Error("Consent record not found");
+        throw new Error('Consent record not found');
       }
 
       if (consent.status === ConsentStatus.WITHDRAWN) {
-        throw new Error("Consent already withdrawn");
+        throw new Error('Consent already withdrawn');
       }
 
       // Create withdrawal record
@@ -368,7 +364,7 @@ export class EnhancedLGPDConsentService {
 
       // Update consent status
       const { error: updateError } = await this.supabase
-        .from("lgpd_enhanced_consents")
+        .from('lgpd_enhanced_consents')
         .update({
           status: ConsentStatus.WITHDRAWN,
           withdrawalRecord: {
@@ -379,28 +375,28 @@ export class EnhancedLGPDConsentService {
           },
           updatedAt: new Date(),
         })
-        .eq("id", consentId);
+        .eq('id', consentId);
 
       if (updateError) {
-        throw new Error("Failed to update consent status");
+        throw new Error('Failed to update consent status');
       }
 
       // Store withdrawal record
       const { data: withdrawal, error: withdrawalError } = await this.supabase
-        .from("lgpd_consent_withdrawals")
+        .from('lgpd_consent_withdrawals')
         .insert(withdrawalRecord)
         .select()
         .single();
 
       if (withdrawalError) {
-        throw new Error("Failed to create withdrawal record");
+        throw new Error('Failed to create withdrawal record');
       }
 
       // Execute data action
       await this.executeDataAction(consent, withdrawalData.dataAction);
 
       // Log withdrawal activity
-      await this.logConsentActivity("withdrawn", consentId, {
+      await this.logConsentActivity('withdrawn', consentId, {
         previousState: consent,
         newState: { ...consent, status: ConsentStatus.WITHDRAWN },
         reason: withdrawalData.reason,
@@ -414,7 +410,7 @@ export class EnhancedLGPDConsentService {
 
       return withdrawal;
     } catch (error) {
-      console.error("Error in withdrawConsent:", error);
+      console.error('Error in withdrawConsent:', error);
       throw error;
     }
   }
@@ -441,13 +437,13 @@ export class EnhancedLGPDConsentService {
       }
 
       if (currentConsent.version === targetVersion) {
-        throw new Error("Consent already at target version");
+        throw new Error('Consent already at target version');
       }
 
       // Create new consent record with updated version
       const newConsent: Omit<
         EnhancedConsentRecord,
-        "id" | "createdAt" | "updatedAt" | "status"
+        'id' | 'createdAt' | 'updatedAt' | 'status'
       > = {
         ...currentConsent,
         version: targetVersion,
@@ -466,12 +462,12 @@ export class EnhancedLGPDConsentService {
 
       // Update old consent to point to new version
       await this.supabase
-        .from("lgpd_enhanced_consents")
+        .from('lgpd_enhanced_consents')
         .update({ nextVersionId: migratedConsent.id })
-        .eq("id", consentId);
+        .eq('id', consentId);
 
       // Log version migration
-      await this.logConsentActivity("version_migrated", consentId, {
+      await this.logConsentActivity('version_migrated', consentId, {
         previousState: currentConsent,
         newState: migratedConsent,
         reason: migrationData.migrationReason,
@@ -479,7 +475,7 @@ export class EnhancedLGPDConsentService {
 
       return migratedConsent;
     } catch (error) {
-      console.error("Error in migrateConsentVersion:", error);
+      console.error('Error in migrateConsentVersion:', error);
       throw error;
     }
   }
@@ -492,19 +488,19 @@ export class EnhancedLGPDConsentService {
   ): Promise<EnhancedConsentRecord[]> {
     try {
       const { data, error } = await this.supabase
-        .from("lgpd_enhanced_consents")
-        .select("*")
-        .eq("patientId", patientId)
-        .eq("status", ConsentStatus.ACTIVE)
-        .order("createdAt", { ascending: false });
+        .from('lgpd_enhanced_consents')
+        .select('*')
+        .eq('patientId', patientId)
+        .eq('status', ConsentStatus.ACTIVE)
+        .order('createdAt', { ascending: false });
 
       if (error) {
-        throw new Error("Failed to fetch patient consents");
+        throw new Error('Failed to fetch patient consents');
       }
 
       return data || [];
     } catch (error) {
-      console.error("Error in getPatientActiveConsents:", error);
+      console.error('Error in getPatientActiveConsents:', error);
       throw error;
     }
   }
@@ -515,18 +511,18 @@ export class EnhancedLGPDConsentService {
   async getConsentById(consentId: string): Promise<EnhancedConsentRecord> {
     try {
       const { data, error } = await this.supabase
-        .from("lgpd_enhanced_consents")
-        .select("*")
-        .eq("id", consentId)
+        .from('lgpd_enhanced_consents')
+        .select('*')
+        .eq('id', consentId)
         .single();
 
       if (error || !data) {
-        throw new Error("Consent record not found");
+        throw new Error('Consent record not found');
       }
 
       return data;
     } catch (error) {
-      console.error("Error in getConsentById:", error);
+      console.error('Error in getConsentById:', error);
       throw error;
     }
   }
@@ -548,13 +544,13 @@ export class EnhancedLGPDConsentService {
 
       for (const consent of activeConsents) {
         // Check if all required data categories are covered
-        const hasAllCategories = requiredCategories.every((category) =>
-          consent.granularity.dataCategories.includes(category),
+        const hasAllCategories = requiredCategories.every(category =>
+          consent.granularity.dataCategories.includes(category)
         );
 
         // Check if all required purposes are covered
-        const hasAllPurposes = purposes.every((purpose) =>
-          consent.granularity.processingPurposes.includes(purpose),
+        const hasAllPurposes = purposes.every(purpose =>
+          consent.granularity.processingPurposes.includes(purpose)
         );
 
         if (hasAllCategories && hasAllPurposes) {
@@ -566,29 +562,25 @@ export class EnhancedLGPDConsentService {
       const missingCategories: string[] = [];
       const missingPurposes: string[] = [];
 
-      requiredCategories.forEach((category) => {
+      requiredCategories.forEach(category => {
         if (
-          !activeConsents.some((consent) =>
-            consent.granularity.dataCategories.includes(category),
-          )
+          !activeConsents.some(consent => consent.granularity.dataCategories.includes(category))
         ) {
           missingCategories.push(category);
         }
       });
 
-      purposes.forEach((purpose) => {
+      purposes.forEach(purpose => {
         if (
-          !activeConsents.some((consent) =>
-            consent.granularity.processingPurposes.includes(purpose),
-          )
+          !activeConsents.some(consent => consent.granularity.processingPurposes.includes(purpose))
         ) {
           missingPurposes.push(purpose);
         }
       });
 
       const missingRequirements = [
-        ...missingCategories.map((cat) => `Data category: ${cat}`),
-        ...missingPurposes.map((purpose) => `Purpose: ${purpose}`),
+        ...missingCategories.map(cat => `Data category: ${cat}`),
+        ...missingPurposes.map(purpose => `Purpose: ${purpose}`),
       ];
 
       return {
@@ -596,7 +588,7 @@ export class EnhancedLGPDConsentService {
         missingRequirements,
       };
     } catch (error) {
-      console.error("Error in isProcessingConsented:", error);
+      console.error('Error in isProcessingConsented:', error);
       throw error;
     }
   }
@@ -606,22 +598,22 @@ export class EnhancedLGPDConsentService {
    */
   private async executeDataAction(
     consent: EnhancedConsentRecord,
-    action: "immediate_deletion" | "anonymization" | "retention_until_expiry",
+    action: 'immediate_deletion' | 'anonymization' | 'retention_until_expiry',
   ): Promise<void> {
     try {
       switch (action) {
-        case "immediate_deletion":
+        case 'immediate_deletion':
           await this.immediateDataDeletion(consent);
           break;
-        case "anonymization":
+        case 'anonymization':
           await this.anonymizeData(consent);
           break;
-        case "retention_until_expiry":
+        case 'retention_until_expiry':
           await this.scheduleRetentionPeriodDeletion(consent);
           break;
       }
     } catch (error) {
-      console.error("Error executing data action:", error);
+      console.error('Error executing data action:', error);
       throw error;
     }
   }
@@ -636,8 +628,8 @@ export class EnhancedLGPDConsentService {
     console.log(`Executing immediate deletion for consent ${consent.id}`);
 
     // Log deletion activity
-    await this.logConsentActivity("data_deleted", consent.id, {
-      reason: "Immediate deletion per consent withdrawal",
+    await this.logConsentActivity('data_deleted', consent.id, {
+      reason: 'Immediate deletion per consent withdrawal',
       dataCategories: consent.granularity.dataCategories,
     });
   }
@@ -650,8 +642,8 @@ export class EnhancedLGPDConsentService {
     console.log(`Executing data anonymization for consent ${consent.id}`);
 
     // Log anonymization activity
-    await this.logConsentActivity("data_anonymized", consent.id, {
-      reason: "Data anonymization per consent withdrawal",
+    await this.logConsentActivity('data_anonymized', consent.id, {
+      reason: 'Data anonymization per consent withdrawal',
       dataCategories: consent.granularity.dataCategories,
     });
   }
@@ -673,7 +665,7 @@ export class EnhancedLGPDConsentService {
     );
 
     // Log scheduling activity
-    await this.logConsentActivity("deletion_scheduled", consent.id, {
+    await this.logConsentActivity('deletion_scheduled', consent.id, {
       reason: `Retention period deletion scheduled for ${deletionDate}`,
       dataCategories: consent.granularity.dataCategories,
     });
@@ -697,7 +689,7 @@ export class EnhancedLGPDConsentService {
    * Log consent activity
    */
   private async logConsentActivity(
-    action: ConsentAuditTrail["action"],
+    action: ConsentAuditTrail['action'],
     consentId: string,
     details: {
       previousState?: any;
@@ -712,17 +704,17 @@ export class EnhancedLGPDConsentService {
         consentId,
         action,
         timestamp: new Date(),
-        performedBy: "system", // Would be actual user in real implementation
-        performedByRole: "system",
+        performedBy: 'system', // Would be actual user in real implementation
+        performedByRole: 'system',
         previousState: details.previousState,
         newState: details.newState,
         reason: details.reason,
         legalBasis: LGPDLegalBasis.LEGAL_OBLIGATION,
       };
 
-      await this.supabase.from("lgpd_consent_audit_trail").insert(auditTrail);
+      await this.supabase.from('lgpd_consent_audit_trail').insert(auditTrail);
     } catch (error) {
-      console.error("Error logging consent activity:", error);
+      console.error('Error logging consent activity:', error);
     }
   }
 
@@ -738,12 +730,12 @@ export class EnhancedLGPDConsentService {
 
     // Update confirmation status
     await this.supabase
-      .from("lgpd_consent_withdrawals")
+      .from('lgpd_consent_withdrawals')
       .update({
         confirmationSent: true,
         confirmationDate: new Date(),
       })
-      .eq("id", withdrawal.id);
+      .eq('id', withdrawal.id);
   }
 
   /**
@@ -752,18 +744,18 @@ export class EnhancedLGPDConsentService {
   async getConsentAuditTrail(consentId: string): Promise<ConsentAuditTrail[]> {
     try {
       const { data, error } = await this.supabase
-        .from("lgpd_consent_audit_trail")
-        .select("*")
-        .eq("consentId", consentId)
-        .order("timestamp", { ascending: false });
+        .from('lgpd_consent_audit_trail')
+        .select('*')
+        .eq('consentId', consentId)
+        .order('timestamp', { ascending: false });
 
       if (error) {
-        throw new Error("Failed to fetch audit trail");
+        throw new Error('Failed to fetch audit trail');
       }
 
       return data || [];
     } catch (error) {
-      console.error("Error in getConsentAuditTrail:", error);
+      console.error('Error in getConsentAuditTrail:', error);
       throw error;
     }
   }
@@ -780,16 +772,16 @@ export class EnhancedLGPDConsentService {
     dataCategoryDistribution: Record<LGPDDataCategory, number>;
   }> {
     try {
-      let query = this.supabase.from("lgpd_enhanced_consents").select("*");
+      let query = this.supabase.from('lgpd_enhanced_consents').select('*');
 
       if (patientId) {
-        query = query.eq("patientId", patientId);
+        query = query.eq('patientId', patientId);
       }
 
       const { data, error } = await query;
 
       if (error) {
-        throw new Error("Failed to fetch consent statistics");
+        throw new Error('Failed to fetch consent statistics');
       }
 
       const consents = data || [];
@@ -797,27 +789,27 @@ export class EnhancedLGPDConsentService {
       const statistics = {
         totalConsents: consents.length,
         activeConsents: consents.filter(
-          (c) => c.status === ConsentStatus.ACTIVE,
+          c => c.status === ConsentStatus.ACTIVE,
         ).length,
         withdrawnConsents: consents.filter(
-          (c) => c.status === ConsentStatus.WITHDRAWN,
+          c => c.status === ConsentStatus.WITHDRAWN,
         ).length,
         expiredConsents: consents.filter(
-          (c) => c.status === ConsentStatus.EXPIRED,
+          c => c.status === ConsentStatus.EXPIRED,
         ).length,
         versionDistribution: {} as Record<ConsentVersion, number>,
         dataCategoryDistribution: {} as Record<LGPDDataCategory, number>,
       };
 
       // Calculate version distribution
-      consents.forEach((consent) => {
+      consents.forEach(consent => {
         statistics.versionDistribution[consent.version] =
           (statistics.versionDistribution[consent.version] || 0) + 1;
       });
 
       // Calculate data category distribution
-      consents.forEach((consent) => {
-        consent.granularity.dataCategories.forEach((category) => {
+      consents.forEach(consent => {
+        consent.granularity.dataCategories.forEach(category => {
           statistics.dataCategoryDistribution[category] =
             (statistics.dataCategoryDistribution[category] || 0) + 1;
         });
@@ -825,7 +817,7 @@ export class EnhancedLGPDConsentService {
 
       return statistics;
     } catch (error) {
-      console.error("Error in getConsentStatistics:", error);
+      console.error('Error in getConsentStatistics:', error);
       throw error;
     }
   }

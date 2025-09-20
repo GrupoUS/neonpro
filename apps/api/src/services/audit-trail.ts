@@ -6,7 +6,7 @@
  * with patient data access tracking and security event monitoring
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // ============================================================================
 // Audit Event Types & Categories
@@ -14,86 +14,86 @@ import { z } from "zod";
 
 export enum AuditEventType {
   // Authentication & Authorization
-  USER_LOGIN = "user_login",
-  USER_LOGOUT = "user_logout",
-  USER_LOGIN_FAILED = "user_login_failed",
-  PASSWORD_CHANGE = "password_change",
-  MFA_ENABLED = "mfa_enabled",
-  MFA_DISABLED = "mfa_disabled",
-  ROLE_CHANGE = "role_change",
-  PERMISSION_CHANGE = "permission_change",
+  USER_LOGIN = 'user_login',
+  USER_LOGOUT = 'user_logout',
+  USER_LOGIN_FAILED = 'user_login_failed',
+  PASSWORD_CHANGE = 'password_change',
+  MFA_ENABLED = 'mfa_enabled',
+  MFA_DISABLED = 'mfa_disabled',
+  ROLE_CHANGE = 'role_change',
+  PERMISSION_CHANGE = 'permission_change',
 
   // Patient Data Access
-  PATIENT_VIEW = "patient_view",
-  PATIENT_CREATE = "patient_create",
-  PATIENT_UPDATE = "patient_update",
-  PATIENT_DELETE = "patient_delete",
-  MEDICAL_RECORD_VIEW = "medical_record_view",
-  MEDICAL_RECORD_UPDATE = "medical_record_update",
-  MEDICAL_RECORD_CREATE = "medical_record_create",
-  MEDICAL_RECORD_DELETE = "medical_record_delete",
+  PATIENT_VIEW = 'patient_view',
+  PATIENT_CREATE = 'patient_create',
+  PATIENT_UPDATE = 'patient_update',
+  PATIENT_DELETE = 'patient_delete',
+  MEDICAL_RECORD_VIEW = 'medical_record_view',
+  MEDICAL_RECORD_UPDATE = 'medical_record_update',
+  MEDICAL_RECORD_CREATE = 'medical_record_create',
+  MEDICAL_RECORD_DELETE = 'medical_record_delete',
 
   // Healthcare Operations
-  APPOINTMENT_CREATE = "appointment_create",
-  APPOINTMENT_UPDATE = "appointment_update",
-  APPOINTMENT_CANCEL = "appointment_cancel",
-  TREATMENT_START = "treatment_start",
-  TREATMENT_COMPLETE = "treatment_complete",
-  PRESCRIPTION_CREATE = "prescription_create",
-  PRESCRIPTION_UPDATE = "prescription_update",
+  APPOINTMENT_CREATE = 'appointment_create',
+  APPOINTMENT_UPDATE = 'appointment_update',
+  APPOINTMENT_CANCEL = 'appointment_cancel',
+  TREATMENT_START = 'treatment_start',
+  TREATMENT_COMPLETE = 'treatment_complete',
+  PRESCRIPTION_CREATE = 'prescription_create',
+  PRESCRIPTION_UPDATE = 'prescription_update',
 
   // Emergency Access
-  EMERGENCY_ACCESS = "emergency_access",
-  BREAK_GLASS_ACCESS = "break_glass_access",
-  EMERGENCY_OVERRIDE = "emergency_override",
+  EMERGENCY_ACCESS = 'emergency_access',
+  BREAK_GLASS_ACCESS = 'break_glass_access',
+  EMERGENCY_OVERRIDE = 'emergency_override',
 
   // Data Subject Rights (LGPD)
-  DATA_SUBJECT_REQUEST = "data_subject_request",
-  DATA_EXPORT = "data_export",
-  DATA_DELETION = "data_deletion",
-  DATA_CORRECTION = "data_correction",
-  CONSENT_GIVEN = "consent_given",
-  CONSENT_WITHDRAWN = "consent_withdrawn",
+  DATA_SUBJECT_REQUEST = 'data_subject_request',
+  DATA_EXPORT = 'data_export',
+  DATA_DELETION = 'data_deletion',
+  DATA_CORRECTION = 'data_correction',
+  CONSENT_GIVEN = 'consent_given',
+  CONSENT_WITHDRAWN = 'consent_withdrawn',
 
   // Security Events
-  SUSPICIOUS_ACTIVITY = "suspicious_activity",
-  PRIVILEGE_ESCALATION = "privilege_escalation",
-  DATA_BREACH_ATTEMPT = "data_breach_attempt",
-  SECURITY_VIOLATION = "security_violation",
-  UNAUTHORIZED_ACCESS = "unauthorized_access",
+  SUSPICIOUS_ACTIVITY = 'suspicious_activity',
+  PRIVILEGE_ESCALATION = 'privilege_escalation',
+  DATA_BREACH_ATTEMPT = 'data_breach_attempt',
+  SECURITY_VIOLATION = 'security_violation',
+  UNAUTHORIZED_ACCESS = 'unauthorized_access',
 
   // System Events
-  SYSTEM_CONFIGURATION_CHANGE = "system_configuration_change",
-  BACKUP_CREATED = "backup_created",
-  BACKUP_RESTORED = "backup_restored",
-  DATA_MIGRATION = "data_migration",
-  SYSTEM_MAINTENANCE = "system_maintenance",
+  SYSTEM_CONFIGURATION_CHANGE = 'system_configuration_change',
+  BACKUP_CREATED = 'backup_created',
+  BACKUP_RESTORED = 'backup_restored',
+  DATA_MIGRATION = 'data_migration',
+  SYSTEM_MAINTENANCE = 'system_maintenance',
 
   // AI & Analytics
-  AI_MODEL_PREDICTION = "ai_model_prediction",
-  AI_MODEL_TRAINING = "ai_model_training",
-  ANALYTICS_REPORT_GENERATED = "analytics_report_generated",
-  DECISION_SUPPORT_USED = "decision_support_used",
+  AI_MODEL_PREDICTION = 'ai_model_prediction',
+  AI_MODEL_TRAINING = 'ai_model_training',
+  ANALYTICS_REPORT_GENERATED = 'analytics_report_generated',
+  DECISION_SUPPORT_USED = 'decision_support_used',
 
   // Compliance & Regulatory
-  REGULATORY_REPORT_GENERATED = "regulatory_report_generated",
-  COMPLIANCE_CHECK = "compliance_check",
-  AUDIT_LOG_EXPORT = "audit_log_export",
-  GDPR_REQUEST_PROCESSED = "gdpr_request_processed",
+  REGULATORY_REPORT_GENERATED = 'regulatory_report_generated',
+  COMPLIANCE_CHECK = 'compliance_check',
+  AUDIT_LOG_EXPORT = 'audit_log_export',
+  GDPR_REQUEST_PROCESSED = 'gdpr_request_processed',
 }
 
 export enum AuditSeverity {
-  LOW = "low",
-  MEDIUM = "medium",
-  HIGH = "high",
-  CRITICAL = "critical",
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical',
 }
 
 export enum AuditOutcome {
-  SUCCESS = "success",
-  FAILURE = "failure",
-  WARNING = "warning",
-  BLOCKED = "blocked",
+  SUCCESS = 'success',
+  FAILURE = 'failure',
+  WARNING = 'warning',
+  BLOCKED = 'blocked',
 }
 
 // ============================================================================
@@ -112,11 +112,11 @@ export interface AuditEvent {
   actor: {
     userId?: string;
     userType:
-      | "patient"
-      | "healthcare_professional"
-      | "admin"
-      | "system"
-      | "ai_agent";
+      | 'patient'
+      | 'healthcare_professional'
+      | 'admin'
+      | 'system'
+      | 'ai_agent';
     userName?: string;
     role?: string;
     professionalRegistration?: string;
@@ -126,15 +126,15 @@ export interface AuditEvent {
   // Resource information
   resource: {
     type:
-      | "patient"
-      | "medical_record"
-      | "appointment"
-      | "prescription"
-      | "system"
-      | "ai_model";
+      | 'patient'
+      | 'medical_record'
+      | 'appointment'
+      | 'prescription'
+      | 'system'
+      | 'ai_model';
     id?: string;
     description?: string;
-    sensitivity: "public" | "internal" | "confidential" | "restricted";
+    sensitivity: 'public' | 'internal' | 'confidential' | 'restricted';
   };
 
   // Healthcare context
@@ -181,14 +181,14 @@ export interface AuditEvent {
     anvisaRelevant: boolean;
     cfmRelevant: boolean;
     retentionPeriod: number; // Days
-    dataClassification: "public" | "internal" | "confidential" | "restricted";
+    dataClassification: 'public' | 'internal' | 'confidential' | 'restricted';
     legalBasis?: string;
     auditRequired: boolean;
   };
 
   // Risk assessment
   riskAssessment?: {
-    riskLevel: "low" | "medium" | "high" | "critical";
+    riskLevel: 'low' | 'medium' | 'high' | 'critical';
     riskFactors: string[];
     mitigationActions: string[];
     followUpRequired: boolean;
@@ -202,12 +202,12 @@ export interface AuditEvent {
 export interface AuditTrailConfig {
   // General settings
   enabled: boolean;
-  logLevel: "minimal" | "standard" | "comprehensive" | "detailed";
+  logLevel: 'minimal' | 'standard' | 'comprehensive' | 'detailed';
   realTimeLogging: boolean;
 
   // Storage settings
   storage: {
-    provider: "database" | "file" | "cloud" | "siem";
+    provider: 'database' | 'file' | 'cloud' | 'siem';
     retentionPeriod: number; // Days
     archivalEnabled: boolean;
     compressionEnabled: boolean;
@@ -252,11 +252,11 @@ export interface AuditTrailConfig {
 
 export const defaultAuditConfig: AuditTrailConfig = {
   enabled: true,
-  logLevel: "comprehensive",
+  logLevel: 'comprehensive',
   realTimeLogging: true,
 
   storage: {
-    provider: "database",
+    provider: 'database',
     retentionPeriod: 2555, // 7 years for healthcare
     archivalEnabled: true,
     compressionEnabled: true,
@@ -304,7 +304,7 @@ export interface AuditStorage {
   query(filters: AuditQueryFilters): Promise<AuditEvent[]>;
   export(
     filters: AuditQueryFilters,
-    format: "json" | "csv" | "pdf",
+    format: 'json' | 'csv' | 'pdf',
   ): Promise<string>;
   archive(olderThan: Date): Promise<number>;
   count(filters: AuditQueryFilters): Promise<number>;
@@ -345,9 +345,9 @@ export class DatabaseAuditStorage implements AuditStorage {
       // Store in database (pseudo-code - replace with actual DB implementation)
       // await db.auditEvents.create(signedEvent);
 
-      console.log("[Audit] Event stored:", event.id);
+      console.log('[Audit] Event stored:', event.id);
     } catch (error) {
-      console.error("[Audit] Failed to store event:", error);
+      console.error('[Audit] Failed to store event:', error);
       // Don't throw - audit failures shouldn't break application flow
     }
   }
@@ -360,16 +360,16 @@ export class DatabaseAuditStorage implements AuditStorage {
 
   async export(
     filters: AuditQueryFilters,
-    format: "json" | "csv" | "pdf",
+    format: 'json' | 'csv' | 'pdf',
   ): Promise<string> {
     const events = await this.query(filters);
 
     switch (format) {
-      case "json":
+      case 'json':
         return JSON.stringify(events, null, 2);
-      case "csv":
+      case 'csv':
         return this.convertToCSV(events);
-      case "pdf":
+      case 'pdf':
         return this.convertToPDF(events);
       default:
         throw new Error(`Unsupported export format: ${format}`);
@@ -415,32 +415,32 @@ export class DatabaseAuditStorage implements AuditStorage {
 
   private async encrypt(data: string): Promise<string> {
     // Implement encryption - placeholder
-    return `encrypted_${Buffer.from(data).toString("base64")}`;
+    return `encrypted_${Buffer.from(data).toString('base64')}`;
   }
 
   private async generateSignature(data: string): Promise<string> {
     // Implement digital signature - placeholder
-    return `sig_${Buffer.from(data).toString("base64").substring(0, 32)}`;
+    return `sig_${Buffer.from(data).toString('base64').substring(0, 32)}`;
   }
 
   private convertToCSV(events: AuditEvent[]): string {
     // Implement CSV conversion
     const headers = [
-      "timestamp",
-      "eventType",
-      "userId",
-      "outcome",
-      "description",
+      'timestamp',
+      'eventType',
+      'userId',
+      'outcome',
+      'description',
     ];
-    const rows = events.map((event) => [
+    const rows = events.map(event => [
       event.timestamp,
       event.eventType,
-      event.actor.userId || "N/A",
+      event.actor.userId || 'N/A',
       event.outcome,
       event.details.description,
     ]);
 
-    return [headers, ...rows].map((row) => row.join(",")).join("\n");
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
   }
 
   private convertToPDF(events: AuditEvent[]): string {
@@ -467,15 +467,15 @@ export class AuditTrailService {
    */
   async logEvent(
     eventType: AuditEventType,
-    actor: AuditEvent["actor"],
-    resource: AuditEvent["resource"],
-    details: AuditEvent["details"],
+    actor: AuditEvent['actor'],
+    resource: AuditEvent['resource'],
+    details: AuditEvent['details'],
     options: {
       severity?: AuditSeverity;
       outcome?: AuditOutcome;
-      healthcareContext?: AuditEvent["healthcareContext"];
-      technicalContext?: Partial<AuditEvent["technicalContext"]>;
-      riskAssessment?: AuditEvent["riskAssessment"];
+      healthcareContext?: AuditEvent['healthcareContext'];
+      technicalContext?: Partial<AuditEvent['technicalContext']>;
+      riskAssessment?: AuditEvent['riskAssessment'];
     } = {},
   ): Promise<void> {
     try {
@@ -491,16 +491,15 @@ export class AuditTrailService {
         id: crypto.randomUUID(),
         timestamp: new Date().toISOString(),
         eventType,
-        severity:
-          options.severity ||
-          this.determineSeverity(eventType, options.outcome),
+        severity: options.severity
+          || this.determineSeverity(eventType, options.outcome),
         outcome: options.outcome || AuditOutcome.SUCCESS,
         actor,
         resource,
         healthcareContext: options.healthcareContext,
         technicalContext: {
           ...options.technicalContext,
-        } as AuditEvent["technicalContext"],
+        } as AuditEvent['technicalContext'],
         details,
         compliance: this.buildComplianceMetadata(
           eventType,
@@ -518,7 +517,7 @@ export class AuditTrailService {
         await this.processRealTimeEvent(auditEvent);
       }
     } catch (error) {
-      console.error("[AuditTrail] Failed to log event:", error);
+      console.error('[AuditTrail] Failed to log event:', error);
       // Log audit failure as a separate event
       await this.logAuditFailure(eventType, error);
     }
@@ -529,11 +528,11 @@ export class AuditTrailService {
    */
   async logPatientDataAccess(
     userId: string,
-    userType: AuditEvent["actor"]["userType"],
+    userType: AuditEvent['actor']['userType'],
     patientId: string,
     dataType: string,
-    action: "view" | "create" | "update" | "delete",
-    technicalContext: Partial<AuditEvent["technicalContext"]> = {},
+    action: 'view' | 'create' | 'update' | 'delete',
+    technicalContext: Partial<AuditEvent['technicalContext']> = {},
     clinicalJustification?: string,
   ): Promise<void> {
     const eventType = this.getPatientDataEventType(action);
@@ -546,10 +545,10 @@ export class AuditTrailService {
         sessionId: technicalContext.endpoint,
       },
       {
-        type: "patient",
+        type: 'patient',
         id: patientId,
         description: `Patient ${dataType} data`,
-        sensitivity: "restricted",
+        sensitivity: 'restricted',
       },
       {
         action: `patient_data_${action}`,
@@ -575,24 +574,24 @@ export class AuditTrailService {
     userId: string,
     patientId: string,
     justification: string,
-    accessType: "break_glass" | "emergency_override",
-    technicalContext: Partial<AuditEvent["technicalContext"]> = {},
+    accessType: 'break_glass' | 'emergency_override',
+    technicalContext: Partial<AuditEvent['technicalContext']> = {},
   ): Promise<void> {
     await this.logEvent(
       AuditEventType.EMERGENCY_ACCESS,
       {
         userId,
-        userType: "healthcare_professional",
+        userType: 'healthcare_professional',
         sessionId: technicalContext.endpoint,
       },
       {
-        type: "patient",
+        type: 'patient',
         id: patientId,
-        description: "Emergency patient data access",
-        sensitivity: "restricted",
+        description: 'Emergency patient data access',
+        sensitivity: 'restricted',
       },
       {
-        action: "emergency_access",
+        action: 'emergency_access',
         description: `Emergency access to patient ${patientId} data`,
         additionalData: { accessType, justification },
       },
@@ -606,9 +605,9 @@ export class AuditTrailService {
         },
         technicalContext,
         riskAssessment: {
-          riskLevel: "high",
-          riskFactors: ["emergency_access", "bypassed_normal_authorization"],
-          mitigationActions: ["audit_review", "supervisor_notification"],
+          riskLevel: 'high',
+          riskFactors: ['emergency_access', 'bypassed_normal_authorization'],
+          mitigationActions: ['audit_review', 'supervisor_notification'],
           followUpRequired: true,
         },
       },
@@ -622,23 +621,23 @@ export class AuditTrailService {
     violationType: string,
     description: string,
     userId?: string,
-    technicalContext: Partial<AuditEvent["technicalContext"]> = {},
+    technicalContext: Partial<AuditEvent['technicalContext']> = {},
     additionalData: Record<string, any> = {},
   ): Promise<void> {
     await this.logEvent(
       AuditEventType.SECURITY_VIOLATION,
       {
         userId,
-        userType: userId ? "healthcare_professional" : "system",
+        userType: userId ? 'healthcare_professional' : 'system',
         sessionId: technicalContext.endpoint,
       },
       {
-        type: "system",
-        description: "Security system",
-        sensitivity: "confidential",
+        type: 'system',
+        description: 'Security system',
+        sensitivity: 'confidential',
       },
       {
-        action: "security_violation",
+        action: 'security_violation',
         description,
         additionalData: { violationType, ...additionalData },
       },
@@ -647,9 +646,9 @@ export class AuditTrailService {
         outcome: AuditOutcome.BLOCKED,
         technicalContext,
         riskAssessment: {
-          riskLevel: "critical",
-          riskFactors: ["security_violation", "potential_breach"],
-          mitigationActions: ["immediate_investigation", "access_review"],
+          riskLevel: 'critical',
+          riskFactors: ['security_violation', 'potential_breach'],
+          mitigationActions: ['immediate_investigation', 'access_review'],
           followUpRequired: true,
         },
       },
@@ -661,21 +660,21 @@ export class AuditTrailService {
    */
   async logDataSubjectRequest(
     dataSubjectId: string,
-    requestType: "access" | "correction" | "deletion" | "portability",
-    status: "received" | "processing" | "completed" | "denied",
+    requestType: 'access' | 'correction' | 'deletion' | 'portability',
+    status: 'received' | 'processing' | 'completed' | 'denied',
     processingDetails?: Record<string, any>,
   ): Promise<void> {
     await this.logEvent(
       AuditEventType.DATA_SUBJECT_REQUEST,
       {
         userId: dataSubjectId,
-        userType: "patient",
+        userType: 'patient',
       },
       {
-        type: "patient",
+        type: 'patient',
         id: dataSubjectId,
         description: `LGPD data subject request - ${requestType}`,
-        sensitivity: "restricted",
+        sensitivity: 'restricted',
       },
       {
         action: `lgpd_${requestType}_request`,
@@ -684,8 +683,7 @@ export class AuditTrailService {
       },
       {
         severity: AuditSeverity.HIGH,
-        outcome:
-          status === "completed" ? AuditOutcome.SUCCESS : AuditOutcome.WARNING,
+        outcome: status === 'completed' ? AuditOutcome.SUCCESS : AuditOutcome.WARNING,
         healthcareContext: {
           patientId: dataSubjectId,
         },
@@ -705,22 +703,22 @@ export class AuditTrailService {
    */
   async exportEvents(
     filters: AuditQueryFilters,
-    format: "json" | "csv" | "pdf",
+    format: 'json' | 'csv' | 'pdf',
   ): Promise<string> {
     // Log the export request itself
     await this.logEvent(
       AuditEventType.AUDIT_LOG_EXPORT,
       {
-        userId: "system", // This would be the requesting user
-        userType: "admin",
+        userId: 'system', // This would be the requesting user
+        userType: 'admin',
       },
       {
-        type: "system",
-        description: "Audit log export",
-        sensitivity: "confidential",
+        type: 'system',
+        description: 'Audit log export',
+        sensitivity: 'confidential',
       },
       {
-        action: "audit_export",
+        action: 'audit_export',
         description: `Audit logs exported in ${format} format`,
         additionalData: { filters, format },
       },
@@ -784,8 +782,9 @@ export class AuditTrailService {
   ): boolean {
     if (!this.config.enabled) return false;
 
-    if (!this.config.filtering.enabledEventTypes.includes(eventType))
+    if (!this.config.filtering.enabledEventTypes.includes(eventType)) {
       return false;
+    }
 
     const severityOrder = {
       [AuditSeverity.LOW]: 0,
@@ -795,8 +794,8 @@ export class AuditTrailService {
     };
 
     return (
-      severityOrder[severity] >=
-      severityOrder[this.config.filtering.minimumSeverity]
+      severityOrder[severity]
+        >= severityOrder[this.config.filtering.minimumSeverity]
     );
   }
 
@@ -850,13 +849,13 @@ export class AuditTrailService {
 
   private getPatientDataEventType(action: string): AuditEventType {
     switch (action) {
-      case "view":
+      case 'view':
         return AuditEventType.PATIENT_VIEW;
-      case "create":
+      case 'create':
         return AuditEventType.PATIENT_CREATE;
-      case "update":
+      case 'update':
         return AuditEventType.PATIENT_UPDATE;
-      case "delete":
+      case 'delete':
         return AuditEventType.PATIENT_DELETE;
       default:
         return AuditEventType.PATIENT_VIEW;
@@ -865,23 +864,21 @@ export class AuditTrailService {
 
   private buildComplianceMetadata(
     eventType: AuditEventType,
-    resource: AuditEvent["resource"],
-    healthcareContext?: AuditEvent["healthcareContext"],
-  ): AuditEvent["compliance"] {
-    const isPatientData =
-      resource.type === "patient" || resource.type === "medical_record";
-    const isSecurityEvent =
-      eventType.includes("security") || eventType.includes("violation");
+    resource: AuditEvent['resource'],
+    healthcareContext?: AuditEvent['healthcareContext'],
+  ): AuditEvent['compliance'] {
+    const isPatientData = resource.type === 'patient' || resource.type === 'medical_record';
+    const isSecurityEvent = eventType.includes('security') || eventType.includes('violation');
 
     return {
-      lgpdRelevant: isPatientData || eventType.includes("data_subject"),
+      lgpdRelevant: isPatientData || eventType.includes('data_subject'),
       anvisaRelevant: healthcareContext?.patientId !== undefined,
       cfmRelevant: healthcareContext?.patientId !== undefined,
       retentionPeriod: isPatientData ? 2555 : 1825, // 7 years for patient data, 5 for others
       dataClassification: resource.sensitivity,
       legalBasis: isPatientData
-        ? "healthcare_treatment"
-        : "legitimate_interests",
+        ? 'healthcare_treatment'
+        : 'legitimate_interests',
       auditRequired: true,
     };
   }
@@ -902,17 +899,17 @@ export class AuditTrailService {
   }
 
   private async sendCriticalAlert(event: AuditEvent): Promise<void> {
-    console.log("[Audit] CRITICAL ALERT:", event.details.description);
+    console.log('[Audit] CRITICAL ALERT:', event.details.description);
     // Implement alerting mechanism (email, SMS, etc.)
   }
 
   private async notifyEmergencyAccess(event: AuditEvent): Promise<void> {
-    console.log("[Audit] Emergency access logged:", event.id);
+    console.log('[Audit] Emergency access logged:', event.id);
     // Implement emergency access notification
   }
 
   private async scheduleFollowUp(event: AuditEvent): Promise<void> {
-    console.log("[Audit] Follow-up required for event:", event.id);
+    console.log('[Audit] Follow-up required for event:', event.id);
     // Implement follow-up scheduling
   }
 
@@ -929,16 +926,16 @@ export class AuditTrailService {
         severity: AuditSeverity.HIGH,
         outcome: AuditOutcome.FAILURE,
         actor: {
-          userType: "system",
+          userType: 'system',
         },
         resource: {
-          type: "system",
-          description: "Audit system",
-          sensitivity: "internal",
+          type: 'system',
+          description: 'Audit system',
+          sensitivity: 'internal',
         },
         technicalContext: {},
         details: {
-          action: "audit_logging_failure",
+          action: 'audit_logging_failure',
           description: `Failed to log ${originalEventType} event`,
           additionalData: {
             originalEventType,
@@ -950,16 +947,16 @@ export class AuditTrailService {
           anvisaRelevant: false,
           cfmRelevant: false,
           retentionPeriod: 365,
-          dataClassification: "internal",
+          dataClassification: 'internal',
           auditRequired: true,
         },
       };
 
       // Try to store the failure event
-      console.error("[Audit] Audit failure event:", failureEvent);
+      console.error('[Audit] Audit failure event:', failureEvent);
     } catch (nestedError) {
       // If we can't even log the failure, just console log
-      console.error("[Audit] Critical: Cannot log audit failure:", nestedError);
+      console.error('[Audit] Critical: Cannot log audit failure:', nestedError);
     }
   }
 }
@@ -973,12 +970,11 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
     const startTime = Date.now();
 
     // Extract request information
-    const userId = req.headers["x-user-id"];
-    const sessionId = req.headers["x-session-id"];
-    const patientId =
-      req.headers["x-patient-id"] ||
-      req.body?.patientId ||
-      req.query?.patientId;
+    const userId = req.headers['x-user-id'];
+    const sessionId = req.headers['x-session-id'];
+    const patientId = req.headers['x-patient-id']
+      || req.body?.patientId
+      || req.query?.patientId;
 
     try {
       // Continue with request
@@ -989,17 +985,17 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
 
       if (patientId) {
         await auditService.logPatientDataAccess(
-          userId || "anonymous",
-          "healthcare_professional",
+          userId || 'anonymous',
+          'healthcare_professional',
           patientId,
-          "general",
-          req.method === "GET" ? "view" : "update",
+          'general',
+          req.method === 'GET' ? 'view' : 'update',
           {
             endpoint: req.path,
             httpMethod: req.method,
             responseTime,
             ipAddress: req.ip,
-            userAgent: req.headers["user-agent"],
+            userAgent: req.headers['user-agent'],
           },
         );
       }
@@ -1008,17 +1004,17 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
       await auditService.logEvent(
         AuditEventType.SYSTEM_CONFIGURATION_CHANGE,
         {
-          userId: userId || "anonymous",
-          userType: "healthcare_professional",
+          userId: userId || 'anonymous',
+          userType: 'healthcare_professional',
           sessionId,
         },
         {
-          type: "system",
-          description: "API endpoint",
-          sensitivity: "internal",
+          type: 'system',
+          description: 'API endpoint',
+          sensitivity: 'internal',
         },
         {
-          action: "api_request_failed",
+          action: 'api_request_failed',
           description: `API request failed: ${req.method} ${req.path}`,
           additionalData: {
             error: error instanceof Error ? error.message : String(error),
@@ -1031,7 +1027,7 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
             endpoint: req.path,
             httpMethod: req.method,
             ipAddress: req.ip,
-            userAgent: req.headers["user-agent"],
+            userAgent: req.headers['user-agent'],
           },
         },
       );

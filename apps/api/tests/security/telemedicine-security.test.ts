@@ -3,17 +3,17 @@
  * Testing security vulnerabilities identified in PR 40
  */
 
-import { beforeEach, describe, expect, it, jest } from "@jest/globals";
-import type { PrismaClient } from "@prisma/client";
-import * as crypto from "crypto";
-import TelemedicineService from "../../src/services/telemedicine";
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import type { PrismaClient } from '@prisma/client';
+import * as crypto from 'crypto';
+import TelemedicineService from '../../src/services/telemedicine';
 
 // Mock Prisma client
 const mockPrisma = {
   // Add mock methods as needed
 } as unknown as PrismaClient;
 
-describe("Telemedicine Service Security Tests", () => {
+describe('Telemedicine Service Security Tests', () => {
   let telemedicineService: TelemedicineService;
 
   beforeEach(() => {
@@ -24,8 +24,8 @@ describe("Telemedicine Service Security Tests", () => {
     delete process.env.ARCHIVE_ENCRYPTION_KEY;
   });
 
-  describe("RED Phase - Security Vulnerabilities Detection", () => {
-    it("should FAIL: detect hardcoded default secrets", async () => {
+  describe('RED Phase - Security Vulnerabilities Detection', () => {
+    it('should FAIL: detect hardcoded default secrets', async () => {
       // This test should FAIL because hardcoded secrets exist
       const result = await analyzeSecurityVulnerabilities();
 
@@ -33,7 +33,7 @@ describe("Telemedicine Service Security Tests", () => {
       expect(result.hardcodedSecrets).toHaveLength(0); // This WILL FAIL
     });
 
-    it("should FAIL: detect hardcoded salt in encryption", async () => {
+    it('should FAIL: detect hardcoded salt in encryption', async () => {
       // This test should FAIL because hardcoded salt exists
       const result = await analyzeEncryptionSecurity();
 
@@ -41,7 +41,7 @@ describe("Telemedicine Service Security Tests", () => {
       expect(result.saltVariants).toHaveLength(0); // This WILL FAIL
     });
 
-    it("should FAIL: detect sensitive data in logs", async () => {
+    it('should FAIL: detect sensitive data in logs', async () => {
       // This test should FAIL because sensitive logging exists
       const logAnalysis = await analyzeSensitiveLogging();
 
@@ -49,7 +49,7 @@ describe("Telemedicine Service Security Tests", () => {
       expect(logAnalysis.sensitiveLogs).toHaveLength(0); // This WILL FAIL
     });
 
-    it("should FAIL: validate secure memory storage", async () => {
+    it('should FAIL: validate secure memory storage', async () => {
       // This test should FAIL because insecure memory storage exists
       const memoryAnalysis = await analyzeMemorySecurityy();
 
@@ -57,29 +57,29 @@ describe("Telemedicine Service Security Tests", () => {
       expect(memoryAnalysis.insecureStorageAreas).toHaveLength(0); // This WILL FAIL
     });
 
-    it("should FAIL: environment variables should be mandatory", () => {
+    it('should FAIL: environment variables should be mandatory', () => {
       // Test should FAIL because service works with defaults
       expect(() => {
         const service = new TelemedicineService(mockPrisma);
         // Service should throw error when critical env vars missing
-      }).toThrow("Missing required environment variables"); // This WILL FAIL
+      }).toThrow('Missing required environment variables'); // This WILL FAIL
     });
   });
 
-  describe("Healthcare Compliance Security Requirements", () => {
-    it("should FAIL: LGPD encryption requirements not met", async () => {
+  describe('Healthcare Compliance Security Requirements', () => {
+    it('should FAIL: LGPD encryption requirements not met', async () => {
       const lgpdCompliance = await validateLGPDEncryption();
 
       expect(lgpdCompliance.hasProperEncryption).toBe(true); // This WILL FAIL
-      expect(lgpdCompliance.encryptionStandard).toBe("AES-256-GCM"); // This WILL FAIL
-      expect(lgpdCompliance.keyManagement).toBe("secure"); // This WILL FAIL
+      expect(lgpdCompliance.encryptionStandard).toBe('AES-256-GCM'); // This WILL FAIL
+      expect(lgpdCompliance.keyManagement).toBe('secure'); // This WILL FAIL
     });
 
-    it("should FAIL: CFM audit trail security not implemented", async () => {
+    it('should FAIL: CFM audit trail security not implemented', async () => {
       const auditSecurity = await validateAuditTrailSecurity();
 
       expect(auditSecurity.hasSecureAuditTrail).toBe(true); // This WILL FAIL
-      expect(auditSecurity.auditIntegrity).toBe("tamper-proof"); // This WILL FAIL
+      expect(auditSecurity.auditIntegrity).toBe('tamper-proof'); // This WILL FAIL
     });
   });
 });
@@ -91,10 +91,10 @@ async function analyzeSecurityVulnerabilities(): Promise<{
   hardcodedSecrets: string[];
 }> {
   // Read the telemedicine service file
-  const fs = await import("fs/promises");
+  const fs = await import('fs/promises');
   const serviceCode = await fs.readFile(
-    "/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts",
-    "utf8",
+    '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
+    'utf8',
   );
 
   // Detect hardcoded secrets
@@ -106,7 +106,7 @@ async function analyzeSecurityVulnerabilities(): Promise<{
   ];
 
   const foundSecrets: string[] = [];
-  hardcodedSecretPatterns.forEach((pattern) => {
+  hardcodedSecretPatterns.forEach(pattern => {
     const matches = serviceCode.match(pattern);
     if (matches) {
       foundSecrets.push(...matches);
@@ -123,10 +123,10 @@ async function analyzeEncryptionSecurity(): Promise<{
   hasHardcodedSalt: boolean;
   saltVariants: string[];
 }> {
-  const fs = await import("fs/promises");
+  const fs = await import('fs/promises');
   const serviceCode = await fs.readFile(
-    "/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts",
-    "utf8",
+    '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
+    'utf8',
   );
 
   // Detect hardcoded salt
@@ -137,7 +137,7 @@ async function analyzeEncryptionSecurity(): Promise<{
   ];
 
   const foundSalts: string[] = [];
-  saltPatterns.forEach((pattern) => {
+  saltPatterns.forEach(pattern => {
     const matches = serviceCode.match(pattern);
     if (matches) {
       foundSalts.push(...matches);
@@ -154,10 +154,10 @@ async function analyzeSensitiveLogging(): Promise<{
   hasSensitiveLogs: boolean;
   sensitiveLogs: string[];
 }> {
-  const fs = await import("fs/promises");
+  const fs = await import('fs/promises');
   const serviceCode = await fs.readFile(
-    "/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts",
-    "utf8",
+    '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
+    'utf8',
   );
 
   // Detect console.log with sensitive data
@@ -169,7 +169,7 @@ async function analyzeSensitiveLogging(): Promise<{
   ];
 
   const foundLogs: string[] = [];
-  sensitiveLogPatterns.forEach((pattern) => {
+  sensitiveLogPatterns.forEach(pattern => {
     const matches = serviceCode.match(pattern);
     if (matches) {
       foundLogs.push(...matches);
@@ -186,10 +186,10 @@ async function analyzeMemorySecurityy(): Promise<{
   hasInsecureStorage: boolean;
   insecureStorageAreas: string[];
 }> {
-  const fs = await import("fs/promises");
+  const fs = await import('fs/promises');
   const serviceCode = await fs.readFile(
-    "/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts",
-    "utf8",
+    '/home/vibecode/neonpro/apps/api/src/services/telemedicine.ts',
+    'utf8',
   );
 
   // Detect insecure memory storage patterns
@@ -200,7 +200,7 @@ async function analyzeMemorySecurityy(): Promise<{
   ];
 
   const foundInsecure: string[] = [];
-  insecureStoragePatterns.forEach((pattern) => {
+  insecureStoragePatterns.forEach(pattern => {
     const matches = serviceCode.match(pattern);
     if (matches) {
       foundInsecure.push(...matches);
@@ -221,8 +221,8 @@ async function validateLGPDEncryption(): Promise<{
   // This should check if encryption meets LGPD requirements
   return {
     hasProperEncryption: false, // Currently fails
-    encryptionStandard: "AES-256-CBC", // Should be GCM
-    keyManagement: "insecure", // Currently insecure
+    encryptionStandard: 'AES-256-CBC', // Should be GCM
+    keyManagement: 'insecure', // Currently insecure
   };
 }
 
@@ -233,6 +233,6 @@ async function validateAuditTrailSecurity(): Promise<{
   // This should check audit trail security
   return {
     hasSecureAuditTrail: false, // Currently fails
-    auditIntegrity: "unsecured", // Currently unsecured
+    auditIntegrity: 'unsecured', // Currently unsecured
   };
 }

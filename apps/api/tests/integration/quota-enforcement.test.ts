@@ -13,11 +13,11 @@
  * - Seasonal demand management for aesthetic procedures
  */
 
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createTestClient } from "../helpers/auth";
-import { cleanupTestDatabase, setupTestDatabase } from "../helpers/database";
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { createTestClient } from '../helpers/auth';
+import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
 
-describe("Integration Test T013: Quota Enforcement", () => {
+describe('Integration Test T013: Quota Enforcement', () => {
   let testClient: any;
   let clinicId: string;
   let professionalCRM: string;
@@ -25,25 +25,25 @@ describe("Integration Test T013: Quota Enforcement", () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: "admin" });
-    clinicId = "clinic-quota-test-001";
-    professionalCRM = "CRM/SP 123456";
+    testClient = createTestClient({ role: 'admin' });
+    clinicId = 'clinic-quota-test-001';
+    professionalCRM = 'CRM/SP 123456';
   });
 
   afterEach(async () => {
     await cleanupTestDatabase();
   });
 
-  describe("Daily and Monthly Quota Limits", () => {
-    it("should enforce daily AI request quotas per clinic", async () => {
+  describe('Daily and Monthly Quota Limits', () => {
+    it('should enforce daily AI request quotas per clinic', async () => {
       const dailyLimit = 50;
       const requests = [];
 
       // Setup clinic with daily quota
-      await fetch("/api/v1/ai/quotas/setup", {
-        method: "POST",
+      await fetch('/api/v1/ai/quotas/setup', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...testClient.headers,
         },
         body: JSON.stringify({
@@ -51,9 +51,9 @@ describe("Integration Test T013: Quota Enforcement", () => {
           quotaConfig: {
             daily: {
               aiRequests: dailyLimit,
-              resetTime: "00:00:00-03:00", // Brasília time
+              resetTime: '00:00:00-03:00', // Brasília time
             },
-            plan: "premium",
+            plan: 'premium',
           },
         }),
       });
@@ -61,16 +61,16 @@ describe("Integration Test T013: Quota Enforcement", () => {
       // Generate requests exceeding daily limit
       for (let i = 0; i < dailyLimit + 10; i++) {
         requests.push(
-          fetch("/api/v1/ai/analyze", {
-            method: "POST",
+          fetch('/api/v1/ai/analyze', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
-              "x-clinic-id": clinicId,
+              'Content-Type': 'application/json',
+              'x-clinic-id': clinicId,
               ...testClient.headers,
             },
             body: JSON.stringify({
               patientId: `patient-quota-${i}`,
-              analysisType: "standard_analysis",
+              analysisType: 'standard_analysis',
               quotaCheck: true,
             }),
           }),
@@ -91,32 +91,32 @@ describe("Integration Test T013: Quota Enforcement", () => {
 
         const error = await responses[i].json();
         expect(error).toMatchObject({
-          error: "QUOTA_DIARIA_EXCEDIDA",
-          message: expect.stringContaining("limite diário"),
+          error: 'QUOTA_DIARIA_EXCEDIDA',
+          message: expect.stringContaining('limite diário'),
           quotaInfo: {
             current: dailyLimit,
             limit: dailyLimit,
             resetTime: expect.any(String),
-            timeZone: "America/Sao_Paulo",
+            timeZone: 'America/Sao_Paulo',
           },
           costImplications: {
             savedCostBRL: expect.any(Number),
             estimatedOverageCost: expect.any(Number),
           },
-          locale: "pt-BR",
+          locale: 'pt-BR',
         });
       }
     });
 
-    it("should enforce monthly quota limits with rollover tracking", async () => {
+    it('should enforce monthly quota limits with rollover tracking', async () => {
       const monthlyLimit = 1000;
       const currentUsage = 950; // Near limit
 
       // Setup monthly quota with existing usage
-      await fetch("/api/v1/ai/quotas/setup", {
-        method: "POST",
+      await fetch('/api/v1/ai/quotas/setup', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...testClient.headers,
         },
         body: JSON.stringify({
@@ -126,7 +126,7 @@ describe("Integration Test T013: Quota Enforcement", () => {
               aiRequests: monthlyLimit,
               currentUsage,
               rolloverAllowed: true,
-              unusedQuotaExpiry: "3_months",
+              unusedQuotaExpiry: '3_months',
             },
           },
         }),
@@ -136,17 +136,17 @@ describe("Integration Test T013: Quota Enforcement", () => {
       const requests = [];
       for (let i = 0; i < 60; i++) {
         requests.push(
-          fetch("/api/v1/ai/analyze", {
-            method: "POST",
+          fetch('/api/v1/ai/analyze', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
-              "x-clinic-id": clinicId,
+              'Content-Type': 'application/json',
+              'x-clinic-id': clinicId,
               ...testClient.headers,
             },
             body: JSON.stringify({
               patientId: `monthly-patient-${i}`,
-              analysisType: "complex_analysis",
-              quotaTracking: "monthly",
+              analysisType: 'complex_analysis',
+              quotaTracking: 'monthly',
             }),
           }),
         );
@@ -166,8 +166,8 @@ describe("Integration Test T013: Quota Enforcement", () => {
 
         const error = await responses[i].json();
         expect(error).toMatchObject({
-          error: "QUOTA_MENSAL_EXCEDIDA",
-          message: expect.stringContaining("limite mensal"),
+          error: 'QUOTA_MENSAL_EXCEDIDA',
+          message: expect.stringContaining('limite mensal'),
           quotaInfo: {
             monthly: {
               limit: monthlyLimit,
@@ -176,32 +176,32 @@ describe("Integration Test T013: Quota Enforcement", () => {
               resetDate: expect.any(String),
             },
           },
-          locale: "pt-BR",
+          locale: 'pt-BR',
         });
       }
     });
   });
 
-  describe("Model-Specific Quota Management", () => {
-    it("should enforce different quotas for different AI models based on cost", async () => {
+  describe('Model-Specific Quota Management', () => {
+    it('should enforce different quotas for different AI models based on cost', async () => {
       const modelQuotas = {
-        "gpt-4": { daily: 10, costPerRequest: 0.15 },
-        "gpt-3.5-turbo": { daily: 100, costPerRequest: 0.03 },
-        "claude-3": { daily: 20, costPerRequest: 0.12 },
-        "gemini-pro": { daily: 50, costPerRequest: 0.05 },
+        'gpt-4': { daily: 10, costPerRequest: 0.15 },
+        'gpt-3.5-turbo': { daily: 100, costPerRequest: 0.03 },
+        'claude-3': { daily: 20, costPerRequest: 0.12 },
+        'gemini-pro': { daily: 50, costPerRequest: 0.05 },
       };
 
       // Setup model-specific quotas
-      await fetch("/api/v1/ai/quotas/models", {
-        method: "POST",
+      await fetch('/api/v1/ai/quotas/models', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...testClient.headers,
         },
         body: JSON.stringify({
           clinicId,
           modelQuotas,
-          currency: "BRL",
+          currency: 'BRL',
           costTracking: true,
         }),
       });
@@ -210,17 +210,17 @@ describe("Integration Test T013: Quota Enforcement", () => {
       const gpt4Requests = [];
       for (let i = 0; i < 15; i++) {
         gpt4Requests.push(
-          fetch("/api/v1/ai/analyze", {
-            method: "POST",
+          fetch('/api/v1/ai/analyze', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
-              "x-clinic-id": clinicId,
+              'Content-Type': 'application/json',
+              'x-clinic-id': clinicId,
               ...testClient.headers,
             },
             body: JSON.stringify({
               patientId: `gpt4-patient-${i}`,
-              aiModel: "gpt-4",
-              analysisType: "premium_analysis",
+              aiModel: 'gpt-4',
+              analysisType: 'premium_analysis',
             }),
           }),
         );
@@ -240,36 +240,36 @@ describe("Integration Test T013: Quota Enforcement", () => {
 
         const error = await gpt4Responses[i].json();
         expect(error).toMatchObject({
-          error: "QUOTA_MODELO_EXCEDIDA",
-          message: expect.stringContaining("GPT-4"),
+          error: 'QUOTA_MODELO_EXCEDIDA',
+          message: expect.stringContaining('GPT-4'),
           modelInfo: {
-            model: "gpt-4",
+            model: 'gpt-4',
             dailyLimit: 10,
             used: 10,
             costPerRequest: 0.15,
             totalCostBRL: expect.any(Number),
           },
-          alternatives: expect.arrayContaining(["gpt-3.5-turbo", "claude-3"]),
-          locale: "pt-BR",
+          alternatives: expect.arrayContaining(['gpt-3.5-turbo', 'claude-3']),
+          locale: 'pt-BR',
         });
       }
     });
 
-    it("should provide automatic model fallback when quota exceeded", async () => {
+    it('should provide automatic model fallback when quota exceeded', async () => {
       const fallbackRequest = {
-        patientId: "fallback-patient-001",
-        aiModel: "gpt-4",
-        fallbackStrategy: "auto",
-        fallbackModels: ["claude-3", "gpt-3.5-turbo"],
-        analysisType: "standard_analysis",
+        patientId: 'fallback-patient-001',
+        aiModel: 'gpt-4',
+        fallbackStrategy: 'auto',
+        fallbackModels: ['claude-3', 'gpt-3.5-turbo'],
+        analysisType: 'standard_analysis',
       };
 
       // TDD RED: Model fallback not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/analyze", {
-        method: "POST",
+      const response = await fetch('/api/v1/ai/analyze', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-clinic-id": clinicId,
+          'Content-Type': 'application/json',
+          'x-clinic-id': clinicId,
           ...testClient.headers,
         },
         body: JSON.stringify(fallbackRequest),
@@ -280,10 +280,10 @@ describe("Integration Test T013: Quota Enforcement", () => {
       const result = await response.json();
       expect(result).toMatchObject({
         analysisId: expect.any(String),
-        modelUsed: expect.oneOf(["claude-3", "gpt-3.5-turbo"]),
+        modelUsed: expect.oneOf(['claude-3', 'gpt-3.5-turbo']),
         fallbackApplied: true,
-        originalModelRequested: "gpt-4",
-        fallbackReason: "quota_exceeded",
+        originalModelRequested: 'gpt-4',
+        fallbackReason: 'quota_exceeded',
         costSavings: {
           originalCostBRL: expect.any(Number),
           actualCostBRL: expect.any(Number),
@@ -298,19 +298,19 @@ describe("Integration Test T013: Quota Enforcement", () => {
     });
   });
 
-  describe("Rate Limiting and Burst Protection", () => {
-    it("should enforce rate limits to prevent API abuse", async () => {
+  describe('Rate Limiting and Burst Protection', () => {
+    it('should enforce rate limits to prevent API abuse', async () => {
       const rateLimitConfig = {
         requestsPerMinute: 10,
         burstLimit: 15,
-        slidingWindow: "1_minute",
+        slidingWindow: '1_minute',
       };
 
       // Setup rate limiting
-      await fetch("/api/v1/ai/quotas/rate-limits", {
-        method: "POST",
+      await fetch('/api/v1/ai/quotas/rate-limits', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...testClient.headers,
         },
         body: JSON.stringify({
@@ -325,16 +325,16 @@ describe("Integration Test T013: Quota Enforcement", () => {
 
       for (let i = 0; i < 20; i++) {
         burstRequests.push(
-          fetch("/api/v1/ai/analyze", {
-            method: "POST",
+          fetch('/api/v1/ai/analyze', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
-              "x-clinic-id": clinicId,
+              'Content-Type': 'application/json',
+              'x-clinic-id': clinicId,
               ...testClient.headers,
             },
             body: JSON.stringify({
               patientId: `burst-patient-${i}`,
-              analysisType: "quick_analysis",
+              analysisType: 'quick_analysis',
               timestamp: Date.now(),
             }),
           }),
@@ -356,22 +356,22 @@ describe("Integration Test T013: Quota Enforcement", () => {
 
         const error = await responses[i].json();
         expect(error).toMatchObject({
-          error: "LIMITE_TAXA_EXCEDIDO",
-          message: expect.stringContaining("muitas requisições"),
+          error: 'LIMITE_TAXA_EXCEDIDO',
+          message: expect.stringContaining('muitas requisições'),
           rateLimitInfo: {
             requestsPerMinute: 10,
             burstLimit: 15,
             retryAfter: expect.any(Number),
             resetTime: expect.any(String),
           },
-          locale: "pt-BR",
+          locale: 'pt-BR',
         });
       }
 
       expect(endTime - startTime).toBeLessThan(5000); // Burst handled quickly
     });
 
-    it("should implement healthcare-specific rate limiting for patient safety", async () => {
+    it('should implement healthcare-specific rate limiting for patient safety', async () => {
       const healthcareRateLimits = {
         patientAnalysisPerHour: 5, // Max 5 analyses per patient per hour
         professionalMaxConcurrent: 3, // Max 3 concurrent analyses per professional
@@ -379,10 +379,10 @@ describe("Integration Test T013: Quota Enforcement", () => {
       };
 
       // Setup healthcare-specific rate limiting
-      await fetch("/api/v1/ai/quotas/healthcare-limits", {
-        method: "POST",
+      await fetch('/api/v1/ai/quotas/healthcare-limits', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...testClient.headers,
         },
         body: JSON.stringify({
@@ -393,24 +393,24 @@ describe("Integration Test T013: Quota Enforcement", () => {
         }),
       });
 
-      const patientId = "safety-patient-001";
+      const patientId = 'safety-patient-001';
       const requests = [];
 
       // Attempt multiple analyses for same patient
       for (let i = 0; i < 8; i++) {
         requests.push(
-          fetch("/api/v1/ai/analyze", {
-            method: "POST",
+          fetch('/api/v1/ai/analyze', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
-              "x-clinic-id": clinicId,
-              "x-professional-crm": professionalCRM,
+              'Content-Type': 'application/json',
+              'x-clinic-id': clinicId,
+              'x-professional-crm': professionalCRM,
               ...testClient.headers,
             },
             body: JSON.stringify({
               patientId,
-              analysisType: "patient_safety_analysis",
-              procedureType: "aesthetic_consultation",
+              analysisType: 'patient_safety_analysis',
+              procedureType: 'aesthetic_consultation',
             }),
           }),
         );
@@ -430,27 +430,27 @@ describe("Integration Test T013: Quota Enforcement", () => {
 
         const error = await responses[i].json();
         expect(error).toMatchObject({
-          error: "LIMITE_SEGURANCA_PACIENTE",
-          message: expect.stringContaining("segurança do paciente"),
+          error: 'LIMITE_SEGURANCA_PACIENTE',
+          message: expect.stringContaining('segurança do paciente'),
           safetyInfo: {
             patientId,
             analysesInLastHour: 5,
             maxAllowed: 5,
             nextAvailableTime: expect.any(String),
-            reason: "patient_safety_protocol",
+            reason: 'patient_safety_protocol',
           },
           cfmCompliance: {
-            ethicalGuideline: "patient_safety_first",
-            recommendedAction: "wait_before_next_analysis",
+            ethicalGuideline: 'patient_safety_first',
+            recommendedAction: 'wait_before_next_analysis',
           },
-          locale: "pt-BR",
+          locale: 'pt-BR',
         });
       }
     });
   });
 
-  describe("Cost-Based Quota Management", () => {
-    it("should enforce budget limits in Brazilian Reais", async () => {
+  describe('Cost-Based Quota Management', () => {
+    it('should enforce budget limits in Brazilian Reais', async () => {
       const budgetConfig = {
         dailyBudgetBRL: 100.0,
         monthlyBudgetBRL: 2500.0,
@@ -459,16 +459,16 @@ describe("Integration Test T013: Quota Enforcement", () => {
       };
 
       // Setup budget-based quotas
-      await fetch("/api/v1/ai/quotas/budget", {
-        method: "POST",
+      await fetch('/api/v1/ai/quotas/budget', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...testClient.headers,
         },
         body: JSON.stringify({
           clinicId,
           budgetConfig,
-          currency: "BRL",
+          currency: 'BRL',
         }),
       });
 
@@ -476,17 +476,17 @@ describe("Integration Test T013: Quota Enforcement", () => {
       const expensiveRequests = [];
       for (let i = 0; i < 20; i++) {
         expensiveRequests.push(
-          fetch("/api/v1/ai/analyze", {
-            method: "POST",
+          fetch('/api/v1/ai/analyze', {
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
-              "x-clinic-id": clinicId,
+              'Content-Type': 'application/json',
+              'x-clinic-id': clinicId,
               ...testClient.headers,
             },
             body: JSON.stringify({
               patientId: `budget-patient-${i}`,
-              aiModel: "gpt-4", // Most expensive model
-              analysisType: "comprehensive_analysis",
+              aiModel: 'gpt-4', // Most expensive model
+              analysisType: 'comprehensive_analysis',
               costTracking: true,
             }),
           }),
@@ -512,15 +512,15 @@ describe("Integration Test T013: Quota Enforcement", () => {
 
           const error = await response.json();
           expect(error).toMatchObject({
-            error: "ORCAMENTO_EXCEDIDO",
-            message: expect.stringContaining("orçamento diário"),
+            error: 'ORCAMENTO_EXCEDIDO',
+            message: expect.stringContaining('orçamento diário'),
             budgetInfo: {
               dailyBudgetBRL: 100.0,
               spentBRL: expect.any(Number),
               remainingBRL: expect.any(Number),
               overspendProtection: true,
             },
-            locale: "pt-BR",
+            locale: 'pt-BR',
           });
           budgetExceeded = true;
         }
@@ -529,19 +529,19 @@ describe("Integration Test T013: Quota Enforcement", () => {
       expect(budgetExceeded).toBe(true);
     });
 
-    it("should provide cost optimization recommendations", async () => {
+    it('should provide cost optimization recommendations', async () => {
       const costOptimizationRequest = {
         clinicId,
-        analysisType: "cost_optimization",
-        period: "30_days",
+        analysisType: 'cost_optimization',
+        period: '30_days',
         includeRecommendations: true,
       };
 
       // TDD RED: Cost optimization not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/quotas/optimize", {
-        method: "POST",
+      const response = await fetch('/api/v1/ai/quotas/optimize', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...testClient.headers,
         },
         body: JSON.stringify(costOptimizationRequest),
@@ -560,7 +560,7 @@ describe("Integration Test T013: Quota Enforcement", () => {
           expect.objectContaining({
             recommendation: expect.any(String),
             potentialSavingsBRL: expect.any(Number),
-            implementationEffort: expect.oneOf(["low", "medium", "high"]),
+            implementationEffort: expect.oneOf(['low', 'medium', 'high']),
             impactOnQuality: expect.any(Number),
           }),
         ]),
@@ -578,20 +578,20 @@ describe("Integration Test T013: Quota Enforcement", () => {
     });
   });
 
-  describe("Quota Analytics and Reporting", () => {
-    it("should provide detailed quota usage analytics", async () => {
+  describe('Quota Analytics and Reporting', () => {
+    it('should provide detailed quota usage analytics', async () => {
       const analyticsRequest = {
         clinicId,
-        period: "7_days",
+        period: '7_days',
         includeDetails: true,
-        metricsType: "comprehensive",
+        metricsType: 'comprehensive',
       };
 
       // TDD RED: Quota analytics not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/quotas/analytics", {
-        method: "GET",
+      const response = await fetch('/api/v1/ai/quotas/analytics', {
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           ...testClient.headers,
         },
         body: JSON.stringify(analyticsRequest),

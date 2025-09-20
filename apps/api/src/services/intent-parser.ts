@@ -4,13 +4,13 @@
  */
 
 import {
-  QueryIntent,
-  UserQuery,
-  ValidUserQuery,
   IntentParsingError,
+  QueryIntent,
   safeValidate,
+  UserQuery,
   UserQuerySchema,
-} from "@neonpro/web/types";
+  ValidUserQuery,
+} from '@neonpro/web/types';
 
 // Keywords and patterns for intent classification
 const INTENT_PATTERNS = {
@@ -62,12 +62,12 @@ const DATE_PATTERNS = [
   // Relative dates
   {
     pattern: /hoje/i,
-    type: "relative",
+    type: 'relative',
     getDate: () => new Date(),
   },
   {
     pattern: /amanh[ãa]/i,
-    type: "relative",
+    type: 'relative',
     getDate: () => {
       const date = new Date();
       date.setDate(date.getDate() + 1);
@@ -76,7 +76,7 @@ const DATE_PATTERNS = [
   },
   {
     pattern: /depois\s+de\s+amanh[ãa]/i,
-    type: "relative",
+    type: 'relative',
     getDate: () => {
       const date = new Date();
       date.setDate(date.getDate() + 2);
@@ -85,7 +85,7 @@ const DATE_PATTERNS = [
   },
   {
     pattern: /ontem/i,
-    type: "relative",
+    type: 'relative',
     getDate: () => {
       const date = new Date();
       date.setDate(date.getDate() - 1);
@@ -94,7 +94,7 @@ const DATE_PATTERNS = [
   },
   {
     pattern: /pr[oó]xima\s+semana/i,
-    type: "relative",
+    type: 'relative',
     getDate: () => {
       const date = new Date();
       date.setDate(date.getDate() + 7);
@@ -103,7 +103,7 @@ const DATE_PATTERNS = [
   },
   {
     pattern: /pr[oó]ximo\s+m[êe]s/i,
-    type: "relative",
+    type: 'relative',
     getDate: () => {
       const date = new Date();
       date.setMonth(date.getMonth() + 1);
@@ -113,20 +113,18 @@ const DATE_PATTERNS = [
   // Week days
   {
     pattern: /(segunda|terç|quart|quint|sexta|s[áa]bado|domingo)/i,
-    type: "relative",
+    type: 'relative',
     getDate: (match: string) => {
       const days = [
-        "domingo",
-        "segunda",
-        "terça",
-        "quarta",
-        "quinta",
-        "sexta",
-        "sábado",
+        'domingo',
+        'segunda',
+        'terça',
+        'quarta',
+        'quinta',
+        'sexta',
+        'sábado',
       ];
-      const targetDay = days.findIndex((day) =>
-        match.toLowerCase().includes(day),
-      );
+      const targetDay = days.findIndex(day => match.toLowerCase().includes(day));
       if (targetDay === -1) return null;
 
       const date = new Date();
@@ -139,7 +137,7 @@ const DATE_PATTERNS = [
   // Absolute dates (Brazilian format)
   {
     pattern: /(\d{2})[/-](\d{2})[/-](\d{4})/i,
-    type: "absolute",
+    type: 'absolute',
     getDate: (_, d: string, m: string, y: string) => {
       return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
     },
@@ -147,7 +145,7 @@ const DATE_PATTERNS = [
   {
     pattern:
       /(\d{1,2})\s+de\s+(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+(\d{4})/i,
-    type: "absolute",
+    type: 'absolute',
     getDate: (_, d: string, m: string, y: string) => {
       const months = {
         janeiro: 0,
@@ -170,16 +168,16 @@ const DATE_PATTERNS = [
 
 // Service keywords
 const SERVICE_KEYWORDS = [
-  "consulta",
-  "retorno",
-  "exame",
-  "procedimento",
-  "avaliação",
-  "acompanhamento",
-  "cirurgia",
-  "triagem",
-  "urgência",
-  "emergência",
+  'consulta',
+  'retorno',
+  'exame',
+  'procedimento',
+  'avaliação',
+  'acompanhamento',
+  'cirurgia',
+  'triagem',
+  'urgência',
+  'emergência',
 ];
 
 export class IntentParser {
@@ -215,11 +213,11 @@ export class IntentParser {
         entities,
         context: context
           ? {
-              userId: context.userId || "",
-              userRole: context.userRole || "",
-              domain: context.domain,
-              session: context.session,
-            }
+            userId: context.userId || '',
+            userRole: context.userRole || '',
+            domain: context.domain,
+            session: context.session,
+          }
           : undefined,
         timestamp: new Date().toISOString(),
       };
@@ -274,8 +272,8 @@ export class IntentParser {
   private async extractEntities(
     text: string,
     intent: QueryIntent,
-  ): Promise<UserQuery["entities"]> {
-    const entities: UserQuery["entities"] = {};
+  ): Promise<UserQuery['entities']> {
+    const entities: UserQuery['entities'] = {};
 
     // Extract client names
     entities.clients = this.extractNames(text);
@@ -285,8 +283,8 @@ export class IntentParser {
 
     // Extract services based on intent
     if (
-      intent === QueryIntent.APPOINTMENT_QUERY ||
-      intent === QueryIntent.APPOINTMENT_CREATION
+      intent === QueryIntent.APPOINTMENT_QUERY
+      || intent === QueryIntent.APPOINTMENT_CREATION
     ) {
       entities.services = this.extractServices(text);
     }
@@ -314,16 +312,16 @@ export class IntentParser {
 
       // Filter out common words that aren't names
       const commonWords = [
-        "O",
-        "A",
-        "Os",
-        "As",
-        "Do",
-        "Da",
-        "Dos",
-        "Das",
-        "De",
-        "E",
+        'O',
+        'A',
+        'Os',
+        'As',
+        'Do',
+        'Da',
+        'Dos',
+        'Das',
+        'De',
+        'E',
       ];
       if (!commonWords.includes(name.toUpperCase()) && name.length > 2) {
         names.push({
@@ -334,11 +332,10 @@ export class IntentParser {
     }
 
     // Look for "cliente/paciente X" patterns
-    const clientPattern =
-      /(cliente|paciente)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi;
+    const clientPattern = /(cliente|paciente)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi;
     while ((match = clientPattern.exec(text)) !== null) {
       const name = match[2];
-      if (!names.find((n) => n.name === name)) {
+      if (!names.find(n => n.name === name)) {
         names.push({
           name,
           confidence: 0.95,
@@ -354,12 +351,12 @@ export class IntentParser {
    */
   private extractDates(text: string): Array<{
     date: string;
-    type: "absolute" | "relative";
+    type: 'absolute' | 'relative';
     confidence: number;
   }> {
     const dates: Array<{
       date: string;
-      type: "absolute" | "relative";
+      type: 'absolute' | 'relative';
       confidence: number;
     }> = [];
 
@@ -413,8 +410,7 @@ export class IntentParser {
     const professionals: Array<{ name: string; confidence: number }> = [];
 
     // Look for "dr/dra" patterns
-    const doctorPattern =
-      /(dr\.?|dra\.?|doutor|doutora)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi;
+    const doctorPattern = /(dr\.?|dra\.?|doutor|doutora)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi;
     let match;
 
     while ((match = doctorPattern.exec(text)) !== null) {
@@ -447,7 +443,7 @@ export class IntentParser {
       /[A-Z][a-z]+\s+[A-Z][a-z]+/, // Two capitalized words
     ];
 
-    return nameSearchPatterns.some((pattern) => pattern.test(text));
+    return nameSearchPatterns.some(pattern => pattern.test(text));
   }
 
   /**

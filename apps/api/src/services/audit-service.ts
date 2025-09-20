@@ -3,12 +3,9 @@
  * Integrates cryptographic audit logging with database storage and compliance reporting
  */
 
-import type { Database } from "../../../../packages/database/src/types/supabase";
-import { createServerClient } from "../clients/supabase.js";
-import {
-  type AuditLogEntry,
-  cryptographicAuditLogger,
-} from "../utils/crypto-audit.js";
+import type { Database } from '../../../../packages/database/src/types/supabase';
+import { createServerClient } from '../clients/supabase.js';
+import { type AuditLogEntry, cryptographicAuditLogger } from '../utils/crypto-audit.js';
 
 export interface AuditEventContext {
   userId?: string;
@@ -67,7 +64,7 @@ export interface ComplianceReport {
     id: string;
     eventType: string;
     timestamp: string;
-    severity: "low" | "medium" | "high" | "critical";
+    severity: 'low' | 'medium' | 'high' | 'critical';
     description: string;
     userId?: string;
     clinicId?: string;
@@ -100,7 +97,7 @@ export class ComprehensiveAuditService {
 
       // Store in database
       const { data, error } = await this.supabase
-        .from("audit_logs")
+        .from('audit_logs')
         .insert({
           id: auditEntry.id,
           timestamp: auditEntry.timestamp,
@@ -127,14 +124,14 @@ export class ComprehensiveAuditService {
         .single();
 
       if (error) {
-        console.error("Error storing audit log:", error);
-        return { success: false, error: "Failed to store audit log" };
+        console.error('Error storing audit log:', error);
+        return { success: false, error: 'Failed to store audit log' };
       }
 
       return { success: true, auditId: data.id };
     } catch (error) {
-      console.error("Error in audit logging:", error);
-      return { success: false, error: "Internal audit error" };
+      console.error('Error in audit logging:', error);
+      return { success: false, error: 'Internal audit error' };
     }
   }
 
@@ -151,7 +148,7 @@ export class ComprehensiveAuditService {
     ipAddress?: string;
     userAgent?: string;
     complianceContext?: string;
-    sensitivityLevel?: "low" | "medium" | "high" | "critical";
+    sensitivityLevel?: 'low' | 'medium' | 'high' | 'critical';
   }): Promise<{ success: boolean; data?: any; error?: string }> {
     const {
       userId,
@@ -170,12 +167,12 @@ export class ComprehensiveAuditService {
       ipAddress,
       userAgent,
       requestId: details?.requestId,
-      patientId: resourceType === "patient" ? resourceId : undefined,
+      patientId: resourceType === 'patient' ? resourceId : undefined,
       professionalId: details?.professionalId,
       emergencyAccess: details?.emergencyAccess,
       justification: details?.justification,
       complianceFlags: {
-        lgpd_compliant: complianceContext === "LGPD" ? true : true,
+        lgpd_compliant: complianceContext === 'LGPD' ? true : true,
         rls_enforced: true,
         consent_validated: true,
       },
@@ -217,49 +214,49 @@ export class ComprehensiveAuditService {
   }> {
     try {
       let supabaseQuery = this.supabase
-        .from("audit_logs")
-        .select("*", { count: "exact" });
+        .from('audit_logs')
+        .select('*', { count: 'exact' });
 
       // Apply filters
       if (query.startDate) {
         supabaseQuery = supabaseQuery.gte(
-          "timestamp",
+          'timestamp',
           query.startDate.toISOString(),
         );
       }
 
       if (query.endDate) {
         supabaseQuery = supabaseQuery.lte(
-          "timestamp",
+          'timestamp',
           query.endDate.toISOString(),
         );
       }
 
       if (query.eventTypes && query.eventTypes.length > 0) {
-        supabaseQuery = supabaseQuery.in("event_type", query.eventTypes);
+        supabaseQuery = supabaseQuery.in('event_type', query.eventTypes);
       }
 
       if (query.userId) {
-        supabaseQuery = supabaseQuery.eq("user_id", query.userId);
+        supabaseQuery = supabaseQuery.eq('user_id', query.userId);
       }
 
       if (query.clinicId) {
-        supabaseQuery = supabaseQuery.eq("clinic_id", query.clinicId);
+        supabaseQuery = supabaseQuery.eq('clinic_id', query.clinicId);
       }
 
       if (query.patientId) {
-        supabaseQuery = supabaseQuery.eq("patient_id", query.patientId);
+        supabaseQuery = supabaseQuery.eq('patient_id', query.patientId);
       }
 
       if (query.emergencyOnly) {
-        supabaseQuery = supabaseQuery.eq("emergency_access", true);
+        supabaseQuery = supabaseQuery.eq('emergency_access', true);
       }
 
       if (query.complianceIssues) {
         supabaseQuery = supabaseQuery.or(
-          "compliance_flags->lgpd_compliant.eq.false," +
-            "compliance_flags->rls_enforced.eq.false," +
-            "compliance_flags->consent_validated.eq.false",
+          'compliance_flags->lgpd_compliant.eq.false,'
+            + 'compliance_flags->rls_enforced.eq.false,'
+            + 'compliance_flags->consent_validated.eq.false',
         );
       }
 
@@ -274,17 +271,17 @@ export class ComprehensiveAuditService {
       }
 
       // Order by timestamp (newest first)
-      supabaseQuery = supabaseQuery.order("timestamp", { ascending: false });
+      supabaseQuery = supabaseQuery.order('timestamp', { ascending: false });
 
       const { data, error, count } = await supabaseQuery;
 
       if (error) {
-        console.error("Error querying audit logs:", error);
-        return { success: false, error: "Failed to query audit logs" };
+        console.error('Error querying audit logs:', error);
+        return { success: false, error: 'Failed to query audit logs' };
       }
 
       // Convert database records to AuditLogEntry format
-      const auditEntries: AuditLogEntry[] = data.map((record) => ({
+      const auditEntries: AuditLogEntry[] = data.map(record => ({
         id: record.id,
         timestamp: record.timestamp,
         eventType: record.event_type,
@@ -307,8 +304,8 @@ export class ComprehensiveAuditService {
         totalCount: count || 0,
       };
     } catch (error) {
-      console.error("Error in queryAuditLogs:", error);
-      return { success: false, error: "Internal query error" };
+      console.error('Error in queryAuditLogs:', error);
+      return { success: false, error: 'Internal query error' };
     }
   }
 
@@ -351,8 +348,8 @@ export class ComprehensiveAuditService {
         },
       };
     } catch (error) {
-      console.error("Error validating audit integrity:", error);
-      return { success: false, error: "Internal validation error" };
+      console.error('Error validating audit integrity:', error);
+      return { success: false, error: 'Internal validation error' };
     }
   }
 
@@ -361,13 +358,13 @@ export class ComprehensiveAuditService {
    */
   async logSecurityEvent(params: {
     eventType: string;
-    severity: "low" | "medium" | "high" | "critical";
+    severity: 'low' | 'medium' | 'high' | 'critical';
     userId?: string;
     ipAddress?: string;
     resourceType?: string;
     resourceId?: string;
     details?: any;
-    threatLevel?: "low" | "medium" | "high" | "critical";
+    threatLevel?: 'low' | 'medium' | 'high' | 'critical';
     requiresInvestigation?: boolean;
   }): Promise<{ success: boolean; data?: any; error?: string }> {
     const {
@@ -399,7 +396,7 @@ export class ComprehensiveAuditService {
       ...details,
       threatLevel: threatLevel || severity,
       investigationRequired: requiresInvestigation || false,
-      immediateAlert: severity === "critical",
+      immediateAlert: severity === 'critical',
       timestamp: new Date().toISOString(),
     };
 
@@ -414,8 +411,7 @@ export class ComprehensiveAuditService {
         threatLevel: eventData.threatLevel,
         investigationRequired: eventData.investigationRequired,
         immediateAlert: eventData.immediateAlert,
-        alertTriggered:
-          eventData.severity === "high" || eventData.severity === "critical",
+        alertTriggered: eventData.severity === 'high' || eventData.severity === 'critical',
         persisted: true,
       },
     };
@@ -447,13 +443,13 @@ export class ComprehensiveAuditService {
 
       // Calculate compliance metrics
       const compliantEvents = logs.filter(
-        (log) =>
-          log.complianceFlags.lgpd_compliant &&
-          log.complianceFlags.rls_enforced,
+        log =>
+          log.complianceFlags.lgpd_compliant
+          && log.complianceFlags.rls_enforced,
       ).length;
 
       const emergencyAccess = logs.filter(
-        (log) => log.complianceFlags.emergency_access,
+        log => log.complianceFlags.emergency_access,
       ).length;
 
       // Identify violations
@@ -466,8 +462,8 @@ export class ComprehensiveAuditService {
             id: log.id,
             eventType: log.eventType,
             timestamp: log.timestamp,
-            severity: "high" as const,
-            description: "LGPD compliance violation detected",
+            severity: 'high' as const,
+            description: 'LGPD compliance violation detected',
             userId: log.userId,
             clinicId: log.clinicId,
           });
@@ -478,23 +474,23 @@ export class ComprehensiveAuditService {
             id: log.id,
             eventType: log.eventType,
             timestamp: log.timestamp,
-            severity: "critical" as const,
-            description: "RLS policy violation - unauthorized data access",
+            severity: 'critical' as const,
+            description: 'RLS policy violation - unauthorized data access',
             userId: log.userId,
             clinicId: log.clinicId,
           });
         }
 
         if (
-          log.complianceFlags.emergency_access &&
-          !log.eventData.justification
+          log.complianceFlags.emergency_access
+          && !log.eventData.justification
         ) {
           violations.push({
             id: log.id,
             eventType: log.eventType,
             timestamp: log.timestamp,
-            severity: "medium" as const,
-            description: "Emergency access without proper justification",
+            severity: 'medium' as const,
+            description: 'Emergency access without proper justification',
             userId: log.userId,
             clinicId: log.clinicId,
           });
@@ -503,16 +499,16 @@ export class ComprehensiveAuditService {
 
       // Generate breakdown statistics
       const breakdown = {
-        byEventType: this.aggregateByField(logs, "eventType"),
-        byUser: this.aggregateByField(logs, "userId"),
-        byClinic: this.aggregateByField(logs, "clinicId"),
+        byEventType: this.aggregateByField(logs, 'eventType'),
+        byUser: this.aggregateByField(logs, 'userId'),
+        byClinic: this.aggregateByField(logs, 'clinicId'),
         byCompliance: {
-          lgpd_compliant: logs.filter((l) => l.complianceFlags.lgpd_compliant)
+          lgpd_compliant: logs.filter(l => l.complianceFlags.lgpd_compliant)
             .length,
-          rls_enforced: logs.filter((l) => l.complianceFlags.rls_enforced)
+          rls_enforced: logs.filter(l => l.complianceFlags.rls_enforced)
             .length,
           consent_validated: logs.filter(
-            (l) => l.complianceFlags.consent_validated,
+            l => l.complianceFlags.consent_validated,
           ).length,
           emergency_access: emergencyAccess,
         },
@@ -529,8 +525,7 @@ export class ComprehensiveAuditService {
         summary: {
           totalEvents,
           compliantEvents,
-          complianceRate:
-            totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 0,
+          complianceRate: totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 0,
           emergencyAccess,
           dataBreaches: 0, // Would be calculated based on specific breach detection logic
           policyViolations: violations.length,
@@ -542,8 +537,8 @@ export class ComprehensiveAuditService {
 
       return { success: true, report };
     } catch (error) {
-      console.error("Error generating compliance report:", error);
-      return { success: false, error: "Internal report generation error" };
+      console.error('Error generating compliance report:', error);
+      return { success: false, error: 'Internal report generation error' };
     }
   }
 
@@ -572,8 +567,8 @@ export class ComprehensiveAuditService {
 
       return { success: true, report: retentionReport };
     } catch (error) {
-      console.error("Error generating retention report:", error);
-      return { success: false, error: "Internal retention report error" };
+      console.error('Error generating retention report:', error);
+      return { success: false, error: 'Internal retention report error' };
     }
   }
 
@@ -617,36 +612,36 @@ export class ComprehensiveAuditService {
           purgeReport: {
             dryRun: false,
             purgedCount: 0,
-            message: "No expired entries to purge",
+            message: 'No expired entries to purge',
           },
         };
       }
 
       // Archive before deletion for compliance
       const { error: archiveError } = await this.supabase
-        .from("audit_logs_archive")
+        .from('audit_logs_archive')
         .insert(
           expiredEntries.map((entry: any) => ({
             ...entry,
             archived_at: new Date().toISOString(),
-            purge_reason: "retention_policy",
+            purge_reason: 'retention_policy',
           })),
         );
 
       if (archiveError) {
-        console.error("Error archiving expired logs:", archiveError);
-        return { success: false, error: "Failed to archive expired logs" };
+        console.error('Error archiving expired logs:', archiveError);
+        return { success: false, error: 'Failed to archive expired logs' };
       }
 
       // Delete expired entries
       const { error: deleteError } = await this.supabase
-        .from("audit_logs")
+        .from('audit_logs')
         .delete()
-        .in("id", expiredIds);
+        .in('id', expiredIds);
 
       if (deleteError) {
-        console.error("Error purging expired logs:", deleteError);
-        return { success: false, error: "Failed to purge expired logs" };
+        console.error('Error purging expired logs:', deleteError);
+        return { success: false, error: 'Failed to purge expired logs' };
       }
 
       return {
@@ -659,8 +654,8 @@ export class ComprehensiveAuditService {
         },
       };
     } catch (error) {
-      console.error("Error in purgeExpiredLogs:", error);
-      return { success: false, error: "Internal purge error" };
+      console.error('Error in purgeExpiredLogs:', error);
+      return { success: false, error: 'Internal purge error' };
     }
   }
 
@@ -674,7 +669,7 @@ export class ComprehensiveAuditService {
 
     for (const log of logs) {
       const value = log[field];
-      const key = value ? String(value) : "unknown";
+      const key = value ? String(value) : 'unknown';
       aggregation[key] = (aggregation[key] || 0) + 1;
     }
 
@@ -696,45 +691,44 @@ export class ComprehensiveAuditService {
       {} as Record<string, number>,
     );
 
-    if (violationTypes["LGPD compliance violation detected"] > 0) {
+    if (violationTypes['LGPD compliance violation detected'] > 0) {
       recommendations.push(
-        "Review and strengthen LGPD consent validation procedures",
+        'Review and strengthen LGPD consent validation procedures',
       );
     }
 
-    if (violationTypes["RLS policy violation - unauthorized data access"] > 0) {
+    if (violationTypes['RLS policy violation - unauthorized data access'] > 0) {
       recommendations.push(
-        "Critical: Review and tighten Row Level Security policies immediately",
+        'Critical: Review and tighten Row Level Security policies immediately',
       );
     }
 
-    if (violationTypes["Emergency access without proper justification"] > 0) {
+    if (violationTypes['Emergency access without proper justification'] > 0) {
       recommendations.push(
-        "Implement mandatory justification fields for all emergency access",
+        'Implement mandatory justification fields for all emergency access',
       );
     }
 
     // Analyze access patterns
-    const emergencyAccessRate =
-      logs.filter((l) => l.complianceFlags.emergency_access).length /
-      logs.length;
+    const emergencyAccessRate = logs.filter(l => l.complianceFlags.emergency_access).length
+      / logs.length;
     if (emergencyAccessRate > 0.05) {
       // More than 5% emergency access
       recommendations.push(
-        "High emergency access rate detected - review emergency procedures",
+        'High emergency access rate detected - review emergency procedures',
       );
     }
 
     // General recommendations
     if (logs.length === 0) {
       recommendations.push(
-        "No audit activity detected - verify audit logging is functioning correctly",
+        'No audit activity detected - verify audit logging is functioning correctly',
       );
     }
 
     if (recommendations.length === 0) {
       recommendations.push(
-        "Audit compliance appears satisfactory - continue monitoring",
+        'Audit compliance appears satisfactory - continue monitoring',
       );
     }
 

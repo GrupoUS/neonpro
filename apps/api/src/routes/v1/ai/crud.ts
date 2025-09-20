@@ -4,11 +4,11 @@
  * Integrates with tRPC router for healthcare-compliant CRUD operations
  */
 
-import { Context, Hono, Next } from 'hono';
 import { zValidator } from '@hono/zod-validator';
+import { createTRPCHandle } from '@trpc/server/adapters/hono';
+import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
 import { appRouter } from '../../../trpc/router';
-import { createTRPCHandle } from '@trpc/server/adapters/hono';
 
 // Import middleware and utilities
 import { mockAuthMiddleware, mockLGPDMiddleware } from '../../../middleware/auth-middleware';
@@ -20,8 +20,14 @@ const crudRequestSchema = z.object({
   step: z.enum(['intent', 'confirm', 'execute']),
   operation: z.enum(['create', 'read', 'update', 'delete']).optional(),
   entity: z.enum([
-    'patients', 'appointments', 'treatments', 'medical_records', 
-    'prescriptions', 'healthcare_professionals', 'clinics', 'consent_records'
+    'patients',
+    'appointments',
+    'treatments',
+    'medical_records',
+    'prescriptions',
+    'healthcare_professionals',
+    'clinics',
+    'consent_records',
   ]).optional(),
   data: z.any().optional(),
   options: z.object({
@@ -47,12 +53,12 @@ const crudRequestSchema = z.object({
 // Create tRPC handler for Hono integration
 const tRPCHandle = createTRPCHandle({
   router: appRouter,
-  createContext: async (opts) => {
+  createContext: async opts => {
     // Create context similar to existing tRPC context
     const headers = opts.req.headers;
     const userId = headers.get('x-user-id') || 'user-123';
     const clinicId = headers.get('x-clinic-id') || 'clinic-456';
-    
+
     return {
       userId,
       clinicId,
@@ -63,8 +69,8 @@ const tRPCHandle = createTRPCHandle({
       },
       // Add other necessary context properties
       prisma: null, // Will be handled by tRPC context
-   };
- },
+    };
+  },
 });
 const app = new Hono();
 
@@ -74,7 +80,7 @@ app.post(
   mockAuthMiddleware,
   mockLGPDMiddleware,
   zValidator('json', crudRequestSchema),
-  async (c) => {
+  async c => {
     const startTime = Date.now();
     const user = c.get('user');
     const userId = c.get('userId');
@@ -162,7 +168,7 @@ app.post(
         responseHeaders['X-CRUD-Step'] = requestData.step;
         responseHeaders['X-CRUD-Operation'] = requestData.operation || 'unknown';
         responseHeaders['X-CRUD-Entity'] = requestData.entity || 'unknown';
-        
+
         if (responseData.data.intentId) {
           responseHeaders['X-Intent-ID'] = responseData.data.intentId;
         }
@@ -191,10 +197,11 @@ app.post(
         compliance: {
           lgpdCompliant: true,
           auditLogged: true,
-          cfmCompliant: ['patients', 'medical_records', 'prescriptions'].includes(requestData.entity || ''),
+          cfmCompliant: ['patients', 'medical_records', 'prescriptions'].includes(
+            requestData.entity || '',
+          ),
         },
       });
-
     } catch (error) {
       console.error('AI CRUD endpoint error:', error);
 
@@ -222,11 +229,11 @@ app.post(
         error: 'Erro interno do servidor. Tente novamente mais tarde.',
       }, 500);
     }
-  }
+  },
 );
 
 // GET endpoint to check CRUD operation status
-app.get('/crud/status/:operationId', mockAuthMiddleware, async (c) => {
+app.get('/crud/status/:operationId', mockAuthMiddleware, async c => {
   const operationId = c.req.param('operationId');
   const user = c.get('user');
   const userId = c.get('userId');
@@ -267,7 +274,6 @@ app.get('/crud/status/:operationId', mockAuthMiddleware, async (c) => {
       success: true,
       data: responseData.data,
     });
-
   } catch (error) {
     console.error('CRUD status check error:', error);
 
@@ -279,7 +285,7 @@ app.get('/crud/status/:operationId', mockAuthMiddleware, async (c) => {
 });
 
 // GET endpoint to list supported entities
-app.get('/crud/entities', mockAuthMiddleware, async (c) => {
+app.get('/crud/entities', mockAuthMiddleware, async c => {
   const user = c.get('user');
   const userId = c.get('userId');
   const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
@@ -316,7 +322,6 @@ app.get('/crud/entities', mockAuthMiddleware, async (c) => {
       success: true,
       data: responseData.data,
     });
-
   } catch (error) {
     console.error('CRUD entities list error:', error);
 

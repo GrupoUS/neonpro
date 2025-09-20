@@ -3,22 +3,22 @@
  * This module provides the missing createHealthcareError export
  */
 
-import { ErrorSeverity } from "../types/error-severity";
-import { HealthcareErrorType } from "./error-tracking";
+import { ErrorSeverity } from '../types/error-severity';
+import { HealthcareErrorType } from './error-tracking';
 
 // Define ErrorCategory enum to match the expected export
 export enum ErrorCategory {
-  SYSTEM = "system",
-  VALIDATION = "validation",
-  COMPLIANCE = "compliance",
-  SECURITY = "security",
-  BUSINESS_LOGIC = "business_logic",
-  EXTERNAL_SERVICE = "external_service",
-  DATABASE = "database",
-  AUTHENTICATION = "authentication",
-  AUTHORIZATION = "authorization",
-  RATE_LIMIT = "rate_limit",
-  CONFIGURATION = "configuration",
+  SYSTEM = 'system',
+  VALIDATION = 'validation',
+  COMPLIANCE = 'compliance',
+  SECURITY = 'security',
+  BUSINESS_LOGIC = 'business_logic',
+  EXTERNAL_SERVICE = 'external_service',
+  DATABASE = 'database',
+  AUTHENTICATION = 'authentication',
+  AUTHORIZATION = 'authorization',
+  RATE_LIMIT = 'rate_limit',
+  CONFIGURATION = 'configuration',
 }
 
 // Re-export ErrorSeverity for convenience
@@ -51,7 +51,7 @@ export function createHealthcareError(
   (error as any).severity = severity;
   (error as any).statusCode = statusCode;
   (error as any).metadata = options.metadata || {};
-  (error as any).type = options.type || "business_logic_error";
+  (error as any).type = options.type || 'business_logic_error';
 
   // Add cause if provided
   if (options.cause) {
@@ -76,7 +76,7 @@ export function createValidationError(
     422,
     {
       metadata: { ...metadata, field },
-      type: "validation_error",
+      type: 'validation_error',
     },
   );
 }
@@ -96,7 +96,7 @@ export function createComplianceError(
     400,
     {
       metadata: { ...metadata, regulation },
-      type: "lgpd_compliance_issue",
+      type: 'lgpd_compliance_issue',
     },
   );
 }
@@ -115,7 +115,7 @@ export function createSecurityError(
     403,
     {
       metadata,
-      type: "unauthorized_access",
+      type: 'unauthorized_access',
     },
   );
 }
@@ -134,7 +134,7 @@ export function createDatabaseError(
     500,
     {
       metadata,
-      type: "database_error",
+      type: 'database_error',
     },
   );
 }

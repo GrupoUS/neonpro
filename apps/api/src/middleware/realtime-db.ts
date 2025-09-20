@@ -10,19 +10,15 @@
  * - Integration with WebSocket middleware (T070)
  */
 
-import {
-  createClient,
-  RealtimeChannel,
-  SupabaseClient,
-} from "@supabase/supabase-js";
-import { Context, Next } from "hono";
-import { z } from "zod";
+import { createClient, RealtimeChannel, SupabaseClient } from '@supabase/supabase-js';
+import { Context, Next } from 'hono';
+import { z } from 'zod';
 
 // Real-time subscription configuration
 const subscriptionConfigSchema = z.object({
   table: z.string().min(1),
-  event: z.enum(["INSERT", "UPDATE", "DELETE", "*"]).default("*"),
-  schema: z.string().default("public"),
+  event: z.enum(['INSERT', 'UPDATE', 'DELETE', '*']).default('*'),
+  schema: z.string().default('public'),
   filter: z.string().optional(),
   lgpdCompliant: z.boolean().default(true),
   auditEnabled: z.boolean().default(true),
@@ -34,7 +30,7 @@ export type SubscriptionConfig = z.infer<typeof subscriptionConfigSchema>;
 
 // Real-time event data
 interface RealtimeEvent {
-  eventType: "INSERT" | "UPDATE" | "DELETE";
+  eventType: 'INSERT' | 'UPDATE' | 'DELETE';
   table: string;
   schema: string;
   old?: Record<string, any>;
@@ -88,7 +84,7 @@ class RealtimeSubscriptionManager {
     callback: (event: RealtimeEvent) => void,
   ): Promise<boolean> {
     if (!this.supabase) {
-      console.error("Supabase client not initialized");
+      console.error('Supabase client not initialized');
       return false;
     }
 
@@ -103,14 +99,14 @@ class RealtimeSubscriptionManager {
       const channel = this.supabase
         .channel(channelName)
         .on(
-          "postgres_changes",
+          'postgres_changes',
           {
             event: validatedConfig.event,
             schema: validatedConfig.schema,
             table: validatedConfig.table,
             filter: validatedConfig.filter,
           },
-          (payload) => {
+          payload => {
             this.handleRealtimeEvent(payload, validatedConfig, callback);
           },
         )
@@ -132,7 +128,7 @@ class RealtimeSubscriptionManager {
       );
       return true;
     } catch (error) {
-      console.error("Error creating real-time subscription:", error);
+      console.error('Error creating real-time subscription:', error);
       return false;
     }
   }
@@ -174,7 +170,7 @@ class RealtimeSubscriptionManager {
         await this.logAuditTrail(event, config);
       }
     } catch (error) {
-      console.error("Error handling real-time event:", error);
+      console.error('Error handling real-time event:', error);
     }
   }
 
@@ -218,38 +214,38 @@ class RealtimeSubscriptionManager {
     const filtered = { ...data };
 
     // Define sensitive fields by category
-    const personalDataFields = ["name", "full_name", "cpf", "rg", "birth_date"];
+    const personalDataFields = ['name', 'full_name', 'cpf', 'rg', 'birth_date'];
     const healthDataFields = [
-      "medical_history",
-      "allergies",
-      "medications",
-      "diagnosis",
+      'medical_history',
+      'allergies',
+      'medications',
+      'diagnosis',
     ];
-    const contactDataFields = ["email", "phone", "address", "cep"];
+    const contactDataFields = ['email', 'phone', 'address', 'cep'];
 
     // Filter personal data
     if (!lgpdFilter.canViewPersonalData) {
-      personalDataFields.forEach((field) => {
+      personalDataFields.forEach(field => {
         if (filtered[field]) {
-          filtered[field] = "[FILTERED - LGPD]";
+          filtered[field] = '[FILTERED - LGPD]';
         }
       });
     }
 
     // Filter health data
     if (!lgpdFilter.canViewHealthData) {
-      healthDataFields.forEach((field) => {
+      healthDataFields.forEach(field => {
         if (filtered[field]) {
-          filtered[field] = "[FILTERED - LGPD]";
+          filtered[field] = '[FILTERED - LGPD]';
         }
       });
     }
 
     // Filter contact data
     if (!lgpdFilter.canViewContactData) {
-      contactDataFields.forEach((field) => {
+      contactDataFields.forEach(field => {
         if (filtered[field]) {
-          filtered[field] = "[FILTERED - LGPD]";
+          filtered[field] = '[FILTERED - LGPD]';
         }
       });
     }
@@ -278,9 +274,9 @@ class RealtimeSubscriptionManager {
         },
       };
 
-      console.log("Audit trail logged:", auditLog);
+      console.log('Audit trail logged:', auditLog);
     } catch (error) {
-      console.error("Error logging audit trail:", error);
+      console.error('Error logging audit trail:', error);
     }
   }
 
@@ -319,7 +315,7 @@ class RealtimeSubscriptionManager {
       console.log(`Real-time subscription removed: ${subscriptionId}`);
       return true;
     } catch (error) {
-      console.error("Error removing real-time subscription:", error);
+      console.error('Error removing real-time subscription:', error);
       return false;
     }
   }
@@ -351,9 +347,9 @@ export const realtimeManager = new RealtimeSubscriptionManager();
 export function realtimeSubscription() {
   return async (c: Context, next: Next) => {
     // Add real-time utilities to context
-    c.set("realtimeManager", realtimeManager);
+    c.set('realtimeManager', realtimeManager);
     c.set(
-      "createSubscription",
+      'createSubscription',
       (
         config: SubscriptionConfig,
         callback: (event: RealtimeEvent) => void,
@@ -374,9 +370,9 @@ export function realtimeSubscription() {
 // Patient data subscription middleware
 export function patientDataSubscription() {
   return async (c: Context, next: Next) => {
-    const userId = c.get("userId");
-    const lgpdConsent = c.get("lgpdConsent");
-    const healthcareProfessional = c.get("healthcareProfessional");
+    const userId = c.get('userId');
+    const lgpdConsent = c.get('lgpdConsent');
+    const healthcareProfessional = c.get('healthcareProfessional');
 
     if (!userId) {
       return next();
@@ -387,12 +383,9 @@ export function patientDataSubscription() {
       const lgpdFilter: LGPDFilter = {
         userId,
         consentedDataCategories: lgpdConsent.dataCategories || [],
-        canViewPersonalData:
-          lgpdConsent.dataCategories?.includes("personal_data") || false,
-        canViewHealthData:
-          lgpdConsent.dataCategories?.includes("health_data") || false,
-        canViewContactData:
-          lgpdConsent.dataCategories?.includes("contact_data") || false,
+        canViewPersonalData: lgpdConsent.dataCategories?.includes('personal_data') || false,
+        canViewHealthData: lgpdConsent.dataCategories?.includes('health_data') || false,
+        canViewContactData: lgpdConsent.dataCategories?.includes('contact_data') || false,
         dataRetentionDays: lgpdConsent.retentionPeriod || 365,
       };
 
@@ -401,11 +394,11 @@ export function patientDataSubscription() {
 
     // Add patient data subscription helper to context
     c.set(
-      "subscribeToPatientData",
+      'subscribeToPatientData',
       (patientId: string, callback: (event: RealtimeEvent) => void) => {
         const config: SubscriptionConfig = {
-          table: "patients",
-          event: "*",
+          table: 'patients',
+          event: '*',
           filter: `id=eq.${patientId}`,
           lgpdCompliant: true,
           auditEnabled: true,

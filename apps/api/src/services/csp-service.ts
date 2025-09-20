@@ -18,16 +18,16 @@ export interface ContentSecurityPolicy {
 }
 
 export interface CSPReport {
-  "csp-report": {
-    "document-uri": string;
-    "violated-directive": string;
-    "original-policy": string;
-    "blocked-uri": string;
+  'csp-report': {
+    'document-uri': string;
+    'violated-directive': string;
+    'original-policy': string;
+    'blocked-uri': string;
     referrer?: string;
-    "status-code"?: number;
-    "source-file"?: string;
-    "line-number"?: number;
-    "column-number"?: number;
+    'status-code'?: number;
+    'source-file'?: string;
+    'line-number'?: number;
+    'column-number'?: number;
   };
 }
 
@@ -49,8 +49,8 @@ export interface CSPViolation {
  */
 export function generateCSP(policy: ContentSecurityPolicy): string {
   const directives = policy.directives
-    .map((directive) => `${directive.name} ${directive.values.join(" ")}`)
-    .join("; ");
+    .map(directive => `${directive.name} ${directive.values.join(' ')}`)
+    .join('; ');
 
   return directives;
 }
@@ -59,18 +59,18 @@ export function generateCSP(policy: ContentSecurityPolicy): string {
  * Parse CSP violation report
  */
 export function parseCSPReport(report: CSPReport): CSPViolation {
-  const cspReport = report["csp-report"];
+  const cspReport = report['csp-report'];
 
   return {
-    documentUri: cspReport["document-uri"],
-    violatedDirective: cspReport["violated-directive"],
-    originalPolicy: cspReport["original-policy"],
-    blockedUri: cspReport["blocked-uri"],
+    documentUri: cspReport['document-uri'],
+    violatedDirective: cspReport['violated-directive'],
+    originalPolicy: cspReport['original-policy'],
+    blockedUri: cspReport['blocked-uri'],
     referrer: cspReport.referrer,
-    statusCode: cspReport["status-code"],
-    sourceFile: cspReport["source-file"],
-    lineNumber: cspReport["line-number"],
-    columnNumber: cspReport["column-number"],
+    statusCode: cspReport['status-code'],
+    sourceFile: cspReport['source-file'],
+    lineNumber: cspReport['line-number'],
+    columnNumber: cspReport['column-number'],
     timestamp: new Date(),
   };
 }
@@ -88,15 +88,15 @@ export function validateCSP(policy: ContentSecurityPolicy): {
 
   // Basic validation
   if (!policy.directives || policy.directives.length === 0) {
-    errors.push("Policy must contain at least one directive");
+    errors.push('Policy must contain at least one directive');
   }
 
   // Check for potentially unsafe directives
   for (const directive of policy.directives) {
-    if (directive.values.includes("'unsafe-inline'")) {
+    if (directive.values.includes('\'unsafe-inline\'')) {
       warnings.push(`Directive ${directive.name} contains 'unsafe-inline'`);
     }
-    if (directive.values.includes("'unsafe-eval'")) {
+    if (directive.values.includes('\'unsafe-eval\'')) {
       warnings.push(`Directive ${directive.name} contains 'unsafe-eval'`);
     }
   }
@@ -114,39 +114,39 @@ export function validateCSP(policy: ContentSecurityPolicy): {
 export function createHealthcareCSP(): ContentSecurityPolicy {
   return {
     id: crypto.randomUUID(),
-    name: "Healthcare Default Policy",
+    name: 'Healthcare Default Policy',
     directives: [
       {
-        name: "default-src",
-        values: ["'self'"],
+        name: 'default-src',
+        values: ['\'self\''],
       },
       {
-        name: "script-src",
-        values: ["'self'", "'strict-dynamic'"],
+        name: 'script-src',
+        values: ['\'self\'', '\'strict-dynamic\''],
       },
       {
-        name: "style-src",
-        values: ["'self'", "'unsafe-inline'"],
+        name: 'style-src',
+        values: ['\'self\'', '\'unsafe-inline\''],
       },
       {
-        name: "img-src",
-        values: ["'self'", "data:", "https:"],
+        name: 'img-src',
+        values: ['\'self\'', 'data:', 'https:'],
       },
       {
-        name: "connect-src",
-        values: ["'self'", "https://api.supabase.co"],
+        name: 'connect-src',
+        values: ['\'self\'', 'https://api.supabase.co'],
       },
       {
-        name: "frame-ancestors",
-        values: ["'none'"],
+        name: 'frame-ancestors',
+        values: ['\'none\''],
       },
       {
-        name: "base-uri",
-        values: ["'self'"],
+        name: 'base-uri',
+        values: ['\'self\''],
       },
       {
-        name: "form-action",
-        values: ["'self'"],
+        name: 'form-action',
+        values: ['\'self\''],
       },
     ],
     reportOnly: false,
@@ -162,7 +162,7 @@ export async function getCSPPolicy(
   id: string,
 ): Promise<ContentSecurityPolicy | null> {
   // Mock implementation for contract testing
-  if (id === "healthcare-default") {
+  if (id === 'healthcare-default') {
     return createHealthcareCSP();
   }
   return null;
@@ -191,7 +191,7 @@ export async function createCSPPolicy(
  */
 export async function updateCSPPolicy(
   id: string,
-  updates: Partial<Omit<ContentSecurityPolicy, "id" | "createdAt">>,
+  updates: Partial<Omit<ContentSecurityPolicy, 'id' | 'createdAt'>>,
 ): Promise<ContentSecurityPolicy | null> {
   // Mock implementation for contract testing
   const existingPolicy = await getCSPPolicy(id);

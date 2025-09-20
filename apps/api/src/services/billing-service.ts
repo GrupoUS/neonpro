@@ -7,36 +7,36 @@
  * @fileoverview Healthcare billing with Brazilian regulations compliance
  */
 
-import { randomUUID } from "crypto";
-import { z } from "zod";
+import { randomUUID } from 'crypto';
+import { z } from 'zod';
 
 // Brazilian tax and billing enums
 export enum BillingType {
-  SUS = "sus",
-  HEALTH_PLAN = "health_plan",
-  PRIVATE = "private",
-  MIXED = "mixed",
+  SUS = 'sus',
+  HEALTH_PLAN = 'health_plan',
+  PRIVATE = 'private',
+  MIXED = 'mixed',
 }
 
 export enum PaymentStatus {
-  PENDING = "pending",
-  AUTHORIZED = "authorized",
-  PAID = "paid",
-  CANCELLED = "cancelled",
-  REFUNDED = "refunded",
-  PARTIALLY_PAID = "partially_paid",
-  OVERDUE = "overdue",
+  PENDING = 'pending',
+  AUTHORIZED = 'authorized',
+  PAID = 'paid',
+  CANCELLED = 'cancelled',
+  REFUNDED = 'refunded',
+  PARTIALLY_PAID = 'partially_paid',
+  OVERDUE = 'overdue',
 }
 
 export enum PaymentMethod {
-  CASH = "cash",
-  DEBIT_CARD = "debit_card",
-  CREDIT_CARD = "credit_card",
-  PIX = "pix",
-  BANK_TRANSFER = "bank_transfer",
-  HEALTH_PLAN = "health_plan",
-  SUS = "sus",
-  INSTALLMENT = "installment",
+  CASH = 'cash',
+  DEBIT_CARD = 'debit_card',
+  CREDIT_CARD = 'credit_card',
+  PIX = 'pix',
+  BANK_TRANSFER = 'bank_transfer',
+  HEALTH_PLAN = 'health_plan',
+  SUS = 'sus',
+  INSTALLMENT = 'installment',
 }
 
 // Brazilian healthcare procedure codes (CBHPM)
@@ -68,7 +68,7 @@ const billingItemSchema = z.object({
   unitValue: z.number().positive(),
   totalValue: z.number().positive(),
   discount: z.number().min(0).default(0),
-  discountType: z.enum(["percentage", "fixed"]).default("percentage"),
+  discountType: z.enum(['percentage', 'fixed']).default('percentage'),
   professionalId: z.string().uuid(),
   date: z.string().datetime(),
 });
@@ -80,7 +80,7 @@ const healthPlanSchema = z.object({
   ansNumber: z.string().regex(/^\d{6}$/), // ANS registration number
   cardNumber: z.string(),
   validUntil: z.string().datetime(),
-  coverageType: z.enum(["partial", "full"]),
+  coverageType: z.enum(['partial', 'full']),
   coveragePercentage: z.number().min(0).max(100),
   preAuthRequired: z.boolean().default(false),
   preAuthNumber: z.string().optional(),
@@ -170,7 +170,7 @@ export interface BillingSearchOptions {
   page?: number;
   limit?: number;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 }
 
 // Financial report interfaces
@@ -222,36 +222,35 @@ export class BillingService {
     // Sample CBHPM procedure codes
     const sampleProcedures: ProcedureCode[] = [
       {
-        cbhpmCode: "10101012",
-        description:
-          "Consulta médica em consultório (no horário normal ou preestabelecido)",
+        cbhpmCode: '10101012',
+        description: 'Consulta médica em consultório (no horário normal ou preestabelecido)',
         value: 150.0,
-        category: "Consultas",
-        specialtyRequired: "Medicina Geral",
+        category: 'Consultas',
+        specialtyRequired: 'Medicina Geral',
       },
       {
-        cbhpmCode: "20101015",
-        description: "Eletrocardiograma convencional",
+        cbhpmCode: '20101015',
+        description: 'Eletrocardiograma convencional',
         value: 45.0,
-        category: "Diagnóstico",
+        category: 'Diagnóstico',
       },
       {
-        cbhpmCode: "30401019",
-        description: "Exame ultrassonográfico do abdome total",
+        cbhpmCode: '30401019',
+        description: 'Exame ultrassonográfico do abdome total',
         value: 180.0,
-        category: "Imagem",
-        specialtyRequired: "Radiologia",
+        category: 'Imagem',
+        specialtyRequired: 'Radiologia',
       },
     ];
 
-    sampleProcedures.forEach((proc) => {
+    sampleProcedures.forEach(proc => {
       this.procedureCodes.set(proc.cbhpmCode, proc);
     });
 
     // Sample billing record
     const sampleBilling: Billing = {
       id: randomUUID(),
-      invoiceNumber: "INV-2025-001",
+      invoiceNumber: 'INV-2025-001',
       patientId: randomUUID(),
       clinicId: randomUUID(),
       professionalId: randomUUID(),
@@ -265,7 +264,7 @@ export class BillingService {
           unitValue: 150.0,
           totalValue: 150.0,
           discount: 0,
-          discountType: "percentage",
+          discountType: 'percentage',
           professionalId: randomUUID(),
           date: new Date().toISOString(),
         },
@@ -289,7 +288,7 @@ export class BillingService {
       updatedAt: new Date().toISOString(),
       auditTrail: [
         {
-          action: "create",
+          action: 'create',
           performedBy: randomUUID(),
           timestamp: new Date().toISOString(),
         },
@@ -309,20 +308,20 @@ export class BillingService {
     try {
       // Validate required fields
       if (
-        !billingData.patientId ||
-        !billingData.clinicId ||
-        !billingData.professionalId
+        !billingData.patientId
+        || !billingData.clinicId
+        || !billingData.professionalId
       ) {
         return {
           success: false,
-          error: "patientId, clinicId e professionalId são obrigatórios",
+          error: 'patientId, clinicId e professionalId são obrigatórios',
         };
       }
 
       if (!billingData.items || billingData.items.length === 0) {
         return {
           success: false,
-          error: "Pelo menos um item deve ser adicionado à cobrança",
+          error: 'Pelo menos um item deve ser adicionado à cobrança',
         };
       }
 
@@ -354,9 +353,8 @@ export class BillingService {
         total,
         paymentStatus: PaymentStatus.PENDING,
         paymentMethod: billingData.paymentMethod,
-        dueDate:
-          billingData.dueDate ||
-          new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        dueDate: billingData.dueDate
+          || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         healthPlan: billingData.healthPlan,
         taxInfo: billingData.taxInfo,
         notes: billingData.notes,
@@ -367,7 +365,7 @@ export class BillingService {
         updatedAt: new Date().toISOString(),
         auditTrail: [
           {
-            action: "create",
+            action: 'create',
             performedBy: billingData.professionalId,
             timestamp: new Date().toISOString(),
           },
@@ -379,10 +377,10 @@ export class BillingService {
       if (!validationResult.success) {
         return {
           success: false,
-          errors: validationResult.error.errors.map((err) => ({
-            field: err.path.join("."),
+          errors: validationResult.error.errors.map(err => ({
+            field: err.path.join('.'),
             message: err.message,
-            code: "VALIDATION_ERROR",
+            code: 'VALIDATION_ERROR',
           })),
         };
       }
@@ -392,13 +390,13 @@ export class BillingService {
       return {
         success: true,
         data: billing,
-        message: "Cobrança criada com sucesso",
+        message: 'Cobrança criada com sucesso',
       };
     } catch (error) {
-      console.error("Billing operation failed:", error);
+      console.error('Billing operation failed:', error);
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -413,7 +411,7 @@ export class BillingService {
       if (!billing) {
         return {
           success: false,
-          error: "Cobrança não encontrada",
+          error: 'Cobrança não encontrada',
         };
       }
 
@@ -422,10 +420,10 @@ export class BillingService {
         data: billing,
       };
     } catch (error) {
-      console.error("Billing operation failed:", error);
+      console.error('Billing operation failed:', error);
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -442,43 +440,43 @@ export class BillingService {
       // Apply filters
       if (options.patientId) {
         allBillings = allBillings.filter(
-          (billing) => billing.patientId === options.patientId,
+          billing => billing.patientId === options.patientId,
         );
       }
 
       if (options.clinicId) {
         allBillings = allBillings.filter(
-          (billing) => billing.clinicId === options.clinicId,
+          billing => billing.clinicId === options.clinicId,
         );
       }
 
       if (options.professionalId) {
         allBillings = allBillings.filter(
-          (billing) => billing.professionalId === options.professionalId,
+          billing => billing.professionalId === options.professionalId,
         );
       }
 
       if (options.billingType) {
         allBillings = allBillings.filter(
-          (billing) => billing.billingType === options.billingType,
+          billing => billing.billingType === options.billingType,
         );
       }
 
       if (options.paymentStatus) {
         allBillings = allBillings.filter(
-          (billing) => billing.paymentStatus === options.paymentStatus,
+          billing => billing.paymentStatus === options.paymentStatus,
         );
       }
 
       if (options.dateFrom) {
         allBillings = allBillings.filter(
-          (billing) => new Date(billing.createdAt) >= options.dateFrom!,
+          billing => new Date(billing.createdAt) >= options.dateFrom!,
         );
       }
 
       if (options.dateTo) {
         allBillings = allBillings.filter(
-          (billing) => new Date(billing.createdAt) <= options.dateTo!,
+          billing => new Date(billing.createdAt) <= options.dateTo!,
         );
       }
 
@@ -488,7 +486,7 @@ export class BillingService {
           const aValue = (a as any)[options.sortBy!];
           const bValue = (b as any)[options.sortBy!];
 
-          if (options.sortOrder === "desc") {
+          if (options.sortOrder === 'desc') {
             return bValue > aValue ? 1 : -1;
           }
           return aValue > bValue ? 1 : -1;
@@ -516,10 +514,10 @@ export class BillingService {
         },
       };
     } catch (error) {
-      console.error("Billing operation failed:", error);
+      console.error('Billing operation failed:', error);
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -536,14 +534,14 @@ export class BillingService {
       if (!billing) {
         return {
           success: false,
-          error: "Cobrança não encontrada",
+          error: 'Cobrança não encontrada',
         };
       }
 
       if (billing.paymentStatus === PaymentStatus.PAID) {
         return {
           success: false,
-          error: "Cobrança já foi paga",
+          error: 'Cobrança já foi paga',
         };
       }
 
@@ -589,14 +587,12 @@ export class BillingService {
             dueDate: new Date(
               Date.now() + i * 30 * 24 * 60 * 60 * 1000,
             ).toISOString(),
-            status:
-              i === 1 && paymentStatus === PaymentStatus.PAID
-                ? PaymentStatus.PAID
-                : PaymentStatus.PENDING,
-            paymentDate:
-              i === 1 && paymentStatus === PaymentStatus.PAID
-                ? new Date().toISOString()
-                : undefined,
+            status: i === 1 && paymentStatus === PaymentStatus.PAID
+              ? PaymentStatus.PAID
+              : PaymentStatus.PENDING,
+            paymentDate: i === 1 && paymentStatus === PaymentStatus.PAID
+              ? new Date().toISOString()
+              : undefined,
             paymentMethod: request.paymentMethod,
           });
         }
@@ -604,8 +600,8 @@ export class BillingService {
 
       billing.updatedAt = new Date().toISOString();
       billing.auditTrail.push({
-        action: "payment_processed",
-        performedBy: "system",
+        action: 'payment_processed',
+        performedBy: 'system',
         timestamp: new Date().toISOString(),
         details: `Payment processed via ${request.paymentMethod}`,
       });
@@ -615,13 +611,13 @@ export class BillingService {
       return {
         success: true,
         data: { paymentId, status: paymentStatus },
-        message: "Pagamento processado com sucesso",
+        message: 'Pagamento processado com sucesso',
       };
     } catch (error) {
-      console.error("Billing operation failed:", error);
+      console.error('Billing operation failed:', error);
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -639,50 +635,49 @@ export class BillingService {
 
       // Filter by clinic
       if (clinicId) {
-        billings = billings.filter((billing) => billing.clinicId === clinicId);
+        billings = billings.filter(billing => billing.clinicId === clinicId);
       }
 
       // Filter by date range
       if (dateFrom) {
         billings = billings.filter(
-          (billing) => new Date(billing.createdAt) >= dateFrom,
+          billing => new Date(billing.createdAt) >= dateFrom,
         );
       }
 
       if (dateTo) {
         billings = billings.filter(
-          (billing) => new Date(billing.createdAt) <= dateTo,
+          billing => new Date(billing.createdAt) <= dateTo,
         );
       }
 
       // Calculate summary
       const totalRevenue = billings
-        .filter((b) => b.paymentStatus === PaymentStatus.PAID)
+        .filter(b => b.paymentStatus === PaymentStatus.PAID)
         .reduce((sum, b) => sum + b.total, 0);
 
       const totalPending = billings
-        .filter((b) => b.paymentStatus === PaymentStatus.PENDING)
+        .filter(b => b.paymentStatus === PaymentStatus.PENDING)
         .reduce((sum, b) => sum + b.total, 0);
 
       const totalPaid = totalRevenue;
 
       const totalOverdue = billings
-        .filter((b) => b.paymentStatus === PaymentStatus.OVERDUE)
+        .filter(b => b.paymentStatus === PaymentStatus.OVERDUE)
         .reduce((sum, b) => sum + b.total, 0);
 
-      const averageTicket =
-        billings.length > 0
-          ? billings.reduce((sum, b) => sum + b.total, 0) / billings.length
-          : 0;
+      const averageTicket = billings.length > 0
+        ? billings.reduce((sum, b) => sum + b.total, 0) / billings.length
+        : 0;
 
       // Revenue by type
       const revenueByType = Object.values(BillingType).reduce(
         (acc, type) => {
           acc[type] = billings
             .filter(
-              (b) =>
-                b.billingType === type &&
-                b.paymentStatus === PaymentStatus.PAID,
+              b =>
+                b.billingType === type
+                && b.paymentStatus === PaymentStatus.PAID,
             )
             .reduce((sum, b) => sum + b.total, 0);
           return acc;
@@ -712,10 +707,10 @@ export class BillingService {
         data: summary,
       };
     } catch (error) {
-      console.error("Billing operation failed:", error);
+      console.error('Billing operation failed:', error);
       return {
         success: false,
-        error: "Erro interno do servidor",
+        error: 'Erro interno do servidor',
       };
     }
   }
@@ -743,10 +738,10 @@ export class BillingService {
     const monthRevenue: Record<string, number> = {};
 
     billings
-      .filter((b) => b.paymentStatus === PaymentStatus.PAID)
-      .forEach((billing) => {
+      .filter(b => b.paymentStatus === PaymentStatus.PAID)
+      .forEach(billing => {
         const date = new Date(billing.paymentDate || billing.createdAt);
-        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
         monthRevenue[monthKey] = (monthRevenue[monthKey] || 0) + billing.total;
       });
 
@@ -761,13 +756,12 @@ export class BillingService {
   private calculateTopProcedures(
     billings: Billing[],
   ): Array<{ procedure: string; count: number; revenue: number }> {
-    const procedureStats: Record<string, { count: number; revenue: number }> =
-      {};
+    const procedureStats: Record<string, { count: number; revenue: number }> = {};
 
     billings
-      .filter((b) => b.paymentStatus === PaymentStatus.PAID)
-      .forEach((billing) => {
-        billing.items.forEach((item) => {
+      .filter(b => b.paymentStatus === PaymentStatus.PAID)
+      .forEach(billing => {
+        billing.items.forEach(item => {
           const key = item.procedureCode.description;
           if (!procedureStats[key]) {
             procedureStats[key] = { count: 0, revenue: 0 };
@@ -798,16 +792,16 @@ export class BillingService {
       initialized: this.isInitialized,
       billingsCount: this.billings.size,
       procedureCodesCount: this.procedureCodes.size,
-      version: "1.0.0",
+      version: '1.0.0',
       features: [
-        "billing_management",
-        "payment_processing",
-        "tax_calculation",
-        "health_plan_integration",
-        "sus_billing",
-        "installment_payments",
-        "financial_reports",
-        "lgpd_compliance",
+        'billing_management',
+        'payment_processing',
+        'tax_calculation',
+        'health_plan_integration',
+        'sus_billing',
+        'installment_payments',
+        'financial_reports',
+        'lgpd_compliance',
       ],
       supportedPaymentMethods: Object.values(PaymentMethod),
       supportedBillingTypes: Object.values(BillingType),

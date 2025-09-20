@@ -5,25 +5,24 @@
  * with Brazilian compliance and LGPD consent validation.
  */
 
-import { NextRequest } from "next/server";
-import type { Database } from "../../../../../packages/database/src/types/supabase";
-import { createAdminClient } from "../../../../lib/supabase/client";
-import { createHealthcareResponse } from "../../../../middleware/edge-runtime";
+import { NextRequest } from 'next/server';
+import type { Database } from '../../../../../packages/database/src/types/supabase';
+import { createAdminClient } from '../../../../lib/supabase/client';
+import { createHealthcareResponse } from '../../../../middleware/edge-runtime';
 import {
   type AppointmentReminder,
   whatsappReminderService,
-} from "../../../../services/whatsapp-reminder-service";
+} from '../../../../services/whatsapp-reminder-service';
 
 // Configure for edge runtime
-export const runtime = "edge";
+export const runtime = 'edge';
 
 // Type for the appointment query result with joined tables
-type AppointmentWithRelations =
-  Database["public"]["Tables"]["appointments"]["Row"] & {
-    patients: Database["public"]["Tables"]["patients"]["Row"];
-    clinics: Database["public"]["Tables"]["clinics"]["Row"];
-    doctors: Database["public"]["Tables"]["doctors"]["Row"];
-  };
+type AppointmentWithRelations = Database['public']['Tables']['appointments']['Row'] & {
+  patients: Database['public']['Tables']['patients']['Row'];
+  clinics: Database['public']['Tables']['clinics']['Row'];
+  doctors: Database['public']['Tables']['doctors']['Row'];
+};
 
 /**
  * Send reminder for specific appointment (POST)
@@ -33,18 +32,18 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { appointmentId, reminderType, language = "pt-BR" } = body;
+    const { appointmentId, reminderType, language = 'pt-BR' } = body;
 
     // Validate required fields
     if (!appointmentId || !reminderType) {
       return createHealthcareResponse(
         {
-          error: "Missing required fields",
-          required: ["appointmentId", "reminderType"],
+          error: 'Missing required fields',
+          required: ['appointmentId', 'reminderType'],
         },
         {
           status: 400,
-          dataType: "public",
+          dataType: 'public',
         },
       );
     }
@@ -54,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     // Get appointment details with patient and clinic info
     const { data: appointment, error: appointmentError } = await supabase
-      .from("appointments")
+      .from('appointments')
       .select(
         `
         *,
@@ -63,18 +62,18 @@ export async function POST(request: NextRequest) {
         doctors!inner(*)
       `,
       )
-      .eq("id", appointmentId)
+      .eq('id', appointmentId)
       .single();
 
     if (appointmentError || !appointment) {
       return createHealthcareResponse(
         {
-          error: "Appointment not found",
+          error: 'Appointment not found',
           appointmentId,
         },
         {
           status: 404,
-          dataType: "public",
+          dataType: 'public',
         },
       );
     }
@@ -84,17 +83,17 @@ export async function POST(request: NextRequest) {
 
     // Check if appointment is eligible for reminders
     if (
-      typedAppointment.status === "cancelled" ||
-      typedAppointment.status === "completed"
+      typedAppointment.status === 'cancelled'
+      || typedAppointment.status === 'completed'
     ) {
       return createHealthcareResponse(
         {
-          error: "Appointment not eligible for reminders",
+          error: 'Appointment not eligible for reminders',
           status: typedAppointment.status,
         },
         {
           status: 400,
-          dataType: "public",
+          dataType: 'public',
         },
       );
     }
@@ -114,13 +113,11 @@ export async function POST(request: NextRequest) {
       reminderType,
       language,
       consentGiven: true, // Will be validated by the service
-      preferredChannel:
-        typedAppointment.patients.preferred_contact_method || "whatsapp",
+      preferredChannel: typedAppointment.patients.preferred_contact_method || 'whatsapp',
     };
 
     // Send reminder
-    const result =
-      await whatsappReminderService.sendAppointmentReminder(reminder);
+    const result = await whatsappReminderService.sendAppointmentReminder(reminder);
 
     const processingTime = Date.now() - startTime;
 
@@ -135,24 +132,24 @@ export async function POST(request: NextRequest) {
       },
       {
         status: result.success ? 200 : 500,
-        dataType: "public",
+        dataType: 'public',
       },
     );
   } catch (error) {
-    console.error("Reminder send error:", error);
+    console.error('Reminder send error:', error);
 
     const processingTime = Date.now() - startTime;
 
     return createHealthcareResponse(
       {
-        error: "Failed to send reminder",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to send reminder',
+        message: error instanceof Error ? error.message : 'Unknown error',
         processingTime,
         timestamp: new Date().toISOString(),
       },
       {
         status: 500,
-        dataType: "public",
+        dataType: 'public',
       },
     );
   }
@@ -166,23 +163,23 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { appointmentIds, reminderType, language = "pt-BR" } = body;
+    const { appointmentIds, reminderType, language = 'pt-BR' } = body;
 
     // Validate required fields
     if (
-      !appointmentIds ||
-      !Array.isArray(appointmentIds) ||
-      appointmentIds.length === 0 ||
-      !reminderType
+      !appointmentIds
+      || !Array.isArray(appointmentIds)
+      || appointmentIds.length === 0
+      || !reminderType
     ) {
       return createHealthcareResponse(
         {
-          error: "Missing required fields",
-          required: ["appointmentIds (array)", "reminderType"],
+          error: 'Missing required fields',
+          required: ['appointmentIds (array)', 'reminderType'],
         },
         {
           status: 400,
-          dataType: "public",
+          dataType: 'public',
         },
       );
     }
@@ -192,7 +189,7 @@ export async function PUT(request: NextRequest) {
 
     // Get all appointments
     const { data: appointments, error: appointmentsError } = await supabase
-      .from("appointments")
+      .from('appointments')
       .select(
         `
         *,
@@ -201,9 +198,9 @@ export async function PUT(request: NextRequest) {
         doctors!inner(*)
       `,
       )
-      .in("id", appointmentIds)
-      .neq("status", "cancelled")
-      .neq("status", "completed");
+      .in('id', appointmentIds)
+      .neq('status', 'cancelled')
+      .neq('status', 'completed');
 
     if (appointmentsError) {
       throw appointmentsError;
@@ -214,7 +211,7 @@ export async function PUT(request: NextRequest) {
 
     // Build reminder objects
     const reminders: AppointmentReminder[] = typedAppointments.map(
-      (appointment) => ({
+      appointment => ({
         appointmentId: appointment.id,
         patientId: appointment.patients.id,
         clinicId: appointment.clinics.id,
@@ -228,8 +225,7 @@ export async function PUT(request: NextRequest) {
         reminderType,
         language,
         consentGiven: true, // Will be validated by the service
-        preferredChannel:
-          appointment.patients.preferred_contact_method || "whatsapp",
+        preferredChannel: appointment.patients.preferred_contact_method || 'whatsapp',
       }),
     );
 
@@ -242,7 +238,7 @@ export async function PUT(request: NextRequest) {
       {
         success: true,
         totalSent: results.length,
-        results: results.map((r) => ({
+        results: results.map(r => ({
           appointmentId: r.appointmentId,
           success: r.success,
           messageId: r.messageId,
@@ -254,24 +250,24 @@ export async function PUT(request: NextRequest) {
       },
       {
         status: 200,
-        dataType: "public",
+        dataType: 'public',
       },
     );
   } catch (error) {
-    console.error("Bulk reminder send error:", error);
+    console.error('Bulk reminder send error:', error);
 
     const processingTime = Date.now() - startTime;
 
     return createHealthcareResponse(
       {
-        error: "Failed to send bulk reminders",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to send bulk reminders',
+        message: error instanceof Error ? error.message : 'Unknown error',
         processingTime,
         timestamp: new Date().toISOString(),
       },
       {
         status: 500,
-        dataType: "public",
+        dataType: 'public',
       },
     );
   }
@@ -285,18 +281,18 @@ export async function GET(request: NextRequest) {
 
   try {
     const { searchParams } = new URL(request.url);
-    const appointmentId = searchParams.get("appointmentId");
-    const patientId = searchParams.get("patientId");
+    const appointmentId = searchParams.get('appointmentId');
+    const patientId = searchParams.get('patientId');
 
     if (!appointmentId && !patientId) {
       return createHealthcareResponse(
         {
-          error: "Missing required parameter",
-          required: "appointmentId OR patientId",
+          error: 'Missing required parameter',
+          required: 'appointmentId OR patientId',
         },
         {
           status: 400,
-          dataType: "public",
+          dataType: 'public',
         },
       );
     }
@@ -306,14 +302,14 @@ export async function GET(request: NextRequest) {
 
     // Get reminder history
     let query = supabase
-      .from("reminder_logs")
-      .select("*")
-      .order("created_at", { ascending: false });
+      .from('reminder_logs')
+      .select('*')
+      .order('created_at', { ascending: false });
 
     if (appointmentId) {
-      query = query.eq("appointment_id", appointmentId);
+      query = query.eq('appointment_id', appointmentId);
     } else if (patientId) {
-      query = query.eq("patient_id", patientId);
+      query = query.eq('patient_id', patientId);
     }
 
     const { data: reminders, error: remindersError } = await query;
@@ -333,24 +329,24 @@ export async function GET(request: NextRequest) {
       },
       {
         status: 200,
-        dataType: "public",
+        dataType: 'public',
       },
     );
   } catch (error) {
-    console.error("Get reminder status error:", error);
+    console.error('Get reminder status error:', error);
 
     const processingTime = Date.now() - startTime;
 
     return createHealthcareResponse(
       {
-        error: "Failed to get reminder status",
-        message: error instanceof Error ? error.message : "Unknown error",
+        error: 'Failed to get reminder status',
+        message: error instanceof Error ? error.message : 'Unknown error',
         processingTime,
         timestamp: new Date().toISOString(),
       },
       {
         status: 500,
-        dataType: "public",
+        dataType: 'public',
       },
     );
   }
@@ -361,7 +357,7 @@ export async function OPTIONS() {
     {},
     {
       status: 200,
-      dataType: "public",
+      dataType: 'public',
     },
   );
 }

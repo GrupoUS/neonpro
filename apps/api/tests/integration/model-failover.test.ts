@@ -13,11 +13,11 @@
  * - Emergency fallback for healthcare-critical operations
  */
 
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createTestClient } from "../helpers/auth";
-import { cleanupTestDatabase, setupTestDatabase } from "../helpers/database";
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { createTestClient } from '../helpers/auth';
+import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
 
-describe("Integration Test T015: Multi-Model Failover", () => {
+describe('Integration Test T015: Multi-Model Failover', () => {
   let testClient: any;
   let clinicId: string;
   let professionalCRM: string;
@@ -25,43 +25,43 @@ describe("Integration Test T015: Multi-Model Failover", () => {
 
   beforeEach(async () => {
     await setupTestDatabase();
-    testClient = createTestClient({ role: "admin" });
-    clinicId = "clinic-failover-test-001";
-    professionalCRM = "CRM/SP 123456";
-    criticalPatientId = "critical-patient-001";
+    testClient = createTestClient({ role: 'admin' });
+    clinicId = 'clinic-failover-test-001';
+    professionalCRM = 'CRM/SP 123456';
+    criticalPatientId = 'critical-patient-001';
   });
 
   afterEach(async () => {
     await cleanupTestDatabase();
   });
 
-  describe("Primary Model Failure Detection", () => {
-    it("should detect when primary AI model becomes unavailable", async () => {
+  describe('Primary Model Failure Detection', () => {
+    it('should detect when primary AI model becomes unavailable', async () => {
       const primaryModelRequest = {
         patientId: criticalPatientId,
-        analysisType: "critical_aesthetic_analysis",
-        aiModel: "gpt-4",
-        priority: "high",
+        analysisType: 'critical_aesthetic_analysis',
+        aiModel: 'gpt-4',
+        priority: 'high',
         fallbackEnabled: true,
-        fallbackStrategy: "auto",
+        fallbackStrategy: 'auto',
       };
 
       // Simulate primary model failure
       const mockModelFailure = {
         simulateFailure: true,
-        primaryModel: "gpt-4",
-        failureType: "service_unavailable",
-        expectedFallback: "claude-3",
+        primaryModel: 'gpt-4',
+        failureType: 'service_unavailable',
+        expectedFallback: 'claude-3',
       };
 
       // TDD RED: Model failure detection not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/analyze", {
-        method: "POST",
+      const response = await fetch('/api/v1/ai/analyze', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-clinic-id": clinicId,
-          "x-professional-crm": professionalCRM,
-          "x-simulate-failure": JSON.stringify(mockModelFailure),
+          'Content-Type': 'application/json',
+          'x-clinic-id': clinicId,
+          'x-professional-crm': professionalCRM,
+          'x-simulate-failure': JSON.stringify(mockModelFailure),
           ...testClient.headers,
         },
         body: JSON.stringify(primaryModelRequest),
@@ -72,12 +72,12 @@ describe("Integration Test T015: Multi-Model Failover", () => {
       const result = await response.json();
       expect(result).toMatchObject({
         analysisId: expect.any(String),
-        modelUsed: "claude-3", // Fallback model
+        modelUsed: 'claude-3', // Fallback model
         fallbackApplied: true,
-        originalModelRequested: "gpt-4",
+        originalModelRequested: 'gpt-4',
         failureDetection: {
           primaryModelFailure: true,
-          failureType: "service_unavailable",
+          failureType: 'service_unavailable',
           detectionTime: expect.any(String),
           fallbackTime: expect.any(Number), // Should be < 5 seconds
         },
@@ -96,30 +96,30 @@ describe("Integration Test T015: Multi-Model Failover", () => {
       expect(result.failureDetection.fallbackTime).toBeLessThan(5000);
     });
 
-    it("should handle multiple model failures with cascading fallbacks", async () => {
+    it('should handle multiple model failures with cascading fallbacks', async () => {
       const cascadingFailureRequest = {
         patientId: criticalPatientId,
-        analysisType: "emergency_assessment",
-        aiModel: "gpt-4",
-        fallbackChain: ["claude-3", "gemini-pro", "gpt-3.5-turbo"],
+        analysisType: 'emergency_assessment',
+        aiModel: 'gpt-4',
+        fallbackChain: ['claude-3', 'gemini-pro', 'gpt-3.5-turbo'],
         maxFallbacks: 3,
         criticalOperation: true,
       };
 
       // Simulate multiple failures
       const multipleFallures = {
-        simulateFailures: ["gpt-4", "claude-3"],
-        failureTypes: ["timeout", "rate_limit_exceeded"],
-        expectedSuccessModel: "gemini-pro",
+        simulateFailures: ['gpt-4', 'claude-3'],
+        failureTypes: ['timeout', 'rate_limit_exceeded'],
+        expectedSuccessModel: 'gemini-pro',
       };
 
       // TDD RED: Cascading fallback not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/analyze", {
-        method: "POST",
+      const response = await fetch('/api/v1/ai/analyze', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-clinic-id": clinicId,
-          "x-simulate-failures": JSON.stringify(multipleFallures),
+          'Content-Type': 'application/json',
+          'x-clinic-id': clinicId,
+          'x-simulate-failures': JSON.stringify(multipleFallures),
           ...testClient.headers,
         },
         body: JSON.stringify(cascadingFailureRequest),
@@ -130,22 +130,22 @@ describe("Integration Test T015: Multi-Model Failover", () => {
       const result = await response.json();
       expect(result).toMatchObject({
         analysisId: expect.any(String),
-        modelUsed: "gemini-pro",
+        modelUsed: 'gemini-pro',
         fallbackChain: expect.arrayContaining([
           expect.objectContaining({
-            model: "gpt-4",
+            model: 'gpt-4',
             attempted: true,
             failed: true,
-            failureReason: "timeout",
+            failureReason: 'timeout',
           }),
           expect.objectContaining({
-            model: "claude-3",
+            model: 'claude-3',
             attempted: true,
             failed: true,
-            failureReason: "rate_limit_exceeded",
+            failureReason: 'rate_limit_exceeded',
           }),
           expect.objectContaining({
-            model: "gemini-pro",
+            model: 'gemini-pro',
             attempted: true,
             succeeded: true,
           }),
@@ -162,23 +162,23 @@ describe("Integration Test T015: Multi-Model Failover", () => {
     });
   });
 
-  describe("Cost-Optimized Model Selection", () => {
-    it("should route to cost-effective models while maintaining quality", async () => {
+  describe('Cost-Optimized Model Selection', () => {
+    it('should route to cost-effective models while maintaining quality', async () => {
       const costOptimizedRequest = {
-        patientId: "cost-sensitive-patient-001",
-        analysisType: "routine_assessment",
+        patientId: 'cost-sensitive-patient-001',
+        analysisType: 'routine_assessment',
         costOptimization: true,
         maxCostBRL: 0.5,
         qualityThreshold: 85, // Minimum quality score
-        preferredModels: ["gpt-3.5-turbo", "claude-instant", "gemini-pro"],
+        preferredModels: ['gpt-3.5-turbo', 'claude-instant', 'gemini-pro'],
       };
 
       // TDD RED: Cost-optimized routing not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/analyze", {
-        method: "POST",
+      const response = await fetch('/api/v1/ai/analyze', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-clinic-id": clinicId,
+          'Content-Type': 'application/json',
+          'x-clinic-id': clinicId,
           ...testClient.headers,
         },
         body: JSON.stringify(costOptimizedRequest),
@@ -191,7 +191,7 @@ describe("Integration Test T015: Multi-Model Failover", () => {
         analysisId: expect.any(String),
         modelSelection: {
           selectedModel: expect.any(String),
-          selectionReason: "cost_optimization",
+          selectionReason: 'cost_optimization',
           costBRL: expect.any(Number),
           qualityScore: expect.any(Number),
           costEfficiencyRatio: expect.any(Number),
@@ -215,28 +215,28 @@ describe("Integration Test T015: Multi-Model Failover", () => {
       expect(result.modelSelection.qualityScore).toBeGreaterThanOrEqual(85);
     });
 
-    it("should adjust model selection based on Brazilian regional latency", async () => {
+    it('should adjust model selection based on Brazilian regional latency', async () => {
       const regionalRequests = [
-        { region: "southeast", state: "SP", expectedLatency: "low" },
-        { region: "northeast", state: "CE", expectedLatency: "medium" },
-        { region: "north", state: "AM", expectedLatency: "high" },
+        { region: 'southeast', state: 'SP', expectedLatency: 'low' },
+        { region: 'northeast', state: 'CE', expectedLatency: 'medium' },
+        { region: 'north', state: 'AM', expectedLatency: 'high' },
       ];
 
       const responses = [];
       for (const regionConfig of regionalRequests) {
         // TDD RED: Regional latency optimization not implemented - MUST FAIL
-        const response = await fetch("/api/v1/ai/analyze", {
-          method: "POST",
+        const response = await fetch('/api/v1/ai/analyze', {
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            "x-clinic-id": clinicId,
-            "x-region": regionConfig.region,
-            "x-state": regionConfig.state,
+            'Content-Type': 'application/json',
+            'x-clinic-id': clinicId,
+            'x-region': regionConfig.region,
+            'x-state': regionConfig.state,
             ...testClient.headers,
           },
           body: JSON.stringify({
             patientId: `regional-patient-${regionConfig.state}`,
-            analysisType: "latency_optimized_analysis",
+            analysisType: 'latency_optimized_analysis',
             optimizeForRegion: true,
             maxLatencyMs: 3000,
           }),
@@ -270,18 +270,18 @@ describe("Integration Test T015: Multi-Model Failover", () => {
     });
   });
 
-  describe("Healthcare-Critical Failover", () => {
-    it("should prioritize reliability for emergency medical situations", async () => {
+  describe('Healthcare-Critical Failover', () => {
+    it('should prioritize reliability for emergency medical situations', async () => {
       const emergencyRequest = {
         patientId: criticalPatientId,
-        analysisType: "emergency_medical_analysis",
-        urgencyLevel: "critical",
-        patientCondition: "acute",
+        analysisType: 'emergency_medical_analysis',
+        urgencyLevel: 'critical',
+        patientCondition: 'acute',
         professionalCRM,
         cfmCompliance: {
           emergencyProtocol: true,
           medicalSupervisionRequired: true,
-          ethicalClearance: "emergency_exemption",
+          ethicalClearance: 'emergency_exemption',
         },
         reliabilityRequirements: {
           maxFailureRate: 0.01, // 99% reliability
@@ -291,13 +291,13 @@ describe("Integration Test T015: Multi-Model Failover", () => {
       };
 
       // TDD RED: Emergency failover not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/analyze", {
-        method: "POST",
+      const response = await fetch('/api/v1/ai/analyze', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-clinic-id": clinicId,
-          "x-emergency": "true",
-          "x-priority": "critical",
+          'Content-Type': 'application/json',
+          'x-clinic-id': clinicId,
+          'x-emergency': 'true',
+          'x-priority': 'critical',
           ...testClient.headers,
         },
         body: JSON.stringify(emergencyRequest),
@@ -312,9 +312,9 @@ describe("Integration Test T015: Multi-Model Failover", () => {
           emergencyProtocolActivated: true,
           priorityProcessing: true,
           reliabilityMeasures: expect.arrayContaining([
-            "multiple_model_parallel_processing",
-            "real_time_health_checks",
-            "instant_failover",
+            'multiple_model_parallel_processing',
+            'real_time_health_checks',
+            'instant_failover',
           ]),
         },
         performanceGuarantees: {
@@ -333,10 +333,10 @@ describe("Integration Test T015: Multi-Model Failover", () => {
       expect(result.performanceGuarantees.reliabilityScore).toBeGreaterThan(99);
     });
 
-    it("should maintain audit trail during model failovers for compliance", async () => {
+    it('should maintain audit trail during model failovers for compliance', async () => {
       const auditedFailoverRequest = {
         patientId: criticalPatientId,
-        analysisType: "compliance_tracked_analysis",
+        analysisType: 'compliance_tracked_analysis',
         auditRequirements: {
           lgpdCompliance: true,
           cfmDocumentation: true,
@@ -347,12 +347,12 @@ describe("Integration Test T015: Multi-Model Failover", () => {
       };
 
       // TDD RED: Audit trail during failover not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/analyze", {
-        method: "POST",
+      const response = await fetch('/api/v1/ai/analyze', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-clinic-id": clinicId,
-          "x-audit-mode": "comprehensive",
+          'Content-Type': 'application/json',
+          'x-clinic-id': clinicId,
+          'x-audit-mode': 'comprehensive',
           ...testClient.headers,
         },
         body: JSON.stringify(auditedFailoverRequest),
@@ -399,26 +399,26 @@ describe("Integration Test T015: Multi-Model Failover", () => {
     });
   });
 
-  describe("Quality Assurance During Failover", () => {
-    it("should validate output quality consistency across models", async () => {
+  describe('Quality Assurance During Failover', () => {
+    it('should validate output quality consistency across models', async () => {
       const qualityConsistencyRequest = {
-        patientId: "quality-test-patient-001",
-        analysisType: "quality_benchmark_analysis",
+        patientId: 'quality-test-patient-001',
+        analysisType: 'quality_benchmark_analysis',
         qualityBenchmark: {
           enableCrossModelValidation: true,
           minimumAgreementScore: 80,
-          qualityMetrics: ["accuracy", "consistency", "completeness"],
+          qualityMetrics: ['accuracy', 'consistency', 'completeness'],
           validateFallbacks: true,
         },
       };
 
       // TDD RED: Quality validation across models not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/analyze", {
-        method: "POST",
+      const response = await fetch('/api/v1/ai/analyze', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-clinic-id": clinicId,
-          "x-quality-validation": "true",
+          'Content-Type': 'application/json',
+          'x-clinic-id': clinicId,
+          'x-quality-validation': 'true',
           ...testClient.headers,
         },
         body: JSON.stringify(qualityConsistencyRequest),
@@ -458,14 +458,14 @@ describe("Integration Test T015: Multi-Model Failover", () => {
       expect(result.qualityValidation.overallQualityScore).toBeGreaterThan(80);
     });
 
-    it("should handle semantic consistency across model transitions", async () => {
+    it('should handle semantic consistency across model transitions', async () => {
       const semanticConsistencyRequest = {
-        patientId: "semantic-test-patient-001",
-        analysisType: "semantic_consistency_analysis",
+        patientId: 'semantic-test-patient-001',
+        analysisType: 'semantic_consistency_analysis',
         conversationContext: {
           previousInteractions: [
-            { model: "gpt-4", analysis: "Initial aesthetic assessment" },
-            { model: "claude-3", analysis: "Follow-up recommendations" },
+            { model: 'gpt-4', analysis: 'Initial aesthetic assessment' },
+            { model: 'claude-3', analysis: 'Follow-up recommendations' },
           ],
           maintainContext: true,
           semanticAlignment: true,
@@ -473,12 +473,12 @@ describe("Integration Test T015: Multi-Model Failover", () => {
       };
 
       // TDD RED: Semantic consistency not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/analyze", {
-        method: "POST",
+      const response = await fetch('/api/v1/ai/analyze', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-clinic-id": clinicId,
-          "x-semantic-validation": "true",
+          'Content-Type': 'application/json',
+          'x-clinic-id': clinicId,
+          'x-semantic-validation': 'true',
           ...testClient.headers,
         },
         body: JSON.stringify(semanticConsistencyRequest),
@@ -512,10 +512,10 @@ describe("Integration Test T015: Multi-Model Failover", () => {
     });
   });
 
-  describe("Monitoring and Alerting", () => {
-    it("should provide real-time failover monitoring and alerts", async () => {
+  describe('Monitoring and Alerting', () => {
+    it('should provide real-time failover monitoring and alerts', async () => {
       const monitoringRequest = {
-        action: "enable_realtime_monitoring",
+        action: 'enable_realtime_monitoring',
         clinicId,
         monitoringConfig: {
           alertThresholds: {
@@ -523,17 +523,17 @@ describe("Integration Test T015: Multi-Model Failover", () => {
             responseTime: 3000, // Alert if >3 seconds
             qualityDegradation: 10, // Alert if >10% quality drop
           },
-          notificationChannels: ["email", "webhook", "sms"],
+          notificationChannels: ['email', 'webhook', 'sms'],
           portuguese: true,
         },
       };
 
       // TDD RED: Real-time monitoring not implemented - MUST FAIL
-      const response = await fetch("/api/v1/ai/monitoring/failover", {
-        method: "POST",
+      const response = await fetch('/api/v1/ai/monitoring/failover', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-clinic-id": clinicId,
+          'Content-Type': 'application/json',
+          'x-clinic-id': clinicId,
           ...testClient.headers,
         },
         body: JSON.stringify(monitoringRequest),
@@ -551,8 +551,8 @@ describe("Integration Test T015: Multi-Model Failover", () => {
             responseTime: 3000,
             qualityDegradation: 10,
           }),
-          notifications: expect.arrayContaining(["email", "webhook", "sms"]),
-          locale: "pt-BR",
+          notifications: expect.arrayContaining(['email', 'webhook', 'sms']),
+          locale: 'pt-BR',
         },
         dashboardAccess: {
           url: expect.any(String),

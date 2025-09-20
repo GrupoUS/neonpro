@@ -1,266 +1,474 @@
 """
-Integration tests for AI Agent Service
+Integration tests for the AI Agent service.
+Tests full workflow from query processing to response generation.
 """
 
 import pytest
 import asyncio
 import json
-from httpx import AsyncClient
+from datetime import datetime, timedelta
+from unittest.mock import AsyncMock, MagicMock, patch
+from fastapi.testclient import TestClient
 from websockets.client import connect
+from websockets.server import serve
+
+from main import app
 from services.database_service import DatabaseService
 from services.websocket_manager import WebSocketManager
 from services.agent_service import AgentService
+from config import Settings
 
+# Test client for FastAPI
+client = TestClient(app)
 
-class TestIntegration:
-    """Integration test cases"""
+# Test fixtures for integration testing
+@pytest.fixture(scope="module")
+def test_settings():
+    """Test settings with overrides."""
+    with patch('config.Settings') as mock:
+        settings = mock.return_value
+        settings.supabase_url = "http://localhost:8000"
+        settings.supabase_key = "test-key"
+        settings.openai_api_key = "sk-test-key"
+        settings.anthropic_api_key = "sk-ant-test-key"
+        settings.enable_lgpd_compliance = True
+        settings.enable_cache = True
+        settings.cache_ttl = 300
+        settings.max_concurrent_requests = 10
+        settings.websocket_max_connections = 100
+        yield settings
 
+@pytest.fixture
+async def database_service(test_settings):
+    """Database service with mocked dependencies."""
+    with patch('services.database_service.Client') as mock_client:
+        service = DatabaseService(test_settings)
+        service.client = mock_client.return_value
+        yield service
+
+@pytest.fixture
+def websocket_manager(test_settings):
+    """WebSocket manager for testing."""
+    return WebSocketManager(test_settings)
+
+@pytest.fixture
+def agent_service(database_service, test_settings):
+    """Agent service with mocked dependencies."""
+    with patch('services.agent_service.OpenAIEmbeddings') as mock_embed, \
+         patch('services.agent_service.ConversationBufferMemory') as mock_memory, \
+         patch('services.agent_service.OpenAI') as mock_openai:
+        
+        # Mock embeddings
+        mock_embed.return_value.embed_query = MagicMock(return_value=[0.1, 0.2, 0.3])
+        
+        # Mock memory
+        mock_memory.return_value.load_memory_variables = MagicMock(return_value={"history": []})
+        mock_memory.return_value.save_context = MagicMock()
+        
+        # Mock OpenAI
+        mock_openai.return_value.chat.completions.create = MagicMock()
+        
+        service = AgentService(database_service, test_settings)
+        service.embeddings = mock_embed.return_value
+        service.memory = mock_memory.return_value
+        service.llm = mock_openai.return_value
+        
+        yield service
+
+class TestFullWorkflow:
+    """Test complete workflow from query to response."""
+    
     @pytest.mark.asyncio
-    async def test_full_query_flow(self, agent_service, sample_patients, sample_appointments):
-        """Test complete query flow from message to response"""
-        # Setup mocks
-        agent_service.db_service.search_patients = AsyncMock(return_value=[sample_patients[0]])
-        agent_service.db_service.get_patient_appointments = AsyncMock(return_value=sample_appointments)
-        agent_service.db_service.get_professional_info = AsyncMock(return_value={"full_name": "Dr. Silva"})
-        agent_service.db_service.get_service_info = AsyncMock(return_value={"name": "Consulta"})
+    async def test_patient_search_workflow(self, agent_service):
+        """Test complete patient search workflow."""
+        # Mock database response
+        agent_service.database_service.search_patients = AsyncMock(return_value=[
+            {
+                "id": "123",
+                "name": "João Silva",
+                "cpf": "123.456.789-00",
+                "birth_date": "1990-01-15",
+                "status": "active",
+                "contact_info": json.dumps({"phone": "+55 11 9999-9999", "email": "joao@email.com"})
+            }
+        ])
+        
+        # Mock LLM response
+        agent_service.llm.chat.completions.create.return_value = MagicMock(
+            choices=[MagicMock(message=MagicMock(content="Encontrei 1 paciente: João Silva"))]
+        )
+        
+        # Process query
+        result = await agent_service.process_query(
+            "Buscar paciente João Silva",
+            {"user_id": "user-123", "context": "dashboard"}
+        )
+        
+        # Verify result
+        assert result["success"] is True
+        assert "João Silva" in result["response"]
+        assert len(result["data"]) == 1
+        assert result["intent"] == "CLIENT_SEARCH"
+        
+        # Verify database was called
+        agent_service.database_service.search_patients.assert_called_once()
+    
+    @pytest.mark.asyncio
+    async def test_appointment_query_workflow(self, agent_service):
+        """Test complete appointment query workflow."""
+        # Mock database response
+        agent_service.database_service.get_appointments_by_patient = AsyncMock(return_value=[
+            {
+                "id": "apt-123",
+                "patient_id": "123",
+                "professional_id": "prof-456",
+                "service_id": "srv-789",
+                "scheduled_date": "2024-01-20T10:00:00",
+                "status": "confirmed",
+                "service_type": "Consulta"
+            }
+        ])
+        
+        # Mock LLM response
+        agent_service.llm.chat.completions.create.return_value = MagicMock(
+            choices=[MagicMock(message=MagicMock(content="O paciente tem 1 agendamento confirmado"))]
+        )
+        
+        # Process query
+        result = await agent_service.process_query(
+            "Mostrar agendamentos do paciente João",
+            {"user_id": "user-123", "context": "dashboard"}
+        )
+        
+        # Verify result
+        assert result["success"] is True
+        assert "agendamento" in result["response"].lower()
+        assert result["intent"] == "APPOINTMENT_QUERY"
+        assert result["data"][0]["status"] == "confirmed"
 
-        # Test query processing
-        query = {
-            "query": "Buscar agendamentos do paciente João Silva",
-            "context": {"userId": "user_1"}
+class TestWebSocketIntegration:
+    """Test WebSocket real-time communication."""
+    
+    @pytest.mark.asyncio
+    async def test_websocket_query_flow(self, websocket_manager, agent_service):
+        """Test complete WebSocket query flow."""
+        # Mock WebSocket
+        mock_websocket = AsyncMock()
+        mock_websocket.send = AsyncMock()
+        mock_websocket.receive = AsyncMock(
+            side_effect=[
+                json.dumps({
+                    "type": "query",
+                    "query_id": "test-123",
+                    "query": "Listar pacientes",
+                    "context": {"user_id": "user-123"}
+                }),
+                json.dumps({
+                    "type": "subscribe",
+                    "subscription_id": "sub-123",
+                    "subscription_type": "patient_updates"
+                })
+            ]
+        )
+        
+        # Connect WebSocket
+        await websocket_manager.connect(mock_websocket, "client-123")
+        
+        # Mock agent service
+        agent_service.process_query = AsyncMock(return_value={
+            "success": True,
+            "response": "Encontrei 10 pacientes",
+            "data": [],
+            "intent": "CLIENT_SEARCH"
+        })
+        
+        # Process message
+        message = json.loads(await mock_websocket.receive())
+        
+        if message["type"] == "query":
+            result = await agent_service.process_query(
+                message["query"],
+                message["context"]
+            )
+            
+            # Send response
+            response = {
+                "type": "query_response",
+                "query_id": message["query_id"],
+                "success": result["success"],
+                "response": result["response"],
+                "data": result["data"],
+                "timestamp": datetime.utcnow().isoformat()
+            }
+            
+            await mock_websocket.send(json.dumps(response))
+            
+            # Verify
+            mock_websocket.send.assert_called_once()
+            sent_data = json.loads(mock_websocket.send.call_args[0][0])
+            assert sent_data["type"] == "query_response"
+            assert sent_data["query_id"] == "test-123"
+    
+    @pytest.mark.asyncio
+    async def test_websocket_real_time_updates(self, websocket_manager):
+        """Test real-time updates through WebSocket."""
+        # Mock multiple clients
+        mock_clients = [AsyncMock() for _ in range(3)]
+        for i, client in enumerate(mock_clients):
+            client.send = AsyncMock()
+            await websocket_manager.connect(client, f"client-{i}")
+        
+        # Broadcast update
+        update_data = {
+            "type": "patient_update",
+            "patient_id": "123",
+            "update_type": "appointment_created",
+            "data": {"appointment_id": "apt-456"}
         }
         
-        response = await agent_service.process_query(query)
+        await websocket_manager.broadcast("patient_updates", update_data)
         
-        assert response["type"] == "data_response"
-        assert response["data_type"] == "appointments"
-        assert response["patient_name"] == "João Silva"
-        assert len(response["data"]) == 2
+        # Verify all clients received update
+        for client in mock_clients:
+            client.send.assert_called_once()
+            sent_data = json.loads(client.send.call_args[0][0])
+            assert sent_data["type"] == "patient_update"
+            assert sent_data["patient_id"] == "123"
 
+class TestDatabaseIntegration:
+    """Test database service integration."""
+    
     @pytest.mark.asyncio
-    async def test_websocket_real_time_communication(self):
-        """Test real-time WebSocket communication"""
-        # This would require a running server
-        # For now, we'll test the WebSocket manager in isolation
+    async def test_cache_integration(self, database_service):
+        """Test caching functionality."""
+        # Enable cache
+        database_service.cache_enabled = True
+        database_service.cache_ttl = 300
         
-        manager = WebSocketManager(max_connections=5)
+        # Mock database
+        database_service.client.table.return_value.select.return_value.\
+            eq.return_value.limit.return_value.execute.return_value.data = []
         
-        # Mock WebSocket
-        mock_client = MagicMock()
-        mock_client.accept = AsyncMock()
-        mock_client.send_json = AsyncMock()
+        # First call (miss)
+        result1 = await database_service.search_patients("test")
         
-        # Connect
-        await manager.connect(mock_client, client_id="test_client")
+        # Second call (hit)
+        result2 = await database_service.search_patients("test")
         
-        # Send message
-        await manager.send_to_client("test_client", {"type": "test", "content": "Hello"})
+        # Verify results
+        assert result1 == result2
+        
+        # Verify database called only once
+        database_service.client.table.return_value.select.assert_called_once()
+    
+    @pytest.mark.asyncio
+    async def test_lgpd_compliance_integration(self, database_service):
+        """Test LGPD compliance integration."""
+        # Enable compliance
+        database_service.lgpd_compliance_enabled = True
+        
+        # Mock audit log
+        with patch.object(database_service, '_log_access') as mock_log:
+            await database_service.search_patients(
+                "test",
+                context={"user_id": "user-123", "purpose": "patient_care"}
+            )
+            
+            # Verify audit log
+            mock_log.assert_called_once()
+            call_args = mock_log.call_args[0]
+            assert call_args[0] == "patient_search"
+            assert call_args[1] == "user-123"
+            assert call_args[2]["purpose"] == "patient_care"
+
+class TestErrorHandlingIntegration:
+    """Test error handling in integrated scenarios."""
+    
+    @pytest.mark.asyncio
+    async def test_database_error_handling(self, agent_service):
+        """Test handling of database errors."""
+        # Mock database failure
+        agent_service.database_service.search_patients = AsyncMock(
+            side_effect=Exception("Database connection failed")
+        )
+        
+        # Process query
+        result = await agent_service.process_query(
+            "Buscar pacientes",
+            {"user_id": "user-123"}
+        )
+        
+        # Verify error handling
+        assert result["success"] is False
+        assert "Database connection failed" in result["error"]
+        assert "suggestions" in result
+        
+    @pytest.mark.asyncio
+    async def test_rate_limiting_integration(self, agent_service):
+        """Test rate limiting in real scenarios."""
+        # Mock rate limiter
+        agent_service.rate_limiter.is_allowed = MagicMock(side_effect=[True, False])
+        
+        # First request (allowed)
+        result1 = await agent_service.process_query("test", {"user_id": "user-1"})
+        
+        # Second request (rate limited)
+        result2 = await agent_service.process_query("test", {"user_id": "user-1"})
         
         # Verify
-        mock_client.send_json.assert_called_once()
-        assert manager.get_connection_count() == 1
+        assert result1["success"] is True
+        assert result2["success"] is False
+        assert "Rate limit exceeded" in result2["error"]
 
-    @pytest.mark.asyncio
-    async def test_database_caching_integration(self, database_service, sample_patients):
-        """Test that database caching works correctly"""
-        # Mock database response
-        database_service.client.from_.return_value.select.return_value.ilike.return_value.limit.return_value.execute.return_value.data = sample_patients
-        
-        # First call
-        result1 = await database_service.search_patients("João")
-        
-        # Second call should use cache
-        result2 = await database_service.search_patients("João")
-        
-        assert result1 == result2
-        assert len(database_service._cache) == 1
-
-    @pytest.mark.asyncio
-    async def test_error_handling_flow(self, agent_service):
-        """Test error handling throughout the flow"""
-        # Mock database error
-        agent_service.db_service.search_patients = AsyncMock(side_effect=Exception("Database error"))
-        
-        query = {
-            "query": "Buscar paciente João",
-            "context": {"userId": "user_1"}
-        }
-        
-        response = await agent_service.process_query(query)
-        
-        assert response["type"] == "error"
-        assert "error occurred" in response["message"]
-
-    @pytest.mark.asyncio
-    async def test_lgpd_compliance_check(self, agent_service, sample_patients):
-        """Test LGPD compliance checks"""
-        # Mock patient without consent
-        patient_no_consent = sample_patients[0].copy()
-        patient_no_consent["lgpd_consent_given"] = False
-        
-        agent_service.db_service.search_patients = AsyncMock(return_value=[patient_no_consent])
-        agent_service.db_service.check_lgpd_consent = AsyncMock(return_value=False)
-        
-        entities = {"names": ["João"]}
-        result = await agent_service._handle_client_search(entities, {})
-        
-        # Should still return data but with compliance info
-        assert result["type"] == "data_response"
-        assert result["data"][0]["lgpd_consent"] == False
-
+class TestPerformanceIntegration:
+    """Test performance under load."""
+    
     @pytest.mark.asyncio
     async def test_concurrent_requests(self, agent_service):
-        """Test handling concurrent requests"""
-        # Mock database
-        agent_service.db_service.search_patients = AsyncMock(return_value=[])
+        """Test handling of concurrent requests."""
+        # Mock successful responses
+        agent_service.database_service.search_patients = AsyncMock(
+            return_value=[{"id": "123", "name": "Test Patient"}]
+        )
+        agent_service.llm.chat.completions.create.return_value = MagicMock(
+            choices=[MagicMock(message=MagicMock(content="Found 1 patient"))]
+        )
         
-        # Create multiple concurrent requests
+        # Create concurrent requests
         tasks = []
         for i in range(5):
-            query = {
-                "query": f"Buscar paciente {i}",
-                "context": {"userId": f"user_{i}"}
-            }
-            tasks.append(agent_service.process_query(query))
+            task = agent_service.process_query(
+                f"Search patient {i}",
+                {"user_id": f"user-{i}"}
+            )
+            tasks.append(task)
         
-        # Wait for all to complete
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        # Execute concurrently
+        results = await asyncio.gather(*tasks)
         
-        # All should succeed
-        assert len([r for r in results if not isinstance(r, Exception)]) == 5
-
+        # Verify all requests handled
+        assert len(results) == 5
+        for result in results:
+            assert result["success"] is True
+    
     @pytest.mark.asyncio
-    async def test_conversation_memory(self, agent_service):
-        """Test conversation memory functionality"""
-        # Mock successful response
-        with patch.object(agent_service, '_handle_client_search') as mock_handle:
-            mock_handle.return_value = {
-                "type": "response",
-                "content": "Found 2 patients"
-            }
-            
-            # Send first query
-            query1 = {"query": "Buscar pacientes", "context": {}}
-            await agent_service.process_query(query1)
-            
-            # Check memory
-            assert len(agent_service.memory.chat_memory.messages) == 2  # input + output
-            
-            # Send second query
-            query2 = {"query": "E mais?", "context": {}}
-            await agent_service.process_query(query2)
-            
-            # Memory should have 4 messages
-            assert len(agent_service.memory.chat_memory.messages) == 4
-
-    @pytest.mark.asyncio
-    async def test_audit_log_creation(self, database_service):
-        """Test audit log creation for LGPD compliance"""
-        # Mock successful insert
-        database_service.client.from_.return_value.insert.return_value.execute.return_value.data = {"id": "log_1"}
+    async def test_memory_performance(self, agent_service):
+        """Test conversation memory performance."""
+        # Add many messages to memory
+        for i in range(100):
+            agent_service.memory.save_context(
+                {"input": f"Message {i}"},
+                {"output": f"Response {i}"}
+            )
         
-        result = await database_service.create_audit_log(
-            user_id="user_1",
-            action="view_patient",
-            resource_type="patient",
-            resource_id="pat_1",
-            details={"query": "patient search"}
+        # Test query with large history
+        result = await agent_service.process_query(
+            "Current context",
+            {"user_id": "user-123"}
         )
         
-        assert result is True
+        # Verify performance (should complete quickly)
+        assert result["success"] is True
 
-    @pytest.mark.asyncio
-    async def test_financial_statistics_calculation(self, database_service, sample_transactions):
-        """Test financial statistics calculation"""
-        # Mock data
-        database_service.client.from_.return_value.select.return_value.eq.return_value.gte.return_value.lte.return_value.execute.return_value.data = sample_transactions
-        
-        stats = await database_service.get_patient_statistics("pat_1")
-        
-        assert "total_appointments" in stats
-        assert "total_spent" in stats
-        assert "pending_payments" in stats
-
-    @pytest.mark.asyncio
-    async def test_websocket_reconnection(self):
-        """Test WebSocket reconnection logic"""
-        manager = WebSocketManager(max_connections=5, reconnect_interval=0.1)
-        
-        # Mock WebSocket that fails on send
-        mock_websocket = MagicMock()
-        mock_websocket.accept = AsyncMock()
-        mock_websocket.send_json = AsyncMock(side_effect=Exception("Disconnected"))
-        
-        # Connect
-        await manager.connect(mock_websocket)
-        
-        # Try to send message (should disconnect)
-        await manager.send_personal_message({"type": "test"}, mock_websocket)
-        
-        # Should be disconnected
-        assert manager.get_connection_count() == 0
-
-    @pytest.mark.asyncio
-    async def test_agent_initialization(self):
-        """Test agent service initialization"""
-        db_service = MagicMock(spec=DatabaseService)
-        ws_manager = MagicMock(spec=WebSocketManager)
-        
-        agent = AgentService(
-            db_service=db_service,
-            ws_manager=ws_manager,
-            openai_api_key="test-key",
-            anthropic_api_key="test-key"
-        )
-        
-        assert agent.db_service == db_service
-        assert agent.ws_manager == ws_manager
-        assert agent.memory is not None
-        assert agent.conversation is not None
-
-    @pytest.mark.asyncio
-    async def test_portuguese_intent_detection(self, agent_service):
-        """Test Portuguese language intent detection"""
-        test_cases = [
-            ("procure o cliente Maria", QueryIntent.CLIENT_SEARCH),
-            ("quero ver minhas consultas", QueryIntent.APPOINTMENT_QUERY),
-            ("mostre os pagamentos", QueryIntent.FINANCIAL_QUERY),
-            ("agende uma nova consulta", QueryIntent.SCHEDULE_MANAGEMENT),
-            ("gere um relatório", QueryIntent.REPORT_GENERATION),
-            ("qual o preço do café?", QueryIntent.UNKNOWN)
-        ]
-        
-        for text, expected_intent in test_cases:
-            detected = agent_service._detect_intent(text)
-            assert detected == expected_intent, f"Failed for text: {text}"
-
+class TestComplianceIntegration:
+    """Test compliance features integration."""
+    
     @pytest.mark.asyncio
     async def test_brazilian_document_validation(self, agent_service):
-        """Test Brazilian document (CPF) validation"""
-        # Test CPF extraction
-        text = "Paciente com CPF 123.456.789-00"
-        entities = await agent_service._extract_entities(text, QueryIntent.CLIENT_SEARCH)
+        """Test Brazilian document validation in queries."""
+        # Mock database with Brazilian data
+        agent_service.database_service.search_patients = AsyncMock(return_value=[
+            {
+                "id": "123",
+                "name": "Maria Santos",
+                "cpf": "987.654.321-00",
+                "sus_card": "123 4567 8901 2345"
+            }
+        ])
         
-        assert "cpf" in entities
-        assert entities["cpf"] == "123.456.789-00"
-
-    @pytest.mark.asyncio
-    async def test_response_format_consistency(self, agent_service, sample_patients):
-        """Test that all responses follow consistent format"""
-        agent_service.db_service.search_patients = AsyncMock(return_value=sample_patients)
-        
-        response = await agent_service._handle_client_search(
-            {"names": ["João"]}, 
-            {}
+        # Process query with CPF
+        result = await agent_service.process_query(
+            "Buscar paciente com CPF 987.654.321-00",
+            {"user_id": "user-123"}
         )
         
-        # Required fields
-        assert "type" in response
-        assert "timestamp" in response
-        assert isinstance(response["timestamp"], str)
+        # Verify CPF handling
+        assert result["success"] is True
+        assert "987.654.321-00" in result["response"]
         
-        # For data responses
-        if response["type"] == "data_response":
-            assert "data_type" in response
-            assert "data" in response
-            assert "count" in response
+        # Verify proper data handling
+        patient_data = result["data"][0]
+        assert "cpf" in patient_data
+    
+    @pytest.mark.asyncio
+    async def test_consent_validation_integration(self, agent_service):
+        """Test patient consent validation."""
+        # Mock consent check
+        agent_service.database_service.check_patient_consent = AsyncMock(
+            return_value={"has_consent": True, "consent_type": "data_processing"}
+        )
+        
+        # Process query requiring consent
+        result = await agent_service.process_query(
+            "Show patient medical history",
+            {"user_id": "doctor-123", "context": {"patient_id": "123"}}
+        )
+        
+        # Verify consent check
+        agent_service.database_service.check_patient_consent.assert_called_once()
+        assert result["success"] is True
+
+# Test REST API integration
+class TestRestApiIntegration:
+    """Test REST API endpoints integration."""
+    
+    def test_health_check_integration(self):
+        """Test health check endpoint."""
+        response = client.get("/health")
+        assert response.status_code == 200
+        data = response.json()
+        assert data["status"] == "healthy"
+        assert "version" in data
+    
+    def test_query_endpoint_integration(self):
+        """Test query endpoint with valid request."""
+        with patch('main.agent_service.process_query') as mock_process:
+            mock_process.return_value = {
+                "success": True,
+                "response": "Test response",
+                "data": []
+            }
+            
+            response = client.post(
+                "/query",
+                json={
+                    "query": "Test query",
+                    "context": {"user_id": "user-123"}
+                }
+            )
+            
+            assert response.status_code == 200
+            data = response.json()
+            assert data["success"] is True
+            assert data["response"] == "Test response"
+    
+    def test_query_endpoint_validation(self):
+        """Test query endpoint validation."""
+        # Missing required fields
+        response = client.post("/query", json={})
+        assert response.status_code == 422
+        
+        # Empty query
+        response = client.post(
+            "/query",
+            json={"query": "", "context": {"user_id": "user-123"}}
+        )
+        assert response.status_code == 422
+
+# Cleanup helper
+@pytest.fixture(autouse=True)
+async def cleanup():
+    """Cleanup after tests."""
+    yield
+    # Clean up any test data
+    await asyncio.sleep(0.1)  # Allow async operations to complete

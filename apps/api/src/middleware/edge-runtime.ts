@@ -13,7 +13,7 @@
  * - Healthcare-specific security headers
  */
 
-import type { NextRequest, NextResponse } from "next/server";
+import type { NextRequest, NextResponse } from 'next/server';
 
 // Brazilian healthcare compliance configuration
 const BRASIL_HEALTHCARE_CONFIG = {
@@ -21,26 +21,26 @@ const BRASIL_HEALTHCARE_CONFIG = {
   lgpd: {
     // Data processing lawful bases under LGPD Art. 7º
     lawfulBases: [
-      "consent", // Consentimento do titular
-      "legal_obligation", // Cumprimento de obrigação legal
-      "vital_interests", // Proteção da vida ou da incolumidade física
-      "legitimate_interests", // Interesse legítimo
-      "health_protection", // Proteção da saúde (Art. 11)
+      'consent', // Consentimento do titular
+      'legal_obligation', // Cumprimento de obrigação legal
+      'vital_interests', // Proteção da vida ou da incolumidade física
+      'legitimate_interests', // Interesse legítimo
+      'health_protection', // Proteção da saúde (Art. 11)
     ],
     // Sensitive data categories under LGPD Art. 11
     sensitiveDataCategories: [
-      "health_data", // Dados sobre saúde
-      "genetic_data", // Dados genéticos
-      "biometric_data", // Dados biométricos
-      "personal_life", // Dados referentes à vida privada
+      'health_data', // Dados sobre saúde
+      'genetic_data', // Dados genéticos
+      'biometric_data', // Dados biométricos
+      'personal_life', // Dados referentes à vida privada
     ],
     // Data retention periods for healthcare
     retentionPeriods: {
-      patient_records: "20_years", // CFM Resolution 1997/2012
-      medical_images: "20_years", // CFM Resolution 1997/2012
-      prescriptions: "5_years", // CFM Resolution 1997/2012
-      audit_logs: "5_years", // LGPD Art. 37
-      consent_records: "5_years", // LGPD Art. 8º, §5º
+      patient_records: '20_years', // CFM Resolution 1997/2012
+      medical_images: '20_years', // CFM Resolution 1997/2012
+      prescriptions: '5_years', // CFM Resolution 1997/2012
+      audit_logs: '5_years', // LGPD Art. 37
+      consent_records: '5_years', // LGPD Art. 8º, §5º
     },
   },
 
@@ -48,23 +48,23 @@ const BRASIL_HEALTHCARE_CONFIG = {
   cfm: {
     // Telemedicine requirements (CFM Resolution 2314/2022)
     telemedicine: {
-      minVideoQuality: "720p",
-      minAudioSampleRate: "44100Hz",
-      encryptionStandard: "AES-256",
-      sessionRecording: "mandatory_with_consent",
+      minVideoQuality: '720p',
+      minAudioSampleRate: '44100Hz',
+      encryptionStandard: 'AES-256',
+      sessionRecording: 'mandatory_with_consent',
       presentialExamRequirements: [
-        "first_consultation",
-        "chronic_disease_followup",
-        "mental_health_assessment",
+        'first_consultation',
+        'chronic_disease_followup',
+        'mental_health_assessment',
       ],
     },
     // Digital prescription requirements (CFM Resolution 2299/2021)
     digitalPrescription: {
-      certificateType: "ICP-Brasil",
-      signatureStandard: "CAdES",
+      certificateType: 'ICP-Brasil',
+      signatureStandard: 'CAdES',
       timestampRequired: true,
       qrCodeRequired: true,
-      validityPeriod: "90_days",
+      validityPeriod: '90_days',
     },
   },
 
@@ -73,33 +73,33 @@ const BRASIL_HEALTHCARE_CONFIG = {
     // Medical device regulations (RDC 657/2022)
     medicalDevices: {
       softwareClassification: {
-        class_i: "low_risk", // Software não médico
-        class_iia: "medium_risk", // Software médico de baixo risco
-        class_iib: "high_risk", // Software médico de risco moderado
-        class_iii: "very_high_risk", // Software médico de alto risco
+        class_i: 'low_risk', // Software não médico
+        class_iia: 'medium_risk', // Software médico de baixo risco
+        class_iib: 'high_risk', // Software médico de risco moderado
+        class_iii: 'very_high_risk', // Software médico de alto risco
       },
       adverseEventReporting: {
         timeframes: {
-          death: "24_hours",
-          serious_injury: "10_days",
-          malfunction: "30_days",
-          recall: "24_hours",
+          death: '24_hours',
+          serious_injury: '10_days',
+          malfunction: '30_days',
+          recall: '24_hours',
         },
-        notificationChannels: ["anvisa_portal", "email", "phone"],
+        notificationChannels: ['anvisa_portal', 'email', 'phone'],
       },
     },
   },
 
   // Geographic and performance requirements
   dataResidency: {
-    primaryRegion: "sao1", // São Paulo, Brazil
-    fallbackRegions: ["gru1"], // Guarulhos, Brazil
-    crossBorderTransfers: "prohibited", // LGPD Art. 33
+    primaryRegion: 'sao1', // São Paulo, Brazil
+    fallbackRegions: ['gru1'], // Guarulhos, Brazil
+    crossBorderTransfers: 'prohibited', // LGPD Art. 33
     edgeLocations: [
-      "sao-paulo",
-      "rio-de-janeiro",
-      "brasilia",
-      "belo-horizonte",
+      'sao-paulo',
+      'rio-de-janeiro',
+      'brasilia',
+      'belo-horizonte',
     ],
   },
 
@@ -112,7 +112,7 @@ const BRASIL_HEALTHCARE_CONFIG = {
     },
     availability: {
       target: 99.9, // 99.9% uptime requirement
-      monthlyDowntime: "43.8_minutes", // Maximum allowed downtime
+      monthlyDowntime: '43.8_minutes', // Maximum allowed downtime
     },
     throughput: {
       minRps: 1000, // Minimum requests per second
@@ -142,65 +142,64 @@ function getHealthcareSecurityHeaders(): Record<string, string> {
 
   return {
     // LGPD compliance headers
-    "X-LGPD-Compliant": "true",
-    "X-Data-Controller": "NeonPro Healthcare Platform",
-    "X-Legal-Basis": "health-protection",
+    'X-LGPD-Compliant': 'true',
+    'X-Data-Controller': 'NeonPro Healthcare Platform',
+    'X-Legal-Basis': 'health-protection',
 
     // CFM compliance headers
-    "X-CFM-Compliant": "true",
-    "X-Telemedicine-Standard": "CFM-2314-2022",
-    "X-Medical-Grade": "true",
+    'X-CFM-Compliant': 'true',
+    'X-Telemedicine-Standard': 'CFM-2314-2022',
+    'X-Medical-Grade': 'true',
 
     // ANVISA compliance headers
-    "X-ANVISA-Compliant": "true",
-    "X-Medical-Device-Class": "IIa",
-    "X-Adverse-Event-Reporting": "enabled",
+    'X-ANVISA-Compliant': 'true',
+    'X-Medical-Device-Class': 'IIa',
+    'X-Adverse-Event-Reporting': 'enabled',
 
     // Security headers
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-    "X-Content-Type-Options": "nosniff",
-    "X-Frame-Options": "DENY",
-    "X-XSS-Protection": "1; mode=block",
-    "Referrer-Policy": "strict-origin-when-cross-origin",
-    "Permissions-Policy":
-      "camera=self, microphone=self, geolocation=(), payment=()",
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'DENY',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'camera=self, microphone=self, geolocation=(), payment=()',
 
     // CORS for healthcare applications
-    "Access-Control-Allow-Origin":
-      process.env.NODE_ENV === "production" ? "https://neonpro.com.br" : "*",
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers":
-      "Content-Type, Authorization, X-Clinic-ID, X-Patient-ID",
-    "Access-Control-Max-Age": "86400",
+    'Access-Control-Allow-Origin': process.env.NODE_ENV === 'production'
+      ? 'https://neonpro.com.br'
+      : '*',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Clinic-ID, X-Patient-ID',
+    'Access-Control-Max-Age': '86400',
 
     // Content Security Policy for medical applications (SECURE)
     // SECURITY FIX: Fresh nonce generated per request, not per deployment
-    "Content-Security-Policy": [
-      "default-src 'self'",
+    'Content-Security-Policy': [
+      'default-src \'self\'',
       `script-src 'self' 'nonce-${nonce}' https://js.stripe.com https://maps.googleapis.com`, // Fresh nonce per request
       `style-src 'self' 'nonce-${nonce}' https://fonts.googleapis.com`, // Fresh nonce per request
-      "img-src 'self' data: blob: https://maps.gstatic.com",
-      "font-src 'self' https://fonts.gstatic.com",
-      "connect-src 'self' wss: ws: *.neonpro.com.br",
-      "media-src 'self' blob: mediastream:",
-      "object-src 'none'",
-      "embed-src 'none'",
-      "frame-src 'self' https://js.stripe.com",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      "worker-src 'self' blob:",
-      "upgrade-insecure-requests",
-    ].join("; "),
+      'img-src \'self\' data: blob: https://maps.gstatic.com',
+      'font-src \'self\' https://fonts.gstatic.com',
+      'connect-src \'self\' wss: ws: *.neonpro.com.br',
+      'media-src \'self\' blob: mediastream:',
+      'object-src \'none\'',
+      'embed-src \'none\'',
+      'frame-src \'self\' https://js.stripe.com',
+      'frame-ancestors \'none\'',
+      'base-uri \'self\'',
+      'form-action \'self\'',
+      'worker-src \'self\' blob:',
+      'upgrade-insecure-requests',
+    ].join('; '),
 
     // Additional headers for healthcare compliance
-    "X-Audit-Log": "enabled",
-    "X-Data-Retention": "as-per-lgpd",
-    "X-Encryption-Standard": "AES-256",
+    'X-Audit-Log': 'enabled',
+    'X-Data-Retention': 'as-per-lgpd',
+    'X-Encryption-Standard': 'AES-256',
 
     // Performance and monitoring
-    "X-Cache-Control": "healthcare-optimized",
-    "Server-Timing": "edge-processing",
+    'X-Cache-Control': 'healthcare-optimized',
+    'Server-Timing': 'edge-processing',
   };
 }
 
@@ -216,8 +215,7 @@ export class BrazilianHealthcareEdgeRuntime {
 
   static getInstance(): BrazilianHealthcareEdgeRuntime {
     if (!BrazilianHealthcareEdgeRuntime.instance) {
-      BrazilianHealthcareEdgeRuntime.instance =
-        new BrazilianHealthcareEdgeRuntime();
+      BrazilianHealthcareEdgeRuntime.instance = new BrazilianHealthcareEdgeRuntime();
     }
     return BrazilianHealthcareEdgeRuntime.instance;
   }
@@ -254,29 +252,29 @@ export class BrazilianHealthcareEdgeRuntime {
 
       // Add performance metrics
       const responseTime = Date.now() - startTime;
-      response.headers.set("X-Response-Time", `${responseTime}ms`);
+      response.headers.set('X-Response-Time', `${responseTime}ms`);
       response.headers.set(
-        "X-Edge-Region",
-        process.env.VERCEL_REGION || "sao1",
+        'X-Edge-Region',
+        process.env.VERCEL_REGION || 'sao1',
       );
 
       return response;
     } catch (error) {
-      console.error("Brazilian Healthcare Edge Runtime Error:", error);
+      console.error('Brazilian Healthcare Edge Runtime Error:', error);
 
       // Return compliance error response
       return new NextResponse(
         JSON.stringify({
-          error: "Healthcare compliance validation failed",
-          code: "COMPLIANCE_ERROR",
-          message: error instanceof Error ? error.message : "Unknown error",
+          error: 'Healthcare compliance validation failed',
+          code: 'COMPLIANCE_ERROR',
+          message: error instanceof Error ? error.message : 'Unknown error',
           timestamp: new Date().toISOString(),
           region: process.env.VERCEL_REGION,
         }),
         {
           status: 403,
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             ...getHealthcareSecurityHeaders(), // SECURITY FIX: Fresh headers per request
           },
         },
@@ -290,13 +288,13 @@ export class BrazilianHealthcareEdgeRuntime {
   private async validateGeographicCompliance(
     request: NextRequest,
   ): Promise<void> {
-    const region = process.env.VERCEL_REGION || "unknown";
-    const country = request.geo?.country || "unknown";
+    const region = process.env.VERCEL_REGION || 'unknown';
+    const country = request.geo?.country || 'unknown';
 
     // Ensure processing occurs within Brazil (LGPD Art. 33)
     if (
-      !BRASIL_HEALTHCARE_CONFIG.dataResidency.edgeLocations.includes(region) &&
-      country !== "BR"
+      !BRASIL_HEALTHCARE_CONFIG.dataResidency.edgeLocations.includes(region)
+      && country !== 'BR'
     ) {
       throw new Error(
         `Geographic compliance violation: Processing outside Brazil not allowed. Region: ${region}, Country: ${country}`,
@@ -313,40 +311,40 @@ export class BrazilianHealthcareEdgeRuntime {
 
   private async applyLgpdProtection(request: NextRequest): Promise<void> {
     const url = new URL(request.url);
-    const patientId = request.headers.get("X-Patient-ID");
-    const clinicId = request.headers.get("X-Clinic-ID");
+    const patientId = request.headers.get('X-Patient-ID');
+    const clinicId = request.headers.get('X-Clinic-ID');
 
     // Validate required identifiers for patient data access
-    if (url.pathname.includes("/api/patients") && !patientId) {
+    if (url.pathname.includes('/api/patients') && !patientId) {
       throw new Error(
-        "LGPD violation: Patient ID required for patient data access",
+        'LGPD violation: Patient ID required for patient data access',
       );
     }
 
     if (!clinicId) {
       throw new Error(
-        "LGPD violation: Clinic ID required for multi-tenant isolation",
+        'LGPD violation: Clinic ID required for multi-tenant isolation',
       );
     }
 
     // Check for sensitive data endpoints
     const sensitiveEndpoints = [
-      "/api/patients/medical-records",
-      "/api/patients/genetic-data",
-      "/api/patients/biometric",
-      "/api/telemedicine/sessions",
+      '/api/patients/medical-records',
+      '/api/patients/genetic-data',
+      '/api/patients/biometric',
+      '/api/telemedicine/sessions',
     ];
 
-    const isSensitiveEndpoint = sensitiveEndpoints.some((endpoint) =>
-      url.pathname.includes(endpoint),
+    const isSensitiveEndpoint = sensitiveEndpoints.some(endpoint =>
+      url.pathname.includes(endpoint)
     );
 
     if (isSensitiveEndpoint) {
       // Ensure consent validation for sensitive data
-      const consentHeader = request.headers.get("X-Patient-Consent");
+      const consentHeader = request.headers.get('X-Patient-Consent');
       if (!consentHeader) {
         throw new Error(
-          "LGPD violation: Patient consent required for sensitive data processing (Art. 11)",
+          'LGPD violation: Patient consent required for sensitive data processing (Art. 11)',
         );
       }
 
@@ -361,24 +359,24 @@ export class BrazilianHealthcareEdgeRuntime {
     const url = new URL(request.url);
 
     // Check telemedicine session requirements
-    if (url.pathname.includes("/api/telemedicine")) {
-      const sessionType = request.headers.get("X-Session-Type");
-      const doctorCrm = request.headers.get("X-Doctor-CRM");
+    if (url.pathname.includes('/api/telemedicine')) {
+      const sessionType = request.headers.get('X-Session-Type');
+      const doctorCrm = request.headers.get('X-Doctor-CRM');
 
       if (!doctorCrm) {
         throw new Error(
-          "CFM violation: Doctor CRM registration required for telemedicine",
+          'CFM violation: Doctor CRM registration required for telemedicine',
         );
       }
 
       // Validate first consultation requirements
-      if (sessionType === "first_consultation") {
+      if (sessionType === 'first_consultation') {
         const presentialExamCompleted = request.headers.get(
-          "X-Presential-Exam-Completed",
+          'X-Presential-Exam-Completed',
         );
-        if (presentialExamCompleted !== "true") {
+        if (presentialExamCompleted !== 'true') {
           throw new Error(
-            "CFM violation: First consultation requires presential examination (Resolution 2314/2022)",
+            'CFM violation: First consultation requires presential examination (Resolution 2314/2022)',
           );
         }
       }
@@ -387,17 +385,17 @@ export class BrazilianHealthcareEdgeRuntime {
     }
 
     // Check digital prescription requirements
-    if (url.pathname.includes("/api/prescriptions")) {
-      const digitalSignature = request.headers.get("X-Digital-Signature");
-      const icpBrasilCert = request.headers.get("X-ICP-Brasil-Certificate");
+    if (url.pathname.includes('/api/prescriptions')) {
+      const digitalSignature = request.headers.get('X-Digital-Signature');
+      const icpBrasilCert = request.headers.get('X-ICP-Brasil-Certificate');
 
       if (!digitalSignature || !icpBrasilCert) {
         throw new Error(
-          "CFM violation: Digital prescription requires ICP-Brasil certificate and digital signature (Resolution 2299/2021)",
+          'CFM violation: Digital prescription requires ICP-Brasil certificate and digital signature (Resolution 2299/2021)',
         );
       }
 
-      console.log("CFM digital prescription compliance validated");
+      console.log('CFM digital prescription compliance validated');
     }
   }
 
@@ -408,13 +406,13 @@ export class BrazilianHealthcareEdgeRuntime {
     const url = new URL(request.url);
 
     // Check adverse event reporting endpoints
-    if (url.pathname.includes("/api/adverse-events")) {
-      const eventSeverity = request.headers.get("X-Event-Severity");
-      const deviceClass = request.headers.get("X-Device-Class");
+    if (url.pathname.includes('/api/adverse-events')) {
+      const eventSeverity = request.headers.get('X-Event-Severity');
+      const deviceClass = request.headers.get('X-Device-Class');
 
       if (!eventSeverity || !deviceClass) {
         throw new Error(
-          "ANVISA violation: Adverse event reporting requires severity and device class classification",
+          'ANVISA violation: Adverse event reporting requires severity and device class classification',
         );
       }
 
@@ -428,17 +426,17 @@ export class BrazilianHealthcareEdgeRuntime {
     }
 
     // Validate medical device software classification
-    if (url.pathname.includes("/api/medical-devices")) {
-      const softwareClass = request.headers.get("X-Software-Class");
+    if (url.pathname.includes('/api/medical-devices')) {
+      const softwareClass = request.headers.get('X-Software-Class');
 
       if (
-        !softwareClass ||
-        !Object.keys(
+        !softwareClass
+        || !Object.keys(
           BRASIL_HEALTHCARE_CONFIG.anvisa.medicalDevices.softwareClassification,
         ).includes(softwareClass)
       ) {
         throw new Error(
-          "ANVISA violation: Valid software classification required for medical device access",
+          'ANVISA violation: Valid software classification required for medical device access',
         );
       }
 
@@ -473,10 +471,8 @@ export class BrazilianHealthcareEdgeRuntime {
     }
 
     // Check SLA compliance
-    const slaTarget =
-      BRASIL_HEALTHCARE_CONFIG.performanceSla.responseTime.target;
-    const slaWarning =
-      BRASIL_HEALTHCARE_CONFIG.performanceSla.responseTime.warning;
+    const slaTarget = BRASIL_HEALTHCARE_CONFIG.performanceSla.responseTime.target;
+    const slaWarning = BRASIL_HEALTHCARE_CONFIG.performanceSla.responseTime.warning;
 
     if (responseTime > slaTarget) {
       console.warn(
@@ -491,13 +487,14 @@ export class BrazilianHealthcareEdgeRuntime {
     }
 
     // Calculate average response time for the endpoint
-    const avgResponseTime =
-      metrics.reduce((sum, time) => sum + time, 0) / metrics.length;
+    const avgResponseTime = metrics.reduce((sum, time) => sum + time, 0) / metrics.length;
 
     console.log(
-      `Performance monitoring: ${endpoint} - Current: ${responseTime}ms, Average: ${Math.round(
-        avgResponseTime,
-      )}ms`,
+      `Performance monitoring: ${endpoint} - Current: ${responseTime}ms, Average: ${
+        Math.round(
+          avgResponseTime,
+        )
+      }ms`,
     );
   }
 
@@ -514,8 +511,7 @@ export class BrazilianHealthcareEdgeRuntime {
     > = {};
 
     this.performanceMetrics.forEach((metrics, endpoint) => {
-      const average =
-        metrics.reduce((sum, time) => sum + time, 0) / metrics.length;
+      const average = metrics.reduce((sum, time) => sum + time, 0) / metrics.length;
       result[endpoint] = {
         current: metrics[metrics.length - 1] || 0,
         average: Math.round(average),
@@ -532,30 +528,30 @@ export class BrazilianHealthcareEdgeRuntime {
   static validateEdgeEnvironment(): void {
     // Check required environment variables
     const requiredEnvVars = [
-      "SUPABASE_URL",
-      "SUPABASE_ANON_KEY",
-      "VERCEL_REGION",
+      'SUPABASE_URL',
+      'SUPABASE_ANON_KEY',
+      'VERCEL_REGION',
     ];
 
     const missingVars = requiredEnvVars.filter(
-      (varName) => !process.env[varName],
+      varName => !process.env[varName],
     );
 
     if (missingVars.length > 0) {
       throw new Error(
-        `Edge runtime validation failed: Missing environment variables: ${missingVars.join(", ")}`,
+        `Edge runtime validation failed: Missing environment variables: ${missingVars.join(', ')}`,
       );
     }
 
     // Validate Brazilian region
     const region = process.env.VERCEL_REGION;
-    if (region && !["sao1", "gru1"].includes(region)) {
+    if (region && !['sao1', 'gru1'].includes(region)) {
       console.warn(
         `Warning: Edge runtime not in Brazilian region. Current: ${region}, Expected: sao1 or gru1`,
       );
     }
 
-    console.log("Edge runtime environment validation completed");
+    console.log('Edge runtime environment validation completed');
   }
 
   /**
@@ -568,46 +564,44 @@ export class BrazilianHealthcareEdgeRuntime {
     performance: { status: string; details: any };
   } {
     const performanceMetrics = this.getPerformanceMetrics();
-    const avgResponseTime =
-      Object.values(performanceMetrics).reduce(
-        (sum, metric) => sum + metric.average,
-        0,
-      ) / Math.max(Object.values(performanceMetrics).length, 1);
+    const avgResponseTime = Object.values(performanceMetrics).reduce(
+      (sum, metric) => sum + metric.average,
+      0,
+    ) / Math.max(Object.values(performanceMetrics).length, 1);
 
     return {
       lgpd: {
-        status: "compliant",
+        status: 'compliant',
         details: {
-          data_residency: "brazil_only",
-          consent_validation: "active",
-          retention_policies: "configured",
-          cross_border_transfers: "prohibited",
+          data_residency: 'brazil_only',
+          consent_validation: 'active',
+          retention_policies: 'configured',
+          cross_border_transfers: 'prohibited',
         },
       },
       cfm: {
-        status: "compliant",
+        status: 'compliant',
         details: {
-          telemedicine_standard: "CFM-2314-2022",
-          digital_prescription: "ICP-Brasil_enabled",
-          doctor_validation: "CRM_required",
-          presential_exam: "enforced_for_first_consultation",
+          telemedicine_standard: 'CFM-2314-2022',
+          digital_prescription: 'ICP-Brasil_enabled',
+          doctor_validation: 'CRM_required',
+          presential_exam: 'enforced_for_first_consultation',
         },
       },
       anvisa: {
-        status: "compliant",
+        status: 'compliant',
         details: {
-          software_classification: "class_IIa",
-          adverse_event_reporting: "automated",
-          medical_device_regulations: "RDC_657_2022",
-          post_market_surveillance: "active",
+          software_classification: 'class_IIa',
+          adverse_event_reporting: 'automated',
+          medical_device_regulations: 'RDC_657_2022',
+          post_market_surveillance: 'active',
         },
       },
       performance: {
-        status:
-          avgResponseTime <
-          BRASIL_HEALTHCARE_CONFIG.performanceSla.responseTime.target
-            ? "compliant"
-            : "warning",
+        status: avgResponseTime
+            < BRASIL_HEALTHCARE_CONFIG.performanceSla.responseTime.target
+          ? 'compliant'
+          : 'warning',
         details: {
           average_response_time: `${Math.round(avgResponseTime)}ms`,
           target_response_time: `${BRASIL_HEALTHCARE_CONFIG.performanceSla.responseTime.target}ms`,
@@ -620,8 +614,7 @@ export class BrazilianHealthcareEdgeRuntime {
 }
 
 // Export singleton instance
-export const brazilianHealthcareEdge =
-  BrazilianHealthcareEdgeRuntime.getInstance();
+export const brazilianHealthcareEdge = BrazilianHealthcareEdgeRuntime.getInstance();
 
 // Export configuration for use in other modules
 export { BRASIL_HEALTHCARE_CONFIG, HEALTHCARE_SECURITY_HEADERS };
@@ -635,7 +628,7 @@ export function createHealthcareResponse(
     status?: number;
     patientId?: string;
     clinicId?: string;
-    dataType?: "sensitive" | "public";
+    dataType?: 'sensitive' | 'public';
     cacheControl?: string;
   } = {},
 ): Response {
@@ -643,23 +636,23 @@ export function createHealthcareResponse(
 
   // Add healthcare-specific headers
   if (options.patientId) {
-    headers.set("X-Patient-ID", options.patientId);
+    headers.set('X-Patient-ID', options.patientId);
   }
 
   if (options.clinicId) {
-    headers.set("X-Clinic-ID", options.clinicId);
+    headers.set('X-Clinic-ID', options.clinicId);
   }
 
-  if (options.dataType === "sensitive") {
-    headers.set("X-Data-Classification", "sensitive");
-    headers.set("X-LGPD-Basis", "health-protection");
-    headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+  if (options.dataType === 'sensitive') {
+    headers.set('X-Data-Classification', 'sensitive');
+    headers.set('X-LGPD-Basis', 'health-protection');
+    headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
   } else {
-    headers.set("X-Data-Classification", "public");
-    headers.set("Cache-Control", options.cacheControl || "public, max-age=300");
+    headers.set('X-Data-Classification', 'public');
+    headers.set('Cache-Control', options.cacheControl || 'public, max-age=300');
   }
 
-  headers.set("Content-Type", "application/json");
+  headers.set('Content-Type', 'application/json');
 
   return new Response(JSON.stringify(data), {
     status: options.status || 200,

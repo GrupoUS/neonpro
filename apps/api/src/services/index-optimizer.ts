@@ -10,10 +10,7 @@
  * - LGPD compliance index optimization
  */
 
-import {
-  HEALTHCARE_RECOMMENDED_INDEXES,
-  IndexRecommendation,
-} from "./database-performance";
+import { HEALTHCARE_RECOMMENDED_INDEXES, IndexRecommendation } from './database-performance';
 
 // Index analysis result
 export interface IndexAnalysis {
@@ -47,64 +44,62 @@ export interface IndexCreationScript {
   table: string;
   indexName: string;
   estimatedTime: number; // seconds
-  lockLevel: "none" | "share" | "exclusive";
-  healthcareImpact: "low" | "medium" | "high";
+  lockLevel: 'none' | 'share' | 'exclusive';
+  healthcareImpact: 'low' | 'medium' | 'high';
 }
 
 // Healthcare query patterns for index optimization
 export const HEALTHCARE_INDEX_PATTERNS = {
   // Patient search patterns
   patientSearch: {
-    pattern: "SELECT * FROM patients WHERE clinic_id = ? AND full_name ILIKE ?",
-    frequency: "high",
-    indexes: ["patients(clinic_id, full_name)"],
+    pattern: 'SELECT * FROM patients WHERE clinic_id = ? AND full_name ILIKE ?',
+    frequency: 'high',
+    indexes: ['patients(clinic_id, full_name)'],
   },
   patientByCPF: {
-    pattern: "SELECT * FROM patients WHERE clinic_id = ? AND cpf = ?",
-    frequency: "high",
-    indexes: ["patients(clinic_id, cpf)"],
+    pattern: 'SELECT * FROM patients WHERE clinic_id = ? AND cpf = ?',
+    frequency: 'high',
+    indexes: ['patients(clinic_id, cpf)'],
   },
   patientFullTextSearch: {
     pattern:
-      "SELECT * FROM patients WHERE full_name ILIKE ? OR phone_primary ILIKE ? OR email ILIKE ?",
-    frequency: "medium",
+      'SELECT * FROM patients WHERE full_name ILIKE ? OR phone_primary ILIKE ? OR email ILIKE ?',
+    frequency: 'medium',
     indexes: [
-      "patients USING gin(to_tsvector('portuguese', full_name || ' ' || phone_primary || ' ' || email))",
+      'patients USING gin(to_tsvector(\'portuguese\', full_name || \' \' || phone_primary || \' \' || email))',
     ],
   },
 
   // Appointment patterns
   professionalSchedule: {
-    pattern:
-      "SELECT * FROM appointments WHERE professional_id = ? AND start_time BETWEEN ? AND ?",
-    frequency: "very_high",
-    indexes: ["appointments(professional_id, start_time)"],
+    pattern: 'SELECT * FROM appointments WHERE professional_id = ? AND start_time BETWEEN ? AND ?',
+    frequency: 'very_high',
+    indexes: ['appointments(professional_id, start_time)'],
   },
   patientAppointments: {
-    pattern:
-      "SELECT * FROM appointments WHERE patient_id = ? ORDER BY start_time DESC",
-    frequency: "high",
-    indexes: ["appointments(patient_id, start_time)"],
+    pattern: 'SELECT * FROM appointments WHERE patient_id = ? ORDER BY start_time DESC',
+    frequency: 'high',
+    indexes: ['appointments(patient_id, start_time)'],
   },
   dailySchedule: {
     pattern:
-      "SELECT * FROM appointments WHERE clinic_id = ? AND start_time::date = ? ORDER BY start_time",
-    frequency: "very_high",
-    indexes: ["appointments(clinic_id, start_time)"],
+      'SELECT * FROM appointments WHERE clinic_id = ? AND start_time::date = ? ORDER BY start_time',
+    frequency: 'very_high',
+    indexes: ['appointments(clinic_id, start_time)'],
   },
 
   // LGPD compliance patterns
   consentTracking: {
     pattern:
-      "SELECT * FROM consent_records WHERE patient_id = ? AND consent_type = ? AND is_active = true",
-    frequency: "medium",
-    indexes: ["consent_records(patient_id, consent_type, is_active)"],
+      'SELECT * FROM consent_records WHERE patient_id = ? AND consent_type = ? AND is_active = true',
+    frequency: 'medium',
+    indexes: ['consent_records(patient_id, consent_type, is_active)'],
   },
   auditTrail: {
     pattern:
-      "SELECT * FROM audit_logs WHERE table_name = ? AND record_id = ? ORDER BY created_at DESC",
-    frequency: "medium",
-    indexes: ["audit_logs(table_name, record_id, created_at)"],
+      'SELECT * FROM audit_logs WHERE table_name = ? AND record_id = ? ORDER BY created_at DESC',
+    frequency: 'medium',
+    indexes: ['audit_logs(table_name, record_id, created_at)'],
   },
 };
 
@@ -175,20 +170,20 @@ export class IndexOptimizerService {
     const commonIndexes: Record<string, DatabaseIndex[]> = {
       patients: [
         {
-          name: "patients_pkey",
-          table: "patients",
-          columns: ["id"],
-          type: "btree",
+          name: 'patients_pkey',
+          table: 'patients',
+          columns: ['id'],
+          type: 'btree',
           size: 8192,
           usage: { scans: 1000, tuples: 5000 },
           isUnique: true,
           isPrimary: true,
         },
         {
-          name: "patients_clinic_id_idx",
-          table: "patients",
-          columns: ["clinic_id"],
-          type: "btree",
+          name: 'patients_clinic_id_idx',
+          table: 'patients',
+          columns: ['clinic_id'],
+          type: 'btree',
           size: 4096,
           usage: { scans: 500, tuples: 2500 },
           isUnique: false,
@@ -197,20 +192,20 @@ export class IndexOptimizerService {
       ],
       appointments: [
         {
-          name: "appointments_pkey",
-          table: "appointments",
-          columns: ["id"],
-          type: "btree",
+          name: 'appointments_pkey',
+          table: 'appointments',
+          columns: ['id'],
+          type: 'btree',
           size: 8192,
           usage: { scans: 800, tuples: 4000 },
           isUnique: true,
           isPrimary: true,
         },
         {
-          name: "appointments_professional_id_idx",
-          table: "appointments",
-          columns: ["professional_id"],
-          type: "btree",
+          name: 'appointments_professional_id_idx',
+          table: 'appointments',
+          columns: ['professional_id'],
+          type: 'btree',
           size: 4096,
           usage: { scans: 1200, tuples: 6000 },
           isUnique: false,
@@ -219,10 +214,10 @@ export class IndexOptimizerService {
       ],
       professionals: [
         {
-          name: "professionals_pkey",
-          table: "professionals",
-          columns: ["id"],
-          type: "btree",
+          name: 'professionals_pkey',
+          table: 'professionals',
+          columns: ['id'],
+          type: 'btree',
           size: 4096,
           usage: { scans: 200, tuples: 1000 },
           isUnique: true,
@@ -239,8 +234,8 @@ export class IndexOptimizerService {
    */
   private getRecommendedIndexes(tableName: string): IndexRecommendation[] {
     return HEALTHCARE_RECOMMENDED_INDEXES.filter(
-      (index) => index.table === tableName,
-    ).map((index) => ({
+      index => index.table === tableName,
+    ).map(index => ({
       ...index,
       estimatedImprovement: this.calculateEstimatedImprovement(index),
       healthcareRelevant: true,
@@ -253,7 +248,7 @@ export class IndexOptimizerService {
   private identifyUnusedIndexes(
     existingIndexes: DatabaseIndex[],
   ): DatabaseIndex[] {
-    return existingIndexes.filter((index) => {
+    return existingIndexes.filter(index => {
       // Don't consider primary keys as unused
       if (index.isPrimary) return false;
 
@@ -270,10 +265,10 @@ export class IndexOptimizerService {
     existingIndexes: DatabaseIndex[],
     recommendedIndexes: IndexRecommendation[],
   ): IndexRecommendation[] {
-    return recommendedIndexes.filter((recommended) => {
+    return recommendedIndexes.filter(recommended => {
       // Check if a similar index already exists
-      return !existingIndexes.some((existing) =>
-        this.indexesAreSimilar(existing.columns, recommended.columns),
+      return !existingIndexes.some(existing =>
+        this.indexesAreSimilar(existing.columns, recommended.columns)
       );
     });
   }
@@ -299,13 +294,13 @@ export class IndexOptimizerService {
 
     // Penalize for missing critical indexes
     const criticalMissing = missingIndexes.filter(
-      (idx) => idx.priority === "critical",
+      idx => idx.priority === 'critical',
     ).length;
     score -= criticalMissing * 30;
 
     // Penalize for missing high priority indexes
     const highMissing = missingIndexes.filter(
-      (idx) => idx.priority === "high",
+      idx => idx.priority === 'high',
     ).length;
     score -= highMissing * 15;
 
@@ -339,14 +334,15 @@ export class IndexOptimizerService {
   generateIndexCreationScripts(
     missingIndexes: IndexRecommendation[],
   ): IndexCreationScript[] {
-    return missingIndexes.map((index) => {
-      const indexName = `idx_${index.table}_${index.columns.join("_")}`;
-      const columnsStr = index.columns.join(", ");
+    return missingIndexes.map(index => {
+      const indexName = `idx_${index.table}_${index.columns.join('_')}`;
+      const columnsStr = index.columns.join(', ');
 
       let sql: string;
-      if (index.type === "gin") {
+      if (index.type === 'gin') {
         // Special handling for GIN indexes (full-text search)
-        sql = `CREATE INDEX CONCURRENTLY ${indexName} ON ${index.table} USING gin(to_tsvector('portuguese', ${columnsStr}));`;
+        sql =
+          `CREATE INDEX CONCURRENTLY ${indexName} ON ${index.table} USING gin(to_tsvector('portuguese', ${columnsStr}));`;
       } else {
         sql = `CREATE INDEX CONCURRENTLY ${indexName} ON ${index.table} (${columnsStr});`;
       }
@@ -356,7 +352,7 @@ export class IndexOptimizerService {
         table: index.table,
         indexName,
         estimatedTime: this.estimateIndexCreationTime(index),
-        lockLevel: "none", // CONCURRENTLY avoids locks
+        lockLevel: 'none', // CONCURRENTLY avoids locks
         healthcareImpact: this.assessHealthcareImpact(index),
       };
     });
@@ -376,7 +372,7 @@ export class IndexOptimizerService {
     };
 
     const tableTime = baseTime[index.table as keyof typeof baseTime] || 20;
-    const complexityMultiplier = index.type === "gin" ? 2 : 1;
+    const complexityMultiplier = index.type === 'gin' ? 2 : 1;
 
     return tableTime * complexityMultiplier;
   }
@@ -386,16 +382,16 @@ export class IndexOptimizerService {
    */
   private assessHealthcareImpact(
     index: IndexRecommendation,
-  ): "low" | "medium" | "high" {
-    const criticalTables = ["patients", "appointments", "consent_records"];
+  ): 'low' | 'medium' | 'high' {
+    const criticalTables = ['patients', 'appointments', 'consent_records'];
 
-    if (criticalTables.includes(index.table) && index.priority === "critical") {
-      return "high";
+    if (criticalTables.includes(index.table) && index.priority === 'critical') {
+      return 'high';
     } else if (criticalTables.includes(index.table)) {
-      return "medium";
+      return 'medium';
     }
 
-    return "low";
+    return 'low';
   }
 
   /**
@@ -403,14 +399,14 @@ export class IndexOptimizerService {
    */
   async analyzeAllHealthcareTables(): Promise<Map<string, IndexAnalysis>> {
     const healthcareTables = [
-      "patients",
-      "appointments",
-      "professionals",
-      "clinics",
-      "consent_records",
-      "audit_logs",
-      "medical_records",
-      "services",
+      'patients',
+      'appointments',
+      'professionals',
+      'clinics',
+      'consent_records',
+      'audit_logs',
+      'medical_records',
+      'services',
     ];
 
     const analyses = new Map<string, IndexAnalysis>();
@@ -436,14 +432,13 @@ export class IndexOptimizerService {
 
     // Calculate overall score
     const scores = Array.from(tableAnalyses.values()).map(
-      (analysis) => analysis.optimizationScore,
+      analysis => analysis.optimizationScore,
     );
-    const overallScore =
-      scores.reduce((sum, score) => sum + score, 0) / scores.length;
+    const overallScore = scores.reduce((sum, score) => sum + score, 0) / scores.length;
 
     // Get all missing indexes and prioritize them
     const allMissingIndexes: IndexRecommendation[] = [];
-    tableAnalyses.forEach((analysis) => {
+    tableAnalyses.forEach(analysis => {
       allMissingIndexes.push(...analysis.missingIndexes);
     });
 

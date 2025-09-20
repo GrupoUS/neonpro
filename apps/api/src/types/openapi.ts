@@ -98,7 +98,7 @@ export interface ExternalDocumentationObject {
 // Parameter Object
 export interface ParameterObject {
   name: string;
-  in: "query" | "header" | "path" | "cookie";
+  in: 'query' | 'header' | 'path' | 'cookie';
   description?: string;
   required?: boolean;
   deprecated?: boolean;
@@ -330,10 +330,10 @@ export interface XmlObject {
 
 // Security Scheme Object
 export interface SecuritySchemeObject {
-  type: "apiKey" | "http" | "oauth2" | "openIdConnect" | "mutualTLS";
+  type: 'apiKey' | 'http' | 'oauth2' | 'openIdConnect' | 'mutualTLS';
   description?: string;
   name?: string;
-  in?: "query" | "header" | "cookie";
+  in?: 'query' | 'header' | 'cookie';
   scheme?: string;
   bearerFormat?: string;
   flows?: OAuthFlowsObject;

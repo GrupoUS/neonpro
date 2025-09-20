@@ -1,13 +1,13 @@
-import { describe, it, expect, beforeAll, afterAll } from "vitest";
-import { Hono } from "hono";
-import { serve } from "@hono/node-server";
-import { createServer } from "http";
-import { fetch } from "undici";
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
+import { createServer } from 'http';
+import { fetch } from 'undici';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 // Import the feedback route
-import { feedbackRouter } from "../../src/routes/ai/feedback";
+import { feedbackRouter } from '../../src/routes/ai/feedback';
 
-describe("Contract Tests: AI Feedback Endpoint", () => {
+describe('Contract Tests: AI Feedback Endpoint', () => {
   let server: any;
   let baseUrl: string;
   let app: Hono;
@@ -15,7 +15,7 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
   beforeAll(async () => {
     // Create Hono app with feedback route
     app = new Hono();
-    app.route("/api/ai/sessions", feedbackRouter);
+    app.route('/api/ai/sessions', feedbackRouter);
 
     // Start test server
     server = createServer({
@@ -23,10 +23,10 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       port: 0,
     });
 
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       server.listen(0, () => {
         const address = server.address();
-        if (address && typeof address === "object") {
+        if (address && typeof address === 'object') {
           baseUrl = `http://localhost:${address.port}`;
         }
         resolve(true);
@@ -36,20 +36,20 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
 
   afterAll(async () => {
     if (server) {
-      await new Promise((resolve) => server.close(resolve));
+      await new Promise(resolve => server.close(resolve));
     }
   });
 
-  describe("POST /api/ai/sessions/{sessionId}/feedback", () => {
-    it("should return 400 for missing messageId", async () => {
-      const sessionId = "test-session-123";
+  describe('POST /api/ai/sessions/{sessionId}/feedback', () => {
+    it('should return 400 for missing messageId', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({
             feedback: {
@@ -65,18 +65,18 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       expect(data.error).toBeDefined();
     });
 
-    it("should return 400 for missing feedback", async () => {
-      const sessionId = "test-session-123";
+    it('should return 400 for missing feedback', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({
-            messageId: "msg-123",
+            messageId: 'msg-123',
           }),
         },
       );
@@ -86,21 +86,21 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       expect(data.error).toBeDefined();
     });
 
-    it("should return 200 for valid feedback with rating", async () => {
-      const sessionId = "test-session-123";
+    it('should return 200 for valid feedback with rating', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({
-            messageId: "msg-123",
+            messageId: 'msg-123',
             feedback: {
               rating: 4,
-              comment: "Very helpful response",
+              comment: 'Very helpful response',
             },
           }),
         },
@@ -111,21 +111,21 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       expect(data.success).toBe(true);
     });
 
-    it("should return 200 for valid feedback with helpful flag", async () => {
-      const sessionId = "test-session-123";
+    it('should return 200 for valid feedback with helpful flag', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({
-            messageId: "msg-456",
+            messageId: 'msg-456',
             feedback: {
               helpful: true,
-              comment: "This answered my question perfectly",
+              comment: 'This answered my question perfectly',
             },
           }),
         },
@@ -136,18 +136,18 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       expect(data.success).toBe(true);
     });
 
-    it("should accept feedback with minimal required fields", async () => {
-      const sessionId = "test-session-123";
+    it('should accept feedback with minimal required fields', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({
-            messageId: "msg-789",
+            messageId: 'msg-789',
             feedback: {
               rating: 3,
             },
@@ -160,20 +160,20 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       expect(data.success).toBe(true);
     });
 
-    it("should validate rating range (1-5)", async () => {
-      const sessionId = "test-session-123";
+    it('should validate rating range (1-5)', async () => {
+      const sessionId = 'test-session-123';
 
       // Test rating below minimum
       let response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({
-            messageId: "msg-123",
+            messageId: 'msg-123',
             feedback: {
               rating: 0, // Invalid: too low
             },
@@ -187,13 +187,13 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({
-            messageId: "msg-123",
+            messageId: 'msg-123',
             feedback: {
               rating: 6, // Invalid: too high
             },
@@ -208,10 +208,10 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
         response = await fetch(
           `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
           {
-            method: "POST",
+            method: 'POST',
             headers: {
-              "Content-Type": "application/json",
-              Authorization: "Bearer test-token",
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer test-token',
             },
             body: JSON.stringify({
               messageId: `msg-${rating}`,
@@ -226,23 +226,22 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       }
     });
 
-    it("should accept long comments", async () => {
-      const sessionId = "test-session-123";
-      const longComment =
-        "This is a very long comment that exceeds the typical length. ".repeat(
-          20,
-        );
+    it('should accept long comments', async () => {
+      const sessionId = 'test-session-123';
+      const longComment = 'This is a very long comment that exceeds the typical length. '.repeat(
+        20,
+      );
 
       const response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({
-            messageId: "msg-long-comment",
+            messageId: 'msg-long-comment',
             feedback: {
               rating: 5,
               comment: longComment,
@@ -257,34 +256,34 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       expect(data.success).toBe(true);
     });
 
-    it("should handle malformed JSON", async () => {
-      const sessionId = "test-session-123";
+    it('should handle malformed JSON', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
-          body: "invalid json string",
+          body: 'invalid json string',
         },
       );
 
       expect(response.status).toBe(400);
     });
 
-    it("should require authentication", async () => {
-      const sessionId = "test-session-123";
+    it('should require authentication', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            messageId: "msg-123",
+            messageId: 'msg-123',
             feedback: {
               rating: 5,
             },
@@ -295,18 +294,18 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       expect(response.status).toBe(401);
     });
 
-    it("should accept feedback without comment", async () => {
-      const sessionId = "test-session-123";
+    it('should accept feedback without comment', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({
-            messageId: "msg-no-comment",
+            messageId: 'msg-no-comment',
             feedback: {
               rating: 4,
               helpful: false,
@@ -320,21 +319,21 @@ describe("Contract Tests: AI Feedback Endpoint", () => {
       expect(data.success).toBe(true);
     });
 
-    it("should store feedback with timestamp", async () => {
-      const sessionId = "test-session-123";
+    it('should store feedback with timestamp', async () => {
+      const sessionId = 'test-session-123';
       const response = await fetch(
         `${baseUrl}/api/ai/sessions/${sessionId}/feedback`,
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
-            Authorization: "Bearer test-token",
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer test-token',
           },
           body: JSON.stringify({
-            messageId: "msg-timestamped",
+            messageId: 'msg-timestamped',
             feedback: {
               rating: 5,
-              comment: "Testing timestamp",
+              comment: 'Testing timestamp',
             },
           }),
         },

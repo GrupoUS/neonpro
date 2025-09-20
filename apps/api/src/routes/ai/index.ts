@@ -3,24 +3,24 @@
  * Combines all AI-related endpoints under /ai namespace
  */
 
-import { Hono } from "hono";
-import analyzeRoutes from "./analyze";
-import chatRoutes from "./chat";
-import insightsRoutes from "./insights";
-import modelsRoutes from "./models";
+import { Hono } from 'hono';
+import analyzeRoutes from './analyze';
+import chatRoutes from './chat';
+import insightsRoutes from './insights';
+import modelsRoutes from './models';
 
 const app = new Hono();
 
 // Mount AI chat routes under /chat
-app.route("/chat", chatRoutes);
+app.route('/chat', chatRoutes);
 
 // Mount AI insights routes under /insights
-app.route("/insights", insightsRoutes);
+app.route('/insights', insightsRoutes);
 
 // Mount AI analyze route
-app.route("", analyzeRoutes);
+app.route('', analyzeRoutes);
 
 // Mount AI models routes under /models
-app.route("/models", modelsRoutes);
+app.route('/models', modelsRoutes);
 
 export default app;

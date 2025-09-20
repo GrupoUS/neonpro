@@ -11,23 +11,23 @@ import {
   HealthcareAIUseCase,
   HealthcareDataClassification,
   LGPDDataCategory,
-} from "@neonpro/shared";
+} from '@neonpro/shared';
 
 export enum RoutingStrategy {
-  COST_OPTIMIZED = "cost_optimized",
-  LATENCY_OPTIMIZED = "latency_optimized",
-  QUALITY_OPTIMIZED = "quality_optimized",
-  HEALTHCARE_SPECIFIC = "healthcare_specific",
-  EMERGENCY_PRIORITY = "emergency_priority",
-  LOAD_BALANCED = "load_balanced",
+  COST_OPTIMIZED = 'cost_optimized',
+  LATENCY_OPTIMIZED = 'latency_optimized',
+  QUALITY_OPTIMIZED = 'quality_optimized',
+  HEALTHCARE_SPECIFIC = 'healthcare_specific',
+  EMERGENCY_PRIORITY = 'emergency_priority',
+  LOAD_BALANCED = 'load_balanced',
 }
 
 export enum ProviderStatus {
-  AVAILABLE = "available",
-  DEGRADED = "degraded",
-  UNAVAILABLE = "unavailable",
-  RATE_LIMITED = "rate_limited",
-  MAINTENANCE = "maintenance",
+  AVAILABLE = 'available',
+  DEGRADED = 'degraded',
+  UNAVAILABLE = 'unavailable',
+  RATE_LIMITED = 'rate_limited',
+  MAINTENANCE = 'maintenance',
 }
 
 export interface ProviderHealthCheck {
@@ -74,7 +74,7 @@ export interface RoutingRequest {
     max_cost_usd?: number;
     max_latency_ms?: number;
     min_quality_score?: number;
-    priority_level: "low" | "normal" | "high" | "emergency";
+    priority_level: 'low' | 'normal' | 'high' | 'emergency';
   };
 
   // Request metadata

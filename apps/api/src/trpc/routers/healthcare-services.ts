@@ -10,28 +10,28 @@
  * - Comprehensive audit trails and compliance monitoring
  */
 
-import { TRPCError } from "@trpc/server";
-import * as v from "valibot";
-import { z } from "zod";
+import { TRPCError } from '@trpc/server';
+import * as v from 'valibot';
+import { z } from 'zod';
 import {
   healthcareProcedure,
   patientProcedure,
   protectedProcedure,
   router,
   telemedicineProcedure,
-} from "../trpc";
+} from '../trpc';
 
 // Import our new services
-import EnhancedLGPDLifecycleService from "../../services/enhanced-lgpd-lifecycle";
-import NoShowPredictionService from "../../services/no-show-prediction";
-import TelemedicineService from "../../services/telemedicine";
+import EnhancedLGPDLifecycleService from '../../services/enhanced-lgpd-lifecycle';
+import NoShowPredictionService from '../../services/no-show-prediction';
+import TelemedicineService from '../../services/telemedicine';
 
 // Import existing validation schemas
 import {
   AppointmentCreateSchema,
   LGPDConsentCreateSchema,
   PatientCreateSchema,
-} from "@neonpro/types";
+} from '@neonpro/types';
 
 // Import enhanced schemas from new services
 import {
@@ -40,17 +40,17 @@ import {
   NGS2AuthContextSchema,
   NoShowPredictionSchema,
   TelemedicineSessionSchema,
-} from "../../services/enhanced-lgpd-lifecycle";
+} from '../../services/enhanced-lgpd-lifecycle';
 
 import {
   NoShowPredictionSchema as NSPredictionSchema,
   PatientBehaviorProfileSchema,
-} from "../../services/no-show-prediction";
+} from '../../services/no-show-prediction';
 
 import {
   CFMProfessionalValidationSchema,
   TelemedicineSessionSchema as TMSessionSchema,
-} from "../../services/telemedicine";
+} from '../../services/telemedicine';
 
 // Service instances (would be injected in real app)
 let lgpdService: EnhancedLGPDLifecycleService;
@@ -91,8 +91,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!lgpdService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "LGPD service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'LGPD service not initialized',
           });
         }
 
@@ -127,11 +127,11 @@ export const healthcareServicesRouter = router({
         return {
           success: true,
           record,
-          message: "Data processing record created successfully",
+          message: 'Data processing record created successfully',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to create data processing record: ${error.message}`,
         });
       }
@@ -146,11 +146,11 @@ export const healthcareServicesRouter = router({
         v.object({
           patientId: v.string(),
           withdrawalMethod: v.picklist([
-            "online",
-            "written",
-            "verbal",
-            "email",
-            "phone",
+            'online',
+            'written',
+            'verbal',
+            'email',
+            'phone',
           ]),
           withdrawalReason: v.optional(v.string()),
           affectedDataCategories: v.optional(v.array(v.string())),
@@ -161,8 +161,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!lgpdService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "LGPD service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'LGPD service not initialized',
           });
         }
 
@@ -189,8 +189,7 @@ export const healthcareServicesRouter = router({
               withdrawalMethod: input.withdrawalMethod,
               withdrawalReason: input.withdrawalReason,
               affectedCategories: input.affectedDataCategories?.length || 0,
-              anonymizationScheduled:
-                withdrawalRecord.anonymizationSchedule.length,
+              anonymizationScheduled: withdrawalRecord.anonymizationSchedule.length,
             }),
           },
         });
@@ -198,11 +197,11 @@ export const healthcareServicesRouter = router({
         return {
           success: true,
           withdrawalRecord,
-          message: "Consent withdrawal processed successfully",
+          message: 'Consent withdrawal processed successfully',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to process consent withdrawal: ${error.message}`,
         });
       }
@@ -225,8 +224,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!lgpdService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "LGPD service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'LGPD service not initialized',
           });
         }
 
@@ -263,11 +262,11 @@ export const healthcareServicesRouter = router({
           errors: result.errors,
           message: result.success
             ? `Successfully anonymized ${result.anonymizedRecords} records`
-            : "Anonymization completed with errors",
+            : 'Anonymization completed with errors',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to execute anonymization: ${error.message}`,
         });
       }
@@ -288,8 +287,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!lgpdService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "LGPD service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'LGPD service not initialized',
           });
         }
 
@@ -302,7 +301,7 @@ export const healthcareServicesRouter = router({
           data: {
             action: AuditAction.READ,
             resourceType: ResourceType.COMPLIANCE_REPORT,
-            resource: input.patientId || "all",
+            resource: input.patientId || 'all',
             userId: ctx.userId,
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.LOW,
@@ -310,7 +309,7 @@ export const healthcareServicesRouter = router({
             userAgent: ctx.auditMeta.userAgent,
             sessionId: ctx.auditMeta.sessionId,
             additionalInfo: JSON.stringify({
-              reportType: "lgpd_lifecycle_compliance",
+              reportType: 'lgpd_lifecycle_compliance',
               totalRecords: report.totalRecords,
               complianceScore: report.complianceScore,
             }),
@@ -320,11 +319,11 @@ export const healthcareServicesRouter = router({
         return {
           success: true,
           report,
-          message: "Compliance report generated successfully",
+          message: 'Compliance report generated successfully',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to generate compliance report: ${error.message}`,
         });
       }
@@ -356,8 +355,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!noShowService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "No-show prediction service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'No-show prediction service not initialized',
           });
         }
 
@@ -381,34 +380,32 @@ export const healthcareServicesRouter = router({
             userId: ctx.userId,
 
             status: AuditStatus.SUCCESS,
-            riskLevel:
-              prediction.riskLevel === "very_high" ||
-              prediction.riskLevel === "high"
-                ? RiskLevel.HIGH
-                : RiskLevel.MEDIUM,
+            riskLevel: prediction.riskLevel === 'very_high'
+                || prediction.riskLevel === 'high'
+              ? RiskLevel.HIGH
+              : RiskLevel.MEDIUM,
             details: {
               appointmentId: input.appointmentId,
               patientId: input.patientId,
               riskScore: prediction.riskScore,
               riskLevel: prediction.riskLevel,
               confidenceScore: prediction.confidenceScore,
-              interventionsRecommended:
-                prediction.recommendedInterventions.length,
+              interventionsRecommended: prediction.recommendedInterventions.length,
               processingTime: prediction.processingTime,
             },
-            ipAddress: ctx.req?.ip || "unknown",
-            userAgent: ctx.req?.headers["user-agent"] || "unknown",
+            ipAddress: ctx.req?.ip || 'unknown',
+            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
           },
         });
 
         return {
           success: true,
           prediction,
-          message: "No-show risk prediction completed successfully",
+          message: 'No-show risk prediction completed successfully',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to predict no-show risk: ${error.message}`,
         });
       }
@@ -421,8 +418,8 @@ export const healthcareServicesRouter = router({
     try {
       if (!noShowService) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "No-show prediction service not initialized",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'No-show prediction service not initialized',
         });
       }
 
@@ -433,31 +430,30 @@ export const healthcareServicesRouter = router({
         data: {
           action: AuditAction.READ,
           resourceType: ResourceType.AI_MODEL_PERFORMANCE,
-          resourceId: "no_show_prediction",
+          resourceId: 'no_show_prediction',
           userId: ctx.userId,
 
           status: AuditStatus.SUCCESS,
           details: {
-            reportType: "no_show_model_performance",
+            reportType: 'no_show_model_performance',
             totalPredictions: report.overallPerformance.totalPredictions,
             averageAccuracy: report.overallPerformance.averageAccuracy,
-            averageProcessingTime:
-              report.overallPerformance.averageProcessingTime,
+            averageProcessingTime: report.overallPerformance.averageProcessingTime,
             modelsCount: report.models.length,
           },
-          ipAddress: ctx.req?.ip || "unknown",
-          userAgent: ctx.req?.headers["user-agent"] || "unknown",
+          ipAddress: ctx.req?.ip || 'unknown',
+          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
         },
       });
 
       return {
         success: true,
         report,
-        message: "Model performance report retrieved successfully",
+        message: 'Model performance report retrieved successfully',
       };
     } catch (error) {
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
+        code: 'INTERNAL_SERVER_ERROR',
         message: `Failed to get model performance: ${error.message}`,
       });
     }
@@ -492,8 +488,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!telemedicineService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Telemedicine service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Telemedicine service not initialized',
           });
         }
 
@@ -524,19 +520,19 @@ export const healthcareServicesRouter = router({
               securityLevel: session.securityLevel,
               recordingConsent: session.communicationChannel.recordingConsent,
             },
-            ipAddress: ctx.req?.ip || "unknown",
-            userAgent: ctx.req?.headers["user-agent"] || "unknown",
+            ipAddress: ctx.req?.ip || 'unknown',
+            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
           },
         });
 
         return {
           success: true,
           session,
-          message: "Telemedicine session created successfully",
+          message: 'Telemedicine session created successfully',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to create telemedicine session: ${error.message}`,
         });
       }
@@ -570,8 +566,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!telemedicineService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Telemedicine service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Telemedicine service not initialized',
           });
         }
 
@@ -596,8 +592,7 @@ export const healthcareServicesRouter = router({
             userId: ctx.userId,
 
             status: result.success ? AuditStatus.SUCCESS : AuditStatus.FAILURE,
-            riskLevel:
-              authContext.riskScore > 70 ? RiskLevel.HIGH : RiskLevel.MEDIUM,
+            riskLevel: authContext.riskScore > 70 ? RiskLevel.HIGH : RiskLevel.MEDIUM,
             details: {
               sessionStarted: result.success,
               securityLevel: authContext.securityLevel,
@@ -605,8 +600,8 @@ export const healthcareServicesRouter = router({
               riskScore: authContext.riskScore,
               consentObtained: input.patientConsent.telemedicineConsent,
             },
-            ipAddress: ctx.req?.ip || "unknown",
-            userAgent: ctx.req?.headers["user-agent"] || "unknown",
+            ipAddress: ctx.req?.ip || 'unknown',
+            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
           },
         });
 
@@ -616,12 +611,12 @@ export const healthcareServicesRouter = router({
           connectionDetails: result.connectionDetails,
           qualityRequirements: result.qualityRequirements,
           message: result.success
-            ? "Telemedicine session started successfully"
-            : "Failed to start telemedicine session",
+            ? 'Telemedicine session started successfully'
+            : 'Failed to start telemedicine session',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to start telemedicine session: ${error.message}`,
         });
       }
@@ -650,8 +645,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!telemedicineService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Telemedicine service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Telemedicine service not initialized',
           });
         }
 
@@ -677,8 +672,8 @@ export const healthcareServicesRouter = router({
               shouldEscalate: result.shouldEscalate,
               qualityMetrics: input.qualityMetrics,
             },
-            ipAddress: ctx.req?.ip || "unknown",
-            userAgent: ctx.req?.headers["user-agent"] || "unknown",
+            ipAddress: ctx.req?.ip || 'unknown',
+            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
           },
         });
 
@@ -689,12 +684,12 @@ export const healthcareServicesRouter = router({
           complianceIssues: result.complianceIssues,
           shouldEscalate: result.shouldEscalate,
           message: result.shouldEscalate
-            ? "Quality issues detected - escalation recommended"
-            : "Session quality monitoring completed",
+            ? 'Quality issues detected - escalation recommended'
+            : 'Session quality monitoring completed',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to monitor session quality: ${error.message}`,
         });
       }
@@ -730,8 +725,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!telemedicineService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Telemedicine service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Telemedicine service not initialized',
           });
         }
 
@@ -760,8 +755,8 @@ export const healthcareServicesRouter = router({
               digitalSignatureValid: result.isValid,
               certificateType: input.digitalCertificate.type,
             },
-            ipAddress: ctx.req?.ip || "unknown",
-            userAgent: ctx.req?.headers["user-agent"] || "unknown",
+            ipAddress: ctx.req?.ip || 'unknown',
+            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
           },
         });
 
@@ -772,12 +767,12 @@ export const healthcareServicesRouter = router({
           timestamp: result.timestamp,
           isValid: result.isValid,
           message: result.isValid
-            ? "Digital prescription created successfully"
-            : "Failed to create valid digital prescription",
+            ? 'Digital prescription created successfully'
+            : 'Failed to create valid digital prescription',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to create digital prescription: ${error.message}`,
         });
       }
@@ -791,7 +786,7 @@ export const healthcareServicesRouter = router({
       v.parser(
         v.object({
           sessionId: v.string(),
-          escalationLevel: v.picklist(["urgent", "critical", "emergency"]),
+          escalationLevel: v.picklist(['urgent', 'critical', 'emergency']),
           reason: v.string(),
           location: v.optional(
             v.object({
@@ -807,8 +802,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!telemedicineService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Telemedicine service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Telemedicine service not initialized',
           });
         }
 
@@ -835,12 +830,12 @@ export const healthcareServicesRouter = router({
               reason: input.reason,
               location: input.location,
               emergencyContactsNotified: result.emergencyContacts.filter(
-                (c) => c.notified,
+                c => c.notified,
               ).length,
               nearestHospital: result.nearestHospital?.name,
             },
-            ipAddress: ctx.req?.ip || "unknown",
-            userAgent: ctx.req?.headers["user-agent"] || "unknown",
+            ipAddress: ctx.req?.ip || 'unknown',
+            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
           },
         });
 
@@ -850,12 +845,12 @@ export const healthcareServicesRouter = router({
           emergencyContacts: result.emergencyContacts,
           nearestHospital: result.nearestHospital,
           message: result.success
-            ? "Emergency escalation activated successfully"
-            : "Failed to activate emergency escalation",
+            ? 'Emergency escalation activated successfully'
+            : 'Failed to activate emergency escalation',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to activate emergency escalation: ${error.message}`,
         });
       }
@@ -883,8 +878,8 @@ export const healthcareServicesRouter = router({
       try {
         if (!telemedicineService) {
           throw new TRPCError({
-            code: "INTERNAL_SERVER_ERROR",
-            message: "Telemedicine service not initialized",
+            code: 'INTERNAL_SERVER_ERROR',
+            message: 'Telemedicine service not initialized',
           });
         }
 
@@ -910,11 +905,10 @@ export const healthcareServicesRouter = router({
             userId: ctx.userId,
 
             status: result.success ? AuditStatus.SUCCESS : AuditStatus.FAILURE,
-            riskLevel:
-              !result.complianceReport.cfmCompliant ||
-              !result.complianceReport.lgpdCompliant
-                ? RiskLevel.HIGH
-                : RiskLevel.LOW,
+            riskLevel: !result.complianceReport.cfmCompliant
+                || !result.complianceReport.lgpdCompliant
+              ? RiskLevel.HIGH
+              : RiskLevel.LOW,
             details: {
               sessionDuration: result.sessionDuration,
               cfmCompliant: result.complianceReport.cfmCompliant,
@@ -924,8 +918,8 @@ export const healthcareServicesRouter = router({
               archiveId: result.archivalDetails.archiveId,
               followUpRequired: sessionSummary.followUpRequired,
             },
-            ipAddress: ctx.req?.ip || "unknown",
-            userAgent: ctx.req?.headers["user-agent"] || "unknown",
+            ipAddress: ctx.req?.ip || 'unknown',
+            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
           },
         });
 
@@ -935,12 +929,12 @@ export const healthcareServicesRouter = router({
           complianceReport: result.complianceReport,
           archivalDetails: result.archivalDetails,
           message: result.success
-            ? "Telemedicine session ended successfully"
-            : "Failed to end telemedicine session properly",
+            ? 'Telemedicine session ended successfully'
+            : 'Failed to end telemedicine session properly',
         };
       } catch (error) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
+          code: 'INTERNAL_SERVER_ERROR',
           message: `Failed to end telemedicine session: ${error.message}`,
         });
       }
@@ -953,8 +947,8 @@ export const healthcareServicesRouter = router({
     try {
       if (!telemedicineService) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Telemedicine service not initialized",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'Telemedicine service not initialized',
         });
       }
 
@@ -965,7 +959,7 @@ export const healthcareServicesRouter = router({
         data: {
           action: AuditAction.READ,
           resourceType: ResourceType.TELEMEDICINE_SESSION,
-          resourceId: "summary",
+          resourceId: 'summary',
           userId: ctx.userId,
 
           status: AuditStatus.SUCCESS,
@@ -974,19 +968,19 @@ export const healthcareServicesRouter = router({
             averageQualityScore: summary.averageQualityScore,
             complianceIssues: summary.complianceIssues,
           },
-          ipAddress: ctx.req?.ip || "unknown",
-          userAgent: ctx.req?.headers["user-agent"] || "unknown",
+          ipAddress: ctx.req?.ip || 'unknown',
+          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
         },
       });
 
       return {
         success: true,
         summary,
-        message: "Active sessions summary retrieved successfully",
+        message: 'Active sessions summary retrieved successfully',
       };
     } catch (error) {
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
+        code: 'INTERNAL_SERVER_ERROR',
         message: `Failed to get active sessions summary: ${error.message}`,
       });
     }
@@ -1003,8 +997,8 @@ export const healthcareServicesRouter = router({
     try {
       if (!lgpdService) {
         throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "LGPD service not initialized",
+          code: 'INTERNAL_SERVER_ERROR',
+          message: 'LGPD service not initialized',
         });
       }
 
@@ -1015,21 +1009,20 @@ export const healthcareServicesRouter = router({
         data: {
           action: AuditAction.DELETE,
           resourceType: ResourceType.PATIENT_DATA,
-          resourceId: "retention_enforcement",
+          resourceId: 'retention_enforcement',
           userId: ctx.userId,
 
-          status:
-            result.errors.length === 0
-              ? AuditStatus.SUCCESS
-              : AuditStatus.PARTIAL_SUCCESS,
+          status: result.errors.length === 0
+            ? AuditStatus.SUCCESS
+            : AuditStatus.PARTIAL_SUCCESS,
           details: {
             deletedRecords: result.deletedRecords,
             anonymizedRecords: result.anonymizedRecords,
             notificationsSent: result.notificationsSent,
             errors: result.errors.length,
           },
-          ipAddress: ctx.req?.ip || "unknown",
-          userAgent: ctx.req?.headers["user-agent"] || "unknown",
+          ipAddress: ctx.req?.ip || 'unknown',
+          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
         },
       });
 
@@ -1039,14 +1032,13 @@ export const healthcareServicesRouter = router({
         anonymizedRecords: result.anonymizedRecords,
         notificationsSent: result.notificationsSent,
         errors: result.errors,
-        message:
-          result.errors.length === 0
-            ? "Retention periods enforced successfully"
-            : "Retention enforcement completed with some errors",
+        message: result.errors.length === 0
+          ? 'Retention periods enforced successfully'
+          : 'Retention enforcement completed with some errors',
       };
     } catch (error) {
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
+        code: 'INTERNAL_SERVER_ERROR',
         message: `Failed to enforce retention periods: ${error.message}`,
       });
     }
@@ -1068,20 +1060,18 @@ export const healthcareServicesRouter = router({
 
       // Get LGPD compliance report
       if (lgpdService) {
-        dashboardData.lgpdCompliance =
-          await lgpdService.generateLifecycleComplianceReport();
+        dashboardData.lgpdCompliance = await lgpdService.generateLifecycleComplianceReport();
       }
 
       // Get no-show model performance
       if (noShowService) {
-        dashboardData.noShowModelPerformance =
-          await noShowService.getModelPerformanceReport();
+        dashboardData.noShowModelPerformance = await noShowService.getModelPerformanceReport();
       }
 
       // Get telemedicine sessions summary
       if (telemedicineService) {
-        dashboardData.telemedicineSessionsSummary =
-          await telemedicineService.getActiveSessionsSummary();
+        dashboardData.telemedicineSessionsSummary = await telemedicineService
+          .getActiveSessionsSummary();
       }
 
       // Calculate overall compliance score
@@ -1101,12 +1091,11 @@ export const healthcareServicesRouter = router({
         );
       }
 
-      dashboardData.overallComplianceScore =
-        scores.length > 0
-          ? Math.round(
-              scores.reduce((sum, score) => sum + score, 0) / scores.length,
-            )
-          : 0;
+      dashboardData.overallComplianceScore = scores.length > 0
+        ? Math.round(
+          scores.reduce((sum, score) => sum + score, 0) / scores.length,
+        )
+        : 0;
 
       // Collect critical issues and recommendations
       if (dashboardData.lgpdCompliance) {
@@ -1125,7 +1114,7 @@ export const healthcareServicesRouter = router({
         data: {
           action: AuditAction.READ,
           resourceType: ResourceType.COMPLIANCE_REPORT,
-          resourceId: "dashboard",
+          resourceId: 'dashboard',
           userId: ctx.userId,
 
           status: AuditStatus.SUCCESS,
@@ -1133,28 +1122,28 @@ export const healthcareServicesRouter = router({
             overallComplianceScore: dashboardData.overallComplianceScore,
             recommendationsCount: dashboardData.recommendations.length,
             servicesIncluded: Object.keys(dashboardData).filter(
-              (key) =>
-                dashboardData[key] !== null &&
-                ![
-                  "overallComplianceScore",
-                  "criticalIssues",
-                  "recommendations",
+              key =>
+                dashboardData[key] !== null
+                && ![
+                  'overallComplianceScore',
+                  'criticalIssues',
+                  'recommendations',
                 ].includes(key),
             ),
           },
-          ipAddress: ctx.req?.ip || "unknown",
-          userAgent: ctx.req?.headers["user-agent"] || "unknown",
+          ipAddress: ctx.req?.ip || 'unknown',
+          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
         },
       });
 
       return {
         success: true,
         dashboard: dashboardData,
-        message: "Compliance dashboard data retrieved successfully",
+        message: 'Compliance dashboard data retrieved successfully',
       };
     } catch (error) {
       throw new TRPCError({
-        code: "INTERNAL_SERVER_ERROR",
+        code: 'INTERNAL_SERVER_ERROR',
         message: `Failed to get compliance dashboard: ${error.message}`,
       });
     }

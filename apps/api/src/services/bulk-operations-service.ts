@@ -13,13 +13,13 @@
 
 export interface BulkOperationRequest {
   operationType:
-    | "activate"
-    | "deactivate"
-    | "update"
-    | "delete"
-    | "export"
-    | "assign_tag";
-  entityType: "patient" | "appointment" | "professional" | "service";
+    | 'activate'
+    | 'deactivate'
+    | 'update'
+    | 'delete'
+    | 'export'
+    | 'assign_tag';
+  entityType: 'patient' | 'appointment' | 'professional' | 'service';
   entityIds: string[];
   data?: Record<string, any>;
   requesterUserId: string;
@@ -61,7 +61,7 @@ const SAFETY_CONFIGURATIONS: Record<string, SafetyConfiguration> = {
     enableUndo: true,
     undoWindowMs: 30 * 60 * 1000, // 30 minutes
     rateLimitPerMinute: 5,
-    allowedRoles: ["admin", "manager", "healthcare_professional"],
+    allowedRoles: ['admin', 'manager', 'healthcare_professional'],
   },
   deactivate: {
     maxBatchSize: 50,
@@ -70,7 +70,7 @@ const SAFETY_CONFIGURATIONS: Record<string, SafetyConfiguration> = {
     enableUndo: true,
     undoWindowMs: 60 * 60 * 1000, // 1 hour
     rateLimitPerMinute: 10,
-    allowedRoles: ["admin", "manager", "healthcare_professional"],
+    allowedRoles: ['admin', 'manager', 'healthcare_professional'],
   },
   update: {
     maxBatchSize: 100,
@@ -79,7 +79,7 @@ const SAFETY_CONFIGURATIONS: Record<string, SafetyConfiguration> = {
     enableUndo: true,
     undoWindowMs: 24 * 60 * 60 * 1000, // 24 hours
     rateLimitPerMinute: 20,
-    allowedRoles: ["admin", "manager", "healthcare_professional", "staff"],
+    allowedRoles: ['admin', 'manager', 'healthcare_professional', 'staff'],
   },
   activate: {
     maxBatchSize: 100,
@@ -88,7 +88,7 @@ const SAFETY_CONFIGURATIONS: Record<string, SafetyConfiguration> = {
     enableUndo: true,
     undoWindowMs: 60 * 60 * 1000, // 1 hour
     rateLimitPerMinute: 15,
-    allowedRoles: ["admin", "manager", "healthcare_professional"],
+    allowedRoles: ['admin', 'manager', 'healthcare_professional'],
   },
   export: {
     maxBatchSize: 1000,
@@ -97,7 +97,7 @@ const SAFETY_CONFIGURATIONS: Record<string, SafetyConfiguration> = {
     enableUndo: false,
     undoWindowMs: 0,
     rateLimitPerMinute: 3,
-    allowedRoles: ["admin", "manager"],
+    allowedRoles: ['admin', 'manager'],
   },
   assign_tag: {
     maxBatchSize: 200,
@@ -106,7 +106,7 @@ const SAFETY_CONFIGURATIONS: Record<string, SafetyConfiguration> = {
     enableUndo: true,
     undoWindowMs: 24 * 60 * 60 * 1000, // 24 hours
     rateLimitPerMinute: 30,
-    allowedRoles: ["admin", "manager", "healthcare_professional", "staff"],
+    allowedRoles: ['admin', 'manager', 'healthcare_professional', 'staff'],
   },
 };
 
@@ -142,12 +142,12 @@ export class BulkOperationsService {
 
       // 5. Validate confirmation if required
       if (config.requireConfirmation && !request.confirmationToken) {
-        throw new Error("Confirmation token required for this operation");
+        throw new Error('Confirmation token required for this operation');
       }
 
       // 6. Validate reason if required
       if (config.requireReason && !request.reason) {
-        throw new Error("Reason required for this operation");
+        throw new Error('Reason required for this operation');
       }
 
       // 7. Log operation start
@@ -190,16 +190,16 @@ export class BulkOperationsService {
     const undoInfo = this.undoOperations.get(undoToken);
 
     if (!undoInfo) {
-      throw new Error("Undo token not found or expired");
+      throw new Error('Undo token not found or expired');
     }
 
     if (undoInfo.requesterUserId !== requesterUserId) {
-      throw new Error("Unauthorized undo attempt");
+      throw new Error('Unauthorized undo attempt');
     }
 
     if (Date.now() > undoInfo.expiresAt) {
       this.undoOperations.delete(undoToken);
-      throw new Error("Undo window has expired");
+      throw new Error('Undo window has expired');
     }
 
     try {
@@ -232,7 +232,7 @@ export class BulkOperationsService {
     // Mock implementation - in real application, query audit trail
     return {
       id: auditTrailId,
-      status: "completed",
+      status: 'completed',
       progress: 100,
       processed: 0,
       failed: 0,
@@ -247,12 +247,12 @@ export class BulkOperationsService {
   ): Promise<void> {
     // Validate required fields
     if (
-      !request.operationType ||
-      !request.entityType ||
-      !request.entityIds?.length
+      !request.operationType
+      || !request.entityType
+      || !request.entityIds?.length
     ) {
       throw new Error(
-        "Invalid bulk operation request: missing required fields",
+        'Invalid bulk operation request: missing required fields',
       );
     }
 
@@ -263,10 +263,10 @@ export class BulkOperationsService {
 
     // Validate entity IDs format (basic UUID check)
     const invalidIds = request.entityIds.filter(
-      (id) => !id || typeof id !== "string" || id.length < 10,
+      id => !id || typeof id !== 'string' || id.length < 10,
     );
     if (invalidIds.length > 0) {
-      throw new Error(`Invalid entity IDs: ${invalidIds.join(", ")}`);
+      throw new Error(`Invalid entity IDs: ${invalidIds.join(', ')}`);
     }
 
     // TODO: Validate user permissions against allowedRoles
@@ -285,7 +285,7 @@ export class BulkOperationsService {
 
     // Remove timestamps older than 1 minute
     const recentTimestamps = timestamps.filter(
-      (timestamp) => now - timestamp < oneMinute,
+      timestamp => now - timestamp < oneMinute,
     );
 
     // Check if rate limit exceeded
@@ -315,8 +315,8 @@ export class BulkOperationsService {
 
         // Don't retry validation errors or auth errors
         if (
-          error.message.includes("validation") ||
-          error.message.includes("unauthorized")
+          error.message.includes('validation')
+          || error.message.includes('unauthorized')
         ) {
           throw error;
         }
@@ -324,7 +324,7 @@ export class BulkOperationsService {
         // Wait before retry with exponential backoff
         if (attempt < maxRetries) {
           const delay = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
-          await new Promise((resolve) => setTimeout(resolve, delay));
+          await new Promise(resolve => setTimeout(resolve, delay));
           console.warn(
             `Bulk operation attempt ${attempt} failed, retrying in ${delay}ms: ${error.message}`,
           );
@@ -332,7 +332,7 @@ export class BulkOperationsService {
       }
     }
 
-    throw lastError || new Error("All retry attempts failed");
+    throw lastError || new Error('All retry attempts failed');
   }
 
   private async executeBulkOperationCore(
@@ -373,7 +373,7 @@ export class BulkOperationsService {
           result.errors.push({
             entityId,
             error: error.message,
-            code: error.code || "UNKNOWN_ERROR",
+            code: error.code || 'UNKNOWN_ERROR',
           });
 
           console.error(`Failed to process entity ${entityId}:`, error);
@@ -399,7 +399,7 @@ export class BulkOperationsService {
     entityId: string,
   ): Promise<any> {
     // Mock implementation - in real application, query database
-    return { id: entityId, type: entityType, status: "active" };
+    return { id: entityId, type: entityType, status: 'active' };
   }
 
   private async executeEntityOperation(
@@ -408,22 +408,22 @@ export class BulkOperationsService {
   ): Promise<void> {
     // Mock implementation - in real application, execute actual operation
     switch (request.operationType) {
-      case "activate":
+      case 'activate':
         console.info(`Activating ${request.entityType} ${entityId}`);
         break;
-      case "deactivate":
+      case 'deactivate':
         console.info(`Deactivating ${request.entityType} ${entityId}`);
         break;
-      case "delete":
+      case 'delete':
         console.info(`Deleting ${request.entityType} ${entityId}`);
         break;
-      case "update":
+      case 'update':
         console.info(`Updating ${request.entityType} ${entityId}`);
         break;
-      case "assign_tag":
+      case 'assign_tag':
         console.info(`Assigning tag to ${request.entityType} ${entityId}`);
         break;
-      case "export":
+      case 'export':
         console.info(`Exporting ${request.entityType} ${entityId}`);
         break;
       default:
@@ -431,12 +431,12 @@ export class BulkOperationsService {
     }
 
     // Simulate processing time and potential failures
-    await new Promise((resolve) => setTimeout(resolve, Math.random() * 100));
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
 
     // Simulate random failures for testing
     if (Math.random() < 0.05) {
       // 5% failure rate
-      throw new Error("Simulated processing error");
+      throw new Error('Simulated processing error');
     }
   }
 
@@ -445,10 +445,10 @@ export class BulkOperationsService {
     originalData: Record<string, any>,
   ): BulkOperationRequest {
     const reverseOperations: Record<string, string> = {
-      activate: "deactivate",
-      deactivate: "activate",
-      delete: "restore", // Would need special handling
-      update: "update", // Restore original values
+      activate: 'deactivate',
+      deactivate: 'activate',
+      delete: 'restore', // Would need special handling
+      update: 'update', // Restore original values
     };
 
     return {
@@ -545,7 +545,7 @@ export class BulkOperationsService {
     // Clean up rate limits older than 1 hour
     this.rateLimitMap.forEach((timestamps, key) => {
       const recentTimestamps = timestamps.filter(
-        (timestamp) => now - timestamp < oneHour,
+        timestamp => now - timestamp < oneHour,
       );
       if (recentTimestamps.length === 0) {
         this.rateLimitMap.delete(key);
@@ -567,7 +567,7 @@ export class BulkOperationsService {
 export const bulkOperationsService = new BulkOperationsService();
 
 // Start cleanup interval (run every 15 minutes)
-if (typeof setInterval !== "undefined") {
+if (typeof setInterval !== 'undefined') {
   setInterval(
     () => {
       bulkOperationsService.cleanup();

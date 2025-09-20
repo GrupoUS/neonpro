@@ -3,8 +3,8 @@
  * Defines the structure and validation rules for API contracts
  */
 
-import { ErrorCategory } from "../../../services/createHealthcareError";
-import { ErrorSeverity } from "../../../types/error-severity";
+import { ErrorCategory } from '../../../services/createHealthcareError';
+import { ErrorSeverity } from '../../../types/error-severity';
 
 /**
  * Healthcare validation error interface
@@ -76,7 +76,7 @@ export interface ValidationRule {
  */
 export interface FieldConstraint {
   /** Data type */
-  type: "string" | "number" | "boolean" | "date" | "object" | "array";
+  type: 'string' | 'number' | 'boolean' | 'date' | 'object' | 'array';
   /** Required flag */
   required?: boolean;
   /** Minimum length (for strings/arrays) */
@@ -145,64 +145,63 @@ export interface APIContractValidationResult {
  */
 export const DEFAULT_HEALTHCARE_VALIDATION_RULES: ValidationRule[] = [
   {
-    id: "patient_id_format",
-    name: "Patient ID Format",
-    description: "Validates patient ID format",
-    fields: ["patientId"],
+    id: 'patient_id_format',
+    name: 'Patient ID Format',
+    description: 'Validates patient ID format',
+    fields: ['patientId'],
     validate: (value: any) => {
       if (!value) return true; // Optional field
-      return typeof value === "string" && value.length > 0;
+      return typeof value === 'string' && value.length > 0;
     },
-    errorMessage: "Patient ID must be a non-empty string",
+    errorMessage: 'Patient ID must be a non-empty string',
     severity: ErrorSeverity.MEDIUM,
     category: ErrorCategory.VALIDATION,
   },
   {
-    id: "clinic_id_format",
-    name: "Clinic ID Format",
-    description: "Validates clinic ID format",
-    fields: ["clinicId"],
+    id: 'clinic_id_format',
+    name: 'Clinic ID Format',
+    description: 'Validates clinic ID format',
+    fields: ['clinicId'],
     validate: (value: any) => {
       if (!value) return true; // Optional field
-      return typeof value === "string" && value.length > 0;
+      return typeof value === 'string' && value.length > 0;
     },
-    errorMessage: "Clinic ID must be a non-empty string",
+    errorMessage: 'Clinic ID must be a non-empty string',
     severity: ErrorSeverity.MEDIUM,
     category: ErrorCategory.VALIDATION,
   },
   {
-    id: "lgpd_consent_check",
-    name: "LGPD Consent Check",
-    description: "Validates LGPD consent requirements",
-    fields: ["consentRecords"],
+    id: 'lgpd_consent_check',
+    name: 'LGPD Consent Check',
+    description: 'Validates LGPD consent requirements',
+    fields: ['consentRecords'],
     validate: (value: any, context: ValidationContext) => {
       // Only validate if personal data is present
-      const hasPersonalData =
-        context.request.headers["content-type"]?.includes("personal") || false;
+      const hasPersonalData = context.request.headers['content-type']?.includes('personal')
+        || false;
       if (!hasPersonalData) return true;
 
       return Array.isArray(value) && value.length > 0;
     },
-    errorMessage:
-      "LGPD consent records are required when processing personal data",
+    errorMessage: 'LGPD consent records are required when processing personal data',
     severity: ErrorSeverity.CRITICAL,
     category: ErrorCategory.COMPLIANCE,
   },
   {
-    id: "medical_data_classification",
-    name: "Medical Data Classification",
-    description: "Validates medical data classification",
-    fields: ["dataClassification"],
+    id: 'medical_data_classification',
+    name: 'Medical Data Classification',
+    description: 'Validates medical data classification',
+    fields: ['dataClassification'],
     validate: (value: any) => {
       const validClassifications = [
-        "public",
-        "restricted",
-        "confidential",
-        "highly_confidential",
+        'public',
+        'restricted',
+        'confidential',
+        'highly_confidential',
       ];
       return validClassifications.includes(value);
     },
-    errorMessage: "Invalid data classification",
+    errorMessage: 'Invalid data classification',
     severity: ErrorSeverity.HIGH,
     category: ErrorCategory.SECURITY,
   },
@@ -216,33 +215,33 @@ export const DEFAULT_HEALTHCARE_FIELD_CONSTRAINTS: Record<
   FieldConstraint
 > = {
   patientId: {
-    type: "string",
+    type: 'string',
     required: false,
     minLength: 1,
     maxLength: 50,
   },
   clinicId: {
-    type: "string",
+    type: 'string',
     required: false,
     minLength: 1,
     maxLength: 50,
   },
   appointmentDate: {
-    type: "date",
+    type: 'date',
     required: true,
   },
   medicalRecord: {
-    type: "object",
+    type: 'object',
     required: false,
   },
   consentRecords: {
-    type: "array",
+    type: 'array',
     required: false,
   },
   dataClassification: {
-    type: "string",
+    type: 'string',
     required: true,
-    enum: ["public", "restricted", "confidential", "highly_confidential"],
+    enum: ['public', 'restricted', 'confidential', 'highly_confidential'],
   },
 };
 
@@ -251,9 +250,9 @@ export const DEFAULT_HEALTHCARE_FIELD_CONSTRAINTS: Record<
  */
 export function createDefaultAPIContract(): APIContract {
   return {
-    version: "1.0.0",
-    dataClassification: "restricted",
-    complianceRequirements: ["lgpd", "hipaa"],
+    version: '1.0.0',
+    dataClassification: 'restricted',
+    complianceRequirements: ['lgpd', 'hipaa'],
     validationRules: DEFAULT_HEALTHCARE_VALIDATION_RULES,
     fieldConstraints: DEFAULT_HEALTHCARE_FIELD_CONSTRAINTS,
   };
@@ -282,7 +281,7 @@ export function validateAPIContract(
       // Check required fields
       if (constraint.required && (value === undefined || value === null)) {
         errors.push({
-          id: "missing_required_field",
+          id: 'missing_required_field',
           message: `Required field '${field}' is missing`,
           field,
           severity: ErrorSeverity.HIGH,
@@ -299,9 +298,9 @@ export function validateAPIContract(
       }
 
       // Type validation
-      if (constraint.type === "string" && typeof value !== "string") {
+      if (constraint.type === 'string' && typeof value !== 'string') {
         errors.push({
-          id: "invalid_type",
+          id: 'invalid_type',
           message: `Field '${field}' must be a string`,
           field,
           severity: ErrorSeverity.MEDIUM,
@@ -312,9 +311,9 @@ export function validateAPIContract(
         return;
       }
 
-      if (constraint.type === "number" && typeof value !== "number") {
+      if (constraint.type === 'number' && typeof value !== 'number') {
         errors.push({
-          id: "invalid_type",
+          id: 'invalid_type',
           message: `Field '${field}' must be a number`,
           field,
           severity: ErrorSeverity.MEDIUM,
@@ -325,9 +324,9 @@ export function validateAPIContract(
         return;
       }
 
-      if (constraint.type === "boolean" && typeof value !== "boolean") {
+      if (constraint.type === 'boolean' && typeof value !== 'boolean') {
         errors.push({
-          id: "invalid_type",
+          id: 'invalid_type',
           message: `Field '${field}' must be a boolean`,
           field,
           severity: ErrorSeverity.MEDIUM,
@@ -339,13 +338,13 @@ export function validateAPIContract(
       }
 
       // Length validation
-      if (constraint.type === "string" || constraint.type === "array") {
+      if (constraint.type === 'string' || constraint.type === 'array') {
         if (
-          constraint.minLength &&
-          (value as string | any[]).length < constraint.minLength
+          constraint.minLength
+          && (value as string | any[]).length < constraint.minLength
         ) {
           errors.push({
-            id: "min_length_violation",
+            id: 'min_length_violation',
             message: `Field '${field}' must be at least ${constraint.minLength} characters long`,
             field,
             severity: ErrorSeverity.LOW,
@@ -357,12 +356,13 @@ export function validateAPIContract(
         }
 
         if (
-          constraint.maxLength &&
-          (value as string | any[]).length > constraint.maxLength
+          constraint.maxLength
+          && (value as string | any[]).length > constraint.maxLength
         ) {
           errors.push({
-            id: "max_length_violation",
-            message: `Field '${field}' must be no more than ${constraint.maxLength} characters long`,
+            id: 'max_length_violation',
+            message:
+              `Field '${field}' must be no more than ${constraint.maxLength} characters long`,
             field,
             severity: ErrorSeverity.LOW,
             category: ErrorCategory.VALIDATION,
@@ -374,10 +374,10 @@ export function validateAPIContract(
       }
 
       // Range validation for numbers
-      if (constraint.type === "number") {
+      if (constraint.type === 'number') {
         if (constraint.min !== undefined && value < constraint.min) {
           errors.push({
-            id: "min_value_violation",
+            id: 'min_value_violation',
             message: `Field '${field}' must be at least ${constraint.min}`,
             field,
             severity: ErrorSeverity.LOW,
@@ -390,7 +390,7 @@ export function validateAPIContract(
 
         if (constraint.max !== undefined && value > constraint.max) {
           errors.push({
-            id: "max_value_violation",
+            id: 'max_value_violation',
             message: `Field '${field}' must be no more than ${constraint.max}`,
             field,
             severity: ErrorSeverity.LOW,
@@ -403,11 +403,11 @@ export function validateAPIContract(
       }
 
       // Pattern validation for strings
-      if (constraint.type === "string" && constraint.pattern) {
+      if (constraint.type === 'string' && constraint.pattern) {
         const pattern = new RegExp(constraint.pattern);
         if (!pattern.test(value)) {
           errors.push({
-            id: "pattern_violation",
+            id: 'pattern_violation',
             message: `Field '${field}' does not match required pattern`,
             field,
             severity: ErrorSeverity.MEDIUM,
@@ -422,8 +422,8 @@ export function validateAPIContract(
       // Enum validation
       if (constraint.enum && !constraint.enum.includes(value)) {
         errors.push({
-          id: "enum_violation",
-          message: `Field '${field}' must be one of: ${constraint.enum.join(", ")}`,
+          id: 'enum_violation',
+          message: `Field '${field}' must be one of: ${constraint.enum.join(', ')}`,
           field,
           severity: ErrorSeverity.MEDIUM,
           category: ErrorCategory.VALIDATION,
@@ -438,11 +438,10 @@ export function validateAPIContract(
         const customResult = constraint.validate(value);
         if (customResult !== true) {
           errors.push({
-            id: "custom_validation_failed",
-            message:
-              typeof customResult === "string"
-                ? customResult
-                : `Field '${field}' failed custom validation`,
+            id: 'custom_validation_failed',
+            message: typeof customResult === 'string'
+              ? customResult
+              : `Field '${field}' failed custom validation`,
             field,
             severity: ErrorSeverity.MEDIUM,
             category: ErrorCategory.VALIDATION,
@@ -459,15 +458,15 @@ export function validateAPIContract(
 
   // Validate validation rules
   if (contract.validationRules) {
-    contract.validationRules.forEach((rule) => {
+    contract.validationRules.forEach(rule => {
       rulesChecked++;
 
-      rule.fields.forEach((field) => {
+      rule.fields.forEach(field => {
         const value = data[field];
         const result = rule.validate(value, context);
 
         if (result !== true) {
-          if (typeof result === "object") {
+          if (typeof result === 'object') {
             // It's already a HealthcareValidationError
             errors.push(result);
           } else {

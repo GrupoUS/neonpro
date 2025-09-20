@@ -5,8 +5,8 @@
  * for automatic documentation generation and type-safe API contracts.
  */
 
-import { createRoute } from "@hono/zod-openapi";
-import { z } from "@hono/zod-openapi";
+import { createRoute } from '@hono/zod-openapi';
+import { z } from '@hono/zod-openapi';
 import {
   ApiInfoResponseSchema,
   AppointmentsListResponseSchema,
@@ -17,7 +17,7 @@ import {
   CommonResponses,
   DetailedHealthResponseSchema,
   HealthResponseSchema,
-} from "../schemas/openapi-schemas";
+} from '../schemas/openapi-schemas';
 
 // Parameter schemas
 export const PatientIdParamSchema = z
@@ -27,28 +27,28 @@ export const PatientIdParamSchema = z
       .min(1)
       .openapi({
         param: {
-          name: "patientId",
-          in: "path",
-          description: "Patient unique identifier",
+          name: 'patientId',
+          in: 'path',
+          description: 'Patient unique identifier',
         },
-        example: "patient_123",
-        description: "Must be a valid patient ID",
+        example: 'patient_123',
+        description: 'Must be a valid patient ID',
       }),
   })
-  .openapi("PatientIdParam");
+  .openapi('PatientIdParam');
 
 // Health and system routes
 export const healthRoute = createRoute({
-  method: "get",
-  path: "/health",
-  summary: "Basic Health Check",
-  description: "Simple health check endpoint for load balancers and monitoring",
-  tags: ["System"],
+  method: 'get',
+  path: '/health',
+  summary: 'Basic Health Check',
+  description: 'Simple health check endpoint for load balancers and monitoring',
+  tags: ['System'],
   responses: {
     200: {
-      description: "Service is healthy",
+      description: 'Service is healthy',
       content: {
-        "application/json": {
+        'application/json': {
           schema: HealthResponseSchema,
         },
       },
@@ -58,17 +58,16 @@ export const healthRoute = createRoute({
 });
 
 export const detailedHealthRoute = createRoute({
-  method: "get",
-  path: "/v1/health",
-  summary: "Detailed Health Check",
-  description:
-    "Comprehensive health check with system diagnostics and environment info",
-  tags: ["System"],
+  method: 'get',
+  path: '/v1/health',
+  summary: 'Detailed Health Check',
+  description: 'Comprehensive health check with system diagnostics and environment info',
+  tags: ['System'],
   responses: {
     200: {
-      description: "Detailed system health information",
+      description: 'Detailed system health information',
       content: {
-        "application/json": {
+        'application/json': {
           schema: DetailedHealthResponseSchema,
         },
       },
@@ -78,16 +77,16 @@ export const detailedHealthRoute = createRoute({
 });
 
 export const apiInfoRoute = createRoute({
-  method: "get",
-  path: "/v1/info",
-  summary: "API Information",
-  description: "Get API version, runtime information and deployment details",
-  tags: ["System"],
+  method: 'get',
+  path: '/v1/info',
+  summary: 'API Information',
+  description: 'Get API version, runtime information and deployment details',
+  tags: ['System'],
   responses: {
     200: {
-      description: "API information",
+      description: 'API information',
       content: {
-        "application/json": {
+        'application/json': {
           schema: ApiInfoResponseSchema,
         },
       },
@@ -98,16 +97,16 @@ export const apiInfoRoute = createRoute({
 
 // Authentication routes
 export const authStatusRoute = createRoute({
-  method: "get",
-  path: "/v1/auth/status",
-  summary: "Authentication Status",
-  description: "Check authentication service availability",
-  tags: ["Authentication"],
+  method: 'get',
+  path: '/v1/auth/status',
+  summary: 'Authentication Status',
+  description: 'Check authentication service availability',
+  tags: ['Authentication'],
   responses: {
     200: {
-      description: "Authentication service status",
+      description: 'Authentication service status',
       content: {
-        "application/json": {
+        'application/json': {
           schema: AuthStatusResponseSchema,
         },
       },
@@ -118,12 +117,12 @@ export const authStatusRoute = createRoute({
 
 // Client management routes (LGPD compliant)
 export const listClientsRoute = createRoute({
-  method: "get",
-  path: "/v1/clients",
-  summary: "List Clients",
+  method: 'get',
+  path: '/v1/clients',
+  summary: 'List Clients',
   description:
-    "Get a list of active aesthetic clinic clients with LGPD consent (professionals only)",
-  tags: ["Clients"],
+    'Get a list of active aesthetic clinic clients with LGPD consent (professionals only)',
+  tags: ['Clients'],
   security: [
     {
       BearerAuth: [],
@@ -131,9 +130,9 @@ export const listClientsRoute = createRoute({
   ],
   responses: {
     200: {
-      description: "List of clients with LGPD consent",
+      description: 'List of clients with LGPD consent',
       content: {
-        "application/json": {
+        'application/json': {
           schema: ClientsListResponseSchema,
         },
       },
@@ -143,12 +142,12 @@ export const listClientsRoute = createRoute({
 });
 
 export const getClientByIdRoute = createRoute({
-  method: "get",
-  path: "/v1/clients/{clientId}",
-  summary: "Get Client Details",
+  method: 'get',
+  path: '/v1/clients/{clientId}',
+  summary: 'Get Client Details',
   description:
-    "Retrieve detailed information about a specific aesthetic clinic client (requires LGPD consent)",
-  tags: ["Clients"],
+    'Retrieve detailed information about a specific aesthetic clinic client (requires LGPD consent)',
+  tags: ['Clients'],
   security: [
     {
       BearerAuth: [],
@@ -159,9 +158,9 @@ export const getClientByIdRoute = createRoute({
   },
   responses: {
     200: {
-      description: "Client details",
+      description: 'Client details',
       content: {
-        "application/json": {
+        'application/json': {
           schema: ClientDetailResponseSchema,
         },
       },
@@ -172,12 +171,11 @@ export const getClientByIdRoute = createRoute({
 
 // Appointment management routes
 export const listAppointmentsRoute = createRoute({
-  method: "get",
-  path: "/v1/appointments",
-  summary: "List Appointments",
-  description:
-    "Get a list of appointments (LGPD consent validated for patient data)",
-  tags: ["Appointments"],
+  method: 'get',
+  path: '/v1/appointments',
+  summary: 'List Appointments',
+  description: 'Get a list of appointments (LGPD consent validated for patient data)',
+  tags: ['Appointments'],
   security: [
     {
       BearerAuth: [],
@@ -185,9 +183,9 @@ export const listAppointmentsRoute = createRoute({
   ],
   responses: {
     200: {
-      description: "List of appointments",
+      description: 'List of appointments',
       content: {
-        "application/json": {
+        'application/json': {
           schema: AppointmentsListResponseSchema,
         },
       },
@@ -197,12 +195,12 @@ export const listAppointmentsRoute = createRoute({
 });
 
 export const getClientAppointmentsRoute = createRoute({
-  method: "get",
-  path: "/v1/appointments/client/{clientId}",
-  summary: "Get Client Appointments",
+  method: 'get',
+  path: '/v1/appointments/client/{clientId}',
+  summary: 'Get Client Appointments',
   description:
-    "Retrieve appointments for a specific aesthetic clinic client (requires LGPD consent)",
-  tags: ["Appointments"],
+    'Retrieve appointments for a specific aesthetic clinic client (requires LGPD consent)',
+  tags: ['Appointments'],
   security: [
     {
       BearerAuth: [],
@@ -213,9 +211,9 @@ export const getClientAppointmentsRoute = createRoute({
   },
   responses: {
     200: {
-      description: "Client appointments",
+      description: 'Client appointments',
       content: {
-        "application/json": {
+        'application/json': {
           schema: AppointmentsListResponseSchema,
         },
       },
@@ -226,12 +224,11 @@ export const getClientAppointmentsRoute = createRoute({
 
 // Patient management routes
 export const listPatientsRoute = createRoute({
-  method: "get",
-  path: "/v1/patients",
-  summary: "List Patients",
-  description:
-    "Get a list of aesthetic clinic patients with pagination and filtering",
-  tags: ["Patients"],
+  method: 'get',
+  path: '/v1/patients',
+  summary: 'List Patients',
+  description: 'Get a list of aesthetic clinic patients with pagination and filtering',
+  tags: ['Patients'],
   security: [
     {
       BearerAuth: [],
@@ -239,9 +236,9 @@ export const listPatientsRoute = createRoute({
   ],
   responses: {
     200: {
-      description: "List of patients with pagination data",
+      description: 'List of patients with pagination data',
       content: {
-        "application/json": {
+        'application/json': {
           schema: z.object({
             data: z
               .array(
@@ -261,7 +258,7 @@ export const listPatientsRoute = createRoute({
                   }),
                 }),
               )
-              .openapi("Patient"),
+              .openapi('Patient'),
             pagination: z.object({
               page: z.number(),
               limit: z.number(),
@@ -277,12 +274,11 @@ export const listPatientsRoute = createRoute({
 });
 
 export const getPatientByIdRoute = createRoute({
-  method: "get",
-  path: "/v1/patients/{patientId}",
-  summary: "Get Patient Details",
-  description:
-    "Retrieve detailed information about a specific aesthetic clinic patient",
-  tags: ["Patients"],
+  method: 'get',
+  path: '/v1/patients/{patientId}',
+  summary: 'Get Patient Details',
+  description: 'Retrieve detailed information about a specific aesthetic clinic patient',
+  tags: ['Patients'],
   security: [
     {
       BearerAuth: [],
@@ -293,9 +289,9 @@ export const getPatientByIdRoute = createRoute({
   },
   responses: {
     200: {
-      description: "Patient details with appointments and consent records",
+      description: 'Patient details with appointments and consent records',
       content: {
-        "application/json": {
+        'application/json': {
           schema: z.object({
             id: z.string(),
             clinicId: z.string(),
@@ -344,11 +340,11 @@ export const getPatientByIdRoute = createRoute({
 });
 
 export const createPatientRoute = createRoute({
-  method: "post",
-  path: "/v1/patients",
-  summary: "Create Patient",
-  description: "Create a new patient record in the aesthetic clinic system",
-  tags: ["Patients"],
+  method: 'post',
+  path: '/v1/patients',
+  summary: 'Create Patient',
+  description: 'Create a new patient record in the aesthetic clinic system',
+  tags: ['Patients'],
   security: [
     {
       BearerAuth: [],
@@ -357,7 +353,7 @@ export const createPatientRoute = createRoute({
   request: {
     body: {
       content: {
-        "application/json": {
+        'application/json': {
           schema: z.object({
             clinicId: z.string().uuid(),
             fullName: z.string().min(2).max(100),
@@ -374,9 +370,9 @@ export const createPatientRoute = createRoute({
   },
   responses: {
     201: {
-      description: "Patient successfully created",
+      description: 'Patient successfully created',
       content: {
-        "application/json": {
+        'application/json': {
           schema: z.object({
             id: z.string(),
             clinicId: z.string(),
@@ -404,12 +400,11 @@ export const createPatientRoute = createRoute({
 });
 
 export const updatePatientRoute = createRoute({
-  method: "put",
-  path: "/v1/patients/{patientId}",
-  summary: "Update Patient",
-  description:
-    "Update an existing patient record in the aesthetic clinic system",
-  tags: ["Patients"],
+  method: 'put',
+  path: '/v1/patients/{patientId}',
+  summary: 'Update Patient',
+  description: 'Update an existing patient record in the aesthetic clinic system',
+  tags: ['Patients'],
   security: [
     {
       BearerAuth: [],
@@ -419,7 +414,7 @@ export const updatePatientRoute = createRoute({
     params: PatientIdParamSchema,
     body: {
       content: {
-        "application/json": {
+        'application/json': {
           schema: z.object({
             id: z.string().uuid(),
             clinicId: z.string().uuid(),
@@ -437,9 +432,9 @@ export const updatePatientRoute = createRoute({
   },
   responses: {
     200: {
-      description: "Patient successfully updated",
+      description: 'Patient successfully updated',
       content: {
-        "application/json": {
+        'application/json': {
           schema: z.object({
             id: z.string(),
             clinicId: z.string(),

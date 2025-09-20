@@ -5,19 +5,12 @@
  * with healthcare data protection and compliance logging.
  */
 
-import {
-  context as otelContext,
-  SpanStatusCode,
-  trace,
-} from "@opentelemetry/api";
-import * as Sentry from "@sentry/node";
-import { Context, Next } from "hono";
-import { HTTPException } from "hono/http-exception";
-import { extractHealthcareContext } from "../config/error-tracking";
-import {
-  errorTracker,
-  HealthcareErrorContext,
-} from "../services/error-tracking-bridge";
+import { context as otelContext, SpanStatusCode, trace } from '@opentelemetry/api';
+import * as Sentry from '@sentry/node';
+import { Context, Next } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+import { extractHealthcareContext } from '../config/error-tracking';
+import { errorTracker, HealthcareErrorContext } from '../services/error-tracking-bridge';
 
 /**
  * Healthcare-specific error types
@@ -30,14 +23,14 @@ export class HealthcareError extends Error {
       appointmentId?: string;
       clinicId?: string;
       action?: string;
-      severity: "low" | "medium" | "high" | "critical";
+      severity: 'low' | 'medium' | 'high' | 'critical';
       lgpdViolation?: boolean;
       complianceIssue?: boolean;
     },
     public readonly statusCode: number = 500,
   ) {
     super(message);
-    this.name = "HealthcareError";
+    this.name = 'HealthcareError';
   }
 }
 
@@ -50,14 +43,14 @@ export class LGPDComplianceError extends HealthcareError {
       message,
       {
         patientId,
-        severity: "critical",
+        severity: 'critical',
         lgpdViolation: true,
         complianceIssue: true,
-        action: "data_access_violation",
+        action: 'data_access_violation',
       },
       403,
     );
-    this.name = "LGPDComplianceError";
+    this.name = 'LGPDComplianceError';
   }
 }
 
@@ -71,12 +64,12 @@ export class PatientDataAccessError extends HealthcareError {
       {
         patientId,
         clinicId,
-        severity: "high",
-        action: "unauthorized_patient_access",
+        severity: 'high',
+        action: 'unauthorized_patient_access',
       },
       403,
     );
-    this.name = "PatientDataAccessError";
+    this.name = 'PatientDataAccessError';
   }
 }
 
@@ -88,12 +81,12 @@ export class MedicalDataValidationError extends HealthcareError {
     super(
       message,
       {
-        severity: "medium",
-        action: "medical_data_validation",
+        severity: 'medium',
+        action: 'medical_data_validation',
       },
       400,
     );
-    this.name = "MedicalDataValidationError";
+    this.name = 'MedicalDataValidationError';
   }
 }
 
@@ -103,32 +96,31 @@ export class MedicalDataValidationError extends HealthcareError {
 export function errorTrackingMiddleware() {
   return async (c: Context, next: Next) => {
     const startTime = Date.now();
-    const requestId =
-      c.req.header("x-request-id") ||
-      c.req.header("x-trace-id") ||
-      crypto.randomUUID();
+    const requestId = c.req.header('x-request-id')
+      || c.req.header('x-trace-id')
+      || crypto.randomUUID();
 
     // Set request ID in response headers
-    c.res.headers.set("x-request-id", requestId);
+    c.res.headers.set('x-request-id', requestId);
 
     // Create healthcare context
     const healthcareContext = extractHealthcareContext(c.req, {
       requestId,
-      userAgent: c.req.header("user-agent"),
-      clientIp: c.req.header("x-forwarded-for") || c.req.header("x-real-ip"),
+      userAgent: c.req.header('user-agent'),
+      clientIp: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
     });
 
     // Start OpenTelemetry span
-    const tracer = trace.getTracer("neonpro-api");
+    const tracer = trace.getTracer('neonpro-api');
     const span = tracer.startSpan(`${c.req.method} ${c.req.path}`, {
       attributes: {
-        "http.method": c.req.method,
-        "http.url": c.req.url,
-        "http.route": c.req.path,
-        "request.id": requestId,
-        "healthcare.clinic_id": healthcareContext.clinicId || "unknown",
-        "healthcare.user_role": healthcareContext.userRole || "anonymous",
-        "healthcare.lgpd_compliant": healthcareContext.lgpdCompliant,
+        'http.method': c.req.method,
+        'http.url': c.req.url,
+        'http.route': c.req.path,
+        'request.id': requestId,
+        'healthcare.clinic_id': healthcareContext.clinicId || 'unknown',
+        'healthcare.user_role': healthcareContext.userRole || 'anonymous',
+        'healthcare.lgpd_compliant': healthcareContext.lgpdCompliant,
       },
     });
 
@@ -144,14 +136,14 @@ export function errorTrackingMiddleware() {
       // Record successful request metrics
       const duration = Date.now() - startTime;
       span.setAttributes({
-        "http.status_code": c.res.status,
-        "http.response_time_ms": duration,
+        'http.status_code': c.res.status,
+        'http.response_time_ms': duration,
       });
 
       // Log successful requests for audit trail
       if (c.res.status >= 200 && c.res.status < 300) {
         await errorTracker.logAuditEvent({
-          type: "request_success",
+          type: 'request_success',
           context: healthcareContext,
           details: {
             statusCode: c.res.status,
@@ -185,9 +177,9 @@ async function handleError(
   duration: number,
 ): Promise<void> {
   let statusCode = 500;
-  let errorMessage = "Internal server error";
-  let errorType = "UnknownError";
-  let severity: "low" | "medium" | "high" | "critical" = "medium";
+  let errorMessage = 'Internal server error';
+  let errorType = 'UnknownError';
+  let severity: 'low' | 'medium' | 'high' | 'critical' = 'medium';
 
   // Determine error type and status code
   if (error instanceof HealthcareError) {
@@ -198,26 +190,24 @@ async function handleError(
 
     // Add healthcare-specific context to span
     span.setAttributes({
-      "healthcare.error.type": errorType,
-      "healthcare.error.severity": severity,
-      "healthcare.error.lgpd_violation":
-        error.healthcareContext.lgpdViolation || false,
-      "healthcare.error.compliance_issue":
-        error.healthcareContext.complianceIssue || false,
+      'healthcare.error.type': errorType,
+      'healthcare.error.severity': severity,
+      'healthcare.error.lgpd_violation': error.healthcareContext.lgpdViolation || false,
+      'healthcare.error.compliance_issue': error.healthcareContext.complianceIssue || false,
     });
   } else if (error instanceof HTTPException) {
     statusCode = error.status;
     errorMessage = error.message;
-    errorType = "HTTPException";
-    severity = statusCode >= 500 ? "high" : "low";
+    errorType = 'HTTPException';
+    severity = statusCode >= 500 ? 'high' : 'low';
   } else if (error instanceof Error) {
     errorMessage = error.message;
     errorType = error.name;
-    severity = "medium";
+    severity = 'medium';
   } else {
     errorMessage = String(error);
-    errorType = "UnknownError";
-    severity = "medium";
+    errorType = 'UnknownError';
+    severity = 'medium';
   }
 
   // Set span status and attributes
@@ -227,10 +217,10 @@ async function handleError(
     message: errorMessage,
   });
   span.setAttributes({
-    "http.status_code": statusCode,
-    "http.response_time_ms": duration,
-    "error.type": errorType,
-    "error.message": errorMessage,
+    'http.status_code': statusCode,
+    'http.response_time_ms': duration,
+    'error.type': errorType,
+    'error.message': errorMessage,
   });
 
   // Track the error with our error tracking service
@@ -244,19 +234,19 @@ async function handleError(
     });
   } catch (trackingError) {
     // If error tracking fails, log to console as fallback
-    console.error("Error tracking failed:", trackingError);
-    console.error("Original error:", error);
+    console.error('Error tracking failed:', trackingError);
+    console.error('Original error:', error);
   }
 
   // Send error to Sentry with healthcare context
-  Sentry.withScope((scope) => {
-    scope.setTag("component", "api");
-    scope.setTag("errorType", errorType);
-    scope.setTag("severity", severity);
-    scope.setLevel(severity === "critical" ? "fatal" : (severity as any));
+  Sentry.withScope(scope => {
+    scope.setTag('component', 'api');
+    scope.setTag('errorType', errorType);
+    scope.setTag('severity', severity);
+    scope.setLevel(severity === 'critical' ? 'fatal' : (severity as any));
 
     // Add healthcare context (without sensitive data)
-    scope.setContext("healthcare", {
+    scope.setContext('healthcare', {
       clinicId: healthcareContext.clinicId,
       userRole: healthcareContext.userRole,
       lgpdCompliant: healthcareContext.lgpdCompliant,
@@ -264,7 +254,7 @@ async function handleError(
       method: healthcareContext.method,
     });
 
-    scope.setContext("request", {
+    scope.setContext('request', {
       requestId: healthcareContext.requestId,
       endpoint: healthcareContext.endpoint,
       method: healthcareContext.method,
@@ -281,7 +271,7 @@ async function handleError(
       message: errorMessage,
       requestId: healthcareContext.requestId,
       timestamp: new Date().toISOString(),
-      ...(process.env.NODE_ENV === "development" && {
+      ...(process.env.NODE_ENV === 'development' && {
         stack: error instanceof Error ? error.stack : undefined,
       }),
     },
@@ -292,8 +282,8 @@ async function handleError(
     errorResponse.error = {
       ...errorResponse.error,
       compliance: {
-        type: "LGPD_VIOLATION",
-        message: "This action violates LGPD data protection requirements",
+        type: 'LGPD_VIOLATION',
+        message: 'This action violates LGPD data protection requirements',
         reportingRequired: true,
       },
     };
@@ -308,13 +298,13 @@ async function handleError(
  * Global error handler for uncaught exceptions
  */
 export function setupGlobalErrorHandlers(): void {
-  process.on("uncaughtException", (error) => {
-    console.error("Uncaught Exception:", error);
+  process.on('uncaughtException', error => {
+    console.error('Uncaught Exception:', error);
 
-    Sentry.withScope((scope) => {
-      scope.setTag("component", "global");
-      scope.setTag("errorType", "UncaughtException");
-      scope.setLevel("fatal");
+    Sentry.withScope(scope => {
+      scope.setTag('component', 'global');
+      scope.setTag('errorType', 'UncaughtException');
+      scope.setLevel('fatal');
       Sentry.captureException(error);
     });
 
@@ -324,18 +314,18 @@ export function setupGlobalErrorHandlers(): void {
     }, 1000);
   });
 
-  process.on("unhandledRejection", (reason, promise) => {
+  process.on('unhandledRejection', (reason, promise) => {
     console.error(
-      "Unhandled Promise Rejection at:",
+      'Unhandled Promise Rejection at:',
       promise,
-      "reason:",
+      'reason:',
       reason,
     );
 
-    Sentry.withScope((scope) => {
-      scope.setTag("component", "global");
-      scope.setTag("errorType", "UnhandledRejection");
-      scope.setLevel("error");
+    Sentry.withScope(scope => {
+      scope.setTag('component', 'global');
+      scope.setTag('errorType', 'UnhandledRejection');
+      scope.setLevel('error');
       Sentry.captureException(reason as Error);
     });
   });
@@ -350,7 +340,7 @@ export function expressErrorHandler() {
 
     errorTracker.trackError(error, {
       ...healthcareContext,
-      severity: "medium",
+      severity: 'medium',
       statusCode: 500,
     });
 
@@ -371,24 +361,22 @@ export function expressErrorHandler() {
 export function globalErrorHandler() {
   return async (err: Error, c: Context) => {
     const startTime = Date.now();
-    const requestId =
-      c.req.header("x-request-id") ||
-      c.req.header("x-trace-id") ||
-      crypto.randomUUID();
+    const requestId = c.req.header('x-request-id')
+      || c.req.header('x-trace-id')
+      || crypto.randomUUID();
 
     // Extract healthcare context from the request
     const healthcareContext = {
       requestId,
-      patientId: c.req.query("patientId") || c.req.param("patientId"),
-      appointmentId:
-        c.req.query("appointmentId") || c.req.param("appointmentId"),
-      clinicId: c.req.query("clinicId") || c.req.param("clinicId"),
-      userId: c.req.query("userId") || c.req.param("userId"),
-      userAgent: c.req.header("user-agent"),
-      ipAddress: c.req.header("x-forwarded-for") || "unknown",
+      patientId: c.req.query('patientId') || c.req.param('patientId'),
+      appointmentId: c.req.query('appointmentId') || c.req.param('appointmentId'),
+      clinicId: c.req.query('clinicId') || c.req.param('clinicId'),
+      userId: c.req.query('userId') || c.req.param('userId'),
+      userAgent: c.req.header('user-agent'),
+      ipAddress: c.req.header('x-forwarded-for') || 'unknown',
       method: c.req.method,
       path: c.req.url,
-      severity: "high" as const,
+      severity: 'high' as const,
       statusCode: 500,
       timestamp: new Date().toISOString(),
     };
@@ -400,16 +388,16 @@ export function globalErrorHandler() {
     let statusCode = 500;
     if (err instanceof HealthcareError) {
       switch (err.healthcareContext.severity) {
-        case "low":
+        case 'low':
           statusCode = 400;
           break;
-        case "medium":
+        case 'medium':
           statusCode = 422;
           break;
-        case "high":
+        case 'high':
           statusCode = 500;
           break;
-        case "critical":
+        case 'critical':
           statusCode = 503;
           break;
         default:

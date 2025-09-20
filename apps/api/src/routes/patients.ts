@@ -3,20 +3,14 @@
  * Healthcare-compliant API with LGPD audit logging
  */
 
-import { zValidator } from "@hono/zod-validator";
-import { BaseService, prisma } from "@neonpro/database";
-import { Hono } from "hono";
-import type { Context } from "hono";
-import { cache } from "hono/cache";
-import { etag } from "hono/etag";
-import { z } from "zod";
-import {
-  badRequest,
-  created,
-  notFound,
-  ok,
-  serverError,
-} from "../utils/responses";
+import { zValidator } from '@hono/zod-validator';
+import { BaseService, prisma } from '@neonpro/database';
+import { Hono } from 'hono';
+import type { Context } from 'hono';
+import { cache } from 'hono/cache';
+import { etag } from 'hono/etag';
+import { z } from 'zod';
+import { badRequest, created, notFound, ok, serverError } from '../utils/responses';
 
 // Consent duration configuration (defaults to 1 year)
 const DEFAULT_CONSENT_DURATION_MS = 365 * 24 * 60 * 60 * 1000;
@@ -55,13 +49,13 @@ const PatientQuerySchema = z.object({
   page: z
     .string()
     .optional()
-    .transform((val) => (val ? parseInt(val) : 1)),
+    .transform(val => (val ? parseInt(val) : 1)),
   limit: z
     .string()
     .optional()
-    .transform((val) => (val ? Math.min(parseInt(val) || 20, 100) : 20)),
+    .transform(val => (val ? Math.min(parseInt(val) || 20, 100) : 20)),
   search: z.string().optional(),
-  status: z.enum(["active", "inactive", "all"]).optional().default("active"),
+  status: z.enum(['active', 'inactive', 'all']).optional().default('active'),
 });
 
 class PatientService extends BaseService {
@@ -82,9 +76,9 @@ class PatientService extends BaseService {
   ) {
     return this.withAuditLog(
       {
-        operation: "GET_PATIENTS",
+        operation: 'GET_PATIENTS',
         userId,
-        tableName: "patients",
+        tableName: 'patients',
         recordId: clinicId,
       },
       async () => {
@@ -92,13 +86,13 @@ class PatientService extends BaseService {
 
         const whereClause: any = {
           clinicId,
-          ...(options.status !== "all" && {
-            isActive: options.status === "active",
+          ...(options.status !== 'all' && {
+            isActive: options.status === 'active',
           }),
           ...(options.search && {
             OR: [
-              { fullName: { contains: options.search, mode: "insensitive" } },
-              { email: { contains: options.search, mode: "insensitive" } },
+              { fullName: { contains: options.search, mode: 'insensitive' } },
+              { email: { contains: options.search, mode: 'insensitive' } },
               { phone: { contains: options.search } },
             ],
           }),
@@ -113,7 +107,7 @@ class PatientService extends BaseService {
                   startTime: { gte: new Date() },
                 },
                 take: 3,
-                orderBy: { startTime: "asc" },
+                orderBy: { startTime: 'asc' },
                 select: {
                   id: true,
                   startTime: true,
@@ -130,7 +124,7 @@ class PatientService extends BaseService {
                 },
               },
             },
-            orderBy: { createdAt: "desc" },
+            orderBy: { createdAt: 'desc' },
             skip: offset,
             take: options.limit,
           }),
@@ -153,9 +147,9 @@ class PatientService extends BaseService {
   async getPatientById(patientId: string, userId: string) {
     return this.withAuditLog(
       {
-        operation: "GET_PATIENT",
+        operation: 'GET_PATIENT',
         userId,
-        tableName: "patients",
+        tableName: 'patients',
         recordId: patientId,
       },
       async () => {
@@ -163,7 +157,7 @@ class PatientService extends BaseService {
           where: { id: patientId },
           include: {
             appointments: {
-              orderBy: { startTime: "desc" },
+              orderBy: { startTime: 'desc' },
               take: 10,
               include: {
                 professional: {
@@ -176,14 +170,14 @@ class PatientService extends BaseService {
               },
             },
             consentRecords: {
-              where: { status: "GRANTED" },
-              orderBy: { createdAt: "desc" },
+              where: { status: 'GRANTED' },
+              orderBy: { createdAt: 'desc' },
             },
           },
         });
 
         if (!patient) {
-          throw new Error("Patient not found");
+          throw new Error('Patient not found');
         }
 
         return patient;
@@ -197,21 +191,21 @@ class PatientService extends BaseService {
     // Validate LGPD consent if processing personal data
     if (data.cpf || data.email) {
       if (!data.lgpdConsentGiven) {
-        throw new Error("LGPD consent required for processing personal data");
+        throw new Error('LGPD consent required for processing personal data');
       }
     }
 
     // Validate CPF if provided
     if (data.cpf && !this.validateCPF(data.cpf)) {
-      throw new Error("Invalid CPF format");
+      throw new Error('Invalid CPF format');
     }
 
     return this.withAuditLog(
       {
-        operation: "CREATE_PATIENT",
+        operation: 'CREATE_PATIENT',
         userId,
-        tableName: "patients",
-        recordId: "new",
+        tableName: 'patients',
+        recordId: 'new',
         newValues: data,
       },
       async () => {
@@ -241,11 +235,11 @@ class PatientService extends BaseService {
             data: {
               patientId: patient.id,
               clinicId: data.clinicId,
-              purpose: "MEDICAL_TREATMENT",
-              status: "GRANTED",
-              consentType: "EXPLICIT",
-              legalBasis: "CONSENT",
-              collectionMethod: "ONLINE_FORM",
+              purpose: 'MEDICAL_TREATMENT',
+              status: 'GRANTED',
+              consentType: 'EXPLICIT',
+              legalBasis: 'CONSENT',
+              collectionMethod: 'ONLINE_FORM',
               expiresAt: new Date(Date.now() + CONSENT_DURATION_MS), // default 1 year, configurable via CONSENT_DURATION_MS
             },
           });
@@ -261,7 +255,7 @@ class PatientService extends BaseService {
     const count = await prisma.patient.count({
       where: { clinicId },
     });
-    return `MR${clinicId.slice(-6).toUpperCase()}${(count + 1).toString().padStart(4, "0")}`;
+    return `MR${clinicId.slice(-6).toUpperCase()}${(count + 1).toString().padStart(4, '0')}`;
   }
 
   async updatePatient(
@@ -273,14 +267,14 @@ class PatientService extends BaseService {
     });
 
     if (!existingPatient) {
-      throw new Error("Patient not found");
+      throw new Error('Patient not found');
     }
 
     return this.withAuditLog(
       {
-        operation: "UPDATE_PATIENT",
+        operation: 'UPDATE_PATIENT',
         userId,
-        tableName: "patients",
+        tableName: 'patients',
         recordId: data.id,
         oldValues: existingPatient,
         newValues: data,
@@ -312,41 +306,41 @@ const validateClinicAccess = async (
   c: Context<{ Variables: Variables }>,
   next: any,
 ) => {
-  const userId = c.get("userId"); // Now properly typed
-  const clinicId = c.req.query("clinicId") || (await c.req.json())?.clinicId;
+  const userId = c.get('userId'); // Now properly typed
+  const clinicId = c.req.query('clinicId') || (await c.req.json())?.clinicId;
 
   if (!userId) {
-    return c.json({ error: "Unauthorized" }, 401);
+    return c.json({ error: 'Unauthorized' }, 401);
   }
 
   if (!clinicId) {
-    return c.json({ error: "Clinic ID required" }, 400);
+    return c.json({ error: 'Clinic ID required' }, 400);
   }
 
   const hasAccess = await patientService.checkClinicAccess(userId, clinicId);
   if (!hasAccess) {
-    return c.json({ error: "Access denied to clinic" }, 403);
+    return c.json({ error: 'Access denied to clinic' }, 403);
   }
 
   return await next();
 };
 
-import { requireAuth } from "../middleware/authn";
+import { requireAuth } from '../middleware/authn';
 
 // Routes with optimized caching and validation
 app.get(
-  "/patients",
+  '/patients',
   requireAuth,
   cache({
-    cacheName: "patients-list",
-    cacheControl: "private, max-age=300", // 5 minutes cache
+    cacheName: 'patients-list',
+    cacheControl: 'private, max-age=300', // 5 minutes cache
   }),
   etag(),
-  zValidator("query", PatientQuerySchema),
+  zValidator('query', PatientQuerySchema),
   validateClinicAccess,
-  async (c) => {
-    const query = c.req.valid("query");
-    const userId = c.get("userId"); // Now properly typed
+  async c => {
+    const query = c.req.valid('query');
+    const userId = c.get('userId'); // Now properly typed
 
     try {
       const result = await patientService.getPatients(query.clinicId, userId, {
@@ -357,16 +351,16 @@ app.get(
       });
 
       // Add performance headers
-      c.header("X-Total-Count", result.pagination.total.toString());
-      c.header("X-Page", result.pagination.page.toString());
+      c.header('X-Total-Count', result.pagination.total.toString());
+      c.header('X-Page', result.pagination.page.toString());
 
       return ok(c, result);
     } catch (error) {
-      console.error("Error fetching patients:", error);
+      console.error('Error fetching patients:', error);
 
       return serverError(
         c,
-        "Failed to fetch patients",
+        'Failed to fetch patients',
         error instanceof Error ? error : undefined,
       );
     }
@@ -375,35 +369,35 @@ app.get(
 
 // Get single patient by ID
 app.get(
-  "/patients/:id",
+  '/patients/:id',
   requireAuth,
   cache({
-    cacheName: "patient-detail",
-    cacheControl: "private, max-age=600", // 10 minutes cache for patient details
+    cacheName: 'patient-detail',
+    cacheControl: 'private, max-age=600', // 10 minutes cache for patient details
   }),
   etag(),
   validateClinicAccess,
-  async (c) => {
-    const patientId = c.req.param("id");
-    const userId = c.get("userId"); // Now properly typed
+  async c => {
+    const patientId = c.req.param('id');
+    const userId = c.get('userId'); // Now properly typed
 
     try {
       const patient = await patientService.getPatientById(patientId, userId);
 
       // Add LGPD compliance headers
-      c.header("X-Data-Classification", "sensitive");
-      c.header("X-Retention-Policy", "7-years");
+      c.header('X-Data-Classification', 'sensitive');
+      c.header('X-Retention-Policy', '7-years');
 
       return ok(c, patient);
     } catch (error) {
-      console.error("Error fetching patient:", error);
+      console.error('Error fetching patient:', error);
 
-      if (error instanceof Error && error.message === "Patient not found") {
-        return notFound(c, "Patient not found");
+      if (error instanceof Error && error.message === 'Patient not found') {
+        return notFound(c, 'Patient not found');
       }
       return serverError(
         c,
-        "Failed to fetch patient",
+        'Failed to fetch patient',
         error instanceof Error ? error : undefined,
       );
     }
@@ -412,29 +406,29 @@ app.get(
 
 // Create new patient
 app.post(
-  "/patients",
+  '/patients',
   requireAuth,
-  zValidator("json", PatientCreateSchema),
+  zValidator('json', PatientCreateSchema),
   validateClinicAccess,
-  async (c) => {
-    const data = c.req.valid("json");
-    const userId = c.get("userId"); // Now properly typed
+  async c => {
+    const data = c.req.valid('json');
+    const userId = c.get('userId'); // Now properly typed
 
     try {
       const patient = await patientService.createPatient(data, userId);
 
       // Add performance headers
-      c.header("X-Created-At", new Date().toISOString());
-      c.header("Location", `/patients/${patient.id}`);
+      c.header('X-Created-At', new Date().toISOString());
+      c.header('Location', `/patients/${patient.id}`);
 
       return created(c, patient, `/patients/${patient.id}`);
     } catch (error) {
-      console.error("Error creating patient:", error);
+      console.error('Error creating patient:', error);
 
       return badRequest(
         c,
-        "VALIDATION_ERROR",
-        error instanceof Error ? error.message : "Failed to create patient",
+        'VALIDATION_ERROR',
+        error instanceof Error ? error.message : 'Failed to create patient',
         error instanceof Error ? error : undefined,
       );
     }

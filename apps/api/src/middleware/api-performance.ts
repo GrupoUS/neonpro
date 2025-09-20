@@ -9,8 +9,8 @@
  * - Resource usage tracking
  */
 
-import { Context, Next } from "hono";
-import { queryMonitor } from "../utils/query-optimizer";
+import { Context, Next } from 'hono';
+import { queryMonitor } from '../utils/query-optimizer';
 
 // Performance metrics
 export interface PerformanceMetrics {
@@ -101,7 +101,7 @@ export class APIPerformanceMonitor {
     };
   } {
     const cutoffTime = new Date(Date.now() - timeWindow);
-    const recentMetrics = this.metrics.filter((m) => m.timestamp >= cutoffTime);
+    const recentMetrics = this.metrics.filter(m => m.timestamp >= cutoffTime);
 
     if (recentMetrics.length === 0) {
       return {
@@ -123,10 +123,9 @@ export class APIPerformanceMonitor {
     // Basic statistics
     const totalRequests = recentMetrics.length;
     const responseTimes = recentMetrics
-      .map((m) => m.responseTime)
+      .map(m => m.responseTime)
       .sort((a, b) => a - b);
-    const averageResponseTime =
-      responseTimes.reduce((sum, time) => sum + time, 0) / totalRequests;
+    const averageResponseTime = responseTimes.reduce((sum, time) => sum + time, 0) / totalRequests;
 
     // Percentiles
     const p95Index = Math.floor(totalRequests * 0.95);
@@ -136,7 +135,7 @@ export class APIPerformanceMonitor {
 
     // Error rate
     const errorRequests = recentMetrics.filter(
-      (m) => m.statusCode >= 400,
+      m => m.statusCode >= 400,
     ).length;
     const errorRate = (errorRequests / totalRequests) * 100;
 
@@ -146,7 +145,7 @@ export class APIPerformanceMonitor {
 
     // Slowest endpoints
     const endpointStats = new Map<string, { total: number; count: number }>();
-    recentMetrics.forEach((m) => {
+    recentMetrics.forEach(m => {
       const key = `${m.method} ${m.endpoint}`;
       const current = endpointStats.get(key) || { total: 0, count: 0 };
       endpointStats.set(key, {
@@ -165,31 +164,27 @@ export class APIPerformanceMonitor {
 
     // Healthcare-specific metrics
     const patientDataMetrics = recentMetrics.filter(
-      (m) =>
-        m.endpoint.includes("/patients") ||
-        m.endpoint.includes("/patient-records"),
+      m =>
+        m.endpoint.includes('/patients')
+        || m.endpoint.includes('/patient-records'),
     );
-    const appointmentMetrics = recentMetrics.filter((m) =>
-      m.endpoint.includes("/appointments"),
-    );
+    const appointmentMetrics = recentMetrics.filter(m => m.endpoint.includes('/appointments'));
     const sensitiveDataQueries = recentMetrics.filter(
-      (m) =>
-        m.endpoint.includes("/patients") ||
-        m.endpoint.includes("/medical-history") ||
-        m.endpoint.includes("/patient-records"),
+      m =>
+        m.endpoint.includes('/patients')
+        || m.endpoint.includes('/medical-history')
+        || m.endpoint.includes('/patient-records'),
     ).length;
 
-    const avgPatientDataAccess =
-      patientDataMetrics.length > 0
-        ? patientDataMetrics.reduce((sum, m) => sum + m.responseTime, 0) /
-          patientDataMetrics.length
-        : 0;
+    const avgPatientDataAccess = patientDataMetrics.length > 0
+      ? patientDataMetrics.reduce((sum, m) => sum + m.responseTime, 0)
+        / patientDataMetrics.length
+      : 0;
 
-    const avgAppointmentResponse =
-      appointmentMetrics.length > 0
-        ? appointmentMetrics.reduce((sum, m) => sum + m.responseTime, 0) /
-          appointmentMetrics.length
-        : 0;
+    const avgAppointmentResponse = appointmentMetrics.length > 0
+      ? appointmentMetrics.reduce((sum, m) => sum + m.responseTime, 0)
+        / appointmentMetrics.length
+      : 0;
 
     return {
       totalRequests,
@@ -216,9 +211,10 @@ export class APIPerformanceMonitor {
     // Response time alerts
     if (metrics.responseTime > HEALTHCARE_THRESHOLDS.responseTime.critical) {
       alerts.push({
-        type: "response_time",
-        severity: "critical",
-        message: `Critical response time: ${metrics.responseTime}ms for ${metrics.method} ${metrics.endpoint}`,
+        type: 'response_time',
+        severity: 'critical',
+        message:
+          `Critical response time: ${metrics.responseTime}ms for ${metrics.method} ${metrics.endpoint}`,
         metrics,
         threshold: HEALTHCARE_THRESHOLDS.responseTime.critical,
       });
@@ -226,9 +222,10 @@ export class APIPerformanceMonitor {
       metrics.responseTime > HEALTHCARE_THRESHOLDS.responseTime.warning
     ) {
       alerts.push({
-        type: "response_time",
-        severity: "warning",
-        message: `Slow response time: ${metrics.responseTime}ms for ${metrics.method} ${metrics.endpoint}`,
+        type: 'response_time',
+        severity: 'warning',
+        message:
+          `Slow response time: ${metrics.responseTime}ms for ${metrics.method} ${metrics.endpoint}`,
         metrics,
         threshold: HEALTHCARE_THRESHOLDS.responseTime.warning,
       });
@@ -236,12 +233,12 @@ export class APIPerformanceMonitor {
 
     // Memory usage alerts
     if (
-      metrics.memoryUsage &&
-      metrics.memoryUsage > HEALTHCARE_THRESHOLDS.memoryUsage.critical
+      metrics.memoryUsage
+      && metrics.memoryUsage > HEALTHCARE_THRESHOLDS.memoryUsage.critical
     ) {
       alerts.push({
-        type: "memory_usage",
-        severity: "critical",
+        type: 'memory_usage',
+        severity: 'critical',
         message: `Critical memory usage: ${metrics.memoryUsage}MB`,
         metrics,
         threshold: HEALTHCARE_THRESHOLDS.memoryUsage.critical,
@@ -249,10 +246,10 @@ export class APIPerformanceMonitor {
     }
 
     // Healthcare-specific alerts
-    if (metrics.endpoint.includes("/patients") && metrics.responseTime > 100) {
+    if (metrics.endpoint.includes('/patients') && metrics.responseTime > 100) {
       alerts.push({
-        type: "healthcare_compliance",
-        severity: "warning",
+        type: 'healthcare_compliance',
+        severity: 'warning',
         message: `Patient data access slower than recommended: ${metrics.responseTime}ms`,
         metrics,
         threshold: 100,
@@ -260,12 +257,12 @@ export class APIPerformanceMonitor {
     }
 
     // Trigger alert callbacks
-    alerts.forEach((alert) => {
-      this.alertCallbacks.forEach((callback) => {
+    alerts.forEach(alert => {
+      this.alertCallbacks.forEach(callback => {
         try {
           callback(alert);
         } catch (error) {
-          console.error("Error in performance alert callback:", error);
+          console.error('Error in performance alert callback:', error);
         }
       });
     });
@@ -289,11 +286,11 @@ export class APIPerformanceMonitor {
 // Performance alert interface
 export interface PerformanceAlert {
   type:
-    | "response_time"
-    | "memory_usage"
-    | "error_rate"
-    | "healthcare_compliance";
-  severity: "warning" | "critical";
+    | 'response_time'
+    | 'memory_usage'
+    | 'error_rate'
+    | 'healthcare_compliance';
+  severity: 'warning' | 'critical';
   message: string;
   metrics: PerformanceMetrics;
   threshold: number;
@@ -313,9 +310,9 @@ export function createPerformanceMonitoringMiddleware() {
     // Extract request information
     const method = c.req.method;
     const endpoint = c.req.path;
-    const userAgent = c.req.header("user-agent");
-    const userId = c.get("userId"); // From auth middleware
-    const clinicId = c.get("clinicId"); // From auth middleware
+    const userAgent = c.req.header('user-agent');
+    const userId = c.get('userId'); // From auth middleware
+    const clinicId = c.get('clinicId'); // From auth middleware
 
     try {
       await next();
@@ -337,7 +334,7 @@ export function createPerformanceMonitoringMiddleware() {
         userId,
         clinicId,
         userAgent,
-        contentLength: parseInt(c.res.headers.get("content-length") || "0", 10),
+        contentLength: parseInt(c.res.headers.get('content-length') || '0', 10),
         memoryUsage,
       };
 
@@ -345,17 +342,17 @@ export function createPerformanceMonitoringMiddleware() {
       apiPerformanceMonitor.recordMetrics(metrics);
 
       // Add performance headers
-      c.header("X-Response-Time", `${responseTime}ms`);
-      c.header("X-Memory-Usage", `${memoryUsage}MB`);
-      c.header("X-Performance-Tier", getPerformanceTier(responseTime));
+      c.header('X-Response-Time', `${responseTime}ms`);
+      c.header('X-Memory-Usage', `${memoryUsage}MB`);
+      c.header('X-Performance-Tier', getPerformanceTier(responseTime));
 
       // Healthcare compliance headers
       if (
-        endpoint.includes("/patients") ||
-        endpoint.includes("/appointments")
+        endpoint.includes('/patients')
+        || endpoint.includes('/appointments')
       ) {
-        c.header("X-Healthcare-Performance", "monitored");
-        c.header("X-LGPD-Compliant", "true");
+        c.header('X-Healthcare-Performance', 'monitored');
+        c.header('X-LGPD-Compliant', 'true');
       }
     } catch (error) {
       // Record error metrics
@@ -381,11 +378,11 @@ export function createPerformanceMonitoringMiddleware() {
  * Get performance tier based on response time
  */
 function getPerformanceTier(responseTime: number): string {
-  if (responseTime < 50) return "excellent";
-  if (responseTime < 100) return "good";
-  if (responseTime < 200) return "acceptable";
-  if (responseTime < 500) return "slow";
-  return "critical";
+  if (responseTime < 50) return 'excellent';
+  if (responseTime < 100) return 'good';
+  if (responseTime < 200) return 'acceptable';
+  if (responseTime < 500) return 'slow';
+  return 'critical';
 }
 
 /**
@@ -393,8 +390,8 @@ function getPerformanceTier(responseTime: number): string {
  */
 export function createPerformanceDashboardMiddleware() {
   return async (c: Context, next: Next) => {
-    if (c.req.path === "/v1/performance/stats") {
-      const timeWindow = parseInt(c.req.query("window") || "3600000", 10); // Default 1 hour
+    if (c.req.path === '/v1/performance/stats') {
+      const timeWindow = parseInt(c.req.query('window') || '3600000', 10); // Default 1 hour
       const stats = apiPerformanceMonitor.getStats(timeWindow);
       const queryStats = queryMonitor.getStats();
 
@@ -403,16 +400,13 @@ export function createPerformanceDashboardMiddleware() {
         database: queryStats,
         timestamp: new Date().toISOString(),
         healthcareCompliance: {
-          patientDataPerformance:
-            stats.healthcareCompliance.avgPatientDataAccess < 100
-              ? "compliant"
-              : "warning",
-          appointmentPerformance:
-            stats.healthcareCompliance.avgAppointmentResponse < 150
-              ? "compliant"
-              : "warning",
-          overallCompliance:
-            stats.averageResponseTime < 200 ? "compliant" : "non-compliant",
+          patientDataPerformance: stats.healthcareCompliance.avgPatientDataAccess < 100
+            ? 'compliant'
+            : 'warning',
+          appointmentPerformance: stats.healthcareCompliance.avgAppointmentResponse < 150
+            ? 'compliant'
+            : 'warning',
+          overallCompliance: stats.averageResponseTime < 200 ? 'compliant' : 'non-compliant',
         },
       });
     }
@@ -422,13 +416,13 @@ export function createPerformanceDashboardMiddleware() {
 }
 
 // Setup default alert handlers
-apiPerformanceMonitor.onAlert((alert) => {
-  console.warn("Performance Alert:", alert);
+apiPerformanceMonitor.onAlert(alert => {
+  console.warn('Performance Alert:', alert);
 
   // In production, you would send alerts to monitoring systems
-  if (alert.severity === "critical") {
+  if (alert.severity === 'critical') {
     // Send to alerting system (PagerDuty, Slack, etc.)
-    console.error("CRITICAL PERFORMANCE ALERT:", alert.message);
+    console.error('CRITICAL PERFORMANCE ALERT:', alert.message);
   }
 });
 

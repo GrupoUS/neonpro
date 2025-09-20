@@ -3,9 +3,9 @@
  * Extracted from ai-provider-router.ts for better modularity
  */
 
-import { AIProviderOpt } from "@neonpro/shared";
-import { ProviderConfig, ProviderHealthCheck, ProviderStatus } from "./types";
-import { CircuitBreaker } from "../circuit-breaker";
+import { AIProviderOpt } from '@neonpro/shared';
+import { CircuitBreaker } from '../circuit-breaker';
+import { ProviderConfig, ProviderHealthCheck, ProviderStatus } from './types';
 
 /**
  * Health monitoring utilities for AI providers
@@ -49,7 +49,7 @@ export class ProviderHealthMonitor {
           rate_limit_remaining: 0,
           cost_efficiency: 0,
           last_check: new Date(),
-          error_message: "Provider not found",
+          error_message: 'Provider not found',
         }
       );
     }
@@ -139,14 +139,12 @@ export class ProviderHealthMonitor {
    */
   private async mockHealthCheck(): Promise<void> {
     // Simulate health check call
-    await new Promise((resolve) =>
-      setTimeout(resolve, Math.random() * 100 + 50),
-    );
+    await new Promise(resolve => setTimeout(resolve, Math.random() * 100 + 50));
 
     // Randomly fail some checks for testing
     if (Math.random() < 0.05) {
       // 5% failure rate
-      throw new Error("Health check failed");
+      throw new Error('Health check failed');
     }
   }
 
@@ -165,9 +163,9 @@ export class ProviderHealthMonitor {
     const circuit_breaker = this.circuit_breakers.get(provider);
 
     return Boolean(
-      health &&
-        health.status !== ProviderStatus.UNAVAILABLE &&
-        (!circuit_breaker || !circuit_breaker.isOpen()),
+      health
+        && health.status !== ProviderStatus.UNAVAILABLE
+        && (!circuit_breaker || !circuit_breaker.isOpen()),
     );
   }
 
@@ -175,7 +173,7 @@ export class ProviderHealthMonitor {
    * Get providers that can handle emergency requests
    */
   getEmergencyCapableProviders(configs: ProviderConfig[]): ProviderConfig[] {
-    return configs.filter((provider) => {
+    return configs.filter(provider => {
       // Must be enabled and have healthcare compliance
       if (!provider.enabled || !provider.healthcare_compliance.lgpd_approved) {
         return false;
@@ -183,9 +181,9 @@ export class ProviderHealthMonitor {
 
       // Must have emergency-capable models
       const has_emergency_model = provider.models.some(
-        (model) =>
-          model.healthcare_config.patient_data_processing &&
-          model.performance_config.max_latency_ms <= 5000,
+        model =>
+          model.healthcare_config.patient_data_processing
+          && model.performance_config.max_latency_ms <= 5000,
       );
 
       if (!has_emergency_model) return false;

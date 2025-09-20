@@ -1,4 +1,4 @@
-import type { Context, Next } from "hono";
+import type { Context, Next } from 'hono';
 
 // Minimal audit middleware: collects request metadata and logs to console
 export function auditMiddleware(eventName: string) {
@@ -14,12 +14,12 @@ export function auditMiddleware(eventName: string) {
       path: c.req.path,
       status: c.res.status,
       durationMs,
-      userId: c.get("userId") || c.req.header("x-user-id") || "anonymous",
-      clinicId: c.get("clinicId") || c.req.header("x-clinic-id") || null,
-      ip: c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || null,
-      userAgent: c.req.header("user-agent") || null,
+      userId: c.get('userId') || c.req.header('x-user-id') || 'anonymous',
+      clinicId: c.get('clinicId') || c.req.header('x-clinic-id') || null,
+      ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || null,
+      userAgent: c.req.header('user-agent') || null,
     };
 
-    console.log("AUDIT_EVENT", JSON.stringify(payload));
+    console.log('AUDIT_EVENT', JSON.stringify(payload));
   };
 }
