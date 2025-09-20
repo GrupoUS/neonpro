@@ -528,6 +528,8 @@ async function handleIntentStep(ctx: any, input: v.InferOutput<typeof crudIntent
         validation: validation,
         confirmationRequired,
         consentRequired,
+        data: input.data,
+        metadata: input.metadata,
       }),
     },
   });
