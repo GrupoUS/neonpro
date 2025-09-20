@@ -753,7 +753,7 @@ async function handleExecuteStep(ctx: any, input: v.InferOutput<typeof crudExecu
       data: {
         userId: ctx.userId,
         clinicId: ctx.clinicId,
-        patientId: intentData.patientId,
+        patientId: intentAudit.patientId,
         action: mapOperationToAuditAction(intentData.operation),
         resource: intentData.entity,
         resourceType: mapEntityToResourceType(intentData.entity),
