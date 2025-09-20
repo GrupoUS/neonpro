@@ -228,10 +228,13 @@ export function setupGlobalErrorHandling(loggerInstance: EnhancedStructuredLogge
     });
 
     process.on('unhandledRejection', (reason, promise) => {
-      loggerInstance.error('Unhandled Rejection', { 
+      const errorData = { 
         reason: reason instanceof Error ? reason.message : reason,
         promise: promise.toString() 
-      });
+      };
+      // Pass error as error parameter and additional data as data parameter
+      const error = reason instanceof Error ? reason : new Error(String(reason));
+      loggerInstance.error('Unhandled Rejection', error, errorData);
     });
   }
 }

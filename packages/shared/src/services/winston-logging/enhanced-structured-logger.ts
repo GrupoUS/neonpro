@@ -201,28 +201,29 @@ class HealthcareLogFormat extends winston.Logform.Format {
   constructor(options: { colorize?: boolean; prettyPrint?: boolean } = {}) {
     super();
     this.options = options;
-  }
+    
+    // Define transform as a property, not a method
+    this.transform = (info: any, opts?: any) => {
+      // Apply PII redaction to all string fields
+      if (info.message && typeof info.message === 'string') {
+        info.message = brazilianPIIRedactionService.redactText(info.message);
+      }
 
-  override transform(info: any, opts: any) {
-    // Apply PII redaction to all string fields
-    if (info.message && typeof info.message === 'string') {
-      info.message = brazilianPIIRedactionService.redactText(info.message);
-    }
+      if (info.error && typeof info.error === 'object') {
+        info.error = brazilianPIIRedactionService.redactObject(info.error);
+      }
 
-    if (info.error && typeof info.error === 'object') {
-      info.error = brazilianPIIRedactionService.redactObject(info.error);
-    }
+      if (info.metadata && typeof info.metadata === 'object') {
+        info.metadata = brazilianPIIRedactionService.redactObject(info.metadata);
+      }
 
-    if (info.metadata && typeof info.metadata === 'object') {
-      info.metadata = brazilianPIIRedactionService.redactObject(info.metadata);
-    }
+      // Add healthcare-specific formatting
+      if (info.severity && info.severity !== info.level) {
+        info.severityEmoji = this.getSeverityEmoji(info.severity);
+      }
 
-    // Add healthcare-specific formatting
-    if (info.severity && info.severity !== info.level) {
-      info.severityEmoji = this.getSeverityEmoji(info.severity);
-    }
-
-    return info;
+      return info;
+    };
   }
 
   private getSeverityEmoji(severity: HealthcareSeverity): string {
@@ -571,8 +572,8 @@ export class EnhancedStructuredLogger {
    * Handle critical events
    */
   private handleCriticalEvent(logEntry: WinstonLogEntry): void {
-    // Immediate flush for critical events
-    this.winston.flush();
+    // Immediate end for critical events  
+    this.winston.end();
 
     // TODO: Implement alert system integration
     if (this.config.healthcareCompliance.criticalEventAlerts) {
