@@ -34,7 +34,7 @@ export const handlers = [
     }
 
     // Handle server errors
-    if (request.url.includes('/invalid')) {
+    if (request.url.includes('/dashboard/invalid')) {
       return HttpResponse.json({
         success: false,
         error: {
@@ -137,9 +137,35 @@ export const handlers = [
   http.get('/api/financial/metrics', ({ request }) => {
     const url = new URL(request.url);
     const period = url.searchParams.get('period') || '30d';
+    const date = url.searchParams.get('date');
     const metrics = url.searchParams.get('metrics')?.split(',') || [];
 
-    // Handle authentication errors - no authorization header
+    // Handle validation errors FIRST (before auth check)
+    if (date === 'invalid-date') {
+      return HttpResponse.json({
+        success: false,
+        error: {
+          code: 'INVALID_DATE_FORMAT',
+          message: 'Data em formato de data inválido',
+          field: 'date'
+        }
+      }, { status: 400 });
+    }
+
+    if (period === 'invalid') {
+      return HttpResponse.json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Invalid period parameter',
+          details: 'Period must be one of: 7d, 30d, 90d, 1y',
+          field: 'period',
+          requestId: 'req-' + Math.random().toString(36).substr(2, 9)
+        }
+      }, { status: 400 });
+    }
+
+    // Handle authentication errors AFTER validation - no authorization header
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return HttpResponse.json({
@@ -160,20 +186,6 @@ export const handlers = [
           message: 'Invalid token'
         }
       }, { status: 401 });
-    }
-
-    // Handle validation errors
-    if (period === 'invalid') {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid period parameter',
-          details: 'Period must be one of: 7d, 30d, 90d, 1y',
-          field: 'period',
-          requestId: 'req-' + Math.random().toString(36).substr(2, 9)
-        }
-      }, { status: 400 });
     }
 
     // Handle server errors
@@ -258,6 +270,10 @@ export const handlers = [
         lgpdCompliant: true,
         dataAnonymized: true
       }
+    }, {
+      headers: {
+        'Cache-Control': 'max-age=300'
+      }
     });
   }),
 
@@ -267,7 +283,34 @@ export const handlers = [
     const period = url.searchParams.get('period') || '12m';
     const metric = url.searchParams.get('metric') || 'revenue';
 
-    // Handle authentication errors - no authorization header
+    // Handle validation errors FIRST (before auth check)
+    if (metric === 'invalid') {
+      return HttpResponse.json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Invalid metric parameter',
+          details: 'Metric must be one of: revenue, expenses, profit, arr, mrr',
+          field: 'metric',
+          requestId: 'req-' + Math.random().toString(36).substr(2, 9)
+        }
+      }, { status: 400 });
+    }
+
+    if (period === 'invalid') {
+      return HttpResponse.json({
+        success: false,
+        error: {
+          code: 'VALIDATION_ERROR',
+          message: 'Invalid period parameter',
+          details: 'Period must be one of: 7d, 30d, 90d, 12m',
+          field: 'period',
+          requestId: 'req-' + Math.random().toString(36).substr(2, 9)
+        }
+      }, { status: 400 });
+    }
+
+    // Handle authentication errors AFTER validation - no authorization header
     const authHeader = request.headers.get('authorization');
     if (!authHeader) {
       return HttpResponse.json({
@@ -288,20 +331,6 @@ export const handlers = [
           message: 'Invalid token'
         }
       }, { status: 401 });
-    }
-
-    // Handle validation errors
-    if (period === 'invalid') {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid period parameter',
-          details: 'Period must be one of: 7d, 30d, 90d, 12m',
-          field: 'period',
-          requestId: 'req-' + Math.random().toString(36).substr(2, 9)
-        }
-      }, { status: 400 });
     }
 
     return HttpResponse.json({
