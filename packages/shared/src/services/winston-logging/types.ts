@@ -280,10 +280,3 @@ export const EnhancedStructuredLoggingConfigSchema = z.object({
 });
 
 export type EnhancedStructuredLoggingConfig = z.infer<typeof EnhancedStructuredLoggingConfigSchema>;
-export type WinstonLogLevel = z.infer<typeof WinstonLogLevelSchema>;
-export type HealthcareSeverity = z.infer<typeof HealthcareSeveritySchema>;
-export type BrazilianIdentifier = z.infer<typeof BrazilianIdentifierSchema>;
-export type BrazilianHealthcareContext = z.infer<typeof BrazilianHealthcareContextSchema>;
-export type EnhancedLGPDCompliance = z.infer<typeof EnhancedLGPDComplianceSchema>;
-export type WinstonLogEntry = z.infer<typeof WinstonLogEntrySchema>;
-export type WinstonTransportConfig = z.infer<typeof WinstonTransportConfigSchema>;

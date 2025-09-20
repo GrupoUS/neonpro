@@ -11,6 +11,8 @@
  */
 
 // Error severity levels
+import { TRPCError } from '@trpc/server';
+
 export enum ErrorSeverity {
   LOW = 'low',
   MEDIUM = 'medium',
@@ -386,3 +388,69 @@ export const HealthcareErrors = {
       { ethicalCode, violation }
     ),
 };
+/**
+ * Healthcare-specific tRPC error that combines TRPCError with healthcare compliance
+ */
+export class HealthcareTRPCError extends TRPCError {
+  public readonly healthcareContext: boolean = true;
+  public readonly lgpdCompliant: boolean;
+  public readonly timestamp: Date;
+  public readonly id: string;
+  public readonly healthcareCode?: string;
+  public readonly metadata?: Record<string, unknown>;
+
+  constructor(
+    code: any,
+    message: string,
+    healthcareCode?: string,
+    metadata?: Record<string, unknown>
+  ) {
+    super({ code, message });
+    
+    this.id = crypto.randomUUID();
+    this.timestamp = new Date();
+    this.healthcareCode = healthcareCode;
+    this.metadata = metadata;
+    this.lgpdCompliant = this.checkLGPDCompliance(message);
+  }
+
+  /**
+   * Get audit trail information
+   */
+  public getAuditInfo() {
+    return {
+      errorId: this.id,
+      code: this.code,
+      healthcareCode: this.healthcareCode,
+      healthcareContext: this.healthcareContext,
+      lgpdCompliant: this.lgpdCompliant,
+      timestamp: this.timestamp,
+      metadata: this.metadata,
+    };
+  }
+
+  /**
+   * Check if error message is LGPD compliant
+   */
+  private checkLGPDCompliance(message: string): boolean {
+    return !PERSONAL_DATA_PATTERNS.some(pattern => pattern.test(message));
+  }
+
+  /**
+   * Serialize error for logging
+   */
+  public toJSON() {
+    return {
+      id: this.id,
+      name: this.name,
+      message: this.message,
+      code: this.code,
+      healthcareCode: this.healthcareCode,
+      healthcareContext: this.healthcareContext,
+      lgpdCompliant: this.lgpdCompliant,
+      timestamp: this.timestamp.toISOString(),
+      metadata: this.metadata,
+      stack: this.stack,
+    };
+  }
+}

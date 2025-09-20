@@ -3,18 +3,13 @@
   "version": "0.1.0",
   "description": "Security infrastructure for NeonPro healthcare platform",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "require": "./dist/index.js"
-    },
-    "./auth/enterprise": {
-      "types": "./dist/auth/enterprise/index.d.ts",
-      "import": "./dist/auth/enterprise/index.mjs",
-      "require": "./dist/auth/enterprise/index.js"
     }
   },
   "scripts": {
@@ -44,9 +39,8 @@
     "vitest": "^3.2.4"
   },
   "peerDependencies": {
-    "@neonpro/config": "0.1.0",
-    "@neonpro/types": "0.1.0",
-    "next": ">=14.0.0"
+    "@neonpro/config": "workspace:*",
+    "@neonpro/types": "workspace:*"
   },
   "files": [
     "dist"

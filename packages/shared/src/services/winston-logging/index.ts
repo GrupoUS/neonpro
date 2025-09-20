@@ -160,6 +160,7 @@ export const logger = {
   // Utility methods
   child: (context: any) => enhancedLogger.child(context),
   getCorrelationId: () => enhancedLogger.getCorrelationId(),
+  generateCorrelationId: () => enhancedLogger.generateCorrelationId(),
   setCorrelationId: (id: string) => enhancedLogger.setCorrelationId(id),
   clearCorrelationId: () => enhancedLogger.clearCorrelationId(),
   setRequestContext: (context: any) => enhancedLogger.setRequestContext(context),

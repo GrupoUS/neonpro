@@ -1,109 +1,221 @@
-// Audit types for the database service
+/**
+ * Audit event for compliance and security tracking
+ */
 export interface AuditEvent {
   id: string;
   timestamp: string;
+  action: string;
+  entityType: string;
+  entityId: string;
+  actorId: string;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Compliance check result for LGPD/healthcare regulations
+ */
+export interface ComplianceCheck {
+  status: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING';
+  riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  risk_level: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL'; // Legacy support
+  violations: string[];
+  isCompliant: boolean;
+  lastChecked?: string;
+  recommendations?: string[];
+}
+
+/**
+ * Data access audit record
+ */
+export interface DataAccessAudit {
+  id: string;
+  userId: string;
+  patientId: string;
+  dataType: string;
+  action: 'read' | 'write' | 'delete' | 'export';
+  timestamp: string;
+  source: string;
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Privacy-safe logging utility
+ */
+export interface PrivateLogEntry {
+  level: 'info' | 'warn' | 'error' | 'debug';
+  message: string;
+  timestamp: string;
+  redactedFields: string[];
+  metadata?: Record<string, unknown>;
+}
+
+/**
+ * Audit log request for creating new audit entries
+ */
+export interface AuditLogRequest {
+  sessionId?: string;
   userId: string;
   action: string;
-  resource: string;
-  details?: any;
-}
-
-export interface AuditLogRequest {
-  userId: string;
-  action?: string;
-  resource?: string;
-  details?: any;
-  eventType?: string;
+  eventType?: string; // Legacy support
+  userRole?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
+  dataClassification?: MedicalDataClassification;
   description?: string;
+  resourceType?: ResourceType; // Make optional for backward compatibility
+  resourceId?: string;
+  resource?: string; // Legacy support
+  clinicId?: string;
+  metadata?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
-  clinicId?: string;
-  metadata?: any;
-  sessionId?: string;
-  userRole?: "doctor" | "patient" | "nurse" | "admin" | "system";
-  dataClassification?: MedicalDataClassification;
+  source?: string;
 }
 
-export interface ComplianceCheck {
-  status?: string;
-  risk_level?: string;
-  violations: string[];
-  riskLevel: string;
-  isCompliant: boolean;
-}
-
-export interface AuditStatus {
-  status?: string;
-  risk_level?: string;
-  violations?: string[];
-}
-
+/**
+ * Compliance report for healthcare regulations
+ */
 export interface ComplianceReport {
-  reportPeriod: {
+  id: string;
+  generatedAt: string;
+  reportType: 'LGPD' | 'ANVISA' | 'CFM' | 'GENERAL';
+  periodStart: string;
+  periodEnd: string;
+  reportPeriod?: {
     startDate: string;
     endDate: string;
   };
   summary: {
     totalEvents: number;
-    compliantEvents: number;
-    nonCompliantEvents: number;
-    complianceRate: number;
+    complianceScore: number;
+    violationsCount: number;
+    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    compliantEvents?: number;
+    nonCompliantEvents?: number;
+    complianceRate?: number;
   };
-  riskLevels: {
+  violations: Array<{
+    id: string;
+    type: string;
+    severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+    description: string;
+    timestamp: string;
+    resolved: boolean;
+  }> | Record<string, number>; // Support both formats
+  riskLevels?: {
     low: number;
     medium: number;
     high: number;
     critical: number;
   };
-  violations: Record<string, number>;
   recommendations: string[];
+  metadata?: Record<string, unknown>;
 }
 
+/**
+ * Search criteria for audit logs
+ */
 export interface AuditSearchCriteria {
+  startDate?: string | Date;
+  endDate?: string | Date;
   userId?: string;
+  userIds?: string[]; // Multiple user IDs
+  sessionIds?: string[]; // Multiple session IDs
   action?: string;
-  resource?: string;
-  startDate?: Date;
-  endDate?: Date;
+  eventTypes?: string[]; // Multiple event types
+  resourceType?: ResourceType;
+  resourceId?: string;
+  userRole?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
+  dataClassification?: MedicalDataClassification;
+  dataClassifications?: MedicalDataClassification[]; // Multiple classifications
+  ipAddress?: string;
   clinicId?: string;
-  sessionIds?: string[];
-  userIds?: string[];
-  eventTypes?: string[];
-  dataClassifications?: string[];
-  complianceStatus?: boolean;
+  complianceStatus?: 'compliant' | 'non_compliant' | 'pending';
   limit?: number;
+  offset?: number;
+  sortBy?: 'timestamp' | 'action' | 'userId';
+  sortOrder?: 'asc' | 'desc';
 }
 
-export interface MedicalDataClassification {
-  id: string;
-  dataType: string;
-  sensitivity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-  retentionPeriod: number;
-  encryptionRequired: boolean;
-  accessControls: string[];
-  complianceStandards: string[];
-}
+/**
+ * Medical data classification levels
+ */
+export type MedicalDataClassification = 
+  | 'public'
+  | 'internal'
+  | 'confidential'
+  | 'restricted'
+  | 'pii'
+  | 'phi'
+  | 'sensitive'
+  | 'general'; // Legacy support
 
+/**
+ * Resource types for audit tracking
+ */
+export type ResourceType =
+  | 'patient'
+  | 'appointment'
+  | 'medical_record'
+  | 'prescription'
+  | 'payment'
+  | 'user'
+  | 'clinic'
+  | 'report'
+  | 'system'
+  | 'auth'
+  | 'api'
+  | 'file'
+  | 'configuration';
+
+/**
+ * Audit status types
+ */
+export type AuditStatusType =
+  | 'pending'
+  | 'processed'
+  | 'archived'
+  | 'deleted'
+  | 'error';
+
+/**
+ * Real-time compliance audit log entry
+ */
 export interface RTCAuditLogEntry {
   id: string;
+  timestamp: Date | string;
+  event?: string; // Add missing property
   sessionId?: string;
   userId: string;
-  eventType: string;
-  userRole: string;
-  dataClassification: string;
+  action: string;
+  userRole?: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
+  resourceType?: ResourceType; // Make optional
+  resourceId?: string;
+  resource?: string; // Add legacy support
+  dataClassification?: MedicalDataClassification; // Make optional
   description?: string;
-  timestamp: string;
+  metadata?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
-  clinicId?: string;
-  metadata?: Record<string, unknown>;
-  complianceCheck: {
+  source?: string;
+  complianceFlags?: string[];
+  complianceCheck?: {
     isCompliant: boolean;
     violations: string[];
-    riskLevel: string;
+    riskLevel: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   };
+  // Add missing properties from service usage
+  severity?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  complianceStatus?: 'COMPLIANT' | 'NON_COMPLIANT' | 'PENDING_REVIEW';
+  violations?: Array<{ rule: string; description: string; severity: string }> | Record<string, unknown>;
+  patientContext?: {
+    patientId?: string;
+    cpf?: string;
+    medicalRecordNumber?: string;
+  };
+  clinicContext?: {
+    clinicId?: string;
+    cnpj?: string;
+  };
+  riskScore?: number;
+  status?: AuditStatusType;
+  processedAt?: string;
 }
-
-// Audit status types
-export type ResourceType = 'PATIENT_RECORD' | 'PATIENT_DATA' | 'PATIENT_CONSENT' | 'APPOINTMENT' | 'COMMUNICATION' | 'AI_PREDICTION' | 'AI_MODEL_PERFORMANCE' | 'TELEMEDICINE_SESSION' | 'PRESCRIPTION' | 'COMPLIANCE_REPORT' | 'REPORT' | 'SYSTEM_CONFIG' | 'USER_ACCOUNT';
-export type AuditStatusType = 'SUCCESS' | 'FAILED' | 'FAILURE' | 'PARTIAL_SUCCESS' | 'BLOCKED';

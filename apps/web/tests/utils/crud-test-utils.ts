@@ -252,18 +252,7 @@ export async function executeCrudOperation(
 
     const data = await response.json();
 
-    // Flatten structure to match test expectations
-    if (data.data) {
-      return {
-        success: data.success,
-        executionId: data.data.executionId,
-        result: data.data.result,
-        auditTrail: data.auditTrail,
-        performance: data.meta?.performance,
-        meta: data.meta,
-      };
-    }
-
+    // Return the structure as-is since it matches test expectations
     return data;
   } catch (error) {
     clearTimeout(timeoutId);
@@ -636,6 +625,7 @@ export class ComplianceValidator {
     };
   }
 
+  /**
    * Validate data subject right to rectification (Art. 16)
    */
   validateRectificationRequest(rectificationRequest: any, patientData: any): {

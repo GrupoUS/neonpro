@@ -203,7 +203,7 @@ class HealthcareLogFormat extends winston.Logform.Format {
     this.options = options;
   }
 
-  transform(info: any, opts: any) {
+  override transform(info: any, opts: any) {
     // Apply PII redaction to all string fields
     if (info.message && typeof info.message === 'string') {
       info.message = brazilianPIIRedactionService.redactText(info.message);
@@ -252,6 +252,17 @@ export class EnhancedStructuredLogger {
   constructor(config: EnhancedStructuredLoggingConfig) {
     this.config = this.validateConfig(config);
     this.winston = this.createWinstonLogger();
+  }
+
+  /**
+   * Validate and merge configuration
+   */
+  private validateConfig(config: EnhancedStructuredLoggingConfig): EnhancedStructuredLoggingConfig {
+    // Basic validation - could be enhanced with schema validation
+    if (!config.service) {
+      throw new Error('Service name is required in logging configuration');
+    }
+    return config;
   }
 
   /**
@@ -323,13 +334,13 @@ export class EnhancedStructuredLogger {
     } else {
       formats.push(
         winston.format.printf((info) => {
-          const timestamp = info.timestamp ? new Date(info.timestamp).toLocaleTimeString() : '';
+          const timestamp = info.timestamp ? new Date(info.timestamp as string).toLocaleTimeString() : '';
           const severityEmoji = info.severityEmoji || '';
           const correlationId = info.correlationId ? `[${info.correlationId}]` : '';
           
           return `${timestamp} ${severityEmoji} [${info.level.toUpperCase()}] ${correlationId} ${info.service}: ${info.message} ${
             info.metadata ? JSON.stringify(info.metadata) : ''
-          } ${info.error ? `\nError: ${info.error.stack || info.error.message}` : ''}`;
+          } ${info.error ? `\nError: ${(info.error as Error).stack || (info.error as Error).message}` : ''}`;
         })
       );
     }

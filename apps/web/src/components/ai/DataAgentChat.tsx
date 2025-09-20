@@ -4,10 +4,10 @@
  *
  * Integrates with:
  * - CopilotKit for chat UI framework
- * - AG-UI Protocol for real-time agent communication  
+ * - AG-UI Protocol for real-time agent communication
  * - ottomator-agents backend logic
  * - Newly created API endpoints: /api/ai/data-agent, /api/ai/sessions, /api/ai/feedback
- * 
+ *
  * Features:
  * - Natural language queries for client data, appointments, financial information
  * - Portuguese language support for Brazilian healthcare market
@@ -21,7 +21,7 @@
 'use client';
 
 import { useCopilotContext, useCopilotReadable } from '@copilotkit/react-core';
-import { CopilotChat, CopilotPopup } from '@copilotkit/react-ui';
+import { CopilotPopup } from '@copilotkit/react-ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Bot,
@@ -44,7 +44,7 @@ import {
   User,
   Users,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ActionHandlers } from './ActionHandlers';
 
 import {
@@ -87,23 +87,27 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui';
+import {
+  AGUIConnectionState,
+  createAGUIProtocolClient,
+  useAGUIProtocol,
+} from '@/services/agui-protocol';
 import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
-import { createAGUIProtocolClient, useAGUIProtocol, AGUIConnectionState } from '@/services/agui-protocol';
 
 // Import our specific types for AI agent integration
 import type {
   AgentAction,
   AgentResponse,
+  AppointmentData,
   ChatMessage,
   ChatState,
+  ClientData,
   DataAgentRequest,
   DataAgentResponse,
-  AppointmentData,
-  ClientData,
   FinancialData,
   UserQuery,
-} from '@/types/ai-agent';
+} from '@neonpro/types';
 
 export interface DataAgentChatProps {
   /** Current user context for role-based access */
@@ -220,7 +224,10 @@ const submitFeedback = async (sessionId: string, feedback: FeedbackRequest): Pro
   });
 };
 
-const submitQuickFeedback = async (sessionId: string, feedback: QuickFeedbackRequest): Promise<any> => {
+const submitQuickFeedback = async (
+  sessionId: string,
+  feedback: QuickFeedbackRequest,
+): Promise<any> => {
   return apiCall(`/sessions/${sessionId}/feedback/quick`, {
     method: 'POST',
     body: JSON.stringify(feedback),
@@ -237,23 +244,31 @@ const ActionButton: React.FC<{
 }> = ({ action, onExecute }) => {
   const getIcon = (iconName: string) => {
     switch (iconName) {
-      case 'user': return <User className="h-3 w-3" />;
-      case 'calendar': return <Calendar className="h-3 w-3" />;
-      case 'chart-bar': return <DollarSign className="h-3 w-3" />;
-      case 'download': return <Download className="h-3 w-3" />;
-      case 'refresh': return <RefreshCw className="h-3 w-3" />;
-      case 'plus': return <Plus className="h-3 w-3" />;
-      case 'help': return <MessageSquare className="h-3 w-3" />;
-      default: return <ExternalLink className="h-3 w-3" />;
+      case 'user':
+        return <User className='h-3 w-3' />;
+      case 'calendar':
+        return <Calendar className='h-3 w-3' />;
+      case 'chart-bar':
+        return <DollarSign className='h-3 w-3' />;
+      case 'download':
+        return <Download className='h-3 w-3' />;
+      case 'refresh':
+        return <RefreshCw className='h-3 w-3' />;
+      case 'plus':
+        return <Plus className='h-3 w-3' />;
+      case 'help':
+        return <MessageSquare className='h-3 w-3' />;
+      default:
+        return <ExternalLink className='h-3 w-3' />;
     }
   };
 
   return (
     <Button
       variant={action.primary ? 'default' : 'outline'}
-      size="sm"
+      size='sm'
       onClick={() => onExecute(action)}
-      className="flex items-center gap-2 text-xs"
+      className='flex items-center gap-2 text-xs'
     >
       {action.icon && getIcon(action.icon)}
       {action.label}
@@ -276,10 +291,11 @@ const MessageFeedback: React.FC<{
   const [submitting, setSubmitting] = useState(false);
 
   const submitQuickFeedbackMutation = useMutation({
-    mutationFn: (helpful: boolean) => submitQuickFeedback(sessionId, {
-      messageId,
-      helpful,
-    }),
+    mutationFn: (helpful: boolean) =>
+      submitQuickFeedback(sessionId, {
+        messageId,
+        helpful,
+      }),
     onSuccess: () => {
       onFeedbackSubmitted();
     },
@@ -301,7 +317,7 @@ const MessageFeedback: React.FC<{
 
   const handleDetailedFeedback = () => {
     if (rating === 0) return;
-    
+
     submitDetailedFeedbackMutation.mutate({
       rating,
       comment: comment.trim() || undefined,
@@ -311,19 +327,19 @@ const MessageFeedback: React.FC<{
   };
 
   return (
-    <div className="flex items-center gap-2 mt-2">
-      <div className="flex gap-1">
+    <div className='flex items-center gap-2 mt-2'>
+      <div className='flex gap-1'>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant="ghost"
-                size="sm"
+                variant='ghost'
+                size='sm'
                 onClick={() => handleQuickFeedback(true)}
                 disabled={submitQuickFeedbackMutation.isPending}
-                className="h-6 w-6 p-0 text-muted-foreground hover:text-green-600"
+                className='h-6 w-6 p-0 text-muted-foreground hover:text-green-600'
               >
-                <ThumbsUp className="h-3 w-3" />
+                <ThumbsUp className='h-3 w-3' />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -336,13 +352,13 @@ const MessageFeedback: React.FC<{
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant="ghost"
-                size="sm"
+                variant='ghost'
+                size='sm'
                 onClick={() => handleQuickFeedback(false)}
                 disabled={submitQuickFeedbackMutation.isPending}
-                className="h-6 w-6 p-0 text-muted-foreground hover:text-red-600"
+                className='h-6 w-6 p-0 text-muted-foreground hover:text-red-600'
               >
-                <ThumbsDown className="h-3 w-3" />
+                <ThumbsDown className='h-3 w-3' />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -354,30 +370,30 @@ const MessageFeedback: React.FC<{
 
       <Dialog open={showDetailedFeedback} onOpenChange={setShowDetailedFeedback}>
         <DialogTrigger asChild>
-          <Button variant="ghost" size="sm" className="h-6 text-xs text-muted-foreground">
+          <Button variant='ghost' size='sm' className='h-6 text-xs text-muted-foreground'>
             Detalhes
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className='sm:max-w-md'>
           <DialogHeader>
             <DialogTitle>Avaliar Resposta</DialogTitle>
             <DialogDescription>
               Sua avaliação nos ajuda a melhorar o atendimento
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className='space-y-4'>
             <div>
-              <label className="text-sm font-medium">Nota (1-5 estrelas)</label>
-              <div className="flex gap-1 mt-1">
-                {[1, 2, 3, 4, 5].map((star) => (
+              <label className='text-sm font-medium'>Nota (1-5 estrelas)</label>
+              <div className='flex gap-1 mt-1'>
+                {[1, 2, 3, 4, 5].map(star => (
                   <Button
                     key={star}
-                    variant="ghost"
-                    size="sm"
+                    variant='ghost'
+                    size='sm'
                     onClick={() => setRating(star)}
                     className={cn(
-                      "h-8 w-8 p-0",
-                      rating >= star ? "text-yellow-500" : "text-muted-foreground"
+                      'h-8 w-8 p-0',
+                      rating >= star ? 'text-yellow-500' : 'text-muted-foreground',
                     )}
                   >
                     ⭐
@@ -387,25 +403,25 @@ const MessageFeedback: React.FC<{
             </div>
 
             <div>
-              <label className="text-sm font-medium">Comentário (opcional)</label>
+              <label className='text-sm font-medium'>Comentário (opcional)</label>
               <Textarea
                 value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Como podemos melhorar?"
-                className="mt-1"
+                onChange={e => setComment(e.target.value)}
+                placeholder='Como podemos melhorar?'
+                className='mt-1'
                 rows={3}
               />
             </div>
 
-            <div className="flex gap-2">
+            <div className='flex gap-2'>
               <Button
                 onClick={handleDetailedFeedback}
                 disabled={rating === 0 || submitDetailedFeedbackMutation.isPending}
-                className="flex-1"
+                className='flex-1'
               >
                 Enviar Avaliação
               </Button>
-              <Button variant="outline" onClick={() => setShowDetailedFeedback(false)}>
+              <Button variant='outline' onClick={() => setShowDetailedFeedback(false)}>
                 Cancelar
               </Button>
             </div>
@@ -433,40 +449,43 @@ const DataSummaryCard: React.FC<{
     switch (type) {
       case 'clients':
         return (
-          <div key={index} className="p-2 border rounded-md">
-            <div className="font-medium text-sm">{item.name}</div>
-            <div className="text-xs text-muted-foreground">
+          <div key={index} className='p-2 border rounded-md'>
+            <div className='font-medium text-sm'>{item.name}</div>
+            <div className='text-xs text-muted-foreground'>
               {item.email} • {item.status}
             </div>
           </div>
         );
-      
+
       case 'appointments':
         return (
-          <div key={index} className="p-2 border rounded-md">
-            <div className="font-medium text-sm">{item.clientName}</div>
-            <div className="text-xs text-muted-foreground">
+          <div key={index} className='p-2 border rounded-md'>
+            <div className='font-medium text-sm'>{item.clientName}</div>
+            <div className='text-xs text-muted-foreground'>
               {formatDateTime(item.scheduledAt)} • {item.serviceName}
             </div>
-            <Badge variant="outline" className="text-xs mt-1">
+            <Badge variant='outline' className='text-xs mt-1'>
               {item.status}
             </Badge>
           </div>
         );
-      
+
       case 'financial':
         return (
-          <div key={index} className="p-2 border rounded-md">
-            <div className="font-medium text-sm">{item.clientName}</div>
-            <div className="text-xs text-muted-foreground">
+          <div key={index} className='p-2 border rounded-md'>
+            <div className='font-medium text-sm'>{item.clientName}</div>
+            <div className='text-xs text-muted-foreground'>
               {item.serviceName} • {formatCurrency(item.amount)}
             </div>
-            <Badge variant={item.status === 'paid' ? 'default' : 'destructive'} className="text-xs mt-1">
+            <Badge
+              variant={item.status === 'paid' ? 'default' : 'destructive'}
+              className='text-xs mt-1'
+            >
               {item.status}
             </Badge>
           </div>
         );
-      
+
       default:
         return null;
     }
@@ -475,35 +494,37 @@ const DataSummaryCard: React.FC<{
   if (!data || data.length === 0) return null;
 
   return (
-    <Card className="mt-3">
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium">{title}</CardTitle>
-          <Badge variant="secondary" className="text-xs">
+    <Card className='mt-3'>
+      <CardHeader className='pb-2'>
+        <div className='flex items-center justify-between'>
+          <CardTitle className='text-sm font-medium'>{title}</CardTitle>
+          <Badge variant='secondary' className='text-xs'>
             {data.length} {data.length === 1 ? 'item' : 'itens'}
           </Badge>
         </div>
         {summary && (
-          <CardDescription className="text-xs">
-            {type === 'financial' && (
-              <span>Total: {formatCurrency(summary.total)}</span>
-            )}
+          <CardDescription className='text-xs'>
+            {type === 'financial' && <span>Total: {formatCurrency(summary.total)}</span>}
           </CardDescription>
         )}
       </CardHeader>
-      <CardContent className="pt-0">
-        <div className="space-y-2">
-          {data.slice(0, expanded ? data.length : displayLimit).map((item, index) => renderItem(item, index))}
-          
+      <CardContent className='pt-0'>
+        <div className='space-y-2'>
+          {data.slice(0, expanded ? data.length : displayLimit).map((item, index) =>
+            renderItem(item, index)
+          )}
+
           {data.length > displayLimit && (
             <Button
-              variant="ghost"
-              size="sm"
+              variant='ghost'
+              size='sm'
               onClick={() => setExpanded(!expanded)}
-              className="w-full justify-center text-xs"
+              className='w-full justify-center text-xs'
             >
               {expanded ? 'Ver menos' : `Ver mais ${data.length - displayLimit} itens`}
-              <ChevronDown className={cn("h-3 w-3 ml-1 transition-transform", expanded && "rotate-180")} />
+              <ChevronDown
+                className={cn('h-3 w-3 ml-1 transition-transform', expanded && 'rotate-180')}
+              />
             </Button>
           )}
         </div>
@@ -546,8 +567,8 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
 
   // AG-UI Protocol integration
   const aguiConfig = {
-    websocketUrl: process.env.NODE_ENV === 'production' 
-      ? `wss://${window.location.host}/api/agents/ag-ui-rag-agent` 
+    websocketUrl: process.env.NODE_ENV === 'production'
+      ? `wss://${window.location.host}/api/agents/ag-ui-rag-agent`
       : `ws://${window.location.host}/api/agents/ag-ui-rag-agent`,
     httpUrl: process.env.NODE_ENV === 'production'
       ? `https://${window.location.host}/api/agents/ag-ui-rag-agent`
@@ -561,23 +582,25 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     timeout: 30000,
   };
 
-  const { client: aguiClient, state: aguiState, session: aguiSession } = useAGUIProtocol(aguiConfig);
+  const { client: aguiClient, state: aguiState, session: aguiSession } = useAGUIProtocol(
+    aguiConfig,
+  );
 
   // Connect to AG-UI Protocol when component mounts
   useEffect(() => {
     aguiClient.connect();
-    
+
     // Handle AG-UI Protocol events
     const handleMessage = (message: any) => {
       const assistantMessage: ChatMessage = {
         id: message.id,
         role: 'assistant',
         content: message.content,
-        timestamp: new Date(),
+        timestamp: new Date(message.timestamp || Date.now()),
         actions: message.actions || [],
         metadata: message.metadata || {},
       };
-      
+
       setMessages(prev => [...prev, assistantMessage]);
       setIsLoading(false);
     };
@@ -587,7 +610,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
         id: `error_${Date.now()}`,
         role: 'assistant',
         content: 'Erro na conexão com o assistente. Verifique sua conexão e tente novamente.',
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
       setIsLoading(false);
@@ -619,9 +642,13 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     queryKey: ['session', currentSessionId],
     queryFn: () => getSession(currentSessionId!),
     enabled: !!currentSessionId,
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data.success && data.chatState?.messages) {
-        setMessages(data.chatState.messages);
+        const normalized = data.chatState.messages.map((m: any) => ({
+          ...m,
+          timestamp: m.timestamp ? new Date(m.timestamp) : new Date(),
+        }));
+        setMessages(normalized);
       }
     },
   });
@@ -629,7 +656,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   // Create new session mutation
   const createSessionMutation = useMutation({
     mutationFn: createSession,
-    onSuccess: (data) => {
+    onSuccess: data => {
       if (data.success) {
         setCurrentSessionId(data.session.id);
         onSessionChange?.(data.session.id);
@@ -641,13 +668,13 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: sendDataAgentQuery,
-    onSuccess: (response) => {
+    onSuccess: response => {
       if (response.success && response.response) {
         const assistantMessage: ChatMessage = {
           id: response.response.id,
           role: 'assistant',
           content: response.response.message,
-          timestamp: new Date().toISOString(),
+          timestamp: new Date(response.response.timestamp || Date.now()),
           data: response.response.data,
           actions: response.response.actions,
         };
@@ -666,13 +693,13 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       }
       setIsLoading(false);
     },
-    onError: (error) => {
+    onError: error => {
       console.error('Failed to send message:', error);
       const errorMessage: ChatMessage = {
         id: `error_${Date.now()}`,
         role: 'assistant',
         content: 'Desculpe, ocorreu um erro ao processar sua consulta. Tente novamente.',
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(),
       };
       setMessages(prev => [...prev, errorMessage]);
       setIsLoading(false);
@@ -710,7 +737,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       id: `user_${Date.now()}`,
       role: 'user',
       content: query,
-      timestamp: new Date().toISOString(),
+      timestamp: new Date(),
     };
 
     setMessages(prev => [...prev, userMessage]);
@@ -725,7 +752,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
           userRole: userContext.userRole,
           domain: userContext.domain,
         });
-        
+
         // Update session context with user role
         updateAGUISessionContext({
           userRole: userContext.userRole,
@@ -749,7 +776,16 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
         userContext,
       });
     }
-  }, [inputValue, isLoading, currentSessionId, userContext, aguiClient, createSessionMutation, sendMessageMutation, updateAGUISessionContext]);
+  }, [
+    inputValue,
+    isLoading,
+    currentSessionId,
+    userContext,
+    aguiClient,
+    createSessionMutation,
+    sendMessageMutation,
+    updateAGUISessionContext,
+  ]);
 
   // Handle action execution
   const handleActionExecute = useCallback((action: AgentAction) => {
@@ -760,23 +796,23 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
           window.open(`/clientes/${action.payload.clientId}`, '_blank');
         }
         break;
-      
+
       case 'create_appointment':
         // Navigate to appointment creation
         window.open('/agendamentos/novo', '_blank');
         break;
-      
+
       case 'export_data':
         // Trigger data export
         console.log('Export data action:', action.payload);
         break;
-      
+
       case 'navigate':
         if (action.payload?.path) {
           window.open(action.payload.path, '_blank');
         }
         break;
-      
+
       case 'refresh':
         // Re-run the last query
         if (messages.length > 0) {
@@ -787,7 +823,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
           }
         }
         break;
-      
+
       default:
         console.log('Unknown action type:', action.type);
     }
@@ -817,48 +853,51 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
 
   // Render chat interface
   const chatInterface = (
-    <Card className={cn(
-      'flex flex-col w-full',
-      mode === 'inline' ? 'h-full' : 'w-96 h-[500px]',
-      mobileOptimized && 'touch-manipulation',
-      'border-0 shadow-lg rounded-xl overflow-hidden'
-    )} data-testid={testId}>
+    <Card
+      className={cn(
+        'flex flex-col w-full',
+        mode === 'inline' ? 'h-full' : 'w-96 h-[500px]',
+        mobileOptimized && 'touch-manipulation',
+        'border-0 shadow-lg rounded-xl overflow-hidden',
+      )}
+      data-testid={testId}
+    >
       {/* Header */}
-      <CardHeader className="pb-3 border-b bg-gradient-to-r from-primary/5 to-blue-500/5">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Brain className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg font-semibold">
+      <CardHeader className='pb-3 border-b bg-gradient-to-r from-primary/5 to-blue-500/5'>
+        <div className='flex items-center justify-between'>
+          <div className='flex items-center gap-2'>
+            <Brain className='h-5 w-5 text-primary' />
+            <CardTitle className='text-lg font-semibold'>
               Consulta de Dados
             </CardTitle>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-xs">
+          <div className='flex items-center gap-2'>
+            <Badge variant='outline' className='text-xs'>
               {userContext.userRole}
             </Badge>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                  <MoreHorizontal className="h-4 w-4" />
+                <Button variant='ghost' size='sm' className='h-8 w-8 p-0'>
+                  <MoreHorizontal className='h-4 w-4' />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
+              <DropdownMenuContent align='end'>
                 <DropdownMenuItem onClick={() => setShowSettings(true)}>
-                  <Settings className="h-4 w-4 mr-2" />
+                  <Settings className='h-4 w-4 mr-2' />
                   Configurações
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem 
+                <DropdownMenuItem
                   onClick={() => {
                     setMessages([]);
                     setCurrentSessionId(null);
                     onSessionChange?.(null);
                   }}
-                  className="text-destructive"
+                  className='text-destructive'
                 >
-                  <RefreshCw className="h-4 w-4 mr-2" />
+                  <RefreshCw className='h-4 w-4 mr-2' />
                   Nova Conversa
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -868,32 +907,35 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       </CardHeader>
 
       {/* Messages Area */}
-      <CardContent className="flex-1 flex flex-col p-0">
-        <ScrollArea className="flex-1 px-4" style={{ maxHeight: mode === 'inline' ? maxHeight : undefined }}>
-          <div className="space-y-4 py-4">
+      <CardContent className='flex-1 flex flex-col p-0'>
+        <ScrollArea
+          className='flex-1 px-4'
+          style={{ maxHeight: mode === 'inline' ? maxHeight : undefined }}
+        >
+          <div className='space-y-4 py-4'>
             {/* Welcome message */}
             {messages.length === 0 && !isLoadingSession && (
-              <div className="text-center py-8">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <Search className="h-6 w-6 text-primary" />
+              <div className='text-center py-8'>
+                <div className='w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4'>
+                  <Search className='h-6 w-6 text-primary' />
                 </div>
-                <h3 className="text-lg font-semibold mb-2">
+                <h3 className='text-lg font-semibold mb-2'>
                   Como posso ajudar você hoje?
                 </h3>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className='text-sm text-muted-foreground mb-4'>
                   Faça consultas sobre clientes, agendamentos ou informações financeiras
                 </p>
-                <div className="flex flex-wrap gap-2 justify-center text-xs">
-                  <Badge variant="outline">
-                    <Users className="h-3 w-3 mr-1" />
+                <div className='flex flex-wrap gap-2 justify-center text-xs'>
+                  <Badge variant='outline'>
+                    <Users className='h-3 w-3 mr-1' />
                     Buscar Clientes
                   </Badge>
-                  <Badge variant="outline">
-                    <Calendar className="h-3 w-3 mr-1" />
+                  <Badge variant='outline'>
+                    <Calendar className='h-3 w-3 mr-1' />
                     Agendamentos
                   </Badge>
-                  <Badge variant="outline">
-                    <DollarSign className="h-3 w-3 mr-1" />
+                  <Badge variant='outline'>
+                    <DollarSign className='h-3 w-3 mr-1' />
                     Financeiro
                   </Badge>
                 </div>
@@ -901,58 +943,60 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
             )}
 
             {/* Render messages */}
-            {messages.map((message) => (
+            {messages.map(message => (
               <div
                 key={message.id}
                 className={cn(
                   'flex gap-3',
-                  message.role === 'user' ? 'justify-end' : 'justify-start'
+                  message.role === 'user' ? 'justify-end' : 'justify-start',
                 )}
               >
                 {message.role === 'assistant' && (
-                  <div className="flex-shrink-0">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-primary/10 text-primary">
-                        <Bot className="h-4 w-4" />
+                  <div className='flex-shrink-0'>
+                    <Avatar className='h-8 w-8'>
+                      <AvatarFallback className='bg-primary/10 text-primary'>
+                        <Bot className='h-4 w-4' />
                       </AvatarFallback>
                     </Avatar>
                   </div>
                 )}
 
-                <div className={cn(
-                  'max-w-[80%] rounded-lg px-4 py-3',
-                  message.role === 'user'
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-muted'
-                )}>
-                  <div className="text-sm whitespace-pre-wrap">
+                <div
+                  className={cn(
+                    'max-w-[80%] rounded-lg px-4 py-3',
+                    message.role === 'user'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted',
+                  )}
+                >
+                  <div className='text-sm whitespace-pre-wrap'>
                     {message.content}
                   </div>
 
                   {/* Render structured data */}
                   {message.data && (
-                    <div className="mt-3 space-y-2">
+                    <div className='mt-3 space-y-2'>
                       {message.data.clients && (
                         <DataSummaryCard
-                          title="Clientes Encontrados"
+                          title='Clientes Encontrados'
                           data={message.data.clients}
-                          type="clients"
+                          type='clients'
                           summary={message.data.summary}
                         />
                       )}
                       {message.data.appointments && (
                         <DataSummaryCard
-                          title="Agendamentos"
+                          title='Agendamentos'
                           data={message.data.appointments}
-                          type="appointments"
+                          type='appointments'
                           summary={message.data.summary}
                         />
                       )}
                       {message.data.financial && (
                         <DataSummaryCard
-                          title="Dados Financeiros"
+                          title='Dados Financeiros'
                           data={message.data.financial}
-                          type="financial"
+                          type='financial'
                           summary={message.data.summary}
                         />
                       )}
@@ -969,7 +1013,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
                   )}
 
                   {/* Message metadata */}
-                  <div className="flex items-center justify-between mt-2 text-xs opacity-70">
+                  <div className='flex items-center justify-between mt-2 text-xs opacity-70'>
                     <span>{formatDateTime(message.timestamp)}</span>
                     {message.role === 'assistant' && currentSessionId && (
                       <MessageFeedback
@@ -984,10 +1028,10 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
                 </div>
 
                 {message.role === 'user' && (
-                  <div className="flex-shrink-0">
-                    <Avatar className="h-8 w-8">
-                      <AvatarFallback className="bg-primary text-primary-foreground">
-                        <User className="h-4 w-4" />
+                  <div className='flex-shrink-0'>
+                    <Avatar className='h-8 w-8'>
+                      <AvatarFallback className='bg-primary text-primary-foreground'>
+                        <User className='h-4 w-4' />
                       </AvatarFallback>
                     </Avatar>
                   </div>
@@ -997,28 +1041,28 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
 
             {/* Loading state */}
             {isLoading && (
-              <div className="flex gap-3 justify-start">
-                <div className="flex-shrink-0">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      <Bot className="h-4 w-4 animate-pulse" />
+              <div className='flex gap-3 justify-start'>
+                <div className='flex-shrink-0'>
+                  <Avatar className='h-8 w-8'>
+                    <AvatarFallback className='bg-primary/10 text-primary'>
+                      <Bot className='h-4 w-4 animate-pulse' />
                     </AvatarFallback>
                   </Avatar>
                 </div>
-                <div className="bg-muted rounded-lg px-4 py-3">
-                  <div className="flex items-center gap-2">
-                    <div className="flex gap-1">
-                      <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
+                <div className='bg-muted rounded-lg px-4 py-3'>
+                  <div className='flex items-center gap-2'>
+                    <div className='flex gap-1'>
+                      <div className='w-2 h-2 bg-muted-foreground rounded-full animate-bounce' />
                       <div
-                        className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                        className='w-2 h-2 bg-muted-foreground rounded-full animate-bounce'
                         style={{ animationDelay: '0.1s' }}
                       />
                       <div
-                        className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
+                        className='w-2 h-2 bg-muted-foreground rounded-full animate-bounce'
                         style={{ animationDelay: '0.2s' }}
                       />
                     </div>
-                    <span className="text-xs text-muted-foreground">
+                    <span className='text-xs text-muted-foreground'>
                       Analisando consulta...
                     </span>
                   </div>
@@ -1031,17 +1075,17 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
         </ScrollArea>
 
         {/* Input Area */}
-        <div className="border-t p-4 bg-background/50 backdrop-blur-sm">
-          <div className="flex gap-2">
-            <div className="flex-1 relative">
+        <div className='border-t p-4 bg-background/50 backdrop-blur-sm'>
+          <div className='flex gap-2'>
+            <div className='flex-1 relative'>
               <Textarea
                 ref={inputRef}
                 value={inputValue}
-                onChange={(e) => setInputValue(e.target.value)}
+                onChange={e => setInputValue(e.target.value)}
                 onKeyDown={handleKeyPress}
                 placeholder={placeholder}
                 disabled={isLoading}
-                className="min-h-[44px] max-h-32 resize-none pr-12"
+                className='min-h-[44px] max-h-32 resize-none pr-12'
                 rows={1}
               />
             </div>
@@ -1049,15 +1093,15 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
             <Button
               onClick={handleSendMessage}
               disabled={!inputValue.trim() || isLoading}
-              size="sm"
-              className="px-3"
+              size='sm'
+              className='px-3'
             >
-              <Send className="h-4 w-4" />
+              <Send className='h-4 w-4' />
             </Button>
           </div>
 
           {/* LGPD Notice */}
-          <p className="text-xs text-muted-foreground mt-2 text-center">
+          <p className='text-xs text-muted-foreground mt-2 text-center'>
             {lgpdConsent.canStoreHistory
               ? `Conversa armazenada conforme LGPD por ${lgpdConsent.dataRetentionDays} dias`
               : 'Conversa não armazenada • Conforme LGPD'}
@@ -1071,7 +1115,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   if (mode === 'popup') {
     return (
       <CopilotPopup
-        instructions="You are a healthcare data assistant for NeonPro. Help users query client data, appointments, and financial information in Portuguese."
+        instructions='You are a healthcare data assistant for NeonPro. Help users query client data, appointments, and financial information in Portuguese.'
         defaultOpen={false}
         clickOutsideToClose={true}
       >
@@ -1081,7 +1125,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   }
 
   return (
-    <div className="w-full h-full">
+    <div className='w-full h-full'>
       {chatInterface}
     </div>
   );

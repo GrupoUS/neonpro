@@ -236,7 +236,7 @@ export class AuditService {
       eventType: "consent-verification",
       userId,
       userRole: "system",
-      dataClassification: { id: "consent", dataType: "consent", sensitivity: "MEDIUM", retentionPeriod: 365, encryptionRequired: true, accessControls: [], complianceStandards: [] } as MedicalDataClassification,
+      dataClassification: "sensitive",
       description: `Consent verification for ${consentType}: ${
         isValid ? "VALID" : "INVALID"
       }`,
@@ -280,7 +280,7 @@ export class AuditService {
       eventType: `security-${eventType}`,
       userId: userId || "system",
       userRole: "system",
-      dataClassification: { id: "security", dataType: "security", sensitivity: "HIGH", retentionPeriod: 180, encryptionRequired: true, accessControls: [], complianceStandards: [] } as MedicalDataClassification,
+      dataClassification: "restricted",
       description,
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
@@ -485,11 +485,13 @@ export class AuditService {
       }
 
       if (criteria.startDate) {
-        query = query.gte("timestamp", criteria.startDate.toISOString());
+        const startDate = typeof criteria.startDate === 'string' ? new Date(criteria.startDate) : criteria.startDate;
+        query = query.gte("timestamp", startDate.toISOString());
       }
 
       if (criteria.endDate) {
-        query = query.lte("timestamp", criteria.endDate.toISOString());
+        const endDate = typeof criteria.endDate === 'string' ? new Date(criteria.endDate) : criteria.endDate;
+        query = query.lte("timestamp", endDate.toISOString());
       }
 
       if (criteria.clinicId) {
@@ -534,19 +536,19 @@ export class AuditService {
       id: log.id,
       sessionId: log.session_id,
       userId: log.user_id,
-      eventType: this.mapActionToEventType(log.event_type || log.action),
+      action: log.action || this.mapActionToEventType(log.event_type || log.action),
       userRole: log.user_role || "system",
       dataClassification: typeof log.data_classification === 'string' ? log.data_classification : "general",
       description: log.description || "",
       timestamp: log.timestamp || log.created_at,
       ipAddress: log.ip_address,
       userAgent: log.user_agent,
-      clinicId: log.clinic_id,
+      clinicContext: log.clinic_id ? { clinicId: log.clinic_id } : undefined,
       metadata: log.metadata,
       complianceCheck: {
         isCompliant: log.compliance_check?.status === "COMPLIANT" || log.status === "SUCCESS",
         violations: [],
-        riskLevel: log.compliance_check?.risk_level || log.risk_level || "LOW",
+        riskLevel: (log.compliance_check?.risk_level || log.risk_level || "LOW") as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
       },
     };
   }
@@ -577,7 +579,7 @@ export class AuditService {
     endDate: Date,
   ): ComplianceReport {
     const totalEvents = logs.length;
-    const compliantEvents = logs.filter((log) => log.complianceCheck.isCompliant).length;
+    const compliantEvents = logs.filter((log) => log.complianceCheck?.isCompliant === true).length;
     const nonCompliantEvents = totalEvents - compliantEvents;
 
     const riskLevels = {
@@ -590,9 +592,9 @@ export class AuditService {
     const violations: Record<string, number> = {};
 
     logs.forEach((log) => {
-      const riskLevel = log.complianceCheck.riskLevel;
+      const riskLevel = log.complianceCheck?.riskLevel || 'LOW';
       if (riskLevel in riskLevels) {
-        riskLevels[riskLevel as keyof typeof riskLevels]++;
+        riskLevels[riskLevel.toLowerCase() as keyof typeof riskLevels]++;
       }
     });
 
@@ -611,12 +613,20 @@ export class AuditService {
     }
 
     return {
+      id: `compliance-report-${Date.now()}`,
+      generatedAt: new Date().toISOString(),
+      reportType: 'GENERAL',
+      periodStart: startDate.toISOString(),
+      periodEnd: endDate.toISOString(),
       reportPeriod: {
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
       },
       summary: {
         totalEvents,
+        complianceScore: totalEvents > 0 ? (compliantEvents / totalEvents) * 100 : 100,
+        violationsCount: nonCompliantEvents,
+        riskLevel: this.calculateOverallRiskLevel(riskLevels),
         compliantEvents,
         nonCompliantEvents,
         complianceRate: totalEvents > 0 ? compliantEvents / totalEvents : 1,
@@ -625,5 +635,12 @@ export class AuditService {
       violations,
       recommendations,
     };
+  }
+
+  private calculateOverallRiskLevel(riskLevels: { low: number; medium: number; high: number; critical: number }): "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" {
+    if (riskLevels.critical > 0) return "CRITICAL";
+    if (riskLevels.high > 0) return "HIGH";
+    if (riskLevels.medium > 0) return "MEDIUM";
+    return "LOW";
   }
 }
