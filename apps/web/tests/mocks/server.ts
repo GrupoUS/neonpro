@@ -677,49 +677,55 @@ export const handlers = [
       }, { status: 408 });
     }
 
-    const isBulkCalculation = body.periods && Array.isArray(body.periods);
+    const isBulkCalculation = body.calculations && Array.isArray(body.calculations);
     const isRealTime = body.realTime === true;
     
     return HttpResponse.json({
       success: true,
       data: {
-        metrics: {
-          mrr: {
-            amount: 10000.0,
-            currency: 'BRL'
-          },
-          arr: {
-            amount: 120000.0,
-            currency: 'BRL'
-          },
-          customerCount: 120,
-          churnRate: 2.5
-        },
         calculation: {
-          period: body.period,
-          realTime: isRealTime,
-          calculatedAt: new Date().toISOString(),
-          accuracy: 99.5,
+          period: body.period || { start: '2024-01-01', end: '2024-01-31', type: 'month' },
           metrics: {
-            mrr: 42000,
-            arr: 504000,
-            churn: 3.2,
-            growth: 12.5
+            mrr: {
+              amount: 10000.0,
+              currency: 'BRL'
+            },
+            arr: {
+              amount: 120000.0,
+              currency: 'BRL'
+            },
+            churn: {
+              amount: 2.5,
+              unit: 'percent'
+            },
+            growth: {
+              amount: 12.5,
+              unit: 'percent'
+            }
           },
-          executionTime: 156
+          realTime: isRealTime,
+          precision: body.precision || 'standard',
+          calculatedAt: new Date().toISOString(),
+          executionTime: body.timeout ? Math.min(body.timeout - 100, 4900) : 156
         },
-        calculations: isBulkCalculation ? [
-          { period: body.periods[0], results: { mrr: 40000, arr: 480000 } },
-          { period: body.periods[1], results: { mrr: 41000, arr: 492000 } },
-          { period: body.periods[2], results: { mrr: 42000, arr: 504000 } }
-        ] : undefined,
-        performance: {
-          executionTime: 156,
-          dataPoints: 1000,
-          accuracy: 99.5,
+        calculations: isBulkCalculation ? body.calculations.map((calc: any, index: number) => ({
+          period: calc.period,
+          metrics: {
+            mrr: { amount: 40000 + (index * 1000), currency: 'BRL' },
+            churn: { amount: 2.5 - (index * 0.1), unit: 'percent' }
+          }
+        })) : undefined,
+        comparison: isBulkCalculation ? {
+          trends: {
+            mrr: 'increasing',
+            churn: 'decreasing'
+          }
+        } : undefined,
+        performance: body.includePerformance ? {
+          executionTime: body.timeout ? Math.min(body.timeout - 100, 4900) : 156,
           memoryUsage: 42.8,
           cacheHit: true
-        }
+        } : undefined
       },
       meta: {
         calculatedAt: new Date().toISOString(),

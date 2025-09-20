@@ -254,9 +254,9 @@ export class FinancialMetricsService {
       id: 'profit',
       name: 'Net Profit',
       value: profit,
-      previousValue: profit * 0.85, // Mock previous value
-      change: profit * 0.15,
-      changePercentage: 15,
+      previousValue: 0, // TODO: Calculate from previous period
+      change: 0, // TODO: Calculate from previous period
+      changePercentage: 0, // TODO: Calculate from previous period
       period: options.period,
       category: 'profit',
       formattedValue: new Intl.NumberFormat('pt-BR', {

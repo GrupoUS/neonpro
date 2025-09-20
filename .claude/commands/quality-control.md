@@ -1136,16 +1136,16 @@ Type safety
 // Before
 type Handler = (c: any) => any;
 // After
-type Handler = (c: import("hono").Context) => Response | Promise<Response>;
+type Handler = (c: import('hono').Context) => Response | Promise<Response>;
 ```
 
 ESM imports
 
 ```ts
 // Before
-const { execSync } = require("node:child_process");
+const { execSync } = require('node:child_process');
 // After
-import { execSync } from "node:child_process";
+import { execSync } from 'node:child_process';
 ```
 
 ---
@@ -1159,17 +1159,27 @@ Use workspace tasks for speed:
 - “📈 Performance Benchmark” → perf checks
 - “🏥 Healthcare Compliance Check” → LGPD/ANVISA heuristics
 
-CLI fallbacks
+CLI fallbacks (Updated with Working Commands)
 
 ```bash
-# Root helpers
-pnpm quality:full
-pnpm workflow:ci
+# ❌ NON-WORKING COMMANDS (documented for reference)
+# pnpm quality:full          # Script does not exist
+# pnpm workflow:ci           # Script does not exist
+# pnpm constitutional:quick  # Script does not exist
 
-# Tools/audit
-pnpm constitutional:quick
-pnpm constitutional:full
-pnpm constitutional:benchmark
+# ✅ WORKING ALTERNATIVES
+# Full quality check pipeline
+pnpm --filter @neonpro/api test && pnpm --filter @neonpro/api lint
+
+# Security audit
+pnpm audit --audit-level moderate
+
+# Dependency updates
+pnpm update --latest && pnpm install
+
+# Individual package validation
+pnpm --filter @neonpro/api lint    # Works with 305 warnings
+pnpm --filter @neonpro/web lint    # Fails with 1003 warnings, 3 errors
 ```
 
 ---
