@@ -1,43 +1,10 @@
-import { beforeAll, describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import { HealthcareMetricsService, HealthcareMetricType, ComplianceKPI } from '../services/metrics';
-
-// Mock the Supabase client
-const mockSupabase = {
-  from: vi.fn(() => ({
-    insert: vi.fn(() => ({
-      select: vi.fn(() => ({
-        single: vi.fn(),
-      })),
-    })),
-    select: vi.fn(() => ({
-      eq: vi.fn(() => ({
-        gte: vi.fn(() => ({
-          lt: vi.fn(() => ({
-            order: vi.fn(() => ({
-              limit: vi.fn(),
-            })),
-          })),
-        })),
-        or: vi.fn(() => ({
-          order: vi.fn(() => ({
-            limit: vi.fn(),
-          })),
-        })),
-      })),
-    })),
-  })),
-};
-
-// Mock the createAdminClient function
-vi.mock('../lib/supabase', () => ({
-  createAdminClient: vi.fn(() => mockSupabase),
-}));
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { HealthcareMetricsService, HealthcareMetricType } from '../services/metrics';
 
 describe('HealthcareMetricsService', () => {
   let metricsService: HealthcareMetricsService;
 
   beforeEach(() => {
-    vi.clearAllMocks();
     metricsService = new HealthcareMetricsService();
   });
 
@@ -66,16 +33,19 @@ describe('HealthcareMetricsService', () => {
   describe('recordMetric', () => {
     it('should successfully record a metric', async () => {
       // Mock successful database insertion
-      mockSupabase.from.mockReturnValue({
-        insert: vi.fn(() => ({
-          select: vi.fn(() => ({
-            single: vi.fn(() => ({
+      const insertSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const selectionSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const singleSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      metricsService.db = {
+        insert: () => ({
+          select: () => ({
+            single: () => ({
               data: { id: 'test-metric-id' },
               error: null,
-            })),
-          })),
-        })),
-      });
+            }),
+          }),
+        }),
+      };
 
       const result = await metricsService.recordMetric(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
@@ -90,16 +60,19 @@ describe('HealthcareMetricsService', () => {
 
     it('should handle database errors gracefully', async () => {
       // Mock database error
-      mockSupabase.from.mockReturnValue({
-        insert: vi.fn(() => ({
-          select: vi.fn(() => ({
-            single: vi.fn(() => ({
+      const insertSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const selectionSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const singleSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      metricsService.db = {
+        insert: () => ({
+          select: () => ({
+            single: () => ({
               data: null,
               error: { message: 'Database error' },
-            })),
-          })),
-        })),
-      });
+            }),
+          }),
+        }),
+      };
 
       const result = await metricsService.recordMetric(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
@@ -114,16 +87,19 @@ describe('HealthcareMetricsService', () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
       
       // Mock database error
-      mockSupabase.from.mockReturnValue({
-        insert: vi.fn(() => ({
-          select: vi.fn(() => ({
-            single: vi.fn(() => ({
+      const insertSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const selectionSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const singleSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      metricsService.db = {
+        insert: () => ({
+          select: () => ({
+            single: () => ({
               data: null,
               error: { message: 'Database error' },
-            })),
-          })),
-        })),
-      });
+            }),
+          }),
+        }),
+      };
 
       await metricsService.recordMetric(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
@@ -135,17 +111,19 @@ describe('HealthcareMetricsService', () => {
     });
 
     it('should include default compliance flags when not provided', async () => {
-      const insertSpy = vi.fn();
-      mockSupabase.from.mockReturnValue({
-        insert: insertSpy.mockReturnValue({
-          select: vi.fn(() => ({
-            single: vi.fn(() => ({
+      const insertSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const selectionSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const singleSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      metricsService.db = {
+        insert: () => ({
+          select: () => ({
+            single: () => ({
               data: { id: 'test-metric-id' },
               error: null,
-            })),
-          })),
+            }),
+          }),
         }),
-      });
+      };
 
       await metricsService.recordMetric(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
@@ -205,18 +183,21 @@ describe('HealthcareMetricsService', () => {
 
   describe('getMetricAggregation', () => {
     it('should return empty aggregation when no data exists', async () => {
-      mockSupabase.from.mockReturnValue({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            gte: vi.fn(() => ({
-              lt: vi.fn(() => ({
+      const insertSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const selectionSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const singleSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      metricsService.db = {
+        select: () => ({
+          eq: () => ({
+            gte: () => ({
+              lt: () => ({
                 data: [],
                 error: null,
-              })),
-            })),
-          })),
-        })),
-      });
+              }),
+            }),
+          }),
+        }),
+      };
 
       const result = await metricsService.getMetricAggregation(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
@@ -236,18 +217,21 @@ describe('HealthcareMetricsService', () => {
         { value: 85, compliance_flags: { lgpd_compliant: false, cfm_validated: true, anvisa_compliant: true } },
       ];
 
-      mockSupabase.from.mockReturnValue({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            gte: vi.fn(() => ({
-              lt: vi.fn(() => ({
+      const insertSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const selectionSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const singleSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      metricsService.db = {
+        select: () => ({
+          eq: () => ({
+            gte: () => ({
+              lt: () => ({
                 data: mockData,
                 error: null,
-              })),
-            })),
-          })),
-        })),
-      });
+              }),
+            }),
+          }),
+        }),
+      };
 
       const result = await metricsService.getMetricAggregation(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,
@@ -264,18 +248,21 @@ describe('HealthcareMetricsService', () => {
     });
 
     it('should handle database query errors', async () => {
-      mockSupabase.from.mockReturnValue({
-        select: vi.fn(() => ({
-          eq: vi.fn(() => ({
-            gte: vi.fn(() => ({
-              lt: vi.fn(() => ({
+      const insertSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const selectionSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      const singleSpy = vi.spyOn(metricsService as any, 'db').mockImplementation();
+      metricsService.db = {
+        select: () => ({
+          eq: () => ({
+            gte: () => ({
+              lt: () => ({
                 data: null,
                 error: { message: 'Query error' },
-              })),
-            })),
-          })),
-        })),
-      });
+              }),
+            }),
+          }),
+        }),
+      };
 
       const result = await metricsService.getMetricAggregation(
         HealthcareMetricType.LGPD_COMPLIANCE_SCORE,

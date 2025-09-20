@@ -15,6 +15,15 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
@@ -24,7 +33,9 @@
     "forceConsistentCasingInFileNames": true,
     "types": [
       "vite/client",
-      "vitest/globals"
+      "vitest/globals",
+      "node",
+      "recharts"
     ],
     "baseUrl": ".",
     "paths": {

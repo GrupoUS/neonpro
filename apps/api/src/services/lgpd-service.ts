@@ -17,8 +17,8 @@ import {
   createDataSubjectRequest,
   createLGPDConsent,
   DataSubjectRequest,
-  LegalBasis,
-  LGPDConsent,
+  LGPDLegalBasis as LegalBasis,
+  LGPDConsentModel as LGPDConsent,
 } from '@neonpro/shared';
 
 // Define missing enums locally

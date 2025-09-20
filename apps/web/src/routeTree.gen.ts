@@ -33,12 +33,14 @@ import { Route as PatientsIdBackupRouteImport } from './routes/patients/[id]-bac
 import { Route as PatientsIdRouteImport } from './routes/patients/[id]'
 import { Route as PatientsDashboardBackupRouteImport } from './routes/patients/dashboard-backup'
 import { Route as PatientsDashboardRouteImport } from './routes/patients/dashboard'
+import { Route as PatientsAiInsightsRouteImport } from './routes/patients/ai-insights'
 import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
 import { Route as GoogleCalendarAuthRouteImport } from './routes/google-calendar/auth'
 import { Route as FinancialSubscriptionRouteImport } from './routes/financial/subscription'
 import { Route as FinancialPricingRulesRouteImport } from './routes/financial/pricing-rules'
 import { Route as DemosSignupDemoRouteImport } from './routes/demos/signup-demo'
 import { Route as DemosAestheticDemoRouteImport } from './routes/demos/aesthetic-demo'
+import { Route as DashboardMainRouteImport } from './routes/dashboard/main'
 import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard/analytics'
 import { Route as DashboardAiChatRouteImport } from './routes/dashboard/ai-chat'
 import { Route as DashboardAdvancedAnalyticsRouteImport } from './routes/dashboard/advanced-analytics'
@@ -185,6 +187,11 @@ const PatientsDashboardRoute = PatientsDashboardRouteImport.update({
   path: '/patients/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientsAiInsightsRoute = PatientsAiInsightsRouteImport.update({
+  id: '/patients/ai-insights',
+  path: '/patients/ai-insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   id: '/patients/$patientId',
   path: '/patients/$patientId',
@@ -213,6 +220,11 @@ const DemosSignupDemoRoute = DemosSignupDemoRouteImport.update({
 const DemosAestheticDemoRoute = DemosAestheticDemoRouteImport.update({
   id: '/demos/aesthetic-demo',
   path: '/demos/aesthetic-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardMainRoute = DashboardMainRouteImport.update({
+  id: '/dashboard/main',
+  path: '/dashboard/main',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAnalyticsRoute = DashboardAnalyticsRouteImport.update({
@@ -346,12 +358,14 @@ export interface FileRoutesByFullPath {
   '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute
   '/dashboard/ai-chat': typeof DashboardAiChatRoute
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/main': typeof DashboardMainRoute
   '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
   '/financial/subscription': typeof FinancialSubscriptionRoute
   '/google-calendar/auth': typeof GoogleCalendarAuthRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/patients/ai-insights': typeof PatientsAiInsightsRoute
   '/patients/dashboard': typeof PatientsDashboardRoute
   '/patients/dashboard-backup': typeof PatientsDashboardBackupRoute
   '/patients/id': typeof PatientsIdRoute
@@ -398,12 +412,14 @@ export interface FileRoutesByTo {
   '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute
   '/dashboard/ai-chat': typeof DashboardAiChatRoute
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/main': typeof DashboardMainRoute
   '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
   '/financial/subscription': typeof FinancialSubscriptionRoute
   '/google-calendar/auth': typeof GoogleCalendarAuthRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/patients/ai-insights': typeof PatientsAiInsightsRoute
   '/patients/dashboard': typeof PatientsDashboardRoute
   '/patients/dashboard-backup': typeof PatientsDashboardBackupRoute
   '/patients/id': typeof PatientsIdRoute
@@ -452,12 +468,14 @@ export interface FileRoutesById {
   '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute
   '/dashboard/ai-chat': typeof DashboardAiChatRoute
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/main': typeof DashboardMainRoute
   '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
   '/financial/subscription': typeof FinancialSubscriptionRoute
   '/google-calendar/auth': typeof GoogleCalendarAuthRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/patients/ai-insights': typeof PatientsAiInsightsRoute
   '/patients/dashboard': typeof PatientsDashboardRoute
   '/patients/dashboard-backup': typeof PatientsDashboardBackupRoute
   '/patients/id': typeof PatientsIdRoute
@@ -507,12 +525,14 @@ export interface FileRouteTypes {
     | '/dashboard/advanced-analytics'
     | '/dashboard/ai-chat'
     | '/dashboard/analytics'
+    | '/dashboard/main'
     | '/demos/aesthetic-demo'
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
     | '/financial/subscription'
     | '/google-calendar/auth'
     | '/patients/$patientId'
+    | '/patients/ai-insights'
     | '/patients/dashboard'
     | '/patients/dashboard-backup'
     | '/patients/id'
@@ -559,12 +579,14 @@ export interface FileRouteTypes {
     | '/dashboard/advanced-analytics'
     | '/dashboard/ai-chat'
     | '/dashboard/analytics'
+    | '/dashboard/main'
     | '/demos/aesthetic-demo'
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
     | '/financial/subscription'
     | '/google-calendar/auth'
     | '/patients/$patientId'
+    | '/patients/ai-insights'
     | '/patients/dashboard'
     | '/patients/dashboard-backup'
     | '/patients/id'
@@ -612,12 +634,14 @@ export interface FileRouteTypes {
     | '/dashboard/advanced-analytics'
     | '/dashboard/ai-chat'
     | '/dashboard/analytics'
+    | '/dashboard/main'
     | '/demos/aesthetic-demo'
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
     | '/financial/subscription'
     | '/google-calendar/auth'
     | '/patients/$patientId'
+    | '/patients/ai-insights'
     | '/patients/dashboard'
     | '/patients/dashboard-backup'
     | '/patients/id'
@@ -666,12 +690,14 @@ export interface RootRouteChildren {
   DashboardAdvancedAnalyticsRoute: typeof DashboardAdvancedAnalyticsRoute
   DashboardAiChatRoute: typeof DashboardAiChatRoute
   DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
+  DashboardMainRoute: typeof DashboardMainRoute
   DemosAestheticDemoRoute: typeof DemosAestheticDemoRoute
   DemosSignupDemoRoute: typeof DemosSignupDemoRoute
   FinancialPricingRulesRoute: typeof FinancialPricingRulesRoute
   FinancialSubscriptionRoute: typeof FinancialSubscriptionRoute
   GoogleCalendarAuthRoute: typeof GoogleCalendarAuthRoute
   PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren
+  PatientsAiInsightsRoute: typeof PatientsAiInsightsRoute
   PatientsDashboardRoute: typeof PatientsDashboardRoute
   PatientsDashboardBackupRoute: typeof PatientsDashboardBackupRoute
   PatientsIdRoute: typeof PatientsIdRoute
@@ -864,6 +890,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientsDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patients/ai-insights': {
+      id: '/patients/ai-insights'
+      path: '/patients/ai-insights'
+      fullPath: '/patients/ai-insights'
+      preLoaderRoute: typeof PatientsAiInsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patients/$patientId': {
       id: '/patients/$patientId'
       path: '/patients/$patientId'
@@ -904,6 +937,13 @@ declare module '@tanstack/react-router' {
       path: '/demos/aesthetic-demo'
       fullPath: '/demos/aesthetic-demo'
       preLoaderRoute: typeof DemosAestheticDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/main': {
+      id: '/dashboard/main'
+      path: '/dashboard/main'
+      fullPath: '/dashboard/main'
+      preLoaderRoute: typeof DashboardMainRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/analytics': {
@@ -1109,12 +1149,14 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardAdvancedAnalyticsRoute: DashboardAdvancedAnalyticsRoute,
   DashboardAiChatRoute: DashboardAiChatRoute,
   DashboardAnalyticsRoute: DashboardAnalyticsRoute,
+  DashboardMainRoute: DashboardMainRoute,
   DemosAestheticDemoRoute: DemosAestheticDemoRoute,
   DemosSignupDemoRoute: DemosSignupDemoRoute,
   FinancialPricingRulesRoute: FinancialPricingRulesRoute,
   FinancialSubscriptionRoute: FinancialSubscriptionRoute,
   GoogleCalendarAuthRoute: GoogleCalendarAuthRoute,
   PatientsPatientIdRoute: PatientsPatientIdRouteWithChildren,
+  PatientsAiInsightsRoute: PatientsAiInsightsRoute,
   PatientsDashboardRoute: PatientsDashboardRoute,
   PatientsDashboardBackupRoute: PatientsDashboardBackupRoute,
   PatientsIdRoute: PatientsIdRoute,

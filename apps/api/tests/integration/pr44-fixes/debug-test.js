@@ -1,0 +1,26 @@
+const fs = require('fs');
+const path = require('path');
+
+const servicesPath = path.join(__dirname, '../../../../src');
+const filePath = path.join(servicesPath, 'ai-provider-router-new.ts');
+
+console.log('Checking file:', filePath);
+console.log('File exists:', fs.existsSync(filePath));
+
+if (fs.existsSync(filePath)) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const lineCount = content.split('\n').length;
+  console.log('Line count:', lineCount);
+  console.log('Should be <= 1000:', lineCount <= 1000);
+  
+  // This should fail
+  if (lineCount > 1000) {
+    console.log('❌ Test should fail - file is too large');
+    process.exit(1);
+  } else {
+    console.log('✅ Test would pass');
+  }
+} else {
+  console.log('❌ File does not exist');
+  process.exit(1);
+}

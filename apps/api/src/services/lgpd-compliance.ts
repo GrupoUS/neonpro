@@ -1,607 +1,239 @@
 /**
- * LGPD (Lei Geral de Proteção de Dados) Compliance Validation Service
- * T082 - Brazilian Healthcare Compliance Validation
- *
- * Features:
- * - Consent management validation
- * - Data retention policy compliance
- * - Patient rights (data subject rights) validation
- * - Audit trail requirements verification
- * - Healthcare-specific LGPD compliance
- * - Automated compliance reporting
+ * LGPD Compliance Service for AI Agent
+ * Ensures all data access complies with Brazilian data protection laws
  */
 
-import { z } from 'zod';
-import { createAdminClient } from '../clients/supabase';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-// LGPD Compliance Levels
-export const LGPD_COMPLIANCE_LEVELS = {
-  COMPLIANT: 'compliant',
-  PARTIAL: 'partial',
-  NON_COMPLIANT: 'non_compliant',
-  UNKNOWN: 'unknown',
-} as const;
+export interface LGPDComplianceContext {
+  userId: string;
+  clinicId?: string;
+  patientId?: string;
+  action: 'read' | 'write' | 'delete';
+  resourceType: 'patient' | 'appointment' | 'financial' | 'medical_record';
+  justification?: string;
+}
 
-export type LGPDComplianceLevel =
-  typeof LGPD_COMPLIANCE_LEVELS[keyof typeof LGPD_COMPLIANCE_LEVELS];
-
-// LGPD Data Processing Purposes
-export const LGPD_PROCESSING_PURPOSES = {
-  MEDICAL_CARE: 'medical_care',
-  APPOINTMENT_SCHEDULING: 'appointment_scheduling',
-  BILLING: 'billing',
-  MARKETING: 'marketing',
-  RESEARCH: 'research',
-  LEGAL_COMPLIANCE: 'legal_compliance',
-  EMERGENCY_CARE: 'emergency_care',
-} as const;
-
-export type LGPDProcessingPurpose =
-  typeof LGPD_PROCESSING_PURPOSES[keyof typeof LGPD_PROCESSING_PURPOSES];
-
-// LGPD Data Subject Rights
-export const LGPD_DATA_SUBJECT_RIGHTS = {
-  ACCESS: 'access',
-  RECTIFICATION: 'rectification',
-  DELETION: 'deletion',
-  PORTABILITY: 'portability',
-  OBJECTION: 'objection',
-  RESTRICTION: 'restriction',
-} as const;
-
-export type LGPDDataSubjectRight =
-  typeof LGPD_DATA_SUBJECT_RIGHTS[keyof typeof LGPD_DATA_SUBJECT_RIGHTS];
-
-// LGPD Consent Record Schema
-export const LGPDConsentRecordSchema = z.object({
-  id: z.string(),
-  patientId: z.string(),
-  purpose: z.nativeEnum(LGPD_PROCESSING_PURPOSES),
-  consentGiven: z.boolean(),
-  consentDate: z.date(),
-  consentWithdrawnDate: z.date().optional(),
-  consentMethod: z.enum(['explicit', 'implicit', 'opt_in', 'opt_out']),
-  dataCategories: z.array(z.string()),
-  retentionPeriod: z.number(), // in days
-  legalBasis: z.string(),
-  processingLocation: z.string(),
-  thirdPartySharing: z.boolean(),
-  automatedDecisionMaking: z.boolean(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-});
-
-export type LGPDConsentRecord = z.infer<typeof LGPDConsentRecordSchema>;
-
-// LGPD Audit Log Schema
-export const LGPDAuditLogSchema = z.object({
-  id: z.string(),
-  patientId: z.string(),
-  action: z.enum([
-    'access',
-    'create',
-    'update',
-    'delete',
-    'export',
-    'consent_given',
-    'consent_withdrawn',
-  ]),
-  dataCategory: z.string(),
-  purpose: z.nativeEnum(LGPD_PROCESSING_PURPOSES),
-  userId: z.string(),
-  userRole: z.string(),
-  ipAddress: z.string(),
-  userAgent: z.string(),
-  timestamp: z.date(),
-  details: z.record(z.any()),
-  complianceStatus: z.nativeEnum(LGPD_COMPLIANCE_LEVELS),
-});
-
-export type LGPDAuditLog = z.infer<typeof LGPDAuditLogSchema>;
-
-// LGPD Compliance Issue
-export interface LGPDComplianceIssue {
+export interface AuditLogEntry {
   id: string;
-  type: 'consent' | 'retention' | 'rights' | 'audit' | 'security';
-  severity: 'critical' | 'high' | 'medium' | 'low';
-  title: string;
-  description: string;
-  recommendation: string;
-  affectedData: string[];
-  legalReference: string;
-  remediation: {
-    steps: string[];
-    timeframe: string;
-    responsible: string;
-  };
-  detectedAt: Date;
+  userId: string;
+  action: string;
+  resourceType: string;
+  resourceId?: string;
+  metadata: Record<string, any>;
+  timestamp: Date;
+  ipAddress?: string;
+  userAgent?: string;
+  phiAccessed: boolean;
 }
 
-// LGPD Compliance Report
-export interface LGPDComplianceReport {
-  overallCompliance: LGPDComplianceLevel;
-  score: number; // 0-100
-  lastAuditDate: Date;
-  consentCompliance: {
-    level: LGPDComplianceLevel;
-    totalConsents: number;
-    validConsents: number;
-    expiredConsents: number;
-    withdrawnConsents: number;
-    issues: LGPDComplianceIssue[];
-  };
-  retentionCompliance: {
-    level: LGPDComplianceLevel;
-    dataRetentionPolicies: number;
-    expiredDataSets: number;
-    retentionViolations: number;
-    issues: LGPDComplianceIssue[];
-  };
-  rightsCompliance: {
-    level: LGPDComplianceLevel;
-    accessRequests: number;
-    rectificationRequests: number;
-    deletionRequests: number;
-    portabilityRequests: number;
-    fulfilledRequests: number;
-    pendingRequests: number;
-    issues: LGPDComplianceIssue[];
-  };
-  auditCompliance: {
-    level: LGPDComplianceLevel;
-    auditLogsCount: number;
-    missingAuditLogs: number;
-    auditRetentionCompliance: boolean;
-    issues: LGPDComplianceIssue[];
-  };
-  recommendations: string[];
-  nextAuditDate: Date;
-}
-
-/**
- * LGPD Compliance Validation Service
- */
 export class LGPDComplianceService {
-  private issues: LGPDComplianceIssue[] = [];
-  private supabase = createAdminClient();
+  private supabase: SupabaseClient;
 
-  /**
-   * Perform comprehensive LGPD compliance validation
-   */
-  async validateCompliance(patientId?: string): Promise<LGPDComplianceReport> {
-    this.issues = [];
-
-    // Run all compliance validations
-    const [
-      consentCompliance,
-      retentionCompliance,
-      rightsCompliance,
-      auditCompliance,
-    ] = await Promise.all([
-      this.validateConsentCompliance(patientId),
-      this.validateRetentionCompliance(patientId),
-      this.validateDataSubjectRights(patientId),
-      this.validateAuditCompliance(patientId),
-    ]);
-
-    // Calculate overall compliance
-    const overallCompliance = this.calculateOverallCompliance([
-      consentCompliance.level,
-      retentionCompliance.level,
-      rightsCompliance.level,
-      auditCompliance.level,
-    ]);
-
-    const score = this.calculateComplianceScore();
-
-    return {
-      overallCompliance,
-      score,
-      lastAuditDate: new Date(),
-      consentCompliance,
-      retentionCompliance,
-      rightsCompliance,
-      auditCompliance,
-      recommendations: this.generateRecommendations(),
-      nextAuditDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-    };
+  constructor() {
+    this.supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_KEY!
+    );
   }
 
   /**
-   * Validate consent management compliance
+   * Validate data access request against LGPD principles
    */
-  private async validateConsentCompliance(patientId?: string) {
+  async validateDataAccess(context: LGPDComplianceContext): Promise<boolean> {
     try {
-      // Query real consent data from database
-      let query = this.supabase
-        .from('lgpd_consents')
-        .select('*');
+      // Check if user has valid professional credentials
+      const { data: professional, error } = await this.supabase
+        .from('professionals')
+        .select('id, clinic_id, is_active')
+        .eq('user_id', context.userId)
+        .single();
 
-      if (patientId) {
-        query = query.eq('user_id', patientId);
+      if (error || !professional?.is_active) {
+        await this.logViolation(context, 'Unauthorized access attempt');
+        return false;
       }
 
-      const { data: consents, error } = await query;
-
-      if (error) {
-        console.error('Error querying consent data:', error);
-        throw new Error('Failed to query consent data');
+      // Validate clinic access for multi-tenant setup
+      if (context.clinicId && professional.clinic_id !== context.clinicId) {
+        await this.logViolation(context, 'Cross-clinic access attempt');
+        return false;
       }
 
-      const totalConsents = consents?.length || 0;
-      const validConsents = consents?.filter(c => c.is_active && !c.withdrawn_at).length || 0;
-      const expiredConsents = consents?.filter(c => {
-        if (!c.expires_at) return false;
-        return new Date(c.expires_at) < new Date();
-      }).length || 0;
-      const withdrawnConsents = consents?.filter(c => c.withdrawn_at).length || 0;
+      // For patient data, check LGPD consent
+      if (context.resourceType === 'patient' && context.patientId) {
+        const { data: patient, error } = await this.supabase
+          .from('patients')
+          .select('lgpd_consent_given, data_retention_until')
+          .eq('id', context.patientId)
+          .single();
 
-      const issues: LGPDComplianceIssue[] = [];
-
-      // Check for missing explicit consent
-      consents?.forEach(consent => {
-        if (
-          consent.consent_method !== 'explicit'
-          && consent.purpose !== LGPD_PROCESSING_PURPOSES.EMERGENCY_CARE
-        ) {
-          issues.push({
-            id: `consent-${consent.id}`,
-            type: 'consent',
-            severity: 'high',
-            title: 'Consentimento não explícito',
-            description: `Consentimento para ${consent.purpose} não é explícito`,
-            recommendation: 'Obter consentimento explícito do titular dos dados',
-            affectedData: consent.data_categories,
-            legalReference: 'LGPD Art. 8º',
-            remediation: {
-              steps: [
-                'Implementar mecanismo de consentimento explícito',
-                'Solicitar novo consentimento do paciente',
-                'Documentar o processo de obtenção de consentimento',
-              ],
-              timeframe: '30 dias',
-              responsible: 'Equipe de Compliance',
-            },
-            detectedAt: new Date(),
-          });
+        if (error || !patient?.lgpd_consent_given) {
+          await this.logViolation(context, 'Access without LGPD consent');
+          return false;
         }
-      });
 
-      // Check for expired consents
-      if (expiredConsents > 0) {
-        issues.push({
-          id: 'expired-consents',
-          type: 'consent',
-          severity: 'medium',
-          title: 'Consentimentos expirados',
-          description: `${expiredConsents} consentimentos estão expirados`,
-          recommendation: 'Renovar consentimentos expirados ou excluir dados',
-          affectedData: ['personal_data', 'health_data'],
-          legalReference: 'LGPD Art. 15º',
-          remediation: {
-            steps: [
-              'Identificar dados com consentimentos expirados',
-              'Solicitar renovação de consentimento',
-              'Excluir dados se consentimento não for renovado',
-            ],
-            timeframe: '15 dias',
-            responsible: 'Equipe de Compliance',
-          },
-          detectedAt: new Date(),
-        });
+        // Check data retention policy
+        if (patient.data_retention_until && new Date() > new Date(patient.data_retention_until)) {
+          await this.logViolation(context, 'Access beyond retention period');
+          return false;
+        }
       }
 
-      this.issues.push(...issues);
-
-      const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
-        ? LGPD_COMPLIANCE_LEVELS.NON_COMPLIANT
-        : issues.length > 0
-        ? LGPD_COMPLIANCE_LEVELS.PARTIAL
-        : LGPD_COMPLIANCE_LEVELS.COMPLIANT;
-
-      return {
-        level,
-        totalConsents,
-        validConsents,
-        expiredConsents,
-        withdrawnConsents,
-        issues,
-      };
+      return true;
     } catch (error) {
-      console.error('Error in validateConsentCompliance:', error);
-      return {
-        level: LGPD_COMPLIANCE_LEVELS.UNKNOWN,
-        totalConsents: 0,
-        validConsents: 0,
-        expiredConsents: 0,
-        withdrawnConsents: 0,
-        issues: [{
-          id: 'consent-validation-error',
-          type: 'consent',
-          severity: 'critical',
-          title: 'Erro na validação de consentimento',
-          description: 'Falha ao validar consentimentos LGPD',
-          recommendation: 'Verificar a configuração do banco de dados',
-          affectedData: ['consent_data'],
-          legalReference: 'LGPD Art. 7º',
-          remediation: {
-            steps: [
-              'Investigar causa do erro',
-              'Restabelecer conexão com banco de dados',
-              'Implementar monitoramento de saúde do sistema',
-            ],
-            timeframe: '24 horas',
-            responsible: 'Equipe Técnica',
+      console.error('LGPD validation error:', error);
+      await this.logViolation(context, `Validation error: ${error}`);
+      return false;
+    }
+  }
+
+  /**
+   * Log data access for audit trail
+   */
+  async logDataAccess(
+    context: LGPDComplianceContext,
+    success: boolean,
+    metadata?: Record<string, any>
+  ): Promise<void> {
+    const auditEntry: Omit<AuditLogEntry, 'id' | 'timestamp'> = {
+      userId: context.userId,
+      action: `${context.action}_${context.resourceType}`,
+      resourceType: context.resourceType,
+      resourceId: context.patientId,
+      metadata: {
+        ...metadata,
+        clinicId: context.clinicId,
+        justification: context.justification,
+        success
+      },
+      phiAccessed: context.resourceType === 'patient' || context.resourceType === 'medical_record'
+    };
+
+    try {
+      await this.supabase
+        .from('audit_logs')
+        .insert([auditEntry]);
+    } catch (error) {
+      console.error('Failed to log audit entry:', error);
+    }
+  }
+
+  /**
+   * Log LGPD violations
+   */
+  private async logViolation(context: LGPDComplianceContext, reason: string): Promise<void> {
+    try {
+      await this.supabase
+        .from('audit_logs')
+        .insert([{
+          userId: context.userId,
+          action: 'lgpd_violation',
+          resourceType: context.resourceType,
+          resourceId: context.patientId,
+          metadata: {
+            violationReason: reason,
+            clinicId: context.clinicId,
+            action: context.action,
+            severity: 'high'
           },
-          detectedAt: new Date(),
-        }],
-      };
+          phiAccessed: true
+        }]);
+    } catch (error) {
+      console.error('Failed to log LGPD violation:', error);
     }
   }
 
   /**
-   * Validate data retention policy compliance
+   * Sanitize PHI from AI responses
    */
-  private async validateRetentionCompliance(patientId?: string) {
-    // Validate data retention policies for patient data
-    if (patientId) {
-      // Check if patient data exceeds retention period
-      const retentionLimit = new Date();
-      retentionLimit.setFullYear(retentionLimit.getFullYear() - 7); // 7 years retention for medical data
+  sanitizePHI(text: string): string {
+    // Brazilian PHI patterns
+    const phiPatterns = [
+      // CPF
+      /\d{3}\.\d{3}\.\d{3}-\d{2}/g,
+      // Phone numbers
+      /\(\d{2}\)\s*\d{4,5}-\d{4}/g,
+      // Email addresses
+      /[\w.-]+@[\w.-]+\.\w+/g,
+      // Medical record numbers
+      /(?:MR|PR|RM)\s*\d+/gi,
+      // Full names (simplified)
+      /\b[A-Z][a-z]+\s+[A-Z][a-z]+\s+[A-Z][a-z]+\b/g
+    ];
 
-      // Log retention check
-      console.log(`LGPD: Checking retention compliance for patient ${patientId}`);
-    }
-    // Mock implementation - would query actual retention policies
-    const dataRetentionPolicies = 5;
-    const expiredDataSets = 0;
-    const retentionViolations = 0;
-    const issues: LGPDComplianceIssue[] = [];
-
-    // Check for missing retention policies
-    if (dataRetentionPolicies === 0) {
-      issues.push({
-        id: 'missing-retention-policy',
-        type: 'retention',
-        severity: 'critical',
-        title: 'Política de retenção ausente',
-        description: 'Não foram encontradas políticas de retenção de dados',
-        recommendation: 'Implementar políticas de retenção de dados conforme LGPD',
-        affectedData: ['all_data'],
-        legalReference: 'LGPD Art. 16º',
-        remediation: {
-          steps: [
-            'Definir períodos de retenção por categoria de dados',
-            'Implementar exclusão automática de dados expirados',
-            'Documentar políticas de retenção',
-          ],
-          timeframe: '60 dias',
-          responsible: 'Equipe Técnica',
-        },
-        detectedAt: new Date(),
-      });
-    }
-
-    this.issues.push(...issues);
-
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
-      ? LGPD_COMPLIANCE_LEVELS.NON_COMPLIANT
-      : issues.length > 0
-      ? LGPD_COMPLIANCE_LEVELS.PARTIAL
-      : LGPD_COMPLIANCE_LEVELS.COMPLIANT;
-
-    return {
-      level,
-      dataRetentionPolicies,
-      expiredDataSets,
-      retentionViolations,
-      issues,
-    };
-  }
-
-  /**
-   * Validate data subject rights compliance
-   */
-  private async validateDataSubjectRights(patientId?: string) {
-    // Validate patient's data subject rights under LGPD
-    if (patientId) {
-      // Check if patient has any pending data subject requests
-      console.log(`LGPD: Validating data subject rights for patient ${patientId}`);
-
-      // Simulate checking for pending requests (access, correction, deletion)
-      const pendingRequests = []; // Would query actual database
-
-      if (pendingRequests.length > 0) {
-        this.addIssue(
-          'pending_data_subject_requests',
-          'Patient has pending data subject rights requests',
-          'medium',
-        );
-      }
-    }
-    // Mock implementation - would query actual rights requests
-    const accessRequests = 10;
-    const rectificationRequests = 5;
-    const deletionRequests = 2;
-    const portabilityRequests = 3;
-    const fulfilledRequests = 18;
-    const pendingRequests = 2;
-    const issues: LGPDComplianceIssue[] = [];
-
-    // Check for overdue requests
-    if (pendingRequests > 0) {
-      issues.push({
-        id: 'overdue-rights-requests',
-        type: 'rights',
-        severity: 'high',
-        title: 'Solicitações de direitos em atraso',
-        description: `${pendingRequests} solicitações de direitos dos titulares estão pendentes`,
-        recommendation: 'Processar solicitações pendentes dentro do prazo legal',
-        affectedData: ['personal_data'],
-        legalReference: 'LGPD Art. 18º',
-        remediation: {
-          steps: [
-            'Revisar solicitações pendentes',
-            'Processar solicitações dentro de 15 dias',
-            'Implementar sistema de acompanhamento automático',
-          ],
-          timeframe: '15 dias',
-          responsible: 'Equipe de Atendimento',
-        },
-        detectedAt: new Date(),
-      });
-    }
-
-    this.issues.push(...issues);
-
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
-      ? LGPD_COMPLIANCE_LEVELS.NON_COMPLIANT
-      : issues.length > 0
-      ? LGPD_COMPLIANCE_LEVELS.PARTIAL
-      : LGPD_COMPLIANCE_LEVELS.COMPLIANT;
-
-    return {
-      level,
-      accessRequests,
-      rectificationRequests,
-      deletionRequests,
-      portabilityRequests,
-      fulfilledRequests,
-      pendingRequests,
-      issues,
-    };
-  }
-
-  /**
-   * Validate audit trail compliance
-   */
-  private async validateAuditCompliance(patientId?: string) {
-    // Validate audit trail compliance for patient data operations
-    if (patientId) {
-      console.log(`LGPD: Validating audit compliance for patient ${patientId}`);
-
-      // Check if all patient data operations are properly audited
-      const auditCoverage = 0.95; // Would calculate actual coverage
-
-      if (auditCoverage < 0.98) {
-        this.addIssue(
-          'incomplete_audit_trail',
-          'Audit trail coverage below required threshold',
-          'high',
-        );
-      }
-    }
-    // Mock implementation - would query actual audit logs
-    const auditLogsCount = 1000;
-    const missingAuditLogs = 0;
-    const auditRetentionCompliance = true;
-    const issues: LGPDComplianceIssue[] = [];
-
-    // Check for missing audit logs
-    if (missingAuditLogs > 0) {
-      issues.push({
-        id: 'missing-audit-logs',
-        type: 'audit',
-        severity: 'critical',
-        title: 'Logs de auditoria ausentes',
-        description: `${missingAuditLogs} operações sem logs de auditoria`,
-        recommendation: 'Implementar logging completo de todas as operações',
-        affectedData: ['audit_data'],
-        legalReference: 'LGPD Art. 37º',
-        remediation: {
-          steps: [
-            'Implementar logging automático',
-            'Revisar operações sem logs',
-            'Estabelecer monitoramento contínuo',
-          ],
-          timeframe: '30 dias',
-          responsible: 'Equipe Técnica',
-        },
-        detectedAt: new Date(),
-      });
-    }
-
-    this.issues.push(...issues);
-
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
-      ? LGPD_COMPLIANCE_LEVELS.NON_COMPLIANT
-      : issues.length > 0
-      ? LGPD_COMPLIANCE_LEVELS.PARTIAL
-      : LGPD_COMPLIANCE_LEVELS.COMPLIANT;
-
-    return {
-      level,
-      auditLogsCount,
-      missingAuditLogs,
-      auditRetentionCompliance,
-      issues,
-    };
-  }
-
-  /**
-   * Calculate overall compliance level
-   */
-  private calculateOverallCompliance(levels: LGPDComplianceLevel[]): LGPDComplianceLevel {
-    if (levels.includes(LGPD_COMPLIANCE_LEVELS.NON_COMPLIANT)) {
-      return LGPD_COMPLIANCE_LEVELS.NON_COMPLIANT;
-    }
-    if (levels.includes(LGPD_COMPLIANCE_LEVELS.PARTIAL)) {
-      return LGPD_COMPLIANCE_LEVELS.PARTIAL;
-    }
-    return LGPD_COMPLIANCE_LEVELS.COMPLIANT;
-  }
-
-  /**
-   * Calculate compliance score
-   */
-  private calculateComplianceScore(): number {
-    const criticalIssues = this.issues.filter(i => i.severity === 'critical').length;
-    const highIssues = this.issues.filter(i => i.severity === 'high').length;
-    const mediumIssues = this.issues.filter(i => i.severity === 'medium').length;
-    const lowIssues = this.issues.filter(i => i.severity === 'low').length;
-
-    // Calculate penalty based on issue severity
-    const penalty = (criticalIssues * 25) + (highIssues * 15) + (mediumIssues * 8)
-      + (lowIssues * 3);
-
-    return Math.max(0, 100 - penalty);
-  }
-
-  /**
-   * Generate compliance recommendations
-   */
-  private generateRecommendations(): string[] {
-    const recommendations: string[] = [];
-
-    // Group issues by type and generate recommendations
-    const issuesByType = this.issues.reduce((acc, issue) => {
-      if (!acc[issue.type]) acc[issue.type] = [];
-      acc[issue.type].push(issue);
-      return acc;
-    }, {} as Record<string, LGPDComplianceIssue[]>);
-
-    Object.entries(issuesByType).forEach(([type, issues]) => {
-      const criticalCount = issues.filter(i => i.severity === 'critical').length;
-      const highCount = issues.filter(i => i.severity === 'high').length;
-
-      if (criticalCount > 0) {
-        recommendations.push(
-          `Resolver urgentemente ${criticalCount} problema(s) crítico(s) de ${type}`,
-        );
-      }
-      if (highCount > 0) {
-        recommendations.push(`Abordar ${highCount} problema(s) de alta prioridade em ${type}`);
-      }
+    let sanitized = text;
+    
+    phiPatterns.forEach(pattern => {
+      sanitized = sanitized.replace(pattern, '[REDACTED]');
     });
 
-    // Add general recommendations
-    if (this.issues.length === 0) {
-      recommendations.push('Manter monitoramento contínuo da conformidade LGPD');
-      recommendations.push('Realizar auditorias regulares de conformidade');
-    }
+    return sanitized;
+  }
 
-    return recommendations;
+  /**
+   * Check if data retention policy requires deletion
+   */
+  async checkRetentionPolicies(): Promise<void> {
+    try {
+      // Find patients past retention period
+      const { data: expiredPatients } = await this.supabase
+        .from('patients')
+        .select('id, clinic_id')
+        .lt('data_retention_until', new Date().toISOString());
+
+      if (expiredPatients) {
+        console.log(`Found ${expiredPatients.length} patients past retention period`);
+        
+        // In production, implement secure deletion process
+        // For now, just log the finding
+        for (const patient of expiredPatients) {
+          await this.logDataAccess({
+            userId: 'system',
+            clinicId: patient.clinic_id,
+            patientId: patient.id,
+            action: 'delete',
+            resourceType: 'patient',
+            justification: 'Retention policy expired'
+          }, true);
+        }
+      }
+    } catch (error) {
+      console.error('Retention check error:', error);
+    }
+  }
+
+  /**
+   * Create data access request for patient rights
+   */
+  async createAccessRequest(
+    patientId: string,
+    requestType: 'access' | 'deletion' | 'portability',
+    justification: string
+  ): Promise<string> {
+    try {
+      const { data, error } = await this.supabase
+        .from('consent_records')
+        .insert([{
+          patient_id: patientId,
+          purpose: `lgpd_${requestType}`,
+          status: 'pending',
+          justification
+        }])
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return data.id;
+    } catch (error) {
+      console.error('Failed to create access request:', error);
+      throw error;
+    }
   }
 }
 
-export default LGPDComplianceService;
+// Export singleton instance
+export const lgpdService = new LGPDComplianceService();

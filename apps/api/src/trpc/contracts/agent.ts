@@ -7,7 +7,7 @@
 
 import { z } from 'zod';
 import { router, protectedProcedure } from '../trpc';
-import { HealthcareTRPCError } from '@/utils/healthcare-errors';
+import { HealthcareTRPCError } from '@neonpro/types/api/contracts';
 
 /**
  * Core Agent Types

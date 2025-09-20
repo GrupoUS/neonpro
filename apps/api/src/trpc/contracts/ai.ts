@@ -13,30 +13,25 @@ import {
 } from '@neonpro/types/api/contracts';
 import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
-import auditLogger from '@neonpro/security';
+import { auditLogger } from '@neonpro/security';
 import { 
   aiSecurityService,
   sanitizeForAI,
   validatePromptSecurity,
   validateAIOutputSafety,
   shouldRetainAIData
-} from '../services/ai-security-service';
+} from '../../services/ai-security-service';
 import { 
   lgpdConsentService, 
-  lgpdAuditService,
-  lgpdDataSubjectService 
-} from '../services';
-import { LGPDComplianceMiddleware } from '../middleware/lgpd-compliance';
-import { ConsentPurpose, DataCategory } from '../types/lgpd';
+  lgpdAuditService 
+} from '../../services/lgpd-consent-service';
+import { lgpdDataSubjectService } from '../../services/lgpd-data-subject-service';
+import { LGPDComplianceMiddleware } from '../../middleware/lgpd-compliance';
+import { ConsentPurpose } from '../../services/lgpd-consent-service';
+import { DataCategory } from '../../services/lgpd-audit-service';
 
-// Health analysis functions
-import {
-  gatherPatientAnalysisData,
-  buildHealthAnalysisPrompt,
-  callHealthAnalysisAI,
-  parseHealthAnalysisResponse,
-  storeHealthAnalysis
-} from '@neonpro/core-services';
+// Health analysis service
+import { HealthAnalysisService } from '@neonpro/core-services';
 
 // AI service management functions
 import {
@@ -44,6 +39,9 @@ import {
   checkModelAvailability,
   getAIUsageStats
 } from '@neonpro/core-services';
+
+// Initialize services
+const healthAnalysisService = new HealthAnalysisService();
 
 export const aiRouter = router({
   /**
@@ -134,7 +132,7 @@ export const aiRouter = router({
         throw new HealthcareTRPCError(
           'BAD_REQUEST',
           'Message contains potentially harmful content',
-          'SECURITY_VALIDATION_FAILED',
+          'CONTENT_FILTERED',
         );
       }
 
@@ -261,7 +259,7 @@ export const aiRouter = router({
           throw new HealthcareTRPCError(
             'BAD_REQUEST',
             'AI response failed security validation',
-            'AI_RESPONSE_SECURITY_VALIDATION_FAILED',
+            'CONTENT_FILTERED',
           );
         }
 
@@ -703,7 +701,7 @@ export const aiRouter = router({
         throw new HealthcareTRPCError(
           'NOT_FOUND',
           'Clinic not found',
-          'CLINIC_NOT_FOUND',
+          'CLINIC_ACCESS_DENIED',
           { clinicId: input.clinicId }
         );
       }
@@ -730,24 +728,24 @@ export const aiRouter = router({
         throw new HealthcareTRPCError(
           'FORBIDDEN',
           'Insufficient permissions for health analysis',
-          'INSUFFICIENT_PERMISSIONS',
+          'CLINIC_ACCESS_DENIED',
           { requiredPermission: 'health_analysis', userRole: ctx.user.role },
         );
       }
 
       // Gather patient data for analysis
-      const patientData = await gatherPatientAnalysisData(
-        input.patientId,
-        input.clinicId,
-        input.timeRange,
-        input.includeHistory,
-      );
+      const patientData = await healthAnalysisService.gatherPatientAnalysisData({
+        patientId: input.patientId,
+        clinicId: input.clinicId,
+        userId: ctx.user.id,
+        userRole: ctx.user.role,
+      });
 
       if (!patientData.hasMinimumData) {
         throw new HealthcareTRPCError(
           'BAD_REQUEST',
           'Insufficient patient data for analysis',
-          'INSUFFICIENT_DATA',
+          'AI_PROCESSING_ERROR',
           {
             dataPoints: patientData.dataPointCount,
             minimumRequired: 3,
@@ -756,25 +754,24 @@ export const aiRouter = router({
       }
 
       // Build analysis prompt
-      const analysisPrompt = buildHealthAnalysisPrompt({
-        analysisType: input.analysisType,
+      const analysisPrompt = healthAnalysisService.buildHealthAnalysisPrompt({
         patientData,
         customPrompt: input.customPrompt,
       });
 
       try {
         // Call AI service for health analysis
-        const aiResponse = await callHealthAnalysisAI({
+        const aiResponse = await healthAnalysisService.callHealthAnalysisAI({
           prompt: analysisPrompt,
           model: 'gpt-4', // Use most capable model for health analysis
           temperature: 0.3, // Lower temperature for medical analysis
         });
 
         // Parse AI response into structured insights
-        const analysisResult = parseHealthAnalysisResponse(aiResponse.content);
+        const analysisResult = healthAnalysisService.parseHealthAnalysisResponse(aiResponse.content);
 
         // Store analysis results
-        const analysisId = await storeHealthAnalysis({
+        const analysisId = await healthAnalysisService.storeHealthAnalysis({
           patientId: input.patientId,
           clinicId: input.clinicId,
           analysisType: input.analysisType,
