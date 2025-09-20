@@ -251,7 +251,7 @@ export class DataRetentionService {
   async scheduleCleanup(
     policyId: string,
     dataSource: string,
-    dataIdentifier: string,
+    _dataIdentifier: string,
     patientId?: string,
     customRetentionDate?: Date,
   ): Promise<CleanupJob> {
@@ -753,7 +753,7 @@ export class DataRetentionService {
   private async sendCompletionNotification(
     job: CleanupJob,
     execution: CleanupExecution,
-    policy: RetentionPolicy,
+    _policy: RetentionPolicy,
   ): Promise<void> {
     const message =
       `Cleanup job ${job.id} completed successfully. Processed ${execution.recordsProcessed} records, affected ${execution.recordsAffected} records.`;
@@ -767,7 +767,7 @@ export class DataRetentionService {
   private async sendErrorNotification(
     job: CleanupJob,
     execution: CleanupExecution,
-    policy: RetentionPolicy,
+    _policy: RetentionPolicy,
   ): Promise<void> {
     const message = `Cleanup job ${job.id} failed. Error: ${
       execution.errors[0]?.error || 'Unknown error'

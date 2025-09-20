@@ -4,8 +4,6 @@
  * LGPD compliance, Brazilian healthcare security standards, and medical data protection
  */
 
-import { z } from 'zod';
-
 // ============================================================================
 // Security Header Configuration Types
 // ============================================================================
@@ -581,7 +579,7 @@ export class SecurityHeadersService {
   /**
    * Store CSP violation in database
    */
-  private async storeCSPViolation(violation: any): Promise<void> {
+  private async storeCSPViolation(_violation: any): Promise<void> {
     // Mock implementation - would integrate with your security monitoring system
     console.log('Storing CSP violation in security monitoring system');
   }

@@ -14,10 +14,10 @@
  */
 
 import type { Context } from 'hono';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Hono context for SSR integration testing
-const mockHonoContext = {
+const _mockHonoContext = {
   req: {
     header: vi.fn(),
     cookie: vi.fn(),

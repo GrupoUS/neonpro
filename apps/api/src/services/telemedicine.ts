@@ -1098,7 +1098,7 @@ export class TelemedicineService {
   /**
    * Find nearest hospital based on location
    */
-  private async findNearestHospital(location: {
+  private async findNearestHospital(_location: {
     latitude: number;
     longitude: number;
     address: string;
@@ -1129,9 +1129,9 @@ export class TelemedicineService {
       role: string;
       notified: boolean;
     }>,
-    escalationLevel: string,
-    reason: string,
-    location?: any,
+    _escalationLevel: string,
+    _reason: string,
+    _location?: any,
   ): Promise<
     Array<{
       name: string;
@@ -1231,7 +1231,7 @@ export class TelemedicineService {
     const retentionPeriod = this.getRetentionPeriod(session.sessionType);
 
     // Encrypt session data
-    const encryptedData = this.encryptSessionData(session);
+    const _encryptedData = this.encryptSessionData(session);
 
     // In real implementation, store in secure archive
     console.log(`Archiving session ${session.id} with ID ${archiveId}`);

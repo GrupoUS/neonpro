@@ -934,7 +934,7 @@ export class EnhancedPerformanceOptimizationService {
 
   private async generateProjections(
     clinicId: string,
-    currentMetrics: Record<string, any>,
+    _currentMetrics: Record<string, any>,
   ) {
     // Implement predictive analytics for future metrics
     // This would use machine learning or statistical models
@@ -956,7 +956,7 @@ export class EnhancedPerformanceOptimizationService {
     key: string,
     value: any,
     ttl: number,
-    tags: string[],
+    _tags: string[],
   ): Promise<void> {
     try {
       // Use the query optimizer's cache
@@ -985,7 +985,7 @@ export class EnhancedPerformanceOptimizationService {
   private updatePerformanceMetrics(
     key: string,
     duration: number,
-    isError: boolean,
+    _isError: boolean,
   ): void {
     if (!this.config.enablePerformanceMonitoring) return;
 
@@ -1102,9 +1102,9 @@ export class EnhancedPerformanceOptimizationService {
 
   private cleanupPerformanceMetrics(): void {
     // Remove old metrics data
-    const cutoff = Date.now() - 60 * 60 * 1000; // Keep last hour
+    const _cutoff = Date.now() - 60 * 60 * 1000; // Keep last hour
 
-    for (const [key, metrics] of this.performanceMetrics.entries()) {
+    for (const [_key, _metrics] of this.performanceMetrics.entries()) {
       // Implement cleanup logic based on your requirements
     }
   }

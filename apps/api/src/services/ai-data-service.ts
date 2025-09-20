@@ -9,7 +9,6 @@ import {
   ClientData,
   DataAccessError,
   FinancialData,
-  QueryIntent,
 } from '@neonpro/types';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
@@ -715,7 +714,7 @@ export class AIDataService {
    */
   async healthCheck(): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
+      const { error } = await this.supabase
         .from('clients')
         .select('count', { count: 'exact', head: true })
         .limit(1);

@@ -299,7 +299,7 @@ export function checkRateLimit(
  */
 export function getRateLimitKey(c: Context, type: 'general' | 'auth' | 'sensitive' = 'general'): string {
   const ip = c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown';
-  const userAgent = c.req.header('user-agent') || 'unknown';
+  const _userAgent = c.req.header('user-agent') || 'unknown';
   const userId = c.get('userId') || 'anonymous';
   const endpoint = c.req.path;
 
@@ -556,7 +556,7 @@ export async function httpErrorHandlingMiddleware(
     });
 
   } catch (error: any) {
-    const duration = Date.now() - startTime;
+    const _duration = Date.now() - startTime;
 
     // Handle the error with appropriate HTTP response
     return handleHTTPError(error, c);

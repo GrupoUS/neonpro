@@ -259,7 +259,7 @@ const generateMockPatient = (id: string): Patient => ({
   },
 });
 
-const generateMockAppointments = (patientId: string): Appointment[] => [
+const generateMockAppointments = (_patientId: string): Appointment[] => [
   {
     id: '1',
     type: 'Consulta inicial',
@@ -288,7 +288,7 @@ const generateMockAppointments = (patientId: string): Appointment[] => [
   },
 ];
 
-const generateMockMedicalRecords = (patientId: string): MedicalRecord[] => [
+const generateMockMedicalRecords = (_patientId: string): MedicalRecord[] => [
   {
     id: '1',
     date: '2024-01-15',
@@ -312,7 +312,7 @@ const generateMockMedicalRecords = (patientId: string): MedicalRecord[] => [
   },
 ];
 
-const generateMockAIInsights = (patientId: string): AIInsight[] => [
+const generateMockAIInsights = (_patientId: string): AIInsight[] => [
   {
     id: '1',
     type: 'treatment_recommendation',

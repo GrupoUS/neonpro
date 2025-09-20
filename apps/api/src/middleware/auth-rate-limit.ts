@@ -512,10 +512,10 @@ export class AuthRateLimiter {
     }
 
     // Block if suspicious score exceeds threshold
-    const ipEntry = this.ipStore.get(clientInfo.ip);
-    if (ipEntry && ipEntry.suspiciousScore >= this.config.suspiciousThreshold) {
+    const finalIpEntry = this.ipStore.get(clientInfo.ip);
+    if (finalIpEntry && finalIpEntry.suspiciousScore >= this.config.suspiciousThreshold) {
       this.suspiciousIPs.add(clientInfo.ip);
-      console.warn(`IP ${clientInfo.ip} blocked due to suspicious behavior (score: ${ipEntry.suspiciousScore})`);
+      console.warn(`IP ${clientInfo.ip} blocked due to suspicious behavior (score: ${finalIpEntry.suspiciousScore})`);
     }
   }
 

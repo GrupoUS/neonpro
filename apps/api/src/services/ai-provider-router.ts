@@ -39,52 +39,6 @@ import {
 } from './ai-provider/types';
 
 // ============================================================================
-// Circuit Breaker Implementation
-// ============================================================================
-
-class CircuitBreaker {
-  private failures = 0;
-  private lastFailureTime = 0;
-  private state: 'closed' | 'open' | 'half-open' = 'closed';
-  private readonly failureThreshold = 5;
-  private readonly timeoutMs = 60000; // 1 minute
-
-  constructor(private provider: AIProvider) {}
-
-  isOpen(): boolean {
-    if (this.state === 'open') {
-      // Check if timeout has elapsed
-      if (Date.now() - this.lastFailureTime >= this.timeoutMs) {
-        this.state = 'half-open';
-        return false;
-      }
-      return true;
-    }
-    return false;
-  }
-
-  recordSuccess(): void {
-    this.failures = 0;
-    this.state = 'closed';
-  }
-
-  recordFailure(): void {
-    this.failures++;
-    this.lastFailureTime = Date.now();
-
-    if (this.state === 'half-open') {
-      this.state = 'open';
-    } else if (this.failures >= this.failureThreshold) {
-      this.state = 'open';
-    }
-  }
-
-  getState(): string {
-    return this.state;
-  }
-}
-
-// ============================================================================
 // AI Provider Router Service
 // ============================================================================
 
@@ -427,7 +381,7 @@ export class AIProviderRouterService {
    */
   private selectLatencyOptimizedProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): ProviderConfig {
     let best_provider = providers[0];
     let lowest_latency = (
@@ -456,7 +410,7 @@ export class AIProviderRouterService {
    */
   private selectQualityOptimizedProvider(
     providers: ProviderConfig[],
-    request: RoutingRequest,
+    _request: RoutingRequest,
   ): ProviderConfig {
     let best_provider = providers[0];
     let best_quality = (

@@ -589,8 +589,8 @@ export const agentRouter = router({
         );
 
         // Build context for AI
-        const context = HEALTHCARE_CONTEXTS[session.agentType];
-        const ragContext = ragResults
+        const _context = HEALTHCARE_CONTEXTS[session.agentType];
+        const _ragContext = ragResults
           .map(r => `${r.content} (Fonte: ${r.source})`)
           .join('\n\n');
 
@@ -607,7 +607,7 @@ export const agentRouter = router({
         }, estou aqui para ajudar.`;
 
         // Save agent response
-        const agentMessage = await ctx.prisma.agentMessage.create({
+        const _agentMessage = await ctx.prisma.agentMessage.create({
           data: {
             sessionId: input.session_id,
             role: 'assistant',

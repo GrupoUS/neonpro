@@ -1118,12 +1118,12 @@ async function sanitizeHealthcareMessage(
   return message; // Placeholder
 }
 
-async function buildHealthcareContext(context: any): Promise<string> {
+async function _buildHealthcareContext(_context: any): Promise<string> {
   // Build context-aware system prompt for healthcare AI
   return 'Healthcare AI assistant context'; // Placeholder
 }
 
-async function callAIServiceWithRetry(request: any): Promise<any> {
+async function callAIServiceWithRetry(_request: any): Promise<any> {
   // Implementation for AI service calls with retry logic
   return {
     content: 'AI response',
@@ -1133,9 +1133,9 @@ async function callAIServiceWithRetry(request: any): Promise<any> {
   };
 }
 
-async function checkAIUsageLimit(
-  userId: string,
-  clinicId: string,
+async function _checkAIUsageLimit(
+  _userId: string,
+  _clinicId: string,
 ): Promise<any> {
   return { allowed: true, currentUsage: 0, limit: 1000, resetTime: new Date() };
 }

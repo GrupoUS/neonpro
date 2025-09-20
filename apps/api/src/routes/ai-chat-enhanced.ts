@@ -13,7 +13,6 @@ import { HealthcareDataSanitizer, PIIRedactionLevel } from '../lib/pii-redaction
 import { AIProviderResponse, AIProviderRouter } from '../services/ai-provider-router-new';
 import {
   CacheKeyGenerator,
-  CacheValidationResult,
   SemanticCacheService,
 } from '../services/semantic-cache';
 
