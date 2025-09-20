@@ -43,12 +43,12 @@ export class ConsentService {
     return consent;
   }
   
-  async getConsent(patientId: string): Promise<ConsentRecord[]> {
+  async getConsent(_patientId: string): Promise<ConsentRecord[]> {
     // In a real implementation, this would query database
     return [];
   }
   
-  async revokeConsent(consentId: string): Promise<ConsentRecord> {
+  async revokeConsent(_consentId: string): Promise<ConsentRecord> {
     // In a real implementation, this would update database
     const revokedConsent: ConsentRecord = {
       id: consentId,
@@ -65,10 +65,11 @@ export class ConsentService {
     return revokedConsent;
   }
   
-  async checkCompliance(patientId: string): Promise<ComplianceCheck> {
+  async checkCompliance(_patientId: string): Promise<ComplianceCheck> {
     return {
       status: 'COMPLIANT',
       risk_level: 'LOW',
+      riskLevel: 'LOW',
       violations: [],
       isCompliant: true,
     };

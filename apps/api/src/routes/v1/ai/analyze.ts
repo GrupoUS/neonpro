@@ -147,7 +147,6 @@ const v1AnalyzeRequestSchema = z
     optimizeForRegion: z.boolean().optional(),
     maxLatencyMs: z.number().optional(),
     fallbackStrategy: z.string().optional(),
-    fallbackModels: z.array(z.string()).optional(),
     urgencyLevel: z.string().optional(),
     patientCondition: z.string().optional(),
     professionalCRM: z.string().optional(),

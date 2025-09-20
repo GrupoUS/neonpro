@@ -176,8 +176,13 @@ export class OrchestrationMonitoring {
       test: 0,
       "compliance-validator": 0,
       "code-reviewer": 0,
-      "architect-review": 0,
       "security-auditor": 0,
+      "architect-review": 0,
+      "tdd-orchestrator": 0,
+      "test-auditor": 0,
+      "custom-agent": 0,
+      "tertiary-agent": 0,
+      "non-existent-agent": 0,
     };
   }
 

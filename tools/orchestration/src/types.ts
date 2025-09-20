@@ -1,7 +1,7 @@
 export type AgentCoordinationPattern = "parallel" | "sequential" | "hierarchical" | "event-driven" | "consensus";
 
 // Agent and workflow type definitions
-export type AgentName = "test" | "code-reviewer" | "security-auditor" | "architect-review" | "tdd-orchestrator";
+export type AgentName = "test" | "code-reviewer" | "security-auditor" | "architect-review" | "tdd-orchestrator" | "test-auditor" | "custom-agent" | "tertiary-agent" | "non-existent-agent";
 export type WorkflowType = "parallel" | "sequential" | "hierarchical" | "event-driven";
 
 // Re-export types from agent-registry

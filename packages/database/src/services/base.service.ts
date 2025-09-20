@@ -4,7 +4,6 @@
  */
 
 import type { PrismaClient } from "@prisma/client";
-import { ResourceType, AuditStatusType } from "../types/audit.types.js";
 
 // Lazy load prisma to avoid test environment issues
 let _prismaInstance: PrismaClient | null = null;
@@ -69,14 +68,14 @@ export abstract class BaseService {
       const prisma = await this.getPrisma();
       await prisma.auditTrail.create({
         data: {
-          userId,
+          userId: userId || "system",
           action,
           resource,
-          resourceType: "SYSTEM" as ResourceType,
+          resourceType: "SYSTEM_CONFIG",
           additionalInfo: additionalInfo ? JSON.stringify(additionalInfo) : undefined,
           ipAddress: "127.0.0.1",
           userAgent: "NeonPro-Service",
-          status: "COMPLETED" as AuditStatusType,
+          status: "SUCCESS",
         },
       });
     } catch (error) {
@@ -236,7 +235,7 @@ export abstract class BaseService {
         timestamp: new Date(),
         service: this.serviceName,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         status: "unhealthy",
         timestamp: new Date(),

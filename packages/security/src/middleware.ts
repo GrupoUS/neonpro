@@ -347,7 +347,8 @@ function sanitizeObject<T extends Record<string, unknown>>(obj: T): Record<strin
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => sanitizeObject(item));
+    // For arrays, we need to return a wrapper object or handle arrays differently
+    return { items: obj.map(item => sanitizeObject(item)) };
   }
 
   const sanitized: Record<string, unknown> = {};

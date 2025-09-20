@@ -39,13 +39,24 @@ export interface AuditStatus {
 }
 
 export interface ComplianceReport {
-  id: string;
-  timestamp: string;
-  status: string;
-  riskLevel: string;
-  violations: string[];
-  isCompliant: boolean;
-  metadata?: any;
+  reportPeriod: {
+    startDate: string;
+    endDate: string;
+  };
+  summary: {
+    totalEvents: number;
+    compliantEvents: number;
+    nonCompliantEvents: number;
+    complianceRate: number;
+  };
+  riskLevels: {
+    low: number;
+    medium: number;
+    high: number;
+    critical: number;
+  };
+  violations: Record<string, number>;
+  recommendations: string[];
 }
 
 export interface AuditSearchCriteria {
@@ -75,12 +86,12 @@ export interface MedicalDataClassification {
 
 export interface RTCAuditLogEntry {
   id: string;
-  sessionId: string;
+  sessionId?: string;
   userId: string;
   eventType: string;
   userRole: string;
   dataClassification: string;
-  description: string;
+  description?: string;
   timestamp: string;
   ipAddress?: string;
   userAgent?: string;

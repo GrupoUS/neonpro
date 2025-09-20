@@ -14,15 +14,9 @@ import {
   FileText,
   Info,
   Lock,
-  Mic,
-  Monitor,
-  Print,
   Settings,
-  Share,
   Shield,
   Stethoscope,
-  User,
-  Video,
   XCircle,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -39,11 +33,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
-import { Switch } from '@/components/ui/switch';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
@@ -116,22 +107,22 @@ interface ConsentSection {
 export function SessionConsent({
   sessionId,
   patientId,
-  professionalId,
+  _professionalId,
   onConsentComplete,
   onConsentRevoke,
   mode = 'initial',
   className = '',
 }: SessionConsentProps) {
   // Hooks
-  const { consent, updateConsent, revokeConsent, validateConsent, isUpdating } = useSessionConsent(
+  const { consent, updateConsent, revokeConsent, validateConsent, _isUpdating } = useSessionConsent(
     sessionId,
   );
 
   // Session consent management
-  const sessionConsent = useSessionConsent(sessionId);
+  const _sessionConsent = useSessionConsent(sessionId);
 
   // LGPD consent management
-  const lgpdConsent = useLGPDConsent({
+  const _lgpdConsent = useLGPDConsent({
     userId: patientId,
     patientId,
     sessionId,
@@ -181,9 +172,9 @@ export function SessionConsent({
     consentMethod: 'checkbox',
   });
 
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, _setCurrentStep] = useState(0);
   const [showLegalText, setShowLegalText] = useState(false);
-  const [showAuditDialog, setShowAuditDialog] = useState(false);
+  const [_showAuditDialog, setShowAuditDialog] = useState(false);
   const [additionalNotes, setAdditionalNotes] = useState('');
   const [isValidating, setIsValidating] = useState(false);
   const [consentProgress, setConsentProgress] = useState(0);
@@ -297,7 +288,7 @@ export function SessionConsent({
   // Calculate progress
   useEffect(() => {
     const requiredSections = consentSections.filter(s => s.required);
-    const completedRequired = requiredSections.filter(
+    const _completedRequired = requiredSections.filter(
       s => consentData[s.id as keyof ConsentData] === true,
     ).length;
 
@@ -383,7 +374,7 @@ export function SessionConsent({
       } else {
         toast.error('Falha na validação do consentimento');
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao registrar consentimento');
     } finally {
       setIsValidating(false);
@@ -412,7 +403,7 @@ export function SessionConsent({
 
       onConsentRevoke?.();
       toast.success('Consentimento revogado');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao revogar consentimento');
     }
   }, [revokeConsent, logConsentAction, onConsentRevoke]);

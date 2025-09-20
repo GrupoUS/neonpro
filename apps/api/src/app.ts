@@ -8,6 +8,9 @@ import chatRouter from './routes/chat';
 import { medicalRecords } from './routes/medical-records';
 import patientsRouter from './routes/patients';
 import v1Router from './routes/v1';
+import { trpcServer } from '@hono/trpc-server';
+import { appRouter } from './trpc/router';
+import { Context } from './trpc/context';
 
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
@@ -235,6 +238,30 @@ app.route('/api/v2/ai', aiRouter);
 
 // Mount V1 API routes under /api/v1
 app.route('/api/v1', v1Router);
+
+// Mount tRPC router under /trpc for type-safe API access
+const tRPCHandle = trpcServer({
+  router: appRouter,
+  createContext: async (opts) => {
+    // Create tRPC context from Hono request
+    const headers = opts.req.headers;
+    const userId = headers.get('x-user-id') || headers.get('user-id');
+    const clinicId = headers.get('x-clinic-id') || headers.get('clinic-id');
+    
+    return {
+      userId,
+      clinicId,
+      auditMeta: {
+        ipAddress: headers.get('x-forwarded-for') || headers.get('x-real-ip') || 'unknown',
+        userAgent: headers.get('user-agent') || 'unknown',
+        sessionId: headers.get('x-session-id') || headers.get('session-id') || 'unknown',
+      },
+    } as Context;
+  },
+});
+
+// Mount tRPC router with healthcare compliance
+app.mount('/trpc', tRPCHandle);
 
 // Basic health endpoints with enhanced monitoring
 app.get('/health', c => {

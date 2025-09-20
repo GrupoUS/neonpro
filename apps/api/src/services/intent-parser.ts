@@ -53,7 +53,7 @@ export class IntentParserService {
       /m[êe]s\s+atual\b/i,
     ],
     specific_dates: [
-      /(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/g, // DD/MM/YYYY
+      /(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})/g, // DD/MM/YYYY
       /(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})/gi, // DD de MMMM de YYYY
     ],
   };
@@ -355,7 +355,7 @@ export class IntentParserService {
     const dates: Date[] = [];
 
     // DD/MM/YYYY pattern
-    const dateMatches = query.matchAll(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/g);
+    const dateMatches = query.matchAll(/(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})/g);
     for (const match of dateMatches) {
       const [, day, month, year] = match;
       const fullYear = year.length === 2 ? 2000 + parseInt(year) : parseInt(year);

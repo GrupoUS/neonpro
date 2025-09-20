@@ -3,7 +3,7 @@
  * Provides comprehensive quality control orchestration with healthcare compliance
  */
 
-import type { QualityControlContext, AgentName } from "./types";
+import type { QualityControlContext, AgentName, AgentResult } from "./types";
 
 interface QualityControlSession {
   id: string;
@@ -15,6 +15,7 @@ interface QualityControlSession {
     name: string;
     status: string;
     type: string;
+    duration: number;
   }>;
   healthcareCompliance: {
     required: boolean;
@@ -52,11 +53,7 @@ interface QualityControlSession {
       type: string;
     }>;
   };
-  agentResults: Array<{
-    agentName: string;
-    success: boolean;
-    result: any;
-  }>;
+  agentResults: AgentResult[];
   conflicts: any[];
   resolutions: any[];
   aggregatedResult: {
@@ -94,7 +91,8 @@ export class QualityControlOrchestrator {
           name: "analysis",
           status: "completed",
           type: context.type === "security" ? "security-analysis" : 
-                context.type === "performance" ? "performance-analysis" : "general-analysis"
+                context.type === "performance" ? "performance-analysis" : "general-analysis",
+          duration: Math.floor(Math.random() * 1000) + 500 // Simulate phase duration
         }
       ],
       healthcareCompliance: {
@@ -142,6 +140,7 @@ export class QualityControlOrchestrator {
       agentResults: (context.agents || ["test"]).map(agent => ({
         agentName: agent,
         success: agent !== "non-existent-agent",
+        duration: Math.floor(Math.random() * 2000) + 500, // Simulate agent execution duration
         result: { status: "completed" }
       })),
       conflicts: [],

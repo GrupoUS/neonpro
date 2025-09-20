@@ -1,45 +1,46 @@
-export * from "./aesthetic-data";
-export * from "./ai-chat";
-export * from "./ai-provider";
-export * from "./webrtc";
-export * from "./healthcare-governance.types";
-export * from "./governance.types";
-export * from "./enhanced-ai";
+export * from './aesthetic-data';
+export * from './ai-chat';
+export * from './ai-provider';
+export * from './api/contracts';
+export * from './enhanced-ai';
+export * from './governance.types';
+export * from './healthcare-governance.types';
+export * from './webrtc';
 
 // Export specific types from ai-enhanced to avoid conflicts
 export type {
+  AIAnalyzeRequest,
+  AIAnalyzeResponse,
+  AICrudRequest,
+  AICrudResponse,
+  AIEnhancedError,
+  AIEnhancedErrorCode,
+  AIModelsResponse,
+  AIRecommendationsRequest,
+  AIRecommendationsResponse,
+  AIUsageRequest,
+  AIUsageResponse,
+  DataSensitivityLevel,
+  DomainDescriptor,
+  ImplementationEffort,
+  PerformanceBenchmarks,
   Plan,
   PlanData,
-  UsageCounter,
-  UsageCounterData,
-  UsageAggregation,
   Recommendation,
-  RecommendationType,
   RecommendationCategory,
   RecommendationPriority,
   RecommendationStatus,
-  ImplementationEffort,
-  DomainDescriptor,
-  DataSensitivityLevel,
-  PerformanceBenchmarks,
-  AIAnalyzeRequest,
-  AICrudRequest,
-  AIUsageRequest,
-  AIRecommendationsRequest,
-  AIAnalyzeResponse,
-  AICrudResponse,
-  AIUsageResponse,
-  AIRecommendationsResponse,
-  AIModelsResponse,
-  AIEnhancedError,
-  AIEnhancedErrorCode,
-} from "./ai-enhanced";
+  RecommendationType,
+  UsageAggregation,
+  UsageCounter,
+  UsageCounterData,
+} from './ai-enhanced';
 
 // Valibot Validation Schemas for Brazilian Healthcare
-export * from "./patient.valibot";
-export * from "./lgpd.valibot";
-export * from "./appointment.valibot";
-export * from "./prescription.valibot";
+export * from './appointment.valibot';
+export * from './lgpd.valibot';
+export * from './patient.valibot';
+export * from './prescription.valibot';
 // Healthcare types
 export interface Patient {
   id: string;

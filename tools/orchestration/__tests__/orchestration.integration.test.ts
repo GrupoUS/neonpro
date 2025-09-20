@@ -4,7 +4,7 @@
  */
 
 import { createTDDOrchestrationSystem, executeQualityControl } from '../index';
-import type { FeatureContext, OrchestrationOptions, QualityControlContext } from '../types';
+import type { FeatureContext, OrchestrationOptions } from '../types';
 
 // --- Added interfaces for typing ---
 interface SystemStatus {
@@ -289,19 +289,37 @@ async function testParallelExecution(): Promise<void> {
     // Test 6: Metrics Collection
     console.log('6️⃣ Testing Metrics Collection...');
     const metrics: Metrics = system.getMetrics();
-    if ('snapshot' in metrics && metrics.snapshot) {
+    // safe extraction: narrow union and guard nested properties before access
+    const snapshot = (metrics && typeof metrics === 'object' && 'snapshot' in metrics)
+      ? (metrics as { snapshot?: MetricsSnapshot }).snapshot
+      : undefined;
+
+    if (snapshot && typeof snapshot === 'object') {
+      const totalExecutions = typeof snapshot.orchestration?.totalExecutions === 'number'
+        ? snapshot.orchestration.totalExecutions
+        : null;
+      const qualityScore = typeof snapshot.quality?.overallQualityScore === 'number'
+        ? snapshot.quality.overallQualityScore
+        : null;
+      const avgExecTime = typeof snapshot.performance?.averageExecutionTime === 'number'
+        ? snapshot.performance.averageExecutionTime
+        : null;
+      const lgpdCompliance = typeof snapshot.healthcare?.lgpdCompliance === 'number'
+        ? snapshot.healthcare.lgpdCompliance
+        : null;
+
       console.log('✅ Metrics collection active');
+      console.log(`   - Total executions: ${totalExecutions ?? 'N/A'}`);
       console.log(
-        `   - Total executions: ${metrics.snapshot.orchestration.totalExecutions}`,
+        `   - Quality score: ${qualityScore !== null ? qualityScore.toFixed(1) : 'N/A'}`,
       );
       console.log(
-        `   - Quality score: ${metrics.snapshot.quality.overallQualityScore.toFixed(1)}`,
+        `   - Average execution time: ${avgExecTime !== null ? `${avgExecTime}ms` : 'N/A'}`,
       );
       console.log(
-        `   - Average execution time: ${metrics.snapshot.performance.averageExecutionTime}ms`,
-      );
-      console.log(
-        `   - LGPD compliance: ${(metrics.snapshot.healthcare.lgpdCompliance * 100).toFixed(1)}%`,
+        `   - LGPD compliance: ${
+          lgpdCompliance !== null ? `${(lgpdCompliance * 100).toFixed(1)}%` : 'N/A'
+        }`,
       );
     } else {
       console.log('❌ Metrics collection not available');
@@ -342,27 +360,19 @@ async function testParallelExecution(): Promise<void> {
         );
         console.log('✅ Healthcare compliance validation completed');
         console.log(
-          `   - LGPD compliance: ${
-            compliance.lgpd.compliant ? '✅' : '❌'
-          } (${compliance.lgpd.score}/100)`,
+          `   - LGPD compliance: ${compliance.lgpd.compliant ? '✅' : '❌'}`,
         );
         console.log(
-          `   - ANVISA compliance: ${
-            compliance.anvisa.compliant ? '✅' : '❌'
-          } (${compliance.anvisa.score}/100)`,
+          `   - ANVISA compliance: ${compliance.anvisa.compliant ? '✅' : '❌'}`,
         );
         console.log(
-          `   - CFM compliance: ${
-            compliance.cfm.compliant ? '✅' : '❌'
-          } (${compliance.cfm.score}/100)`,
+          `   - CFM compliance: ${compliance.cfm.compliant ? '✅' : '❌'}`,
         );
       } catch (error) {
-        console.log(
-          `❌ Healthcare compliance validation failed: ${formatError(error)}`,
-        );
+        console.log(`❌ Healthcare compliance failed: ${formatError(error)}`);
       }
     } else {
-      console.log('❌ Healthcare compliance validator not available');
+      console.log('❌ Healthcare compliance validation not available');
     }
     console.log();
 
@@ -371,10 +381,18 @@ async function testParallelExecution(): Promise<void> {
     const examples = system.getCommandExamples(); // allow inference to avoid shape mismatch
     console.log(`✅ Available commands: ${examples.availableCommands?.length ?? 0}`);
     console.log(
-      `   - Example commands: ${Array.isArray(examples.examples) ? examples.examples.slice(0, 3).join(', ') : ''}`,
+      `   - Example commands: ${
+        Array.isArray(examples.examples) ? examples.examples.slice(0, 3).join(', ') : ''
+      }`,
     );
-    console.log(`   - Available workflows: ${Array.isArray(examples.workflows) ? examples.workflows.join(', ') : ''}`);
-    console.log(`   - Registered agents: ${Array.isArray(examples.agents) ? examples.agents.length : 0}`);
+    console.log(
+      `   - Available workflows: ${
+        Array.isArray(examples.workflows) ? examples.workflows.join(', ') : ''
+      }`,
+    );
+    console.log(
+      `   - Registered agents: ${Array.isArray(examples.agents) ? examples.agents.length : 0}`,
+    );
     console.log();
 
     // Cleanup
@@ -400,7 +418,14 @@ async function testParallelExecution(): Promise<void> {
   }
 }
 
-// Run the tests
+// --- Type augmentation to allow `import.meta.main` check in various runtimes ---
+declare global {
+  interface ImportMeta {
+    main?: boolean;
+  }
+}
+
+// runtime-safe entry (keeps original behavior)
 if (import.meta.main) {
   testParallelExecution();
 }

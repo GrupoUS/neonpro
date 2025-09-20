@@ -16,11 +16,9 @@
 
 import { z } from "zod";
 import { nanoid } from "nanoid";
-import winston from "winston";
 
 // Import enhanced Winston-based logging
 import {
-  EnhancedStructuredLogger,
   brazilianPIIRedactionService,
   createHealthcareLogger,
   logger as enhancedLogger,

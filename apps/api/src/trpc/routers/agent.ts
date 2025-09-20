@@ -12,7 +12,6 @@ import { z } from 'zod';
 import {
   AgentMessageResponseSchema,
   AgentSessionResponseSchema,
-  AgentStatusSchema,
   AgentTypeSchema,
   CreateAgentMessageSchema,
   CreateAgentSessionSchema,

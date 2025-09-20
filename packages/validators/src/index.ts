@@ -20,20 +20,28 @@ export function validateCPF(cpf: string): boolean {
   // Validate first check digit
   let sum = 0;
   for (let i = 0; i < 9; i++) {
-    sum += parseInt(cleanCPF.charAt(i)) * (10 - i);
+    const digit = cleanCPF.charAt(i);
+    if (digit) {
+      sum += parseInt(digit) * (10 - i);
+    }
   }
   let remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cleanCPF.charAt(9))) return false;
+  const ninthDigit = cleanCPF.charAt(9);
+  if (!ninthDigit || remainder !== parseInt(ninthDigit)) return false;
 
   // Validate second check digit
   sum = 0;
   for (let i = 0; i < 10; i++) {
-    sum += parseInt(cleanCPF.charAt(i)) * (11 - i);
+    const digit = cleanCPF.charAt(i);
+    if (digit) {
+      sum += parseInt(digit) * (11 - i);
+    }
   }
   remainder = (sum * 10) % 11;
   if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cleanCPF.charAt(10))) return false;
+  const tenthDigit = cleanCPF.charAt(10);
+  if (!tenthDigit || remainder !== parseInt(tenthDigit)) return false;
 
   return true;
 }
@@ -56,21 +64,31 @@ export function validateCNPJ(cnpj: string): boolean {
   let sum = 0;
   const weights1 = [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   for (let i = 0; i < 12; i++) {
-    sum += parseInt(cleanCNPJ.charAt(i)) * weights1[i];
+    const digit = cleanCNPJ.charAt(i);
+    const weight = weights1[i];
+    if (digit && weight !== undefined) {
+      sum += parseInt(digit) * weight;
+    }
   }
   let remainder = sum % 11;
   const digit1 = remainder < 2 ? 0 : 11 - remainder;
-  if (digit1 !== parseInt(cleanCNPJ.charAt(12))) return false;
+  const twelfthDigit = cleanCNPJ.charAt(12);
+  if (!twelfthDigit || digit1 !== parseInt(twelfthDigit)) return false;
 
   // Validate second check digit
   sum = 0;
   const weights2 = [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
   for (let i = 0; i < 13; i++) {
-    sum += parseInt(cleanCNPJ.charAt(i)) * weights2[i];
+    const digit = cleanCNPJ.charAt(i);
+    const weight = weights2[i];
+    if (digit && weight !== undefined) {
+      sum += parseInt(digit) * weight;
+    }
   }
   remainder = sum % 11;
   const digit2 = remainder < 2 ? 0 : 11 - remainder;
-  if (digit2 !== parseInt(cleanCNPJ.charAt(13))) return false;
+  const thirteenthDigit = cleanCNPJ.charAt(13);
+  if (!thirteenthDigit || digit2 !== parseInt(thirteenthDigit)) return false;
 
   return true;
 }
