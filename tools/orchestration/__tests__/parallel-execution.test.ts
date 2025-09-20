@@ -3,7 +3,7 @@
  * Tests TDD orchestration, quality control integration, and agent coordination
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   createTDDOrchestrationSystem,
   executeQualityControl,
@@ -18,8 +18,6 @@ import type {
   OrchestrationOptions,
   QualityControlContext,
   AgentCoordinationPattern,
-  OrchestrationResult,
-  QualityControlResult,
 } from "../types";
 
 describe("Parallel Agent Execution Workflows", () => {
@@ -52,7 +50,7 @@ describe("Parallel Agent Execution Workflows", () => {
   describe("Quality Control Command Integration", () => {
     it("should parse and execute quality control commands", async () => {
       const command =
-        "analyze --type security --depth L5 --parallel --agents code-reviewer,security-auditor";
+        "analyze --type security --depth L5 --parallel --agents code-reviewer,test-auditor";
       const result = await executeQualityControl(command);
 
       expect(result).toMatchObject({
@@ -69,12 +67,12 @@ describe("Parallel Agent Execution Workflows", () => {
         type: "analyze",
         depth: "L5",
         parallel: true,
-        agents: ["code-reviewer", "architect-review", "security-auditor"],
+        agents: ["code-reviewer", "architect-review", "test-auditor"],
         coordination: "parallel",
       };
 
       const result = await qualityControlBridge.executeQualityControl(
-        "review --parallel --agents code-reviewer,architect-review,security-auditor",
+        "review --parallel --agents code-reviewer,architect-review,test-auditor",
         qualityContext,
       );
 
@@ -89,7 +87,7 @@ describe("Parallel Agent Execution Workflows", () => {
         type: "compliance",
         healthcare: true,
         parallel: true,
-        agents: ["security-auditor"],
+        agents: ["test-auditor"],
         coordination: "parallel",
       };
 
@@ -145,7 +143,7 @@ describe("Parallel Agent Execution Workflows", () => {
       const options: OrchestrationOptions = {
         workflow: "hierarchical",
         coordination: "hierarchical",
-        agents: ["architect-review", "code-reviewer", "security-auditor"],
+        agents: ["architect-review", "code-reviewer", "test-auditor"],
         healthcare: true,
       };
 
@@ -180,7 +178,7 @@ describe("Parallel Agent Execution Workflows", () => {
       const options: OrchestrationOptions = {
         workflow: "consensus",
         coordination: "consensus",
-        agents: ["code-reviewer", "architect-review", "security-auditor"],
+        agents: ["code-reviewer", "architect-review", "test-auditor"],
         healthcare: true,
       };
 
@@ -200,7 +198,7 @@ describe("Parallel Agent Execution Workflows", () => {
       const agents = [
         "code-reviewer",
         "architect-review",
-        "security-auditor",
+        "test-auditor",
         "test",
       ];
       const optimized = agentRegistry.getParallelOptimizedAgents(agents);
@@ -212,7 +210,7 @@ describe("Parallel Agent Execution Workflows", () => {
     });
 
     it("should create coordination groups", () => {
-      const agents = ["code-reviewer", "architect-review", "security-auditor"];
+      const agents = ["code-reviewer", "architect-review", "test-auditor"];
       const groups = agentRegistry.getAgentCoordinationGroups(
         agents,
         "parallel",
@@ -224,7 +222,7 @@ describe("Parallel Agent Execution Workflows", () => {
     });
 
     it("should create execution plan for parallel agents", () => {
-      const agents = ["code-reviewer", "security-auditor"];
+      const agents = ["code-reviewer", "test-auditor"];
       const plan = agentRegistry.createParallelExecutionPlan(
         agents,
         "parallel",
@@ -251,7 +249,7 @@ describe("Parallel Agent Execution Workflows", () => {
           },
           {
             name: "validation",
-            agents: ["security-auditor"],
+            agents: ["test-auditor"],
             parallel: false,
             coordination: "sequential" as AgentCoordinationPattern,
           },
@@ -435,7 +433,7 @@ describe("Parallel Agent Execution Workflows", () => {
 
       const agentResults = [
         {
-          agentName: "security-auditor" as const,
+          agentName: "test-auditor" as const,
           success: true,
           result: { securityScan: { vulnerabilities: [], score: 95 } },
           duration: 100,
@@ -535,7 +533,7 @@ describe("Parallel Agent Execution Workflows", () => {
       const result = await runTDDCycle(testFeature, {
         workflow: "parallel",
         coordination: "parallel",
-        agents: ["code-reviewer", "architect-review", "security-auditor"],
+        agents: ["code-reviewer", "architect-review", "test-auditor"],
         healthcare: true,
         enableMetrics: true,
         enableCompliance: true,
@@ -553,7 +551,7 @@ describe("Parallel Agent Execution Workflows", () => {
       const commands = [
         "analyze --type security --depth L8 --parallel --healthcare",
         "test --type unit --parallel --agents test,code-reviewer",
-        "review --depth L6 --parallel --agents architect-review,security-auditor --healthcare",
+        "review --depth L6 --parallel --agents architect-review,test-auditor --healthcare",
         "validate --type compliance --healthcare --parallel",
       ];
 

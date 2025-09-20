@@ -4,14 +4,14 @@
  * CFM 2.314/2022 compliant with LGPD data protection
  */
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 // Import tRPC client for backend communication
-import { trpc } from "@/lib/trpc";
+import { trpc } from '@/lib/trpc';
 
 // Import secure WebRTC configuration
-import { SECURE_WEBRTC_CONFIG } from "../lib/webrtc/secure-config";
+import { SECURE_WEBRTC_CONFIG } from '../lib/webrtc/secure-config';
 
 /**
  * WebRTC Configuration following CFM guidelines with enhanced security
@@ -26,7 +26,7 @@ const MEDICAL_MEDIA_CONSTRAINTS = {
     width: { min: 640, ideal: 1280, max: 1920 },
     height: { min: 480, ideal: 720, max: 1080 },
     frameRate: { min: 15, ideal: 30, max: 60 },
-    facingMode: "user",
+    facingMode: 'user',
   },
   audio: {
     echoCancellation: true,
@@ -39,7 +39,7 @@ const MEDICAL_MEDIA_CONSTRAINTS = {
 
 export interface WebRTCState {
   connectionState: RTCPeerConnectionState;
-  connectionQuality: "excellent" | "good" | "poor" | "disconnected";
+  connectionQuality: 'excellent' | 'good' | 'poor' | 'disconnected';
   localStream: MediaStream | null;
   remoteStream: MediaStream | null;
   isVideoEnabled: boolean;
@@ -56,8 +56,8 @@ export interface WebRTCState {
 export interface MediaSettings {
   video: boolean;
   audio: boolean;
-  videoQuality: "low" | "medium" | "high" | "auto";
-  audioQuality: "low" | "medium" | "high" | "auto";
+  videoQuality: 'low' | 'medium' | 'high' | 'auto';
+  audioQuality: 'low' | 'medium' | 'high' | 'auto';
   echoCancellation: boolean;
   noiseSuppression: boolean;
   autoGainControl: boolean;
@@ -65,12 +65,12 @@ export interface MediaSettings {
 
 export interface SignalingMessage {
   type:
-    | "offer"
-    | "answer"
-    | "ice-candidate"
-    | "session-end"
-    | "media-update"
-    | "connection-quality";
+    | 'offer'
+    | 'answer'
+    | 'ice-candidate'
+    | 'session-end'
+    | 'media-update'
+    | 'connection-quality';
   sessionId: string;
   from: string;
   to: string;
@@ -90,8 +90,8 @@ export interface SignalingMessage {
 export function useWebRTC(sessionId: string, participantId: string) {
   // State management
   const [state, setState] = useState<WebRTCState>({
-    connectionState: "new",
-    connectionQuality: "excellent",
+    connectionState: 'new',
+    connectionQuality: 'excellent',
     localStream: null,
     remoteStream: null,
     isVideoEnabled: true,
@@ -108,8 +108,8 @@ export function useWebRTC(sessionId: string, participantId: string) {
   const [mediaSettings, setMediaSettings] = useState<MediaSettings>({
     video: true,
     audio: true,
-    videoQuality: "auto",
-    audioQuality: "auto",
+    videoQuality: 'auto',
+    audioQuality: 'auto',
     echoCancellation: true,
     noiseSuppression: true,
     autoGainControl: true,
@@ -120,16 +120,14 @@ export function useWebRTC(sessionId: string, participantId: string) {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
-  const signalingStateRef = useRef<"connecting" | "connected" | "disconnected">(
-    "disconnected",
+  const signalingStateRef = useRef<'connecting' | 'connected' | 'disconnected'>(
+    'disconnected',
   );
   const statisticsIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // tRPC mutations for signaling
-  const sendSignalingMessage =
-    trpc.telemedicine.sendSignalingMessage.useMutation();
-  const updateConnectionStats =
-    trpc.telemedicine.updateConnectionStats.useMutation();
+  const sendSignalingMessage = trpc.telemedicine.sendSignalingMessage.useMutation();
+  const updateConnectionStats = trpc.telemedicine.updateConnectionStats.useMutation();
   const logComplianceEvent = trpc.telemedicine.logComplianceEvent.useMutation();
 
   // WebRTC signaling subscription
@@ -137,9 +135,9 @@ export function useWebRTC(sessionId: string, participantId: string) {
     { sessionId, participantId },
     {
       onData: handleSignalingMessage,
-      onError: (error) => {
-        console.error("Signaling error:", error);
-        toast.error("Erro na comunicação WebRTC");
+      onError: error => {
+        console.error('Signaling error:', error);
+        toast.error('Erro na comunicação WebRTC');
       },
     },
   );
@@ -153,8 +151,8 @@ export function useWebRTC(sessionId: string, participantId: string) {
       await logComplianceEvent.mutateAsync({
         sessionId,
         participantId,
-        eventType: "webrtc_initialization",
-        details: "WebRTC peer connection initialization started",
+        eventType: 'webrtc_initialization',
+        details: 'WebRTC peer connection initialization started',
         cfmCompliant: true,
         lgpdCompliant: true,
       });
@@ -164,27 +162,27 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
       // Set up connection state handlers
       peerConnection.onconnectionstatechange = () => {
-        setState((prev) => ({
+        setState(prev => ({
           ...prev,
           connectionState: peerConnection.connectionState,
         }));
 
-        if (peerConnection.connectionState === "connected") {
-          toast.success("Conexão WebRTC estabelecida");
+        if (peerConnection.connectionState === 'connected') {
+          toast.success('Conexão WebRTC estabelecida');
           startStatisticsMonitoring();
-        } else if (peerConnection.connectionState === "failed") {
-          toast.error("Falha na conexão WebRTC");
+        } else if (peerConnection.connectionState === 'failed') {
+          toast.error('Falha na conexão WebRTC');
           handleConnectionFailure();
         }
       };
 
       // Handle ICE candidates
-      peerConnection.onicecandidate = (event) => {
+      peerConnection.onicecandidate = event => {
         if (event.candidate) {
           sendSignalingMessage.mutate({
-            type: "ice-candidate",
+            type: 'ice-candidate',
             sessionId,
-            to: "remote", // This would be determined by session participants
+            to: 'remote', // This would be determined by session participants
             data: event.candidate,
             compliance: {
               encrypted: true,
@@ -196,9 +194,9 @@ export function useWebRTC(sessionId: string, participantId: string) {
       };
 
       // Handle remote stream
-      peerConnection.ontrack = (event) => {
+      peerConnection.ontrack = event => {
         const [remoteStream] = event.streams;
-        setState((prev) => ({ ...prev, remoteStream }));
+        setState(prev => ({ ...prev, remoteStream }));
 
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = remoteStream;
@@ -208,32 +206,32 @@ export function useWebRTC(sessionId: string, participantId: string) {
         logComplianceEvent.mutate({
           sessionId,
           participantId,
-          eventType: "remote_media_received",
-          details: "Remote media stream received and displayed",
+          eventType: 'remote_media_received',
+          details: 'Remote media stream received and displayed',
           cfmCompliant: true,
           lgpdCompliant: true,
         });
       };
 
       // Set up data channel for chat and control messages
-      const dataChannel = peerConnection.createDataChannel("telemedicine", {
+      const dataChannel = peerConnection.createDataChannel('telemedicine', {
         ordered: true,
         maxRetransmits: 3,
       });
       dataChannelRef.current = dataChannel;
 
       dataChannel.onopen = () => {
-        console.log("Data channel opened");
+        console.log('Data channel opened');
       };
 
-      dataChannel.onmessage = (event) => {
+      dataChannel.onmessage = event => {
         handleDataChannelMessage(JSON.parse(event.data));
       };
 
       return peerConnection;
     } catch (error) {
-      console.error("Error initializing peer connection:", error);
-      toast.error("Erro ao inicializar conexão WebRTC");
+      console.error('Error initializing peer connection:', error);
+      toast.error('Erro ao inicializar conexão WebRTC');
       throw error;
     }
   }, [sessionId, participantId, sendSignalingMessage, logComplianceEvent]);
@@ -246,25 +244,25 @@ export function useWebRTC(sessionId: string, participantId: string) {
       const constraints = {
         video: mediaSettings.video
           ? {
-              ...MEDICAL_MEDIA_CONSTRAINTS.video,
-              width: getVideoConstraintsByQuality(mediaSettings.videoQuality)
-                .width,
-              height: getVideoConstraintsByQuality(mediaSettings.videoQuality)
-                .height,
-            }
+            ...MEDICAL_MEDIA_CONSTRAINTS.video,
+            width: getVideoConstraintsByQuality(mediaSettings.videoQuality)
+              .width,
+            height: getVideoConstraintsByQuality(mediaSettings.videoQuality)
+              .height,
+          }
           : false,
         audio: mediaSettings.audio
           ? {
-              ...MEDICAL_MEDIA_CONSTRAINTS.audio,
-              echoCancellation: mediaSettings.echoCancellation,
-              noiseSuppression: mediaSettings.noiseSuppression,
-              autoGainControl: mediaSettings.autoGainControl,
-            }
+            ...MEDICAL_MEDIA_CONSTRAINTS.audio,
+            echoCancellation: mediaSettings.echoCancellation,
+            noiseSuppression: mediaSettings.noiseSuppression,
+            autoGainControl: mediaSettings.autoGainControl,
+          }
           : false,
       };
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      setState((prev) => ({ ...prev, localStream: stream }));
+      setState(prev => ({ ...prev, localStream: stream }));
 
       if (localVideoRef.current && stream.getVideoTracks().length > 0) {
         localVideoRef.current.srcObject = stream;
@@ -272,7 +270,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
       // Add tracks to peer connection if initialized
       if (peerConnectionRef.current) {
-        stream.getTracks().forEach((track) => {
+        stream.getTracks().forEach(track => {
           peerConnectionRef.current!.addTrack(track, stream);
         });
       }
@@ -281,17 +279,18 @@ export function useWebRTC(sessionId: string, participantId: string) {
       await logComplianceEvent.mutateAsync({
         sessionId,
         participantId,
-        eventType: "local_media_initialized",
-        details: `Local media initialized - Video: ${!!constraints.video}, Audio: ${!!constraints.audio}`,
+        eventType: 'local_media_initialized',
+        details: `Local media initialized - Video: ${!!constraints.video}, Audio: ${!!constraints
+          .audio}`,
         cfmCompliant: true,
         lgpdCompliant: true,
       });
 
-      toast.success("Mídia local inicializada");
+      toast.success('Mídia local inicializada');
       return stream;
     } catch (error) {
-      console.error("Error accessing local media:", error);
-      toast.error("Erro ao acessar câmera e microfone");
+      console.error('Error accessing local media:', error);
+      toast.error('Erro ao acessar câmera e microfone');
       throw error;
     }
   }, [mediaSettings, sessionId, participantId, logComplianceEvent]);
@@ -304,13 +303,13 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
     try {
       switch (message.type) {
-        case "offer":
+        case 'offer':
           await peerConnectionRef.current.setRemoteDescription(message.data);
           const answer = await peerConnectionRef.current.createAnswer();
           await peerConnectionRef.current.setLocalDescription(answer);
 
           sendSignalingMessage.mutate({
-            type: "answer",
+            type: 'answer',
             sessionId,
             to: message.from,
             data: answer,
@@ -318,29 +317,29 @@ export function useWebRTC(sessionId: string, participantId: string) {
           });
           break;
 
-        case "answer":
+        case 'answer':
           await peerConnectionRef.current.setRemoteDescription(message.data);
           break;
 
-        case "ice-candidate":
+        case 'ice-candidate':
           await peerConnectionRef.current.addIceCandidate(message.data);
           break;
 
-        case "media-update":
+        case 'media-update':
           handleRemoteMediaUpdate(message.data);
           break;
 
-        case "connection-quality":
+        case 'connection-quality':
           updateConnectionQualityFromRemote(message.data);
           break;
 
-        case "session-end":
+        case 'session-end':
           await endSession();
           break;
       }
     } catch (error) {
-      console.error("Error handling signaling message:", error);
-      toast.error("Erro no processamento de sinalização");
+      console.error('Error handling signaling message:', error);
+      toast.error('Erro no processamento de sinalização');
     }
   }
 
@@ -349,7 +348,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
    */
   const createOffer = useCallback(async () => {
     if (!peerConnectionRef.current) {
-      throw new Error("Peer connection not initialized");
+      throw new Error('Peer connection not initialized');
     }
 
     try {
@@ -361,9 +360,9 @@ export function useWebRTC(sessionId: string, participantId: string) {
       await peerConnectionRef.current.setLocalDescription(offer);
 
       sendSignalingMessage.mutate({
-        type: "offer",
+        type: 'offer',
         sessionId,
-        to: "remote", // This would be determined by session participants
+        to: 'remote', // This would be determined by session participants
         data: offer,
         compliance: {
           encrypted: true,
@@ -372,10 +371,10 @@ export function useWebRTC(sessionId: string, participantId: string) {
         },
       });
 
-      toast.success("Oferta WebRTC enviada");
+      toast.success('Oferta WebRTC enviada');
     } catch (error) {
-      console.error("Error creating offer:", error);
-      toast.error("Erro ao criar oferta WebRTC");
+      console.error('Error creating offer:', error);
+      toast.error('Erro ao criar oferta WebRTC');
       throw error;
     }
   }, [sessionId, sendSignalingMessage]);
@@ -389,13 +388,13 @@ export function useWebRTC(sessionId: string, participantId: string) {
         const videoTrack = state.localStream.getVideoTracks()[0];
         if (videoTrack) {
           videoTrack.enabled = !videoTrack.enabled;
-          setState((prev) => ({ ...prev, isVideoEnabled: videoTrack.enabled }));
+          setState(prev => ({ ...prev, isVideoEnabled: videoTrack.enabled }));
 
           // Notify remote participant
           sendSignalingMessage.mutate({
-            type: "media-update",
+            type: 'media-update',
             sessionId,
-            to: "remote",
+            to: 'remote',
             data: { video: videoTrack.enabled },
             compliance: {
               encrypted: true,
@@ -408,18 +407,18 @@ export function useWebRTC(sessionId: string, participantId: string) {
           await logComplianceEvent.mutateAsync({
             sessionId,
             participantId,
-            eventType: "video_toggle",
-            details: `Video ${videoTrack.enabled ? "enabled" : "disabled"}`,
+            eventType: 'video_toggle',
+            details: `Video ${videoTrack.enabled ? 'enabled' : 'disabled'}`,
             cfmCompliant: true,
             lgpdCompliant: true,
           });
 
-          toast.success(`Vídeo ${videoTrack.enabled ? "ligado" : "desligado"}`);
+          toast.success(`Vídeo ${videoTrack.enabled ? 'ligado' : 'desligado'}`);
         }
       }
     } catch (error) {
-      console.error("Error toggling video:", error);
-      toast.error("Erro ao alternar vídeo");
+      console.error('Error toggling video:', error);
+      toast.error('Erro ao alternar vídeo');
     }
   }, [
     state.localStream,
@@ -438,13 +437,13 @@ export function useWebRTC(sessionId: string, participantId: string) {
         const audioTrack = state.localStream.getAudioTracks()[0];
         if (audioTrack) {
           audioTrack.enabled = !audioTrack.enabled;
-          setState((prev) => ({ ...prev, isAudioEnabled: audioTrack.enabled }));
+          setState(prev => ({ ...prev, isAudioEnabled: audioTrack.enabled }));
 
           // Notify remote participant
           sendSignalingMessage.mutate({
-            type: "media-update",
+            type: 'media-update',
             sessionId,
-            to: "remote",
+            to: 'remote',
             data: { audio: audioTrack.enabled },
             compliance: {
               encrypted: true,
@@ -457,18 +456,18 @@ export function useWebRTC(sessionId: string, participantId: string) {
           await logComplianceEvent.mutateAsync({
             sessionId,
             participantId,
-            eventType: "audio_toggle",
-            details: `Audio ${audioTrack.enabled ? "enabled" : "disabled"}`,
+            eventType: 'audio_toggle',
+            details: `Audio ${audioTrack.enabled ? 'enabled' : 'disabled'}`,
             cfmCompliant: true,
             lgpdCompliant: true,
           });
 
-          toast.success(`Áudio ${audioTrack.enabled ? "ligado" : "desligado"}`);
+          toast.success(`Áudio ${audioTrack.enabled ? 'ligado' : 'desligado'}`);
         }
       }
     } catch (error) {
-      console.error("Error toggling audio:", error);
-      toast.error("Erro ao alternar áudio");
+      console.error('Error toggling audio:', error);
+      toast.error('Erro ao alternar áudio');
     }
   }, [
     state.localStream,
@@ -496,7 +495,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
       if (peerConnectionRef.current && state.localStream) {
         const videoSender = peerConnectionRef.current
           .getSenders()
-          .find((sender) => sender.track && sender.track.kind === "video");
+          .find(sender => sender.track && sender.track.kind === 'video');
 
         if (videoSender) {
           const screenVideoTrack = screenStream.getVideoTracks()[0];
@@ -507,7 +506,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
             localVideoRef.current.srcObject = screenStream;
           }
 
-          setState((prev) => ({ ...prev, isScreenSharing: true }));
+          setState(prev => ({ ...prev, isScreenSharing: true }));
 
           // Handle screen share end
           screenVideoTrack.onended = () => {
@@ -518,18 +517,18 @@ export function useWebRTC(sessionId: string, participantId: string) {
           await logComplianceEvent.mutateAsync({
             sessionId,
             participantId,
-            eventType: "screen_share_started",
-            details: "Screen sharing initiated",
+            eventType: 'screen_share_started',
+            details: 'Screen sharing initiated',
             cfmCompliant: true,
             lgpdCompliant: true,
           });
 
-          toast.success("Compartilhamento de tela iniciado");
+          toast.success('Compartilhamento de tela iniciado');
         }
       }
     } catch (error) {
-      console.error("Error starting screen share:", error);
-      toast.error("Erro ao compartilhar tela");
+      console.error('Error starting screen share:', error);
+      toast.error('Erro ao compartilhar tela');
     }
   }, [state.localStream, sessionId, participantId, logComplianceEvent]);
 
@@ -541,7 +540,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
       if (state.localStream && peerConnectionRef.current) {
         const videoSender = peerConnectionRef.current
           .getSenders()
-          .find((sender) => sender.track && sender.track.kind === "video");
+          .find(sender => sender.track && sender.track.kind === 'video');
 
         if (videoSender) {
           const cameraVideoTrack = state.localStream.getVideoTracks()[0];
@@ -552,24 +551,24 @@ export function useWebRTC(sessionId: string, participantId: string) {
             localVideoRef.current.srcObject = state.localStream;
           }
 
-          setState((prev) => ({ ...prev, isScreenSharing: false }));
+          setState(prev => ({ ...prev, isScreenSharing: false }));
 
           // Log compliance event
           await logComplianceEvent.mutateAsync({
             sessionId,
             participantId,
-            eventType: "screen_share_stopped",
-            details: "Screen sharing ended",
+            eventType: 'screen_share_stopped',
+            details: 'Screen sharing ended',
             cfmCompliant: true,
             lgpdCompliant: true,
           });
 
-          toast.success("Compartilhamento de tela finalizado");
+          toast.success('Compartilhamento de tela finalizado');
         }
       }
     } catch (error) {
-      console.error("Error stopping screen share:", error);
-      toast.error("Erro ao parar compartilhamento de tela");
+      console.error('Error stopping screen share:', error);
+      toast.error('Erro ao parar compartilhamento de tela');
     }
   }, [state.localStream, sessionId, participantId, logComplianceEvent]);
 
@@ -587,7 +586,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
           const stats = await peerConnectionRef.current.getStats();
           const connectionStats = parseWebRTCStats(stats);
 
-          setState((prev) => ({
+          setState(prev => ({
             ...prev,
             bandwidth: connectionStats.bandwidth,
             latency: connectionStats.latency,
@@ -604,7 +603,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
             timestamp: Date.now(),
           });
         } catch (error) {
-          console.error("Error collecting WebRTC stats:", error);
+          console.error('Error collecting WebRTC stats:', error);
         }
       }
     }, 5000); // Update every 5 seconds
@@ -623,7 +622,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
       // Stop local media tracks
       if (state.localStream) {
-        state.localStream.getTracks().forEach((track) => track.stop());
+        state.localStream.getTracks().forEach(track => track.stop());
       }
 
       // Close peer connection
@@ -640,8 +639,8 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
       // Reset state
       setState({
-        connectionState: "closed",
-        connectionQuality: "disconnected",
+        connectionState: 'closed',
+        connectionQuality: 'disconnected',
         localStream: null,
         remoteStream: null,
         isVideoEnabled: false,
@@ -659,16 +658,16 @@ export function useWebRTC(sessionId: string, participantId: string) {
       await logComplianceEvent.mutateAsync({
         sessionId,
         participantId,
-        eventType: "session_ended",
-        details: "WebRTC session ended and resources cleaned up",
+        eventType: 'session_ended',
+        details: 'WebRTC session ended and resources cleaned up',
         cfmCompliant: true,
         lgpdCompliant: true,
       });
 
-      toast.success("Sessão WebRTC finalizada");
+      toast.success('Sessão WebRTC finalizada');
     } catch (error) {
-      console.error("Error ending session:", error);
-      toast.error("Erro ao finalizar sessão");
+      console.error('Error ending session:', error);
+      toast.error('Erro ao finalizar sessão');
     }
   }, [state.localStream, sessionId, participantId, logComplianceEvent]);
 
@@ -679,10 +678,10 @@ export function useWebRTC(sessionId: string, participantId: string) {
     try {
       await initializePeerConnection();
       await initializeLocalMedia();
-      toast.success("Sessão WebRTC inicializada");
+      toast.success('Sessão WebRTC inicializada');
     } catch (error) {
-      console.error("Error initializing WebRTC session:", error);
-      toast.error("Erro ao inicializar sessão WebRTC");
+      console.error('Error initializing WebRTC session:', error);
+      toast.error('Erro ao inicializar sessão WebRTC');
       throw error;
     }
   }, [initializePeerConnection, initializeLocalMedia]);
@@ -714,8 +713,8 @@ export function useWebRTC(sessionId: string, participantId: string) {
     setMediaSettings,
 
     // Utils
-    isConnected: state.connectionState === "connected",
-    isConnecting: state.connectionState === "connecting",
+    isConnected: state.connectionState === 'connected',
+    isConnecting: state.connectionState === 'connecting',
     hasLocalVideo: !!state.localStream?.getVideoTracks().length,
     hasLocalAudio: !!state.localStream?.getAudioTracks().length,
     hasRemoteVideo: !!state.remoteStream?.getVideoTracks().length,
@@ -727,13 +726,13 @@ export function useWebRTC(sessionId: string, participantId: string) {
 
 function getVideoConstraintsByQuality(quality: string) {
   switch (quality) {
-    case "low":
+    case 'low':
       return { width: { ideal: 640 }, height: { ideal: 480 } };
-    case "medium":
+    case 'medium':
       return { width: { ideal: 1280 }, height: { ideal: 720 } };
-    case "high":
+    case 'high':
       return { width: { ideal: 1920 }, height: { ideal: 1080 } };
-    case "auto":
+    case 'auto':
     default:
       return { width: { ideal: 1280 }, height: { ideal: 720 } };
   }
@@ -745,14 +744,14 @@ function parseWebRTCStats(stats: RTCStatsReport) {
   let packetsLost = 0;
   let jitter = 0;
 
-  stats.forEach((report) => {
-    if (report.type === "inbound-rtp" && report.mediaType === "video") {
+  stats.forEach(report => {
+    if (report.type === 'inbound-rtp' && report.mediaType === 'video') {
       bandwidth = report.bytesReceived ? (report.bytesReceived * 8) / 1024 : 0;
       packetsLost = report.packetsLost || 0;
       jitter = report.jitter || 0;
     } else if (
-      report.type === "candidate-pair" &&
-      report.state === "succeeded"
+      report.type === 'candidate-pair'
+      && report.state === 'succeeded'
     ) {
       latency = report.currentRoundTripTime
         ? report.currentRoundTripTime * 1000
@@ -765,33 +764,33 @@ function parseWebRTCStats(stats: RTCStatsReport) {
 
 function calculateConnectionQuality(
   stats: any,
-): "excellent" | "good" | "poor" | "disconnected" {
+): 'excellent' | 'good' | 'poor' | 'disconnected' {
   if (stats.latency > 500 || stats.packetsLost > 5) {
-    return "poor";
+    return 'poor';
   } else if (stats.latency > 200 || stats.packetsLost > 1) {
-    return "good";
+    return 'good';
   } else {
-    return "excellent";
+    return 'excellent';
   }
 }
 
 function handleDataChannelMessage(message: any) {
   // Handle data channel messages (chat, control, etc.)
-  console.log("Data channel message:", message);
+  console.log('Data channel message:', message);
 }
 
 function handleRemoteMediaUpdate(data: any) {
   // Handle remote media updates (video/audio toggle notifications)
-  console.log("Remote media update:", data);
+  console.log('Remote media update:', data);
 }
 
 function updateConnectionQualityFromRemote(data: any) {
   // Handle connection quality updates from remote peer
-  console.log("Remote connection quality:", data);
+  console.log('Remote connection quality:', data);
 }
 
 function handleConnectionFailure() {
   // Handle connection failure and attempt reconnection
-  console.log("Connection failed, attempting reconnection...");
+  console.log('Connection failed, attempting reconnection...');
   // Implement reconnection logic here
 }

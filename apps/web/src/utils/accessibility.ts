@@ -21,57 +21,57 @@ export const WCAG_CONTRAST_RATIOS = {
 
 // Healthcare-specific ARIA roles and properties
 export const HEALTHCARE_ARIA_ROLES = {
-  patientInfo: "region",
-  medicalData: "group",
-  appointmentSchedule: "grid",
-  emergencyAlert: "alert",
-  statusUpdate: "status",
-  progressIndicator: "progressbar",
-  navigationMenu: "navigation",
-  searchResults: "search",
-  formSection: "form",
-  dataTable: "table",
+  patientInfo: 'region',
+  medicalData: 'group',
+  appointmentSchedule: 'grid',
+  emergencyAlert: 'alert',
+  statusUpdate: 'status',
+  progressIndicator: 'progressbar',
+  navigationMenu: 'navigation',
+  searchResults: 'search',
+  formSection: 'form',
+  dataTable: 'table',
 } as const;
 
 // Brazilian Portuguese accessibility labels
 export const ACCESSIBILITY_LABELS_PT_BR = {
   // Navigation
-  mainNavigation: "Navegação principal",
-  breadcrumb: "Caminho de navegação",
-  skipToContent: "Pular para o conteúdo principal",
-  skipToNavigation: "Pular para a navegação",
+  mainNavigation: 'Navegação principal',
+  breadcrumb: 'Caminho de navegação',
+  skipToContent: 'Pular para o conteúdo principal',
+  skipToNavigation: 'Pular para a navegação',
 
   // Forms
-  required: "Campo obrigatório",
-  optional: "Campo opcional",
-  invalid: "Campo inválido",
-  validationError: "Erro de validação",
+  required: 'Campo obrigatório',
+  optional: 'Campo opcional',
+  invalid: 'Campo inválido',
+  validationError: 'Erro de validação',
 
   // Actions
-  loading: "Carregando",
-  saving: "Salvando",
-  submitting: "Enviando",
-  processing: "Processando",
+  loading: 'Carregando',
+  saving: 'Salvando',
+  submitting: 'Enviando',
+  processing: 'Processando',
 
   // Healthcare specific
-  patientData: "Dados do paciente",
-  medicalHistory: "Histórico médico",
-  appointmentDetails: "Detalhes do agendamento",
-  emergencyContact: "Contato de emergência",
-  lgpdConsent: "Consentimento LGPD",
+  patientData: 'Dados do paciente',
+  medicalHistory: 'Histórico médico',
+  appointmentDetails: 'Detalhes do agendamento',
+  emergencyContact: 'Contato de emergência',
+  lgpdConsent: 'Consentimento LGPD',
 
   // Status messages
-  success: "Sucesso",
-  error: "Erro",
-  warning: "Aviso",
-  info: "Informação",
+  success: 'Sucesso',
+  error: 'Erro',
+  warning: 'Aviso',
+  info: 'Informação',
 
   // Time and dates
-  today: "Hoje",
-  tomorrow: "Amanhã",
-  yesterday: "Ontem",
-  thisWeek: "Esta semana",
-  nextWeek: "Próxima semana",
+  today: 'Hoje',
+  tomorrow: 'Amanhã',
+  yesterday: 'Ontem',
+  thisWeek: 'Esta semana',
+  nextWeek: 'Próxima semana',
 } as const;
 
 /**
@@ -80,13 +80,13 @@ export const ACCESSIBILITY_LABELS_PT_BR = {
 export function calculateContrastRatio(color1: string, color2: string): number {
   const getLuminance = (color: string): number => {
     // Convert hex to RGB
-    const hex = color.replace("#", "");
+    const hex = color.replace('#', '');
     const r = parseInt(hex.substr(0, 2), 16) / 255;
     const g = parseInt(hex.substr(2, 2), 16) / 255;
     const b = parseInt(hex.substr(4, 2), 16) / 255;
 
     // Calculate relative luminance
-    const sRGB = [r, g, b].map((c) => {
+    const sRGB = [r, g, b].map(c => {
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
 
@@ -107,18 +107,17 @@ export function calculateContrastRatio(color1: string, color2: string): number {
 export function meetsContrastRequirement(
   foreground: string,
   background: string,
-  level: "AA" | "AAA" = "AA",
+  level: 'AA' | 'AAA' = 'AA',
   isLargeText: boolean = false,
 ): boolean {
   const ratio = calculateContrastRatio(foreground, background);
-  const requirement =
-    level === "AA"
-      ? isLargeText
-        ? WCAG_CONTRAST_RATIOS.AA_LARGE
-        : WCAG_CONTRAST_RATIOS.AA_NORMAL
-      : isLargeText
-        ? WCAG_CONTRAST_RATIOS.AAA_LARGE
-        : WCAG_CONTRAST_RATIOS.AAA_NORMAL;
+  const requirement = level === 'AA'
+    ? isLargeText
+      ? WCAG_CONTRAST_RATIOS.AA_LARGE
+      : WCAG_CONTRAST_RATIOS.AA_NORMAL
+    : isLargeText
+    ? WCAG_CONTRAST_RATIOS.AAA_LARGE
+    : WCAG_CONTRAST_RATIOS.AAA_NORMAL;
 
   return ratio >= requirement;
 }
@@ -126,7 +125,7 @@ export function meetsContrastRequirement(
 /**
  * Generate accessible ID for form elements
  */
-export function generateAccessibleId(prefix: string = "a11y"): string {
+export function generateAccessibleId(prefix: string = 'a11y'): string {
   return `${prefix}-${Math.random().toString(36).substr(2, 9)}`;
 }
 
@@ -143,14 +142,12 @@ export function createHealthcareFormAria(
 
   return {
     id: baseId,
-    "aria-required": isRequired,
-    "aria-invalid": hasError,
-    "aria-describedby":
-      hasError && errorMessage ? `${baseId}-error` : undefined,
-    "aria-label":
-      ACCESSIBILITY_LABELS_PT_BR[
-        fieldName as keyof typeof ACCESSIBILITY_LABELS_PT_BR
-      ] || fieldName,
+    'aria-required': isRequired,
+    'aria-invalid': hasError,
+    'aria-describedby': hasError && errorMessage ? `${baseId}-error` : undefined,
+    'aria-label': ACCESSIBILITY_LABELS_PT_BR[
+      fieldName as keyof typeof ACCESSIBILITY_LABELS_PT_BR
+    ] || fieldName,
   };
 }
 
@@ -158,13 +155,13 @@ export function createHealthcareFormAria(
  * Create ARIA live region attributes
  */
 export function createLiveRegionAria(
-  politeness: "polite" | "assertive" = "polite",
+  politeness: 'polite' | 'assertive' = 'polite',
   atomic: boolean = false,
 ) {
   return {
-    "aria-live": politeness,
-    "aria-atomic": atomic,
-    role: "status",
+    'aria-live': politeness,
+    'aria-atomic': atomic,
+    role: 'status',
   };
 }
 
@@ -186,7 +183,7 @@ export class FocusManager {
     const lastElement = focusableElements[focusableElements.length - 1];
 
     const handleTabKey = (e: KeyboardEvent) => {
-      if (e.key !== "Tab") return;
+      if (e.key !== 'Tab') return;
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -201,11 +198,11 @@ export class FocusManager {
       }
     };
 
-    element.addEventListener("keydown", handleTabKey);
+    element.addEventListener('keydown', handleTabKey);
     firstElement?.focus();
 
     return () => {
-      element.removeEventListener("keydown", handleTabKey);
+      element.removeEventListener('keydown', handleTabKey);
     };
   }
 
@@ -238,12 +235,12 @@ export class FocusManager {
    */
   static announceToScreenReader(
     message: string,
-    priority: "polite" | "assertive" = "polite",
+    priority: 'polite' | 'assertive' = 'polite',
   ): void {
-    const announcement = document.createElement("div");
-    announcement.setAttribute("aria-live", priority);
-    announcement.setAttribute("aria-atomic", "true");
-    announcement.className = "sr-only";
+    const announcement = document.createElement('div');
+    announcement.setAttribute('aria-live', priority);
+    announcement.setAttribute('aria-atomic', 'true');
+    announcement.className = 'sr-only';
     announcement.textContent = message;
 
     document.body.appendChild(announcement);
@@ -272,22 +269,22 @@ export class KeyboardNavigation {
     let newIndex = currentIndex;
 
     switch (key) {
-      case "ArrowRight":
+      case 'ArrowRight':
         newIndex = Math.min(currentIndex + 1, totalItems - 1);
         break;
-      case "ArrowLeft":
+      case 'ArrowLeft':
         newIndex = Math.max(currentIndex - 1, 0);
         break;
-      case "ArrowDown":
+      case 'ArrowDown':
         newIndex = Math.min(currentIndex + columns, totalItems - 1);
         break;
-      case "ArrowUp":
+      case 'ArrowUp':
         newIndex = Math.max(currentIndex - columns, 0);
         break;
-      case "Home":
+      case 'Home':
         newIndex = 0;
         break;
-      case "End":
+      case 'End':
         newIndex = totalItems - 1;
         break;
       default:
@@ -314,20 +311,20 @@ export class KeyboardNavigation {
     let newIndex = currentIndex;
 
     switch (key) {
-      case "ArrowDown":
+      case 'ArrowDown':
         newIndex = wrap
           ? (currentIndex + 1) % totalItems
           : Math.min(currentIndex + 1, totalItems - 1);
         break;
-      case "ArrowUp":
+      case 'ArrowUp':
         newIndex = wrap
           ? (currentIndex - 1 + totalItems) % totalItems
           : Math.max(currentIndex - 1, 0);
         break;
-      case "Home":
+      case 'Home':
         newIndex = 0;
         break;
-      case "End":
+      case 'End':
         newIndex = totalItems - 1;
         break;
       default:
@@ -361,11 +358,11 @@ export class ScreenReaderUtils {
    * Format date for Brazilian Portuguese screen readers
    */
   static formatDateForScreenReader(date: Date): string {
-    return new Intl.DateTimeFormat("pt-BR", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return new Intl.DateTimeFormat('pt-BR', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     }).format(date);
   }
 
@@ -373,9 +370,9 @@ export class ScreenReaderUtils {
    * Format time for Brazilian Portuguese screen readers
    */
   static formatTimeForScreenReader(date: Date): string {
-    return new Intl.DateTimeFormat("pt-BR", {
-      hour: "2-digit",
-      minute: "2-digit",
+    return new Intl.DateTimeFormat('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
     }).format(date);
   }
 
@@ -395,16 +392,16 @@ export class ScreenReaderUtils {
  * Reduced motion utilities
  */
 export function prefersReducedMotion(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
 
 /**
  * High contrast mode detection
  */
 export function prefersHighContrast(): boolean {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(prefers-contrast: high)").matches;
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-contrast: high)').matches;
 }
 
 /**
@@ -421,9 +418,9 @@ export function createAccessibleErrorMessage(
     message: errorMessage,
     ariaAttributes: {
       id,
-      role: "alert",
-      "aria-live": "assertive",
-      "aria-atomic": "true",
+      role: 'alert',
+      'aria-live': 'assertive',
+      'aria-atomic': 'true',
     },
   };
 }

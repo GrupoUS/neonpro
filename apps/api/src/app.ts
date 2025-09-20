@@ -1,5 +1,6 @@
 import { cors } from 'hono/cors';
 import { errorHandler } from './middleware/error-handler';
+import { errorSanitizationMiddleware } from './middleware/error-sanitization';
 import aiRouter from './routes/ai';
 import appointmentsRouter from './routes/appointments';
 import { billing } from './routes/billing';
@@ -26,7 +27,7 @@ import {
   globalErrorHandler,
 } from './middleware/error-tracking';
 import { rateLimitMiddleware } from './middleware/rate-limiting';
-import { healthcareSecurityHeadersMiddleware } from './middleware/security-headers';
+import { healthcareSecurityHeadersMiddleware, httpsRedirectMiddleware } from './middleware/security-headers';
 import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer';
 
 // Extract middleware functions from security package
@@ -115,6 +116,13 @@ app.use(
 // Sentry middleware for error tracking and performance monitoring
 app.use('*', sentryMiddleware());
 
+// Error sanitization middleware for sensitive data protection
+app.use('*', errorSanitizationMiddleware());
+
+// HTTP error handling middleware with rate limiting and DDoS protection
+import { httpErrorHandlingMiddleware } from './middleware/http-error-handling';
+app.use('*', httpErrorHandlingMiddleware());
+
 // Global error handler with enhanced error tracking
 app.use('*', errorHandler);
 
@@ -125,6 +133,7 @@ app.use('*', errorHandler);
 app.use('*', healthcareErrorTrackingMiddleware());
 
 // Enhanced security headers with HSTS and healthcare compliance
+app.use '*', httpsRedirectMiddleware();
 app.use('*', healthcareSecurityHeadersMiddleware());
 
 // Healthcare-specific rate limiting

@@ -3,17 +3,15 @@
  * Comprehensive testing for TDD orchestration engine with multi-agent coordination
  */
 
-import { describe, it, expect, beforeEach, vi, Mock } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { TDDOrchestrator } from "../orchestration/tdd-orchestrator";
 import { TDDAgentRegistry } from "../orchestration/agent-registry";
 import { StandardTDDWorkflow } from "../orchestration/workflows/standard-tdd";
 import { SecurityCriticalWorkflow } from "../orchestration/workflows/security-critical";
 import type {
   OrchestrationContext,
-  TDDCycleResult,
   AgentRegistry,
   WorkflowEngine,
-  TDDPhase,
 } from "../orchestration/types";
 
 // Mock workflow engine
@@ -148,21 +146,15 @@ describe("TDDOrchestrator", () => {
         requirements: [], // Invalid requirements to trigger failure
       };
 
-      // Mock the workflow to simulate failure
-      vi.spyOn(workflowEngine, "selectWorkflow").mockImplementation(
-        async () => {
-          const workflow = new StandardTDDWorkflow();
-          vi.spyOn(workflow, "executeAgent").mockRejectedValueOnce(
-            new Error("Test failure in RED phase"),
-          );
-          return workflow;
-        },
+      // Mock the RED phase execution to simulate failure
+      vi.spyOn(orchestrator as any, "executeRedPhase").mockRejectedValueOnce(
+        new Error("Test failure in RED phase"),
       );
 
       const result = await orchestrator.executeFullTDDCycle(failingContext);
 
       expect(result.success).toBe(false);
-      expect(result.error).toContain("red");
+      expect(result.error).toContain("Test failure in RED phase");
     });
 
     it("should update metrics after successful cycle", async () => {

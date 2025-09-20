@@ -598,10 +598,10 @@ function isValidStatusTransition(current: string, next: string): boolean {
 }
 
 async function checkRescheduleConflicts(
-  appointmentId: string,
-  professionalId: string,
-  newDate: Date,
-  duration: number,
+  _appointmentId: string,
+  _professionalId: string,
+  _newDate: Date,
+  _duration: number,
 ): Promise<void> {
   // Implementation for conflict checking during rescheduling
   // This is a placeholder

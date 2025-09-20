@@ -3,7 +3,7 @@
  * T083 - Mobile Accessibility Optimization
  */
 
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   CONTRAST_REQUIREMENTS,
   HEALTHCARE_RESPONSIVE_PATTERNS,
@@ -15,20 +15,20 @@ import {
   type ResponsiveElement,
   ResponsiveElementSchema,
   TEXT_SCALING_REQUIREMENTS,
-} from "../mobile-responsive-accessibility";
+} from '../mobile-responsive-accessibility';
 
-describe("Mobile Responsive Accessibility", () => {
+describe('Mobile Responsive Accessibility', () => {
   let mobileResponsiveAccessibility: MobileResponsiveAccessibility;
 
   beforeEach(() => {
     mobileResponsiveAccessibility = new MobileResponsiveAccessibility();
   });
 
-  describe("Schema Validation", () => {
-    it("should validate responsive element schema", () => {
+  describe('Schema Validation', () => {
+    it('should validate responsive element schema', () => {
       const validElement = {
-        id: "patient-card-1",
-        selector: ".patient-card",
+        id: 'patient-card-1',
+        selector: '.patient-card',
         breakpoint: 375,
         width: 350,
         height: 200,
@@ -38,21 +38,21 @@ describe("Mobile Responsive Accessibility", () => {
         isVisible: true,
         isAccessible: true,
         pattern: HEALTHCARE_RESPONSIVE_PATTERNS.PATIENT_CARD,
-        textContent: "Dados do paciente João Silva",
-        role: "article",
+        textContent: 'Dados do paciente João Silva',
+        role: 'article',
       };
 
       const result = ResponsiveElementSchema.safeParse(validElement);
       expect(result.success).toBe(true);
     });
 
-    it("should reject invalid responsive element", () => {
+    it('should reject invalid responsive element', () => {
       const invalidElement = {
-        id: "invalid",
+        id: 'invalid',
         // Missing required fields
-        width: "invalid",
-        height: "invalid",
-        fontSize: "invalid",
+        width: 'invalid',
+        height: 'invalid',
+        fontSize: 'invalid',
       };
 
       const result = ResponsiveElementSchema.safeParse(invalidElement);
@@ -60,12 +60,12 @@ describe("Mobile Responsive Accessibility", () => {
     });
   });
 
-  describe("Breakpoint Compliance Validation", () => {
-    it("should validate compliant breakpoints", () => {
+  describe('Breakpoint Compliance Validation', () => {
+    it('should validate compliant breakpoints', () => {
       const compliantElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".compliant-element",
+          id: 'element-1',
+          selector: '.compliant-element',
           breakpoint: RESPONSIVE_BREAKPOINTS.SMALL_MOBILE,
           width: 300,
           height: 100,
@@ -76,8 +76,8 @@ describe("Mobile Responsive Accessibility", () => {
           isAccessible: true,
         },
         {
-          id: "element-2",
-          selector: ".another-compliant",
+          id: 'element-2',
+          selector: '.another-compliant',
           breakpoint: RESPONSIVE_BREAKPOINTS.MOBILE,
           width: 350,
           height: 120,
@@ -89,10 +89,9 @@ describe("Mobile Responsive Accessibility", () => {
         },
       ];
 
-      const result =
-        mobileResponsiveAccessibility.validateBreakpointCompliance(
-          compliantElements,
-        );
+      const result = mobileResponsiveAccessibility.validateBreakpointCompliance(
+        compliantElements,
+      );
 
       expect(result.level).toBe(RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT);
       expect(result.testedBreakpoints).toHaveLength(4); // Excludes desktop
@@ -100,11 +99,11 @@ describe("Mobile Responsive Accessibility", () => {
       expect(result.issues).toHaveLength(0);
     });
 
-    it("should detect non-compliant breakpoints", () => {
+    it('should detect non-compliant breakpoints', () => {
       const nonCompliantElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".non-compliant",
+          id: 'element-1',
+          selector: '.non-compliant',
           breakpoint: RESPONSIVE_BREAKPOINTS.SMALL_MOBILE,
           width: 300,
           height: 100,
@@ -115,8 +114,8 @@ describe("Mobile Responsive Accessibility", () => {
           isAccessible: false, // Not accessible
         },
         {
-          id: "element-2",
-          selector: ".another-non-compliant",
+          id: 'element-2',
+          selector: '.another-non-compliant',
           breakpoint: RESPONSIVE_BREAKPOINTS.SMALL_MOBILE,
           width: 280,
           height: 80,
@@ -128,10 +127,9 @@ describe("Mobile Responsive Accessibility", () => {
         },
       ];
 
-      const result =
-        mobileResponsiveAccessibility.validateBreakpointCompliance(
-          nonCompliantElements,
-        );
+      const result = mobileResponsiveAccessibility.validateBreakpointCompliance(
+        nonCompliantElements,
+      );
 
       expect(result.level).toBeOneOf([
         RESPONSIVE_ACCESSIBILITY_LEVELS.ACCEPTABLE,
@@ -139,17 +137,16 @@ describe("Mobile Responsive Accessibility", () => {
         RESPONSIVE_ACCESSIBILITY_LEVELS.CRITICAL,
       ]);
       expect(result.issues.length).toBeGreaterThan(0);
-      expect(result.issues[0].type).toBe("breakpoint");
+      expect(result.issues[0].type).toBe('breakpoint');
       expect(result.issues[0].title).toContain(
-        "Não conformidade no breakpoint",
+        'Não conformidade no breakpoint',
       );
     });
 
-    it("should test all mobile breakpoints", () => {
+    it('should test all mobile breakpoints', () => {
       const elements: ResponsiveElement[] = [];
 
-      const result =
-        mobileResponsiveAccessibility.validateBreakpointCompliance(elements);
+      const result = mobileResponsiveAccessibility.validateBreakpointCompliance(elements);
 
       expect(result.testedBreakpoints).toContain(
         RESPONSIVE_BREAKPOINTS.SMALL_MOBILE,
@@ -165,12 +162,12 @@ describe("Mobile Responsive Accessibility", () => {
     });
   });
 
-  describe("Text Scaling Compliance Validation", () => {
-    it("should validate text scaling compliance", () => {
+  describe('Text Scaling Compliance Validation', () => {
+    it('should validate text scaling compliance', () => {
       const scalableElements: ResponsiveElement[] = [
         {
-          id: "text-1",
-          selector: ".scalable-text",
+          id: 'text-1',
+          selector: '.scalable-text',
           breakpoint: 375,
           width: 300,
           height: 50,
@@ -181,8 +178,8 @@ describe("Mobile Responsive Accessibility", () => {
           isAccessible: true,
         },
         {
-          id: "text-2",
-          selector: ".another-scalable",
+          id: 'text-2',
+          selector: '.another-scalable',
           breakpoint: 375,
           width: 280,
           height: 40,
@@ -194,10 +191,9 @@ describe("Mobile Responsive Accessibility", () => {
         },
       ];
 
-      const result =
-        mobileResponsiveAccessibility.validateTextScalingCompliance(
-          scalableElements,
-        );
+      const result = mobileResponsiveAccessibility.validateTextScalingCompliance(
+        scalableElements,
+      );
 
       expect(result.level).toBeOneOf([
         RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT,
@@ -208,11 +204,11 @@ describe("Mobile Responsive Accessibility", () => {
       expect(result.zoomLevelsCompliant.length).toBeGreaterThan(0);
     });
 
-    it("should detect text scaling issues at 200% zoom", () => {
+    it('should detect text scaling issues at 200% zoom', () => {
       const nonScalableElements: ResponsiveElement[] = [
         {
-          id: "text-1",
-          selector: ".non-scalable-text",
+          id: 'text-1',
+          selector: '.non-scalable-text',
           breakpoint: 375,
           width: 300,
           height: 50,
@@ -224,15 +220,13 @@ describe("Mobile Responsive Accessibility", () => {
         },
       ];
 
-      const result =
-        mobileResponsiveAccessibility.validateTextScalingCompliance(
-          nonScalableElements,
-        );
+      const result = mobileResponsiveAccessibility.validateTextScalingCompliance(
+        nonScalableElements,
+      );
 
       // Should detect issues at 200% zoom
       const hasScalingIssue = result.issues.some(
-        (issue) =>
-          issue.type === "text_scaling" && issue.title.includes("200%"),
+        issue => issue.type === 'text_scaling' && issue.title.includes('200%'),
       );
 
       if (!result.zoomLevelsCompliant.includes(200)) {
@@ -240,11 +234,11 @@ describe("Mobile Responsive Accessibility", () => {
       }
     });
 
-    it("should test required zoom levels", () => {
+    it('should test required zoom levels', () => {
       const elements: ResponsiveElement[] = [
         {
-          id: "text-1",
-          selector: ".test-text",
+          id: 'text-1',
+          selector: '.test-text',
           breakpoint: 375,
           width: 300,
           height: 50,
@@ -256,25 +250,22 @@ describe("Mobile Responsive Accessibility", () => {
         },
       ];
 
-      const result =
-        mobileResponsiveAccessibility.validateTextScalingCompliance(elements);
+      const result = mobileResponsiveAccessibility.validateTextScalingCompliance(elements);
 
       // Should test 100%, 150%, and 200% zoom levels
       expect(result.maxZoomTested).toBe(200);
       expect(
-        result.zoomLevelsCompliant.every((level) =>
-          [100, 150, 200].includes(level),
-        ),
+        result.zoomLevelsCompliant.every(level => [100, 150, 200].includes(level)),
       ).toBe(true);
     });
   });
 
-  describe("Contrast Compliance Validation", () => {
-    it("should validate contrast compliance", () => {
+  describe('Contrast Compliance Validation', () => {
+    it('should validate contrast compliance', () => {
       const highContrastElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".high-contrast",
+          id: 'element-1',
+          selector: '.high-contrast',
           breakpoint: 375,
           width: 300,
           height: 100,
@@ -285,8 +276,8 @@ describe("Mobile Responsive Accessibility", () => {
           isAccessible: true,
         },
         {
-          id: "element-2",
-          selector: ".good-contrast",
+          id: 'element-2',
+          selector: '.good-contrast',
           breakpoint: 375,
           width: 280,
           height: 80,
@@ -298,10 +289,9 @@ describe("Mobile Responsive Accessibility", () => {
         },
       ];
 
-      const result =
-        mobileResponsiveAccessibility.validateContrastCompliance(
-          highContrastElements,
-        );
+      const result = mobileResponsiveAccessibility.validateContrastCompliance(
+        highContrastElements,
+      );
 
       expect(result.level).toBeOneOf([
         RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT,
@@ -315,11 +305,11 @@ describe("Mobile Responsive Accessibility", () => {
       expect(result.issues).toHaveLength(0);
     });
 
-    it("should detect low contrast elements", () => {
+    it('should detect low contrast elements', () => {
       const lowContrastElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".low-contrast",
+          id: 'element-1',
+          selector: '.low-contrast',
           breakpoint: 375,
           width: 300,
           height: 100,
@@ -330,8 +320,8 @@ describe("Mobile Responsive Accessibility", () => {
           isAccessible: true,
         },
         {
-          id: "element-2",
-          selector: ".very-low-contrast",
+          id: 'element-2',
+          selector: '.very-low-contrast',
           breakpoint: 375,
           width: 280,
           height: 80,
@@ -343,10 +333,9 @@ describe("Mobile Responsive Accessibility", () => {
         },
       ];
 
-      const result =
-        mobileResponsiveAccessibility.validateContrastCompliance(
-          lowContrastElements,
-        );
+      const result = mobileResponsiveAccessibility.validateContrastCompliance(
+        lowContrastElements,
+      );
 
       expect(result.level).toBeOneOf([
         RESPONSIVE_ACCESSIBILITY_LEVELS.POOR,
@@ -354,17 +343,17 @@ describe("Mobile Responsive Accessibility", () => {
       ]);
       expect(result.compliantElements).toBe(0);
       expect(result.issues.length).toBeGreaterThan(0);
-      expect(result.issues[0].type).toBe("contrast");
+      expect(result.issues[0].type).toBe('contrast');
       expect(result.issues[0].title).toBe(
-        "Elementos com contraste insuficiente",
+        'Elementos com contraste insuficiente',
       );
     });
 
-    it("should calculate average contrast correctly", () => {
+    it('should calculate average contrast correctly', () => {
       const mixedContrastElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".element-1",
+          id: 'element-1',
+          selector: '.element-1',
           breakpoint: 375,
           width: 300,
           height: 100,
@@ -375,8 +364,8 @@ describe("Mobile Responsive Accessibility", () => {
           isAccessible: true,
         },
         {
-          id: "element-2",
-          selector: ".element-2",
+          id: 'element-2',
+          selector: '.element-2',
           breakpoint: 375,
           width: 280,
           height: 80,
@@ -397,8 +386,8 @@ describe("Mobile Responsive Accessibility", () => {
     });
   });
 
-  describe("Layout Adaptability Validation", () => {
-    it("should validate layout adaptability", () => {
+  describe('Layout Adaptability Validation', () => {
+    it('should validate layout adaptability', () => {
       const result = mobileResponsiveAccessibility.validateLayoutAdaptability();
 
       expect(result.level).toBeOneOf([
@@ -406,51 +395,50 @@ describe("Mobile Responsive Accessibility", () => {
         RESPONSIVE_ACCESSIBILITY_LEVELS.GOOD,
         RESPONSIVE_ACCESSIBILITY_LEVELS.ACCEPTABLE,
       ]);
-      expect(typeof result.adaptiveElements).toBe("number");
-      expect(typeof result.rigidElements).toBe("number");
-      expect(typeof result.overflowIssues).toBe("number");
+      expect(typeof result.adaptiveElements).toBe('number');
+      expect(typeof result.rigidElements).toBe('number');
+      expect(typeof result.overflowIssues).toBe('number');
       expect(Array.isArray(result.issues)).toBe(true);
     });
 
-    it("should detect rigid layout elements", () => {
+    it('should detect rigid layout elements', () => {
       const result = mobileResponsiveAccessibility.validateLayoutAdaptability();
 
       // Mock implementation sets rigidElements to 2
       expect(result.rigidElements).toBe(2);
-      expect(result.issues.some((issue) => issue.type === "layout")).toBe(true);
+      expect(result.issues.some(issue => issue.type === 'layout')).toBe(true);
       expect(
-        result.issues.find((issue) => issue.type === "layout")?.title,
-      ).toBe("Elementos de layout rígido");
+        result.issues.find(issue => issue.type === 'layout')?.title,
+      ).toBe('Elementos de layout rígido');
     });
 
-    it("should detect content overflow issues", () => {
+    it('should detect content overflow issues', () => {
       const result = mobileResponsiveAccessibility.validateLayoutAdaptability();
 
       // Mock implementation sets overflowIssues to 1
       expect(result.overflowIssues).toBe(1);
       expect(
         result.issues.some(
-          (issue) =>
-            issue.type === "layout" && issue.title.includes("transbordamento"),
+          issue => issue.type === 'layout' && issue.title.includes('transbordamento'),
         ),
       ).toBe(true);
     });
 
-    it("should provide healthcare-specific layout recommendations", () => {
+    it('should provide healthcare-specific layout recommendations', () => {
       const result = mobileResponsiveAccessibility.validateLayoutAdaptability();
 
-      result.issues.forEach((issue) => {
-        if (issue.type === "layout") {
+      result.issues.forEach(issue => {
+        if (issue.type === 'layout') {
           expect(issue.healthcareImpact).toMatch(/médic[ao]s/); // Matches both "médicos" and "médicas"
-          expect(issue.wcagReference).toContain("WCAG 2.1 AA");
+          expect(issue.wcagReference).toContain('WCAG 2.1 AA');
           expect(issue.remediation.steps.length).toBeGreaterThan(0);
         }
       });
     });
   });
 
-  describe("Healthcare Patterns Validation", () => {
-    it("should validate healthcare-specific responsive patterns", () => {
+  describe('Healthcare Patterns Validation', () => {
+    it('should validate healthcare-specific responsive patterns', () => {
       const result = mobileResponsiveAccessibility.validateHealthcarePatterns();
 
       expect(result.level).toBeOneOf([
@@ -479,20 +467,20 @@ describe("Mobile Responsive Accessibility", () => {
       );
     });
 
-    it("should detect missing healthcare patterns", () => {
+    it('should detect missing healthcare patterns', () => {
       const result = mobileResponsiveAccessibility.validateHealthcarePatterns();
 
       if (result.missingPatterns.length > 0) {
-        expect(result.issues.some((issue) => issue.type === "content")).toBe(
+        expect(result.issues.some(issue => issue.type === 'content')).toBe(
           true,
         );
         expect(
-          result.issues.find((issue) => issue.type === "content")?.title,
-        ).toBe("Padrões responsivos para saúde ausentes");
+          result.issues.find(issue => issue.type === 'content')?.title,
+        ).toBe('Padrões responsivos para saúde ausentes');
       }
     });
 
-    it("should validate all healthcare responsive pattern types", () => {
+    it('should validate all healthcare responsive pattern types', () => {
       const result = mobileResponsiveAccessibility.validateHealthcarePatterns();
 
       const allPatterns = [
@@ -526,12 +514,12 @@ describe("Mobile Responsive Accessibility", () => {
     });
   });
 
-  describe("Comprehensive Report Generation", () => {
-    it("should generate comprehensive responsive accessibility report", () => {
+  describe('Comprehensive Report Generation', () => {
+    it('should generate comprehensive responsive accessibility report', () => {
       const mockElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".test-element",
+          id: 'element-1',
+          selector: '.test-element',
           breakpoint: RESPONSIVE_BREAKPOINTS.MOBILE,
           width: 350,
           height: 100,
@@ -543,8 +531,8 @@ describe("Mobile Responsive Accessibility", () => {
           pattern: HEALTHCARE_RESPONSIVE_PATTERNS.PATIENT_CARD,
         },
         {
-          id: "element-2",
-          selector: ".problematic-element",
+          id: 'element-2',
+          selector: '.problematic-element',
           breakpoint: RESPONSIVE_BREAKPOINTS.SMALL_MOBILE,
           width: 300,
           height: 80,
@@ -578,11 +566,11 @@ describe("Mobile Responsive Accessibility", () => {
       expect(report.healthcarePatterns).toBeDefined();
     });
 
-    it("should calculate overall score based on issues", () => {
+    it('should calculate overall score based on issues', () => {
       const problematicElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".problematic",
+          id: 'element-1',
+          selector: '.problematic',
           breakpoint: 375,
           width: 300,
           height: 100,
@@ -594,8 +582,7 @@ describe("Mobile Responsive Accessibility", () => {
         },
       ];
 
-      const report =
-        mobileResponsiveAccessibility.generateReport(problematicElements);
+      const report = mobileResponsiveAccessibility.generateReport(problematicElements);
 
       // Should have lower score due to multiple issues
       expect(report.score).toBeLessThan(100);
@@ -605,11 +592,11 @@ describe("Mobile Responsive Accessibility", () => {
       ]);
     });
 
-    it("should generate actionable recommendations", () => {
+    it('should generate actionable recommendations', () => {
       const mockElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".test-element",
+          id: 'element-1',
+          selector: '.test-element',
           breakpoint: 375,
           width: 300,
           height: 100,
@@ -625,22 +612,21 @@ describe("Mobile Responsive Accessibility", () => {
 
       expect(report.recommendations.length).toBeGreaterThan(0);
 
-      report.recommendations.forEach((recommendation) => {
-        expect(typeof recommendation).toBe("string");
+      report.recommendations.forEach(recommendation => {
+        expect(typeof recommendation).toBe('string');
         expect(recommendation.length).toBeGreaterThan(0);
       });
 
       // Should prioritize critical and high severity issues
       const hasHighPriorityRecommendation = report.recommendations.some(
-        (rec) =>
-          rec.includes("urgentemente") || rec.includes("alta prioridade"),
+        rec => rec.includes('urgentemente') || rec.includes('alta prioridade'),
       );
       expect(hasHighPriorityRecommendation).toBe(true);
     });
   });
 
-  describe("WCAG Compliance", () => {
-    it("should enforce WCAG 2.1 AA+ requirements", () => {
+  describe('WCAG Compliance', () => {
+    it('should enforce WCAG 2.1 AA+ requirements', () => {
       expect(TEXT_SCALING_REQUIREMENTS.MAXIMUM_ZOOM).toBe(200);
       expect(TEXT_SCALING_REQUIREMENTS.FONT_SIZE_MINIMUM).toBe(16);
       expect(TEXT_SCALING_REQUIREMENTS.LINE_HEIGHT_MINIMUM).toBe(1.5);
@@ -651,11 +637,11 @@ describe("Mobile Responsive Accessibility", () => {
       expect(CONTRAST_REQUIREMENTS.ENHANCED_AAA).toBe(7);
     });
 
-    it("should reference WCAG guidelines in issues", () => {
+    it('should reference WCAG guidelines in issues', () => {
       const problematicElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".problematic",
+          id: 'element-1',
+          selector: '.problematic',
           breakpoint: 375,
           width: 300,
           height: 100,
@@ -667,17 +653,16 @@ describe("Mobile Responsive Accessibility", () => {
         },
       ];
 
-      const report =
-        mobileResponsiveAccessibility.generateReport(problematicElements);
+      const report = mobileResponsiveAccessibility.generateReport(problematicElements);
 
-      report.breakpointCompliance.issues.forEach((issue) => {
-        expect(issue.wcagReference).toContain("WCAG 2.1 AA");
+      report.breakpointCompliance.issues.forEach(issue => {
+        expect(issue.wcagReference).toContain('WCAG 2.1 AA');
       });
     });
   });
 
-  describe("Mobile Breakpoints", () => {
-    it("should define appropriate responsive breakpoints", () => {
+  describe('Mobile Breakpoints', () => {
+    it('should define appropriate responsive breakpoints', () => {
       expect(RESPONSIVE_BREAKPOINTS.SMALL_MOBILE).toBe(320);
       expect(RESPONSIVE_BREAKPOINTS.MOBILE).toBe(375);
       expect(RESPONSIVE_BREAKPOINTS.LARGE_MOBILE).toBe(414);
@@ -686,33 +671,33 @@ describe("Mobile Responsive Accessibility", () => {
     });
   });
 
-  describe("Brazilian Portuguese Localization", () => {
-    it("should provide Brazilian Portuguese accessibility labels", () => {
+  describe('Brazilian Portuguese Localization', () => {
+    it('should provide Brazilian Portuguese accessibility labels', () => {
       expect(RESPONSIVE_ACCESSIBILITY_LABELS_PT_BR.breakpointCompliance).toBe(
-        "Conformidade de breakpoints",
+        'Conformidade de breakpoints',
       );
       expect(RESPONSIVE_ACCESSIBILITY_LABELS_PT_BR.textScaling).toBe(
-        "Escalonamento de texto",
+        'Escalonamento de texto',
       );
       expect(RESPONSIVE_ACCESSIBILITY_LABELS_PT_BR.contrastRatio).toBe(
-        "Taxa de contraste",
+        'Taxa de contraste',
       );
       expect(RESPONSIVE_ACCESSIBILITY_LABELS_PT_BR.layoutAdaptability).toBe(
-        "Adaptabilidade de layout",
+        'Adaptabilidade de layout',
       );
       expect(RESPONSIVE_ACCESSIBILITY_LABELS_PT_BR.medicalInformation).toBe(
-        "Informações médicas",
+        'Informações médicas',
       );
       expect(RESPONSIVE_ACCESSIBILITY_LABELS_PT_BR.emergencyAccess).toBe(
-        "Acesso de emergência",
+        'Acesso de emergência',
       );
     });
 
-    it("should use Portuguese in issue descriptions", () => {
+    it('should use Portuguese in issue descriptions', () => {
       const problematicElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".problematic",
+          id: 'element-1',
+          selector: '.problematic',
           breakpoint: 375,
           width: 300,
           height: 100,
@@ -724,8 +709,7 @@ describe("Mobile Responsive Accessibility", () => {
         },
       ];
 
-      const report =
-        mobileResponsiveAccessibility.generateReport(problematicElements);
+      const report = mobileResponsiveAccessibility.generateReport(problematicElements);
 
       const allIssues = [
         ...report.breakpointCompliance.issues,
@@ -735,26 +719,25 @@ describe("Mobile Responsive Accessibility", () => {
         ...report.healthcarePatterns.issues,
       ];
 
-      allIssues.forEach((issue) => {
+      allIssues.forEach(issue => {
         // Check if any of the text contains Portuguese characters
-        const hasPortugueseChars = (text: string) =>
-          /[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/.test(text);
+        const hasPortugueseChars = (text: string) => /[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/.test(text);
 
         expect(
-          hasPortugueseChars(issue.title) ||
-            hasPortugueseChars(issue.description) ||
-            hasPortugueseChars(issue.recommendation),
+          hasPortugueseChars(issue.title)
+            || hasPortugueseChars(issue.description)
+            || hasPortugueseChars(issue.recommendation),
         ).toBe(true);
       });
     });
   });
 
-  describe("Healthcare-Specific Features", () => {
-    it("should include healthcare impact in issues", () => {
+  describe('Healthcare-Specific Features', () => {
+    it('should include healthcare impact in issues', () => {
       const mockElements: ResponsiveElement[] = [
         {
-          id: "element-1",
-          selector: ".medical-element",
+          id: 'element-1',
+          selector: '.medical-element',
           breakpoint: 375,
           width: 300,
           height: 100,
@@ -777,54 +760,54 @@ describe("Mobile Responsive Accessibility", () => {
         ...report.healthcarePatterns.issues,
       ];
 
-      allIssues.forEach((issue) => {
+      allIssues.forEach(issue => {
         expect(issue.healthcareImpact).toBeDefined();
         expect(issue.healthcareImpact.length).toBeGreaterThan(0);
       });
     });
 
-    it("should validate healthcare responsive patterns", () => {
+    it('should validate healthcare responsive patterns', () => {
       const patterns = Object.values(HEALTHCARE_RESPONSIVE_PATTERNS);
 
-      expect(patterns).toContain("patient_card");
-      expect(patterns).toContain("appointment_list");
-      expect(patterns).toContain("medical_form");
-      expect(patterns).toContain("vital_signs_display");
-      expect(patterns).toContain("medication_list");
-      expect(patterns).toContain("emergency_banner");
-      expect(patterns).toContain("navigation_menu");
-      expect(patterns).toContain("data_table");
+      expect(patterns).toContain('patient_card');
+      expect(patterns).toContain('appointment_list');
+      expect(patterns).toContain('medical_form');
+      expect(patterns).toContain('vital_signs_display');
+      expect(patterns).toContain('medication_list');
+      expect(patterns).toContain('emergency_banner');
+      expect(patterns).toContain('navigation_menu');
+      expect(patterns).toContain('data_table');
     });
   });
 
-  describe("Constants and Enums", () => {
-    it("should have correct responsive accessibility levels", () => {
-      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT).toBe("excellent");
-      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.GOOD).toBe("good");
-      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.ACCEPTABLE).toBe("acceptable");
-      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.POOR).toBe("poor");
-      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.CRITICAL).toBe("critical");
+  describe('Constants and Enums', () => {
+    it('should have correct responsive accessibility levels', () => {
+      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.EXCELLENT).toBe('excellent');
+      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.GOOD).toBe('good');
+      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.ACCEPTABLE).toBe('acceptable');
+      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.POOR).toBe('poor');
+      expect(RESPONSIVE_ACCESSIBILITY_LEVELS.CRITICAL).toBe('critical');
     });
 
-    it("should have healthcare-specific responsive patterns", () => {
-      expect(HEALTHCARE_RESPONSIVE_PATTERNS.PATIENT_CARD).toBe("patient_card");
+    it('should have healthcare-specific responsive patterns', () => {
+      expect(HEALTHCARE_RESPONSIVE_PATTERNS.PATIENT_CARD).toBe('patient_card');
       expect(HEALTHCARE_RESPONSIVE_PATTERNS.APPOINTMENT_LIST).toBe(
-        "appointment_list",
+        'appointment_list',
       );
-      expect(HEALTHCARE_RESPONSIVE_PATTERNS.MEDICAL_FORM).toBe("medical_form");
+      expect(HEALTHCARE_RESPONSIVE_PATTERNS.MEDICAL_FORM).toBe('medical_form');
       expect(HEALTHCARE_RESPONSIVE_PATTERNS.VITAL_SIGNS_DISPLAY).toBe(
-        "vital_signs_display",
+        'vital_signs_display',
       );
       expect(HEALTHCARE_RESPONSIVE_PATTERNS.MEDICATION_LIST).toBe(
-        "medication_list",
+        'medication_list',
       );
       expect(HEALTHCARE_RESPONSIVE_PATTERNS.EMERGENCY_BANNER).toBe(
-        "emergency_banner",
+        'emergency_banner',
       );
       expect(HEALTHCARE_RESPONSIVE_PATTERNS.NAVIGATION_MENU).toBe(
-        "navigation_menu",
+        'navigation_menu',
       );
-      expect(HEALTHCARE_RESPONSIVE_PATTERNS.DATA_TABLE).toBe("data_table");
+      expect(HEALTHCARE_RESPONSIVE_PATTERNS.DATA_TABLE).toBe('data_table');
     });
   });
 });

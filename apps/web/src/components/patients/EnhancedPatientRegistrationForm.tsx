@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import {
   AlertTriangle,
   Calendar,
@@ -19,10 +19,10 @@ import {
   Phone,
   Shield,
   User,
-} from "lucide-react";
-import { useState } from "react";
-import { useForm, useFormContext } from "react-hook-form";
-import { z } from "zod";
+} from 'lucide-react';
+import { useState } from 'react';
+import { useForm, useFormContext } from 'react-hook-form';
+import { z } from 'zod';
 
 import {
   Alert,
@@ -56,8 +56,8 @@ import {
   SelectValue,
   Separator,
   Textarea,
-} from "@neonpro/ui";
-import { cn } from "@neonpro/utils";
+} from '@neonpro/ui';
+import { cn } from '@neonpro/utils';
 
 // Import our Brazilian validation schemas
 import {
@@ -72,75 +72,75 @@ import {
   validateBrazilianPhone,
   validateCns,
   validateCpf,
-} from "./validation/brazilian-healthcare-schemas";
+} from './validation/brazilian-healthcare-schemas';
 
 // Registration steps configuration
 const REGISTRATION_STEPS = [
   {
-    id: "basic",
-    title: "Informações Básicas",
-    description: "Dados pessoais do paciente",
+    id: 'basic',
+    title: 'Informações Básicas',
+    description: 'Dados pessoais do paciente',
     icon: User,
     required: true,
   },
   {
-    id: "address",
-    title: "Endereço",
-    description: "Endereço residencial",
+    id: 'address',
+    title: 'Endereço',
+    description: 'Endereço residencial',
     icon: MapPin,
     required: true,
   },
   {
-    id: "contact",
-    title: "Contato",
-    description: "Telefone e e-mail",
+    id: 'contact',
+    title: 'Contato',
+    description: 'Telefone e e-mail',
     icon: Phone,
     required: true,
   },
   {
-    id: "consent",
-    title: "Consentimento LGPD",
-    description: "Autorização para uso de dados",
+    id: 'consent',
+    title: 'Consentimento LGPD',
+    description: 'Autorização para uso de dados',
     icon: Shield,
     required: true,
   },
   {
-    id: "review",
-    title: "Revisão",
-    description: "Confirmar informações",
+    id: 'review',
+    title: 'Revisão',
+    description: 'Confirmar informações',
     icon: FileText,
     required: true,
   },
 ] as const;
 
-type StepId = (typeof REGISTRATION_STEPS)[number]["id"];
+type StepId = (typeof REGISTRATION_STEPS)[number]['id'];
 
 interface EnhancedPatientRegistrationFormProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: CompletePatientRegistration) => Promise<void>;
   initialData?: Partial<CompletePatientRegistration>;
-  userRole: "admin" | "aesthetician" | "coordinator";
+  userRole: 'admin' | 'aesthetician' | 'coordinator';
   className?: string;
 }
 
 // Document formatting functions
 const formatCpf = (value: string) => {
-  const numbers = value.replace(/\D/g, "");
-  return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+  const numbers = value.replace(/\D/g, '');
+  return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 };
 
 const formatCep = (value: string) => {
-  const numbers = value.replace(/\D/g, "");
-  return numbers.replace(/(\d{5})(\d{3})/, "$1-$2");
+  const numbers = value.replace(/\D/g, '');
+  return numbers.replace(/(\d{5})(\d{3})/, '$1-$2');
 };
 
 const formatPhone = (value: string) => {
-  const numbers = value.replace(/\D/g, "");
+  const numbers = value.replace(/\D/g, '');
   if (numbers.length === 11) {
-    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+    return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
   } else if (numbers.length === 10) {
-    return numbers.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
+    return numbers.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
   }
   return value;
 };
@@ -158,16 +158,16 @@ const BasicInformationStep = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div className='space-y-4'>
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <FormField
           control={form.control}
-          name="basicInfo.name"
+          name='basicInfo.name'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Nome Completo *</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: Maria Silva Santos" {...field} />
+                <Input placeholder='Ex: Maria Silva Santos' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -176,39 +176,39 @@ const BasicInformationStep = () => {
 
         <FormField
           control={form.control}
-          name="basicInfo.cpf"
+          name='basicInfo.cpf'
           render={({ field }) => (
             <FormItem>
               <FormLabel>CPF *</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="000.000.000-00"
-                  value={field.value || ""}
-                  onChange={(e) =>
-                    handleCpfChange(e.target.value, field.onChange)
-                  }
+                  placeholder='000.000.000-00'
+                  value={field.value || ''}
+                  onChange={e => handleCpfChange(e.target.value, field.onChange)}
                 />
               </FormControl>
               {field.value && (
                 <FormDescription
                   className={cn(
-                    "text-xs flex items-center gap-1",
+                    'text-xs flex items-center gap-1',
                     validateCpf(field.value)
-                      ? "text-green-600"
-                      : "text-red-600",
+                      ? 'text-green-600'
+                      : 'text-red-600',
                   )}
                 >
-                  {validateCpf(field.value) ? (
-                    <>
-                      <Check className="h-3 w-3" />
-                      CPF válido
-                    </>
-                  ) : (
-                    <>
-                      <AlertTriangle className="h-3 w-3" />
-                      CPF inválido
-                    </>
-                  )}
+                  {validateCpf(field.value)
+                    ? (
+                      <>
+                        <Check className='h-3 w-3' />
+                        CPF válido
+                      </>
+                    )
+                    : (
+                      <>
+                        <AlertTriangle className='h-3 w-3' />
+                        CPF inválido
+                      </>
+                    )}
                 </FormDescription>
               )}
               <FormMessage />
@@ -218,12 +218,12 @@ const BasicInformationStep = () => {
 
         <FormField
           control={form.control}
-          name="basicInfo.birthDate"
+          name='basicInfo.birthDate'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Data de Nascimento *</FormLabel>
               <FormControl>
-                <Input type="date" {...field} />
+                <Input type='date' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -232,20 +232,20 @@ const BasicInformationStep = () => {
 
         <FormField
           control={form.control}
-          name="basicInfo.gender"
+          name='basicInfo.gender'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Gênero *</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione o gênero" />
+                    <SelectValue placeholder='Selecione o gênero' />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="feminino">Feminino</SelectItem>
-                  <SelectItem value="masculino">Masculino</SelectItem>
-                  <SelectItem value="outro">Outro</SelectItem>
+                  <SelectItem value='feminino'>Feminino</SelectItem>
+                  <SelectItem value='masculino'>Masculino</SelectItem>
+                  <SelectItem value='outro'>Outro</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -254,15 +254,15 @@ const BasicInformationStep = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <FormField
           control={form.control}
-          name="cns"
+          name='cns'
           render={({ field }) => (
             <FormItem>
               <FormLabel>CNS (Cartão Nacional de Saúde)</FormLabel>
               <FormControl>
-                <Input placeholder="000 0000 0000 0000" {...field} />
+                <Input placeholder='000 0000 0000 0000' {...field} />
               </FormControl>
               <FormDescription>
                 Número do Cartão Nacional de Saúde (opcional)
@@ -274,12 +274,12 @@ const BasicInformationStep = () => {
 
         <FormField
           control={form.control}
-          name="rg"
+          name='rg'
           render={({ field }) => (
             <FormItem>
               <FormLabel>RG</FormLabel>
               <FormControl>
-                <Input placeholder="Ex: 12.345.678-9" {...field} />
+                <Input placeholder='Ex: 12.345.678-9' {...field} />
               </FormControl>
               <FormDescription>Registro Geral (opcional)</FormDescription>
               <FormMessage />
@@ -304,21 +304,19 @@ const AddressStep = () => {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className='space-y-4'>
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
         <FormField
           control={form.control}
-          name="address.zipCode"
+          name='address.zipCode'
           render={({ field }) => (
             <FormItem>
               <FormLabel>CEP *</FormLabel>
               <FormControl>
                 <Input
-                  placeholder="00000-000"
-                  value={field.value || ""}
-                  onChange={(e) =>
-                    handleCepChange(e.target.value, field.onChange)
-                  }
+                  placeholder='00000-000'
+                  value={field.value || ''}
+                  onChange={e => handleCepChange(e.target.value, field.onChange)}
                 />
               </FormControl>
               <FormMessage />
@@ -328,12 +326,12 @@ const AddressStep = () => {
 
         <FormField
           control={form.control}
-          name="address.street"
+          name='address.street'
           render={({ field }) => (
-            <FormItem className="md:col-span-2">
+            <FormItem className='md:col-span-2'>
               <FormLabel>Endereço *</FormLabel>
               <FormControl>
-                <Input placeholder="Rua, Avenida, etc." {...field} />
+                <Input placeholder='Rua, Avenida, etc.' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -341,15 +339,15 @@ const AddressStep = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
         <FormField
           control={form.control}
-          name="address.number"
+          name='address.number'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Número *</FormLabel>
               <FormControl>
-                <Input placeholder="123" {...field} />
+                <Input placeholder='123' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -358,12 +356,12 @@ const AddressStep = () => {
 
         <FormField
           control={form.control}
-          name="address.complement"
+          name='address.complement'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Complemento</FormLabel>
               <FormControl>
-                <Input placeholder="Apto, Bloco, etc." {...field} />
+                <Input placeholder='Apto, Bloco, etc.' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -372,12 +370,12 @@ const AddressStep = () => {
 
         <FormField
           control={form.control}
-          name="address.neighborhood"
+          name='address.neighborhood'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Bairro *</FormLabel>
               <FormControl>
-                <Input placeholder="Centro, Vila..." {...field} />
+                <Input placeholder='Centro, Vila...' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -385,15 +383,15 @@ const AddressStep = () => {
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
         <FormField
           control={form.control}
-          name="address.city"
+          name='address.city'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Cidade *</FormLabel>
               <FormControl>
-                <Input placeholder="São Paulo" {...field} />
+                <Input placeholder='São Paulo' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -402,46 +400,46 @@ const AddressStep = () => {
 
         <FormField
           control={form.control}
-          name="address.state"
+          name='address.state'
           render={({ field }) => (
             <FormItem>
               <FormLabel>Estado *</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecione o estado" />
+                    <SelectValue placeholder='Selecione o estado' />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {[
-                    "AC",
-                    "AL",
-                    "AP",
-                    "AM",
-                    "BA",
-                    "CE",
-                    "DF",
-                    "ES",
-                    "GO",
-                    "MA",
-                    "MT",
-                    "MS",
-                    "MG",
-                    "PA",
-                    "PB",
-                    "PR",
-                    "PE",
-                    "PI",
-                    "RJ",
-                    "RN",
-                    "RS",
-                    "RO",
-                    "RR",
-                    "SC",
-                    "SP",
-                    "SE",
-                    "TO",
-                  ].map((state) => (
+                    'AC',
+                    'AL',
+                    'AP',
+                    'AM',
+                    'BA',
+                    'CE',
+                    'DF',
+                    'ES',
+                    'GO',
+                    'MA',
+                    'MT',
+                    'MS',
+                    'MG',
+                    'PA',
+                    'PB',
+                    'PR',
+                    'PE',
+                    'PI',
+                    'RJ',
+                    'RN',
+                    'RS',
+                    'RO',
+                    'RR',
+                    'SC',
+                    'SP',
+                    'SE',
+                    'TO',
+                  ].map(state => (
                     <SelectItem key={state} value={state}>
                       {state}
                     </SelectItem>
@@ -470,42 +468,42 @@ const ContactStep = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className='space-y-4'>
       <FormField
         control={form.control}
-        name="basicInfo.phone"
+        name='basicInfo.phone'
         render={({ field }) => (
           <FormItem>
             <FormLabel>Telefone *</FormLabel>
             <FormControl>
               <Input
-                placeholder="(00) 00000-0000"
-                value={field.value || ""}
-                onChange={(e) =>
-                  handlePhoneChange(e.target.value, field.onChange)
-                }
+                placeholder='(00) 00000-0000'
+                value={field.value || ''}
+                onChange={e => handlePhoneChange(e.target.value, field.onChange)}
               />
             </FormControl>
             {field.value && (
               <FormDescription
                 className={cn(
-                  "text-xs flex items-center gap-1",
+                  'text-xs flex items-center gap-1',
                   validateBrazilianPhone(field.value)
-                    ? "text-green-600"
-                    : "text-red-600",
+                    ? 'text-green-600'
+                    : 'text-red-600',
                 )}
               >
-                {validateBrazilianPhone(field.value) ? (
-                  <>
-                    <Check className="h-3 w-3" />
-                    Telefone válido
-                  </>
-                ) : (
-                  <>
-                    <AlertTriangle className="h-3 w-3" />
-                    Formato inválido
-                  </>
-                )}
+                {validateBrazilianPhone(field.value)
+                  ? (
+                    <>
+                      <Check className='h-3 w-3' />
+                      Telefone válido
+                    </>
+                  )
+                  : (
+                    <>
+                      <AlertTriangle className='h-3 w-3' />
+                      Formato inválido
+                    </>
+                  )}
               </FormDescription>
             )}
             <FormMessage />
@@ -515,12 +513,12 @@ const ContactStep = () => {
 
       <FormField
         control={form.control}
-        name="basicInfo.email"
+        name='basicInfo.email'
         render={({ field }) => (
           <FormItem>
             <FormLabel>E-mail *</FormLabel>
             <FormControl>
-              <Input type="email" placeholder="exemplo@email.com" {...field} />
+              <Input type='email' placeholder='exemplo@email.com' {...field} />
             </FormControl>
             <FormDescription>
               E-mail para comunicações da clínica
@@ -539,97 +537,97 @@ const ConsentStep = () => {
 
   const consentPurposes = [
     {
-      key: "dataProcessing",
-      title: "Processamento de Dados Pessoais",
+      key: 'dataProcessing',
+      title: 'Processamento de Dados Pessoais',
       description:
-        "Autorizo o processamento dos meus dados pessoais para prestação de serviços estéticos, incluindo histórico médico, tratamentos realizados e agendamentos.",
+        'Autorizo o processamento dos meus dados pessoais para prestação de serviços estéticos, incluindo histórico médico, tratamentos realizados e agendamentos.',
       required: true,
       icon: Database,
     },
     {
-      key: "marketing",
-      title: "Marketing e Comunicação",
+      key: 'marketing',
+      title: 'Marketing e Comunicação',
       description:
-        "Autorizo o envio de materiais promocionais, informações sobre novos tratamentos, ofertas especiais e pesquisas de satisfação.",
+        'Autorizo o envio de materiais promocionais, informações sobre novos tratamentos, ofertas especiais e pesquisas de satisfação.',
       required: false,
       icon: Mail,
     },
     {
-      key: "thirdPartySharing",
-      title: "Compartilhamento com Terceiros",
+      key: 'thirdPartySharing',
+      title: 'Compartilhamento com Terceiros',
       description:
-        "Autorizo o compartilhamento de dados com laboratórios parceiros, fornecedores de equipamentos e profissionais de saúde quando necessário.",
+        'Autorizo o compartilhamento de dados com laboratórios parceiros, fornecedores de equipamentos e profissionais de saúde quando necessário.',
       required: false,
       icon: Share,
     },
     {
-      key: "research",
-      title: "Pesquisa e Desenvolvimento",
+      key: 'research',
+      title: 'Pesquisa e Desenvolvimento',
       description:
-        "Autorizo o uso de dados anonimizados para pesquisas científicas e desenvolvimento de novos tratamentos estéticos.",
+        'Autorizo o uso de dados anonimizados para pesquisas científicas e desenvolvimento de novos tratamentos estéticos.',
       required: false,
       icon: FileText,
     },
     {
-      key: "telehealth",
-      title: "Telemedicina",
+      key: 'telehealth',
+      title: 'Telemedicina',
       description:
-        "Autorizo consultas online, monitoramento remoto e acompanhamento de tratamentos através de plataformas digitais.",
+        'Autorizo consultas online, monitoramento remoto e acompanhamento de tratamentos através de plataformas digitais.',
       required: false,
       icon: Heart,
     },
   ];
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       <Alert>
-        <Shield className="h-4 w-4" />
+        <Shield className='h-4 w-4' />
         <AlertDescription>
           <strong>Lei Geral de Proteção de Dados (LGPD)</strong>
           <br />
-          Em conformidade com a LGPD, precisamos do seu consentimento explícito
-          para processar seus dados pessoais. Você pode revogar esses
-          consentimentos a qualquer momento através do nosso sistema.
+          Em conformidade com a LGPD, precisamos do seu consentimento explícito para processar seus
+          dados pessoais. Você pode revogar esses consentimentos a qualquer momento através do nosso
+          sistema.
         </AlertDescription>
       </Alert>
 
-      <div className="space-y-4">
-        {consentPurposes.map((purpose) => (
+      <div className='space-y-4'>
+        {consentPurposes.map(purpose => (
           <Card
             key={purpose.key}
             className={cn(
-              "border-2 transition-colors",
+              'border-2 transition-colors',
               form.watch(`consent.${purpose.key}`)
-                ? "border-green-200 bg-green-50"
-                : "border-gray-200",
+                ? 'border-green-200 bg-green-50'
+                : 'border-gray-200',
             )}
           >
-            <CardContent className="p-4">
+            <CardContent className='p-4'>
               <FormField
                 control={form.control}
                 name={`consent.${purpose.key}`}
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormItem className='flex flex-row items-start space-x-3 space-y-0'>
                     <FormControl>
                       <Checkbox
                         checked={field.value}
                         onCheckedChange={field.onChange}
-                        className="mt-1"
+                        className='mt-1'
                       />
                     </FormControl>
-                    <div className="space-y-1 leading-none flex-1">
-                      <div className="flex items-center gap-2">
-                        <purpose.icon className="h-4 w-4 text-blue-600" />
-                        <FormLabel className="text-sm font-medium">
+                    <div className='space-y-1 leading-none flex-1'>
+                      <div className='flex items-center gap-2'>
+                        <purpose.icon className='h-4 w-4 text-blue-600' />
+                        <FormLabel className='text-sm font-medium'>
                           {purpose.title}
                           {purpose.required && (
-                            <Badge variant="outline" className="ml-2 text-xs">
+                            <Badge variant='outline' className='ml-2 text-xs'>
                               Obrigatório
                             </Badge>
                           )}
                         </FormLabel>
                       </div>
-                      <FormDescription className="text-xs text-muted-foreground">
+                      <FormDescription className='text-xs text-muted-foreground'>
                         {purpose.description}
                       </FormDescription>
                     </div>
@@ -643,30 +641,30 @@ const ConsentStep = () => {
 
       <Separator />
 
-      <div className="space-y-4">
+      <div className='space-y-4'>
         <FormField
           control={form.control}
-          name="termsAccepted"
+          name='termsAccepted'
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+            <FormItem className='flex flex-row items-start space-x-3 space-y-0'>
               <FormControl>
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
                 />
               </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel className="text-sm font-medium">
+              <div className='space-y-1 leading-none'>
+                <FormLabel className='text-sm font-medium'>
                   Aceito os Termos de Uso *
                 </FormLabel>
-                <FormDescription className="text-xs">
-                  Li e concordo com os{" "}
+                <FormDescription className='text-xs'>
+                  Li e concordo com os{' '}
                   <button
-                    type="button"
-                    className="text-blue-600 hover:underline"
+                    type='button'
+                    className='text-blue-600 hover:underline'
                   >
                     Termos de Uso
-                  </button>{" "}
+                  </button>{' '}
                   da clínica estética.
                 </FormDescription>
               </div>
@@ -676,27 +674,27 @@ const ConsentStep = () => {
 
         <FormField
           control={form.control}
-          name="privacyPolicyAccepted"
+          name='privacyPolicyAccepted'
           render={({ field }) => (
-            <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+            <FormItem className='flex flex-row items-start space-x-3 space-y-0'>
               <FormControl>
                 <Checkbox
                   checked={field.value}
                   onCheckedChange={field.onChange}
                 />
               </FormControl>
-              <div className="space-y-1 leading-none">
-                <FormLabel className="text-sm font-medium">
+              <div className='space-y-1 leading-none'>
+                <FormLabel className='text-sm font-medium'>
                   Aceito a Política de Privacidade *
                 </FormLabel>
-                <FormDescription className="text-xs">
-                  Li e concordo com a{" "}
+                <FormDescription className='text-xs'>
+                  Li e concordo com a{' '}
                   <button
-                    type="button"
-                    className="text-blue-600 hover:underline"
+                    type='button'
+                    className='text-blue-600 hover:underline'
                   >
                     Política de Privacidade
-                  </button>{" "}
+                  </button>{' '}
                   sobre o tratamento dos meus dados pessoais.
                 </FormDescription>
               </div>
@@ -714,25 +712,24 @@ const ReviewStep = () => {
   const formData = form.getValues();
 
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h3 className="text-lg font-semibold">Revisão das Informações</h3>
-        <p className="text-sm text-muted-foreground">
-          Verifique se todas as informações estão corretas antes de finalizar o
-          cadastro
+    <div className='space-y-6'>
+      <div className='text-center'>
+        <h3 className='text-lg font-semibold'>Revisão das Informações</h3>
+        <p className='text-sm text-muted-foreground'>
+          Verifique se todas as informações estão corretas antes de finalizar o cadastro
         </p>
       </div>
 
-      <div className="grid gap-4">
+      <div className='grid gap-4'>
         {/* Basic Information */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <User className="h-4 w-4" />
+          <CardHeader className='pb-3'>
+            <CardTitle className='text-base flex items-center gap-2'>
+              <User className='h-4 w-4' />
               Informações Básicas
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm space-y-2">
+          <CardContent className='text-sm space-y-2'>
             <div>
               <strong>Nome:</strong> {formData.basicInfo?.name}
             </div>
@@ -740,9 +737,8 @@ const ReviewStep = () => {
               <strong>CPF:</strong> {formData.basicInfo?.cpf}
             </div>
             <div>
-              <strong>Data de Nascimento:</strong>{" "}
-              {formData.basicInfo?.birthDate &&
-                format(new Date(formData.basicInfo.birthDate), "dd/MM/yyyy", {
+              <strong>Data de Nascimento:</strong> {formData.basicInfo?.birthDate
+                && format(new Date(formData.basicInfo.birthDate), 'dd/MM/yyyy', {
                   locale: ptBR,
                 })}
             </div>
@@ -754,25 +750,23 @@ const ReviewStep = () => {
 
         {/* Address */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <MapPin className="h-4 w-4" />
+          <CardHeader className='pb-3'>
+            <CardTitle className='text-base flex items-center gap-2'>
+              <MapPin className='h-4 w-4' />
               Endereço
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm space-y-2">
+          <CardContent className='text-sm space-y-2'>
             <div>
-              <strong>Endereço:</strong> {formData.address?.street},{" "}
-              {formData.address?.number}
-              {formData.address?.complement &&
-                `, ${formData.address.complement}`}
+              <strong>Endereço:</strong> {formData.address?.street}, {formData.address?.number}
+              {formData.address?.complement
+                && `, ${formData.address.complement}`}
             </div>
             <div>
               <strong>Bairro:</strong> {formData.address?.neighborhood}
             </div>
             <div>
-              <strong>Cidade:</strong> {formData.address?.city} -{" "}
-              {formData.address?.state}
+              <strong>Cidade:</strong> {formData.address?.city} - {formData.address?.state}
             </div>
             <div>
               <strong>CEP:</strong> {formData.address?.zipCode}
@@ -782,13 +776,13 @@ const ReviewStep = () => {
 
         {/* Contact */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Phone className="h-4 w-4" />
+          <CardHeader className='pb-3'>
+            <CardTitle className='text-base flex items-center gap-2'>
+              <Phone className='h-4 w-4' />
               Contato
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm space-y-2">
+          <CardContent className='text-sm space-y-2'>
             <div>
               <strong>Telefone:</strong> {formData.basicInfo?.phone}
             </div>
@@ -800,36 +794,30 @@ const ReviewStep = () => {
 
         {/* Consent Summary */}
         <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Shield className="h-4 w-4" />
+          <CardHeader className='pb-3'>
+            <CardTitle className='text-base flex items-center gap-2'>
+              <Shield className='h-4 w-4' />
               Consentimentos LGPD
             </CardTitle>
           </CardHeader>
-          <CardContent className="text-sm">
-            <div className="space-y-1">
-              <div className="flex items-center gap-2">
-                {formData.consent?.dataProcessing ? (
-                  <Check className="h-3 w-3 text-green-600" />
-                ) : (
-                  <X className="h-3 w-3 text-red-600" />
-                )}
+          <CardContent className='text-sm'>
+            <div className='space-y-1'>
+              <div className='flex items-center gap-2'>
+                {formData.consent?.dataProcessing
+                  ? <Check className='h-3 w-3 text-green-600' />
+                  : <X className='h-3 w-3 text-red-600' />}
                 <span>Processamento de Dados Pessoais</span>
               </div>
-              <div className="flex items-center gap-2">
-                {formData.consent?.marketing ? (
-                  <Check className="h-3 w-3 text-green-600" />
-                ) : (
-                  <X className="h-3 w-3 text-red-600" />
-                )}
+              <div className='flex items-center gap-2'>
+                {formData.consent?.marketing
+                  ? <Check className='h-3 w-3 text-green-600' />
+                  : <X className='h-3 w-3 text-red-600' />}
                 <span>Marketing e Comunicação</span>
               </div>
-              <div className="flex items-center gap-2">
-                {formData.consent?.thirdPartySharing ? (
-                  <Check className="h-3 w-3 text-green-600" />
-                ) : (
-                  <X className="h-3 w-3 text-red-600" />
-                )}
+              <div className='flex items-center gap-2'>
+                {formData.consent?.thirdPartySharing
+                  ? <Check className='h-3 w-3 text-green-600' />
+                  : <X className='h-3 w-3 text-red-600' />}
                 <span>Compartilhamento com Terceiros</span>
               </div>
             </div>
@@ -855,21 +843,21 @@ export function EnhancedPatientRegistrationForm({
     resolver: zodResolver(CompletePatientRegistrationSchema),
     defaultValues: {
       basicInfo: {
-        name: "",
-        cpf: "",
-        birthDate: "",
-        gender: "feminino",
-        phone: "",
-        email: "",
+        name: '',
+        cpf: '',
+        birthDate: '',
+        gender: 'feminino',
+        phone: '',
+        email: '',
       },
       address: {
-        street: "",
-        number: "",
-        complement: "",
-        neighborhood: "",
-        city: "",
-        state: "SP",
-        zipCode: "",
+        street: '',
+        number: '',
+        complement: '',
+        neighborhood: '',
+        city: '',
+        state: 'SP',
+        zipCode: '',
       },
       consent: {
         dataProcessing: false,
@@ -878,11 +866,11 @@ export function EnhancedPatientRegistrationForm({
         research: false,
         telehealth: false,
         consentDate: new Date(),
-        ipAddress: "",
-        userAgent: "",
+        ipAddress: '',
+        userAgent: '',
       },
-      cns: "",
-      rg: "",
+      cns: '',
+      rg: '',
       termsAccepted: false,
       privacyPolicyAccepted: false,
       ...initialData,
@@ -917,7 +905,7 @@ export function EnhancedPatientRegistrationForm({
         consent: {
           ...data.consent,
           consentDate: new Date(),
-          ipAddress: "127.0.0.1", // This should be obtained from the request
+          ipAddress: '127.0.0.1', // This should be obtained from the request
           userAgent: navigator.userAgent,
         },
       };
@@ -927,7 +915,7 @@ export function EnhancedPatientRegistrationForm({
       form.reset();
       setCurrentStep(0);
     } catch (error) {
-      console.error("Erro ao cadastrar paciente:", error);
+      console.error('Erro ao cadastrar paciente:', error);
     } finally {
       setIsSubmitting(false);
     }
@@ -938,13 +926,13 @@ export function EnhancedPatientRegistrationForm({
   ): (keyof CompletePatientRegistration)[] => {
     switch (step) {
       case 0:
-        return ["basicInfo"]; // Basic info
+        return ['basicInfo']; // Basic info
       case 1:
-        return ["address"]; // Address
+        return ['address']; // Address
       case 2:
-        return ["basicInfo"]; // Contact (phone/email in basicInfo)
+        return ['basicInfo']; // Contact (phone/email in basicInfo)
       case 3:
-        return ["consent", "termsAccepted", "privacyPolicyAccepted"]; // Consent
+        return ['consent', 'termsAccepted', 'privacyPolicyAccepted']; // Consent
       case 4:
         return []; // Review
       default:
@@ -972,11 +960,11 @@ export function EnhancedPatientRegistrationForm({
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
-        className={cn("max-w-4xl max-h-[90vh] overflow-y-auto", className)}
+        className={cn('max-w-4xl max-h-[90vh] overflow-y-auto', className)}
       >
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <User className="h-5 w-5" />
+          <DialogTitle className='flex items-center gap-2'>
+            <User className='h-5 w-5' />
             Cadastro de Paciente
           </DialogTitle>
           <DialogDescription>
@@ -985,18 +973,18 @@ export function EnhancedPatientRegistrationForm({
         </DialogHeader>
 
         {/* Progress Bar */}
-        <div className="space-y-2">
-          <div className="flex justify-between text-sm text-muted-foreground">
+        <div className='space-y-2'>
+          <div className='flex justify-between text-sm text-muted-foreground'>
             <span>
               Etapa {currentStep + 1} de {REGISTRATION_STEPS.length}
             </span>
             <span>{Math.round(progress)}% concluído</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className='h-2' />
         </div>
 
         {/* Step Navigation */}
-        <div className="flex justify-between">
+        <div className='flex justify-between'>
           {REGISTRATION_STEPS.map((step, index) => {
             const Icon = step.icon;
             const isActive = index === currentStep;
@@ -1006,26 +994,22 @@ export function EnhancedPatientRegistrationForm({
               <div
                 key={step.id}
                 className={cn(
-                  "flex flex-col items-center space-y-2 text-center flex-1",
-                  isActive && "text-blue-600",
-                  isCompleted && "text-green-600",
+                  'flex flex-col items-center space-y-2 text-center flex-1',
+                  isActive && 'text-blue-600',
+                  isCompleted && 'text-green-600',
                 )}
               >
                 <div
                   className={cn(
-                    "w-8 h-8 rounded-full flex items-center justify-center border-2",
-                    isActive && "border-blue-600 bg-blue-50",
-                    isCompleted && "border-green-600 bg-green-50",
-                    !isActive && !isCompleted && "border-gray-300 bg-gray-50",
+                    'w-8 h-8 rounded-full flex items-center justify-center border-2',
+                    isActive && 'border-blue-600 bg-blue-50',
+                    isCompleted && 'border-green-600 bg-green-50',
+                    !isActive && !isCompleted && 'border-gray-300 bg-gray-50',
                   )}
                 >
-                  {isCompleted ? (
-                    <Check className="w-4 h-4" />
-                  ) : (
-                    <Icon className="w-4 h-4" />
-                  )}
+                  {isCompleted ? <Check className='w-4 h-4' /> : <Icon className='w-4 h-4' />}
                 </div>
-                <div className="text-xs font-medium hidden md:block">
+                <div className='text-xs font-medium hidden md:block'>
                   {step.title}
                 </div>
               </div>
@@ -1037,12 +1021,12 @@ export function EnhancedPatientRegistrationForm({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className="space-y-6"
+            className='space-y-6'
           >
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <currentStepData.icon className="h-5 w-5" />
+                <CardTitle className='flex items-center gap-2'>
+                  <currentStepData.icon className='h-5 w-5' />
                   {currentStepData.title}
                 </CardTitle>
                 <CardDescription>{currentStepData.description}</CardDescription>
@@ -1051,37 +1035,41 @@ export function EnhancedPatientRegistrationForm({
             </Card>
 
             {/* Navigation Buttons */}
-            <div className="flex justify-between">
+            <div className='flex justify-between'>
               <Button
-                type="button"
-                variant="outline"
+                type='button'
+                variant='outline'
                 onClick={handlePrevious}
                 disabled={currentStep === 0}
               >
-                <ChevronLeft className="mr-2 h-4 w-4" />
+                <ChevronLeft className='mr-2 h-4 w-4' />
                 Anterior
               </Button>
 
-              {currentStep === REGISTRATION_STEPS.length - 1 ? (
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Cadastrando...
-                    </>
-                  ) : (
-                    <>
-                      <Check className="mr-2 h-4 w-4" />
-                      Finalizar Cadastro
-                    </>
-                  )}
-                </Button>
-              ) : (
-                <Button type="button" onClick={handleNext}>
-                  Próximo
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
-              )}
+              {currentStep === REGISTRATION_STEPS.length - 1
+                ? (
+                  <Button type='submit' disabled={isSubmitting}>
+                    {isSubmitting
+                      ? (
+                        <>
+                          <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                          Cadastrando...
+                        </>
+                      )
+                      : (
+                        <>
+                          <Check className='mr-2 h-4 w-4' />
+                          Finalizar Cadastro
+                        </>
+                      )}
+                  </Button>
+                )
+                : (
+                  <Button type='button' onClick={handleNext}>
+                    Próximo
+                    <ChevronRight className='ml-2 h-4 w-4' />
+                  </Button>
+                )}
             </div>
           </form>
         </Form>

@@ -17,7 +17,6 @@ import {
   OrchestrationMetrics,
   OrchestratorConfig,
   normalizeDomain,
-  normalizeComplexity,
 } from "./types";
 import { AgentRegistry } from "./agent-registry";
 import { WorkflowEngine } from "./workflow-engine";
@@ -496,7 +495,7 @@ export class TDDOrchestrator extends EventEmitter {
         "compliance-validator": 0,
         "code-reviewer": 0,
         "architect-review": 0,
-        "security-auditor": 0,
+        "test-auditor": 0,
       },
       qualityGateResults: state.qualityGates,
       findingsCount: {},

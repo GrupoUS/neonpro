@@ -3,8 +3,8 @@
  * React Query hooks for appointment time slot validation
  */
 
-import { timeSlotValidationService } from "@/services/time-slot-validation.service";
-import { useQuery } from "@tanstack/react-query";
+import { timeSlotValidationService } from '@/services/time-slot-validation.service';
+import { useQuery } from '@tanstack/react-query';
 
 /**
  * Hook to validate a time slot for appointment booking
@@ -19,7 +19,7 @@ export function useTimeSlotValidation(
 ) {
   return useQuery({
     queryKey: [
-      "time-slot-validation",
+      'time-slot-validation',
       clinicId,
       professionalId,
       serviceTypeId,
@@ -37,11 +37,11 @@ export function useTimeSlotValidation(
         excludeAppointmentId,
       ),
     enabled: !!(
-      clinicId &&
-      professionalId &&
-      serviceTypeId &&
-      startTime &&
-      endTime
+      clinicId
+      && professionalId
+      && serviceTypeId
+      && startTime
+      && endTime
     ),
     staleTime: 30 * 1000, // 30 seconds (short for real-time validation)
     gcTime: 2 * 60 * 1000, // 2 minutes

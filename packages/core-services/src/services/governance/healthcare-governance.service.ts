@@ -21,8 +21,15 @@ import {
   HealthcarePolicyFilters,
   HealthcareAlertFilters,
   ComplianceReportFilters,
+  AuditTrailEntry,
 } from "@neonpro/types";
-import { AuditTrailEntry } from "@neonpro/types";
+import {
+  HealthcareMetricRecord,
+  PatientSafetyKPIRecord,
+  HealthcarePolicyRecord,
+  HealthcareAlertRecord,
+  ComplianceReportRecord,
+} from "../../types/database-records";
 
 export class HealthcareGovernanceService
   extends SupabaseGovernanceService
@@ -142,7 +149,7 @@ export class HealthcareGovernanceService
     update: UpdateHealthcareMetric,
   ): Promise<HealthcareMetric> {
     try {
-      const updateData: any = {
+      const updateData: Partial<HealthcareMetricRecord> = {
         updated_at: new Date().toISOString(),
         last_updated: new Date().toISOString(),
       };
@@ -621,7 +628,7 @@ export class HealthcareGovernanceService
       const auditEntry = await this.createAuditEntry({
         action: entry.action,
         resource: entry.resource,
-        resourceType: entry.resourceType as any,
+        resourceType: entry.resourceType,
         resourceId: entry.resourceId,
         userId: entry.userId,
         clinicId: entry.clinicId,
@@ -718,17 +725,17 @@ export class HealthcareGovernanceService
   }
 
   // Private helper methods
-  private mapHealthcareMetrics(data: any[]): HealthcareMetric[] {
+  private mapHealthcareMetrics(data: HealthcareMetricRecord[]): HealthcareMetric[] {
     return data.map((item) => this.mapHealthcareMetric(item));
   }
 
-  private mapHealthcareMetric(data: any): HealthcareMetric {
+  private mapHealthcareMetric(data: HealthcareMetricRecord): HealthcareMetric {
     return {
       id: data.id,
       clinicId: data.clinic_id,
       metricType: data.metric_type as HealthcareMetricType,
       name: data.name,
-      description: data.description,
+      description: data.description || undefined,
       category: data.category as HealthcareMetricCategory,
       currentValue: data.current_value,
       targetValue: data.target_value,
@@ -736,7 +743,7 @@ export class HealthcareGovernanceService
       unit: data.unit,
       status: data.status as HealthcareMetricStatus,
       complianceFramework: data.compliance_framework,
-      riskLevel: data.risk_level,
+      riskLevel: data.risk_level as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
       lastUpdated: new Date(data.last_updated),
       metadata: data.metadata || {},
       createdAt: new Date(data.created_at),
@@ -744,87 +751,79 @@ export class HealthcareGovernanceService
     };
   }
 
-  private mapPatientSafetyKPIs(data: any[]): PatientSafetyKPI[] {
+  private mapPatientSafetyKPIs(data: PatientSafetyKPIRecord[]): PatientSafetyKPI[] {
     return data.map((item) => this.mapPatientSafetyKPI(item));
   }
 
-  private mapPatientSafetyKPI(data: any): PatientSafetyKPI {
+  private mapPatientSafetyKPI(data: PatientSafetyKPIRecord): PatientSafetyKPI {
     return {
       id: data.id,
       clinicId: data.clinic_id,
       kpiName: data.kpi_name,
-      category: data.category,
+      category: data.category as "MEDICATION_SAFETY" | "DIAGNOSTIC_ACCURACY" | "TREATMENT_OUTCOMES" | "INFECTION_CONTROL",
       currentValue: data.current_value,
       targetValue: data.target_value,
       benchmark: data.benchmark,
-      trend: data.trend,
+      trend: data.trend as "IMPROVING" | "STABLE" | "DECLINING",
       alertThreshold: data.alert_threshold,
-      lastIncident: data.last_incident
-        ? new Date(data.last_incident)
-        : undefined,
+      lastIncident: data.last_incident ? new Date(data.last_incident) : undefined,
       incidentCount: data.incident_count,
       mitigationActions: data.mitigation_actions || [],
       responsibleTeam: data.responsible_team,
-      reportingFrequency: data.reporting_frequency,
+      reportingFrequency: data.reporting_frequency as "DAILY" | "WEEKLY" | "MONTHLY",
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
     };
   }
 
-  private mapHealthcarePolicies(data: any[]): HealthcarePolicy[] {
+  private mapHealthcarePolicies(data: HealthcarePolicyRecord[]): HealthcarePolicy[] {
     return data.map((item) => this.mapHealthcarePolicy(item));
   }
 
-  private mapHealthcarePolicy(data: any): HealthcarePolicy {
+  private mapHealthcarePolicy(data: HealthcarePolicyRecord): HealthcarePolicy {
     return {
       id: data.id,
       name: data.name,
       description: data.description,
       category: data.category,
       version: data.version || "1.0",
-      status: data.status || "ACTIVE",
+      status: (data.status || "ACTIVE") as "ACTIVE" | "DRAFT" | "ARCHIVED" | "UNDER_REVIEW",
       content: data.content,
       metadata: data.metadata || {},
       createdAt: new Date(data.created_at),
       updatedAt: new Date(data.updated_at),
-      regulatoryBody: data.regulatory_body,
-      regulationNumber: data.regulation_number,
+      regulatoryBody: data.regulatory_body as "CFM" | "ANVISA" | "MS" | "CRM",
+      regulationNumber: data.regulation_number || "",
       applicableServices: data.applicable_services || [],
-      complianceDeadline: data.compliance_deadline
-        ? new Date(data.compliance_deadline)
-        : undefined,
-      auditFrequency: data.audit_frequency,
-      criticalityLevel: data.criticality_level,
+      complianceDeadline: data.compliance_deadline ? new Date(data.compliance_deadline) : undefined,
+      auditFrequency: data.audit_frequency as "MONTHLY" | "QUARTERLY" | "ANNUALLY",
+      criticalityLevel: data.criticality_level as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
       // Add missing properties from PolicyManagement interface
-      framework: data.framework || "GENERAL",
+      framework: data.framework as any,
       enforcementRate: data.enforcement_rate || 0,
       violationCount: data.violation_count || 0,
     };
   }
 
-  private mapHealthcareAlerts(data: any[]): HealthcareAlert[] {
+  private mapHealthcareAlerts(data: HealthcareAlertRecord[]): HealthcareAlert[] {
     return data.map((item) => this.mapHealthcareAlert(item));
   }
 
-  private mapHealthcareAlert(data: any): HealthcareAlert {
+  private mapHealthcareAlert(data: HealthcareAlertRecord): HealthcareAlert {
     return {
       id: data.id,
       clinicId: data.clinic_id,
-      alertType: data.alert_type,
-      severity: data.severity,
+      alertType: data.alert_type as "COMPLIANCE_VIOLATION" | "SAFETY_INCIDENT" | "METRIC_THRESHOLD" | "POLICY_BREACH",
+      severity: data.severity as "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
       title: data.title,
       description: data.description,
-      source: data.source,
-      triggeredBy: data.triggered_by,
-      status: data.status,
-      assignedTo: data.assigned_to,
-      escalationLevel: data.escalation_level,
-      autoEscalationTime: data.auto_escalation_time
-        ? new Date(data.auto_escalation_time)
-        : undefined,
-      resolutionDeadline: data.resolution_deadline
-        ? new Date(data.resolution_deadline)
-        : undefined,
+      source: data.source || "",
+      triggeredBy: data.triggered_by || "",
+      status: data.status as "ACTIVE" | "ACKNOWLEDGED" | "RESOLVED" | "DISMISSED",
+      assignedTo: data.assigned_to || undefined,
+      escalationLevel: data.escalation_level as any,
+      autoEscalationTime: data.auto_escalation_time ? new Date(data.auto_escalation_time) : undefined,
+      resolutionDeadline: data.resolution_deadline ? new Date(data.resolution_deadline) : undefined,
       actions: data.actions || [],
       metadata: data.metadata || {},
       createdAt: new Date(data.created_at),
@@ -832,23 +831,25 @@ export class HealthcareGovernanceService
     };
   }
 
-  private mapComplianceReports(data: any[]): HealthcareComplianceReport[] {
+  private mapComplianceReports(data: ComplianceReportRecord[]): HealthcareComplianceReport[] {
     return data.map((item) => ({
       id: item.id,
       clinicId: item.clinic_id,
-      reportType: item.report_type,
+      reportType: item.report_type as HealthcareComplianceReport["reportType"],
       period: {
         startDate: new Date(item.period_start),
         endDate: new Date(item.period_end),
       },
       overallScore: item.overall_score,
-      complianceStatus: item.compliance_status,
+      complianceStatus: item.compliance_status as "COMPLIANT" | "NON_COMPLIANT" | "UNDER_REVIEW" | "CRITICAL",
       metrics: [], // Would need to fetch separately
-      violations: item.violations,
+      violations: item.violations !== null && item.violations !== undefined 
+        ? { count: item.violations, critical: 0, resolved: 0, pending: 0 }
+        : { count: 0, critical: 0, resolved: 0, pending: 0 },
       recommendations: item.recommendations || [],
-      nextAuditDate: new Date(item.next_audit_date),
+      nextAuditDate: item.next_audit_date ? new Date(item.next_audit_date) : new Date(),
       generatedBy: item.generated_by,
-      approvedBy: item.approved_by,
+      approvedBy: item.approved_by || undefined,
       metadata: item.metadata || {},
       createdAt: new Date(item.created_at),
     }));
@@ -901,7 +902,12 @@ export class HealthcareGovernanceService
 
   private generateRecommendations(
     metrics: HealthcareMetric[],
-    violations: any,
+    violations: {
+      count: number;
+      critical: number;
+      resolved: number;
+      pending: number;
+    },
   ): string[] {
     const recommendations: string[] = [];
 

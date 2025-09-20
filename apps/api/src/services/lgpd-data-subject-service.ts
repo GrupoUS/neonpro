@@ -343,7 +343,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult & { exportData?: any; exportUrl?: string }> {
     try {
       // Validate request exists and belongs to patient
-      const request = await this.validateRequest(
+      const _request = await this.validateRequest(
         requestId,
         patientId,
         'PORTABILITY',
@@ -414,7 +414,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult & { explanation?: any }> {
     try {
       // Validate request exists and belongs to patient
-      const request = await this.validateRequest(
+      const _request = await this.validateRequest(
         requestId,
         patientId,
         'AUTOMATED_DECISION_EXPLANATION',
@@ -808,12 +808,12 @@ export class LGPDDataSubjectService {
     };
   }
 
-  private async getThirdPartySharingData(patientId: string): Promise<any> {
+  private async getThirdPartySharingData(_patientId: string): Promise<any> {
     // Return third-party data sharing records
     return [];
   }
 
-  private async getDataRetentionInfo(patientId: string): Promise<any> {
+  private async getDataRetentionInfo(_patientId: string): Promise<any> {
     // Return data retention information
     return {
       personalDataRetention: '10 years after last contact',

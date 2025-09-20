@@ -1,12 +1,26 @@
 openapi: 3.0.3
 info:
   title: NeonPro AI Agent API
-  description: API for AI agent database integration
+  description: |
+    API for AI agent database integration.
+    
+    ## Security Requirements
+    - All communication MUST use HTTPS with TLS 1.3 or higher
+    - HTTP requests are automatically redirected to HTTPS
+    - HSTS headers enforced with max-age ≥ 31536000
+    - Comprehensive security headers implemented
+    - Mixed content strictly prohibited
+    
+    ## TLS Configuration
+    - TLS 1.3 minimum version
+    - Perfect Forward Secrecy (PFS) cipher suites
+    - Certificate Transparency logging enabled
+    - Automatic certificate renewal
   version: 1.0.0
 
 servers:
   - url: https://api.neonpro.com/v1
-    description: Production server
+    description: Production server (HTTPS required, TLS 1.3+)
 
 paths:
   /api/ai/data-agent:
@@ -53,6 +67,37 @@ paths:
       responses:
         '200':
           description: Successful response
+          headers:
+            Strict-Transport-Security:
+              description: HSTS header enforcing HTTPS
+              schema:
+                type: string
+                example: "max-age=31536000; includeSubDomains; preload"
+            X-Content-Type-Options:
+              description: Prevents MIME type sniffing
+              schema:
+                type: string
+                example: "nosniff"
+            X-Frame-Options:
+              description: Prevents clickjacking
+              schema:
+                type: string
+                example: "DENY"
+            X-XSS-Protection:
+              description: XSS protection
+              schema:
+                type: string
+                example: "1; mode=block"
+            Content-Security-Policy:
+              description: CSP policy for enhanced security
+              schema:
+                type: string
+                example: "default-src 'self'; script-src 'self'"
+            Referrer-Policy:
+              description: Controls referrer information
+              schema:
+                type: string
+                example: "strict-origin-when-cross-origin"
           content:
             application/json:
               schema:
@@ -228,6 +273,22 @@ components:
   responses:
     BadRequest:
       description: Bad request
+      headers:
+        Strict-Transport-Security:
+          description: HSTS header enforcing HTTPS
+          schema:
+            type: string
+            example: "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options:
+          description: Prevents MIME type sniffing
+          schema:
+            type: string
+            example: "nosniff"
+        X-Frame-Options:
+          description: Prevents clickjacking
+          schema:
+            type: string
+            example: "DENY"
       content:
         application/json:
           schema:
@@ -235,6 +296,17 @@ components:
     
     Unauthorized:
       description: Unauthorized
+      headers:
+        Strict-Transport-Security:
+          description: HSTS header enforcing HTTPS
+          schema:
+            type: string
+            example: "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options:
+          description: Prevents MIME type sniffing
+          schema:
+            type: string
+            example: "nosniff"
       content:
         application/json:
           schema:
@@ -242,6 +314,17 @@ components:
     
     Forbidden:
       description: Forbidden - insufficient permissions
+      headers:
+        Strict-Transport-Security:
+          description: HSTS header enforcing HTTPS
+          schema:
+            type: string
+            example: "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options:
+          description: Prevents MIME type sniffing
+          schema:
+            type: string
+            example: "nosniff"
       content:
         application/json:
           schema:
@@ -249,6 +332,17 @@ components:
     
     InternalError:
       description: Internal server error
+      headers:
+        Strict-Transport-Security:
+          description: HSTS header enforcing HTTPS
+          schema:
+            type: string
+            example: "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options:
+          description: Prevents MIME type sniffing
+          schema:
+            type: string
+            example: "nosniff"
       content:
         application/json:
           schema:

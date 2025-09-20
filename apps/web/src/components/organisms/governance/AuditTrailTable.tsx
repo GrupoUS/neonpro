@@ -1,4 +1,4 @@
-import { Input } from "@/components/atoms/input";
+import { Input } from '@/components/atoms/input';
 import {
   Table,
   TableBody,
@@ -6,20 +6,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/molecules/table";
+} from '@/components/molecules/table';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { getGovernanceService } from "@/lib/governance-service";
-import type { AuditTrail } from "@/lib/governance-service";
-import { Badge } from "@neonpro/ui";
-import { Card, CardContent, CardHeader, CardTitle } from "@neonpro/ui";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+} from '@/components/ui/select';
+import { getGovernanceService } from '@/lib/governance-service';
+import type { AuditTrail } from '@/lib/governance-service';
+import { Badge } from '@neonpro/ui';
+import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 
 export interface AuditLogEntry {
   id: string;
@@ -37,74 +37,74 @@ export interface AuditLogEntry {
 }
 
 export type AuditAction =
-  | "view"
-  | "create"
-  | "update"
-  | "delete"
-  | "export"
-  | "login"
-  | "logout";
+  | 'view'
+  | 'create'
+  | 'update'
+  | 'delete'
+  | 'export'
+  | 'login'
+  | 'logout';
 export type ResourceType =
-  | "patient_record"
-  | "report"
-  | "system_config"
-  | "user_account";
-export type AuditStatus = "success" | "failed" | "blocked";
-export type RiskLevel = "low" | "medium" | "high";
+  | 'patient_record'
+  | 'report'
+  | 'system_config'
+  | 'user_account';
+export type AuditStatus = 'success' | 'failed' | 'blocked';
+export type RiskLevel = 'low' | 'medium' | 'high';
 
 // Helper functions for badge variants
 function getActionBadge(action: AuditAction) {
   const variants = {
-    view: { variant: "secondary" as const, text: "View" },
-    create: { variant: "default" as const, text: "Create" },
-    update: { variant: "default" as const, text: "Update" },
-    delete: { variant: "destructive" as const, text: "Delete" },
-    export: { variant: "secondary" as const, text: "Export" },
-    login: { variant: "outline" as const, text: "Login" },
-    logout: { variant: "outline" as const, text: "Logout" },
+    view: { variant: 'secondary' as const, text: 'View' },
+    create: { variant: 'default' as const, text: 'Create' },
+    update: { variant: 'default' as const, text: 'Update' },
+    delete: { variant: 'destructive' as const, text: 'Delete' },
+    export: { variant: 'secondary' as const, text: 'Export' },
+    login: { variant: 'outline' as const, text: 'Login' },
+    logout: { variant: 'outline' as const, text: 'Logout' },
   };
   return variants[action];
 }
 
 function getStatusBadge(status: AuditStatus) {
   const variants = {
-    success: { variant: "default" as const, text: "Success" },
-    failed: { variant: "destructive" as const, text: "Failed" },
-    blocked: { variant: "destructive" as const, text: "Blocked" },
+    success: { variant: 'default' as const, text: 'Success' },
+    failed: { variant: 'destructive' as const, text: 'Failed' },
+    blocked: { variant: 'destructive' as const, text: 'Blocked' },
   };
   return variants[status];
 }
 
 function getRiskLevelBadge(riskLevel: RiskLevel) {
   const variants = {
-    low: { variant: "secondary" as const, text: "Low" },
-    medium: { variant: "default" as const, text: "Medium" },
-    high: { variant: "destructive" as const, text: "High" },
+    low: { variant: 'secondary' as const, text: 'Low' },
+    medium: { variant: 'default' as const, text: 'Medium' },
+    high: { variant: 'destructive' as const, text: 'High' },
   };
   return variants[riskLevel];
 }
 
 function getResourceTypeLabel(resourceType: ResourceType) {
   const labels = {
-    patient_record: "Patient Record",
-    report: "Report",
-    system_config: "System Config",
-    user_account: "User Account",
+    patient_record: 'Patient Record',
+    report: 'Report',
+    system_config: 'System Config',
+    user_account: 'User Account',
   };
   return labels[resourceType];
 }
 export function AuditTrailTable() {
   // TODO: Get actual clinic ID from auth context
-  const clinicId = "default-clinic-id"; // Placeholder
+  const clinicId = 'default-clinic-id'; // Placeholder
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [actionFilter, setActionFilter] = useState<string>("all");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [riskLevelFilter, setRiskLevelFilter] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [actionFilter, setActionFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [riskLevelFilter, setRiskLevelFilter] = useState<string>('all');
 
   const { data: auditData, isLoading } = useQuery<AuditTrail>({
     queryKey: [
-      "audit-trail",
+      'audit-trail',
       clinicId,
       {
         searchTerm,
@@ -117,9 +117,9 @@ export function AuditTrailTable() {
       const governanceService = getGovernanceService();
       const filters = {
         search: searchTerm || undefined,
-        action: actionFilter !== "all" ? actionFilter : undefined,
-        status: statusFilter !== "all" ? statusFilter : undefined,
-        riskLevel: riskLevelFilter !== "all" ? riskLevelFilter : undefined,
+        action: actionFilter !== 'all' ? actionFilter : undefined,
+        status: statusFilter !== 'all' ? statusFilter : undefined,
+        riskLevel: riskLevelFilter !== 'all' ? riskLevelFilter : undefined,
       };
       return await governanceService.getAuditTrailData(clinicId, filters);
     },
@@ -128,12 +128,12 @@ export function AuditTrailTable() {
   });
 
   const formatTimestamp = (timestamp: Date) => {
-    return new Intl.DateTimeFormat("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
       hour12: false,
     }).format(timestamp);
   };
@@ -145,7 +145,7 @@ export function AuditTrailTable() {
           <CardTitle>Audit Trail</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-4">Loading audit logs...</div>
+          <div className='text-center py-4'>Loading audit logs...</div>
         </CardContent>
       </Card>
     );
@@ -155,63 +155,63 @@ export function AuditTrailTable() {
     <Card>
       <CardHeader>
         <CardTitle>Audit Trail</CardTitle>
-        <div className="text-sm text-muted-foreground">
+        <div className='text-sm text-muted-foreground'>
           HIPAA/LGPD compliant access monitoring with comprehensive PHI tracking
         </div>
       </CardHeader>
       <CardContent>
         {/* Filters */}
-        <div className="mb-6 space-y-4">
+        <div className='mb-6 space-y-4'>
           <Input
-            placeholder="Search audit logs..."
+            placeholder='Search audit logs...'
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="max-w-sm"
+            onChange={e => setSearchTerm(e.target.value)}
+            className='max-w-sm'
           />
 
-          <div className="flex gap-4 flex-wrap">
+          <div className='flex gap-4 flex-wrap'>
             <Select value={actionFilter} onValueChange={setActionFilter}>
-              <SelectTrigger className="w-[140px]">
-                <SelectValue placeholder="All Actions" />
+              <SelectTrigger className='w-[140px]'>
+                <SelectValue placeholder='All Actions' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Actions</SelectItem>
-                <SelectItem value="view">View</SelectItem>
-                <SelectItem value="create">Create</SelectItem>
-                <SelectItem value="update">Update</SelectItem>
-                <SelectItem value="delete">Delete</SelectItem>
-                <SelectItem value="export">Export</SelectItem>
-                <SelectItem value="login">Login</SelectItem>
-                <SelectItem value="logout">Logout</SelectItem>
+                <SelectItem value='all'>All Actions</SelectItem>
+                <SelectItem value='view'>View</SelectItem>
+                <SelectItem value='create'>Create</SelectItem>
+                <SelectItem value='update'>Update</SelectItem>
+                <SelectItem value='delete'>Delete</SelectItem>
+                <SelectItem value='export'>Export</SelectItem>
+                <SelectItem value='login'>Login</SelectItem>
+                <SelectItem value='logout'>Logout</SelectItem>
               </SelectContent>
-            </Select>{" "}
+            </Select>{' '}
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[130px]">
-                <SelectValue placeholder="All Status" />
+              <SelectTrigger className='w-[130px]'>
+                <SelectValue placeholder='All Status' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="success">Success</SelectItem>
-                <SelectItem value="failed">Failed</SelectItem>
-                <SelectItem value="blocked">Blocked</SelectItem>
+                <SelectItem value='all'>All Status</SelectItem>
+                <SelectItem value='success'>Success</SelectItem>
+                <SelectItem value='failed'>Failed</SelectItem>
+                <SelectItem value='blocked'>Blocked</SelectItem>
               </SelectContent>
             </Select>
             <Select value={riskLevelFilter} onValueChange={setRiskLevelFilter}>
-              <SelectTrigger className="w-[160px]">
-                <SelectValue placeholder="All Risk Levels" />
+              <SelectTrigger className='w-[160px]'>
+                <SelectValue placeholder='All Risk Levels' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Risk Levels</SelectItem>
-                <SelectItem value="low">Low</SelectItem>
-                <SelectItem value="medium">Medium</SelectItem>
-                <SelectItem value="high">High</SelectItem>
+                <SelectItem value='all'>All Risk Levels</SelectItem>
+                <SelectItem value='low'>Low</SelectItem>
+                <SelectItem value='medium'>Medium</SelectItem>
+                <SelectItem value='high'>High</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
         {/* Audit Trail Table */}
-        <div className="rounded-md border">
+        <div className='rounded-md border'>
           <Table>
             <TableHeader>
               <TableRow>
@@ -234,12 +234,12 @@ export function AuditTrailTable() {
 
                 return (
                   <TableRow key={entry.id}>
-                    <TableCell className="font-mono text-xs">
+                    <TableCell className='font-mono text-xs'>
                       {formatTimestamp(entry.timestamp)}
                     </TableCell>
                     <TableCell>
-                      <div className="font-medium">{entry.userName}</div>
-                      <div className="text-xs text-muted-foreground">
+                      <div className='font-medium'>{entry.userName}</div>
+                      <div className='text-xs text-muted-foreground'>
                         {entry.userId}
                       </div>
                     </TableCell>
@@ -250,14 +250,14 @@ export function AuditTrailTable() {
                     </TableCell>
                     <TableCell>
                       <div
-                        className="max-w-[200px] truncate"
+                        className='max-w-[200px] truncate'
                         title={entry.resource}
                       >
                         {entry.resource}
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline">
+                      <Badge variant='outline'>
                         {getResourceTypeLabel(entry.resourceType)}
                       </Badge>
                     </TableCell>
@@ -271,12 +271,12 @@ export function AuditTrailTable() {
                         {riskLevelBadge.text}
                       </Badge>
                     </TableCell>
-                    <TableCell className="font-mono text-xs">
+                    <TableCell className='font-mono text-xs'>
                       {entry.ipAddress}
-                    </TableCell>{" "}
+                    </TableCell>{' '}
                     <TableCell>
                       <div
-                        className="max-w-[250px] truncate text-sm text-muted-foreground"
+                        className='max-w-[250px] truncate text-sm text-muted-foreground'
                         title={entry.additionalInfo}
                       >
                         {entry.additionalInfo}
@@ -290,7 +290,7 @@ export function AuditTrailTable() {
                 <TableRow>
                   <TableCell
                     colSpan={9}
-                    className="text-center py-8 text-muted-foreground"
+                    className='text-center py-8 text-muted-foreground'
                   >
                     No audit logs found matching the current filters.
                   </TableCell>
@@ -301,9 +301,8 @@ export function AuditTrailTable() {
         </div>
 
         {/* Summary */}
-        <div className="mt-4 text-sm text-muted-foreground">
-          Showing {auditData?.filteredCount || 0} of{" "}
-          {auditData?.totalCount || 0} audit entries
+        <div className='mt-4 text-sm text-muted-foreground'>
+          Showing {auditData?.filteredCount || 0} of {auditData?.totalCount || 0} audit entries
         </div>
       </CardContent>
     </Card>

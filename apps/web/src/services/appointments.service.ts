@@ -3,24 +3,21 @@
  * Implements healthcare-specific patterns with comprehensive LGPD compliance and audit logging
  */
 
-import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/lib/supabase/types/database";
-import { parseISO } from "date-fns";
+import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/lib/supabase/types/database';
+import { calendarLGPDAuditService, LGPDAuditAction } from '@/services/lgpd/audit-logging.service';
 import {
   calendarLGPDConsentService,
   type ConsentValidationResult,
   DataMinimizationLevel,
   type MinimizedCalendarAppointment,
-} from "@/services/lgpd/calendar-consent.service";
-import { calendarDataMinimizationService } from "@/services/lgpd/data-minimization.service";
-import {
-  calendarLGPDAuditService,
-  LGPDAuditAction,
-} from "@/services/lgpd/audit-logging.service";
+} from '@/services/lgpd/calendar-consent.service';
+import { calendarDataMinimizationService } from '@/services/lgpd/data-minimization.service';
+import { parseISO } from 'date-fns';
 
 // Type definitions
-type AppointmentInsert = Database["public"]["Tables"]["appointments"]["Insert"];
-type AppointmentUpdate = Database["public"]["Tables"]["appointments"]["Update"];
+type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
+type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
 
 export interface CalendarAppointment {
   id: string;
@@ -66,9 +63,9 @@ export interface LGPDCompliantAppointmentRequest {
   userRole: string;
   clinicId: string;
   purpose:
-    | "appointment_scheduling"
-    | "appointment_management"
-    | "healthcare_coordination";
+    | 'appointment_scheduling'
+    | 'appointment_management'
+    | 'healthcare_coordination';
 }
 
 // Appointment service response with compliance metadata
@@ -102,30 +99,29 @@ class AppointmentService {
 
     try {
       // Validate LGPD consent for accessing appointment data
-      const consentResult =
-        await calendarLGPDConsentService.validateCalendarConsent(
-          request.patientId,
-          request.purpose,
-          request.userId,
-          request.userRole,
-        );
+      const consentResult = await calendarLGPDConsentService.validateCalendarConsent(
+        request.patientId,
+        request.purpose,
+        request.userId,
+        request.userRole,
+      );
 
       if (!consentResult.isValid) {
         throw new Error(
-          `LGPD: ${consentResult.error || "Consentimento não válido para acessar agendamentos"}`,
+          `LGPD: ${consentResult.error || 'Consentimento não válido para acessar agendamentos'}`,
         );
       }
 
       // Check if appointments table exists first
       const { data: tableExists } = await supabase
-        .from("appointments")
-        .select("id")
+        .from('appointments')
+        .select('id')
         .limit(1);
 
       // If table doesn't exist or is empty, return mock data with compliance
       if (!tableExists) {
         console.log(
-          "Appointments table not found, returning mock data with LGPD compliance",
+          'Appointments table not found, returning mock data with LGPD compliance',
         );
         const mockData = this.getMockAppointments();
 
@@ -139,10 +135,10 @@ class AppointmentService {
 
         // Log audit trail
         const auditLogId = await this.logDataAccess(
-          "batch_access",
+          'batch_access',
           request,
           consentResult,
-          { source: "mock_data", count: mockData.length },
+          { source: 'mock_data', count: mockData.length },
         );
 
         return {
@@ -152,13 +148,13 @@ class AppointmentService {
             minimizationApplied: true,
             auditLogId,
             complianceScore: 85,
-            risksIdentified: ["Using mock data - validate database setup"],
+            risksIdentified: ['Using mock data - validate database setup'],
           },
           metadata: {
             processingTime: Date.now() - startTime,
             dataCategoriesShared: [
-              "appointment_data",
-              "personal_identification",
+              'appointment_data',
+              'personal_identification',
             ],
             legalBasis: consentResult.legalBasis,
           },
@@ -167,7 +163,7 @@ class AppointmentService {
 
       // Query real appointments data
       let query = supabase
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           id,
@@ -192,21 +188,21 @@ class AppointmentService {
           )
         `,
         )
-        .eq("clinic_id", request.clinicId)
-        .order("start_time", { ascending: true });
+        .eq('clinic_id', request.clinicId)
+        .order('start_time', { ascending: true });
 
       // Add date filters if provided
       if (request.startDate) {
-        query = query.gte("start_time", request.startDate.toISOString());
+        query = query.gte('start_time', request.startDate.toISOString());
       }
       if (request.endDate) {
-        query = query.lte("start_time", request.endDate.toISOString());
+        query = query.lte('start_time', request.endDate.toISOString());
       }
 
       const { data, error } = await query;
 
       if (error) {
-        console.error("Error fetching appointments:", error);
+        console.error('Error fetching appointments:', error);
         // Fallback to mock data with compliance
         const mockData = this.getMockAppointments();
         const minimizedData = await this.applyDataMinimization(
@@ -217,12 +213,12 @@ class AppointmentService {
         );
 
         const auditLogId = await this.logDataAccess(
-          "fallback_access",
+          'fallback_access',
           request,
           consentResult,
           {
             error: error.message,
-            fallbackReason: "database_error",
+            fallbackReason: 'database_error',
             count: mockData.length,
           },
         );
@@ -234,33 +230,32 @@ class AppointmentService {
             minimizationApplied: true,
             auditLogId,
             complianceScore: 75,
-            risksIdentified: ["Database access failed - using fallback data"],
+            risksIdentified: ['Database access failed - using fallback data'],
           },
           metadata: {
             processingTime: Date.now() - startTime,
-            dataCategoriesShared: ["appointment_data"],
+            dataCategoriesShared: ['appointment_data'],
             legalBasis: consentResult.legalBasis,
           },
         };
       }
 
       // Transform to calendar format with LGPD compliance
-      const appointments = (data || []).map((appointment) => ({
+      const appointments = (data || []).map(appointment => ({
         id: appointment.id,
-        title: `${appointment.patients?.full_name || "Paciente"} - ${
-          appointment.service_types?.name || "Serviço"
+        title: `${appointment.patients?.full_name || 'Paciente'} - ${
+          appointment.service_types?.name || 'Serviço'
         }`,
         start: appointment.start_time
           ? parseISO(appointment.start_time)
           : new Date(),
         end: appointment.end_time ? parseISO(appointment.end_time) : new Date(),
-        color: appointment.service_types?.color || "#3b82f6",
-        description: appointment.service_types?.name || "",
-        status: appointment.status || "scheduled",
-        patientName: appointment.patients?.full_name || "Paciente",
-        serviceName: appointment.service_types?.name || "Serviço",
-        professionalName:
-          appointment.professionals?.full_name || "Profissional",
+        color: appointment.service_types?.color || '#3b82f6',
+        description: appointment.service_types?.name || '',
+        status: appointment.status || 'scheduled',
+        patientName: appointment.patients?.full_name || 'Paciente',
+        serviceName: appointment.service_types?.name || 'Serviço',
+        professionalName: appointment.professionals?.full_name || 'Profissional',
         notes: appointment.notes || undefined,
         priority: appointment.priority || undefined,
         patientId: appointment.patient_id,
@@ -278,12 +273,12 @@ class AppointmentService {
 
       // Log audit trail
       const auditLogId = await this.logDataAccess(
-        "database_access",
+        'database_access',
         request,
         consentResult,
         {
           count: appointments.length,
-          source: "database",
+          source: 'database',
           hasDateFilters: !!(request.startDate || request.endDate),
         },
       );
@@ -299,18 +294,18 @@ class AppointmentService {
         },
         metadata: {
           processingTime: Date.now() - startTime,
-          dataCategoriesShared: ["appointment_data", "personal_identification"],
+          dataCategoriesShared: ['appointment_data', 'personal_identification'],
           legalBasis: consentResult.legalBasis,
         },
       };
     } catch (error) {
-      console.error("LGPD: Error in getAppointments:", error);
+      console.error('LGPD: Error in getAppointments:', error);
 
       // Log compliance failure
       await this.logComplianceFailure(
-        "get_appointments",
+        'get_appointments',
         request,
-        error instanceof Error ? error.message : "Unknown error",
+        error instanceof Error ? error.message : 'Unknown error',
       );
 
       throw error;
@@ -328,17 +323,16 @@ class AppointmentService {
 
     try {
       // Validate LGPD consent for creating appointments
-      const consentResult =
-        await calendarLGPDConsentService.validateCalendarConsent(
-          data.patientId,
-          request.purpose,
-          request.userId,
-          request.userRole,
-        );
+      const consentResult = await calendarLGPDConsentService.validateCalendarConsent(
+        data.patientId,
+        request.purpose,
+        request.userId,
+        request.userRole,
+      );
 
       if (!consentResult.isValid) {
         throw new Error(
-          `LGPD: ${consentResult.error || "Consentimento não válido para criar agendamento"}`,
+          `LGPD: ${consentResult.error || 'Consentimento não válido para criar agendamento'}`,
         );
       }
 
@@ -352,7 +346,7 @@ class AppointmentService {
 
       if (hasConflict) {
         throw new Error(
-          "Conflito de horário detectado. Já existe um agendamento neste período.",
+          'Conflito de horário detectado. Já existe um agendamento neste período.',
         );
       }
 
@@ -362,16 +356,16 @@ class AppointmentService {
         patient_id: data.patientId,
         professional_id: data.professionalId,
         service_type_id: data.serviceTypeId,
-        appointment_date: data.startTime.toISOString().split("T")[0],
+        appointment_date: data.startTime.toISOString().split('T')[0],
         start_time: data.startTime.toISOString(),
         end_time: data.endTime.toISOString(),
         notes: data.notes || null,
         priority: data.priority || null,
-        status: data.status || "scheduled",
+        status: data.status || 'scheduled',
       };
 
       const { data: appointment, error } = await supabase
-        .from("appointments")
+        .from('appointments')
         .insert(appointmentData)
         .select(
           `
@@ -399,27 +393,26 @@ class AppointmentService {
         .single();
 
       if (error) {
-        console.error("Error creating appointment:", error);
+        console.error('Error creating appointment:', error);
         throw new Error(`Failed to create appointment: ${error.message}`);
       }
 
       // Transform to calendar format
       const calendarAppointment: CalendarAppointment = {
         id: appointment.id,
-        title: `${appointment.patients?.full_name || "Paciente"} - ${
-          appointment.service_types?.name || "Serviço"
+        title: `${appointment.patients?.full_name || 'Paciente'} - ${
+          appointment.service_types?.name || 'Serviço'
         }`,
         start: appointment.start_time
           ? parseISO(appointment.start_time)
           : new Date(),
         end: appointment.end_time ? parseISO(appointment.end_time) : new Date(),
-        color: appointment.service_types?.color || "#3b82f6",
-        description: appointment.service_types?.name || "",
-        status: appointment.status || "scheduled",
-        patientName: appointment.patients?.full_name || "Paciente",
-        serviceName: appointment.service_types?.name || "Serviço",
-        professionalName:
-          appointment.professionals?.full_name || "Profissional",
+        color: appointment.service_types?.color || '#3b82f6',
+        description: appointment.service_types?.name || '',
+        status: appointment.status || 'scheduled',
+        patientName: appointment.patients?.full_name || 'Paciente',
+        serviceName: appointment.service_types?.name || 'Serviço',
+        professionalName: appointment.professionals?.full_name || 'Profissional',
         notes: appointment.notes || undefined,
         priority: appointment.priority || undefined,
         patientId: appointment.patient_id,
@@ -437,7 +430,7 @@ class AppointmentService {
 
       // Log audit trail for appointment creation
       const auditLogId = await this.logDataAccess(
-        "create_appointment",
+        'create_appointment',
         request,
         consentResult,
         {
@@ -452,7 +445,7 @@ class AppointmentService {
 
       // Log appointment action for internal audit
       await this.logAppointmentAction(
-        "create",
+        'create',
         appointment.id,
         request.userId,
         {
@@ -474,18 +467,18 @@ class AppointmentService {
         },
         metadata: {
           processingTime: Date.now() - startTime,
-          dataCategoriesShared: ["appointment_data", "personal_identification"],
+          dataCategoriesShared: ['appointment_data', 'personal_identification'],
           legalBasis: consentResult.legalBasis,
         },
       };
     } catch (error) {
-      console.error("LGPD: Error in createAppointment:", error);
+      console.error('LGPD: Error in createAppointment:', error);
 
       // Log compliance failure
       await this.logComplianceFailure(
-        "create_appointment",
+        'create_appointment',
         request,
-        error instanceof Error ? error.message : "Unknown error",
+        error instanceof Error ? error.message : 'Unknown error',
         { appointmentData: data },
       );
 
@@ -506,7 +499,7 @@ class AppointmentService {
     try {
       // Get current appointment data for audit
       const { data: currentAppointment, error: fetchError } = await supabase
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           patient_id,
@@ -517,7 +510,7 @@ class AppointmentService {
           status
         `,
         )
-        .eq("id", appointmentId)
+        .eq('id', appointmentId)
         .single();
 
       if (fetchError) {
@@ -525,17 +518,16 @@ class AppointmentService {
       }
 
       // Validate LGPD consent for update operation
-      const consentResult =
-        await calendarLGPDConsentService.validateCalendarConsent(
-          currentAppointment.patient_id,
-          request.purpose,
-          request.userId,
-          request.userRole,
-        );
+      const consentResult = await calendarLGPDConsentService.validateCalendarConsent(
+        currentAppointment.patient_id,
+        request.purpose,
+        request.userId,
+        request.userRole,
+      );
 
       if (!consentResult.isValid) {
         throw new Error(
-          `LGPD: ${consentResult.error || "Consentimento não válido para atualizar agendamento"}`,
+          `LGPD: ${consentResult.error || 'Consentimento não válido para atualizar agendamento'}`,
         );
       }
 
@@ -555,15 +547,15 @@ class AppointmentService {
       }
       if (updates.status) {
         updateData.status = updates.status;
-        if (updates.status === "cancelled" && updates.cancellationReason) {
+        if (updates.status === 'cancelled' && updates.cancellationReason) {
           updateData.notes = updates.cancellationReason;
         }
       }
 
       const { data: appointment, error } = await supabase
-        .from("appointments")
+        .from('appointments')
         .update(updateData)
-        .eq("id", appointmentId)
+        .eq('id', appointmentId)
         .select(
           `
           id,
@@ -590,27 +582,26 @@ class AppointmentService {
         .single();
 
       if (error) {
-        console.error("Error updating appointment:", error);
+        console.error('Error updating appointment:', error);
         throw new Error(`Failed to update appointment: ${error.message}`);
       }
 
       // Transform to calendar format
       const calendarAppointment: CalendarAppointment = {
         id: appointment.id,
-        title: `${appointment.patients?.full_name || "Paciente"} - ${
-          appointment.service_types?.name || "Serviço"
+        title: `${appointment.patients?.full_name || 'Paciente'} - ${
+          appointment.service_types?.name || 'Serviço'
         }`,
         start: appointment.start_time
           ? parseISO(appointment.start_time)
           : new Date(),
         end: appointment.end_time ? parseISO(appointment.end_time) : new Date(),
-        color: appointment.service_types?.color || "#3b82f6",
-        description: appointment.service_types?.name || "",
-        status: appointment.status || "scheduled",
-        patientName: appointment.patients?.full_name || "Paciente",
-        serviceName: appointment.service_types?.name || "Serviço",
-        professionalName:
-          appointment.professionals?.full_name || "Profissional",
+        color: appointment.service_types?.color || '#3b82f6',
+        description: appointment.service_types?.name || '',
+        status: appointment.status || 'scheduled',
+        patientName: appointment.patients?.full_name || 'Paciente',
+        serviceName: appointment.service_types?.name || 'Serviço',
+        professionalName: appointment.professionals?.full_name || 'Profissional',
         notes: appointment.notes || undefined,
         priority: appointment.priority || undefined,
         patientId: appointment.patient_id,
@@ -628,7 +619,7 @@ class AppointmentService {
 
       // Log audit trail for update
       const auditLogId = await this.logDataAccess(
-        "update_appointment",
+        'update_appointment',
         request,
         consentResult,
         {
@@ -640,7 +631,7 @@ class AppointmentService {
       );
 
       // Log appointment action for internal audit
-      await this.logAppointmentAction("update", appointmentId, request.userId, {
+      await this.logAppointmentAction('update', appointmentId, request.userId, {
         previous_state: currentAppointment,
         updates,
         lgpd_consent_validated: true,
@@ -657,18 +648,18 @@ class AppointmentService {
         },
         metadata: {
           processingTime: Date.now() - startTime,
-          dataCategoriesShared: ["appointment_data"],
+          dataCategoriesShared: ['appointment_data'],
           legalBasis: consentResult.legalBasis,
         },
       };
     } catch (error) {
-      console.error("LGPD: Error in updateAppointment:", error);
+      console.error('LGPD: Error in updateAppointment:', error);
 
       // Log compliance failure
       await this.logComplianceFailure(
-        "update_appointment",
+        'update_appointment',
         request,
-        error instanceof Error ? error.message : "Unknown error",
+        error instanceof Error ? error.message : 'Unknown error',
         { appointmentId, updates },
       );
 
@@ -689,9 +680,9 @@ class AppointmentService {
     try {
       // Get appointment data for audit
       const { data: appointment, error: fetchError } = await supabase
-        .from("appointments")
-        .select("patient_id, professional_id, service_type_id, status")
-        .eq("id", appointmentId)
+        .from('appointments')
+        .select('patient_id, professional_id, service_type_id, status')
+        .eq('id', appointmentId)
         .single();
 
       if (fetchError) {
@@ -699,38 +690,37 @@ class AppointmentService {
       }
 
       // Validate LGPD consent for deletion
-      const consentResult =
-        await calendarLGPDConsentService.validateCalendarConsent(
-          appointment.patient_id,
-          request.purpose,
-          request.userId,
-          request.userRole,
-        );
+      const consentResult = await calendarLGPDConsentService.validateCalendarConsent(
+        appointment.patient_id,
+        request.purpose,
+        request.userId,
+        request.userRole,
+      );
 
       if (!consentResult.isValid) {
         throw new Error(
-          `LGPD: ${consentResult.error || "Consentimento não válido para excluir agendamento"}`,
+          `LGPD: ${consentResult.error || 'Consentimento não válido para excluir agendamento'}`,
         );
       }
 
       // Soft delete by setting status to cancelled
       const { error } = await supabase
-        .from("appointments")
+        .from('appointments')
         .update({
-          status: "cancelled",
-          notes: reason || "Cancelled by user",
+          status: 'cancelled',
+          notes: reason || 'Cancelled by user',
           updated_at: new Date().toISOString(),
         })
-        .eq("id", appointmentId);
+        .eq('id', appointmentId);
 
       if (error) {
-        console.error("Error deleting appointment:", error);
+        console.error('Error deleting appointment:', error);
         throw new Error(`Failed to delete appointment: ${error.message}`);
       }
 
       // Log audit trail for deletion
       const auditLogId = await this.logDataAccess(
-        "delete_appointment",
+        'delete_appointment',
         request,
         consentResult,
         {
@@ -742,7 +732,7 @@ class AppointmentService {
       );
 
       // Log appointment action for internal audit
-      await this.logAppointmentAction("delete", appointmentId, request.userId, {
+      await this.logAppointmentAction('delete', appointmentId, request.userId, {
         reason,
         previous_status: appointment.status,
         lgpd_consent_validated: true,
@@ -764,13 +754,13 @@ class AppointmentService {
         },
       };
     } catch (error) {
-      console.error("LGPD: Error in deleteAppointment:", error);
+      console.error('LGPD: Error in deleteAppointment:', error);
 
       // Log compliance failure
       await this.logComplianceFailure(
-        "delete_appointment",
+        'delete_appointment',
         request,
-        error instanceof Error ? error.message : "Unknown error",
+        error instanceof Error ? error.message : 'Unknown error',
         { appointmentId, reason },
       );
 
@@ -789,19 +779,18 @@ class AppointmentService {
   ): Promise<CalendarAppointment[]> {
     try {
       // Use the data minimization service to apply LGPD compliance
-      const results =
-        await calendarDataMinimizationService.batchMinimizeAppointments(
-          appointments,
-          consentResult.isExplicit
-            ? DataMinimizationLevel.FULL
-            : DataMinimizationLevel.STANDARD,
-          userId,
-          userRole,
-          "view",
-        );
+      const results = await calendarDataMinimizationService.batchMinimizeAppointments(
+        appointments,
+        consentResult.isExplicit
+          ? DataMinimizationLevel.FULL
+          : DataMinimizationLevel.STANDARD,
+        userId,
+        userRole,
+        'view',
+      );
 
       // Transform minimized data back to CalendarAppointment format
-      return results.minimizedAppointments.map((minimized) => ({
+      return results.minimizedAppointments.map(minimized => ({
         id: minimized.id,
         title: minimized.title,
         start: minimized.start,
@@ -809,14 +798,14 @@ class AppointmentService {
         color: minimized.color,
         description: minimized.description,
         status: minimized.status,
-        patientName: minimized.patientInfo || "Paciente",
-        serviceName: minimized.description || "Consulta",
-        professionalName: "Profissional", // This would come from original data
+        patientName: minimized.patientInfo || 'Paciente',
+        serviceName: minimized.description || 'Consulta',
+        professionalName: 'Profissional', // This would come from original data
         notes: undefined, // Notes are typically minimized out
         priority: undefined,
       }));
     } catch (error) {
-      console.error("Error applying data minimization:", error);
+      console.error('Error applying data minimization:', error);
       // Return original data if minimization fails
       return appointments;
     }
@@ -841,8 +830,8 @@ class AppointmentService {
         `appointment_${action}`,
       );
     } catch (error) {
-      console.error("Error logging data access:", error);
-      return "error_logging";
+      console.error('Error logging data access:', error);
+      return 'error_logging';
     }
   }
 
@@ -868,7 +857,7 @@ class AppointmentService {
             purpose: request.purpose,
             patientId: request.patientId,
             isExplicit: false,
-            legalBasis: "error",
+            legalBasis: 'error',
             error,
           },
         ],
@@ -881,7 +870,7 @@ class AppointmentService {
         },
       );
     } catch (logError) {
-      console.error("Error logging compliance failure:", logError);
+      console.error('Error logging compliance failure:', logError);
     }
   }
 
@@ -897,29 +886,29 @@ class AppointmentService {
   ): Promise<boolean> {
     try {
       let query = supabase
-        .from("appointments")
-        .select("id")
-        .eq("professional_id", professionalId)
-        .eq("clinic_id", clinicId)
-        .in("status", ["scheduled", "confirmed"])
+        .from('appointments')
+        .select('id')
+        .eq('professional_id', professionalId)
+        .eq('clinic_id', clinicId)
+        .in('status', ['scheduled', 'confirmed'])
         .or(
           `start_time.lt.${endTime.toISOString()},end_time.gt.${startTime.toISOString()}`,
         );
 
       if (excludeAppointmentId) {
-        query = query.neq("id", excludeAppointmentId);
+        query = query.neq('id', excludeAppointmentId);
       }
 
       const { data, error } = await query;
 
       if (error) {
-        console.error("Error checking conflicts:", error);
+        console.error('Error checking conflicts:', error);
         return false; // Assume no conflict on error to avoid blocking
       }
 
       return (data || []).length > 0;
     } catch (error) {
-      console.error("Error in checkAppointmentConflict:", error);
+      console.error('Error in checkAppointmentConflict:', error);
       return false;
     }
   }
@@ -934,7 +923,7 @@ class AppointmentService {
     metadata?: any,
   ): Promise<void> {
     try {
-      await supabase.from("audit_logs").insert({
+      await supabase.from('audit_logs').insert({
         // table_name removed: not part of current type
         record_id: appointmentId,
         action: action.toUpperCase(),
@@ -943,7 +932,7 @@ class AppointmentService {
         created_at: new Date().toISOString(),
       } as any);
     } catch (error) {
-      console.error("Error logging appointment action:", error);
+      console.error('Error logging appointment action:', error);
       // Don't throw error for audit logging failures
     }
   }
@@ -960,24 +949,24 @@ class AppointmentService {
 
     return [
       {
-        id: "mock-1",
-        title: "Consulta - Maria Silva",
+        id: 'mock-1',
+        title: 'Consulta - Maria Silva',
         start: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0),
         end: new Date(now.getFullYear(), now.getMonth(), now.getDate(), 10, 0),
-        color: "#3b82f6",
-        description: "Consulta de avaliação estética",
-        status: "scheduled",
-        patientName: "Maria Silva",
-        serviceName: "Consulta Estética",
-        professionalName: "Dr. João Santos",
-        patientId: "patient-1",
-        professionalId: "prof-1",
-        serviceTypeId: "service-1",
-        notes: "Primeira consulta - avaliação facial",
+        color: '#3b82f6',
+        description: 'Consulta de avaliação estética',
+        status: 'scheduled',
+        patientName: 'Maria Silva',
+        serviceName: 'Consulta Estética',
+        professionalName: 'Dr. João Santos',
+        patientId: 'patient-1',
+        professionalId: 'prof-1',
+        serviceTypeId: 'service-1',
+        notes: 'Primeira consulta - avaliação facial',
       },
       {
-        id: "mock-2",
-        title: "Procedimento - Ana Costa",
+        id: 'mock-2',
+        title: 'Procedimento - Ana Costa',
         start: new Date(
           tomorrow.getFullYear(),
           tomorrow.getMonth(),
@@ -992,20 +981,20 @@ class AppointmentService {
           16,
           0,
         ),
-        color: "#10b981",
-        description: "Aplicação de botox",
-        status: "confirmed",
-        patientName: "Ana Costa",
-        serviceName: "Aplicação de Botox",
-        professionalName: "Dra. Patricia Lima",
-        patientId: "patient-2",
-        professionalId: "prof-2",
-        serviceTypeId: "service-2",
-        notes: "Retorno - segunda sessão",
+        color: '#10b981',
+        description: 'Aplicação de botox',
+        status: 'confirmed',
+        patientName: 'Ana Costa',
+        serviceName: 'Aplicação de Botox',
+        professionalName: 'Dra. Patricia Lima',
+        patientId: 'patient-2',
+        professionalId: 'prof-2',
+        serviceTypeId: 'service-2',
+        notes: 'Retorno - segunda sessão',
       },
       {
-        id: "mock-3",
-        title: "Consulta - Pedro Oliveira",
+        id: 'mock-3',
+        title: 'Consulta - Pedro Oliveira',
         start: new Date(
           nextWeek.getFullYear(),
           nextWeek.getMonth(),
@@ -1020,16 +1009,16 @@ class AppointmentService {
           12,
           0,
         ),
-        color: "#f59e0b",
-        description: "Consulta dermatológica",
-        status: "scheduled",
-        patientName: "Pedro Oliveira",
-        serviceName: "Consulta Dermatológica",
-        professionalName: "Dr. João Santos",
-        patientId: "patient-3",
-        professionalId: "prof-1",
-        serviceTypeId: "service-3",
-        notes: "Avaliação de manchas na pele",
+        color: '#f59e0b',
+        description: 'Consulta dermatológica',
+        status: 'scheduled',
+        patientName: 'Pedro Oliveira',
+        serviceName: 'Consulta Dermatológica',
+        professionalName: 'Dr. João Santos',
+        patientId: 'patient-3',
+        professionalId: 'prof-1',
+        serviceTypeId: 'service-3',
+        notes: 'Avaliação de manchas na pele',
       },
     ];
   }

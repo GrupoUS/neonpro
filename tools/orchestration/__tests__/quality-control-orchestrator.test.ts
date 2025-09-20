@@ -7,10 +7,7 @@ import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { QualityControlOrchestrator } from "../quality-control-orchestrator";
 import type {
   QualityControlContext,
-  AgentResult,
-  FeatureContext,
   AgentName,
-  TDDPhase,
 } from "../types";
 
 describe("QualityControlOrchestrator", () => {
@@ -56,7 +53,7 @@ describe("QualityControlOrchestrator", () => {
         depth: "L5" as const,
         healthcare: true,
         parallel: false,
-        agents: ["security-auditor"] as AgentName[],
+        agents: ["test-auditor"] as AgentName[],
         orchestrator: true,
       };
 
@@ -80,7 +77,7 @@ describe("QualityControlOrchestrator", () => {
         depth: "L4" as const,
         healthcare: false,
         parallel: true,
-        agents: ["code-reviewer", "security-auditor", "test"] as AgentName[],
+        agents: ["code-reviewer", "test-auditor", "test"] as AgentName[],
         orchestrator: true,
       };
 
@@ -121,7 +118,7 @@ describe("QualityControlOrchestrator", () => {
         depth: "L5" as const,
         healthcare: true,
         parallel: false,
-        agents: ["security-auditor"] as AgentName[],
+        agents: ["test-auditor"] as AgentName[],
       };
 
       const session =
@@ -225,7 +222,7 @@ describe("QualityControlOrchestrator", () => {
         depth: "L5" as const,
         healthcare: true,
         parallel: false,
-        agents: ["security-auditor"] as AgentName[],
+        agents: ["test-auditor"] as AgentName[],
       };
 
       const session =
@@ -246,7 +243,7 @@ describe("QualityControlOrchestrator", () => {
         depth: "L5" as const,
         healthcare: true,
         parallel: false,
-        agents: ["security-auditor"] as AgentName[],
+        agents: ["test-auditor"] as AgentName[],
       };
 
       const session =
@@ -266,7 +263,7 @@ describe("QualityControlOrchestrator", () => {
         depth: "L5" as const,
         healthcare: true,
         parallel: false,
-        agents: ["security-auditor"] as AgentName[],
+        agents: ["test-auditor"] as AgentName[],
       };
 
       const session =
@@ -288,7 +285,7 @@ describe("QualityControlOrchestrator", () => {
         parallel: true,
         agents: [
           "code-reviewer",
-          "security-auditor",
+          "test-auditor",
           "test",
           "architect-review",
         ] as AgentName[],
@@ -313,7 +310,7 @@ describe("QualityControlOrchestrator", () => {
         depth: "L3" as const,
         healthcare: false,
         parallel: true,
-        agents: ["code-reviewer", "security-auditor"] as AgentName[],
+        agents: ["code-reviewer", "test-auditor"] as AgentName[],
       };
 
       const session =
@@ -358,7 +355,7 @@ describe("QualityControlOrchestrator", () => {
         depth: "L4" as const,
         healthcare: true,
         parallel: false,
-        agents: ["code-reviewer", "security-auditor"] as AgentName[],
+        agents: ["code-reviewer", "test-auditor"] as AgentName[],
       };
 
       const session =

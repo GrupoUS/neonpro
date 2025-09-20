@@ -5,20 +5,20 @@
 
 import {
   DataAgentRequest,
+  DataAgentRequestSchema,
   DataAgentResponse,
+  DataAgentResponseSchema,
+  safeValidate,
   ValidDataAgentRequest,
   ValidDataAgentResponse,
-  safeValidate,
-  DataAgentRequestSchema,
-  DataAgentResponseSchema,
-} from "@neonpro/types";
+} from '@neonpro/types';
 
 export class AIAgentService {
   private baseUrl: string;
   private getToken: () => Promise<string>;
 
   constructor(options: { baseUrl?: string; getToken: () => Promise<string> }) {
-    this.baseUrl = options.baseUrl || "/api";
+    this.baseUrl = options.baseUrl || '/api';
     this.getToken = options.getToken;
   }
 
@@ -47,9 +47,9 @@ export class AIAgentService {
       }
 
       const response = await fetch(`${this.baseUrl}/ai/data-agent`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${await this.getToken()}`,
         },
         body: JSON.stringify(validatedRequest.data),
@@ -69,7 +69,7 @@ export class AIAgentService {
 
       return validatedResponse.data;
     } catch (error) {
-      console.error("AI Agent service error:", error);
+      console.error('AI Agent service error:', error);
       throw error;
     }
   }
@@ -78,15 +78,15 @@ export class AIAgentService {
    * Export data
    */
   async exportData(payload: {
-    type: "clients" | "appointments" | "financial";
+    type: 'clients' | 'appointments' | 'financial';
     filters?: Record<string, any>;
-    format?: "xlsx" | "csv" | "pdf";
+    format?: 'xlsx' | 'csv' | 'pdf';
   }): Promise<Blob> {
     try {
       const response = await fetch(`${this.baseUrl}/ai/export`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${await this.getToken()}`,
         },
         body: JSON.stringify(payload),
@@ -98,7 +98,7 @@ export class AIAgentService {
 
       return await response.blob();
     } catch (error) {
-      console.error("Export error:", error);
+      console.error('Export error:', error);
       throw error;
     }
   }
@@ -107,7 +107,7 @@ export class AIAgentService {
    * Get agent health status
    */
   async getHealthStatus(): Promise<{
-    status: "healthy" | "unhealthy";
+    status: 'healthy' | 'unhealthy';
     timestamp: string;
     version?: string;
   }> {
@@ -116,9 +116,9 @@ export class AIAgentService {
       const data = await response.json();
       return data;
     } catch (error) {
-      console.error("Health check error:", error);
+      console.error('Health check error:', error);
       return {
-        status: "unhealthy",
+        status: 'unhealthy',
         timestamp: new Date().toISOString(),
       };
     }
@@ -130,9 +130,9 @@ export class AIAgentService {
   async getSuggestions(query: string): Promise<string[]> {
     try {
       const response = await fetch(`${this.baseUrl}/ai/suggestions`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${await this.getToken()}`,
         },
         body: JSON.stringify({ query }),
@@ -145,7 +145,7 @@ export class AIAgentService {
       const data = await response.json();
       return data.suggestions || [];
     } catch (error) {
-      console.error("Suggestions error:", error);
+      console.error('Suggestions error:', error);
       return [];
     }
   }
@@ -155,9 +155,9 @@ export class AIAgentService {
 export const aiAgentService = new AIAgentService({
   getToken: async () => {
     // This should be replaced with actual token retrieval logic
-    const token = localStorage.getItem("auth-token");
+    const token = localStorage.getItem('auth-token');
     if (!token) {
-      throw new Error("No authentication token found");
+      throw new Error('No authentication token found');
     }
     return token;
   },

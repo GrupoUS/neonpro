@@ -3,7 +3,7 @@
  * Extracted from ai-provider-router.ts for better modularity
  */
 
-import { AIProviderOpt, HealthcareAIUseCase, LGPDDataCategory } from '@neonpro/shared';
+import { AIProviderOpt, HealthcareAIUseCase } from '@neonpro/shared';
 import { AuditEventType, AuditTrailService } from '../audit-trail';
 import { RoutingRequest } from './types';
 

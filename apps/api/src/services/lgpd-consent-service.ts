@@ -392,7 +392,7 @@ export class LGPDConsentService {
 
   private async revokeConsent(
     consentId: string,
-    reason: string,
+    _reason: string,
   ): Promise<void> {
     await this.prisma.auditTrail.update({
       where: { id: consentId },
@@ -407,7 +407,7 @@ export class LGPDConsentService {
 
   private async getOrCreateConsentTemplate(
     purpose: z.infer<typeof ConsentPurpose>,
-    language: string,
+    _language: string,
   ): Promise<{ text: string; version: string }> {
     // Default consent templates for different purposes
     const templates: Record<string, { text: string; version: string }> = {

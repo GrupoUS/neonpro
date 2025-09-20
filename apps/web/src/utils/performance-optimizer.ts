@@ -10,8 +10,8 @@
  * - Brazilian healthcare context performance
  */
 
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { type ClassValue, clsx } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 // Performance monitoring interface
 export interface PerformanceMetrics {
@@ -54,7 +54,7 @@ export class PerformanceOptimizer {
    * Sets up observers for Core Web Vitals and healthcare-specific metrics
    */
   initialize(): void {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
     // Monitor paint metrics
     this.observePaintMetrics();
@@ -69,7 +69,7 @@ export class PerformanceOptimizer {
     this.observeLargestContentfulPaint();
 
     console.info(
-      "🚀 Performance monitoring initialized for healthcare application",
+      '🚀 Performance monitoring initialized for healthcare application',
     );
   }
 
@@ -85,9 +85,11 @@ export class PerformanceOptimizer {
     // Log warning if load time exceeds mobile target
     if (loadTime > PERFORMANCE_TARGETS.MOBILE_LOAD_TIME) {
       console.warn(
-        `⚡ Component ${componentName} load time: ${loadTime.toFixed(
-          2,
-        )}ms (target: ${PERFORMANCE_TARGETS.MOBILE_LOAD_TIME}ms)`,
+        `⚡ Component ${componentName} load time: ${
+          loadTime.toFixed(
+            2,
+          )
+        }ms (target: ${PERFORMANCE_TARGETS.MOBILE_LOAD_TIME}ms)`,
       );
     }
 
@@ -128,13 +130,15 @@ export class PerformanceOptimizer {
             cache.set(query, { data: result, timestamp: Date.now() });
 
             // Monitor search performance
-            this.metrics.set("search_response_time", responseTime);
+            this.metrics.set('search_response_time', responseTime);
 
             if (responseTime > PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME) {
               console.warn(
-                `🔍 Search response time: ${responseTime.toFixed(
-                  2,
-                )}ms (target: ${PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME}ms)`,
+                `🔍 Search response time: ${
+                  responseTime.toFixed(
+                    2,
+                  )
+                }ms (target: ${PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME}ms)`,
               );
             }
 
@@ -153,33 +157,33 @@ export class PerformanceOptimizer {
   createLazyLoader(
     options: IntersectionObserverInit = {},
   ): IntersectionObserver {
-    if (typeof window === "undefined") {
+    if (typeof window === 'undefined') {
       // Return mock observer for SSR
       return {
         observe: () => {},
         unobserve: () => {},
         disconnect: () => {},
         root: null,
-        rootMargin: "0px",
+        rootMargin: '0px',
         thresholds: [0],
         takeRecords: () => [],
       } as IntersectionObserver;
     }
 
     return new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             const element = entry.target as HTMLElement;
 
             // Load image
-            if (element.tagName === "IMG") {
+            if (element.tagName === 'IMG') {
               const img = element as HTMLImageElement;
               const src = img.dataset.src;
               if (src) {
                 img.src = src;
-                img.removeAttribute("data-src");
-                element.classList.remove("lazy");
+                img.removeAttribute('data-src');
+                element.classList.remove('lazy');
               }
             }
 
@@ -187,7 +191,7 @@ export class PerformanceOptimizer {
             const lazyComponent = element.dataset.lazyComponent;
             if (lazyComponent) {
               element.dispatchEvent(
-                new CustomEvent("lazy-load", {
+                new CustomEvent('lazy-load', {
                   detail: { component: lazyComponent },
                 }),
               );
@@ -196,7 +200,7 @@ export class PerformanceOptimizer {
         });
       },
       {
-        rootMargin: "50px",
+        rootMargin: '50px',
         threshold: 0.1,
         ...options,
       },
@@ -212,7 +216,7 @@ export class PerformanceOptimizer {
       width?: number;
       height?: number;
       quality?: number;
-      format?: "webp" | "jpeg" | "png";
+      format?: 'webp' | 'jpeg' | 'png';
       lazy?: boolean;
     } = {},
   ): string {
@@ -220,7 +224,7 @@ export class PerformanceOptimizer {
       width,
       height,
       quality = 80,
-      format = "webp",
+      format = 'webp',
       lazy = true,
     } = options;
 
@@ -229,13 +233,13 @@ export class PerformanceOptimizer {
 
     // Add responsive parameters
     const params = new URLSearchParams();
-    if (width) params.set("w", width.toString());
-    if (height) params.set("h", height.toString());
-    params.set("q", quality.toString());
-    params.set("f", format);
+    if (width) params.set('w', width.toString());
+    if (height) params.set('h', height.toString());
+    params.set('q', quality.toString());
+    params.set('f', format);
 
     if (params.toString()) {
-      optimizedSrc += (src.includes("?") ? "&" : "?") + params.toString();
+      optimizedSrc += (src.includes('?') ? '&' : '?') + params.toString();
     }
 
     return optimizedSrc;
@@ -245,23 +249,23 @@ export class PerformanceOptimizer {
    * Bundle optimization utilities
    */
   static preloadModule(moduleUrl: string): void {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
-    const link = document.createElement("link");
-    link.rel = "modulepreload";
+    const link = document.createElement('link');
+    link.rel = 'modulepreload';
     link.href = moduleUrl;
     document.head.appendChild(link);
   }
 
   static preloadFont(fontUrl: string): void {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
-    const link = document.createElement("link");
-    link.rel = "preload";
+    const link = document.createElement('link');
+    link.rel = 'preload';
     link.href = fontUrl;
-    link.as = "font";
-    link.type = "font/woff2";
-    link.crossOrigin = "anonymous";
+    link.as = 'font';
+    link.type = 'font/woff2';
+    link.crossOrigin = 'anonymous';
     document.head.appendChild(link);
   }
 
@@ -269,7 +273,7 @@ export class PerformanceOptimizer {
    * Get current performance metrics
    */
   getMetrics(): PerformanceMetrics {
-    if (typeof window === "undefined") {
+    if (typeof window === 'undefined') {
       return {
         loadTime: 0,
         firstContentfulPaint: 0,
@@ -281,18 +285,18 @@ export class PerformanceOptimizer {
     }
 
     const navigation = performance.getEntriesByType(
-      "navigation",
+      'navigation',
     )[0] as PerformanceNavigationTiming;
 
     return {
       loadTime: navigation?.loadEventEnd - navigation?.fetchStart || 0,
-      firstContentfulPaint: this.metrics.get("first-contentful-paint") || 0,
-      largestContentfulPaint: this.metrics.get("largest-contentful-paint") || 0,
-      cumulativeLayoutShift: this.metrics.get("cumulative-layout-shift") || 0,
-      firstInputDelay: this.metrics.get("first-input-delay") || 0,
-      timeToInteractive: this.metrics.get("time-to-interactive") || 0,
-      searchResponseTime: this.metrics.get("search_response_time"),
-      aiResponseTime: this.metrics.get("ai_response_time"),
+      firstContentfulPaint: this.metrics.get('first-contentful-paint') || 0,
+      largestContentfulPaint: this.metrics.get('largest-contentful-paint') || 0,
+      cumulativeLayoutShift: this.metrics.get('cumulative-layout-shift') || 0,
+      firstInputDelay: this.metrics.get('first-input-delay') || 0,
+      timeToInteractive: this.metrics.get('time-to-interactive') || 0,
+      searchResponseTime: this.metrics.get('search_response_time'),
+      aiResponseTime: this.metrics.get('ai_response_time'),
     };
   }
 
@@ -311,61 +315,67 @@ export class PerformanceOptimizer {
     // Check mobile load time
     if (metrics.loadTime > PERFORMANCE_TARGETS.MOBILE_LOAD_TIME) {
       recommendations.push(
-        `Reduce mobile load time from ${metrics.loadTime.toFixed(
-          2,
-        )}ms to under ${PERFORMANCE_TARGETS.MOBILE_LOAD_TIME}ms`,
+        `Reduce mobile load time from ${
+          metrics.loadTime.toFixed(
+            2,
+          )
+        }ms to under ${PERFORMANCE_TARGETS.MOBILE_LOAD_TIME}ms`,
       );
       score -= 20;
     }
 
     // Check search response time
     if (
-      metrics.searchResponseTime &&
-      metrics.searchResponseTime > PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME
+      metrics.searchResponseTime
+      && metrics.searchResponseTime > PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME
     ) {
       recommendations.push(
-        `Optimize search response time from ${metrics.searchResponseTime.toFixed(
-          2,
-        )}ms to under ${PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME}ms`,
+        `Optimize search response time from ${
+          metrics.searchResponseTime.toFixed(
+            2,
+          )
+        }ms to under ${PERFORMANCE_TARGETS.SEARCH_RESPONSE_TIME}ms`,
       );
       score -= 15;
     }
 
     // Check AI response time
     if (
-      metrics.aiResponseTime &&
-      metrics.aiResponseTime > PERFORMANCE_TARGETS.AI_INSIGHTS_TIME
+      metrics.aiResponseTime
+      && metrics.aiResponseTime > PERFORMANCE_TARGETS.AI_INSIGHTS_TIME
     ) {
       recommendations.push(
-        `Optimize AI insights response time from ${metrics.aiResponseTime.toFixed(
-          2,
-        )}ms to under ${PERFORMANCE_TARGETS.AI_INSIGHTS_TIME}ms`,
+        `Optimize AI insights response time from ${
+          metrics.aiResponseTime.toFixed(
+            2,
+          )
+        }ms to under ${PERFORMANCE_TARGETS.AI_INSIGHTS_TIME}ms`,
       );
       score -= 15;
     }
 
     // Check Core Web Vitals
     if (
-      metrics.largestContentfulPaint >
-      PERFORMANCE_TARGETS.LARGEST_CONTENTFUL_PAINT
+      metrics.largestContentfulPaint
+        > PERFORMANCE_TARGETS.LARGEST_CONTENTFUL_PAINT
     ) {
       recommendations.push(
-        "Improve Largest Contentful Paint for better user experience",
+        'Improve Largest Contentful Paint for better user experience',
       );
       score -= 10;
     }
 
     if (metrics.firstInputDelay > PERFORMANCE_TARGETS.FIRST_INPUT_DELAY) {
-      recommendations.push("Reduce First Input Delay for better interactivity");
+      recommendations.push('Reduce First Input Delay for better interactivity');
       score -= 10;
     }
 
     if (
-      metrics.cumulativeLayoutShift >
-      PERFORMANCE_TARGETS.CUMULATIVE_LAYOUT_SHIFT
+      metrics.cumulativeLayoutShift
+        > PERFORMANCE_TARGETS.CUMULATIVE_LAYOUT_SHIFT
     ) {
       recommendations.push(
-        "Reduce Cumulative Layout Shift for visual stability",
+        'Reduce Cumulative Layout Shift for visual stability',
       );
       score -= 10;
     }
@@ -380,66 +390,65 @@ export class PerformanceOptimizer {
   // Private methods for observers
   private observePaintMetrics(): void {
     try {
-      const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
+      const observer = new PerformanceObserver(list => {
+        list.getEntries().forEach(entry => {
           this.metrics.set(entry.name, entry.startTime);
         });
       });
-      observer.observe({ entryTypes: ["paint"] });
+      observer.observe({ entryTypes: ['paint'] });
       this.observers.push(observer);
     } catch (error) {
-      console.warn("Paint metrics not supported");
+      console.warn('Paint metrics not supported');
     }
   }
 
   private observeLayoutShift(): void {
     try {
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         let clsValue = 0;
         list.getEntries().forEach((entry: any) => {
           if (!entry.hadRecentInput) {
             clsValue += entry.value;
           }
         });
-        this.metrics.set("cumulative-layout-shift", clsValue);
+        this.metrics.set('cumulative-layout-shift', clsValue);
       });
-      observer.observe({ entryTypes: ["layout-shift"] });
+      observer.observe({ entryTypes: ['layout-shift'] });
       this.observers.push(observer);
     } catch (error) {
-      console.warn("Layout shift metrics not supported");
+      console.warn('Layout shift metrics not supported');
     }
   }
 
   private observeFirstInputDelay(): void {
     try {
-      const observer = new PerformanceObserver((list) => {
-        list.getEntries().forEach((entry) => {
-          const processingStart =
-            (entry as any).processingStart || entry.startTime;
+      const observer = new PerformanceObserver(list => {
+        list.getEntries().forEach(entry => {
+          const processingStart = (entry as any).processingStart || entry.startTime;
           this.metrics.set(
-            "first-input-delay",
+            'first-input-delay',
             processingStart - entry.startTime,
           );
         });
       });
-      observer.observe({ entryTypes: ["first-input"] });
+      observer.observe({ entryTypes: ['first-input'] });
       this.observers.push(observer);
     } catch (error) {
-      console.warn("First input delay metrics not supported");
+      console.warn('First input delay metrics not supported');
     }
   }
 
   private observeLargestContentfulPaint(): void {
     try {
-      const observer = new PerformanceObserver((list) => {
+      const observer = new PerformanceObserver(list => {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
-        this.metrics.set("largest-contentful-paint", lastEntry.startTime);
+        this.metrics.set('largest-contentful-paint', lastEntry.startTime);
       });
-      observer.observe({ entryTypes: ["largest-contentful-paint"] });
+      observer.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.push(observer);
     } catch (error) {
-      console.warn("Largest contentful paint metrics not supported");
+      console.warn('Largest contentful paint metrics not supported');
     }
   }
 
@@ -447,7 +456,7 @@ export class PerformanceOptimizer {
    * Cleanup observers
    */
   destroy(): void {
-    this.observers.forEach((observer) => observer.disconnect());
+    this.observers.forEach(observer => observer.disconnect());
     this.observers = [];
     this.metrics.clear();
   }
@@ -463,10 +472,10 @@ export function cn(...inputs: ClassValue[]): string {
  */
 export function createResponsiveBreakpoints() {
   return {
-    mobile: "320px", // Minimum Brazilian smartphone
-    tablet: "768px", // Brazilian tablet average
-    desktop: "1024px", // Brazilian desktop average
-    wide: "1440px", // Wide screen support
+    mobile: '320px', // Minimum Brazilian smartphone
+    tablet: '768px', // Brazilian tablet average
+    desktop: '1024px', // Brazilian desktop average
+    wide: '1440px', // Wide screen support
   };
 }
 

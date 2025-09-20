@@ -3,9 +3,9 @@
  * Comprehensive service management with CRUD operations
  */
 
-import { createFileRoute } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
-import { useState } from "react";
+import { createFileRoute } from '@tanstack/react-router';
+import { Plus } from 'lucide-react';
+import { useState } from 'react';
 
 import {
   Button,
@@ -19,14 +19,14 @@ import {
   SmoothDrawerDescription,
   SmoothDrawerHeader,
   SmoothDrawerTitle,
-} from "@neonpro/ui";
+} from '@neonpro/ui';
 
-import { ServiceForm } from "@/components/services/ServiceForm";
-import { ServicesDataTable } from "@/components/services/ServicesDataTable";
-import { useAuth } from "@/hooks/useAuth";
-import { useDeleteService, useServices } from "@/hooks/useServices";
-import type { Service } from "@/types/service";
-import { toast } from "sonner";
+import { ServiceForm } from '@/components/services/ServiceForm';
+import { ServicesDataTable } from '@/components/services/ServicesDataTable';
+import { useAuth } from '@/hooks/useAuth';
+import { useDeleteService, useServices } from '@/hooks/useServices';
+import type { Service } from '@/types/service';
+import { toast } from 'sonner';
 function ServicesPage() {
   const { user } = useAuth();
   const [editingService, setEditingService] = useState<Service | null>(null);
@@ -38,12 +38,12 @@ function ServicesPage() {
   // If clinicId is missing, show error and prevent data fetch
   if (!clinicId) {
     return (
-      <div className="container mx-auto py-8">
+      <div className='container mx-auto py-8'>
         <Card>
-          <CardContent className="pt-6">
-            <div className="text-center text-destructive">
-              Erro: Não foi possível identificar a clínica do usuário. Por
-              favor, faça login novamente.
+          <CardContent className='pt-6'>
+            <div className='text-center text-destructive'>
+              Erro: Não foi possível identificar a clínica do usuário. Por favor, faça login
+              novamente.
             </div>
           </CardContent>
         </Card>
@@ -79,10 +79,10 @@ function ServicesPage() {
     ) {
       try {
         await deleteServiceMutation.mutateAsync(service.id);
-        toast.success("Serviço excluído com sucesso!");
+        toast.success('Serviço excluído com sucesso!');
       } catch (error) {
-        console.error("Error deleting service:", error);
-        toast.error("Erro ao excluir serviço. Tente novamente.");
+        console.error('Error deleting service:', error);
+        toast.error('Erro ao excluir serviço. Tente novamente.');
       }
     }
   };
@@ -90,15 +90,15 @@ function ServicesPage() {
   const handleFormSuccess = () => {
     setEditingService(null);
     setIsCreateDrawerOpen(false);
-    toast.success(editingService ? "Serviço atualizado!" : "Serviço criado!");
+    toast.success(editingService ? 'Serviço atualizado!' : 'Serviço criado!');
   };
 
   if (error) {
     return (
-      <div className="container mx-auto py-8">
+      <div className='container mx-auto py-8'>
         <Card>
-          <CardContent className="pt-6">
-            <div className="text-center text-destructive">
+          <CardContent className='pt-6'>
+            <div className='text-center text-destructive'>
               Erro ao carregar serviços: {error.message}
             </div>
           </CardContent>
@@ -108,17 +108,17 @@ function ServicesPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 space-y-8">
+    <div className='container mx-auto py-8 space-y-8'>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between'>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Serviços</h1>
-          <p className="text-muted-foreground">
+          <h1 className='text-3xl font-bold tracking-tight'>Serviços</h1>
+          <p className='text-muted-foreground'>
             Gerencie os serviços oferecidos pela sua clínica
           </p>
         </div>
-        <Button onClick={() => setIsCreateDrawerOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
+        <Button onClick={() => setIsCreateDrawerOpen(true)} className='gap-2'>
+          <Plus className='h-4 w-4' />
           Novo Serviço
         </Button>
       </div>
@@ -128,8 +128,8 @@ function ServicesPage() {
         <CardHeader>
           <CardTitle>Lista de Serviços</CardTitle>
           <CardDescription>
-            {services.length} serviço{services.length !== 1 ? "s" : ""}{" "}
-            cadastrado{services.length !== 1 ? "s" : ""}
+            {services.length} serviço{services.length !== 1 ? 's' : ''}{' '}
+            cadastrado{services.length !== 1 ? 's' : ''}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -183,6 +183,6 @@ function ServicesPage() {
   );
 }
 
-export const Route = createFileRoute("/services/")({
+export const Route = createFileRoute('/services/')({
   component: ServicesPage,
 });

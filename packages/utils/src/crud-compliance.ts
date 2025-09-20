@@ -192,13 +192,13 @@ export class LGPDComplianceService {
     action: string,
     context: DataProcessingContext,
     options: LGPDCRUDOptions,
-    metadata: Record<string, any> = {},
+    metadata: Record<string, unknown> = {},
   ): AuditTrail {
     return {
       action,
       timestamp: new Date(),
       userId: context.userId,
-      userRole: metadata.userRole,
+      userRole: typeof metadata.userRole === 'string' ? metadata.userRole : undefined,
       ipAddress: context.ipAddress,
       userAgent: context.userAgent,
       consentStatus: options.consentId
@@ -258,8 +258,8 @@ export class LGPDComplianceService {
   /**
    * Applies anonymization based on current configuration
    */
-  applyAnonymization(data: Record<string, any>): Record<string, any> {
-    const result = { ...data };
+  applyAnonymization(data: Record<string, unknown>): Record<string, unknown> {
+    const result = { ...data } as Record<string, unknown>;
 
     // Remove redacted fields
     this.anonymizationConfig.redactFields?.forEach((field) => {

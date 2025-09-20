@@ -17,10 +17,18 @@
     "composite": true,
     "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo"
   },
-  "files": [
+  "include": [
+    "src/**/*",
+    "orchestration/**/*",
     "index.ts",
-    "src/config.ts",
-    "src/orchestrator.ts",
-    "src/shims.d.ts"
+    "types.ts",
+    "execution-pattern-selector.ts",
+    "result-aggregator.ts",
+    "quality-control-orchestrator.ts",
+    "__tests__/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

@@ -5,7 +5,7 @@
  * Full LGPD/ANVISA/CFM compliance for healthcare data interactions
  */
 
-import { HealthcareTRPCError } from '@/utils/healthcare-errors';
+import { HealthcareTRPCError } from '@neonpro/utils/healthcare-errors';
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
@@ -18,7 +18,6 @@ import {
   CreateAgentSessionSchema,
   CreateKnowledgeEntrySchema,
   KnowledgeEntryResponseSchema,
-  ListAgentMessagesSchema,
   ListAgentSessionsSchema,
   RAGQuerySchema,
   RAGResponseSchema,
@@ -121,62 +120,7 @@ const HEALTHCARE_CONTEXTS = {
 // UTILITY FUNCTIONS
 // =====================================
 
-/**
- * Sanitize data for AI processing (LGPD compliance)
- */
-function sanitizeDataForAI(data: any, agentType: string): any {
-  if (!data) return {};
 
-  const sanitized = { ...data };
-
-  // Remove direct identifiers
-  const sensitiveFields = [
-    'fullName',
-    'cpf',
-    'rg',
-    'email',
-    'phonePrimary',
-    'phoneSecondary',
-    'addressLine1',
-    'addressLine2',
-    'passportNumber',
-    'id',
-  ];
-
-  sensitiveFields.forEach(field => {
-    delete sanitized[field];
-  });
-
-  // Generalize sensitive data
-  if (sanitized.birthDate) {
-    const birthYear = new Date(sanitized.birthDate).getFullYear();
-    const currentYear = new Date().getFullYear();
-    sanitized.ageGroup = Math.floor((currentYear - birthYear) / 10) * 10;
-    delete sanitized.birthDate;
-  }
-
-  // Keep agent-specific relevant data
-  const allowedFieldsByType = {
-    client: [
-      'allergies',
-      'chronicConditions',
-      'bloodType',
-      'gender',
-      'ageGroup',
-    ],
-    financial: ['insurancePlan', 'paymentHistory', 'outstandingBalance'],
-    appointment: ['appointmentHistory', 'noShowCount', 'preferredTimes'],
-  };
-
-  const allowedFields = allowedFieldsByType[agentType as keyof typeof allowedFieldsByType] || [];
-
-  return Object.keys(sanitized).reduce((acc, key) => {
-    if (allowedFields.includes(key)) {
-      acc[key] = sanitized[key];
-    }
-    return acc;
-  }, {});
-}
 
 /**
  * Create audit trail for agent operations
@@ -589,8 +533,8 @@ export const agentRouter = router({
         );
 
         // Build context for AI
-        const context = HEALTHCARE_CONTEXTS[session.agentType];
-        const ragContext = ragResults
+        const _context = HEALTHCARE_CONTEXTS[session.agentType];
+        const _ragContext = ragResults
           .map(r => `${r.content} (Fonte: ${r.source})`)
           .join('\n\n');
 
@@ -607,7 +551,7 @@ export const agentRouter = router({
         }, estou aqui para ajudar.`;
 
         // Save agent response
-        const agentMessage = await ctx.prisma.agentMessage.create({
+        const _agentMessage = await ctx.prisma.agentMessage.create({
           data: {
             sessionId: input.session_id,
             role: 'assistant',

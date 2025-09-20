@@ -3,36 +3,31 @@
  * Implements healthcare-specific patterns with real-time updates and optimistic mutations
  */
 
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import {
   appointmentService,
   type CalendarAppointment,
   type CreateAppointmentData,
   type UpdateAppointmentData,
-} from "@/services/appointments.service";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  type UseQueryOptions,
-} from "@tanstack/react-query";
-import { addDays, endOfDay, startOfDay } from "date-fns";
-import { useCallback, useEffect } from "react";
-import { toast } from "sonner";
+} from '@/services/appointments.service';
+import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
+import { addDays, endOfDay, startOfDay } from 'date-fns';
+import { useCallback, useEffect } from 'react';
+import { toast } from 'sonner';
 
 // Query keys for appointments
 export const appointmentKeys = {
-  all: ["appointments"] as const,
-  lists: () => [...appointmentKeys.all, "list"] as const,
+  all: ['appointments'] as const,
+  lists: () => [...appointmentKeys.all, 'list'] as const,
   list: (clinicId: string, filters?: any) =>
     [...appointmentKeys.lists(), clinicId, filters] as const,
-  details: () => [...appointmentKeys.all, "detail"] as const,
+  details: () => [...appointmentKeys.all, 'detail'] as const,
   detail: (id: string) => [...appointmentKeys.details(), id] as const,
   calendar: (clinicId: string, startDate?: Date, endDate?: Date) =>
     [
       ...appointmentKeys.all,
-      "calendar",
+      'calendar',
       clinicId,
       startDate?.toISOString(),
       endDate?.toISOString(),
@@ -48,19 +43,18 @@ export function useAppointments(
   endDate?: Date,
   options?: Omit<
     UseQueryOptions<CalendarAppointment[], Error>,
-    "queryKey" | "queryFn"
+    'queryKey' | 'queryFn'
   >,
 ) {
   return useQuery({
     queryKey: appointmentKeys.calendar(clinicId, startDate, endDate),
-    queryFn: () =>
-      appointmentService.getAppointments(clinicId, startDate, endDate),
+    queryFn: () => appointmentService.getAppointments(clinicId, startDate, endDate),
     staleTime: 2 * 60 * 1000, // 2 minutes - healthcare data should be fresh
     gcTime: 5 * 60 * 1000, // 5 minutes
     refetchOnWindowFocus: true,
     refetchOnReconnect: true,
     retry: 3,
-    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
     enabled: !!clinicId,
     ...options,
   });
@@ -82,7 +76,7 @@ export function useCreateAppointment() {
       clinicId: string;
     }) => {
       if (!user?.id) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
       return appointmentService.createAppointment(data, clinicId, user.id);
     },
@@ -101,15 +95,15 @@ export function useCreateAppointment() {
       // Optimistically add the new appointment
       const optimisticAppointment: CalendarAppointment = {
         id: `temp-${Date.now()}`,
-        title: "Novo Agendamento",
+        title: 'Novo Agendamento',
         start: data.startTime,
         end: data.endTime,
-        color: "#3b82f6",
-        description: "Criando...",
-        status: "scheduled",
-        patientName: "Carregando...",
-        serviceName: "Carregando...",
-        professionalName: "Carregando...",
+        color: '#3b82f6',
+        description: 'Criando...',
+        status: 'scheduled',
+        patientName: 'Carregando...',
+        serviceName: 'Carregando...',
+        professionalName: 'Carregando...',
         notes: data.notes,
         priority: data.priority,
       };
@@ -127,13 +121,13 @@ export function useCreateAppointment() {
       queryClient.setQueryData(
         appointmentKeys.calendar(_clinicId),
         (old: CalendarAppointment[] = []) =>
-          old.map((apt) => (apt.id.startsWith("temp-") ? newAppointment : apt)),
+          old.map(apt => (apt.id.startsWith('temp-') ? newAppointment : apt)),
       );
 
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
 
-      toast.success("Agendamento criado com sucesso!");
+      toast.success('Agendamento criado com sucesso!');
     },
 
     onError: (error, { clinicId }, context) => {
@@ -145,8 +139,8 @@ export function useCreateAppointment() {
         );
       }
 
-      console.error("Error creating appointment:", error);
-      toast.error(error.message || "Erro ao criar agendamento");
+      console.error('Error creating appointment:', error);
+      toast.error(error.message || 'Erro ao criar agendamento');
     },
 
     onSettled: (_, __, { clinicId: _clinicId }) => {
@@ -176,7 +170,7 @@ export function useUpdateAppointment() {
       clinicId: string; // eslint-disable-line @typescript-eslint/no-unused-vars
     }) => {
       if (!user?.id) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
       // reference to avoid TS6133 unused parameter warning
       void _clinicId;
@@ -203,16 +197,16 @@ export function useUpdateAppointment() {
       queryClient.setQueryData(
         appointmentKeys.calendar(clinicId),
         (old: CalendarAppointment[] = []) =>
-          old.map((apt) =>
+          old.map(apt =>
             apt.id === appointmentId
               ? {
-                  ...apt,
-                  ...(updates.startTime && { start: updates.startTime }),
-                  ...(updates.endTime && { end: updates.endTime }),
-                  ...(updates.notes !== undefined && { notes: updates.notes }),
-                  ...(updates.status && { status: updates.status }),
-                }
-              : apt,
+                ...apt,
+                ...(updates.startTime && { start: updates.startTime }),
+                ...(updates.endTime && { end: updates.endTime }),
+                ...(updates.notes !== undefined && { notes: updates.notes }),
+                ...(updates.status && { status: updates.status }),
+              }
+              : apt
           ),
       );
 
@@ -224,15 +218,13 @@ export function useUpdateAppointment() {
       queryClient.setQueryData(
         appointmentKeys.calendar(_clinicId),
         (old: CalendarAppointment[] = []) =>
-          old.map((apt) =>
-            apt.id === updatedAppointment.id ? updatedAppointment : apt,
-          ),
+          old.map(apt => apt.id === updatedAppointment.id ? updatedAppointment : apt),
       );
 
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
 
-      toast.success("Agendamento atualizado com sucesso!");
+      toast.success('Agendamento atualizado com sucesso!');
     },
 
     onError: (error, { clinicId }, context) => {
@@ -244,8 +236,8 @@ export function useUpdateAppointment() {
         );
       }
 
-      console.error("Error updating appointment:", error);
-      toast.error(error.message || "Erro ao atualizar agendamento");
+      console.error('Error updating appointment:', error);
+      toast.error(error.message || 'Erro ao atualizar agendamento');
     },
 
     onSettled: (_, __, { clinicId: _clinicId }) => {
@@ -275,7 +267,7 @@ export function useDeleteAppointment() {
       reason?: string;
     }) => {
       if (!user?.id) {
-        throw new Error("User not authenticated");
+        throw new Error('User not authenticated');
       }
       return appointmentService.deleteAppointment(
         appointmentId,
@@ -298,8 +290,7 @@ export function useDeleteAppointment() {
       // Optimistically remove the appointment
       queryClient.setQueryData(
         appointmentKeys.calendar(clinicId),
-        (old: CalendarAppointment[] = []) =>
-          old.filter((apt) => apt.id !== appointmentId),
+        (old: CalendarAppointment[] = []) => old.filter(apt => apt.id !== appointmentId),
       );
 
       return { previousAppointments };
@@ -309,7 +300,7 @@ export function useDeleteAppointment() {
       // Invalidate related queries
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
 
-      toast.success("Agendamento cancelado com sucesso!");
+      toast.success('Agendamento cancelado com sucesso!');
     },
 
     onError: (error, { clinicId }, context) => {
@@ -321,8 +312,8 @@ export function useDeleteAppointment() {
         );
       }
 
-      console.error("Error deleting appointment:", error);
-      toast.error(error.message || "Erro ao cancelar agendamento");
+      console.error('Error deleting appointment:', error);
+      toast.error(error.message || 'Erro ao cancelar agendamento');
     },
 
     onSettled: (_, __, { clinicId: _clinicId }) => {
@@ -351,12 +342,12 @@ export function useAppointmentRealtime(clinicId: string) {
       queryClient.invalidateQueries({ queryKey: appointmentKeys.lists() });
 
       // Show notifications for changes made by other users
-      if (eventType === "INSERT") {
-        toast.info("Novo agendamento criado por outro usuário");
-      } else if (eventType === "UPDATE") {
-        toast.info("Agendamento atualizado por outro usuário");
-      } else if (eventType === "DELETE") {
-        toast.info("Agendamento cancelado por outro usuário");
+      if (eventType === 'INSERT') {
+        toast.info('Novo agendamento criado por outro usuário');
+      } else if (eventType === 'UPDATE') {
+        toast.info('Agendamento atualizado por outro usuário');
+      } else if (eventType === 'DELETE') {
+        toast.info('Agendamento cancelado por outro usuário');
       }
     },
     [queryClient, clinicId],
@@ -364,17 +355,17 @@ export function useAppointmentRealtime(clinicId: string) {
 
   useEffect(() => {
     if (!clinicId) return;
-    const hasChannel = typeof (supabase as any)?.channel === "function";
+    const hasChannel = typeof (supabase as any)?.channel === 'function';
     if (!hasChannel) return;
 
     const subscription = (supabase as any)
-      .channel("appointments")
+      .channel('appointments')
       .on(
-        "postgres_changes",
+        'postgres_changes',
         {
-          event: "*",
-          schema: "public",
-          table: "appointments",
+          event: '*',
+          schema: 'public',
+          table: 'appointments',
           filter: `clinic_id=eq.${clinicId}`,
         },
         handleRealtimeUpdate,

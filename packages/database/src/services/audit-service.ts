@@ -1,49 +1,48 @@
-import type { Database } from "../types/supabase";
-import type {
+import { SupabaseClient } from "@supabase/supabase-js";
+import {
+  AuditLogRequest,
   RTCAuditLogEntry,
+  ComplianceReport,
+  AuditSearchCriteria,
   MedicalDataClassification,
-} from "@neonpro/types";
-import { createClient } from "@supabase/supabase-js";
-import { BaseService } from "./base.service";
+} from "../types/audit.types";
 
-// Types for audit logging
-import type { ComplianceEventType } from "../types/events";
-
-export interface AuditLogRequest {
-  sessionId: string;
-  eventType: ComplianceEventType;
-  userId: string;
-  userRole: "doctor" | "patient" | "nurse" | "admin" | "system";
-  dataClassification: MedicalDataClassification;
-  description: string;
-  ipAddress?: string;
-  userAgent?: string;
-  clinicId: string;
-  metadata?: Record<string, any>;
-}
-
-export interface ComplianceCheck {
-  isCompliant: boolean;
-  violations?: string[];
-  riskLevel: "low" | "medium" | "high";
+// Database log entry interface
+interface DatabaseLogEntry {
+  id: string;
+  session_id?: string;
+  user_id: string;
+  action: string;
+  user_role?: "doctor" | "patient" | "nurse" | "admin" | "system";
+  data_classification?: MedicalDataClassification;
+  description?: string;
+  created_at: string;
+  ip_address?: string;
+  user_agent?: string;
+  resource_type?: string;
+  clinic_id?: string;
+  status?: string;
+  risk_level?: string;
+  event_type?: string;
+  timestamp?: string;
+  metadata?: Record<string, unknown>;
+  compliance_check?: {
+    status?: string;
+    risk_level?: string;
+  };
 }
 
 /**
- * LGPD-compliant audit logging service for telemedicine
- * Tracks all data access and consent events for compliance
+ * Service for managing audit logs and compliance reporting
+ * Handles WebRTC session auditing, LGPD compliance, and security monitoring
  */
-export class AuditService extends BaseService {
-  private supabase: ReturnType<typeof createClient<Database>>;
-
-  constructor(supabaseClient: ReturnType<typeof createClient<Database>>) {
-    super();
-    this.supabase = supabaseClient;
-  }
+export class AuditService {
+  constructor(private supabase: SupabaseClient) {}
 
   /**
-   * Create a WebRTC audit log entry
-   * @param request - Audit log request data
-   * @returns Promise<string> - Audit log entry ID
+   * Creates a new audit log entry
+   * @param request - Audit log data
+   * @returns Promise<string> - The ID of the created audit log
    */
   async createAuditLog(request: AuditLogRequest): Promise<string> {
     try {
@@ -77,260 +76,209 @@ export class AuditService extends BaseService {
   }
 
   /**
-   * Log telemedicine session start
-   * @param sessionId - WebRTC session ID
-   * @param doctorId - Doctor user ID
-   * @param patientId - Patient user ID
-   * @param clinicId - Clinic ID
+   * Logs the start of a WebRTC session
+   * @param sessionId - Session identifier
+   * @param userId - User identifier
+   * @param userRole - User role
    * @param metadata - Additional session metadata
+   * @returns Promise<string> - The ID of the created audit log
    */
   async logSessionStart(
     sessionId: string,
-    doctorId: string,
-    patientId: string,
-    clinicId: string,
-    metadata?: Record<string, any>,
-  ): Promise<void> {
-    try {
-      // Log doctor joining session
-      await this.createAuditLog({
-        sessionId,
-        eventType: "session-start",
-        userId: doctorId,
-        userRole: "doctor",
-        dataClassification: "internal",
-        description: `Doctor started telemedicine session`,
-        clinicId,
-        metadata: { ...metadata, patientId, role: "doctor" },
-      });
-
-      // Log patient joining session
-      await this.createAuditLog({
-        sessionId,
-        eventType: "participant-join",
-        userId: patientId,
-        userRole: "patient",
-        dataClassification: "internal",
-        description: `Patient joined telemedicine session`,
-        clinicId,
-        metadata: { ...metadata, doctorId, role: "patient" },
-      });
-    } catch (error) {
-      console.error("AuditService.logSessionStart error:", error);
-      throw error;
-    }
+    userId: string,
+    userRole: "doctor" | "patient" | "nurse" | "admin",
+    metadata?: {
+      ipAddress?: string;
+      userAgent?: string;
+      clinicId?: string;
+      dataClassification?: MedicalDataClassification;
+    },
+  ): Promise<string> {
+    return this.createAuditLog({
+      sessionId,
+      eventType: "session-start",
+      userId,
+      userRole,
+      dataClassification: metadata?.dataClassification || "general",
+      description: `${userRole} started WebRTC session`,
+      ipAddress: metadata?.ipAddress,
+      userAgent: metadata?.userAgent,
+      clinicId: metadata?.clinicId,
+    });
   }
 
   /**
-   * Log telemedicine session end
-   * @param sessionId - WebRTC session ID
-   * @param userId - User ending the session
-   * @param userRole - Role of user ending session
-   * @param clinicId - Clinic ID
-   * @param duration - Session duration in milliseconds
+   * Logs the end of a WebRTC session
+   * @param sessionId - Session identifier
+   * @param userId - User identifier
+   * @param userRole - User role
+   * @param duration - Session duration in seconds
+   * @param metadata - Additional session metadata
+   * @returns Promise<string> - The ID of the created audit log
    */
   async logSessionEnd(
     sessionId: string,
     userId: string,
-    userRole: "doctor" | "patient",
-    clinicId: string,
+    userRole: "doctor" | "patient" | "nurse" | "admin",
     duration: number,
-  ): Promise<void> {
-    try {
-      await this.createAuditLog({
-        sessionId,
-        eventType: "session-end",
-        userId,
-        userRole,
-        dataClassification: "internal",
-        description: `Telemedicine session ended by ${userRole}`,
-        clinicId,
-        metadata: { duration, endedBy: userRole },
-      });
-    } catch (error) {
-      console.error("AuditService.logSessionEnd error:", error);
-      throw error;
-    }
+    metadata?: {
+      ipAddress?: string;
+      userAgent?: string;
+      clinicId?: string;
+      dataClassification?: MedicalDataClassification;
+      reason?: string;
+    },
+  ): Promise<string> {
+    return this.createAuditLog({
+      sessionId,
+      eventType: "session-end",
+      userId,
+      userRole,
+      dataClassification: metadata?.dataClassification || "general",
+      description: `${userRole} ended WebRTC session (duration: ${duration}s)${
+        metadata?.reason ? ` - ${metadata.reason}` : ""
+      }`,
+      ipAddress: metadata?.ipAddress,
+      userAgent: metadata?.userAgent,
+      clinicId: metadata?.clinicId,
+      metadata: {
+        sessionDuration: duration,
+        endReason: metadata?.reason,
+      },
+    });
   }
 
   /**
-   * Log participant leaving session
-   * @param sessionId - WebRTC session ID
-   * @param userId - User leaving session
-   * @param userRole - Role of user leaving
-   * @param clinicId - Clinic ID
-   * @param reason - Reason for leaving
-   */
-  async logParticipantLeave(
-    sessionId: string,
-    userId: string,
-    userRole: "doctor" | "patient",
-    clinicId: string,
-    reason?: string,
-  ): Promise<void> {
-    try {
-      await this.createAuditLog({
-        sessionId,
-        eventType: "participant-leave",
-        userId,
-        userRole,
-        dataClassification: "internal",
-        description: `${userRole} left telemedicine session`,
-        clinicId,
-        metadata: { reason, role: userRole },
-      });
-    } catch (error) {
-      console.error("AuditService.logParticipantLeave error:", error);
-      throw error;
-    }
-  }
-
-  /**
-   * Log data access event
-   * @param sessionId - WebRTC session ID
-   * @param userId - User accessing data
-   * @param userRole - Role of user accessing data
-   * @param dataClassification - Type of data being accessed
-   * @param description - Description of data access
-   * @param clinicId - Clinic ID
+   * Logs a data access event
+   * @param userId - User identifier
+   * @param userRole - User role
+   * @param dataType - Type of data accessed
+   * @param patientId - Patient identifier (if applicable)
    * @param metadata - Additional metadata
+   * @returns Promise<string> - The ID of the created audit log
    */
   async logDataAccess(
-    sessionId: string,
     userId: string,
-    userRole: "doctor" | "patient" | "nurse" | "admin" | "system",
-    dataClassification: MedicalDataClassification,
+    userRole: "doctor" | "patient" | "nurse" | "admin",
+    dataType: string,
+    patientId?: string,
+    metadata?: {
+      ipAddress?: string;
+      userAgent?: string;
+      clinicId?: string;
+      dataClassification?: MedicalDataClassification;
+      legalBasis?: string;
+    },
+  ): Promise<string> {
+    return this.createAuditLog({
+      sessionId: `data-access-${Date.now()}`,
+      eventType: "data-access",
+      userId,
+      userRole,
+      dataClassification: metadata?.dataClassification || "general-medical",
+      description: `${userRole} accessed ${dataType}${
+        patientId ? ` for patient ${patientId}` : ""
+      }`,
+      ipAddress: metadata?.ipAddress,
+      userAgent: metadata?.userAgent,
+      clinicId: metadata?.clinicId,
+      metadata: {
+        dataType,
+        patientId,
+        legalBasis: metadata?.legalBasis,
+      },
+    });
+  }
+
+  /**
+   * Logs a consent verification event
+   * @param userId - User identifier
+   * @param patientId - Patient identifier
+   * @param consentType - Type of consent
+   * @param isValid - Whether consent is valid
+   * @param metadata - Additional metadata
+   * @returns Promise<string> - The ID of the created audit log
+   */
+  async logConsentVerification(
+    userId: string,
+    patientId: string,
+    consentType: string,
+    isValid: boolean,
+    metadata?: {
+      ipAddress?: string;
+      userAgent?: string;
+      clinicId?: string;
+      sessionId?: string;
+    },
+  ): Promise<string> {
+    return this.createAuditLog({
+      sessionId: metadata?.sessionId || `consent-${Date.now()}`,
+      eventType: "consent-verification",
+      userId,
+      userRole: "system",
+      dataClassification: "consent-data",
+      description: `Consent verification for ${consentType}: ${
+        isValid ? "VALID" : "INVALID"
+      }`,
+      ipAddress: metadata?.ipAddress,
+      userAgent: metadata?.userAgent,
+      clinicId: metadata?.clinicId,
+      metadata: {
+        patientId,
+        consentType,
+        isValid,
+      },
+    });
+  }
+
+  /**
+   * Logs a security event
+   * @param eventType - Type of security event
+   * @param userId - User identifier (if applicable)
+   * @param severity - Event severity
+   * @param description - Event description
+   * @param metadata - Additional metadata
+   * @returns Promise<string> - The ID of the created audit log
+   */
+  async logSecurityEvent(
+    eventType: string,
+    userId: string | null,
+    severity: "low" | "medium" | "high" | "critical",
     description: string,
-    clinicId: string,
-    metadata?: Record<string, any>,
-  ): Promise<void> {
-    try {
-      await this.createAuditLog({
-        sessionId,
-        eventType: "data-access",
-        userId,
-        userRole,
-        dataClassification,
-        description,
-        clinicId,
-        metadata,
-      });
-    } catch (error) {
-      console.error("AuditService.logDataAccess error:", error);
-      throw error;
-    }
+    metadata?: {
+      ipAddress?: string;
+      userAgent?: string;
+      clinicId?: string;
+      sessionId?: string;
+      additionalData?: Record<string, unknown>;
+    },
+  ): Promise<string> {
+    return this.createAuditLog({
+      sessionId: metadata?.sessionId || `security-${Date.now()}`,
+      eventType: `security-${eventType}`,
+      userId: userId || "system",
+      userRole: "system",
+      dataClassification: "security-data",
+      description,
+      ipAddress: metadata?.ipAddress,
+      userAgent: metadata?.userAgent,
+      clinicId: metadata?.clinicId,
+      metadata: {
+        severity,
+        ...metadata?.additionalData,
+      },
+    });
   }
 
   /**
-   * Log consent given event
-   * @param sessionId - WebRTC session ID
-   * @param userId - Patient user ID
-   * @param dataTypes - Types of data consent was given for
-   * @param purpose - Purpose of consent
-   * @param clinicId - Clinic ID
-   */
-  async logConsentGiven(
-    sessionId: string,
-    userId: string,
-    dataTypes: MedicalDataClassification[],
-    purpose: string,
-    clinicId: string,
-  ): Promise<void> {
-    try {
-      await this.createAuditLog({
-        sessionId,
-        eventType: "consent-given",
-        userId,
-        userRole: "patient",
-        dataClassification: "internal",
-        description: `Patient granted consent for ${purpose}`,
-        clinicId,
-        metadata: { dataTypes, purpose },
-      });
-    } catch (error) {
-      console.error("AuditService.logConsentGiven error:", error);
-      throw error;
-    }
-  }
-
-  /**
-   * Log consent revoked event
-   * @param sessionId - WebRTC session ID
-   * @param userId - Patient user ID
-   * @param dataType - Type of data consent was revoked for
-   * @param reason - Reason for revocation
-   * @param clinicId - Clinic ID
-   */
-  async logConsentRevoked(
-    sessionId: string,
-    userId: string,
-    dataType: MedicalDataClassification,
-    reason: string,
-    clinicId: string,
-  ): Promise<void> {
-    try {
-      await this.createAuditLog({
-        sessionId,
-        eventType: "consent-revoked",
-        userId,
-        userRole: "patient",
-        dataClassification: dataType,
-        description: `Patient revoked consent for ${dataType}`,
-        clinicId,
-        metadata: { reason, dataType },
-      });
-    } catch (error) {
-      console.error("AuditService.logConsentRevoked error:", error);
-      throw error;
-    }
-  }
-
-  /**
-   * Log error event
-   * @param sessionId - WebRTC session ID
-   * @param userId - User ID where error occurred
-   * @param userRole - Role of user
-   * @param error - Error that occurred
-   * @param clinicId - Clinic ID
-   */
-  async logError(
-    sessionId: string,
-    userId: string,
-    userRole: "doctor" | "patient" | "nurse" | "admin" | "system",
-    error: Error | string,
-    clinicId: string,
-  ): Promise<void> {
-    try {
-      const errorMessage = error instanceof Error ? error.message : error;
-      await this.createAuditLog({
-        sessionId,
-        eventType: "error-occurred",
-        userId,
-        userRole,
-        dataClassification: "public",
-        description: `Error in telemedicine session: ${errorMessage}`,
-        clinicId,
-        metadata: {
-          error: errorMessage,
-          stack: error instanceof Error ? error.stack : undefined,
-        },
-      });
-    } catch (auditError) {
-      console.error("AuditService.logError error:", auditError);
-      // Don't throw here to avoid infinite error loops
-    }
-  }
-
-  /**
-   * Get audit logs for a specific session
-   * @param sessionId - WebRTC session ID (stored in resource_id field)
-   * @param clinicId - Clinic ID for access control
+   * Retrieves audit logs for a specific session
+   * @param sessionId - Session identifier
    * @returns Promise<RTCAuditLogEntry[]> - Array of audit log entries
    */
   async getSessionAuditLogs(sessionId: string): Promise<RTCAuditLogEntry[]> {
     try {
       const { data: logs, error } = await this.supabase
-        .from("audit_logs")
+        .from("webrtc_audit_logs")
         .select(
           `
           id,
@@ -346,7 +294,7 @@ export class AuditService extends BaseService {
         `,
         )
         .eq("session_id", sessionId)
-        .order("created_at", { ascending: false });
+        .order("timestamp", { ascending: false });
 
       if (error) {
         console.error("Failed to get session audit logs:", error);
@@ -357,19 +305,13 @@ export class AuditService extends BaseService {
         return [];
       }
 
-      return logs.map((log: any) => ({
+      return logs.map((log: DatabaseLogEntry) => ({
         id: log.id,
         sessionId: log.session_id || sessionId,
         userId: log.user_id,
         eventType: this.mapActionToEventType(log.action),
-        userRole:
-          (log.user_role as
-            | "doctor"
-            | "patient"
-            | "nurse"
-            | "admin"
-            | "system") || "system",
-        dataClassification: (log.data_classification as any) || "general",
+        userRole: log.user_role || "system",
+        dataClassification: log.data_classification || "general",
         description:
           log.description || `${log.action} performed on ${log.resource_type}`,
         timestamp: log.created_at || new Date().toISOString(),
@@ -391,48 +333,39 @@ export class AuditService extends BaseService {
     }
   }
 
+  /**
+   * Retrieves audit logs for a specific user
+   * @param userId - User identifier
+   * @param limit - Maximum number of logs to retrieve
+   * @returns Promise<RTCAuditLogEntry[]> - Array of audit log entries
+   */
   async getUserAuditLogs(
     userId: string,
-    clinicId: string,
-    limit: number = 100,
+    limit?: number,
   ): Promise<RTCAuditLogEntry[]> {
     try {
-      const { data: auditLogs, error } = await this.supabase
-        .from("audit_logs")
+      let query = this.supabase
+        .from("webrtc_audit_logs")
         .select("*")
         .eq("user_id", userId)
-        .eq("clinic_id", clinicId)
-        .order("created_at", { ascending: false })
-        .limit(limit);
+        .order("timestamp", { ascending: false });
+
+      if (limit) {
+        query = query.limit(limit);
+      }
+
+      const { data: logs, error } = await query;
 
       if (error) {
         console.error("Failed to get user audit logs:", error);
         return [];
       }
 
-      return auditLogs.map((log) => ({
-        id: log.id,
-        sessionId: log.resource_id || "unknown", // Use resource_id for sessionId
-        eventType: log.action as any,
-        timestamp: log.created_at || new Date().toISOString(),
-        userId: log.user_id,
-        userRole: "patient" as any, // Default role, should be determined from user data
-        dataClassification: "internal" as MedicalDataClassification,
-        description: log.resource_type || "Audit log entry", // Use resource_type for description
-        ipAddress: (log.ip_address as string) || "unknown",
-        userAgent: log.user_agent || "unknown",
-        clinicId: log.clinic_id || "unknown", // Provide default for null case
-        metadata: {
-          lgpd_basis: log.lgpd_basis,
-          old_values: log.old_values,
-          new_values: log.new_values,
-        },
-        complianceCheck: {
-          isCompliant: true, // Default to compliant since status field doesn't exist in schema
-          violations: [],
-          riskLevel: "low" as "low" | "medium" | "high", // Default risk level since field doesn't exist in schema
-        },
-      }));
+      if (!logs) {
+        return [];
+      }
+
+      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
     } catch (error) {
       console.error("AuditService.getUserAuditLogs error:", error);
       return [];
@@ -440,165 +373,151 @@ export class AuditService extends BaseService {
   }
 
   /**
-   * Get compliance report for a date range
-   * @param clinicId - Clinic ID
-   * @param startDate - Start date for report
-   * @param endDate - End date for report
-   * @returns Promise<any> - Compliance report data
+   * Retrieves audit logs within a date range
+   * @param startDate - Start date
+   * @param endDate - End date
+   * @param clinicId - Optional clinic filter
+   * @param limit - Maximum number of logs to retrieve
+   * @returns Promise<RTCAuditLogEntry[]> - Array of audit log entries
    */
-  async getComplianceReport(
-    clinicId: string,
+  async getAuditLogsByDateRange(
     startDate: Date,
     endDate: Date,
-  ): Promise<any> {
+    clinicId?: string,
+    limit?: number,
+  ): Promise<RTCAuditLogEntry[]> {
     try {
-      const { data: auditLogs, error } = await this.supabase
-        .from("audit_logs")
+      let query = this.supabase
+        .from("webrtc_audit_logs")
         .select("*")
-        .eq("clinic_id", clinicId)
-        .gte("created_at", startDate.toISOString())
-        .lte("created_at", endDate.toISOString())
-        .order("created_at", { ascending: false });
+        .gte("timestamp", startDate.toISOString())
+        .lte("timestamp", endDate.toISOString());
 
-      if (error) {
-        console.error("Failed to get compliance report:", error);
-        return null;
+      if (clinicId) {
+        query = query.eq("clinic_id", clinicId);
       }
 
-      // Analyze compliance data - all events are considered compliant by default
-      const totalEvents = auditLogs.length;
-      const compliantEvents = totalEvents; // All events are compliant by default
+      if (limit) {
+        query = query.limit(limit);
+      }
 
-      // Check for LGPD compliance (presence of lgpd_basis)
-      const lgpdCompliantEvents = auditLogs.filter(
-        (log) => log.lgpd_basis !== null,
-      ).length;
+      const { data: logs, error } = await query;
 
-      // Group by event types (action field)
-      const eventTypes = auditLogs.reduce(
-        (acc, log) => {
-          acc[log.action] = (acc[log.action] || 0) + 1;
-          return acc;
-        },
-        {} as Record<string, number>,
-      );
+      if (error) {
+        console.error("Failed to get audit logs by date range:", error);
+        return [];
+      }
 
-      // Group by LGPD basis
-      const lgpdBasis = auditLogs.reduce(
-        (acc, log) => {
-          if (log.lgpd_basis) {
-            acc[log.lgpd_basis] = (acc[log.lgpd_basis] || 0) + 1;
-          }
-          return acc;
-        },
-        {} as Record<string, number>,
-      );
+      if (!logs) {
+        return [];
+      }
 
-      return {
-        reportPeriod: {
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
-        },
-        summary: {
-          totalEvents,
-          compliantEvents,
-          lgpdCompliantEvents,
-          complianceRate: 100, // All events are compliant by default
-          lgpdComplianceRate:
-            totalEvents > 0 ? (lgpdCompliantEvents / totalEvents) * 100 : 100,
-        },
-        eventTypes,
-        lgpdBasis,
-        clinicId,
-      };
+      return logs.map((log: any) => this.mapDatabaseLogToEntry(log));
     } catch (error) {
-      console.error("AuditService.getComplianceReport error:", error);
-      return null;
+      console.error("AuditService.getAuditLogsByDateRange error:", error);
+      return [];
     }
   }
 
   /**
-   * Search audit logs with filters
-   * @param clinicId - Clinic ID
-   * @param filters - Search filters
-   * @param limit - Maximum number of results
-   * @returns Promise<RTCAuditLogEntry[]> - Filtered audit log entries
+   * Generates a compliance report for a given date range
+   * @param startDate - Start date
+   * @param endDate - End date
+   * @param clinicId - Optional clinic filter
+   * @returns Promise<ComplianceReport> - Compliance report
    */
-  async searchAuditLogs(
-    clinicId: string,
-    filters: {
-      sessionId?: string;
-      userId?: string;
-      eventType?: string;
-      startDate?: Date;
-      endDate?: Date;
-      riskLevel?: string;
-    },
-    limit: number = 100,
-  ): Promise<RTCAuditLogEntry[]> {
+  async getComplianceReport(
+    startDate: Date,
+    endDate: Date,
+    clinicId?: string,
+  ): Promise<ComplianceReport> {
     try {
       let query = this.supabase
-        .from("audit_logs")
+        .from("webrtc_audit_logs")
         .select("*")
-        .eq("clinic_id", clinicId);
+        .gte("timestamp", startDate.toISOString())
+        .lte("timestamp", endDate.toISOString());
 
-      if (filters.sessionId) {
-        query = query.eq("resource_id", filters.sessionId); // sessionId stored in resource_id
+      if (clinicId) {
+        query = query.eq("clinic_id", clinicId);
       }
 
-      if (filters.userId) {
-        query = query.eq("user_id", filters.userId);
+      const { data: logs, error } = await query;
+
+      if (error) {
+        console.error("Failed to generate compliance report:", error);
+        throw new Error(`Failed to generate compliance report: ${error.message}`);
       }
 
-      if (filters.eventType) {
-        query = query.eq("action", filters.eventType);
+      const auditLogs = logs ? logs.map((log: any) => this.mapDatabaseLogToEntry(log)) : [];
+
+      return this.generateComplianceReport(auditLogs, startDate, endDate);
+    } catch (error) {
+      console.error("AuditService.getComplianceReport error:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * Searches audit logs based on criteria
+   * @param criteria - Search criteria
+   * @returns Promise<RTCAuditLogEntry[]> - Array of matching audit log entries
+   */
+  async searchAuditLogs(criteria: AuditSearchCriteria): Promise<RTCAuditLogEntry[]> {
+    try {
+      let query = this.supabase.from("webrtc_audit_logs").select("*");
+
+      if (criteria.sessionIds?.length) {
+        query = query.in("session_id", criteria.sessionIds);
       }
 
-      if (filters.startDate) {
-        query = query.gte("created_at", filters.startDate.toISOString());
+      if (criteria.userIds?.length) {
+        query = query.in("user_id", criteria.userIds);
       }
 
-      if (filters.endDate) {
-        query = query.lte("created_at", filters.endDate.toISOString());
+      if (criteria.eventTypes?.length) {
+        query = query.in("event_type", criteria.eventTypes);
       }
 
-      const { data: auditLogs, error } = await query
-        .order("created_at", { ascending: false })
-        .limit(limit);
+      if (criteria.dataClassifications?.length) {
+        query = query.in("data_classification", criteria.dataClassifications);
+      }
+
+      if (criteria.startDate) {
+        query = query.gte("timestamp", criteria.startDate.toISOString());
+      }
+
+      if (criteria.endDate) {
+        query = query.lte("timestamp", criteria.endDate.toISOString());
+      }
+
+      if (criteria.clinicId) {
+        query = query.eq("clinic_id", criteria.clinicId);
+      }
+
+      if (criteria.complianceStatus !== undefined) {
+        const statusFilter = criteria.complianceStatus ? "SUCCESS" : "FAILED";
+        query = query.eq("status", statusFilter);
+      }
+
+      if (criteria.limit) {
+        query = query.limit(criteria.limit);
+      }
+
+      query = query.order("timestamp", { ascending: false });
+
+      const { data: logs, error } = await query;
 
       if (error) {
         console.error("Failed to search audit logs:", error);
         return [];
       }
 
-      let results = auditLogs.map((log) => ({
-        id: log.id,
-        sessionId: log.resource_id || "unknown", // Use resource_id for sessionId
-        eventType: log.action as any,
-        timestamp: log.created_at || new Date().toISOString(),
-        userId: log.user_id,
-        userRole: "patient" as any, // Default role, should be determined from user data
-        dataClassification: "internal" as MedicalDataClassification,
-        description: log.resource_type || "Audit log entry", // Use resource_type for description
-        ipAddress: (log.ip_address as string) || "unknown",
-        userAgent: log.user_agent || "unknown",
-        clinicId: log.clinic_id || "unknown", // Provide default for null case
-        metadata: {
-          lgpd_basis: log.lgpd_basis,
-          old_values: log.old_values,
-          new_values: log.new_values,
-        },
-        complianceCheck: {
-          isCompliant: true, // Default to compliant since status field doesn't exist in schema
-          violations: [],
-          riskLevel: "low" as "low" | "medium" | "high", // Default risk level since field doesn't exist in schema
-        },
-      }));
+      if (!logs) {
+        return [];
+      }
 
-      // Note: riskLevel filtering is not available since the field doesn't exist in schema
-      // All events are considered low risk by default
-
-      return results;
+      return logs.map((log: any) => this.mapDatabaseLogToEntry(log));
     } catch (error) {
       console.error("AuditService.searchAuditLogs error:", error);
       return [];
@@ -606,37 +525,104 @@ export class AuditService extends BaseService {
   }
 
   /**
-   * Maps action strings to RTCAuditLogEntry event types
+   * Maps database log entry to RTCAuditLogEntry
+   * @private
    */
-  private mapActionToEventType(
-    action: string,
-  ):
-    | "session-start"
-    | "session-end"
-    | "participant-join"
-    | "participant-leave"
-    | "recording-start"
-    | "recording-stop"
-    | "data-access"
-    | "consent-given"
-    | "consent-revoked"
-    | "error-occurred" {
-    const actionMapping: Record<string, any> = {
-      CREATE: "session-start",
-      UPDATE: "data-access",
-      DELETE: "session-end",
-      READ: "data-access",
-      JOIN: "participant-join",
-      LEAVE: "participant-leave",
-      START_RECORDING: "recording-start",
-      STOP_RECORDING: "recording-stop",
-      CONSENT_GIVEN: "consent-given",
-      CONSENT_REVOKED: "consent-revoked",
-      ERROR: "error-occurred",
+  private mapDatabaseLogToEntry(log: DatabaseLogEntry): RTCAuditLogEntry {
+    return {
+      id: log.id,
+      sessionId: log.session_id,
+      userId: log.user_id,
+      eventType: this.mapActionToEventType(log.event_type || log.action),
+      userRole: log.user_role || "system",
+      dataClassification: log.data_classification || "general",
+      description: log.description,
+      timestamp: log.timestamp || log.created_at,
+      ipAddress: log.ip_address,
+      userAgent: log.user_agent,
+      clinicId: log.clinic_id,
+      metadata: log.metadata,
+      complianceCheck: {
+        isCompliant: log.compliance_check?.isCompliant ?? (log.status === "SUCCESS"),
+        violations: log.compliance_check?.violations || [],
+        riskLevel: log.compliance_check?.riskLevel || log.risk_level || "low",
+      },
+    };
+  }
+
+  /**
+   * Maps action to event type
+   * @private
+   */
+  private mapActionToEventType(action: string): string {
+    const actionMap: Record<string, string> = {
+      "session-start": "video-call-start",
+      "session-end": "video-call-end",
+      "data-access": "data-access",
+      "consent-verification": "consent-verification",
+      "security-event": "security-event",
     };
 
-    return actionMapping[action?.toUpperCase()] || "data-access";
+    return actionMap[action] || action;
+  }
+
+  /**
+   * Generates compliance report from audit logs
+   * @private
+   */
+  private generateComplianceReport(
+    logs: RTCAuditLogEntry[],
+    startDate: Date,
+    endDate: Date,
+  ): ComplianceReport {
+    const totalEvents = logs.length;
+    const compliantEvents = logs.filter((log) => log.complianceCheck.isCompliant).length;
+    const nonCompliantEvents = totalEvents - compliantEvents;
+
+    const riskLevels = {
+      low: 0,
+      medium: 0,
+      high: 0,
+      critical: 0,
+    };
+
+    const violations: Record<string, number> = {};
+
+    logs.forEach((log) => {
+      const riskLevel = log.complianceCheck.riskLevel;
+      if (riskLevel in riskLevels) {
+        riskLevels[riskLevel as keyof typeof riskLevels]++;
+      }
+    });
+
+    const recommendations: string[] = [];
+
+    if (nonCompliantEvents > 0) {
+      recommendations.push("Review and address non-compliant events");
+    }
+
+    if (riskLevels.high > 0 || riskLevels.critical > 0) {
+      recommendations.push("Investigate high and critical risk events");
+    }
+
+    if (Object.keys(violations).length > 0) {
+      recommendations.push("Address identified compliance violations");
+    }
+
+    return {
+      reportPeriod: {
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      },
+      summary: {
+        totalEvents,
+        compliantEvents,
+        nonCompliantEvents,
+        complianceRate: totalEvents > 0 ? compliantEvents / totalEvents : 1,
+      },
+      riskLevels,
+      violations,
+      recommendations,
+    };
   }
 }
-
-export default AuditService;

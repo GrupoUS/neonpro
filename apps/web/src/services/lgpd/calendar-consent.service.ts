@@ -3,16 +3,16 @@
  * Ensures calendar components comply with Brazilian LGPD requirements for healthcare data
  */
 
-import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/lib/supabase/types/database";
-import type { CalendarAppointment } from "@/services/appointments.service";
+import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/lib/supabase/types/database';
+import type { CalendarAppointment } from '@/services/appointments.service';
 
 // LGPD Processing Purposes for Calendar Operations
 export const CALENDAR_LGPD_PURPOSES = {
-  APPOINTMENT_SCHEDULING: "appointment_scheduling",
-  APPOINTMENT_MANAGEMENT: "appointment_management",
-  HEALTHCARE_COORDINATION: "healthcare_coordination",
-  MEDICAL_CARE_ACCESS: "medical_care_access",
+  APPOINTMENT_SCHEDULING: 'appointment_scheduling',
+  APPOINTMENT_MANAGEMENT: 'appointment_management',
+  HEALTHCARE_COORDINATION: 'healthcare_coordination',
+  MEDICAL_CARE_ACCESS: 'medical_care_access',
 } as const;
 
 export type CalendarLGPDPurpose =
@@ -33,10 +33,10 @@ export interface ConsentValidationResult {
 
 // Calendar data minimization levels
 export enum DataMinimizationLevel {
-  MINIMAL = "minimal", // Only essential info: time, status
-  RESTRICTED = "restricted", // Limited info: initials, service type
-  STANDARD = "standard", // Normal view with compliance checks
-  FULL = "full", // Full data (requires explicit consent)
+  MINIMAL = 'minimal', // Only essential info: time, status
+  RESTRICTED = 'restricted', // Limited info: initials, service type
+  STANDARD = 'standard', // Normal view with compliance checks
+  FULL = 'full', // Full data (requires explicit consent)
 }
 
 // Minimized calendar appointment data
@@ -71,30 +71,29 @@ export class CalendarLGPDConsentService {
     try {
       // Query active consents for the patient
       const { data: consents, error } = await this.supabase
-        .from("lgpd_consents")
-        .select("*")
-        .eq("user_id", patientId)
-        .eq("is_active", true)
-        .is("withdrawn_at", null)
-        .gte("expires_at", new Date().toISOString())
-        .contains("data_categories", ["appointment_data"]);
+        .from('lgpd_consents')
+        .select('*')
+        .eq('user_id', patientId)
+        .eq('is_active', true)
+        .is('withdrawn_at', null)
+        .gte('expires_at', new Date().toISOString())
+        .contains('data_categories', ['appointment_data']);
 
       if (error) {
-        console.error("Error querying LGPD consents:", error);
+        console.error('Error querying LGPD consents:', error);
         return {
           isValid: false,
           purpose,
           patientId,
           isExplicit: false,
-          legalBasis: "none",
-          error: "Failed to validate consent",
-          recommendation:
-            "Contact compliance team to resolve consent validation issues",
+          legalBasis: 'none',
+          error: 'Failed to validate consent',
+          recommendation: 'Contact compliance team to resolve consent validation issues',
         };
       }
 
       // Find matching consent for calendar purpose
-      const matchingConsent = consents?.find((consent) => {
+      const matchingConsent = consents?.find(consent => {
         // Check if consent covers calendar operations
         const validPurposes = [
           CALENDAR_LGPD_PURPOSES.APPOINTMENT_SCHEDULING,
@@ -102,8 +101,8 @@ export class CalendarLGPDConsentService {
         ];
 
         return (
-          validPurposes.includes(purpose) &&
-          consent.consent_method === "explicit"
+          validPurposes.includes(purpose)
+          && consent.consent_method === 'explicit'
         );
       });
 
@@ -113,15 +112,14 @@ export class CalendarLGPDConsentService {
           purpose,
           patientId,
           isExplicit: false,
-          legalBasis: "none",
-          error: "No valid LGPD consent found for calendar operations",
-          recommendation:
-            "Obtain explicit consent from patient for appointment scheduling",
+          legalBasis: 'none',
+          error: 'No valid LGPD consent found for calendar operations',
+          recommendation: 'Obtain explicit consent from patient for appointment scheduling',
         };
       }
 
       // Validate consent details
-      const isExplicit = matchingConsent.consent_method === "explicit";
+      const isExplicit = matchingConsent.consent_method === 'explicit';
       const expiryDate = matchingConsent.expires_at
         ? new Date(matchingConsent.expires_at)
         : undefined;
@@ -133,9 +131,9 @@ export class CalendarLGPDConsentService {
           purpose,
           patientId,
           isExplicit,
-          legalBasis: matchingConsent.legal_basis || "consent",
-          error: "Consent has expired",
-          recommendation: "Renew consent or remove from calendar view",
+          legalBasis: matchingConsent.legal_basis || 'consent',
+          error: 'Consent has expired',
+          recommendation: 'Renew consent or remove from calendar view',
         };
       }
 
@@ -156,18 +154,18 @@ export class CalendarLGPDConsentService {
         patientId,
         expiryDate,
         isExplicit,
-        legalBasis: matchingConsent.legal_basis || "consent",
+        legalBasis: matchingConsent.legal_basis || 'consent',
       };
     } catch (error) {
-      console.error("Error in validateCalendarConsent:", error);
+      console.error('Error in validateCalendarConsent:', error);
       return {
         isValid: false,
         purpose,
         patientId,
         isExplicit: false,
-        legalBasis: "none",
-        error: "Consent validation failed",
-        recommendation: "System error - please try again or contact support",
+        legalBasis: 'none',
+        error: 'Consent validation failed',
+        recommendation: 'System error - please try again or contact support',
       };
     }
   }
@@ -205,7 +203,7 @@ export class CalendarLGPDConsentService {
         return DataMinimizationLevel.RESTRICTED;
       }
     } catch (error) {
-      console.error("Error determining data minimization level:", error);
+      console.error('Error determining data minimization level:', error);
       return DataMinimizationLevel.MINIMAL; // Fail safely
     }
   }
@@ -240,9 +238,9 @@ export class CalendarLGPDConsentService {
         case DataMinimizationLevel.MINIMAL:
           return {
             ...baseMinimized,
-            title: "Agendamento Reservado",
-            description: "Tipo não disponível",
-            patientInfo: "Paciente",
+            title: 'Agendamento Reservado',
+            description: 'Tipo não disponível',
+            patientInfo: 'Paciente',
           };
 
         case DataMinimizationLevel.RESTRICTED:
@@ -273,11 +271,11 @@ export class CalendarLGPDConsentService {
           return baseMinimized;
       }
     } catch (error) {
-      console.error("Error minimizing appointment data:", error);
+      console.error('Error minimizing appointment data:', error);
       // Return minimal data on error
       return {
         id: appointment.id,
-        title: "Agendamento Reservado",
+        title: 'Agendamento Reservado',
         start: appointment.start,
         end: appointment.end,
         color: appointment.color,
@@ -318,7 +316,7 @@ export class CalendarLGPDConsentService {
           if (!consentResult.isValid) {
             consentIssues.push(consentResult);
             auditActions.push({
-              action: "CONSENT_DENIED",
+              action: 'CONSENT_DENIED',
               appointmentId: appointment.id,
               reason: consentResult.error,
               timestamp: new Date().toISOString(),
@@ -333,7 +331,7 @@ export class CalendarLGPDConsentService {
 
             compliantAppointments.push(minimizedAppointment);
             auditActions.push({
-              action: "APPOINTMENT_ACCESSED",
+              action: 'APPOINTMENT_ACCESSED',
               appointmentId: appointment.id,
               consentLevel: minimizedAppointment.consentLevel,
               timestamp: new Date().toISOString(),
@@ -349,9 +347,9 @@ export class CalendarLGPDConsentService {
             purpose: CALENDAR_LGPD_PURPOSES.APPOINTMENT_MANAGEMENT,
             patientId: appointment.id,
             isExplicit: false,
-            legalBasis: "error",
-            error: "Processing error",
-            recommendation: "Contact system administrator",
+            legalBasis: 'error',
+            error: 'Processing error',
+            recommendation: 'Contact system administrator',
           });
         }
       }
@@ -369,17 +367,17 @@ export class CalendarLGPDConsentService {
         auditLogId,
       };
     } catch (error) {
-      console.error("Error in batch processing:", error);
+      console.error('Error in batch processing:', error);
       return {
         compliantAppointments: [],
-        consentIssues: appointments.map((appointment) => ({
+        consentIssues: appointments.map(appointment => ({
           isValid: false,
           purpose: CALENDAR_LGPD_PURPOSES.APPOINTMENT_MANAGEMENT,
           patientId: appointment.id,
           isExplicit: false,
-          legalBasis: "error",
-          error: "Batch processing failed",
-          recommendation: "Contact system administrator",
+          legalBasis: 'error',
+          error: 'Batch processing failed',
+          recommendation: 'Contact system administrator',
         })),
       };
     }
@@ -390,35 +388,33 @@ export class CalendarLGPDConsentService {
    */
   private isHealthcareRole(userRole: string): boolean {
     const healthcareRoles = [
-      "doctor",
-      "nurse",
-      "healthcare_professional",
-      "medical_staff",
-      "clinician",
-      "therapist",
-      "specialist",
+      'doctor',
+      'nurse',
+      'healthcare_professional',
+      'medical_staff',
+      'clinician',
+      'therapist',
+      'specialist',
     ];
 
-    return healthcareRoles.some((role) =>
-      userRole.toLowerCase().includes(role.toLowerCase()),
-    );
+    return healthcareRoles.some(role => userRole.toLowerCase().includes(role.toLowerCase()));
   }
 
   /**
    * Get patient initials for data minimization
    */
   private getPatientInitials(fullName: string): string {
-    if (!fullName) return "P";
+    if (!fullName) return 'P';
 
-    const names = fullName.trim().split(" ");
+    const names = fullName.trim().split(' ');
     if (names.length === 1) {
       return names[0].charAt(0).toUpperCase();
     }
 
     return names
       .slice(0, 2)
-      .map((name) => name.charAt(0).toUpperCase())
-      .join("");
+      .map(name => name.charAt(0).toUpperCase())
+      .join('');
   }
 
   /**
@@ -433,10 +429,10 @@ export class CalendarLGPDConsentService {
     isExplicit: boolean,
   ): Promise<void> {
     try {
-      await this.supabase.from("lgpd_audit_logs").insert({
+      await this.supabase.from('lgpd_audit_logs').insert({
         patient_id: patientId,
-        action: "CONSENT_VALIDATED",
-        data_category: "appointment_data",
+        action: 'CONSENT_VALIDATED',
+        data_category: 'appointment_data',
         purpose,
         user_id: userId,
         user_role: userRole,
@@ -446,11 +442,11 @@ export class CalendarLGPDConsentService {
         details: {
           purpose,
           isExplicit,
-          validation_method: "calendar_service",
+          validation_method: 'calendar_service',
         },
       });
     } catch (error) {
-      console.error("Error logging consent validation:", error);
+      console.error('Error logging consent validation:', error);
       // Don't throw error for audit logging failures
     }
   }
@@ -465,11 +461,11 @@ export class CalendarLGPDConsentService {
   ): Promise<string | undefined> {
     try {
       const { data: log } = await this.supabase
-        .from("lgpd_audit_logs")
+        .from('lgpd_audit_logs')
         .insert({
-          patient_id: "batch_processing",
-          action: "CALENDAR_BATCH_PROCESSED",
-          data_category: "appointment_data",
+          patient_id: 'batch_processing',
+          action: 'CALENDAR_BATCH_PROCESSED',
+          data_category: 'appointment_data',
           purpose: CALENDAR_LGPD_PURPOSES.APPOINTMENT_MANAGEMENT,
           user_id: userId,
           user_role: userRole,
@@ -477,15 +473,15 @@ export class CalendarLGPDConsentService {
           details: {
             totalAppointments: actions.length,
             actions,
-            processing_method: "calendar_lgpd_service",
+            processing_method: 'calendar_lgpd_service',
           },
         })
-        .select("id")
+        .select('id')
         .single();
 
       return log?.id;
     } catch (error) {
-      console.error("Error logging batch processing:", error);
+      console.error('Error logging batch processing:', error);
       return undefined;
     }
   }

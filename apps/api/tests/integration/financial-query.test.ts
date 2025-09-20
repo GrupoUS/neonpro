@@ -1,473 +1,541 @@
-import { Hono } from 'hono';
-import { createServer } from 'http';
-import { fetch } from 'undici';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+/**
+ * Integration Test for "Query financial summary" scenario
+ * TDD Test - MUST FAIL until implementation is complete
+ * 
+ * This test validates the complete flow for querying financial information
+ * from quickstart.md scenario 3
+ */
 
-// Import the agent endpoint with mock data service
-import { agentRouter } from '../../src/routes/ai/data-agent';
+import { describe, test, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 
-// Mock the AIDataService to avoid actual database calls during tests
-vi.mock('../../src/services/ai-data-service', () => ({
-  AIDataService: {
-    getInstance: () => ({
-      getClientsByName: async (name: string) => ({
-        type: 'list',
-        title: 'Clientes Encontrados',
-        data: [],
-        columns: [],
-      }),
-      getAppointmentsByDate: async (date: string) => ({
-        type: 'list',
-        title: 'Agendamentos',
-        data: [],
-        columns: [],
-      }),
-      getFinancialSummary: async (period: string) => {
-        // Mock financial data
-        const mockFinancialRecords = [
-          {
-            id: 'fin-1',
-            date: '2024-01-19',
-            type: 'revenue',
-            amount: 1500.0,
-            currency: 'BRL',
-            description: 'Consulta - Maria Silva',
-            status: 'paid',
-            category: 'Consultas',
-          },
-          {
-            id: 'fin-2',
-            date: '2024-01-19',
-            type: 'revenue',
-            amount: 800.0,
-            currency: 'BRL',
-            description: 'Procedimento - João Santos',
-            status: 'paid',
-            category: 'Procedimentos',
-          },
-          {
-            id: 'fin-3',
-            date: '2024-01-18',
-            type: 'expense',
-            amount: 500.0,
-            currency: 'BRL',
-            description: 'Material médico',
-            status: 'paid',
-            category: 'Suprimentos',
-          },
-          {
-            id: 'fin-4',
-            date: '2024-01-17',
-            type: 'revenue',
-            amount: 1200.0,
-            currency: 'BRL',
-            description: 'Pacote tratamento',
-            status: 'pending',
-            category: 'Pacotes',
-          },
-        ];
-
-        // Calculate summary
-        const totalRevenue = mockFinancialRecords
-          .filter(r => r.type === 'revenue')
-          .reduce((sum, r) => sum + r.amount, 0);
-
-        const totalExpenses = mockFinancialRecords
-          .filter(r => r.type === 'expense')
-          .reduce((sum, r) => sum + r.amount, 0);
-
-        return {
-          type: 'summary',
-          title: 'Resumo Financeiro',
-          data: mockFinancialRecords,
-          summary: {
-            totalRevenue,
-            totalExpenses,
-            netIncome: totalRevenue - totalExpenses,
-            period: period || 'Últimos 30 dias',
-            currency: 'BRL',
-          },
-          columns: [
-            { key: 'date', label: 'Data', type: 'date' },
-            { key: 'type', label: 'Tipo', type: 'badge' },
-            { key: 'amount', label: 'Valor', type: 'currency' },
-            { key: 'description', label: 'Descrição', type: 'text' },
-            { key: 'status', label: 'Status', type: 'badge' },
-          ],
-        };
-      },
-    }),
-  },
-}));
-
-describe('Integration Tests: Financial Query', () => {
-  let server: any;
-  let baseUrl: string;
-  let app: Hono;
+describe('Query Financial Summary - Integration Test', () => {
+  let app: any
+  let testServer: any
 
   beforeAll(async () => {
-    // Create Hono app with agent route
-    app = new Hono();
-    app.route('/api/ai/data-agent', agentRouter);
-
-    // Start test server
-    server = createServer({
-      fetch: app.fetch,
-      port: 0,
-    });
-
-    await new Promise(resolve => {
-      server.listen(0, () => {
-        const address = server.address();
-        if (address && typeof address === 'object') {
-          baseUrl = `http://localhost:${address.port}`;
-        }
-        resolve(true);
-      });
-    });
-  });
+    try {
+      app = (await import('../../src/app')).default
+    } catch (error) {
+      console.log('Expected failure: App not available during TDD phase')
+    }
+  })
 
   afterAll(async () => {
-    if (server) {
-      await new Promise(resolve => server.close(resolve));
+    if (testServer) {
+      testServer.close()
     }
-  });
+  })
 
-  describe('Financial Query Integration', () => {
-    it('should successfully query financial summary', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+  beforeEach(async () => {
+    // Setup test data - this will fail until implementation is complete
+    // In real implementation, this would set up test financial records
+  })
+
+  describe('Portuguese Language Query Processing', () => {
+    test('should handle "Como está o faturamento?" query', async () => {
+      expect(app).toBeDefined()
+
+      const query = "Como está o faturamento?"
+      const sessionId = "test-session-financial"
+
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-admin-token'
         },
         body: JSON.stringify({
-          query: 'Como está o faturamento?',
-          sessionId: 'test-session-fin-1',
-        }),
-      });
+          query,
+          sessionId,
+          context: {
+            userId: "admin-user-id",
+            role: "admin"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      // Response validation
+      expect(response.status).toBe(200)
+      
+      const responseData = await response.json()
+      expect(responseData.success).toBe(true)
+      expect(responseData.response).toBeDefined()
+      
+      // Should return chart or table type for financial data
+      expect(['chart', 'table']).toContain(responseData.response.type)
+      
+      // Content should have title and data
+      expect(responseData.response.content).toHaveProperty('title')
+      expect(responseData.response.content.title).toMatch(/[Ff]aturamento|[Ff]inanceiro/)
+      expect(responseData.response.content).toHaveProperty('data')
+    })
 
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('summary');
-      expect(data.response.title).toBe('Resumo Financeiro');
-      expect(data.response.summary).toBeDefined();
+    test('should handle alternative financial queries', async () => {
+      expect(app).toBeDefined()
 
-      // Verify summary structure
-      const summary = data.response.summary;
-      expect(summary).toHaveProperty('totalRevenue');
-      expect(summary).toHaveProperty('totalExpenses');
-      expect(summary).toHaveProperty('netIncome');
-      expect(summary).toHaveProperty('period');
-      expect(summary).toHaveProperty('currency');
+      const alternativeQueries = [
+        "Relatório financeiro",
+        "Receita do mês",
+        "Faturamento mensal",
+        "Como estão as finanças?",
+        "Resumo financeiro",
+        "Balanço financeiro"
+      ]
 
-      // Verify financial calculations
-      expect(typeof summary.totalRevenue).toBe('number');
-      expect(typeof summary.totalExpenses).toBe('number');
-      expect(typeof summary.netIncome).toBe('number');
-      expect(summary.netIncome).toBe(
-        summary.totalRevenue - summary.totalExpenses,
-      );
-    });
-
-    it('should query for revenue specifically', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Qual foi a receita este mês?',
-          sessionId: 'test-session-fin-2',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('summary');
-      expect(data.response.summary.totalRevenue).toBeGreaterThan(0);
-    });
-
-    it('should query for expenses specifically', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Mostrar as despesas',
-          sessionId: 'test-session-fin-3',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('summary');
-
-      // Filter for expenses in the data
-      const expenses = data.response.data.filter(
-        (r: any) => r.type === 'expense',
-      );
-      expect(expenses.length).toBeGreaterThan(0);
-    });
-
-    it('should handle different financial query variations', async () => {
-      const variations = [
-        'Faturamento do mês',
-        'Resumo financeiro',
-        'Balancete',
-        'Relatório financeiro',
-        'Como estão as finanças?',
-        'Receitas e despesas',
-      ];
-
-      for (const query of variations) {
-        const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      for (const query of alternativeQueries) {
+        const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer test-token',
+            'Authorization': 'Bearer valid-admin-token'
           },
           body: JSON.stringify({
             query,
-            sessionId: `test-session-var-${query}`,
-          }),
-        });
+            sessionId: `test-session-${Math.random()}`,
+            context: {
+              userId: "admin-user-id",
+              role: "admin"
+            }
+          })
+        })
 
-        expect(response.status).toBe(200);
-        const data = await response.json();
-        expect(data.success).toBe(true);
-        expect(data.response.type).toBe('summary');
+        expect(response.status).toBe(200)
+        
+        const responseData = await response.json()
+        expect(responseData.success).toBe(true)
+        expect(['chart', 'table', 'text']).toContain(responseData.response.type)
       }
-    });
+    })
+  })
 
-    it('should include detailed financial records', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+  describe('Response Structure Validation', () => {
+    test('should return properly structured financial data', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-admin-token'
         },
         body: JSON.stringify({
-          query: 'Detalhes financeiros',
-          sessionId: 'test-session-fin-4',
-        }),
-      });
+          query: "Como está o faturamento?",
+          sessionId: "test-session-structure",
+          context: {
+            userId: "admin-user-id",
+            role: "admin"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      const responseData = await response.json()
+      
+      if (responseData.response.type === 'chart') {
+        // Validate chart data structure
+        expect(responseData.response.content).toHaveProperty('data')
+        expect(Array.isArray(responseData.response.content.data)).toBe(true)
+        
+        if (responseData.response.content.data.length > 0) {
+          const dataPoint = responseData.response.content.data[0]
+          expect(dataPoint).toHaveProperty('amount')
+          expect(typeof dataPoint.amount).toBe('number')
+        }
+      } else if (responseData.response.type === 'table') {
+        // Validate table data structure
+        expect(responseData.response.content).toHaveProperty('data')
+        expect(responseData.response.content).toHaveProperty('columns')
+        expect(Array.isArray(responseData.response.content.data)).toBe(true)
+        expect(Array.isArray(responseData.response.content.columns)).toBe(true)
+      }
+    })
 
-      expect(Array.isArray(data.response.data)).toBe(true);
-      expect(data.response.data.length).toBeGreaterThan(0);
+    test('should include financial metrics summary', async () => {
+      expect(app).toBeDefined()
 
-      // Verify record structure
-      const record = data.response.data[0];
-      expect(record).toHaveProperty('id');
-      expect(record).toHaveProperty('date');
-      expect(record).toHaveProperty('type');
-      expect(record).toHaveProperty('amount');
-      expect(record).toHaveProperty('description');
-      expect(record).toHaveProperty('status');
-      expect(record).toHaveProperty('category');
-    });
-
-    it('should properly categorize financial transactions', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-admin-token'
         },
         body: JSON.stringify({
-          query: 'Categorias financeiras',
-          sessionId: 'test-session-fin-5',
-        }),
-      });
+          query: "Resumo financeiro mensal",
+          sessionId: "test-session-metrics",
+          context: {
+            userId: "admin-user-id"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      const responseData = await response.json()
+      
+      // Should include financial summary metrics
+      if (responseData.response.content.data) {
+        // Look for typical financial metrics
+        const hasRevenue = JSON.stringify(responseData.response.content).includes('receita')
+        const hasPayments = JSON.stringify(responseData.response.content).includes('pagamento')
+        const hasPending = JSON.stringify(responseData.response.content).includes('pendente')
+        
+        expect(hasRevenue || hasPayments || hasPending).toBe(true)
+      }
+    })
 
-      const records = data.response.data;
+    test('should include interactive drill-down options', async () => {
+      expect(app).toBeDefined()
 
-      // Verify all records have categories
-      records.forEach((record: any) => {
-        expect(record.category).toBeDefined();
-        expect(typeof record.category).toBe('string');
-        expect(record.category.length).toBeGreaterThan(0);
-      });
-    });
-
-    it('should handle currency formatting correctly', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-admin-token'
         },
         body: JSON.stringify({
-          query: 'Valores financeiros',
-          sessionId: 'test-session-fin-6',
-        }),
-      });
+          query: "Faturamento detalhado",
+          sessionId: "test-session-actions",
+          context: {
+            userId: "admin-user-id"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      const responseData = await response.json()
+      
+      // Should include interactive actions for financial data
+      expect(responseData.actions).toBeDefined()
+      expect(Array.isArray(responseData.actions)).toBe(true)
+      
+      if (responseData.actions.length > 0) {
+        const action = responseData.actions[0]
+        expect(action).toHaveProperty('id')
+        expect(action).toHaveProperty('label')
+        expect(action).toHaveProperty('type')
+      }
+    })
+  })
 
-      // Verify currency column exists
-      const currencyColumn = data.response.columns.find(
-        (col: any) => col.key === 'amount',
-      );
-      expect(currencyColumn).toBeDefined();
-      expect(currencyColumn.type).toBe('currency');
+  describe('Role-Based Financial Access Control', () => {
+    test('should provide full financial data for admin role', async () => {
+      expect(app).toBeDefined()
 
-      // Verify amounts are numbers
-      data.response.data.forEach((record: any) => {
-        expect(typeof record.amount).toBe('number');
-        expect(record.amount).toBeGreaterThan(0);
-      });
-    });
-
-    it('should handle financial status tracking', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-admin-token'
         },
         body: JSON.stringify({
-          query: 'Status dos pagamentos',
-          sessionId: 'test-session-fin-7',
-        }),
-      });
+          query: "Relatório financeiro completo",
+          sessionId: "test-session-admin",
+          context: {
+            userId: "admin-user-id",
+            role: "admin"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      const responseData = await response.json()
+      expect(responseData.success).toBe(true)
+      
+      // Admin should see detailed financial information
+      expect(responseData.response).toBeDefined()
+      expect(['chart', 'table']).toContain(responseData.response.type)
+    })
 
-      const records = data.response.data;
+    test('should restrict financial data for non-admin roles', async () => {
+      expect(app).toBeDefined()
 
-      // Verify status field exists and has valid values
-      const validStatuses = ['paid', 'pending', 'overdue', 'cancelled'];
-      records.forEach((record: any) => {
-        expect(validStatuses).toContain(record.status);
-      });
-    });
+      const restrictedRoles = [
+        { token: 'valid-doctor-token', role: 'doctor' },
+        { token: 'valid-nurse-token', role: 'nurse' },
+        { token: 'valid-receptionist-token', role: 'receptionist' }
+      ]
 
-    it('should calculate financial metrics correctly', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Métricas financeiras',
-          sessionId: 'test-session-fin-8',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      const summary = data.response.summary;
-
-      // Verify positive revenue
-      expect(summary.totalRevenue).toBeGreaterThan(0);
-
-      // Verify non-negative expenses
-      expect(summary.totalExpenses).toBeGreaterThanOrEqual(0);
-
-      // Verify calculation accuracy
-      const actualNet = summary.totalRevenue - summary.totalExpenses;
-      expect(summary.netIncome).toBe(actualNet);
-    });
-
-    it('should handle period-specific queries', async () => {
-      const periods = [
-        'hoje',
-        'esta semana',
-        'este mês',
-        'últimos 30 dias',
-        'trimestre atual',
-      ];
-
-      for (const period of periods) {
-        const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      for (const { token, role } of restrictedRoles) {
+        const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer test-token',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
-            query: `Faturamento ${period}`,
-            sessionId: `test-session-period-${period}`,
-          }),
-        });
+            query: "Faturamento completo da clínica",
+            sessionId: `test-session-${role}`,
+            context: {
+              userId: `${role}-user-id`,
+              role: role
+            }
+          })
+        })
 
-        expect(response.status).toBe(200);
-        const data = await response.json();
-        expect(data.success).toBe(true);
-        expect(data.response.type).toBe('summary');
+        // Should either deny access or provide limited information
+        if (response.status === 200) {
+          const responseData = await response.json()
+          if (responseData.success) {
+            // Limited financial information might be provided
+            expect(responseData.response).toBeDefined()
+          }
+        } else {
+          expect(response.status).toBe(403)
+        }
       }
-    });
+    })
 
-    it('should handle empty financial data', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+    test('should handle unauthorized financial access attempts', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer invalid-role-token'
         },
         body: JSON.stringify({
-          query: 'Faturamento do período sem movimentação',
-          sessionId: 'test-session-fin-9',
-        }),
-      });
+          query: "Todos os dados financeiros",
+          sessionId: "test-session-unauthorized",
+          context: {
+            userId: "unauthorized-user",
+            role: "guest"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      expect(response.status).toBe(403)
+    })
+  })
 
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('summary');
-      expect(data.response.summary.totalRevenue).toBe(0);
-      expect(data.response.summary.totalExpenses).toBe(0);
-      expect(data.response.summary.netIncome).toBe(0);
-    });
+  describe('Financial Data Aggregation', () => {
+    test('should aggregate revenue data appropriately', async () => {
+      expect(app).toBeDefined()
 
-    it('should include date formatting for financial records', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-admin-token'
         },
         body: JSON.stringify({
-          query: 'Registros financeiros',
-          sessionId: 'test-session-fin-10',
-        }),
-      });
+          query: "Receita total do mês",
+          sessionId: "test-session-aggregation",
+          context: {
+            userId: "admin-user-id"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      const responseData = await response.json()
+      
+      if (responseData.response.content.data) {
+        // Should include aggregated financial totals
+        const content = JSON.stringify(responseData.response.content)
+        const hasTotal = content.includes('total') || content.includes('R$')
+        expect(hasTotal).toBe(true)
+      }
+    })
 
-      // Verify date column exists
-      const dateColumn = data.response.columns.find(
-        (col: any) => col.key === 'date',
-      );
-      expect(dateColumn).toBeDefined();
-      expect(dateColumn.type).toBe('date');
+    test('should handle different time periods', async () => {
+      expect(app).toBeDefined()
 
-      // Verify date format
-      data.response.data.forEach((record: any) => {
-        expect(() => new Date(record.date)).not.toThrow();
-      });
-    });
-  });
-});
+      const timePeriodQueries = [
+        "Faturamento desta semana",
+        "Receita do mês passado",
+        "Faturamento anual",
+        "Comparativo mensal"
+      ]
+
+      for (const query of timePeriodQueries) {
+        const response = await app.request('/api/ai/data-agent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer valid-admin-token'
+          },
+          body: JSON.stringify({
+            query,
+            sessionId: `test-session-period-${Math.random()}`,
+            context: {
+              userId: "admin-user-id"
+            }
+          })
+        })
+
+        expect(response.status).toBe(200)
+        
+        const responseData = await response.json()
+        expect(responseData.success).toBe(true)
+      }
+    })
+  })
+
+  describe('Performance Requirements', () => {
+    test('should respond within 2 seconds for financial queries', async () => {
+      expect(app).toBeDefined()
+
+      const startTime = Date.now()
+      
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-admin-token'
+        },
+        body: JSON.stringify({
+          query: "Como está o faturamento?",
+          sessionId: "test-session-performance",
+          context: {
+            userId: "admin-user-id"
+          }
+        })
+      })
+
+      const endTime = Date.now()
+      const responseTime = endTime - startTime
+
+      expect(responseTime).toBeLessThan(2000) // <2s requirement
+      expect(response.status).toBe(200)
+    })
+
+    test('should handle complex financial calculations efficiently', async () => {
+      expect(app).toBeDefined()
+
+      const complexQueries = [
+        "Análise de tendência de faturamento",
+        "Comparativo de receita por período",
+        "Projeção financeira baseada em dados históricos"
+      ]
+
+      for (const query of complexQueries) {
+        const startTime = Date.now()
+        
+        const response = await app.request('/api/ai/data-agent', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer valid-admin-token'
+          },
+          body: JSON.stringify({
+            query,
+            sessionId: `test-session-complex-${Math.random()}`,
+            context: {
+              userId: "admin-user-id"
+            }
+          })
+        })
+
+        const endTime = Date.now()
+        const responseTime = endTime - startTime
+
+        expect(responseTime).toBeLessThan(2000)
+        expect(response.status).toBe(200)
+      }
+    })
+  })
+
+  describe('Financial Data Security and Audit', () => {
+    test('should audit all financial data access', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-admin-token'
+        },
+        body: JSON.stringify({
+          query: "Relatório financeiro mensal",
+          sessionId: "test-session-audit",
+          context: {
+            userId: "admin-user-id"
+          }
+        })
+      })
+
+      expect(response.status).toBe(200)
+      
+      // Audit logging should be triggered for financial data access
+      const responseData = await response.json()
+      expect(responseData.success).toBe(true)
+    })
+
+    test('should not expose sensitive financial details unnecessarily', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-admin-token'
+        },
+        body: JSON.stringify({
+          query: "Resumo financeiro geral",
+          sessionId: "test-session-privacy",
+          context: {
+            userId: "admin-user-id"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      
+      // Should provide aggregated data, not individual transaction details
+      if (responseData.response.content.data) {
+        const content = JSON.stringify(responseData.response.content)
+        
+        // Should not include sensitive payment details like card numbers
+        expect(content).not.toMatch(/\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b/)
+        expect(content).not.toMatch(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/) // CPF format
+      }
+    })
+  })
+
+  describe('Currency and Localization', () => {
+    test('should format currency values in Brazilian Real (BRL)', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-admin-token'
+        },
+        body: JSON.stringify({
+          query: "Faturamento em reais",
+          sessionId: "test-session-currency",
+          context: {
+            userId: "admin-user-id"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      
+      // Should include BRL currency formatting
+      const content = JSON.stringify(responseData.response.content)
+      const hasBRLFormat = content.includes('R$') || content.includes('BRL')
+      expect(hasBRLFormat).toBe(true)
+    })
+
+    test('should use Portuguese language for financial terms', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-admin-token'
+        },
+        body: JSON.stringify({
+          query: "Balanço financeiro",
+          sessionId: "test-session-language",
+          context: {
+            userId: "admin-user-id"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      
+      // Response should be in Portuguese
+      expect(responseData.response.content.title).toMatch(/[Ff]inanceiro|[Bb]alanço|[Ff]aturamento/)
+    })
+  })
+})

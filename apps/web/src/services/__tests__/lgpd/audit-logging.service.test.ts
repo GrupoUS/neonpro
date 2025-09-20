@@ -4,18 +4,18 @@
  * Tests LGPD audit trail requirements for healthcare calendar operations
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { calendarLGPDAuditService } from "@/services/lgpd/audit-logging.service";
+import type { CalendarAppointment } from '@/services/appointments.service';
+import { calendarLGPDAuditService } from '@/services/lgpd/audit-logging.service';
 import type {
-  LGPDAuditAction,
   AuditFilter,
   ConsentValidationResult,
   DataMinimizationLevel,
-} from "@/services/lgpd/audit-logging.service";
-import type { CalendarAppointment } from "@/services/appointments.service";
+  LGPDAuditAction,
+} from '@/services/lgpd/audit-logging.service';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Supabase client
-vi.mock("@/integrations/supabase/client", () => ({
+vi.mock('@/integrations/supabase/client', () => ({
   supabase: {
     from: vi.fn(() => ({
       select: vi.fn(() => ({
@@ -24,11 +24,11 @@ vi.mock("@/integrations/supabase/client", () => ({
             gte: vi.fn(() => ({
               lte: vi.fn(() => ({
                 order: vi.fn(() => ({
-                  then: vi.fn((resolve) =>
+                  then: vi.fn(resolve =>
                     resolve({
                       data: [],
                       error: null,
-                    }),
+                    })
                   ),
                 })),
               })),
@@ -39,11 +39,11 @@ vi.mock("@/integrations/supabase/client", () => ({
       insert: vi.fn(() => ({
         select: vi.fn(() => ({
           single: vi.fn(() => ({
-            then: vi.fn((resolve) =>
+            then: vi.fn(resolve =>
               resolve({
-                data: { id: "audit-log-123" },
+                data: { id: 'audit-log-123' },
                 error: null,
-              }),
+              })
             ),
           })),
         })),
@@ -52,7 +52,7 @@ vi.mock("@/integrations/supabase/client", () => ({
   },
 }));
 
-describe("CalendarLGPDAuditService - RED Phase Tests", () => {
+describe('CalendarLGPDAuditService - RED Phase Tests', () => {
   let mockAppointment: CalendarAppointment;
   let mockUserId: string;
   let mockUserRole: string;
@@ -62,30 +62,30 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
     vi.clearAllMocks();
 
     mockAppointment = {
-      id: "apt-123",
-      title: "Consulta Dr. Silva",
-      start: new Date("2024-01-15T10:00:00"),
-      end: new Date("2024-01-15T11:00:00"),
-      color: "#3b82f6",
-      status: "scheduled",
-      patientName: "João Silva",
-      patientId: "patient-123",
-      serviceName: "Consulta Clínica Geral",
-      description: "Consulta de acompanhamento",
-      notes: "Paciente apresenta melhora",
-      clinicId: "clinic-123",
+      id: 'apt-123',
+      title: 'Consulta Dr. Silva',
+      start: new Date('2024-01-15T10:00:00'),
+      end: new Date('2024-01-15T11:00:00'),
+      color: '#3b82f6',
+      status: 'scheduled',
+      patientName: 'João Silva',
+      patientId: 'patient-123',
+      serviceName: 'Consulta Clínica Geral',
+      description: 'Consulta de acompanhamento',
+      notes: 'Paciente apresenta melhora',
+      clinicId: 'clinic-123',
     };
 
-    mockUserId = "user-123";
-    mockUserRole = "doctor";
+    mockUserId = 'user-123';
+    mockUserRole = 'doctor';
 
     mockConsentResult = {
       isValid: true,
-      consentId: "consent-123",
-      purpose: "appointment_management" as any,
-      patientId: "patient-123",
+      consentId: 'consent-123',
+      purpose: 'appointment_management' as any,
+      patientId: 'patient-123',
       isExplicit: true,
-      legalBasis: "consent",
+      legalBasis: 'consent',
     };
   });
 
@@ -93,52 +93,51 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
     vi.restoreAllMocks();
   });
 
-  describe("Service Existence and Structure", () => {
-    it("should FAIL - service should be properly instantiated", () => {
+  describe('Service Existence and Structure', () => {
+    it('should FAIL - service should be properly instantiated', () => {
       // RED: This test fails if service doesn't exist or is malformed
       expect(calendarLGPDAuditService).toBeDefined();
       expect(typeof calendarLGPDAuditService.logAppointmentAccess).toBe(
-        "function",
+        'function',
       );
       expect(typeof calendarLGPDAuditService.logBatchOperation).toBe(
-        "function",
+        'function',
       );
       expect(typeof calendarLGPDAuditService.logConsentValidation).toBe(
-        "function",
+        'function',
       );
       expect(typeof calendarLGPDAuditService.logDataMinimization).toBe(
-        "function",
+        'function',
       );
       expect(typeof calendarLGPDAuditService.generateComplianceReport).toBe(
-        "function",
+        'function',
       );
       expect(typeof calendarLGPDAuditService.getPatientAuditLogs).toBe(
-        "function",
+        'function',
       );
     });
 
-    it("should FAIL - LGPD audit actions should be defined", () => {
+    it('should FAIL - LGPD audit actions should be defined', () => {
       // RED: This test fails if audit actions are incomplete
-      expect(LGPDAuditAction.CONSENT_VALIDATED).toBe("consent_validated");
-      expect(LGPDAuditAction.CONSENT_DENIED).toBe("consent_denied");
-      expect(LGPDAuditAction.APPOINTMENT_ACCESSED).toBe("appointment_accessed");
-      expect(LGPDAuditAction.APPOINTMENT_CREATED).toBe("appointment_created");
-      expect(LGPDAuditAction.APPOINTMENT_UPDATED).toBe("appointment_updated");
-      expect(LGPDAuditAction.APPOINTMENT_DELETED).toBe("appointment_deleted");
-      expect(LGPDAuditAction.DATA_MINIMIZED).toBe("data_minimized");
-      expect(LGPDAuditAction.BATCH_PROCESSED).toBe("batch_processed");
+      expect(LGPDAuditAction.CONSENT_VALIDATED).toBe('consent_validated');
+      expect(LGPDAuditAction.CONSENT_DENIED).toBe('consent_denied');
+      expect(LGPDAuditAction.APPOINTMENT_ACCESSED).toBe('appointment_accessed');
+      expect(LGPDAuditAction.APPOINTMENT_CREATED).toBe('appointment_created');
+      expect(LGPDAuditAction.APPOINTMENT_UPDATED).toBe('appointment_updated');
+      expect(LGPDAuditAction.APPOINTMENT_DELETED).toBe('appointment_deleted');
+      expect(LGPDAuditAction.DATA_MINIMIZED).toBe('data_minimized');
+      expect(LGPDAuditAction.BATCH_PROCESSED).toBe('batch_processed');
     });
 
-    it("should FAIL - should have proper default retention period", () => {
+    it('should FAIL - should have proper default retention period', () => {
       // RED: This test fails if default retention is incorrect
-      const defaultRetention =
-        calendarLGPDAuditService["DEFAULT_RETENTION_DAYS"];
+      const defaultRetention = calendarLGPDAuditService['DEFAULT_RETENTION_DAYS'];
       expect(defaultRetention).toBe(2555); // 7 years for medical data
     });
   });
 
-  describe("Appointment Access Logging - LGPD Art. 37º", () => {
-    it("should FAIL - should log appointment access with full compliance data", async () => {
+  describe('Appointment Access Logging - LGPD Art. 37º', () => {
+    it('should FAIL - should log appointment access with full compliance data', async () => {
       // RED: This test fails if appointment access logging is incomplete
       const auditLogId = await calendarLGPDAuditService.logAppointmentAccess(
         mockAppointment,
@@ -146,15 +145,15 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         mockUserRole,
         mockConsentResult,
         DataMinimizationLevel.STANDARD,
-        "view",
+        'view',
       );
 
       expect(auditLogId).toBeDefined();
-      expect(typeof auditLogId).toBe("string");
+      expect(typeof auditLogId).toBe('string');
       expect(auditLogId.length).toBeGreaterThan(0);
     });
 
-    it("should FAIL - should include required audit log fields", async () => {
+    it('should FAIL - should include required audit log fields', async () => {
       // RED: This test fails if required fields are missing
       await calendarLGPDAuditService.logAppointmentAccess(
         mockAppointment,
@@ -162,11 +161,11 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         mockUserRole,
         mockConsentResult,
         DataMinimizationLevel.STANDARD,
-        "view",
+        'view',
       );
 
       // Check that Supabase insert was called with required fields
-      const mockSupabase = require("@/integrations/supabase/client").supabase;
+      const mockSupabase = require('@/integrations/supabase/client').supabase;
       const insertCall = mockSupabase.from().insert().select().single;
 
       expect(insertCall).toHaveBeenCalled();
@@ -188,7 +187,7 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
       expect(auditLog.riskLevel).toBeDefined();
     });
 
-    it("should FAIL - should determine correct action based on context", async () => {
+    it('should FAIL - should determine correct action based on context', async () => {
       // RED: This test fails if action determination is incorrect
       await calendarLGPDAuditService.logAppointmentAccess(
         mockAppointment,
@@ -196,10 +195,10 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         mockUserRole,
         mockConsentResult,
         DataMinimizationLevel.STANDARD,
-        "view",
+        'view',
       );
 
-      const mockSupabase = require("@/integrations/supabase/client").supabase;
+      const mockSupabase = require('@/integrations/supabase/client').supabase;
       const auditLog = mockSupabase.from().insert().select().single.mock
         .calls[0][0];
 
@@ -207,18 +206,18 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
 
       // Reset mock and test edit context
       vi.clearAllMocks();
-      require("@/integrations/supabase/client").supabase.from.mockReturnValue({
+      require('@/integrations/supabase/client').supabase.from.mockReturnValue({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             in: vi.fn(() => ({
               gte: vi.fn(() => ({
                 lte: vi.fn(() => ({
                   order: vi.fn(() => ({
-                    then: vi.fn((resolve) =>
+                    then: vi.fn(resolve =>
                       resolve({
                         data: [],
                         error: null,
-                      }),
+                      })
                     ),
                   })),
                 })),
@@ -229,11 +228,11 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         insert: vi.fn(() => ({
           select: vi.fn(() => ({
             single: vi.fn(() => ({
-              then: vi.fn((resolve) =>
+              then: vi.fn(resolve =>
                 resolve({
-                  data: { id: "audit-log-123" },
+                  data: { id: 'audit-log-123' },
                   error: null,
-                }),
+                })
               ),
             })),
           })),
@@ -246,20 +245,20 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         mockUserRole,
         mockConsentResult,
         DataMinimizationLevel.STANDARD,
-        "edit",
+        'edit',
       );
 
-      const editAuditLog = require("@/integrations/supabase/client")
+      const editAuditLog = require('@/integrations/supabase/client')
         .supabase.from()
         .insert()
         .select().single.mock.calls[0][0];
       expect(editAuditLog.action).toBe(LGPDAuditAction.APPOINTMENT_UPDATED);
     });
 
-    it("should FAIL - should include metadata in audit details", async () => {
+    it('should FAIL - should include metadata in audit details', async () => {
       // RED: This test fails if metadata inclusion is missing
       const metadata = {
-        customField: "test-value",
+        customField: 'test-value',
         additionalInfo: { test: true },
       };
 
@@ -269,29 +268,29 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         mockUserRole,
         mockConsentResult,
         DataMinimizationLevel.STANDARD,
-        "view",
+        'view',
         metadata,
       );
 
-      const mockSupabase = require("@/integrations/supabase/client").supabase;
+      const mockSupabase = require('@/integrations/supabase/client').supabase;
       const auditLog = mockSupabase.from().insert().select().single.mock
         .calls[0][0];
 
-      expect(auditLog.details.customField).toBe("test-value");
+      expect(auditLog.details.customField).toBe('test-value');
       expect(auditLog.details.additionalInfo).toEqual({ test: true });
     });
   });
 
-  describe("Batch Operation Logging", () => {
-    it("should FAIL - should log batch operations with comprehensive audit trail", async () => {
+  describe('Batch Operation Logging', () => {
+    it('should FAIL - should log batch operations with comprehensive audit trail', async () => {
       // RED: This test fails if batch operation logging is incomplete
       const appointments = [
         mockAppointment,
-        { ...mockAppointment, id: "apt-456" },
+        { ...mockAppointment, id: 'apt-456' },
       ];
       const consentResults = [
         mockConsentResult,
-        { ...mockConsentResult, patientId: "apt-456" },
+        { ...mockConsentResult, patientId: 'apt-456' },
       ];
       const minimizationResults = [
         { consentLevel: DataMinimizationLevel.STANDARD },
@@ -302,33 +301,33 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         mockUserId,
         mockUserRole,
         LGPDAuditAction.APPOINTMENT_CREATED,
-        "appointment_management" as any,
+        'appointment_management' as any,
         consentResults,
         minimizationResults,
       );
 
       expect(auditLogId).toBeDefined();
-      expect(typeof auditLogId).toBe("string");
+      expect(typeof auditLogId).toBe('string');
     });
 
-    it("should FAIL - should include batch-specific audit fields", async () => {
+    it('should FAIL - should include batch-specific audit fields', async () => {
       // RED: This test fails if batch-specific fields are missing
       await calendarLGPDAuditService.logBatchOperation(
         [mockAppointment],
         mockUserId,
         mockUserRole,
         LGPDAuditAction.APPOINTMENT_CREATED,
-        "appointment_management" as any,
+        'appointment_management' as any,
         [mockConsentResult],
         [{ consentLevel: DataMinimizationLevel.STANDARD }],
       );
 
-      const mockSupabase = require("@/integrations/supabase/client").supabase;
+      const mockSupabase = require('@/integrations/supabase/client').supabase;
       const auditLog = mockSupabase.from().insert().select().single.mock
         .calls[0][0];
 
-      expect(auditLog.patientId).toBe("batch_operation");
-      expect(auditLog.dataCategory).toContain("batch_processing");
+      expect(auditLog.patientId).toBe('batch_operation');
+      expect(auditLog.dataCategory).toContain('batch_processing');
       expect(auditLog.details.automatedDecision).toBe(true);
       expect(auditLog.details.riskAssessment).toBeDefined();
       expect(
@@ -339,7 +338,7 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
       ).toBe(true);
     });
 
-    it("should FAIL - should assess batch compliance status", async () => {
+    it('should FAIL - should assess batch compliance status', async () => {
       // RED: This test fails if batch compliance assessment is missing
       const validConsents = [mockConsentResult];
       const mixedConsents = [
@@ -349,79 +348,76 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
       const invalidConsents = [{ ...mockConsentResult, isValid: false }];
 
       // Test all valid
-      let complianceStatus =
-        calendarLGPDAuditService["determineBatchComplianceStatus"](
-          validConsents,
-        );
-      expect(complianceStatus).toBe("compliant");
+      let complianceStatus = calendarLGPDAuditService['determineBatchComplianceStatus'](
+        validConsents,
+      );
+      expect(complianceStatus).toBe('compliant');
 
       // Test mixed
-      complianceStatus =
-        calendarLGPDAuditService["determineBatchComplianceStatus"](
-          mixedConsents,
-        );
-      expect(complianceStatus).toBe("partial");
+      complianceStatus = calendarLGPDAuditService['determineBatchComplianceStatus'](
+        mixedConsents,
+      );
+      expect(complianceStatus).toBe('partial');
 
       // Test all invalid
-      complianceStatus =
-        calendarLGPDAuditService["determineBatchComplianceStatus"](
-          invalidConsents,
-        );
-      expect(complianceStatus).toBe("non_compliant");
+      complianceStatus = calendarLGPDAuditService['determineBatchComplianceStatus'](
+        invalidConsents,
+      );
+      expect(complianceStatus).toBe('non_compliant');
     });
   });
 
-  describe("Consent Validation Logging", () => {
-    it("should FAIL - should log consent validation events", async () => {
+  describe('Consent Validation Logging', () => {
+    it('should FAIL - should log consent validation events', async () => {
       // RED: This test fails if consent validation logging is missing
       const auditLogId = await calendarLGPDAuditService.logConsentValidation(
-        "patient-123",
+        'patient-123',
         mockUserId,
         mockUserRole,
-        "appointment_management" as any,
+        'appointment_management' as any,
         mockConsentResult,
-        "calendar_view",
+        'calendar_view',
       );
 
       expect(auditLogId).toBeDefined();
-      expect(typeof auditLogId).toBe("string");
+      expect(typeof auditLogId).toBe('string');
     });
 
-    it("should FAIL - should log different actions for valid vs invalid consent", async () => {
+    it('should FAIL - should log different actions for valid vs invalid consent', async () => {
       // RED: This test fails if action differentiation is missing
 
       // Test valid consent
       await calendarLGPDAuditService.logConsentValidation(
-        "patient-123",
+        'patient-123',
         mockUserId,
         mockUserRole,
-        "appointment_management" as any,
+        'appointment_management' as any,
         mockConsentResult,
-        "calendar_view",
+        'calendar_view',
       );
 
-      const mockSupabase = require("@/integrations/supabase/client").supabase;
+      const mockSupabase = require('@/integrations/supabase/client').supabase;
       const validAuditLog = mockSupabase.from().insert().select().single.mock
         .calls[0][0];
 
       expect(validAuditLog.action).toBe(LGPDAuditAction.CONSENT_VALIDATED);
-      expect(validAuditLog.complianceStatus).toBe("compliant");
-      expect(validAuditLog.riskLevel).toBe("low");
+      expect(validAuditLog.complianceStatus).toBe('compliant');
+      expect(validAuditLog.riskLevel).toBe('low');
 
       // Reset mock and test invalid consent
       vi.clearAllMocks();
-      require("@/integrations/supabase/client").supabase.from.mockReturnValue({
+      require('@/integrations/supabase/client').supabase.from.mockReturnValue({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             in: vi.fn(() => ({
               gte: vi.fn(() => ({
                 lte: vi.fn(() => ({
                   order: vi.fn(() => ({
-                    then: vi.fn((resolve) =>
+                    then: vi.fn(resolve =>
                       resolve({
                         data: [],
                         error: null,
-                      }),
+                      })
                     ),
                   })),
                 })),
@@ -432,11 +428,11 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         insert: vi.fn(() => ({
           select: vi.fn(() => ({
             single: vi.fn(() => ({
-              then: vi.fn((resolve) =>
+              then: vi.fn(resolve =>
                 resolve({
-                  data: { id: "audit-log-123" },
+                  data: { id: 'audit-log-123' },
                   error: null,
-                }),
+                })
               ),
             })),
           })),
@@ -446,55 +442,55 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
       const invalidConsentResult = { ...mockConsentResult, isValid: false };
 
       await calendarLGPDAuditService.logConsentValidation(
-        "patient-123",
+        'patient-123',
         mockUserId,
         mockUserRole,
-        "appointment_management" as any,
+        'appointment_management' as any,
         invalidConsentResult,
-        "calendar_view",
+        'calendar_view',
       );
 
-      const invalidAuditLog = require("@/integrations/supabase/client")
+      const invalidAuditLog = require('@/integrations/supabase/client')
         .supabase.from()
         .insert()
         .select().single.mock.calls[0][0];
 
       expect(invalidAuditLog.action).toBe(LGPDAuditAction.CONSENT_DENIED);
-      expect(invalidAuditLog.complianceStatus).toBe("non_compliant");
-      expect(invalidAuditLog.riskLevel).toBe("medium");
+      expect(invalidAuditLog.complianceStatus).toBe('non_compliant');
+      expect(invalidAuditLog.riskLevel).toBe('medium');
     });
   });
 
-  describe("Data Minimization Logging", () => {
-    it("should FAIL - should log data minimization operations", async () => {
+  describe('Data Minimization Logging', () => {
+    it('should FAIL - should log data minimization operations', async () => {
       // RED: This test fails if data minimization logging is missing
       const auditLogId = await calendarLGPDAuditService.logDataMinimization(
-        "patient-123",
+        'patient-123',
         mockUserId,
         mockUserRole,
         mockAppointment,
-        { id: "minimized-123" },
+        { id: 'minimized-123' },
         DataMinimizationLevel.STANDARD,
-        "calendar_processing",
+        'calendar_processing',
       );
 
       expect(auditLogId).toBeDefined();
-      expect(typeof auditLogId).toBe("string");
+      expect(typeof auditLogId).toBe('string');
     });
 
-    it("should FAIL - should include minimization-specific details", async () => {
+    it('should FAIL - should include minimization-specific details', async () => {
       // RED: This test fails if minimization details are incomplete
       await calendarLGPDAuditService.logDataMinimization(
-        "patient-123",
+        'patient-123',
         mockUserId,
         mockUserRole,
         mockAppointment,
-        { id: "minimized-123" },
+        { id: 'minimized-123' },
         DataMinimizationLevel.STANDARD,
-        "calendar_processing",
+        'calendar_processing',
       );
 
-      const mockSupabase = require("@/integrations/supabase/client").supabase;
+      const mockSupabase = require('@/integrations/supabase/client').supabase;
       const auditLog = mockSupabase.from().insert().select().single.mock
         .calls[0][0];
 
@@ -503,13 +499,13 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
       expect(auditLog.details.consentLevel).toBe(
         DataMinimizationLevel.STANDARD,
       );
-      expect(auditLog.complianceStatus).toBe("compliant");
-      expect(auditLog.legalBasis).toContain("minimização");
+      expect(auditLog.complianceStatus).toBe('compliant');
+      expect(auditLog.legalBasis).toContain('minimização');
     });
   });
 
-  describe("Compliance Reporting", () => {
-    it("should FAIL - should generate comprehensive compliance reports", async () => {
+  describe('Compliance Reporting', () => {
+    it('should FAIL - should generate comprehensive compliance reports', async () => {
       // RED: This test fails if compliance reporting is incomplete
       const report = await calendarLGPDAuditService.generateComplianceReport();
 
@@ -527,22 +523,22 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
       expect(report.generatedAt).toBeInstanceOf(Date);
     });
 
-    it("should FAIL - should apply filters correctly", async () => {
+    it('should FAIL - should apply filters correctly', async () => {
       // RED: This test fails if filtering is not applied correctly
       const filter: AuditFilter = {
-        patientId: "patient-123",
-        userId: "user-123",
+        patientId: 'patient-123',
+        userId: 'user-123',
         action: [
           LGPDAuditAction.APPOINTMENT_ACCESSED,
           LGPDAuditAction.APPOINTMENT_CREATED,
         ],
-        complianceStatus: ["compliant"],
-        riskLevel: ["low", "medium"],
+        complianceStatus: ['compliant'],
+        riskLevel: ['low', 'medium'],
       };
 
       await calendarLGPDAuditService.generateComplianceReport(filter);
 
-      const mockSupabase = require("@/integrations/supabase/client").supabase;
+      const mockSupabase = require('@/integrations/supabase/client').supabase;
       const selectCall = mockSupabase.from().select;
 
       expect(selectCall).toHaveBeenCalled();
@@ -551,11 +547,11 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
       // In a real test, we'd verify the actual SQL constraints
     });
 
-    it("should FAIL - should handle date range filtering", async () => {
+    it('should FAIL - should handle date range filtering', async () => {
       // RED: This test fails if date range filtering is missing
       const dateRange = {
-        start: new Date("2024-01-01"),
-        end: new Date("2024-01-31"),
+        start: new Date('2024-01-01'),
+        end: new Date('2024-01-31'),
       };
 
       await calendarLGPDAuditService.generateComplianceReport(
@@ -563,38 +559,37 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         dateRange,
       );
 
-      const mockSupabase = require("@/integrations/supabase/client").supabase;
+      const mockSupabase = require('@/integrations/supabase/client').supabase;
       const selectCall = mockSupabase.from().select;
 
       expect(selectCall).toHaveBeenCalled();
     });
   });
 
-  describe("Patient Data Subject Rights", () => {
-    it("should FAIL - should retrieve audit logs for specific patients", async () => {
+  describe('Patient Data Subject Rights', () => {
+    it('should FAIL - should retrieve audit logs for specific patients', async () => {
       // RED: This test fails if patient-specific log retrieval is missing
-      const patientLogs =
-        await calendarLGPDAuditService.getPatientAuditLogs("patient-123");
+      const patientLogs = await calendarLGPDAuditService.getPatientAuditLogs('patient-123');
 
       expect(Array.isArray(patientLogs)).toBe(true);
       expect(patientLogs.length).toBeGreaterThanOrEqual(0);
 
       if (patientLogs.length > 0) {
         const log = patientLogs[0];
-        expect(log.patientId).toBe("patient-123");
+        expect(log.patientId).toBe('patient-123');
         expect(log.timestamp).toBeInstanceOf(Date);
       }
     });
 
-    it("should FAIL - should filter patient logs by date range", async () => {
+    it('should FAIL - should filter patient logs by date range', async () => {
       // RED: This test fails if date range filtering for patient logs is missing
       const dateRange = {
-        start: new Date("2024-01-01"),
-        end: new Date("2024-01-31"),
+        start: new Date('2024-01-01'),
+        end: new Date('2024-01-31'),
       };
 
       const patientLogs = await calendarLGPDAuditService.getPatientAuditLogs(
-        "patient-123",
+        'patient-123',
         dateRange,
       );
 
@@ -602,10 +597,9 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
       // In a real implementation, we'd verify the date filtering worked correctly
     });
 
-    it("should FAIL - should return logs in chronological order", async () => {
+    it('should FAIL - should return logs in chronological order', async () => {
       // RED: This test fails if chronological ordering is missing
-      const patientLogs =
-        await calendarLGPDAuditService.getPatientAuditLogs("patient-123");
+      const patientLogs = await calendarLGPDAuditService.getPatientAuditLogs('patient-123');
 
       // Verify logs are sorted by timestamp in descending order
       for (let i = 1; i < patientLogs.length; i++) {
@@ -616,125 +610,121 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
     });
   });
 
-  describe("Data Category Determination", () => {
-    it("should FAIL - should determine data categories based on minimization level", () => {
+  describe('Data Category Determination', () => {
+    it('should FAIL - should determine data categories based on minimization level', () => {
       // RED: This test fails if data category determination is incorrect
       const minimalCategories = calendarLGPDAuditService[
-        "determineDataCategories"
+        'determineDataCategories'
       ](DataMinimizationLevel.MINIMAL);
-      expect(minimalCategories).toContain("appointment_data");
-      expect(minimalCategories).not.toContain("personal_identification");
+      expect(minimalCategories).toContain('appointment_data');
+      expect(minimalCategories).not.toContain('personal_identification');
 
       const standardCategories = calendarLGPDAuditService[
-        "determineDataCategories"
+        'determineDataCategories'
       ](DataMinimizationLevel.STANDARD);
-      expect(standardCategories).toContain("appointment_data");
-      expect(standardCategories).toContain("personal_identification");
-      expect(standardCategories).toContain("health_data");
+      expect(standardCategories).toContain('appointment_data');
+      expect(standardCategories).toContain('personal_identification');
+      expect(standardCategories).toContain('health_data');
 
       const fullCategories = calendarLGPDAuditService[
-        "determineDataCategories"
+        'determineDataCategories'
       ](DataMinimizationLevel.FULL);
-      expect(fullCategories).toContain("appointment_data");
-      expect(fullCategories).toContain("personal_identification");
-      expect(fullCategories).toContain("health_data");
-      expect(fullCategories).toContain("sensitive_health_data");
+      expect(fullCategories).toContain('appointment_data');
+      expect(fullCategories).toContain('personal_identification');
+      expect(fullCategories).toContain('health_data');
+      expect(fullCategories).toContain('sensitive_health_data');
     });
 
-    it("should FAIL - should track accessed data elements", () => {
+    it('should FAIL - should track accessed data elements', () => {
       // RED: This test fails if data element tracking is incomplete
       const minimalElements = calendarLGPDAuditService[
-        "getAccessedDataElements"
+        'getAccessedDataElements'
       ](DataMinimizationLevel.MINIMAL);
-      expect(minimalElements).toContain("appointment_id");
-      expect(minimalElements).toContain("time_slot");
-      expect(minimalElements).toContain("status");
-      expect(minimalElements).not.toContain("patient_full_name");
+      expect(minimalElements).toContain('appointment_id');
+      expect(minimalElements).toContain('time_slot');
+      expect(minimalElements).toContain('status');
+      expect(minimalElements).not.toContain('patient_full_name');
 
-      const fullElements = calendarLGPDAuditService["getAccessedDataElements"](
+      const fullElements = calendarLGPDAuditService['getAccessedDataElements'](
         DataMinimizationLevel.FULL,
       );
-      expect(fullElements).toContain("appointment_id");
-      expect(fullElements).toContain("patient_full_name");
-      expect(fullElements).toContain("service_details");
-      expect(fullElements).toContain("medical_notes");
+      expect(fullElements).toContain('appointment_id');
+      expect(fullElements).toContain('patient_full_name');
+      expect(fullElements).toContain('service_details');
+      expect(fullElements).toContain('medical_notes');
     });
   });
 
-  describe("Compliance Status Determination", () => {
-    it("should FAIL - should determine compliance status correctly", () => {
+  describe('Compliance Status Determination', () => {
+    it('should FAIL - should determine compliance status correctly', () => {
       // RED: This test fails if compliance status determination is incorrect
       // Valid consent with full access
-      let status = calendarLGPDAuditService["determineComplianceStatus"](
+      let status = calendarLGPDAuditService['determineComplianceStatus'](
         mockConsentResult,
         DataMinimizationLevel.FULL,
       );
-      expect(status).toBe("compliant");
+      expect(status).toBe('compliant');
 
       // Invalid consent
-      status = calendarLGPDAuditService["determineComplianceStatus"](
+      status = calendarLGPDAuditService['determineComplianceStatus'](
         { ...mockConsentResult, isValid: false },
         DataMinimizationLevel.STANDARD,
       );
-      expect(status).toBe("non_compliant");
+      expect(status).toBe('non_compliant');
 
       // Valid consent but minimal access
-      status = calendarLGPDAuditService["determineComplianceStatus"](
+      status = calendarLGPDAuditService['determineComplianceStatus'](
         { ...mockConsentResult, isExplicit: false },
         DataMinimizationLevel.MINIMAL,
       );
-      expect(status).toBe("unknown");
+      expect(status).toBe('unknown');
     });
 
-    it("should FAIL - should calculate appropriate retention periods", () => {
+    it('should FAIL - should calculate appropriate retention periods', () => {
       // RED: This test fails if retention period calculation is incorrect
-      const cancelledRetention =
-        calendarLGPDAuditService["calculateRetentionPeriod"]("cancelled");
+      const cancelledRetention = calendarLGPDAuditService['calculateRetentionPeriod']('cancelled');
       expect(cancelledRetention).toBe(90);
 
-      const completedRetention =
-        calendarLGPDAuditService["calculateRetentionPeriod"]("completed");
+      const completedRetention = calendarLGPDAuditService['calculateRetentionPeriod']('completed');
       expect(completedRetention).toBe(2555);
 
-      const emergencyRetention =
-        calendarLGPDAuditService["calculateRetentionPeriod"]("emergency");
+      const emergencyRetention = calendarLGPDAuditService['calculateRetentionPeriod']('emergency');
       expect(emergencyRetention).toBe(3650);
 
-      const defaultRetention =
-        calendarLGPDAuditService["calculateRetentionPeriod"]("unknown");
+      const defaultRetention = calendarLGPDAuditService['calculateRetentionPeriod']('unknown');
       expect(defaultRetention).toBe(1825);
     });
   });
 
-  describe("Risk Assessment", () => {
-    it("should FAIL - should assess risk level accurately", () => {
+  describe('Risk Assessment', () => {
+    it('should FAIL - should assess risk level accurately', () => {
       // RED: This test fails if risk assessment is inaccurate
       // Invalid consent - high risk
-      let risk = calendarLGPDAuditService["assessRiskLevel"](
+      let risk = calendarLGPDAuditService['assessRiskLevel'](
         { ...mockConsentResult, isValid: false },
         DataMinimizationLevel.STANDARD,
-        "view",
+        'view',
       );
-      expect(risk).toBe("high");
+      expect(risk).toBe('high');
 
       // Export with high minimization - high risk
-      risk = calendarLGPDAuditService["assessRiskLevel"](
+      risk = calendarLGPDAuditService['assessRiskLevel'](
         mockConsentResult,
         DataMinimizationLevel.FULL,
-        "export",
+        'export',
       );
-      expect(risk).toBe("high");
+      expect(risk).toBe('high');
 
       // Valid consent with minimal access - low risk
-      risk = calendarLGPDAuditService["assessRiskLevel"](
+      risk = calendarLGPDAuditService['assessRiskLevel'](
         mockConsentResult,
         DataMinimizationLevel.MINIMAL,
-        "view",
+        'view',
       );
-      expect(risk).toBe("low");
+      expect(risk).toBe('low');
     });
 
-    it("should FAIL - should identify batch processing risks", () => {
+    it('should FAIL - should identify batch processing risks', () => {
       // RED: This test fails if batch risk identification is missing
       const validConsents = [mockConsentResult, mockConsentResult];
       const invalidConsents = [{ ...mockConsentResult, isValid: false }];
@@ -742,19 +732,19 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         { consentLevel: DataMinimizationLevel.FULL },
       ];
 
-      const risks = calendarLGPDAuditService["identifyBatchRisks"](
+      const risks = calendarLGPDAuditService['identifyBatchRisks'](
         invalidConsents,
         minimizationResults,
       );
 
       expect(Array.isArray(risks)).toBe(true);
       expect(risks.length).toBeGreaterThan(0);
-      expect(risks.some((risk) => risk.includes("without valid consent"))).toBe(
+      expect(risks.some(risk => risk.includes('without valid consent'))).toBe(
         true,
       );
     });
 
-    it("should FAIL - should calculate batch residual risk", () => {
+    it('should FAIL - should calculate batch residual risk', () => {
       // RED: This test fails if batch residual risk calculation is incorrect
       const allValid = [mockConsentResult, mockConsentResult];
       const someValid = [
@@ -763,35 +753,34 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
       ];
       const allInvalid = [{ ...mockConsentResult, isValid: false }];
 
-      let risk =
-        calendarLGPDAuditService["calculateBatchResidualRisk"](allValid);
-      expect(risk).toBe("low");
+      let risk = calendarLGPDAuditService['calculateBatchResidualRisk'](allValid);
+      expect(risk).toBe('low');
 
-      risk = calendarLGPDAuditService["calculateBatchResidualRisk"](someValid);
-      expect(risk).toBe("medium");
+      risk = calendarLGPDAuditService['calculateBatchResidualRisk'](someValid);
+      expect(risk).toBe('medium');
 
-      risk = calendarLGPDAuditService["calculateBatchResidualRisk"](allInvalid);
-      expect(risk).toBe("high");
+      risk = calendarLGPDAuditService['calculateBatchResidualRisk'](allInvalid);
+      expect(risk).toBe('high');
     });
   });
 
-  describe("Report Analysis and Recommendations", () => {
-    it("should FAIL - should analyze audit logs correctly", () => {
+  describe('Report Analysis and Recommendations', () => {
+    it('should FAIL - should analyze audit logs correctly', () => {
       // RED: This test fails if audit log analysis is incorrect
       const mockLogs = [
         {
-          compliance_status: "compliant",
-          risk_level: "low",
-          action: "appointment_viewed",
+          compliance_status: 'compliant',
+          risk_level: 'low',
+          action: 'appointment_viewed',
         },
         {
-          compliance_status: "non_compliant",
-          risk_level: "high",
-          action: "consent_denied",
+          compliance_status: 'non_compliant',
+          risk_level: 'high',
+          action: 'consent_denied',
         },
       ];
 
-      const report = calendarLGPDAuditService["analyzeAuditLogs"](mockLogs);
+      const report = calendarLGPDAuditService['analyzeAuditLogs'](mockLogs);
 
       expect(report.totalOperations).toBe(2);
       expect(report.compliantOperations).toBe(1);
@@ -801,50 +790,50 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
       expect(Array.isArray(report.recommendations)).toBe(true);
     });
 
-    it("should FAIL - should generate appropriate recommendations", () => {
+    it('should FAIL - should generate appropriate recommendations', () => {
       // RED: This test fails if recommendation generation is inadequate
       const mockLogs = [
         {
-          compliance_status: "non_compliant",
-          risk_level: "high",
-          action: "consent_denied",
+          compliance_status: 'non_compliant',
+          risk_level: 'high',
+          action: 'consent_denied',
         },
       ];
 
       const recommendations = calendarLGPDAuditService[
-        "generateReportRecommendations"
+        'generateReportRecommendations'
       ](mockLogs, 25);
 
       expect(Array.isArray(recommendations)).toBe(true);
       expect(recommendations.length).toBeGreaterThan(0);
-      expect(recommendations.some((rec) => rec.includes("não conformes"))).toBe(
+      expect(recommendations.some(rec => rec.includes('não conformes'))).toBe(
         true,
       );
     });
 
-    it("should FAIL - should provide positive recommendations for high compliance", () => {
+    it('should FAIL - should provide positive recommendations for high compliance', () => {
       // RED: This test fails if positive recommendations are missing
       const mockLogs = [
         {
-          compliance_status: "compliant",
-          risk_level: "low",
-          action: "appointment_viewed",
+          compliance_status: 'compliant',
+          risk_level: 'low',
+          action: 'appointment_viewed',
         },
       ];
 
       const recommendations = calendarLGPDAuditService[
-        "generateReportRecommendations"
+        'generateReportRecommendations'
       ](mockLogs, 100);
 
       expect(Array.isArray(recommendations)).toBe(true);
-      expect(recommendations.some((rec) => rec.includes("manter"))).toBe(true);
+      expect(recommendations.some(rec => rec.includes('manter'))).toBe(true);
     });
   });
 
-  describe("Error Handling", () => {
-    it("should FAIL - should handle Supabase errors gracefully", async () => {
+  describe('Error Handling', () => {
+    it('should FAIL - should handle Supabase errors gracefully', async () => {
       // RED: This test fails if Supabase error handling is missing
-      const mockSupabase = require("@/integrations/supabase/client").supabase;
+      const mockSupabase = require('@/integrations/supabase/client').supabase;
       mockSupabase.from.mockReturnValue({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
@@ -852,11 +841,11 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
               gte: vi.fn(() => ({
                 lte: vi.fn(() => ({
                   order: vi.fn(() => ({
-                    then: vi.fn((resolve) =>
+                    then: vi.fn(resolve =>
                       resolve({
                         data: [],
                         error: null,
-                      }),
+                      })
                     ),
                   })),
                 })),
@@ -867,11 +856,11 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
         insert: vi.fn(() => ({
           select: vi.fn(() => ({
             single: vi.fn(() => ({
-              then: vi.fn((resolve) =>
+              then: vi.fn(resolve =>
                 resolve({
                   data: null,
-                  error: { message: "Database connection failed" },
-                }),
+                  error: { message: 'Database connection failed' },
+                })
               ),
             })),
           })),
@@ -885,14 +874,14 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
           mockUserRole,
           mockConsentResult,
           DataMinimizationLevel.STANDARD,
-          "view",
+          'view',
         ),
-      ).rejects.toThrow("Failed to log audit");
+      ).rejects.toThrow('Failed to log audit');
     });
 
-    it("should FAIL - should handle query errors in report generation", async () => {
+    it('should FAIL - should handle query errors in report generation', async () => {
       // RED: This test fails if query error handling is missing
-      const mockSupabase = require("@/integrations/supabase/client").supabase;
+      const mockSupabase = require('@/integrations/supabase/client').supabase;
       mockSupabase.from.mockReturnValue({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
@@ -900,11 +889,11 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
               gte: vi.fn(() => ({
                 lte: vi.fn(() => ({
                   order: vi.fn(() => ({
-                    then: vi.fn((resolve) =>
+                    then: vi.fn(resolve =>
                       resolve({
                         data: null,
-                        error: { message: "Query failed" },
-                      }),
+                        error: { message: 'Query failed' },
+                      })
                     ),
                   })),
                 })),
@@ -916,44 +905,44 @@ describe("CalendarLGPDAuditService - RED Phase Tests", () => {
 
       await expect(
         calendarLGPDAuditService.generateComplianceReport(),
-      ).rejects.toThrow("Failed to fetch audit logs");
+      ).rejects.toThrow('Failed to fetch audit logs');
     });
   });
 
-  describe("Integration with Calendar Component", () => {
-    it("should FAIL - should provide types needed by calendar integration", () => {
+  describe('Integration with Calendar Component', () => {
+    it('should FAIL - should provide types needed by calendar integration', () => {
       // RED: This test fails if required types are missing
       const types = [
-        "LGPDAuditLog",
-        "LGPDAuditAction",
-        "AuditDetails",
-        "AuditFilter",
-        "AuditReport",
+        'LGPDAuditLog',
+        'LGPDAuditAction',
+        'AuditDetails',
+        'AuditFilter',
+        'AuditReport',
       ];
 
-      types.forEach((type) => {
+      types.forEach(type => {
         expect(true).toBe(false); // Force failure to indicate type validation needed
       });
     });
 
-    it("should FAIL - should export service instance correctly", () => {
+    it('should FAIL - should export service instance correctly', () => {
       // RED: This test fails if export is incorrect
-      const exported = require("@/services/lgpd/audit-logging.service");
+      const exported = require('@/services/lgpd/audit-logging.service');
 
       expect(exported.calendarLGPDAuditService).toBeDefined();
       expect(exported.calendarLGPDAuditService).toBe(calendarLGPDAuditService);
     });
 
-    it("should FAIL - should export CALENDAR_LGPD_PURPOSES constant", () => {
+    it('should FAIL - should export CALENDAR_LGPD_PURPOSES constant', () => {
       // RED: This test fails if purpose constants are not exported
-      const exported = require("@/services/lgpd/audit-logging.service");
+      const exported = require('@/services/lgpd/audit-logging.service');
 
       expect(exported.CALENDAR_LGPD_PURPOSES).toBeDefined();
       expect(exported.CALENDAR_LGPD_PURPOSES.APPOINTMENT_SCHEDULING).toBe(
-        "appointment_scheduling",
+        'appointment_scheduling',
       );
       expect(exported.CALENDAR_LGPD_PURPOSES.APPOINTMENT_MANAGEMENT).toBe(
-        "appointment_management",
+        'appointment_management',
       );
     });
   });

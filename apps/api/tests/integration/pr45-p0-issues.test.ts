@@ -8,7 +8,7 @@
  * 4. Non-unique operation_id field in operation state service
  */
 
-import { createTRPCHandle } from '@trpc/server/adapters/hono';
+import { trpcServer } from '@hono/trpc-server';
 import { Hono } from 'hono';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

@@ -40,7 +40,7 @@ export interface GenerateAnswerResult {
   model?: string;
   provider?: AIProvider;
   finishReason?: "stop" | "length" | "content_filter" | "function_call";
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface StreamChunk {
@@ -49,7 +49,7 @@ export interface StreamChunk {
   finished: boolean;
   provider?: AIProvider;
   finishReason?: "stop" | "length" | "content_filter" | "function_call";
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface AIProviderInterface {
@@ -61,7 +61,7 @@ export interface AIProviderInterface {
 export interface AIMessage {
   role: "user" | "assistant" | "system";
   content: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // Chat-related types
@@ -84,7 +84,7 @@ export interface ChatResponse {
   metadata?: {
     finishReason?: "stop" | "length" | "content_filter" | "function_call";
     processingTime?: number;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   timestamp: Date;
 }
@@ -105,13 +105,13 @@ export interface StreamingChatResponse {
         metadata?: {
           finishReason?: "stop" | "length" | "content_filter" | "function_call";
           processingTime?: number;
-          [key: string]: any;
+          [key: string]: unknown;
         };
       }>;
   provider: AIProvider;
   model?: string;
   timestamp?: Date;
   metadata?: {
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }

@@ -96,7 +96,7 @@ export const contractTestUtils = {
   /**
    * Validates API response structure
    */
-  validateResponseStructure: (response: any, expectedStructure: any) => {
+  validateResponseStructure: (_response: any, expectedStructure: any) => {
     // Implementation for structure validation
   },
 

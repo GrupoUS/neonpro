@@ -524,7 +524,7 @@ function calculateStringSimilarity(str1: string, str2: string): number {
 export function createQuotaAuditTrail(
   action: string,
   userId: string,
-  details: Record<string, any>,
+  details: Record<string, unknown>,
 ): AuditTrail {
   return {
     action,

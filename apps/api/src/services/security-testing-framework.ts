@@ -686,7 +686,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testSQLInjectionProtection(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
       testId: 'input-validation-sql-injection',
@@ -701,7 +701,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testXSSProtection(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
       testId: 'input-validation-xss',
@@ -716,7 +716,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testPatientDataRLS(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
       testId: 'rls-patient-data',
@@ -733,7 +733,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testSensitiveDataExposure(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
       testId: 'data-exposure-sensitive-fields',
@@ -748,7 +748,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testLGPDCompliance(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
       testId: 'compliance-lgpd',

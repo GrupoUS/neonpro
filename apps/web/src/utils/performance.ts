@@ -3,7 +3,7 @@
  * T078 - Frontend Performance Optimization
  */
 
-import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
+import { onCLS, onFCP, onINP, onLCP, onTTFB } from 'web-vitals';
 
 // Core Web Vitals monitoring
 export interface WebVitalsMetrics {
@@ -18,7 +18,7 @@ export interface WebVitalsMetrics {
 declare global {
   interface Window {
     gtag?: (
-      command: "event" | string,
+      command: 'event' | string,
       action: string,
       params?: Record<string, any>,
     ) => void;
@@ -35,52 +35,52 @@ export class PerformanceMonitor {
   }
 
   private initializeWebVitals() {
-    onCLS((metric) => {
+    onCLS(metric => {
       this.metrics.cls = metric.value;
-      this.reportMetric("CLS", metric.value);
+      this.reportMetric('CLS', metric.value);
     });
 
-    onFCP((metric) => {
+    onFCP(metric => {
       this.metrics.fcp = metric.value;
-      this.reportMetric("FCP", metric.value);
+      this.reportMetric('FCP', metric.value);
     });
 
-    onINP((metric) => {
+    onINP(metric => {
       this.metrics.inp = metric.value;
-      this.reportMetric("INP", metric.value);
+      this.reportMetric('INP', metric.value);
     });
 
-    onLCP((metric) => {
+    onLCP(metric => {
       this.metrics.lcp = metric.value;
-      this.reportMetric("LCP", metric.value);
+      this.reportMetric('LCP', metric.value);
     });
 
-    onTTFB((metric) => {
+    onTTFB(metric => {
       this.metrics.ttfb = metric.value;
-      this.reportMetric("TTFB", metric.value);
+      this.reportMetric('TTFB', metric.value);
     });
   }
 
   private initializeResourceTiming() {
-    if ("PerformanceObserver" in window) {
-      const observer = new PerformanceObserver((list) => {
+    if ('PerformanceObserver' in window) {
+      const observer = new PerformanceObserver(list => {
         for (const entry of list.getEntries()) {
-          if (entry.entryType === "navigation") {
+          if (entry.entryType === 'navigation') {
             this.reportNavigationTiming(entry as PerformanceNavigationTiming);
           }
         }
       });
 
-      observer.observe({ entryTypes: ["navigation"] });
+      observer.observe({ entryTypes: ['navigation'] });
       this.observers.push(observer);
     }
   }
 
   private reportMetric(name: string, value: number) {
     // Send to analytics service
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("event", "web_vitals", {
-        event_category: "Performance",
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'web_vitals', {
+        event_category: 'Performance',
         event_label: name,
         value: Math.round(value),
         non_interaction: true,
@@ -88,7 +88,7 @@ export class PerformanceMonitor {
     }
 
     // Log for development
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       console.log(`[Performance] ${name}: ${value.toFixed(2)}ms`);
     }
   }
@@ -101,12 +101,11 @@ export class PerformanceMonitor {
       ttfb: entry.responseStart - entry.requestStart,
       download: entry.responseEnd - entry.responseStart,
       domParse: entry.domContentLoadedEventStart - entry.responseEnd,
-      domReady:
-        entry.domContentLoadedEventEnd - entry.domContentLoadedEventStart,
+      domReady: entry.domContentLoadedEventEnd - entry.domContentLoadedEventStart,
       loadComplete: entry.loadEventEnd - entry.loadEventStart,
     };
 
-    if (process.env.NODE_ENV === "development") {
+    if (process.env.NODE_ENV === 'development') {
       console.table(metrics);
     }
   }
@@ -116,7 +115,7 @@ export class PerformanceMonitor {
   }
 
   destroy() {
-    this.observers.forEach((observer) => observer.disconnect());
+    this.observers.forEach(observer => observer.disconnect());
     this.observers = [];
   }
 }
@@ -126,12 +125,12 @@ export const createIntersectionObserver = (
   callback: (entries: IntersectionObserverEntry[]) => void,
   options: IntersectionObserverInit = {},
 ): IntersectionObserver | null => {
-  if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+  if (typeof window === 'undefined' || !('IntersectionObserver' in window)) {
     return null;
   }
 
   return new IntersectionObserver(callback, {
-    rootMargin: "50px",
+    rootMargin: '50px',
     threshold: 0.1,
     ...options,
   });
@@ -143,10 +142,10 @@ export const preloadResource = (
   as: string,
   crossorigin?: string,
 ) => {
-  if (typeof document === "undefined") return;
+  if (typeof document === 'undefined') return;
 
-  const link = document.createElement("link");
-  link.rel = "preload";
+  const link = document.createElement('link');
+  link.rel = 'preload';
   link.href = href;
   link.as = as;
   if (crossorigin) link.crossOrigin = crossorigin;
@@ -155,10 +154,10 @@ export const preloadResource = (
 };
 
 export const prefetchResource = (href: string) => {
-  if (typeof document === "undefined") return;
+  if (typeof document === 'undefined') return;
 
-  const link = document.createElement("link");
-  link.rel = "prefetch";
+  const link = document.createElement('link');
+  link.rel = 'prefetch';
   link.href = href;
 
   document.head.appendChild(link);
@@ -166,26 +165,29 @@ export const prefetchResource = (href: string) => {
 
 // Bundle size monitoring
 export const logBundleSize = () => {
-  if (typeof window === "undefined" || process.env.NODE_ENV !== "development")
+  if (typeof window === 'undefined' || process.env.NODE_ENV !== 'development') {
     return;
+  }
 
-  const scripts = Array.from(document.querySelectorAll("script[src]"));
+  const scripts = Array.from(document.querySelectorAll('script[src]'));
   const styles = Array.from(
     document.querySelectorAll('link[rel="stylesheet"]'),
   );
 
-  console.group("Bundle Analysis");
-  console.log("Scripts:", scripts.length);
-  console.log("Stylesheets:", styles.length);
+  console.group('Bundle Analysis');
+  console.log('Scripts:', scripts.length);
+  console.log('Stylesheets:', styles.length);
   console.groupEnd();
 };
 
 // Memory usage monitoring
 export const monitorMemoryUsage = ():
   | { used: number; total: number; limit: number }
-  | undefined => {
-  if (typeof window === "undefined" || !("performance" in window))
+  | undefined =>
+{
+  if (typeof window === 'undefined' || !('performance' in window)) {
     return undefined;
+  }
 
   const memory = (performance as any).memory;
   if (memory) {
@@ -195,8 +197,8 @@ export const monitorMemoryUsage = ():
       limit: Math.round(memory.jsHeapSizeLimit / 1048576),
     };
 
-    if (process.env.NODE_ENV === "development") {
-      console.log("Memory Usage (MB):", usage);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Memory Usage (MB):', usage);
     }
 
     return usage;
@@ -208,8 +210,8 @@ export const monitorMemoryUsage = ():
 export const performanceMonitor = new PerformanceMonitor();
 
 // Cleanup on page unload
-if (typeof window !== "undefined") {
-  window.addEventListener("beforeunload", () => {
+if (typeof window !== 'undefined') {
+  window.addEventListener('beforeunload', () => {
     performanceMonitor.destroy();
   });
 }

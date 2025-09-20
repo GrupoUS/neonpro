@@ -2,7 +2,7 @@
 // These functions handle patient data anonymization, deletion, and export
 // in compliance with Brazilian data protection regulations
 
-import type { Database } from './supabase';
+
 
 // Types for LGPD operations
 export interface LGPDPatientData {

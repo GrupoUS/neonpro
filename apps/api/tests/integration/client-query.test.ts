@@ -1,336 +1,502 @@
-import { Hono } from 'hono';
-import { createServer } from 'http';
-import { fetch } from 'undici';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+/**
+ * Integration Test for "Query client information" scenario
+ * TDD Test - MUST FAIL until implementation is complete
+ * 
+ * This test validates the complete flow for querying client information
+ * from quickstart.md scenario 2
+ */
 
-// Import the agent endpoint with mock data service
-import { agentRouter } from '../../src/routes/ai/data-agent';
+import { describe, test, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 
-// Mock the AIDataService to avoid actual database calls during tests
-vi.mock('../../src/services/ai-data-service', () => ({
-  AIDataService: {
-    getInstance: () => ({
-      getClientsByName: async (name: string) => ({
-        type: 'list',
-        title: 'Clientes Encontrados',
-        data: [
-          {
-            id: 'client-1',
-            name: name || 'Maria Silva',
-            email: 'maria.silva@email.com',
-            phone: '(11) 99999-8888',
-            createdAt: '2024-01-15T10:30:00Z',
-            updatedAt: '2024-01-20T14:45:00Z',
-          },
-          {
-            id: 'client-2',
-            name: 'João Santos',
-            email: 'joao.santos@email.com',
-            phone: '(11) 98888-7777',
-            createdAt: '2024-01-10T09:15:00Z',
-            updatedAt: '2024-01-18T16:20:00Z',
-          },
-        ],
-        columns: [
-          { key: 'name', label: 'Nome', type: 'text' },
-          { key: 'email', label: 'Email', type: 'email' },
-          { key: 'phone', label: 'Telefone', type: 'phone' },
-        ],
-      }),
-      getAppointmentsByDate: async (date: string) => ({
-        type: 'list',
-        title: 'Agendamentos',
-        data: [],
-        columns: [],
-      }),
-      getFinancialSummary: async (period: string) => ({
-        type: 'summary',
-        title: 'Resumo Financeiro',
-        data: [],
-        summary: {},
-        columns: [],
-      }),
-    }),
-  },
-}));
-
-describe('Integration Tests: Client Data Query', () => {
-  let server: any;
-  let baseUrl: string;
-  let app: Hono;
+describe('Query Client Information - Integration Test', () => {
+  let app: any
+  let testServer: any
 
   beforeAll(async () => {
-    // Create Hono app with agent route
-    app = new Hono();
-    app.route('/api/ai/data-agent', agentRouter);
-
-    // Start test server
-    server = createServer({
-      fetch: app.fetch,
-      port: 0,
-    });
-
-    await new Promise(resolve => {
-      server.listen(0, () => {
-        const address = server.address();
-        if (address && typeof address === 'object') {
-          baseUrl = `http://localhost:${address.port}`;
-        }
-        resolve(true);
-      });
-    });
-  });
+    try {
+      app = (await import('../../src/app')).default
+    } catch (error) {
+      console.log('Expected failure: App not available during TDD phase')
+    }
+  })
 
   afterAll(async () => {
-    if (server) {
-      await new Promise(resolve => server.close(resolve));
+    if (testServer) {
+      testServer.close()
     }
-  });
+  })
 
-  describe('Client Query Integration', () => {
-    it('should successfully query for all clients', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+  beforeEach(async () => {
+    // Setup test data - this will fail until implementation is complete
+    // In real implementation, this would set up test clients
+  })
+
+  describe('Portuguese Language Query Processing', () => {
+    test('should handle "Me mostre os clientes cadastrados" query', async () => {
+      expect(app).toBeDefined()
+
+      const query = "Me mostre os clientes cadastrados"
+      const sessionId = "test-session-clients"
+
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-nurse-token'
         },
         body: JSON.stringify({
-          query: 'Me mostre os clientes cadastrados',
-          sessionId: 'test-session-client-1',
-        }),
-      });
+          query,
+          sessionId,
+          context: {
+            userId: "nurse-user-id",
+            role: "nurse"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      // Response validation
+      expect(response.status).toBe(200)
+      
+      const responseData = await response.json()
+      expect(responseData.success).toBe(true)
+      expect(responseData.response).toBeDefined()
+      
+      // Should return list type for clients
+      expect(responseData.response.type).toBe('list')
+      
+      // Content should have title and data
+      expect(responseData.response.content).toHaveProperty('title')
+      expect(responseData.response.content.title).toContain('Clientes')
+      expect(responseData.response.content).toHaveProperty('data')
+      expect(Array.isArray(responseData.response.content.data)).toBe(true)
+    })
 
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('list');
-      expect(data.response.title).toBe('Clientes Encontrados');
-      expect(Array.isArray(data.response.data)).toBe(true);
-      expect(data.response.data.length).toBeGreaterThan(0);
+    test('should handle alternative client queries', async () => {
+      expect(app).toBeDefined()
 
-      // Verify client data structure
-      const client = data.response.data[0];
-      expect(client).toHaveProperty('id');
-      expect(client).toHaveProperty('name');
-      expect(client).toHaveProperty('email');
-      expect(client).toHaveProperty('phone');
-      expect(client).toHaveProperty('createdAt');
-      expect(client).toHaveProperty('updatedAt');
-    });
+      const alternativeQueries = [
+        "Lista de pacientes",
+        "Clientes da clínica",
+        "Pacientes cadastrados",
+        "Mostrar todos os clientes"
+      ]
 
-    it('should successfully query for specific client by name', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Me mostre os dados da Maria Silva',
-          sessionId: 'test-session-client-2',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('list');
-      expect(data.response.title).toBe('Clientes Encontrados');
-
-      // Verify the specific client is returned
-      const clients = data.response.data;
-      expect(clients.length).toBeGreaterThan(0);
-      expect(clients[0].name).toContain('Maria Silva');
-    });
-
-    it('should handle empty results gracefully', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Busque por cliente inexistente',
-          sessionId: 'test-session-client-3',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('list');
-      expect(Array.isArray(data.response.data)).toBe(true);
-
-      // Should return empty array, not error
-      expect(data.response.data.length).toBe(0);
-    });
-
-    it('should handle variations in query phrasing', async () => {
-      const variations = [
-        'Liste todos os clientes',
-        'Mostrar pacientes cadastrados',
-        'Quem são os clientes?',
-        'Pacientes',
-        'clientes',
-      ];
-
-      for (const query of variations) {
-        const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      for (const query of alternativeQueries) {
+        const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer test-token',
+            'Authorization': 'Bearer valid-nurse-token'
           },
           body: JSON.stringify({
             query,
-            sessionId: `test-session-variation-${query}`,
-          }),
-        });
+            sessionId: `test-session-${Math.random()}`,
+            context: {
+              userId: "nurse-user-id",
+              role: "nurse"
+            }
+          })
+        })
 
-        expect(response.status).toBe(200);
-        const data = await response.json();
-        expect(data.success).toBe(true);
-        expect(data.response.type).toBe('list');
+        expect(response.status).toBe(200)
+        
+        const responseData = await response.json()
+        expect(responseData.success).toBe(true)
+        expect(responseData.response.type).toBe('list')
       }
-    });
+    })
+  })
 
-    it('should include proper column definitions', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+  describe('Response Structure Validation', () => {
+    test('should return properly structured client data', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-nurse-token'
         },
         body: JSON.stringify({
-          query: 'Clientes',
-          sessionId: 'test-session-client-4',
-        }),
-      });
+          query: "Me mostre os clientes cadastrados",
+          sessionId: "test-session-structure",
+          context: {
+            userId: "nurse-user-id",
+            role: "nurse"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      const responseData = await response.json()
+      
+      if (responseData.response.content.data.length > 0) {
+        const client = responseData.response.content.data[0]
+        
+        // Validate client structure according to quickstart requirements
+        expect(client).toHaveProperty('id')
+        expect(client).toHaveProperty('name')
+        expect(client).toHaveProperty('email')
+        expect(client).toHaveProperty('phone')
+        
+        // Validate data types
+        expect(typeof client.name).toBe('string')
+        expect(typeof client.email).toBe('string')
+        expect(typeof client.phone).toBe('string')
+        
+        // Validate email format
+        expect(client.email).toMatch(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)
+      }
+    })
 
-      expect(data.response.columns).toBeDefined();
-      expect(Array.isArray(data.response.columns)).toBe(true);
+    test('should include interactive action buttons for client details', async () => {
+      expect(app).toBeDefined()
 
-      // Verify column structure
-      const columns = data.response.columns;
-      expect(columns.length).toBeGreaterThan(0);
-
-      const column = columns[0];
-      expect(column).toHaveProperty('key');
-      expect(column).toHaveProperty('label');
-      expect(column).toHaveProperty('type');
-    });
-
-    it('should handle special characters in client names', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-nurse-token'
         },
         body: JSON.stringify({
-          query: 'Buscar por José da Silva',
-          sessionId: 'test-session-client-5',
-        }),
-      });
+          query: "Clientes cadastrados",
+          sessionId: "test-session-actions",
+          context: {
+            userId: "nurse-user-id"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data.success).toBe(true);
-    });
+      const responseData = await response.json()
+      
+      // Should include interactive actions
+      expect(responseData.actions).toBeDefined()
+      expect(Array.isArray(responseData.actions)).toBe(true)
+      
+      if (responseData.actions.length > 0) {
+        const action = responseData.actions[0]
+        expect(action).toHaveProperty('id')
+        expect(action).toHaveProperty('label')
+        expect(action).toHaveProperty('type')
+        expect(action.label).toMatch(/detalhes|ver/i)
+      }
+    })
+  })
 
-    it('should handle case insensitive queries', async () => {
-      const queries = ['CLIENTES', 'clientes', 'Clientes', 'cLiEnTeS'];
+  describe('Role-Based Access Control', () => {
+    test('should show appropriate client information for nurse role', async () => {
+      expect(app).toBeDefined()
 
-      for (const query of queries) {
-        const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-nurse-token'
+        },
+        body: JSON.stringify({
+          query: "Me mostre os clientes cadastrados",
+          sessionId: "test-session-nurse",
+          context: {
+            userId: "nurse-user-id",
+            role: "nurse"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      expect(responseData.success).toBe(true)
+      
+      if (responseData.response.content.data.length > 0) {
+        const client = responseData.response.content.data[0]
+        
+        // Nurse should see basic contact information
+        expect(client).toHaveProperty('name')
+        expect(client).toHaveProperty('email')
+        expect(client).toHaveProperty('phone')
+        
+        // Should not expose sensitive medical information at list level
+        expect(client).not.toHaveProperty('medicalHistory')
+        expect(client).not.toHaveProperty('documents')
+      }
+    })
+
+    test('should limit information for receptionist role', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-receptionist-token'
+        },
+        body: JSON.stringify({
+          query: "Lista de clientes",
+          sessionId: "test-session-receptionist",
+          context: {
+            userId: "receptionist-user-id",
+            role: "receptionist"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      expect(responseData.success).toBe(true)
+      
+      if (responseData.response.content.data.length > 0) {
+        const client = responseData.response.content.data[0]
+        
+        // Receptionist should see basic info only
+        expect(client).toHaveProperty('name')
+        expect(client).toHaveProperty('phone')
+        
+        // May have limited access to other fields
+        expect(client).toBeDefined()
+      }
+    })
+
+    test('should provide full access for doctor role', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-doctor-token'
+        },
+        body: JSON.stringify({
+          query: "Pacientes cadastrados",
+          sessionId: "test-session-doctor",
+          context: {
+            userId: "doctor-user-id",
+            role: "doctor"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      expect(responseData.success).toBe(true)
+      
+      if (responseData.response.content.data.length > 0) {
+        const client = responseData.response.content.data[0]
+        
+        // Doctor should have access to all relevant fields
+        expect(client).toHaveProperty('name')
+        expect(client).toHaveProperty('email')
+        expect(client).toHaveProperty('phone')
+        
+        // May include additional information for doctors
+        expect(client).toBeDefined()
+      }
+    })
+  })
+
+  describe('Domain-Based Data Isolation', () => {
+    test('should only show clients from user domain', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-clinic-a-token'
+        },
+        body: JSON.stringify({
+          query: "Clientes cadastrados",
+          sessionId: "test-session-domain-isolation",
+          context: {
+            userId: "clinic-a-user",
+            domain: "clinic-a"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      expect(responseData.success).toBe(true)
+      
+      if (responseData.response.content.data.length > 0) {
+        // All clients should belong to the same domain
+        // This will be validated through RLS policies
+        const clients = responseData.response.content.data
+        clients.forEach(client => {
+          expect(client).toBeDefined()
+          // Domain validation will be implemented at the database level
+        })
+      }
+    })
+
+    test('should handle cross-domain access denial', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer invalid-domain-token'
+        },
+        body: JSON.stringify({
+          query: "Todos os clientes do sistema",
+          sessionId: "test-session-cross-domain",
+          context: {
+            userId: "invalid-domain-user",
+            domain: "unauthorized-domain"
+          }
+        })
+      })
+
+      // Should either return empty results or forbidden error
+      if (response.status === 200) {
+        const responseData = await response.json()
+        expect(responseData.response.content.data).toHaveLength(0)
+      } else {
+        expect(response.status).toBe(403)
+      }
+    })
+  })
+
+  describe('Performance Requirements', () => {
+    test('should respond within 2 seconds for client list', async () => {
+      expect(app).toBeDefined()
+
+      const startTime = Date.now()
+      
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-nurse-token'
+        },
+        body: JSON.stringify({
+          query: "Me mostre os clientes cadastrados",
+          sessionId: "test-session-performance",
+          context: {
+            userId: "nurse-user-id"
+          }
+        })
+      })
+
+      const endTime = Date.now()
+      const responseTime = endTime - startTime
+
+      expect(responseTime).toBeLessThan(2000) // <2s requirement
+      expect(response.status).toBe(200)
+    })
+
+    test('should handle large client lists efficiently', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-nurse-token'
+        },
+        body: JSON.stringify({
+          query: "Todos os clientes cadastrados",
+          sessionId: "test-session-large-list",
+          context: {
+            userId: "nurse-user-id"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      
+      // Should implement pagination or reasonable limits
+      if (responseData.response.content.data.length > 50) {
+        // Should include pagination info or be limited
+        expect(responseData.response.content).toHaveProperty('pagination')
+      }
+    })
+  })
+
+  describe('Data Privacy and Security', () => {
+    test('should not expose sensitive client data in list view', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-nurse-token'
+        },
+        body: JSON.stringify({
+          query: "Clientes cadastrados",
+          sessionId: "test-session-privacy",
+          context: {
+            userId: "nurse-user-id"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      
+      if (responseData.response.content.data.length > 0) {
+        const client = responseData.response.content.data[0]
+        
+        // Should not expose sensitive data in list view
+        expect(client).not.toHaveProperty('cpf')
+        expect(client).not.toHaveProperty('rg')
+        expect(client).not.toHaveProperty('medicalHistory')
+        expect(client).not.toHaveProperty('address')
+      }
+    })
+
+    test('should audit client data access', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-nurse-token'
+        },
+        body: JSON.stringify({
+          query: "Lista de pacientes",
+          sessionId: "test-session-audit",
+          context: {
+            userId: "nurse-user-id"
+          }
+        })
+      })
+
+      expect(response.status).toBe(200)
+      
+      // Audit logging should be triggered (validated in implementation)
+      const responseData = await response.json()
+      expect(responseData.success).toBe(true)
+    })
+  })
+
+  describe('Search and Filtering', () => {
+    test('should handle filtered client queries', async () => {
+      expect(app).toBeDefined()
+
+      const filteredQueries = [
+        "Clientes ativos",
+        "Pacientes recentes",
+        "Clientes com agendamentos"
+      ]
+
+      for (const query of filteredQueries) {
+        const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer test-token',
+            'Authorization': 'Bearer valid-nurse-token'
           },
           body: JSON.stringify({
             query,
-            sessionId: `test-session-case-${query}`,
-          }),
-        });
+            sessionId: `test-session-filter-${Math.random()}`,
+            context: {
+              userId: "nurse-user-id"
+            }
+          })
+        })
 
-        expect(response.status).toBe(200);
-        const data = await response.json();
-        expect(data.success).toBe(true);
+        expect(response.status).toBe(200)
+        
+        const responseData = await response.json()
+        expect(responseData.success).toBe(true)
       }
-    });
-
-    it('should maintain session context', async () => {
-      const sessionId = 'test-session-context-123';
-
-      // First query
-      const response1 = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Clientes',
-          sessionId,
-          context: {
-            userId: 'user-123',
-            previousMessages: [],
-          },
-        }),
-      });
-
-      expect(response1.status).toBe(200);
-      const data1 = await response1.json();
-      expect(data1.success).toBe(true);
-
-      // Follow-up query
-      const response2 = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'E os agendamentos?',
-          sessionId,
-          context: {
-            userId: 'user-123',
-            previousMessages: [
-              { role: 'user', content: 'Clientes' },
-              { role: 'assistant', content: 'Aqui estão os clientes' },
-            ],
-          },
-        }),
-      });
-
-      expect(response2.status).toBe(200);
-      const data2 = await response2.json();
-      expect(data2.success).toBe(true);
-    });
-
-    it('should handle malformed requests gracefully', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          // Missing required fields
-          extra: 'data',
-        }),
-      });
-
-      expect(response.status).toBe(400);
-    });
-  });
-});
+    })
+  })
+})

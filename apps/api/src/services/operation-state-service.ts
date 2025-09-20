@@ -1,9 +1,9 @@
 /**
  * Operation State Management Service
- * 
+ *
  * This service provides proper state management for the 3-step CRUD flow,
  * replacing the misuse of auditTrail for state storage.
- * 
+ *
  * Features:
  * - Proper state management for 3-step CRUD operations
  * - Audit trail for state changes
@@ -104,7 +104,7 @@ export class OperationStateService {
   async updateState(
     operationId: string,
     updates: Partial<OperationStateData>,
-    changeReason?: string
+    changeReason?: string,
   ): Promise<OperationState> {
     const currentState = await this.getStateByOperationId(operationId);
     if (!currentState) {
@@ -125,7 +125,9 @@ export class OperationStateService {
         ai_validation_result: updates.aiValidationResult,
         lgpd_compliance_result: updates.lgpdComplianceResult,
         updated_at: new Date(),
-        completed_at: updates.status === 'completed' || updates.status === 'failed' ? new Date() : null,
+        completed_at: updates.status === 'completed' || updates.status === 'failed'
+          ? new Date()
+          : null,
       },
     });
 

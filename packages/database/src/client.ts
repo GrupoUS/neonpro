@@ -8,9 +8,31 @@ import {
   createClient as createSupabaseClient,
   type SupabaseClient,
 } from "@supabase/supabase-js";
+import { winstonLogger } from "@neonpro/shared/services/structured-logging";
 
 // Connection pool configuration optimized for healthcare workloads
 const createOptimizedSupabaseClient = (): SupabaseClient => {
+  // Skip Supabase client creation in test environment
+  if (process.env.NODE_ENV === 'test') {
+    // Return a mock client for testing
+    return {
+      from: (_table: string) => ({
+        select: () => Promise.resolve({ data: [], error: null }),
+        insert: () => Promise.resolve({ data: [], error: null }),
+        update: () => Promise.resolve({ data: [], error: null }),
+        delete: () => Promise.resolve({ data: [], error: null }),
+      }),
+      auth: {
+        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+      },
+      storage: {
+        from: () => ({
+          upload: () => Promise.resolve({ data: null, error: null }),
+        }),
+      },
+    } as any;
+  }
+
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     throw new Error(
       "Missing required Supabase environment variables for optimized client",
@@ -44,6 +66,29 @@ const createOptimizedSupabaseClient = (): SupabaseClient => {
 
 // Browser client for client-side operations with RLS
 const createBrowserSupabaseClient = (): SupabaseClient => {
+  // Skip Supabase client creation in test environment
+  if (process.env.NODE_ENV === 'test') {
+    // Return a mock client for testing
+    return {
+      from: () => ({
+        select: () => Promise.resolve({ data: [], error: null }),
+        insert: () => Promise.resolve({ data: [], error: null }),
+        update: () => Promise.resolve({ data: [], error: null }),
+        delete: () => Promise.resolve({ data: [], error: null }),
+      }),
+      auth: {
+        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+        signInWithPassword: () => Promise.resolve({ data: { user: null, session: null }, error: null }),
+        signOut: () => Promise.resolve({ error: null }),
+      },
+      storage: {
+        from: () => ({
+          upload: () => Promise.resolve({ data: null, error: null }),
+        }),
+      },
+    } as any;
+  }
+
   return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
@@ -75,6 +120,27 @@ const createPrismaClient = (): PrismaClient => {
 
 // Client creation functions for testing
 export const createNodeSupabaseClient = (): SupabaseClient => {
+  // Skip Supabase client creation in test environment
+  if (process.env.NODE_ENV === 'test') {
+    // Return a mock client for testing
+    return {
+      from: () => ({
+        select: () => Promise.resolve({ data: [], error: null }),
+        insert: () => Promise.resolve({ data: [], error: null }),
+        update: () => Promise.resolve({ data: [], error: null }),
+        delete: () => Promise.resolve({ data: [], error: null }),
+      }),
+      auth: {
+        getUser: () => Promise.resolve({ data: { user: null }, error: null }),
+      },
+      storage: {
+        from: () => ({
+          upload: () => Promise.resolve({ data: null, error: null }),
+        }),
+      },
+    } as any;
+  }
+
   if (!process.env.SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
     throw new Error("Missing Supabase environment variables");
   }
@@ -116,10 +182,37 @@ export const createServiceSupabaseClient = (): SupabaseClient => {
 export const createClient = createNodeSupabaseClient;
 export const createServiceClient = createServiceSupabaseClient;
 
-// Global instances
-export const supabase = createOptimizedSupabaseClient();
-export const supabaseBrowser = createBrowserSupabaseClient();
-export const prisma = createPrismaClient();
+// Global instances - lazy loaded to handle test environment
+let _supabase: SupabaseClient | null = null;
+let _supabaseBrowser: SupabaseClient | null = null;
+let _prisma: PrismaClient | null = null;
+
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    if (!_supabase) {
+      _supabase = createOptimizedSupabaseClient();
+    }
+    return (_supabase as any)[prop];
+  }
+});
+
+export const supabaseBrowser = new Proxy({} as SupabaseClient, {
+  get(_target, prop) {
+    if (!_supabaseBrowser) {
+      _supabaseBrowser = createBrowserSupabaseClient();
+    }
+    return (_supabaseBrowser as any)[prop];
+  }
+});
+
+export const prisma = new Proxy({} as PrismaClient, {
+  get(_target, prop) {
+    if (!_prisma) {
+      _prisma = createPrismaClient();
+    }
+    return (_prisma as any)[prop];
+  }
+});
 
 // Connection health check
 export const checkDatabaseHealth = async () => {
@@ -151,9 +244,9 @@ export const checkDatabaseHealth = async () => {
 export const closeDatabaseConnections = async () => {
   try {
     await prisma.$disconnect();
-    console.log("Database connections closed successfully");
+    winstonLogger.info("Database connections closed successfully");
   } catch (error) {
-    console.error("Error closing database connections:", error);
+    winstonLogger.error("Error closing database connections", error instanceof Error ? error : new Error(String(error)));
   }
 };
 

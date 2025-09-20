@@ -6,6 +6,7 @@
  */
 
 import { NextRequest } from 'next/server';
+import { logger } from '@/utils/secure-logger';
 import { createHealthcareResponse } from '../../../../middleware/edge-runtime';
 import { whatsappReminderService } from '../../../../services/whatsapp-reminder-service';
 
@@ -26,14 +27,14 @@ export async function GET(request: NextRequest) {
     const expectedToken = process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN;
 
     if (mode === 'subscribe' && token === expectedToken) {
-      console.log('WhatsApp webhook verified successfully');
+      logger.info('WhatsApp webhook verified successfully');
       return new Response(challenge, { status: 200 });
     } else {
-      console.error('WhatsApp webhook verification failed');
+      logger.error('WhatsApp webhook verification failed');
       return new Response('Verification failed', { status: 403 });
     }
   } catch (error) {
-    console.error('WhatsApp webhook verification error:', error);
+    logger.error('WhatsApp webhook verification error', error);
     return createHealthcareResponse(
       {
         error: 'Webhook verification failed',
@@ -56,10 +57,9 @@ export async function POST(request: NextRequest) {
   try {
     const webhookData = await request.json();
 
-    console.log(
-      'WhatsApp webhook received:',
-      JSON.stringify(webhookData, null, 2),
-    );
+    logger.info('WhatsApp webhook received', {
+      webhookData: JSON.stringify(webhookData, null, 2)
+    });
 
     // Process webhook data
     const result = await whatsappReminderService.handleWebhook(webhookData);
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
       },
     );
   } catch (error) {
-    console.error('WhatsApp webhook processing error:', error);
+    logger.error('WhatsApp webhook processing error', error);
 
     const processingTime = Date.now() - startTime;
 

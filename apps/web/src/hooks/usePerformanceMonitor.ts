@@ -16,10 +16,10 @@
  * - Accessibility compliance (WCAG 2.1 AA+)
  */
 
-"use client";
+'use client';
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 // Performance metrics types
 export interface PerformanceMetrics {
@@ -43,12 +43,12 @@ export const PERFORMANCE_THRESHOLDS = {
 } as const;
 
 // Performance status
-export type PerformanceStatus = "excellent" | "good" | "fair" | "poor";
+export type PerformanceStatus = 'excellent' | 'good' | 'fair' | 'poor';
 
 // Performance alert types
 export interface PerformanceAlert {
-  type: "search" | "mobile" | "realtime" | "general";
-  severity: "warning" | "error" | "critical";
+  type: 'search' | 'mobile' | 'realtime' | 'general';
+  severity: 'warning' | 'error' | 'critical';
   message: string;
   value: number;
   threshold: number;
@@ -77,15 +77,15 @@ export function usePerformanceMonitor() {
 
   // Initialize performance monitoring
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === 'undefined') return;
 
     // Setup Performance Observer
-    if ("PerformanceObserver" in window) {
-      performanceObserver.current = new PerformanceObserver((list) => {
+    if ('PerformanceObserver' in window) {
+      performanceObserver.current = new PerformanceObserver(list => {
         const entries = list.getEntries();
 
-        entries.forEach((entry) => {
-          if (entry.entryType === "navigation") {
+        entries.forEach(entry => {
+          if (entry.entryType === 'navigation') {
             const navEntry = entry as PerformanceNavigationTiming;
             updateMetrics({
               pageLoadTime: navEntry.loadEventEnd - navEntry.loadEventStart,
@@ -93,8 +93,8 @@ export function usePerformanceMonitor() {
             });
           }
 
-          if (entry.entryType === "paint") {
-            if (entry.name === "first-contentful-paint") {
+          if (entry.entryType === 'paint') {
+            if (entry.name === 'first-contentful-paint') {
               updateMetrics({
                 renderTime: entry.startTime,
               });
@@ -104,13 +104,13 @@ export function usePerformanceMonitor() {
       });
 
       performanceObserver.current.observe({
-        entryTypes: ["navigation", "paint", "measure"],
+        entryTypes: ['navigation', 'paint', 'measure'],
       });
     }
 
     // Monitor memory usage
     const monitorMemory = () => {
-      if ("memory" in performance) {
+      if ('memory' in performance) {
         const memInfo = (performance as any).memory;
         updateMetrics({
           memoryUsage: memInfo.usedJSHeapSize / 1024 / 1024, // MB
@@ -129,7 +129,7 @@ export function usePerformanceMonitor() {
   // Update metrics and check thresholds
   const updateMetrics = useCallback(
     (newMetrics: Partial<PerformanceMetrics>) => {
-      setMetrics((prev) => {
+      setMetrics(prev => {
         const updated = { ...prev, ...newMetrics };
 
         // Store in history
@@ -154,13 +154,13 @@ export function usePerformanceMonitor() {
 
       // Check search response time
       if (
-        newMetrics.searchResponseTime &&
-        newMetrics.searchResponseTime >
-          PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME
+        newMetrics.searchResponseTime
+        && newMetrics.searchResponseTime
+          > PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME
       ) {
         newAlerts.push({
-          type: "search",
-          severity: newMetrics.searchResponseTime > 500 ? "error" : "warning",
+          type: 'search',
+          severity: newMetrics.searchResponseTime > 500 ? 'error' : 'warning',
           message: `Busca lenta detectada: ${newMetrics.searchResponseTime}ms (meta: <300ms)`,
           value: newMetrics.searchResponseTime,
           threshold: PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME,
@@ -170,12 +170,12 @@ export function usePerformanceMonitor() {
 
       // Check mobile load time
       if (
-        newMetrics.mobileLoadTime &&
-        newMetrics.mobileLoadTime > PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME
+        newMetrics.mobileLoadTime
+        && newMetrics.mobileLoadTime > PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME
       ) {
         newAlerts.push({
-          type: "mobile",
-          severity: newMetrics.mobileLoadTime > 1000 ? "error" : "warning",
+          type: 'mobile',
+          severity: newMetrics.mobileLoadTime > 1000 ? 'error' : 'warning',
           message: `Carregamento móvel lento: ${newMetrics.mobileLoadTime}ms (meta: <500ms)`,
           value: newMetrics.mobileLoadTime,
           threshold: PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME,
@@ -185,12 +185,12 @@ export function usePerformanceMonitor() {
 
       // Check real-time latency
       if (
-        newMetrics.realTimeLatency &&
-        newMetrics.realTimeLatency > PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY
+        newMetrics.realTimeLatency
+        && newMetrics.realTimeLatency > PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY
       ) {
         newAlerts.push({
-          type: "realtime",
-          severity: newMetrics.realTimeLatency > 2000 ? "error" : "warning",
+          type: 'realtime',
+          severity: newMetrics.realTimeLatency > 2000 ? 'error' : 'warning',
           message: `Latência em tempo real alta: ${newMetrics.realTimeLatency}ms (meta: <1s)`,
           value: newMetrics.realTimeLatency,
           threshold: PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY,
@@ -200,13 +200,13 @@ export function usePerformanceMonitor() {
 
       // Add new alerts
       if (newAlerts.length > 0) {
-        setAlerts((prev) => [...prev, ...newAlerts].slice(-20)); // Keep last 20 alerts
+        setAlerts(prev => [...prev, ...newAlerts].slice(-20)); // Keep last 20 alerts
 
         // Show toast notifications for critical issues
-        newAlerts.forEach((alert) => {
-          if (alert.severity === "error" || alert.severity === "critical") {
+        newAlerts.forEach(alert => {
+          if (alert.severity === 'error' || alert.severity === 'critical') {
             toast.error(alert.message);
-          } else if (alert.severity === "warning") {
+          } else if (alert.severity === 'warning') {
             toast.warning(alert.message);
           }
         });
@@ -219,10 +219,10 @@ export function usePerformanceMonitor() {
   const getPerformanceStatus = useCallback(
     (value: number, threshold: number): PerformanceStatus => {
       const ratio = value / threshold;
-      if (ratio <= 0.5) return "excellent";
-      if (ratio <= 0.8) return "good";
-      if (ratio <= 1.0) return "fair";
-      return "poor";
+      if (ratio <= 0.5) return 'excellent';
+      if (ratio <= 0.8) return 'good';
+      if (ratio <= 1.0) return 'fair';
+      return 'poor';
     },
     [],
   );
@@ -237,15 +237,12 @@ export function usePerformanceMonitor() {
     return {
       current: latest,
       average: {
-        searchResponseTime:
-          history.reduce((sum, m) => sum + m.searchResponseTime, 0) /
-          history.length,
-        mobileLoadTime:
-          history.reduce((sum, m) => sum + m.mobileLoadTime, 0) /
-          history.length,
-        realTimeLatency:
-          history.reduce((sum, m) => sum + m.realTimeLatency, 0) /
-          history.length,
+        searchResponseTime: history.reduce((sum, m) => sum + m.searchResponseTime, 0)
+          / history.length,
+        mobileLoadTime: history.reduce((sum, m) => sum + m.mobileLoadTime, 0)
+          / history.length,
+        realTimeLatency: history.reduce((sum, m) => sum + m.realTimeLatency, 0)
+          / history.length,
       },
       trend: {
         searchResponseTime: getPerformanceStatus(
@@ -275,11 +272,11 @@ export function usePerformanceMonitor() {
         const duration = endTime - startTime;
 
         // Update relevant metrics based on operation type
-        if (operation.includes("search")) {
+        if (operation.includes('search')) {
           updateMetrics({ searchResponseTime: duration });
-        } else if (operation.includes("mobile") || operation.includes("load")) {
+        } else if (operation.includes('mobile') || operation.includes('load')) {
           updateMetrics({ mobileLoadTime: duration });
-        } else if (operation.includes("realtime")) {
+        } else if (operation.includes('realtime')) {
           updateMetrics({ realTimeLatency: duration });
         }
 
@@ -289,7 +286,7 @@ export function usePerformanceMonitor() {
       try {
         const result = fn();
 
-        if (result && typeof result.then === "function") {
+        if (result && typeof result.then === 'function') {
           return result.then(finish).catch((error: any) => {
             finish();
             throw error;
@@ -312,11 +309,10 @@ export function usePerformanceMonitor() {
     measurePerformance,
     getAnalytics,
     getPerformanceStatus,
-    isHealthy:
-      metrics.searchResponseTime <
-        PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME &&
-      metrics.mobileLoadTime < PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME &&
-      metrics.realTimeLatency < PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY,
+    isHealthy: metrics.searchResponseTime
+        < PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME
+      && metrics.mobileLoadTime < PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME
+      && metrics.realTimeLatency < PERFORMANCE_THRESHOLDS.REAL_TIME_LATENCY,
   };
 }
 
@@ -325,12 +321,11 @@ export function usePerformanceMonitor() {
  * Specialized hook for tracking search performance
  */
 export function useSearchPerformance() {
-  const { measurePerformance, metrics, getPerformanceStatus } =
-    usePerformanceMonitor();
+  const { measurePerformance, metrics, getPerformanceStatus } = usePerformanceMonitor();
 
   const measureSearch = useCallback(
     async (searchFn: () => Promise<any>) => {
-      return measurePerformance("search", searchFn);
+      return measurePerformance('search', searchFn);
     },
     [measurePerformance],
   );
@@ -346,8 +341,7 @@ export function useSearchPerformance() {
     measureSearch,
     searchResponseTime: metrics.searchResponseTime,
     searchStatus: getSearchStatus(),
-    isSearchHealthy:
-      metrics.searchResponseTime < PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME,
+    isSearchHealthy: metrics.searchResponseTime < PERFORMANCE_THRESHOLDS.SEARCH_RESPONSE_TIME,
   };
 }
 
@@ -356,28 +350,26 @@ export function useSearchPerformance() {
  * Specialized hook for mobile performance optimization
  */
 export function useMobilePerformance() {
-  const { measurePerformance, metrics, getPerformanceStatus } =
-    usePerformanceMonitor();
+  const { measurePerformance, metrics, getPerformanceStatus } = usePerformanceMonitor();
   const [isMobile, setIsMobile] = useState(false);
 
   // Detect mobile device
   useEffect(() => {
     const checkMobile = () => {
       const userAgent = navigator.userAgent;
-      const mobileRegex =
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+      const mobileRegex = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
       setIsMobile(mobileRegex.test(userAgent) || window.innerWidth < 768);
     };
 
     checkMobile();
-    window.addEventListener("resize", checkMobile);
+    window.addEventListener('resize', checkMobile);
 
-    return () => window.removeEventListener("resize", checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   const measureMobileLoad = useCallback(
     async (loadFn: () => Promise<any>) => {
-      return measurePerformance("mobile-load", loadFn);
+      return measurePerformance('mobile-load', loadFn);
     },
     [measurePerformance],
   );
@@ -394,21 +386,21 @@ export function useMobilePerformance() {
 
     if (metrics.mobileLoadTime > PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME) {
       recommendations.push(
-        "Considere implementar lazy loading para componentes não críticos",
+        'Considere implementar lazy loading para componentes não críticos',
       );
       recommendations.push(
-        "Otimize imagens e recursos para dispositivos móveis",
+        'Otimize imagens e recursos para dispositivos móveis',
       );
     }
 
     if (metrics.bundleSize > 1000) {
       // 1MB
-      recommendations.push("Reduza o tamanho do bundle com code splitting");
+      recommendations.push('Reduza o tamanho do bundle com code splitting');
     }
 
     if (metrics.memoryUsage > 50) {
       // 50MB
-      recommendations.push("Otimize o uso de memória removendo vazamentos");
+      recommendations.push('Otimize o uso de memória removendo vazamentos');
     }
 
     return recommendations;
@@ -419,8 +411,7 @@ export function useMobilePerformance() {
     measureMobileLoad,
     mobileLoadTime: metrics.mobileLoadTime,
     mobileStatus: getMobileStatus(),
-    isMobileHealthy:
-      metrics.mobileLoadTime < PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME,
+    isMobileHealthy: metrics.mobileLoadTime < PERFORMANCE_THRESHOLDS.MOBILE_LOAD_TIME,
     recommendations: getRecommendations(),
   };
 }

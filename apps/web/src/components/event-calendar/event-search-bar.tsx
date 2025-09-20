@@ -1,17 +1,13 @@
-"use client";
+'use client';
 
-import React, { useState, useEffect, useRef } from "react";
-import { Search, X, Clock, Calendar, Filter } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { useEventSearch } from "./hooks/use-event-search";
-import { cn } from "@/lib/utils";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+import { Calendar, Clock, Filter, Search, X } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useEventSearch } from './hooks/use-event-search';
 
 interface EventSearchBarProps {
   className?: string;
@@ -23,11 +19,11 @@ interface EventSearchBarProps {
 /**
  * Event Search Bar - Advanced search functionality for calendar events
  */
-export function EventSearchBar({ 
-  className, 
-  placeholder = "Search events...", 
+export function EventSearchBar({
+  className,
+  placeholder = 'Search events...',
   onResultSelect,
-  showFilters = true 
+  showFilters = true,
 }: EventSearchBarProps) {
   const {
     searchQuery,
@@ -50,7 +46,7 @@ export function EventSearchBar({
   // Handle search input change
   const handleSearchChange = (value: string) => {
     setSearchQuery(value);
-    
+
     if (value.trim()) {
       performSearch({
         query: value,
@@ -84,17 +80,15 @@ export function EventSearchBar({
     const totalItems = suggestions.length + searchResults.length;
 
     switch (e.key) {
-      case "ArrowDown":
+      case 'ArrowDown':
         e.preventDefault();
-        setSelectedSuggestion(prev => 
-          prev < totalItems - 1 ? prev + 1 : prev
-        );
+        setSelectedSuggestion(prev => prev < totalItems - 1 ? prev + 1 : prev);
         break;
-      case "ArrowUp":
+      case 'ArrowUp':
         e.preventDefault();
         setSelectedSuggestion(prev => prev > 0 ? prev - 1 : -1);
         break;
-      case "Enter":
+      case 'Enter':
         e.preventDefault();
         if (selectedSuggestion >= 0) {
           if (selectedSuggestion < suggestions.length) {
@@ -105,7 +99,7 @@ export function EventSearchBar({
           }
         }
         break;
-      case "Escape":
+      case 'Escape':
         setShowResults(false);
         setSelectedSuggestion(-1);
         break;
@@ -116,16 +110,16 @@ export function EventSearchBar({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        inputRef.current && !inputRef.current.contains(event.target as Node) &&
-        resultsRef.current && !resultsRef.current.contains(event.target as Node)
+        inputRef.current && !inputRef.current.contains(event.target as Node)
+        && resultsRef.current && !resultsRef.current.contains(event.target as Node)
       ) {
         setShowResults(false);
         setSelectedSuggestion(-1);
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Show results when searching
@@ -152,37 +146,43 @@ export function EventSearchBar({
   // Get event status color
   const getStatusColor = (status?: string) => {
     switch (status?.toLowerCase()) {
-      case 'confirmed': return 'bg-emerald-100 text-emerald-800';
-      case 'pending': return 'bg-orange-100 text-orange-800';
-      case 'cancelled': return 'bg-rose-100 text-rose-800';
-      case 'completed': return 'bg-blue-100 text-blue-800';
-      case 'no_show': return 'bg-violet-100 text-violet-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'confirmed':
+        return 'bg-emerald-100 text-emerald-800';
+      case 'pending':
+        return 'bg-orange-100 text-orange-800';
+      case 'cancelled':
+        return 'bg-rose-100 text-rose-800';
+      case 'completed':
+        return 'bg-blue-100 text-blue-800';
+      case 'no_show':
+        return 'bg-violet-100 text-violet-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn('relative', className)}>
       {/* Search Input */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+      <div className='relative'>
+        <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
         <Input
           ref={inputRef}
-          type="text"
+          type='text'
           placeholder={placeholder}
           value={searchQuery}
-          onChange={(e) => handleSearchChange(e.target.value)}
+          onChange={e => handleSearchChange(e.target.value)}
           onKeyDown={handleKeyDown}
           onFocus={() => setShowResults(true)}
-          className="pl-10 pr-10"
+          className='pl-10 pr-10'
         />
-        
+
         {/* Clear button */}
         {searchQuery && (
           <Button
-            variant="ghost"
-            size="sm"
-            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+            variant='ghost'
+            size='sm'
+            className='absolute right-1 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0'
             onClick={() => {
               clearSearch();
               if (inputRef.current) {
@@ -190,7 +190,7 @@ export function EventSearchBar({
               }
             }}
           >
-            <X className="h-4 w-4" />
+            <X className='h-4 w-4' />
           </Button>
         )}
 
@@ -199,24 +199,24 @@ export function EventSearchBar({
           <Popover>
             <PopoverTrigger asChild>
               <Button
-                variant="ghost"
-                size="sm"
-                className="absolute right-10 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0"
+                variant='ghost'
+                size='sm'
+                className='absolute right-10 top-1/2 transform -translate-y-1/2 h-6 w-6 p-0'
               >
-                <Filter className="h-4 w-4" />
+                <Filter className='h-4 w-4' />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-80" align="end">
-              <div className="p-4">
-                <h4 className="font-medium mb-3">Search Filters</h4>
-                <div className="space-y-3">
+            <PopoverContent className='w-80' align='end'>
+              <div className='p-4'>
+                <h4 className='font-medium mb-3'>Search Filters</h4>
+                <div className='space-y-3'>
                   <div>
-                    <label className="text-sm font-medium">Search in</label>
-                    <div className="mt-1 space-y-2">
-                      {['title', 'description', 'notes', 'patient', 'professional'].map((field) => (
-                        <label key={field} className="flex items-center space-x-2">
-                          <input type="checkbox" className="rounded" defaultChecked />
-                          <span className="text-sm capitalize">{field}</span>
+                    <label className='text-sm font-medium'>Search in</label>
+                    <div className='mt-1 space-y-2'>
+                      {['title', 'description', 'notes', 'patient', 'professional'].map(field => (
+                        <label key={field} className='flex items-center space-x-2'>
+                          <input type='checkbox' className='rounded' defaultChecked />
+                          <span className='text-sm capitalize'>{field}</span>
                         </label>
                       ))}
                     </div>
@@ -230,35 +230,35 @@ export function EventSearchBar({
 
       {/* Search Results Dropdown */}
       {showResults && (searchQuery.trim().length > 0) && (
-        <div 
+        <div
           ref={resultsRef}
-          className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-lg shadow-lg z-50 max-h-96 overflow-hidden"
+          className='absolute top-full left-0 right-0 mt-1 bg-background border rounded-lg shadow-lg z-50 max-h-96 overflow-hidden'
         >
           {/* Loading State */}
           {isSearching && (
-            <div className="p-4 text-center">
-              <div className="flex items-center justify-center space-x-2 text-muted-foreground">
-                <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
-                <span className="text-sm">Searching...</span>
+            <div className='p-4 text-center'>
+              <div className='flex items-center justify-center space-x-2 text-muted-foreground'>
+                <div className='animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full' />
+                <span className='text-sm'>Searching...</span>
               </div>
             </div>
           )}
 
           {/* Suggestions */}
           {!isSearching && searchSuggestions.length > 0 && searchResults.length === 0 && (
-            <div className="p-2">
-              <p className="text-xs font-medium text-muted-foreground px-2 py-1">Suggestions</p>
+            <div className='p-2'>
+              <p className='text-xs font-medium text-muted-foreground px-2 py-1'>Suggestions</p>
               {searchSuggestions.map((suggestion, index) => (
                 <button
                   key={index}
                   className={cn(
-                    "w-full text-left px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors",
-                    selectedSuggestion === index && "bg-accent"
+                    'w-full text-left px-3 py-2 text-sm hover:bg-accent rounded-md transition-colors',
+                    selectedSuggestion === index && 'bg-accent',
                   )}
                   onClick={() => handleSuggestionSelect(suggestion, index)}
                 >
-                  <div className="flex items-center space-x-2">
-                    <Clock className="h-3 w-3 text-muted-foreground" />
+                  <div className='flex items-center space-x-2'>
+                    <Clock className='h-3 w-3 text-muted-foreground' />
                     <span>{suggestion}</span>
                   </div>
                 </button>
@@ -268,67 +268,67 @@ export function EventSearchBar({
 
           {/* Search Results */}
           {!isSearching && searchResults.length > 0 && (
-            <div className="p-2">
-              <div className="flex items-center justify-between px-3 py-1">
-                <p className="text-xs font-medium text-muted-foreground">
+            <div className='p-2'>
+              <div className='flex items-center justify-between px-3 py-1'>
+                <p className='text-xs font-medium text-muted-foreground'>
                   Search Results
                 </p>
-                <Badge variant="outline" className="text-xs">
+                <Badge variant='outline' className='text-xs'>
                   {searchResults.length} found
                 </Badge>
               </div>
-              
-              <div className="max-h-64 overflow-y-auto">
+
+              <div className='max-h-64 overflow-y-auto'>
                 {searchResults.map((event, index) => {
                   const suggestionIndex = searchSuggestions.length + index;
                   return (
                     <button
                       key={event.id}
                       className={cn(
-                        "w-full text-left px-3 py-2 hover:bg-accent rounded-md transition-colors border-b last:border-b-0",
-                        selectedSuggestion === suggestionIndex && "bg-accent"
+                        'w-full text-left px-3 py-2 hover:bg-accent rounded-md transition-colors border-b last:border-b-0',
+                        selectedSuggestion === suggestionIndex && 'bg-accent',
                       )}
                       onClick={() => handleResultSelect(event)}
                     >
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-sm truncate">
+                      <div className='space-y-1'>
+                        <div className='flex items-center justify-between'>
+                          <span className='font-medium text-sm truncate'>
                             {event.title}
                           </span>
                           {event.status && (
-                            <Badge 
-                              variant="outline" 
-                              className={cn("text-xs", getStatusColor(event.status))}
+                            <Badge
+                              variant='outline'
+                              className={cn('text-xs', getStatusColor(event.status))}
                             >
                               {event.status}
                             </Badge>
                           )}
                         </div>
-                        
-                        <div className="flex items-center space-x-4 text-xs text-muted-foreground">
-                          <div className="flex items-center space-x-1">
-                            <Calendar className="h-3 w-3" />
+
+                        <div className='flex items-center space-x-4 text-xs text-muted-foreground'>
+                          <div className='flex items-center space-x-1'>
+                            <Calendar className='h-3 w-3' />
                             <span>{formatDate(event.start)}</span>
                           </div>
-                          
+
                           {event.priority && (
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant='outline' className='text-xs'>
                               Priority {event.priority}
                             </Badge>
                           )}
-                          
+
                           {event.color && (
-                            <div 
+                            <div
                               className={cn(
-                                "w-2 h-2 rounded-full",
-                                `bg-${event.color}-500`
+                                'w-2 h-2 rounded-full',
+                                `bg-${event.color}-500`,
                               )}
                             />
                           )}
                         </div>
-                        
+
                         {event.description && (
-                          <p className="text-xs text-muted-foreground truncate">
+                          <p className='text-xs text-muted-foreground truncate'>
                             {event.description}
                           </p>
                         )}
@@ -342,8 +342,8 @@ export function EventSearchBar({
 
           {/* No Results */}
           {!isSearching && isEmpty && hasSearched && (
-            <div className="p-4 text-center">
-              <p className="text-sm text-muted-foreground">
+            <div className='p-4 text-center'>
+              <p className='text-sm text-muted-foreground'>
                 No events found for "{searchQuery}"
               </p>
             </div>

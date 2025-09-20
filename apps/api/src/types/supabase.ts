@@ -5,10 +5,13 @@
  * for use in the API application with proper path resolution.
  */
 
-import type { Database, Json } from '../../../../packages/database/src/types/supabase';
+import type {
+  Database as DatabaseType,
+  Json as JsonType
+} from '../../../../packages/database/src/types/supabase';
 
-// Re-export the main types
-export type { Database, Json };
+// Re-export the main types with explicit aliases to avoid conflicts
+export type { DatabaseType as SupabaseDatabase, JsonType as SupabaseJson };
 
 // Type aliases for commonly used tables
 export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T];

@@ -3,8 +3,8 @@
  * Handles structured logging for healthcare data access and operations
  */
 
-import { createClient } from "@supabase/supabase-js";
-import type { Database } from "@neonpro/database";
+import type { Database } from '@neonpro/database';
+import { createClient } from '@supabase/supabase-js';
 
 export interface AuditLogEntry {
   id?: string;
@@ -12,21 +12,21 @@ export interface AuditLogEntry {
   action: string;
   resource: string;
   resourceId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   timestamp?: Date;
   success: boolean;
   errorMessage?: string;
   lgpdCompliant?: boolean;
-  dataClassification?: "public" | "internal" | "sensitive" | "restricted";
+  dataClassification?: 'public' | 'internal' | 'sensitive' | 'restricted';
 }
 
 export interface AuditLoggerOptions {
   enableConsoleLogging?: boolean;
   enableDatabaseLogging?: boolean;
   enableFileLogging?: boolean;
-  logLevel?: "debug" | "info" | "warn" | "error";
+  logLevel?: 'debug' | 'info' | 'warn' | 'error';
   supabaseUrl?: string;
   supabaseKey?: string;
 }
@@ -40,15 +40,15 @@ export class AuditLogger {
       enableConsoleLogging: true,
       enableDatabaseLogging: false,
       enableFileLogging: false,
-      logLevel: "info",
+      logLevel: 'info',
       ...options,
     };
 
     // Initialize Supabase client if database logging is enabled
     if (
-      this.options.enableDatabaseLogging &&
-      this.options.supabaseUrl &&
-      this.options.supabaseKey
+      this.options.enableDatabaseLogging
+      && this.options.supabaseUrl
+      && this.options.supabaseKey
     ) {
       this.supabase = createClient<Database>(
         this.options.supabaseUrl,
@@ -77,7 +77,7 @@ export class AuditLogger {
       try {
         await this.logToDatabase(fullEntry);
       } catch (error) {
-        console.error("Failed to log audit entry to database:", error);
+        console.error('Failed to log audit entry to database:', error);
       }
     }
 
@@ -94,7 +94,7 @@ export class AuditLogger {
     userId: string,
     action: string,
     resource: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     await this.log({
       userId,
@@ -113,7 +113,7 @@ export class AuditLogger {
     action: string,
     resource: string,
     errorMessage: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     await this.log({
       userId,
@@ -134,12 +134,12 @@ export class AuditLogger {
     patientId: string,
     dataType: string,
     lgpdConsent: boolean = false,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     await this.log({
       userId,
       action: `healthcare_data_${action}`,
-      resource: "patient_data",
+      resource: 'patient_data',
       resourceId: patientId,
       metadata: {
         ...metadata,
@@ -148,7 +148,7 @@ export class AuditLogger {
       },
       success: true,
       lgpdCompliant: lgpdConsent,
-      dataClassification: "sensitive",
+      dataClassification: 'sensitive',
     });
   }
 
@@ -166,7 +166,7 @@ export class AuditLogger {
     await this.log({
       userId,
       action: `ai_${action}`,
-      resource: "ai_model",
+      resource: 'ai_model',
       resourceId: model,
       metadata: {
         ...metadata,
@@ -175,15 +175,15 @@ export class AuditLogger {
         model,
       },
       success: true,
-      dataClassification: "internal",
+      dataClassification: 'internal',
     });
   }
 
   private logToConsole(entry: AuditLogEntry): void {
-    const logLevel = entry.success ? "info" : "error";
+    const logLevel = entry.success ? 'info' : 'error';
     const message = `[AUDIT] ${entry.action} on ${entry.resource} by ${entry.userId}`;
 
-    if (logLevel === "error") {
+    if (logLevel === 'error') {
       console.error(message, {
         ...entry,
         error: entry.errorMessage,
@@ -196,16 +196,16 @@ export class AuditLogger {
   private async logToDatabase(entry: AuditLogEntry): Promise<void> {
     if (!this.supabase) return;
 
-    const { error } = await this.supabase.from("audit_logs").insert({
+    const { error } = await this.supabase.from('audit_logs').insert({
       id: entry.id,
       user_id: entry.userId,
       action: entry.action,
       resource_type: entry.resource,
       resource_id: entry.resourceId,
-      new_values: entry.metadata as any, // Store metadata in new_values
-      ip_address: entry.ipAddress as any,
+      new_values: entry.metadata || null, // Store metadata in new_values
+      ip_address: entry.ipAddress || null,
       user_agent: entry.userAgent,
-      lgpd_basis: entry.lgpdCompliant ? "legitimate_interest" : null,
+      lgpd_basis: entry.lgpdCompliant ? 'legitimate_interest' : null,
       created_at: entry.timestamp?.toISOString(),
     });
 
@@ -217,7 +217,7 @@ export class AuditLogger {
   private logToFile(entry: AuditLogEntry): void {
     // Placeholder for file logging implementation
     // In a real implementation, this would write to a log file
-    console.log("[FILE AUDIT]", JSON.stringify(entry));
+    console.log('[FILE AUDIT]', JSON.stringify(entry));
   }
 
   private generateId(): string {
@@ -229,7 +229,7 @@ export class AuditLogger {
 export const auditLogger = new AuditLogger({
   enableConsoleLogging: true,
   enableDatabaseLogging: false, // Enable when Supabase is configured
-  logLevel: "info",
+  logLevel: 'info',
 });
 
 // Export default for named import compatibility

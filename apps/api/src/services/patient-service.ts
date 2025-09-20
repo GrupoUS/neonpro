@@ -14,10 +14,7 @@
  */
 
 import { validatePatientData } from '../../../../packages/shared/src';
-import { createDataSubjectRequest } from '../../../../packages/shared/src/types/lgpd-consent';
 import {
-  anonymizePatientData,
-  createPatientWithDefaults,
   Patient,
 } from '../../../../packages/shared/src/types/patient';
 import {
@@ -329,7 +326,7 @@ export class PatientService {
   ): Promise<ServiceResponse<PatientListResponse>> {
     try {
       const {
-        userId,
+        _userId,
         page,
         limit,
         search,

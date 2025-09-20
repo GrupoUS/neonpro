@@ -3,7 +3,7 @@
  * Handles CRUD operations for service templates and packages
  */
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 import type {
   CreateServiceTemplateItemRequest,
   CreateServiceTemplateRequest,
@@ -14,7 +14,7 @@ import type {
   ServiceTemplateWithItems,
   UpdateServiceTemplateItemRequest,
   UpdateServiceTemplateRequest,
-} from "@/types/service-templates";
+} from '@/types/service-templates';
 
 class ServiceTemplatesService {
   // Use an any-typed supabase client to avoid strict generated overloads during migration
@@ -25,23 +25,23 @@ class ServiceTemplatesService {
   async getServiceTemplates(
     filters: ServiceTemplateFilters = {},
   ): Promise<ServiceTemplate[]> {
-    let query = this.sb.from("service_templates").select("*");
+    let query = this.sb.from('service_templates').select('*');
 
     // Apply filters
     if (filters.clinic_id) {
-      query = query.eq("clinic_id", filters.clinic_id);
+      query = query.eq('clinic_id', filters.clinic_id);
     }
     if (filters.category_id) {
-      query = query.eq("category_id", filters.category_id);
+      query = query.eq('category_id', filters.category_id);
     }
     if (filters.template_type) {
-      query = query.eq("template_type", filters.template_type);
+      query = query.eq('template_type', filters.template_type);
     }
     if (filters.is_active !== undefined) {
-      query = query.eq("is_active", filters.is_active);
+      query = query.eq('is_active', filters.is_active);
     }
     if (filters.is_featured !== undefined) {
-      query = query.eq("is_featured", filters.is_featured);
+      query = query.eq('is_featured', filters.is_featured);
     }
     if (filters.search) {
       query = query.or(
@@ -50,9 +50,9 @@ class ServiceTemplatesService {
     }
 
     const { data, error } = await query
-      .order("is_featured", { ascending: false })
-      .order("sort_order", { ascending: true })
-      .order("name", { ascending: true });
+      .order('is_featured', { ascending: false })
+      .order('sort_order', { ascending: true })
+      .order('name', { ascending: true });
 
     if (error) {
       throw new Error(`Failed to fetch service templates: ${error.message}`);
@@ -68,7 +68,7 @@ class ServiceTemplatesService {
     clinicId: string,
   ): Promise<ServiceTemplateWithItems[]> {
     const { data, error } = await this.sb.rpc(
-      "get_service_templates_with_items",
+      'get_service_templates_with_items',
       { p_clinic_id: clinicId },
     );
 
@@ -86,13 +86,13 @@ class ServiceTemplatesService {
    */
   async getServiceTemplate(id: string): Promise<ServiceTemplate | null> {
     const { data, error } = await this.sb
-      .from("service_templates")
-      .select("*")
-      .eq("id", id)
+      .from('service_templates')
+      .select('*')
+      .eq('id', id)
       .single();
 
     if (error) {
-      if (error.code === "PGRST116") return null; // Not found
+      if (error.code === 'PGRST116') return null; // Not found
       throw new Error(`Failed to fetch service template: ${error.message}`);
     }
 
@@ -110,15 +110,15 @@ class ServiceTemplatesService {
 
     // Get template items
     const { data: items, error: itemsError } = await this.sb
-      .from("service_template_items")
+      .from('service_template_items')
       .select(
         `
         *,
         service_types!inner(name, price)
       `,
       )
-      .eq("template_id", id)
-      .order("sequence_order");
+      .eq('template_id', id)
+      .order('sequence_order');
 
     if (itemsError) {
       throw new Error(`Failed to fetch template items: ${itemsError.message}`);
@@ -138,10 +138,9 @@ class ServiceTemplatesService {
       is_required: item.is_required,
       discount_percentage: item.discount_percentage,
       notes: item.notes,
-      total_price:
-        item.service_types.price *
-        item.quantity *
-        (1 - (item.discount_percentage || 0) / 100),
+      total_price: item.service_types.price
+        * item.quantity
+        * (1 - (item.discount_percentage || 0) / 100),
       created_at: item.created_at,
     }));
 
@@ -164,7 +163,7 @@ class ServiceTemplatesService {
     request: CreateServiceTemplateRequest,
   ): Promise<ServiceTemplate> {
     const { data, error } = await this.sb
-      .from("service_templates")
+      .from('service_templates')
       .insert({
         name: request.name,
         description: request.description || null,
@@ -173,7 +172,7 @@ class ServiceTemplatesService {
         clinic_id: request.clinic_id,
         default_duration_minutes: request.default_duration_minutes || 60,
         default_price: request.default_price || 0,
-        price_type: request.price_type || "fixed",
+        price_type: request.price_type || 'fixed',
         is_featured: request.is_featured || false,
         template_config: request.template_config || {},
       })
@@ -201,30 +200,37 @@ class ServiceTemplatesService {
     const updateData: Partial<ServiceTemplate> = {};
 
     if (request.name) updateData.name = request.name;
-    if (request.description !== undefined)
+    if (request.description !== undefined) {
       updateData.description = request.description;
+    }
     if (request.template_type) updateData.template_type = request.template_type;
-    if (request.category_id !== undefined)
+    if (request.category_id !== undefined) {
       updateData.category_id = request.category_id;
+    }
     if (request.default_duration_minutes) {
       updateData.default_duration_minutes = request.default_duration_minutes;
     }
-    if (request.default_price !== undefined)
+    if (request.default_price !== undefined) {
       updateData.default_price = request.default_price;
+    }
     if (request.price_type) updateData.price_type = request.price_type;
-    if (request.is_active !== undefined)
+    if (request.is_active !== undefined) {
       updateData.is_active = request.is_active;
-    if (request.is_featured !== undefined)
+    }
+    if (request.is_featured !== undefined) {
       updateData.is_featured = request.is_featured;
-    if (request.sort_order !== undefined)
+    }
+    if (request.sort_order !== undefined) {
       updateData.sort_order = request.sort_order;
-    if (request.template_config)
+    }
+    if (request.template_config) {
       updateData.template_config = request.template_config;
+    }
 
     const { data, error } = await this.sb
-      .from("service_templates")
+      .from('service_templates')
       .update(updateData)
-      .eq("id", request.id)
+      .eq('id', request.id)
       .select()
       .single();
 
@@ -240,9 +246,9 @@ class ServiceTemplatesService {
    */
   async deleteServiceTemplate(id: string): Promise<void> {
     const { error } = await this.sb
-      .from("service_templates")
+      .from('service_templates')
       .delete()
-      .eq("id", id);
+      .eq('id', id);
 
     if (error) {
       throw new Error(`Failed to delete service template: ${error.message}`);
@@ -260,15 +266,14 @@ class ServiceTemplatesService {
       template_id: templateId,
       service_id: item.service_id,
       quantity: item.quantity || 1,
-      sequence_order:
-        item.sequence_order !== undefined ? item.sequence_order : index,
+      sequence_order: item.sequence_order !== undefined ? item.sequence_order : index,
       is_required: item.is_required !== undefined ? item.is_required : true,
       discount_percentage: item.discount_percentage || null,
       notes: item.notes || null,
     }));
 
     const { error } = await this.sb
-      .from("service_template_items")
+      .from('service_template_items')
       .insert(itemsData);
 
     if (error) {
@@ -285,19 +290,21 @@ class ServiceTemplatesService {
     const updateData: any = {};
 
     if (request.quantity !== undefined) updateData.quantity = request.quantity;
-    if (request.sequence_order !== undefined)
+    if (request.sequence_order !== undefined) {
       updateData.sequence_order = request.sequence_order;
-    if (request.is_required !== undefined)
+    }
+    if (request.is_required !== undefined) {
       updateData.is_required = request.is_required;
+    }
     if (request.discount_percentage !== undefined) {
       updateData.discount_percentage = request.discount_percentage;
     }
     if (request.notes !== undefined) updateData.notes = request.notes;
 
     const { error } = await this.sb
-      .from("service_template_items")
+      .from('service_template_items')
       .update(updateData)
-      .eq("id", request.id);
+      .eq('id', request.id);
 
     if (error) {
       throw new Error(`Failed to update template item: ${error.message}`);
@@ -309,9 +316,9 @@ class ServiceTemplatesService {
    */
   async removeTemplateItem(itemId: string): Promise<void> {
     const { error } = await this.sb
-      .from("service_template_items")
+      .from('service_template_items')
       .delete()
-      .eq("id", itemId);
+      .eq('id', itemId);
 
     if (error) {
       throw new Error(`Failed to remove template item: ${error.message}`);
@@ -322,7 +329,7 @@ class ServiceTemplatesService {
    * Increment template usage count
    */
   async incrementTemplateUsage(templateId: string): Promise<boolean> {
-    const { data, error } = await this.sb.rpc("increment_template_usage", {
+    const { data, error } = await this.sb.rpc('increment_template_usage', {
       p_template_id: templateId as any,
     });
 
@@ -339,7 +346,7 @@ class ServiceTemplatesService {
   async duplicateServiceTemplate(
     request: DuplicateServiceTemplateRequest,
   ): Promise<string> {
-    const { data, error } = await this.sb.rpc("duplicate_service_template", {
+    const { data, error } = await this.sb.rpc('duplicate_service_template', {
       p_template_id: request.template_id,
       p_new_name: request.new_name,
       p_clinic_id: request.clinic_id,
@@ -361,8 +368,8 @@ class ServiceTemplatesService {
     const templates = await this.getServiceTemplates({ clinic_id: clinicId });
 
     const totalTemplates = templates.length;
-    const activeTemplates = templates.filter((t) => t.is_active).length;
-    const featuredTemplates = templates.filter((t) => t.is_featured).length;
+    const activeTemplates = templates.filter(t => t.is_active).length;
+    const featuredTemplates = templates.filter(t => t.is_featured).length;
     const totalUsage = templates.reduce(
       (sum: number, t: any) => sum + (t.usage_count || 0),
       0,
@@ -387,25 +394,20 @@ class ServiceTemplatesService {
     );
 
     // Calculate averages
-    const averagePrice =
-      totalTemplates > 0
-        ? templates.reduce((sum, t) => sum + t.default_price, 0) /
-          totalTemplates
-        : 0;
+    const averagePrice = totalTemplates > 0
+      ? templates.reduce((sum, t) => sum + t.default_price, 0)
+        / totalTemplates
+      : 0;
 
-    const averageDuration =
-      totalTemplates > 0
-        ? templates.reduce((sum, t) => sum + t.default_duration_minutes, 0) /
-          totalTemplates
-        : 0;
+    const averageDuration = totalTemplates > 0
+      ? templates.reduce((sum, t) => sum + t.default_duration_minutes, 0)
+        / totalTemplates
+      : 0;
 
     // Find most used template
-    const mostUsedTemplate =
-      templates.length > 0
-        ? templates.reduce((max, template) =>
-            template.usage_count > max.usage_count ? template : max,
-          )
-        : null;
+    const mostUsedTemplate = templates.length > 0
+      ? templates.reduce((max, template) => template.usage_count > max.usage_count ? template : max)
+      : null;
 
     return {
       total_templates: totalTemplates,
@@ -418,10 +420,10 @@ class ServiceTemplatesService {
       average_duration: averageDuration,
       most_used_template: mostUsedTemplate
         ? {
-            id: mostUsedTemplate.id,
-            name: mostUsedTemplate.name,
-            usage_count: mostUsedTemplate.usage_count,
-          }
+          id: mostUsedTemplate.id,
+          name: mostUsedTemplate.name,
+          usage_count: mostUsedTemplate.usage_count,
+        }
         : null,
     };
   }

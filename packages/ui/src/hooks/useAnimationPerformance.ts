@@ -6,6 +6,30 @@
 
 import { useCallback, useEffect, useState } from "react";
 
+// Extended navigator interface for touch points
+interface NavigatorWithTouch extends Navigator {
+  maxTouchPoints?: number;
+}
+
+// Process interface for environment variables
+interface ProcessWithEnv {
+  env?: {
+    VITEST?: string;
+    [key: string]: string | undefined;
+  };
+}
+
+// Screen interface for refresh rate
+interface ScreenWithRefreshRate extends Screen {
+  refreshRate?: number;
+}
+
+// Navigator interface for device capabilities
+interface NavigatorWithDeviceCapabilities extends NavigatorWithTouch {
+  hardwareConcurrency?: number;
+  deviceMemory?: number;
+}
+
 interface DeviceCapabilities {
   /** CPU performance estimate (1-10 scale) */
   cpuPower: number;
@@ -74,7 +98,7 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
 
   const hasTouch =
     hasWindow && hasNavigator
-      ? "ontouchstart" in window || (navigator as any).maxTouchPoints > 0
+      ? "ontouchstart" in window || (navigator as NavigatorWithTouch).maxTouchPoints > 0
       : false;
 
   const userAgent = hasNavigator ? navigator.userAgent : "";
@@ -92,8 +116,8 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
   let hasGPU = false;
   // Avoid calling canvas.getContext in test/jsdom where it throws a Not implemented error
   const isTestEnv =
-    (typeof process !== "undefined" && (process as any).env?.VITEST) ||
-    (hasNavigator && /jsdom/i.test((navigator as any).userAgent || ""));
+    (typeof process !== "undefined" && (process as ProcessWithEnv).env?.VITEST) ||
+    (hasNavigator && /jsdom/i.test(navigator.userAgent || ""));
   if (hasDocument && !isTestEnv) {
     try {
       const canvas = document.createElement("canvas");
@@ -111,23 +135,23 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
   // CPU power estimation (simplified)
   const cpuPower = (() => {
     const cores = hasNavigator
-      ? (navigator as any).hardwareConcurrency || 4
+      ? (navigator as NavigatorWithDeviceCapabilities).hardwareConcurrency || 4
       : 4;
-    const memory = hasNavigator ? (navigator as any).deviceMemory || 4 : 4;
+    const memory = hasNavigator ? (navigator as NavigatorWithDeviceCapabilities).deviceMemory || 4 : 4;
     if (isMobile) return Math.min(cores + memory - 2, 6);
     return Math.min(cores + memory - 1, 10);
   })();
 
   // High refresh rate detection (fallback since refreshRate is not standard)
   const isHighRefreshRate =
-    hasScreen && (screen as any).refreshRate
-      ? (screen as any).refreshRate > 60
+    hasScreen && (screen as ScreenWithRefreshRate).refreshRate
+      ? (screen as ScreenWithRefreshRate).refreshRate! > 60
       : false;
 
   // Memory constraints (rough estimation)
   const hasMemoryConstraints =
-    hasNavigator && (navigator as any).deviceMemory
-      ? (navigator as any).deviceMemory <= 2
+    hasNavigator && (navigator as NavigatorWithDeviceCapabilities).deviceMemory
+      ? (navigator as NavigatorWithDeviceCapabilities).deviceMemory! <= 2
       : isMobile;
 
   const isLowEnd =

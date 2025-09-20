@@ -34,7 +34,7 @@ export interface HealthCheck {
   status: "pass" | "fail" | "warn";
   duration: number;
   message?: string;
-  data?: any;
+  data?: unknown;
 }
 
 export interface MonitoringConfig {

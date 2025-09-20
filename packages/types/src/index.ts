@@ -140,8 +140,8 @@ export interface Database {
     };
     Functions: {
       [key: string]: {
-        Args: Record<string, any>;
-        Returns: any;
+        Args: Record<string, unknown>;
+        Returns: unknown;
       };
     };
     Enums: {

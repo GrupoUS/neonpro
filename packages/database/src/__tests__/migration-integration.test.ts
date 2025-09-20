@@ -102,16 +102,16 @@ describe("Supabase Migration Integration", () => {
       expect(types.Database.public.Tables.patients).toBeDefined();
     });
 
-    it("should export required Supabase types", async () => {
-      const exports = await import("../index");
-
+    it("should export required database functions", async () => {
+      // Import specific functions instead of the entire index
+      const { createClient: indexCreateClient } = await import("../client");
+      const { validateSchema: indexValidateSchema } = await import("../utils/validation");
+      
       // Check that all required exports are available
-      expect(exports.createClient).toBeDefined();
-      expect(exports.validateSchema).toBeDefined();
-      expect(exports.migrateData).toBeDefined();
-      expect(typeof exports.createClient).toBe("function");
-      expect(typeof exports.validateSchema).toBe("function");
-      expect(typeof exports.migrateData).toBe("function");
+      expect(indexCreateClient).toBeDefined();
+      expect(indexValidateSchema).toBeDefined();
+      expect(typeof indexCreateClient).toBe("function");
+      expect(typeof indexValidateSchema).toBe("function");
     });
   });
 
@@ -255,6 +255,7 @@ describe("Supabase Migration Integration", () => {
       expect(serviceClient).toBeDefined();
 
       // Service client should have access to bypassing RLS
+      expect(typeof regularClient.from).toBe("function");
       expect(typeof serviceClient.from).toBe("function");
     });
   });

@@ -24,21 +24,21 @@ The main chat interface component with full feature set.
 **Usage:**
 
 ```tsx
-import { EnhancedAIChat } from "@/components/ai";
+import { EnhancedAIChat } from '@/components/ai';
 
 <EnhancedAIChat
   patientContext={{
-    patientId: "123",
-    patientName: "Maria Silva",
-    cpf: "123.456.789-00",
+    patientId: '123',
+    patientName: 'Maria Silva',
+    cpf: '123.456.789-00',
   }}
   healthcareProfessional={{
-    id: "456",
-    name: "Dr. Carlos Mendes",
-    specialty: "Clínico Geral",
-    crmNumber: "12345-SP",
+    id: '456',
+    name: 'Dr. Carlos Mendes',
+    specialty: 'Clínico Geral',
+    crmNumber: '12345-SP',
   }}
-  sessionType="client"
+  sessionType='client'
   showVoiceInput={true}
   showFileAttachment={true}
   lgpdConsent={{
@@ -65,7 +65,7 @@ Enhanced input component with voice and file attachment capabilities.
 **Usage:**
 
 ```tsx
-import { AIChatInput } from "@/components/ai";
+import { AIChatInput } from '@/components/ai';
 
 <AIChatInput
   value={input}
@@ -95,7 +95,7 @@ Advanced message display component with streaming and markdown support.
 **Usage:**
 
 ```tsx
-import { AIMessageDisplay } from "@/components/ai";
+import { AIMessageDisplay } from '@/components/ai';
 
 <AIMessageDisplay
   content={message.content}
@@ -123,7 +123,7 @@ Comprehensive demo component showcasing all features.
 **Usage:**
 
 ```tsx
-import { AIChatDemo } from "@/components/ai";
+import { AIChatDemo } from '@/components/ai';
 
 <AIChatDemo showScenarios={true} testMode={false} />;
 ```
@@ -134,13 +134,13 @@ All components include comprehensive TypeScript types:
 
 ```typescript
 import type {
-  ChatMessage,
   AIModel,
+  ChatMessage,
   ChatSession,
   HealthcareContext,
   LGPDSettings,
   // ... many more types
-} from "@/components/ai";
+} from '@/components/ai';
 ```
 
 ## Key Features
@@ -190,7 +190,7 @@ The components integrate with your existing tRPC agent backend:
 
 ```typescript
 // tRPC router setup
-import { agentRouter } from "@/server/api/routers/agent";
+import { agentRouter } from '@/server/api/routers/agent';
 
 // App Router
 export const appRouter = t.router({
@@ -214,14 +214,14 @@ Create API routes for AI chat:
 
 ```typescript
 // app/api/ai/chat/route.ts
-import { openai } from "@ai-sdk/openai";
-import { streamText } from "ai";
+import { openai } from '@ai-sdk/openai';
+import { streamText } from 'ai';
 
 export async function POST(req: Request) {
   const { messages } = await req.json();
 
   const result = streamText({
-    model: openai("gpt-4o"),
+    model: openai('gpt-4o'),
     messages,
     system: `You are a helpful AI assistant for NeonPro aesthetic clinic...`,
   });
@@ -236,13 +236,13 @@ export async function POST(req: Request) {
 
 ```typescript
 const patientContext = {
-  patientId: "123",
-  patientName: "Maria Silva",
-  cpf: "123.456.789-00",
-  dateOfBirth: new Date("1980-05-15"),
-  medicalConditions: ["Hipertensão", "Diabetes Tipo 2"],
-  allergies: ["Penicilina"],
-  currentMedications: ["Losartana", "Metformina"],
+  patientId: '123',
+  patientName: 'Maria Silva',
+  cpf: '123.456.789-00',
+  dateOfBirth: new Date('1980-05-15'),
+  medicalConditions: ['Hipertensão', 'Diabetes Tipo 2'],
+  allergies: ['Penicilina'],
+  currentMedications: ['Losartana', 'Metformina'],
 };
 ```
 
@@ -250,13 +250,13 @@ const patientContext = {
 
 ```typescript
 const professionalContext = {
-  id: "456",
-  name: "Dr. Carlos Mendes",
-  specialty: "Clínico Geral",
-  crmNumber: "12345-SP",
+  id: '456',
+  name: 'Dr. Carlos Mendes',
+  specialty: 'Clínico Geral',
+  crmNumber: '12345-SP',
   contact: {
-    email: "carlos.mendes@neonpro.com.br",
-    phone: "(11) 98765-4321",
+    email: 'carlos.mendes@neonpro.com.br',
+    phone: '(11) 98765-4321',
   },
 };
 ```

@@ -10,21 +10,21 @@
  */
 
 // Mock the missing hooks for testing
-vi.mock("@/hooks/use-long-tasks", () => ({
+vi.mock('@/hooks/use-long-tasks', () => ({
   useLongTasks: () => ({ longTasks: [], monitorLongTasks: vi.fn() }),
 }));
 
-vi.mock("@/hooks/use-network-information", () => ({
+vi.mock('@/hooks/use-network-information', () => ({
   useNetworkInformation: () => ({
     online: true,
-    effectiveType: "4g",
+    effectiveType: '4g',
     downlink: 10,
     rtt: 100,
     saveData: false,
   }),
 }));
 
-vi.mock("@/hooks/use-performance-monitoring", () => ({
+vi.mock('@/hooks/use-performance-monitoring', () => ({
   usePerformanceMonitoring: () => ({
     metrics: {},
     startMonitoring: vi.fn(),
@@ -32,14 +32,14 @@ vi.mock("@/hooks/use-performance-monitoring", () => ({
   }),
 }));
 
-vi.mock("@/hooks/use-resource-timing", () => ({
+vi.mock('@/hooks/use-resource-timing', () => ({
   useResourceTiming: () => ({
     resources: [],
     monitorResources: vi.fn(),
   }),
 }));
 
-vi.mock("@/hooks/use-web-vitals", () => ({
+vi.mock('@/hooks/use-web-vitals', () => ({
   useWebVitals: () => ({
     vitals: {},
     measureVitals: vi.fn(),
@@ -47,14 +47,14 @@ vi.mock("@/hooks/use-web-vitals", () => ({
 }));
 
 // Import the mocked hooks
-import { useLongTasks } from "@/hooks/use-long-tasks";
-import { useNetworkInformation } from "@/hooks/use-network-information";
-import { usePerformanceMonitoring } from "@/hooks/use-performance-monitoring";
-import { useResourceTiming } from "@/hooks/use-resource-timing";
-import { useWebVitals } from "@/hooks/use-web-vitals";
-import { act, renderHook, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, Mock, vi } from "vitest";
-import { z } from "zod";
+import { useLongTasks } from '@/hooks/use-long-tasks';
+import { useNetworkInformation } from '@/hooks/use-network-information';
+import { usePerformanceMonitoring } from '@/hooks/use-performance-monitoring';
+import { useResourceTiming } from '@/hooks/use-resource-timing';
+import { useWebVitals } from '@/hooks/use-web-vitals';
+import { act, renderHook, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { z } from 'zod';
 
 // Import performance monitoring services
 import {
@@ -66,7 +66,7 @@ import {
   PerformanceReport,
   ResourceTimingMetrics,
   WebVitalsMetrics,
-} from "@/services/performance-monitoring-service";
+} from '@/services/performance-monitoring-service';
 
 import {
   createPerformanceTracker,
@@ -75,7 +75,7 @@ import {
   trackCustomMetric,
   trackResourceLoad,
   trackUserInteraction,
-} from "@/services/performance-tracker-service";
+} from '@/services/performance-tracker-service';
 
 import {
   AIResponseMetrics,
@@ -83,12 +83,12 @@ import {
   HealthcarePerformanceProfiler,
   PatientDataMetrics,
   TelemedicineMetrics,
-} from "@/services/healthcare-performance-service";
+} from '@/services/healthcare-performance-service';
 
 // Mock external dependencies
-vi.mock("@/services/performance-monitoring-service");
-vi.mock("@/services/performance-tracker-service");
-vi.mock("@/services/healthcare-performance-service");
+vi.mock('@/services/performance-monitoring-service');
+vi.mock('@/services/performance-tracker-service');
+vi.mock('@/services/healthcare-performance-service');
 
 // Test schemas for integration validation
 const WebVitalsMetricsSchema = z.object({
@@ -159,7 +159,7 @@ const LongTaskMetricsSchema = z.object({
 });
 
 const NetworkMetricsSchema = z.object({
-  effectiveType: z.enum(["slow-2g", "2g", "3g", "4g", "5g"]),
+  effectiveType: z.enum(['slow-2g', '2g', '3g', '4g', '5g']),
   downlink: z.number().min(0),
   rtt: z.number().min(0),
   saveData: z.boolean(),
@@ -208,13 +208,13 @@ const HealthcareMetricsSchema = z.object({
 const PerformanceAlertSchema = z.object({
   id: z.string(),
   type: z.enum([
-    "web_vitals",
-    "resource_timing",
-    "long_tasks",
-    "network",
-    "healthcare",
+    'web_vitals',
+    'resource_timing',
+    'long_tasks',
+    'network',
+    'healthcare',
   ]),
-  severity: z.enum(["low", "medium", "high", "critical"]),
+  severity: z.enum(['low', 'medium', 'high', 'critical']),
   metric: z.string(),
   value: z.number(),
   threshold: z.number(),
@@ -247,7 +247,7 @@ const PerformanceReportSchema = z.object({
     issues: z.array(
       z.object({
         type: z.string(),
-        severity: z.enum(["low", "medium", "high", "critical"]),
+        severity: z.enum(['low', 'medium', 'high', 'critical']),
         description: z.string(),
         recommendation: z.string(),
       }),
@@ -266,21 +266,21 @@ const generateValidWebVitals = () => ({
   lcp: 1800,
   ttfb: 350,
   timestamp: new Date().toISOString(),
-  page: "/dashboard",
-  sessionId: "sess_12345678901234567890123456789012",
-  userId: "usr_healthcare_12345",
+  page: '/dashboard',
+  sessionId: 'sess_12345678901234567890123456789012',
+  userId: 'usr_healthcare_12345',
   metadata: {
-    browser: "Chrome",
-    device: "desktop",
-    networkType: "4g",
+    browser: 'Chrome',
+    device: 'desktop',
+    networkType: '4g',
   },
 });
 
 const generateValidResourceTiming = () => ({
   resources: [
     {
-      name: "https://api.neonpro.health/patients",
-      initiatorType: "fetch",
+      name: 'https://api.neonpro.health/patients',
+      initiatorType: 'fetch',
       duration: 450,
       size: 25600,
       transferSize: 12800,
@@ -296,8 +296,8 @@ const generateValidResourceTiming = () => ({
       responseTime: 250,
     },
     {
-      name: "https://cdn.neonpro.health/main.js",
-      initiatorType: "script",
+      name: 'https://cdn.neonpro.health/main.js',
+      initiatorType: 'script',
       duration: 800,
       size: 512000,
       transferSize: 128000,
@@ -316,9 +316,9 @@ const generateValidResourceTiming = () => ({
   totalSize: 537600,
   cachedResources: 1,
   uncachedResources: 1,
-  slowestResource: "https://cdn.neonpro.health/main.js",
+  slowestResource: 'https://cdn.neonpro.health/main.js',
   timestamp: new Date().toISOString(),
-  page: "/dashboard",
+  page: '/dashboard',
 });
 
 const generateValidLongTasks = () => ({
@@ -327,13 +327,13 @@ const generateValidLongTasks = () => ({
       duration: 120,
       startTime: 5000,
       endTime: 5120,
-      name: "long_task",
-      source: "self",
-      culprit: "https://app.neonpro.health/main.js",
+      name: 'long_task',
+      source: 'self',
+      culprit: 'https://app.neonpro.health/main.js',
       attribution: [
         {
-          name: "processPatientData",
-          type: "function",
+          name: 'processPatientData',
+          type: 'function',
           duration: 120,
         },
       ],
@@ -343,18 +343,18 @@ const generateValidLongTasks = () => ({
   longestTask: 120,
   taskCount: 1,
   timestamp: new Date().toISOString(),
-  page: "/patients/list",
+  page: '/patients/list',
 });
 
 const generateValidNetworkMetrics = () => ({
-  effectiveType: "4g" as const,
+  effectiveType: '4g' as const,
   downlink: 10,
   rtt: 150,
   saveData: false,
   online: true,
-  connectionType: "wifi",
+  connectionType: 'wifi',
   timestamp: new Date().toISOString(),
-  page: "/dashboard",
+  page: '/dashboard',
 });
 
 const generateValidHealthcareMetrics = () => ({
@@ -389,32 +389,32 @@ const generateValidHealthcareMetrics = () => ({
     consentValidationTime: 25,
   },
   timestamp: new Date().toISOString(),
-  sessionId: "sess_12345678901234567890123456789012",
-  page: "/telemedicine/session",
+  sessionId: 'sess_12345678901234567890123456789012',
+  page: '/telemedicine/session',
 });
 
 const generateValidPerformanceAlert = () => ({
-  id: "alert_12345678901234567890123456789012",
-  type: "web_vitals" as const,
-  severity: "high" as const,
-  metric: "LCP",
+  id: 'alert_12345678901234567890123456789012',
+  type: 'web_vitals' as const,
+  severity: 'high' as const,
+  metric: 'LCP',
   value: 4500,
   threshold: 2500,
-  message: "LCP exceeds threshold of 2500ms",
-  recommendation: "Optimize image loading and reduce server response time",
+  message: 'LCP exceeds threshold of 2500ms',
+  recommendation: 'Optimize image loading and reduce server response time',
   timestamp: new Date().toISOString(),
-  page: "/dashboard",
-  sessionId: "sess_12345678901234567890123456789012",
-  userId: "usr_healthcare_12345",
+  page: '/dashboard',
+  sessionId: 'sess_12345678901234567890123456789012',
+  userId: 'usr_healthcare_12345',
   metadata: {
-    browser: "Chrome",
-    device: "mobile",
+    browser: 'Chrome',
+    device: 'mobile',
   },
 });
 
 const generateValidPerformanceReport = () => ({
-  sessionId: "sess_12345678901234567890123456789012",
-  page: "/dashboard",
+  sessionId: 'sess_12345678901234567890123456789012',
+  page: '/dashboard',
   duration: 15000,
   webVitals: generateValidWebVitals(),
   resourceTiming: generateValidResourceTiming(),
@@ -429,10 +429,10 @@ const generateValidPerformanceReport = () => ({
     healthcareScore: 92,
     issues: [
       {
-        type: "lcp_slow",
-        severity: "high" as const,
-        description: "Largest Contentful Paint is too slow",
-        recommendation: "Optimize images and server response time",
+        type: 'lcp_slow',
+        severity: 'high' as const,
+        description: 'Largest Contentful Paint is too slow',
+        recommendation: 'Optimize images and server response time',
       },
     ],
   },
@@ -440,7 +440,7 @@ const generateValidPerformanceReport = () => ({
   lgpdCompliant: true,
 });
 
-describe("Performance Monitoring Integration Tests", () => {
+describe('Performance Monitoring Integration Tests', () => {
   let performanceMetricsCollector: PerformanceMetricsCollector;
   let performanceTracker: ReturnType<typeof createPerformanceTracker>;
   let healthcareProfiler: HealthcarePerformanceProfiler;
@@ -459,13 +459,13 @@ describe("Performance Monitoring Integration Tests", () => {
     vi.restoreAllMocks();
   });
 
-  describe("Web Vitals Monitoring", () => {
-    it("should collect and validate Web Vitals metrics", async () => {
+  describe('Web Vitals Monitoring', () => {
+    it('should collect and validate Web Vitals metrics', async () => {
       const webVitalsData = generateValidWebVitals();
 
       vi.spyOn(
         performanceMetricsCollector,
-        "collectWebVitals",
+        'collectWebVitals',
       ).mockResolvedValue(webVitalsData);
 
       const { result } = renderHook(() => useWebVitals());
@@ -487,7 +487,7 @@ describe("Performance Monitoring Integration Tests", () => {
       expect(validatedData.ttfb).toBeLessThan(600); // Good TTFB
     });
 
-    it("should detect performance regressions in Web Vitals", async () => {
+    it('should detect performance regressions in Web Vitals', async () => {
       const poorWebVitals = {
         ...generateValidWebVitals(),
         lcp: 4500, // Poor LCP
@@ -497,7 +497,7 @@ describe("Performance Monitoring Integration Tests", () => {
 
       vi.spyOn(
         performanceMetricsCollector,
-        "collectWebVitals",
+        'collectWebVitals',
       ).mockResolvedValue(poorWebVitals);
 
       const { result } = renderHook(() => useWebVitals());
@@ -512,34 +512,34 @@ describe("Performance Monitoring Integration Tests", () => {
 
       // Check if alerts are generated for poor performance
       const alerts = await performanceTracker.getAlerts();
-      const lcpAlert = alerts.find((alert) => alert.metric === "LCP");
-      const inpAlert = alerts.find((alert) => alert.metric === "INP");
-      const clsAlert = alerts.find((alert) => alert.metric === "CLS");
+      const lcpAlert = alerts.find(alert => alert.metric === 'LCP');
+      const inpAlert = alerts.find(alert => alert.metric === 'INP');
+      const clsAlert = alerts.find(alert => alert.metric === 'CLS');
 
       expect(lcpAlert).toBeDefined();
-      expect(lcpAlert?.severity).toBe("high");
+      expect(lcpAlert?.severity).toBe('high');
       expect(inpAlert).toBeDefined();
-      expect(inpAlert?.severity).toBe("high");
+      expect(inpAlert?.severity).toBe('high');
       expect(clsAlert).toBeDefined();
-      expect(clsAlert?.severity).toBe("medium");
+      expect(clsAlert?.severity).toBe('medium');
     });
 
-    it("should track Web Vitals across different pages", async () => {
+    it('should track Web Vitals across different pages', async () => {
       const pageWebVitals = {
         dashboard: generateValidWebVitals(),
         patients: {
           ...generateValidWebVitals(),
-          page: "/patients",
+          page: '/patients',
           lcp: 2200,
         },
         telemedicine: {
           ...generateValidWebVitals(),
-          page: "/telemedicine",
+          page: '/telemedicine',
           lcp: 2800, // Slower due to video processing
         },
       };
 
-      vi.spyOn(performanceMetricsCollector, "collectWebVitals")
+      vi.spyOn(performanceMetricsCollector, 'collectWebVitals')
         .mockResolvedValueOnce(pageWebVitals.dashboard)
         .mockResolvedValueOnce(pageWebVitals.patients)
         .mockResolvedValueOnce(pageWebVitals.telemedicine);
@@ -567,13 +567,13 @@ describe("Performance Monitoring Integration Tests", () => {
     });
   });
 
-  describe("Resource Timing Monitoring", () => {
-    it("should monitor resource loading performance", async () => {
+  describe('Resource Timing Monitoring', () => {
+    it('should monitor resource loading performance', async () => {
       const resourceData = generateValidResourceTiming();
 
       vi.spyOn(
         performanceMetricsCollector,
-        "collectResourceTiming",
+        'collectResourceTiming',
       ).mockResolvedValue(resourceData);
 
       const { result } = renderHook(() => useResourceTiming());
@@ -596,14 +596,14 @@ describe("Performance Monitoring Integration Tests", () => {
       expect(validatedData.slowestResource).toBeDefined();
     });
 
-    it("should detect slow-loading resources", async () => {
+    it('should detect slow-loading resources', async () => {
       const slowResourceData = {
         ...generateValidResourceTiming(),
         resources: [
           ...generateValidResourceTiming().resources,
           {
-            name: "https://api.neonpro.health/patients/large-dataset",
-            initiatorType: "fetch",
+            name: 'https://api.neonpro.health/patients/large-dataset',
+            initiatorType: 'fetch',
             duration: 3500, // Very slow
             size: 10240000,
             transferSize: 5120000,
@@ -623,7 +623,7 @@ describe("Performance Monitoring Integration Tests", () => {
 
       vi.spyOn(
         performanceMetricsCollector,
-        "collectResourceTiming",
+        'collectResourceTiming',
       ).mockResolvedValue(slowResourceData);
 
       const { result } = renderHook(() => useResourceTiming());
@@ -641,26 +641,25 @@ describe("Performance Monitoring Integration Tests", () => {
       // Check for slow resource alerts
       const alerts = await performanceTracker.getAlerts();
       const resourceAlert = alerts.find(
-        (alert) => alert.type === "resource_timing",
+        alert => alert.type === 'resource_timing',
       );
 
       expect(resourceAlert).toBeDefined();
-      expect(resourceAlert?.severity).toBe("high");
-      expect(resourceAlert?.metric).toBe("resource_duration");
+      expect(resourceAlert?.severity).toBe('high');
+      expect(resourceAlert?.metric).toBe('resource_duration');
     });
 
-    it("should analyze cache hit rates", async () => {
+    it('should analyze cache hit rates', async () => {
       const resourceData = generateValidResourceTiming();
-      const cacheHitRate =
-        resourceData.cachedResources /
-        (resourceData.cachedResources + resourceData.uncachedResources);
+      const cacheHitRate = resourceData.cachedResources
+        / (resourceData.cachedResources + resourceData.uncachedResources);
 
       expect(cacheHitRate).toBeGreaterThan(0);
       expect(cacheHitRate).toBeLessThanOrEqual(1);
 
       // Mock performance tracker to track cache metrics
-      vi.spyOn(performanceTracker, "trackCacheMetrics").mockImplementation(
-        (metrics) => {
+      vi.spyOn(performanceTracker, 'trackCacheMetrics').mockImplementation(
+        metrics => {
           expect(metrics.hitRate).toBe(cacheHitRate);
           expect(metrics.totalResources).toBe(2);
           expect(metrics.cachedResources).toBe(1);
@@ -669,13 +668,13 @@ describe("Performance Monitoring Integration Tests", () => {
     });
   });
 
-  describe("Long Tasks Monitoring", () => {
-    it("should detect and report long tasks", async () => {
+  describe('Long Tasks Monitoring', () => {
+    it('should detect and report long tasks', async () => {
       const longTasksData = generateValidLongTasks();
 
       vi.spyOn(
         performanceMetricsCollector,
-        "collectLongTasks",
+        'collectLongTasks',
       ).mockResolvedValue(longTasksData);
 
       const { result } = renderHook(() => useLongTasks());
@@ -695,7 +694,7 @@ describe("Performance Monitoring Integration Tests", () => {
       expect(validatedData.taskCount).toBeGreaterThan(0);
     });
 
-    it("should correlate long tasks with user interactions", async () => {
+    it('should correlate long tasks with user interactions', async () => {
       const longTasksWithInteraction = {
         ...generateValidLongTasks(),
         tasks: [
@@ -703,8 +702,8 @@ describe("Performance Monitoring Integration Tests", () => {
             ...generateValidLongTasks().tasks[0],
             attribution: [
               {
-                name: "handlePatientFormSubmit",
-                type: "event",
+                name: 'handlePatientFormSubmit',
+                type: 'event',
                 duration: 120,
               },
             ],
@@ -714,7 +713,7 @@ describe("Performance Monitoring Integration Tests", () => {
 
       vi.spyOn(
         performanceMetricsCollector,
-        "collectLongTasks",
+        'collectLongTasks',
       ).mockResolvedValue(longTasksWithInteraction);
 
       const { result } = renderHook(() => useLongTasks());
@@ -728,16 +727,16 @@ describe("Performance Monitoring Integration Tests", () => {
       });
 
       // Track user interaction correlation
-      vi.spyOn(performanceTracker, "trackInteraction").mockImplementation(
-        (interaction) => {
-          expect(interaction.type).toBe("form_submit");
+      vi.spyOn(performanceTracker, 'trackInteraction').mockImplementation(
+        interaction => {
+          expect(interaction.type).toBe('form_submit');
           expect(interaction.duration).toBe(120);
           expect(interaction.blockingTime).toBe(120);
         },
       );
     });
 
-    it("should identify problematic JavaScript execution", async () => {
+    it('should identify problematic JavaScript execution', async () => {
       const problematicLongTasks = {
         ...generateValidLongTasks(),
         tasks: [
@@ -745,13 +744,13 @@ describe("Performance Monitoring Integration Tests", () => {
             duration: 500, // Very long task
             startTime: 3000,
             endTime: 3500,
-            name: "script_evaluation",
-            source: "https://app.neonpro.health/large-bundle.js",
-            culprit: "processLargeDataset",
+            name: 'script_evaluation',
+            source: 'https://app.neonpro.health/large-bundle.js',
+            culprit: 'processLargeDataset',
             attribution: [
               {
-                name: "processLargeDataset",
-                type: "function",
+                name: 'processLargeDataset',
+                type: 'function',
                 duration: 500,
               },
             ],
@@ -764,7 +763,7 @@ describe("Performance Monitoring Integration Tests", () => {
 
       vi.spyOn(
         performanceMetricsCollector,
-        "collectLongTasks",
+        'collectLongTasks',
       ).mockResolvedValue(problematicLongTasks);
 
       const { result } = renderHook(() => useLongTasks());
@@ -780,22 +779,22 @@ describe("Performance Monitoring Integration Tests", () => {
       // Should generate critical alert for very long tasks
       const alerts = await performanceTracker.getAlerts();
       const criticalAlert = alerts.find(
-        (alert) => alert.severity === "critical",
+        alert => alert.severity === 'critical',
       );
 
       expect(criticalAlert).toBeDefined();
-      expect(criticalAlert?.type).toBe("long_tasks");
+      expect(criticalAlert?.type).toBe('long_tasks');
       expect(criticalAlert?.value).toBe(500);
     });
   });
 
-  describe("Network Information Monitoring", () => {
-    it("should monitor network conditions and adapt performance", async () => {
+  describe('Network Information Monitoring', () => {
+    it('should monitor network conditions and adapt performance', async () => {
       const networkData = generateValidNetworkMetrics();
 
       vi.spyOn(
         performanceMetricsCollector,
-        "collectNetworkMetrics",
+        'collectNetworkMetrics',
       ).mockResolvedValue(networkData);
 
       const { result } = renderHook(() => useNetworkInformation());
@@ -818,17 +817,17 @@ describe("Performance Monitoring Integration Tests", () => {
       expect(validatedData.online).toBe(true);
     });
 
-    it("should adjust performance targets based on network conditions", async () => {
+    it('should adjust performance targets based on network conditions', async () => {
       const slowNetworkMetrics = {
         ...generateValidNetworkMetrics(),
-        effectiveType: "2g" as const,
+        effectiveType: '2g' as const,
         downlink: 0.5,
         rtt: 800,
       };
 
       vi.spyOn(
         performanceMetricsCollector,
-        "collectNetworkMetrics",
+        'collectNetworkMetrics',
       ).mockResolvedValue(slowNetworkMetrics);
 
       const { result } = renderHook(() => useNetworkInformation());
@@ -844,26 +843,25 @@ describe("Performance Monitoring Integration Tests", () => {
       });
 
       // Should adjust performance thresholds for slow networks
-      const adjustedThresholds =
-        performanceTracker.getAdjustedThresholds(slowNetworkMetrics);
+      const adjustedThresholds = performanceTracker.getAdjustedThresholds(slowNetworkMetrics);
 
       expect(adjustedThresholds.lcp).toBeGreaterThan(2500); // Higher threshold for 2G
       expect(adjustedThresholds.fcp).toBeGreaterThan(1800); // Higher threshold for 2G
       expect(adjustedThresholds.resourceLoadTime).toBeGreaterThan(5000); // Higher threshold
     });
 
-    it("should detect network disconnections and handle gracefully", async () => {
+    it('should detect network disconnections and handle gracefully', async () => {
       const offlineMetrics = {
         ...generateValidNetworkMetrics(),
         online: false,
-        effectiveType: "slow-2g" as const,
+        effectiveType: 'slow-2g' as const,
         downlink: 0,
         rtt: 0,
       };
 
       vi.spyOn(
         performanceMetricsCollector,
-        "collectNetworkMetrics",
+        'collectNetworkMetrics',
       ).mockResolvedValue(offlineMetrics);
 
       const { result } = renderHook(() => useNetworkInformation());
@@ -891,11 +889,11 @@ describe("Performance Monitoring Integration Tests", () => {
     });
   });
 
-  describe("Healthcare-Specific Performance Monitoring", () => {
-    it("should monitor healthcare data processing performance", async () => {
+  describe('Healthcare-Specific Performance Monitoring', () => {
+    it('should monitor healthcare data processing performance', async () => {
       const healthcareMetrics = generateValidHealthcareMetrics();
 
-      vi.spyOn(healthcareProfiler, "collectMetrics").mockResolvedValue(
+      vi.spyOn(healthcareProfiler, 'collectMetrics').mockResolvedValue(
         healthcareMetrics,
       );
 
@@ -909,7 +907,7 @@ describe("Performance Monitoring Integration Tests", () => {
       expect(validatedData.compliance.lgpdDataProcessing).toBeGreaterThan(0.9); // Good compliance
     });
 
-    it("should track telemedicine session performance", async () => {
+    it('should track telemedicine session performance', async () => {
       const telemedicineMetrics = {
         ...generateValidHealthcareMetrics(),
         telemedicine: {
@@ -924,7 +922,7 @@ describe("Performance Monitoring Integration Tests", () => {
 
       vi.spyOn(
         healthcareProfiler,
-        "collectTelemedicineMetrics",
+        'collectTelemedicineMetrics',
       ).mockResolvedValue(telemedicineMetrics.telemedicine);
 
       const metrics = await healthcareProfiler.collectTelemedicineMetrics();
@@ -936,7 +934,7 @@ describe("Performance Monitoring Integration Tests", () => {
       expect(metrics.frameRate).toBeGreaterThanOrEqual(30); // Good frame rate
     });
 
-    it("should monitor AI response performance in healthcare context", async () => {
+    it('should monitor AI response performance in healthcare context', async () => {
       const aiMetrics = {
         ...generateValidHealthcareMetrics(),
         aiResponse: {
@@ -949,7 +947,7 @@ describe("Performance Monitoring Integration Tests", () => {
         },
       };
 
-      vi.spyOn(healthcareProfiler, "collectAIMetrics").mockResolvedValue(
+      vi.spyOn(healthcareProfiler, 'collectAIMetrics').mockResolvedValue(
         aiMetrics.aiResponse,
       );
 
@@ -961,7 +959,7 @@ describe("Performance Monitoring Integration Tests", () => {
       expect(metrics.cost).toBeLessThan(0.05); // Reasonable cost
     });
 
-    it("should validate LGPD compliance in performance monitoring", async () => {
+    it('should validate LGPD compliance in performance monitoring', async () => {
       const complianceMetrics = {
         ...generateValidHealthcareMetrics(),
         compliance: {
@@ -974,7 +972,7 @@ describe("Performance Monitoring Integration Tests", () => {
 
       vi.spyOn(
         healthcareProfiler,
-        "collectComplianceMetrics",
+        'collectComplianceMetrics',
       ).mockResolvedValue(complianceMetrics.compliance);
 
       const metrics = await healthcareProfiler.collectComplianceMetrics();
@@ -986,17 +984,17 @@ describe("Performance Monitoring Integration Tests", () => {
     });
   });
 
-  describe("Performance Alerts and Notifications", () => {
-    it("should generate alerts for performance threshold violations", async () => {
+  describe('Performance Alerts and Notifications', () => {
+    it('should generate alerts for performance threshold violations', async () => {
       const alertThresholds: AlertThreshold[] = [
-        { metric: "LCP", threshold: 2500, severity: "high" },
-        { metric: "INP", threshold: 100, severity: "high" },
-        { metric: "CLS", threshold: 0.1, severity: "medium" },
-        { metric: "resource_load_time", threshold: 3000, severity: "medium" },
+        { metric: 'LCP', threshold: 2500, severity: 'high' },
+        { metric: 'INP', threshold: 100, severity: 'high' },
+        { metric: 'CLS', threshold: 0.1, severity: 'medium' },
+        { metric: 'resource_load_time', threshold: 3000, severity: 'medium' },
       ];
 
-      vi.spyOn(performanceTracker, "setupAlerts").mockImplementation(
-        (thresholds) => {
+      vi.spyOn(performanceTracker, 'setupAlerts').mockImplementation(
+        thresholds => {
           expect(thresholds).toEqual(alertThresholds);
         },
       );
@@ -1008,7 +1006,7 @@ describe("Performance Monitoring Integration Tests", () => {
       );
     });
 
-    it("should alert on healthcare performance degradation", async () => {
+    it('should alert on healthcare performance degradation', async () => {
       const poorHealthcareMetrics = {
         ...generateValidHealthcareMetrics(),
         telemedicine: {
@@ -1021,7 +1019,7 @@ describe("Performance Monitoring Integration Tests", () => {
         },
       };
 
-      vi.spyOn(healthcareProfiler, "collectMetrics").mockResolvedValue(
+      vi.spyOn(healthcareProfiler, 'collectMetrics').mockResolvedValue(
         poorHealthcareMetrics,
       );
 
@@ -1030,44 +1028,44 @@ describe("Performance Monitoring Integration Tests", () => {
       // Should generate healthcare-specific alerts
       const alerts = await healthcareProfiler.generateAlerts(metrics);
       const telemedicineAlert = alerts.find(
-        (alert) => alert.type === "telemedicine",
+        alert => alert.type === 'telemedicine',
       );
 
       expect(telemedicineAlert).toBeDefined();
-      expect(telemedicineAlert?.severity).toBe("critical");
-      expect(telemedicineAlert?.metric).toBe("video_setup_time");
+      expect(telemedicineAlert?.severity).toBe('critical');
+      expect(telemedicineAlert?.metric).toBe('video_setup_time');
     });
 
-    it("should provide actionable recommendations for performance issues", async () => {
+    it('should provide actionable recommendations for performance issues', async () => {
       const alert = generateValidPerformanceAlert();
 
       expect(alert.recommendation).toBeDefined();
-      expect(typeof alert.recommendation).toBe("string");
+      expect(typeof alert.recommendation).toBe('string');
       expect(alert.recommendation.length).toBeGreaterThan(0);
 
       // Should provide specific, actionable recommendations
       const lcpRecommendations = [
-        "Optimize image loading and compression",
-        "Reduce server response time",
-        "Implement lazy loading for offscreen content",
-        "Minimize and defer JavaScript execution",
+        'Optimize image loading and compression',
+        'Reduce server response time',
+        'Implement lazy loading for offscreen content',
+        'Minimize and defer JavaScript execution',
       ];
 
       expect(
-        lcpRecommendations.some((rec) =>
+        lcpRecommendations.some(rec =>
           alert.recommendation
             ?.toLowerCase()
-            .includes(rec.slice(0, 10).toLowerCase()),
+            .includes(rec.slice(0, 10).toLowerCase())
         ),
       ).toBe(true);
     });
   });
 
-  describe("Performance Reporting and Analytics", () => {
-    it("should generate comprehensive performance reports", async () => {
+  describe('Performance Reporting and Analytics', () => {
+    it('should generate comprehensive performance reports', async () => {
       const performanceReport = generateValidPerformanceReport();
 
-      vi.spyOn(performanceTracker, "generateReport").mockResolvedValue(
+      vi.spyOn(performanceTracker, 'generateReport').mockResolvedValue(
         performanceReport,
       );
 
@@ -1083,7 +1081,7 @@ describe("Performance Monitoring Integration Tests", () => {
       expect(validatedReport.lgpdCompliant).toBe(true);
     });
 
-    it("should analyze performance trends over time", async () => {
+    it('should analyze performance trends over time', async () => {
       const historicalReports = [
         generateValidPerformanceReport(),
         {
@@ -1104,21 +1102,21 @@ describe("Performance Monitoring Integration Tests", () => {
         },
       ];
 
-      vi.spyOn(performanceTracker, "getHistoricalReports").mockResolvedValue(
+      vi.spyOn(performanceTracker, 'getHistoricalReports').mockResolvedValue(
         historicalReports,
       );
 
       const reports = await performanceTracker.getHistoricalReports(3);
 
       // Analyze trends
-      const scores = reports.map((r) => r.summary.performanceScore);
+      const scores = reports.map(r => r.summary.performanceScore);
       const trend = scores[scores.length - 1] - scores[0];
 
       expect(trend).toBeGreaterThan(0); // Performance improving over time
       expect(scores).toHaveLength(3);
     });
 
-    it("should provide healthcare-specific performance insights", async () => {
+    it('should provide healthcare-specific performance insights', async () => {
       const healthcareReport = {
         ...generateValidPerformanceReport(),
         healthcare: generateValidHealthcareMetrics(),
@@ -1127,11 +1125,10 @@ describe("Performance Monitoring Integration Tests", () => {
           healthcareScore: 88,
           issues: [
             {
-              type: "telemedicine_latency",
-              severity: "medium",
-              description: "Telemedicine latency above optimal threshold",
-              recommendation:
-                "Optimize WebRTC configuration and server infrastructure",
+              type: 'telemedicine_latency',
+              severity: 'medium',
+              description: 'Telemedicine latency above optimal threshold',
+              recommendation: 'Optimize WebRTC configuration and server infrastructure',
             },
           ],
         },
@@ -1139,7 +1136,7 @@ describe("Performance Monitoring Integration Tests", () => {
 
       vi.spyOn(
         healthcareProfiler,
-        "generateHealthcareReport",
+        'generateHealthcareReport',
       ).mockResolvedValue(healthcareReport);
 
       const report = await healthcareProfiler.generateHealthcareReport();
@@ -1152,16 +1149,16 @@ describe("Performance Monitoring Integration Tests", () => {
     });
   });
 
-  describe("Integration with Healthcare Platform", () => {
-    it("should integrate with existing authentication system", async () => {
+  describe('Integration with Healthcare Platform', () => {
+    it('should integrate with existing authentication system', async () => {
       const userContext = {
-        userId: "usr_healthcare_12345",
-        roles: ["doctor", "admin"],
-        permissions: ["view_patients", "edit_patients"],
+        userId: 'usr_healthcare_12345',
+        roles: ['doctor', 'admin'],
+        permissions: ['view_patients', 'edit_patients'],
       };
 
-      vi.spyOn(performanceTracker, "setUserContext").mockImplementation(
-        (context) => {
+      vi.spyOn(performanceTracker, 'setUserContext').mockImplementation(
+        context => {
           expect(context.userId).toBe(userContext.userId);
           expect(context.roles).toEqual(userContext.roles);
         },
@@ -1174,53 +1171,53 @@ describe("Performance Monitoring Integration Tests", () => {
       );
     });
 
-    it("should respect LGPD data minimization principles", async () => {
+    it('should respect LGPD data minimization principles', async () => {
       const sensitiveData = {
-        userId: "usr_healthcare_12345",
-        patientId: "pat_789",
-        medicalData: "sensitive information",
+        userId: 'usr_healthcare_12345',
+        patientId: 'pat_789',
+        medicalData: 'sensitive information',
       };
 
-      vi.spyOn(performanceTracker, "sanitizeData").mockImplementation(
-        (data) => {
+      vi.spyOn(performanceTracker, 'sanitizeData').mockImplementation(
+        data => {
           expect(data).toEqual(sensitiveData);
           // Should redact sensitive information
           return {
             ...data,
-            userId: "REDACTED",
-            patientId: "REDACTED",
-            medicalData: "REDACTED",
+            userId: 'REDACTED',
+            patientId: 'REDACTED',
+            medicalData: 'REDACTED',
           };
         },
       );
 
       const sanitized = performanceTracker.sanitizeData(sensitiveData);
 
-      expect(sanitized.userId).toBe("REDACTED");
-      expect(sanitized.patientId).toBe("REDACTED");
-      expect(sanitized.medicalData).toBe("REDACTED");
+      expect(sanitized.userId).toBe('REDACTED');
+      expect(sanitized.patientId).toBe('REDACTED');
+      expect(sanitized.medicalData).toBe('REDACTED');
     });
 
-    it("should provide role-based performance insights", async () => {
+    it('should provide role-based performance insights', async () => {
       const roleBasedReports = {
         doctor: {
           averageSessionDuration: 1800,
-          commonPages: ["/patients", "/appointments", "/telemedicine"],
+          commonPages: ['/patients', '/appointments', '/telemedicine'],
           performanceScore: 85,
         },
         nurse: {
           averageSessionDuration: 2400,
-          commonPages: ["/patients", "/medications", "/vitals"],
+          commonPages: ['/patients', '/medications', '/vitals'],
           performanceScore: 82,
         },
         admin: {
           averageSessionDuration: 3600,
-          commonPages: ["/dashboard", "/reports", "/users"],
+          commonPages: ['/dashboard', '/reports', '/users'],
           performanceScore: 88,
         },
       };
 
-      vi.spyOn(performanceTracker, "getRoleBasedInsights").mockResolvedValue(
+      vi.spyOn(performanceTracker, 'getRoleBasedInsights').mockResolvedValue(
         roleBasedReports,
       );
 
@@ -1229,18 +1226,18 @@ describe("Performance Monitoring Integration Tests", () => {
       expect(insights.doctor).toBeDefined();
       expect(insights.nurse).toBeDefined();
       expect(insights.admin).toBeDefined();
-      expect(insights.doctor.commonPages).toContain("/patients");
-      expect(insights.nurse.commonPages).toContain("/medications");
+      expect(insights.doctor.commonPages).toContain('/patients');
+      expect(insights.nurse.commonPages).toContain('/medications');
     });
   });
 
-  describe("Error Handling and Resilience", () => {
-    it("should handle performance monitoring service failures gracefully", async () => {
+  describe('Error Handling and Resilience', () => {
+    it('should handle performance monitoring service failures gracefully', async () => {
       vi.spyOn(
         performanceMetricsCollector,
-        "collectWebVitals",
+        'collectWebVitals',
       ).mockRejectedValue(
-        new Error("Performance monitoring service unavailable"),
+        new Error('Performance monitoring service unavailable'),
       );
 
       const { result } = renderHook(() => useWebVitals());
@@ -1251,17 +1248,17 @@ describe("Performance Monitoring Integration Tests", () => {
 
       // Should have fallback behavior
       expect(result.current.getFallbackMetrics()).toBeDefined();
-      expect(result.current.getServiceStatus()).toBe("degraded");
+      expect(result.current.getServiceStatus()).toBe('degraded');
     });
 
-    it("should maintain data consistency during service interruptions", async () => {
+    it('should maintain data consistency during service interruptions', async () => {
       const partialData = {
         webVitals: generateValidWebVitals(),
         resourceTiming: null, // Service failure
         longTasks: generateValidLongTasks(),
       };
 
-      vi.spyOn(performanceTracker, "getCurrentMetrics").mockReturnValue(
+      vi.spyOn(performanceTracker, 'getCurrentMetrics').mockReturnValue(
         partialData,
       );
 
@@ -1278,8 +1275,8 @@ describe("Performance Monitoring Integration Tests", () => {
     });
   });
 
-  describe("Performance Optimization Integration", () => {
-    it("should provide optimization suggestions based on metrics", async () => {
+  describe('Performance Optimization Integration', () => {
+    it('should provide optimization suggestions based on metrics', async () => {
       const metrics = {
         webVitals: {
           lcp: 3500,
@@ -1294,48 +1291,47 @@ describe("Performance Monitoring Integration Tests", () => {
 
       vi.spyOn(
         performanceTracker,
-        "getOptimizationSuggestions",
-      ).mockImplementation((data) => {
+        'getOptimizationSuggestions',
+      ).mockImplementation(data => {
         expect(data.webVitals.lcp).toBeGreaterThan(2500);
         expect(data.resourceTiming.uncachedResources).toBeGreaterThan(10);
 
         return [
           {
-            category: "images",
-            priority: "high",
-            description: "Optimize image loading",
-            impact: "High impact on LCP",
+            category: 'images',
+            priority: 'high',
+            description: 'Optimize image loading',
+            impact: 'High impact on LCP',
           },
           {
-            category: "caching",
-            priority: "medium",
-            description: "Implement better caching strategy",
-            impact: "Reduces server load",
+            category: 'caching',
+            priority: 'medium',
+            description: 'Implement better caching strategy',
+            impact: 'Reduces server load',
           },
         ];
       });
 
-      const suggestions =
-        performanceTracker.getOptimizationSuggestions(metrics);
+      const suggestions = performanceTracker.getOptimizationSuggestions(metrics);
 
       expect(suggestions).toHaveLength(2);
-      expect(suggestions[0].category).toBe("images");
-      expect(suggestions[0].priority).toBe("high");
+      expect(suggestions[0].category).toBe('images');
+      expect(suggestions[0].priority).toBe('high');
     });
 
-    it("should track optimization implementation and results", async () => {
+    it('should track optimization implementation and results', async () => {
       const optimization = {
-        id: "opt_image_compression",
-        category: "images",
+        id: 'opt_image_compression',
+        category: 'images',
         implemented: true,
         beforeMetrics: { lcp: 3500 },
         afterMetrics: { lcp: 2200 },
         improvement: 37,
       };
 
-      vi.spyOn(performanceTracker, "trackOptimization").mockImplementation(
-        (data) => {
-          expect(data.category).toBe("images");
+      vi.spyOn(performanceTracker, 'trackOptimization').mockImplementation(
+        data => {
+          expect(data.category).toBe('images');
           expect(data.implementation.before.lcp).toBe(3500);
           expect(data.implementation.after.lcp).toBe(2200);
           expect(data.improvement).toBeGreaterThan(0);

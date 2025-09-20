@@ -1,8 +1,8 @@
-import { Progress } from "@/components/ui/progress";
-import { useI18n } from "@/i18n/i18n";
-import { Button } from "@neonpro/ui";
+import { Progress } from '@/components/ui/progress';
+import { useI18n } from '@/i18n/i18n';
+import { Button } from '@neonpro/ui';
 
-export type TaskStage = "queued" | "running" | "completed" | "failed";
+export type TaskStage = 'queued' | 'running' | 'completed' | 'failed';
 
 export type TaskProgressProps = {
   stage: TaskStage;
@@ -19,22 +19,22 @@ export function TaskProgress({
   const stageLabel = t(`chat.stage.${stage}`);
   return (
     <div
-      role="status"
-      aria-live="polite"
-      aria-label={t("a11y.status")}
-      className="flex items-center gap-2"
+      role='status'
+      aria-live='polite'
+      aria-label={t('a11y.status')}
+      className='flex items-center gap-2'
     >
-      <span className="text-xs capitalize">{stageLabel}</span>
-      <Progress value={percent} className="w-40" />
-      <span className="text-xs">{Math.round(percent)}%</span>
-      {stage !== "completed" && (
+      <span className='text-xs capitalize'>{stageLabel}</span>
+      <Progress value={percent} className='w-40' />
+      <span className='text-xs'>{Math.round(percent)}%</span>
+      {stage !== 'completed' && (
         <Button
-          type="button"
-          variant="outline"
-          size="sm"
+          type='button'
+          variant='outline'
+          size='sm'
           onClick={() => onCancel?.()}
         >
-          {t("chat.cancel")}
+          {t('chat.cancel')}
         </Button>
       )}
     </div>

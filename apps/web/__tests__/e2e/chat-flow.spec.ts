@@ -1,9 +1,9 @@
 // T049: E2E tests for complete chat flow with Playwright
-import { expect, type Page, test } from "@playwright/test";
+import { expect, type Page, test } from '@playwright/test';
 
 // Test configuration
-const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:5173";
-const API_BASE_URL = process.env.PLAYWRIGHT_API_URL || "http://localhost:3000";
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
+const API_BASE_URL = process.env.PLAYWRIGHT_API_URL || 'http://localhost:3000';
 
 // Helper function to wait for chat response
 async function waitForChatResponse(page: Page, timeout = 5000) {
@@ -18,16 +18,16 @@ async function typeMessage(page: Page, selector: string, message: string) {
   await page.type(selector, message, { delay: 50 });
 }
 
-test.describe("AI Chat E2E Flow", () => {
+test.describe('AI Chat E2E Flow', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to the chat interface
     await page.goto(`${BASE_URL}/chat`);
 
     // Wait for the page to load
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState('networkidle');
   });
 
-  test("should display chat interface correctly", async ({ page }) => {
+  test('should display chat interface correctly', async ({ page }) => {
     // Check that main chat components are present
     await expect(page.locator('[data-testid="chat-container"]')).toBeVisible();
     await expect(page.locator('[data-testid="chat-input"]')).toBeVisible();
@@ -38,16 +38,16 @@ test.describe("AI Chat E2E Flow", () => {
     // Check initial state
     await expect(page.locator('[data-testid="chat-messages"]')).toBeEmpty();
     await expect(page.locator('[data-testid="chat-input"]')).toHaveAttribute(
-      "placeholder",
+      'placeholder',
     );
   });
 
-  test("should handle consent flow correctly", async ({ page }) => {
+  test('should handle consent flow correctly', async ({ page }) => {
     // Start typing a message
     await typeMessage(
       page,
       '[data-testid="chat-input"]',
-      "Hello, I need medical help",
+      'Hello, I need medical help',
     );
 
     // Try to send without consent - should show consent prompt
@@ -80,17 +80,17 @@ test.describe("AI Chat E2E Flow", () => {
     // Verify message was sent and response received
     await expect(
       page.locator('[data-testid="chat-message-user"]'),
-    ).toContainText("Hello, I need medical help");
+    ).toContainText('Hello, I need medical help');
     await expect(
       page.locator('[data-testid="chat-message-assistant"]'),
     ).toBeVisible();
   });
 
-  test("should complete full chat conversation flow", async ({ page }) => {
+  test('should complete full chat conversation flow', async ({ page }) => {
     // Skip consent by setting it in localStorage
     await page.evaluate(() => {
       localStorage.setItem(
-        "neonpro_consent",
+        'neonpro_consent',
         JSON.stringify({
           dataProcessing: true,
           aiInteraction: true,
@@ -100,13 +100,13 @@ test.describe("AI Chat E2E Flow", () => {
     });
 
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState('networkidle');
 
     const conversation = [
-      "Olá, gostaria de agendar uma consulta",
-      "Tenho sentido dores de cabeça frequentes",
-      "As dores começaram há cerca de uma semana",
-      "Obrigado pela ajuda",
+      'Olá, gostaria de agendar uma consulta',
+      'Tenho sentido dores de cabeça frequentes',
+      'As dores começaram há cerca de uma semana',
+      'Obrigado pela ajuda',
     ];
 
     for (const [index, message] of conversation.entries()) {
@@ -130,7 +130,7 @@ test.describe("AI Chat E2E Flow", () => {
       ).toBeVisible();
 
       // Clear input for next message
-      await page.fill('[data-testid="chat-input"]', "");
+      await page.fill('[data-testid="chat-input"]', '');
     }
 
     // Verify conversation history
@@ -145,11 +145,11 @@ test.describe("AI Chat E2E Flow", () => {
     expect(assistantMessages).toBe(conversation.length);
   });
 
-  test("should handle streaming responses correctly", async ({ page }) => {
+  test('should handle streaming responses correctly', async ({ page }) => {
     // Set consent
     await page.evaluate(() => {
       localStorage.setItem(
-        "neonpro_consent",
+        'neonpro_consent',
         JSON.stringify({
           dataProcessing: true,
           aiInteraction: true,
@@ -159,13 +159,13 @@ test.describe("AI Chat E2E Flow", () => {
     });
 
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState('networkidle');
 
     // Send a message that should trigger streaming
     await typeMessage(
       page,
       '[data-testid="chat-input"]',
-      "Explain hypertension treatment in detail",
+      'Explain hypertension treatment in detail',
     );
     await page.click('[data-testid="chat-send-button"]');
 
@@ -213,11 +213,11 @@ test.describe("AI Chat E2E Flow", () => {
     expect(finalResponse!.length).toBeGreaterThan(50); // Should be a substantial response
   });
 
-  test("should handle rate limiting gracefully", async ({ page }) => {
+  test('should handle rate limiting gracefully', async ({ page }) => {
     // Set consent
     await page.evaluate(() => {
       localStorage.setItem(
-        "neonpro_consent",
+        'neonpro_consent',
         JSON.stringify({
           dataProcessing: true,
           aiInteraction: true,
@@ -227,7 +227,7 @@ test.describe("AI Chat E2E Flow", () => {
     });
 
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState('networkidle');
 
     // Send multiple messages rapidly to trigger rate limiting
     const rapidMessages = Array.from(
@@ -250,8 +250,8 @@ test.describe("AI Chat E2E Flow", () => {
     const rateLimitText = await page
       .locator('[data-testid="rate-limit-notice"]')
       .textContent();
-    expect(rateLimitText).toContain("limite");
-    expect(rateLimitText).toContain("minuto"); // Should mention time restriction
+    expect(rateLimitText).toContain('limite');
+    expect(rateLimitText).toContain('minuto'); // Should mention time restriction
 
     // Send button should be disabled during rate limiting
     await expect(
@@ -260,15 +260,15 @@ test.describe("AI Chat E2E Flow", () => {
 
     // Input should show rate limit state
     await expect(page.locator('[data-testid="chat-input"]')).toHaveAttribute(
-      "disabled",
+      'disabled',
     );
   });
 
-  test("should persist chat session across page reload", async ({ page }) => {
+  test('should persist chat session across page reload', async ({ page }) => {
     // Set consent and start chat
     await page.evaluate(() => {
       localStorage.setItem(
-        "neonpro_consent",
+        'neonpro_consent',
         JSON.stringify({
           dataProcessing: true,
           aiInteraction: true,
@@ -278,31 +278,31 @@ test.describe("AI Chat E2E Flow", () => {
     });
 
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState('networkidle');
 
     // Send initial message
     await typeMessage(
       page,
       '[data-testid="chat-input"]',
-      "Test message for persistence",
+      'Test message for persistence',
     );
     await page.click('[data-testid="chat-send-button"]');
     await waitForChatResponse(page);
 
     // Get session ID from UI or storage
     const sessionId = await page.evaluate(() => {
-      return localStorage.getItem("neonpro_chat_session_id");
+      return localStorage.getItem('neonpro_chat_session_id');
     });
 
     expect(sessionId).toBeTruthy();
 
     // Reload page
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState('networkidle');
 
     // Check that session is restored
     const restoredSessionId = await page.evaluate(() => {
-      return localStorage.getItem("neonpro_chat_session_id");
+      return localStorage.getItem('neonpro_chat_session_id');
     });
 
     expect(restoredSessionId).toBe(sessionId);
@@ -319,7 +319,7 @@ test.describe("AI Chat E2E Flow", () => {
     await typeMessage(
       page,
       '[data-testid="chat-input"]',
-      "Continuation after reload",
+      'Continuation after reload',
     );
     await page.click('[data-testid="chat-send-button"]');
     await waitForChatResponse(page);
@@ -331,12 +331,12 @@ test.describe("AI Chat E2E Flow", () => {
     expect(userMessages).toBe(2);
   });
 
-  test("should handle accessibility requirements", async ({ page }) => {
+  test('should handle accessibility requirements', async ({ page }) => {
     // Check keyboard navigation
-    await page.keyboard.press("Tab");
+    await page.keyboard.press('Tab');
     await expect(page.locator('[data-testid="chat-input"]')).toBeFocused();
 
-    await page.keyboard.press("Tab");
+    await page.keyboard.press('Tab');
     await expect(
       page.locator('[data-testid="chat-send-button"]'),
     ).toBeFocused();
@@ -344,42 +344,42 @@ test.describe("AI Chat E2E Flow", () => {
     // Check ARIA labels and roles
     await expect(
       page.locator('[data-testid="chat-container"]'),
-    ).toHaveAttribute("role", "main");
+    ).toHaveAttribute('role', 'main');
     await expect(page.locator('[data-testid="chat-messages"]')).toHaveAttribute(
-      "role",
-      "log",
+      'role',
+      'log',
     );
     await expect(page.locator('[data-testid="chat-input"]')).toHaveAttribute(
-      "aria-label",
+      'aria-label',
     );
 
     // Check screen reader support
     const chatInput = page.locator('[data-testid="chat-input"]');
-    await expect(chatInput).toHaveAttribute("aria-describedby");
+    await expect(chatInput).toHaveAttribute('aria-describedby');
 
     // Test keyboard-only interaction
-    await page.keyboard.press("Shift+Tab"); // Back to input
-    await page.keyboard.type("Keyboard accessibility test");
-    await page.keyboard.press("Enter");
+    await page.keyboard.press('Shift+Tab'); // Back to input
+    await page.keyboard.type('Keyboard accessibility test');
+    await page.keyboard.press('Enter');
 
     // Should trigger consent flow with keyboard navigation
     if (await page.locator('[data-testid="consent-modal"]').isVisible()) {
-      await page.keyboard.press("Tab"); // First checkbox
-      await page.keyboard.press("Space"); // Check it
-      await page.keyboard.press("Tab"); // Second checkbox
-      await page.keyboard.press("Space"); // Check it
-      await page.keyboard.press("Tab"); // Confirm button
-      await page.keyboard.press("Enter"); // Confirm
+      await page.keyboard.press('Tab'); // First checkbox
+      await page.keyboard.press('Space'); // Check it
+      await page.keyboard.press('Tab'); // Second checkbox
+      await page.keyboard.press('Space'); // Check it
+      await page.keyboard.press('Tab'); // Confirm button
+      await page.keyboard.press('Enter'); // Confirm
     }
 
     await waitForChatResponse(page);
   });
 
-  test("should handle error states gracefully", async ({ page }) => {
+  test('should handle error states gracefully', async ({ page }) => {
     // Set consent
     await page.evaluate(() => {
       localStorage.setItem(
-        "neonpro_consent",
+        'neonpro_consent',
         JSON.stringify({
           dataProcessing: true,
           aiInteraction: true,
@@ -389,14 +389,14 @@ test.describe("AI Chat E2E Flow", () => {
     });
 
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState('networkidle');
 
     // Mock network error
-    await page.route(`${API_BASE_URL}/api/v1/chat/query`, (route) => {
+    await page.route(`${API_BASE_URL}/api/v1/chat/query`, route => {
       route.fulfill({
         status: 500,
-        contentType: "application/json",
-        body: JSON.stringify({ error: "Internal server error" }),
+        contentType: 'application/json',
+        body: JSON.stringify({ error: 'Internal server error' }),
       });
     });
 
@@ -404,7 +404,7 @@ test.describe("AI Chat E2E Flow", () => {
     await typeMessage(
       page,
       '[data-testid="chat-input"]',
-      "This will cause an error",
+      'This will cause an error',
     );
     await page.click('[data-testid="chat-send-button"]');
 
@@ -417,7 +417,7 @@ test.describe("AI Chat E2E Flow", () => {
     const errorText = await page
       .locator('[data-testid="chat-error-message"]')
       .textContent();
-    expect(errorText).toContain("erro");
+    expect(errorText).toContain('erro');
 
     // Should allow retry
     await expect(
@@ -437,10 +437,7 @@ test.describe("AI Chat E2E Flow", () => {
     ).not.toBeVisible();
   });
 
-  test("should handle mobile viewport correctly", async ({
-    page,
-    isMobile,
-  }) => {
+  test('should handle mobile viewport correctly', async ({ page, isMobile }) => {
     if (!isMobile) {
       // Set mobile viewport manually if not running mobile tests
       await page.setViewportSize({ width: 375, height: 667 });
@@ -449,7 +446,7 @@ test.describe("AI Chat E2E Flow", () => {
     // Set consent
     await page.evaluate(() => {
       localStorage.setItem(
-        "neonpro_consent",
+        'neonpro_consent',
         JSON.stringify({
           dataProcessing: true,
           aiInteraction: true,
@@ -459,7 +456,7 @@ test.describe("AI Chat E2E Flow", () => {
     });
 
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState('networkidle');
 
     // Check mobile-specific elements
     await expect(page.locator('[data-testid="chat-container"]')).toBeVisible();
@@ -474,7 +471,7 @@ test.describe("AI Chat E2E Flow", () => {
     await typeMessage(
       page,
       '[data-testid="chat-input"]',
-      "Mobile test message",
+      'Mobile test message',
     );
     await page.click('[data-testid="chat-send-button"]');
     await waitForChatResponse(page);
@@ -492,11 +489,11 @@ test.describe("AI Chat E2E Flow", () => {
     await expect(page.locator('[data-testid="chat-input"]')).toBeInViewport();
   });
 
-  test("should handle performance requirements", async ({ page }) => {
+  test('should handle performance requirements', async ({ page }) => {
     // Set consent
     await page.evaluate(() => {
       localStorage.setItem(
-        "neonpro_consent",
+        'neonpro_consent',
         JSON.stringify({
           dataProcessing: true,
           aiInteraction: true,
@@ -506,7 +503,7 @@ test.describe("AI Chat E2E Flow", () => {
     });
 
     await page.reload();
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState('networkidle');
 
     // Measure response time
     const startTime = Date.now();
@@ -514,7 +511,7 @@ test.describe("AI Chat E2E Flow", () => {
     await typeMessage(
       page,
       '[data-testid="chat-input"]',
-      "Performance test message",
+      'Performance test message',
     );
     await page.click('[data-testid="chat-send-button"]');
     await waitForChatResponse(page);
@@ -531,13 +528,13 @@ test.describe("AI Chat E2E Flow", () => {
     await expect(inputField).toBeEnabled();
 
     // Should be able to type while processing
-    await typeMessage(page, '[data-testid="chat-input"]', "Quick follow-up");
+    await typeMessage(page, '[data-testid="chat-input"]', 'Quick follow-up');
 
     // Input should work immediately
-    await expect(inputField).toHaveValue("Quick follow-up");
+    await expect(inputField).toHaveValue('Quick follow-up');
   });
 
-  test("should support LGPD compliance features", async ({ page }) => {
+  test('should support LGPD compliance features', async ({ page }) => {
     // Check data privacy notice
     await expect(page.locator('[data-testid="privacy-notice"]')).toBeVisible();
 
@@ -545,7 +542,7 @@ test.describe("AI Chat E2E Flow", () => {
     await typeMessage(
       page,
       '[data-testid="chat-input"]',
-      "LGPD compliance test",
+      'LGPD compliance test',
     );
     await page.click('[data-testid="chat-send-button"]');
 
@@ -556,9 +553,9 @@ test.describe("AI Chat E2E Flow", () => {
     const consentText = await page
       .locator('[data-testid="consent-modal"]')
       .textContent();
-    expect(consentText).toContain("dados");
-    expect(consentText).toContain("processamento");
-    expect(consentText).toContain("LGPD");
+    expect(consentText).toContain('dados');
+    expect(consentText).toContain('processamento');
+    expect(consentText).toContain('LGPD');
 
     // Should have opt-out options
     await expect(

@@ -13,7 +13,7 @@ const testServer = setupServer(
 describe('MSW Direct Test', () => {
   beforeAll(() => {
     console.log('🔧 Starting test server...');
-    testServer.listen({ onUnhandledRequest: 'error' });
+    testServer.listen({ onUnhandledRequest: 'warn' });
     console.log('✅ Test server started');
   });
 

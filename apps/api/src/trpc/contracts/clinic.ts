@@ -909,14 +909,14 @@ async function validateClinicAccess(
 }
 
 async function validateClinicAdminAccess(
-  userId: string,
-  clinicId: string,
+  _userId: string,
+  _clinicId: string,
 ): Promise<void> {
   // Implementation for clinic admin access validation
   return Promise.resolve();
 }
 
-function hasClinicAdminAccess(userId: string, clinicId: string): boolean {
+function hasClinicAdminAccess(_userId: string, _clinicId: string): boolean {
   // Implementation for clinic admin access check
   return true;
 }

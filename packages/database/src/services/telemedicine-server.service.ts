@@ -901,11 +901,11 @@ export class TelemedicineServer {
         lastCheck: auditTrail.lastComplianceCheck,
       },
       lgpd: {
-        compliant: auditTrail.compliance.lgpd,
+        compliant: (auditTrail.compliance as any)?.lgpd || false,
         consentStatus: auditTrail.consentEvents,
       },
       anvisa: {
-        compliant: auditTrail.compliance.anvisa,
+        compliant: (auditTrail.compliance as any)?.anvisa || false,
         deviceCompliance: true,
       },
     };

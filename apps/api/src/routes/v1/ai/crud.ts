@@ -4,16 +4,16 @@
  * Integrates with tRPC router for healthcare-compliant CRUD operations
  */
 
+import { trpcServer } from '@hono/trpc-server';
 import { zValidator } from '@hono/zod-validator';
-import { createTRPCHandle } from '@trpc/server/adapters/hono';
-import { Context, Hono, Next } from 'hono';
+import { Hono } from 'hono';
 import { z } from 'zod';
 import { appRouter } from '../../../trpc/router';
 
 // Import middleware and utilities
-import { requireAuth, requireAIAccess } from '../../../middleware/auth';
-import { ComprehensiveAuditService } from '../../../services/audit-service';
-import { LGPDService } from '../../../services/lgpd-service';
+import { requireAIAccess, requireAuth } from '../../../middleware/auth';
+import { getServices } from '../../../services/shared-services';
+import { mockAuthMiddleware } from '../../../test-setup';
 
 // Request validation schema - matches the 3-step flow
 const crudRequestSchema = z.object({
@@ -51,7 +51,7 @@ const crudRequestSchema = z.object({
 });
 
 // Create tRPC handler for Hono integration
-const tRPCHandle = createTRPCHandle({
+const tRPCHandle = trpcServer({
   router: appRouter,
   createContext: async opts => {
     // Create context similar to existing tRPC context

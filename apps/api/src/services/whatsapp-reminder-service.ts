@@ -300,7 +300,7 @@ export class WhatsAppReminderService {
               channel: 'sms',
               fallbackUsed: true,
             };
-          } catch (smsError) {
+          } catch {
             // 6. Final fallback to email
             const emailResult = await this.sendEmailMessage(
               reminder,
@@ -878,7 +878,7 @@ export class WhatsAppReminderService {
   /**
    * Verify webhook signature for security
    */
-  private verifyWebhookSignature(data: any): boolean {
+  private verifyWebhookSignature(_data: any): boolean {
     // Implement signature verification based on WhatsApp webhook security
     // This is a simplified version - implement proper signature verification in production
     return true;
@@ -1074,7 +1074,7 @@ export class WhatsAppReminderService {
       const fallbackUsed = logs.filter(log => log.fallback_used).length;
 
       // Get response count
-      const { data: responses, error: responseError } = await this.supabase
+      const { data: responses, error: _responseError } = await this.supabase
         .from('patient_responses')
         .select('appointment_id')
         .eq('clinic_id', clinicId)

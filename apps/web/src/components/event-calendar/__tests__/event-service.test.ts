@@ -3,9 +3,9 @@
  * Tests CRUD operations, validation, filtering, and search functionality
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
-import { EventService } from '@/services/event.service';
 import { supabase } from '@/integrations/supabase/client';
+import { EventService } from '@/services/event.service';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 
 // Mock Supabase client
 vi.mock('@/integrations/supabase/client', () => ({
@@ -44,13 +44,19 @@ vi.mock('date-fns', () => ({
   isSameWeek: vi.fn(() => false),
   isAfter: vi.fn((a, b) => a > b),
   isBefore: vi.fn((a, b) => a < b),
-  startOfDay: vi.fn((date) => new Date(date.getFullYear(), date.getMonth(), date.getDate())),
-  endOfDay: vi.fn((date) => new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999)),
-  startOfWeek: vi.fn((date) => new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay())),
-  endOfWeek: vi.fn((date) => new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 6)),
-  startOfMonth: vi.fn((date) => new Date(date.getFullYear(), date.getMonth(), 1)),
-  endOfMonth: vi.fn((date) => new Date(date.getFullYear(), date.getMonth() + 1, 0)),
-  parseISO: vi.fn((isoString) => new Date(isoString)),
+  startOfDay: vi.fn(date => new Date(date.getFullYear(), date.getMonth(), date.getDate())),
+  endOfDay: vi.fn(date =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59, 999)
+  ),
+  startOfWeek: vi.fn(date =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay())
+  ),
+  endOfWeek: vi.fn(date =>
+    new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 6)
+  ),
+  startOfMonth: vi.fn(date => new Date(date.getFullYear(), date.getMonth(), 1)),
+  endOfMonth: vi.fn(date => new Date(date.getFullYear(), date.getMonth() + 1, 0)),
+  parseISO: vi.fn(isoString => new Date(isoString)),
   format: vi.fn((date, formatString) => date.toString()),
 }));
 
@@ -96,14 +102,14 @@ describe('EventService', () => {
   describe('appointmentToEvent', () => {
     it('should convert appointment to event format', () => {
       const result = EventService['appointmentToEvent'](mockAppointment as any);
-      
+
       expect(result).toEqual(mockEvent);
     });
 
     it('should handle appointment without status', () => {
       const appointmentWithoutStatus = { ...mockAppointment, status: null };
       const result = EventService['appointmentToEvent'](appointmentWithoutStatus as any);
-      
+
       expect(result.color).toBe('sky');
     });
   });
@@ -139,7 +145,7 @@ describe('EventService', () => {
       };
 
       const result = EventService.validateEvent(eventData);
-      
+
       expect(result.isValid).toBe(true);
       expect(result.errors).toHaveLength(0);
     });
@@ -152,7 +158,7 @@ describe('EventService', () => {
       };
 
       const result = EventService.validateEvent(eventData);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('Event title is required');
     });
@@ -165,7 +171,7 @@ describe('EventService', () => {
       };
 
       const result = EventService.validateEvent(eventData);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.errors).toContain('Event start time must be before end time');
     });
@@ -178,7 +184,7 @@ describe('EventService', () => {
       };
 
       const result = EventService.validateEvent(eventData);
-      
+
       expect(result.isValid).toBe(true);
       expect(result.warnings).toContain('Event duration is less than 5 minutes');
     });
@@ -191,7 +197,7 @@ describe('EventService', () => {
       };
 
       const result = EventService.validateEvent(eventData);
-      
+
       expect(result.isValid).toBe(true);
       expect(result.warnings).toContain('Event duration exceeds 8 hours');
     });
@@ -204,7 +210,7 @@ describe('EventService', () => {
       };
 
       const result = EventService.validateEvent(eventData);
-      
+
       expect(result.isValid).toBe(true);
       expect(result.warnings).toContain('Event is scheduled outside normal business hours');
     });
@@ -233,7 +239,7 @@ describe('EventService', () => {
       };
 
       const result = await EventService.createEvent(eventData);
-      
+
       expect(result).toEqual(mockEvent);
       expect(supabase.from).toHaveBeenCalledWith('appointments');
     });
@@ -266,7 +272,7 @@ describe('EventService', () => {
       });
 
       const result = await EventService.getEventById('test-appointment-id');
-      
+
       expect(result).toEqual(mockEvent);
     });
 
@@ -285,7 +291,7 @@ describe('EventService', () => {
       });
 
       const result = await EventService.getEventById('non-existent-id');
-      
+
       expect(result).toBeNull();
     });
   });
@@ -313,7 +319,7 @@ describe('EventService', () => {
       };
 
       const result = await EventService.updateEvent(updateData);
-      
+
       expect(result.title).toBe('Updated Event');
     });
   });
@@ -360,7 +366,7 @@ describe('EventService', () => {
       };
 
       const result = await EventService.getEvents(filters);
-      
+
       expect(result).toHaveLength(1);
       expect(result[0]).toEqual(mockEvent);
     });
@@ -391,7 +397,7 @@ describe('EventService', () => {
       };
 
       const result = await EventService.searchEvents(searchOptions);
-      
+
       expect(result.events).toHaveLength(1);
       expect(result.totalCount).toBe(1);
       expect(result.hasMore).toBe(false);
@@ -423,7 +429,7 @@ describe('EventService', () => {
       const end = new Date('2024-01-15T11:00:00.000Z');
 
       const conflicts = await EventService.checkConflicts(start, end);
-      
+
       expect(conflicts).toHaveLength(1);
     });
 
@@ -445,7 +451,7 @@ describe('EventService', () => {
       const end = new Date('2024-01-15T11:00:00.000Z');
 
       const conflicts = await EventService.checkConflicts(start, end, 'test-appointment-id');
-      
+
       expect(conflicts).toHaveLength(0);
     });
   });
@@ -466,7 +472,7 @@ describe('EventService', () => {
       });
 
       const stats = await EventService.getEventStatistics();
-      
+
       expect(stats.totalEvents).toBe(1);
       expect(stats.eventsByStatus.confirmed).toBe(1);
       expect(stats.eventsByPriority[2]).toBe(1);

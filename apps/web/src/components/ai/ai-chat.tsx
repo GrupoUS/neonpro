@@ -12,9 +12,9 @@
  * - Accessibility compliance (WCAG 2.1 AA+)
  */
 
-"use client";
+'use client';
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
   Bot,
   Brain,
@@ -25,8 +25,8 @@ import {
   Settings,
   Stethoscope,
   User,
-} from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
+} from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   Badge,
@@ -51,9 +51,9 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui";
-import { formatDateTime } from "@/utils/brazilian-formatters";
-import { cn } from "@neonpro/ui";
+} from '@/components/ui';
+import { formatDateTime } from '@/utils/brazilian-formatters';
+import { cn } from '@neonpro/ui';
 
 export interface AIChatProps {
   /** Patient context for healthcare-specific conversations */
@@ -92,7 +92,7 @@ export interface AIChatProps {
 
 interface ChatMessage {
   id: string;
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
   timestamp: Date;
   model?: string;
@@ -110,7 +110,7 @@ interface AIModel {
   provider: string;
   capabilities: string[];
   healthcareOptimized: boolean;
-  status: "available" | "limited" | "unavailable";
+  status: 'available' | 'limited' | 'unavailable';
 }
 
 // Mock API functions - these would be replaced with actual API calls
@@ -122,21 +122,21 @@ const sendChatMessage = async (data: {
   stream?: boolean;
 }) => {
   // This calls the actual POST /api/v2/ai/chat endpoint (T051)
-  const response = await fetch("/api/v2/ai/chat", {
-    method: "POST",
+  const response = await fetch('/api/v2/ai/chat', {
+    method: 'POST',
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-      "Content-Type": "application/json",
-      "X-Healthcare-Professional": data.healthcareProfessional
-        ? "true"
-        : "false",
-      "X-Healthcare-Context": data.patientContext
-        ? "patient_consultation"
-        : "general",
+      Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+      'Content-Type': 'application/json',
+      'X-Healthcare-Professional': data.healthcareProfessional
+        ? 'true'
+        : 'false',
+      'X-Healthcare-Context': data.patientContext
+        ? 'patient_consultation'
+        : 'general',
     },
     body: JSON.stringify({
       message: data.message,
-      model: data.model || "gpt-4",
+      model: data.model || 'gpt-4',
       patientContext: data.patientContext,
       options: {
         stream: data.stream || false,
@@ -148,7 +148,7 @@ const sendChatMessage = async (data: {
   });
 
   if (!response.ok) {
-    throw new Error("Falha ao enviar mensagem para IA");
+    throw new Error('Falha ao enviar mensagem para IA');
   }
 
   return response.json();
@@ -156,15 +156,15 @@ const sendChatMessage = async (data: {
 
 const fetchAvailableModels = async (): Promise<AIModel[]> => {
   // This calls the actual GET /api/v2/ai/models endpoint (T054)
-  const response = await fetch("/api/v2/ai/models?healthcareContext=true", {
+  const response = await fetch('/api/v2/ai/models?healthcareContext=true', {
     headers: {
-      Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-      "Content-Type": "application/json",
+      Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+      'Content-Type': 'application/json',
     },
   });
 
   if (!response.ok) {
-    throw new Error("Falha ao carregar modelos de IA");
+    throw new Error('Falha ao carregar modelos de IA');
   }
 
   const result = await response.json();
@@ -177,7 +177,7 @@ const fetchAvailableModels = async (): Promise<AIModel[]> => {
 export const AIChat = ({
   patientContext,
   healthcareProfessional,
-  defaultModel = "gpt-4",
+  defaultModel = 'gpt-4',
   showModelSelection = true,
   showVoiceInput = false,
   showFileAttachment = false,
@@ -186,11 +186,11 @@ export const AIChat = ({
     dataRetentionDays: 30,
   },
   mobileOptimized = true,
-  maxHeight = "600px",
-  testId = "ai-chat",
+  maxHeight = '600px',
+  testId = 'ai-chat',
 }: AIChatProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [inputMessage, setInputMessage] = useState("");
+  const [inputMessage, setInputMessage] = useState('');
   const [selectedModel, setSelectedModel] = useState(defaultModel);
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -202,7 +202,7 @@ export const AIChat = ({
 
   // Fetch available AI models
   const { data: availableModels = [] } = useQuery({
-    queryKey: ["ai-models"],
+    queryKey: ['ai-models'],
     queryFn: fetchAvailableModels,
     staleTime: 5 * 60 * 1000, // 5 minutes cache
   });
@@ -210,11 +210,11 @@ export const AIChat = ({
   // Send message mutation
   const sendMessageMutation = useMutation({
     mutationFn: sendChatMessage,
-    onSuccess: (response) => {
+    onSuccess: response => {
       if (response.success && response.data) {
         const assistantMessage: ChatMessage = {
           id: response.data.messageId || Date.now().toString(),
-          role: "assistant",
+          role: 'assistant',
           content: response.data.response || response.data.message,
           timestamp: new Date(),
           model: selectedModel,
@@ -226,28 +226,27 @@ export const AIChat = ({
           },
         };
 
-        setMessages((prev) => [...prev, assistantMessage]);
+        setMessages(prev => [...prev, assistantMessage]);
       }
       setIsLoading(false);
     },
-    onError: (error) => {
-      console.error("Chat error:", error);
+    onError: error => {
+      console.error('Chat error:', error);
       const errorMessage: ChatMessage = {
         id: Date.now().toString(),
-        role: "assistant",
-        content:
-          "Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.",
+        role: 'assistant',
+        content: 'Desculpe, ocorreu um erro ao processar sua mensagem. Tente novamente.',
         timestamp: new Date(),
         model: selectedModel,
       };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages(prev => [...prev, errorMessage]);
       setIsLoading(false);
     },
   });
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
   useEffect(() => {
@@ -260,13 +259,13 @@ export const AIChat = ({
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
-      role: "user",
+      role: 'user',
       content: inputMessage.trim(),
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
-    setInputMessage("");
+    setMessages(prev => [...prev, userMessage]);
+    setInputMessage('');
     setIsLoading(true);
 
     // Send to AI
@@ -289,7 +288,7 @@ export const AIChat = ({
   // Handle key press
   const handleKeyPress = useCallback(
     (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+      if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         handleSendMessage();
       }
@@ -309,40 +308,38 @@ export const AIChat = ({
   }, []);
 
   // Get model display info
-  const selectedModelInfo = availableModels.find((m) => m.id === selectedModel);
+  const selectedModelInfo = availableModels.find(m => m.id === selectedModel);
 
   return (
     <Card
-      className={cn("flex flex-col", mobileOptimized && "touch-manipulation")}
+      className={cn('flex flex-col', mobileOptimized && 'touch-manipulation')}
       data-testid={testId}
     >
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5 text-primary" />
+      <CardHeader className='pb-3'>
+        <div className='flex items-center justify-between'>
+          <CardTitle className='flex items-center gap-2'>
+            <Brain className='h-5 w-5 text-primary' />
             Chat com IA
             {patientContext && (
-              <Badge variant="secondary" className="ml-2">
+              <Badge variant='secondary' className='ml-2'>
                 Contexto: {patientContext.patientName}
               </Badge>
             )}
           </CardTitle>
 
-          <div className="flex items-center gap-2">
+          <div className='flex items-center gap-2'>
             {showModelSelection && (
               <Select value={selectedModel} onValueChange={setSelectedModel}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className='w-32'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                   {availableModels
-                    .filter((model) => model.status === "available")
-                    .map((model) => (
+                    .filter(model => model.status === 'available')
+                    .map(model => (
                       <SelectItem key={model.id} value={model.id}>
-                        <div className="flex items-center gap-2">
-                          {model.healthcareOptimized && (
-                            <Stethoscope className="h-3 w-3" />
-                          )}
+                        <div className='flex items-center gap-2'>
+                          {model.healthcareOptimized && <Stethoscope className='h-3 w-3' />}
                           {model.name}
                         </div>
                       </SelectItem>
@@ -353,22 +350,22 @@ export const AIChat = ({
 
             <Dialog open={showSettings} onOpenChange={setShowSettings}>
               <DialogTrigger asChild>
-                <Button variant="ghost" size="sm">
-                  <Settings className="h-4 w-4" />
+                <Button variant='ghost' size='sm'>
+                  <Settings className='h-4 w-4' />
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Configurações do Chat</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
+                <div className='space-y-4'>
                   <div>
-                    <h4 className="font-medium mb-2">Modelo Selecionado</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <h4 className='font-medium mb-2'>Modelo Selecionado</h4>
+                    <p className='text-sm text-muted-foreground'>
                       {selectedModelInfo?.name} ({selectedModelInfo?.provider})
                     </p>
                     {selectedModelInfo?.healthcareOptimized && (
-                      <Badge variant="secondary" className="mt-1">
+                      <Badge variant='secondary' className='mt-1'>
                         Otimizado para Saúde
                       </Badge>
                     )}
@@ -376,27 +373,26 @@ export const AIChat = ({
 
                   {patientContext && (
                     <div>
-                      <h4 className="font-medium mb-2">Contexto do Paciente</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {patientContext.patientName} (ID:{" "}
-                        {patientContext.patientId})
+                      <h4 className='font-medium mb-2'>Contexto do Paciente</h4>
+                      <p className='text-sm text-muted-foreground'>
+                        {patientContext.patientName} (ID: {patientContext.patientId})
                       </p>
                     </div>
                   )}
 
                   <div>
-                    <h4 className="font-medium mb-2">LGPD e Privacidade</h4>
-                    <p className="text-sm text-muted-foreground">
+                    <h4 className='font-medium mb-2'>LGPD e Privacidade</h4>
+                    <p className='text-sm text-muted-foreground'>
                       {lgpdConsent.canStoreHistory
                         ? `Histórico armazenado por ${lgpdConsent.dataRetentionDays} dias`
-                        : "Histórico não armazenado"}
+                        : 'Histórico não armazenado'}
                     </p>
                   </div>
 
                   <Button
                     onClick={handleClearChat}
-                    variant="outline"
-                    className="w-full"
+                    variant='outline'
+                    className='w-full'
                   >
                     Limpar Conversa
                   </Button>
@@ -407,66 +403,64 @@ export const AIChat = ({
         </div>
       </CardHeader>
 
-      <CardContent className="flex-1 flex flex-col p-0">
+      <CardContent className='flex-1 flex flex-col p-0'>
         {/* Messages Area */}
-        <ScrollArea className="flex-1 px-4" style={{ maxHeight }}>
-          <div className="space-y-4 py-4">
+        <ScrollArea className='flex-1 px-4' style={{ maxHeight }}>
+          <div className='space-y-4 py-4'>
             {messages.length === 0 && (
-              <div className="text-center text-muted-foreground py-8">
-                <Bot className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="text-lg font-medium mb-2">
+              <div className='text-center text-muted-foreground py-8'>
+                <Bot className='h-12 w-12 mx-auto mb-4 opacity-50' />
+                <p className='text-lg font-medium mb-2'>
                   Olá! Como posso ajudar?
                 </p>
-                <p className="text-sm">
+                <p className='text-sm'>
                   {patientContext
                     ? `Estou aqui para ajudar com questões sobre ${patientContext.patientName}.`
-                    : "Faça uma pergunta sobre saúde ou medicina."}
+                    : 'Faça uma pergunta sobre saúde ou medicina.'}
                 </p>
                 {healthcareProfessional && (
-                  <Badge variant="secondary" className="mt-2">
+                  <Badge variant='secondary' className='mt-2'>
                     Contexto Profissional: {healthcareProfessional.specialty}
                   </Badge>
                 )}
               </div>
             )}
 
-            {messages.map((message) => (
+            {messages.map(message => (
               <div
                 key={message.id}
                 className={cn(
-                  "flex gap-3",
-                  message.role === "user" ? "justify-end" : "justify-start",
+                  'flex gap-3',
+                  message.role === 'user' ? 'justify-end' : 'justify-start',
                 )}
               >
-                {message.role === "assistant" && (
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Bot className="h-4 w-4 text-primary" />
+                {message.role === 'assistant' && (
+                  <div className='flex-shrink-0'>
+                    <div className='w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center'>
+                      <Bot className='h-4 w-4 text-primary' />
                     </div>
                   </div>
                 )}
 
                 <div
                   className={cn(
-                    "max-w-[80%] rounded-lg px-4 py-2",
-                    message.role === "user"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted",
+                    'max-w-[80%] rounded-lg px-4 py-2',
+                    message.role === 'user'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted',
                   )}
                 >
-                  <p className="text-sm whitespace-pre-wrap">
+                  <p className='text-sm whitespace-pre-wrap'>
                     {message.content}
                   </p>
 
-                  <div className="flex items-center justify-between mt-2 text-xs opacity-70">
+                  <div className='flex items-center justify-between mt-2 text-xs opacity-70'>
                     <span>{formatDateTime(message.timestamp)}</span>
 
-                    {message.role === "assistant" && (
-                      <div className="flex items-center gap-2">
+                    {message.role === 'assistant' && (
+                      <div className='flex items-center gap-2'>
                         {message.model && <span>{message.model}</span>}
-                        {message.confidence && (
-                          <span>{Math.round(message.confidence * 100)}%</span>
-                        )}
+                        {message.confidence && <span>{Math.round(message.confidence * 100)}%</span>}
                         {message.metadata?.processingTime && (
                           <span>{message.metadata.processingTime}ms</span>
                         )}
@@ -475,10 +469,10 @@ export const AIChat = ({
                   </div>
                 </div>
 
-                {message.role === "user" && (
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                      <User className="h-4 w-4 text-primary-foreground" />
+                {message.role === 'user' && (
+                  <div className='flex-shrink-0'>
+                    <div className='w-8 h-8 rounded-full bg-primary flex items-center justify-center'>
+                      <User className='h-4 w-4 text-primary-foreground' />
                     </div>
                   </div>
                 )}
@@ -486,22 +480,22 @@ export const AIChat = ({
             ))}
 
             {isLoading && (
-              <div className="flex gap-3 justify-start">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Bot className="h-4 w-4 text-primary animate-pulse" />
+              <div className='flex gap-3 justify-start'>
+                <div className='flex-shrink-0'>
+                  <div className='w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center'>
+                    <Bot className='h-4 w-4 text-primary animate-pulse' />
                   </div>
                 </div>
-                <div className="bg-muted rounded-lg px-4 py-2">
-                  <div className="flex items-center gap-1">
-                    <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
+                <div className='bg-muted rounded-lg px-4 py-2'>
+                  <div className='flex items-center gap-1'>
+                    <div className='w-2 h-2 bg-muted-foreground rounded-full animate-bounce' />
                     <div
-                      className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
-                      style={{ animationDelay: "0.1s" }}
+                      className='w-2 h-2 bg-muted-foreground rounded-full animate-bounce'
+                      style={{ animationDelay: '0.1s' }}
                     />
                     <div
-                      className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
+                      className='w-2 h-2 bg-muted-foreground rounded-full animate-bounce'
+                      style={{ animationDelay: '0.2s' }}
                     />
                   </div>
                 </div>
@@ -513,33 +507,30 @@ export const AIChat = ({
         </ScrollArea>
 
         {/* Input Area */}
-        <div className="border-t p-4">
-          <div className="flex gap-2">
-            <div className="flex-1 relative">
+        <div className='border-t p-4'>
+          <div className='flex gap-2'>
+            <div className='flex-1 relative'>
               <Textarea
                 ref={inputRef}
                 value={inputMessage}
                 onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setInputMessage(e.target.value)
-                }
+                  setInputMessage(e.target.value)}
                 onKeyDown={handleKeyPress}
-                placeholder={
-                  patientContext
-                    ? `Pergunte sobre ${patientContext.patientName}...`
-                    : "Digite sua mensagem..."
-                }
+                placeholder={patientContext
+                  ? `Pergunte sobre ${patientContext.patientName}...`
+                  : 'Digite sua mensagem...'}
                 disabled={isLoading}
-                className="min-h-[44px] max-h-32 resize-none pr-20"
+                className='min-h-[44px] max-h-32 resize-none pr-20'
                 rows={1}
               />
 
-              <div className="absolute right-2 top-2 flex items-center gap-1">
+              <div className='absolute right-2 top-2 flex items-center gap-1'>
                 {showFileAttachment && (
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <Button variant="ghost" size="sm" disabled>
-                          <Paperclip className="h-4 w-4" />
+                        <Button variant='ghost' size='sm' disabled>
+                          <Paperclip className='h-4 w-4' />
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
@@ -554,20 +545,18 @@ export const AIChat = ({
                     <Tooltip>
                       <TooltipTrigger asChild>
                         <Button
-                          variant="ghost"
-                          size="sm"
+                          variant='ghost'
+                          size='sm'
                           onClick={handleVoiceToggle}
-                          className={cn(isListening && "text-destructive")}
+                          className={cn(isListening && 'text-destructive')}
                         >
-                          {isListening ? (
-                            <MicOff className="h-4 w-4" />
-                          ) : (
-                            <Mic className="h-4 w-4" />
-                          )}
+                          {isListening
+                            ? <MicOff className='h-4 w-4' />
+                            : <Mic className='h-4 w-4' />}
                         </Button>
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>{isListening ? "Parar gravação" : "Gravar áudio"}</p>
+                        <p>{isListening ? 'Parar gravação' : 'Gravar áudio'}</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -578,18 +567,18 @@ export const AIChat = ({
             <Button
               onClick={handleSendMessage}
               disabled={!inputMessage.trim() || isLoading}
-              size="sm"
-              className="px-3"
+              size='sm'
+              className='px-3'
             >
-              <Send className="h-4 w-4" />
+              <Send className='h-4 w-4' />
             </Button>
           </div>
 
           {/* LGPD Notice */}
-          <p className="text-xs text-muted-foreground mt-2 text-center">
+          <p className='text-xs text-muted-foreground mt-2 text-center'>
             {lgpdConsent.canStoreHistory
               ? `Conversa armazenada conforme LGPD por ${lgpdConsent.dataRetentionDays} dias`
-              : "Conversa não armazenada • Conforme LGPD"}
+              : 'Conversa não armazenada • Conforme LGPD'}
           </p>
         </div>
       </CardContent>

@@ -1,0 +1,143 @@
+export type AgentCoordinationPattern = "parallel" | "sequential" | "hierarchical" | "event-driven" | "consensus";
+
+export type OrchestrationOptions = {
+  workflow: string;
+  coordination: AgentCoordinationPattern;
+  agents: string[];
+  healthcare?: boolean;
+  enableMetrics?: boolean;
+  enableCompliance?: boolean;
+};
+
+export type FeatureContext = {
+  name: string;
+  description: string;
+  domain: string[];
+  complexity: "low" | "medium" | "high";
+  requirements: string[];
+  acceptance: string[];
+};
+
+export type QualityControlContext = {
+  action: string;
+  type: string;
+  depth?: string;
+  parallel?: boolean;
+  agents?: string[];
+  coordination?: AgentCoordinationPattern;
+  healthcare?: boolean;
+};
+
+export type OrchestrationResult = {
+  success: boolean;
+  phases: string[];
+  agentResults: AgentResult[];
+  coordination: AgentCoordinationPattern;
+  consensusResult?: ConsensusResult;
+  healthcareCompliance?: HealthcareCompliance;
+  duration: number;
+};
+
+export type QualityControlResult = {
+  success: boolean;
+  command: string;
+  orchestrationResult?: OrchestrationResult;
+  duration: number;
+};
+
+export type AgentResult = {
+  agentName: string;
+  success: boolean;
+  result: any;
+  duration: number;
+  quality: {
+    score: number;
+    issues: string[];
+  };
+};
+
+export type ConsensusResult = {
+  agreement: number;
+  conflicts: number;
+  resolution: string;
+};
+
+export type HealthcareCompliance = {
+  lgpd: boolean | { compliant: boolean; score: number };
+  anvisa: boolean | { compliant: boolean; score: number };
+  cfm: boolean | { compliant: boolean; score: number };
+  score: number;
+};
+
+export type OrchestrationMetrics = {
+  snapshot: {
+    orchestration: {
+      totalExecutions: number;
+      averageExecutionTime: number;
+    };
+    agent: {
+      totalAgentExecutions: number;
+      agentPerformance: Record<string, number>;
+    };
+    quality: {
+      overallQualityScore: number;
+      qualityTrends: string[];
+    };
+    performance: {
+      averageExecutionTime: number;
+      throughput: number;
+    };
+    healthcare: {
+      lgpdCompliance: number;
+      anvisaCompliance: number;
+      cfmCompliance: number;
+    };
+  };
+};
+
+export type SystemStatus = {
+  system: string;
+  version: string;
+  status: "ready" | "busy" | "error";
+  components: {
+    orchestrator: string;
+    agentRegistry: string;
+    workflowEngine: string;
+    qualityControlBridge: string;
+  };
+  capabilities: {
+    multiAgentCoordination: boolean;
+    parallelExecution: boolean;
+    qualityControlIntegration: boolean;
+    healthcareCompliance: boolean;
+    metricsCollection: boolean;
+    realtimeCommunication: boolean;
+  };
+  healthcareMode: boolean;
+};
+
+export type CommandExample = {
+  availableCommands: string[];
+  examples: string[];
+  workflows: string[];
+  agents: Array<{
+    name: string;
+    type: string;
+    capabilities: string[];
+  }>;
+};
+
+export type TDDOrchestrationSystem = {
+  initialize(): Promise<void>;
+  shutdown(): Promise<void>;
+  orchestrator: any;
+  qualityControlBridge: any;
+  workflowEngine: any;
+  agentRegistry: any;
+  communication?: any;
+  complianceValidator?: any;
+  getMetrics(): OrchestrationMetrics;
+  getStatus(): SystemStatus;
+  getCommandExamples(): CommandExample;
+  validateCompliance(context: any, agentResults: AgentResult[]): Promise<HealthcareCompliance>;
+};

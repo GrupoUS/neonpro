@@ -65,9 +65,9 @@ vi.mock('@/integrations/supabase/client', () => ({
             error: null 
           }))
         }))
-      })),
-    }),
-  },
+      }))
+    }))
+  }
 }));
 
 describe('Database Schema LGPD Compliance - RED Phase Tests', () => {

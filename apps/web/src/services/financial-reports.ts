@@ -1,19 +1,19 @@
-import { supabase } from "@/lib/supabase";
-import { CacheService } from "./cache";
+import { supabase } from '@/lib/supabase';
+import { CacheService } from './cache';
 
 export interface FinancialReport {
   id: string;
   title: string;
   description: string;
-  type: "revenue" | "expenses" | "profit" | "patients" | "comprehensive";
-  period: "daily" | "weekly" | "monthly" | "quarterly" | "yearly";
+  type: 'revenue' | 'expenses' | 'profit' | 'patients' | 'comprehensive';
+  period: 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly';
   startDate: Date;
   endDate: Date;
   data: ReportData;
   generatedAt: Date;
   generatedBy: string;
-  status: "generating" | "completed" | "failed";
-  format: "pdf" | "excel" | "csv";
+  status: 'generating' | 'completed' | 'failed';
+  format: 'pdf' | 'excel' | 'csv';
   downloadUrl?: string;
 }
 
@@ -29,10 +29,10 @@ export interface ReportData {
     category: string;
     amount: number;
     percentage: number;
-    trend: "up" | "down" | "stable";
+    trend: 'up' | 'down' | 'stable';
   }>;
   charts: Array<{
-    type: "line" | "bar" | "pie";
+    type: 'line' | 'bar' | 'pie';
     title: string;
     data: any[];
   }>;
@@ -40,17 +40,17 @@ export interface ReportData {
 
 export interface ReportSchedule {
   id: string;
-  reportType: FinancialReport["type"];
-  frequency: "daily" | "weekly" | "monthly";
+  reportType: FinancialReport['type'];
+  frequency: 'daily' | 'weekly' | 'monthly';
   recipients: string[];
-  format: "pdf" | "excel" | "csv";
+  format: 'pdf' | 'excel' | 'csv';
   isActive: boolean;
   nextRun: Date;
   lastRun?: Date;
 }
 
 export interface ReportExportOptions {
-  format: "pdf" | "excel" | "csv";
+  format: 'pdf' | 'excel' | 'csv';
   includeCharts: boolean;
   includeSummary: boolean;
   includeDetails: boolean;
@@ -64,21 +64,21 @@ export interface ReportExportOptions {
 }
 
 export class FinancialReportsService {
-  private static readonly CACHE_PREFIX = "financial_reports";
+  private static readonly CACHE_PREFIX = 'financial_reports';
   private static readonly CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
   /**
    * Generate a financial report
    */
   static async generateReport(
-    type: FinancialReport["type"],
-    period: FinancialReport["period"],
+    type: FinancialReport['type'],
+    period: FinancialReport['period'],
     startDate: Date,
     endDate: Date,
-    userId: string
+    userId: string,
   ): Promise<FinancialReport> {
     const reportId = `report_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     try {
       // Create initial report record
       const report: FinancialReport = {
@@ -89,11 +89,21 @@ export class FinancialReportsService {
         period,
         startDate,
         endDate,
-        data: { summary: { totalRevenue: 0, totalExpenses: 0, netProfit: 0, patientCount: 0, appointmentCount: 0 }, details: [], charts: [] },
+        data: {
+          summary: {
+            totalRevenue: 0,
+            totalExpenses: 0,
+            netProfit: 0,
+            patientCount: 0,
+            appointmentCount: 0,
+          },
+          details: [],
+          charts: [],
+        },
         generatedAt: new Date(),
         generatedBy: userId,
-        status: "generating",
-        format: "pdf"
+        status: 'generating',
+        format: 'pdf',
       };
 
       // Save to database
@@ -109,7 +119,7 @@ export class FinancialReportsService {
           end_date: endDate.toISOString(),
           generated_by: userId,
           status: report.status,
-          format: report.format
+          format: report.format,
         });
 
       if (insertError) throw insertError;
@@ -129,7 +139,7 @@ export class FinancialReportsService {
    */
   static async getReport(reportId: string): Promise<FinancialReport | null> {
     const cacheKey = `${this.CACHE_PREFIX}_${reportId}`;
-    
+
     // Try cache first
     const cached = await CacheService.get<FinancialReport>(cacheKey);
     if (cached) {
@@ -147,10 +157,10 @@ export class FinancialReportsService {
       if (!data) return null;
 
       const report = this.mapDatabaseToReport(data);
-      
+
       // Cache the result
       await CacheService.set(cacheKey, report, this.CACHE_TTL);
-      
+
       return report;
     } catch (error) {
       console.error('Error getting report:', error);
@@ -163,12 +173,12 @@ export class FinancialReportsService {
    */
   static async listReports(
     filters?: {
-      type?: FinancialReport["type"];
-      period?: FinancialReport["period"];
-      status?: FinancialReport["status"];
+      type?: FinancialReport['type'];
+      period?: FinancialReport['period'];
+      status?: FinancialReport['status'];
       userId?: string;
       limit?: number;
-    }
+    },
   ): Promise<FinancialReport[]> {
     try {
       let query = supabase
@@ -208,7 +218,7 @@ export class FinancialReportsService {
    */
   static async exportReport(
     reportId: string,
-    options: ReportExportOptions
+    options: ReportExportOptions,
   ): Promise<Blob> {
     const report = await this.getReport(reportId);
     if (!report) {
@@ -230,7 +240,9 @@ export class FinancialReportsService {
   /**
    * Schedule recurring reports
    */
-  static async scheduleReport(schedule: Omit<ReportSchedule, 'id' | 'nextRun' | 'lastRun'>): Promise<ReportSchedule> {
+  static async scheduleReport(
+    schedule: Omit<ReportSchedule, 'id' | 'nextRun' | 'lastRun'>,
+  ): Promise<ReportSchedule> {
     const scheduleId = `schedule_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const nextRun = this.calculateNextRun(schedule.frequency);
 
@@ -244,7 +256,7 @@ export class FinancialReportsService {
           recipients: schedule.recipients,
           format: schedule.format,
           is_active: schedule.isActive,
-          next_run: nextRun.toISOString()
+          next_run: nextRun.toISOString(),
         });
 
       if (error) throw error;
@@ -252,7 +264,7 @@ export class FinancialReportsService {
       return {
         id: scheduleId,
         ...schedule,
-        nextRun
+        nextRun,
       };
     } catch (error) {
       console.error('Error scheduling report:', error);
@@ -265,9 +277,9 @@ export class FinancialReportsService {
    */
   private static async processReportGeneration(
     reportId: string,
-    type: FinancialReport["type"],
+    type: FinancialReport['type'],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<void> {
     try {
       // Fetch data based on report type
@@ -279,7 +291,7 @@ export class FinancialReportsService {
         .update({
           data: reportData,
           status: 'completed',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', reportId);
 
@@ -289,13 +301,13 @@ export class FinancialReportsService {
       await CacheService.invalidate(`${this.CACHE_PREFIX}_${reportId}`);
     } catch (error) {
       console.error('Error processing report generation:', error);
-      
+
       // Mark report as failed
       await supabase
         .from('financial_reports')
         .update({
           status: 'failed',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', reportId);
     }
@@ -305,9 +317,9 @@ export class FinancialReportsService {
    * Fetch report data based on type
    */
   private static async fetchReportData(
-    type: FinancialReport["type"],
+    type: FinancialReport['type'],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<ReportData> {
     // This would typically fetch from your financial data sources
     // For now, returning mock data
@@ -317,33 +329,33 @@ export class FinancialReportsService {
         totalExpenses: 80000,
         netProfit: 70000,
         patientCount: 245,
-        appointmentCount: 520
+        appointmentCount: 520,
       },
       details: [
         {
-          category: "Consultations",
+          category: 'Consultations',
           amount: 120000,
           percentage: 80,
-          trend: "up"
+          trend: 'up',
         },
         {
-          category: "Procedures",
+          category: 'Procedures',
           amount: 30000,
           percentage: 20,
-          trend: "stable"
-        }
+          trend: 'stable',
+        },
       ],
       charts: [
         {
-          type: "line",
-          title: "Revenue Trend",
+          type: 'line',
+          title: 'Revenue Trend',
           data: [
-            { month: "Jan", value: 25000 },
-            { month: "Feb", value: 28000 },
-            { month: "Mar", value: 32000 }
-          ]
-        }
-      ]
+            { month: 'Jan', value: 25000 },
+            { month: 'Feb', value: 28000 },
+            { month: 'Mar', value: 32000 },
+          ],
+        },
+      ],
     };
   }
 
@@ -351,23 +363,23 @@ export class FinancialReportsService {
    * Generate report title
    */
   private static generateReportTitle(
-    type: FinancialReport["type"],
-    period: FinancialReport["period"]
+    type: FinancialReport['type'],
+    period: FinancialReport['period'],
   ): string {
     const typeMap = {
-      revenue: "Revenue",
-      expenses: "Expenses",
-      profit: "Profit",
-      patients: "Patient",
-      comprehensive: "Comprehensive Financial"
+      revenue: 'Revenue',
+      expenses: 'Expenses',
+      profit: 'Profit',
+      patients: 'Patient',
+      comprehensive: 'Comprehensive Financial',
     };
 
     const periodMap = {
-      daily: "Daily",
-      weekly: "Weekly",
-      monthly: "Monthly",
-      quarterly: "Quarterly",
-      yearly: "Annual"
+      daily: 'Daily',
+      weekly: 'Weekly',
+      monthly: 'Monthly',
+      quarterly: 'Quarterly',
+      yearly: 'Annual',
     };
 
     return `${periodMap[period]} ${typeMap[type]} Report`;
@@ -377,10 +389,10 @@ export class FinancialReportsService {
    * Generate report description
    */
   private static generateReportDescription(
-    type: FinancialReport["type"],
-    period: FinancialReport["period"],
+    type: FinancialReport['type'],
+    period: FinancialReport['period'],
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): string {
     const start = startDate.toLocaleDateString('pt-BR');
     const end = endDate.toLocaleDateString('pt-BR');
@@ -399,19 +411,30 @@ export class FinancialReportsService {
       period: data.period,
       startDate: new Date(data.start_date),
       endDate: new Date(data.end_date),
-      data: data.data || { summary: { totalRevenue: 0, totalExpenses: 0, netProfit: 0, patientCount: 0, appointmentCount: 0 }, details: [], charts: [] },
+      data: data.data
+        || {
+          summary: {
+            totalRevenue: 0,
+            totalExpenses: 0,
+            netProfit: 0,
+            patientCount: 0,
+            appointmentCount: 0,
+          },
+          details: [],
+          charts: [],
+        },
       generatedAt: new Date(data.generated_at),
       generatedBy: data.generated_by,
       status: data.status,
       format: data.format,
-      downloadUrl: data.download_url
+      downloadUrl: data.download_url,
     };
   }
 
   /**
    * Calculate next run date for scheduled reports
    */
-  private static calculateNextRun(frequency: "daily" | "weekly" | "monthly"): Date {
+  private static calculateNextRun(frequency: 'daily' | 'weekly' | 'monthly'): Date {
     const now = new Date();
     switch (frequency) {
       case 'daily':
@@ -435,12 +458,26 @@ export class FinancialReportsService {
     const content = `
 Financial Report: ${report.title}
 Generated: ${report.generatedAt.toLocaleDateString('pt-BR')}
-Period: ${report.startDate.toLocaleDateString('pt-BR')} - ${report.endDate.toLocaleDateString('pt-BR')}
+Period: ${report.startDate.toLocaleDateString('pt-BR')} - ${
+      report.endDate.toLocaleDateString('pt-BR')
+    }
 
 Summary:
-- Total Revenue: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(report.data.summary.totalRevenue)}
-- Total Expenses: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(report.data.summary.totalExpenses)}
-- Net Profit: ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(report.data.summary.netProfit)}
+- Total Revenue: ${
+      new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+        report.data.summary.totalRevenue,
+      )
+    }
+- Total Expenses: ${
+      new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+        report.data.summary.totalExpenses,
+      )
+    }
+- Net Profit: ${
+      new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(
+        report.data.summary.netProfit,
+      )
+    }
 - Patient Count: ${report.data.summary.patientCount}
 - Appointment Count: ${report.data.summary.appointmentCount}
     `;
@@ -454,22 +491,22 @@ Summary:
   private static exportToExcel(report: FinancialReport, options: ReportExportOptions): Blob {
     // Simplified Excel export - in production, use a proper Excel library
     const content = this.exportToCsv(report, options);
-    return new Blob([content], { 
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' 
+    return new Blob([content], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
   }
 
   /**
    * Export to CSV
    */
-  private static exportToCsv(report: FinancialReport, options: ReportExportOptions): Blob {
+  private static exportToCsv(report: FinancialReport, _options: ReportExportOptions): Blob {
     const headers = ['Metric', 'Value'];
     const rows = [
       ['Total Revenue', report.data.summary.totalRevenue.toString()],
       ['Total Expenses', report.data.summary.totalExpenses.toString()],
       ['Net Profit', report.data.summary.netProfit.toString()],
       ['Patient Count', report.data.summary.patientCount.toString()],
-      ['Appointment Count', report.data.summary.appointmentCount.toString()]
+      ['Appointment Count', report.data.summary.appointmentCount.toString()],
     ];
 
     const csvContent = [headers, ...rows]

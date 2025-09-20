@@ -3,9 +3,9 @@
  * Real-time communication with Python AI Agent using AG-UI protocol
  */
 
-import React from "react";
-import { WebSocketService } from "@/lib/websocket";
-import { AgentResponse, ChatMessage, AgentAction } from "@neonpro/types";
+import { WebSocketService } from '@/lib/websocket';
+import { AgentAction, AgentResponse, ChatMessage } from '@neonpro/types';
+import React from 'react';
 
 export interface WebSocketAgentConfig {
   url?: string;
@@ -28,10 +28,11 @@ export class WebSocketAgentService {
   constructor(config: WebSocketAgentConfig = {}) {
     this.maxReconnectAttempts = config.reconnectAttempts || this.maxReconnectAttempts;
     this.reconnectInterval = config.reconnectInterval || this.reconnectInterval;
-    
+
     // Use environment variable or default
-    const wsUrl = config.url || process.env.NEXT_PUBLIC_AI_AGENT_WS_URL || 'ws://localhost:8001/ws/agent';
-    
+    const wsUrl = config.url || process.env.NEXT_PUBLIC_AI_AGENT_WS_URL
+      || 'ws://localhost:8001/ws/agent';
+
     this.ws = new WebSocketService({
       url: wsUrl,
       onOpen: this.handleOpen.bind(this),
@@ -45,7 +46,7 @@ export class WebSocketAgentService {
   // Connect to WebSocket
   connect() {
     if (this.isConnected) return;
-    
+
     this.ws?.connect();
   }
 
@@ -136,13 +137,13 @@ export class WebSocketAgentService {
     console.log('WebSocket agent connected');
     this.isConnected = true;
     this.reconnectAttempts = 0;
-    
+
     // Send pending messages
     while (this.pendingMessages.length > 0) {
       const message = this.pendingMessages.shift();
       this.ws?.send(message);
     }
-    
+
     // Notify connection handlers
     this.connectionHandlers.forEach(handler => handler());
   }
@@ -151,15 +152,14 @@ export class WebSocketAgentService {
     try {
       const data = JSON.parse(event.data);
       const messageType = data.type;
-      
+
       // Emit to specific handlers
       const handlers = this.messageHandlers.get(messageType) || [];
       handlers.forEach(handler => handler(data));
-      
+
       // Emit to wildcard handlers
       const wildcardHandlers = this.messageHandlers.get('*') || [];
       wildcardHandlers.forEach(handler => handler(data));
-      
     } catch (error) {
       console.error('Error parsing WebSocket message:', error);
     }
@@ -168,15 +168,17 @@ export class WebSocketAgentService {
   private handleClose(event: CloseEvent) {
     console.log('WebSocket agent disconnected');
     this.isConnected = false;
-    
+
     // Notify disconnection handlers
     this.disconnectionHandlers.forEach(handler => handler(event));
-    
+
     // Attempt to reconnect
     if (this.reconnectAttempts < this.maxReconnectAttempts) {
       this.reconnectAttempts++;
-      console.log(`Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`);
-      
+      console.log(
+        `Attempting to reconnect... (${this.reconnectAttempts}/${this.maxReconnectAttempts})`,
+      );
+
       setTimeout(() => {
         this.connect();
       }, this.reconnectInterval);
@@ -238,45 +240,45 @@ export function getWebSocketAgentService(config?: WebSocketAgentConfig): WebSock
 export function useWebSocketAgent(config?: WebSocketAgentConfig) {
   const [isConnected, setIsConnected] = React.useState(false);
   const [lastMessage, setLastMessage] = React.useState<any>(null);
-  
+
   React.useEffect(() => {
     const service = getWebSocketAgentService(config);
-    
+
     const handleConnect = () => setIsConnected(true);
     const handleDisconnect = () => setIsConnected(false);
     const handleMessage = (message: any) => setLastMessage(message);
-    
+
     service.onConnection(handleConnect);
     service.onDisconnection(handleDisconnect);
     service.on('*', handleMessage);
-    
+
     // Connect if not already connected
     if (!service['isConnected']) {
       service.connect();
     }
-    
+
     return () => {
       service.offConnection(handleConnect);
       service.offDisconnection(handleDisconnect);
       service.off('*', handleMessage);
     };
   }, [config]);
-  
+
   const sendQuery = React.useCallback(async (query: string, context?: any) => {
     const service = getWebSocketAgentService(config);
     return service.sendQuery(query, context);
   }, [config]);
-  
+
   const sendAction = React.useCallback(async (actionType: string, payload: any) => {
     const service = getWebSocketAgentService(config);
     return service.sendAction(actionType, payload);
   }, [config]);
-  
+
   const sendFeedback = React.useCallback((feedbackType: string, data: any) => {
     const service = getWebSocketAgentService(config);
     service.sendFeedback(feedbackType, data);
   }, [config]);
-  
+
   return {
     isConnected,
     lastMessage,

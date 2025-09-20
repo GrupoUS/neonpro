@@ -31,66 +31,45 @@ Transform NeonPro's basic Financeiro page into a sophisticated, interactive fina
 
 ## Technical Context
 
-**Language/Version**: TypeScript 5.0+, Node.js 18+  
-**Primary Dependencies**: Next.js 14+, Shadcn MCP (experiment-03), Recharts, TanStack Query, Zustand  
-**Storage**: Supabase PostgreSQL with row-level security, materialized views for performance  
-**Testing**: Jest, React Testing Library, Playwright E2E, Vitest for components  
-**Target Platform**: Web application (desktop + mobile), Progressive Web App capabilities  
-**Project Type**: web - determines frontend/backend integration structure  
-**Performance Goals**: <2s initial load, <500ms chart interactions, 90+ mobile Lighthouse score  
-**Constraints**: LGPD compliance, <100KB bundle impact, real-time updates <1s latency  
+**Language/Version**: TypeScript 5.9.2, Node.js 20+
+**Primary Dependencies**: TanStack Router + Vite + React 19, Shadcn MCP (experiment-03), Recharts, TanStack Query, Zustand
+**Backend**: tRPC v11.0.0 for type-safe API endpoints
+**Authentication**: Supabase Auth v2.38.5, WebAuthn biometric, 5-tier RBAC
+**Storage**: Supabase PostgreSQL with row-level security, materialized views for performance
+**Testing**: Jest, React Testing Library, Playwright E2E, Vitest for components
+**Target Platform**: Web application (desktop + mobile), Progressive Web App capabilities
+**Project Type**: web - determines frontend/backend integration structure
+**Performance Goals**: <2s initial load, <500ms chart interactions, 90+ mobile Lighthouse score
+**Security**: HTTPS/TLS 1.3, HSTS, AES-256 encryption, LGPD compliance
+**Constraints**: LGPD, ANVISA, CFM compliance, <100KB bundle impact, real-time updates <1s latency
 **Scale/Scope**: 15+ chart components, 5-tier permission system, 10k+ financial records
 
 ## Constitution Check
+*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
+### Aesthetic Clinic Compliance Gates
+- [x] **Healthcare-First Development**: Feature prioritizes financial transparency and data privacy (LGPD) with RLS enforcement
+- [x] **AI-Native Architecture**: Systems designed with AI integration for financial insights and predictive analytics
+- [x] **Test-Driven Healthcare**: TDD mandatory for financial-critical features with proper test cases
+- [x] **Brazilian Regulatory Compliance**: All code complies with LGPD, ANVISA, CFM standards with audit logging
+- [x] **Performance for Clinical Environments**: Meets clinical-grade performance standards (<2s load, <500ms interactions)
+- [x] **HTTPS Security**: Implements HTTPS Everywhere with TLS 1.3+, HSTS, and comprehensive security headers
+- [x] **Security & Privacy**: Implements data protection, role-based access control, and audit trails
+- [x] **Quality Gates**: Healthcare testing requirements, code quality standards, and performance requirements met
 
-**I. Compliance-First Development**: ✅
+### Technology Stack Validation
+- [x] Frontend: Uses TanStack Router + Vite + React 19, TypeScript 5.9.2, Shadcn MCP (compatible with existing stack)
+- [x] Backend: Uses tRPC v11.0.0, Supabase with RLS, comprehensive audit logging
+- [x] Infrastructure: Uses existing monorepo structure, comprehensive testing with Vitest/Playwright
+- [x] **Authentication & Authorization Stack**: Supabase Auth v2.38.5, WebAuthn biometric, JOSE library integration
+- [x] **HTTPS Implementation Standards**: TLS 1.3+, HSTS enforcement, security headers, certificate management
+- [x] **Password Security**: bcryptjs v2.4.3 with migration path to Argon2id for enhanced security
 
-- LGPD data protection implemented? ✅ (comprehensive data encryption, consent management, audit trails)
-- ANVISA compliance verified? ✅ (medical device cost tracking, equipment compliance reporting)
-- CFM professional standards met? ✅ (financial transparency, professional disclosure requirements)
-- Patient data anonymization on consent withdrawal? ✅ (automated data lifecycle management)
-
-**II. Test-Driven Development (NON-NEGOTIABLE)**: ✅
-
-- RED-GREEN-Refactor cycle enforced? ✅ (mandatory failing tests before implementation)
-- 90% test coverage for healthcare components? ✅ (95% target for financial components)
-- Git commits show tests before implementation? ✅ (enforced via pre-commit hooks)
-- Order: Contract→Integration→E2E→Unit strictly followed? ✅
-- Real dependencies used? ✅ (actual Supabase, not mocks)
-- FORBIDDEN: Implementation before test, skipping RED phase ✅
-
-**III. AI-Enhanced Architecture**: ✅
-
-- Conversational AI integration planned? ✅ (AI-driven financial insights and recommendations)
-- Predictive analytics included? ✅ (revenue forecasting, trend analysis, anomaly detection)
-- AI automation throughout platform? ✅ (automated report generation, smart notifications)
-- Portuguese language support for AI features? ✅ (localized financial terminology)
-
-**IV. Mobile-First Design**: ✅
-
-- Mobile-optimized for 70%+ usage? ✅ (touch-optimized charts, mobile-specific layouts)
-- Responsive design mandatory? ✅ (progressive enhancement approach)
-- Performance targets met? ✅ (<500ms financial data access, mobile-optimized animations)
-
-**V. Real-Time Operations**: ✅
-
-- WebSocket subscriptions for live updates? ✅ (real-time financial metric updates)
-- Performance targets: 99.9% uptime, <2s responses? ✅ (cached aggregations, CDN delivery)
-- Critical healthcare operations prioritized? ✅ (financial data for operational decisions)
-
-**Healthcare Standards**: ✅
-
-- Branded types for medical identifiers? ✅ (PatientId, ClinicId, FinancialRecordId)
-- Healthcare-specific error handling? ✅ (financial severity levels, patient impact assessment)
-- Comprehensive audit logging? ✅ (all financial data access and modifications tracked)
-
-**Technology Governance**: ✅
-
-- Required tech stack used? ✅ (Next.js, Supabase, TanStack stack)
-- MCP tools integration? ✅ (archon, serena, desktop-commander, shadcn MCP)
-- Quality standard ≥9.5/10 maintained? ✅ (comprehensive testing and validation)
+### Constitutional Compliance Assessment
+- [x] KISS Principle: Using proven frameworks (Shadcn MCP, Recharts) rather than custom charting implementation
+- [x] YAGNI Principle: Building only enhanced dashboard features, not full financial ERP system
+- [x] Chain of Thought: Clear phased approach with validation at each step
+- [x] A.P.T.E Methodology: Analysis → Planning → Thinking → Execution workflow followed
 
 ## Project Structure
 
@@ -263,5 +242,7 @@ All complexity decisions align with constitutional principles:
 
 ---
 
-**Template Version**: 1.1.0 | **Constitution Version**: 1.0.0 | **Last Updated**: 2025-01-15
-_Based on NeonPro Constitution v1.0.0 - See `.specify/memory/constitution.md`_
+**Template Version**: 1.1.0 | **Constitution Version**: 1.2.0 | **Last Updated**: 2025-01-15
+_Based on NeonPro Constitution v1.2.0 - See `.specify/memory/constitution.md`_
+
+**Security Standards**: HTTPS/TLS 1.3, HSTS, WebAuthn biometric authentication, AES-256 encryption at rest and in transit

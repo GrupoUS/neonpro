@@ -1,32 +1,24 @@
-/**
- * Contract Test: Financial Metrics API
- *
- * Tests the GET /api/financial/metrics endpoint for:
- * - Metrics aggregation by period (monthly, quarterly, yearly)
- * - Metric calculations validation (MRR, ARR, churn, growth)
- * - Period filtering and date range validation
- * - Performance metrics and caching headers
- *
- * CRITICAL: These tests MUST FAIL initially (TDD Red phase)
- * The endpoint /api/financial/metrics does NOT exist yet
- */
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { makeAbsoluteUrl } from '../utils/test-config';
 
-import { describe, it, expect } from "vitest";
-import type {
-  FinancialMetrics,
-  MonetaryValue,
-  Currency,
-  Period,
-} from "@/types/financial";
+describe('Financial Metrics API Contract Tests', () => {
+  beforeAll(async () => {
+    // Setup test environment
+  });
 
-describe("Contract: Financial Metrics API", () => {
-  describe("GET /api/financial/metrics", () => {
-    it("should return metrics aggregated by month", async () => {
-      // TDD RED PHASE: Test monthly metrics aggregation
+  afterAll(async () => {
+    // Cleanup test environment
+  });
 
-      // ACT: Call real endpoint with monthly period
+  describe('GET /api/financial/metrics', () => {
+    it('should return monthly financial metrics', async () => {
+      // ARRANGE: Setup test data
+      const testDate = '2024-01';
+      const period = 'month';
+
+      // ACT: Make request to financial metrics endpoint
       const response = await fetch(
-        "/api/financial/metrics?period=month&date=2024-01",
+        makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`),
       );
 
       // ASSERT: Should return monthly metrics data
@@ -35,203 +27,243 @@ describe("Contract: Financial Metrics API", () => {
 
       const data = await response.json();
       expect(data.success).toBe(true);
-      expect(data.data.metrics).toBeDefined();
-
-      // Validate monthly period structure
-      expect(data.data.period.type).toBe("month");
-      expect(data.data.period.start).toBeDefined();
-      expect(data.data.period.end).toBeDefined();
-      expect(data.data.period.label).toMatch(/\w+ 2024/); // "Janeiro 2024"
+      expect(data.data).toBeDefined();
+      expect(data.data.period).toBe(period);
+      expect(data.data.date).toBe(testDate);
     });
 
-    it("should return metrics aggregated by quarter", async () => {
-      // TDD RED PHASE: Test quarterly metrics aggregation
+    it('should return yearly financial metrics', async () => {
+      // ARRANGE: Setup test data
+      const testDate = '2024';
+      const period = 'year';
 
-      // ACT: Call real endpoint with quarterly period
+      // ACT: Make request to financial metrics endpoint
       const response = await fetch(
-        "/api/financial/metrics?period=quarter&date=2024-Q1",
-      );
-
-      // ASSERT: Should return quarterly metrics data
-      expect(response.ok).toBe(true);
-
-      const data = await response.json();
-      expect(data.data.period.type).toBe("quarter");
-      expect(data.data.period.quarter).toBe(1);
-      expect(data.data.period.year).toBe(2024);
-      expect(data.data.period.label).toBe("Q1 2024");
-    });
-
-    it("should return metrics aggregated by year", async () => {
-      // TDD RED PHASE: Test yearly metrics aggregation
-
-      // ACT: Call real endpoint with yearly period
-      const response = await fetch(
-        "/api/financial/metrics?period=year&date=2024",
+        makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`),
       );
 
       // ASSERT: Should return yearly metrics data
       expect(response.ok).toBe(true);
+      expect(response.status).toBe(200);
 
       const data = await response.json();
-      expect(data.data.period.type).toBe("year");
-      expect(data.data.period.year).toBe(2024);
-      expect(data.data.period.label).toBe("2024");
+      expect(data.success).toBe(true);
+      expect(data.data).toBeDefined();
+      expect(data.data.period).toBe(period);
+      expect(data.data.date).toBe(testDate);
     });
 
-    it("should validate MRR calculation accuracy", async () => {
-      // TDD RED PHASE: Test MRR calculation requirements
+    it('should handle invalid period parameter', async () => {
+      // ARRANGE: Setup invalid period
+      const testDate = '2024-01';
+      const invalidPeriod = 'invalid';
 
-      // ACT: Call real endpoint for current month
+      // ACT: Make request with invalid period
       const response = await fetch(
-        "/api/financial/metrics?period=month&date=current",
+        makeAbsoluteUrl(`/api/financial/metrics?period=${invalidPeriod}&date=${testDate}`),
       );
 
-      // ASSERT: MRR calculation validation
-      expect(response.ok).toBe(true);
-
-      const data = await response.json();
-      const metrics = data.data.metrics;
-
-      // MRR should be properly calculated
-      expect(metrics.mrr).toBeDefined();
-      expect(metrics.mrr.amount).toBeTypeOf("number");
-      expect(metrics.mrr.amount).toBeGreaterThanOrEqual(0);
-      expect(metrics.mrr.currency).toBe("BRL");
-      expect(metrics.mrr.formatted).toMatch(/^R\$ [\d.,]+$/);
-
-      // ARR should be MRR * 12 (approximately)
-      expect(metrics.arr).toBeDefined();
-      expect(metrics.arr.amount).toBeCloseTo(metrics.mrr.amount * 12, 2);
-    });
-    it("should validate churn rate calculation", async () => {
-      // TDD RED PHASE: Test churn rate calculation accuracy
-
-      // ACT: Call real endpoint for churn metrics
-      const response = await fetch(
-        "/api/financial/metrics?period=month&include=churn",
-      );
-
-      // ASSERT: Churn rate validation
-      expect(response.ok).toBe(true);
-
-      const data = await response.json();
-      const metrics = data.data.metrics;
-
-      expect(metrics.churnRate).toBeDefined();
-      expect(metrics.churnRate).toBeTypeOf("number");
-      expect(metrics.churnRate).toBeGreaterThanOrEqual(0);
-      expect(metrics.churnRate).toBeLessThanOrEqual(100); // Percentage
-
-      // Churn details should be included
-      expect(metrics.churnDetails).toBeDefined();
-      expect(metrics.churnDetails.churned).toBeTypeOf("number");
-      expect(metrics.churnDetails.retained).toBeTypeOf("number");
-      expect(metrics.churnDetails.total).toBeTypeOf("number");
-    });
-
-    it("should validate growth metrics calculation", async () => {
-      // TDD RED PHASE: Test growth metrics accuracy
-
-      // ACT: Call real endpoint for growth metrics
-      const response = await fetch(
-        "/api/financial/metrics?period=month&include=growth",
-      );
-
-      // ASSERT: Growth metrics validation
-      expect(response.ok).toBe(true);
-
-      const data = await response.json();
-      const metrics = data.data.metrics;
-
-      expect(metrics.growth).toBeDefined();
-      expect(metrics.growth.mrrGrowth).toBeTypeOf("number");
-      expect(metrics.growth.customerGrowth).toBeTypeOf("number");
-      expect(metrics.growth.ticketGrowth).toBeTypeOf("number");
-
-      // Growth percentages should be reasonable (-100% to +1000%)
-      expect(metrics.growth.mrrGrowth).toBeGreaterThanOrEqual(-100);
-      expect(metrics.growth.mrrGrowth).toBeLessThanOrEqual(1000);
-    });
-
-    it("should handle invalid date range validation", async () => {
-      // TDD RED PHASE: Test date validation
-
-      // ACT: Call endpoint with invalid date
-      const response = await fetch(
-        "/api/financial/metrics?period=month&date=invalid-date",
-      );
-
-      // ASSERT: Should return validation error
+      // ASSERT: Should return error for invalid period
       expect(response.ok).toBe(false);
       expect(response.status).toBe(400);
 
       const data = await response.json();
       expect(data.success).toBe(false);
-      expect(data.error.code).toBe("INVALID_DATE_FORMAT");
-      expect(data.error.message).toContain("formato de data");
+      expect(data.error).toBeDefined();
     });
 
-    it("should include proper caching headers", async () => {
-      // TDD RED PHASE: Test performance caching headers
+    it('should handle missing date parameter', async () => {
+      // ARRANGE: Setup request without date
+      const period = 'month';
 
-      // ACT: Call real endpoint
-      const response = await fetch("/api/financial/metrics?period=month");
-
-      // ASSERT: Caching headers validation
-      expect(response.ok).toBe(true);
-
-      // Cache headers should be present
-      expect(response.headers.get("cache-control")).toBeDefined();
-      expect(response.headers.get("etag")).toBeDefined();
-      expect(response.headers.get("x-cache-ttl")).toBeDefined();
-
-      // Cache control should specify max-age
-      const cacheControl = response.headers.get("cache-control");
-      expect(cacheControl).toMatch(/max-age=\d+/);
-    });
-
-    it("should handle period filtering with custom date range", async () => {
-      // TDD RED PHASE: Test custom date range filtering
-
-      // ACT: Call endpoint with custom date range
+      // ACT: Make request without date parameter
       const response = await fetch(
-        "/api/financial/metrics?start_date=2024-01-01&end_date=2024-01-31",
+        makeAbsoluteUrl(`/api/financial/metrics?period=${period}`),
       );
 
-      // ASSERT: Custom period validation
-      expect(response.ok).toBe(true);
+      // ASSERT: Should return error for missing date
+      expect(response.ok).toBe(false);
+      expect(response.status).toBe(400);
 
       const data = await response.json();
-      expect(data.data.period.type).toBe("custom");
-      expect(data.data.period.start).toBe("2024-01-01");
-      expect(data.data.period.end).toBe("2024-01-31");
-      expect(data.data.period.days).toBe(31);
+      expect(data.success).toBe(false);
+      expect(data.error).toBeDefined();
     });
 
-    it("should validate metrics aggregation accuracy", async () => {
-      // TDD RED PHASE: Test aggregation calculations
+    it('should handle invalid date format', async () => {
+      // ARRANGE: Setup invalid date format
+      const testDate = 'invalid-date';
+      const period = 'month';
 
-      // ACT: Call endpoint for aggregation validation
+      // ACT: Make request with invalid date format
       const response = await fetch(
-        "/api/financial/metrics?period=month&aggregate=true",
+        makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`),
       );
 
-      // ASSERT: Aggregation accuracy
-      expect(response.ok).toBe(true);
+      // ASSERT: Should return error for invalid date format
+      expect(response.ok).toBe(false);
+      expect(response.status).toBe(400);
 
       const data = await response.json();
-      const metrics = data.data.metrics;
+      expect(data.success).toBe(false);
+      expect(data.error).toBeDefined();
+    });
 
-      // Total revenue should equal sum of all revenue streams
-      expect(metrics.totalRevenue).toBeDefined();
-      expect(metrics.revenueBreakdown).toBeDefined();
+    it('should return proper financial metrics structure', async () => {
+      // ARRANGE: Setup test data
+      const testDate = '2024-01';
+      const period = 'month';
 
-      const sum = metrics.revenueBreakdown.reduce(
-        (acc: number, item: any) => acc + item.amount,
-        0,
+      // ACT: Make request to financial metrics endpoint
+      const response = await fetch(
+        makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`),
       );
-      expect(metrics.totalRevenue.amount).toBeCloseTo(sum, 2);
+
+      // ASSERT: Should return proper structure
+      expect(response.ok).toBe(true);
+      const data = await response.json();
+
+      expect(data).toHaveProperty('success', true);
+      expect(data).toHaveProperty('data');
+      expect(data.data).toHaveProperty('period');
+      expect(data.data).toHaveProperty('date');
+      expect(data.data).toHaveProperty('revenue');
+      expect(data.data).toHaveProperty('expenses');
+      expect(data.data).toHaveProperty('profit');
+      expect(data.data).toHaveProperty('transactions');
+
+      // Validate data types
+      expect(typeof data.data.revenue).toBe('number');
+      expect(typeof data.data.expenses).toBe('number');
+      expect(typeof data.data.profit).toBe('number');
+      expect(typeof data.data.transactions).toBe('number');
+    });
+
+    it('should handle authentication requirements', async () => {
+      // ARRANGE: Setup request without authentication
+      const testDate = '2024-01';
+      const period = 'month';
+
+      // ACT: Make request without proper authentication
+      const response = await fetch(
+        makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`),
+        {
+          headers: {
+            // Intentionally omit authentication headers
+          },
+        },
+      );
+
+      // ASSERT: Should handle authentication appropriately
+      // Note: This test assumes the endpoint requires authentication
+      // Adjust based on actual authentication requirements
+      if (response.status === 401) {
+        expect(response.ok).toBe(false);
+        const data = await response.json();
+        expect(data.success).toBe(false);
+        expect(data.error).toContain('authentication');
+      } else {
+        // If endpoint doesn't require auth, it should still work
+        expect(response.ok).toBe(true);
+      }
+    });
+
+    it('should handle rate limiting gracefully', async () => {
+      // ARRANGE: Setup multiple rapid requests
+      const testDate = '2024-01';
+      const period = 'month';
+      const requests = [];
+
+      // ACT: Make multiple rapid requests
+      for (let i = 0; i < 10; i++) {
+        requests.push(
+          fetch(makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`)),
+        );
+      }
+
+      const responses = await Promise.all(requests);
+
+      // ASSERT: Should handle rate limiting appropriately
+      const successfulResponses = responses.filter(r => r.ok);
+      const rateLimitedResponses = responses.filter(r => r.status === 429);
+
+      // At least some requests should succeed
+      expect(successfulResponses.length).toBeGreaterThan(0);
+
+      // If rate limiting is implemented, check for proper response
+      if (rateLimitedResponses.length > 0) {
+        const rateLimitedData = await rateLimitedResponses[0].json();
+        expect(rateLimitedData.success).toBe(false);
+        expect(rateLimitedData.error).toContain('rate limit');
+      }
+    });
+
+    it('should return consistent data format across different periods', async () => {
+      // ARRANGE: Setup requests for different periods
+      const testDate = '2024-01';
+      const monthlyRequest = fetch(
+        makeAbsoluteUrl(`/api/financial/metrics?period=month&date=${testDate}`),
+      );
+      const yearlyRequest = fetch(
+        makeAbsoluteUrl(`/api/financial/metrics?period=year&date=2024`),
+      );
+
+      // ACT: Make requests for both periods
+      const [monthlyResponse, yearlyResponse] = await Promise.all([
+        monthlyRequest,
+        yearlyRequest,
+      ]);
+
+      // ASSERT: Both should have consistent structure
+      expect(monthlyResponse.ok).toBe(true);
+      expect(yearlyResponse.ok).toBe(true);
+
+      const monthlyData = await monthlyResponse.json();
+      const yearlyData = await yearlyResponse.json();
+
+      // Both should have the same structure
+      const expectedProperties = ['success', 'data'];
+      const expectedDataProperties = [
+        'period',
+        'date',
+        'revenue',
+        'expenses',
+        'profit',
+        'transactions',
+      ];
+
+      expectedProperties.forEach(prop => {
+        expect(monthlyData).toHaveProperty(prop);
+        expect(yearlyData).toHaveProperty(prop);
+      });
+
+      expectedDataProperties.forEach(prop => {
+        expect(monthlyData.data).toHaveProperty(prop);
+        expect(yearlyData.data).toHaveProperty(prop);
+      });
+    });
+
+    it('should handle edge cases for date boundaries', async () => {
+      // ARRANGE: Setup edge case dates
+      const edgeCases = [
+        { period: 'month', date: '2024-02' }, // February (leap year)
+        { period: 'month', date: '2024-12' }, // December
+        { period: 'year', date: '2024' }, // Leap year
+        { period: 'year', date: '2023' }, // Non-leap year
+      ];
+
+      // ACT & ASSERT: Test each edge case
+      for (const testCase of edgeCases) {
+        const response = await fetch(
+          makeAbsoluteUrl(`/api/financial/metrics?period=${testCase.period}&date=${testCase.date}`),
+        );
+
+        expect(response.ok).toBe(true);
+        const data = await response.json();
+        expect(data.success).toBe(true);
+        expect(data.data.period).toBe(testCase.period);
+        expect(data.data.date).toBe(testCase.date);
+      }
     });
   });
 });

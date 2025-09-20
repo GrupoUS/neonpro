@@ -208,7 +208,7 @@ export interface Recommendation {
   readonly status: RecommendationStatus;
 
   // Additional details
-  readonly metadata: Record<string, any>;
+  readonly metadata: Record<string, unknown>;
   readonly implementationEffort: ImplementationEffort;
   readonly expectedBenefit: string;
   readonly riskLevel: RiskLevel;
@@ -305,7 +305,7 @@ export interface DomainDescriptor {
 
   // Status
   readonly active: boolean;
-  readonly metadata: Record<string, any>;
+  readonly metadata: Record<string, unknown>;
 
   readonly createdAt: Date;
   readonly updatedAt: Date;
@@ -349,7 +349,7 @@ export interface AIAnalyzeRequest {
   readonly query: string;
   readonly specialty?: MedicalSpecialty;
   readonly preferredModel?: EnhancedAIModel;
-  readonly context?: Record<string, any>;
+  readonly context?: Record<string, unknown>;
   readonly userId: string;
   readonly clinicId: string;
 }
@@ -358,7 +358,7 @@ export interface AICrudRequest {
   readonly operation: "create" | "read" | "update" | "delete";
   readonly intent: string;
   readonly entity?: string;
-  readonly data?: Record<string, any>;
+  readonly data?: Record<string, unknown>;
   readonly userId: string;
   readonly clinicId: string;
 }
@@ -395,7 +395,7 @@ export interface AIAnalyzeResponse {
 export interface AICrudResponse {
   readonly success: boolean;
   readonly operation: string;
-  readonly result?: any;
+  readonly result?: unknown;
   readonly confirmation?: string;
   readonly tokensUsed: number;
   readonly metadata?: Record<string, any>;
@@ -442,7 +442,7 @@ export interface AIModelsResponse {
 export interface AIEnhancedError {
   readonly code: string;
   readonly message: string;
-  readonly details?: Record<string, any>;
+  readonly details?: Record<string, unknown>;
   readonly timestamp: Date;
   readonly requestId?: string;
 }

@@ -1,7 +1,6 @@
 import { appRouter } from '@/trpc/router';
 import type { AppRouter } from '@/trpc/router';
-import type { AI, AIInput, AIOutput } from '@/types/api/contracts';
-import { httpLink } from '@trpc/client';
+import type { AIInput, AIOutput } from '@/types/api/contracts';
 import { createTRPCMsw } from 'msw-trpc';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -65,7 +64,7 @@ describe('AI Contract Testing', () => {
     },
   };
 
-  const trpcMsw = createTRPCMsw<AppRouter>();
+  const _trpcMsw = createTRPCMsw<AppRouter>();
   const caller = appRouter.createCaller(mockContext);
 
   beforeEach(() => {
