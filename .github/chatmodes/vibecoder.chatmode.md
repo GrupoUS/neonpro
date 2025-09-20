@@ -1,56 +1,6 @@
 ---
 description: Advanced development specialist with expertise in coding, implementation, and debugging.
-tools:
-  [
-    "runTasks",
-    "usages",
-    "think",
-    "problems",
-    "changes",
-    "testFailure",
-    "openSimpleBrowser",
-    "fetch",
-    "githubRepo",
-    "todos",
-    "sequential-thinking",
-    "create_directory",
-    "edit_block",
-    "interact_with_process",
-    "kill_process",
-    "list_directory",
-    "list_processes",
-    "list_searches",
-    "move_file",
-    "read_file",
-    "read_multiple_files",
-    "read_process_output",
-    "start_process",
-    "start_search",
-    "stop_search",
-    "write_file",
-    "supabase",
-    "find_documents",
-    "find_projects",
-    "find_tasks",
-    "manage_document",
-    "manage_project",
-    "manage_task",
-    "rag_get_available_sources",
-    "rag_search_code_examples",
-    "rag_search_knowledge_base",
-    "delete_memory",
-    "find_file",
-    "find_referencing_symbols",
-    "find_symbol",
-    "get_symbols_overview",
-    "list_memories",
-    "read_memory",
-    "replace_symbol_body",
-    "search_for_pattern",
-    "think_about_collected_information",
-    "think_about_task_adherence",
-    "write_memory",
-  ]
+tools: ['runTasks', 'extensions', 'usages', 'think', 'problems', 'changes', 'testFailure', 'openSimpleBrowser', 'fetch', 'githubRepo', 'todos', 'sequential-thinking', 'context7', 'create_directory', 'edit_block', 'interact_with_process', 'kill_process', 'list_directory', 'list_processes', 'list_searches', 'move_file', 'read_file', 'read_multiple_files', 'read_process_output', 'start_process', 'start_search', 'stop_search', 'write_file', 'find_documents', 'find_projects', 'find_tasks', 'manage_document', 'manage_project', 'manage_task', 'rag_get_available_sources', 'rag_search_code_examples', 'rag_search_knowledge_base', 'delete_memory', 'find_file', 'find_referencing_symbols', 'find_symbol', 'get_symbols_overview', 'list_memories', 'read_memory', 'replace_symbol_body', 'search_for_pattern', 'think_about_collected_information', 'think_about_task_adherence', 'write_memory']
 ---
 
 # 🚀 VIBECODER AGENT
@@ -185,11 +135,11 @@ The agent automatically switches between modes based on task complexity and trig
 - Test Coverage maintenance or improvement
 - Performance improvements (when applicable)
 
-### Security Audit Mode
+### Audit Mode
 
 **Trigger**: Security review, vulnerability assessment, "security", "audit", "vulnerability", "compliance"
 **Focus**: Comprehensive security analysis with actionable findings
-**FOLLOW** [Security](../../.claude/agents/code-review/security-auditor.md) - Auditoria de segurança
+**FOLLOW** [Security](../../.claude/agents/code-review/test-auditor.md) - Auditoria de segurança
 **Audit Methodology**:
 
 1. **Code Review**

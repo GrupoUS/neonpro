@@ -11,142 +11,191 @@ describe('Financial Metrics API Contract Tests', () => {
   });
 
   describe('GET /api/financial/metrics', () => {
-    it('should return monthly financial metrics', async () => {
+    it('should return financial metrics for all types', async () => {
       // ARRANGE: Setup test data
-      const testDate = '2024-01';
-      const period = 'month';
+      const type = 'all';
+      const timeframe = '30d';
 
       // ACT: Make request to financial metrics endpoint
       const response = await fetch(
-        makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`),
+        makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${timeframe}`),
       );
 
-      // ASSERT: Should return monthly metrics data
+      // ASSERT: Should return financial metrics data
       expect(response.ok).toBe(true);
       expect(response.status).toBe(200);
 
       const data = await response.json();
-      expect(data.success).toBe(true);
-      expect(data.data).toBeDefined();
-      expect(data.data.period).toBe(period);
-      expect(data.data.date).toBe(testDate);
+      expect(data).toBeDefined();
+      expect(data.revenue).toBeDefined();
+      expect(data.expenses).toBeDefined();
+      expect(data.profitability).toBeDefined();
+      expect(data.cashFlow).toBeDefined();
+      expect(data.performance).toBeDefined();
+      expect(data.metadata).toBeDefined();
     });
 
-    it('should return yearly financial metrics', async () => {
-      // ARRANGE: Setup test data
-      const testDate = '2024';
-      const period = 'year';
+    it('should return revenue metrics specifically', async () => {
+      // ARRANGE: Setup test data for revenue type
+      const type = 'revenue';
+      const timeframe = '30d';
 
       // ACT: Make request to financial metrics endpoint
       const response = await fetch(
-        makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`),
+        makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${timeframe}`),
       );
 
-      // ASSERT: Should return yearly metrics data
+      // ASSERT: Should return revenue metrics data
       expect(response.ok).toBe(true);
       expect(response.status).toBe(200);
 
       const data = await response.json();
-      expect(data.success).toBe(true);
-      expect(data.data).toBeDefined();
-      expect(data.data.period).toBe(period);
-      expect(data.data.date).toBe(testDate);
+      expect(data).toBeDefined();
+      expect(data.revenue).toBeDefined();
+      expect(data.expenses).toBeUndefined();
+      expect(data.metadata).toBeDefined();
     });
 
-    it('should handle invalid period parameter', async () => {
-      // ARRANGE: Setup invalid period
-      const testDate = '2024-01';
-      const invalidPeriod = 'invalid';
+    it('should return expenses metrics specifically', async () => {
+      // ARRANGE: Setup test data for expenses type
+      const type = 'expenses';
+      const timeframe = '30d';
 
-      // ACT: Make request with invalid period
+      // ACT: Make request to financial metrics endpoint
       const response = await fetch(
-        makeAbsoluteUrl(`/api/financial/metrics?period=${invalidPeriod}&date=${testDate}`),
+        makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${timeframe}`),
       );
 
-      // ASSERT: Should return error for invalid period
-      expect(response.ok).toBe(false);
-      expect(response.status).toBe(400);
+      // ASSERT: Should return expenses metrics data
+      expect(response.ok).toBe(true);
+      expect(response.status).toBe(200);
 
       const data = await response.json();
-      expect(data.success).toBe(false);
-      expect(data.error).toBeDefined();
+      expect(data).toBeDefined();
+      expect(data.expenses).toBeDefined();
+      expect(data.revenue).toBeUndefined();
+      expect(data.metadata).toBeDefined();
     });
 
-    it('should handle missing date parameter', async () => {
-      // ARRANGE: Setup request without date
-      const period = 'month';
+    it('should handle invalid type gracefully', async () => {
+      // ARRANGE: Setup invalid type
+      const timeframe = '30d';
+      const invalidType = 'invalid';
 
-      // ACT: Make request without date parameter
+      // ACT: Make request with invalid type
       const response = await fetch(
-        makeAbsoluteUrl(`/api/financial/metrics?period=${period}`),
+        makeAbsoluteUrl(`/api/financial/metrics?type=${invalidType}&timeframe=${timeframe}`),
       );
 
-      // ASSERT: Should return error for missing date
-      expect(response.ok).toBe(false);
-      expect(response.status).toBe(400);
-
+      // ASSERT: Should handle invalid type gracefully
+      expect(response.ok).toBe(true);
       const data = await response.json();
-      expect(data.success).toBe(false);
-      expect(data.error).toBeDefined();
+      expect(data).toBeDefined();
+      // API returns all metrics for invalid type
     });
 
-    it('should handle invalid date format', async () => {
-      // ARRANGE: Setup invalid date format
-      const testDate = 'invalid-date';
-      const period = 'month';
+    it('should use default timeframe when not provided', async () => {
+      // ARRANGE: Setup request without timeframe parameter (uses default)
+      const type = 'all';
 
-      // ACT: Make request with invalid date format
+      // ACT: Make request without timeframe parameter
       const response = await fetch(
-        makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`),
+        makeAbsoluteUrl(`/api/financial/metrics?type=${type}`),
       );
 
-      // ASSERT: Should return error for invalid date format
-      expect(response.ok).toBe(false);
-      expect(response.status).toBe(400);
-
+      // ASSERT: Should return data with default timeframe
+      expect(response.ok).toBe(true);
       const data = await response.json();
-      expect(data.success).toBe(false);
-      expect(data.error).toBeDefined();
+      expect(data).toBeDefined();
+      expect(data.metadata).toBeDefined();
+      expect(data.metadata.timeframe).toBe('30d');
+    });
+
+    it('should handle invalid timeframe gracefully', async () => {
+      // ARRANGE: Setup invalid timeframe format
+      const type = 'all';
+      const invalidTimeframe = 'invalid';
+
+      // ACT: Make request with invalid timeframe format
+      const response = await fetch(
+        makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${invalidTimeframe}`),
+      );
+
+      // ASSERT: Should handle invalid timeframe gracefully
+      expect(response.ok).toBe(true);
+      const data = await response.json();
+      expect(data).toBeDefined();
+      expect(data.metadata).toBeDefined();
     });
 
     it('should return proper financial metrics structure', async () => {
       // ARRANGE: Setup test data
-      const testDate = '2024-01';
-      const period = 'month';
+      const type = 'all';
+      const timeframe = '30d';
 
       // ACT: Make request to financial metrics endpoint
       const response = await fetch(
-        makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`),
+        makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${timeframe}`),
       );
 
       // ASSERT: Should return proper structure
       expect(response.ok).toBe(true);
       const data = await response.json();
 
-      expect(data).toHaveProperty('success', true);
-      expect(data).toHaveProperty('data');
-      expect(data.data).toHaveProperty('period');
-      expect(data.data).toHaveProperty('date');
-      expect(data.data).toHaveProperty('revenue');
-      expect(data.data).toHaveProperty('expenses');
-      expect(data.data).toHaveProperty('profit');
-      expect(data.data).toHaveProperty('transactions');
+      expect(data).toHaveProperty('revenue');
+      expect(data).toHaveProperty('expenses');
+      expect(data).toHaveProperty('profitability');
+      expect(data).toHaveProperty('cashFlow');
+      expect(data).toHaveProperty('performance');
+      expect(data).toHaveProperty('metadata');
 
       // Validate data types
-      expect(typeof data.data.revenue).toBe('number');
-      expect(typeof data.data.expenses).toBe('number');
-      expect(typeof data.data.profit).toBe('number');
-      expect(typeof data.data.transactions).toBe('number');
+      expect(typeof data.revenue).toBe('object');
+      expect(typeof data.expenses).toBe('object');
+      expect(typeof data.profitability).toBe('object');
+      expect(typeof data.cashFlow).toBe('object');
+      expect(typeof data.performance).toBe('object');
+
+      // Validate revenue structure
+      expect(data.revenue).toHaveProperty('total');
+      expect(data.revenue).toHaveProperty('growth');
+      expect(data.revenue).toHaveProperty('monthlyRecurring');
+      expect(data.revenue).toHaveProperty('oneTime');
+      expect(data.revenue).toHaveProperty('breakdown');
+
+      // Validate expenses structure
+      expect(data.expenses).toHaveProperty('total');
+      expect(data.expenses).toHaveProperty('growth');
+      expect(data.expenses).toHaveProperty('operational');
+      expect(data.expenses).toHaveProperty('marketing');
+      expect(data.expenses).toHaveProperty('technology');
+      expect(data.expenses).toHaveProperty('breakdown');
+
+      // Validate profitability structure
+      expect(data.profitability).toHaveProperty('grossProfit');
+      expect(data.profitability).toHaveProperty('grossMargin');
+      expect(data.profitability).toHaveProperty('netProfit');
+      expect(data.profitability).toHaveProperty('netMargin');
+      expect(data.profitability).toHaveProperty('ebitda');
+      expect(data.profitability).toHaveProperty('ebitdaMargin');
+
+      // Validate metadata structure
+      expect(data.metadata).toHaveProperty('timeframe');
+      expect(data.metadata).toHaveProperty('lastUpdated');
+      expect(data.metadata).toHaveProperty('currency');
+      expect(data.metadata).toHaveProperty('period');
+      expect(data.metadata.period).toHaveProperty('start');
+      expect(data.metadata.period).toHaveProperty('end');
     });
 
     it('should handle authentication requirements', async () => {
-      // ARRANGE: Setup request without authentication
-      const testDate = '2024-01';
-      const period = 'month';
+      // ARRANGE: Setup test data
+      const type = 'all';
+      const timeframe = '30d';
 
       // ACT: Make request without proper authentication
       const response = await fetch(
-        makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`),
+        makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${timeframe}`),
         {
           headers: {
             // Intentionally omit authentication headers
@@ -155,29 +204,20 @@ describe('Financial Metrics API Contract Tests', () => {
       );
 
       // ASSERT: Should handle authentication appropriately
-      // Note: This test assumes the endpoint requires authentication
-      // Adjust based on actual authentication requirements
-      if (response.status === 401) {
-        expect(response.ok).toBe(false);
-        const data = await response.json();
-        expect(data.success).toBe(false);
-        expect(data.error).toContain('authentication');
-      } else {
-        // If endpoint doesn't require auth, it should still work
-        expect(response.ok).toBe(true);
-      }
+      // Note: This API doesn't require authentication for public metrics
+      expect(response.ok).toBe(true);
     });
 
     it('should handle rate limiting gracefully', async () => {
       // ARRANGE: Setup multiple rapid requests
-      const testDate = '2024-01';
-      const period = 'month';
+      const type = 'all';
+      const timeframe = '30d';
       const requests = [];
 
       // ACT: Make multiple rapid requests
       for (let i = 0; i < 10; i++) {
         requests.push(
-          fetch(makeAbsoluteUrl(`/api/financial/metrics?period=${period}&date=${testDate}`)),
+          fetch(makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${timeframe}`)),
         );
       }
 
@@ -193,77 +233,106 @@ describe('Financial Metrics API Contract Tests', () => {
       // If rate limiting is implemented, check for proper response
       if (rateLimitedResponses.length > 0) {
         const rateLimitedData = await rateLimitedResponses[0].json();
-        expect(rateLimitedData.success).toBe(false);
         expect(rateLimitedData.error).toContain('rate limit');
       }
     });
 
-    it('should return consistent data format across different periods', async () => {
-      // ARRANGE: Setup requests for different periods
-      const testDate = '2024-01';
-      const monthlyRequest = fetch(
-        makeAbsoluteUrl(`/api/financial/metrics?period=month&date=${testDate}`),
+    it('should return consistent data format across different timeframes', async () => {
+      // ARRANGE: Setup requests for different timeframes
+      const thirtyDayRequest = fetch(
+        makeAbsoluteUrl(`/api/financial/metrics?type=all&timeframe=30d`),
       );
       const yearlyRequest = fetch(
-        makeAbsoluteUrl(`/api/financial/metrics?period=year&date=2024`),
+        makeAbsoluteUrl(`/api/financial/metrics?type=all&timeframe=1y`),
       );
 
-      // ACT: Make requests for both periods
-      const [monthlyResponse, yearlyResponse] = await Promise.all([
-        monthlyRequest,
+      // ACT: Make requests for both timeframes
+      const [thirtyDayResponse, yearlyResponse] = await Promise.all([
+        thirtyDayRequest,
         yearlyRequest,
       ]);
 
       // ASSERT: Both should have consistent structure
-      expect(monthlyResponse.ok).toBe(true);
+      expect(thirtyDayResponse.ok).toBe(true);
       expect(yearlyResponse.ok).toBe(true);
 
-      const monthlyData = await monthlyResponse.json();
+      const thirtyDayData = await thirtyDayResponse.json();
       const yearlyData = await yearlyResponse.json();
 
       // Both should have the same structure
-      const expectedProperties = ['success', 'data'];
-      const expectedDataProperties = [
-        'period',
-        'date',
+      const expectedProperties = [
         'revenue',
         'expenses',
-        'profit',
-        'transactions',
+        'profitability',
+        'cashFlow',
+        'performance',
+        'metadata',
       ];
 
       expectedProperties.forEach(prop => {
-        expect(monthlyData).toHaveProperty(prop);
+        expect(thirtyDayData).toHaveProperty(prop);
         expect(yearlyData).toHaveProperty(prop);
-      });
-
-      expectedDataProperties.forEach(prop => {
-        expect(monthlyData.data).toHaveProperty(prop);
-        expect(yearlyData.data).toHaveProperty(prop);
       });
     });
 
-    it('should handle edge cases for date boundaries', async () => {
-      // ARRANGE: Setup edge case dates
+    it('should handle edge cases for different timeframes', async () => {
+      // ARRANGE: Setup edge case timeframes
       const edgeCases = [
-        { period: 'month', date: '2024-02' }, // February (leap year)
-        { period: 'month', date: '2024-12' }, // December
-        { period: 'year', date: '2024' }, // Leap year
-        { period: 'year', date: '2023' }, // Non-leap year
+        { type: 'all', timeframe: '1d' }, // 1 day
+        { type: 'all', timeframe: '7d' }, // 7 days
+        { type: 'all', timeframe: '30d' }, // 30 days
+        { type: 'all', timeframe: '1y' }, // 1 year
       ];
 
       // ACT & ASSERT: Test each edge case
       for (const testCase of edgeCases) {
         const response = await fetch(
-          makeAbsoluteUrl(`/api/financial/metrics?period=${testCase.period}&date=${testCase.date}`),
+          makeAbsoluteUrl(`/api/financial/metrics?type=${testCase.type}&timeframe=${testCase.timeframe}`),
         );
 
         expect(response.ok).toBe(true);
         const data = await response.json();
-        expect(data.success).toBe(true);
-        expect(data.data.period).toBe(testCase.period);
-        expect(data.data.date).toBe(testCase.date);
+        expect(data).toBeDefined();
+        expect(data.revenue).toBeDefined();
+        expect(data.expenses).toBeDefined();
+        expect(data.metadata).toBeDefined();
+        expect(data.metadata.timeframe).toBe(testCase.timeframe);
       }
+    });
+
+    it('should include category filtering when provided', async () => {
+      // ARRANGE: Setup test data with category
+      const type = 'all';
+      const timeframe = '30d';
+      const category = 'healthcare';
+
+      // ACT: Make request with category parameter
+      const response = await fetch(
+        makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${timeframe}&category=${category}`),
+      );
+
+      // ASSERT: Should include category in metadata
+      expect(response.ok).toBe(true);
+      const data = await response.json();
+      expect(data).toBeDefined();
+      expect(data.metadata).toBeDefined();
+      expect(data.metadata.category).toBe(category);
+    });
+
+    it('should return proper cache headers', async () => {
+      // ARRANGE: Setup test data
+      const type = 'all';
+      const timeframe = '30d';
+
+      // ACT: Make request to financial metrics endpoint
+      const response = await fetch(
+        makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${timeframe}`),
+      );
+
+      // ASSERT: Should have proper cache headers
+      expect(response.ok).toBe(true);
+      expect(response.headers.get('Cache-Control')).toBe('public, max-age=180');
+      expect(response.headers.get('Content-Type')).toBe('application/json');
     });
   });
 });

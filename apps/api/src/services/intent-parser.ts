@@ -1,345 +1,278 @@
+import { QueryIntent, QueryParameters, DateRange, UserRole } from '@neonpro/types';
+
 /**
  * Intent Parser Service
- * Analyzes user queries to determine intent and extract entities
+ * 
+ * Analyzes natural language queries to extract intent and parameters
+ * for database operations. Supports Portuguese healthcare queries with
+ * context-aware parameter extraction.
  */
+export class IntentParserService {
+  private readonly INTENT_PATTERNS: Record<QueryIntent, RegExp[]> = {
+    client_data: [
+      /(?:clientes?|pacientes?|paciente|client|patients?)\b/i,
+      /(?:most(?:re|ar)?|mostr(?:ar)?|ver|show|list(?:ar)?)\s+(?:todos?\s+)?(?:os\s+)?(?:clientes?|pacientes?)/i,
+      /(?:dados\s+do\s+)?(?:cliente|paciente)\s+([^]+)/i,
+      /(?:informa[çc][õo]es?\s+do\s+)?(?:cliente|paciente)\s+([^]+)/i,
+    ],
+    appointments: [
+      /(?:agendamentos?|consultas?|appointments?)\b/i,
+      /(?:pr[óo]ximos?\s+)?(?:agendamentos?|consultas?)/i,
+      /(?:agendamentos?\s+para|consultas?\s+para)\s+(.+)/i,
+      /(?:marcados|confirmados|cancelados|completados)\s+(?:agendamentos?|consultas?)/i,
+      /(?:hoje|amanh[ãa]|esta\s+semana|este\s+m[êe]s)\s+(?:agendamentos?|consultas?)/i,
+    ],
+    financial: [
+      /(?:faturamento?|financeiro?|receita?|pagamentos?|financial?)\b/i,
+      /(?:como\s+est[áa]\s+o\s+)?(?:faturamento?|financeiro?)/i,
+      /(?:resumo\s+)?(?:financeiro?|faturamento?)/i,
+      /(?:pagamentos?\s+recebidos?|receita?\s+gerada)/i,
+      /(?:balan[çc]o?\s+)?(?:financeiro?|cont[áa]bil)/i,
+    ],
+    general: [
+      /(?:oi|ol[áa]|hello|hi|bom\s+dia|boa\s+tarde|boa\s+noite)/i,
+      /(?:ajuda|help|como|o\s+que)/i,
+      /(?:voc[êe]\s+pode|pode\s+me\s+ajudar)/i,
+    ],
+  };
 
-import {
-  IntentParsingError,
-  QueryIntent,
-  safeValidate,
-  UserQuery,
-  UserQuerySchema,
-  ValidUserQuery,
-} from '@neonpro/web/types';
+  private readonly DATE_PATTERNS = {
+    today: [
+      /hoje\b/i,
+      /agora\b/i,
+    ],
+    tomorrow: [
+      /amanh[ãa]\b/i,
+    ],
+    this_week: [
+      /esta\s+semana\b/i,
+      /pr[óo]ximos?\s+7\s+dias\b/i,
+    ],
+    this_month: [
+      /este\s+m[êe]s\b/i,
+      /m[êe]s\s+atual\b/i,
+    ],
+    specific_dates: [
+      /(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})/g, // DD/MM/YYYY
+      /(\d{1,2})\s+de\s+(\w+)\s+de\s+(\d{4})/gi, // DD de MMMM de YYYY
+    ],
+  };
 
-// Keywords and patterns for intent classification
-const INTENT_PATTERNS = {
-  [QueryIntent.CLIENT_SEARCH]: [
-    /buscar\s+(cliente|paciente)/i,
-    /procurar\s+(cliente|paciente)/i,
-    /encontrar\s+(cliente|paciente)/i,
-    /quem\s+é\s+(o|a)?\s*(cliente|paciente)/i,
-    /(cliente|paciente)\s+com\s+nome/i,
-    /dados\s+do\s+(cliente|paciente)/i,
-    /informações\s+do\s+(cliente|paciente)/i,
-  ],
-  [QueryIntent.APPOINTMENT_QUERY]: [
-    /agendamentos?\s*(de|para)?/i,
-    /consultas?\s*(de|para)?/i,
-    /(pr[oó]ximos?|futuros?)\s*(agendamentos?|consultas?)/i,
-    /agendamentos?\s+(do|da)\s+(dia|semana|m[eê]s)/i,
-    /hoje\s+(tem|temos)/i,
-    /amanhã\s+(tem|temos)/i,
-    /quais?\s+(agendamentos?|consultas?)\s+(do|da)\s+(dia|semana)/i,
-    /hor[áa]rios?\s+(marcados|agendados)/i,
-    /hist[óo]rico\s+de\s+(agendamentos?|consultas?)/i,
-    /[uú]ltimas?\s+(consultas?|agendamentos?)/i,
-  ],
-  [QueryIntent.FINANCIAL_QUERY]: [
-    /resumo\s+financeiro/i,
-    /extrato\s+financeiro/i,
-    /faturamento/i,
-    /pagamentos?\s+(recebidos|pendentes)/i,
-    /valores?\s+(a\s+receber|recebidos)/i,
-    /saldo/i,
-    /financeiro\s+(do|da)\s+(cliente|paciente)/i,
-    /contas?\s+(a\s+receber|pagas)/i,
-    /situação\s+financeira/i,
-  ],
-  [QueryIntent.APPOINTMENT_CREATION]: [
-    /agendar\s+(uma\s+)?(consulta|retorno)/i,
-    /marcar\s+(uma\s+)?(consulta|retorno)/i,
-    /novo\s+agendamento/i,
-    /criar\s+(uma\s+)?(consulta|agendamento)/i,
-    /quero\s+agendar/i,
-    /gostaria\s+de\s+agendar/i,
-    /marcar\s+(para|com)/i,
-  ],
-};
+  private readonly CLIENT_NAME_PATTERNS = [
+    /(?:cliente|paciente)\s+([A-Z][a-z]+\s+[A-Z][a-z]+)/i,
+    /([A-Z][a-z]+\s+[A-Z][a-z]+)/i, // Capitalized names
+  ];
 
-// Date extraction patterns
-const DATE_PATTERNS = [
-  // Relative dates
-  {
-    pattern: /hoje/i,
-    type: 'relative',
-    getDate: () => new Date(),
-  },
-  {
-    pattern: /amanh[ãa]/i,
-    type: 'relative',
-    getDate: () => {
-      const date = new Date();
-      date.setDate(date.getDate() + 1);
-      return date;
-    },
-  },
-  {
-    pattern: /depois\s+de\s+amanh[ãa]/i,
-    type: 'relative',
-    getDate: () => {
-      const date = new Date();
-      date.setDate(date.getDate() + 2);
-      return date;
-    },
-  },
-  {
-    pattern: /ontem/i,
-    type: 'relative',
-    getDate: () => {
-      const date = new Date();
-      date.setDate(date.getDate() - 1);
-      return date;
-    },
-  },
-  {
-    pattern: /pr[oó]xima\s+semana/i,
-    type: 'relative',
-    getDate: () => {
-      const date = new Date();
-      date.setDate(date.getDate() + 7);
-      return date;
-    },
-  },
-  {
-    pattern: /pr[oó]ximo\s+m[êe]s/i,
-    type: 'relative',
-    getDate: () => {
-      const date = new Date();
-      date.setMonth(date.getMonth() + 1);
-      return date;
-    },
-  },
-  // Week days
-  {
-    pattern: /(segunda|terç|quart|quint|sexta|s[áa]bado|domingo)/i,
-    type: 'relative',
-    getDate: (match: string) => {
-      const days = [
-        'domingo',
-        'segunda',
-        'terça',
-        'quarta',
-        'quinta',
-        'sexta',
-        'sábado',
-      ];
-      const targetDay = days.findIndex(day => match.toLowerCase().includes(day));
-      if (targetDay === -1) return null;
-
-      const date = new Date();
-      const currentDay = date.getDay();
-      const daysUntilTarget = (targetDay - currentDay + 7) % 7;
-      date.setDate(date.getDate() + daysUntilTarget);
-      return date;
-    },
-  },
-  // Absolute dates (Brazilian format)
-  {
-    pattern: /(\d{2})[/-](\d{2})[/-](\d{4})/i,
-    type: 'absolute',
-    getDate: (_, d: string, m: string, y: string) => {
-      return new Date(parseInt(y), parseInt(m) - 1, parseInt(d));
-    },
-  },
-  {
-    pattern:
-      /(\d{1,2})\s+de\s+(janeiro|fevereiro|março|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro)\s+de\s+(\d{4})/i,
-    type: 'absolute',
-    getDate: (_, d: string, m: string, y: string) => {
-      const months = {
-        janeiro: 0,
-        fevereiro: 1,
-        março: 2,
-        abril: 3,
-        maio: 4,
-        junho: 5,
-        julho: 6,
-        agosto: 7,
-        setembro: 8,
-        outubro: 9,
-        novembro: 10,
-        dezembro: 11,
-      };
-      return new Date(parseInt(y), months[m.toLowerCase()], parseInt(d));
-    },
-  },
-];
-
-// Service keywords
-const SERVICE_KEYWORDS = [
-  'consulta',
-  'retorno',
-  'exame',
-  'procedimento',
-  'avaliação',
-  'acompanhamento',
-  'cirurgia',
-  'triagem',
-  'urgência',
-  'emergência',
-];
-
-export class IntentParser {
-  private contextCache: Map<string, any> = new Map();
+  private readonly FINANCIAL_TYPE_PATTERNS = {
+    revenue: [
+      /receita\b/i,
+      /faturamento?\b/i,
+      /entradas?\b/i,
+    ],
+    payments: [
+      /pagamentos?\b/i,
+      /recebidos?\b/i,
+    ],
+    expenses: [
+      /despesas?\b/i,
+      /gastos?\b/i,
+      /custos?\b/i,
+    ],
+  };
 
   /**
-   * Parse user query to determine intent and extract entities
+   * Parse natural language query to extract intent and parameters
    */
-  async parseQuery(
-    text: string,
-    context?: {
-      userId?: string;
-      userRole?: string;
-      domain?: string;
-      session?: string;
-    },
-  ): Promise<ValidUserQuery> {
-    try {
-      // Clean and normalize text
-      const cleanedText = text.trim().toLowerCase();
+  parseQuery(query: string, userRole: UserRole): {
+    intent: QueryIntent;
+    parameters: QueryParameters;
+    confidence: number;
+  } {
+    const normalizedQuery = this.normalizeQuery(query);
+    
+    // Determine primary intent
+    const intent = this.extractIntent(normalizedQuery);
+    const confidence = this.calculateConfidence(normalizedQuery, intent);
+    
+    // Extract parameters based on intent
+    const parameters = this.extractParameters(normalizedQuery, intent, userRole);
 
-      // Determine intent
-      const intent = this.detectIntent(cleanedText);
-
-      // Extract entities
-      const entities = await this.extractEntities(cleanedText, intent);
-
-      // Create user query object
-      const userQuery: UserQuery = {
-        id: this.generateId(),
-        text,
-        intent,
-        entities,
-        context: context
-          ? {
-            userId: context.userId || '',
-            userRole: context.userRole || '',
-            domain: context.domain,
-            session: context.session,
-          }
-          : undefined,
-        timestamp: new Date().toISOString(),
-      };
-
-      // Validate and return
-      const result = safeValidate(UserQuerySchema, userQuery);
-      if (!result.success) {
-        throw new IntentParsingError(
-          `Invalid query structure: ${result.error.message}`,
-          text,
-        );
-      }
-
-      return result.data;
-    } catch (error) {
-      if (error instanceof IntentParsingError) {
-        throw error;
-      }
-      throw new IntentParsingError(`Failed to parse query: ${error}`, text);
-    }
+    return {
+      intent,
+      parameters,
+      confidence,
+    };
   }
 
   /**
-   * Detect query intent based on patterns
+   * Normalize query text for better matching
    */
-  private detectIntent(text: string): QueryIntent {
-    // Check each intent pattern
-    for (const [intent, patterns] of Object.entries(INTENT_PATTERNS)) {
+  private normalizeQuery(query: string): string {
+    return query
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove accents
+      .replace(/[^\w\s]/g, ' ') // Keep only alphanumeric and spaces
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .trim();
+  }
+
+  /**
+   * Extract primary intent from normalized query
+   */
+  private extractIntent(normalizedQuery: string): QueryIntent {
+    const intentScores: Record<QueryIntent, number> = {
+      client_data: 0,
+      appointments: 0,
+      financial: 0,
+      general: 0,
+      unknown: 0,
+    };
+
+    // Score each intent based on pattern matches
+    for (const [intent, patterns] of Object.entries(this.INTENT_PATTERNS)) {
       for (const pattern of patterns) {
-        if (pattern.test(text)) {
-          return intent as QueryIntent;
+        if (pattern.test(normalizedQuery)) {
+          intentScores[intent as QueryIntent]++;
         }
       }
     }
 
-    // Special case: if the query mentions money/financial terms
-    if (/(r\$|reais|valor|pago|pagar|fatura|boleto)/i.test(text)) {
-      return QueryIntent.FINANCIAL_QUERY;
+    // Find intent with highest score
+    const maxScore = Math.max(...Object.values(intentScores));
+    if (maxScore === 0) {
+      return 'unknown';
     }
 
-    // Default to client search if name-like patterns are found
-    if (this.looksLikeName(text)) {
-      return QueryIntent.CLIENT_SEARCH;
+    const bestIntents = Object.entries(intentScores)
+      .filter(([_, score]) => score === maxScore)
+      .map(([intent]) => intent as QueryIntent);
+
+    // If tie, prioritize based on query content
+    if (bestIntents.length > 1) {
+      return this.resolveIntentTie(normalizedQuery, bestIntents);
     }
 
-    return QueryIntent.GENERAL_INQUIRY;
+    return bestIntents[0];
   }
 
   /**
-   * Extract entities from query text
+   * Resolve ties between multiple matching intents
    */
-  private async extractEntities(
-    text: string,
-    intent: QueryIntent,
-  ): Promise<UserQuery['entities']> {
-    const entities: UserQuery['entities'] = {};
+  private resolveIntentTie(query: string, intents: QueryIntent[]): QueryIntent {
+    // Priority order for tie-breaking
+    const priorityOrder: QueryIntent[] = [
+      'financial',
+      'appointments',
+      'client_data',
+      'general',
+    ];
 
-    // Extract client names
-    entities.clients = this.extractNames(text);
-
-    // Extract dates
-    entities.dates = this.extractDates(text);
-
-    // Extract services based on intent
-    if (
-      intent === QueryIntent.APPOINTMENT_QUERY
-      || intent === QueryIntent.APPOINTMENT_CREATION
-    ) {
-      entities.services = this.extractServices(text);
-    }
-
-    // Extract professionals
-    entities.professionals = this.extractProfessionals(text);
-
-    return entities;
-  }
-
-  /**
-   * Extract potential client names from text
-   */
-  private extractNames(
-    text: string,
-  ): Array<{ name: string; confidence: number }> {
-    const names: Array<{ name: string; confidence: number }> = [];
-
-    // Look for name patterns (capitalized words)
-    const namePattern = /\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)\b/g;
-    let match;
-
-    while ((match = namePattern.exec(text)) !== null) {
-      const name = match[1];
-
-      // Filter out common words that aren't names
-      const commonWords = [
-        'O',
-        'A',
-        'Os',
-        'As',
-        'Do',
-        'Da',
-        'Dos',
-        'Das',
-        'De',
-        'E',
-      ];
-      if (!commonWords.includes(name.toUpperCase()) && name.length > 2) {
-        names.push({
-          name,
-          confidence: Math.min(0.9, 0.3 + name.length * 0.1),
-        });
+    for (const intent of priorityOrder) {
+      if (intents.includes(intent)) {
+        return intent;
       }
     }
 
-    // Look for "cliente/paciente X" patterns
-    const clientPattern = /(cliente|paciente)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi;
-    while ((match = clientPattern.exec(text)) !== null) {
-      const name = match[2];
-      if (!names.find(n => n.name === name)) {
-        names.push({
-          name,
-          confidence: 0.95,
-        });
+    return intents[0];
+  }
+
+  /**
+   * Calculate confidence score for intent detection
+   */
+  private calculateConfidence(query: string, intent: QueryIntent): number {
+    if (intent === 'unknown') {
+      return 0.3;
+    }
+
+    const patterns = this.INTENT_PATTERNS[intent];
+    let matchCount = 0;
+
+    for (const pattern of patterns) {
+      if (pattern.test(query)) {
+        matchCount++;
+      }
+    }
+
+    // Base confidence on number of matching patterns
+    const baseConfidence = Math.min(matchCount / patterns.length, 1.0);
+
+    // Adjust based on query length and specificity
+    const queryLengthBonus = Math.min(query.length / 50, 0.2);
+    const specificityBonus = this.calculateSpecificityBonus(query);
+
+    return Math.min(baseConfidence + queryLengthBonus + specificityBonus, 1.0);
+  }
+
+  /**
+   * Calculate bonus based on query specificity
+   */
+  private calculateSpecificityBonus(query: string): number {
+    let bonus = 0;
+
+    // Bonus for specific names
+    if (this.CLIENT_NAME_PATTERNS.some(pattern => pattern.test(query))) {
+      bonus += 0.2;
+    }
+
+    // Bonus for dates
+    if (Object.values(this.DATE_PATTERNS).some(patterns => 
+      patterns.some(pattern => pattern.test(query))
+    )) {
+      bonus += 0.2;
+    }
+
+    // Bonus for financial type specification
+    if (Object.values(this.FINANCIAL_TYPE_PATTERNS).some(patterns => 
+      patterns.some(pattern => pattern.test(query))
+    )) {
+      bonus += 0.1;
+    }
+
+    return bonus;
+  }
+
+  /**
+   * Extract parameters based on intent and query content
+   */
+  private extractParameters(query: string, intent: QueryIntent, userRole: UserRole): QueryParameters {
+    const parameters: QueryParameters = {
+      rawEntities: {},
+    };
+
+    switch (intent) {
+      case 'client_data':
+        parameters.clientNames = this.extractClientNames(query);
+        break;
+      
+      case 'appointments':
+        parameters.dateRanges = this.extractDateRanges(query);
+        break;
+      
+      case 'financial':
+        parameters.financial = this.extractFinancialParameters(query);
+        break;
+    }
+
+    return parameters;
+  }
+
+  /**
+   * Extract client names from query
+   */
+  private extractClientNames(query: string): string[] {
+    const names: string[] = [];
+
+    for (const pattern of this.CLIENT_NAME_PATTERNS) {
+      const matches = query.match(pattern);
+      if (matches) {
+        // Extract the captured group (client name)
+        for (let i = 1; i < matches.length; i++) {
+          if (matches[i] && !names.includes(matches[i])) {
+            names.push(matches[i]);
+          }
+        }
       }
     }
 
@@ -347,34 +280,89 @@ export class IntentParser {
   }
 
   /**
-   * Extract dates from text
+   * Extract date ranges from query
    */
-  private extractDates(text: string): Array<{
-    date: string;
-    type: 'absolute' | 'relative';
-    confidence: number;
-  }> {
-    const dates: Array<{
-      date: string;
-      type: 'absolute' | 'relative';
-      confidence: number;
-    }> = [];
+  private extractDateRanges(query: string): DateRange[] {
+    const ranges: DateRange[] = [];
+    const now = new Date();
 
-    for (const patternInfo of DATE_PATTERNS) {
-      const match = text.match(patternInfo.pattern);
-      if (match) {
-        try {
-          const date = patternInfo.getDate(match[0], ...match.slice(1));
-          if (date && !isNaN(date.getTime())) {
-            dates.push({
-              date: date.toISOString(),
-              type: patternInfo.type,
-              confidence: 0.9,
-            });
-          }
-        } catch (error) {
-          console.warn(`Failed to parse date from "${match[0]}":`, error);
-        }
+    // Check for relative date patterns
+    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(query))) {
+      const today = new Date(now);
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      
+      ranges.push({ start: today, end: tomorrow });
+    }
+
+    if (this.DATE_PATTERNS.tomorrow.some(pattern => pattern.test(query))) {
+      const tomorrow = new Date(now);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      tomorrow.setHours(0, 0, 0, 0);
+      const dayAfter = new Date(tomorrow);
+      dayAfter.setDate(dayAfter.getDate() + 1);
+      
+      ranges.push({ start: tomorrow, end: dayAfter });
+    }
+
+    if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(query))) {
+      const weekStart = new Date(now);
+      weekStart.setDate(now.getDate() - now.getDay());
+      weekStart.setHours(0, 0, 0, 0);
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 7);
+      
+      ranges.push({ start: weekStart, end: weekEnd });
+    }
+
+    if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(query))) {
+      const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      monthEnd.setHours(23, 59, 59, 999);
+      
+      ranges.push({ start: monthStart, end: monthEnd });
+    }
+
+    // Extract specific dates
+    const specificDates = this.extractSpecificDates(query);
+    if (specificDates.length > 0) {
+      if (specificDates.length === 1) {
+        // Single date - create a day range
+        const date = specificDates[0];
+        const start = new Date(date);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(date);
+        end.setHours(23, 59, 59, 999);
+        ranges.push({ start, end });
+      } else {
+        // Multiple dates - create range from first to last
+        const sorted = specificDates.sort((a, b) => a.getTime() - b.getTime());
+        ranges.push({ 
+          start: sorted[0], 
+          end: sorted[sorted.length - 1] 
+        });
+      }
+    }
+
+    return ranges;
+  }
+
+  /**
+   * Extract specific dates from query
+   */
+  private extractSpecificDates(query: string): Date[] {
+    const dates: Date[] = [];
+
+    // DD/MM/YYYY pattern
+    const dateMatches = query.matchAll(/(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})/g);
+    for (const match of dateMatches) {
+      const [, day, month, year] = match;
+      const fullYear = year.length === 2 ? 2000 + parseInt(year) : parseInt(year);
+      const date = new Date(fullYear, parseInt(month) - 1, parseInt(day));
+      
+      if (!isNaN(date.getTime())) {
+        dates.push(date);
       }
     }
 
@@ -382,116 +370,95 @@ export class IntentParser {
   }
 
   /**
-   * Extract service types from text
+   * Extract financial parameters from query
    */
-  private extractServices(
-    text: string,
-  ): Array<{ name: string; confidence: number }> {
-    const services: Array<{ name: string; confidence: number }> = [];
+  private extractFinancialParameters(query: string): QueryParameters['financial'] {
+    const financial: QueryParameters['financial'] = {
+      type: 'all',
+      period: 'month',
+    };
 
-    for (const keyword of SERVICE_KEYWORDS) {
-      if (text.includes(keyword)) {
-        services.push({
-          name: keyword,
-          confidence: 0.8,
-        });
+    // Extract financial type
+    for (const [type, patterns] of Object.entries(this.FINANCIAL_TYPE_PATTERNS)) {
+      if (patterns.some(pattern => pattern.test(query))) {
+        financial.type = type as 'revenue' | 'payments' | 'expenses';
+        break;
       }
     }
 
-    return services;
+    // Extract period
+    if (this.DATE_PATTERNS.today.some(pattern => pattern.test(query))) {
+      financial.period = 'today';
+    } else if (this.DATE_PATTERNS.this_week.some(pattern => pattern.test(query))) {
+      financial.period = 'week';
+    } else if (this.DATE_PATTERNS.this_month.some(pattern => pattern.test(query))) {
+      financial.period = 'month';
+    } else if (query.includes('ano') || query.includes('year')) {
+      financial.period = 'year';
+    }
+
+    return financial;
   }
 
   /**
-   * Extract professional names from text
+   * Get suggested queries for when intent is unclear
    */
-  private extractProfessionals(
-    text: string,
-  ): Array<{ name: string; confidence: number }> {
-    const professionals: Array<{ name: string; confidence: number }> = [];
-
-    // Look for "dr/dra" patterns
-    const doctorPattern = /(dr\.?|dra\.?|doutor|doutora)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)/gi;
-    let match;
-
-    while ((match = doctorPattern.exec(text)) !== null) {
-      const name = match[2];
-      professionals.push({
-        name,
-        confidence: 0.95,
-      });
-    }
-
-    return professionals;
-  }
-
-  /**
-   * Check if text looks like a name search
-   */
-  private looksLikeName(text: string): boolean {
-    // Count capitalized words (potential names)
-    const capitalizedWords = text.match(/\b[A-Z][a-z]+\b/g) || [];
-
-    // If there are 2-3 capitalized words, it's likely a name
-    if (capitalizedWords.length >= 2 && capitalizedWords.length <= 3) {
-      return true;
-    }
-
-    // Check for common name search patterns
-    const nameSearchPatterns = [
-      /buscar\s+[A-Z]/i,
-      /procurar\s+[A-Z]/i,
-      /[A-Z][a-z]+\s+[A-Z][a-z]+/, // Two capitalized words
+  getSuggestedQueries(userRole: UserRole): string[] {
+    const baseSuggestions = [
+      "Quais os próximos agendamentos?",
+      "Me mostre os clientes cadastrados",
+      "Como está o faturamento?",
     ];
 
-    return nameSearchPatterns.some(pattern => pattern.test(text));
-  }
-
-  /**
-   * Generate unique ID for query
-   */
-  private generateId(): string {
-    return `query_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }
-
-  /**
-   * Update context cache for better entity recognition
-   */
-  updateContext(sessionId: string, context: any): void {
-    this.contextCache.set(sessionId, {
-      ...this.contextCache.get(sessionId),
-      ...context,
-      timestamp: Date.now(),
-    });
-  }
-
-  /**
-   * Get context from cache
-   */
-  getContext(sessionId: string): any {
-    const context = this.contextCache.get(sessionId);
-    if (!context) return null;
-
-    // Clear old contexts (older than 30 minutes)
-    if (Date.now() - context.timestamp > 1800000) {
-      this.contextCache.delete(sessionId);
-      return null;
+    // Add role-specific suggestions
+    if (userRole === 'admin') {
+      baseSuggestions.push("Resumo financeiro completo");
+    } else if (userRole === 'doctor') {
+      baseSuggestions.push("Me mostre informações do paciente [nome]");
+    } else if (userRole === 'receptionist') {
+      baseSuggestions.push("Agendamentos para hoje");
     }
 
-    return context;
+    return baseSuggestions;
   }
 
   /**
-   * Clear expired contexts
+   * Validate extracted parameters
    */
-  clearExpiredContexts(): void {
-    const now = Date.now();
-    for (const [sessionId, context] of this.contextCache.entries()) {
-      if (now - context.timestamp > 1800000) {
-        this.contextCache.delete(sessionId);
-      }
+  validateParameters(parameters: QueryParameters, intent: QueryIntent): {
+    valid: boolean;
+    errors: string[];
+  } {
+    const errors: string[] = [];
+
+    switch (intent) {
+      case 'client_data':
+        if (parameters.clientNames && parameters.clientNames.length > 5) {
+          errors.push('Too many client names specified (max 5)');
+        }
+        break;
+      
+      case 'appointments':
+        if (parameters.dateRanges && parameters.dateRanges.length > 3) {
+          errors.push('Too many date ranges specified (max 3)');
+        }
+        for (const range of parameters.dateRanges || []) {
+          if (range.start > range.end) {
+            errors.push('Date range start must be before end');
+          }
+        }
+        break;
+      
+      case 'financial':
+        if (parameters.financial?.type && !['revenue', 'payments', 'expenses', 'all'].includes(parameters.financial.type)) {
+          errors.push('Invalid financial type specified');
+        }
+        break;
     }
+
+    return {
+      valid: errors.length === 0,
+      errors,
+    };
   }
 }
-
-// Export singleton instance
-export const intentParser = new IntentParser();

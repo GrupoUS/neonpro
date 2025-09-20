@@ -10,14 +10,14 @@ export { createTDDOrchestrationSystem } from "./src/orchestration-system";
 export { executeQualityControl, runTDDCycle } from "./src/utils";
 export { TDDOrchestrator } from "./src/tdd-orchestrator";
 export { QualityControlBridge } from "./src/quality-control-bridge";
-export { QualityControlOrchestrator } from "./quality-control-orchestrator";
+export { QualityControlOrchestrator } from "./src/quality-control-orchestrator";
 export { WorkflowEngine } from "./src/workflow-engine";
-export { TDDAgentRegistry } from "./src/tdd-agent-registry";
+export { TDDAgentRegistry } from "./src/agent-registry";
 
 // New orchestration components
-export { ExecutionPatternSelector } from "./execution-pattern-selector";
+export { ExecutionPatternSelector } from "./src/execution-pattern-selector";
 export { ToolOrchestrator } from "./src/tool-orchestrator";
-export { ResultAggregator } from "./result-aggregator";
+export { ResultAggregator } from "./src/result-aggregator";
 export { TestSuiteCoordinator } from "./src/test-suite-coordinator";
 
 // Type exports

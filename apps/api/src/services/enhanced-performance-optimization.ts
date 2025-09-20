@@ -424,7 +424,7 @@ export class EnhancedPerformanceOptimizationService {
       if (professionalId) whereClause.professionalId = professionalId;
       if (status?.length) whereClause.status = { in: status };
 
-      const [appointments, total] = await Promise.all([
+      const [appointments, _total] = await Promise.all([
         this.prisma.appointment.findMany({
           where: whereClause,
           include: this.getAppointmentInclude(includePatientDetails),
@@ -799,7 +799,7 @@ export class EnhancedPerformanceOptimizationService {
     return queryBuilder(params);
   }
 
-  private generateCursor(item: any, reverse = false): string {
+  private generateCursor(item: any, _reverse = false): string {
     if (!item) return '';
 
     // Simple cursor implementation using ID and timestamp
@@ -885,7 +885,7 @@ export class EnhancedPerformanceOptimizationService {
     return orderBy;
   }
 
-  private generateAppointmentSummary(appointments: any[], groupBy?: string) {
+  private generateAppointmentSummary(appointments: any[], _groupBy?: string) {
     const byStatus: Record<string, number> = {};
     const byProfessional: Record<
       string,

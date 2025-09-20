@@ -36,7 +36,7 @@ const SENSITIVE_PATTERNS = {
   // API keys and tokens
   API_KEYS: [
     /api[_-]?key\s*[:=]\s*['"]([^'"]+)['"]/gi,
-    /bearer\s+([a-zA-Z0-9\-._~+\/]+=*)/gi,
+    /bearer\s+([a-zA-Z0-9\-._~+/]+=*)/gi,
     /token\s*[:=]\s*['"]([^'"]+)['"]/gi,
     /secret\s*[:=]\s*['"]([^'"]+)['"]/gi,
     /authorization\s*[:=]\s*['"]([^'"]+)['"]/gi,
@@ -63,9 +63,9 @@ const SENSITIVE_PATTERNS = {
 
   // File system paths
   FILE_PATHS: [
-    /\/home\/[^\/]+/gi,
-    /\/users\/[^\/]+/gi,
-    /\/var\/www\/[^\/]+/gi,
+    /\/home\/[^/]+/gi,
+    /\/users\/[^/]+/gi,
+    /\/var\/www\/[^/]+/gi,
     /c:\\\\users\\\\[^\\\\]+/gi,
     /d:\\\\projects\\\\[^\\\\]+/gi,
   ],
@@ -74,11 +74,11 @@ const SENSITIVE_PATTERNS = {
   INTERNAL_DETAILS: [
     /stack\s*trace[:\s]*/gi,
     /at\s+[a-zA-Z_][a-zA-Z0-9_]*\s*\(/gi,
-    /node_modules\/[^\/]+/gi,
+    /node_modules\/[^/]+/gi,
     /\.ts:\d+:\d+/gi,
     /\.js:\d+:\d+/gi,
-    /internal\/[^\/]+/gi,
-    /\.next\/[^\/]+/gi,
+    /internal\/[^/]+/gi,
+    /\.next\/[^/]+/gi,
   ],
 };
 

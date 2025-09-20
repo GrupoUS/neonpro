@@ -4,7 +4,6 @@
  * with Brazilian formatting and LGPD compliance
  */
 
-import { supabase } from '@/integrations/supabase/client';
 import type { DashboardData } from './dashboard-data';
 import type { FinancialMetric } from './financial-metrics';
 

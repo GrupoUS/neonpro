@@ -90,7 +90,6 @@ import {
 import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
 import { createAGUIProtocolClient, useAGUIProtocol, AGUIConnectionState } from '@/services/agui-protocol';
-import { useState } from 'react';
 
 // Import our specific types for AI agent integration
 import type {
@@ -104,7 +103,7 @@ import type {
   ClientData,
   FinancialData,
   UserQuery,
-} from '@neonpro/types';
+} from '@/types/ai-agent';
 
 export interface DataAgentChatProps {
   /** Current user context for role-based access */
@@ -574,7 +573,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
         id: message.id,
         role: 'assistant',
         content: message.content,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date(),
         actions: message.actions || [],
         metadata: message.metadata || {},
       };
@@ -751,13 +750,6 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       });
     }
   }, [inputValue, isLoading, currentSessionId, userContext, aguiClient, createSessionMutation, sendMessageMutation, updateAGUISessionContext]);
-      context: {
-        userId: userContext.userId,
-        domain: userContext.domain,
-        limit: 10,
-      },
-    });
-  }, [inputValue, isLoading, currentSessionId, userContext, createSessionMutation, sendMessageMutation]);
 
   // Handle action execution
   const handleActionExecute = useCallback((action: AgentAction) => {

@@ -68,14 +68,14 @@ export abstract class BaseService {
       const prisma = await this.getPrisma();
       await prisma.auditTrail.create({
         data: {
-          userId,
+          userId: userId || "system",
           action,
           resource,
-          resourceType: "SYSTEM",
+          resourceType: "SYSTEM_CONFIG",
           additionalInfo: additionalInfo ? JSON.stringify(additionalInfo) : undefined,
           ipAddress: "127.0.0.1",
           userAgent: "NeonPro-Service",
-          status: "COMPLETED",
+          status: "SUCCESS",
         },
       });
     } catch (error) {
@@ -235,7 +235,7 @@ export abstract class BaseService {
         timestamp: new Date(),
         service: this.serviceName,
       };
-    } catch (error) {
+    } catch (_error) {
       return {
         status: "unhealthy",
         timestamp: new Date(),

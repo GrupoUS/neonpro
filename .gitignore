@@ -116,6 +116,7 @@ id_ed25519*
 .turbo
 **/.turbo
 .specify/
+.specify
 
 # Workspace and package manager
 node_modules/
@@ -214,8 +215,6 @@ cleanup-reports/
 # Workspace configurations
 *.code-workspace
 **/*.code-workspace
-.vscode/settings.json
-.vscode/launch.json
 
 # Healthcare specific temporary files
 *patient*temp*
@@ -477,6 +476,30 @@ node-compile-cache/
 
 # User-specific configurations
 .user.ini
+
+# =============================================================================
+# 🐍 PYTHON VIRTUAL ENVIRONMENTS & CACHE
+# =============================================================================
+
+# Python virtual environments
+venv/
+**/venv/
+env/
+**/env/
+.venv/
+**/.venv/
+.env/
+**/.env/
+
+# Python cache and compiled files
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+**/*.egg-info/
 
 # =============================================================================
 # 📱 MOBILE & CROSS-PLATFORM (Future NeonPro Mobile)

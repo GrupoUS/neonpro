@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
-import { readFileSync, existsSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
+import { describe, expect, it } from 'vitest';
 
 describe('TDD: Test Infrastructure Issues - RED Phase', () => {
   describe('Test Setup Validation', () => {
@@ -20,11 +20,11 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const setupPath = join(process.cwd(), 'src/__tests__/setup.ts');
       const content = readFileSync(setupPath, 'utf8');
 
-      const hasMatchMediaMock = content.includes('matchMedia') &&
-                               content.includes('mockImplementation');
+      const hasMatchMediaMock = content.includes('matchMedia')
+        && content.includes('mockImplementation');
 
-      const hasNavigationMock = content.includes('navigation') &&
-                               content.includes('mockImplementation');
+      const hasNavigationMock = content.includes('navigation')
+        && content.includes('mockImplementation');
 
       const hasJestDomSetup = content.includes('@testing-library/jest-dom');
 
@@ -36,8 +36,8 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const content = readFileSync(vitestConfigPath, 'utf8');
 
       const hasGlobalsConfig = content.includes('globals: true');
-      const hasEnvironmentConfig = content.includes('environment:') &&
-                                  content.includes('jsdom');
+      const hasEnvironmentConfig = content.includes('environment:')
+        && content.includes('jsdom');
 
       expect(hasGlobalsConfig && hasEnvironmentConfig).toBe(true);
     });
@@ -46,14 +46,14 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const testSetupPath = join(process.cwd(), 'tests/setup.ts');
       const content = readFileSync(testSetupPath, 'utf8');
 
-      const hasServerMock = content.includes('server.listen') &&
-                           content.includes('server.resetHandlers') &&
-                           content.includes('server.close');
+      const hasServerMock = content.includes('server.listen')
+        && content.includes('server.resetHandlers')
+        && content.includes('server.close');
 
-      const hasFetchPolyfill = content.includes('fetch') &&
-                              content.includes('Headers') &&
-                              content.includes('Request') &&
-                              content.includes('Response');
+      const hasFetchPolyfill = content.includes('fetch')
+        && content.includes('Headers')
+        && content.includes('Request')
+        && content.includes('Response');
 
       expect(hasServerMock && hasFetchPolyfill).toBe(true);
     });
@@ -64,12 +64,12 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
-      const hasJsdomEnvironment = content.includes('environment') &&
-                                 content.includes('jsdom');
+      const hasJsdomEnvironment = content.includes('environment')
+        && content.includes('jsdom');
 
-      const hasProperSetupFiles = content.includes('setupFiles') &&
-                                 content.includes('src/__tests__/setup.ts') &&
-                                 content.includes('tests/setup.ts');
+      const hasProperSetupFiles = content.includes('setupFiles')
+        && content.includes('src/__tests__/setup.ts')
+        && content.includes('tests/setup.ts');
 
       expect(hasJsdomEnvironment && hasProperSetupFiles).toBe(true);
     });
@@ -78,13 +78,13 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
-      const hasIncludePatterns = content.includes('include:') &&
-                                content.includes('.test.') &&
-                                content.includes('.spec.');
+      const hasIncludePatterns = content.includes('include:')
+        && content.includes('.test.')
+        && content.includes('.spec.');
 
-      const hasExcludePatterns = content.includes('exclude:') &&
-                                content.includes('node_modules') &&
-                                content.includes('dist');
+      const hasExcludePatterns = content.includes('exclude:')
+        && content.includes('node_modules')
+        && content.includes('dist');
 
       expect(hasIncludePatterns && hasExcludePatterns).toBe(true);
     });
@@ -93,11 +93,11 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
-      const hasTestTimeout = content.includes('testTimeout') &&
-                            content.includes('30000');
+      const hasTestTimeout = content.includes('testTimeout')
+        && content.includes('30000');
 
-      const hasHookTimeout = content.includes('hookTimeout') &&
-                            content.includes('30000');
+      const hasHookTimeout = content.includes('hookTimeout')
+        && content.includes('30000');
 
       expect(hasTestTimeout && hasHookTimeout).toBe(true);
     });
@@ -106,13 +106,13 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
-      const hasCoverageConfig = content.includes('coverage:') &&
-                               content.includes('provider:') &&
-                               content.includes('reporter:');
+      const hasCoverageConfig = content.includes('coverage:')
+        && content.includes('provider:')
+        && content.includes('reporter:');
 
-      const hasCoverageExclusions = content.includes('exclude:') &&
-                                  content.includes('node_modules') &&
-                                  content.includes('dist');
+      const hasCoverageExclusions = content.includes('exclude:')
+        && content.includes('node_modules')
+        && content.includes('dist');
 
       expect(hasCoverageConfig && hasCoverageExclusions).toBe(true);
     });
@@ -123,13 +123,13 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
-      const hasV8Provider = content.includes('provider:') &&
-                           content.includes('v8');
+      const hasV8Provider = content.includes('provider:')
+        && content.includes('v8');
 
-      const hasMultipleReporters = content.includes('reporter:') &&
-                                  content.includes('text') &&
-                                  content.includes('json') &&
-                                  content.includes('html');
+      const hasMultipleReporters = content.includes('reporter:')
+        && content.includes('text')
+        && content.includes('json')
+        && content.includes('html');
 
       expect(hasV8Provider && hasMultipleReporters).toBe(true);
     });
@@ -138,9 +138,9 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
-      const hasProperExclusions = content.includes('node_modules/') &&
-                                 content.includes('src/test/') &&
-                                 content.includes('**/*.d.ts');
+      const hasProperExclusions = content.includes('node_modules/')
+        && content.includes('src/test/')
+        && content.includes('**/*.d.ts');
 
       expect(hasProperExclusions).toBe(true);
     });
@@ -159,13 +159,13 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
-      const hasReporterArray = content.includes('reporter:') &&
-                              content.includes('[') &&
-                              content.includes(']');
+      const hasReporterArray = content.includes('reporter:')
+        && content.includes('[')
+        && content.includes(']');
 
-      const hasMultipleFormats = content.includes('text') &&
-                                content.includes('json') &&
-                                content.includes('html');
+      const hasMultipleFormats = content.includes('text')
+        && content.includes('json')
+        && content.includes('html');
 
       expect(hasReporterArray && hasMultipleFormats).toBe(true);
     });
@@ -237,8 +237,8 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
           const content = readFileSync(fullPath, 'utf8');
 
           // Each test file should have its own describe block
-          const hasTopLevelDescribe = content.includes("describe('TDD:") ||
-                                    content.includes('describe("TDD:');
+          const hasTopLevelDescribe = content.includes('describe(\'TDD:')
+            || content.includes('describe("TDD:');
 
           expect(hasTopLevelDescribe).toBe(true);
         }
@@ -251,12 +251,12 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const testSetupPath = join(process.cwd(), 'tests/setup.ts');
       const content = readFileSync(testSetupPath, 'utf8');
 
-      const hasServerImport = content.includes('server') &&
-                             content.includes('from');
+      const hasServerImport = content.includes('server')
+        && content.includes('from');
 
-      const hasServerLifecycle = content.includes('beforeAll') &&
-                                content.includes('afterEach') &&
-                                content.includes('afterAll');
+      const hasServerLifecycle = content.includes('beforeAll')
+        && content.includes('afterEach')
+        && content.includes('afterAll');
 
       expect(hasServerImport && hasServerLifecycle).toBe(true);
     });
@@ -292,9 +292,9 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const testSetupPath = join(process.cwd(), 'tests/setup.ts');
       const content = readFileSync(testSetupPath, 'utf8');
 
-      const hasFactoryFunctions = content.includes('factory') ||
-                                 content.includes('mock') ||
-                                 content.includes('create');
+      const hasFactoryFunctions = content.includes('factory')
+        || content.includes('mock')
+        || content.includes('create');
 
       expect(hasFactoryFunctions).toBe(true);
     });
@@ -305,9 +305,9 @@ describe('TDD: Test Infrastructure Issues - RED Phase', () => {
       const vitestConfigPath = join(process.cwd(), 'vitest.config.ts');
       const content = readFileSync(vitestConfigPath, 'utf8');
 
-      const hasIntegrationPatterns = content.includes('integration') &&
-                                    content.includes('.test.') &&
-                                    content.includes('.spec.');
+      const hasIntegrationPatterns = content.includes('integration')
+        && content.includes('.test.')
+        && content.includes('.spec.');
 
       expect(hasIntegrationPatterns).toBe(true);
     });

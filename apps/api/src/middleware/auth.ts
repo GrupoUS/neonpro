@@ -69,6 +69,8 @@ const lgpdConsentSchema = z.object({
 
 export type LGPDConsent = z.infer<typeof lgpdConsentSchema>;
 
+// Healthcare session interface with LGPD compliance
+interface HealthcareSession {
   lgpdConsent?: LGPDConsent;
   permissions: string[];
   isRealTimeSession: boolean;

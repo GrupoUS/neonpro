@@ -3,8 +3,8 @@
  * Tests coordinated tool execution with intelligent scheduling and conflict resolution
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-import { ToolOrchestrator } from "../tool-orchestrator";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { ToolOrchestrator } from "../src/tool-orchestrator";
 import type {
   ToolExecutionRequest,
   ToolExecutionResult,
@@ -14,6 +14,16 @@ import type {
 
 describe("ToolOrchestrator", () => {
   let orchestrator: ToolOrchestrator;
+
+  // Default test context for ToolExecutionRequest
+  const defaultTestContext: FeatureContext = {
+    name: "Test Feature",
+    description: "Default test feature for tool execution tests",
+    domain: ["testing"],
+    complexity: "medium" as const,
+    requirements: ["Tool execution", "Result validation"],
+    acceptance: ["Tool executes successfully", "Results are validated"],
+  };
 
   beforeEach(() => {
     orchestrator = new ToolOrchestrator();
@@ -30,6 +40,7 @@ describe("ToolOrchestrator", () => {
         toolName: "test-tool",
         action: "test-action",
         parameters: { input: "test" },
+        context: defaultTestContext,
         priority: "medium" as const,
         timeout: 5000,
         retries: 2,
@@ -50,6 +61,7 @@ describe("ToolOrchestrator", () => {
         toolName: "dependency-tool",
         action: "setup",
         parameters: { setup: true },
+        context: defaultTestContext,
         priority: "high" as const,
         timeout: 3000,
         retries: 1,
@@ -60,6 +72,7 @@ describe("ToolOrchestrator", () => {
         toolName: "dependent-tool",
         action: "execute",
         parameters: { ready: true },
+        context: defaultTestContext,
         priority: "medium" as const,
         timeout: 5000,
         retries: 2,
@@ -82,6 +95,7 @@ describe("ToolOrchestrator", () => {
         toolName: "failing-tool",
         action: "fail",
         parameters: { shouldFail: true },
+        context: defaultTestContext,
         priority: "low" as const,
         timeout: 1000,
         retries: 1,
@@ -100,6 +114,7 @@ describe("ToolOrchestrator", () => {
         toolName: "flaky-tool",
         action: "flaky",
         parameters: { succeedOnRetry: true },
+        context: defaultTestContext,
         priority: "medium" as const,
         timeout: 2000,
         retries: 3,
@@ -119,6 +134,7 @@ describe("ToolOrchestrator", () => {
         toolName: "resource-intensive-tool",
         action: "process",
         parameters: { data: "large" },
+        context: defaultTestContext,
         priority: "high" as const,
         timeout: 10000,
         retries: 1,
@@ -141,6 +157,7 @@ describe("ToolOrchestrator", () => {
         toolName: "constrained-tool",
         action: "minimal",
         parameters: { minimal: true },
+        context: defaultTestContext,
         priority: "low" as const,
         timeout: 1000,
         retries: 1,
@@ -162,6 +179,7 @@ describe("ToolOrchestrator", () => {
         toolName: "background-tool",
         action: "background",
         parameters: { background: true },
+        context: defaultTestContext,
         priority: "low" as const,
         timeout: 5000,
         retries: 1,
@@ -172,6 +190,7 @@ describe("ToolOrchestrator", () => {
         toolName: "urgent-tool",
         action: "urgent",
         parameters: { urgent: true },
+        context: defaultTestContext,
         priority: "critical" as const,
         timeout: 2000,
         retries: 1,
@@ -198,6 +217,7 @@ describe("ToolOrchestrator", () => {
           toolName: "batch-tool",
           action: "process",
           parameters: { batch: 1 },
+          context: defaultTestContext,
           priority: "medium" as const,
           timeout: 3000,
           retries: 1,
@@ -207,6 +227,7 @@ describe("ToolOrchestrator", () => {
           toolName: "batch-tool",
           action: "process",
           parameters: { batch: 2 },
+          context: defaultTestContext,
           priority: "medium" as const,
           timeout: 3000,
           retries: 1,
@@ -216,6 +237,7 @@ describe("ToolOrchestrator", () => {
           toolName: "batch-tool",
           action: "process",
           parameters: { batch: 3 },
+          context: defaultTestContext,
           priority: "medium" as const,
           timeout: 3000,
           retries: 1,
@@ -236,6 +258,7 @@ describe("ToolOrchestrator", () => {
           toolName: "batch-tool",
           action: "process",
           parameters: { batch: 1 },
+          context: defaultTestContext,
           priority: "medium" as const,
           timeout: 3000,
           retries: 1,
@@ -245,6 +268,7 @@ describe("ToolOrchestrator", () => {
           toolName: "failing-tool",
           action: "fail",
           parameters: { shouldFail: true },
+          context: defaultTestContext,
           priority: "medium" as const,
           timeout: 1000,
           retries: 1,
@@ -254,6 +278,7 @@ describe("ToolOrchestrator", () => {
           toolName: "batch-tool",
           action: "process",
           parameters: { batch: 2 },
+          context: defaultTestContext,
           priority: "medium" as const,
           timeout: 3000,
           retries: 1,
@@ -276,6 +301,7 @@ describe("ToolOrchestrator", () => {
         toolName: "exclusive-tool",
         action: "exclusive",
         parameters: { resource: "shared" },
+        context: defaultTestContext,
         priority: "medium" as const,
         timeout: 5000,
         retries: 1,
@@ -290,6 +316,7 @@ describe("ToolOrchestrator", () => {
         toolName: "exclusive-tool",
         action: "exclusive",
         parameters: { resource: "shared" },
+        context: defaultTestContext,
         priority: "high" as const,
         timeout: 3000,
         retries: 1,
@@ -316,6 +343,7 @@ describe("ToolOrchestrator", () => {
         toolName: "slow-tool",
         action: "slow",
         parameters: { delay: 2000 },
+        context: defaultTestContext,
         priority: "medium" as const,
         timeout: 1000, // Short timeout
         retries: 1,
@@ -339,6 +367,7 @@ describe("ToolOrchestrator", () => {
           patientData: "sensitive",
           compliance: true,
         },
+        context: defaultTestContext,
         priority: "high" as const,
         timeout: 5000,
         retries: 2,
@@ -363,6 +392,7 @@ describe("ToolOrchestrator", () => {
           patientData: "sensitive",
           compliance: false,
         },
+        context: defaultTestContext,
         priority: "medium" as const,
         timeout: 5000,
         retries: 1,
@@ -386,6 +416,7 @@ describe("ToolOrchestrator", () => {
         toolName: "metrics-tool",
         action: "track",
         parameters: { metrics: true },
+        context: defaultTestContext,
         priority: "medium" as const,
         timeout: 3000,
         retries: 1,
@@ -407,6 +438,7 @@ describe("ToolOrchestrator", () => {
         toolName: "resource-tool",
         action: "consume",
         parameters: { consume: true },
+        context: defaultTestContext,
         priority: "medium" as const,
         timeout: 3000,
         retries: 1,

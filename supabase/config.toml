@@ -1,1 +1,25 @@
+# Simplified Supabase config for remote operations
 project_id = "ownkoxryswokcdanrdgj"
+
+[api]
+port = 54321
+schemas = ["public", "auth", "extensions"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+major_version = 17
+
+[studio]
+enabled = true
+port = 54324
+
+[realtime]
+enabled = true
+
+[auth]
+enabled = true
+
+[storage]
+enabled = true

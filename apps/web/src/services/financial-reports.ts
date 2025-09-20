@@ -317,9 +317,9 @@ export class FinancialReportsService {
    * Fetch report data based on type
    */
   private static async fetchReportData(
-    type: FinancialReport['type'],
-    startDate: Date,
-    endDate: Date,
+    _type: FinancialReport['type'],
+    _startDate: Date,
+    _endDate: Date,
   ): Promise<ReportData> {
     // This would typically fetch from your financial data sources
     // For now, returning mock data
@@ -453,7 +453,7 @@ export class FinancialReportsService {
   /**
    * Export to PDF
    */
-  private static exportToPdf(report: FinancialReport, options: ReportExportOptions): Blob {
+  private static exportToPdf(report: FinancialReport, _options: ReportExportOptions): Blob {
     // Simplified PDF export - in production, use a proper PDF library
     const content = `
 Financial Report: ${report.title}

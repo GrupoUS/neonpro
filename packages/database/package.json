@@ -11,6 +11,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "require": "./dist/index.js"
+    },
+    "./services/*": {
+      "types": "./dist/services/*.d.ts",
+      "import": "./dist/services/*.js",
+      "require": "./dist/services/*.js"
     }
   },
   "scripts": {
@@ -25,7 +30,11 @@
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "sync-types": "tsx scripts/sync-types.ts",
+    "validate-schema": "npm run prisma:generate && npm run sync-types",
+    "supabase:types": "supabase gen types typescript --local > src/types/supabase-auto.ts || echo 'Supabase not running locally, using manual sync'",
+    "sync": "npm run validate-schema && npm run build"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^6.16.1",

@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 
 // Extended navigator interface for touch points
 interface NavigatorWithTouch extends Navigator {
-  maxTouchPoints?: number;
+  maxTouchPoints: number;
 }
 
 // Process interface for environment variables
@@ -26,7 +26,7 @@ interface ScreenWithRefreshRate extends Screen {
 
 // Navigator interface for device capabilities
 interface NavigatorWithDeviceCapabilities extends NavigatorWithTouch {
-  hardwareConcurrency?: number;
+  hardwareConcurrency: number;
   deviceMemory?: number;
 }
 
@@ -98,7 +98,7 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
 
   const hasTouch =
     hasWindow && hasNavigator
-      ? "ontouchstart" in window || (navigator as NavigatorWithTouch).maxTouchPoints > 0
+      ? "ontouchstart" in window || ((navigator as NavigatorWithTouch).maxTouchPoints || 0) > 0
       : false;
 
   const userAgent = hasNavigator ? navigator.userAgent : "";

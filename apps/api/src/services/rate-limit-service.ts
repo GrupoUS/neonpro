@@ -97,7 +97,7 @@ export function evaluateRateLimit(
   // In a real implementation, this would check against a store (Redis, memory, etc.)
   // For now, we'll simulate rate limiting logic
 
-  const windowStart = new Date(currentTime.getTime() - rule.windowMs);
+  const _windowStart = new Date(currentTime.getTime() - rule.windowMs);
 
   // Simulate current usage (in real implementation, this would come from store)
   const currentUsage = Math.floor(Math.random() * rule.maxRequests);
@@ -139,7 +139,7 @@ export function getRateLimitStatus(
 /**
  * Reset rate limit for a client
  */
-export function resetRateLimit(clientId: string, _ruleId: string): boolean {
+export function resetRateLimit(_clientId: string, _ruleId: string): boolean {
   // In real implementation, this would clear the store for the client/rule combination
   return true;
 }

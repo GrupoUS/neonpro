@@ -10,7 +10,7 @@ import {
   HealthcareTRPCError,
   PaginationSchema,
   UpdateClinicRequestSchema,
-} from '@neonpro/types/api/contracts';
+} from '@neonpro/types';
 import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 

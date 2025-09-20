@@ -1,10 +1,22 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import {
+import type {
   AuditLogRequest,
-  RTCAuditLogEntry,
   ComplianceReport,
   AuditSearchCriteria,
   MedicalDataClassification,
+  RTCAuditLogEntry,
+} from "../types/audit.types";
+
+// Re-export types for external use
+export type {
+  AuditLogRequest,
+  ComplianceReport,
+  AuditSearchCriteria,
+  MedicalDataClassification,
+  ResourceType,
+  AuditStatusType,
+  ComplianceCheck,
+  RTCAuditLogEntry,
 } from "../types/audit.types";
 
 // Database log entry interface
@@ -49,10 +61,10 @@ export class AuditService {
       const { data, error } = await this.supabase
         .from("audit_logs")
         .insert({
-          action: request.eventType,
+          action: request.action || request.eventType || "UNKNOWN",
           user_id: request.userId,
-          resource: request.description,
-          resource_type: "session", // Default resource type
+          resource: request.resource || request.description || "UNKNOWN",
+          resource_type: request.resource || "session", // Default resource type
           ip_address: request.ipAddress || "unknown",
           user_agent: request.userAgent || "unknown",
           clinic_id: request.clinicId,
@@ -96,10 +108,12 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId,
+      action: "CREATE",
+      resource: "TELEMEDICINE_SESSION",
       eventType: "session-start",
       userId,
       userRole,
-      dataClassification: metadata?.dataClassification || "general",
+      dataClassification: metadata?.dataClassification,
       description: `${userRole} started WebRTC session`,
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
@@ -131,10 +145,12 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId,
+      action: "UPDATE",
+      resource: "TELEMEDICINE_SESSION",
       eventType: "session-end",
       userId,
       userRole,
-      dataClassification: metadata?.dataClassification || "general",
+      dataClassification: typeof metadata?.dataClassification === 'string' ? undefined : metadata?.dataClassification,
       description: `${userRole} ended WebRTC session (duration: ${duration}s)${
         metadata?.reason ? ` - ${metadata.reason}` : ""
       }`,
@@ -172,10 +188,12 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId: `data-access-${Date.now()}`,
+      action: "READ",
+      resource: "PATIENT_DATA",
       eventType: "data-access",
       userId,
       userRole,
-      dataClassification: metadata?.dataClassification || "general-medical",
+      dataClassification: typeof metadata?.dataClassification === 'string' ? undefined : metadata?.dataClassification,
       description: `${userRole} accessed ${dataType}${
         patientId ? ` for patient ${patientId}` : ""
       }`,
@@ -213,10 +231,12 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId: metadata?.sessionId || `consent-${Date.now()}`,
+      action: "READ",
+      resource: "PATIENT_CONSENT",
       eventType: "consent-verification",
       userId,
       userRole: "system",
-      dataClassification: "consent-data",
+      dataClassification: { id: "consent", dataType: "consent", sensitivity: "MEDIUM", retentionPeriod: 365, encryptionRequired: true, accessControls: [], complianceStandards: [] } as MedicalDataClassification,
       description: `Consent verification for ${consentType}: ${
         isValid ? "VALID" : "INVALID"
       }`,
@@ -255,10 +275,12 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId: metadata?.sessionId || `security-${Date.now()}`,
+      action: "CREATE",
+      resource: "SYSTEM_CONFIG",
       eventType: `security-${eventType}`,
       userId: userId || "system",
       userRole: "system",
-      dataClassification: "security-data",
+      dataClassification: { id: "security", dataType: "security", sensitivity: "HIGH", retentionPeriod: 180, encryptionRequired: true, accessControls: [], complianceStandards: [] } as MedicalDataClassification,
       description,
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
@@ -305,28 +327,7 @@ export class AuditService {
         return [];
       }
 
-      return logs.map((log: DatabaseLogEntry) => ({
-        id: log.id,
-        sessionId: log.session_id || sessionId,
-        userId: log.user_id,
-        eventType: this.mapActionToEventType(log.action),
-        userRole: log.user_role || "system",
-        dataClassification: log.data_classification || "general",
-        description:
-          log.description || `${log.action} performed on ${log.resource_type}`,
-        timestamp: log.created_at || new Date().toISOString(),
-        ipAddress: log.ip_address,
-        userAgent: log.user_agent,
-        clinicId: log.clinic_id || "default",
-        complianceCheck: {
-          isCompliant: log.status === "SUCCESS",
-          violations:
-            log.status === "FAILED" ? ["Audit log indicates failure"] : [],
-          riskLevel:
-            (log.risk_level?.toLowerCase() as "low" | "medium" | "high") ||
-            "low",
-        },
-      }));
+      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
     } catch (error) {
       console.error("AuditService.getSessionAuditLogs error:", error);
       return [];
@@ -535,17 +536,17 @@ export class AuditService {
       userId: log.user_id,
       eventType: this.mapActionToEventType(log.event_type || log.action),
       userRole: log.user_role || "system",
-      dataClassification: log.data_classification || "general",
-      description: log.description,
+      dataClassification: typeof log.data_classification === 'string' ? log.data_classification : "general",
+      description: log.description || "",
       timestamp: log.timestamp || log.created_at,
       ipAddress: log.ip_address,
       userAgent: log.user_agent,
       clinicId: log.clinic_id,
       metadata: log.metadata,
       complianceCheck: {
-        isCompliant: log.compliance_check?.isCompliant ?? (log.status === "SUCCESS"),
-        violations: log.compliance_check?.violations || [],
-        riskLevel: log.compliance_check?.riskLevel || log.risk_level || "low",
+        isCompliant: log.compliance_check?.status === "COMPLIANT" || log.status === "SUCCESS",
+        violations: [],
+        riskLevel: log.compliance_check?.risk_level || log.risk_level || "LOW",
       },
     };
   }

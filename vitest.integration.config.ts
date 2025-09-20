@@ -6,7 +6,7 @@ export default defineConfig({
     globals: true,
     environment: "node",
     setupFiles: ["./tools/tests/setup.ts"],
-    include: ["tools/tests/**/*.{test,spec}.{js,ts}"],
+    include: ["tools/tests/**/*.{test,spec}.{js,ts}", "tests/integration/**/*.{test,spec}.{js,ts}"],
     exclude: ["node_modules/**", "dist/**", ".vercel/**"],
     testTimeout: 30000, // 30 seconds for integration tests
     bail: 1,

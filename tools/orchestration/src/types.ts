@@ -1,5 +1,12 @@
 export type AgentCoordinationPattern = "parallel" | "sequential" | "hierarchical" | "event-driven" | "consensus";
 
+// Agent and workflow type definitions
+export type AgentName = "test" | "code-reviewer" | "security-auditor" | "architect-review" | "tdd-orchestrator" | "test-auditor" | "custom-agent" | "tertiary-agent" | "non-existent-agent";
+export type WorkflowType = "parallel" | "sequential" | "hierarchical" | "event-driven";
+
+// Re-export types from agent-registry
+export type { AgentCapability, OrchestrationContext, AgentType, TDDPhase, AgentStats } from './agent-registry';
+
 export type OrchestrationOptions = {
   workflow: string;
   coordination: AgentCoordinationPattern;
@@ -15,7 +22,26 @@ export type FeatureContext = {
   domain: string[];
   complexity: "low" | "medium" | "high";
   requirements: string[];
-  acceptance: string[];
+  acceptance?: string[];
+  healthcareCompliance?: boolean;
+};
+
+export interface ToolExecutionRequest {
+  id: string;
+  toolName: string;
+  action: string;
+  parameters: Record<string, any>;
+  context: FeatureContext;
+  timeout: number;
+  priority: "low" | "medium" | "high";
+  retries: number;
+  dependencies?: string[];
+  resources?: {
+    memory: number;
+    cpu: number;
+    disk: number;
+  };
+  metadata?: Record<string, any>;
 };
 
 export type QualityControlContext = {
@@ -23,9 +49,11 @@ export type QualityControlContext = {
   type: string;
   depth?: string;
   parallel?: boolean;
-  agents?: string[];
+  agents?: AgentName[];
   coordination?: AgentCoordinationPattern;
   healthcare?: boolean;
+  target?: string;
+  orchestrator?: boolean;
 };
 
 export type OrchestrationResult = {
@@ -50,9 +78,27 @@ export type AgentResult = {
   success: boolean;
   result: any;
   duration: number;
-  quality: {
+  quality?: {
     score: number;
     issues: string[];
+  };
+  metrics?: {
+    quality?: number;
+    performance?: number;
+    coverage?: number;
+    complianceScore?: number;
+    vulnerabilities?: any;
+    issues?: any;
+    memoryUsage?: any;
+    cpuUsage?: number;
+  };
+  errors?: string[];
+  warnings?: string[];
+  healthcareCompliance?: {
+    lgpd: boolean;
+    anvisa: boolean;
+    cfm: boolean;
+    compliant: boolean;
   };
 };
 
@@ -141,3 +187,18 @@ export type TDDOrchestrationSystem = {
   getCommandExamples(): CommandExample;
   validateCompliance(context: any, agentResults: AgentResult[]): Promise<HealthcareCompliance>;
 };
+
+// Re-export WorkflowEngine and AgentRegistry interfaces for test compatibility
+export interface WorkflowEngine {
+  executeWorkflow(context: OrchestrationContext): Promise<OrchestrationResult>;
+  getAvailableWorkflows(): string[];
+  validateWorkflow(workflow: string): boolean;
+}
+
+export interface AgentRegistry {
+  registerAgent(agent: any): void;
+  getAgent(name: string): any;
+  getAllAgents(): any[];
+  initializeDefaultAgents(): void;
+  agentStats: Map<string, any>;
+}

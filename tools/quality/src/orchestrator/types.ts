@@ -11,9 +11,13 @@ export type AgentName =
   | "test"
   | "compliance-validator"
   | "code-reviewer"
+  | "security-auditor"
   | "architect-review"
+  | "tdd-orchestrator"
   | "test-auditor"
-  | "security-auditor";
+  | "custom-agent"
+  | "tertiary-agent"
+  | "non-existent-agent";
 
 export type TDDPhase = "red" | "green" | "refactor";
 

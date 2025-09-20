@@ -3,8 +3,8 @@
  * Tests unified result handling with analysis and trend detection
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-import { ResultAggregator } from "../result-aggregator";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { ResultAggregator } from "../src/result-aggregator";
 import type {
   AgentResult,
   AggregatedResult,

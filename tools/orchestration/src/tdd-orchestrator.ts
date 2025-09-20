@@ -37,11 +37,11 @@ export class TDDOrchestrator {
   /**
    * Execute complete TDD cycle with FeatureContext
    */
-  async executeFullTDDCycle(feature: FeatureContext, options?: any): Promise<TDDCycleResult> {
+  async executeFullTDDCycle(feature: FeatureContext, _options?: any): Promise<TDDCycleResult> {
     // Convert FeatureContext to OrchestrationContext
     const context: OrchestrationContext = {
       featureName: feature.name,
-      featureType: feature.domain.join(","),
+      featureType: typeof feature.domain === 'string' ? feature.domain : Array.isArray(feature.domain) ? feature.domain.join(",") : "general",
       complexity: feature.complexity,
       criticalityLevel: feature.complexity === "high" ? "critical" : feature.complexity,
       requirements: feature.requirements,

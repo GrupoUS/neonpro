@@ -4,8 +4,8 @@
  * Supports contract testing with LGPD/CFM/ANVISA compliance
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { rest } from 'msw';
 import { TEST_BASE_URL } from './test-config';
@@ -133,7 +133,9 @@ export async function createCrudIntent(
         errorData = await response.json();
       } catch (e) {
         // Handle cases where response is not valid JSON (like 500 errors)
-        const error = new Error(response.status === 500 ? 'Server error' : `HTTP ${response.status}`) as any;
+        const error = new Error(
+          response.status === 500 ? 'Server error' : `HTTP ${response.status}`,
+        ) as any;
         error.code = response.status === 500 ? 'SERVER_ERROR' : 'HTTP_ERROR';
         error.details = { status: response.status, timestamp: new Date().toISOString() };
         error.timestamp = new Date().toISOString();
@@ -193,7 +195,7 @@ export async function confirmCrudIntent(
     }
 
     const data = await response.json();
-    
+
     // Flatten structure to match test expectations
     if (data.data) {
       return {
@@ -204,13 +206,13 @@ export async function confirmCrudIntent(
         validationResult: {
           dataValid: data.data.validated,
           transformations: data.data.transformations,
-          compliance: data.data.compliance
+          compliance: data.data.compliance,
         },
         auditTrail: data.auditTrail,
-        meta: data.meta
+        meta: data.meta,
       };
     }
-    
+
     return data;
   } catch (error) {
     clearTimeout(timeoutId);
@@ -249,7 +251,7 @@ export async function executeCrudOperation(
     }
 
     const data = await response.json();
-    
+
     // Flatten structure to match test expectations
     if (data.data) {
       return {
@@ -258,10 +260,10 @@ export async function executeCrudOperation(
         result: data.data.result,
         auditTrail: data.auditTrail,
         performance: data.meta?.performance,
-        meta: data.meta
+        meta: data.meta,
       };
     }
-    
+
     return data;
   } catch (error) {
     clearTimeout(timeoutId);
@@ -616,43 +618,24 @@ export class ComplianceValidator {
   } {
     const timeframes = ['immediate', '24h', '7d', '30d'];
     const purpose = accessRequest.purpose || 'general';
-    
+
     // Immediate access for medical purposes
     if (purpose === 'medical_treatment') {
       return {
         isValid: true,
         timeframe: 'immediate',
-        justification: 'medical_emergency_access'
+        justification: 'medical_emergency_access',
       };
     }
-    
+
     // Standard timeframe for other purposes
     return {
       isValid: true,
       timeframe: '24h',
-      justification: 'standard_processing_time'
+      justification: 'standard_processing_time',
     };
   }
 
-  /**
-   * Validate access timeframe
-   */
-  validateAccessTimeframe(requestTime: Date): {
-    compliant: boolean;
-    maximumDays: number;
-    responseDeadline: Date;
-  } {
-    const maximumDays = 15; // LGPD Art. 9
-    const responseDeadline = new Date(requestTime.getTime() + maximumDays * 24 * 60 * 60 * 1000);
-    
-    return {
-      compliant: true,
-      maximumDays,
-      responseDeadline,
-    };
-  }
-
-  /**
    * Validate data subject right to rectification (Art. 16)
    */
   validateRectificationRequest(rectificationRequest: any, patientData: any): {
@@ -666,7 +649,7 @@ export class ComplianceValidator {
       'medical_condition',
       'genetic_data',
       'biometric_data',
-      'mental_health'
+      'mental_health',
     ].some(field => rectificationRequest.fieldToCorrect?.toLowerCase().includes(field));
 
     const result = {
@@ -683,7 +666,10 @@ export class ComplianceValidator {
     };
 
     // Validate evidence for sensitive data
-    if (isSensitiveData && (!rectificationRequest.evidence || rectificationRequest.evidence.length === 0)) {
+    if (
+      isSensitiveData
+      && (!rectificationRequest.evidence || rectificationRequest.evidence.length === 0)
+    ) {
       result.valid = false;
       result.correctionAllowed = false;
       result.auditTrail.action = 'rectification_denied';
@@ -838,9 +824,9 @@ export class LGPDScoringSystem {
     }
 
     // Check data collection ratio
-    const requiredToUnnecessaryRatio = dataCollection.collectedFields.length / 
-      Math.max(dataCollection.unnecessaryFields.length, 1);
-    
+    const requiredToUnnecessaryRatio = dataCollection.collectedFields.length
+      / Math.max(dataCollection.unnecessaryFields.length, 1);
+
     if (requiredToUnnecessaryRatio < 2) {
       score -= 20;
       recommendations.push('Improve data minimization practices');
@@ -884,8 +870,10 @@ export class LGPDScoringSystem {
     }
 
     // Check purpose clarity
-    if (purpose.dataProcessingPurpose?.includes('general') || 
-        purpose.dataProcessingPurpose?.includes('business')) {
+    if (
+      purpose.dataProcessingPurpose?.includes('general')
+      || purpose.dataProcessingPurpose?.includes('business')
+    ) {
       violations.push('purpose_not_specific_enough');
       score -= 30;
     }
@@ -936,9 +924,9 @@ export class LGPDScoringSystem {
     }
 
     // Check access controls
-    const accessControlValid = security.accessControls?.multiFactorAuth && 
-                               security.accessControls?.roleBasedAccess &&
-                               security.accessControls?.leastPrivilege;
+    const accessControlValid = security.accessControls?.multiFactorAuth
+      && security.accessControls?.roleBasedAccess
+      && security.accessControls?.leastPrivilege;
     if (!accessControlValid) {
       score -= 25;
       recommendations.push('Implement multi-factor authentication');
@@ -946,9 +934,9 @@ export class LGPDScoringSystem {
     }
 
     // Check audit logging
-    const auditValid = security.auditLogging?.enabled && 
-                       security.auditLogging?.retentionPeriod &&
-                       security.auditLogging?.integrityProtection;
+    const auditValid = security.auditLogging?.enabled
+      && security.auditLogging?.retentionPeriod
+      && security.auditLogging?.integrityProtection;
     if (!auditValid) {
       score -= 20;
       recommendations.push('Enable comprehensive audit logging');
@@ -1017,11 +1005,17 @@ export class LGPDScoringSystem {
     blockedReasons: string[];
     alternatives: string[];
   } {
-    const adequateCountries = ['European Union', 'United Kingdom', 'Switzerland', 'Argentina', 'Chile'];
+    const adequateCountries = [
+      'European Union',
+      'United Kingdom',
+      'Switzerland',
+      'Argentina',
+      'Chile',
+    ];
     const requiredSafeguards = ['standard_contractual_clauses', 'technical_security_measures'];
 
     const isAdequateCountry = adequateCountries.includes(transfer.dataDestination);
-    const hasRequiredSafeguards = requiredSafeguards.every(safe => 
+    const hasRequiredSafeguards = requiredSafeguards.every(safe =>
       transfer.securityMeasures?.[safe.replace('_', '_')] || transfer.securityMeasures?.[safe]
     );
 
@@ -1049,7 +1043,7 @@ export class LGPDScoringSystem {
     auditTrail: any;
   } {
     const brazilianLocations = ['São Paulo', 'Rio de Janeiro', 'Brasília', 'Belo Horizonte'];
-    const isBrazilianLocation = brazilianLocations.some(location => 
+    const isBrazilianLocation = brazilianLocations.some(location =>
       dataStorage.dataCenterLocation?.includes(location)
     );
 
@@ -1126,8 +1120,8 @@ export class LGPDScoringSystem {
       notificationCompliant: violations.length === 0,
       notificationTimely: timeToReport <= maxAllowedTime,
       anpdNotified: breach.anpdNotified || breach.affectedIndividuals <= 100,
-      patientCommunicationAdequate: breach.patientNotification?.sent && 
-                                      breach.patientNotification?.timeline === 'within_24_hours',
+      patientCommunicationAdequate: breach.patientNotification?.sent
+        && breach.patientNotification?.timeline === 'within_24_hours',
       violations,
       penalties,
     };
@@ -1148,7 +1142,7 @@ export class LGPDScoringSystem {
       'purposes',
       'sharedWith',
       'retentionPeriod',
-      'securityMeasures'
+      'securityMeasures',
     ];
 
     const missingFields = requiredFields.filter(field => !records[field]);
@@ -1342,8 +1336,10 @@ export class LGPDScoringSystem {
       'breach_detection',
     ];
 
-    const score = config.dataAccessLogging && config.consentModificationLogging && 
-                   config.deletionRequestLogging && config.breachDetectionLogging ? 100 : 70;
+    const score = config.dataAccessLogging && config.consentModificationLogging
+        && config.deletionRequestLogging && config.breachDetectionLogging
+      ? 100
+      : 70;
 
     const capabilities = requiredCapabilities.filter(cap => {
       switch (cap) {

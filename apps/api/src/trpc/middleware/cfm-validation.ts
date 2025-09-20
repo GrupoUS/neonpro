@@ -1,6 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { logger } from '../../utils/logger';
+import { logger } from '../../lib/logger';
 import { middleware } from '../trpc';
 
 /**

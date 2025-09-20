@@ -897,7 +897,7 @@ export class TelemedicineServer {
 
     return {
       cfm: {
-        compliant: auditTrail.compliance.cfm,
+        compliant: (auditTrail.compliance as any)?.cfm || false,
         lastCheck: auditTrail.lastComplianceCheck,
       },
       lgpd: {

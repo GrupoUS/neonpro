@@ -1,395 +1,400 @@
 /**
  * Performance Test for ≤300ms HTTPS Handshake Requirement
  * TDD Test - MUST FAIL until implementation is complete
- * 
+ *
  * This test validates that HTTPS handshakes complete within 300ms
  * as specified in the performance requirements
  */
 
-import { describe, test, expect, beforeAll, afterAll } from 'vitest'
-import { performance } from 'perf_hooks'
+import { performance } from 'perf_hooks';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
 describe('HTTPS Handshake Performance - Integration Test', () => {
-  let app: any
-  let serverUrl: string
+  let app: any;
+  let serverUrl: string;
 
   beforeAll(async () => {
     try {
-      app = (await import('../../src/app')).default
-      serverUrl = process.env.TEST_SERVER_URL || 'https://localhost:3004'
+      app = (await import('../../src/app')).default;
+      serverUrl = process.env.TEST_SERVER_URL || 'https://localhost:3004';
     } catch (error) {
-      console.log('Expected failure: App not available during TDD phase')
+      console.log('Expected failure: App not available during TDD phase');
     }
-  })
+  });
 
   describe('TLS Handshake Performance', () => {
     test('should complete TLS handshake within 300ms', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       // Test multiple handshakes to get accurate measurements
-      const handshakeTimes: number[] = []
-      const numberOfTests = 5
+      const handshakeTimes: number[] = [];
+      const numberOfTests = 5;
 
       for (let i = 0; i < numberOfTests; i++) {
-        const startTime = performance.now()
-        
+        const startTime = performance.now();
+
         try {
           // Perform HTTPS request to measure handshake + response
           const response = await app.request('/health', {
             headers: {
-              'Connection': 'close' // Force new connection for each test
-            }
-          })
-          
-          const endTime = performance.now()
-          const totalTime = endTime - startTime
-          
-          expect(response.status).toBe(200)
-          handshakeTimes.push(totalTime)
-          
-          console.log(`Handshake attempt ${i + 1}: ${totalTime.toFixed(2)}ms`)
-          
+              Connection: 'close', // Force new connection for each test
+            },
+          });
+
+          const endTime = performance.now();
+          const totalTime = endTime - startTime;
+
+          expect(response.status).toBe(200);
+          handshakeTimes.push(totalTime);
+
+          console.log(`Handshake attempt ${i + 1}: ${totalTime.toFixed(2)}ms`);
         } catch (error) {
-          console.error(`Handshake test ${i + 1} failed:`, error)
+          console.error(`Handshake test ${i + 1} failed:`, error);
         }
-        
+
         // Small delay between tests to avoid connection reuse
-        await new Promise(resolve => setTimeout(resolve, 100))
+        await new Promise(resolve => setTimeout(resolve, 100));
       }
 
       // All handshakes should complete within 300ms
       handshakeTimes.forEach((time, index) => {
-        expect(time).toBeLessThan(300) // ≤300ms requirement
-      })
+        expect(time).toBeLessThan(300); // ≤300ms requirement
+      });
 
       // Calculate average handshake time
-      const avgHandshakeTime = handshakeTimes.reduce((sum, time) => sum + time, 0) / handshakeTimes.length
-      console.log(`Average handshake time: ${avgHandshakeTime.toFixed(2)}ms`)
-      
+      const avgHandshakeTime = handshakeTimes.reduce((sum, time) => sum + time, 0)
+        / handshakeTimes.length;
+      console.log(`Average handshake time: ${avgHandshakeTime.toFixed(2)}ms`);
+
       // Average should be well under 300ms
-      expect(avgHandshakeTime).toBeLessThan(250)
-    })
+      expect(avgHandshakeTime).toBeLessThan(250);
+    });
 
     test('should maintain handshake performance under concurrent connections', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
-      const concurrentConnections = 5
-      const promises: Promise<number>[] = []
+      const concurrentConnections = 5;
+      const promises: Promise<number>[] = [];
 
       // Create multiple concurrent connections
       for (let i = 0; i < concurrentConnections; i++) {
         const promise = (async () => {
-          const startTime = performance.now()
-          
+          const startTime = performance.now();
+
           const response = await app.request('/health', {
             headers: {
-              'Connection': 'close',
-              'X-Test-Connection': `concurrent-${i}`
-            }
-          })
-          
-          const endTime = performance.now()
-          const handshakeTime = endTime - startTime
-          
-          expect(response.status).toBe(200)
-          return handshakeTime
-        })()
-        
-        promises.push(promise)
+              Connection: 'close',
+              'X-Test-Connection': `concurrent-${i}`,
+            },
+          });
+
+          const endTime = performance.now();
+          const handshakeTime = endTime - startTime;
+
+          expect(response.status).toBe(200);
+          return handshakeTime;
+        })();
+
+        promises.push(promise);
       }
 
-      const concurrentTimes = await Promise.all(promises)
+      const concurrentTimes = await Promise.all(promises);
 
       // All concurrent handshakes should complete within 300ms
       concurrentTimes.forEach((time, index) => {
-        expect(time).toBeLessThan(300)
-        console.log(`Concurrent handshake ${index + 1}: ${time.toFixed(2)}ms`)
-      })
+        expect(time).toBeLessThan(300);
+        console.log(`Concurrent handshake ${index + 1}: ${time.toFixed(2)}ms`);
+      });
 
-      const avgConcurrentTime = concurrentTimes.reduce((sum, time) => sum + time, 0) / concurrentTimes.length
-      console.log(`Average concurrent handshake time: ${avgConcurrentTime.toFixed(2)}ms`)
-    })
-  })
+      const avgConcurrentTime = concurrentTimes.reduce((sum, time) => sum + time, 0)
+        / concurrentTimes.length;
+      console.log(`Average concurrent handshake time: ${avgConcurrentTime.toFixed(2)}ms`);
+    });
+  });
 
   describe('TLS 1.3 Performance Benefits', () => {
     test('should leverage TLS 1.3 for faster handshakes', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       // TLS 1.3 should provide faster handshakes than TLS 1.2
-      const startTime = performance.now()
-      
+      const startTime = performance.now();
+
       const response = await app.request('/health', {
         headers: {
-          'Connection': 'close'
-        }
-      })
-      
-      const endTime = performance.now()
-      const handshakeTime = endTime - startTime
+          Connection: 'close',
+        },
+      });
 
-      expect(response.status).toBe(200)
-      expect(handshakeTime).toBeLessThan(300)
-      
+      const endTime = performance.now();
+      const handshakeTime = endTime - startTime;
+
+      expect(response.status).toBe(200);
+      expect(handshakeTime).toBeLessThan(300);
+
       // TLS 1.3 should typically be faster than 200ms
-      expect(handshakeTime).toBeLessThan(200)
-      
-      console.log(`TLS 1.3 handshake time: ${handshakeTime.toFixed(2)}ms`)
-    })
+      expect(handshakeTime).toBeLessThan(200);
+
+      console.log(`TLS 1.3 handshake time: ${handshakeTime.toFixed(2)}ms`);
+    });
 
     test('should validate TLS 1.3 is being used', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
-      const response = await app.request('/health')
-      
-      expect(response.status).toBe(200)
-      
+      const response = await app.request('/health');
+
+      expect(response.status).toBe(200);
+
       // Validate that TLS 1.3 security headers are present
-      expect(response.headers.get('Strict-Transport-Security')).toBeDefined()
-      
+      expect(response.headers.get('Strict-Transport-Security')).toBeDefined();
+
       // The handshake performance itself validates TLS 1.3 usage
-      const startTime = performance.now()
-      const testResponse = await app.request('/v1/health')
-      const endTime = performance.now()
-      
-      expect(endTime - startTime).toBeLessThan(300)
-    })
-  })
+      const startTime = performance.now();
+      const testResponse = await app.request('/v1/health');
+      const endTime = performance.now();
+
+      expect(endTime - startTime).toBeLessThan(300);
+    });
+  });
 
   describe('Certificate Performance', () => {
     test('should handle certificate validation efficiently', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       // Test certificate validation performance
-      const certValidationTimes: number[] = []
-      
+      const certValidationTimes: number[] = [];
+
       for (let i = 0; i < 3; i++) {
-        const startTime = performance.now()
-        
+        const startTime = performance.now();
+
         const response = await app.request('/v1/info', {
           headers: {
-            'Connection': 'close'
-          }
-        })
-        
-        const endTime = performance.now()
-        const validationTime = endTime - startTime
-        
-        expect(response.status).toBe(200)
-        certValidationTimes.push(validationTime)
-        
-        await new Promise(resolve => setTimeout(resolve, 50))
+            Connection: 'close',
+          },
+        });
+
+        const endTime = performance.now();
+        const validationTime = endTime - startTime;
+
+        expect(response.status).toBe(200);
+        certValidationTimes.push(validationTime);
+
+        await new Promise(resolve => setTimeout(resolve, 50));
       }
 
       // Certificate validation should not slow down handshakes
       certValidationTimes.forEach(time => {
-        expect(time).toBeLessThan(300)
-      })
+        expect(time).toBeLessThan(300);
+      });
 
-      const avgValidationTime = certValidationTimes.reduce((sum, time) => sum + time, 0) / certValidationTimes.length
-      console.log(`Average certificate validation time: ${avgValidationTime.toFixed(2)}ms`)
-    })
-  })
+      const avgValidationTime = certValidationTimes.reduce((sum, time) => sum + time, 0)
+        / certValidationTimes.length;
+      console.log(`Average certificate validation time: ${avgValidationTime.toFixed(2)}ms`);
+    });
+  });
 
   describe('Network Optimization', () => {
     test('should optimize for low-latency connections', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       // Test with keepalive disabled to force new handshakes
-      const lowLatencyTimes: number[] = []
-      
+      const lowLatencyTimes: number[] = [];
+
       for (let i = 0; i < 3; i++) {
-        const startTime = performance.now()
-        
+        const startTime = performance.now();
+
         const response = await app.request('/health', {
           headers: {
-            'Connection': 'close',
-            'Cache-Control': 'no-cache'
-          }
-        })
-        
-        const endTime = performance.now()
-        const latencyTime = endTime - startTime
-        
-        expect(response.status).toBe(200)
-        lowLatencyTimes.push(latencyTime)
-        
-        await new Promise(resolve => setTimeout(resolve, 25))
+            Connection: 'close',
+            'Cache-Control': 'no-cache',
+          },
+        });
+
+        const endTime = performance.now();
+        const latencyTime = endTime - startTime;
+
+        expect(response.status).toBe(200);
+        lowLatencyTimes.push(latencyTime);
+
+        await new Promise(resolve => setTimeout(resolve, 25));
       }
 
       // Optimized connections should complete quickly
       lowLatencyTimes.forEach(time => {
-        expect(time).toBeLessThan(300)
-      })
-    })
+        expect(time).toBeLessThan(300);
+      });
+    });
 
     test('should handle connection reuse efficiently', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       // First request establishes connection
-      const firstStart = performance.now()
-      const firstResponse = await app.request('/health')
-      const firstEnd = performance.now()
-      const firstTime = firstEnd - firstStart
+      const firstStart = performance.now();
+      const firstResponse = await app.request('/health');
+      const firstEnd = performance.now();
+      const firstTime = firstEnd - firstStart;
 
-      expect(firstResponse.status).toBe(200)
+      expect(firstResponse.status).toBe(200);
 
       // Second request should reuse connection (if supported)
-      const secondStart = performance.now()
-      const secondResponse = await app.request('/v1/health')
-      const secondEnd = performance.now()
-      const secondTime = secondEnd - secondStart
+      const secondStart = performance.now();
+      const secondResponse = await app.request('/v1/health');
+      const secondEnd = performance.now();
+      const secondTime = secondEnd - secondStart;
 
-      expect(secondResponse.status).toBe(200)
+      expect(secondResponse.status).toBe(200);
 
-      console.log(`First request (new connection): ${firstTime.toFixed(2)}ms`)
-      console.log(`Second request (potential reuse): ${secondTime.toFixed(2)}ms`)
+      console.log(`First request (new connection): ${firstTime.toFixed(2)}ms`);
+      console.log(`Second request (potential reuse): ${secondTime.toFixed(2)}ms`);
 
       // Both should be fast, but this mainly tests the first handshake
-      expect(firstTime).toBeLessThan(300)
-    })
-  })
+      expect(firstTime).toBeLessThan(300);
+    });
+  });
 
   describe('Error Handling Performance', () => {
     test('should handle SSL/TLS errors quickly', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       // Test how quickly SSL errors are handled
-      const startTime = performance.now()
-      
+      const startTime = performance.now();
+
       try {
-        const response = await app.request('/nonexistent-endpoint')
-        const endTime = performance.now()
-        const errorTime = endTime - startTime
+        const response = await app.request('/nonexistent-endpoint');
+        const endTime = performance.now();
+        const errorTime = endTime - startTime;
 
         // Even 404 responses should have fast handshakes
-        expect(response.status).toBe(404)
-        expect(errorTime).toBeLessThan(300)
-        
+        expect(response.status).toBe(404);
+        expect(errorTime).toBeLessThan(300);
       } catch (error) {
-        const endTime = performance.now()
-        const errorTime = endTime - startTime
-        
+        const endTime = performance.now();
+        const errorTime = endTime - startTime;
+
         // Even connection errors should fail quickly
-        expect(errorTime).toBeLessThan(1000)
+        expect(errorTime).toBeLessThan(1000);
       }
-    })
-  })
+    });
+  });
 
   describe('Healthcare Compliance Performance', () => {
     test('should maintain handshake performance with security headers', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
-      const startTime = performance.now()
-      
+      const startTime = performance.now();
+
       const response = await app.request('/health', {
         headers: {
-          'Connection': 'close'
-        }
-      })
-      
-      const endTime = performance.now()
-      const timeWithSecurity = endTime - startTime
+          Connection: 'close',
+        },
+      });
 
-      expect(response.status).toBe(200)
-      
+      const endTime = performance.now();
+      const timeWithSecurity = endTime - startTime;
+
+      expect(response.status).toBe(200);
+
       // Security headers should not significantly impact handshake time
-      expect(timeWithSecurity).toBeLessThan(300)
-      
+      expect(timeWithSecurity).toBeLessThan(300);
+
       // Validate security headers are present
-      expect(response.headers.get('Strict-Transport-Security')).toBeDefined()
-      expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff')
-      
-      console.log(`Handshake with security headers: ${timeWithSecurity.toFixed(2)}ms`)
-    })
+      expect(response.headers.get('Strict-Transport-Security')).toBeDefined();
+      expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
+
+      console.log(`Handshake with security headers: ${timeWithSecurity.toFixed(2)}ms`);
+    });
 
     test('should meet healthcare performance standards', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       // Healthcare systems require sub-second response times
       // HTTPS handshake is part of this requirement
-      
+
       const healthcareTests = [
         '/health',
         '/v1/health',
-        '/v1/info'
-      ]
+        '/v1/info',
+      ];
 
       for (const endpoint of healthcareTests) {
-        const startTime = performance.now()
-        
+        const startTime = performance.now();
+
         const response = await app.request(endpoint, {
           headers: {
-            'Connection': 'close'
-          }
-        })
-        
-        const endTime = performance.now()
-        const healthcareTime = endTime - startTime
+            Connection: 'close',
+          },
+        });
 
-        expect(response.status).toBe(200)
-        expect(healthcareTime).toBeLessThan(300) // Healthcare requirement
-        
-        console.log(`Healthcare endpoint ${endpoint}: ${healthcareTime.toFixed(2)}ms`)
+        const endTime = performance.now();
+        const healthcareTime = endTime - startTime;
+
+        expect(response.status).toBe(200);
+        expect(healthcareTime).toBeLessThan(300); // Healthcare requirement
+
+        console.log(`Healthcare endpoint ${endpoint}: ${healthcareTime.toFixed(2)}ms`);
       }
-    })
-  })
+    });
+  });
 
   describe('Performance Monitoring', () => {
     test('should provide handshake performance metrics', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const performanceMetrics = {
         handshakeTimes: [] as number[],
         successCount: 0,
-        failureCount: 0
-      }
+        failureCount: 0,
+      };
 
       // Collect performance data
       for (let i = 0; i < 5; i++) {
         try {
-          const startTime = performance.now()
-          
+          const startTime = performance.now();
+
           const response = await app.request('/health', {
             headers: {
-              'Connection': 'close'
-            }
-          })
-          
-          const endTime = performance.now()
-          const handshakeTime = endTime - startTime
+              Connection: 'close',
+            },
+          });
+
+          const endTime = performance.now();
+          const handshakeTime = endTime - startTime;
 
           if (response.status === 200) {
-            performanceMetrics.handshakeTimes.push(handshakeTime)
-            performanceMetrics.successCount++
+            performanceMetrics.handshakeTimes.push(handshakeTime);
+            performanceMetrics.successCount++;
           } else {
-            performanceMetrics.failureCount++
+            performanceMetrics.failureCount++;
           }
-          
         } catch (error) {
-          performanceMetrics.failureCount++
+          performanceMetrics.failureCount++;
         }
-        
-        await new Promise(resolve => setTimeout(resolve, 50))
+
+        await new Promise(resolve => setTimeout(resolve, 50));
       }
 
       // Analyze performance metrics
-      expect(performanceMetrics.successCount).toBeGreaterThan(0)
-      
+      expect(performanceMetrics.successCount).toBeGreaterThan(0);
+
       if (performanceMetrics.handshakeTimes.length > 0) {
-        const avgTime = performanceMetrics.handshakeTimes.reduce((sum, time) => sum + time, 0) / performanceMetrics.handshakeTimes.length
-        const minTime = Math.min(...performanceMetrics.handshakeTimes)
-        const maxTime = Math.max(...performanceMetrics.handshakeTimes)
-        
-        console.log(`Performance metrics:`)
-        console.log(`  Average: ${avgTime.toFixed(2)}ms`)
-        console.log(`  Min: ${minTime.toFixed(2)}ms`)
-        console.log(`  Max: ${maxTime.toFixed(2)}ms`)
-        console.log(`  Success rate: ${performanceMetrics.successCount}/${performanceMetrics.successCount + performanceMetrics.failureCount}`)
-        
+        const avgTime = performanceMetrics.handshakeTimes.reduce((sum, time) => sum + time, 0)
+          / performanceMetrics.handshakeTimes.length;
+        const minTime = Math.min(...performanceMetrics.handshakeTimes);
+        const maxTime = Math.max(...performanceMetrics.handshakeTimes);
+
+        console.log(`Performance metrics:`);
+        console.log(`  Average: ${avgTime.toFixed(2)}ms`);
+        console.log(`  Min: ${minTime.toFixed(2)}ms`);
+        console.log(`  Max: ${maxTime.toFixed(2)}ms`);
+        console.log(
+          `  Success rate: ${performanceMetrics.successCount}/${
+            performanceMetrics.successCount + performanceMetrics.failureCount
+          }`,
+        );
+
         // All times should meet the requirement
-        expect(avgTime).toBeLessThan(300)
-        expect(maxTime).toBeLessThan(300)
+        expect(avgTime).toBeLessThan(300);
+        expect(maxTime).toBeLessThan(300);
       }
-    })
-  })
-})
+    });
+  });
+});

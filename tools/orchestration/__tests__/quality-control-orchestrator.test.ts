@@ -3,8 +3,8 @@
  * Tests main quality control coordination with healthcare compliance support
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-import { QualityControlOrchestrator } from "../quality-control-orchestrator";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { QualityControlOrchestrator } from "../src/quality-control-orchestrator";
 import type {
   QualityControlContext,
   AgentName,

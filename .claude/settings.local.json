@@ -3,6 +3,8 @@
   "permissions": {
     "allow": [
       "TodoWrite",
+      "Read",
+      "Bash",
       "mcp__desktop-commander__list_directory",
       "mcp__desktop-commander__read_file",
       "mcp__desktop-commander__search_code",
@@ -16,25 +18,13 @@
       "mcp__desktop-commander__force_terminate",
       "mcp__desktop-commander__interact_with_process",
       "mcp__context7__get-library-docs",
-      "mcp__tavily__searchQNA",
-      "mcp__tavily__searchContext",
       "mcp__sequential-thinking__sequentialthinking",
       "mcp__serena__search_for_pattern",
       "mcp__serena__find_file",
       "mcp__serena__list_dir",
-      "mcp__supabase-mcp__list_projects",
-      "mcp__supabase-mcp__execute_sql",
-      "mcp__supabase-mcp__get_project",
-      "mcp__supabase-mcp__get_project_url",
-      "mcp__supabase-mcp__get_anon_key",
-      "mcp__supabase-mcp__list_tables",
-      "mcp__supabase-mcp__apply_migration",
-      "mcp__tavily__tavily-search",
       "mcp__context7__resolve-library-id",
       "mcp__serena__find_symbol",
       "mcp__serena__get_symbols_overview",
-      "mcp__supabase-mcp__get_advisors",
-      "mcp__supabase-mcp__get_logs",
       "mcp__serena__read_memory",
       "mcp__serena__replace_symbol_body",
       "mcp__serena__insert_before_symbol",
@@ -42,14 +32,13 @@
       "mcp__archon__manage_project",
       "mcp__archon__manage_task",
       "mcp__serena__write_memory",
-      "mcp__archon__get_available_sources",
+      "WebSearch",
+      "WebFetch",
       "mcp__archon__perform_rag_query",
       "mcp__archon__search_code_examples",
       "mcp__archon__manage_document",
       "mcp__serena__list_memories",
       "mcp__tavily__tavily-extract",
-      "mcp__archon__health_check",
-      "mcp__archon__session_info",
       "mcp__archon__list_tasks",
       "mcp__archon__get_task",
       "mcp__archon__create_task",
@@ -57,29 +46,14 @@
       "mcp__archon__get_project",
       "mcp__archon__create_project",
       "mcp__archon__create_document",
-      "mcp__archon__create_version",
       "mcp__archon__list_documents",
       "mcp__archon__update_document",
       "mcp__archon__get_document",
-      "mcp__supabase-mcp__search_docs",
       "mcp__archon__update_task",
-      "mcp__Tavily__tavily-search",
       "mcp__Sequential_Thinking__sequentialthinking",
-      "mcp__shadcn__search_items_in_registries",
-      "mcp__shadcn__get_add_command_for_items",
       "mcp__Tavily__tavily-extract",
-      "mcp__shadcn__get_project_registries",
-      "mcp__shadcn__list_items_in_registries",
-      "mcp__shadcn__view_items_in_registries",
-      "mcp__shadcn__get_item_examples_from_registries",
-      "mcp__supabase__list_projects",
-      "mcp__supabase__list_tables",
-      "mcp__supabase__execute_sql",
-      "mcp__Tavily__tavily-crawl",
       "mcp__archon__find_projects",
       "mcp__archon__find_tasks",
-      "mcp__supabase__get_advisors",
-      "mcp__supabase__apply_migration",
       "mcp__desktop-commander__read_multiple_files",
       "mcp__serena__find_referencing_symbols",
       "mcp__archon__rag_search_knowledge_base",
@@ -87,20 +61,20 @@
       "mcp__archon__rag_search_code_examples",
       "mcp__archon__find_documents",
       "mcp__archon__rag_get_available_sources",
-      "mcp__supabase__get_project",
-      "mcp__supabase__get_anon_key",
       "mcp__desktop-commander__kill_process",
-      "mcp__desktop-commander__list_processes"
+      "mcp__desktop-commander__list_processes",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__execute_sql"
     ],
     "deny": [
       "Edit",
       "Write",
-      "Read",
-      "Bash",
       "NotebookRead",
       "NotebookEdit",
-      "WebSearch",
-      "WebFetch",
+      "mcp__archon__create_version",
+      "mcp__archon__session_info",
+      "mcp__archon__health_check",
+      "mcp__archon__get_available_sources",
       "mcp__desktop-commander__stop_search",
       "mcp__serena__get_current_config",
       "mcp__serena__update_config",
@@ -116,198 +90,11 @@
       "mcp__supabase__get_project_url"
     ]
   },
-  "enableAllProjectMcpServers": true,
-  "allowedToolsUnguarded": [
-    "mcp__archon__create_project",
-    "mcp__archon__list_projects",
-    "mcp__archon__get_project",
-    "mcp__archon__update_project",
-    "mcp__archon__delete_project",
-    "mcp__archon__create_task",
-    "mcp__archon__list_tasks",
-    "mcp__archon__get_task",
-    "mcp__archon__update_task",
-    "mcp__archon__delete_task",
-    "mcp__supabase__search_docs",
-    "mcp__supabase__list_organizations",
-    "mcp__supabase__get_organization",
-    "mcp__supabase__list_projects",
-    "mcp__supabase__get_project",
-    "mcp__supabase__get_cost",
-    "mcp__supabase__list_tables",
-    "mcp__supabase__list_extensions",
-    "mcp__supabase__list_migrations",
-    "mcp__supabase__get_logs",
-    "mcp__supabase__get_advisors",
-    "mcp__supabase__get_project_url",
-    "mcp__supabase__get_anon_key",
-    "mcp__supabase__generate_typescript_types"
-  ],
-  "allowedToolsGuarded": [
-    {
-      "name": "mcp__supabase__apply_migration",
-      "preToolUse": {
-        "guardScript": "scripts/guard-nonprod-only.py",
-        "confirmationRequired": true,
-        "confirmationPrompt": "⚠️  MIGRATION EXECUTION WARNING ⚠️\n\nThis will apply a database migration which can:\n• Modify database schema permanently\n• Affect data integrity if not properly tested\n• Be difficult or impossible to rollback\n\nEnvironment: {environment}\nMigration: {migration_name}\n\nConfirm you want to proceed with this migration?",
-        "metadata": {
-          "description": "Database migration execution with production protection",
-          "requirements": [
-            "Non-production environment (CLAUDE_ENV != production)",
-            "Explicit user confirmation",
-            "Guard script validation"
-          ],
-          "safetyChecks": [
-            "Environment validation via guard-nonprod-only.py",
-            "User confirmation prompt with migration details",
-            "Pre-execution validation of migration syntax"
-          ]
-        }
-      }
-    },
-    {
-      "name": "mcp__supabase__execute_sql",
-      "preToolUse": {
-        "guardScript": "scripts/guard-nonprod-only.py",
-        "confirmationRequired": true,
-        "confirmationPrompt": "⚠️  SQL EXECUTION WARNING ⚠️\n\nThis will execute raw SQL against the database which can:\n• Modify, delete, or corrupt data permanently\n• Affect database performance and stability\n• Expose sensitive information if misused\n• Be irreversible without proper backups\n\nEnvironment: {environment}\nSQL Query: {query}\n\nConfirm you want to execute this SQL query?",
-        "metadata": {
-          "description": "Raw SQL execution with security protection",
-          "requirements": [
-            "Non-production environment (CLAUDE_ENV != production)",
-            "Explicit user confirmation",
-            "Guard script validation"
-          ],
-          "safetyChecks": [
-            "Environment validation via guard-nonprod-only.py",
-            "User confirmation with SQL query preview",
-            "Read-only query detection and warnings"
-          ]
-        }
-      }
-    },
-    {
-      "name": "mcp__supabase__confirm_cost",
-      "preToolUse": {
-        "confirmationRequired": true,
-        "confirmationPrompt": "⚠️  FINANCIAL OPERATION CONFIRMATION ⚠️\n\nThis will confirm costs for a financial operation which may:\n• Authorize charges to your Supabase account\n• Commit to billing for resources\n• Affect your organization's budget\n\nOperation Type: {type}\nAmount: {amount} {recurrence}\n\nConfirm you want to authorize this cost?",
-        "metadata": {
-          "description": "Financial operation confirmation with billing protection",
-          "requirements": [
-            "Explicit user confirmation",
-            "Cost transparency"
-          ],
-          "safetyChecks": [
-            "User confirmation with cost breakdown",
-            "Operation type and amount validation"
-          ]
-        }
-      }
-    },
-    {
-      "name": "mcp__desktop-commander__read_multiple_files",
-      "preToolUse": {
-        "guardScript": "scripts/guard-nonprod-only.py",
-        "confirmationRequired": true,
-        "confirmationPrompt": "⚠️  MULTIPLE FILE READ WARNING ⚠️\n\nThis will read multiple files simultaneously which can:\n• Access sensitive configuration or data files\n• Consume significant system resources\n• Expose file contents that may contain secrets\n• Impact system performance\n\nEnvironment: {environment}\nFiles: {paths}\n\nConfirm you want to read these multiple files?",
-        "metadata": {
-          "description": "Multiple file read operation with security protection",
-          "requirements": [
-            "Non-production environment (CLAUDE_ENV != production)",
-            "Explicit user confirmation",
-            "Guard script validation"
-          ],
-          "safetyChecks": [
-            "Environment validation via guard-nonprod-only.py",
-            "User confirmation with file list preview",
-            "Path validation and security checks"
-          ]
-        }
-      }
-    },
-    {
-      "name": "mcp__desktop-commander__start_process",
-      "preToolUse": {
-        "guardScript": "scripts/guard-nonprod-only.py",
-        "confirmationRequired": true,
-        "confirmationPrompt": "⚠️  PROCESS START WARNING ⚠️\n\nThis will start a new system process which can:\n• Execute arbitrary commands on the system\n• Access system resources and files\n• Potentially compromise system security\n• Run long-running or resource-intensive operations\n\nEnvironment: {environment}\nCommand: {command}\n\nConfirm you want to start this process?",
-        "metadata": {
-          "description": "System process execution with security protection",
-          "requirements": [
-            "Non-production environment (CLAUDE_ENV != production)",
-            "Explicit user confirmation",
-            "Guard script validation"
-          ],
-          "safetyChecks": [
-            "Environment validation via guard-nonprod-only.py",
-            "User confirmation with command preview",
-            "Command validation and security checks"
-          ]
-        }
-      }
-    },
-    {
-      "name": "mcp__desktop-commander__read_process_output",
-      "preToolUse": {
-        "guardScript": "scripts/guard-nonprod-only.py",
-        "confirmationRequired": true,
-        "confirmationPrompt": "⚠️  PROCESS OUTPUT READ WARNING ⚠️\n\nThis will read output from running processes which can:\n• Access potentially sensitive process information\n• Monitor system operations and data flows\n• Expose running process states and data\n• Impact system monitoring and security\n\nEnvironment: {environment}\nProcess ID: {pid}\n\nConfirm you want to read this process output?",
-        "metadata": {
-          "description": "Process output monitoring with security protection",
-          "requirements": [
-            "Non-production environment (CLAUDE_ENV != production)",
-            "Explicit user confirmation",
-            "Guard script validation"
-          ],
-          "safetyChecks": [
-            "Environment validation via guard-nonprod-only.py",
-            "User confirmation with process ID",
-            "Process validation and security checks"
-          ]
-        }
-      }
-    },
-    {
-      "name": "mcp__desktop-commander__list_sessions",
-      "preToolUse": {
-        "guardScript": "scripts/guard-nonprod-only.py",
-        "confirmationRequired": true,
-        "confirmationPrompt": "⚠️  SESSION LIST WARNING ⚠️\n\nThis will list active system sessions which can:\n• Expose running processes and system state\n• Reveal system usage patterns and activities\n• Access potentially sensitive session information\n• Impact system monitoring and privacy\n\nEnvironment: {environment}\n\nConfirm you want to list active sessions?",
-        "metadata": {
-          "description": "System session listing with security protection",
-          "requirements": [
-            "Non-production environment (CLAUDE_ENV != production)",
-            "Explicit user confirmation",
-            "Guard script validation"
-          ],
-          "safetyChecks": [
-            "Environment validation via guard-nonprod-only.py",
-            "User confirmation for session monitoring",
-            "Session access validation and security checks"
-          ]
-        }
-      }
-    },
-    {
-      "name": "mcp__serena__search_for_pattern",
-      "preToolUse": {
-        "guardScript": "scripts/guard-nonprod-only.py",
-        "confirmationRequired": true,
-        "confirmationPrompt": "⚠️  PATTERN SEARCH WARNING ⚠️\n\nThis will search for patterns across the codebase which can:\n• Access and scan potentially sensitive source code\n• Expose configuration files and secrets\n• Consume significant system resources\n• Reveal system architecture and vulnerabilities\n\nEnvironment: {environment}\nPattern: {substring_pattern}\n\nConfirm you want to perform this pattern search?",
-        "metadata": {
-          "description": "Codebase pattern search with security protection",
-          "requirements": [
-            "Non-production environment (CLAUDE_ENV != production)",
-            "Explicit user confirmation",
-            "Guard script validation"
-          ],
-          "safetyChecks": [
-            "Environment validation via guard-nonprod-only.py",
-            "User confirmation with search pattern",
-            "Pattern validation and security checks"
-          ]
-        }
-      }
-    }
+  "enabledMcpjsonServers": [
+    "archon",
+    "desktop-commander",
+    "context7",
+    "Sequential Thinking",
+    "serena"
   ]
 }

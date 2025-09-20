@@ -8,9 +8,9 @@ import http from "http";
 import { Server as SocketIOServer } from "socket.io";
 import type { Socket } from "socket.io";
 
-// Import services
-import { WebRTCSessionService } from "@neonpro/database/src/services/webrtc-session.service";
-import { CFMComplianceService } from "@neonpro/database/src/services/cfm-compliance.service";
+// Import services  
+import { WebRTCSessionService } from "./webrtc-session.service";
+import { CFMComplianceService } from "./cfm-compliance.service";
 import { winstonLogger } from "@neonpro/shared/services/structured-logging";
 
 interface SignalingParticipant {
@@ -83,7 +83,7 @@ export class WebRTCSignalingServer {
         healthcare: {
           workflowType: "system_maintenance",
           clinicalContext: {
-            facilityId: this.config.facilityId,
+            facilityId: "signaling-server",
             requiresAudit: true,
           },
         },
@@ -111,7 +111,7 @@ export class WebRTCSignalingServer {
           try {
             await this.handleJoinSession(socket, data);
           } catch (error) {
-            winstonLogger.error("Error joining session", error);
+            winstonLogger.error("Error joining session", error instanceof Error ? error : undefined);
             socket.emit("error", {
               type: "join-session-failed",
               message: "Failed to join session",
@@ -133,7 +133,7 @@ export class WebRTCSignalingServer {
           try {
             await this.handleWebRTCSignal(socket, signal);
           } catch (error) {
-            winstonLogger.error("Error handling WebRTC signal", error);
+            winstonLogger.error("Error handling WebRTC signal", error instanceof Error ? error : undefined);
             socket.emit("error", {
               type: "signal-failed",
               message: "Failed to relay signal",

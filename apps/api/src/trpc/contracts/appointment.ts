@@ -569,7 +569,7 @@ export const appointmentRouter = router({
 });
 
 // Helper functions
-async function calculateNoShowRisk(params: {
+async function calculateNoShowRisk(_params: {
   patientId: string;
   professionalId: string;
   appointmentDate: Date;
@@ -611,7 +611,7 @@ async function handleStatusChange(
   appointment: any,
   oldStatus: string,
   newStatus: string,
-  ctx: any,
+  _ctx: any,
 ): Promise<void> {
   // Handle status-specific notifications and actions
   switch (newStatus) {
@@ -645,7 +645,7 @@ function getChanges(current: any, input: any): Record<string, any> {
 }
 
 // Notification helpers (placeholders)
-async function sendEmergencyNotification(appointment: any): Promise<void> {
+async function sendEmergencyNotification(_appointment: any): Promise<void> {
   // Implementation for emergency notifications
 }
 

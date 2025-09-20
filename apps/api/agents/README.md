@@ -14,12 +14,14 @@ This directory contains the Python-based AG-UI RAG agent for NeonPro's healthcar
 ### Installing Python and Dependencies
 
 #### Ubuntu/Debian
+
 ```bash
 sudo apt update
 sudo apt install python3 python3-pip python3-venv
 ```
 
 #### CentOS/RHEL/Fedora
+
 ```bash
 # CentOS/RHEL
 sudo yum install python3 python3-pip python3-venv
@@ -29,6 +31,7 @@ sudo dnf install python3 python3-pip python3-venv
 ```
 
 #### macOS
+
 ```bash
 # Using Homebrew
 brew install python3
@@ -38,6 +41,7 @@ sudo port install python311
 ```
 
 #### Windows (WSL2)
+
 ```bash
 # In WSL2 Ubuntu
 sudo apt update
@@ -47,6 +51,7 @@ sudo apt install python3 python3-pip python3-venv
 ## Quick Setup
 
 ### Automated Setup
+
 ```bash
 # Run the automated setup script
 ./setup-python-env.sh
@@ -56,6 +61,7 @@ sudo apt install python3 python3-pip python3-venv
 ```
 
 ### Manual Setup
+
 ```bash
 # 1. Create virtual environment
 cd ag-ui-rag-agent
@@ -87,11 +93,13 @@ cp .env.example .env
 ```
 
 **Required Variables:**
+
 - `SUPABASE_URL` - Your Supabase project URL
 - `SUPABASE_SERVICE_KEY` - Supabase service role key
 - `OPENAI_API_KEY` - OpenAI API key for the LLM
 
 **Optional Variables:**
+
 - `AGENT_HOST` - Host to bind to (default: 127.0.0.1)
 - `AGENT_PORT` - Port to listen on (default: 8000)
 - `ANTHROPIC_API_KEY` - Anthropic Claude API key (if using Claude)
@@ -108,6 +116,7 @@ The agent includes healthcare compliance features:
 ## Running the Agent
 
 ### Using the Start Script
+
 ```bash
 # Navigate to agent directory
 cd ag-ui-rag-agent
@@ -117,6 +126,7 @@ cd ag-ui-rag-agent
 ```
 
 ### Manual Activation
+
 ```bash
 # Activate environment
 source activate.sh
@@ -126,6 +136,7 @@ python main.py
 ```
 
 ### Development Mode
+
 ```bash
 # Activate environment
 source venv/bin/activate
@@ -137,6 +148,7 @@ uvicorn main:app --reload --host 127.0.0.1 --port 8000
 ## Development
 
 ### Project Structure
+
 ```
 ag-ui-rag-agent/
 ├── main.py              # Main application entry point
@@ -151,6 +163,7 @@ ag-ui-rag-agent/
 ```
 
 ### Installing New Dependencies
+
 ```bash
 # Activate environment
 source venv/bin/activate
@@ -163,6 +176,7 @@ pip freeze > requirements.txt
 ```
 
 ### Testing
+
 ```bash
 # Activate environment
 source venv/bin/activate
@@ -194,10 +208,10 @@ The frontend connects through the main API server:
 
 ```typescript
 // Frontend (React with CopilotKit)
-import { HttpAgent } from "@ag-ui/client";
+import { HttpAgent } from '@ag-ui/client';
 
 const agent = new HttpAgent({
-  url: "http://127.0.0.1:3004/api/ai/data-agent"
+  url: 'http://127.0.0.1:3004/api/ai/data-agent',
 });
 ```
 
@@ -206,11 +220,13 @@ const agent = new HttpAgent({
 ### Common Issues
 
 #### 1. Virtual Environment Creation Failed
+
 ```
 Error: ensurepip is not available
 ```
 
 **Solution:** Install python3-venv package
+
 ```bash
 # Ubuntu/Debian
 sudo apt install python3.12-venv
@@ -221,32 +237,38 @@ virtualenv ag-ui-rag-agent/venv
 ```
 
 #### 2. Permission Denied
+
 ```
 Error: Permission denied
 ```
 
 **Solution:** Make scripts executable
+
 ```bash
 chmod +x setup-python-env.sh
 chmod +x ag-ui-rag-agent/start.sh
 ```
 
 #### 3. Port Already in Use
+
 ```
 Error: Address already in use
 ```
 
 **Solution:** Change port in `.env` file
+
 ```bash
 AGENT_PORT=8001
 ```
 
 #### 4. Import Errors
+
 ```
 ModuleNotFoundError: No module named 'package'
 ```
 
 **Solution:** Ensure virtual environment is activated and dependencies installed
+
 ```bash
 source ag-ui-rag-agent/venv/bin/activate
 pip install -r ag-ui-rag-agent/requirements.txt

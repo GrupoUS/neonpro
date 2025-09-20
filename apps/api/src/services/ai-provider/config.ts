@@ -6,7 +6,6 @@
 import {
   AIModelCategory,
   AIProviderOpt,
-  HealthcareAIUseCase,
 } from '@neonpro/shared';
 import { ProviderConfig, ProviderHealthCheck, ProviderStatus } from './types';
 
