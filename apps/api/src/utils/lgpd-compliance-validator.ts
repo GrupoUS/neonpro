@@ -15,7 +15,7 @@
  * - Data Protection Impact Assessment (DPIA) support
  */
 
-import { type HealthcarePrismaClient } from '../clients/prisma.js';
+import { type HealthcarePrismaClient } from '../clients/prisma';
 import { LGPDComplianceError } from './healthcare-errors.js';
 
 // LGPD Legal Basis types

@@ -1,2 +1,2 @@
-export { AnalyticsDashboard } from './AnalyticsDashboard';
 export { AdvancedAnalyticsDashboard } from './AdvancedAnalyticsDashboard';
+export { AnalyticsDashboard } from './AnalyticsDashboard';

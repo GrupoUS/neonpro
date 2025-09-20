@@ -1,34 +1,34 @@
 /**
  * Advanced Analytics Dashboard
- * 
+ *
  * Enhanced analytics dashboard with AI-powered predictive insights
  * and LGPD-compliant healthcare analytics visualization.
  */
 
-import { useState, useEffect } from 'react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Activity,
+  AlertTriangle,
   BarChart3,
   Brain,
   Calendar,
+  CheckCircle,
+  Clock,
   DollarSign,
+  Eye,
+  Lightbulb,
   RefreshCw,
+  Shield,
   Target,
   TrendingUp,
   Users,
   Zap,
-  AlertTriangle,
-  CheckCircle,
-  Eye,
-  Shield,
-  Clock,
-  Lightbulb
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 // Types for the advanced analytics
 interface PredictiveInsight {
@@ -71,7 +71,7 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
 
   const loadAnalyticsData = async () => {
     setIsLoading(true);
-    
+
     // Simulate API call
     setTimeout(() => {
       setMetrics({
@@ -82,7 +82,7 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
         capacityUtilization: 0.78,
         avgWaitTime: 8,
         npsScore: 8.7,
-        returnRate: 0.73
+        returnRate: 0.73,
       });
 
       setInsights([
@@ -93,9 +93,10 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
           description: 'Terças-feiras às 14h apresentam 31% mais cancelamentos que a média.',
           confidence: 0.87,
           impact: 'high',
-          recommendation: 'Implementar confirmações automáticas 24h antes para este horário específico.',
+          recommendation:
+            'Implementar confirmações automáticas 24h antes para este horário específico.',
           data: { riskScore: 0.87, timeSlot: 'Terça 14h' },
-          createdAt: new Date()
+          createdAt: new Date(),
         },
         {
           id: 'insight-2',
@@ -104,9 +105,10 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
           description: '52% dos pacientes de hidratação facial retornam em 21 dias.',
           confidence: 0.82,
           impact: 'high',
-          recommendation: 'Oferecer pacotes de 3 sessões com desconto de 20% no momento do agendamento.',
+          recommendation:
+            'Oferecer pacotes de 3 sessões com desconto de 20% no momento do agendamento.',
           data: { returnRate: 0.52, avgDays: 21, service: 'Hidratação Facial' },
-          createdAt: new Date()
+          createdAt: new Date(),
         },
         {
           id: 'insight-3',
@@ -117,8 +119,8 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
           impact: 'medium',
           recommendation: 'Criar promoção "Sexta Matinal" com 25% de desconto.',
           data: { occupancy: 0.41, timeSlot: 'Sexta 8h-10h' },
-          createdAt: new Date()
-        }
+          createdAt: new Date(),
+        },
       ]);
 
       setLastUpdate(new Date());
@@ -128,20 +130,29 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
 
   const getInsightIcon = (type: string) => {
     switch (type) {
-      case 'no_show_risk': return AlertTriangle;
-      case 'revenue_forecast': return DollarSign;
-      case 'capacity_optimization': return Clock;
-      case 'patient_outcome': return Users;
-      default: return Lightbulb;
+      case 'no_show_risk':
+        return AlertTriangle;
+      case 'revenue_forecast':
+        return DollarSign;
+      case 'capacity_optimization':
+        return Clock;
+      case 'patient_outcome':
+        return Users;
+      default:
+        return Lightbulb;
     }
   };
 
   const getImpactColor = (impact: string) => {
     switch (impact) {
-      case 'high': return 'text-red-600 bg-red-50 border-red-200';
-      case 'medium': return 'text-orange-600 bg-orange-50 border-orange-200';
-      case 'low': return 'text-blue-600 bg-blue-50 border-blue-200';
-      default: return 'text-gray-600 bg-gray-50 border-gray-200';
+      case 'high':
+        return 'text-red-600 bg-red-50 border-red-200';
+      case 'medium':
+        return 'text-orange-600 bg-orange-50 border-orange-200';
+      case 'low':
+        return 'text-blue-600 bg-blue-50 border-blue-200';
+      default:
+        return 'text-gray-600 bg-gray-50 border-gray-200';
     }
   };
 
@@ -162,9 +173,9 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
             </Badge>
           </p>
         </div>
-        <Button 
-          variant='outline' 
-          size='sm' 
+        <Button
+          variant='outline'
+          size='sm'
           onClick={loadAnalyticsData}
           disabled={isLoading}
         >
@@ -181,13 +192,13 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
             <TrendingUp className='h-4 w-4 text-green-600' />
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <Skeleton className='h-8 w-16 mb-2' />
-            ) : (
-              <div className='text-2xl font-bold text-green-600'>
-                {metrics ? `${(metrics.attendanceRate * 100).toFixed(1)}%` : '---'}
-              </div>
-            )}
+            {isLoading
+              ? <Skeleton className='h-8 w-16 mb-2' />
+              : (
+                <div className='text-2xl font-bold text-green-600'>
+                  {metrics ? `${(metrics.attendanceRate * 100).toFixed(1)}%` : '---'}
+                </div>
+              )}
             <p className='text-xs text-muted-foreground'>
               +5.2% vs mês anterior
             </p>
@@ -204,13 +215,13 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
             <DollarSign className='h-4 w-4 text-blue-600' />
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <Skeleton className='h-8 w-20 mb-2' />
-            ) : (
-              <div className='text-2xl font-bold text-blue-600'>
-                {metrics ? `R$ ${metrics.revenuePerPatient.toFixed(2)}` : '---'}
-              </div>
-            )}
+            {isLoading
+              ? <Skeleton className='h-8 w-20 mb-2' />
+              : (
+                <div className='text-2xl font-bold text-blue-600'>
+                  {metrics ? `R$ ${metrics.revenuePerPatient.toFixed(2)}` : '---'}
+                </div>
+              )}
             <p className='text-xs text-muted-foreground'>
               +8.7% vs média anual
             </p>
@@ -227,13 +238,13 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
             <Users className='h-4 w-4 text-purple-600' />
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <Skeleton className='h-8 w-16 mb-2' />
-            ) : (
-              <div className='text-2xl font-bold text-purple-600'>
-                {metrics ? metrics.npsScore.toFixed(1) : '---'}
-              </div>
-            )}
+            {isLoading
+              ? <Skeleton className='h-8 w-16 mb-2' />
+              : (
+                <div className='text-2xl font-bold text-purple-600'>
+                  {metrics ? metrics.npsScore.toFixed(1) : '---'}
+                </div>
+              )}
             <p className='text-xs text-muted-foreground'>
               Baseado em 248 avaliações
             </p>
@@ -250,13 +261,13 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
             <Activity className='h-4 w-4 text-orange-600' />
           </CardHeader>
           <CardContent>
-            {isLoading ? (
-              <Skeleton className='h-8 w-16 mb-2' />
-            ) : (
-              <div className='text-2xl font-bold text-orange-600'>
-                {metrics ? `${(metrics.operationalEfficiency * 100).toFixed(0)}%` : '---'}
-              </div>
-            )}
+            {isLoading
+              ? <Skeleton className='h-8 w-16 mb-2' />
+              : (
+                <div className='text-2xl font-bold text-orange-600'>
+                  {metrics ? `${(metrics.operationalEfficiency * 100).toFixed(0)}%` : '---'}
+                </div>
+              )}
             <p className='text-xs text-muted-foreground'>
               Tempo médio: {metrics ? `${metrics.avgWaitTime}min` : '---'}
             </p>
@@ -280,54 +291,66 @@ export function AdvancedAnalyticsDashboard({ className }: AdvancedAnalyticsDashb
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className='space-y-4'>
-              {[1, 2, 3].map(i => (
-                <div key={i} className='flex items-start gap-3'>
-                  <Skeleton className='w-2 h-2 rounded-full mt-2' />
-                  <div className='flex-1 space-y-2'>
-                    <Skeleton className='h-4 w-3/4' />
-                    <Skeleton className='h-3 w-full' />
+          {isLoading
+            ? (
+              <div className='space-y-4'>
+                {[1, 2, 3].map(i => (
+                  <div key={i} className='flex items-start gap-3'>
+                    <Skeleton className='w-2 h-2 rounded-full mt-2' />
+                    <div className='flex-1 space-y-2'>
+                      <Skeleton className='h-4 w-3/4' />
+                      <Skeleton className='h-3 w-full' />
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className='space-y-4'>
-              {insights.map((insight) => {
-                const IconComponent = getInsightIcon(insight.type);
-                return (
-                  <Card key={insight.id} className={`border ${getImpactColor(insight.impact)}`}>
-                    <CardContent className='pt-4'>
-                      <div className='flex items-start gap-3'>
-                        <IconComponent className='h-5 w-5 mt-0.5' />
-                        <div className='flex-1'>
-                          <div className='flex items-center gap-2 mb-1'>
-                            <h4 className='font-medium'>{insight.title}</h4>
-                            <Badge variant='outline' className='text-xs'>
-                              {(insight.confidence * 100).toFixed(0)}% confiança
-                            </Badge>
-                            <Badge variant={insight.impact === 'high' ? 'destructive' : insight.impact === 'medium' ? 'default' : 'secondary'}>
-                              {insight.impact === 'high' ? 'Alto Impacto' : insight.impact === 'medium' ? 'Médio Impacto' : 'Baixo Impacto'}
-                            </Badge>
+                ))}
+              </div>
+            )
+            : (
+              <div className='space-y-4'>
+                {insights.map(insight => {
+                  const IconComponent = getInsightIcon(insight.type);
+                  return (
+                    <Card key={insight.id} className={`border ${getImpactColor(insight.impact)}`}>
+                      <CardContent className='pt-4'>
+                        <div className='flex items-start gap-3'>
+                          <IconComponent className='h-5 w-5 mt-0.5' />
+                          <div className='flex-1'>
+                            <div className='flex items-center gap-2 mb-1'>
+                              <h4 className='font-medium'>{insight.title}</h4>
+                              <Badge variant='outline' className='text-xs'>
+                                {(insight.confidence * 100).toFixed(0)}% confiança
+                              </Badge>
+                              <Badge
+                                variant={insight.impact === 'high'
+                                  ? 'destructive'
+                                  : insight.impact === 'medium'
+                                  ? 'default'
+                                  : 'secondary'}
+                              >
+                                {insight.impact === 'high'
+                                  ? 'Alto Impacto'
+                                  : insight.impact === 'medium'
+                                  ? 'Médio Impacto'
+                                  : 'Baixo Impacto'}
+                              </Badge>
+                            </div>
+                            <p className='text-sm text-muted-foreground mb-2'>
+                              {insight.description}
+                            </p>
+                            <Alert className='bg-blue-50 border-blue-200'>
+                              <Lightbulb className='h-4 w-4' />
+                              <AlertDescription className='text-sm'>
+                                <strong>Recomendação:</strong> {insight.recommendation}
+                              </AlertDescription>
+                            </Alert>
                           </div>
-                          <p className='text-sm text-muted-foreground mb-2'>
-                            {insight.description}
-                          </p>
-                          <Alert className='bg-blue-50 border-blue-200'>
-                            <Lightbulb className='h-4 w-4' />
-                            <AlertDescription className='text-sm'>
-                              <strong>Recomendação:</strong> {insight.recommendation}
-                            </AlertDescription>
-                          </Alert>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
         </CardContent>
       </Card>
 

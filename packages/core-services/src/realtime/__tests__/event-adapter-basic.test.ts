@@ -183,12 +183,12 @@ describe('Realtime Event Adapter (Basic)', () => {
   describe('Adapter Lifecycle', () => {
     it('should initialize successfully', async () => {
       const freshAdapter = new TestMockRealtimeAdapter();
-      await expect(freshAdapter.initialize()).resolves.not.toThrow();
+      await expect(freshAdapter.initialize()).resolves.toBeUndefined();
       await freshAdapter.cleanup();
     });
 
     it('should cleanup successfully', async () => {
-      await expect(adapter.cleanup()).resolves.not.toThrow();
+      await expect(adapter.cleanup()).resolves.toBeUndefined();
       expect(adapter.getActiveChannels()).toEqual([]);
     });
   });
@@ -301,8 +301,8 @@ describe('Realtime Event Adapter (Basic)', () => {
 
     it('should handle non-existent channel operations', async () => {
       // Should not throw, but should handle gracefully
-      await expect(adapter.leaveChannel('non-existent', 'participant-1')).resolves.not.toThrow();
-      await expect(adapter.updateParticipantStatus('non-existent', 'participant-1', 'connected')).resolves.not.toThrow();
+      await expect(adapter.leaveChannel('non-existent', 'participant-1')).resolves.toBeUndefined();
+      await expect(adapter.updateParticipantStatus('non-existent', 'participant-1', 'connected')).resolves.toBeUndefined();
     });
   });
 

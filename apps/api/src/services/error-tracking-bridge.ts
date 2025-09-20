@@ -1,20 +1,17 @@
 /**
  * Error Tracking Bridge for Legacy Compatibility
- * 
+ *
  * This module provides backward compatibility between the old error tracking
  * system and the new healthcare-compliant error tracking system.
  */
 
-import { 
-  HealthcareErrorTracker, 
-  createHealthcareErrorTracker 
-} from './error-tracking';
-import type { 
-  ErrorEvent as LegacyErrorEvent,
-  ErrorContext as LegacyErrorContext,
+import type {
   Breadcrumb as LegacyBreadcrumb,
-  ErrorTrackingConfig as LegacyConfig
+  ErrorContext as LegacyErrorContext,
+  ErrorEvent as LegacyErrorEvent,
+  ErrorTrackingConfig as LegacyConfig,
 } from '../lib/error-tracking';
+import { createHealthcareErrorTracker, HealthcareErrorTracker } from './error-tracking';
 
 // Global instance for backward compatibility
 let legacyCompatibleTracker: LegacyErrorTracker | null = null;
@@ -46,7 +43,7 @@ class LegacyErrorTracker {
   captureException(
     error: Error,
     context: Partial<LegacyErrorContext> = {},
-    extra?: Record<string, any>
+    extra?: Record<string, any>,
   ): string {
     if (!this.config.enabled) {
       return 'disabled';
@@ -54,7 +51,7 @@ class LegacyErrorTracker {
 
     // Convert legacy context to healthcare context
     const healthcareContext = this.convertContext(context);
-    
+
     // Use healthcare tracker
     return this.healthcareTracker.captureException(error, healthcareContext, extra);
   }
@@ -66,7 +63,7 @@ class LegacyErrorTracker {
     message: string,
     level: LegacyErrorEvent['level'] = 'info',
     context: Partial<LegacyErrorContext> = {},
-    extra?: Record<string, any>
+    extra?: Record<string, any>,
   ): string {
     if (!this.config.enabled) {
       return 'disabled';
@@ -74,11 +71,14 @@ class LegacyErrorTracker {
 
     // Convert legacy context to healthcare context
     const healthcareContext = this.convertContext(context);
-    
+
     // Map level to severity
-    const severity = level === 'error' ? 'high' : 
-                    level === 'warning' ? 'medium' : 'low';
-    
+    const severity = level === 'error'
+      ? 'high'
+      : level === 'warning'
+      ? 'medium'
+      : 'low';
+
     // Use healthcare tracker
     return this.healthcareTracker.captureMessage(message, severity, healthcareContext, extra);
   }
@@ -90,7 +90,7 @@ class LegacyErrorTracker {
     message: string,
     type: LegacyBreadcrumb['type'] = 'info',
     data?: Record<string, any>,
-    level: LegacyBreadcrumb['level'] = 'info'
+    level: LegacyBreadcrumb['level'] = 'info',
   ): void {
     if (!this.config.enabled) {
       return;
@@ -115,6 +115,31 @@ class LegacyErrorTracker {
 
     // Also add to healthcare tracker
     this.healthcareTracker.addBreadcrumb(message, data);
+  }
+
+  /**
+   * Track an error event (legacy compatibility)
+   */
+  async trackError(error: Error, context: Partial<LegacyErrorContext> = {}): Promise<string> {
+    if (!this.config.enabled) {
+      return 'disabled';
+    }
+    const healthcareContext = this.convertContext(context);
+    return await this.healthcareTracker.trackError(error, healthcareContext);
+  }
+
+  /**
+   * Log an audit event (legacy compatibility)
+   */
+  async logAuditEvent(
+    event: { action: string; subject?: string; metadata?: Record<string, any> },
+    context: Partial<LegacyErrorContext> = {},
+  ): Promise<void> {
+    if (!this.config.enabled) return;
+    // Map to breadcrumb + structured context; defer to healthcare tracker if audit API exists later
+    const { action, subject, metadata } = event;
+    const breadcrumbData = { action, subject, ...metadata };
+    this.addBreadcrumb(`audit:${action}` + (subject ? `:${subject}` : ''), 'info', breadcrumbData);
   }
 
   /**
@@ -147,11 +172,11 @@ class LegacyErrorTracker {
     // Extract healthcare context
     const patientId = c.req.param('patientId') || c.req.query('patientId');
     const clinicId = c.req.param('clinicId') || c.req.query('clinicId');
-    
+
     if (patientId) {
       context.patientId = patientId;
     }
-    
+
     if (clinicId) {
       context.clinicId = clinicId;
     }
@@ -276,7 +301,7 @@ export function initializeLegacyErrorTracking(config?: Partial<LegacyConfig>): P
   return new Promise((resolve, reject) => {
     try {
       const tracker = getLegacyErrorTracker(config);
-      
+
       // Add initialization breadcrumb
       tracker.addBreadcrumb(
         'Legacy error tracking initialized',
@@ -285,7 +310,7 @@ export function initializeLegacyErrorTracking(config?: Partial<LegacyConfig>): P
           environment: tracker.getConfig().environment,
           enabled: tracker.getConfig().enabled,
           timestamp: new Date().toISOString(),
-        }
+        },
       );
 
       console.log('[Legacy Error Tracker] Initialized successfully');
@@ -299,7 +324,12 @@ export function initializeLegacyErrorTracking(config?: Partial<LegacyConfig>): P
 
 // Export singleton instance for backward compatibility
 export const errorTracker = getLegacyErrorTracker();
+// Import the missing healthcare error factory
+import { createHealthcareError, ErrorCategory, ErrorSeverity } from './createHealthcareError';
+
+// Re-export the missing functions and types
+export { createHealthcareError, ErrorCategory, ErrorSeverity };
 
 // Export both legacy and new implementations
 export { LegacyErrorTracker };
-export type { LegacyErrorEvent, LegacyErrorContext, LegacyBreadcrumb, LegacyConfig };
+export type { LegacyBreadcrumb, LegacyConfig, LegacyErrorContext, LegacyErrorEvent };

@@ -4,15 +4,14 @@
  * CFM 2.314/2022 compliant with LGPD data protection
  */
 
-import { useRef, useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 // Import tRPC client for backend communication
 import { trpc } from '@/lib/trpc';
 
-// Import secure WebRTC configuration and security validation
+// Import secure WebRTC configuration
 import { SECURE_WEBRTC_CONFIG } from '../lib/webrtc/secure-config';
-import { validateConnectionSecurity, monitorConnectionSecurity } from '../lib/webrtc/security-validator';
 
 /**
  * WebRTC Configuration following CFM guidelines with enhanced security
@@ -27,15 +26,15 @@ const MEDICAL_MEDIA_CONSTRAINTS = {
     width: { min: 640, ideal: 1280, max: 1920 },
     height: { min: 480, ideal: 720, max: 1080 },
     frameRate: { min: 15, ideal: 30, max: 60 },
-    facingMode: 'user'
+    facingMode: 'user',
   },
   audio: {
     echoCancellation: true,
     noiseSuppression: true,
     autoGainControl: true,
     sampleRate: 48000,
-    channelCount: 1
-  }
+    channelCount: 1,
+  },
 };
 
 export interface WebRTCState {
@@ -65,7 +64,13 @@ export interface MediaSettings {
 }
 
 export interface SignalingMessage {
-  type: 'offer' | 'answer' | 'ice-candidate' | 'session-end' | 'media-update' | 'connection-quality';
+  type:
+    | 'offer'
+    | 'answer'
+    | 'ice-candidate'
+    | 'session-end'
+    | 'media-update'
+    | 'connection-quality';
   sessionId: string;
   from: string;
   to: string;
@@ -97,7 +102,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
     bandwidth: 0,
     latency: 0,
     packetsLost: 0,
-    jitter: 0
+    jitter: 0,
   });
 
   const [mediaSettings, setMediaSettings] = useState<MediaSettings>({
@@ -107,7 +112,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
     audioQuality: 'auto',
     echoCancellation: true,
     noiseSuppression: true,
-    autoGainControl: true
+    autoGainControl: true,
   });
 
   // Refs for WebRTC components
@@ -126,10 +131,10 @@ export function useWebRTC(sessionId: string, participantId: string) {
   // WebRTC signaling subscription
   trpc.telemedicine.onSignalingMessage.useSubscription({ sessionId, participantId }, {
     onData: handleSignalingMessage,
-    onError: (error) => {
+    onError: error => {
       console.error('Signaling error:', error);
       toast.error('Erro na comunicação WebRTC');
-    }
+    },
   });
 
   /**
@@ -144,7 +149,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
         eventType: 'webrtc_initialization',
         details: 'WebRTC peer connection initialization started',
         cfmCompliant: true,
-        lgpdCompliant: true
+        lgpdCompliant: true,
       });
 
       const peerConnection = new RTCPeerConnection(WEBRTC_CONFIG);
@@ -153,7 +158,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
       // Set up connection state handlers
       peerConnection.onconnectionstatechange = () => {
         setState(prev => ({ ...prev, connectionState: peerConnection.connectionState }));
-        
+
         if (peerConnection.connectionState === 'connected') {
           toast.success('Conexão WebRTC estabelecida');
           startStatisticsMonitoring();
@@ -164,7 +169,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
       };
 
       // Handle ICE candidates
-      peerConnection.onicecandidate = (event) => {
+      peerConnection.onicecandidate = event => {
         if (event.candidate) {
           sendSignalingMessage.mutate({
             type: 'ice-candidate',
@@ -174,17 +179,17 @@ export function useWebRTC(sessionId: string, participantId: string) {
             compliance: {
               encrypted: true,
               auditLogged: true,
-              cfmCompliant: true
-            }
+              cfmCompliant: true,
+            },
           });
         }
       };
 
       // Handle remote stream
-      peerConnection.ontrack = (event) => {
+      peerConnection.ontrack = event => {
         const [remoteStream] = event.streams;
         setState(prev => ({ ...prev, remoteStream }));
-        
+
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = remoteStream;
         }
@@ -196,14 +201,14 @@ export function useWebRTC(sessionId: string, participantId: string) {
           eventType: 'remote_media_received',
           details: 'Remote media stream received and displayed',
           cfmCompliant: true,
-          lgpdCompliant: true
+          lgpdCompliant: true,
         });
       };
 
       // Set up data channel for chat and control messages
       const dataChannel = peerConnection.createDataChannel('telemedicine', {
         ordered: true,
-        maxRetransmits: 3
+        maxRetransmits: 3,
       });
       dataChannelRef.current = dataChannel;
 
@@ -211,7 +216,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
         console.log('Data channel opened');
       };
 
-      dataChannel.onmessage = (event) => {
+      dataChannel.onmessage = event => {
         handleDataChannelMessage(JSON.parse(event.data));
       };
 
@@ -229,17 +234,21 @@ export function useWebRTC(sessionId: string, participantId: string) {
   const initializeLocalMedia = useCallback(async () => {
     try {
       const constraints = {
-        video: mediaSettings.video ? {
-          ...MEDICAL_MEDIA_CONSTRAINTS.video,
-          width: getVideoConstraintsByQuality(mediaSettings.videoQuality).width,
-          height: getVideoConstraintsByQuality(mediaSettings.videoQuality).height
-        } : false,
-        audio: mediaSettings.audio ? {
-          ...MEDICAL_MEDIA_CONSTRAINTS.audio,
-          echoCancellation: mediaSettings.echoCancellation,
-          noiseSuppression: mediaSettings.noiseSuppression,
-          autoGainControl: mediaSettings.autoGainControl
-        } : false
+        video: mediaSettings.video
+          ? {
+            ...MEDICAL_MEDIA_CONSTRAINTS.video,
+            width: getVideoConstraintsByQuality(mediaSettings.videoQuality).width,
+            height: getVideoConstraintsByQuality(mediaSettings.videoQuality).height,
+          }
+          : false,
+        audio: mediaSettings.audio
+          ? {
+            ...MEDICAL_MEDIA_CONSTRAINTS.audio,
+            echoCancellation: mediaSettings.echoCancellation,
+            noiseSuppression: mediaSettings.noiseSuppression,
+            autoGainControl: mediaSettings.autoGainControl,
+          }
+          : false,
       };
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -261,9 +270,10 @@ export function useWebRTC(sessionId: string, participantId: string) {
         sessionId,
         participantId,
         eventType: 'local_media_initialized',
-        details: `Local media initialized - Video: ${!!constraints.video}, Audio: ${!!constraints.audio}`,
+        details: `Local media initialized - Video: ${!!constraints.video}, Audio: ${!!constraints
+          .audio}`,
         cfmCompliant: true,
-        lgpdCompliant: true
+        lgpdCompliant: true,
       });
 
       toast.success('Mídia local inicializada');
@@ -287,13 +297,13 @@ export function useWebRTC(sessionId: string, participantId: string) {
           await peerConnectionRef.current.setRemoteDescription(message.data);
           const answer = await peerConnectionRef.current.createAnswer();
           await peerConnectionRef.current.setLocalDescription(answer);
-          
+
           sendSignalingMessage.mutate({
             type: 'answer',
             sessionId,
             to: message.from,
             data: answer,
-            compliance: message.compliance
+            compliance: message.compliance,
           });
           break;
 
@@ -334,9 +344,9 @@ export function useWebRTC(sessionId: string, participantId: string) {
     try {
       const offer = await peerConnectionRef.current.createOffer({
         offerToReceiveAudio: true,
-        offerToReceiveVideo: true
+        offerToReceiveVideo: true,
       });
-      
+
       await peerConnectionRef.current.setLocalDescription(offer);
 
       sendSignalingMessage.mutate({
@@ -347,8 +357,8 @@ export function useWebRTC(sessionId: string, participantId: string) {
         compliance: {
           encrypted: true,
           auditLogged: true,
-          cfmCompliant: true
-        }
+          cfmCompliant: true,
+        },
       });
 
       toast.success('Oferta WebRTC enviada');
@@ -379,8 +389,8 @@ export function useWebRTC(sessionId: string, participantId: string) {
             compliance: {
               encrypted: true,
               auditLogged: true,
-              cfmCompliant: true
-            }
+              cfmCompliant: true,
+            },
           });
 
           // Log compliance event
@@ -390,7 +400,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
             eventType: 'video_toggle',
             details: `Video ${videoTrack.enabled ? 'enabled' : 'disabled'}`,
             cfmCompliant: true,
-            lgpdCompliant: true
+            lgpdCompliant: true,
           });
 
           toast.success(`Vídeo ${videoTrack.enabled ? 'ligado' : 'desligado'}`);
@@ -422,8 +432,8 @@ export function useWebRTC(sessionId: string, participantId: string) {
             compliance: {
               encrypted: true,
               auditLogged: true,
-              cfmCompliant: true
-            }
+              cfmCompliant: true,
+            },
           });
 
           // Log compliance event
@@ -433,7 +443,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
             eventType: 'audio_toggle',
             details: `Audio ${audioTrack.enabled ? 'enabled' : 'disabled'}`,
             cfmCompliant: true,
-            lgpdCompliant: true
+            lgpdCompliant: true,
           });
 
           toast.success(`Áudio ${audioTrack.enabled ? 'ligado' : 'desligado'}`);
@@ -454,21 +464,21 @@ export function useWebRTC(sessionId: string, participantId: string) {
         video: {
           width: { ideal: 1920, max: 1920 },
           height: { ideal: 1080, max: 1080 },
-          frameRate: { ideal: 30, max: 60 }
+          frameRate: { ideal: 30, max: 60 },
         },
-        audio: true
+        audio: true,
       });
 
       // Replace video track in peer connection
       if (peerConnectionRef.current && state.localStream) {
-        const videoSender = peerConnectionRef.current.getSenders().find(sender => 
+        const videoSender = peerConnectionRef.current.getSenders().find(sender =>
           sender.track && sender.track.kind === 'video'
         );
-        
+
         if (videoSender) {
           const screenVideoTrack = screenStream.getVideoTracks()[0];
           await videoSender.replaceTrack(screenVideoTrack);
-          
+
           // Update local video element
           if (localVideoRef.current) {
             localVideoRef.current.srcObject = screenStream;
@@ -488,7 +498,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
             eventType: 'screen_share_started',
             details: 'Screen sharing initiated',
             cfmCompliant: true,
-            lgpdCompliant: true
+            lgpdCompliant: true,
           });
 
           toast.success('Compartilhamento de tela iniciado');
@@ -506,14 +516,14 @@ export function useWebRTC(sessionId: string, participantId: string) {
   const stopScreenShare = useCallback(async () => {
     try {
       if (state.localStream && peerConnectionRef.current) {
-        const videoSender = peerConnectionRef.current.getSenders().find(sender => 
+        const videoSender = peerConnectionRef.current.getSenders().find(sender =>
           sender.track && sender.track.kind === 'video'
         );
-        
+
         if (videoSender) {
           const cameraVideoTrack = state.localStream.getVideoTracks()[0];
           await videoSender.replaceTrack(cameraVideoTrack);
-          
+
           // Restore local video element
           if (localVideoRef.current) {
             localVideoRef.current.srcObject = state.localStream;
@@ -528,7 +538,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
             eventType: 'screen_share_stopped',
             details: 'Screen sharing ended',
             cfmCompliant: true,
-            lgpdCompliant: true
+            lgpdCompliant: true,
           });
 
           toast.success('Compartilhamento de tela finalizado');
@@ -553,14 +563,14 @@ export function useWebRTC(sessionId: string, participantId: string) {
         try {
           const stats = await peerConnectionRef.current.getStats();
           const connectionStats = parseWebRTCStats(stats);
-          
+
           setState(prev => ({
             ...prev,
             bandwidth: connectionStats.bandwidth,
             latency: connectionStats.latency,
             packetsLost: connectionStats.packetsLost,
             jitter: connectionStats.jitter,
-            connectionQuality: calculateConnectionQuality(connectionStats)
+            connectionQuality: calculateConnectionQuality(connectionStats),
           }));
 
           // Update backend with connection stats
@@ -568,7 +578,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
             sessionId,
             participantId,
             stats: connectionStats,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         } catch (error) {
           console.error('Error collecting WebRTC stats:', error);
@@ -619,7 +629,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
         bandwidth: 0,
         latency: 0,
         packetsLost: 0,
-        jitter: 0
+        jitter: 0,
       });
 
       // Log compliance event
@@ -629,7 +639,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
         eventType: 'session_ended',
         details: 'WebRTC session ended and resources cleaned up',
         cfmCompliant: true,
-        lgpdCompliant: true
+        lgpdCompliant: true,
       });
 
       toast.success('Sessão WebRTC finalizada');
@@ -665,11 +675,11 @@ export function useWebRTC(sessionId: string, participantId: string) {
     // State
     state,
     mediaSettings,
-    
+
     // Refs
     localVideoRef,
     remoteVideoRef,
-    
+
     // Methods
     initializeSession,
     createOffer,
@@ -679,14 +689,14 @@ export function useWebRTC(sessionId: string, participantId: string) {
     stopScreenShare,
     endSession,
     setMediaSettings,
-    
+
     // Utils
     isConnected: state.connectionState === 'connected',
     isConnecting: state.connectionState === 'connecting',
     hasLocalVideo: !!state.localStream?.getVideoTracks().length,
     hasLocalAudio: !!state.localStream?.getAudioTracks().length,
     hasRemoteVideo: !!state.remoteStream?.getVideoTracks().length,
-    hasRemoteAudio: !!state.remoteStream?.getAudioTracks().length
+    hasRemoteAudio: !!state.remoteStream?.getAudioTracks().length,
   };
 }
 
@@ -712,7 +722,7 @@ function parseWebRTCStats(stats: RTCStatsReport) {
   let packetsLost = 0;
   let jitter = 0;
 
-  stats.forEach((report) => {
+  stats.forEach(report => {
     if (report.type === 'inbound-rtp' && report.mediaType === 'video') {
       bandwidth = report.bytesReceived ? report.bytesReceived * 8 / 1024 : 0;
       packetsLost = report.packetsLost || 0;

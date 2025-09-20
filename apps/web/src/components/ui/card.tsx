@@ -9,12 +9,12 @@ const Card = React.forwardRef<
   const accessibilityProps = {
     'aria-label': props['aria-label'] || props.title,
     'aria-describedby': props['aria-describedby'],
-    'role': props.role || 'article',
+    role: props.role || 'article',
   };
 
   // Remove undefined props to avoid HTML validation warnings
   const cleanProps = Object.fromEntries(
-    Object.entries(accessibilityProps).filter(([_, value]) => value !== undefined)
+    Object.entries(accessibilityProps).filter(([_, value]) => value !== undefined),
   );
 
   return (

@@ -312,4 +312,7 @@ export function setupRateLimitCleanup(): void {
   }, 5 * 60 * 1000); // Clean up every 5 minutes
 }
 
+// Default rate limiting middleware export for app.ts compatibility
+export const rateLimitMiddleware = createGeneralRateLimit;
+
 // End of module

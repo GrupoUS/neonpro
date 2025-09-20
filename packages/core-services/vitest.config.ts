@@ -9,6 +9,8 @@ export default defineConfig({
       'src/services/**/*.test.ts',
       'src/services/governance/**/__tests__/**/*.test.ts',
       'src/realtime/**/*.test.ts',
+      'src/usage/**/*.test.ts',
+      'src/parser/**/*.test.ts',
       'src/**/__tests__/**/*.test.ts',
     ],
     setupFiles: [],

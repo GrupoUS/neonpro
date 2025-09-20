@@ -1,15 +1,15 @@
 /**
  * Error Tracking Initialization for NeonPro API
- * 
+ *
  * Sets up Sentry and OpenTelemetry error tracking with healthcare
  * compliance and LGPD data protection.
  */
 
 import { NodeSDK } from '@opentelemetry/sdk-node';
-import { 
-  initializeSentry, 
-  initializeOpenTelemetry, 
-  errorTrackingConfig 
+import {
+  errorTrackingConfig,
+  initializeOpenTelemetry,
+  initializeSentry,
 } from '../config/error-tracking';
 import { setupGlobalErrorHandlers } from '../middleware/error-tracking';
 
@@ -59,16 +59,17 @@ export async function initializeErrorTracking(): Promise<void> {
       environment: errorTrackingConfig.sentry.environment,
       healthcare: errorTrackingConfig.healthcare,
     });
-
   } catch (error) {
     console.error('❌ Failed to initialize error tracking:', error);
-    
+
     // Even if initialization fails, we should continue with the application
     // but log the failure for monitoring
     if (typeof process !== 'undefined' && process.env.NODE_ENV === 'production') {
-      console.error('Error tracking initialization failure in production - this should be investigated');
+      console.error(
+        'Error tracking initialization failure in production - this should be investigated',
+      );
     }
-    
+
     throw error;
   }
 }
@@ -98,7 +99,6 @@ export async function shutdownErrorTracking(): Promise<void> {
 
     isInitialized = false;
     console.log('🏁 Error tracking shutdown complete');
-
   } catch (error) {
     console.error('❌ Error during error tracking shutdown:', error);
   }
@@ -180,7 +180,6 @@ export async function testErrorTracking(): Promise<{
 
     // Global handlers are always available once initialized
     results.globalHandlers = isInitialized;
-
   } catch (error) {
     console.error('Error tracking test failed:', error);
   }
@@ -193,7 +192,7 @@ export async function testErrorTracking(): Promise<{
  */
 export async function forceErrorTracking(
   message: string,
-  severity: 'low' | 'medium' | 'high' | 'critical' = 'low'
+  severity: 'low' | 'medium' | 'high' | 'critical' = 'low',
 ): Promise<void> {
   if (!isInitialized) {
     throw new Error('Error tracking not initialized');

@@ -5,7 +5,11 @@
 
 import { Context, Next } from 'hono';
 import * as v from 'valibot';
-import { createHealthcareError, ErrorCategory, ErrorSeverity } from '../services/error-tracking-bridge';
+import {
+  createHealthcareError,
+  ErrorCategory,
+  ErrorSeverity,
+} from '../services/error-tracking-bridge';
 
 // Validation target types
 export type ValidationTarget = 'query' | 'params' | 'body' | 'headers';
@@ -331,7 +335,7 @@ export function valibotValidation(config: ValidationConfig) {
           dataToValidate = c.req.param();
           break;
         case 'body':
-          dataToValidate = await c.req.json().catch(() => ({}));
+          dataToValidate = await c.req.json().catch(_error => ({}));
           break;
         case 'headers':
           dataToValidate = c.req.header();

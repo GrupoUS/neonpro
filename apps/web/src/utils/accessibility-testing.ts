@@ -244,7 +244,9 @@ export async function runAccessibilityTest(
     healthcareCompliance: {
       lgpd: !violations.some(v => v.lgpdRelevant),
       healthcareData: !violations.some(v => v.healthcareSpecific),
-      emergencyFeatures: validateEmergencyFeatures(element instanceof Document ? element.documentElement : element),
+      emergencyFeatures: validateEmergencyFeatures(
+        element instanceof Document ? element.documentElement : element,
+      ),
     },
   };
 }

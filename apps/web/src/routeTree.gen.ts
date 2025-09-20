@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TelemedicineRouteImport } from './routes/telemedicine'
+import { Route as AiChatDemoRouteImport } from './routes/ai-chat-demo'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TelemedicineIndexRouteImport } from './routes/telemedicine/index'
@@ -26,10 +27,14 @@ import { Route as ServicesProfessionalServicesRouteImport } from './routes/servi
 import { Route as ServicesPatientsRouteImport } from './routes/services/patients'
 import { Route as ServicesClientsRouteImport } from './routes/services/clients'
 import { Route as ServicesAppointmentsRouteImport } from './routes/services/appointments'
+import { Route as PatientsRegisterBackupRouteImport } from './routes/patients/register-backup'
 import { Route as PatientsRegisterRouteImport } from './routes/patients/register'
+import { Route as PatientsIdBackupRouteImport } from './routes/patients/[id]-backup'
 import { Route as PatientsIdRouteImport } from './routes/patients/[id]'
+import { Route as PatientsDashboardBackupRouteImport } from './routes/patients/dashboard-backup'
 import { Route as PatientsDashboardRouteImport } from './routes/patients/dashboard'
 import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
+import { Route as GoogleCalendarAuthRouteImport } from './routes/google-calendar/auth'
 import { Route as FinancialSubscriptionRouteImport } from './routes/financial/subscription'
 import { Route as FinancialPricingRulesRouteImport } from './routes/financial/pricing-rules'
 import { Route as DemosSignupDemoRouteImport } from './routes/demos/signup-demo'
@@ -42,6 +47,7 @@ import { Route as AuthLoginRouteImport } from './routes/auth/login'
 import { Route as AuthConfirmRouteImport } from './routes/auth/confirm'
 import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AppointmentsNewRouteImport } from './routes/appointments/new'
+import { Route as AiInsightsEnhancedRouteImport } from './routes/ai/insights-enhanced'
 import { Route as AiInsightsRouteImport } from './routes/ai/insights'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
@@ -51,10 +57,18 @@ import { Route as TelemedicineSessionSessionIdRouteImport } from './routes/telem
 import { Route as PatientsPatientIdHistoryRouteImport } from './routes/patients/$patientId/history'
 import { Route as PatientsPatientIdEditRouteImport } from './routes/patients/$patientId/edit'
 import { Route as PatientsPatientIdDocumentsRouteImport } from './routes/patients/$patientId/documents'
+import { Route as ApiGoogleCalendarWebhookRouteImport } from './routes/api/google-calendar/webhook'
+import { Route as ApiGoogleCalendarDisconnectRouteImport } from './routes/api/google-calendar/disconnect'
+import { Route as ApiGoogleCalendarConnectRouteImport } from './routes/api/google-calendar/connect'
 
 const TelemedicineRoute = TelemedicineRouteImport.update({
   id: '/telemedicine',
   path: '/telemedicine',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiChatDemoRoute = AiChatDemoRouteImport.update({
+  id: '/ai-chat-demo',
+  path: '/ai-chat-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
 const R404Route = R404RouteImport.update({
@@ -141,14 +155,29 @@ const ServicesAppointmentsRoute = ServicesAppointmentsRouteImport.update({
   path: '/services/appointments',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientsRegisterBackupRoute = PatientsRegisterBackupRouteImport.update({
+  id: '/patients/register-backup',
+  path: '/patients/register-backup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientsRegisterRoute = PatientsRegisterRouteImport.update({
   id: '/patients/register',
   path: '/patients/register',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientsIdBackupRoute = PatientsIdBackupRouteImport.update({
+  id: '/patients/id-backup',
+  path: '/patients/id-backup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientsIdRoute = PatientsIdRouteImport.update({
   id: '/patients/id',
   path: '/patients/id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PatientsDashboardBackupRoute = PatientsDashboardBackupRouteImport.update({
+  id: '/patients/dashboard-backup',
+  path: '/patients/dashboard-backup',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatientsDashboardRoute = PatientsDashboardRouteImport.update({
@@ -159,6 +188,11 @@ const PatientsDashboardRoute = PatientsDashboardRouteImport.update({
 const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   id: '/patients/$patientId',
   path: '/patients/$patientId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GoogleCalendarAuthRoute = GoogleCalendarAuthRouteImport.update({
+  id: '/google-calendar/auth',
+  path: '/google-calendar/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FinancialSubscriptionRoute = FinancialSubscriptionRouteImport.update({
@@ -222,6 +256,11 @@ const AppointmentsNewRoute = AppointmentsNewRouteImport.update({
   path: '/appointments/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AiInsightsEnhancedRoute = AiInsightsEnhancedRouteImport.update({
+  id: '/ai/insights-enhanced',
+  path: '/ai/insights-enhanced',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AiInsightsRoute = AiInsightsRouteImport.update({
   id: '/ai/insights',
   path: '/ai/insights',
@@ -270,15 +309,35 @@ const PatientsPatientIdDocumentsRoute =
     path: '/documents',
     getParentRoute: () => PatientsPatientIdRoute,
   } as any)
+const ApiGoogleCalendarWebhookRoute =
+  ApiGoogleCalendarWebhookRouteImport.update({
+    id: '/api/google-calendar/webhook',
+    path: '/api/google-calendar/webhook',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiGoogleCalendarDisconnectRoute =
+  ApiGoogleCalendarDisconnectRouteImport.update({
+    id: '/api/google-calendar/disconnect',
+    path: '/api/google-calendar/disconnect',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiGoogleCalendarConnectRoute =
+  ApiGoogleCalendarConnectRouteImport.update({
+    id: '/api/google-calendar/connect',
+    path: '/api/google-calendar/connect',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/ai-chat-demo': typeof AiChatDemoRoute
   '/telemedicine': typeof TelemedicineRouteWithChildren
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/ai/insights': typeof AiInsightsRoute
+  '/ai/insights-enhanced': typeof AiInsightsEnhancedRoute
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
@@ -291,10 +350,14 @@ export interface FileRoutesByFullPath {
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
   '/financial/subscription': typeof FinancialSubscriptionRoute
+  '/google-calendar/auth': typeof GoogleCalendarAuthRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
   '/patients/dashboard': typeof PatientsDashboardRoute
+  '/patients/dashboard-backup': typeof PatientsDashboardBackupRoute
   '/patients/id': typeof PatientsIdRoute
+  '/patients/id-backup': typeof PatientsIdBackupRoute
   '/patients/register': typeof PatientsRegisterRoute
+  '/patients/register-backup': typeof PatientsRegisterBackupRoute
   '/services/appointments': typeof ServicesAppointmentsRoute
   '/services/clients': typeof ServicesClientsRoute
   '/services/patients': typeof ServicesPatientsRoute
@@ -309,6 +372,9 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileIndexRoute
   '/services': typeof ServicesIndexRoute
   '/telemedicine/': typeof TelemedicineIndexRoute
+  '/api/google-calendar/connect': typeof ApiGoogleCalendarConnectRoute
+  '/api/google-calendar/disconnect': typeof ApiGoogleCalendarDisconnectRoute
+  '/api/google-calendar/webhook': typeof ApiGoogleCalendarWebhookRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
   '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
@@ -318,10 +384,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/ai-chat-demo': typeof AiChatDemoRoute
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/ai/insights': typeof AiInsightsRoute
+  '/ai/insights-enhanced': typeof AiInsightsEnhancedRoute
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
@@ -334,10 +402,14 @@ export interface FileRoutesByTo {
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
   '/financial/subscription': typeof FinancialSubscriptionRoute
+  '/google-calendar/auth': typeof GoogleCalendarAuthRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
   '/patients/dashboard': typeof PatientsDashboardRoute
+  '/patients/dashboard-backup': typeof PatientsDashboardBackupRoute
   '/patients/id': typeof PatientsIdRoute
+  '/patients/id-backup': typeof PatientsIdBackupRoute
   '/patients/register': typeof PatientsRegisterRoute
+  '/patients/register-backup': typeof PatientsRegisterBackupRoute
   '/services/appointments': typeof ServicesAppointmentsRoute
   '/services/clients': typeof ServicesClientsRoute
   '/services/patients': typeof ServicesPatientsRoute
@@ -352,6 +424,9 @@ export interface FileRoutesByTo {
   '/profile': typeof ProfileIndexRoute
   '/services': typeof ServicesIndexRoute
   '/telemedicine': typeof TelemedicineIndexRoute
+  '/api/google-calendar/connect': typeof ApiGoogleCalendarConnectRoute
+  '/api/google-calendar/disconnect': typeof ApiGoogleCalendarDisconnectRoute
+  '/api/google-calendar/webhook': typeof ApiGoogleCalendarWebhookRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
   '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
@@ -362,11 +437,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/404': typeof R404Route
+  '/ai-chat-demo': typeof AiChatDemoRoute
   '/telemedicine': typeof TelemedicineRouteWithChildren
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
   '/ai/insights': typeof AiInsightsRoute
+  '/ai/insights-enhanced': typeof AiInsightsEnhancedRoute
   '/appointments/new': typeof AppointmentsNewRoute
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/confirm': typeof AuthConfirmRoute
@@ -379,10 +456,14 @@ export interface FileRoutesById {
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
   '/financial/subscription': typeof FinancialSubscriptionRoute
+  '/google-calendar/auth': typeof GoogleCalendarAuthRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
   '/patients/dashboard': typeof PatientsDashboardRoute
+  '/patients/dashboard-backup': typeof PatientsDashboardBackupRoute
   '/patients/id': typeof PatientsIdRoute
+  '/patients/id-backup': typeof PatientsIdBackupRoute
   '/patients/register': typeof PatientsRegisterRoute
+  '/patients/register-backup': typeof PatientsRegisterBackupRoute
   '/services/appointments': typeof ServicesAppointmentsRoute
   '/services/clients': typeof ServicesClientsRoute
   '/services/patients': typeof ServicesPatientsRoute
@@ -397,6 +478,9 @@ export interface FileRoutesById {
   '/profile/': typeof ProfileIndexRoute
   '/services/': typeof ServicesIndexRoute
   '/telemedicine/': typeof TelemedicineIndexRoute
+  '/api/google-calendar/connect': typeof ApiGoogleCalendarConnectRoute
+  '/api/google-calendar/disconnect': typeof ApiGoogleCalendarDisconnectRoute
+  '/api/google-calendar/webhook': typeof ApiGoogleCalendarWebhookRoute
   '/patients/$patientId/documents': typeof PatientsPatientIdDocumentsRoute
   '/patients/$patientId/edit': typeof PatientsPatientIdEditRoute
   '/patients/$patientId/history': typeof PatientsPatientIdHistoryRoute
@@ -408,11 +492,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/404'
+    | '/ai-chat-demo'
     | '/telemedicine'
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
     | '/ai/insights'
+    | '/ai/insights-enhanced'
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
@@ -425,10 +511,14 @@ export interface FileRouteTypes {
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
     | '/financial/subscription'
+    | '/google-calendar/auth'
     | '/patients/$patientId'
     | '/patients/dashboard'
+    | '/patients/dashboard-backup'
     | '/patients/id'
+    | '/patients/id-backup'
     | '/patients/register'
+    | '/patients/register-backup'
     | '/services/appointments'
     | '/services/clients'
     | '/services/patients'
@@ -443,6 +533,9 @@ export interface FileRouteTypes {
     | '/profile'
     | '/services'
     | '/telemedicine/'
+    | '/api/google-calendar/connect'
+    | '/api/google-calendar/disconnect'
+    | '/api/google-calendar/webhook'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
@@ -452,10 +545,12 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/404'
+    | '/ai-chat-demo'
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
     | '/ai/insights'
+    | '/ai/insights-enhanced'
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
@@ -468,10 +563,14 @@ export interface FileRouteTypes {
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
     | '/financial/subscription'
+    | '/google-calendar/auth'
     | '/patients/$patientId'
     | '/patients/dashboard'
+    | '/patients/dashboard-backup'
     | '/patients/id'
+    | '/patients/id-backup'
     | '/patients/register'
+    | '/patients/register-backup'
     | '/services/appointments'
     | '/services/clients'
     | '/services/patients'
@@ -486,6 +585,9 @@ export interface FileRouteTypes {
     | '/profile'
     | '/services'
     | '/telemedicine'
+    | '/api/google-calendar/connect'
+    | '/api/google-calendar/disconnect'
+    | '/api/google-calendar/webhook'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
@@ -495,11 +597,13 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/404'
+    | '/ai-chat-demo'
     | '/telemedicine'
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
     | '/ai/insights'
+    | '/ai/insights-enhanced'
     | '/appointments/new'
     | '/auth/callback'
     | '/auth/confirm'
@@ -512,10 +616,14 @@ export interface FileRouteTypes {
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
     | '/financial/subscription'
+    | '/google-calendar/auth'
     | '/patients/$patientId'
     | '/patients/dashboard'
+    | '/patients/dashboard-backup'
     | '/patients/id'
+    | '/patients/id-backup'
     | '/patients/register'
+    | '/patients/register-backup'
     | '/services/appointments'
     | '/services/clients'
     | '/services/patients'
@@ -530,6 +638,9 @@ export interface FileRouteTypes {
     | '/profile/'
     | '/services/'
     | '/telemedicine/'
+    | '/api/google-calendar/connect'
+    | '/api/google-calendar/disconnect'
+    | '/api/google-calendar/webhook'
     | '/patients/$patientId/documents'
     | '/patients/$patientId/edit'
     | '/patients/$patientId/history'
@@ -540,11 +651,13 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R404Route: typeof R404Route
+  AiChatDemoRoute: typeof AiChatDemoRoute
   TelemedicineRoute: typeof TelemedicineRouteWithChildren
   AdminGovernanceRoute: typeof AdminGovernanceRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
   AiInsightsRoute: typeof AiInsightsRoute
+  AiInsightsEnhancedRoute: typeof AiInsightsEnhancedRoute
   AppointmentsNewRoute: typeof AppointmentsNewRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
   AuthConfirmRoute: typeof AuthConfirmRoute
@@ -557,10 +670,14 @@ export interface RootRouteChildren {
   DemosSignupDemoRoute: typeof DemosSignupDemoRoute
   FinancialPricingRulesRoute: typeof FinancialPricingRulesRoute
   FinancialSubscriptionRoute: typeof FinancialSubscriptionRoute
+  GoogleCalendarAuthRoute: typeof GoogleCalendarAuthRoute
   PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren
   PatientsDashboardRoute: typeof PatientsDashboardRoute
+  PatientsDashboardBackupRoute: typeof PatientsDashboardBackupRoute
   PatientsIdRoute: typeof PatientsIdRoute
+  PatientsIdBackupRoute: typeof PatientsIdBackupRoute
   PatientsRegisterRoute: typeof PatientsRegisterRoute
+  PatientsRegisterBackupRoute: typeof PatientsRegisterBackupRoute
   ServicesAppointmentsRoute: typeof ServicesAppointmentsRoute
   ServicesClientsRoute: typeof ServicesClientsRoute
   ServicesPatientsRoute: typeof ServicesPatientsRoute
@@ -572,6 +689,9 @@ export interface RootRouteChildren {
   FinancialIndexRoute: typeof FinancialIndexRoute
   ProfileIndexRoute: typeof ProfileIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
+  ApiGoogleCalendarConnectRoute: typeof ApiGoogleCalendarConnectRoute
+  ApiGoogleCalendarDisconnectRoute: typeof ApiGoogleCalendarDisconnectRoute
+  ApiGoogleCalendarWebhookRoute: typeof ApiGoogleCalendarWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -581,6 +701,13 @@ declare module '@tanstack/react-router' {
       path: '/telemedicine'
       fullPath: '/telemedicine'
       preLoaderRoute: typeof TelemedicineRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-chat-demo': {
+      id: '/ai-chat-demo'
+      path: '/ai-chat-demo'
+      fullPath: '/ai-chat-demo'
+      preLoaderRoute: typeof AiChatDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/404': {
@@ -695,6 +822,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesAppointmentsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patients/register-backup': {
+      id: '/patients/register-backup'
+      path: '/patients/register-backup'
+      fullPath: '/patients/register-backup'
+      preLoaderRoute: typeof PatientsRegisterBackupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patients/register': {
       id: '/patients/register'
       path: '/patients/register'
@@ -702,11 +836,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientsRegisterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patients/id-backup': {
+      id: '/patients/id-backup'
+      path: '/patients/id-backup'
+      fullPath: '/patients/id-backup'
+      preLoaderRoute: typeof PatientsIdBackupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patients/id': {
       id: '/patients/id'
       path: '/patients/id'
       fullPath: '/patients/id'
       preLoaderRoute: typeof PatientsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/patients/dashboard-backup': {
+      id: '/patients/dashboard-backup'
+      path: '/patients/dashboard-backup'
+      fullPath: '/patients/dashboard-backup'
+      preLoaderRoute: typeof PatientsDashboardBackupRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patients/dashboard': {
@@ -721,6 +869,13 @@ declare module '@tanstack/react-router' {
       path: '/patients/$patientId'
       fullPath: '/patients/$patientId'
       preLoaderRoute: typeof PatientsPatientIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/google-calendar/auth': {
+      id: '/google-calendar/auth'
+      path: '/google-calendar/auth'
+      fullPath: '/google-calendar/auth'
+      preLoaderRoute: typeof GoogleCalendarAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/financial/subscription': {
@@ -807,6 +962,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppointmentsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ai/insights-enhanced': {
+      id: '/ai/insights-enhanced'
+      path: '/ai/insights-enhanced'
+      fullPath: '/ai/insights-enhanced'
+      preLoaderRoute: typeof AiInsightsEnhancedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/ai/insights': {
       id: '/ai/insights'
       path: '/ai/insights'
@@ -870,6 +1032,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientsPatientIdDocumentsRouteImport
       parentRoute: typeof PatientsPatientIdRoute
     }
+    '/api/google-calendar/webhook': {
+      id: '/api/google-calendar/webhook'
+      path: '/api/google-calendar/webhook'
+      fullPath: '/api/google-calendar/webhook'
+      preLoaderRoute: typeof ApiGoogleCalendarWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google-calendar/disconnect': {
+      id: '/api/google-calendar/disconnect'
+      path: '/api/google-calendar/disconnect'
+      fullPath: '/api/google-calendar/disconnect'
+      preLoaderRoute: typeof ApiGoogleCalendarDisconnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/google-calendar/connect': {
+      id: '/api/google-calendar/connect'
+      path: '/api/google-calendar/connect'
+      fullPath: '/api/google-calendar/connect'
+      preLoaderRoute: typeof ApiGoogleCalendarConnectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -911,11 +1094,13 @@ const PatientsPatientIdRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
+  AiChatDemoRoute: AiChatDemoRoute,
   TelemedicineRoute: TelemedicineRouteWithChildren,
   AdminGovernanceRoute: AdminGovernanceRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
   AiInsightsRoute: AiInsightsRoute,
+  AiInsightsEnhancedRoute: AiInsightsEnhancedRoute,
   AppointmentsNewRoute: AppointmentsNewRoute,
   AuthCallbackRoute: AuthCallbackRoute,
   AuthConfirmRoute: AuthConfirmRoute,
@@ -928,10 +1113,14 @@ const rootRouteChildren: RootRouteChildren = {
   DemosSignupDemoRoute: DemosSignupDemoRoute,
   FinancialPricingRulesRoute: FinancialPricingRulesRoute,
   FinancialSubscriptionRoute: FinancialSubscriptionRoute,
+  GoogleCalendarAuthRoute: GoogleCalendarAuthRoute,
   PatientsPatientIdRoute: PatientsPatientIdRouteWithChildren,
   PatientsDashboardRoute: PatientsDashboardRoute,
+  PatientsDashboardBackupRoute: PatientsDashboardBackupRoute,
   PatientsIdRoute: PatientsIdRoute,
+  PatientsIdBackupRoute: PatientsIdBackupRoute,
   PatientsRegisterRoute: PatientsRegisterRoute,
+  PatientsRegisterBackupRoute: PatientsRegisterBackupRoute,
   ServicesAppointmentsRoute: ServicesAppointmentsRoute,
   ServicesClientsRoute: ServicesClientsRoute,
   ServicesPatientsRoute: ServicesPatientsRoute,
@@ -943,6 +1132,9 @@ const rootRouteChildren: RootRouteChildren = {
   FinancialIndexRoute: FinancialIndexRoute,
   ProfileIndexRoute: ProfileIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
+  ApiGoogleCalendarConnectRoute: ApiGoogleCalendarConnectRoute,
+  ApiGoogleCalendarDisconnectRoute: ApiGoogleCalendarDisconnectRoute,
+  ApiGoogleCalendarWebhookRoute: ApiGoogleCalendarWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

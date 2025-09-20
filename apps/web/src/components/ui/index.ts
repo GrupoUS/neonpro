@@ -29,6 +29,7 @@ export * from './switch';
 export * from './tabs';
 export * from './textarea';
 export * from './tooltip';
+export * from './avatar';
 
 // Custom Advanced Components
 export * from './advanced-button';

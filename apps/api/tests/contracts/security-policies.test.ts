@@ -1,66 +1,65 @@
 /**
  * Security Policies Contract Tests
- * 
+ *
  * Healthcare platform security policies contract validation
  * Based on OpenAPI 3.0 specification with healthcare compliance (LGPD, ANVISA, CFM)
- * 
+ *
  * @version 1.0.0
  * @compliance LGPD, ANVISA, CFM, OWASP, NIST
  * @healthcare-platform NeonPro
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
 import { createHono, Hono } from 'hono';
-import { z } from 'zod';
 import { hc } from 'hono/client';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { z } from 'zod';
 
 // Import security policy services and types
-import { 
+import {
+  applySecurityPolicyToEndpoint,
+  createSecurityPolicy,
+  deleteSecurityPolicy,
+  evaluateSecurityPolicy,
+  listSecurityPolicies,
   SecurityPolicy,
   SecurityPolicyConfig,
-  SecurityPolicyRule,
   SecurityPolicyEvaluation,
-  createSecurityPolicy,
-  evaluateSecurityPolicy,
+  SecurityPolicyRule,
   updateSecurityPolicy,
-  deleteSecurityPolicy,
-  listSecurityPolicies,
-  applySecurityPolicyToEndpoint,
-  validateSecurityPolicyCompliance
-} from '@/services/security-policy-service';
+  validateSecurityPolicyCompliance,
+} from '../../src/services/security-policy-service';
 
 import {
   ContentSecurityPolicy,
   CSPDirective,
   CSPReport,
   generateCSP,
+  parseCSPReport,
   validateCSP,
-  parseCSPReport
-} from '@/services/csp-service';
+} from '../../src/services/csp-service';
 
 import {
-  RateLimitRule,
-  RateLimitStrategy,
-  RateLimitMetrics,
   createRateLimitRule,
   evaluateRateLimit,
-  getRateLimitMetrics
-} from '@/services/rate-limit-service';
+  getRateLimitStatus,
+  RateLimitEvaluation,
+  RateLimitRule,
+} from '../../src/services/rate-limit-service';
 
 import {
+  generateSecurityHeaders,
   SecurityHeaderConfig,
   SecurityHeaders,
-  generateSecurityHeaders,
-  validateSecurityHeaders
-} from '@/services/security-headers-service';
+  validateSecurityHeaders,
+} from '../../src/services/security-headers-service';
 
 import {
-  AuditLog,
   AuditEvent,
+  AuditLog,
   AuditSeverity,
-  logSecurityEvent,
+  createAuditTrail,
   getAuditLogs,
-  createAuditTrail
+  logSecurityEvent,
 } from '@/services/audit-service';
 
 // Mock external dependencies
@@ -80,7 +79,15 @@ const SecurityPolicySchema = z.object({
   priority: z.number().min(1).max(10),
   rules: z.array(z.object({
     id: z.string(),
-    type: z.enum(['csp', 'cors', 'rate_limit', 'authentication', 'authorization', 'encryption', 'input_validation']),
+    type: z.enum([
+      'csp',
+      'cors',
+      'rate_limit',
+      'authentication',
+      'authorization',
+      'encryption',
+      'input_validation',
+    ]),
     config: z.record(z.any()),
     conditions: z.array(z.object({
       field: z.string(),
@@ -118,7 +125,15 @@ const SecurityPolicyConfigSchema = z.object({
   description: z.string().max(500),
   priority: z.number().min(1).max(10),
   rules: z.array(z.object({
-    type: z.enum(['csp', 'cors', 'rate_limit', 'authentication', 'authorization', 'encryption', 'input_validation']),
+    type: z.enum([
+      'csp',
+      'cors',
+      'rate_limit',
+      'authentication',
+      'authorization',
+      'encryption',
+      'input_validation',
+    ]),
     config: z.record(z.any()),
     conditions: z.array(z.object({
       field: z.string(),
@@ -162,7 +177,7 @@ const CSPSchema = z.object({
   'trusted-types': z.array(z.string()).optional(),
   'upgrade-insecure-requests': z.boolean().optional(),
   'block-all-mixed-content': z.boolean().optional(),
-  'sandbox': z.array(z.string()).optional(),
+  sandbox: z.array(z.string()).optional(),
 });
 
 const RateLimitRuleSchema = z.object({
@@ -279,11 +294,11 @@ const generateValidSecurityPolicyConfig = () => ({
     {
       type: 'csp' as const,
       config: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", 'data:', 'https:'],
-        connectSrc: ["'self'", 'https://api.neonpro.health'],
+        defaultSrc: ['\'self\''],
+        scriptSrc: ['\'self\'', '\'unsafe-inline\''],
+        styleSrc: ['\'self\'', '\'unsafe-inline\''],
+        imgSrc: ['\'self\'', 'data:', 'https:'],
+        connectSrc: ['\'self\'', 'https://api.neonpro.health'],
         reportUri: '/api/security/csp-report',
       },
       action: 'allow' as const,
@@ -357,11 +372,11 @@ const generateValidSecurityPolicy = () => ({
       id: 'rule_1',
       type: 'csp' as const,
       config: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", 'data:', 'https:'],
-        connectSrc: ["'self'", 'https://api.neonpro.health'],
+        defaultSrc: ['\'self\''],
+        scriptSrc: ['\'self\'', '\'unsafe-inline\''],
+        styleSrc: ['\'self\'', '\'unsafe-inline\''],
+        imgSrc: ['\'self\'', 'data:', 'https:'],
+        connectSrc: ['\'self\'', 'https://api.neonpro.health'],
         reportUri: '/api/security/csp-report',
       },
       action: 'allow' as const,
@@ -415,21 +430,21 @@ const generateValidSecurityPolicy = () => ({
 });
 
 const generateValidCSP = () => ({
-  'default-src': ["'self'"],
-  'script-src': ["'self'", "'unsafe-inline'"],
-  'style-src': ["'self'", "'unsafe-inline'"],
-  'img-src': ["'self'", 'data:', 'https:'],
-  'connect-src': ["'self'", 'https://api.neonpro.health'],
-  'font-src': ["'self'", 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
-  'object-src': ["'none'"],
-  'media-src': ["'self'"],
-  'frame-src': ["'none'"],
-  'child-src': ["'none'"],
-  'worker-src': ["'self'"],
-  'manifest-src': ["'self'"],
-  'prefetch-src': ["'self'"],
-  'form-action': ["'self'"],
-  'frame-ancestors': ["'none'"],
+  'default-src': ['\'self\''],
+  'script-src': ['\'self\'', '\'unsafe-inline\''],
+  'style-src': ['\'self\'', '\'unsafe-inline\''],
+  'img-src': ['\'self\'', 'data:', 'https:'],
+  'connect-src': ['\'self\'', 'https://api.neonpro.health'],
+  'font-src': ['\'self\'', 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
+  'object-src': ['\'none\''],
+  'media-src': ['\'self\''],
+  'frame-src': ['\'none\''],
+  'child-src': ['\'none\''],
+  'worker-src': ['\'self\''],
+  'manifest-src': ['\'self\''],
+  'prefetch-src': ['\'self\''],
+  'form-action': ['\'self\''],
+  'frame-ancestors': ['\'none\''],
   'report-uri': '/api/security/csp-report',
   'upgrade-insecure-requests': true,
   'block-all-mixed-content': true,
@@ -496,7 +511,7 @@ const generateValidEvaluationRequest = () => ({
   method: 'POST' as const,
   headers: {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer jwt_token',
+    Authorization: 'Bearer jwt_token',
     'X-API-Key': 'api_key',
   },
   body: {
@@ -525,25 +540,25 @@ describe('Security Policies Contract Tests', () => {
     app = createHono();
 
     // Setup security policy routes
-    app.post('/api/security/policies', async (c) => {
+    app.post('/api/security/policies', async c => {
       const body = await c.req.json();
       const validated = SecurityPolicyConfigSchema.parse(body);
       const result = await createSecurityPolicy(validated);
       return c.json(result, 201);
     });
 
-    app.get('/api/security/policies', async (c) => {
+    app.get('/api/security/policies', async c => {
       const result = await listSecurityPolicies();
       return c.json(result);
     });
 
-    app.get('/api/security/policies/:id', async (c) => {
+    app.get('/api/security/policies/:id', async c => {
       const id = c.req.param('id');
       const result = await evaluateSecurityPolicy(id);
       return c.json(result);
     });
 
-    app.put('/api/security/policies/:id', async (c) => {
+    app.put('/api/security/policies/:id', async c => {
       const id = c.req.param('id');
       const body = await c.req.json();
       const validated = SecurityPolicyConfigSchema.parse(body);
@@ -551,13 +566,13 @@ describe('Security Policies Contract Tests', () => {
       return c.json(result);
     });
 
-    app.delete('/api/security/policies/:id', async (c) => {
+    app.delete('/api/security/policies/:id', async c => {
       const id = c.req.param('id');
       const result = await deleteSecurityPolicy(id);
       return c.json(result);
     });
 
-    app.post('/api/security/policies/:id/evaluate', async (c) => {
+    app.post('/api/security/policies/:id/evaluate', async c => {
       const id = c.req.param('id');
       const body = await c.req.json();
       const validated = SecurityEvaluationRequestSchema.parse(body);
@@ -565,35 +580,35 @@ describe('Security Policies Contract Tests', () => {
       return c.json(result);
     });
 
-    app.post('/api/security/policies/:id/apply', async (c) => {
+    app.post('/api/security/policies/:id/apply', async c => {
       const id = c.req.param('id');
       const endpoint = c.req.query('endpoint');
       const result = await applySecurityPolicyToEndpoint(id, endpoint);
       return c.json(result);
     });
 
-    app.get('/api/security/csp', async (c) => {
+    app.get('/api/security/csp', async c => {
       const result = await generateCSP();
       return c.json(result);
     });
 
-    app.post('/api/security/csp/validate', async (c) => {
+    app.post('/api/security/csp/validate', async c => {
       const body = await c.req.json();
       const result = await validateCSP(body);
       return c.json(result);
     });
 
-    app.get('/api/security/rate-limit/rules', async (c) => {
+    app.get('/api/security/rate-limit/rules', async c => {
       const result = await getRateLimitMetrics();
       return c.json(result);
     });
 
-    app.get('/api/security/audit/logs', async (c) => {
+    app.get('/api/security/audit/logs', async c => {
       const result = await getAuditLogs();
       return c.json(result);
     });
 
-    app.post('/api/security/compliance/check', async (c) => {
+    app.post('/api/security/compliance/check', async c => {
       const body = await c.req.json();
       const result = await validateSecurityPolicyCompliance(body.policyId);
       return c.json(result);
@@ -623,11 +638,11 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(201);
       const data = await response.json();
-      
+
       // Validate response schema
       const validatedData = SecurityPolicySchema.parse(data);
       expect(validatedData).toEqual(expectedResponse);
-      
+
       // Verify mock was called with correct data
       expect(createSecurityPolicy).toHaveBeenCalledWith(policyConfig);
     });
@@ -647,7 +662,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       // Validate error response schema
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('VALIDATION_ERROR');
@@ -679,7 +694,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('HEALTHCARE_COMPLIANCE_REQUIRED');
     });
@@ -709,7 +724,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('INVALID_RULE_PRIORITY');
     });
@@ -725,13 +740,13 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(Array.isArray(data)).toBe(true);
       if (data.length > 0) {
         const validatedData = SecurityPolicySchema.parse(data[0]);
         expect(validatedData).toEqual(expectedPolicies[0]);
       }
-      
+
       expect(listSecurityPolicies).toHaveBeenCalled();
     });
 
@@ -746,7 +761,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       // All returned policies should be LGPD compliant
       data.forEach(policy => {
         expect(policy.compliance.lgpd).toBe(true);
@@ -760,7 +775,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(Array.isArray(data)).toBe(true);
       expect(data).toHaveLength(0);
     });
@@ -806,11 +821,11 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       // Validate response schema
       const validatedData = SecurityEvaluationResponseSchema.parse(data);
       expect(validatedData).toEqual(expectedResponse);
-      
+
       expect(evaluateSecurityPolicy).toHaveBeenCalledWith(policyId, evaluationRequest);
     });
 
@@ -860,7 +875,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const validatedData = SecurityEvaluationResponseSchema.parse(data);
       expect(validatedData.decision).toBe('deny');
       expect(validatedData.riskScore).toBeGreaterThan(80);
@@ -886,7 +901,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('VALIDATION_ERROR');
     });
@@ -902,20 +917,24 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       // Validate response schema
       const validatedData = CSPSchema.parse(data);
       expect(validatedData).toEqual(expectedCSP);
-      
+
       expect(generateCSP).toHaveBeenCalled();
     });
 
     it('should include healthcare-specific CSP directives', async () => {
       const healthcareCSP = {
         ...generateValidCSP(),
-        'connect-src': ["'self'", 'https://api.neonpro.health', 'https://medical-records.neonpro.health'],
-        'script-src': ["'self'", "'unsafe-inline'", 'https://cdn.neonpro.health'],
-        'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        'connect-src': [
+          '\'self\'',
+          'https://api.neonpro.health',
+          'https://medical-records.neonpro.health',
+        ],
+        'script-src': ['\'self\'', '\'unsafe-inline\'', 'https://cdn.neonpro.health'],
+        'style-src': ['\'self\'', '\'unsafe-inline\'', 'https://fonts.googleapis.com'],
       };
 
       (generateCSP as Mock).mockResolvedValue(healthcareCSP);
@@ -924,7 +943,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(data['connect-src']).toContain('https://api.neonpro.health');
       expect(data['connect-src']).toContain('https://medical-records.neonpro.health');
     });
@@ -949,18 +968,18 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(data.isValid).toBe(true);
       expect(data.issues).toHaveLength(0);
       expect(data.healthcareCompliance).toBe(true);
-      
+
       expect(validateCSP).toHaveBeenCalledWith(cspConfig);
     });
 
     it('should identify CSP security issues', async () => {
       const insecureCSP = {
-        'default-src': ["'unsafe-inline'", "'unsafe-eval'", 'http:'], // Insecure
-        'script-src': ["'unsafe-inline'", "'unsafe-eval'"], // Very insecure
+        'default-src': ['\'unsafe-inline\'', '\'unsafe-eval\'', 'http:'], // Insecure
+        'script-src': ['\'unsafe-inline\'', '\'unsafe-eval\''], // Very insecure
       };
 
       const validationResult = {
@@ -996,7 +1015,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(data.isValid).toBe(false);
       expect(data.issues).toHaveLength(2);
       expect(data.healthcareCompliance).toBe(false);
@@ -1022,11 +1041,11 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(data.currentRequests).toBe(45);
       expect(data.remaining).toBe(55);
       expect(Array.isArray(data.rules)).toBe(true);
-      
+
       if (data.rules.length > 0) {
         const validatedRule = RateLimitRuleSchema.parse(data.rules[0]);
         expect(validatedRule).toEqual(rateLimitRule);
@@ -1068,7 +1087,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const rule = data.rules[0];
       expect(rule.metadata.healthcareData).toBe(true);
       expect(rule.metadata.patientDataAccess).toBe(true);
@@ -1086,13 +1105,13 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(Array.isArray(data)).toBe(true);
       if (data.length > 0) {
         const validatedLog = AuditLogSchema.parse(data[0]);
         expect(validatedLog).toEqual(auditLogs[0]);
       }
-      
+
       expect(getAuditLogs).toHaveBeenCalled();
     });
 
@@ -1107,7 +1126,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       // All logs should have healthcare compliance information
       data.forEach(log => {
         expect(log.compliance).toBeDefined();
@@ -1135,7 +1154,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const log = data[0];
       expect(log.isRedacted).toBe(true);
       expect(log.redactionReason).toBe('lgpd_compliance');
@@ -1171,13 +1190,13 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(data.overallScore).toBe(95);
       expect(data.frameworks.lgpd.compliant).toBe(true);
       expect(data.frameworks.lgpd.score).toBe(100);
       expect(data.frameworks.hipaa.compliant).toBe(false);
       expect(Array.isArray(data.recommendations)).toBe(true);
-      
+
       expect(validateSecurityPolicyCompliance).toHaveBeenCalledWith(policyId);
     });
 
@@ -1187,7 +1206,11 @@ describe('Security Policies Contract Tests', () => {
         policyId,
         overallScore: 45,
         frameworks: {
-          lgpd: { score: 30, compliant: false, issues: ['Missing data retention policy', 'Insufficient consent management'] },
+          lgpd: {
+            score: 30,
+            compliant: false,
+            issues: ['Missing data retention policy', 'Insufficient consent management'],
+          },
           anvisa: { score: 60, compliant: false, issues: ['Medical device validation incomplete'] },
           cfm: { score: 45, compliant: false, issues: ['Professional ethics policy outdated'] },
         },
@@ -1223,7 +1246,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(data.overallScore).toBeLessThan(50);
       expect(data.frameworks.lgpd.compliant).toBe(false);
       expect(data.frameworks.anvisa.compliant).toBe(false);
@@ -1277,7 +1300,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(201);
       const data = await response.json();
-      
+
       expect(data.rules[0].config.healthcareData).toBe(true);
       expect(data.rules[1].config.validateHealthcareData).toBe(true);
       expect(data.rules[1].config.restrictedFields).toContain('ssn');
@@ -1324,7 +1347,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(data.frameworks.lgpd.compliant).toBe(true);
       expect(data.frameworks.lgpd.details.consentManagement.compliant).toBe(true);
       expect(data.frameworks.lgpd.details.dataRights.deletion).toBe(true);
@@ -1363,12 +1386,12 @@ describe('Security Policies Contract Tests', () => {
       );
 
       const responses = await Promise.all(concurrentRequests);
-      
+
       // All requests should succeed
       responses.forEach(response => {
         expect(response.status).toBe(200);
       });
-      
+
       expect(evaluateSecurityPolicy).toHaveBeenCalledTimes(10);
     });
 
@@ -1422,7 +1445,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(404);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('SECURITY_POLICY_NOT_FOUND');
     });
@@ -1441,7 +1464,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('INVALID_CSP_CONFIGURATION');
     });
@@ -1457,7 +1480,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(500);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('INTERNAL_SERVER_ERROR');
       expect(errorData.error.severity).toBe('high');
@@ -1476,9 +1499,9 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const policyData = data[0];
-      
+
       // Validate required fields
       expect(policyData).toHaveProperty('id');
       expect(policyData).toHaveProperty('name');
@@ -1489,7 +1512,7 @@ describe('Security Policies Contract Tests', () => {
       expect(policyData).toHaveProperty('compliance');
       expect(policyData).toHaveProperty('createdAt');
       expect(policyData).toHaveProperty('updatedAt');
-      
+
       // Validate data types
       expect(typeof policyData.priority).toBe('number');
       expect(Array.isArray(policyData.rules)).toBe(true);
@@ -1524,7 +1547,7 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       // Validate OpenAPI compliance
       expect(data).toHaveProperty('requestId');
       expect(data).toHaveProperty('policyId');
@@ -1534,7 +1557,7 @@ describe('Security Policies Contract Tests', () => {
       expect(data).toHaveProperty('riskScore');
       expect(data).toHaveProperty('evaluatedAt');
       expect(data).toHaveProperty('compliance');
-      
+
       // Validate data types and constraints
       expect(typeof data.confidence).toBe('number');
       expect(data.confidence).toBeGreaterThanOrEqual(0);
@@ -1557,10 +1580,10 @@ describe('Security Policies Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       // Should handle missing optional fields gracefully
       expect(data[0].evaluationResults).toBeUndefined();
-      
+
       // Core required fields should still be present
       expect(data[0]).toHaveProperty('id');
       expect(data[0]).toHaveProperty('name');

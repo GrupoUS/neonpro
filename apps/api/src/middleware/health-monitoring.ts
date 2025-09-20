@@ -635,13 +635,4 @@ export function metricsEndpoint() {
   };
 }
 
-// Export types and utilities
-export type {
-  ComplianceMetrics,
-  HealthCheckConfig,
-  HealthCheckResult,
-  MetricEntry,
-  PerformanceMetrics,
-  SystemMetrics,
-};
-export { HealthMonitor, healthMonitor, HealthStatus, MetricType };
+

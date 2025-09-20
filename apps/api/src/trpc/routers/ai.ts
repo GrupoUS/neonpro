@@ -14,7 +14,7 @@
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
-import { healthcareProcedure, patientProcedure, protectedProcedure, router } from '../trpc';
+import { healthcareProcedure, protectedProcedure, router } from '../trpc';
 
 // =====================================
 // AI PROVIDER CONFIGURATION

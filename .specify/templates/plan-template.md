@@ -1,5 +1,5 @@
-# Implementation Plan: [FEATURE]
 
+# Implementation Plan: [FEATURE]
 
 **Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
 **Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
@@ -11,18 +11,19 @@
 2. Fill Technical Context (scan for NEEDS CLARIFICATION)
    → Detect Project Type from context (web=frontend+backend, mobile=app+api)
    → Set Structure Decision based on project type
-3. Evaluate Constitution Check section below
+3. Fill the Constitution Check section based on the content of the constitution document.
+4. Evaluate Constitution Check section below
    → If violations exist: Document in Complexity Tracking
    → If no justification possible: ERROR "Simplify approach first"
    → Update Progress Tracking: Initial Constitution Check
-4. Execute Phase 0 → research.md
+5. Execute Phase 0 → research.md
    → If NEEDS CLARIFICATION remain: ERROR "Resolve unknowns"
-5. Execute Phase 1 → contracts, data-model.md, quickstart.md, agent-specific template file (e.g., `CLAUDE.md` for Claude Code, `.github/copilot-instructions.md` for GitHub Copilot, or `GEMINI.md` for Gemini CLI).
-6. Re-evaluate Constitution Check section
+6. Execute Phase 1 → contracts, data-model.md, quickstart.md, agent-specific template file (e.g., `CLAUDE.md` for Claude Code, `.github/copilot-instructions.md` for GitHub Copilot, `GEMINI.md` for Gemini CLI, `QWEN.md` for Qwen Code or `AGENTS.md` for opencode).
+7. Re-evaluate Constitution Check section
    → If new violations: Refactor design, return to Phase 1
    → Update Progress Tracking: Post-Design Constitution Check
-7. Plan Phase 2 → Describe task generation approach (DO NOT create tasks.md)
-8. STOP - Ready for /tasks command
+8. Plan Phase 2 → Describe task generation approach (DO NOT create tasks.md)
+9. STOP - Ready for /tasks command
 ```
 
 **IMPORTANT**: The /plan command STOPS at step 7. Phases 2-4 are executed by other commands:
@@ -46,45 +47,7 @@
 ## Constitution Check
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-**I. Compliance-First Development**:
-- LGPD data protection implemented? (patient consent, audit trails)
-- ANVISA compliance verified? (medical device regulations if applicable)
-- CFM professional standards met? (Brazilian medical council requirements)
-- Patient data anonymization on consent withdrawal?
-
-**II. Test-Driven Development (NON-NEGOTIABLE)**:
-- RED-GREEN-Refactor cycle enforced? (test MUST fail first)
-- 90% test coverage for healthcare components? (patient data, appointments, AI)
-- Git commits show tests before implementation?
-- Order: Contract→Integration→E2E→Unit strictly followed?
-- Real dependencies used? (actual DBs, not mocks)
-- FORBIDDEN: Implementation before test, skipping RED phase
-
-**III. AI-Enhanced Architecture**:
-- Conversational AI integration planned? (24/7 patient engagement)
-- Predictive analytics included? (no-show prevention <10%)
-- AI automation throughout platform? (scheduling, triage, insights)
-- Portuguese language support for AI features?
-
-**IV. Mobile-First Design**:
-- Mobile-optimized for 70%+ usage? (touch interfaces, PWA)
-- Responsive design mandatory? (not degraded mobile experience)
-- Performance targets met? (<500ms patient records, <300ms scheduling)
-
-**V. Real-Time Operations**:
-- WebSocket subscriptions for live updates?
-- Performance targets: 99.9% uptime, <2s AI responses?
-- Critical healthcare operations prioritized?
-
-**Healthcare Standards**:
-- Branded types for medical identifiers? (PatientId, CPF)
-- Healthcare-specific error handling? (severity levels)
-- Comprehensive audit logging? (all data operations)
-
-**Technology Governance**:
-- Required tech stack used? (TanStack Router, Vite, Hono, Supabase)
-- MCP tools integration? (archon, serena, desktop-commander)
-- Quality standard ≥9.5/10 maintained?
+[Gates determined based on constitution file]
 
 ## Project Structure
 
@@ -182,7 +145,7 @@ ios/ or android/
    - Quickstart test = story validation steps
 
 5. **Update agent file incrementally** (O(1) operation):
-   - Run `/scripts/bash/update-agent-context.sh claude` for your AI assistant
+   - Run `.specify/scripts/bash/update-agent-context.sh copilot` for your AI assistant
    - If exists: Add only NEW tech from current plan
    - Preserve manual additions between markers
    - Update recent changes (keep last 3)
@@ -195,7 +158,7 @@ ios/ or android/
 *This section describes what the /tasks command will do - DO NOT execute during /plan*
 
 **Task Generation Strategy**:
-- Load `/templates/tasks-template.md` as base
+- Load `.specify/templates/tasks-template.md` as base
 - Generate tasks from Phase 1 design docs (contracts, data model, quickstart)
 - Each contract → contract test task [P]
 - Each entity → model creation task [P] 
@@ -245,5 +208,4 @@ ios/ or android/
 - [ ] Complexity deviations documented
 
 ---
-**Template Version**: 1.1.0 | **Constitution Version**: 1.0.0 | **Last Updated**: 2025-01-15
-*Based on NeonPro Constitution v1.0.0 - See `.specify/memory/constitution.md`*
+*Based on Constitution v2.1.1 - See `/memory/constitution.md`*

@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { errorTracker, HealthcareErrorTypeSchema, ErrorSeveritySchema } from '../error-tracking';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ErrorSeveritySchema, errorTracker, HealthcareErrorTypeSchema } from '../error-tracking';
 
 // Mock Sentry and OpenTelemetry
 vi.mock('@sentry/node', () => ({
@@ -8,11 +8,13 @@ vi.mock('@sentry/node', () => ({
   setUser: vi.fn(),
   setTag: vi.fn(),
   setContext: vi.fn(),
-  withScope: vi.fn((callback) => callback({
-    setLevel: vi.fn(),
-    setTag: vi.fn(),
-    setContext: vi.fn(),
-  })),
+  withScope: vi.fn(callback =>
+    callback({
+      setLevel: vi.fn(),
+      setTag: vi.fn(),
+      setContext: vi.fn(),
+    })
+  ),
 }));
 
 vi.mock('@opentelemetry/api', () => ({
@@ -81,7 +83,7 @@ describe('HealthcareErrorTracker', () => {
   it('should export correct types and schemas', () => {
     expect(HealthcareErrorTypeSchema).toBeDefined();
     expect(ErrorSeveritySchema).toBeDefined();
-    
+
     // Test enum values
     expect(HealthcareErrorTypeSchema.enum.data_access_violation).toBe('data_access_violation');
     expect(ErrorSeveritySchema.enum.critical).toBe('critical');

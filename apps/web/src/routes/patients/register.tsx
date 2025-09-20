@@ -1,682 +1,387 @@
-import { AnimatedModal } from '@/components/ui/animated-modal';
+'use client';
+
+import { PatientRegistrationWizard } from '@/components/patients/PatientRegistrationWizard';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Checkbox } from '@/components/ui/checkbox';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
-import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
-import React, { useState } from 'react';
+import {
+  AlertTriangle,
+  ArrowLeft,
+  CheckCircle,
+  Clock,
+  FileText,
+  Heart,
+  Save,
+  Shield,
+  UserPlus,
+  Users,
+  Zap,
+} from 'lucide-react';
+import { useState } from 'react';
 
 export const Route = createFileRoute('/patients/register')({
   component: PatientRegister,
 });
 
-interface PatientFormData {
-  // Personal Information
-  name: string;
-  email: string;
-  phone: string;
-  cpf: string;
-  birth_date: string;
-  gender: string;
-  blood_type: string;
-
-  // Address
-  address_street: string;
-  address_number: string;
-  address_complement: string;
-  address_neighborhood: string;
-  address_city: string;
-  address_state: string;
-  address_zip_code: string;
-
-  // Emergency Contact
-  emergency_name: string;
-  emergency_phone: string;
-  emergency_relationship: string;
-
-  // Health Insurance
-  insurance_provider: string;
-  insurance_plan_type: string;
-  insurance_policy_number: string;
-  insurance_valid_until: string;
-
-  // LGPD Consent
-  lgpd_data_processing: boolean;
-  lgpd_communication: boolean;
-  lgpd_storage: boolean;
-  lgpd_ai_processing: boolean;
-  lgpd_consent_date: string;
+interface RegistrationProgress {
+  currentStep: number;
+  completedSteps: number[];
+  draftSaved: boolean;
+  lastSaved: Date | null;
+  validationErrors: string[];
 }
-
-interface FormErrors {
-  [key: string]: string;
-}
-
-const brazilianStates = [
-  'AC',
-  'AL',
-  'AP',
-  'AM',
-  'BA',
-  'CE',
-  'DF',
-  'ES',
-  'GO',
-  'MA',
-  'MT',
-  'MS',
-  'MG',
-  'PA',
-  'PB',
-  'PR',
-  'PE',
-  'PI',
-  'RJ',
-  'RN',
-  'RS',
-  'RO',
-  'RR',
-  'SC',
-  'SP',
-  'SE',
-  'TO',
-];
-
-const bloodTypes = [
-  'A+',
-  'A-',
-  'B+',
-  'B-',
-  'AB+',
-  'AB-',
-  'O+',
-  'O-',
-];
-
-const insuranceProviders = [
-  'Unimed',
-  'Amil',
-  'Bradesco Saúde',
-  'SulAmérica',
-  'Porto Seguro',
-  'Notredame',
-  'Intermédica',
-  'Outra',
-];
 
 function PatientRegister() {
-  const [formData, setFormData] = useState<PatientFormData>({
-    name: '',
-    email: '',
-    phone: '',
-    cpf: '',
-    birth_date: '',
-    gender: '',
-    blood_type: '',
-    address_street: '',
-    address_number: '',
-    address_complement: '',
-    address_neighborhood: '',
-    address_city: '',
-    address_state: '',
-    address_zip_code: '',
-    emergency_name: '',
-    emergency_phone: '',
-    emergency_relationship: '',
-    insurance_provider: '',
-    insurance_plan_type: '',
-    insurance_policy_number: '',
-    insurance_valid_until: '',
-    lgpd_data_processing: false,
-    lgpd_communication: false,
-    lgpd_storage: false,
-    lgpd_ai_processing: false,
-    lgpd_consent_date: new Date().toISOString(),
+  const [isWizardOpen, setIsWizardOpen] = useState(true);
+  const [registrationProgress, setRegistrationProgress] = useState<RegistrationProgress>({
+    currentStep: 1,
+    completedSteps: [],
+    draftSaved: false,
+    lastSaved: null,
+    validationErrors: [],
   });
-
-  const [errors, setErrors] = useState<FormErrors>({});
-  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [recentlyCreated, setRecentlyCreated] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const validateForm = (): boolean => {
-    const newErrors: FormErrors = {};
+  // Handle successful patient creation
+  const handlePatientCreated = (patient: any) => {
+    setRecentlyCreated(patient.id);
+    setIsWizardOpen(false);
 
-    // Personal Information
-    if (!formData.name.trim()) {
-      newErrors.name = 'Nome é obrigatório';
-    }
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email é obrigatório';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Email inválido';
-    }
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Telefone é obrigatório';
-    }
-    if (!formData.cpf.trim()) {
-      newErrors.cpf = 'CPF é obrigatório';
-    } else if (!/^\d{11}$/.test(formData.cpf.replace(/\D/g, ''))) {
-      newErrors.cpf = 'CPF inválido';
-    }
-    if (!formData.birth_date) {
-      newErrors.birth_date = 'Data de nascimento é obrigatória';
-    }
-    if (!formData.gender) {
-      newErrors.gender = 'Gênero é obrigatório';
-    }
+    toast({
+      title: 'Paciente cadastrado com sucesso!',
+      description: `O paciente ${patient.name} foi cadastrado no sistema conforme LGPD.`,
+      duration: 5000,
+    });
 
-    // Address
-    if (!formData.address_street.trim()) {
-      newErrors.address_street = 'Rua é obrigatória';
-    }
-    if (!formData.address_number.trim()) {
-      newErrors.address_number = 'Número é obrigatório';
-    }
-    if (!formData.address_neighborhood.trim()) {
-      newErrors.address_neighborhood = 'Bairro é obrigatório';
-    }
-    if (!formData.address_city.trim()) {
-      newErrors.address_city = 'Cidade é obrigatória';
-    }
-    if (!formData.address_state) {
-      newErrors.address_state = 'Estado é obrigatório';
-    }
-    if (!formData.address_zip_code.trim()) {
-      newErrors.address_zip_code = 'CEP é obrigatório';
-    } else if (
-      !/^\d{5}-?\d{3}$/.test(
-        formData.address_zip_code.replace(/\D/g, '').replace(/(\d{5})(\d{3})/, '$1-$2'),
-      )
-    ) {
-      newErrors.address_zip_code = 'CEP inválido';
-    }
-
-    // Emergency Contact
-    if (!formData.emergency_name.trim()) {
-      newErrors.emergency_name = 'Nome do contato de emergência é obrigatório';
-    }
-    if (!formData.emergency_phone.trim()) {
-      newErrors.emergency_phone = 'Telefone do contato de emergência é obrigatório';
-    }
-    if (!formData.emergency_relationship.trim()) {
-      newErrors.emergency_relationship = 'Relação com o paciente é obrigatória';
-    }
-
-    // LGPD Consent
-    if (!formData.lgpd_data_processing) {
-      newErrors.lgpd_data_processing = 'Consentimento de processamento de dados é obrigatório';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    // Update progress
+    setRegistrationProgress(prev => ({
+      ...prev,
+      completedSteps: [1, 2, 3, 4, 5],
+      currentStep: 5,
+      draftSaved: false,
+      lastSaved: new Date(),
+      validationErrors: [],
+    }));
   };
 
-  const handleInputChange = (field: keyof PatientFormData, value: string | boolean) => {
-    setFormData(prev => ({
+  // Handle wizard step changes
+  const handleStepChange = (step: number, completedSteps: number[]) => {
+    setRegistrationProgress(prev => ({
       ...prev,
-      [field]: value,
+      currentStep: step,
+      completedSteps,
+    }));
+  };
+
+  // Handle draft save
+  const handleDraftSave = () => {
+    setRegistrationProgress(prev => ({
+      ...prev,
+      draftSaved: true,
+      lastSaved: new Date(),
     }));
 
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: '',
-      }));
+    toast({
+      title: 'Rascunho salvo',
+      description: 'As informações foram salvas como rascunho.',
+      duration: 3000,
+    });
+  };
+
+  // Handle validation errors
+  const handleValidationError = (errors: string[]) => {
+    setRegistrationProgress(prev => ({
+      ...prev,
+      validationErrors: errors,
+    }));
+  };
+
+  // Navigate back to dashboard
+  const handleBackToDashboard = () => {
+    navigate({ to: '/patients/dashboard' });
+  };
+
+  // Navigate to patient details
+  const handleViewPatient = () => {
+    if (recentlyCreated) {
+      navigate({ to: '/patients/$patientId', params: { patientId: recentlyCreated } });
     }
   };
 
-  const formatCPF = (value: string) => {
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+  // Reset form for new registration
+  const handleRegisterAnother = () => {
+    setRecentlyCreated(null);
+    setIsWizardOpen(true);
+    setRegistrationProgress({
+      currentStep: 1,
+      completedSteps: [],
+      draftSaved: false,
+      lastSaved: null,
+      validationErrors: [],
+    });
   };
 
-  const formatPhone = (value: string) => {
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{2})(\d)/, '($1) $2')
-      .replace(/(\d{5})(\d)/, '$1-$2');
-  };
-
-  const formatZipCode = (value: string) => {
-    return value
-      .replace(/\D/g, '')
-      .replace(/(\d{5})(\d)/, '$1-$2');
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (validateForm()) {
-      setShowConfirmModal(true);
-    }
-  };
-
-  const confirmSubmit = () => {
-    // Mock API call
-    setTimeout(() => {
-      toast({
-        title: 'Paciente cadastrado com sucesso',
-        description: `${formData.name} foi cadastrado no sistema.`,
-      });
-      setShowConfirmModal(false);
-      navigate({ to: '/patients/dashboard' });
-    }, 1000);
-  };
-
-  const sections = [
-    {
-      title: 'Informações Pessoais',
-      fields: [
-        { name: 'name', label: 'Nome Completo', type: 'text', required: true },
-        { name: 'email', label: 'Email', type: 'email', required: true },
-        {
-          name: 'phone',
-          label: 'Telefone',
-          type: 'text',
-          required: true,
-          format: formatPhone,
-        },
-        {
-          name: 'cpf',
-          label: 'CPF',
-          type: 'text',
-          required: true,
-          format: formatCPF,
-        },
-        { name: 'birth_date', label: 'Data de Nascimento', type: 'date', required: true },
-        {
-          name: 'gender',
-          label: 'Gênero',
-          type: 'select',
-          required: true,
-          options: [
-            { value: 'M', label: 'Masculino' },
-            { value: 'F', label: 'Feminino' },
-            { value: 'O', label: 'Outro' },
-          ],
-        },
-        {
-          name: 'blood_type',
-          label: 'Tipo Sanguíneo',
-          type: 'select',
-          options: bloodTypes.map(type => ({ value: type, label: type })),
-        },
-      ],
-    },
-    {
-      title: 'Endereço',
-      fields: [
-        { name: 'address_street', label: 'Rua', type: 'text', required: true },
-        { name: 'address_number', label: 'Número', type: 'text', required: true },
-        { name: 'address_complement', label: 'Complemento', type: 'text' },
-        { name: 'address_neighborhood', label: 'Bairro', type: 'text', required: true },
-        { name: 'address_city', label: 'Cidade', type: 'text', required: true },
-        {
-          name: 'address_state',
-          label: 'Estado',
-          type: 'select',
-          required: true,
-          options: brazilianStates.map(state => ({ value: state, label: state })),
-        },
-        {
-          name: 'address_zip_code',
-          label: 'CEP',
-          type: 'text',
-          required: true,
-          format: formatZipCode,
-        },
-      ],
-    },
-    {
-      title: 'Contato de Emergência',
-      fields: [
-        { name: 'emergency_name', label: 'Nome do Contato', type: 'text', required: true },
-        {
-          name: 'emergency_phone',
-          label: 'Telefone do Contato',
-          type: 'text',
-          required: true,
-          format: formatPhone,
-        },
-        {
-          name: 'emergency_relationship',
-          label: 'Relação com o Paciente',
-          type: 'text',
-          required: true,
-        },
-      ],
-    },
-    {
-      title: 'Plano de Saúde',
-      fields: [
-        {
-          name: 'insurance_provider',
-          label: 'Operadora',
-          type: 'select',
-          options: [
-            ...insuranceProviders.map(provider => ({ value: provider, label: provider })),
-            { value: '', label: 'Particular' },
-          ],
-        },
-        {
-          name: 'insurance_plan_type',
-          label: 'Tipo de Plano',
-          type: 'select',
-          options: [
-            { value: 'basic', label: 'Básico' },
-            { value: 'standard', label: 'Padrão' },
-            { value: 'comprehensive', label: 'Abrangente' },
-            { value: 'premium', label: 'Premium' },
-          ],
-        },
-        { name: 'insurance_policy_number', label: 'Número da Apólice', type: 'text' },
-        { name: 'insurance_valid_until', label: 'Validade', type: 'date' },
-      ],
-    },
-  ];
-
-  const renderField = (field: any) => {
-    const value = formData[field.name as keyof PatientFormData];
-    const error = errors[field.name];
-
-    if (field.type === 'select') {
-      return (
-        <div key={field.name} className='space-y-2'>
-          <Label htmlFor={field.name}>
-            {field.label} {field.required && <span className='text-red-500'>*</span>}
-          </Label>
-          <Select value={value} onValueChange={v => handleInputChange(field.name, v)}>
-            <SelectTrigger className={error ? 'border-red-500' : ''}>
-              <SelectValue placeholder={`Selecione ${field.label.toLowerCase()}`} />
-            </SelectTrigger>
-            <SelectContent>
-              {field.options?.map((option: any) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {error && <p className='text-sm text-red-500'>{error}</p>}
-        </div>
-      );
-    }
-
-    return (
-      <div key={field.name} className='space-y-2'>
-        <Label htmlFor={field.name}>
-          {field.label} {field.required && <span className='text-red-500'>*</span>}
-        </Label>
-        <Input
-          id={field.name}
-          type={field.type}
-          value={value}
-          onChange={e => {
-            let formattedValue = e.target.value;
-            if (field.format) {
-              formattedValue = field.format(formattedValue);
-            }
-            handleInputChange(field.name, formattedValue);
-          }}
-          className={error ? 'border-red-500' : ''}
-          placeholder={field.placeholder || `Digite ${field.label.toLowerCase()}`}
-        />
-        {error && <p className='text-sm text-red-500'>{error}</p>}
-      </div>
-    );
-  };
+  // Mock clinic ID - in real app this would come from context/auth
+  const clinicId = 'default-clinic-id';
 
   return (
-    <div className='container mx-auto p-6 max-w-4xl'>
-      {/* Header */}
-      <div className='mb-8'>
-        <div className='flex items-center gap-4 mb-4'>
-          <Button
-            variant='outline'
-            onClick={() => navigate({ to: '/patients/dashboard' })}
-          >
-            ← Voltar
-          </Button>
-          <div>
-            <h1 className='text-3xl font-bold tracking-tight'>Cadastro de Paciente</h1>
-            <p className='text-muted-foreground'>
-              Preencha as informações abaixo para cadastrar um novo paciente
-            </p>
+    <div className='container mx-auto p-4 sm:p-6 max-w-6xl'>
+      {/* Header with CFM compliance */}
+      <header className='space-y-4 sm:space-y-6 mb-6 sm:mb-8'>
+        {/* CFM Header */}
+        <div className='bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4'>
+          <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2'>
+            <div className='flex items-center gap-2'>
+              <Shield className='h-5 w-5 text-blue-600' />
+              <span className='text-sm sm:text-base font-medium text-blue-900'>
+                CRM/SP 123456 - Dr. João Silva
+              </span>
+            </div>
+            <div className='flex items-center gap-2'>
+              <FileText className='h-4 w-4 text-blue-600' />
+              <span className='text-xs sm:text-sm text-blue-700'>
+                Cadastro conforme LGPD - Resolução CFM 2.314/2022
+              </span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <form onSubmit={handleSubmit} className='space-y-8'>
-        {sections.map(section => (
-          <Card key={section.title}>
-            <CardHeader>
-              <CardTitle>{section.title}</CardTitle>
-              <CardDescription>
-                {section.title === 'Informações Pessoais' && 'Dados básicos do paciente'}
-                {section.title === 'Endereço' && 'Endereço residencial do paciente'}
-                {section.title === 'Contato de Emergência'
-                  && 'Informações para contato em caso de emergência'}
-                {section.title === 'Plano de Saúde'
-                  && 'Informações sobre o plano de saúde (opcional)'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                {section.fields.map(renderField)}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+          <div>
+            <h1 className='text-2xl sm:text-3xl font-bold tracking-tight text-gray-900'>
+              Cadastro de Pacientes
+            </h1>
+            <p className='text-sm sm:text-base text-muted-foreground mt-1 sm:mt-0'>
+              Cadastre novos pacientes com todas as informações necessárias para tratamento
+            </p>
+          </div>
 
-        {/* LGPD Consent Section */}
-        <Card>
+          <Button
+            variant='outline'
+            onClick={handleBackToDashboard}
+            className='h-11 sm:h-10 text-base sm:text-sm font-medium'
+            aria-label='Voltar para o dashboard de pacientes'
+          >
+            <ArrowLeft className='h-4 w-4 mr-2' />
+            Voltar
+          </Button>
+        </div>
+      </header>
+
+      {/* Progress Overview */}
+      {!recentlyCreated && (
+        <Card className='mb-6'>
           <CardHeader>
-            <CardTitle>Consentimento LGPD</CardTitle>
+            <CardTitle className='flex items-center gap-2'>
+              <Users className='h-5 w-5 text-blue-600' />
+              Status do Cadastro
+            </CardTitle>
             <CardDescription>
-              De acordo com a Lei Geral de Proteção de Dados, necessitamos do seu consentimento para
-              processar os dados do paciente
+              Acompanhe o progresso do cadastro do paciente
             </CardDescription>
           </CardHeader>
           <CardContent className='space-y-4'>
-            <div className='space-y-3'>
-              <div className='flex items-start space-x-3'>
-                <Checkbox
-                  id='lgpd_data_processing'
-                  checked={formData.lgpd_data_processing}
-                  onCheckedChange={checked =>
-                    handleInputChange('lgpd_data_processing', checked as boolean)}
-                />
-                <div className='grid gap-1.5 leading-none'>
-                  <Label
-                    htmlFor='lgpd_data_processing'
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-                  >
-                    Processamento de Dados *
-                  </Label>
-                  <p className='text-sm text-muted-foreground'>
-                    Autorizo o processamento de meus dados para fins médicos e administrativos
-                  </p>
-                </div>
-              </div>
+            {/* Progress Steps */}
+            <div className='grid gap-4 grid-cols-1 sm:grid-cols-5'>
+              {[
+                { id: 1, title: 'Informações Básicas', icon: UserPlus },
+                { id: 2, title: 'Contato e Endereço', icon: Heart },
+                { id: 3, title: 'Documentos', icon: FileText },
+                { id: 4, title: 'Informações Médicas', icon: Heart },
+                { id: 5, title: 'Consentimento LGPD', icon: Shield },
+              ].map(step => {
+                const isCompleted = registrationProgress.completedSteps.includes(step.id);
+                const isCurrent = registrationProgress.currentStep === step.id;
+                const isError = registrationProgress.validationErrors.length > 0 && isCurrent;
 
-              <div className='flex items-start space-x-3'>
-                <Checkbox
-                  id='lgpd_communication'
-                  checked={formData.lgpd_communication}
-                  onCheckedChange={checked =>
-                    handleInputChange('lgpd_communication', checked as boolean)}
-                />
-                <div className='grid gap-1.5 leading-none'>
-                  <Label
-                    htmlFor='lgpd_communication'
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-                  >
-                    Comunicação
-                  </Label>
-                  <p className='text-sm text-muted-foreground'>
-                    Autorizo o envio de comunicações sobre consultas e exames
-                  </p>
-                </div>
-              </div>
-
-              <div className='flex items-start space-x-3'>
-                <Checkbox
-                  id='lgpd_storage'
-                  checked={formData.lgpd_storage}
-                  onCheckedChange={checked => handleInputChange('lgpd_storage', checked as boolean)}
-                />
-                <div className='grid gap-1.5 leading-none'>
-                  <Label
-                    htmlFor='lgpd_storage'
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-                  >
-                    Armazenamento
-                  </Label>
-                  <p className='text-sm text-muted-foreground'>
-                    Autorizo o armazenamento seguro de meus dados médicos
-                  </p>
-                </div>
-              </div>
-
-              <div className='flex items-start space-x-3'>
-                <Checkbox
-                  id='lgpd_ai_processing'
-                  checked={formData.lgpd_ai_processing}
-                  onCheckedChange={checked =>
-                    handleInputChange('lgpd_ai_processing', checked as boolean)}
-                />
-                <div className='grid gap-1.5 leading-none'>
-                  <Label
-                    htmlFor='lgpd_ai_processing'
-                    className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
-                  >
-                    Processamento por IA
-                  </Label>
-                  <p className='text-sm text-muted-foreground'>
-                    Autorizo o uso de inteligência artificial para análise e previsões de saúde
-                  </p>
-                </div>
-              </div>
+                return (
+                  <div key={step.id} className='text-center'>
+                    <div
+                      className={cn(
+                        'w-12 h-12 mx-auto rounded-full flex items-center justify-center text-sm font-medium transition-all',
+                        isCompleted
+                          ? 'bg-green-100 text-green-700 border-2 border-green-300'
+                          : isCurrent
+                          ? isError
+                            ? 'bg-red-100 text-red-700 border-2 border-red-300'
+                            : 'bg-blue-100 text-blue-700 border-2 border-blue-300'
+                          : 'bg-gray-100 text-gray-500 border-2 border-gray-300',
+                      )}
+                      aria-label={`${step.title} - ${
+                        isCompleted ? 'Concluído' : isCurrent ? 'Em andamento' : 'Pendente'
+                      }`}
+                    >
+                      {isCompleted
+                        ? <CheckCircle className='h-6 w-6' />
+                        : <step.icon className='h-6 w-6' />}
+                    </div>
+                    <div className='mt-2'>
+                      <div className='text-xs sm:text-sm font-medium text-gray-900'>
+                        {step.title}
+                      </div>
+                      <div className='text-xs text-gray-500'>
+                        {isCompleted ? 'Concluído' : isCurrent ? 'Atual' : 'Pendente'}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            {errors.lgpd_data_processing && (
-              <p className='text-sm text-red-500'>{errors.lgpd_data_processing}</p>
-            )}
+            {/* Status Information */}
+            <div className='grid gap-4 grid-cols-1 sm:grid-cols-3'>
+              <div className='flex items-center gap-2'>
+                <Clock className='h-4 w-4 text-blue-600' />
+                <span className='text-sm text-gray-700'>
+                  Passo atual: {registrationProgress.currentStep}/5
+                </span>
+              </div>
 
-            <div className='text-xs text-muted-foreground'>
-              Data do consentimento:{' '}
-              {format(new Date(formData.lgpd_consent_date), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+              {registrationProgress.draftSaved && registrationProgress.lastSaved && (
+                <div className='flex items-center gap-2'>
+                  <Save className='h-4 w-4 text-green-600' />
+                  <span className='text-sm text-gray-700'>
+                    Rascunho salvo às {registrationProgress.lastSaved.toLocaleTimeString('pt-BR')}
+                  </span>
+                </div>
+              )}
+
+              {registrationProgress.validationErrors.length > 0 && (
+                <div className='flex items-center gap-2'>
+                  <AlertTriangle className='h-4 w-4 text-red-600' />
+                  <span className='text-sm text-red-700'>
+                    {registrationProgress.validationErrors.length} erro(s) de validação
+                  </span>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
+      )}
 
-        {/* Form Actions */}
-        <div className='flex justify-end gap-4'>
-          <UniversalButton
-            variant='outline'
-            type='button'
-            onClick={() => navigate({ to: '/patients/dashboard' })}
-          >
-            Cancelar
-          </UniversalButton>
-          <UniversalButton
-            variant='primary'
-            type='submit'
-            className='bg-blue-600 hover:bg-blue-700'
-          >
-            Cadastrar Paciente
-          </UniversalButton>
-        </div>
-      </form>
-
-      {/* Confirmation Modal */}
-      <AnimatedModal
-        isOpen={showConfirmModal}
-        onClose={() => setShowConfirmModal(false)}
-        title='Confirmar Cadastro'
-        description={`Tem certeza que deseja cadastrar o paciente "${formData.name}" com as informações fornecidas?`}
-      >
-        <div className='space-y-4 mt-6'>
-          <div className='grid grid-cols-2 gap-4 text-sm'>
-            <div>
-              <span className='font-medium'>Email:</span> {formData.email}
-            </div>
-            <div>
-              <span className='font-medium'>Telefone:</span> {formData.phone}
-            </div>
-            <div>
-              <span className='font-medium'>CPF:</span> {formData.cpf}
-            </div>
-            <div>
-              <span className='font-medium'>Data de Nascimento:</span> {formData.birth_date}
-            </div>
-          </div>
-
-          <div className='border-t pt-4'>
-            <h4 className='font-medium mb-2'>Consentimentos LGPD:</h4>
-            <div className='space-y-1 text-sm'>
-              <div className='flex items-center gap-2'>
-                <span>✓</span>
-                <span>Processamento de Dados</span>
+      {/* Main Content */}
+      {recentlyCreated
+        ? (
+          /* Success State */
+          <Card>
+            <CardHeader className='text-center'>
+              <div className='w-16 h-16 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-4'>
+                <CheckCircle className='h-8 w-8 text-green-600' />
               </div>
-              {formData.lgpd_communication && (
-                <div className='flex items-center gap-2'>
-                  <span>✓</span>
-                  <span>Comunicação</span>
+              <CardTitle className='text-xl sm:text-2xl text-green-900'>
+                Paciente Cadastrado com Sucesso!
+              </CardTitle>
+              <CardDescription className='text-base'>
+                O paciente foi cadastrado no sistema e já está disponível para agendamento de
+                consultas.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-6'>
+              {/* Compliance Information */}
+              <div className='bg-green-50 border border-green-200 rounded-lg p-4'>
+                <div className='flex items-center gap-2 mb-2'>
+                  <Shield className='h-5 w-5 text-green-600' />
+                  <span className='font-medium text-green-900'>
+                    Conformidade LGPD Verificada
+                  </span>
                 </div>
-              )}
-              {formData.lgpd_storage && (
-                <div className='flex items-center gap-2'>
-                  <span>✓</span>
-                  <span>Armazenamento</span>
-                </div>
-              )}
-              {formData.lgpd_ai_processing && (
-                <div className='flex items-center gap-2'>
-                  <span>✓</span>
-                  <span>Processamento por IA</span>
-                </div>
-              )}
-            </div>
-          </div>
+                <ul className='text-sm text-green-800 space-y-1'>
+                  <li>• Consentimento de processamento de dados obtido</li>
+                  <li>• Informações criptografadas e armazenadas com segurança</li>
+                  <li>• Audit trail registrado conforme resolução CFM 2.314/2022</li>
+                  <li>• Direitos do paciente garantidos e documentados</li>
+                </ul>
+              </div>
 
-          <div className='flex justify-end gap-3'>
-            <UniversalButton
-              variant='outline'
-              onClick={() => setShowConfirmModal(false)}
-            >
-              Revisar
-            </UniversalButton>
-            <UniversalButton
-              variant='primary'
-              onClick={confirmSubmit}
-              className='bg-blue-600 hover:bg-blue-700'
-            >
-              Confirmar Cadastro
-            </UniversalButton>
-          </div>
-        </div>
-      </AnimatedModal>
+              {/* Action Buttons */}
+              <div className='flex flex-col sm:flex-row gap-3'>
+                <Button
+                  variant='default'
+                  onClick={handleViewPatient}
+                  className='h-12 sm:h-11 text-base sm:text-sm font-medium flex-1'
+                  aria-label='Visualizar detalhes do paciente recém-cadastrado'
+                >
+                  <Users className='h-4 w-4 mr-2' />
+                  Visualizar Paciente
+                </Button>
+
+                <Button
+                  variant='outline'
+                  onClick={handleRegisterAnother}
+                  className='h-12 sm:h-11 text-base sm:text-sm font-medium flex-1'
+                  aria-label='Cadastrar outro paciente'
+                >
+                  <UserPlus className='h-4 w-4 mr-2' />
+                  Cadastrar Outro
+                </Button>
+
+                <Button
+                  variant='outline'
+                  onClick={handleBackToDashboard}
+                  className='h-12 sm:h-11 text-base sm:text-sm font-medium flex-1'
+                  aria-label='Voltar para o dashboard'
+                >
+                  <ArrowLeft className='h-4 w-4 mr-2' />
+                  Voltar ao Dashboard
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )
+        : (
+          /* Registration Wizard */
+          <PatientRegistrationWizard
+            open={isWizardOpen}
+            onOpenChange={setIsWizardOpen}
+            clinicId={clinicId}
+            onPatientCreated={handlePatientCreated}
+            onStepChange={handleStepChange}
+            onDraftSave={handleDraftSave}
+            onValidationError={handleValidationError}
+          />
+        )}
+
+      {/* LGPD Information Footer */}
+      <footer className='mt-8 sm:mt-12'>
+        <Card className='bg-gray-50'>
+          <CardContent className='p-4 sm:p-6'>
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4'>
+              <div className='flex items-center gap-3'>
+                <Shield className='h-6 w-6 text-blue-600' />
+                <div>
+                  <h3 className='text-sm font-medium text-gray-900'>
+                    Proteção de Dados LGPD
+                  </h3>
+                  <p className='text-xs text-gray-600'>
+                    Todos os dados são processados conforme Lei Geral de Proteção de Dados
+                  </p>
+                </div>
+              </div>
+
+              <div className='flex items-center gap-2'>
+                <Badge variant='outline' className='text-xs'>
+                  Criptografia AES-256
+                </Badge>
+                <Badge variant='outline' className='text-xs'>
+                  Audit Trail Completo
+                </Badge>
+                <Badge variant='outline' className='text-xs'>
+                  Conforme CFM
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </footer>
     </div>
   );
+}
+
+// Helper function for conditional class names
+function cn(...classes: (string | undefined | null | false)[]) {
+  return classes.filter(Boolean).join(' ');
 }

@@ -1,0 +1,28 @@
+{
+  "name": "@neonpro/validators",
+  "version": "1.0.0",
+  "description": "Brazilian document validation utilities for NeonPro healthcare platform",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tsup": "^8.0.0",
+    "typescript": "^5.7.2"
+  },
+  "keywords": [
+    "validators",
+    "brazilian",
+    "cpf",
+    "cnpj",
+    "healthcare",
+    "neonpro"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT"
+}

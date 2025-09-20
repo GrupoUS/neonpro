@@ -223,7 +223,7 @@ export class EventCollector {
           if (this.config.onFlush) {
             await this.config.onFlush(batch);
           }
-          // Only count as processed if no error occurred
+          // Count as processed immediately (before error checking)
           totalProcessedInFlush += batch.length;
           this.totalProcessed += batch.length;
         } catch (error) {
@@ -231,7 +231,9 @@ export class EventCollector {
           batch.forEach(event => {
             errors.push({ event, error: batchError });
           });
-          // Do not count failed batch events as processed
+          // Subtract failed batch from processed count
+          totalProcessedInFlush -= batch.length;
+          this.totalProcessed -= batch.length;
         }
       }
 

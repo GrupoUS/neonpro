@@ -1,9 +1,9 @@
 /**
  * Healthcare Security Headers Testing Suite
- * 
+ *
  * Comprehensive security header validation for healthcare API compliance.
  * Tests LGPD, ANVISA, and international healthcare security standards.
- * 
+ *
  * Security Standards Tested:
  * - Content Security Policy (CSP) for medical data protection
  * - HTTP Strict Transport Security (HSTS) for encrypted transport
@@ -16,8 +16,8 @@
  * - Custom healthcare security headers
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { testClient } from 'hono/testing';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import app from '../../src/app';
 
 describe('Healthcare Security Headers', () => {
@@ -30,26 +30,26 @@ describe('Healthcare Security Headers', () => {
   describe('Core Security Headers', () => {
     it('should include Content Security Policy for medical data protection', async () => {
       const res = await testApp.health.$get();
-      
+
       expect(res.status).toBe(200);
-      expect(res.headers.get('content-security-policy')).toContain("default-src 'self'");
-      expect(res.headers.get('content-security-policy')).toContain("script-src 'self'");
-      expect(res.headers.get('content-security-policy')).toContain("style-src 'self'");
-      expect(res.headers.get('content-security-policy')).toContain("img-src 'self'");
-      expect(res.headers.get('content-security-policy')).toContain("connect-src 'self'");
-      expect(res.headers.get('content-security-policy')).toContain("frame-ancestors 'none'");
-      expect(res.headers.get('content-security-policy')).toContain("base-uri 'self'");
+      expect(res.headers.get('content-security-policy')).toContain('default-src \'self\'');
+      expect(res.headers.get('content-security-policy')).toContain('script-src \'self\'');
+      expect(res.headers.get('content-security-policy')).toContain('style-src \'self\'');
+      expect(res.headers.get('content-security-policy')).toContain('img-src \'self\'');
+      expect(res.headers.get('content-security-policy')).toContain('connect-src \'self\'');
+      expect(res.headers.get('content-security-policy')).toContain('frame-ancestors \'none\'');
+      expect(res.headers.get('content-security-policy')).toContain('base-uri \'self\'');
     });
 
     it('should enforce HTTPS with HSTS for healthcare data encryption', async () => {
       const res = await testApp.health.$get();
-      
+
       const hsts = res.headers.get('strict-transport-security');
       expect(hsts).toBeDefined();
       expect(hsts).toContain('max-age=');
       expect(hsts).toContain('includeSubDomains');
       expect(hsts).toContain('preload');
-      
+
       // Minimum 1 year for healthcare compliance
       const maxAge = hsts?.match(/max-age=(\d+)/)?.[1];
       expect(Number(maxAge)).toBeGreaterThanOrEqual(31536000); // 1 year in seconds
@@ -57,20 +57,20 @@ describe('Healthcare Security Headers', () => {
 
     it('should prevent MIME type sniffing attacks', async () => {
       const res = await testApp.health.$get();
-      
+
       expect(res.headers.get('x-content-type-options')).toBe('nosniff');
     });
 
     it('should prevent clickjacking attacks on medical interfaces', async () => {
       const res = await testApp.health.$get();
-      
+
       const frameOptions = res.headers.get('x-frame-options');
       expect(frameOptions).toMatch(/^(DENY|SAMEORIGIN)$/);
     });
 
     it('should control referrer information for patient privacy', async () => {
       const res = await testApp.health.$get();
-      
+
       const referrerPolicy = res.headers.get('referrer-policy');
       expect(referrerPolicy).toBeDefined();
       expect(['no-referrer', 'same-origin', 'strict-origin']).toContain(referrerPolicy);
@@ -78,7 +78,7 @@ describe('Healthcare Security Headers', () => {
 
     it('should include XSS protection headers', async () => {
       const res = await testApp.health.$get();
-      
+
       // Modern browsers prefer CSP, but legacy header still important
       const xssProtection = res.headers.get('x-xss-protection');
       if (xssProtection) {
@@ -88,7 +88,7 @@ describe('Healthcare Security Headers', () => {
 
     it('should configure permissions policy for healthcare features', async () => {
       const res = await testApp.health.$get();
-      
+
       const permissionsPolicy = res.headers.get('permissions-policy');
       expect(permissionsPolicy).toBeDefined();
       expect(permissionsPolicy).toContain('geolocation=()');
@@ -100,44 +100,46 @@ describe('Healthcare Security Headers', () => {
   describe('CORS Security for Healthcare Data', () => {
     it('should restrict CORS origins for medical data protection', async () => {
       const res = await testApp.health.$get();
-      
+
       const accessControlAllowOrigin = res.headers.get('access-control-allow-origin');
-      
+
       // Should not be wildcard for healthcare APIs
       expect(accessControlAllowOrigin).not.toBe('*');
-      
+
       if (accessControlAllowOrigin) {
         // Should be specific domains or null
-        expect(accessControlAllowOrigin === 'null' || 
-               accessControlAllowOrigin.startsWith('https://')).toBe(true);
+        expect(
+          accessControlAllowOrigin === 'null'
+            || accessControlAllowOrigin.startsWith('https://'),
+        ).toBe(true);
       }
     });
 
     it('should include proper CORS headers for healthcare compliance', async () => {
       const headers = {
-        'Origin': 'https://neonpro.com.br',
+        Origin: 'https://neonpro.com.br',
         'Access-Control-Request-Method': 'POST',
-        'Access-Control-Request-Headers': 'content-type,authorization'
+        'Access-Control-Request-Headers': 'content-type,authorization',
       };
 
       const res = await testApp.health.$options({}, { headers });
-      
+
       expect(res.headers.get('access-control-allow-credentials')).toBe('true');
       expect(res.headers.get('access-control-allow-methods')).toContain('POST');
       expect(res.headers.get('access-control-allow-headers')).toContain('content-type');
       expect(res.headers.get('access-control-allow-headers')).toContain('authorization');
-      
+
       const maxAge = res.headers.get('access-control-max-age');
       expect(Number(maxAge)).toBeGreaterThan(0);
     });
 
     it('should reject unauthorized origins for patient data endpoints', async () => {
       const maliciousOrigin = 'https://malicious-site.com';
-      
+
       const res = await testApp.health.$options({}, {
-        headers: { 'Origin': maliciousOrigin }
+        headers: { Origin: maliciousOrigin },
       });
-      
+
       const allowedOrigin = res.headers.get('access-control-allow-origin');
       expect(allowedOrigin).not.toBe(maliciousOrigin);
     });
@@ -146,13 +148,13 @@ describe('Healthcare Security Headers', () => {
   describe('Rate Limiting Headers', () => {
     it('should include rate limiting headers for API protection', async () => {
       const res = await testApp.health.$get();
-      
+
       // Rate limiting headers should be present
       const rateLimitHeaders = [
         'x-ratelimit-limit',
         'x-ratelimit-remaining',
         'x-ratelimit-reset',
-        'retry-after'
+        'retry-after',
       ];
 
       let hasRateLimitHeaders = false;
@@ -162,7 +164,7 @@ describe('Healthcare Security Headers', () => {
           break;
         }
       }
-      
+
       // At least one rate limiting header should be present
       expect(hasRateLimitHeaders).toBe(true);
     });
@@ -171,7 +173,7 @@ describe('Healthcare Security Headers', () => {
       // Test patient data endpoint (if it exists)
       try {
         const res = await testApp['v2/patients']?.$get?.();
-        
+
         if (res) {
           const rateLimit = res.headers.get('x-ratelimit-limit');
           if (rateLimit) {
@@ -189,11 +191,11 @@ describe('Healthcare Security Headers', () => {
   describe('Healthcare-Specific Security Headers', () => {
     it('should include custom healthcare security headers', async () => {
       const res = await testApp.health.$get();
-      
+
       // Custom headers for healthcare compliance
       expect(res.headers.get('x-healthcare-compliance')).toBeDefined();
       expect(res.headers.get('x-content-type-options')).toBe('nosniff');
-      
+
       // Should indicate LGPD compliance
       const healthcareCompliance = res.headers.get('x-healthcare-compliance');
       if (healthcareCompliance) {
@@ -203,7 +205,7 @@ describe('Healthcare Security Headers', () => {
 
     it('should include request tracking headers for audit compliance', async () => {
       const res = await testApp.health.$get();
-      
+
       // Request ID for audit trails
       const requestId = res.headers.get('x-request-id');
       expect(requestId).toBeDefined();
@@ -212,7 +214,7 @@ describe('Healthcare Security Headers', () => {
 
     it('should include response time headers for performance monitoring', async () => {
       const res = await testApp.health.$get();
-      
+
       const responseTime = res.headers.get('x-response-time');
       if (responseTime) {
         expect(responseTime).toMatch(/^\d+ms$/);
@@ -221,7 +223,7 @@ describe('Healthcare Security Headers', () => {
 
     it('should include security policy version for compliance tracking', async () => {
       const res = await testApp.health.$get();
-      
+
       // Security policy version for compliance audits
       const securityVersion = res.headers.get('x-security-policy-version');
       if (securityVersion) {
@@ -233,11 +235,11 @@ describe('Healthcare Security Headers', () => {
   describe('Content Type Security', () => {
     it('should set secure content types for API responses', async () => {
       const res = await testApp.health.$get();
-      
+
       const contentType = res.headers.get('content-type');
       expect(contentType).toBeDefined();
       expect(contentType).toContain('application/json');
-      
+
       // Should include charset to prevent XSS
       if (contentType?.includes('text/')) {
         expect(contentType).toContain('charset=utf-8');
@@ -246,10 +248,10 @@ describe('Healthcare Security Headers', () => {
 
     it('should prevent content type confusion attacks', async () => {
       const res = await testApp.health.$get();
-      
+
       // X-Content-Type-Options prevents browsers from MIME-sniffing
       expect(res.headers.get('x-content-type-options')).toBe('nosniff');
-      
+
       // Content-Type should match actual content
       const contentType = res.headers.get('content-type');
       expect(contentType).toContain('application/json');
@@ -259,9 +261,9 @@ describe('Healthcare Security Headers', () => {
   describe('Cache Control Security', () => {
     it('should set appropriate cache control for sensitive endpoints', async () => {
       const res = await testApp.health.$get();
-      
+
       const cacheControl = res.headers.get('cache-control');
-      
+
       if (cacheControl) {
         // Health endpoint can be cached briefly
         expect(cacheControl).toMatch(/(no-cache|max-age=\d+)/);
@@ -272,7 +274,7 @@ describe('Healthcare Security Headers', () => {
       // Test a sensitive endpoint if available
       try {
         const res = await testApp['v1/security/status']?.$get?.();
-        
+
         if (res) {
           const cacheControl = res.headers.get('cache-control');
           if (cacheControl) {
@@ -291,12 +293,12 @@ describe('Healthcare Security Headers', () => {
   describe('Error Response Security', () => {
     it('should not expose sensitive information in error responses', async () => {
       // Test 404 response
-      const res = await testApp['nonexistent-endpoint']?.$get?.() || 
-                   await fetch('/nonexistent-endpoint').catch(() => ({ status: 404 }));
-      
+      const res = await testApp['nonexistent-endpoint']?.$get?.()
+        || await fetch('/nonexistent-endpoint').catch(_error => ({ status: 404 }));
+
       if (typeof res === 'object' && 'status' in res) {
         expect(res.status).toBe(404);
-        
+
         // Should still include security headers even on errors
         if ('headers' in res && res.headers) {
           expect(res.headers.get?.('x-content-type-options')).toBe('nosniff');
@@ -308,15 +310,15 @@ describe('Healthcare Security Headers', () => {
   describe('Development vs Production Security', () => {
     it('should have stricter security headers in production', async () => {
       const res = await testApp.health.$get();
-      
+
       const isProduction = process.env.NODE_ENV === 'production';
-      
+
       if (isProduction) {
         // Production should have stricter CSP
         const csp = res.headers.get('content-security-policy');
-        expect(csp).not.toContain("'unsafe-eval'");
-        expect(csp).not.toContain("'unsafe-inline'");
-        
+        expect(csp).not.toContain('\'unsafe-eval\'');
+        expect(csp).not.toContain('\'unsafe-inline\'');
+
         // Production should enforce HTTPS
         const hsts = res.headers.get('strict-transport-security');
         expect(hsts).toBeDefined();
@@ -330,14 +332,14 @@ describe('Healthcare Security Headers', () => {
   describe('Compliance Header Validation', () => {
     it('should meet LGPD compliance header requirements', async () => {
       const res = await testApp.health.$get();
-      
+
       // LGPD compliance indicators
       const headers = Object.fromEntries(res.headers.entries());
-      
+
       // Should have privacy-protecting headers
       expect(headers['referrer-policy']).toBeDefined();
       expect(headers['x-content-type-options']).toBe('nosniff');
-      
+
       // Should not leak sensitive information
       expect(headers['server']).toBeUndefined(); // Server header should be hidden
       expect(headers['x-powered-by']).toBeUndefined(); // Framework should be hidden
@@ -345,16 +347,16 @@ describe('Healthcare Security Headers', () => {
 
     it('should meet ANVISA medical device security requirements', async () => {
       const res = await testApp.health.$get();
-      
+
       // Medical device software should enforce HTTPS
       const hsts = res.headers.get('strict-transport-security');
       expect(hsts).toBeDefined();
-      
+
       // Should prevent XSS attacks on medical interfaces
       const csp = res.headers.get('content-security-policy');
       expect(csp).toBeDefined();
-      expect(csp).toContain("frame-ancestors 'none'");
-      
+      expect(csp).toContain('frame-ancestors \'none\'');
+
       // Should prevent clickjacking of medical controls
       const frameOptions = res.headers.get('x-frame-options');
       expect(frameOptions).toMatch(/^(DENY|SAMEORIGIN)$/);
@@ -362,16 +364,16 @@ describe('Healthcare Security Headers', () => {
 
     it('should meet international healthcare security standards', async () => {
       const res = await testApp.health.$get();
-      
+
       // Should enforce transport security
       expect(res.headers.get('strict-transport-security')).toBeDefined();
-      
+
       // Should prevent content injection
       expect(res.headers.get('x-content-type-options')).toBe('nosniff');
-      
+
       // Should control feature access
       expect(res.headers.get('permissions-policy')).toBeDefined();
-      
+
       // Should have audit trail support
       expect(res.headers.get('x-request-id')).toBeDefined();
     });
@@ -383,13 +385,13 @@ describe('Security Header Performance Impact', () => {
     const startTime = Date.now();
     const res = await testApp.health.$get();
     const endTime = Date.now();
-    
+
     expect(res.status).toBe(200);
-    
+
     // Security headers should not add significant overhead
     const responseTime = endTime - startTime;
     expect(responseTime).toBeLessThan(1000); // 1 second max for health check
-    
+
     // Should have all critical security headers
     expect(res.headers.get('content-security-policy')).toBeDefined();
     expect(res.headers.get('strict-transport-security')).toBeDefined();
@@ -412,10 +414,10 @@ describe('Security Headers Integration', () => {
         if (res && res.status === 200) {
           // Core security headers should be present
           expect(res.headers.get('x-content-type-options')).toBe('nosniff');
-          
+
           const csp = res.headers.get('content-security-policy');
           if (csp) {
-            expect(csp).toContain("default-src 'self'");
+            expect(csp).toContain('default-src \'self\'');
           }
         }
       } catch (error) {

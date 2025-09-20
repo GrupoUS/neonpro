@@ -134,7 +134,7 @@ export interface HealthcareAccessibilityRecommendation {
 export const healthcareAccessibilityRules = {
   rules: [
     'patient-data-privacy',
-    'emergency-info-accessible', 
+    'emergency-info-accessible',
     'medical-terminology',
     'treatment-accessibility',
     'lgpd-accessibility',
@@ -143,8 +143,8 @@ export const healthcareAccessibilityRules = {
     'appointment-accessibility',
     'medical-history',
     'consent-forms',
-    'vital-signs'
-  ]
+    'vital-signs',
+  ],
 };
 
 // Healthcare accessibility audit main class
@@ -177,7 +177,7 @@ export class HealthcareAccessibilityAuditor {
     const axeResults = await Axe.run(element, {
       runOnly: {
         type: 'tag',
-        values: ['wcag2a', 'wcag2aa', 'best-practice']
+        values: ['wcag2a', 'wcag2aa', 'best-practice'],
       },
       ...options,
     });
@@ -230,7 +230,7 @@ export class HealthcareAccessibilityAuditor {
               html: node.html,
               target: Array.isArray(node.target) ? node.target.map(String) : [String(node.target)],
               failureSummary: node.failureSummary || '',
-              any: node.any || []
+              any: node.any || [],
             }],
             healthcareRuleId,
             complianceStandards: this.getRelevantComplianceStandards(violation.tags),
@@ -448,11 +448,14 @@ export class HealthcareAccessibilityAuditor {
     issues: HealthcareAccessibilityIssue[],
   ): 'immediate' | 'high' | 'medium' | 'low' {
     const priorityOrder = { immediate: 4, high: 3, medium: 2, low: 1 };
-    const highestPriority = issues.reduce((highest: 'immediate' | 'high' | 'medium' | 'low', issue) => {
-      const currentPriority = priorityOrder[issue.remediationPriority];
-      const highestPriorityValue = priorityOrder[highest];
-      return currentPriority > highestPriorityValue ? issue.remediationPriority : highest;
-    }, 'low' as const);
+    const highestPriority = issues.reduce(
+      (highest: 'immediate' | 'high' | 'medium' | 'low', issue) => {
+        const currentPriority = priorityOrder[issue.remediationPriority];
+        const highestPriorityValue = priorityOrder[highest];
+        return currentPriority > highestPriorityValue ? issue.remediationPriority : highest;
+      },
+      'low' as const,
+    );
 
     return highestPriority;
   }

@@ -3,16 +3,47 @@
  * Comprehensive AI integration with health compliance and error handling
  */
 
-import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
 import {
-  AIRequestSchema,
-  AIResponseSchema,
   AIChatResponseSchema,
   AIHealthcheckResponseSchema,
+  AIRequestSchema,
+  AIResponseSchema,
   HealthcareTRPCError,
   PaginationSchema,
 } from '@neonpro/types/api/contracts';
+import { z } from 'zod';
+import { protectedProcedure, router } from '../trpc';
+import auditLogger from '@neonpro/security';
+import { 
+  aiSecurityService,
+  sanitizeForAI,
+  validatePromptSecurity,
+  validateAIOutputSafety,
+  shouldRetainAIData
+} from '../services/ai-security-service';
+import { 
+  lgpdConsentService, 
+  lgpdAuditService,
+  lgpdDataSubjectService 
+} from '../services';
+import { LGPDComplianceMiddleware } from '../middleware/lgpd-compliance';
+import { ConsentPurpose, DataCategory } from '../types/lgpd';
+
+// Health analysis functions
+import {
+  gatherPatientAnalysisData,
+  buildHealthAnalysisPrompt,
+  callHealthAnalysisAI,
+  parseHealthAnalysisResponse,
+  storeHealthAnalysis
+} from '@neonpro/core-services';
+
+// AI service management functions
+import {
+  checkAIServiceHealth,
+  checkModelAvailability,
+  getAIUsageStats
+} from '@neonpro/core-services';
 
 export const aiRouter = router({
   /**
@@ -29,7 +60,12 @@ export const aiRouter = router({
       conversationId: z.string().uuid().optional(),
       patientId: z.string().uuid().optional(),
       clinicId: z.string().uuid(),
-      context: z.enum(['general', 'patient_consultation', 'appointment_scheduling', 'medical_analysis']).default('general'),
+      context: z.enum([
+        'general',
+        'patient_consultation',
+        'appointment_scheduling',
+        'medical_analysis',
+      ]).default('general'),
       model: z.enum(['gpt-4', 'gpt-3.5-turbo', 'claude-3', 'claude-3-haiku']).default('gpt-4'),
       temperature: z.number().min(0).max(2).default(0.7),
       maxTokens: z.number().min(1).max(4000).default(1000),
@@ -43,7 +79,7 @@ export const aiRouter = router({
         throw new HealthcareTRPCError(
           'FORBIDDEN',
           'Access denied to clinic',
-          'CLINIC_ACCESS_DENIED'
+          'CLINIC_ACCESS_DENIED',
         );
       }
 
@@ -59,22 +95,70 @@ export const aiRouter = router({
           throw new HealthcareTRPCError(
             'NOT_FOUND',
             'Patient not found or access denied',
-            'PATIENT_NOT_FOUND'
+            'PATIENT_NOT_FOUND',
           );
         }
       }
 
+      // LGPD Compliance: Validate consent for AI processing
+      if (input.lgpdCompliant) {
+        try {
+          await lgpdConsentService.validateConsent(
+            input.patientId || ctx.userId,
+            ConsentPurpose.AI_ANALYSIS,
+            'AI chat processing'
+          );
+        } catch (error) {
+          // Create audit entry for consent violation
+          await lgpdAuditService.recordAudit({
+            userId: ctx.userId,
+            patientId: input.patientId,
+            action: 'CONSENT_VIOLATION',
+            entityType: 'AI_PROCESSING',
+            entityId: `ai_chat_${Date.now()}`,
+            dataCategory: DataCategory.HEALTH,
+            severity: 'HIGH',
+            description: 'AI processing attempted without valid consent',
+            metadata: {
+              operation: 'AI_CHAT',
+              purpose: ConsentPurpose.AI_ANALYSIS,
+              error: error instanceof Error ? error.message : 'Unknown error'
+            }
+          });
+          throw error;
+        }
+      }
+
+      // Apply AI security validations
+      if (!validatePromptSecurity(input.message)) {
+        throw new HealthcareTRPCError(
+          'BAD_REQUEST',
+          'Message contains potentially harmful content',
+          'SECURITY_VALIDATION_FAILED',
+        );
+      }
+
+      // Check rate limiting
+      if (!aiSecurityService.canMakeRequest(ctx.user.id, input.clinicId)) {
+        throw new HealthcareTRPCError(
+          'TOO_MANY_REQUESTS',
+          'AI request rate limit exceeded',
+          'RATE_LIMIT_EXCEEDED',
+        );
+      }
+
       // Check AI usage limits (basic implementation)
-      const dailyUsage = await ctx.prisma.aiUsage.count({
+      const dailyUsage = await ctx.prisma.auditTrail.count({
         where: {
           userId: ctx.userId,
           clinicId: input.clinicId,
+          action: 'AI_CHAT',
           createdAt: {
             gte: new Date(new Date().setHours(0, 0, 0, 0)),
           },
         },
       });
-      
+
       const DAILY_LIMIT = 1000;
       if (dailyUsage >= DAILY_LIMIT) {
         throw new HealthcareTRPCError(
@@ -84,14 +168,17 @@ export const aiRouter = router({
           {
             currentUsage: dailyUsage,
             limit: DAILY_LIMIT,
-          }
+          },
         );
       }
 
-      // Sanitize input for LGPD compliance
-      const sanitizedMessage = input.lgpdCompliant 
-        ? input.message.replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '[CPF_REDACTED]')
-        : input.message;
+      // Sanitize input for LGPD compliance using security service
+      const sanitizedMessage = sanitizeForAI({
+        message: input.message,
+        patientId: input.patientId,
+        clinicId: input.clinicId,
+        userId: ctx.userId,
+      });
 
       // Build healthcare context (simplified)
       const systemContext = {
@@ -106,25 +193,38 @@ export const aiRouter = router({
       let conversationId = input.conversationId;
 
       if (input.includeHistory && conversationId) {
-        conversationHistory = await ctx.prisma.aiConversation.findMany({
+        // Get conversation history from audit trails
+        conversationHistory = await ctx.prisma.auditTrail.findMany({
           where: {
-            conversationId,
             userId: ctx.userId,
+            clinicId: input.clinicId,
+            action: 'AI_CHAT',
+            resourceId: conversationId,
           },
           orderBy: { createdAt: 'asc' },
           take: 50,
         });
       } else if (!conversationId) {
-        // Create new conversation
-        const conversation = await ctx.prisma.aiConversation.create({
+        // Create new conversation audit trail
+        conversationId = `ai_conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        await ctx.prisma.auditTrail.create({
           data: {
             userId: ctx.userId,
             clinicId: input.clinicId,
-            patientId: input.patientId,
-            sessionId: `ai_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            action: 'AI_CHAT',
+            resource: 'AI_CONVERSATION_START',
+            resourceType: 'AI_PREDICTION',
+            resourceId: conversationId,
+            ipAddress: ctx.req.socket.remoteAddress || '',
+            userAgent: ctx.req.headers['user-agent'] || '',
+            status: 'SUCCESS',
+            riskLevel: 'LOW',
+            additionalInfo: JSON.stringify({
+              patientId: input.patientId,
+              model: input.model,
+            }),
           },
         });
-        conversationId = conversation.id;
       }
 
       // Prepare AI request
@@ -133,7 +233,10 @@ export const aiRouter = router({
         messages: [
           {
             role: 'system',
-            content: `Healthcare AI Assistant for clinic ${input.clinicId}. User: ${ctx.userId}. Patient context: ${input.patientId || 'none'}.`,
+            content:
+              `Healthcare AI Assistant for clinic ${input.clinicId}. User: ${ctx.userId}. Patient context: ${
+                input.patientId || 'none'
+              }.`,
           },
           ...conversationHistory.map(msg => ({
             role: msg.role,
@@ -153,34 +256,108 @@ export const aiRouter = router({
         // Call AI service with retry logic
         const aiResponse = await callAIServiceWithRetry(aiRequest);
 
-        // Store conversation message
-        const messageId = await ctx.prisma.aiMessage.create({
-          data: {
-            conversationId,
-            role: 'user',
-            content: sanitizedMessage,
-            originalContent: input.message,
-            userId: ctx.userId,
-          },
-        });
+        // Validate AI response for security
+        if (!validateAIOutputSafety(aiResponse.content)) {
+          throw new HealthcareTRPCError(
+            'BAD_REQUEST',
+            'AI response failed security validation',
+            'AI_RESPONSE_SECURITY_VALIDATION_FAILED',
+          );
+        }
 
-        const responseMessageId = await ctx.prisma.aiMessage.create({
-          data: {
-            conversationId,
-            role: 'assistant',
-            content: 'AI response placeholder', // aiResponse.content,
-            model: input.model,
-            userId: ctx.userId,
-          },
-        });
-
-        // Update usage tracking
-        await ctx.prisma.aiUsage.create({
+        // Store conversation message in audit trail with LGPD compliance
+        await ctx.prisma.auditTrail.create({
           data: {
             userId: ctx.userId,
             clinicId: input.clinicId,
-            tokensUsed: 100, // placeholder
+            action: 'AI_CHAT',
+            resource: 'AI_MESSAGE_USER',
+            resourceType: 'AI_PREDICTION',
+            resourceId: conversationId,
+            ipAddress: ctx.req.socket.remoteAddress || '',
+            userAgent: ctx.req.headers['user-agent'] || '',
+            status: 'SUCCESS',
+            riskLevel: 'LOW',
+            additionalInfo: JSON.stringify({
+              role: 'user',
+              content: sanitizedMessage,
+              originalContent: input.message,
+              model: input.model,
+              lgpdCompliant: input.lgpdCompliant,
+              patientId: input.patientId,
+            }),
+          },
+        });
+
+        // LGPD Compliance: Record AI data processing
+        await lgpdAuditService.recordAudit({
+          userId: ctx.userId,
+          patientId: input.patientId,
+          action: 'AI_DATA_PROCESSING',
+          entityType: 'AI_CHAT',
+          entityId: conversationId,
+          dataCategory: DataCategory.HEALTH,
+          severity: 'MEDIUM',
+          description: 'AI chat message processed with LGPD compliance',
+          metadata: {
+            messageLength: sanitizedMessage.length,
             model: input.model,
+            lgpdCompliant: input.lgpdCompliant,
+            consentValidated: input.lgpdCompliant,
+            processingTime: Date.now()
+          }
+        });
+
+        // Store AI response in audit trail
+        await ctx.prisma.auditTrail.create({
+          data: {
+            userId: ctx.userId,
+            clinicId: input.clinicId,
+            action: 'AI_CHAT',
+            resource: 'AI_MESSAGE_ASSISTANT',
+            resourceType: 'AI_PREDICTION',
+            resourceId: conversationId,
+            ipAddress: ctx.req.socket.remoteAddress || '',
+            userAgent: ctx.req.headers['user-agent'] || '',
+            status: 'SUCCESS',
+            riskLevel: 'LOW',
+            additionalInfo: JSON.stringify({
+              role: 'assistant',
+              content: aiResponse.content,
+              model: input.model,
+            }),
+          },
+        });
+
+        // Log AI interaction for audit trail
+        aiSecurityService.logAIInteraction({
+          userId: ctx.userId,
+          patientId: input.patientId,
+          clinicId: input.clinicId,
+          provider: input.model,
+          prompt: input.message,
+          response: aiResponse.content,
+          timestamp: Date.now(),
+        });
+
+        // Update usage tracking with audit trail
+        await ctx.prisma.auditTrail.create({
+          data: {
+            userId: ctx.userId,
+            clinicId: input.clinicId,
+            action: 'AI_CHAT',
+            resource: 'AI_CONVERSATION',
+            resourceType: 'AI_PREDICTION',
+            resourceId: conversationId,
+            ipAddress: ctx.req.socket.remoteAddress || '',
+            userAgent: ctx.req.headers['user-agent'] || '',
+            status: 'SUCCESS',
+            riskLevel: 'LOW',
+            additionalInfo: JSON.stringify({
+              model: input.model,
+              tokensUsed: 100,
+              patientContext: !!input.patientId,
+            }),
           },
         });
 
@@ -188,36 +365,36 @@ export const aiRouter = router({
           success: true,
           data: {
             conversationId,
-            messageId: responseMessageId.id,
-            content: 'AI response placeholder',
+            messageId: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+            content: aiResponse.content,
             model: input.model,
             usage: {
-              prompt_tokens: 50,
-              completion_tokens: 50,
-              total_tokens: 100,
+              prompt_tokens: aiResponse.usage?.prompt_tokens || 50,
+              completion_tokens: aiResponse.usage?.completion_tokens || 50,
+              total_tokens: aiResponse.usage?.total_tokens || 100,
             },
-            finishReason: 'stop',
+            finishReason: aiResponse.finish_reason || 'stop',
             metadata: {
-              sanitized: input.lgpdCompliant,
+              sanitized: true,
               contextType: input.context,
-              responseTime: 150,
+              responseTime: aiResponse.responseTime || 150,
+              securityValidated: true,
             },
           },
           message: 'AI chat completion successful',
           timestamp: new Date().toISOString(),
         };
-
       } catch (error: unknown) {
         // Handle AI service errors
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         const errorCode = (error as any)?.code;
-        
+
         if (errorCode === 'insufficient_quota') {
           throw new HealthcareTRPCError(
             'INTERNAL_SERVER_ERROR',
             'AI service quota exceeded',
             'SERVICE_UNAVAILABLE',
-            { provider: input.model }
+            { provider: input.model },
           );
         }
 
@@ -226,7 +403,7 @@ export const aiRouter = router({
             'BAD_REQUEST',
             'Content filtered by AI safety systems',
             'CONTENT_FILTERED',
-            { reason: (error as any)?.details }
+            { reason: (error as any)?.details },
           );
         }
 
@@ -237,7 +414,7 @@ export const aiRouter = router({
           'INTERNAL_SERVER_ERROR',
           'AI service error',
           'AI_PROCESSING_ERROR',
-          { originalError: errorMessage }
+          { originalError: errorMessage },
         );
       }
     }),
@@ -255,7 +432,12 @@ export const aiRouter = router({
       conversationId: z.string().uuid().optional(),
       clinicId: z.string().uuid(),
       patientId: z.string().uuid().optional(),
-      context: z.enum(['general', 'patient_consultation', 'appointment_scheduling', 'medical_analysis']).optional(),
+      context: z.enum([
+        'general',
+        'patient_consultation',
+        'appointment_scheduling',
+        'medical_analysis',
+      ]).optional(),
       dateFrom: z.string().datetime().optional(),
       dateTo: z.string().datetime().optional(),
       includeContent: z.boolean().default(true),
@@ -298,12 +480,30 @@ export const aiRouter = router({
       requestId: z.string().optional(),
     }))
     .query(async ({ input, ctx }) => {
-      // Validate clinic access
-      await validateClinicAccess(ctx.user.id, input.clinicId);
+      // Validate clinic access through context
+      if (ctx.clinicId !== input.clinicId) {
+        throw new HealthcareTRPCError(
+          'FORBIDDEN',
+          'Access denied to clinic',
+          'CLINIC_ACCESS_DENIED',
+        );
+      }
 
       // Validate patient access if specified
       if (input.patientId) {
-        await validatePatientAccess(ctx.user.id, input.patientId, input.clinicId);
+        const patient = await ctx.prisma.patient.findFirst({
+          where: {
+            id: input.patientId,
+            clinicId: input.clinicId,
+          },
+        });
+        if (!patient) {
+          throw new HealthcareTRPCError(
+            'NOT_FOUND',
+            'Patient not found or access denied',
+            'PATIENT_NOT_FOUND',
+          );
+        }
       }
 
       const where = {
@@ -317,67 +517,95 @@ export const aiRouter = router({
       };
 
       const [conversations, total] = await Promise.all([
-        ctx.prisma.aiConversation.findMany({
-          where,
+        ctx.prisma.auditTrail.findMany({
+          where: {
+            ...where,
+            action: 'AI_CHAT',
+            resource: { in: ['AI_CONVERSATION_START', 'AI_MESSAGE_USER', 'AI_MESSAGE_ASSISTANT'] },
+          },
           skip: (input.page - 1) * input.limit,
           take: input.limit,
-          orderBy: { updatedAt: 'desc' },
-          include: {
-            _count: {
-              select: { messages: true },
-            },
-            messages: input.includeContent ? {
-              orderBy: { createdAt: 'asc' },
-              select: {
-                id: true,
-                role: true,
-                content: true,
-                usage: true,
-                createdAt: true,
-              },
-            } : false,
+          orderBy: { createdAt: 'desc' },
+          distinct: ['resourceId'],
+        }),
+        ctx.prisma.auditTrail.count({
+          where: {
+            ...where,
+            action: 'AI_CHAT',
+            resource: 'AI_CONVERSATION_START',
           },
         }),
-        ctx.prisma.aiConversation.count({ where }),
       ]);
 
       // Get last message for each conversation if not including full content
       const conversationsWithLastMessage = await Promise.all(
-        conversations.map(async (conversation) => {
+        conversations.map(async conversation => {
           let lastMessage;
           if (!input.includeContent) {
-            lastMessage = await ctx.prisma.aiMessage.findFirst({
-              where: { conversationId: conversation.id },
+            lastMessage = await ctx.prisma.auditTrail.findFirst({
+              where: { 
+                resourceId: conversation.resourceId,
+                action: 'AI_CHAT',
+              },
               orderBy: { createdAt: 'desc' },
               select: {
-                role: true,
-                content: true,
+                additionalInfo: true,
                 createdAt: true,
               },
             });
           }
 
+          // Parse additional info to get message content
+          const parseMessageInfo = (info: string) => {
+            try {
+              return JSON.parse(info);
+            } catch {
+              return { content: '', role: '' };
+            }
+          };
+
+          const lastMessageInfo = lastMessage ? parseMessageInfo(lastMessage.additionalInfo) : null;
+
           return {
-            id: conversation.id,
-            context: conversation.context,
+            id: conversation.resourceId,
+            context: 'AI Conversation',
             patientId: conversation.patientId,
             createdAt: conversation.createdAt.toISOString(),
-            updatedAt: conversation.updatedAt.toISOString(),
-            messageCount: conversation._count.messages,
-            lastMessage: lastMessage ? {
-              role: lastMessage.role,
-              content: lastMessage.content.substring(0, 100) + (lastMessage.content.length > 100 ? '...' : ''),
-              createdAt: lastMessage.createdAt.toISOString(),
-            } : undefined,
-            messages: input.includeContent ? conversation.messages?.map(msg => ({
-              id: msg.id,
-              role: msg.role as 'user' | 'assistant' | 'system',
-              content: msg.content,
-              usage: msg.usage,
-              createdAt: msg.createdAt.toISOString(),
-            })) : undefined,
+            updatedAt: conversation.createdAt.toISOString(),
+            messageCount: 1, // Simplified for audit trail approach
+            lastMessage: lastMessageInfo
+              ? {
+                role: lastMessageInfo.role,
+                content: lastMessageInfo.content.substring(0, 100)
+                  + (lastMessageInfo.content.length > 100 ? '...' : ''),
+                createdAt: lastMessage.createdAt.toISOString(),
+              }
+              : undefined,
+            messages: input.includeContent
+              ? await ctx.prisma.auditTrail.findMany({
+                  where: {
+                    resourceId: conversation.resourceId,
+                    action: 'AI_CHAT',
+                    resource: { in: ['AI_MESSAGE_USER', 'AI_MESSAGE_ASSISTANT'] },
+                  },
+                  orderBy: { createdAt: 'asc' },
+                  select: {
+                    additionalInfo: true,
+                    createdAt: true,
+                  },
+                }).then(msgs => msgs.map(msg => {
+                  const msgInfo = parseMessageInfo(msg.additionalInfo);
+                  return {
+                    id: msg.id,
+                    role: msgInfo.role as 'user' | 'assistant' | 'system',
+                    content: msgInfo.content,
+                    usage: msgInfo.usage,
+                    createdAt: msg.createdAt.toISOString(),
+                  };
+                }))
+              : undefined,
           };
-        })
+        }),
       );
 
       return {
@@ -408,7 +636,12 @@ export const aiRouter = router({
     .input(z.object({
       patientId: z.string().uuid(),
       clinicId: z.string().uuid(),
-      analysisType: z.enum(['risk_assessment', 'treatment_recommendation', 'diagnostic_support', 'follow_up_planning']),
+      analysisType: z.enum([
+        'risk_assessment',
+        'treatment_recommendation',
+        'diagnostic_support',
+        'follow_up_planning',
+      ]),
       includeHistory: z.boolean().default(true),
       timeRange: z.object({
         from: z.string().datetime(),
@@ -459,8 +692,38 @@ export const aiRouter = router({
     }))
     .mutation(async ({ input, ctx }) => {
       // Validate clinic and patient access
-      await validateClinicAccess(ctx.user.id, input.clinicId);
-      await validatePatientAccess(ctx.user.id, input.patientId, input.clinicId);
+      const clinic = await ctx.prisma.clinic.findFirst({
+        where: {
+          id: input.clinicId,
+          userId: ctx.user.id
+        }
+      });
+
+      if (!clinic) {
+        throw new HealthcareTRPCError(
+          'NOT_FOUND',
+          'Clinic not found',
+          'CLINIC_NOT_FOUND',
+          { clinicId: input.clinicId }
+        );
+      }
+
+      const patient = await ctx.prisma.patient.findFirst({
+        where: {
+          id: input.patientId,
+          clinicId: input.clinicId,
+          userId: ctx.user.id
+        }
+      });
+
+      if (!patient) {
+        throw new HealthcareTRPCError(
+          'NOT_FOUND',
+          'Patient not found',
+          'PATIENT_NOT_FOUND',
+          { patientId: input.patientId }
+        );
+      }
 
       // Check if user has permission for health analysis
       if (!hasHealthAnalysisPermission(ctx.user.role)) {
@@ -468,7 +731,7 @@ export const aiRouter = router({
           'FORBIDDEN',
           'Insufficient permissions for health analysis',
           'INSUFFICIENT_PERMISSIONS',
-          { requiredPermission: 'health_analysis', userRole: ctx.user.role }
+          { requiredPermission: 'health_analysis', userRole: ctx.user.role },
         );
       }
 
@@ -477,7 +740,7 @@ export const aiRouter = router({
         input.patientId,
         input.clinicId,
         input.timeRange,
-        input.includeHistory
+        input.includeHistory,
       );
 
       if (!patientData.hasMinimumData) {
@@ -485,10 +748,10 @@ export const aiRouter = router({
           'BAD_REQUEST',
           'Insufficient patient data for analysis',
           'INSUFFICIENT_DATA',
-          { 
+          {
             dataPoints: patientData.dataPointCount,
-            minimumRequired: 3 
-          }
+            minimumRequired: 3,
+          },
         );
       }
 
@@ -553,7 +816,6 @@ export const aiRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-
       } catch (error) {
         await ctx.prisma.auditLog.create({
           data: {
@@ -572,7 +834,7 @@ export const aiRouter = router({
           'INTERNAL_SERVER_ERROR',
           'Health analysis failed',
           'HEALTH_ANALYSIS_ERROR',
-          { originalError: error.message }
+          { originalError: error.message },
         );
       }
     }),
@@ -624,7 +886,6 @@ export const aiRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-
       } catch (error) {
         return {
           success: true,
@@ -702,14 +963,34 @@ export const aiRouter = router({
     }))
     .mutation(async ({ input, ctx }) => {
       // Validate access
-      await validateClinicAccess(ctx.user.id, input.clinicId);
-      await validatePatientAccess(ctx.user.id, input.patientId, input.clinicId);
+      const clinic = await ctx.prisma.clinic.findFirst({
+        where: {
+          id: input.clinicId,
+          userId: ctx.user.id
+        }
+      });
+
+      if (!clinic) {
+        throw new Error('Clinic not found');
+      }
+
+      const patient = await ctx.prisma.patient.findFirst({
+        where: {
+          id: input.patientId,
+          clinicId: input.clinicId,
+          userId: ctx.user.id
+        }
+      });
+
+      if (!patient) {
+        throw new Error('Patient not found');
+      }
 
       // Gather appointment data
       const appointmentData = await gatherAppointmentAnalysisData(
         input.patientId,
         input.clinicId,
-        input.previousAppointments
+        input.previousAppointments,
       );
 
       // Get clinic schedule and availability
@@ -761,13 +1042,12 @@ export const aiRouter = router({
           timestamp: new Date().toISOString(),
           requestId: ctx.requestId,
         };
-
       } catch (error) {
         throw new HealthcareTRPCError(
           'INTERNAL_SERVER_ERROR',
           'Failed to generate appointment suggestions',
           'APPOINTMENT_SUGGESTIONS_ERROR',
-          { originalError: error.message }
+          { originalError: error.message },
         );
       }
     }),
@@ -786,19 +1066,16 @@ async function buildHealthcareContext(context: any): Promise<string> {
 
 async function callAIServiceWithRetry(request: any): Promise<any> {
   // Implementation for AI service calls with retry logic
-  return { content: 'AI response', usage: { total_tokens: 100 }, finish_reason: 'stop', responseTime: 1000 };
+  return {
+    content: 'AI response',
+    usage: { total_tokens: 100 },
+    finish_reason: 'stop',
+    responseTime: 1000,
+  };
 }
 
 async function checkAIUsageLimit(userId: string, clinicId: string): Promise<any> {
   return { allowed: true, currentUsage: 0, limit: 1000, resetTime: new Date() };
-}
-
-async function validateClinicAccess(userId: string, clinicId: string): Promise<void> {
-  // Implementation for clinic access validation
-}
-
-async function validatePatientAccess(userId: string, patientId: string, clinicId: string): Promise<void> {
-  // Implementation for patient access validation
 }
 
 function hasHealthAnalysisPermission(role: string): boolean {

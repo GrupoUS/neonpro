@@ -1,25 +1,53 @@
-import * as React from 'react'
+"use client";
 
-// Minimal shadcn-compatible Avatar stub to unblock type-check
-// Replace with registry component if needed
-export function Avatar({ className, children }: React.PropsWithChildren<{ className?: string }>) {
+import * as React from "react";
+import * as AvatarPrimitive from "@radix-ui/react-avatar";
+
+import { cn } from "@/lib/utils";
+
+function Avatar({
+  className,
+  ...props
+}: React.ComponentProps<typeof AvatarPrimitive.Root>) {
   return (
-    <div className={['relative inline-flex h-10 w-10 shrink-0 overflow-hidden rounded-full bg-muted', className].filter(Boolean).join(' ')}>
-      {children}
-    </div>
-  )
+    <AvatarPrimitive.Root
+      data-slot="avatar"
+      className={cn(
+        "relative flex size-8 shrink-0 overflow-hidden rounded-full",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
-export function AvatarImage(props: React.ImgHTMLAttributes<HTMLImageElement>) {
-  return <img alt={props.alt ?? ''} {...props} className={['h-full w-full object-cover'].concat(props.className ? [props.className] : []).join(' ')} />
-}
-
-export function AvatarFallback({ children }: React.PropsWithChildren) {
+function AvatarImage({
+  className,
+  ...props
+}: React.ComponentProps<typeof AvatarPrimitive.Image>) {
   return (
-    <span className="flex h-full w-full items-center justify-center bg-muted text-muted-foreground">
-      {children}
-    </span>
-  )
+    <AvatarPrimitive.Image
+      data-slot="avatar-image"
+      className={cn("aspect-square size-full", className)}
+      {...props}
+    />
+  );
 }
 
-export default Avatar
+function AvatarFallback({
+  className,
+  ...props
+}: React.ComponentProps<typeof AvatarPrimitive.Fallback>) {
+  return (
+    <AvatarPrimitive.Fallback
+      data-slot="avatar-fallback"
+      className={cn(
+        "bg-muted flex size-full items-center justify-center rounded-full",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export { Avatar, AvatarImage, AvatarFallback };

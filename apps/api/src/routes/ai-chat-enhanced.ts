@@ -9,28 +9,22 @@ import { z } from 'zod';
 import { endTimerMs, logMetric, startTimer } from '../services/metrics';
 
 // Import semantic caching components
-import { 
-  SemanticCacheService, 
-  CacheKeyGenerator, 
-  CacheValidationResult 
+import { HealthcareDataSanitizer, PIIRedactionLevel } from '../lib/pii-redaction';
+import { AIProviderResponse, AIProviderRouter } from '../services/ai-provider-router';
+import {
+  CacheKeyGenerator,
+  CacheValidationResult,
+  SemanticCacheService,
 } from '../services/semantic-cache';
-import { 
-  HealthcareDataSanitizer, 
-  PIIRedactionLevel 
-} from '../lib/pii-redaction';
-import { 
-  AIProviderRouter, 
-  AIProviderResponse 
-} from '../services/ai-provider-router';
 
 // Import healthcare compliance utilities
-import { 
-  LGPDComplianceValidator, 
-  HealthcareComplianceContext 
+import {
+  HealthcareComplianceContext,
+  LGPDComplianceValidator,
 } from '../middleware/lgpd-compliance';
 
 // Import OpenTelemetry for performance monitoring
-import { trace, SpanStatusCode } from '@opentelemetry/api';
+import { SpanStatusCode, trace } from '@opentelemetry/api';
 
 // Request validation schemas
 const ChatMessageSchema = z.object({
@@ -54,7 +48,8 @@ const EnhancedChatRequestSchema = z.object({
     professionalId: z.string().optional(),
     treatmentType: z.string().optional(),
     urgency: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
-    dataClassification: z.enum(['public', 'restricted', 'confidential', 'highly_confidential']).default('restricted'),
+    dataClassification: z.enum(['public', 'restricted', 'confidential', 'highly_confidential'])
+      .default('restricted'),
   }).optional(),
 });
 
@@ -79,14 +74,16 @@ if (process.env.NODE_ENV !== 'production') {
 app.use(
   '*',
   cors({
-    origin: origin => (!origin ? undefined : (allowedOrigins.includes(origin) ? origin : undefined)),
+    origin:
+      origin => (!origin ? undefined : (allowedOrigins.includes(origin) ? origin : undefined)),
     allowMethods: ['GET', 'POST'],
     allowHeaders: ['Content-Type', 'Authorization'],
   }),
 );
 
 // Enhanced system prompt with healthcare compliance
-const SYSTEM_PROMPT = `Você é um assistente especializado em clínica estética no Brasil com foco em compliance LGPD.
+const SYSTEM_PROMPT =
+  `Você é um assistente especializado em clínica estética no Brasil com foco em compliance LGPD.
 
 CONTEXTO:
 - Trabalha para a NeonPro, clínica estética moderna e acolhedora
@@ -125,13 +122,13 @@ class HealthcareCacheKeyGenerator implements CacheKeyGenerator {
       role: msg.role,
       content: piiSanitizer.sanitize(msg.content),
     }));
-    
+
     const contextHash = this.hashContext(context);
     const messagesHash = this.hashMessages(normalizedMessages);
-    
+
     return `healthcare-ai-chat:${contextHash}:${messagesHash}`;
   }
-  
+
   private hashContext(context: any): string {
     const relevantContext = {
       locale: context.locale,
@@ -141,7 +138,7 @@ class HealthcareCacheKeyGenerator implements CacheKeyGenerator {
     };
     return Buffer.from(JSON.stringify(relevantContext)).toString('base64').slice(0, 16);
   }
-  
+
   private hashMessages(messages: AIMessage[]): string {
     const messageString = messages.map(m => `${m.role}:${m.content}`).join('|');
     return Buffer.from(messageString).toString('base64').slice(0, 16);
@@ -154,25 +151,28 @@ const cacheKeyGenerator = new HealthcareCacheKeyGenerator();
 app.post('/stream', zValidator('json', EnhancedChatRequestSchema), async c => {
   const tracer = trace.getTracer('neonpro-ai-chat');
   const span = tracer.startSpan('/ai-chat/stream');
-  
+
   const t0 = startTimer();
   try {
-    const { 
-      messages, 
-      text, 
-      locale, 
-      clientId, 
-      sessionId, 
-      model, 
+    const {
+      messages,
+      text,
+      locale,
+      clientId,
+      sessionId,
+      model,
       enableCache,
       cacheTTL,
-      healthcareContext 
+      healthcareContext,
     } = c.req.valid('json');
 
     span.setAttribute('session.id', sessionId);
     span.setAttribute('cache.enabled', enableCache);
     span.setAttribute('healthcare.urgency', healthcareContext?.urgency || 'medium');
-    span.setAttribute('healthcare.data_classification', healthcareContext?.dataClassification || 'restricted');
+    span.setAttribute(
+      'healthcare.data_classification',
+      healthcareContext?.dataClassification || 'restricted',
+    );
 
     const url = new URL(c.req.url);
     const mockMode = url.searchParams.get('mock') === 'true'
@@ -211,12 +211,12 @@ app.post('/stream', zValidator('json', EnhancedChatRequestSchema), async c => {
         dataClassification: healthcareContext.dataClassification,
         legalBasis: 'consent',
       };
-      
+
       const validationResult = await lgpdValidator.validate(complianceContext);
       if (!validationResult.compliant) {
         span.setAttribute('lgpd.compliance', 'failed');
         span.setAttribute('lgpd.violations', validationResult.violations.join(','));
-        
+
         // Log compliance violation
         console.warn('LGPD compliance violation in AI chat:', {
           timestamp: new Date().toISOString(),
@@ -234,22 +234,22 @@ app.post('/stream', zValidator('json', EnhancedChatRequestSchema), async c => {
 
     if (enableCache && !mockMode) {
       cacheKey = cacheKeyGenerator.generateKey(aiMessages, { locale, healthcareContext });
-      cachedResponse = await semanticCache.get(cacheKey, { 
+      cachedResponse = await semanticCache.get(cacheKey, {
         ttl: cacheTTL,
-        validateHealthcare: true 
+        validateHealthcare: true,
       });
-      
+
       if (cachedResponse) {
         span.setAttribute('cache.hit', true);
         span.setAttribute('cache.response_age', Date.now() - cachedResponse.timestamp);
-        
+
         const ms = endTimerMs(t0);
-        logMetric({ 
-          route: '/v1/ai-chat/stream', 
-          ms, 
-          ok: true, 
+        logMetric({
+          route: '/v1/ai-chat/stream',
+          ms,
+          ok: true,
           model: cachedResponse.provider,
-          cacheHit: true 
+          cacheHit: true,
         });
 
         // Stream cached response
@@ -286,7 +286,7 @@ app.post('/stream', zValidator('json', EnhancedChatRequestSchema), async c => {
     if (mockMode) {
       // Use mock provider with caching
       const mockResponse = await AIProviderFactory.generateWithFailover(aiMessages, 1);
-      
+
       // Cache mock response for development
       if (enableCache && cacheKey) {
         await semanticCache.set(cacheKey, {
@@ -331,7 +331,7 @@ app.post('/stream', zValidator('json', EnhancedChatRequestSchema), async c => {
 
     const encoder = new TextEncoder();
     const chunks: string[] = [];
-    
+
     const stream = new ReadableStream({
       async start(controller) {
         try {
@@ -358,7 +358,8 @@ app.post('/stream', zValidator('json', EnhancedChatRequestSchema), async c => {
     }
 
     // Enhanced audit logging with healthcare context
-    const lastText = text || (Array.isArray(messages) ? messages[messages.length - 1]?.content : '') || '';
+    const lastText = text || (Array.isArray(messages) ? messages[messages.length - 1]?.content : '')
+      || '';
     console.log('Enhanced AI Chat Interaction:', {
       timestamp: new Date().toISOString(),
       sessionId,
@@ -372,12 +373,12 @@ app.post('/stream', zValidator('json', EnhancedChatRequestSchema), async c => {
     });
 
     const ms = endTimerMs(t0);
-    logMetric({ 
-      route: '/v1/ai-chat/stream', 
-      ms, 
-      ok: true, 
+    logMetric({
+      route: '/v1/ai-chat/stream',
+      ms,
+      ok: true,
       model: provider.name,
-      cacheHit: false 
+      cacheHit: false,
     });
 
     span.setStatus({ code: SpanStatusCode.OK });
@@ -395,12 +396,12 @@ app.post('/stream', zValidator('json', EnhancedChatRequestSchema), async c => {
   } catch (error) {
     const ms = endTimerMs(t0);
     logMetric({ route: '/v1/ai-chat/stream', ms, ok: false });
-    
-    span.setStatus({ 
-      code: SpanStatusCode.ERROR, 
-      message: error instanceof Error ? error.message : 'Unknown error' 
+
+    span.setStatus({
+      code: SpanStatusCode.ERROR,
+      message: error instanceof Error ? error.message : 'Unknown error',
     });
-    
+
     console.error('Enhanced AI chat error:', error);
     return c.json({
       error: 'Erro interno do servidor',
@@ -414,13 +415,13 @@ app.post('/stream', zValidator('json', EnhancedChatRequestSchema), async c => {
 // Cache management endpoints
 app.post('/cache/clear', async c => {
   const { pattern } = await c.req.json() as { pattern?: string };
-  
+
   if (pattern) {
     await semanticCache.clearPattern(pattern);
   } else {
     await semanticCache.clear();
   }
-  
+
   return c.json({ success: true, cleared: pattern ? 'pattern' : 'all' });
 });
 

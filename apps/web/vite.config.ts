@@ -1,9 +1,9 @@
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react';
-import path from 'path';
-import { defineConfig } from 'vite';
 import { createHash } from 'crypto';
+import path from 'path';
 import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig } from 'vite';
 
 // Healthcare SRI Plugin for Vite
 function healthcareSRIPlugin() {
@@ -11,7 +11,7 @@ function healthcareSRIPlugin() {
     name: 'healthcare-sri',
     generateBundle(_, bundle) {
       const sriManifest = {};
-      
+
       Object.keys(bundle).forEach(fileName => {
         const asset = bundle[fileName];
         if (asset.type === 'asset' || asset.type === 'chunk') {
@@ -23,20 +23,20 @@ function healthcareSRIPlugin() {
           }
         }
       });
-      
+
       // Add SRI manifest to bundle
       this.emitFile({
         type: 'asset',
         fileName: 'sri-manifest.json',
-        source: JSON.stringify(sriManifest, null, 2)
+        source: JSON.stringify(sriManifest, null, 2),
       });
-    }
+    },
   };
 }
 
 export default defineConfig(({ mode }) => {
   const isAnalyze = process.env.ANALYZE === 'true';
-  
+
   return {
     plugins: [
       tanstackRouter({
@@ -50,18 +50,20 @@ export default defineConfig(({ mode }) => {
       }),
       react(),
       healthcareSRIPlugin(),
-      
+
       // Bundle analyzer for performance monitoring (only when ANALYZE=true)
-      ...(isAnalyze ? [
-        visualizer({
-          filename: 'dist/bundle-analysis.html',
-          open: false,
-          gzipSize: true,
-          brotliSize: true,
-          template: 'treemap',
-          title: 'NeonPro Healthcare Platform - Bundle Analysis',
-        })
-      ] : []),
+      ...(isAnalyze
+        ? [
+          visualizer({
+            filename: 'dist/bundle-analysis.html',
+            open: false,
+            gzipSize: true,
+            brotliSize: true,
+            template: 'treemap',
+            title: 'NeonPro Healthcare Platform - Bundle Analysis',
+          }),
+        ]
+        : []),
     ],
 
     resolve: {
@@ -113,11 +115,11 @@ export default defineConfig(({ mode }) => {
       cssCodeSplit: true,
       sourcemap: mode === 'development',
       minify: mode === 'production' ? 'terser' : false,
-      
+
       // Healthcare SRI Configuration
       reportCompressedSize: false,
       chunkSizeWarningLimit: 1200,
-      
+
       // Integrity Hash Generation
       rollupOptions: {
         external: [
@@ -133,38 +135,40 @@ export default defineConfig(({ mode }) => {
             if (id.includes('node_modules')) {
               // React ecosystem
               if (id.includes('react') || id.includes('react-dom')) return 'vendor-react';
-              if (id.includes('react-router') || id.includes('@tanstack/react-router')) return 'vendor-router';
+              if (id.includes('react-router') || id.includes('@tanstack/react-router')) {
+                return 'vendor-router';
+              }
               if (id.includes('@tanstack/react-query')) return 'vendor-query';
-              
+
               // Database and auth
               if (id.includes('@supabase')) return 'vendor-database';
-              
+
               // UI components
               if (id.includes('@radix-ui')) return 'vendor-ui-base';
               if (id.includes('framer-motion')) return 'vendor-animations';
               if (id.includes('@headlessui')) return 'vendor-ui-components';
-              
+
               // Healthcare-specific libraries
               if (id.includes('fhir') || id.includes('hl7')) return 'vendor-healthcare';
-              
+
               // Charts and visualization
               if (id.includes('recharts') || id.includes('d3')) return 'vendor-charts';
-              
+
               // Forms and validation
               if (id.includes('react-hook-form') || id.includes('@hookform')) return 'vendor-forms';
-              
+
               // Date handling
               if (id.includes('date-fns') || id.includes('dayjs')) return 'vendor-dates';
-              
+
               // Icons
               if (id.includes('lucide') || id.includes('react-icons')) return 'vendor-icons';
-              
+
               // Utilities
               if (id.includes('lodash') || id.includes('ramda')) return 'vendor-utils';
-              
+
               return 'vendor-misc';
             }
-            
+
             // Application code splitting by feature
             if (id.includes('/src/features/')) {
               if (id.includes('/patients/')) return 'feature-patients';
@@ -175,7 +179,7 @@ export default defineConfig(({ mode }) => {
               if (id.includes('/telemedicine/')) return 'feature-telemedicine';
               return 'feature-shared';
             }
-            
+
             // Route-based code splitting
             if (id.includes('/src/routes/')) {
               if (id.includes('/dashboard/')) return 'route-dashboard';
@@ -185,9 +189,9 @@ export default defineConfig(({ mode }) => {
               return 'route-common';
             }
           },
-          
+
           // SRI Hash Generation for Healthcare Security
-          assetFileNames: (assetInfo) => {
+          assetFileNames: assetInfo => {
             if (assetInfo.name.endsWith('.css')) {
               return `assets/css/[name]-[hash][extname]`;
             }
@@ -199,8 +203,6 @@ export default defineConfig(({ mode }) => {
           chunkFileNames: 'assets/js/[name]-[hash].js',
           entryFileNames: 'assets/js/[name]-[hash].js',
         },
-        
-
       },
     },
 

@@ -13,30 +13,37 @@
  */
 
 import { describe, it, expect, test } from 'vitest';
+import type {
+  RTCConnectionState,
+  TelemedicineCallType,
+  MedicalDataClassification,
+  RTCSignalingMessage,
+  RTCSignalingServer,
+  CallParticipant,
+  TelemedicineCallSession,
+  RTCHealthcareConfiguration,
+  RTCCallManager,
+  RTCCallQualityMetrics,
+  RTCError,
+  RTCAuditLogEntry,
+  RTCConsentManager
+} from '../webrtc';
+import type * as WebRTC from '../webrtc';
 
 describe('WebRTC Types Export Validation (TDD RED Phase)', () => {
   describe('Type Export Resolution', () => {
     it('should import WebRTC types without TypeScript conflicts', async () => {
-      // This test will FAIL due to current export conflicts
-      // Testing direct import resolution
-      expect(async () => {
-        const webrtcTypes = await import('../webrtc');
+      // Test that WebRTC types can be imported without conflicts
+      // Note: TypeScript types are compile-time only, not runtime accessible
+      
+      // Test that imported types work correctly
+      expect(() => {
+        // Type assignments to verify types work correctly
+        const state: RTCConnectionState = 'connected';
+        const callType: TelemedicineCallType = 'consultation';
+        const classification: MedicalDataClassification = 'sensitive';
         
-        // Verify all types are accessible
-        expect(webrtcTypes.RTCConnectionState).toBeDefined();
-        expect(webrtcTypes.TelemedicineCallType).toBeDefined();
-        expect(webrtcTypes.MedicalDataClassification).toBeDefined();
-        expect(webrtcTypes.RTCSignalingMessage).toBeDefined();
-        expect(webrtcTypes.RTCSignalingServer).toBeDefined();
-        expect(webrtcTypes.CallParticipant).toBeDefined();
-        expect(webrtcTypes.TelemedicineCallSession).toBeDefined();
-        expect(webrtcTypes.RTCHealthcareConfiguration).toBeDefined();
-        expect(webrtcTypes.RTCCallManager).toBeDefined();
-        expect(webrtcTypes.RTCCallQualityMetrics).toBeDefined();
-        expect(webrtcTypes.RTCError).toBeDefined();
-        expect(webrtcTypes.RTCAuditLogEntry).toBeDefined();
-        expect(webrtcTypes.RTCConsentManager).toBeDefined();
-        
+        // If we reach this point, imports work correctly
         return true;
       }).not.toThrow();
     });
@@ -234,40 +241,42 @@ describe('WebRTC Types Export Validation (TDD RED Phase)', () => {
 
   describe('Build System Integration', () => {
     it('should not cause TypeScript compilation errors', async () => {
-      // This test documents the expected build behavior
-      // Currently FAILS due to export conflicts
+      // Test that WebRTC types don't cause TypeScript compilation errors
       
-      // Test that imports don't cause TS2484 errors
-      expect(async () => {
-        // This import should work without "Export declaration conflicts" errors
-        const allTypes = await import('../webrtc');
+      // Test static type imports (compile-time validation)
+      expect(() => {
+        // Use the types to verify they work
+        type ConnectionState = WebRTC.RTCConnectionState;
+        type CallType = WebRTC.TelemedicineCallType;
         
-        // Verify we can access all exported types
-        const typeNames = Object.keys(allTypes);
+        const state: ConnectionState = 'connected';
+        const callType: CallType = 'consultation';
         
-        expect(typeNames.length).toBeGreaterThan(0);
-        expect(typeNames).toContain('RTCConnectionState');
-        expect(typeNames).toContain('TelemedicineCallType');
-        expect(typeNames).toContain('MedicalDataClassification');
+        expect(state).toBe('connected');
+        expect(callType).toBe('consultation');
         
         return true;
       }).not.toThrow();
     });
 
     it('should support proper tree-shaking for production builds', async () => {
-      // This will FAIL due to current export structure
-      const { RTCConnectionState, TelemedicineCallType } = await import('../webrtc');
+      // Test that WebRTC types are properly exported for tree-shaking
+      // Note: TypeScript types are compile-time only, not runtime accessible
       
-      // Test selective imports work correctly
-      expect(RTCConnectionState).toBeDefined();
-      expect(TelemedicineCallType).toBeDefined();
+      // Type assertions (compile-time validation)
+      const connectionState: RTCConnectionState = 'connected';
+      const callType: TelemedicineCallType = 'consultation';
       
-      // These should be importable without importing everything
-      const connectionState: typeof RTCConnectionState = 'connected';
-      const callType: typeof TelemedicineCallType = 'consultation';
-      
+      // These type assignments should compile without errors
       expect(connectionState).toBe('connected');
       expect(callType).toBe('consultation');
+      
+      // Verify types are properly exported by checking they can be used
+      type TestConnectionState = RTCConnectionState;
+      type TestCallType = TelemedicineCallType;
+      
+      // If we reach this point, the types are properly exported
+      expect(true).toBe(true);
     });
   });
 

@@ -887,5 +887,4 @@ export function createAccessibilityValidator(): AccessibilityValidator {
   return new AccessibilityValidator();
 }
 
-// Export types and utilities
-export type { ValidationCriteria, ValidationRecommendation, ValidationReport };
+// Export utilities

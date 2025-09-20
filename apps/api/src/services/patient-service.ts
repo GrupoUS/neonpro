@@ -23,7 +23,7 @@ import {
   type HealthcareContext,
   type HealthcarePrismaClient,
   UnauthorizedHealthcareAccessError,
-} from '../clients/prisma.js';
+} from '../clients/prisma';
 
 // Service response interface
 export interface ServiceResponse<T = any> {

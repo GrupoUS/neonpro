@@ -1,12 +1,12 @@
 /**
  * Accessibility-Enhanced Healthcare Components
- * 
+ *
  * WCAG 2.1 AA+ compliant components designed specifically for healthcare applications
  * with enhanced accessibility features and Brazilian healthcare compliance.
  */
 
-import * as React from 'react';
 import { cn } from '@neonpro/ui/lib/utils';
+import * as React from 'react';
 
 // Enhanced accessible form components
 export const AccessibleForm = React.forwardRef<
@@ -16,7 +16,16 @@ export const AccessibleForm = React.forwardRef<
     'aria-describedby'?: string;
     'data-medical'?: boolean;
   }
->(({ className, 'aria-label': ariaLabel, 'aria-describedby': ariaDescribedBy, 'data-medical': isMedical, ...props }, ref) => {
+>((
+  {
+    className,
+    'aria-label': ariaLabel,
+    'aria-describedby': ariaDescribedBy,
+    'data-medical': isMedical,
+    ...props
+  },
+  ref,
+) => {
   const accessibilityProps = {
     'aria-label': ariaLabel || (isMedical ? 'Medical information form' : 'Information form'),
     'aria-describedby': ariaDescribedBy,
@@ -49,16 +58,16 @@ export const AccessibleInput = React.forwardRef<
     'data-sensitive'?: boolean;
     'data-medical'?: boolean;
   }
->(({ 
-  className, 
-  label, 
-  error, 
-  description, 
+>(({
+  className,
+  label,
+  error,
+  description,
   required = false,
   'data-sensitive': isSensitive,
   'data-medical': isMedical,
   id: propId,
-  ...props 
+  ...props
 }, ref) => {
   const inputId = propId || React.useId();
   const errorId = error ? `${inputId}-error` : undefined;
@@ -73,21 +82,21 @@ export const AccessibleInput = React.forwardRef<
   };
 
   return (
-    <div className="space-y-2">
+    <div className='space-y-2'>
       {label && (
-        <label 
+        <label
           htmlFor={inputId}
           className={cn(
             'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
             isSensitive && 'text-red-600 font-semibold',
-            isMedical && 'text-blue-600 font-semibold'
+            isMedical && 'text-blue-600 font-semibold',
           )}
         >
           {label}
-          {required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
+          {required && <span className='text-red-500 ml-1' aria-label='required'>*</span>}
         </label>
       )}
-      
+
       <input
         id={inputId}
         ref={ref}
@@ -101,15 +110,15 @@ export const AccessibleInput = React.forwardRef<
         {...accessibilityProps}
         {...props}
       />
-      
+
       {description && (
-        <p id={descriptionId} className="text-xs text-muted-foreground">
+        <p id={descriptionId} className='text-xs text-muted-foreground'>
           {description}
         </p>
       )}
-      
+
       {error && (
-        <p id={errorId} className="text-xs text-red-600 font-medium" role="alert">
+        <p id={errorId} className='text-xs text-red-600 font-medium' role='alert'>
           {error}
         </p>
       )}
@@ -129,16 +138,16 @@ export const AccessibleSelect = React.forwardRef<
     required?: boolean;
     'data-medical'?: boolean;
   }
->(({ 
-  className, 
-  label, 
-  options, 
-  error, 
-  description, 
+>(({
+  className,
+  label,
+  options,
+  error,
+  description,
   required = false,
   'data-medical': isMedical,
   id: propId,
-  ...props 
+  ...props
 }, ref) => {
   const selectId = propId || React.useId();
   const errorId = error ? `${selectId}-error` : undefined;
@@ -153,20 +162,20 @@ export const AccessibleSelect = React.forwardRef<
   };
 
   return (
-    <div className="space-y-2">
+    <div className='space-y-2'>
       {label && (
-        <label 
+        <label
           htmlFor={selectId}
           className={cn(
             'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
-            isMedical && 'text-blue-600 font-semibold'
+            isMedical && 'text-blue-600 font-semibold',
           )}
         >
           {label}
-          {required && <span className="text-red-500 ml-1" aria-label="required">*</span>}
+          {required && <span className='text-red-500 ml-1' aria-label='required'>*</span>}
         </label>
       )}
-      
+
       <select
         id={selectId}
         ref={ref}
@@ -179,9 +188,9 @@ export const AccessibleSelect = React.forwardRef<
         {...accessibilityProps}
         {...props}
       >
-        {options.map((option) => (
-          <option 
-            key={option.value} 
+        {options.map(option => (
+          <option
+            key={option.value}
             value={option.value}
             disabled={option.disabled}
           >
@@ -189,15 +198,15 @@ export const AccessibleSelect = React.forwardRef<
           </option>
         ))}
       </select>
-      
+
       {description && (
-        <p id={descriptionId} className="text-xs text-muted-foreground">
+        <p id={descriptionId} className='text-xs text-muted-foreground'>
           {description}
         </p>
       )}
-      
+
       {error && (
-        <p id={errorId} className="text-xs text-red-600 font-medium" role="alert">
+        <p id={errorId} className='text-xs text-red-600 font-medium' role='alert'>
           {error}
         </p>
       )}
@@ -217,7 +226,7 @@ export const AccessibleButton = React.forwardRef<
     'data-medical'?: boolean;
     icon?: React.ReactNode;
   }
->(({ 
+>(({
   className,
   variant = 'default',
   size = 'default',
@@ -227,7 +236,7 @@ export const AccessibleButton = React.forwardRef<
   icon,
   children,
   disabled,
-  ...props 
+  ...props
 }, ref) => {
   const accessibilityProps = {
     'aria-label': props['aria-label'] || props.title,
@@ -269,9 +278,9 @@ export const AccessibleButton = React.forwardRef<
       {...props}
     >
       {loading && (
-        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        <div className='mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent' />
       )}
-      {icon && <span className="mr-2">{icon}</span>}
+      {icon && <span className='mr-2'>{icon}</span>}
       {children}
     </button>
   );
@@ -287,17 +296,17 @@ export const AccessibleAlert = React.forwardRef<
     dismissible?: boolean;
     onDismiss?: () => void;
   }
->(({ 
+>(({
   className,
   variant = 'info',
   title,
   dismissible = false,
   onDismiss,
   children,
-  ...props 
+  ...props
 }, ref) => {
   const alertId = React.useId();
-  
+
   const variants = {
     info: 'bg-blue-50 border-blue-200 text-blue-800',
     success: 'bg-green-50 border-green-200 text-green-800',
@@ -336,35 +345,35 @@ export const AccessibleAlert = React.forwardRef<
       {dismissible && (
         <button
           onClick={onDismiss}
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-          aria-label="Close alert"
+          className='absolute top-2 right-2 text-gray-500 hover:text-gray-700'
+          aria-label='Close alert'
         >
           ✕
         </button>
       )}
-      
-      <div className="flex items-start space-x-3">
-        <span className="text-lg" aria-hidden="true">
+
+      <div className='flex items-start space-x-3'>
+        <span className='text-lg' aria-hidden='true'>
           {icons[variant]}
         </span>
-        
-        <div className="flex-1 space-y-2">
+
+        <div className='flex-1 space-y-2'>
           {title && (
-            <h4 
+            <h4
               id={`${alertId}-title`}
               className={cn(
                 'font-medium',
-                variant === 'emergency' && 'font-bold text-lg'
+                variant === 'emergency' && 'font-bold text-lg',
               )}
             >
               {title}
             </h4>
           )}
-          
+
           {children && (
-            <div 
+            <div
               id={`${alertId}-description`}
-              className="text-sm"
+              className='text-sm'
             >
               {children}
             </div>
@@ -387,7 +396,7 @@ export const AccessibleModal = React.forwardRef<
     size?: 'sm' | 'md' | 'lg' | 'xl';
     'data-medical'?: boolean;
   }
->(({ 
+>(({
   className,
   isOpen,
   onClose,
@@ -396,7 +405,7 @@ export const AccessibleModal = React.forwardRef<
   size = 'md',
   'data-medical': isMedical,
   children,
-  ...props 
+  ...props
 }, ref) => {
   const modalId = React.useId();
   const titleId = title ? `${modalId}-title` : undefined;
@@ -419,7 +428,7 @@ export const AccessibleModal = React.forwardRef<
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50'>
       <div
         ref={ref}
         className={cn(
@@ -431,14 +440,14 @@ export const AccessibleModal = React.forwardRef<
         {...accessibilityProps}
         {...props}
       >
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className='p-6'>
+          <div className='flex items-center justify-between mb-4'>
             {title && (
-              <h2 
+              <h2
                 id={titleId}
                 className={cn(
                   'text-xl font-semibold',
-                  isMedical && 'text-blue-800'
+                  isMedical && 'text-blue-800',
                 )}
               >
                 {title}
@@ -446,22 +455,22 @@ export const AccessibleModal = React.forwardRef<
             )}
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700 text-2xl leading-none"
-              aria-label="Close modal"
+              className='text-gray-500 hover:text-gray-700 text-2xl leading-none'
+              aria-label='Close modal'
             >
               ×
             </button>
           </div>
-          
+
           {description && (
-            <p 
+            <p
               id={descriptionId}
-              className="text-gray-600 mb-4"
+              className='text-gray-600 mb-4'
             >
               {description}
             </p>
           )}
-          
+
           {children}
         </div>
       </div>
@@ -483,13 +492,13 @@ export const AccessibleTable = React.forwardRef<
       align?: 'left' | 'center' | 'right';
     }>;
   }
->(({ 
+>(({
   className,
   caption,
   'data-medical': isMedical,
   columns,
   children,
-  ...props 
+  ...props
 }, ref) => {
   const tableId = React.useId();
   const captionId = caption ? `${tableId}-caption` : undefined;
@@ -501,7 +510,7 @@ export const AccessibleTable = React.forwardRef<
   };
 
   return (
-    <div className="overflow-x-auto">
+    <div className='overflow-x-auto'>
       <table
         ref={ref}
         className={cn(
@@ -513,38 +522,38 @@ export const AccessibleTable = React.forwardRef<
         {...props}
       >
         {caption && (
-          <caption id={captionId} className="text-sm font-medium text-gray-700 mb-2">
+          <caption id={captionId} className='text-sm font-medium text-gray-700 mb-2'>
             {caption}
           </caption>
         )}
-        
+
         <thead>
-          <tr className={cn(
-            'bg-gray-50',
-            isMedical && 'bg-blue-50'
-          )}>
-            {columns.map((column) => (
+          <tr
+            className={cn(
+              'bg-gray-50',
+              isMedical && 'bg-blue-50',
+            )}
+          >
+            {columns.map(column => (
               <th
                 key={column.key}
-                scope="col"
+                scope='col'
                 className={cn(
                   'border border-gray-300 px-4 py-2 text-left font-medium text-gray-700',
                   column.align === 'center' && 'text-center',
                   column.align === 'right' && 'text-right',
                   column.sortable && 'cursor-pointer hover:bg-gray-100',
-                  isMedical && 'border-blue-200 text-blue-800'
+                  isMedical && 'border-blue-200 text-blue-800',
                 )}
                 aria-sort={column.sortable ? 'none' : undefined}
               >
                 {column.label}
-                {column.sortable && (
-                  <span className="ml-1" aria-hidden="true">↕</span>
-                )}
+                {column.sortable && <span className='ml-1' aria-hidden='true'>↕</span>}
               </th>
             ))}
           </tr>
         </thead>
-        
+
         <tbody>
           {children}
         </tbody>
@@ -556,11 +565,11 @@ AccessibleTable.displayName = 'AccessibleTable';
 
 // Export all enhanced components
 export {
+  AccessibleAlert,
+  AccessibleButton,
   AccessibleForm,
   AccessibleInput,
-  AccessibleSelect,
-  AccessibleButton,
-  AccessibleAlert,
   AccessibleModal,
+  AccessibleSelect,
   AccessibleTable,
 };

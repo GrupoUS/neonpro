@@ -6,7 +6,11 @@
     "declaration": true,
     "declarationMap": true,
     "composite": true,
-    "noEmit": false
+    "noEmit": false,
+    "skipLibCheck": true,
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
   "include": [
     "src/**/*.ts",
@@ -19,5 +23,9 @@
     "**/*.test.tsx",
     "**/*.spec.ts",
     "**/*.spec.tsx"
+  ],
+  "references": [
+    { "path": "../database" },
+    { "path": "../types" }
   ]
 }

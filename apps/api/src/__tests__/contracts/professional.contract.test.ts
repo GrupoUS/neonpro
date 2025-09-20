@@ -1,9 +1,9 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { Professional, ProfessionalInput, ProfessionalOutput } from '@/types/api/contracts';
-import { createTRPCMsw } from 'msw-trpc';
-import { httpLink } from '@trpc/client';
 import { appRouter } from '@/trpc/router';
 import type { AppRouter } from '@/trpc/router';
+import type { Professional, ProfessionalInput, ProfessionalOutput } from '@/types/api/contracts';
+import { httpLink } from '@trpc/client';
+import { createTRPCMsw } from 'msw-trpc';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 /**
  * Professional Contract Tests
@@ -22,31 +22,31 @@ describe('Professional Contract Testing', () => {
         findMany: vi.fn(),
         update: vi.fn(),
         delete: vi.fn(),
-        count: vi.fn()
+        count: vi.fn(),
       },
       clinic: {
-        findUnique: vi.fn()
+        findUnique: vi.fn(),
       },
       professionalQualification: {
         create: vi.fn(),
         findMany: vi.fn(),
         update: vi.fn(),
-        delete: vi.fn()
-      }
+        delete: vi.fn(),
+      },
     },
     crm: {
       validateLicense: vi.fn(),
       checkStatus: vi.fn(),
-      getSpecializations: vi.fn()
+      getSpecializations: vi.fn(),
     },
     audit: {
       logProfessionalAction: vi.fn(),
-      createAuditRecord: vi.fn()
+      createAuditRecord: vi.fn(),
     },
     compliance: {
       validateCFMCompliance: vi.fn(),
-      checkProfessionalCredentials: vi.fn()
-    }
+      checkProfessionalCredentials: vi.fn(),
+    },
   };
 
   const trpcMsw = createTRPCMsw<AppRouter>();
@@ -64,18 +64,18 @@ describe('Professional Contract Testing', () => {
           cpf: '123.456.789-00',
           email: 'maria@clinic.com',
           phone: '+5511999888777',
-          dateOfBirth: '1985-03-15'
+          dateOfBirth: '1985-03-15',
         },
         professionalInfo: {
           crmNumber: 'CRM/SP 123456',
           crmState: 'SP',
           specializations: ['dermatology', 'aesthetic_medicine'],
           licenseNumber: 'LICENSE-123456',
-          licenseExpiryDate: '2025-12-31'
+          licenseExpiryDate: '2025-12-31',
         },
         clinicId: 'clinic-456',
         role: 'doctor',
-        permissions: ['view_patients', 'create_appointments', 'prescribe_treatments']
+        permissions: ['view_patients', 'create_appointments', 'prescribe_treatments'],
       };
 
       const mockProfessional = {
@@ -90,11 +90,14 @@ describe('Professional Contract Testing', () => {
         role: 'doctor',
         isActive: true,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       mockContext.crm.validateLicense.mockResolvedValue({ valid: true, status: 'active' });
-      mockContext.prisma.clinic.findUnique.mockResolvedValue({ id: 'clinic-456', name: 'Test Clinic' });
+      mockContext.prisma.clinic.findUnique.mockResolvedValue({
+        id: 'clinic-456',
+        name: 'Test Clinic',
+      });
       mockContext.prisma.professional.create.mockResolvedValue(mockProfessional);
 
       const result = await caller.api.professional.create(createInput);
@@ -105,14 +108,14 @@ describe('Professional Contract Testing', () => {
           id: 'prof-789',
           fullName: 'Dr. Maria Silva',
           crmNumber: 'CRM/SP 123456',
-          specializations: ['dermatology', 'aesthetic_medicine']
-        })
+          specializations: ['dermatology', 'aesthetic_medicine'],
+        }),
       });
 
       // Verify CRM validation was called
       expect(mockContext.crm.validateLicense).toHaveBeenCalledWith({
         crmNumber: 'CRM/SP 123456',
-        crmState: 'SP'
+        crmState: 'SP',
       });
 
       // Verify audit logging
@@ -120,7 +123,7 @@ describe('Professional Contract Testing', () => {
         action: 'create',
         professionalId: 'prof-789',
         userId: mockContext.user.id,
-        timestamp: expect.any(Date)
+        timestamp: expect.any(Date),
       });
     });
 
@@ -131,22 +134,22 @@ describe('Professional Contract Testing', () => {
           cpf: '123.456.789-00',
           email: 'invalid@clinic.com',
           phone: '+5511999888777',
-          dateOfBirth: '1985-03-15'
+          dateOfBirth: '1985-03-15',
         },
         professionalInfo: {
           crmNumber: 'INVALID-CRM',
           crmState: 'SP',
           specializations: ['dermatology'],
           licenseNumber: 'LICENSE-123',
-          licenseExpiryDate: '2025-12-31'
+          licenseExpiryDate: '2025-12-31',
         },
         clinicId: 'clinic-456',
-        role: 'doctor'
+        role: 'doctor',
       };
 
-      mockContext.crm.validateLicense.mockResolvedValue({ 
-        valid: false, 
-        error: 'Invalid CRM format' 
+      mockContext.crm.validateLicense.mockResolvedValue({
+        valid: false,
+        error: 'Invalid CRM format',
       });
 
       await expect(caller.api.professional.create(invalidInput))
@@ -160,23 +163,23 @@ describe('Professional Contract Testing', () => {
           cpf: '123.456.789-00',
           email: 'noncompliant@clinic.com',
           phone: '+5511999888777',
-          dateOfBirth: '1985-03-15'
+          dateOfBirth: '1985-03-15',
         },
         professionalInfo: {
           crmNumber: 'CRM/SP 123456',
           crmState: 'SP',
           specializations: ['surgery'], // Requires additional qualifications
           licenseNumber: 'LICENSE-123',
-          licenseExpiryDate: '2025-12-31'
+          licenseExpiryDate: '2025-12-31',
         },
         clinicId: 'clinic-456',
-        role: 'doctor'
+        role: 'doctor',
       };
 
       mockContext.crm.validateLicense.mockResolvedValue({ valid: true, status: 'active' });
-      mockContext.compliance.validateCFMCompliance.mockResolvedValue({ 
-        compliant: false, 
-        missingRequirements: ['surgical_qualification'] 
+      mockContext.compliance.validateCFMCompliance.mockResolvedValue({
+        compliant: false,
+        missingRequirements: ['surgical_qualification'],
       });
 
       await expect(caller.api.professional.create(nonCompliantInput))
@@ -200,20 +203,20 @@ describe('Professional Contract Testing', () => {
         schedule: {
           workingHours: {
             monday: { start: '08:00', end: '18:00' },
-            tuesday: { start: '08:00', end: '18:00' }
+            tuesday: { start: '08:00', end: '18:00' },
           },
-          lunchBreak: { start: '12:00', end: '13:00' }
+          lunchBreak: { start: '12:00', end: '13:00' },
         },
         qualifications: [
           {
             id: 'qual-1',
             name: 'Dermatology Certification',
             issuedBy: 'SBD',
-            expiryDate: '2025-12-31'
-          }
+            expiryDate: '2025-12-31',
+          },
         ],
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(mockProfessional);
@@ -228,20 +231,20 @@ describe('Professional Contract Testing', () => {
           crmNumber: 'CRM/SP 123456',
           specializations: expect.arrayContaining(['dermatology']),
           schedule: expect.objectContaining({
-            workingHours: expect.any(Object)
+            workingHours: expect.any(Object),
           }),
           qualifications: expect.arrayContaining([
             expect.objectContaining({
-              name: 'Dermatology Certification'
-            })
-          ])
-        })
+              name: 'Dermatology Certification',
+            }),
+          ]),
+        }),
       });
     });
 
     it('should handle professional not found', async () => {
       const professionalId = 'nonexistent-prof';
-      
+
       mockContext.prisma.professional.findUnique.mockResolvedValue(null);
 
       await expect(caller.api.professional.getById({ id: professionalId }))
@@ -256,26 +259,26 @@ describe('Professional Contract Testing', () => {
         id: professionalId,
         personalInfo: {
           phone: '+5511888777666',
-          email: 'maria.new@clinic.com'
+          email: 'maria.new@clinic.com',
         },
         professionalInfo: {
-          specializations: ['dermatology', 'aesthetic_medicine', 'laser_therapy']
+          specializations: ['dermatology', 'aesthetic_medicine', 'laser_therapy'],
         },
         schedule: {
           workingHours: {
             monday: { start: '09:00', end: '17:00' },
             tuesday: { start: '09:00', end: '17:00' },
-            wednesday: { start: '09:00', end: '17:00' }
+            wednesday: { start: '09:00', end: '17:00' },
           },
-          lunchBreak: { start: '12:30', end: '13:30' }
-        }
+          lunchBreak: { start: '12:30', end: '13:30' },
+        },
       };
 
       const existingProfessional = {
         id: professionalId,
         fullName: 'Dr. Maria Silva',
         crmNumber: 'CRM/SP 123456',
-        isActive: true
+        isActive: true,
       };
 
       const updatedProfessional = {
@@ -283,7 +286,7 @@ describe('Professional Contract Testing', () => {
         phone: '+5511888777666',
         email: 'maria.new@clinic.com',
         specializations: ['dermatology', 'aesthetic_medicine', 'laser_therapy'],
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(existingProfessional);
@@ -297,8 +300,8 @@ describe('Professional Contract Testing', () => {
           id: professionalId,
           phone: '+5511888777666',
           email: 'maria.new@clinic.com',
-          specializations: expect.arrayContaining(['laser_therapy'])
-        })
+          specializations: expect.arrayContaining(['laser_therapy']),
+        }),
       });
 
       // Verify audit logging for update
@@ -308,9 +311,9 @@ describe('Professional Contract Testing', () => {
         userId: mockContext.user.id,
         changes: expect.objectContaining({
           phone: '+5511888777666',
-          email: 'maria.new@clinic.com'
+          email: 'maria.new@clinic.com',
         }),
-        timestamp: expect.any(Date)
+        timestamp: expect.any(Date),
       });
     });
 
@@ -320,14 +323,14 @@ describe('Professional Contract Testing', () => {
         id: professionalId,
         professionalInfo: {
           crmNumber: 'CRM/SP 999999', // Changing CRM should require special authorization
-          crmState: 'RJ'
-        }
+          crmState: 'RJ',
+        },
       };
 
       const existingProfessional = {
         id: professionalId,
         crmNumber: 'CRM/SP 123456',
-        crmState: 'SP'
+        crmState: 'SP',
       };
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(existingProfessional);
@@ -347,22 +350,22 @@ describe('Professional Contract Testing', () => {
             tuesday: { start: '08:00', end: '17:00' },
             wednesday: { start: '08:00', end: '17:00' },
             thursday: { start: '08:00', end: '17:00' },
-            friday: { start: '08:00', end: '16:00' }
+            friday: { start: '08:00', end: '16:00' },
           },
           lunchBreak: { start: '12:00', end: '13:00' },
           breaks: [
             { start: '10:00', end: '10:15', name: 'Morning break' },
-            { start: '15:00', end: '15:15', name: 'Afternoon break' }
-          ]
+            { start: '15:00', end: '15:15', name: 'Afternoon break' },
+          ],
         },
-        effectiveFrom: '2024-03-01'
+        effectiveFrom: '2024-03-01',
       };
 
       const updatedProfessional = {
         id: 'prof-789',
         schedule: scheduleInput.schedule,
         scheduleUpdatedAt: new Date(),
-        scheduleEffectiveFrom: new Date('2024-03-01')
+        scheduleEffectiveFrom: new Date('2024-03-01'),
       };
 
       mockContext.prisma.professional.update.mockResolvedValue(updatedProfessional);
@@ -374,11 +377,11 @@ describe('Professional Contract Testing', () => {
         data: expect.objectContaining({
           schedule: expect.objectContaining({
             workingHours: expect.objectContaining({
-              monday: { start: '08:00', end: '17:00' }
+              monday: { start: '08:00', end: '17:00' },
             }),
-            lunchBreak: { start: '12:00', end: '13:00' }
-          })
-        })
+            lunchBreak: { start: '12:00', end: '13:00' },
+          }),
+        }),
       });
     });
 
@@ -387,9 +390,9 @@ describe('Professional Contract Testing', () => {
         professionalId: 'prof-789',
         schedule: {
           workingHours: {
-            monday: { start: '14:00', end: '12:00' } // Invalid: end before start
-          }
-        }
+            monday: { start: '14:00', end: '12:00' }, // Invalid: end before start
+          },
+        },
       };
 
       await expect(caller.api.professional.updateSchedule(conflictingSchedule))
@@ -406,10 +409,10 @@ describe('Professional Contract Testing', () => {
           clinicId: 'clinic-456',
           specializations: ['dermatology'],
           isActive: true,
-          role: 'doctor'
+          role: 'doctor',
         },
         orderBy: 'fullName',
-        orderDirection: 'asc'
+        orderDirection: 'asc',
       };
 
       const mockProfessionals = [
@@ -419,7 +422,7 @@ describe('Professional Contract Testing', () => {
           crmNumber: 'CRM/SP 111111',
           specializations: ['dermatology'],
           isActive: true,
-          role: 'doctor'
+          role: 'doctor',
         },
         {
           id: 'prof-2',
@@ -427,8 +430,8 @@ describe('Professional Contract Testing', () => {
           crmNumber: 'CRM/SP 222222',
           specializations: ['dermatology', 'aesthetic_medicine'],
           isActive: true,
-          role: 'doctor'
-        }
+          role: 'doctor',
+        },
       ];
 
       mockContext.prisma.professional.findMany.mockResolvedValue(mockProfessionals);
@@ -443,20 +446,20 @@ describe('Professional Contract Testing', () => {
             expect.objectContaining({
               id: 'prof-1',
               fullName: 'Dr. Ana Costa',
-              specializations: expect.arrayContaining(['dermatology'])
-            })
+              specializations: expect.arrayContaining(['dermatology']),
+            }),
           ]),
           pagination: {
             page: 1,
             limit: 10,
             total: 25,
-            totalPages: 3
+            totalPages: 3,
           },
           filters: expect.objectContaining({
             clinicId: 'clinic-456',
-            specializations: ['dermatology']
-          })
-        }
+            specializations: ['dermatology'],
+          }),
+        },
       });
     });
   });
@@ -471,15 +474,15 @@ describe('Professional Contract Testing', () => {
           issueDate: '2024-01-15',
           expiryDate: '2027-01-15',
           certificateNumber: 'CERT-2024-ALT-001',
-          credentialUrl: 'https://certificates.laser-institute.com/ALT-001'
-        }
+          credentialUrl: 'https://certificates.laser-institute.com/ALT-001',
+        },
       };
 
       const newQualification = {
         id: 'qual-new',
         professionalId: 'prof-789',
         ...qualificationInput.qualification,
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
       mockContext.prisma.professionalQualification.create.mockResolvedValue(newQualification);
@@ -491,8 +494,8 @@ describe('Professional Contract Testing', () => {
         data: expect.objectContaining({
           id: 'qual-new',
           name: 'Advanced Laser Therapy Certification',
-          certificateNumber: 'CERT-2024-ALT-001'
-        })
+          certificateNumber: 'CERT-2024-ALT-001',
+        }),
       });
     });
 
@@ -503,11 +506,13 @@ describe('Professional Contract Testing', () => {
           id: 'qual-expiring',
           name: 'Basic Certification',
           expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
-          daysUntilExpiry: 30
-        }
+          daysUntilExpiry: 30,
+        },
       ];
 
-      mockContext.prisma.professionalQualification.findMany.mockResolvedValue(mockExpiringQualifications);
+      mockContext.prisma.professionalQualification.findMany.mockResolvedValue(
+        mockExpiringQualifications,
+      );
 
       const result = await caller.api.professional.getExpiringQualifications({ professionalId });
 
@@ -516,9 +521,9 @@ describe('Professional Contract Testing', () => {
         data: expect.arrayContaining([
           expect.objectContaining({
             id: 'qual-expiring',
-            daysUntilExpiry: 30
-          })
-        ])
+            daysUntilExpiry: 30,
+          }),
+        ]),
       });
     });
   });
@@ -531,17 +536,17 @@ describe('Professional Contract Testing', () => {
           cpf: '123.456.789-00',
           email: 'test@clinic.com',
           phone: '+5511999888777',
-          dateOfBirth: '1985-03-15'
+          dateOfBirth: '1985-03-15',
         },
         professionalInfo: {
           crmNumber: 'CRM/SP 123456',
           crmState: 'SP',
           specializations: ['dermatology'],
           licenseNumber: 'LICENSE-123',
-          licenseExpiryDate: '2025-12-31'
+          licenseExpiryDate: '2025-12-31',
         },
         clinicId: 'clinic-456',
-        role: 'doctor'
+        role: 'doctor',
       };
 
       expect(validInput).toBeDefined();
@@ -561,8 +566,8 @@ describe('Professional Contract Testing', () => {
           role: 'doctor',
           isActive: true,
           createdAt: new Date(),
-          updatedAt: new Date()
-        }
+          updatedAt: new Date(),
+        },
       };
 
       expect(mockOutput).toBeDefined();

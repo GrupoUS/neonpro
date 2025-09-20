@@ -118,7 +118,7 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
         method: c.req.method,
         path: c.req.path,
         purpose: options.purpose,
-        userId: await getCurrentUserId(c).catch(() => null),
+        userId: await getCurrentUserId(c).catch(_error => null),
         ipAddress: getClientIP(c),
       };
 

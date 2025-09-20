@@ -5,7 +5,11 @@
     "rootDir": "./",
     "declaration": true,
     "declarationMap": true,
-    "composite": true
+    "composite": true,
+    "baseUrl": ".",
+    "paths": {
+      "@neonpro/types": ["../types/dist/index.d.ts"]
+    }
   },
   "include": [
     "**/*.ts",

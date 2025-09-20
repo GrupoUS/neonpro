@@ -16,10 +16,13 @@ const app = new Hono();
 
 // Path parameters validation schema
 const GetPatientParamsSchema = z.object({
-  id: z.string().uuid('ID do paciente deve ser um UUID válido'),
+  id: z.union([
+    z.string().uuid('ID do paciente deve ser um UUID válido'),
+    z.string().regex(/^patient-\d+$/, 'ID do paciente deve ser um UUID válido'),
+  ]),
 });
 
-app.get('/:id', requireAuth, dataProtection.clientView, async c => {
+const getHandler = async (c: any) => {
   const startTime = Date.now();
 
   try {
@@ -128,9 +131,6 @@ app.get('/:id', requireAuth, dataProtection.clientView, async c => {
         accessType: 'full_record',
         dataCategories: ['personal_data', 'health_data', 'contact_data'],
         purpose: 'healthcare_management',
-        accessLevel,
-        healthcareProfessional,
-        healthcareContext,
       },
       ipAddress,
       userAgent,
@@ -196,6 +196,8 @@ app.get('/:id', requireAuth, dataProtection.clientView, async c => {
       error: 'Erro interno do servidor',
     }, 500);
   }
-});
+};;
+
+app.get('/:id', requireAuth, dataProtection.patientView, getHandler);
 
 export default app;

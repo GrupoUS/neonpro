@@ -52,6 +52,49 @@ export class AgentRegistry {
       parallelizable: false // Primary TDD coordinator and code auditor
     });
 
+    // Test Agent - TDD and Quality Assurance
+    this.agents.set('test', {
+      name: 'test',
+      phases: ['red', 'green', 'refactor'],
+      specializations: [
+        'test-driven-development',
+        'unit-testing',
+        'integration-testing',
+        'e2e-testing',
+        'test-coverage',
+        'quality-assurance',
+        'ci-cd-integration'
+      ],
+      triggers: [
+        'test', 'testing', 'tdd', 'unit test',
+        'integration test', 'e2e test', 'coverage',
+        'quality', 'qa', 'test pattern'
+      ],
+      dependencies: ['apex-dev'],
+      parallelizable: true
+    });
+
+    // Compliance Validator Agent - Healthcare Compliance
+    this.agents.set('compliance-validator', {
+      name: 'compliance-validator',
+      phases: ['red', 'green', 'refactor'],
+      specializations: [
+        'lgpd-compliance',
+        'anvisa-regulations',
+        'cfm-guidelines',
+        'healthcare-compliance',
+        'data-protection',
+        'audit-trail'
+      ],
+      triggers: [
+        'compliance', 'lgpd', 'anvisa', 'cfm',
+        'healthcare', 'patient data', 'privacy',
+        'consent', 'audit', 'regulation'
+      ],
+      dependencies: ['security-auditor'],
+      parallelizable: true
+    });
+
     // Architect Review Agent - System design and patterns
     this.agents.set('architect-review', {
       name: 'architect-review',
@@ -138,6 +181,16 @@ export class AgentRegistry {
     this.activationRules.set('legacy', [
       'code-reviewer', 'architect-review', 'apex-dev', 'security-auditor'
     ]);
+
+    // Test-heavy features
+    this.activationRules.set('test-heavy', [
+      'test', 'apex-dev', 'code-reviewer'
+    ]);
+
+    // Compliance-heavy features
+    this.activationRules.set('compliance-heavy', [
+      'compliance-validator', 'security-auditor', 'apex-dev'
+    ]);
   }
 
   /**
@@ -185,6 +238,16 @@ export class AgentRegistry {
     // Check for performance/quality triggers
     if (this.hasQualityTriggers(feature)) {
       selectedAgents.add('code-reviewer');
+    }
+
+    // Check for test triggers
+    if (this.hasTestTriggers(feature)) {
+      selectedAgents.add('test');
+    }
+
+    // Check for compliance triggers
+    if (this.hasComplianceTriggers(feature)) {
+      selectedAgents.add('compliance-validator');
     }
 
     // Complexity-based selection
@@ -263,6 +326,45 @@ export class AgentRegistry {
     return codeReviewerAgent.triggers.some(trigger => 
       featureText.includes(trigger.toLowerCase())
     );
+  }
+
+  /**
+   * Check if feature has test-related triggers
+   */
+  private hasTestTriggers(feature: FeatureContext): boolean {
+    const testAgent = this.agents.get('test');
+    if (!testAgent) return false;
+
+    const featureText = [
+      feature.name,
+      ...(Array.isArray(feature.domain) ? feature.domain : []),
+      ...(Array.isArray(feature.requirements) ? feature.requirements : []),
+      ...(Array.isArray(feature.complianceRequirements) ? feature.complianceRequirements : [])
+    ].join(' ').toLowerCase();
+
+    return testAgent.triggers.some(trigger => 
+      featureText.includes(trigger.toLowerCase())
+    );
+  }
+
+  /**
+   * Check if feature has compliance-related triggers
+   */
+  private hasComplianceTriggers(feature: FeatureContext): boolean {
+    const complianceAgent = this.agents.get('compliance-validator');
+    if (!complianceAgent) return false;
+
+    const featureText = [
+      feature.name,
+      ...(Array.isArray(feature.domain) ? feature.domain : []),
+      ...(Array.isArray(feature.requirements) ? feature.requirements : []),
+      ...(Array.isArray(feature.complianceRequirements) ? feature.complianceRequirements : [])
+    ].join(' ').toLowerCase();
+
+    return complianceAgent.triggers.some(trigger => 
+      featureText.includes(trigger.toLowerCase())
+    ) || 
+    (feature.complianceRequirements && feature.complianceRequirements.length > 0);
   }
 
   /**

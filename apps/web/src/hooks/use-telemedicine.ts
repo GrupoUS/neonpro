@@ -1,6 +1,6 @@
 /**
  * Enhanced Telemedicine Hooks
- * 
+ *
  * Features:
  * - Complete session management with tRPC integration
  * - WebRTC video/audio call management
@@ -12,10 +12,10 @@
  * - Medical transcription and AI assistance
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
 import { trpc } from '@/lib/trpc/client';
-import { useAuth } from './useAuth';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import { useAuth } from './useAuth';
 
 // Types
 export interface TelemedicineSession {
@@ -78,39 +78,39 @@ export function useTelemedicineSession(params: {
   const [error, setError] = useState<string | null>(null);
 
   const sessionQuery = trpc.telemedicine.getSession.useQuery(
-    { 
+    {
       sessionId: params.sessionId,
       appointmentId: params.appointmentId,
-      includeConsent: params.includeConsent || false
+      includeConsent: params.includeConsent || false,
     },
-    { 
+    {
       enabled: !!(params.sessionId || params.appointmentId),
-      refetchInterval: 5000 // Poll every 5 seconds for updates
-    }
+      refetchInterval: 5000, // Poll every 5 seconds for updates
+    },
   );
 
   const createSessionMutation = trpc.telemedicine.createSession.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       setSession(data);
       toast.success('Sessão de telemedicina criada com sucesso');
     },
-    onError: (error) => {
+    onError: error => {
       setError(error.message);
       toast.error('Erro ao criar sessão de telemedicina');
-    }
+    },
   });
 
   const updateSessionMutation = trpc.telemedicine.updateSession.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       setSession(data);
-    }
+    },
   });
 
   const endSessionMutation = trpc.telemedicine.endSession.useMutation({
     onSuccess: () => {
       setSession(null);
       toast.success('Sessão finalizada com sucesso');
-    }
+    },
   });
 
   useEffect(() => {
@@ -136,7 +136,7 @@ export function useTelemedicineSession(params: {
     if (!session?.sessionId) return;
     return updateSessionMutation.mutateAsync({
       sessionId: session.sessionId,
-      ...data
+      ...data,
     });
   }, [session?.sessionId, updateSessionMutation]);
 
@@ -144,7 +144,7 @@ export function useTelemedicineSession(params: {
     if (!session?.sessionId) return;
     return endSessionMutation.mutateAsync({
       sessionId: session.sessionId,
-      reason
+      reason,
     });
   }, [session?.sessionId, endSessionMutation]);
 
@@ -158,7 +158,7 @@ export function useTelemedicineSession(params: {
     refetch: sessionQuery.refetch,
     isCreating: createSessionMutation.isPending,
     isUpdating: updateSessionMutation.isPending,
-    isEnding: endSessionMutation.isPending
+    isEnding: endSessionMutation.isPending,
   };
 }
 
@@ -173,7 +173,7 @@ export function useVideoCall(sessionId: string) {
     isScreenSharing: false,
     connectionQuality: 'excellent',
     bandwidth: 0,
-    latency: 0
+    latency: 0,
   });
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
@@ -184,11 +184,11 @@ export function useVideoCall(sessionId: string) {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: true
+        audio: true,
       });
-      
+
       setCallState(prev => ({ ...prev, localStream: stream }));
-      
+
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
       }
@@ -196,18 +196,18 @@ export function useVideoCall(sessionId: string) {
       // Initialize WebRTC peer connection
       const peerConnection = new RTCPeerConnection({
         iceServers: [
-          { urls: 'stun:stun.l.google.com:19302' }
-        ]
+          { urls: 'stun:stun.l.google.com:19302' },
+        ],
       });
 
       stream.getTracks().forEach(track => {
         peerConnection.addTrack(track, stream);
       });
 
-      peerConnection.ontrack = (event) => {
+      peerConnection.ontrack = event => {
         const [remoteStream] = event.streams;
         setCallState(prev => ({ ...prev, remoteStream }));
-        
+
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = remoteStream;
         }
@@ -215,7 +215,6 @@ export function useVideoCall(sessionId: string) {
 
       peerConnectionRef.current = peerConnection;
       setCallState(prev => ({ ...prev, isConnected: true }));
-      
     } catch (error) {
       console.error('Error initializing video call:', error);
       toast.error('Erro ao inicializar videochamada');
@@ -246,15 +245,14 @@ export function useVideoCall(sessionId: string) {
     try {
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
-        audio: true
+        audio: true,
       });
-      
+
       setCallState(prev => ({ ...prev, isScreenSharing: true }));
-      
+
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = screenStream;
       }
-      
     } catch (error) {
       console.error('Error starting screen share:', error);
       toast.error('Erro ao compartilhar tela');
@@ -265,11 +263,11 @@ export function useVideoCall(sessionId: string) {
     if (callState.localStream) {
       callState.localStream.getTracks().forEach(track => track.stop());
     }
-    
+
     if (peerConnectionRef.current) {
       peerConnectionRef.current.close();
     }
-    
+
     setCallState({
       isConnected: false,
       localStream: null,
@@ -279,7 +277,7 @@ export function useVideoCall(sessionId: string) {
       isScreenSharing: false,
       connectionQuality: 'excellent',
       bandwidth: 0,
-      latency: 0
+      latency: 0,
     });
   }, [callState.localStream]);
 
@@ -291,7 +289,7 @@ export function useVideoCall(sessionId: string) {
     toggleMute,
     toggleVideo,
     startScreenShare,
-    endCall
+    endCall,
   };
 }
 
@@ -306,19 +304,19 @@ export function useRealTimeChat(params: {
 
   const messagesQuery = trpc.telemedicine.getChatMessages.useQuery(
     { sessionId: params.sessionId },
-    { 
+    {
       enabled: !!params.sessionId,
-      refetchInterval: 2000 // Poll every 2 seconds
-    }
+      refetchInterval: 2000, // Poll every 2 seconds
+    },
   );
 
   const sendMessageMutation = trpc.telemedicine.sendChatMessage.useMutation({
-    onSuccess: (newMessage) => {
+    onSuccess: newMessage => {
       setMessages(prev => [...prev, newMessage]);
     },
-    onError: (error) => {
+    onError: error => {
       toast.error('Erro ao enviar mensagem');
-    }
+    },
   });
 
   useEffect(() => {
@@ -333,7 +331,7 @@ export function useRealTimeChat(params: {
       sessionId: params.sessionId,
       content,
       type,
-      enableAI: params.enableAI || false
+      enableAI: params.enableAI || false,
     });
   }, [params.sessionId, params.enableAI, sendMessageMutation]);
 
@@ -342,7 +340,7 @@ export function useRealTimeChat(params: {
     loading,
     sendMessage,
     isTyping,
-    isSending: sendMessageMutation.isPending
+    isSending: sendMessageMutation.isPending,
   };
 }
 
@@ -350,13 +348,13 @@ export function useRealTimeChat(params: {
 export function useSessionConsent(sessionId: string) {
   const consentQuery = trpc.telemedicine.getSessionConsent.useQuery(
     { sessionId },
-    { enabled: !!sessionId }
+    { enabled: !!sessionId },
   );
 
   const updateConsentMutation = trpc.telemedicine.updateSessionConsent.useMutation({
     onSuccess: () => {
       toast.success('Consentimento atualizado com sucesso');
-    }
+    },
   });
 
   const updateConsent = useCallback(async (data: {
@@ -367,7 +365,7 @@ export function useSessionConsent(sessionId: string) {
   }) => {
     return updateConsentMutation.mutateAsync({
       sessionId,
-      ...data
+      ...data,
     });
   }, [sessionId, updateConsentMutation]);
 
@@ -375,7 +373,7 @@ export function useSessionConsent(sessionId: string) {
     consent: consentQuery.data,
     loading: consentQuery.isLoading,
     updateConsent,
-    isUpdating: updateConsentMutation.isPending
+    isUpdating: updateConsentMutation.isPending,
   };
 }
 
@@ -387,7 +385,7 @@ export function useEmergencyEscalation(sessionId: string) {
     },
     onError: () => {
       toast.error('Erro ao escalar emergência');
-    }
+    },
   });
 
   const escalateEmergency = useCallback(async (data: {
@@ -398,32 +396,32 @@ export function useEmergencyEscalation(sessionId: string) {
   }) => {
     return escalateMutation.mutateAsync({
       sessionId,
-      ...data
+      ...data,
     });
   }, [sessionId, escalateMutation]);
 
   return {
     escalateEmergency,
-    isEscalating: escalateMutation.isPending
+    isEscalating: escalateMutation.isPending,
   };
 }
 
 // Session recording hook
 export function useSessionRecording(sessionId: string) {
   const [isRecording, setIsRecording] = useState(false);
-  
+
   const startRecordingMutation = trpc.telemedicine.startRecording.useMutation({
     onSuccess: () => {
       setIsRecording(true);
       toast.success('Gravação iniciada');
-    }
+    },
   });
 
   const stopRecordingMutation = trpc.telemedicine.stopRecording.useMutation({
     onSuccess: () => {
       setIsRecording(false);
       toast.success('Gravação finalizada');
-    }
+    },
   });
 
   const startRecording = useCallback(async () => {
@@ -439,7 +437,7 @@ export function useSessionRecording(sessionId: string) {
     startRecording,
     stopRecording,
     isStarting: startRecordingMutation.isPending,
-    isStopping: stopRecordingMutation.isPending
+    isStopping: stopRecordingMutation.isPending,
   };
 }
 
@@ -450,24 +448,24 @@ export function useMedicalTranscription(sessionId: string) {
 
   const transcriptionQuery = trpc.telemedicine.getTranscription.useQuery(
     { sessionId },
-    { 
+    {
       enabled: !!sessionId,
-      refetchInterval: 5000
-    }
+      refetchInterval: 5000,
+    },
   );
 
   const startTranscriptionMutation = trpc.telemedicine.startTranscription.useMutation({
     onSuccess: () => {
       setIsTranscribing(true);
       toast.success('Transcrição médica iniciada');
-    }
+    },
   });
 
   const stopTranscriptionMutation = trpc.telemedicine.stopTranscription.useMutation({
     onSuccess: () => {
       setIsTranscribing(false);
       toast.success('Transcrição médica finalizada');
-    }
+    },
   });
 
   useEffect(() => {
@@ -490,7 +488,7 @@ export function useMedicalTranscription(sessionId: string) {
     startTranscription,
     stopTranscription,
     isStarting: startTranscriptionMutation.isPending,
-    isStopping: stopTranscriptionMutation.isPending
+    isStopping: stopTranscriptionMutation.isPending,
   };
 }
 
@@ -498,13 +496,13 @@ export function useMedicalTranscription(sessionId: string) {
 export function useSessionAnalytics(sessionId: string) {
   const analyticsQuery = trpc.telemedicine.getSessionAnalytics.useQuery(
     { sessionId },
-    { enabled: !!sessionId }
+    { enabled: !!sessionId },
   );
 
   return {
     analytics: analyticsQuery.data,
     loading: analyticsQuery.isLoading,
-    refetch: analyticsQuery.refetch
+    refetch: analyticsQuery.refetch,
   };
 }
 
@@ -512,13 +510,13 @@ export function useSessionAnalytics(sessionId: string) {
 export function useSessionAuditLog(sessionId: string) {
   const auditLogQuery = trpc.telemedicine.getSessionAuditLog.useQuery(
     { sessionId },
-    { enabled: !!sessionId }
+    { enabled: !!sessionId },
   );
 
   return {
     auditLog: auditLogQuery.data,
     loading: auditLogQuery.isLoading,
-    refetch: auditLogQuery.refetch
+    refetch: auditLogQuery.refetch,
   };
 }
 
@@ -526,13 +524,13 @@ export function useSessionAuditLog(sessionId: string) {
 export function useTelemedicineAvailability(professionalId?: string) {
   const availabilityQuery = trpc.telemedicine.getAvailability.useQuery(
     { professionalId },
-    { enabled: !!professionalId }
+    { enabled: !!professionalId },
   );
 
   return {
     availability: availabilityQuery.data,
     loading: availabilityQuery.isLoading,
-    refetch: availabilityQuery.refetch
+    refetch: availabilityQuery.refetch,
   };
 }
 

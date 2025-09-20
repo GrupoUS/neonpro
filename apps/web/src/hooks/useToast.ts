@@ -1,4 +1,4 @@
-import { toast } from '@/components/ui/sonner';
+import { toast } from 'sonner';
 
 /**
  * Simple hook wrapper for consistent toast usage across the app.

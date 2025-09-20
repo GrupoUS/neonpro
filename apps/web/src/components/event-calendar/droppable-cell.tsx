@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { useDroppable } from '@dnd-kit/core';
+import { useDroppable } from "@dnd-kit/core";
 
-import { cn } from '../../lib/utils';
-import { useCalendarDnd } from '.';
+import { cn } from "@/lib/utils";
+import { useCalendarDnd } from "@/components/event-calendar/index";
 
 interface DroppableCellProps {
   id: string;
@@ -33,24 +33,31 @@ export function DroppableCell({
   });
 
   // Format time for display in tooltip (only for debugging)
-  const formattedTime = time !== undefined
-    ? `${Math.floor(time)}:${
-      Math.round((time - Math.floor(time)) * 60)
-        .toString()
-        .padStart(2, '0')
-    }`
-    : null;
+  const formattedTime =
+    time !== undefined
+      ? `${Math.floor(time)}:${Math.round((time - Math.floor(time)) * 60)
+          .toString()
+          .padStart(2, "0")}`
+      : null;
 
   return (
     <div
       ref={setNodeRef}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick?.();
+        }
+      }}
       className={cn(
-        'data-dragging:bg-accent flex h-full flex-col overflow-hidden px-0.5 py-1 sm:px-1',
+        "data-dragging:bg-accent flex h-full flex-col px-0.5 py-1 sm:px-1",
         className,
       )}
       title={formattedTime ? `${formattedTime}` : undefined}
       data-dragging={isOver && activeEvent ? true : undefined}
+      tabIndex={0}
+      role="button"
     >
       {children}
     </div>

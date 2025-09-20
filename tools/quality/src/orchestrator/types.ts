@@ -6,7 +6,7 @@
  */
 
 // Agent Types
-export type AgentName = 'apex-dev' | 'code-reviewer' | 'architect-review' | 'security-auditor';
+export type AgentName = 'apex-dev' | 'test' | 'compliance-validator' | 'code-reviewer' | 'architect-review' | 'security-auditor';
 
 export type TDDPhase = 'red' | 'green' | 'refactor';
 

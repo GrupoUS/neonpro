@@ -1,6 +1,6 @@
 import { serve } from '@hono/node-server';
-import { initializeErrorTracking, shutdownErrorTracking } from './services/error-tracking-init';
 import app from './app';
+import { initializeErrorTracking, shutdownErrorTracking } from './services/error-tracking-init';
 
 // This is the Node entrypoint for the API. In serverless/Vercel, we use files under vercel/.
 const port = Number(process.env.PORT || 3005);
@@ -11,7 +11,7 @@ async function startServer() {
     // Initialize error tracking systems
     await initializeErrorTracking();
     console.log('✅ Error tracking initialized');
-    
+
     if (process.env.VERCEL === undefined) {
       // Only start a local server when not running on Vercel
       serve({ fetch: app.fetch, port });
@@ -27,7 +27,7 @@ async function startServer() {
 // Graceful shutdown
 const gracefulShutdown = async (signal: string) => {
   console.log(`\n🔄 Received ${signal}, starting graceful shutdown...`);
-  
+
   try {
     await shutdownErrorTracking();
     console.log('✅ Error tracking shutdown complete');
@@ -43,7 +43,7 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // Handle uncaught exceptions
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   console.error('❌ Uncaught Exception:', error);
   gracefulShutdown('uncaughtException');
 });

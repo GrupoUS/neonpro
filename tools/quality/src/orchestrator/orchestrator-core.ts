@@ -465,6 +465,8 @@ export class TDDOrchestrator extends EventEmitter {
       },
       agentDurations: {
         'apex-dev': 0,
+        'test': 0,
+        'compliance-validator': 0,
         'code-reviewer': 0,
         'architect-review': 0,
         'security-auditor': 0

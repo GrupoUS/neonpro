@@ -49,7 +49,7 @@ export default defineConfig({
     alias: {
       '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src'),
       '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src'),
-      '@neonpro/database': path.resolve(__dirname, '../../packages/database/src'),
+      '@neonpro/database': path.resolve(__dirname, '../../packages/database/dist/src'),
       '@neonpro/tools-shared': path.resolve(__dirname, '../shared/src')
     },
   },

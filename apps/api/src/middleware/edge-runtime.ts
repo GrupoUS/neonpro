@@ -13,8 +13,6 @@
  * - Healthcare-specific security headers
  */
 
-import crypto from 'crypto';
-
 import type { NextRequest, NextResponse } from 'next/server';
 
 // Brazilian healthcare compliance configuration
@@ -124,12 +122,23 @@ const BRASIL_HEALTHCARE_CONFIG = {
 } as const;
 
 /**
+ * Generate secure nonce using Web Crypto API for edge runtime compatibility
+ * SECURITY FIX: Edge-compatible CSP nonce generation
+ */
+function generateSecureNonce(): string {
+  // Use Web Crypto API available in edge runtime
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+  return btoa(String.fromCharCode(...array));
+}
+
+/**
  * Generate healthcare security headers with fresh CSP nonce per request
  * SECURITY FIX: Each request gets a unique nonce to prevent XSS attacks
  */
 function getHealthcareSecurityHeaders(): Record<string, string> {
   // Generate fresh nonce per request (CRITICAL SECURITY FIX)
-  const nonce = crypto.randomBytes(16).toString('base64');
+  const nonce = generateSecureNonce();
 
   return {
     // LGPD compliance headers

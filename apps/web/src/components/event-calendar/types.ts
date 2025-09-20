@@ -1,4 +1,4 @@
-export type CalendarView = 'month' | 'week' | 'day' | 'agenda';
+export type CalendarView = "month" | "week" | "day" | "agenda";
 
 export interface CalendarEvent {
   id: string;
@@ -8,13 +8,8 @@ export interface CalendarEvent {
   end: Date;
   allDay?: boolean;
   color?: EventColor;
+  label?: string;
   location?: string;
 }
 
-export type EventColor =
-  | 'sky'
-  | 'amber'
-  | 'violet'
-  | 'rose'
-  | 'emerald'
-  | 'orange';
+export type EventColor = "blue" | "orange" | "violet" | "rose" | "emerald";

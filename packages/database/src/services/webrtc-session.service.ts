@@ -163,6 +163,12 @@ export class WebRTCSessionService {
   /**
    * Creates a new WebRTC session
    */
+  /**
+   * Creates a new telemedicine session in the database
+   * 
+   * @param sessionData - Object containing patient and physician information
+   * @returns Promise containing the session ID and room ID
+   */
   async createSession(sessionData: {
     patientId: string;
     physicianId: string;
@@ -203,17 +209,22 @@ export class WebRTCSessionService {
   /**
    * Starts a WebRTC session
    */
-  async startSession(sessionId: string): Promise<{ success: boolean; roomId: string }> {
+  /**
+   * Starts a telemedicine session and initializes WebRTC connections
+   * 
+   * @param sessionId - The ID of the session to start
+   * @returns Promise resolving when session is successfully started
+   */
+  async startSession(sessionId: string): Promise<void> {
     try {
-      const { data, error } = await this.supabase
+      // Update session status to active
+      const { error } = await this.supabase
         .from('telemedicine_sessions')
-        .update({
+        .update({ 
           status: 'active',
           started_at: new Date().toISOString(),
         })
-        .eq('id', sessionId)
-        .select('room_id')
-        .single();
+        .eq('id', sessionId);
 
       if (error) {
         throw new Error(`Failed to start session: ${error.message}`);
@@ -221,15 +232,15 @@ export class WebRTCSessionService {
 
       // Log session start event
       await this.logSessionEvent(sessionId, {
+        event: 'session_started',
         timestamp: new Date().toISOString(),
       });
 
-      return {
-        success: true,
-        roomId: data.room_id,
-      };
+      // Initialize WebRTC connections
+      await this.initializeSession(sessionId);
+
     } catch (error) {
-      console.error('Error starting WebRTC session:', error);
+      console.error('Error starting session:', error);
       throw error;
     }
   }
@@ -506,66 +517,45 @@ export class WebRTCSessionService {
   /**
    * Ends the WebRTC session and updates metrics
    */
-  async endSession(roomId: string, reason: string = 'completed'): Promise<void> {
+  /**
+   * Ends a telemedicine session and performs cleanup operations
+   * 
+   * @param sessionId - The ID of the session to end
+   * @param reason - Optional reason for ending the session
+   * @returns Promise resolving when session is successfully ended
+   */
+  async endSession(sessionId: string, reason?: string): Promise<void> {
     try {
-      const endTime = new Date();
-
-      // Get session details
-      const { data: webrtcSession, error } = await this.supabase
-        .from('webrtc_sessions')
-        .select(`
-          *,
-          telemedicine_session:telemedicine_sessions(*)
-        `)
-        .eq('room_id', roomId)
+      // Stop recording if active
+      const { data: session } = await this.supabase
+        .from('telemedicine_sessions')
+        .select('recording_enabled')
+        .eq('id', sessionId)
         .single();
 
-      if (error || !webrtcSession) {
-        throw new Error('WebRTC session not found');
+      if (session?.recording_enabled) {
+        await this.stopRecording(sessionId);
       }
 
-      // Calculate session duration
-      const startTime = new Date(webrtcSession.session_started_at || webrtcSession.created_at);
-      const duration = Math.floor((endTime.getTime() - startTime.getTime()) / 1000);
-
-      // Update WebRTC session
-      const { error: updateWebRTCError } = await this.supabase
-        .from('webrtc_sessions')
-        .update({
-          connection_state: 'closed',
-          session_ended_at: endTime.toISOString(),
-        })
-        .eq('id', webrtcSession.id);
-
-      if (updateWebRTCError) {
-        throw new Error(`Failed to update WebRTC session: ${updateWebRTCError.message}`);
-      }
-
-      // Update telemedicine session
-      const { error: updateTelemedicineError } = await this.supabase
+      // Update session status
+      const { error } = await this.supabase
         .from('telemedicine_sessions')
-        .update({
-          session_status: reason === 'completed' ? 'completed' : 'cancelled',
-          session_end_time: endTime.toISOString(),
-          session_duration: duration,
+        .update({ 
+          status: 'ended',
+          ended_at: new Date().toISOString(),
+          end_reason: reason,
         })
-        .eq('id', webrtcSession.telemedicine_session_id);
+        .eq('id', sessionId);
 
-      if (updateTelemedicineError) {
-        throw new Error(`Failed to update telemedicine session: ${updateTelemedicineError.message}`);
+      if (error) {
+        throw new Error(`Failed to end session: ${error.message}`);
       }
 
-      // Log session end
-      await this.logSessionEvent(webrtcSession.telemedicine_session_id, {
+      // Log session end event
+      await this.logSessionEvent(sessionId, {
         event: 'session_ended',
+        timestamp: new Date().toISOString(),
         reason,
-        duration_seconds: duration,
-        final_quality_scores: {
-          video: webrtcSession.video_quality_score,
-          audio: webrtcSession.audio_quality_score,
-          connection: webrtcSession.connection_stability_score,
-        },
-        timestamp: endTime.toISOString(),
       });
 
     } catch (error) {
@@ -801,6 +791,17 @@ export class WebRTCSessionService {
    */
   async cancelSession(sessionId: string, reason: string): Promise<void> {
     try {
+      // Get the WebRTC session to find the telemedicine session ID
+      const { data: webrtcSession, error: getError } = await this.supabase
+        .from('webrtc_sessions')
+        .select('telemedicine_session_id')
+        .eq('id', sessionId)
+        .single();
+
+      if (getError || !webrtcSession) {
+        throw new Error(`WebRTC session not found: ${getError?.message || 'Session not found'}`);
+      }
+
       const { error } = await this.supabase
         .from('webrtc_sessions')
         .update({
@@ -815,7 +816,7 @@ export class WebRTCSessionService {
       }
 
       // Log the cancellation event
-      await this.logSessionEvent(sessionId, {
+      await this.logSessionEvent(webrtcSession.telemedicine_session_id, {
         type: 'session_cancelled',
         reason,
         cancelled_at: new Date().toISOString()

@@ -4,12 +4,20 @@
  * CFM 2.314/2022 compliant with encrypted messaging and audit logging
  */
 
-import { useEffect, useRef, useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 // Types for signaling messages
 export interface SignalingMessage {
-  type: 'offer' | 'answer' | 'ice-candidate' | 'session-end' | 'media-update' | 'connection-quality' | 'participant-joined' | 'participant-left';
+  type:
+    | 'offer'
+    | 'answer'
+    | 'ice-candidate'
+    | 'session-end'
+    | 'media-update'
+    | 'connection-quality'
+    | 'participant-joined'
+    | 'participant-left';
   sessionId: string;
   from: string;
   to: string;
@@ -35,7 +43,9 @@ export interface SignalingCallbacks {
   onParticipantJoined: (participantId: string) => void;
   onParticipantLeft: (participantId: string) => void;
   onSessionEnd: () => void;
-  onConnectionStateChange: (state: 'connected' | 'connecting' | 'disconnected' | 'reconnecting') => void;
+  onConnectionStateChange: (
+    state: 'connected' | 'connecting' | 'disconnected' | 'reconnecting',
+  ) => void;
 }
 
 /**
@@ -45,14 +55,14 @@ export interface SignalingCallbacks {
 export function useSignalingClient(
   sessionId: string,
   participantId: string,
-  callbacks: SignalingCallbacks
+  callbacks: SignalingCallbacks,
 ) {
   const [state, setState] = useState<SignalingState>({
     isConnected: false,
     isConnecting: false,
     lastPing: 0,
     reconnectAttempts: 0,
-    participantCount: 0
+    participantCount: 0,
   });
 
   const websocketRef = useRef<WebSocket | null>(null);
@@ -61,10 +71,10 @@ export function useSignalingClient(
   const reconnectAttemptsRef = useRef(0);
 
   // WebSocket connection configuration
-  const WEBSOCKET_URL = process.env.NODE_ENV === 'production' 
+  const WEBSOCKET_URL = process.env.NODE_ENV === 'production'
     ? 'wss://api.neonpro.com.br/webrtc-signaling'
     : 'ws://localhost:3001/webrtc-signaling';
-  
+
   const MAX_RECONNECT_ATTEMPTS = 10;
   const INITIAL_RECONNECT_DELAY = 1000; // 1 second
   const MAX_RECONNECT_DELAY = 30000; // 30 seconds
@@ -92,7 +102,7 @@ export function useSignalingClient(
           ...prev,
           isConnected: true,
           isConnecting: false,
-          lastPing: Date.now()
+          lastPing: Date.now(),
         }));
         callbacks.onConnectionStateChange('connected');
         reconnectAttemptsRef.current = 0;
@@ -105,14 +115,14 @@ export function useSignalingClient(
           to: 'all',
           data: {
             participantId,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           },
           timestamp: Date.now(),
           compliance: {
             encrypted: true,
             auditLogged: true,
-            cfmCompliant: true
-          }
+            cfmCompliant: true,
+          },
         });
 
         // Start ping interval
@@ -120,7 +130,7 @@ export function useSignalingClient(
         toast.success('Sinalização WebRTC conectada');
       };
 
-      websocket.onmessage = (event) => {
+      websocket.onmessage = event => {
         try {
           const message: SignalingMessage = JSON.parse(event.data);
           handleIncomingMessage(message);
@@ -129,15 +139,15 @@ export function useSignalingClient(
         }
       };
 
-      websocket.onclose = (event) => {
+      websocket.onclose = event => {
         console.log('WebRTC signaling disconnected:', event.code, event.reason);
         setState(prev => ({
           ...prev,
           isConnected: false,
-          isConnecting: false
+          isConnecting: false,
         }));
         callbacks.onConnectionStateChange('disconnected');
-        
+
         // Stop ping interval
         if (pingIntervalRef.current) {
           clearInterval(pingIntervalRef.current);
@@ -152,11 +162,10 @@ export function useSignalingClient(
         }
       };
 
-      websocket.onerror = (error) => {
+      websocket.onerror = error => {
         console.error('WebRTC signaling error:', error);
         toast.error('Erro na sinalização WebRTC');
       };
-
     } catch (error) {
       console.error('Error creating WebSocket connection:', error);
       setState(prev => ({ ...prev, isConnecting: false }));
@@ -178,14 +187,14 @@ export function useSignalingClient(
         to: 'all',
         data: {
           participantId,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         },
         timestamp: Date.now(),
         compliance: {
           encrypted: true,
           auditLogged: true,
-          cfmCompliant: true
-        }
+          cfmCompliant: true,
+        },
       });
 
       websocketRef.current.close(1000, 'Normal closure');
@@ -208,7 +217,7 @@ export function useSignalingClient(
       isConnecting: false,
       lastPing: 0,
       reconnectAttempts: 0,
-      participantCount: 0
+      participantCount: 0,
     });
   }, [sessionId, participantId]);
 
@@ -226,8 +235,8 @@ export function useSignalingClient(
             encrypted: true,
             auditLogged: true,
             cfmCompliant: true,
-            ...message.compliance
-          }
+            ...message.compliance,
+          },
         };
 
         websocketRef.current.send(JSON.stringify(completeMessage));
@@ -297,16 +306,20 @@ export function useSignalingClient(
     reconnectAttemptsRef.current++;
     const delay = Math.min(
       INITIAL_RECONNECT_DELAY * Math.pow(2, reconnectAttemptsRef.current - 1),
-      MAX_RECONNECT_DELAY
+      MAX_RECONNECT_DELAY,
     );
 
     setState(prev => ({
       ...prev,
-      reconnectAttempts: reconnectAttemptsRef.current
+      reconnectAttempts: reconnectAttemptsRef.current,
     }));
 
     callbacks.onConnectionStateChange('reconnecting');
-    toast.info(`Reconectando em ${delay / 1000}s... (tentativa ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`);
+    toast.info(
+      `Reconectando em ${
+        delay / 1000
+      }s... (tentativa ${reconnectAttemptsRef.current}/${MAX_RECONNECT_ATTEMPTS})`,
+    );
 
     reconnectTimeoutRef.current = setTimeout(() => {
       connect();
@@ -333,8 +346,8 @@ export function useSignalingClient(
           compliance: {
             encrypted: false, // Ping messages don't need encryption
             auditLogged: false,
-            cfmCompliant: true
-          }
+            cfmCompliant: true,
+          },
         });
 
         setState(prev => ({ ...prev, lastPing: Date.now() }));
@@ -356,8 +369,8 @@ export function useSignalingClient(
       compliance: {
         encrypted: true,
         auditLogged: true,
-        cfmCompliant: true
-      }
+        cfmCompliant: true,
+      },
     });
   }, [sessionId, participantId, sendMessage]);
 
@@ -375,8 +388,8 @@ export function useSignalingClient(
       compliance: {
         encrypted: true,
         auditLogged: true,
-        cfmCompliant: true
-      }
+        cfmCompliant: true,
+      },
     });
   }, [sessionId, participantId, sendMessage]);
 
@@ -394,48 +407,54 @@ export function useSignalingClient(
       compliance: {
         encrypted: true,
         auditLogged: true,
-        cfmCompliant: true
-      }
+        cfmCompliant: true,
+      },
     });
   }, [sessionId, participantId, sendMessage]);
 
   /**
    * Send media update notification
    */
-  const sendMediaUpdate = useCallback((mediaState: { video?: boolean; audio?: boolean }, targetParticipant: string = 'all') => {
-    return sendMessage({
-      type: 'media-update',
-      sessionId,
-      from: participantId,
-      to: targetParticipant,
-      data: mediaState,
-      timestamp: Date.now(),
-      compliance: {
-        encrypted: true,
-        auditLogged: true,
-        cfmCompliant: true
-      }
-    });
-  }, [sessionId, participantId, sendMessage]);
+  const sendMediaUpdate = useCallback(
+    (mediaState: { video?: boolean; audio?: boolean }, targetParticipant: string = 'all') => {
+      return sendMessage({
+        type: 'media-update',
+        sessionId,
+        from: participantId,
+        to: targetParticipant,
+        data: mediaState,
+        timestamp: Date.now(),
+        compliance: {
+          encrypted: true,
+          auditLogged: true,
+          cfmCompliant: true,
+        },
+      });
+    },
+    [sessionId, participantId, sendMessage],
+  );
 
   /**
    * Send connection quality update
    */
-  const sendConnectionQuality = useCallback((qualityData: any, targetParticipant: string = 'all') => {
-    return sendMessage({
-      type: 'connection-quality',
-      sessionId,
-      from: participantId,
-      to: targetParticipant,
-      data: qualityData,
-      timestamp: Date.now(),
-      compliance: {
-        encrypted: false, // Quality data doesn't contain sensitive info
-        auditLogged: true,
-        cfmCompliant: true
-      }
-    });
-  }, [sessionId, participantId, sendMessage]);
+  const sendConnectionQuality = useCallback(
+    (qualityData: any, targetParticipant: string = 'all') => {
+      return sendMessage({
+        type: 'connection-quality',
+        sessionId,
+        from: participantId,
+        to: targetParticipant,
+        data: qualityData,
+        timestamp: Date.now(),
+        compliance: {
+          encrypted: false, // Quality data doesn't contain sensitive info
+          auditLogged: true,
+          cfmCompliant: true,
+        },
+      });
+    },
+    [sessionId, participantId, sendMessage],
+  );
 
   /**
    * End session for all participants
@@ -451,15 +470,15 @@ export function useSignalingClient(
       compliance: {
         encrypted: true,
         auditLogged: true,
-        cfmCompliant: true
-      }
+        cfmCompliant: true,
+      },
     });
   }, [sessionId, participantId, sendMessage]);
 
   // Auto-connect on mount
   useEffect(() => {
     connect();
-    
+
     return () => {
       disconnect();
     };
@@ -480,11 +499,11 @@ export function useSignalingClient(
   return {
     // State
     state,
-    
+
     // Connection management
     connect,
     disconnect,
-    
+
     // Message sending
     sendMessage,
     sendOffer,
@@ -493,11 +512,11 @@ export function useSignalingClient(
     sendMediaUpdate,
     sendConnectionQuality,
     endSession,
-    
+
     // Utilities
     isConnected: state.isConnected,
     isConnecting: state.isConnecting,
     reconnectAttempts: state.reconnectAttempts,
-    participantCount: state.participantCount
+    participantCount: state.participantCount,
   };
 }

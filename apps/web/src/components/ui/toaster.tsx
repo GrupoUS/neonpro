@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 // Minimal in-app toast implementation (placeholder). For production, integrate sonner or radix-toast.
 // Legacy placeholder Toaster kept for compatibility; real UI mounted via Sonner in ui/sonner.tsx
-import { toast } from './sonner';
 
 export function Toaster() {
   return null;

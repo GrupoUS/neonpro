@@ -13,7 +13,7 @@ import {
   UpdatePatientRequestSchema,
 } from '@neonpro/types/api/contracts';
 import { z } from 'zod';
-import { protectedProcedure, publicProcedure, router } from '../trpc';
+import { protectedProcedure, router } from '../trpc';
 
 export const patientRouter = router({
   /**

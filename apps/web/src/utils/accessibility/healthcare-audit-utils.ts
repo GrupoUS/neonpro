@@ -1,6 +1,6 @@
 /**
  * Healthcare Accessibility Audit Utilities
- * 
+ *
  * Specialized audit utilities for healthcare applications with Brazilian compliance standards,
  * WCAG 2.1 AA+ requirements, and healthcare-specific validation patterns.
  */
@@ -21,8 +21,8 @@ export const BRAZILIAN_HEALTHCARE_STANDARDS = {
       'Anonymization and pseudonymization',
       'Data protection officer',
       'Incident reporting',
-      'International data transfer'
-    ]
+      'International data transfer',
+    ],
   },
   ANVISA: {
     name: 'Agência Nacional de Vigilância Sanitária',
@@ -35,8 +35,8 @@ export const BRAZILIAN_HEALTHCARE_STANDARDS = {
       'Labeling and instructions',
       'User interface validation',
       'Safety and performance requirements',
-      'Quality management system'
-    ]
+      'Quality management system',
+    ],
   },
   CFM: {
     name: 'Conselho Federal de Medicina',
@@ -49,42 +49,46 @@ export const BRAZILIAN_HEALTHCARE_STANDARDS = {
       'Prescription validation',
       'Informed consent',
       'Professional responsibility',
-      'Ethical guidelines'
-    ]
-  }
+      'Ethical guidelines',
+    ],
+  },
 };
 
 // Healthcare-specific accessibility audit rules
 export const HEALTHCARE_AUDIT_RULES = {
   // Patient safety critical rules
-  'MEDICAL_INFORMATION_ACCESSIBILITY': {
+  MEDICAL_INFORMATION_ACCESSIBILITY: {
     id: 'medical-info-access',
     name: 'Medical Information Accessibility',
     description: 'All medical information must be accessible to healthcare professionals',
     severity: 'critical',
     check: (element: Element) => {
-      const medicalInfo = element.querySelectorAll('[data-sensitive="medical"], [data-medical="true"]');
+      const medicalInfo = element.querySelectorAll(
+        '[data-sensitive="medical"], [data-medical="true"]',
+      );
       return Array.from(medicalInfo).every(info => {
         return (
-          info.hasAttribute('aria-label') ||
-          info.hasAttribute('aria-labelledby') ||
-          info.getAttribute('role') === 'alert' ||
-          info.getAttribute('role') === 'status'
+          info.hasAttribute('aria-label')
+          || info.hasAttribute('aria-labelledby')
+          || info.getAttribute('role') === 'alert'
+          || info.getAttribute('role') === 'status'
         );
       });
     },
     fix: (element: Element) => {
-      const medicalInfo = element.querySelectorAll('[data-sensitive="medical"], [data-medical="true"]');
+      const medicalInfo = element.querySelectorAll(
+        '[data-sensitive="medical"], [data-medical="true"]',
+      );
       medicalInfo.forEach(info => {
         if (!info.hasAttribute('aria-label') && !info.hasAttribute('aria-labelledby')) {
           const label = info.textContent?.trim() || 'Medical information';
           info.setAttribute('aria-label', label);
         }
       });
-    }
+    },
   },
 
-  'EMERGENCY_ACCESSIBILITY': {
+  EMERGENCY_ACCESSIBILITY: {
     id: 'emergency-access',
     name: 'Emergency Information Accessibility',
     description: 'Emergency information must be accessible without color dependence',
@@ -95,7 +99,7 @@ export const HEALTHCARE_AUDIT_RULES = {
         const computedStyle = window.getComputedStyle(el);
         const color = computedStyle.color;
         const backgroundColor = computedStyle.backgroundColor;
-        
+
         // Check if color contrast is sufficient
         return color !== backgroundColor && color !== 'transparent';
       });
@@ -107,10 +111,10 @@ export const HEALTHCARE_AUDIT_RULES = {
           el.setAttribute('aria-label', 'Emergency information');
         }
       });
-    }
+    },
   },
 
-  'MEDICAL_FORM_ACCESSIBILITY': {
+  MEDICAL_FORM_ACCESSIBILITY: {
     id: 'medical-form-access',
     name: 'Medical Form Accessibility',
     description: 'Medical forms must have proper labeling and instructions',
@@ -121,11 +125,11 @@ export const HEALTHCARE_AUDIT_RULES = {
         const inputs = form.querySelectorAll('input, select, textarea');
         return Array.from(inputs).every(input => {
           return (
-            input.hasAttribute('id') &&
-            input.hasAttribute('name') &&
-            (input.hasAttribute('aria-label') ||
-             input.hasAttribute('aria-labelledby') ||
-             document.querySelector(`label[for="${input.id}"]`) !== null)
+            input.hasAttribute('id')
+            && input.hasAttribute('name')
+            && (input.hasAttribute('aria-label')
+              || input.hasAttribute('aria-labelledby')
+              || document.querySelector(`label[for="${input.id}"]`) !== null)
           );
         });
       });
@@ -143,26 +147,30 @@ export const HEALTHCARE_AUDIT_RULES = {
           }
         });
       });
-    }
+    },
   },
 
-  'PRESCRIPTION_ACCESSIBILITY': {
+  PRESCRIPTION_ACCESSIBILITY: {
     id: 'prescription-access',
     name: 'Prescription Information Accessibility',
     description: 'Prescription information must be clear and accessible',
     severity: 'serious',
     check: (element: Element) => {
-      const prescriptionElements = element.querySelectorAll('[data-prescription="true"], .prescription');
+      const prescriptionElements = element.querySelectorAll(
+        '[data-prescription="true"], .prescription',
+      );
       return Array.from(prescriptionElements).every(el => {
         return (
-          el.hasAttribute('aria-label') ||
-          el.hasAttribute('aria-describedby') ||
-          el.querySelector('.prescription-label, .medication-name') !== null
+          el.hasAttribute('aria-label')
+          || el.hasAttribute('aria-describedby')
+          || el.querySelector('.prescription-label, .medication-name') !== null
         );
       });
     },
     fix: (element: Element) => {
-      const prescriptionElements = element.querySelectorAll('[data-prescription="true"], .prescription');
+      const prescriptionElements = element.querySelectorAll(
+        '[data-prescription="true"], .prescription',
+      );
       prescriptionElements.forEach(el => {
         if (!el.hasAttribute('aria-label')) {
           const medicationName = el.querySelector('.medication-name')?.textContent?.trim();
@@ -171,68 +179,75 @@ export const HEALTHCARE_AUDIT_RULES = {
           }
         }
       });
-    }
+    },
   },
 
-  'APPOINTMENT_ACCESSIBILITY': {
+  APPOINTMENT_ACCESSIBILITY: {
     id: 'appointment-access',
     name: 'Appointment Scheduling Accessibility',
     description: 'Appointment scheduling must be accessible to all users',
     severity: 'moderate',
     check: (element: Element) => {
-      const appointmentElements = element.querySelectorAll('[data-appointment="true"], .appointment-scheduler');
+      const appointmentElements = element.querySelectorAll(
+        '[data-appointment="true"], .appointment-scheduler',
+      );
       return Array.from(appointmentElements).every(el => {
         const dateInputs = el.querySelectorAll('input[type="date"], input[type="time"]');
         const buttons = el.querySelectorAll('button');
-        
+
         return (
-          Array.from(dateInputs).every(input => input.hasAttribute('aria-label')) &&
-          Array.from(buttons).every(button => 
+          Array.from(dateInputs).every(input => input.hasAttribute('aria-label'))
+          && Array.from(buttons).every(button =>
             button.hasAttribute('aria-label') || button.textContent?.trim().length > 0
           )
         );
       });
     },
     fix: (element: Element) => {
-      const appointmentElements = element.querySelectorAll('[data-appointment="true"], .appointment-scheduler');
+      const appointmentElements = element.querySelectorAll(
+        '[data-appointment="true"], .appointment-scheduler',
+      );
       appointmentElements.forEach(el => {
         const dateInputs = el.querySelectorAll('input[type="date"], input[type="time"]');
         dateInputs.forEach(input => {
           if (!input.hasAttribute('aria-label') && input instanceof HTMLInputElement) {
-            input.setAttribute('aria-label', input.type === 'date' ? 'Date selection' : 'Time selection');
+            input.setAttribute(
+              'aria-label',
+              input.type === 'date' ? 'Date selection' : 'Time selection',
+            );
           }
         });
       });
-    }
-  }
+    },
+  },
 };
 
 // Healthcare audit categories
 export const HEALTHCARE_AUDIT_CATEGORIES = {
-  'PATIENT_SAFETY': {
+  PATIENT_SAFETY: {
     name: 'Patient Safety',
     description: 'Critical patient safety related accessibility issues',
     rules: ['medical-info-access', 'emergency-access'],
-    priority: 1
+    priority: 1,
   },
-  'MEDICAL_FORMS': {
+  MEDICAL_FORMS: {
     name: 'Medical Forms',
     description: 'Accessibility of medical data entry forms',
     rules: ['medical-form-access'],
-    priority: 2
+    priority: 2,
   },
-  'PRESCRIPTION_MANAGEMENT': {
+  PRESCRIPTION_MANAGEMENT: {
     name: 'Prescription Management',
     description: 'Accessibility of prescription and medication information',
     rules: ['prescription-access'],
-    priority: 3
+    priority: 3,
   },
-  'APPOINTMENT_MANAGEMENT': {
+  APPOINTMENT_MANAGEMENT: {
     name: 'Appointment Management',
     description: 'Accessibility of scheduling and calendar interfaces',
     rules: ['appointment-access'],
-    priority: 4
-  }
+    priority: 4,
+  },
 };
 
 /**
@@ -247,7 +262,7 @@ export class HealthcareAccessibilityAuditor {
    * Perform comprehensive healthcare accessibility audit
    */
   async performComprehensiveAudit(
-    context?: Element | string
+    context?: Element | string,
   ): Promise<{
     summary: {
       overallScore: number;
@@ -270,15 +285,18 @@ export class HealthcareAccessibilityAuditor {
     recommendations: string[];
     detailedReport: any;
   }> {
-    const auditContext = typeof context === 'string' ? 
-      document.querySelector(context) : context || document;
+    const auditContext = typeof context === 'string'
+      ? document.querySelector(context)
+      : context || document;
 
     if (!auditContext) {
       throw new Error('Audit context not found');
     }
 
     // Ensure we have an Element for category audits
-    const elementContext = auditContext instanceof Document ? auditContext.documentElement : auditContext;
+    const elementContext = auditContext instanceof Document
+      ? auditContext.documentElement
+      : auditContext;
 
     const results = {
       summary: {
@@ -290,19 +308,19 @@ export class HealthcareAccessibilityAuditor {
         healthcareCompliance: {
           lgpd: false,
           anvisa: false,
-          cfm: false
-        }
+          cfm: false,
+        },
       },
-      categoryResults: [],
-      recommendations: [],
-      detailedReport: {}
+      categoryResults: [] as Array<{category: string, score: number, issues: any[], passed: boolean}>,
+      recommendations: [] as string[],
+      detailedReport: {} as any,
     };
 
     // Run category-specific audits
     for (const [categoryId, category] of Object.entries(this.categories)) {
       const categoryResult = await this.auditCategory(categoryId, category, elementContext);
       results.categoryResults.push(categoryResult);
-      
+
       // Update summary counts
       categoryResult.issues.forEach((issue: any) => {
         switch (issue.severity) {
@@ -324,10 +342,11 @@ export class HealthcareAccessibilityAuditor {
 
     // Calculate overall score
     const totalChecks = results.categoryResults.reduce((sum, cat) => sum + cat.issues.length, 0);
-    const passedChecks = results.categoryResults.reduce((sum, cat) => 
-      sum + cat.issues.filter((issue: any) => issue.passed).length, 0
+    const passedChecks = results.categoryResults.reduce(
+      (sum, cat) => sum + cat.issues.filter((issue: any) => issue.passed).length,
+      0,
     );
-    
+
     results.summary.overallScore = Math.round((passedChecks / totalChecks) * 100);
 
     // Validate healthcare compliance
@@ -345,7 +364,7 @@ export class HealthcareAccessibilityAuditor {
   private async auditCategory(
     categoryId: string,
     category: typeof HEALTHCARE_AUDIT_CATEGORIES[keyof typeof HEALTHCARE_AUDIT_CATEGORIES],
-    context: Element
+    context: Element,
   ): Promise<{
     category: string;
     score: number;
@@ -358,21 +377,21 @@ export class HealthcareAccessibilityAuditor {
 
     for (const ruleId of category.rules) {
       const rule = this.rules[ruleId as keyof typeof HEALTHCARE_AUDIT_RULES];
-      
+
       if (!rule) continue;
 
       totalChecks++;
-      
+
       try {
         const passed = rule.check(context);
-        
+
         issues.push({
           ruleId: rule.id,
           ruleName: rule.name,
           description: rule.description,
           severity: rule.severity,
           passed,
-          category: categoryId
+          category: categoryId,
         });
 
         if (passed) {
@@ -380,15 +399,15 @@ export class HealthcareAccessibilityAuditor {
         }
       } catch (error) {
         console.error(`Audit rule ${ruleId} failed:`, error);
-        
+
         issues.push({
           ruleId: rule.id,
           ruleName: rule.name,
           description: rule.description,
           severity: rule.severity,
           passed: false,
-          error: error.message,
-          category: categoryId
+          error: error instanceof Error ? error.message : String(error),
+          category: categoryId,
         });
       }
     }
@@ -399,7 +418,7 @@ export class HealthcareAccessibilityAuditor {
       category: category.name,
       score,
       issues,
-      passed: score >= 90
+      passed: score >= 90,
     };
   }
 
@@ -414,7 +433,7 @@ export class HealthcareAccessibilityAuditor {
     return {
       lgpd: this.validateLGPDCompliance(context),
       anvisa: this.validateANVISACompliance(context),
-      cfm: this.validateCFMCompliance(context)
+      cfm: this.validateCFMCompliance(context),
     };
   }
 
@@ -422,11 +441,15 @@ export class HealthcareAccessibilityAuditor {
    * Validate LGPD compliance
    */
   private validateLGPDCompliance(context: Element): boolean {
-    const lgpdElements = context.querySelectorAll('[data-lgpd="true"], [data-sensitive="personal"]');
-    
+    const lgpdElements = context.querySelectorAll(
+      '[data-lgpd="true"], [data-sensitive="personal"]',
+    );
+
     for (const element of Array.from(lgpdElements)) {
-      if (!element.hasAttribute('aria-label') && 
-          !element.hasAttribute('aria-labelledby')) {
+      if (
+        !element.hasAttribute('aria-label')
+        && !element.hasAttribute('aria-labelledby')
+      ) {
         return false;
       }
     }
@@ -434,8 +457,8 @@ export class HealthcareAccessibilityAuditor {
     // Check for consent management accessibility
     const consentElements = context.querySelectorAll('[data-consent="true"], .consent-management');
     return Array.from(consentElements).every(el => {
-      return el.hasAttribute('role') && 
-             (el.hasAttribute('aria-label') || el.hasAttribute('aria-labelledby'));
+      return el.hasAttribute('role')
+        && (el.hasAttribute('aria-label') || el.hasAttribute('aria-labelledby'));
     });
   }
 
@@ -443,12 +466,16 @@ export class HealthcareAccessibilityAuditor {
    * Validate ANVISA compliance
    */
   private validateANVISACompliance(context: Element): boolean {
-    const anvisaElements = context.querySelectorAll('[data-anvisa="true"], [data-medical-device="true"]');
-    
+    const anvisaElements = context.querySelectorAll(
+      '[data-anvisa="true"], [data-medical-device="true"]',
+    );
+
     for (const element of Array.from(anvisaElements)) {
-      if (!element.hasAttribute('aria-label') && 
-          !element.hasAttribute('aria-describedby') &&
-          !element.hasAttribute('role')) {
+      if (
+        !element.hasAttribute('aria-label')
+        && !element.hasAttribute('aria-describedby')
+        && !element.hasAttribute('role')
+      ) {
         return false;
       }
     }
@@ -460,11 +487,15 @@ export class HealthcareAccessibilityAuditor {
    * Validate CFM compliance
    */
   private validateCFMCompliance(context: Element): boolean {
-    const cfmElements = context.querySelectorAll('[data-cfm="true"], [data-professional="medical"]');
-    
+    const cfmElements = context.querySelectorAll(
+      '[data-cfm="true"], [data-professional="medical"]',
+    );
+
     for (const element of Array.from(cfmElements)) {
-      if (!element.hasAttribute('aria-label') && 
-          !element.hasAttribute('aria-describedby')) {
+      if (
+        !element.hasAttribute('aria-label')
+        && !element.hasAttribute('aria-describedby')
+      ) {
         return false;
       }
     }
@@ -472,9 +503,9 @@ export class HealthcareAccessibilityAuditor {
     // Check for professional authentication accessibility
     const authElements = context.querySelectorAll('[data-auth="professional"], .professional-auth');
     return Array.from(authElements).every(el => {
-      return el.hasAttribute('aria-label') || 
-             el.hasAttribute('aria-describedby') ||
-             el.querySelector('label') !== null;
+      return el.hasAttribute('aria-label')
+        || el.hasAttribute('aria-describedby')
+        || el.querySelector('label') !== null;
     });
   }
 
@@ -489,7 +520,7 @@ export class HealthcareAccessibilityAuditor {
       recommendations.push(
         '🚨 CRITICAL: Patient safety issues detected - immediate attention required',
         'Schedule urgent accessibility review with healthcare compliance team',
-        'Implement fixes for critical accessibility violations before deployment'
+        'Implement fixes for critical accessibility violations before deployment',
       );
     }
 
@@ -498,7 +529,7 @@ export class HealthcareAccessibilityAuditor {
       recommendations.push(
         '🔒 LGPD compliance issues detected',
         'Review data handling and privacy controls accessibility',
-        'Ensure consent management interfaces are fully accessible'
+        'Ensure consent management interfaces are fully accessible',
       );
     }
 
@@ -506,7 +537,7 @@ export class HealthcareAccessibilityAuditor {
       recommendations.push(
         '⚕️ ANVISA compliance issues detected',
         'Review medical device interface accessibility',
-        'Validate user interface for medical device software requirements'
+        'Validate user interface for medical device software requirements',
       );
     }
 
@@ -514,7 +545,7 @@ export class HealthcareAccessibilityAuditor {
       recommendations.push(
         '👨‍⚕️ CFM compliance issues detected',
         'Review professional authentication and authorization interfaces',
-        'Ensure medical record access controls are accessible'
+        'Ensure medical record access controls are accessible',
       );
     }
 
@@ -525,25 +556,25 @@ export class HealthcareAccessibilityAuditor {
           case 'Patient Safety':
             recommendations.push(
               '🏥 Prioritize patient safety accessibility fixes',
-              'Ensure emergency information is accessible without color dependence'
+              'Ensure emergency information is accessible without color dependence',
             );
             break;
           case 'Medical Forms':
             recommendations.push(
               '📋 Improve medical form accessibility',
-              'Add proper labels and instructions for all form fields'
+              'Add proper labels and instructions for all form fields',
             );
             break;
           case 'Prescription Management':
             recommendations.push(
               '💊 Enhance prescription information accessibility',
-              'Ensure medication information is clear and accessible'
+              'Ensure medication information is clear and accessible',
             );
             break;
           case 'Appointment Management':
             recommendations.push(
               '📅 Optimize appointment scheduling accessibility',
-              'Improve date and time input accessibility'
+              'Improve date and time input accessibility',
             );
             break;
         }
@@ -554,12 +585,12 @@ export class HealthcareAccessibilityAuditor {
     if (results.summary.overallScore < 80) {
       recommendations.push(
         '📊 Overall accessibility score below 80% - comprehensive review needed',
-        'Consider professional accessibility audit and remediation'
+        'Consider professional accessibility audit and remediation',
       );
     } else if (results.summary.overallScore < 90) {
       recommendations.push(
         '✅ Good accessibility foundation - focus on remaining issues',
-        'Target specific areas for improvement to reach 90%+ compliance'
+        'Target specific areas for improvement to reach 90%+ compliance',
       );
     }
 
@@ -580,7 +611,9 @@ export class HealthcareAccessibilityAuditor {
     }>;
   }> {
     const auditContext = context || document;
-    const elementContext = auditContext instanceof Document ? auditContext.documentElement : auditContext;
+    const elementContext = auditContext instanceof Document
+      ? auditContext.documentElement
+      : auditContext;
     const fixes = [];
     let fixed = 0;
     let failed = 0;
@@ -592,7 +625,7 @@ export class HealthcareAccessibilityAuditor {
           rule: rule.id,
           element: 'document',
           success: true,
-          message: `Applied fix for ${rule.name}`
+          message: `Applied fix for ${rule.name}`,
         });
         fixed++;
       } catch (error) {
@@ -600,7 +633,7 @@ export class HealthcareAccessibilityAuditor {
           rule: rule.id,
           element: 'document',
           success: false,
-          message: `Failed to apply fix for ${rule.name}: ${error.message}`
+          message: `Failed to apply fix for ${rule.name}: ${error instanceof Error ? error.message : String(error)}`,
         });
         failed++;
       }
@@ -609,7 +642,7 @@ export class HealthcareAccessibilityAuditor {
     return {
       fixed,
       failed,
-      fixes
+      fixes,
     };
   }
 
@@ -633,9 +666,9 @@ export class HealthcareAccessibilityAuditor {
         lgpd: auditResults.summary.healthcareCompliance.lgpd,
         anvisa: auditResults.summary.healthcareCompliance.anvisa,
         cfm: auditResults.summary.healthcareCompliance.cfm,
-        overall: Object.values(auditResults.summary.healthcareCompliance).every(Boolean)
+        overall: Object.values(auditResults.summary.healthcareCompliance).every(Boolean),
       },
-      actionItems: auditResults.recommendations
+      actionItems: auditResults.recommendations,
     };
   }
 }
@@ -649,7 +682,7 @@ export const healthcareAccessibilityAuditor = new HealthcareAccessibilityAuditor
  * Utility function for quick healthcare accessibility check
  */
 export async function quickHealthcareAccessibilityCheck(
-  selector?: string
+  selector?: string,
 ): Promise<{
   passed: boolean;
   score: number;
@@ -661,7 +694,7 @@ export async function quickHealthcareAccessibilityCheck(
   };
 }> {
   const context = selector ? document.querySelector(selector) : document;
-  
+
   if (!context) {
     return {
       passed: false,
@@ -669,13 +702,13 @@ export async function quickHealthcareAccessibilityCheck(
       issues: [{
         rule: 'CONTEXT_NOT_FOUND',
         description: `No element found for selector: ${selector}`,
-        severity: 'critical'
+        severity: 'critical',
       }],
       healthcareCompliance: {
         lgpd: false,
         anvisa: false,
-        cfm: false
-      }
+        cfm: false,
+      },
     };
   }
 
@@ -683,12 +716,12 @@ export async function quickHealthcareAccessibilityCheck(
     const auditor = new HealthcareAccessibilityAuditor();
     const elementContext = context instanceof Document ? context.documentElement : context;
     const results = await auditor.performComprehensiveAudit(elementContext);
-    
+
     return {
       passed: results.summary.overallScore >= 90,
       score: results.summary.overallScore,
       issues: results.categoryResults.flatMap((cat: any) => cat.issues),
-      healthcareCompliance: results.summary.healthcareCompliance
+      healthcareCompliance: results.summary.healthcareCompliance,
     };
   } catch (error) {
     console.error('Quick healthcare accessibility check failed:', error);
@@ -698,19 +731,21 @@ export async function quickHealthcareAccessibilityCheck(
       issues: [{
         rule: 'AUDIT_ERROR',
         description: `Healthcare accessibility audit failed: ${error}`,
-        severity: 'critical'
+        severity: 'critical',
       }],
       healthcareCompliance: {
         lgpd: false,
         anvisa: false,
-        cfm: false
-      }
+        cfm: false,
+      },
     };
   }
 }
 
 // Export types
-export type HealthcareAuditResults = ReturnType<typeof healthcareAccessibilityAuditor.performComprehensiveAudit>;
+export type HealthcareAuditResults = ReturnType<
+  typeof healthcareAccessibilityAuditor.performComprehensiveAudit
+>;
 export type HealthcareCompliance = {
   lgpd: boolean;
   anvisa: boolean;

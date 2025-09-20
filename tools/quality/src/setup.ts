@@ -87,7 +87,18 @@ global.simulateAuditLogCreation = async (_logData: Record<string, unknown>) => {
 global.simulateEmergencyScenario = async (scenarioType: string, options: Record<string, unknown>) => {
   // Simulate emergency access scenarios
   await new Promise(resolve => setTimeout(resolve, Math.random() * 8));
-  console.log(`Emergency scenario: ${scenarioType}`, options);
+  
+  // Use secure logging for LGPD compliance - mask sensitive data
+  const maskSensitiveData = (data: string, maskChar: string = '*') => {
+    // Simple masking for test purposes
+    return data.replace(/"password":"[^"]*"/g, `"password":"${maskChar.repeat(8)}"`)
+              .replace(/"cpf":"[^"]*"/g, `"cpf":"${maskChar.repeat(11)}"`)
+              .replace(/"email":"[^"]*"/g, `"email":"${maskChar.repeat(8)}@${maskChar.repeat(4)}.${maskChar.repeat(3)}"`);
+  };
+  const maskedOptions = maskSensitiveData(JSON.stringify(options));
+  
+  // Log emergency scenario without exposing sensitive data
+  console.log(`[EMERGENCY SIMULATION] Scenario type: ${scenarioType}, Data: ${maskedOptions}`);
 };
 
 global.simulateHealthcareOperation = async (operationType: string, _options: Record<string, unknown>) => {

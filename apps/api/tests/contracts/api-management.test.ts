@@ -1,50 +1,45 @@
 /**
  * API Management Contract Tests
- * 
+ *
  * Healthcare platform API management contract validation
  * Based on OpenAPI 3.0 specification with healthcare compliance (LGPD, ANVISA, CFM)
- * 
+ *
  * @version 1.0.0
  * @compliance LGPD, ANVISA, CFM
  * @healthcare-platform NeonPro
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi, Mock } from 'vitest';
 import { createHono, Hono } from 'hono';
-import { z } from 'zod';
 import { hc } from 'hono/client';
+import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { z } from 'zod';
 
 // Import API management utilities and types
-import { 
-  createApiKey, 
-  validateApiKey, 
-  revokeApiKey, 
-  rotateApiKey,
+import {
   ApiKey,
+  ApiKeyMetadata,
   ApiKeyPermissions,
-  ApiKeyMetadata
-} from '@/services/api-key-service';
+  createApiKey,
+  revokeApiKey,
+  rotateApiKey,
+  validateApiKey,
+} from '../../src/services/api-key-service';
 
 import {
+  applyRateLimit,
+  checkRateLimit,
   RateLimitConfig,
   RateLimitResult,
-  applyRateLimit,
-  checkRateLimit
-} from '@/middleware/rate-limiting';
+} from '../../src/middleware/rate-limiting';
+
+import { applyQuota, checkQuota, QuotaConfig, QuotaResult } from '../../src/services/quota-service';
 
 import {
-  QuotaConfig,
-  QuotaResult,
-  applyQuota,
-  checkQuota
-} from '@/services/quota-service';
-
-import {
+  applySecurityPolicy,
   SecurityPolicy,
   SecurityPolicyConfig,
   validateSecurityPolicy,
-  applySecurityPolicy
-} from '@/services/security-policy-service';
+} from '../../src/services/security-policy-service';
 
 // Mock external dependencies
 vi.mock('@/services/api-key-service');
@@ -251,13 +246,13 @@ const generateValidSecurityPolicy = () => ({
     {
       type: 'csp' as const,
       config: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'"],
-        imgSrc: ["'self'", 'data:', 'https:'],
-        connectSrc: ["'self'", 'https://api.neonpro.health'],
-        frameSrc: ["'none'"],
-        objectSrc: ["'none'"],
+        defaultSrc: ['\'self\''],
+        scriptSrc: ['\'self\'', '\'unsafe-inline\''],
+        styleSrc: ['\'self\'', '\'unsafe-inline\''],
+        imgSrc: ['\'self\'', 'data:', 'https:'],
+        connectSrc: ['\'self\'', 'https://api.neonpro.health'],
+        frameSrc: ['\'none\''],
+        objectSrc: ['\'none\''],
         reportUri: '/api/security/csp-report',
       },
       priority: 1,
@@ -321,19 +316,19 @@ describe('API Management Contract Tests', () => {
     app = createHono();
 
     // Setup API management routes
-    app.post('/api/management/api-keys', async (c) => {
+    app.post('/api/management/api-keys', async c => {
       const body = await c.req.json();
       const validated = ApiKeyCreateRequestSchema.parse(body);
       const result = await createApiKey(validated);
       return c.json(result, 201);
     });
 
-    app.get('/api/management/api-keys', async (c) => {
+    app.get('/api/management/api-keys', async c => {
       const result = await validateApiKey(c.req.header('Authorization') || '');
       return c.json(result);
     });
 
-    app.put('/api/management/api-keys/:id', async (c) => {
+    app.put('/api/management/api-keys/:id', async c => {
       const id = c.req.param('id');
       const body = await c.req.json();
       const validated = ApiKeyUpdateRequestSchema.parse(body);
@@ -341,30 +336,30 @@ describe('API Management Contract Tests', () => {
       return c.json(result);
     });
 
-    app.delete('/api/management/api-keys/:id', async (c) => {
+    app.delete('/api/management/api-keys/:id', async c => {
       const id = c.req.param('id');
       const result = await revokeApiKey(id);
       return c.json(result);
     });
 
-    app.get('/api/management/rate-limit', async (c) => {
+    app.get('/api/management/rate-limit', async c => {
       const apiKey = c.req.header('x-api-key') || '';
       const result = await checkRateLimit(apiKey);
       return c.json(result);
     });
 
-    app.get('/api/management/quota', async (c) => {
+    app.get('/api/management/quota', async c => {
       const apiKey = c.req.header('x-api-key') || '';
       const result = await checkQuota(apiKey);
       return c.json(result);
     });
 
-    app.get('/api/management/security-policies', async (c) => {
+    app.get('/api/management/security-policies', async c => {
       const result = await validateSecurityPolicy();
       return c.json(result);
     });
 
-    app.post('/api/management/security-policies/:id/apply', async (c) => {
+    app.post('/api/management/security-policies/:id/apply', async c => {
       const id = c.req.param('id');
       const result = await applySecurityPolicy(id);
       return c.json(result);
@@ -394,11 +389,11 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(201);
       const data = await response.json();
-      
+
       // Validate response schema
       const validatedData = ApiKeySchema.parse(data);
       expect(validatedData).toEqual(expectedResponse);
-      
+
       // Verify mock was called with correct data
       expect(createApiKey).toHaveBeenCalledWith(requestData);
     });
@@ -419,7 +414,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       // Validate error response schema
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('VALIDATION_ERROR');
@@ -438,7 +433,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('LGPD_COMPLIANCE_REQUIRED');
     });
@@ -459,7 +454,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('INVALID_PERMISSIONS');
     });
@@ -484,7 +479,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('INVALID_RATE_LIMIT');
     });
@@ -505,10 +500,10 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const validatedData = ApiKeySchema.parse(data);
       expect(validatedData).toEqual(expectedResponse);
-      
+
       expect(validateApiKey).toHaveBeenCalledWith(`Bearer ${apiKey}`);
     });
 
@@ -523,7 +518,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(401);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('INVALID_API_KEY_FORMAT');
     });
@@ -541,7 +536,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(401);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('API_KEY_EXPIRED');
     });
@@ -559,7 +554,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(401);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('API_KEY_REVOKED');
     });
@@ -589,11 +584,11 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const validatedData = ApiKeySchema.parse(data);
       expect(validatedData).toEqual(expectedResponse);
       expect(validatedData.key).not.toBe(generateValidApiKey().key); // New key should be different
-      
+
       expect(rotateApiKey).toHaveBeenCalledWith(apiKeyId, updateData);
     });
 
@@ -607,7 +602,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('INVALID_API_KEY_ID_FORMAT');
     });
@@ -630,7 +625,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(data).toEqual(expectedResponse);
       expect(revokeApiKey).toHaveBeenCalledWith(apiKeyId);
     });
@@ -646,7 +641,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(404);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('API_KEY_NOT_FOUND');
     });
@@ -667,10 +662,10 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const validatedData = RateLimitSchema.parse(data);
       expect(validatedData).toEqual(expectedResponse);
-      
+
       expect(checkRateLimit).toHaveBeenCalledWith(apiKey);
     });
 
@@ -692,7 +687,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const validatedData = RateLimitSchema.parse(data);
       expect(validatedData.exceeded).toBe(true);
       expect(validatedData.remaining).toBe(0);
@@ -703,7 +698,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(401);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('API_KEY_REQUIRED');
     });
@@ -724,10 +719,10 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const validatedData = QuotaSchema.parse(data);
       expect(validatedData).toEqual(expectedResponse);
-      
+
       expect(checkQuota).toHaveBeenCalledWith(apiKey);
     });
 
@@ -749,7 +744,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const validatedData = QuotaSchema.parse(data);
       expect(validatedData.exceeded).toBe(true);
       expect(validatedData.remaining).toBe(0);
@@ -776,7 +771,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const validatedData = QuotaSchema.parse(data);
       expect(validatedData.period).toBe('daily');
       expect(validatedData.remaining).toBeGreaterThan(validatedData.current);
@@ -793,13 +788,13 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(Array.isArray(data)).toBe(true);
       if (data.length > 0) {
         const validatedData = SecurityPolicySchema.parse(data[0]);
         expect(validatedData).toEqual(expectedPolicies[0]);
       }
-      
+
       expect(validateSecurityPolicy).toHaveBeenCalled();
     });
 
@@ -812,7 +807,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const policy = data[0];
       expect(policy.compliance).toBeDefined();
       expect(policy.compliance.lgpd).toBe(true);
@@ -829,10 +824,10 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       const policyData = data[0];
       expect(Array.isArray(policyData.rules)).toBe(true);
-      
+
       if (policyData.rules.length > 0) {
         const rule = policyData.rules[0];
         expect(['csp', 'cors', 'rate_limit', 'auth', 'encryption']).toContain(rule.type);
@@ -863,7 +858,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       expect(data).toEqual(expectedResponse);
       expect(applySecurityPolicy).toHaveBeenCalledWith(policyId);
     });
@@ -879,7 +874,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(404);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('SECURITY_POLICY_NOT_FOUND');
     });
@@ -895,7 +890,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(500);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('POLICY_APPLICATION_FAILED');
     });
@@ -924,7 +919,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('LGPD_DATA_MINIMIZATION_VIOLATION');
     });
@@ -940,9 +935,11 @@ describe('API Management Contract Tests', () => {
       };
 
       // Mock additional healthcare permission validation
-      (createApiKey as Mock).mockImplementation(async (data) => {
-        if (data.permissions.includes('admin') && 
-            !data.lgpdConsent.purposes.includes('administrative_access')) {
+      (createApiKey as Mock).mockImplementation(async data => {
+        if (
+          data.permissions.includes('admin')
+          && !data.lgpdConsent.purposes.includes('administrative_access')
+        ) {
           throw new Error('Administrative access requires explicit consent');
         }
         return generateValidApiKey();
@@ -954,7 +951,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(400);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('HEALTHCARE_ADMIN_CONSENT_REQUIRED');
     });
@@ -968,7 +965,7 @@ describe('API Management Contract Tests', () => {
       (validateApiKey as Mock).mockResolvedValue(expectedResponse);
 
       // Simulate concurrent requests
-      const concurrentRequests = Array(10).fill(null).map(() => 
+      const concurrentRequests = Array(10).fill(null).map(() =>
         client.api.management['api-keys'].$get({
           header: {
             Authorization: `Bearer ${apiKey}`,
@@ -977,12 +974,12 @@ describe('API Management Contract Tests', () => {
       );
 
       const responses = await Promise.all(concurrentRequests);
-      
+
       // All requests should succeed
       responses.forEach(response => {
         expect(response.status).toBe(200);
       });
-      
+
       expect(validateApiKey).toHaveBeenCalledTimes(10);
     });
 
@@ -1037,7 +1034,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(500);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.code).toBe('INTERNAL_SERVER_ERROR');
       expect(errorData.error.message).toBe('Database connection failed');
@@ -1056,7 +1053,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(500);
       const data = await response.json();
-      
+
       const errorData = ErrorResponseSchema.parse(data);
       expect(errorData.error.requestId).toBeDefined();
       expect(errorData.error.timestamp).toBeDefined();
@@ -1078,7 +1075,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(201);
       const data = await response.json();
-      
+
       // Validate all required fields are present
       expect(data).toHaveProperty('id');
       expect(data).toHaveProperty('key');
@@ -1105,7 +1102,7 @@ describe('API Management Contract Tests', () => {
 
       expect(response.status).toBe(200);
       const data = await response.json();
-      
+
       // Validate OpenAPI compliance
       expect(data).toHaveProperty('current');
       expect(data).toHaveProperty('limit');
@@ -1113,7 +1110,7 @@ describe('API Management Contract Tests', () => {
       expect(data).toHaveProperty('resetTime');
       expect(data).toHaveProperty('windowSize');
       expect(data).toHaveProperty('exceeded');
-      
+
       // Validate data types
       expect(typeof data.current).toBe('number');
       expect(typeof data.limit).toBe('number');

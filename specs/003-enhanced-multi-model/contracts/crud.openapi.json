@@ -1,5 +1,0 @@
-{
-  "openapi": "3.1.0",
-  "info": {"title": "Natural Language CRUD", "version": "0.1.0"},
-  "paths": {"/api/v1/ai/crud": {"post": {"summary": "Execute natural language CRUD","requestBody": {"required": true, "content": {"application/json": {"schema": {"type": "object", "required": ["instruction"], "properties": {"instruction": {"type": "string"}, "confirm": {"type": "boolean"}}}}}}, "responses": {"200": {"description": "Result or confirmation required"}, "402": {"description": "Upgrade required"}, "409": {"description": "Confirmation needed or conflict"}}}}}
-}

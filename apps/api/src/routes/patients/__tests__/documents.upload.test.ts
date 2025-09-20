@@ -136,7 +136,7 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
     });
 
     const response = await uploadRoute.request(request);
-    const json = await response.json().catch(() => ({}));
+    const json = await response.json().catch((_error) => ({}));
 
     // Final expectations (will fail until implemented)
     expect(response.status).toBe(201);

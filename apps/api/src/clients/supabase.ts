@@ -15,7 +15,10 @@
 import { createBrowserClient, createServerClient as createSSRServerClient } from '@supabase/ssr';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '../../../../packages/database/src/types/supabase';
-import { createTelemetryEnabledSupabaseClient, TelemetryEnabledSupabaseClient } from '../lib/supabase-telemetry';
+import {
+  createTelemetryEnabledSupabaseClient,
+  TelemetryEnabledSupabaseClient,
+} from '../lib/supabase-telemetry';
 
 // Environment validation with fallback to NEXT_PUBLIC_ variables
 function getSupabaseUrl(): string {
@@ -176,7 +179,11 @@ export function createAdminClient(): HealthcareAdminClient {
             .eq('user_id', userId);
           exportData[table] = data || [];
         } catch (error) {
-          exportData[table] = { error: 'Table access denied or not found' };
+          console.error(`Failed to export ${table} data for user ${userId}:`, error);
+          exportData[table] = { 
+            error: 'Table access denied or not found',
+            details: error instanceof Error ? error.message : String(error)
+          };
         }
       }
 
@@ -339,6 +346,7 @@ export const healthcareRLS = {
 
       return !!membership;
     } catch (error) {
+      console.error(`Failed to check user clinic membership for user ${userId}, clinic ${clinicId}:`, error);
       return false;
     }
   },
@@ -371,6 +379,7 @@ export const healthcareRLS = {
 
       return !!patientClinic;
     } catch (error) {
+      console.error(`Failed to check patient access for patient ${patientId}:`, error);
       return false;
     }
   },

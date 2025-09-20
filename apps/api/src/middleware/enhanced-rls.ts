@@ -125,7 +125,7 @@ export function enhancedRLSMiddleware(options: EnhancedRLSOptions = {}) {
 
       await logSecurityEvent('RLS_ERROR', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        context: await buildRLSContext(c, options).catch(() => null),
+        context: await buildRLSContext(c, options).catch(_error => null),
       });
 
       return c.json({

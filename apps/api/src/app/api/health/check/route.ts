@@ -5,13 +5,12 @@
  * running on Vercel Edge Runtime with <100ms response targets.
  */
 
-import { NextRequest } from 'next/server';
 import { createHealthcareResponse } from '../../../../middleware/edge-runtime';
 
 // Configure for edge runtime
 export const runtime = 'edge';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   const startTime = Date.now();
 
   try {
@@ -116,7 +115,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS() {
   return createHealthcareResponse({}, {
     status: 200,
     dataType: 'public',

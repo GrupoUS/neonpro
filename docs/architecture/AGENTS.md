@@ -59,7 +59,7 @@ tags:
     outputs: ["overall context", "components", "high-level flows"]
     ```
 
-- **🌳 @source-tree**: [docs/architecture/source-tree.md](./source-tree.md)
+- **🌳 source-tree**: [docs/architecture/source-tree.md](./source-tree.md)
   - One‑line: Real monorepo structure (apps/packages) validated and categorized
   - Use when: Locating code, packages, or wiring across the repo
   - Metadata:
@@ -93,42 +93,32 @@ tags:
 
 ### technology-and-flows
 
-- **⚙️ @tech-stack**: [docs/architecture/tech-stack.md](./tech-stack.md)
+- **⚙️ tech-stack**: [docs/architecture/tech-stack.md](./tech-stack.md)
   - One‑line: Live, in‑repo technology list with pinned versions and tooling
   - Use when: Choosing libs, validating compatibility, or planning upgrades
   - Metadata:
     ```yaml
-    role: "Technology Inventory & Versions"
-    triggers: ["versions", "compatibility", "libs", "upgrade", "tooling"]
-    outputs: ["current stack", "pinned versions", "critical dependencies"]
-    ```
-
-- **🩺 @platform-flows**: [docs/architecture/aesthetic-platform-flows.md](./aesthetic-platform-flows.md)
-  - One‑line: Core product workflows and sequence diagrams for aesthetic clinics
-  - Use when: Mapping functional behavior or designing new flows
-  - Metadata:
-    ```yaml
-    role: "Business/Clinical Workflow Architecture"
-    triggers: ["flow", "sequence", "process", "product"]
-    outputs: ["diagrams", "functional step-by-step"]
+    role: "Technology Stack & Versions"
+    triggers: ["version", "library", "framework", "tooling", "compatibility"]
+    outputs: ["practical rules", "quick references", "examples"]
     ```
 
 ## orchestrated-architecture-workflows
 
 - Implement frontend feature
-  1. @tech-stack → 2) @frontend-architecture → 3) @frontend-spec → (+ @source-tree if needed)
+  1. tech-stack → 2) frontend-architecture → 3) frontend-spec → (+ source-tree if needed)
 - Fix cross-cutting bug
-  1. @source-tree → 2) @tech-stack → 3) relevant section in @system-architecture
+  1. source-tree → 2) tech-stack → 3) relevant section in system-architecture
 - Create new flow
-  1. @platform-flows → 2) @system-architecture → 3) @source-tree
+  1. platform-flows → 2) system-architecture → 3) source-tree
 - Review performance/security
-  1. @tech-stack → 2) @frontend-architecture → 3) @source-tree
+  1. tech-stack → 2) frontend-architecture → 3) source-tree
 
 ## references-correct-link-format
 
-- **🏗️ @system-architecture**: [docs/architecture/architecture.md](./architecture.md)
-- **🌳 @source-tree**: [docs/architecture/source-tree.md](./source-tree.md)
-- **🖥️ @frontend-architecture**: [docs/architecture/frontend-architecture.md](./frontend-architecture.md)
-- **🧩 @frontend-spec**: [docs/architecture/front-end-spec.md](./front-end-spec.md)
-- **⚙️ @tech-stack**: [docs/architecture/tech-stack.md](./tech-stack.md)
-- **🩺 @platform-flows**: [docs/architecture/aesthetic-platform-flows.md](./aesthetic-platform-flows.md)
+- **🏗️ system-architecture**: [docs/architecture/architecture.md](./architecture.md)
+- **🌳 source-tree**: [docs/architecture/source-tree.md](./source-tree.md)
+- **🖥️ frontend-architecture**: [docs/architecture/frontend-architecture.md](./frontend-architecture.md)
+- **🧩 frontend-spec**: [docs/architecture/front-end-spec.md](./front-end-spec.md)
+- **⚙️ tech-stack**: [docs/architecture/tech-stack.md](./tech-stack.md)
+- **🩺 platform-flows**: [docs/architecture/aesthetic-platform-flows.md](./aesthetic-platform-flows.md)

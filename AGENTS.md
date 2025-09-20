@@ -11,8 +11,8 @@ applyTo: "**/*"
 # MANDATORY EXECUTION RULES ALWAYS READ AND LOAD References
 
 - **🌟 Always Read the Complete Workflow**: [`docs/AGENTS.md`](../docs/AGENTS.md)
-- **📚 Always Read the @source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
-- **🔍 Always Read the @tech-stack**: [docs/architecture/tech-stack.md](../docs/architecture/tech-stack.md)
+- **📚 Always Read the source-tree**: [docs/architecture/source-tree.md](../docs/architecture/source-tree.md)
+- **🔍 Always Read the tech-stack**: [docs/architecture/tech-stack.md](../docs/architecture/tech-stack.md)
 
 ## Pre-Development Guidelines
 
@@ -113,6 +113,20 @@ CONSTITUTIONAL_PRINCIPLES:
 - **📚 context7** - Documentation
 - **🌐 tavily** - Real-time info
 - **🎨 shadcn-ui** - UI components
+
+### **🤖 AI Agent Technologies**
+
+**NEW: AI Agent Integration Stack**
+- **CopilotKit**: Conversational AI UI and infrastructure
+- **AG-UI Protocol**: Real-time agent communication protocol
+- **ottomator-agents**: Backend agent logic with RAG capabilities
+- **Supabase Integration**: Secure database access with RLS enforcement
+
+**Key Integration Points**:
+- AI chat interface in React/Next.js frontend
+- Python-based agent backend with natural language processing
+- Real-time communication via AG-UI Protocol
+- Secure data access respecting Row Level Security
 
 ## Mandatory Development Steps
 

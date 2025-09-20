@@ -29,6 +29,7 @@ export const createContext = (opts: CreateHTTPContextOptions) => {
   // Extract user information from request headers or JWT
   const userId = req.headers['x-user-id'] as string;
   const clinicId = req.headers['x-clinic-id'] as string;
+  const requestId = req.headers['x-request-id'] as string || `req_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
   // Collect audit metadata for LGPD compliance
   const auditMeta = {
@@ -43,8 +44,10 @@ export const createContext = (opts: CreateHTTPContextOptions) => {
     supabase,
     req,
     res,
+    user: userId ? { id: userId } : null,
     userId,
     clinicId,
+    requestId,
     auditMeta,
   };
 };

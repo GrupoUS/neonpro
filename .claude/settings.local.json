@@ -85,7 +85,12 @@
       "mcp__archon__rag_search_knowledge_base",
       "mcp__archon__get_project_features",
       "mcp__archon__rag_search_code_examples",
-      "mcp__archon__find_documents"
+      "mcp__archon__find_documents",
+      "mcp__archon__rag_get_available_sources",
+      "mcp__supabase__get_project",
+      "mcp__supabase__get_anon_key",
+      "mcp__desktop-commander__kill_process",
+      "mcp__desktop-commander__list_processes"
     ],
     "deny": [
       "Edit",

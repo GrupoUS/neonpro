@@ -10,7 +10,7 @@
  * - Data anonymization and audit trail helpers
  */
 
-import { type HealthcarePrismaClient } from '../clients/prisma.js';
+import { type HealthcarePrismaClient } from '../clients/prisma';
 
 // Brazilian healthcare regulatory validation
 export class BrazilianHealthcareValidator {
@@ -537,10 +537,4 @@ export class PatientDataHelper {
   }
 }
 
-// Export all helper classes
-export {
-  BrazilianHealthcareValidator,
-  HealthcareAppointmentHelper,
-  LGPDComplianceHelper,
-  PatientDataHelper,
-};
+

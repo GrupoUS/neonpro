@@ -3,16 +3,16 @@
  * Multi-tenant clinic management with compliance tracking
  */
 
-import { z } from 'zod';
-import { router, protectedProcedure } from '../trpc';
 import {
-  CreateClinicRequestSchema,
-  UpdateClinicRequestSchema,
   ClinicResponseSchema,
   ClinicsListResponseSchema,
+  CreateClinicRequestSchema,
   HealthcareTRPCError,
   PaginationSchema,
+  UpdateClinicRequestSchema,
 } from '@neonpro/types/api/contracts';
+import { z } from 'zod';
+import { protectedProcedure, router } from '../trpc';
 
 export const clinicRouter = router({
   /**
@@ -33,7 +33,7 @@ export const clinicRouter = router({
           'FORBIDDEN',
           'Insufficient permissions to create clinic',
           'INSUFFICIENT_PERMISSIONS',
-          { requiredRole: 'system_admin', currentRole: ctx.user.role }
+          { requiredRole: 'system_admin', currentRole: ctx.user.role },
         );
       }
 
@@ -43,7 +43,7 @@ export const clinicRouter = router({
           'BAD_REQUEST',
           'Invalid CNPJ format',
           'INVALID_CNPJ_FORMAT',
-          { cnpj: input.cnpj }
+          { cnpj: input.cnpj },
         );
       }
 
@@ -63,7 +63,7 @@ export const clinicRouter = router({
           {
             existingClinicId: existingClinic.id,
             cnpj: input.cnpj,
-          }
+          },
         );
       }
 
@@ -77,7 +77,7 @@ export const clinicRouter = router({
           {
             cnpj: input.cnpj,
             validationErrors: businessValidation.errors,
-          }
+          },
         );
       }
 
@@ -85,7 +85,7 @@ export const clinicRouter = router({
       const healthLicenseValidation = await validateHealthcareLicense(
         input.healthLicenseNumber,
         input.address.city,
-        input.address.state
+        input.address.state,
       );
 
       if (!healthLicenseValidation.isValid) {
@@ -96,7 +96,7 @@ export const clinicRouter = router({
           {
             licenseNumber: input.healthLicenseNumber,
             validationErrors: healthLicenseValidation.errors,
-          }
+          },
         );
       }
 
@@ -242,7 +242,7 @@ export const clinicRouter = router({
           'NOT_FOUND',
           'Clinic not found',
           'CLINIC_NOT_FOUND',
-          { clinicId: input.id }
+          { clinicId: input.id },
         );
       }
 
@@ -255,7 +255,7 @@ export const clinicRouter = router({
         metrics = await calculateClinicMetrics(
           input.id,
           new Date(input.metricsDateRange.from),
-          new Date(input.metricsDateRange.to)
+          new Date(input.metricsDateRange.to),
         );
       }
 
@@ -397,7 +397,7 @@ export const clinicRouter = router({
           'NOT_FOUND',
           'Clinic not found',
           'CLINIC_NOT_FOUND',
-          { clinicId: input.id }
+          { clinicId: input.id },
         );
       }
 
@@ -406,9 +406,8 @@ export const clinicRouter = router({
 
       // Check if critical information is being updated
       const cnpjChanged = input.cnpj && input.cnpj !== currentClinic.cnpj;
-      const healthLicenseChanged = 
-        input.healthLicenseNumber && 
-        input.healthLicenseNumber !== currentClinic.healthLicenseNumber;
+      const healthLicenseChanged = input.healthLicenseNumber
+        && input.healthLicenseNumber !== currentClinic.healthLicenseNumber;
 
       // Re-validate if critical info changed
       if (cnpjChanged) {
@@ -417,7 +416,7 @@ export const clinicRouter = router({
             'BAD_REQUEST',
             'Invalid CNPJ format',
             'INVALID_CNPJ_FORMAT',
-            { cnpj: input.cnpj }
+            { cnpj: input.cnpj },
           );
         }
 
@@ -437,7 +436,7 @@ export const clinicRouter = router({
             {
               existingClinicId: existingClinic.id,
               cnpj: input.cnpj,
-            }
+            },
           );
         }
 
@@ -450,7 +449,7 @@ export const clinicRouter = router({
             {
               cnpj: input.cnpj,
               validationErrors: businessValidation.errors,
-            }
+            },
           );
         }
       }
@@ -459,7 +458,7 @@ export const clinicRouter = router({
         const healthLicenseValidation = await validateHealthcareLicense(
           input.healthLicenseNumber,
           input.address?.city || currentClinic.address.city,
-          input.address?.state || currentClinic.address.state
+          input.address?.state || currentClinic.address.state,
         );
 
         if (!healthLicenseValidation.isValid) {
@@ -470,7 +469,7 @@ export const clinicRouter = router({
             {
               licenseNumber: input.healthLicenseNumber,
               validationErrors: healthLicenseValidation.errors,
-            }
+            },
           );
         }
       }
@@ -611,7 +610,7 @@ export const clinicRouter = router({
           'NOT_FOUND',
           'Clinic not found',
           'CLINIC_NOT_FOUND',
-          { clinicId: input.clinicId }
+          { clinicId: input.clinicId },
         );
       }
 
@@ -719,7 +718,7 @@ export const clinicRouter = router({
           'NOT_FOUND',
           'Clinic not found',
           'CLINIC_NOT_FOUND',
-          { clinicId: input.clinicId }
+          { clinicId: input.clinicId },
         );
       }
 
@@ -767,41 +766,43 @@ export const clinicRouter = router({
 // Helper functions
 function isValidCNPJ(cnpj: string): boolean {
   const cleanCNPJ = cnpj.replace(/[^\d]/g, '');
-  
+
   if (cleanCNPJ.length !== 14) return false;
-  
+
   // Check for known invalid CNPJs
   if (/^(.)\1*$/.test(cleanCNPJ)) return false;
-  
+
   // Validate check digits
   let sum = 0;
   let weight = 2;
-  
+
   for (let i = 11; i >= 0; i--) {
     sum += parseInt(cleanCNPJ.charAt(i)) * weight;
     weight = weight === 9 ? 2 : weight + 1;
   }
-  
+
   let remainder = sum % 11;
   let digit1 = remainder < 2 ? 0 : 11 - remainder;
-  
+
   if (parseInt(cleanCNPJ.charAt(12)) !== digit1) return false;
-  
+
   sum = 0;
   weight = 2;
-  
+
   for (let i = 12; i >= 0; i--) {
     sum += parseInt(cleanCNPJ.charAt(i)) * weight;
     weight = weight === 9 ? 2 : weight + 1;
   }
-  
+
   remainder = sum % 11;
   let digit2 = remainder < 2 ? 0 : 11 - remainder;
-  
+
   return parseInt(cleanCNPJ.charAt(13)) === digit2;
 }
 
-async function validateBusinessLicense(cnpj: string): Promise<{ isValid: boolean; errors?: string[] }> {
+async function validateBusinessLicense(
+  cnpj: string,
+): Promise<{ isValid: boolean; errors?: string[] }> {
   // Placeholder for actual business license validation with Receita Federal
   return { isValid: true };
 }
@@ -809,7 +810,7 @@ async function validateBusinessLicense(cnpj: string): Promise<{ isValid: boolean
 async function validateHealthcareLicense(
   licenseNumber: string,
   city: string,
-  state: string
+  state: string,
 ): Promise<{ isValid: boolean; errors?: string[] }> {
   // Placeholder for healthcare license validation with ANVISA/municipal authorities
   return { isValid: true };
@@ -818,7 +819,7 @@ async function validateHealthcareLicense(
 async function calculateClinicMetrics(
   clinicId: string,
   dateFrom: Date,
-  dateTo: Date
+  dateTo: Date,
 ): Promise<any> {
   // Placeholder for clinic metrics calculation
   return {
@@ -844,7 +845,10 @@ async function sendClinicSetupNotification(clinic: any): Promise<void> {
 function getChanges(current: any, input: any): Record<string, any> {
   const changes = {};
   Object.keys(input).forEach(key => {
-    if (key !== 'id' && input[key] !== undefined && JSON.stringify(input[key]) !== JSON.stringify(current[key])) {
+    if (
+      key !== 'id' && input[key] !== undefined
+      && JSON.stringify(input[key]) !== JSON.stringify(current[key])
+    ) {
       changes[key] = {
         from: current[key],
         to: input[key],

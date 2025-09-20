@@ -17,6 +17,7 @@
 // Core Patient Management Components
 export { default as ConsentManagementDialog } from './ConsentManagementDialog';
 export { default as EnhancedPatientRegistrationForm } from './EnhancedPatientRegistrationForm';
+export { default as GlobalPatientSearch } from './GlobalPatientSearch';
 export { default as HealthcareSearch } from './HealthcareSearch';
 export { default as MobilePatientCard } from './MobilePatientCard';
 export { default as MobilePatientList } from './MobilePatientList';
