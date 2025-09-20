@@ -3,7 +3,17 @@
  * Provides common functionality for all database services
  */
 
-import { prisma } from "../client.js";
+import type { PrismaClient } from "@prisma/client";
+
+// Lazy load prisma to avoid test environment issues
+let _prismaInstance: PrismaClient | null = null;
+const getPrisma = (): PrismaClient => {
+  if (!_prismaInstance) {
+    const { prisma } = require("../client.js");
+    _prismaInstance = prisma;
+  }
+  return _prismaInstance!;
+};
 
 export interface AuditLogData {
   operation: string;
@@ -30,7 +40,7 @@ export abstract class BaseService {
       const result = await action();
 
       // LGPD-compliant audit logging for successful operations
-      await prisma.auditTrail.create({
+      await getPrisma().auditTrail.create({
         data: {
           userId: auditData.userId,
           action: "VIEW", // Default action, should be parameterized
@@ -53,7 +63,7 @@ export abstract class BaseService {
       return result;
     } catch (error) {
       // Log failed operations for security monitoring
-      await prisma.auditTrail.create({
+      await getPrisma().auditTrail.create({
         data: {
           userId: auditData.userId,
           action: "VIEW", // Default action, should be parameterized
@@ -85,7 +95,7 @@ export abstract class BaseService {
       | "communication"
       | "marketing",
   ): Promise<boolean> {
-    const consent = await prisma.consentRecord.findFirst({
+    const consent = await getPrisma().consentRecord.findFirst({
       where: {
         patientId,
         purpose,
@@ -131,7 +141,7 @@ export abstract class BaseService {
    * Calculate appointment no-show risk score using ML patterns
    */
   protected async calculateNoShowRisk(appointmentId: string): Promise<number> {
-    const appointment = await prisma.appointment.findUnique({
+    const appointment = await getPrisma().appointment.findUnique({
       where: { id: appointmentId },
       include: {
         patient: {
@@ -196,7 +206,7 @@ export abstract class BaseService {
    * Get user's clinic access permissions
    */
   protected async getUserClinicAccess(userId: string): Promise<string[]> {
-    const professional = await prisma.professional.findFirst({
+    const professional = await getPrisma().professional.findFirst({
       where: {
         userId,
         isActive: true,

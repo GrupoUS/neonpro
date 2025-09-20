@@ -10,7 +10,7 @@ import { AIChatWS } from '@/components/ai-agent/ai-chat-ws';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/useAuth';
 import { createFileRoute } from '@tanstack/react-router';
 import { Brain, Calendar, MessageSquare, Shield, TrendingUp, Users, Zap } from 'lucide-react';
 import React, { useState } from 'react';

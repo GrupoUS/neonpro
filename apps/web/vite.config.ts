@@ -130,6 +130,7 @@ export default defineConfig(({ mode }) => {
           '@opentelemetry/exporter-otlp-http',
           '@opentelemetry/exporter-otlp-grpc',
           '@opentelemetry/sdk-node',
+          'node-fetch',
         ],
         output: {
           // Enhanced code splitting for healthcare application performance

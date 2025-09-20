@@ -116,6 +116,8 @@ export async function createCrudIntent(
       const error = new Error(errorData.error || `HTTP ${response.status}`) as any;
       error.code = errorData.code;
       error.details = errorData.details || errorData;
+      error.timestamp = errorData.timestamp;
+      error.executionId = errorData.executionId || 'exec-error-' + Date.now();
       throw error;
     }
 
@@ -151,6 +153,8 @@ export async function confirmCrudIntent(
       const error = new Error(errorData.error || `HTTP ${response.status}`) as any;
       error.code = errorData.code;
       error.details = errorData.details || errorData;
+      error.timestamp = errorData.timestamp;
+      error.executionId = errorData.executionId || 'exec-error-' + Date.now();
       throw error;
     }
 
@@ -205,6 +209,8 @@ export async function executeCrudOperation(
       const error = new Error(errorData.error || `HTTP ${response.status}`) as any;
       error.code = errorData.code;
       error.details = errorData.details || errorData;
+      error.timestamp = errorData.timestamp;
+      error.executionId = errorData.executionId || 'exec-error-' + Date.now();
       throw error;
     }
 

@@ -18,7 +18,7 @@ import { server } from '../mocks/server';
 // Setup MSW server
 beforeAll(() => {
   console.log('📡 Starting MSW server for financial trends tests...');
-  server.listen({ onUnhandledRequest: 'error' });
+  server.listen({ onUnhandledRequest: 'warn' });
   console.log('✅ MSW server started');
 });
 

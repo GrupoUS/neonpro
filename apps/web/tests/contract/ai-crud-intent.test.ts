@@ -41,11 +41,45 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       http.post('/api/v1/ai/crud/intent', async ({ request }) => {
         const body = await request.json();
 
-        // Validate request format
-        if (!validateIntentRequest(body)) {
+        // Validate authentication first
+        const authHeader = request.headers.get('authorization');
+        if (!authHeader || authHeader !== 'Bearer test-token') {
+          return new HttpResponse(
+            JSON.stringify({
+              error: 'Authentication required',
+              code: 'AUTH_ERROR',
+            }),
+            { status: 401 },
+          );
+        }
+
+        // Basic structure validation (before session check)
+        if (!body || typeof body.entity !== 'string' || typeof body.operation !== 'string') {
           return new HttpResponse(
             JSON.stringify({
               error: 'Invalid intent request format',
+              code: 'INVALID_REQUEST',
+            }),
+            { status: 400 },
+          );
+        }
+
+        // Session validation (specific check)
+        if (!body.context || !body.context.sessionId) {
+          return new HttpResponse(
+            JSON.stringify({
+              error: 'Session required',
+              code: 'SESSION_REQUIRED',
+            }),
+            { status: 400 },
+          );
+        }
+
+        // Full request validation
+        if (!validateIntentRequest(body)) {
+          return new HttpResponse(
+            JSON.stringify({
+              error: 'Missing required fields',
               code: 'INVALID_REQUEST',
             }),
             { status: 400 },
@@ -76,6 +110,11 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
           },
           nextStep: 'confirm',
           expiresAt: new Date(Date.now() + 300000).toISOString(), // 5 minutes
+          riskAssessment: {
+            score: 85,
+            factors: ['entity_validation', 'data_validation'],
+            passed: true,
+          },
         });
       }),
     );

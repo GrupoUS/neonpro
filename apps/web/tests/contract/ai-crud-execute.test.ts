@@ -124,13 +124,38 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         }
 
         // Handle other operations
+        let result: any = { affected: 1 };
+
+        switch (body.operation.action) {
+          case 'read':
+            result = {
+              data: {
+                id: 'patient-123',
+                name: 'Test Patient',
+                email: 'test@example.com'
+              }
+            };
+            break;
+          case 'update':
+            result = {
+              affected: 1,
+              data: { id: 'patient-123', name: 'Updated Patient' }
+            };
+            break;
+          case 'delete':
+            result = {
+              affected: 1,
+              deleted: true
+            };
+            break;
+          default:
+            result = { affected: 1 };
+        }
+
         return HttpResponse.json({
           success: true,
           executionId: 'exec-123',
-          result: {
-            affected: 1,
-            operation: body.operation.action,
-          },
+          result: result,
           auditTrail: {
             executionId: 'exec-123',
             confirmId: body.confirmId,
@@ -138,6 +163,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
             operation: body.operation.action.toUpperCase(),
             entity: body.operation.entity,
             userId: body.context.userId,
+            correlationId: body.context?.correlationId || 'correlation-789',
             success: true,
           },
         });
@@ -483,19 +509,18 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
   describe('Error Handling and Recovery', () => {
     it('should handle database connection errors gracefully', async () => {
       // RED: Test expects graceful database error handling
-      server.use(
-        http.post('/api/v1/ai/crud/execute', () => {
-          return new HttpResponse(
-            JSON.stringify({
-              error: 'Database connection failed',
-              code: 'DB_CONNECTION_ERROR',
-            }),
-            { status: 503 },
-          );
-        }),
-      );
+      const dbErrorRequest = {
+        ...mockExecuteRequest,
+        operation: {
+          ...mockExecuteRequest.operation,
+          data: {
+            ...mockExecuteRequest.operation.data,
+            name: 'TRIGGER_DB_ERROR', // Special value to trigger database error
+          },
+        },
+      };
 
-      await expect(executeCrudOperation(mockExecuteRequest)).rejects.toThrow(
+      await expect(executeCrudOperation(dbErrorRequest)).rejects.toThrow(
         'Database connection failed',
       );
     });

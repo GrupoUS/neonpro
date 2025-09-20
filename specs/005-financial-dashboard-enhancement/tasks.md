@@ -52,13 +52,13 @@
 - [ ] **T000** Instale o Shadcn MCP registry usando npx shadcn init https://ui-experiment-03.vercel.app/r/experiment-03.json em `apps/web/` (se necessário procure informações em https://github.com/origin-space/ui-experiments/tree/main/apps/experiment-03)
 - [ ] **T001** Initialize Shadcn MCP registry from experiment-03.json in `apps/web/`
 - [ ] **T002** [P] Configure project dependencies: Recharts, TanStack Query, Zustand, date-fns
-- [ ] **T003** [P] Set up linting rules for financial components in `.eslintrc.json`
+- [x] **T003** [P] Set up linting rules for financial components in `.eslintrc.json`
 - [ ] **T004** [P] Configure TypeScript strict mode for financial data types in `tsconfig.json`
 
 ### Database Schema
 
 - [ ] **T005** Create financial transactions table migration in `supabase/migrations/001_financial_transactions.sql`
-- [ ] **T006** Create financial metrics materialized view in `supabase/migrations/002_financial_metrics.sql`
+- [x] **T006** Create financial metrics materialized view in `supabase/migrations/002_financial_metrics.sql`
 - [ ] **T007** Create dashboard preferences table in `supabase/migrations/003_dashboard_preferences.sql`
 - [ ] **T008** Create audit logs table with LGPD compliance in `supabase/migrations/004_audit_logs.sql`
 
@@ -66,24 +66,24 @@
 
 ### API Contract Tests
 
-- [ ] **T009** [P] Contract test GET /api/financial/dashboard in `apps/web/tests/contract/financial-dashboard.test.ts`
-- [ ] **T010** [P] Contract test GET /api/financial/metrics in `apps/web/tests/contract/financial-metrics.test.ts`
-- [ ] **T011** [P] Contract test POST /api/financial/export in `apps/web/tests/contract/financial-export.test.ts`
-- [ ] **T012** [P] Contract test WebSocket /ws/financial/updates in `apps/web/tests/contract/financial-websocket.test.ts`
+- [x] **T009** [P] Contract test GET /api/financial/dashboard in `apps/web/tests/contract/financial-dashboard.test.ts`
+- [x] **T010** [P] Contract test GET /api/financial/metrics in `apps/web/tests/contract/financial-metrics.test.ts`
+- [x] **T011** [P] Contract test POST /api/financial/export in `apps/web/tests/contract/financial-export.test.ts`
+- [x] **T012** [P] Contract test WebSocket /ws/financial/updates in `apps/web/tests/contract/financial-websocket.test.ts`
 
 ### Component Tests
 
-- [ ] **T013** [P] Chart component test for MRR visualization in `apps/web/tests/components/chart-mrr.test.tsx`
-- [ ] **T014** [P] Chart component test for ARR trends in `apps/web/tests/components/chart-arr.test.tsx`
-- [ ] **T015** [P] Chart component test for churn analysis in `apps/web/tests/components/chart-churn.test.tsx`
-- [ ] **T016** [P] Dashboard layout responsive test in `apps/web/tests/components/dashboard-layout.test.tsx`
+- [x] **T013** [P] Chart component test for MRR visualization in `apps/web/tests/components/chart-mrr.test.tsx`
+- [x] **T014** [P] Chart component test for ARR trends in `apps/web/tests/components/chart-arr.test.tsx`
+- [x] **T015** [P] Chart component test for churn analysis in `apps/web/tests/components/chart-churn.test.tsx`
+- [x] **T016** [P] Dashboard layout responsive test in `apps/web/tests/components/dashboard-layout.test.tsx`
 
 ### Integration Tests
 
-- [ ] **T017** [P] Integration test: Financial dashboard loading scenario in `apps/web/tests/integration/dashboard-loading.test.ts`
-- [ ] **T018** [P] Integration test: Date range filtering workflow in `apps/web/tests/integration/date-filtering.test.ts`
-- [ ] **T019** [P] Integration test: Export functionality end-to-end in `apps/web/tests/integration/export-workflow.test.ts`
-- [ ] **T020** [P] Integration test: Mobile responsiveness validation in `apps/web/tests/integration/mobile-responsive.test.ts`
+- [x] **T017** [P] Integration test: Financial dashboard loading scenario in `apps/web/tests/integration/dashboard-loading.test.ts`
+- [x] **T018** [P] Integration test: Date range filtering workflow in `apps/web/tests/integration/date-filtering.test.ts`
+- [x] **T019** [P] Integration test: Export functionality end-to-end in `apps/web/tests/integration/export-workflow.test.ts`
+- [x] **T020** [P] Integration test: Mobile responsiveness validation in `apps/web/tests/integration/mobile-responsive.test.ts`
 
 **CRITICAL: Tests T009-T020 MUST be written and MUST FAIL before ANY implementation**
 
@@ -91,10 +91,10 @@
 
 ### Data Services
 
-- [ ] **T021** [P] Financial metrics service with TanStack Query in `apps/web/src/services/financial-metrics.ts`
-- [ ] **T022** [P] Dashboard data aggregation service in `apps/web/src/services/dashboard-data.ts`
-- [ ] **T023** [P] Export service for PDF/Excel generation in `apps/web/src/services/export.ts`
-- [ ] **T024** [P] Zustand store for dashboard state in `apps/web/src/stores/dashboard-store.ts`
+- [x] **T021** [P] Financial metrics service with TanStack Query in `apps/web/src/services/financial-metrics.ts`
+- [x] **T022** [P] Dashboard data aggregation service in `apps/web/src/services/dashboard-data.ts`
+- [x] **T023** [P] Export service for PDF/Excel generation in `apps/web/src/services/export.ts`
+- [x] **T024** [P] Zustand store for dashboard state in `apps/web/src/stores/dashboard-store.ts`
 
 ### Chart Components (Shadcn MCP + Recharts)
 

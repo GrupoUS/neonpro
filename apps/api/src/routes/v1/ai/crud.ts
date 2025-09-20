@@ -6,7 +6,7 @@
 
 import { trpcServer } from '@hono/trpc-server';
 import { zValidator } from '@hono/zod-validator';
-import { Context, Hono, Next } from 'hono';
+import { Hono } from 'hono';
 import { z } from 'zod';
 import { appRouter } from '../../../trpc/router';
 

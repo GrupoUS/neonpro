@@ -9,7 +9,7 @@
 import { http, HttpResponse } from 'msw';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { server } from '../mocks/server';
-import { confirmCrudIntent, validateConfirmRequest } from '../utils/crud-test-utils';
+import { createCrudIntent, confirmCrudIntent, validateConfirmRequest } from '../utils/crud-test-utils';
 
 // Mock data for testing
 const mockConfirmRequest = {
