@@ -4,13 +4,23 @@
   "private": true,
   "type": "module",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.mjs",
       "require": "./dist/index.js"
+    },
+    "./api/*": {
+      "types": "./dist/api/*.d.ts",
+      "import": "./dist/api/*.js",
+      "require": "./dist/api/*.js"
+    },
+    "./api/contracts": {
+      "types": "./dist/api/contracts.d.ts",
+      "import": "./dist/api/contracts.js",
+      "require": "./dist/api/contracts.js"
     },
     "./governance.types": {
       "types": "./dist/governance.types.d.ts",
