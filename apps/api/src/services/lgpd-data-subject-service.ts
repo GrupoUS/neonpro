@@ -343,7 +343,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult & { exportData?: any; exportUrl?: string }> {
     try {
       // Validate request exists and belongs to patient
-      const request = await this.validateRequest(
+      const _request = await this.validateRequest(
         requestId,
         patientId,
         'PORTABILITY',
@@ -414,7 +414,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult & { explanation?: any }> {
     try {
       // Validate request exists and belongs to patient
-      const request = await this.validateRequest(
+      const _request = await this.validateRequest(
         requestId,
         patientId,
         'AUTOMATED_DECISION_EXPLANATION',

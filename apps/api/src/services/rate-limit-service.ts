@@ -139,7 +139,7 @@ export function getRateLimitStatus(
 /**
  * Reset rate limit for a client
  */
-export function resetRateLimit(clientId: string, ruleId: string): boolean {
+export function resetRateLimit(clientId: string, _ruleId: string): boolean {
   // In real implementation, this would clear the store for the client/rule combination
   return true;
 }

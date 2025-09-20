@@ -343,7 +343,7 @@ export function validateEntityData(entity: string, data: any): {
         sanitizedData: data,
       };
     }
-  } catch (error) {
+  } catch (_error) {
     return {
       isValid: false,
       errors: ['Erro na validação do esquema'],

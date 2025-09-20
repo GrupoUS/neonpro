@@ -41,6 +41,8 @@
     "nanoid": "^5.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^5.0.0",
     "zod": "^3.22.0"
   },
   "devDependencies": {

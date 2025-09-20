@@ -7,6 +7,31 @@ import {
   MedicalDataClassification,
 } from "../types/audit.types";
 
+// Database log entry interface
+interface DatabaseLogEntry {
+  id: string;
+  session_id?: string;
+  user_id: string;
+  action: string;
+  user_role?: "doctor" | "patient" | "nurse" | "admin" | "system";
+  data_classification?: MedicalDataClassification;
+  description?: string;
+  created_at: string;
+  ip_address?: string;
+  user_agent?: string;
+  resource_type?: string;
+  clinic_id?: string;
+  status?: string;
+  risk_level?: string;
+  event_type?: string;
+  timestamp?: string;
+  metadata?: Record<string, unknown>;
+  compliance_check?: {
+    status?: string;
+    risk_level?: string;
+  };
+}
+
 /**
  * Service for managing audit logs and compliance reporting
  * Handles WebRTC session auditing, LGPD compliance, and security monitoring
@@ -225,7 +250,7 @@ export class AuditService {
       userAgent?: string;
       clinicId?: string;
       sessionId?: string;
-      additionalData?: Record<string, any>;
+      additionalData?: Record<string, unknown>;
     },
   ): Promise<string> {
     return this.createAuditLog({
@@ -280,19 +305,13 @@ export class AuditService {
         return [];
       }
 
-      return logs.map((log: any) => ({
+      return logs.map((log: DatabaseLogEntry) => ({
         id: log.id,
         sessionId: log.session_id || sessionId,
         userId: log.user_id,
         eventType: this.mapActionToEventType(log.action),
-        userRole:
-          (log.user_role as
-            | "doctor"
-            | "patient"
-            | "nurse"
-            | "admin"
-            | "system") || "system",
-        dataClassification: (log.data_classification as any) || "general",
+        userRole: log.user_role || "system",
+        dataClassification: log.data_classification || "general",
         description:
           log.description || `${log.action} performed on ${log.resource_type}`,
         timestamp: log.created_at || new Date().toISOString(),
@@ -346,7 +365,7 @@ export class AuditService {
         return [];
       }
 
-      return logs.map((log: any) => this.mapDatabaseLogToEntry(log));
+      return logs.map((log: DatabaseLogEntry) => this.mapDatabaseLogToEntry(log));
     } catch (error) {
       console.error("AuditService.getUserAuditLogs error:", error);
       return [];
@@ -509,7 +528,7 @@ export class AuditService {
    * Maps database log entry to RTCAuditLogEntry
    * @private
    */
-  private mapDatabaseLogToEntry(log: any): RTCAuditLogEntry {
+  private mapDatabaseLogToEntry(log: DatabaseLogEntry): RTCAuditLogEntry {
     return {
       id: log.id,
       sessionId: log.session_id,
@@ -574,10 +593,6 @@ export class AuditService {
       if (riskLevel in riskLevels) {
         riskLevels[riskLevel as keyof typeof riskLevels]++;
       }
-
-      log.complianceCheck.violations.forEach((violation) => {
-        violations[violation] = (violations[violation] || 0) + 1;
-      });
     });
 
     const recommendations: string[] = [];

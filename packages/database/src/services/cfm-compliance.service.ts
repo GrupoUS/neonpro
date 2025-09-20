@@ -76,7 +76,7 @@ export class CFMComplianceService {
           crmState,
           specialties: localLicense.specialties || [],
           isValid,
-          status: localLicense.license_status as any,
+          status: localLicense.license_status as "active" | "expired" | "suspended" | "revoked",
           expiryDate: localLicense.license_expiry_date
             ? new Date(localLicense.license_expiry_date)
             : undefined,
@@ -406,7 +406,7 @@ export class CFMComplianceService {
     clinicId: string,
     periodStart: Date,
     periodEnd: Date,
-  ): Promise<any> {
+  ): Promise<Record<string, unknown>> {
     try {
       // Get compliance metrics from materialized view
       const { error: dashboardError } = await this.supabase
@@ -665,7 +665,7 @@ export class CFMComplianceService {
   /**
    * Get session audit trail for compliance reporting
    */
-  async getSessionAuditTrail(sessionId: string): Promise<any> {
+  async getSessionAuditTrail(sessionId: string): Promise<Record<string, unknown>> {
     try {
       const { data, error } = await this.supabase
         .from("telemedicine_sessions")

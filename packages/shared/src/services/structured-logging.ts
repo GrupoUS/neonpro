@@ -16,6 +16,15 @@
 
 import { z } from "zod";
 import { nanoid } from "nanoid";
+import winston from "winston";
+
+// Import enhanced Winston-based logging
+import {
+  EnhancedStructuredLogger,
+  brazilianPIIRedactionService,
+  createHealthcareLogger,
+  logger as enhancedLogger,
+} from "./winston-logging";
 
 // ============================================================================
 // SCHEMAS & TYPES
@@ -1248,6 +1257,9 @@ export class StructuredLogger {
 
 /**
  * Default structured logger instance with healthcare-optimized settings
+ * 
+ * Note: This logger now uses the enhanced Winston-based backend while maintaining
+ * backward compatibility with the existing API.
  */
 export const logger = new StructuredLogger({
   service: "neonpro-platform",
@@ -1288,3 +1300,92 @@ export const logger = new StructuredLogger({
     enableMetricsCorrelation: true,
   },
 });
+
+// ============================================================================
+// ENHANCED WINSTON-BASED LOGGER
+// ============================================================================
+
+/**
+ * Enhanced Winston-based logger with Brazilian compliance features
+ * 
+ * This is the new generation logger with:
+ * - Winston transport system
+ * - Enhanced Brazilian PII/PHI redaction
+ * - LGPD compliance features
+ * - Better performance and reliability
+ */
+export const winstonLogger = enhancedLogger;
+
+/**
+ * Factory function to create custom healthcare loggers
+ */
+export function createWinstonHealthcareLogger(serviceName: string) {
+  return createHealthcareLogger({
+    service: serviceName,
+    environment: process.env.NODE_ENV as any || "development",
+  });
+}
+
+/**
+ * Brazilian PII redaction service for direct usage
+ */
+export const piiRedactionService = brazilianPIIRedactionService;
+
+/**
+ * Utility function to redact PII from any text or object
+ */
+export function redactPII(data: any): any {
+  if (typeof data === 'string') {
+    return piiRedactionService.redactText(data);
+  } else if (typeof data === 'object' && data !== null) {
+    return piiRedactionService.redactObject(data);
+  }
+  return data;
+}
+
+/**
+ * Utility function to check if data contains PII
+ */
+export function containsPII(data: any): boolean {
+  if (typeof data === 'string') {
+    return piiRedactionService.containsPII(data);
+  } else if (typeof data === 'object' && data !== null) {
+    return piiRedactionService.containsPII(JSON.stringify(data));
+  }
+  return false;
+}
+
+/**
+ * Generate correlation ID for request tracing
+ */
+export function generateCorrelationId(): string {
+  return winstonLogger.generateCorrelationId();
+}
+
+/**
+ * Create logging middleware for request correlation
+ */
+export function createLoggingMiddleware() {
+  return (req: any, res: any, next: any) => {
+    const correlationId = req.headers['x-correlation-id'] || generateCorrelationId();
+    
+    // Set correlation ID in both loggers
+    logger.setCorrelationId?.(correlationId);
+    winstonLogger.setCorrelationId(correlationId);
+    
+    // Add to response headers
+    res.setHeader('x-correlation-id', correlationId);
+    
+    // Set request context
+    winstonLogger.setRequestContext({
+      requestId: correlationId,
+      sessionId: req.session?.id,
+      anonymizedUserId: req.user?.id ? `user_${req.user.id.slice(-8)}` : undefined,
+      deviceType: req.headers['user-agent']?.includes('Mobile') ? 'mobile' : 'desktop',
+      method: req.method,
+      url: req.url,
+    });
+    
+    next();
+  };
+}

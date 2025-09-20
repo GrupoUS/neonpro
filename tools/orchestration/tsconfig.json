@@ -19,7 +19,13 @@
   },
   "include": [
     "src/**/*",
-    "index.ts"
+    "orchestration/**/*",
+    "index.ts",
+    "types.ts",
+    "execution-pattern-selector.ts",
+    "result-aggregator.ts",
+    "quality-control-orchestrator.ts",
+    "__tests__/**/*"
   ],
   "exclude": [
     "node_modules",

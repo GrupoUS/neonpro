@@ -300,7 +300,7 @@ export class WhatsAppReminderService {
               channel: 'sms',
               fallbackUsed: true,
             };
-          } catch (_smsError) {
+          } catch {
             // 6. Final fallback to email
             const emailResult = await this.sendEmailMessage(
               reminder,

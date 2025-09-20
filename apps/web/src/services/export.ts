@@ -5,8 +5,8 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { DashboardData, DashboardFilters } from './dashboard-data';
-import type { FinancialMetric, MetricsCalculationOptions } from './financial-metrics';
+import type { DashboardData } from './dashboard-data';
+import type { FinancialMetric } from './financial-metrics';
 
 export interface ExportOptions {
   format: 'csv' | 'excel' | 'pdf';

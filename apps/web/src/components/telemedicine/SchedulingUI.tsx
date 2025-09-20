@@ -19,7 +19,7 @@ import {
   // Avatar components not available in current UI library
 } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { addDays, endOfWeek, format, isPast, isSameDay, isToday, startOfWeek } from 'date-fns';
+import { addDays, format, isPast, isSameDay, isToday, startOfWeek } from 'date-fns';
 import { pt } from 'date-fns/locale';
 import {
   AlertCircle,
@@ -29,7 +29,6 @@ import {
   ChevronRight,
   Clock,
   Filter,
-  MapPin,
   Monitor,
   Phone,
   Plus,
@@ -86,7 +85,7 @@ interface Professional {
   nextAvailable?: Date;
 }
 
-interface TimeSlot {
+interface _TimeSlot {
   time: Date;
   isAvailable: boolean;
   duration: number;
@@ -549,7 +548,7 @@ interface AppointmentCardProps {
 
 function AppointmentCard({
   appointment,
-  onUpdate,
+  onUpdate: _onUpdate,
   onCancel,
   showDate = false,
 }: AppointmentCardProps) {

@@ -89,6 +89,15 @@ export interface LGPDConsentBannerProps {
 // Consent status type
 type ConsentStatus = Record<ConsentType, boolean>;
 
+// Stored consent data interface
+interface StoredConsentData {
+  consents: ConsentStatus;
+  timestamp: string;
+  version: string;
+  dataTypes: HealthcareDataType[];
+  processingPurposes: DataProcessingPurpose[];
+}
+
 // Consent descriptions for each type
 const consentDescriptions: Record<
   ConsentType,
@@ -598,7 +607,7 @@ export const LGPDConsentBanner: React.FC<LGPDConsentBannerProps> = ({
 // Hook for consent management
 export const useLGPDConsent = () => {
   const [hasConsent, setHasConsent] = useState(false);
-  const [consentData, setConsentData] = useState<any>(null);
+  const [consentData, setConsentData] = useState<StoredConsentData | null>(null);
 
   useEffect(() => {
     try {

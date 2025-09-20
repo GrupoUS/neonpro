@@ -17,7 +17,6 @@ import {
   OrchestrationMetrics,
   OrchestratorConfig,
   normalizeDomain,
-  normalizeComplexity,
 } from "./types";
 import { AgentRegistry } from "./agent-registry";
 import { WorkflowEngine } from "./workflow-engine";

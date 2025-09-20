@@ -27,7 +27,7 @@ import {
   globalErrorHandler,
 } from './middleware/error-tracking';
 import { rateLimitMiddleware } from './middleware/rate-limiting';
-import { healthcareSecurityHeadersMiddleware } from './middleware/security-headers';
+import { healthcareSecurityHeadersMiddleware, httpsRedirectMiddleware } from './middleware/security-headers';
 import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer';
 
 // Extract middleware functions from security package
@@ -133,6 +133,7 @@ app.use('*', errorHandler);
 app.use('*', healthcareErrorTrackingMiddleware());
 
 // Enhanced security headers with HSTS and healthcare compliance
+app.use '*', httpsRedirectMiddleware();
 app.use('*', healthcareSecurityHeadersMiddleware());
 
 // Healthcare-specific rate limiting

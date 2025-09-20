@@ -115,7 +115,7 @@ export interface RTCSignalingMessage {
   recipientId: string;
 
   /** WebRTC payload (SDP or ICE candidate) */
-  payload?: any;
+  payload?: unknown;
 
   /** Timestamp for audit logging (ISO 8601) */
   timestamp: string;
@@ -532,7 +532,7 @@ export interface RTCAuditLogEntry {
   clinicId: string;
 
   /** Additional metadata */
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 
   /** Compliance validation result */
   complianceCheck: {
@@ -572,7 +572,7 @@ export interface RTCConsentManager {
   getConsentHistory(userId: string): Promise<RTCAuditLogEntry[]>;
 
   /** Export user data for LGPD compliance */
-  exportUserData(userId: string): Promise<any>;
+  exportUserData(userId: string): Promise<Record<string, unknown>>;
 
   /** Delete user data (right to erasure) */
   deleteUserData(userId: string, sessionId?: string): Promise<void>;

@@ -3,17 +3,15 @@
  * Comprehensive testing for TDD orchestration engine with multi-agent coordination
  */
 
-import { describe, it, expect, beforeEach, vi, Mock } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import { TDDOrchestrator } from "../orchestration/tdd-orchestrator";
 import { TDDAgentRegistry } from "../orchestration/agent-registry";
 import { StandardTDDWorkflow } from "../orchestration/workflows/standard-tdd";
 import { SecurityCriticalWorkflow } from "../orchestration/workflows/security-critical";
 import type {
   OrchestrationContext,
-  TDDCycleResult,
   AgentRegistry,
   WorkflowEngine,
-  TDDPhase,
 } from "../orchestration/types";
 
 // Mock workflow engine

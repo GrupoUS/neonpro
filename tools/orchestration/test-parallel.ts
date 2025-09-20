@@ -27,7 +27,7 @@ async function testParallelExecution() {
       `✅ Workflow Engine: ${workflowEngine.getAvailableWorkflows().length} workflows available`,
     );
 
-    const orchestrator = new TDDOrchestrator(agentRegistry, workflowEngine);
+    const _orchestrator = new TDDOrchestrator(agentRegistry, workflowEngine);
     console.log("✅ TDD Orchestrator initialized");
 
     const qualityControlBridge = new QualityControlBridge();

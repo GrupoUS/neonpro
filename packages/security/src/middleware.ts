@@ -341,7 +341,7 @@ export function healthcareDataProtection() {
 /**
  * Helper function to sanitize object properties recursively
  */
-function sanitizeObject(obj: any): any {
+function sanitizeObject<T extends Record<string, unknown>>(obj: T): Record<string, unknown> {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
   }
@@ -350,12 +350,12 @@ function sanitizeObject(obj: any): any {
     return obj.map(item => sanitizeObject(item));
   }
 
-  const sanitized: any = {};
+  const sanitized: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(obj)) {
     if (typeof value === 'string') {
       sanitized[key] = SecurityUtils.sanitizeInput(value);
     } else if (typeof value === 'object' && value !== null) {
-      sanitized[key] = sanitizeObject(value);
+      sanitized[key] = sanitizeObject(value as Record<string, unknown>);
     } else {
       sanitized[key] = value;
     }
@@ -371,7 +371,7 @@ export { validateJWT, validateLGPDConsent };
  * JWT validation placeholder
  * TODO: Implement actual JWT validation
  */
-async function validateJWT(_token: string): Promise<any> {
+async function validateJWT(_token: string): Promise<Record<string, unknown>> {
   // Placeholder implementation
   // In a real implementation, this would:
   // 1. Verify the token signature

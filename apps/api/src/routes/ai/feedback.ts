@@ -114,7 +114,7 @@ type FeedbackSummary = z.infer<typeof FeedbackSummarySchema>;
  */
 app.post(
   '/api/ai/sessions/:sessionId/feedback',
-  validator('json', (value, c) => {
+  validator('json', (value, _c) => {
     const result = safeValidate(FeedbackSchema, value);
     if (!result.success) {
       throw new HTTPException(400, {
@@ -164,7 +164,7 @@ app.post(
       const now = new Date().toISOString();
 
       // Insert feedback
-      const { data, error } = await supabase
+      const { data: _data, error } = await supabase
         .from('ai_feedback')
         .insert({
           id: feedbackId,

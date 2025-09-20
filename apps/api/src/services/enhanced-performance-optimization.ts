@@ -243,7 +243,7 @@ export class EnhancedPerformanceOptimizationService {
    * Optimized patient search with advanced filtering and performance
    */
   async searchPatientsEnhanced(
-    clinicId: string,
+    _clinicId: string,
     searchParams: {
       query?: string;
       page?: number;
@@ -926,14 +926,14 @@ export class EnhancedPerformanceOptimizationService {
     };
   }
 
-  private async getHistoricalMetrics(clinicId: string, days: number) {
+  private async getHistoricalMetrics(_clinicId: string, _days: number) {
     // Implement historical data retrieval
     // This would query historical metrics tables
     return [];
   }
 
   private async generateProjections(
-    clinicId: string,
+    _clinicId: string,
     _currentMetrics: Record<string, any>,
   ) {
     // Implement predictive analytics for future metrics

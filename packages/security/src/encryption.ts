@@ -6,6 +6,16 @@
 
 import crypto from 'crypto';
 
+// Type for GCM cipher with getAuthTag method
+interface CipherGCM extends crypto.Cipher {
+  getAuthTag(): Buffer;
+}
+
+// Type for GCM decipher with setAuthTag method
+interface DecipherGCM extends crypto.Decipher {
+  setAuthTag(tag: Buffer): void;
+}
+
 /**
  * Encryption Manager for handling sensitive data encryption/decryption
  * Implements AES-256-GCM for authenticated encryption
@@ -58,7 +68,7 @@ export class EncryptionManager {
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
 
-    const authTag = (cipher as any).getAuthTag();
+    const authTag = (cipher as CipherGCM).getAuthTag();
 
     // Combine IV + encrypted data + auth tag
     const combined = Buffer.concat([
@@ -93,7 +103,7 @@ export class EncryptionManager {
       Buffer.from(key, 'base64'),
       iv,
     );
-    (decipher as any).setAuthTag(authTag);
+    (decipher as DecipherGCM).setAuthTag(authTag);
 
     let decrypted = decipher.update(encrypted, undefined, 'utf8');
     decrypted += decipher.final('utf8');
@@ -108,7 +118,7 @@ export class EncryptionManager {
    * @param sensitiveFields Array of field names to encrypt
    * @returns Object with encrypted fields
    */
-  encryptObject<T extends Record<string, any>>(
+  encryptObject<T extends Record<string, unknown>>(
     obj: T,
     key: string,
     sensitiveFields: string[],
@@ -117,7 +127,7 @@ export class EncryptionManager {
 
     for (const field of sensitiveFields) {
       if (result[field] && typeof result[field] === 'string') {
-        (result as any)[field] = this.encryptData(result[field], key);
+        (result as Record<string, unknown>)[field] = this.encryptData(result[field], key);
       }
     }
 
@@ -131,7 +141,7 @@ export class EncryptionManager {
    * @param sensitiveFields Array of field names to decrypt
    * @returns Object with decrypted fields
    */
-  decryptObject<T extends Record<string, any>>(
+  decryptObject<T extends Record<string, unknown>>(
     obj: T,
     key: string,
     sensitiveFields: string[],
@@ -141,7 +151,7 @@ export class EncryptionManager {
     for (const field of sensitiveFields) {
       if (result[field] && typeof result[field] === 'string') {
         try {
-          (result as any)[field] = this.decryptData(result[field], key);
+          (result as Record<string, unknown>)[field] = this.decryptData(result[field], key);
         } catch (error) {
           // Field might not be encrypted, leave as is
           console.warn(`Failed to decrypt field ${field}:`, error);

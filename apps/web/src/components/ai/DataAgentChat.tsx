@@ -45,6 +45,7 @@ import {
   Users,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ActionHandlers } from './ActionHandlers';
 
 import {
   AlertDialog,
@@ -88,6 +89,8 @@ import {
 } from '@/components/ui';
 import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
+import { createAGUIProtocolClient, useAGUIProtocol, AGUIConnectionState } from '@/services/agui-protocol';
+import { useState } from 'react';
 
 // Import our specific types for AI agent integration
 import type {
@@ -542,6 +545,76 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   // Query client for cache management
   const queryClient = useQueryClient();
 
+  // AG-UI Protocol integration
+  const aguiConfig = {
+    websocketUrl: process.env.NODE_ENV === 'production' 
+      ? `wss://${window.location.host}/api/agents/ag-ui-rag-agent` 
+      : `ws://${window.location.host}/api/agents/ag-ui-rag-agent`,
+    httpUrl: process.env.NODE_ENV === 'production'
+      ? `https://${window.location.host}/api/agents/ag-ui-rag-agent`
+      : `http://${window.location.host}/api/agents/ag-ui-rag-agent`,
+    userId: userContext.userId,
+    authToken: localStorage.getItem('authToken') || undefined,
+    enableEncryption: true,
+    heartbeatInterval: 30000,
+    reconnectAttempts: 5,
+    reconnectDelay: 5000,
+    timeout: 30000,
+  };
+
+  const { client: aguiClient, state: aguiState, session: aguiSession } = useAGUIProtocol(aguiConfig);
+
+  // Connect to AG-UI Protocol when component mounts
+  useEffect(() => {
+    aguiClient.connect();
+    
+    // Handle AG-UI Protocol events
+    const handleMessage = (message: any) => {
+      const assistantMessage: ChatMessage = {
+        id: message.id,
+        role: 'assistant',
+        content: message.content,
+        timestamp: new Date().toISOString(),
+        actions: message.actions || [],
+        metadata: message.metadata || {},
+      };
+      
+      setMessages(prev => [...prev, assistantMessage]);
+      setIsLoading(false);
+    };
+
+    const handleError = (error: any) => {
+      const errorMessage: ChatMessage = {
+        id: `error_${Date.now()}`,
+        role: 'assistant',
+        content: 'Erro na conexão com o assistente. Verifique sua conexão e tente novamente.',
+        timestamp: new Date().toISOString(),
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      setIsLoading(false);
+    };
+
+    const handleAuthenticated = (session: any) => {
+      console.log('AG-UI Protocol authenticated:', session);
+    };
+
+    aguiClient.on('message', handleMessage);
+    aguiClient.on('error', handleError);
+    aguiClient.on('authenticated', handleAuthenticated);
+
+    return () => {
+      aguiClient.disconnect();
+      aguiClient.removeAllListeners();
+    };
+  }, [aguiClient, userContext.userId]);
+
+  // Update session context when needed
+  const updateAGUISessionContext = useCallback((context: any) => {
+    if (aguiSession && aguiClient.isConnected()) {
+      aguiClient.updateSessionContext(context).catch(console.error);
+    }
+  }, [aguiSession, aguiClient]);
+
   // Load existing session if provided
   const { data: sessionData, isLoading: isLoadingSession } = useQuery({
     queryKey: ['session', currentSessionId],
@@ -620,14 +693,16 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
   const handleSendMessage = useCallback(async () => {
     if (!inputValue.trim() || isLoading) return;
 
+    const query = inputValue.trim();
+
     // Create session if none exists
     if (!currentSessionId) {
       await createSessionMutation.mutateAsync({
-        title: inputValue.slice(0, 50) + (inputValue.length > 50 ? '...' : ''),
+        title: query.slice(0, 50) + (query.length > 50 ? '...' : ''),
         domain: userContext.domain,
         metadata: {
           userRole: userContext.userRole,
-          initialQuery: inputValue,
+          initialQuery: query,
         },
       });
     }
@@ -635,7 +710,7 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     const userMessage: ChatMessage = {
       id: `user_${Date.now()}`,
       role: 'user',
-      content: inputValue.trim(),
+      content: query,
       timestamp: new Date().toISOString(),
     };
 
@@ -643,9 +718,39 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
     setInputValue('');
     setIsLoading(true);
 
-    // Send to data agent API
-    sendMessageMutation.mutate({
-      query: inputValue.trim(),
+    // Try to send via AG-UI Protocol first, fallback to HTTP API
+    try {
+      if (aguiClient.isConnected()) {
+        await aguiClient.sendMessage(query, 'text', {
+          sessionId: currentSessionId,
+          userRole: userContext.userRole,
+          domain: userContext.domain,
+        });
+        
+        // Update session context with user role
+        updateAGUISessionContext({
+          userRole: userContext.userRole,
+          domain: userContext.domain,
+          lastQuery: query,
+        });
+      } else {
+        // Fallback to HTTP API
+        sendMessageMutation.mutate({
+          query,
+          sessionId: currentSessionId || undefined,
+          userContext,
+        });
+      }
+    } catch (error) {
+      console.error('Error sending message via AG-UI Protocol, falling back to HTTP:', error);
+      // Fallback to HTTP API
+      sendMessageMutation.mutate({
+        query,
+        sessionId: currentSessionId || undefined,
+        userContext,
+      });
+    }
+  }, [inputValue, isLoading, currentSessionId, userContext, aguiClient, createSessionMutation, sendMessageMutation, updateAGUISessionContext]);
       context: {
         userId: userContext.userId,
         domain: userContext.domain,
@@ -864,15 +969,11 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
 
                   {/* Render action buttons */}
                   {message.actions && message.actions.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-3">
-                      {message.actions.map((action) => (
-                        <ActionButton
-                          key={action.id}
-                          action={action}
-                          onExecute={handleActionExecute}
-                        />
-                      ))}
-                    </div>
+                    <ActionHandlers
+                      actions={message.actions}
+                      onActionExecuted={handleActionExecute}
+                      sessionId={currentSessionId || undefined}
+                    />
                   )}
 
                   {/* Message metadata */}

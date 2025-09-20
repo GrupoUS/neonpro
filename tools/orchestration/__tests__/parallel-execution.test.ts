@@ -3,7 +3,7 @@
  * Tests TDD orchestration, quality control integration, and agent coordination
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import {
   createTDDOrchestrationSystem,
   executeQualityControl,
@@ -18,8 +18,6 @@ import type {
   OrchestrationOptions,
   QualityControlContext,
   AgentCoordinationPattern,
-  OrchestrationResult,
-  QualityControlResult,
 } from "../types";
 
 describe("Parallel Agent Execution Workflows", () => {

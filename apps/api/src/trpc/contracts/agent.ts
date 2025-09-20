@@ -6,7 +6,6 @@
  */
 
 import { z } from 'zod';
-import { protectedProcedure, router } from '../trpc';
 
 /**
  * Core Agent Types

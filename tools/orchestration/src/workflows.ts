@@ -3,7 +3,7 @@ import type {
   TDDPhase,
   AgentResult,
   AgentCoordinationPattern,
-} from "./types";
+} from "../types";
 
 /**
  * Base workflow interface
@@ -40,7 +40,7 @@ export class StandardTDDWorkflow implements Workflow {
       duration: 100,
       quality: {
         score: 85,
-        issues: [],
+        issues: []
       },
     };
   }
@@ -76,7 +76,7 @@ export class SecurityCriticalWorkflow implements Workflow {
       duration: 150,
       quality: {
         score: securityScore,
-        issues: [],
+        issues: []
       },
     };
   }

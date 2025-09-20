@@ -1,7 +1,6 @@
 import { appRouter } from '@/trpc/router';
 import type { AppRouter } from '@/trpc/router';
 import type { Professional, ProfessionalInput, ProfessionalOutput } from '@/types/api/contracts';
-import { httpLink } from '@trpc/client';
 import { createTRPCMsw } from 'msw-trpc';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 

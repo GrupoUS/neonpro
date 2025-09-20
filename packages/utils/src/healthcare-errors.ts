@@ -53,7 +53,7 @@ export class HealthcareError extends Error {
   public readonly healthcareContext: boolean;
   public readonly lgpdCompliant: boolean;
   public readonly timestamp: Date;
-  public readonly metadata?: Record<string, any>;
+  public readonly metadata?: Record<string, unknown>;
   public readonly cause?: Error | undefined;
 
   constructor(
@@ -62,7 +62,7 @@ export class HealthcareError extends Error {
     severity: ErrorSeverity = ErrorSeverity.MEDIUM,
     options: {
       code?: string;
-      metadata?: Record<string, any>;
+      metadata?: Record<string, unknown>;
       cause?: Error;
     } = {}
   ) {
@@ -152,7 +152,7 @@ export class HealthcareValidationError extends HealthcareError {
  * Healthcare authentication error
  */
 export class HealthcareAuthenticationError extends HealthcareError {
-  constructor(message: string, metadata?: Record<string, any>) {
+  constructor(message: string, metadata?: Record<string, unknown>) {
     super(message, ErrorCategory.AUTHENTICATION, ErrorSeverity.HIGH, {
       code: 'AUTHENTICATION_FAILED',
       metadata
@@ -165,7 +165,7 @@ export class HealthcareAuthenticationError extends HealthcareError {
  * Healthcare authorization error
  */
 export class HealthcareAuthorizationError extends HealthcareError {
-  constructor(message: string, metadata?: Record<string, any>) {
+  constructor(message: string, metadata?: Record<string, unknown>) {
     super(message, ErrorCategory.AUTHORIZATION, ErrorSeverity.HIGH, {
       code: 'INSUFFICIENT_PERMISSIONS',
       metadata
@@ -183,7 +183,7 @@ export class HealthcareComplianceError extends HealthcareError {
   constructor(
     message: string,
     complianceFramework: 'lgpd' | 'anvisa' | 'cfm',
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ) {
     // Map compliance frameworks to specific error categories
     const category = complianceFramework === 'lgpd'
@@ -203,7 +203,7 @@ export class HealthcareComplianceError extends HealthcareError {
  * Healthcare system error
  */
 export class HealthcareSystemError extends HealthcareError {
-  constructor(message: string, cause?: Error, metadata?: Record<string, any>) {
+  constructor(message: string, cause?: Error, metadata?: Record<string, unknown>) {
     super(message, ErrorCategory.SYSTEM, ErrorSeverity.CRITICAL, {
       code: 'SYSTEM_ERROR',
       cause,
@@ -222,7 +222,7 @@ export function createHealthcareError(
   severity: ErrorSeverity,
   options: {
     code?: string;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
     cause?: Error;
   } = {}
 ): HealthcareError {
@@ -254,7 +254,15 @@ export function formatHealthcareError(
     message = sanitizeErrorMessage(message);
   }
 
-  const formatted: any = {
+  const formatted: {
+    id: string;
+    message: string;
+    code: string;
+    category: ErrorCategory;
+    severity: ErrorSeverity;
+    timestamp: string;
+    stack?: string;
+  } = {
     id: error.id,
     message,
     code: error.code,
@@ -273,7 +281,7 @@ export function formatHealthcareError(
 /**
  * Check if an error is a healthcare error
  */
-export function isHealthcareError(error: any): error is HealthcareError {
+export function isHealthcareError(error: unknown): error is HealthcareError {
   return error instanceof HealthcareError;
 }
 

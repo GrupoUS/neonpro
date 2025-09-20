@@ -63,9 +63,9 @@ export function AccessibilityTester({
     colorContrast,
     lastTested,
     isTesting,
-    healthcareCompliance,
+    healthcareCompliance,const {
     testAccessibility,
-    clearResults,
+    clearResults: _clearResults,
   } = useAccessibilityTesting(null, {
     enabled,
     runOnMount: autoTest,

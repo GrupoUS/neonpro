@@ -7,10 +7,7 @@ import { describe, it, expect, beforeEach, afterEach } from "bun:test";
 import { QualityControlOrchestrator } from "../quality-control-orchestrator";
 import type {
   QualityControlContext,
-  AgentResult,
-  FeatureContext,
   AgentName,
-  TDDPhase,
 } from "../types";
 
 describe("QualityControlOrchestrator", () => {

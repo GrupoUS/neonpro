@@ -11,6 +11,7 @@ import type { Socket } from "socket.io";
 // Import services
 import { WebRTCSessionService } from "@neonpro/database/src/services/webrtc-session.service";
 import { CFMComplianceService } from "@neonpro/database/src/services/cfm-compliance.service";
+import { winstonLogger } from "@neonpro/shared/services/structured-logging";
 
 interface SignalingParticipant {
   socketId: string;
@@ -78,7 +79,15 @@ export class WebRTCSignalingServer {
 
     // Start server
     this.server.listen(port, () => {
-      console.log(`WebRTC Signaling Server listening on port ${port}`);
+      winstonLogger.info(`WebRTC Signaling Server listening on port ${port}`, undefined, {
+        healthcare: {
+          workflowType: "system_maintenance",
+          clinicalContext: {
+            facilityId: this.config.facilityId,
+            requiresAudit: true,
+          },
+        },
+      });
     });
   }
 
@@ -87,7 +96,7 @@ export class WebRTCSignalingServer {
    */
   private setupSocketHandlers(): void {
     this.io.on("connection", (socket: Socket) => {
-      console.log(`Socket connected: ${socket.id}`);
+      winstonLogger.debug(`Socket connected: ${socket.id}`);
 
       // Handle session join
       socket.on(
@@ -102,7 +111,7 @@ export class WebRTCSignalingServer {
           try {
             await this.handleJoinSession(socket, data);
           } catch (error) {
-            console.error("Error joining session:", error);
+            winstonLogger.error("Error joining session", error);
             socket.emit("error", {
               type: "join-session-failed",
               message: "Failed to join session",
@@ -124,7 +133,7 @@ export class WebRTCSignalingServer {
           try {
             await this.handleWebRTCSignal(socket, signal);
           } catch (error) {
-            console.error("Error handling WebRTC signal:", error);
+            winstonLogger.error("Error handling WebRTC signal", error);
             socket.emit("error", {
               type: "signal-failed",
               message: "Failed to relay signal",
@@ -176,7 +185,7 @@ export class WebRTCSignalingServer {
 
       // Handle disconnect
       socket.on("disconnect", (reason: string) => {
-        console.log(`Socket disconnected: ${socket.id}, reason: ${reason}`);
+        winstonLogger.debug(`Socket disconnected: ${socket.id}, reason: ${reason}`);
         this.handleDisconnect(socket);
       });
 

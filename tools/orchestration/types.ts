@@ -4,6 +4,66 @@
 
 export type AgentCoordinationPattern = "parallel" | "sequential" | "hierarchical" | "event-driven" | "consensus";
 
+export type WorkflowType = "standard-tdd" | "security-critical" | "performance-focused" | "healthcare-compliant";
+
+export interface ToolExecutionRequest {
+  id: string;
+  toolName: string;
+  action: string;
+  parameters: Record<string, any>;
+  context: FeatureContext;
+  timeout: number;
+  priority: "low" | "medium" | "high";
+  retries: number;
+  dependencies?: string[];
+  resources?: {
+    memory: number;
+    cpu: number;
+    disk: number;
+  };
+  metadata?: Record<string, any>;
+}
+
+export interface ToolExecutionResult {
+  id: string;
+  success: boolean;
+  result?: any;
+  output?: any;
+  duration: number;
+  errors?: string[];
+  warnings?: string[];
+  error?: string;
+}
+
+export interface AggregatedResult {
+  overall: {
+    success: boolean;
+    qualityScore: number;
+    performance: number;
+    coverage: number;
+    complianceScore: number;
+  };
+  byAgent: Record<string, AgentResult>;
+  byPhase: Record<string, any>;
+  trends: {
+    quality: number[];
+    performance: number[];
+    coverage: number[];
+  };
+}
+
+export interface ResultAnalysis {
+  summary: string;
+  strengths: string[];
+  weaknesses: string[];
+  recommendations: string[];
+  performanceScore: number;
+  riskAssessment: {
+    level: "low" | "medium" | "high";
+    factors: string[];
+  };
+}
+
 export interface AgentCapability {
   type: AgentType;
   name: string;
@@ -41,8 +101,12 @@ export type AgentType =
   | "code-reviewer"
   | "security-auditor"
   | "test"
+  | "test-auditor"
   | "custom-agent"
-  | "tertiary-agent";
+  | "tertiary-agent"
+  | "non-existent-agent";
+
+export type AgentName = AgentType;
 
 export type TDDPhase = "red" | "green" | "refactor";
 
@@ -58,9 +122,27 @@ export interface AgentResult {
   success: boolean;
   result: any;
   duration: number;
-  quality: {
+  quality?: {
     score: number;
     issues: string[];
+  };
+  metrics?: {
+    quality?: number;
+    performance?: number;
+    coverage?: number;
+    complianceScore?: number;
+    vulnerabilities?: any;
+    issues?: any;
+    memoryUsage?: any;
+    cpuUsage?: number;
+  };
+  errors?: string[];
+  warnings?: string[];
+  healthcareCompliance?: {
+    lgpd: boolean;
+    anvisa: boolean;
+    cfm: boolean;
+    compliant: boolean;
   };
 }
 
@@ -165,9 +247,11 @@ export interface QualityControlContext {
   type: string;
   depth?: string;
   parallel?: boolean;
-  agents?: string[];
+  agents?: AgentType[];
   coordination?: AgentCoordinationPattern;
   healthcare?: boolean;
+  target?: string;
+  orchestrator?: boolean;
 }
 
 export interface QualityControlResult {
@@ -175,6 +259,13 @@ export interface QualityControlResult {
   command: string;
   orchestrationResult?: OrchestrationResult;
   duration: number;
+  qualityScore?: number;
+  complianceStatus?: {
+    required: boolean;
+    lgpd?: boolean;
+    anvisa?: boolean;
+    cfm?: boolean;
+  };
 }
 
 export interface OrchestrationOptions {
@@ -192,7 +283,8 @@ export interface FeatureContext {
   domain: string[];
   complexity: "low" | "medium" | "high";
   requirements: string[];
-  acceptance: string[];
+  acceptance?: string[];
+  healthcareCompliance?: boolean;
 }
 
 export interface TDDCycleResult {
@@ -202,6 +294,23 @@ export interface TDDCycleResult {
   agentResults: AgentResult[];
   qualityScore: number;
   complianceScore: number;
+  coordination?: AgentCoordinationPattern;
+  consensusResult?: ConsensusResult;
+  healthcareCompliance?: {
+    required: boolean;
+    lgpd?: boolean;
+    anvisa?: boolean;
+    cfm?: boolean;
+  };
+  // Additional properties expected by tests
+  cycleId?: string;
+  red?: any;
+  green?: any;
+  refactor?: any;
+  metrics?: any;
+  error?: string;
+  errors?: string[];
+  warnings?: string[];
 }
 
 export interface WorkflowEngine {
@@ -212,7 +321,14 @@ export interface WorkflowEngine {
 
 export interface TDDOrchestrator {
   executeTDDCycle(context: OrchestrationContext): Promise<TDDCycleResult>;
+  executeFullTDDCycle(feature: FeatureContext, options?: any): Promise<TDDCycleResult>;
   getPhaseStatus(): TDDPhase;
   pauseExecution(): void;
   resumeExecution(): void;
+}
+
+export interface AgentRegistry {
+  registerAgent(agent: any): void;
+  getAgent(name: string): any;
+  getAllAgents(): any[];
 }

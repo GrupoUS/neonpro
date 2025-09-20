@@ -362,7 +362,7 @@ describe('Accessibility Compliance Suite - WCAG 2.1 AA+', () => {
       // Should not overlap content
 
       const calendar = screen.getByRole('application');
-      const originalStyle = window.getComputedStyle(calendar);
+      const _originalStyle = window.getComputedStyle(calendar);
 
       // Simulate text zoom
       Object.defineProperty(document.documentElement, 'style', {

@@ -499,7 +499,7 @@ Summary:
   /**
    * Export to CSV
    */
-  private static exportToCsv(report: FinancialReport, options: ReportExportOptions): Blob {
+  private static exportToCsv(report: FinancialReport, _options: ReportExportOptions): Blob {
     const headers = ['Metric', 'Value'];
     const rows = [
       ['Total Revenue', report.data.summary.totalRevenue.toString()],

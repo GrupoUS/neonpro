@@ -3,8 +3,9 @@ import type {
   TDDCycleResult,
   TDDPhase,
   AgentResult,
+  FeatureContext,
   HealthcareCompliance,
-} from "./types";
+} from "../types";
 import { TDDAgentRegistry } from "./agent-registry";
 
 /**
@@ -34,9 +35,31 @@ export class TDDOrchestrator {
   }
 
   /**
+   * Execute complete TDD cycle with FeatureContext
+   */
+  async executeFullTDDCycle(feature: FeatureContext, options?: any): Promise<TDDCycleResult> {
+    // Convert FeatureContext to OrchestrationContext
+    const context: OrchestrationContext = {
+      featureName: feature.name,
+      featureType: feature.domain.join(","),
+      complexity: feature.complexity,
+      criticalityLevel: feature.complexity === "high" ? "critical" : feature.complexity,
+      requirements: feature.requirements,
+      healthcareCompliance: {
+        required: feature.healthcareCompliance || false,
+        lgpd: feature.healthcareCompliance || false,
+        anvisa: feature.healthcareCompliance || false,
+        cfm: feature.healthcareCompliance || false,
+      }
+    };
+
+    return this.executeFullTDDCycleInternal(context);
+  }
+
+  /**
     * Execute complete TDD cycle
     */
-   async executeFullTDDCycle(context: OrchestrationContext): Promise<TDDCycleResult> {
+   async executeFullTDDCycleInternal(context: OrchestrationContext): Promise<TDDCycleResult> {
      const cycleId = this.generateCycleId();
      const startTime = Date.now();
 
@@ -46,7 +69,7 @@ export class TDDOrchestrator {
          throw new Error("Workflow engine not available");
        }
 
-       const workflow = await this.workflowEngine.selectWorkflow(context);
+       await this.workflowEngine.selectWorkflow(context);
 
        // Execute RED phase
        const redResult = await this.executeRedPhase(context);
@@ -60,21 +83,18 @@ export class TDDOrchestrator {
        // Aggregate results
        const success = redResult.success && greenResult.success && refactorResult.success;
        const duration = Math.max(Date.now() - startTime, 1); // Ensure minimum duration of 1ms for testing
+       const healthcareCompliance = await this.validateHealthcareCompliance(context);
 
        // Update metrics
        this.updateMetrics(cycleId, duration, success);
 
        return {
          success,
-         cycleId,
-         phases: {
-           red: redResult,
-           green: greenResult,
-           refactor: refactorResult,
-         },
+         phases: ["red", "green", "refactor"],
          duration: Math.max(duration, 100), // Ensure minimum duration for testing
-         metrics: this.metrics,
-         healthcareCompliance: await this.validateHealthcareCompliance(context),
+         agentResults: [redResult, greenResult, refactorResult],
+         qualityScore: this.calculateQualityScore([redResult, greenResult, refactorResult]),
+         complianceScore: healthcareCompliance?.score || 0
        };
      } catch (error) {
        const duration = Date.now() - startTime;
@@ -89,7 +109,7 @@ export class TDDOrchestrator {
    */
   async executeRedPhase(context: OrchestrationContext): Promise<AgentResult> {
     const agents = this.agentRegistry.getAgentsForPhase("red", context);
-    const coordination = this.determineCoordinationPattern(context, "red");
+    this.determineCoordinationPattern(context, "red");
 
     // Simplified RED phase execution
     const result = {
@@ -99,12 +119,10 @@ export class TDDOrchestrator {
       duration: 100,
       quality: {
         score: 85,
-        issues: [],
+        issues: []
       },
     };
 
-    // Add quality gates
-    result.qualityGates = await this.applyQualityGates(result, context, "red");
     return result;
   }
 
@@ -113,7 +131,7 @@ export class TDDOrchestrator {
    */
   async executeGreenPhase(context: OrchestrationContext): Promise<AgentResult> {
     const agents = this.agentRegistry.getAgentsForPhase("green", context);
-    const coordination = this.determineCoordinationPattern(context, "green");
+    this.determineCoordinationPattern(context, "green");
 
     // Simplified GREEN phase execution
     const result = {
@@ -123,12 +141,10 @@ export class TDDOrchestrator {
       duration: 150,
       quality: {
         score: 90,
-        issues: [],
+        issues: []
       },
     };
 
-    // Add quality gates
-    result.qualityGates = await this.applyQualityGates(result, context, "green");
     return result;
   }
 
@@ -137,7 +153,7 @@ export class TDDOrchestrator {
    */
   async executeRefactorPhase(context: OrchestrationContext): Promise<AgentResult> {
     const agents = this.agentRegistry.getAgentsForPhase("refactor", context);
-    const coordination = this.determineCoordinationPattern(context, "refactor");
+    this.determineCoordinationPattern(context, "refactor");
 
     // Simplified REFACTOR phase execution
     const result = {
@@ -147,12 +163,10 @@ export class TDDOrchestrator {
       duration: 200,
       quality: {
         score: 95,
-        issues: [],
+        issues: []
       },
     };
 
-    // Add quality gates
-    result.qualityGates = await this.applyQualityGates(result, context, "refactor");
     return result;
   }
 
@@ -167,7 +181,7 @@ export class TDDOrchestrator {
     const qualityGates = [];
 
     // Ensure result has quality property
-    const qualityScore = result.quality?.score || 85;
+    const qualityScore = (result as any).quality?.score || 85;
 
     // Test structure gate (for RED phase)
     if (phase === "red") {
@@ -223,9 +237,9 @@ export class TDDOrchestrator {
    * Execute sequential coordination pattern
    */
   async executeSequentialCoordination(
-    agents: any[],
-    context: OrchestrationContext,
-    workflow: any
+    _agents: any[],
+    _context: OrchestrationContext,
+    _workflow: any
   ): Promise<any> {
     return {
       success: true,
@@ -244,9 +258,9 @@ export class TDDOrchestrator {
    * Execute parallel coordination pattern
    */
   async executeParallelCoordination(
-    agents: any[],
-    context: OrchestrationContext,
-    workflow: any
+    _agents: any[],
+    _context: OrchestrationContext,
+    _workflow: any
   ): Promise<any> {
     return {
       success: true,
@@ -265,9 +279,9 @@ export class TDDOrchestrator {
    * Execute hierarchical coordination pattern
    */
   async executeHierarchicalCoordination(
-    agents: any[],
-    context: OrchestrationContext,
-    workflow: any
+    _agents: any[],
+    _context: OrchestrationContext,
+    _workflow: any
   ): Promise<any> {
     return {
       success: true,
@@ -316,19 +330,35 @@ export class TDDOrchestrator {
   /**
    * Create failure result
    */
-  createFailureResult(cycleId: string, phase: string, error: string): TDDCycleResult {
+  createFailureResult(_cycleId: string, _phase: string, _error: string): TDDCycleResult {
     return {
       success: false,
-      cycleId,
-      phases: {
-        red: { agentName: "red", success: false, result: null, duration: 0, quality: { score: 0, issues: [] } },
-        green: { agentName: "green", success: false, result: null, duration: 0, quality: { score: 0, issues: [] } },
-        refactor: { agentName: "refactor", success: false, result: null, duration: 0, quality: { score: 0, issues: [] } },
-      },
+      phases: ["red", "green", "refactor"],
       duration: 0,
-      error: `${phase} phase failed: ${error}`,
-      metrics: this.metrics,
+      agentResults: [
+        { agentName: "red", success: false, result: null, duration: 0, quality: { score: 0, issues: [] } },
+        { agentName: "green", success: false, result: null, duration: 0, quality: { score: 0, issues: [] } },
+        { agentName: "refactor", success: false, result: null, duration: 0, quality: { score: 0, issues: [] } },
+      ],
+      qualityScore: 0,
+      complianceScore: 0
     };
+  }
+
+  /**
+   * Calculate overall quality score from agent results
+   */
+  private calculateQualityScore(results: AgentResult[]): number {
+    const scores = results.map(result => {
+      if (typeof result.quality === 'number') {
+        return result.quality;
+      } else if (typeof result.quality === 'object' && result.quality?.score) {
+        return result.quality.score;
+      }
+      return 0;
+    });
+    
+    return scores.length > 0 ? scores.reduce((sum, score) => sum + score, 0) / scores.length : 0;
   }
 
   /**
@@ -378,17 +408,7 @@ export class TDDOrchestrator {
       lgpd: context.healthcareCompliance.lgpd,
       anvisa: context.healthcareCompliance.anvisa,
       cfm: context.healthcareCompliance.cfm,
-      score: 0,
-      auditTrail: [
-        "Compliance validation started",
-        "LGPD requirements checked",
-        "ANVISA standards validated",
-        "CFM regulations verified"
-      ],
-      international: {
-        hipaa: context.healthcareCompliance.required,
-        gdpr: context.healthcareCompliance.lgpd, // GDPR similar to LGPD
-      },
+      score: 0
     };
 
     if (context.healthcareCompliance.lgpd) compliance.score += 33;

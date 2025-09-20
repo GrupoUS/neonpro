@@ -188,7 +188,7 @@ export interface Report {
   title: string;
   description?: string;
   parameters: ReportParameters;
-  data: any;
+  data: Record<string, unknown>;
   generatedAt: Date;
   generatedBy: string;
   format: ReportFormat;
@@ -212,7 +212,7 @@ export enum ReportFormat {
 
 export interface ReportParameters {
   dateRange: DateRange;
-  filters?: Record<string, any>;
+  filters?: Record<string, unknown>;
   groupBy?: string[];
   metrics?: string[];
 }
@@ -250,7 +250,7 @@ export interface Alert {
   message: string;
   threshold?: number;
   currentValue?: number;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
   acknowledged: boolean;
   createdAt: Date;
 }

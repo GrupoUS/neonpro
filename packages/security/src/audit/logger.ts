@@ -12,7 +12,7 @@ export interface AuditLogEntry {
   action: string;
   resource: string;
   resourceId?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   ipAddress?: string;
   userAgent?: string;
   timestamp?: Date;
@@ -94,7 +94,7 @@ export class AuditLogger {
     userId: string,
     action: string,
     resource: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     await this.log({
       userId,
@@ -113,7 +113,7 @@ export class AuditLogger {
     action: string,
     resource: string,
     errorMessage: string,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     await this.log({
       userId,
@@ -134,7 +134,7 @@ export class AuditLogger {
     patientId: string,
     dataType: string,
     lgpdConsent: boolean = false,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
     await this.log({
       userId,
@@ -202,8 +202,8 @@ export class AuditLogger {
       action: entry.action,
       resource_type: entry.resource,
       resource_id: entry.resourceId,
-      new_values: entry.metadata as any, // Store metadata in new_values
-      ip_address: entry.ipAddress as any,
+      new_values: entry.metadata || null, // Store metadata in new_values
+      ip_address: entry.ipAddress || null,
       user_agent: entry.userAgent,
       lgpd_basis: entry.lgpdCompliant ? 'legitimate_interest' : null,
       created_at: entry.timestamp?.toISOString(),

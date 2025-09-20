@@ -9,7 +9,7 @@ import type {
 import { TDDOrchestrator } from "./tdd-orchestrator";
 import { QualityControlBridge } from "./quality-control-bridge";
 import { WorkflowEngine } from "./workflow-engine";
-import { TDDAgentRegistry } from "./tdd-agent-registry";
+import { TDDAgentRegistry } from "./agent-registry";
 
 type OrchestrationSystemOptions = {
   enableCommunication?: boolean;
@@ -21,10 +21,10 @@ type OrchestrationSystemOptions = {
 export function createTDDOrchestrationSystem(
   options: OrchestrationSystemOptions = {},
 ): TDDOrchestrationSystem {
-  const orchestrator = new TDDOrchestrator();
+  const agentRegistry = new TDDAgentRegistry();
+  const orchestrator = new TDDOrchestrator(agentRegistry);
   const qualityControlBridge = new QualityControlBridge();
   const workflowEngine = new WorkflowEngine();
-  const agentRegistry = new TDDAgentRegistry();
 
   let communication: CommunicationSystem | undefined;
   let complianceValidator: ComplianceValidator | undefined;
