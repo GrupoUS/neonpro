@@ -1,1 +1,156 @@
+# NeonPro Supabase Configuration
+# Healthcare management platform with LGPD, ANVISA, and CFM compliance
+
 project_id = "ownkoxryswokcdanrdgj"
+
+[api]
+port = 54321
+schemas = ["public", "auth", "extensions"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+# Use the latest stable PostgreSQL version
+port = 54322
+major_version = 17
+
+[realtime]
+enabled = true
+port = 54323
+# Enable realtime for healthcare tables
+max_changes = 100
+max_record_bytes = 1048576
+
+[studio]
+enabled = true
+port = 54324
+api_url = "http://localhost:54321"
+
+# Edge Functions Configuration
+[edge_functions]
+enabled = true
+port = 54325
+
+[auth]
+enabled = true
+port = 54326
+
+# Healthcare-specific Auth settings
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://neonpro.vercel.app"]
+jwt_expiry = 3600
+refresh_token_rotation_enabled = true
+double_confirm_changes_enabled = true
+enable_signup = false  # Registration controlled by clinic admins
+enable_confirmations = true
+secure_password_change_enabled = true
+password_min_length = 12
+
+[auth.email]
+enable_signup = false
+double_confirm_changes = true
+enable_confirmations = true
+secure_password_change = true
+
+# SMS provider for appointment reminders
+[auth.sms]
+enable_signup = false
+enable_confirmations = true
+max_frequency = 5
+template = "Your confirmation code is {{ .Code }}"
+
+# Security settings for healthcare compliance
+[auth.security]
+update_password_require_reauthentication = true
+refresh_token_reuse_interval = 10
+
+# Database settings optimized for healthcare workload
+[db.settings]
+log_min_messages = "warning"
+log_min_error_statement = "error"
+log_statement = "mod"  # Log data-modifying statements for audit
+logging_collector = true
+log_directory = "pg_log"
+log_filename = "postgresql-%Y-%m-%d_%H%M%S.log"
+log_file_mode = "0600"
+log_rotation_age = "1d"
+log_rotation_size = "100MB"
+log_truncate_on_rotation = true
+
+# Performance settings
+shared_preload_libraries = "pg_stat_statements,pg_cron"
+max_connections = 100
+shared_buffers = "256MB"
+effective_cache_size = "1GB"
+maintenance_work_mem = "128MB"
+random_page_cost = 1.1
+effective_io_concurrency = 200
+work_mem = "32MB"
+min_wal_size = "1GB"
+max_wal_size = "4GB"
+checkpoint_completion_target = 0.9
+wal_buffers = "16MB"
+default_statistics_target = 100
+
+# Brazilian timezone
+timezone = "America/Sao_Paulo"
+log_timezone = "America/Sao_Paulo"
+
+# Enable extensions for healthcare features
+[db.extensions]
+select = [
+  "uuid-ossp",     # UUID generation
+  "pgcrypto",      # Encryption for PHI
+  "pg_stat_statements",  # Performance monitoring
+  "pg_cron",       # Scheduled jobs for compliance
+  "pg_trgm",       # Text search for patients
+  "vector",        # AI embeddings for smart search
+  "unaccent",      # Brazilian Portuguese text search
+  "btree_gin",     # Performance for JSON queries
+  "btree_gist",    # Performance for date ranges
+  "ltree",         # Hierarchical data (org structure)
+]
+
+# Realtime configuration for healthcare updates
+[realtime.tenants.public]
+max_concurrent_users = 200
+max_events_per_second = 100
+max_bytes_per_second = 100000
+max_channels_per_client = 100
+max_joins_per_second = 500
+
+# Enable realtime for healthcare tables
+[realtime.tenants.public.extensions.postgres_changes]
+enabled = true
+ip_version = 4
+
+# Storage configuration for medical files
+[storage]
+enabled = true
+image_transformation_enabled = true
+file_size_limit = "50MB"
+
+[storage.buckets.patient_documents]
+public = false
+file_size_limit = "10MB"
+allowed_mime_types = ["application/pdf", "image/jpeg", "image/png"]
+
+[storage.buckets.medical_images]
+public = false
+file_size_limit = "50MB"
+allowed_mime_types = ["image/jpeg", "image/png", "image/tiff", "application/dicom"]
+
+[storage.buckets.telemedicine_recordings]
+public = false
+file_size_limit = "500MB"
+allowed_mime_types = ["video/mp4", "video/webm"]
+
+# Analytics configuration
+[analytics]
+enabled = true
+
+# Local development settings
+[experimental]
+webhooks_enabled = true
+orientdb_enabled = false
+websocket_url_check_enabled = false

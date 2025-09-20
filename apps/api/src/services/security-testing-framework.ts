@@ -16,8 +16,6 @@
  * @healthcare-platform NeonPro
  */
 
-import { Context } from 'hono';
-import { createServerClient } from '../clients/supabase.js';
 import { logger } from '../lib/logger';
 
 // Security Test Types
@@ -607,7 +605,7 @@ export class HealthcareSecurityTestFramework {
 
   // Placeholder implementations for other tests
   private async testJWTValidation(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
       testId: 'auth-token-validation',
@@ -624,7 +622,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testSessionManagement(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
       testId: 'auth-session-management',
@@ -641,7 +639,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testRoleBasedAccess(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
       testId: 'authz-role-based-access',
@@ -656,7 +654,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testResourceLevelSecurity(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
       testId: 'authz-resource-level-security',
@@ -671,7 +669,7 @@ export class HealthcareSecurityTestFramework {
   }
 
   private async testRateLimiting(
-    context: SecurityTestContext,
+    _context: SecurityTestContext,
   ): Promise<SecurityTestResult> {
     return {
       testId: 'rate-limiting-endpoint',

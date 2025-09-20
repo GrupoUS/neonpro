@@ -1,10 +1,25 @@
 import { SupabaseClient } from "@supabase/supabase-js";
-import {
+import type {
   AuditLogRequest,
-  RTCAuditLogEntry,
   ComplianceReport,
   AuditSearchCriteria,
   MedicalDataClassification,
+  ResourceType,
+  AuditStatusType,
+  ComplianceCheck,
+  RTCAuditLogEntry,
+} from "../types/audit.types";
+
+// Re-export types for external use
+export type {
+  AuditLogRequest,
+  ComplianceReport,
+  AuditSearchCriteria,
+  MedicalDataClassification,
+  ResourceType,
+  AuditStatusType,
+  ComplianceCheck,
+  RTCAuditLogEntry,
 } from "../types/audit.types";
 
 // Database log entry interface
@@ -96,10 +111,12 @@ export class AuditService {
   ): Promise<string> {
     return this.createAuditLog({
       sessionId,
+      action: "CREATE",
+      resource: "TELEMEDICINE_SESSION",
       eventType: "session-start",
       userId,
       userRole,
-      dataClassification: metadata?.dataClassification || "general",
+      dataClassification: metadata?.dataClassification,
       description: `${userRole} started WebRTC session`,
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
@@ -216,7 +233,7 @@ export class AuditService {
       eventType: "consent-verification",
       userId,
       userRole: "system",
-      dataClassification: "consent-data",
+      dataClassification: { id: "consent", dataType: "consent", sensitivity: "MEDIUM", retentionPeriod: 365, encryptionRequired: true, accessControls: [], complianceStandards: [] } as MedicalDataClassification,
       description: `Consent verification for ${consentType}: ${
         isValid ? "VALID" : "INVALID"
       }`,
@@ -258,7 +275,7 @@ export class AuditService {
       eventType: `security-${eventType}`,
       userId: userId || "system",
       userRole: "system",
-      dataClassification: "security-data",
+      dataClassification: { id: "security", dataType: "security", sensitivity: "HIGH", retentionPeriod: 180, encryptionRequired: true, accessControls: [], complianceStandards: [] } as MedicalDataClassification,
       description,
       ipAddress: metadata?.ipAddress,
       userAgent: metadata?.userAgent,
@@ -545,7 +562,7 @@ export class AuditService {
       complianceCheck: {
         isCompliant: log.compliance_check?.isCompliant ?? (log.status === "SUCCESS"),
         violations: log.compliance_check?.violations || [],
-        riskLevel: log.compliance_check?.riskLevel || log.risk_level || "low",
+        riskLevel: log.compliance_check?.risk_level || log.risk_level || "low",
       },
     };
   }

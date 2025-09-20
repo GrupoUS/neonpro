@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { describe, expect, it } from 'vitest';
 
 describe('TDD: Build Compatibility Issues - RED Phase', () => {
   describe('Dashboard Main Route - Unused Imports Detection', () => {
@@ -179,7 +179,9 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       const hasAIInsightInterface = content.includes('interface AIInsight');
 
       // This test will pass - interfaces are properly defined
-      expect(hasPatientInterface && hasDashboardMetricsInterface && hasAIInsightInterface).toBe(true);
+      expect(hasPatientInterface && hasDashboardMetricsInterface && hasAIInsightInterface).toBe(
+        true,
+      );
     });
   });
 
@@ -189,7 +191,8 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       const content = readFileSync(viteConfigPath, 'utf8');
 
       const hasAliasConfiguration = content.includes('alias:');
-      const hasWorkspaceAliases = content.includes('@neonpro/ui') && content.includes('@neonpro/utils');
+      const hasWorkspaceAliases = content.includes('@neonpro/ui')
+        && content.includes('@neonpro/utils');
 
       expect(hasAliasConfiguration && hasWorkspaceAliases).toBe(true);
     });
@@ -199,7 +202,8 @@ describe('TDD: Build Compatibility Issues - RED Phase', () => {
       const content = readFileSync(tsConfigPath, 'utf8');
 
       const hasPathsConfiguration = content.includes('"paths":');
-      const hasWorkspacePaths = content.includes('@neonpro/ui') && content.includes('@neonpro/utils');
+      const hasWorkspacePaths = content.includes('@neonpro/ui')
+        && content.includes('@neonpro/utils');
 
       expect(hasPathsConfiguration && hasWorkspacePaths).toBe(true);
     });

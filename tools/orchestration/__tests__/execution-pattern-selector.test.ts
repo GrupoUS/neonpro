@@ -3,14 +3,14 @@
  * Tests intelligent pattern selection based on context and requirements
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-import { ExecutionPatternSelector } from "../execution-pattern-selector";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { ExecutionPatternSelector } from "../src/execution-pattern-selector";
 import type {
   FeatureContext,
   AgentName,
   AgentCoordinationPattern,
   WorkflowType,
-} from "../types";
+} from "../src/types";
 
 describe("ExecutionPatternSelector", () => {
   let selector: ExecutionPatternSelector;
@@ -28,9 +28,11 @@ describe("ExecutionPatternSelector", () => {
       const context = {
         feature: {
           name: "Simple UI Component",
+          description: "A basic UI component for simple interactions",
           domain: ["ui"],
           complexity: "low" as const,
           requirements: ["Basic functionality"],
+          acceptance: ["Component renders correctly", "User can interact"],
           healthcareCompliance: false,
         } as FeatureContext,
         complexity: "low" as const,
@@ -52,9 +54,11 @@ describe("ExecutionPatternSelector", () => {
       const context = {
         feature: {
           name: "Medium Feature",
+          description: "A feature with medium complexity requirements",
           domain: ["backend"],
           complexity: "medium" as const,
           requirements: ["Multiple components"],
+          acceptance: ["All components work together", "Performance meets standards"],
           healthcareCompliance: false,
         } as FeatureContext,
         complexity: "medium" as const,
@@ -76,9 +80,11 @@ describe("ExecutionPatternSelector", () => {
       const context = {
         feature: {
           name: "Complex System",
+          description: "A high-complexity system with multiple integration points",
           domain: ["architecture"],
           complexity: "high" as const,
           requirements: ["Multiple subsystems", "Integration points"],
+          acceptance: ["All subsystems integrated", "Performance requirements met", "Security validated"],
           healthcareCompliance: false,
         } as FeatureContext,
         complexity: "high" as const,
@@ -100,9 +106,11 @@ describe("ExecutionPatternSelector", () => {
       const context = {
         feature: {
           name: "Healthcare Feature",
+          description: "A healthcare feature requiring LGPD compliance",
           domain: ["healthcare"],
           complexity: "medium" as const,
           requirements: ["Patient data", "LGPD compliance"],
+          acceptance: ["LGPD compliance verified", "Patient data secure", "Audit trail complete"],
           healthcareCompliance: true,
         } as FeatureContext,
         complexity: "medium" as const,
@@ -126,9 +134,11 @@ describe("ExecutionPatternSelector", () => {
       const context = {
         feature: {
           name: "Test Feature",
+          description: "A test feature for orchestration patterns",
           domain: ["testing"],
           complexity: "medium" as const,
           requirements: ["Unit tests", "Integration tests"],
+          acceptance: ["Feature works as expected", "Quality standards met"],
           healthcareCompliance: false,
         } as FeatureContext,
         complexity: "medium" as const,
@@ -149,9 +159,11 @@ describe("ExecutionPatternSelector", () => {
       const context = {
         feature: {
           name: "Complex Feature",
+          description: "A test feature for orchestration patterns",
           domain: ["architecture"],
           complexity: "high" as const,
           requirements: ["Architecture", "Security", "Testing"],
+          acceptance: ["Feature works as expected", "Quality standards met"],
           healthcareCompliance: true,
         } as FeatureContext,
         complexity: "high" as const,
@@ -174,9 +186,11 @@ describe("ExecutionPatternSelector", () => {
       const context = {
         feature: {
           name: "Performance Feature",
+          description: "A test feature for orchestration patterns",
           domain: ["backend"],
           complexity: "medium" as const,
           requirements: ["High performance"],
+          acceptance: ["Feature works as expected", "Quality standards met"],
           healthcareCompliance: false,
         } as FeatureContext,
         complexity: "medium" as const,
@@ -196,9 +210,11 @@ describe("ExecutionPatternSelector", () => {
       const context = {
         feature: {
           name: "Healthcare Feature",
+          description: "A test feature for orchestration patterns",
           domain: ["healthcare"],
           complexity: "medium" as const,
           requirements: ["Patient data", "LGPD compliance"],
+          acceptance: ["Feature works as expected", "Quality standards met"],
           healthcareCompliance: true,
         } as FeatureContext,
         complexity: "medium" as const,
@@ -220,9 +236,11 @@ describe("ExecutionPatternSelector", () => {
       const context = {
         feature: {
           name: "Complex Feature",
+          description: "A test feature for orchestration patterns",
           domain: ["architecture"],
           complexity: "high" as const,
           requirements: ["Multiple subsystems", "Integration"],
+          acceptance: ["Feature works as expected", "Quality standards met"],
           healthcareCompliance: false,
         } as FeatureContext,
         complexity: "high" as const,
@@ -246,9 +264,11 @@ describe("ExecutionPatternSelector", () => {
       const context = {
         feature: {
           name: "Simple Feature",
+          description: "A test feature for orchestration patterns",
           domain: ["ui"],
           complexity: "low" as const,
           requirements: ["Basic functionality"],
+          acceptance: ["Feature works as expected", "Quality standards met"],
           healthcareCompliance: false,
         } as FeatureContext,
         complexity: "low" as const,
@@ -271,9 +291,11 @@ describe("ExecutionPatternSelector", () => {
       const minimalContext = {
         feature: {
           name: "Minimal Feature",
+          description: "A test feature for orchestration patterns",
           domain: ["ui"],
           complexity: "low" as const,
           requirements: ["Basic"],
+          acceptance: ["Feature works as expected", "Quality standards met"],
           healthcareCompliance: false,
         } as FeatureContext,
         complexity: "low" as const,
@@ -295,9 +317,11 @@ describe("ExecutionPatternSelector", () => {
       const largeContext = {
         feature: {
           name: "Large Feature",
+          description: "A test feature for orchestration patterns",
           domain: ["enterprise"],
           complexity: "high" as const,
           requirements: ["Many agents needed"],
+          acceptance: ["Feature works as expected", "Quality standards met"],
           healthcareCompliance: false,
         } as FeatureContext,
         complexity: "high" as const,

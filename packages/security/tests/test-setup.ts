@@ -16,7 +16,7 @@ const originalConsole = {
   log: console.log,
   error: console.error,
   warn: console.warn,
-  info: console.info
+  info: console.info,
 };
 
 // Test environment setup
@@ -36,7 +36,7 @@ export const setupSecurityLoggingTests = () => {
     mockConsoleError,
     mockConsoleWarn,
     mockConsoleInfo,
-    originalConsole
+    originalConsole,
   };
 };
 
@@ -59,13 +59,11 @@ export const securityTestUtils = {
       'WHERE',
       'ORDER BY',
       'GROUP BY',
-      'HAVING'
+      'HAVING',
     ];
 
-    return output.some(log => 
-      sqlPatterns.some(pattern => 
-        JSON.stringify(log).toUpperCase().includes(pattern.toUpperCase())
-      )
+    return output.some(log =>
+      sqlPatterns.some(pattern => JSON.stringify(log).toUpperCase().includes(pattern.toUpperCase()))
     );
   },
 
@@ -87,13 +85,11 @@ export const securityTestUtils = {
       'expression(',
       '<style',
       'onclick=',
-      'onmouseover='
+      'onmouseover=',
     ];
 
-    return output.some(log => 
-      xssPatterns.some(pattern => 
-        JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
-      )
+    return output.some(log =>
+      xssPatterns.some(pattern => JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase()))
     );
   },
 
@@ -108,11 +104,11 @@ export const securityTestUtils = {
       'token',
       'secret',
       'session_token',
-      'authenticity_token'
+      'authenticity_token',
     ];
 
-    return output.some(log => 
-      csrfPatterns.some(pattern => 
+    return output.some(log =>
+      csrfPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     );
@@ -134,11 +130,11 @@ export const securityTestUtils = {
       '../',
       'wp-content',
       'uploads',
-      'downloads'
+      'downloads',
     ];
 
-    return output.some(log => 
-      pathPatterns.some(pattern => 
+    return output.some(log =>
+      pathPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     );
@@ -160,13 +156,11 @@ export const securityTestUtils = {
       'host=',
       'port=',
       'database=',
-      'schema='
+      'schema=',
     ];
 
-    return output.some(log => 
-      dbPatterns.some(pattern => 
-        JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
-      )
+    return output.some(log =>
+      dbPatterns.some(pattern => JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase()))
     );
   },
 
@@ -180,7 +174,7 @@ export const securityTestUtils = {
       '172\\.1[6-9]\\.',
       '172\\.2[0-9]\\.',
       '172\\.3[01]\\.',
-      '127\\.0\\.0\\.1'
+      '127\\.0\\.0\\.1',
     ];
 
     return output.some(log => {
@@ -211,11 +205,11 @@ export const securityTestUtils = {
       'tls',
       'pem',
       'crt',
-      'key'
+      'key',
     ];
 
-    return output.some(log => 
-      encryptionPatterns.some(pattern => 
+    return output.some(log =>
+      encryptionPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     );
@@ -234,11 +228,11 @@ export const securityTestUtils = {
       'limit',
       'quota',
       'capacity',
-      'burst'
+      'burst',
     ];
 
-    return output.some(log => 
-      rateLimitPatterns.some(pattern => 
+    return output.some(log =>
+      rateLimitPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     );
@@ -261,11 +255,11 @@ export const securityTestUtils = {
       'ransomware',
       'phishing',
       'data_leak',
-      'security_incident'
+      'security_incident',
     ];
 
-    return output.some(log => 
-      breachPatterns.some(pattern => 
+    return output.some(log =>
+      breachPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     );
@@ -282,7 +276,7 @@ export const securityTestUtils = {
       'resource',
       'action',
       'outcome',
-      'metadata'
+      'metadata',
     ];
 
     return output.some(call => {
@@ -307,11 +301,11 @@ export const securityTestUtils = {
       'proxy',
       'nat',
       'vpn',
-      'ssl termination'
+      'ssl termination',
     ];
 
-    return output.some(log => 
-      networkPatterns.some(pattern => 
+    return output.some(log =>
+      networkPatterns.some(pattern =>
         JSON.stringify(log).toLowerCase().includes(pattern.toLowerCase())
       )
     );
@@ -321,7 +315,7 @@ export const securityTestUtils = {
     logs: mockConsoleLog.mock.calls,
     errors: mockConsoleError.mock.calls,
     warnings: mockConsoleWarn.mock.calls,
-    info: mockConsoleInfo.mock.calls
+    info: mockConsoleInfo.mock.calls,
   }),
 
   resetConsoleMocks: () => {
@@ -329,5 +323,5 @@ export const securityTestUtils = {
     mockConsoleError.mockReset();
     mockConsoleWarn.mockReset();
     mockConsoleInfo.mockReset();
-  }
+  },
 };

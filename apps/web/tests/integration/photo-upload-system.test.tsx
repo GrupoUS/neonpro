@@ -1,6 +1,6 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { AppointmentBooking } from '../../src/components/aesthetic/photo-upload/AppointmentBooking';
 import { PhotoUploadSystem } from '../../src/components/aesthetic/photo-upload/PhotoUploadSystem';
 import { TreatmentSuggestions } from '../../src/components/aesthetic/photo-upload/TreatmentSuggestions';
@@ -9,10 +9,10 @@ import { mockAnalysisResult, mockTreatmentSuggestions } from '../mocks/photo-ana
 // Mock dos componentes
 vi.mock('../../src/components/aesthetic/photo-upload/PhotoUpload', () => ({
   PhotoUpload: ({ onAnalysisComplete }: any) => (
-    <div data-testid="photo-upload">
+    <div data-testid='photo-upload'>
       <input
-        type="file"
-        data-testid="file-input"
+        type='file'
+        data-testid='file-input'
         onChange={e => {
           const file = (e.target as HTMLInputElement).files?.[0];
           if (file) {
@@ -40,7 +40,7 @@ vi.mock('../../src/components/aesthetic/photo-upload/PhotoUpload', () => ({
 
 vi.mock('../../src/components/aesthetic/photo-upload/TreatmentSuggestions', () => ({
   TreatmentSuggestions: ({ suggestions, onTreatmentSelect }: any) => (
-    <div data-testid="treatment-suggestions">
+    <div data-testid='treatment-suggestions'>
       {suggestions.map((suggestion: any) => (
         <button
           key={suggestion.id}
@@ -56,10 +56,10 @@ vi.mock('../../src/components/aesthetic/photo-upload/TreatmentSuggestions', () =
 
 vi.mock('../../src/components/aesthetic/photo-upload/AppointmentBooking', () => ({
   AppointmentBooking: ({ treatment, onBookingComplete }: any) => (
-    <div data-testid="appointment-booking">
+    <div data-testid='appointment-booking'>
       <h3>Booking for {treatment.name}</h3>
       <button
-        data-testid="confirm-booking"
+        data-testid='confirm-booking'
         onClick={() =>
           onBookingComplete({
             id: 'booking-123',

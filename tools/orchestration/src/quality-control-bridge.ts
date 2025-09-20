@@ -74,7 +74,7 @@ export class QualityControlBridge {
     // Basic command parsing - in real implementation this would be more sophisticated
     const parts = command.split(' ');
     const action = parts[0] || 'validate';
-    const target = parts[1] || 'unknown';
+    const _target = parts[1] || 'unknown';
     
     const context: QualityControlContext = {
       action,

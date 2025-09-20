@@ -1,38 +1,38 @@
 /**
  * LGPD Compliance Integration Tests - RED PHASE
- * 
+ *
  * These tests are designed to FAIL initially and demonstrate critical LGPD compliance gaps.
  * They will only PASS when comprehensive LGPD compliance is properly implemented across all packages.
- * 
+ *
  * COMPLIANCE AREAS TESTED:
  * 1. PII Redaction integration across packages
- * 2. Consent management system integration  
+ * 2. Consent management system integration
  * 3. Data anonymization in healthcare contexts
  * 4. Data subject rights implementation
  * 5. Audit trail completeness
  * 6. Cross-package compliance validation
- * 
+ *
  * @security_critical
  * @compliance LGPD, ANVISA, CFM
  * @version 1.0.0
  */
 
 import { describe, expect, it } from 'vitest';
-import { redactPII } from '../../../../packages/utils/src/redaction/pii';
-import { 
-  maskPatientData, 
+import {
   generatePrivacyReport,
-  type LGPDComplianceLevel 
+  type LGPDComplianceLevel,
+  maskPatientData,
 } from '../../../../packages/security/src/anonymization';
-import { 
-  LGPDConsent,
-  LegalBasis,
-  ProcessingPurpose,
-  DataCategory,
-  validateConsentCompleteness,
+import {
   auditLGPDCompliance,
-  generateComplianceReport
+  DataCategory,
+  generateComplianceReport,
+  LegalBasis,
+  LGPDConsent,
+  ProcessingPurpose,
+  validateConsentCompleteness,
 } from '../../../../packages/shared/src/types/lgpd-consent';
+import { redactPII } from '../../../../packages/utils/src/redaction/pii';
 
 // Mock healthcare data for testing
 const mockPatientData = {
@@ -49,7 +49,7 @@ const mockPatientData = {
     neighborhood: 'Vila Madalena',
     city: 'São Paulo',
     state: 'SP',
-    zipCode: '05432-100'
+    zipCode: '05432-100',
   },
   medicalData: {
     diagnosis: ['Hipertensão', 'Diabetes Tipo 2'],
@@ -57,9 +57,9 @@ const mockPatientData = {
     medications: ['Losartana', 'Metformina'],
     vitals: {
       bloodPressure: '120/80',
-      heartRate: 72
-    }
-  }
+      heartRate: 72,
+    },
+  },
 };
 
 const mockConsent: Partial<LGPDConsent> = {
@@ -74,7 +74,7 @@ const mockConsent: Partial<LGPDConsent> = {
   dataProcessing: true,
   marketing: false,
   analytics: false,
-  thirdPartySharing: false
+  thirdPartySharing: false,
 };
 
 describe('LGPD Compliance Integration Tests', () => {
@@ -82,10 +82,10 @@ describe('LGPD Compliance Integration Tests', () => {
     it('SHOULD FAIL: Should integrate PII redaction across all packages consistently', async () => {
       // Test redaction using utils package
       const utilsRedacted = redactPII(mockPatientData.name);
-      
+
       // Test redaction using security package
       const securityRedacted = maskPatientData(mockPatientData, 'basic').data.name;
-      
+
       // Results should be consistent across packages
       expect(utilsRedacted.text).toBe(securityRedacted);
       expect(utilsRedacted.flags).toContain('lgpd');
@@ -99,19 +99,20 @@ describe('LGPD Compliance Integration Tests', () => {
           id: 'apt-123',
           patientId: 'patient-123',
           date: '2024-01-15',
-          notes: 'Paciente relatou dor no peito. Contato: joao.silva@email.com, Telefone: (11) 99999-9999'
+          notes:
+            'Paciente relatou dor no peito. Contato: joao.silva@email.com, Telefone: (11) 99999-9999',
         },
         billing: {
           id: 'bill-123',
           patientCPF: '111.444.777-35',
           amount: 150.00,
-          insurance: 'Unimed'
-        }
+          insurance: 'Unimed',
+        },
       };
 
       // Should redact PII at all nesting levels
       const redacted = redactPII(JSON.stringify(complexData));
-      
+
       expect(redacted.text).not.toContain('joao.silva@email.com');
       expect(redacted.text).not.toContain('(11) 99999-9999');
       expect(redacted.text).not.toContain('111.444.777-35');
@@ -125,18 +126,16 @@ describe('LGPD Compliance Integration Tests', () => {
         name: `Paciente ${i}`,
         email: `paciente${i}@email.com`,
         cpf: `${String(i).padStart(3, '0')}.444.777-35`,
-        phone: `(11) 9${String(i).padStart(4, '0')}-${String(i).padStart(4, '0')}`
+        phone: `(11) 9${String(i).padStart(4, '0')}-${String(i).padStart(4, '0')}`,
       }));
 
       const startTime = performance.now();
-      const redactedResults = largeDataset.map(patient => 
-        redactPII(JSON.stringify(patient))
-      );
+      const redactedResults = largeDataset.map(patient => redactPII(JSON.stringify(patient)));
       const endTime = performance.now();
 
       // Should process 1000 records in under 1000ms
       expect(endTime - startTime).toBeLessThan(1000);
-      
+
       // All results should be properly redacted
       redactedResults.forEach(result => {
         expect(result.text).not.toContain('@email.com');
@@ -149,7 +148,7 @@ describe('LGPD Compliance Integration Tests', () => {
     it('SHOULD FAIL: Should validate consent completeness across packages', () => {
       // Test shared package consent validation
       const isComplete = validateConsentCompleteness(mockConsent);
-      
+
       // Should fail because required fields are missing
       expect(isComplete).toBe(false);
     });
@@ -160,13 +159,16 @@ describe('LGPD Compliance Integration Tests', () => {
         consent: {
           ...mockConsent,
           dataProcessing: false,
-          marketing: false
-        }
+          marketing: false,
+        },
       };
 
       // When consent is withdrawn, PII should be fully anonymized
-      const redacted = maskPatientData(patientWithoutConsent, 'full_anonymization' as LGPDComplianceLevel);
-      
+      const redacted = maskPatientData(
+        patientWithoutConsent,
+        'full_anonymization' as LGPDComplianceLevel,
+      );
+
       expect(redacted.data.name).toBe('ANONIMIZADO');
       expect(redacted.data.email).toContain('ANONIMIZADO');
       expect(redacted.data.cpf).toContain('***');
@@ -176,12 +178,14 @@ describe('LGPD Compliance Integration Tests', () => {
 
     it('SHOULD FAIL: Should audit consent compliance and generate reports', () => {
       const auditResult = auditLGPDCompliance(mockConsent);
-      
+
       // Should fail compliance due to missing fields
       expect(auditResult.compliant).toBe(false);
       expect(auditResult.score).toBeLessThan(80);
       expect(auditResult.issues.length).toBeGreaterThan(0);
-      expect(auditResult.issues).toContain('Consentimento incompleto - campos obrigatórios ausentes');
+      expect(auditResult.issues).toContain(
+        'Consentimento incompleto - campos obrigatórios ausentes',
+      );
     });
 
     it('SHOULD FAIL: Should handle consent withdrawal and data deletion', () => {
@@ -189,7 +193,7 @@ describe('LGPD Compliance Integration Tests', () => {
         ...mockConsent,
         dataProcessing: false,
         withdrawalDate: new Date(),
-        withdrawalReason: 'Solicitação do titular'
+        withdrawalReason: 'Solicitação do titular',
       };
 
       // System should handle consent withdrawal properly
@@ -228,11 +232,11 @@ describe('LGPD Compliance Integration Tests', () => {
 
     it('SHOULD FAIL: Should validate anonymization for statistical purposes', () => {
       const anonymized = maskPatientData(mockPatientData, 'enhanced');
-      
+
       // Should preserve city/state for statistical purposes
       expect(anonymized.data.address?.city).toBe('São Paulo');
       expect(anonymized.data.address?.state).toBe('SP');
-      
+
       // But mask specific address details
       expect(anonymized.data.address?.street).not.toBe('Rua das Flores');
       expect(anonymized.data.address?.number).not.toBe('123');
@@ -240,10 +244,10 @@ describe('LGPD Compliance Integration Tests', () => {
 
     it('SHOULD FAIL: Should handle medical data anonymization appropriately', () => {
       const anonymized = maskPatientData(mockPatientData, 'enhanced');
-      
+
       // Medical data should be handled according to LGPD
       expect(anonymized.data.medicalData).toBeDefined();
-      
+
       // But should not contain identifiable information
       if (anonymized.data.medicalData?.diagnosis) {
         // Diagnosis should be preserved for treatment purposes
@@ -255,24 +259,25 @@ describe('LGPD Compliance Integration Tests', () => {
   describe('Cross-Package Compliance Validation', () => {
     it('SHOULD FAIL: Should validate data flow between packages maintains compliance', () => {
       // Simulate data flow: API → Utils → Security → Shared
-      const inputText = `Paciente: ${mockPatientData.name}, CPF: ${mockPatientData.cpf}, Email: ${mockPatientData.email}`;
-      
+      const inputText =
+        `Paciente: ${mockPatientData.name}, CPF: ${mockPatientData.cpf}, Email: ${mockPatientData.email}`;
+
       // Step 1: API receives data
       const receivedData = inputText;
-      
+
       // Step 2: Utils redacts PII
       const utilsRedacted = redactPII(receivedData);
-      
+
       // Step 3: Security applies additional anonymization
       const securityData = {
         text: utilsRedacted.text,
-        patient: mockPatientData
+        patient: mockPatientData,
       };
       const securityRedacted = maskPatientData(securityData.patient, 'basic');
-      
+
       // Step 4: Shared validates compliance
       const complianceCheck = auditLGPDCompliance(mockConsent);
-      
+
       // Data should remain compliant throughout the flow
       expect(utilsRedacted.flags.length).toBeGreaterThan(0);
       expect(securityRedacted.metadata.fieldsAnonymized.length).toBeGreaterThan(0);
@@ -283,11 +288,11 @@ describe('LGPD Compliance Integration Tests', () => {
       const consents = [
         mockConsent,
         { ...mockConsent, patientId: 'patient-456' },
-        { ...mockConsent, patientId: 'patient-789', withdrawalDate: new Date() }
+        { ...mockConsent, patientId: 'patient-789', withdrawalDate: new Date() },
       ];
 
       const report = generateComplianceReport(consents as LGPDConsent[]);
-      
+
       // Should provide comprehensive compliance metrics
       expect(report.totalConsents).toBe(3);
       expect(report.activeConsents).toBe(2);
@@ -300,12 +305,12 @@ describe('LGPD Compliance Integration Tests', () => {
       // Test that all packages contribute to audit trail
       const redactionMetadata = maskPatientData(mockPatientData, 'basic').metadata;
       const consentAudit = auditLGPDCompliance(mockConsent);
-      
+
       // Audit trail should include information from all packages
       expect(redactionMetadata.anonymizedAt).toBeDefined();
       expect(redactionMetadata.fieldsAnonymized.length).toBeGreaterThan(0);
       expect(redactionMetadata.version).toBeDefined();
-      
+
       expect(consentAudit.issues.length).toBeGreaterThan(0);
       expect(consentAudit.recommendations.length).toBeGreaterThan(0);
     });
@@ -315,7 +320,7 @@ describe('LGPD Compliance Integration Tests', () => {
     it('SHOULD FAIL: Should implement right to access (Art. 18 LGPD)', () => {
       // System should provide complete access to user data
       const patientDataCopy = { ...mockPatientData };
-      
+
       // When user requests access, they should receive all their data
       expect(patientDataCopy.name).toBeDefined();
       expect(patientDataCopy.cpf).toBeDefined();
@@ -328,13 +333,13 @@ describe('LGPD Compliance Integration Tests', () => {
       const incorrectData = {
         ...mockPatientData,
         name: 'João Silva Santos (errado)',
-        email: 'joao.silva@old-email.com'
+        email: 'joao.silva@old-email.com',
       };
 
       const correctedData = {
         ...incorrectData,
         name: 'João Silva Santos',
-        email: 'joao.silva@email.com'
+        email: 'joao.silva@email.com',
       };
 
       // System should handle data correction
@@ -348,7 +353,7 @@ describe('LGPD Compliance Integration Tests', () => {
         patientId: 'patient-123',
         requestType: 'erasure',
         reason: 'Solicitação do titular',
-        requestedAt: new Date()
+        requestedAt: new Date(),
       };
 
       // System should process deletion request
@@ -364,7 +369,7 @@ describe('LGPD Compliance Integration Tests', () => {
         patient: mockPatientData,
         consent: mockConsent,
         exportDate: new Date().toISOString(),
-        format: 'application/json'
+        format: 'application/json',
       };
 
       // Data should be portable and complete
@@ -385,8 +390,8 @@ describe('LGPD Compliance Integration Tests', () => {
           mentalHealth: ['Depressão', 'Ansiedade'],
           sexualHealth: ['Doenças sexualmente transmissíveis'],
           geneticData: ['Mutação BRCA1'],
-          biometricData: ['Digital', 'Retina']
-        }
+          biometricData: ['Digital', 'Retina'],
+        },
       };
 
       // System should require explicit consent for sensitive health data
@@ -396,9 +401,9 @@ describe('LGPD Compliance Integration Tests', () => {
           DataCategory.HEALTH_DATA,
           DataCategory.SENSITIVE_DATA,
           DataCategory.GENETIC_DATA,
-          DataCategory.BIOMETRIC_DATA
+          DataCategory.BIOMETRIC_DATA,
         ],
-        legalBasis: LegalBasis.CONSENT // Explicit consent required
+        legalBasis: LegalBasis.CONSENT, // Explicit consent required
       };
 
       expect(sensitiveConsent.dataCategories).toContain(DataCategory.SENSITIVE_DATA);
@@ -418,9 +423,9 @@ describe('LGPD Compliance Integration Tests', () => {
             doctor: 'Dr. João Silva',
             diagnosis: 'Hipertensão',
             prescription: 'Losartana 50mg',
-            anvisaNotified: true // ANVISA notification for adverse events
-          }
-        ]
+            anvisaNotified: true, // ANVISA notification for adverse events
+          },
+        ],
       };
 
       // Should validate ANVISA compliance
@@ -436,7 +441,7 @@ describe('LGPD Compliance Integration Tests', () => {
         endTime: '2024-01-15T10:30:00Z',
         cfmCompliant: true,
         patientConsent: true,
-        confidentiality: true
+        confidentiality: true,
       };
 
       // Should validate CFM compliance
@@ -449,7 +454,7 @@ describe('LGPD Compliance Integration Tests', () => {
   describe('Performance and Scalability', () => {
     it('SHOULD FAIL: Should handle high-volume PII redaction efficiently', () => {
       const largeText = Array(1000).fill(mockPatientData.name).join(' ');
-      
+
       const startTime = performance.now();
       const result = redactPII(largeText);
       const endTime = performance.now();
@@ -464,7 +469,7 @@ describe('LGPD Compliance Integration Tests', () => {
       const consents = Array(1000).fill(null).map((_, i) => ({
         ...mockConsent,
         patientId: `patient-${i}`,
-        consentDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000)
+        consentDate: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
       }));
 
       const startTime = performance.now();
@@ -481,7 +486,7 @@ describe('LGPD Compliance Integration Tests', () => {
       const largeDataset = Array(10000).fill(null).map((_, i) => ({
         id: `record-${i}`,
         patient: mockPatientData,
-        consent: mockConsent
+        consent: mockConsent,
       }));
 
       // Should not cause memory issues
@@ -501,7 +506,7 @@ describe('LGPD Compliance Integration Tests', () => {
         email: undefined,
         cpf: 'invalid-cpf',
         phone: '',
-        address: null
+        address: null,
       };
 
       // Should handle invalid data without crashing
@@ -517,11 +522,11 @@ describe('LGPD Compliance Integration Tests', () => {
         email: 'john.doe@international.com',
         phone: '+1 (555) 123-4567',
         // Should handle Brazilian CPF format
-        cpf: '111.444.777-35'
+        cpf: '111.444.777-35',
       };
 
       const result = redactPII(JSON.stringify(internationalData));
-      
+
       // Should handle international formats while maintaining LGPD compliance
       expect(result.text).toContain('j***.***@i************.com');
       expect(result.text).toContain('***.***.***-**');
@@ -535,20 +540,22 @@ describe('LGPD Compliance Integration Tests', () => {
           enabled: true,
           retentionPeriod: 2,
           retentionUnit: 'years' as const,
-          automaticDeletion: true
-        }
+          automaticDeletion: true,
+        },
       };
 
       // Should identify expired consent
       const isExpired = expiredConsent.dataRetention && expiredConsent.consentDate;
-      const retentionMs = expiredConsent.dataRetention.retentionPeriod * 
-        (expiredConsent.dataRetention.retentionUnit === 'years' ? 365 * 24 * 60 * 60 * 1000 : 
-         expiredConsent.dataRetention.retentionUnit === 'months' ? 30 * 24 * 60 * 60 * 1000 : 
-         24 * 60 * 60 * 1000);
-      
+      const retentionMs = expiredConsent.dataRetention.retentionPeriod
+        * (expiredConsent.dataRetention.retentionUnit === 'years'
+          ? 365 * 24 * 60 * 60 * 1000
+          : expiredConsent.dataRetention.retentionUnit === 'months'
+          ? 30 * 24 * 60 * 60 * 1000
+          : 24 * 60 * 60 * 1000);
+
       const expirationDate = new Date(expiredConsent.consentDate.getTime() + retentionMs);
       const actuallyExpired = expirationDate < new Date();
-      
+
       expect(actuallyExpired).toBe(true);
     });
   });

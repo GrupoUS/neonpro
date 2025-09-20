@@ -4,13 +4,13 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { TDDAgentRegistry } from "../orchestration/agent-registry";
+import { TDDAgentRegistry } from "../src/agent-registry";
 import type {
   AgentCapability,
   OrchestrationContext,
   AgentType,
   TDDPhase,
-} from "../orchestration/types";
+} from "../src/types";
 
 describe("TDDAgentRegistry", () => {
   let registry: TDDAgentRegistry;

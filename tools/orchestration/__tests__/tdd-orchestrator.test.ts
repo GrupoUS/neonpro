@@ -4,15 +4,15 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { TDDOrchestrator } from "../orchestration/tdd-orchestrator";
-import { TDDAgentRegistry } from "../orchestration/agent-registry";
-import { StandardTDDWorkflow } from "../orchestration/workflows/standard-tdd";
-import { SecurityCriticalWorkflow } from "../orchestration/workflows/security-critical";
+import { TDDOrchestrator } from "../src/tdd-orchestrator";
+import { TDDAgentRegistry } from "../src/agent-registry";
+import { StandardTDDWorkflow } from "../src/workflows/standard-tdd";
+import { SecurityCriticalWorkflow } from "../src/workflows/security-critical";
 import type {
   OrchestrationContext,
   AgentRegistry,
   WorkflowEngine,
-} from "../orchestration/types";
+} from "../src/types";
 
 // Mock workflow engine
 class MockWorkflowEngine implements WorkflowEngine {

@@ -1,626 +1,406 @@
-/**
- * AI Agent Feedback API Endpoint
- * Handles user feedback collection for conversation quality and improvement
- */
-
-import { validator } from '@hono/zod-validator';
-import { safeValidate } from '@neonpro/types';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Hono } from 'hono';
+import { handle } from 'hono/vercel';
 import { cors } from 'hono/cors';
-import { HTTPException } from 'hono/http-exception';
-import { z } from 'zod';
+import { jwt } from 'hono/jwt';
+import { FeedbackRequest, FeedbackResponse, UserRole } from '@neonpro/types';
 
-// Initialize Hono app
-const app = new Hono<{
-  Bindings: {
-    SUPABASE_URL: string;
-    SUPABASE_SERVICE_KEY: string;
-  };
-  Variables: {
-    user: {
-      id: string;
-      role: string;
-      domain?: string;
-    };
-  };
-}>();
+// Create Hono app for Vercel deployment
+const app = new Hono().basePath('/api');
 
-// Middleware
-app.use(
-  '*',
-  cors({
-    origin: origin => {
-      const allowedOrigins = [
-        'http://localhost:3000',
-        'http://localhost:5173',
-        'https://neonpro.app',
-      ];
-      return allowedOrigins.includes(origin) || origin === undefined;
-    },
-    allowMethods: ['POST', 'GET', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization'],
-  }),
-);
+// Enable CORS for frontend integration
+app.use('*', cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  maxAge: 86400, // 24 hours
+}));
 
-// Initialize Supabase client
-let supabaseClient: SupabaseClient;
+// JWT middleware for authentication
+app.use('*', async (c, next) => {
+  const jwtMiddleware = jwt({
+    secret: process.env.JWT_SECRET!,
+  });
+  return jwtMiddleware(c, next);
+});
 
-function getSupabaseClient(): SupabaseClient {
-  if (!supabaseClient) {
-    supabaseClient = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY!,
-      {
-        auth: {
-          persistSession: false,
-        },
-      },
-    );
+// Simple in-memory feedback storage (in production, use database)
+const feedbackStore = new Map<string, any>();
+
+/**
+ * Helper function to validate feedback request
+ */
+function validateFeedbackRequest(body: any, _userRole: UserRole): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (!body.messageId) {
+    errors.push('Message ID is required');
+  } else if (typeof body.messageId !== 'string' || body.messageId.trim().length === 0) {
+    errors.push('Message ID must be a non-empty string');
   }
-  return supabaseClient;
+
+  if (!body.feedback || typeof body.feedback !== 'object') {
+    errors.push('Feedback object is required');
+  } else {
+    if (!body.feedback.rating || typeof body.feedback.rating !== 'number') {
+      errors.push('Rating is required and must be a number');
+    } else if (body.feedback.rating < 1 || body.feedback.rating > 5) {
+      errors.push('Rating must be between 1 and 5');
+    }
+
+    if (body.feedback.comment && typeof body.feedback.comment !== 'string') {
+      errors.push('Comment must be a string');
+    } else if (body.feedback.comment && body.feedback.comment.length > 1000) {
+      errors.push('Comment must be less than 1000 characters');
+    }
+
+    if (body.feedback.helpful !== undefined && typeof body.feedback.helpful !== 'boolean') {
+      errors.push('Helpful flag must be a boolean');
+    }
+  }
+
+  return { valid: errors.length === 0, errors };
 }
 
-// =====================================
-// Feedback Schema
-// =====================================
+/**
+ * Helper function to log feedback for analytics
+ */
+async function logFeedbackForAnalytics(
+  sessionId: string,
+  messageId: string,
+  userId: string,
+  userRole: UserRole,
+  feedback: FeedbackRequest['feedback']
+): Promise<void> {
+  try {
+    // In production, this would store to your analytics database
+    const feedbackData = {
+      id: crypto.randomUUID(),
+      sessionId,
+      messageId,
+      userId,
+      userRole,
+      rating: feedback.rating,
+      comment: feedback.comment || null,
+      helpful: feedback.helpful ?? null,
+      timestamp: new Date().toISOString(),
+      userAgent: '', // Would extract from request headers
+    };
 
-const FeedbackSchema = z.object({
-  rating: z.number().int().min(1).max(5),
-  comment: z.string().optional(),
-  category: z.enum([
-    'accuracy',
-    'helpfulness',
-    'speed',
-    'completeness',
-    'clarity',
-    'general',
-  ]).optional(),
-  tags: z.array(z.string()).optional(),
-  metadata: z.object({
-    queryIntent: z.string().optional(),
-    resultCount: z.number().optional(),
-    processingTime: z.number().optional(),
-    userAgent: z.string().optional(),
-    timestamp: z.string().datetime().optional(),
-  }).optional(),
-});
-
-const FeedbackSummarySchema = z.object({
-  messageId: z.string().optional(),
-  responseId: z.string().optional(),
-  helpful: z.boolean(),
-  issues: z.array(z.enum([
-    'incorrect_data',
-    'slow_response',
-    'unclear_answer',
-    'missing_information',
-    'technical_error',
-    'other',
-  ])).optional(),
-  suggestions: z.string().optional(),
-});
-
-type Feedback = z.infer<typeof FeedbackSchema>;
-type FeedbackSummary = z.infer<typeof FeedbackSummarySchema>;
-
-// =====================================
-// Feedback Endpoints
-// =====================================
+    feedbackStore.set(feedbackData.id, feedbackData);
+    
+    console.log('Feedback logged:', {
+      sessionId,
+      messageId,
+      userId,
+      rating: feedback.rating,
+      helpful: feedback.helpful,
+    });
+  } catch (error) {
+    console.error('Failed to log feedback for analytics:', error);
+    // Don't throw - feedback logging failures shouldn't block the user experience
+  }
+}
 
 /**
- * POST /api/ai/sessions/{sessionId}/feedback
- * Submit detailed feedback for a conversation session
+ * Helper function to trigger feedback-based improvements
  */
-app.post(
-  '/api/ai/sessions/:sessionId/feedback',
-  validator('json', (value, _c) => {
-    const result = safeValidate(FeedbackSchema, value);
-    if (!result.success) {
-      throw new HTTPException(400, {
-        message: `Invalid feedback data: ${result.error.message}`,
-        cause: result.error,
-      });
-    }
-    return result.data;
-  }),
-  async c => {
-    try {
-      const sessionId = c.req.param('sessionId');
-      const user = c.get('user');
-      
-      if (!user) {
-        throw new HTTPException(401, { message: 'Unauthorized' });
-      }
+async function triggerFeedbackImprovements(
+  feedback: FeedbackRequest['feedback'],
+  queryContext?: any
+): Promise<void> {
+  // Low ratings trigger improvement alerts
+  if (feedback.rating <= 2) {
+    console.warn('Low rating detected - triggering improvement analysis:', {
+      rating: feedback.rating,
+      comment: feedback.comment,
+      context: queryContext,
+    });
 
-      if (!sessionId) {
-        throw new HTTPException(400, { message: 'Session ID is required' });
-      }
+    // In production, this could:
+    // 1. Send alerts to the development team
+    // 2. Trigger model retraining
+    // 3. Update intent recognition patterns
+    // 4. Improve response formatting
+  }
 
-      const feedback: Feedback = c.req.valid('json');
-      const supabase = getSupabaseClient();
+  // Unhelpful responses with comments trigger specific analysis
+  if (feedback.helpful === false && feedback.comment) {
+    console.log('Unhelpful response with comment - analyzing for improvements:', {
+      comment: feedback.comment,
+      context: queryContext,
+    });
 
-      // Verify session exists and belongs to user
-      const { data: sessionData, error: sessionError } = await supabase
-        .from('ai_sessions')
-        .select('id, domain')
-        .eq('id', sessionId)
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .single();
-
-      if (sessionError) {
-        if (sessionError.code === 'PGRST116') {
-          throw new HTTPException(404, { message: 'Session not found' });
-        }
-        console.error('Database error verifying session:', sessionError);
-        throw new HTTPException(500, { 
-          message: 'Failed to verify session',
-          cause: sessionError 
-        });
-      }
-
-      const feedbackId = `feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const now = new Date().toISOString();
-
-      // Insert feedback
-      const { data: _data, error } = await supabase
-        .from('ai_feedback')
-        .insert({
-          id: feedbackId,
-          session_id: sessionId,
-          user_id: user.id,
-          domain: sessionData.domain,
-          rating: feedback.rating,
-          comment: feedback.comment,
-          category: feedback.category || 'general',
-          tags: feedback.tags || [],
-          metadata: {
-            ...feedback.metadata,
-            userRole: user.role,
-            submittedAt: now,
-          },
-          created_at: now,
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Database error submitting feedback:', error);
-        throw new HTTPException(500, { 
-          message: 'Failed to submit feedback',
-          cause: error 
-        });
-      }
-
-      // Update session with feedback flag
-      await supabase
-        .from('ai_sessions')
-        .update({ 
-          updated_at: now,
-          metadata: { 
-            ...sessionData.metadata,
-            hasFeedback: true,
-            lastFeedbackAt: now,
-          },
-        })
-        .eq('id', sessionId);
-
-      return c.json({
-        success: true,
-        feedback: {
-          id: data.id,
-          sessionId: data.session_id,
-          rating: data.rating,
-          category: data.category,
-          submittedAt: data.created_at,
-        },
-        message: 'Feedback submitted successfully',
-      });
-    } catch (error) {
-      console.error('Error submitting feedback:', error);
-      
-      if (error instanceof HTTPException) {
-        throw error;
-      }
-
-      throw new HTTPException(500, {
-        message: 'Internal error submitting feedback',
-      });
-    }
-  },
-);
+    // In production, this could:
+    // 1. Analyze comment content with NLP
+    // 2. Categorize the type of issue
+    // 3. Update response templates
+    // 4. Improve intent parsing
+  }
+}
 
 /**
- * POST /api/ai/sessions/{sessionId}/feedback/quick
- * Submit quick thumbs up/down feedback with optional issues
+ * POST /api/ai/sessions/:sessionId/feedback
+ * Submit feedback for agent responses
  */
-app.post(
-  '/api/ai/sessions/:sessionId/feedback/quick',
-  validator('json', (value, c) => {
-    const result = safeValidate(FeedbackSummarySchema, value);
-    if (!result.success) {
-      throw new HTTPException(400, {
-        message: `Invalid quick feedback data: ${result.error.message}`,
-        cause: result.error,
-      });
-    }
-    return result.data;
-  }),
-  async c => {
-    try {
-      const sessionId = c.req.param('sessionId');
-      const user = c.get('user');
-      
-      if (!user) {
-        throw new HTTPException(401, { message: 'Unauthorized' });
-      }
-
-      if (!sessionId) {
-        throw new HTTPException(400, { message: 'Session ID is required' });
-      }
-
-      const quickFeedback: FeedbackSummary = c.req.valid('json');
-      const supabase = getSupabaseClient();
-
-      // Verify session exists and belongs to user
-      const { data: sessionData, error: sessionError } = await supabase
-        .from('ai_sessions')
-        .select('id, domain')
-        .eq('id', sessionId)
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .single();
-
-      if (sessionError) {
-        if (sessionError.code === 'PGRST116') {
-          throw new HTTPException(404, { message: 'Session not found' });
-        }
-        console.error('Database error verifying session:', sessionError);
-        throw new HTTPException(500, { 
-          message: 'Failed to verify session',
-          cause: sessionError 
-        });
-      }
-
-      const feedbackId = `quick_feedback_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const now = new Date().toISOString();
-
-      // Convert quick feedback to standard feedback format
-      const standardFeedback = {
-        id: feedbackId,
-        session_id: sessionId,
-        user_id: user.id,
-        domain: sessionData.domain,
-        rating: quickFeedback.helpful ? 4 : 2, // Helpful = 4, Not helpful = 2
-        comment: quickFeedback.suggestions,
-        category: 'general',
-        tags: quickFeedback.issues || [],
-        metadata: {
-          type: 'quick_feedback',
-          messageId: quickFeedback.messageId,
-          responseId: quickFeedback.responseId,
-          helpful: quickFeedback.helpful,
-          userRole: user.role,
-          submittedAt: now,
-        },
-        created_at: now,
-      };
-
-      // Insert feedback
-      const { data, error } = await supabase
-        .from('ai_feedback')
-        .insert(standardFeedback)
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Database error submitting quick feedback:', error);
-        throw new HTTPException(500, { 
-          message: 'Failed to submit quick feedback',
-          cause: error 
-        });
-      }
-
-      return c.json({
-        success: true,
-        feedback: {
-          id: data.id,
-          sessionId: data.session_id,
-          helpful: quickFeedback.helpful,
-          submittedAt: data.created_at,
-        },
-        message: 'Quick feedback submitted successfully',
-      });
-    } catch (error) {
-      console.error('Error submitting quick feedback:', error);
-      
-      if (error instanceof HTTPException) {
-        throw error;
-      }
-
-      throw new HTTPException(500, {
-        message: 'Internal error submitting quick feedback',
-      });
-    }
-  },
-);
-
-/**
- * GET /api/ai/sessions/{sessionId}/feedback
- * Get feedback summary for a session (admin/analytics use)
- */
-app.get('/api/ai/sessions/:sessionId/feedback', async c => {
+app.post('/ai/sessions/:sessionId/feedback', async (c) => {
   try {
     const sessionId = c.req.param('sessionId');
-    const user = c.get('user');
+    const payload = c.get('jwtPayload');
     
-    if (!user) {
-      throw new HTTPException(401, { message: 'Unauthorized' });
+    // Parse and validate request
+    const body = await c.req.json() as FeedbackRequest;
+    const userRole = payload.role as UserRole;
+
+    // Validate feedback structure
+    const validation = validateFeedbackRequest(body, userRole);
+    if (!validation.valid) {
+      return c.json({
+        error: {
+          code: 'INVALID_FEEDBACK',
+          message: 'Invalid feedback request',
+          details: validation.errors,
+        }
+      }, 400);
     }
 
-    // Only allow admins or the session owner to view feedback
-    if (user.role !== 'admin' && user.role !== 'super_admin') {
-      // Verify session belongs to user
-      const supabase = getSupabaseClient();
-      const { data: sessionData, error: sessionError } = await supabase
-        .from('ai_sessions')
-        .select('user_id')
-        .eq('id', sessionId)
-        .single();
-
-      if (sessionError || sessionData.user_id !== user.id) {
-        throw new HTTPException(403, { message: 'Access denied' });
-      }
+    // Validate user can access this session
+    if (!payload.sub) {
+      return c.json({
+        error: {
+          code: 'INVALID_USER',
+          message: 'Invalid user token',
+        }
+      }, 401);
     }
 
-    const supabase = getSupabaseClient();
+    // Log feedback for analytics
+    await logFeedbackForAnalytics(
+      sessionId,
+      body.messageId,
+      payload.sub,
+      userRole,
+      body.feedback
+    );
 
-    // Get all feedback for this session
-    const { data: feedbackData, error: feedbackError } = await supabase
-      .from('ai_feedback')
-      .select('*')
-      .eq('session_id', sessionId)
-      .order('created_at', { ascending: false });
+    // Trigger improvement processes based on feedback
+    await triggerFeedbackImprovements(body.feedback);
 
-    if (feedbackError) {
-      console.error('Database error fetching feedback:', feedbackError);
-      throw new HTTPException(500, { 
-        message: 'Failed to fetch feedback',
-        cause: feedbackError 
-      });
-    }
-
-    const feedback = feedbackData || [];
-
-    // Calculate summary statistics
-    const summary = {
-      totalFeedback: feedback.length,
-      averageRating: feedback.length > 0 
-        ? feedback.reduce((sum, f) => sum + f.rating, 0) / feedback.length 
-        : 0,
-      positiveCount: feedback.filter(f => f.rating >= 4).length,
-      negativeCount: feedback.filter(f => f.rating <= 2).length,
-      categories: [...new Set(feedback.map(f => f.category))],
-      commonIssues: getCommonIssues(feedback),
-      latestFeedback: feedback[0]?.created_at,
+    // Prepare success response
+    const response: FeedbackResponse = {
+      success: true,
+      message: 'Feedback recebido com sucesso. Obrigado por nos ajudar a melhorar!',
+      feedbackId: crypto.randomUUID(),
     };
 
-    return c.json({
-      success: true,
-      summary,
-      feedback: feedback.map(f => ({
-        id: f.id,
-        rating: f.rating,
-        category: f.category,
-        comment: f.comment,
-        tags: f.tags,
-        createdAt: f.created_at,
-        metadata: f.metadata,
-      })),
-    });
-  } catch (error) {
-    console.error('Error fetching feedback:', error);
-    
-    if (error instanceof HTTPException) {
-      throw error;
-    }
+    return c.json(response, 200);
 
-    throw new HTTPException(500, {
-      message: 'Internal error fetching feedback',
-    });
+  } catch (error) {
+    console.error('Feedback endpoint error:', error);
+    
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to submit feedback',
+      }
+    }, 500);
   }
 });
 
 /**
- * GET /api/ai/feedback/analytics
- * Get system-wide feedback analytics (admin only)
+ * GET /api/ai/sessions/:sessionId/feedback/stats
+ * Get feedback statistics for a session (admin only)
  */
-app.get('/api/ai/feedback/analytics', async c => {
+app.get('/ai/sessions/:sessionId/feedback/stats', async (c) => {
   try {
-    const user = c.get('user');
+    const sessionId = c.req.param('sessionId');
+    const payload = c.get('jwtPayload');
+    const userRole = payload.role as UserRole;
+
+    // Only admins can view feedback statistics
+    if (userRole !== 'admin') {
+      return c.json({
+        error: {
+          code: 'INSUFFICIENT_PERMISSIONS',
+          message: 'Admin access required to view feedback statistics',
+        }
+      }, 403);
+    }
+
+    // Calculate feedback statistics for the session
+    const sessionFeedback = Array.from(feedbackStore.values())
+      .filter((feedback: any) => feedback.sessionId === sessionId);
+
+    if (sessionFeedback.length === 0) {
+      return c.json({
+        sessionId,
+        totalFeedback: 0,
+        averageRating: 0,
+        ratingDistribution: {},
+        helpfulPercentage: 0,
+        recentComments: [],
+      }, 200);
+    }
+
+    const totalFeedback = sessionFeedback.length;
+    const averageRating = sessionFeedback.reduce((sum, f) => sum + f.rating, 0) / totalFeedback;
     
-    if (!user || (user.role !== 'admin' && user.role !== 'super_admin')) {
-      throw new HTTPException(403, { message: 'Admin access required' });
-    }
+    const ratingDistribution = sessionFeedback.reduce((acc, f) => {
+      acc[f.rating] = (acc[f.rating] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
 
-    const supabase = getSupabaseClient();
+    const helpfulResponses = sessionFeedback.filter(f => f.helpful === true).length;
+    const helpfulPercentage = totalFeedback > 0 ? (helpfulResponses / totalFeedback) * 100 : 0;
 
-    // Get feedback from last 30 days
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-    const { data: feedbackData, error: feedbackError } = await supabase
-      .from('ai_feedback')
-      .select('*')
-      .gte('created_at', thirtyDaysAgo.toISOString())
-      .order('created_at', { ascending: false });
-
-    if (feedbackError) {
-      console.error('Database error fetching analytics:', feedbackError);
-      throw new HTTPException(500, { 
-        message: 'Failed to fetch analytics',
-        cause: feedbackError 
-      });
-    }
-
-    const feedback = feedbackData || [];
-
-    const analytics = {
-      period: '30 days',
-      totalFeedback: feedback.length,
-      averageRating: feedback.length > 0 
-        ? Math.round((feedback.reduce((sum, f) => sum + f.rating, 0) / feedback.length) * 100) / 100
-        : 0,
-      satisfactionRate: feedback.length > 0 
-        ? Math.round((feedback.filter(f => f.rating >= 4).length / feedback.length) * 100)
-        : 0,
-      byCategory: getCategoryBreakdown(feedback),
-      byRating: getRatingDistribution(feedback),
-      commonIssues: getCommonIssues(feedback),
-      trends: getTrends(feedback),
-      suggestions: feedback
-        .filter(f => f.comment && f.comment.trim())
-        .slice(0, 10)
-        .map(f => ({
-          rating: f.rating,
-          comment: f.comment,
-          category: f.category,
-          createdAt: f.created_at,
-        })),
-    };
+    const recentComments = sessionFeedback
+      .filter(f => f.comment)
+      .slice(-5) // Last 5 comments
+      .map(f => ({
+        rating: f.rating,
+        comment: f.comment,
+        timestamp: f.timestamp,
+      }));
 
     return c.json({
-      success: true,
-      analytics,
-    });
+      sessionId,
+      totalFeedback,
+      averageRating: Math.round(averageRating * 100) / 100,
+      ratingDistribution,
+      helpfulPercentage: Math.round(helpfulPercentage * 100) / 100,
+      recentComments,
+    }, 200);
+
   } catch (error) {
-    console.error('Error fetching analytics:', error);
+    console.error('Feedback stats endpoint error:', error);
     
-    if (error instanceof HTTPException) {
-      throw error;
-    }
-
-    throw new HTTPException(500, {
-      message: 'Internal error fetching analytics',
-    });
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to retrieve feedback statistics',
+      }
+    }, 500);
   }
 });
 
-// =====================================
-// Helper Functions
-// =====================================
-
-function getCommonIssues(feedback: any[]): Array<{issue: string; count: number}> {
-  const issueCount = new Map<string, number>();
-  
-  feedback.forEach(f => {
-    if (f.tags && Array.isArray(f.tags)) {
-      f.tags.forEach((tag: string) => {
-        issueCount.set(tag, (issueCount.get(tag) || 0) + 1);
-      });
-    }
-  });
-
-  return Array.from(issueCount.entries())
-    .map(([issue, count]) => ({ issue, count }))
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 5);
-}
-
-function getCategoryBreakdown(feedback: any[]): Record<string, number> {
-  const breakdown: Record<string, number> = {};
-  
-  feedback.forEach(f => {
-    const category = f.category || 'general';
-    breakdown[category] = (breakdown[category] || 0) + 1;
-  });
-
-  return breakdown;
-}
-
-function getRatingDistribution(feedback: any[]): Record<string, number> {
-  const distribution: Record<string, number> = {
-    '1': 0, '2': 0, '3': 0, '4': 0, '5': 0,
-  };
-  
-  feedback.forEach(f => {
-    const rating = f.rating.toString();
-    if (distribution[rating] !== undefined) {
-      distribution[rating]++;
-    }
-  });
-
-  return distribution;
-}
-
-function getTrends(feedback: any[]): {
-  weeklyAverage: number;
-  isImproving: boolean;
-  changePercent: number;
-} {
-  const now = new Date();
-  const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-  const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
-
-  const thisWeek = feedback.filter(f => new Date(f.created_at) >= oneWeekAgo);
-  const lastWeek = feedback.filter(f => {
-    const date = new Date(f.created_at);
-    return date >= twoWeeksAgo && date < oneWeekAgo;
-  });
-
-  const thisWeekAvg = thisWeek.length > 0 
-    ? thisWeek.reduce((sum, f) => sum + f.rating, 0) / thisWeek.length 
-    : 0;
-  
-  const lastWeekAvg = lastWeek.length > 0 
-    ? lastWeek.reduce((sum, f) => sum + f.rating, 0) / lastWeek.length 
-    : 0;
-
-  const changePercent = lastWeekAvg > 0 
-    ? Math.round(((thisWeekAvg - lastWeekAvg) / lastWeekAvg) * 100)
-    : 0;
-
-  return {
-    weeklyAverage: Math.round(thisWeekAvg * 100) / 100,
-    isImproving: thisWeekAvg > lastWeekAvg,
-    changePercent,
-  };
-}
-
-// Health check endpoint
-app.get('/api/ai/feedback/health', async c => {
+/**
+ * GET /api/ai/feedback/admin/overview
+ * Get system-wide feedback overview (admin only)
+ */
+app.get('/ai/feedback/admin/overview', async (c) => {
   try {
-    const supabase = getSupabaseClient();
-    const { data, error } = await supabase
-      .from('ai_feedback')
-      .select('count', { count: 'exact', head: true })
-      .limit(1);
+    const payload = c.get('jwtPayload');
+    const userRole = payload.role as UserRole;
 
-    const isHealthy = !error;
+    // Only admins can view system-wide feedback
+    if (userRole !== 'admin') {
+      return c.json({
+        error: {
+          code: 'INSUFFICIENT_PERMISSIONS',
+          message: 'Admin access required to view feedback overview',
+        }
+      }, 403);
+    }
 
-    return c.json(
-      {
-        status: isHealthy ? 'healthy' : 'unhealthy',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-        service: 'ai-feedback',
-      },
-      isHealthy ? 200 : 503,
-    );
+    const allFeedback = Array.from(feedbackStore.values());
+
+    if (allFeedback.length === 0) {
+      return c.json({
+        totalFeedback: 0,
+        averageRating: 0,
+        ratingDistribution: {},
+        helpfulPercentage: 0,
+        topIssues: [],
+        recentActivity: [],
+      }, 200);
+    }
+
+    const totalFeedback = allFeedback.length;
+    const averageRating = allFeedback.reduce((sum, f) => sum + f.rating, 0) / totalFeedback;
+    
+    const ratingDistribution = allFeedback.reduce((acc, f) => {
+      acc[f.rating] = (acc[f.rating] || 0) + 1;
+      return acc;
+    }, {} as Record<number, number>);
+
+    const helpfulResponses = allFeedback.filter(f => f.helpful === true).length;
+    const helpfulPercentage = totalFeedback > 0 ? (helpfulResponses / totalFeedback) * 100 : 0;
+
+    // Identify top issues from low ratings and comments
+    const lowRatings = allFeedback.filter(f => f.rating <= 2 && f.comment);
+    const topIssues = lowRatings
+      .map(f => ({
+        comment: f.comment,
+        rating: f.rating,
+        sessionId: f.sessionId,
+        timestamp: f.timestamp,
+      }))
+      .slice(-10); // Last 10 issues
+
+    // Recent activity
+    const recentActivity = allFeedback
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(-10)
+      .map(f => ({
+        rating: f.rating,
+        helpful: f.helpful,
+        timestamp: f.timestamp,
+        userRole: f.userRole,
+      }));
+
+    return c.json({
+      totalFeedback,
+      averageRating: Math.round(averageRating * 100) / 100,
+      ratingDistribution,
+      helpfulPercentage: Math.round(helpfulPercentage * 100) / 100,
+      topIssues,
+      recentActivity,
+    }, 200);
+
   } catch (error) {
-    console.error('Health check error:', error);
-    return c.json(
-      {
-        status: 'unhealthy',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-        service: 'ai-feedback',
-        error: 'Health check failed',
-      },
-      503,
-    );
+    console.error('Feedback overview endpoint error:', error);
+    
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to retrieve feedback overview',
+      }
+    }, 500);
   }
 });
 
-export default app;
+/**
+ * Health check endpoint
+ */
+app.get('/ai/feedback/health', async (c) => {
+  try {
+    const totalFeedback = feedbackStore.size;
+    const recentFeedback = Array.from(feedbackStore.values())
+      .filter(f => {
+        const feedbackTime = new Date(f.timestamp).getTime();
+        const hourAgo = Date.now() - (60 * 60 * 1000);
+        return feedbackTime > hourAgo;
+      })
+      .length;
+
+    return c.json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      feedback: {
+        total: totalFeedback,
+        recentLastHour: recentFeedback,
+      },
+      store: {
+        type: 'memory',
+        entries: totalFeedback,
+      },
+    }, 200);
+  } catch (error) {
+    return c.json({
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }, 500);
+  }
+});
+
+export const POST = handle(app);

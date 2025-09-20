@@ -751,13 +751,6 @@ export const DataAgentChat: React.FC<DataAgentChatProps> = ({
       });
     }
   }, [inputValue, isLoading, currentSessionId, userContext, aguiClient, createSessionMutation, sendMessageMutation, updateAGUISessionContext]);
-      context: {
-        userId: userContext.userId,
-        domain: userContext.domain,
-        limit: 10,
-      },
-    });
-  }, [inputValue, isLoading, currentSessionId, userContext, createSessionMutation, sendMessageMutation]);
 
   // Handle action execution
   const handleActionExecute = useCallback((action: AgentAction) => {

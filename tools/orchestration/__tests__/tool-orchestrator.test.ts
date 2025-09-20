@@ -3,8 +3,8 @@
  * Tests coordinated tool execution with intelligent scheduling and conflict resolution
  */
 
-import { describe, it, expect, beforeEach, afterEach } from "bun:test";
-import { ToolOrchestrator } from "../tool-orchestrator";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { ToolOrchestrator } from "../src/tool-orchestrator";
 import type {
   ToolExecutionRequest,
   ToolExecutionResult,

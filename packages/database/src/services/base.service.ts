@@ -4,6 +4,7 @@
  */
 
 import type { PrismaClient } from "@prisma/client";
+import { ResourceType, AuditStatusType } from "../types/audit.types.js";
 
 // Lazy load prisma to avoid test environment issues
 let _prismaInstance: PrismaClient | null = null;
@@ -71,11 +72,11 @@ export abstract class BaseService {
           userId,
           action,
           resource,
-          resourceType: "SYSTEM",
+          resourceType: "SYSTEM" as ResourceType,
           additionalInfo: additionalInfo ? JSON.stringify(additionalInfo) : undefined,
           ipAddress: "127.0.0.1",
           userAgent: "NeonPro-Service",
-          status: "COMPLETED",
+          status: "COMPLETED" as AuditStatusType,
         },
       });
     } catch (error) {

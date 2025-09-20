@@ -177,7 +177,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult & { accessData?: AccessRequestData }> {
     try {
       // Validate request exists and belongs to patient
-      const request = await this.validateRequest(
+      const _request = await this.validateRequest(
         requestId,
         patientId,
         'ACCESS',
@@ -258,7 +258,7 @@ export class LGPDDataSubjectService {
   ): Promise<LGPDOperationResult> {
     try {
       // Validate request exists and belongs to patient
-      const request = await this.validateRequest(
+      const _request = await this.validateRequest(
         requestId,
         patientId,
         'DELETION',

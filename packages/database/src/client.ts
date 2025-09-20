@@ -8,7 +8,9 @@ import {
   createClient as createSupabaseClient,
   type SupabaseClient,
 } from "@supabase/supabase-js";
-import { winstonLogger } from "@neonpro/shared/services/structured-logging";
+
+// Re-export SupabaseClient type for external use
+export type { SupabaseClient } from "@supabase/supabase-js";
 
 // Connection pool configuration optimized for healthcare workloads
 const createOptimizedSupabaseClient = (): SupabaseClient => {
@@ -244,9 +246,9 @@ export const checkDatabaseHealth = async () => {
 export const closeDatabaseConnections = async () => {
   try {
     await prisma.$disconnect();
-    winstonLogger.info("Database connections closed successfully");
+    console.log("Database connections closed successfully");
   } catch (error) {
-    winstonLogger.error("Error closing database connections", error instanceof Error ? error : new Error(String(error)));
+    console.error("Error closing database connections", error instanceof Error ? error : new Error(String(error)));
   }
 };
 

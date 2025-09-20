@@ -1,7 +1,7 @@
 /**
  * AG-UI Protocol Client Implementation (T045)
  * Real-time communication layer between frontend and AI agent
- * 
+ *
  * Features:
  * - WebSocket-based real-time communication
  * - End-to-end encryption for sensitive healthcare data
@@ -59,7 +59,7 @@ export enum AGUIEventType {
   FEEDBACK = 'feedback',
   STREAM_START = 'stream_start',
   STREAM_CHUNK = 'stream_chunk',
-  STREAM_END = 'stream_end'
+  STREAM_END = 'stream_end',
 }
 
 export enum AGUIConnectionState {
@@ -67,7 +67,7 @@ export enum AGUIConnectionState {
   CONNECTED = 'connected',
   AUTHENTICATED = 'authenticated',
   DISCONNECTED = 'disconnected',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 export interface AGUIProtocolConfig {
@@ -112,9 +112,9 @@ export class AGUIProtocolClient extends EventEmitter {
       heartbeatInterval: config.heartbeatInterval ?? 30000,
       reconnectAttempts: config.reconnectAttempts ?? 5,
       reconnectDelay: config.reconnectDelay ?? 5000,
-      timeout: config.timeout ?? 30000
+      timeout: config.timeout ?? 30000,
     };
-    
+
     // Generate encryption key if enabled
     if (this.config.enableEncryption) {
       this.generateEncryptionKey();
@@ -125,28 +125,29 @@ export class AGUIProtocolClient extends EventEmitter {
    * Connect to AG-UI Protocol WebSocket
    */
   async connect(): Promise<void> {
-    if (this.state === AGUIConnectionState.CONNECTED || this.state === AGUIConnectionState.CONNECTING) {
+    if (
+      this.state === AGUIConnectionState.CONNECTED || this.state === AGUIConnectionState.CONNECTING
+    ) {
       return;
     }
 
     this.setState(AGUIConnectionState.CONNECTING);
-    
+
     try {
       const wsUrl = `${this.config.websocketUrl}/ws/agui/${this.config.userId}`;
       this.websocket = new WebSocket(wsUrl);
-      
+
       this.websocket.onopen = this.handleOpen.bind(this);
       this.websocket.onmessage = this.handleMessage.bind(this);
       this.websocket.onclose = this.handleClose.bind(this);
       this.websocket.onerror = this.handleError.bind(this);
-      
+
       // Set timeout for connection
       setTimeout(() => {
         if (this.state === AGUIConnectionState.CONNECTING) {
           this.handleError(new Error('Connection timeout'));
         }
       }, this.config.timeout);
-      
     } catch (error) {
       this.handleError(error);
       throw error;
@@ -158,12 +159,12 @@ export class AGUIProtocolClient extends EventEmitter {
    */
   disconnect(): void {
     this.clearTimers();
-    
+
     if (this.websocket) {
       this.websocket.close(1000, 'Disconnect requested');
       this.websocket = null;
     }
-    
+
     this.setState(AGUIConnectionState.DISCONNECTED);
     this.emit('disconnected');
   }
@@ -180,7 +181,7 @@ export class AGUIProtocolClient extends EventEmitter {
       id: this.generateId(),
       content,
       type,
-      metadata
+      metadata,
     };
 
     const event: AGUIEvent = {
@@ -189,7 +190,7 @@ export class AGUIProtocolClient extends EventEmitter {
       timestamp: Date.now(),
       session_id: this.session.session_id,
       user_id: this.config.userId,
-      data: { message }
+      data: { message },
     };
 
     return this.sendEvent(event);
@@ -214,7 +215,7 @@ export class AGUIProtocolClient extends EventEmitter {
       timestamp: Date.now(),
       session_id: this.session.session_id,
       user_id: this.config.userId,
-      data: { feedback }
+      data: { feedback },
     };
 
     await this.sendEvent(event);
@@ -234,7 +235,7 @@ export class AGUIProtocolClient extends EventEmitter {
       timestamp: Date.now(),
       session_id: this.session.session_id,
       user_id: this.config.userId,
-      data: { context }
+      data: { context },
     };
 
     await this.sendEvent(event);
@@ -258,8 +259,8 @@ export class AGUIProtocolClient extends EventEmitter {
    * Check if connected
    */
   isConnected(): boolean {
-    return this.state === AGUIConnectionState.CONNECTED || 
-           this.state === AGUIConnectionState.AUTHENTICATED;
+    return this.state === AGUIConnectionState.CONNECTED
+      || this.state === AGUIConnectionState.AUTHENTICATED;
   }
 
   // Private Methods
@@ -268,10 +269,10 @@ export class AGUIProtocolClient extends EventEmitter {
     this.setState(AGUIConnectionState.CONNECTED);
     this.reconnectCount = 0;
     this.emit('connected');
-    
+
     // Send queued messages
     this.flushMessageQueue();
-    
+
     // Start heartbeat
     this.startHeartbeat();
   }
@@ -281,7 +282,7 @@ export class AGUIProtocolClient extends EventEmitter {
       const data = JSON.parse(event.data);
       const aguiEvent: AGUIEvent = {
         ...data,
-        type: data.type as AGUIEventType
+        type: data.type as AGUIEventType,
       };
 
       // Decrypt if encrypted
@@ -290,7 +291,6 @@ export class AGUIProtocolClient extends EventEmitter {
       }
 
       this.handleAGUIEvent(aguiEvent);
-      
     } catch (error) {
       console.error('Error handling WebSocket message:', error);
       this.emit('error', error);
@@ -301,7 +301,7 @@ export class AGUIProtocolClient extends EventEmitter {
     this.clearTimers();
     this.setState(AGUIConnectionState.DISCONNECTED);
     this.emit('disconnected', event);
-    
+
     // Attempt reconnection if not manual disconnect
     if (event.code !== 1000 && this.reconnectCount < this.config.reconnectAttempts) {
       this.scheduleReconnect();
@@ -312,7 +312,7 @@ export class AGUIProtocolClient extends EventEmitter {
     this.clearTimers();
     this.setState(AGUIConnectionState.ERROR);
     this.emit('error', error);
-    
+
     // Attempt reconnection
     if (this.reconnectCount < this.config.reconnectAttempts) {
       this.scheduleReconnect();
@@ -349,7 +349,7 @@ export class AGUIProtocolClient extends EventEmitter {
       created_at: new Date(),
       last_activity: new Date(),
       message_count: 0,
-      context: {}
+      context: {},
     };
 
     this.setState(AGUIConnectionState.AUTHENTICATED);
@@ -414,7 +414,6 @@ export class AGUIProtocolClient extends EventEmitter {
             reject(new Error('Request timeout'));
           }
         }, this.config.timeout);
-
       } catch (error) {
         this.pendingRequests.delete(event.id);
         reject(error);
@@ -442,9 +441,9 @@ export class AGUIProtocolClient extends EventEmitter {
           timestamp: Date.now(),
           session_id: this.session.session_id,
           user_id: this.config.userId,
-          data: { timestamp: Date.now() }
+          data: { timestamp: Date.now() },
         };
-        
+
         this.websocket.send(JSON.stringify(event));
       }
     }, this.config.heartbeatInterval);
@@ -455,7 +454,7 @@ export class AGUIProtocolClient extends EventEmitter {
       clearInterval(this.heartbeatTimer);
       this.heartbeatTimer = null;
     }
-    
+
     if (this.reconnectTimer) {
       clearTimeout(this.reconnectTimer);
       this.reconnectTimer = null;
@@ -464,17 +463,19 @@ export class AGUIProtocolClient extends EventEmitter {
 
   private scheduleReconnect(): void {
     this.reconnectCount++;
-    
+
     if (this.reconnectCount <= this.config.reconnectAttempts) {
       const delay = this.config.reconnectDelay * this.reconnectCount;
-      
+
       this.reconnectTimer = setTimeout(() => {
-        console.log(`Attempting reconnection (${this.reconnectCount}/${this.config.reconnectAttempts})`);
+        console.log(
+          `Attempting reconnection (${this.reconnectCount}/${this.config.reconnectAttempts})`,
+        );
         this.connect().catch(error => {
           console.error('Reconnection failed:', error);
         });
       }, delay);
-      
+
       this.emit('reconnecting', this.reconnectCount, delay);
     } else {
       this.emit('reconnectFailed');
@@ -500,7 +501,7 @@ export class AGUIProtocolClient extends EventEmitter {
     let encrypted = '';
     for (let i = 0; i < data.length; i++) {
       encrypted += String.fromCharCode(
-        data.charCodeAt(i) ^ this.encryptionKey.charCodeAt(i % this.encryptionKey.length)
+        data.charCodeAt(i) ^ this.encryptionKey.charCodeAt(i % this.encryptionKey.length),
       );
     }
     return btoa(encrypted);
@@ -511,7 +512,7 @@ export class AGUIProtocolClient extends EventEmitter {
     let decrypted = '';
     for (let i = 0; i < data.length; i++) {
       decrypted += String.fromCharCode(
-        data.charCodeAt(i) ^ this.encryptionKey.charCodeAt(i % this.encryptionKey.length)
+        data.charCodeAt(i) ^ this.encryptionKey.charCodeAt(i % this.encryptionKey.length),
       );
     }
     return decrypted;
@@ -547,6 +548,6 @@ export function useAGUIProtocol(config: AGUIProtocolConfig) {
     disconnect: client.disconnect.bind(client),
     sendMessage: client.sendMessage.bind(client),
     sendFeedback: client.sendFeedback.bind(client),
-    updateSessionContext: client.updateSessionContext.bind(client)
+    updateSessionContext: client.updateSessionContext.bind(client),
   };
 }

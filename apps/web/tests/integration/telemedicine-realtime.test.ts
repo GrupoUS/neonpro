@@ -1,8 +1,8 @@
-import React from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -23,10 +23,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
  */
 
 // Mock components that will need to be implemented
-const MockTelemedicineRoom = () => React.createElement('div', { 'data-testid': 'telemedicine-room' }, 'Telemedicine Room');
-const MockVideoConsultation = () => React.createElement('div', { 'data-testid': 'video-consultation' }, 'Video Consultation');
-const MockRealTimeChat = () => React.createElement('div', { 'data-testid': 'realtime-chat' }, 'Real-time Chat');
-const MockNotificationCenter = () => React.createElement('div', { 'data-testid': 'notification-center' }, 'Notification Center');
+const MockTelemedicineRoom = () =>
+  React.createElement('div', { 'data-testid': 'telemedicine-room' }, 'Telemedicine Room');
+const MockVideoConsultation = () =>
+  React.createElement('div', { 'data-testid': 'video-consultation' }, 'Video Consultation');
+const MockRealTimeChat = () =>
+  React.createElement('div', { 'data-testid': 'realtime-chat' }, 'Real-time Chat');
+const MockNotificationCenter = () =>
+  React.createElement('div', { 'data-testid': 'notification-center' }, 'Notification Center');
 
 describe('Real-Time Telemedicine Interface Integration Tests', () => {
   let queryClient: QueryClient;
@@ -37,7 +41,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
   beforeEach(async () => {
     // Setup window object
     global.window = global.window || {};
-    
+
     // Mock WebRTC and real-time APIs
     const mockPeerConnection = {
       createOffer: vi.fn(() => Promise.resolve({ type: 'offer', sdp: 'mock_offer_sdp' })),
@@ -127,10 +131,10 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
 
   const renderWithProviders = (component: React.ReactElement) => {
     return render(
-      React.createElement(QueryClientProvider, { client: queryClient },
-        React.createElement(BrowserRouter, null,
-          component
-        )
+      React.createElement(
+        QueryClientProvider,
+        { client: queryClient },
+        React.createElement(BrowserRouter, null, component),
       ),
     );
   };

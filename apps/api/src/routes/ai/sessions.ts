@@ -1,666 +1,269 @@
-/**
- * AI Agent Sessions API Endpoint
- * Handles session management and conversation history using Hono.js
- */
-
-import { validator } from '@hono/zod-validator';
-import {
-  AgentError,
-  ChatMessage,
-  ChatState,
-  safeValidate,
-} from '@neonpro/types';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Hono } from 'hono';
+import { handle } from 'hono/vercel';
 import { cors } from 'hono/cors';
-import { HTTPException } from 'hono/http-exception';
-import { z } from 'zod';
+import { jwt } from 'hono/jwt';
+import { SessionResponse, ChatSession, ChatMessage, UserRole } from '@neonpro/types';
 
-// Initialize Hono app
-const app = new Hono<{
-  Bindings: {
-    SUPABASE_URL: string;
-    SUPABASE_SERVICE_KEY: string;
-  };
-  Variables: {
-    user: {
-      id: string;
-      role: string;
-      domain?: string;
-    };
-  };
-}>();
+// Create Hono app for Vercel deployment
+const app = new Hono().basePath('/api');
 
-// Middleware
-app.use(
-  '*',
-  cors({
-    origin: origin => {
-      const allowedOrigins = [
-        'http://localhost:3000',
-        'http://localhost:5173',
-        'https://neonpro.app',
-      ];
-      return allowedOrigins.includes(origin) || origin === undefined;
-    },
-    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization'],
-  }),
-);
+// Enable CORS for frontend integration
+app.use('*', cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  maxAge: 86400, // 24 hours
+}));
 
-// Initialize Supabase client
-let supabaseClient: SupabaseClient;
+// JWT middleware for authentication
+app.use('*', async (c, next) => {
+  const jwtMiddleware = jwt({
+    secret: process.env.JWT_SECRET!,
+  });
+  return jwtMiddleware(c, next);
+});
 
-function getSupabaseClient(): SupabaseClient {
-  if (!supabaseClient) {
-    supabaseClient = createClient(
-      process.env.SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY!,
-      {
-        auth: {
-          persistSession: false,
-        },
-      },
-    );
+// Simple in-memory session storage (in production, use Redis or database)
+const sessionStore = new Map<string, ChatSession>();
+
+/**
+ * Helper function to validate user permissions
+ */
+function validateUserSession(payload: any, sessionId: string): { valid: boolean; error?: string } {
+  if (!payload.sub) {
+    return { valid: false, error: 'Invalid user token' };
   }
-  return supabaseClient;
+
+  if (!sessionId) {
+    return { valid: false, error: 'Session ID is required' };
+  }
+
+  const session = sessionStore.get(sessionId);
+  if (!session) {
+    return { valid: false, error: 'Session not found' };
+  }
+
+  if (session.userId !== payload.sub) {
+    return { valid: false, error: 'Session does not belong to current user' };
+  }
+
+  if (session.status === 'terminated') {
+    return { valid: false, error: 'Session has been terminated' };
+  }
+
+  // Check session expiration (30 minutes of inactivity)
+  const now = new Date();
+  const lastActivity = new Date(session.lastActivity);
+  const inactiveTime = now.getTime() - lastActivity.getTime();
+  
+  if (inactiveTime > 30 * 60 * 1000) { // 30 minutes
+    session.status = 'expired';
+    sessionStore.set(sessionId, session);
+    return { valid: false, error: 'Session has expired' };
+  }
+
+  return { valid: true };
 }
 
-// =====================================
-// Session Management Schema
-// =====================================
-
-const SessionSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  domain: z.string().optional(),
-  title: z.string().optional(),
-  createdAt: z.string().datetime(),
-  updatedAt: z.string().datetime(),
-  isActive: z.boolean().default(true),
-  metadata: z.record(z.any()).optional(),
-});
-
-const MessageSchema = z.object({
-  id: z.string(),
-  sessionId: z.string(),
-  role: z.enum(['user', 'assistant', 'system']),
-  content: z.string(),
-  timestamp: z.string().datetime(),
-  data: z.any().optional(),
-  actions: z.array(z.any()).optional(),
-});
-
-type Session = z.infer<typeof SessionSchema>;
-type Message = z.infer<typeof MessageSchema>;
-
-// =====================================
-// Sessions Endpoints
-// =====================================
-
 /**
- * GET /api/ai/sessions
- * Get all sessions for the current user
+ * GET /api/ai/sessions/:sessionId
+ * Retrieve conversation session data
  */
-app.get('/api/ai/sessions', async c => {
-  try {
-    const user = c.get('user');
-    if (!user) {
-      throw new HTTPException(401, { message: 'Unauthorized' });
-    }
-
-    const supabase = getSupabaseClient();
-    
-    let query = supabase
-      .from('ai_sessions')
-      .select('*')
-      .eq('user_id', user.id)
-      .eq('is_active', true)
-      .order('updated_at', { ascending: false })
-      .limit(50);
-
-    // Apply domain filter if specified
-    if (user.domain) {
-      query = query.eq('domain', user.domain);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
-      console.error('Database error fetching sessions:', error);
-      throw new HTTPException(500, { 
-        message: 'Failed to fetch sessions',
-        cause: error 
-      });
-    }
-
-    const sessions: Session[] = (data || []).map(row => ({
-      id: row.id,
-      userId: row.user_id,
-      domain: row.domain,
-      title: row.title,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-      isActive: row.is_active,
-      metadata: row.metadata,
-    }));
-
-    return c.json({
-      success: true,
-      sessions,
-      count: sessions.length,
-    });
-  } catch (error) {
-    console.error('Error fetching sessions:', error);
-    
-    if (error instanceof HTTPException) {
-      throw error;
-    }
-
-    throw new HTTPException(500, {
-      message: 'Internal error fetching sessions',
-    });
-  }
-});
-
-/**
- * GET /api/ai/sessions/{sessionId}
- * Get specific session with conversation history
- */
-app.get('/api/ai/sessions/:sessionId', async c => {
+app.get('/ai/sessions/:sessionId', async (c) => {
   try {
     const sessionId = c.req.param('sessionId');
-    const user = c.get('user');
+    const payload = c.get('jwtPayload');
+
+    // Validate session access
+    const validation = validateUserSession(payload, sessionId);
+    if (!validation.valid) {
+      return c.json({
+        error: {
+          code: 'SESSION_INVALID',
+          message: validation.error || 'Invalid session',
+        }
+      }, validation.error?.includes('not found') ? 404 : 401);
+    }
+
+    const session = sessionStore.get(sessionId)!;
     
-    if (!user) {
-      throw new HTTPException(401, { message: 'Unauthorized' });
-    }
+    // Update last activity timestamp
+    session.lastActivity = new Date();
+    sessionStore.set(sessionId, session);
 
-    if (!sessionId) {
-      throw new HTTPException(400, { message: 'Session ID is required' });
-    }
-
-    const supabase = getSupabaseClient();
-
-    // Get session details
-    const { data: sessionData, error: sessionError } = await supabase
-      .from('ai_sessions')
-      .select('*')
-      .eq('id', sessionId)
-      .eq('user_id', user.id)
-      .single();
-
-    if (sessionError) {
-      if (sessionError.code === 'PGRST116') {
-        throw new HTTPException(404, { message: 'Session not found' });
-      }
-      console.error('Database error fetching session:', sessionError);
-      throw new HTTPException(500, { 
-        message: 'Failed to fetch session',
-        cause: sessionError 
-      });
-    }
-
-    // Get conversation history
-    const { data: messagesData, error: messagesError } = await supabase
-      .from('ai_messages')
-      .select('*')
-      .eq('session_id', sessionId)
-      .order('timestamp', { ascending: true })
-      .limit(100);
-
-    if (messagesError) {
-      console.error('Database error fetching messages:', messagesError);
-      throw new HTTPException(500, { 
-        message: 'Failed to fetch conversation history',
-        cause: messagesError 
-      });
-    }
-
-    const session: Session = {
-      id: sessionData.id,
-      userId: sessionData.user_id,
-      domain: sessionData.domain,
-      title: sessionData.title,
-      createdAt: sessionData.created_at,
-      updatedAt: sessionData.updated_at,
-      isActive: sessionData.is_active,
-      metadata: sessionData.metadata,
+    // Format response
+    const response: SessionResponse = {
+      sessionId: session.id,
+      userId: session.userId,
+      status: session.status,
+      messages: session.context.recentMessages || [],
+      createdAt: session.createdAt,
+      lastActivity: session.lastActivity,
+      messageCount: session.messageCount,
     };
 
-    const messages: ChatMessage[] = (messagesData || []).map(msg => ({
-      id: msg.id,
-      role: msg.role,
-      content: msg.content,
-      timestamp: msg.timestamp,
-      data: msg.data,
-      actions: msg.actions,
-    }));
+    return c.json(response, 200);
 
-    const chatState: ChatState = {
-      messages,
-      isLoading: false,
-      context: {
-        userId: user.id,
-        userRole: user.role,
-        domain: user.domain,
-      },
-    };
+  } catch (error) {
+    console.error('Session endpoint error:', error);
+    
+    return c.json({
+      error: {
+        code: 'INTERNAL_ERROR',
+        message: 'Failed to retrieve session data',
+      }
+    }, 500);
+  }
+});
+
+/**
+ * Helper function to create a new session
+ */
+export function createSession(userId: string, userRole: UserRole, domain: string): ChatSession {
+  const sessionId = crypto.randomUUID();
+  const now = new Date();
+  
+  const session: ChatSession = {
+    id: sessionId,
+    userId,
+    status: 'active',
+    createdAt: now,
+    lastActivity: now,
+    context: {
+      domain,
+      role: userRole,
+      preferences: {},
+      recentIntents: [],
+      cachedData: {},
+    },
+    messageCount: 0,
+  };
+
+  sessionStore.set(sessionId, session);
+  return session;
+}
+
+/**
+ * Helper function to add a message to a session
+ */
+export function addMessageToSession(
+  sessionId: string, 
+  message: Omit<ChatMessage, 'id' | 'timestamp'>
+): ChatMessage | null {
+  const session = sessionStore.get(sessionId);
+  if (!session) {
+    return null;
+  }
+
+  const fullMessage: ChatMessage = {
+    ...message,
+    id: crypto.randomUUID(),
+    timestamp: new Date(),
+  };
+
+  // Add to recent messages (keep last 10 for context)
+  if (!session.context.recentMessages) {
+    session.context.recentMessages = [];
+  }
+  
+  session.context.recentMessages.push(fullMessage);
+  if (session.context.recentMessages.length > 10) {
+    session.context.recentMessages.shift();
+  }
+
+  // Update session metadata
+  session.lastActivity = new Date();
+  session.messageCount++;
+  
+  sessionStore.set(sessionId, session);
+  return fullMessage;
+}
+
+/**
+ * Helper function to update session context
+ */
+export function updateSessionContext(
+  sessionId: string,
+  context: Partial<ChatSession['context']>
+): boolean {
+  const session = sessionStore.get(sessionId);
+  if (!session) {
+    return false;
+  }
+
+  session.context = {
+    ...session.context,
+    ...context,
+  };
+  
+  session.lastActivity = new Date();
+  sessionStore.set(sessionId, session);
+  return true;
+}
+
+/**
+ * Helper function to terminate a session
+ */
+export function terminateSession(sessionId: string): boolean {
+  const session = sessionStore.get(sessionId);
+  if (!session) {
+    return false;
+  }
+
+  session.status = 'terminated';
+  session.lastActivity = new Date();
+  sessionStore.set(sessionId, session);
+  return true;
+}
+
+/**
+ * Cleanup expired sessions (call this periodically)
+ */
+export function cleanupExpiredSessions(): void {
+  const now = new Date();
+  const expirationThreshold = 30 * 60 * 1000; // 30 minutes
+
+  for (const [sessionId, session] of sessionStore.entries()) {
+    const lastActivity = new Date(session.lastActivity);
+    const inactiveTime = now.getTime() - lastActivity.getTime();
+    
+    if (inactiveTime > expirationThreshold) {
+      session.status = 'expired';
+      sessionStore.set(sessionId, session);
+    }
+  }
+}
+
+/**
+ * Health check endpoint
+ */
+app.get('/ai/sessions/health', async (c) => {
+  try {
+    const activeSessions = Array.from(sessionStore.values())
+      .filter(s => s.status === 'active')
+      .length;
+
+    const totalSessions = sessionStore.size;
 
     return c.json({
-      success: true,
-      session,
-      chatState,
-      messageCount: messages.length,
-    });
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      sessions: {
+        active: activeSessions,
+        total: totalSessions,
+      },
+      store: {
+        type: 'memory',
+        entries: totalSessions,
+      },
+    }, 200);
   } catch (error) {
-    console.error('Error fetching session:', error);
-    
-    if (error instanceof HTTPException) {
-      throw error;
-    }
-
-    throw new HTTPException(500, {
-      message: 'Internal error fetching session',
-    });
-  }
-});
-
-/**
- * POST /api/ai/sessions
- * Create a new conversation session
- */
-app.post(
-  '/api/ai/sessions',
-  validator('json', (value, c) => {
-    const CreateSessionSchema = z.object({
-      title: z.string().optional(),
-      domain: z.string().optional(),
-      metadata: z.record(z.any()).optional(),
-    });
-    
-    const result = safeValidate(CreateSessionSchema, value);
-    if (!result.success) {
-      throw new HTTPException(400, {
-        message: `Invalid request: ${result.error.message}`,
-        cause: result.error,
-      });
-    }
-    return result.data;
-  }),
-  async c => {
-    try {
-      const user = c.get('user');
-      if (!user) {
-        throw new HTTPException(401, { message: 'Unauthorized' });
-      }
-
-      const request = c.req.valid('json');
-      const supabase = getSupabaseClient();
-
-      const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const now = new Date().toISOString();
-
-      const { data, error } = await supabase
-        .from('ai_sessions')
-        .insert({
-          id: sessionId,
-          user_id: user.id,
-          domain: request.domain || user.domain,
-          title: request.title || 'Nova Conversa',
-          created_at: now,
-          updated_at: now,
-          is_active: true,
-          metadata: request.metadata || {},
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Database error creating session:', error);
-        throw new HTTPException(500, { 
-          message: 'Failed to create session',
-          cause: error 
-        });
-      }
-
-      const session: Session = {
-        id: data.id,
-        userId: data.user_id,
-        domain: data.domain,
-        title: data.title,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
-        isActive: data.is_active,
-        metadata: data.metadata,
-      };
-
-      return c.json({
-        success: true,
-        session,
-      });
-    } catch (error) {
-      console.error('Error creating session:', error);
-      
-      if (error instanceof HTTPException) {
-        throw error;
-      }
-
-      throw new HTTPException(500, {
-        message: 'Internal error creating session',
-      });
-    }
-  },
-);
-
-/**
- * PUT /api/ai/sessions/{sessionId}
- * Update session details
- */
-app.put(
-  '/api/ai/sessions/:sessionId',
-  validator('json', (value, c) => {
-    const UpdateSessionSchema = z.object({
-      title: z.string().optional(),
-      isActive: z.boolean().optional(),
-      metadata: z.record(z.any()).optional(),
-    });
-    
-    const result = safeValidate(UpdateSessionSchema, value);
-    if (!result.success) {
-      throw new HTTPException(400, {
-        message: `Invalid request: ${result.error.message}`,
-        cause: result.error,
-      });
-    }
-    return result.data;
-  }),
-  async c => {
-    try {
-      const sessionId = c.req.param('sessionId');
-      const user = c.get('user');
-      
-      if (!user) {
-        throw new HTTPException(401, { message: 'Unauthorized' });
-      }
-
-      if (!sessionId) {
-        throw new HTTPException(400, { message: 'Session ID is required' });
-      }
-
-      const request = c.req.valid('json');
-      const supabase = getSupabaseClient();
-
-      const updateData: any = {
-        updated_at: new Date().toISOString(),
-      };
-
-      if (request.title !== undefined) {
-        updateData.title = request.title;
-      }
-      if (request.isActive !== undefined) {
-        updateData.is_active = request.isActive;
-      }
-      if (request.metadata !== undefined) {
-        updateData.metadata = request.metadata;
-      }
-
-      const { data, error } = await supabase
-        .from('ai_sessions')
-        .update(updateData)
-        .eq('id', sessionId)
-        .eq('user_id', user.id)
-        .select()
-        .single();
-
-      if (error) {
-        if (error.code === 'PGRST116') {
-          throw new HTTPException(404, { message: 'Session not found' });
-        }
-        console.error('Database error updating session:', error);
-        throw new HTTPException(500, { 
-          message: 'Failed to update session',
-          cause: error 
-        });
-      }
-
-      const session: Session = {
-        id: data.id,
-        userId: data.user_id,
-        domain: data.domain,
-        title: data.title,
-        createdAt: data.created_at,
-        updatedAt: data.updated_at,
-        isActive: data.is_active,
-        metadata: data.metadata,
-      };
-
-      return c.json({
-        success: true,
-        session,
-      });
-    } catch (error) {
-      console.error('Error updating session:', error);
-      
-      if (error instanceof HTTPException) {
-        throw error;
-      }
-
-      throw new HTTPException(500, {
-        message: 'Internal error updating session',
-      });
-    }
-  },
-);
-
-/**
- * DELETE /api/ai/sessions/{sessionId}
- * Soft delete a session (mark as inactive)
- */
-app.delete('/api/ai/sessions/:sessionId', async c => {
-  try {
-    const sessionId = c.req.param('sessionId');
-    const user = c.get('user');
-    
-    if (!user) {
-      throw new HTTPException(401, { message: 'Unauthorized' });
-    }
-
-    if (!sessionId) {
-      throw new HTTPException(400, { message: 'Session ID is required' });
-    }
-
-    const supabase = getSupabaseClient();
-
-    const { error } = await supabase
-      .from('ai_sessions')
-      .update({
-        is_active: false,
-        updated_at: new Date().toISOString(),
-      })
-      .eq('id', sessionId)
-      .eq('user_id', user.id);
-
-    if (error) {
-      console.error('Database error deleting session:', error);
-      throw new HTTPException(500, { 
-        message: 'Failed to delete session',
-        cause: error 
-      });
-    }
-
     return c.json({
-      success: true,
-      message: 'Session deleted successfully',
-    });
-  } catch (error) {
-    console.error('Error deleting session:', error);
-    
-    if (error instanceof HTTPException) {
-      throw error;
-    }
-
-    throw new HTTPException(500, {
-      message: 'Internal error deleting session',
-    });
+      status: 'unhealthy',
+      timestamp: new Date().toISOString(),
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }, 500);
   }
 });
 
-// =====================================
-// Message Management
-// =====================================
-
-/**
- * POST /api/ai/sessions/{sessionId}/messages
- * Add a new message to the conversation
- */
-app.post(
-  '/api/ai/sessions/:sessionId/messages',
-  validator('json', (value, c) => {
-    const AddMessageSchema = z.object({
-      role: z.enum(['user', 'assistant', 'system']),
-      content: z.string().min(1),
-      data: z.any().optional(),
-      actions: z.array(z.any()).optional(),
-    });
-    
-    const result = safeValidate(AddMessageSchema, value);
-    if (!result.success) {
-      throw new HTTPException(400, {
-        message: `Invalid request: ${result.error.message}`,
-        cause: result.error,
-      });
-    }
-    return result.data;
-  }),
-  async c => {
-    try {
-      const sessionId = c.req.param('sessionId');
-      const user = c.get('user');
-      
-      if (!user) {
-        throw new HTTPException(401, { message: 'Unauthorized' });
-      }
-
-      if (!sessionId) {
-        throw new HTTPException(400, { message: 'Session ID is required' });
-      }
-
-      const request = c.req.valid('json');
-      const supabase = getSupabaseClient();
-
-      // Verify session exists and belongs to user
-      const { data: sessionData, error: sessionError } = await supabase
-        .from('ai_sessions')
-        .select('id')
-        .eq('id', sessionId)
-        .eq('user_id', user.id)
-        .eq('is_active', true)
-        .single();
-
-      if (sessionError) {
-        if (sessionError.code === 'PGRST116') {
-          throw new HTTPException(404, { message: 'Session not found' });
-        }
-        console.error('Database error verifying session:', sessionError);
-        throw new HTTPException(500, { 
-          message: 'Failed to verify session',
-          cause: sessionError 
-        });
-      }
-
-      const messageId = `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      const now = new Date().toISOString();
-
-      // Insert message
-      const { data, error } = await supabase
-        .from('ai_messages')
-        .insert({
-          id: messageId,
-          session_id: sessionId,
-          role: request.role,
-          content: request.content,
-          timestamp: now,
-          data: request.data,
-          actions: request.actions,
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Database error adding message:', error);
-        throw new HTTPException(500, { 
-          message: 'Failed to add message',
-          cause: error 
-        });
-      }
-
-      // Update session timestamp
-      await supabase
-        .from('ai_sessions')
-        .update({ updated_at: now })
-        .eq('id', sessionId);
-
-      const message: ChatMessage = {
-        id: data.id,
-        role: data.role,
-        content: data.content,
-        timestamp: data.timestamp,
-        data: data.data,
-        actions: data.actions,
-      };
-
-      return c.json({
-        success: true,
-        message,
-      });
-    } catch (error) {
-      console.error('Error adding message:', error);
-      
-      if (error instanceof HTTPException) {
-        throw error;
-      }
-
-      throw new HTTPException(500, {
-        message: 'Internal error adding message',
-      });
-    }
-  },
-);
-
-// Health check endpoint
-app.get('/api/ai/sessions/health', async c => {
-  try {
-    const supabase = getSupabaseClient();
-    const { data, error } = await supabase
-      .from('ai_sessions')
-      .select('count', { count: 'exact', head: true })
-      .limit(1);
-
-    const isHealthy = !error;
-
-    return c.json(
-      {
-        status: isHealthy ? 'healthy' : 'unhealthy',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-        service: 'ai-sessions',
-      },
-      isHealthy ? 200 : 503,
-    );
-  } catch (error) {
-    console.error('Health check error:', error);
-    return c.json(
-      {
-        status: 'unhealthy',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-        service: 'ai-sessions',
-        error: 'Health check failed',
-      },
-      503,
-    );
-  }
-});
-
-export default app;
+export const GET = handle(app);

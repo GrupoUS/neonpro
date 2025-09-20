@@ -25,7 +25,7 @@ export interface ReportExportResult {
 export class ReportExportService {
   static async exportToPdf(
     report: any,
-    config: ReportExportConfig
+    config: ReportExportConfig,
   ): Promise<ReportExportResult> {
     // Mock implementation for testing
     return {
@@ -43,7 +43,7 @@ export class ReportExportService {
 
   static async exportToExcel(
     report: any,
-    config: ReportExportConfig
+    config: ReportExportConfig,
   ): Promise<ReportExportResult> {
     // Mock implementation for testing
     return {
@@ -61,7 +61,7 @@ export class ReportExportService {
 
   static async exportToCsv(
     report: any,
-    config: ReportExportConfig
+    config: ReportExportConfig,
   ): Promise<ReportExportResult> {
     // Mock implementation for testing
     return {

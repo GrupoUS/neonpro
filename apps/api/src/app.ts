@@ -13,11 +13,10 @@ import v1Router from './routes/v1';
 // import security from '@neonpro/security';
 import { initializeLogger, logger } from './lib/logger';
 import { initializeSentry, sentryMiddleware } from './lib/sentry';
-import { createHealthcareError, errorTracker } from './services/error-tracking-bridge';
+import { errorTracker } from './services/error-tracking-bridge';
 import {
   getErrorTrackingHealth,
   initializeErrorTracking,
-  shutdownErrorTracking,
 } from './services/error-tracking-init';
 // import { sdk as telemetrySDK, healthcareTelemetryMiddleware } from '@neonpro/shared/src/telemetry';
 import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator';
@@ -133,7 +132,7 @@ app.use('*', errorHandler);
 app.use('*', healthcareErrorTrackingMiddleware());
 
 // Enhanced security headers with HSTS and healthcare compliance
-app.use '*', httpsRedirectMiddleware();
+app.use('*', httpsRedirectMiddleware());
 app.use('*', healthcareSecurityHeadersMiddleware());
 
 // Healthcare-specific rate limiting

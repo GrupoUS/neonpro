@@ -1,38 +1,16 @@
 #!/bin/bash
 # Final setup script for Claude Code hooks
-# Run this script to complete the multiplataform hook setup
+# Run this script to complete the hook setup
 
-echo "Setting up multiplataform Claude Code hooks..."
-
-# Navigate to project directory
-cd /mnt/d/neonpro
-
-# Replace settings file
-echo "Updating settings.local.json..."
-mv .claude/settings.local.json.new .claude/settings.local.json
-echo "✓ Settings file updated"
-
-# Clean up temporary files
-rm -f .claude/settings.local.json.temp
+# Get hook directory
+HOOK_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Set executable permissions on shell scripts
-echo "Setting executable permissions on shell scripts..."
-chmod +x .claude/hooks/commons.sh
-chmod +x .claude/hooks/pre-tool.sh
-chmod +x .claude/hooks/post-tool.sh
-chmod +x .claude/hooks/session-stop.sh
-echo "✓ Shell scripts are now executable"
+chmod +x "$HOOK_DIR"/*.sh 2>/dev/null
 
-# Verify setup
-echo "
-Setup verification:"
-echo "Settings file:"
-ls -la .claude/settings.local.json
-echo "
-Shell scripts:"
-ls -la .claude/hooks/*.sh
+# Clean up temporary files
+rm -f "$HOOK_DIR"/../*.temp 2>/dev/null
 
-echo "
-✓ Setup completed successfully!"
-echo "Your Claude Code hooks are now compatible with both Windows and Linux/Ubuntu."
-echo "The system will automatically detect the environment and use the appropriate version."
+# Suppress output to reduce token consumption
+echo '{"suppressOutput": true}'
+exit 0

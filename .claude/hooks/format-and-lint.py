@@ -13,8 +13,9 @@ import re
 from pathlib import Path
 
 def log_message(message, level="INFO"):
-    """Log messages with consistent formatting"""
-    print(f"🔧 [{level}] {message}", file=sys.stderr)
+    """Log messages with consistent formatting - only errors to reduce tokens"""
+    if level == "ERROR":
+        print(f"🔧 [{level}] {message}", file=sys.stderr)
 
 def run_command(cmd, cwd=None, timeout=30):
     """Run shell command with error handling"""
@@ -77,43 +78,37 @@ def run_oxlint(file_path, project_root):
     """Run oxlint on specific file"""
     if not is_lintable_file(file_path) or not should_process_file(file_path):
         return None
-        
-    log_message(f"Running oxlint on {file_path}")
-    
+
     # Use the existing oxlint script from package.json but target specific file
     cmd = f"npx oxlint --fix {file_path}"
     result = run_command(cmd, cwd=project_root)
-    
+
     if result and result.returncode == 0:
-        if result.stdout.strip():
-            log_message(f"Oxlint applied fixes: {result.stdout.strip()}")
-        return True
+        # Only return True if there were actual fixes applied
+        return True if result.stdout.strip() else None
     elif result:
         if result.stderr.strip():
-            log_message(f"Oxlint warnings: {result.stderr.strip()}", "WARN")
+            log_message(f"Oxlint warnings: {result.stderr.strip()}", "ERROR")
         return False
-    
+
     return None
 
 def run_dprint(file_path, project_root):
     """Run dprint fmt on specific file"""
     if not is_formattable_file(file_path) or not should_process_file(file_path):
         return None
-        
-    log_message(f"Running dprint fmt on {file_path}")
-    
+
     cmd = f"dprint fmt {file_path}"
     result = run_command(cmd, cwd=project_root)
-    
+
     if result and result.returncode == 0:
-        if result.stdout.strip():
-            log_message(f"Dprint formatting: {result.stdout.strip()}")
-        return True
+        # Only return True if there were actual changes
+        return True if result.stdout.strip() else None
     elif result:
         if result.stderr.strip():
             log_message(f"Dprint errors: {result.stderr.strip()}", "ERROR")
         return False
-    
+
     return None
 
 def main():
@@ -133,12 +128,11 @@ def main():
             file_path = tool_input['path']
         
         if not file_path:
-            log_message("No file path found in tool input", "WARN")
             sys.exit(0)
-        
+
         # Get project root (where package.json is located)
         project_root = input_data.get('cwd', os.getcwd())
-        
+
         # Find actual project root by looking for package.json
         current = Path(project_root)
         while current != current.parent:
@@ -147,16 +141,12 @@ def main():
                 break
             current = current.parent
         
-        log_message(f"Processing file: {file_path}")
-        log_message(f"Project root: {project_root}")
-        
         # Convert to absolute path if relative
         if not os.path.isabs(file_path):
             file_path = os.path.join(project_root, file_path)
         
         # Check if file exists
         if not os.path.exists(file_path):
-            log_message(f"File does not exist: {file_path}", "WARN")
             sys.exit(0)
         
         actions_performed = []
@@ -164,31 +154,32 @@ def main():
         # Step 1: Run oxlint first (linting before formatting)
         oxlint_result = run_oxlint(file_path, project_root)
         if oxlint_result is True:
-            actions_performed.append("✓ Linted with oxlint")
+            actions_performed.append("linted")
         elif oxlint_result is False:
-            actions_performed.append("⚠ Oxlint had warnings")
-        
+            actions_performed.append("lint-warnings")
+
         # Step 2: Run dprint formatting
         dprint_result = run_dprint(file_path, project_root)
         if dprint_result is True:
-            actions_performed.append("✓ Formatted with dprint")
+            actions_performed.append("formatted")
         elif dprint_result is False:
-            actions_performed.append("✗ Dprint formatting failed")
-        
-        # Provide feedback
+            actions_performed.append("format-failed")
+
+        # Provide minimal feedback only when changes occurred
         if actions_performed:
-            feedback = f"🎯 Code quality tools applied to {os.path.basename(file_path)}: " + ", ".join(actions_performed)
-            print(feedback)
-        else:
-            log_message(f"No formatting/linting needed for {file_path}")
-        
+            print(f"Code tools: {os.path.basename(file_path)} - {', '.join(actions_performed)}")
+
+        # Suppress output to reduce token consumption
+        print('{"suppressOutput": true}')
         sys.exit(0)
         
     except json.JSONDecodeError as e:
         log_message(f"Invalid JSON input: {e}", "ERROR")
+        print('{"suppressOutput": true}')
         sys.exit(1)
     except Exception as e:
         log_message(f"Unexpected error: {e}", "ERROR")
+        print('{"suppressOutput": true}')
         sys.exit(1)
 
 if __name__ == "__main__":
