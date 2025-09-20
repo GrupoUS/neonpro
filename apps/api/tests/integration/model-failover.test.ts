@@ -168,7 +168,7 @@ describe('Integration Test T015: Multi-Model Failover', () => {
         patientId: 'cost-sensitive-patient-001',
         analysisType: 'routine_assessment',
         costOptimization: true,
-        maxCostBRL: 0.50,
+        maxCostBRL: 0.5,
         qualityThreshold: 85, // Minimum quality score
         preferredModels: ['gpt-3.5-turbo', 'claude-instant', 'gemini-pro'],
       };
@@ -211,7 +211,7 @@ describe('Integration Test T015: Multi-Model Failover', () => {
         },
       });
 
-      expect(result.modelSelection.costBRL).toBeLessThanOrEqual(0.50);
+      expect(result.modelSelection.costBRL).toBeLessThanOrEqual(0.5);
       expect(result.modelSelection.qualityScore).toBeGreaterThanOrEqual(85);
     });
 

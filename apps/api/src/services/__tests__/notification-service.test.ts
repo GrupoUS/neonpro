@@ -441,19 +441,22 @@ describe('Real-time Notification Service (T042)', () => {
       const { NotificationService } = await import('../notification-service');
       const service = new NotificationService();
 
-      const result = await service.updateNotificationStatus('notification-123', {
-        status: 'delivered',
-        deliveredAt: new Date(),
-        providerResponse: {
-          messageId: 'msg-456',
+      const result = await service.updateNotificationStatus(
+        'notification-123',
+        {
           status: 'delivered',
-          timestamp: new Date(),
+          deliveredAt: new Date(),
+          providerResponse: {
+            messageId: 'msg-456',
+            status: 'delivered',
+            timestamp: new Date(),
+          },
+          metadata: {
+            deliveryTime: 1500, // ms
+            provider: 'twilio',
+          },
         },
-        metadata: {
-          deliveryTime: 1500, // ms
-          provider: 'twilio',
-        },
-      });
+      );
 
       expect(result.success).toBe(true);
       expect(result.data.notificationId).toBe('notification-123');

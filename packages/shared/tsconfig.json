@@ -13,19 +13,9 @@
     "strictNullChecks": false,
     "noImplicitAny": false,
     "paths": {
-      "@neonpro/core-services": [
-        "../core-services/dist/index.d.ts"
-      ]
+      "@neonpro/core-services": ["../core-services/dist/index.d.ts"]
     }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "**/*.test.ts",
-    "**/*.spec.ts"
-  ]
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

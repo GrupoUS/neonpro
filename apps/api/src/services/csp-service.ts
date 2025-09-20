@@ -158,7 +158,9 @@ export function createHealthcareCSP(): ContentSecurityPolicy {
 /**
  * Get CSP policy by ID
  */
-export async function getCSPPolicy(id: string): Promise<ContentSecurityPolicy | null> {
+export async function getCSPPolicy(
+  id: string,
+): Promise<ContentSecurityPolicy | null> {
   // Mock implementation for contract testing
   if (id === 'healthcare-default') {
     return createHealthcareCSP();

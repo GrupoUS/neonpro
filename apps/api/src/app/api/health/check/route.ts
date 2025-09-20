@@ -101,23 +101,29 @@ export async function GET() {
 
     const processingTime = Date.now() - startTime;
 
-    return createHealthcareResponse({
-      status: 'unhealthy',
-      error: 'Health check failed',
-      message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString(),
-      processing_time_ms: processingTime,
-      region: process.env.VERCEL_REGION || 'unknown',
-    }, {
-      status: 503,
-      dataType: 'public',
-    });
+    return createHealthcareResponse(
+      {
+        status: 'unhealthy',
+        error: 'Health check failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
+        processing_time_ms: processingTime,
+        region: process.env.VERCEL_REGION || 'unknown',
+      },
+      {
+        status: 503,
+        dataType: 'public',
+      },
+    );
   }
 }
 
 export async function OPTIONS() {
-  return createHealthcareResponse({}, {
-    status: 200,
-    dataType: 'public',
-  });
+  return createHealthcareResponse(
+    {},
+    {
+      status: 200,
+      dataType: 'public',
+    },
+  );
 }

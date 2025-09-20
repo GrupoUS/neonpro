@@ -15,24 +15,27 @@ import { z } from 'zod';
 import EnhancedTelemedicineRealtime, {
   PresenceState,
 } from '../../services/enhanced-realtime-telemedicine';
-import {
-  protectedProcedure,
-  router,
-  telemedicineProcedure,
-} from '../trpc';
+import { protectedProcedure, router, telemedicineProcedure } from '../trpc';
 
 // Input validation schemas
 const CreateSessionSchema = z.object({
   sessionId: z.string().uuid(),
   participants: z.array(z.string().uuid()).min(1).max(10),
-  sessionType: z.enum(['consultation', 'emergency', 'follow_up', 'group_session']),
-  metadata: z.object({
-    appointmentId: z.string().uuid().optional(),
-    specialtyCode: z.string().optional(),
-    emergencyLevel: z.enum(['low', 'medium', 'high', 'critical']).optional(),
-    recordingConsent: z.boolean().default(false),
-    lgpdConsentVerified: z.boolean().default(true),
-  }).optional(),
+  sessionType: z.enum([
+    'consultation',
+    'emergency',
+    'follow_up',
+    'group_session',
+  ]),
+  metadata: z
+    .object({
+      appointmentId: z.string().uuid().optional(),
+      specialtyCode: z.string().optional(),
+      emergencyLevel: z.enum(['low', 'medium', 'high', 'critical']).optional(),
+      recordingConsent: z.boolean().default(false),
+      lgpdConsentVerified: z.boolean().default(true),
+    })
+    .optional(),
 });
 
 const SendMessageSchema = z.object({
@@ -51,32 +54,38 @@ const UpdatePresenceSchema = z.object({
   userId: z.string().uuid(),
   userRole: z.enum(['patient', 'doctor', 'nurse', 'technician', 'admin']),
   status: z.enum(['online', 'away', 'busy', 'offline', 'in_consultation']),
-  connectionQuality: z.object({
-    latency: z.number().min(0).max(5000),
-    bandwidth: z.number().min(0),
-    packetLoss: z.number().min(0).max(100),
-    jitter: z.number().min(0).max(1000),
-  }).optional(),
-  deviceInfo: z.object({
-    type: z.enum(['desktop', 'mobile', 'tablet']),
-    browser: z.string().optional(),
-    os: z.string().optional(),
-    capabilities: z.object({
-      video: z.boolean(),
-      audio: z.boolean(),
-      screenshare: z.boolean(),
-    }),
-  }).optional(),
+  connectionQuality: z
+    .object({
+      latency: z.number().min(0).max(5000),
+      bandwidth: z.number().min(0),
+      packetLoss: z.number().min(0).max(100),
+      jitter: z.number().min(0).max(1000),
+    })
+    .optional(),
+  deviceInfo: z
+    .object({
+      type: z.enum(['desktop', 'mobile', 'tablet']),
+      browser: z.string().optional(),
+      os: z.string().optional(),
+      capabilities: z.object({
+        video: z.boolean(),
+        audio: z.boolean(),
+        screenshare: z.boolean(),
+      }),
+    })
+    .optional(),
 });
 
 const MonitorQualitySchema = z.object({
   sessionId: z.string().uuid(),
   userId: z.string().uuid().optional(),
-  thresholds: z.object({
-    maxLatency: z.number().default(200), // ms
-    maxPacketLoss: z.number().default(5), // percentage
-    maxJitter: z.number().default(100), // ms
-  }).optional(),
+  thresholds: z
+    .object({
+      maxLatency: z.number().default(200), // ms
+      maxPacketLoss: z.number().default(5), // percentage
+      maxJitter: z.number().default(100), // ms
+    })
+    .optional(),
 });
 
 // Global realtime service instance
@@ -92,7 +101,10 @@ async function initializeRealtimeService() {
       throw new Error('Supabase configuration not found');
     }
 
-    realtimeService = new EnhancedTelemedicineRealtime(supabaseUrl, supabaseKey);
+    realtimeService = new EnhancedTelemedicineRealtime(
+      supabaseUrl,
+      supabaseKey,
+    );
     console.log('✅ Enhanced Telemedicine Realtime service initialized');
   }
   return realtimeService;
@@ -269,7 +281,10 @@ export const realtimeTelemedicineRouter = router({
           },
         };
 
-        const success = await service.updatePresence(input.sessionId, presenceData);
+        const success = await service.updatePresence(
+          input.sessionId,
+          presenceData,
+        );
 
         if (!success) {
           throw new TRPCError({
@@ -329,7 +344,9 @@ export const realtimeTelemedicineRouter = router({
 
         if (stats.connectionQuality === 'poor') {
           qualityAssessment.concerns.push('Poor overall connection quality');
-          qualityAssessment.recommendations.push('Consider switching to better network');
+          qualityAssessment.recommendations.push(
+            'Consider switching to better network',
+          );
         }
 
         return {
@@ -359,9 +376,11 @@ export const realtimeTelemedicineRouter = router({
    * Get session statistics and participants
    */
   getSessionInfo: telemedicineProcedure
-    .input(z.object({
-      sessionId: z.string().uuid(),
-    }))
+    .input(
+      z.object({
+        sessionId: z.string().uuid(),
+      }),
+    )
     .query(async ({ input, ctx }) => {
       try {
         const service = await initializeRealtimeService();
@@ -399,11 +418,20 @@ export const realtimeTelemedicineRouter = router({
    * End telemedicine session and cleanup
    */
   endSession: telemedicineProcedure
-    .input(z.object({
-      sessionId: z.string().uuid(),
-      reason: z.enum(['completed', 'emergency_ended', 'technical_issues', 'cancelled']).optional(),
-      summary: z.string().max(1000).optional(),
-    }))
+    .input(
+      z.object({
+        sessionId: z.string().uuid(),
+        reason: z
+          .enum([
+            'completed',
+            'emergency_ended',
+            'technical_issues',
+            'cancelled',
+          ])
+          .optional(),
+        summary: z.string().max(1000).optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         const service = await initializeRealtimeService();
@@ -450,60 +478,61 @@ export const realtimeTelemedicineRouter = router({
   /**
    * Get real-time connection health check
    */
-  healthCheck: protectedProcedure
-    .query(async ({ ctx }) => {
-      try {
-        // Check if service is initialized and working
-        const service = await initializeRealtimeService();
+  healthCheck: protectedProcedure.query(async ({ ctx }) => {
+    try {
+      // Check if service is initialized and working
+      const service = await initializeRealtimeService();
 
-        return {
-          status: 'healthy',
-          timestamp: new Date().toISOString(),
-          services: {
-            supabase_realtime: 'connected',
-            encryption_service: 'active',
-            connection_monitoring: 'active',
-            emergency_protocols: 'ready',
-          },
-          performance: {
-            average_latency_target: '< 50ms',
-            encryption_overhead: '< 10ms',
-            presence_update_frequency: '5s',
-            quality_monitoring_interval: '5s',
-          },
-          compliance: {
-            lgpd_encryption: true,
-            cfm_telemedicine_standards: true,
-            anvisa_medical_device_compliance: true,
-            audit_logging: true,
-          },
-        };
-      } catch (error: any) {
-        console.error('❌ Realtime service health check failed:', error);
-        return {
-          status: 'unhealthy',
-          error: error.message,
-          timestamp: new Date().toISOString(),
-        };
-      }
-    }),
+      return {
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        services: {
+          supabase_realtime: 'connected',
+          encryption_service: 'active',
+          connection_monitoring: 'active',
+          emergency_protocols: 'ready',
+        },
+        performance: {
+          average_latency_target: '< 50ms',
+          encryption_overhead: '< 10ms',
+          presence_update_frequency: '5s',
+          quality_monitoring_interval: '5s',
+        },
+        compliance: {
+          lgpd_encryption: true,
+          cfm_telemedicine_standards: true,
+          anvisa_medical_device_compliance: true,
+          audit_logging: true,
+        },
+      };
+    } catch (error: any) {
+      console.error('❌ Realtime service health check failed:', error);
+      return {
+        status: 'unhealthy',
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }),
 
   /**
    * Emergency alert system
    */
   sendEmergencyAlert: telemedicineProcedure
-    .input(z.object({
-      sessionId: z.string().uuid(),
-      alertType: z.enum([
-        'medical_emergency',
-        'technical_failure',
-        'security_breach',
-        'connectivity_loss',
-      ]),
-      severity: z.enum(['low', 'medium', 'high', 'critical']),
-      description: z.string().max(500),
-      requiredActions: z.array(z.string()).optional(),
-    }))
+    .input(
+      z.object({
+        sessionId: z.string().uuid(),
+        alertType: z.enum([
+          'medical_emergency',
+          'technical_failure',
+          'security_breach',
+          'connectivity_loss',
+        ]),
+        severity: z.enum(['low', 'medium', 'high', 'critical']),
+        description: z.string().max(500),
+        requiredActions: z.array(z.string()).optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         const service = await initializeRealtimeService();

@@ -10,14 +10,10 @@
     "moduleResolution": "bundler",
     "module": "ESNext",
     "target": "ES2022",
-    "types": [
-      "vitest"
-    ],
+    "types": ["vitest"],
     "skipLibCheck": true
   },
-  "include": [
-    "src"
-  ],
+  "include": ["src"],
   "exclude": [
     "dist",
     "node_modules",

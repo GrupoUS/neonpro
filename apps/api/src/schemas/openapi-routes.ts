@@ -20,17 +20,22 @@ import {
 } from '../schemas/openapi-schemas';
 
 // Parameter schemas
-export const PatientIdParamSchema = z.object({
-  patientId: z.string().min(1).openapi({
-    param: {
-      name: 'patientId',
-      in: 'path',
-      description: 'Patient unique identifier',
-    },
-    example: 'patient_123',
-    description: 'Must be a valid patient ID',
-  }),
-}).openapi('PatientIdParam');
+export const PatientIdParamSchema = z
+  .object({
+    patientId: z
+      .string()
+      .min(1)
+      .openapi({
+        param: {
+          name: 'patientId',
+          in: 'path',
+          description: 'Patient unique identifier',
+        },
+        example: 'patient_123',
+        description: 'Must be a valid patient ID',
+      }),
+  })
+  .openapi('PatientIdParam');
 
 // Health and system routes
 export const healthRoute = createRoute({
@@ -235,21 +240,25 @@ export const listPatientsRoute = createRoute({
       content: {
         'application/json': {
           schema: z.object({
-            data: z.array(z.object({
-              id: z.string(),
-              fullName: z.string(),
-              familyName: z.string(),
-              email: z.string().email().optional(),
-              phone: z.string().optional(),
-              medicalRecordNumber: z.string(),
-              lgpdConsentGiven: z.boolean(),
-              isActive: z.boolean(),
-              createdAt: z.string(),
-              updatedAt: z.string(),
-              _count: z.object({
-                appointments: z.number(),
-              }),
-            })).openapi('Patient'),
+            data: z
+              .array(
+                z.object({
+                  id: z.string(),
+                  fullName: z.string(),
+                  familyName: z.string(),
+                  email: z.string().email().optional(),
+                  phone: z.string().optional(),
+                  medicalRecordNumber: z.string(),
+                  lgpdConsentGiven: z.boolean(),
+                  isActive: z.boolean(),
+                  createdAt: z.string(),
+                  updatedAt: z.string(),
+                  _count: z.object({
+                    appointments: z.number(),
+                  }),
+                }),
+              )
+              .openapi('Patient'),
             pagination: z.object({
               page: z.number(),
               limit: z.number(),
@@ -298,23 +307,27 @@ export const getPatientByIdRoute = createRoute({
             isActive: z.boolean(),
             createdAt: z.string(),
             updatedAt: z.string(),
-            appointments: z.array(z.object({
-              id: z.string(),
-              startTime: z.string(),
-              status: z.string(),
-              professional: z.object({
-                fullName: z.string(),
+            appointments: z.array(
+              z.object({
+                id: z.string(),
+                startTime: z.string(),
+                status: z.string(),
+                professional: z.object({
+                  fullName: z.string(),
+                }),
               }),
-            })),
-            consentRecords: z.array(z.object({
-              id: z.string(),
-              purpose: z.string(),
-              status: z.string(),
-              consentType: z.string(),
-              legalBasis: z.string(),
-              createdAt: z.string(),
-              expiresAt: z.string(),
-            })),
+            ),
+            consentRecords: z.array(
+              z.object({
+                id: z.string(),
+                purpose: z.string(),
+                status: z.string(),
+                consentType: z.string(),
+                legalBasis: z.string(),
+                createdAt: z.string(),
+                expiresAt: z.string(),
+              }),
+            ),
             _count: z.object({
               appointments: z.number(),
             }),

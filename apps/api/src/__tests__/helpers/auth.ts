@@ -46,7 +46,9 @@ export function createTestAuthContext(user = testUser) {
 /**
  * Create mock user for integration tests
  */
-export async function createMockUser(role: 'patient' | 'professional' = 'patient') {
+export async function createMockUser(
+  role: 'patient' | 'professional' = 'patient',
+) {
   if (role === 'professional') {
     return testProfessional;
   }
@@ -78,7 +80,9 @@ export async function createMockPatient() {
 /**
  * Setup test authentication
  */
-export async function setupTestAuth(userId: string): Promise<Record<string, string>> {
+export async function setupTestAuth(
+  userId: string,
+): Promise<Record<string, string>> {
   return {
     Authorization: `Bearer test-token`,
     'Content-Type': 'application/json',
@@ -116,7 +120,10 @@ export function createMockSupabaseClient() {
       getSession: () => Promise.resolve({ data: { session: null }, error: null }),
       getUser: () => Promise.resolve({ data: { user: null }, error: null }),
       signInWithPassword: (_credentials: any) =>
-        Promise.resolve({ data: { user: testUser, session: null }, error: null }),
+        Promise.resolve({
+          data: { user: testUser, session: null },
+          error: null,
+        }),
       signOut: () => Promise.resolve({ error: null }),
     },
     storage: {
@@ -156,15 +163,14 @@ export function mockAuthMiddleware(user = testUser) {
  * Validate test environment variables
  */
 export function validateTestEnvironment() {
-  const required = [
-    'SUPABASE_URL',
-    'SUPABASE_ANON_KEY',
-  ];
+  const required = ['SUPABASE_URL', 'SUPABASE_ANON_KEY'];
 
   const missing = required.filter(key => !process.env[key]);
 
   if (missing.length > 0) {
-    console.warn(`⚠️  Missing test environment variables: ${missing.join(', ')}`);
+    console.warn(
+      `⚠️  Missing test environment variables: ${missing.join(', ')}`,
+    );
     console.warn('Some integration tests may be skipped or use mock data.');
     return false;
   }
@@ -177,7 +183,9 @@ export function validateTestEnvironment() {
  */
 export function skipIfNoTestEnv(description: string) {
   if (!validateTestEnvironment()) {
-    console.log(`⏭️  Skipping ${description} - test environment not configured`);
+    console.log(
+      `⏭️  Skipping ${description} - test environment not configured`,
+    );
     return true;
   }
   return false;

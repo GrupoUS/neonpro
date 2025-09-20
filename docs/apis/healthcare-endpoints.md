@@ -13,6 +13,7 @@ Development: http://localhost:3000/api/trpc
 ```
 
 ### Authentication Headers
+
 ```typescript
 {
   "Authorization": "Bearer <jwt_token>",
@@ -26,6 +27,7 @@ Development: http://localhost:3000/api/trpc
 ## Brazilian Healthcare Compliance Framework
 
 ### LGPD (Lei Geral de Proteção de Dados) Compliance
+
 - **Article 7º**: Legal basis for personal data processing
 - **Article 11º**: Enhanced protection for sensitive health data
 - **Right to be forgotten**: Automatic anonymization on consent withdrawal
@@ -33,12 +35,14 @@ Development: http://localhost:3000/api/trpc
 - **Audit trails**: Comprehensive logging for all patient data operations
 
 ### CFM (Conselho Federal de Medicina) Compliance
+
 - **Resolution 2,314/2022**: Telemedicine standards
 - **Real-time license validation**: Portal integration with portal.cfm.org.br
 - **ICP-Brasil certificates**: Digital signature validation
 - **NGS2 security standards**: Government-level security requirements
 
 ### ANVISA (Agência Nacional de Vigilância Sanitária) Compliance
+
 - **RDC 657/2022**: Medical device software classification
 - **SaMD compliance**: Software as Medical Device regulations
 - **Adverse event reporting**: Automated detection and reporting
@@ -49,6 +53,7 @@ Development: http://localhost:3000/api/trpc
 ## 🏥 Patients Router
 
 ### Overview
+
 LGPD-compliant patient data management with cryptographic consent and audit trails.
 
 ### Base Path: `/patients`
@@ -60,6 +65,7 @@ LGPD-compliant patient data management with cryptographic consent and audit trai
 **Middleware**: `healthcareProcedure` (RLS + Auth + CFM + LGPD audit)
 
 #### Input Schema
+
 ```typescript
 interface CreatePatientInput {
   fullName: string;
@@ -69,7 +75,7 @@ interface CreatePatientInput {
   email: string;
   phone: string;
   dateOfBirth: Date;
-  gender: 'male' | 'female' | 'other' | 'prefer_not_to_say';
+  gender: "male" | "female" | "other" | "prefer_not_to_say";
   address: {
     street: string;
     number: string;
@@ -95,12 +101,13 @@ interface CreatePatientInput {
 ```
 
 #### Response
+
 ```typescript
 interface CreatePatientResponse {
   id: string;
   fullName: string;
   medicalRecordNumber: string;
-  consentStatus: 'active' | 'inactive';
+  consentStatus: "active" | "inactive";
   consentProof: string; // SHA-256 cryptographic proof
   createdAt: Date;
   updatedAt: Date;
@@ -108,6 +115,7 @@ interface CreatePatientResponse {
 ```
 
 #### LGPD Compliance Features
+
 - ✅ Cryptographic consent verification (SHA-256)
 - ✅ Automatic audit trail generation
 - ✅ Legal basis documentation (legitimate healthcare interest)
@@ -115,6 +123,7 @@ interface CreatePatientResponse {
 - ✅ Consent version tracking
 
 #### Code Example
+
 ```typescript
 const newPatient = await trpc.patients.create.mutate({
   fullName: "Maria Silva Santos",
@@ -129,17 +138,17 @@ const newPatient = await trpc.patients.create.mutate({
     district: "Centro",
     city: "São Paulo",
     state: "SP",
-    zipCode: "01234-567"
+    zipCode: "01234-567",
   },
   emergencyContact: {
     name: "João Santos",
     relationship: "spouse",
-    phone: "+55 11 98765-4322"
+    phone: "+55 11 98765-4322",
   },
   lgpdConsentGiven: true,
   lgpdConsentVersion: "v2.1",
   allergies: ["penicillin"],
-  chronicConditions: ["diabetes_type_2"]
+  chronicConditions: ["diabetes_type_2"],
 });
 ```
 
@@ -150,6 +159,7 @@ const newPatient = await trpc.patients.create.mutate({
 **Middleware**: `patientProcedure` (RLS + Auth + LGPD audit + Consent)
 
 #### LGPD Data Minimization
+
 - **Basic User**: Name, medical record number only
 - **Healthcare Professional**: Full medical data
 - **Administrator**: All data including audit information
@@ -161,6 +171,7 @@ const newPatient = await trpc.patients.create.mutate({
 **Middleware**: `patientProcedure`
 
 #### LGPD "Right to be Forgotten" Implementation
+
 - Implements LGPD Article 18 (Right to be Forgotten)
 - Automatic data anonymization
 - Cryptographic proof of withdrawal
@@ -171,6 +182,7 @@ const newPatient = await trpc.patients.create.mutate({
 ## 📅 Appointments Router
 
 ### Overview
+
 AI-powered appointment management with no-show prediction, CFM validation, and multi-channel reminders.
 
 ### Base Path: `/appointments`
@@ -182,6 +194,7 @@ AI-powered appointment management with no-show prediction, CFM validation, and m
 **Middleware**: `healthcareProcedure`
 
 #### AI-Powered Features
+
 - **No-show risk prediction**: Brazilian behavior pattern analysis
 - **CFM license validation**: Real-time verification with CFM portal
 - **Adaptive reminders**: Multi-channel scheduling based on risk level
@@ -192,6 +205,7 @@ AI-powered appointment management with no-show prediction, CFM validation, and m
 **Method**: `Query`
 
 #### Brazilian Behavior Factors
+
 - **Cultural factors**: Carnival season, regional holidays
 - **Socioeconomic patterns**: SUS dependency, transportation
 - **Weather impact**: Rain, heat wave effects
@@ -202,6 +216,7 @@ AI-powered appointment management with no-show prediction, CFM validation, and m
 ## 🤖 AI Router
 
 ### Overview
+
 Multi-provider AI routing with Portuguese healthcare support and patient data anonymization.
 
 ### Base Path: `/ai`
@@ -212,11 +227,13 @@ Multi-provider AI routing with Portuguese healthcare support and patient data an
 **Method**: `Mutation`
 
 #### Portuguese Medical Terminology Support
+
 - **50+ medical terms**: Automatic translation and validation
 - **Brazilian healthcare context**: CFM, ANVISA, SUS integration
 - **Patient data anonymization**: Automatic before AI processing
 
 #### Multi-Provider Routing
+
 - **Primary**: OpenAI GPT-4 (conversational excellence)
 - **Fallback**: Anthropic Claude (cost optimization)
 - **Health monitoring**: Provider performance tracking
@@ -228,11 +245,13 @@ Multi-provider AI routing with Portuguese healthcare support and patient data an
 ### Base Path: `/healthcareServices`
 
 ### 1. LGPD Data Lifecycle Management
+
 - `createConsent`: Generate new LGPD consent
 - `revokeConsent`: Withdraw consent with anonymization
 - `generateComplianceReport`: Full LGPD audit report
 
 ### 2. Telemedicine Session Management
+
 - `createSession`: Initialize secure telemedicine session
 - `validateCertificate`: ICP-Brasil certificate validation
 - `monitorQuality`: Real-time session quality metrics
@@ -244,10 +263,12 @@ Multi-provider AI routing with Portuguese healthcare support and patient data an
 ### Base Path: `/realtimeTelemedicine`
 
 ### 1. Session Subscriptions
+
 **Method**: `Subscription`
 **Protocol**: `WebSocket`
 
 #### Healthcare Quality Standards
+
 - **Video quality**: 720p minimum, medical grade
 - **Audio quality**: 48kHz medical grade
 - **Latency**: <150ms for critical operations
@@ -257,11 +278,13 @@ Multi-provider AI routing with Portuguese healthcare support and patient data an
 ## 🔒 Security & Compliance
 
 ### Row-Level Security (RLS)
+
 - **Clinic-based isolation**: Multi-tenant data separation
 - **Role-based access**: Granular permission control
 - **Emergency override**: Audit-logged emergency access
 
 ### LGPD Data Subject Rights
+
 1. **Right to Access** (Art. 9º): `patients.get` with data export
 2. **Right to Rectification** (Art. 16º): `patients.update`
 3. **Right to Erasure** (Art. 18º): `patients.withdrawConsent`
@@ -272,11 +295,13 @@ Multi-provider AI routing with Portuguese healthcare support and patient data an
 ## 📊 Performance Targets
 
 ### Response Time Requirements
+
 - **Critical operations**: <100ms (patient lookup, emergency)
 - **Standard operations**: <500ms (appointments, updates)
 - **AI operations**: <2s (predictions, insights)
 
 ### Mobile Healthcare Users
+
 - **3G networks**: <2s page load time
 - **Cache optimization**: 85%+ hit rate
 
@@ -285,10 +310,12 @@ Multi-provider AI routing with Portuguese healthcare support and patient data an
 ## 🌍 Brazilian Localization
 
 ### Time Zone Support
+
 - **14 Brazilian time zones**: America/Sao_Paulo default
 - **Regional holidays**: Calendar integration
 
 ### Healthcare Terminology
+
 - **TUSS codes**: Procedure billing codes
 - **CFM specialties**: Medical specialty validation
 - **SUS integration**: Public healthcare compatibility

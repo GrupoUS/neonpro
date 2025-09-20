@@ -101,7 +101,9 @@ export class QueryPerformanceMonitor {
       ? this.metrics.reduce((sum, m) => sum + m.duration, 0) / totalQueries
       : 0;
 
-    const slowQueries = this.metrics.filter(m => m.duration > this.slowQueryThreshold);
+    const slowQueries = this.metrics.filter(
+      m => m.duration > this.slowQueryThreshold,
+    );
     const slowQueryRate = totalQueries > 0 ? (slowQueries.length / totalQueries) * 100 : 0;
 
     // Top 10 slowest queries
@@ -248,8 +250,12 @@ export class ConnectionPoolOptimizer {
     recommendations: string[];
     stats: typeof this.connectionStats;
   } {
-    const { activeConnections, totalConnections, waitingRequests, connectionErrors } =
-      this.connectionStats;
+    const {
+      activeConnections,
+      totalConnections,
+      waitingRequests,
+      connectionErrors,
+    } = this.connectionStats;
 
     let health: 'healthy' | 'warning' | 'critical' = 'healthy';
     const recommendations: string[] = [];
@@ -327,7 +333,11 @@ export class HealthcareQueryOptimizer {
   /**
    * Optimize patient data queries for LGPD compliance
    */
-  optimizePatientQuery(query: string, userId: string, clinicId: string): string {
+  optimizePatientQuery(
+    query: string,
+    userId: string,
+    clinicId: string,
+  ): string {
     let optimizedQuery = query;
 
     // Ensure proper filtering for patient data
@@ -339,7 +349,10 @@ export class HealthcareQueryOptimizer {
     }
 
     // Add audit trail for sensitive queries
-    if (query.includes('patient_records') || query.includes('medical_history')) {
+    if (
+      query.includes('patient_records')
+      || query.includes('medical_history')
+    ) {
       // This would integrate with audit logging
       console.log('Sensitive query executed:', {
         userId,

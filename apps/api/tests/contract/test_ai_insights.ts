@@ -58,21 +58,25 @@ const PatientInsightsResponseSchema = z.object({
         factors: z.array(z.string()),
         recommendation: z.string(),
       }),
-      healthOutcomes: z.array(z.object({
-        condition: z.string(),
-        probability: z.number().min(0).max(1),
-        timeframe: z.string(),
-        prevention: z.array(z.string()),
-      })),
+      healthOutcomes: z.array(
+        z.object({
+          condition: z.string(),
+          probability: z.number().min(0).max(1),
+          timeframe: z.string(),
+          prevention: z.array(z.string()),
+        }),
+      ),
     }),
   }),
-  aiModels: z.array(z.object({
-    provider: z.enum(['openai', 'anthropic', 'google', 'local']),
-    model: z.string(),
-    confidence: z.number().min(0).max(1),
-    specialization: z.string(),
-    contribution: z.number().min(0).max(1),
-  })),
+  aiModels: z.array(
+    z.object({
+      provider: z.enum(['openai', 'anthropic', 'google', 'local']),
+      model: z.string(),
+      confidence: z.number().min(0).max(1),
+      specialization: z.string(),
+      contribution: z.number().min(0).max(1),
+    }),
+  ),
   metadata: z.object({
     generatedAt: z.string().datetime(),
     processingTime: z.number().max(2000), // <2s requirement
@@ -115,9 +119,12 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
 
   describe('Basic Functionality', () => {
     it('should generate comprehensive patient insights', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
-        headers: testAuthHeaders,
-      });
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       expect(response.status).toBe(200);
 
@@ -156,36 +163,47 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
 
   describe('Error Handling', () => {
     it('should return 401 for missing authentication', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`);
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}`,
+      );
 
       expect(response.status).toBe(401);
     });
 
     it('should return 404 for non-existent patient', async () => {
       const invalidPatientId = '00000000-0000-0000-0000-000000000000';
-      const response = await api(`/api/v2/ai/insights/patient/${invalidPatientId}`, {
-        headers: testAuthHeaders,
-      });
+      const response = await api(
+        `/api/v2/ai/insights/patient/${invalidPatientId}`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       expect(response.status).toBe(404);
     });
 
     it('should return 403 for insufficient healthcare permissions', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
-        headers: {
-          Authorization: 'Bearer limited-token',
-          'Content-Type': 'application/json',
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}`,
+        {
+          headers: {
+            Authorization: 'Bearer limited-token',
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(403);
     });
 
     it('should return 422 for invalid patient ID format', async () => {
       const invalidPatientId = 'invalid-uuid';
-      const response = await api(`/api/v2/ai/insights/patient/${invalidPatientId}`, {
-        headers: testAuthHeaders,
-      });
+      const response = await api(
+        `/api/v2/ai/insights/patient/${invalidPatientId}`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       expect(response.status).toBe(422);
     });
@@ -195,9 +213,12 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
     it('should generate insights within 2 seconds', async () => {
       const startTime = Date.now();
 
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
-        headers: testAuthHeaders,
-      });
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(2000);
@@ -206,17 +227,23 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
 
     it('should support caching for repeated requests', async () => {
       // First request
-      const firstResponse = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
-        headers: testAuthHeaders,
-      });
+      const firstResponse = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       expect(firstResponse.status).toBe(200);
 
       // Second request should be faster due to caching
       const startTime = Date.now();
-      const secondResponse = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
-        headers: testAuthHeaders,
-      });
+      const secondResponse = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(500); // Should be much faster from cache
@@ -227,9 +254,12 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
 
   describe('Healthcare Compliance', () => {
     it('should enforce LGPD consent for AI analysis', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
-        headers: testAuthHeaders,
-      });
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       expect(response.headers.get('X-LGPD-Processed')).toBeDefined();
       expect(response.headers.get('X-Consent-Verified')).toBeDefined();
@@ -238,11 +268,16 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
     });
 
     it('should validate healthcare professional credentials', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
-        headers: testAuthHeaders,
-      });
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
-      expect(response.headers.get('X-Healthcare-Professional-Validated')).toBeDefined();
+      expect(
+        response.headers.get('X-Healthcare-Professional-Validated'),
+      ).toBeDefined();
       expect(response.headers.get('X-CFM-License-Verified')).toBeDefined();
       expect(response.status).toBe(200);
     });
@@ -285,9 +320,12 @@ describe('GET /api/v2/ai/insights/patient/{id} - Contract Tests', () => {
 
   describe('Clinical Relevance', () => {
     it('should score clinical relevance of insights', async () => {
-      const response = await api(`/api/v2/ai/insights/patient/${testPatientId}`, {
-        headers: testAuthHeaders,
-      });
+      const response = await api(
+        `/api/v2/ai/insights/patient/${testPatientId}`,
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       expect(response.status).toBe(200);
 

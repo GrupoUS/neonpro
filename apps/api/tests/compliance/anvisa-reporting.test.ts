@@ -65,7 +65,11 @@ const mockANVISASystem = {
 
   auditTrail: [] as Array<{
     id: string;
-    event_type: 'DEVICE_USE' | 'SOFTWARE_UPDATE' | 'ADVERSE_EVENT' | 'MAINTENANCE';
+    event_type:
+      | 'DEVICE_USE'
+      | 'SOFTWARE_UPDATE'
+      | 'ADVERSE_EVENT'
+      | 'MAINTENANCE';
     timestamp: string;
     user_id: string;
     device_serial: string;
@@ -107,40 +111,52 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
     server = setupServer(
       // Mock ANVISA device registration API
-      http.get('https://consultas.anvisa.gov.br/api/dispositivos/:codigo', ({ params }) => {
-        const device = mockANVISASystem.registeredDevices.find(d =>
-          d.anvisa_code === params.codigo
-        );
-        if (!device) {
-          return new Response(JSON.stringify({ error: 'Dispositivo não encontrado' }), {
-            status: 404,
-          });
-        }
-        return Response.json(device);
-      }),
+      http.get(
+        'https://consultas.anvisa.gov.br/api/dispositivos/:codigo',
+        ({ params }) => {
+          const device = mockANVISASystem.registeredDevices.find(
+            d => d.anvisa_code === params.codigo,
+          );
+          if (!device) {
+            return new Response(
+              JSON.stringify({ error: 'Dispositivo não encontrado' }),
+              {
+                status: 404,
+              },
+            );
+          }
+          return Response.json(device);
+        },
+      ),
       // Mock ANVISA VigiMed reporting API
-      http.post('https://vigimed.anvisa.gov.br/api/eventos/relatar', async ({ request }) => {
-        const eventData = await request.json() as any;
-        const notificationId = 'VIGIMED_' + Date.now();
+      http.post(
+        'https://vigimed.anvisa.gov.br/api/eventos/relatar',
+        async ({ request }) => {
+          const eventData = (await request.json()) as any;
+          const notificationId = 'VIGIMED_' + Date.now();
 
-        return Response.json({
-          notification_id: notificationId,
-          status: 'RECEBIDO',
-          protocol_number: 'PROT_' + Date.now(),
-          estimated_processing_time: '5_business_days',
-          next_steps: ['INVESTIGACAO_INICIAL', 'CLASSIFICACAO_RISCO'],
-        });
-      }),
+          return Response.json({
+            notification_id: notificationId,
+            status: 'RECEBIDO',
+            protocol_number: 'PROT_' + Date.now(),
+            estimated_processing_time: '5_business_days',
+            next_steps: ['INVESTIGACAO_INICIAL', 'CLASSIFICACAO_RISCO'],
+          });
+        },
+      ),
       // Mock ANVISA post-market surveillance API
-      http.post('https://pos-comercializacao.anvisa.gov.br/api/vigilancia', () => {
-        return Response.json({
-          surveillance_id: 'SURV_' + Date.now(),
-          monitoring_active: true,
-          frequency: 'CONTINUOUS',
-          next_report_due: '2025-12-31',
-          compliance_status: 'CONFORME',
-        });
-      }),
+      http.post(
+        'https://pos-comercializacao.anvisa.gov.br/api/vigilancia',
+        () => {
+          return Response.json({
+            surveillance_id: 'SURV_' + Date.now(),
+            monitoring_active: true,
+            frequency: 'CONTINUOUS',
+            next_report_due: '2025-12-31',
+            compliance_status: 'CONFORME',
+          });
+        },
+      ),
       // Mock ANVISA SaMD classification API
       http.post('https://samd.anvisa.gov.br/api/classificacao', () => {
         return Response.json({
@@ -202,7 +218,10 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         const performanceIssues = [];
 
         // Check response time thresholds
-        if (operation.actual_response_time > operation.expected_response_time * 2) {
+        if (
+          operation.actual_response_time
+            > operation.expected_response_time * 2
+        ) {
           performanceIssues.push({
             type: 'PERFORMANCE_DEGRADATION',
             severity: 'GRAVE',
@@ -234,10 +253,14 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       // Verify automatic detection
       expect(adverseEvents.length).toBeGreaterThan(0);
 
-      const criticalEvents = adverseEvents.filter(event => event.severity === 'CRITICO');
+      const criticalEvents = adverseEvents.filter(
+        event => event.severity === 'CRITICO',
+      );
       expect(criticalEvents.length).toBeGreaterThan(0);
 
-      const reportableEvents = adverseEvents.filter(event => event.requires_reporting);
+      const reportableEvents = adverseEvents.filter(
+        event => event.requires_reporting,
+      );
       expect(reportableEvents.length).toBeGreaterThan(0);
 
       // Log detected events
@@ -333,13 +356,18 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       // Verify safety monitoring
       expect(safetyIssues.length).toBeGreaterThan(0);
 
-      const criticalSafetyIssues = safetyIssues.filter(issue => issue.severity === 'CRITICO');
+      const criticalSafetyIssues = safetyIssues.filter(
+        issue => issue.severity === 'CRITICO',
+      );
       expect(criticalSafetyIssues.length).toBeGreaterThan(0);
 
       // Report critical safety issues to ANVISA
       for (const issue of criticalSafetyIssues) {
         mockANVISASystem.adverseEventReports.push({
-          id: 'SAFETY_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          id: 'SAFETY_'
+            + Date.now()
+            + '_'
+            + Math.random().toString(36).substr(2, 9),
           anvisa_code: 'ANVISA_80149018001',
           event_type: 'EVENTO_ADVERSO',
           severity: issue.severity as any,
@@ -349,14 +377,20 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
           occurrence_date: new Date().toISOString(),
           reported_date: new Date().toISOString(),
           reporter_type: 'FABRICANTE',
-          actions_taken: ['AUTOMATIC_DETECTION', 'IMMEDIATE_ALERT', 'PROCEDURE_SUSPENDED'],
+          actions_taken: [
+            'AUTOMATIC_DETECTION',
+            'IMMEDIATE_ALERT',
+            'PROCEDURE_SUSPENDED',
+          ],
           follow_up_required: true,
         });
       }
 
       expect(
-        mockANVISASystem.adverseEventReports.some(report =>
-          report.event_type === 'EVENTO_ADVERSO' && report.severity === 'CRITICO'
+        mockANVISASystem.adverseEventReports.some(
+          report =>
+            report.event_type === 'EVENTO_ADVERSO'
+            && report.severity === 'CRITICO',
         ),
       ).toBe(true);
     });
@@ -364,31 +398,58 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
     it('should identify patterns in adverse events for proactive reporting', async () => {
       // Simulate historical adverse events
       const historicalEvents = [
-        { date: '2025-09-01', type: 'PERFORMANCE_ISSUE', severity: 'LEVE', procedure: 'Botox' },
-        { date: '2025-09-03', type: 'PERFORMANCE_ISSUE', severity: 'LEVE', procedure: 'Botox' },
-        { date: '2025-09-05', type: 'PERFORMANCE_ISSUE', severity: 'MODERADO', procedure: 'Botox' },
+        {
+          date: '2025-09-01',
+          type: 'PERFORMANCE_ISSUE',
+          severity: 'LEVE',
+          procedure: 'Botox',
+        },
+        {
+          date: '2025-09-03',
+          type: 'PERFORMANCE_ISSUE',
+          severity: 'LEVE',
+          procedure: 'Botox',
+        },
+        {
+          date: '2025-09-05',
+          type: 'PERFORMANCE_ISSUE',
+          severity: 'MODERADO',
+          procedure: 'Botox',
+        },
         {
           date: '2025-09-07',
           type: 'ALLERGIC_REACTION',
           severity: 'GRAVE',
           procedure: 'Preenchimento',
         },
-        { date: '2025-09-10', type: 'PERFORMANCE_ISSUE', severity: 'MODERADO', procedure: 'Botox' },
-        { date: '2025-09-12', type: 'DOSAGE_ERROR', severity: 'CRITICO', procedure: 'Botox' },
+        {
+          date: '2025-09-10',
+          type: 'PERFORMANCE_ISSUE',
+          severity: 'MODERADO',
+          procedure: 'Botox',
+        },
+        {
+          date: '2025-09-12',
+          type: 'DOSAGE_ERROR',
+          severity: 'CRITICO',
+          procedure: 'Botox',
+        },
       ];
 
       // Pattern analysis
       const patternAnalysis = {
-        botox_performance_issues:
-          historicalEvents.filter(e => e.procedure === 'Botox' && e.type === 'PERFORMANCE_ISSUE')
-            .length,
+        botox_performance_issues: historicalEvents.filter(
+          e => e.procedure === 'Botox' && e.type === 'PERFORMANCE_ISSUE',
+        ).length,
 
         severity_escalation: historicalEvents
           .filter(e => e.procedure === 'Botox')
           .map(e => e.severity),
 
         time_clustering: historicalEvents.reduce((clusters: any, event) => {
-          const week = Math.floor(new Date(event.date).getTime() / (7 * 24 * 60 * 60 * 1000));
+          const week = Math.floor(
+            new Date(event.date).getTime() / (7 * 24 * 60 * 60 * 1000),
+          );
           if (!clusters[week]) clusters[week] = 0;
           clusters[week]++;
           return clusters;
@@ -399,16 +460,19 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       const patterns = {
         recurring_procedure_issues: patternAnalysis.botox_performance_issues >= 3,
         severity_escalation_detected: patternAnalysis.severity_escalation.includes('CRITICO'),
-        temporal_clustering: Object.values(patternAnalysis.time_clustering).some((count: any) =>
-          count >= 3
-        ),
+        temporal_clustering: Object.values(
+          patternAnalysis.time_clustering,
+        ).some((count: any) => count >= 3),
       };
 
       expect(patterns.recurring_procedure_issues).toBe(true);
       expect(patterns.severity_escalation_detected).toBe(true);
 
       // Generate proactive report if patterns detected
-      if (patterns.recurring_procedure_issues || patterns.severity_escalation_detected) {
+      if (
+        patterns.recurring_procedure_issues
+        || patterns.severity_escalation_detected
+      ) {
         mockANVISASystem.adverseEventReports.push({
           id: 'PATTERN_' + Date.now(),
           anvisa_code: 'ANVISA_80149018001',
@@ -420,13 +484,17 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
           occurrence_date: new Date().toISOString(),
           reported_date: new Date().toISOString(),
           reporter_type: 'FABRICANTE',
-          actions_taken: ['PATTERN_ANALYSIS', 'PROACTIVE_REPORTING', 'INVESTIGATION_INITIATED'],
+          actions_taken: [
+            'PATTERN_ANALYSIS',
+            'PROACTIVE_REPORTING',
+            'INVESTIGATION_INITIATED',
+          ],
           follow_up_required: true,
         });
       }
 
-      const patternReport = mockANVISASystem.adverseEventReports.find(report =>
-        report.id.startsWith('PATTERN_')
+      const patternReport = mockANVISASystem.adverseEventReports.find(
+        report => report.id.startsWith('PATTERN_'),
       );
 
       expect(patternReport).toBeTruthy();
@@ -451,30 +519,37 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       };
 
       // Call ANVISA SaMD classification API
-      const classificationResponse = await fetch('https://samd.anvisa.gov.br/api/classificacao', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(samdClassificationRequest),
-      });
+      const classificationResponse = await fetch(
+        'https://samd.anvisa.gov.br/api/classificacao',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(samdClassificationRequest),
+        },
+      );
 
       const classification = await classificationResponse.json();
 
       // Verify SaMD classification
       expect(classification.classification).toBe('SOFTWARE_MEDICO_CLASSE_II');
       expect(classification.risk_level).toBe('BAIXO_RISCO');
-      expect(classification.regulatory_requirements).toContain('ISO_13485_QUALITY_SYSTEM');
-      expect(classification.regulatory_requirements).toContain('IEC_62304_SOFTWARE_LIFECYCLE');
+      expect(classification.regulatory_requirements).toContain(
+        'ISO_13485_QUALITY_SYSTEM',
+      );
+      expect(classification.regulatory_requirements).toContain(
+        'IEC_62304_SOFTWARE_LIFECYCLE',
+      );
 
       // Verify compliance with regulatory requirements
       const complianceStatus = {
-        iso_13485_certified:
-          mockANVISASystem.samdCompliance.quality_management_system === 'ISO_13485_CERTIFIED',
-        iec_62304_compliant:
-          mockANVISASystem.samdCompliance.software_lifecycle_process === 'IEC_62304_COMPLIANT',
-        iec_62366_applied:
-          mockANVISASystem.samdCompliance.usability_engineering === 'IEC_62366_APPLIED',
-        clinical_evidence_adequate:
-          mockANVISASystem.samdCompliance.clinical_evidence_level === 'ADEQUATE',
+        iso_13485_certified: mockANVISASystem.samdCompliance.quality_management_system
+          === 'ISO_13485_CERTIFIED',
+        iec_62304_compliant: mockANVISASystem.samdCompliance.software_lifecycle_process
+          === 'IEC_62304_COMPLIANT',
+        iec_62366_applied: mockANVISASystem.samdCompliance.usability_engineering
+          === 'IEC_62366_APPLIED',
+        clinical_evidence_adequate: mockANVISASystem.samdCompliance.clinical_evidence_level
+          === 'ADEQUATE',
       };
 
       expect(complianceStatus.iso_13485_certified).toBe(true);
@@ -512,10 +587,18 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       };
 
       // Verify IEC 62304 compliance
-      expect(softwareLifecycleProcess.planning.software_safety_classification).toBeTruthy();
-      expect(softwareLifecycleProcess.development.software_requirements_analysis).toBe('COMPLETE');
-      expect(softwareLifecycleProcess.testing.software_unit_testing).toBeGreaterThanOrEqual(85);
-      expect(softwareLifecycleProcess.release.post_market_surveillance_plan).toBe('ACTIVE');
+      expect(
+        softwareLifecycleProcess.planning.software_safety_classification,
+      ).toBeTruthy();
+      expect(
+        softwareLifecycleProcess.development.software_requirements_analysis,
+      ).toBe('COMPLETE');
+      expect(
+        softwareLifecycleProcess.testing.software_unit_testing,
+      ).toBeGreaterThanOrEqual(85);
+      expect(
+        softwareLifecycleProcess.release.post_market_surveillance_plan,
+      ).toBe('ACTIVE');
 
       // Document lifecycle compliance
       mockANVISASystem.auditTrail.push({
@@ -534,8 +617,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         },
       });
 
-      const lifecycleAudit = mockANVISASystem.auditTrail.find(audit =>
-        audit.operation_performed === 'IEC_62304_COMPLIANCE_VERIFICATION'
+      const lifecycleAudit = mockANVISASystem.auditTrail.find(
+        audit => audit.operation_performed === 'IEC_62304_COMPLIANCE_VERIFICATION',
       );
 
       expect(lifecycleAudit?.outcome).toBe('SUCCESS');
@@ -600,14 +683,22 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       // Verify risk management completeness
       expect(riskManagementFile.hazard_analysis.length).toBeGreaterThan(0);
       expect(
-        riskManagementFile.hazard_analysis.every(hazard => hazard.risk_control_measures.length > 0),
+        riskManagementFile.hazard_analysis.every(
+          hazard => hazard.risk_control_measures.length > 0,
+        ),
       ).toBe(true);
-      expect(riskManagementFile.risk_benefit_analysis.benefit_risk_ratio).toBe('FAVORABLE');
-      expect(riskManagementFile.post_market_surveillance.adverse_event_monitoring).toBe('ACTIVE');
+      expect(riskManagementFile.risk_benefit_analysis.benefit_risk_ratio).toBe(
+        'FAVORABLE',
+      );
+      expect(
+        riskManagementFile.post_market_surveillance.adverse_event_monitoring,
+      ).toBe('ACTIVE');
 
       // Verify residual risks are acceptable
-      const unacceptableRisks = riskManagementFile.hazard_analysis.filter(hazard =>
-        hazard.residual_risk === 'HIGH' || hazard.residual_risk === 'CRITICAL'
+      const unacceptableRisks = riskManagementFile.hazard_analysis.filter(
+        hazard =>
+          hazard.residual_risk === 'HIGH'
+          || hazard.residual_risk === 'CRITICAL',
       );
 
       expect(unacceptableRisks.length).toBe(0);
@@ -653,7 +744,11 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         patient_information: {
           affected: adverseEvent.patient_affected,
           anonymized_id: patientId
-            ? crypto.createHash('sha256').update(patientId).digest('hex').substr(0, 16)
+            ? crypto
+              .createHash('sha256')
+              .update(patientId)
+              .digest('hex')
+              .substr(0, 16)
             : null,
         },
         reporter_information: {
@@ -665,11 +760,14 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       };
 
       // Submit to VigiMed
-      const vigimeaResponse = await fetch('https://vigimed.anvisa.gov.br/api/eventos/relatar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(vigimeaSubmission),
-      });
+      const vigimeaResponse = await fetch(
+        'https://vigimed.anvisa.gov.br/api/eventos/relatar',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(vigimeaSubmission),
+        },
+      );
 
       const vigimeaResult = await vigimeaResponse.json();
 
@@ -696,8 +794,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         vigimed_notification_id: vigimeaResult.notification_id,
       });
 
-      const reportedEvent = mockANVISASystem.adverseEventReports.find(report =>
-        report.vigimed_notification_id === vigimeaResult.notification_id
+      const reportedEvent = mockANVISASystem.adverseEventReports.find(
+        report => report.vigimed_notification_id === vigimeaResult.notification_id,
       );
 
       expect(reportedEvent).toBeTruthy();
@@ -713,7 +811,11 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       };
 
       // Simulate submission attempts with failures
-      for (let attempt = 1; attempt <= failedSubmission.max_retries; attempt++) {
+      for (
+        let attempt = 1;
+        attempt <= failedSubmission.max_retries;
+        attempt++
+      ) {
         const submissionResult = {
           attempt: attempt,
           timestamp: new Date(Date.now() + attempt * 1000).toISOString(),
@@ -735,8 +837,9 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       // Verify retry mechanism
       expect(failedSubmission.submission_attempts.length).toBeGreaterThan(1);
       expect(
-        failedSubmission.submission_attempts[failedSubmission.submission_attempts.length - 1]
-          .success,
+        failedSubmission.submission_attempts[
+          failedSubmission.submission_attempts.length - 1
+        ].success,
       ).toBe(true);
 
       // Verify exponential backoff was applied
@@ -771,7 +874,10 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
           software_versions_active: ['2.0.0', '2.1.0', '2.1.1'],
         },
         adverse_events_summary: {
-          total_events: periodEvents.reduce((sum, event) => sum + event.count, 0),
+          total_events: periodEvents.reduce(
+            (sum, event) => sum + event.count,
+            0,
+          ),
           events_by_type: periodEvents,
           trend_analysis: 'STABLE_WITH_MINOR_IMPROVEMENT',
           corrective_actions_implemented: [
@@ -807,15 +913,19 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       };
 
       // Verify report completeness
-      expect(periodicSafetyReport.adverse_events_summary.total_events).toBeGreaterThanOrEqual(0);
-      expect(periodicSafetyReport.safety_performance_indicators.customer_satisfaction_score)
-        .toBeGreaterThan(4.0);
-      expect(periodicSafetyReport.risk_benefit_assessment.overall_assessment).toBe(
-        'BENEFITS_OUTWEIGH_RISKS',
-      );
-      expect(periodicSafetyReport.regulatory_compliance_status.anvisa_requirements).toBe(
-        'COMPLIANT',
-      );
+      expect(
+        periodicSafetyReport.adverse_events_summary.total_events,
+      ).toBeGreaterThanOrEqual(0);
+      expect(
+        periodicSafetyReport.safety_performance_indicators
+          .customer_satisfaction_score,
+      ).toBeGreaterThan(4.0);
+      expect(
+        periodicSafetyReport.risk_benefit_assessment.overall_assessment,
+      ).toBe('BENEFITS_OUTWEIGH_RISKS');
+      expect(
+        periodicSafetyReport.regulatory_compliance_status.anvisa_requirements,
+      ).toBe('COMPLIANT');
 
       // Verify trend analysis
       const totalCriticalEvents = periodEvents
@@ -864,7 +974,10 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
         };
 
         mockANVISASystem.auditTrail.push({
-          id: 'AUDIT_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+          id: 'AUDIT_'
+            + Date.now()
+            + '_'
+            + Math.random().toString(36).substr(2, 9),
           event_type: 'DEVICE_USE',
           timestamp: operation.timestamp,
           user_id: operation.user_id,
@@ -877,25 +990,30 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       }
 
       // Verify audit trail completeness
-      const auditEntries = mockANVISASystem.auditTrail.filter(entry =>
-        entry.device_serial === deviceSerial
+      const auditEntries = mockANVISASystem.auditTrail.filter(
+        entry => entry.device_serial === deviceSerial,
       );
 
       expect(auditEntries.length).toBe(deviceOperations.length);
-      expect(auditEntries.every(entry => entry.performance_metrics)).toBe(true);
+      expect(auditEntries.every(entry => entry.performance_metrics)).toBe(
+        true,
+      );
       expect(auditEntries.every(entry => entry.timestamp)).toBe(true);
 
       // Analyze performance trends
       const performanceAnalysis = {
-        average_response_time:
-          auditEntries.reduce((sum, entry) => sum + entry.performance_metrics!.response_time_ms, 0)
-          / auditEntries.length,
+        average_response_time: auditEntries.reduce(
+          (sum, entry) => sum + entry.performance_metrics!.response_time_ms,
+          0,
+        ) / auditEntries.length,
 
-        success_rate:
-          (auditEntries.filter(entry => entry.outcome === 'SUCCESS').length / auditEntries.length)
+        success_rate: (auditEntries.filter(entry => entry.outcome === 'SUCCESS').length
+          / auditEntries.length)
           * 100,
 
-        warning_operations: auditEntries.filter(entry => entry.outcome === 'WARNING'),
+        warning_operations: auditEntries.filter(
+          entry => entry.outcome === 'WARNING',
+        ),
       };
 
       expect(performanceAnalysis.success_rate).toBeGreaterThan(50); // At least 50% success rate
@@ -937,21 +1055,25 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
           operation_performed: 'SOFTWARE_VERSION_UPDATE',
           outcome: 'SUCCESS',
           performance_metrics: 'performance_baseline' in update
-            ? update.performance_baseline as any
-            : update.performance_after_update as any,
+            ? (update.performance_baseline as any)
+            : (update.performance_after_update as any),
         });
       }
 
       // Verify update tracking
-      const updateEntries = mockANVISASystem.auditTrail.filter(entry =>
-        entry.event_type === 'SOFTWARE_UPDATE'
+      const updateEntries = mockANVISASystem.auditTrail.filter(
+        entry => entry.event_type === 'SOFTWARE_UPDATE',
       );
 
       expect(updateEntries.length).toBe(softwareUpdates.length);
 
       // Calculate performance improvement
-      const baselineVersion = updateEntries.find(entry => entry.software_version === '2.0.0');
-      const updatedVersion = updateEntries.find(entry => entry.software_version === '2.1.0');
+      const baselineVersion = updateEntries.find(
+        entry => entry.software_version === '2.0.0',
+      );
+      const updatedVersion = updateEntries.find(
+        entry => entry.software_version === '2.1.0',
+      );
 
       if (baselineVersion && updatedVersion) {
         const improvement = {
@@ -1023,8 +1145,8 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
       expect(integrityCheck.integrity_maintained).toBe(false);
 
       // Verify original entry integrity
-      const storedEntry = mockANVISASystem.auditTrail.find(entry =>
-        entry.id === originalAuditEntry.id
+      const storedEntry = mockANVISASystem.auditTrail.find(
+        entry => entry.id === originalAuditEntry.id,
       );
 
       expect(storedEntry).toBeTruthy();

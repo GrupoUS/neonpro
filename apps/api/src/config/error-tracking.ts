@@ -27,7 +27,9 @@ const serviceVersion = process.env.npm_package_version || '1.0.0';
  */
 export function initializeSentry(): void {
   if (!sentryDsn) {
-    console.warn('SENTRY_DSN not configured - error tracking will use fallback methods');
+    console.warn(
+      'SENTRY_DSN not configured - error tracking will use fallback methods',
+    );
     return;
   }
 
@@ -237,7 +239,13 @@ function sanitizeUrl(url: string): string {
     const urlObj = new URL(url, 'http://localhost');
 
     // Remove sensitive query parameters
-    const sensitiveParams = ['token', 'cpf', 'patient_id', 'health_data', 'password'];
+    const sensitiveParams = [
+      'token',
+      'cpf',
+      'patient_id',
+      'health_data',
+      'password',
+    ];
     sensitiveParams.forEach(param => {
       urlObj.searchParams.delete(param);
     });

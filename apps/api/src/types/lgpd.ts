@@ -78,7 +78,9 @@ export async function anonymize_patient_data(
       // Remove or hash direct identifiers
       if (removeDirectIdentifiers) {
         if (!preserveId) {
-          anonymized.id = hashSensitiveData ? `anon_${hashString(patient.id)}` : 'anonymized';
+          anonymized.id = hashSensitiveData
+            ? `anon_${hashString(patient.id)}`
+            : 'anonymized';
         }
 
         if (patient.name) {
@@ -98,7 +100,9 @@ export async function anonymize_patient_data(
         }
 
         if (patient.phone) {
-          anonymized.phone = hashSensitiveData ? hashString(patient.phone) : null;
+          anonymized.phone = hashSensitiveData
+            ? hashString(patient.phone)
+            : null;
         }
 
         if (patient.address) {
@@ -112,7 +116,9 @@ export async function anonymize_patient_data(
           ...record,
           patient_id: anonymized.id,
           // Remove patient-specific details but keep medical data
-          notes: hashSensitiveData ? hashString(record.notes || '') : 'Anonymized notes',
+          notes: hashSensitiveData
+            ? hashString(record.notes || '')
+            : 'Anonymized notes',
         }));
       }
 
@@ -132,7 +138,9 @@ export async function anonymize_patient_data(
       recordsProcessed: 0,
       operationId: `anon_error_${Date.now()}`,
       timestamp: new Date().toISOString(),
-      errors: [`Anonymization failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
+      errors: [
+        `Anonymization failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      ],
     };
   }
 }
@@ -206,7 +214,9 @@ export async function delete_patient_data(
       recordsProcessed,
       operationId: `del_error_${Date.now()}`,
       timestamp: new Date().toISOString(),
-      errors: [`Deletion failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
+      errors: [
+        `Deletion failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      ],
     };
   }
 }
@@ -255,7 +265,9 @@ export async function export_patient_data(
       // Apply date range filter if specified
       if (dateRange) {
         // Filter records by date range
-        console.log(`Applying date range filter: ${dateRange.start} to ${dateRange.end}`);
+        console.log(
+          `Applying date range filter: ${dateRange.start} to ${dateRange.end}`,
+        );
       }
 
       // Anonymize data if requested
@@ -318,7 +330,9 @@ export async function export_patient_data(
       recordsProcessed: 0,
       operationId: `exp_error_${Date.now()}`,
       timestamp: new Date().toISOString(),
-      errors: [`Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`],
+      errors: [
+        `Export failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      ],
     };
   }
 }
@@ -335,7 +349,7 @@ import { getHealthcarePrismaClient, type HealthcarePrismaClient } from '../clien
 function hashString(input: string): string {
   // Get or generate anonymization salt for LGPD compliance
   const salt = process.env.LGPD_ANONYMIZATION_SALT || generateStaticSalt();
-  
+
   // Create SHA-256 hash with salt for irreversible anonymization
   return createHash('sha256')
     .update(input + salt)
@@ -361,7 +375,9 @@ function convertToCSV(data: any[]): string {
   for (const row of data) {
     const values = headers.map(header => {
       const value = row[header];
-      return typeof value === 'string' ? `"${value.replace(/"/g, '""')}"` : value;
+      return typeof value === 'string'
+        ? `"${value.replace(/"/g, '""')}"`
+        : value;
     });
     csvRows.push(values.join(','));
   }

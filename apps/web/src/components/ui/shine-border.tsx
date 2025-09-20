@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 
-import { cn } from '@neonpro/ui';
+import { cn } from "@neonpro/ui";
 
 interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -31,30 +31,34 @@ interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
 export function ShineBorder({
   borderWidth = 1,
   duration = 14,
-  shineColor = '#AC9469', // NeonPro golden color as default
+  shineColor = "#AC9469", // NeonPro golden color as default
   className,
   style,
   ...props
 }: ShineBorderProps) {
-  const colorValue = Array.isArray(shineColor) ? shineColor.join(',') : shineColor;
+  const colorValue = Array.isArray(shineColor)
+    ? shineColor.join(",")
+    : shineColor;
 
   return (
     <div
       className={cn(
-        'pointer-events-none absolute inset-0 rounded-[inherit] z-0 overflow-hidden',
+        "pointer-events-none absolute inset-0 rounded-[inherit] z-0 overflow-hidden",
         className,
       )}
-      style={{
-        '--border-width': `${borderWidth}px`,
-        '--duration': `${duration}s`,
-        '--shine-color': colorValue,
-        ...style,
-      } as React.CSSProperties}
+      style={
+        {
+          "--border-width": `${borderWidth}px`,
+          "--duration": `${duration}s`,
+          "--shine-color": colorValue,
+          ...style,
+        } as React.CSSProperties
+      }
       {...props}
     >
       {/* Top Border */}
       <div
-        className='absolute top-0 left-0 w-full h-[2px] opacity-0'
+        className="absolute top-0 left-0 w-full h-[2px] opacity-0"
         style={{
           background: `linear-gradient(90deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
           animation: `shine-top ${duration}s infinite linear`,
@@ -63,27 +67,25 @@ export function ShineBorder({
 
       {/* Right Border */}
       <div
-        className='absolute top-0 right-0 w-[2px] h-full opacity-0'
+        className="absolute top-0 right-0 w-[2px] h-full opacity-0"
         style={{
-          background:
-            `linear-gradient(180deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
+          background: `linear-gradient(180deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
           animation: `shine-right ${duration}s infinite linear`,
         }}
       />
 
       {/* Bottom Border */}
       <div
-        className='absolute bottom-0 right-0 w-full h-[2px] opacity-0'
+        className="absolute bottom-0 right-0 w-full h-[2px] opacity-0"
         style={{
-          background:
-            `linear-gradient(270deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
+          background: `linear-gradient(270deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
           animation: `shine-bottom ${duration}s infinite linear`,
         }}
       />
 
       {/* Left Border */}
       <div
-        className='absolute bottom-0 left-0 w-[2px] h-full opacity-0'
+        className="absolute bottom-0 left-0 w-[2px] h-full opacity-0"
         style={{
           background: `linear-gradient(0deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
           animation: `shine-left ${duration}s infinite linear`,

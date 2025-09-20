@@ -15,7 +15,11 @@ import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
 // RLS Policy Types
-type RLSPolicy = 'clinic_isolation' | 'user_context' | 'professional_access' | 'emergency_override';
+type RLSPolicy =
+  | 'clinic_isolation'
+  | 'user_context'
+  | 'professional_access'
+  | 'emergency_override';
 
 interface RLSContext {
   userId: string;
@@ -38,7 +42,11 @@ interface RLSPolicyResult {
  */
 const RLS_POLICIES = {
   // Clinic-based isolation - ensures users only access data from their clinic
-  clinic_isolation: (ctx: RLSContext, model: string, operation: string): RLSPolicyResult => {
+  clinic_isolation: (
+    ctx: RLSContext,
+    model: string,
+    operation: string,
+  ): RLSPolicyResult => {
     if (!ctx.clinicId) {
       return {
         allowed: false,
@@ -57,7 +65,11 @@ const RLS_POLICIES = {
   },
 
   // User context validation - ensures users can only access data they own or are authorized for
-  user_context: (ctx: RLSContext, model: string, operation: string): RLSPolicyResult => {
+  user_context: (
+    ctx: RLSContext,
+    model: string,
+    operation: string,
+  ): RLSPolicyResult => {
     if (!ctx.userId) {
       return {
         allowed: false,
@@ -116,10 +128,7 @@ const RLS_POLICIES = {
         return {
           allowed: true,
           whereClause: {
-            AND: [
-              { clinicId: ctx.clinicId },
-              { patientId: ctx.userId },
-            ],
+            AND: [{ clinicId: ctx.clinicId }, { patientId: ctx.userId }],
           },
         };
     }
@@ -130,7 +139,11 @@ const RLS_POLICIES = {
       fallbackPolicy: 'emergency_override',
     };
   }, // Professional access control - ensures professionals only access authorized data
-  professional_access: (ctx: RLSContext, model: string, operation: string): RLSPolicyResult => {
+  professional_access: (
+    ctx: RLSContext,
+    model: string,
+    operation: string,
+  ): RLSPolicyResult => {
     if (ctx.userRole !== 'professional' || !ctx.professionalId) {
       return {
         allowed: false,
@@ -166,7 +179,11 @@ const RLS_POLICIES = {
   },
 
   // Emergency override - special policy for emergency medical situations
-  emergency_override: (ctx: RLSContext, model: string, operation: string): RLSPolicyResult => {
+  emergency_override: (
+    ctx: RLSContext,
+    model: string,
+    operation: string,
+  ): RLSPolicyResult => {
     if (!ctx.isEmergency) {
       return {
         allowed: false,
@@ -234,7 +251,9 @@ function extractModelName(operation: any): string {
 
   // Fallback to analyzing the operation structure
   const operationStr = operation?.toString() || '';
-  const modelMatch = operationStr.match(/(\w+)\.(findMany|findUnique|create|update|delete)/);
+  const modelMatch = operationStr.match(
+    /(\w+)\.(findMany|findUnique|create|update|delete)/,
+  );
 
   return modelMatch?.[1] || 'Unknown';
 } /**
@@ -272,7 +291,9 @@ function createRLSContext(ctx: any): RLSContext {
   };
 }
 
-function determineAccessLevel(ctx: any): 'read' | 'write' | 'admin' | 'emergency' {
+function determineAccessLevel(
+  ctx: any,
+): 'read' | 'write' | 'admin' | 'emergency' {
   if (ctx.isEmergency) return 'emergency';
   if (ctx.userRole === 'admin' || ctx.userRole === 'owner') return 'admin';
   if (ctx.userRole === 'professional') return 'write';
@@ -294,7 +315,9 @@ function applyRLSPolicies(
     // Default policy for unknown models - clinic isolation
     const policy = RLS_POLICIES.clinic_isolation(rlsContext, model, operation);
     return {
-      where: existingWhere ? { AND: [existingWhere, policy.whereClause] } : policy.whereClause,
+      where: existingWhere
+        ? { AND: [existingWhere, policy.whereClause] }
+        : policy.whereClause,
       allowed: policy.allowed,
       errorMessage: policy.errorMessage,
     };
@@ -311,7 +334,11 @@ function applyRLSPolicies(
 
     if (!result.allowed) {
       // If any policy fails, check for fallback
-      if (result.fallbackPolicy && modelConfig.emergencyAccess && rlsContext.isEmergency) {
+      if (
+        result.fallbackPolicy
+        && modelConfig.emergencyAccess
+        && rlsContext.isEmergency
+      ) {
         const fallbackPolicy = RLS_POLICIES[result.fallbackPolicy];
         const fallbackResult = fallbackPolicy(rlsContext, model, operation);
 
@@ -333,7 +360,9 @@ function applyRLSPolicies(
       combinedWhere = combinedWhere.AND
         ? {
           AND: [
-            ...(Array.isArray(combinedWhere.AND) ? combinedWhere.AND : [combinedWhere.AND]),
+            ...(Array.isArray(combinedWhere.AND)
+              ? combinedWhere.AND
+              : [combinedWhere.AND]),
             result.whereClause,
           ],
         }
@@ -349,15 +378,21 @@ function applyRLSPolicies(
  * Enhanced Prisma client with automatic RLS enforcement
  */
 
-function createRLSEnforcedPrisma(originalPrisma: any, rlsContext: RLSContext, auditMeta: any) {
+function createRLSEnforcedPrisma(
+  originalPrisma: any,
+  rlsContext: RLSContext,
+  auditMeta: any,
+) {
   const enhancedPrisma = new Proxy(originalPrisma, {
     get(target, prop) {
       const originalValue = target[prop];
 
       // If it's a model delegate (like prisma.patient, prisma.appointment)
       if (
-        typeof originalValue === 'object' && originalValue !== null
-        && typeof prop === 'string' && prop !== 'constructor'
+        typeof originalValue === 'object'
+        && originalValue !== null
+        && typeof prop === 'string'
+        && prop !== 'constructor'
       ) {
         return new Proxy(originalValue, {
           get(modelTarget, modelProp) {
@@ -383,7 +418,8 @@ function createRLSEnforcedPrisma(originalPrisma: any, rlsContext: RLSContext, au
                 if (!rlsResult.allowed) {
                   throw new TRPCError({
                     code: 'FORBIDDEN',
-                    message: rlsResult.errorMessage || 'Access denied by Row Level Security policy',
+                    message: rlsResult.errorMessage
+                      || 'Access denied by Row Level Security policy',
                   });
                 }
 
@@ -426,7 +462,13 @@ function createRLSEnforcedPrisma(originalPrisma: any, rlsContext: RLSContext, au
  * Automatically enforces Row Level Security policies for all Prisma operations,
  * ensuring proper multi-tenant data isolation and user context validation.
  */
-export const prismaRLSMiddleware = async ({ ctx, next, path, type, input }: any) => {
+export const prismaRLSMiddleware = async ({
+  ctx,
+  next,
+  path,
+  type,
+  input,
+}: any) => {
   const start = performance.now();
 
   try {
@@ -448,7 +490,11 @@ export const prismaRLSMiddleware = async ({ ctx, next, path, type, input }: any)
 
     // Create RLS-enforced Prisma client
     const originalPrisma = ctx.prisma;
-    ctx.prisma = createRLSEnforcedPrisma(originalPrisma, rlsContext, ctx.auditMeta);
+    ctx.prisma = createRLSEnforcedPrisma(
+      originalPrisma,
+      rlsContext,
+      ctx.auditMeta,
+    );
 
     // Add RLS context for downstream middleware
     ctx.rlsContext = rlsContext;
@@ -461,7 +507,9 @@ export const prismaRLSMiddleware = async ({ ctx, next, path, type, input }: any)
     // Log performance metrics
     const duration = performance.now() - start;
     if (duration > 200) {
-      console.warn(`RLS enforcement exceeded 200ms target: ${duration.toFixed(2)}ms for ${path}`);
+      console.warn(
+        `RLS enforcement exceeded 200ms target: ${duration.toFixed(2)}ms for ${path}`,
+      );
     }
 
     return result;

@@ -56,11 +56,15 @@ export function loggingMiddleware() {
       const duration = Date.now() - startTime;
 
       // Log error response
-      logger.error('Request failed', {
-        ...requestContext,
-        duration,
-        statusCode: 500,
-      }, error as Error);
+      logger.error(
+        'Request failed',
+        {
+          ...requestContext,
+          duration,
+          statusCode: 500,
+        },
+        error as Error,
+      );
 
       throw error;
     }
@@ -81,7 +85,10 @@ export function healthcareAuditMiddleware() {
     const userId = c.get('userId');
 
     if (patientId || clinicId) {
-      const healthcareContext = logUtils.getHealthcareContext(patientId, clinicId);
+      const healthcareContext = logUtils.getHealthcareContext(
+        patientId,
+        clinicId,
+      );
 
       // Log healthcare operation
       logger.auditLog(`Healthcare operation: ${c.req.method} ${c.req.path}`, {
@@ -107,10 +114,14 @@ export function errorLoggingMiddleware() {
       const requestContext = logUtils.getRequestContext(c);
       const errorContext = logUtils.getErrorContext(error as Error);
 
-      logger.error('Unhandled error', {
-        ...requestContext,
-        ...errorContext,
-      }, error as Error);
+      logger.error(
+        'Unhandled error',
+        {
+          ...requestContext,
+          ...errorContext,
+        },
+        error as Error,
+      );
 
       // Re-throw to let other error handlers process it
       throw error;
@@ -139,7 +150,11 @@ export function securityLoggingMiddleware() {
     const userAgent = c.req.header('user-agent') || '';
 
     for (const pattern of suspiciousPatterns) {
-      if (pattern.test(path) || pattern.test(query) || pattern.test(userAgent)) {
+      if (
+        pattern.test(path)
+        || pattern.test(query)
+        || pattern.test(userAgent)
+      ) {
         logger.securityLog('Suspicious request pattern detected', {
           ...requestContext,
           pattern: pattern.toString(),

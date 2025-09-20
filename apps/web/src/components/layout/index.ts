@@ -12,33 +12,37 @@
  */
 
 // Core Components
-export { AppShellWithSidebar } from './AppShellWithSidebar';
-export { BreadcrumbNavigation } from './BreadcrumbNavigation';
-export { EnhancedAppShell } from './EnhancedAppShell';
-export { EnhancedSidebar } from './EnhancedSidebar';
+export { AppShellWithSidebar } from "./AppShellWithSidebar";
+export { BreadcrumbNavigation } from "./BreadcrumbNavigation";
+export { EnhancedAppShell } from "./EnhancedAppShell";
+export { EnhancedSidebar } from "./EnhancedSidebar";
 
 // Enhanced Sidebar Exports
 export {
   EnhancedSidebarProvider,
   useEnhancedSidebar,
   useEnhancedSidebarManagement,
-} from './EnhancedSidebar';
+} from "./EnhancedSidebar";
 
 // Breadcrumb Exports
-export { BreadcrumbItem, BreadcrumbSeparator, useBreadcrumbs } from './BreadcrumbNavigation';
+export {
+  BreadcrumbItem,
+  BreadcrumbSeparator,
+  useBreadcrumbs,
+} from "./BreadcrumbNavigation";
 
 // Integration Guide
-export { SidebarIntegrationGuide } from './SidebarIntegrationGuide';
+export { SidebarIntegrationGuide } from "./SidebarIntegrationGuide";
 
 // Types
-export type { BreadcrumbNavigationProps } from './BreadcrumbNavigation';
+export type { BreadcrumbNavigationProps } from "./BreadcrumbNavigation";
 export type {
   BreadcrumbItem as BreadcrumbItemType,
   EnhancedSidebarContextProps,
   SidebarItem,
   SidebarSection,
   UserPreferences,
-} from './EnhancedSidebar';
+} from "./EnhancedSidebar";
 
 // App Shell Types
-export type { EnhancedAppShellProps } from './EnhancedAppShell';
+export type { EnhancedAppShellProps } from "./EnhancedAppShell";

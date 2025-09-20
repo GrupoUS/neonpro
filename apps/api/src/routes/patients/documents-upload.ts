@@ -12,10 +12,7 @@ const app = new Hono();
 
 // Dependency Injection scaffold for forthcoming service layer
 interface DocumentService {
-  uploadPatientDocument(args: {
-    patientId: string;
-    file: File;
-  }): Promise<{
+  uploadPatientDocument(args: { patientId: string; file: File }): Promise<{
     success: boolean;
     data?: any;
     error?: string;
@@ -48,7 +45,11 @@ app.use(
   '/:id/documents',
   bodyLimit({
     maxSize: 10 * 1024 * 1024,
-    onError: c => c.json({ success: false, error: 'Arquivo excede tamanho máximo (10MB)' }, 413),
+    onError: c =>
+      c.json(
+        { success: false, error: 'Arquivo excede tamanho máximo (10MB)' },
+        413,
+      ),
   }),
 );
 
@@ -69,12 +70,19 @@ app.post('/:id/documents', requireAuth, async c => {
 
   const file = form.get('file');
   if (!(file instanceof File)) {
-    return c.json({ success: false, error: 'Arquivo é obrigatório (campo file)' }, 400);
+    return c.json(
+      { success: false, error: 'Arquivo é obrigatório (campo file)' },
+      400,
+    );
   }
 
   if (!ALLOWED_MIME.has(file.type)) {
     return c.json(
-      { success: false, error: 'Tipo de arquivo não suportado', mimeType: file.type },
+      {
+        success: false,
+        error: 'Tipo de arquivo não suportado',
+        mimeType: file.type,
+      },
       415,
     );
   }
@@ -85,7 +93,9 @@ app.post('/:id/documents', requireAuth, async c => {
 
   // Instantiate default service lazily if not injected (production path)
   if (!documentService) {
-    const { PatientDocumentService } = await import('../../services/patient-document-service');
+    const { PatientDocumentService } = await import(
+      '../../services/patient-document-service'
+    );
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_ANON_KEY;
     let supabaseClient: any = undefined;
@@ -99,28 +109,40 @@ app.post('/:id/documents', requireAuth, async c => {
   // Delegate to service (injected or default)
   if (documentService) {
     try {
-      const result = await documentService.uploadPatientDocument({ patientId, file });
+      const result = await documentService.uploadPatientDocument({
+        patientId,
+        file,
+      });
       if (!result.success) {
-        return c.json({ success: false, error: result.error || 'Falha no upload' }, 500);
+        return c.json(
+          { success: false, error: result.error || 'Falha no upload' },
+          500,
+        );
       }
       return c.json(result, 201);
     } catch (err: any) {
-      return c.json({ success: false, error: err?.message || 'Erro interno' }, 500);
+      return c.json(
+        { success: false, error: err?.message || 'Erro interno' },
+        500,
+      );
     }
   }
 
   // Default placeholder success response (no persistence yet)
-  return c.json({
-    success: true,
-    data: {
-      id: docId,
-      patientId,
-      filename: file.name,
-      mimeType: file.type,
-      size: file.size,
-      createdAt: now,
+  return c.json(
+    {
+      success: true,
+      data: {
+        id: docId,
+        patientId,
+        filename: file.name,
+        mimeType: file.type,
+        size: file.size,
+        createdAt: now,
+      },
     },
-  }, 201);
+    201,
+  );
 });
 
 export default app;

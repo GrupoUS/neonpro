@@ -58,7 +58,9 @@ const AuditEventSchema = z.object({
     previousValues: z.record(z.any()).optional(),
     newValues: z.record(z.any()).optional(),
     accessReason: z.string().optional(),
-    dataClassification: z.enum(['public', 'internal', 'confidential', 'restricted']).optional(),
+    dataClassification: z
+      .enum(['public', 'internal', 'confidential', 'restricted'])
+      .optional(),
   }),
   complianceMetadata: z.object({
     lgpdBasis: z.string().optional(),
@@ -72,7 +74,14 @@ const AuditEventSchema = z.object({
 
 const AuditReportSchema = z.object({
   reportId: z.string().uuid(),
-  reportType: z.enum(['daily', 'weekly', 'monthly', 'compliance', 'security', 'custom']),
+  reportType: z.enum([
+    'daily',
+    'weekly',
+    'monthly',
+    'compliance',
+    'security',
+    'custom',
+  ]),
   generatedAt: z.string().datetime(),
   period: z.object({
     start: z.string().datetime(),
@@ -86,12 +95,14 @@ const AuditReportSchema = z.object({
     securityIncidents: z.number(),
     complianceViolations: z.number(),
   }),
-  topUsers: z.array(z.object({
-    userId: z.string(),
-    userName: z.string(),
-    eventCount: z.number(),
-    riskScore: z.number(),
-  })),
+  topUsers: z.array(
+    z.object({
+      userId: z.string(),
+      userName: z.string(),
+      eventCount: z.number(),
+      riskScore: z.number(),
+    }),
+  ),
   riskAnalysis: z.object({
     overallRisk: z.enum(['low', 'medium', 'high', 'critical']),
     anomalies: z.array(z.string()),
@@ -172,13 +183,16 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
     it('should track sensitive field access separately', async () => {
       // Access sensitive patient fields
-      const sensitiveAccessResponse = await api(`/api/v2/patients/${testPatientId}`, {
-        headers: {
-          ...testAuthHeaders,
-          'X-Decrypt-Fields': 'cpf,medicalHistory,allergies',
-          'X-Access-Reason': 'emergency_treatment',
+      const sensitiveAccessResponse = await api(
+        `/api/v2/patients/${testPatientId}`,
+        {
+          headers: {
+            ...testAuthHeaders,
+            'X-Decrypt-Fields': 'cpf,medicalHistory,allergies',
+            'X-Access-Reason': 'emergency_treatment',
+          },
         },
-      });
+      );
 
       expect(sensitiveAccessResponse.status).toBe(200);
 
@@ -197,24 +211,29 @@ describe('Healthcare Audit Trail Integration Tests', () => {
       expect(auditResponse.status).toBe(200);
       const auditEvents = await auditResponse.json();
 
-      const sensitiveAccess = auditEvents.events.find(
-        (event: any) => event.details.accessedFields?.includes('medicalHistory'),
+      const sensitiveAccess = auditEvents.events.find((event: any) =>
+        event.details.accessedFields?.includes('medicalHistory')
       );
 
       expect(sensitiveAccess).toBeDefined();
       expect(sensitiveAccess.details.dataClassification).toBe('restricted');
       expect(sensitiveAccess.riskLevel).toBe('medium');
-      expect(sensitiveAccess.complianceMetadata.lgpdBasis).toBe('emergency_treatment');
+      expect(sensitiveAccess.complianceMetadata.lgpdBasis).toBe(
+        'emergency_treatment',
+      );
     });
 
     it('should log unauthorized access attempts', async () => {
       // Attempt access without proper authorization
-      const unauthorizedResponse = await api(`/api/v2/patients/${testPatientId}`, {
-        headers: {
-          Authorization: 'Bearer invalid-token',
-          'Content-Type': 'application/json',
+      const unauthorizedResponse = await api(
+        `/api/v2/patients/${testPatientId}`,
+        {
+          headers: {
+            Authorization: 'Bearer invalid-token',
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(unauthorizedResponse.status).toBe(401);
 
@@ -258,15 +277,18 @@ describe('Healthcare Audit Trail Integration Tests', () => {
       };
 
       // Update medical record
-      const updateResponse = await api(`/api/v2/patients/${testPatientId}/medical`, {
-        method: 'PUT',
-        headers: {
-          ...testAuthHeaders,
-          'X-Medical-Procedure': 'consultation_update',
-          'X-Clinical-Justification': 'Regular follow-up appointment',
+      const updateResponse = await api(
+        `/api/v2/patients/${testPatientId}/medical`,
+        {
+          method: 'PUT',
+          headers: {
+            ...testAuthHeaders,
+            'X-Medical-Procedure': 'consultation_update',
+            'X-Clinical-Justification': 'Regular follow-up appointment',
+          },
+          body: JSON.stringify(medicalUpdate),
         },
-        body: JSON.stringify(medicalUpdate),
-      });
+      );
 
       expect(updateResponse.status).toBe(200);
 
@@ -291,7 +313,10 @@ describe('Healthcare Audit Trail Integration Tests', () => {
           userCrm: 'CRM-123456',
           action: 'update_medical_history',
           details: expect.objectContaining({
-            changedFields: expect.arrayContaining(['medicalHistory', 'allergies']),
+            changedFields: expect.arrayContaining([
+              'medicalHistory',
+              'allergies',
+            ]),
             clinicalJustification: 'Regular follow-up appointment',
           }),
           complianceMetadata: expect.objectContaining({
@@ -313,7 +338,9 @@ describe('Healthcare Audit Trail Integration Tests', () => {
           },
         ],
         instructions: 'Tomar com água, preferencialmente pela manhã',
-        validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        validUntil: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
       };
 
       // Create prescription
@@ -538,7 +565,9 @@ describe('Healthcare Audit Trail Integration Tests', () => {
         headers: testAuthHeaders,
         body: JSON.stringify({
           period: {
-            start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+            start: new Date(
+              Date.now() - 30 * 24 * 60 * 60 * 1000,
+            ).toISOString(),
             end: new Date().toISOString(),
           },
           includePresciptions: true,
@@ -693,17 +722,20 @@ describe('Healthcare Audit Trail Integration Tests', () => {
 
     it('should trigger alerts for critical audit events', async () => {
       // Simulate a critical security event
-      const criticalEventResponse = await api('/api/v2/audit/simulate-critical', {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify({
-          eventType: 'mass_data_export',
-          details: {
-            recordCount: 1000,
-            exportType: 'patient_records',
-          },
-        }),
-      });
+      const criticalEventResponse = await api(
+        '/api/v2/audit/simulate-critical',
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify({
+            eventType: 'mass_data_export',
+            details: {
+              recordCount: 1000,
+              exportType: 'patient_records',
+            },
+          }),
+        },
+      );
 
       expect(criticalEventResponse.status).toBe(201);
 

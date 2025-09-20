@@ -102,7 +102,9 @@ export const router = t.router;
 export const middleware = t.middleware;
 
 // Public procedures (minimal middleware for performance)
-export const publicProcedure = t.procedure.use(t.middleware(lgpdAuditMiddleware));
+export const publicProcedure = t.procedure.use(
+  t.middleware(lgpdAuditMiddleware),
+);
 
 // Protected procedures (authenticated users)
 export const protectedProcedure = t.procedure

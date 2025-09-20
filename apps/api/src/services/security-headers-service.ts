@@ -47,7 +47,10 @@ export interface SecurityHeaderConfig {
   referrerPolicy: string;
   permissionsPolicy: string;
   crossOriginEmbedderPolicy: 'require-corp' | 'credentialless' | 'unsafe-none';
-  crossOriginOpenerPolicy: 'same-origin' | 'same-origin-allow-popups' | 'unsafe-none';
+  crossOriginOpenerPolicy:
+    | 'same-origin'
+    | 'same-origin-allow-popups'
+    | 'unsafe-none';
   crossOriginResourcePolicy: 'same-origin' | 'same-site' | 'cross-origin';
 }
 
@@ -199,7 +202,9 @@ export class SecurityHeadersService {
   /**
    * Generate security headers based on healthcare context
    */
-  generateSecurityHeaders(context: HealthcareSecurityContext): SecurityHeadersResult {
+  generateSecurityHeaders(
+    context: HealthcareSecurityContext,
+  ): SecurityHeadersResult {
     try {
       const config = this.selectConfig(context);
       const headers: Record<string, string> = {};
@@ -219,7 +224,9 @@ export class SecurityHeadersService {
         appliedHeaders.push('CSP');
       } else {
         missingHeaders.push('CSP');
-        recommendations.push('Enable Content Security Policy for enhanced security');
+        recommendations.push(
+          'Enable Content Security Policy for enhanced security',
+        );
       }
 
       // HTTP Strict Transport Security
@@ -279,7 +286,11 @@ export class SecurityHeadersService {
       headers['Expires'] = '0';
 
       // Calculate security score
-      const securityScore = this.calculateSecurityScore(appliedHeaders, missingHeaders, context);
+      const securityScore = this.calculateSecurityScore(
+        appliedHeaders,
+        missingHeaders,
+        context,
+      );
 
       // Generate context-specific recommendations
       const contextRecommendations = this.generateContextRecommendations(context);
@@ -310,7 +321,9 @@ export class SecurityHeadersService {
   /**
    * Select appropriate security configuration based on context
    */
-  private selectConfig(context: HealthcareSecurityContext): SecurityHeaderConfig {
+  private selectConfig(
+    context: HealthcareSecurityContext,
+  ): SecurityHeaderConfig {
     if (context.sensitivityLevel === 'critical' || context.handlesMedicalData) {
       return this.configs.medical_data;
     }
@@ -436,7 +449,11 @@ export class SecurityHeadersService {
     });
 
     // Deduct for missing important headers
-    const importantHeaders = ['X-Content-Type-Options', 'X-Frame-Options', 'X-XSS-Protection'];
+    const importantHeaders = [
+      'X-Content-Type-Options',
+      'X-Frame-Options',
+      'X-XSS-Protection',
+    ];
     importantHeaders.forEach(header => {
       if (!appliedHeaders.includes(header)) {
         score -= 10;
@@ -444,7 +461,10 @@ export class SecurityHeadersService {
     });
 
     // Bonus for healthcare-specific security
-    if (context.handlesMedicalData && appliedHeaders.includes('Healthcare-Security')) {
+    if (
+      context.handlesMedicalData
+      && appliedHeaders.includes('Healthcare-Security')
+    ) {
       score += 5;
     }
 
@@ -459,22 +479,32 @@ export class SecurityHeadersService {
   /**
    * Generate context-specific security recommendations
    */
-  private generateContextRecommendations(context: HealthcareSecurityContext): string[] {
+  private generateContextRecommendations(
+    context: HealthcareSecurityContext,
+  ): string[] {
     const recommendations: string[] = [];
 
     if (context.handlesMedicalData) {
-      recommendations.push('Implement additional encryption for medical data in transit');
-      recommendations.push('Consider additional monitoring for medical data endpoints');
+      recommendations.push(
+        'Implement additional encryption for medical data in transit',
+      );
+      recommendations.push(
+        'Consider additional monitoring for medical data endpoints',
+      );
     }
 
     if (context.sensitivityLevel === 'critical') {
-      recommendations.push('Enable advanced threat detection for critical endpoints');
+      recommendations.push(
+        'Enable advanced threat detection for critical endpoints',
+      );
       recommendations.push('Implement additional authentication factors');
     }
 
     if (context.isEmergencyAccess) {
       recommendations.push('Maintain detailed audit logs for emergency access');
-      recommendations.push('Consider temporary security relaxation for emergency scenarios');
+      recommendations.push(
+        'Consider temporary security relaxation for emergency scenarios',
+      );
     }
 
     return recommendations;
@@ -483,18 +513,21 @@ export class SecurityHeadersService {
   /**
    * Handle CSP violation reports
    */
-  async handleCSPViolation(report: {
-    'csp-report': {
-      'blocked-uri': string;
-      'violated-directive': string;
-      'original-policy': string;
-      'document-uri': string;
-      referrer: string;
-    };
-  }, request: {
-    headers: Record<string, string>;
-    ip: string;
-  }): Promise<void> {
+  async handleCSPViolation(
+    report: {
+      'csp-report': {
+        'blocked-uri': string;
+        'violated-directive': string;
+        'original-policy': string;
+        'document-uri': string;
+        referrer: string;
+      };
+    },
+    request: {
+      headers: Record<string, string>;
+      ip: string;
+    },
+  ): Promise<void> {
     try {
       const cspReport = report['csp-report'];
 
@@ -537,11 +570,7 @@ export class SecurityHeadersService {
       'connect-src',
     ];
 
-    const highRiskBlockedUris = [
-      'data:',
-      'javascript:',
-      'http:',
-    ];
+    const highRiskBlockedUris = ['data:', 'javascript:', 'http:'];
 
     return (
       highRiskDirectives.includes(violation.violatedDirective)
@@ -642,7 +671,10 @@ export class SecurityHeadersService {
         });
       }
 
-      if (config.csp.scriptSrc && config.csp.scriptSrc.includes('\'unsafe-inline\'')) {
+      if (
+        config.csp.scriptSrc
+        && config.csp.scriptSrc.includes('\'unsafe-inline\'')
+      ) {
         validationErrors.push({
           type: 'warning',
           message: 'CSP script-src contains \'unsafe-inline\' which reduces security',
@@ -653,7 +685,8 @@ export class SecurityHeadersService {
 
     // Validate HSTS configuration
     if (config.hsts.enabled) {
-      if (config.hsts.maxAge < 31536000) { // Less than 1 year
+      if (config.hsts.maxAge < 31536000) {
+        // Less than 1 year
         validationErrors.push({
           type: 'warning',
           message: 'HSTS max-age should be at least 1 year for optimal security',
@@ -698,7 +731,10 @@ export class SecurityHeadersService {
           isEmergencyAccess: c.req.header('x-emergency-access') === 'true',
           userRole: c.req.header('x-user-role') || 'anonymous',
           patientId: c.req.header('x-patient-id'),
-          sensitivityLevel: this.assessSensitivityLevel(c.req.url, c.req.method),
+          sensitivityLevel: this.assessSensitivityLevel(
+            c.req.url,
+            c.req.method,
+          ),
         };
 
         // Generate security headers

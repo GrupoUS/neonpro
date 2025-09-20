@@ -42,10 +42,13 @@ rlsPatients.get('/', async (c: Context<{ Variables: Variables }>) => {
 
     if (error) {
       console.error('RLS query error:', error);
-      return c.json({
-        error: 'Failed to fetch patients with RLS',
-        details: error.message,
-      }, 500);
+      return c.json(
+        {
+          error: 'Failed to fetch patients with RLS',
+          details: error.message,
+        },
+        500,
+      );
     }
 
     // Log successful access
@@ -85,7 +88,8 @@ rlsPatients.get(
       // Use RLS-aware query for single patient
       const { data: patient, error } = await (rlsQuery as any).client
         .from('patients')
-        .select(`
+        .select(
+          `
         *,
         clinic:clinics(id, name),
         consent_records(
@@ -96,36 +100,48 @@ rlsPatients.get(
           given_at,
           expires_at
         )
-      `)
+      `,
+        )
         .eq('id', patientId)
         .single();
 
       if (error) {
         if (error.code === 'PGRST116') {
-          return c.json({
-            error: 'Patient not found or access denied',
-            code: 'PATIENT_NOT_FOUND_OR_ACCESS_DENIED',
-          }, 404);
+          return c.json(
+            {
+              error: 'Patient not found or access denied',
+              code: 'PATIENT_NOT_FOUND_OR_ACCESS_DENIED',
+            },
+            404,
+          );
         }
 
         console.error('RLS patient query error:', error);
-        return c.json({
-          error: 'Failed to fetch patient with RLS',
-          details: error.message,
-        }, 500);
+        return c.json(
+          {
+            error: 'Failed to fetch patient with RLS',
+            details: error.message,
+          },
+          500,
+        );
       }
 
       // Additional LGPD compliance check
       if (!patient.lgpd_consent_given) {
-        return c.json({
-          error: 'Patient has not provided LGPD consent',
-          code: 'LGPD_CONSENT_REQUIRED',
-          patientId,
-        }, 403);
+        return c.json(
+          {
+            error: 'Patient has not provided LGPD consent',
+            code: 'LGPD_CONSENT_REQUIRED',
+            patientId,
+          },
+          403,
+        );
       }
 
       // Log successful access
-      console.log(`RLS Patient Detail Access: User ${userId} accessed patient ${patientId}`);
+      console.log(
+        `RLS Patient Detail Access: User ${userId} accessed patient ${patientId}`,
+      );
 
       return c.json({
         patient,
@@ -171,10 +187,13 @@ rlsPatients.get(
 
       if (error) {
         console.error('RLS appointments query error:', error);
-        return c.json({
-          error: 'Failed to fetch appointments with RLS',
-          details: error.message,
-        }, 500);
+        return c.json(
+          {
+            error: 'Failed to fetch appointments with RLS',
+            details: error.message,
+          },
+          500,
+        );
       }
 
       // Log successful access
@@ -215,14 +234,20 @@ rlsPatients.get(
       const _userId = c.get('userId');
 
       // Use RLS-aware consent query
-      const { data: consentRecords, error } = await rlsQuery.getConsentRecords(patientId, purpose);
+      const { data: consentRecords, error } = await rlsQuery.getConsentRecords(
+        patientId,
+        purpose,
+      );
 
       if (error) {
         console.error('RLS consent query error:', error);
-        return c.json({
-          error: 'Failed to fetch consent records with RLS',
-          details: error.message,
-        }, 500);
+        return c.json(
+          {
+            error: 'Failed to fetch consent records with RLS',
+            details: error.message,
+          },
+          500,
+        );
       }
 
       // Log successful access

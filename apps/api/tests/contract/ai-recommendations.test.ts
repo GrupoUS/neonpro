@@ -17,6 +17,9 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createTestClient } from '../helpers/auth';
 import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
 
+// Import test setup to configure mocks
+import '../../src/test-setup';
+
 describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
   let testClient: any;
   let patientId: string;
@@ -470,7 +473,12 @@ describe('Contract Test T011: POST /api/v1/ai/recommendations', () => {
         deviceInformation: expect.arrayContaining([
           expect.objectContaining({
             deviceName: expect.any(String),
-            anvisaClassification: expect.oneOf(['class_i', 'class_ii', 'class_iii', 'class_iv']),
+            anvisaClassification: expect.oneOf([
+              'class_i',
+              'class_ii',
+              'class_iii',
+              'class_iv',
+            ]),
             registrationNumber: expect.any(String),
             certificationRequired: expect.any(Boolean),
             operatorTraining: expect.any(String),

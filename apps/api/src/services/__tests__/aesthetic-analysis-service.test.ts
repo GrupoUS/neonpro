@@ -47,7 +47,9 @@ const createChainableMock = (tableName: string) => {
     eq: vi.fn(() => ({
       single: vi.fn(() =>
         Promise.resolve({
-          data: { granted_permissions: ['skin_analysis', 'procedure_recommendation'] },
+          data: {
+            granted_permissions: ['skin_analysis', 'procedure_recommendation'],
+          },
           error: null,
         })
       ),
@@ -198,7 +200,11 @@ describe('AestheticAnalysisService', () => {
         contra => contra.contraindication === 'smoking_laser_therapy',
       );
 
-      if (result.recommended_procedures.some(rec => rec.procedure.category === 'laser')) {
+      if (
+        result.recommended_procedures.some(
+          rec => rec.procedure.category === 'laser',
+        )
+      ) {
         expect(smokingContraindication).toBeDefined();
         expect(smokingContraindication?.severity).toBe('relative');
       }
@@ -237,7 +243,9 @@ describe('AestheticAnalysisService', () => {
         'clinic-789',
       );
 
-      expect(result.follow_up_recommendations.maintenance_schedule).toBe('Avaliação trimestral');
+      expect(result.follow_up_recommendations.maintenance_schedule).toBe(
+        'Avaliação trimestral',
+      );
 
       // Test younger patient
       const youngerPatientRequest = {
@@ -308,7 +316,9 @@ describe('AestheticAnalysisService', () => {
         );
 
         // Reasonable price ranges for Brazilian market
-        expect(recommendation.estimated_cost_brl.min).toBeGreaterThanOrEqual(300);
+        expect(recommendation.estimated_cost_brl.min).toBeGreaterThanOrEqual(
+          300,
+        );
         expect(recommendation.estimated_cost_brl.max).toBeLessThanOrEqual(5000);
       }
     });
@@ -344,7 +354,12 @@ describe('AestheticAnalysisService', () => {
             eq: vi.fn(() => ({
               single: vi.fn(() =>
                 Promise.resolve({
-                  data: { granted_permissions: ['skin_analysis', 'procedure_recommendation'] },
+                  data: {
+                    granted_permissions: [
+                      'skin_analysis',
+                      'procedure_recommendation',
+                    ],
+                  },
                 })
               ),
             })),
@@ -370,15 +385,22 @@ describe('AestheticAnalysisService', () => {
 
   describe('getTreatmentProtocol', () => {
     it('should return detailed treatment protocol with steps and recovery timeline', async () => {
-      const protocol = await service.getTreatmentProtocol('botox_001', 'adult_female');
+      const protocol = await service.getTreatmentProtocol(
+        'botox_001',
+        'adult_female',
+      );
 
       expect(protocol).toBeDefined();
       expect(protocol?.protocol_steps).toHaveLength(2);
       expect(protocol?.recovery_timeline).toHaveLength(1);
 
       // Verify protocol includes Brazilian regulatory compliance
-      expect(protocol?.protocol_steps[0].precautions).toContain('Técnica asséptica rigorosa');
-      expect(protocol?.recovery_timeline[0].warning_signs).toContain('Dor intensa');
+      expect(protocol?.protocol_steps[0].precautions).toContain(
+        'Técnica asséptica rigorosa',
+      );
+      expect(protocol?.recovery_timeline[0].warning_signs).toContain(
+        'Dor intensa',
+      );
     });
   });
 
@@ -410,7 +432,10 @@ describe('AestheticAnalysisService', () => {
                         id: 'consent_001',
                         patient_id: 'patient_123',
                         consent_timestamp: new Date().toISOString(),
-                        granted_permissions: ['skin_analysis', 'procedure_recommendation'],
+                        granted_permissions: [
+                          'skin_analysis',
+                          'procedure_recommendation',
+                        ],
                       },
                     ],
                     error: null,
@@ -463,7 +488,9 @@ describe('AestheticAnalysisService', () => {
         'clinic-789',
       );
 
-      expect(result.follow_up_recommendations.red_flags).toContain('Dor intensa ou persistente');
+      expect(result.follow_up_recommendations.red_flags).toContain(
+        'Dor intensa ou persistente',
+      );
       expect(result.follow_up_recommendations.red_flags).toContain(
         'Sinais de infecção (vermelhidão, calor, secreção)',
       );

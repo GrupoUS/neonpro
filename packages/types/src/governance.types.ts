@@ -2,17 +2,38 @@
 // Generated from database schema - DO NOT EDIT MANUALLY
 
 // Enums matching database schema
-export type AuditAction = 'VIEW' | 'CREATE' | 'UPDATE' | 'DELETE' | 'EXPORT' | 'LOGIN' | 'LOGOUT';
-export type ResourceType = 'PATIENT_RECORD' | 'REPORT' | 'SYSTEM_CONFIG' | 'USER_ACCOUNT' | 'HEALTHCARE_METRIC';
-export type AuditStatus = 'SUCCESS' | 'FAILED' | 'BLOCKED';
-export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-export type KPIStatus = 'ACTIVE' | 'ARCHIVED' | 'PROVISIONAL';
-export type ComplianceFramework = 'HIPAA' | 'LGPD' | 'GDPR' | 'SOC2';
-export type ComplianceStatusEnum = 'COMPLIANT' | 'NON_COMPLIANT' | 'UNDER_REVIEW' | 'CRITICAL';
-export type AIModelStatus = 'ACTIVE' | 'INACTIVE' | 'TRAINING' | 'DEPRECATED';
-export type PolicyStatus = 'ACTIVE' | 'DRAFT' | 'ARCHIVED' | 'UNDER_REVIEW';
-export type EscalationPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
-export type EscalationStatus = 'OPEN' | 'IN_PROGRESS' | 'ESCALATED' | 'RESOLVED' | 'CLOSED';
+export type AuditAction =
+  | "VIEW"
+  | "CREATE"
+  | "UPDATE"
+  | "DELETE"
+  | "EXPORT"
+  | "LOGIN"
+  | "LOGOUT";
+export type ResourceType =
+  | "PATIENT_RECORD"
+  | "REPORT"
+  | "SYSTEM_CONFIG"
+  | "USER_ACCOUNT"
+  | "HEALTHCARE_METRIC";
+export type AuditStatus = "SUCCESS" | "FAILED" | "BLOCKED";
+export type RiskLevel = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type KPIStatus = "ACTIVE" | "ARCHIVED" | "PROVISIONAL";
+export type ComplianceFramework = "HIPAA" | "LGPD" | "GDPR" | "SOC2";
+export type ComplianceStatusEnum =
+  | "COMPLIANT"
+  | "NON_COMPLIANT"
+  | "UNDER_REVIEW"
+  | "CRITICAL";
+export type AIModelStatus = "ACTIVE" | "INACTIVE" | "TRAINING" | "DEPRECATED";
+export type PolicyStatus = "ACTIVE" | "DRAFT" | "ARCHIVED" | "UNDER_REVIEW";
+export type EscalationPriority = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type EscalationStatus =
+  | "OPEN"
+  | "IN_PROGRESS"
+  | "ESCALATED"
+  | "RESOLVED"
+  | "CLOSED";
 
 // Audit Trail Types
 export interface AuditTrailEntry {
@@ -59,7 +80,7 @@ export interface KPIMetric {
   category: string;
   currentValue: number;
   targetValue: number;
-  direction: 'higher_better' | 'lower_better' | 'target_exact';
+  direction: "higher_better" | "lower_better" | "target_exact";
   unit?: string;
   status: KPIStatus;
   threshold?: number;
@@ -72,7 +93,7 @@ export interface CreateKPIMetric {
   category: string;
   currentValue: number;
   targetValue: number;
-  direction: 'higher_better' | 'lower_better' | 'target_exact';
+  direction: "higher_better" | "lower_better" | "target_exact";
   unit?: string;
   status?: KPIStatus;
   threshold?: number;
@@ -122,7 +143,7 @@ export interface RiskAssessment {
   severity: RiskLevel;
   likelihood: RiskLevel;
   impact: RiskLevel;
-  status: 'Open' | 'Mitigated' | 'Accepted' | 'Transferred';
+  status: "Open" | "Mitigated" | "Accepted" | "Transferred";
   mitigation?: string;
   owner?: string;
   dueDate?: Date;
@@ -138,7 +159,7 @@ export interface CreateRiskAssessment {
   severity: RiskLevel;
   likelihood: RiskLevel;
   impact: RiskLevel;
-  status?: 'Open' | 'Mitigated' | 'Accepted' | 'Transferred';
+  status?: "Open" | "Mitigated" | "Accepted" | "Transferred";
   mitigation?: string;
   owner?: string;
   dueDate?: Date;
@@ -298,9 +319,11 @@ export interface ComplianceStatusData {
 export interface GovernanceService {
   // Audit Trail
   createAuditEntry(entry: CreateAuditTrailEntry): Promise<AuditTrailEntry>;
-  getAuditTrail(
-    filters?: AuditTrailFilters,
-  ): Promise<{ entries: AuditTrailEntry[]; totalCount: number; filteredCount: number }>;
+  getAuditTrail(filters?: AuditTrailFilters): Promise<{
+    entries: AuditTrailEntry[];
+    totalCount: number;
+    filteredCount: number;
+  }>;
 
   // KPI Metrics
   getKPIMetrics(): Promise<KPIMetric[]>;
@@ -308,11 +331,16 @@ export interface GovernanceService {
 
   // Compliance Status
   getComplianceStatus(clinicId: string): Promise<ComplianceStatus[]>;
-  updateComplianceStatus(id: string, updates: Partial<ComplianceStatus>): Promise<ComplianceStatus>;
+  updateComplianceStatus(
+    id: string,
+    updates: Partial<ComplianceStatus>,
+  ): Promise<ComplianceStatus>;
 
   // Risk Assessment
   getRiskAssessments(clinicId: string): Promise<RiskAssessment[]>;
-  createRiskAssessment(assessment: CreateRiskAssessment): Promise<RiskAssessment>;
+  createRiskAssessment(
+    assessment: CreateRiskAssessment,
+  ): Promise<RiskAssessment>;
 
   // AI Governance
   getAIGovernanceMetrics(): Promise<AIGovernanceMetric[]>;
@@ -323,12 +351,19 @@ export interface GovernanceService {
 
   // Policy Management
   getPolicies(): Promise<PolicyManagement[]>;
-  updatePolicy(id: string, updates: Partial<PolicyManagement>): Promise<PolicyManagement>;
+  updatePolicy(
+    id: string,
+    updates: Partial<PolicyManagement>,
+  ): Promise<PolicyManagement>;
 
   // Escalation Workflow
   getEscalations(filters?: EscalationFilters): Promise<EscalationWorkflow[]>;
-  createEscalation(escalation: CreateEscalationWorkflow): Promise<EscalationWorkflow>;
-  updateEscalation(update: UpdateEscalationWorkflow): Promise<EscalationWorkflow>;
+  createEscalation(
+    escalation: CreateEscalationWorkflow,
+  ): Promise<EscalationWorkflow>;
+  updateEscalation(
+    update: UpdateEscalationWorkflow,
+  ): Promise<EscalationWorkflow>;
 }
 
 export interface AuditTrailFilters {

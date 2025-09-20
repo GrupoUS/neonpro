@@ -46,7 +46,9 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       const result = await service.generateResponse({
         provider: 'anthropic',
         model: 'claude-3',
-        messages: [{ role: 'user', content: 'Preciso de ajuda com minha consulta' }],
+        messages: [
+          { role: 'user', content: 'Preciso de ajuda com minha consulta' },
+        ],
         patientId: 'patient-123',
       });
 
@@ -62,7 +64,9 @@ describe('AI Chat Service with Multi-Model Support (T039)', () => {
       const result = await service.generateResponse({
         provider: 'google',
         model: 'gemini-pro',
-        messages: [{ role: 'user', content: 'Quais são os sintomas de gripe?' }],
+        messages: [
+          { role: 'user', content: 'Quais são os sintomas de gripe?' },
+        ],
         patientId: 'patient-123',
       });
 

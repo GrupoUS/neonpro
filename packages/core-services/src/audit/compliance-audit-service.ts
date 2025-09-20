@@ -1,9 +1,9 @@
 // Generic Compliance Audit Service (Phase 4)
 // Complements existing AuditService with generic action/actor audit logging
 
-import type { 
-  GenericAuditEvent, 
-  ConsentReference, 
+import type {
+  GenericAuditEvent,
+  ConsentReference,
   ComplianceFramework,
   ComplianceReport,
   AuditSearchFilters,
@@ -11,9 +11,9 @@ import type {
   RiskLevel,
   ComplianceStatus,
   AuditAction,
-  ActorType
-} from './types';
-import { ComplianceValidator } from './validators';
+  ActorType,
+} from "./types";
+import { ComplianceValidator } from "./validators";
 
 export interface ComplianceAuditConfig {
   /** Default frameworks to apply */
@@ -38,11 +38,11 @@ export class ComplianceAuditService {
 
   constructor(config?: Partial<ComplianceAuditConfig>) {
     this.config = {
-      defaultFrameworks: ['LGPD', 'ANVISA', 'CFM'],
+      defaultFrameworks: ["LGPD", "ANVISA", "CFM"],
       autoValidate: true,
       persistEvents: false, // In-memory by default for Phase 4
       maxMemoryEvents: 1000,
-      ...config
+      ...config,
     };
   }
 
@@ -72,7 +72,6 @@ export class ComplianceAuditService {
     userAgent?: string;
     sessionId?: string;
   }): Promise<GenericAuditEvent> {
-    
     const auditEvent: GenericAuditEvent = {
       id: `audit-${Date.now()}-${Math.random().toString(36).substring(2)}`,
       action: params.action,
@@ -81,13 +80,13 @@ export class ComplianceAuditService {
       resource: params.resource,
       clinicId: params.clinicId,
       consentRef: params.consentRef,
-      riskLevel: 'LOW', // Will be updated by validation
-      complianceStatus: 'UNKNOWN', // Will be updated by validation
+      riskLevel: "LOW", // Will be updated by validation
+      complianceStatus: "UNKNOWN", // Will be updated by validation
       metadata: params.metadata,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
       sessionId: params.sessionId,
-      frameworks: params.frameworks || this.config.defaultFrameworks
+      frameworks: params.frameworks || this.config.defaultFrameworks,
     };
 
     // Auto-validate if enabled
@@ -95,7 +94,7 @@ export class ComplianceAuditService {
       const validation = ComplianceValidator.validateEvent(auditEvent);
       auditEvent.complianceStatus = validation.complianceStatus;
       auditEvent.riskLevel = validation.riskLevel;
-      
+
       if (validation.violations.length > 0) {
         this.violations.set(auditEvent.id, validation.violations);
       }
@@ -103,7 +102,7 @@ export class ComplianceAuditService {
 
     // Store in memory
     this.events.set(auditEvent.id, auditEvent);
-    
+
     // Cleanup old events if over limit
     this.cleanupOldEvents();
 
@@ -126,7 +125,7 @@ export class ComplianceAuditService {
     sessionId?: string;
   }): Promise<GenericAuditEvent> {
     return this.logEvent({
-      action: 'READ',
+      action: "READ",
       actor: { id: params.actorId, type: params.actorType },
       resource: { type: params.resourceType, id: params.resourceId },
       clinicId: params.clinicId,
@@ -134,7 +133,7 @@ export class ComplianceAuditService {
       metadata: params.metadata,
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
-      sessionId: params.sessionId
+      sessionId: params.sessionId,
     });
   }
 
@@ -151,21 +150,21 @@ export class ComplianceAuditService {
     userAgent?: string;
   }): Promise<GenericAuditEvent> {
     return this.logEvent({
-      action: 'CONSENT_GRANT',
-      actor: { 
-        id: params.grantedBy || params.patientId, 
-        type: params.grantedBy ? 'ADMIN' : 'PATIENT' 
+      action: "CONSENT_GRANT",
+      actor: {
+        id: params.grantedBy || params.patientId,
+        type: params.grantedBy ? "ADMIN" : "PATIENT",
       },
-      resource: { 
-        type: 'consent', 
+      resource: {
+        type: "consent",
         id: params.consentRef.id,
-        category: params.consentRef.type 
+        category: params.consentRef.type,
       },
       clinicId: params.clinicId,
       consentRef: params.consentRef,
       metadata: { ...params.metadata, patientId: params.patientId },
       ipAddress: params.ipAddress,
-      userAgent: params.userAgent
+      userAgent: params.userAgent,
     });
   }
 
@@ -183,25 +182,25 @@ export class ComplianceAuditService {
     userAgent?: string;
   }): Promise<GenericAuditEvent> {
     return this.logEvent({
-      action: 'CONSENT_REVOKE',
-      actor: { 
-        id: params.revokedBy || params.patientId, 
-        type: params.revokedBy ? 'ADMIN' : 'PATIENT' 
+      action: "CONSENT_REVOKE",
+      actor: {
+        id: params.revokedBy || params.patientId,
+        type: params.revokedBy ? "ADMIN" : "PATIENT",
       },
-      resource: { 
-        type: 'consent', 
+      resource: {
+        type: "consent",
         id: params.consentRef.id,
-        category: params.consentRef.type 
+        category: params.consentRef.type,
       },
       clinicId: params.clinicId,
       consentRef: params.consentRef,
-      metadata: { 
-        ...params.metadata, 
+      metadata: {
+        ...params.metadata,
         patientId: params.patientId,
-        reason: params.reason 
+        reason: params.reason,
       },
       ipAddress: params.ipAddress,
-      userAgent: params.userAgent
+      userAgent: params.userAgent,
     });
   }
 
@@ -209,7 +208,7 @@ export class ComplianceAuditService {
    * Log medical action (prescription, diagnosis)
    */
   async logMedicalAction(params: {
-    action: 'PRESCRIBE' | 'DIAGNOSE';
+    action: "PRESCRIBE" | "DIAGNOSE";
     doctorId: string;
     patientId: string;
     resourceId: string;
@@ -222,27 +221,27 @@ export class ComplianceAuditService {
   }): Promise<GenericAuditEvent> {
     return this.logEvent({
       action: params.action,
-      actor: { 
-        id: params.doctorId, 
-        type: 'DOCTOR',
+      actor: {
+        id: params.doctorId,
+        type: "DOCTOR",
         name: params.metadata?.doctorName,
-        email: params.metadata?.doctorEmail 
+        email: params.metadata?.doctorEmail,
       },
-      resource: { 
-        type: params.action.toLowerCase(), 
+      resource: {
+        type: params.action.toLowerCase(),
         id: params.resourceId,
-        category: 'medical' 
+        category: "medical",
       },
       clinicId: params.clinicId,
       consentRef: params.consentRef,
-      metadata: { 
-        ...params.metadata, 
-        patientId: params.patientId 
+      metadata: {
+        ...params.metadata,
+        patientId: params.patientId,
       },
-      frameworks: ['LGPD', 'ANVISA', 'CFM'], // All frameworks for medical actions
+      frameworks: ["LGPD", "ANVISA", "CFM"], // All frameworks for medical actions
       ipAddress: params.ipAddress,
       userAgent: params.userAgent,
-      sessionId: params.sessionId
+      sessionId: params.sessionId,
     });
   }
 
@@ -250,55 +249,67 @@ export class ComplianceAuditService {
    * Search audit events
    */
   async searchEvents(
-    clinicId: string, 
+    clinicId: string,
     filters?: AuditSearchFilters,
-    limit: number = 100
+    limit: number = 100,
   ): Promise<GenericAuditEvent[]> {
-    let results = Array.from(this.events.values())
-      .filter(event => event.clinicId === clinicId);
+    let results = Array.from(this.events.values()).filter(
+      (event) => event.clinicId === clinicId,
+    );
 
     if (filters) {
       if (filters.action) {
-        results = results.filter(e => e.action === filters.action);
+        results = results.filter((e) => e.action === filters.action);
       }
       if (filters.actorType) {
-        results = results.filter(e => e.actor.type === filters.actorType);
+        results = results.filter((e) => e.actor.type === filters.actorType);
       }
       if (filters.actorId) {
-        results = results.filter(e => e.actor.id === filters.actorId);
+        results = results.filter((e) => e.actor.id === filters.actorId);
       }
       if (filters.resourceType) {
-        results = results.filter(e => e.resource.type === filters.resourceType);
+        results = results.filter(
+          (e) => e.resource.type === filters.resourceType,
+        );
       }
       if (filters.resourceId) {
-        results = results.filter(e => e.resource.id === filters.resourceId);
+        results = results.filter((e) => e.resource.id === filters.resourceId);
       }
       if (filters.riskLevel) {
-        results = results.filter(e => e.riskLevel === filters.riskLevel);
+        results = results.filter((e) => e.riskLevel === filters.riskLevel);
       }
       if (filters.complianceStatus) {
-        results = results.filter(e => e.complianceStatus === filters.complianceStatus);
+        results = results.filter(
+          (e) => e.complianceStatus === filters.complianceStatus,
+        );
       }
       if (filters.framework) {
-        results = results.filter(e => e.frameworks.includes(filters.framework!));
+        results = results.filter((e) =>
+          e.frameworks.includes(filters.framework!),
+        );
       }
       if (filters.startDate) {
-        results = results.filter(e => e.timestamp >= filters.startDate!);
+        results = results.filter((e) => e.timestamp >= filters.startDate!);
       }
       if (filters.endDate) {
-        results = results.filter(e => e.timestamp <= filters.endDate!);
+        results = results.filter((e) => e.timestamp <= filters.endDate!);
       }
       if (filters.sessionId) {
-        results = results.filter(e => e.sessionId === filters.sessionId);
+        results = results.filter((e) => e.sessionId === filters.sessionId);
       }
       if (filters.consentRefId) {
-        results = results.filter(e => e.consentRef?.id === filters.consentRefId);
+        results = results.filter(
+          (e) => e.consentRef?.id === filters.consentRefId,
+        );
       }
     }
 
     // Sort by timestamp (newest first) and limit
     return results
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+      )
       .slice(0, limit);
   }
 
@@ -307,11 +318,9 @@ export class ComplianceAuditService {
    */
   getViolations(eventIds?: string[]): ComplianceViolation[] {
     if (eventIds) {
-      return eventIds
-        .map(id => this.violations.get(id) || [])
-        .flat();
+      return eventIds.map((id) => this.violations.get(id) || []).flat();
     }
-    
+
     return Array.from(this.violations.values()).flat();
   }
 
@@ -322,48 +331,49 @@ export class ComplianceAuditService {
     clinicId: string,
     startDate: string,
     endDate: string,
-    frameworks?: ComplianceFramework[]
+    frameworks?: ComplianceFramework[],
   ): Promise<ComplianceReport> {
     const events = await this.searchEvents(clinicId, {
       startDate,
       endDate,
-      framework: frameworks?.[0] // Simple filter for single framework
+      framework: frameworks?.[0], // Simple filter for single framework
     });
 
-    const filteredEvents = frameworks 
-      ? events.filter(e => frameworks.some(f => e.frameworks.includes(f)))
+    const filteredEvents = frameworks
+      ? events.filter((e) => frameworks.some((f) => e.frameworks.includes(f)))
       : events;
 
     const totalEvents = filteredEvents.length;
-    
+
     // Count by compliance status
     const statusBreakdown: Record<ComplianceStatus, number> = {
-      'COMPLIANT': 0,
-      'NON_COMPLIANT': 0,
-      'PENDING_REVIEW': 0,
-      'UNKNOWN': 0
-    };
-    
-    // Count by risk level
-    const riskBreakdown: Record<RiskLevel, number> = {
-      'LOW': 0,
-      'MEDIUM': 0,
-      'HIGH': 0,
-      'CRITICAL': 0
+      COMPLIANT: 0,
+      NON_COMPLIANT: 0,
+      PENDING_REVIEW: 0,
+      UNKNOWN: 0,
     };
 
-    filteredEvents.forEach(event => {
+    // Count by risk level
+    const riskBreakdown: Record<RiskLevel, number> = {
+      LOW: 0,
+      MEDIUM: 0,
+      HIGH: 0,
+      CRITICAL: 0,
+    };
+
+    filteredEvents.forEach((event) => {
       statusBreakdown[event.complianceStatus]++;
       riskBreakdown[event.riskLevel]++;
     });
 
     // Collect violations
-    const eventIds = filteredEvents.map(e => e.id);
+    const eventIds = filteredEvents.map((e) => e.id);
     const violations = this.getViolations(eventIds);
 
     // Calculate compliance score
     const compliantEvents = statusBreakdown.COMPLIANT;
-    const complianceScore = totalEvents > 0 ? Math.round((compliantEvents / totalEvents) * 100) : 100;
+    const complianceScore =
+      totalEvents > 0 ? Math.round((compliantEvents / totalEvents) * 100) : 100;
 
     return {
       period: { start: startDate, end: endDate },
@@ -374,7 +384,7 @@ export class ComplianceAuditService {
       violations,
       complianceScore,
       frameworks: frameworks || this.config.defaultFrameworks,
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
     };
   }
 
@@ -390,11 +400,11 @@ export class ComplianceAuditService {
     if (!event) return null;
 
     const validation = ComplianceValidator.validateEvent(event);
-    
+
     // Update stored event
     event.complianceStatus = validation.complianceStatus;
     event.riskLevel = validation.riskLevel;
-    
+
     // Update violations
     if (validation.violations.length > 0) {
       this.violations.set(eventId, validation.violations);
@@ -417,8 +427,13 @@ export class ComplianceAuditService {
    */
   getSessionEvents(sessionId: string, clinicId: string): GenericAuditEvent[] {
     return Array.from(this.events.values())
-      .filter(event => event.sessionId === sessionId && event.clinicId === clinicId)
-      .sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+      .filter(
+        (event) => event.sessionId === sessionId && event.clinicId === clinicId,
+      )
+      .sort(
+        (a, b) =>
+          new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime(),
+      );
   }
 
   /**
@@ -427,8 +442,10 @@ export class ComplianceAuditService {
   private cleanupOldEvents(): void {
     if (this.events.size <= this.config.maxMemoryEvents) return;
 
-    const events = Array.from(this.events.entries())
-      .sort(([, a], [, b]) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    const events = Array.from(this.events.entries()).sort(
+      ([, a], [, b]) =>
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+    );
 
     // Keep only the most recent events
     const toRemove = events.slice(this.config.maxMemoryEvents);
@@ -454,14 +471,20 @@ export class ComplianceAuditService {
     const eventsWithViolations = Array.from(this.violations.keys()).length;
 
     const riskDistribution: Record<RiskLevel, number> = {
-      'LOW': 0, 'MEDIUM': 0, 'HIGH': 0, 'CRITICAL': 0
-    };
-    
-    const complianceDistribution: Record<ComplianceStatus, number> = {
-      'COMPLIANT': 0, 'NON_COMPLIANT': 0, 'PENDING_REVIEW': 0, 'UNKNOWN': 0
+      LOW: 0,
+      MEDIUM: 0,
+      HIGH: 0,
+      CRITICAL: 0,
     };
 
-    events.forEach(event => {
+    const complianceDistribution: Record<ComplianceStatus, number> = {
+      COMPLIANT: 0,
+      NON_COMPLIANT: 0,
+      PENDING_REVIEW: 0,
+      UNKNOWN: 0,
+    };
+
+    events.forEach((event) => {
       riskDistribution[event.riskLevel]++;
       complianceDistribution[event.complianceStatus]++;
     });
@@ -470,7 +493,7 @@ export class ComplianceAuditService {
       totalEvents,
       eventsWithViolations,
       riskDistribution,
-      complianceDistribution
+      complianceDistribution,
     };
   }
 }

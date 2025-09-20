@@ -41,11 +41,31 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         successCount: 5,
         failureCount: 0,
         results: [
-          { patientId: 'patient-1', success: true, message: 'Atualizado com sucesso' },
-          { patientId: 'patient-2', success: true, message: 'Atualizado com sucesso' },
-          { patientId: 'patient-3', success: true, message: 'Atualizado com sucesso' },
-          { patientId: 'patient-4', success: true, message: 'Atualizado com sucesso' },
-          { patientId: 'patient-5', success: true, message: 'Atualizado com sucesso' },
+          {
+            patientId: 'patient-1',
+            success: true,
+            message: 'Atualizado com sucesso',
+          },
+          {
+            patientId: 'patient-2',
+            success: true,
+            message: 'Atualizado com sucesso',
+          },
+          {
+            patientId: 'patient-3',
+            success: true,
+            message: 'Atualizado com sucesso',
+          },
+          {
+            patientId: 'patient-4',
+            success: true,
+            message: 'Atualizado com sucesso',
+          },
+          {
+            patientId: 'patient-5',
+            success: true,
+            message: 'Atualizado com sucesso',
+          },
         ],
         executionTime: 1250,
       },
@@ -60,9 +80,21 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
         failureCount: 0,
         deletionType: 'soft_delete',
         results: [
-          { patientId: 'patient-1', success: true, message: 'Removido com sucesso' },
-          { patientId: 'patient-2', success: true, message: 'Removido com sucesso' },
-          { patientId: 'patient-3', success: true, message: 'Removido com sucesso' },
+          {
+            patientId: 'patient-1',
+            success: true,
+            message: 'Removido com sucesso',
+          },
+          {
+            patientId: 'patient-2',
+            success: true,
+            message: 'Removido com sucesso',
+          },
+          {
+            patientId: 'patient-3',
+            success: true,
+            message: 'Removido com sucesso',
+          },
         ],
         executionTime: 850,
       },
@@ -93,7 +125,10 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
     mockLGPDService.validateBulkConsent.mockResolvedValue({
       success: true,
-      data: { consentValid: true, validPatients: ['patient-1', 'patient-2', 'patient-3'] },
+      data: {
+        consentValid: true,
+        validPatients: ['patient-1', 'patient-2', 'patient-3'],
+      },
     });
   });
 
@@ -188,7 +223,13 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
       const bulkData = {
         action: 'export',
-        patientIds: ['patient-1', 'patient-2', 'patient-3', 'patient-4', 'patient-5'],
+        patientIds: [
+          'patient-1',
+          'patient-2',
+          'patient-3',
+          'patient-4',
+          'patient-5',
+        ],
         options: {
           format: 'csv',
           fields: ['name', 'email', 'phone', 'status'],
@@ -255,11 +296,31 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
           successCount: 3,
           failureCount: 2,
           results: [
-            { patientId: 'patient-1', success: true, message: 'Atualizado com sucesso' },
-            { patientId: 'patient-2', success: false, message: 'Paciente não encontrado' },
-            { patientId: 'patient-3', success: true, message: 'Atualizado com sucesso' },
-            { patientId: 'patient-4', success: false, message: 'Permissões insuficientes' },
-            { patientId: 'patient-5', success: true, message: 'Atualizado com sucesso' },
+            {
+              patientId: 'patient-1',
+              success: true,
+              message: 'Atualizado com sucesso',
+            },
+            {
+              patientId: 'patient-2',
+              success: false,
+              message: 'Paciente não encontrado',
+            },
+            {
+              patientId: 'patient-3',
+              success: true,
+              message: 'Atualizado com sucesso',
+            },
+            {
+              patientId: 'patient-4',
+              success: false,
+              message: 'Permissões insuficientes',
+            },
+            {
+              patientId: 'patient-5',
+              success: true,
+              message: 'Atualizado com sucesso',
+            },
           ],
           executionTime: 1100,
         },
@@ -269,7 +330,13 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
 
       const bulkData = {
         action: 'update',
-        patientIds: ['patient-1', 'patient-2', 'patient-3', 'patient-4', 'patient-5'],
+        patientIds: [
+          'patient-1',
+          'patient-2',
+          'patient-3',
+          'patient-4',
+          'patient-5',
+        ],
         updateData: { status: 'active' },
       };
 
@@ -523,7 +590,9 @@ describe('POST /api/v2/patients/bulk-actions endpoint (T049)', () => {
     });
 
     it('should handle bulk operation timeout', async () => {
-      mockPatientService.bulkUpdatePatients.mockRejectedValue(new Error('Operation timeout'));
+      mockPatientService.bulkUpdatePatients.mockRejectedValue(
+        new Error('Operation timeout'),
+      );
 
       const { default: bulkRoute } = await import('../bulk');
 

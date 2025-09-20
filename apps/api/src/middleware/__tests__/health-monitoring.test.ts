@@ -197,20 +197,32 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
     it('should track healthcare compliance metrics', () => {
       // Record LGPD compliance metrics
       healthMonitor.recordMetric('lgpd_consent_checks', 1, { result: 'valid' });
-      healthMonitor.recordMetric('lgpd_consent_checks', 1, { result: 'invalid' });
+      healthMonitor.recordMetric('lgpd_consent_checks', 1, {
+        result: 'invalid',
+      });
 
       // Record healthcare professional validations
-      healthMonitor.recordMetric('healthcare_validations', 1, { status: 'active' });
-      healthMonitor.recordMetric('healthcare_validations', 1, { status: 'suspended' });
+      healthMonitor.recordMetric('healthcare_validations', 1, {
+        status: 'active',
+      });
+      healthMonitor.recordMetric('healthcare_validations', 1, {
+        status: 'suspended',
+      });
 
       const lgpdMetrics = healthMonitor.getMetrics('lgpd_consent_checks');
-      const healthcareMetrics = healthMonitor.getMetrics('healthcare_validations');
+      const healthcareMetrics = healthMonitor.getMetrics(
+        'healthcare_validations',
+      );
 
       expect(lgpdMetrics).toHaveLength(2);
       expect(healthcareMetrics).toHaveLength(2);
 
-      const validConsents = lgpdMetrics.filter(m => m.tags?.result === 'valid');
-      const activeValidations = healthcareMetrics.filter(m => m.tags?.status === 'active');
+      const validConsents = lgpdMetrics.filter(
+        m => m.tags?.result === 'valid',
+      );
+      const activeValidations = healthcareMetrics.filter(
+        m => m.tags?.status === 'active',
+      );
 
       expect(validConsents).toHaveLength(1);
       expect(activeValidations).toHaveLength(1);
@@ -282,7 +294,9 @@ describe('Health Monitoring and Metrics Middleware (T077)', () => {
 
       await healthMonitoringMiddleware(mockContext, mockNext);
 
-      const healthcareMetrics = healthMonitor.getMetrics('healthcare_professional_requests');
+      const healthcareMetrics = healthMonitor.getMetrics(
+        'healthcare_professional_requests',
+      );
       expect(healthcareMetrics.length).toBeGreaterThan(0);
 
       const lastMetric = healthcareMetrics[healthcareMetrics.length - 1];

@@ -32,13 +32,27 @@ describe('Healthcare Security Headers', () => {
       const res = await testApp.health.$get();
 
       expect(res.status).toBe(200);
-      expect(res.headers.get('content-security-policy')).toContain('default-src \'self\'');
-      expect(res.headers.get('content-security-policy')).toContain('script-src \'self\'');
-      expect(res.headers.get('content-security-policy')).toContain('style-src \'self\'');
-      expect(res.headers.get('content-security-policy')).toContain('img-src \'self\'');
-      expect(res.headers.get('content-security-policy')).toContain('connect-src \'self\'');
-      expect(res.headers.get('content-security-policy')).toContain('frame-ancestors \'none\'');
-      expect(res.headers.get('content-security-policy')).toContain('base-uri \'self\'');
+      expect(res.headers.get('content-security-policy')).toContain(
+        'default-src \'self\'',
+      );
+      expect(res.headers.get('content-security-policy')).toContain(
+        'script-src \'self\'',
+      );
+      expect(res.headers.get('content-security-policy')).toContain(
+        'style-src \'self\'',
+      );
+      expect(res.headers.get('content-security-policy')).toContain(
+        'img-src \'self\'',
+      );
+      expect(res.headers.get('content-security-policy')).toContain(
+        'connect-src \'self\'',
+      );
+      expect(res.headers.get('content-security-policy')).toContain(
+        'frame-ancestors \'none\'',
+      );
+      expect(res.headers.get('content-security-policy')).toContain(
+        'base-uri \'self\'',
+      );
     });
 
     it('should enforce HTTPS with HSTS for healthcare data encryption', async () => {
@@ -73,7 +87,9 @@ describe('Healthcare Security Headers', () => {
 
       const referrerPolicy = res.headers.get('referrer-policy');
       expect(referrerPolicy).toBeDefined();
-      expect(['no-referrer', 'same-origin', 'strict-origin']).toContain(referrerPolicy);
+      expect(['no-referrer', 'same-origin', 'strict-origin']).toContain(
+        referrerPolicy,
+      );
     });
 
     it('should include XSS protection headers', async () => {
@@ -101,7 +117,9 @@ describe('Healthcare Security Headers', () => {
     it('should restrict CORS origins for medical data protection', async () => {
       const res = await testApp.health.$get();
 
-      const accessControlAllowOrigin = res.headers.get('access-control-allow-origin');
+      const accessControlAllowOrigin = res.headers.get(
+        'access-control-allow-origin',
+      );
 
       // Should not be wildcard for healthcare APIs
       expect(accessControlAllowOrigin).not.toBe('*');
@@ -126,8 +144,12 @@ describe('Healthcare Security Headers', () => {
 
       expect(res.headers.get('access-control-allow-credentials')).toBe('true');
       expect(res.headers.get('access-control-allow-methods')).toContain('POST');
-      expect(res.headers.get('access-control-allow-headers')).toContain('content-type');
-      expect(res.headers.get('access-control-allow-headers')).toContain('authorization');
+      expect(res.headers.get('access-control-allow-headers')).toContain(
+        'content-type',
+      );
+      expect(res.headers.get('access-control-allow-headers')).toContain(
+        'authorization',
+      );
 
       const maxAge = res.headers.get('access-control-max-age');
       expect(Number(maxAge)).toBeGreaterThan(0);
@@ -136,9 +158,12 @@ describe('Healthcare Security Headers', () => {
     it('should reject unauthorized origins for patient data endpoints', async () => {
       const maliciousOrigin = 'https://malicious-site.com';
 
-      const res = await testApp.health.$options({}, {
-        headers: { Origin: maliciousOrigin },
-      });
+      const res = await testApp.health.$options(
+        {},
+        {
+          headers: { Origin: maliciousOrigin },
+        },
+      );
 
       const allowedOrigin = res.headers.get('access-control-allow-origin');
       expect(allowedOrigin).not.toBe(maliciousOrigin);
@@ -183,7 +208,9 @@ describe('Healthcare Security Headers', () => {
         }
       } catch (error) {
         // Endpoint might not exist or be protected, which is acceptable
-        console.log('Patient endpoint test skipped - endpoint may not be accessible');
+        console.log(
+          'Patient endpoint test skipped - endpoint may not be accessible',
+        );
       }
     });
   });
@@ -285,7 +312,9 @@ describe('Healthcare Security Headers', () => {
         }
       } catch (error) {
         // Endpoint might require authentication, which is acceptable
-        console.log('Security status endpoint test skipped - requires authentication');
+        console.log(
+          'Security status endpoint test skipped - requires authentication',
+        );
       }
     });
   });
@@ -293,8 +322,10 @@ describe('Healthcare Security Headers', () => {
   describe('Error Response Security', () => {
     it('should not expose sensitive information in error responses', async () => {
       // Test 404 response
-      const res = await testApp['nonexistent-endpoint']?.$get?.()
-        || await fetch('/nonexistent-endpoint').catch(_error => ({ status: 404 }));
+      const res = (await testApp['nonexistent-endpoint']?.$get?.())
+        || (await fetch('/nonexistent-endpoint').catch(_error => ({
+          status: 404,
+        })));
 
       if (typeof res === 'object' && 'status' in res) {
         expect(res.status).toBe(404);
@@ -324,7 +355,9 @@ describe('Healthcare Security Headers', () => {
         expect(hsts).toBeDefined();
       } else {
         // Development may have more relaxed policies for debugging
-        console.log('Development environment - some security headers may be relaxed');
+        console.log(
+          'Development environment - some security headers may be relaxed',
+        );
       }
     });
   });

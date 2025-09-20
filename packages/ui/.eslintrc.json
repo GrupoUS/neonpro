@@ -7,9 +7,7 @@
       "jsx": true
     }
   },
-  "extends": [
-    "eslint:recommended"
-  ],
+  "extends": ["eslint:recommended"],
   "rules": {
     "no-unused-vars": "error",
     "no-console": "off",
@@ -23,9 +21,5 @@
     "es2022": true,
     "node": true
   },
-  "ignorePatterns": [
-    "dist/",
-    "node_modules/",
-    "*.js"
-  ]
+  "ignorePatterns": ["dist/", "node_modules/", "*.js"]
 }

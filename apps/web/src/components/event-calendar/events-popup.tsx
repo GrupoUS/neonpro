@@ -4,7 +4,10 @@ import { useEffect, useMemo, useRef } from "react";
 import { format, isSameDay } from "date-fns";
 import { XIcon } from "lucide-react";
 
-import { EventItem, type CalendarEvent } from "@/components/event-calendar/index";
+import {
+  EventItem,
+  type CalendarEvent,
+} from "@/components/event-calendar/index";
 
 interface EventsPopupProps {
   date: Date;
@@ -119,7 +122,7 @@ export function EventsPopup({
                 className="cursor-pointer"
                 onClick={() => handleEventClick(event)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
+                  if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
                     handleEventClick(event);
                   }

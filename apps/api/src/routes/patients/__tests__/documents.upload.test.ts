@@ -47,11 +47,14 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const request = new Request('/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents', {
-      method: 'POST',
-      body: formData,
-      // No auth header
-    });
+    const request = new Request(
+      '/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents',
+      {
+        method: 'POST',
+        body: formData,
+        // No auth header
+      },
+    );
 
     const response = await uploadRoute.request(request);
     expect(response.status).toBe(401);
@@ -75,13 +78,16 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const request = new Request('/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents', {
-      method: 'POST',
-      body: formData,
-      headers: new Headers({
-        authorization: 'Bearer valid-token',
-      }),
-    });
+    const request = new Request(
+      '/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents',
+      {
+        method: 'POST',
+        body: formData,
+        headers: new Headers({
+          authorization: 'Bearer valid-token',
+        }),
+      },
+    );
 
     const response = await uploadRoute.request(request);
     expect([400, 415]).toContain(response.status); // Allow 400 until strict 415 implemented
@@ -91,17 +97,24 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
     const { default: uploadRoute } = require(ROUTE_PATH);
 
     // Create a 10.5MB file
-    const file = makeFile('large.pdf', 'application/pdf', 10.5 * 1024 * 1024 | 0);
+    const file = makeFile(
+      'large.pdf',
+      'application/pdf',
+      (10.5 * 1024 * 1024) | 0,
+    );
     const formData = new FormData();
     formData.append('file', file);
 
-    const request = new Request('/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents', {
-      method: 'POST',
-      body: formData,
-      headers: new Headers({
-        authorization: 'Bearer valid-token',
-      }),
-    });
+    const request = new Request(
+      '/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents',
+      {
+        method: 'POST',
+        body: formData,
+        headers: new Headers({
+          authorization: 'Bearer valid-token',
+        }),
+      },
+    );
 
     const response = await uploadRoute.request(request);
     expect([400, 413]).toContain(response.status); // Accept 400 until bodyLimit middleware added
@@ -127,16 +140,19 @@ describe('POST /api/v2/patients/:id/documents (FR-003)', () => {
     const formData = new FormData();
     formData.append('file', file);
 
-    const request = new Request('/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents', {
-      method: 'POST',
-      body: formData,
-      headers: new Headers({
-        authorization: 'Bearer valid-token',
-      }),
-    });
+    const request = new Request(
+      '/api/v2/patients/123e4567-e89b-12d3-a456-426614174003/documents',
+      {
+        method: 'POST',
+        body: formData,
+        headers: new Headers({
+          authorization: 'Bearer valid-token',
+        }),
+      },
+    );
 
     const response = await uploadRoute.request(request);
-    const json = await response.json().catch((_error) => ({}));
+    const json = await response.json().catch(_error => ({}));
 
     // Final expectations (will fail until implemented)
     expect(response.status).toBe(201);

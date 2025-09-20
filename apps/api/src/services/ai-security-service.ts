@@ -110,12 +110,7 @@ export function validatePromptSecurity(prompt: string): boolean {
     /confidential/i,
   ];
 
-  const xmlInjectionPatterns = [
-    /<\?xml/i,
-    /<!DOCTYPE/i,
-    /<attack/i,
-    /<xss/i,
-  ];
+  const xmlInjectionPatterns = [/<\?xml/i, /<!DOCTYPE/i, /<attack/i, /<xss/i];
 
   // Check for common injection patterns
   for (const pattern of [...injectionPatterns, ...xmlInjectionPatterns]) {
@@ -177,9 +172,10 @@ export function validateMedicalTerminology(term: string): boolean {
   ];
 
   const normalizedTerm = term.toLowerCase().trim();
-  return validTerms.some(validTerm =>
-    validTerm.toLowerCase().includes(normalizedTerm)
-    || normalizedTerm.includes(validTerm.toLowerCase())
+  return validTerms.some(
+    validTerm =>
+      validTerm.toLowerCase().includes(normalizedTerm)
+      || normalizedTerm.includes(validTerm.toLowerCase()),
   );
 }
 
@@ -255,10 +251,14 @@ export class AIRateLimiter {
     const userRequests = this.requests.get(key) || [];
 
     // Remove requests older than 1 hour
-    const recentRequests = userRequests.filter(time => now - time < 60 * 60 * 1000);
+    const recentRequests = userRequests.filter(
+      time => now - time < 60 * 60 * 1000,
+    );
 
     // Check minute limit
-    const minuteRequests = recentRequests.filter(time => now - time < 60 * 1000);
+    const minuteRequests = recentRequests.filter(
+      time => now - time < 60 * 1000,
+    );
 
     if (minuteRequests.length >= RATE_LIMITS.requestsPerMinute) {
       auditLogger.logSecurityEvent({
@@ -293,7 +293,9 @@ export class AIRateLimiter {
   private cleanupOldRequests(): void {
     const now = Date.now();
     for (const [key, requests] of this.requests.entries()) {
-      const recentRequests = requests.filter(time => now - time < 60 * 60 * 1000);
+      const recentRequests = requests.filter(
+        time => now - time < 60 * 60 * 1000,
+      );
 
       if (recentRequests.length === 0) {
         this.requests.delete(key);
@@ -361,7 +363,10 @@ export function logAIInteraction(interaction: {
 /**
  * Checks if data should be retained based on LGPD policies
  */
-export function shouldRetainAIData(createdAt: number, dataCategory: string): boolean {
+export function shouldRetainAIData(
+  createdAt: number,
+  dataCategory: string,
+): boolean {
   const daysOld = (Date.now() - createdAt) / (24 * 60 * 60 * 1000);
 
   // Different retention periods for different data types

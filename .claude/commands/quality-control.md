@@ -16,47 +16,74 @@ Use this prompt as the single source of truth for multi-agent orchestrated audit
 
 ### Core Code Review Agents
 
-| Agent                | Primary Focus                          | Execution Phase         | Parallel Capable | Dependencies     | TDD Integration          |
-| -------------------- | -------------------------------------- | ----------------------- | ---------------- | ---------------- | ------------------------ |
-| **architect-review** | System design, patterns, scalability   | Architecture validation | ✅               | None             | RED/GREEN/REFACTOR       |
-| **security-auditor** | DevSecOps, compliance, vulnerabilities | Security analysis       | ✅               | None             | ALL phases (healthcare)  |
-| **code-reviewer**    | Quality, maintainability, performance  | Code analysis           | ✅               | architect-review | GREEN/REFACTOR           |
-| **test**             | TDD patterns, coverage, test quality   | Test orchestration      | ✅               | code-reviewer    | RED (primary)             |
-| **compliance-validator** | Healthcare regulatory validation    | Compliance checking     | ✅               | security-auditor | ALL phases (mandatory)    |
+| Agent                    | Primary Focus                          | Execution Phase         | Parallel Capable | Dependencies     | TDD Integration         |
+| ------------------------ | -------------------------------------- | ----------------------- | ---------------- | ---------------- | ----------------------- |
+| **architect-review**     | System design, patterns, scalability   | Architecture validation | ✅               | None             | RED/GREEN/REFACTOR      |
+| **security-auditor**     | DevSecOps, compliance, vulnerabilities | Security analysis       | ✅               | None             | ALL phases (healthcare) |
+| **code-reviewer**        | Quality, maintainability, performance  | Code analysis           | ✅               | architect-review | GREEN/REFACTOR          |
+| **test**                 | TDD patterns, coverage, test quality   | Test orchestration      | ✅               | code-reviewer    | RED (primary)           |
+| **compliance-validator** | Healthcare regulatory validation       | Compliance checking     | ✅               | security-auditor | ALL phases (mandatory)  |
 
 ### Enhanced Agent Activation Triggers
 
 ```yaml
 AGENT_TRIGGERS:
   architect-review:
-    keywords: ["microservice", "architecture", "system design", "patterns", "scalability"]
+    keywords:
+      [
+        "microservice",
+        "architecture",
+        "system design",
+        "patterns",
+        "scalability",
+      ]
     file_patterns: ["**/routes/**", "**/api/**", "**/services/**"]
     always_active: true
     tdd_integration: "Validates architectural test patterns and design compliance"
-    
+
   security-auditor:
-    keywords: ["authentication", "authorization", "payment", "personal data", "compliance"]
-    file_patterns: ["**/auth/**", "**/security/**", "**/*patient*", "**/*clinic*"]
+    keywords:
+      [
+        "authentication",
+        "authorization",
+        "payment",
+        "personal data",
+        "compliance",
+      ]
+    file_patterns:
+      ["**/auth/**", "**/security/**", "**/*patient*", "**/*clinic*"]
     healthcare_critical: true
     tdd_integration: "Security-first approach for all TDD phases in healthcare contexts"
-    
+
   code-reviewer:
-    keywords: ["performance", "maintainability", "technical debt", "code quality"]
+    keywords:
+      ["performance", "maintainability", "technical debt", "code quality"]
     file_patterns: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
     always_active: true
     tdd_integration: "Quality gates enforcement during GREEN/REFACTOR phases"
-    
+
   test:
     keywords: ["tdd", "testing", "coverage", "test patterns"]
     file_patterns: ["**/*.test.*", "**/*.spec.*", "**/tests/**"]
     always_active: true
     tdd_integration: "Primary coordinator for RED phase with test structure definition"
-    
+
   compliance-validator:
-    keywords: ["lgpd", "gdpr", "hipaa", "anvisa", "cfm", "healthcare", "patient", "clinic"]
-    file_patterns: ["**/*patient*", "**/*clinic*", "**/healthcare/**", "**/compliance/**"]
+    keywords:
+      [
+        "lgpd",
+        "gdpr",
+        "hipaa",
+        "anvisa",
+        "cfm",
+        "healthcare",
+        "patient",
+        "clinic",
+      ]
+    file_patterns:
+      ["**/*patient*", "**/*clinic*", "**/healthcare/**", "**/compliance/**"]
     healthcare_critical: true
-    always_active: false  # Only activated for healthcare features
+    always_active: false # Only activated for healthcare features
     tdd_integration: "Mandatory validation in ALL phases for healthcare features"
 ```
 
@@ -189,45 +216,45 @@ CRITICAL_MCPS:
 
 MANDATORY_TOOL_SEQUENCES:
   RED_PHASE_SEQUENCE:
-    - "sequential-thinking"  # Always first - analyze requirements
-    - "archon"              # Task management and coordination
-    - "serena"              # Codebase analysis
-    - "context7/tavily"     # Research if complexity ≥7
-    - "desktop-commander"   # Test implementation
+    - "sequential-thinking" # Always first - analyze requirements
+    - "archon" # Task management and coordination
+    - "serena" # Codebase analysis
+    - "context7/tavily" # Research if complexity ≥7
+    - "desktop-commander" # Test implementation
 
   GREEN_PHASE_SEQUENCE:
-    - "desktop-commander"   # File operations
-    - "serena"              # Code analysis
-    - "archon"              # Task updates
-    - "context7/tavily"     # Research if stuck
-    - "shadcn"             # UI components if applicable
+    - "desktop-commander" # File operations
+    - "serena" # Code analysis
+    - "archon" # Task updates
+    - "context7/tavily" # Research if stuck
+    - "shadcn" # UI components if applicable
 
   REFACTOR_PHASE_SEQUENCE:
-    - "sequential-thinking"  # Analysis and optimization
-    - "serena"              # Code quality assessment
-    - "desktop-commander"   # Refactoring operations
-    - "archon"              # Documentation and updates
+    - "sequential-thinking" # Analysis and optimization
+    - "serena" # Code quality assessment
+    - "desktop-commander" # Refactoring operations
+    - "archon" # Documentation and updates
 
   COMPLIANCE_SEQUENCE:
-    - "security-auditor"    # Primary compliance validation
-    - "supabase"            # Database compliance checks
-    - "archon"              # Compliance documentation
-    - "desktop-commander"   # Compliance fixes
+    - "security-auditor" # Primary compliance validation
+    - "supabase" # Database compliance checks
+    - "archon" # Compliance documentation
+    - "desktop-commander" # Compliance fixes
 
 HEALTHCARE_MANDATORY_SEQUENCES:
   patient_data_operations:
-    - "sequential-thinking"  # Risk assessment
-    - "security-auditor"    # LGPD compliance validation
-    - "supabase"            # RLS policy verification
-    - "serena"              # Code analysis for PHI handling
-    - "desktop-commander"   # Implementation
-    - "archon"              # Compliance documentation
+    - "sequential-thinking" # Risk assessment
+    - "security-auditor" # LGPD compliance validation
+    - "supabase" # RLS policy verification
+    - "serena" # Code analysis for PHI handling
+    - "desktop-commander" # Implementation
+    - "archon" # Compliance documentation
 
   compliance_validation:
-    - "security-auditor"    # Primary validation
+    - "security-auditor" # Primary validation
     - "compliance-validator" # Healthcare specific checks
-    - "supabase"            # Database compliance
-    - "archon"              # Audit trail documentation
+    - "supabase" # Database compliance
+    - "archon" # Audit trail documentation
 ```
 
 ### Enhanced Documentation Preload with Agent Integration
@@ -264,24 +291,25 @@ AGENT_QUALITY_GATE_COORDINATION:
       - "Quality gate validation"
       - "Workflow progression management"
       - "Compliance enforcement"
-  
+
   quality_gate_validation:
     architect-review:
       gates: ["architecture_compliance", "design_patterns", "scalability"]
       thresholds: ["≥90%", "≥85%", "≥80%"]
-    
+
     security-auditor:
-      gates: ["security_vulnerabilities", "compliance_validation", "data_protection"]
+      gates:
+        ["security_vulnerabilities", "compliance_validation", "data_protection"]
       thresholds: ["0 critical", "≥100%", "≥100%"]
-    
+
     code-reviewer:
       gates: ["code_quality", "maintainability", "performance"]
       thresholds: ["≥85%", "≥80%", "≥75%"]
-    
+
     test:
       gates: ["test_coverage", "test_quality", "tdd_patterns"]
       thresholds: ["≥90%", "≥85%", "≥95%"]
-    
+
     compliance-validator:
       gates: ["lgpd_compliance", "healthcare_standards", "audit_trail"]
       thresholds: ["≥100%", "≥100%", "≥100%"]
@@ -318,8 +346,8 @@ graph TD
 phase: RED
 primary_agent: test
 support_agents:
-  - architect-review  # Design test validation
-  - security-auditor  # Security test requirements (if triggered)
+  - architect-review # Design test validation
+  - security-auditor # Security test requirements (if triggered)
 
 parallel_execution:
   - test: "Define test structure and patterns"
@@ -335,9 +363,9 @@ quality_gate: "All failing tests created with proper structure"
 phase: GREEN
 primary_agent: code-reviewer
 support_agents:
-  - architect-review  # Pattern compliance
-  - security-auditor  # Vulnerability scanning
-  - test             # Test validation
+  - architect-review # Pattern compliance
+  - security-auditor # Vulnerability scanning
+  - test # Test validation
 
 sequential_execution:
   1. code-reviewer: "Implement minimal code to pass tests"
@@ -354,10 +382,10 @@ quality_gate: "All tests pass with security and architecture compliance"
 phase: REFACTOR
 coordination: parallel_execution
 agents:
-  - code-reviewer     # Code quality improvements
-  - architect-review  # Design optimization
-  - security-auditor  # Security hardening
-  - test             # Test optimization
+  - code-reviewer # Code quality improvements
+  - architect-review # Design optimization
+  - security-auditor # Security hardening
+  - test # Test optimization
 
 quality_gate: "Code quality improved while maintaining test coverage"
 ```
@@ -545,21 +573,21 @@ agent_tasks:
 ```yaml
 sequential_execution:
   1. architect-review:
-     - "Review RLS policy architecture"
-     - "Validate tenant isolation design"
+    - "Review RLS policy architecture"
+    - "Validate tenant isolation design"
 
   2. security-auditor:
-     - "Verify policies active for patient/clinic tables"
-     - "Test user context propagation (clinic, role, professional id)"
-     - "Validate tenant isolation effectiveness"
+    - "Verify policies active for patient/clinic tables"
+    - "Test user context propagation (clinic, role, professional id)"
+    - "Validate tenant isolation effectiveness"
 
   3. code-reviewer:
-     - "Review RLS policy implementation in queries"
-     - "Validate context passing in API layers"
+    - "Review RLS policy implementation in queries"
+    - "Validate context passing in API layers"
 
   4. test:
-     - "Execute tenant isolation tests"
-     - "Validate cross-tenant access prevention"
+    - "Execute tenant isolation tests"
+    - "Validate cross-tenant access prevention"
 
 quality_gates:
   - "RLS policies active on all sensitive tables: ≥100%"
@@ -782,16 +810,16 @@ agent_validation:
 ```yaml
 sequential_execution:
   1. architect-review:
-     - "Analyze DB schema mismatches and relationship issues"
-     - "Review API field mapping and contract alignment"
+    - "Analyze DB schema mismatches and relationship issues"
+    - "Review API field mapping and contract alignment"
 
   2. security-auditor:
-     - "Identify RLS bypass risks and tenant isolation issues"
-     - "Validate consent/audit logging on PHI paths"
+    - "Identify RLS bypass risks and tenant isolation issues"
+    - "Validate consent/audit logging on PHI paths"
 
   3. code-reviewer:
-     - "Fix API field errors and implement tenant/role scoping"
-     - "Implement missing consent/audit logging mechanisms"
+    - "Fix API field errors and implement tenant/role scoping"
+    - "Implement missing consent/audit logging mechanisms"
 
 blocking_issues:
   - "DB mismatches (naming/relations), RLS bypass risks"
@@ -1108,16 +1136,16 @@ Type safety
 // Before
 type Handler = (c: any) => any;
 // After
-type Handler = (c: import('hono').Context) => Response | Promise<Response>;
+type Handler = (c: import("hono").Context) => Response | Promise<Response>;
 ```
 
 ESM imports
 
 ```ts
 // Before
-const { execSync } = require('node:child_process');
+const { execSync } = require("node:child_process");
 // After
-import { execSync } from 'node:child_process';
+import { execSync } from "node:child_process";
 ```
 
 ---

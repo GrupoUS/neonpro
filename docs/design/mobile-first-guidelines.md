@@ -16,12 +16,14 @@ This guide outlines the mobile-first design principles and implementation patter
 ## Performance Targets
 
 ### Load Time Targets
+
 - **First Contentful Paint**: <1.5s
 - **Largest Contentful Paint**: <2.5s
 - **Time to Interactive**: <3.0s
 - **Cumulative Layout Shift**: <0.1
 
 ### Network Considerations
+
 - 3G network optimization
 - Offline functionality for critical features
 - Progressive loading of non-essential features
@@ -31,10 +33,10 @@ This guide outlines the mobile-first design principles and implementation patter
 
 ```scss
 // Mobile-first breakpoints
-$breakpoint-sm: 640px;   // Small phones
-$breakpoint-md: 768px;   // Large phones, small tablets
-$breakpoint-lg: 1024px;  // Tablets, small desktops
-$breakpoint-xl: 1280px;  // Desktops
+$breakpoint-sm: 640px; // Small phones
+$breakpoint-md: 768px; // Large phones, small tablets
+$breakpoint-lg: 1024px; // Tablets, small desktops
+$breakpoint-xl: 1280px; // Desktops
 $breakpoint-2xl: 1536px; // Large desktops
 ```
 
@@ -43,6 +45,7 @@ $breakpoint-2xl: 1536px; // Large desktops
 ### 1. Navigation
 
 #### Mobile Navigation
+
 ```typescript
 import { MobileNavigation } from '../components/layout/mobile-navigation';
 
@@ -58,6 +61,7 @@ import { MobileNavigation } from '../components/layout/mobile-navigation';
 ```
 
 **Key Features:**
+
 - Bottom navigation bar for thumb accessibility
 - Maximum 5 items for clarity
 - Active state indication
@@ -65,6 +69,7 @@ import { MobileNavigation } from '../components/layout/mobile-navigation';
 - Touch target: 48x48px minimum
 
 #### Desktop Navigation
+
 ```typescript
 import { Sidebar } from '../components/layout/sidebar';
 
@@ -87,6 +92,7 @@ import { Sidebar } from '../components/layout/sidebar';
 ### 2. Forms
 
 #### Mobile Form Strategy
+
 ```typescript
 import { SteppedForm } from '../components/forms/stepped-form';
 
@@ -119,6 +125,7 @@ const PatientRegistrationForm = () => {
 ```
 
 **Form Guidelines:**
+
 - Single column layout on mobile
 - Large touch targets (44px minimum)
 - Clear field labels above inputs
@@ -129,6 +136,7 @@ const PatientRegistrationForm = () => {
 ### 3. Data Display
 
 #### Mobile Cards
+
 ```typescript
 import { PatientCard } from '../components/patient/patient-card';
 
@@ -149,6 +157,7 @@ const PatientListItem = ({ patient }) => {
 ```
 
 #### Table Alternatives
+
 ```typescript
 // Convert tables to cards on mobile
 const ResponsivePatientTable = ({ patients }) => {
@@ -170,6 +179,7 @@ const ResponsivePatientTable = ({ patients }) => {
 ### 4. Search and Filters
 
 #### Mobile Search
+
 ```typescript
 import { MobileSearch } from '../components/search/mobile-search';
 
@@ -199,6 +209,7 @@ const PatientSearch = () => {
 ### Base Components
 
 #### Button
+
 ```typescript
 interface ButtonProps {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -223,6 +234,7 @@ interface ButtonProps {
 ```
 
 #### Input Field
+
 ```typescript
 interface InputFieldProps {
   label: string;
@@ -247,6 +259,7 @@ interface InputFieldProps {
 ### Layout Components
 
 #### Container
+
 ```typescript
 // Responsive container
 <Container className="px-4 py-6 max-w-7xl mx-auto">
@@ -257,6 +270,7 @@ interface InputFieldProps {
 ```
 
 #### Grid System
+
 ```typescript
 // Mobile-first grid
 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -269,6 +283,7 @@ interface InputFieldProps {
 ## Touch Interactions
 
 ### Gesture Support
+
 ```typescript
 import { useSwipeable } from 'react-swipeable';
 
@@ -289,6 +304,7 @@ const SwipeableCard = ({ patient }) => {
 ```
 
 ### Touch Targets
+
 - Minimum 44x44px for all interactive elements
 - 8px spacing between touch targets
 - Visual feedback on touch
@@ -297,14 +313,15 @@ const SwipeableCard = ({ patient }) => {
 ## Accessibility Considerations
 
 ### Font Sizes
+
 ```css
 :root {
-  --font-size-xs: 0.75rem;  /* 12px */
+  --font-size-xs: 0.75rem; /* 12px */
   --font-size-sm: 0.875rem; /* 14px */
-  --font-size-base: 1rem;   /* 16px */
+  --font-size-base: 1rem; /* 16px */
   --font-size-lg: 1.125rem; /* 18px */
-  --font-size-xl: 1.25rem;  /* 20px */
-  --font-size-2xl: 1.5rem;  /* 24px */
+  --font-size-xl: 1.25rem; /* 20px */
+  --font-size-2xl: 1.5rem; /* 24px */
   --font-size-3xl: 1.875rem; /* 30px */
 }
 
@@ -317,11 +334,13 @@ const SwipeableCard = ({ patient }) => {
 ```
 
 ### Color Contrast
+
 - Minimum 4.5:1 contrast ratio for normal text
 - Minimum 3:1 for large text (18px+)
 - Test with Brazilian color blindness patterns
 
 ### Focus Management
+
 - Visible focus indicators
 - Logical tab order
 - Skip to content links
@@ -330,6 +349,7 @@ const SwipeableCard = ({ patient }) => {
 ## Performance Optimization
 
 ### Image Handling
+
 ```typescript
 import { Image } from '../components/ui/image';
 
@@ -345,21 +365,21 @@ import { Image } from '../components/ui/image';
 ```
 
 ### Code Splitting
+
 ```typescript
 // Route-based code splitting
-const PatientDashboard = lazy(() => 
-  import('./pages/patients/dashboard').then(module => ({
-    default: module.PatientDashboard
-  }))
+const PatientDashboard = lazy(() =>
+  import("./pages/patients/dashboard").then((module) => ({
+    default: module.PatientDashboard,
+  })),
 );
 
 // Component-level code splitting
-const HeavyChart = lazy(() => 
-  import('../components/charts/heavy-chart')
-);
+const HeavyChart = lazy(() => import("../components/charts/heavy-chart"));
 ```
 
 ### Virtualization
+
 ```typescript
 import { VirtualList } from '../components/ui/virtual-list';
 
@@ -375,9 +395,10 @@ import { VirtualList } from '../components/ui/virtual-list';
 ## Brazilian Context
 
 ### Date and Time
+
 ```typescript
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 // Brazilian date format
 const formatDate = (date: Date) => {
@@ -387,27 +408,29 @@ const formatDate = (date: Date) => {
 
 // Brazilian time format
 const formatTime = (date: Date) => {
-  return format(date, 'HH:mm', { locale: ptBR });
+  return format(date, "HH:mm", { locale: ptBR });
   // Ex: 14:30
 };
 ```
 
 ### Currency
+
 ```typescript
-import { formatCurrency } from '../utils/format-currency';
+import { formatCurrency } from "../utils/format-currency";
 
 const formatBRL = (value: number) => {
   return formatCurrency(value, {
-    locale: 'pt-BR',
-    currency: 'BRL'
+    locale: "pt-BR",
+    currency: "BRL",
   });
   // Ex: R$ 1.234,56
 };
 ```
 
 ### Phone Numbers
+
 ```typescript
-import { formatPhone } from '../utils/format-phone';
+import { formatPhone } from "../utils/format-phone";
 
 const formatBrazilianPhone = (phone: string) => {
   return formatPhone(phone);
@@ -418,17 +441,20 @@ const formatBrazilianPhone = (phone: string) => {
 ## Testing Guidelines
 
 ### Device Testing Matrix
+
 - **Small Mobile**: iPhone SE, Samsung Galaxy S
 - **Large Mobile**: iPhone 14 Pro, Samsung Galaxy S23
 - **Tablet**: iPad, Samsung Galaxy Tab
 - **Desktop**: Various screen sizes
 
 ### Network Conditions
+
 - 3G (1 Mbps download, 750 kbps upload, 300ms latency)
 - 4G (4 Mbps download, 3 Mbps upload, 100ms latency)
 - Offline mode for critical features
 
 ### User Testing Scenarios
+
 1. **Doctor on Rounds**: Quick patient lookup, one-handed operation
 2. **Receptionist**: Rapid patient registration, form completion
 3. **Specialist**: Detailed patient history review, data analysis
@@ -437,6 +463,7 @@ const formatBrazilianPhone = (phone: string) => {
 ## Implementation Checklist
 
 ### Mobile Optimizations
+
 - [ ] Touch targets ≥44px
 - [ ] Single column layout on mobile
 - [ ] Optimized images and lazy loading
@@ -448,6 +475,7 @@ const formatBrazilianPhone = (phone: string) => {
 - [ ] Progressive enhancement
 
 ### Brazilian Adaptations
+
 - [ ] Portuguese (pt-BR) language
 - [ ] Brazilian date/time formats
 - [ ] CPF/CNPJ masking and validation
@@ -458,6 +486,7 @@ const formatBrazilianPhone = (phone: string) => {
 - [ ] Regional healthcare considerations
 
 ### Accessibility
+
 - [ ] WCAG 2.1 AA+ compliance
 - [ ] Screen reader testing
 - [ ] Keyboard navigation
@@ -469,6 +498,7 @@ const formatBrazilianPhone = (phone: string) => {
 ## Resources
 
 ### Tools
+
 - Chrome DevTools Device Mode
 - BrowserStack for cross-device testing
 - Lighthouse for performance auditing
@@ -476,6 +506,7 @@ const formatBrazilianPhone = (phone: string) => {
 - WebPageTest for network simulation
 
 ### Libraries
+
 - React Native Web for mobile components
 - Hammer.js for touch gestures
 - Intersection Observer API for lazy loading
@@ -483,6 +514,7 @@ const formatBrazilianPhone = (phone: string) => {
 - react-virtualized for large lists
 
 ### Design Resources
+
 - [Material Design](https://material.io/)
 - [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
 - [Fluent Design](https://www.microsoft.com/design/fluent/)

@@ -16,6 +16,7 @@ technology_stack: "React 19 + Hono + Supabase + Prisma + Turborepo"
 **Primary Mission**: Canonical playbook for orchestrating multi-agent code quality audits across NeonPro's healthcare platform with strict LGPD/ANVISA compliance and intelligent agent coordination.
 
 **Scope Boundaries**:
+
 - ✅ **In Scope**: Full-stack code quality, database integration, security compliance, test orchestration
 - ✅ **Healthcare Focus**: Patient data, clinical workflows, consent management, audit trails
 - ✅ **Agent Coordination**: Multi-agent TDD workflows with parallel execution optimization
@@ -24,20 +25,23 @@ technology_stack: "React 19 + Hono + Supabase + Prisma + Turborepo"
 ## 📋 Mandatory Prerequisites
 
 **Documentation Preload**:
+
 - `docs/AGENTS.md` - Agent coordination framework
-- `docs/architecture/source-tree.md` - Monorepo structure and boundaries  
+- `docs/architecture/source-tree.md` - Monorepo structure and boundaries
 - `docs/architecture/tech-stack.md` - Technology stack and patterns
 - `docs/testing/AGENTS.md` - Testing strategy and patterns
 - `docs/testing/database-security-testing.md` - Healthcare security testing
 - `docs/rules/coding-standards.md` - Code quality standards
 
 **Tool Access Validation**:
+
 - ✅ `archon` MCP - Task management and knowledge base
 - ✅ `serena` MCP - Codebase analysis and semantic search
 - ✅ `desktop-commander` MCP - File operations and command execution
 - ⚠️ `supabase` MCP - Conditional activation for RLS/database validation
 
 **Compliance Requirements**:
+
 - LGPD compliance for all patient data operations
 - ANVISA device registration for adverse events
 - CFM professional access controls
@@ -52,7 +56,7 @@ CRITICAL_MCP_ORDER:
   3. serena: "Codebase analysis and change surface detection"
   4. desktop-commander: "File operations and command execution"
   5. supabase: "Conditional - Database and RLS validation (when needed)"
-  
+
 WARNING: "Strict order required for Phase 0 setup. Deviation may cause agent coordination failures."
 ```
 
@@ -78,17 +82,18 @@ HEALTH_STATUS:
 
 ## ⚡ Quick Execution Index
 
-| Phase | Focus | Auto-Triggers | Primary Agents | Output | Estimated Duration |
-|-------|-------|---------------|----------------|---------|-------------------|
-| **0** | Setup & Scoping | Audit kickoff | `sequential-thinking → archon → serena` | Scope confirmation + task log | 2-5 min |
-| **1** | Backend ↔ DB | Schema/API changes | `architect-review + security-auditor + code-reviewer` | Green Prisma build + RLS validation | 5-15 min |
-| **2** | LGPD Security | Patient/clinic data | `security-auditor + architect-review + test` | LGPD compliance report | 8-20 min |
-| **3** | Code Quality | Any code changes | `code-reviewer + test` | Lint/type-check/coverage | 3-10 min |
-| **4** | Test Orchestration | Significant diffs | `test + security-auditor` | Targeted test suites | 5-15 min |
-| **5** | Systematic Fixing | Blockers identified | Priority-based agents | Remediation log | Variable |
-| **6** | Quality Gates | Pre-release | All agents | Final approval package | 5-10 min |
+| Phase | Focus              | Auto-Triggers       | Primary Agents                                        | Output                              | Estimated Duration |
+| ----- | ------------------ | ------------------- | ----------------------------------------------------- | ----------------------------------- | ------------------ |
+| **0** | Setup & Scoping    | Audit kickoff       | `sequential-thinking → archon → serena`               | Scope confirmation + task log       | 2-5 min            |
+| **1** | Backend ↔ DB      | Schema/API changes  | `architect-review + security-auditor + code-reviewer` | Green Prisma build + RLS validation | 5-15 min           |
+| **2** | LGPD Security      | Patient/clinic data | `security-auditor + architect-review + test`          | LGPD compliance report              | 8-20 min           |
+| **3** | Code Quality       | Any code changes    | `code-reviewer + test`                                | Lint/type-check/coverage            | 3-10 min           |
+| **4** | Test Orchestration | Significant diffs   | `test + security-auditor`                             | Targeted test suites                | 5-15 min           |
+| **5** | Systematic Fixing  | Blockers identified | Priority-based agents                                 | Remediation log                     | Variable           |
+| **6** | Quality Gates      | Pre-release         | All agents                                            | Final approval package              | 5-10 min           |
 
 **Emergency Hotkeys**:
+
 - `pnpm test:healthcare -- --regression` - Healthcare compliance regression
 - `pnpm test:orchestrate -- --all-categories` - Full orchestration test
 - `pnpm lint && pnpm type-check` - Quick quality check
@@ -98,20 +103,21 @@ HEALTH_STATUS:
 ## 🧰 Process & Tooling Integration Checklist
 
 ### Documentation Sync Protocol
+
 ```yaml
 SYNC_PROTOCOL:
   version_bump_triggers:
     - "Update .github/prompts/code-quality-audit.prompt.md version"
     - "Significant agent orchestration changes"
     - "New compliance requirements added"
-  
+
   required_doc_updates:
     - "docs/AGENTS.md" - Agent coordination updates
     - "docs/architecture/source-tree.md" - Source tree changes
     - "docs/testing/AGENTS.md" - Testing pattern updates
     - "docs/testing/database-security-testing.md" - Security testing updates
     - "docs/mistakes/automation.md" - Automation lessons learned
-  
+
   workflow:
     1. "Document target doc owners in Archon task"
     2. "Create 48h follow-up task for confirmation"
@@ -121,8 +127,9 @@ SYNC_PROTOCOL:
 ```
 
 ### Command & Script Mapping
+
 ```yaml
-WORKSPACE_SCRIPTS:  # Preferred - always use these first
+WORKSPACE_SCRIPTS: # Preferred - always use these first
   backend_testing: "pnpm test:backend"
   frontend_testing: "pnpm test:frontend"
   healthcare_compliance: "pnpm test:healthcare"
@@ -133,7 +140,7 @@ WORKSPACE_SCRIPTS:  # Preferred - always use these first
   constitutional_full: "pnpm constitutional:full"
   orchestration_full: "pnpm test:orchestrate -- --all-categories"
 
-VS_CODE_TASKS:  # Fast execution via IDE
+VS_CODE_TASKS: # Fast execution via IDE
   - "🏛️ Constitutional Audit - Quick"
   - "🏛️ Constitutional Audit - Full"
   - "📈 Performance Benchmark"
@@ -143,11 +150,11 @@ VS_CODE_TASKS:  # Fast execution via IDE
   - "🧹 Web Lint (apps/web)"
   - "✅ Web Type-Check (apps/web)"
 
-FALLBACK_COMMANDS:  # When Bun/Turbo unavailable
+FALLBACK_COMMANDS: # When Bun/Turbo unavailable
   package_manager: "Use pnpm directly: pnpm <command>"
   test_execution: "node --test or vitest directly"
   build_commands: "vite build or tsc directly"
-  
+
 FALLBACK_PROTOCOL:
   - "Log deviation in Archon task notes"
   - "Capture full console output"
@@ -156,25 +163,33 @@ FALLBACK_PROTOCOL:
 ```
 
 ### Execution Mode Decision Matrix
+
 ```yaml
 EXECUTION_MODES:
   sequential_mandatory:
     conditions: ["Phase 0 setup", "Agent conflicts", "Compliance escalations"]
     order: "strict MCP order: sequential-thinking → archon → serena → desktop-commander"
     notes: "Never skip or reorder Phase 0 MCP sequence"
-  
+
   parallel_preferred:
-    conditions: ["Independent agent analyses", "Phase 1-3 execution", "Multiple quality gates"]
+    conditions:
+      [
+        "Independent agent analyses",
+        "Phase 1-3 execution",
+        "Multiple quality gates",
+      ]
     coordination: "Launch concurrently, checkpoint evidence, capture combined logs"
     conflict_handling: "Use fallback_priority, rerun serially if conflicts"
-  
+
   hybrid_mixed:
-    conditions: ["Complex audits", "Multi-phase workflows", "Recovery scenarios"]
+    conditions:
+      ["Complex audits", "Multi-phase workflows", "Recovery scenarios"]
     approach: "Sequential setup, parallel execution, sequential validation"
     notes: "Maintain context across phase transitions"
 ```
 
 ### Tooling Usage Guidelines
+
 ```yaml
 TOOLING_PREFERENCES:
   workspace_scripts: "Always prefer over ad-hoc commands"
@@ -182,7 +197,7 @@ TOOLING_PREFERENCES:
   supabase_mcp: "Activate only for RLS/consent verification"
   test_reports: "Archive Playwright/Vitest reports and PDFs"
   knowledge_base: "Upload all artifacts to Archon KB"
-  
+
 PERFORMANCE_NOTES:
   script_execution: "Bun 3-5x faster than npm, use when available"
   parallel_agents: "Significant speedup for independent analyses"
@@ -196,58 +211,113 @@ PERFORMANCE_NOTES:
 
 ### Core Agent Capabilities Matrix
 
-| Agent | Primary Focus | Execution Phase | Parallel Capable | Dependencies | Healthcare Critical |
-|-------|---------------|-----------------|-----------------|--------------|-------------------|
-| **architect-review** | System design, patterns, scalability | Architecture validation | ✅ | None | 🔶 Medium |
-| **security-auditor** | DevSecOps, compliance, vulnerabilities | Security analysis | ✅ | None | 🔴 Critical |
-| **code-reviewer** | Quality, maintainability, performance | Code analysis | ✅ | architect-review | 🔶 Medium |
-| **test** | TDD patterns, coverage, test quality | Test orchestration | ✅ | code-reviewer | 🔶 Medium |
+| Agent                | Primary Focus                          | Execution Phase         | Parallel Capable | Dependencies     | Healthcare Critical |
+| -------------------- | -------------------------------------- | ----------------------- | ---------------- | ---------------- | ------------------- |
+| **architect-review** | System design, patterns, scalability   | Architecture validation | ✅               | None             | 🔶 Medium           |
+| **security-auditor** | DevSecOps, compliance, vulnerabilities | Security analysis       | ✅               | None             | 🔴 Critical         |
+| **code-reviewer**    | Quality, maintainability, performance  | Code analysis           | ✅               | architect-review | 🔶 Medium           |
+| **test**             | TDD patterns, coverage, test quality   | Test orchestration      | ✅               | code-reviewer    | 🔶 Medium           |
 
 ### Enhanced Agent Activation Triggers
 
 ```yaml
 AGENT_TRIGGERS:
   architect-review:
-    keywords: [
-      "microservice", "architecture", "system design", "patterns", "scalability",
-      "database schema", "api design", "service boundaries", "integration patterns"
-    ]
-    file_patterns: [
-      "**/routes/**", "**/api/**", "**/services/**", "**/lib/**",
-      "packages/database/prisma/schema.prisma", "**/migrations/**"
-    ]
+    keywords:
+      [
+        "microservice",
+        "architecture",
+        "system design",
+        "patterns",
+        "scalability",
+        "database schema",
+        "api design",
+        "service boundaries",
+        "integration patterns",
+      ]
+    file_patterns:
+      [
+        "**/routes/**",
+        "**/api/**",
+        "**/services/**",
+        "**/lib/**",
+        "packages/database/prisma/schema.prisma",
+        "**/migrations/**",
+      ]
     always_active: true
     complexity_threshold: "Medium-High"
 
   security-auditor:
-    keywords: [
-      "authentication", "authorization", "payment", "personal data", "compliance",
-      "rls", "tenant", "consent", "audit", "break-glass", "lgpd", "phi", "pii",
-      "healthcare", "patient", "clinic", "professional", "anvisa", "cfm"
-    ]
-    file_patterns: [
-      "**/auth/**", "**/security/**", "**/*patient*", "**/*clinic*",
-      "packages/database/**", "apps/api/src/routes/**", "**/consent/**",
-      "**/audit/**", "apps/web/src/components/patients/**"
-    ]
+    keywords:
+      [
+        "authentication",
+        "authorization",
+        "payment",
+        "personal data",
+        "compliance",
+        "rls",
+        "tenant",
+        "consent",
+        "audit",
+        "break-glass",
+        "lgpd",
+        "phi",
+        "pii",
+        "healthcare",
+        "patient",
+        "clinic",
+        "professional",
+        "anvisa",
+        "cfm",
+      ]
+    file_patterns:
+      [
+        "**/auth/**",
+        "**/security/**",
+        "**/*patient*",
+        "**/*clinic*",
+        "packages/database/**",
+        "apps/api/src/routes/**",
+        "**/consent/**",
+        "**/audit/**",
+        "apps/web/src/components/patients/**",
+      ]
     healthcare_critical: true
     always_active: false
     priority: "P0-Critical"
 
   code-reviewer:
-    keywords: [
-      "performance", "maintainability", "technical debt", "code quality",
-      "regression", "refactor", "optimization", "bug fix", "hotfix"
-    ]
+    keywords:
+      [
+        "performance",
+        "maintainability",
+        "technical debt",
+        "code quality",
+        "regression",
+        "refactor",
+        "optimization",
+        "bug fix",
+        "hotfix",
+      ]
     file_patterns: ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"]
     always_active: true
     regression_focus: true
 
   test:
-    keywords: [
-      "tdd", "testing", "coverage", "test patterns", "vitest", "playwright",
-      "spec", "mock", "fixture", "healthcare compliance", "integration test"
-    ]
+    keywords:
+      [
+        "tdd",
+        "testing",
+        "coverage",
+        "test patterns",
+        "vitest",
+        "playwright",
+        "spec",
+        "mock",
+        "fixture",
+        "healthcare compliance",
+        "integration test",
+      ]
     file_patterns: ["**/*.test.*", "**/*.spec.*", "**/tests/**"]
     always_active: true
     healthcare_validation: true
@@ -257,14 +327,15 @@ AGENT_TRIGGERS:
 
 ```yaml
 FALLBACK_PRIORITY:
-  resolution_order: ["security-auditor", "architect-review", "code-reviewer", "test"]
+  resolution_order:
+    ["security-auditor", "architect-review", "code-reviewer", "test"]
   conflict_resolution_protocol: |
     1. Deactivate lower-priority agent when conflicts occur
     2. Rerun impacted phase sequentially using priority order
     3. Document conflict rationale and resolution in Archon task notes
     4. Re-trigger regression suite with ID: pnpm test:healthcare -- --regression
     5. Log agent coordination lessons in knowledge base
-  
+
   ESCALATION_PATH:
     - "First conflict: Automatic resolution with fallback_priority"
     - "Second conflict: Manual review with project owner"
@@ -281,19 +352,19 @@ AGENT_COORDINATION_RULES:
 
 ### Post-API-Fix Regression Requirements
 
-```yaml
+````yaml
 POST_API_FIX_CHECKLIST:
   mandatory_regression_triggers:
     - "Any changes to apps/api/src/routes/**"
     - "Patient/clinic data model modifications"
     - "Authentication/authorization updates"
     - "RLS policy changes"
-  
+
   regression_suite_ids:
     healthcare_compliance: "pnpm test:healthcare -- --regression"
     api_contract: "pnpm test:backend -- --api-contract"
     security_validation: "pnpm test:healthcare -- --audit-only"
-  
+
   documentation_requirements:
     - "Log regression execution in Archon with full console output"
     - "Attach coverage reports and test artifacts"
@@ -308,37 +379,37 @@ POST_API_FIX_CHECKLIST:
 ```yaml
 ORCHESTRATION_SETUP:
   steps:
-    1. sequential-thinking: 
+    1. sequential-thinking:
         action: "Analyze audit scope and complexity assessment"
         output: "Complexity score (1-10) and agent routing recommendation"
-        
-    2. archon_mcp: 
+
+    2. archon_mcp:
         action: "Initialize task tracking and agent coordination"
         output: "Task registry with agent assignments and dependencies"
-        
-    3. serena_mcp: 
+
+    3. serena_mcp:
         action: "Codebase analysis and change surface detection"
         output: "Change impact analysis and affected components"
-        
-    4. agent_selection: 
+
+    4. agent_selection:
         action: "Activate agents based on triggers and complexity"
         output: "Agent activation plan with coordination strategy"
-        
-    5. regression_register: 
+
+    5. regression_register:
         action: "Record post-API-fix regression suite IDs"
         output: "Regression checklist stored in Archon task notes"
-        
-    6. workflow_selection: 
+
+    6. workflow_selection:
         action: "Choose orchestration pattern based on triggers"
         output: "Execution plan (standard/security-critical/microservices)"
-        
-    7. documentation_preload: 
+
+    7. documentation_preload:
         action: "Load required documentation from /docs"
         output: "Documentation cache with version tracking"
 
   QUALITY_GATE: "All Phase 0 steps complete with MCP order validation"
   FAILURE_HANDLING: "Restart Phase 0 if any MCP tool fails to initialize"
-```
+````
 
 ### Critical Documentation Preload
 
@@ -348,22 +419,22 @@ DOCUMENTATION_PRELOAD:
     - "docs/architecture/source-tree.md"
     - "docs/architecture/tech-stack.md"
     - "docs/architecture/AGENTS.md"
-    
+
   testing_docs:
     - "docs/testing/AGENTS.md"
     - "docs/testing/coverage-policy.md"
     - "docs/testing/integration-testing.md"
     - "docs/testing/database-security-testing.md"
-    
+
   standards_docs:
     - "docs/rules/coding-standards.md"
     - ".claude/agents/code-review/tdd-orchestrator.md"
     - "CLAUDE.md"
-    
+
   compliance_docs:
     - "docs/features/lgpd-compliance.md"
     - "docs/features/healthcare-security.md"
-    
+
   VERSION_TRACKING: "Record all loaded doc versions in Archon task"
 ```
 
@@ -379,7 +450,7 @@ DOCUMENTATION_PRELOAD:
 graph TD
     A[Feature Analysis] --> B{Complexity Assessment}
     B -->|Low (1-3)| C[Basic TDD + 2 Agents]
-    B -->|Medium (4-6)| D[Enhanced TDD + 3 Agents] 
+    B -->|Medium (4-6)| D[Enhanced TDD + 3 Agents]
     B -->|High (7-10)| E[Full TDD + 4 Agents]
 
     C --> F[test + code-reviewer]
@@ -405,12 +476,12 @@ agent_tasks:
     - "Define test structure and patterns"
     - "Create failing test cases"
     - "Validate test environment setup"
-    
+
   architect-review:
     - "Validate architectural test approach"
     - "Review test design patterns"
     - "Ensure test coverage of system boundaries"
-    
+
   security-auditor:
     - "Define security test requirements"
     - "Ensure compliance test coverage"
@@ -448,17 +519,17 @@ parallel_tasks:
     - "Optimize code quality and maintainability"
     - "Improve performance bottlenecks"
     - "Enhance error handling patterns"
-    
+
   architect-review:
     - "Refine architectural patterns"
     - "Optimize system design"
     - "Improve modularity and separation of concerns"
-    
+
   security-auditor:
     - "Enhance security measures"
     - "Improve compliance implementation"
     - "Strengthen data protection mechanisms"
-    
+
   test:
     - "Optimize test performance and coverage"
     - "Refine test patterns and mocks"
@@ -506,14 +577,14 @@ QUALITY_ASSURANCE: "Security-auditor must sign off each phase"
 
 **Use Case**: Patient data, clinical records, LGPD compliance
 
-```yaml
+````yaml
 workflow: healthcare-compliance-tdd
 compliance_first: true
 regulations: ["LGPD", "CFM", "ANVISA"]
 agent_leadership: "security-auditor"
 
 agent_coordination:
-  security-auditor: 
+  security-auditor:
     role: "Primary - LGPD compliance validation"
     responsibilities: [
       "Consent mechanism validation",
@@ -522,8 +593,8 @@ agent_coordination:
       "Data retention compliance",
       "Professional access controls"
     ]
-    
-  architect-review: 
+
+  architect-review:
     role: "Data architecture and privacy by design"
     responsibilities: [
       "Privacy-by-design architecture",
@@ -531,8 +602,8 @@ agent_coordination:
       "Service boundary security",
       "Multi-tenant isolation design"
     ]
-    
-  code-reviewer: 
+
+  code-reviewer:
     role: "PHI handling and audit trail implementation"
     responsibilities: [
       "PHI handling code review",
@@ -540,8 +611,8 @@ agent_coordination:
       "Audit logging implementation",
       "Data sanitization validation"
     ]
-    
-  test: 
+
+  test:
     role: "Compliance test patterns and data protection"
     responsibilities: [
       "Compliance test development",
@@ -565,12 +636,12 @@ parallel_agents:
     - "Validate database schema design patterns"
     - "Review service boundaries and data relationships"
     - "Ensure proper foreign key constraints and indexing"
-    
+
   security-auditor:
     - "Verify RLS policies on sensitive tables"
     - "Audit data access patterns and permissions"
     - "Validate tenant isolation mechanisms"
-    
+
   code-reviewer:
     - "Analyze Prisma client generation and type safety"
     - "Review API-database contract consistency"
@@ -579,28 +650,28 @@ parallel_agents:
 execution_commands:
   - "pnpm --filter @neonpro/api prisma:generate"
   - "pnpm --filter @neonpro/api build"
-  
+
 quality_gate: "Prisma generation successful + API builds green"
-```
+````
 
 ### 1.2 Database Structure & RLS Analysis (Sequential Security Focus)
 
 ```yaml
 sequential_execution:
-  1. architect-review: 
-     - "Analyze database architecture and relationships"
-     - "Review schema design patterns"
-     - "Validate data model consistency"
-     
-  2. security-auditor: 
-     - "Validate RLS policies and tenant isolation"
-     - "Test user context propagation"
-     - "Verify audit trail implementation"
-     
-  3. code-reviewer: 
-     - "Review field mapping and error handling"
-     - "Check snake_case/camelCase consistency"
-     - "Validate type safety across boundaries"
+  1. architect-review:
+    - "Analyze database architecture and relationships"
+    - "Review schema design patterns"
+    - "Validate data model consistency"
+
+  2. security-auditor:
+    - "Validate RLS policies and tenant isolation"
+    - "Test user context propagation"
+    - "Verify audit trail implementation"
+
+  3. code-reviewer:
+    - "Review field mapping and error handling"
+    - "Check snake_case/camelCase consistency"
+    - "Validate type safety across boundaries"
 
 security_requirements:
   - "RLS enabled on all patient/clinic tables: 100%"
@@ -617,12 +688,12 @@ agent_coordination:
     - "Scan Hono routes for field name consistency"
     - "Validate error handling for DB errors and RLS denials"
     - "Review API response type alignment"
-    
+
   security-auditor:
     - "Ensure multi-tenant scoping in patient/clinic queries"
     - "Verify audit trail implementation for data access"
     - "Test for potential data leakage vectors"
-    
+
   architect-review:
     - "Review API contract alignment with database schema"
     - "Validate service layer abstraction patterns"
@@ -631,7 +702,7 @@ agent_coordination:
 validation_commands:
   - "pnpm test:backend -- --api-contract"
   - "pnpm test:healthcare -- --database-validation"
-  
+
 blocking_criteria: "All API-Database contracts validated and secure"
 ```
 
@@ -654,7 +725,7 @@ RED_phase:
     - "Create consent validation test patterns"
     - "Establish audit trail test structure"
     - "Design data retention validation tests"
-    
+
   test:
     - "Implement failing compliance tests"
     - "Create PHI handling test scenarios"
@@ -667,7 +738,7 @@ GREEN_phase:
     - "Add audit trail mechanisms"
     - "Create data retention implementations"
     - "Build PHI handling safeguards"
-    
+
   security-auditor:
     - "Validate LGPD compliance implementation"
     - "Verify data protection measures"
@@ -731,26 +802,26 @@ agent_tasks:
 ```yaml
 sequential_execution:
   1. architect-review:
-     - "Review RLS policy architecture"
-     - "Validate tenant isolation design"
-     - "Ensure proper context propagation"
-     
+    - "Review RLS policy architecture"
+    - "Validate tenant isolation design"
+    - "Ensure proper context propagation"
+
   2. security-auditor:
-     - "Verify policies active for patient/clinic tables"
-     - "Test user context propagation (clinic, role, professional id)"
-     - "Validate tenant isolation effectiveness"
-     - "Test for privilege escalation vulnerabilities"
-     
+    - "Verify policies active for patient/clinic tables"
+    - "Test user context propagation (clinic, role, professional id)"
+    - "Validate tenant isolation effectiveness"
+    - "Test for privilege escalation vulnerabilities"
+
   3. code-reviewer:
-     - "Review RLS policy implementation in queries"
-     - "Validate context passing in API layers"
-     - "Check for bypass or circumvention attempts"
-     
+    - "Review RLS policy implementation in queries"
+    - "Validate context passing in API layers"
+    - "Check for bypass or circumvention attempts"
+
   4. test:
-     - "Execute tenant isolation tests"
-     - "Validate cross-tenant access prevention"
-     - "Test RLS policy effectiveness"
-     - "Verify audit trail completeness"
+    - "Execute tenant isolation tests"
+    - "Validate cross-tenant access prevention"
+    - "Test RLS policy effectiveness"
+    - "Verify audit trail completeness"
 
 quality_gates:
   - "RLS policies active on all sensitive tables: ≥100%"
@@ -759,13 +830,13 @@ quality_gates:
   - "No cross-tenant data access possible: ≥100%"
   - "Audit trail integrity confirmed (retention ≥7 years)"
   - "Test data anonymization validated: ≥100%"
-  
+
 failure_protocol: "Gate failures trigger pnpm test:healthcare -- --audit-only rerun"
 ```
 
 ### 2.4 Emergency Access & Documentation (Compliance Orchestration)
 
-```yaml
+````yaml
 agent_coordination:
   security-auditor:
     - "Validate emergency access protocols"
@@ -773,12 +844,12 @@ agent_coordination:
     - "Audit emergency access logging"
     - "Verify alert delivery and session expiry"
     - "Log break-glass review outcome in Archon"
-    
+
   architect-review:
     - "Review emergency access architecture"
     - "Validate failsafe mechanisms"
     - "Ensure proper audit trail integration"
-    
+
   code-reviewer:
     - "Review emergency access implementation"
     - "Validate audit trail for emergency procedures"
@@ -804,19 +875,19 @@ parallel_execution:
     - "Code quality metrics analysis"
     - "Performance bottleneck detection"
     - "Maintainability assessment"
-    
+
   security-auditor:
     - "Dependency vulnerability scanning"
     - "Security advisory analysis"
     - "Code security pattern validation"
     - "Compliance verification"
-    
+
   architect-review:
     - "Architecture pattern compliance"
     - "Design consistency validation"
     - "Module dependency analysis"
     - "System boundary validation"
-    
+
   test:
     - "Test coverage analysis"
     - "Test quality assessment"
@@ -830,7 +901,7 @@ execution_commands:
   - "pnpm lint"
   - "pnpm type-check"
   - "pnpm audit --json > audit-report.json || true"
-```
+````
 
 ### 3.2 Quality Gates & Thresholds (Multi-Agent Validation)
 
@@ -841,19 +912,19 @@ quality_gates:
     - "Oxlint errors: 0 (warnings <100)"
     - "Code complexity: Cyclomatic <10"
     - "Maintainability index: >70"
-    
+
   security-auditor:
     - "Critical vulnerabilities: 0"
     - "High vulnerabilities: <5"
     - "Security patterns: 100% compliance"
     - "Dependency security: No critical alerts"
-    
+
   architect-review:
     - "Architecture violations: 0"
     - "Design pattern compliance: >90%"
     - "Module coupling: <80%"
     - "System boundary integrity: 100%"
-    
+
   test:
     - "Test coverage: ≥90% critical / ≥85% important / ≥80% useful"
     - "Test quality score: >8/10"
@@ -878,19 +949,19 @@ agent_analysis:
     - "Select appropriate test strategies based on file patterns"
     - "Coordinate test execution across different domains"
     - "Validate test environment readiness"
-    
+
   architect-review:
     - "Validate test architecture and patterns"
     - "Review integration test strategies"
     - "Ensure test coverage aligns with system boundaries"
     - "Verify test isolation and independence"
-    
+
   code-reviewer:
     - "Analyze code changes for test impact"
     - "Review test quality and maintainability"
     - "Validate test performance and efficiency"
     - "Check test data management"
-    
+
   security-auditor:
     - "Ensure security test coverage for sensitive changes"
     - "Validate compliance test execution"
@@ -915,24 +986,24 @@ routing_strategy:
       tests: ["integration", "api-contract", "rls-security"]
       regression_suite: "pnpm test:healthcare -- --regression"
       notes: "Always enqueue regression when routes touching clinics/patients change"
-      
+
     "packages/database/**":
       primary_agent: security-auditor
       strategy: "Schema & RLS verification + API regression"
       tests: ["schema-validation", "rls-policies", "migration-safety"]
       regression_suite: "pnpm test:healthcare -- --audit-only"
       notes: "Auto-run audit-only regression when database objects change"
-      
+
     "apps/web/src/routes/**":
       primary_agent: code-reviewer
       strategy: "TanStack Router tests + API contract checks"
       tests: ["routing", "api-integration", "navigation"]
-      
+
     "apps/web/src/components|hooks/**":
       primary_agent: test
       strategy: "Unit tests + Supabase client usage"
       tests: ["component", "hook", "client-integration"]
-      
+
     "healthcare_domains":
       primary_agent: security-auditor
       strategy: "LGPD + RLS suites"
@@ -948,24 +1019,26 @@ test_execution_matrix:
     agents: ["architect-review", "code-reviewer"]
     command: "pnpm test:backend"
     artifacts: ["api-test-results.json", "integration-logs.txt"]
-    
+
   frontend_integration:
     agents: ["test", "code-reviewer"]
     commands: ["pnpm test:frontend", "pnpm test:a11y"]
     artifacts: ["frontend-coverage.html", "a11y-report.json"]
-    
+
   healthcare_compliance:
     agents: ["test", "security-auditor"]
-    commands: [
-      "pnpm test:healthcare -- --compliance",
-      "pnpm test:e2e",
-      "pnpm test:orchestrate -- --healthcare-compliance"
-    ]
-    artifacts: [
-      "compliance-report.pdf",
-      "playwright-results/",
-      "healthcare-audit-trail.json"
-    ]
+    commands:
+      [
+        "pnpm test:healthcare -- --compliance",
+        "pnpm test:e2e",
+        "pnpm test:orchestrate -- --healthcare-compliance",
+      ]
+    artifacts:
+      [
+        "compliance-report.pdf",
+        "playwright-results/",
+        "healthcare-audit-trail.json",
+      ]
     evidence_requirements: "Archive screenshots/videos for compliance evidence"
 
 archive_requirements: "All test artifacts uploaded to Archon knowledge base"
@@ -973,7 +1046,7 @@ archive_requirements: "All test artifacts uploaded to Archon knowledge base"
 
 ### 4.4 Coverage Policy & Quality Gates
 
-```yaml
+````yaml
 coverage_policy:
   critical: "≥90% (healthcare data, authentication, payments)"
   important: "≥85% (business logic, integrations)"
@@ -984,12 +1057,12 @@ agent_validation:
     - "Validate coverage thresholds met"
     - "Review test quality metrics"
     - "Ensure test isolation and independence"
-    
+
   security-auditor:
     - "Ensure compliance test coverage"
     - "Validate security test execution"
     - "Review penetration test results"
-    
+
   code-reviewer:
     - "Review test maintainability"
     - "Validate test performance"
@@ -1010,12 +1083,12 @@ sequential_execution:
      - "Analyze DB schema mismatches and relationship issues"
      - "Review API field mapping and contract alignment"
      - "Validate service boundary integrity"
-     
+
   2. security-auditor:
      - "Identify RLS bypass risks and tenant isolation issues"
      - "Validate consent/audit logging on PHI paths"
      - "Test for privilege escalation vulnerabilities"
-     
+
   3. code-reviewer:
      - "Fix API field errors and implement tenant/role scoping"
      - "Implement missing consent/audit logging mechanisms"
@@ -1029,7 +1102,7 @@ blocking_issues:
 
 quality_gate: "All P0 issues resolved before proceeding"
 escalation: "P0 failures require immediate project owner notification"
-```
+````
 
 ### 5.2 P1 — Security & Compliance (Parallel Execution)
 
@@ -1041,7 +1114,7 @@ parallel_execution:
     - "Implement PHI redaction in logs and error messages"
     - "Add audit logs for sensitive operations"
     - "Test for injection vulnerabilities"
-    
+
   code-reviewer:
     - "Review and fix security code patterns"
     - "Optimize error handling without data leakage"
@@ -1064,7 +1137,7 @@ parallel_execution:
     - "Align response types and zod schemas with routes"
     - "Improve type safety across API boundaries"
     - "Validate input/output type consistency"
-    
+
   architect-review:
     - "Review API contract consistency"
     - "Validate type system architecture"
@@ -1087,7 +1160,7 @@ parallel_execution:
     - "Optimize query performance"
     - "Improve error handling patterns"
     - "Refactor complex functions"
-    
+
   architect-review:
     - "Review module architecture and dependencies"
     - "Validate import/export patterns"
@@ -1102,20 +1175,20 @@ module_hygiene:
 
 ### 5.5 Enhanced Error Handling & Rollback Strategy
 
-```yaml
+````yaml
 error_handling:
   agent_failure:
     - "Log agent failure with full context"
     - "Attempt automatic recovery with alternative agent"
     - "Implement fallback_priority sequence"
     - "Escalate to manual intervention if needed"
-    
+
   quality_gate_failure:
     - "Stop execution at failed gate"
     - "Provide detailed failure analysis"
     - "Suggest remediation steps"
     - "Create recovery task in Archon"
-    
+
   rollback_strategy:
     - "Maintain checkpoint before each phase"
     - "Enable selective rollback to last successful state"
@@ -1140,12 +1213,12 @@ validation_agents:
     - "API architecture integrity validation"
     - "Database schema design compliance"
     - "Service boundary validation"
-    
+
   security-auditor:
     - "RLS policies active and effective"
     - "Data access pattern security validation"
     - "Tenant isolation verification"
-    
+
   code-reviewer:
     - "API builds green; Prisma client generates successfully"
     - "No schema/field mapping errors"
@@ -1155,9 +1228,9 @@ blocking_criteria:
   - "API builds green; Prisma client generates: ≥100%"
   - "No schema/field errors; RLS policies verified: ≥100%"
   - "Multi-tenant scoping implemented: ≥100%"
-  
+
 test_commands: ["pnpm test:backend", "pnpm test:healthcare -- --database-validation"]
-```
+````
 
 ### 6.2 Gate 1 — LGPD Compliance (Blocking)
 
@@ -1168,11 +1241,11 @@ validation_agents:
     - "Consent mechanism verification"
     - "Audit trail completeness validation"
     - "Data protection measure verification"
-    
+
   architect-review:
     - "Privacy-by-design architecture validation"
     - "Data flow compliance verification"
-    
+
   code-reviewer:
     - "Consent implementation code review"
     - "Audit logging implementation validation"
@@ -1183,7 +1256,7 @@ blocking_criteria:
   - "LGPD compliance validated: ≥100%"
   - "PHI handling secure: ≥100%"
   - "Regression suite executed (pnpm test:healthcare)"
-  
+
 compliance_evidence: "Archive compliance reports in Archon"
 ```
 
@@ -1195,11 +1268,11 @@ validation_agents:
     - "RLS policy effectiveness validation (primary)"
     - "Cross-tenant access prevention verification"
     - "Security boundary enforcement validation"
-    
+
   architect-review:
     - "RLS architecture design validation"
     - "Tenant isolation architecture review"
-    
+
   test:
     - "RLS test execution and validation"
     - "Cross-tenant leakage test verification"
@@ -1211,7 +1284,7 @@ blocking_criteria:
   - "User context propagation verified: ≥100%"
   - "Audit trail entries captured for access attempts"
   - "ANVISA device/adverse-event validation documented: ≥100%"
-  
+
 audit_requirements: "Run pnpm test:healthcare -- --audit-only"
 ```
 
@@ -1223,12 +1296,12 @@ validation_agents:
     - "TypeScript strict mode compliance (primary)"
     - "Linting standards compliance"
     - "Code quality metrics validation"
-    
+
   security-auditor:
     - "Security vulnerability assessment (primary)"
     - "Dependency security validation"
     - "Security pattern compliance"
-    
+
   architect-review:
     - "Architecture pattern compliance"
     - "Design consistency validation"
@@ -1238,7 +1311,7 @@ blocking_criteria:
   - "pnpm type-check passes: ≥100%"
   - "pnpm audit has 0 criticals: ≥100%"
   - "Security patterns compliant: ≥100%"
-  
+
 quality_commands: ["pnpm lint", "pnpm type-check", "pnpm audit"]
 ```
 
@@ -1250,11 +1323,11 @@ validation_agents:
     - "Test coverage validation (primary)"
     - "Test quality assessment"
     - "TDD pattern compliance"
-    
+
   code-reviewer:
     - "Test maintainability review"
     - "Test performance validation"
-    
+
   security-auditor:
     - "Security test coverage validation"
     - "Compliance test execution verification"
@@ -1265,7 +1338,7 @@ blocking_criteria:
   - "Security test coverage: ≥100%"
   - "Compliance test execution: ≥100%"
   - "Useful feature coverage: ≥80%"
-  
+
 coverage_requirements: "Upload coverage reports to Archon knowledge base"
 ```
 
@@ -1304,17 +1377,17 @@ reporting_coordination:
     - "Architecture compliance report"
     - "Design pattern analysis"
     - "System boundary validation results"
-    
+
   security-auditor:
     - "Security vulnerability assessment"
     - "LGPD compliance validation report"
     - "RLS policy effectiveness analysis"
-    
+
   code-reviewer:
     - "Code quality metrics and analysis"
     - "Type safety validation results"
     - "Performance optimization recommendations"
-    
+
   test:
     - "Test coverage and quality report"
     - "TDD compliance validation"
@@ -1330,20 +1403,20 @@ consolidated_outputs:
 
 ### Archon Integration Requirements
 
-```yaml
+````yaml
 archon_integration:
   task_updates:
     - "Update tasks with agent decisions and evidence"
     - "Upload all artifacts to Archon knowledge base"
     - "Refresh docs/features/code-quality-audit.md with version/date"
     - "Cross-link to supporting documentation"
-    
+
   knowledge_base:
     - "Store agent coordination lessons learned"
     - "Archive quality reports and compliance evidence"
     - "Document new patterns and best practices"
     - "Track regression suite IDs and results"
-    
+
   follow_up_tasks:
     - "Create 48h follow-up for documentation updates"
     - "Schedule regression testing for critical fixes"
@@ -1369,7 +1442,7 @@ workflow: "healthcare-compliance-tdd"
 execution: "Security-critical with full agent coordination"
 regression_requirements: "pnpm test:healthcare -- --regression"
 compliance_evidence: "Archive consent validation logs and audit trails"
-```
+````
 
 ### Example 2: API Integration Enhancement
 
@@ -1430,12 +1503,12 @@ const patientData: Patient = await getPatientData(id);
 
 ```typescript
 // Before - CommonJS
-const { execSync } = require('node:child_process');
-const express = require('express');
+const { execSync } = require("node:child_process");
+const express = require("express");
 
 // After - ES modules
-import { execSync } from 'node:child_process';
-import express from 'express';
+import { execSync } from "node:child_process";
+import express from "express";
 ```
 
 ### Security Pattern Examples
@@ -1446,10 +1519,10 @@ const query = `SELECT * FROM patients WHERE name = '${name}'`;
 
 // After - parameterized queries with RLS
 const patients = await prisma.patient.findMany({
-  where: { 
+  where: {
     name: { contains: name },
-    clinicId: context.clinicId // RLS enforced
-  }
+    clinicId: context.clinicId, // RLS enforced
+  },
 });
 ```
 
@@ -1458,12 +1531,14 @@ const patients = await prisma.patient.findMany({
 ## 🧭 Quick Start (Task Runner)
 
 ### VS Code Tasks (Fast Execution)
+
 - "🧪 Web Tests (apps/web)" → Vitest suite para frontend
 - "🔎 Web Smoke Test (vite build)" → build rápido de verificação
 - "🧹 Web Lint (apps/web)" → lint local
 - "✅ Web Type-Check (apps/web)" → type-check dedicado
 
 ### CLI Commands (Fallback)
+
 ```bash
 # Root workspace helpers
 pnpm test:orchestrate -- --all-categories
@@ -1482,6 +1557,7 @@ pnpm build
 ```
 
 ### Emergency Healthcare Commands
+
 ```bash
 # Healthcare compliance regression
 pnpm test:healthcare -- --regression
@@ -1512,12 +1588,12 @@ agent_performance:
     phase_4_testing: "5-15 minutes"
     phase_5_fixing: "variable based on issues"
     phase_6_gates: "5-10 minutes"
-    
+
   success_rates:
     agent_coordination: "Target >95%"
     quality_gate_passage: "Target >90% first attempt"
     regression_detection: "Target >99%"
-    
+
   bottlenecks:
     healthcare_compliance: "Often longest phase, security-auditor dependent"
     database_integration: "Schema changes require sequential validation"
@@ -1533,13 +1609,13 @@ health_checks:
     - "Serena MCP responsive for codebase analysis"
     - "Desktop-commander executing commands properly"
     - "Supabase MCP available when needed"
-    
+
   quality_metrics:
     - "Agent decision quality assessment"
     - "Conflict resolution effectiveness"
     - "Regression detection accuracy"
     - "Compliance validation thoroughness"
-    
+
   continuous_improvement:
     - "Monthly agent orchestration reviews"
     - "Quarterly workflow optimization"
@@ -1561,13 +1637,13 @@ recovery_strategies:
       - "Log failure state in Archon with full context"
       - "Apply fallback_priority sequence"
       - "Restart with minimal agent set"
-      
+
     escalation_path:
       - "First failure: Automatic recovery with fallback"
       - "Second failure: Manual intervention with project owner"
       - "Third failure: System architecture review required"
       - "Chronic failures: Agent orchestration framework update"
-      
+
     documentation_requirements:
       - "Document root cause analysis"
       - "Update conflict resolution procedures"
@@ -1580,13 +1656,13 @@ recovery_strategies:
       - "Assess agent effectiveness for failed gate"
       - "Review system design for inherent issues"
       - "Evaluate test coverage and quality"
-      
+
     resolution_strategies:
       - "Adjust gate thresholds if unrealistic"
       - "Enhance agent capabilities for specific domains"
       - "Improve system design or architecture"
       - "Expand test coverage and validation"
-      
+
     prevention_measures:
       - "Implement progressive gate validation"
       - "Add early warning systems for gate failures"
@@ -1599,13 +1675,13 @@ recovery_strategies:
       - "Security-auditor takes immediate control"
       - "Document violation scope and impact"
       - "Notify compliance officer and project owner"
-      
+
     remediation_process:
       - "Full security audit by security-auditor"
       - "System architecture review by architect-review"
       - "Code quality assessment by code-reviewer"
       - "Compliance testing by test agent"
-      
+
     prevention_protocol:
       - "Enhanced pre-commit compliance checks"
       - "Improved agent training on compliance"
@@ -1617,20 +1693,18 @@ recovery_strategies:
 
 ```yaml
 conflict_resolution:
-  priority_hierarchy:
-    1. "security-auditor (P0-Critical for healthcare)"
+  priority_hierarchy: 1. "security-auditor (P0-Critical for healthcare)"
     2. "architect-review (System design authority)"
     3. "code-reviewer (Code quality standards)"
     4. "test (Validation and coverage)"
-    
-  resolution_protocol:
-    1. "Identify conflicting agents and recommendations"
+
+  resolution_protocol: 1. "Identify conflicting agents and recommendations"
     2. "Apply priority hierarchy to select dominant agent"
     3. "Deactivate lower-priority agents for conflict duration"
     4. "Execute dominant agent recommendation"
     5. "Validate resolution effectiveness"
     6. "Document conflict and resolution in knowledge base"
-    
+
   learning_and_improvement:
     - "Analyze conflict patterns and root causes"
     - "Update agent coordination procedures"
@@ -1647,7 +1721,7 @@ conflict_resolution:
 ### Key Enhancements (v3.3.0)
 
 - **🤖 Enhanced Agent Coordination**: Intelligent triggers, conflict resolution, and fallback sequencing
-- **📋 Process Integration**: Comprehensive documentation sync protocols and tooling mappings  
+- **📋 Process Integration**: Comprehensive documentation sync protocols and tooling mappings
 - **🔄 Healthcare Compliance**: Strengthened LGPD/ANVISA/CFM validation with agent orchestration
 - **✅ Quality Gates**: Multi-layered validation with agent-specific responsibilities
 - **🔧 Error Handling**: Robust rollback and recovery strategies with escalation paths
@@ -1663,20 +1737,20 @@ deployment_readiness:
     - "✅ Update docs/testing/AGENTS.md with enhanced testing workflows"
     - "✅ Refresh docs/testing/database-security-testing.md"
     - "✅ Update docs/mistakes/automation.md with new lessons"
-    
+
   validation_requirements:
     - "Execute pnpm test:orchestrate -- --all-categories"
     - "Run pnpm test:healthcare -- --regression"
     - "Validate all agent coordination workflows"
     - "Test conflict resolution procedures"
     - "Verify compliance validation effectiveness"
-    
+
   archon_integration:
     - "Upload all artifacts to knowledge base"
     - "Create 48h follow-up task for documentation confirmation"
     - "Schedule regression testing monitoring"
     - "Document agent coordination effectiveness"
-    
+
   rollout_protocol:
     - "Communicate changes to development team"
     - "Provide training on new agent workflows"
@@ -1693,13 +1767,13 @@ success_metrics:
     - "Code quality score improvement: >20%"
     - "Test coverage increase: >15%"
     - "Security vulnerability reduction: >50%"
-    
+
   efficiency_gains:
     - "Audit time reduction: >25%"
     - "Agent coordination success: >95%"
     - "First-pass quality gates: >90%"
     - "Regression detection accuracy: >99%"
-    
+
   compliance_excellence:
     - "LGPD compliance validation: 100%"
     - "Security audit pass rate: >95%"

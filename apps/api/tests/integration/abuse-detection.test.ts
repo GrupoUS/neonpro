@@ -120,7 +120,7 @@ describe('Integration Test T014: Abuse Detection', () => {
           body: JSON.stringify({
             patientId: `bot-patient-${String(i).padStart(3, '0')}`, // Highly regular pattern
             analysisType: 'automated_analysis',
-            timestamp: Date.now() + (i * 1000), // Exact 1-second intervals
+            timestamp: Date.now() + i * 1000, // Exact 1-second intervals
             requestSource: 'automated_script',
           }),
         });
@@ -399,7 +399,8 @@ describe('Integration Test T014: Abuse Detection', () => {
       const responses = await Promise.all(suspiciousAccessPattern);
 
       let suspiciousActivityDetected = false;
-      for (const response of responses.slice(15)) { // Check later responses
+      for (const response of responses.slice(15)) {
+        // Check later responses
         if (response.status === 403) {
           const error = await response.json();
           expect(error).toMatchObject({

@@ -12,7 +12,13 @@
  */
 
 export interface BulkOperationRequest {
-  operationType: 'activate' | 'deactivate' | 'update' | 'delete' | 'export' | 'assign_tag';
+  operationType:
+    | 'activate'
+    | 'deactivate'
+    | 'update'
+    | 'delete'
+    | 'export'
+    | 'assign_tag';
   entityType: 'patient' | 'appointment' | 'professional' | 'service';
   entityIds: string[];
   data?: Record<string, any>;
@@ -111,7 +117,9 @@ export class BulkOperationsService {
   /**
    * Execute bulk operation with safety mechanisms
    */
-  async executeBulkOperation(request: BulkOperationRequest): Promise<BulkOperationResult> {
+  async executeBulkOperation(
+    request: BulkOperationRequest,
+  ): Promise<BulkOperationResult> {
     const startTime = Date.now();
     const auditTrailId = this.generateAuditId();
 
@@ -151,7 +159,11 @@ export class BulkOperationsService {
       // 9. Store undo information if enabled
       if (config.enableUndo && result.success) {
         const undoToken = this.generateUndoToken();
-        await this.storeUndoInformation(undoToken, request, config.undoWindowMs);
+        await this.storeUndoInformation(
+          undoToken,
+          request,
+          config.undoWindowMs,
+        );
         result.undoToken = undoToken;
       }
 
@@ -171,7 +183,10 @@ export class BulkOperationsService {
   /**
    * Undo bulk operation within the allowed window
    */
-  async undoBulkOperation(undoToken: string, requesterUserId: string): Promise<boolean> {
+  async undoBulkOperation(
+    undoToken: string,
+    requesterUserId: string,
+  ): Promise<boolean> {
     const undoInfo = this.undoOperations.get(undoToken);
 
     if (!undoInfo) {
@@ -199,7 +214,9 @@ export class BulkOperationsService {
       this.undoOperations.delete(undoToken);
 
       // Log undo operation
-      console.info(`Bulk operation undone: ${undoToken} by user ${requesterUserId}`);
+      console.info(
+        `Bulk operation undone: ${undoToken} by user ${requesterUserId}`,
+      );
 
       return true;
     } catch (error: any) {
@@ -225,10 +242,18 @@ export class BulkOperationsService {
 
   // Private helper methods
 
-  private async validateBulkRequest(request: BulkOperationRequest): Promise<void> {
+  private async validateBulkRequest(
+    request: BulkOperationRequest,
+  ): Promise<void> {
     // Validate required fields
-    if (!request.operationType || !request.entityType || !request.entityIds?.length) {
-      throw new Error('Invalid bulk operation request: missing required fields');
+    if (
+      !request.operationType
+      || !request.entityType
+      || !request.entityIds?.length
+    ) {
+      throw new Error(
+        'Invalid bulk operation request: missing required fields',
+      );
     }
 
     // Validate operation type
@@ -237,8 +262,8 @@ export class BulkOperationsService {
     }
 
     // Validate entity IDs format (basic UUID check)
-    const invalidIds = request.entityIds.filter(id =>
-      !id || typeof id !== 'string' || id.length < 10
+    const invalidIds = request.entityIds.filter(
+      id => !id || typeof id !== 'string' || id.length < 10,
     );
     if (invalidIds.length > 0) {
       throw new Error(`Invalid entity IDs: ${invalidIds.join(', ')}`);
@@ -259,7 +284,9 @@ export class BulkOperationsService {
     const timestamps = this.rateLimitMap.get(key) || [];
 
     // Remove timestamps older than 1 minute
-    const recentTimestamps = timestamps.filter(timestamp => now - timestamp < oneMinute);
+    const recentTimestamps = timestamps.filter(
+      timestamp => now - timestamp < oneMinute,
+    );
 
     // Check if rate limit exceeded
     if (recentTimestamps.length >= config.rateLimitPerMinute) {
@@ -287,7 +314,10 @@ export class BulkOperationsService {
         lastError = error;
 
         // Don't retry validation errors or auth errors
-        if (error.message.includes('validation') || error.message.includes('unauthorized')) {
+        if (
+          error.message.includes('validation')
+          || error.message.includes('unauthorized')
+        ) {
           throw error;
         }
 
@@ -328,7 +358,10 @@ export class BulkOperationsService {
       for (const entityId of batch) {
         try {
           // Store original data for undo functionality
-          const originalEntityData = await this.getEntityData(request.entityType, entityId);
+          const originalEntityData = await this.getEntityData(
+            request.entityType,
+            entityId,
+          );
           originalData[entityId] = originalEntityData;
 
           // Execute the operation
@@ -361,7 +394,10 @@ export class BulkOperationsService {
     return result;
   }
 
-  private async getEntityData(entityType: string, entityId: string): Promise<any> {
+  private async getEntityData(
+    entityType: string,
+    entityId: string,
+  ): Promise<any> {
     // Mock implementation - in real application, query database
     return { id: entityId, type: entityType, status: 'active' };
   }
@@ -398,7 +434,8 @@ export class BulkOperationsService {
     await new Promise(resolve => setTimeout(resolve, Math.random() * 100));
 
     // Simulate random failures for testing
-    if (Math.random() < 0.05) { // 5% failure rate
+    if (Math.random() < 0.05) {
+      // 5% failure rate
       throw new Error('Simulated processing error');
     }
   }
@@ -507,7 +544,9 @@ export class BulkOperationsService {
 
     // Clean up rate limits older than 1 hour
     this.rateLimitMap.forEach((timestamps, key) => {
-      const recentTimestamps = timestamps.filter(timestamp => now - timestamp < oneHour);
+      const recentTimestamps = timestamps.filter(
+        timestamp => now - timestamp < oneHour,
+      );
       if (recentTimestamps.length === 0) {
         this.rateLimitMap.delete(key);
       } else {
@@ -529,7 +568,10 @@ export const bulkOperationsService = new BulkOperationsService();
 
 // Start cleanup interval (run every 15 minutes)
 if (typeof setInterval !== 'undefined') {
-  setInterval(() => {
-    bulkOperationsService.cleanup();
-  }, 15 * 60 * 1000);
+  setInterval(
+    () => {
+      bulkOperationsService.cleanup();
+    },
+    15 * 60 * 1000,
+  );
 }

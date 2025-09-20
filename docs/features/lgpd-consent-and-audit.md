@@ -33,12 +33,14 @@ This document describes the implementation of LGPD (Lei Geral de Proteção de D
 #### ConsentService (`packages/database/src/services/consent-service.ts`)
 
 **Core Capabilities:**
+
 - Request, grant, verify, and revoke user consent
 - Export user data for LGPD compliance
 - Delete user data (right to be forgotten)
 - Track consent history and generate audit trails
 
 **Key Methods:**
+
 ```typescript
 async requestConsent(userId: string, dataTypes: MedicalDataClassification[], purpose: string, sessionId?: string): Promise<boolean>
 async verifyConsent(userId: string, dataType: MedicalDataClassification, sessionId: string): Promise<boolean>
@@ -50,12 +52,14 @@ async deleteUserData(userId: string, sessionId?: string): Promise<void>
 #### AuditService (`packages/database/src/services/audit-service.ts`)
 
 **Core Capabilities:**
+
 - Log telemedicine session events with LGPD metadata
 - Generate compliance reports and risk assessments
 - Search and filter audit logs by various criteria
 - Track data access patterns and consent violations
 
 **Key Methods:**
+
 ```typescript
 async createAuditLog(request: AuditLogRequest): Promise<string>
 async getSessionAuditLogs(sessionId: string): Promise<WebRTCAuditLog[]>
@@ -69,12 +73,14 @@ async searchAuditLogs(criteria: AuditSearchCriteria, limit?: number): Promise<We
 #### ConsentDialog Component (`apps/web/src/components/telemedicine/ConsentDialog.tsx`)
 
 **Features:**
+
 - Clear presentation of data usage terms
 - Granular consent options for different data types
 - Visual consent status indicators
 - Accessible design with ARIA compliance
 
 **Props:**
+
 ```typescript
 interface ConsentDialogProps {
   isOpen: boolean;
@@ -88,12 +94,14 @@ interface ConsentDialogProps {
 #### useLGPDConsent Hook (`apps/web/src/hooks/useLGPDConsent.ts`)
 
 **Features:**
+
 - Real-time consent status management
 - Automated audit logging integration
 - Error handling and user feedback
 - Session-specific consent tracking
 
 **Returns:**
+
 ```typescript
 interface LGPDConsentState {
   hasConsent: boolean;
@@ -108,6 +116,7 @@ interface LGPDConsentState {
 #### WaitingRoom Integration
 
 **Updates to `apps/web/src/components/telemedicine/WaitingRoom.tsx`:**
+
 - Consent status card showing current permissions
 - Integrated consent dialog for missing permissions
 - Conditional session join based on consent status
@@ -118,6 +127,7 @@ interface LGPDConsentState {
 #### Enhanced validateLGPDConsent (`packages/security/src/middleware.ts`)
 
 **Updates:**
+
 - Integrated with ConsentService for real-time validation
 - Comprehensive audit logging for all consent checks
 - Enhanced error handling and user feedback
@@ -188,12 +198,14 @@ interface LGPDConsentState {
 ### Unit Tests
 
 **ConsentService Tests (`packages/database/src/services/__tests__/consent-service.test.ts`):**
+
 - All CRUD operations for consent records
 - Error handling and edge cases
 - Data export and deletion functionality
 - Integration with audit logging
 
 **AuditService Tests (`packages/database/src/services/__tests__/audit-service.test.ts`):**
+
 - Audit log creation and retrieval
 - Compliance report generation
 - Search and filtering capabilities

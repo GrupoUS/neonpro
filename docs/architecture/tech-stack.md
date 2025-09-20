@@ -19,7 +19,7 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 
 **Stack Overview**:
 
-- **Frontend**: TanStack Router + Vite + React 19 + TypeScript 5.7.2
+- **Frontend**: TanStack Router + Vite + React 19 + TypeScript 5.9.2
 - **Backend**: tRPC v11 + Prisma + Supabase + PostgreSQL 15+
 - **AI**: OpenAI GPT-4 + Anthropic Claude via Vercel AI SDK
 - **Infrastructure**: Vercel (São Paulo) + Turborepo monorepo
@@ -47,7 +47,7 @@ This document details **WHICH** technologies NeonPro uses and **WHY** they were 
 - **Usage**: Test runner, development scripts, package auditing
 - **Performance**: ~12s test suite execution vs ~30s with Jest
 
-**TypeScript v5.7.2** - Type Safety & Developer Experience
+**TypeScript v5.9.2** - Type Safety & Developer Experience
 
 - **Why**: Latest features (decorators, satisfies), strict mode for data safety
 - **Benefits**: Compile-time error detection, excellent IDE support, data validation

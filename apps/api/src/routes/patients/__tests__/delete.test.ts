@@ -520,7 +520,9 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
     });
 
     it('should handle service errors gracefully', async () => {
-      mockPatientService.deletePatient.mockRejectedValue(new Error('Database connection failed'));
+      mockPatientService.deletePatient.mockRejectedValue(
+        new Error('Database connection failed'),
+      );
 
       const { default: deleteRoute } = await import('../delete');
 
@@ -556,7 +558,9 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
       const response = await deleteRoute.request(mockRequest);
 
       expect(response.headers.get('X-CFM-Compliant')).toBe('true');
-      expect(response.headers.get('X-Medical-Record-Retention')).toBe('required');
+      expect(response.headers.get('X-Medical-Record-Retention')).toBe(
+        'required',
+      );
       expect(response.headers.get('X-LGPD-Compliant')).toBe('true');
     });
 
@@ -662,7 +666,9 @@ describe('DELETE /api/v2/patients/{id} endpoint (T047)', () => {
 
       expect(response.status).toBe(200);
       expect(data.data.deletionType).toBe('scheduled_anonymization');
-      expect(response.headers.get('X-Anonymization-Scheduled')).toBe('2029-01-15T00:00:00Z');
+      expect(response.headers.get('X-Anonymization-Scheduled')).toBe(
+        '2029-01-15T00:00:00Z',
+      );
     });
   });
 });

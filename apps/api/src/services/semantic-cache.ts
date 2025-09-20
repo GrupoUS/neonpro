@@ -113,7 +113,7 @@ export class SemanticCacheService {
     let hash = 0;
     for (let i = 0; i < text.length; i++) {
       const char = text.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Converter para 32bit integer
     }
 
@@ -123,14 +123,19 @@ export class SemanticCacheService {
     }
 
     // Normalizar embedding
-    const magnitude = Math.sqrt(embedding.reduce((sum, val) => sum + val * val, 0));
+    const magnitude = Math.sqrt(
+      embedding.reduce((sum, val) => sum + val * val, 0),
+    );
     return embedding.map(val => val / magnitude);
   }
 
   /**
    * Calcula similaridade de cosseno entre dois embeddings
    */
-  private calculateCosineSimilarity(embedding1: number[], embedding2: number[]): number {
+  private calculateCosineSimilarity(
+    embedding1: number[],
+    embedding2: number[],
+  ): number {
     if (embedding1.length !== embedding2.length) {
       return 0;
     }
@@ -168,7 +173,9 @@ export class SemanticCacheService {
 
     // 🚨 SECURITY FIX: Validate context and sanitize input
     if (!context || !context.patientId) {
-      throw new Error('LGPD Violation: Patient context is required for healthcare caching');
+      throw new Error(
+        'LGPD Violation: Patient context is required for healthcare caching',
+      );
     }
 
     // 🚨 SECURITY FIX: Sanitize input to prevent injection
@@ -179,7 +186,9 @@ export class SemanticCacheService {
 
     // 🚨 SECURITY FIX: Emergency data should never be cached
     if (context.isEmergency || context.containsUrgentSymptoms) {
-      console.warn('Emergency data detected - bypassing cache for patient safety');
+      console.warn(
+        'Emergency data detected - bypassing cache for patient safety',
+      );
       return null;
     }
 
@@ -200,7 +209,10 @@ export class SemanticCacheService {
         }
 
         // 🚨 SECURITY FIX: STRICT patient isolation - ALWAYS require patient ID match
-        if (!entry.metadata.patientId || entry.metadata.patientId !== context.patientId) {
+        if (
+          !entry.metadata.patientId
+          || entry.metadata.patientId !== context.patientId
+        ) {
           continue; // Skip all entries that don't have exact patient ID match
         }
 
@@ -221,15 +233,23 @@ export class SemanticCacheService {
 
         // 🚨 SECURITY FIX: Validate entry is not corrupted or tampered
         if (!this.validateCacheEntryIntegrity(entry)) {
-          console.warn(`Cache entry ${entry.id} failed integrity check - removing`);
+          console.warn(
+            `Cache entry ${entry.id} failed integrity check - removing`,
+          );
           this.cache.delete(entry.id);
           continue;
         }
 
         // Calcular similaridade
-        const similarity = this.calculateCosineSimilarity(promptEmbedding, entry.embedding);
+        const similarity = this.calculateCosineSimilarity(
+          promptEmbedding,
+          entry.embedding,
+        );
 
-        if (similarity > this.similarityThreshold && similarity > bestSimilarity) {
+        if (
+          similarity > this.similarityThreshold
+          && similarity > bestSimilarity
+        ) {
           bestSimilarity = similarity;
           bestMatch = entry;
         }
@@ -238,7 +258,9 @@ export class SemanticCacheService {
       if (bestMatch) {
         // 🚨 SECURITY FIX: Final validation before returning sensitive data
         if (!this.validatePatientAccess(bestMatch, context)) {
-          console.error('LGPD Violation Prevented: Unauthorized patient data access attempt');
+          console.error(
+            'LGPD Violation Prevented: Unauthorized patient data access attempt',
+          );
           return null;
         }
 
@@ -252,7 +274,9 @@ export class SemanticCacheService {
 
         console.log(
           `Cache hit! Similaridade: ${
-            (bestSimilarity * 100).toFixed(2)
+            (bestSimilarity * 100).toFixed(
+              2,
+            )
           }% - Patient: ${context.patientId}`,
         );
       } else {
@@ -281,12 +305,16 @@ export class SemanticCacheService {
     try {
       // 🚨 SECURITY FIX: Validate input parameters
       if (!prompt || !response || !metadata) {
-        throw new Error('Invalid input: prompt, response, and metadata are required');
+        throw new Error(
+          'Invalid input: prompt, response, and metadata are required',
+        );
       }
 
       // 🚨 SECURITY FIX: Patient ID is mandatory for healthcare caching
       if (!metadata.patientId) {
-        throw new Error('LGPD Violation: Patient ID is required for healthcare caching');
+        throw new Error(
+          'LGPD Violation: Patient ID is required for healthcare caching',
+        );
       }
 
       // 🚨 SECURITY FIX: Sanitize input to prevent injection attacks
@@ -294,12 +322,16 @@ export class SemanticCacheService {
       const sanitizedResponse = this.sanitizeInput(response);
 
       if (!sanitizedPrompt || !sanitizedResponse) {
-        throw new Error('Input sanitization failed - potential injection attack detected');
+        throw new Error(
+          'Input sanitization failed - potential injection attack detected',
+        );
       }
 
       // 🚨 SECURITY FIX: Validate healthcare context
       if (metadata.isEmergency || metadata.containsUrgentSymptoms) {
-        console.warn('Emergency data detected - refusing to cache for patient safety');
+        console.warn(
+          'Emergency data detected - refusing to cache for patient safety',
+        );
         throw new Error('Emergency data cannot be cached');
       }
 
@@ -308,13 +340,17 @@ export class SemanticCacheService {
         ...metadata,
         compliance: this.ensureLGPDCompliance(metadata.compliance),
         sanitized: true,
-        integrityHash: this.generateIntegrityHash(sanitizedPrompt + sanitizedResponse),
+        integrityHash: this.generateIntegrityHash(
+          sanitizedPrompt + sanitizedResponse,
+        ),
       };
 
       const embedding = await this.generateEmbedding(sanitizedPrompt);
       const id = `cache_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
-      const ttl = secureMetadata.ttlMs ? new Date(Date.now() + secureMetadata.ttlMs) : undefined;
+      const ttl = secureMetadata.ttlMs
+        ? new Date(Date.now() + secureMetadata.ttlMs)
+        : undefined;
 
       const entry: SemanticCacheEntry = {
         id,
@@ -332,7 +368,9 @@ export class SemanticCacheService {
       // Validar entrada
       const validation = SemanticCacheEntrySchema.safeParse(entry);
       if (!validation.success) {
-        throw new Error(`Entrada de cache inválida: ${validation.error.message}`);
+        throw new Error(
+          `Entrada de cache inválida: ${validation.error.message}`,
+        );
       }
 
       this.cache.set(id, entry);
@@ -428,7 +466,7 @@ export class SemanticCacheService {
     let hash = 0;
     for (let i = 0; i < prompt.length; i++) {
       const char = prompt.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash;
     }
     return hash.toString(36);
@@ -468,7 +506,9 @@ export class SemanticCacheService {
   /**
    * 🚨 SECURITY: Garante conformidade LGPD obrigatória
    */
-  private ensureLGPDCompliance(compliance?: ComplianceLevel[]): ComplianceLevel[] {
+  private ensureLGPDCompliance(
+    compliance?: ComplianceLevel[],
+  ): ComplianceLevel[] {
     const requiredCompliance = [ComplianceLevel.LGPD_COMPLIANT];
 
     if (!compliance || compliance.length === 0) {
@@ -492,7 +532,7 @@ export class SemanticCacheService {
     let hash = 0;
     for (let i = 0; i < data.length; i++) {
       const char = data.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return `integrity_${hash.toString(36)}`;
@@ -515,7 +555,9 @@ export class SemanticCacheService {
 
       // Verificar hash de integridade se disponível
       if (entry.metadata.integrityHash) {
-        const expectedHash = this.generateIntegrityHash(entry.prompt + entry.response);
+        const expectedHash = this.generateIntegrityHash(
+          entry.prompt + entry.response,
+        );
         if (entry.metadata.integrityHash !== expectedHash) {
           console.error(`Integrity hash mismatch for entry ${entry.id}`);
           return false;
@@ -532,7 +574,10 @@ export class SemanticCacheService {
   /**
    * 🚨 SECURITY: Valida acesso do paciente antes de retornar dados
    */
-  private validatePatientAccess(entry: SemanticCacheEntry, context: HealthcareAIContext): boolean {
+  private validatePatientAccess(
+    entry: SemanticCacheEntry,
+    context: HealthcareAIContext,
+  ): boolean {
     // Verificar se o patient ID do contexto bate com a entrada
     if (!context.patientId || !entry.metadata.patientId) {
       return false;
@@ -556,7 +601,9 @@ export class SemanticCacheService {
   /**
    * 🚨 SECURITY: Verifica conformidade LGPD obrigatória
    */
-  private hasRequiredLGPDCompliance(entryCompliance: ComplianceLevel[]): boolean {
+  private hasRequiredLGPDCompliance(
+    entryCompliance: ComplianceLevel[],
+  ): boolean {
     if (!entryCompliance || entryCompliance.length === 0) {
       return false;
     }
@@ -601,8 +648,7 @@ export class SemanticCacheService {
   private calculateCostEfficiency(): number {
     if (this.stats.totalSavedCost === 0) return 0;
 
-    const totalCost = this.stats.totalSavedCost
-      + (this.stats.cacheMisses * 0.01); // Custo estimado por miss
+    const totalCost = this.stats.totalSavedCost + this.stats.cacheMisses * 0.01; // Custo estimado por miss
     return this.stats.totalSavedCost / totalCost;
   }
 

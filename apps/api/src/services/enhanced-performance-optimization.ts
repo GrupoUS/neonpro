@@ -3,9 +3,12 @@
  * Advanced caching strategies, pagination improvements, and performance monitoring for healthcare platform
  */
 
-import { HealthcareQueryOptimizer, type PerformanceMetrics } from '../utils/healthcare-performance.js';
-import { type HealthcarePrismaClient } from '../clients/prisma';
 import { createHash } from 'crypto';
+import { type HealthcarePrismaClient } from '../clients/prisma';
+import {
+  HealthcareQueryOptimizer,
+  type PerformanceMetrics,
+} from '../utils/healthcare-performance.js';
 
 export interface PaginationParams {
   page?: number;
@@ -67,7 +70,10 @@ export class EnhancedPerformanceOptimizationService {
   private queryOptimizer: HealthcareQueryOptimizer;
   private config: PerformanceConfig;
   private performanceMetrics: Map<string, PerformanceMetrics> = new Map();
-  private cacheStats: Map<string, { hits: number; misses: number; size: number }> = new Map();
+  private cacheStats: Map<
+    string,
+    { hits: number; misses: number; size: number }
+  > = new Map();
 
   constructor(
     prisma: HealthcarePrismaClient,
@@ -87,7 +93,7 @@ export class EnhancedPerformanceOptimizationService {
       cacheWarmerEnabled: true,
       ...config,
     };
-    
+
     this.queryOptimizer = new HealthcareQueryOptimizer(prisma, {
       cacheEnabled: this.config.cacheEnabled,
       cacheTTL: this.config.cacheTTLSec,
@@ -105,14 +111,19 @@ export class EnhancedPerformanceOptimizationService {
    */
   async executePaginatedQuery<T>(
     queryKey: string,
-    queryBuilder: (params: PaginationParams) => Promise<{ data: T[]; total: number }>,
+    queryBuilder: (
+      params: PaginationParams,
+    ) => Promise<{ data: T[]; total: number }>,
     params: PaginationParams = {},
     cacheStrategy?: Partial<CacheStrategy>,
   ): Promise<PaginatedResult<T>> {
     const startTime = performance.now();
     const {
       page = 1,
-      limit = Math.min(params.limit || this.config.defaultPageSize, this.config.maxPageSize),
+      limit = Math.min(
+        params.limit || this.config.defaultPageSize,
+        this.config.maxPageSize,
+      ),
       sortBy = 'updatedAt',
       sortOrder = 'desc',
       cursor,
@@ -146,27 +157,24 @@ export class EnhancedPerformanceOptimizationService {
 
     try {
       // Execute query with timeout
-      const result = await this.executeWithTimeout(
-        async () => {
-          if (cursor && includeCursor) {
-            // Cursor-based pagination
-            return this.executeCursorPagination(queryBuilder, {
-              ...params,
-              limit,
-              cursor,
-            });
-          } else {
-            // Offset-based pagination
-            return queryBuilder({
-              page,
-              limit,
-              sortBy,
-              sortOrder,
-            });
-          }
-        },
-        this.config.queryTimeoutMs,
-      );
+      const result = await this.executeWithTimeout(async () => {
+        if (cursor && includeCursor) {
+          // Cursor-based pagination
+          return this.executeCursorPagination(queryBuilder, {
+            ...params,
+            limit,
+            cursor,
+          });
+        } else {
+          // Offset-based pagination
+          return queryBuilder({
+            page,
+            limit,
+            sortBy,
+            sortOrder,
+          });
+        }
+      }, this.config.queryTimeoutMs);
 
       const { data, total } = result;
 
@@ -184,8 +192,12 @@ export class EnhancedPerformanceOptimizationService {
           totalPages,
           hasNextPage,
           hasPreviousPage,
-          nextPageCursor: hasNextPage ? this.generateCursor(data[data.length - 1]) : undefined,
-          previousPageCursor: hasPreviousPage ? this.generateCursor(data[0], true) : undefined,
+          nextPageCursor: hasNextPage
+            ? this.generateCursor(data[data.length - 1])
+            : undefined,
+          previousPageCursor: hasPreviousPage
+            ? this.generateCursor(data[0], true)
+            : undefined,
         },
         performance: {
           queryTime: performance.now() - startTime,
@@ -210,11 +222,19 @@ export class EnhancedPerformanceOptimizationService {
       }
 
       this.updateCacheStats(queryKey, false);
-      this.updatePerformanceMetrics(queryKey, performance.now() - startTime, false);
+      this.updatePerformanceMetrics(
+        queryKey,
+        performance.now() - startTime,
+        false,
+      );
 
       return paginatedResult;
     } catch (error) {
-      this.updatePerformanceMetrics(queryKey, performance.now() - startTime, true);
+      this.updatePerformanceMetrics(
+        queryKey,
+        performance.now() - startTime,
+        true,
+      );
       throw this.handleQueryError(error, queryKey);
     }
   }
@@ -244,7 +264,7 @@ export class EnhancedPerformanceOptimizationService {
   ): Promise<PaginatedResult<any>> {
     return this.executePaginatedQuery(
       `patients_search:${clinicId}`,
-      async (params) => {
+      async params => {
         const { page, limit, sortBy, sortOrder } = params;
         const { query, filters, includeInactive = false } = searchParams;
 
@@ -271,11 +291,11 @@ export class EnhancedPerformanceOptimizationService {
           if (filters.status?.length) {
             whereClause.patientStatus = { in: filters.status };
           }
-          
+
           if (filters.gender?.length) {
             whereClause.gender = { in: filters.gender };
           }
-          
+
           if (filters.ageRange) {
             const today = new Date();
             const maxBirthDate = new Date(
@@ -293,19 +313,21 @@ export class EnhancedPerformanceOptimizationService {
               lte: maxBirthDate,
             };
           }
-          
+
           if (filters.lastVisitAfter) {
             whereClause.lastVisitDate = { gte: filters.lastVisitAfter };
           }
-          
+
           if (filters.nextAppointmentBefore) {
-            whereClause.nextAppointmentDate = { lte: filters.nextAppointmentBefore };
+            whereClause.nextAppointmentDate = {
+              lte: filters.nextAppointmentBefore,
+            };
           }
-          
+
           if (filters.noShowRiskThreshold !== undefined) {
             whereClause.noShowRiskScore = { gte: filters.noShowRiskThreshold };
           }
-          
+
           if (filters.tags?.length) {
             whereClause.tags = { hasSome: filters.tags };
           }
@@ -353,7 +375,10 @@ export class EnhancedPerformanceOptimizationService {
     summary: {
       total: number;
       byStatus: Record<string, number>;
-      byProfessional: Record<string, { total: number; completed: number; cancelled: number }>;
+      byProfessional: Record<
+        string,
+        { total: number; completed: number; cancelled: number }
+      >;
       revenue: number;
       occupancy: number;
     };
@@ -380,7 +405,15 @@ export class EnhancedPerformanceOptimizationService {
     }
 
     try {
-      const { startDate, endDate, professionalId, status, includeCancelled = false, includePatientDetails = true, groupBy } = params;
+      const {
+        startDate,
+        endDate,
+        professionalId,
+        status,
+        includeCancelled = false,
+        includePatientDetails = true,
+        groupBy,
+      } = params;
 
       const whereClause: any = {
         clinicId,
@@ -415,7 +448,11 @@ export class EnhancedPerformanceOptimizationService {
 
       // Cache with shorter TTL for calendar data (frequent updates)
       if (this.config.cacheEnabled) {
-        await this.setCache(cacheKey, result, 60, ['appointments', 'calendar', `clinic:${clinicId}`]);
+        await this.setCache(cacheKey, result, 60, [
+          'appointments',
+          'calendar',
+          `clinic:${clinicId}`,
+        ]);
       }
 
       return result;
@@ -462,7 +499,9 @@ export class EnhancedPerformanceOptimizationService {
 
     try {
       // Get current metrics using the existing optimizer
-      const { metrics: currentMetrics } = await this.queryOptimizer.getDashboardMetricsOptimized(clinicId);
+      const { metrics: currentMetrics } = await this.queryOptimizer.getDashboardMetricsOptimized(
+        clinicId,
+      );
 
       let historical, projections;
 
@@ -487,7 +526,10 @@ export class EnhancedPerformanceOptimizationService {
 
       // Cache dashboard metrics for 5 minutes
       if (this.config.cacheEnabled) {
-        await this.setCache(cacheKey, result, 300, ['dashboard', `clinic:${clinicId}`]);
+        await this.setCache(cacheKey, result, 300, [
+          'dashboard',
+          `clinic:${clinicId}`,
+        ]);
       }
 
       return result;
@@ -506,7 +548,11 @@ export class EnhancedPerformanceOptimizationService {
     options?: {
       batchSize?: number;
       continueOnError?: boolean;
-      progressCallback?: (processed: number, total: number, errors: number) => void;
+      progressCallback?: (
+        processed: number,
+        total: number,
+        errors: number,
+      ) => void;
     },
   ): Promise<{
     results: any[];
@@ -530,7 +576,7 @@ export class EnhancedPerformanceOptimizationService {
       // Process in batches
       for (let i = 0; i < items.length; i += batchSize) {
         const batch = items.slice(i, i + batchSize);
-        
+
         // Process batch with concurrency control
         const batchResults = await Promise.allSettled(
           batch.map(async (item, batchIndex) => {
@@ -538,20 +584,20 @@ export class EnhancedPerformanceOptimizationService {
             try {
               const result = await processFn(item, actualIndex);
               processed++;
-              
+
               if (options?.progressCallback) {
                 options.progressCallback(processed, items.length, failed);
               }
-              
+
               return { success: true, result, index: actualIndex };
             } catch (error) {
               failed++;
               const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-              
+
               if (!continueOnError) {
                 throw error;
               }
-              
+
               return {
                 success: false,
                 error: errorMessage,
@@ -563,7 +609,7 @@ export class EnhancedPerformanceOptimizationService {
         );
 
         // Process batch results
-        batchResults.forEach((batchResult) => {
+        batchResults.forEach(batchResult => {
           if (batchResult.status === 'fulfilled') {
             const result = batchResult.value;
             if (result.success) {
@@ -601,14 +647,17 @@ export class EnhancedPerformanceOptimizationService {
       };
     } catch (error) {
       const totalTime = performance.now() - startTime;
-      
+
       return {
         results,
-        errors: [...errors, {
-          index: -1,
-          error: error instanceof Error ? error.message : 'Batch operation failed',
-          item: items[0],
-        }],
+        errors: [
+          ...errors,
+          {
+            index: -1,
+            error: error instanceof Error ? error.message : 'Batch operation failed',
+            item: items[0],
+          },
+        ],
         processed,
         failed: items.length - processed,
         performance: {
@@ -671,7 +720,10 @@ export class EnhancedPerformanceOptimizationService {
       slowQueryCount: number;
     };
     slowQueries?: Array<{ query: string; duration: number; timestamp: Date }>;
-    cacheStats?: Record<string, { hits: number; misses: number; hitRate: number }>;
+    cacheStats?: Record<
+      string,
+      { hits: number; misses: number; hitRate: number }
+    >;
     recommendations: string[];
   }> {
     const metrics = this.queryOptimizer.getPerformanceMetrics();
@@ -684,11 +736,16 @@ export class EnhancedPerformanceOptimizationService {
       slowQueryCount: metrics.slowQueries.length,
     };
 
-    const recommendations = this.generatePerformanceRecommendations(summary, metrics);
+    const recommendations = this.generatePerformanceRecommendations(
+      summary,
+      metrics,
+    );
 
     return {
       summary,
-      slowQueries: options?.includeSlowQueries ? metrics.slowQueries : undefined,
+      slowQueries: options?.includeSlowQueries
+        ? metrics.slowQueries
+        : undefined,
       cacheStats: options?.includeCacheStats ? cacheStats : undefined,
       recommendations,
     };
@@ -704,21 +761,27 @@ export class EnhancedPerformanceOptimizationService {
     };
 
     const keyString = JSON.stringify(keyData);
-    return createHash('sha256').update(keyString).digest('hex').substring(0, 32);
+    return createHash('sha256')
+      .update(keyString)
+      .digest('hex')
+      .substring(0, 32);
   }
 
-  private async executeWithTimeout<T>(fn: () => Promise<T>, timeoutMs: number): Promise<T> {
+  private async executeWithTimeout<T>(
+    fn: () => Promise<T>,
+    timeoutMs: number,
+  ): Promise<T> {
     return new Promise((resolve, reject) => {
       const timer = setTimeout(() => {
         reject(new Error(`Query timeout after ${timeoutMs}ms`));
       }, timeoutMs);
 
       fn()
-        .then((result) => {
+        .then(result => {
           clearTimeout(timer);
           resolve(result);
         })
-        .catch((_error) => {
+        .catch(_error => {
           clearTimeout(timer);
           reject(error);
         });
@@ -726,7 +789,9 @@ export class EnhancedPerformanceOptimizationService {
   }
 
   private async executeCursorPagination<T>(
-    queryBuilder: (params: PaginationParams) => Promise<{ data: T[]; total: number }>,
+    queryBuilder: (
+      params: PaginationParams,
+    ) => Promise<{ data: T[]; total: number }>,
     params: PaginationParams & { cursor?: string },
   ): Promise<{ data: T[]; total: number }> {
     // Implement cursor-based pagination logic
@@ -736,13 +801,13 @@ export class EnhancedPerformanceOptimizationService {
 
   private generateCursor(item: any, reverse = false): string {
     if (!item) return '';
-    
+
     // Simple cursor implementation using ID and timestamp
     const cursorData = {
       id: item.id,
       updatedAt: item.updatedAt || new Date().toISOString(),
     };
-    
+
     return Buffer.from(JSON.stringify(cursorData)).toString('base64');
   }
 
@@ -808,7 +873,7 @@ export class EnhancedPerformanceOptimizationService {
 
   private buildOrderBy(sortBy: string, sortOrder: 'asc' | 'desc'): any {
     const orderBy: any = {};
-    
+
     // Handle complex sort fields
     if (sortBy.includes('.')) {
       const [relation, field] = sortBy.split('.');
@@ -822,7 +887,10 @@ export class EnhancedPerformanceOptimizationService {
 
   private generateAppointmentSummary(appointments: any[], groupBy?: string) {
     const byStatus: Record<string, number> = {};
-    const byProfessional: Record<string, { total: number; completed: number; cancelled: number }> = {};
+    const byProfessional: Record<
+      string,
+      { total: number; completed: number; cancelled: number }
+    > = {};
     let revenue = 0;
 
     appointments.forEach(apt => {
@@ -864,7 +932,10 @@ export class EnhancedPerformanceOptimizationService {
     return [];
   }
 
-  private async generateProjections(clinicId: string, currentMetrics: Record<string, any>) {
+  private async generateProjections(
+    clinicId: string,
+    currentMetrics: Record<string, any>,
+  ) {
     // Implement predictive analytics for future metrics
     // This would use machine learning or statistical models
     return {};
@@ -881,7 +952,12 @@ export class EnhancedPerformanceOptimizationService {
     }
   }
 
-  private async setCache(key: string, value: any, ttl: number, tags: string[]): Promise<void> {
+  private async setCache(
+    key: string,
+    value: any,
+    ttl: number,
+    tags: string[],
+  ): Promise<void> {
     try {
       // Use the query optimizer's cache
       const cache = (this.queryOptimizer as any).cache;
@@ -895,18 +971,22 @@ export class EnhancedPerformanceOptimizationService {
 
   private updateCacheStats(key: string, isHit: boolean): void {
     const stats = this.cacheStats.get(key) || { hits: 0, misses: 0, size: 0 };
-    
+
     if (isHit) {
       stats.hits++;
     } else {
       stats.misses++;
     }
-    
+
     stats.size = stats.hits + stats.misses;
     this.cacheStats.set(key, stats);
   }
 
-  private updatePerformanceMetrics(key: string, duration: number, isError: boolean): void {
+  private updatePerformanceMetrics(
+    key: string,
+    duration: number,
+    isError: boolean,
+  ): void {
     if (!this.config.enablePerformanceMonitoring) return;
 
     const existing = this.performanceMetrics.get(key) || {
@@ -938,21 +1018,29 @@ export class EnhancedPerformanceOptimizationService {
 
   private handleQueryError(error: any, queryKey: string): Error {
     const errorMessage = error instanceof Error ? error.message : 'Unknown query error';
-    
+
     if (this.config.enableQueryLogging) {
       console.error(`Query error for ${queryKey}:`, errorMessage);
     }
 
     if (errorMessage.includes('timeout')) {
-      return new Error(`Query timeout for ${queryKey}. Please try again or refine your search criteria.`);
+      return new Error(
+        `Query timeout for ${queryKey}. Please try again or refine your search criteria.`,
+      );
     }
 
     return error instanceof Error ? error : new Error(errorMessage);
   }
 
-  private getOverallCacheStats(): Record<string, { hits: number; misses: number; hitRate: number }> {
-    const stats: Record<string, { hits: number; misses: number; hitRate: number }> = {};
-    
+  private getOverallCacheStats(): Record<
+    string,
+    { hits: number; misses: number; hitRate: number }
+  > {
+    const stats: Record<
+      string,
+      { hits: number; misses: number; hitRate: number }
+    > = {};
+
     this.cacheStats.forEach((value, key) => {
       const total = value.hits + value.misses;
       stats[key] = {
@@ -973,22 +1061,30 @@ export class EnhancedPerformanceOptimizationService {
 
     // Cache recommendations
     if (summary.cacheHitRate < 50) {
-      recommendations.push('Consider increasing cache TTL or adding more cacheable endpoints');
+      recommendations.push(
+        'Consider increasing cache TTL or adding more cacheable endpoints',
+      );
     }
 
     // Query performance recommendations
     if (summary.averageQueryTime > this.config.slowQueryThresholdMs) {
-      recommendations.push('Average query time is high - consider query optimization or indexing');
+      recommendations.push(
+        'Average query time is high - consider query optimization or indexing',
+      );
     }
 
     // Slow query recommendations
     if (summary.slowQueryCount > 10) {
-      recommendations.push('Multiple slow queries detected - review and optimize database queries');
+      recommendations.push(
+        'Multiple slow queries detected - review and optimize database queries',
+      );
     }
 
     // Memory usage recommendations
     if (metrics.memoryUsage.heapUsed / metrics.memoryUsage.heapTotal > 0.8) {
-      recommendations.push('High memory usage detected - consider implementing memory optimization');
+      recommendations.push(
+        'High memory usage detected - consider implementing memory optimization',
+      );
     }
 
     return recommendations;
@@ -996,15 +1092,18 @@ export class EnhancedPerformanceOptimizationService {
 
   private initializePerformanceMonitoring(): void {
     // Set up periodic performance monitoring
-    setInterval(() => {
-      this.cleanupPerformanceMetrics();
-    }, 5 * 60 * 1000); // Clean up every 5 minutes
+    setInterval(
+      () => {
+        this.cleanupPerformanceMetrics();
+      },
+      5 * 60 * 1000,
+    ); // Clean up every 5 minutes
   }
 
   private cleanupPerformanceMetrics(): void {
     // Remove old metrics data
-    const cutoff = Date.now() - (60 * 60 * 1000); // Keep last hour
-    
+    const cutoff = Date.now() - 60 * 60 * 1000; // Keep last hour
+
     for (const [key, metrics] of this.performanceMetrics.entries()) {
       // Implement cleanup logic based on your requirements
     }
@@ -1018,4 +1117,4 @@ export const enhancedPerformanceOptimizationService = new EnhancedPerformanceOpt
 );
 
 // Export types
-export type { PaginationParams, PaginatedResult, CacheStrategy, PerformanceConfig };
+export type { CacheStrategy, PaginatedResult, PaginationParams, PerformanceConfig };

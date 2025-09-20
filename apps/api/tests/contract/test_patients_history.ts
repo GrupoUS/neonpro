@@ -29,25 +29,32 @@ const HistoryEntrySchema = z.object({
   actorType: z.enum(['user', 'system', 'api', 'scheduled']),
   actorId: z.string(),
   actorName: z.string(),
-  changes: z.object({
-    field: z.string(),
-    oldValue: z.any().optional(),
-    newValue: z.any().optional(),
-    changeType: z.enum(['create', 'update', 'delete', 'access']),
-  }).array().optional(),
-  metadata: z.object({
-    ipAddress: z.string().ip().optional(),
-    userAgent: z.string().optional(),
-    sessionId: z.string().optional(),
-    source: z.enum(['web', 'mobile', 'api', 'system']).optional(),
-    reason: z.string().optional(),
-  }).optional(),
-  lgpdInfo: z.object({
-    consentStatus: z.boolean(),
-    legalBasis: z.string(),
-    dataCategories: z.array(z.string()),
-    retentionPeriod: z.string().optional(),
-  }).optional(),
+  changes: z
+    .object({
+      field: z.string(),
+      oldValue: z.any().optional(),
+      newValue: z.any().optional(),
+      changeType: z.enum(['create', 'update', 'delete', 'access']),
+    })
+    .array()
+    .optional(),
+  metadata: z
+    .object({
+      ipAddress: z.string().ip().optional(),
+      userAgent: z.string().optional(),
+      sessionId: z.string().optional(),
+      source: z.enum(['web', 'mobile', 'api', 'system']).optional(),
+      reason: z.string().optional(),
+    })
+    .optional(),
+  lgpdInfo: z
+    .object({
+      consentStatus: z.boolean(),
+      legalBasis: z.string(),
+      dataCategories: z.array(z.string()),
+      retentionPeriod: z.string().optional(),
+    })
+    .optional(),
 });
 
 // Patient history response schema validation
@@ -67,14 +74,18 @@ const PatientHistoryResponseSchema = z.object({
     total: z.number().min(0),
     hasMore: z.boolean(),
   }),
-  filters: z.object({
-    actionTypes: z.array(z.string()).optional(),
-    dateRange: z.object({
-      startDate: z.string().datetime().optional(),
-      endDate: z.string().datetime().optional(),
-    }).optional(),
-    actors: z.array(z.string()).optional(),
-  }).optional(),
+  filters: z
+    .object({
+      actionTypes: z.array(z.string()).optional(),
+      dateRange: z
+        .object({
+          startDate: z.string().datetime().optional(),
+          endDate: z.string().datetime().optional(),
+        })
+        .optional(),
+      actors: z.array(z.string()).optional(),
+    })
+    .optional(),
   performanceMetrics: z.object({
     duration: z.number().max(500), // Performance requirement: <500ms
     entriesProcessed: z.number(),
@@ -190,7 +201,9 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const creationEntry = response.body.history.find(entry => entry.action === 'created');
+      const creationEntry = response.body.history.find(
+        entry => entry.action === 'created',
+      );
       expect(creationEntry).toBeDefined();
       expect(creationEntry.actorType).toBeDefined();
       expect(creationEntry.timestamp).toBeDefined();
@@ -202,7 +215,9 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const updateEntries = response.body.history.filter(entry => entry.action === 'updated');
+      const updateEntries = response.body.history.filter(
+        entry => entry.action === 'updated',
+      );
       expect(updateEntries.length).toBeGreaterThan(0);
 
       // Should have entries for name update, medical history update, and consent update
@@ -218,7 +233,9 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const accessEntries = response.body.history.filter(entry => entry.action === 'accessed');
+      const accessEntries = response.body.history.filter(
+        entry => entry.action === 'accessed',
+      );
       expect(accessEntries.length).toBeGreaterThan(0);
       expect(response.body.summary.accessCount).toBeGreaterThan(0);
     });
@@ -231,8 +248,8 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const updateEntry = response.body.history.find(entry =>
-        entry.action === 'updated' && entry.changes
+      const updateEntry = response.body.history.find(
+        entry => entry.action === 'updated' && entry.changes,
       );
 
       if (updateEntry) {
@@ -253,12 +270,14 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
 
     it('should track medical history changes separately', async () => {
       const response = await request(app)
-        .get(`/api/v2/patients/${testPatientId}/history?actionTypes=medical_updated`)
+        .get(
+          `/api/v2/patients/${testPatientId}/history?actionTypes=medical_updated`,
+        )
         .set(testAuthHeaders)
         .expect(200);
 
-      const medicalEntries = response.body.history.filter(entry =>
-        entry.action === 'medical_updated'
+      const medicalEntries = response.body.history.filter(
+        entry => entry.action === 'medical_updated',
       );
 
       if (medicalEntries.length > 0) {
@@ -273,12 +292,14 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
 
     it('should track LGPD consent changes', async () => {
       const response = await request(app)
-        .get(`/api/v2/patients/${testPatientId}/history?actionTypes=consents_updated`)
+        .get(
+          `/api/v2/patients/${testPatientId}/history?actionTypes=consents_updated`,
+        )
         .set(testAuthHeaders)
         .expect(200);
 
-      const consentEntries = response.body.history.filter(entry =>
-        entry.action === 'consents_updated'
+      const consentEntries = response.body.history.filter(
+        entry => entry.action === 'consents_updated',
       );
 
       if (consentEntries.length > 0) {
@@ -293,7 +314,9 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
   describe('Filtering and Pagination', () => {
     it('should filter by action types', async () => {
       const response = await request(app)
-        .get(`/api/v2/patients/${testPatientId}/history?actionTypes=updated,accessed`)
+        .get(
+          `/api/v2/patients/${testPatientId}/history?actionTypes=updated,accessed`,
+        )
         .set(testAuthHeaders)
         .expect(200);
 
@@ -347,7 +370,9 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
       for (let i = 1; i < response.body.history.length; i++) {
         const currentTime = new Date(response.body.history[i].timestamp);
         const previousTime = new Date(response.body.history[i - 1].timestamp);
-        expect(currentTime.getTime()).toBeLessThanOrEqual(previousTime.getTime());
+        expect(currentTime.getTime()).toBeLessThanOrEqual(
+          previousTime.getTime(),
+        );
       }
     });
   });
@@ -372,8 +397,8 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const userEntries = response.body.history.filter(entry =>
-        entry.actorType === 'user' || entry.actorType === 'api'
+      const userEntries = response.body.history.filter(
+        entry => entry.actorType === 'user' || entry.actorType === 'api',
       );
 
       userEntries.forEach(entry => {
@@ -403,8 +428,8 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      const dataProcessingEntries = response.body.history.filter(entry =>
-        entry.lgpdInfo && entry.lgpdInfo.consentStatus !== undefined
+      const dataProcessingEntries = response.body.history.filter(
+        entry => entry.lgpdInfo && entry.lgpdInfo.consentStatus !== undefined,
       );
 
       expect(dataProcessingEntries.length).toBeGreaterThan(0);
@@ -430,14 +455,17 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         });
 
       const response = await request(app)
-        .get(`/api/v2/patients/${testPatientId}/history?actionTypes=consents_updated`)
+        .get(
+          `/api/v2/patients/${testPatientId}/history?actionTypes=consents_updated`,
+        )
         .set(testAuthHeaders)
         .expect(200);
 
       const consentWithdrawal = response.body.history.find(entry =>
-        entry.changes?.some(change =>
-          change.field === 'marketingCommunications'
-          && change.newValue === false
+        entry.changes?.some(
+          change =>
+            change.field === 'marketingCommunications'
+            && change.newValue === false,
         )
       );
 
@@ -527,7 +555,9 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
         .set(testAuthHeaders)
         .expect(200);
 
-      expect(response.body.summary.totalEntries).toBe(response.body.pagination.total);
+      expect(response.body.summary.totalEntries).toBe(
+        response.body.pagination.total,
+      );
       expect(response.body.summary.firstActivity).toBeDefined();
       expect(response.body.summary.lastActivity).toBeDefined();
       expect(response.body.summary.majorChanges).toBeGreaterThanOrEqual(0);
@@ -548,7 +578,9 @@ describe('GET /api/v2/patients/{id}/history - Contract Tests', () => {
   describe('Export and Audit Features', () => {
     it('should support exporting history for compliance', async () => {
       const response = await request(app)
-        .get(`/api/v2/patients/${testPatientId}/history?export=true&format=json`)
+        .get(
+          `/api/v2/patients/${testPatientId}/history?export=true&format=json`,
+        )
         .set(testAuthHeaders)
         .expect(200);
 

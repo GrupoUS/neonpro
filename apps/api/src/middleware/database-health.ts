@@ -105,9 +105,15 @@ export class DatabaseHealthMonitor {
 
     const components = {
       connectionPool: this.assessConnectionPoolHealth(poolMetrics),
-      queryPerformance: this.assessQueryPerformanceHealth(dbMetrics.queryPerformance),
-      indexOptimization: this.assessIndexOptimizationHealth(dbMetrics.indexUsage),
-      healthcareCompliance: this.assessHealthcareComplianceHealth(dbMetrics.healthcareCompliance),
+      queryPerformance: this.assessQueryPerformanceHealth(
+        dbMetrics.queryPerformance,
+      ),
+      indexOptimization: this.assessIndexOptimizationHealth(
+        dbMetrics.indexUsage,
+      ),
+      healthcareCompliance: this.assessHealthcareComplianceHealth(
+        dbMetrics.healthcareCompliance,
+      ),
     };
 
     const alerts = this.generateAlerts(components);
@@ -143,12 +149,14 @@ export class DatabaseHealthMonitor {
 
     // Check utilization
     if (
-      poolMetrics.utilization > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.utilization.critical
+      poolMetrics.utilization
+        > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.utilization.critical
     ) {
       issues.push('Critical connection pool utilization');
       score -= 30;
     } else if (
-      poolMetrics.utilization > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.utilization.warning
+      poolMetrics.utilization
+        > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.utilization.warning
     ) {
       issues.push('High connection pool utilization');
       score -= 15;
@@ -156,12 +164,14 @@ export class DatabaseHealthMonitor {
 
     // Check wait times
     if (
-      poolMetrics.averageWaitTime > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.waitTime.critical
+      poolMetrics.averageWaitTime
+        > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.waitTime.critical
     ) {
       issues.push('Critical connection wait times');
       score -= 25;
     } else if (
-      poolMetrics.averageWaitTime > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.waitTime.warning
+      poolMetrics.averageWaitTime
+        > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.waitTime.warning
     ) {
       issues.push('High connection wait times');
       score -= 10;
@@ -169,12 +179,14 @@ export class DatabaseHealthMonitor {
 
     // Check errors
     if (
-      poolMetrics.connectionErrors > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.errors.critical
+      poolMetrics.connectionErrors
+        > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.errors.critical
     ) {
       issues.push('Critical connection error rate');
       score -= 20;
     } else if (
-      poolMetrics.connectionErrors > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.errors.warning
+      poolMetrics.connectionErrors
+        > HEALTHCARE_HEALTH_THRESHOLDS.connectionPool.errors.warning
     ) {
       issues.push('Elevated connection errors');
       score -= 10;
@@ -219,11 +231,15 @@ export class DatabaseHealthMonitor {
     }
 
     // Check error rate
-    if (queryMetrics.errorRate > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.errorRate.critical) {
+    if (
+      queryMetrics.errorRate
+        > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.errorRate.critical
+    ) {
       issues.push('Critical query error rate');
       score -= 25;
     } else if (
-      queryMetrics.errorRate > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.errorRate.warning
+      queryMetrics.errorRate
+        > HEALTHCARE_HEALTH_THRESHOLDS.queryPerformance.errorRate.warning
     ) {
       issues.push('Elevated query errors');
       score -= 10;
@@ -307,7 +323,9 @@ export class DatabaseHealthMonitor {
   /**
    * Assess healthcare compliance health
    */
-  private assessHealthcareComplianceHealth(complianceMetrics: any): ComponentHealth {
+  private assessHealthcareComplianceHealth(
+    complianceMetrics: any,
+  ): ComponentHealth {
     const issues: string[] = [];
     let score = 100;
 
@@ -328,12 +346,18 @@ export class DatabaseHealthMonitor {
 
     // Check LGPD compliance rate
     const lgpdRate = complianceMetrics.patientDataQueries > 0
-      ? (complianceMetrics.lgpdCompliantQueries / complianceMetrics.patientDataQueries) * 100
+      ? (complianceMetrics.lgpdCompliantQueries
+        / complianceMetrics.patientDataQueries)
+        * 100
       : 100; // Default to 100% if no patient queries
-    if (lgpdRate < HEALTHCARE_HEALTH_THRESHOLDS.compliance.lgpdQueries.critical) {
+    if (
+      lgpdRate < HEALTHCARE_HEALTH_THRESHOLDS.compliance.lgpdQueries.critical
+    ) {
       issues.push('Critical LGPD compliance rate');
       score -= 35;
-    } else if (lgpdRate < HEALTHCARE_HEALTH_THRESHOLDS.compliance.lgpdQueries.warning) {
+    } else if (
+      lgpdRate < HEALTHCARE_HEALTH_THRESHOLDS.compliance.lgpdQueries.warning
+    ) {
       issues.push('Low LGPD compliance rate');
       score -= 20;
     }
@@ -360,27 +384,35 @@ export class DatabaseHealthMonitor {
     const alerts: HealthAlert[] = [];
     const timestamp = new Date();
 
-    Object.entries(components).forEach(([componentName, health]: [string, any]) => {
-      if (health.status === 'critical') {
-        alerts.push({
-          type: this.getAlertType(componentName),
-          severity: 'critical',
-          message: `Critical issues in ${componentName}: ${health.issues.join(', ')}`,
-          component: componentName,
-          timestamp,
-          healthcareImpact: this.getHealthcareImpact(componentName, 'critical'),
-        });
-      } else if (health.status === 'warning') {
-        alerts.push({
-          type: this.getAlertType(componentName),
-          severity: 'warning',
-          message: `Performance issues in ${componentName}: ${health.issues.join(', ')}`,
-          component: componentName,
-          timestamp,
-          healthcareImpact: this.getHealthcareImpact(componentName, 'warning'),
-        });
-      }
-    });
+    Object.entries(components).forEach(
+      ([componentName, health]: [string, any]) => {
+        if (health.status === 'critical') {
+          alerts.push({
+            type: this.getAlertType(componentName),
+            severity: 'critical',
+            message: `Critical issues in ${componentName}: ${health.issues.join(', ')}`,
+            component: componentName,
+            timestamp,
+            healthcareImpact: this.getHealthcareImpact(
+              componentName,
+              'critical',
+            ),
+          });
+        } else if (health.status === 'warning') {
+          alerts.push({
+            type: this.getAlertType(componentName),
+            severity: 'warning',
+            message: `Performance issues in ${componentName}: ${health.issues.join(', ')}`,
+            component: componentName,
+            timestamp,
+            healthcareImpact: this.getHealthcareImpact(
+              componentName,
+              'warning',
+            ),
+          });
+        }
+      },
+    );
 
     return alerts;
   }
@@ -391,7 +423,10 @@ export class DatabaseHealthMonitor {
   private getAlertType(
     componentName: string,
   ): 'performance' | 'compliance' | 'connection' | 'query' {
-    const typeMap: Record<string, 'performance' | 'compliance' | 'connection' | 'query'> = {
+    const typeMap: Record<
+      string,
+      'performance' | 'compliance' | 'connection' | 'query'
+    > = {
       connectionPool: 'connection',
       queryPerformance: 'query',
       indexOptimization: 'performance',
@@ -423,7 +458,10 @@ export class DatabaseHealthMonitor {
       },
     };
 
-    return impactMap[componentName]?.[severity] || 'Healthcare operations may be affected';
+    return (
+      impactMap[componentName]?.[severity]
+      || 'Healthcare operations may be affected'
+    );
   }
 
   /**
@@ -453,7 +491,9 @@ export class DatabaseHealthMonitor {
     score: number,
     alerts: HealthAlert[],
   ): 'healthy' | 'warning' | 'critical' {
-    const hasCriticalAlerts = alerts.some(alert => alert.severity === 'critical');
+    const hasCriticalAlerts = alerts.some(
+      alert => alert.severity === 'critical',
+    );
 
     if (hasCriticalAlerts || score < 60) {
       return 'critical';

@@ -42,9 +42,15 @@
 
 /* Keyframes Oficiais MagicUI */
 @keyframes shine {
-  0% { background-position: 0% 0%; }
-  50% { background-position: 100% 100%; }
-  to { background-position: 0% 0%; }
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  to {
+    background-position: 0% 0%;
+  }
 }
 ```
 
@@ -67,7 +73,7 @@ animation: {
 export function ShineBorder({
   borderWidth = 1,
   duration = 14,
-  shineColor = '#AC9469', // NeonPro golden
+  shineColor = "#AC9469", // NeonPro golden
   className,
   style,
   ...props
@@ -75,21 +81,21 @@ export function ShineBorder({
   return (
     <div
       style={{
-        '--border-width': `${borderWidth}px`,
-        '--duration': `${duration}s`,
+        "--border-width": `${borderWidth}px`,
+        "--duration": `${duration}s`,
         backgroundImage: `radial-gradient(transparent,transparent, ${
-          Array.isArray(shineColor) ? shineColor.join(',') : shineColor
+          Array.isArray(shineColor) ? shineColor.join(",") : shineColor
         },transparent,transparent)`,
-        backgroundSize: '300% 300%',
+        backgroundSize: "300% 300%",
         mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
         WebkitMask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
-        WebkitMaskComposite: 'xor',
-        maskComposite: 'exclude',
-        padding: 'var(--border-width)',
+        WebkitMaskComposite: "xor",
+        maskComposite: "exclude",
+        padding: "var(--border-width)",
         ...style,
       }}
       className={cn(
-        'pointer-events-none absolute inset-0 size-full rounded-[inherit] will-change-[background-position] motion-safe:animate-shine',
+        "pointer-events-none absolute inset-0 size-full rounded-[inherit] will-change-[background-position] motion-safe:animate-shine",
         className,
       )}
       {...props}
@@ -191,9 +197,15 @@ const shouldShowShine = (magic || !disableShine) && !isTest;
 ```css
 /* Keyframes Oficiais */
 @keyframes shine {
-  0% { background-position: 0% 0%; }
-  50% { background-position: 100% 100%; }
-  to { background-position: 0% 0%; }
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  to {
+    background-position: 0% 0%;
+  }
 }
 
 /* Animação */
@@ -204,20 +216,20 @@ background-size: 300% 300%;
 ### **Estrutura do Componente:**
 
 ```tsx
-<div className='relative rounded-xl'>
+<div className="relative rounded-xl">
   {/* Shine Border Effect (MagicUI Official) */}
   <ShineBorder
     borderWidth={1}
     duration={14}
-    shineColor='#AC9469'
-    className='motion-safe:animate-shine'
+    shineColor="#AC9469"
+    className="motion-safe:animate-shine"
   />
 
   {/* Card Content */}
-  <div className='bg-card text-card-foreground ... relative z-10'>
+  <div className="bg-card text-card-foreground ... relative z-10">
     {children}
   </div>
-</div>;
+</div>
 ```
 
 ---

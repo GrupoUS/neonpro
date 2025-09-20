@@ -46,10 +46,10 @@ Elite TDD orchestrator that coordinates specialized code review agents throughou
 orchestrator: tdd-orchestrator
 feature: "user-authentication"
 agents:
-  - architect-review    # Design validation
-  - security-auditor   # Security-first approach
-  - code-reviewer      # Quality analysis
-  - test              # Test patterns
+  - architect-review # Design validation
+  - security-auditor # Security-first approach
+  - code-reviewer # Quality analysis
+  - test # Test patterns
 workflow: "security-critical-tdd"
 ```
 
@@ -64,12 +64,12 @@ workflow: "security-critical-tdd"
 
 ### Core Agent Capabilities
 
-| Agent | RED Phase | GREEN Phase | REFACTOR Phase | Specialization |
-|-------|-----------|-------------|----------------|----------------|
-| **test.md** | Test patterns, TDD structure | Test validation | Test optimization | Test orchestration, TDD discipline |
-| **architect-review.md** | Architecture tests, design validation | Pattern compliance | Design improvements | System architecture, patterns |
-| **code-reviewer.md** | Test code quality | Implementation analysis | Refactoring opportunities | Code quality, maintainability |
-| **security-auditor.md** | Security test requirements | Vulnerability scanning | Security hardening | DevSecOps, compliance |
+| Agent                   | RED Phase                             | GREEN Phase             | REFACTOR Phase            | Specialization                     |
+| ----------------------- | ------------------------------------- | ----------------------- | ------------------------- | ---------------------------------- |
+| **test.md**             | Test patterns, TDD structure          | Test validation         | Test optimization         | Test orchestration, TDD discipline |
+| **architect-review.md** | Architecture tests, design validation | Pattern compliance      | Design improvements       | System architecture, patterns      |
+| **code-reviewer.md**    | Test code quality                     | Implementation analysis | Refactoring opportunities | Code quality, maintainability      |
+| **security-auditor.md** | Security test requirements            | Vulnerability scanning  | Security hardening        | DevSecOps, compliance              |
 
 ### Agent Activation Triggers
 
@@ -81,20 +81,20 @@ AGENT_TRIGGERS:
     - "system design"
     - "patterns"
     - "scalability"
-  
+
   security-auditor:
     - "authentication"
-    - "authorization" 
+    - "authorization"
     - "payment"
     - "personal data"
     - "compliance"
-  
+
   code-reviewer:
     - "performance"
     - "maintainability"
     - "technical debt"
     - "code quality"
-  
+
   test:
     - "tdd"
     - "testing"
@@ -114,11 +114,11 @@ graph TD
     B -->|Low| C[Basic TDD Cycle]
     B -->|Medium| D[Enhanced TDD Cycle]
     B -->|High| E[Multi-Agent TDD Cycle]
-    
+
     C --> F[test.md + code-reviewer.md]
     D --> G[+ architect-review.md]
     E --> H[+ security-auditor.md]
-    
+
     F --> I[Quality Gates]
     G --> I
     H --> I
@@ -128,13 +128,14 @@ graph TD
 #### Execution Steps
 
 1. **RED Phase Orchestration**
+
    ```yaml
    phase: RED
    primary_agent: test.md
    support_agents:
-     - architect-review.md  # Design test validation
-     - security-auditor.md  # Security test requirements (if triggered)
-   
+     - architect-review.md # Design test validation
+     - security-auditor.md # Security test requirements (if triggered)
+
    actions:
      - Define test structure and patterns
      - Validate architectural test approach
@@ -143,14 +144,15 @@ graph TD
    ```
 
 2. **GREEN Phase Orchestration**
+
    ```yaml
    phase: GREEN
    primary_agent: code-reviewer.md
    support_agents:
-     - architect-review.md  # Pattern compliance
-     - security-auditor.md  # Vulnerability scanning
-     - test.md             # Test validation
-   
+     - architect-review.md # Pattern compliance
+     - security-auditor.md # Vulnerability scanning
+     - test.md # Test validation
+
    actions:
      - Implement minimal code to pass tests
      - Validate architectural patterns
@@ -159,15 +161,16 @@ graph TD
    ```
 
 3. **REFACTOR Phase Orchestration**
+
    ```yaml
    phase: REFACTOR
    coordination: parallel_execution
    agents:
-     - code-reviewer.md     # Code quality improvements
-     - architect-review.md  # Design optimization
-     - security-auditor.md  # Security hardening
-     - test.md             # Test optimization
-   
+     - code-reviewer.md # Code quality improvements
+     - architect-review.md # Design optimization
+     - security-auditor.md # Security hardening
+     - test.md # Test optimization
+
    actions:
      - Identify refactoring opportunities
      - Apply design improvements
@@ -189,12 +192,12 @@ phase_sequence:
     primary: security-auditor
     secondary: [test, architect-review]
     focus: "Security test requirements definition"
-  
+
   GREEN:
     primary: security-auditor
     secondary: [code-reviewer, test]
     focus: "Secure implementation with vulnerability prevention"
-  
+
   REFACTOR:
     coordination: security-auditor
     agents: [code-reviewer, architect-review, test]
@@ -214,12 +217,12 @@ orchestration_pattern:
   service_boundary_analysis:
     agent: architect-review
     output: "Service contracts and boundaries"
-  
+
   contract_testing:
     agent: test
     dependencies: [architect-review]
     output: "Contract tests and integration patterns"
-  
+
   implementation_coordination:
     agents: [code-reviewer, security-auditor]
     parallel: true
@@ -239,11 +242,11 @@ phases:
   characterization:
     agents: [code-reviewer, test]
     goal: "Understand existing behavior"
-  
+
   safety_net:
     agents: [test, architect-review]
     goal: "Create comprehensive test coverage"
-  
+
   refactoring:
     coordination: architect-review
     agents: [code-reviewer, security-auditor, test]
@@ -273,11 +276,11 @@ execution_order:
 pattern: parallel
 concurrent_agents:
   analysis_group:
-    - code-reviewer     # Code quality
-    - security-auditor  # Security analysis
+    - code-reviewer # Code quality
+    - security-auditor # Security analysis
   validation_group:
-    - architect-review  # Design compliance
-    - test             # Test validation
+    - architect-review # Design compliance
+    - test # Test validation
 ```
 
 ### 3. Hierarchical Coordination Pattern
@@ -291,11 +294,11 @@ sub_coordinators:
   quality_coordinator:
     agents: [code-reviewer, test]
     focus: "Quality assurance"
-  
+
   security_coordinator:
     agents: [security-auditor]
     focus: "Security validation"
-  
+
   architecture_coordinator:
     agents: [architect-review]
     focus: "Design compliance"
@@ -316,7 +319,7 @@ activation_rules:
   if_security_detected:
     primary: security-auditor
     support: [code-reviewer, test]
-  
+
   if_architecture_detected:
     primary: architect-review
     support: [code-reviewer, security-auditor]
@@ -333,15 +336,15 @@ COMMUNICATION_PROTOCOL:
     receiver: agent_name | "broadcast"
     type: "analysis" | "recommendation" | "validation"
     priority: "low" | "medium" | "high" | "critical"
-    context: 
+    context:
       phase: "red" | "green" | "refactor"
       feature: string
       files: array
     payload: object
-  
+
   shared_context:
     feature_spec: "Common understanding of requirements"
-    code_changes: "Current implementation state"  
+    code_changes: "Current implementation state"
     test_suite: "Test coverage and results"
     quality_metrics: "Code quality measurements"
     security_findings: "Vulnerabilities and compliance status"
@@ -353,24 +356,24 @@ COMMUNICATION_PROTOCOL:
 interface OrchestrationState {
   feature: {
     name: string;
-    complexity: 'low' | 'medium' | 'high';
+    complexity: "low" | "medium" | "high";
     domain: string[];
     requirements: string[];
   };
-  
+
   tdd_cycle: {
-    phase: 'red' | 'green' | 'refactor';
+    phase: "red" | "green" | "refactor";
     iteration: number;
-    test_status: 'failing' | 'passing' | 'optimizing';
+    test_status: "failing" | "passing" | "optimizing";
   };
-  
+
   agents: {
     active: AgentName[];
     completed: AgentName[];
     pending: AgentName[];
     failed: AgentName[];
   };
-  
+
   quality_gates: {
     architecture: QualityGateStatus;
     security: QualityGateStatus;
@@ -389,22 +392,22 @@ INTEGRATION_POINTS:
       - trigger: "pull_request"
         workflow: "tdd-orchestration"
         agents: ["code-reviewer", "security-auditor"]
-  
+
   ide_integration:
     vscode_extension:
       - command: "tdd.orchestrate"
         agents: ["test", "code-reviewer"]
-    
+
     jetbrains_plugin:
       - action: "orchestrate_tdd_cycle"
         context: "current_feature"
-  
+
   monitoring_integration:
     metrics_dashboard:
       - agent_utilization_rates
       - workflow_completion_times
       - quality_improvement_trends
-    
+
     alerting_rules:
       - quality_gate_failures
       - agent_coordination_issues
@@ -420,15 +423,15 @@ graph TD
     A[Feature Analysis] --> B{Security Requirements?}
     B -->|Yes| C[security-auditor REQUIRED]
     B -->|No| D{Architecture Complexity?}
-    
+
     C --> E{High Complexity?}
     E -->|Yes| F[+ architect-review]
     E -->|No| G[Standard security workflow]
-    
+
     D -->|High| H[architect-review REQUIRED]
     D -->|Medium| I[code-reviewer + test]
     D -->|Low| J[test only]
-    
+
     F --> K[Full orchestration]
     G --> L[Security-focused TDD]
     H --> M[Architecture-driven TDD]
@@ -442,38 +445,43 @@ graph TD
 function selectWorkflow(feature: FeatureContext): WorkflowType {
   // Security-critical features
   if (hasSecurityRequirements(feature)) {
-    return 'security-critical-tdd';
+    return "security-critical-tdd";
   }
-  
+
   // Architectural complexity
-  if (feature.complexity === 'high' || isDistributedSystem(feature)) {
-    return 'microservices-tdd';
+  if (feature.complexity === "high" || isDistributedSystem(feature)) {
+    return "microservices-tdd";
   }
-  
+
   // Legacy codebase
   if (isLegacyCode(feature.codebase)) {
-    return 'legacy-tdd';
+    return "legacy-tdd";
   }
-  
+
   // Default workflow
-  return 'standard-tdd';
+  return "standard-tdd";
 }
 
 function selectAgents(workflow: WorkflowType, phase: TDDPhase): Agent[] {
   const agentMatrix = {
-    'standard-tdd': {
-      red: ['test', 'code-reviewer'],
-      green: ['code-reviewer', 'test'],
-      refactor: ['code-reviewer', 'architect-review', 'test']
+    "standard-tdd": {
+      red: ["test", "code-reviewer"],
+      green: ["code-reviewer", "test"],
+      refactor: ["code-reviewer", "architect-review", "test"],
     },
-    'security-critical-tdd': {
-      red: ['security-auditor', 'test', 'architect-review'],
-      green: ['security-auditor', 'code-reviewer', 'test'],
-      refactor: ['security-auditor', 'code-reviewer', 'architect-review', 'test']
-    }
+    "security-critical-tdd": {
+      red: ["security-auditor", "test", "architect-review"],
+      green: ["security-auditor", "code-reviewer", "test"],
+      refactor: [
+        "security-auditor",
+        "code-reviewer",
+        "architect-review",
+        "test",
+      ],
+    },
     // ... other workflow mappings
   };
-  
+
   return agentMatrix[workflow][phase];
 }
 ```
@@ -488,12 +496,12 @@ ORCHESTRATION_METRICS:
     tdd_cycle_time: "Average time per red-green-refactor cycle"
     agent_coordination_overhead: "Time spent in agent coordination"
     workflow_completion_rate: "Successful workflow completion percentage"
-  
+
   quality:
     quality_gate_pass_rate: "Percentage of quality gates passed"
     defect_prevention_rate: "Issues caught before production"
     security_compliance_score: "Security validation success rate"
-  
+
   agent_performance:
     agent_utilization: "Individual agent activation rates"
     agent_effectiveness: "Agent contribution to quality improvements"
@@ -508,13 +516,13 @@ QUALITY_GATES:
     test_structure: "Tests follow established patterns ≥95%"
     security_coverage: "Security test requirements defined ≥100%"
     architecture_alignment: "Design tests validate architecture ≥90%"
-  
+
   green_phase:
     test_passage: "All tests pass ≥100%"
     code_quality: "Quality metrics threshold ≥85%"
     security_validation: "No critical vulnerabilities ≥100%"
     pattern_compliance: "Architectural patterns followed ≥90%"
-  
+
   refactor_phase:
     code_improvement: "Quality metrics improved ≥10%"
     test_optimization: "Test suite performance improved ≥5%"
@@ -544,7 +552,7 @@ interface QualityAssessment {
 }
 
 async function assessTDDCycleQuality(
-  orchestrationContext: OrchestrationState
+  orchestrationContext: OrchestrationState,
 ): Promise<QualityAssessment> {
   // Implementation of quality assessment logic
   // Aggregates metrics from all participating agents
@@ -565,19 +573,19 @@ classification:
 
 orchestration_plan:
   workflow: "security-critical-tdd"
-  
+
   red_phase:
     primary_agent: security-auditor
     tasks:
       - "Define security test requirements"
-      - "Specify authentication flow tests"  
+      - "Specify authentication flow tests"
       - "Create authorization boundary tests"
-    
+
     support_agents:
       test:
         - "Establish test structure and patterns"
         - "Create test fixtures and mocks"
-      
+
       architect-review:
         - "Validate authentication architecture"
         - "Review security design patterns"
@@ -588,12 +596,12 @@ orchestration_plan:
       - "Implement secure JWT handling"
       - "Add password hashing with bcrypt"
       - "Configure CORS and security headers"
-    
+
     support_agents:
       code-reviewer:
         - "Analyze implementation quality"
         - "Review error handling patterns"
-      
+
       test:
         - "Validate test execution"
         - "Verify test coverage metrics"
@@ -604,11 +612,11 @@ orchestration_plan:
       security-auditor:
         - "Perform security hardening"
         - "Add additional security layers"
-      
+
       code-reviewer:
         - "Optimize code structure"
         - "Improve maintainability"
-      
+
       architect-review:
         - "Enhance design patterns"
         - "Improve separation of concerns"
@@ -625,14 +633,14 @@ classification:
 
 orchestration_plan:
   workflow: "microservices-tdd"
-  
+
   preliminary_analysis:
     agent: architect-review
     deliverables:
       - "Service boundary definition"
       - "API contract specification"
       - "Integration point mapping"
-  
+
   red_phase:
     primary_agent: test
     dependencies: ["architect-review"]
@@ -640,12 +648,12 @@ orchestration_plan:
       - "Create contract tests"
       - "Define integration test structure"
       - "Establish API testing patterns"
-    
+
     support_agents:
       architect-review:
         - "Validate test architecture"
         - "Review service contracts"
-      
+
       security-auditor:
         - "Define security test requirements"
         - "Specify data protection tests"
@@ -654,16 +662,16 @@ orchestration_plan:
     coordination: "sequential"
     execution_order:
       1. code-reviewer:
-         - "Implement API endpoints"
-         - "Add request validation"
-      
+        - "Implement API endpoints"
+        - "Add request validation"
+
       2. security-auditor:
-         - "Add authentication middleware"
-         - "Implement rate limiting"
-      
+        - "Add authentication middleware"
+        - "Implement rate limiting"
+
       3. test:
-         - "Validate contract compliance"
-         - "Run integration tests"
+        - "Validate contract compliance"
+        - "Run integration tests"
 
   refactor_phase:
     focus: "performance_and_maintainability"
@@ -671,7 +679,7 @@ orchestration_plan:
       architect-review:
         - "Optimize service architecture"
         - "Review scalability patterns"
-      
+
       code-reviewer:
         - "Refactor for maintainability"
         - "Optimize performance bottlenecks"
@@ -688,19 +696,19 @@ classification:
 
 orchestration_plan:
   workflow: "legacy-tdd"
-  
+
   characterization_phase:
     primary_agent: code-reviewer
     tasks:
       - "Analyze existing code structure"
       - "Identify coupling and dependencies"
       - "Map current behavior patterns"
-    
+
     support_agents:
       test:
         - "Create characterization tests"
         - "Establish behavior baselines"
-      
+
       security-auditor:
         - "Audit existing security vulnerabilities"
         - "Identify compliance gaps"
@@ -712,7 +720,7 @@ orchestration_plan:
       - "Build comprehensive test suite"
       - "Achieve 95%+ code coverage"
       - "Create approval tests for complex outputs"
-    
+
     support_agents:
       architect-review:
         - "Define target architecture"
@@ -721,13 +729,12 @@ orchestration_plan:
   incremental_refactor_phase:
     coordination: "careful_sequential"
     safety_checks: true
-    
-    iteration_pattern:
-      1. Extract small methods (code-reviewer)
+
+    iteration_pattern: 1. Extract small methods (code-reviewer)
       2. Validate with tests (test)
       3. Security review (security-auditor)
       4. Architecture compliance (architect-review)
-      
+
     rollback_strategy:
       trigger: "Any test failure or quality regression"
       action: "Revert to previous working state"
@@ -737,13 +744,13 @@ orchestration_plan:
 
 ### Common Orchestration Issues
 
-| Issue | Symptoms | Solution |
-|-------|----------|----------|
-| **Agent Coordination Conflicts** | Multiple agents making contradictory recommendations | Implement priority hierarchy and conflict resolution protocols |
-| **Workflow Performance Degradation** | TDD cycles taking significantly longer | Optimize agent selection and parallel execution patterns |
-| **Quality Gate Failures** | Consistent failures in specific quality gates | Review gate thresholds and agent effectiveness |
-| **Context Loss Between Phases** | Agents losing shared context during phase transitions | Strengthen state management and context persistence |
-| **Agent Selection Suboptimal** | Wrong agents activated for feature type | Refine trigger keywords and selection algorithms |
+| Issue                                | Symptoms                                              | Solution                                                       |
+| ------------------------------------ | ----------------------------------------------------- | -------------------------------------------------------------- |
+| **Agent Coordination Conflicts**     | Multiple agents making contradictory recommendations  | Implement priority hierarchy and conflict resolution protocols |
+| **Workflow Performance Degradation** | TDD cycles taking significantly longer                | Optimize agent selection and parallel execution patterns       |
+| **Quality Gate Failures**            | Consistent failures in specific quality gates         | Review gate thresholds and agent effectiveness                 |
+| **Context Loss Between Phases**      | Agents losing shared context during phase transitions | Strengthen state management and context persistence            |
+| **Agent Selection Suboptimal**       | Wrong agents activated for feature type               | Refine trigger keywords and selection algorithms               |
 
 ### Debugging Orchestration Flows
 
@@ -771,13 +778,13 @@ interface CommunicationDiagnostics {
     received: number;
     failed: number;
   };
-  
+
   coordination_issues: {
     conflicts: ConflictReport[];
     timeouts: TimeoutReport[];
     state_sync_failures: StateSyncError[];
   };
-  
+
   performance_metrics: {
     average_response_time: number;
     agent_utilization: Record<string, number>;

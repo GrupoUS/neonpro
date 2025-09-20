@@ -4,18 +4,23 @@
  * Provides validation functions for agent coordination and quality gates.
  */
 
-import { QUALITY_GATES } from './index';
-import type { AgentMetrics, AgentType } from './types';
+import { QUALITY_GATES } from "./index";
+import type { AgentMetrics, AgentType } from "./types";
 
 /**
  * Validate agent metrics against quality gates
  */
-export function validateAgentMetrics(agent: AgentType, metrics: AgentMetrics): {
+export function validateAgentMetrics(
+  agent: AgentType,
+  metrics: AgentMetrics,
+): {
   passed: boolean;
   failures: string[];
   score: number;
 } {
-  const gateKey = agent.toUpperCase().replace('-', '_') as keyof typeof QUALITY_GATES;
+  const gateKey = agent
+    .toUpperCase()
+    .replace("-", "_") as keyof typeof QUALITY_GATES;
   const gates = QUALITY_GATES[gateKey];
 
   if (!gates) {
@@ -32,7 +37,7 @@ export function validateAgentMetrics(agent: AgentType, metrics: AgentMetrics): {
 
     gateCount++;
 
-    if (metric === 'vulnerabilities') {
+    if (metric === "vulnerabilities") {
       // Lower is better for vulnerabilities
       if (value > threshold) {
         failures.push(`${metric}: ${value} exceeds threshold of ${threshold}`);
@@ -68,9 +73,9 @@ export function validateTDDCycle(phases: Record<string, boolean>): {
   missingPhases: string[];
   completionRate: number;
 } {
-  const requiredPhases = ['red-phase', 'green-phase', 'refactor-phase'];
-  const missingPhases = requiredPhases.filter(phase => !phases[phase]);
-  const completedPhases = requiredPhases.filter(phase => phases[phase]);
+  const requiredPhases = ["red-phase", "green-phase", "refactor-phase"];
+  const missingPhases = requiredPhases.filter((phase) => !phases[phase]);
+  const completedPhases = requiredPhases.filter((phase) => phases[phase]);
 
   return {
     compliant: missingPhases.length === 0,
@@ -85,43 +90,52 @@ export function validateTDDCycle(phases: Record<string, boolean>): {
 export function validateHealthcareCompliance(data: any): {
   compliant: boolean;
   violations: string[];
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
 } {
   const violations: string[] = [];
 
   // LGPD compliance checks
   if (!data.consentGiven) {
-    violations.push('Missing patient consent (LGPD violation)');
+    violations.push("Missing patient consent (LGPD violation)");
   }
 
   if (!data.dataProcessingPurpose) {
-    violations.push('Missing data processing purpose (LGPD violation)');
-  }
-
-  if (!data.auditTrail || !Array.isArray(data.auditTrail) || data.auditTrail.length === 0) {
-    violations.push('Missing or incomplete audit trail (LGPD/ANVISA violation)');
+    violations.push("Missing data processing purpose (LGPD violation)");
   }
 
   if (
-    !data.incidentReports || !Array.isArray(data.incidentReports)
-    || data.incidentReports.length === 0
+    !data.auditTrail ||
+    !Array.isArray(data.auditTrail) ||
+    data.auditTrail.length === 0
   ) {
-    violations.push('Missing incident response records (LGPD/ANVISA violation)');
+    violations.push(
+      "Missing or incomplete audit trail (LGPD/ANVISA violation)",
+    );
+  }
+
+  if (
+    !data.incidentReports ||
+    !Array.isArray(data.incidentReports) ||
+    data.incidentReports.length === 0
+  ) {
+    violations.push(
+      "Missing incident response records (LGPD/ANVISA violation)",
+    );
   }
 
   if (!data.dataRetentionPolicy) {
-    violations.push('Missing data retention policy (LGPD violation)');
+    violations.push("Missing data retention policy (LGPD violation)");
   }
 
   // Determine risk level
-  let riskLevel: 'low' | 'medium' | 'high' | 'critical' = 'low';
+  let riskLevel: "low" | "medium" | "high" | "critical" = "low";
   if (violations.length > 0) {
-    if (violations.some(v => v.includes('consent') || v.includes('audit'))) {
-      riskLevel = 'critical';
+    if (violations.some((v) => v.includes("consent") || v.includes("audit"))) {
+      riskLevel = "critical";
     } else if (violations.length > 2) {
-      riskLevel = 'high';
+      riskLevel = "high";
     } else {
-      riskLevel = 'medium';
+      riskLevel = "medium";
     }
   }
 
@@ -143,39 +157,49 @@ export function generateAgentRecommendations(
   const recommendations: string[] = [];
 
   if (!validationResult.passed) {
-    validationResult.failures.forEach(failure => {
-      const [metric] = failure.split(':');
+    validationResult.failures.forEach((failure) => {
+      const [metric] = failure.split(":");
 
       switch (agent) {
-        case 'architect-review':
-          if (metric === 'patterns') {
-            recommendations.push('Review and improve architectural patterns compliance');
-          } else if (metric === 'scalability') {
-            recommendations.push('Address scalability concerns in system design');
+        case "architect-review":
+          if (metric === "patterns") {
+            recommendations.push(
+              "Review and improve architectural patterns compliance",
+            );
+          } else if (metric === "scalability") {
+            recommendations.push(
+              "Address scalability concerns in system design",
+            );
           }
           break;
 
-        case 'code-reviewer':
-          if (metric === 'quality') {
-            recommendations.push('Improve code quality metrics (complexity, maintainability)');
-          } else if (metric === 'performance') {
-            recommendations.push('Optimize performance bottlenecks');
+        case "code-reviewer":
+          if (metric === "quality") {
+            recommendations.push(
+              "Improve code quality metrics (complexity, maintainability)",
+            );
+          } else if (metric === "performance") {
+            recommendations.push("Optimize performance bottlenecks");
           }
           break;
 
-        case 'security-auditor':
-          if (metric === 'vulnerabilities') {
-            recommendations.push('Address security vulnerabilities immediately');
-          } else if (metric === 'compliance') {
-            recommendations.push('Ensure full healthcare compliance (LGPD, ANVISA, CFM)');
+        case "security-auditor":
+          if (metric === "vulnerabilities") {
+            recommendations.push(
+              "Address security vulnerabilities immediately",
+            );
+          } else if (metric === "compliance") {
+            recommendations.push(
+              "Ensure full healthcare compliance (LGPD, ANVISA, CFM)",
+            );
           }
           break;
 
-        case 'tdd-orchestrator':
-          if (metric === 'coverage') {
-            recommendations.push('Increase test coverage for critical paths');
-          } else if (metric === 'patterns') {
-            recommendations.push('Follow TDD patterns more consistently');
+        case "tdd-orchestrator":
+          if (metric === "coverage") {
+            recommendations.push("Increase test coverage for critical paths");
+          } else if (metric === "patterns") {
+            recommendations.push("Follow TDD patterns more consistently");
           }
           break;
       }
@@ -188,7 +212,9 @@ export function generateAgentRecommendations(
       `${agent} requires significant improvement (score: ${validationResult.score}%)`,
     );
   } else if (validationResult.score < 85) {
-    recommendations.push(`${agent} needs minor improvements (score: ${validationResult.score}%)`);
+    recommendations.push(
+      `${agent} needs minor improvements (score: ${validationResult.score}%)`,
+    );
   }
 
   return recommendations;

@@ -1,11 +1,11 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import React from 'react';
-import { vi } from 'vitest';
-import NotificationCard from '../NotificationCard';
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import React from "react";
+import { vi } from "vitest";
+import NotificationCard from "../NotificationCard";
 
-vi.mock('@/integrations/supabase/client', () => {
+vi.mock("@/integrations/supabase/client", () => {
   // Build a tiny chainable mock for supabase.from().select().order().limit()
   const mkChain = (rows: any[]) => ({
     select: vi.fn().mockReturnValue({
@@ -18,27 +18,38 @@ vi.mock('@/integrations/supabase/client', () => {
   const tables: Record<string, any[]> = {
     appointments: [
       {
-        id: 'a1',
-        created_at: '2025-01-01T10:00:00.000Z',
-        start_time: '2025-01-01T11:00:00.000Z',
-        status: 'scheduled',
+        id: "a1",
+        created_at: "2025-01-01T10:00:00.000Z",
+        start_time: "2025-01-01T11:00:00.000Z",
+        status: "scheduled",
       },
     ],
     patients: [
-      { id: 'p1', created_at: '2025-01-01T09:00:00.000Z', full_name: 'Maria Silva' },
+      {
+        id: "p1",
+        created_at: "2025-01-01T09:00:00.000Z",
+        full_name: "Maria Silva",
+      },
     ],
     financial_transactions: [
-      { id: 'f1', created_at: '2025-01-01T08:00:00.000Z', amount: 150, transaction_type: 'income' },
+      {
+        id: "f1",
+        created_at: "2025-01-01T08:00:00.000Z",
+        amount: 150,
+        transaction_type: "income",
+      },
     ],
   };
 
   const supabase = {
-    from: vi.fn().mockImplementation((table: string) => mkChain(tables[table] ?? [])),
+    from: vi
+      .fn()
+      .mockImplementation((table: string) => mkChain(tables[table] ?? [])),
   };
   return { supabase };
 });
 
-vi.mock('@tanstack/react-router', async importOriginal => {
+vi.mock("@tanstack/react-router", async (importOriginal) => {
   const mod = await importOriginal<any>();
   return {
     ...mod,
@@ -49,12 +60,12 @@ vi.mock('@tanstack/react-router', async importOriginal => {
   };
 });
 
-describe('NotificationCard', () => {
-  test('renders aggregated notifications and navigates on click', async () => {
+describe("NotificationCard", () => {
+  test("renders aggregated notifications and navigates on click", async () => {
     const qc = new QueryClient();
     render(
       <QueryClientProvider client={qc}>
-        <NotificationCard title='Notificações' pollIntervalMs={false} />
+        <NotificationCard title="Notificações" pollIntervalMs={false} />
       </QueryClientProvider>,
     );
 

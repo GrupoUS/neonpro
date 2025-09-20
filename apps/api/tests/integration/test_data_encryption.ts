@@ -29,7 +29,12 @@ const EncryptedFieldSchema = z.object({
   metadata: z.object({
     encryptedAt: z.string().datetime(),
     fieldType: z.string(),
-    dataClassification: z.enum(['public', 'internal', 'confidential', 'restricted']),
+    dataClassification: z.enum([
+      'public',
+      'internal',
+      'confidential',
+      'restricted',
+    ]),
   }),
 });
 
@@ -241,14 +246,17 @@ describe('Patient Data Encryption Integration Tests', () => {
       const originalKeyId = patient.cpf.keyId;
 
       // Trigger key rotation
-      const rotationResponse = await api('/api/v2/security/encryption/rotate-keys', {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify({
-          rotationType: 'gradual',
-          estimatedDuration: '24h',
-        }),
-      });
+      const rotationResponse = await api(
+        '/api/v2/security/encryption/rotate-keys',
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify({
+            rotationType: 'gradual',
+            estimatedDuration: '24h',
+          }),
+        },
+      );
 
       expect(rotationResponse.status).toBe(202); // Accepted for processing
 
@@ -263,18 +271,23 @@ describe('Patient Data Encryption Integration Tests', () => {
       expect(verifyResponse.status).toBe(200);
       const verifiedPatient = await verifyResponse.json();
       expect(verifiedPatient.cpf.decrypted).toBe('555.666.777-88');
-      expect(verifiedPatient.medicalHistory.decrypted.conditions).toContain('Enxaqueca');
+      expect(verifiedPatient.medicalHistory.decrypted.conditions).toContain(
+        'Enxaqueca',
+      );
     });
 
     it('should validate encryption key integrity', async () => {
-      const integrityResponse = await api('/api/v2/security/encryption/validate', {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify({
-          checkType: 'comprehensive',
-          sampleSize: 100,
-        }),
-      });
+      const integrityResponse = await api(
+        '/api/v2/security/encryption/validate',
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify({
+            checkType: 'comprehensive',
+            sampleSize: 100,
+          }),
+        },
+      );
 
       expect(integrityResponse.status).toBe(200);
       const validation = await integrityResponse.json();
@@ -303,8 +316,14 @@ describe('Patient Data Encryption Integration Tests', () => {
           cep: '80000-000',
         },
         medicalHistory: {
-          conditions: Array.from({ length: 50 }, (_, i) => `Condition ${i + 1}`),
-          medications: Array.from({ length: 20 }, (_, i) => `Medication ${i + 1}`),
+          conditions: Array.from(
+            { length: 50 },
+            (_, i) => `Condition ${i + 1}`,
+          ),
+          medications: Array.from(
+            { length: 20 },
+            (_, i) => `Medication ${i + 1}`,
+          ),
         },
       };
 
@@ -320,7 +339,9 @@ describe('Patient Data Encryption Integration Tests', () => {
       expect(duration).toBeLessThan(2000); // Should complete within 2 seconds
 
       const responseData = await response.json();
-      expect(responseData.encryptionMetadata.encryptionStandard).toBe('AES-256-GCM');
+      expect(responseData.encryptionMetadata.encryptionStandard).toBe(
+        'AES-256-GCM',
+      );
     });
 
     it('should support batch encryption for large datasets', async () => {
@@ -328,7 +349,9 @@ describe('Patient Data Encryption Integration Tests', () => {
       const patients = Array.from({ length: batchSize }, (_, i) => ({
         name: `Batch Patient ${i + 1}`,
         cpf: `${String(i + 1).padStart(3, '0')}.${String(i + 1).padStart(3, '0')}.${
-          String(i + 1).padStart(3, '0')
+          String(
+            i + 1,
+          ).padStart(3, '0')
         }-${String(i + 1).padStart(2, '0')}`,
         phone: `(11) ${String(i + 1).padStart(5, '0')}-${String(i + 1).padStart(4, '0')}`,
         email: `batch${i + 1}@test.com`,
@@ -380,15 +403,18 @@ describe('Patient Data Encryption Integration Tests', () => {
       });
 
       // Check audit logs
-      const auditResponse = await api('/api/v2/security/audit/encryption-events', {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify({
-          patientId: patient.id,
-          timeRange: '1h',
-          operations: ['encrypt', 'decrypt'],
-        }),
-      });
+      const auditResponse = await api(
+        '/api/v2/security/audit/encryption-events',
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify({
+            patientId: patient.id,
+            timeRange: '1h',
+            operations: ['encrypt', 'decrypt'],
+          }),
+        },
+      );
 
       expect(auditResponse.status).toBe(200);
       const auditLogs = await auditResponse.json();
@@ -411,9 +437,12 @@ describe('Patient Data Encryption Integration Tests', () => {
     });
 
     it('should enforce healthcare data protection standards', async () => {
-      const complianceResponse = await api('/api/v2/security/compliance/encryption', {
-        headers: testAuthHeaders,
-      });
+      const complianceResponse = await api(
+        '/api/v2/security/compliance/encryption',
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       expect(complianceResponse.status).toBe(200);
       const compliance = await complianceResponse.json();
@@ -478,14 +507,17 @@ describe('Patient Data Encryption Integration Tests', () => {
 
     it('should validate data integrity after system recovery', async () => {
       // Simulate system recovery validation
-      const validationResponse = await api('/api/v2/security/recovery/validate', {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify({
-          validationType: 'full_integrity_check',
-          samplePercentage: 10,
-        }),
-      });
+      const validationResponse = await api(
+        '/api/v2/security/recovery/validate',
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify({
+            validationType: 'full_integrity_check',
+            samplePercentage: 10,
+          }),
+        },
+      );
 
       expect(validationResponse.status).toBe(200);
       const validation = await validationResponse.json();

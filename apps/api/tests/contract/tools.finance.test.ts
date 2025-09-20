@@ -15,7 +15,11 @@ describe('Contract: Tool.finance.overdueInvoices', () => {
     const res = await api('/tools/finance/overdue', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ clinicId: 'clinic_001', asOfDate: '2025-09-01', locale: 'pt-BR' }),
+      body: JSON.stringify({
+        clinicId: 'clinic_001',
+        asOfDate: '2025-09-01',
+        locale: 'pt-BR',
+      }),
     });
     expect(res.ok).toBe(true);
     const json = await res.json();

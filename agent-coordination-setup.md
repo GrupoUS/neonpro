@@ -1,53 +1,55 @@
 # TypeScript Error Resolution Initiative - Agent Coordination Setup
 
 ## Overview
+
 This document outlines the agent coordination strategy for resolving 143+ TypeScript errors categorized by priority levels. The setup follows the TDD orchestrator methodology and integrates with the quality control processes defined in `.kilocode/workflows/quality-control.md`.
 
 ## Agent Coordination Strategy
 
 ### Primary Agent Assignments by Priority
 
-| Priority | Agent | Focus Area | TDD Phase Integration |
-|----------|-------|------------|----------------------|
-| **P0 - Critical Blockers** | architect-review | System architecture, missing modules, database schema | RED/GREEN/REFACTOR |
-| **P1 - Security & Compliance** | security-auditor | Healthcare data protection, authentication | ALL phases (healthcare) |
-| **P2 - Type Safety & Contract** | code-reviewer | Valibot schemas, HTTP responses, type safety | GREEN/REFACTOR |
-| **P3 - Code Hygiene & Optimization** | apex-dev | Unused imports, error handling, optimization | GREEN/REFACTOR |
+| Priority                             | Agent            | Focus Area                                            | TDD Phase Integration   |
+| ------------------------------------ | ---------------- | ----------------------------------------------------- | ----------------------- |
+| **P0 - Critical Blockers**           | architect-review | System architecture, missing modules, database schema | RED/GREEN/REFACTOR      |
+| **P1 - Security & Compliance**       | security-auditor | Healthcare data protection, authentication            | ALL phases (healthcare) |
+| **P2 - Type Safety & Contract**      | code-reviewer    | Valibot schemas, HTTP responses, type safety          | GREEN/REFACTOR          |
+| **P3 - Code Hygiene & Optimization** | apex-dev         | Unused imports, error handling, optimization          | GREEN/REFACTOR          |
 
 ### Coordination Workflow
 
 ```yaml
 workflow_sequence:
   1. apex-researcher:
-      - "Validate analysis and research best practices"
-      - "Multi-source validation for each error category"
-      - "Establish evidence-based implementation approach"
-  
+    - "Validate analysis and research best practices"
+    - "Multi-source validation for each error category"
+    - "Establish evidence-based implementation approach"
+
   2. architect-review (P0):
-      - "Handle critical blockers affecting system architecture"
-      - "Database schema mismatches and tRPC router issues"
-      - "Missing modules and core system dependencies"
-  
+    - "Handle critical blockers affecting system architecture"
+    - "Database schema mismatches and tRPC router issues"
+    - "Missing modules and core system dependencies"
+
   3. security-auditor (P1):
-      - "Address healthcare data protection issues"
-      - "Authentication and authorization problems"
-      - "LGPD compliance validation"
-  
+    - "Address healthcare data protection issues"
+    - "Authentication and authorization problems"
+    - "LGPD compliance validation"
+
   4. code-reviewer (P2):
-      - "Resolve type safety and contract issues"
-      - "Valibot schema alignment"
-      - "HTTP response type consistency"
-  
+    - "Resolve type safety and contract issues"
+    - "Valibot schema alignment"
+    - "HTTP response type consistency"
+
   5. apex-dev (P3):
-      - "Code hygiene and optimization"
-      - "Unused imports cleanup"
-      - "Error handling improvements"
-      - "Overall coordination and quality gates"
+    - "Code hygiene and optimization"
+    - "Unused imports cleanup"
+    - "Error handling improvements"
+    - "Overall coordination and quality gates"
 ```
 
 ## Task Structure
 
 ### Main Task
+
 **ID**: TS-MAIN-001  
 **Title**: TypeScript Error Resolution Initiative  
 **Description**: Comprehensive resolution of 143+ TypeScript errors categorized by priority  
@@ -61,6 +63,7 @@ workflow_sequence:
 #### P0 - Critical Blockers
 
 **TS-P0-001**: Missing Modules & Core Dependencies
+
 - **Description**: Resolve missing module imports and core system dependencies that block compilation
 - **Agent**: architect-review
 - **Dependencies**: None
@@ -68,6 +71,7 @@ workflow_sequence:
 - **MCP Sequence**: sequential-thinking → serena → desktop-commander → archon
 
 **TS-P0-002**: Database Schema Mismatches
+
 - **Description**: Fix database schema inconsistencies and tRPC router alignment issues
 - **Agent**: architect-review
 - **Dependencies**: TS-P0-001
@@ -77,6 +81,7 @@ workflow_sequence:
 #### P1 - Security & Compliance
 
 **TS-P1-001**: Healthcare Data Protection
+
 - **Description**: Implement proper healthcare data protection and PHI handling
 - **Agent**: security-auditor
 - **Dependencies**: TS-P0-002
@@ -84,6 +89,7 @@ workflow_sequence:
 - **MCP Sequence**: sequential-thinking → security-auditor → serena → desktop-commander → archon
 
 **TS-P1-002**: Authentication & Authorization
+
 - **Description**: Fix authentication system and authorization mechanisms
 - **Agent**: security-auditor
 - **Dependencies**: TS-P1-001
@@ -93,6 +99,7 @@ workflow_sequence:
 #### P2 - Type Safety & Contract
 
 **TS-P2-001**: Valibot Schema Alignment
+
 - **Description**: Align Valibot schemas with TypeScript types and API contracts
 - **Agent**: code-reviewer
 - **Dependencies**: TS-P1-002
@@ -100,6 +107,7 @@ workflow_sequence:
 - **MCP Sequence**: sequential-thinking → serena → desktop-commander → archon
 
 **TS-P2-002**: HTTP Response Types
+
 - **Description**: Standardize HTTP response types and API contract consistency
 - **Agent**: code-reviewer
 - **Dependencies**: TS-P2-001
@@ -109,6 +117,7 @@ workflow_sequence:
 #### P3 - Code Hygiene & Optimization
 
 **TS-P3-001**: Unused Imports & Dead Code
+
 - **Description**: Remove unused imports and eliminate dead code
 - **Agent**: apex-dev
 - **Dependencies**: TS-P2-002
@@ -116,6 +125,7 @@ workflow_sequence:
 - **MCP Sequence**: sequential-thinking → serena → desktop-commander → archon
 
 **TS-P3-002**: Error Handling & Optimization
+
 - **Description**: Improve error handling patterns and optimize performance
 - **Agent**: apex-dev
 - **Dependencies**: TS-P3-001
@@ -125,70 +135,74 @@ workflow_sequence:
 ## MCP Tool Sequences by Phase
 
 ### Research Phase (All Tasks)
+
 ```yaml
 sequence:
-  - "sequential-thinking"  # Analyze requirements and complexity
-  - "archon"              # Task management setup
-  - "serena"              # Codebase analysis
-  - "context7"            # Documentation research
-  - "tavily"              # Best practices validation
+  - "sequential-thinking" # Analyze requirements and complexity
+  - "archon" # Task management setup
+  - "serena" # Codebase analysis
+  - "context7" # Documentation research
+  - "tavily" # Best practices validation
 ```
 
 ### Analysis Phase (Task-Specific)
+
 ```yaml
 p0_sequence:
-  - "sequential-thinking"  # Architecture analysis
-  - "serena"              # Codebase structure analysis
-  - "supabase"            # Database schema validation
-  - "archon"              # Task documentation
+  - "sequential-thinking" # Architecture analysis
+  - "serena" # Codebase structure analysis
+  - "supabase" # Database schema validation
+  - "archon" # Task documentation
 
 p1_sequence:
-  - "sequential-thinking"  # Security risk assessment
-  - "security-auditor"    # Security analysis
-  - "serena"              # Code security review
-  - "archon"              # Compliance documentation
+  - "sequential-thinking" # Security risk assessment
+  - "security-auditor" # Security analysis
+  - "serena" # Code security review
+  - "archon" # Compliance documentation
 
 p2_sequence:
-  - "sequential-thinking"  # Type safety analysis
-  - "serena"              # Code type analysis
-  - "desktop-commander"   # Type validation
-  - "archon"              # Quality documentation
+  - "sequential-thinking" # Type safety analysis
+  - "serena" # Code type analysis
+  - "desktop-commander" # Type validation
+  - "archon" # Quality documentation
 
 p3_sequence:
-  - "sequential-thinking"  # Optimization analysis
-  - "serena"              # Code quality analysis
-  - "desktop-commander"   # Performance validation
-  - "archon"              # Optimization documentation
+  - "sequential-thinking" # Optimization analysis
+  - "serena" # Code quality analysis
+  - "desktop-commander" # Performance validation
+  - "archon" # Optimization documentation
 ```
 
 ### Implementation Phase (TDD-Driven)
+
 ```yaml
 red_phase:
-  - "sequential-thinking"  # Test planning
-  - "archon"              # Task coordination
-  - "serena"              # Codebase understanding
-  - "desktop-commander"   # Test implementation
+  - "sequential-thinking" # Test planning
+  - "archon" # Task coordination
+  - "serena" # Codebase understanding
+  - "desktop-commander" # Test implementation
 
 green_phase:
-  - "desktop-commander"   # Implementation
-  - "serena"              # Code analysis
-  - "archon"              # Progress tracking
-  - "context7/tavily"     # Research if stuck
+  - "desktop-commander" # Implementation
+  - "serena" # Code analysis
+  - "archon" # Progress tracking
+  - "context7/tavily" # Research if stuck
 
 refactor_phase:
-  - "sequential-thinking"  # Optimization analysis
-  - "serena"              # Code quality assessment
-  - "desktop-commander"   # Refactoring
-  - "archon"              # Documentation
+  - "sequential-thinking" # Optimization analysis
+  - "serena" # Code quality assessment
+  - "desktop-commander" # Refactoring
+  - "archon" # Documentation
 ```
 
 ### Validation Phase
+
 ```yaml
 validation_sequence:
-  - "desktop-commander"   # Test execution
-  - "serena"              # Code validation
-  - "archon"              # Results documentation
-  - "sequential-thinking"  # Quality assessment
+  - "desktop-commander" # Test execution
+  - "serena" # Code validation
+  - "archon" # Results documentation
+  - "sequential-thinking" # Quality assessment
 ```
 
 ## Quality Gates Configuration
@@ -196,24 +210,28 @@ validation_sequence:
 ### Phase Quality Gates
 
 #### Research Phase Quality Gates
+
 - **Requirement Clarity**: 100% understanding of error categories
 - **Multi-source Validation**: ≥95% confidence in approach
 - **Agent Assignment**: Clear responsibilities defined
 - **Dependency Mapping**: Complete task dependency graph
 
 #### Analysis Phase Quality Gates
+
 - **Error Categorization**: 100% errors properly categorized
 - **Impact Assessment**: Complete risk analysis
 - **Resource Estimation**: Accurate effort assessment
 - **Architecture Review**: System impact understood
 
 #### Implementation Phase Quality Gates
+
 - **TDD Compliance**: 100% test-driven development
 - **Code Quality**: ≥85% quality metrics
 - **Security Compliance**: 100% for healthcare-related code
 - **Type Safety**: Zero TypeScript errors in implemented fixes
 
 #### Validation Phase Quality Gates
+
 - **Test Coverage**: ≥90% for critical paths
 - **Performance**: No regression in performance
 - **Security**: Zero new vulnerabilities introduced
@@ -222,24 +240,28 @@ validation_sequence:
 ### Agent-Specific Quality Gates
 
 #### architect-review Quality Gates
+
 - **Architecture Compliance**: ≥90%
 - **Design Patterns**: ≥85% adherence
 - **System Stability**: No breaking changes
 - **Documentation**: Complete architectural documentation
 
 #### security-auditor Quality Gates
+
 - **Security Vulnerabilities**: 0 critical
 - **Compliance Validation**: 100% LGPD/healthcare
 - **Data Protection**: 100% PHI security
 - **Audit Trail**: Complete security documentation
 
 #### code-reviewer Quality Gates
+
 - **Type Safety**: 100% TypeScript compliance
 - **Code Quality**: ≥85% metrics
 - **Contract Consistency**: 100% API alignment
 - **Maintainability**: ≥80% maintainability index
 
 #### apex-dev Quality Gates
+
 - **Code Hygiene**: Zero unused imports/dead code
 - **Error Handling**: ≥90% coverage
 - **Performance**: No degradation
@@ -250,11 +272,13 @@ validation_sequence:
 ### Agent Communication Channels
 
 #### Archon Task Management
+
 - **Primary Channel**: Archon task comments and status updates
 - **Purpose**: Centralized coordination and progress tracking
 - **Protocol**: Structured updates with evidence and metrics
 
 #### Agent Handoff Procedures
+
 ```yaml
 handoff_protocol:
   pre_handoff:
@@ -277,6 +301,7 @@ handoff_protocol:
 ```
 
 #### Conflict Resolution
+
 ```yaml
 conflict_resolution:
   agent_conflicts:
@@ -301,6 +326,7 @@ conflict_resolution:
 ### Status Reporting
 
 #### Progress Reporting Structure
+
 ```yaml
 reporting_structure:
   daily_updates:
@@ -323,6 +349,7 @@ reporting_structure:
 ```
 
 #### Documentation Requirements
+
 ```yaml
 documentation_standards:
   task_updates:
@@ -349,22 +376,23 @@ documentation_standards:
 ### TDD Phase Coordination
 
 #### RED Phase Coordination
+
 ```yaml
 red_phase_agents:
   primary: "test"
   support: ["architect-review", "security-auditor"]
-  
+
   responsibilities:
     test:
       - "Define failing test scenarios"
       - "Establish test structure"
       - "Create test data setup"
-    
+
     architect-review:
       - "Validate test architecture"
       - "Ensure design patterns"
       - "Review integration points"
-    
+
     security-auditor:
       - "Security test requirements"
       - "Compliance validation"
@@ -372,27 +400,28 @@ red_phase_agents:
 ```
 
 #### GREEN Phase Coordination
+
 ```yaml
 green_phase_agents:
   primary: "code-reviewer"
   support: ["architect-review", "security-auditor", "test"]
-  
+
   responsibilities:
     code-reviewer:
       - "Implement minimal code"
       - "Ensure type safety"
       - "Maintain code quality"
-    
+
     architect-review:
       - "Pattern compliance"
       - "Architecture integrity"
       - "Design consistency"
-    
+
     security-auditor:
       - "Security implementation"
       - "Compliance adherence"
       - "Vulnerability prevention"
-    
+
     test:
       - "Test validation"
       - "Coverage verification"
@@ -400,27 +429,28 @@ green_phase_agents:
 ```
 
 #### REFACTOR Phase Coordination
+
 ```yaml
 refactor_phase_agents:
   coordination: "parallel"
   agents: ["code-reviewer", "architect-review", "security-auditor", "test"]
-  
+
   responsibilities:
     code-reviewer:
       - "Code optimization"
       - "Performance improvements"
       - "Maintainability enhancements"
-    
+
     architect-review:
       - "Design optimization"
       - "Architecture improvements"
       - "Pattern refinement"
-    
+
     security-auditor:
       - "Security hardening"
       - "Compliance optimization"
       - "Risk mitigation"
-    
+
     test:
       - "Test optimization"
       - "Coverage maintenance"
@@ -432,6 +462,7 @@ refactor_phase_agents:
 ### Pre-Implementation Checklist
 
 #### System Readiness
+
 - [ ] Archon MCP connection established
 - [ ] Serena MCP codebase analysis completed
 - [ ] Agent assignments confirmed
@@ -442,6 +473,7 @@ refactor_phase_agents:
 - [ ] Documentation templates prepared
 
 #### Agent Readiness
+
 - [ ] apex-dev coordination role confirmed
 - [ ] architect-review P0 responsibilities understood
 - [ ] security-auditor P1 scope defined
@@ -452,6 +484,7 @@ refactor_phase_agents:
 - [ ] Communication protocols reviewed
 
 #### Process Readiness
+
 - [ ] Task dependency mapping complete
 - [ ] Quality gate thresholds established
 - [ ] MCP tool sequences tested
@@ -464,6 +497,7 @@ refactor_phase_agents:
 ### Success Criteria
 
 #### Initiative Success Criteria
+
 - **Error Resolution**: 100% of TypeScript errors resolved
 - **Quality Compliance**: All quality gates passed
 - **Security Compliance**: 100% LGPD and healthcare compliance
@@ -474,6 +508,7 @@ refactor_phase_agents:
 - **Knowledge Transfer**: Learnings captured and documented
 
 #### Agent Performance Criteria
+
 - **architect-review**: Architecture integrity maintained, critical blockers resolved
 - **security-auditor**: Security compliance validated, healthcare standards met
 - **code-reviewer**: Type safety achieved, code quality standards met
@@ -481,6 +516,7 @@ refactor_phase_agents:
 - **test**: Test coverage maintained, quality validation thorough
 
 #### Process Performance Criteria
+
 - **TDD Compliance**: 100% test-driven development adherence
 - **Quality Gates**: All gates passed with required thresholds
 - **Communication**: Clear, timely agent communication
@@ -493,28 +529,34 @@ refactor_phase_agents:
 ### Phase Timeline Estimates
 
 #### Research & Planning Phase: 2-3 days
+
 - **Day 1**: Analysis completion, agent assignment, task structure setup
 - **Day 2**: Quality gate definition, MCP sequence configuration, communication protocols
 - **Day 3**: Readiness validation, final preparations
 
 #### P0 Critical Blockers: 3-4 days
+
 - **Days 1-2**: Missing modules resolution, core dependencies
 - **Days 3-4**: Database schema fixes, tRPC router alignment
 
 #### P1 Security & Compliance: 4-5 days
+
 - **Days 1-2**: Healthcare data protection implementation
 - **Days 3-4**: Authentication and authorization fixes
 - **Day 5**: Compliance validation and testing
 
 #### P2 Type Safety & Contract: 3-4 days
+
 - **Days 1-2**: Valibot schema alignment
 - **Days 3-4**: HTTP response type standardization
 
 #### P3 Code Hygiene & Optimization: 2-3 days
+
 - **Days 1-2**: Unused imports cleanup, dead code removal
 - **Day 3**: Error handling improvements, performance optimization
 
 #### Validation & Documentation: 2 days
+
 - **Day 1**: Comprehensive testing, quality validation
 - **Day 2**: Final documentation, knowledge transfer
 
@@ -525,6 +567,7 @@ refactor_phase_agents:
 This agent coordination setup provides a comprehensive framework for resolving the TypeScript errors while maintaining healthcare compliance and system quality. The setup follows the TDD orchestrator methodology and integrates seamlessly with the existing quality control processes.
 
 The coordination strategy ensures that:
+
 1. Each error category is handled by the most appropriate specialist agent
 2. Quality gates are enforced at each phase
 3. Communication protocols ensure smooth agent handoffs

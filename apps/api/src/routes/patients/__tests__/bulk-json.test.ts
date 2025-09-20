@@ -48,19 +48,24 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
         },
       };
 
-      const mockRequest = new Request('http://localhost:3000/api/v2/patients/bulk-actions', {
-        method: 'POST',
-        headers: new Headers({
-          authorization: 'Bearer test-token',
-          'content-type': 'application/json',
-        }),
-        body: JSON.stringify(validBulkPayload),
-      });
+      const mockRequest = new Request(
+        'http://localhost:3000/api/v2/patients/bulk-actions',
+        {
+          method: 'POST',
+          headers: new Headers({
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
+          }),
+          body: JSON.stringify(validBulkPayload),
+        },
+      );
 
       const response = await bulkRoute.request(mockRequest);
 
       // Should return valid JSON response, not parsing errors
-      expect(response.headers.get('content-type')).toContain('application/json');
+      expect(response.headers.get('content-type')).toContain(
+        'application/json',
+      );
 
       const data = await response.json();
       expect(data).toBeDefined();
@@ -82,14 +87,17 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       ];
 
       for (const payload of malformedPayloads) {
-        const mockRequest = new Request('http://localhost:3000/api/v2/patients/bulk-actions', {
-          method: 'POST',
-          headers: new Headers({
-            authorization: 'Bearer test-token',
-            'content-type': 'application/json',
-          }),
-          body: payload,
-        });
+        const mockRequest = new Request(
+          'http://localhost:3000/api/v2/patients/bulk-actions',
+          {
+            method: 'POST',
+            headers: new Headers({
+              authorization: 'Bearer test-token',
+              'content-type': 'application/json',
+            }),
+            body: payload,
+          },
+        );
 
         const response = await bulkRoute.request(mockRequest);
 
@@ -116,14 +124,17 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       ];
 
       for (const payload of incompletePayloads) {
-        const mockRequest = new Request('http://localhost:3000/api/v2/patients/bulk-actions', {
-          method: 'POST',
-          headers: new Headers({
-            authorization: 'Bearer test-token',
-            'content-type': 'application/json',
-          }),
-          body: JSON.stringify(payload),
-        });
+        const mockRequest = new Request(
+          'http://localhost:3000/api/v2/patients/bulk-actions',
+          {
+            method: 'POST',
+            headers: new Headers({
+              authorization: 'Bearer test-token',
+              'content-type': 'application/json',
+            }),
+            body: JSON.stringify(payload),
+          },
+        );
 
         const response = await bulkRoute.request(mockRequest);
 
@@ -161,14 +172,17 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
         },
       };
 
-      const mockRequest = new Request('http://localhost:3000/api/v2/patients/bulk-actions', {
-        method: 'POST',
-        headers: new Headers({
-          authorization: 'Bearer test-token',
-          'content-type': 'application/json',
-        }),
-        body: JSON.stringify(lgpdRequiredPayload),
-      });
+      const mockRequest = new Request(
+        'http://localhost:3000/api/v2/patients/bulk-actions',
+        {
+          method: 'POST',
+          headers: new Headers({
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
+          }),
+          body: JSON.stringify(lgpdRequiredPayload),
+        },
+      );
 
       const response = await bulkRoute.request(mockRequest);
 
@@ -203,14 +217,17 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
         },
       };
 
-      const mockRequest = new Request('http://localhost:3000/api/v2/patients/bulk-actions', {
-        method: 'POST',
-        headers: new Headers({
-          authorization: 'Bearer test-token',
-          'content-type': 'application/json',
-        }),
-        body: JSON.stringify(healthcareProfessionalPayload),
-      });
+      const mockRequest = new Request(
+        'http://localhost:3000/api/v2/patients/bulk-actions',
+        {
+          method: 'POST',
+          headers: new Headers({
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
+          }),
+          body: JSON.stringify(healthcareProfessionalPayload),
+        },
+      );
 
       const response = await bulkRoute.request(mockRequest);
 
@@ -249,14 +266,17 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
         },
       };
 
-      const mockRequest = new Request('http://localhost:3000/api/v2/patients/bulk-actions', {
-        method: 'POST',
-        headers: new Headers({
-          authorization: 'Bearer test-token',
-          'content-type': 'application/json',
-        }),
-        body: JSON.stringify(medicalDataPayload),
-      });
+      const mockRequest = new Request(
+        'http://localhost:3000/api/v2/patients/bulk-actions',
+        {
+          method: 'POST',
+          headers: new Headers({
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
+          }),
+          body: JSON.stringify(medicalDataPayload),
+        },
+      );
 
       const response = await bulkRoute.request(mockRequest);
 
@@ -290,14 +310,17 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
         },
       };
 
-      const mockRequest = new Request('http://localhost:3000/api/v2/patients/bulk-actions', {
-        method: 'POST',
-        headers: new Headers({
-          authorization: 'Bearer test-token',
-          'content-type': 'application/json',
-        }),
-        body: JSON.stringify(largeBulkPayload),
-      });
+      const mockRequest = new Request(
+        'http://localhost:3000/api/v2/patients/bulk-actions',
+        {
+          method: 'POST',
+          headers: new Headers({
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
+          }),
+          body: JSON.stringify(largeBulkPayload),
+        },
+      );
 
       const startTime = Date.now();
       const response = await bulkRoute.request(mockRequest);
@@ -321,7 +344,10 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
       const massiveData = Array.from({ length: 10000 }, (_, i) => ({
         patientId: `patient-${i}`,
         massiveField: 'x'.repeat(1000), // 1KB per patient
-        medicalHistory: Array.from({ length: 100 }, (_, j) => `history-item-${j}`),
+        medicalHistory: Array.from(
+          { length: 100 },
+          (_, j) => `history-item-${j}`,
+        ),
       }));
 
       const massivePayload = {
@@ -331,14 +357,17 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
         data: massiveData,
       };
 
-      const mockRequest = new Request('http://localhost:3000/api/v2/patients/bulk-actions', {
-        method: 'POST',
-        headers: new Headers({
-          authorization: 'Bearer test-token',
-          'content-type': 'application/json',
-        }),
-        body: JSON.stringify(massivePayload),
-      });
+      const mockRequest = new Request(
+        'http://localhost:3000/api/v2/patients/bulk-actions',
+        {
+          method: 'POST',
+          headers: new Headers({
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json',
+          }),
+          body: JSON.stringify(massivePayload),
+        },
+      );
 
       const response = await bulkRoute.request(mockRequest);
 
@@ -378,11 +407,14 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
           headers.set('content-type', contentType);
         }
 
-        const mockRequest = new Request('http://localhost:3000/api/v2/patients/bulk-actions', {
-          method: 'POST',
-          headers,
-          body: JSON.stringify(validPayload),
-        });
+        const mockRequest = new Request(
+          'http://localhost:3000/api/v2/patients/bulk-actions',
+          {
+            method: 'POST',
+            headers,
+            body: JSON.stringify(validPayload),
+          },
+        );
 
         const response = await bulkRoute.request(mockRequest);
 
@@ -409,14 +441,17 @@ describe('Bulk Operations JSON Handling Test (TDD RED Phase)', () => {
         },
       };
 
-      const mockRequest = new Request('http://localhost:3000/api/v2/patients/bulk-actions', {
-        method: 'POST',
-        headers: new Headers({
-          authorization: 'Bearer test-token',
-          'content-type': 'application/json; charset=utf-8',
-        }),
-        body: JSON.stringify(payloadWithUnicode),
-      });
+      const mockRequest = new Request(
+        'http://localhost:3000/api/v2/patients/bulk-actions',
+        {
+          method: 'POST',
+          headers: new Headers({
+            authorization: 'Bearer test-token',
+            'content-type': 'application/json; charset=utf-8',
+          }),
+          body: JSON.stringify(payloadWithUnicode),
+        },
+      );
 
       const response = await bulkRoute.request(mockRequest);
 

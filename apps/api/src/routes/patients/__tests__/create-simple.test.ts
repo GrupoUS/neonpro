@@ -9,10 +9,13 @@ describe('Simple Create Route Test', () => {
 
     // Simple route without middleware
     app.post('/', async c => {
-      return c.json({
-        success: true,
-        message: 'Simple route works',
-      }, 201);
+      return c.json(
+        {
+          success: true,
+          message: 'Simple route works',
+        },
+        201,
+      );
     });
 
     const mockRequest = {

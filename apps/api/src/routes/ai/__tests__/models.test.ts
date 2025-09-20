@@ -257,7 +257,11 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(data.data.models).toHaveLength(4);
       expect(data.data.summary.totalModels).toBe(4);
       expect(data.data.summary.availableModels).toBe(3);
-      expect(data.data.summary.providers).toEqual(['openai', 'anthropic', 'google']);
+      expect(data.data.summary.providers).toEqual([
+        'openai',
+        'anthropic',
+        'google',
+      ]);
     });
 
     it('should filter models by provider', async () => {
@@ -413,8 +417,12 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
       expect(response.headers.get('X-Total-Models')).toBe('4');
       expect(response.headers.get('X-Available-Models')).toBe('3');
       expect(response.headers.get('X-Healthy-Models')).toBe('3');
-      expect(response.headers.get('X-Model-Providers')).toBe('openai,anthropic,google');
-      expect(response.headers.get('X-Last-Updated')).toBe('2024-01-16T10:30:00Z');
+      expect(response.headers.get('X-Model-Providers')).toBe(
+        'openai,anthropic,google',
+      );
+      expect(response.headers.get('X-Last-Updated')).toBe(
+        '2024-01-16T10:30:00Z',
+      );
     });
   });
 
@@ -457,7 +465,9 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
 
       expect(response.status).toBe(200);
       expect(data.data.recommendations).toBeDefined();
-      expect(data.data.recommendations[0].recommendedModel).toBe('gpt-4-vision');
+      expect(data.data.recommendations[0].recommendedModel).toBe(
+        'gpt-4-vision',
+      );
     });
 
     it('should provide fallback model suggestions', async () => {
@@ -570,7 +580,9 @@ describe('GET /api/v2/ai/models endpoint (T054)', () => {
 
       expect(response.status).toBe(503);
       expect(data.success).toBe(false);
-      expect(data.error).toContain('Serviço de modelos de IA temporariamente indisponível');
+      expect(data.error).toContain(
+        'Serviço de modelos de IA temporariamente indisponível',
+      );
     });
   });
 

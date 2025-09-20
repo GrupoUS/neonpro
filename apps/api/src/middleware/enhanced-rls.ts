@@ -11,7 +11,12 @@ export interface EnhancedRLSOptions {
   tableName?: string;
   operation?: 'SELECT' | 'INSERT' | 'UPDATE' | 'DELETE';
   requireEmergencyJustification?: boolean;
-  sensitivityLevel?: 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED' | 'HIGHLY_RESTRICTED';
+  sensitivityLevel?:
+    | 'PUBLIC'
+    | 'INTERNAL'
+    | 'CONFIDENTIAL'
+    | 'RESTRICTED'
+    | 'HIGHLY_RESTRICTED';
   auditLevel?: 'basic' | 'detailed' | 'comprehensive';
   allowEmergencyAccess?: boolean;
   timeRestricted?: boolean;
@@ -74,20 +79,29 @@ export function enhancedRLSMiddleware(options: EnhancedRLSOptions = {}) {
             operation: options.operation,
           });
 
-          return c.json({
-            error: 'Access denied',
-            code: 'RLS_ACCESS_DENIED',
-            reason: policyResult.reason,
-          }, 403);
+          return c.json(
+            {
+              error: 'Access denied',
+              code: 'RLS_ACCESS_DENIED',
+              reason: policyResult.reason,
+            },
+            403,
+          );
         }
 
         // Handle emergency access
-        if (policyResult.emergencyAccess && options.requireEmergencyJustification) {
+        if (
+          policyResult.emergencyAccess
+          && options.requireEmergencyJustification
+        ) {
           if (!rlsContext.justification) {
-            return c.json({
-              error: 'Emergency access requires justification',
-              code: 'EMERGENCY_JUSTIFICATION_REQUIRED',
-            }, 400);
+            return c.json(
+              {
+                error: 'Emergency access requires justification',
+                code: 'EMERGENCY_JUSTIFICATION_REQUIRED',
+              },
+              400,
+            );
           }
 
           await logSecurityEvent('EMERGENCY_ACCESS', {
@@ -128,10 +142,13 @@ export function enhancedRLSMiddleware(options: EnhancedRLSOptions = {}) {
         context: await buildRLSContext(c, options).catch(_error => null),
       });
 
-      return c.json({
-        error: 'Security validation error',
-        code: 'RLS_VALIDATION_ERROR',
-      }, 500);
+      return c.json(
+        {
+          error: 'Security validation error',
+          code: 'RLS_VALIDATION_ERROR',
+        },
+        500,
+      );
     }
   };
 }
@@ -139,7 +156,10 @@ export function enhancedRLSMiddleware(options: EnhancedRLSOptions = {}) {
 /**
  * Build RLS context from HTTP request
  */
-async function buildRLSContext(c: Context, options: EnhancedRLSOptions): Promise<RLSContext> {
+async function buildRLSContext(
+  c: Context,
+  options: EnhancedRLSOptions,
+): Promise<RLSContext> {
   // Extract user information from auth middleware
   const userId = c.get('userId') || c.req.header('x-user-id') || '';
   const userRole = c.get('userRole') || c.req.header('x-user-role') || 'anonymous';
@@ -150,8 +170,7 @@ async function buildRLSContext(c: Context, options: EnhancedRLSOptions): Promise
   const emergencyAccess = c.req.header('x-emergency-access') === 'true'
     || c.req.query('emergency') === 'true';
 
-  const justification = c.req.header('x-emergency-justification')
-    || c.req.query('justification');
+  const justification = c.req.header('x-emergency-justification') || c.req.query('justification');
 
   // Get client information
   const ipAddress = getClientIP(c);
@@ -201,7 +220,9 @@ function addSecurityHeaders(
   // Cache control for sensitive data
   if (
     options.sensitivityLevel
-    && ['CONFIDENTIAL', 'RESTRICTED', 'HIGHLY_RESTRICTED'].includes(options.sensitivityLevel)
+    && ['CONFIDENTIAL', 'RESTRICTED', 'HIGHLY_RESTRICTED'].includes(
+      options.sensitivityLevel,
+    )
   ) {
     c.header('Cache-Control', 'no-cache, no-store, must-revalidate, private');
     c.header('Pragma', 'no-cache');
@@ -212,7 +233,10 @@ function addSecurityHeaders(
 /**
  * Log security events for audit trail
  */
-async function logSecurityEvent(eventType: string, eventData: any): Promise<void> {
+async function logSecurityEvent(
+  eventType: string,
+  eventData: any,
+): Promise<void> {
   try {
     const auditEntry = {
       timestamp: new Date().toISOString(),
@@ -237,10 +261,12 @@ async function logSecurityEvent(eventType: string, eventData: any): Promise<void
  * Get client IP address
  */
 function getClientIP(c: Context): string {
-  return c.req.header('X-Forwarded-For')?.split(',')[0]?.trim()
+  return (
+    c.req.header('X-Forwarded-For')?.split(',')[0]?.trim()
     || c.req.header('X-Real-IP')
     || c.req.header('CF-Connecting-IP')
-    || 'unknown';
+    || 'unknown'
+  );
 }
 
 /**
@@ -322,24 +348,32 @@ export const enhancedRLSHealthcareMiddleware = {
 /**
  * Patient access validation with enhanced RLS
  */
-export function enhancedPatientAccessMiddleware(patientIdParam: string = 'patientId') {
+export function enhancedPatientAccessMiddleware(
+  patientIdParam: string = 'patientId',
+) {
   return async (c: Context, next: Next) => {
     try {
       const patientId = c.req.param(patientIdParam) || c.req.query(patientIdParam);
       const securityContext = c.get('securityContext') as SecurityContext;
 
       if (!patientId) {
-        return c.json({
-          error: 'Patient ID required',
-          code: 'PATIENT_ID_REQUIRED',
-        }, 400);
+        return c.json(
+          {
+            error: 'Patient ID required',
+            code: 'PATIENT_ID_REQUIRED',
+          },
+          400,
+        );
       }
 
       if (!securityContext) {
-        return c.json({
-          error: 'Security context not initialized',
-          code: 'SECURITY_CONTEXT_MISSING',
-        }, 500);
+        return c.json(
+          {
+            error: 'Security context not initialized',
+            code: 'SECURITY_CONTEXT_MISSING',
+          },
+          500,
+        );
       }
 
       // Validate patient access through RLS policies
@@ -357,11 +391,14 @@ export function enhancedPatientAccessMiddleware(patientIdParam: string = 'patien
           context: securityContext.rlsContext,
         });
 
-        return c.json({
-          error: 'Patient access denied',
-          code: 'PATIENT_ACCESS_DENIED',
-          reason: accessResult.reason,
-        }, 403);
+        return c.json(
+          {
+            error: 'Patient access denied',
+            code: 'PATIENT_ACCESS_DENIED',
+            reason: accessResult.reason,
+          },
+          403,
+        );
       }
 
       // Validate consent for patient data access
@@ -373,12 +410,15 @@ export function enhancedPatientAccessMiddleware(patientIdParam: string = 'patien
       );
 
       if (!consentValid.isValid) {
-        return c.json({
-          error: 'Patient consent required',
-          code: 'CONSENT_REQUIRED',
-          reason: consentValid.reason,
-          renewalRequired: consentValid.renewalRequired,
-        }, 403);
+        return c.json(
+          {
+            error: 'Patient consent required',
+            code: 'CONSENT_REQUIRED',
+            reason: consentValid.reason,
+            renewalRequired: consentValid.renewalRequired,
+          },
+          403,
+        );
       }
 
       // Store validated patient ID in context
@@ -388,10 +428,13 @@ export function enhancedPatientAccessMiddleware(patientIdParam: string = 'patien
       return next();
     } catch (error) {
       console.error('Enhanced patient access middleware error:', error);
-      return c.json({
-        error: 'Patient access validation error',
-        code: 'PATIENT_ACCESS_ERROR',
-      }, 500);
+      return c.json(
+        {
+          error: 'Patient access validation error',
+          code: 'PATIENT_ACCESS_ERROR',
+        },
+        500,
+      );
     }
   };
 }

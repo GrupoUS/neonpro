@@ -46,8 +46,12 @@ describe('DatabasePerformanceService', () => {
 
       // Healthcare compliance metrics
       expect(metrics.healthcareCompliance).toHaveProperty('patientDataQueries');
-      expect(metrics.healthcareCompliance).toHaveProperty('avgPatientQueryTime');
-      expect(metrics.healthcareCompliance).toHaveProperty('lgpdCompliantQueries');
+      expect(metrics.healthcareCompliance).toHaveProperty(
+        'avgPatientQueryTime',
+      );
+      expect(metrics.healthcareCompliance).toHaveProperty(
+        'lgpdCompliantQueries',
+      );
       expect(metrics.healthcareCompliance).toHaveProperty('auditTrailQueries');
     });
 
@@ -74,7 +78,9 @@ describe('DatabasePerformanceService', () => {
       expect(compliance.auditTrailQueries).toBeGreaterThanOrEqual(0);
 
       // Patient queries should be a significant portion
-      expect(compliance.patientDataQueries).toBeGreaterThan(compliance.auditTrailQueries);
+      expect(compliance.patientDataQueries).toBeGreaterThan(
+        compliance.auditTrailQueries,
+      );
 
       // LGPD compliance should be high
       expect(compliance.lgpdCompliantQueries).toBeGreaterThanOrEqual(
@@ -116,7 +122,9 @@ describe('DatabasePerformanceService', () => {
 
     it('should prioritize critical healthcare indexes', () => {
       const recommendations = service.generateIndexRecommendations();
-      const criticalRecs = recommendations.filter(rec => rec.priority === 'critical');
+      const criticalRecs = recommendations.filter(
+        rec => rec.priority === 'critical',
+      );
       const highRecs = recommendations.filter(rec => rec.priority === 'high');
 
       expect(criticalRecs.length).toBeGreaterThan(0);
@@ -124,7 +132,8 @@ describe('DatabasePerformanceService', () => {
 
       // Critical indexes should have higher estimated improvements
       const avgCriticalImprovement =
-        criticalRecs.reduce((sum, rec) => sum + rec.estimatedImprovement, 0) / criticalRecs.length;
+        criticalRecs.reduce((sum, rec) => sum + rec.estimatedImprovement, 0)
+        / criticalRecs.length;
       const avgHighImprovement = highRecs.reduce((sum, rec) => sum + rec.estimatedImprovement, 0)
         / highRecs.length;
 
@@ -133,8 +142,12 @@ describe('DatabasePerformanceService', () => {
 
     it('should include patient and appointment table indexes', () => {
       const recommendations = service.generateIndexRecommendations();
-      const patientIndexes = recommendations.filter(rec => rec.table === 'patients');
-      const appointmentIndexes = recommendations.filter(rec => rec.table === 'appointments');
+      const patientIndexes = recommendations.filter(
+        rec => rec.table === 'patients',
+      );
+      const appointmentIndexes = recommendations.filter(
+        rec => rec.table === 'appointments',
+      );
 
       expect(patientIndexes.length).toBeGreaterThan(0);
       expect(appointmentIndexes.length).toBeGreaterThan(0);
@@ -145,8 +158,10 @@ describe('DatabasePerformanceService', () => {
       expect(cpfIndex?.priority).toBe('critical');
 
       // Should include professional schedule index for appointments
-      const scheduleIndex = appointmentIndexes.find(rec =>
-        rec.columns.includes('professional_id') && rec.columns.includes('start_time')
+      const scheduleIndex = appointmentIndexes.find(
+        rec =>
+          rec.columns.includes('professional_id')
+          && rec.columns.includes('start_time'),
       );
       expect(scheduleIndex).toBeDefined();
       expect(scheduleIndex?.priority).toBe('critical');
@@ -199,12 +214,13 @@ describe('DatabasePerformanceService', () => {
       expect(health.score).toBeLessThan(100);
 
       // Should provide healthcare-specific recommendations or general optimization recommendations
-      const hasHealthcareRecommendation = health.recommendations.some(rec =>
-        rec.toLowerCase().includes('patient')
-        || rec.toLowerCase().includes('healthcare')
-        || rec.toLowerCase().includes('lgpd')
-        || rec.toLowerCase().includes('index')
-        || rec.toLowerCase().includes('optimize')
+      const hasHealthcareRecommendation = health.recommendations.some(
+        rec =>
+          rec.toLowerCase().includes('patient')
+          || rec.toLowerCase().includes('healthcare')
+          || rec.toLowerCase().includes('lgpd')
+          || rec.toLowerCase().includes('index')
+          || rec.toLowerCase().includes('optimize'),
       );
       expect(hasHealthcareRecommendation).toBe(true);
     });
@@ -288,12 +304,18 @@ describe('DatabasePerformanceService', () => {
 
     it('should have appropriate response time expectations', () => {
       // LGPD compliance queries should be fastest (critical for compliance)
-      expect(HEALTHCARE_QUERY_PATTERNS.lgpdCompliance.expectedResponseTime)
-        .toBeLessThan(HEALTHCARE_QUERY_PATTERNS.patientSearch.expectedResponseTime);
+      expect(
+        HEALTHCARE_QUERY_PATTERNS.lgpdCompliance.expectedResponseTime,
+      ).toBeLessThan(
+        HEALTHCARE_QUERY_PATTERNS.patientSearch.expectedResponseTime,
+      );
 
       // Patient search should be faster than complex history queries
-      expect(HEALTHCARE_QUERY_PATTERNS.patientSearch.expectedResponseTime)
-        .toBeLessThan(HEALTHCARE_QUERY_PATTERNS.patientHistory.expectedResponseTime);
+      expect(
+        HEALTHCARE_QUERY_PATTERNS.patientSearch.expectedResponseTime,
+      ).toBeLessThan(
+        HEALTHCARE_QUERY_PATTERNS.patientHistory.expectedResponseTime,
+      );
 
       // All should be sub-100ms for critical healthcare operations
       Object.values(HEALTHCARE_QUERY_PATTERNS).forEach(pattern => {
@@ -322,43 +344,50 @@ describe('DatabasePerformanceService', () => {
     });
 
     it('should prioritize critical healthcare operations', () => {
-      const criticalIndexes = HEALTHCARE_RECOMMENDED_INDEXES.filter(idx =>
-        idx.priority === 'critical'
+      const criticalIndexes = HEALTHCARE_RECOMMENDED_INDEXES.filter(
+        idx => idx.priority === 'critical',
       );
 
       expect(criticalIndexes.length).toBeGreaterThan(0);
 
       // Should include patient CPF lookup (critical for Brazilian healthcare)
-      const cpfIndex = criticalIndexes.find(idx =>
-        idx.table === 'patients' && idx.columns.includes('cpf')
+      const cpfIndex = criticalIndexes.find(
+        idx => idx.table === 'patients' && idx.columns.includes('cpf'),
       );
       expect(cpfIndex).toBeDefined();
 
       // Should include professional scheduling (critical for appointments)
-      const scheduleIndex = criticalIndexes.find(idx =>
-        idx.table === 'appointments'
-        && idx.columns.includes('professional_id')
-        && idx.columns.includes('start_time')
+      const scheduleIndex = criticalIndexes.find(
+        idx =>
+          idx.table === 'appointments'
+          && idx.columns.includes('professional_id')
+          && idx.columns.includes('start_time'),
       );
       expect(scheduleIndex).toBeDefined();
 
       // Should include LGPD consent tracking (critical for compliance)
-      const consentIndex = criticalIndexes.find(idx =>
-        idx.table === 'consent_records' && idx.columns.includes('consent_type')
+      const consentIndex = criticalIndexes.find(
+        idx =>
+          idx.table === 'consent_records'
+          && idx.columns.includes('consent_type'),
       );
       expect(consentIndex).toBeDefined();
     });
 
     it('should include full-text search indexes for patient data', () => {
-      const ginIndexes = HEALTHCARE_RECOMMENDED_INDEXES.filter(idx => idx.type === 'gin');
+      const ginIndexes = HEALTHCARE_RECOMMENDED_INDEXES.filter(
+        idx => idx.type === 'gin',
+      );
 
       expect(ginIndexes.length).toBeGreaterThan(0);
 
       // Should include patient full-text search
-      const patientSearchIndex = ginIndexes.find(idx =>
-        idx.table === 'patients'
-        && (idx.columns.includes('full_name') || idx.columns.includes('phone_primary')
-          || idx.columns.includes('email'))
+      const patientSearchIndex = ginIndexes.find(
+        idx =>
+          idx.table === 'patients'
+          && (idx.columns.includes('full_name')
+            || idx.columns.includes('phone_primary')
+            || idx.columns.includes('email')),
       );
       expect(patientSearchIndex).toBeDefined();
       expect(patientSearchIndex?.reason).toContain('search');

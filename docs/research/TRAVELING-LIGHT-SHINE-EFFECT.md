@@ -29,24 +29,36 @@
 
 ```tsx
 // 4 camadas separadas para cada borda
-{/* Top edge */}
-<div className='animate-[shine-top_var(--duration)_linear_infinite]'>
-  background: linear-gradient(90deg, transparent 0%, #AC9469 50%, transparent 100%)
+{
+  /* Top edge */
+}
+<div className="animate-[shine-top_var(--duration)_linear_infinite]">
+  background: linear-gradient(90deg, transparent 0%, #AC9469 50%, transparent
+  100%)
 </div>;
 
-{/* Right edge */}
-<div className='animate-[shine-right_var(--duration)_linear_infinite]'>
-  background: linear-gradient(180deg, transparent 0%, #AC9469 50%, transparent 100%)
+{
+  /* Right edge */
+}
+<div className="animate-[shine-right_var(--duration)_linear_infinite]">
+  background: linear-gradient(180deg, transparent 0%, #AC9469 50%, transparent
+  100%)
 </div>;
 
-{/* Bottom edge */}
-<div className='animate-[shine-bottom_var(--duration)_linear_infinite]'>
-  background: linear-gradient(270deg, transparent 0%, #AC9469 50%, transparent 100%)
+{
+  /* Bottom edge */
+}
+<div className="animate-[shine-bottom_var(--duration)_linear_infinite]">
+  background: linear-gradient(270deg, transparent 0%, #AC9469 50%, transparent
+  100%)
 </div>;
 
-{/* Left edge */}
-<div className='animate-[shine-left_var(--duration)_linear_infinite]'>
-  background: linear-gradient(0deg, transparent 0%, #AC9469 50%, transparent 100%)
+{
+  /* Left edge */
+}
+<div className="animate-[shine-left_var(--duration)_linear_infinite]">
+  background: linear-gradient(0deg, transparent 0%, #AC9469 50%, transparent
+  100%)
 </div>;
 ```
 
@@ -54,28 +66,62 @@
 
 ```css
 @keyframes shine-top {
-  0% { opacity: 1; background-position: -200% 0; }
-  25% { opacity: 1; background-position: 200% 0; }
-  25.01% { opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 1;
+    background-position: -200% 0;
+  }
+  25% {
+    opacity: 1;
+    background-position: 200% 0;
+  }
+  25.01% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes shine-right {
-  0% { opacity: 0; }
-  25.01% { opacity: 1; background-position: 0 -200%; }
-  50% { opacity: 1; background-position: 0 200%; }
-  50.01% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  25.01% {
+    opacity: 1;
+    background-position: 0 -200%;
+  }
+  50% {
+    opacity: 1;
+    background-position: 0 200%;
+  }
+  50.01% {
+    opacity: 0;
+  }
 }
 
 @keyframes shine-bottom {
-  50.01% { opacity: 1; background-position: 200% 0; }
-  75% { opacity: 1; background-position: -200% 0; }
-  75.01% { opacity: 0; }
+  50.01% {
+    opacity: 1;
+    background-position: 200% 0;
+  }
+  75% {
+    opacity: 1;
+    background-position: -200% 0;
+  }
+  75.01% {
+    opacity: 0;
+  }
 }
 
 @keyframes shine-left {
-  75.01% { opacity: 1; background-position: 0 200%; }
-  100% { opacity: 1; background-position: 0 -200%; }
+  75.01% {
+    opacity: 1;
+    background-position: 0 200%;
+  }
+  100% {
+    opacity: 1;
+    background-position: 0 -200%;
+  }
 }
 ```
 

@@ -3,13 +3,19 @@
  * Optimized for healthcare applications with intelligent caching
  */
 
-import { RealtimeManager, RealtimeSubscriptionOptions } from '../realtime/realtime-manager';
-import { useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
-import { useCallback, useEffect, useRef } from 'react';
+import {
+  RealtimeManager,
+  RealtimeSubscriptionOptions,
+} from "../realtime/realtime-manager";
+import {
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from "@tanstack/react-query";
+import { useCallback, useEffect, useRef } from "react";
 
 export interface UseRealtimeQueryOptions<T>
-  extends Omit<UseQueryOptions<T[]>, 'queryKey' | 'queryFn'>
-{
+  extends Omit<UseQueryOptions<T[]>, "queryKey" | "queryFn"> {
   tableName: string;
   filter?: string;
   realtimeOptions?: RealtimeSubscriptionOptions<T>;
@@ -39,7 +45,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
     refetchOnWindowFocus: options.refetchOnWindowFocus ?? false,
     refetchOnReconnect: true,
     retry: 3,
-    retryDelay: attemptIndex => Math.min(1000 * 2 ** attemptIndex, 30000),
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     enabled: options.enabled ?? true,
     ...options,
   });
@@ -73,7 +79,13 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
 
     subscriptionRef.current = subscription;
     return subscription;
-  }, [queryKey, options.tableName, options.filter, options.enabled, options.realtimeOptions]);
+  }, [
+    queryKey,
+    options.tableName,
+    options.filter,
+    options.enabled,
+    options.realtimeOptions,
+  ]);
 
   // Set up real-time subscription
   useEffect(() => {
@@ -81,7 +93,7 @@ export function useRealtimeQuery<T extends { id: string } = { id: string }>(
 
     return () => {
       if (subscription && realtimeManager.current) {
-        const channelName = `${options.tableName}-${options.filter || 'all'}`;
+        const channelName = `${options.tableName}-${options.filter || "all"}`;
         realtimeManager.current.unsubscribe(channelName);
       }
     };
@@ -122,8 +134,12 @@ export function useRealtimeMutation<T extends { id: string }>(
       const previousData = queryClient.getQueryData<T[]>(queryKey);
 
       // Optimistically update
-      queryClient.setQueryData<T[]>(queryKey, old => {
-        return old?.map(item => item.id === updatedItem.id ? updatedItem : item) ?? [];
+      queryClient.setQueryData<T[]>(queryKey, (old) => {
+        return (
+          old?.map((item) =>
+            item.id === updatedItem.id ? updatedItem : item,
+          ) ?? []
+        );
       });
 
       return { previousData };

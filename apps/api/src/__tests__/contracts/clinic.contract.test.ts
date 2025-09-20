@@ -83,7 +83,11 @@ describe('Clinic Contract Testing', () => {
         businessInfo: {
           anvisaRegistration: 'ANVISA-REG-2024-001',
           municipalLicense: 'LIC-SP-2024-001',
-          specializations: ['aesthetic_medicine', 'dermatology', 'plastic_surgery'],
+          specializations: [
+            'aesthetic_medicine',
+            'dermatology',
+            'plastic_surgery',
+          ],
           businessHours: {
             monday: { start: '08:00', end: '18:00' },
             tuesday: { start: '08:00', end: '18:00' },
@@ -108,7 +112,11 @@ describe('Clinic Contract Testing', () => {
         cnpj: '12.345.678/0001-90',
         email: 'contato@neonpro.com',
         anvisaRegistration: 'ANVISA-REG-2024-001',
-        specializations: ['aesthetic_medicine', 'dermatology', 'plastic_surgery'],
+        specializations: [
+          'aesthetic_medicine',
+          'dermatology',
+          'plastic_surgery',
+        ],
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -121,7 +129,11 @@ describe('Clinic Contract Testing', () => {
       });
       mockContext.compliance.validateLGPDCompliance.mockResolvedValue({
         compliant: true,
-        requirements: ['data_protection_officer', 'privacy_policy', 'consent_management'],
+        requirements: [
+          'data_protection_officer',
+          'privacy_policy',
+          'consent_management',
+        ],
       });
       mockContext.prisma.clinic.create.mockResolvedValue(mockClinic);
 
@@ -138,7 +150,9 @@ describe('Clinic Contract Testing', () => {
       });
 
       // Verify ANVISA validation was called
-      expect(mockContext.anvisa.validateClinicRegistration).toHaveBeenCalledWith({
+      expect(
+        mockContext.anvisa.validateClinicRegistration,
+      ).toHaveBeenCalledWith({
         anvisaRegistration: 'ANVISA-REG-2024-001',
         cnpj: '12.345.678/0001-90',
       });
@@ -177,8 +191,9 @@ describe('Clinic Contract Testing', () => {
         error: 'Invalid ANVISA registration format',
       });
 
-      await expect(caller.api.clinic.create(invalidInput))
-        .rejects.toThrow('Invalid ANVISA registration: Invalid ANVISA registration format');
+      await expect(caller.api.clinic.create(invalidInput)).rejects.toThrow(
+        'Invalid ANVISA registration: Invalid ANVISA registration format',
+      );
     });
 
     it('should enforce LGPD compliance requirements', async () => {
@@ -210,8 +225,9 @@ describe('Clinic Contract Testing', () => {
         missingRequirements: ['data_protection_officer', 'privacy_policy'],
       });
 
-      await expect(caller.api.clinic.create(nonCompliantInput))
-        .rejects.toThrow('LGPD compliance requirements not met');
+      await expect(caller.api.clinic.create(nonCompliantInput)).rejects.toThrow(
+        'LGPD compliance requirements not met',
+      );
     });
   });
 
@@ -278,8 +294,9 @@ describe('Clinic Contract Testing', () => {
 
       mockContext.prisma.clinic.findUnique.mockResolvedValue(null);
 
-      await expect(caller.api.clinic.getById({ id: clinicId }))
-        .rejects.toThrow('Clinic not found');
+      await expect(caller.api.clinic.getById({ id: clinicId })).rejects.toThrow(
+        'Clinic not found',
+      );
     });
   });
 
@@ -294,7 +311,11 @@ describe('Clinic Contract Testing', () => {
           website: 'https://neonpro.com.br',
         },
         businessInfo: {
-          specializations: ['aesthetic_medicine', 'dermatology', 'laser_therapy'],
+          specializations: [
+            'aesthetic_medicine',
+            'dermatology',
+            'laser_therapy',
+          ],
           businessHours: {
             monday: { start: '09:00', end: '19:00' },
             tuesday: { start: '09:00', end: '19:00' },
@@ -307,7 +328,13 @@ describe('Clinic Contract Testing', () => {
         configuration: {
           appointmentDuration: 90,
           maxAdvanceBookingDays: 120,
-          paymentMethods: ['cash', 'credit_card', 'debit_card', 'pix', 'installments'],
+          paymentMethods: [
+            'cash',
+            'credit_card',
+            'debit_card',
+            'pix',
+            'installments',
+          ],
         },
       };
 
@@ -373,8 +400,9 @@ describe('Clinic Contract Testing', () => {
 
       mockContext.prisma.clinic.findUnique.mockResolvedValue(existingClinic);
 
-      await expect(caller.api.clinic.update(unauthorizedUpdate))
-        .rejects.toThrow('Unauthorized to modify CNPJ information');
+      await expect(
+        caller.api.clinic.update(unauthorizedUpdate),
+      ).rejects.toThrow('Unauthorized to modify CNPJ information');
     });
   });
 
@@ -394,9 +422,9 @@ describe('Clinic Contract Testing', () => {
           cancelledAppointments: 480,
         },
         revenue: {
-          totalRevenue: 850000.50,
+          totalRevenue: 850000.5,
           monthlyRevenue: 125000.75,
-          averageTicket: 245.30,
+          averageTicket: 245.3,
           paymentMethods: {
             cash: 25.5,
             credit_card: 45.2,
@@ -416,7 +444,7 @@ describe('Clinic Contract Testing', () => {
             id: 'prof-1',
             name: 'Dr. Ana Silva',
             appointmentsCompleted: 156,
-            revenue: 38500.00,
+            revenue: 38500.0,
             rating: 4.8,
           },
         ],
@@ -429,7 +457,9 @@ describe('Clinic Contract Testing', () => {
 
       mockContext.prisma.appointment.count.mockResolvedValue(5680);
       mockContext.prisma.appointment.findMany.mockResolvedValue([]);
-      mockContext.prisma.professional.findMany.mockResolvedValue(mockStatistics.professionals);
+      mockContext.prisma.professional.findMany.mockResolvedValue(
+        mockStatistics.professionals,
+      );
 
       const result = await caller.api.clinic.getStatistics({
         clinicId,
@@ -531,8 +561,11 @@ describe('Clinic Contract Testing', () => {
         },
       };
 
-      await expect(caller.api.clinic.updateConfiguration(invalidConfig))
-        .rejects.toThrow('Invalid configuration: appointment duration must be at least 30 minutes');
+      await expect(
+        caller.api.clinic.updateConfiguration(invalidConfig),
+      ).rejects.toThrow(
+        'Invalid configuration: appointment duration must be at least 30 minutes',
+      );
     });
   });
 

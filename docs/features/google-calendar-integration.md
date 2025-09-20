@@ -108,6 +108,7 @@ SUPABASE_ANON_KEY=your-supabase-anon-key
 ### Syncing Appointments
 
 Appointments are automatically synced when:
+
 - A new appointment is created
 - An appointment is updated
 - An appointment is cancelled
@@ -117,6 +118,7 @@ You can also manually trigger a sync from the integration panel.
 ### Managing Integration
 
 The integration panel provides:
+
 - Connection status overview
 - Sync activity logs
 - Configuration options
@@ -189,6 +191,7 @@ The integration handles various error scenarios:
 ### Sync Logs
 
 All synchronization activities are logged with:
+
 - Timestamp
 - User ID
 - Action performed
@@ -249,7 +252,7 @@ Enable debug logging:
 
 ```typescript
 const service = new GoogleCalendarService({
-  debug: true
+  debug: true,
 });
 ```
 
@@ -273,6 +276,7 @@ const service = new GoogleCalendarService({
 ## Support
 
 For issues and questions:
+
 - Create an issue in the GitHub repository
 - Contact the development team
 - Review the troubleshooting guide
@@ -280,6 +284,7 @@ For issues and questions:
 ## Changelog
 
 ### v1.0.0 (2024-01-15)
+
 - Initial release
 - Basic sync functionality
 - LGPD compliance implementation

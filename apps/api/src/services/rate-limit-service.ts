@@ -51,7 +51,9 @@ export interface RateLimitEvaluation {
 /**
  * Create a new rate limit rule
  */
-export function createRateLimitRule(data: Partial<RateLimitRule>): RateLimitRule {
+export function createRateLimitRule(
+  data: Partial<RateLimitRule>,
+): RateLimitRule {
   const now = new Date().toISOString();
 
   const ruleData = {
@@ -116,7 +118,9 @@ export function evaluateRateLimit(
   };
 
   if (!allowed) {
-    result.retryAfter = Math.ceil((resetTime.getTime() - currentTime.getTime()) / 1000);
+    result.retryAfter = Math.ceil(
+      (resetTime.getTime() - currentTime.getTime()) / 1000,
+    );
   }
 
   return result;

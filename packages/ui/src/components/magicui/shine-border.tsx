@@ -50,7 +50,19 @@ interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
    * Color theme
    * @default "gold"
    */
-  theme?: "gold" | "silver" | "copper" | "blue" | "purple" | "green" | "red" | "neonpro-primary" | "neonpro-secondary" | "neonpro-accent" | "aesthetic-gold" | "beauty-rainbow";
+  theme?:
+    | "gold"
+    | "silver"
+    | "copper"
+    | "blue"
+    | "purple"
+    | "green"
+    | "red"
+    | "neonpro-primary"
+    | "neonpro-secondary"
+    | "neonpro-accent"
+    | "aesthetic-gold"
+    | "beauty-rainbow";
   /**
    * Additional CSS class names
    */
@@ -90,20 +102,21 @@ export function ShineBorder({
       `shine-border--${speed}`,
       shineColor ? "" : `shine-border--${theme}`,
     ],
-    className
+    className,
   );
 
   return (
     <div
-      className={cn(
-        "relative flex overflow-hidden",
-        shineClasses
-      )}
+      className={cn("relative flex overflow-hidden", shineClasses)}
       style={
         {
           "--border-width": `${borderWidth}px`,
           "--shine-duration": `${duration}s`,
-          "--shine-color": shineColor ? (Array.isArray(shineColor) ? shineColor.join(', ') : shineColor) : undefined,
+          "--shine-color": shineColor
+            ? Array.isArray(shineColor)
+              ? shineColor.join(", ")
+              : shineColor
+            : undefined,
           borderRadius: `${borderRadius}px`,
           padding: `${borderWidth}px`,
         } as React.CSSProperties

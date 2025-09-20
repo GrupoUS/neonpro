@@ -17,15 +17,21 @@ const PHONE_REGEX = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
  */
 export const CreatePatientSchema = v.object({
   // Basic patient information
-  medicalRecordNumber: v.string([v.minLength(1, 'Medical record number is required')]),
+  medicalRecordNumber: v.string([
+    v.minLength(1, 'Medical record number is required'),
+  ]),
   givenNames: v.array(v.string([v.minLength(1)])),
   familyName: v.string([v.minLength(1, 'Family name is required')]),
   fullName: v.string([v.minLength(1, 'Full name is required')]),
   preferredName: v.optional(v.string()),
 
   // Contact information
-  phonePrimary: v.optional(v.string([v.regex(PHONE_REGEX, 'Invalid phone format')])),
-  phoneSecondary: v.optional(v.string([v.regex(PHONE_REGEX, 'Invalid phone format')])),
+  phonePrimary: v.optional(
+    v.string([v.regex(PHONE_REGEX, 'Invalid phone format')]),
+  ),
+  phoneSecondary: v.optional(
+    v.string([v.regex(PHONE_REGEX, 'Invalid phone format')]),
+  ),
   email: v.optional(v.string([v.email('Invalid email format')])),
 
   // Address information

@@ -253,7 +253,10 @@ export class BrazilianHealthcareEdgeRuntime {
       // Add performance metrics
       const responseTime = Date.now() - startTime;
       response.headers.set('X-Response-Time', `${responseTime}ms`);
-      response.headers.set('X-Edge-Region', process.env.VERCEL_REGION || 'sao1');
+      response.headers.set(
+        'X-Edge-Region',
+        process.env.VERCEL_REGION || 'sao1',
+      );
 
       return response;
     } catch (error) {
@@ -282,7 +285,9 @@ export class BrazilianHealthcareEdgeRuntime {
   /**
    * Validate geographic compliance for LGPD data residency
    */
-  private async validateGeographicCompliance(request: NextRequest): Promise<void> {
+  private async validateGeographicCompliance(
+    request: NextRequest,
+  ): Promise<void> {
     const region = process.env.VERCEL_REGION || 'unknown';
     const country = request.geo?.country || 'unknown';
 
@@ -297,7 +302,9 @@ export class BrazilianHealthcareEdgeRuntime {
     }
 
     // Log geographic compliance validation
-    console.log(`Geographic compliance validated: Region=${region}, Country=${country}`);
+    console.log(
+      `Geographic compliance validated: Region=${region}, Country=${country}`,
+    );
   } /**
    * Apply LGPD data protection measures
    */
@@ -309,11 +316,15 @@ export class BrazilianHealthcareEdgeRuntime {
 
     // Validate required identifiers for patient data access
     if (url.pathname.includes('/api/patients') && !patientId) {
-      throw new Error('LGPD violation: Patient ID required for patient data access');
+      throw new Error(
+        'LGPD violation: Patient ID required for patient data access',
+      );
     }
 
     if (!clinicId) {
-      throw new Error('LGPD violation: Clinic ID required for multi-tenant isolation');
+      throw new Error(
+        'LGPD violation: Clinic ID required for multi-tenant isolation',
+      );
     }
 
     // Check for sensitive data endpoints
@@ -353,12 +364,16 @@ export class BrazilianHealthcareEdgeRuntime {
       const doctorCrm = request.headers.get('X-Doctor-CRM');
 
       if (!doctorCrm) {
-        throw new Error('CFM violation: Doctor CRM registration required for telemedicine');
+        throw new Error(
+          'CFM violation: Doctor CRM registration required for telemedicine',
+        );
       }
 
       // Validate first consultation requirements
       if (sessionType === 'first_consultation') {
-        const presentialExamCompleted = request.headers.get('X-Presential-Exam-Completed');
+        const presentialExamCompleted = request.headers.get(
+          'X-Presential-Exam-Completed',
+        );
         if (presentialExamCompleted !== 'true') {
           throw new Error(
             'CFM violation: First consultation requires presential examination (Resolution 2314/2022)',
@@ -403,8 +418,11 @@ export class BrazilianHealthcareEdgeRuntime {
 
       // Validate reporting timeframes based on severity
       const reportingTimeframes =
-        BRASIL_HEALTHCARE_CONFIG.anvisa.medicalDevices.adverseEventReporting.timeframes;
-      console.log(`ANVISA adverse event compliance validated: ${eventSeverity}`);
+        BRASIL_HEALTHCARE_CONFIG.anvisa.medicalDevices.adverseEventReporting
+          .timeframes;
+      console.log(
+        `ANVISA adverse event compliance validated: ${eventSeverity}`,
+      );
     }
 
     // Validate medical device software classification
@@ -413,22 +431,28 @@ export class BrazilianHealthcareEdgeRuntime {
 
       if (
         !softwareClass
-        || !Object.keys(BRASIL_HEALTHCARE_CONFIG.anvisa.medicalDevices.softwareClassification)
-          .includes(softwareClass)
+        || !Object.keys(
+          BRASIL_HEALTHCARE_CONFIG.anvisa.medicalDevices.softwareClassification,
+        ).includes(softwareClass)
       ) {
         throw new Error(
           'ANVISA violation: Valid software classification required for medical device access',
         );
       }
 
-      console.log(`ANVISA medical device compliance validated: ${softwareClass}`);
+      console.log(
+        `ANVISA medical device compliance validated: ${softwareClass}`,
+      );
     }
   }
 
   /**
    * Monitor performance SLA compliance
    */
-  private async monitorPerformance(request: NextRequest, startTime: number): Promise<void> {
+  private async monitorPerformance(
+    request: NextRequest,
+    startTime: number,
+  ): Promise<void> {
     const currentTime = Date.now();
     const responseTime = currentTime - startTime;
     const endpoint = new URL(request.url).pathname;
@@ -467,7 +491,9 @@ export class BrazilianHealthcareEdgeRuntime {
 
     console.log(
       `Performance monitoring: ${endpoint} - Current: ${responseTime}ms, Average: ${
-        Math.round(avgResponseTime)
+        Math.round(
+          avgResponseTime,
+        )
       }ms`,
     );
   }
@@ -475,8 +501,14 @@ export class BrazilianHealthcareEdgeRuntime {
   /**
    * Get current performance metrics
    */
-  getPerformanceMetrics(): Record<string, { current: number; average: number; count: number }> {
-    const result: Record<string, { current: number; average: number; count: number }> = {};
+  getPerformanceMetrics(): Record<
+    string,
+    { current: number; average: number; count: number }
+  > {
+    const result: Record<
+      string,
+      { current: number; average: number; count: number }
+    > = {};
 
     this.performanceMetrics.forEach((metrics, endpoint) => {
       const average = metrics.reduce((sum, time) => sum + time, 0) / metrics.length;
@@ -501,7 +533,9 @@ export class BrazilianHealthcareEdgeRuntime {
       'VERCEL_REGION',
     ];
 
-    const missingVars = requiredEnvVars.filter(varName => !process.env[varName]);
+    const missingVars = requiredEnvVars.filter(
+      varName => !process.env[varName],
+    );
 
     if (missingVars.length > 0) {
       throw new Error(
@@ -530,9 +564,10 @@ export class BrazilianHealthcareEdgeRuntime {
     performance: { status: string; details: any };
   } {
     const performanceMetrics = this.getPerformanceMetrics();
-    const avgResponseTime = Object.values(performanceMetrics)
-      .reduce((sum, metric) => sum + metric.average, 0)
-      / Math.max(Object.values(performanceMetrics).length, 1);
+    const avgResponseTime = Object.values(performanceMetrics).reduce(
+      (sum, metric) => sum + metric.average,
+      0,
+    ) / Math.max(Object.values(performanceMetrics).length, 1);
 
     return {
       lgpd: {
@@ -563,7 +598,8 @@ export class BrazilianHealthcareEdgeRuntime {
         },
       },
       performance: {
-        status: avgResponseTime < BRASIL_HEALTHCARE_CONFIG.performanceSla.responseTime.target
+        status: avgResponseTime
+            < BRASIL_HEALTHCARE_CONFIG.performanceSla.responseTime.target
           ? 'compliant'
           : 'warning',
         details: {

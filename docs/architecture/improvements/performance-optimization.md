@@ -7,6 +7,7 @@ This guide covers the comprehensive performance optimization system implemented 
 ## Architecture
 
 ### Performance Optimization Stack
+
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    User Interface                           │
@@ -23,8 +24,9 @@ This guide covers the comprehensive performance optimization system implemented 
 ```
 
 ### Performance Targets
+
 - **Page Load Time**: <2s average (healthcare compliance requirement)
-- **Time to Interactive**: <1.5s 
+- **Time to Interactive**: <1.5s
 - **Bundle Size**: <500KB gzipped main bundle
 - **AI Response Time**: <200ms for cached responses
 - **Core Web Vitals**: All metrics in "Good" range (LCP ≤2.5s, INP ≤200ms, CLS ≤0.1)
@@ -49,7 +51,7 @@ interface SemanticCacheEntry {
   };
   complianceInfo: {
     piiRedacted: boolean;
-    dataClassification: 'public' | 'internal' | 'confidential' | 'restricted';
+    dataClassification: "public" | "internal" | "confidential" | "restricted";
     auditTrail: string;
   };
 }
@@ -58,9 +60,10 @@ interface SemanticCacheEntry {
 ### Implementation
 
 **File**: `packages/core-services/src/ai/semantic-cache.service.ts`
+
 ```typescript
-import { createHash } from 'crypto';
-import { encode } from '@xenova/transformers';
+import { createHash } from "crypto";
+import { encode } from "@xenova/transformers";
 
 export interface CacheOptions {
   healthcareContext?: boolean;
@@ -94,12 +97,12 @@ export class SemanticCacheService {
       ttlMs: number;
       healthcareMode: boolean;
       redactPII: boolean;
-    }
+    },
   ) {}
 
   async get(
-    query: string, 
-    options: CacheOptions = {}
+    query: string,
+    options: CacheOptions = {},
   ): Promise<CachedResponse | null> {
     try {
       // Healthcare validation
@@ -108,8 +111,8 @@ export class SemanticCacheService {
       }
 
       // Redact PII from query before processing
-      const sanitizedQuery = this.config.redactPII 
-        ? this.redactPII(query) 
+      const sanitizedQuery = this.config.redactPII
+        ? this.redactPII(query)
         : query;
 
       // Generate query vector
@@ -124,16 +127,18 @@ export class SemanticCacheService {
 
       // Search for similar entries
       const similarEntries = await this.findSimilarEntries(
-        queryVector, 
-        options.similarity || this.defaultSimilarity
+        queryVector,
+        options.similarity || this.defaultSimilarity,
       );
 
       if (similarEntries.length > 0) {
         const bestMatch = similarEntries[0];
-        
+
         // Healthcare context validation
         if (options.healthcareContext && options.professionalId) {
-          if (!this.validateHealthcareAccess(bestMatch, options.professionalId)) {
+          if (
+            !this.validateHealthcareAccess(bestMatch, options.professionalId)
+          ) {
             return null; // Access denied for healthcare context
           }
         }
@@ -143,23 +148,23 @@ export class SemanticCacheService {
 
       return null;
     } catch (error) {
-      console.error('Semantic cache get error:', error);
+      console.error("Semantic cache get error:", error);
       return null; // Fail silently to not break AI operations
     }
   }
 
   async set(
-    query: string, 
-    response: string, 
-    options: CacheOptions = {}
+    query: string,
+    response: string,
+    options: CacheOptions = {},
   ): Promise<void> {
     try {
       // Redact PII from both query and response
-      const sanitizedQuery = this.config.redactPII 
-        ? this.redactPII(query) 
+      const sanitizedQuery = this.config.redactPII
+        ? this.redactPII(query)
         : query;
-      const sanitizedResponse = this.config.redactPII 
-        ? this.redactPII(response) 
+      const sanitizedResponse = this.config.redactPII
+        ? this.redactPII(response)
         : response;
 
       // Generate vector for the query
@@ -172,17 +177,17 @@ export class SemanticCacheService {
         queryVector,
         response: sanitizedResponse,
         metadata: {
-          professionalId: options.professionalId || 'anonymous',
+          professionalId: options.professionalId || "anonymous",
           healthcareContext: options.healthcareContext || false,
           timestamp: Date.now(),
           ttl: options.ttl || this.defaultTTL,
-          similarityThreshold: options.similarity || this.defaultSimilarity
+          similarityThreshold: options.similarity || this.defaultSimilarity,
         },
         complianceInfo: {
           piiRedacted: this.config.redactPII,
           dataClassification: this.classifyData(sanitizedResponse),
-          auditTrail: this.generateAuditTrail(options)
-        }
+          auditTrail: this.generateAuditTrail(options),
+        },
       };
 
       // Cache management
@@ -195,11 +200,10 @@ export class SemanticCacheService {
 
       // Healthcare audit logging
       if (options.healthcareContext) {
-        await this.logHealthcareAccess(entry, 'cache_set');
+        await this.logHealthcareAccess(entry, "cache_set");
       }
-
     } catch (error) {
-      console.error('Semantic cache set error:', error);
+      console.error("Semantic cache set error:", error);
       // Don't throw to avoid breaking AI operations
     }
   }
@@ -208,35 +212,38 @@ export class SemanticCacheService {
     try {
       // Use a lightweight embedding model suitable for semantic similarity
       const embeddings = await encode(text, {
-        model: 'sentence-transformers/all-MiniLM-L6-v2',
-        normalize: true
+        model: "sentence-transformers/all-MiniLM-L6-v2",
+        normalize: true,
       });
-      
+
       return Array.from(embeddings.data);
     } catch (error) {
-      console.error('Vector generation error:', error);
+      console.error("Vector generation error:", error);
       // Fallback to simple hash-based vector
       return this.createHashVector(text);
     }
   }
 
   private createHashVector(text: string): number[] {
-    const hash = createHash('sha256').update(text).digest();
+    const hash = createHash("sha256").update(text).digest();
     const vector: number[] = [];
-    
+
     for (let i = 0; i < hash.length; i += 4) {
       const value = hash.readFloatBE(i % (hash.length - 3));
       vector.push(isNaN(value) ? 0 : value);
     }
-    
+
     return vector.slice(0, 384); // Standard embedding size
   }
 
   private async findSimilarEntries(
-    queryVector: number[], 
-    threshold: number
-  ): Promise<Array<{entry: SemanticCacheEntry, similarity: number}>> {
-    const similarities: Array<{entry: SemanticCacheEntry, similarity: number}> = [];
+    queryVector: number[],
+    threshold: number,
+  ): Promise<Array<{ entry: SemanticCacheEntry; similarity: number }>> {
+    const similarities: Array<{
+      entry: SemanticCacheEntry;
+      similarity: number;
+    }> = [];
 
     for (const [hash, entry] of this.cache.entries()) {
       if (this.isExpired(entry)) {
@@ -246,7 +253,7 @@ export class SemanticCacheService {
       }
 
       const similarity = this.cosineSimilarity(queryVector, entry.queryVector);
-      
+
       if (similarity >= threshold) {
         similarities.push({ entry, similarity });
       }
@@ -277,16 +284,22 @@ export class SemanticCacheService {
 
   private redactPII(text: string): string {
     return text
-      .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, '[REDACTED_CPF]')
-      .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, '[REDACTED_EMAIL]')
-      .replace(/\(\d{2}\)\s*\d{4,5}-?\d{4}/g, '[REDACTED_PHONE]')
-      .replace(/MR-\d{6,10}/g, '[REDACTED_MEDICAL_RECORD]')
-      .replace(/PAT-[A-Z0-9]{8,12}/g, '[REDACTED_PATIENT_ID]');
+      .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, "[REDACTED_CPF]")
+      .replace(
+        /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g,
+        "[REDACTED_EMAIL]",
+      )
+      .replace(/\(\d{2}\)\s*\d{4,5}-?\d{4}/g, "[REDACTED_PHONE]")
+      .replace(/MR-\d{6,10}/g, "[REDACTED_MEDICAL_RECORD]")
+      .replace(/PAT-[A-Z0-9]{8,12}/g, "[REDACTED_PATIENT_ID]");
   }
 
   private hashVector(vector: number[]): string {
-    const vectorString = vector.map(v => v.toFixed(6)).join(',');
-    return createHash('sha256').update(vectorString).digest('hex').substring(0, 16);
+    const vectorString = vector.map((v) => v.toFixed(6)).join(",");
+    return createHash("sha256")
+      .update(vectorString)
+      .digest("hex")
+      .substring(0, 16);
   }
 
   private isExpired(entry: SemanticCacheEntry): boolean {
@@ -294,8 +307,8 @@ export class SemanticCacheService {
   }
 
   private createCachedResponse(
-    entry: SemanticCacheEntry, 
-    similarity: number
+    entry: SemanticCacheEntry,
+    similarity: number,
   ): CachedResponse {
     return {
       content: entry.response,
@@ -304,51 +317,57 @@ export class SemanticCacheService {
       metadata: {
         professionalId: entry.metadata.professionalId,
         healthcareContext: entry.metadata.healthcareContext,
-        cached: true
-      }
+        cached: true,
+      },
     };
   }
 
   private validateHealthcareAccess(
-    entry: SemanticCacheEntry, 
-    professionalId: string
+    entry: SemanticCacheEntry,
+    professionalId: string,
   ): boolean {
     // Validate professional access to cached healthcare data
-    if (entry.complianceInfo.dataClassification === 'restricted') {
+    if (entry.complianceInfo.dataClassification === "restricted") {
       return entry.metadata.professionalId === professionalId;
     }
-    
-    if (entry.complianceInfo.dataClassification === 'confidential') {
+
+    if (entry.complianceInfo.dataClassification === "confidential") {
       // Additional validation logic for confidential data
       return this.hasHealthcareAccess(professionalId);
     }
-    
+
     return true;
   }
 
   private async validateHealthcareContext(context: any): Promise<void> {
     if (!context || !context.professionalId) {
-      throw new Error('Healthcare context validation failed: missing professional ID');
+      throw new Error(
+        "Healthcare context validation failed: missing professional ID",
+      );
     }
-    
+
     // Additional healthcare validation logic
     if (context.requiresPatientConsent && !context.patientConsent) {
-      throw new Error('Healthcare context validation failed: patient consent required');
+      throw new Error(
+        "Healthcare context validation failed: patient consent required",
+      );
     }
   }
 
-  private classifyData(content: string): 'public' | 'internal' | 'confidential' | 'restricted' {
+  private classifyData(
+    content: string,
+  ): "public" | "internal" | "confidential" | "restricted" {
     // Simple classification based on content patterns
-    if (content.includes('patient') || content.includes('medical')) {
-      return 'restricted';
+    if (content.includes("patient") || content.includes("medical")) {
+      return "restricted";
     }
-    if (content.includes('internal') || content.includes('professional')) {
-      return 'confidential';
+    if (content.includes("internal") || content.includes("professional")) {
+      return "confidential";
     }
-    if (content.includes('private') || content.includes('personal')) {
-      return 'internal';
+    if (content.includes("private") || content.includes("personal")) {
+      return "internal";
     }
-    return 'public';
+    return "public";
   }
 
   private generateAuditTrail(options: CacheOptions): string {
@@ -356,8 +375,8 @@ export class SemanticCacheService {
       timestamp: new Date().toISOString(),
       professionalId: options.professionalId,
       healthcareContext: options.healthcareContext,
-      operation: 'semantic_cache',
-      compliance: 'lgpd_compliant'
+      operation: "semantic_cache",
+      compliance: "lgpd_compliant",
     });
   }
 
@@ -368,23 +387,23 @@ export class SemanticCacheService {
   }
 
   private async logHealthcareAccess(
-    entry: SemanticCacheEntry, 
-    operation: string
+    entry: SemanticCacheEntry,
+    operation: string,
   ): Promise<void> {
     // Healthcare audit logging implementation
-    console.log('Healthcare cache access:', {
+    console.log("Healthcare cache access:", {
       entryId: entry.id,
       operation,
       professionalId: entry.metadata.professionalId,
       timestamp: new Date().toISOString(),
-      dataClassification: entry.complianceInfo.dataClassification
+      dataClassification: entry.complianceInfo.dataClassification,
     });
   }
 
   private evictOldestEntries(): void {
     const entries = Array.from(this.cache.entries());
-    entries.sort(([,a], [,b]) => a.metadata.timestamp - b.metadata.timestamp);
-    
+    entries.sort(([, a], [, b]) => a.metadata.timestamp - b.metadata.timestamp);
+
     const toEvict = Math.floor(this.config.maxEntries * 0.1); // Evict 10%
     for (let i = 0; i < toEvict && i < entries.length; i++) {
       const [hash] = entries[i];
@@ -396,14 +415,16 @@ export class SemanticCacheService {
   // Public methods for monitoring and management
   getStats() {
     const entries = Array.from(this.cache.values());
-    const healthcareEntries = entries.filter(e => e.metadata.healthcareContext);
-    
+    const healthcareEntries = entries.filter(
+      (e) => e.metadata.healthcareContext,
+    );
+
     return {
       totalEntries: this.cache.size,
       healthcareEntries: healthcareEntries.length,
       memoryUsage: this.calculateMemoryUsage(),
       hitRate: this.calculateHitRate(),
-      averageAge: this.calculateAverageAge()
+      averageAge: this.calculateAverageAge(),
     };
   }
 
@@ -424,11 +445,12 @@ export class SemanticCacheService {
   private calculateAverageAge(): number {
     const entries = Array.from(this.cache.values());
     if (entries.length === 0) return 0;
-    
-    const totalAge = entries.reduce((sum, entry) => 
-      sum + (Date.now() - entry.metadata.timestamp), 0
+
+    const totalAge = entries.reduce(
+      (sum, entry) => sum + (Date.now() - entry.metadata.timestamp),
+      0,
     );
-    
+
     return totalAge / entries.length;
   }
 
@@ -454,60 +476,60 @@ export class SemanticCacheService {
 ### Integration with AI Chat
 
 **File**: `apps/api/src/routes/ai-chat.ts`
+
 ```typescript
-import { SemanticCacheService } from '../services/semantic-cache.service';
+import { SemanticCacheService } from "../services/semantic-cache.service";
 
 const semanticCache = new SemanticCacheService({
   maxEntries: 1000,
   ttlMs: 3600000, // 1 hour cache
   healthcareMode: true,
-  redactPII: true
+  redactPII: true,
 });
 
-app.post('/api/ai/chat', async (c) => {
+app.post("/api/ai/chat", async (c) => {
   const { message } = await c.req.json();
-  const session = c.get('session');
-  
+  const session = c.get("session");
+
   // Check cache before AI call
-  const cachedResponse = await semanticCache.get(
-    message,
-    { 
-      healthcareContext: true,
+  const cachedResponse = await semanticCache.get(message, {
+    healthcareContext: true,
+    professionalId: session.user.id,
+    similarity: 0.85,
+    validateHealthcare: true,
+    context: {
       professionalId: session.user.id,
-      similarity: 0.85,
-      validateHealthcare: true,
-      context: {
-        professionalId: session.user.id,
-        requiresPatientConsent: false
-      }
-    }
-  );
+      requiresPatientConsent: false,
+    },
+  });
 
   if (cachedResponse) {
-    console.log(`Cache hit with ${(cachedResponse.similarity * 100).toFixed(1)}% similarity`);
-    return c.json({ 
-      response: cachedResponse.content, 
+    console.log(
+      `Cache hit with ${(cachedResponse.similarity * 100).toFixed(1)}% similarity`,
+    );
+    return c.json({
+      response: cachedResponse.content,
       cached: true,
-      similarity: cachedResponse.similarity
+      similarity: cachedResponse.similarity,
     });
   }
 
   // Make AI call if not cached
   const aiResponse = await callAI(message, {
     professionalId: session.user.id,
-    context: 'healthcare'
+    context: "healthcare",
   });
 
   // Cache the response
   await semanticCache.set(message, aiResponse, {
     healthcareContext: true,
     professionalId: session.user.id,
-    ttl: 3600000
+    ttl: 3600000,
   });
 
-  return c.json({ 
-    response: aiResponse, 
-    cached: false 
+  return c.json({
+    response: aiResponse,
+    cached: false,
   });
 });
 ```
@@ -517,187 +539,175 @@ app.post('/api/ai/chat', async (c) => {
 ### Vite Configuration with Bundle Analyzer
 
 **File**: `apps/web/vite-bundle-analyzer.config.js`
+
 ```javascript
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import { visualizer } from 'rollup-plugin-visualizer';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import { visualizer } from "rollup-plugin-visualizer";
 
 export default defineConfig({
   plugins: [
     react({
       // React 19 optimizations
-      jsxRuntime: 'automatic',
-      jsxImportSource: 'react'
+      jsxRuntime: "automatic",
+      jsxImportSource: "react",
     }),
-    
+
     // Bundle analyzer
     visualizer({
-      filename: 'dist/bundle-analysis.html',
+      filename: "dist/bundle-analysis.html",
       open: false,
       gzipSize: true,
       brotliSize: true,
-      template: 'treemap' // or 'sunburst', 'network'
-    })
+      template: "treemap", // or 'sunburst', 'network'
+    }),
   ],
-  
+
   build: {
     // Performance optimizations
-    target: 'es2020',
-    minify: 'terser',
-    sourcemap: process.env.NODE_ENV === 'development',
-    
+    target: "es2020",
+    minify: "terser",
+    sourcemap: process.env.NODE_ENV === "development",
+
     // Bundle splitting strategy
     rollupOptions: {
       output: {
         manualChunks: {
           // Core React libraries
-          'vendor-react': [
-            'react', 
-            'react-dom', 
-            'react/jsx-runtime'
-          ],
-          
+          "vendor-react": ["react", "react-dom", "react/jsx-runtime"],
+
           // Routing and state management
-          'vendor-router': [
-            '@tanstack/react-router',
-            '@tanstack/react-query'
-          ],
-          
+          "vendor-router": ["@tanstack/react-router", "@tanstack/react-query"],
+
           // UI component libraries
-          'vendor-ui': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-select',
-            '@radix-ui/react-tooltip',
-            'lucide-react'
+          "vendor-ui": [
+            "@radix-ui/react-dialog",
+            "@radix-ui/react-dropdown-menu",
+            "@radix-ui/react-select",
+            "@radix-ui/react-tooltip",
+            "lucide-react",
           ],
-          
+
           // Healthcare-specific modules
-          'healthcare-core': [
-            './src/lib/healthcare',
-            './src/lib/compliance',
-            './src/lib/telemedicine'
+          "healthcare-core": [
+            "./src/lib/healthcare",
+            "./src/lib/compliance",
+            "./src/lib/telemedicine",
           ],
-          
+
           // Charts and visualization
-          'vendor-charts': [
-            'recharts',
-            'd3'
-          ],
-          
+          "vendor-charts": ["recharts", "d3"],
+
           // Date and time utilities
-          'vendor-date': [
-            'date-fns',
-            'date-fns/locale'
-          ]
+          "vendor-date": ["date-fns", "date-fns/locale"],
         },
-        
+
         // Chunk file naming
         chunkFileNames: (chunkInfo) => {
           return `assets/[name]-[hash].js`;
         },
-        
+
         // Asset file naming
         assetFileNames: (assetInfo) => {
-          const info = assetInfo.name.split('.');
+          const info = assetInfo.name.split(".");
           const ext = info[info.length - 1];
-          
+
           if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(assetInfo.name)) {
             return `assets/images/[name]-[hash].${ext}`;
           }
-          
+
           if (/\.(woff2?|ttf|eot)$/i.test(assetInfo.name)) {
             return `assets/fonts/[name]-[hash].${ext}`;
           }
-          
+
           return `assets/[name]-[hash].${ext}`;
-        }
-      }
+        },
+      },
     },
-    
+
     // Terser optimizations for production
     terserOptions: {
       compress: {
-        drop_console: process.env.NODE_ENV === 'production',
+        drop_console: process.env.NODE_ENV === "production",
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info'],
-        passes: 2
+        pure_funcs: ["console.log", "console.info"],
+        passes: 2,
       },
       mangle: {
-        safari10: true
+        safari10: true,
       },
       format: {
-        comments: false
-      }
-    }
+        comments: false,
+      },
+    },
   },
-  
+
   // Performance budgets configuration
   performanceBudgets: {
     // Main bundles
-    'vendor-react': { maxSize: '150KB', warning: '120KB' },
-    'vendor-router': { maxSize: '100KB', warning: '80KB' },
-    'vendor-ui': { maxSize: '200KB', warning: '160KB' },
-    'healthcare-core': { maxSize: '250KB', warning: '200KB' },
-    'vendor-charts': { maxSize: '300KB', warning: '250KB' },
-    'vendor-date': { maxSize: '50KB', warning: '40KB' },
-    'main': { maxSize: '300KB', warning: '250KB' },
-    
+    "vendor-react": { maxSize: "150KB", warning: "120KB" },
+    "vendor-router": { maxSize: "100KB", warning: "80KB" },
+    "vendor-ui": { maxSize: "200KB", warning: "160KB" },
+    "healthcare-core": { maxSize: "250KB", warning: "200KB" },
+    "vendor-charts": { maxSize: "300KB", warning: "250KB" },
+    "vendor-date": { maxSize: "50KB", warning: "40KB" },
+    main: { maxSize: "300KB", warning: "250KB" },
+
     // Total budget
-    total: { maxSize: '1MB', warning: '800KB' },
-    
+    total: { maxSize: "1MB", warning: "800KB" },
+
     // Individual assets
-    singleAsset: { maxSize: '500KB', warning: '400KB' }
+    singleAsset: { maxSize: "500KB", warning: "400KB" },
   },
-  
+
   // Development optimizations
   server: {
     hmr: {
-      overlay: false // Reduce noise in healthcare development
-    }
+      overlay: false, // Reduce noise in healthcare development
+    },
   },
-  
+
   // CSS optimizations
   css: {
     modules: {
-      localsConvention: 'camelCase'
+      localsConvention: "camelCase",
     },
     preprocessorOptions: {
       scss: {
-        additionalData: `@import "@/styles/healthcare-variables.scss";`
-      }
-    }
-  }
+        additionalData: `@import "@/styles/healthcare-variables.scss";`,
+      },
+    },
+  },
 });
 
 // Performance budget validation
 export function validatePerformanceBudgets(bundleStats, budgets) {
   const violations = [];
   const warnings = [];
-  
+
   Object.entries(bundleStats.chunks).forEach(([chunkName, stats]) => {
     const budget = budgets[chunkName];
     if (!budget) return;
-    
+
     const sizeKB = stats.size / 1024;
-    
+
     if (sizeKB > budget.maxSize) {
       violations.push({
         chunk: chunkName,
         size: `${sizeKB.toFixed(1)}KB`,
         budget: `${budget.maxSize}KB`,
-        overage: `${(sizeKB - budget.maxSize).toFixed(1)}KB`
+        overage: `${(sizeKB - budget.maxSize).toFixed(1)}KB`,
       });
     } else if (sizeKB > budget.warning) {
       warnings.push({
         chunk: chunkName,
         size: `${sizeKB.toFixed(1)}KB`,
         warning: `${budget.warning}KB`,
-        margin: `${(budget.maxSize - sizeKB).toFixed(1)}KB remaining`
+        margin: `${(budget.maxSize - sizeKB).toFixed(1)}KB remaining`,
       });
     }
   });
-  
+
   return { violations, warnings };
 }
 ```
@@ -705,86 +715,108 @@ export function validatePerformanceBudgets(bundleStats, budgets) {
 ### Bundle Analysis Script
 
 **File**: `scripts/analyze-bundle.js`
+
 ```javascript
 #!/usr/bin/env node
 
-import fs from 'fs';
-import path from 'path';
-import { validatePerformanceBudgets } from '../apps/web/vite-bundle-analyzer.config.js';
+import fs from "fs";
+import path from "path";
+import { validatePerformanceBudgets } from "../apps/web/vite-bundle-analyzer.config.js";
 
 async function analyzeBundlePerformance() {
-  const statsFile = path.join(process.cwd(), 'apps/web/dist/bundle-stats.json');
-  
+  const statsFile = path.join(process.cwd(), "apps/web/dist/bundle-stats.json");
+
   if (!fs.existsSync(statsFile)) {
-    console.error('Bundle stats file not found. Run `bun run build:analyze` first.');
+    console.error(
+      "Bundle stats file not found. Run `bun run build:analyze` first.",
+    );
     process.exit(1);
   }
-  
-  const stats = JSON.parse(fs.readFileSync(statsFile, 'utf8'));
-  
-  console.log('🔍 Bundle Analysis Report\n');
-  console.log('📊 Chunk Sizes:');
-  console.log('─'.repeat(60));
-  
-  const chunks = Object.entries(stats.chunks)
-    .sort(([,a], [,b]) => b.size - a.size);
-  
+
+  const stats = JSON.parse(fs.readFileSync(statsFile, "utf8"));
+
+  console.log("🔍 Bundle Analysis Report\n");
+  console.log("📊 Chunk Sizes:");
+  console.log("─".repeat(60));
+
+  const chunks = Object.entries(stats.chunks).sort(
+    ([, a], [, b]) => b.size - a.size,
+  );
+
   chunks.forEach(([name, data]) => {
     const sizeKB = (data.size / 1024).toFixed(1);
-    const gzipSizeKB = data.gzipSize ? (data.gzipSize / 1024).toFixed(1) : 'N/A';
-    
-    console.log(`${name.padEnd(20)} ${sizeKB.padStart(8)}KB (${gzipSizeKB}KB gzipped)`);
+    const gzipSizeKB = data.gzipSize
+      ? (data.gzipSize / 1024).toFixed(1)
+      : "N/A";
+
+    console.log(
+      `${name.padEnd(20)} ${sizeKB.padStart(8)}KB (${gzipSizeKB}KB gzipped)`,
+    );
   });
-  
+
   // Performance budget validation
   const budgets = {
-    'vendor-react': { maxSize: 150, warning: 120 },
-    'vendor-router': { maxSize: 100, warning: 80 },
-    'vendor-ui': { maxSize: 200, warning: 160 },
-    'healthcare-core': { maxSize: 250, warning: 200 },
-    'main': { maxSize: 300, warning: 250 }
+    "vendor-react": { maxSize: 150, warning: 120 },
+    "vendor-router": { maxSize: 100, warning: 80 },
+    "vendor-ui": { maxSize: 200, warning: 160 },
+    "healthcare-core": { maxSize: 250, warning: 200 },
+    main: { maxSize: 300, warning: 250 },
   };
-  
+
   const validation = validatePerformanceBudgets(stats, budgets);
-  
+
   if (validation.violations.length > 0) {
-    console.log('\n❌ Performance Budget Violations:');
-    console.log('─'.repeat(60));
-    validation.violations.forEach(v => {
-      console.log(`${v.chunk}: ${v.size} (exceeds ${v.budget} by ${v.overage})`);
+    console.log("\n❌ Performance Budget Violations:");
+    console.log("─".repeat(60));
+    validation.violations.forEach((v) => {
+      console.log(
+        `${v.chunk}: ${v.size} (exceeds ${v.budget} by ${v.overage})`,
+      );
     });
   }
-  
+
   if (validation.warnings.length > 0) {
-    console.log('\n⚠️  Performance Budget Warnings:');
-    console.log('─'.repeat(60));
-    validation.warnings.forEach(w => {
+    console.log("\n⚠️  Performance Budget Warnings:");
+    console.log("─".repeat(60));
+    validation.warnings.forEach((w) => {
       console.log(`${w.chunk}: ${w.size} (${w.margin} until budget)`);
     });
   }
-  
+
   if (validation.violations.length === 0 && validation.warnings.length === 0) {
-    console.log('\n✅ All chunks within performance budgets!');
+    console.log("\n✅ All chunks within performance budgets!");
   }
-  
+
   // Healthcare-specific recommendations
-  console.log('\n🏥 Healthcare Performance Recommendations:');
-  console.log('─'.repeat(60));
-  
-  const totalSize = Object.values(stats.chunks).reduce((sum, chunk) => sum + chunk.size, 0);
+  console.log("\n🏥 Healthcare Performance Recommendations:");
+  console.log("─".repeat(60));
+
+  const totalSize = Object.values(stats.chunks).reduce(
+    (sum, chunk) => sum + chunk.size,
+    0,
+  );
   const totalSizeKB = (totalSize / 1024).toFixed(1);
-  
-  if (totalSize > 1024 * 1024) { // 1MB
-    console.log('⚠️  Total bundle size exceeds 1MB - consider lazy loading for non-critical features');
+
+  if (totalSize > 1024 * 1024) {
+    // 1MB
+    console.log(
+      "⚠️  Total bundle size exceeds 1MB - consider lazy loading for non-critical features",
+    );
   }
-  
-  if (stats.chunks['healthcare-core']?.size > 250 * 1024) {
-    console.log('⚠️  Healthcare core bundle is large - consider splitting compliance and telemedicine modules');
+
+  if (stats.chunks["healthcare-core"]?.size > 250 * 1024) {
+    console.log(
+      "⚠️  Healthcare core bundle is large - consider splitting compliance and telemedicine modules",
+    );
   }
-  
+
   console.log(`\n📈 Total Bundle Size: ${totalSizeKB}KB`);
-  console.log(`📱 Estimated 3G Load Time: ${(totalSize / (50 * 1024)).toFixed(1)}s`);
-  console.log(`📡 Estimated 4G Load Time: ${(totalSize / (100 * 1024)).toFixed(1)}s`);
+  console.log(
+    `📱 Estimated 3G Load Time: ${(totalSize / (50 * 1024)).toFixed(1)}s`,
+  );
+  console.log(
+    `📡 Estimated 4G Load Time: ${(totalSize / (100 * 1024)).toFixed(1)}s`,
+  );
 }
 
 analyzeBundlePerformance().catch(console.error);

@@ -11,10 +11,10 @@ import {
   // type PatientAnalytics,
   // type ProfessionalPerformance,
   // type PopularServicesData
-} from '@/services/analytics.service';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { subDays } from 'date-fns';
-import { toast } from 'sonner';
+} from "@/services/analytics.service";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { subDays } from "date-fns";
+import { toast } from "sonner";
 
 /**
  * Default date range (last 30 days)
@@ -32,7 +32,12 @@ export function useAppointmentMetrics(
   dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   return useQuery({
-    queryKey: ['appointment-metrics', clinicId, dateRange.startDate, dateRange.endDate],
+    queryKey: [
+      "appointment-metrics",
+      clinicId,
+      dateRange.startDate,
+      dateRange.endDate,
+    ],
     queryFn: () => analyticsService.getAppointmentMetrics(clinicId, dateRange),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -48,7 +53,12 @@ export function useRevenueMetrics(
   dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   return useQuery({
-    queryKey: ['revenue-metrics', clinicId, dateRange.startDate, dateRange.endDate],
+    queryKey: [
+      "revenue-metrics",
+      clinicId,
+      dateRange.startDate,
+      dateRange.endDate,
+    ],
     queryFn: () => analyticsService.getRevenueMetrics(clinicId, dateRange),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -64,7 +74,12 @@ export function usePatientAnalytics(
   dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   return useQuery({
-    queryKey: ['patient-analytics', clinicId, dateRange.startDate, dateRange.endDate],
+    queryKey: [
+      "patient-analytics",
+      clinicId,
+      dateRange.startDate,
+      dateRange.endDate,
+    ],
     queryFn: () => analyticsService.getPatientAnalytics(clinicId, dateRange),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -80,8 +95,14 @@ export function useProfessionalPerformance(
   dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   return useQuery({
-    queryKey: ['professional-performance', clinicId, dateRange.startDate, dateRange.endDate],
-    queryFn: () => analyticsService.getProfessionalPerformance(clinicId, dateRange),
+    queryKey: [
+      "professional-performance",
+      clinicId,
+      dateRange.startDate,
+      dateRange.endDate,
+    ],
+    queryFn: () =>
+      analyticsService.getProfessionalPerformance(clinicId, dateRange),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -96,7 +117,12 @@ export function usePopularServices(
   dateRange: AnalyticsDateRange = getDefaultDateRange(),
 ) {
   return useQuery({
-    queryKey: ['popular-services', clinicId, dateRange.startDate, dateRange.endDate],
+    queryKey: [
+      "popular-services",
+      clinicId,
+      dateRange.startDate,
+      dateRange.endDate,
+    ],
     queryFn: () => analyticsService.getPopularServices(clinicId, dateRange),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
@@ -116,7 +142,7 @@ export function useExportAnalytics() {
     }: {
       clinicId: string;
       dateRange: AnalyticsDateRange;
-      reportType: 'appointments' | 'revenue' | 'patients' | 'professionals';
+      reportType: "appointments" | "revenue" | "patients" | "professionals";
     }) => {
       const csvContent = await analyticsService.exportAnalyticsToCSV(
         clinicId,
@@ -125,16 +151,16 @@ export function useExportAnalytics() {
       );
 
       // Create and download CSV file
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const link = document.createElement('a');
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
 
-      link.setAttribute('href', url);
+      link.setAttribute("href", url);
       link.setAttribute(
-        'download',
-        `neonpro-${reportType}-${new Date().toISOString().split('T')[0]}.csv`,
+        "download",
+        `neonpro-${reportType}-${new Date().toISOString().split("T")[0]}.csv`,
       );
-      link.style.visibility = 'hidden';
+      link.style.visibility = "hidden";
 
       document.body.appendChild(link);
       link.click();
@@ -145,9 +171,9 @@ export function useExportAnalytics() {
     onSuccess: (_, { reportType }) => {
       toast.success(`Relatório de ${reportType} exportado com sucesso!`);
     },
-    onError: error => {
-      console.error('Error exporting analytics:', error);
-      toast.error('Erro ao exportar relatório');
+    onError: (error) => {
+      console.error("Error exporting analytics:", error);
+      toast.error("Erro ao exportar relatório");
     },
   });
 }
@@ -162,7 +188,10 @@ export function useDashboardData(
   const appointmentMetrics = useAppointmentMetrics(clinicId, dateRange);
   const revenueMetrics = useRevenueMetrics(clinicId, dateRange);
   const patientAnalytics = usePatientAnalytics(clinicId, dateRange);
-  const professionalPerformance = useProfessionalPerformance(clinicId, dateRange);
+  const professionalPerformance = useProfessionalPerformance(
+    clinicId,
+    dateRange,
+  );
   const popularServices = usePopularServices(clinicId, dateRange);
 
   return {
@@ -171,21 +200,24 @@ export function useDashboardData(
     patientAnalytics,
     professionalPerformance,
     popularServices,
-    isLoading: appointmentMetrics.isLoading
-      || revenueMetrics.isLoading
-      || patientAnalytics.isLoading
-      || professionalPerformance.isLoading
-      || popularServices.isLoading,
-    isError: appointmentMetrics.isError
-      || revenueMetrics.isError
-      || patientAnalytics.isError
-      || professionalPerformance.isError
-      || popularServices.isError,
-    error: appointmentMetrics.error
-      || revenueMetrics.error
-      || patientAnalytics.error
-      || professionalPerformance.error
-      || popularServices.error,
+    isLoading:
+      appointmentMetrics.isLoading ||
+      revenueMetrics.isLoading ||
+      patientAnalytics.isLoading ||
+      professionalPerformance.isLoading ||
+      popularServices.isLoading,
+    isError:
+      appointmentMetrics.isError ||
+      revenueMetrics.isError ||
+      patientAnalytics.isError ||
+      professionalPerformance.isError ||
+      popularServices.isError,
+    error:
+      appointmentMetrics.error ||
+      revenueMetrics.error ||
+      patientAnalytics.error ||
+      professionalPerformance.error ||
+      popularServices.error,
   };
 }
 
@@ -217,7 +249,7 @@ export function useRealtimeDashboard(
 /**
  * Utility function to format currency
  */
-import { formatBRL } from '@neonpro/utils';
+import { formatBRL } from "@neonpro/utils";
 
 export function formatCurrency(value: number): string {
   return formatBRL(value);
@@ -233,40 +265,43 @@ export function formatPercentage(value: number): string {
 /**
  * Utility function to get date range presets
  */
-export function getDateRangePresets(): { label: string; range: AnalyticsDateRange }[] {
+export function getDateRangePresets(): {
+  label: string;
+  range: AnalyticsDateRange;
+}[] {
   const today = new Date();
 
   return [
     {
-      label: 'Últimos 7 dias',
+      label: "Últimos 7 dias",
       range: {
         startDate: subDays(today, 7),
         endDate: today,
       },
     },
     {
-      label: 'Últimos 30 dias',
+      label: "Últimos 30 dias",
       range: {
         startDate: subDays(today, 30),
         endDate: today,
       },
     },
     {
-      label: 'Últimos 90 dias',
+      label: "Últimos 90 dias",
       range: {
         startDate: subDays(today, 90),
         endDate: today,
       },
     },
     {
-      label: 'Este mês',
+      label: "Este mês",
       range: {
         startDate: new Date(today.getFullYear(), today.getMonth(), 1),
         endDate: today,
       },
     },
     {
-      label: 'Mês passado',
+      label: "Mês passado",
       range: {
         startDate: new Date(today.getFullYear(), today.getMonth() - 1, 1),
         endDate: new Date(today.getFullYear(), today.getMonth(), 0),

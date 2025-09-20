@@ -273,7 +273,11 @@ export function securityEventTrackingMiddleware() {
     const userAgent = context.userAgent || '';
 
     for (const { pattern, name } of suspiciousPatterns) {
-      if (pattern.test(path) || pattern.test(query) || pattern.test(userAgent)) {
+      if (
+        pattern.test(path)
+        || pattern.test(query)
+        || pattern.test(userAgent)
+      ) {
         // Track security event
         errorTracker.captureMessage(
           `Security threat detected: ${name}`,
@@ -309,18 +313,14 @@ export function securityEventTrackingMiddleware() {
 
     // Track failed authentication attempts
     if (context.endpoint.includes('/auth/') && c.res?.status === 401) {
-      errorTracker.captureMessage(
-        'Failed authentication attempt',
-        'warning',
-        {
-          ...context,
-          extra: {
-            endpoint: context.endpoint,
-            ip: context.ip,
-            userAgent: context.userAgent,
-          },
+      errorTracker.captureMessage('Failed authentication attempt', 'warning', {
+        ...context,
+        extra: {
+          endpoint: context.endpoint,
+          ip: context.ip,
+          userAgent: context.userAgent,
         },
-      );
+      });
     }
 
     await next();
@@ -352,10 +352,12 @@ export function formatErrorResponse(
       message: isProduction ? 'Internal server error' : error.message,
       status: 500,
       requestId,
-      ...(isProduction ? {} : {
-        name: error.name,
-        stack: error.stack?.split('\n').slice(0, 3), // Limit stack trace
-      }),
+      ...(isProduction
+        ? {}
+        : {
+          name: error.name,
+          stack: error.stack?.split('\n').slice(0, 3), // Limit stack trace
+        }),
     },
   };
 }

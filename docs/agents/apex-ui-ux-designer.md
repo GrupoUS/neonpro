@@ -29,7 +29,7 @@ AESTHETIC_CLINIC_CONSTITUTION:
   privacy_by_design: "Data privacy built into every component"
   ai_first_interface: "Universal AI chat as primary interaction method"
   wellness_focused: "Interfaces promote relaxation and aesthetic wellness"
-  
+
 AESTHETIC_CLINIC_PATTERNS:
   procedure_focused: "UI optimized for aesthetic procedures and scheduling"
   brazilian_compliance: "LGPD regulatory requirements for beauty industry"
@@ -77,7 +77,7 @@ COMPONENT_PLACEMENT_ALGORITHM:
     location: "packages/ui/src/components/ui/"
     command: "cd packages/ui && pnpm dlx shadcn@latest add"
     post_install: "Update packages/ui/src/index.ts with exports"
-    
+
   app_specific_components:
     criteria: "Single app usage, business logic integration, complex state"
     location: "apps/web/src/components/molecules/"
@@ -105,17 +105,17 @@ MCP_POWERED_QUALITY_GATES:
     action: "mcp__shadcn__get_audit_checklist()"
     purpose: "Comprehensive component quality assessment"
     coverage: "Accessibility, performance, security, compatibility"
-    
+
   accessibility_validation:
     automated_tools: "axe-core, WAVE, Lighthouse integration via MCP audit"
     compliance_level: "WCAG 2.2 AA minimum, AAA target for critical functions"
     touch_targets: "Mobile touch target size validation (44px+)"
-    
+
   healthcare_compliance:
     lgpd_validation: "Data protection requirement verification"
     audit_logging: "Component interaction tracking for compliance"
     data_minimization: "Progressive disclosure implementation check"
-    
+
   performance_monitoring:
     core_web_vitals: "LCP ≤2.5s, INP ≤200ms, CLS ≤0.1"
     bundle_optimization: "Tree-shaking verification and size analysis"
@@ -201,7 +201,7 @@ MOBILE_OPTIMIZATION:
   swipe_gestures: "Client navigation and treatment selection"
   voice_input: "Accessibility support for hands-free operation"
   offline_forms: "Client data collection without connection"
-  
+
 RELAXING_EXPERIENCE:
   calming_colors: "NeonPro brand palette for wellness atmosphere"
   smooth_animations: "Gentle transitions promoting relaxation"
@@ -241,12 +241,12 @@ PHASE_2_INTELLIGENT_SELECTION:
   enhanced_search: "Search @magicui/@aceternity for animations"
   specialized_search: "Search @cult-ui/@originui for healthcare-specific"
   block_search: "Search @shadcnui-blocks for complex layouts"
-  
+
 PHASE_3_AUTOMATED_INSTALLATION:
   command_generation: "mcp__shadcn__get_add_command_for_items([components])"
   location_decision: "Apply monorepo placement algorithm"
   dependency_resolution: "Verify compatibility with existing components"
-  
+
 PHASE_4_QUALITY_VALIDATION:
   accessibility_testing: "Automated WCAG 2.2 AA validation"
   performance_testing: "Bundle size and loading impact analysis"
@@ -268,13 +268,14 @@ QUALITY_ASSESSMENT_MATRIX:
   neonpro_branding: "Color scheme and aesthetic alignment"
   performance_impact: "Bundle size and loading performance"
   mobile_optimization: "Touch targets and responsive design"
-  
+
 AESTHETIC_CLINIC_COMPONENT_MAPPING:
   patient_management: "@shadcn/card, @shadcn/table, @cult-ui/medical-card"
   appointment_scheduling: "@shadcn/calendar, @aceternity/timeline, @originui/booking-widget"
   treatment_tracking: "@shadcn/progress, @magicui/progress-circle, @cult-ui/medical-progress"
   dashboard_analytics: "@shadcnui-blocks/dashboard-01, @aceternity/chart-containers"
 ```
+
 ### **Component Hierarchy (Atomic Design Implementation)**
 
 ```yaml
@@ -328,7 +329,7 @@ DEVELOPMENT_EFFICIENCY:
   development_speed: "60% reduction in UI development time"
   quality_consistency: "95%+ WCAG 2.2 AA compliance maintained automatically"
   registry_utilization: "100% of 8 configured registries accessible"
-  
+
 WORKFLOW_AUTOMATION_FEATURES:
   automated_discovery: "8 registry search with intelligent fallback strategies"
   monorepo_optimization: "Automated placement algorithm for packages/ui vs apps/web"

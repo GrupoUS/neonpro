@@ -26,6 +26,8 @@ import {
   globalErrorHandler,
 } from './middleware/error-tracking';
 import { rateLimitMiddleware } from './middleware/rate-limiting';
+import { healthcareSecurityHeadersMiddleware } from './middleware/security-headers';
+import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer';
 
 // Extract middleware functions from security package
 // const { getSecurityMiddlewareStack, getProtectedRoutesMiddleware } = security.middleware;
@@ -37,7 +39,7 @@ Promise.all([
   initializeErrorTracking(),
   initializeLogger({
     level: process.env.NODE_ENV === 'production' ? 1 : 0, // INFO in production, DEBUG in development
-    environment: process.env.NODE_ENV as any || 'development',
+    environment: (process.env.NODE_ENV as any) || 'development',
     enableConsole: true,
     enableFile: false,
     enableStructured: true,
@@ -45,15 +47,20 @@ Promise.all([
   }),
   // Initialize OpenTelemetry if available
   // telemetrySDK ? telemetrySDK.start() : Promise.resolve(),
-]).then(() => {
-  logger.info('Application monitoring and telemetry initialized successfully', {
-    sentry: true,
-    errorTracking: true,
-    structuredLogging: true,
+])
+  .then(() => {
+    logger.info(
+      'Application monitoring and telemetry initialized successfully',
+      {
+        sentry: true,
+        errorTracking: true,
+        structuredLogging: true,
+      },
+    );
+  })
+  .catch(error => {
+    console.error('Failed to initialize monitoring:', error);
   });
-}).catch(error => {
-  console.error('Failed to initialize monitoring:', error);
-});
 
 // Global error tracker instance is now accessed via the bridge
 // const errorTracker = already imported from bridge
@@ -95,7 +102,12 @@ app.use(
     },
     credentials: true,
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-CSRF-Token'],
+    allowHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'X-CSRF-Token',
+    ],
     exposeHeaders: ['X-Request-ID'],
   }),
 );
@@ -112,11 +124,17 @@ app.use('*', errorHandler);
 // Healthcare-compliant error tracking middleware
 app.use('*', healthcareErrorTrackingMiddleware());
 
+// Enhanced security headers with HSTS and healthcare compliance
+app.use('*', healthcareSecurityHeadersMiddleware());
+
 // Healthcare-specific rate limiting
 app.use('*', rateLimitMiddleware());
 
 // Healthcare-compliant Content Security Policy (T006)
 app.use('*', healthcareCSPMiddleware());
+
+// Sensitive data exposure monitoring
+app.use('*', sensitiveDataExposureMiddleware());
 
 // Enhanced error handling middleware
 app.use('*', async (c, next) => {
@@ -125,40 +143,36 @@ app.use('*', async (c, next) => {
 
   try {
     // Add breadcrumb for request start
-    errorTracker.addBreadcrumb(
-      'Request started',
-      'request',
-      {
-        method: c.req.method,
-        endpoint: c.req.path,
-        requestId,
-      },
-    );
+    errorTracker.addBreadcrumb('Request started', 'request', {
+      method: c.req.method,
+      endpoint: c.req.path,
+      requestId,
+    });
 
     await next();
 
     const duration = Date.now() - startTime;
 
     // Log successful request
-    logger.info('Request completed', {
-      requestId,
-      method: c.req.method,
-      endpoint: c.req.path,
-      statusCode: c.res.status,
-    }, { duration });
-
-    // Add breadcrumb for request completion
-    errorTracker.addBreadcrumb(
+    logger.info(
       'Request completed',
-      'request',
       {
+        requestId,
         method: c.req.method,
         endpoint: c.req.path,
         statusCode: c.res.status,
-        duration,
-        requestId,
       },
+      { duration },
     );
+
+    // Add breadcrumb for request completion
+    errorTracker.addBreadcrumb('Request completed', 'request', {
+      method: c.req.method,
+      endpoint: c.req.path,
+      statusCode: c.res.status,
+      duration,
+      requestId,
+    });
   } catch (error) {
     const duration = Date.now() - startTime;
 
@@ -170,24 +184,24 @@ app.use('*', async (c, next) => {
     });
 
     // Log error
-    logger.error('Request failed', {
-      requestId,
-      method: c.req.method,
-      endpoint: c.req.path,
-    }, { errorMessage: (error as Error).message, duration });
-
-    // Add breadcrumb for error
-    errorTracker.addBreadcrumb(
+    logger.error(
       'Request failed',
-      'error',
       {
+        requestId,
         method: c.req.method,
         endpoint: c.req.path,
-        errorMessage: (error as Error).message,
-        duration,
-        requestId,
       },
+      { errorMessage: (error as Error).message, duration },
     );
+
+    // Add breadcrumb for error
+    errorTracker.addBreadcrumb('Request failed', 'error', {
+      method: c.req.method,
+      endpoint: c.req.path,
+      errorMessage: (error as Error).message,
+      duration,
+      requestId,
+    });
 
     throw error;
   }
@@ -251,7 +265,12 @@ app.get('/v1/health', c => {
     },
   };
 
-  logger.healthcare('health_check', 'Detailed health check completed', { requestId }, healthData);
+  logger.healthcare(
+    'health_check',
+    'Detailed health check completed',
+    { requestId },
+    healthData,
+  );
 
   return c.json(healthData);
 });
@@ -282,54 +301,67 @@ app.get('/v1/info', c => {
     },
   };
 
-  logger.audit('system_info', 'System information accessed', { requestId }, infoData);
+  logger.audit(
+    'system_info',
+    'System information accessed',
+    { requestId },
+    infoData,
+  );
 
   return c.json(infoData);
 });
 
 // Security endpoints (protected)
-app.get('/v1/security/status', /* ...getProtectedRoutesMiddleware(['admin']), */ c => {
-  const requestId = c.get('requestId');
-  const user = c.get('user');
+app.get(
+  '/v1/security/status',
+  /* ...getProtectedRoutesMiddleware(['admin']), */ c => {
+    const requestId = c.get('requestId');
+    const user = c.get('user');
 
-  logger.security('security_status', 'Security status accessed', {
-    requestId,
-    userId: user?.id,
-  });
+    logger.security('security_status', 'Security status accessed', {
+      requestId,
+      userId: user?.id,
+    });
 
-  const securityStatus = {
-    encryption: {
-      enabled: true,
-      algorithm: 'AES-256-GCM',
-      keyRotation: 'enabled',
-    },
-    rateLimiting: {
-      enabled: true,
-      defaultLimit: 100,
-      windowMs: 60000,
-    },
-    inputValidation: {
-      enabled: true,
-      xssProtection: 'enabled',
-      sqlInjectionProtection: 'enabled',
-    },
-    healthcareCompliance: {
-      lgpdEnabled: true,
-      dataEncryption: 'enabled',
-      auditLogging: 'enabled',
-    },
-    monitoring: {
-      errorTracking: getErrorTrackingHealth(),
-      logger: logger.getStats(),
-    },
-    timestamp: new Date().toISOString(),
-    requestId,
-  };
+    const securityStatus = {
+      encryption: {
+        enabled: true,
+        algorithm: 'AES-256-GCM',
+        keyRotation: 'enabled',
+      },
+      rateLimiting: {
+        enabled: true,
+        defaultLimit: 100,
+        windowMs: 60000,
+      },
+      inputValidation: {
+        enabled: true,
+        xssProtection: 'enabled',
+        sqlInjectionProtection: 'enabled',
+      },
+      healthcareCompliance: {
+        lgpdEnabled: true,
+        dataEncryption: 'enabled',
+        auditLogging: 'enabled',
+      },
+      monitoring: {
+        errorTracking: getErrorTrackingHealth(),
+        logger: logger.getStats(),
+      },
+      timestamp: new Date().toISOString(),
+      requestId,
+    };
 
-  logger.audit('security_status', 'Security status retrieved', { requestId }, securityStatus);
+    logger.audit(
+      'security_status',
+      'Security status retrieved',
+      { requestId },
+      securityStatus,
+    );
 
-  return c.json(securityStatus);
-});
+    return c.json(securityStatus);
+  },
+);
 
 // LGPD compliance endpoint
 app.get(
@@ -397,7 +429,10 @@ if (process.env.NODE_ENV !== 'production') {
     try {
       throw new Error('This is a test error for error tracking');
     } catch (error) {
-      errorTracker.captureException(error as Error, { requestId, endpoint: 'test' });
+      errorTracker.captureException(error as Error, {
+        requestId,
+        endpoint: 'test',
+      });
       return c.json({ message: 'Test error captured', requestId });
     }
   });
@@ -418,12 +453,15 @@ app.notFound(c => {
     ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
   });
 
-  return c.json({
-    error: 'Not Found',
-    message: 'The requested resource was not found',
-    requestId,
-    timestamp: new Date().toISOString(),
-  }, 404);
+  return c.json(
+    {
+      error: 'Not Found',
+      message: 'The requested resource was not found',
+      requestId,
+      timestamp: new Date().toISOString(),
+    },
+    404,
+  );
 });
 
 // Setup OpenAPI documentation

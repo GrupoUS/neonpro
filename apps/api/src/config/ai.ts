@@ -7,16 +7,36 @@ import { generateText, streamText } from 'ai';
 export type Provider = 'openai' | 'google' | 'anthropic';
 
 export const MODEL_REGISTRY = {
-  'gpt-5-mini': { provider: 'openai' as Provider, active: true, label: 'ChatGPT 5 Mini' },
-  'gemini-2.5-flash': { provider: 'google' as Provider, active: true, label: 'Gemini Flash 2.5' },
+  'gpt-5-mini': {
+    provider: 'openai' as Provider,
+    active: true,
+    label: 'ChatGPT 5 Mini',
+  },
+  'gemini-2.5-flash': {
+    provider: 'google' as Provider,
+    active: true,
+    label: 'Gemini Flash 2.5',
+  },
   'claude-3-5-sonnet': {
     provider: 'anthropic' as Provider,
     active: true,
     label: 'Claude 3.5 Sonnet',
   },
-  'gpt-4o-mini': { provider: 'openai' as Provider, active: false, label: 'GPT-4o Mini' },
-  'o4-mini': { provider: 'openai' as Provider, active: false, label: 'o4-mini' },
-  'gemini-1.5-pro': { provider: 'google' as Provider, active: false, label: 'Gemini 1.5 Pro' },
+  'gpt-4o-mini': {
+    provider: 'openai' as Provider,
+    active: false,
+    label: 'GPT-4o Mini',
+  },
+  'o4-mini': {
+    provider: 'openai' as Provider,
+    active: false,
+    label: 'o4-mini',
+  },
+  'gemini-1.5-pro': {
+    provider: 'google' as Provider,
+    active: false,
+    label: 'Gemini 1.5 Pro',
+  },
 } as const;
 
 export const DEFAULT_PRIMARY = 'gpt-5-mini' as const;
@@ -40,8 +60,14 @@ export async function streamWithFailover(opts: {
   maxOutputTokens?: number;
   mock?: boolean;
 }) {
-  const { model, allowExperimental, messages, temperature = 0.7, maxOutputTokens = 1000, mock } =
-    opts;
+  const {
+    model,
+    allowExperimental,
+    messages,
+    temperature = 0.7,
+    maxOutputTokens = 1000,
+    mock,
+  } = opts;
 
   const isActive = MODEL_REGISTRY[model]?.active;
   const chosen = isActive || allowExperimental ? model : DEFAULT_PRIMARY;
@@ -49,7 +75,11 @@ export async function streamWithFailover(opts: {
   if (mock) {
     const stream = new ReadableStream({
       start(controller) {
-        const chunks = ['Olá! ', 'Sou o assistente da NeonPro. ', 'Como posso ajudar você hoje?'];
+        const chunks = [
+          'Olá! ',
+          'Sou o assistente da NeonPro. ',
+          'Como posso ajudar você hoje?',
+        ];
         let i = 0;
         const id = setInterval(() => {
           controller.enqueue(new TextEncoder().encode(chunks[i]));
@@ -112,7 +142,14 @@ export async function generateWithFailover(opts: {
   maxOutputTokens?: number;
   mock?: boolean;
 }) {
-  const { model, prompt, allowExperimental, temperature = 0.7, maxOutputTokens = 400, mock } = opts;
+  const {
+    model,
+    prompt,
+    allowExperimental,
+    temperature = 0.7,
+    maxOutputTokens = 400,
+    mock,
+  } = opts;
   const isActive = MODEL_REGISTRY[model]?.active;
   const chosen = isActive || allowExperimental ? model : DEFAULT_PRIMARY;
 
@@ -121,7 +158,10 @@ export async function generateWithFailover(opts: {
     const text = `Explicação: ${prompt.slice(0, 80)}`;
     return {
       text,
-      headers: new Headers({ 'X-Chat-Model': 'mock:model', 'X-Data-Freshness': 'as-of-now' }),
+      headers: new Headers({
+        'X-Chat-Model': 'mock:model',
+        'X-Data-Freshness': 'as-of-now',
+      }),
     };
   }
 
@@ -135,7 +175,9 @@ export async function generateWithFailover(opts: {
     });
     return {
       text: result.text,
-      headers: new Headers({ 'X-Chat-Model': `${MODEL_REGISTRY[chosen].provider}:${chosen}` }),
+      headers: new Headers({
+        'X-Chat-Model': `${MODEL_REGISTRY[chosen].provider}:${chosen}`,
+      }),
     };
   } catch (primaryError) {
     console.error('Primary AI provider failed:', primaryError);
@@ -163,7 +205,9 @@ export async function getSuggestionsFromAI(query: string, webHints: string[]) {
     model: openai(DEFAULT_PRIMARY),
     prompt:
       `Com base na consulta "${query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Considere estas pistas da web (se houver): ${
-        webHints.join('; ')
+        webHints.join(
+          '; ',
+        )
       }. Responda apenas com lista separada por vírgulas, sem numeração.`,
     maxOutputTokens: 100,
   });

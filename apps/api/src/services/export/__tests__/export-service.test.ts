@@ -66,7 +66,10 @@ describe('ExportService', () => {
         consentRequired: false,
       };
 
-      const validateSpy = vi.spyOn(ExportLGPDCompliance, 'validateExportRequest');
+      const validateSpy = vi.spyOn(
+        ExportLGPDCompliance,
+        'validateExportRequest',
+      );
       validateSpy.mockResolvedValue({ valid: true });
 
       const job = await ExportService.createExportJob(
@@ -166,7 +169,10 @@ describe('ExportService', () => {
         lgpdOptions,
       );
 
-      const success = await ExportService.cancelExportJob(job.id, 'different-user');
+      const success = await ExportService.cancelExportJob(
+        job.id,
+        'different-user',
+      );
       expect(success).toBe(false);
     });
   });
@@ -207,21 +213,33 @@ describe('ExportService', () => {
     it('should return user export history', async () => {
       const userId = 'user123';
 
-      await ExportService.createExportJob(userId, 'csv', {}, { page: 1, limit: 10, offset: 0 }, {
-        anonymizeSensitiveFields: true,
-        excludeRestrictedFields: false,
-        purpose: 'DATA_EXPORT',
-        retentionDays: 30,
-        consentRequired: false,
-      });
+      await ExportService.createExportJob(
+        userId,
+        'csv',
+        {},
+        { page: 1, limit: 10, offset: 0 },
+        {
+          anonymizeSensitiveFields: true,
+          excludeRestrictedFields: false,
+          purpose: 'DATA_EXPORT',
+          retentionDays: 30,
+          consentRequired: false,
+        },
+      );
 
-      await ExportService.createExportJob(userId, 'xlsx', {}, { page: 1, limit: 10, offset: 0 }, {
-        anonymizeSensitiveFields: true,
-        excludeRestrictedFields: false,
-        purpose: 'DATA_EXPORT',
-        retentionDays: 30,
-        consentRequired: false,
-      });
+      await ExportService.createExportJob(
+        userId,
+        'xlsx',
+        {},
+        { page: 1, limit: 10, offset: 0 },
+        {
+          anonymizeSensitiveFields: true,
+          excludeRestrictedFields: false,
+          purpose: 'DATA_EXPORT',
+          retentionDays: 30,
+          consentRequired: false,
+        },
+      );
 
       const history = await ExportService.getExportHistory(userId, 10);
 
@@ -235,13 +253,19 @@ describe('ExportService', () => {
       const userId = 'user123';
 
       for (let i = 0; i < 5; i++) {
-        await ExportService.createExportJob(userId, 'csv', {}, { page: 1, limit: 10, offset: 0 }, {
-          anonymizeSensitiveFields: true,
-          excludeRestrictedFields: false,
-          purpose: 'DATA_EXPORT',
-          retentionDays: 30,
-          consentRequired: false,
-        });
+        await ExportService.createExportJob(
+          userId,
+          'csv',
+          {},
+          { page: 1, limit: 10, offset: 0 },
+          {
+            anonymizeSensitiveFields: true,
+            excludeRestrictedFields: false,
+            purpose: 'DATA_EXPORT',
+            retentionDays: 30,
+            consentRequired: false,
+          },
+        );
       }
 
       const history = await ExportService.getExportHistory(userId, 3);
@@ -263,7 +287,10 @@ describe('ExportService', () => {
         consentRequired: false,
       };
 
-      const validateSpy = vi.spyOn(ExportLGPDCompliance, 'validateExportRequest');
+      const validateSpy = vi.spyOn(
+        ExportLGPDCompliance,
+        'validateExportRequest',
+      );
       validateSpy.mockResolvedValue({ valid: true });
 
       const job = await ExportService.createExportJob(
@@ -304,7 +331,10 @@ describe('ExportService', () => {
         consentRequired: false,
       };
 
-      const validateSpy = vi.spyOn(ExportLGPDCompliance, 'validateExportRequest');
+      const validateSpy = vi.spyOn(
+        ExportLGPDCompliance,
+        'validateExportRequest',
+      );
       validateSpy.mockResolvedValue({ valid: true });
 
       const job = await ExportService.createExportJob(

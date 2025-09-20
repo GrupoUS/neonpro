@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from "react";
 
-type Theme = 'light' | 'dark' | 'system';
+type Theme = "light" | "dark" | "system";
 
-function resolveTheme(theme: Theme): 'light' | 'dark' {
-  if (theme === 'system') {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light';
+function resolveTheme(theme: Theme): "light" | "dark" {
+  if (theme === "system") {
+    return window.matchMedia &&
+      window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
   }
   return theme;
 }
@@ -14,9 +15,9 @@ function resolveTheme(theme: Theme): 'light' | 'dark' {
 export function useThemeBridge() {
   const [theme, setThemeState] = useState<Theme>(() => {
     try {
-      return (localStorage.getItem('neonpro-theme') as Theme) || 'dark';
+      return (localStorage.getItem("neonpro-theme") as Theme) || "dark";
     } catch {
-      return 'dark';
+      return "dark";
     }
   });
 
@@ -24,9 +25,9 @@ export function useThemeBridge() {
 
   useEffect(() => {
     try {
-      localStorage.setItem('neonpro-theme', theme);
+      localStorage.setItem("neonpro-theme", theme);
     } catch {}
-    document.documentElement.classList.toggle('dark', resolvedTheme === 'dark');
+    document.documentElement.classList.toggle("dark", resolvedTheme === "dark");
   }, [theme, resolvedTheme]);
 
   const setTheme = (next: Theme) => setThemeState(next);

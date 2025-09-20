@@ -6,8 +6,8 @@
 // Base healthcare error class
 export abstract class HealthcareError extends Error {
   public readonly errorCode: string;
-  public readonly complianceFramework: 'LGPD' | 'CFM' | 'ANVISA' | 'GENERAL';
-  public readonly severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  public readonly complianceFramework: "LGPD" | "CFM" | "ANVISA" | "GENERAL";
+  public readonly severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
   public readonly auditData: Record<string, any>;
   public readonly timestamp: string;
   public readonly operationContext?: string;
@@ -15,10 +15,10 @@ export abstract class HealthcareError extends Error {
   constructor(
     message: string,
     errorCode: string,
-    complianceFramework: 'LGPD' | 'CFM' | 'ANVISA' | 'GENERAL',
-    severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL',
+    complianceFramework: "LGPD" | "CFM" | "ANVISA" | "GENERAL",
+    severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL",
     auditData: Record<string, any> = {},
-    operationContext?: string
+    operationContext?: string,
   ) {
     super(message);
     this.name = this.constructor.name;
@@ -27,9 +27,9 @@ export abstract class HealthcareError extends Error {
     this.severity = severity;
     this.auditData = {
       ...auditData,
-      userId: auditData.userId || 'unknown',
-      clinicId: auditData.clinicId || 'unknown',
-      ipAddress: auditData.ipAddress || 'unknown',
+      userId: auditData.userId || "unknown",
+      clinicId: auditData.clinicId || "unknown",
+      ipAddress: auditData.ipAddress || "unknown",
     };
     this.timestamp = new Date().toISOString();
     this.operationContext = operationContext;
@@ -55,11 +55,11 @@ export class GeneralHealthcareError extends HealthcareError {
   constructor(
     message: string,
     errorCode: string,
-    severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL' = 'MEDIUM',
+    severity: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL" = "MEDIUM",
     auditData: Record<string, any> = {},
-    operationContext?: string
+    operationContext?: string,
   ) {
-    super(message, errorCode, 'GENERAL', severity, auditData, operationContext);
+    super(message, errorCode, "GENERAL", severity, auditData, operationContext);
   }
 }
 
@@ -69,15 +69,18 @@ export class LGPDComplianceError extends HealthcareError {
     message: string,
     errorCode: string,
     auditData: Record<string, any> = {},
-    operationContext?: string
+    operationContext?: string,
   ) {
-    super(message, errorCode, 'LGPD', 'HIGH', auditData, operationContext);
+    super(message, errorCode, "LGPD", "HIGH", auditData, operationContext);
   }
 }
 
 // Error handler utility functions
 export class HealthcareErrorHandler {
-  static handleError(error: unknown, context: Record<string, any> = {}): HealthcareError {
+  static handleError(
+    error: unknown,
+    context: Record<string, any> = {},
+  ): HealthcareError {
     if (error instanceof HealthcareError) {
       return error;
     }
@@ -85,19 +88,19 @@ export class HealthcareErrorHandler {
     if (error instanceof Error) {
       return new GeneralHealthcareError(
         error.message,
-        'UNKNOWN_HEALTHCARE_ERROR',
-        'MEDIUM',
+        "UNKNOWN_HEALTHCARE_ERROR",
+        "MEDIUM",
         context,
-        'Unknown operation'
+        "Unknown operation",
       );
     }
 
     return new GeneralHealthcareError(
-      'An unknown error occurred',
-      'UNKNOWN_ERROR',
-      'LOW',
+      "An unknown error occurred",
+      "UNKNOWN_ERROR",
+      "LOW",
       context,
-      'Unknown operation'
+      "Unknown operation",
     );
   }
 

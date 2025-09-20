@@ -80,7 +80,7 @@ describe('AI Optimization Contract Tests', () => {
         budgetLimits: {
           daily: 100,
           monthly: 2500,
-          perRequest: 0.50,
+          perRequest: 0.5,
         },
         costTracking: true,
         providerCostComparison: true,
@@ -103,7 +103,11 @@ describe('AI Optimization Contract Tests', () => {
     });
 
     it('MUST implement intelligent routing strategy', () => {
-      const validStrategies = ['cost-optimized', 'performance-optimized', 'balanced'];
+      const validStrategies = [
+        'cost-optimized',
+        'performance-optimized',
+        'balanced',
+      ];
       expect(validStrategies).toContain(aiOptimization.routing.strategy);
     });
 
@@ -142,15 +146,17 @@ describe('AI Optimization Contract Tests', () => {
       };
 
       // Cost-optimized strategy should prefer lower cost
-      const costOptimal = Object.entries(mockProviderMetrics)
-        .sort(([, a], [, b]) => a.cost - b.cost)[0][0];
+      const costOptimal = Object.entries(mockProviderMetrics).sort(
+        ([, a], [, b]) => a.cost - b.cost,
+      )[0][0];
       expect(costOptimal).toBe('anthropic');
 
       // Performance-optimized should prefer lower latency + high success rate
-      const perfOptimal = Object.entries(mockProviderMetrics)
-        .sort(([, a], [, b]) =>
-          (a.avgLatency * (2 - a.successRate)) - (b.avgLatency * (2 - b.successRate))
-        )[0][0];
+      const perfOptimal = Object.entries(mockProviderMetrics).sort(
+        ([, a], [, b]) =>
+          a.avgLatency * (2 - a.successRate)
+          - b.avgLatency * (2 - b.successRate),
+      )[0][0];
       expect(perfOptimal).toBe('azure');
     });
   });
@@ -167,7 +173,9 @@ describe('AI Optimization Contract Tests', () => {
 
     it('MUST set similarity threshold for cache hits', () => {
       expect(aiOptimization.caching.similarityThreshold).toBeGreaterThan(0.7);
-      expect(aiOptimization.caching.similarityThreshold).toBeLessThanOrEqual(1.0);
+      expect(aiOptimization.caching.similarityThreshold).toBeLessThanOrEqual(
+        1.0,
+      );
     });
 
     it('MUST limit cache size to prevent memory issues', () => {
@@ -198,7 +206,9 @@ describe('AI Optimization Contract Tests', () => {
       const mockSimilarityCheck = vi.fn().mockResolvedValue(0.92);
 
       const similarity = await mockSimilarityCheck();
-      expect(similarity).toBeGreaterThan(aiOptimization.caching.similarityThreshold);
+      expect(similarity).toBeGreaterThan(
+        aiOptimization.caching.similarityThreshold,
+      );
 
       // Should return cached response for similar query
       const shouldUseCache = similarity > aiOptimization.caching.similarityThreshold;
@@ -211,16 +221,22 @@ describe('AI Optimization Contract Tests', () => {
         ttl: aiOptimization.caching.ttl,
       };
 
-      const isExpired = (Date.now() - mockCacheEntry.timestamp) > mockCacheEntry.ttl;
+      const isExpired = Date.now() - mockCacheEntry.timestamp > mockCacheEntry.ttl;
       expect(isExpired).toBe(true);
     });
   });
 
   describe('Cost Optimization', () => {
     it('MUST enforce budget limits', () => {
-      expect(aiOptimization.costOptimization.budgetLimits.daily).toBeGreaterThan(0);
-      expect(aiOptimization.costOptimization.budgetLimits.monthly).toBeGreaterThan(0);
-      expect(aiOptimization.costOptimization.budgetLimits.perRequest).toBeGreaterThan(0);
+      expect(
+        aiOptimization.costOptimization.budgetLimits.daily,
+      ).toBeGreaterThan(0);
+      expect(
+        aiOptimization.costOptimization.budgetLimits.monthly,
+      ).toBeGreaterThan(0);
+      expect(
+        aiOptimization.costOptimization.budgetLimits.perRequest,
+      ).toBeGreaterThan(0);
     });
 
     it('MUST track costs across providers', () => {
@@ -259,7 +275,7 @@ describe('AI Optimization Contract Tests', () => {
         requestCount: 1234,
         avgCostPerRequest: 0.037,
         providerCosts: {
-          openai: { total: 25.30, requests: 687, avgCost: 0.037 },
+          openai: { total: 25.3, requests: 687, avgCost: 0.037 },
           anthropic: { total: 15.15, requests: 456, avgCost: 0.033 },
           azure: { total: 5.22, requests: 91, avgCost: 0.057 },
         },
@@ -283,12 +299,16 @@ describe('AI Optimization Contract Tests', () => {
     });
 
     it('MUST support required throughput', () => {
-      expect(aiOptimization.performance.throughputTarget).toBeGreaterThanOrEqual(100);
+      expect(
+        aiOptimization.performance.throughputTarget,
+      ).toBeGreaterThanOrEqual(100);
     });
 
     it('MUST limit concurrent requests', () => {
       expect(aiOptimization.performance.concurrencyLimit).toBeGreaterThan(0);
-      expect(aiOptimization.performance.concurrencyLimit).toBeLessThanOrEqual(20);
+      expect(aiOptimization.performance.concurrencyLimit).toBeLessThanOrEqual(
+        20,
+      );
     });
 
     it('MUST enable circuit breaker protection', () => {
@@ -307,7 +327,9 @@ describe('AI Optimization Contract Tests', () => {
         circuitBreakerStatus: 'closed',
       };
 
-      expect(mockPerformanceMetrics.avgLatency).toBeLessThan(aiOptimization.performance.maxLatency);
+      expect(mockPerformanceMetrics.avgLatency).toBeLessThan(
+        aiOptimization.performance.maxLatency,
+      );
       expect(mockPerformanceMetrics.throughput).toBeGreaterThanOrEqual(
         aiOptimization.performance.throughputTarget,
       );

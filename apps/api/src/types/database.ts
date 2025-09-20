@@ -69,7 +69,12 @@ export interface Database {
           appointment_date: string;
           appointment_time: string;
           duration: number;
-          status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+          status:
+            | 'scheduled'
+            | 'confirmed'
+            | 'completed'
+            | 'cancelled'
+            | 'no_show';
           notes?: string;
           created_at: string;
           updated_at: string;
@@ -82,7 +87,12 @@ export interface Database {
           appointment_date: string;
           appointment_time: string;
           duration: number;
-          status?: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+          status?:
+            | 'scheduled'
+            | 'confirmed'
+            | 'completed'
+            | 'cancelled'
+            | 'no_show';
           notes?: string;
           created_at?: string;
           updated_at?: string;
@@ -95,7 +105,12 @@ export interface Database {
           appointment_date?: string;
           appointment_time?: string;
           duration?: number;
-          status?: 'scheduled' | 'confirmed' | 'completed' | 'cancelled' | 'no_show';
+          status?:
+            | 'scheduled'
+            | 'confirmed'
+            | 'completed'
+            | 'cancelled'
+            | 'no_show';
           notes?: string;
           created_at?: string;
           updated_at?: string;
@@ -314,7 +329,13 @@ export interface Database {
 }
 
 // Export Json type for compatibility
-export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
 
 // Export convenience types
 export type Tables<T extends keyof Database['public']['Tables']> = Database['public']['Tables'][T];

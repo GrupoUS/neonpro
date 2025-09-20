@@ -3,12 +3,12 @@
  * Handles user role management, clinic associations, and permissions
  */
 
-import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/lib/supabase/types/database';
+import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/lib/supabase/types/database";
 
 // Type definitions
 // type ProfessionalRow = Database['public']['Tables']['professionals']['Row'];
-type StaffMemberRow = Database['public']['Tables']['staff_members']['Row'];
+type StaffMemberRow = Database["public"]["Tables"]["staff_members"]["Row"];
 
 export interface UserProfile {
   id: string;
@@ -45,7 +45,12 @@ export interface StaffInfo {
   avatarUrl: string | null;
 }
 
-export type UserRole = 'patient' | 'professional' | 'staff' | 'admin' | 'clinic_owner';
+export type UserRole =
+  | "patient"
+  | "professional"
+  | "staff"
+  | "admin"
+  | "clinic_owner";
 
 export interface UserPermissions {
   canViewAllAppointments: boolean;
@@ -64,79 +69,84 @@ class UserProfileService {
    * Get user profile with role and clinic information
    */
   async getUserProfile(userId: string): Promise<UserProfile> {
-    console.log('🔍 getUserProfile called for userId:', userId);
+    console.log("🔍 getUserProfile called for userId:", userId);
 
     // Handle fallback user case immediately
-    if (userId === 'fallback-user') {
-      console.log('🔧 Creating fallback profile for development');
+    if (userId === "fallback-user") {
+      console.log("🔧 Creating fallback profile for development");
       return this.createFallbackProfile(userId);
     }
 
     try {
       // Add timeout to all database operations
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Database operation timeout')), 5000)
+        setTimeout(() => reject(new Error("Database operation timeout")), 5000),
       );
 
       // First check if user is a professional
-      console.log('🔍 Checking for professional profile...');
+      console.log("🔍 Checking for professional profile...");
       const professionalPromise = supabase
-        .from('professionals')
-        .select(`
+        .from("professionals")
+        .select(
+          `
           *,
           clinics!inner(id, clinic_name)
-        `)
-        .eq('user_id', userId)
-        .eq('is_active', true)
+        `,
+        )
+        .eq("user_id", userId)
+        .eq("is_active", true)
         .single();
 
-      const { data: professional, error: profError } = await Promise.race([
+      const { data: professional, error: profError } = (await Promise.race([
         professionalPromise,
         timeoutPromise,
-      ]) as any;
+      ])) as any;
 
       if (professional && !profError) {
-        console.log('✅ Found professional profile:', professional.full_name);
+        console.log("✅ Found professional profile:", professional.full_name);
         return this.buildProfessionalProfile(professional);
       }
 
-      console.log('⚠️ No professional profile found, checking staff...');
+      console.log("⚠️ No professional profile found, checking staff...");
       // Check if user is staff member
       const staffPromise = supabase
-        .from('staff_members')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('is_active', true)
+        .from("staff_members")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("is_active", true)
         .single();
 
-      const { data: staff, error: staffError } = await Promise.race([
+      const { data: staff, error: staffError } = (await Promise.race([
         staffPromise,
         timeoutPromise,
-      ]) as any;
+      ])) as any;
 
       if (staff && !staffError) {
-        console.log('✅ Found staff profile:', staff.name);
+        console.log("✅ Found staff profile:", staff.name);
         return this.buildStaffProfile(staff);
       }
 
-      console.log('⚠️ No staff profile found, checking auth user...');
+      console.log("⚠️ No staff profile found, checking auth user...");
       // If not professional or staff, treat as patient
       // Get user info from auth.users
       const authPromise = supabase.auth.getUser();
-      const { data: authUser, error: authError } = await Promise.race([
+      const { data: authUser, error: authError } = (await Promise.race([
         authPromise,
         timeoutPromise,
-      ]) as any;
+      ])) as any;
 
       if (authError || !authUser.user) {
-        console.warn('⚠️ Could not get authenticated user, throwing error');
-        throw new Error('No authenticated user found');
+        console.warn("⚠️ Could not get authenticated user, throwing error");
+        throw new Error("No authenticated user found");
       }
 
-      console.log('✅ Found auth user, creating patient profile:', authUser.user.email);
+      console.log(
+        "✅ Found auth user, creating patient profile:",
+        authUser.user.email,
+      );
       return this.buildPatientProfile(authUser.user);
     } catch (error) {
-      console.error('❌ Error fetching user profile:', error);
+      console.error("❌ Error fetching user profile:", error);
       // Throw error instead of creating fallback to let caller handle it
       throw error;
     }
@@ -150,8 +160,8 @@ class UserProfileService {
 
     return {
       id: professional.user_id,
-      email: professional.email || '',
-      role: 'professional',
+      email: professional.email || "",
+      role: "professional",
       clinicId: professional.clinic_id,
       clinicName: professional.clinics?.clinic_name,
       fullName: professional.full_name,
@@ -181,18 +191,18 @@ class UserProfileService {
     const anyStaff = staff as any;
 
     return {
-      id: anyStaff.user_id || '',
-      email: anyStaff.email || '',
+      id: anyStaff.user_id || "",
+      email: anyStaff.email || "",
       role: this.mapStaffRole(anyStaff.role),
-      clinicId: '', // Staff members don't have direct clinic association in current schema
-      fullName: anyStaff.full_name || anyStaff.name || '',
+      clinicId: "", // Staff members don't have direct clinic association in current schema
+      fullName: anyStaff.full_name || anyStaff.name || "",
       permissions,
       staffInfo: {
         id: anyStaff.id,
         role: anyStaff.role,
-        specialization: anyStaff.specialization || '',
-        crmNumber: anyStaff.crm_number || '',
-        avatarUrl: anyStaff.avatar_url || '',
+        specialization: anyStaff.specialization || "",
+        crmNumber: anyStaff.crm_number || "",
+        avatarUrl: anyStaff.avatar_url || "",
       },
     };
   }
@@ -205,10 +215,10 @@ class UserProfileService {
 
     return {
       id: authUser.id,
-      email: authUser.email || '',
-      role: 'patient',
-      clinicId: '', // Patients don't have a fixed clinic association
-      fullName: authUser.user_metadata?.full_name || authUser.email || '',
+      email: authUser.email || "",
+      role: "patient",
+      clinicId: "", // Patients don't have a fixed clinic association
+      fullName: authUser.user_metadata?.full_name || authUser.email || "",
       permissions,
     };
   }
@@ -221,25 +231,25 @@ class UserProfileService {
 
     return {
       id: userId,
-      email: 'dev@neonpro.com',
-      role: 'professional',
-      clinicId: '89084c3a-9200-4058-a15a-b440d3c60687', // Default clinic ID
-      clinicName: 'Clínica NeonPro',
-      fullName: 'Usuário de Desenvolvimento',
+      email: "dev@neonpro.com",
+      role: "professional",
+      clinicId: "89084c3a-9200-4058-a15a-b440d3c60687", // Default clinic ID
+      clinicName: "Clínica NeonPro",
+      fullName: "Usuário de Desenvolvimento",
       permissions,
       professionalInfo: {
-        id: 'dev-professional-id',
-        specialization: 'Estética Geral',
-        licenseNumber: 'DEV-001',
+        id: "dev-professional-id",
+        specialization: "Estética Geral",
+        licenseNumber: "DEV-001",
         serviceTypeIds: [],
         workingHours: {
-          startTime: '08:00',
-          endTime: '18:00',
-          breakStart: '12:00',
-          breakEnd: '13:00',
+          startTime: "08:00",
+          endTime: "18:00",
+          breakStart: "12:00",
+          breakEnd: "13:00",
         },
         canWorkWeekends: false,
-        color: '#3b82f6',
+        color: "#3b82f6",
       },
     };
   }
@@ -278,8 +288,8 @@ class UserProfileService {
     };
 
     switch (role.toLowerCase()) {
-      case 'admin':
-      case 'clinic_admin':
+      case "admin":
+      case "clinic_admin":
         return {
           ...basePermissions,
           canViewAllAppointments: true,
@@ -292,8 +302,8 @@ class UserProfileService {
           canManageStaff: true,
           canManageSettings: true,
         };
-      case 'receptionist':
-      case 'secretary':
+      case "receptionist":
+      case "secretary":
         return {
           ...basePermissions,
           canViewAllAppointments: true,
@@ -302,8 +312,8 @@ class UserProfileService {
           canViewPatients: true,
           canEditPatients: true,
         };
-      case 'nurse':
-      case 'assistant':
+      case "nurse":
+      case "assistant":
         return {
           ...basePermissions,
           canViewAllAppointments: true,
@@ -337,20 +347,23 @@ class UserProfileService {
    */
   private mapStaffRole(staffRole: string): UserRole {
     switch (staffRole.toLowerCase()) {
-      case 'admin':
-      case 'clinic_admin':
-        return 'admin';
-      case 'clinic_owner':
-        return 'clinic_owner';
+      case "admin":
+      case "clinic_admin":
+        return "admin";
+      case "clinic_owner":
+        return "clinic_owner";
       default:
-        return 'staff';
+        return "staff";
     }
   }
 
   /**
    * Check if user has specific permission
    */
-  hasPermission(userProfile: UserProfile, permission: keyof UserPermissions): boolean {
+  hasPermission(
+    userProfile: UserProfile,
+    permission: keyof UserPermissions,
+  ): boolean {
     return userProfile.permissions[permission];
   }
 
@@ -366,7 +379,7 @@ class UserProfileService {
       // In future, could support multi-clinic access
       return profile.clinicId ? [profile.clinicId] : [];
     } catch (error) {
-      console.error('Error getting accessible clinics:', error);
+      console.error("Error getting accessible clinics:", error);
       return [];
     }
   }

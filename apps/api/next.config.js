@@ -14,11 +14,7 @@ const nextConfig = {
   },
 
   // Basic server external packages
-  serverExternalPackages: [
-    'crypto-js',
-    'jose',
-    'node-forge',
-  ],
+  serverExternalPackages: ['crypto-js', 'jose', 'node-forge'],
 
   // No custom webpack configuration for now
   typescript: {

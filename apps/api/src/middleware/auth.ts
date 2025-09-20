@@ -18,39 +18,49 @@ import { unauthorized } from '../utils/responses';
 // Healthcare professional validation schema
 const healthcareProfessionalSchema = z.object({
   id: z.string().uuid(),
-  crmNumber: z.string().regex(/^\d{4,6}-[A-Z]{2}$/, 'Número CRM inválido (formato: 12345-SP)'),
+  crmNumber: z
+    .string()
+    .regex(/^\d{4,6}-[A-Z]{2}$/, 'Número CRM inválido (formato: 12345-SP)'),
   specialty: z.string().min(1, 'Especialidade é obrigatória'),
   licenseStatus: z.enum(['active', 'suspended', 'expired']).default('active'),
   verificationDate: z.date().optional(),
-  permissions: z.object({
-    canAccessAI: z.boolean().default(false),
-    canViewPatientData: z.boolean().default(false),
-    canModifyPatientData: z.boolean().default(false),
-    canAccessReports: z.boolean().default(false),
-  }).optional(),
+  permissions: z
+    .object({
+      canAccessAI: z.boolean().default(false),
+      canViewPatientData: z.boolean().default(false),
+      canModifyPatientData: z.boolean().default(false),
+      canAccessReports: z.boolean().default(false),
+    })
+    .optional(),
 });
 
-export type HealthcareProfessional = z.infer<typeof healthcareProfessionalSchema>;
+export type HealthcareProfessional = z.infer<
+  typeof healthcareProfessionalSchema
+>;
 
 // LGPD consent schema
 const lgpdConsentSchema = z.object({
   userId: z.string().uuid(),
   consentDate: z.date(),
   consentVersion: z.string().default('1.0'),
-  purposes: z.array(z.enum([
-    'healthcare_service',
-    'ai_assistance',
-    'data_analytics',
-    'notifications',
-    'marketing',
-  ])),
-  dataCategories: z.array(z.enum([
-    'personal_data',
-    'health_data',
-    'contact_data',
-    'usage_data',
-    'technical_data',
-  ])),
+  purposes: z.array(
+    z.enum([
+      'healthcare_service',
+      'ai_assistance',
+      'data_analytics',
+      'notifications',
+      'marketing',
+    ]),
+  ),
+  dataCategories: z.array(
+    z.enum([
+      'personal_data',
+      'health_data',
+      'contact_data',
+      'usage_data',
+      'technical_data',
+    ]),
+  ),
   retentionPeriod: z.number().min(1).max(3650).default(365), // days
   canWithdraw: z.boolean().default(true),
   isActive: z.boolean().default(true),
@@ -246,19 +256,24 @@ export function requireHealthcareProfessional() {
       // Query healthcare professional data from database
       const { data: healthcareProfessional, error } = await supabase
         .from('healthcare_professionals')
-        .select(`
+        .select(
+          `
           *,
           permissions:healthcare_professional_permissions(*)
-        `)
+        `,
+        )
         .eq('user_id', userId)
         .single();
 
       if (error || !healthcareProfessional) {
-        return c.json({
-          success: false,
-          error: 'Profissional de saúde não encontrado',
-          code: 'HEALTHCARE_PROFESSIONAL_NOT_FOUND',
-        }, 404);
+        return c.json(
+          {
+            success: false,
+            error: 'Profissional de saúde não encontrado',
+            code: 'HEALTHCARE_PROFESSIONAL_NOT_FOUND',
+          },
+          404,
+        );
       }
 
       // Transform database record to match schema
@@ -277,15 +292,20 @@ export function requireHealthcareProfessional() {
       };
 
       // Validate healthcare professional data
-      const validatedProfessional = healthcareProfessionalSchema.parse(transformedProfessional);
+      const validatedProfessional = healthcareProfessionalSchema.parse(
+        transformedProfessional,
+      );
 
       // Check license status
       if (validatedProfessional.licenseStatus !== 'active') {
-        return c.json({
-          success: false,
-          error: 'Licença profissional inativa ou suspensa',
-          code: 'INACTIVE_LICENSE',
-        }, 403);
+        return c.json(
+          {
+            success: false,
+            error: 'Licença profissional inativa ou suspensa',
+            code: 'INACTIVE_LICENSE',
+          },
+          403,
+        );
       }
 
       // Update session with healthcare professional info
@@ -305,11 +325,14 @@ export function requireHealthcareProfessional() {
       return next();
     } catch (error) {
       console.error('Healthcare professional validation error:', error);
-      return c.json({
-        success: false,
-        error: 'Validação de profissional de saúde falhou',
-        code: 'HEALTHCARE_VALIDATION_FAILED',
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          error: 'Validação de profissional de saúde falhou',
+          code: 'HEALTHCARE_VALIDATION_FAILED',
+        },
+        403,
+      );
     }
   };
 }
@@ -339,11 +362,14 @@ export function requireLGPDConsent(
         .limit(1);
 
       if (error || !consentRecords || consentRecords.length === 0) {
-        return c.json({
-          success: false,
-          error: 'Consentimento LGPD não encontrado',
-          code: 'LGPD_CONSENT_NOT_FOUND',
-        }, 404);
+        return c.json(
+          {
+            success: false,
+            error: 'Consentimento LGPD não encontrado',
+            code: 'LGPD_CONSENT_NOT_FOUND',
+          },
+          404,
+        );
       }
 
       const consentRecord = consentRecords[0];
@@ -365,11 +391,14 @@ export function requireLGPDConsent(
 
       // Check if consent is active
       if (!validatedConsent.isActive) {
-        return c.json({
-          success: false,
-          error: 'Consentimento LGPD retirado ou inativo',
-          code: 'LGPD_CONSENT_WITHDRAWN',
-        }, 403);
+        return c.json(
+          {
+            success: false,
+            error: 'Consentimento LGPD retirado ou inativo',
+            code: 'LGPD_CONSENT_WITHDRAWN',
+          },
+          403,
+        );
       }
 
       // Check required purposes
@@ -378,15 +407,18 @@ export function requireLGPDConsent(
       );
 
       if (missingPurposes.length > 0) {
-        return c.json({
-          success: false,
-          error: 'Consentimento LGPD insuficiente',
-          code: 'LGPD_INSUFFICIENT_CONSENT',
-          details: {
-            missingPurposes,
-            requiredPurposes,
+        return c.json(
+          {
+            success: false,
+            error: 'Consentimento LGPD insuficiente',
+            code: 'LGPD_INSUFFICIENT_CONSENT',
+            details: {
+              missingPurposes,
+              requiredPurposes,
+            },
           },
-        }, 403);
+          403,
+        );
       }
 
       // Check required data categories
@@ -395,15 +427,18 @@ export function requireLGPDConsent(
       );
 
       if (missingDataCategories.length > 0) {
-        return c.json({
-          success: false,
-          error: 'Consentimento LGPD insuficiente para categorias de dados',
-          code: 'LGPD_INSUFFICIENT_DATA_CONSENT',
-          details: {
-            missingDataCategories,
-            requiredDataCategories,
+        return c.json(
+          {
+            success: false,
+            error: 'Consentimento LGPD insuficiente para categorias de dados',
+            code: 'LGPD_INSUFFICIENT_DATA_CONSENT',
+            details: {
+              missingDataCategories,
+              requiredDataCategories,
+            },
           },
-        }, 403);
+          403,
+        );
       }
 
       // Update session with LGPD consent info
@@ -423,11 +458,14 @@ export function requireLGPDConsent(
       return next();
     } catch (error) {
       console.error('LGPD consent validation error:', error);
-      return c.json({
-        success: false,
-        error: 'Validação de consentimento LGPD falhou',
-        code: 'LGPD_VALIDATION_FAILED',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Validação de consentimento LGPD falhou',
+          code: 'LGPD_VALIDATION_FAILED',
+        },
+        500,
+      );
     }
   };
 }
@@ -444,7 +482,10 @@ export function requireAIAccess() {
     }
 
     // Then require LGPD consent for AI assistance
-    const lgpdMiddleware = requireLGPDConsent(['ai_assistance'], ['health_data']);
+    const lgpdMiddleware = requireLGPDConsent(
+      ['ai_assistance'],
+      ['health_data'],
+    );
     const lgpdResult = await lgpdMiddleware(c, async () => {});
 
     if (lgpdResult) {
@@ -452,13 +493,18 @@ export function requireAIAccess() {
     }
 
     // Check AI access permission
-    const healthcareProfessional = c.get('healthcareProfessional') as HealthcareProfessional;
+    const healthcareProfessional = c.get(
+      'healthcareProfessional',
+    ) as HealthcareProfessional;
     if (!healthcareProfessional?.permissions?.canAccessAI) {
-      return c.json({
-        success: false,
-        error: 'Acesso a recursos de IA não autorizado',
-        code: 'AI_ACCESS_DENIED',
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          error: 'Acesso a recursos de IA não autorizado',
+          code: 'AI_ACCESS_DENIED',
+        },
+        403,
+      );
     }
 
     // Add AI access permission to session

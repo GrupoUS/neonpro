@@ -182,6 +182,4 @@ neonpro/
 | **Tailwind CSS**    | ^3.3.0  | Styling framework | Rapid development, healthcare design tokens  |
 | **shadcn/ui**       | v4      | Component library | WCAG 2.1 AA compliance, healthcare optimized |
 
-
 <!-- Link added to simplified UI architecture guide -->
-

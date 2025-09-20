@@ -13,9 +13,13 @@
  * - CFM professional license validation
  */
 
-import { createDataSubjectRequest } from '@neonpro/shared';
-import { anonymizePatientData, createPatientWithDefaults, Patient } from '@neonpro/shared';
-import { validatePatientData } from '@neonpro/shared';
+import { validatePatientData } from '../../../../packages/shared/src';
+import { createDataSubjectRequest } from '../../../../packages/shared/src/types/lgpd-consent';
+import {
+  anonymizePatientData,
+  createPatientWithDefaults,
+  Patient,
+} from '../../../../packages/shared/src/types/patient';
 import {
   createPrismaWithContext,
   getHealthcarePrismaClient,
@@ -140,7 +144,9 @@ export class PatientService {
   /**
    * Create a new patient with LGPD compliance
    */
-  async createPatient(patientData: Partial<Patient>): Promise<ServiceResponse<Patient>> {
+  async createPatient(
+    patientData: Partial<Patient>,
+  ): Promise<ServiceResponse<Patient>> {
     try {
       // Validate patient data
       const validation = validatePatientData({
@@ -159,7 +165,7 @@ export class PatientService {
       }
 
       // Validate healthcare context
-      if (!await this.prismaClient.validateContext()) {
+      if (!(await this.prismaClient.validateContext())) {
         throw new HealthcareComplianceError(
           'Invalid healthcare context for patient creation',
           'CONTEXT_VALIDATION_FAILED',
@@ -255,7 +261,7 @@ export class PatientService {
   async getPatientById(patientId: string): Promise<ServiceResponse<Patient>> {
     try {
       // Validate healthcare context
-      if (!await this.prismaClient.validateContext()) {
+      if (!(await this.prismaClient.validateContext())) {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for patient access',
           'patient',
@@ -318,13 +324,22 @@ export class PatientService {
   /**
    * List patients with pagination and filtering - Updated for real database
    */
-  async listPatients(options: SearchOptions): Promise<ServiceResponse<PatientListResponse>> {
+  async listPatients(
+    options: SearchOptions,
+  ): Promise<ServiceResponse<PatientListResponse>> {
     try {
-      const { userId, page, limit, search, filters = {}, sortBy = 'fullName', sortOrder = 'asc' } =
-        options;
+      const {
+        userId,
+        page,
+        limit,
+        search,
+        filters = {},
+        sortBy = 'fullName',
+        sortOrder = 'asc',
+      } = options;
 
       // Validate healthcare context
-      if (!await this.prismaClient.validateContext()) {
+      if (!(await this.prismaClient.validateContext())) {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for patient listing',
           'patient_list',
@@ -463,7 +478,8 @@ export class PatientService {
   private convertPrismaToPatient(record: any): Patient {
     return {
       id: record.id,
-      name: record.fullName || `${record.givenNames?.join(' ')} ${record.familyName}`,
+      name: record.fullName
+        || `${record.givenNames?.join(' ')} ${record.familyName}`,
       cpf: record.cpf || '',
       email: record.email || '',
       phone: record.phonePrimary || '',
@@ -482,7 +498,9 @@ export class PatientService {
         dataProcessing: record.lgpdConsentGiven || false,
         marketing: record.marketingConsent || false,
         analytics: record.researchConsent || false,
-        consentDate: record.dataConsentDate ? new Date(record.dataConsentDate) : new Date(),
+        consentDate: record.dataConsentDate
+          ? new Date(record.dataConsentDate)
+          : new Date(),
         ipAddress: 'system',
         userAgent: 'api-system',
         legalBasis: 'consent',
@@ -556,7 +574,7 @@ export class PatientService {
   async findPatientByCPF(cpf: string): Promise<ServiceResponse<Patient>> {
     try {
       // Validate healthcare context
-      if (!await this.prismaClient.validateContext()) {
+      if (!(await this.prismaClient.validateContext())) {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for CPF search',
           'patient_cpf',
@@ -611,7 +629,7 @@ export class PatientService {
   ): Promise<ServiceResponse<Patient>> {
     try {
       // Validate healthcare context
-      if (!await this.prismaClient.validateContext()) {
+      if (!(await this.prismaClient.validateContext())) {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for patient update',
           'patient',
@@ -643,17 +661,24 @@ export class PatientService {
         if (!emailRegex.test(updateData.email)) {
           return {
             success: false,
-            errors: [{ field: 'email', message: 'E-mail inválido', code: 'INVALID' }],
+            errors: [
+              { field: 'email', message: 'E-mail inválido', code: 'INVALID' },
+            ],
           };
         }
       }
 
-      if (updateData.phone && updateData.phone !== existingPatient.phonePrimary) {
+      if (
+        updateData.phone
+        && updateData.phone !== existingPatient.phonePrimary
+      ) {
         const phoneRegex = /^\(\d{2}\)\s\d{4,5}-\d{4}$/;
         if (!phoneRegex.test(updateData.phone)) {
           return {
             success: false,
-            errors: [{ field: 'phone', message: 'Telefone inválido', code: 'INVALID' }],
+            errors: [
+              { field: 'phone', message: 'Telefone inválido', code: 'INVALID' },
+            ],
           };
         }
       }
@@ -705,7 +730,7 @@ export class PatientService {
   async deletePatient(patientId: string): Promise<ServiceResponse> {
     try {
       // Validate healthcare context
-      if (!await this.prismaClient.validateContext()) {
+      if (!(await this.prismaClient.validateContext())) {
         throw new UnauthorizedHealthcareAccessError(
           'Invalid healthcare context for patient deletion',
           'patient',

@@ -103,11 +103,17 @@ export class LGPDComplianceHelper {
     let sanitized = text;
 
     // Remove CPF patterns
-    sanitized = sanitized.replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, '[CPF_REMOVED]');
+    sanitized = sanitized.replace(
+      /\d{3}\.\d{3}\.\d{3}-\d{2}/g,
+      '[CPF_REMOVED]',
+    );
     sanitized = sanitized.replace(/\d{11}/g, '[CPF_REMOVED]');
 
     // Remove phone patterns
-    sanitized = sanitized.replace(/\(\d{2}\)\s*\d{4,5}-\d{4}/g, '[PHONE_REMOVED]');
+    sanitized = sanitized.replace(
+      /\(\d{2}\)\s*\d{4,5}-\d{4}/g,
+      '[PHONE_REMOVED]',
+    );
     sanitized = sanitized.replace(/\d{2}\s*\d{4,5}-\d{4}/g, '[PHONE_REMOVED]');
 
     // Remove email patterns
@@ -117,7 +123,10 @@ export class LGPDComplianceHelper {
     );
 
     // Remove RG patterns
-    sanitized = sanitized.replace(/\d{1,2}\.\d{3}\.\d{3}-\d{1}/g, '[RG_REMOVED]');
+    sanitized = sanitized.replace(
+      /\d{1,2}\.\d{3}\.\d{3}-\d{1}/g,
+      '[RG_REMOVED]',
+    );
 
     // Remove addresses (basic patterns)
     sanitized = sanitized.replace(/\b\d{5}-?\d{3}\b/g, '[CEP_REMOVED]');
@@ -144,10 +153,7 @@ export class LGPDComplianceHelper {
           patientId,
           purpose,
           status: 'given',
-          OR: [
-            { expiresAt: null },
-            { expiresAt: { gte: new Date() } },
-          ],
+          OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }],
         },
       });
 
@@ -156,7 +162,9 @@ export class LGPDComplianceHelper {
       }
 
       // Check if all required data categories are covered
-      const consentedCategories = consentRecords.flatMap(record => record.dataCategories);
+      const consentedCategories = consentRecords.flatMap(
+        record => record.dataCategories,
+      );
       const missingCategories = dataCategories.filter(
         category => !consentedCategories.includes(category),
       );
@@ -500,7 +508,9 @@ export class PatientDataHelper {
   static generateMedicalRecordNumber(clinicId: string): string {
     const prefix = clinicId.substring(0, 4).toUpperCase();
     const timestamp = Date.now().toString().slice(-6);
-    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    const random = Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, '0');
 
     return `${prefix}${timestamp}${random}`;
   }
@@ -536,5 +546,3 @@ export class PatientDataHelper {
     };
   }
 }
-
-

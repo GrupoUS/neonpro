@@ -1,21 +1,26 @@
 # Task Generation Workflow
 
 ## Description
+
 Generate atomic tasks from PRDs and implementation plans with TDD enforcement, constitutional compliance, and healthcare validation for NeonPro platform.
 
 ## Category
+
 Development
 
 ## Complexity
+
 Medium
 
 ## MCP Tools Required
+
 - archon
 - serena
 
 ## Execution Flow
 
 ### Phase 1: Input Analysis and Preparation
+
 1. **PRD and Plan Loading**
    - Load Product Requirements Document from Archon
    - Read implementation plan and technical specifications
@@ -29,6 +34,7 @@ Medium
    - Map healthcare compliance constraints
 
 ### Phase 2: Task Analysis and Design
+
 1. **Feature Breakdown**
    - Analyze feature components and modules
    - Identify data models and entities
@@ -44,6 +50,7 @@ Medium
    - Polish tasks (optimization, documentation, monitoring)
 
 ### Phase 3: TDD-First Task Generation
+
 1. **Test Task Creation**
    - Create contract test tasks for all endpoints
    - Generate model validation test tasks
@@ -58,6 +65,7 @@ Medium
    - Define task dependencies and sequencing
 
 ### Phase 4: Constitutional Compliance Integration
+
 1. **Testing Commitments**
    - Add tasks for RED first development
    - Include contract and integration test tasks
@@ -89,6 +97,7 @@ Medium
    - Ensure KISS/YAGNI compliance
 
 ### Phase 5: Parallelization and Optimization
+
 1. **Task Dependency Analysis**
    - Identify independent tasks that can run in parallel
    - Mark parallelizable tasks with [P] annotation
@@ -102,6 +111,7 @@ Medium
    - Plan for resource constraints
 
 ### Phase 6: Validation and Quality Assurance
+
 1. **Task Completeness Validation**
    - Verify all PRD requirements have corresponding tasks
    - Check all implementation plan components are covered
@@ -121,6 +131,7 @@ Medium
    - Ensure critical path is optimized
 
 ### Phase 7: Documentation and Integration
+
 1. **Task Documentation**
    - Create comprehensive tasks.md file
    - Include task descriptions, dependencies, and acceptance criteria
@@ -134,12 +145,14 @@ Medium
    - Enable knowledge base integration
 
 ## Input Parameters
+
 - **prd_id**: Archon document ID for the Product Requirements Document
 - **plan_id**: Archon document ID for the implementation plan
 - **feature_directory**: Path to the feature specification directory
 - **complexity_threshold**: Maximum allowed complexity per task
 
 ## Output Requirements
+
 - **tasks.md**: Comprehensive task list with numbering and dependencies
 - **task_dependencies.json**: Machine-readable task dependency graph
 - **parallel_groups.json**: Groups of tasks that can be executed in parallel
@@ -147,6 +160,7 @@ Medium
 - **archon_tasks**: Tasks created in Archon with proper metadata and links
 
 ## Quality Gates
+
 - **Contract Coverage**: Every endpoint in contracts/ has a preceding contract test task
 - **Model Coverage**: Every entity in data-model.md has a model creation + validation test task
 - **Scenario Coverage**: Every PRD user scenario → integration test task (RED first)
@@ -164,6 +178,7 @@ Medium
 - **JSON Summary Integrity**: Summary arrays lengths match number of tasks & IDs sequential (T001..Tnn)
 
 ## Error Handling
+
 - **Missing PRD/Plan**: Abort with error indicating required input documents
 - **Constitutional Violations**: Report specific violations and halt execution
 - **Complexity Threshold Exceeded**: Split complex tasks or adjust threshold
@@ -171,6 +186,7 @@ Medium
 - **Parallelization Conflicts**: Identify file conflicts and adjust [P] markings
 
 ## Success Criteria
+
 - **Complete Coverage**: All PRD requirements and plan components have corresponding tasks
 - **TDD Compliance**: All implementation tasks have corresponding test tasks defined first
 - **Constitutional Compliance**: All constitutional commitments are enforced through specific tasks
@@ -180,6 +196,7 @@ Medium
 - **Quality Assurance**: All quality gates passed with validation evidence
 
 ## Constitutional Compliance
+
 - **KISS/YAGNI**: Tasks are simple and necessary, no over-engineering
 - **Test-First**: All implementation tasks have corresponding test tasks (RED before GREEN)
 - **Architecture**: Tasks respect architectural boundaries and library constraints
@@ -187,6 +204,7 @@ Medium
 - **Observability**: Logging and monitoring tasks included for all new components
 
 ## Integration Points
+
 - **Archon**: Persistent storage of task lists and linking to PRDs/plans
 - **Serena**: Code analysis and validation for task dependencies and complexity
 - **Desktop Commander**: File system operations for task documentation and validation

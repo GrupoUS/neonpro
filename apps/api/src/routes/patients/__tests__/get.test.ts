@@ -179,7 +179,9 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
 
       const response = await getRoute.request(mockRequest);
 
-      expect(response.headers.get('Cache-Control')).toBe('private, max-age=600');
+      expect(response.headers.get('Cache-Control')).toBe(
+        'private, max-age=600',
+      );
       expect(response.headers.get('ETag')).toBeDefined();
     });
   });
@@ -405,7 +407,9 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should handle service errors gracefully', async () => {
-      mockPatientService.getPatientById.mockRejectedValue(new Error('Database connection failed'));
+      mockPatientService.getPatientById.mockRejectedValue(
+        new Error('Database connection failed'),
+      );
 
       const { default: getRoute } = await import('../get');
 
@@ -426,7 +430,9 @@ describe('GET /api/v2/patients/{id} endpoint (T045)', () => {
     });
 
     it('should handle audit logging failures gracefully', async () => {
-      mockAuditService.logActivity.mockRejectedValue(new Error('Audit service unavailable'));
+      mockAuditService.logActivity.mockRejectedValue(
+        new Error('Audit service unavailable'),
+      );
 
       const { default: getRoute } = await import('../get');
 

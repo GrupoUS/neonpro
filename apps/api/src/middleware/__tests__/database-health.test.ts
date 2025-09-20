@@ -40,7 +40,11 @@ vi.mock('../services/database-performance', () => ({
     getQueryMonitor() {
       return {
         recordQuery: vi.fn(),
-        getStats: () => ({ averageDuration: 75, slowQueries: 2, totalQueries: 100 }),
+        getStats: () => ({
+          averageDuration: 75,
+          slowQueries: 2,
+          totalQueries: 100,
+        }),
       };
     }
   },
@@ -176,7 +180,8 @@ describe('DatabaseHealthMonitor', () => {
 
       // Should calculate slow query rate
       const expectedSlowQueryRate =
-        (queryHealth.metrics.slowQueries / queryHealth.metrics.totalQueries) * 100;
+        (queryHealth.metrics.slowQueries / queryHealth.metrics.totalQueries)
+        * 100;
       expect(queryHealth.metrics.slowQueryRate).toBe(expectedSlowQueryRate);
     });
 
@@ -236,7 +241,11 @@ describe('DatabaseHealthMonitor', () => {
         }),
         getQueryMonitor: () => ({
           recordQuery: vi.fn(),
-          getStats: () => ({ averageDuration: 250, slowQueries: 20, totalQueries: 100 }),
+          getStats: () => ({
+            averageDuration: 250,
+            slowQueries: 20,
+            totalQueries: 100,
+          }),
         }),
       };
 
@@ -247,7 +256,9 @@ describe('DatabaseHealthMonitor', () => {
       expect(health.status).toBe('critical');
       expect(health.alerts.length).toBeGreaterThan(0);
 
-      const criticalAlerts = health.alerts.filter(alert => alert.severity === 'critical');
+      const criticalAlerts = health.alerts.filter(
+        alert => alert.severity === 'critical',
+      );
       expect(criticalAlerts.length).toBeGreaterThan(0);
 
       health.alerts.forEach(alert => {
@@ -258,7 +269,9 @@ describe('DatabaseHealthMonitor', () => {
         expect(alert).toHaveProperty('timestamp');
         expect(alert).toHaveProperty('healthcareImpact');
 
-        expect(['performance', 'compliance', 'connection', 'query']).toContain(alert.type);
+        expect(['performance', 'compliance', 'connection', 'query']).toContain(
+          alert.type,
+        );
         expect(['warning', 'critical']).toContain(alert.severity);
         expect(typeof alert.healthcareImpact).toBe('string');
       });
@@ -290,14 +303,20 @@ describe('DatabaseHealthMonitor', () => {
         }),
         getQueryMonitor: () => ({
           recordQuery: vi.fn(),
-          getStats: () => ({ averageDuration: 75, slowQueries: 2, totalQueries: 100 }),
+          getStats: () => ({
+            averageDuration: 75,
+            slowQueries: 2,
+            totalQueries: 100,
+          }),
         }),
       };
 
       monitor['performanceService'] = mockService as any;
 
       const health = await monitor.getCurrentHealth();
-      const complianceAlerts = health.alerts.filter(alert => alert.type === 'compliance');
+      const complianceAlerts = health.alerts.filter(
+        alert => alert.type === 'compliance',
+      );
 
       if (complianceAlerts.length > 0) {
         complianceAlerts.forEach(alert => {
@@ -337,7 +356,11 @@ describe('DatabaseHealthMonitor', () => {
         }),
         getQueryMonitor: () => ({
           recordQuery: vi.fn(),
-          getStats: () => ({ averageDuration: 250, slowQueries: 20, totalQueries: 100 }),
+          getStats: () => ({
+            averageDuration: 250,
+            slowQueries: 20,
+            totalQueries: 100,
+          }),
         }),
       };
 
@@ -376,7 +399,10 @@ describe('Database Health Middleware', () => {
 
       await middleware(mockContext, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('databaseHealthMonitor', expect.any(Object));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'databaseHealthMonitor',
+        expect.any(Object),
+      );
       expect(mockNext).toHaveBeenCalled();
     });
   });
@@ -485,7 +511,9 @@ describe('Healthcare Health Thresholds', () => {
 
     // All thresholds should be reasonable for healthcare
     expect(queryThresholds.patientQueries.critical).toBeLessThanOrEqual(100); // Sub-100ms for critical
-    expect(queryThresholds.appointmentQueries.critical).toBeLessThanOrEqual(150);
+    expect(queryThresholds.appointmentQueries.critical).toBeLessThanOrEqual(
+      150,
+    );
     expect(queryThresholds.generalQueries.critical).toBeLessThanOrEqual(200);
   });
 
@@ -494,10 +522,16 @@ describe('Healthcare Health Thresholds', () => {
 
     // LGPD compliance should be very high
     expect(complianceThresholds.lgpdQueries.warning).toBeGreaterThanOrEqual(90);
-    expect(complianceThresholds.lgpdQueries.critical).toBeGreaterThanOrEqual(80);
+    expect(complianceThresholds.lgpdQueries.critical).toBeGreaterThanOrEqual(
+      80,
+    );
 
     // Audit coverage should be comprehensive
-    expect(complianceThresholds.auditCoverage.warning).toBeGreaterThanOrEqual(95);
-    expect(complianceThresholds.auditCoverage.critical).toBeGreaterThanOrEqual(90);
+    expect(complianceThresholds.auditCoverage.warning).toBeGreaterThanOrEqual(
+      95,
+    );
+    expect(complianceThresholds.auditCoverage.critical).toBeGreaterThanOrEqual(
+      90,
+    );
   });
 });

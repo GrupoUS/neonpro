@@ -4,23 +4,34 @@
  * Enhanced with real-time subscriptions and comprehensive CRUD operations
  */
 
-import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
-import { type CreatePatientData, type Patient, patientService } from '@/services/patients.service';
-import { useMutation, useQuery, useQueryClient, type UseQueryOptions } from '@tanstack/react-query';
-import React from 'react';
-import { toast } from 'sonner';
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
+import {
+  type CreatePatientData,
+  type Patient,
+  patientService,
+} from "@/services/patients.service";
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  type UseQueryOptions,
+} from "@tanstack/react-query";
+import React from "react";
+import { toast } from "sonner";
 
 // Query keys for patients
 export const patientKeys = {
-  all: ['patients'] as const,
-  lists: () => [...patientKeys.all, 'list'] as const,
-  list: (clinicId: string, filters?: any) => [...patientKeys.lists(), clinicId, filters] as const,
-  details: () => [...patientKeys.all, 'detail'] as const,
+  all: ["patients"] as const,
+  lists: () => [...patientKeys.all, "list"] as const,
+  list: (clinicId: string, filters?: any) =>
+    [...patientKeys.lists(), clinicId, filters] as const,
+  details: () => [...patientKeys.all, "detail"] as const,
   detail: (id: string) => [...patientKeys.details(), id] as const,
   search: (clinicId: string, query: string) =>
-    [...patientKeys.all, 'search', clinicId, query] as const,
-  history: (patientId: string) => [...patientKeys.all, 'history', patientId] as const,
+    [...patientKeys.all, "search", clinicId, query] as const,
+  history: (patientId: string) =>
+    [...patientKeys.all, "history", patientId] as const,
 };
 
 /**
@@ -29,7 +40,7 @@ export const patientKeys = {
 export function useSearchPatients(
   clinicId: string,
   query: string,
-  options?: Omit<UseQueryOptions<Patient[], Error>, 'queryKey' | 'queryFn'>,
+  options?: Omit<UseQueryOptions<Patient[], Error>, "queryKey" | "queryFn">,
 ) {
   return useQuery({
     queryKey: patientKeys.search(clinicId, query),
@@ -46,7 +57,10 @@ export function useSearchPatients(
  */
 export function usePatient(
   patientId: string,
-  options?: Omit<UseQueryOptions<Patient | null, Error>, 'queryKey' | 'queryFn'>,
+  options?: Omit<
+    UseQueryOptions<Patient | null, Error>,
+    "queryKey" | "queryFn"
+  >,
 ) {
   return useQuery({
     queryKey: patientKeys.detail(patientId),
@@ -66,9 +80,15 @@ export function useCreatePatient() {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ data, clinicId }: { data: CreatePatientData; clinicId: string }) => {
+    mutationFn: async ({
+      data,
+      clinicId,
+    }: {
+      data: CreatePatientData;
+      clinicId: string;
+    }) => {
       if (!user?.id) {
-        throw new Error('User not authenticated');
+        throw new Error("User not authenticated");
       }
       return patientService.createPatient(data, clinicId, user.id);
     },
@@ -76,17 +96,19 @@ export function useCreatePatient() {
     onSuccess: (newPatient, { clinicId }) => {
       // Invalidate patient lists and searches
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: patientKeys.search(clinicId, '') });
+      queryClient.invalidateQueries({
+        queryKey: patientKeys.search(clinicId, ""),
+      });
 
       // Add to cache
       queryClient.setQueryData(patientKeys.detail(newPatient.id), newPatient);
 
-      toast.success('Paciente criado com sucesso!');
+      toast.success("Paciente criado com sucesso!");
     },
 
-    onError: error => {
-      console.error('Error creating patient:', error);
-      toast.error(error.message || 'Erro ao criar paciente');
+    onError: (error) => {
+      console.error("Error creating patient:", error);
+      toast.error(error.message || "Erro ao criar paciente");
     },
   });
 }
@@ -94,7 +116,11 @@ export function useCreatePatient() {
 /**
  * Hook for patient search with debouncing
  */
-export function useDebouncedPatientSearch(clinicId: string, query: string, delay = 300) {
+export function useDebouncedPatientSearch(
+  clinicId: string,
+  query: string,
+  delay = 300,
+) {
   const [debouncedQuery, setDebouncedQuery] = React.useState(query);
 
   React.useEffect(() => {
@@ -147,11 +173,14 @@ export function usePatientAppointmentHistory(
   patientId: string,
   options?: Omit<
     UseQueryOptions<
-      ReturnType<typeof patientService.getPatientAppointmentHistory> extends Promise<infer R> ? R
+      ReturnType<
+        typeof patientService.getPatientAppointmentHistory
+      > extends Promise<infer R>
+        ? R
         : never,
       Error
     >,
-    'queryKey' | 'queryFn'
+    "queryKey" | "queryFn"
   >,
 ) {
   return useQuery({
@@ -168,7 +197,7 @@ export function usePatientAppointmentHistory(
  * Enhanced Patient interface for data table
  */
 export interface PatientTableData extends Patient {
-  status: 'Active' | 'Inactive' | 'Pending';
+  status: "Active" | "Inactive" | "Pending";
   lastVisit?: string;
   nextAppointment?: string;
   totalAppointments: number;
@@ -185,7 +214,7 @@ export function usePatientsTable(
     pageIndex?: number;
     pageSize?: number;
     sortBy?: string;
-    sortOrder?: 'asc' | 'desc';
+    sortOrder?: "asc" | "desc";
     filters?: {
       search?: string;
       status?: string[];
@@ -193,39 +222,44 @@ export function usePatientsTable(
   },
 ) {
   const queryClient = useQueryClient();
-  const { pageIndex = 0, pageSize = 10, sortBy = 'full_name', sortOrder = 'asc', filters } = options
-    || {};
+  const {
+    pageIndex = 0,
+    pageSize = 10,
+    sortBy = "full_name",
+    sortOrder = "asc",
+    filters,
+  } = options || {};
 
   // Set up real-time subscription
   React.useEffect(() => {
     if (!clinicId) return;
 
     const channel = supabase
-      .channel('patients-changes')
+      .channel("patients-changes")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'patients',
+          event: "*",
+          schema: "public",
+          table: "patients",
           filter: `clinic_id=eq.${clinicId}`,
         },
-        payload => {
-          console.log('Patient real-time update:', payload);
+        (payload) => {
+          console.log("Patient real-time update:", payload);
 
           // Invalidate queries to refresh data
           queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
 
           // Show toast notification for changes
           switch (payload.eventType) {
-            case 'INSERT':
-              toast.success('Novo paciente adicionado');
+            case "INSERT":
+              toast.success("Novo paciente adicionado");
               break;
-            case 'UPDATE':
-              toast.info('Dados do paciente atualizados');
+            case "UPDATE":
+              toast.info("Dados do paciente atualizados");
               break;
-            case 'DELETE':
-              toast.info('Paciente removido');
+            case "DELETE":
+              toast.info("Paciente removido");
               break;
           }
         },
@@ -238,10 +272,16 @@ export function usePatientsTable(
   }, [clinicId, queryClient]);
 
   return useQuery({
-    queryKey: patientKeys.list(clinicId, { pageIndex, pageSize, sortBy, sortOrder, filters }),
+    queryKey: patientKeys.list(clinicId, {
+      pageIndex,
+      pageSize,
+      sortBy,
+      sortOrder,
+      filters,
+    }),
     queryFn: async () => {
       let query = supabase
-        .from('patients')
+        .from("patients")
         .select(
           `
           id,
@@ -258,9 +298,9 @@ export function usePatientsTable(
           created_at,
           is_active
         `,
-          { count: 'exact' },
+          { count: "exact" },
         )
-        .eq('clinic_id', clinicId);
+        .eq("clinic_id", clinicId);
 
       // Apply search filter
       if (filters?.search) {
@@ -271,11 +311,11 @@ export function usePatientsTable(
 
       // Apply status filter
       if (filters?.status && filters.status.length > 0) {
-        query = query.in('patient_status', filters.status);
+        query = query.in("patient_status", filters.status);
       }
 
       // Apply sorting
-      query = query.order(sortBy, { ascending: sortOrder === 'asc' });
+      query = query.order(sortBy, { ascending: sortOrder === "asc" });
 
       // Apply pagination
       const from = pageIndex * pageSize;
@@ -288,9 +328,13 @@ export function usePatientsTable(
         throw new Error(`Failed to fetch patients: ${error.message}`);
       }
 
-      const patients: PatientTableData[] = (data || []).map(patient => {
-        const birthDate = patient.birth_date ? new Date(patient.birth_date) : null;
-        const age = birthDate ? new Date().getFullYear() - birthDate.getFullYear() : undefined;
+      const patients: PatientTableData[] = (data || []).map((patient) => {
+        const birthDate = patient.birth_date
+          ? new Date(patient.birth_date)
+          : null;
+        const age = birthDate
+          ? new Date().getFullYear() - birthDate.getFullYear()
+          : undefined;
 
         return {
           id: patient.id,
@@ -299,14 +343,16 @@ export function usePatientsTable(
           phone: patient.phone_primary || undefined,
           birthDate: patient.birth_date || undefined,
           cpf: patient.cpf || undefined,
-          createdAt: patient.created_at || '',
+          createdAt: patient.created_at || "",
           status: patient.is_active
-            ? (patient.patient_status === 'active' ? 'Active' : 'Pending')
-            : 'Inactive',
+            ? patient.patient_status === "active"
+              ? "Active"
+              : "Pending"
+            : "Inactive",
           lastVisit: patient.last_visit_date || undefined,
           nextAppointment: patient.next_appointment_date || undefined,
           totalAppointments: patient.total_appointments || 0,
-          contactMethod: patient.preferred_contact_method || 'phone',
+          contactMethod: patient.preferred_contact_method || "phone",
           age,
         };
       });
@@ -331,31 +377,38 @@ export function useUpdatePatient() {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ patientId, data, clinicId }: {
+    mutationFn: async ({
+      patientId,
+      data,
+      clinicId,
+    }: {
       patientId: string;
       data: Partial<CreatePatientData>;
       clinicId: string;
     }) => {
       if (!user?.id) {
-        throw new Error('User not authenticated');
+        throw new Error("User not authenticated");
       }
 
       const updateData: any = {
         ...(data.fullName && { full_name: data.fullName }),
         ...(data.email !== undefined && { email: data.email || null }),
         ...(data.phone !== undefined && { phone_primary: data.phone || null }),
-        ...(data.birthDate !== undefined && { birth_date: data.birthDate || null }),
+        ...(data.birthDate !== undefined && {
+          birth_date: data.birthDate || null,
+        }),
         ...(data.cpf !== undefined && { cpf: data.cpf || null }),
         updated_by: user.id,
         updated_at: new Date().toISOString(),
       };
 
       const { data: patient, error } = await supabase
-        .from('patients')
+        .from("patients")
         .update(updateData)
-        .eq('id', patientId)
-        .eq('clinic_id', clinicId)
-        .select(`
+        .eq("id", patientId)
+        .eq("clinic_id", clinicId)
+        .select(
+          `
           id,
           full_name,
           email,
@@ -363,7 +416,8 @@ export function useUpdatePatient() {
           birth_date,
           cpf,
           created_at
-        `)
+        `,
+        )
         .single();
 
       if (error) {
@@ -377,24 +431,29 @@ export function useUpdatePatient() {
         phone: patient.phone_primary || undefined,
         birthDate: patient.birth_date || undefined,
         cpf: patient.cpf || undefined,
-        createdAt: patient.created_at || '',
+        createdAt: patient.created_at || "",
       };
     },
 
     onSuccess: (updatedPatient, { clinicId }) => {
       // Update cache
-      queryClient.setQueryData(patientKeys.detail(updatedPatient.id), updatedPatient);
+      queryClient.setQueryData(
+        patientKeys.detail(updatedPatient.id),
+        updatedPatient,
+      );
 
       // Invalidate lists to refresh data
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: patientKeys.search(clinicId, '') });
+      queryClient.invalidateQueries({
+        queryKey: patientKeys.search(clinicId, ""),
+      });
 
-      toast.success('Paciente atualizado com sucesso!');
+      toast.success("Paciente atualizado com sucesso!");
     },
 
-    onError: error => {
-      console.error('Error updating patient:', error);
-      toast.error(error.message || 'Erro ao atualizar paciente');
+    onError: (error) => {
+      console.error("Error updating patient:", error);
+      toast.error(error.message || "Erro ao atualizar paciente");
     },
   });
 }
@@ -407,21 +466,27 @@ export function useDeletePatient() {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ patientId, clinicId }: { patientId: string; clinicId: string }) => {
+    mutationFn: async ({
+      patientId,
+      clinicId,
+    }: {
+      patientId: string;
+      clinicId: string;
+    }) => {
       if (!user?.id) {
-        throw new Error('User not authenticated');
+        throw new Error("User not authenticated");
       }
 
       // Soft delete by setting is_active to false
       const { error } = await supabase
-        .from('patients')
+        .from("patients")
         .update({
           is_active: false,
           updated_by: user.id,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', patientId)
-        .eq('clinic_id', clinicId);
+        .eq("id", patientId)
+        .eq("clinic_id", clinicId);
 
       if (error) {
         throw new Error(`Failed to delete patient: ${error.message}`);
@@ -436,14 +501,16 @@ export function useDeletePatient() {
 
       // Invalidate lists to refresh data
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: patientKeys.search(clinicId, '') });
+      queryClient.invalidateQueries({
+        queryKey: patientKeys.search(clinicId, ""),
+      });
 
-      toast.success('Paciente removido com sucesso!');
+      toast.success("Paciente removido com sucesso!");
     },
 
-    onError: error => {
-      console.error('Error deleting patient:', error);
-      toast.error(error.message || 'Erro ao remover paciente');
+    onError: (error) => {
+      console.error("Error deleting patient:", error);
+      toast.error(error.message || "Erro ao remover paciente");
     },
   });
 }
@@ -456,20 +523,26 @@ export function useBulkDeletePatients() {
   const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async ({ patientIds, clinicId }: { patientIds: string[]; clinicId: string }) => {
+    mutationFn: async ({
+      patientIds,
+      clinicId,
+    }: {
+      patientIds: string[];
+      clinicId: string;
+    }) => {
       if (!user?.id) {
-        throw new Error('User not authenticated');
+        throw new Error("User not authenticated");
       }
 
       const { error } = await supabase
-        .from('patients')
+        .from("patients")
         .update({
           is_active: false,
           updated_by: user.id,
           updated_at: new Date().toISOString(),
         })
-        .in('id', patientIds)
-        .eq('clinic_id', clinicId);
+        .in("id", patientIds)
+        .eq("clinic_id", clinicId);
 
       if (error) {
         throw new Error(`Failed to delete patients: ${error.message}`);
@@ -480,20 +553,24 @@ export function useBulkDeletePatients() {
 
     onSuccess: (_, { patientIds, clinicId }) => {
       // Remove from cache
-      patientIds.forEach(id => {
+      patientIds.forEach((id) => {
         queryClient.removeQueries({ queryKey: patientKeys.detail(id) });
       });
 
       // Invalidate lists to refresh data
       queryClient.invalidateQueries({ queryKey: patientKeys.lists() });
-      queryClient.invalidateQueries({ queryKey: patientKeys.search(clinicId, '') });
+      queryClient.invalidateQueries({
+        queryKey: patientKeys.search(clinicId, ""),
+      });
 
-      toast.success(`${patientIds.length} paciente(s) removido(s) com sucesso!`);
+      toast.success(
+        `${patientIds.length} paciente(s) removido(s) com sucesso!`,
+      );
     },
 
-    onError: error => {
-      console.error('Error bulk deleting patients:', error);
-      toast.error(error.message || 'Erro ao remover pacientes');
+    onError: (error) => {
+      console.error("Error bulk deleting patients:", error);
+      toast.error(error.message || "Erro ao remover pacientes");
     },
   });
 }

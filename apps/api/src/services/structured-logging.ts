@@ -45,14 +45,20 @@ const HEALTHCARE_PATTERNS: Record<string, RegExp> = {
 /**
  * Redacts sensitive healthcare data from log messages
  */
-function redactSensitiveData(text: string): { redacted: string; fields: string[] } {
+function redactSensitiveData(text: string): {
+  redacted: string;
+  fields: string[];
+} {
   let redactedText = text;
   const redactedFields: string[] = [];
 
   Object.entries(HEALTHCARE_PATTERNS).forEach(([field, pattern]) => {
     if (pattern.test(redactedText)) {
       redactedFields.push(field);
-      redactedText = redactedText.replace(pattern, `[REDACTED_${field.toUpperCase()}]`);
+      redactedText = redactedText.replace(
+        pattern,
+        `[REDACTED_${field.toUpperCase()}]`,
+      );
     }
   });
 
@@ -121,7 +127,9 @@ function createLogEntry(
 
   // Add error information if provided
   if (context.error) {
-    const { redacted: redactedErrorMessage } = redactSensitiveData(context.error.message);
+    const { redacted: redactedErrorMessage } = redactSensitiveData(
+      context.error.message,
+    );
     logEntry.error = {
       message: redactedErrorMessage,
       type: context.error.name,
@@ -140,14 +148,23 @@ class StructuredLogger {
   private serviceName: string;
   private serviceVersion: string;
 
-  private constructor(serviceName: string = 'api', serviceVersion: string = '1.0.0') {
+  private constructor(
+    serviceName: string = 'api',
+    serviceVersion: string = '1.0.0',
+  ) {
     this.serviceName = serviceName;
     this.serviceVersion = serviceVersion;
   }
 
-  public static getInstance(serviceName?: string, serviceVersion?: string): StructuredLogger {
+  public static getInstance(
+    serviceName?: string,
+    serviceVersion?: string,
+  ): StructuredLogger {
     if (!StructuredLogger.instance) {
-      StructuredLogger.instance = new StructuredLogger(serviceName, serviceVersion);
+      StructuredLogger.instance = new StructuredLogger(
+        serviceName,
+        serviceVersion,
+      );
     }
     return StructuredLogger.instance;
   }
@@ -155,28 +172,40 @@ class StructuredLogger {
   /**
    * Logs a debug message
    */
-  public debug(message: string, context?: Parameters<typeof createLogEntry>[1]): void {
+  public debug(
+    message: string,
+    context?: Parameters<typeof createLogEntry>[1],
+  ): void {
     this.log(LogLevel.DEBUG, message, context);
   }
 
   /**
    * Logs an info message
    */
-  public info(message: string, context?: Parameters<typeof createLogEntry>[1]): void {
+  public info(
+    message: string,
+    context?: Parameters<typeof createLogEntry>[1],
+  ): void {
     this.log(LogLevel.INFO, message, context);
   }
 
   /**
    * Logs a warning message
    */
-  public warn(message: string, context?: Parameters<typeof createLogEntry>[1]): void {
+  public warn(
+    message: string,
+    context?: Parameters<typeof createLogEntry>[1],
+  ): void {
     this.log(LogLevel.WARN, message, context);
   }
 
   /**
    * Logs an error message
    */
-  public error(message: string, context?: Parameters<typeof createLogEntry>[1]): void {
+  public error(
+    message: string,
+    context?: Parameters<typeof createLogEntry>[1],
+  ): void {
     this.log(LogLevel.ERROR, message, context);
   }
 
@@ -220,7 +249,9 @@ class StructuredLogger {
   /**
    * Creates a child logger with additional context
    */
-  public child(context: Parameters<typeof createLogEntry>[1]): StructuredLogger {
+  public child(
+    context: Parameters<typeof createLogEntry>[1],
+  ): StructuredLogger {
     const childLogger = Object.create(this);
     childLogger.context = context;
     return childLogger;
@@ -228,7 +259,10 @@ class StructuredLogger {
 }
 
 // Export singleton instance
-export const structuredLogger = StructuredLogger.getInstance('neonpro-api', '1.0.0');
+export const structuredLogger = StructuredLogger.getInstance(
+  'neonpro-api',
+  '1.0.0',
+);
 
 // Export types and utilities for external use
 export type { LogEntry };

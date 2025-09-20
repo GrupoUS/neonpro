@@ -48,12 +48,12 @@ describe('BillingService', () => {
             procedureCode: {
               cbhpmCode: '10101012',
               description: 'Consulta médica especializada',
-              value: 150.00,
+              value: 150.0,
               category: 'Consulta',
             },
             quantity: 1,
-            unitValue: 150.00,
-            totalValue: 150.00,
+            unitValue: 150.0,
+            totalValue: 150.0,
             date: new Date().toISOString(),
             professionalId: randomUUID(),
           },
@@ -99,12 +99,12 @@ describe('BillingService', () => {
             procedureCode: {
               cbhpmCode: '10101012',
               description: 'Consulta médica especializada',
-              value: 100.00,
+              value: 100.0,
               category: 'Consulta',
             },
             quantity: 1,
-            unitValue: 100.00,
-            totalValue: 100.00,
+            unitValue: 100.0,
+            totalValue: 100.0,
             date: new Date().toISOString(),
             professionalId: randomUUID(),
           },
@@ -159,12 +159,12 @@ describe('BillingService', () => {
             procedureCode: {
               cbhpmCode: '10101012',
               description: 'Consulta médica especializada',
-              value: 200.00,
+              value: 200.0,
               category: 'Consulta',
             },
             quantity: 1,
-            unitValue: 200.00,
-            totalValue: 200.00,
+            unitValue: 200.0,
+            totalValue: 200.0,
             date: new Date().toISOString(),
             professionalId: randomUUID(),
           },
@@ -179,7 +179,7 @@ describe('BillingService', () => {
       const paymentRequest = {
         billingId: createResult.data!.id,
         paymentMethod: PaymentMethod.PIX,
-        amount: 200.00,
+        amount: 200.0,
       };
 
       const result = await service.processPayment(paymentRequest);
@@ -238,12 +238,7 @@ describe('BillingService', () => {
     });
 
     it('should have all required billing types', () => {
-      const expectedTypes = [
-        'sus',
-        'health_plan',
-        'private',
-        'mixed',
-      ];
+      const expectedTypes = ['sus', 'health_plan', 'private', 'mixed'];
 
       expectedTypes.forEach(type => {
         expect(Object.values(BillingType)).toContain(type);

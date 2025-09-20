@@ -46,11 +46,14 @@
 ```typescript
 // Consent purposes clearly defined
 const CONSENT_PURPOSES = {
-  data_processing: { required: true, title: 'Processamento de Dados Pessoais' },
-  marketing: { required: false, title: 'Marketing e Comunicação' },
-  third_party_sharing: { required: false, title: 'Compartilhamento com Terceiros' },
-  research: { required: false, title: 'Pesquisa e Desenvolvimento' },
-  telehealth: { required: false, title: 'Telemedicina' },
+  data_processing: { required: true, title: "Processamento de Dados Pessoais" },
+  marketing: { required: false, title: "Marketing e Comunicação" },
+  third_party_sharing: {
+    required: false,
+    title: "Compartilhamento com Terceiros",
+  },
+  research: { required: false, title: "Pesquisa e Desenvolvimento" },
+  telehealth: { required: false, title: "Telemedicina" },
 };
 ```
 
@@ -89,7 +92,7 @@ const handleDataExport = async () => {
 
 // Data erasure with confirmation
 const handleDataErasure = async () => {
-  if (confirm('Confirma a exclusão permanente dos dados?')) {
+  if (confirm("Confirma a exclusão permanente dos dados?")) {
     await onDataErasure(patientData.id);
   }
 };
@@ -237,7 +240,7 @@ const handleDataErasure = async () => {
 ```typescript
 // CPF validation implementation
 export const validateCPF = (cpf: string): boolean => {
-  const digits = cpf.replace(/\D/g, '');
+  const digits = cpf.replace(/\D/g, "");
   if (digits.length !== 11) return false;
 
   // Validation algorithm implementation
@@ -317,9 +320,9 @@ export const validateCPF = (cpf: string): boolean => {
 // PII sanitization in error handling
 const sanitizeError = (error: Error) => {
   return error.message
-    .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, '[CPF_REDACTED]')
-    .replace(/\d{15}/g, '[CNS_REDACTED]')
-    .replace(/\(\d{2}\)\s\d{4,5}-\d{4}/g, '[PHONE_REDACTED]');
+    .replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, "[CPF_REDACTED]")
+    .replace(/\d{15}/g, "[CNS_REDACTED]")
+    .replace(/\(\d{2}\)\s\d{4,5}-\d{4}/g, "[PHONE_REDACTED]");
 };
 ```
 

@@ -6,11 +6,7 @@ import {
   HealthcareDataClassification,
   LGPDDataCategory,
 } from '@neonpro/shared';
-import {
-  AIProviderRouterService,
-  ProviderStatus,
-  RoutingStrategy,
-} from '../ai-provider-router-new';
+import { AIProviderRouterService, ProviderStatus, RoutingStrategy } from '../ai-provider-router';
 import { AuditTrailService } from '../audit-trail';
 import { SemanticCacheService } from '../semantic-cache';
 
@@ -235,7 +231,9 @@ describe('AIProviderRouterService', () => {
       expect(response).toBeDefined();
       expect(response.metrics.total_cost_usd).toBeGreaterThan(0);
       // Should select a lower-cost provider like Anthropic
-      expect([AIProvider.ANTHROPIC, AIProvider.AWS_BEDROCK]).toContain(response.provider_used);
+      expect([AIProvider.ANTHROPIC, AIProvider.AWS_BEDROCK]).toContain(
+        response.provider_used,
+      );
     });
 
     it('should select latency-optimized provider', async () => {
@@ -302,9 +300,9 @@ describe('AIProviderRouterService', () => {
         },
       };
 
-      await expect(routerService.routeRequest(invalidRequest))
-        .rejects
-        .toThrow('LGPD Violation: Patient ID required when PII is present');
+      await expect(routerService.routeRequest(invalidRequest)).rejects.toThrow(
+        'LGPD Violation: Patient ID required when PII is present',
+      );
     });
 
     it('should apply PII redaction when contains_pii is true', async () => {
@@ -317,7 +315,10 @@ describe('AIProviderRouterService', () => {
           is_emergency: false,
           contains_pii: true,
           data_classification: HealthcareDataClassification.PATIENT_SENSITIVE,
-          lgpd_categories: [LGPDDataCategory.HEALTH_DATA, LGPDDataCategory.PERSONAL_DATA],
+          lgpd_categories: [
+            LGPDDataCategory.HEALTH_DATA,
+            LGPDDataCategory.PERSONAL_DATA,
+          ],
           requires_audit: true,
         },
         ai_config: {
@@ -397,9 +398,18 @@ describe('AIProviderRouterService', () => {
 
   describe('Provider Management', () => {
     it('should enable and disable providers correctly', () => {
-      expect(routerService.setProviderEnabled(AIProvider.OPENAI, false)).toBe(true);
-      expect(routerService.setProviderEnabled(AIProvider.OPENAI, true)).toBe(true);
-      expect(routerService.setProviderEnabled('invalid_provider' as AIProvider, false)).toBe(false);
+      expect(routerService.setProviderEnabled(AIProvider.OPENAI, false)).toBe(
+        true,
+      );
+      expect(routerService.setProviderEnabled(AIProvider.OPENAI, true)).toBe(
+        true,
+      );
+      expect(
+        routerService.setProviderEnabled(
+          'invalid_provider' as AIProvider,
+          false,
+        ),
+      ).toBe(false);
     });
 
     it('should return provider health metrics', () => {
@@ -468,9 +478,9 @@ describe('AIProviderRouterService', () => {
         },
       };
 
-      await expect(routerService.routeRequest(invalidRequest as any))
-        .rejects
-        .toThrow('Invalid request');
+      await expect(
+        routerService.routeRequest(invalidRequest as any),
+      ).rejects.toThrow('Invalid request');
     });
   });
 });

@@ -142,7 +142,9 @@ describe('OpenAPI Integration', () => {
 
       const patientDetailPath = schema.paths['/v1/patients/{patientId}'];
       expect(patientDetailPath.get.description).toContain('LGPD consent');
-      expect(patientDetailPath.get.responses['403'].description).toBe('LGPD consent required');
+      expect(patientDetailPath.get.responses['403'].description).toBe(
+        'LGPD consent required',
+      );
     });
 
     it('should document LGPD error responses', async () => {

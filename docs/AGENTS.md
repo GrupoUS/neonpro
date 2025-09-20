@@ -137,8 +137,9 @@ navigation_matrix:
 
 **🎯 Intelligent Context Loading Strategy:**
 Follow the layered approach from `docs/architecture/context-engineering.md`:
+
 1. **Task Meta** (Layer 0): Classify task type → reference matrix below
-2. **Topology** (Layer 1): Use `source-tree.md` to identify target location  
+2. **Topology** (Layer 1): Use `source-tree.md` to identify target location
 3. **Contracts** (Layer 2): Load only relevant types/interfaces from `packages/types/*`
 4. **Implementation** (Layer 3): Sample 1-2 existing patterns, avoid broad scanning
 5. **Cross-Cutting** (Layer 4): Check security/compliance ONLY if handling PII/patient data
@@ -156,6 +157,7 @@ Follow the layered approach from `docs/architecture/context-engineering.md`:
 | **Compliance/security** | `security/` docs, RLS helpers | Service call sites | UI styling files |
 
 ### Code Quality Audit Prompt (v3.2.0)
+
 - Treat `.github/prompts/code-quality-audit.prompt.md` as the execution blueprint for audits—read the **Process & Tooling Integration** block before running checks.
 - Prefer workspace scripts (`pnpm test:backend`, `pnpm test:frontend`, `pnpm test:healthcare`, `pnpm lint`, `pnpm type-check`, `pnpm constitutional:*`) over ad-hoc commands and capture CLI logs in Archon task notes.
 - Register regression suites (`pnpm test:healthcare -- --regression`, `pnpm test:healthcare -- --audit-only`) in Archon with run IDs and attach artifacts before closing the task.
@@ -174,7 +176,7 @@ Follow the layered approach from `docs/architecture/context-engineering.md`:
   - Key documents: database-schema-consolidated, tables/README, tables/tables-consolidated
 - Look at apis/ — Orchestrator for API patterns: [./apis/AGENTS.md](./apis/AGENTS.md)
   - Key documents: apis, ai-sdk-v5.0, ai-sdk-v4.0
-- **Code Style:** Follow established patterns and conventions from development rules and guidelines found in the `/rules` directory — Standards: coding-standards, supabase-*, variables-configuration
+- **Code Style:** Follow established patterns and conventions from development rules and guidelines found in the `/rules` directory — Standards: coding-standards, supabase-\*, variables-configuration
 - Check testing/ — Tests: react-test-patterns, e2e-testing, integration-testing, coverage-policy, ci-pipelines
 - Check prd/ — Product: prd and support files
 - Check mistakes/ — Errors and fixes

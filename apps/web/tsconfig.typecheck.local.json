@@ -5,11 +5,7 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "include": [
-    "src/**/*",
-    "src/**/*.tsx",
-    "src/**/*.ts"
-  ],
+  "include": ["src/**/*", "src/**/*.tsx", "src/**/*.ts"],
   "exclude": [
     "node_modules",
     "dist",

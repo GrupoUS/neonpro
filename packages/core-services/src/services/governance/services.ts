@@ -8,7 +8,7 @@ import {
   isProvisionalAging,
   PolicyRule,
   scorePriority,
-} from './helpers';
+} from "./helpers";
 
 // Shared basic types
 interface ServiceContext {
@@ -20,12 +20,12 @@ export interface KPIRegisterInput {
   id: string;
   name: string;
   target?: number;
-  direction?: 'lower-better' | 'higher-better';
+  direction?: "lower-better" | "higher-better";
   unit?: string;
   provisional?: boolean;
 }
-export interface KPIRecord extends Omit<KPIRegisterInput, 'provisional'> {
-  status: 'Active' | 'Provisional' | 'Archived';
+export interface KPIRecord extends Omit<KPIRegisterInput, "provisional"> {
+  status: "Active" | "Provisional" | "Archived";
   provisionalSince?: Date;
   archivedAt?: Date;
   archivedRationale?: string;
@@ -37,22 +37,27 @@ export interface KPIEvaluationInput {
 }
 export interface KPIEvaluationResult {
   kpiId: string;
-  status: 'within' | 'breach';
+  status: "within" | "breach";
   value: number;
   target: number;
-  direction: 'lower-better' | 'higher-better';
+  direction: "lower-better" | "higher-better";
   delta: number;
 }
 
 export class InMemoryKPIService {
   private store = new Map<string, KPIRecord>();
-  async register(input: KPIRegisterInput, _ctx?: ServiceContext): Promise<KPIRecord> {
-    if (this.store.has(input.id)) throw new Error('duplicate_kpi_id');
-    const status: KPIRecord['status'] = input.provisional ? 'Provisional' : 'Active';
+  async register(
+    input: KPIRegisterInput,
+    _ctx?: ServiceContext,
+  ): Promise<KPIRecord> {
+    if (this.store.has(input.id)) throw new Error("duplicate_kpi_id");
+    const status: KPIRecord["status"] = input.provisional
+      ? "Provisional"
+      : "Active";
     const rec: KPIRecord = {
       ...input,
       target: input.target ?? 0,
-      direction: input.direction ?? 'lower-better',
+      direction: input.direction ?? "lower-better",
       status,
       provisionalSince: input.provisional ? new Date() : undefined,
     };
@@ -61,23 +66,26 @@ export class InMemoryKPIService {
   }
   async archive(input: { id: string; rationale: string }): Promise<KPIRecord> {
     const rec = this.store.get(input.id);
-    if (!rec) throw new Error('KPI_NOT_FOUND');
-    if (!input.rationale) throw new Error('rationale_required');
+    if (!rec) throw new Error("KPI_NOT_FOUND");
+    if (!input.rationale) throw new Error("rationale_required");
     const archived: KPIRecord = {
       ...rec,
-      status: 'Archived',
+      status: "Archived",
       archivedAt: new Date(),
       archivedRationale: input.rationale,
     };
     this.store.set(rec.id, archived);
     return archived;
   }
-  async evaluate(id: string, data?: KPIEvaluationInput): Promise<KPIEvaluationResult> {
+  async evaluate(
+    id: string,
+    data?: KPIEvaluationInput,
+  ): Promise<KPIEvaluationResult> {
     const kpi = this.store.get(id);
-    if (!kpi) throw new Error('KPI_NOT_FOUND');
+    if (!kpi) throw new Error("KPI_NOT_FOUND");
     const value = data?.value ?? 0;
     const target = (kpi as any).target ?? 0;
-    const direction = (kpi as any).direction ?? 'lower-better';
+    const direction = (kpi as any).direction ?? "lower-better";
     const { status, delta } = evaluateKPIValue({ value, target, direction });
     return { kpiId: id, status, value, target, direction, delta };
   }
@@ -86,7 +94,9 @@ export class InMemoryKPIService {
   }
   // Provisional aging check used in scenario test
   agingCheck(now: Date = new Date()) {
-    return [...this.store.values()].filter(k => isProvisionalAging(k.provisionalSince, now));
+    return [...this.store.values()].filter((k) =>
+      isProvisionalAging(k.provisionalSince, now),
+    );
   }
 }
 
@@ -97,7 +107,8 @@ export interface PolicyRegisterInput {
   rules: PolicyRule[];
 }
 export interface PolicyRecord extends PolicyRegisterInput {}
-export interface PolicyEvaluation extends ReturnType<typeof aggregatePolicyRules> {}
+export interface PolicyEvaluation
+  extends ReturnType<typeof aggregatePolicyRules> {}
 export interface PolicyAttachmentInput {
   policyId: string;
   kpiId: string;
@@ -118,7 +129,7 @@ export class InMemoryPolicyService {
   }
   async evaluate(id: string): Promise<PolicyEvaluation> {
     const p = this.store.get(id);
-    if (!p) throw new Error('POLICY_NOT_FOUND');
+    if (!p) throw new Error("POLICY_NOT_FOUND");
     return aggregatePolicyRules(p.rules);
   }
   async list(): Promise<PolicyRecord[]> {
@@ -143,7 +154,11 @@ export interface EscalationRecord {
 export class InMemoryEscalationService {
   private records: EscalationRecord[] = [];
   async trigger(input: EscalationTriggerInput): Promise<EscalationRecord> {
-    const rec: EscalationRecord = { id: `REC-${Date.now()}`, createdAt: new Date(), ...input };
+    const rec: EscalationRecord = {
+      id: `REC-${Date.now()}`,
+      createdAt: new Date(),
+      ...input,
+    };
     this.records.push(rec);
     return rec;
   }
@@ -163,16 +178,16 @@ export interface FeatureScoreInput {
 export interface FeatureScoreResult {
   featureId: string;
   total: number;
-  priority: 'P0' | 'P1' | 'P2' | 'P3';
+  priority: "P0" | "P1" | "P2" | "P3";
 }
 
 export class InMemoryPrioritizationService {
   async scoreFeature(input: FeatureScoreInput): Promise<FeatureScoreResult> {
     const total = scorePriority(input);
-    let priority: FeatureScoreResult['priority'] = 'P3';
-    if (total > 25) priority = 'P0';
-    else if (total > 20) priority = 'P1';
-    else if (total > 15) priority = 'P2';
+    let priority: FeatureScoreResult["priority"] = "P3";
+    if (total > 25) priority = "P0";
+    else if (total > 20) priority = "P1";
+    else if (total > 15) priority = "P2";
     return { featureId: input.featureId, total, priority };
   }
 }
@@ -190,7 +205,10 @@ export interface RiskRecord extends RiskRegisterInput {
 export class InMemoryRiskService {
   private store = new Map<string, RiskRecord>();
   async register(input: RiskRegisterInput): Promise<RiskRecord> {
-    const exposure = computeRiskExposure({ probability: input.probability, impact: input.impact });
+    const exposure = computeRiskExposure({
+      probability: input.probability,
+      impact: input.impact,
+    });
     const rec: RiskRecord = { ...input, exposure };
     this.store.set(rec.id, rec);
     return rec;
@@ -201,4 +219,4 @@ export class InMemoryRiskService {
 }
 
 // Export Supabase Governance Service
-export { SupabaseGovernanceService } from './supabase-governance.service';
+export { SupabaseGovernanceService } from "./supabase-governance.service";

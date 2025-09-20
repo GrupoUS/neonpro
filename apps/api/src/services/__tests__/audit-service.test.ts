@@ -572,7 +572,9 @@ describe('Audit Trail Service (T041)', () => {
     });
 
     it('should validate service configuration', async () => {
-      const { ComprehensiveComprehensiveAuditService } = await import('../audit-service');
+      const { ComprehensiveComprehensiveAuditService } = await import(
+        '../audit-service'
+      );
       const service = new ComprehensiveComprehensiveAuditService();
 
       const config = service.getServiceConfiguration();

@@ -16,14 +16,22 @@ const allowedOrigins = [
 ].filter(Boolean) as string[];
 
 if (process.env.NODE_ENV !== 'production') {
-  allowedOrigins.push('http://localhost:3000', 'http://localhost:5173', 'http://localhost:8081');
+  allowedOrigins.push(
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:8081',
+  );
 }
 
 app.use(
   '*',
   cors({
-    origin:
-      origin => (!origin ? undefined : (allowedOrigins.includes(origin) ? origin : undefined)),
+    origin: origin =>
+      !origin
+        ? undefined
+        : allowedOrigins.includes(origin)
+        ? origin
+        : undefined,
     allowMethods: ['GET', 'POST'],
     allowHeaders: ['Content-Type', 'Authorization'],
   }),
@@ -62,9 +70,12 @@ app.post('/create-portal-session', async c => {
 
     // Check if user has a Stripe customer ID
     if (!profile.stripe_customer_id) {
-      return c.json({
-        error: 'No Stripe customer found. Please subscribe first.',
-      }, 400);
+      return c.json(
+        {
+          error: 'No Stripe customer found. Please subscribe first.',
+        },
+        400,
+      );
     }
 
     // Import Stripe (dynamic import to avoid issues)
@@ -85,10 +96,13 @@ app.post('/create-portal-session', async c => {
     });
   } catch (error) {
     console.error('Error creating customer portal session:', error);
-    return c.json({
-      error: 'Failed to create customer portal session',
-      details: error instanceof Error ? error.message : 'Unknown error',
-    }, 500);
+    return c.json(
+      {
+        error: 'Failed to create customer portal session',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500,
+    );
   }
 });
 
@@ -121,10 +135,13 @@ app.get('/portal-config', async c => {
     });
   } catch (error) {
     console.error('Error fetching portal configuration:', error);
-    return c.json({
-      error: 'Failed to fetch portal configuration',
-      details: error instanceof Error ? error.message : 'Unknown error',
-    }, 500);
+    return c.json(
+      {
+        error: 'Failed to fetch portal configuration',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500,
+    );
   }
 });
 
@@ -162,7 +179,10 @@ app.post('/create-customer', async c => {
       .eq('id', userId);
 
     if (updateError) {
-      console.error('Error updating user profile with customer ID:', updateError);
+      console.error(
+        'Error updating user profile with customer ID:',
+        updateError,
+      );
       return c.json({ error: 'Failed to update user profile' }, 500);
     }
 
@@ -173,10 +193,13 @@ app.post('/create-customer', async c => {
     });
   } catch (error) {
     console.error('Error creating Stripe customer:', error);
-    return c.json({
-      error: 'Failed to create customer',
-      details: error instanceof Error ? error.message : 'Unknown error',
-    }, 500);
+    return c.json(
+      {
+        error: 'Failed to create customer',
+        details: error instanceof Error ? error.message : 'Unknown error',
+      },
+      500,
+    );
   }
 });
 

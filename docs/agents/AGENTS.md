@@ -68,22 +68,23 @@ llm:
 ```yaml
 role: "Full-Stack Healthcare Development + Agent Coordination + Refactoring + Security Audit"
 always_active: true
-triggers: [
-  "desenvolver",
-  "implementar",
-  "código",
-  "feature",
-  "bug",
-  "healthcare",
-  "refatorar",
-  "otimizar",
-  "auditoria",
-  "segurança",
-  "refactor",
-  "optimize",
-  "audit",
-  "security",
-]
+triggers:
+  [
+    "desenvolver",
+    "implementar",
+    "código",
+    "feature",
+    "bug",
+    "healthcare",
+    "refatorar",
+    "otimizar",
+    "auditoria",
+    "segurança",
+    "refactor",
+    "optimize",
+    "audit",
+    "security",
+  ]
 capabilities:
   - TanStack Router + Vite + React 19 + TypeScript development
   - Constitutional principles (KISS/YAGNI/CoT) enforcement
@@ -102,7 +103,8 @@ capabilities:
 
 ```yaml
 role: "Multi-Source Research and Healthcare Compliance"
-triggers: ["pesquisar", "analisar", "investigar", "research", "compliance", "validar"]
+triggers:
+  ["pesquisar", "analisar", "investigar", "research", "compliance", "validar"]
 capabilities:
   - Context7 → Tavily → Exa intelligence chain
   - Evidence-based implementation guidance
@@ -114,7 +116,8 @@ capabilities:
 
 ```yaml
 role: "Healthcare UI/UX with Constitutional Accessibility"
-triggers: ["design", "ui", "ux", "interface", "página", "componente", "acessibilidade"]
+triggers:
+  ["design", "ui", "ux", "interface", "página", "componente", "acessibilidade"]
 capabilities:
   - WCAG 2.1 AA+ accessibility compliance
   - shadcn/ui v4 healthcare optimization
@@ -128,7 +131,8 @@ capabilities:
 
 ```yaml
 role: "Test-Driven Development and Quality Assurance Specialist"
-triggers: ["teste", "tdd", "qualidade", "test", "testing", "quality", "coverage"]
+triggers:
+  ["teste", "tdd", "qualidade", "test", "testing", "quality", "coverage"]
 capabilities:
   - Test-Driven Development (Red-Green-Refactor) workflow
   - Vitest unit and integration testing
@@ -142,7 +146,8 @@ capabilities:
 
 ```yaml
 role: "Senior Product Manager for Comprehensive PRDs"
-triggers: ["requisitos", "produto", "especificação", "prd", "feature spec", "roadmap"]
+triggers:
+  ["requisitos", "produto", "especificação", "prd", "feature spec", "roadmap"]
 capabilities:
   - User-centric product requirements
   - Strategic alignment and success metrics
@@ -180,7 +185,8 @@ capabilities:
 
 ```yaml
 role: "Rules Architect for AI-Assisted Development"
-triggers: ["regras", "padrões", "guidelines", "rules", "standards", "conventions"]
+triggers:
+  ["regras", "padrões", "guidelines", "rules", "standards", "conventions"]
 capabilities:
   - Comprehensive rule system design
   - AI collaboration workflow optimization
@@ -194,8 +200,7 @@ capabilities:
 
 ```yaml
 workflow: "Full Feature Development"
-sequence:
-  1. apex-researcher → "Technology validation and best practices"
+sequence: 1. apex-researcher → "Technology validation and best practices"
   2. apex-dev → "Architecture planning and component design (Architecture Mode)"
   3. apex-dev → "Core implementation with constitutional principles"
   4. apex-ui-ux-designer → "Healthcare-optimized interface design"
@@ -208,8 +213,7 @@ output: "Production-ready healthcare feature with full documentation"
 
 ```yaml
 workflow: "Research-Driven Implementation"
-sequence:
-  1. apex-researcher → "Multi-source research and validation"
+sequence: 1. apex-researcher → "Multi-source research and validation"
   2. apex-dev → "Architecture design based on research findings (Architecture Mode)"
   3. apex-dev → "Implementation following research insights"
   4. test → "Automated tests and security checks via quality gates"
@@ -231,8 +235,7 @@ output: "Improved, secure codebase with validated quality"
 
 ```yaml
 workflow: "Complete MVP Development"
-sequence:
-  1. prd → "Product requirements and specifications"
+sequence: 1. prd → "Product requirements and specifications"
   2. apex-dev → "System architecture and design patterns (Architecture Mode)"
   3. apex-researcher → "Technology stack validation"
   4. apex-dev → "Core development and integration"

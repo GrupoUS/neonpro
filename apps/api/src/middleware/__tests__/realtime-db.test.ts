@@ -75,7 +75,11 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       const callback = vi.fn();
       const subscriptionId = 'test-subscription';
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(true);
       expect(mockSupabase.channel).toHaveBeenCalledWith(
@@ -105,7 +109,11 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       const callback = vi.fn();
       const subscriptionId = 'filtered-subscription';
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(true);
       expect(mockChannel.on).toHaveBeenCalledWith(
@@ -128,7 +136,11 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       const callback = vi.fn();
       const subscriptionId = 'user-subscription';
 
-      await realtimeManager.createSubscription(subscriptionId, config, callback);
+      await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       const userSubscriptions = realtimeManager.getUserSubscriptions('user-123');
       expect(userSubscriptions).toContain(subscriptionId);
@@ -145,7 +157,11 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       const subscriptionId = 'removable-subscription';
 
       // Create subscription first
-      await realtimeManager.createSubscription(subscriptionId, config, callback);
+      await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       // Remove subscription
       const result = await realtimeManager.removeSubscription(subscriptionId);
@@ -219,8 +235,14 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       const middleware = realtimeSubscription();
       await middleware(mockContext, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('realtimeManager', realtimeManager);
-      expect(mockContext.set).toHaveBeenCalledWith('createSubscription', expect.any(Function));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'realtimeManager',
+        realtimeManager,
+      );
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'createSubscription',
+        expect.any(Function),
+      );
       expect(mockNext).toHaveBeenCalled();
     });
 
@@ -371,7 +393,11 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       const callback = vi.fn();
       const subscriptionId = 'lgpd-subscription';
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(true);
       expect(mockChannel.on).toHaveBeenCalledWith(
@@ -395,7 +421,11 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       const callback = vi.fn();
       const subscriptionId = 'audit-subscription';
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(true);
       expect(mockChannel.on).toHaveBeenCalledWith(
@@ -423,7 +453,11 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       const callback = vi.fn();
       const subscriptionId = 'error-subscription';
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(false);
 
@@ -463,7 +497,11 @@ describe('Database Real-time Subscriptions Middleware (T074)', () => {
       const callback = vi.fn();
       const subscriptionId = 'error-subscription';
 
-      const result = await realtimeManager.createSubscription(subscriptionId, config, callback);
+      const result = await realtimeManager.createSubscription(
+        subscriptionId,
+        config,
+        callback,
+      );
 
       expect(result).toBe(false);
 

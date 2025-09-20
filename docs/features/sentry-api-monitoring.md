@@ -43,10 +43,10 @@ Context Extraction → PII Sanitization → Sentry Capture → Healthcare Alerts
 // Environment-based initialization
 export async function initializeSentry(): Promise<void> {
   const dsn = process.env.SENTRY_DSN;
-  const environment = process.env.NODE_ENV || 'development';
+  const environment = process.env.NODE_ENV || "development";
 
-  if (!dsn && environment === 'production') {
-    console.warn('[Sentry API] DSN not configured in production');
+  if (!dsn && environment === "production") {
+    console.warn("[Sentry API] DSN not configured in production");
     return;
   }
 
@@ -91,7 +91,7 @@ The error tracking middleware uses Sentry for comprehensive error capture:
 
 ```typescript
 // Updated import to use Sentry-based error tracker
-import { errorTracker } from '../lib/sentry.js';
+import { errorTracker } from "../lib/sentry.js";
 
 export function errorTrackingMiddleware() {
   return async (c: Context, next: Next) => {
@@ -113,18 +113,21 @@ export function errorTrackingMiddleware() {
 All data is automatically sanitized before sending to Sentry:
 
 #### Brazilian Healthcare Patterns
+
 - **CPF**: `123.456.789-10` → `XXX.XXX.XXX-XX`
 - **RG**: `12.345.678-9` → `XX.XXX.XXX-X`
 - **Phone**: `(11) 99999-9999` → `(XX) XXXXX-XXXX`
 - **Email**: `paciente@email.com` → `xxx@xxx.com`
 
 #### Medical Data Protection
+
 - **Patient IDs**: Completely removed from error reports
 - **Medical Records**: Replaced with `[HEALTHCARE_DATA]`
 - **Diagnoses**: Automatically redacted
 - **Prescriptions**: Sanitized before transmission
 
 #### Request Context Sanitization
+
 - **Authorization Headers**: Completely removed
 - **Cookies**: Never sent to Sentry
 - **Patient Parameters**: Replaced with `[PATIENT_ID]`
@@ -136,21 +139,21 @@ All data is automatically sanitized before sending to Sentry:
 // String sanitization for Brazilian patterns
 function sanitizeString(str?: string): string {
   return str
-    ?.replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, 'XXX.XXX.XXX-XX') // CPF
-    .replace(/\d{2}\.\d{3}\.\d{3}-\d{1}/g, 'XX.XXX.XXX-X')   // RG
-    .replace(/\(\d{2}\)\s?\d{4,5}-?\d{4}/g, '(XX) XXXXX-XXXX') // Phone
-    .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, 'xxx@xxx.com'); // Email
+    ?.replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, "XXX.XXX.XXX-XX") // CPF
+    .replace(/\d{2}\.\d{3}\.\d{3}-\d{1}/g, "XX.XXX.XXX-X") // RG
+    .replace(/\(\d{2}\)\s?\d{4,5}-?\d{4}/g, "(XX) XXXXX-XXXX") // Phone
+    .replace(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g, "xxx@xxx.com"); // Email
 }
 
 // Context extraction with sanitization
 function extractContextFromHono(c: Context): Record<string, any> {
   return {
-    requestId: c.get('requestId') || 'unknown',
+    requestId: c.get("requestId") || "unknown",
     method: c.req.method,
     endpoint: sanitizeString(new URL(c.req.url).pathname),
-    hasPatientData: !!c.get('patientId'), // Boolean flag only
-    clinicId: c.get('clinicId') ? '[CLINIC_ID]' : undefined,
-    userId: c.get('userId') ? hashUserId(c.get('userId')) : undefined,
+    hasPatientData: !!c.get("patientId"), // Boolean flag only
+    clinicId: c.get("clinicId") ? "[CLINIC_ID]" : undefined,
+    userId: c.get("userId") ? hashUserId(c.get("userId")) : undefined,
   };
 }
 ```
@@ -158,6 +161,7 @@ function extractContextFromHono(c: Context): Record<string, any> {
 ## Healthcare Error Classification
 
 ### Error Categories
+
 - **Patient Safety**: Errors that could affect patient care
 - **Data Integrity**: Database or data consistency issues
 - **Compliance**: LGPD/ANVISA/CFM regulation violations
@@ -165,6 +169,7 @@ function extractContextFromHono(c: Context): Record<string, any> {
 - **Authorization**: Access control violations
 
 ### Severity Levels
+
 - **Critical**: Patient safety risk or data corruption
 - **High**: Workflow disruption or compliance violation
 - **Medium**: Performance degradation or minor issues
@@ -176,23 +181,31 @@ function extractContextFromHono(c: Context): Record<string, any> {
 function assessHealthcareImpact(error: ErrorEvent): HealthcareImpact {
   const impact = { ...error.healthcareImpact };
   const errorText = `${error.message} ${error.source}`.toLowerCase();
-  
+
   // Patient safety assessment
   const patientSafetyKeywords = [
-    'patient', 'medical', 'medication', 'allergy', 'emergency',
-    'diagnosis', 'treatment', 'prescription', 'vital', 'critical'
+    "patient",
+    "medical",
+    "medication",
+    "allergy",
+    "emergency",
+    "diagnosis",
+    "treatment",
+    "prescription",
+    "vital",
+    "critical",
   ];
-  
-  impact.patientSafetyRisk = patientSafetyKeywords.some(
-    keyword => errorText.includes(keyword)
+
+  impact.patientSafetyRisk = patientSafetyKeywords.some((keyword) =>
+    errorText.includes(keyword),
   );
-  
+
   // Automatic severity escalation
   if (impact.patientSafetyRisk) {
-    impact.severity = 'critical';
-    impact.workflowDisruption = 'critical';
+    impact.severity = "critical";
+    impact.workflowDisruption = "critical";
   }
-  
+
   return impact;
 }
 ```
@@ -220,12 +233,14 @@ SENTRY_PATIENT_DATA_PROTECTION=strict
 ### Development vs Production
 
 **Development Mode**:
+
 - All errors captured for debugging
 - Detailed stack traces included
 - Local console logging enabled
 - Sentry optional (works without DSN)
 
 **Production Mode**:
+
 - Aggressive PII redaction
 - Patient data never transmitted
 - Critical errors trigger immediate alerts
@@ -258,18 +273,15 @@ await this.storeError(sanitizedError); // Now includes Sentry capture
 
 ```typescript
 // Critical healthcare errors trigger immediate Sentry alerts
-if (healthcareAssessment.severity === 'critical' || 
-    healthcareAssessment.patientSafetyRisk) {
-  
-  captureMessage(
-    `CRITICAL HEALTHCARE ERROR: ${error.message}`,
-    'fatal',
-    {
-      errorId: error.id,
-      healthcareImpact: error.healthcareImpact,
-      patientSafetyRisk: true,
-    }
-  );
+if (
+  healthcareAssessment.severity === "critical" ||
+  healthcareAssessment.patientSafetyRisk
+) {
+  captureMessage(`CRITICAL HEALTHCARE ERROR: ${error.message}`, "fatal", {
+    errorId: error.id,
+    healthcareImpact: error.healthcareImpact,
+    patientSafetyRisk: true,
+  });
 }
 ```
 
@@ -302,7 +314,7 @@ if (healthcareAssessment.severity === 'critical' ||
 ### Manual Error Capture
 
 ```typescript
-import { captureException, captureMessage } from '@/lib/sentry';
+import { captureException, captureMessage } from "@/lib/sentry";
 
 // Capture exception with healthcare context
 try {
@@ -310,34 +322,30 @@ try {
 } catch (error) {
   captureException(error, {
     hasPatientData: true,
-    workflow: 'patient_data_processing',
-    clinicId: '[CLINIC_ID]', // Always sanitized
+    workflow: "patient_data_processing",
+    clinicId: "[CLINIC_ID]", // Always sanitized
   });
   throw error;
 }
 
 // Capture custom message
-captureMessage(
-  'Patient workflow completed successfully',
-  'info',
-  { workflow: 'patient_registration' }
-);
+captureMessage("Patient workflow completed successfully", "info", {
+  workflow: "patient_registration",
+});
 ```
 
 ### Context Setting
 
 ```typescript
-import { setUserContext, addBreadcrumb } from '@/lib/sentry';
+import { setUserContext, addBreadcrumb } from "@/lib/sentry";
 
 // Set user context (sanitized)
 setUserContext(userId, clinicId);
 
 // Add breadcrumb for tracking
-addBreadcrumb(
-  'Patient form validation started',
-  'user_action',
-  { formStep: 'medical_history' }
-);
+addBreadcrumb("Patient form validation started", "user_action", {
+  formStep: "medical_history",
+});
 ```
 
 ## Testing
@@ -346,10 +354,10 @@ addBreadcrumb(
 
 ```typescript
 // Test error capture without Sentry DSN
-import { errorTracker } from '@/lib/sentry';
+import { errorTracker } from "@/lib/sentry";
 
 try {
-  throw new Error('Test healthcare error');
+  throw new Error("Test healthcare error");
 } catch (error) {
   // Will log locally if no DSN configured
   errorTracker.captureException(error, {
@@ -363,15 +371,15 @@ try {
 
 ```typescript
 // Verify sanitization works correctly
-import { sanitizeErrorEvent } from '@/lib/sentry';
+import { sanitizeErrorEvent } from "@/lib/sentry";
 
 const testEvent = {
-  message: 'Error processing CPF 123.456.789-10',
-  user: { email: 'test@example.com' },
+  message: "Error processing CPF 123.456.789-10",
+  user: { email: "test@example.com" },
 };
 
 const sanitized = sanitizeErrorEvent(testEvent);
-expect(sanitized.message).toBe('Error processing CPF XXX.XXX.XXX-XX');
+expect(sanitized.message).toBe("Error processing CPF XXX.XXX.XXX-XX");
 expect(sanitized.user.email).toBeUndefined();
 ```
 
@@ -398,16 +406,19 @@ expect(sanitized.user.email).toBeUndefined();
 ### Common Issues
 
 **Sentry Not Capturing Errors**:
+
 - Check `SENTRY_DSN` environment variable
 - Verify network connectivity to Sentry
 - Review sanitization functions for over-filtering
 
 **Performance Impact**:
+
 - Adjust sample rates for high-traffic APIs
 - Use async error capture to avoid blocking
 - Monitor Sentry payload sizes
 
 **Compliance Concerns**:
+
 - Review sanitization logs regularly
 - Audit Sentry dashboard for sensitive data
 - Update redaction patterns as needed
@@ -416,10 +427,10 @@ expect(sanitized.user.email).toBeUndefined();
 
 ```typescript
 // Enable debug logging
-process.env.SENTRY_DEBUG = 'true';
+process.env.SENTRY_DEBUG = "true";
 
 // Test sanitization
-import { sanitizeErrorEvent } from '@/lib/sentry';
+import { sanitizeErrorEvent } from "@/lib/sentry";
 console.log(sanitizeErrorEvent(testEvent));
 ```
 
@@ -435,6 +446,7 @@ console.log(sanitizeErrorEvent(testEvent));
 ### Rollback Plan
 
 If issues arise, the system can be rolled back by:
+
 1. Removing Sentry environment variables
 2. Error tracking continues with local logging only
 3. No data loss or functionality impact
@@ -446,6 +458,7 @@ If issues arise, the system can be rolled back by:
 The Sentry API monitoring implementation provides enterprise-grade error tracking while maintaining the highest standards of healthcare data protection and LGPD compliance. The system enhances existing error tracking capabilities without breaking changes, ensuring a smooth integration with comprehensive patient data protection.
 
 **Key Benefits**:
+
 - ✅ Healthcare-compliant error monitoring
 - ✅ Automatic PII/PHI redaction
 - ✅ Brazilian regulatory compliance

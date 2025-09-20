@@ -7,11 +7,7 @@
     "noEmit": false,
     "types": ["node", "vitest", "vitest/globals", "@testing-library/jest-dom"]
   },
-  "include": [
-    "src/**/*",
-    "fixtures/**/*",
-    "utils/**/*"
-  ],
+  "include": ["src/**/*", "fixtures/**/*", "utils/**/*"],
   "exclude": [
     "node_modules",
     "dist",

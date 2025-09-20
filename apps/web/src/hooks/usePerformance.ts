@@ -1,18 +1,19 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 // Temporary stub during type sweep; replace with real impl when available
 export const performanceMonitor = {
   mark: (_label: string) => {},
   measure: (_name: string, _start: string, _end: string) => {},
 };
 
-export function usePerformance(componentName: string) { // componentName required
+export function usePerformance(componentName: string) {
+  // componentName required
   const mountTime = useRef<number | null>(null);
   const renderCount = useRef<number>(0);
 
   useEffect(() => {
     mountTime.current = performance.now();
     return () => {
-      if (typeof mountTime.current === 'number') {
+      if (typeof mountTime.current === "number") {
         const mountDuration = performance.now() - mountTime.current;
         (performanceMonitor as any).handleCustomMetric(
           `${componentName}-mount-time`,

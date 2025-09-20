@@ -2,7 +2,10 @@ import type { Context, Next } from 'hono';
 import { errorTracker } from '../services/error-tracking-bridge';
 import { badRequest, forbidden, notFound, serverError, unauthorized } from '../utils/responses';
 
-export async function errorHandler(c: Context, next: Next): Promise<Response | void> {
+export async function errorHandler(
+  c: Context,
+  next: Next,
+): Promise<Response | void> {
   try {
     await next();
 
@@ -23,11 +26,12 @@ export async function errorHandler(c: Context, next: Next): Promise<Response | v
     });
 
     // Add breadcrumb for error handling
-    errorTracker.addBreadcrumb(
-      'Error handled in middleware',
-      'error',
-      { code, eventId, endpoint: c.req.path, method: c.req.method },
-    );
+    errorTracker.addBreadcrumb('Error handled in middleware', 'error', {
+      code,
+      eventId,
+      endpoint: c.req.path,
+      method: c.req.method,
+    });
 
     // Map common error types
     if (code === 'VALIDATION_ERROR') {

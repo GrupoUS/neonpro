@@ -82,12 +82,7 @@
         "granularConsent": true,
         "withdrawalSupport": true,
         "auditTrail": true,
-        "consentTypes": [
-          "data_processing",
-          "marketing",
-          "research",
-          "sharing"
-        ],
+        "consentTypes": ["data_processing", "marketing", "research", "sharing"],
         "lawfulBasis": [
           "consent",
           "contract",

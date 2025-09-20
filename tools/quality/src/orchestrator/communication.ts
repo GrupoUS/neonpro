@@ -1,12 +1,12 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from "events";
 import type {
   AgentMessage,
   AgentName,
   MessageType,
   Priority,
   TDDPhase,
-  OrchestrationState
-} from './types';
+  OrchestrationState,
+} from "./types";
 
 /**
  * Inter-Agent Communication System
@@ -34,29 +34,31 @@ export class CommunicationSystem extends EventEmitter {
   /**
    * Send message between agents
    */
-  async sendMessage(message: Omit<AgentMessage, 'id' | 'timestamp'>): Promise<string> {
+  async sendMessage(
+    message: Omit<AgentMessage, "id" | "timestamp">,
+  ): Promise<string> {
     const fullMessage: AgentMessage = {
       ...message,
       id: this.generateMessageId(),
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     // Add to queue for receiver
     const receiverQueue = this.messageQueue.get(message.receiver) || [];
     receiverQueue.push(fullMessage);
-    
+
     // Maintain buffer size
     if (receiverQueue.length > this.bufferSize) {
       receiverQueue.shift(); // Remove oldest message
     }
-    
+
     this.messageQueue.set(message.receiver, receiverQueue);
 
     // Emit message event
-    this.emit('message-sent', fullMessage);
+    this.emit("message-sent", fullMessage);
 
     // Handle broadcast messages
-    if (message.receiver === 'broadcast') {
+    if (message.receiver === "broadcast") {
       await this.broadcastMessage(fullMessage);
     }
 
@@ -66,15 +68,18 @@ export class CommunicationSystem extends EventEmitter {
   /**
    * Receive messages for a specific agent
    */
-  async receiveMessages(agent: AgentName | 'orchestrator'): Promise<AgentMessage[]> {
+  async receiveMessages(
+    agent: AgentName | "orchestrator",
+  ): Promise<AgentMessage[]> {
     const messages = this.messageQueue.get(agent) || [];
     this.messageQueue.set(agent, []); // Clear queue after reading
-    
+
     return messages.sort((a, b) => {
       // Sort by priority first, then by timestamp
       const priorityOrder = { critical: 4, high: 3, medium: 2, low: 1 };
-      const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
-      
+      const priorityDiff =
+        priorityOrder[b.priority] - priorityOrder[a.priority];
+
       if (priorityDiff !== 0) return priorityDiff;
       return a.timestamp.getTime() - b.timestamp.getTime();
     });
@@ -84,8 +89,12 @@ export class CommunicationSystem extends EventEmitter {
    * Broadcast message to all agents
    */
   private async broadcastMessage(message: AgentMessage): Promise<void> {
-    const agents: (AgentName | 'orchestrator')[] = [
-      'apex-dev', 'code-reviewer', 'architect-review', 'security-auditor', 'orchestrator'
+    const agents: (AgentName | "orchestrator")[] = [
+      "apex-dev",
+      "code-reviewer",
+      "architect-review",
+      "security-auditor",
+      "orchestrator",
     ];
 
     for (const agent of agents) {
@@ -104,10 +113,10 @@ export class CommunicationSystem extends EventEmitter {
     this.agentStates.set(agent, {
       ...this.agentStates.get(agent),
       ...state,
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
     });
 
-    this.emit('agent-state-updated', { agent, state });
+    this.emit("agent-state-updated", { agent, state });
   }
 
   /**
@@ -121,11 +130,11 @@ export class CommunicationSystem extends EventEmitter {
    * Update orchestration state
    */
   async updateOrchestrationState(
-    orchestrationId: string, 
-    updates: Partial<OrchestrationState>
+    orchestrationId: string,
+    updates: Partial<OrchestrationState>,
   ): Promise<void> {
     const currentState = this.orchestrationStates.get(orchestrationId);
-    
+
     if (!currentState) {
       throw new Error(`Orchestration state not found: ${orchestrationId}`);
     }
@@ -133,17 +142,22 @@ export class CommunicationSystem extends EventEmitter {
     const updatedState: OrchestrationState = {
       ...currentState,
       ...updates,
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.orchestrationStates.set(orchestrationId, updatedState);
-    this.emit('orchestration-state-updated', { orchestrationId, state: updatedState });
+    this.emit("orchestration-state-updated", {
+      orchestrationId,
+      state: updatedState,
+    });
   }
 
   /**
    * Get orchestration state
    */
-  async getOrchestrationState(orchestrationId: string): Promise<OrchestrationState | null> {
+  async getOrchestrationState(
+    orchestrationId: string,
+  ): Promise<OrchestrationState | null> {
     return this.orchestrationStates.get(orchestrationId) || null;
   }
 
@@ -152,7 +166,7 @@ export class CommunicationSystem extends EventEmitter {
    */
   async initializeOrchestrationState(state: OrchestrationState): Promise<void> {
     this.orchestrationStates.set(state.id, state);
-    this.emit('orchestration-initialized', state);
+    this.emit("orchestration-initialized", state);
   }
 
   /**
@@ -162,27 +176,27 @@ export class CommunicationSystem extends EventEmitter {
     orchestrationId: string,
     fromPhase: TDDPhase,
     toPhase: TDDPhase,
-    context: any
+    context: any,
   ): Promise<string> {
     return this.sendMessage({
-      sender: 'orchestrator',
-      receiver: 'broadcast',
-      type: 'analysis',
-      priority: 'high',
+      sender: "orchestrator",
+      receiver: "broadcast",
+      type: "analysis",
+      priority: "high",
       context: {
         phase: toPhase,
-        feature: context.feature?.name || 'unknown',
+        feature: context.feature?.name || "unknown",
         files: context.files || [],
-        iteration: context.iteration || 1
+        iteration: context.iteration || 1,
       },
       payload: {
-        type: 'phase-transition',
+        type: "phase-transition",
         orchestrationId,
         fromPhase,
         toPhase,
         timestamp: new Date(),
-        context
-      }
+        context,
+      },
     });
   }
 
@@ -190,28 +204,28 @@ export class CommunicationSystem extends EventEmitter {
    * Create agent coordination message
    */
   async createAgentCoordinationMessage(
-    sender: AgentName | 'orchestrator',
+    sender: AgentName | "orchestrator",
     receiver: AgentName,
     phase: TDDPhase,
-    coordinationType: 'handoff' | 'collaboration' | 'validation',
-    payload: any
+    coordinationType: "handoff" | "collaboration" | "validation",
+    payload: any,
   ): Promise<string> {
     return this.sendMessage({
       sender,
       receiver,
-      type: 'analysis',
-      priority: 'medium',
+      type: "analysis",
+      priority: "medium",
       context: {
         phase,
-        feature: payload.feature || 'unknown',
+        feature: payload.feature || "unknown",
         files: payload.files || [],
-        iteration: payload.iteration || 1
+        iteration: payload.iteration || 1,
       },
       payload: {
-        type: 'agent-coordination',
+        type: "agent-coordination",
         coordinationType,
-        ...payload
-      }
+        ...payload,
+      },
     });
   }
 
@@ -222,27 +236,27 @@ export class CommunicationSystem extends EventEmitter {
     orchestrationId: string,
     phase: TDDPhase,
     gateResults: any,
-    passed: boolean
+    passed: boolean,
   ): Promise<string> {
     return this.sendMessage({
-      sender: 'orchestrator',
-      receiver: 'broadcast',
-      type: passed ? 'validation' : 'error',
-      priority: passed ? 'medium' : 'high',
+      sender: "orchestrator",
+      receiver: "broadcast",
+      type: passed ? "validation" : "error",
+      priority: passed ? "medium" : "high",
       context: {
         phase,
-        feature: 'quality-gate',
+        feature: "quality-gate",
         files: [],
-        iteration: 1
+        iteration: 1,
       },
       payload: {
-        type: 'quality-gate-result',
+        type: "quality-gate-result",
         orchestrationId,
         phase,
         gateResults,
         passed,
-        timestamp: new Date()
-      }
+        timestamp: new Date(),
+      },
     });
   }
 
@@ -254,14 +268,14 @@ export class CommunicationSystem extends EventEmitter {
       totalQueues: this.messageQueue.size,
       totalMessages: 0,
       messagesByAgent: {} as Record<string, number>,
-      messagesByPriority: { critical: 0, high: 0, medium: 0, low: 0 }
+      messagesByPriority: { critical: 0, high: 0, medium: 0, low: 0 },
     };
 
     this.messageQueue.forEach((messages, agent) => {
       stats.totalMessages += messages.length;
       stats.messagesByAgent[agent] = messages.length;
-      
-      messages.forEach(msg => {
+
+      messages.forEach((msg) => {
         stats.messagesByPriority[msg.priority]++;
       });
     });
@@ -274,7 +288,7 @@ export class CommunicationSystem extends EventEmitter {
    */
   clearQueues(): void {
     this.messageQueue.clear();
-    this.emit('queues-cleared');
+    this.emit("queues-cleared");
   }
 
   /**
@@ -282,7 +296,7 @@ export class CommunicationSystem extends EventEmitter {
    */
   clearOrchestrationState(orchestrationId: string): void {
     this.orchestrationStates.delete(orchestrationId);
-    this.emit('orchestration-state-cleared', { orchestrationId });
+    this.emit("orchestration-state-cleared", { orchestrationId });
   }
 
   /**
@@ -296,23 +310,26 @@ export class CommunicationSystem extends EventEmitter {
    * Health check for communication system
    */
   healthCheck(): {
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: "healthy" | "degraded" | "unhealthy";
     metrics: Record<string, any>;
   } {
     const stats = this.getMessageStats();
     const queueSizes = Object.values(stats.messagesByAgent) as number[];
     const maxQueueSize = Math.max(...queueSizes, 0);
-    const avgQueueSize = queueSizes.length > 0 ? 
-      queueSizes.reduce((a: number, b: number) => a + b, 0) / queueSizes.length : 0;
+    const avgQueueSize =
+      queueSizes.length > 0
+        ? queueSizes.reduce((a: number, b: number) => a + b, 0) /
+          queueSizes.length
+        : 0;
 
-    let status: 'healthy' | 'degraded' | 'unhealthy' = 'healthy';
-    
+    let status: "healthy" | "degraded" | "unhealthy" = "healthy";
+
     if (maxQueueSize > this.bufferSize * 0.8) {
-      status = 'degraded';
+      status = "degraded";
     }
-    
+
     if (maxQueueSize >= this.bufferSize) {
-      status = 'unhealthy';
+      status = "unhealthy";
     }
 
     return {
@@ -322,8 +339,8 @@ export class CommunicationSystem extends EventEmitter {
         maxQueueSize,
         avgQueueSize,
         bufferUtilization: maxQueueSize / this.bufferSize,
-        activeOrchestrations: this.orchestrationStates.size
-      }
+        activeOrchestrations: this.orchestrationStates.size,
+      },
     };
   }
 }
@@ -338,12 +355,12 @@ export class MessageBuilder {
     return new MessageBuilder();
   }
 
-  from(sender: AgentName | 'orchestrator'): MessageBuilder {
+  from(sender: AgentName | "orchestrator"): MessageBuilder {
     this.message.sender = sender;
     return this;
   }
 
-  to(receiver: AgentName | 'orchestrator' | 'broadcast'): MessageBuilder {
+  to(receiver: AgentName | "orchestrator" | "broadcast"): MessageBuilder {
     this.message.receiver = receiver;
     return this;
   }
@@ -358,7 +375,12 @@ export class MessageBuilder {
     return this;
   }
 
-  context(phase: TDDPhase, feature: string, files: string[] = [], iteration: number = 1): MessageBuilder {
+  context(
+    phase: TDDPhase,
+    feature: string,
+    files: string[] = [],
+    iteration: number = 1,
+  ): MessageBuilder {
     this.message.context = { phase, feature, files, iteration };
     return this;
   }
@@ -368,13 +390,19 @@ export class MessageBuilder {
     return this;
   }
 
-  build(): Omit<AgentMessage, 'id' | 'timestamp'> {
-    if (!this.message.sender || !this.message.receiver || !this.message.type || 
-        !this.message.priority || !this.message.context || !this.message.payload) {
-      throw new Error('Incomplete message: missing required fields');
+  build(): Omit<AgentMessage, "id" | "timestamp"> {
+    if (
+      !this.message.sender ||
+      !this.message.receiver ||
+      !this.message.type ||
+      !this.message.priority ||
+      !this.message.context ||
+      !this.message.payload
+    ) {
+      throw new Error("Incomplete message: missing required fields");
     }
 
-    return this.message as Omit<AgentMessage, 'id' | 'timestamp'>;
+    return this.message as Omit<AgentMessage, "id" | "timestamp">;
   }
 }
 
@@ -384,5 +412,5 @@ export class MessageBuilder {
 export const defaultCommunicationConfig = {
   maxRetries: 3,
   timeout: 30000, // 30 seconds
-  bufferSize: 100
+  bufferSize: 100,
 };

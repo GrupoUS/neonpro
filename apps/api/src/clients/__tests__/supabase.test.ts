@@ -115,13 +115,17 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       const adminClient = createAdminClient();
 
       // Should use service role key for admin operations
-      expect(adminClient.supabaseKey).toBe(process.env.SUPABASE_SERVICE_ROLE_KEY);
+      expect(adminClient.supabaseKey).toBe(
+        process.env.SUPABASE_SERVICE_ROLE_KEY,
+      );
       expect(adminClient.supabaseUrl).toBe(process.env.SUPABASE_URL);
     });
 
     it('should configure admin client with disabled session persistence', async () => {
       const { createClient } = await import('@supabase/supabase-js');
-      const { createAdminClient, resetClientInstances } = await import('../supabase');
+      const { createAdminClient, resetClientInstances } = await import(
+        '../supabase'
+      );
 
       // Reset singleton to ensure fresh creation and mock tracking
       resetClientInstances();
@@ -176,7 +180,9 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
 
     it('should configure server client with cookie handlers', async () => {
       const { createServerClient } = await import('../supabase');
-      const { createServerClient: mockCreateServerClient } = await import('@supabase/ssr');
+      const { createServerClient: mockCreateServerClient } = await import(
+        '@supabase/ssr'
+      );
 
       createServerClient(mockCookies);
 
@@ -249,7 +255,9 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
 
       const { createUserClient } = await import('../supabase');
 
-      expect(() => createUserClient()).toThrow('SUPABASE_URL and SUPABASE_ANON_KEY are required');
+      expect(() => createUserClient()).toThrow(
+        'SUPABASE_URL and SUPABASE_ANON_KEY are required',
+      );
     });
   });
 
@@ -257,7 +265,10 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
     it('should provide clinic access validation', async () => {
       const { healthcareRLS } = await import('../supabase');
 
-      const canAccess = await healthcareRLS.canAccessClinic('user-123', 'clinic-456');
+      const canAccess = await healthcareRLS.canAccessClinic(
+        'user-123',
+        'clinic-456',
+      );
 
       // Should return boolean result based on actual RLS logic
       expect(typeof canAccess).toBe('boolean');
@@ -267,7 +278,10 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
     it('should provide patient access validation', async () => {
       const { healthcareRLS } = await import('../supabase');
 
-      const canAccess = await healthcareRLS.canAccessPatient('user-123', 'patient-789');
+      const canAccess = await healthcareRLS.canAccessPatient(
+        'user-123',
+        'patient-789',
+      );
 
       // Should return boolean based on actual RLS logic
       expect(typeof canAccess).toBe('boolean');
@@ -279,7 +293,10 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
     it('should create RLS query builder with user context', async () => {
       const { RLSQueryBuilder } = await import('../supabase');
 
-      const builder = new RLSQueryBuilder('user-123', 'healthcare_professional');
+      const builder = new RLSQueryBuilder(
+        'user-123',
+        'healthcare_professional',
+      );
 
       // Should store user context properly and provide query methods
       expect(builder.userId).toBe('user-123');
@@ -324,7 +341,9 @@ describe('Supabase Client Implementation - TDD RED Phase', () => {
       delete process.env.SUPABASE_URL;
 
       const { createUserClient } = await import('../supabase');
-      expect(() => createUserClient()).toThrow('SUPABASE_URL and SUPABASE_ANON_KEY are required');
+      expect(() => createUserClient()).toThrow(
+        'SUPABASE_URL and SUPABASE_ANON_KEY are required',
+      );
     });
 
     it('should handle connection failures gracefully', async () => {

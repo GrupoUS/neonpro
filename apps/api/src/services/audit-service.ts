@@ -219,11 +219,17 @@ export class ComprehensiveAuditService {
 
       // Apply filters
       if (query.startDate) {
-        supabaseQuery = supabaseQuery.gte('timestamp', query.startDate.toISOString());
+        supabaseQuery = supabaseQuery.gte(
+          'timestamp',
+          query.startDate.toISOString(),
+        );
       }
 
       if (query.endDate) {
-        supabaseQuery = supabaseQuery.lte('timestamp', query.endDate.toISOString());
+        supabaseQuery = supabaseQuery.lte(
+          'timestamp',
+          query.endDate.toISOString(),
+        );
       }
 
       if (query.eventTypes && query.eventTypes.length > 0) {
@@ -258,7 +264,7 @@ export class ComprehensiveAuditService {
       if (query.offset) {
         supabaseQuery = supabaseQuery.range(
           query.offset,
-          (query.offset + (query.limit || 100)) - 1,
+          query.offset + (query.limit || 100) - 1,
         );
       } else if (query.limit) {
         supabaseQuery = supabaseQuery.limit(query.limit);
@@ -326,7 +332,9 @@ export class ComprehensiveAuditService {
         return { success: false, error: result.error };
       }
 
-      const validation = await cryptographicAuditLogger.validateAuditChain(result.logs);
+      const validation = await cryptographicAuditLogger.validateAuditChain(
+        result.logs,
+      );
       const forensicReport = cryptographicAuditLogger.generateForensicReport(
         result.logs,
         validation,
@@ -434,12 +442,15 @@ export class ComprehensiveAuditService {
       const totalEvents = logs.length;
 
       // Calculate compliance metrics
-      const compliantEvents = logs.filter(log =>
-        log.complianceFlags.lgpd_compliant
-        && log.complianceFlags.rls_enforced
+      const compliantEvents = logs.filter(
+        log =>
+          log.complianceFlags.lgpd_compliant
+          && log.complianceFlags.rls_enforced,
       ).length;
 
-      const emergencyAccess = logs.filter(log => log.complianceFlags.emergency_access).length;
+      const emergencyAccess = logs.filter(
+        log => log.complianceFlags.emergency_access,
+      ).length;
 
       // Identify violations
       const violations = [];
@@ -470,7 +481,10 @@ export class ComprehensiveAuditService {
           });
         }
 
-        if (log.complianceFlags.emergency_access && !log.eventData.justification) {
+        if (
+          log.complianceFlags.emergency_access
+          && !log.eventData.justification
+        ) {
           violations.push({
             id: log.id,
             eventType: log.eventType,
@@ -489,9 +503,13 @@ export class ComprehensiveAuditService {
         byUser: this.aggregateByField(logs, 'userId'),
         byClinic: this.aggregateByField(logs, 'clinicId'),
         byCompliance: {
-          lgpd_compliant: logs.filter(l => l.complianceFlags.lgpd_compliant).length,
-          rls_enforced: logs.filter(l => l.complianceFlags.rls_enforced).length,
-          consent_validated: logs.filter(l => l.complianceFlags.consent_validated).length,
+          lgpd_compliant: logs.filter(l => l.complianceFlags.lgpd_compliant)
+            .length,
+          rls_enforced: logs.filter(l => l.complianceFlags.rls_enforced)
+            .length,
+          consent_validated: logs.filter(
+            l => l.complianceFlags.consent_validated,
+          ).length,
           emergency_access: emergencyAccess,
         },
       };
@@ -543,7 +561,9 @@ export class ComprehensiveAuditService {
         return { success: false, error: result.error };
       }
 
-      const retentionReport = cryptographicAuditLogger.generateRetentionReport(result.logs);
+      const retentionReport = cryptographicAuditLogger.generateRetentionReport(
+        result.logs,
+      );
 
       return { success: true, report: retentionReport };
     } catch (error) {
@@ -555,7 +575,10 @@ export class ComprehensiveAuditService {
   /**
    * Purge expired audit logs according to retention policies
    */
-  async purgeExpiredLogs(clinicId?: string, dryRun: boolean = true): Promise<{
+  async purgeExpiredLogs(
+    clinicId?: string,
+    dryRun: boolean = true,
+  ): Promise<{
     success: boolean;
     purgeReport?: any;
     error?: string;
@@ -653,32 +676,47 @@ export class ComprehensiveAuditService {
     return aggregation;
   }
 
-  private generateRecommendations(logs: AuditLogEntry[], violations: any[]): string[] {
+  private generateRecommendations(
+    logs: AuditLogEntry[],
+    violations: any[],
+  ): string[] {
     const recommendations = [];
 
     // Analyze violation patterns
-    const violationTypes = violations.reduce((acc, v) => {
-      acc[v.description] = (acc[v.description] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const violationTypes = violations.reduce(
+      (acc, v) => {
+        acc[v.description] = (acc[v.description] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     if (violationTypes['LGPD compliance violation detected'] > 0) {
-      recommendations.push('Review and strengthen LGPD consent validation procedures');
+      recommendations.push(
+        'Review and strengthen LGPD consent validation procedures',
+      );
     }
 
     if (violationTypes['RLS policy violation - unauthorized data access'] > 0) {
-      recommendations.push('Critical: Review and tighten Row Level Security policies immediately');
+      recommendations.push(
+        'Critical: Review and tighten Row Level Security policies immediately',
+      );
     }
 
     if (violationTypes['Emergency access without proper justification'] > 0) {
-      recommendations.push('Implement mandatory justification fields for all emergency access');
+      recommendations.push(
+        'Implement mandatory justification fields for all emergency access',
+      );
     }
 
     // Analyze access patterns
     const emergencyAccessRate = logs.filter(l => l.complianceFlags.emergency_access).length
       / logs.length;
-    if (emergencyAccessRate > 0.05) { // More than 5% emergency access
-      recommendations.push('High emergency access rate detected - review emergency procedures');
+    if (emergencyAccessRate > 0.05) {
+      // More than 5% emergency access
+      recommendations.push(
+        'High emergency access rate detected - review emergency procedures',
+      );
     }
 
     // General recommendations
@@ -689,7 +727,9 @@ export class ComprehensiveAuditService {
     }
 
     if (recommendations.length === 0) {
-      recommendations.push('Audit compliance appears satisfactory - continue monitoring');
+      recommendations.push(
+        'Audit compliance appears satisfactory - continue monitoring',
+      );
     }
 
     return recommendations;

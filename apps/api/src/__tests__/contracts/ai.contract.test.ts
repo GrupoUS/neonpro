@@ -160,8 +160,11 @@ describe('AI Contract Testing', () => {
         error: 'Raw PHI handling not permitted',
       });
 
-      await expect(caller.api.ai.createChatSession(unsafeInput))
-        .rejects.toThrow('PHI handling validation failed: Raw PHI handling not permitted');
+      await expect(
+        caller.api.ai.createChatSession(unsafeInput),
+      ).rejects.toThrow(
+        'PHI handling validation failed: Raw PHI handling not permitted',
+      );
     });
   });
 
@@ -263,8 +266,9 @@ describe('AI Contract Testing', () => {
         reason: 'Malicious intent detected',
       });
 
-      await expect(caller.api.ai.sendMessage(unsafeInput))
-        .rejects.toThrow('Message content rejected: Malicious intent detected');
+      await expect(caller.api.ai.sendMessage(unsafeInput)).rejects.toThrow(
+        'Message content rejected: Malicious intent detected',
+      );
     });
   });
 
@@ -328,7 +332,9 @@ describe('AI Contract Testing', () => {
         factors: mockPrediction.factors,
         recommendations: mockPrediction.recommendations,
       });
-      mockContext.prisma.aiNoShowPrediction.create.mockResolvedValue(mockPrediction);
+      mockContext.prisma.aiNoShowPrediction.create.mockResolvedValue(
+        mockPrediction,
+      );
 
       const result = await caller.api.ai.predictNoShow(predictionInput);
 

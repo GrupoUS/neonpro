@@ -1,12 +1,12 @@
 /**
  * AI Agent tRPC Integration
- * 
+ *
  * Type-safe tRPC hooks for AI agent functionality
  * Integrates with the existing agent router backend
  */
 
-import { createTRPCReact } from '@trpc/react-query';
-import type { AppRouter } from '@neonpro/api';
+import { createTRPCReact } from "@trpc/react-query";
+import type { AppRouter } from "@neonpro/api";
 
 // Create tRPC React instance
 export const agentTRPC = createTRPCReact<AppRouter>();
@@ -22,10 +22,10 @@ export function useAgentSession() {
   return agentTRPC.agent.createSession.useMutation({
     onSuccess: (data) => {
       // Log successful session creation
-      console.log('Agent session created:', data.data.id);
+      console.log("Agent session created:", data.data.id);
     },
     onError: (error) => {
-      console.error('Failed to create agent session:', error);
+      console.error("Failed to create agent session:", error);
     },
   });
 }
@@ -33,29 +33,27 @@ export function useAgentSession() {
 /**
  * Hook for listing user's agent sessions
  */
-export function useAgentSessions(
-  params?: {
-    agent_type?: 'client' | 'financial' | 'appointment';
-    status?: 'active' | 'archived' | 'pending';
-    page?: number;
-    limit?: number;
-    sort_by?: 'created_at' | 'updated_at';
-    sort_order?: 'asc' | 'desc';
-  }
-) {
+export function useAgentSessions(params?: {
+  agent_type?: "client" | "financial" | "appointment";
+  status?: "active" | "archived" | "pending";
+  page?: number;
+  limit?: number;
+  sort_by?: "created_at" | "updated_at";
+  sort_order?: "asc" | "desc";
+}) {
   return agentTRPC.agent.listSessions.useQuery(
     {
       agent_type: params?.agent_type,
       status: params?.status,
       page: params?.page || 1,
       limit: params?.limit || 10,
-      sort_by: params?.sort_by || 'created_at',
-      sort_order: params?.sort_order || 'desc',
+      sort_by: params?.sort_by || "created_at",
+      sort_order: params?.sort_order || "desc",
     },
     {
       enabled: true,
       staleTime: 5 * 60 * 1000, // 5 minutes
-    }
+    },
   );
 }
 
@@ -64,7 +62,7 @@ export function useAgentSessions(
  */
 export function useAgentSessionDetail(
   sessionId: string,
-  includeMessages: boolean = false
+  includeMessages: boolean = false,
 ) {
   return agentTRPC.agent.getSession.useQuery(
     {
@@ -74,7 +72,7 @@ export function useAgentSessionDetail(
     {
       enabled: !!sessionId,
       staleTime: 30 * 1000, // 30 seconds for fresh messages
-    }
+    },
   );
 }
 
@@ -84,10 +82,10 @@ export function useAgentSessionDetail(
 export function useAgentArchiveSession() {
   return agentTRPC.agent.archiveSession.useMutation({
     onSuccess: () => {
-      console.log('Agent session archived successfully');
+      console.log("Agent session archived successfully");
     },
     onError: (error) => {
-      console.error('Failed to archive agent session:', error);
+      console.error("Failed to archive agent session:", error);
     },
   });
 }
@@ -101,7 +99,7 @@ export function useAgentArchiveSession() {
  */
 export function useAgentSendMessage() {
   const queryClient = agentTRPC.useUtils();
-  
+
   return agentTRPC.agent.sendMessage.useMutation({
     onSuccess: (data, variables) => {
       // Invalidate session queries to get fresh messages
@@ -109,11 +107,11 @@ export function useAgentSendMessage() {
         session_id: variables.session_id,
         include_messages: true,
       });
-      
-      console.log('Message sent successfully:', data.data.message.id);
+
+      console.log("Message sent successfully:", data.data.message.id);
     },
     onError: (error) => {
-      console.error('Failed to send message:', error);
+      console.error("Failed to send message:", error);
     },
   });
 }
@@ -126,11 +124,11 @@ export function useAgentMessages(
   options?: {
     enabled?: boolean;
     refetchInterval?: number;
-  }
+  },
 ) {
   const { data: sessionData, isLoading } = useAgentSessionDetail(
     sessionId,
-    true
+    true,
   );
 
   return {
@@ -149,15 +147,15 @@ export function useAgentMessages(
  */
 export function useAgentAddKnowledge() {
   const queryClient = agentTRPC.useUtils();
-  
+
   return agentTRPC.agent.addKnowledge.useMutation({
     onSuccess: () => {
       // Invalidate knowledge search queries
       queryClient.agent.searchKnowledge.invalidate();
-      console.log('Knowledge entry added successfully');
+      console.log("Knowledge entry added successfully");
     },
     onError: (error) => {
-      console.error('Failed to add knowledge entry:', error);
+      console.error("Failed to add knowledge entry:", error);
     },
   });
 }
@@ -171,7 +169,7 @@ export function useAgentSearchKnowledge() {
       console.log(`Found ${data.data.total_matches} knowledge entries`);
     },
     onError: (error) => {
-      console.error('Failed to search knowledge base:', error);
+      console.error("Failed to search knowledge base:", error);
     },
   });
 }
@@ -185,7 +183,7 @@ export function useAgentRAGQuery() {
       console.log(`RAG query completed with ${data.results.length} results`);
     },
     onError: (error) => {
-      console.error('Failed to perform RAG query:', error);
+      console.error("Failed to perform RAG query:", error);
     },
   });
 }
@@ -197,13 +195,11 @@ export function useAgentRAGQuery() {
 /**
  * Hook for getting agent analytics
  */
-export function useAgentAnalytics(
-  params?: {
-    agent_type?: 'client' | 'financial' | 'appointment';
-    start_date?: string;
-    end_date?: string;
-  }
-) {
+export function useAgentAnalytics(params?: {
+  agent_type?: "client" | "financial" | "appointment";
+  start_date?: string;
+  end_date?: string;
+}) {
   return agentTRPC.agent.getAnalytics.useQuery(
     {
       agent_type: params?.agent_type,
@@ -213,7 +209,7 @@ export function useAgentAnalytics(
     {
       enabled: true,
       staleTime: 5 * 60 * 1000, // 5 minutes
-    }
+    },
   );
 }
 
@@ -222,7 +218,7 @@ export function useAgentAnalytics(
  */
 export function useAgentRealtimeAnalytics(
   enabled: boolean = false,
-  refreshInterval: number = 30000 // 30 seconds
+  refreshInterval: number = 30000, // 30 seconds
 ) {
   return agentTRPC.agent.getAnalytics.useQuery(
     {},
@@ -230,7 +226,7 @@ export function useAgentRealtimeAnalytics(
       enabled,
       refetchInterval: refreshInterval,
       staleTime: 10 * 1000, // 10 seconds
-    }
+    },
   );
 }
 
@@ -248,7 +244,7 @@ export function useAgentSessionManager() {
 
   const startNewSession = useCallback(
     async (params: {
-      agent_type: 'client' | 'financial' | 'appointment';
+      agent_type: "client" | "financial" | "appointment";
       initial_context?: string;
       metadata?: Record<string, unknown>;
     }) => {
@@ -256,7 +252,7 @@ export function useAgentSessionManager() {
       setCurrentSessionId(result.data.id);
       return result;
     },
-    [createSession]
+    [createSession],
   );
 
   const endCurrentSession = useCallback(
@@ -269,7 +265,7 @@ export function useAgentSessionManager() {
         setCurrentSessionId(undefined);
       }
     },
-    [archiveSession, currentSessionId]
+    [archiveSession, currentSessionId],
   );
 
   return {
@@ -291,21 +287,24 @@ export function useAgentChat(sessionId?: string) {
   const ragQuery = useAgentRAGQuery();
 
   const sendUserMessage = useCallback(
-    async (content: string, options?: {
-      metadata?: Record<string, unknown>;
-      attachments?: any[];
-    }) => {
+    async (
+      content: string,
+      options?: {
+        metadata?: Record<string, unknown>;
+        attachments?: any[];
+      },
+    ) => {
       if (!sessionId) return;
 
       await sendMessage.mutateAsync({
         session_id: sessionId,
-        role: 'user',
+        role: "user",
         content,
         metadata: options?.metadata,
         attachments: options?.attachments,
       });
     },
-    [sendMessage, sessionId]
+    [sendMessage, sessionId],
   );
 
   const performRAGSearch = useCallback(
@@ -318,7 +317,7 @@ export function useAgentChat(sessionId?: string) {
         max_results: maxResults,
       });
     },
-    [ragQuery, sessionId]
+    [ragQuery, sessionId],
   );
 
   return {
@@ -340,7 +339,7 @@ export function useKnowledgeBaseManager() {
 
   const addEntry = useCallback(
     async (params: {
-      agent_type: 'client' | 'financial' | 'appointment';
+      agent_type: "client" | "financial" | "appointment";
       title: string;
       content: string;
       source: string;
@@ -349,12 +348,12 @@ export function useKnowledgeBaseManager() {
     }) => {
       return addKnowledge.mutateAsync(params);
     },
-    [addKnowledge]
+    [addKnowledge],
   );
 
   const searchEntries = useCallback(
     async (params: {
-      agent_type: 'client' | 'financial' | 'appointment';
+      agent_type: "client" | "financial" | "appointment";
       query: string;
       limit?: number;
     }) => {
@@ -364,7 +363,7 @@ export function useKnowledgeBaseManager() {
         limit: params.limit || 10,
       });
     },
-    [searchKnowledge]
+    [searchKnowledge],
   );
 
   return {
@@ -385,17 +384,17 @@ export function useKnowledgeBaseManager() {
 export function prefetchAgentSessions(
   queryClient: ReturnType<typeof agentTRPC.useUtils>,
   params?: {
-    agent_type?: 'client' | 'financial' | 'appointment';
-    status?: 'active' | 'archived' | 'pending';
-  }
+    agent_type?: "client" | "financial" | "appointment";
+    status?: "active" | "archived" | "pending";
+  },
 ) {
   return queryClient.agent.listSessions.prefetch({
     agent_type: params?.agent_type,
     status: params?.status,
     page: 1,
     limit: 10,
-    sort_by: 'created_at',
-    sort_order: 'desc',
+    sort_by: "created_at",
+    sort_order: "desc",
   });
 }
 
@@ -405,7 +404,7 @@ export function prefetchAgentSessions(
 export function prefetchAgentSession(
   queryClient: ReturnType<typeof agentTRPC.useUtils>,
   sessionId: string,
-  includeMessages: boolean = false
+  includeMessages: boolean = false,
 ) {
   return queryClient.agent.getSession.prefetch(
     {
@@ -414,7 +413,7 @@ export function prefetchAgentSession(
     },
     {
       staleTime: 30 * 1000,
-    }
+    },
   );
 }
 
@@ -424,10 +423,10 @@ export function prefetchAgentSession(
 export function prefetchAgentAnalytics(
   queryClient: ReturnType<typeof agentTRPC.useUtils>,
   params?: {
-    agent_type?: 'client' | 'financial' | 'appointment';
+    agent_type?: "client" | "financial" | "appointment";
     start_date?: string;
     end_date?: string;
-  }
+  },
 ) {
   return queryClient.agent.getAnalytics.prefetch({
     agent_type: params?.agent_type,
@@ -444,26 +443,26 @@ export function prefetchAgentAnalytics(
  * Handle agent-related errors with user-friendly messages
  */
 export function handleAgentError(error: unknown): string {
-  if (error && typeof error === 'object' && 'data' in error) {
+  if (error && typeof error === "object" && "data" in error) {
     const errorData = error.data as any;
-    
+
     switch (errorData?.code) {
-      case 'UNAUTHORIZED':
-        return 'Você não tem permissão para acessar este assistente.';
-      case 'FORBIDDEN':
-        return 'Acesso negado. Verifique suas permissões.';
-      case 'NOT_FOUND':
-        return 'Sessão não encontrada ou expirada.';
-      case 'RATE_LIMITED':
-        return 'Muitas solicitações. Por favor, aguarde um momento.';
-      case 'INTERNAL_SERVER_ERROR':
-        return 'Erro interno do servidor. Tente novamente mais tarde.';
+      case "UNAUTHORIZED":
+        return "Você não tem permissão para acessar este assistente.";
+      case "FORBIDDEN":
+        return "Acesso negado. Verifique suas permissões.";
+      case "NOT_FOUND":
+        return "Sessão não encontrada ou expirada.";
+      case "RATE_LIMITED":
+        return "Muitas solicitações. Por favor, aguarde um momento.";
+      case "INTERNAL_SERVER_ERROR":
+        return "Erro interno do servidor. Tente novamente mais tarde.";
       default:
-        return 'Ocorreu um erro. Por favor, tente novamente.';
+        return "Ocorreu um erro. Por favor, tente novamente.";
     }
   }
-  
-  return 'Ocorreu um erro inesperado.';
+
+  return "Ocorreu um erro inesperado.";
 }
 
 // =====================================
@@ -476,7 +475,7 @@ export type {
   KnowledgeEntryResponse,
   RAGResponse,
   AgentAnalytics,
-} from '@neonpro/api';
+} from "@neonpro/api";
 
 // Import React if needed for useState
-import { useState, useCallback } from 'react';
+import { useState, useCallback } from "react";

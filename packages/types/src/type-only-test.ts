@@ -1,3 +1,2 @@
-
-export type TestType = 'test';
-export type TestType2 = 'test2';
+export type TestType = "test";
+export type TestType2 = "test2";

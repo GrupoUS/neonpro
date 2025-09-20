@@ -164,16 +164,20 @@ export const professionalRouter = router({
       tags: ['professional', 'read', 'metrics'],
       requiresPermission: 'professional:read',
     })
-    .input(z.object({
-      id: z.string().uuid(),
-      includeWorkingHours: z.boolean().default(true),
-      includePerformanceMetrics: z.boolean().default(false),
-      includeRecentAppointments: z.boolean().default(false),
-      metricsDateRange: z.object({
-        from: z.string().datetime(),
-        to: z.string().datetime(),
-      }).optional(),
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        includeWorkingHours: z.boolean().default(true),
+        includePerformanceMetrics: z.boolean().default(false),
+        includeRecentAppointments: z.boolean().default(false),
+        metricsDateRange: z
+          .object({
+            from: z.string().datetime(),
+            to: z.string().datetime(),
+          })
+          .optional(),
+      }),
+    )
     .output(ProfessionalResponseSchema)
     .query(async ({ input, ctx }) => {
       const professional = await ctx.prisma.professional.findUnique({
@@ -245,22 +249,31 @@ export const professionalRouter = router({
       tags: ['professional', 'list', 'search', 'availability'],
       requiresPermission: 'professional:list',
     })
-    .input(PaginationSchema.extend({
-      clinicId: z.string().uuid(),
-      search: z.string().optional(),
-      specialization: z.string().optional(),
-      licenseType: z.enum(['CRM', 'CRO', 'CRF', 'CREF', 'CRP']).optional(),
-      isActive: z.boolean().default(true),
-      availableOn: z.string().datetime().optional(),
-      availabilityTimeSlot: z.object({
-        startTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
-        endTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
-      }).optional(),
-      sortBy: z.enum(['fullName', 'specialization', 'createdAt', 'licenseValidatedAt']).default(
-        'fullName',
-      ),
-      sortOrder: z.enum(['asc', 'desc']).default('asc'),
-    }))
+    .input(
+      PaginationSchema.extend({
+        clinicId: z.string().uuid(),
+        search: z.string().optional(),
+        specialization: z.string().optional(),
+        licenseType: z.enum(['CRM', 'CRO', 'CRF', 'CREF', 'CRP']).optional(),
+        isActive: z.boolean().default(true),
+        availableOn: z.string().datetime().optional(),
+        availabilityTimeSlot: z
+          .object({
+            startTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
+            endTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
+          })
+          .optional(),
+        sortBy: z
+          .enum([
+            'fullName',
+            'specialization',
+            'createdAt',
+            'licenseValidatedAt',
+          ])
+          .default('fullName'),
+        sortOrder: z.enum(['asc', 'desc']).default('asc'),
+      }),
+    )
     .output(ProfessionalsListResponseSchema)
     .query(async ({ input, ctx }) => {
       // Validate clinic access
@@ -277,7 +290,10 @@ export const professionalRouter = router({
           ],
         }),
         ...(input.specialization && {
-          specialization: { contains: input.specialization, mode: 'insensitive' },
+          specialization: {
+            contains: input.specialization,
+            mode: 'insensitive',
+          },
         }),
         ...(input.licenseType && { licenseType: input.licenseType }),
       };
@@ -312,17 +328,27 @@ export const professionalRouter = router({
             professionalId: { in: professionalIds },
             scheduledDate: {
               gte: new Date(
-                availableDate.toDateString() + ' ' + input.availabilityTimeSlot.startTime,
+                availableDate.toDateString()
+                  + ' '
+                  + input.availabilityTimeSlot.startTime,
               ),
-              lt: new Date(availableDate.toDateString() + ' ' + input.availabilityTimeSlot.endTime),
+              lt: new Date(
+                availableDate.toDateString()
+                  + ' '
+                  + input.availabilityTimeSlot.endTime,
+              ),
             },
             status: { in: ['scheduled', 'confirmed', 'in_progress'] },
           },
           select: { professionalId: true },
         });
 
-        const busyProfessionalIds = new Set(conflictingAppointments.map(a => a.professionalId));
-        professionalIds = professionalIds.filter(id => !busyProfessionalIds.has(id));
+        const busyProfessionalIds = new Set(
+          conflictingAppointments.map(a => a.professionalId),
+        );
+        professionalIds = professionalIds.filter(
+          id => !busyProfessionalIds.has(id),
+        );
       }
 
       const finalWhere = professionalIds
@@ -406,9 +432,10 @@ export const professionalRouter = router({
       await validateClinicAccess(ctx.user.id, currentProfessional.clinicId);
 
       // Check if license information is being updated
-      const licenseChanged =
-        (input.licenseNumber && input.licenseNumber !== currentProfessional.licenseNumber)
-        || (input.licenseType && input.licenseType !== currentProfessional.licenseType);
+      const licenseChanged = (input.licenseNumber
+        && input.licenseNumber !== currentProfessional.licenseNumber)
+        || (input.licenseType
+          && input.licenseType !== currentProfessional.licenseType);
 
       let licenseValidation = null;
       if (licenseChanged) {
@@ -541,34 +568,42 @@ export const professionalRouter = router({
       tags: ['professional', 'availability', 'schedule'],
       requiresPermission: 'professional:read',
     })
-    .input(z.object({
-      professionalId: z.string().uuid(),
-      dateFrom: z.string().datetime(),
-      dateTo: z.string().datetime(),
-      slotDuration: z.number().min(15).max(180).default(30), // Duration in minutes
-      includeBookedSlots: z.boolean().default(false),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        professionalId: z.string(),
-        availableSlots: z.array(z.object({
-          date: z.string().datetime(),
-          startTime: z.string(),
-          endTime: z.string(),
-          isAvailable: z.boolean(),
-          reason: z.string().optional(),
-        })),
-        workingHours: z.array(z.object({
-          dayOfWeek: z.number(),
-          startTime: z.string(),
-          endTime: z.string(),
-          isActive: z.boolean(),
-        })),
+    .input(
+      z.object({
+        professionalId: z.string().uuid(),
+        dateFrom: z.string().datetime(),
+        dateTo: z.string().datetime(),
+        slotDuration: z.number().min(15).max(180).default(30), // Duration in minutes
+        includeBookedSlots: z.boolean().default(false),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          professionalId: z.string(),
+          availableSlots: z.array(
+            z.object({
+              date: z.string().datetime(),
+              startTime: z.string(),
+              endTime: z.string(),
+              isAvailable: z.boolean(),
+              reason: z.string().optional(),
+            }),
+          ),
+          workingHours: z.array(
+            z.object({
+              dayOfWeek: z.number(),
+              startTime: z.string(),
+              endTime: z.string(),
+              isActive: z.boolean(),
+            }),
+          ),
+        }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .query(async ({ input, ctx }) => {
       const professional = await ctx.prisma.professional.findUnique({
         where: { id: input.professionalId },
@@ -639,23 +674,29 @@ export const professionalRouter = router({
       tags: ['professional', 'deactivate'],
       requiresPermission: 'professional:deactivate',
     })
-    .input(z.object({
-      id: z.string().uuid(),
-      reason: z.string().min(5).max(500),
-      handleActiveAppointments: z.enum(['cancel', 'reassign', 'keep']).default('keep'),
-      reassignToProfessionalId: z.string().uuid().optional(),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        deactivatedProfessionalId: z.string(),
-        affectedAppointments: z.number(),
-        handlingMethod: z.string(),
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        reason: z.string().min(5).max(500),
+        handleActiveAppointments: z
+          .enum(['cancel', 'reassign', 'keep'])
+          .default('keep'),
+        reassignToProfessionalId: z.string().uuid().optional(),
       }),
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          deactivatedProfessionalId: z.string(),
+          affectedAppointments: z.number(),
+          handlingMethod: z.string(),
+        }),
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const professional = await ctx.prisma.professional.findUnique({
         where: { id: input.id },
@@ -773,7 +814,10 @@ export const professionalRouter = router({
 });
 
 // Helper functions
-function isValidLicenseFormat(licenseType: string, licenseNumber: string): boolean {
+function isValidLicenseFormat(
+  licenseType: string,
+  licenseNumber: string,
+): boolean {
   const formats = {
     CRM: /^CRM\/[A-Z]{2}\s\d{4,6}$/, // CRM/SP 123456
     CRO: /^CRO\/[A-Z]{2}\s\d{4,6}$/, // CRO/SP 123456
@@ -824,14 +868,20 @@ function calculateAvailableSlots(
   return [];
 }
 
-async function sendProfessionalWelcomeNotification(_professional: unknown): Promise<void> {
+async function sendProfessionalWelcomeNotification(
+  _professional: unknown,
+): Promise<void> {
   // Placeholder for welcome notification
 }
 
 function getChanges(current: any, input: any): Record<string, any> {
   const changes = {} as Record<string, any>;
   Object.keys(input).forEach(key => {
-    if (key !== 'id' && input[key] !== undefined && input[key] !== current[key]) {
+    if (
+      key !== 'id'
+      && input[key] !== undefined
+      && input[key] !== current[key]
+    ) {
       changes[key] = {
         from: current[key],
         to: input[key],
@@ -841,12 +891,18 @@ function getChanges(current: any, input: any): Record<string, any> {
   return changes;
 }
 
-async function validateClinicAccess(_userId: string, _clinicId: string): Promise<void> {
+async function validateClinicAccess(
+  _userId: string,
+  _clinicId: string,
+): Promise<void> {
   // Implementation for clinic access validation
   return Promise.resolve();
 }
 
-async function validateClinicAdminAccess(_userId: string, _clinicId: string): Promise<void> {
+async function validateClinicAdminAccess(
+  _userId: string,
+  _clinicId: string,
+): Promise<void> {
   // Implementation for clinic admin access validation
   return Promise.resolve();
 }

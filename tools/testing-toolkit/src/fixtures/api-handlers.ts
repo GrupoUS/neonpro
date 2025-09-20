@@ -5,62 +5,56 @@
  * Provides realistic API responses for testing.
  */
 
-import { http, HttpResponse } from 'msw';
-import { TEST_IDS } from './index';
+import { http, HttpResponse } from "msw";
+import { TEST_IDS } from "./index";
 
 // Auth handlers
 export const authHandlers = [
-  http.post('/api/auth/login', async ({ request }) => {
-    const body = await request.json() as { email: string; password: string };
+  http.post("/api/auth/login", async ({ request }) => {
+    const body = (await request.json()) as { email: string; password: string };
 
-    if (body.email === 'test@example.com' && body.password === 'password') {
+    if (body.email === "test@example.com" && body.password === "password") {
       return HttpResponse.json({
         user: {
           id: TEST_IDS.USER,
           email: body.email,
-          role: 'professional',
+          role: "professional",
         },
-        token: 'mock-jwt-token',
+        token: "mock-jwt-token",
       });
     }
 
-    return HttpResponse.json(
-      { error: 'Invalid credentials' },
-      { status: 401 },
-    );
+    return HttpResponse.json({ error: "Invalid credentials" }, { status: 401 });
   }),
 
-  http.post('/api/auth/logout', () => {
+  http.post("/api/auth/logout", () => {
     return HttpResponse.json({ success: true });
   }),
 
-  http.get('/api/auth/me', ({ request }) => {
-    const authHeader = request.headers.get('Authorization');
+  http.get("/api/auth/me", ({ request }) => {
+    const authHeader = request.headers.get("Authorization");
 
-    if (authHeader === 'Bearer mock-jwt-token') {
+    if (authHeader === "Bearer mock-jwt-token") {
       return HttpResponse.json({
         id: TEST_IDS.USER,
-        email: 'test@example.com',
-        role: 'professional',
+        email: "test@example.com",
+        role: "professional",
       });
     }
 
-    return HttpResponse.json(
-      { error: 'Unauthorized' },
-      { status: 401 },
-    );
+    return HttpResponse.json({ error: "Unauthorized" }, { status: 401 });
   }),
 ];
 
 // Patient data handlers
 export const patientHandlers = [
-  http.get('/api/patients', ({ request }) => {
+  http.get("/api/patients", ({ request }) => {
     const url = new URL(request.url);
-    const clinicId = url.searchParams.get('clinic_id');
+    const clinicId = url.searchParams.get("clinic_id");
 
     if (!clinicId) {
       return HttpResponse.json(
-        { error: 'clinic_id required' },
+        { error: "clinic_id required" },
         { status: 400 },
       );
     }
@@ -69,8 +63,8 @@ export const patientHandlers = [
       patients: [
         {
           id: TEST_IDS.PATIENT,
-          name: 'João Silva',
-          email: 'joao@example.com',
+          name: "João Silva",
+          email: "joao@example.com",
           clinic_id: clinicId,
           created_at: new Date().toISOString(),
         },
@@ -78,43 +72,40 @@ export const patientHandlers = [
     });
   }),
 
-  http.get('/api/patients/:id', ({ params }) => {
+  http.get("/api/patients/:id", ({ params }) => {
     if (params.id === TEST_IDS.PATIENT) {
       return HttpResponse.json({
         id: TEST_IDS.PATIENT,
-        name: 'João Silva',
-        email: 'joao@example.com',
-        cpf: '123.456.789-00',
+        name: "João Silva",
+        email: "joao@example.com",
+        cpf: "123.456.789-00",
         clinic_id: TEST_IDS.CLINIC,
         created_at: new Date().toISOString(),
         // LGPD compliance fields
         consent_given: true,
-        data_processing_purpose: 'Healthcare service provision',
+        data_processing_purpose: "Healthcare service provision",
         audit_trail: [
           {
             timestamp: new Date().toISOString(),
-            action: 'data_access',
+            action: "data_access",
             user_id: TEST_IDS.USER,
-            data_type: 'patient_data',
-            purpose: 'Healthcare service provision',
+            data_type: "patient_data",
+            purpose: "Healthcare service provision",
           },
         ],
       });
     }
 
-    return HttpResponse.json(
-      { error: 'Patient not found' },
-      { status: 404 },
-    );
+    return HttpResponse.json({ error: "Patient not found" }, { status: 404 });
   }),
 
-  http.post('/api/patients', async ({ request }) => {
-    const body = await request.json() as any;
+  http.post("/api/patients", async ({ request }) => {
+    const body = (await request.json()) as any;
 
     // Validate required fields
     if (!body.name || !body.email || !body.clinic_id) {
       return HttpResponse.json(
-        { error: 'Missing required fields' },
+        { error: "Missing required fields" },
         { status: 400 },
       );
     }
@@ -122,57 +113,60 @@ export const patientHandlers = [
     // Validate LGPD compliance
     if (!body.consent_given || !body.data_processing_purpose) {
       return HttpResponse.json(
-        { error: 'LGPD compliance required: consent and purpose must be provided' },
+        {
+          error:
+            "LGPD compliance required: consent and purpose must be provided",
+        },
         { status: 400 },
       );
     }
 
-    return HttpResponse.json({
-      id: 'new-patient-id',
-      ...body,
-      created_at: new Date().toISOString(),
-    }, { status: 201 });
+    return HttpResponse.json(
+      {
+        id: "new-patient-id",
+        ...body,
+        created_at: new Date().toISOString(),
+      },
+      { status: 201 },
+    );
   }),
 ];
 
 // Clinic handlers
 export const clinicHandlers = [
-  http.get('/api/clinics/:id', ({ params }) => {
+  http.get("/api/clinics/:id", ({ params }) => {
     if (params.id === TEST_IDS.CLINIC) {
       return HttpResponse.json({
         id: TEST_IDS.CLINIC,
-        name: 'Clínica Teste',
-        cnpj: '12.345.678/0001-90',
-        address: 'Rua Teste, 123',
-        city: 'São Paulo',
-        state: 'SP',
+        name: "Clínica Teste",
+        cnpj: "12.345.678/0001-90",
+        address: "Rua Teste, 123",
+        city: "São Paulo",
+        state: "SP",
         created_at: new Date().toISOString(),
       });
     }
 
-    return HttpResponse.json(
-      { error: 'Clinic not found' },
-      { status: 404 },
-    );
+    return HttpResponse.json({ error: "Clinic not found" }, { status: 404 });
   }),
 ];
 
 // Error handlers for testing error scenarios
 export const errorHandlers = [
-  http.get('/api/error/500', () => {
+  http.get("/api/error/500", () => {
     return HttpResponse.json(
-      { error: 'Internal server error' },
+      { error: "Internal server error" },
       { status: 500 },
     );
   }),
 
-  http.get('/api/error/timeout', () => {
+  http.get("/api/error/timeout", () => {
     return new Promise(() => {
       // Never resolves - simulates timeout
     });
   }),
 
-  http.get('/api/error/network', () => {
+  http.get("/api/error/network", () => {
     return HttpResponse.error();
   }),
 ];

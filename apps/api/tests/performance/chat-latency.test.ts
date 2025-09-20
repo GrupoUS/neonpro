@@ -26,7 +26,9 @@ describe('Chat API Performance Tests', () => {
 
       const responseTime = Date.now() - startTime;
 
-      expect(responseTime).toBeLessThan(PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME);
+      expect(responseTime).toBeLessThan(
+        PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME,
+      );
       expect(response.body).toHaveProperty('status', 'ok');
     });
 
@@ -85,7 +87,9 @@ describe('Chat API Performance Tests', () => {
 
       const responseTime = Date.now() - startTime;
 
-      expect(responseTime).toBeLessThan(PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME);
+      expect(responseTime).toBeLessThan(
+        PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME,
+      );
       expect(response.body).toHaveProperty('id', sessionId);
     });
 
@@ -126,7 +130,9 @@ describe('Chat API Performance Tests', () => {
       const totalTime = Date.now() - startTime;
 
       // All requests should complete within reasonable time
-      expect(totalTime).toBeLessThan(PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME * 2);
+      expect(totalTime).toBeLessThan(
+        PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME * 2,
+      );
 
       // All responses should be successful
       responses.forEach(response => {
@@ -164,17 +170,24 @@ describe('Chat API Performance Tests', () => {
       const avgResponseTime = totalTime / PERFORMANCE_TARGETS.CONCURRENT_REQUESTS;
 
       // Average response time should be within constitutional limit
-      expect(avgResponseTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME);
+      expect(avgResponseTime).toBeLessThan(
+        PERFORMANCE_TARGETS.MAX_RESPONSE_TIME,
+      );
 
       // All responses should be successful
       responses.forEach((response, i) => {
         expect(response.body).toHaveProperty('response');
-        expect(response.body).toHaveProperty('sessionId', `concurrent-session-${i}`);
+        expect(response.body).toHaveProperty(
+          'sessionId',
+          `concurrent-session-${i}`,
+        );
       });
 
       console.log(
         `${PERFORMANCE_TARGETS.CONCURRENT_REQUESTS} concurrent queries: avg ${
-          avgResponseTime.toFixed(2)
+          avgResponseTime.toFixed(
+            2,
+          )
         }ms`,
       );
     });
@@ -201,11 +214,13 @@ describe('Chat API Performance Tests', () => {
             },
           });
 
-        requests.push(request.then(response => {
-          const responseTime = Date.now() - startTime;
-          responseTimes.push(responseTime);
-          return response;
-        }));
+        requests.push(
+          request.then(response => {
+            const responseTime = Date.now() - startTime;
+            responseTimes.push(responseTime);
+            return response;
+          }),
+        );
       }
 
       const responses = await Promise.all(requests);
@@ -213,12 +228,16 @@ describe('Chat API Performance Tests', () => {
       // All successful requests should be within performance limits
       responses.forEach((response, i) => {
         if (response.status === 200) {
-          expect(responseTimes[i]).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME);
+          expect(responseTimes[i]).toBeLessThan(
+            PERFORMANCE_TARGETS.MAX_RESPONSE_TIME,
+          );
         }
       });
 
       const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
-      console.log(`Rate limiting scenario avg response time: ${avgResponseTime.toFixed(2)}ms`);
+      console.log(
+        `Rate limiting scenario avg response time: ${avgResponseTime.toFixed(2)}ms`,
+      );
     });
   });
 
@@ -253,19 +272,28 @@ describe('Chat API Performance Tests', () => {
       const avgResponseTime = responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length;
       const maxResponseTime = Math.max(...responseTimes);
       const minResponseTime = Math.min(...responseTimes);
-      const p95ResponseTime =
-        responseTimes.sort((a, b) => a - b)[Math.floor(responseTimes.length * 0.95)];
+      const p95ResponseTime = responseTimes.sort((a, b) => a - b)[
+        Math.floor(responseTimes.length * 0.95)
+      ];
 
-      console.log(`Throughput test results (${PERFORMANCE_TARGETS.THROUGHPUT_REQUESTS} requests):`);
+      console.log(
+        `Throughput test results (${PERFORMANCE_TARGETS.THROUGHPUT_REQUESTS} requests):`,
+      );
       console.log(`  Average: ${avgResponseTime.toFixed(2)}ms`);
       console.log(`  Min: ${minResponseTime}ms`);
       console.log(`  Max: ${maxResponseTime}ms`);
       console.log(`  95th percentile: ${p95ResponseTime}ms`);
 
       // Performance assertions
-      expect(avgResponseTime).toBeLessThan(PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME);
-      expect(p95ResponseTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME);
-      expect(maxResponseTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME * 2); // Allow some variance
+      expect(avgResponseTime).toBeLessThan(
+        PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME,
+      );
+      expect(p95ResponseTime).toBeLessThan(
+        PERFORMANCE_TARGETS.MAX_RESPONSE_TIME,
+      );
+      expect(maxResponseTime).toBeLessThan(
+        PERFORMANCE_TARGETS.MAX_RESPONSE_TIME * 2,
+      ); // Allow some variance
     });
 
     it('should handle streaming responses efficiently', async () => {
@@ -289,7 +317,9 @@ describe('Chat API Performance Tests', () => {
       const responseTime = Date.now() - startTime;
 
       // Streaming should start quickly
-      expect(responseTime).toBeLessThan(PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME);
+      expect(responseTime).toBeLessThan(
+        PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME,
+      );
 
       // Should have proper streaming headers
       expect(response.headers['content-type']).toContain('text/event-stream');
@@ -306,9 +336,7 @@ describe('Chat API Performance Tests', () => {
 
       // Perform many requests
       for (let i = 0; i < 50; i++) {
-        await testRequest(app)
-          .get('/api/v1/chat/health')
-          .expect(200);
+        await testRequest(app).get('/api/v1/chat/health').expect(200);
       }
 
       // Force garbage collection if available
@@ -453,9 +481,13 @@ describe('Chat API Performance Tests', () => {
       }
 
       const avgStepTime = stepTimes.reduce((a, b) => a + b, 0) / stepTimes.length;
-      console.log(`Average step time in medical consultation: ${avgStepTime.toFixed(2)}ms`);
+      console.log(
+        `Average step time in medical consultation: ${avgStepTime.toFixed(2)}ms`,
+      );
 
-      expect(avgStepTime).toBeLessThan(PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME * 1.5);
+      expect(avgStepTime).toBeLessThan(
+        PERFORMANCE_TARGETS.TARGET_RESPONSE_TIME * 1.5,
+      );
     });
 
     it('should handle peak hour simulation', async () => {
@@ -494,11 +526,15 @@ describe('Chat API Performance Tests', () => {
 
       console.log(
         `Peak hour simulation: ${responses.length} requests in ${totalTime}ms (avg: ${
-          avgResponseTime.toFixed(2)
+          avgResponseTime.toFixed(
+            2,
+          )
         }ms)`,
       );
 
-      expect(avgResponseTime).toBeLessThan(PERFORMANCE_TARGETS.MAX_RESPONSE_TIME);
+      expect(avgResponseTime).toBeLessThan(
+        PERFORMANCE_TARGETS.MAX_RESPONSE_TIME,
+      );
 
       // All responses should be successful
       responses.forEach(response => {

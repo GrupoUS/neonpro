@@ -168,7 +168,10 @@ export class NotificationService {
   private supabase: SupabaseClient;
   private activeStreams: Map<string, NotificationStream> = new Map();
   private templates: Map<string, NotificationTemplate> = new Map();
-  private notificationQueue: Array<{ notification: Notification; priority: number }> = [];
+  private notificationQueue: Array<{
+    notification: Notification;
+    priority: number;
+  }> = [];
   private rateLimits: Map<string, { count: number; resetTime: Date }> = new Map();
   private isInitialized = false;
 
@@ -205,7 +208,12 @@ export class NotificationService {
         subject: 'Lembrete: Consulta agendada para {{appointmentDate}} - {{patientName}}',
         content:
           'Olá {{patientName}}, sua {{appointmentType}} está agendada para {{appointmentDate}} às {{appointmentTime}}.',
-        variables: ['patientName', 'appointmentType', 'appointmentDate', 'appointmentTime'],
+        variables: [
+          'patientName',
+          'appointmentType',
+          'appointmentDate',
+          'appointmentTime',
+        ],
         category: 'appointment',
       },
       {
@@ -599,7 +607,10 @@ export class NotificationService {
   /**
    * Update notification template
    */
-  async updateTemplate(templateId: string, updates: TemplateUpdate): Promise<
+  async updateTemplate(
+    templateId: string,
+    updates: TemplateUpdate,
+  ): Promise<
     ServiceResponse<{
       templateId: string;
       subject: string;
@@ -688,7 +699,9 @@ export class NotificationService {
   /**
    * Track notification delivery
    */
-  async trackDelivery(notificationId: string): Promise<ServiceResponse<DeliveryTracking>> {
+  async trackDelivery(
+    notificationId: string,
+  ): Promise<ServiceResponse<DeliveryTracking>> {
     try {
       // Mock delivery tracking
       const nextRetry = new Date(Date.now() + 300000); // 5 minutes from now
@@ -713,7 +726,10 @@ export class NotificationService {
   /**
    * Retry failed notification
    */
-  async retryNotification(notificationId: string, config: RetryConfig): Promise<
+  async retryNotification(
+    notificationId: string,
+    config: RetryConfig,
+  ): Promise<
     ServiceResponse<{
       notificationId: string;
       retryScheduled: boolean;
@@ -789,12 +805,15 @@ export class NotificationService {
   /**
    * Update notification status
    */
-  async updateNotificationStatus(notificationId: string, update: {
-    status: string;
-    deliveredAt: Date;
-    providerResponse: Record<string, any>;
-    metadata: Record<string, any>;
-  }): Promise<
+  async updateNotificationStatus(
+    notificationId: string,
+    update: {
+      status: string;
+      deliveredAt: Date;
+      providerResponse: Record<string, any>;
+      metadata: Record<string, any>;
+    },
+  ): Promise<
     ServiceResponse<{
       notificationId: string;
       status: string;
@@ -870,8 +889,10 @@ export class NotificationService {
   > {
     try {
       const key = `${params.recipientId}:${params.channel}`;
-      const limit = this.rateLimits.get(key)
-        || { count: 0, resetTime: new Date(Date.now() + 3600000) };
+      const limit = this.rateLimits.get(key) || {
+        count: 0,
+        resetTime: new Date(Date.now() + 3600000),
+      };
 
       const allowed = limit.count < 10; // Mock limit of 10 per hour
       const remaining = Math.max(0, 10 - limit.count);
@@ -905,7 +926,10 @@ export class NotificationService {
     }>
   > {
     try {
-      const processed = Math.min(config.batchSize, this.notificationQueue.length);
+      const processed = Math.min(
+        config.batchSize,
+        this.notificationQueue.length,
+      );
       const failed = 0;
       const remaining = Math.max(0, this.notificationQueue.length - processed);
 
@@ -944,17 +968,33 @@ export class NotificationService {
       const totalQueued = this.notificationQueue.length;
 
       const byPriority = {
-        critical: this.notificationQueue.filter(n => n.notification.priority === 'critical').length,
-        high: this.notificationQueue.filter(n => n.notification.priority === 'high').length,
-        medium: this.notificationQueue.filter(n => n.notification.priority === 'medium').length,
-        low: this.notificationQueue.filter(n => n.notification.priority === 'low').length,
+        critical: this.notificationQueue.filter(
+          n => n.notification.priority === 'critical',
+        ).length,
+        high: this.notificationQueue.filter(
+          n => n.notification.priority === 'high',
+        ).length,
+        medium: this.notificationQueue.filter(
+          n => n.notification.priority === 'medium',
+        ).length,
+        low: this.notificationQueue.filter(
+          n => n.notification.priority === 'low',
+        ).length,
       };
 
       const byChannel = {
-        email: this.notificationQueue.filter(n => n.notification.channel === 'email').length,
-        sms: this.notificationQueue.filter(n => n.notification.channel === 'sms').length,
-        whatsapp: this.notificationQueue.filter(n => n.notification.channel === 'whatsapp').length,
-        push: this.notificationQueue.filter(n => n.notification.channel === 'push').length,
+        email: this.notificationQueue.filter(
+          n => n.notification.channel === 'email',
+        ).length,
+        sms: this.notificationQueue.filter(
+          n => n.notification.channel === 'sms',
+        ).length,
+        whatsapp: this.notificationQueue.filter(
+          n => n.notification.channel === 'whatsapp',
+        ).length,
+        push: this.notificationQueue.filter(
+          n => n.notification.channel === 'push',
+        ).length,
       };
 
       return {

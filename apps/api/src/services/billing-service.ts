@@ -107,30 +107,40 @@ const billingSchema = z.object({
   healthPlan: healthPlanSchema.optional(),
   taxInfo: taxInfoSchema.optional(),
   notes: z.string().optional(),
-  attachments: z.array(z.object({
-    id: z.string().uuid(),
-    fileName: z.string(),
-    fileType: z.string(),
-    url: z.string().url(),
-    uploadedAt: z.string().datetime(),
-  })).optional(),
-  installments: z.array(z.object({
-    installmentNumber: z.number().positive(),
-    amount: z.number().positive(),
-    dueDate: z.string().datetime(),
-    status: z.nativeEnum(PaymentStatus),
-    paymentDate: z.string().datetime().optional(),
-    paymentMethod: z.nativeEnum(PaymentMethod).optional(),
-  })).optional(),
+  attachments: z
+    .array(
+      z.object({
+        id: z.string().uuid(),
+        fileName: z.string(),
+        fileType: z.string(),
+        url: z.string().url(),
+        uploadedAt: z.string().datetime(),
+      }),
+    )
+    .optional(),
+  installments: z
+    .array(
+      z.object({
+        installmentNumber: z.number().positive(),
+        amount: z.number().positive(),
+        dueDate: z.string().datetime(),
+        status: z.nativeEnum(PaymentStatus),
+        paymentDate: z.string().datetime().optional(),
+        paymentMethod: z.nativeEnum(PaymentMethod).optional(),
+      }),
+    )
+    .optional(),
   lgpdCompliant: z.boolean().default(true),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-  auditTrail: z.array(z.object({
-    action: z.string(),
-    performedBy: z.string(),
-    timestamp: z.string().datetime(),
-    details: z.string().optional(),
-  })),
+  auditTrail: z.array(
+    z.object({
+      action: z.string(),
+      performedBy: z.string(),
+      timestamp: z.string().datetime(),
+      details: z.string().optional(),
+    }),
+  ),
 });
 
 export type Billing = z.infer<typeof billingSchema>;
@@ -214,20 +224,20 @@ export class BillingService {
       {
         cbhpmCode: '10101012',
         description: 'Consulta médica em consultório (no horário normal ou preestabelecido)',
-        value: 150.00,
+        value: 150.0,
         category: 'Consultas',
         specialtyRequired: 'Medicina Geral',
       },
       {
         cbhpmCode: '20101015',
         description: 'Eletrocardiograma convencional',
-        value: 45.00,
+        value: 45.0,
         category: 'Diagnóstico',
       },
       {
         cbhpmCode: '30401019',
         description: 'Exame ultrassonográfico do abdome total',
-        value: 180.00,
+        value: 180.0,
         category: 'Imagem',
         specialtyRequired: 'Radiologia',
       },
@@ -246,21 +256,23 @@ export class BillingService {
       professionalId: randomUUID(),
       appointmentId: randomUUID(),
       billingType: BillingType.PRIVATE,
-      items: [{
-        id: randomUUID(),
-        procedureCode: sampleProcedures[0],
-        quantity: 1,
-        unitValue: 150.00,
-        totalValue: 150.00,
-        discount: 0,
-        discountType: 'percentage',
-        professionalId: randomUUID(),
-        date: new Date().toISOString(),
-      }],
-      subtotal: 150.00,
+      items: [
+        {
+          id: randomUUID(),
+          procedureCode: sampleProcedures[0],
+          quantity: 1,
+          unitValue: 150.0,
+          totalValue: 150.0,
+          discount: 0,
+          discountType: 'percentage',
+          professionalId: randomUUID(),
+          date: new Date().toISOString(),
+        },
+      ],
+      subtotal: 150.0,
       discounts: 0,
-      taxes: 15.00, // 10% ISS
-      total: 165.00,
+      taxes: 15.0, // 10% ISS
+      total: 165.0,
       paymentStatus: PaymentStatus.PENDING,
       dueDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
       taxInfo: {
@@ -274,11 +286,13 @@ export class BillingService {
       lgpdCompliant: true,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      auditTrail: [{
-        action: 'create',
-        performedBy: randomUUID(),
-        timestamp: new Date().toISOString(),
-      }],
+      auditTrail: [
+        {
+          action: 'create',
+          performedBy: randomUUID(),
+          timestamp: new Date().toISOString(),
+        },
+      ],
     };
 
     this.billings.set(sampleBilling.id, sampleBilling);
@@ -288,10 +302,16 @@ export class BillingService {
   /**
    * Create new billing record
    */
-  async createBilling(billingData: Partial<Billing>): Promise<ServiceResponse<Billing>> {
+  async createBilling(
+    billingData: Partial<Billing>,
+  ): Promise<ServiceResponse<Billing>> {
     try {
       // Validate required fields
-      if (!billingData.patientId || !billingData.clinicId || !billingData.professionalId) {
+      if (
+        !billingData.patientId
+        || !billingData.clinicId
+        || !billingData.professionalId
+      ) {
         return {
           success: false,
           error: 'patientId, clinicId e professionalId são obrigatórios',
@@ -306,9 +326,15 @@ export class BillingService {
       }
 
       // Calculate totals
-      const subtotal = billingData.items.reduce((sum, item) => sum + item.totalValue, 0);
+      const subtotal = billingData.items.reduce(
+        (sum, item) => sum + item.totalValue,
+        0,
+      );
       const discounts = billingData.discounts || 0;
-      const taxes = this.calculateTaxes(subtotal - discounts, billingData.taxInfo);
+      const taxes = this.calculateTaxes(
+        subtotal - discounts,
+        billingData.taxInfo,
+      );
       const total = subtotal - discounts + taxes;
 
       // Generate billing
@@ -337,11 +363,13 @@ export class BillingService {
         lgpdCompliant: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        auditTrail: [{
-          action: 'create',
-          performedBy: billingData.professionalId,
-          timestamp: new Date().toISOString(),
-        }],
+        auditTrail: [
+          {
+            action: 'create',
+            performedBy: billingData.professionalId,
+            timestamp: new Date().toISOString(),
+          },
+        ],
       };
 
       // Validate schema
@@ -411,37 +439,45 @@ export class BillingService {
 
       // Apply filters
       if (options.patientId) {
-        allBillings = allBillings.filter(billing => billing.patientId === options.patientId);
+        allBillings = allBillings.filter(
+          billing => billing.patientId === options.patientId,
+        );
       }
 
       if (options.clinicId) {
-        allBillings = allBillings.filter(billing => billing.clinicId === options.clinicId);
+        allBillings = allBillings.filter(
+          billing => billing.clinicId === options.clinicId,
+        );
       }
 
       if (options.professionalId) {
-        allBillings = allBillings.filter(billing =>
-          billing.professionalId === options.professionalId
+        allBillings = allBillings.filter(
+          billing => billing.professionalId === options.professionalId,
         );
       }
 
       if (options.billingType) {
-        allBillings = allBillings.filter(billing => billing.billingType === options.billingType);
+        allBillings = allBillings.filter(
+          billing => billing.billingType === options.billingType,
+        );
       }
 
       if (options.paymentStatus) {
-        allBillings = allBillings.filter(billing =>
-          billing.paymentStatus === options.paymentStatus
+        allBillings = allBillings.filter(
+          billing => billing.paymentStatus === options.paymentStatus,
         );
       }
 
       if (options.dateFrom) {
-        allBillings = allBillings.filter(billing =>
-          new Date(billing.createdAt) >= options.dateFrom!
+        allBillings = allBillings.filter(
+          billing => new Date(billing.createdAt) >= options.dateFrom!,
         );
       }
 
       if (options.dateTo) {
-        allBillings = allBillings.filter(billing => new Date(billing.createdAt) <= options.dateTo!);
+        allBillings = allBillings.filter(
+          billing => new Date(billing.createdAt) <= options.dateTo!,
+        );
       }
 
       // Sorting
@@ -548,7 +584,9 @@ export class BillingService {
           billing.installments.push({
             installmentNumber: i,
             amount: installmentAmount,
-            dueDate: new Date(Date.now() + i * 30 * 24 * 60 * 60 * 1000).toISOString(),
+            dueDate: new Date(
+              Date.now() + i * 30 * 24 * 60 * 60 * 1000,
+            ).toISOString(),
             status: i === 1 && paymentStatus === PaymentStatus.PAID
               ? PaymentStatus.PAID
               : PaymentStatus.PENDING,
@@ -602,11 +640,15 @@ export class BillingService {
 
       // Filter by date range
       if (dateFrom) {
-        billings = billings.filter(billing => new Date(billing.createdAt) >= dateFrom);
+        billings = billings.filter(
+          billing => new Date(billing.createdAt) >= dateFrom,
+        );
       }
 
       if (dateTo) {
-        billings = billings.filter(billing => new Date(billing.createdAt) <= dateTo);
+        billings = billings.filter(
+          billing => new Date(billing.createdAt) <= dateTo,
+        );
       }
 
       // Calculate summary
@@ -629,12 +671,19 @@ export class BillingService {
         : 0;
 
       // Revenue by type
-      const revenueByType = Object.values(BillingType).reduce((acc, type) => {
-        acc[type] = billings
-          .filter(b => b.billingType === type && b.paymentStatus === PaymentStatus.PAID)
-          .reduce((sum, b) => sum + b.total, 0);
-        return acc;
-      }, {} as Record<BillingType, number>);
+      const revenueByType = Object.values(BillingType).reduce(
+        (acc, type) => {
+          acc[type] = billings
+            .filter(
+              b =>
+                b.billingType === type
+                && b.paymentStatus === PaymentStatus.PAID,
+            )
+            .reduce((sum, b) => sum + b.total, 0);
+          return acc;
+        },
+        {} as Record<BillingType, number>,
+      );
 
       // Revenue by month
       const revenueByMonth = this.calculateRevenueByMonth(billings);
@@ -683,7 +732,9 @@ export class BillingService {
   /**
    * Calculate revenue by month
    */
-  private calculateRevenueByMonth(billings: Billing[]): Array<{ month: string; revenue: number }> {
+  private calculateRevenueByMonth(
+    billings: Billing[],
+  ): Array<{ month: string; revenue: number }> {
     const monthRevenue: Record<string, number> = {};
 
     billings

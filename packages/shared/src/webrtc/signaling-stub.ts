@@ -2,21 +2,21 @@
  * @fileoverview WebRTC Signaling Server Stub Implementation
  * @version 1.0.0
  * @description Mock signaling server for telemedicine WebRTC infrastructure
- * 
+ *
  * This is a development/testing stub that simulates a real signaling server.
  * In production, this should be replaced with a proper WebSocket-based
  * signaling server with healthcare compliance features.
  */
 
-import type { 
-  RTCSignalingServer, 
-  RTCSignalingMessage, 
-  MedicalDataClassification 
-} from '@neonpro/types';
+import type {
+  RTCSignalingServer,
+  RTCSignalingMessage,
+  MedicalDataClassification,
+} from "@neonpro/types";
 
 /**
  * WebRTC Signaling Server stub implementation for development and testing
- * 
+ *
  * Features:
  * - In-memory message routing
  * - Healthcare compliance logging
@@ -26,25 +26,30 @@ import type {
  */
 export class RTCSignalingServerStub implements RTCSignalingServer {
   private connected = false;
-  private messageHandlers = new Map<string, (message: RTCSignalingMessage) => void>();
+  private messageHandlers = new Map<
+    string,
+    (message: RTCSignalingMessage) => void
+  >();
   private auditLog: RTCSignalingMessage[] = [];
   private connectionStartTime: Date | null = null;
   private lastHeartbeat: Date | null = null;
   private heartbeatInterval: NodeJS.Timeout | null = null;
 
-  constructor(private options: {
-    /** Simulate network latency in milliseconds */
-    networkLatency?: number;
-    /** Enable verbose logging for development */
-    enableLogging?: boolean;
-    /** Maximum audit log entries to keep in memory */
-    maxAuditLogSize?: number;
-  } = {}) {
+  constructor(
+    private options: {
+      /** Simulate network latency in milliseconds */
+      networkLatency?: number;
+      /** Enable verbose logging for development */
+      enableLogging?: boolean;
+      /** Maximum audit log entries to keep in memory */
+      maxAuditLogSize?: number;
+    } = {},
+  ) {
     this.options = {
       networkLatency: 50,
       enableLogging: true,
       maxAuditLogSize: 1000,
-      ...options
+      ...options,
     };
   }
 
@@ -53,7 +58,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    */
   async connect(): Promise<void> {
     if (this.connected) {
-      this.log('Already connected to signaling server');
+      this.log("Already connected to signaling server");
       return;
     }
 
@@ -67,7 +72,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
     // Start heartbeat simulation
     this.startHeartbeat();
 
-    this.log('Connected to WebRTC signaling server (stub)');
+    this.log("Connected to WebRTC signaling server (stub)");
   }
 
   /**
@@ -75,7 +80,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    */
   async disconnect(): Promise<void> {
     if (!this.connected) {
-      this.log('Already disconnected from signaling server');
+      this.log("Already disconnected from signaling server");
       return;
     }
 
@@ -89,7 +94,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
     this.connectionStartTime = null;
     this.lastHeartbeat = null;
 
-    this.log('Disconnected from WebRTC signaling server (stub)');
+    this.log("Disconnected from WebRTC signaling server (stub)");
   }
 
   /**
@@ -97,7 +102,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    */
   async sendMessage(message: RTCSignalingMessage): Promise<void> {
     if (!this.connected) {
-      throw new Error('Not connected to signaling server');
+      throw new Error("Not connected to signaling server");
     }
 
     // Validate message structure
@@ -117,13 +122,18 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
       this.routeMessage(message);
     }, this.options.networkLatency || 0);
 
-    this.log(`Sent ${message.type} message from ${message.senderId} to ${message.recipientId}`);
+    this.log(
+      `Sent ${message.type} message from ${message.senderId} to ${message.recipientId}`,
+    );
   }
 
   /**
    * Subscribe to incoming messages for specific session
    */
-  onMessage(sessionId: string, callback: (message: RTCSignalingMessage) => void): void {
+  onMessage(
+    sessionId: string,
+    callback: (message: RTCSignalingMessage) => void,
+  ): void {
     this.messageHandlers.set(sessionId, callback);
     this.log(`Registered message handler for session ${sessionId}`);
   }
@@ -152,14 +162,14 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
     lastHeartbeat: string;
   }> {
     const now = new Date();
-    const latency = this.lastHeartbeat 
+    const latency = this.lastHeartbeat
       ? now.getTime() - this.lastHeartbeat.getTime()
       : -1;
 
     return {
       connected: this.connected,
       latency,
-      lastHeartbeat: this.lastHeartbeat?.toISOString() || ''
+      lastHeartbeat: this.lastHeartbeat?.toISOString() || "",
     };
   }
 
@@ -175,7 +185,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    */
   clearAuditLog(): void {
     this.auditLog = [];
-    this.log('Audit log cleared');
+    this.log("Audit log cleared");
   }
 
   // ============================================================================
@@ -187,26 +197,39 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    */
   private validateMessage(message: RTCSignalingMessage): void {
     // Required fields validation
-    if (!message.id) throw new Error('Message ID is required');
-    if (!message.type) throw new Error('Message type is required');
-    if (!message.sessionId) throw new Error('Session ID is required');
-    if (!message.senderId) throw new Error('Sender ID is required');
-    if (!message.recipientId) throw new Error('Recipient ID is required');
-    if (!message.timestamp) throw new Error('Timestamp is required');
-    if (!message.dataClassification) throw new Error('Data classification is required');
+    if (!message.id) throw new Error("Message ID is required");
+    if (!message.type) throw new Error("Message type is required");
+    if (!message.sessionId) throw new Error("Session ID is required");
+    if (!message.senderId) throw new Error("Sender ID is required");
+    if (!message.recipientId) throw new Error("Recipient ID is required");
+    if (!message.timestamp) throw new Error("Timestamp is required");
+    if (!message.dataClassification)
+      throw new Error("Data classification is required");
 
     // Message type validation
-    const validTypes = ['offer', 'answer', 'ice-candidate', 'bye', 'error', 'heartbeat'];
+    const validTypes = [
+      "offer",
+      "answer",
+      "ice-candidate",
+      "bye",
+      "error",
+      "heartbeat",
+    ];
     if (!validTypes.includes(message.type)) {
       throw new Error(`Invalid message type: ${message.type}`);
     }
 
     // Data classification validation
     const validClassifications: MedicalDataClassification[] = [
-      'sensitive', 'confidential', 'internal', 'public'
+      "sensitive",
+      "confidential",
+      "internal",
+      "public",
     ];
     if (!validClassifications.includes(message.dataClassification)) {
-      throw new Error(`Invalid data classification: ${message.dataClassification}`);
+      throw new Error(
+        `Invalid data classification: ${message.dataClassification}`,
+      );
     }
 
     // Timestamp validation (must be recent)
@@ -214,30 +237,37 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
     const now = new Date();
     const maxAge = 5 * 60 * 1000; // 5 minutes
     if (now.getTime() - messageTime.getTime() > maxAge) {
-      throw new Error('Message timestamp is too old');
+      throw new Error("Message timestamp is too old");
     }
   }
 
   /**
    * Perform healthcare compliance checks on message
    */
-  private async performComplianceCheck(message: RTCSignalingMessage): Promise<void> {
+  private async performComplianceCheck(
+    message: RTCSignalingMessage,
+  ): Promise<void> {
     // LGPD compliance checks
-    if (message.dataClassification === 'sensitive' || message.dataClassification === 'confidential') {
+    if (
+      message.dataClassification === "sensitive" ||
+      message.dataClassification === "confidential"
+    ) {
       // In production, verify consent exists for processing sensitive data
-      this.log(`LGPD compliance check passed for ${message.dataClassification} data`);
+      this.log(
+        `LGPD compliance check passed for ${message.dataClassification} data`,
+      );
     }
 
     // ANVISA compliance for medical device data
-    if (message.metadata?.callType === 'emergency') {
+    if (message.metadata?.callType === "emergency") {
       // Emergency calls have special handling requirements
-      this.log('ANVISA compliance check passed for emergency call');
+      this.log("ANVISA compliance check passed for emergency call");
     }
 
     // CFM compliance for medical consultations
-    if (message.metadata?.callType === 'consultation') {
+    if (message.metadata?.callType === "consultation") {
       // Verify doctor has valid CRM registration
-      this.log('CFM compliance check passed for medical consultation');
+      this.log("CFM compliance check passed for medical consultation");
     }
 
     // Audit trail requirement
@@ -252,14 +282,18 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
     this.auditLog.push({
       ...message,
       // Ensure no sensitive data leaks in logs
-      payload: message.dataClassification === 'sensitive' || message.dataClassification === 'confidential'
-        ? '[REDACTED]'
-        : message.payload
+      payload:
+        message.dataClassification === "sensitive" ||
+        message.dataClassification === "confidential"
+          ? "[REDACTED]"
+          : message.payload,
     });
 
     // Trim audit log if too large
     if (this.auditLog.length > (this.options.maxAuditLogSize || 1000)) {
-      this.auditLog = this.auditLog.slice(-((this.options.maxAuditLogSize || 1000) / 2));
+      this.auditLog = this.auditLog.slice(
+        -((this.options.maxAuditLogSize || 1000) / 2),
+      );
     }
   }
 
@@ -271,12 +305,18 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
     if (handler) {
       try {
         handler(message);
-        this.log(`Delivered ${message.type} message to session ${message.sessionId}`);
+        this.log(
+          `Delivered ${message.type} message to session ${message.sessionId}`,
+        );
       } catch (error) {
-        this.log(`Error delivering message to session ${message.sessionId}: ${error}`);
+        this.log(
+          `Error delivering message to session ${message.sessionId}: ${error}`,
+        );
       }
     } else {
-      this.log(`No handler found for session ${message.sessionId}, message dropped`);
+      this.log(
+        `No handler found for session ${message.sessionId}, message dropped`,
+      );
     }
   }
 
@@ -285,7 +325,9 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    */
   private async simulateNetworkDelay(): Promise<void> {
     if (this.options.networkLatency && this.options.networkLatency > 0) {
-      await new Promise(resolve => setTimeout(resolve, this.options.networkLatency));
+      await new Promise((resolve) =>
+        setTimeout(resolve, this.options.networkLatency),
+      );
     }
   }
 
@@ -295,7 +337,7 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
   private startHeartbeat(): void {
     this.heartbeatInterval = setInterval(() => {
       this.lastHeartbeat = new Date();
-      this.log('Heartbeat sent');
+      this.log("Heartbeat sent");
     }, 30000); // 30 seconds
   }
 
@@ -314,7 +356,9 @@ export class RTCSignalingServerStub implements RTCSignalingServer {
    */
   private log(message: string): void {
     if (this.options.enableLogging) {
-      console.log(`[RTCSignalingStub] ${new Date().toISOString()} - ${message}`);
+      console.log(
+        `[RTCSignalingStub] ${new Date().toISOString()} - ${message}`,
+      );
     }
   }
 }
@@ -334,15 +378,15 @@ export function createSignalingServerStub(options?: {
  * Helper function to create a signaling message with proper defaults
  */
 export function createSignalingMessage(
-  type: RTCSignalingMessage['type'],
+  type: RTCSignalingMessage["type"],
   sessionId: string,
   senderId: string,
   recipientId: string,
   payload?: any,
   options?: {
     dataClassification?: MedicalDataClassification;
-    metadata?: RTCSignalingMessage['metadata'];
-  }
+    metadata?: RTCSignalingMessage["metadata"];
+  },
 ): RTCSignalingMessage {
   return {
     id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -352,7 +396,7 @@ export function createSignalingMessage(
     recipientId,
     payload,
     timestamp: new Date().toISOString(),
-    dataClassification: options?.dataClassification || 'internal',
-    metadata: options?.metadata
+    dataClassification: options?.dataClassification || "internal",
+    metadata: options?.metadata,
   };
 }

@@ -34,7 +34,9 @@ describe('Integration: SSE streaming', () => {
     expect(text).toContain('data:');
     expect(text).toContain('"type":"text"');
     expect(text).toContain('"type":"done"');
-    expect(res.headers.get('content-type') || '').toContain('text/event-stream');
+    expect(res.headers.get('content-type') || '').toContain(
+      'text/event-stream',
+    );
     expect(res.headers.get('x-chat-started-at')).toBeTruthy();
   });
 });

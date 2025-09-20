@@ -143,7 +143,9 @@ describe('AI Provider Integrations Middleware (T072)', () => {
     });
 
     it('should check rate limits', () => {
-      const canMakeRequest = aiProviderManager.checkRateLimit(AIProvider.OPENAI);
+      const canMakeRequest = aiProviderManager.checkRateLimit(
+        AIProvider.OPENAI,
+      );
       expect(canMakeRequest).toBe(true);
     });
 
@@ -160,7 +162,9 @@ describe('AI Provider Integrations Middleware (T072)', () => {
 
       aiProviderManager.recordRequest(metrics);
 
-      const providerHealth = aiProviderManager.getProviderHealth(AIProvider.OPENAI);
+      const providerHealth = aiProviderManager.getProviderHealth(
+        AIProvider.OPENAI,
+      );
       expect(providerHealth).toHaveLength(1);
       expect(providerHealth[0].requestCount).toBeGreaterThan(0);
     });
@@ -169,7 +173,9 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       const allHealth = aiProviderManager.getProviderHealth();
       expect(allHealth.length).toBeGreaterThan(0);
 
-      const openaiHealth = aiProviderManager.getProviderHealth(AIProvider.OPENAI);
+      const openaiHealth = aiProviderManager.getProviderHealth(
+        AIProvider.OPENAI,
+      );
       expect(openaiHealth).toHaveLength(1);
       expect(openaiHealth[0].provider).toBe(AIProvider.OPENAI);
     });
@@ -178,7 +184,9 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       const allMetrics = aiProviderManager.getRequestMetrics();
       expect(Array.isArray(allMetrics)).toBe(true);
 
-      const openaiMetrics = aiProviderManager.getRequestMetrics(AIProvider.OPENAI);
+      const openaiMetrics = aiProviderManager.getRequestMetrics(
+        AIProvider.OPENAI,
+      );
       expect(Array.isArray(openaiMetrics)).toBe(true);
     });
   });
@@ -195,8 +203,14 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       const middleware = aiProviderSelection();
       await middleware(mockContext, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('selectedAIModel', expect.any(Object));
-      expect(mockContext.set).toHaveBeenCalledWith('aiProviderManager', aiProviderManager);
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'selectedAIModel',
+        expect.any(Object),
+      );
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'aiProviderManager',
+        aiProviderManager,
+      );
       expect(mockNext).toHaveBeenCalled();
     });
 
@@ -213,7 +227,9 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       expect(mockNext).toHaveBeenCalled();
 
       // Check that a streaming-capable model was selected
-      const setCall = mockContext.set.mock.calls.find((call: any) => call[0] === 'selectedAIModel');
+      const setCall = mockContext.set.mock.calls.find(
+        (call: any) => call[0] === 'selectedAIModel',
+      );
       if (setCall) {
         const selectedModel = setCall[1] as AIModel;
         expect(selectedModel.supportsStreaming).toBe(true);
@@ -230,7 +246,9 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       expect(mockNext).toHaveBeenCalled();
 
       // Check that a healthcare-optimized model was selected
-      const setCall = mockContext.set.mock.calls.find((call: any) => call[0] === 'selectedAIModel');
+      const setCall = mockContext.set.mock.calls.find(
+        (call: any) => call[0] === 'selectedAIModel',
+      );
       if (setCall) {
         const selectedModel = setCall[1] as AIModel;
         expect(selectedModel.healthcareOptimized).toBe(true);
@@ -352,8 +370,14 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       const middleware = aiRequestMetrics();
       await middleware(mockContext, mockNext);
 
-      expect(mockContext.set).toHaveBeenCalledWith('aiRequestId', expect.any(String));
-      expect(mockContext.set).toHaveBeenCalledWith('aiRequestStartTime', expect.any(Date));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'aiRequestId',
+        expect.any(String),
+      );
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'aiRequestStartTime',
+        expect.any(Date),
+      );
       expect(mockNext).toHaveBeenCalled();
     });
 
@@ -383,10 +407,18 @@ describe('AI Provider Integrations Middleware (T072)', () => {
 
       const middleware = aiRequestMetrics();
 
-      await expect(middleware(mockContext, mockNext)).rejects.toThrow('Test error');
+      await expect(middleware(mockContext, mockNext)).rejects.toThrow(
+        'Test error',
+      );
 
-      expect(mockContext.set).toHaveBeenCalledWith('aiRequestId', expect.any(String));
-      expect(mockContext.set).toHaveBeenCalledWith('aiRequestStartTime', expect.any(Date));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'aiRequestId',
+        expect.any(String),
+      );
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'aiRequestStartTime',
+        expect.any(Date),
+      );
     });
 
     it('should skip metrics when no model selected', async () => {
@@ -396,7 +428,10 @@ describe('AI Provider Integrations Middleware (T072)', () => {
       await middleware(mockContext, mockNext);
 
       expect(mockNext).toHaveBeenCalled();
-      expect(mockContext.set).not.toHaveBeenCalledWith('aiRequestId', expect.any(String));
+      expect(mockContext.set).not.toHaveBeenCalledWith(
+        'aiRequestId',
+        expect.any(String),
+      );
     });
   });
 });

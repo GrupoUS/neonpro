@@ -29,21 +29,21 @@ Production-ready patterns and best practices for using the Vercel AI SDK v5.0 wi
 ### Server — Hono route streaming UI messages
 
 ```ts
-import { Hono } from 'hono';
-import { openai } from '@ai-sdk/openai';
-import { streamText, convertToModelMessages } from 'ai';
-import type { UIMessage } from 'ai';
+import { Hono } from "hono";
+import { openai } from "@ai-sdk/openai";
+import { streamText, convertToModelMessages } from "ai";
+import type { UIMessage } from "ai";
 
 // Define a shared UI message type (extend later as needed)
 export type MyUIMessage = UIMessage;
 
 const app = new Hono();
 
-app.post('/api/chat', async (c) => {
+app.post("/api/chat", async (c) => {
   const { messages } = (await c.req.json()) as { messages: MyUIMessage[] };
 
   const result = await streamText({
-    model: openai('gpt-4o-mini'),
+    model: openai("gpt-4o-mini"),
     messages: convertToModelMessages(messages),
   });
 
@@ -57,15 +57,16 @@ export default app;
 ### Client — React hook with typed messages
 
 ```tsx
-import { useChat } from 'ai/react';
-import type { UIMessage } from 'ai';
+import { useChat } from "ai/react";
+import type { UIMessage } from "ai";
 
 type MyUIMessage = UIMessage;
 
 export function Chat() {
-  const { messages, input, setInput, sendMessage, isLoading } = useChat<MyUIMessage>({
-    api: '/api/chat',
-  });
+  const { messages, input, setInput, sendMessage, isLoading } =
+    useChat<MyUIMessage>({
+      api: "/api/chat",
+    });
 
   return (
     <div>
@@ -104,13 +105,13 @@ export function Chat() {
 
 ```typescript
 // ✅ DO: Use separate message types
-import { convertToModelMessages, UIMessage } from 'ai';
+import { convertToModelMessages, UIMessage } from "ai";
 
 const uiMessages: UIMessage[] = await loadChatHistory(chatId);
 const modelMessages = convertToModelMessages(uiMessages);
 
 const result = await streamText({
-  model: openai('gpt-4o'),
+  model: openai("gpt-4o"),
   messages: modelMessages,
 });
 
@@ -129,7 +130,7 @@ return result.toUIMessageStreamResponse({
 
 ```typescript
 // ✅ DO: Define custom message type once
-import { InferUITools, UIMessage } from 'ai';
+import { InferUITools, UIMessage } from "ai";
 
 type MyMetadata = {
   model?: string;
@@ -138,8 +139,12 @@ type MyMetadata = {
 };
 
 type MyDataParts = {
-  'data-weather': { city: string; weather?: string; status: 'loading' | 'success' };
-  'data-notification': { message: string; level: 'info' | 'warning' | 'error' };
+  "data-weather": {
+    city: string;
+    weather?: string;
+    status: "loading" | "success";
+  };
+  "data-notification": { message: string; level: "info" | "warning" | "error" };
 };
 
 type MyUITools = InferUITools<typeof tools>;
@@ -203,8 +208,8 @@ const stream = createUIMessageStream<MyUIMessage>({
 ```typescript
 // ✅ DO: Server - Send transient notifications
 writer.write({
-  type: 'data-notification',
-  data: { message: 'Processing...', level: 'info' },
+  type: "data-notification",
+  data: { message: "Processing...", level: "info" },
   transient: true, // Won't be persisted in message history
 });
 
@@ -213,7 +218,7 @@ const [notification, setNotification] = useState();
 
 const { messages } = useChat({
   onData: ({ data, type }) => {
-    if (type === 'data-notification') {
+    if (type === "data-notification") {
       setNotification({ message: data.message, level: data.level });
     }
   },
@@ -301,13 +306,15 @@ return result.toUIMessageStreamResponse({
 
 ```typescript
 // ✅ DO: Control agent execution with conditions
-import { hasToolCall, stepCountIs } from 'ai';
+import { hasToolCall, stepCountIs } from "ai";
 
 const result = await generateText({
-  model: openai('gpt-4o'),
-  tools: {/* your tools */},
+  model: openai("gpt-4o"),
+  tools: {
+    /* your tools */
+  },
   // Stop after 5 steps OR when finalAnswer tool is called
-  stopWhen: [stepCountIs(5), hasToolCall('finalAnswer')],
+  stopWhen: [stepCountIs(5), hasToolCall("finalAnswer")],
 });
 ```
 
@@ -318,21 +325,23 @@ const result = await generateText({
 ```typescript
 // ✅ DO: Adjust settings per step
 const result = await streamText({
-  model: openai('gpt-4o'),
+  model: openai("gpt-4o"),
   messages: convertToModelMessages(messages),
-  tools: {/* your tools */},
+  tools: {
+    /* your tools */
+  },
   prepareStep: async ({ stepNumber, messages }) => {
     if (stepNumber === 0) {
       return {
-        model: openai('gpt-4o-mini'), // Different model for first step
-        toolChoice: { type: 'tool', toolName: 'analyzeIntent' },
+        model: openai("gpt-4o-mini"), // Different model for first step
+        toolChoice: { type: "tool", toolName: "analyzeIntent" },
       };
     }
 
     // Compress context for longer conversations
     if (messages.length > 10) {
       return {
-        model: openai('gpt-4-turbo'), // Larger context window
+        model: openai("gpt-4-turbo"), // Larger context window
         messages: messages.slice(-10),
       };
     }
@@ -346,22 +355,24 @@ const result = await streamText({
 
 ```typescript
 // ✅ DO: Create reusable agents
-import { Experimental_Agent as Agent, stepCountIs } from 'ai';
+import { Experimental_Agent as Agent, stepCountIs } from "ai";
 
 const codingAgent = new Agent({
-  model: openai('gpt-4o'),
-  system: 'You are a coding agent specializing in Next.js and TypeScript.',
+  model: openai("gpt-4o"),
+  system: "You are a coding agent specializing in Next.js and TypeScript.",
   stopWhen: stepCountIs(10),
-  tools: {/* your tools */},
+  tools: {
+    /* your tools */
+  },
 });
 
 // Use with generate or stream
 const result = await codingAgent.generate({
-  prompt: 'Build an AI coding agent.',
+  prompt: "Build an AI coding agent.",
 });
 
 const streamResult = await codingAgent.stream({
-  prompt: 'Build an AI coding agent.',
+  prompt: "Build an AI coding agent.",
 });
 ```
 
@@ -376,19 +387,19 @@ const streamResult = await codingAgent.stream({
 const { messages, sendMessage } = useChat({
   transport: new DefaultChatTransport({
     prepareSendMessagesRequest: ({ id, messages, trigger, messageId }) => {
-      if (trigger === 'submit-user-message') {
+      if (trigger === "submit-user-message") {
         return {
           body: {
-            trigger: 'submit-user-message',
+            trigger: "submit-user-message",
             id,
             message: messages[messages.length - 1],
             messageId,
           },
         };
-      } else if (trigger === 'regenerate-assistant-message') {
+      } else if (trigger === "regenerate-assistant-message") {
         return {
           body: {
-            trigger: 'regenerate-assistant-message',
+            trigger: "regenerate-assistant-message",
             id,
             messageId,
           },
@@ -411,7 +422,7 @@ sendMessage(
   {
     headers: {
       Authorization: `Bearer ${getAuthToken()}`,
-      'X-Custom-Header': 'custom-value',
+      "X-Custom-Header": "custom-value",
     },
     body: {
       temperature: 0.7,
@@ -419,8 +430,8 @@ sendMessage(
       user_id: getCurrentUserId(),
     },
     metadata: {
-      userId: 'user123',
-      sessionId: 'session456',
+      userId: "user123",
+      sessionId: "session456",
     },
   },
 );
@@ -435,7 +446,7 @@ sendMessage(
 ```typescript
 // ✅ DO: v5.0 tool definition
 const weatherTool = tool({
-  description: 'Get the weather for a location',
+  description: "Get the weather for a location",
   inputSchema: z.object({ location: z.string() }), // was 'parameters'
   outputSchema: z.string(), // New in v5.0 (optional)
   execute: async ({ location }) => {
@@ -450,19 +461,19 @@ const weatherTool = tool({
 
 ```typescript
 // ✅ DO: Handle dynamic tools
-import { dynamicTool } from 'ai';
+import { dynamicTool } from "ai";
 
 const customDynamicTool = dynamicTool({
-  description: 'Execute a custom user-defined function',
+  description: "Execute a custom user-defined function",
   inputSchema: z.object({}),
-  execute: async input => {
+  execute: async (input) => {
     const { action, parameters } = input as any;
     return { result: `Executed ${action} with ${JSON.stringify(parameters)}` };
   },
 });
 
 const result = await generateText({
-  model: 'openai/gpt-4o',
+  model: "openai/gpt-4o",
   tools: {
     weatherTool, // Static tool with known types
     customDynamicTool, // Dynamic tool
@@ -470,11 +481,11 @@ const result = await generateText({
   onStepFinish: ({ toolCalls }) => {
     for (const toolCall of toolCalls) {
       if (toolCall.dynamic) {
-        console.log('Dynamic:', toolCall.toolName, toolCall.input);
+        console.log("Dynamic:", toolCall.toolName, toolCall.input);
       } else {
         // Static tool: full type inference
         switch (toolCall.toolName) {
-          case 'weather':
+          case "weather":
             console.log(toolCall.input.location); // typed as string
             break;
         }
@@ -490,10 +501,10 @@ const result = await generateText({
 
 ```typescript
 // ✅ DO: Use provider-executed tools
-import { openai } from '@ai-sdk/openai';
+import { openai } from "@ai-sdk/openai";
 
 const result = await generateText({
-  model: openai.responses('gpt-4o-mini'),
+  model: openai.responses("gpt-4o-mini"),
   tools: {
     web_search_preview: openai.tools.webSearchPreview({}),
   },
@@ -510,21 +521,21 @@ const result = await generateText({
 ```typescript
 // ✅ DO: Handle stream errors
 const result = streamText({
-  model: openai('gpt-4o'),
-  prompt: 'Generate content...',
+  model: openai("gpt-4o"),
+  prompt: "Generate content...",
   onError({ error }) {
-    console.error('Stream error:', error);
+    console.error("Stream error:", error);
     // Your error logging logic
   },
 });
 
 // ✅ DO: Server error handling
 return result.toUIMessageStreamResponse({
-  onError: error => {
+  onError: (error) => {
     if (error instanceof Error) {
       return error.message;
     }
-    return 'An unexpected error occurred';
+    return "An unexpected error occurred";
   },
 });
 ```
@@ -535,15 +546,15 @@ return result.toUIMessageStreamResponse({
 
 ```typescript
 // ✅ DO: Set global provider once
-import { openai } from '@ai-sdk/openai';
+import { openai } from "@ai-sdk/openai";
 
 // Initialize once during startup
 globalThis.AI_SDK_DEFAULT_PROVIDER = openai;
 
 // Use anywhere with simple string
 const result = streamText({
-  model: 'gpt-4o', // Uses OpenAI provider without prefix
-  prompt: 'Generate content...',
+  model: "gpt-4o", // Uses OpenAI provider without prefix
+  prompt: "Generate content...",
 });
 ```
 
@@ -564,21 +575,21 @@ const result = streamText({
 
 ```typescript
 // ✅ DO: Text-to-Speech generation
-import { openai } from '@ai-sdk/openai';
-import { experimental_generateSpeech as generateSpeech } from 'ai';
+import { openai } from "@ai-sdk/openai";
+import { experimental_generateSpeech as generateSpeech } from "ai";
 
 const { audio } = await generateSpeech({
-  model: openai.speech('tts-1'),
-  text: 'Hello, world!',
-  voice: 'alloy',
+  model: openai.speech("tts-1"),
+  text: "Hello, world!",
+  voice: "alloy",
 });
 
 // ✅ DO: Speech-to-Text transcription
-import { experimental_transcribe as transcribe } from 'ai';
+import { experimental_transcribe as transcribe } from "ai";
 
 const { text, segments } = await transcribe({
-  model: openai.transcription('whisper-1'),
-  audio: await readFile('audio.mp3'),
+  model: openai.transcription("whisper-1"),
+  audio: await readFile("audio.mp3"),
 });
 ```
 
@@ -624,8 +635,8 @@ export class ChatComponent {
 ```typescript
 // ✅ DO: SSE streaming is now default
 const result = streamText({
-  model: openai('gpt-4o'),
-  prompt: 'Generate content...',
+  model: openai("gpt-4o"),
+  prompt: "Generate content...",
 });
 
 // Automatically uses SSE for better debugging and reliability
@@ -639,25 +650,25 @@ return result.toUIMessageStreamResponse();
 ```typescript
 // ✅ DO: Access raw streaming chunks
 const result = streamText({
-  model: openai('gpt-4o-mini'),
-  prompt: 'Generate content...',
+  model: openai("gpt-4o-mini"),
+  prompt: "Generate content...",
   includeRawChunks: true,
 });
 
 for await (const part of result.fullStream) {
-  if (part.type === 'raw') {
-    console.log('Raw chunk:', part.rawValue);
+  if (part.type === "raw") {
+    console.log("Raw chunk:", part.rawValue);
   }
 }
 
 // ✅ DO: Access request/response bodies
 const result = await generateText({
-  model: openai('gpt-4o'),
-  prompt: 'Write a haiku about debugging',
+  model: openai("gpt-4o"),
+  prompt: "Write a haiku about debugging",
 });
 
-console.log('Request:', result.request.body);
-console.log('Response:', result.response.body);
+console.log("Request:", result.request.body);
+console.log("Response:", result.response.body);
 ```
 
 ### 3. Stream Transformations
@@ -666,21 +677,22 @@ console.log('Response:', result.response.body);
 
 ```typescript
 // ✅ DO: Use built-in smooth streaming
-import { smoothStream } from 'ai';
+import { smoothStream } from "ai";
 
 const result = streamText({
-  model: openai('gpt-4o'),
-  prompt: 'Generate content...',
+  model: openai("gpt-4o"),
+  prompt: "Generate content...",
   experimental_transform: smoothStream(),
 });
 
 // ✅ DO: Custom transformation
 const upperCaseTransform =
-  <TOOLS extends ToolSet>() => (options: { tools: TOOLS; stopStream: () => void }) =>
+  <TOOLS extends ToolSet>() =>
+  (options: { tools: TOOLS; stopStream: () => void }) =>
     new TransformStream<TextStreamPart<TOOLS>, TextStreamPart<TOOLS>>({
       transform(chunk, controller) {
         controller.enqueue(
-          chunk.type === 'text'
+          chunk.type === "text"
             ? { ...chunk, text: chunk.text.toUpperCase() }
             : chunk,
         );
@@ -688,8 +700,8 @@ const upperCaseTransform =
     });
 
 const result = streamText({
-  model: openai('gpt-4o'),
-  prompt: 'Generate content...',
+  model: openai("gpt-4o"),
+  prompt: "Generate content...",
   experimental_transform: upperCaseTransform(),
 });
 ```
@@ -741,18 +753,22 @@ const { messages, input, handleInputChange, handleSubmit } = useChat();
 // Tool definition
 const tool = {
   parameters: z.object({ location: z.string() }),
-  execute: async ({ location }) => {/* ... */},
+  execute: async ({ location }) => {
+    /* ... */
+  },
 };
 
 // ✅ DO: v5.0 patterns
 const { messages, sendMessage } = useChat<MyUIMessage>();
-const [input, setInput] = useState('');
+const [input, setInput] = useState("");
 
 // Tool definition
 const tool = {
   inputSchema: z.object({ location: z.string() }),
   outputSchema: z.string(), // Optional but recommended
-  execute: async ({ location }) => {/* ... */},
+  execute: async ({ location }) => {
+    /* ... */
+  },
 };
 ```
 

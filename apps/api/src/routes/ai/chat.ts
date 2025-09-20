@@ -53,10 +53,13 @@ interface ChatResponse {
 const mockAuthMiddleware = (c: Context, next: Next) => {
   const authHeader = c.req.header('authorization');
   if (!authHeader) {
-    return c.json({
-      success: false,
-      error: 'Não autorizado. Token de acesso necessário.',
-    }, 401);
+    return c.json(
+      {
+        success: false,
+        error: 'Não autorizado. Token de acesso necessário.',
+      },
+      401,
+    );
   }
   c.set('user', { id: 'user-123', role: 'healthcare_professional' });
   return next();
@@ -68,18 +71,24 @@ const app = new Hono();
 
 // Request validation schema
 const chatRequestSchema = z.object({
-  message: z.string().min(1, 'Mensagem é obrigatória').max(4000, 'Mensagem muito longa'),
+  message: z
+    .string()
+    .min(1, 'Mensagem é obrigatória')
+    .max(4000, 'Mensagem muito longa'),
   conversationId: z.string().optional(),
   modelPreference: z.string().optional(),
   streaming: z.boolean().optional().default(false),
   patientId: z.string().optional(),
-  context: z.object({
-    healthcareContext: z.boolean().optional().default(true),
-    medicalContext: z.boolean().optional().default(false),
-    language: z.string().optional().default('pt-BR'),
-    includePatientHistory: z.boolean().optional().default(false),
-    detailedResponse: z.boolean().optional().default(false),
-  }).optional().default({}),
+  context: z
+    .object({
+      healthcareContext: z.boolean().optional().default(true),
+      medicalContext: z.boolean().optional().default(false),
+      language: z.string().optional().default('pt-BR'),
+      includePatientHistory: z.boolean().optional().default(false),
+      detailedResponse: z.boolean().optional().default(false),
+    })
+    .optional()
+    .default({}),
 });
 
 // Services - will be injected during testing or use real services in production
@@ -129,11 +138,14 @@ app.post(
       });
 
       if (!lgpdValidation.success) {
-        return c.json({
-          success: false,
-          error: lgpdValidation.error,
-          code: lgpdValidation.code || 'LGPD_AI_CHAT_DENIED',
-        }, 403);
+        return c.json(
+          {
+            success: false,
+            error: lgpdValidation.error,
+            code: lgpdValidation.code || 'LGPD_AI_CHAT_DENIED',
+          },
+          403,
+        );
       }
 
       // Get patient context if requested
@@ -195,10 +207,13 @@ app.post(
       }
 
       if (!aiResponse.success) {
-        return c.json({
-          success: false,
-          error: aiResponse.error || 'Erro interno do serviço de IA',
-        }, 500);
+        return c.json(
+          {
+            success: false,
+            error: aiResponse.error || 'Erro interno do serviço de IA',
+          },
+          500,
+        );
       }
 
       // Mask sensitive data based on access level
@@ -234,7 +249,9 @@ app.post(
         resourceType: 'ai_conversation',
         resourceId: requestData.streaming
           ? responseData.streamId
-          : (requestData.conversationId || responseData.conversationId || 'new_conversation'),
+          : requestData.conversationId
+            || responseData.conversationId
+            || 'new_conversation',
         details: auditDetails,
         ipAddress,
         userAgent,
@@ -313,17 +330,24 @@ app.post(
       // Handle specific error types
       if (error instanceof Error) {
         if (error.message.includes('All AI models unavailable')) {
-          return c.json({
-            success: false,
-            error: 'Serviço de IA temporariamente indisponível. Tente novamente em alguns minutos.',
-          }, 503);
+          return c.json(
+            {
+              success: false,
+              error:
+                'Serviço de IA temporariamente indisponível. Tente novamente em alguns minutos.',
+            },
+            503,
+          );
         }
       }
 
-      return c.json({
-        success: false,
-        error: 'Erro interno do servidor. Tente novamente mais tarde.',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro interno do servidor. Tente novamente mais tarde.',
+        },
+        500,
+      );
     }
   },
 );
@@ -335,61 +359,83 @@ const sessionRequestSchema = z.object({
   provider: z.string().optional(),
   healthcareContext: z.string().optional(),
   language: z.string().optional(),
-  lgpdConsent: z.union([
-    z.boolean(),
-    z.object({
-      dataProcessing: z.boolean(),
-      aiAnalysis: z.boolean().optional(),
-      consentTimestamp: z.string().optional(),
-    }),
-  ]).optional(),
-  context: z.object({
-    healthcareProfessional: z.object({
-      name: z.string().optional(),
-      specialty: z.string().optional(),
-      crmNumber: z.string().optional(),
-      cfmLicense: z.string().optional(),
-    }).optional(),
-    healthcare: z.object({
-      specialty: z.string().optional(),
-    }).optional(),
-    lgpdConsent: z.object({
-      dataProcessing: z.boolean().optional(),
-      aiAnalysis: z.boolean().optional(),
-      consentTimestamp: z.string().optional(),
-    }).optional(),
-    language: z.string().optional(),
-  }).optional(),
-  settings: z.object({
-    temperature: z.number().optional(),
-    maxTokens: z.number().optional(),
-    enableStreaming: z.boolean().optional(),
-  }).optional(),
+  lgpdConsent: z
+    .union([
+      z.boolean(),
+      z.object({
+        dataProcessing: z.boolean(),
+        aiAnalysis: z.boolean().optional(),
+        consentTimestamp: z.string().optional(),
+      }),
+    ])
+    .optional(),
+  context: z
+    .object({
+      healthcareProfessional: z
+        .object({
+          name: z.string().optional(),
+          specialty: z.string().optional(),
+          crmNumber: z.string().optional(),
+          cfmLicense: z.string().optional(),
+        })
+        .optional(),
+      healthcare: z
+        .object({
+          specialty: z.string().optional(),
+        })
+        .optional(),
+      lgpdConsent: z
+        .object({
+          dataProcessing: z.boolean().optional(),
+          aiAnalysis: z.boolean().optional(),
+          consentTimestamp: z.string().optional(),
+        })
+        .optional(),
+      language: z.string().optional(),
+    })
+    .optional(),
+  settings: z
+    .object({
+      temperature: z.number().optional(),
+      maxTokens: z.number().optional(),
+      enableStreaming: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 // Message request schema
 const messageRequestSchema = z.object({
   content: z.string().min(1).max(4000),
   type: z.string().optional(), // Multi-modal request type
-  attachments: z.array(z.object({
-    type: z.string().optional(),
-    data: z.string().optional(),
-    url: z.string().optional(),
-    metadata: z.object({
-      filename: z.string().optional(),
-      size: z.number().optional(),
-      mimeType: z.string().optional(),
-    }).optional(),
-  })).optional(),
-  settings: z.object({
-    stream: z.boolean().optional(),
-    model: z.string().optional(),
-    language: z.string().optional(),
-  }).optional(),
-  context: z.object({
-    specialty: z.string().optional(),
-    urgency: z.string().optional(),
-  }).optional(),
+  attachments: z
+    .array(
+      z.object({
+        type: z.string().optional(),
+        data: z.string().optional(),
+        url: z.string().optional(),
+        metadata: z
+          .object({
+            filename: z.string().optional(),
+            size: z.number().optional(),
+            mimeType: z.string().optional(),
+          })
+          .optional(),
+      }),
+    )
+    .optional(),
+  settings: z
+    .object({
+      stream: z.boolean().optional(),
+      model: z.string().optional(),
+      language: z.string().optional(),
+    })
+    .optional(),
+  context: z
+    .object({
+      specialty: z.string().optional(),
+      urgency: z.string().optional(),
+    })
+    .optional(),
 });
 
 // POST /sessions - Create AI session
@@ -414,25 +460,35 @@ app.post(
       const provider = requestData.provider || 'openai';
       const model = requestData.model || 'gpt-4o';
 
-      if (!validCombinations[provider] || !validCombinations[provider].includes(model)) {
-        return c.json({
-          success: false,
-          error: 'Combinação inválida de modelo e provedor.',
-          code: 'INVALID_MODEL_PROVIDER_COMBINATION',
-        }, 400);
+      if (
+        !validCombinations[provider]
+        || !validCombinations[provider].includes(model)
+      ) {
+        return c.json(
+          {
+            success: false,
+            error: 'Combinação inválida de modelo e provedor.',
+            code: 'INVALID_MODEL_PROVIDER_COMBINATION',
+          },
+          400,
+        );
       }
 
       // Check LGPD consent (mock validation for testing)
       const hasLGPDConsent = requestData.lgpdConsent === true
-        || (requestData.lgpdConsent && typeof requestData.lgpdConsent === 'object'
+        || (requestData.lgpdConsent
+          && typeof requestData.lgpdConsent === 'object'
           && requestData.lgpdConsent.dataProcessing === true)
-        || (requestData.context?.lgpdConsent?.dataProcessing === true);
+        || requestData.context?.lgpdConsent?.dataProcessing === true;
       if (!hasLGPDConsent) {
-        return c.json({
-          success: false,
-          error: 'Consentimento LGPD obrigatório para processamento de dados de IA.',
-          code: 'LGPD_CONSENT_REQUIRED',
-        }, 403);
+        return c.json(
+          {
+            success: false,
+            error: 'Consentimento LGPD obrigatório para processamento de dados de IA.',
+            code: 'LGPD_CONSENT_REQUIRED',
+          },
+          403,
+        );
       }
 
       // Mock session creation
@@ -467,16 +523,22 @@ app.post(
         }
       }
 
-      return c.json({
-        success: true,
-        data: responseData,
-      }, 201);
+      return c.json(
+        {
+          success: true,
+          data: responseData,
+        },
+        201,
+      );
     } catch (error) {
       console.error('Chat request failed:', error);
-      return c.json({
-        success: false,
-        error: 'Erro interno do servidor.',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro interno do servidor.',
+        },
+        500,
+      );
     }
   },
 );
@@ -496,11 +558,14 @@ app.post(
       // Validate session ID (basic UUID format check)
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       if (!uuidRegex.test(sessionId)) {
-        return c.json({
-          success: false,
-          error: 'Formato de ID de sessão inválido.',
-          code: 'INVALID_SESSION_ID_FORMAT',
-        }, 404);
+        return c.json(
+          {
+            success: false,
+            error: 'Formato de ID de sessão inválido.',
+            code: 'INVALID_SESSION_ID_FORMAT',
+          },
+          404,
+        );
       }
 
       // Check if session exists (mock validation)
@@ -509,20 +574,26 @@ app.post(
         || sessionId.startsWith('session-');
 
       if (!isValidSession) {
-        return c.json({
-          success: false,
-          error: 'Sessão não encontrada.',
-          code: 'SESSION_NOT_FOUND',
-        }, 404);
+        return c.json(
+          {
+            success: false,
+            error: 'Sessão não encontrada.',
+            code: 'SESSION_NOT_FOUND',
+          },
+          404,
+        );
       }
 
       // Check for empty content
       if (!requestData.content || requestData.content.trim().length === 0) {
-        return c.json({
-          success: false,
-          error: 'Conteúdo da mensagem não pode estar vazio.',
-          code: 'EMPTY_MESSAGE_CONTENT',
-        }, 400);
+        return c.json(
+          {
+            success: false,
+            error: 'Conteúdo da mensagem não pode estar vazio.',
+            code: 'EMPTY_MESSAGE_CONTENT',
+          },
+          400,
+        );
       }
 
       // Check attachment size limits (mock validation)
@@ -536,12 +607,16 @@ app.post(
             attachmentSize = attachment.metadata.size;
           }
 
-          if (attachmentSize > 1048576) { // 1MB limit
-            return c.json({
-              success: false,
-              error: 'Anexo muito grande. Limite máximo de 1MB.',
-              code: 'ATTACHMENT_TOO_LARGE',
-            }, 413);
+          if (attachmentSize > 1048576) {
+            // 1MB limit
+            return c.json(
+              {
+                success: false,
+                error: 'Anexo muito grande. Limite máximo de 1MB.',
+                code: 'ATTACHMENT_TOO_LARGE',
+              },
+              413,
+            );
           }
 
           // Validate attachment type for multi-modal
@@ -562,11 +637,14 @@ app.post(
             const isGenericTypeSupported = supportedGenericTypes.includes(attachmentType);
 
             if (!isSpecificTypeSupported && !isGenericTypeSupported) {
-              return c.json({
-                success: false,
-                error: 'Tipo de anexo não suportado.',
-                code: 'UNSUPPORTED_ATTACHMENT_TYPE',
-              }, 400);
+              return c.json(
+                {
+                  success: false,
+                  error: 'Tipo de anexo não suportado.',
+                  code: 'UNSUPPORTED_ATTACHMENT_TYPE',
+                },
+                400,
+              );
             }
           }
         }
@@ -583,7 +661,9 @@ app.post(
       const containsPortuguese = /português|brasil|anvisa|cfm|lgpd|toxina|botulínica/i.test(
         requestData.content,
       );
-      const isEmergency = /emergência|urgente|grave|crítico|risco/i.test(requestData.content);
+      const isEmergency = /emergência|urgente|grave|crítico|risco/i.test(
+        requestData.content,
+      );
 
       if (containsPortuguese) {
         responseContent +=
@@ -635,18 +715,15 @@ app.post(
         });
 
         // Return streaming response (simplified for testing)
-        return new Response(
-          `data: ${JSON.stringify(responseData)}\n\n`,
-          {
-            status: 201,
-            headers: {
-              'Content-Type': 'text/event-stream',
-              'Cache-Control': 'no-cache',
-              Connection: 'keep-alive',
-              ...headers,
-            },
+        return new Response(`data: ${JSON.stringify(responseData)}\n\n`, {
+          status: 201,
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            Connection: 'keep-alive',
+            ...headers,
           },
-        );
+        });
       } else {
         // Set headers for regular response
         Object.entries(headers).forEach(([key, value]) => {
@@ -654,17 +731,23 @@ app.post(
         });
 
         // Return regular JSON response
-        return c.json({
-          success: true,
-          data: responseData,
-        }, 201);
+        return c.json(
+          {
+            success: true,
+            data: responseData,
+          },
+          201,
+        );
       }
     } catch (error) {
       console.error('Chat request failed:', error);
-      return c.json({
-        success: false,
-        error: 'Erro interno do servidor.',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro interno do servidor.',
+        },
+        500,
+      );
     }
   },
 );

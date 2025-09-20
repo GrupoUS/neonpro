@@ -1,14 +1,23 @@
-import * as opentelemetry from '@opentelemetry/api';
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { Resource } from '@opentelemetry/resources';
-import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
-import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
-import { ConsoleSpanExporter, SimpleSpanProcessor, BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
-import { PeriodicExportingMetricReader } from '@opentelemetry/sdk-metrics';
-import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
-import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { ParentBasedSampler, TraceIdRatioBasedSampler, AlwaysOnSampler, AlwaysOffSampler } from '@opentelemetry/sdk-trace-base';
+import * as opentelemetry from "@opentelemetry/api";
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { Resource } from "@opentelemetry/resources";
+import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
+import { JaegerExporter } from "@opentelemetry/exporter-jaeger";
+import {
+  ConsoleSpanExporter,
+  SimpleSpanProcessor,
+  BatchSpanProcessor,
+} from "@opentelemetry/sdk-trace-base";
+import { PeriodicExportingMetricReader } from "@opentelemetry/sdk-metrics";
+import { PrometheusExporter } from "@opentelemetry/exporter-prometheus";
+import { ExpressInstrumentation } from "@opentelemetry/instrumentation-express";
+import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
+import {
+  ParentBasedSampler,
+  TraceIdRatioBasedSampler,
+  AlwaysOnSampler,
+  AlwaysOffSampler,
+} from "@opentelemetry/sdk-trace-base";
 
 // Healthcare-specific telemetry configuration
 export interface HealthcareTelemetryConfig {
@@ -24,38 +33,38 @@ export interface HealthcareTelemetryConfig {
   healthcareContext?: {
     facilityId?: string;
     region?: string;
-    complianceLevel?: 'lgpd' | 'hipaa' | 'gdpr';
+    complianceLevel?: "lgpd" | "hipaa" | "gdpr";
   };
 }
 
 // Healthcare-specific span attributes
 export enum HealthcareSpanAttributes {
-  PATIENT_ID = 'healthcare.patient.id',
-  MEDICAL_RECORD_ID = 'healthcare.medical_record.id',
-  APPOINTMENT_ID = 'healthcare.appointment.id',
-  DOCTOR_ID = 'healthcare.doctor.id',
-  PROCEDURE_TYPE = 'healthcare.procedure.type',
-  DATA_SENSITIVITY = 'healthcare.data.sensitivity',
-  CONSENT_GRANTED = 'healthcare.consent.granted',
-  COMPLIANCE_LEVEL = 'healthcare.compliance.level',
+  PATIENT_ID = "healthcare.patient.id",
+  MEDICAL_RECORD_ID = "healthcare.medical_record.id",
+  APPOINTMENT_ID = "healthcare.appointment.id",
+  DOCTOR_ID = "healthcare.doctor.id",
+  PROCEDURE_TYPE = "healthcare.procedure.type",
+  DATA_SENSITIVITY = "healthcare.data.sensitivity",
+  CONSENT_GRANTED = "healthcare.consent.granted",
+  COMPLIANCE_LEVEL = "healthcare.compliance.level",
 }
 
 // Healthcare-specific operations
 export enum HealthcareOperations {
-  PATIENT_DATA_READ = 'patient.data.read',
-  PATIENT_DATA_ACCESS = 'patient.data.access',
-  PATIENT_DATA_UPDATE = 'patient.data.update',
-  MEDICAL_RECORD_CREATE = 'medical_record.create',
-  MEDICAL_RECORD_READ = 'medical_record.read',
-  MEDICAL_RECORD_UPDATE = 'medical_record.update',
-  APPOINTMENT_SCHEDULE = 'appointment.schedule',
-  APPOINTMENT_CANCEL = 'appointment.cancel',
-  PRESCRIPTION_CREATE = 'prescription.create',
-  PRESCRIPTION_DISPENSE = 'prescription.dispense',
-  BILLING_GENERATE = 'billing.generate',
-  BILLING_PROCESS = 'billing.process',
-  TELEHEALTH_SESSION = 'telehealth.session',
-  AI_CONSULTATION = 'ai.consultation',
+  PATIENT_DATA_READ = "patient.data.read",
+  PATIENT_DATA_ACCESS = "patient.data.access",
+  PATIENT_DATA_UPDATE = "patient.data.update",
+  MEDICAL_RECORD_CREATE = "medical_record.create",
+  MEDICAL_RECORD_READ = "medical_record.read",
+  MEDICAL_RECORD_UPDATE = "medical_record.update",
+  APPOINTMENT_SCHEDULE = "appointment.schedule",
+  APPOINTMENT_CANCEL = "appointment.cancel",
+  PRESCRIPTION_CREATE = "prescription.create",
+  PRESCRIPTION_DISPENSE = "prescription.dispense",
+  BILLING_GENERATE = "billing.generate",
+  BILLING_PROCESS = "billing.process",
+  TELEHEALTH_SESSION = "telehealth.session",
+  AI_CONSULTATION = "ai.consultation",
 }
 
 export class HealthcareTelemetryManager {
@@ -71,7 +80,8 @@ export class HealthcareTelemetryManager {
       enablePrometheusExporter: config.enablePrometheusExporter ?? true,
       samplingRate: config.samplingRate ?? 1.0,
       prometheusPort: config.prometheusPort ?? 9464,
-      jaegerEndpoint: config.jaegerEndpoint ?? 'http://localhost:14268/api/traces',
+      jaegerEndpoint:
+        config.jaegerEndpoint ?? "http://localhost:14268/api/traces",
     };
   }
 
@@ -83,20 +93,24 @@ export class HealthcareTelemetryManager {
     const resourceAttributes: Record<string, string> = {
       [SemanticResourceAttributes.SERVICE_NAME]: this.config.serviceName,
       [SemanticResourceAttributes.SERVICE_VERSION]: this.config.serviceVersion,
-      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]: this.config.environment,
-      'healthcare.platform': 'neonpro',
+      [SemanticResourceAttributes.DEPLOYMENT_ENVIRONMENT]:
+        this.config.environment,
+      "healthcare.platform": "neonpro",
     };
 
     // Add healthcare-specific attributes
     if (this.config.healthcareContext) {
       if (this.config.healthcareContext.facilityId) {
-        resourceAttributes['healthcare.facility.id'] = this.config.healthcareContext.facilityId;
+        resourceAttributes["healthcare.facility.id"] =
+          this.config.healthcareContext.facilityId;
       }
       if (this.config.healthcareContext.region) {
-        resourceAttributes['healthcare.region'] = this.config.healthcareContext.region;
+        resourceAttributes["healthcare.region"] =
+          this.config.healthcareContext.region;
       }
       if (this.config.healthcareContext.complianceLevel) {
-        resourceAttributes['healthcare.compliance.level'] = this.config.healthcareContext.complianceLevel;
+        resourceAttributes["healthcare.compliance.level"] =
+          this.config.healthcareContext.complianceLevel;
       }
     }
 
@@ -151,9 +165,14 @@ export class HealthcareTelemetryManager {
     try {
       await this.sdk.start();
       this.initialized = true;
-      console.info(`[OpenTelemetry] Healthcare telemetry initialized for ${this.config.serviceName}`);
+      console.info(
+        `[OpenTelemetry] Healthcare telemetry initialized for ${this.config.serviceName}`,
+      );
     } catch (error) {
-      console.error('[OpenTelemetry] Failed to initialize healthcare telemetry:', error);
+      console.error(
+        "[OpenTelemetry] Failed to initialize healthcare telemetry:",
+        error,
+      );
       throw error;
     }
   }
@@ -162,7 +181,7 @@ export class HealthcareTelemetryManager {
     if (this.sdk && this.initialized) {
       await this.sdk.shutdown();
       this.initialized = false;
-      console.info('[OpenTelemetry] Healthcare telemetry shutdown completed');
+      console.info("[OpenTelemetry] Healthcare telemetry shutdown completed");
     }
   }
 
@@ -172,21 +191,27 @@ export class HealthcareTelemetryManager {
 
   // Get tracer for creating spans
   getTracer(): opentelemetry.Tracer {
-    return opentelemetry.trace.getTracer(this.config.serviceName, this.config.serviceVersion);
+    return opentelemetry.trace.getTracer(
+      this.config.serviceName,
+      this.config.serviceVersion,
+    );
   }
 
   // Healthcare-specific span creation
   createHealthcareSpan(
     name: string,
     operation: HealthcareOperations,
-    attributes: Record<string, string | number | boolean> = {}
+    attributes: Record<string, string | number | boolean> = {},
   ): opentelemetry.Span {
     const tracer = this.getTracer();
     const span = tracer.startSpan(name);
 
     // Set healthcare-specific attributes
-    span.setAttribute('healthcare.operation', operation);
-    span.setAttribute(HealthcareSpanAttributes.COMPLIANCE_LEVEL, this.config.healthcareContext?.complianceLevel || 'lgpd');
+    span.setAttribute("healthcare.operation", operation);
+    span.setAttribute(
+      HealthcareSpanAttributes.COMPLIANCE_LEVEL,
+      this.config.healthcareContext?.complianceLevel || "lgpd",
+    );
 
     // Add custom attributes
     Object.entries(attributes).forEach(([key, value]) => {
@@ -200,7 +225,7 @@ export class HealthcareTelemetryManager {
   addHealthcareEvent(
     span: opentelemetry.Span,
     eventName: string,
-    attributes: Record<string, string | number | boolean> = {}
+    attributes: Record<string, string | number | boolean> = {},
   ): void {
     span.addEvent(eventName, attributes);
   }
@@ -209,14 +234,17 @@ export class HealthcareTelemetryManager {
   recordHealthcareMetric(
     name: string,
     value: number,
-    attributes: Record<string, string> = {}
+    attributes: Record<string, string> = {},
   ): void {
-    const meter = opentelemetry.metrics.getMeter(this.config.serviceName, this.config.serviceVersion);
-    
+    const meter = opentelemetry.metrics.getMeter(
+      this.config.serviceName,
+      this.config.serviceVersion,
+    );
+
     const counter = meter.createCounter(name, {
       description: `Healthcare metric: ${name}`,
     });
-    
+
     counter.add(value, attributes);
   }
 
@@ -224,9 +252,12 @@ export class HealthcareTelemetryManager {
   createHealthcareCounter(
     name: string,
     description: string,
-    unit: string = '1'
+    unit: string = "1",
   ): opentelemetry.Counter {
-    const meter = opentelemetry.metrics.getMeter(this.config.serviceName, this.config.serviceVersion);
+    const meter = opentelemetry.metrics.getMeter(
+      this.config.serviceName,
+      this.config.serviceVersion,
+    );
     return meter.createCounter(name, { description, unit });
   }
 
@@ -234,16 +265,19 @@ export class HealthcareTelemetryManager {
   createHealthcareHistogram(
     name: string,
     description: string,
-    unit: string = 'ms'
+    unit: string = "ms",
   ): opentelemetry.Histogram {
-    const meter = opentelemetry.metrics.getMeter(this.config.serviceName, this.config.serviceVersion);
+    const meter = opentelemetry.metrics.getMeter(
+      this.config.serviceName,
+      this.config.serviceVersion,
+    );
     return meter.createHistogram(name, { description, unit });
   }
 }
 
 // Factory function for creating telemetry manager
 export function createHealthcareTelemetryManager(
-  config: HealthcareTelemetryConfig
+  config: HealthcareTelemetryConfig,
 ): HealthcareTelemetryManager {
   return new HealthcareTelemetryManager(config);
 }
@@ -251,27 +285,27 @@ export function createHealthcareTelemetryManager(
 // Predefined configurations for different services
 export const TELEMETRY_CONFIGS = {
   api: {
-    serviceName: 'neonpro-api',
-    serviceVersion: '1.0.0',
-    environment: process.env.NODE_ENV || 'development',
-    enableJaegerExporter: process.env.OTEL_JAEGER_ENABLED === 'true',
+    serviceName: "neonpro-api",
+    serviceVersion: "1.0.0",
+    environment: process.env.NODE_ENV || "development",
+    enableJaegerExporter: process.env.OTEL_JAEGER_ENABLED === "true",
     enablePrometheusExporter: true,
-    prometheusPort: parseInt(process.env.OTEL_PROMETHEUS_PORT || '9464'),
-    samplingRate: parseFloat(process.env.OTEL_SAMPLING_RATE || '1.0'),
+    prometheusPort: parseInt(process.env.OTEL_PROMETHEUS_PORT || "9464"),
+    samplingRate: parseFloat(process.env.OTEL_SAMPLING_RATE || "1.0"),
   },
   web: {
-    serviceName: 'neonpro-web',
-    serviceVersion: '1.0.0',
-    environment: process.env.NODE_ENV || 'development',
+    serviceName: "neonpro-web",
+    serviceVersion: "1.0.0",
+    environment: process.env.NODE_ENV || "development",
     enableConsoleExporter: true,
     enableJaegerExporter: false,
     enablePrometheusExporter: false,
     samplingRate: 0.1,
   },
   worker: {
-    serviceName: 'neonpro-worker',
-    serviceVersion: '1.0.0',
-    environment: process.env.NODE_ENV || 'development',
+    serviceName: "neonpro-worker",
+    serviceVersion: "1.0.0",
+    environment: process.env.NODE_ENV || "development",
     enableConsoleExporter: false,
     enableJaegerExporter: true,
     enablePrometheusExporter: true,
@@ -284,8 +318,8 @@ let globalTelemetryManager: HealthcareTelemetryManager | null = null;
 
 // Initialize global telemetry manager
 export async function initializeGlobalTelemetry(
-  serviceType: keyof typeof TELEMETRY_CONFIGS = 'api',
-  customConfig?: Partial<HealthcareTelemetryConfig>
+  serviceType: keyof typeof TELEMETRY_CONFIGS = "api",
+  customConfig?: Partial<HealthcareTelemetryConfig>,
 ): Promise<HealthcareTelemetryManager> {
   if (globalTelemetryManager) {
     return globalTelemetryManager;
@@ -298,7 +332,7 @@ export async function initializeGlobalTelemetry(
 
   globalTelemetryManager = createHealthcareTelemetryManager(config);
   await globalTelemetryManager.initialize();
-  
+
   return globalTelemetryManager;
 }
 

@@ -571,8 +571,12 @@ describe('Contract: API Management', () => {
       expect(rateLimitedResponse).toBeDefined();
 
       if (rateLimitedResponse) {
-        expect(rateLimitedResponse.headers.get('X-RateLimit-Limit')).toBeTruthy();
-        expect(rateLimitedResponse.headers.get('X-RateLimit-Remaining')).toBe('0');
+        expect(
+          rateLimitedResponse.headers.get('X-RateLimit-Limit'),
+        ).toBeTruthy();
+        expect(rateLimitedResponse.headers.get('X-RateLimit-Remaining')).toBe(
+          '0',
+        );
         expect(rateLimitedResponse.headers.get('Retry-After')).toBeTruthy();
       }
     });

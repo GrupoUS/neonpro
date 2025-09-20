@@ -45,14 +45,22 @@ const allowedOrigins = [
 ].filter(Boolean) as string[];
 
 if (process.env.NODE_ENV !== 'production') {
-  allowedOrigins.push('http://localhost:3000', 'http://localhost:5173', 'http://localhost:8081');
+  allowedOrigins.push(
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:8081',
+  );
 }
 
 app.use(
   '*',
   cors({
-    origin:
-      origin => (!origin ? undefined : (allowedOrigins.includes(origin) ? origin : undefined)),
+    origin: origin =>
+      !origin
+        ? undefined
+        : allowedOrigins.includes(origin)
+        ? origin
+        : undefined,
     allowMethods: ['GET', 'POST'],
     allowHeaders: ['Content-Type', 'Authorization'],
   }),
@@ -90,7 +98,10 @@ const redactPII = (text: string): string => {
     .replace(/\b\d{3}\.\d{3}\.\d{3}-\d{2}\b/g, '[CPF_REDACTED]')
     .replace(/\b\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}\b/g, '[CNPJ_REDACTED]')
     .replace(/\b\d{2}\s?\d{4,5}-?\d{4}\b/g, '[PHONE_REDACTED]')
-    .replace(/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g, '[EMAIL_REDACTED]');
+    .replace(
+      /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g,
+      '[EMAIL_REDACTED]',
+    );
 };
 
 // Streaming AI response endpoint with Phase 2 provider integration
@@ -102,7 +113,8 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     const url = new URL(c.req.url);
     const mockMode = url.searchParams.get('mock') === 'true'
       || process.env.AI_CHAT_MOCK_MODE === 'true'
-      || (!process.env.OPENAI_API_KEY && !process.env.ANTHROPIC_API_KEY
+      || (!process.env.OPENAI_API_KEY
+        && !process.env.ANTHROPIC_API_KEY
         && !process.env.GOOGLE_AI_API_KEY);
 
     // Build AI messages for our provider system
@@ -147,7 +159,10 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     let cachedResponse: string | null = null;
     if (!mockMode && userPrompt && semanticCache.isEnabled()) {
       try {
-        const cacheEntry = await semanticCache.findSimilarEntry(userPrompt, healthcareContext);
+        const cacheEntry = await semanticCache.findSimilarEntry(
+          userPrompt,
+          healthcareContext,
+        );
         if (cacheEntry && cacheEntry.response) {
           cachedResponse = cacheEntry.response;
           console.log('Cache hit for AI query:', {
@@ -158,7 +173,10 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
           });
         }
       } catch (cacheError) {
-        console.warn('Semantic cache error (continuing without cache):', cacheError);
+        console.warn(
+          'Semantic cache error (continuing without cache):',
+          cacheError,
+        );
       }
     }
 
@@ -173,7 +191,9 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
 
           const sendChunk = () => {
             if (index < chunks.length) {
-              const chunk = index === chunks.length - 1 ? chunks[index] : chunks[index] + ' ';
+              const chunk = index === chunks.length - 1
+                ? chunks[index]
+                : chunks[index] + ' ';
               controller.enqueue(encoder.encode(chunk));
               index++;
               setTimeout(sendChunk, 50); // Simulate typing speed
@@ -187,7 +207,13 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
       });
 
       const ms = endTimerMs(t0);
-      logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: 'cached', cached: true });
+      logMetric({
+        route: '/v1/ai-chat/stream',
+        ms,
+        ok: true,
+        model: 'cached',
+        cached: true,
+      });
 
       return new Response(stream, {
         status: 200,
@@ -203,7 +229,10 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
 
     if (mockMode) {
       // Use mock provider from factory
-      const mockStream = AIProviderFactory.generateStreamWithFailover(aiMessages, 1);
+      const mockStream = AIProviderFactory.generateStreamWithFailover(
+        aiMessages,
+        1,
+      );
 
       const encoder = new TextEncoder();
       const stream = new ReadableStream({
@@ -243,7 +272,11 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     const stream = new ReadableStream({
       async start(controller) {
         try {
-          for await (const chunk of provider.generateStreamingCompletion(aiMessages)) {
+          for await (
+            const chunk of provider.generateStreamingCompletion(
+              aiMessages,
+            )
+          ) {
             fullResponse += chunk; // Accumulate response for caching
             controller.enqueue(encoder.encode(chunk));
           }
@@ -283,7 +316,8 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     });
 
     // Audit log minimal info
-    const lastText = text || (Array.isArray(messages) ? messages[messages.length - 1]?.content : '')
+    const lastText = text
+      || (Array.isArray(messages) ? messages[messages.length - 1]?.content : '')
       || '';
     console.log('AI Chat Interaction:', {
       timestamp: new Date().toISOString(),
@@ -295,7 +329,12 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     });
 
     const ms = endTimerMs(t0);
-    logMetric({ route: '/v1/ai-chat/stream', ms, ok: true, model: providerName });
+    logMetric({
+      route: '/v1/ai-chat/stream',
+      ms,
+      ok: true,
+      model: providerName,
+    });
 
     return new Response(stream, {
       status: 200,
@@ -310,10 +349,13 @@ app.post('/stream', zValidator('json', ChatRequestSchema), async c => {
     const ms = endTimerMs(t0);
     logMetric({ route: '/v1/ai-chat/stream', ms, ok: false });
     console.error('AI chat error:', error);
-    return c.json({
-      error: 'Erro interno do servidor',
-      message: 'Não foi possível processar sua solicitação',
-    }, 500);
+    return c.json(
+      {
+        error: 'Erro interno do servidor',
+        message: 'Não foi possível processar sua solicitação',
+      },
+      500,
+    );
   }
 });
 
@@ -339,13 +381,23 @@ app.post(
         try {
           const resp = await fetch('https://api.tavily.com/search', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${tavilyKey}` },
-            body: JSON.stringify({ query, max_results: 5, search_depth: 'basic' }),
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${tavilyKey}`,
+            },
+            body: JSON.stringify({
+              query,
+              max_results: 5,
+              search_depth: 'basic',
+            }),
           });
           if (resp.ok) {
             const data = await resp.json();
             webHints = Array.isArray(data?.results)
-              ? data.results.map((r: any) => r.title).filter(Boolean).slice(0, 5)
+              ? data.results
+                .map((r: any) => r.title)
+                .filter(Boolean)
+                .slice(0, 5)
               : [];
           }
         } catch {
@@ -356,7 +408,9 @@ app.post(
       // Generate suggestions using AI provider
       const suggestionPrompt =
         `Com base na consulta "${query}" sobre tratamentos estéticos, sugira 5 tratamentos relacionados da NeonPro. Considere estas pistas da web (se houver): ${
-          webHints.join('; ')
+          webHints.join(
+            '; ',
+          )
         }. Responda apenas com lista separada por vírgulas, sem numeração.`;
 
       const messages: AIMessage[] = [
@@ -426,10 +480,13 @@ app.get('/health', c => {
     status: 'ok',
     service: 'neonpro-ai-chat',
     timestamp: new Date().toISOString(),
-    providers: availableProviders.reduce((acc, provider) => {
-      acc[provider] = 'available';
-      return acc;
-    }, {} as Record<string, string>),
+    providers: availableProviders.reduce(
+      (acc, provider) => {
+        acc[provider] = 'available';
+        return acc;
+      },
+      {} as Record<string, string>,
+    ),
   });
 });
 

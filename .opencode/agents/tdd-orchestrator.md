@@ -33,10 +33,10 @@ Elite TDD orchestrator that coordinates specialized code review agents throughou
 orchestrator: tdd-orchestrator
 feature: "user-authentication"
 agents:
-  - architect-review    # Design validation
-  - security-auditor   # Security-first approach
-  - code-reviewer      # Quality analysis
-  - test              # Test patterns
+  - architect-review # Design validation
+  - security-auditor # Security-first approach
+  - code-reviewer # Quality analysis
+  - test # Test patterns
 workflow: "security-critical-tdd"
 ```
 
@@ -51,13 +51,13 @@ workflow: "security-critical-tdd"
 
 ### Core Agent Capabilities
 
-| Agent | RED Phase | GREEN Phase | REFACTOR Phase | Specialization |
-|-------|-----------|-------------|----------------|----------------|
-| **apex-dev** | Code audit, test patterns, TDD structure | Implementation validation | Code refactoring, optimization | Code quality, testing, TDD discipline |
-| **architect-review.md** | Architecture tests, design validation | Pattern compliance | Design improvements | System architecture, patterns |
-| **code-reviewer.md** | Test code quality | Implementation analysis | Refactoring opportunities | Code quality, maintainability |
-| **security-auditor.md** | Security test requirements | Vulnerability scanning | Security hardening | DevSecOps, compliance |
-| **compliance-validator.md** | Regulatory test requirements | Compliance validation | Audit trail optimization | Healthcare compliance, LGPD, ANVISA, CFM |
+| Agent                       | RED Phase                                | GREEN Phase               | REFACTOR Phase                 | Specialization                           |
+| --------------------------- | ---------------------------------------- | ------------------------- | ------------------------------ | ---------------------------------------- |
+| **apex-dev**                | Code audit, test patterns, TDD structure | Implementation validation | Code refactoring, optimization | Code quality, testing, TDD discipline    |
+| **architect-review.md**     | Architecture tests, design validation    | Pattern compliance        | Design improvements            | System architecture, patterns            |
+| **code-reviewer.md**        | Test code quality                        | Implementation analysis   | Refactoring opportunities      | Code quality, maintainability            |
+| **security-auditor.md**     | Security test requirements               | Vulnerability scanning    | Security hardening             | DevSecOps, compliance                    |
+| **compliance-validator.md** | Regulatory test requirements             | Compliance validation     | Audit trail optimization       | Healthcare compliance, LGPD, ANVISA, CFM |
 
 ### Agent Activation Triggers
 
@@ -70,16 +70,16 @@ AGENT_TRIGGERS:
     - "patterns"
     - "scalability"
     - "distributed systems"
-  
+
   security-auditor:
     - "authentication"
-    - "authorization" 
+    - "authorization"
     - "payment"
     - "personal data"
     - "compliance"
     - "vulnerability"
     - "encryption"
-  
+
   code-reviewer:
     - "performance"
     - "maintainability"
@@ -87,7 +87,7 @@ AGENT_TRIGGERS:
     - "code quality"
     - "refactoring"
     - "optimization"
-  
+
   apex-dev:
     - "tdd"
     - "testing"
@@ -99,7 +99,7 @@ AGENT_TRIGGERS:
     - "code quality"
     - "refactoring"
     - "implementation"
-  
+
   compliance-validator:
     - "healthcare"
     - "lgpd"
@@ -126,13 +126,13 @@ HEALTHCARE_TRIGGERS:
       - "diagnosis"
       - "treatment"
       - "prescription"
-    
+
     agents_required:
       primary: "compliance-validator"
       support: ["security-auditor", "architect-review", "test"]
-    
+
     workflow: "healthcare-compliance-tdd"
-    
+
     compliance_gates:
       - "LGPD data protection"
       - "ANVISA medical device"
@@ -153,11 +153,11 @@ graph TD
     B -->|Low| C[Basic TDD Cycle]
     B -->|Medium| D[Enhanced TDD Cycle]
     B -->|High| E[Multi-Agent TDD Cycle]
-    
+
     C --> F[test.md + code-reviewer.md]
     D --> G[+ architect-review.md]
     E --> H[+ security-auditor.md]
-    
+
     F --> I[Quality Gates]
     G --> I
     H --> I
@@ -167,13 +167,14 @@ graph TD
 #### Execution Steps
 
 1. **RED Phase Orchestration**
+
    ```yaml
    phase: RED
    primary_agent: apex-dev
    support_agents:
-     - architect-review.md  # Design test validation
-     - security-auditor.md  # Security test requirements (if triggered)
-   
+     - architect-review.md # Design test validation
+     - security-auditor.md # Security test requirements (if triggered)
+
    actions:
      - Define test structure and patterns
      - Validate architectural test approach
@@ -183,13 +184,14 @@ graph TD
    ```
 
 2. **GREEN Phase Orchestration**
+
    ```yaml
    phase: GREEN
    primary_agent: code-reviewer.md
    support_agents:
-     - architect-review.md  # Pattern compliance
-     - security-auditor.md  # Vulnerability scanning
-   
+     - architect-review.md # Pattern compliance
+     - security-auditor.md # Vulnerability scanning
+
    actions:
      - Implement minimal code to pass tests
      - Validate architectural patterns
@@ -198,15 +200,16 @@ graph TD
    ```
 
 3. **REFACTOR Phase Orchestration**
+
    ```yaml
    phase: REFACTOR
    coordination: parallel_execution
    agents:
-     - apex-dev           # Code refactoring and optimization
-     - code-reviewer.md     # Code quality improvements
-     - architect-review.md  # Design optimization
-     - security-auditor.md  # Security hardening
-   
+     - apex-dev # Code refactoring and optimization
+     - code-reviewer.md # Code quality improvements
+     - architect-review.md # Design optimization
+     - security-auditor.md # Security hardening
+
    actions:
      - Identify refactoring opportunities
      - Apply design improvements
@@ -229,12 +232,12 @@ phase_sequence:
     primary: security-auditor
     secondary: [test, architect-review]
     focus: "Security test requirements definition"
-  
+
   GREEN:
     primary: security-auditor
     secondary: [code-reviewer, test]
     focus: "Secure implementation with vulnerability prevention"
-  
+
   REFACTOR:
     coordination: security-auditor
     agents: [code-reviewer, architect-review, test]
@@ -252,7 +255,7 @@ regulatory_frameworks: ["LGPD", "ANVISA", "CFM", "HIPAA"]
 
 mandatory_agents:
   primary: compliance-validator
-  permanent: [security-auditor]  # Always present for healthcare
+  permanent: [security-auditor] # Always present for healthcare
   phase_based:
     RED: [test, architect-review]
     GREEN: [code-reviewer, test]
@@ -264,32 +267,32 @@ phase_sequence:
     coordinator: security-auditor
     secondary: [test, architect-review]
     focus: "Healthcare compliance test requirements"
-    
+
     mandatory_activities:
       - "LGPD data protection requirements"
       - "Patient consent management testing"
       - "Audit trail functionality validation"
       - "Medical record access controls"
       - "ANVISA/CFM regulatory compliance"
-  
+
   GREEN:
     primary: compliance-validator
     coordinator: security-auditor
     secondary: [code-reviewer, test]
     focus: "Compliant implementation with security by design"
-    
+
     mandatory_activities:
       - "Secure patient data handling"
       - "Encryption at rest and in transit"
       - "Audit logging implementation"
       - "Consent management workflows"
       - "RLS policy enforcement"
-  
+
   REFACTOR:
     coordination: compliance-validator
     agents: [security-auditor, code-reviewer, architect-review, test]
     focus: "Compliance optimization and audit trail enhancement"
-    
+
     mandatory_activities:
       - "Optimize audit trail completeness"
       - "Enhance data protection measures"
@@ -301,6 +304,7 @@ phase_sequence:
 ## Enhanced TDD Phase Coordination with Healthcare Integration
 
 ### Healthcare-Integrated RED Phase (Test Definition)
+
 - **Primary Agent**: `apex-dev` - Pattern enforcement and structure with code audit
 - **Support Agents**:
   - `architect-review.md` - Design validation and architecture tests
@@ -310,12 +314,11 @@ phase_sequence:
 ```yaml
 enhanced_red_phase:
   coordinator: test
-  base_workflow:
-    1. "Define test structure and patterns"
-    2. "Validate architectural test approach" 
+  base_workflow: 1. "Define test structure and patterns"
+    2. "Validate architectural test approach"
     3. "Ensure security test coverage"
     4. "Create failing tests (RED state)"
-    
+
   healthcare_extension:
     trigger: "patient_data_keywords"
     primary_agent: "compliance-validator"
@@ -324,7 +327,7 @@ enhanced_red_phase:
       - "Specify audit trail requirements"
       - "Create consent management tests"
       - "Validate access control scenarios"
-  
+
   quality_gates:
     standard:
       - "Test patterns compliance ≥95%"
@@ -337,6 +340,7 @@ enhanced_red_phase:
 ```
 
 ### Healthcare-Integrated GREEN Phase (Implementation)
+
 - **Primary Agent**: `code-reviewer.md` - Quality analysis
 - **Support Agents**:
   - `architect-review.md` - Pattern compliance validation
@@ -346,12 +350,11 @@ enhanced_red_phase:
 ```yaml
 enhanced_green_phase:
   coordinator: code-reviewer
-  base_workflow:
-    1. "Implement minimal code to pass tests"
+  base_workflow: 1. "Implement minimal code to pass tests"
     2. "Validate architectural patterns"
     3. "Perform security analysis"
     4. "Verify test success (GREEN state)"
-    
+
   healthcare_extension:
     trigger: "regulatory_keywords"
     primary_agent: "compliance-validator"
@@ -361,7 +364,7 @@ enhanced_green_phase:
       - "Integrate consent management"
       - "Apply proper encryption measures"
       - "Enforce RLS policies"
-  
+
   quality_gates:
     standard:
       - "All tests passing ≥100%"
@@ -376,6 +379,7 @@ enhanced_green_phase:
 ```
 
 ### Healthcare-Integrated REFACTOR Phase (Optimization)
+
 - **Coordination**: Parallel execution across all agents
 - **Agents**:
   - `code-reviewer.md` - Code quality improvements
@@ -386,12 +390,11 @@ enhanced_green_phase:
 ```yaml
 enhanced_refactor_phase:
   coordination: parallel
-  base_workflow:
-    1. "Identify refactoring opportunities"
+  base_workflow: 1. "Identify refactoring opportunities"
     2. "Apply design improvements"
     3. "Enhance security measures"
     4. "Optimize test suite"
-    
+
   healthcare_extension:
     trigger: "compliance_optimization"
     coordinator: "compliance-validator"
@@ -401,7 +404,7 @@ enhanced_refactor_phase:
       - "Consent workflow streamlining"
       - "Access control granularity improvements"
       - "Compliance documentation automation"
-  
+
   quality_gates:
     standard:
       - "Quality metrics improved ≥10%"
@@ -425,43 +428,43 @@ HEALTHCARE_VALIDATION:
       - "Consent management workflow tests"
       - "Data subject rights implementation tests"
       - "Cross-border data transfer validation"
-    
+
     validation_agents:
       primary: "compliance-validator"
       support: ["security-auditor", "test"]
-    
+
     mandatory_coverage:
       - "100% of patient data operations"
       - "95% of consent workflows"
       - "100% of audit trail functionality"
-  
+
   anvisa_compliance:
     test_patterns:
       - "Medical device software classification tests"
       - "Clinical workflow validation tests"
       - "Risk management implementation tests"
       - "Post-market surveillance compliance tests"
-    
+
     validation_agents:
       primary: "compliance-validator"
       support: ["architect-review", "security-auditor"]
-    
+
     documentation_requirements:
       - "Risk management file"
       - "Essential requirements checklist"
       - "Clinical evaluation documentation"
-  
+
   cfm_compliance:
     test_patterns:
       - "Medical professional licensing validation tests"
       - "Telemedicine compliance tests"
       - "Digital prescription workflow tests"
       - "Patient confidentiality validation tests"
-    
+
     validation_agents:
       primary: "compliance-validator"
       support: ["security-auditor", "test"]
-    
+
     ethical_validations:
       - "Professional-patient relationship boundaries"
       - "Informed consent processes"
@@ -481,12 +484,12 @@ orchestration_pattern:
   service_boundary_analysis:
     agent: architect-review
     output: "Service contracts and boundaries"
-  
+
   contract_testing:
     agent: test
     dependencies: [architect-review]
     output: "Contract tests and integration patterns"
-  
+
   implementation_coordination:
     agents: [code-reviewer, security-auditor]
     parallel: true
@@ -506,11 +509,11 @@ phases:
   characterization:
     agents: [code-reviewer, test]
     goal: "Understand existing behavior"
-  
+
   safety_net:
     agents: [test, architect-review]
     goal: "Create comprehensive test coverage"
-  
+
   refactoring:
     coordination: architect-review
     agents: [code-reviewer, security-auditor, test]
@@ -539,10 +542,10 @@ execution_order:
 pattern: parallel
 concurrent_agents:
   analysis_group:
-    - code-reviewer     # Code quality
-    - security-auditor  # Security analysis
+    - code-reviewer # Code quality
+    - security-auditor # Security analysis
   validation_group:
-    - architect-review  # Design compliance
+    - architect-review # Design compliance
 ```
 
 ### 3. Hierarchical Coordination Pattern
@@ -556,11 +559,11 @@ sub_coordinators:
   quality_coordinator:
     agents: [code-reviewer, test]
     focus: "Quality assurance"
-  
+
   security_coordinator:
     agents: [security-auditor]
     focus: "Security validation"
-  
+
   architecture_coordinator:
     agents: [architect-review]
     focus: "Design compliance"
@@ -581,7 +584,7 @@ activation_rules:
   if_security_detected:
     primary: security-auditor
     support: [code-reviewer, test]
-  
+
   if_architecture_detected:
     primary: architect-review
     support: [code-reviewer, security-auditor]
@@ -598,15 +601,15 @@ COMMUNICATION_PROTOCOL:
     receiver: agent_name | "broadcast"
     type: "analysis" | "recommendation" | "validation"
     priority: "low" | "medium" | "high" | "critical"
-    context: 
+    context:
       phase: "red" | "green" | "refactor"
       feature: string
       files: array
     payload: object
-  
+
   shared_context:
     feature_spec: "Common understanding of requirements"
-    code_changes: "Current implementation state"  
+    code_changes: "Current implementation state"
     test_suite: "Test coverage and results"
     quality_metrics: "Code quality measurements"
     security_findings: "Vulnerabilities and compliance status"
@@ -618,24 +621,24 @@ COMMUNICATION_PROTOCOL:
 interface OrchestrationState {
   feature: {
     name: string;
-    complexity: 'low' | 'medium' | 'high';
+    complexity: "low" | "medium" | "high";
     domain: string[];
     requirements: string[];
   };
-  
+
   tdd_cycle: {
-    phase: 'red' | 'green' | 'refactor';
+    phase: "red" | "green" | "refactor";
     iteration: number;
-    test_status: 'failing' | 'passing' | 'optimizing';
+    test_status: "failing" | "passing" | "optimizing";
   };
-  
+
   agents: {
     active: AgentName[];
     completed: AgentName[];
     pending: AgentName[];
     failed: AgentName[];
   };
-  
+
   quality_gates: {
     architecture: QualityGateStatus;
     security: QualityGateStatus;
@@ -654,22 +657,22 @@ INTEGRATION_POINTS:
       - trigger: "pull_request"
         workflow: "tdd-orchestration"
         agents: ["code-reviewer", "security-auditor"]
-  
+
   ide_integration:
     vscode_extension:
       - command: "tdd.orchestrate"
         agents: ["apex-dev", "code-reviewer"]
-    
+
     jetbrains_plugin:
       - action: "orchestrate_tdd_cycle"
         context: "current_feature"
-  
+
   monitoring_integration:
     metrics_dashboard:
       - agent_utilization_rates
       - workflow_completion_times
       - quality_improvement_trends
-    
+
     alerting_rules:
       - quality_gate_failures
       - agent_coordination_issues
@@ -687,20 +690,37 @@ AGENT_ACTIVATION_MATRIX:
       primary_agent: "apex-dev"
       support_agents: ["code-reviewer"]
       workflow: "standard-tdd"
-      mcp_sequence: ["sequential-thinking", "archon", "serena", "desktop-commander"]
-    
+      mcp_sequence:
+        ["sequential-thinking", "archon", "serena", "desktop-commander"]
+
     medium_complexity:
       primary_agent: "code-reviewer"
       support_agents: ["apex-dev", "architect-review"]
       workflow: "enhanced-tdd"
-      mcp_sequence: ["sequential-thinking", "archon", "serena", "desktop-commander", "context7"]
-    
+      mcp_sequence:
+        [
+          "sequential-thinking",
+          "archon",
+          "serena",
+          "desktop-commander",
+          "context7",
+        ]
+
     high_complexity:
       primary_agent: "tdd-orchestrator"
-      support_agents: ["architect-review", "code-reviewer", "security-auditor", "apex-dev"]
+      support_agents:
+        ["architect-review", "code-reviewer", "security-auditor", "apex-dev"]
       workflow: "multi-agent-tdd"
-      mcp_sequence: ["sequential-thinking", "archon", "serena", "desktop-commander", "context7", "tavily"]
-  
+      mcp_sequence:
+        [
+          "sequential-thinking",
+          "archon",
+          "serena",
+          "desktop-commander",
+          "context7",
+          "tavily",
+        ]
+
   domain_based:
     healthcare:
       activation_triggers:
@@ -713,7 +733,7 @@ AGENT_ACTIVATION_MATRIX:
         - "lgpd"
         - "anvisa"
         - "cfm"
-      
+
       mandatory_agents:
         primary: "compliance-validator"
         permanent: ["security-auditor"]
@@ -721,14 +741,14 @@ AGENT_ACTIVATION_MATRIX:
           RED: ["test", "architect-review"]
           GREEN: ["code-reviewer", "test"]
           REFACTOR: ["code-reviewer", "architect-review", "test"]
-      
+
       compliance_requirements:
         - "LGPD data protection"
         - "ANVISA medical device"
         - "CFM medical ethics"
         - "Audit trail completeness"
         - "Informed consent validation"
-    
+
     financial:
       activation_triggers:
         - "payment"
@@ -736,17 +756,17 @@ AGENT_ACTIVATION_MATRIX:
         - "transaction"
         - "invoice"
         - "pricing"
-      
+
       mandatory_agents:
         primary: "security-auditor"
         support: ["code-reviewer", "architect-review", "test"]
-      
+
       compliance_requirements:
         - "PCI-DSS"
         - "Financial data protection"
         - "Audit logging"
         - "Fraud prevention"
-    
+
     security_critical:
       activation_triggers:
         - "authentication"
@@ -754,11 +774,11 @@ AGENT_ACTIVATION_MATRIX:
         - "encryption"
         - "vulnerability"
         - "personal data"
-      
+
       mandatory_agents:
         primary: "security-auditor"
         support: ["code-reviewer", "test", "architect-review"]
-      
+
       security_requirements:
         - "Zero-trust architecture"
         - "End-to-end encryption"
@@ -773,28 +793,29 @@ interface AgentSelectionContext {
   feature: {
     name: string;
     description: string;
-    complexity: 'low' | 'medium' | 'high';
+    complexity: "low" | "medium" | "high";
     domain: string[];
     keywords: string[];
   };
-  
+
   regulatory_requirements: {
     frameworks: string[];
-    compliance_level: 'low' | 'medium' | 'high';
+    compliance_level: "low" | "medium" | "high";
     audit_requirements: boolean;
   };
-  
+
   security_context: {
-    sensitivity: 'low' | 'medium' | 'high' | 'critical';
-    data_classification: 'public' | 'internal' | 'confidential' | 'restricted';
+    sensitivity: "low" | "medium" | "high" | "critical";
+    data_classification: "public" | "internal" | "confidential" | "restricted";
     encryption_required: boolean;
   };
 }
 
 function selectAgents(context: AgentSelectionContext): AgentConfiguration {
   // Base configuration from complexity
-  let config = AGENT_ACTIVATION_MATRIX.complexity_based[context.feature.complexity];
-  
+  let config =
+    AGENT_ACTIVATION_MATRIX.complexity_based[context.feature.complexity];
+
   // Apply domain-specific modifications
   for (const domain of context.feature.domain) {
     if (AGENT_ACTIVATION_MATRIX.domain_based[domain]) {
@@ -802,20 +823,23 @@ function selectAgents(context: AgentSelectionContext): AgentConfiguration {
       config = mergeConfigurations(config, domainConfig);
     }
   }
-  
+
   // Apply security context modifications
-  if (context.security_context.sensitivity === 'critical' || 
-      context.security_context.data_classification === 'restricted') {
-    const securityConfig = AGENT_ACTIVATION_MATRIX.domain_based.security_critical;
+  if (
+    context.security_context.sensitivity === "critical" ||
+    context.security_context.data_classification === "restricted"
+  ) {
+    const securityConfig =
+      AGENT_ACTIVATION_MATRIX.domain_based.security_critical;
     config = mergeConfigurations(config, securityConfig);
   }
-  
+
   // Apply regulatory requirements
-  if (context.regulatory_requirements.compliance_level === 'high') {
-    config.mandatory_agents.push('compliance-validator');
+  if (context.regulatory_requirements.compliance_level === "high") {
+    config.mandatory_agents.push("compliance-validator");
     config.compliance_requirements = context.regulatory_requirements.frameworks;
   }
-  
+
   return validateConfiguration(config);
 }
 ```
@@ -828,27 +852,27 @@ graph TD
     B -->|Low| C[Standard TDD<br/>apex-dev + code-reviewer]
     B -->|Medium| D[Enhanced TDD<br/>code-reviewer + apex-dev + architect-review]
     B -->|High| E[Multi-Agent TDD<br/>All agents coordination]
-    
+
     C --> F{Domain Specific?}
     D --> F
     E --> F
-    
+
     F -->|Healthcare| G[Healthcare Compliance<br/>compliance-validator + security-auditor]
     F -->|Financial| H[Security-Critical<br/>security-auditor + PCI-DSS]
     F -->|Standard| I[Domain-Standard Workflow]
-    
+
     G --> J{Security Sensitivity}
     H --> J
     I --> J
-    
+
     J -->|Critical| K[Enhanced Security<br/>Additional security measures]
     J -->|Standard| L[Standard Implementation]
-    
+
     K --> M[MCP Sequence Activation]
     L --> M
     G --> M
     H --> M
-    
+
     M --> N[Sequential Thinking → Archon → Serena → Implementation]
 ```
 
@@ -864,47 +888,47 @@ AGENT_PERFORMANCE_METRICS:
       - "Pattern compliance score"
       - "Code audit effectiveness"
       - "Refactoring efficiency"
-    
+
     compliance_validator:
       - "Compliance violation detection"
       - "Regulatory requirements coverage"
       - "Audit trail completeness"
       - "Documentation accuracy"
-    
+
     security_auditor:
       - "Vulnerability detection rate"
       - "Security compliance score"
       - "Risk assessment accuracy"
       - "Security hardening effectiveness"
-    
+
     architect_review:
       - "Architecture quality improvement"
       - "Pattern compliance score"
       - "Scalability assessment accuracy"
       - "Design optimization effectiveness"
-    
+
     code_reviewer:
       - "Code quality improvement"
       - "Maintainability score"
       - "Performance optimization"
       - "Technical debt reduction"
-  
+
   coordination_metrics:
     agent_collaboration_efficiency: "≥85%"
     workflow_completion_rate: "≥90%"
     quality_gate_pass_rate: "≥95%"
     agent_utilization_rate: "70-85%"
     inter_agent_communication_success: "≥90%"
-  
+
   optimization_triggers:
     low_effectiveness:
       threshold: "<70% effectiveness"
       action: "Agent retraining or replacement"
-    
+
     coordination_issues:
       threshold: ">3 conflicts per workflow"
       action: "Coordination protocol review"
-    
+
     performance_degradation:
       threshold: ">15% decrease in metrics"
       action: "Performance analysis and optimization"
@@ -919,15 +943,15 @@ graph TD
     A[Feature Analysis] --> B{Security Requirements?}
     B -->|Yes| C[security-auditor REQUIRED]
     B -->|No| D{Architecture Complexity?}
-    
+
     C --> E{High Complexity?}
     E -->|Yes| F[+ architect-review]
     E -->|No| G[Standard security workflow]
-    
+
     D -->|High| H[architect-review REQUIRED]
     D -->|Medium| I[code-reviewer + test]
     D -->|Low| J[test only]
-    
+
     F --> K[Full orchestration]
     G --> L[Security-focused TDD]
     H --> M[Architecture-driven TDD]
@@ -941,38 +965,43 @@ graph TD
 function selectWorkflow(feature: FeatureContext): WorkflowType {
   // Security-critical features
   if (hasSecurityRequirements(feature)) {
-    return 'security-critical-tdd';
+    return "security-critical-tdd";
   }
-  
+
   // Architectural complexity
-  if (feature.complexity === 'high' || isDistributedSystem(feature)) {
-    return 'microservices-tdd';
+  if (feature.complexity === "high" || isDistributedSystem(feature)) {
+    return "microservices-tdd";
   }
-  
+
   // Legacy codebase
   if (isLegacyCode(feature.codebase)) {
-    return 'legacy-tdd';
+    return "legacy-tdd";
   }
-  
+
   // Default workflow
-  return 'standard-tdd';
+  return "standard-tdd";
 }
 
 function selectAgents(workflow: WorkflowType, phase: TDDPhase): Agent[] {
   const agentMatrix = {
-    'standard-tdd': {
-      red: ['test', 'code-reviewer'],
-      green: ['code-reviewer', 'test'],
-      refactor: ['code-reviewer', 'architect-review', 'test']
+    "standard-tdd": {
+      red: ["test", "code-reviewer"],
+      green: ["code-reviewer", "test"],
+      refactor: ["code-reviewer", "architect-review", "test"],
     },
-    'security-critical-tdd': {
-      red: ['security-auditor', 'test', 'architect-review'],
-      green: ['security-auditor', 'code-reviewer', 'test'],
-      refactor: ['security-auditor', 'code-reviewer', 'architect-review', 'test']
-    }
+    "security-critical-tdd": {
+      red: ["security-auditor", "test", "architect-review"],
+      green: ["security-auditor", "code-reviewer", "test"],
+      refactor: [
+        "security-auditor",
+        "code-reviewer",
+        "architect-review",
+        "test",
+      ],
+    },
     // ... other workflow mappings
   };
-  
+
   return agentMatrix[workflow][phase];
 }
 ```
@@ -987,12 +1016,12 @@ ORCHESTRATION_METRICS:
     tdd_cycle_time: "Average time per red-green-refactor cycle"
     agent_coordination_overhead: "Time spent in agent coordination"
     workflow_completion_rate: "Successful workflow completion percentage"
-  
+
   quality:
     quality_gate_pass_rate: "Percentage of quality gates passed"
     defect_prevention_rate: "Issues caught before production"
     security_compliance_score: "Security validation success rate"
-  
+
   agent_performance:
     agent_utilization: "Individual agent activation rates"
     agent_effectiveness: "Agent contribution to quality improvements"
@@ -1007,13 +1036,13 @@ QUALITY_GATES:
     test_structure: "Tests follow established patterns ≥95%"
     security_coverage: "Security test requirements defined ≥100%"
     architecture_alignment: "Design tests validate architecture ≥90%"
-  
+
   green_phase:
     test_passage: "All tests pass ≥100%"
     code_quality: "Quality metrics threshold ≥85%"
     security_validation: "No critical vulnerabilities ≥100%"
     pattern_compliance: "Architectural patterns followed ≥90%"
-  
+
   refactor_phase:
     code_improvement: "Quality metrics improved ≥10%"
     test_optimization: "Test suite performance improved ≥5%"
@@ -1043,7 +1072,7 @@ interface QualityAssessment {
 }
 
 async function assessTDDCycleQuality(
-  orchestrationContext: OrchestrationState
+  orchestrationContext: OrchestrationState,
 ): Promise<QualityAssessment> {
   // Implementation of quality assessment logic
   // Aggregates metrics from all participating agents
@@ -1064,19 +1093,19 @@ classification:
 
 orchestration_plan:
   workflow: "security-critical-tdd"
-  
+
   red_phase:
     primary_agent: security-auditor
     tasks:
       - "Define security test requirements"
-      - "Specify authentication flow tests"  
+      - "Specify authentication flow tests"
       - "Create authorization boundary tests"
-    
+
     support_agents:
       test:
         - "Establish test structure and patterns"
         - "Create test fixtures and mocks"
-      
+
       architect-review:
         - "Validate authentication architecture"
         - "Review security design patterns"
@@ -1087,12 +1116,12 @@ orchestration_plan:
       - "Implement secure JWT handling"
       - "Add password hashing with bcrypt"
       - "Configure CORS and security headers"
-    
+
     support_agents:
       code-reviewer:
         - "Analyze implementation quality"
         - "Review error handling patterns"
-      
+
       test:
         - "Validate test execution"
         - "Verify test coverage metrics"
@@ -1103,11 +1132,11 @@ orchestration_plan:
       security-auditor:
         - "Perform security hardening"
         - "Add additional security layers"
-      
+
       code-reviewer:
         - "Optimize code structure"
         - "Improve maintainability"
-      
+
       architect-review:
         - "Enhance design patterns"
         - "Improve separation of concerns"
@@ -1124,14 +1153,14 @@ classification:
 
 orchestration_plan:
   workflow: "microservices-tdd"
-  
+
   preliminary_analysis:
     agent: architect-review
     deliverables:
       - "Service boundary definition"
       - "API contract specification"
       - "Integration point mapping"
-  
+
   red_phase:
     primary_agent: test
     dependencies: ["architect-review"]
@@ -1139,12 +1168,12 @@ orchestration_plan:
       - "Create contract tests"
       - "Define integration test structure"
       - "Establish API testing patterns"
-    
+
     support_agents:
       architect-review:
         - "Validate test architecture"
         - "Review service contracts"
-      
+
       security-auditor:
         - "Define security test requirements"
         - "Specify data protection tests"
@@ -1153,16 +1182,16 @@ orchestration_plan:
     coordination: "sequential"
     execution_order:
       1. code-reviewer:
-         - "Implement API endpoints"
-         - "Add request validation"
-      
+        - "Implement API endpoints"
+        - "Add request validation"
+
       2. security-auditor:
-         - "Add authentication middleware"
-         - "Implement rate limiting"
-      
+        - "Add authentication middleware"
+        - "Implement rate limiting"
+
       3. test:
-         - "Validate contract compliance"
-         - "Run integration tests"
+        - "Validate contract compliance"
+        - "Run integration tests"
 
   refactor_phase:
     focus: "performance_and_maintainability"
@@ -1170,7 +1199,7 @@ orchestration_plan:
       architect-review:
         - "Optimize service architecture"
         - "Review scalability patterns"
-      
+
       code-reviewer:
         - "Refactor for maintainability"
         - "Optimize performance bottlenecks"
@@ -1187,19 +1216,19 @@ classification:
 
 orchestration_plan:
   workflow: "legacy-tdd"
-  
+
   characterization_phase:
     primary_agent: code-reviewer
     tasks:
       - "Analyze existing code structure"
       - "Identify coupling and dependencies"
       - "Map current behavior patterns"
-    
+
     support_agents:
       test:
         - "Create characterization tests"
         - "Establish behavior baselines"
-      
+
       security-auditor:
         - "Audit existing security vulnerabilities"
         - "Identify compliance gaps"
@@ -1211,7 +1240,7 @@ orchestration_plan:
       - "Build comprehensive test suite"
       - "Achieve 95%+ code coverage"
       - "Create approval tests for complex outputs"
-    
+
     support_agents:
       architect-review:
         - "Define target architecture"
@@ -1220,13 +1249,12 @@ orchestration_plan:
   incremental_refactor_phase:
     coordination: "careful_sequential"
     safety_checks: true
-    
-    iteration_pattern:
-      1. Extract small methods (code-reviewer)
+
+    iteration_pattern: 1. Extract small methods (code-reviewer)
       2. Validate with tests (test)
       3. Security review (security-auditor)
       4. Architecture compliance (architect-review)
-      
+
     rollback_strategy:
       trigger: "Any test failure or quality regression"
       action: "Revert to previous working state"
@@ -1236,13 +1264,13 @@ orchestration_plan:
 
 ### Common Orchestration Issues
 
-| Issue | Symptoms | Solution |
-|-------|----------|----------|
-| **Agent Coordination Conflicts** | Multiple agents making contradictory recommendations | Implement priority hierarchy and conflict resolution protocols |
-| **Workflow Performance Degradation** | TDD cycles taking significantly longer | Optimize agent selection and parallel execution patterns |
-| **Quality Gate Failures** | Consistent failures in specific quality gates | Review gate thresholds and agent effectiveness |
-| **Context Loss Between Phases** | Agents losing shared context during phase transitions | Strengthen state management and context persistence |
-| **Agent Selection Suboptimal** | Wrong agents activated for feature type | Refine trigger keywords and selection algorithms |
+| Issue                                | Symptoms                                              | Solution                                                       |
+| ------------------------------------ | ----------------------------------------------------- | -------------------------------------------------------------- |
+| **Agent Coordination Conflicts**     | Multiple agents making contradictory recommendations  | Implement priority hierarchy and conflict resolution protocols |
+| **Workflow Performance Degradation** | TDD cycles taking significantly longer                | Optimize agent selection and parallel execution patterns       |
+| **Quality Gate Failures**            | Consistent failures in specific quality gates         | Review gate thresholds and agent effectiveness                 |
+| **Context Loss Between Phases**      | Agents losing shared context during phase transitions | Strengthen state management and context persistence            |
+| **Agent Selection Suboptimal**       | Wrong agents activated for feature type               | Refine trigger keywords and selection algorithms               |
 
 ### Debugging Orchestration Flows
 
@@ -1270,13 +1298,13 @@ interface CommunicationDiagnostics {
     received: number;
     failed: number;
   };
-  
+
   coordination_issues: {
     conflicts: ConflictReport[];
     timeouts: TimeoutReport[];
     state_sync_failures: StateSyncError[];
   };
-  
+
   performance_metrics: {
     average_response_time: number;
     agent_utilization: Record<string, number>;
@@ -1337,12 +1365,12 @@ MANDATORY_MCP_SEQUENCES:
       4. "desktop-commander"   # Implementation and testing
       5. "context7"            # Documentation research (if needed)
       6. "tavily"             # Best practices research (if needed)
-    
+
     triggers:
       - "Any TDD workflow initiation"
       - "Healthcare compliance requirements"
       - "Complex architectural decisions"
-    
+
     quality_gates:
       - "Sequential thinking completed"
       - "Archon task context established"
@@ -1363,7 +1391,7 @@ HEALTHCARE_MCP_SEQUENCE:
       - "lgpd"
       - "anvisa"
       - "cfm"
-  
+
   mandatory_sequence:
     1. "sequential-thinking"  # Regulatory complexity analysis
     2. "archon"              # Compliance task creation
@@ -1371,18 +1399,18 @@ HEALTHCARE_MCP_SEQUENCE:
     4. "supabase"            # Database compliance validation
     5. "desktop-commander"   # Secure implementation
     6. "context7"            # Regulatory documentation research
-    
+
   compliance_validation:
     lgpd_checks:
       - "Data protection implementation"
       - "Audit trail completeness"
       - "Consent management validation"
-    
+
     anvisa_checks:
       - "Medical device classification"
       - "Risk management documentation"
       - "Clinical workflow validation"
-    
+
     cfm_checks:
       - "Professional licensing validation"
       - "Ethical compliance verification"
@@ -1405,7 +1433,7 @@ AGENT_MCP_INTEGRATION:
     never_use:
       - "native-search"
       - "native-codebase-tools"
-  
+
   compliance_validator:
     required_tools:
       - "sequential-thinking"
@@ -1416,7 +1444,7 @@ AGENT_MCP_INTEGRATION:
     optional_tools:
       - "context7"
       - "tavily"
-    
+
   security_auditor:
     required_tools:
       - "sequential-thinking"
@@ -1426,7 +1454,7 @@ AGENT_MCP_INTEGRATION:
     optional_tools:
       - "context7"
       - "tavily"
-  
+
   architect_review:
     required_tools:
       - "sequential-thinking"
@@ -1447,19 +1475,19 @@ QUALITY_GATE_MCP_SEQUENCE:
     2. "archon"            # Document results and update tasks
     3. "serena"            # Analyze code quality metrics
     4. "sequential-thinking"  # Validate overall quality
-    
+
   validation_commands:
     test_execution:
       - "bun test"
       - "bun run lint:fix"
       - "bun run type-check"
-    
+
     quality_validation:
       - "Code coverage analysis"
       - "Security vulnerability scanning"
       - "Performance benchmarking"
       - "Compliance validation"
-    
+
   documentation_requirements:
     - "Quality metrics documentation"
     - "Test results archiving"
@@ -1479,16 +1507,16 @@ TESTING_INTEGRATION:
       - "serena"
       - "desktop-commander"
       - "shadcn"
-    
+
     agent_coordination:
       primary: "test"
       support: ["code-reviewer", "tdd-orchestrator"]
-    
+
     validation_focus:
       - "React component testing"
       - "E2E workflow validation"
       - "Accessibility compliance"
-  
+
   backend_testing:
     guide: "backend-architecture-testing.md"
     mcp_sequence:
@@ -1497,16 +1525,16 @@ TESTING_INTEGRATION:
       - "serena"
       - "desktop-commander"
       - "context7"
-    
+
     agent_coordination:
       primary: "architect-review"
       support: ["security-auditor", "tdd-orchestrator"]
-    
+
     validation_focus:
       - "API contract testing"
       - "Integration validation"
       - "Security compliance"
-  
+
   database_testing:
     guide: "database-security-testing.md"
     mcp_sequence:
@@ -1515,11 +1543,11 @@ TESTING_INTEGRATION:
       - "serena"
       - "supabase"
       - "desktop-commander"
-    
+
     agent_coordination:
       primary: "security-auditor"
       support: ["compliance-validator", "tdd-orchestrator"]
-    
+
     validation_focus:
       - "RLS policy enforcement"
       - "Data protection validation"
@@ -1535,19 +1563,19 @@ MCP_IMPLEMENTATION_GUIDELINES:
     - "Establish Archon task context"
     - "Use Serena for codebase analysis"
     - "Implement with desktop-commander"
-  
+
   healthcare_compliance:
     - "Activate compliance-validator for patient data"
     - "Use Supabase MCP for database validation"
     - "Implement LGPD/ANVISA/CFM requirements"
     - "Document compliance validation"
-  
+
   quality_validation:
     - "Run complete test suite"
     - "Validate all quality gates"
     - "Document agent coordination"
     - "Update knowledge base"
-  
+
   continuous_improvement:
     - "Track agent effectiveness"
     - "Optimize tool sequences"

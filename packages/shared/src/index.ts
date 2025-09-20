@@ -3,7 +3,7 @@
 // ============================================================================
 
 // Core library
-export const shared = { version: '1.0.0' };
+export const shared = { version: "1.0.0" };
 
 // Telemetry and observability models
 // Export only types to avoid function name collisions; alias helper if needed
@@ -16,16 +16,16 @@ export type {
   HealthcareAccessEvent,
   AICostEvent,
   ComplianceEvent,
-} from './models/telemetry-event';
+} from "./models/telemetry-event";
 // export { createDefaultLGPDMetadata, PerformanceMetricsSchema, sanitizeTelemetryEvent } from './models/telemetry-event';
 // Alias function to avoid conflicts with notifications.validateHealthcareCompliance
 // export { validateHealthcareCompliance as validateTelemetryCompliance } from './models/telemetry-event';
 
 // Existing exports
-export * from './types/ai-insights';
+export * from "./types/ai-insights";
 // Export API types (names do not collide with validators)
-export * from './types/api';
-export * from './types/appointment';
+export * from "./types/api";
+export * from "./types/appointment";
 // Export only enums and interfaces from contact to avoid helper duplicate names
 export {
   ContactType,
@@ -33,7 +33,7 @@ export {
   CommunicationMethod,
   type ContactPreferences,
   type Contact,
-} from './types/contact';
+} from "./types/contact";
 // LGPD Consent types (canonical LegalBasis here)
 export {
   LegalBasis as LGPDLegalBasis,
@@ -51,8 +51,8 @@ export {
   renewConsent,
   createDataSubjectRequest,
   auditLGPDCompliance,
-} from './types/lgpd-consent';
-export * from './types/medical-history';
+} from "./types/lgpd-consent";
+export * from "./types/medical-history";
 export {
   NotificationType,
   NotificationChannel,
@@ -64,7 +64,7 @@ export {
   type DeliveryStatus,
   type Notification,
   // Avoid re-exporting helper functions with generic names to prevent collisions
-} from './types/notifications';
+} from "./types/notifications";
 // Export only enums and interfaces from patient to avoid helper duplicate names
 export {
   Gender,
@@ -77,7 +77,7 @@ export {
   type AuditLogEntry as PatientAuditLogEntry,
   type AuditTrail,
   type Patient,
-} from './types/patient';
+} from "./types/patient";
 
 // Validators
 // Choose validators as canonical source for validation helpers
@@ -104,11 +104,10 @@ export {
   HEALTHCARE_SPECIALTIES,
   type ValidationError,
   type ValidationResult,
-} from './validators/brazilian';
-
+} from "./validators/brazilian";
 
 // Environment configuration
-export * from './env/ai';
+export * from "./env/ai";
 
 // Authentication
 // NOTE: Avoid duplicate type re-exports (e.g., AuthUser) already provided by ./types/api
@@ -116,28 +115,27 @@ export * from './env/ai';
 
 // export * from './auth/protected-route';
 
-
 // Models
-export * from './models/healthcare-base';
-export * from './models/ai-optimization';
+export * from "./models/healthcare-base";
+export * from "./models/ai-optimization";
 
 // Components
 // export * from './components/healthcare-base';
 
 // API client
-export * from './api-client';
+export * from "./api-client";
 
 // Hooks
-export * from './hooks/useRealtimeQuery';
+export * from "./hooks/useRealtimeQuery";
 
 // Realtime
-export * from './realtime/realtime-manager';
+export * from "./realtime/realtime-manager";
 
 // Internationalization
-export * from './i18n/ai-chat';
+export * from "./i18n/ai-chat";
 
 // WebRTC infrastructure
-export * from './webrtc';
+export * from "./webrtc";
 
 // Telemetry and observability
-export * from './telemetry';
+export * from "./telemetry";

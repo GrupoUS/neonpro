@@ -69,16 +69,20 @@ const healthcareContextSchema = z.object({
   isHealthcareProfessional: z.boolean().default(false),
   crmNumber: z.string().optional(),
   specialty: z.string().optional(),
-  patientContext: z.object({
-    patientId: z.string().optional(),
-    hasConsent: z.boolean().default(false),
-    dataCategories: z.array(z.string()).default([]),
-  }).optional(),
-  complianceRequirements: z.object({
-    lgpd: z.boolean().default(true),
-    anvisa: z.boolean().default(false),
-    cfm: z.boolean().default(false),
-  }).default({}),
+  patientContext: z
+    .object({
+      patientId: z.string().optional(),
+      hasConsent: z.boolean().default(false),
+      dataCategories: z.array(z.string()).default([]),
+    })
+    .optional(),
+  complianceRequirements: z
+    .object({
+      lgpd: z.boolean().default(true),
+      anvisa: z.boolean().default(false),
+      cfm: z.boolean().default(false),
+    })
+    .default({}),
 });
 
 export type HealthcareContext = z.infer<typeof healthcareContextSchema>;
@@ -210,22 +214,30 @@ class AIProviderManager {
     supportsBrazilianPortuguese?: boolean;
     supportsStreaming?: boolean;
   }): AIModel[] {
-    let models = Array.from(this.models.values()).filter(model => model.isAvailable);
+    let models = Array.from(this.models.values()).filter(
+      model => model.isAvailable,
+    );
 
     if (filters) {
       if (filters.provider) {
         models = models.filter(model => model.provider === filters.provider);
       }
       if (filters.healthcareOptimized !== undefined) {
-        models = models.filter(model => model.healthcareOptimized === filters.healthcareOptimized);
+        models = models.filter(
+          model => model.healthcareOptimized === filters.healthcareOptimized,
+        );
       }
       if (filters.supportsBrazilianPortuguese !== undefined) {
-        models = models.filter(model =>
-          model.supportsBrazilianPortuguese === filters.supportsBrazilianPortuguese
+        models = models.filter(
+          model =>
+            model.supportsBrazilianPortuguese
+              === filters.supportsBrazilianPortuguese,
         );
       }
       if (filters.supportsStreaming !== undefined) {
-        models = models.filter(model => model.supportsStreaming === filters.supportsStreaming);
+        models = models.filter(
+          model => model.supportsStreaming === filters.supportsStreaming,
+        );
       }
     }
 
@@ -256,7 +268,9 @@ class AIProviderManager {
 
     // Filter by token requirements
     if (requirements.maxTokens) {
-      availableModels = availableModels.filter(model => model.maxTokens >= requirements.maxTokens);
+      availableModels = availableModels.filter(
+        model => model.maxTokens >= requirements.maxTokens,
+      );
     }
 
     // Filter by provider health
@@ -287,7 +301,10 @@ class AIProviderManager {
     const now = new Date();
     if (now > limit.resetTime) {
       // Reset the limit
-      this.rateLimits.set(provider, { requests: 0, resetTime: new Date(now.getTime() + 60000) }); // 1 minute window
+      this.rateLimits.set(provider, {
+        requests: 0,
+        resetTime: new Date(now.getTime() + 60000),
+      }); // 1 minute window
       return true;
     }
 
@@ -320,8 +337,10 @@ class AIProviderManager {
 
     // Update rate limits
     const provider = metrics.provider;
-    const limit = this.rateLimits.get(provider)
-      || { requests: 0, resetTime: new Date(Date.now() + 60000) };
+    const limit = this.rateLimits.get(provider) || {
+      requests: 0,
+      resetTime: new Date(Date.now() + 60000),
+    };
     limit.requests++;
     this.rateLimits.set(provider, limit);
 
@@ -341,7 +360,10 @@ class AIProviderManager {
   }
 
   // Get request metrics
-  getRequestMetrics(provider?: AIProvider, limit: number = 100): RequestMetrics[] {
+  getRequestMetrics(
+    provider?: AIProvider,
+    limit: number = 100,
+  ): RequestMetrics[] {
     let metrics = this.requestMetrics;
 
     if (provider) {
@@ -402,20 +424,26 @@ export function aiProviderSelection() {
     });
 
     if (!selectedModel) {
-      return c.json({
-        success: false,
-        error: 'Nenhum modelo de IA disponível para os requisitos especificados',
-        code: 'NO_AVAILABLE_MODEL',
-      }, 503);
+      return c.json(
+        {
+          success: false,
+          error: 'Nenhum modelo de IA disponível para os requisitos especificados',
+          code: 'NO_AVAILABLE_MODEL',
+        },
+        503,
+      );
     }
 
     // Check rate limits
     if (!aiProviderManager.checkRateLimit(selectedModel.provider)) {
-      return c.json({
-        success: false,
-        error: 'Limite de taxa excedido para o provedor de IA',
-        code: 'RATE_LIMIT_EXCEEDED',
-      }, 429);
+      return c.json(
+        {
+          success: false,
+          error: 'Limite de taxa excedido para o provedor de IA',
+          code: 'RATE_LIMIT_EXCEEDED',
+        },
+        429,
+      );
     }
 
     // Add selected model to context

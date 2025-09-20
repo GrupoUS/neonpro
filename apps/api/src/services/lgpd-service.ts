@@ -18,8 +18,8 @@ import {
   createLGPDConsent,
   DataSubjectRequest,
   LegalBasis,
-  LGPDConsent,
-} from '@neonpro/shared';
+  LGPDConsentModel as LGPDConsent,
+} from '../../../../packages/shared/src/types/lgpd-consent';
 
 // Define missing enums locally
 export enum ConsentStatus {
@@ -198,7 +198,11 @@ export interface DataAnonymization {
   patientId: string;
   dataCategories: string[];
   preserveStatistical: boolean;
-  anonymizationMethod: 'k-anonymity' | 'l-diversity' | 't-closeness' | 'differential-privacy';
+  anonymizationMethod:
+    | 'k-anonymity'
+    | 'l-diversity'
+    | 't-closeness'
+    | 'differential-privacy';
   parameters?: Record<string, any>;
 }
 
@@ -275,7 +279,9 @@ export class LGPDService {
   /**
    * Create consent record
    */
-  async createConsent(params: ConsentCreation): Promise<ServiceResponse<LGPDConsent>> {
+  async createConsent(
+    params: ConsentCreation,
+  ): Promise<ServiceResponse<LGPDConsent>> {
     try {
       // Validate input
       const validation = this.validateConsentCreation(params);
@@ -437,7 +443,9 @@ export class LGPDService {
         .sort((a, b) => b.consentDate.getTime() - a.consentDate.getTime());
 
       const currentConsent = patientConsents.find(consent => !consent.withdrawalDate) || null;
-      const history = patientConsents.flatMap(consent => consent.history || []);
+      const history = patientConsents.flatMap(
+        consent => consent.history || [],
+      );
 
       return {
         success: true,
@@ -570,7 +578,9 @@ export class LGPDService {
   /**
    * Process data rectification request
    */
-  async processDataRectificationRequest(params: DataRectificationRequest): Promise<
+  async processDataRectificationRequest(
+    params: DataRectificationRequest,
+  ): Promise<
     ServiceResponse<{
       requestId: string;
       field: string;
@@ -636,7 +646,9 @@ export class LGPDService {
   /**
    * Get processing activities report
    */
-  async getProcessingActivitiesReport(params: ProcessingActivitiesReport): Promise<
+  async getProcessingActivitiesReport(
+    params: ProcessingActivitiesReport,
+  ): Promise<
     ServiceResponse<{
       activities: ProcessingActivity[];
       summary: Record<string, any>;
@@ -655,19 +667,27 @@ export class LGPDService {
       // Filter by date range
       activities = activities.filter(activity => {
         const activityDate = (activity as any).timestamp || new Date();
-        return activityDate >= params.startDate && activityDate <= params.endDate;
+        return (
+          activityDate >= params.startDate && activityDate <= params.endDate
+        );
       });
 
       const summary = {
         totalActivities: activities.length,
-        byLegalBasis: activities.reduce((acc, activity) => {
-          acc[activity.legalBasis] = (acc[activity.legalBasis] || 0) + 1;
-          return acc;
-        }, {} as Record<string, number>),
-        byPurpose: activities.reduce((acc, activity) => {
-          acc[activity.purpose] = (acc[activity.purpose] || 0) + 1;
-          return acc;
-        }, {} as Record<string, number>),
+        byLegalBasis: activities.reduce(
+          (acc, activity) => {
+            acc[activity.legalBasis] = (acc[activity.legalBasis] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>,
+        ),
+        byPurpose: activities.reduce(
+          (acc, activity) => {
+            acc[activity.purpose] = (acc[activity.purpose] || 0) + 1;
+            return acc;
+          },
+          {} as Record<string, number>,
+        ),
       };
 
       return {
@@ -689,7 +709,9 @@ export class LGPDService {
   /**
    * Validate processing legality
    */
-  async validateProcessingLegality(_params: ProcessingLegalityValidation): Promise<
+  async validateProcessingLegality(
+    _params: ProcessingLegalityValidation,
+  ): Promise<
     ServiceResponse<{
       isLegal: boolean;
       legalBasis: string;
@@ -929,7 +951,9 @@ export class LGPDService {
       }
 
       if (filters.riskLevel) {
-        assessments = assessments.filter(a => a.riskLevel === filters.riskLevel);
+        assessments = assessments.filter(
+          a => a.riskLevel === filters.riskLevel,
+        );
       }
 
       if (filters.limit) {
@@ -967,14 +991,16 @@ export class LGPDService {
 
       const metrics = {
         totalConsents: this.consents.size,
-        activeConsents: Array.from(this.consents.values()).filter(c =>
-          c.status === ConsentStatus.ACTIVE
+        activeConsents: Array.from(this.consents.values()).filter(
+          c => c.status === ConsentStatus.ACTIVE,
         ).length,
-        revokedConsents: Array.from(this.consents.values()).filter(c =>
-          c.status === ConsentStatus.REVOKED
+        revokedConsents: Array.from(this.consents.values()).filter(
+          c => c.status === ConsentStatus.REVOKED,
         ).length,
         dataSubjectRequests: this.dataSubjectRequests.size,
-        processingActivities: Array.from(this.processingActivities.values()).flat().length,
+        processingActivities: Array.from(
+          this.processingActivities.values(),
+        ).flat().length,
         complianceScore: 95.5, // Mock score
       };
 
@@ -1136,7 +1162,12 @@ export class LGPDService {
   } {
     return {
       retentionPolicies: Object.fromEntries(this.retentionPolicies),
-      anonymizationMethods: ['k-anonymity', 'l-diversity', 't-closeness', 'differential-privacy'],
+      anonymizationMethods: [
+        'k-anonymity',
+        'l-diversity',
+        't-closeness',
+        'differential-privacy',
+      ],
       complianceChecks: [
         'consent_validity',
         'data_minimization',

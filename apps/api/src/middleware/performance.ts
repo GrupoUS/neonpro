@@ -39,7 +39,9 @@ export const performanceMiddleware = (app: Hono) => {
           process.env.FRONTEND_URL as string | undefined,
         ].filter(Boolean) as string[];
         const incoming = origin || '';
-        return allowedOrigins.includes(incoming) ? incoming : (allowedOrigins[0] || '*');
+        return allowedOrigins.includes(incoming)
+          ? incoming
+          : allowedOrigins[0] || '*';
       },
       allowMethods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
       allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
@@ -89,13 +91,15 @@ export const performanceMiddleware = (app: Hono) => {
 
     // Log slow requests (>1000ms for healthcare APIs)
     if (duration > 1000) {
-      console.warn(JSON.stringify({
-        type: 'slow_request',
-        method: c.req.method,
-        path: c.req.path,
-        duration,
-        timestamp: new Date().toISOString(),
-      }));
+      console.warn(
+        JSON.stringify({
+          type: 'slow_request',
+          method: c.req.method,
+          path: c.req.path,
+          duration,
+          timestamp: new Date().toISOString(),
+        }),
+      );
     }
   });
 
@@ -150,10 +154,13 @@ export const performanceMiddleware = (app: Hono) => {
       clientData.count++;
 
       if (clientData.count > maxRequests) {
-        return c.json({
-          error: 'Rate limit exceeded',
-          retryAfter: Math.ceil((clientData.resetTime - now) / 1000),
-        }, 429);
+        return c.json(
+          {
+            error: 'Rate limit exceeded',
+            retryAfter: Math.ceil((clientData.resetTime - now) / 1000),
+          },
+          429,
+        );
       }
     }
 
@@ -161,7 +168,10 @@ export const performanceMiddleware = (app: Hono) => {
     const remaining = Math.max(0, maxRequests - (clientData?.count || 0));
     c.header('X-RateLimit-Limit', maxRequests.toString());
     c.header('X-RateLimit-Remaining', remaining.toString());
-    c.header('X-RateLimit-Reset', Math.ceil((clientData?.resetTime || now) / 1000).toString());
+    c.header(
+      'X-RateLimit-Reset',
+      Math.ceil((clientData?.resetTime || now) / 1000).toString(),
+    );
 
     await next();
   });
@@ -180,30 +190,38 @@ export const performanceMiddleware = (app: Hono) => {
 // Error handling middleware
 export const errorHandler = (app: Hono) => {
   app.onError((err, c) => {
-    console.error(JSON.stringify({
-      type: 'api_error',
-      error: err.message,
-      stack: err.stack,
-      method: c.req.method,
-      path: c.req.path,
-      timestamp: new Date().toISOString(),
-    }));
+    console.error(
+      JSON.stringify({
+        type: 'api_error',
+        error: err.message,
+        stack: err.stack,
+        method: c.req.method,
+        path: c.req.path,
+        timestamp: new Date().toISOString(),
+      }),
+    );
 
     // Don't expose internal errors in production
     const isDevelopment = process.env.NODE_ENV === 'development';
 
-    return c.json({
-      error: 'Internal server error',
-      message: isDevelopment ? err.message : 'Something went wrong',
-      ...(isDevelopment && { stack: err.stack }),
-    }, 500);
+    return c.json(
+      {
+        error: 'Internal server error',
+        message: isDevelopment ? err.message : 'Something went wrong',
+        ...(isDevelopment && { stack: err.stack }),
+      },
+      500,
+    );
   });
 
   // 404 handler
   app.notFound(c => {
-    return c.json({
-      error: 'Not found',
-      message: `Route ${c.req.method} ${c.req.path} not found`,
-    }, 404);
+    return c.json(
+      {
+        error: 'Not found',
+        message: `Route ${c.req.method} ${c.req.path} not found`,
+      },
+      404,
+    );
   });
 };

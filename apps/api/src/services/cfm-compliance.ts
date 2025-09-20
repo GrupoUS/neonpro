@@ -21,7 +21,7 @@ export const CFM_COMPLIANCE_LEVELS = {
   UNDER_REVIEW: 'under_review',
 } as const;
 
-export type CFMComplianceLevel = typeof CFM_COMPLIANCE_LEVELS[keyof typeof CFM_COMPLIANCE_LEVELS];
+export type CFMComplianceLevel = (typeof CFM_COMPLIANCE_LEVELS)[keyof typeof CFM_COMPLIANCE_LEVELS];
 
 // CFM Professional Categories
 export const CFM_PROFESSIONAL_CATEGORIES = {
@@ -33,7 +33,7 @@ export const CFM_PROFESSIONAL_CATEGORIES = {
 } as const;
 
 export type CFMProfessionalCategory =
-  typeof CFM_PROFESSIONAL_CATEGORIES[keyof typeof CFM_PROFESSIONAL_CATEGORIES];
+  (typeof CFM_PROFESSIONAL_CATEGORIES)[keyof typeof CFM_PROFESSIONAL_CATEGORIES];
 
 // CFM Compliance Requirements
 export const CFM_REQUIREMENTS = {
@@ -46,7 +46,7 @@ export const CFM_REQUIREMENTS = {
   PATIENT_SAFETY: 'patient_safety',
 } as const;
 
-export type CFMRequirement = typeof CFM_REQUIREMENTS[keyof typeof CFM_REQUIREMENTS];
+export type CFMRequirement = (typeof CFM_REQUIREMENTS)[keyof typeof CFM_REQUIREMENTS];
 
 // CFM Medical Professional Schema
 export const CFMMedicalProfessionalSchema = z.object({
@@ -66,7 +66,9 @@ export const CFMMedicalProfessionalSchema = z.object({
   updatedAt: z.date(),
 });
 
-export type CFMMedicalProfessional = z.infer<typeof CFMMedicalProfessionalSchema>;
+export type CFMMedicalProfessional = z.infer<
+  typeof CFMMedicalProfessionalSchema
+>;
 
 // CFM Compliance Issue
 export interface CFMComplianceIssue {
@@ -243,7 +245,9 @@ export class CFMComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? CFM_COMPLIANCE_LEVELS.PARTIAL
@@ -299,7 +303,9 @@ export class CFMComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? CFM_COMPLIANCE_LEVELS.PARTIAL
@@ -356,7 +362,9 @@ export class CFMComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? CFM_COMPLIANCE_LEVELS.PARTIAL
@@ -387,7 +395,9 @@ export class CFMComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? CFM_COMPLIANCE_LEVELS.PARTIAL
@@ -417,7 +427,9 @@ export class CFMComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? CFM_COMPLIANCE_LEVELS.PARTIAL
@@ -447,7 +459,9 @@ export class CFMComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? CFM_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? CFM_COMPLIANCE_LEVELS.PARTIAL
@@ -466,7 +480,9 @@ export class CFMComplianceService {
   /**
    * Calculate overall compliance level
    */
-  private calculateOverallCompliance(levels: CFMComplianceLevel[]): CFMComplianceLevel {
+  private calculateOverallCompliance(
+    levels: CFMComplianceLevel[],
+  ): CFMComplianceLevel {
     if (levels.includes(CFM_COMPLIANCE_LEVELS.NON_COMPLIANT)) {
       return CFM_COMPLIANCE_LEVELS.NON_COMPLIANT;
     }
@@ -480,14 +496,17 @@ export class CFMComplianceService {
    * Calculate compliance score
    */
   private calculateComplianceScore(): number {
-    const criticalIssues = this.issues.filter(i => i.severity === 'critical').length;
+    const criticalIssues = this.issues.filter(
+      i => i.severity === 'critical',
+    ).length;
     const highIssues = this.issues.filter(i => i.severity === 'high').length;
-    const mediumIssues = this.issues.filter(i => i.severity === 'medium').length;
+    const mediumIssues = this.issues.filter(
+      i => i.severity === 'medium',
+    ).length;
     const lowIssues = this.issues.filter(i => i.severity === 'low').length;
 
     // Calculate penalty based on issue severity
-    const penalty = (criticalIssues * 25) + (highIssues * 15) + (mediumIssues * 8)
-      + (lowIssues * 3);
+    const penalty = criticalIssues * 25 + highIssues * 15 + mediumIssues * 8 + lowIssues * 3;
 
     return Math.max(0, 100 - penalty);
   }
@@ -499,14 +518,19 @@ export class CFMComplianceService {
     const recommendations: string[] = [];
 
     // Group issues by requirement and generate recommendations
-    const issuesByRequirement = this.issues.reduce((acc, issue) => {
-      if (!acc[issue.requirement]) acc[issue.requirement] = [];
-      acc[issue.requirement].push(issue);
-      return acc;
-    }, {} as Record<string, CFMComplianceIssue[]>);
+    const issuesByRequirement = this.issues.reduce(
+      (acc, issue) => {
+        if (!acc[issue.requirement]) acc[issue.requirement] = [];
+        acc[issue.requirement].push(issue);
+        return acc;
+      },
+      {} as Record<string, CFMComplianceIssue[]>,
+    );
 
     Object.entries(issuesByRequirement).forEach(([requirement, issues]) => {
-      const criticalCount = issues.filter(i => i.severity === 'critical').length;
+      const criticalCount = issues.filter(
+        i => i.severity === 'critical',
+      ).length;
       const highCount = issues.filter(i => i.severity === 'high').length;
       const mediumCount = issues.filter(i => i.severity === 'medium').length;
 

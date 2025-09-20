@@ -169,10 +169,16 @@ const PatientService = {
 const historyQuerySchema = z.object({
   page: z.coerce.number().min(1).optional().default(1),
   limit: z.coerce.number().min(1).max(100).optional().default(20),
-  eventTypes: z.string().optional().transform(val => val ? val.split(',') : undefined),
+  eventTypes: z
+    .string()
+    .optional()
+    .transform(val => (val ? val.split(',') : undefined)),
   startDate: z.string().datetime().optional(),
   endDate: z.string().datetime().optional(),
-  severity: z.string().optional().transform(val => val ? val.split(',') : undefined),
+  severity: z
+    .string()
+    .optional()
+    .transform(val => (val ? val.split(',') : undefined)),
   category: z.string().optional(),
   actorId: z.string().optional(),
 });
@@ -207,11 +213,14 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
     });
 
     if (!patientValidation.success) {
-      return c.json({
-        success: false,
-        error: patientValidation.error || 'Paciente não encontrado',
-        code: patientValidation.code || 'PATIENT_NOT_FOUND',
-      }, 404);
+      return c.json(
+        {
+          success: false,
+          error: patientValidation.error || 'Paciente não encontrado',
+          code: patientValidation.code || 'PATIENT_NOT_FOUND',
+        },
+        404,
+      );
     }
 
     // Validate LGPD history access permissions
@@ -224,11 +233,15 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
     });
 
     if (!lgpdValidation.success) {
-      return c.json({
-        success: false,
-        error: lgpdValidation.error || 'Acesso ao histórico negado por política LGPD',
-        code: lgpdValidation.code || 'LGPD_HISTORY_ACCESS_DENIED',
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          error: lgpdValidation.error
+            || 'Acesso ao histórico negado por política LGPD',
+          code: lgpdValidation.code || 'LGPD_HISTORY_ACCESS_DENIED',
+        },
+        403,
+      );
     }
 
     // Get healthcare professional context from headers
@@ -258,10 +271,13 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
     });
 
     if (!historyResult.success) {
-      return c.json({
-        success: false,
-        error: historyResult.error || 'Erro interno do serviço de auditoria',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: historyResult.error || 'Erro interno do serviço de auditoria',
+        },
+        500,
+      );
     }
 
     // Mask sensitive data based on access level
@@ -298,8 +314,14 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
     const executionTime = Date.now() - startTime;
 
     // Set response headers
-    c.header('X-Total-Events', historyResult.data.summary.totalEvents.toString());
-    c.header('X-Date-Range-Start', historyResult.data.summary.dateRange.earliest);
+    c.header(
+      'X-Total-Events',
+      historyResult.data.summary.totalEvents.toString(),
+    );
+    c.header(
+      'X-Date-Range-Start',
+      historyResult.data.summary.dateRange.earliest,
+    );
     c.header('X-Date-Range-End', historyResult.data.summary.dateRange.latest);
     c.header('X-History-Access-Logged', 'true');
     c.header('X-Response-Time', `${executionTime}ms`);
@@ -330,20 +352,26 @@ app.get('/:id/history', requireAuth, dataProtection.clientView, async c => {
 
     // Handle validation errors
     if (error instanceof z.ZodError) {
-      return c.json({
-        success: false,
-        error: 'Parâmetros de consulta inválidos',
-        errors: error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-        })),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: 'Parâmetros de consulta inválidos',
+          errors: error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message,
+          })),
+        },
+        400,
+      );
     }
 
-    return c.json({
-      success: false,
-      error: 'Erro interno do servidor',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: 'Erro interno do servidor',
+      },
+      500,
+    );
   }
 });
 

@@ -2,7 +2,7 @@
 
 **Version**: Phase 1  
 **Last Updated**: 2025-01-27  
-**Status**: Implementation Complete  
+**Status**: Implementation Complete
 
 ## Overview
 
@@ -39,6 +39,7 @@ Authorization: Bearer <jwt-token>
 - **Streaming**: Separate limits for real-time interactions
 
 Rate limit headers are included in responses:
+
 ```http
 X-RateLimit-Limit: 60
 X-RateLimit-Remaining: 45
@@ -63,6 +64,7 @@ All errors follow a consistent format:
 ```
 
 Common error codes:
+
 - `RATE_LIMIT_EXCEEDED`: Rate limit exceeded
 - `INVALID_INPUT`: Malformed request data
 - `SESSION_EXPIRED`: Chat session expired
@@ -77,6 +79,7 @@ Common error codes:
 Create a new AI chat session.
 
 **Request Body:**
+
 ```json
 {
   "context": {
@@ -95,6 +98,7 @@ Create a new AI chat session.
 ```
 
 **Response:**
+
 ```json
 {
   "sessionId": "uuid",
@@ -117,6 +121,7 @@ Create a new AI chat session.
 Send a message to an AI chat session.
 
 **Request Body:**
+
 ```json
 {
   "message": "Como interpretar este exame de ECG?",
@@ -130,6 +135,7 @@ Send a message to an AI chat session.
 ```
 
 **Response (Non-streaming):**
+
 ```json
 {
   "messageId": "uuid",
@@ -149,6 +155,7 @@ Send a message to an AI chat session.
 ```
 
 **Response (Streaming):**
+
 ```
 data: {"type": "start", "messageId": "uuid"}
 
@@ -166,6 +173,7 @@ data: {"type": "done", "metadata": {"tokensUsed": 245, "responseTime": 1200}}
 Get session details and message history.
 
 **Response:**
+
 ```json
 {
   "sessionId": "uuid",
@@ -186,7 +194,7 @@ Get session details and message history.
       "metadata": {}
     },
     {
-      "messageId": "uuid", 
+      "messageId": "uuid",
       "timestamp": "2025-01-27T14:32:02Z",
       "role": "assistant",
       "content": "Para interpretar um ECG...",
@@ -209,6 +217,7 @@ Get session details and message history.
 Terminate a chat session immediately.
 
 **Response:**
+
 ```json
 {
   "sessionId": "uuid",
@@ -222,12 +231,14 @@ Terminate a chat session immediately.
 List user's active chat sessions.
 
 **Query Parameters:**
+
 - `limit`: Number of sessions to return (default: 10, max: 50)
 - `offset`: Pagination offset
 - `status`: Filter by status (active, expired, terminated)
 - `clinicId`: Filter by clinic
 
 **Response:**
+
 ```json
 {
   "sessions": [
@@ -261,17 +272,19 @@ wss://neonpro.com.br/api/v1/ai-chat/ws
 ```
 
 **Connection:**
+
 ```javascript
-const ws = new WebSocket('wss://neonpro.com.br/api/v1/ai-chat/ws', {
+const ws = new WebSocket("wss://neonpro.com.br/api/v1/ai-chat/ws", {
   headers: {
-    'Authorization': 'Bearer <jwt-token>'
-  }
+    Authorization: "Bearer <jwt-token>",
+  },
 });
 ```
 
 **Message Types:**
 
 **Client → Server:**
+
 ```json
 {
   "type": "create_session",
@@ -281,7 +294,7 @@ const ws = new WebSocket('wss://neonpro.com.br/api/v1/ai-chat/ws', {
 }
 
 {
-  "type": "send_message", 
+  "type": "send_message",
   "sessionId": "uuid",
   "data": {
     "message": "Como interpretar este ECG?"
@@ -290,6 +303,7 @@ const ws = new WebSocket('wss://neonpro.com.br/api/v1/ai-chat/ws', {
 ```
 
 **Server → Client:**
+
 ```json
 {
   "type": "session_created",
@@ -299,7 +313,7 @@ const ws = new WebSocket('wss://neonpro.com.br/api/v1/ai-chat/ws', {
 
 {
   "type": "message_start",
-  "sessionId": "uuid", 
+  "sessionId": "uuid",
   "messageId": "uuid"
 }
 
@@ -331,7 +345,7 @@ const ws = new WebSocket('wss://neonpro.com.br/api/v1/ai-chat/ws', {
 ### Content Safety
 
 - **Medical Context Validation**: Ensures responses are appropriate for healthcare
-- **Professional Boundaries**: Maintains doctor-patient relationship boundaries  
+- **Professional Boundaries**: Maintains doctor-patient relationship boundaries
 - **Harmful Content Filtering**: Blocks inappropriate medical advice
 - **Brazilian Medical Standards**: Adheres to CFM professional guidelines
 
@@ -347,18 +361,21 @@ const ws = new WebSocket('wss://neonpro.com.br/api/v1/ai-chat/ws', {
 The API provides comprehensive metrics for monitoring:
 
 ### Performance Metrics
+
 - Response time percentiles (p50, p95, p99)
 - Token usage and costs
 - Provider availability and failover rates
 - Streaming latency and completion rates
 
-### Compliance Metrics  
+### Compliance Metrics
+
 - PII detection rates
 - Consent validation coverage
 - Audit event generation
 - Data retention compliance
 
 ### Usage Metrics
+
 - Request volume per clinic/user
 - Rate limiting effectiveness
 - Session duration and message counts
@@ -375,26 +392,26 @@ npm install @neonpro/ai-chat-sdk
 ```
 
 ```typescript
-import { AIChatClient } from '@neonpro/ai-chat-sdk';
+import { AIChatClient } from "@neonpro/ai-chat-sdk";
 
 const client = new AIChatClient({
-  apiKey: 'your-jwt-token',
-  baseUrl: 'https://neonpro.com.br/api/v1/ai-chat'
+  apiKey: "your-jwt-token",
+  baseUrl: "https://neonpro.com.br/api/v1/ai-chat",
 });
 
 // Create session
 const session = await client.createSession({
-  context: { type: 'consultation', clinicId: 'uuid' }
+  context: { type: "consultation", clinicId: "uuid" },
 });
 
 // Send message with streaming
 const response = client.sendMessage(session.sessionId, {
-  message: 'Como interpretar este ECG?',
-  streaming: true
+  message: "Como interpretar este ECG?",
+  streaming: true,
 });
 
-response.on('token', (token) => console.log(token));
-response.on('complete', (metadata) => console.log('Done:', metadata));
+response.on("token", (token) => console.log(token));
+response.on("complete", (metadata) => console.log("Done:", metadata));
 ```
 
 ### React Hooks
@@ -444,6 +461,7 @@ This returns pre-defined responses without calling AI providers.
 ### Rate Limit Testing
 
 Test environments have relaxed rate limits:
+
 - Per User: 1000 requests per minute
 - Per Clinic: 10000 requests per minute
 
@@ -460,7 +478,7 @@ Test environments have relaxed rate limits:
 When upgrading from pre-Phase 1 implementations:
 
 1. Update authentication to use JWT tokens
-2. Migrate to new session-based architecture  
+2. Migrate to new session-based architecture
 3. Update error handling for new error format
 4. Implement new rate limiting logic
 5. Add LGPD compliance checks

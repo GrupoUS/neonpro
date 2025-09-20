@@ -75,19 +75,19 @@ Para conectar com IA real, substitua a simulação em `handleSendMessage`:
 setTimeout(() => {
   const aiMessage: ChatMessage = {
     id: (Date.now() + 1).toString(),
-    role: 'assistant',
+    role: "assistant",
     content: `Resposta simulada...`,
     timestamp: new Date(),
   };
-  setMessages(prev => [...prev, aiMessage]);
+  setMessages((prev) => [...prev, aiMessage]);
   setIsLoading(false);
 }, 1500);
 
 // Por chamada real para API:
 try {
-  const response = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       message: userMessage.content,
       context,
@@ -99,14 +99,14 @@ try {
   const data = await response.json();
   const aiMessage: ChatMessage = {
     id: (Date.now() + 1).toString(),
-    role: 'assistant',
+    role: "assistant",
     content: data.response,
     timestamp: new Date(),
   };
 
-  setMessages(prev => [...prev, aiMessage]);
+  setMessages((prev) => [...prev, aiMessage]);
 } catch (error) {
-  console.error('Chat API error:', error);
+  console.error("Chat API error:", error);
 } finally {
   setIsLoading(false);
 }
@@ -125,7 +125,7 @@ try {
 ### Botão não aparece
 
 - Verifique se está em uma página protegida (com sidebar)
-- Confirme que `showSidebar` é true no __root.tsx
+- Confirme que `showSidebar` é true no \_\_root.tsx
 
 ### Erros de dependências
 

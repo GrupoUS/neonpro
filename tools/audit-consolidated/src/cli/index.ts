@@ -1,12 +1,12 @@
-import { Command } from 'commander';
-import { createAuditCommand } from './audit.js';
+import { Command } from "commander";
+import { createAuditCommand } from "./audit.js";
 
 export function createCli(): Command {
   const program = new Command();
   program
-    .name('neonpro-audit')
-    .description('NeonPro minimal audit tool')
-    .version('2.0.0');
+    .name("neonpro-audit")
+    .description("NeonPro minimal audit tool")
+    .version("2.0.0");
 
   program.addCommand(createAuditCommand());
 

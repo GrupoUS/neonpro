@@ -377,7 +377,9 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
       await updateRoute.request(mockRequest);
 
-      expect(mockBrazilianValidator.validateCPF).toHaveBeenCalledWith('987.654.321-00');
+      expect(mockBrazilianValidator.validateCPF).toHaveBeenCalledWith(
+        '987.654.321-00',
+      );
     });
 
     it('should reject invalid CPF update', async () => {
@@ -431,7 +433,9 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
       await updateRoute.request(mockRequest);
 
-      expect(mockBrazilianValidator.validatePhone).toHaveBeenCalledWith('(11) 77777-7777');
+      expect(mockBrazilianValidator.validatePhone).toHaveBeenCalledWith(
+        '(11) 77777-7777',
+      );
     });
 
     it('should validate updated address CEP', async () => {
@@ -458,7 +462,9 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
 
       await updateRoute.request(mockRequest);
 
-      expect(mockBrazilianValidator.validateCEP).toHaveBeenCalledWith('20000-000');
+      expect(mockBrazilianValidator.validateCEP).toHaveBeenCalledWith(
+        '20000-000',
+      );
     });
   });
 
@@ -545,7 +551,9 @@ describe('PUT /api/v2/patients/{id} endpoint (T046)', () => {
       const response = await updateRoute.request(mockRequest);
 
       expect(response.status).toBe(200);
-      expect(response.headers.get('X-Consent-Withdrawn')).toBe('data_processing');
+      expect(response.headers.get('X-Consent-Withdrawn')).toBe(
+        'data_processing',
+      );
       expect(response.headers.get('X-Data-Retention-Review')).toBe('required');
     });
   });

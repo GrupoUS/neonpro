@@ -21,7 +21,13 @@ const DeletePatientParamsSchema = z.object({
 
 // Query parameters validation schema
 const DeletePatientQuerySchema = z.object({
-  deletion_type: z.enum(['soft_delete', 'hard_delete', 'anonymization', 'data_subject_request'])
+  deletion_type: z
+    .enum([
+      'soft_delete',
+      'hard_delete',
+      'anonymization',
+      'data_subject_request',
+    ])
     .optional(),
   reason: z.string().max(200).optional(),
   schedule_anonymization: z.coerce.boolean().optional(),
@@ -36,27 +42,33 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
     // Validate path parameters
     const paramsValidation = DeletePatientParamsSchema.safeParse(params);
     if (!paramsValidation.success) {
-      return c.json({
-        success: false,
-        error: 'Parâmetros inválidos',
-        errors: paramsValidation.error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-        })),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: 'Parâmetros inválidos',
+          errors: paramsValidation.error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message,
+          })),
+        },
+        400,
+      );
     }
 
     // Validate query parameters
     const queryValidation = DeletePatientQuerySchema.safeParse(query);
     if (!queryValidation.success) {
-      return c.json({
-        success: false,
-        error: 'Parâmetros de consulta inválidos',
-        errors: queryValidation.error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-        })),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: 'Parâmetros de consulta inválidos',
+          errors: queryValidation.error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message,
+          })),
+        },
+        400,
+      );
     }
 
     const { id: patientId } = paramsValidation.data;
@@ -79,17 +91,23 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
 
     if (!patientResult.success) {
       if (patientResult.code === 'PATIENT_NOT_FOUND') {
-        return c.json({
-          success: false,
-          error: patientResult.error,
-          code: patientResult.code,
-        }, 404);
+        return c.json(
+          {
+            success: false,
+            error: patientResult.error,
+            code: patientResult.code,
+          },
+          404,
+        );
       }
 
-      return c.json({
-        success: false,
-        error: patientResult.error || 'Erro interno do serviço',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: patientResult.error || 'Erro interno do serviço',
+        },
+        500,
+      );
     }
 
     const patient = patientResult.data;
@@ -102,11 +120,14 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
     });
 
     if (!accessValidation.success) {
-      return c.json({
-        success: false,
-        error: accessValidation.error,
-        code: accessValidation.code,
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          error: accessValidation.error,
+          code: accessValidation.code,
+        },
+        403,
+      );
     }
 
     // Determine deletion type and reason
@@ -115,7 +136,9 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
         ? 'data_subject_request'
         : 'administrative_deletion');
     const requestedDeletionType = deletion_type
-      || (lgpdRequest === 'data_subject_deletion' ? 'data_subject_request' : 'soft_delete');
+      || (lgpdRequest === 'data_subject_deletion'
+        ? 'data_subject_request'
+        : 'soft_delete');
 
     // Validate LGPD deletion request
     const lgpdService = new LGPDService();
@@ -128,28 +151,42 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
     });
 
     if (!lgpdValidation.success) {
-      return c.json({
-        success: false,
-        error: lgpdValidation.error,
-        code: lgpdValidation.code,
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          error: lgpdValidation.error,
+          code: lgpdValidation.code,
+        },
+        403,
+      );
     }
 
-    const { deletionAllowed, deletionType, retentionRequired, retentionPeriod, anonymizationDate } =
-      lgpdValidation.data;
+    const {
+      deletionAllowed,
+      deletionType,
+      retentionRequired,
+      retentionPeriod,
+      anonymizationDate,
+    } = lgpdValidation.data;
 
     if (!deletionAllowed) {
-      return c.json({
-        success: false,
-        error: 'Exclusão não permitida por política LGPD',
-        code: 'LGPD_DELETION_DENIED',
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          error: 'Exclusão não permitida por política LGPD',
+          code: 'LGPD_DELETION_DENIED',
+        },
+        403,
+      );
     }
 
     // Process deletion based on type
     let deletionResult;
 
-    if (deletionType === 'anonymization' || deletionType === 'data_subject_request') {
+    if (
+      deletionType === 'anonymization'
+      || deletionType === 'data_subject_request'
+    ) {
       // Process anonymization
       const anonymizationResult = await lgpdService.anonymizePatientData({
         patientId,
@@ -158,10 +195,13 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
       });
 
       if (!anonymizationResult.success) {
-        return c.json({
-          success: false,
-          error: 'Falha na anonimização dos dados',
-        }, 500);
+        return c.json(
+          {
+            success: false,
+            error: 'Falha na anonimização dos dados',
+          },
+          500,
+        );
       }
 
       deletionResult = {
@@ -187,21 +227,26 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
     }
 
     if (!deletionResult.success) {
-      return c.json({
-        success: false,
-        error: deletionResult.error || 'Erro interno do serviço',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: deletionResult.error || 'Erro interno do serviço',
+        },
+        500,
+      );
     }
 
     // Process LGPD data deletion
-    await lgpdService.processDataDeletion({
-      patientId,
-      deletionType: requestedDeletionType,
-      requestedBy: userId,
-      reason: deletionReason,
-    }).catch(err => {
-      console.error('LGPD data deletion processing failed:', err);
-    });
+    await lgpdService
+      .processDataDeletion({
+        patientId,
+        deletionType: requestedDeletionType,
+        requestedBy: userId,
+        reason: deletionReason,
+      })
+      .catch(err => {
+        console.error('LGPD data deletion processing failed:', err);
+      });
 
     // Log deletion activity
     const auditService = new AuditService();
@@ -209,48 +254,52 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
       ? 'patient_anonymization'
       : 'patient_deletion';
 
-    await auditService.logActivity({
-      userId,
-      action: auditAction,
-      resourceType: 'patient',
-      resourceId: patientId,
-      details: {
-        deletionType,
-        patientName: patient.name,
-        retentionPeriod,
-        deletionReason,
-        lgpdCompliant: true,
-        auditTrailPreserved: true,
-        deletionCompliant: true,
-        anonymizationLevel: deletionType === 'anonymization' ? 'full' : undefined,
-        healthcareProfessional,
-      },
-      ipAddress,
-      userAgent,
-      complianceContext: 'LGPD',
-      sensitivityLevel: 'critical',
-    }).catch(err => {
-      console.error('Audit logging failed:', err);
-    });
+    await auditService
+      .logActivity({
+        userId,
+        action: auditAction,
+        resourceType: 'patient',
+        resourceId: patientId,
+        details: {
+          deletionType,
+          patientName: patient.name,
+          retentionPeriod,
+          deletionReason,
+          lgpdCompliant: true,
+          auditTrailPreserved: true,
+          deletionCompliant: true,
+          anonymizationLevel: deletionType === 'anonymization' ? 'full' : undefined,
+          healthcareProfessional,
+        },
+        ipAddress,
+        userAgent,
+        complianceContext: 'LGPD',
+        sensitivityLevel: 'critical',
+      })
+      .catch(err => {
+        console.error('Audit logging failed:', err);
+      });
 
     // Send deletion confirmation notification
     const notificationService = new NotificationService();
     if (patient.email && patient.lgpdConsent?.marketing !== false) {
-      await notificationService.sendNotification({
-        recipientId: patientId,
-        channel: 'email',
-        templateId: 'patient_data_deletion',
-        data: {
-          patientName: patient.name,
-          deletionType,
-          retentionPeriod: retentionPeriod || 'N/A',
-          deletionDate: new Date().toISOString(),
-        },
-        priority: 'high',
-        lgpdConsent: true,
-      }).catch(err => {
-        console.error('Deletion notification failed:', err);
-      });
+      await notificationService
+        .sendNotification({
+          recipientId: patientId,
+          channel: 'email',
+          templateId: 'patient_data_deletion',
+          data: {
+            patientName: patient.name,
+            deletionType,
+            retentionPeriod: retentionPeriod || 'N/A',
+            deletionDate: new Date().toISOString(),
+          },
+          priority: 'high',
+          lgpdConsent: true,
+        })
+        .catch(err => {
+          console.error('Deletion notification failed:', err);
+        });
     }
 
     // Set response headers
@@ -258,7 +307,10 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
     c.header('X-LGPD-Compliant', 'true');
     c.header('X-Deletion-Confirmed', 'true');
     c.header('X-CFM-Compliant', 'true');
-    c.header('X-Medical-Record-Retention', retentionRequired ? 'required' : 'not-required');
+    c.header(
+      'X-Medical-Record-Retention',
+      retentionRequired ? 'required' : 'not-required',
+    );
 
     if (retentionPeriod) {
       c.header('X-Retention-Period', retentionPeriod);
@@ -291,10 +343,13 @@ app.delete('/:id', requireAuth, dataProtection.clientView, async c => {
   } catch (error) {
     console.error('Error deleting patient:', error);
 
-    return c.json({
-      success: false,
-      error: 'Erro interno do servidor',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: 'Erro interno do servidor',
+      },
+      500,
+    );
   }
 });
 

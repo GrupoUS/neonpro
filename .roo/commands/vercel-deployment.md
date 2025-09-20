@@ -1,20 +1,25 @@
 # Vercel Deployment Workflow
 
 ## Description
+
 Unified Vercel deployment system with healthcare compliance validation for NeonPro platform. Supports CLI-first approach with unified script fallback.
 
 ## Category
+
 Operations
 
 ## Complexity
+
 Medium
 
 ## MCP Tools Required
+
 - desktop-commander
 
 ## Execution Flow
 
 ### Phase 1: Pre-Deployment Validation
+
 1. **Environment Setup Verification**
    - Check Bun version (v1.2.21+ required)
    - Verify Node.js version (v18.0.0+ required)
@@ -36,9 +41,10 @@ Medium
      - VITE_SITE_URL
      - VITE_GOOGLE_CLIENT_ID
    - Validate variable formats and values
-   - Ensure frontend-only exposure (VITE_ prefixed variables)
+   - Ensure frontend-only exposure (VITE\_ prefixed variables)
 
 ### Phase 2: Deployment Strategy Selection
+
 1. **CLI-First Approach (Primary)**
    - Link project: `npx vercel link --project neonpro --org <org>`
    - Verify environment variables: `npx vercel env ls`
@@ -52,6 +58,7 @@ Medium
    - Emergency deployment: `./scripts/deploy-unified.sh deploy --production --force --skip-tests`
 
 ### Phase 3: Build Strategy Execution
+
 1. **Turborepo Strategy (Default)**
    - Execute: `bunx turbo build --filter=@neonpro/web`
    - Expected build time: ~45s
@@ -64,6 +71,7 @@ Medium
    - **Auto Recovery**: Handle dependency resolution, build failures, network issues, cache corruption
 
 ### Phase 4: Healthcare Compliance Validation
+
 1. **Compliance Testing**
    - Execute: `./scripts/deploy-unified.sh test compliance`
    - Validate LGPD compliance markers
@@ -78,6 +86,7 @@ Medium
    - Verify data retention policies
 
 ### Phase 5: Post-Deployment Verification
+
 1. **Automated Validation**
    - **Basic Validation**: `./scripts/deploy-unified.sh validate --url https://neonpro.vercel.app`
      - Homepage loads successfully
@@ -97,6 +106,7 @@ Medium
    - Confirm healthcare compliance (LGPD markers)
 
 ### Phase 6: Monitoring and Reporting
+
 1. **Performance Monitoring**
    - Check LCP (<2.5s)
    - Verify INP (<200ms)
@@ -110,6 +120,7 @@ Medium
    - Ensure system availability and reliability
 
 ## Input Parameters
+
 - **deployment_mode**: Deployment mode (preview, production, emergency)
 - **build_strategy**: Build strategy (turbo, bun, npm, auto)
 - **compliance_level**: Healthcare compliance strictness (standard, enhanced, strict)
@@ -117,6 +128,7 @@ Medium
 - **rollback_enabled**: Enable rollback capability (true/false)
 
 ## Output Requirements
+
 - **deployment_manifest**: Detailed deployment configuration and status
 - **compliance_report**: Healthcare compliance validation results
 - **performance_metrics**: Deployment performance and health metrics
@@ -124,6 +136,7 @@ Medium
 - **rollback_information**: Rollback capability and procedures (if enabled)
 
 ## Quality Gates
+
 - **Environment Compliance**: All environment variables present and valid
 - **Build Success**: Local build passes without errors
 - **Deployment Success**: Application deployed successfully to target environment
@@ -132,6 +145,7 @@ Medium
 - **Functionality Verification**: All critical features working correctly
 
 ## Error Handling
+
 - **Environment Issues**: Provide specific environment setup errors and fixes
 - **Build Failures**: Offer alternative build strategies and recovery steps
 - **Deployment Errors**: Provide deployment error details and retry procedures
@@ -139,6 +153,7 @@ Medium
 - **Performance Issues**: Identify performance bottlenecks and optimization recommendations
 
 ## Success Criteria
+
 - **Deployment Success**: Application successfully deployed to target environment
 - **Build Reliability**: Build process completes successfully with chosen strategy
 - **Compliance Status**: Full healthcare compliance with documented evidence
@@ -147,6 +162,7 @@ Medium
 - **Monitoring Ready**: Deployment monitoring and alerting properly configured
 
 ## Constitutional Compliance
+
 - **KISS/YAGNI**: Deployment process is simple and necessary, no over-engineering
 - **Test-First**: Comprehensive validation and testing before and after deployment
 - **Architecture**: Deployment follows established monorepo patterns and boundaries
@@ -154,6 +170,7 @@ Medium
 - **Observability**: Complete monitoring and logging of deployment operations
 
 ## Build Strategies
+
 - **Turborepo (Default)**:
   - Build time: ~45s
   - Cache hit: 85%
@@ -173,6 +190,7 @@ Medium
   - Command: `npm install && npm run build`
 
 ## Healthcare Compliance Features
+
 - **Automatic Validation**: LGPD compliance markers and audit logging
 - **Healthcare Components**: Validation of healthcare-specific functionality
 - **Brazilian Regulatory**: ANVISA and CFM compliance verification
@@ -180,6 +198,7 @@ Medium
 - **Audit Trail**: Complete logging of deployment operations for compliance
 
 ## Configuration Files
+
 - **Primary**: vercel.json (Bun + Turborepo monorepo configuration)
 - **Linking Metadata**: .vercel/project.json (created by npx vercel link)
 - **Backup Files**: vercel-bun.json, vercel-turbo.json
@@ -187,6 +206,7 @@ Medium
 - **Archived Scripts**: scripts/archive/
 
 ## Integration Points
+
 - **Desktop Commander**: File system operations, script execution, and deployment management
 - **Vercel CLI**: Direct platform integration and deployment operations
 - **Unified Script**: Fallback deployment system with enhanced error handling

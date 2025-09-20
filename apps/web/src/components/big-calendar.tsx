@@ -600,13 +600,13 @@ interface BigCalendarProps {
   initialView?: "day" | "week" | "month" | "agenda";
 }
 
-export default function Component({ 
+export default function Component({
   events: propEvents = sampleEvents,
   onEventUpdate,
   onEventDelete,
   onEventCreate,
   className,
-  initialView = "week"
+  initialView = "week",
 }: BigCalendarProps) {
   const [events, setEvents] = useState<CalendarEvent[]>(propEvents);
   const { isColorVisible } = useCalendarContext();

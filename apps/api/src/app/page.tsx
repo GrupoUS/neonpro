@@ -27,7 +27,9 @@ export default function RootPage() {
 
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-8'>
             <div className='p-4 bg-green-50 rounded-lg'>
-              <h3 className='font-semibold text-green-800 mb-2'>Health Check</h3>
+              <h3 className='font-semibold text-green-800 mb-2'>
+                Health Check
+              </h3>
               <a
                 href='/api/health/check'
                 className='text-green-600 hover:text-green-800 underline'
@@ -37,7 +39,9 @@ export default function RootPage() {
             </div>
 
             <div className='p-4 bg-blue-50 rounded-lg'>
-              <h3 className='font-semibold text-blue-800 mb-2'>API Documentation</h3>
+              <h3 className='font-semibold text-blue-800 mb-2'>
+                API Documentation
+              </h3>
               <a
                 href='/api/docs'
                 className='text-blue-600 hover:text-blue-800 underline'

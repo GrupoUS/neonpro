@@ -12,7 +12,7 @@ Given the implementation details provided as an argument, do this:
 2. **Comprehensive Specification Analysis**
    Read and analyze the feature specification to understand:
    - **User Stories & Acceptance Criteria**: Parse all functional requirements and user scenarios
-   - **Business Objectives**: Extract value propositions and success metrics 
+   - **Business Objectives**: Extract value propositions and success metrics
    - **Technical Constraints**: Identify dependencies, performance requirements, and integration points
    - **Compliance Requirements**: Healthcare-specific needs (LGPD, ANVISA, CFM)
    - **Success Criteria**: Measurable outcomes and KPIs
@@ -37,22 +37,22 @@ Given the implementation details provided as an argument, do this:
 
 5. **Enhanced Implementation Planning Execution**
    Execute the implementation plan template with NeonPro-specific enhancements:
-   
+
    **Phase 0 - Research & Discovery**:
    - Load `.specify/templates/plan-template.md` (copied to IMPL_PLAN path)
    - Generate comprehensive `research.md` including:
-     * Healthcare compliance research (LGPD, ANVISA, CFM)
-     * Technology stack validation (Turborepo, PNPM, Bun, TypeScript, React 19)
-     * AI/ML integration patterns (OpenAI GPT-4, Anthropic Claude, TensorFlow.js)
-     * Mobile-first design patterns and performance optimization
-     * Brazilian healthcare market analysis and regulations
-   
+     - Healthcare compliance research (LGPD, ANVISA, CFM)
+     - Technology stack validation (Turborepo, PNPM, Bun, TypeScript, React 19)
+     - AI/ML integration patterns (OpenAI GPT-4, Anthropic Claude, TensorFlow.js)
+     - Mobile-first design patterns and performance optimization
+     - Brazilian healthcare market analysis and regulations
+
    **Phase 1 - Architecture & Contracts**:
    - Generate `data-model.md` with healthcare-compliant data structures
    - Create `contracts/` directory with OpenAPI 3.1 specifications
    - Generate `quickstart.md` for rapid development setup
    - Include patient data protection schemas and audit trail requirements
-   
+
    **Phase 2 - Implementation Planning**:
    - Generate detailed `tasks.md` with healthcare-specific considerations
    - Include accessibility testing requirements (WCAG 2.1 AA compliance)
@@ -106,30 +106,35 @@ Given the implementation details provided as an argument, do this:
 When planning features for the NeonPro healthcare platform, ensure:
 
 ### **Regulatory Compliance Priority**
+
 - LGPD (Lei Geral de Proteção de Dados) compliance for all patient data
 - ANVISA medical device software regulations alignment
 - CFM (Conselho Federal de Medicina) professional standards adherence
 - Complete audit trail capabilities for healthcare compliance
 
 ### **AI Integration Excellence**
+
 - Portuguese-native conversational AI with healthcare terminology
 - Multi-provider failover (OpenAI GPT-4 → Anthropic Claude)
 - Cost optimization through semantic caching and prompt engineering
 - Patient data anonymization before AI processing
 
 ### **Mobile-First Healthcare UX**
+
 - <2 second page load times on mobile devices (70%+ usage)
 - Progressive web app capabilities for offline access
 - Touch-optimized interfaces for medical professionals
 - Accessibility compliance (WCAG 2.1 AA) for diverse user needs
 
 ### **Performance & Reliability**
+
 - 99.9% uptime for critical healthcare operations
 - <500ms API response times for appointment scheduling
 - Real-time synchronization for multi-device clinic workflows
 - Automated monitoring and alerting for system health
 
 ### **Security & Privacy**
+
 - End-to-end encryption for patient communications
 - Role-based access control for medical staff
 - Secure authentication with MFA for sensitive operations

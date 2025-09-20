@@ -85,7 +85,9 @@ describe('HealthcareErrorTracker', () => {
     expect(ErrorSeveritySchema).toBeDefined();
 
     // Test enum values
-    expect(HealthcareErrorTypeSchema.enum.data_access_violation).toBe('data_access_violation');
+    expect(HealthcareErrorTypeSchema.enum.data_access_violation).toBe(
+      'data_access_violation',
+    );
     expect(ErrorSeveritySchema.enum.critical).toBe('critical');
   });
 

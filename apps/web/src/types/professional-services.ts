@@ -4,7 +4,11 @@
  */
 
 // Proficiency levels for professional-service relationships
-export type ProficiencyLevel = 'beginner' | 'intermediate' | 'advanced' | 'expert';
+export type ProficiencyLevel =
+  | "beginner"
+  | "intermediate"
+  | "advanced"
+  | "expert";
 
 // Base professional-service relationship
 export interface ProfessionalService {
@@ -148,40 +152,43 @@ export interface ProfessionalAssignmentSummary {
 }
 
 // Proficiency level configuration
-export const PROFICIENCY_LEVELS: Record<ProficiencyLevel, {
-  label: string;
-  description: string;
-  color: string;
-  score: number;
-}> = {
+export const PROFICIENCY_LEVELS: Record<
+  ProficiencyLevel,
+  {
+    label: string;
+    description: string;
+    color: string;
+    score: number;
+  }
+> = {
   beginner: {
-    label: 'Iniciante',
-    description: 'Conhecimento básico, requer supervisão',
-    color: '#f59e0b',
+    label: "Iniciante",
+    description: "Conhecimento básico, requer supervisão",
+    color: "#f59e0b",
     score: 25,
   },
   intermediate: {
-    label: 'Intermediário',
-    description: 'Conhecimento sólido, trabalha independentemente',
-    color: '#3b82f6',
+    label: "Intermediário",
+    description: "Conhecimento sólido, trabalha independentemente",
+    color: "#3b82f6",
     score: 50,
   },
   advanced: {
-    label: 'Avançado',
-    description: 'Conhecimento especializado, pode treinar outros',
-    color: '#10b981',
+    label: "Avançado",
+    description: "Conhecimento especializado, pode treinar outros",
+    color: "#10b981",
     score: 75,
   },
   expert: {
-    label: 'Especialista',
-    description: 'Conhecimento excepcional, referência na área',
-    color: '#8b5cf6',
+    label: "Especialista",
+    description: "Conhecimento excepcional, referência na área",
+    color: "#8b5cf6",
     score: 100,
   },
 };
 
 // Default proficiency level
-export const DEFAULT_PROFICIENCY_LEVEL: ProficiencyLevel = 'intermediate';
+export const DEFAULT_PROFICIENCY_LEVEL: ProficiencyLevel = "intermediate";
 
 // Utility functions for proficiency levels
 export const getProficiencyConfig = (level: ProficiencyLevel) => {
@@ -201,12 +208,17 @@ export const getProficiencyLabel = (level: ProficiencyLevel): string => {
 };
 
 // Validation helpers
-export const isValidProficiencyLevel = (level: string): level is ProficiencyLevel => {
+export const isValidProficiencyLevel = (
+  level: string,
+): level is ProficiencyLevel => {
   return Object.keys(PROFICIENCY_LEVELS).includes(level as ProficiencyLevel);
 };
 
 // Sorting and comparison utilities
-export const compareProficiencyLevels = (a: ProficiencyLevel, b: ProficiencyLevel): number => {
+export const compareProficiencyLevels = (
+  a: ProficiencyLevel,
+  b: ProficiencyLevel,
+): number => {
   return getProficiencyScore(b) - getProficiencyScore(a); // Descending order (expert first)
 };
 

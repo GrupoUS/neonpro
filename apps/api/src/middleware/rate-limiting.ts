@@ -45,7 +45,10 @@ export class HealthcareRateLimitStore {
   }
 
   // Increment request count
-  increment(key: string, healthcareContext?: RateLimitData['healthcareContext']): RateLimitData {
+  increment(
+    key: string,
+    healthcareContext?: RateLimitData['healthcareContext'],
+  ): RateLimitData {
     const now = Date.now();
     const resetTime = now + this.config.windowMs;
 
@@ -108,8 +111,15 @@ export const healthcareRateLimitRules: Record<string, RateLimitConfig> = {
     maxRequests: 100,
     skipSuccessfulRequests: false,
     healthcare: {
-      sensitiveEndpoints: ['/api/patients', '/api/appointments', '/api/medical-records'],
-      patientDataEndpoints: ['/api/patients/*/records', '/api/patients/*/diagnostics'],
+      sensitiveEndpoints: [
+        '/api/patients',
+        '/api/appointments',
+        '/api/medical-records',
+      ],
+      patientDataEndpoints: [
+        '/api/patients/*/records',
+        '/api/patients/*/diagnostics',
+      ],
       emergencyOverride: true,
     },
   },
@@ -149,13 +159,17 @@ export const healthcareRateLimitRules: Record<string, RateLimitConfig> = {
 };
 
 // Healthcare rate limiting middleware
-export function healthcareRateLimit(config: RateLimitConfig): MiddlewareHandler {
+export function healthcareRateLimit(
+  config: RateLimitConfig,
+): MiddlewareHandler {
   const store = new HealthcareRateLimitStore(config);
 
   return async (c: Context, next) => {
     try {
       // Generate rate limit key
-      const key = config.keyGenerator ? config.keyGenerator(c) : generateHealthcareRateLimitKey(c);
+      const key = config.keyGenerator
+        ? config.keyGenerator(c)
+        : generateHealthcareRateLimitKey(c);
 
       // Determine healthcare context
       const path = c.req.path;
@@ -179,7 +193,10 @@ export function healthcareRateLimit(config: RateLimitConfig): MiddlewareHandler 
       }
 
       // Allow emergency access override
-      if (healthcareContext.emergencyAccess && config.healthcare?.emergencyOverride) {
+      if (
+        healthcareContext.emergencyAccess
+        && config.healthcare?.emergencyOverride
+      ) {
         return next();
       }
 
@@ -204,7 +221,10 @@ export function healthcareRateLimit(config: RateLimitConfig): MiddlewareHandler 
         'X-Healthcare-RateLimit-PatientData',
         healthcareContext.isPatientDataEndpoint.toString(),
       );
-      c.header('X-Healthcare-RateLimit-Emergency', healthcareContext.emergencyAccess.toString());
+      c.header(
+        'X-Healthcare-RateLimit-Emergency',
+        healthcareContext.emergencyAccess.toString(),
+      );
 
       // Check if limit exceeded
       if (data.blocked) {
@@ -215,16 +235,19 @@ export function healthcareRateLimit(config: RateLimitConfig): MiddlewareHandler 
           await config.onLimitReached(c, key);
         }
 
-        return c.json({
-          error: 'Rate limit exceeded',
-          message: 'Too many requests. Please try again later.',
-          retryAfter: Math.ceil((data.resetTime - Date.now()) / 1000),
-          healthcare: {
-            sensitiveEndpoint: healthcareContext.isSensitiveEndpoint,
-            patientDataEndpoint: healthcareContext.isPatientDataEndpoint,
-            emergencyAccess: healthcareContext.emergencyAccess,
+        return c.json(
+          {
+            error: 'Rate limit exceeded',
+            message: 'Too many requests. Please try again later.',
+            retryAfter: Math.ceil((data.resetTime - Date.now()) / 1000),
+            healthcare: {
+              sensitiveEndpoint: healthcareContext.isSensitiveEndpoint,
+              patientDataEndpoint: healthcareContext.isPatientDataEndpoint,
+              emergencyAccess: healthcareContext.emergencyAccess,
+            },
           },
-        }, 429);
+          429,
+        );
       }
 
       await next();
@@ -274,7 +297,9 @@ async function logRateLimitViolation(
 
     // Send to audit trail if available
     if (c.get('auditService')) {
-      await c.get('auditService').logSecurityEvent('RATE_LIMIT_VIOLATION', violation);
+      await c
+        .get('auditService')
+        .logSecurityEvent('RATE_LIMIT_VIOLATION', violation);
     }
 
     console.warn('🛡️ Rate Limit Violation:', violation);
@@ -306,10 +331,13 @@ export function createDocsRateLimit(): MiddlewareHandler {
 
 // Cleanup expired rate limit entries
 export function setupRateLimitCleanup(): void {
-  setInterval(() => {
-    // This would be called on the store instances
-    // In a production environment, you'd want to track all stores
-  }, 5 * 60 * 1000); // Clean up every 5 minutes
+  setInterval(
+    () => {
+      // This would be called on the store instances
+      // In a production environment, you'd want to track all stores
+    },
+    5 * 60 * 1000,
+  ); // Clean up every 5 minutes
 }
 
 // Default rate limiting middleware export for app.ts compatibility

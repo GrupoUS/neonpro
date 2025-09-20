@@ -49,15 +49,17 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
           object: 'chat.completion',
           created: 1677652288,
           model: 'gpt-4',
-          choices: [{
-            index: 0,
-            message: {
-              role: 'assistant',
-              content:
-                'Com base nos dados do paciente, a probabilidade de não comparecimento é de 23%. Recomendo envio de lembrete via WhatsApp 24h antes.',
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: 'assistant',
+                content:
+                  'Com base nos dados do paciente, a probabilidade de não comparecimento é de 23%. Recomendo envio de lembrete via WhatsApp 24h antes.',
+              },
+              finish_reason: 'stop',
             },
-            finish_reason: 'stop',
-          }],
+          ],
           usage: {
             prompt_tokens: 150,
             completion_tokens: 42,
@@ -71,11 +73,13 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
           id: 'msg_123',
           type: 'message',
           role: 'assistant',
-          content: [{
-            type: 'text',
-            text:
-              'Analisando o histórico do paciente brasileiro, identifico padrões de comportamento típicos da região. Probabilidade de não comparecimento: 28%.',
-          }],
+          content: [
+            {
+              type: 'text',
+              text:
+                'Analisando o histórico do paciente brasileiro, identifico padrões de comportamento típicos da região. Probabilidade de não comparecimento: 28%.',
+            },
+          ],
           model: 'claude-3-sonnet-20240229',
           stop_reason: 'end_turn',
           usage: {
@@ -92,8 +96,16 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
             gender: 'F',
             region: 'sudeste',
             appointment_history: [
-              { date: '2024-01-15', attended: true, procedure_type: 'consulta' },
-              { date: '2024-02-20', attended: false, procedure_type: 'retorno' },
+              {
+                date: '2024-01-15',
+                attended: true,
+                procedure_type: 'consulta',
+              },
+              {
+                date: '2024-02-20',
+                attended: false,
+                procedure_type: 'retorno',
+              },
             ],
             behavioral_patterns: {
               weather_sensitivity: 0.7,
@@ -214,11 +226,17 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
         patient_id: patientId,
         analysis_type: 'no_show_prediction',
         data: {
-          appointment_history: Array(10).fill(null).map((_, i) => ({
-            date: new Date(Date.now() - i * 7 * 24 * 60 * 60 * 1000).toISOString(),
-            attended: Math.random() > 0.2,
-            procedure_type: ['consulta', 'retorno', 'exame'][Math.floor(Math.random() * 3)],
-          })),
+          appointment_history: Array(10)
+            .fill(null)
+            .map((_, i) => ({
+              date: new Date(
+                Date.now() - i * 7 * 24 * 60 * 60 * 1000,
+              ).toISOString(),
+              attended: Math.random() > 0.2,
+              procedure_type: ['consulta', 'retorno', 'exame'][
+                Math.floor(Math.random() * 3)
+              ],
+            })),
         },
         preferred_provider: 'openai',
       };
@@ -261,11 +279,13 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
 
     it('should balance load between providers based on capacity', async () => {
       const loadBalancingQuery = {
-        batch_requests: Array(50).fill(null).map((_, i) => ({
-          patient_id: `patient_${i}`,
-          query: 'Análise rápida de probabilidade de comparecimento',
-          priority: i < 25 ? 'high' : 'normal',
-        })),
+        batch_requests: Array(50)
+          .fill(null)
+          .map((_, i) => ({
+            patient_id: `patient_${i}`,
+            query: 'Análise rápida de probabilidade de comparecimento',
+            priority: i < 25 ? 'high' : 'normal',
+          })),
       };
 
       await expect(
@@ -450,11 +470,13 @@ describe('tRPC AI Router - Portuguese Healthcare Support Tests', () => {
     });
 
     it('should handle high concurrent AI requests efficiently', async () => {
-      const concurrentRequests = Array(100).fill(null).map((_, i) => ({
-        patient_id: `concurrent_test_${i}`,
-        query: `Previsão ${i + 1}`,
-        priority: i < 20 ? 'high' : 'normal',
-      }));
+      const concurrentRequests = Array(100)
+        .fill(null)
+        .map((_, i) => ({
+          patient_id: `concurrent_test_${i}`,
+          query: `Previsão ${i + 1}`,
+          priority: i < 20 ? 'high' : 'normal',
+        }));
 
       await expect(
         Promise.all(

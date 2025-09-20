@@ -13,55 +13,55 @@
 
 // Legal basis enum according to LGPD
 export enum LegalBasis {
-  CONSENT = 'consent',
-  CONTRACT = 'contract',
-  LEGAL_OBLIGATION = 'legal_obligation',
-  VITAL_INTERESTS = 'vital_interests',
-  PUBLIC_TASK = 'public_task',
-  LEGITIMATE_INTERESTS = 'legitimate_interests',
+  CONSENT = "consent",
+  CONTRACT = "contract",
+  LEGAL_OBLIGATION = "legal_obligation",
+  VITAL_INTERESTS = "vital_interests",
+  PUBLIC_TASK = "public_task",
+  LEGITIMATE_INTERESTS = "legitimate_interests",
 }
 
 // Data categories according to LGPD
 export enum DataCategory {
-  PERSONAL_DATA = 'personal_data',
-  SENSITIVE_DATA = 'sensitive_data',
-  HEALTH_DATA = 'health_data',
-  BIOMETRIC_DATA = 'biometric_data',
-  GENETIC_DATA = 'genetic_data',
-  LOCATION_DATA = 'location_data',
-  FINANCIAL_DATA = 'financial_data',
-  BEHAVIORAL_DATA = 'behavioral_data',
+  PERSONAL_DATA = "personal_data",
+  SENSITIVE_DATA = "sensitive_data",
+  HEALTH_DATA = "health_data",
+  BIOMETRIC_DATA = "biometric_data",
+  GENETIC_DATA = "genetic_data",
+  LOCATION_DATA = "location_data",
+  FINANCIAL_DATA = "financial_data",
+  BEHAVIORAL_DATA = "behavioral_data",
 }
 
 // Processing purposes
 export enum ProcessingPurpose {
-  HEALTHCARE_TREATMENT = 'healthcare_treatment',
-  APPOINTMENT_MANAGEMENT = 'appointment_management',
-  BILLING = 'billing',
-  INSURANCE = 'insurance',
-  MARKETING = 'marketing',
-  ANALYTICS = 'analytics',
-  RESEARCH = 'research',
-  LEGAL_COMPLIANCE = 'legal_compliance',
-  SECURITY = 'security',
+  HEALTHCARE_TREATMENT = "healthcare_treatment",
+  APPOINTMENT_MANAGEMENT = "appointment_management",
+  BILLING = "billing",
+  INSURANCE = "insurance",
+  MARKETING = "marketing",
+  ANALYTICS = "analytics",
+  RESEARCH = "research",
+  LEGAL_COMPLIANCE = "legal_compliance",
+  SECURITY = "security",
 }
 
 // Data subject rights according to LGPD
 export enum DataSubjectRight {
-  ACCESS = 'access',
-  RECTIFICATION = 'rectification',
-  ERASURE = 'erasure',
-  PORTABILITY = 'portability',
-  OBJECTION = 'objection',
-  RESTRICTION = 'restriction',
-  INFORMATION = 'information',
+  ACCESS = "access",
+  RECTIFICATION = "rectification",
+  ERASURE = "erasure",
+  PORTABILITY = "portability",
+  OBJECTION = "objection",
+  RESTRICTION = "restriction",
+  INFORMATION = "information",
 }
 
 // Data retention settings
 export interface DataRetentionSettings {
   enabled: boolean;
   retentionPeriod: number;
-  retentionUnit: 'days' | 'months' | 'years';
+  retentionUnit: "days" | "months" | "years";
   automaticDeletion: boolean;
   deletionDate?: Date;
   archivalRequired?: boolean;
@@ -73,7 +73,7 @@ export interface DataRetentionSettings {
 export interface ConsentHistory {
   id: string;
   consentId: string;
-  action: 'granted' | 'withdrawn' | 'modified' | 'renewed' | 'expired';
+  action: "granted" | "withdrawn" | "modified" | "renewed" | "expired";
   timestamp: Date;
   version: string;
   changes?: string[];
@@ -88,7 +88,7 @@ export interface DataSubjectRequest {
   patientId: string;
   requestType: DataSubjectRight | string;
   description: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'rejected';
+  status: "pending" | "in_progress" | "completed" | "rejected";
   requestDate: Date;
   responseDate?: Date;
   responseData?: any;
@@ -168,15 +168,19 @@ export function withdrawConsent(
 }
 
 // Validate consent completeness
-export function validateConsentCompleteness(consent: Partial<LGPDConsent>): boolean {
+export function validateConsentCompleteness(
+  consent: Partial<LGPDConsent>,
+): boolean {
   if (!consent.patientId) return false;
   if (!consent.consentVersion) return false;
   if (!consent.consentDate) return false;
   if (!consent.ipAddress) return false;
   if (!consent.userAgent) return false;
   if (!consent.legalBasis) return false;
-  if (!consent.processingPurposes || consent.processingPurposes.length === 0) return false;
-  if (!consent.dataCategories || consent.dataCategories.length === 0) return false;
+  if (!consent.processingPurposes || consent.processingPurposes.length === 0)
+    return false;
+  if (!consent.dataCategories || consent.dataCategories.length === 0)
+    return false;
 
   return true;
 }
@@ -185,20 +189,20 @@ export function validateConsentCompleteness(consent: Partial<LGPDConsent>): bool
 export function generateConsentSummary(consent: Partial<LGPDConsent>): string {
   const parts: string[] = [];
 
-  parts.push(`Tratamento médico: ${consent.dataProcessing ? 'Sim' : 'Não'}`);
-  parts.push(`Marketing: ${consent.marketing ? 'Sim' : 'Não'}`);
-  parts.push(`Análises: ${consent.analytics ? 'Sim' : 'Não'}`);
-  parts.push(`Compartilhamento: ${consent.thirdPartySharing ? 'Sim' : 'Não'}`);
+  parts.push(`Tratamento médico: ${consent.dataProcessing ? "Sim" : "Não"}`);
+  parts.push(`Marketing: ${consent.marketing ? "Sim" : "Não"}`);
+  parts.push(`Análises: ${consent.analytics ? "Sim" : "Não"}`);
+  parts.push(`Compartilhamento: ${consent.thirdPartySharing ? "Sim" : "Não"}`);
 
   if (consent.processingPurposes && consent.processingPurposes.length > 0) {
-    parts.push(`Finalidades: ${consent.processingPurposes.join(', ')}`);
+    parts.push(`Finalidades: ${consent.processingPurposes.join(", ")}`);
   }
 
   if (consent.dataCategories && consent.dataCategories.length > 0) {
-    parts.push(`Categorias de dados: ${consent.dataCategories.join(', ')}`);
+    parts.push(`Categorias de dados: ${consent.dataCategories.join(", ")}`);
   }
 
-  return parts.join(' | ');
+  return parts.join(" | ");
 }
 
 // Check if consent is expired
@@ -214,10 +218,12 @@ export function isConsentExpired(consent: Partial<LGPDConsent>): boolean {
   if (consent.dataRetention && consent.consentDate) {
     const retentionMs = getRetentionPeriodMs(
       consent.dataRetention.retentionPeriod,
-      consent.dataRetention.retentionUnit || 'years',
+      consent.dataRetention.retentionUnit || "years",
     );
 
-    const expirationDate = new Date(consent.consentDate.getTime() + retentionMs);
+    const expirationDate = new Date(
+      consent.consentDate.getTime() + retentionMs,
+    );
     return expirationDate < new Date();
   }
 
@@ -232,7 +238,9 @@ function getRetentionPeriodMs(period: number, unit: string): number {
     years: 365 * 24 * 60 * 60 * 1000,
   };
 
-  return period * (msPerUnit[unit as keyof typeof msPerUnit] || msPerUnit.years);
+  return (
+    period * (msPerUnit[unit as keyof typeof msPerUnit] || msPerUnit.years)
+  );
 }
 
 // Renew consent
@@ -257,14 +265,14 @@ export function renewConsent(
 
 // Create data subject request
 export function createDataSubjectRequest(
-  data: Omit<DataSubjectRequest, 'id' | 'status' | 'requestDate'>,
+  data: Omit<DataSubjectRequest, "id" | "status" | "requestDate">,
 ): DataSubjectRequest {
   const now = new Date();
 
   return {
     ...data,
     id: `request_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-    status: 'pending',
+    status: "pending",
     requestDate: now,
   };
 }
@@ -284,39 +292,42 @@ export function auditLGPDCompliance(consent: Partial<LGPDConsent>): {
   if (validateConsentCompleteness(consent)) {
     score += 30;
   } else {
-    issues.push('Consentimento incompleto - campos obrigatórios ausentes');
+    issues.push("Consentimento incompleto - campos obrigatórios ausentes");
   }
 
   // Check legal basis
-  if (consent.legalBasis && Object.values(LegalBasis).includes(consent.legalBasis as LegalBasis)) {
+  if (
+    consent.legalBasis &&
+    Object.values(LegalBasis).includes(consent.legalBasis as LegalBasis)
+  ) {
     score += 20;
   } else {
-    issues.push('Base legal inválida ou ausente');
+    issues.push("Base legal inválida ou ausente");
   }
 
   // Check data retention
   if (consent.dataRetention?.enabled) {
     score += 20;
   } else {
-    recommendations.push('Configurar política de retenção de dados');
+    recommendations.push("Configurar política de retenção de dados");
   }
 
   // Check consent expiration
   if (!isConsentExpired(consent)) {
     score += 15;
   } else {
-    issues.push('Consentimento expirado');
+    issues.push("Consentimento expirado");
   }
 
   // Check granular consent
   if (
-    typeof consent.dataProcessing === 'boolean'
-    && typeof consent.marketing === 'boolean'
-    && typeof consent.analytics === 'boolean'
+    typeof consent.dataProcessing === "boolean" &&
+    typeof consent.marketing === "boolean" &&
+    typeof consent.analytics === "boolean"
   ) {
     score += 15;
   } else {
-    recommendations.push('Implementar consentimento granular');
+    recommendations.push("Implementar consentimento granular");
   }
 
   return {
@@ -329,7 +340,7 @@ export function auditLGPDCompliance(consent: Partial<LGPDConsent>): {
 
 // Create LGPD consent with defaults
 export function createLGPDConsent(
-  data: Omit<LGPDConsent, 'id' | 'createdAt' | 'updatedAt'>,
+  data: Omit<LGPDConsent, "id" | "createdAt" | "updatedAt">,
 ): LGPDConsent {
   const now = new Date();
 
@@ -347,13 +358,15 @@ export function getConsentByPatientId(
   patientId: string,
 ): LGPDConsent | undefined {
   return consents
-    .filter(consent => consent.patientId === patientId && !consent.withdrawalDate)
+    .filter(
+      (consent) => consent.patientId === patientId && !consent.withdrawalDate,
+    )
     .sort((a, b) => b.consentDate.getTime() - a.consentDate.getTime())[0];
 }
 
 // Get expired consents
 export function getExpiredConsents(consents: LGPDConsent[]): LGPDConsent[] {
-  return consents.filter(consent => isConsentExpired(consent));
+  return consents.filter((consent) => isConsentExpired(consent));
 }
 
 // Get consents requiring renewal
@@ -364,7 +377,7 @@ export function getConsentsRequiringRenewal(
   const cutoffDate = new Date();
   cutoffDate.setDate(cutoffDate.getDate() + daysBeforeExpiration);
 
-  return consents.filter(consent => {
+  return consents.filter((consent) => {
     if (consent.expiresAt && consent.expiresAt <= cutoffDate) {
       return true;
     }
@@ -372,10 +385,12 @@ export function getConsentsRequiringRenewal(
     if (consent.dataRetention && consent.consentDate) {
       const retentionMs = getRetentionPeriodMs(
         consent.dataRetention.retentionPeriod,
-        consent.dataRetention.retentionUnit || 'years',
+        consent.dataRetention.retentionUnit || "years",
       );
 
-      const expirationDate = new Date(consent.consentDate.getTime() + retentionMs);
+      const expirationDate = new Date(
+        consent.consentDate.getTime() + retentionMs,
+      );
       return expirationDate <= cutoffDate;
     }
 
@@ -394,13 +409,13 @@ export function generateComplianceReport(consents: LGPDConsent[]): {
 } {
   const total = consents.length;
   const expired = getExpiredConsents(consents).length;
-  const withdrawn = consents.filter(c => c.withdrawalDate).length;
+  const withdrawn = consents.filter((c) => c.withdrawalDate).length;
   const active = total - expired - withdrawn;
 
   let totalScore = 0;
   const allIssues: string[] = [];
 
-  consents.forEach(consent => {
+  consents.forEach((consent) => {
     const audit = auditLGPDCompliance(consent);
     totalScore += audit.score;
     allIssues.push(...audit.issues);

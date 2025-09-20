@@ -7,7 +7,9 @@ import { Hono } from 'hono';
 
 // Minimal in-process app mounting only the route under test
 async function api(path: string, init?: RequestInit) {
-  const { default: explanation } = await import('../../src/routes/ai-explanation');
+  const { default: explanation } = await import(
+    '../../src/routes/ai-explanation'
+  );
   const app = new Hono();
   app.route('/v1/ai-explain', explanation);
   const url = new URL(`http://local.test/v1${path}`);

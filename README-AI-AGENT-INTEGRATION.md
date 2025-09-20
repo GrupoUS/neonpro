@@ -7,6 +7,7 @@ This comprehensive frontend implementation enables AI agent integration with the
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js >= 20.0.0
 - PNPM package manager
 - Existing NeonPro project setup
@@ -74,7 +75,7 @@ apps/web/src/
 Main dashboard component that integrates all AI agent functionality:
 
 ```tsx
-import { AgentDashboard } from '@/components/ai/agent-dashboard';
+import { AgentDashboard } from "@/components/ai/agent-dashboard";
 
 function MyApp() {
   return (
@@ -88,6 +89,7 @@ function MyApp() {
 ```
 
 **Features:**
+
 - Multi-agent selection (Client, Financial, Appointment)
 - Real-time chat interface
 - Knowledge base management
@@ -100,7 +102,7 @@ function MyApp() {
 Component for selecting different AI agent types:
 
 ```tsx
-import { AgentSelector } from '@/components/ai/agent-selector';
+import { AgentSelector } from "@/components/ai/agent-selector";
 
 function AgentSelection() {
   return (
@@ -114,6 +116,7 @@ function AgentSelection() {
 ```
 
 **Agent Types:**
+
 - **Client**: Patient assistance and support
 - **Financial**: Billing and financial management
 - **Appointment**: Scheduling and calendar management
@@ -123,7 +126,7 @@ function AgentSelection() {
 Enhanced chat interface with streaming responses:
 
 ```tsx
-import { AgentChat } from '@/components/ai/agent-chat';
+import { AgentChat } from "@/components/ai/agent-chat";
 
 function ChatInterface() {
   return (
@@ -136,6 +139,7 @@ function ChatInterface() {
 ```
 
 **Features:**
+
 - Real-time streaming responses
 - RAG (Retrieval-Augmented Generation)
 - LGPD-compliant data handling
@@ -147,7 +151,7 @@ function ChatInterface() {
 Interface for managing AI knowledge base:
 
 ```tsx
-import { KnowledgeBaseManager } from '@/components/ai/knowledge-base';
+import { KnowledgeBaseManager } from "@/components/ai/knowledge-base";
 
 function KnowledgeManagement() {
   return <KnowledgeBaseManager />;
@@ -155,6 +159,7 @@ function KnowledgeManagement() {
 ```
 
 **Features:**
+
 - Add knowledge entries
 - Search knowledge base
 - Tag-based organization
@@ -168,27 +173,27 @@ function KnowledgeManagement() {
 The system integrates with the existing tRPC backend through dedicated hooks:
 
 ```tsx
-import { 
+import {
   useAgentSession,
   useAgentSendMessage,
   useAgentAnalytics,
-  useKnowledgeBaseManager
-} from '@/trpc/agent';
+  useKnowledgeBaseManager,
+} from "@/trpc/agent";
 
 // Create new session
 const createSession = useAgentSession();
 createSession.mutate({
-  agent_type: 'client',
-  initial_context: 'patient_context',
-  metadata: { patientId: '123' }
+  agent_type: "client",
+  initial_context: "patient_context",
+  metadata: { patientId: "123" },
 });
 
 // Send message
 const sendMessage = useAgentSendMessage();
 sendMessage.mutate({
-  session_id: 'session-123',
-  role: 'user',
-  content: 'Hello, I need help with my appointment'
+  session_id: "session-123",
+  role: "user",
+  content: "Hello, I need help with my appointment",
 });
 
 // Get analytics
@@ -200,14 +205,14 @@ const { data: analytics } = useAgentAnalytics();
 Leverages Vercel AI SDK for streaming responses:
 
 ```tsx
-import { openai } from '@ai-sdk/openai';
-import { streamText } from 'ai';
+import { openai } from "@ai-sdk/openai";
+import { streamText } from "ai";
 
 const result = await streamText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   messages: [
-    { role: 'system', content: healthcareContext },
-    { role: 'user', content: userMessage }
+    { role: "system", content: healthcareContext },
+    { role: "user", content: userMessage },
   ],
   temperature: 0.3,
   maxTokens: 4000,
@@ -228,6 +233,7 @@ The system is designed specifically for Brazilian healthcare regulations:
 ### Context Examples
 
 #### Patient Assistant Context
+
 ```
 Você é um assistente de IA especializado em atendimento ao paciente no sistema de saúde brasileiro.
 
@@ -240,6 +246,7 @@ Você é um assistente de IA especializado em atendimento ao paciente no sistema
 ```
 
 #### Financial Assistant Context
+
 ```
 Você é um assistente financeiro especializado em gestão de clínicas médicas no Brasil.
 
@@ -255,12 +262,12 @@ Você é um assistente financeiro especializado em gestão de clínicas médicas
 ### LGPD Compliance
 
 ```typescript
-import { AIComplianceManager } from '@/compliance/ai-compliance';
+import { AIComplianceManager } from "@/compliance/ai-compliance";
 
 // Sanitize data for AI processing
 const sanitizedData = AIComplianceManager.sanitizeDataForAI(
   patientData,
-  'client'
+  "client",
 );
 
 // Log AI interactions for compliance
@@ -268,13 +275,14 @@ await AIComplianceManager.logAIInteraction(
   sessionId,
   userMessage,
   aiResponse,
-  userId
+  userId,
 );
 ```
 
 ### Data Anonymization
 
 The system automatically:
+
 - Removes direct identifiers (CPF, RG, full name)
 - Generalizes age groups instead of exact birth dates
 - Masks sensitive medical information
@@ -293,7 +301,7 @@ The system automatically:
 ### Performance Metrics
 
 ```typescript
-import { AIPerformanceMonitor } from '@/monitoring/ai-performance';
+import { AIPerformanceMonitor } from "@/monitoring/ai-performance";
 
 // Track response times
 AIPerformanceMonitor.trackResponseTime(1200);
@@ -332,15 +340,15 @@ test('renders agent selection', () => {
 
 test('handles message sending', async () => {
   render(<AgentChat patientId="test-patient" />);
-  
+
   // Select agent
   fireEvent.click(screen.getByText('Assistente de Pacientes'));
-  
+
   // Send message
   const input = screen.getByPlaceholderText('Digite sua mensagem...');
   fireEvent.change(input, { target: { value: 'Hello' } });
   fireEvent.keyDown(input, { key: 'Enter' });
-  
+
   await waitFor(() => {
     expect(screen.getByText('Hello')).toBeInTheDocument();
   });
@@ -351,15 +359,15 @@ test('handles message sending', async () => {
 
 ```typescript
 // Test tRPC integration
-test('creates agent session successfully', async () => {
+test("creates agent session successfully", async () => {
   const { result } = renderHook(() => useAgentSession(), {
     wrapper: createWrapper(),
   });
 
   await act(async () => {
     await result.current.mutateAsync({
-      agent_type: 'client',
-      initial_context: 'test',
+      agent_type: "client",
+      initial_context: "test",
     });
   });
 
@@ -379,8 +387,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'ai-vendor': ['@ai-sdk/react', '@ai-sdk/openai', 'ai'],
-          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-select'],
+          "ai-vendor": ["@ai-sdk/react", "@ai-sdk/openai", "ai"],
+          "ui-vendor": ["@radix-ui/react-dialog", "@radix-ui/react-select"],
         },
       },
     },
@@ -412,13 +420,13 @@ export const AI_CONFIG = {
   providers: {
     openai: {
       apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
-      model: 'gpt-4',
+      model: "gpt-4",
       maxTokens: 4000,
       temperature: 0.3,
     },
     anthropic: {
       apiKey: process.env.NEXT_PUBLIC_ANTHROPIC_API_KEY,
-      model: 'claude-3-sonnet',
+      model: "claude-3-sonnet",
       maxTokens: 4000,
       temperature: 0.3,
     },
@@ -436,10 +444,10 @@ export const AI_CONFIG = {
 
 ```typescript
 const AI_FEATURES = {
-  enableAgentChat: process.env.NEXT_PUBLIC_ENABLE_AI_CHAT === 'true',
-  enableKnowledgeBase: process.env.NEXT_PUBLIC_ENABLE_KB === 'true',
-  enableVoiceInput: process.env.NEXT_PUBLIC_ENABLE_VOICE === 'true',
-  enableFileAttachments: process.env.NEXT_PUBLIC_ENABLE_ATTACHMENTS === 'true',
+  enableAgentChat: process.env.NEXT_PUBLIC_ENABLE_AI_CHAT === "true",
+  enableKnowledgeBase: process.env.NEXT_PUBLIC_ENABLE_KB === "true",
+  enableVoiceInput: process.env.NEXT_PUBLIC_ENABLE_VOICE === "true",
+  enableFileAttachments: process.env.NEXT_PUBLIC_ENABLE_ATTACHMENTS === "true",
 };
 ```
 
@@ -448,6 +456,7 @@ const AI_FEATURES = {
 ### Common Issues
 
 #### 1. tRPC Connection Errors
+
 ```typescript
 // Check tRPC configuration
 const trpc = createTRPCReact<AppRouter>();
@@ -459,21 +468,23 @@ const trpc = createTRPCReact<AppRouter>();
 ```
 
 #### 2. AI SDK Streaming Issues
+
 ```typescript
 // Verify streaming configuration
 const result = await streamText({
-  model: openai('gpt-4'),
+  model: openai("gpt-4"),
   streaming: true,
   // ... other config
 });
 ```
 
 #### 3. LGPD Compliance Errors
+
 ```typescript
 // Ensure data sanitization
 const sanitized = AIComplianceManager.sanitizeDataForAI(data, agentType);
 if (!sanitized) {
-  throw new Error('Data sanitization failed');
+  throw new Error("Data sanitization failed");
 }
 ```
 
@@ -504,8 +515,8 @@ useAgentAnalytics({
 
 ```typescript
 // Lazy load AI components
-const AgentDashboard = lazy(() => import('@/components/ai/agent-dashboard'));
-const KnowledgeBase = lazy(() => import('@/components/ai/knowledge-base'));
+const AgentDashboard = lazy(() => import("@/components/ai/agent-dashboard"));
+const KnowledgeBase = lazy(() => import("@/components/ai/knowledge-base"));
 ```
 
 ### Bundle Optimization
@@ -565,18 +576,21 @@ This project is licensed under the NeonPro Proprietary License. See [LICENSE](..
 ## 🗺️ Roadmap
 
 ### Phase 1 (Completed)
+
 - [x] Basic agent integration
 - [x] tRPC backend connectivity
 - [x] UI component library
 - [x] LGPD compliance framework
 
 ### Phase 2 (In Progress)
+
 - [ ] Voice input integration
 - [ ] File attachment support
 - [ ] Advanced analytics
 - [ ] Multi-language support
 
 ### Phase 3 (Future)
+
 - [ ] Advanced RAG system
 - [ ] Agent collaboration
 - [ ] Custom agent training

@@ -47,7 +47,9 @@ app.post('/stripe/webhook', async c => {
 /**
  * Handle Stripe webhook events
  */
-async function handleStripeWebhook(event: any): Promise<{ success: boolean; message: string }> {
+async function handleStripeWebhook(
+  event: any,
+): Promise<{ success: boolean; message: string }> {
   try {
     switch (event.type) {
       case 'customer.subscription.created':
@@ -87,20 +89,26 @@ async function handleSubscriptionCreated(
   const customerId = subscription.customer;
   const subscriptionId = subscription.id;
   const status = subscription.status;
-  const currentPeriodStart = new Date(subscription.current_period_start * 1000).toISOString();
-  const currentPeriodEnd = new Date(subscription.current_period_end * 1000).toISOString();
+  const currentPeriodStart = new Date(
+    subscription.current_period_start * 1000,
+  ).toISOString();
+  const currentPeriodEnd = new Date(
+    subscription.current_period_end * 1000,
+  ).toISOString();
   const planId = subscription.items.data[0]?.price?.id || 'unknown';
 
   // Find user by Stripe customer ID
   const user = await findUserByStripeCustomer(customerId);
   if (!user) {
-    return { success: false, message: `User not found for customer: ${customerId}` };
+    return {
+      success: false,
+      message: `User not found for customer: ${customerId}`,
+    };
   }
 
   // Create subscription record
-  const { error: subError } = await supabase
-    .from('subscriptions')
-    .upsert({
+  const { error: subError } = await supabase.from('subscriptions').upsert(
+    {
       customer_id: user.id,
       subscription_code: subscriptionId,
       plan_id: planId,
@@ -110,9 +118,11 @@ async function handleSubscriptionCreated(
       clinic_id: user.id, // Assuming user ID is clinic ID
       amount: 9900, // R$ 99.00 in cents
       currency: 'BRL',
-    }, {
+    },
+    {
       onConflict: 'subscription_code',
-    });
+    },
+  );
 
   // Update user profile
   const { error: profileError } = await supabase
@@ -141,13 +151,20 @@ async function handleSubscriptionUpdated(
   const customerId = subscription.customer;
   const subscriptionId = subscription.id;
   const status = subscription.status;
-  const currentPeriodStart = new Date(subscription.current_period_start * 1000).toISOString();
-  const currentPeriodEnd = new Date(subscription.current_period_end * 1000).toISOString();
+  const currentPeriodStart = new Date(
+    subscription.current_period_start * 1000,
+  ).toISOString();
+  const currentPeriodEnd = new Date(
+    subscription.current_period_end * 1000,
+  ).toISOString();
   const planId = subscription.items.data[0]?.price?.id || 'unknown';
 
   const user = await findUserByStripeCustomer(customerId);
   if (!user) {
-    return { success: false, message: `User not found for customer: ${customerId}` };
+    return {
+      success: false,
+      message: `User not found for customer: ${customerId}`,
+    };
   }
 
   // Update subscription record
@@ -183,7 +200,9 @@ async function handleSubscriptionUpdated(
     .eq('id', user.id);
 
   if (!subError && !profileError) {
-    console.log(`Subscription updated for user ${user.id}: ${subscriptionId} -> ${status}`);
+    console.log(
+      `Subscription updated for user ${user.id}: ${subscriptionId} -> ${status}`,
+    );
     return { success: true, message: `Subscription updated successfully` };
   } else {
     console.error('Database errors:', { subError, profileError });
@@ -202,7 +221,10 @@ async function handleSubscriptionDeleted(
 
   const user = await findUserByStripeCustomer(customerId);
   if (!user) {
-    return { success: false, message: `User not found for customer: ${customerId}` };
+    return {
+      success: false,
+      message: `User not found for customer: ${customerId}`,
+    };
   }
 
   // Update subscription record
@@ -221,7 +243,9 @@ async function handleSubscriptionDeleted(
     .eq('id', user.id);
 
   if (!subError && !profileError) {
-    console.log(`Subscription cancelled for user ${user.id}: ${subscriptionId}`);
+    console.log(
+      `Subscription cancelled for user ${user.id}: ${subscriptionId}`,
+    );
     return { success: true, message: `Subscription cancelled successfully` };
   } else {
     console.error('Database errors:', { subError, profileError });
@@ -239,12 +263,18 @@ async function handlePaymentSucceeded(
   const subscriptionId = invoice.subscription;
 
   if (!subscriptionId) {
-    return { success: true, message: 'No subscription associated with invoice' };
+    return {
+      success: true,
+      message: 'No subscription associated with invoice',
+    };
   }
 
   const user = await findUserByStripeCustomer(customerId);
   if (!user) {
-    return { success: false, message: `User not found for customer: ${customerId}` };
+    return {
+      success: false,
+      message: `User not found for customer: ${customerId}`,
+    };
   }
 
   // Ensure user is marked as active pro user
@@ -254,7 +284,9 @@ async function handlePaymentSucceeded(
     .eq('id', user.id);
 
   if (!error) {
-    console.log(`Payment succeeded for user ${user.id}, subscription: ${subscriptionId}`);
+    console.log(
+      `Payment succeeded for user ${user.id}, subscription: ${subscriptionId}`,
+    );
     return { success: true, message: `Payment processed successfully` };
   } else {
     console.error('Database error:', error);
@@ -265,17 +297,25 @@ async function handlePaymentSucceeded(
 /**
  * Handle payment failed event
  */
-async function handlePaymentFailed(invoice: any): Promise<{ success: boolean; message: string }> {
+async function handlePaymentFailed(
+  invoice: any,
+): Promise<{ success: boolean; message: string }> {
   const customerId = invoice.customer;
   const subscriptionId = invoice.subscription;
 
   if (!subscriptionId) {
-    return { success: true, message: 'No subscription associated with invoice' };
+    return {
+      success: true,
+      message: 'No subscription associated with invoice',
+    };
   }
 
   const user = await findUserByStripeCustomer(customerId);
   if (!user) {
-    return { success: false, message: `User not found for customer: ${customerId}` };
+    return {
+      success: false,
+      message: `User not found for customer: ${customerId}`,
+    };
   }
 
   // Mark subscription as expired due to payment failure
@@ -285,11 +325,16 @@ async function handlePaymentFailed(invoice: any): Promise<{ success: boolean; me
     .eq('id', user.id);
 
   if (!error) {
-    console.log(`Payment failed for user ${user.id}, subscription: ${subscriptionId}`);
+    console.log(
+      `Payment failed for user ${user.id}, subscription: ${subscriptionId}`,
+    );
     return { success: true, message: `Payment failure processed` };
   } else {
     console.error('Database error:', error);
-    return { success: false, message: `Failed to update user after payment failure` };
+    return {
+      success: false,
+      message: `Failed to update user after payment failure`,
+    };
   }
 }
 
@@ -304,7 +349,10 @@ async function handleTrialWillEnd(
 
   const user = await findUserByStripeCustomer(customerId);
   if (!user) {
-    return { success: false, message: `User not found for customer: ${customerId}` };
+    return {
+      success: false,
+      message: `User not found for customer: ${customerId}`,
+    };
   }
 
   // Update trial end date

@@ -2,7 +2,16 @@
 title: "NeonPro Frontend Architecture"
 last_updated: 2025-12-12
 form: explanation
-tags: [frontend, architecture, decisions, patterns, monorepo, atomic-design, production-validated]
+tags:
+  [
+    frontend,
+    architecture,
+    decisions,
+    patterns,
+    monorepo,
+    atomic-design,
+    production-validated,
+  ]
 related:
   - ./front-end-spec.md
   - ./tech-stack.md
@@ -139,10 +148,10 @@ packages/
 
 ```typescript
 // ✅ VALIDATED PATTERN - Use this exact order
-import { HealthcareSpecific } from '@/components/healthcare'; // Domain-specific last
-import { AppointmentForm, PatientCard } from '@/components/molecules'; // Molecules second
-import { Dashboard, GovernanceDashboard } from '@/components/organisms'; // Organisms third
-import { Alert, Badge, Button, Card } from '@neonpro/ui'; // Shared components first
+import { HealthcareSpecific } from "@/components/healthcare"; // Domain-specific last
+import { AppointmentForm, PatientCard } from "@/components/molecules"; // Molecules second
+import { Dashboard, GovernanceDashboard } from "@/components/organisms"; // Organisms third
+import { Alert, Badge, Button, Card } from "@neonpro/ui"; // Shared components first
 ```
 
 **Healthcare Component Pattern (LGPD-Compliant)**
@@ -150,7 +159,7 @@ import { Alert, Badge, Button, Card } from '@neonpro/ui'; // Shared components f
 ```typescript
 interface HealthcareComponentProps {
   readonly patientId?: string;
-  readonly userRole: 'admin' | 'professional' | 'coordinator';
+  readonly userRole: "admin" | "professional" | "coordinator";
   readonly lgpdCompliant: boolean;
   readonly onAuditLog?: (action: string) => void;
 }
@@ -211,8 +220,8 @@ interface AccessibleHealthcareProps extends HealthcareComponentProps {
 ```css
 /* ✅ PRODUCTION-TESTED NEUMORPHIC EFFECTS */
 :root {
-  --neonpro-shadow-inset: inset 2px 2px 4px rgba(0,0,0,0.1);
-  --neonpro-shadow-raised: 4px 4px 8px rgba(0,0,0,0.15);
+  --neonpro-shadow-inset: inset 2px 2px 4px rgba(0, 0, 0, 0.1);
+  --neonpro-shadow-raised: 4px 4px 8px rgba(0, 0, 0, 0.15);
   --neonpro-border-radius: 8px; /* Reduced for neumorphic effect */
 }
 ```

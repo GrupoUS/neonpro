@@ -4,9 +4,9 @@ last_updated: 2025-09-10
 form: reference
 tags: [platform-flows, user-journeys, aesthetic-clinics, workflows]
 related:
-- ./architecture.md
-- ./tech-stack.md
-- ../AGENTS.md
+  - ./architecture.md
+  - ./tech-stack.md
+  - ../AGENTS.md
 ---
 
 # NeonPro Platform Flows

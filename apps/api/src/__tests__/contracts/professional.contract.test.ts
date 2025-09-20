@@ -75,7 +75,11 @@ describe('Professional Contract Testing', () => {
         },
         clinicId: 'clinic-456',
         role: 'doctor',
-        permissions: ['view_patients', 'create_appointments', 'prescribe_treatments'],
+        permissions: [
+          'view_patients',
+          'create_appointments',
+          'prescribe_treatments',
+        ],
       };
 
       const mockProfessional = {
@@ -93,12 +97,17 @@ describe('Professional Contract Testing', () => {
         updatedAt: new Date(),
       };
 
-      mockContext.crm.validateLicense.mockResolvedValue({ valid: true, status: 'active' });
+      mockContext.crm.validateLicense.mockResolvedValue({
+        valid: true,
+        status: 'active',
+      });
       mockContext.prisma.clinic.findUnique.mockResolvedValue({
         id: 'clinic-456',
         name: 'Test Clinic',
       });
-      mockContext.prisma.professional.create.mockResolvedValue(mockProfessional);
+      mockContext.prisma.professional.create.mockResolvedValue(
+        mockProfessional,
+      );
 
       const result = await caller.api.professional.create(createInput);
 
@@ -152,8 +161,9 @@ describe('Professional Contract Testing', () => {
         error: 'Invalid CRM format',
       });
 
-      await expect(caller.api.professional.create(invalidInput))
-        .rejects.toThrow('Invalid CRM number: Invalid CRM format');
+      await expect(
+        caller.api.professional.create(invalidInput),
+      ).rejects.toThrow('Invalid CRM number: Invalid CRM format');
     });
 
     it('should enforce CFM compliance requirements', async () => {
@@ -176,14 +186,18 @@ describe('Professional Contract Testing', () => {
         role: 'doctor',
       };
 
-      mockContext.crm.validateLicense.mockResolvedValue({ valid: true, status: 'active' });
+      mockContext.crm.validateLicense.mockResolvedValue({
+        valid: true,
+        status: 'active',
+      });
       mockContext.compliance.validateCFMCompliance.mockResolvedValue({
         compliant: false,
         missingRequirements: ['surgical_qualification'],
       });
 
-      await expect(caller.api.professional.create(nonCompliantInput))
-        .rejects.toThrow('CFM compliance requirements not met');
+      await expect(
+        caller.api.professional.create(nonCompliantInput),
+      ).rejects.toThrow('CFM compliance requirements not met');
     });
   });
 
@@ -219,9 +233,13 @@ describe('Professional Contract Testing', () => {
         updatedAt: new Date(),
       };
 
-      mockContext.prisma.professional.findUnique.mockResolvedValue(mockProfessional);
+      mockContext.prisma.professional.findUnique.mockResolvedValue(
+        mockProfessional,
+      );
 
-      const result = await caller.api.professional.getById({ id: professionalId });
+      const result = await caller.api.professional.getById({
+        id: professionalId,
+      });
 
       expect(result).toMatchObject({
         success: true,
@@ -247,8 +265,9 @@ describe('Professional Contract Testing', () => {
 
       mockContext.prisma.professional.findUnique.mockResolvedValue(null);
 
-      await expect(caller.api.professional.getById({ id: professionalId }))
-        .rejects.toThrow('Professional not found');
+      await expect(
+        caller.api.professional.getById({ id: professionalId }),
+      ).rejects.toThrow('Professional not found');
     });
   });
 
@@ -262,7 +281,11 @@ describe('Professional Contract Testing', () => {
           email: 'maria.new@clinic.com',
         },
         professionalInfo: {
-          specializations: ['dermatology', 'aesthetic_medicine', 'laser_therapy'],
+          specializations: [
+            'dermatology',
+            'aesthetic_medicine',
+            'laser_therapy',
+          ],
         },
         schedule: {
           workingHours: {
@@ -289,8 +312,12 @@ describe('Professional Contract Testing', () => {
         updatedAt: new Date(),
       };
 
-      mockContext.prisma.professional.findUnique.mockResolvedValue(existingProfessional);
-      mockContext.prisma.professional.update.mockResolvedValue(updatedProfessional);
+      mockContext.prisma.professional.findUnique.mockResolvedValue(
+        existingProfessional,
+      );
+      mockContext.prisma.professional.update.mockResolvedValue(
+        updatedProfessional,
+      );
 
       const result = await caller.api.professional.update(updateInput);
 
@@ -333,10 +360,13 @@ describe('Professional Contract Testing', () => {
         crmState: 'SP',
       };
 
-      mockContext.prisma.professional.findUnique.mockResolvedValue(existingProfessional);
+      mockContext.prisma.professional.findUnique.mockResolvedValue(
+        existingProfessional,
+      );
 
-      await expect(caller.api.professional.update(unauthorizedUpdate))
-        .rejects.toThrow('Unauthorized to modify CRM information');
+      await expect(
+        caller.api.professional.update(unauthorizedUpdate),
+      ).rejects.toThrow('Unauthorized to modify CRM information');
     });
   });
 
@@ -368,7 +398,9 @@ describe('Professional Contract Testing', () => {
         scheduleEffectiveFrom: new Date('2024-03-01'),
       };
 
-      mockContext.prisma.professional.update.mockResolvedValue(updatedProfessional);
+      mockContext.prisma.professional.update.mockResolvedValue(
+        updatedProfessional,
+      );
 
       const result = await caller.api.professional.updateSchedule(scheduleInput);
 
@@ -395,8 +427,9 @@ describe('Professional Contract Testing', () => {
         },
       };
 
-      await expect(caller.api.professional.updateSchedule(conflictingSchedule))
-        .rejects.toThrow('Invalid schedule: end time must be after start time');
+      await expect(
+        caller.api.professional.updateSchedule(conflictingSchedule),
+      ).rejects.toThrow('Invalid schedule: end time must be after start time');
     });
   });
 
@@ -434,7 +467,9 @@ describe('Professional Contract Testing', () => {
         },
       ];
 
-      mockContext.prisma.professional.findMany.mockResolvedValue(mockProfessionals);
+      mockContext.prisma.professional.findMany.mockResolvedValue(
+        mockProfessionals,
+      );
       mockContext.prisma.professional.count.mockResolvedValue(25);
 
       const result = await caller.api.professional.list(listInput);
@@ -485,7 +520,9 @@ describe('Professional Contract Testing', () => {
         createdAt: new Date(),
       };
 
-      mockContext.prisma.professionalQualification.create.mockResolvedValue(newQualification);
+      mockContext.prisma.professionalQualification.create.mockResolvedValue(
+        newQualification,
+      );
 
       const result = await caller.api.professional.addQualification(qualificationInput);
 
@@ -514,7 +551,9 @@ describe('Professional Contract Testing', () => {
         mockExpiringQualifications,
       );
 
-      const result = await caller.api.professional.getExpiringQualifications({ professionalId });
+      const result = await caller.api.professional.getExpiringQualifications({
+        professionalId,
+      });
 
       expect(result).toMatchObject({
         success: true,

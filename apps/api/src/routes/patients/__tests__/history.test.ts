@@ -314,8 +314,12 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
       expect(response.status).toBe(200);
       expect(response.headers.get('X-Total-Events')).toBe('3');
-      expect(response.headers.get('X-Date-Range-Start')).toBe('2024-01-15T10:30:00Z');
-      expect(response.headers.get('X-Date-Range-End')).toBe('2024-01-16T09:15:00Z');
+      expect(response.headers.get('X-Date-Range-Start')).toBe(
+        '2024-01-15T10:30:00Z',
+      );
+      expect(response.headers.get('X-Date-Range-End')).toBe(
+        '2024-01-16T09:15:00Z',
+      );
       expect(response.headers.get('X-History-Access-Logged')).toBe('true');
     });
   });
@@ -453,7 +457,9 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
       expect(response.status).toBe(200);
       expect(data.data.timeline[0].actor.name).toBe('Dr. ***');
-      expect(data.data.timeline[0].details.changes.phone.old).toBe('(11) *****-****');
+      expect(data.data.timeline[0].details.changes.phone.old).toBe(
+        '(11) *****-****',
+      );
       expect(response.headers.get('X-Access-Level')).toBe('limited');
     });
   });
@@ -552,7 +558,9 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
     });
 
     it('should handle history retrieval timeout', async () => {
-      mockAuditService.getPatientHistory.mockRejectedValue(new Error('History retrieval timeout'));
+      mockAuditService.getPatientHistory.mockRejectedValue(
+        new Error('History retrieval timeout'),
+      );
 
       const { default: historyRoute } = require('../history');
 
@@ -660,7 +668,9 @@ describe('GET /api/v2/patients/{id}/history endpoint (T050)', () => {
 
       expect(response.status).toBe(200);
       expect(response.headers.get('X-Response-Time')).toBeDefined();
-      expect(response.headers.get('Cache-Control')).toBe('private, max-age=300');
+      expect(response.headers.get('Cache-Control')).toBe(
+        'private, max-age=300',
+      );
       expect(response.headers.get('X-Database-Queries')).toBeDefined();
     });
 

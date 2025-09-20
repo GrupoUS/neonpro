@@ -11,7 +11,7 @@
   },
   "TTFB": {
     "budget": 600,
-    "unit": "ms", 
+    "unit": "ms",
     "description": "Time to First Byte - Server response time"
   }
 }

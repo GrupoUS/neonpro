@@ -4,7 +4,7 @@
 **Status**: Specification Complete, Implementation Pending  
 **Archon Project**: b9bc15e9-d82d-4d22-a5e7-f6d55f00147a  
 **PRD Document**: af0cd577-057a-4cf9-8f3b-4eaabb1ce6f1  
-**Implementation Plan**: f68482f2-0d6b-4adc-949b-333b0fa7a678  
+**Implementation Plan**: f68482f2-0d6b-4adc-949b-333b0fa7a678
 
 ## Feature Overview and Business Context
 
@@ -15,21 +15,25 @@ This enhancement transforms NeonPro's existing AI chat capability into a compreh
 ## Technical Architecture Decisions from Research
 
 ### AI SDK v5 Integration Strategy
+
 - **Decision**: Upgrade to AI SDK v5 for enhanced streaming and tool calling capabilities
 - **Rationale**: v5 provides improved UIMessage types, better streaming performance, and comprehensive tool integration patterns
 - **Implementation**: Use `streamText`, `convertToModelMessages`, and tool framework for database operations
 
 ### Multi-Provider Architecture
+
 - **Decision**: Implement unified provider interface with automatic failover
 - **Providers**: OpenAI (GPT-5 mini), Anthropic (Claude 3 Haiku), Google AI (Gemini 2.5 Flash)
 - **Failover Logic**: Primary → Secondary → Tertiary with health monitoring and circuit breaker patterns
 
 ### UI Component Library Strategy
+
 - **AI SDK Elements**: Core chat components (Context, Conversation, Image, PromptInput, Reasoning, Response, Suggestion, Task, OpenInChat)
 - **KokonutUI**: Enhanced AI interface elements (ai-prompt, ai-input-search, ai-loading)
 - **Integration**: Unified theming with NeonPro design system, responsive behavior across devices
 
 ### Business Plan Gating Architecture
+
 - **Free Plan**: GPT-5 mini access only, read-only operations, daily query limits
 - **Premium Plan**: All models available, full CRUD operations, unlimited queries
 - **Implementation**: Middleware-based plan validation with seamless upgrade prompts
@@ -37,6 +41,7 @@ This enhancement transforms NeonPro's existing AI chat capability into a compreh
 ## Implementation Approach and Key Components
 
 ### Core System Architecture
+
 ```
 Frontend (Next.js 15 + React 19)
 ├── AI Chat Interface (AI SDK Elements + KokonutUI)
@@ -45,7 +50,7 @@ Frontend (Next.js 15 + React 19)
 
 API Layer (Hono Framework)
 ├── /v1/ai-chat/stream - Enhanced streaming endpoint
-├── /v1/ai-chat/suggestions - Context-aware suggestions  
+├── /v1/ai-chat/suggestions - Context-aware suggestions
 ├── /v1/tools/* - CRUD operation endpoints
 └── /v1/settings/* - Configuration management
 
@@ -65,12 +70,13 @@ Data Layer (Supabase + RLS)
 ### Key Technical Components
 
 #### 1. Enhanced Message Types (`packages/types/src/ai-chat.ts`)
+
 ```typescript
 interface EnhancedUIMessage extends UIMessage {
   metadata: {
-    modelUsed: 'claude-3-haiku' | 'gemini-2.5-flash' | 'gpt-5-mini';
-    userPlan: 'free' | 'premium';
-    queryDomains: ('clients' | 'finance' | 'agenda')[];
+    modelUsed: "claude-3-haiku" | "gemini-2.5-flash" | "gpt-5-mini";
+    userPlan: "free" | "premium";
+    queryDomains: ("clients" | "finance" | "agenda")[];
     processingTime: number;
   };
   businessContext?: {
@@ -82,52 +88,59 @@ interface EnhancedUIMessage extends UIMessage {
 ```
 
 #### 2. Multi-Provider Interface (`packages/core-services/src/ai/providers/`)
+
 ```typescript
 interface AIProvider {
   name: string;
   model: string;
   isHealthy(): Promise<boolean>;
   streamText(params: StreamTextParams): Promise<StreamTextResult>;
-  supportedFeatures: ('tools' | 'streaming' | 'reasoning')[];
+  supportedFeatures: ("tools" | "streaming" | "reasoning")[];
 }
 ```
 
 #### 3. CRUD Tool Framework (`packages/core-services/src/ai/tools/`)
+
 ```typescript
-const createDataTool = (domain: 'clients' | 'finance' | 'agenda') => tool({
-  description: `Perform CRUD operations on ${domain} data`,
-  inputSchema: z.object({
-    operation: z.enum(['create', 'read', 'update', 'delete']),
-    query: z.string(),
-    data: z.object({}).optional()
-  }),
-  execute: async ({ operation, query, data }, context) => {
-    // Validate permissions, execute operation, log audit trail
-  }
-});
+const createDataTool = (domain: "clients" | "finance" | "agenda") =>
+  tool({
+    description: `Perform CRUD operations on ${domain} data`,
+    inputSchema: z.object({
+      operation: z.enum(["create", "read", "update", "delete"]),
+      query: z.string(),
+      data: z.object({}).optional(),
+    }),
+    execute: async ({ operation, query, data }, context) => {
+      // Validate permissions, execute operation, log audit trail
+    },
+  });
 ```
 
 ## API Endpoints and Data Models
 
 ### Enhanced Chat Streaming API
+
 - **Endpoint**: `POST /v1/ai-chat/stream`
 - **Features**: Multi-model support, tool calling, business context injection
 - **Headers**: `X-Chat-Model`, `X-User-Plan`, `X-Processing-Time`
 - **Response**: Server-Sent Events with text and tool execution results
 
 ### CRUD Operation Tools
+
 - **Clients**: `/v1/tools/clients` - Customer data management and queries
 - **Finance**: `/v1/tools/finance` - Financial operations, reporting, analytics
 - **Agenda**: `/v1/tools/agenda` - Calendar management, scheduling optimization
 - **Cross-Domain**: `/v1/tools/business-intelligence` - Multi-domain analytical queries
 
 ### Configuration Management
+
 - **Settings**: `/v1/settings/ai` - Model preferences, usage limits, API configurations
 - **User Preferences**: `/v1/settings/user` - Interface customization, notification preferences
 
 ### Data Models
 
 #### Enhanced Chat Messages
+
 ```sql
 -- Migration: Enhanced message storage with multi-model metadata
 ALTER TABLE chat_messages ADD COLUMN metadata JSONB;
@@ -137,6 +150,7 @@ CREATE INDEX idx_chat_messages_metadata ON chat_messages USING GIN (metadata);
 ```
 
 #### User Preferences & Plan Data
+
 ```sql
 -- Migration: User AI preferences and plan tracking
 CREATE TABLE user_ai_preferences (
@@ -152,12 +166,14 @@ CREATE TABLE user_ai_preferences (
 ## Testing Strategy and Acceptance Criteria
 
 ### Test-First Development Approach
+
 1. **Contract Tests**: OpenAPI validation for all tool endpoints
 2. **Integration Tests**: AI provider integration with mock responses
 3. **E2E Tests**: Complete user workflows from UI to database
 4. **Performance Tests**: Response time validation under load
 
 ### Acceptance Criteria
+
 - **Model Access**: Free users limited to GPT-5 mini, premium users access all models
 - **CRUD Operations**: Natural language successfully converts to database operations
 - **Response Times**: <2s for simple queries, <5s for complex multi-domain operations
@@ -165,11 +181,12 @@ CREATE TABLE user_ai_preferences (
 - **Security**: LGPD/ANVISA compliance validated, audit trails functional
 
 ### Testing Commands
+
 ```bash
 # Contract testing
 pnpm --filter @neonpro/api test:contract
 
-# Integration testing  
+# Integration testing
 pnpm --filter @neonpro/api test:integration
 
 # E2E testing
@@ -182,17 +199,20 @@ pnpm --filter @neonpro/api test:performance
 ## Compliance Considerations
 
 ### LGPD (Brazilian Data Protection Law)
+
 - **Data Minimization**: Only process healthcare data necessary for query execution
 - **Consent Management**: Explicit consent for AI processing of patient data
 - **Data Retention**: Configurable message retention with automatic cleanup
 - **Access Controls**: Role-based access with audit logging
 
 ### ANVISA Healthcare Regulations
+
 - **Equipment Compliance**: Ensure AI models meet healthcare software standards
 - **Data Security**: End-to-end encryption for all patient information
 - **Audit Requirements**: Comprehensive logging of all AI interactions
 
 ### Security Implementation
+
 - **Authentication**: JWT-based with role validation
 - **Authorization**: Plan-based feature gating with secure model access
 - **Encryption**: TLS 1.3 for transport, AES-256 for data at rest
@@ -201,11 +221,13 @@ pnpm --filter @neonpro/api test:performance
 ## Dependencies and Integration Points
 
 ### External Dependencies
+
 - **AI Providers**: OpenAI, Anthropic, Google AI APIs with unified interface
 - **UI Libraries**: AI SDK Elements v1.x, KokonutUI components
 - **Framework**: Next.js 15, React 19, TypeScript 5, AI SDK v5
 
 ### Internal Integration Points
+
 - **Authentication**: Existing Supabase Auth with role-based access control
 - **Database**: Current Supabase schema with RLS policies for data security
 - **Payment**: Integration with existing subscription management for plan gating
@@ -214,6 +236,7 @@ pnpm --filter @neonpro/api test:performance
 ## Risk Assessment and Mitigation Strategies
 
 ### Technical Risks
+
 1. **AI Provider Outages** (High likelihood, Medium impact)
    - **Mitigation**: Multi-provider failover with health monitoring
    - **Fallback**: Graceful degradation to available models
@@ -227,11 +250,13 @@ pnpm --filter @neonpro/api test:performance
    - **User Experience**: Clear error messages with suggested alternatives
 
 ### Business Risks
+
 1. **Low Premium Conversion** (Medium likelihood, High impact)
    - **Mitigation**: Compelling premium features, trial periods, usage analytics
    - **Strategy**: A/B testing for upgrade prompts and feature showcasing
 
 ### Security Risks
+
 1. **Data Privacy Violations** (Low likelihood, Very high impact)
    - **Mitigation**: Comprehensive compliance validation, regular audits
    - **Controls**: PII redaction, consent validation, access logging

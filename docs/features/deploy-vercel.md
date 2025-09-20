@@ -196,6 +196,7 @@ curl -f https://your-domain.com.br/api/health
    - Configure framework preset: "Other" (for Turborepo monorepo)
 
 2. **Configure Build Settings**
+
    ```json
    {
      "buildCommand": "pnpm build --filter @neonpro/web",
@@ -304,16 +305,18 @@ Ensure `turbo.json` includes production builds:
 ### Custom Domain Setup
 
 1. **Add Domain in Vercel**
+
    ```bash
    vercel domains add your-domain.com.br
    ```
 
 2. **Configure DNS Records**
+
    ```
    Type: CNAME
    Name: www
    Value: cname.vercel-dns.com
-   
+
    Type: A
    Name: @
    Value: 76.76.19.61 (Vercel IP)
@@ -339,16 +342,16 @@ Ensure `turbo.json` includes production builds:
 // api/health.ts
 export default function handler(req: any, res: any) {
   const healthCheck = {
-    status: 'healthy',
+    status: "healthy",
     timestamp: new Date().toISOString(),
-    version: process.env.VERCEL_GIT_COMMIT_SHA || 'unknown',
+    version: process.env.VERCEL_GIT_COMMIT_SHA || "unknown",
     checks: {
-      database: 'connected',
-      redis: 'connected',
-      external_apis: 'operational'
-    }
+      database: "connected",
+      redis: "connected",
+      external_apis: "operational",
+    },
   };
-  
+
   res.status(200).json(healthCheck);
 }
 ```
@@ -383,7 +386,7 @@ pnpm add @sentry/nextjs @sentry/tracing
 
 ```typescript
 // sentry.client.config.ts
-import * as Sentry from '@sentry/nextjs';
+import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -396,7 +399,7 @@ Sentry.init({
       delete event.user.id;
     }
     return event;
-  }
+  },
 });
 ```
 
@@ -424,29 +427,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - uses: pnpm/action-setup@v2
         with:
           version: 8.15.0
-          
+
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'pnpm'
-          
+          node-version: "20"
+          cache: "pnpm"
+
       - run: pnpm install --frozen-lockfile
-      
+
       - name: Quality Checks
         run: |
           pnpm lint
           pnpm type-check
           pnpm test:frontend
           pnpm test:backend
-          
+
       - name: Security Audit
         run: |
           pnpm audit --audit-level moderate
-          
+
       - name: Healthcare Compliance Check
         run: |
           pnpm test:healthcare-compliance
@@ -456,16 +459,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
-        
+
       - name: Pull Vercel Environment Information
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-        
+
       - name: Build Project Artifacts
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-        
+
       - name: Deploy Project Artifacts to Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
 ```

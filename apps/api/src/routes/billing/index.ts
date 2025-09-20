@@ -30,15 +30,19 @@ const createInvoiceSchema = z.object({
   patientId: z.string().uuid(),
   appointmentId: z.string().uuid().optional(),
   clinicId: z.string().uuid(),
-  items: z.array(z.object({
-    description: z.string().min(3).max(500),
-    quantity: z.number().positive(),
-    unitPrice: z.number().positive(),
-    taxRate: z.number().min(0).max(1),
-    susCode: z.string().optional(),
-    cbhpmCode: z.string().optional(),
-    tussCode: z.string().optional(),
-  })).min(1),
+  items: z
+    .array(
+      z.object({
+        description: z.string().min(3).max(500),
+        quantity: z.number().positive(),
+        unitPrice: z.number().positive(),
+        taxRate: z.number().min(0).max(1),
+        susCode: z.string().optional(),
+        cbhpmCode: z.string().optional(),
+        tussCode: z.string().optional(),
+      }),
+    )
+    .min(1),
   patientResponsibility: z.number().min(0),
   insuranceCoverage: z.number().min(0),
   discountAmount: z.number().min(0).default(0),
@@ -95,7 +99,11 @@ billing.post(
       const result = await billingService.createInvoice(invoiceData, userId);
 
       if (!result.success) {
-        return badRequest(c, result.error || 'Erro ao criar fatura', result.errors);
+        return badRequest(
+          c,
+          result.error || 'Erro ao criar fatura',
+          result.errors,
+        );
       }
 
       return created(c, result.data, result.message);
@@ -153,7 +161,9 @@ billing.get(
       // Convert string dates to Date objects
       const options = {
         ...searchParams,
-        dateFrom: searchParams.dateFrom ? new Date(searchParams.dateFrom) : undefined,
+        dateFrom: searchParams.dateFrom
+          ? new Date(searchParams.dateFrom)
+          : undefined,
         dateTo: searchParams.dateTo ? new Date(searchParams.dateTo) : undefined,
       };
 
@@ -188,7 +198,11 @@ billing.put(
         return badRequest(c, 'ID da fatura é obrigatório');
       }
 
-      const result = await billingService.updateInvoice(invoiceId, updateData, userId);
+      const result = await billingService.updateInvoice(
+        invoiceId,
+        updateData,
+        userId,
+      );
 
       if (!result.success) {
         if (result.error?.includes('não encontrada')) {
@@ -197,7 +211,11 @@ billing.put(
         if (result.error?.includes('Acesso negado')) {
           return forbidden(c, result.error);
         }
-        return badRequest(c, result.error || 'Erro ao atualizar fatura', result.errors);
+        return badRequest(
+          c,
+          result.error || 'Erro ao atualizar fatura',
+          result.errors,
+        );
       }
 
       return ok(c, result.data, result.message);
@@ -257,13 +275,21 @@ billing.post(
         return badRequest(c, 'ID da fatura é obrigatório');
       }
 
-      const result = await billingService.processPayment(invoiceId, paymentData, userId);
+      const result = await billingService.processPayment(
+        invoiceId,
+        paymentData,
+        userId,
+      );
 
       if (!result.success) {
         if (result.error?.includes('não encontrada')) {
           return notFound(c, result.error);
         }
-        return badRequest(c, result.error || 'Erro ao processar pagamento', result.errors);
+        return badRequest(
+          c,
+          result.error || 'Erro ao processar pagamento',
+          result.errors,
+        );
       }
 
       return created(c, result.data, result.message);
@@ -293,7 +319,10 @@ billing.get('/invoices/:id/payments', async c => {
       if (result.error?.includes('não encontrada')) {
         return notFound(c, result.error);
       }
-      return badRequest(c, result.error || 'Erro ao buscar histórico de pagamentos');
+      return badRequest(
+        c,
+        result.error || 'Erro ao buscar histórico de pagamentos',
+      );
     }
 
     return ok(c, result.data);
@@ -322,10 +351,16 @@ billing.get(
         endDate: new Date(reportParams.endDate),
       };
 
-      const result = await billingService.generateFinancialReport(params, userId);
+      const result = await billingService.generateFinancialReport(
+        params,
+        userId,
+      );
 
       if (!result.success) {
-        return badRequest(c, result.error || 'Erro ao gerar relatório financeiro');
+        return badRequest(
+          c,
+          result.error || 'Erro ao gerar relatório financeiro',
+        );
       }
 
       return ok(c, result.data);
@@ -344,9 +379,13 @@ billing.get('/dashboard/stats', async c => {
   try {
     const clinicId = c.get('clinicId');
     const userId = c.get('userId');
-    const period = c.req.query('period') as 'day' | 'week' | 'month' | 'year' || 'month';
+    const period = (c.req.query('period') as 'day' | 'week' | 'month' | 'year') || 'month';
 
-    const result = await billingService.getBillingStats(clinicId, userId, period);
+    const result = await billingService.getBillingStats(
+      clinicId,
+      userId,
+      period,
+    );
 
     if (!result.success) {
       return badRequest(c, result.error || 'Erro ao buscar estatísticas');

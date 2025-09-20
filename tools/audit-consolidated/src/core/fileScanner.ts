@@ -1,6 +1,6 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import { ScannedFile, ScanOptions, ScanResult } from '../types.js';
+import { promises as fs } from "fs";
+import path from "path";
+import { ScannedFile, ScanOptions, ScanResult } from "../types.js";
 
 const DEFAULT_MAX_DEPTH = 6;
 
@@ -104,9 +104,7 @@ function normalisePatterns(patterns?: string[]): string[] {
     return [];
   }
 
-  return patterns
-    .map(pattern => pattern.trim())
-    .filter(Boolean);
+  return patterns.map((pattern) => pattern.trim()).filter(Boolean);
 }
 
 function matchesPatterns(
@@ -114,7 +112,7 @@ function matchesPatterns(
   include: string[],
   exclude: string[],
 ): boolean {
-  if (exclude.some(pattern => relativePath.includes(pattern))) {
+  if (exclude.some((pattern) => relativePath.includes(pattern))) {
     return false;
   }
 
@@ -122,5 +120,5 @@ function matchesPatterns(
     return true;
   }
 
-  return include.some(pattern => relativePath.includes(pattern));
+  return include.some((pattern) => relativePath.includes(pattern));
 }

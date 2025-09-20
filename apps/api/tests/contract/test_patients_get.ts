@@ -38,16 +38,22 @@ const GetPatientResponseSchema = z.object({
     relationship: z.string(),
     phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/),
   }),
-  medicalHistory: z.object({
-    allergies: z.array(z.string()).optional(),
-    medications: z.array(z.string()).optional(),
-    conditions: z.array(z.string()).optional(),
-    surgeries: z.array(z.object({
-      procedure: z.string(),
-      date: z.string().datetime(),
-      hospital: z.string(),
-    })).optional(),
-  }).optional(),
+  medicalHistory: z
+    .object({
+      allergies: z.array(z.string()).optional(),
+      medications: z.array(z.string()).optional(),
+      conditions: z.array(z.string()).optional(),
+      surgeries: z
+        .array(
+          z.object({
+            procedure: z.string(),
+            date: z.string().datetime(),
+            hospital: z.string(),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
   lgpdConsent: z.object({
     dataProcessing: z.boolean(),
     marketingCommunications: z.boolean().optional(),
@@ -180,11 +186,13 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
             allergies: ['Penicillin', 'Latex'],
             medications: ['Metformin', 'Losartan'],
             conditions: ['Diabetes Type 2', 'Hypertension'],
-            surgeries: [{
-              procedure: 'Appendectomy',
-              date: '2020-03-15T10:00:00.000Z',
-              hospital: 'Hospital São Paulo',
-            }],
+            surgeries: [
+              {
+                procedure: 'Appendectomy',
+                date: '2020-03-15T10:00:00.000Z',
+                hospital: 'Hospital São Paulo',
+              },
+            ],
           },
         });
 
@@ -196,9 +204,13 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
       expect(response.body.medicalHistory).toBeDefined();
       expect(response.body.medicalHistory.allergies).toContain('Penicillin');
       expect(response.body.medicalHistory.medications).toContain('Metformin');
-      expect(response.body.medicalHistory.conditions).toContain('Diabetes Type 2');
+      expect(response.body.medicalHistory.conditions).toContain(
+        'Diabetes Type 2',
+      );
       expect(response.body.medicalHistory.surgeries).toHaveLength(1);
-      expect(response.body.medicalHistory.surgeries[0].procedure).toBe('Appendectomy');
+      expect(response.body.medicalHistory.surgeries[0].procedure).toBe(
+        'Appendectomy',
+      );
     });
 
     it('should handle patients without medical history', async () => {
@@ -266,9 +278,7 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
     });
 
     it('should return 401 for missing authentication', async () => {
-      await request(app)
-        .get(`/api/v2/patients/${testPatientId}`)
-        .expect(401);
+      await request(app).get(`/api/v2/patients/${testPatientId}`).expect(401);
     });
 
     it('should return 403 for insufficient permissions', async () => {
@@ -356,7 +366,9 @@ describe('GET /api/v2/patients/{id} - Contract Tests', () => {
       expect(response.body.phone).toMatch(/^\(\d{2}\) \d{4,5}-\d{4}$/);
       expect(response.body.address.zipCode).toMatch(/^\d{5}-\d{3}$/);
       expect(response.body.address.state).toHaveLength(2);
-      expect(response.body.emergencyContact.phone).toMatch(/^\(\d{2}\) \d{4,5}-\d{4}$/);
+      expect(response.body.emergencyContact.phone).toMatch(
+        /^\(\d{2}\) \d{4,5}-\d{4}$/,
+      );
     });
   });
 });

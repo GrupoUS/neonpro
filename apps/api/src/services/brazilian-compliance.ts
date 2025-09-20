@@ -41,7 +41,7 @@ export const BRAZILIAN_COMPLIANCE_LEVELS = {
 } as const;
 
 export type BrazilianComplianceLevel =
-  typeof BRAZILIAN_COMPLIANCE_LEVELS[keyof typeof BRAZILIAN_COMPLIANCE_LEVELS];
+  (typeof BRAZILIAN_COMPLIANCE_LEVELS)[keyof typeof BRAZILIAN_COMPLIANCE_LEVELS];
 
 // Healthcare Data Security Levels
 export const HEALTHCARE_SECURITY_LEVELS = {
@@ -52,12 +52,17 @@ export const HEALTHCARE_SECURITY_LEVELS = {
 } as const;
 
 export type HealthcareSecurityLevel =
-  typeof HEALTHCARE_SECURITY_LEVELS[keyof typeof HEALTHCARE_SECURITY_LEVELS];
+  (typeof HEALTHCARE_SECURITY_LEVELS)[keyof typeof HEALTHCARE_SECURITY_LEVELS];
 
 // Brazilian Healthcare Compliance Configuration
 export const BrazilianComplianceConfigSchema = z.object({
   organizationName: z.string(),
-  organizationType: z.enum(['clinic', 'hospital', 'telemedicine', 'health_tech']),
+  organizationType: z.enum([
+    'clinic',
+    'hospital',
+    'telemedicine',
+    'health_tech',
+  ]),
   anvisaDeviceClass: z.nativeEnum(ANVISA_DEVICE_CLASSES),
   anvisaSoftwareCategory: z.nativeEnum(ANVISA_SOFTWARE_CATEGORIES),
   patientDataVolume: z.enum(['low', 'medium', 'high', 'very_high']),
@@ -68,7 +73,9 @@ export const BrazilianComplianceConfigSchema = z.object({
   ethicsCommittee: z.boolean(),
 });
 
-export type BrazilianComplianceConfig = z.infer<typeof BrazilianComplianceConfigSchema>;
+export type BrazilianComplianceConfig = z.infer<
+  typeof BrazilianComplianceConfigSchema
+>;
 
 // Comprehensive Brazilian Compliance Report
 export interface BrazilianComplianceReport {
@@ -165,14 +172,16 @@ export class BrazilianComplianceService {
     patientId?: string,
   ): Promise<BrazilianComplianceReport> {
     // Run all compliance validations in parallel
-    const [lgpdCompliance, anvisaCompliance, cfmCompliance] = await Promise.all([
-      this.lgpdService.validateCompliance(patientId),
-      this.anvisaService.validateCompliance(
-        config.anvisaDeviceClass,
-        config.anvisaSoftwareCategory,
-      ),
-      this.cfmService.validateCompliance(),
-    ]);
+    const [lgpdCompliance, anvisaCompliance, cfmCompliance] = await Promise.all(
+      [
+        this.lgpdService.validateCompliance(patientId),
+        this.anvisaService.validateCompliance(
+          config.anvisaDeviceClass,
+          config.anvisaSoftwareCategory,
+        ),
+        this.cfmService.validateCompliance(),
+      ],
+    );
 
     // Validate healthcare data security
     const healthcareDataSecurity = await this.validateHealthcareDataSecurity();
@@ -361,14 +370,16 @@ export class BrazilianComplianceService {
   ): number {
     // Weighted average: LGPD (40%), ANVISA (35%), CFM (25%)
     return Math.round(
-      (lgpd.score * 0.4) + (anvisa.score * 0.35) + (cfm.score * 0.25),
+      lgpd.score * 0.4 + anvisa.score * 0.35 + cfm.score * 0.25,
     );
   }
 
   /**
    * Determine security level
    */
-  private determineSecurityLevel(healthcareDataSecurity: any): HealthcareSecurityLevel {
+  private determineSecurityLevel(
+    healthcareDataSecurity: any,
+  ): HealthcareSecurityLevel {
     return healthcareDataSecurity.level;
   }
 
@@ -389,8 +400,11 @@ export class BrazilianComplianceService {
     ];
 
     // Priority recommendations (critical and high severity issues)
-    const priorityRecommendations = allRecommendations.filter(rec =>
-      rec.includes('urgentemente') || rec.includes('crítico') || rec.includes('alta prioridade')
+    const priorityRecommendations = allRecommendations.filter(
+      rec =>
+        rec.includes('urgentemente')
+        || rec.includes('crítico')
+        || rec.includes('alta prioridade'),
     );
 
     return { priorityRecommendations, allRecommendations };
@@ -415,10 +429,18 @@ export class BrazilianComplianceService {
     ];
 
     const totalIssues = allIssues.length;
-    const criticalIssues = allIssues.filter(i => i.severity === 'critical').length;
-    const highPriorityIssues = allIssues.filter(i => i.severity === 'high').length;
-    const mediumPriorityIssues = allIssues.filter(i => i.severity === 'medium').length;
-    const lowPriorityIssues = allIssues.filter(i => i.severity === 'low').length;
+    const criticalIssues = allIssues.filter(
+      i => i.severity === 'critical',
+    ).length;
+    const highPriorityIssues = allIssues.filter(
+      i => i.severity === 'high',
+    ).length;
+    const mediumPriorityIssues = allIssues.filter(
+      i => i.severity === 'medium',
+    ).length;
+    const lowPriorityIssues = allIssues.filter(
+      i => i.severity === 'low',
+    ).length;
 
     const compliancePercentage = Math.round(
       (lgpd.score + anvisa.score + cfm.score) / 3,
@@ -448,7 +470,11 @@ export class BrazilianComplianceService {
       lowPriorityIssues,
       compliancePercentage,
       estimatedRemediationTime,
-      estimatedRemediationCost: estimatedRemediationCost as 'low' | 'medium' | 'high' | 'very_high',
+      estimatedRemediationCost: estimatedRemediationCost as
+        | 'low'
+        | 'medium'
+        | 'high'
+        | 'very_high',
     };
   }
 

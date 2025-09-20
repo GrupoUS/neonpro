@@ -4,7 +4,7 @@
  * React Query hooks for advanced patient medical history and treatment tracking
  */
 
-import { patientHistoryService } from '@/services/patient-history.service';
+import { patientHistoryService } from "@/services/patient-history.service";
 import type {
   CreateMedicalRecordRequest,
   CreateProgressNoteRequest,
@@ -14,26 +14,37 @@ import type {
   PatientHistoryFilters,
   UpdateMedicalRecordRequest,
   UpdateTreatmentPlanRequest,
-} from '@/types/patient-history';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+} from "@/types/patient-history";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 // Query Keys
 export const patientHistoryKeys = {
-  all: ['patientHistory'] as const,
-  patient: (patientId: string) => [...patientHistoryKeys.all, patientId] as const,
+  all: ["patientHistory"] as const,
+  patient: (patientId: string) =>
+    [...patientHistoryKeys.all, patientId] as const,
   medicalRecords: (patientId: string, filters?: PatientHistoryFilters) =>
-    [...patientHistoryKeys.patient(patientId), 'medicalRecords', filters] as const,
+    [
+      ...patientHistoryKeys.patient(patientId),
+      "medicalRecords",
+      filters,
+    ] as const,
   treatmentPlans: (patientId: string) =>
-    [...patientHistoryKeys.patient(patientId), 'treatmentPlans'] as const,
+    [...patientHistoryKeys.patient(patientId), "treatmentPlans"] as const,
   progressNotes: (patientId: string, treatmentPlanId?: string) =>
-    [...patientHistoryKeys.patient(patientId), 'progressNotes', treatmentPlanId] as const,
+    [
+      ...patientHistoryKeys.patient(patientId),
+      "progressNotes",
+      treatmentPlanId,
+    ] as const,
   allergies: (patientId: string) =>
-    [...patientHistoryKeys.patient(patientId), 'allergies'] as const,
+    [...patientHistoryKeys.patient(patientId), "allergies"] as const,
   conditions: (patientId: string) =>
-    [...patientHistoryKeys.patient(patientId), 'conditions'] as const,
-  timeline: (patientId: string) => [...patientHistoryKeys.patient(patientId), 'timeline'] as const,
-  summary: (patientId: string) => [...patientHistoryKeys.patient(patientId), 'summary'] as const,
+    [...patientHistoryKeys.patient(patientId), "conditions"] as const,
+  timeline: (patientId: string) =>
+    [...patientHistoryKeys.patient(patientId), "timeline"] as const,
+  summary: (patientId: string) =>
+    [...patientHistoryKeys.patient(patientId), "summary"] as const,
 };
 
 /**
@@ -57,13 +68,18 @@ export function useCreateMedicalRecord() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, clinicId, request }: {
+    mutationFn: ({
+      patientId,
+      clinicId,
+      request,
+    }: {
       patientId: string;
       clinicId: string;
       request: CreateMedicalRecordRequest;
-    }) => patientHistoryService.createMedicalRecord(patientId, clinicId, request),
+    }) =>
+      patientHistoryService.createMedicalRecord(patientId, clinicId, request),
 
-    onSuccess: _data => {
+    onSuccess: (_data) => {
       // Invalidate medical records for this patient
       queryClient.invalidateQueries({
         queryKey: patientHistoryKeys.all,
@@ -77,11 +93,11 @@ export function useCreateMedicalRecord() {
         queryKey: patientHistoryKeys.timeline(variables.patientId),
       });
 
-      toast.success('Registro médico criado com sucesso!');
+      toast.success("Registro médico criado com sucesso!");
     },
 
     onError: (error: Error) => {
-      console.error('Error creating medical record:', error);
+      console.error("Error creating medical record:", error);
       toast.error(`Erro ao criar registro médico: ${error.message}`);
     },
   });
@@ -94,7 +110,10 @@ export function useUpdateMedicalRecord() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, request }: {
+    mutationFn: ({
+      id,
+      request,
+    }: {
       id: string;
       request: UpdateMedicalRecordRequest;
     }) => patientHistoryService.updateMedicalRecord(id, request),
@@ -105,11 +124,11 @@ export function useUpdateMedicalRecord() {
         queryKey: patientHistoryKeys.all,
       });
 
-      toast.success('Registro médico atualizado com sucesso!');
+      toast.success("Registro médico atualizado com sucesso!");
     },
 
     onError: (error: Error) => {
-      console.error('Error updating medical record:', error);
+      console.error("Error updating medical record:", error);
       toast.error(`Erro ao atualizar registro médico: ${error.message}`);
     },
   });
@@ -133,11 +152,16 @@ export function useCreateTreatmentPlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, clinicId, request }: {
+    mutationFn: ({
+      patientId,
+      clinicId,
+      request,
+    }: {
       patientId: string;
       clinicId: string;
       request: CreateTreatmentPlanRequest;
-    }) => patientHistoryService.createTreatmentPlan(patientId, clinicId, request),
+    }) =>
+      patientHistoryService.createTreatmentPlan(patientId, clinicId, request),
 
     onSuccess: () => {
       // Invalidate treatment plans and summary
@@ -150,11 +174,11 @@ export function useCreateTreatmentPlan() {
         queryKey: patientHistoryKeys.summary(variables.patientId),
       });
 
-      toast.success('Plano de tratamento criado com sucesso!');
+      toast.success("Plano de tratamento criado com sucesso!");
     },
 
     onError: (error: Error) => {
-      console.error('Error creating treatment plan:', error);
+      console.error("Error creating treatment plan:", error);
       toast.error(`Erro ao criar plano de tratamento: ${error.message}`);
     },
   });
@@ -167,7 +191,10 @@ export function useUpdateTreatmentPlan() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ id, request }: {
+    mutationFn: ({
+      id,
+      request,
+    }: {
       id: string;
       request: UpdateTreatmentPlanRequest;
     }) => patientHistoryService.updateTreatmentPlan(id, request),
@@ -178,11 +205,11 @@ export function useUpdateTreatmentPlan() {
         queryKey: patientHistoryKeys.all,
       });
 
-      toast.success('Plano de tratamento atualizado com sucesso!');
+      toast.success("Plano de tratamento atualizado com sucesso!");
     },
 
     onError: (error: Error) => {
-      console.error('Error updating treatment plan:', error);
+      console.error("Error updating treatment plan:", error);
       toast.error(`Erro ao atualizar plano de tratamento: ${error.message}`);
     },
   });
@@ -194,7 +221,8 @@ export function useUpdateTreatmentPlan() {
 export function useProgressNotes(patientId: string, treatmentPlanId?: string) {
   return useQuery({
     queryKey: patientHistoryKeys.progressNotes(patientId, treatmentPlanId),
-    queryFn: () => patientHistoryService.getProgressNotes(patientId, treatmentPlanId),
+    queryFn: () =>
+      patientHistoryService.getProgressNotes(patientId, treatmentPlanId),
     enabled: !!patientId,
   });
 }
@@ -206,7 +234,10 @@ export function useCreateProgressNote() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, request }: {
+    mutationFn: ({
+      patientId,
+      request,
+    }: {
       patientId: string;
       request: CreateProgressNoteRequest;
     }) => patientHistoryService.createProgressNote(patientId, request),
@@ -222,11 +253,11 @@ export function useCreateProgressNote() {
         queryKey: patientHistoryKeys.timeline(variables.patientId),
       });
 
-      toast.success('Nota de progresso criada com sucesso!');
+      toast.success("Nota de progresso criada com sucesso!");
     },
 
     onError: (error: Error) => {
-      console.error('Error creating progress note:', error);
+      console.error("Error creating progress note:", error);
       toast.error(`Erro ao criar nota de progresso: ${error.message}`);
     },
   });
@@ -250,9 +281,15 @@ export function useAddPatientAllergy() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, allergy }: {
+    mutationFn: ({
+      patientId,
+      allergy,
+    }: {
       patientId: string;
-      allergy: Omit<PatientAllergy, 'id' | 'patient_id' | 'created_at' | 'updated_at'>;
+      allergy: Omit<
+        PatientAllergy,
+        "id" | "patient_id" | "created_at" | "updated_at"
+      >;
     }) => patientHistoryService.addPatientAllergy(patientId, allergy),
 
     onSuccess: (_data, variables) => {
@@ -267,11 +304,11 @@ export function useAddPatientAllergy() {
         queryKey: patientHistoryKeys.summary(variables.patientId),
       });
 
-      toast.success('Alergia adicionada com sucesso!');
+      toast.success("Alergia adicionada com sucesso!");
     },
 
     onError: (error: Error) => {
-      console.error('Error adding patient allergy:', error);
+      console.error("Error adding patient allergy:", error);
       toast.error(`Erro ao adicionar alergia: ${error.message}`);
     },
   });
@@ -295,9 +332,15 @@ export function useAddPatientCondition() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ patientId, condition }: {
+    mutationFn: ({
+      patientId,
+      condition,
+    }: {
       patientId: string;
-      condition: Omit<PatientCondition, 'id' | 'patient_id' | 'created_at' | 'updated_at'>;
+      condition: Omit<
+        PatientCondition,
+        "id" | "patient_id" | "created_at" | "updated_at"
+      >;
     }) => patientHistoryService.addPatientCondition(patientId, condition),
 
     onSuccess: (_data, variables) => {
@@ -312,11 +355,11 @@ export function useAddPatientCondition() {
         queryKey: patientHistoryKeys.summary(variables.patientId),
       });
 
-      toast.success('Condição médica adicionada com sucesso!');
+      toast.success("Condição médica adicionada com sucesso!");
     },
 
     onError: (error: Error) => {
-      console.error('Error adding patient condition:', error);
+      console.error("Error adding patient condition:", error);
       toast.error(`Erro ao adicionar condição médica: ${error.message}`);
     },
   });
@@ -353,7 +396,11 @@ export function useUploadAttachment() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ recordId, file, description }: {
+    mutationFn: ({
+      recordId,
+      file,
+      description,
+    }: {
       recordId: string;
       file: File;
       description?: string;
@@ -365,11 +412,11 @@ export function useUploadAttachment() {
         queryKey: patientHistoryKeys.all,
       });
 
-      toast.success('Anexo enviado com sucesso!');
+      toast.success("Anexo enviado com sucesso!");
     },
 
     onError: (error: Error) => {
-      console.error('Error uploading attachment:', error);
+      console.error("Error uploading attachment:", error);
       toast.error(`Erro ao enviar anexo: ${error.message}`);
     },
   });

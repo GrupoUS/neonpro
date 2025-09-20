@@ -13,11 +13,13 @@ https://api.neonpro.com.br/v1
 ## Authentication
 
 ### Bearer Token Authentication
+
 ```http
 Authorization: Bearer <your-jwt-token>
 ```
 
 ### API Key Authentication
+
 ```http
 X-API-Key: <your-api-key>
 ```
@@ -25,6 +27,7 @@ X-API-Key: <your-api-key>
 ## Core Endpoints
 
 ### Health Check
+
 ```http
 GET /health
 ```
@@ -32,6 +35,7 @@ GET /health
 Returns the current health status of all platform services.
 
 **Response:**
+
 ```json
 {
   "status": "healthy",
@@ -48,6 +52,7 @@ Returns the current health status of all platform services.
 ### Observability
 
 #### Submit Telemetry Event
+
 ```http
 POST /telemetry/events
 ```
@@ -55,6 +60,7 @@ POST /telemetry/events
 Submit healthcare-specific telemetry events with LGPD compliance.
 
 **Request Body:**
+
 ```json
 {
   "eventType": "patient_interaction",
@@ -70,6 +76,7 @@ Submit healthcare-specific telemetry events with LGPD compliance.
 ```
 
 **Response:**
+
 ```json
 {
   "eventId": "event-uuid",
@@ -82,6 +89,7 @@ Submit healthcare-specific telemetry events with LGPD compliance.
 ```
 
 #### Performance Metrics
+
 ```http
 GET /telemetry/metrics
 ```
@@ -89,10 +97,12 @@ GET /telemetry/metrics
 Retrieve system performance metrics with healthcare-specific context.
 
 **Query Parameters:**
+
 - `timeRange`: `1h`, `24h`, `7d`, `30d`
 - `metricType`: `response_time`, `error_rate`, `throughput`
 
 **Response:**
+
 ```json
 {
   "metrics": [
@@ -114,6 +124,7 @@ Retrieve system performance metrics with healthcare-specific context.
 ### AI Chat with Semantic Caching
 
 #### Chat Completion
+
 ```http
 POST /ai-chat/completion
 ```
@@ -121,6 +132,7 @@ POST /ai-chat/completion
 Generate AI responses with semantic caching for cost optimization.
 
 **Request Body:**
+
 ```json
 {
   "messages": [
@@ -143,6 +155,7 @@ Generate AI responses with semantic caching for cost optimization.
 ```
 
 **Response:**
+
 ```json
 {
   "id": "chat-uuid",
@@ -169,6 +182,7 @@ Generate AI responses with semantic caching for cost optimization.
 ```
 
 #### Streaming Chat
+
 ```http
 POST /ai-chat/stream
 ```
@@ -176,6 +190,7 @@ POST /ai-chat/stream
 Stream AI responses with real-time semantic caching.
 
 **Request Body:**
+
 ```json
 {
   "messages": [
@@ -197,6 +212,7 @@ Stream AI responses with real-time semantic caching.
 ```
 
 **Response (Streaming):**
+
 ```
 data: {"type": "content", "content": "Diabetes management involves..."}
 data: {"type": "content", "content": " regular blood glucose monitoring..."}
@@ -206,6 +222,7 @@ data: {"type": "done", "usage": {"promptTokens": 30, "completionTokens": 200, "t
 ### Security & Compliance
 
 #### LGPD Compliance Check
+
 ```http
 POST /compliance/lgpd/check
 ```
@@ -213,6 +230,7 @@ POST /compliance/lgpd/check
 Validate data processing against LGPD requirements.
 
 **Request Body:**
+
 ```json
 {
   "processingContext": {
@@ -226,6 +244,7 @@ Validate data processing against LGPD requirements.
 ```
 
 **Response:**
+
 ```json
 {
   "compliant": true,
@@ -243,6 +262,7 @@ Validate data processing against LGPD requirements.
 ```
 
 #### Security Headers Validation
+
 ```http
 GET /security/headers/validate
 ```
@@ -250,6 +270,7 @@ GET /security/headers/validate
 Validate security headers compliance for healthcare applications.
 
 **Response:**
+
 ```json
 {
   "headers": {
@@ -277,6 +298,7 @@ Validate security headers compliance for healthcare applications.
 ### Database Operations
 
 #### Patient Data Query (LGPD Compliant)
+
 ```http
 GET /patients/{id}
 ```
@@ -284,6 +306,7 @@ GET /patients/{id}
 Retrieve patient data with LGPD compliance and PII protection.
 
 **Headers:**
+
 ```
 Authorization: Bearer <token>
 X-Data-Subject-Request: true
@@ -291,10 +314,11 @@ X-Purpose: medical_treatment
 ```
 
 **Response:**
+
 ```json
 {
   "id": "patient-id",
-  "name": "John D.",  // PII masked
+  "name": "John D.", // PII masked
   "medicalHistory": {
     "conditions": ["hypertension"],
     "allergies": ["penicillin"],
@@ -312,6 +336,7 @@ X-Purpose: medical_treatment
 ## Error Handling
 
 ### Standard Error Response
+
 ```json
 {
   "error": {
@@ -330,6 +355,7 @@ X-Purpose: medical_treatment
 ```
 
 ### Healthcare-Specific Errors
+
 ```json
 {
   "error": {
@@ -352,16 +378,19 @@ X-Purpose: medical_treatment
 ## Rate Limiting
 
 ### Standard Limits
+
 - **Authenticated Users**: 1000 requests per hour
 - **Unauthenticated Users**: 100 requests per hour
 - **API Keys**: 10,000 requests per hour
 
 ### Healthcare Operations
+
 - **Patient Data Access**: 500 requests per hour
 - **AI Chat**: 100 requests per hour
 - **Telemetry Events**: 5000 requests per hour
 
 ### Rate Limit Headers
+
 ```http
 X-RateLimit-Limit: 1000
 X-RateLimit-Remaining: 950
@@ -371,6 +400,7 @@ X-RateLimit-Reset: 1640995200
 ## Webhooks
 
 ### Compliance Events
+
 ```http
 POST /webhooks/compliance
 ```
@@ -378,6 +408,7 @@ POST /webhooks/compliance
 Receive real-time compliance event notifications.
 
 **Event Payload:**
+
 ```json
 {
   "event": "lgpd.violation.detected",
@@ -392,6 +423,7 @@ Receive real-time compliance event notifications.
 ```
 
 ### Security Events
+
 ```http
 POST /webhooks/security
 ```
@@ -399,6 +431,7 @@ POST /webhooks/security
 Receive security event notifications.
 
 **Event Payload:**
+
 ```json
 {
   "event": "security.breach.attempt",
@@ -415,35 +448,37 @@ Receive security event notifications.
 ## SDKs
 
 ### JavaScript/TypeScript SDK
+
 ```typescript
-import { NeonProAPI } from '@neonpro/sdk';
+import { NeonProAPI } from "@neonpro/sdk";
 
 const api = new NeonProAPI({
-  apiKey: 'your-api-key',
-  baseUrl: 'https://api.neonpro.com.br/v1'
+  apiKey: "your-api-key",
+  baseUrl: "https://api.neonpro.com.br/v1",
 });
 
 // AI Chat with semantic caching
 const response = await api.ai.chat.completion({
-  messages: [{ role: 'user', content: 'Hello' }],
+  messages: [{ role: "user", content: "Hello" }],
   options: {
     enableCache: true,
     healthcareContext: {
-      patientId: 'hashed-patient-id'
-    }
-  }
+      patientId: "hashed-patient-id",
+    },
+  },
 });
 
 // LGPD compliance check
 const compliance = await api.compliance.lgpd.check({
   processingContext: {
-    operation: 'patient_data_access',
-    legalBasis: 'consent'
-  }
+    operation: "patient_data_access",
+    legalBasis: "consent",
+  },
 });
 ```
 
 ### Python SDK
+
 ```python
 from neonpro import NeonProAPI
 
@@ -465,12 +500,15 @@ response = api.telemetry.submit_event({
 ## OpenAPI Specification
 
 The complete OpenAPI 3.0 specification is available at:
+
 ```
 https://api.neonpro.com.br/v1/openapi.yaml
 ```
 
 ### Interactive Documentation
+
 Interactive API documentation is available at:
+
 ```
 https://api.neonpro.com.br/v1/docs
 ```
@@ -478,83 +516,82 @@ https://api.neonpro.com.br/v1/docs
 ## Implementation Examples
 
 ### React Frontend Integration
+
 ```tsx
-import { useNeonProAPI } from '@neonpro/react';
+import { useNeonProAPI } from "@neonpro/react";
 
 function PatientConsultation() {
-  const { data: patient, loading, error } = useNeonProAPI(
-    `/patients/${patientId}`,
-    {
-      headers: {
-        'X-Data-Subject-Request': 'true',
-        'X-Purpose': 'medical_treatment'
-      }
-    }
-  );
+  const {
+    data: patient,
+    loading,
+    error,
+  } = useNeonProAPI(`/patients/${patientId}`, {
+    headers: {
+      "X-Data-Subject-Request": "true",
+      "X-Purpose": "medical_treatment",
+    },
+  });
 
-  const [chatMessage, setChatMessage] = useState('');
-  
+  const [chatMessage, setChatMessage] = useState("");
+
   const sendMessage = async () => {
-    const response = await fetch('/ai-chat/completion', {
-      method: 'POST',
+    const response = await fetch("/ai-chat/completion", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        messages: [{ role: 'user', content: chatMessage }],
+        messages: [{ role: "user", content: chatMessage }],
         options: {
           enableCache: true,
           healthcareContext: {
             patientId: patient?.id,
-            professionalId: currentUser.id
-          }
-        }
-      })
+            professionalId: currentUser.id,
+          },
+        },
+      }),
     });
   };
 
-  return (
-    <div>
-      {/* Patient consultation interface */}
-    </div>
-  );
+  return <div>{/* Patient consultation interface */}</div>;
 }
 ```
 
 ### Backend Integration
+
 ```typescript
-import { Hono } from 'hono';
-import { NeonProAPI } from '@neonpro/hono';
+import { Hono } from "hono";
+import { NeonProAPI } from "@neonpro/hono";
 
 const app = new Hono();
 const neonpro = new NeonProAPI({
-  apiKey: process.env.NEONPRO_API_KEY
+  apiKey: process.env.NEONPRO_API_KEY,
 });
 
 // Enhanced AI chat with semantic caching
-app.post('/chat', async (c) => {
+app.post("/chat", async (c) => {
   const { messages, healthcareContext } = await c.req.json();
-  
+
   const response = await neonpro.ai.chat.completion({
     messages,
     options: {
       enableCache: true,
-      healthcareContext
-    }
+      healthcareContext,
+    },
   });
-  
+
   return c.json(response);
 });
 
 // LGPD compliance validation
-app.post('/validate-processing', async (c) => {
+app.post("/validate-processing", async (c) => {
   const { processingContext } = await c.req.json();
-  
+
   const compliance = await neonpro.compliance.lgpd.check({
-    processingContext
+    processingContext,
   });
-  
+
   return c.json(compliance);
 });
 ```
@@ -562,22 +599,26 @@ app.post('/validate-processing', async (c) => {
 ## Support
 
 ### Documentation
+
 - [API Reference](https://docs.neonpro.com.br/api)
 - [LGPD Compliance Guide](https://docs.neonpro.com.br/compliance/lgpd)
 - [Security Best Practices](https://docs.neonpro.com.br/security)
 
 ### Contact
+
 - **API Support**: api-support@neonpro.com.br
 - **Compliance Questions**: compliance@neonpro.com.br
 - **Security Issues**: security@neonpro.com.br
 
 ### Status
+
 - **API Status**: https://status.neonpro.com.br
 - **Maintenance Schedule**: https://status.neonpro.com.br/maintenance
 
 ## Changelog
 
 ### v1.0.0 (2024-01-01)
+
 - Initial API release
 - LGPD compliance implementation
 - AI chat with semantic caching
@@ -586,6 +627,7 @@ app.post('/validate-processing', async (c) => {
 - Performance optimization features
 
 ### v1.1.0 (2024-01-15)
+
 - Enhanced PII redaction
 - Improved semantic caching
 - Additional healthcare metrics

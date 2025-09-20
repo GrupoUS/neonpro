@@ -190,7 +190,9 @@ class ErrorLogger {
       endpoint: context.endpoint,
       method: context.method,
       healthcareProfessional: context.healthcareProfessional,
-      patientId: context.patientId ? `patient-${context.patientId.slice(-4)}` : undefined,
+      patientId: context.patientId
+        ? `patient-${context.patientId.slice(-4)}`
+        : undefined,
       timestamp: context.timestamp,
       // Remove potentially sensitive additional data
       additionalData: context.additionalData
@@ -255,7 +257,10 @@ class ErrorHandler {
   }
 
   // Handle error and return appropriate response
-  async handleError(error: Error, context: ErrorContext): Promise<{
+  async handleError(
+    error: Error,
+    context: ErrorContext,
+  ): Promise<{
     status: number;
     response: {
       success: false;
@@ -284,7 +289,10 @@ class ErrorHandler {
   }
 
   // Create structured error from generic error
-  private createStructuredError(error: Error, context: ErrorContext): StructuredError {
+  private createStructuredError(
+    error: Error,
+    context: ErrorContext,
+  ): StructuredError {
     const errorId = crypto.randomUUID();
 
     // Determine error category and severity
@@ -347,7 +355,10 @@ class ErrorHandler {
     }
 
     // Database errors
-    if (error.message.includes('database') || error.message.includes('connection')) {
+    if (
+      error.message.includes('database')
+      || error.message.includes('connection')
+    ) {
       return {
         category: ErrorCategory.DATABASE,
         severity: ErrorSeverity.HIGH,
@@ -426,7 +437,10 @@ class ErrorHandler {
   // Get user-friendly error message
   private getUserFriendlyMessage(error: StructuredError): string {
     if (this.config.brazilianPortuguese) {
-      return errorMessages[error.code as keyof typeof errorMessages] || errorMessages.UNKNOWN_ERROR;
+      return (
+        errorMessages[error.code as keyof typeof errorMessages]
+        || errorMessages.UNKNOWN_ERROR
+      );
     }
 
     // Fallback to English if Portuguese is disabled
@@ -575,14 +589,23 @@ export function errorHandling(config: Partial<ErrorConfig> = {}) {
           },
         );
 
-        const { status, response } = await handler.handleError(healthcareError, context);
-        return c.json({
-          ...response,
-          validationErrors: formattedError.details,
-        }, status);
+        const { status, response } = await handler.handleError(
+          healthcareError,
+          context,
+        );
+        return c.json(
+          {
+            ...response,
+            validationErrors: formattedError.details,
+          },
+          status,
+        );
       }
 
-      const { status, response } = await handler.handleError(error as Error, context);
+      const { status, response } = await handler.handleError(
+        error as Error,
+        context,
+      );
       return c.json(response, status);
     }
   };

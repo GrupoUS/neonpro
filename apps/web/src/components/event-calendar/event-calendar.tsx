@@ -63,14 +63,34 @@ export function EventCalendar({
   className,
   initialView = "month",
 }: EventCalendarProps) {
-  // Use the shared calendar context instead of local state
-  const { currentDate, setCurrentDate } = useCalendarContext();
-  const [view, setView] = useState<CalendarView>(initialView);
+  // Use the enhanced calendar context
+  const { 
+    currentDate, 
+    setCurrentDate,
+    currentView,
+    setCurrentView,
+    filteredEvents,
+    loading,
+    error,
+    createEvent,
+    updateEvent,
+    deleteEvent,
+    navigateToDate,
+    navigateToToday,
+    navigatePrevious,
+    navigateNext,
+  } = useCalendarContext();
+  
+  // Initialize view state
+  const [view, setView] = useState<CalendarView>(currentView);
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false);
-  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(
-    null,
-  );
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const { open } = useSidebar();
+
+  // Sync view state with context
+  React.useEffect(() => {
+    setView(currentView);
+  }, [currentView]);
 
   // Add keyboard shortcuts for view switching
   useEffect(() => {
@@ -110,44 +130,23 @@ export function EventCalendar({
   }, [isEventDialogOpen]);
 
   const handlePrevious = () => {
-    if (view === "month") {
-      setCurrentDate(subMonths(currentDate, 1));
-    } else if (view === "week") {
-      setCurrentDate(subWeeks(currentDate, 1));
-    } else if (view === "day") {
-      setCurrentDate(addDays(currentDate, -1));
-    } else if (view === "agenda") {
-      // For agenda view, go back 30 days (a full month)
-      setCurrentDate(addDays(currentDate, -AgendaDaysToShow));
-    }
+    navigatePrevious();
   };
 
   const handleNext = () => {
-    if (view === "month") {
-      setCurrentDate(addMonths(currentDate, 1));
-    } else if (view === "week") {
-      setCurrentDate(addWeeks(currentDate, 1));
-    } else if (view === "day") {
-      setCurrentDate(addDays(currentDate, 1));
-    } else if (view === "agenda") {
-      // For agenda view, go forward 30 days (a full month)
-      setCurrentDate(addDays(currentDate, AgendaDaysToShow));
-    }
+    navigateNext();
   };
 
   const handleToday = () => {
-    setCurrentDate(new Date());
+    navigateToToday();
   };
 
   const handleEventSelect = (event: CalendarEvent) => {
-    console.log("Event selected:", event); // Debug log
     setSelectedEvent(event);
     setIsEventDialogOpen(true);
   };
 
   const handleEventCreate = (startTime: Date) => {
-    console.log("Creating new event at:", startTime); // Debug log
-
     // Snap to 15-minute intervals
     const minutes = startTime.getMinutes();
     const remainder = minutes % 15;
@@ -174,52 +173,61 @@ export function EventCalendar({
     setIsEventDialogOpen(true);
   };
 
-  const handleEventSave = (event: CalendarEvent) => {
-    if (event.id) {
-      onEventUpdate?.(event);
-      // Show toast notification when an event is updated
-      toast(`Event "${event.title}" updated`, {
-        description: format(new Date(event.start), "MMM d, yyyy"),
-        position: "bottom-left",
-      });
-    } else {
-      onEventAdd?.({
-        ...event,
-        id: Math.random().toString(36).substring(2, 11),
-      });
-      // Show toast notification when an event is added
-      toast(`Event "${event.title}" added`, {
-        description: format(new Date(event.start), "MMM d, yyyy"),
-        position: "bottom-left",
-      });
-    }
-    setIsEventDialogOpen(false);
-    setSelectedEvent(null);
-  };
-
-  const handleEventDelete = (eventId: string) => {
-    const deletedEvent = events.find((e) => e.id === eventId);
-    onEventDelete?.(eventId);
-    setIsEventDialogOpen(false);
-    setSelectedEvent(null);
-
-    // Show toast notification when an event is deleted
-    if (deletedEvent) {
-      toast(`Event "${deletedEvent.title}" deleted`, {
-        description: format(new Date(deletedEvent.start), "MMM d, yyyy"),
-        position: "bottom-left",
-      });
+  const handleEventSave = async (event: CalendarEvent) => {
+    try {
+      if (event.id) {
+        await updateEvent({
+          id: event.id,
+          title: event.title,
+          start: event.start,
+          end: event.end,
+          description: event.description,
+          allDay: event.allDay,
+          color: event.color,
+          location: event.location,
+        } as any);
+      } else {
+        await createEvent({
+          title: event.title,
+          start: event.start,
+          end: event.end,
+          description: event.description,
+          allDay: event.allDay,
+          color: event.color,
+          location: event.location,
+          clinicId: "", // This should come from context or user session
+        } as any);
+      }
+      setIsEventDialogOpen(false);
+      setSelectedEvent(null);
+    } catch (error) {
+      console.error("Failed to save event:", error);
+      // Error is already handled by the context with toast
     }
   };
 
-  const handleEventUpdate = (updatedEvent: CalendarEvent) => {
-    onEventUpdate?.(updatedEvent);
+  const handleEventDelete = async (eventId: string) => {
+    try {
+      await deleteEvent(eventId);
+      setIsEventDialogOpen(false);
+      setSelectedEvent(null);
+    } catch (error) {
+      console.error("Failed to delete event:", error);
+      // Error is already handled by the context with toast
+    }
+  };
 
-    // Show toast notification when an event is updated via drag and drop
-    toast(`Event "${updatedEvent.title}" moved`, {
-      description: format(new Date(updatedEvent.start), "MMM d, yyyy"),
-      position: "bottom-left",
-    });
+  const handleEventUpdate = async (updatedEvent: CalendarEvent) => {
+    try {
+      await updateEvent({
+        id: updatedEvent.id,
+        start: updatedEvent.start,
+        end: updatedEvent.end,
+      } as any);
+    } catch (error) {
+      console.error("Failed to update event:", error);
+      // Error is already handled by the context with toast
+    }
   };
 
   const viewTitle = useMemo(() => {
@@ -348,16 +356,16 @@ export function EventCalendar({
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="min-w-32">
-                  <DropdownMenuItem onClick={() => setView("month")}>
+                  <DropdownMenuItem onClick={() => setCurrentView("month")}>
                     Month <DropdownMenuShortcut>M</DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setView("week")}>
+                  <DropdownMenuItem onClick={() => setCurrentView("week")}>
                     Week <DropdownMenuShortcut>W</DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setView("day")}>
+                  <DropdownMenuItem onClick={() => setCurrentView("day")}>
                     Day <DropdownMenuShortcut>D</DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => setView("agenda")}>
+                  <DropdownMenuItem onClick={() => setCurrentView("agenda")}>
                     Agenda <DropdownMenuShortcut>A</DropdownMenuShortcut>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -368,36 +376,56 @@ export function EventCalendar({
         </div>
 
         <div className="flex flex-1 flex-col">
-          {view === "month" && (
-            <MonthView
-              currentDate={currentDate}
-              events={events}
-              onEventSelect={handleEventSelect}
-              onEventCreate={handleEventCreate}
-            />
+          {loading && (
+            <div className="flex items-center justify-center h-64">
+              <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" />
+              <span className="ml-2 text-sm text-muted-foreground">Loading events...</span>
+            </div>
           )}
-          {view === "week" && (
-            <WeekView
-              currentDate={currentDate}
-              events={events}
-              onEventSelect={handleEventSelect}
-              onEventCreate={handleEventCreate}
-            />
+          
+          {error && (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground mb-2">Error loading events</p>
+                <p className="text-xs text-muted-foreground">{error}</p>
+              </div>
+            </div>
           )}
-          {view === "day" && (
-            <DayView
-              currentDate={currentDate}
-              events={events}
-              onEventSelect={handleEventSelect}
-              onEventCreate={handleEventCreate}
-            />
-          )}
-          {view === "agenda" && (
-            <AgendaView
-              currentDate={currentDate}
-              events={events}
-              onEventSelect={handleEventSelect}
-            />
+          
+          {!loading && !error && (
+            <>
+              {view === "month" && (
+                <MonthView
+                  currentDate={currentDate}
+                  events={filteredEvents}
+                  onEventSelect={handleEventSelect}
+                  onEventCreate={handleEventCreate}
+                />
+              )}
+              {view === "week" && (
+                <WeekView
+                  currentDate={currentDate}
+                  events={filteredEvents}
+                  onEventSelect={handleEventSelect}
+                  onEventCreate={handleEventCreate}
+                />
+              )}
+              {view === "day" && (
+                <DayView
+                  currentDate={currentDate}
+                  events={filteredEvents}
+                  onEventSelect={handleEventSelect}
+                  onEventCreate={handleEventCreate}
+                />
+              )}
+              {view === "agenda" && (
+                <AgendaView
+                  currentDate={currentDate}
+                  events={filteredEvents}
+                  onEventSelect={handleEventSelect}
+                />
+              )}
+            </>
           )}
         </div>
 

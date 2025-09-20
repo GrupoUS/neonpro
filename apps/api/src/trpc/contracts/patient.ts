@@ -295,16 +295,20 @@ export const patientRouter = router({
       tags: ['patient', 'delete', 'lgpd'],
       requiresPermission: 'patient:delete',
     })
-    .input(z.object({
-      id: z.string().uuid(),
-      reason: z.string().min(10).max(500),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        reason: z.string().min(10).max(500),
+      }),
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const patient = await ctx.prisma.patient.findUnique({
         where: { id: input.id },
@@ -403,7 +407,10 @@ function calculateDataRetention(): string {
   return retentionDate.toISOString();
 }
 
-async function validateClinicAccess(userId: string, clinicId: string): Promise<void> {
+async function validateClinicAccess(
+  userId: string,
+  clinicId: string,
+): Promise<void> {
   // Implementation depends on your authorization system
   // This is a placeholder for clinic access validation
   return Promise.resolve();

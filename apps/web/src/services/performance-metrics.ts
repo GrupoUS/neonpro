@@ -18,7 +18,7 @@ import {
   PerformanceMetricsSchema,
   ResourceUtilization,
   WebVitals,
-} from '@neonpro/shared';
+} from "@neonpro/shared";
 
 // ============================================================================
 // Types & Interfaces
@@ -49,11 +49,11 @@ export interface MetricsCollectionOptions {
 }
 
 export interface PerformanceAlert {
-  type: 'threshold_exceeded' | 'sla_violation' | 'critical_latency';
+  type: "threshold_exceeded" | "sla_violation" | "critical_latency";
   metric: string;
   value: number;
   threshold: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
+  severity: "low" | "medium" | "high" | "critical";
   healthcareImpact: boolean;
   timestamp: string;
 }
@@ -77,7 +77,7 @@ export class PerformanceMetricsService {
       sampleRate: 1.0,
       reportingInterval: 30000, // 30 seconds
       maxBatchSize: 50,
-      endpoint: '/api/v1/observability/telemetry/performance',
+      endpoint: "/api/v1/observability/telemetry/performance",
       healthcareCompliance: true,
       emergencyThresholds: {
         emergencyActionResponseTime: 200, // Must be <200ms for patient safety
@@ -107,9 +107,11 @@ export class PerformanceMetricsService {
       this.setupReportingInterval();
       this.isEnabled = true;
 
-      console.log('[PerformanceMetrics] Service initialized with healthcare compliance');
+      console.log(
+        "[PerformanceMetrics] Service initialized with healthcare compliance",
+      );
     } catch (error) {
-      console.error('[PerformanceMetrics] Failed to initialize:', error);
+      console.error("[PerformanceMetrics] Failed to initialize:", error);
     }
   }
 
@@ -132,15 +134,15 @@ export class PerformanceMetricsService {
 
   private setupWebVitalsCollection(): void {
     // Core Web Vitals implementation using web-vitals library pattern
-    this.observeMetric('FCP', this.handleFirstContentfulPaint.bind(this));
-    this.observeMetric('LCP', this.handleLargestContentfulPaint.bind(this));
-    this.observeMetric('CLS', this.handleCumulativeLayoutShift.bind(this));
-    this.observeMetric('FID', this.handleFirstInputDelay.bind(this));
-    this.observeMetric('TTFB', this.handleTimeToFirstByte.bind(this));
+    this.observeMetric("FCP", this.handleFirstContentfulPaint.bind(this));
+    this.observeMetric("LCP", this.handleLargestContentfulPaint.bind(this));
+    this.observeMetric("CLS", this.handleCumulativeLayoutShift.bind(this));
+    this.observeMetric("FID", this.handleFirstInputDelay.bind(this));
+    this.observeMetric("TTFB", this.handleTimeToFirstByte.bind(this));
 
     // Enhanced metrics for healthcare
-    this.observeMetric('TTI', this.handleTimeToInteractive.bind(this));
-    this.observeMetric('INP', this.handleInteractionToNextPaint.bind(this));
+    this.observeMetric("TTI", this.handleTimeToInteractive.bind(this));
+    this.observeMetric("INP", this.handleInteractionToNextPaint.bind(this));
   }
 
   private observeMetric(
@@ -157,52 +159,57 @@ export class PerformanceMetricsService {
 
     // Use appropriate PerformanceObserver for each metric
     switch (name) {
-      case 'FCP':
-      case 'LCP':
+      case "FCP":
+      case "LCP":
         this.observePaintTiming(name, wrappedCallback);
         break;
-      case 'CLS':
+      case "CLS":
         this.observeLayoutShift(wrappedCallback);
         break;
-      case 'FID':
-      case 'INP':
+      case "FID":
+      case "INP":
         this.observeEventTiming(name, wrappedCallback);
         break;
-      case 'TTFB':
+      case "TTFB":
         this.observeNavigationTiming(wrappedCallback);
         break;
-      case 'TTI':
+      case "TTI":
         this.observeTimeToInteractive(wrappedCallback);
         break;
     }
   }
 
   private observePaintTiming(metricName: string, callback: Function): void {
-    if ('PerformanceObserver' in window) {
-      const observer = new PerformanceObserver(list => {
+    if ("PerformanceObserver" in window) {
+      const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         for (const entry of entries) {
-          if (entry.name === 'first-contentful-paint' && metricName === 'FCP') {
+          if (entry.name === "first-contentful-paint" && metricName === "FCP") {
             callback(entry.startTime, entry);
-          } else if (entry.entryType === 'largest-contentful-paint' && metricName === 'LCP') {
+          } else if (
+            entry.entryType === "largest-contentful-paint" &&
+            metricName === "LCP"
+          ) {
             callback(entry.startTime, entry);
           }
         }
       });
 
       try {
-        observer.observe({ entryTypes: ['paint', 'largest-contentful-paint'] });
+        observer.observe({ entryTypes: ["paint", "largest-contentful-paint"] });
       } catch {
         // Fallback for older browsers
-        console.warn(`[PerformanceMetrics] ${metricName} observation not supported`);
+        console.warn(
+          `[PerformanceMetrics] ${metricName} observation not supported`,
+        );
       }
     }
   }
 
   private observeLayoutShift(callback: Function): void {
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       let clsValue = 0;
-      const observer = new PerformanceObserver(list => {
+      const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries() as PerformanceLayoutShift[];
         for (const entry of entries) {
           if (!entry.hadRecentInput) {
@@ -213,24 +220,26 @@ export class PerformanceMetricsService {
       });
 
       try {
-        observer.observe({ entryTypes: ['layout-shift'] });
+        observer.observe({ entryTypes: ["layout-shift"] });
       } catch {
-        console.warn('[PerformanceMetrics] CLS observation not supported');
+        console.warn("[PerformanceMetrics] CLS observation not supported");
       }
     }
   }
 
   private observeEventTiming(metricName: string, callback: Function): void {
-    if ('PerformanceObserver' in window) {
-      const observer = new PerformanceObserver(list => {
+    if ("PerformanceObserver" in window) {
+      const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries() as any[];
         for (const entry of entries) {
-          if (metricName === 'FID' && (entry as any).name === 'first-input') {
-            const ps = (entry as any).processingStart ?? (entry as any).startTime;
+          if (metricName === "FID" && (entry as any).name === "first-input") {
+            const ps =
+              (entry as any).processingStart ?? (entry as any).startTime;
             callback(ps - (entry as any).startTime, entry as any);
-          } else if (metricName === 'INP') {
-            const pe = (entry as any).processingEnd
-              ?? (entry as any).duration + (entry as any).startTime;
+          } else if (metricName === "INP") {
+            const pe =
+              (entry as any).processingEnd ??
+              (entry as any).duration + (entry as any).startTime;
             const duration = pe - (entry as any).startTime;
             callback(duration, entry as any);
           }
@@ -238,19 +247,21 @@ export class PerformanceMetricsService {
       });
 
       try {
-        observer.observe({ entryTypes: ['event'] });
+        observer.observe({ entryTypes: ["event"] });
       } catch {
-        console.warn(`[PerformanceMetrics] ${metricName} observation not supported`);
+        console.warn(
+          `[PerformanceMetrics] ${metricName} observation not supported`,
+        );
       }
     }
   }
 
   private observeNavigationTiming(callback: Function): void {
-    if ('PerformanceObserver' in window) {
-      const observer = new PerformanceObserver(list => {
+    if ("PerformanceObserver" in window) {
+      const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         for (const entry of entries) {
-          if (entry.entryType === 'navigation') {
+          if (entry.entryType === "navigation") {
             const navEntry = entry as PerformanceNavigationTiming;
             const ttfb = navEntry.responseStart - navEntry.requestStart;
             callback(ttfb, entry);
@@ -259,36 +270,38 @@ export class PerformanceMetricsService {
       });
 
       try {
-        observer.observe({ entryTypes: ['navigation'] });
+        observer.observe({ entryTypes: ["navigation"] });
       } catch {
-        console.warn('[PerformanceMetrics] TTFB observation not supported');
+        console.warn("[PerformanceMetrics] TTFB observation not supported");
       }
     }
   }
 
   private observeTimeToInteractive(callback: Function): void {
     // TTI calculation based on long tasks and network quiet periods
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       let longTaskCount = 0;
-      const observer = new PerformanceObserver(list => {
+      const observer = new PerformanceObserver((list) => {
         longTaskCount += list.getEntries().length;
       });
 
       try {
-        observer.observe({ entryTypes: ['longtask'] });
+        observer.observe({ entryTypes: ["longtask"] });
 
         // Simplified TTI estimation
-        window.addEventListener('load', () => {
+        window.addEventListener("load", () => {
           setTimeout(() => {
             const navigationEntry = performance.getEntriesByType(
-              'navigation',
+              "navigation",
             )[0] as PerformanceNavigationTiming;
-            const tti = navigationEntry ? navigationEntry.loadEventEnd : performance.now();
+            const tti = navigationEntry
+              ? navigationEntry.loadEventEnd
+              : performance.now();
             callback(tti);
           }, 1000);
         });
       } catch {
-        console.warn('[PerformanceMetrics] TTI observation not supported');
+        console.warn("[PerformanceMetrics] TTI observation not supported");
       }
     }
   }
@@ -331,8 +344,13 @@ export class PerformanceMetricsService {
     if (patientDataElements.length === 0) return 0;
 
     // Use Resource Timing API to measure data fetch time
-    const entries = performance.getEntriesByType('resource')
-      .filter(entry => entry.name.includes('/patients/') || entry.name.includes('/patient-data/'))
+    const entries = performance
+      .getEntriesByType("resource")
+      .filter(
+        (entry) =>
+          entry.name.includes("/patients/") ||
+          entry.name.includes("/patient-data/"),
+      )
       .sort((a, b) => b.startTime - a.startTime);
 
     return entries.length > 0 ? entries[0].duration : 0;
@@ -345,33 +363,41 @@ export class PerformanceMetricsService {
     if (recordElements.length === 0) return 0;
 
     // Measure rendering time using paint timing
-    const paintEntries = performance.getEntriesByType('paint');
-    const lcp = paintEntries.find(entry => entry.name === 'largest-contentful-paint');
+    const paintEntries = performance.getEntriesByType("paint");
+    const lcp = paintEntries.find(
+      (entry) => entry.name === "largest-contentful-paint",
+    );
 
     return lcp ? lcp.startTime : 0;
   }
 
   private measureAppointmentSchedulingLatency(): number {
     // Measure API response time for appointment operations
-    const appointmentEntries = performance.getEntriesByType('resource')
-      .filter(entry =>
-        entry.name.includes('/appointments/')
-        || entry.name.includes('/scheduling/')
+    const appointmentEntries = performance
+      .getEntriesByType("resource")
+      .filter(
+        (entry) =>
+          entry.name.includes("/appointments/") ||
+          entry.name.includes("/scheduling/"),
       );
 
     if (appointmentEntries.length === 0) return 0;
 
-    const latestEntry = appointmentEntries.sort((a, b) => b.startTime - a.startTime)[0];
+    const latestEntry = appointmentEntries.sort(
+      (a, b) => b.startTime - a.startTime,
+    )[0];
     return latestEntry.duration;
   }
 
   private measureAIResponseTime(): number | undefined {
-    const aiEntries = performance.getEntriesByType('resource')
-      .filter(entry =>
-        entry.name.includes('/ai/')
-        || entry.name.includes('/chat/')
-        || entry.name.includes('openai.com')
-        || entry.name.includes('anthropic.com')
+    const aiEntries = performance
+      .getEntriesByType("resource")
+      .filter(
+        (entry) =>
+          entry.name.includes("/ai/") ||
+          entry.name.includes("/chat/") ||
+          entry.name.includes("openai.com") ||
+          entry.name.includes("anthropic.com"),
       );
 
     if (aiEntries.length === 0) return undefined;
@@ -383,47 +409,58 @@ export class PerformanceMetricsService {
   private measureEmergencyActionResponseTime(): number | undefined {
     // Measure critical emergency actions (alerts, emergency buttons)
     const emergencyElements = document.querySelectorAll(
-      '[data-emergency], .emergency-action, .critical-alert',
+      "[data-emergency], .emergency-action, .critical-alert",
     );
     if (emergencyElements.length === 0) return undefined;
 
     // Check for emergency-related network requests
-    const emergencyEntries = performance.getEntriesByType('resource')
-      .filter(entry =>
-        entry.name.includes('/emergency/')
-        || entry.name.includes('/alert/')
-        || entry.name.includes('/critical/')
+    const emergencyEntries = performance
+      .getEntriesByType("resource")
+      .filter(
+        (entry) =>
+          entry.name.includes("/emergency/") ||
+          entry.name.includes("/alert/") ||
+          entry.name.includes("/critical/"),
       );
 
     if (emergencyEntries.length === 0) return undefined;
 
-    const latestEntry = emergencyEntries.sort((a, b) => b.startTime - a.startTime)[0];
+    const latestEntry = emergencyEntries.sort(
+      (a, b) => b.startTime - a.startTime,
+    )[0];
     return latestEntry.duration;
   }
 
   private measurePrescriptionValidationTime(): number | undefined {
-    const prescriptionEntries = performance.getEntriesByType('resource')
-      .filter(entry =>
-        entry.name.includes('/prescription/')
-        || entry.name.includes('/medication/')
+    const prescriptionEntries = performance
+      .getEntriesByType("resource")
+      .filter(
+        (entry) =>
+          entry.name.includes("/prescription/") ||
+          entry.name.includes("/medication/"),
       );
 
     if (prescriptionEntries.length === 0) return undefined;
 
-    const latestEntry = prescriptionEntries.sort((a, b) => b.startTime - a.startTime)[0];
+    const latestEntry = prescriptionEntries.sort(
+      (a, b) => b.startTime - a.startTime,
+    )[0];
     return latestEntry.duration;
   }
 
   private measureAuditTrailGenerationTime(): number | undefined {
-    const auditEntries = performance.getEntriesByType('resource')
-      .filter(entry =>
-        entry.name.includes('/audit/')
-        || entry.name.includes('/compliance/')
+    const auditEntries = performance
+      .getEntriesByType("resource")
+      .filter(
+        (entry) =>
+          entry.name.includes("/audit/") || entry.name.includes("/compliance/"),
       );
 
     if (auditEntries.length === 0) return undefined;
 
-    const latestEntry = auditEntries.sort((a, b) => b.startTime - a.startTime)[0];
+    const latestEntry = auditEntries.sort(
+      (a, b) => b.startTime - a.startTime,
+    )[0];
     return latestEntry.duration;
   }
 
@@ -447,7 +484,7 @@ export class PerformanceMetricsService {
   }
 
   private getMemoryUsage(): number {
-    if ('memory' in performance) {
+    if ("memory" in performance) {
       const memory = (performance as any).memory;
       return Math.round(memory.usedJSHeapSize / 1024 / 1024); // MB
     }
@@ -456,7 +493,7 @@ export class PerformanceMetricsService {
 
   private getNetworkLatency(): number {
     const navigationEntry = performance.getEntriesByType(
-      'navigation',
+      "navigation",
     )[0] as PerformanceNavigationTiming;
     if (navigationEntry) {
       return navigationEntry.responseStart - navigationEntry.requestStart;
@@ -465,8 +502,11 @@ export class PerformanceMetricsService {
   }
 
   private getBundleSize(): number {
-    const scriptEntries = performance.getEntriesByType('resource')
-      .filter(entry => entry.name.endsWith('.js') || entry.name.endsWith('.css'));
+    const scriptEntries = performance
+      .getEntriesByType("resource")
+      .filter(
+        (entry) => entry.name.endsWith(".js") || entry.name.endsWith(".css"),
+      );
 
     const totalSize = scriptEntries.reduce((sum, entry) => {
       return sum + (entry.transferSize || 0);
@@ -476,32 +516,39 @@ export class PerformanceMetricsService {
   }
 
   private getDatabaseQueryTime(): number | undefined {
-    const dbEntries = performance.getEntriesByType('resource')
-      .filter(entry =>
-        entry.name.includes('/api/')
-        && (entry as PerformanceResourceTiming).responseEnd
-              - (entry as PerformanceResourceTiming).responseStart > 0
+    const dbEntries = performance
+      .getEntriesByType("resource")
+      .filter(
+        (entry) =>
+          entry.name.includes("/api/") &&
+          (entry as PerformanceResourceTiming).responseEnd -
+            (entry as PerformanceResourceTiming).responseStart >
+            0,
       );
 
     if (dbEntries.length === 0) return undefined;
 
-    const avgQueryTime = dbEntries.reduce((sum, entry) => sum + entry.duration, 0)
-      / dbEntries.length;
+    const avgQueryTime =
+      dbEntries.reduce((sum, entry) => sum + entry.duration, 0) /
+      dbEntries.length;
     return avgQueryTime;
   }
 
   private getCacheHitRatio(): number | undefined {
-    const cacheableEntries = performance.getEntriesByType('resource')
-      .filter(entry => {
+    const cacheableEntries = performance
+      .getEntriesByType("resource")
+      .filter((entry) => {
         const resourceEntry = entry as PerformanceResourceTiming;
         return resourceEntry.transferSize !== undefined;
       });
 
     if (cacheableEntries.length === 0) return undefined;
 
-    const cachedEntries = cacheableEntries.filter(entry => {
+    const cachedEntries = cacheableEntries.filter((entry) => {
       const resourceEntry = entry as PerformanceResourceTiming;
-      return resourceEntry.transferSize === 0 && resourceEntry.decodedBodySize > 0;
+      return (
+        resourceEntry.transferSize === 0 && resourceEntry.decodedBodySize > 0
+      );
     });
 
     return cachedEntries.length / cacheableEntries.length;
@@ -525,37 +572,48 @@ export class PerformanceMetricsService {
     };
   }
 
-  private getConnectionType(): 'slow-2g' | '2g' | '3g' | '4g' | '5g' | 'wifi' | 'unknown' {
-    if ('connection' in navigator) {
+  private getConnectionType():
+    | "slow-2g"
+    | "2g"
+    | "3g"
+    | "4g"
+    | "5g"
+    | "wifi"
+    | "unknown" {
+    if ("connection" in navigator) {
       const connection = (navigator as any).connection;
-      return connection.effectiveType || 'unknown';
+      return connection.effectiveType || "unknown";
     }
-    return 'unknown';
+    return "unknown";
   }
 
-  private getDeviceType(): 'mobile' | 'tablet' | 'desktop' {
+  private getDeviceType(): "mobile" | "tablet" | "desktop" {
     const width = window.innerWidth;
-    if (width < 768) return 'mobile';
-    if (width < 1024) return 'tablet';
-    return 'desktop';
+    if (width < 768) return "mobile";
+    if (width < 1024) return "tablet";
+    return "desktop";
   }
 
   // ============================================================================
   // Metrics Collection & Reporting
   // ============================================================================
 
-  public async collectMetrics(options: MetricsCollectionOptions = {
-    includeWebVitals: true,
-    includeHealthcareMetrics: true,
-    includeResourceMetrics: true,
-    dataClassification: 'internal',
-  }): Promise<PerformanceMetrics> {
+  public async collectMetrics(
+    options: MetricsCollectionOptions = {
+      includeWebVitals: true,
+      includeHealthcareMetrics: true,
+      includeResourceMetrics: true,
+      dataClassification: "internal",
+    },
+  ): Promise<PerformanceMetrics> {
     const metrics: PerformanceMetrics = {
       id: crypto.randomUUID(),
       timestamp: new Date().toISOString(),
       sessionId: options.sessionId || this.sessionId,
       userId: options.userId,
-      webVitals: options.includeWebVitals ? this.collectWebVitals() : this.getDefaultWebVitals(),
+      webVitals: options.includeWebVitals
+        ? this.collectWebVitals()
+        : this.getDefaultWebVitals(),
       healthcareMetrics: options.includeHealthcareMetrics
         ? this.collectHealthcareMetrics(options)
         : this.getDefaultHealthcareMetrics(),
@@ -570,8 +628,11 @@ export class PerformanceMetricsService {
     // Validate the metrics
     const validationResult = PerformanceMetricsSchema.safeParse(metrics);
     if (!validationResult.success) {
-      console.error('[PerformanceMetrics] Validation failed:', validationResult.error);
-      throw new Error('Invalid performance metrics');
+      console.error(
+        "[PerformanceMetrics] Validation failed:",
+        validationResult.error,
+      );
+      throw new Error("Invalid performance metrics");
     }
 
     // Add to queue for batch reporting
@@ -588,36 +649,44 @@ export class PerformanceMetricsService {
   private collectWebVitals(): WebVitals {
     // Collect current Web Vitals values
     return {
-      firstContentfulPaint: this.getCurrentMetricValue('FCP'),
-      largestContentfulPaint: this.getCurrentMetricValue('LCP'),
-      cumulativeLayoutShift: this.getCurrentMetricValue('CLS'),
-      firstInputDelay: this.getCurrentMetricValue('FID'),
-      timeToInteractive: this.getCurrentMetricValue('TTI'),
-      timeToFirstByte: this.getCurrentMetricValue('TTFB'),
-      interactionToNextPaint: this.getCurrentMetricValue('INP'),
+      firstContentfulPaint: this.getCurrentMetricValue("FCP"),
+      largestContentfulPaint: this.getCurrentMetricValue("LCP"),
+      cumulativeLayoutShift: this.getCurrentMetricValue("CLS"),
+      firstInputDelay: this.getCurrentMetricValue("FID"),
+      timeToInteractive: this.getCurrentMetricValue("TTI"),
+      timeToFirstByte: this.getCurrentMetricValue("TTFB"),
+      interactionToNextPaint: this.getCurrentMetricValue("INP"),
     };
   }
 
   private getCurrentMetricValue(metric: string): number {
     // This would be populated by the observer callbacks
     // For now, return navigation timing fallbacks
-    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+    const navigation = performance.getEntriesByType(
+      "navigation",
+    )[0] as PerformanceNavigationTiming;
     if (!navigation) return 0;
 
     switch (metric) {
-      case 'FCP':
-        const fcpEntry = performance.getEntriesByName('first-contentful-paint')[0];
+      case "FCP":
+        const fcpEntry = performance.getEntriesByName(
+          "first-contentful-paint",
+        )[0];
         return fcpEntry ? fcpEntry.startTime : 0;
-      case 'LCP':
-        const lcpEntries = performance.getEntriesByType('largest-contentful-paint');
-        return lcpEntries.length > 0 ? lcpEntries[lcpEntries.length - 1].startTime : 0;
-      case 'TTFB':
+      case "LCP":
+        const lcpEntries = performance.getEntriesByType(
+          "largest-contentful-paint",
+        );
+        return lcpEntries.length > 0
+          ? lcpEntries[lcpEntries.length - 1].startTime
+          : 0;
+      case "TTFB":
         return navigation.responseStart - navigation.requestStart;
-      case 'TTI':
+      case "TTI":
         return navigation.loadEventEnd;
-      case 'CLS':
-      case 'FID':
-      case 'INP':
+      case "CLS":
+      case "FID":
+      case "INP":
         return 0; // These require observers to track accurately
       default:
         return 0;
@@ -636,29 +705,32 @@ export class PerformanceMetricsService {
 
     // Check emergency action response time (critical for patient safety)
     if (
-      metrics.emergencyActionResponseTime
-      && metrics.emergencyActionResponseTime
-        > this.config.emergencyThresholds.emergencyActionResponseTime
+      metrics.emergencyActionResponseTime &&
+      metrics.emergencyActionResponseTime >
+        this.config.emergencyThresholds.emergencyActionResponseTime
     ) {
       alerts.push({
-        type: 'critical_latency',
-        metric: 'emergencyActionResponseTime',
+        type: "critical_latency",
+        metric: "emergencyActionResponseTime",
         value: metrics.emergencyActionResponseTime,
         threshold: this.config.emergencyThresholds.emergencyActionResponseTime,
-        severity: 'critical',
+        severity: "critical",
         healthcareImpact: true,
         timestamp: new Date().toISOString(),
       });
     }
 
     // Check patient data load time
-    if (metrics.patientDataLoadTime > this.config.emergencyThresholds.patientDataLoadTime) {
+    if (
+      metrics.patientDataLoadTime >
+      this.config.emergencyThresholds.patientDataLoadTime
+    ) {
       alerts.push({
-        type: 'threshold_exceeded',
-        metric: 'patientDataLoadTime',
+        type: "threshold_exceeded",
+        metric: "patientDataLoadTime",
         value: metrics.patientDataLoadTime,
         threshold: this.config.emergencyThresholds.patientDataLoadTime,
-        severity: context?.emergencyLevel === 'critical' ? 'critical' : 'high',
+        severity: context?.emergencyLevel === "critical" ? "critical" : "high",
         healthcareImpact: true,
         timestamp: new Date().toISOString(),
       });
@@ -672,10 +744,10 @@ export class PerformanceMetricsService {
 
   private processPerformanceAlerts(alerts: PerformanceAlert[]): void {
     for (const alert of alerts) {
-      console.warn('[PerformanceMetrics] Healthcare performance alert:', alert);
+      console.warn("[PerformanceMetrics] Healthcare performance alert:", alert);
 
       // Send immediate alert for critical healthcare issues
-      if (alert.severity === 'critical' && alert.healthcareImpact) {
+      if (alert.severity === "critical" && alert.healthcareImpact) {
         this.sendCriticalAlert(alert);
       }
     }
@@ -683,15 +755,18 @@ export class PerformanceMetricsService {
 
   private async sendCriticalAlert(alert: PerformanceAlert): Promise<void> {
     try {
-      await fetch('/api/v1/alerts/critical', {
-        method: 'POST',
+      await fetch("/api/v1/alerts/critical", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(alert),
       });
     } catch (error) {
-      console.error('[PerformanceMetrics] Failed to send critical alert:', error);
+      console.error(
+        "[PerformanceMetrics] Failed to send critical alert:",
+        error,
+      );
     }
   }
 
@@ -701,23 +776,27 @@ export class PerformanceMetricsService {
 
   private shouldReportImmediately(metrics: PerformanceMetrics): boolean {
     // Report immediately for critical healthcare metrics
-    if (metrics.healthcareContext?.emergencyLevel === 'critical') {
+    if (metrics.healthcareContext?.emergencyLevel === "critical") {
       return true;
     }
 
     // Check if any healthcare metrics exceed thresholds
-    const emergencyResponse = metrics.healthcareMetrics.emergencyActionResponseTime;
+    const emergencyResponse =
+      metrics.healthcareMetrics.emergencyActionResponseTime;
     if (
-      emergencyResponse
-      && emergencyResponse > this.config.emergencyThresholds.emergencyActionResponseTime
+      emergencyResponse &&
+      emergencyResponse >
+        this.config.emergencyThresholds.emergencyActionResponseTime
     ) {
       return true;
     }
 
     // Standard batching conditions
     const timeSinceLastReport = Date.now() - this.lastReportTime;
-    return this.metricsQueue.length >= this.config.maxBatchSize
-      || timeSinceLastReport >= this.config.reportingInterval;
+    return (
+      this.metricsQueue.length >= this.config.maxBatchSize ||
+      timeSinceLastReport >= this.config.reportingInterval
+    );
   }
 
   private async reportMetrics(): Promise<void> {
@@ -729,9 +808,9 @@ export class PerformanceMetricsService {
 
     try {
       const response = await fetch(this.config.endpoint, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           metrics: batch,
@@ -744,9 +823,11 @@ export class PerformanceMetricsService {
         throw new Error(`Failed to report metrics: ${response.status}`);
       }
 
-      console.log(`[PerformanceMetrics] Reported ${batch.length} metrics successfully`);
+      console.log(
+        `[PerformanceMetrics] Reported ${batch.length} metrics successfully`,
+      );
     } catch (error) {
-      console.error('[PerformanceMetrics] Failed to report metrics:', error);
+      console.error("[PerformanceMetrics] Failed to report metrics:", error);
       // Re-queue failed metrics
       this.metricsQueue.unshift(...batch);
     }
@@ -765,41 +846,45 @@ export class PerformanceMetricsService {
   // ============================================================================
 
   private handleFirstContentfulPaint(value: number): void {
-    console.log('[PerformanceMetrics] FCP:', value.toFixed(2), 'ms');
+    console.log("[PerformanceMetrics] FCP:", value.toFixed(2), "ms");
   }
 
   private handleLargestContentfulPaint(value: number): void {
-    console.log('[PerformanceMetrics] LCP:', value.toFixed(2), 'ms');
+    console.log("[PerformanceMetrics] LCP:", value.toFixed(2), "ms");
 
     // Check if LCP exceeds healthcare threshold
     if (value > 2500) {
-      console.warn('[PerformanceMetrics] LCP exceeds healthcare performance threshold');
+      console.warn(
+        "[PerformanceMetrics] LCP exceeds healthcare performance threshold",
+      );
     }
   }
 
   private handleCumulativeLayoutShift(value: number): void {
-    console.log('[PerformanceMetrics] CLS:', value.toFixed(3));
+    console.log("[PerformanceMetrics] CLS:", value.toFixed(3));
 
     // Check if CLS affects healthcare interface stability
     if (value > 0.1) {
-      console.warn('[PerformanceMetrics] CLS may impact healthcare interface usability');
+      console.warn(
+        "[PerformanceMetrics] CLS may impact healthcare interface usability",
+      );
     }
   }
 
   private handleFirstInputDelay(value: number): void {
-    console.log('[PerformanceMetrics] FID:', value.toFixed(2), 'ms');
+    console.log("[PerformanceMetrics] FID:", value.toFixed(2), "ms");
   }
 
   private handleTimeToFirstByte(value: number): void {
-    console.log('[PerformanceMetrics] TTFB:', value.toFixed(2), 'ms');
+    console.log("[PerformanceMetrics] TTFB:", value.toFixed(2), "ms");
   }
 
   private handleTimeToInteractive(value: number): void {
-    console.log('[PerformanceMetrics] TTI:', value.toFixed(2), 'ms');
+    console.log("[PerformanceMetrics] TTI:", value.toFixed(2), "ms");
   }
 
   private handleInteractionToNextPaint(value: number): void {
-    console.log('[PerformanceMetrics] INP:', value.toFixed(2), 'ms');
+    console.log("[PerformanceMetrics] INP:", value.toFixed(2), "ms");
   }
 
   // ============================================================================
@@ -839,7 +924,7 @@ export class PerformanceMetricsService {
 
   private setupPerformanceObserver(): void {
     // Additional performance observations can be set up here
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       this.observer = new PerformanceObserver(() => {
         // Handle additional performance entries as needed
       });

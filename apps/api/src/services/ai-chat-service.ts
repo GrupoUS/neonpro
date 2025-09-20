@@ -12,7 +12,12 @@
  * - Comprehensive error handling
  */
 
-import { AIInsight, AIInsightType, AIProvider, createAIInsight } from '@neonpro/shared';
+import {
+  AIInsight,
+  AIInsightType,
+  AIProvider,
+  createAIInsight,
+} from '../../../../packages/shared/src/types/ai-insights';
 
 // Service response interface
 export interface ServiceResponse<T = any> {
@@ -226,7 +231,9 @@ export class AIChatService {
   /**
    * Generate AI response with multi-model support
    */
-  async generateResponse(request: AIRequest): Promise<ServiceResponse<AIResponse>> {
+  async generateResponse(
+    request: AIRequest,
+  ): Promise<ServiceResponse<AIResponse>> {
     try {
       const startTime = Date.now();
 
@@ -378,7 +385,9 @@ export class AIChatService {
   /**
    * Create new conversation
    */
-  async createConversation(params: ConversationCreation): Promise<ServiceResponse<Conversation>> {
+  async createConversation(
+    params: ConversationCreation,
+  ): Promise<ServiceResponse<Conversation>> {
     try {
       const conversation: Conversation = {
         id: `conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
@@ -409,7 +418,9 @@ export class AIChatService {
   /**
    * Add message to conversation
    */
-  async addMessage(params: MessageAddition): Promise<ServiceResponse<ChatMessage>> {
+  async addMessage(
+    params: MessageAddition,
+  ): Promise<ServiceResponse<ChatMessage>> {
     try {
       const conversation = this.conversations.get(params.conversationId);
 
@@ -601,7 +612,12 @@ export class AIChatService {
   > {
     try {
       // Mock urgent symptom detection
-      const urgentKeywords = ['dor no peito', 'falta de ar', 'desmaio', 'sangramento'];
+      const urgentKeywords = [
+        'dor no peito',
+        'falta de ar',
+        'desmaio',
+        'sangramento',
+      ];
       const hasUrgentSymptoms = params.messages.some(msg =>
         urgentKeywords.some(keyword => msg.content.toLowerCase().includes(keyword))
       );

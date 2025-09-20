@@ -10,11 +10,7 @@ import { brazilianHealthcareEdge } from './src/middleware/edge-runtime';
 
 // Configure edge runtime
 export const config = {
-  matcher: [
-    '/api/:path*',
-    '/health/:path*',
-    '/compliance/:path*',
-  ],
+  matcher: ['/api/:path*', '/health/:path*', '/compliance/:path*'],
   runtime: 'edge',
   regions: ['sao1', 'gru1'], // São Paulo and Guarulhos, Brazil only
 };
@@ -25,7 +21,9 @@ export async function middleware(request: NextRequest) {
   try {
     // Validate edge runtime environment on startup
     if (process.env.NODE_ENV === 'production') {
-      const { BrazilianHealthcareEdgeRuntime } = await import('./src/middleware/edge-runtime');
+      const { BrazilianHealthcareEdgeRuntime } = await import(
+        './src/middleware/edge-runtime'
+      );
       BrazilianHealthcareEdgeRuntime.validateEdgeEnvironment();
     }
 
@@ -39,7 +37,9 @@ export async function middleware(request: NextRequest) {
 
     // Log compliance metrics
     if (process.env.NODE_ENV === 'development') {
-      console.log(`Healthcare Edge Runtime: ${request.url} processed in ${responseTime}ms`);
+      console.log(
+        `Healthcare Edge Runtime: ${request.url} processed in ${responseTime}ms`,
+      );
     }
 
     return response;

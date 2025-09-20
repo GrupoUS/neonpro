@@ -17,55 +17,67 @@ import { app } from '../../src/app';
 // Search request schema validation
 const SearchPatientsRequestSchema = z.object({
   query: z.string().optional(),
-  filters: z.object({
-    name: z.string().optional(),
-    cpf: z.string().optional(),
-    phone: z.string().optional(),
-    email: z.string().optional(),
-    gender: z.enum(['male', 'female', 'other']).optional(),
-    status: z.enum(['active', 'inactive', 'archived']).optional(),
-    ageRange: z.object({
-      min: z.number().min(0).max(150).optional(),
-      max: z.number().min(0).max(150).optional(),
-    }).optional(),
-    dateRange: z.object({
-      startDate: z.string().datetime().optional(),
-      endDate: z.string().datetime().optional(),
-    }).optional(),
-    medicalConditions: z.array(z.string()).optional(),
-    city: z.string().optional(),
-    state: z.string().length(2).optional(),
-  }).optional(),
-  options: z.object({
-    fuzzyMatching: z.boolean().default(true),
-    includeInactive: z.boolean().default(false),
-    maxResults: z.number().min(1).max(100).default(20),
-    sortBy: z.enum(['relevance', 'name', 'createdAt', 'updatedAt']).default('relevance'),
-    sortOrder: z.enum(['asc', 'desc']).default('desc'),
-  }).optional(),
+  filters: z
+    .object({
+      name: z.string().optional(),
+      cpf: z.string().optional(),
+      phone: z.string().optional(),
+      email: z.string().optional(),
+      gender: z.enum(['male', 'female', 'other']).optional(),
+      status: z.enum(['active', 'inactive', 'archived']).optional(),
+      ageRange: z
+        .object({
+          min: z.number().min(0).max(150).optional(),
+          max: z.number().min(0).max(150).optional(),
+        })
+        .optional(),
+      dateRange: z
+        .object({
+          startDate: z.string().datetime().optional(),
+          endDate: z.string().datetime().optional(),
+        })
+        .optional(),
+      medicalConditions: z.array(z.string()).optional(),
+      city: z.string().optional(),
+      state: z.string().length(2).optional(),
+    })
+    .optional(),
+  options: z
+    .object({
+      fuzzyMatching: z.boolean().default(true),
+      includeInactive: z.boolean().default(false),
+      maxResults: z.number().min(1).max(100).default(20),
+      sortBy: z
+        .enum(['relevance', 'name', 'createdAt', 'updatedAt'])
+        .default('relevance'),
+      sortOrder: z.enum(['asc', 'desc']).default('desc'),
+    })
+    .optional(),
 });
 
 // Search response schema validation
 const SearchPatientsResponseSchema = z.object({
-  results: z.array(z.object({
-    id: z.string().uuid(),
-    name: z.string(),
-    cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
-    phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/),
-    email: z.string().email(),
-    dateOfBirth: z.string().datetime(),
-    gender: z.enum(['male', 'female', 'other']),
-    status: z.enum(['active', 'inactive', 'archived']),
-    address: z.object({
-      city: z.string(),
-      state: z.string().length(2),
-      neighborhood: z.string(),
+  results: z.array(
+    z.object({
+      id: z.string().uuid(),
+      name: z.string(),
+      cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
+      phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/),
+      email: z.string().email(),
+      dateOfBirth: z.string().datetime(),
+      gender: z.enum(['male', 'female', 'other']),
+      status: z.enum(['active', 'inactive', 'archived']),
+      address: z.object({
+        city: z.string(),
+        state: z.string().length(2),
+        neighborhood: z.string(),
+      }),
+      relevanceScore: z.number().min(0).max(1), // Search relevance
+      matchedFields: z.array(z.string()), // Which fields matched the search
+      createdAt: z.string().datetime(),
+      updatedAt: z.string().datetime(),
     }),
-    relevanceScore: z.number().min(0).max(1), // Search relevance
-    matchedFields: z.array(z.string()), // Which fields matched the search
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
-  })),
+  ),
   pagination: z.object({
     total: z.number().min(0),
     count: z.number().min(0),
@@ -393,7 +405,9 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
       // Should either find fuzzy matches or provide suggestions
       if (response.body.results.length === 0) {
         expect(response.body.searchMetadata.suggestions).toBeDefined();
-        expect(response.body.searchMetadata.suggestions.length).toBeGreaterThan(0);
+        expect(response.body.searchMetadata.suggestions.length).toBeGreaterThan(
+          0,
+        );
       }
     });
   });
@@ -417,8 +431,9 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
 
       // Check that results are sorted by relevance (descending)
       for (let i = 1; i < response.body.results.length; i++) {
-        expect(response.body.results[i - 1].relevanceScore)
-          .toBeGreaterThanOrEqual(response.body.results[i].relevanceScore);
+        expect(
+          response.body.results[i - 1].relevanceScore,
+        ).toBeGreaterThanOrEqual(response.body.results[i].relevanceScore);
       }
     });
 
@@ -636,7 +651,9 @@ describe('POST /api/v2/patients/search - Contract Tests', () => {
         .send(complexQuery)
         .expect(200);
 
-      expect(response.body.performanceMetrics.queryComplexity).toBeGreaterThan(1);
+      expect(response.body.performanceMetrics.queryComplexity).toBeGreaterThan(
+        1,
+      );
     });
   });
 });

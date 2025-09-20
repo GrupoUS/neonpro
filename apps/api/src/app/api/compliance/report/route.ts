@@ -82,20 +82,26 @@ export async function GET() {
   } catch (error) {
     console.error('Compliance report generation failed:', error);
 
-    return createHealthcareResponse({
-      error: 'Failed to generate compliance report',
-      message: error instanceof Error ? error.message : 'Unknown error',
-      timestamp: new Date().toISOString(),
-    }, {
-      status: 500,
-      dataType: 'public',
-    });
+    return createHealthcareResponse(
+      {
+        error: 'Failed to generate compliance report',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString(),
+      },
+      {
+        status: 500,
+        dataType: 'public',
+      },
+    );
   }
 }
 
 export async function OPTIONS() {
-  return createHealthcareResponse({}, {
-    status: 200,
-    dataType: 'public',
-  });
+  return createHealthcareResponse(
+    {},
+    {
+      status: 200,
+      dataType: 'public',
+    },
+  );
 }

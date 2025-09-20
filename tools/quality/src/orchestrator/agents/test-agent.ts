@@ -1,13 +1,13 @@
-import { BaseAgent } from './base-agent';
+import { BaseAgent } from "./base-agent";
 import type {
   AgentName,
   TDDPhase,
   AgentResult,
   FeatureContext,
   Finding,
-  Recommendation
-} from '../types';
-import { normalizeComplexity } from '../types';
+  Recommendation,
+} from "../types";
+import { normalizeComplexity } from "../types";
 
 /**
  * Test Agent - Responsible for test creation, validation, and quality
@@ -15,7 +15,7 @@ import { normalizeComplexity } from '../types';
  */
 export class TestAgent extends BaseAgent {
   constructor() {
-    super('test' as AgentName);
+    super("test" as AgentName);
   }
 
   /**
@@ -23,26 +23,29 @@ export class TestAgent extends BaseAgent {
    */
   canHandle(phase: TDDPhase, _context: FeatureContext): boolean {
     // Test agent can handle all TDD phases
-    return ['red', 'green', 'refactor'].includes(phase);
+    return ["red", "green", "refactor"].includes(phase);
   }
 
   /**
    * Execute phase-specific test operations
    */
-  protected async executePhase(phase: TDDPhase, context: FeatureContext): Promise<AgentResult> {
+  protected async executePhase(
+    phase: TDDPhase,
+    context: FeatureContext,
+  ): Promise<AgentResult> {
     const startTime = Date.now();
     const findings: Finding[] = [];
     const recommendations: Recommendation[] = [];
 
     try {
       switch (phase) {
-        case 'red':
+        case "red":
           await this.executeRedPhase(context, findings, recommendations);
           break;
-        case 'green':
+        case "green":
           await this.executeGreenPhase(context, findings, recommendations);
           break;
-        case 'refactor':
+        case "refactor":
           await this.executeRefactorPhase(context, findings, recommendations);
           break;
         default:
@@ -52,44 +55,47 @@ export class TestAgent extends BaseAgent {
       return {
         agent: this.agentType,
         phase,
-        status: 'success',
+        status: "success",
         findings,
         recommendations,
         metrics: {
           executionTime: Date.now() - startTime,
-          testsCreated: findings.filter(f => f.type === 'test-creation').length,
-          testQualityIssues: findings.filter(f => f.type === 'test-quality').length
+          testsCreated: findings.filter((f) => f.type === "test-creation")
+            .length,
+          testQualityIssues: findings.filter((f) => f.type === "test-quality")
+            .length,
         },
         duration: Date.now() - startTime,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+
       return {
         agent: this.agentType,
         phase,
-        status: 'failure',
+        status: "failure",
         findings: [
           this.createFinding(
-            'test-creation',
+            "test-creation",
             `Test execution failed: ${errorMessage}`,
-            'high',
-            context.files?.tests || 'unknown',
-            'Review test setup and dependencies'
-          )
+            "high",
+            context.files?.tests || "unknown",
+            "Review test setup and dependencies",
+          ),
         ],
         recommendations: [
           this.createRecommendation(
-            'test-strategy',
+            "test-strategy",
             `Fix test execution issue: ${errorMessage}`,
-            'high',
-            'Debug and resolve the underlying test infrastructure problem'
-          )
+            "high",
+            "Debug and resolve the underlying test infrastructure problem",
+          ),
         ],
         metrics: { executionTime: Date.now() - startTime, errorCount: 1 },
         duration: Date.now() - startTime,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
     }
   }
@@ -100,29 +106,32 @@ export class TestAgent extends BaseAgent {
   private async executeRedPhase(
     context: FeatureContext,
     findings: Finding[],
-    recommendations: Recommendation[]
+    recommendations: Recommendation[],
   ): Promise<void> {
     const complexityLevel = normalizeComplexity(context.complexity);
-    
+
     // Analyze acceptance criteria for test creation
-    if (!context.acceptanceCriteria || context.acceptanceCriteria.length === 0) {
+    if (
+      !context.acceptanceCriteria ||
+      context.acceptanceCriteria.length === 0
+    ) {
       findings.push(
         this.createFinding(
-          'test-creation',
-          'No acceptance criteria defined for feature',
-          'high',
+          "test-creation",
+          "No acceptance criteria defined for feature",
+          "high",
           context.name,
-          'Define clear acceptance criteria before creating tests'
-        )
+          "Define clear acceptance criteria before creating tests",
+        ),
       );
-      
+
       recommendations.push(
         this.createRecommendation(
-          'test-strategy',
-          'Define acceptance criteria to guide test creation',
-          'high',
-          'Work with stakeholders to define clear, testable acceptance criteria'
-        )
+          "test-strategy",
+          "Define acceptance criteria to guide test creation",
+          "high",
+          "Work with stakeholders to define clear, testable acceptance criteria",
+        ),
       );
       return;
     }
@@ -131,12 +140,12 @@ export class TestAgent extends BaseAgent {
     for (const criteria of context.acceptanceCriteria) {
       findings.push(
         this.createFinding(
-          'test-creation',
+          "test-creation",
           `Test needed for: ${criteria}`,
-          'info',
-          context.files?.tests || 'tests/',
-          'Create failing test that validates this acceptance criteria'
-        )
+          "info",
+          context.files?.tests || "tests/",
+          "Create failing test that validates this acceptance criteria",
+        ),
       );
     }
 
@@ -144,11 +153,11 @@ export class TestAgent extends BaseAgent {
     if (complexityLevel > 5) {
       recommendations.push(
         this.createRecommendation(
-          'test-strategy',
-          'High complexity feature requires comprehensive edge case testing',
-          'medium',
-          'Include tests for boundary conditions, error scenarios, and performance edge cases'
-        )
+          "test-strategy",
+          "High complexity feature requires comprehensive edge case testing",
+          "medium",
+          "Include tests for boundary conditions, error scenarios, and performance edge cases",
+        ),
       );
     }
 
@@ -156,11 +165,11 @@ export class TestAgent extends BaseAgent {
     if (context.securityCritical) {
       recommendations.push(
         this.createRecommendation(
-          'security-testing',
-          'Security-critical feature requires security-focused tests',
-          'high',
-          'Include tests for authentication, authorization, input validation, and data protection'
-        )
+          "security-testing",
+          "Security-critical feature requires security-focused tests",
+          "high",
+          "Include tests for authentication, authorization, input validation, and data protection",
+        ),
       );
     }
   }
@@ -171,42 +180,42 @@ export class TestAgent extends BaseAgent {
   private async executeGreenPhase(
     context: FeatureContext,
     findings: Finding[],
-    recommendations: Recommendation[]
+    recommendations: Recommendation[],
   ): Promise<void> {
     const complexityLevel = normalizeComplexity(context.complexity);
-    
+
     // Check if tests are now passing
     findings.push(
       this.createFinding(
-        'test-validation',
-        'Verify all tests pass with minimal implementation',
-        'info',
-        context.files?.implementation || 'src/',
-        'Ensure implementation is minimal and focused on making tests pass'
-      )
+        "test-validation",
+        "Verify all tests pass with minimal implementation",
+        "info",
+        context.files?.implementation || "src/",
+        "Ensure implementation is minimal and focused on making tests pass",
+      ),
     );
 
     // Validate implementation quality
     if (complexityLevel > 7) {
       findings.push(
         this.createFinding(
-          'test-stability',
-          'High complexity implementation may have stability issues',
-          'medium',
-          context.files?.implementation || 'src/',
-          'Add integration tests to verify system stability'
-        )
+          "test-stability",
+          "High complexity implementation may have stability issues",
+          "medium",
+          context.files?.implementation || "src/",
+          "Add integration tests to verify system stability",
+        ),
       );
     }
 
     // Check for over-engineering
     recommendations.push(
       this.createRecommendation(
-        'code-improvement',
-        'Ensure implementation is minimal and focused',
-        'medium',
-        'Avoid over-engineering - implement only what is needed to pass tests'
-      )
+        "code-improvement",
+        "Ensure implementation is minimal and focused",
+        "medium",
+        "Avoid over-engineering - implement only what is needed to pass tests",
+      ),
     );
   }
 
@@ -216,52 +225,55 @@ export class TestAgent extends BaseAgent {
   private async executeRefactorPhase(
     context: FeatureContext,
     findings: Finding[],
-    recommendations: Recommendation[]
+    recommendations: Recommendation[],
   ): Promise<void> {
     const complexityLevel = normalizeComplexity(context.complexity);
-    
+
     // Check test maintainability
     findings.push(
       this.createFinding(
-        'test-quality',
-        'Review test maintainability and readability',
-        'info',
-        context.files?.tests || 'tests/',
-        'Ensure tests are clear, maintainable, and follow testing best practices'
-      )
+        "test-quality",
+        "Review test maintainability and readability",
+        "info",
+        context.files?.tests || "tests/",
+        "Ensure tests are clear, maintainable, and follow testing best practices",
+      ),
     );
 
     // Suggest test improvements
     recommendations.push(
       this.createRecommendation(
-        'test-strategy',
-        'Optimize test structure and remove duplication',
-        'medium',
-        'Refactor tests to improve readability, reduce duplication, and enhance maintainability'
-      )
+        "test-strategy",
+        "Optimize test structure and remove duplication",
+        "medium",
+        "Refactor tests to improve readability, reduce duplication, and enhance maintainability",
+      ),
     );
 
     // Performance considerations for complex features
     if (complexityLevel > 6) {
       recommendations.push(
         this.createRecommendation(
-          'performance',
-          'Consider performance testing for complex features',
-          'medium',
-          'Add performance benchmarks and load testing for high-complexity features'
-        )
+          "performance",
+          "Consider performance testing for complex features",
+          "medium",
+          "Add performance benchmarks and load testing for high-complexity features",
+        ),
       );
     }
 
     // Documentation recommendations
-    if (context.domain.includes('api') || context.domain.includes('integration')) {
+    if (
+      context.domain.includes("api") ||
+      context.domain.includes("integration")
+    ) {
       recommendations.push(
         this.createRecommendation(
-          'test-strategy',
-          'Document test scenarios and API contracts',
-          'low',
-          'Create documentation for test scenarios and API contract validation'
-        )
+          "test-strategy",
+          "Document test scenarios and API contracts",
+          "low",
+          "Create documentation for test scenarios and API contract validation",
+        ),
       );
     }
   }
@@ -271,14 +283,14 @@ export class TestAgent extends BaseAgent {
    */
   getCapabilities(): string[] {
     return [
-      'test-creation',
-      'test-validation', 
-      'test-quality-analysis',
-      'acceptance-criteria-validation',
-      'edge-case-identification',
-      'security-test-planning',
-      'performance-test-planning',
-      'test-maintainability'
+      "test-creation",
+      "test-validation",
+      "test-quality-analysis",
+      "acceptance-criteria-validation",
+      "edge-case-identification",
+      "security-test-planning",
+      "performance-test-planning",
+      "test-maintainability",
     ];
   }
 
@@ -287,16 +299,16 @@ export class TestAgent extends BaseAgent {
    */
   getConfiguration(): Record<string, any> {
     return {
-      supportedPhases: ['red', 'green', 'refactor'],
-      testFrameworks: ['jest', 'vitest', 'cypress', 'playwright'],
-      testTypes: ['unit', 'integration', 'e2e', 'performance', 'security'],
+      supportedPhases: ["red", "green", "refactor"],
+      testFrameworks: ["jest", "vitest", "cypress", "playwright"],
+      testTypes: ["unit", "integration", "e2e", "performance", "security"],
       qualityThresholds: {
         coverage: 90,
         complexity: 10,
-        maintainability: 8
+        maintainability: 8,
       },
       timeout: 300000, // 5 minutes
-      retryAttempts: 2
+      retryAttempts: 2,
     };
   }
 }

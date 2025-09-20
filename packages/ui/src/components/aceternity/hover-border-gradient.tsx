@@ -1,13 +1,16 @@
 "use client";
 
 import React from "react";
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
-import { useShineBorderAnimation, type HoverGradientTheme } from "../../hooks/useShineBorderAnimation";
+import {
+  useShineBorderAnimation,
+  type HoverGradientTheme,
+} from "../../hooks/useShineBorderAnimation";
 
 interface HoverBorderGradientProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
@@ -34,10 +37,7 @@ export function HoverBorderGradient({
   customColors,
   ...props
 }: HoverBorderGradientProps) {
-  const {
-    handlers,
-    hoverGradient,
-  } = useShineBorderAnimation({
+  const { handlers, hoverGradient } = useShineBorderAnimation({
     enabled: false, // Disable shine border, only use hover gradient
     enableHoverGradient: true,
     hoverGradientTheme: theme,
@@ -50,21 +50,18 @@ export function HoverBorderGradient({
     <Tag
       onMouseEnter={handlers.onMouseEnter}
       onMouseLeave={handlers.onMouseLeave}
-      className={cn(
-        hoverGradient.containerClassName,
-        containerClassName
-      )}
+      className={cn(hoverGradient.containerClassName, containerClassName)}
       {...props}
     >
       <div
         className={cn(
           "w-auto text-white z-10 bg-black px-4 py-2 rounded-[inherit]",
-          className
+          className,
         )}
       >
         {children}
       </div>
-      
+
       {/* Animated gradient background */}
       <div
         className="flex-none inset-0 overflow-hidden absolute z-0 rounded-[inherit]"
@@ -77,7 +74,7 @@ export function HoverBorderGradient({
           transition: `background ${duration}s linear`,
         }}
       />
-      
+
       {/* Inner background */}
       <div className="bg-black absolute z-1 flex-none inset-[2px] rounded-[100px]" />
     </Tag>

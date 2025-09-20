@@ -28,7 +28,11 @@ const CrmValidationSchema = z.object({
   specialties: z.array(z.string()),
   validatedAt: z.string().datetime(),
   expiresAt: z.string().datetime(),
-  validationSource: z.enum(['cfm_api', 'crm_state_council', 'manual_verification']),
+  validationSource: z.enum([
+    'cfm_api',
+    'crm_state_council',
+    'manual_verification',
+  ]),
 });
 
 const DigitalPrescriptionSchema = z.object({
@@ -42,14 +46,16 @@ const DigitalPrescriptionSchema = z.object({
     timestamp: z.string().datetime(),
     isValid: z.boolean(),
   }),
-  medications: z.array(z.object({
-    name: z.string(),
-    activeIngredient: z.string(),
-    dosage: z.string(),
-    quantity: z.number(),
-    instructions: z.string(),
-    controlledSubstance: z.boolean().optional(),
-  })),
+  medications: z.array(
+    z.object({
+      name: z.string(),
+      activeIngredient: z.string(),
+      dosage: z.string(),
+      quantity: z.number(),
+      instructions: z.string(),
+      controlledSubstance: z.boolean().optional(),
+    }),
+  ),
   issuedAt: z.string().datetime(),
   validUntil: z.string().datetime(),
   cfmCompliance: z.object({
@@ -178,21 +184,26 @@ describe('CFM Validation Integration Tests', () => {
         if (stateValidationResponse.status === 200) {
           const validation = await stateValidationResponse.json();
           expect(validation.state).toBe(state);
-          expect(validation.validationSource).toMatch(/crm_state_council|cfm_api/);
+          expect(validation.validationSource).toMatch(
+            /crm_state_council|cfm_api/,
+          );
         }
       }
     });
 
     it('should verify physician specialties against CFM records', async () => {
-      const specialtyValidationResponse = await api('/api/v2/cfm/validate-specialty', {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify({
-          crm: testPhysicianCrm,
-          state: 'SP',
-          claimedSpecialties: ['Cardiologia', 'Medicina Interna'],
-        }),
-      });
+      const specialtyValidationResponse = await api(
+        '/api/v2/cfm/validate-specialty',
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify({
+            crm: testPhysicianCrm,
+            state: 'SP',
+            claimedSpecialties: ['Cardiologia', 'Medicina Interna'],
+          }),
+        },
+      );
 
       expect(specialtyValidationResponse.status).toBe(200);
       const specialtyValidation = await specialtyValidationResponse.json();
@@ -400,7 +411,9 @@ describe('CFM Validation Integration Tests', () => {
         },
         assessment: 'Hipertensão arterial sistêmica',
         plan: 'Prescrição de anti-hipertensivo, retorno em 30 dias',
-        followUpDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        followUpDate: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
       };
 
       const recordResponse = await api('/api/v2/medical-records', {
@@ -435,9 +448,12 @@ describe('CFM Validation Integration Tests', () => {
     });
 
     it('should enforce medical record retention policies', async () => {
-      const retentionPolicyResponse = await api('/api/v2/cfm/medical-records/retention', {
-        headers: testAuthHeaders,
-      });
+      const retentionPolicyResponse = await api(
+        '/api/v2/cfm/medical-records/retention',
+        {
+          headers: testAuthHeaders,
+        },
+      );
 
       expect(retentionPolicyResponse.status).toBe(200);
       const retentionPolicy = await retentionPolicyResponse.json();
@@ -536,14 +552,17 @@ describe('CFM Validation Integration Tests', () => {
         isTelemedicineSession: true,
       };
 
-      const telemedicinePrescriptionResponse = await api('/api/v2/prescriptions/telemedicine', {
-        method: 'POST',
-        headers: {
-          ...testAuthHeaders,
-          'X-Telemedicine-Session': 'active',
+      const telemedicinePrescriptionResponse = await api(
+        '/api/v2/prescriptions/telemedicine',
+        {
+          method: 'POST',
+          headers: {
+            ...testAuthHeaders,
+            'X-Telemedicine-Session': 'active',
+          },
+          body: JSON.stringify(telemedicinePrescriptionData),
         },
-        body: JSON.stringify(telemedicinePrescriptionData),
-      });
+      );
 
       // Should be rejected for controlled substances
       expect(telemedicinePrescriptionResponse.status).toBe(403);
@@ -635,7 +654,11 @@ describe('CFM Validation Integration Tests', () => {
         period: '2024',
         requiredHours: 100, // CFM requirement
         completedHours: expect.any(Number),
-        complianceStatus: expect.oneOf(['compliant', 'non_compliant', 'pending']),
+        complianceStatus: expect.oneOf([
+          'compliant',
+          'non_compliant',
+          'pending',
+        ]),
         activitiesRecorded: expect.any(Array),
         certificatesValidated: expect.any(Number),
       });
@@ -644,17 +667,22 @@ describe('CFM Validation Integration Tests', () => {
 
   describe('Regulatory Reporting', () => {
     it('should generate CFM compliance reports', async () => {
-      const complianceReportResponse = await api('/api/v2/cfm/reports/compliance', {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify({
-          period: {
-            start: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString(),
-            end: new Date().toISOString(),
-          },
-          includeDetails: true,
-        }),
-      });
+      const complianceReportResponse = await api(
+        '/api/v2/cfm/reports/compliance',
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify({
+            period: {
+              start: new Date(
+                Date.now() - 30 * 24 * 60 * 60 * 1000,
+              ).toISOString(),
+              end: new Date().toISOString(),
+            },
+            includeDetails: true,
+          }),
+        },
+      );
 
       expect(complianceReportResponse.status).toBe(200);
       const complianceReport = await complianceReportResponse.json();
@@ -694,14 +722,17 @@ describe('CFM Validation Integration Tests', () => {
         reportingPhysician: testPhysicianCrm,
       };
 
-      const notificationResponse = await api('/api/v2/cfm/notifications/adverse-event', {
-        method: 'POST',
-        headers: {
-          ...testAuthHeaders,
-          'X-CFM-Notification': 'automated',
+      const notificationResponse = await api(
+        '/api/v2/cfm/notifications/adverse-event',
+        {
+          method: 'POST',
+          headers: {
+            ...testAuthHeaders,
+            'X-CFM-Notification': 'automated',
+          },
+          body: JSON.stringify(notificationData),
         },
-        body: JSON.stringify(notificationData),
-      });
+      );
 
       expect(notificationResponse.status).toBe(201);
       const notification = await notificationResponse.json();

@@ -48,13 +48,19 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
               category: 'treatment_effectiveness',
               finding: 'Melhora significativa após tratamentos de limpeza de pele',
               confidence: 0.89,
-              evidence: ['Redução de 40% em acne', 'Satisfação do paciente: 9/10'],
+              evidence: [
+                'Redução de 40% em acne',
+                'Satisfação do paciente: 9/10',
+              ],
             },
             {
               category: 'risk_factors',
               finding: 'Sensibilidade a produtos com ácido salicílico',
               confidence: 0.95,
-              evidence: ['Reações alérgicas documentadas', 'Histórico familiar'],
+              evidence: [
+                'Reações alérgicas documentadas',
+                'Histórico familiar',
+              ],
             },
           ],
           recommendations: [
@@ -195,8 +201,16 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
         data: {
           patientId: 'patient-123',
           treatmentHistory: [
-            { date: '2024-01-10', treatment: 'Limpeza de pele', outcome: 'satisfatório' },
-            { date: '2024-01-15', treatment: 'Hidratação', outcome: 'excelente' },
+            {
+              date: '2024-01-10',
+              treatment: 'Limpeza de pele',
+              outcome: 'satisfatório',
+            },
+            {
+              date: '2024-01-15',
+              treatment: 'Hidratação',
+              outcome: 'excelente',
+            },
           ],
           vitals: {
             skinType: 'oleosa',
@@ -265,7 +279,9 @@ describe('POST /api/v2/ai/analyze endpoint (T053)', () => {
       expect(data.success).toBe(true);
       expect(data.data.analysisType).toBe('medical_image');
       expect(data.data.results.imageAnalysis.findings).toHaveLength(2);
-      expect(data.data.results.imageAnalysis.findings[0].coordinates).toBeDefined();
+      expect(
+        data.data.results.imageAnalysis.findings[0].coordinates,
+      ).toBeDefined();
       expect(mockAIChatService.analyzeImage).toHaveBeenCalled();
     });
 

@@ -1,7 +1,4 @@
-import {
-  APIContract,
-  HealthcareValidationError,
-} from '@neonpro/shared/models/api-contract';
+import { APIContract, HealthcareValidationError } from '@neonpro/shared/models/api-contract';
 import { Context, Next } from 'hono';
 import type { OpenAPIV3_1 } from '../../types/openapi';
 // Removed unused import: import * as v from 'valibot';
@@ -47,7 +44,10 @@ export interface HealthcareValidationRule {
   /** Rule description */
   description: string;
   /** Validation function */
-  validate: (data: any, context: ValidationContext) => HealthcareValidationError[];
+  validate: (
+    data: any,
+    context: ValidationContext,
+  ) => HealthcareValidationError[];
   /** Severity level */
   severity: HealthcareErrorSeverity;
   /** Applicable data classifications */
@@ -110,7 +110,11 @@ export interface ContractValidationResult {
  */
 export interface AuditTrailEntry {
   /** Entry type */
-  type: 'validation_start' | 'validation_success' | 'validation_failure' | 'performance_alert';
+  type:
+    | 'validation_start'
+    | 'validation_success'
+    | 'validation_failure'
+    | 'performance_alert';
   /** Timestamp */
   timestamp: Date;
   /** Request identifier */
@@ -130,7 +134,8 @@ class ValidationCache {
   private cache = new Map<string, { result: any; timestamp: number }>();
   private ttl: number;
 
-  constructor(ttl: number = 300) { // 5 minutes default
+  constructor(ttl: number = 300) {
+    // 5 minutes default
     this.ttl = ttl * 1000;
   }
 
@@ -268,16 +273,20 @@ function isValidBrazilianDate(dateString: string): boolean {
   const [, day, month, year] = dateString.match(brazilianDateRegex)!;
   const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
 
-  return date.getFullYear() === parseInt(year)
+  return (
+    date.getFullYear() === parseInt(year)
     && date.getMonth() === parseInt(month) - 1
-    && date.getDate() === parseInt(day);
+    && date.getDate() === parseInt(day)
+  );
 }
 
 /**
  * Create contract validation middleware
  */
 export function contractValidation(config: ContractValidationConfig) {
-  const cache = config.enableCaching ? new ValidationCache(config.cacheTtl) : null;
+  const cache = config.enableCaching
+    ? new ValidationCache(config.cacheTtl)
+    : null;
   const customRules = config.customRules || [];
   const allRules = [...HEALTHCARE_VALIDATION_RULES, ...customRules];
 
@@ -320,7 +329,9 @@ export function contractValidation(config: ContractValidationConfig) {
       const requestData = await getRequestData(c);
 
       // Check cache first
-      const cacheKey = cache ? generateCacheKey(c.req.method, c.req.path, requestData) : null;
+      const cacheKey = cache
+        ? generateCacheKey(c.req.method, c.req.path, requestData)
+        : null;
       let cachedResult: ContractValidationResult | null = null;
 
       if (cache && cacheKey) {
@@ -394,7 +405,10 @@ export function contractValidation(config: ContractValidationConfig) {
 
       // Performance monitoring
       if (config.enableMonitoring) {
-        monitorValidationPerformance(validationResult, config.performanceThreshold);
+        monitorValidationPerformance(
+          validationResult,
+          config.performanceThreshold,
+        );
       }
 
       // Log validation results
@@ -575,7 +589,9 @@ async function validateHealthcareContract(
   try {
     // Apply all applicable validation rules
     for (const rule of rules) {
-      if (rule.applicableClassifications.includes(apiContract.dataClassification)) {
+      if (
+        rule.applicableClassifications.includes(apiContract.dataClassification)
+      ) {
         const ruleErrors = rule.validate(data, context);
         errors.push(...ruleErrors);
       }
@@ -674,7 +690,10 @@ function handleValidationFailure(
   validationResult: ContractValidationResult,
   context: ValidationContext,
 ): void {
-  const allErrors = [...validationResult.openapiErrors, ...validationResult.healthcareErrors];
+  const allErrors = [
+    ...validationResult.openapiErrors,
+    ...validationResult.healthcareErrors,
+  ];
 
   // Sort errors by severity
   const sortedErrors = allErrors.sort((a, b) => {
@@ -747,12 +766,15 @@ function monitorValidationPerformance(
   threshold?: number,
 ): void {
   if (threshold && result.metrics.validationTime > threshold) {
-    structuredLogger.warn('Contract validation performance threshold exceeded', {
-      validationTime: result.metrics.validationTime,
-      threshold,
-      method: 'unknown', // Would be passed from context
-      path: 'unknown', // Would be passed from context
-    });
+    structuredLogger.warn(
+      'Contract validation performance threshold exceeded',
+      {
+        validationTime: result.metrics.validationTime,
+        threshold,
+        method: 'unknown', // Would be passed from context
+        path: 'unknown', // Would be passed from context
+      },
+    );
   }
 }
 

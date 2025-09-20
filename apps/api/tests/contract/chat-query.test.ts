@@ -33,7 +33,9 @@ describe('Contract: POST /api/v1/chat/query', () => {
       }),
     });
     expect(res.status).toBe(200);
-    expect(res.headers.get('content-type') || '').toContain('text/event-stream');
+    expect(res.headers.get('content-type') || '').toContain(
+      'text/event-stream',
+    );
     expect(res.headers.get('x-chat-started-at')).toBeTruthy();
   });
 

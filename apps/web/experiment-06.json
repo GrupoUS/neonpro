@@ -24,9 +24,7 @@
     "react-day-picker",
     "sonner"
   ],
-  "devDependencies": [
-    "tw-animate-css"
-  ],
+  "devDependencies": ["tw-animate-css"],
   "files": [
     {
       "path": "app/layout.tsx",

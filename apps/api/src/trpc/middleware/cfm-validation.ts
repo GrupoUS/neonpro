@@ -165,7 +165,10 @@ async function validateICPBrasilCertificate(
   }
 
   // Mock certificate validation (replace with real ITI validation)
-  const mockCertId = createHash('sha256').update(certificateData).digest('hex').substring(0, 16);
+  const mockCertId = createHash('sha256')
+    .update(certificateData)
+    .digest('hex')
+    .substring(0, 16);
 
   return {
     isValid: true,
@@ -222,7 +225,13 @@ function setCachedCFMValidation(
  * with CFM telemedicine regulations and NGS2 security standards.
  */
 
-export const cfmValidationMiddleware = async ({ ctx, next, path, type, input }: any) => {
+export const cfmValidationMiddleware = async ({
+  ctx,
+  next,
+  path,
+  type,
+  input,
+}: any) => {
   const start = performance.now();
 
   try {
@@ -280,14 +289,23 @@ export const cfmValidationMiddleware = async ({ ctx, next, path, type, input }: 
         cfmValidation = cachedValidation;
       } else {
         // Perform real-time CFM validation
-        cfmValidation = await validateCFMLicense(professional.crmNumber, professional.crmState);
-        setCachedCFMValidation(professional.crmNumber, professional.crmState, cfmValidation);
+        cfmValidation = await validateCFMLicense(
+          professional.crmNumber,
+          professional.crmState,
+        );
+        setCachedCFMValidation(
+          professional.crmNumber,
+          professional.crmState,
+          cfmValidation,
+        );
 
         // Update professional record with validation results
         await ctx.prisma.professional.update({
           where: { id: professionalId },
           data: {
-            cfmValidationStatus: cfmValidation.isValid ? 'validated' : 'rejected',
+            cfmValidationStatus: cfmValidation.isValid
+              ? 'validated'
+              : 'rejected',
             cfmLastValidated: new Date(),
             telemedicineAuthorized: cfmValidation.telemedicineAuthorized,
           },
@@ -300,7 +318,9 @@ export const cfmValidationMiddleware = async ({ ctx, next, path, type, input }: 
         crmNumber: professional.crmNumber,
         state: professional.crmState,
         specialties: professional.specialties || [],
-        status: professional.cfmValidationStatus === 'validated' ? 'active' : 'inactive',
+        status: professional.cfmValidationStatus === 'validated'
+          ? 'active'
+          : 'inactive',
         telemedicineAuthorized: professional.telemedicineAuthorized || false,
         ethicsCompliant: professional.cfmValidationStatus === 'validated',
         lastValidated: professional.cfmLastValidated || new Date(),
@@ -329,7 +349,10 @@ export const cfmValidationMiddleware = async ({ ctx, next, path, type, input }: 
           professional.icpBrasilCertificate,
         );
 
-        if (!certificateValidation.isValid || !certificateValidation.ngs2Compliant) {
+        if (
+          !certificateValidation.isValid
+          || !certificateValidation.ngs2Compliant
+        ) {
           throw new TRPCError({
             code: 'FORBIDDEN',
             message:
@@ -354,11 +377,16 @@ export const cfmValidationMiddleware = async ({ ctx, next, path, type, input }: 
     if (requiresSpecialtyValidation(path, input)) {
       const requiredSpecialty = extractRequiredSpecialty(path, input);
 
-      if (requiredSpecialty && !cfmValidation.specialties.includes(requiredSpecialty)) {
+      if (
+        requiredSpecialty
+        && !cfmValidation.specialties.includes(requiredSpecialty)
+      ) {
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: `Medical specialty ${
-            CFM_SPECIALTIES[requiredSpecialty as keyof typeof CFM_SPECIALTIES] || requiredSpecialty
+            CFM_SPECIALTIES[
+              requiredSpecialty as keyof typeof CFM_SPECIALTIES
+            ] || requiredSpecialty
           } required for this operation.`,
         });
       }
@@ -372,7 +400,9 @@ export const cfmValidationMiddleware = async ({ ctx, next, path, type, input }: 
     // Log performance metrics
     const duration = performance.now() - start;
     if (duration > 200) {
-      console.warn(`CFM validation exceeded 200ms target: ${duration.toFixed(2)}ms for ${path}`);
+      console.warn(
+        `CFM validation exceeded 200ms target: ${duration.toFixed(2)}ms for ${path}`,
+      );
     }
 
     return result;
@@ -395,7 +425,9 @@ export const cfmValidationMiddleware = async ({ ctx, next, path, type, input }: 
           riskLevel: 'HIGH',
           additionalInfo: JSON.stringify({
             errorType: 'CFM_VALIDATION_FAILURE',
-            error: error instanceof Error ? error.message : 'Unknown CFM validation error',
+            error: error instanceof Error
+              ? error.message
+              : 'Unknown CFM validation error',
             duration,
             path,
             professionalId: extractProfessionalId(ctx, input),
@@ -429,9 +461,11 @@ function requiresCFMValidation(path: string): boolean {
 }
 
 function isTelemedicineOperation(path: string): boolean {
-  return path.includes('telemedicine')
+  return (
+    path.includes('telemedicine')
     || path.includes('video-consultation')
-    || path.includes('remote-consultation');
+    || path.includes('remote-consultation')
+  );
 }
 
 function extractProfessionalId(ctx: any, input: any): string | null {

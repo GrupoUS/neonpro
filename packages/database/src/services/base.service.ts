@@ -3,7 +3,7 @@
  * Provides common functionality for all database services
  */
 
-import { prisma } from '../client.js';
+import { prisma } from "../client.js";
 
 export interface AuditLogData {
   operation: string;
@@ -33,14 +33,14 @@ export abstract class BaseService {
       await prisma.auditTrail.create({
         data: {
           userId: auditData.userId,
-          action: 'VIEW', // Default action, should be parameterized
+          action: "VIEW", // Default action, should be parameterized
           resource: auditData.tableName,
-          resourceType: 'PATIENT_RECORD', // Default type, should be parameterized
+          resourceType: "PATIENT_RECORD", // Default type, should be parameterized
           resourceId: auditData.recordId,
-          ipAddress: auditData.ipAddress || 'unknown',
-          userAgent: auditData.userAgent || 'unknown',
-          status: 'SUCCESS',
-          riskLevel: 'LOW',
+          ipAddress: auditData.ipAddress || "unknown",
+          userAgent: auditData.userAgent || "unknown",
+          status: "SUCCESS",
+          riskLevel: "LOW",
           additionalInfo: JSON.stringify({
             operation: auditData.operation,
             duration: Date.now() - startTime,
@@ -56,18 +56,18 @@ export abstract class BaseService {
       await prisma.auditTrail.create({
         data: {
           userId: auditData.userId,
-          action: 'VIEW', // Default action, should be parameterized
+          action: "VIEW", // Default action, should be parameterized
           resource: auditData.tableName,
-          resourceType: 'PATIENT_RECORD', // Default type, should be parameterized
+          resourceType: "PATIENT_RECORD", // Default type, should be parameterized
           resourceId: auditData.recordId,
-          ipAddress: auditData.ipAddress || 'unknown',
-          userAgent: auditData.userAgent || 'unknown',
-          status: 'FAILED',
-          riskLevel: 'HIGH', // Failed operations are higher risk
+          ipAddress: auditData.ipAddress || "unknown",
+          userAgent: auditData.userAgent || "unknown",
+          status: "FAILED",
+          riskLevel: "HIGH", // Failed operations are higher risk
           additionalInfo: JSON.stringify({
             operation: auditData.operation,
             duration: Date.now() - startTime,
-            error: error instanceof Error ? error.message : 'Unknown error',
+            error: error instanceof Error ? error.message : "Unknown error",
           }),
         },
       });
@@ -79,13 +79,17 @@ export abstract class BaseService {
 
   protected async validateLGPDConsent(
     patientId: string,
-    purpose: 'medical_treatment' | 'ai_assistance' | 'communication' | 'marketing',
+    purpose:
+      | "medical_treatment"
+      | "ai_assistance"
+      | "communication"
+      | "marketing",
   ): Promise<boolean> {
     const consent = await prisma.consentRecord.findFirst({
       where: {
         patientId,
         purpose,
-        status: 'granted',
+        status: "granted",
         expiresAt: { gt: new Date() },
       },
     });
@@ -100,19 +104,25 @@ export abstract class BaseService {
     if (!text) return text;
 
     // Remove CPF patterns (Brazilian tax ID)
-    let sanitized = text.replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, '[CPF_REMOVED]');
+    let sanitized = text.replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, "[CPF_REMOVED]");
 
     // Remove phone patterns
-    sanitized = sanitized.replace(/\(\d{2}\)\s*\d{4,5}-\d{4}/g, '[PHONE_REMOVED]');
+    sanitized = sanitized.replace(
+      /\(\d{2}\)\s*\d{4,5}-\d{4}/g,
+      "[PHONE_REMOVED]",
+    );
 
     // Remove email patterns
     sanitized = sanitized.replace(
       /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/g,
-      '[EMAIL_REMOVED]',
+      "[EMAIL_REMOVED]",
     );
 
     // Remove RG patterns (Brazilian ID)
-    sanitized = sanitized.replace(/\d{1,2}\.\d{3}\.\d{3}-\d{1}/g, '[RG_REMOVED]');
+    sanitized = sanitized.replace(
+      /\d{1,2}\.\d{3}\.\d{3}-\d{1}/g,
+      "[RG_REMOVED]",
+    );
 
     return sanitized;
   }
@@ -128,8 +138,10 @@ export abstract class BaseService {
           include: {
             appointments: {
               where: {
-                status: 'no_show',
-                createdAt: { gte: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000) },
+                status: "no_show",
+                createdAt: {
+                  gte: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000),
+                },
               },
             },
           },
@@ -155,7 +167,7 @@ export abstract class BaseService {
    * Validate Brazilian CPF
    */
   protected validateCPF(cpf: string): boolean {
-    cpf = cpf.replace(/[^\d]/g, '');
+    cpf = cpf.replace(/[^\d]/g, "");
 
     if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
       return false;
@@ -204,7 +216,10 @@ export abstract class BaseService {
   /**
    * Validate user has access to specific clinic
    */
-  protected async validateClinicAccess(userId: string, clinicId: string): Promise<boolean> {
+  protected async validateClinicAccess(
+    userId: string,
+    clinicId: string,
+  ): Promise<boolean> {
     const accessibleClinics = await this.getUserClinicAccess(userId);
     return accessibleClinics.includes(clinicId);
   }

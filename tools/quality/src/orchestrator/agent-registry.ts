@@ -1,17 +1,17 @@
 /**
  * 🎭 Agent Registry - Multi-Agent Coordination
  * ============================================
- * 
+ *
  * Central registry for managing TDD agents and their capabilities
  */
 
-import { 
-  AgentName, 
-  AgentCapabilities, 
-  TDDPhase, 
+import {
+  AgentName,
+  AgentCapabilities,
+  TDDPhase,
   FeatureContext,
-  normalizeComplexity
-} from './types';
+  normalizeComplexity,
+} from "./types";
 
 export class AgentRegistry {
   private agents: Map<AgentName, AgentCapabilities> = new Map();
@@ -27,129 +27,169 @@ export class AgentRegistry {
    */
   private initializeAgents(): void {
     // Apex Dev Agent - Advanced development with code audit and TDD
-    this.agents.set('apex-dev', {
-      name: 'apex-dev',
-      phases: ['red', 'green', 'refactor'],
+    this.agents.set("apex-dev", {
+      name: "apex-dev",
+      phases: ["red", "green", "refactor"],
       specializations: [
-        'tdd-discipline',
-        'test-patterns',
-        'test-optimization',
-        'coverage-analysis',
-        'test-structure',
-        'code-audit',
-        'code-quality',
-        'refactoring',
-        'implementation',
-        'performance-optimization'
+        "tdd-discipline",
+        "test-patterns",
+        "test-optimization",
+        "coverage-analysis",
+        "test-structure",
+        "code-audit",
+        "code-quality",
+        "refactoring",
+        "implementation",
+        "performance-optimization",
       ],
       triggers: [
-        'tdd', 'testing', 'coverage', 'test patterns',
-        'unit test', 'integration test', 'e2e test',
-        'code audit', 'code quality', 'refactoring',
-        'implementation', 'performance'
+        "tdd",
+        "testing",
+        "coverage",
+        "test patterns",
+        "unit test",
+        "integration test",
+        "e2e test",
+        "code audit",
+        "code quality",
+        "refactoring",
+        "implementation",
+        "performance",
       ],
       dependencies: [],
-      parallelizable: false // Primary TDD coordinator and code auditor
+      parallelizable: false, // Primary TDD coordinator and code auditor
     });
 
     // Test Agent - TDD and Quality Assurance
-    this.agents.set('test', {
-      name: 'test',
-      phases: ['red', 'green', 'refactor'],
+    this.agents.set("test", {
+      name: "test",
+      phases: ["red", "green", "refactor"],
       specializations: [
-        'test-driven-development',
-        'unit-testing',
-        'integration-testing',
-        'e2e-testing',
-        'test-coverage',
-        'quality-assurance',
-        'ci-cd-integration'
+        "test-driven-development",
+        "unit-testing",
+        "integration-testing",
+        "e2e-testing",
+        "test-coverage",
+        "quality-assurance",
+        "ci-cd-integration",
       ],
       triggers: [
-        'test', 'testing', 'tdd', 'unit test',
-        'integration test', 'e2e test', 'coverage',
-        'quality', 'qa', 'test pattern'
+        "test",
+        "testing",
+        "tdd",
+        "unit test",
+        "integration test",
+        "e2e test",
+        "coverage",
+        "quality",
+        "qa",
+        "test pattern",
       ],
-      dependencies: ['apex-dev'],
-      parallelizable: true
+      dependencies: ["apex-dev"],
+      parallelizable: true,
     });
 
     // Compliance Validator Agent - Healthcare Compliance
-    this.agents.set('compliance-validator', {
-      name: 'compliance-validator',
-      phases: ['red', 'green', 'refactor'],
+    this.agents.set("compliance-validator", {
+      name: "compliance-validator",
+      phases: ["red", "green", "refactor"],
       specializations: [
-        'lgpd-compliance',
-        'anvisa-regulations',
-        'cfm-guidelines',
-        'healthcare-compliance',
-        'data-protection',
-        'audit-trail'
+        "lgpd-compliance",
+        "anvisa-regulations",
+        "cfm-guidelines",
+        "healthcare-compliance",
+        "data-protection",
+        "audit-trail",
       ],
       triggers: [
-        'compliance', 'lgpd', 'anvisa', 'cfm',
-        'healthcare', 'patient data', 'privacy',
-        'consent', 'audit', 'regulation'
+        "compliance",
+        "lgpd",
+        "anvisa",
+        "cfm",
+        "healthcare",
+        "patient data",
+        "privacy",
+        "consent",
+        "audit",
+        "regulation",
       ],
-      dependencies: ['security-auditor'],
-      parallelizable: true
+      dependencies: ["security-auditor"],
+      parallelizable: true,
     });
 
     // Architect Review Agent - System design and patterns
-    this.agents.set('architect-review', {
-      name: 'architect-review',
-      phases: ['red', 'green', 'refactor'],
+    this.agents.set("architect-review", {
+      name: "architect-review",
+      phases: ["red", "green", "refactor"],
       specializations: [
-        'system-architecture',
-        'design-patterns',
-        'scalability',
-        'microservices',
-        'api-design'
+        "system-architecture",
+        "design-patterns",
+        "scalability",
+        "microservices",
+        "api-design",
       ],
       triggers: [
-        'microservice', 'architecture', 'system design', 'patterns',
-        'scalability', 'api', 'integration', 'service boundary'
+        "microservice",
+        "architecture",
+        "system design",
+        "patterns",
+        "scalability",
+        "api",
+        "integration",
+        "service boundary",
       ],
       dependencies: [],
-      parallelizable: true
+      parallelizable: true,
     });
 
     // Code Reviewer Agent - Code quality and maintainability
-    this.agents.set('code-reviewer', {
-      name: 'code-reviewer',
-      phases: ['green', 'refactor'],
+    this.agents.set("code-reviewer", {
+      name: "code-reviewer",
+      phases: ["green", "refactor"],
       specializations: [
-        'code-quality',
-        'maintainability',
-        'performance',
-        'technical-debt',
-        'refactoring'
+        "code-quality",
+        "maintainability",
+        "performance",
+        "technical-debt",
+        "refactoring",
       ],
       triggers: [
-        'performance', 'maintainability', 'technical debt',
-        'code quality', 'refactor', 'optimization'
+        "performance",
+        "maintainability",
+        "technical debt",
+        "code quality",
+        "refactor",
+        "optimization",
       ],
-      dependencies: ['apex-dev'],
-      parallelizable: true
+      dependencies: ["apex-dev"],
+      parallelizable: true,
     });
 
     // Security Auditor Agent - DevSecOps and compliance
-    this.agents.set('security-auditor', {
-      name: 'security-auditor',
-      phases: ['red', 'green', 'refactor'],
+    this.agents.set("security-auditor", {
+      name: "security-auditor",
+      phases: ["red", "green", "refactor"],
       specializations: [
-        'security-analysis',
-        'vulnerability-scanning',
-        'compliance',
-        'devsecops',
-        'threat-modeling'
+        "security-analysis",
+        "vulnerability-scanning",
+        "compliance",
+        "devsecops",
+        "threat-modeling",
       ],
       triggers: [
-        'authentication', 'authorization', 'payment', 'personal data',
-        'compliance', 'security', 'encrypt', 'auth', 'gdpr', 'lgpd'
+        "authentication",
+        "authorization",
+        "payment",
+        "personal data",
+        "compliance",
+        "security",
+        "encrypt",
+        "auth",
+        "gdpr",
+        "lgpd",
       ],
       dependencies: [],
-      parallelizable: true
+      parallelizable: true,
     });
   }
 
@@ -158,38 +198,49 @@ export class AgentRegistry {
    */
   private setupActivationRules(): void {
     // Security-critical features
-    this.activationRules.set('security-critical', [
-      'security-auditor', 'apex-dev', 'code-reviewer'
+    this.activationRules.set("security-critical", [
+      "security-auditor",
+      "apex-dev",
+      "code-reviewer",
     ]);
 
     // Architecture-heavy features
-    this.activationRules.set('architecture-heavy', [
-      'architect-review', 'apex-dev', 'code-reviewer'
+    this.activationRules.set("architecture-heavy", [
+      "architect-review",
+      "apex-dev",
+      "code-reviewer",
     ]);
 
     // Performance-critical features
-    this.activationRules.set('performance-critical', [
-      'code-reviewer', 'architect-review', 'apex-dev'
+    this.activationRules.set("performance-critical", [
+      "code-reviewer",
+      "architect-review",
+      "apex-dev",
     ]);
 
     // Standard features
-    this.activationRules.set('standard', [
-      'apex-dev', 'code-reviewer'
-    ]);
+    this.activationRules.set("standard", ["apex-dev", "code-reviewer"]);
 
     // Legacy code modernization
-    this.activationRules.set('legacy', [
-      'code-reviewer', 'architect-review', 'apex-dev', 'security-auditor'
+    this.activationRules.set("legacy", [
+      "code-reviewer",
+      "architect-review",
+      "apex-dev",
+      "security-auditor",
     ]);
 
     // Test-heavy features
-    this.activationRules.set('test-heavy', [
-      'test', 'apex-dev', 'code-reviewer'
+    this.activationRules.set("test-heavy", [
+      "test",
+      "apex-dev",
+      "code-reviewer",
     ]);
 
     // Compliance-heavy features
-    this.activationRules.set('compliance-heavy', [
-      'compliance-validator', 'security-auditor', 'apex-dev'
+    this.activationRules.set("compliance-heavy", [
+      "compliance-validator",
+      "security-auditor",
+      "apex-dev",
     ]);
   }
 
@@ -211,9 +262,7 @@ export class AgentRegistry {
    * Get agents for a specific TDD phase
    */
   getAgentsForPhase(phase: TDDPhase): AgentCapabilities[] {
-    return this.getAllAgents().filter(agent => 
-      agent.phases.includes(phase)
-    );
+    return this.getAllAgents().filter((agent) => agent.phases.includes(phase));
   }
 
   /**
@@ -221,46 +270,46 @@ export class AgentRegistry {
    */
   selectAgentsForFeature(feature: FeatureContext): AgentName[] {
     const selectedAgents = new Set<AgentName>();
-    
+
     // Always include apex-dev agent for TDD
-    selectedAgents.add('apex-dev');
+    selectedAgents.add("apex-dev");
 
     // Check for security triggers
     if (this.hasSecurityTriggers(feature)) {
-      selectedAgents.add('security-auditor');
+      selectedAgents.add("security-auditor");
     }
 
     // Check for architecture triggers
     if (this.hasArchitectureTriggers(feature)) {
-      selectedAgents.add('architect-review');
+      selectedAgents.add("architect-review");
     }
 
     // Check for performance/quality triggers
     if (this.hasQualityTriggers(feature)) {
-      selectedAgents.add('code-reviewer');
+      selectedAgents.add("code-reviewer");
     }
 
     // Check for test triggers
     if (this.hasTestTriggers(feature)) {
-      selectedAgents.add('test');
+      selectedAgents.add("test");
     }
 
     // Check for compliance triggers
     if (this.hasComplianceTriggers(feature)) {
-      selectedAgents.add('compliance-validator');
+      selectedAgents.add("compliance-validator");
     }
 
     // Complexity-based selection
     const complexityLevel = normalizeComplexity(feature.complexity);
     if (complexityLevel >= 7) {
       // High complexity features need all agents
-      this.getAllAgents().forEach(agent => {
+      this.getAllAgents().forEach((agent) => {
         selectedAgents.add(agent.name);
       });
     } else if (complexityLevel >= 4) {
       // Medium complexity adds code reviewer if not already included
-      if (!selectedAgents.has('code-reviewer')) {
-        selectedAgents.add('code-reviewer');
+      if (!selectedAgents.has("code-reviewer")) {
+        selectedAgents.add("code-reviewer");
       }
     }
 
@@ -271,39 +320,43 @@ export class AgentRegistry {
    * Check if feature has security-related triggers
    */
   private hasSecurityTriggers(feature: FeatureContext): boolean {
-    const securityAgent = this.agents.get('security-auditor');
+    const securityAgent = this.agents.get("security-auditor");
     if (!securityAgent) return false;
 
     const featureText = [
       feature.name,
       ...(Array.isArray(feature.domain) ? feature.domain : []),
       ...(Array.isArray(feature.requirements) ? feature.requirements : []),
-      ...(Array.isArray(feature.complianceRequirements) ? feature.complianceRequirements : [])
-    ].join(' ').toLowerCase();
+      ...(Array.isArray(feature.complianceRequirements)
+        ? feature.complianceRequirements
+        : []),
+    ]
+      .join(" ")
+      .toLowerCase();
 
-    return securityAgent.triggers.some(trigger => 
-      featureText.includes(trigger.toLowerCase())
-    ) || feature.securityCritical;
+    return (
+      securityAgent.triggers.some((trigger) =>
+        featureText.includes(trigger.toLowerCase()),
+      ) || feature.securityCritical
+    );
   }
 
   /**
    * Check if feature has architecture-related triggers
    */
   private hasArchitectureTriggers(feature: FeatureContext): boolean {
-    const architectAgent = this.agents.get('architect-review');
+    const architectAgent = this.agents.get("architect-review");
     if (!architectAgent) return false;
 
     const domains = Array.isArray(feature.domain) ? feature.domain : [];
     const requirements = feature.requirements ?? [];
 
-    const featureText = [
-      feature.name,
-      ...domains,
-      ...requirements
-    ].join(' ').toLowerCase();
+    const featureText = [feature.name, ...domains, ...requirements]
+      .join(" ")
+      .toLowerCase();
 
-    return architectAgent.triggers.some(trigger => 
-      featureText.includes(trigger.toLowerCase())
+    return architectAgent.triggers.some((trigger) =>
+      featureText.includes(trigger.toLowerCase()),
     );
   }
 
@@ -311,20 +364,18 @@ export class AgentRegistry {
    * Check if feature has quality/performance triggers
    */
   private hasQualityTriggers(feature: FeatureContext): boolean {
-    const codeReviewerAgent = this.agents.get('code-reviewer');
+    const codeReviewerAgent = this.agents.get("code-reviewer");
     if (!codeReviewerAgent) return false;
 
     const domains = Array.isArray(feature.domain) ? feature.domain : [];
     const requirements = feature.requirements ?? [];
 
-    const featureText = [
-      feature.name,
-      ...domains,
-      ...requirements
-    ].join(' ').toLowerCase();
+    const featureText = [feature.name, ...domains, ...requirements]
+      .join(" ")
+      .toLowerCase();
 
-    return codeReviewerAgent.triggers.some(trigger => 
-      featureText.includes(trigger.toLowerCase())
+    return codeReviewerAgent.triggers.some((trigger) =>
+      featureText.includes(trigger.toLowerCase()),
     );
   }
 
@@ -332,18 +383,22 @@ export class AgentRegistry {
    * Check if feature has test-related triggers
    */
   private hasTestTriggers(feature: FeatureContext): boolean {
-    const testAgent = this.agents.get('test');
+    const testAgent = this.agents.get("test");
     if (!testAgent) return false;
 
     const featureText = [
       feature.name,
       ...(Array.isArray(feature.domain) ? feature.domain : []),
       ...(Array.isArray(feature.requirements) ? feature.requirements : []),
-      ...(Array.isArray(feature.complianceRequirements) ? feature.complianceRequirements : [])
-    ].join(' ').toLowerCase();
+      ...(Array.isArray(feature.complianceRequirements)
+        ? feature.complianceRequirements
+        : []),
+    ]
+      .join(" ")
+      .toLowerCase();
 
-    return testAgent.triggers.some(trigger => 
-      featureText.includes(trigger.toLowerCase())
+    return testAgent.triggers.some((trigger) =>
+      featureText.includes(trigger.toLowerCase()),
     );
   }
 
@@ -351,43 +406,52 @@ export class AgentRegistry {
    * Check if feature has compliance-related triggers
    */
   private hasComplianceTriggers(feature: FeatureContext): boolean {
-    const complianceAgent = this.agents.get('compliance-validator');
+    const complianceAgent = this.agents.get("compliance-validator");
     if (!complianceAgent) return false;
 
     const featureText = [
       feature.name,
       ...(Array.isArray(feature.domain) ? feature.domain : []),
       ...(Array.isArray(feature.requirements) ? feature.requirements : []),
-      ...(Array.isArray(feature.complianceRequirements) ? feature.complianceRequirements : [])
-    ].join(' ').toLowerCase();
+      ...(Array.isArray(feature.complianceRequirements)
+        ? feature.complianceRequirements
+        : []),
+    ]
+      .join(" ")
+      .toLowerCase();
 
-    return complianceAgent.triggers.some(trigger => 
-      featureText.includes(trigger.toLowerCase())
-    ) || 
-    (feature.complianceRequirements && feature.complianceRequirements.length > 0);
+    return (
+      complianceAgent.triggers.some((trigger) =>
+        featureText.includes(trigger.toLowerCase()),
+      ) ||
+      (feature.complianceRequirements &&
+        feature.complianceRequirements.length > 0)
+    );
   }
 
   /**
    * Get agents that can run in parallel for a given phase
    */
-  getParallelizableAgents(phase: TDDPhase, selectedAgents: AgentName[]): AgentName[] {
-    return selectedAgents.filter(agentName => {
+  getParallelizableAgents(
+    phase: TDDPhase,
+    selectedAgents: AgentName[],
+  ): AgentName[] {
+    return selectedAgents.filter((agentName) => {
       const agent = this.agents.get(agentName);
-      return agent && 
-             agent.phases.includes(phase) && 
-             agent.parallelizable;
+      return agent && agent.phases.includes(phase) && agent.parallelizable;
     });
   }
 
   /**
    * Get agents that must run sequentially for a given phase
    */
-  getSequentialAgents(phase: TDDPhase, selectedAgents: AgentName[]): AgentName[] {
-    return selectedAgents.filter(agentName => {
+  getSequentialAgents(
+    phase: TDDPhase,
+    selectedAgents: AgentName[],
+  ): AgentName[] {
+    return selectedAgents.filter((agentName) => {
       const agent = this.agents.get(agentName);
-      return agent && 
-             agent.phases.includes(phase) && 
-             !agent.parallelizable;
+      return agent && agent.phases.includes(phase) && !agent.parallelizable;
     });
   }
 
@@ -400,19 +464,21 @@ export class AgentRegistry {
 
     const visit = (agentName: AgentName) => {
       if (visiting.has(agentName)) {
-        throw new Error(`Circular dependency detected involving agent: ${agentName}`);
+        throw new Error(
+          `Circular dependency detected involving agent: ${agentName}`,
+        );
       }
-      
+
       if (resolved.has(agentName)) {
         return;
       }
 
       visiting.add(agentName);
-      
+
       const agent = this.agents.get(agentName);
       if (agent) {
         // Visit dependencies first
-        agent.dependencies.forEach(dep => {
+        agent.dependencies.forEach((dep) => {
           if (agents.includes(dep)) {
             visit(dep);
           }
@@ -430,7 +496,10 @@ export class AgentRegistry {
   /**
    * Validate agent configuration
    */
-  validateAgentConfig(agentName: AgentName, _config: Record<string, any>): boolean {
+  validateAgentConfig(
+    agentName: AgentName,
+    _config: Record<string, any>,
+  ): boolean {
     const agent = this.agents.get(agentName);
     if (!agent) {
       throw new Error(`Unknown agent: ${agentName}`);

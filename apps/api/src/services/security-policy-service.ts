@@ -14,14 +14,22 @@ export const SecurityPolicySchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string(),
-  type: z.enum(['authentication', 'authorization', 'data_protection', 'audit', 'compliance']),
+  type: z.enum([
+    'authentication',
+    'authorization',
+    'data_protection',
+    'audit',
+    'compliance',
+  ]),
   enabled: z.boolean().default(true),
-  rules: z.array(z.object({
-    id: z.string(),
-    condition: z.string(),
-    action: z.enum(['allow', 'deny', 'require_mfa', 'audit', 'encrypt']),
-    parameters: z.record(z.unknown()).optional(),
-  })),
+  rules: z.array(
+    z.object({
+      id: z.string(),
+      condition: z.string(),
+      action: z.enum(['allow', 'deny', 'require_mfa', 'audit', 'encrypt']),
+      parameters: z.record(z.unknown()).optional(),
+    }),
+  ),
   metadata: z.object({
     clinicId: z.string().optional(),
     createdBy: z.string(),
@@ -82,7 +90,9 @@ export async function createSecurityPolicy(
 /**
  * Get a security policy by ID
  */
-export async function getSecurityPolicy(id: string): Promise<SecurityPolicy | null> {
+export async function getSecurityPolicy(
+  id: string,
+): Promise<SecurityPolicy | null> {
   return securityPolicies.get(id) || null;
 }
 
@@ -131,21 +141,21 @@ export async function listSecurityPolicies(): Promise<SecurityPolicy[]> {
 /**
  * Evaluate security policies for a given context
  */
-export async function evaluateSecurityPolicies(
-  context: {
-    userId?: string;
-    patientId?: string;
-    clinicId?: string;
-    action: string;
-    resource: string;
-    metadata?: Record<string, unknown>;
-  },
-): Promise<{
+export async function evaluateSecurityPolicies(context: {
+  userId?: string;
+  patientId?: string;
+  clinicId?: string;
+  action: string;
+  resource: string;
+  metadata?: Record<string, unknown>;
+}): Promise<{
   allowed: boolean;
   appliedPolicies: string[];
   requiredActions: string[];
 }> {
-  const policies = Array.from(securityPolicies.values()).filter(p => p.enabled);
+  const policies = Array.from(securityPolicies.values()).filter(
+    p => p.enabled,
+  );
   const appliedPolicies: string[] = [];
   const requiredActions: string[] = [];
   let allowed = true;
@@ -184,7 +194,9 @@ export async function evaluateSecurityPolicies(
 /**
  * Get global security configuration
  */
-export async function getGlobalSecurityConfig(): Promise<SecurityPolicyConfig['globalSettings']> {
+export async function getGlobalSecurityConfig(): Promise<
+  SecurityPolicyConfig['globalSettings']
+> {
   return { ...globalConfig };
 }
 

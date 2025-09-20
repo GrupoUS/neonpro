@@ -32,11 +32,31 @@ const PatientService = {
         successCount: 5,
         failureCount: 0,
         results: [
-          { patientId: 'patient-1', success: true, message: 'Atualizado com sucesso' },
-          { patientId: 'patient-2', success: true, message: 'Atualizado com sucesso' },
-          { patientId: 'patient-3', success: true, message: 'Atualizado com sucesso' },
-          { patientId: 'patient-4', success: true, message: 'Atualizado com sucesso' },
-          { patientId: 'patient-5', success: true, message: 'Atualizado com sucesso' },
+          {
+            patientId: 'patient-1',
+            success: true,
+            message: 'Atualizado com sucesso',
+          },
+          {
+            patientId: 'patient-2',
+            success: true,
+            message: 'Atualizado com sucesso',
+          },
+          {
+            patientId: 'patient-3',
+            success: true,
+            message: 'Atualizado com sucesso',
+          },
+          {
+            patientId: 'patient-4',
+            success: true,
+            message: 'Atualizado com sucesso',
+          },
+          {
+            patientId: 'patient-5',
+            success: true,
+            message: 'Atualizado com sucesso',
+          },
         ],
         executionTime: 1250,
       },
@@ -52,9 +72,21 @@ const PatientService = {
         failureCount: 0,
         deletionType: 'soft_delete',
         results: [
-          { patientId: 'patient-1', success: true, message: 'Removido com sucesso' },
-          { patientId: 'patient-2', success: true, message: 'Removido com sucesso' },
-          { patientId: 'patient-3', success: true, message: 'Removido com sucesso' },
+          {
+            patientId: 'patient-1',
+            success: true,
+            message: 'Removido com sucesso',
+          },
+          {
+            patientId: 'patient-2',
+            success: true,
+            message: 'Removido com sucesso',
+          },
+          {
+            patientId: 'patient-3',
+            success: true,
+            message: 'Removido com sucesso',
+          },
         ],
         executionTime: 850,
       },
@@ -98,7 +130,10 @@ const LGPDService = {
   async validateBulkConsent(_params: any) {
     return {
       success: true,
-      data: { consentValid: true, validPatients: ['patient-1', 'patient-2', 'patient-3'] },
+      data: {
+        consentValid: true,
+        validPatients: ['patient-1', 'patient-2', 'patient-3'],
+      },
     };
   },
   async processBulkDataDeletion(_params: any) {
@@ -112,27 +147,37 @@ const LGPDService = {
 // Validation schemas
 const bulkActionSchema = z.object({
   action: z.enum(['update', 'delete', 'export']),
-  patientIds: z.array(z.string().uuid()).min(1, 'Pelo menos um paciente deve ser especificado'),
-  updateData: z.object({
-    status: z.enum(['active', 'inactive', 'archived']).optional(),
-    notes: z.string().optional(),
-    healthcareInfo: z.object({
-      medicalHistory: z.array(z.string()).optional(),
-    }).optional(),
-  }).optional(),
-  options: z.object({
-    sendNotifications: z.boolean().optional().default(false),
-    validateConsent: z.boolean().optional().default(true),
-    deletionType: z.enum(['soft_delete', 'hard_delete', 'anonymization']).optional().default(
-      'soft_delete',
-    ),
-    reason: z.string().optional(),
-    format: z.enum(['csv', 'pdf', 'json']).optional().default('csv'),
-    fields: z.array(z.string()).optional(),
-    includeHeaders: z.boolean().optional().default(true),
-    lgpdCompliant: z.boolean().optional().default(true),
-    batchSize: z.number().min(1).max(100).optional().default(20),
-  }).optional().default({}),
+  patientIds: z
+    .array(z.string().uuid())
+    .min(1, 'Pelo menos um paciente deve ser especificado'),
+  updateData: z
+    .object({
+      status: z.enum(['active', 'inactive', 'archived']).optional(),
+      notes: z.string().optional(),
+      healthcareInfo: z
+        .object({
+          medicalHistory: z.array(z.string()).optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+  options: z
+    .object({
+      sendNotifications: z.boolean().optional().default(false),
+      validateConsent: z.boolean().optional().default(true),
+      deletionType: z
+        .enum(['soft_delete', 'hard_delete', 'anonymization'])
+        .optional()
+        .default('soft_delete'),
+      reason: z.string().optional(),
+      format: z.enum(['csv', 'pdf', 'json']).optional().default('csv'),
+      fields: z.array(z.string()).optional(),
+      includeHeaders: z.boolean().optional().default(true),
+      lgpdCompliant: z.boolean().optional().default(true),
+      batchSize: z.number().min(1).max(100).optional().default(20),
+    })
+    .optional()
+    .default({}),
 });
 
 const app = new Hono();
@@ -159,11 +204,15 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
       });
 
       if (!consentValidation.success) {
-        return c.json({
-          success: false,
-          error: consentValidation.error || 'Consentimento insuficiente para operação em lote',
-          details: consentValidation.data,
-        }, 403);
+        return c.json(
+          {
+            success: false,
+            error: consentValidation.error
+              || 'Consentimento insuficiente para operação em lote',
+            details: consentValidation.data,
+          },
+          403,
+        );
       }
     }
 
@@ -225,17 +274,23 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
         break;
 
       default:
-        return c.json({
-          success: false,
-          error: 'Ação de operação em lote inválida',
-        }, 400);
+        return c.json(
+          {
+            success: false,
+            error: 'Ação de operação em lote inválida',
+          },
+          400,
+        );
     }
 
     if (!result.success) {
-      return c.json({
-        success: false,
-        error: result.error || 'Erro interno do serviço de operações em lote',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: result.error || 'Erro interno do serviço de operações em lote',
+        },
+        500,
+      );
     }
 
     // Log bulk activity for audit trail
@@ -274,10 +329,16 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
 
     // Set response headers
     c.header('X-Operation-Id', result.data.operationId);
-    c.header('X-Processed-Count', result.data.processedCount?.toString() || '0');
+    c.header(
+      'X-Processed-Count',
+      result.data.processedCount?.toString() || '0',
+    );
     c.header('X-Success-Count', result.data.successCount?.toString() || '0');
     c.header('X-Failure-Count', result.data.failureCount?.toString() || '0');
-    c.header('X-Execution-Time', `${result.data.executionTime || executionTime}ms`);
+    c.header(
+      'X-Execution-Time',
+      `${result.data.executionTime || executionTime}ms`,
+    );
     c.header('X-Response-Time', `${executionTime}ms`);
     c.header('X-Database-Queries', '5');
     c.header('X-CFM-Compliant', 'true');
@@ -290,37 +351,49 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
       c.header('X-Batch-Count', result.data.batchCount?.toString() || '1');
     }
 
-    return c.json({
-      success: true,
-      data: result.data,
-    }, statusCode);
+    return c.json(
+      {
+        success: true,
+        data: result.data,
+      },
+      statusCode,
+    );
   } catch (error) {
     console.error('Bulk actions endpoint error:', error);
 
     // Handle validation errors
     if (error instanceof z.ZodError) {
-      return c.json({
-        success: false,
-        error: 'Dados de operação em lote inválidos',
-        errors: error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-        })),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: 'Dados de operação em lote inválidos',
+          errors: error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message,
+          })),
+        },
+        400,
+      );
     }
 
     // Handle JSON parsing errors
     if (error instanceof SyntaxError) {
-      return c.json({
-        success: false,
-        error: 'Formato JSON inválido',
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: 'Formato JSON inválido',
+        },
+        400,
+      );
     }
 
-    return c.json({
-      success: false,
-      error: 'Erro interno do servidor',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: 'Erro interno do servidor',
+      },
+      500,
+    );
   }
 });
 

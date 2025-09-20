@@ -83,7 +83,7 @@ class InMemoryQueryCache implements QueryCache {
   async set(key: string, value: any, ttl = 300): Promise<void> {
     this.cache.set(key, {
       value,
-      expires: Date.now() + (ttl * 1000),
+      expires: Date.now() + ttl * 1000,
     });
   }
 
@@ -175,8 +175,14 @@ export class HealthcareQueryOptimizer {
     fromCache: boolean;
   }> {
     const startTime = Date.now();
-    const { query, page = 1, limit = 20, sortBy = 'updatedAt', sortOrder = 'desc', filters } =
-      searchParams;
+    const {
+      query,
+      page = 1,
+      limit = 20,
+      sortBy = 'updatedAt',
+      sortOrder = 'desc',
+      filters,
+    } = searchParams;
 
     // Create cache key
     const cacheKey = `patients:${clinicId}:${JSON.stringify(searchParams)}`;
@@ -380,10 +386,16 @@ export class HealthcareQueryOptimizer {
   async batchCreatePatients(
     clinicId: string,
     patientsData: Array<Record<string, any>>,
-  ): Promise<{ created: number; errors: Array<{ index: number; error: string }> }> {
+  ): Promise<{
+    created: number;
+    errors: Array<{ index: number; error: string }>;
+  }> {
     const startTime = Date.now();
     const batchSize = Math.min(this.config.maxBatchSize, patientsData.length);
-    const results = { created: 0, errors: [] as Array<{ index: number; error: string }> };
+    const results = {
+      created: 0,
+      errors: [] as Array<{ index: number; error: string }>,
+    };
 
     try {
       // Process in batches to avoid overwhelming the database
@@ -460,7 +472,11 @@ export class HealthcareQueryOptimizer {
 
     try {
       const today = new Date();
-      const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      const startOfDay = new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate(),
+      );
       const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
       // Execute all queries in parallel for maximum performance
@@ -481,7 +497,9 @@ export class HealthcareQueryOptimizer {
           where: {
             clinicId,
             isActive: true,
-            lastVisitDate: { gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) },
+            lastVisitDate: {
+              gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+            },
           },
         }),
         this.prisma.appointment.count({
@@ -566,7 +584,11 @@ export class HealthcareQueryOptimizer {
   /**
    * Query performance monitoring
    */
-  private updateMetrics(duration: number, isError: boolean, isFromCache: boolean): void {
+  private updateMetrics(
+    duration: number,
+    isError: boolean,
+    isFromCache: boolean,
+  ): void {
     if (!this.config.enablePerformanceMonitoring) return;
 
     this.metrics.queryCount++;
@@ -607,7 +629,10 @@ export class HealthcareQueryOptimizer {
     };
 
     // Log slow queries
-    if (duration > this.config.slowQueryThreshold && this.config.enableQueryLogging) {
+    if (
+      duration > this.config.slowQueryThreshold
+      && this.config.enableQueryLogging
+    ) {
       console.warn(`Slow query detected: ${duration}ms`);
     }
   }
@@ -659,7 +684,10 @@ export class ConnectionPoolMonitor {
 
         // Alert if connection pool is under stress
         if (metrics.utilization > 80) {
-          console.warn('High connection pool utilization:', metrics.utilization + '%');
+          console.warn(
+            'High connection pool utilization:',
+            metrics.utilization + '%',
+          );
         }
       } catch (error) {
         console.error('Connection pool monitoring failed:', error);

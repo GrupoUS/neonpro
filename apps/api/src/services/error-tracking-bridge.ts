@@ -28,7 +28,7 @@ class LegacyErrorTracker {
     this.healthcareTracker = createHealthcareErrorTracker();
     this.config = {
       enabled: true,
-      environment: process.env.NODE_ENV as any || 'development',
+      environment: (process.env.NODE_ENV as any) || 'development',
       sampleRate: 1.0,
       maxBreadcrumbs: 100,
       ignoreErrors: [],
@@ -53,7 +53,11 @@ class LegacyErrorTracker {
     const healthcareContext = this.convertContext(context);
 
     // Use healthcare tracker
-    return this.healthcareTracker.captureException(error, healthcareContext, extra);
+    return this.healthcareTracker.captureException(
+      error,
+      healthcareContext,
+      extra,
+    );
   }
 
   /**
@@ -73,14 +77,15 @@ class LegacyErrorTracker {
     const healthcareContext = this.convertContext(context);
 
     // Map level to severity
-    const severity = level === 'error'
-      ? 'high'
-      : level === 'warning'
-      ? 'medium'
-      : 'low';
+    const severity = level === 'error' ? 'high' : level === 'warning' ? 'medium' : 'low';
 
     // Use healthcare tracker
-    return this.healthcareTracker.captureMessage(message, severity, healthcareContext, extra);
+    return this.healthcareTracker.captureMessage(
+      message,
+      severity,
+      healthcareContext,
+      extra,
+    );
   }
 
   /**
@@ -120,7 +125,10 @@ class LegacyErrorTracker {
   /**
    * Track an error event (legacy compatibility)
    */
-  async trackError(error: Error, context: Partial<LegacyErrorContext> = {}): Promise<string> {
+  async trackError(
+    error: Error,
+    context: Partial<LegacyErrorContext> = {},
+  ): Promise<string> {
     if (!this.config.enabled) {
       return 'disabled';
     }
@@ -139,7 +147,11 @@ class LegacyErrorTracker {
     // Map to breadcrumb + structured context; defer to healthcare tracker if audit API exists later
     const { action, subject, metadata } = event;
     const breadcrumbData = { action, subject, ...metadata };
-    this.addBreadcrumb(`audit:${action}` + (subject ? `:${subject}` : ''), 'info', breadcrumbData);
+    this.addBreadcrumb(
+      `audit:${action}` + (subject ? `:${subject}` : ''),
+      'info',
+      breadcrumbData,
+    );
   }
 
   /**
@@ -287,7 +299,9 @@ class LegacyErrorTracker {
 /**
  * Get singleton legacy-compatible tracker instance
  */
-export function getLegacyErrorTracker(config?: Partial<LegacyConfig>): LegacyErrorTracker {
+export function getLegacyErrorTracker(
+  config?: Partial<LegacyConfig>,
+): LegacyErrorTracker {
   if (!legacyCompatibleTracker) {
     legacyCompatibleTracker = new LegacyErrorTracker(config);
   }
@@ -297,21 +311,19 @@ export function getLegacyErrorTracker(config?: Partial<LegacyConfig>): LegacyErr
 /**
  * Initialize error tracking with legacy compatibility
  */
-export function initializeLegacyErrorTracking(config?: Partial<LegacyConfig>): Promise<void> {
+export function initializeLegacyErrorTracking(
+  config?: Partial<LegacyConfig>,
+): Promise<void> {
   return new Promise((resolve, reject) => {
     try {
       const tracker = getLegacyErrorTracker(config);
 
       // Add initialization breadcrumb
-      tracker.addBreadcrumb(
-        'Legacy error tracking initialized',
-        'info',
-        {
-          environment: tracker.getConfig().environment,
-          enabled: tracker.getConfig().enabled,
-          timestamp: new Date().toISOString(),
-        },
-      );
+      tracker.addBreadcrumb('Legacy error tracking initialized', 'info', {
+        environment: tracker.getConfig().environment,
+        enabled: tracker.getConfig().enabled,
+        timestamp: new Date().toISOString(),
+      });
 
       console.log('[Legacy Error Tracker] Initialized successfully');
       resolve();

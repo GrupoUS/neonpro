@@ -2,7 +2,7 @@
 
 **Version**: Phase 1  
 **Last Updated**: 2025-01-27  
-**Migration Status**: ✅ Complete  
+**Migration Status**: ✅ Complete
 
 ## Overview
 
@@ -27,21 +27,21 @@ CREATE TABLE ai_chat_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
     clinic_id UUID NOT NULL,
-    
+
     -- Session management
     status ai_chat_session_status DEFAULT 'active',
     expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    
+
     -- Chat context
     context JSONB NOT NULL DEFAULT '{}',
     preferences JSONB DEFAULT '{}',
-    
+
     -- Usage tracking
     message_count INTEGER DEFAULT 0,
     token_count INTEGER DEFAULT 0,
-    
+
     -- Metadata
     metadata JSONB DEFAULT '{}'
 );
@@ -49,7 +49,7 @@ CREATE TABLE ai_chat_sessions (
 -- Custom enum for session status
 CREATE TYPE ai_chat_session_status AS ENUM (
     'active',
-    'expired', 
+    'expired',
     'terminated',
     'suspended'
 );
@@ -64,6 +64,7 @@ CREATE TYPE ai_chat_session_status AS ENUM (
 - `expires_at`: Automatic session expiration (default: 1 hour)
 
 **Indexes:**
+
 ```sql
 -- Performance indexes
 CREATE INDEX idx_ai_chat_sessions_user_clinic ON ai_chat_sessions(user_id, clinic_id);
@@ -71,7 +72,7 @@ CREATE INDEX idx_ai_chat_sessions_status_expires ON ai_chat_sessions(status, exp
 CREATE INDEX idx_ai_chat_sessions_created_at ON ai_chat_sessions(created_at);
 
 -- Partial indexes for active sessions (most common queries)
-CREATE INDEX idx_ai_chat_sessions_active ON ai_chat_sessions(clinic_id, user_id) 
+CREATE INDEX idx_ai_chat_sessions_active ON ai_chat_sessions(clinic_id, user_id)
     WHERE status = 'active';
 ```
 
@@ -83,24 +84,24 @@ Stores individual messages within chat sessions.
 CREATE TABLE ai_chat_messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     session_id UUID NOT NULL REFERENCES ai_chat_sessions(id) ON DELETE CASCADE,
-    
+
     -- Message content
     role ai_chat_message_role NOT NULL,
     content TEXT NOT NULL,
-    
+
     -- AI metadata
     provider VARCHAR(50), -- 'openai', 'anthropic', etc.
     model VARCHAR(100),
     tokens_used INTEGER,
     response_time_ms INTEGER,
-    
+
     -- Compliance and safety
     pii_detected BOOLEAN DEFAULT FALSE,
     content_filtered BOOLEAN DEFAULT FALSE,
-    
+
     -- Timestamps
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    
+
     -- Additional metadata
     metadata JSONB DEFAULT '{}'
 );
@@ -108,7 +109,7 @@ CREATE TABLE ai_chat_messages (
 -- Message role enum
 CREATE TYPE ai_chat_message_role AS ENUM (
     'user',
-    'assistant', 
+    'assistant',
     'system'
 );
 ```
@@ -123,13 +124,14 @@ CREATE TYPE ai_chat_message_role AS ENUM (
 - `content_filtered`: Safety filter tracking
 
 **Indexes:**
+
 ```sql
 -- Session-based queries (most common)
 CREATE INDEX idx_ai_chat_messages_session_created ON ai_chat_messages(session_id, created_at);
 
 -- Analytics and reporting
 CREATE INDEX idx_ai_chat_messages_provider_created ON ai_chat_messages(provider, created_at);
-CREATE INDEX idx_ai_chat_messages_pii_created ON ai_chat_messages(pii_detected, created_at) 
+CREATE INDEX idx_ai_chat_messages_pii_created ON ai_chat_messages(pii_detected, created_at)
     WHERE pii_detected = TRUE;
 ```
 
@@ -140,22 +142,22 @@ Comprehensive audit logging for LGPD compliance.
 ```sql
 CREATE TABLE ai_chat_audit_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    
+
     -- Context
     user_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
     clinic_id UUID,
     session_id UUID REFERENCES ai_chat_sessions(id) ON DELETE SET NULL,
     message_id UUID REFERENCES ai_chat_messages(id) ON DELETE SET NULL,
-    
+
     -- Event details
     event_type ai_chat_audit_event_type NOT NULL,
     event_data JSONB NOT NULL DEFAULT '{}',
-    
+
     -- Compliance tracking
     ip_address INET,
     user_agent TEXT,
     consent_version VARCHAR(20),
-    
+
     -- Timestamp
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -163,7 +165,7 @@ CREATE TABLE ai_chat_audit_events (
 -- Audit event types
 CREATE TYPE ai_chat_audit_event_type AS ENUM (
     'session_created',
-    'session_terminated', 
+    'session_terminated',
     'message_sent',
     'message_received',
     'pii_detected',
@@ -183,6 +185,7 @@ CREATE TYPE ai_chat_audit_event_type AS ENUM (
 - `consent_version`: Track consent changes over time
 
 **Indexes:**
+
 ```sql
 -- LGPD compliance queries
 CREATE INDEX idx_ai_chat_audit_user_clinic ON ai_chat_audit_events(user_id, clinic_id);
@@ -205,7 +208,7 @@ ALTER TABLE ai_chat_sessions ENABLE ROW LEVEL SECURITY;
 -- Users can only access their own sessions within their clinic
 CREATE POLICY ai_chat_sessions_user_access ON ai_chat_sessions
     FOR ALL USING (
-        user_id = auth.uid() AND 
+        user_id = auth.uid() AND
         clinic_id = get_user_clinic_id(auth.uid())
     );
 
@@ -231,8 +234,8 @@ ALTER TABLE ai_chat_messages ENABLE ROW LEVEL SECURITY;
 CREATE POLICY ai_chat_messages_user_access ON ai_chat_messages
     FOR ALL USING (
         EXISTS (
-            SELECT 1 FROM ai_chat_sessions s 
-            WHERE s.id = session_id 
+            SELECT 1 FROM ai_chat_sessions s
+            WHERE s.id = session_id
             AND s.user_id = auth.uid()
             AND s.clinic_id = get_user_clinic_id(auth.uid())
         )
@@ -246,7 +249,7 @@ CREATE POLICY ai_chat_messages_service_access ON ai_chat_messages
 ### ai_chat_audit_events Policies
 
 ```sql
--- Enable RLS  
+-- Enable RLS
 ALTER TABLE ai_chat_audit_events ENABLE ROW LEVEL SECURITY;
 
 -- Users can only view their own audit events
@@ -279,11 +282,11 @@ RETURNS INTEGER AS $$
 DECLARE
     expired_count INTEGER;
 BEGIN
-    UPDATE ai_chat_sessions 
+    UPDATE ai_chat_sessions
     SET status = 'expired', updated_at = NOW()
-    WHERE status = 'active' 
+    WHERE status = 'active'
     AND expires_at < NOW();
-    
+
     GET DIAGNOSTICS expired_count = ROW_COUNT;
     RETURN expired_count;
 END;
@@ -300,13 +303,13 @@ SELECT cron.schedule('expire-ai-chat-sessions', '*/5 * * * *', 'SELECT expire_ol
 CREATE OR REPLACE FUNCTION update_session_counters()
 RETURNS TRIGGER AS $$
 BEGIN
-    UPDATE ai_chat_sessions 
-    SET 
+    UPDATE ai_chat_sessions
+    SET
         message_count = message_count + 1,
         token_count = token_count + COALESCE(NEW.tokens_used, 0),
         updated_at = NOW()
     WHERE id = NEW.session_id;
-    
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -340,7 +343,7 @@ BEGIN
         inet_client_addr(), current_setting('request.headers.user-agent', true),
         get_user_consent_version(p_user_id)
     ) RETURNING id INTO event_id;
-    
+
     RETURN event_id;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -356,33 +359,33 @@ CREATE OR REPLACE FUNCTION cleanup_old_ai_chat_data(retention_days INTEGER DEFAU
 RETURNS TABLE(sessions_deleted INTEGER, messages_deleted INTEGER, audit_events_deleted INTEGER) AS $$
 DECLARE
     session_count INTEGER;
-    message_count INTEGER; 
+    message_count INTEGER;
     audit_count INTEGER;
     cutoff_date TIMESTAMP WITH TIME ZONE;
 BEGIN
     cutoff_date := NOW() - (retention_days || ' days')::INTERVAL;
-    
+
     -- Delete old messages (cascades from sessions)
-    DELETE FROM ai_chat_sessions 
+    DELETE FROM ai_chat_sessions
     WHERE created_at < cutoff_date;
     GET DIAGNOSTICS session_count = ROW_COUNT;
-    
+
     -- Get message count (for reporting, messages deleted by cascade)
     SELECT COUNT(*) INTO message_count
     FROM ai_chat_messages m
     WHERE NOT EXISTS (SELECT 1 FROM ai_chat_sessions s WHERE s.id = m.session_id);
-    
+
     -- Clean up orphaned audit events (keep audit longer than data)
-    DELETE FROM ai_chat_audit_events 
+    DELETE FROM ai_chat_audit_events
     WHERE created_at < (cutoff_date - INTERVAL '1 year');
     GET DIAGNOSTICS audit_count = ROW_COUNT;
-    
+
     RETURN QUERY SELECT session_count, message_count, audit_count;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Schedule cleanup (run daily at 2 AM)
-SELECT cron.schedule('cleanup-ai-chat-data', '0 2 * * *', 
+SELECT cron.schedule('cleanup-ai-chat-data', '0 2 * * *',
     'SELECT cleanup_old_ai_chat_data(365);');
 ```
 
@@ -391,6 +394,7 @@ SELECT cron.schedule('cleanup-ai-chat-data', '0 2 * * *',
 ### Phase 1 Implementation
 
 **Migration 1**: Core tables and types
+
 ```sql
 -- File: 20250915010101_ai_chat_phase1.sql
 -- Core table creation with proper types and constraints
@@ -398,8 +402,9 @@ SELECT cron.schedule('cleanup-ai-chat-data', '0 2 * * *',
 ```
 
 **Migration 2**: RLS policies and indexes
+
 ```sql
--- File: 20250915093000_ai_chat_phase1_policies_and_indexes.sql  
+-- File: 20250915093000_ai_chat_phase1_policies_and_indexes.sql
 -- Row Level Security policies and performance indexes
 -- See: packages/database/prisma/migrations/20250915093000_ai_chat_phase1_policies_and_indexes/migration.sql
 ```
@@ -407,6 +412,7 @@ SELECT cron.schedule('cleanup-ai-chat-data', '0 2 * * *',
 ### Future Migrations
 
 **Phase 2 Planned**:
+
 - Multi-modal support (image/document storage)
 - Advanced analytics tables
 - Integration with EHR systems
@@ -425,20 +431,20 @@ SELECT cron.schedule('cleanup-ai-chat-data', '0 2 * * *',
 
 ```sql
 -- Efficient session listing with message preview
-SELECT 
+SELECT
     s.*,
-    (SELECT content FROM ai_chat_messages m 
-     WHERE m.session_id = s.id 
+    (SELECT content FROM ai_chat_messages m
+     WHERE m.session_id = s.id
      ORDER BY created_at DESC LIMIT 1) as last_message
-FROM ai_chat_sessions s 
-WHERE s.user_id = $1 AND s.clinic_id = $2 
+FROM ai_chat_sessions s
+WHERE s.user_id = $1 AND s.clinic_id = $2
 AND s.status = 'active'
 ORDER BY s.updated_at DESC;
 
 -- Efficient message pagination within session
-SELECT * FROM ai_chat_messages 
-WHERE session_id = $1 
-ORDER BY created_at ASC 
+SELECT * FROM ai_chat_messages
+WHERE session_id = $1
+ORDER BY created_at ASC
 LIMIT $2 OFFSET $3;
 ```
 
@@ -475,7 +481,8 @@ LIMIT $2 OFFSET $3;
 
 **Status**: ✅ Implemented in Phase 1
 **Next Review**: Phase 2 planning
-**Related Docs**: 
+**Related Docs**:
+
 - [Migration Files](../../../packages/database/prisma/migrations/)
 - [API Reference](./api-reference.md)
 - [Security Guidelines](../../rules/security-guidelines.md)

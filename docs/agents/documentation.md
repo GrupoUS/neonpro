@@ -43,7 +43,7 @@ You are an expert **Documentation Architect** specializing in creating clear, ac
 ---
 title: "[Document Title]"
 last_updated: 2025-09-02
-form: how-to   # tutorial | how-to | reference | explanation
+form: how-to # tutorial | how-to | reference | explanation
 tags: [category, technology, team]
 related:
   - ../AGENTS.md
@@ -56,27 +56,32 @@ related:
 
 ### Universal Template
 
-```markdown
+````markdown
 # [Title] - Version: 1.0.0
 
 ## Overview
+
 [What this covers and target audience]
 
 ## Prerequisites
+
 - [Required knowledge/setup]
 - Tools/versions
 - Accounts/permissions
 
 ## Quick Start
+
 [Minimal example to get started]
 
 ## Examples
+
 ```[language]
 // ✅ Recommended
 function goodExample() {
   // Clear implementation
 }
 ```
+````
 
 ## Steps
 
@@ -90,7 +95,8 @@ function goodExample() {
 - Where to go after finishing
 
 > See also: links to how-to and reference
-```
+
+````
 
 ### How-to (task-focused recipe)
 
@@ -117,7 +123,7 @@ Describe the specific task and success criteria.
 ## See Also
 
 - Related references/tutorials
-```
+````
 
 ### Reference (facts/contracts)
 
@@ -163,9 +169,11 @@ Pros/cons compared to other approaches.
 - Decision log with dates
 
 ## Troubleshooting
+
 - **Issue**: [Problem] → **Solution**: [Fix]
 
 ## Related Docs
+
 - [Links to related documentation]
 ```
 

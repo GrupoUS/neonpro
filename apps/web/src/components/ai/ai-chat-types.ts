@@ -1,6 +1,6 @@
 /**
  * AI Chat Component Types
- * 
+ *
  * Comprehensive TypeScript types for AI chat components,
  * healthcare compliance, and integration interfaces.
  */
@@ -15,11 +15,11 @@ export interface BaseMessage {
   /** Message content */
   content: string;
   /** Message role */
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   /** Timestamp */
   timestamp: Date;
   /** Message status */
-  status?: 'pending' | 'sending' | 'sent' | 'delivered' | 'read' | 'failed';
+  status?: "pending" | "sending" | "sent" | "delivered" | "read" | "failed";
   /** Additional metadata */
   metadata?: Record<string, unknown>;
 }
@@ -58,18 +58,22 @@ export interface AIModel {
   features?: string[];
 }
 
-export type ModelCapability = 
-  | 'chat'
-  | 'reasoning'
-  | 'healthcare-context'
-  | 'multimodal'
-  | 'function-calling'
-  | 'code-generation'
-  | 'translation'
-  | 'summarization'
-  | 'analysis';
+export type ModelCapability =
+  | "chat"
+  | "reasoning"
+  | "healthcare-context"
+  | "multimodal"
+  | "function-calling"
+  | "code-generation"
+  | "translation"
+  | "summarization"
+  | "analysis";
 
-export type ModelStatus = 'available' | 'limited' | 'unavailable' | 'deprecated';
+export type ModelStatus =
+  | "available"
+  | "limited"
+  | "unavailable"
+  | "deprecated";
 
 // =====================================
 // MESSAGE TYPES
@@ -85,7 +89,7 @@ export interface ChatMessage extends BaseMessage {
   /** Healthcare context flag */
   healthcareContext?: boolean;
   /** Session type */
-  sessionType?: 'client' | 'financial' | 'appointment' | 'general';
+  sessionType?: "client" | "financial" | "appointment" | "general";
   /** Citations and sources */
   sources?: MessageSource[];
   /** Tool calls made during message generation */
@@ -123,15 +127,15 @@ export interface MessageSource {
   metadata?: Record<string, unknown>;
 }
 
-export type SourceType = 
-  | 'document'
-  | 'database'
-  | 'knowledge_base'
-  | 'external'
-  | 'patient_record'
-  | 'medical_guideline'
-  | 'research_paper'
-  | 'internal_policy';
+export type SourceType =
+  | "document"
+  | "database"
+  | "knowledge_base"
+  | "external"
+  | "patient_record"
+  | "medical_guideline"
+  | "research_paper"
+  | "internal_policy";
 
 export interface ToolCall {
   /** Tool call ID */
@@ -150,7 +154,7 @@ export interface ToolCall {
   error?: string;
 }
 
-export type ToolCallStatus = 'pending' | 'executing' | 'completed' | 'failed';
+export type ToolCallStatus = "pending" | "executing" | "completed" | "failed";
 
 export interface MessageAttachment {
   /** Attachment ID */
@@ -173,7 +177,11 @@ export interface MessageAttachment {
   metadata?: Record<string, unknown>;
 }
 
-export type AttachmentStatus = 'uploading' | 'uploaded' | 'failed' | 'processing';
+export type AttachmentStatus =
+  | "uploading"
+  | "uploaded"
+  | "failed"
+  | "processing";
 
 export interface MessageReaction {
   /** Emoji or reaction type */
@@ -212,15 +220,15 @@ export interface MessageFlag {
   moderatorNotes?: string;
 }
 
-export type FlagType = 
-  | 'inappropriate'
-  | 'spam'
-  | 'harassment'
-  | 'medical_inaccuracy'
-  | 'privacy_violation'
-  | 'other';
+export type FlagType =
+  | "inappropriate"
+  | "spam"
+  | "harassment"
+  | "medical_inaccuracy"
+  | "privacy_violation"
+  | "other";
 
-export type FlagStatus = 'pending' | 'reviewed' | 'resolved' | 'dismissed';
+export type FlagStatus = "pending" | "reviewed" | "resolved" | "dismissed";
 
 // =====================================
 // SESSION TYPES
@@ -251,9 +259,14 @@ export interface ChatSession {
   healthcareContext?: HealthcareContext;
 }
 
-export type SessionType = 'client' | 'financial' | 'appointment' | 'general' | 'training';
+export type SessionType =
+  | "client"
+  | "financial"
+  | "appointment"
+  | "general"
+  | "training";
 
-export type SessionStatus = 'active' | 'archived' | 'pending' | 'closed';
+export type SessionStatus = "active" | "archived" | "pending" | "closed";
 
 export interface SessionParticipant {
   /** Participant ID */
@@ -268,12 +281,12 @@ export interface SessionParticipant {
   metadata?: Record<string, unknown>;
 }
 
-export type ParticipantRole = 
-  | 'user'
-  | 'assistant'
-  | 'healthcare_professional'
-  | 'supervisor'
-  | 'observer';
+export type ParticipantRole =
+  | "user"
+  | "assistant"
+  | "healthcare_professional"
+  | "supervisor"
+  | "observer";
 
 export interface SessionSettings {
   /** AI model preference */
@@ -426,7 +439,7 @@ export interface AnonymizationSettings {
   /** Fields to anonymize */
   fieldsToAnonymize: string[];
   /** Anonymization method */
-  method: 'masking' | 'generalization' | 'pseudonymization';
+  method: "masking" | "generalization" | "pseudonymization";
   /** Retention policy for original data */
   originalDataRetentionDays?: number;
 }
@@ -435,7 +448,7 @@ export interface AccessibilitySettings {
   /** High contrast mode */
   highContrastMode: boolean;
   /** Font size */
-  fontSize: 'small' | 'medium' | 'large' | 'x-large';
+  fontSize: "small" | "medium" | "large" | "x-large";
   /** Screen reader optimized */
   screenReaderOptimized: boolean;
   /** Keyboard navigation enabled */
@@ -463,13 +476,13 @@ export interface SearchQuery {
   pagination?: SearchPagination;
 }
 
-export type SearchScope = 
-  | 'current_session'
-  | 'all_sessions'
-  | 'knowledge_base'
-  | 'patient_records'
-  | 'medical_guidelines'
-  | 'documents';
+export type SearchScope =
+  | "current_session"
+  | "all_sessions"
+  | "knowledge_base"
+  | "patient_records"
+  | "medical_guidelines"
+  | "documents";
 
 export interface SearchFilters {
   /** Date range */
@@ -478,7 +491,7 @@ export interface SearchFilters {
     end: Date;
   };
   /** Message types */
-  messageTypes?: ('user' | 'assistant' | 'system')[];
+  messageTypes?: ("user" | "assistant" | "system")[];
   /** Session types */
   sessionTypes?: SessionType[];
   /** Model filters */
@@ -491,12 +504,12 @@ export interface SearchFilters {
   minConfidence?: number;
 }
 
-export type SearchSortOption = 
-  | 'relevance'
-  | 'date_desc'
-  | 'date_asc'
-  | 'confidence_desc'
-  | 'confidence_asc';
+export type SearchSortOption =
+  | "relevance"
+  | "date_desc"
+  | "date_asc"
+  | "confidence_desc"
+  | "confidence_asc";
 
 export interface SearchPagination {
   /** Page number */
@@ -526,13 +539,13 @@ export interface SearchResult {
   highlights?: string[];
 }
 
-export type SearchResultType = 
-  | 'message'
-  | 'session'
-  | 'knowledge_entry'
-  | 'patient_record'
-  | 'medical_guideline'
-  | 'document';
+export type SearchResultType =
+  | "message"
+  | "session"
+  | "knowledge_entry"
+  | "patient_record"
+  | "medical_guideline"
+  | "document";
 
 export interface SearchResultSource {
   /** Source ID */
@@ -610,12 +623,12 @@ export interface VoiceRecognitionAlternative {
   confidence: number;
 }
 
-export type VoiceRecognitionState = 
-  | 'idle'
-  | 'listening'
-  | 'processing'
-  | 'error'
-  | 'success';
+export type VoiceRecognitionState =
+  | "idle"
+  | "listening"
+  | "processing"
+  | "error"
+  | "success";
 
 // =====================================
 // TOKEN USAGE TYPES
@@ -756,7 +769,7 @@ export interface MessageDisplayProps {
   /** Message content */
   content: string;
   /** Message role */
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   /** Message timestamp */
   timestamp: Date;
   /** Message ID */

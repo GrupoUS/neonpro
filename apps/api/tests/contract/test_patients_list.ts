@@ -22,18 +22,20 @@ async function api(path: string, init?: RequestInit) {
 
 // Response schema validation
 const PatientListResponseSchema = z.object({
-  data: z.array(z.object({
-    id: z.string().uuid(),
-    name: z.string().min(1),
-    cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/), // Brazilian CPF format
-    phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/), // Brazilian phone format
-    email: z.string().email(),
-    dateOfBirth: z.string().datetime(),
-    gender: z.enum(['male', 'female', 'other']),
-    status: z.enum(['active', 'inactive', 'archived']),
-    createdAt: z.string().datetime(),
-    updatedAt: z.string().datetime(),
-  })),
+  data: z.array(
+    z.object({
+      id: z.string().uuid(),
+      name: z.string().min(1),
+      cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/), // Brazilian CPF format
+      phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/), // Brazilian phone format
+      email: z.string().email(),
+      dateOfBirth: z.string().datetime(),
+      gender: z.enum(['male', 'female', 'other']),
+      status: z.enum(['active', 'inactive', 'archived']),
+      createdAt: z.string().datetime(),
+      updatedAt: z.string().datetime(),
+    }),
+  ),
   pagination: z.object({
     page: z.number().min(1),
     limit: z.number().min(1).max(100),

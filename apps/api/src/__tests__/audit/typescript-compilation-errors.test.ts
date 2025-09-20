@@ -1,14 +1,14 @@
 /**
  * RED Phase: TypeScript Compilation Error Tests
- * 
+ *
  * These tests are designed to fail and will drive the implementation
  * of fixes for TypeScript compilation issues identified during audit.
- * 
+ *
  * Healthcare Context: Type safety is critical for patient data integrity
  * and regulatory compliance (LGPD, CFM guidelines).
  */
 
-import { describe, it, expect } from 'bun:test';
+import { describe, expect, it } from 'bun:test';
 
 describe('TypeScript Compilation Error Detection', () => {
   describe('Database Type Conflicts', () => {
@@ -61,7 +61,7 @@ describe('TypeScript Compilation Error Detection', () => {
         getConversationHistory: jest.fn(),
         // createChatSession should exist but doesn't
       };
-      
+
       expect(aiContract.createChatSession).toBeDefined();
     });
 
@@ -72,7 +72,7 @@ describe('TypeScript Compilation Error Detection', () => {
         getConversationHistory: jest.fn(),
         // sendMessage should exist but doesn't
       };
-      
+
       expect(aiContract.sendMessage).toBeDefined();
     });
 
@@ -83,7 +83,7 @@ describe('TypeScript Compilation Error Detection', () => {
         getConversationHistory: jest.fn(),
         // predictNoShow should exist but doesn't
       };
-      
+
       expect(aiContract.predictNoShow).toBeDefined();
     });
   });
@@ -113,9 +113,9 @@ describe('TypeScript Compilation Error Detection', () => {
       // RED: Syntax errors break healthcare API functionality
       const syntaxErrorPatterns = [
         'Expected ")" but found ";"',
-        'Expected ";" but found ")"'
+        'Expected ";" but found ")"',
       ];
-      
+
       syntaxErrorPatterns.forEach(pattern => {
         expect(() => {
           // Simulate syntax error detection
@@ -130,12 +130,12 @@ describe('TypeScript Compilation Error Detection', () => {
       // RED: Contract tests are required for healthcare API validation
       const contractModules = [
         './ai.contract.test',
-        './appointment.contract.test', 
+        './appointment.contract.test',
         './clinic.contract.test',
         './patient.contract.test',
-        './professional.contract.test'
+        './professional.contract.test',
       ];
-      
+
       contractModules.forEach(module => {
         expect(() => {
           // This should fail due to missing default exports
@@ -154,7 +154,7 @@ describe('TypeScript Compilation Error Detection', () => {
         await new Promise(resolve => setTimeout(resolve, 5045));
         throw new Error('Test timed out after 5045ms');
       };
-      
+
       expect(timeoutTest()).resolves.not.toThrow();
     });
   });
@@ -171,7 +171,7 @@ describe('TypeScript Compilation Error Detection', () => {
     it('should validate error severity types', () => {
       // RED: Error severity is critical for healthcare incident response
       const { ErrorSeverity } = require('@/types/error-severity');
-      
+
       expect(ErrorSeverity).toHaveProperty('LOW');
       expect(ErrorSeverity).toHaveProperty('MEDIUM');
       expect(ErrorSeverity).toHaveProperty('HIGH');
@@ -183,7 +183,9 @@ describe('TypeScript Compilation Error Detection', () => {
     it('should validate security header types', () => {
       // RED: Security headers are mandatory for healthcare data protection
       expect(() => {
-        const { SecurityHeaders } = require('@/services/security-headers-service');
+        const {
+          SecurityHeaders,
+        } = require('@/services/security-headers-service');
         return typeof SecurityHeaders;
       }).not.toThrow();
     });

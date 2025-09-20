@@ -50,9 +50,12 @@ class FunctionWarmer {
       this.stopWarmup();
     }
 
-    this.warmupInterval = setInterval(() => {
-      this.performWarmup();
-    }, intervalMinutes * 60 * 1000);
+    this.warmupInterval = setInterval(
+      () => {
+        this.performWarmup();
+      },
+      intervalMinutes * 60 * 1000,
+    );
 
     // Initial warmup
     this.performWarmup();
@@ -101,7 +104,10 @@ class FunctionWarmer {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), target.timeout || 5000);
+      const timeoutId = setTimeout(
+        () => controller.abort(),
+        target.timeout || 5000,
+      );
 
       // Do not send body for GET requests to satisfy lint rule and HTTP semantics
       const init: RequestInit = {
@@ -154,6 +160,9 @@ class FunctionWarmer {
 export const functionWarmer = new FunctionWarmer();
 
 // Auto-start in production
-if (process.env.NODE_ENV === 'production' && process.env.VERCEL_ENV === 'production') {
+if (
+  process.env.NODE_ENV === 'production'
+  && process.env.VERCEL_ENV === 'production'
+) {
   functionWarmer.startWarmup(5); // Warm every 5 minutes
 }

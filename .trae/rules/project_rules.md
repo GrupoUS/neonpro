@@ -2,38 +2,33 @@
 
 ## 🧠 FILOSOFIA CENTRAL
 
-**Mantra**: _"Think → Research → Decompose → Plan → Implement → Validate"_
-**Princípio**: KISS + YAGNI - Simplicidade que funciona sobre complexidade que não funciona
+**Mantra**: `Think` → `Research` → `Decompose` → `Plan` → `Implement` → `Validate`
+**Princípio**: `KISS` + `YAGNI` - Simplicidade que funciona sobre complexidade que não funciona. Priorize soluções simples, diretas e eficazes. Evite overengineering e features especulativas. Mantenha o código limpo, legível e manutenível. Implemente apenas o que é realmente necessário agora.
 **Coordenação**: Especialização focada com workflows inteligentes - Agente certo, hora certa
+**ATOMIC TASK**: Always Try breaking down the task into smaller atomic subtasks steps. Sempre execute atomic subtasks de forma fragmentada trabalhando com uma janela de contexto curta.
+**NUNCA** colar saídas longas e somente ler trechos necessários para economizar contexto. Controle o ma output tokens dos mcps.
+**TIMEOUT**: Sempre coloque timeout nos comandos de terminal para serem executados de forma mais efetiva e sem travar em loop
 
 ## 🎯 REGRAS UNIVERSAIS OBRIGATÓRIAS
-
-### **ARCHON-FIRST RULE**
-
-Sempre usar Archon MCP para task management, knowledge management e organização do projeto.
 
 ### **SEQUÊNCIA MCP OBRIGATÓRIA**
 
 1. **`sequential-thinking`** → Análise e decomposição (SEMPRE primeiro)
 2. **`archon`** → Task setup e knowledge base
-3. **`serena`** → Análise de codebase (NUNCA busca nativa)
+3. **`serena`** → Análise de codebase
 4. **Contextuais** → Conforme necessidade (context7, tavily, etc.)
 5. **`desktop-commander`** → Implementação e operações
 
 ### **FERRAMENTAS MCP MANDATÓRIAS**
 
-- **`serena mcp`**: Busca e análise semântica de código _(NUNCA usar busca nativa)_
 - **`supabase mcp`**: Operações de database
 - **`archon mcp`**: Task e knowledge management
 - **`desktop-commander mcp`**: Operações de arquivo e sistema
 - **`context7 mcp`**: Análise contextual profunda _(NUNCA usar contexto nativo)_
-- **`tavily mcp`**: Pesquisas web em tempo real
 
 ## 🤖 COORDENAÇÃO DE AGENTES
 
 ### **📋 Registro de Agentes**
-
-#### 🚀 Agentes Core (Sempre Disponíveis)
 
 **`apex-dev`** - Coordenador Principal
 
@@ -141,8 +136,7 @@ QUANDO_USAR_AGENTES:
 ### 1. Desenvolvimento Completo de Feature
 
 ```yaml
-sequence:
-  1. apex-researcher → "Validação tecnológica e best practices"
+sequence: 1. apex-researcher → "Validação tecnológica e best practices"
   2. apex-dev → "Implementação core + architecture mode se necessário"
   3. apex-ui-ux-designer → "Interface otimizada (se aplicável)"
   4. code-reviewer → "Validação final de qualidade"
@@ -152,8 +146,7 @@ output: "Feature production-ready com qualidade validada"
 ### 2. Research-Driven Implementation
 
 ```yaml
-sequence:
-  1. apex-researcher → "Multi-source research e compliance"
+sequence: 1. apex-researcher → "Multi-source research e compliance"
   2. apex-dev → "Implementação baseada em evidências"
   3. code-reviewer → "Quality gates e security check"
 output: "Implementação evidence-based com qualidade garantida"
@@ -172,8 +165,7 @@ output: "Código seguro e otimizado"
 ### 4. Arquitetura & Sistema
 
 ```yaml
-sequence:
-  1. architect-review → "Design e padrões arquiteturais"
+sequence: 1. architect-review → "Design e padrões arquiteturais"
   2. apex-dev → "Implementação seguindo architecture mode"
   3. security-auditor → "Validação segurança arquitetural"
 output: "Sistema bem arquitetado e seguro"

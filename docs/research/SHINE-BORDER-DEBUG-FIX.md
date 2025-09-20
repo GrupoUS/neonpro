@@ -59,8 +59,12 @@ boxShadow: `0 0 15px ${colorValue}`,
 
 ```css
 @keyframes shine-border {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 ```
 
@@ -79,7 +83,7 @@ animation: {
 ```tsx
 <>
   {/* Layer 1: Rotating conic gradient border */}
-  <div className='animate-[spin_var(--duration)_linear_infinite]'>
+  <div className="animate-[spin_var(--duration)_linear_infinite]">
     {/* Conic gradient with mask */}
   </div>
 
@@ -87,7 +91,7 @@ animation: {
   <div style={{ boxShadow: `0 0 15px ${colorValue}` }}>
     {/* Enhanced visibility */}
   </div>
-</>;
+</>
 ```
 
 ---

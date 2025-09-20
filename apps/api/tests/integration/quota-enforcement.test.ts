@@ -452,8 +452,8 @@ describe('Integration Test T013: Quota Enforcement', () => {
   describe('Cost-Based Quota Management', () => {
     it('should enforce budget limits in Brazilian Reais', async () => {
       const budgetConfig = {
-        dailyBudgetBRL: 100.00,
-        monthlyBudgetBRL: 2500.00,
+        dailyBudgetBRL: 100.0,
+        monthlyBudgetBRL: 2500.0,
         alertThresholds: [50, 80, 95], // Percentage thresholds
         overspendProtection: true,
       };
@@ -502,11 +502,11 @@ describe('Integration Test T013: Quota Enforcement', () => {
       for (let i = 0; i < responses.length; i++) {
         const response = responses[i];
 
-        if (totalCost < 100.00) {
+        if (totalCost < 100.0) {
           expect(response.status).toBe(200);
 
           const result = await response.json();
-          totalCost += result.costBRL || 5.00; // Estimate cost per request
+          totalCost += result.costBRL || 5.0; // Estimate cost per request
         } else {
           expect(response.status).toBe(429);
 
@@ -515,7 +515,7 @@ describe('Integration Test T013: Quota Enforcement', () => {
             error: 'ORCAMENTO_EXCEDIDO',
             message: expect.stringContaining('orçamento diário'),
             budgetInfo: {
-              dailyBudgetBRL: 100.00,
+              dailyBudgetBRL: 100.0,
               spentBRL: expect.any(Number),
               remainingBRL: expect.any(Number),
               overspendProtection: true,

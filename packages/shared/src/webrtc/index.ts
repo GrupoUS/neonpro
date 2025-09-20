@@ -5,17 +5,14 @@
  */
 
 // Signaling infrastructure
-export { 
-  RTCSignalingServerStub, 
-  createSignalingServerStub, 
-  createSignalingMessage 
-} from './signaling-stub';
+export {
+  RTCSignalingServerStub,
+  createSignalingServerStub,
+  createSignalingMessage,
+} from "./signaling-stub";
 
 // Call management
-export { 
-  RTCCallManagerStub, 
-  createCallManagerStub 
-} from './call-manager-stub';
+export { RTCCallManagerStub, createCallManagerStub } from "./call-manager-stub";
 
 // Re-export types for convenience
 export type {
@@ -31,5 +28,5 @@ export type {
   TelemedicineCallType,
   MedicalDataClassification,
   RTCAuditLogEntry,
-  RTCConsentManager
-} from '@neonpro/types';
+  RTCConsentManager,
+} from "@neonpro/types";

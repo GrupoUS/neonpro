@@ -24,27 +24,35 @@ async function api(path: string, init?: RequestInit) {
 const MessageRequestSchema = z.object({
   content: z.string().min(1),
   type: z.enum(['text', 'image', 'document']).default('text'),
-  attachments: z.array(z.object({
-    type: z.enum(['image', 'document', 'medical_report']),
-    url: z.string().url(),
-    metadata: z.object({
-      filename: z.string(),
-      size: z.number(),
-      mimeType: z.string(),
-      encryptionKey: z.string().optional(),
-    }),
-  })).optional(),
-  context: z.object({
-    patientId: z.string().uuid().optional(),
-    urgency: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
-    specialty: z.string().optional(),
-    medicalContext: z.string().optional(),
-  }).optional(),
-  settings: z.object({
-    stream: z.boolean().default(true),
-    includeReferences: z.boolean().default(true),
-    language: z.enum(['pt-BR', 'en-US']).default('pt-BR'),
-  }).optional(),
+  attachments: z
+    .array(
+      z.object({
+        type: z.enum(['image', 'document', 'medical_report']),
+        url: z.string().url(),
+        metadata: z.object({
+          filename: z.string(),
+          size: z.number(),
+          mimeType: z.string(),
+          encryptionKey: z.string().optional(),
+        }),
+      }),
+    )
+    .optional(),
+  context: z
+    .object({
+      patientId: z.string().uuid().optional(),
+      urgency: z.enum(['low', 'medium', 'high', 'emergency']).default('medium'),
+      specialty: z.string().optional(),
+      medicalContext: z.string().optional(),
+    })
+    .optional(),
+  settings: z
+    .object({
+      stream: z.boolean().default(true),
+      includeReferences: z.boolean().default(true),
+      language: z.enum(['pt-BR', 'en-US']).default('pt-BR'),
+    })
+    .optional(),
 });
 
 // Message response schema validation
@@ -115,11 +123,14 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         },
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       expect(response.status).toBe(201);
 
@@ -137,40 +148,50 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         },
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       expect(response.status).toBe(201);
-      expect(response.headers.get('Content-Type')).toContain('text/event-stream');
+      expect(response.headers.get('Content-Type')).toContain(
+        'text/event-stream',
+      );
     });
 
     it('should handle multi-modal inputs (images)', async () => {
       const messageRequest = {
         content: 'Analise esta imagem dermatológica e forneça uma avaliação.',
         type: 'image',
-        attachments: [{
-          type: 'image',
-          url: 'https://example.com/test-image.jpg',
-          metadata: {
-            filename: 'lesao-dermatologica.jpg',
-            size: 1024000,
-            mimeType: 'image/jpeg',
+        attachments: [
+          {
+            type: 'image',
+            url: 'https://example.com/test-image.jpg',
+            metadata: {
+              filename: 'lesao-dermatologica.jpg',
+              size: 1024000,
+              mimeType: 'image/jpeg',
+            },
           },
-        }],
+        ],
         context: {
           specialty: 'dermatologia',
           urgency: 'high',
         },
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       expect(response.status).toBe(201);
       // Contract validation would happen here
@@ -183,11 +204,14 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         content: 'Test message without authentication',
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       expect(response.status).toBe(401);
     });
@@ -198,11 +222,14 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
       };
 
       const invalidSessionId = '00000000-0000-0000-0000-000000000000';
-      const response = await api(`/api/v2/ai/chat/sessions/${invalidSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${invalidSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       expect(response.status).toBe(404);
     });
@@ -212,11 +239,14 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         content: '',
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       expect(response.status).toBe(400);
     });
@@ -224,22 +254,27 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
     it('should return 413 for oversized attachments', async () => {
       const messageRequest = {
         content: 'Attachment too large',
-        attachments: [{
-          type: 'document',
-          url: 'https://example.com/large-file.pdf',
-          metadata: {
-            filename: 'large-document.pdf',
-            size: 50000000, // 50MB - exceeds typical limits
-            mimeType: 'application/pdf',
+        attachments: [
+          {
+            type: 'document',
+            url: 'https://example.com/large-file.pdf',
+            metadata: {
+              filename: 'large-document.pdf',
+              size: 50000000, // 50MB - exceeds typical limits
+              mimeType: 'application/pdf',
+            },
           },
-        }],
+        ],
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       expect(response.status).toBe(413);
     });
@@ -254,11 +289,14 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         settings: { stream: false },
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       const duration = Date.now() - startTime;
       expect(duration).toBeLessThan(3000);
@@ -273,11 +311,14 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         settings: { stream: true },
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       const timeToFirstByte = Date.now() - startTime;
       expect(timeToFirstByte).toBeLessThan(1000);
@@ -295,13 +336,18 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         },
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
-      expect(response.headers.get('X-Medical-Terminology-Validated')).toBeDefined();
+      expect(
+        response.headers.get('X-Medical-Terminology-Validated'),
+      ).toBeDefined();
       expect(response.headers.get('X-Clinical-Context')).toBeDefined();
       expect(response.status).toBe(201);
     });
@@ -315,11 +361,14 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         },
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       expect(response.headers.get('X-LGPD-Processed')).toBeDefined();
       expect(response.headers.get('X-Data-Retention-Policy')).toBeDefined();
@@ -337,11 +386,14 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         },
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       expect(response.status).toBe(201);
 
@@ -360,11 +412,14 @@ describe('POST /api/v2/ai/chat/sessions/{id}/messages - Contract Tests', () => {
         },
       };
 
-      const response = await api(`/api/v2/ai/chat/sessions/${testSessionId}/messages`, {
-        method: 'POST',
-        headers: testAuthHeaders,
-        body: JSON.stringify(messageRequest),
-      });
+      const response = await api(
+        `/api/v2/ai/chat/sessions/${testSessionId}/messages`,
+        {
+          method: 'POST',
+          headers: testAuthHeaders,
+          body: JSON.stringify(messageRequest),
+        },
+      );
 
       expect(response.headers.get('X-Emergency-Protocol')).toBeDefined();
       expect(response.headers.get('X-Priority-Level')).toBe('high');

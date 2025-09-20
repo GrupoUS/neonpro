@@ -1,15 +1,11 @@
 /**
  * Security Integration for TDD Orchestrator
- * 
+ *
  * Provides basic security validation and monitoring for orchestration operations.
  * Focuses on orchestration-specific security concerns.
  */
 
-import type { 
-  AgentName,
-  AgentMessage,
-  OrchestrationState
-} from '../types';
+import type { AgentName, AgentMessage, OrchestrationState } from "../types";
 
 interface SecurityConfig {
   maxExecutionTime: number;
@@ -24,31 +20,41 @@ interface SecurityReport {
   validationFailures: number;
   timeoutViolations: number;
   suspiciousActivity: boolean;
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
 }
 
 export class OrchestrationSecurity {
   private config: SecurityConfig;
-  private sessionMetrics: Map<string, {
-    checks: number;
-    failures: number;
-    timeouts: number;
-  }> = new Map();
+  private sessionMetrics: Map<
+    string,
+    {
+      checks: number;
+      failures: number;
+      timeouts: number;
+    }
+  > = new Map();
 
   constructor(config: Partial<SecurityConfig> = {}) {
     this.config = {
       maxExecutionTime: 300000, // 5 minutes
-      allowedAgents: ['apex-dev', 'code-reviewer', 'architect-review', 'security-auditor'],
+      allowedAgents: [
+        "apex-dev",
+        "code-reviewer",
+        "architect-review",
+        "security-auditor",
+      ],
       enableValidation: true,
       maxMessageSize: 1024 * 1024, // 1MB
-      ...config
+      ...config,
     };
   }
 
   /**
    * Validates an orchestration state before execution
    */
-  async validateOrchestrationState(state: OrchestrationState): Promise<boolean> {
+  async validateOrchestrationState(
+    state: OrchestrationState,
+  ): Promise<boolean> {
     try {
       // Basic validation
       if (!state.workflow || !state.feature) {
@@ -60,7 +66,7 @@ export class OrchestrationSecurity {
       const activeAgents = state.agents.active;
       if (activeAgents && activeAgents.length > 0) {
         const unauthorizedAgents = activeAgents.filter(
-          agent => !this.config.allowedAgents.includes(agent)
+          (agent) => !this.config.allowedAgents.includes(agent),
         );
         if (unauthorizedAgents.length > 0) {
           this.recordValidationFailure(state.id);
@@ -71,7 +77,7 @@ export class OrchestrationSecurity {
       this.recordSecurityCheck(state.id);
       return true;
     } catch (error) {
-      console.error('Security validation error:', error);
+      console.error("Security validation error:", error);
       return false;
     }
   }
@@ -82,7 +88,7 @@ export class OrchestrationSecurity {
   async validateAgentExecution(
     agentName: AgentName,
     message: AgentMessage,
-    orchestrationId: string
+    orchestrationId: string,
   ): Promise<boolean> {
     try {
       // Check if agent is allowed
@@ -92,7 +98,7 @@ export class OrchestrationSecurity {
       }
 
       // Validate message payload
-      if (!message.payload || typeof message.payload !== 'object') {
+      if (!message.payload || typeof message.payload !== "object") {
         this.recordValidationFailure(orchestrationId);
         return false;
       }
@@ -107,7 +113,7 @@ export class OrchestrationSecurity {
       this.recordSecurityCheck(orchestrationId);
       return true;
     } catch (error) {
-      console.error('Agent execution validation error:', error);
+      console.error("Agent execution validation error:", error);
       return false;
     }
   }
@@ -118,11 +124,11 @@ export class OrchestrationSecurity {
   checkExecutionTimeout(startTime: number, orchestrationId: string): boolean {
     const elapsed = Date.now() - startTime;
     const isTimeout = elapsed > this.config.maxExecutionTime;
-    
+
     if (isTimeout) {
       this.recordTimeoutViolation(orchestrationId);
     }
-    
+
     return isTimeout;
   }
 
@@ -133,7 +139,7 @@ export class OrchestrationSecurity {
     const metrics = this.sessionMetrics.get(orchestrationId) || {
       checks: 0,
       failures: 0,
-      timeouts: 0
+      timeouts: 0,
     };
 
     const riskLevel = this.calculateRiskLevel(metrics);
@@ -144,7 +150,7 @@ export class OrchestrationSecurity {
       validationFailures: metrics.failures,
       timeoutViolations: metrics.timeouts,
       suspiciousActivity: metrics.failures > 3 || metrics.timeouts > 1,
-      riskLevel
+      riskLevel,
     };
   }
 
@@ -159,7 +165,7 @@ export class OrchestrationSecurity {
     const metrics = this.sessionMetrics.get(orchestrationId) || {
       checks: 0,
       failures: 0,
-      timeouts: 0
+      timeouts: 0,
     };
     metrics.checks++;
     this.sessionMetrics.set(orchestrationId, metrics);
@@ -169,7 +175,7 @@ export class OrchestrationSecurity {
     const metrics = this.sessionMetrics.get(orchestrationId) || {
       checks: 0,
       failures: 0,
-      timeouts: 0
+      timeouts: 0,
     };
     metrics.failures++;
     this.sessionMetrics.set(orchestrationId, metrics);
@@ -179,30 +185,41 @@ export class OrchestrationSecurity {
     const metrics = this.sessionMetrics.get(orchestrationId) || {
       checks: 0,
       failures: 0,
-      timeouts: 0
+      timeouts: 0,
     };
     metrics.timeouts++;
     this.sessionMetrics.set(orchestrationId, metrics);
   }
 
-  private calculateRiskLevel(metrics: { checks: number; failures: number; timeouts: number }): 'low' | 'medium' | 'high' {
+  private calculateRiskLevel(metrics: {
+    checks: number;
+    failures: number;
+    timeouts: number;
+  }): "low" | "medium" | "high" {
     if (metrics.failures > 5 || metrics.timeouts > 2) {
-      return 'high';
+      return "high";
     }
     if (metrics.failures > 2 || metrics.timeouts > 0) {
-      return 'medium';
+      return "medium";
     }
-    return 'low';
+    return "low";
   }
 }
 
 // Default configuration
 export const defaultSecurityConfig: SecurityConfig = {
   maxExecutionTime: 300000, // 5 minutes
-  allowedAgents: ['apex-dev', 'code-reviewer', 'architect-review', 'security-auditor'],
+  allowedAgents: [
+    "apex-dev",
+    "code-reviewer",
+    "architect-review",
+    "security-auditor",
+  ],
   enableValidation: true,
-  maxMessageSize: 1024 * 1024 // 1MB
+  maxMessageSize: 1024 * 1024, // 1MB
 };
 
 // Singleton instance
-export const orchestrationSecurity = new OrchestrationSecurity(defaultSecurityConfig);
+export const orchestrationSecurity = new OrchestrationSecurity(
+  defaultSecurityConfig,
+);

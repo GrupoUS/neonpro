@@ -118,7 +118,9 @@ app.openapi(
       if (gender) filters.gender = gender;
 
       // Get client IP and User-Agent for audit logging
-      const ipAddress = c.req.header('X-Real-IP') || c.req.header('X-Forwarded-For') || 'unknown';
+      const ipAddress = c.req.header('X-Real-IP')
+        || c.req.header('X-Forwarded-For')
+        || 'unknown';
       const userAgent = c.req.header('User-Agent') || 'unknown';
 
       // Validate LGPD data access permissions
@@ -131,11 +133,14 @@ app.openapi(
       });
 
       if (!lgpdValidation.success) {
-        return c.json({
-          success: false,
-          error: 'Acesso negado por política LGPD',
-          code: 'LGPD_ACCESS_DENIED',
-        }, 403);
+        return c.json(
+          {
+            success: false,
+            error: 'Acesso negado por política LGPD',
+            code: 'LGPD_ACCESS_DENIED',
+          },
+          403,
+        );
       } // Create PatientService with healthcare context
       const patientService = new PatientService(healthcareContext);
 
@@ -152,10 +157,13 @@ app.openapi(
       });
 
       if (!result.success) {
-        return c.json({
-          success: false,
-          error: result.error || 'Erro interno do serviço',
-        }, 500);
+        return c.json(
+          {
+            success: false,
+            error: result.error || 'Erro interno do serviço',
+          },
+          500,
+        );
       }
 
       // Log data access for audit trail using enhanced Prisma client
@@ -222,9 +230,15 @@ app.openapi(
           cfmValidated: healthcareContext.cfmValidated,
         }),
       );
-      c.header('X-Total-Count', (result.data?.pagination.total || 0).toString());
+      c.header(
+        'X-Total-Count',
+        (result.data?.pagination.total || 0).toString(),
+      );
       c.header('X-Page', (result.data?.pagination.page || 1).toString());
-      c.header('X-Total-Pages', (result.data?.pagination.totalPages || 1).toString());
+      c.header(
+        'X-Total-Pages',
+        (result.data?.pagination.totalPages || 1).toString(),
+      );
       c.header('X-Response-Time', `${responseTime}ms`);
       c.header('Cache-Control', 'private, max-age=300');
       c.header('X-CFM-Compliant', 'true');
@@ -256,30 +270,39 @@ app.openapi(
 
       // Enhanced error handling for healthcare compliance errors
       if (error.name === 'HealthcareComplianceError') {
-        return c.json({
-          success: false,
-          error: 'Violação de conformidade de saúde',
-          code: error.code,
-          framework: error.complianceFramework,
-          message: error.message,
-        }, 403);
+        return c.json(
+          {
+            success: false,
+            error: 'Violação de conformidade de saúde',
+            code: error.code,
+            framework: error.complianceFramework,
+            message: error.message,
+          },
+          403,
+        );
       }
 
       if (error.name === 'UnauthorizedHealthcareAccessError') {
-        return c.json({
-          success: false,
-          error: 'Acesso não autorizado a dados de saúde',
-          resourceType: error.resourceType,
-          resourceId: error.resourceId,
-          message: error.message,
-        }, 403);
+        return c.json(
+          {
+            success: false,
+            error: 'Acesso não autorizado a dados de saúde',
+            resourceType: error.resourceType,
+            resourceId: error.resourceId,
+            message: error.message,
+          },
+          403,
+        );
       }
 
-      return c.json({
-        success: false,
-        error: 'Erro interno do servidor',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined,
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro interno do servidor',
+          details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+        },
+        500,
+      );
     }
   },
 );

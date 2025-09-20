@@ -1,43 +1,43 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { GoogleCalendarService } from '../service';
-import { GoogleCalendarClient } from '../client';
-import { GoogleCalendarCompliance } from '../compliance';
-import { createClient } from '@supabase/supabase-js';
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { GoogleCalendarService } from "../service";
+import { GoogleCalendarClient } from "../client";
+import { GoogleCalendarCompliance } from "../compliance";
+import { createClient } from "@supabase/supabase-js";
 
-describe('Google Calendar Integration E2E', () => {
+describe("Google Calendar Integration E2E", () => {
   let service: GoogleCalendarService;
   let mockSupabase: any;
   let mockClient: any;
   let mockCompliance: any;
 
   const mockUser = {
-    id: 'user-123',
-    email: 'doctor@neonpro.com.br'
+    id: "user-123",
+    email: "doctor@neonpro.com.br",
   };
 
   const mockClinic = {
-    id: 'clinic-101',
-    name: 'Clínica NeonPro'
+    id: "clinic-101",
+    name: "Clínica NeonPro",
   };
 
   const mockAppointment = {
-    id: 'appt-123',
-    patientId: 'patient-456',
-    doctorId: 'doctor-789',
+    id: "appt-123",
+    patientId: "patient-456",
+    doctorId: "doctor-789",
     clinicId: mockClinic.id,
-    title: 'Consulta de Cardiologia',
-    description: 'Consulta de rotina com Dr. Silva',
-    startTime: new Date('2024-01-15T10:00:00'),
-    endTime: new Date('2024-01-15T11:00:00'),
-    location: 'Sala 101 - 1º Andar',
-    status: 'SCHEDULED',
-    type: 'CONSULTATION',
+    title: "Consulta de Cardiologia",
+    description: "Consulta de rotina com Dr. Silva",
+    startTime: new Date("2024-01-15T10:00:00"),
+    endTime: new Date("2024-01-15T11:00:00"),
+    location: "Sala 101 - 1º Andar",
+    status: "SCHEDULED",
+    type: "CONSULTATION",
     virtual: false,
     metadata: {
-      specialty: 'Cardiologia',
+      specialty: "Cardiologia",
       confidential: true,
-      notes: 'Paciente com histórico de hipertensão'
-    }
+      notes: "Paciente com histórico de hipertensão",
+    },
   };
 
   beforeEach(() => {
@@ -46,57 +46,67 @@ describe('Google Calendar Integration E2E', () => {
     // Setup Supabase mock
     mockSupabase = {
       auth: {
-        getUser: vi.fn().mockResolvedValue({ data: { user: mockUser } })
+        getUser: vi.fn().mockResolvedValue({ data: { user: mockUser } }),
       },
       from: vi.fn(() => ({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn(),
             data: null,
-            error: null
+            error: null,
           })),
           gte: vi.fn(() => ({
-            lte: vi.fn()
-          }))
+            lte: vi.fn(),
+          })),
         })),
         insert: vi.fn(() => ({
           select: vi.fn(() => ({
-            data: [{ id: 'integration-123' }],
-            error: null
-          }))
+            data: [{ id: "integration-123" }],
+            error: null,
+          })),
         })),
         update: vi.fn(() => ({
-          eq: vi.fn()
+          eq: vi.fn(),
         })),
         delete: vi.fn(() => ({
-          eq: vi.fn()
-        }))
-      }))
+          eq: vi.fn(),
+        })),
+      })),
     };
     (createClient as any).mockReturnValue(mockSupabase);
 
     // Setup client mock
     mockClient = {
-      getAuthUrl: vi.fn().mockReturnValue('https://accounts.google.com/o/oauth2/auth'),
+      getAuthUrl: vi
+        .fn()
+        .mockReturnValue("https://accounts.google.com/o/oauth2/auth"),
       exchangeCodeForTokens: vi.fn(),
       listCalendars: vi.fn().mockResolvedValue([
-        { id: 'primary', summary: 'Dr. Smith - Consultas', description: 'Calendar principal' },
-        { id: 'work', summary: 'Work', description: 'Calendar de trabalho' }
+        {
+          id: "primary",
+          summary: "Dr. Smith - Consultas",
+          description: "Calendar principal",
+        },
+        { id: "work", summary: "Work", description: "Calendar de trabalho" },
       ]),
-      createEvent: vi.fn().mockImplementation(async (calendarId, eventData) => ({
-        id: `google-${Date.now()}`,
-        ...eventData,
-        htmlLink: `https://calendar.google.com/calendar/event?eid=${Date.now()}`,
-        created: new Date().toISOString()
-      })),
-      updateEvent: vi.fn().mockImplementation(async (calendarId, eventId, updates) => ({
-        id: eventId,
-        ...updates,
-        updated: new Date().toISOString()
-      })),
+      createEvent: vi
+        .fn()
+        .mockImplementation(async (calendarId, eventData) => ({
+          id: `google-${Date.now()}`,
+          ...eventData,
+          htmlLink: `https://calendar.google.com/calendar/event?eid=${Date.now()}`,
+          created: new Date().toISOString(),
+        })),
+      updateEvent: vi
+        .fn()
+        .mockImplementation(async (calendarId, eventId, updates) => ({
+          id: eventId,
+          ...updates,
+          updated: new Date().toISOString(),
+        })),
       deleteEvent: vi.fn().mockResolvedValue({}),
       listEvents: vi.fn().mockResolvedValue([]),
-      setTokens: vi.fn()
+      setTokens: vi.fn(),
     };
 
     // Setup compliance mock
@@ -106,40 +116,41 @@ describe('Google Calendar Integration E2E', () => {
       logDataDeletion: vi.fn(),
       validateConsent: vi.fn().mockResolvedValue(true),
       encryptSensitiveData: vi.fn((data) => `encrypted:${data}`),
-      decryptSensitiveData: vi.fn((data) => data.replace('encrypted:', '')),
-      anonymizeData: vi.fn((data) => data.replace(/[0-9]/g, 'X'))
+      decryptSensitiveData: vi.fn((data) => data.replace("encrypted:", "")),
+      anonymizeData: vi.fn((data) => data.replace(/[0-9]/g, "X")),
     };
 
-    const { GoogleCalendarClient } = require('../client');
+    const { GoogleCalendarClient } = require("../client");
     GoogleCalendarClient.mockImplementation(() => mockClient);
 
-    const { GoogleCalendarCompliance } = require('../compliance');
+    const { GoogleCalendarCompliance } = require("../compliance");
     GoogleCalendarCompliance.mockImplementation(() => mockCompliance);
 
     service = new GoogleCalendarService();
   });
 
-  describe('Complete Integration Flow', () => {
-    it('should handle full integration lifecycle', async () => {
+  describe("Complete Integration Flow", () => {
+    it("should handle full integration lifecycle", async () => {
       // 1. User connects Google Calendar
       const authUrl = service.getAuthUrl();
-      expect(authUrl).toContain('accounts.google.com');
+      expect(authUrl).toContain("accounts.google.com");
 
       // 2. Create integration after OAuth callback
       const integration = await service.createIntegration({
         userId: mockUser.id,
         clinicId: mockClinic.id,
-        calendarId: 'primary'
+        calendarId: "primary",
       });
 
-      expect(integration).toEqual([{ id: 'integration-123' }]);
+      expect(integration).toEqual([{ id: "integration-123" }]);
 
       // 3. Sync appointment to Google Calendar
-      const syncResult = await service.syncAppointmentToCalendar(mockAppointment);
+      const syncResult =
+        await service.syncAppointmentToCalendar(mockAppointment);
 
       expect(syncResult).toBeTruthy();
       expect(mockClient.createEvent).toHaveBeenCalledWith(
-        'primary',
+        "primary",
         expect.objectContaining({
           summary: mockAppointment.title,
           description: mockAppointment.description,
@@ -151,10 +162,10 @@ describe('Google Calendar Integration E2E', () => {
               appointmentId: mockAppointment.id,
               patientId: mockAppointment.patientId,
               healthcareType: mockAppointment.type,
-              confidential: 'true'
-            })
-          }
-        })
+              confidential: "true",
+            }),
+          },
+        }),
       );
 
       // 4. Verify compliance checks
@@ -163,24 +174,24 @@ describe('Google Calendar Integration E2E', () => {
       expect(mockCompliance.logDataAccess).toHaveBeenCalled();
     });
 
-    it('should handle appointment updates', async () => {
+    it("should handle appointment updates", async () => {
       // Setup existing integration and sync record
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'integration-123',
+                id: "integration-123",
                 user_id: mockUser.id,
-                calendar_id: 'primary',
-                access_token: 'encrypted:token',
-                refresh_token: 'encrypted:refresh',
-                sync_enabled: true
+                calendar_id: "primary",
+                access_token: "encrypted:token",
+                refresh_token: "encrypted:refresh",
+                sync_enabled: true,
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       mockSupabase.from.mockReturnValueOnce({
@@ -188,56 +199,56 @@ describe('Google Calendar Integration E2E', () => {
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'sync-123',
-                google_event_id: 'google-event-123'
+                id: "sync-123",
+                google_event_id: "google-event-123",
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       // Update appointment
       const updatedAppointment = {
         ...mockAppointment,
-        title: 'Consulta Remarcada - Cardiologia',
-        startTime: new Date('2024-01-15T14:00:00'),
-        endTime: new Date('2024-01-15T15:00:00'),
-        location: 'Sala 202 - 2º Andar'
+        title: "Consulta Remarcada - Cardiologia",
+        startTime: new Date("2024-01-15T14:00:00"),
+        endTime: new Date("2024-01-15T15:00:00"),
+        location: "Sala 202 - 2º Andar",
       };
 
       await service.syncAppointmentToCalendar(updatedAppointment);
 
       expect(mockClient.updateEvent).toHaveBeenCalledWith(
-        'primary',
-        'google-event-123',
+        "primary",
+        "google-event-123",
         expect.objectContaining({
           summary: updatedAppointment.title,
           start: updatedAppointment.startTime,
           end: updatedAppointment.endTime,
-          location: updatedAppointment.location
-        })
+          location: updatedAppointment.location,
+        }),
       );
     });
 
-    it('should handle appointment cancellation', async () => {
+    it("should handle appointment cancellation", async () => {
       // Setup existing integration and sync record
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'integration-123',
+                id: "integration-123",
                 user_id: mockUser.id,
-                calendar_id: 'primary',
-                access_token: 'encrypted:token',
-                refresh_token: 'encrypted:refresh',
-                sync_enabled: true
+                calendar_id: "primary",
+                access_token: "encrypted:token",
+                refresh_token: "encrypted:refresh",
+                sync_enabled: true,
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       mockSupabase.from.mockReturnValueOnce({
@@ -245,102 +256,105 @@ describe('Google Calendar Integration E2E', () => {
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'sync-123',
-                google_event_id: 'google-event-123'
+                id: "sync-123",
+                google_event_id: "google-event-123",
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       const cancelledAppointment = {
         ...mockAppointment,
-        status: 'CANCELLED'
+        status: "CANCELLED",
       };
 
       await service.syncAppointmentToCalendar(cancelledAppointment);
 
-      expect(mockClient.deleteEvent).toHaveBeenCalledWith('primary', 'google-event-123');
+      expect(mockClient.deleteEvent).toHaveBeenCalledWith(
+        "primary",
+        "google-event-123",
+      );
       expect(mockCompliance.logDataDeletion).toHaveBeenCalledWith(
         expect.objectContaining({
-          action: 'DELETE_APPOINTMENT',
-          dataType: 'CALENDAR_EVENT'
-        })
+          action: "DELETE_APPOINTMENT",
+          dataType: "CALENDAR_EVENT",
+        }),
       );
     });
 
-    it('should handle bidirectional sync', async () => {
+    it("should handle bidirectional sync", async () => {
       // Setup integration
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'integration-123',
+                id: "integration-123",
                 user_id: mockUser.id,
-                calendar_id: 'primary',
-                access_token: 'encrypted:token',
-                refresh_token: 'encrypted:refresh',
-                sync_enabled: true
+                calendar_id: "primary",
+                access_token: "encrypted:token",
+                refresh_token: "encrypted:refresh",
+                sync_enabled: true,
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       // Mock events from Google Calendar
       const googleEvents = [
         {
-          id: 'google-event-456',
-          summary: 'Consulta Agendada',
-          description: 'Paciente: Maria Santos',
-          start: { dateTime: '2024-01-16T09:00:00-03:00' },
-          end: { dateTime: '2024-01-16T10:00:00-03:00' },
+          id: "google-event-456",
+          summary: "Consulta Agendada",
+          description: "Paciente: Maria Santos",
+          start: { dateTime: "2024-01-16T09:00:00-03:00" },
+          end: { dateTime: "2024-01-16T10:00:00-03:00" },
           extendedProperties: {
             private: {
-              appointmentId: 'appt-456',
-              patientId: 'patient-789'
-            }
-          }
-        }
+              appointmentId: "appt-456",
+              patientId: "patient-789",
+            },
+          },
+        },
       ];
 
       mockClient.listEvents.mockResolvedValueOnce(googleEvents);
 
-      const syncedEvents = await service.syncFromGoogle('primary');
+      const syncedEvents = await service.syncFromGoogle("primary");
 
       expect(syncedEvents).toHaveLength(1);
       expect(mockCompliance.validateDataProcessing).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle conflicts properly', async () => {
+    it("should handle conflicts properly", async () => {
       // Setup integration
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'integration-123',
+                id: "integration-123",
                 user_id: mockUser.id,
-                calendar_id: 'primary',
-                access_token: 'encrypted:token',
-                refresh_token: 'encrypted:refresh',
-                sync_enabled: true
+                calendar_id: "primary",
+                access_token: "encrypted:token",
+                refresh_token: "encrypted:refresh",
+                sync_enabled: true,
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       // Mock conflicting event
       const conflictingEvent = {
-        id: 'conflict-event',
-        summary: 'Outra Consulta',
-        start: { dateTime: '2024-01-15T10:30:00-03:00' },
-        end: { dateTime: '2024-01-15T11:30:00-03:00' }
+        id: "conflict-event",
+        summary: "Outra Consulta",
+        start: { dateTime: "2024-01-15T10:30:00-03:00" },
+        end: { dateTime: "2024-01-15T11:30:00-03:00" },
       };
 
       mockClient.listEvents.mockResolvedValueOnce([conflictingEvent]);
@@ -348,50 +362,54 @@ describe('Google Calendar Integration E2E', () => {
       const conflicts = await service.checkForConflicts(
         mockAppointment.startTime,
         mockAppointment.endTime,
-        'primary'
+        "primary",
       );
 
       expect(conflicts).toHaveLength(1);
-      expect(conflicts[0].id).toBe('conflict-event');
+      expect(conflicts[0].id).toBe("conflict-event");
     });
 
-    it('should ensure data privacy throughout the flow', async () => {
+    it("should ensure data privacy throughout the flow", async () => {
       // Setup integration with encrypted tokens
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'integration-123',
+                id: "integration-123",
                 user_id: mockUser.id,
-                calendar_id: 'primary',
-                access_token: 'encrypted:very-secret-token',
-                refresh_token: 'encrypted:very-secret-refresh',
-                sync_enabled: true
+                calendar_id: "primary",
+                access_token: "encrypted:very-secret-token",
+                refresh_token: "encrypted:very-secret-refresh",
+                sync_enabled: true,
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       await service.syncAppointmentToCalendar(mockAppointment);
 
       // Verify tokens were decrypted
-      expect(mockCompliance.decryptSensitiveData).toHaveBeenCalledWith('encrypted:very-secret-token');
-      expect(mockCompliance.decryptSensitiveData).toHaveBeenCalledWith('encrypted:very-secret-refresh');
+      expect(mockCompliance.decryptSensitiveData).toHaveBeenCalledWith(
+        "encrypted:very-secret-token",
+      );
+      expect(mockCompliance.decryptSensitiveData).toHaveBeenCalledWith(
+        "encrypted:very-secret-refresh",
+      );
 
       // Verify sensitive data is not logged
       expect(mockCompliance.anonymizeData).toHaveBeenCalledWith(
-        expect.stringContaining(mockAppointment.patientId)
+        expect.stringContaining(mockAppointment.patientId),
       );
     });
 
-    it('should handle errors gracefully and maintain system stability', async () => {
+    it("should handle errors gracefully and maintain system stability", async () => {
       // Simulate API failure
       mockClient.createEvent.mockRejectedValue({
         code: 503,
-        message: 'Service Unavailable'
+        message: "Service Unavailable",
       });
 
       const result = await service.syncAppointmentToCalendar(mockAppointment);
@@ -403,41 +421,41 @@ describe('Google Calendar Integration E2E', () => {
       // Error would be logged by the service
     });
 
-    it('should handle token refresh automatically', async () => {
+    it("should handle token refresh automatically", async () => {
       // Setup integration with expired token
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'integration-123',
+                id: "integration-123",
                 user_id: mockUser.id,
-                calendar_id: 'primary',
-                access_token: 'encrypted:expired-token',
-                refresh_token: 'encrypted:valid-refresh',
-                sync_enabled: true
+                calendar_id: "primary",
+                access_token: "encrypted:expired-token",
+                refresh_token: "encrypted:valid-refresh",
+                sync_enabled: true,
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       // First call fails with auth error
       mockClient.createEvent.mockRejectedValueOnce({
         code: 401,
-        message: 'Invalid token'
+        message: "Invalid token",
       });
 
       // After refresh, it succeeds
       mockClient.createEvent.mockResolvedValueOnce({
-        id: 'event-after-refresh'
+        id: "event-after-refresh",
       });
 
       // Mock token refresh
       mockClient.refreshTokens = vi.fn().mockResolvedValue({
-        access_token: 'new-access-token',
-        refresh_token: 'new-refresh-token'
+        access_token: "new-access-token",
+        refresh_token: "new-refresh-token",
       });
 
       const result = await service.syncAppointmentToCalendar(mockAppointment);
@@ -447,15 +465,15 @@ describe('Google Calendar Integration E2E', () => {
     });
   });
 
-  describe('Healthcare Compliance Requirements', () => {
-    it('should enforce data retention policies', async () => {
+  describe("Healthcare Compliance Requirements", () => {
+    it("should enforce data retention policies", async () => {
       const oldAppointment = {
         ...mockAppointment,
-        startTime: new Date('2015-01-15T10:00:00'), // 9 years ago
+        startTime: new Date("2015-01-15T10:00:00"), // 9 years ago
         metadata: {
           ...mockAppointment.metadata,
-          retentionRequired: true
-        }
+          retentionRequired: true,
+        },
       };
 
       // Setup integration
@@ -464,58 +482,58 @@ describe('Google Calendar Integration E2E', () => {
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'integration-123',
+                id: "integration-123",
                 user_id: mockUser.id,
-                calendar_id: 'primary',
-                access_token: 'encrypted:token',
-                refresh_token: 'encrypted:refresh',
-                sync_enabled: true
+                calendar_id: "primary",
+                access_token: "encrypted:token",
+                refresh_token: "encrypted:refresh",
+                sync_enabled: true,
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       await service.syncAppointmentToCalendar(oldAppointment);
 
       expect(mockCompliance.validateDataProcessing).toHaveBeenCalledWith(
         expect.objectContaining({
-          retentionPeriod: '10-years',
-          dataType: 'HEALTHCARE_APPOINTMENT'
-        })
+          retentionPeriod: "10-years",
+          dataType: "HEALTHCARE_APPOINTMENT",
+        }),
       );
     });
 
-    it('should handle patient consent revocation', async () => {
+    it("should handle patient consent revocation", async () => {
       mockCompliance.validateConsent.mockResolvedValueOnce(false);
 
       await expect(
-        service.syncAppointmentToCalendar(mockAppointment)
-      ).rejects.toThrow('Patient consent required');
+        service.syncAppointmentToCalendar(mockAppointment),
+      ).rejects.toThrow("Patient consent required");
 
       // Should not proceed with sync
       expect(mockClient.createEvent).not.toHaveBeenCalled();
     });
 
-    it('should maintain audit trail for all operations', async () => {
+    it("should maintain audit trail for all operations", async () => {
       // Setup integration
       mockSupabase.from.mockReturnValueOnce({
         select: vi.fn(() => ({
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'integration-123',
+                id: "integration-123",
                 user_id: mockUser.id,
-                calendar_id: 'primary',
-                access_token: 'encrypted:token',
-                refresh_token: 'encrypted:refresh',
-                sync_enabled: true
+                calendar_id: "primary",
+                access_token: "encrypted:token",
+                refresh_token: "encrypted:refresh",
+                sync_enabled: true,
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       await service.syncAppointmentToCalendar(mockAppointment);
@@ -524,21 +542,21 @@ describe('Google Calendar Integration E2E', () => {
       expect(mockCompliance.logDataAccess).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: mockUser.id,
-          action: 'SYNC_APPOINTMENT',
-          dataType: 'CALENDAR_EVENT',
-          patientId: mockAppointment.patientId
-        })
+          action: "SYNC_APPOINTMENT",
+          dataType: "CALENDAR_EVENT",
+          patientId: mockAppointment.patientId,
+        }),
       );
     });
   });
 
-  describe('Performance and Scalability', () => {
-    it('should handle batch operations efficiently', async () => {
+  describe("Performance and Scalability", () => {
+    it("should handle batch operations efficiently", async () => {
       const appointments = Array.from({ length: 100 }, (_, i) => ({
         ...mockAppointment,
         id: `appt-${i}`,
         startTime: new Date(`2024-01-${15 + i}T10:00:00`),
-        endTime: new Date(`2024-01-${15 + i}T11:00:00`)
+        endTime: new Date(`2024-01-${15 + i}T11:00:00`),
       }));
 
       // Setup integration
@@ -547,17 +565,17 @@ describe('Google Calendar Integration E2E', () => {
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'integration-123',
+                id: "integration-123",
                 user_id: mockUser.id,
-                calendar_id: 'primary',
-                access_token: 'encrypted:token',
-                refresh_token: 'encrypted:refresh',
-                sync_enabled: true
+                calendar_id: "primary",
+                access_token: "encrypted:token",
+                refresh_token: "encrypted:refresh",
+                sync_enabled: true,
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       const startTime = Date.now();
@@ -568,11 +586,11 @@ describe('Google Calendar Integration E2E', () => {
       expect(duration).toBeLessThan(10000); // Should complete in under 10 seconds
     });
 
-    it('should handle rate limiting gracefully', async () => {
+    it("should handle rate limiting gracefully", async () => {
       // Simulate rate limit responses
       mockClient.createEvent
-        .mockRejectedValueOnce({ code: 429, message: 'Rate limit exceeded' })
-        .mockResolvedValueOnce({ id: 'event-after-retry' });
+        .mockRejectedValueOnce({ code: 429, message: "Rate limit exceeded" })
+        .mockResolvedValueOnce({ id: "event-after-retry" });
 
       // Setup integration
       mockSupabase.from.mockReturnValueOnce({
@@ -580,17 +598,17 @@ describe('Google Calendar Integration E2E', () => {
           eq: vi.fn(() => ({
             single: vi.fn().mockResolvedValue({
               data: {
-                id: 'integration-123',
+                id: "integration-123",
                 user_id: mockUser.id,
-                calendar_id: 'primary',
-                access_token: 'encrypted:token',
-                refresh_token: 'encrypted:refresh',
-                sync_enabled: true
+                calendar_id: "primary",
+                access_token: "encrypted:token",
+                refresh_token: "encrypted:refresh",
+                sync_enabled: true,
               },
-              error: null
-            })
-          }))
-        }))
+              error: null,
+            }),
+          })),
+        })),
       });
 
       const result = await service.syncAppointmentToCalendar(mockAppointment);

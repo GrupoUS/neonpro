@@ -14,6 +14,7 @@ This guide will help you set up and test the AI agent database integration featu
 ### 1. Install Dependencies
 
 #### Backend
+
 ```bash
 cd apps/api
 npm install @copilotkit/runtime ag-ui
@@ -22,6 +23,7 @@ pnpm add @copilotkit/runtime ag-ui
 ```
 
 #### Frontend
+
 ```bash
 cd apps/web
 npm install @copilotkit/react-core @copilotkit/react-ui
@@ -32,33 +34,35 @@ pnpm add @copilotkit/react-core @copilotkit/react-ui
 ### 2. Backend Setup
 
 Create the agent endpoint:
+
 ```typescript
 // apps/api/src/routes/ai/data-agent.ts
-import { Hono } from 'hono'
-import { serve } from '@hono/node-server'
+import { Hono } from "hono";
+import { serve } from "@hono/node-server";
 
-const app = new Hono()
+const app = new Hono();
 
-app.post('/api/ai/data-agent', async (c) => {
+app.post("/api/ai/data-agent", async (c) => {
   // TODO: Implement agent logic
   return c.json({
     success: true,
     response: {
-      id: 'mock-response',
-      type: 'text',
+      id: "mock-response",
+      type: "text",
       content: {
-        text: 'This is a mock response from the AI agent.'
-      }
-    }
-  })
-})
+        text: "This is a mock response from the AI agent.",
+      },
+    },
+  });
+});
 
-export default app
+export default app;
 ```
 
 ### 3. Frontend Setup
 
 Create the chat component:
+
 ```typescript
 // apps/web/src/components/ai/DataAgentChat.tsx
 import { CopilotKit } from '@copilotkit/react-core'
@@ -106,40 +110,42 @@ npm run dev
 
 ```typescript
 // apps/api/src/services/ai-data-service.ts
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
-)
+  process.env.SUPABASE_SERVICE_KEY!,
+);
 
 export class AIDataService {
   async getClientsByName(name: string) {
     const { data, error } = await supabase
-      .from('clients')
-      .select('*')
-      .ilike('name', `%${name}%`)
-    
-    if (error) throw error
-    return data
+      .from("clients")
+      .select("*")
+      .ilike("name", `%${name}%`);
+
+    if (error) throw error;
+    return data;
   }
 
   async getAppointmentsByDate(date: string) {
     const { data, error } = await supabase
-      .from('appointments')
-      .select(`
+      .from("appointments")
+      .select(
+        `
         *,
         clients (name)
-      `)
-      .gte('datetime', `${date}T00:00:00`)
-      .lte('datetime', `${date}T23:59:59`)
-      .order('datetime')
-    
-    if (error) throw error
-    return data
+      `,
+      )
+      .gte("datetime", `${date}T00:00:00`)
+      .lte("datetime", `${date}T23:59:59`)
+      .order("datetime");
+
+    if (error) throw error;
+    return data;
   }
 
-  async getFinancialSummary(period: 'week' | 'month' | 'year') {
+  async getFinancialSummary(period: "week" | "month" | "year") {
     // Implement financial summary logic
   }
 }
@@ -148,37 +154,40 @@ export class AIDataService {
 ### 2. Update Agent Endpoint
 
 Replace the mock logic with real data service calls:
+
 ```typescript
 // In apps/api/src/routes/ai/data-agent.ts
-import { AIDataService } from '../services/ai-data-service'
+import { AIDataService } from "../services/ai-data-service";
 
-const dataService = new AIDataService()
+const dataService = new AIDataService();
 
-app.post('/api/ai/data-agent', async (c) => {
-  const { query, sessionId } = await c.req.json()
-  
+app.post("/api/ai/data-agent", async (c) => {
+  const { query, sessionId } = await c.req.json();
+
   // Parse query intent (simplified)
-  if (query.toLowerCase().includes('agendamento')) {
-    const appointments = await dataService.getAppointmentsByDate(new Date().toISOString().split('T')[0])
+  if (query.toLowerCase().includes("agendamento")) {
+    const appointments = await dataService.getAppointmentsByDate(
+      new Date().toISOString().split("T")[0],
+    );
     return c.json({
       success: true,
       response: {
-        type: 'list',
+        type: "list",
         content: {
-          title: 'Agendamentos de Hoje',
+          title: "Agendamentos de Hoje",
           data: appointments,
           columns: [
-            { key: 'datetime', label: 'Horário', type: 'datetime' },
-            { key: 'clients.name', label: 'Cliente', type: 'text' },
-            { key: 'status', label: 'Status', type: 'text' }
-          ]
-        }
-      }
-    })
+            { key: "datetime", label: "Horário", type: "datetime" },
+            { key: "clients.name", label: "Cliente", type: "text" },
+            { key: "status", label: "Status", type: "text" },
+          ],
+        },
+      },
+    });
   }
-  
+
   // Handle other query types...
-})
+});
 ```
 
 ## Phase 4: Advanced Features
@@ -186,6 +195,7 @@ app.post('/api/ai/data-agent', async (c) => {
 ### 1. Natural Language Processing
 
 Integrate with a language model service:
+
 ```typescript
 // Use OpenAI or similar service to parse user intent
 async function parseQueryIntent(query: string) {
@@ -197,37 +207,42 @@ async function parseQueryIntent(query: string) {
 ### 2. Rich UI Responses
 
 Enhance responses with interactive elements:
+
 ```typescript
 // In agent response
 actions: [
   {
-    id: 'view-details',
-    label: 'Ver Detalhes',
-    type: 'button',
-    action: 'showAppointmentDetails',
-    payload: { appointmentId: '123' }
-  }
-]
+    id: "view-details",
+    label: "Ver Detalhes",
+    type: "button",
+    action: "showAppointmentDetails",
+    payload: { appointmentId: "123" },
+  },
+];
 ```
 
 ## Testing Scenarios
 
 ### Test Case 1: Appointments Query
+
 1. Type: "Quais os próximos agendamentos?"
 2. Expected: List of upcoming appointments
 3. Verify: Data is from database, formatted correctly
 
 ### Test Case 2: Client Search
+
 1. Type: "Buscar cliente Maria"
 2. Expected: List of clients matching "Maria"
 3. Verify: Only accessible clients shown
 
 ### Test Case 3: Financial Summary
+
 1. Type: "Resumo financeiro mensal"
 2. Expected: Financial summary chart/table
 3. Verify: Numbers accurate, permissions respected
 
 ### Test Case 4: Access Denied
+
 1. Try to access data outside your permissions
 2. Expected: "Acesso negado" message
 3. Verify: No sensitive data exposed
@@ -244,11 +259,12 @@ actions: [
 ### Debug Mode
 
 Enable debug logging:
+
 ```typescript
 // Add to agent endpoint
-console.log('Query:', query)
-console.log('Intent:', intent)
-console.log('Response:', response)
+console.log("Query:", query);
+console.log("Intent:", intent);
+console.log("Response:", response);
 ```
 
 ## Next Steps

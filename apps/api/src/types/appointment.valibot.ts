@@ -15,7 +15,13 @@ export const BaseAppointmentSchema = v.object({
   clinicId: v.pipe(v.string(), v.uuid()),
   appointmentDate: v.pipe(v.string(), v.isoDateTime()),
   duration: v.pipe(v.number(), v.minValue(15), v.maxValue(480)), // 15 minutes to 8 hours
-  status: v.picklist(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show']),
+  status: v.picklist([
+    'scheduled',
+    'confirmed',
+    'completed',
+    'cancelled',
+    'no_show',
+  ]),
   notes: v.optional(v.pipe(v.string(), v.maxLength(1000))),
   createdAt: v.optional(v.pipe(v.string(), v.isoDateTime())),
   updatedAt: v.optional(v.pipe(v.string(), v.isoDateTime())),
@@ -44,7 +50,9 @@ export const UpdateAppointmentValibot = v.object({
   clinicId: v.optional(v.pipe(v.string(), v.uuid())),
   appointmentDate: v.optional(v.pipe(v.string(), v.isoDateTime())),
   duration: v.optional(v.pipe(v.number(), v.minValue(15), v.maxValue(480))),
-  status: v.optional(v.picklist(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show'])),
+  status: v.optional(
+    v.picklist(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show']),
+  ),
   notes: v.optional(v.pipe(v.string(), v.maxLength(1000))),
 });
 
@@ -82,7 +90,10 @@ export const NoShowPredictionValibot = v.object({
   riskFactors: v.object({
     previousNoShows: v.pipe(v.number(), v.minValue(0)),
     appointmentAge: v.pipe(v.number(), v.minValue(0)), // Hours between booking and appointment
-    timeOfDay: v.pipe(v.string(), v.regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/)),
+    timeOfDay: v.pipe(
+      v.string(),
+      v.regex(/^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/),
+    ),
     dayOfWeek: v.pipe(v.number(), v.minValue(0), v.maxValue(6)), // 0 = Sunday, 6 = Saturday
   }),
   predictionScore: v.pipe(v.number(), v.minValue(0), v.maxValue(1)), // 0 = low risk, 1 = high risk
@@ -114,7 +125,9 @@ export const AppointmentSearchFiltersValibot = v.object({
   patientId: v.optional(v.pipe(v.string(), v.uuid())),
   doctorId: v.optional(v.pipe(v.string(), v.uuid())),
   clinicId: v.optional(v.pipe(v.string(), v.uuid())),
-  status: v.optional(v.picklist(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show'])),
+  status: v.optional(
+    v.picklist(['scheduled', 'confirmed', 'completed', 'cancelled', 'no_show']),
+  ),
   startDate: v.optional(v.pipe(v.string(), v.isoDate())),
   endDate: v.optional(v.pipe(v.string(), v.isoDate())),
   limit: v.optional(v.pipe(v.number(), v.minValue(1), v.maxValue(100))),
@@ -138,10 +151,20 @@ export const AppointmentStatisticsValibot = v.object({
 export type BaseAppointment = v.InferOutput<typeof BaseAppointmentSchema>;
 export type CreateAppointment = v.InferOutput<typeof CreateAppointmentValibot>;
 export type UpdateAppointment = v.InferOutput<typeof UpdateAppointmentValibot>;
-export type AppointmentReminder = v.InferOutput<typeof AppointmentReminderValibot>;
-export type RealTimeAvailability = v.InferOutput<typeof RealTimeAvailabilityValibot>;
+export type AppointmentReminder = v.InferOutput<
+  typeof AppointmentReminderValibot
+>;
+export type RealTimeAvailability = v.InferOutput<
+  typeof RealTimeAvailabilityValibot
+>;
 export type NoShowPrediction = v.InferOutput<typeof NoShowPredictionValibot>;
 export type CancelAppointment = v.InferOutput<typeof CancelAppointmentValibot>;
-export type RescheduleAppointment = v.InferOutput<typeof RescheduleAppointmentValibot>;
-export type AppointmentSearchFilters = v.InferOutput<typeof AppointmentSearchFiltersValibot>;
-export type AppointmentStatistics = v.InferOutput<typeof AppointmentStatisticsValibot>;
+export type RescheduleAppointment = v.InferOutput<
+  typeof RescheduleAppointmentValibot
+>;
+export type AppointmentSearchFilters = v.InferOutput<
+  typeof AppointmentSearchFiltersValibot
+>;
+export type AppointmentStatistics = v.InferOutput<
+  typeof AppointmentStatisticsValibot
+>;

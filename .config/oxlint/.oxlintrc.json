@@ -76,9 +76,7 @@
   "settings": {
     "react": {
       "version": "detect",
-      "linkComponents": [
-        { "name": "Link", "linkAttribute": ["href", "to"] }
-      ],
+      "linkComponents": [{ "name": "Link", "linkAttribute": ["href", "to"] }],
       "formComponents": [
         { "name": "Form", "formAttribute": ["action", "endpoint"] }
       ]

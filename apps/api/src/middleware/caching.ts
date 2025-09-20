@@ -14,11 +14,14 @@ import { createHash } from 'crypto';
 import { Context, Next } from 'hono';
 
 // In-memory cache fallback (for development/testing)
-const memoryCache = new Map<string, {
-  data: any;
-  expires: number;
-  headers: Record<string, string>;
-}>();
+const memoryCache = new Map<
+  string,
+  {
+    data: any;
+    expires: number;
+    headers: Record<string, string>;
+  }
+>();
 
 // Cache configuration for different endpoint types
 export interface CacheConfig {
@@ -112,7 +115,10 @@ function generateCacheKey(
   };
 
   const keyString = JSON.stringify(keyData);
-  const hash = createHash('sha256').update(keyString).digest('hex').substring(0, 16);
+  const hash = createHash('sha256')
+    .update(keyString)
+    .digest('hex')
+    .substring(0, 16);
 
   return `${prefix}:${hash}`;
 }
@@ -180,7 +186,7 @@ async function setInMemoryCache(
   headers: Record<string, string>,
   ttl: number,
 ): Promise<void> {
-  const expires = Date.now() + (ttl * 1000);
+  const expires = Date.now() + ttl * 1000;
 
   memoryCache.set(key, {
     data,
@@ -303,7 +309,10 @@ export class CacheInvalidator {
 
     keysToDelete.forEach(key => memoryCache.delete(key));
 
-    console.log(`Invalidated ${keysToDelete.length} cache entries for tags:`, tags);
+    console.log(
+      `Invalidated ${keysToDelete.length} cache entries for tags:`,
+      tags,
+    );
   }
 
   /**

@@ -1,29 +1,32 @@
 /**
  * 📝 Audit Integration for TDD Orchestrator
  * ========================================
- * 
+ *
  * Integrates the TDD Orchestrator with the audit system to log
  * orchestration events, agent executions, and quality gate results.
- * 
+ *
  * Note: Adapts orchestration events to the existing AI audit interface
  */
 
-import { writeAudit, AuditEventInput } from '../../../../../packages/core-services/src/audit/writer';
-import { 
-  OrchestrationState, 
-  TDDPhase, 
-  AgentName, 
+import {
+  writeAudit,
+  AuditEventInput,
+} from "../../../../../packages/core-services/src/audit/writer";
+import {
+  OrchestrationState,
+  TDDPhase,
+  AgentName,
   AgentResult,
   OrchestratorEvent,
-  QualityGateStatus
-} from '../types';
+  QualityGateStatus,
+} from "../types";
 
 export interface OrchestrationAuditConfig {
   enableOrchestrationEvents: boolean;
   enableAgentEvents: boolean;
   enableQualityGateEvents: boolean;
   enablePhaseTransitions: boolean;
-  logLevel: 'minimal' | 'standard' | 'detailed';
+  logLevel: "minimal" | "standard" | "detailed";
 }
 
 export class OrchestrationAudit {
@@ -40,11 +43,11 @@ export class OrchestrationAudit {
     if (!this.config.enableOrchestrationEvents) return;
 
     const auditEvent: AuditEventInput = {
-      action: 'query',
-      userId: 'orchestrator',
-      outcome: 'success',
+      action: "query",
+      userId: "orchestrator",
+      outcome: "success",
       queryType: `orchestration-start-${state.workflow}`,
-      latencyMs: 0
+      latencyMs: 0,
     };
 
     await writeAudit(auditEvent);
@@ -54,18 +57,18 @@ export class OrchestrationAudit {
    * Log orchestration completion event
    */
   async logOrchestrationComplete(
-    state: OrchestrationState, 
-    success: boolean, 
-    duration: number
+    state: OrchestrationState,
+    success: boolean,
+    duration: number,
   ): Promise<void> {
     if (!this.config.enableOrchestrationEvents) return;
 
     const auditEvent: AuditEventInput = {
-      action: 'suggestions',
-      userId: 'orchestrator',
-      outcome: success ? 'success' : 'error',
+      action: "suggestions",
+      userId: "orchestrator",
+      outcome: success ? "success" : "error",
       queryType: `orchestration-complete-${state.workflow}`,
-      latencyMs: duration
+      latencyMs: duration,
     };
 
     await writeAudit(auditEvent);
@@ -78,16 +81,16 @@ export class OrchestrationAudit {
     orchestrationId: string,
     _fromPhase: TDDPhase | null,
     toPhase: TDDPhase,
-    _iteration: number
+    _iteration: number,
   ): Promise<void> {
     if (!this.config.enablePhaseTransitions) return;
 
     const auditEvent: AuditEventInput = {
-      action: 'query',
-      userId: 'orchestrator',
-      outcome: 'success',
+      action: "query",
+      userId: "orchestrator",
+      outcome: "success",
       queryType: `phase-transition-${toPhase}`,
-      sessionId: orchestrationId
+      sessionId: orchestrationId,
     };
 
     await writeAudit(auditEvent);
@@ -98,17 +101,17 @@ export class OrchestrationAudit {
    */
   async logAgentExecution(
     orchestrationId: string,
-    agentResult: AgentResult
+    agentResult: AgentResult,
   ): Promise<void> {
     if (!this.config.enableAgentEvents) return;
 
     const auditEvent: AuditEventInput = {
-      action: 'explanation',
-      userId: 'orchestrator',
-      outcome: agentResult.status === 'success' ? 'success' : 'error',
+      action: "explanation",
+      userId: "orchestrator",
+      outcome: agentResult.status === "success" ? "success" : "error",
       queryType: `agent-${agentResult.agent}`,
       sessionId: orchestrationId,
-      latencyMs: agentResult.duration
+      latencyMs: agentResult.duration,
     };
 
     await writeAudit(auditEvent);
@@ -121,16 +124,16 @@ export class OrchestrationAudit {
     orchestrationId: string,
     gateName: string,
     status: QualityGateStatus,
-    _details?: Record<string, any>
+    _details?: Record<string, any>,
   ): Promise<void> {
     if (!this.config.enableQualityGateEvents) return;
 
     const auditEvent: AuditEventInput = {
-      action: 'suggestions',
-      userId: 'orchestrator',
-      outcome: status === 'passed' ? 'success' : 'error',
+      action: "suggestions",
+      userId: "orchestrator",
+      outcome: status === "passed" ? "success" : "error",
       queryType: `quality-gate-${gateName}`,
-      sessionId: orchestrationId
+      sessionId: orchestrationId,
     };
 
     await writeAudit(auditEvent);
@@ -141,11 +144,11 @@ export class OrchestrationAudit {
    */
   async logOrchestratorEvent(event: OrchestratorEvent): Promise<void> {
     const auditEvent: AuditEventInput = {
-      action: 'query',
-      userId: 'orchestrator',
-      outcome: 'success',
+      action: "query",
+      userId: "orchestrator",
+      outcome: "success",
       queryType: `orchestrator-${event.type}`,
-      sessionId: event.orchestrationId
+      sessionId: event.orchestrationId,
     };
 
     await writeAudit(auditEvent);
@@ -161,14 +164,14 @@ export class OrchestrationAudit {
       agent?: AgentName;
       phase?: TDDPhase;
       operation?: string;
-    }
+    },
   ): Promise<void> {
     const auditEvent: AuditEventInput = {
-      action: 'query',
-      userId: 'orchestrator',
-      outcome: 'error',
-      queryType: `error-${context.operation || 'unknown'}`,
-      sessionId: orchestrationId
+      action: "query",
+      userId: "orchestrator",
+      outcome: "error",
+      queryType: `error-${context.operation || "unknown"}`,
+      sessionId: orchestrationId,
     };
 
     await writeAudit(auditEvent);
@@ -181,7 +184,7 @@ export const defaultAuditConfig: OrchestrationAuditConfig = {
   enableAgentEvents: true,
   enableQualityGateEvents: true,
   enablePhaseTransitions: true,
-  logLevel: 'standard'
+  logLevel: "standard",
 };
 
 // Singleton instance

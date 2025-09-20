@@ -18,38 +18,59 @@ import { app } from '../../src/app';
 // Request schema for updates (all fields optional except ID)
 const UpdatePatientRequestSchema = z.object({
   name: z.string().min(2).max(100).optional(),
-  phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/).optional(),
+  phone: z
+    .string()
+    .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/)
+    .optional(),
   email: z.string().email().optional(),
-  address: z.object({
-    street: z.string().min(1).optional(),
-    number: z.string().min(1).optional(),
-    complement: z.string().optional(),
-    neighborhood: z.string().min(1).optional(),
-    city: z.string().min(1).optional(),
-    state: z.string().length(2).optional(),
-    zipCode: z.string().regex(/^\d{5}-\d{3}$/).optional(),
-  }).optional(),
-  emergencyContact: z.object({
-    name: z.string().min(2).optional(),
-    relationship: z.string().min(1).optional(),
-    phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/).optional(),
-  }).optional(),
-  medicalHistory: z.object({
-    allergies: z.array(z.string()).optional(),
-    medications: z.array(z.string()).optional(),
-    conditions: z.array(z.string()).optional(),
-    surgeries: z.array(z.object({
-      procedure: z.string(),
-      date: z.string().datetime(),
-      hospital: z.string(),
-    })).optional(),
-  }).optional(),
-  lgpdConsent: z.object({
-    marketingCommunications: z.boolean().optional(),
-    thirdPartySharing: z.boolean().optional(),
-    consentDate: z.string().datetime(),
-    ipAddress: z.string().ip(),
-  }).optional(),
+  address: z
+    .object({
+      street: z.string().min(1).optional(),
+      number: z.string().min(1).optional(),
+      complement: z.string().optional(),
+      neighborhood: z.string().min(1).optional(),
+      city: z.string().min(1).optional(),
+      state: z.string().length(2).optional(),
+      zipCode: z
+        .string()
+        .regex(/^\d{5}-\d{3}$/)
+        .optional(),
+    })
+    .optional(),
+  emergencyContact: z
+    .object({
+      name: z.string().min(2).optional(),
+      relationship: z.string().min(1).optional(),
+      phone: z
+        .string()
+        .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/)
+        .optional(),
+    })
+    .optional(),
+  medicalHistory: z
+    .object({
+      allergies: z.array(z.string()).optional(),
+      medications: z.array(z.string()).optional(),
+      conditions: z.array(z.string()).optional(),
+      surgeries: z
+        .array(
+          z.object({
+            procedure: z.string(),
+            date: z.string().datetime(),
+            hospital: z.string(),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
+  lgpdConsent: z
+    .object({
+      marketingCommunications: z.boolean().optional(),
+      thirdPartySharing: z.boolean().optional(),
+      consentDate: z.string().datetime(),
+      ipAddress: z.string().ip(),
+    })
+    .optional(),
   lastModified: z.string().datetime().optional(), // For optimistic concurrency
 });
 
@@ -77,16 +98,22 @@ const UpdatePatientResponseSchema = z.object({
     relationship: z.string(),
     phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/),
   }),
-  medicalHistory: z.object({
-    allergies: z.array(z.string()).optional(),
-    medications: z.array(z.string()).optional(),
-    conditions: z.array(z.string()).optional(),
-    surgeries: z.array(z.object({
-      procedure: z.string(),
-      date: z.string().datetime(),
-      hospital: z.string(),
-    })).optional(),
-  }).optional(),
+  medicalHistory: z
+    .object({
+      allergies: z.array(z.string()).optional(),
+      medications: z.array(z.string()).optional(),
+      conditions: z.array(z.string()).optional(),
+      surgeries: z
+        .array(
+          z.object({
+            procedure: z.string(),
+            date: z.string().datetime(),
+            hospital: z.string(),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
   lgpdConsent: z.object({
     dataProcessing: z.boolean(),
     marketingCommunications: z.boolean().optional(),
@@ -264,9 +291,13 @@ describe('PUT /api/v2/patients/{id} - Contract Tests', () => {
 
       expect(response.body.medicalHistory.allergies).toContain('Peanuts');
       expect(response.body.medicalHistory.medications).toContain('Insulin');
-      expect(response.body.medicalHistory.conditions).toContain('Diabetes Type 1');
+      expect(response.body.medicalHistory.conditions).toContain(
+        'Diabetes Type 1',
+      );
       expect(response.body.medicalHistory.surgeries).toHaveLength(1);
-      expect(response.body.medicalHistory.surgeries[0].procedure).toBe('Gallbladder Removal');
+      expect(response.body.medicalHistory.surgeries[0].procedure).toBe(
+        'Gallbladder Removal',
+      );
     });
 
     it('should append to existing medical history', async () => {

@@ -3,51 +3,51 @@
  * Implements comprehensive audit trail requirements as per LGPD Art. 37º
  */
 
-import { supabase } from '@/integrations/supabase/client';
-import type { CalendarAppointment } from '@/services/appointments.service';
-import type { 
-  CalendarLGPDPurpose, 
+import { supabase } from "@/integrations/supabase/client";
+import type { CalendarAppointment } from "@/services/appointments.service";
+import type {
+  CalendarLGPDPurpose,
   DataMinimizationLevel,
-  ConsentValidationResult 
-} from './calendar-consent.service';
+  ConsentValidationResult,
+} from "./calendar-consent.service";
 
 // LGPD Audit Actions
 export enum LGPDAuditAction {
   // Consent actions
-  CONSENT_VALIDATED = 'consent_validated',
-  CONSENT_DENIED = 'consent_denied',
-  CONSENT_EXPIRED = 'consent_expired',
-  CONSENT_WITHDRAWN = 'consent_withdrawn',
-  
+  CONSENT_VALIDATED = "consent_validated",
+  CONSENT_DENIED = "consent_denied",
+  CONSENT_EXPIRED = "consent_expired",
+  CONSENT_WITHDRAWN = "consent_withdrawn",
+
   // Data access actions
-  APPOINTMENT_ACCESSED = 'appointment_accessed',
-  APPOINTMENT_VIEWED = 'appointment_viewed',
-  APPOINTMENT_LIST_VIEWED = 'appointment_list_viewed',
-  CALENDAR_VIEWED = 'calendar_viewed',
-  
+  APPOINTMENT_ACCESSED = "appointment_accessed",
+  APPOINTMENT_VIEWED = "appointment_viewed",
+  APPOINTMENT_LIST_VIEWED = "appointment_list_viewed",
+  CALENDAR_VIEWED = "calendar_viewed",
+
   // Data modification actions
-  APPOINTMENT_CREATED = 'appointment_created',
-  APPOINTMENT_UPDATED = 'appointment_updated',
-  APPOINTMENT_CANCELLED = 'appointment_cancelled',
-  APPOINTMENT_DELETED = 'appointment_deleted',
-  APPOINTMENT_RESCHEDULED = 'appointment_rescheduled',
-  
+  APPOINTMENT_CREATED = "appointment_created",
+  APPOINTMENT_UPDATED = "appointment_updated",
+  APPOINTMENT_CANCELLED = "appointment_cancelled",
+  APPOINTMENT_DELETED = "appointment_deleted",
+  APPOINTMENT_RESCHEDULED = "appointment_rescheduled",
+
   // Data processing actions
-  DATA_MINIMIZED = 'data_minimized',
-  DATA_EXPORTED = 'data_exported',
-  DATA_SHARED = 'data_shared',
-  DATA_ANONYMIZED = 'data_anonymmized',
-  
+  DATA_MINIMIZED = "data_minimized",
+  DATA_EXPORTED = "data_exported",
+  DATA_SHARED = "data_shared",
+  DATA_ANONYMIZED = "data_anonymmized",
+
   // Compliance actions
-  COMPLIANCE_CHECK = 'compliance_check',
-  RISK_ASSESSMENT = 'risk_assessment',
-  DATA_SUBJECT_REQUEST = 'data_subject_request',
-  BREACH_REPORTED = 'breach_reported',
-  
+  COMPLIANCE_CHECK = "compliance_check",
+  RISK_ASSESSMENT = "risk_assessment",
+  DATA_SUBJECT_REQUEST = "data_subject_request",
+  BREACH_REPORTED = "breach_reported",
+
   // System actions
-  BATCH_PROCESSED = 'batch_processed',
-  ERROR_OCCURRED = 'error_occurred',
-  SECURITY_EVENT = 'security_event',
+  BATCH_PROCESSED = "batch_processed",
+  ERROR_OCCURRED = "error_occurred",
+  SECURITY_EVENT = "security_event",
 }
 
 // LGPD Audit Log Entry Schema
@@ -63,10 +63,10 @@ export interface LGPDAuditLog {
   userAgent?: string;
   timestamp: Date;
   details: AuditDetails;
-  complianceStatus: 'compliant' | 'partial' | 'non_compliant' | 'unknown';
+  complianceStatus: "compliant" | "partial" | "non_compliant" | "unknown";
   legalBasis: string;
   retentionDays: number;
-  riskLevel: 'low' | 'medium' | 'high' | 'critical';
+  riskLevel: "low" | "medium" | "high" | "critical";
 }
 
 // Detailed audit information
@@ -90,7 +90,7 @@ export interface AuditDetails {
   riskAssessment?: {
     identifiedRisks: string[];
     mitigationApplied: string[];
-    residualRisk: 'low' | 'medium' | 'high';
+    residualRisk: "low" | "medium" | "high";
   };
 }
 
@@ -103,8 +103,8 @@ export interface AuditFilter {
     start: Date;
     end: Date;
   };
-  complianceStatus?: ('compliant' | 'partial' | 'non_compliant')[];
-  riskLevel?: ('low' | 'medium' | 'high' | 'critical')[];
+  complianceStatus?: ("compliant" | "partial" | "non_compliant")[];
+  riskLevel?: ("low" | "medium" | "high" | "critical")[];
   purpose?: CalendarLGPDPurpose[];
 }
 
@@ -151,15 +151,18 @@ export class CalendarLGPDAuditService {
     userRole: string,
     consentResult: ConsentValidationResult,
     minimizationLevel: DataMinimizationLevel,
-    context: 'view' | 'edit' | 'export' = 'view',
+    context: "view" | "edit" | "export" = "view",
     metadata?: Partial<AuditDetails>,
   ): Promise<string> {
     try {
       const auditLog: LGPDAuditLog = {
         patientId: appointment.id, // Using appointment ID as patient identifier proxy
-        action: context === 'view' ? LGPDAuditAction.APPOINTMENT_VIEWED : 
-                context === 'edit' ? LGPDAuditAction.APPOINTMENT_UPDATED : 
-                LGPDAuditAction.DATA_EXPORTED,
+        action:
+          context === "view"
+            ? LGPDAuditAction.APPOINTMENT_VIEWED
+            : context === "edit"
+              ? LGPDAuditAction.APPOINTMENT_UPDATED
+              : LGPDAuditAction.DATA_EXPORTED,
         dataCategory: this.determineDataCategories(minimizationLevel),
         purpose: CALENDAR_LGPD_PURPOSES.APPOINTMENT_MANAGEMENT,
         userId,
@@ -170,32 +173,40 @@ export class CalendarLGPDAuditService {
           appointmentStatus: appointment.status,
           consentId: consentResult.consentId,
           consentLevel: minimizationLevel,
-          dataMinimizationApplied: minimizationLevel !== DataMinimizationLevel.FULL,
+          dataMinimizationApplied:
+            minimizationLevel !== DataMinimizationLevel.FULL,
           dataElementsAccessed: this.getAccessedDataElements(minimizationLevel),
-          processingLocation: 'calendar_component',
+          processingLocation: "calendar_component",
           consentResult,
           ...metadata,
         },
-        complianceStatus: this.determineComplianceStatus(consentResult, minimizationLevel),
+        complianceStatus: this.determineComplianceStatus(
+          consentResult,
+          minimizationLevel,
+        ),
         legalBasis: consentResult.legalBasis,
         retentionDays: this.calculateRetentionPeriod(appointment.status),
-        riskLevel: this.assessRiskLevel(consentResult, minimizationLevel, context),
+        riskLevel: this.assessRiskLevel(
+          consentResult,
+          minimizationLevel,
+          context,
+        ),
       };
 
       const { data: log, error } = await this.supabase
-        .from('lgpd_audit_logs')
+        .from("lgpd_audit_logs")
         .insert(auditLog)
-        .select('id')
+        .select("id")
         .single();
 
       if (error) {
-        console.error('Error logging appointment access:', error);
+        console.error("Error logging appointment access:", error);
         throw new Error(`Failed to log audit: ${error.message}`);
       }
 
       return log.id;
     } catch (error) {
-      console.error('Error in logAppointmentAccess:', error);
+      console.error("Error in logAppointmentAccess:", error);
       throw error;
     }
   }
@@ -215,45 +226,55 @@ export class CalendarLGPDAuditService {
   ): Promise<string> {
     try {
       const auditLog: LGPDAuditLog = {
-        patientId: 'batch_operation',
+        patientId: "batch_operation",
         action,
-        dataCategory: ['appointment_data', 'batch_processing'],
+        dataCategory: ["appointment_data", "batch_processing"],
         purpose,
         userId,
         userRole,
         timestamp: new Date(),
         details: {
-          processingLocation: 'calendar_component',
-          dataElementsAccessed: ['appointment_list', 'consent_status', 'minimization_level'],
+          processingLocation: "calendar_component",
+          dataElementsAccessed: [
+            "appointment_list",
+            "consent_status",
+            "minimization_level",
+          ],
           thirdPartyInvolved: false,
           automatedDecision: true,
           riskAssessment: {
-            identifiedRisks: this.identifyBatchRisks(consentResults, minimizationResults),
-            mitigationApplied: ['data_minimization', 'consent_validation'],
+            identifiedRisks: this.identifyBatchRisks(
+              consentResults,
+              minimizationResults,
+            ),
+            mitigationApplied: ["data_minimization", "consent_validation"],
             residualRisk: this.calculateBatchResidualRisk(consentResults),
           },
           ...metadata,
         },
         complianceStatus: this.determineBatchComplianceStatus(consentResults),
-        legalBasis: 'LGPD Art. 7º, V - Execução de contrato',
+        legalBasis: "LGPD Art. 7º, V - Execução de contrato",
         retentionDays: this.DEFAULT_RETENTION_DAYS,
-        riskLevel: this.assessBatchRiskLevel(consentResults, minimizationResults),
+        riskLevel: this.assessBatchRiskLevel(
+          consentResults,
+          minimizationResults,
+        ),
       };
 
       const { data: log, error } = await this.supabase
-        .from('lgpd_audit_logs')
+        .from("lgpd_audit_logs")
         .insert(auditLog)
-        .select('id')
+        .select("id")
         .single();
 
       if (error) {
-        console.error('Error logging batch operation:', error);
+        console.error("Error logging batch operation:", error);
         throw new Error(`Failed to log batch audit: ${error.message}`);
       }
 
       return log.id;
     } catch (error) {
-      console.error('Error in logBatchOperation:', error);
+      console.error("Error in logBatchOperation:", error);
       throw error;
     }
   }
@@ -267,13 +288,15 @@ export class CalendarLGPDAuditService {
     userRole: string,
     purpose: CalendarLGPDPurpose,
     consentResult: ConsentValidationResult,
-    context: 'calendar_view' | 'appointment_access' | 'data_export',
+    context: "calendar_view" | "appointment_access" | "data_export",
   ): Promise<string> {
     try {
       const auditLog: LGPDAuditLog = {
         patientId,
-        action: consentResult.isValid ? LGPDAuditAction.CONSENT_VALIDATED : LGPDAuditAction.CONSENT_DENIED,
-        dataCategory: ['consent_data', 'personal_data'],
+        action: consentResult.isValid
+          ? LGPDAuditAction.CONSENT_VALIDATED
+          : LGPDAuditAction.CONSENT_DENIED,
+        dataCategory: ["consent_data", "personal_data"],
         purpose,
         userId,
         userRole,
@@ -283,28 +306,28 @@ export class CalendarLGPDAuditService {
           consentResult,
           processingLocation: context,
           automatedDecision: true,
-          dataElementsAccessed: ['consent_status', 'patient_id'],
+          dataElementsAccessed: ["consent_status", "patient_id"],
         },
-        complianceStatus: consentResult.isValid ? 'compliant' : 'non_compliant',
+        complianceStatus: consentResult.isValid ? "compliant" : "non_compliant",
         legalBasis: consentResult.legalBasis,
         retentionDays: 365,
-        riskLevel: consentResult.isValid ? 'low' : 'medium',
+        riskLevel: consentResult.isValid ? "low" : "medium",
       };
 
       const { data: log, error } = await this.supabase
-        .from('lgpd_audit_logs')
+        .from("lgpd_audit_logs")
         .insert(auditLog)
-        .select('id')
+        .select("id")
         .single();
 
       if (error) {
-        console.error('Error logging consent validation:', error);
+        console.error("Error logging consent validation:", error);
         throw new Error(`Failed to log consent audit: ${error.message}`);
       }
 
       return log.id;
     } catch (error) {
-      console.error('Error in logConsentValidation:', error);
+      console.error("Error in logConsentValidation:", error);
       throw error;
     }
   }
@@ -338,26 +361,26 @@ export class CalendarLGPDAuditService {
           processingLocation: context,
           automatedDecision: true,
         },
-        complianceStatus: 'compliant',
-        legalBasis: 'LGPD Art. 6º, VII - Princípio da minimização',
+        complianceStatus: "compliant",
+        legalBasis: "LGPD Art. 6º, VII - Princípio da minimização",
         retentionDays: this.DEFAULT_RETENTION_DAYS,
-        riskLevel: 'low',
+        riskLevel: "low",
       };
 
       const { data: log, error } = await this.supabase
-        .from('lgpd_audit_logs')
+        .from("lgpd_audit_logs")
         .insert(auditLog)
-        .select('id')
+        .select("id")
         .single();
 
       if (error) {
-        console.error('Error logging data minimization:', error);
+        console.error("Error logging data minimization:", error);
         throw new Error(`Failed to log minimization audit: ${error.message}`);
       }
 
       return log.id;
     } catch (error) {
-      console.error('Error in logDataMinimization:', error);
+      console.error("Error in logDataMinimization:", error);
       throw error;
     }
   }
@@ -370,42 +393,40 @@ export class CalendarLGPDAuditService {
     dateRange?: { start: Date; end: Date },
   ): Promise<AuditReport> {
     try {
-      let query = this.supabase
-        .from('lgpd_audit_logs')
-        .select('*');
+      let query = this.supabase.from("lgpd_audit_logs").select("*");
 
       // Apply filters
       if (filter?.patientId) {
-        query = query.eq('patient_id', filter.patientId);
+        query = query.eq("patient_id", filter.patientId);
       }
       if (filter?.userId) {
-        query = query.eq('user_id', filter.userId);
+        query = query.eq("user_id", filter.userId);
       }
       if (filter?.action?.length) {
-        query = query.in('action', filter.action);
+        query = query.in("action", filter.action);
       }
       if (filter?.complianceStatus?.length) {
-        query = query.in('compliance_status', filter.complianceStatus);
+        query = query.in("compliance_status", filter.complianceStatus);
       }
       if (filter?.riskLevel?.length) {
-        query = query.in('risk_level', filter.riskLevel);
+        query = query.in("risk_level", filter.riskLevel);
       }
       if (dateRange) {
         query = query
-          .gte('timestamp', dateRange.start.toISOString())
-          .lte('timestamp', dateRange.end.toISOString());
+          .gte("timestamp", dateRange.start.toISOString())
+          .lte("timestamp", dateRange.end.toISOString());
       }
 
       const { data: logs, error } = await query;
 
       if (error) {
-        console.error('Error fetching audit logs:', error);
+        console.error("Error fetching audit logs:", error);
         throw new Error(`Failed to fetch audit logs: ${error.message}`);
       }
 
       return this.analyzeAuditLogs(logs || []);
     } catch (error) {
-      console.error('Error in generateComplianceReport:', error);
+      console.error("Error in generateComplianceReport:", error);
       throw error;
     }
   }
@@ -419,30 +440,30 @@ export class CalendarLGPDAuditService {
   ): Promise<LGPDAuditLog[]> {
     try {
       let query = this.supabase
-        .from('lgpd_audit_logs')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('timestamp', { ascending: false });
+        .from("lgpd_audit_logs")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("timestamp", { ascending: false });
 
       if (dateRange) {
         query = query
-          .gte('timestamp', dateRange.start.toISOString())
-          .lte('timestamp', dateRange.end.toISOString());
+          .gte("timestamp", dateRange.start.toISOString())
+          .lte("timestamp", dateRange.end.toISOString());
       }
 
       const { data: logs, error } = await query;
 
       if (error) {
-        console.error('Error fetching patient audit logs:', error);
+        console.error("Error fetching patient audit logs:", error);
         throw new Error(`Failed to fetch patient audit logs: ${error.message}`);
       }
 
-      return (logs || []).map(log => ({
+      return (logs || []).map((log) => ({
         ...log,
         timestamp: new Date(log.timestamp),
       })) as LGPDAuditLog[];
     } catch (error) {
-      console.error('Error in getPatientAuditLogs:', error);
+      console.error("Error in getPatientAuditLogs:", error);
       throw error;
     }
   }
@@ -451,59 +472,67 @@ export class CalendarLGPDAuditService {
    * Helper methods for audit processing
    */
   private determineDataCategories(level: DataMinimizationLevel): string[] {
-    const categories = ['appointment_data'];
-    
+    const categories = ["appointment_data"];
+
     switch (level) {
       case DataMinimizationLevel.FULL:
-        categories.push('personal_identification', 'health_data', 'sensitive_health_data');
+        categories.push(
+          "personal_identification",
+          "health_data",
+          "sensitive_health_data",
+        );
         break;
       case DataMinimizationLevel.STANDARD:
-        categories.push('personal_identification', 'health_data');
+        categories.push("personal_identification", "health_data");
         break;
       case DataMinimizationLevel.RESTRICTED:
-        categories.push('personal_identification');
+        categories.push("personal_identification");
         break;
     }
-    
+
     return categories;
   }
 
   private getAccessedDataElements(level: DataMinimizationLevel): string[] {
-    const elements = ['appointment_id', 'time_slot', 'status'];
-    
+    const elements = ["appointment_id", "time_slot", "status"];
+
     switch (level) {
       case DataMinimizationLevel.FULL:
-        elements.push('patient_full_name', 'service_details', 'medical_notes');
+        elements.push("patient_full_name", "service_details", "medical_notes");
         break;
       case DataMinimizationLevel.STANDARD:
-        elements.push('patient_name', 'service_type');
+        elements.push("patient_name", "service_type");
         break;
       case DataMinimizationLevel.RESTRICTED:
-        elements.push('patient_initials', 'service_category');
+        elements.push("patient_initials", "service_category");
         break;
     }
-    
+
     return elements;
   }
 
   private determineComplianceStatus(
     consentResult: ConsentValidationResult,
     minimizationLevel: DataMinimizationLevel,
-  ): 'compliant' | 'partial' | 'non_compliant' | 'unknown' {
-    if (!consentResult.isValid) return 'non_compliant';
-    if (minimizationLevel === DataMinimizationLevel.FULL && consentResult.isExplicit) return 'compliant';
-    if (minimizationLevel !== DataMinimizationLevel.MINIMAL) return 'partial';
-    return 'unknown';
+  ): "compliant" | "partial" | "non_compliant" | "unknown" {
+    if (!consentResult.isValid) return "non_compliant";
+    if (
+      minimizationLevel === DataMinimizationLevel.FULL &&
+      consentResult.isExplicit
+    )
+      return "compliant";
+    if (minimizationLevel !== DataMinimizationLevel.MINIMAL) return "partial";
+    return "unknown";
   }
 
   private calculateRetentionPeriod(appointmentStatus: string): number {
     // Medical records retention varies by status
     switch (appointmentStatus) {
-      case 'cancelled':
+      case "cancelled":
         return 90; // 3 months for cancelled appointments
-      case 'completed':
+      case "completed":
         return 2555; // 7 years for completed medical care
-      case 'emergency':
+      case "emergency":
         return 3650; // 10 years for emergency care
       default:
         return 1825; // 5 years default
@@ -513,12 +542,16 @@ export class CalendarLGPDAuditService {
   private assessRiskLevel(
     consentResult: ConsentValidationResult,
     minimizationLevel: DataMinimizationLevel,
-    context: 'view' | 'edit' | 'export',
-  ): 'low' | 'medium' | 'high' | 'critical' {
-    if (!consentResult.isValid) return 'high';
-    if (context === 'export' && minimizationLevel !== DataMinimizationLevel.MINIMAL) return 'high';
-    if (!consentResult.isExplicit) return 'medium';
-    return 'low';
+    context: "view" | "edit" | "export",
+  ): "low" | "medium" | "high" | "critical" {
+    if (!consentResult.isValid) return "high";
+    if (
+      context === "export" &&
+      minimizationLevel !== DataMinimizationLevel.MINIMAL
+    )
+      return "high";
+    if (!consentResult.isExplicit) return "medium";
+    return "low";
   }
 
   private identifyBatchRisks(
@@ -526,63 +559,79 @@ export class CalendarLGPDAuditService {
     minimizationResults: any[],
   ): string[] {
     const risks: string[] = [];
-    
-    const invalidConsents = consentResults.filter(r => !r.isValid).length;
+
+    const invalidConsents = consentResults.filter((r) => !r.isValid).length;
     if (invalidConsents > 0) {
       risks.push(`${invalidConsents} appointments without valid consent`);
     }
-    
-    const highMinimization = minimizationResults.filter(r => r.consentLevel === DataMinimizationLevel.FULL).length;
+
+    const highMinimization = minimizationResults.filter(
+      (r) => r.consentLevel === DataMinimizationLevel.FULL,
+    ).length;
     if (highMinimization > consentResults.length * 0.5) {
-      risks.push('High data exposure in batch processing');
+      risks.push("High data exposure in batch processing");
     }
-    
+
     return risks;
   }
 
-  private calculateBatchResidualRisk(consentResults: ConsentValidationResult[]): 'low' | 'medium' | 'high' {
-    const validConsents = consentResults.filter(r => r.isValid).length;
+  private calculateBatchResidualRisk(
+    consentResults: ConsentValidationResult[],
+  ): "low" | "medium" | "high" {
+    const validConsents = consentResults.filter((r) => r.isValid).length;
     const ratio = validConsents / consentResults.length;
-    
-    if (ratio >= 0.9) return 'low';
-    if (ratio >= 0.7) return 'medium';
-    return 'high';
+
+    if (ratio >= 0.9) return "low";
+    if (ratio >= 0.7) return "medium";
+    return "high";
   }
 
-  private determineBatchComplianceStatus(consentResults: ConsentValidationResult[]): 'compliant' | 'partial' | 'non_compliant' {
-    const validConsents = consentResults.filter(r => r.isValid).length;
+  private determineBatchComplianceStatus(
+    consentResults: ConsentValidationResult[],
+  ): "compliant" | "partial" | "non_compliant" {
+    const validConsents = consentResults.filter((r) => r.isValid).length;
     const ratio = validConsents / consentResults.length;
-    
-    if (ratio === 1) return 'compliant';
-    if (ratio >= 0.8) return 'partial';
-    return 'non_compliant';
+
+    if (ratio === 1) return "compliant";
+    if (ratio >= 0.8) return "partial";
+    return "non_compliant";
   }
 
   private assessBatchRiskLevel(
     consentResults: ConsentValidationResult[],
     minimizationResults: any[],
-  ): 'low' | 'medium' | 'high' | 'critical' {
-    const invalidConsents = consentResults.filter(r => !r.isValid).length;
+  ): "low" | "medium" | "high" | "critical" {
+    const invalidConsents = consentResults.filter((r) => !r.isValid).length;
     const totalRecords = consentResults.length;
-    
-    if (invalidConsents / totalRecords > 0.3) return 'critical';
-    if (invalidConsents / totalRecords > 0.1) return 'high';
-    if (invalidConsents > 0) return 'medium';
-    return 'low';
+
+    if (invalidConsents / totalRecords > 0.3) return "critical";
+    if (invalidConsents / totalRecords > 0.1) return "high";
+    if (invalidConsents > 0) return "medium";
+    return "low";
   }
 
   private analyzeAuditLogs(logs: any[]): AuditReport {
     const totalOperations = logs.length;
-    const compliantOperations = logs.filter(l => l.compliance_status === 'compliant').length;
-    const nonCompliantOperations = logs.filter(l => l.compliance_status === 'non_compliant').length;
-    const highRiskOperations = logs.filter(l => l.risk_level === 'high' || l.risk_level === 'critical').length;
-    
-    const averageComplianceScore = totalOperations > 0 
-      ? Math.round((compliantOperations / totalOperations) * 100)
-      : 0;
+    const compliantOperations = logs.filter(
+      (l) => l.compliance_status === "compliant",
+    ).length;
+    const nonCompliantOperations = logs.filter(
+      (l) => l.compliance_status === "non_compliant",
+    ).length;
+    const highRiskOperations = logs.filter(
+      (l) => l.risk_level === "high" || l.risk_level === "critical",
+    ).length;
+
+    const averageComplianceScore =
+      totalOperations > 0
+        ? Math.round((compliantOperations / totalOperations) * 100)
+        : 0;
 
     // Analyze patterns and generate recommendations
-    const recommendations = this.generateReportRecommendations(logs, averageComplianceScore);
+    const recommendations = this.generateReportRecommendations(
+      logs,
+      averageComplianceScore,
+    );
 
     return {
       totalOperations,
@@ -598,25 +647,38 @@ export class CalendarLGPDAuditService {
     };
   }
 
-  private generateReportRecommendations(logs: any[], complianceScore: number): string[] {
+  private generateReportRecommendations(
+    logs: any[],
+    complianceScore: number,
+  ): string[] {
     const recommendations: string[] = [];
 
     if (complianceScore < 80) {
-      recommendations.push('Investigar operações não conformes e implementar correções');
+      recommendations.push(
+        "Investigar operações não conformes e implementar correções",
+      );
     }
 
-    const highRiskOps = logs.filter(l => l.risk_level === 'high' || l.risk_level === 'critical').length;
+    const highRiskOps = logs.filter(
+      (l) => l.risk_level === "high" || l.risk_level === "critical",
+    ).length;
     if (highRiskOps > logs.length * 0.1) {
-      recommendations.push('Revisar e fortalecer controles de acesso a dados sensíveis');
+      recommendations.push(
+        "Revisar e fortalecer controles de acesso a dados sensíveis",
+      );
     }
 
-    const consentDenials = logs.filter(l => l.action === 'consent_denied').length;
+    const consentDenials = logs.filter(
+      (l) => l.action === "consent_denied",
+    ).length;
     if (consentDenials > logs.length * 0.05) {
-      recommendations.push('Revisar processo de obtenção de consentimentos');
+      recommendations.push("Revisar processo de obtenção de consentimentos");
     }
 
     if (complianceScore >= 95) {
-      recommendations.push('Manter controles atuais e realizar monitoramento regular');
+      recommendations.push(
+        "Manter controles atuais e realizar monitoramento regular",
+      );
     }
 
     return recommendations;
@@ -625,10 +687,10 @@ export class CalendarLGPDAuditService {
 
 // Export purpose constant for easy access
 const CALENDAR_LGPD_PURPOSES = {
-  APPOINTMENT_SCHEDULING: 'appointment_scheduling' as const,
-  APPOINTMENT_MANAGEMENT: 'appointment_management' as const,
-  HEALTHCARE_COORDINATION: 'healthcare_coordination' as const,
-  MEDICAL_CARE_ACCESS: 'medical_care_access' as const,
+  APPOINTMENT_SCHEDULING: "appointment_scheduling" as const,
+  APPOINTMENT_MANAGEMENT: "appointment_management" as const,
+  HEALTHCARE_COORDINATION: "healthcare_coordination" as const,
+  MEDICAL_CARE_ACCESS: "medical_care_access" as const,
 };
 
 export const calendarLGPDAuditService = new CalendarLGPDAuditService();

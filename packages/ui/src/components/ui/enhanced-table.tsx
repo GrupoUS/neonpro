@@ -1,6 +1,13 @@
-import * as React from 'react';
-import { flexRender } from '@tanstack/react-table';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
+import * as React from "react";
+import { flexRender } from "@tanstack/react-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./table";
 
 // Note: keep props non-generic to avoid unused generic type errors in consumers
 export interface EnhancedTableProps {
@@ -30,7 +37,7 @@ export function EnhancedTable(props: EnhancedTableProps) {
     loading = false,
     columnsCount,
     ariaLabel,
-    emptyMessage = 'Nenhum registro encontrado.',
+    emptyMessage = "Nenhum registro encontrado.",
     className,
     renderToolbar,
     renderPagination,
@@ -41,9 +48,15 @@ export function EnhancedTable(props: EnhancedTableProps) {
   const colSpan = columnsCount ?? table?.getAllLeafColumns?.().length ?? 1;
 
   return (
-    <div className={['overflow-hidden rounded-md border', className].filter(Boolean).join(' ')}>
+    <div
+      className={["overflow-hidden rounded-md border", className]
+        .filter(Boolean)
+        .join(" ")}
+    >
       {renderToolbar ? (
-        <div className="flex items-center justify-between px-3 pt-3">{renderToolbar}</div>
+        <div className="flex items-center justify-between px-3 pt-3">
+          {renderToolbar}
+        </div>
       ) : null}
 
       <Table aria-label={ariaLabel}>
@@ -51,10 +64,20 @@ export function EnhancedTable(props: EnhancedTableProps) {
           {table.getHeaderGroups().map((headerGroup: any) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header: any) => (
-                <TableHead key={header.id} style={{ width: header.getSize?.() ? `${header.getSize()}px` : undefined }}>
+                <TableHead
+                  key={header.id}
+                  style={{
+                    width: header.getSize?.()
+                      ? `${header.getSize()}px`
+                      : undefined,
+                  }}
+                >
                   {header.isPlaceholder
                     ? null
-                    : flexRender(header.column.columnDef.header, header.getContext())}
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                 </TableHead>
               ))}
             </TableRow>
@@ -71,15 +94,20 @@ export function EnhancedTable(props: EnhancedTableProps) {
             table.getRowModel().rows.map((row: any) => (
               <TableRow
                 key={row.id}
-                data-state={row.getIsSelected && row.getIsSelected() && 'selected'}
-                className={onRowClick ? 'cursor-pointer' : undefined}
+                data-state={
+                  row.getIsSelected && row.getIsSelected() && "selected"
+                }
+                className={onRowClick ? "cursor-pointer" : undefined}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
                 {row.getVisibleCells().map((cell: any) => (
                   <TableCell
                     key={cell.id}
                     onClick={(e) => {
-                      if (stopRowClickPredicate && stopRowClickPredicate(cell)) {
+                      if (
+                        stopRowClickPredicate &&
+                        stopRowClickPredicate(cell)
+                      ) {
                         e.stopPropagation();
                       }
                     }}
@@ -100,9 +128,10 @@ export function EnhancedTable(props: EnhancedTableProps) {
       </Table>
 
       {renderPagination ? (
-        <div className="flex items-center justify-between px-3 pb-3">{renderPagination}</div>
+        <div className="flex items-center justify-between px-3 pb-3">
+          {renderPagination}
+        </div>
       ) : null}
     </div>
   );
 }
-

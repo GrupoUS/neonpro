@@ -76,13 +76,17 @@ export const healthcareServicesRouter = router({
    * Create data processing record with lifecycle tracking
    */
   createDataProcessingRecord: patientProcedure
-    .input(v.parser(v.object({
-      patientId: v.string(),
-      dataCategory: v.string(),
-      legalBasis: v.string(),
-      processingPurpose: v.string(),
-      dataSource: v.string(),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          patientId: v.string(),
+          dataCategory: v.string(),
+          legalBasis: v.string(),
+          processingPurpose: v.string(),
+          dataSource: v.string(),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
@@ -137,12 +141,22 @@ export const healthcareServicesRouter = router({
    * Process consent withdrawal with legal validity
    */
   processConsentWithdrawal: patientProcedure
-    .input(v.parser(v.object({
-      patientId: v.string(),
-      withdrawalMethod: v.picklist(['online', 'written', 'verbal', 'email', 'phone']),
-      withdrawalReason: v.optional(v.string()),
-      affectedDataCategories: v.optional(v.array(v.string())),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          patientId: v.string(),
+          withdrawalMethod: v.picklist([
+            'online',
+            'written',
+            'verbal',
+            'email',
+            'phone',
+          ]),
+          withdrawalReason: v.optional(v.string()),
+          affectedDataCategories: v.optional(v.array(v.string())),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
@@ -197,11 +211,15 @@ export const healthcareServicesRouter = router({
    * Execute data anonymization workflow
    */
   executeAnonymization: healthcareProcedure
-    .input(v.parser(v.object({
-      patientId: v.string(),
-      dataCategory: v.string(),
-      method: v.string(),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          patientId: v.string(),
+          dataCategory: v.string(),
+          method: v.string(),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
@@ -258,9 +276,13 @@ export const healthcareServicesRouter = router({
    * Generate LGPD lifecycle compliance report
    */
   generateLifecycleComplianceReport: healthcareProcedure
-    .input(v.parser(v.object({
-      patientId: v.optional(v.string()),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          patientId: v.optional(v.string()),
+        }),
+      ),
+    )
     .query(async ({ input, ctx }) => {
       try {
         if (!lgpdService) {
@@ -270,7 +292,9 @@ export const healthcareServicesRouter = router({
           });
         }
 
-        const report = await lgpdService.generateLifecycleComplianceReport(input.patientId);
+        const report = await lgpdService.generateLifecycleComplianceReport(
+          input.patientId,
+        );
 
         // Audit trail for report generation
         await ctx.prisma.auditTrail.create({
@@ -311,18 +335,22 @@ export const healthcareServicesRouter = router({
    * Predict no-show risk for appointment
    */
   predictNoShowRisk: healthcareProcedure
-    .input(v.parser(v.object({
-      appointmentId: v.string(),
-      patientId: v.string(),
-      appointmentDetails: v.object({
-        scheduledDate: v.string(), // ISO date string
-        appointmentType: v.string(),
-        professionalId: v.string(),
-        clinicId: v.string(),
-        estimatedDuration: v.number(),
-        cost: v.optional(v.number()),
-      }),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          appointmentId: v.string(),
+          patientId: v.string(),
+          appointmentDetails: v.object({
+            scheduledDate: v.string(), // ISO date string
+            appointmentType: v.string(),
+            professionalId: v.string(),
+            clinicId: v.string(),
+            estimatedDuration: v.number(),
+            cost: v.optional(v.number()),
+          }),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         if (!noShowService) {
@@ -352,7 +380,8 @@ export const healthcareServicesRouter = router({
             userId: ctx.userId,
 
             status: AuditStatus.SUCCESS,
-            riskLevel: prediction.riskLevel === 'very_high' || prediction.riskLevel === 'high'
+            riskLevel: prediction.riskLevel === 'very_high'
+                || prediction.riskLevel === 'high'
               ? RiskLevel.HIGH
               : RiskLevel.MEDIUM,
             details: {
@@ -385,51 +414,50 @@ export const healthcareServicesRouter = router({
   /**
    * Get model performance report
    */
-  getNoShowModelPerformance: healthcareProcedure
-    .query(async ({ ctx }) => {
-      try {
-        if (!noShowService) {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'No-show prediction service not initialized',
-          });
-        }
-
-        const report = await noShowService.getModelPerformanceReport();
-
-        // Audit trail for performance report
-        await ctx.prisma.auditTrail.create({
-          data: {
-            action: AuditAction.READ,
-            resourceType: ResourceType.AI_MODEL_PERFORMANCE,
-            resourceId: 'no_show_prediction',
-            userId: ctx.userId,
-
-            status: AuditStatus.SUCCESS,
-            details: {
-              reportType: 'no_show_model_performance',
-              totalPredictions: report.overallPerformance.totalPredictions,
-              averageAccuracy: report.overallPerformance.averageAccuracy,
-              averageProcessingTime: report.overallPerformance.averageProcessingTime,
-              modelsCount: report.models.length,
-            },
-            ipAddress: ctx.req?.ip || 'unknown',
-            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
-          },
-        });
-
-        return {
-          success: true,
-          report,
-          message: 'Model performance report retrieved successfully',
-        };
-      } catch (error) {
+  getNoShowModelPerformance: healthcareProcedure.query(async ({ ctx }) => {
+    try {
+      if (!noShowService) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: `Failed to get model performance: ${error.message}`,
+          message: 'No-show prediction service not initialized',
         });
       }
-    }),
+
+      const report = await noShowService.getModelPerformanceReport();
+
+      // Audit trail for performance report
+      await ctx.prisma.auditTrail.create({
+        data: {
+          action: AuditAction.READ,
+          resourceType: ResourceType.AI_MODEL_PERFORMANCE,
+          resourceId: 'no_show_prediction',
+          userId: ctx.userId,
+
+          status: AuditStatus.SUCCESS,
+          details: {
+            reportType: 'no_show_model_performance',
+            totalPredictions: report.overallPerformance.totalPredictions,
+            averageAccuracy: report.overallPerformance.averageAccuracy,
+            averageProcessingTime: report.overallPerformance.averageProcessingTime,
+            modelsCount: report.models.length,
+          },
+          ipAddress: ctx.req?.ip || 'unknown',
+          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+        },
+      });
+
+      return {
+        success: true,
+        report,
+        message: 'Model performance report retrieved successfully',
+      };
+    } catch (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to get model performance: ${error.message}`,
+      });
+    }
+  }),
 
   // =====================================
   // TELEMEDICINE SERVICE
@@ -439,17 +467,23 @@ export const healthcareServicesRouter = router({
    * Create telemedicine session
    */
   createTelemedicineSession: telemedicineProcedure
-    .input(v.parser(v.object({
-      sessionType: v.string(),
-      patientId: v.string(),
-      professionalId: v.string(),
-      scheduledStartTime: v.string(), // ISO date string
-      options: v.optional(v.object({
-        recordingConsent: v.optional(v.boolean()),
-        emergencyProtocols: v.optional(v.boolean()),
-        securityLevel: v.optional(v.string()),
-      })),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          sessionType: v.string(),
+          patientId: v.string(),
+          professionalId: v.string(),
+          scheduledStartTime: v.string(), // ISO date string
+          options: v.optional(
+            v.object({
+              recordingConsent: v.optional(v.boolean()),
+              emergencyProtocols: v.optional(v.boolean()),
+              securityLevel: v.optional(v.string()),
+            }),
+          ),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         if (!telemedicineService) {
@@ -508,22 +542,26 @@ export const healthcareServicesRouter = router({
    * Start telemedicine session with authentication
    */
   startTelemedicineSession: telemedicineProcedure
-    .input(v.parser(v.object({
-      sessionId: v.string(),
-      authContext: v.object({
-        userId: v.string(),
-        securityLevel: v.string(),
-        authenticationMethods: v.array(v.string()),
-        sessionExpiry: v.string(), // ISO date string
-        lastActivity: v.string(), // ISO date string
-        riskScore: v.number(),
-      }),
-      patientConsent: v.object({
-        recordingConsent: v.boolean(),
-        dataProcessingConsent: v.boolean(),
-        telemedicineConsent: v.boolean(),
-      }),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          sessionId: v.string(),
+          authContext: v.object({
+            userId: v.string(),
+            securityLevel: v.string(),
+            authenticationMethods: v.array(v.string()),
+            sessionExpiry: v.string(), // ISO date string
+            lastActivity: v.string(), // ISO date string
+            riskScore: v.number(),
+          }),
+          patientConsent: v.object({
+            recordingConsent: v.boolean(),
+            dataProcessingConsent: v.boolean(),
+            telemedicineConsent: v.boolean(),
+          }),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         if (!telemedicineService) {
@@ -588,17 +626,21 @@ export const healthcareServicesRouter = router({
    * Monitor telemedicine session quality
    */
   monitorSessionQuality: telemedicineProcedure
-    .input(v.parser(v.object({
-      sessionId: v.string(),
-      qualityMetrics: v.object({
-        videoResolution: v.string(),
-        audioQuality: v.number(),
-        latency: v.number(),
-        packetLoss: v.number(),
-        jitter: v.number(),
-        bandwidth: v.number(),
-      }),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          sessionId: v.string(),
+          qualityMetrics: v.object({
+            videoResolution: v.string(),
+            audioQuality: v.number(),
+            latency: v.number(),
+            packetLoss: v.number(),
+            jitter: v.number(),
+            bandwidth: v.number(),
+          }),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         if (!telemedicineService) {
@@ -657,22 +699,28 @@ export const healthcareServicesRouter = router({
    * Create digital prescription with ICP-Brasil signature
    */
   createDigitalPrescription: telemedicineProcedure
-    .input(v.parser(v.object({
-      sessionId: v.string(),
-      professionalId: v.string(),
-      medications: v.array(v.object({
-        name: v.string(),
-        dosage: v.string(),
-        frequency: v.string(),
-        duration: v.string(),
-        instructions: v.string(),
-      })),
-      digitalCertificate: v.object({
-        type: v.string(),
-        serialNumber: v.string(),
-        privateKey: v.string(),
-      }),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          sessionId: v.string(),
+          professionalId: v.string(),
+          medications: v.array(
+            v.object({
+              name: v.string(),
+              dosage: v.string(),
+              frequency: v.string(),
+              duration: v.string(),
+              instructions: v.string(),
+            }),
+          ),
+          digitalCertificate: v.object({
+            type: v.string(),
+            serialNumber: v.string(),
+            privateKey: v.string(),
+          }),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         if (!telemedicineService) {
@@ -734,16 +782,22 @@ export const healthcareServicesRouter = router({
    * Activate emergency escalation protocol
    */
   activateEmergencyEscalation: telemedicineProcedure
-    .input(v.parser(v.object({
-      sessionId: v.string(),
-      escalationLevel: v.picklist(['urgent', 'critical', 'emergency']),
-      reason: v.string(),
-      location: v.optional(v.object({
-        latitude: v.number(),
-        longitude: v.number(),
-        address: v.string(),
-      })),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          sessionId: v.string(),
+          escalationLevel: v.picklist(['urgent', 'critical', 'emergency']),
+          reason: v.string(),
+          location: v.optional(
+            v.object({
+              latitude: v.number(),
+              longitude: v.number(),
+              address: v.string(),
+            }),
+          ),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         if (!telemedicineService) {
@@ -775,7 +829,9 @@ export const healthcareServicesRouter = router({
               escalationLevel: input.escalationLevel,
               reason: input.reason,
               location: input.location,
-              emergencyContactsNotified: result.emergencyContacts.filter(c => c.notified).length,
+              emergencyContactsNotified: result.emergencyContacts.filter(
+                c => c.notified,
+              ).length,
               nearestHospital: result.nearestHospital?.name,
             },
             ipAddress: ctx.req?.ip || 'unknown',
@@ -804,16 +860,20 @@ export const healthcareServicesRouter = router({
    * End telemedicine session
    */
   endTelemedicineSession: telemedicineProcedure
-    .input(v.parser(v.object({
-      sessionId: v.string(),
-      sessionSummary: v.object({
-        clinicalNotes: v.optional(v.string()),
-        diagnosis: v.optional(v.string()),
-        followUpRequired: v.boolean(),
-        nextAppointment: v.optional(v.string()), // ISO date string
-        patientSatisfaction: v.optional(v.number()),
-      }),
-    })))
+    .input(
+      v.parser(
+        v.object({
+          sessionId: v.string(),
+          sessionSummary: v.object({
+            clinicalNotes: v.optional(v.string()),
+            diagnosis: v.optional(v.string()),
+            followUpRequired: v.boolean(),
+            nextAppointment: v.optional(v.string()), // ISO date string
+            patientSatisfaction: v.optional(v.number()),
+          }),
+        }),
+      ),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         if (!telemedicineService) {
@@ -845,10 +905,10 @@ export const healthcareServicesRouter = router({
             userId: ctx.userId,
 
             status: result.success ? AuditStatus.SUCCESS : AuditStatus.FAILURE,
-            riskLevel:
-              !result.complianceReport.cfmCompliant || !result.complianceReport.lgpdCompliant
-                ? RiskLevel.HIGH
-                : RiskLevel.LOW,
+            riskLevel: !result.complianceReport.cfmCompliant
+                || !result.complianceReport.lgpdCompliant
+              ? RiskLevel.HIGH
+              : RiskLevel.LOW,
             details: {
               sessionDuration: result.sessionDuration,
               cfmCompliant: result.complianceReport.cfmCompliant,
@@ -883,49 +943,48 @@ export const healthcareServicesRouter = router({
   /**
    * Get active telemedicine sessions summary
    */
-  getActiveSessionsSummary: healthcareProcedure
-    .query(async ({ ctx }) => {
-      try {
-        if (!telemedicineService) {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'Telemedicine service not initialized',
-          });
-        }
-
-        const summary = await telemedicineService.getActiveSessionsSummary();
-
-        // Audit trail for summary access
-        await ctx.prisma.auditTrail.create({
-          data: {
-            action: AuditAction.READ,
-            resourceType: ResourceType.TELEMEDICINE_SESSION,
-            resourceId: 'summary',
-            userId: ctx.userId,
-
-            status: AuditStatus.SUCCESS,
-            details: {
-              totalActiveSessions: summary.totalActiveSessions,
-              averageQualityScore: summary.averageQualityScore,
-              complianceIssues: summary.complianceIssues,
-            },
-            ipAddress: ctx.req?.ip || 'unknown',
-            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
-          },
-        });
-
-        return {
-          success: true,
-          summary,
-          message: 'Active sessions summary retrieved successfully',
-        };
-      } catch (error) {
+  getActiveSessionsSummary: healthcareProcedure.query(async ({ ctx }) => {
+    try {
+      if (!telemedicineService) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: `Failed to get active sessions summary: ${error.message}`,
+          message: 'Telemedicine service not initialized',
         });
       }
-    }),
+
+      const summary = await telemedicineService.getActiveSessionsSummary();
+
+      // Audit trail for summary access
+      await ctx.prisma.auditTrail.create({
+        data: {
+          action: AuditAction.READ,
+          resourceType: ResourceType.TELEMEDICINE_SESSION,
+          resourceId: 'summary',
+          userId: ctx.userId,
+
+          status: AuditStatus.SUCCESS,
+          details: {
+            totalActiveSessions: summary.totalActiveSessions,
+            averageQualityScore: summary.averageQualityScore,
+            complianceIssues: summary.complianceIssues,
+          },
+          ipAddress: ctx.req?.ip || 'unknown',
+          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+        },
+      });
+
+      return {
+        success: true,
+        summary,
+        message: 'Active sessions summary retrieved successfully',
+      };
+    } catch (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to get active sessions summary: ${error.message}`,
+      });
+    }
+  }),
 
   // =====================================
   // COMPLIANCE AND MONITORING
@@ -934,149 +993,161 @@ export const healthcareServicesRouter = router({
   /**
    * Enforce retention periods across all services
    */
-  enforceRetentionPeriods: healthcareProcedure
-    .mutation(async ({ ctx }) => {
-      try {
-        if (!lgpdService) {
-          throw new TRPCError({
-            code: 'INTERNAL_SERVER_ERROR',
-            message: 'LGPD service not initialized',
-          });
-        }
-
-        const result = await lgpdService.enforceRetentionPeriods();
-
-        // Audit trail for retention enforcement
-        await ctx.prisma.auditTrail.create({
-          data: {
-            action: AuditAction.DELETE,
-            resourceType: ResourceType.PATIENT_DATA,
-            resourceId: 'retention_enforcement',
-            userId: ctx.userId,
-
-            status: result.errors.length === 0 ? AuditStatus.SUCCESS : AuditStatus.PARTIAL_SUCCESS,
-            details: {
-              deletedRecords: result.deletedRecords,
-              anonymizedRecords: result.anonymizedRecords,
-              notificationsSent: result.notificationsSent,
-              errors: result.errors.length,
-            },
-            ipAddress: ctx.req?.ip || 'unknown',
-            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
-          },
-        });
-
-        return {
-          success: result.errors.length === 0,
-          deletedRecords: result.deletedRecords,
-          anonymizedRecords: result.anonymizedRecords,
-          notificationsSent: result.notificationsSent,
-          errors: result.errors,
-          message: result.errors.length === 0
-            ? 'Retention periods enforced successfully'
-            : 'Retention enforcement completed with some errors',
-        };
-      } catch (error) {
+  enforceRetentionPeriods: healthcareProcedure.mutation(async ({ ctx }) => {
+    try {
+      if (!lgpdService) {
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
-          message: `Failed to enforce retention periods: ${error.message}`,
+          message: 'LGPD service not initialized',
         });
       }
-    }),
+
+      const result = await lgpdService.enforceRetentionPeriods();
+
+      // Audit trail for retention enforcement
+      await ctx.prisma.auditTrail.create({
+        data: {
+          action: AuditAction.DELETE,
+          resourceType: ResourceType.PATIENT_DATA,
+          resourceId: 'retention_enforcement',
+          userId: ctx.userId,
+
+          status: result.errors.length === 0
+            ? AuditStatus.SUCCESS
+            : AuditStatus.PARTIAL_SUCCESS,
+          details: {
+            deletedRecords: result.deletedRecords,
+            anonymizedRecords: result.anonymizedRecords,
+            notificationsSent: result.notificationsSent,
+            errors: result.errors.length,
+          },
+          ipAddress: ctx.req?.ip || 'unknown',
+          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+        },
+      });
+
+      return {
+        success: result.errors.length === 0,
+        deletedRecords: result.deletedRecords,
+        anonymizedRecords: result.anonymizedRecords,
+        notificationsSent: result.notificationsSent,
+        errors: result.errors,
+        message: result.errors.length === 0
+          ? 'Retention periods enforced successfully'
+          : 'Retention enforcement completed with some errors',
+      };
+    } catch (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to enforce retention periods: ${error.message}`,
+      });
+    }
+  }),
 
   /**
    * Get comprehensive compliance dashboard
    */
-  getComplianceDashboard: healthcareProcedure
-    .query(async ({ ctx }) => {
-      try {
-        const dashboardData: any = {
-          lgpdCompliance: null,
-          noShowModelPerformance: null,
-          telemedicineSessionsSummary: null,
-          overallComplianceScore: 0,
-          criticalIssues: [],
-          recommendations: [],
-        };
+  getComplianceDashboard: healthcareProcedure.query(async ({ ctx }) => {
+    try {
+      const dashboardData: any = {
+        lgpdCompliance: null,
+        noShowModelPerformance: null,
+        telemedicineSessionsSummary: null,
+        overallComplianceScore: 0,
+        criticalIssues: [],
+        recommendations: [],
+      };
 
-        // Get LGPD compliance report
-        if (lgpdService) {
-          dashboardData.lgpdCompliance = await lgpdService.generateLifecycleComplianceReport();
-        }
-
-        // Get no-show model performance
-        if (noShowService) {
-          dashboardData.noShowModelPerformance = await noShowService.getModelPerformanceReport();
-        }
-
-        // Get telemedicine sessions summary
-        if (telemedicineService) {
-          dashboardData.telemedicineSessionsSummary = await telemedicineService
-            .getActiveSessionsSummary();
-        }
-
-        // Calculate overall compliance score
-        const scores = [];
-        if (dashboardData.lgpdCompliance) {
-          scores.push(dashboardData.lgpdCompliance.complianceScore);
-        }
-        if (dashboardData.noShowModelPerformance) {
-          scores.push(
-            dashboardData.noShowModelPerformance.overallPerformance.averageAccuracy * 100,
-          );
-        }
-        if (dashboardData.telemedicineSessionsSummary) {
-          scores.push(dashboardData.telemedicineSessionsSummary.averageQualityScore);
-        }
-
-        dashboardData.overallComplianceScore = scores.length > 0
-          ? Math.round(scores.reduce((sum, score) => sum + score, 0) / scores.length)
-          : 0;
-
-        // Collect critical issues and recommendations
-        if (dashboardData.lgpdCompliance) {
-          dashboardData.recommendations.push(...dashboardData.lgpdCompliance.recommendations);
-        }
-        if (dashboardData.noShowModelPerformance) {
-          dashboardData.recommendations.push(
-            ...dashboardData.noShowModelPerformance.recommendations,
-          );
-        }
-
-        // Audit trail for dashboard access
-        await ctx.prisma.auditTrail.create({
-          data: {
-            action: AuditAction.READ,
-            resourceType: ResourceType.COMPLIANCE_REPORT,
-            resourceId: 'dashboard',
-            userId: ctx.userId,
-
-            status: AuditStatus.SUCCESS,
-            details: {
-              overallComplianceScore: dashboardData.overallComplianceScore,
-              recommendationsCount: dashboardData.recommendations.length,
-              servicesIncluded: Object.keys(dashboardData).filter(key =>
-                dashboardData[key] !== null
-                && !['overallComplianceScore', 'criticalIssues', 'recommendations'].includes(key)
-              ),
-            },
-            ipAddress: ctx.req?.ip || 'unknown',
-            userAgent: ctx.req?.headers['user-agent'] || 'unknown',
-          },
-        });
-
-        return {
-          success: true,
-          dashboard: dashboardData,
-          message: 'Compliance dashboard data retrieved successfully',
-        };
-      } catch (error) {
-        throw new TRPCError({
-          code: 'INTERNAL_SERVER_ERROR',
-          message: `Failed to get compliance dashboard: ${error.message}`,
-        });
+      // Get LGPD compliance report
+      if (lgpdService) {
+        dashboardData.lgpdCompliance = await lgpdService.generateLifecycleComplianceReport();
       }
-    }),
+
+      // Get no-show model performance
+      if (noShowService) {
+        dashboardData.noShowModelPerformance = await noShowService.getModelPerformanceReport();
+      }
+
+      // Get telemedicine sessions summary
+      if (telemedicineService) {
+        dashboardData.telemedicineSessionsSummary = await telemedicineService
+          .getActiveSessionsSummary();
+      }
+
+      // Calculate overall compliance score
+      const scores = [];
+      if (dashboardData.lgpdCompliance) {
+        scores.push(dashboardData.lgpdCompliance.complianceScore);
+      }
+      if (dashboardData.noShowModelPerformance) {
+        scores.push(
+          dashboardData.noShowModelPerformance.overallPerformance
+            .averageAccuracy * 100,
+        );
+      }
+      if (dashboardData.telemedicineSessionsSummary) {
+        scores.push(
+          dashboardData.telemedicineSessionsSummary.averageQualityScore,
+        );
+      }
+
+      dashboardData.overallComplianceScore = scores.length > 0
+        ? Math.round(
+          scores.reduce((sum, score) => sum + score, 0) / scores.length,
+        )
+        : 0;
+
+      // Collect critical issues and recommendations
+      if (dashboardData.lgpdCompliance) {
+        dashboardData.recommendations.push(
+          ...dashboardData.lgpdCompliance.recommendations,
+        );
+      }
+      if (dashboardData.noShowModelPerformance) {
+        dashboardData.recommendations.push(
+          ...dashboardData.noShowModelPerformance.recommendations,
+        );
+      }
+
+      // Audit trail for dashboard access
+      await ctx.prisma.auditTrail.create({
+        data: {
+          action: AuditAction.READ,
+          resourceType: ResourceType.COMPLIANCE_REPORT,
+          resourceId: 'dashboard',
+          userId: ctx.userId,
+
+          status: AuditStatus.SUCCESS,
+          details: {
+            overallComplianceScore: dashboardData.overallComplianceScore,
+            recommendationsCount: dashboardData.recommendations.length,
+            servicesIncluded: Object.keys(dashboardData).filter(
+              key =>
+                dashboardData[key] !== null
+                && ![
+                  'overallComplianceScore',
+                  'criticalIssues',
+                  'recommendations',
+                ].includes(key),
+            ),
+          },
+          ipAddress: ctx.req?.ip || 'unknown',
+          userAgent: ctx.req?.headers['user-agent'] || 'unknown',
+        },
+      });
+
+      return {
+        success: true,
+        dashboard: dashboardData,
+        message: 'Compliance dashboard data retrieved successfully',
+      };
+    } catch (error) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: `Failed to get compliance dashboard: ${error.message}`,
+      });
+    }
+  }),
 });
 
 export default healthcareServicesRouter;

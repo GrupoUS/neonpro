@@ -1,9 +1,9 @@
 /**
  * EventCollector - In-Memory Event Collection and Queue Management
- * 
+ *
  * This module provides real-time event collection with configurable in-memory queuing,
  * automatic flush mechanisms, and healthcare compliance features.
- * 
+ *
  * @author NeonPro Analytics Team
  * @version 1.0.0
  */
@@ -74,7 +74,7 @@ export const DEFAULT_CONFIG: EventCollectorConfig = {
 
 /**
  * EventCollector - High-performance in-memory event collection system
- * 
+ *
  * Features:
  * - FIFO queue with configurable size limits
  * - Automatic and manual flush operations
@@ -99,7 +99,7 @@ export class EventCollector {
 
   /**
    * Collect an event and add it to the in-memory queue
-   * 
+   *
    * @param event - The ingestion event to collect
    * @returns Result of the collection operation
    */
@@ -128,11 +128,11 @@ export class EventCollector {
         // Auto-flush if queue is full
         const flushResult = await this.flush();
         if (!flushResult.success) {
-          const error = new Error('Queue full and flush failed');
+          const error = new Error("Queue full and flush failed");
           this.handleError(error, event);
           return {
             success: false,
-            message: 'Queue full and flush failed',
+            message: "Queue full and flush failed",
             queueSize: this.queue.length,
           };
         }
@@ -144,7 +144,7 @@ export class EventCollector {
 
       // Log for audit if enabled
       if (this.config.enableAuditLog) {
-        this.auditLog('EVENT_COLLECTED', enrichedEvent);
+        this.auditLog("EVENT_COLLECTED", enrichedEvent);
       }
 
       // Check if auto-flush is needed AFTER adding the event
@@ -153,7 +153,7 @@ export class EventCollector {
         await this.flush();
         return {
           success: true,
-          message: 'Event collected and auto-flushed',
+          message: "Event collected and auto-flushed",
           queueSize: this.queue.length,
           autoFlushed: true,
         };
@@ -161,13 +161,17 @@ export class EventCollector {
 
       return {
         success: true,
-        message: 'Event collected successfully',
+        message: "Event collected successfully",
         queueSize: this.queue.length,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-      this.handleError(new Error(`Failed to collect event: ${errorMessage}`), event);
-      
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      this.handleError(
+        new Error(`Failed to collect event: ${errorMessage}`),
+        event,
+      );
+
       return {
         success: false,
         message: errorMessage,
@@ -178,7 +182,7 @@ export class EventCollector {
 
   /**
    * Flush all queued events and process them
-   * 
+   *
    * @returns Result of the flush operation
    */
   public async flush(): Promise<FlushResult> {
@@ -200,7 +204,7 @@ export class EventCollector {
 
       if (eventsToProcess.length === 0) {
         // Add small delay to ensure measurable duration
-        await new Promise(resolve => setTimeout(resolve, 1));
+        await new Promise((resolve) => setTimeout(resolve, 1));
         return {
           success: true,
           processedCount: 0,
@@ -213,11 +217,14 @@ export class EventCollector {
       let totalProcessedInFlush = 0;
 
       // Add small delay to ensure measurable duration
-      await new Promise(resolve => setTimeout(resolve, 1));
+      await new Promise((resolve) => setTimeout(resolve, 1));
 
       // Process events in batches
-      const batches = this.createBatches(eventsToProcess, this.config.maxBatchSize);
-      
+      const batches = this.createBatches(
+        eventsToProcess,
+        this.config.maxBatchSize,
+      );
+
       for (const batch of batches) {
         try {
           if (this.config.onFlush) {
@@ -227,8 +234,11 @@ export class EventCollector {
           totalProcessedInFlush += batch.length;
           this.totalProcessed += batch.length;
         } catch (error) {
-          const batchError = error instanceof Error ? error : new Error('Batch processing failed');
-          batch.forEach(event => {
+          const batchError =
+            error instanceof Error
+              ? error
+              : new Error("Batch processing failed");
+          batch.forEach((event) => {
             errors.push({ event, error: batchError });
           });
           // Subtract failed batch from processed count
@@ -241,7 +251,7 @@ export class EventCollector {
 
       // Log for audit if enabled
       if (this.config.enableAuditLog) {
-        this.auditLog('EVENTS_FLUSHED', {
+        this.auditLog("EVENTS_FLUSHED", {
           count: eventsToProcess.length,
           errors: errors.length,
           duration: Date.now() - startTime,
@@ -255,9 +265,10 @@ export class EventCollector {
         duration: Date.now() - startTime,
       };
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown flush error';
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown flush error";
       this.handleError(new Error(`Flush operation failed: ${errorMessage}`));
-      
+
       return {
         success: false,
         processedCount: 0,
@@ -301,26 +312,32 @@ export class EventCollector {
   /**
    * Validate event structure and required fields
    */
-  private validateEvent(event: IngestionEvent): { valid: boolean; error?: string } {
+  private validateEvent(event: IngestionEvent): {
+    valid: boolean;
+    error?: string;
+  } {
     if (!event) {
-      return { valid: false, error: 'Event is null or undefined' };
+      return { valid: false, error: "Event is null or undefined" };
     }
 
     if (!event.eventType) {
-      return { valid: false, error: 'Event type is required' };
+      return { valid: false, error: "Event type is required" };
     }
 
     if (!event.source) {
-      return { valid: false, error: 'Event source is required' };
+      return { valid: false, error: "Event source is required" };
     }
 
     if (!event.data) {
-      return { valid: false, error: 'Event data is required' };
+      return { valid: false, error: "Event data is required" };
     }
 
     // Additional healthcare-specific validation
-    if (event.metadata?.patientId && typeof event.metadata.patientId !== 'string') {
-      return { valid: false, error: 'Patient ID must be a string' };
+    if (
+      event.metadata?.patientId &&
+      typeof event.metadata.patientId !== "string"
+    ) {
+      return { valid: false, error: "Patient ID must be a string" };
     }
 
     return { valid: true };
@@ -368,7 +385,11 @@ export class EventCollector {
       this.config.onError(error, event);
     } else {
       // Default error handling - could be enhanced with proper logging
-      console.error('[EventCollector] Error:', error.message, event ? `Event: ${event.eventType}` : '');
+      console.error(
+        "[EventCollector] Error:",
+        error.message,
+        event ? `Event: ${event.eventType}` : "",
+      );
     }
   }
 
@@ -381,18 +402,20 @@ export class EventCollector {
       timestamp: new Date().toISOString(),
       action,
       data,
-      collector: 'EventCollector',
+      collector: "EventCollector",
     };
-    
+
     // For now, just log to console - in production this would go to audit system
-    console.log('[AUDIT]', JSON.stringify(auditEntry));
+    console.log("[AUDIT]", JSON.stringify(auditEntry));
   }
 }
 
 /**
  * Create a new EventCollector instance with configuration
  */
-export function createEventCollector(config?: Partial<EventCollectorConfig>): EventCollector {
+export function createEventCollector(
+  config?: Partial<EventCollectorConfig>,
+): EventCollector {
   return new EventCollector(config);
 }
 

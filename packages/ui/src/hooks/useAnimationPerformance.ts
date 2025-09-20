@@ -4,7 +4,7 @@
  * Automatically adjusts animation settings based on device capabilities
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 interface DeviceCapabilities {
   /** CPU performance estimate (1-10 scale) */
@@ -52,7 +52,7 @@ interface AnimationPerformanceReturn {
   /** Performance utilities */
   utils: {
     /** Check if animation should be enabled */
-    shouldAnimate: (complexity: 'low' | 'medium' | 'high') => boolean;
+    shouldAnimate: (complexity: "low" | "medium" | "high") => boolean;
     /** Get optimized animation duration */
     getOptimizedDuration: (baseDuration: number) => number;
     /** Get optimized debounce value */
@@ -67,30 +67,39 @@ interface AnimationPerformanceReturn {
 // Device capability detection functions
 const detectDeviceCapabilities = (): DeviceCapabilities => {
   // Guard for non-browser environments (SSR/tests)
-  const hasWindow = typeof window !== 'undefined';
-  const hasNavigator = typeof navigator !== 'undefined';
-  const hasDocument = typeof document !== 'undefined';
-  const hasScreen = typeof screen !== 'undefined';
+  const hasWindow = typeof window !== "undefined";
+  const hasNavigator = typeof navigator !== "undefined";
+  const hasDocument = typeof document !== "undefined";
+  const hasScreen = typeof screen !== "undefined";
 
-  const hasTouch = hasWindow && hasNavigator
-    ? ('ontouchstart' in window || (navigator as any).maxTouchPoints > 0)
-    : false;
+  const hasTouch =
+    hasWindow && hasNavigator
+      ? "ontouchstart" in window || (navigator as any).maxTouchPoints > 0
+      : false;
 
-  const userAgent = hasNavigator ? navigator.userAgent : '';
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(userAgent) || hasTouch;
+  const userAgent = hasNavigator ? navigator.userAgent : "";
+  const isMobile =
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+      userAgent,
+    ) || hasTouch;
 
-  const prefersReducedMotion = hasWindow && typeof window.matchMedia === 'function'
-    ? !!window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches
-    : false;
+  const prefersReducedMotion =
+    hasWindow && typeof window.matchMedia === "function"
+      ? !!window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+      : false;
 
   // GPU detection
   let hasGPU = false;
   // Avoid calling canvas.getContext in test/jsdom where it throws a Not implemented error
-  const isTestEnv = (typeof process !== 'undefined' && (process as any).env?.VITEST) || (hasNavigator && /jsdom/i.test((navigator as any).userAgent || ''));
+  const isTestEnv =
+    (typeof process !== "undefined" && (process as any).env?.VITEST) ||
+    (hasNavigator && /jsdom/i.test((navigator as any).userAgent || ""));
   if (hasDocument && !isTestEnv) {
     try {
-      const canvas = document.createElement('canvas');
-      const gl = (canvas.getContext && (canvas.getContext('webgl') || canvas.getContext('experimental-webgl')));
+      const canvas = document.createElement("canvas");
+      const gl =
+        canvas.getContext &&
+        (canvas.getContext("webgl") || canvas.getContext("experimental-webgl"));
       hasGPU = !!gl;
     } catch {
       hasGPU = false;
@@ -101,21 +110,28 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
 
   // CPU power estimation (simplified)
   const cpuPower = (() => {
-    const cores = hasNavigator ? (navigator as any).hardwareConcurrency || 4 : 4;
+    const cores = hasNavigator
+      ? (navigator as any).hardwareConcurrency || 4
+      : 4;
     const memory = hasNavigator ? (navigator as any).deviceMemory || 4 : 4;
     if (isMobile) return Math.min(cores + memory - 2, 6);
     return Math.min(cores + memory - 1, 10);
   })();
 
   // High refresh rate detection (fallback since refreshRate is not standard)
-  const isHighRefreshRate = hasScreen && (screen as any).refreshRate ? (screen as any).refreshRate > 60 : false;
+  const isHighRefreshRate =
+    hasScreen && (screen as any).refreshRate
+      ? (screen as any).refreshRate > 60
+      : false;
 
   // Memory constraints (rough estimation)
-  const hasMemoryConstraints = hasNavigator && (navigator as any).deviceMemory
-    ? (navigator as any).deviceMemory <= 2
-    : isMobile;
+  const hasMemoryConstraints =
+    hasNavigator && (navigator as any).deviceMemory
+      ? (navigator as any).deviceMemory <= 2
+      : isMobile;
 
-  const isLowEnd = cpuPower <= 4 || hasMemoryConstraints || (isMobile && !hasGPU);
+  const isLowEnd =
+    cpuPower <= 4 || hasMemoryConstraints || (isMobile && !hasGPU);
 
   return {
     cpuPower,
@@ -130,8 +146,11 @@ const detectDeviceCapabilities = (): DeviceCapabilities => {
 };
 
 // Generate performance settings based on capabilities
-const generatePerformanceSettings = (capabilities: DeviceCapabilities): PerformanceSettings => {
-  const { isLowEnd, prefersReducedMotion, isMobile, hasGPU, cpuPower } = capabilities;
+const generatePerformanceSettings = (
+  capabilities: DeviceCapabilities,
+): PerformanceSettings => {
+  const { isLowEnd, prefersReducedMotion, isMobile, hasGPU, cpuPower } =
+    capabilities;
 
   // Disable animations if user prefers reduced motion
   if (prefersReducedMotion) {
@@ -185,8 +204,12 @@ const generatePerformanceSettings = (capabilities: DeviceCapabilities): Performa
 };
 
 export function useAnimationPerformance(): AnimationPerformanceReturn {
-  const [capabilities] = useState<DeviceCapabilities>(() => detectDeviceCapabilities());
-  const [settings] = useState<PerformanceSettings>(() => generatePerformanceSettings(capabilities));
+  const [capabilities] = useState<DeviceCapabilities>(() =>
+    detectDeviceCapabilities(),
+  );
+  const [settings] = useState<PerformanceSettings>(() =>
+    generatePerformanceSettings(capabilities),
+  );
   const [currentFPS, setCurrentFPS] = useState<number>(60);
 
   // FPS monitoring
@@ -202,7 +225,9 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
       const currentTime = performance.now();
 
       if (currentTime >= lastTime + 1000) {
-        setCurrentFPS(Math.round((frameCount * 1000) / (currentTime - lastTime)));
+        setCurrentFPS(
+          Math.round((frameCount * 1000) / (currentTime - lastTime)),
+        );
         frameCount = 0;
         lastTime = currentTime;
       }
@@ -221,16 +246,16 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
 
   // Utility functions
   const shouldAnimate = useCallback(
-    (complexity: 'low' | 'medium' | 'high') => {
+    (complexity: "low" | "medium" | "high") => {
       if (!settings.enableAnimations) return false;
       if (capabilities.prefersReducedMotion) return false;
 
       switch (complexity) {
-        case 'low':
+        case "low":
           return true;
-        case 'medium':
+        case "medium":
           return !capabilities.isLowEnd;
-        case 'high':
+        case "high":
           return !capabilities.isLowEnd && !capabilities.isMobile;
         default:
           return settings.enableAnimations;
@@ -260,7 +285,7 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
     async (callback: () => void): Promise<number> => {
       const startTime = performance.now();
 
-      await new Promise<void>(resolve => {
+      await new Promise<void>((resolve) => {
         requestAnimationFrame(() => {
           callback();
           resolve();
@@ -272,7 +297,9 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
     [],
   );
 
-  const supportsRAF = typeof requestAnimationFrame !== 'undefined' && typeof window !== 'undefined';
+  const supportsRAF =
+    typeof requestAnimationFrame !== "undefined" &&
+    typeof window !== "undefined";
 
   return {
     capabilities,
@@ -289,4 +316,8 @@ export function useAnimationPerformance(): AnimationPerformanceReturn {
 }
 
 // Export types for external use
-export type { AnimationPerformanceReturn, DeviceCapabilities, PerformanceSettings };
+export type {
+  AnimationPerformanceReturn,
+  DeviceCapabilities,
+  PerformanceSettings,
+};

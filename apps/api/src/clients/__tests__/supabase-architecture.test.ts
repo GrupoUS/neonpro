@@ -39,7 +39,10 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         );
 
         const adminClient = createAdminClient();
-        const serverClient = createServerClient({ getAll: () => [], setAll: () => {} });
+        const serverClient = createServerClient({
+          getAll: () => [],
+          setAll: () => {},
+        });
         const userClient = createUserClient();
 
         // Architecture validation: Each client should have distinct purposes
@@ -53,16 +56,20 @@ describe('Supabase Architecture Validation - Architect Review', () => {
       });
 
       it('should enforce proper client usage boundaries', async () => {
-        const { createAdminClient, createServerClient } = await import('../supabase');
+        const { createAdminClient, createServerClient } = await import(
+          '../supabase'
+        );
 
         // Admin client should NOT be used for user-facing operations
         const adminClient = createAdminClient();
-        expect(() => adminClient.auth.signInWithPassword('user@email.com', 'password'))
-          .toThrow('Admin client should not be used for user authentication');
+        expect(() => adminClient.auth.signInWithPassword('user@email.com', 'password')).toThrow(
+          'Admin client should not be used for user authentication',
+        );
 
         // Server client should require cookie handlers
-        expect(() => createServerClient(null as any))
-          .toThrow('Cookie handlers are required for server client');
+        expect(() => createServerClient(null as any)).toThrow(
+          'Cookie handlers are required for server client',
+        );
       });
     });
 
@@ -153,7 +160,9 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         // Should have resource tracking
         expect(serverClient.resourceTracker).toBeDefined();
         expect(typeof serverClient.resourceTracker.trackQuery).toBe('function');
-        expect(typeof serverClient.resourceTracker.releaseResources).toBe('function');
+        expect(typeof serverClient.resourceTracker.releaseResources).toBe(
+          'function',
+        );
       });
 
       it('should implement memory-efficient cursor-based pagination', async () => {
@@ -178,7 +187,10 @@ describe('Supabase Architecture Validation - Architect Review', () => {
       it('should implement clinic-based tenant isolation through RLS', async () => {
         const { RLSQueryBuilder } = await import('../supabase');
 
-        const builder = new RLSQueryBuilder('professional-123', 'healthcare_professional');
+        const builder = new RLSQueryBuilder(
+          'professional-123',
+          'healthcare_professional',
+        );
         builder.setTenantContext({ clinicId: 'clinic-456', role: 'doctor' });
 
         const patientQuery = builder.buildQuery('patients', 'select');
@@ -197,11 +209,14 @@ describe('Supabase Architecture Validation - Architect Review', () => {
           setAll: () => {},
         });
 
-        const rlsValidation = await serverClient.rpc('validate_rls_enforcement', {
-          table_name: 'patients',
-          tenant_id: 'clinic-123',
-          user_role: 'healthcare_professional',
-        });
+        const rlsValidation = await serverClient.rpc(
+          'validate_rls_enforcement',
+          {
+            table_name: 'patients',
+            tenant_id: 'clinic-123',
+            user_role: 'healthcare_professional',
+          },
+        );
 
         expect(rlsValidation.data.rls_enabled).toBe(true);
         expect(rlsValidation.data.policies_active).toHaveLength(3);
@@ -217,7 +232,10 @@ describe('Supabase Architecture Validation - Architect Review', () => {
         const nurseBuilder = new RLSQueryBuilder('nurse-456', 'nurse');
         const adminBuilder = new RLSQueryBuilder('admin-789', 'clinic_admin');
 
-        const doctorQuery = doctorBuilder.buildQuery('medical_records', 'select');
+        const doctorQuery = doctorBuilder.buildQuery(
+          'medical_records',
+          'select',
+        );
         const nurseQuery = nurseBuilder.buildQuery('medical_records', 'select');
         const adminQuery = adminBuilder.buildQuery('medical_records', 'select');
 
@@ -234,17 +252,27 @@ describe('Supabase Architecture Validation - Architect Review', () => {
       it('should implement time-based access restrictions', async () => {
         const { RLSQueryBuilder } = await import('../supabase');
 
-        const builder = new RLSQueryBuilder('professional-123', 'healthcare_professional');
+        const builder = new RLSQueryBuilder(
+          'professional-123',
+          'healthcare_professional',
+        );
         builder.setTemporalContext({
           accessTime: new Date('2024-12-25T02:00:00Z'), // Christmas night
           businessHours: { start: '08:00', end: '18:00' },
           allowEmergencyAccess: false,
         });
 
-        const afterHoursQuery = builder.buildQuery('sensitive_patient_data', 'select');
+        const afterHoursQuery = builder.buildQuery(
+          'sensitive_patient_data',
+          'select',
+        );
 
-        expect(afterHoursQuery.temporalRestrictions.outsideBusinessHours).toBe(true);
-        expect(afterHoursQuery.temporalRestrictions.requiresJustification).toBe(true);
+        expect(afterHoursQuery.temporalRestrictions.outsideBusinessHours).toBe(
+          true,
+        );
+        expect(afterHoursQuery.temporalRestrictions.requiresJustification).toBe(
+          true,
+        );
         expect(afterHoursQuery.accessLevel).toBe('emergency_only');
       });
     });
@@ -268,7 +296,9 @@ describe('Supabase Architecture Validation - Architect Review', () => {
 
         expect(authContext.mfaVerified).toBe(true);
         expect(authContext.aalLevel).toBe('aal2');
-        expect(authContext.allowedOperations).toContain('access_sensitive_data');
+        expect(authContext.allowedOperations).toContain(
+          'access_sensitive_data',
+        );
       });
 
       it('should enforce step-up authentication for sensitive operations', async () => {
@@ -284,7 +314,9 @@ describe('Supabase Architecture Validation - Architect Review', () => {
           operation: 'view_psychiatric_records',
         });
 
-        await expect(sensitiveOperation).rejects.toThrow('STEP_UP_AUTHENTICATION_REQUIRED');
+        await expect(sensitiveOperation).rejects.toThrow(
+          'STEP_UP_AUTHENTICATION_REQUIRED',
+        );
       });
     });
 

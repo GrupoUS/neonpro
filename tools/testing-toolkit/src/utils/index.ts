@@ -4,13 +4,14 @@
  * Common utilities and helpers for testing across the NeonPro project.
  */
 
-export * from './mock-factories';
-export * from './performance';
-export type { HealthcarePerformanceBudget } from './performance';
-export * from './test-helpers';
+export * from "./mock-factories";
+export * from "./performance";
+export type { HealthcarePerformanceBudget } from "./performance";
+export * from "./test-helpers";
 
 // Common test utilities
-export const wait = (ms: number): Promise<void> => new Promise(resolve => setTimeout(resolve, ms));
+export const wait = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
 
 export const waitFor = async (
   condition: () => boolean | Promise<boolean>,
@@ -52,8 +53,9 @@ export const retry = async <T>(
 };
 
 export const randomString = (length: number = 10): string => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
@@ -64,6 +66,11 @@ export const randomEmail = (): string => {
   return `${randomString(8)}@example.com`;
 };
 
-export const randomDate = (start: Date = new Date(2020, 0, 1), end: Date = new Date()): Date => {
-  return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+export const randomDate = (
+  start: Date = new Date(2020, 0, 1),
+  end: Date = new Date(),
+): Date => {
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime()),
+  );
 };

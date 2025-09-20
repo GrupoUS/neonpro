@@ -111,7 +111,10 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
 
     mockAIChatService.validateModelAccess.mockResolvedValue({
       success: true,
-      data: { hasAccess: true, availableModels: ['gpt-4', 'claude-3', 'gemini-pro'] },
+      data: {
+        hasAccess: true,
+        availableModels: ['gpt-4', 'claude-3', 'gemini-pro'],
+      },
     });
 
     mockAIChatService.generateResponse.mockResolvedValue({
@@ -250,7 +253,12 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
       expect(mockAIChatService.generateResponse).toHaveBeenCalledWith({
         provider: 'claude-3',
         model: 'gpt-4o',
-        messages: [{ role: 'user', content: 'Quais são os riscos do preenchimento labial?' }],
+        messages: [
+          {
+            role: 'user',
+            content: 'Quais são os riscos do preenchimento labial?',
+          },
+        ],
         patientId: undefined,
         temperature: 0.7,
         maxTokens: 1000,
@@ -544,7 +552,11 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
               tokens: { input: 25, output: 18, total: 43 },
               processingTime: 1250,
             },
-            metadata: { model: 'gpt-4', provider: 'openai', fallbackUsed: false },
+            metadata: {
+              model: 'gpt-4',
+              provider: 'openai',
+              fallbackUsed: false,
+            },
           }),
         },
         patientService: mockPatientService,
@@ -656,7 +668,9 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
     });
 
     it('should handle AI model unavailability', async () => {
-      mockAIChatService.sendMessage.mockRejectedValue(new Error('All AI models unavailable'));
+      mockAIChatService.sendMessage.mockRejectedValue(
+        new Error('All AI models unavailable'),
+      );
 
       const { default: chatRoute } = await import('../chat.js');
 
@@ -679,7 +693,9 @@ describe('POST /api/v2/ai/chat endpoint (T051)', () => {
 
       expect(response.status).toBe(503);
       expect(data.success).toBe(false);
-      expect(data.error).toContain('Serviço de IA temporariamente indisponível');
+      expect(data.error).toContain(
+        'Serviço de IA temporariamente indisponível',
+      );
     });
   });
 

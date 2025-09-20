@@ -1,49 +1,39 @@
 {
-    "mcpServers": {
-        "shadcn": {
-            "command": "bunx",
-            "args": [
-                "shadcn@latest",
-                "mcp"
-            ]
-        },
-        "context7": {
-            "command": "bunx",
-            "args": [
-                "@upstash/context7-mcp@latest"
-            ],
-            "env": {
-                "CONTEXT7_MAX_TOKENS": "10000",
-                "CONTEXT7_TIMEOUT": "15000",
-                "CONTEXT7_API_KEY": "ctx7_fzqcQNgU3AChDBMjNIVYg4zLQp4LgBjZnbA"
-            },
-            "type": "stdio",
-            "fromGalleryId": "upstash.context7",
-            "alwaysAllow": [
-                "resolve-library-id",
-                "get-library-docs"
-            ]
-        },
-        "Sequential Thinking": {
-            "command": "bunx",
-            "args": [
-                "@modelcontextprotocol/server-sequential-thinking"
-            ],
-            "env": {
-                "DISABLE_THOUGHT_LOGGING": "false",
-                "SEQUENTIAL_THINKING_MAX_TOKENS": "16000",
-                "MAX_THOUGHTS": "10",
-                "SEQUENTIAL_THINKING_THOUGHTS_TO_KEEP": "10",
-                "SEQUENTIAL_THINKING_TIMEOUT": "15000"
-            }
-        },
-        "supabase": {
-            "command": "bunx",
-            "args": [
-                "@supabase/mcp-server-supabase@latest",
-                "--access-token",
-                "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc"
-            ]
-        }
+  "mcpServers": {
+    "shadcn": {
+      "command": "bunx",
+      "args": ["shadcn@latest", "mcp"]
+    },
+    "context7": {
+      "command": "bunx",
+      "args": ["@upstash/context7-mcp@latest"],
+      "env": {
+        "CONTEXT7_MAX_TOKENS": "10000",
+        "CONTEXT7_TIMEOUT": "15000",
+        "CONTEXT7_API_KEY": "ctx7_fzqcQNgU3AChDBMjNIVYg4zLQp4LgBjZnbA"
+      },
+      "type": "stdio",
+      "fromGalleryId": "upstash.context7",
+      "alwaysAllow": ["resolve-library-id", "get-library-docs"]
+    },
+    "Sequential Thinking": {
+      "command": "bunx",
+      "args": ["@modelcontextprotocol/server-sequential-thinking"],
+      "env": {
+        "DISABLE_THOUGHT_LOGGING": "false",
+        "SEQUENTIAL_THINKING_MAX_TOKENS": "16000",
+        "MAX_THOUGHTS": "10",
+        "SEQUENTIAL_THINKING_THOUGHTS_TO_KEEP": "10",
+        "SEQUENTIAL_THINKING_TIMEOUT": "15000"
+      }
+    },
+    "supabase": {
+      "command": "bunx",
+      "args": [
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc"
+      ]
     }
+  }
 }

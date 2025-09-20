@@ -3,7 +3,9 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 
 export default function handler(req: VercelRequest, res: VercelResponse) {
   // Set CORS headers with proper restrictions
-  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['https://neonpro.vercel.app'];
+  const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [
+    'https://neonpro.vercel.app',
+  ];
   const origin = req.headers.origin;
 
   if (origin && allowedOrigins.includes(origin)) {

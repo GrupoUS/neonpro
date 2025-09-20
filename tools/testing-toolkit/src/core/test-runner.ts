@@ -37,12 +37,25 @@ export class TestRunner {
     } catch (error) {
       const duration = Date.now() - startTime;
 
+      let errorMessage: string;
+      if (error === undefined) {
+        errorMessage = 'undefined';
+      } else if (error === null) {
+        errorMessage = 'null';
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      } else {
+        errorMessage = JSON.stringify(error);
+      }
+
       const result: TestResult = {
         name,
         category: this.config.category,
         passed: false,
         duration,
-        errors: [error instanceof Error ? error.message : String(error)],
+        errors: [errorMessage],
       };
 
       this.results.push(result);

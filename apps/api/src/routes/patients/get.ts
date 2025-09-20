@@ -32,14 +32,17 @@ const getHandler = async (c: any) => {
     // Validate path parameters
     const validationResult = GetPatientParamsSchema.safeParse(params);
     if (!validationResult.success) {
-      return c.json({
-        success: false,
-        error: 'Parâmetros inválidos',
-        errors: validationResult.error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-        })),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: 'Parâmetros inválidos',
+          errors: validationResult.error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message,
+          })),
+        },
+        400,
+      );
     }
 
     const { id: patientId } = validationResult.data;
@@ -59,11 +62,14 @@ const getHandler = async (c: any) => {
     });
 
     if (!accessValidation.success) {
-      return c.json({
-        success: false,
-        error: accessValidation.error,
-        code: accessValidation.code,
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          error: accessValidation.error,
+          code: accessValidation.code,
+        },
+        403,
+      );
     }
 
     // Validate LGPD data access permissions
@@ -77,11 +83,14 @@ const getHandler = async (c: any) => {
     });
 
     if (!lgpdValidation.success) {
-      return c.json({
-        success: false,
-        error: lgpdValidation.error,
-        code: lgpdValidation.code,
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          error: lgpdValidation.error,
+          code: lgpdValidation.code,
+        },
+        403,
+      );
     }
 
     const accessLevel = lgpdValidation.data?.accessLevel || 'full';
@@ -96,17 +105,23 @@ const getHandler = async (c: any) => {
 
     if (!result.success) {
       if (result.code === 'PATIENT_NOT_FOUND') {
-        return c.json({
-          success: false,
-          error: result.error,
-          code: result.code,
-        }, 404);
+        return c.json(
+          {
+            success: false,
+            error: result.error,
+            code: result.code,
+          },
+          404,
+        );
       }
 
-      return c.json({
-        success: false,
-        error: result.error || 'Erro interno do serviço',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: result.error || 'Erro interno do serviço',
+        },
+        500,
+      );
     }
 
     let patientData = result.data;
@@ -122,24 +137,26 @@ const getHandler = async (c: any) => {
 
     // Log data access for audit trail
     const auditService = new ComprehensiveAuditService();
-    const auditPromise = auditService.logActivity({
-      userId,
-      action: 'patient_data_access',
-      resourceType: 'patient',
-      resourceId: patientId,
-      details: {
-        accessType: 'full_record',
-        dataCategories: ['personal_data', 'health_data', 'contact_data'],
-        purpose: 'healthcare_management',
-      },
-      ipAddress,
-      userAgent,
-      complianceContext: 'LGPD',
-      sensitivityLevel: 'high',
-    }).catch(err => {
-      console.error('Audit logging failed:', err);
-      return { success: false };
-    });
+    const auditPromise = auditService
+      .logActivity({
+        userId,
+        action: 'patient_data_access',
+        resourceType: 'patient',
+        resourceId: patientId,
+        details: {
+          accessType: 'full_record',
+          dataCategories: ['personal_data', 'health_data', 'contact_data'],
+          purpose: 'healthcare_management',
+        },
+        ipAddress,
+        userAgent,
+        complianceContext: 'LGPD',
+        sensitivityLevel: 'high',
+      })
+      .catch(err => {
+        console.error('Audit logging failed:', err);
+        return { success: false };
+      });
 
     const responseTime = Date.now() - startTime;
 
@@ -191,12 +208,15 @@ const getHandler = async (c: any) => {
   } catch (error) {
     console.error('Error getting patient:', error);
 
-    return c.json({
-      success: false,
-      error: 'Erro interno do servidor',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: 'Erro interno do servidor',
+      },
+      500,
+    );
   }
-};;
+};
 
 app.get('/:id', requireAuth, dataProtection.patientView, getHandler);
 

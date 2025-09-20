@@ -46,8 +46,14 @@ const PatientUpdateSchema = PatientCreateSchema.partial().extend({
 
 const PatientQuerySchema = z.object({
   clinicId: z.string().uuid(),
-  page: z.string().optional().transform(val => val ? parseInt(val) : 1),
-  limit: z.string().optional().transform(val => val ? Math.min(parseInt(val) || 20, 100) : 20),
+  page: z
+    .string()
+    .optional()
+    .transform(val => (val ? parseInt(val) : 1)),
+  limit: z
+    .string()
+    .optional()
+    .transform(val => (val ? Math.min(parseInt(val) || 20, 100) : 20)),
   search: z.string().optional(),
   status: z.enum(['active', 'inactive', 'all']).optional().default('active'),
 });
@@ -178,7 +184,10 @@ class PatientService extends BaseService {
       },
     );
   }
-  async createPatient(data: z.infer<typeof PatientCreateSchema>, userId: string) {
+  async createPatient(
+    data: z.infer<typeof PatientCreateSchema>,
+    userId: string,
+  ) {
     // Validate LGPD consent if processing personal data
     if (data.cpf || data.email) {
       if (!data.lgpdConsentGiven) {
@@ -201,7 +210,9 @@ class PatientService extends BaseService {
       },
       async () => {
         // Generate medical record number
-        const medicalRecordNumber = await this.generateMedicalRecordNumber(data.clinicId);
+        const medicalRecordNumber = await this.generateMedicalRecordNumber(
+          data.clinicId,
+        );
 
         const patient = await prisma.patient.create({
           data: {
@@ -247,7 +258,10 @@ class PatientService extends BaseService {
     return `MR${clinicId.slice(-6).toUpperCase()}${(count + 1).toString().padStart(4, '0')}`;
   }
 
-  async updatePatient(data: z.infer<typeof PatientUpdateSchema>, userId: string) {
+  async updatePatient(
+    data: z.infer<typeof PatientUpdateSchema>,
+    userId: string,
+  ) {
     const existingPatient = await prisma.patient.findUnique({
       where: { id: data.id },
     });
@@ -288,7 +302,10 @@ class PatientService extends BaseService {
 const patientService = new PatientService();
 
 // Middleware for authentication and clinic access validation
-const validateClinicAccess = async (c: Context<{ Variables: Variables }>, next: any) => {
+const validateClinicAccess = async (
+  c: Context<{ Variables: Variables }>,
+  next: any,
+) => {
   const userId = c.get('userId'); // Now properly typed
   const clinicId = c.req.query('clinicId') || (await c.req.json())?.clinicId;
 
@@ -326,16 +343,12 @@ app.get(
     const userId = c.get('userId'); // Now properly typed
 
     try {
-      const result = await patientService.getPatients(
-        query.clinicId,
-        userId,
-        {
-          page: query.page,
-          limit: query.limit,
-          search: query.search,
-          status: query.status,
-        },
-      );
+      const result = await patientService.getPatients(query.clinicId, userId, {
+        page: query.page,
+        limit: query.limit,
+        search: query.search,
+        status: query.status,
+      });
 
       // Add performance headers
       c.header('X-Total-Count', result.pagination.total.toString());
@@ -345,7 +358,11 @@ app.get(
     } catch (error) {
       console.error('Error fetching patients:', error);
 
-      return serverError(c, 'Failed to fetch patients', error instanceof Error ? error : undefined);
+      return serverError(
+        c,
+        'Failed to fetch patients',
+        error instanceof Error ? error : undefined,
+      );
     }
   },
 );
@@ -378,7 +395,11 @@ app.get(
       if (error instanceof Error && error.message === 'Patient not found') {
         return notFound(c, 'Patient not found');
       }
-      return serverError(c, 'Failed to fetch patient', error instanceof Error ? error : undefined);
+      return serverError(
+        c,
+        'Failed to fetch patient',
+        error instanceof Error ? error : undefined,
+      );
     }
   },
 );

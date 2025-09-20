@@ -195,13 +195,15 @@ describe('Enhanced Healthcare Middleware Chain', () => {
 
       const middleware = cfmValidationMiddleware;
 
-      await expect(middleware({
-        ctx,
-        next,
-        path: 'appointments.create',
-        type: 'mutation',
-        input: {},
-      })).rejects.toThrow(TRPCError);
+      await expect(
+        middleware({
+          ctx,
+          next,
+          path: 'appointments.create',
+          type: 'mutation',
+          input: {},
+        }),
+      ).rejects.toThrow(TRPCError);
 
       expect(next).not.toHaveBeenCalled();
     });
@@ -222,13 +224,17 @@ describe('Enhanced Healthcare Middleware Chain', () => {
 
       const middleware = cfmValidationMiddleware;
 
-      await expect(middleware({
-        ctx,
-        next,
-        path: 'telemedicine.startSession',
-        type: 'mutation',
-        input: {},
-      })).rejects.toThrow('ICP-Brasil digital certificate required for telemedicine operations');
+      await expect(
+        middleware({
+          ctx,
+          next,
+          path: 'telemedicine.startSession',
+          type: 'mutation',
+          input: {},
+        }),
+      ).rejects.toThrow(
+        'ICP-Brasil digital certificate required for telemedicine operations',
+      );
 
       expect(next).not.toHaveBeenCalled();
     });
@@ -273,13 +279,15 @@ describe('Enhanced Healthcare Middleware Chain', () => {
 
       const middleware = prismaRLSMiddleware;
 
-      await expect(middleware({
-        ctx,
-        next,
-        path: 'patients.list',
-        type: 'query',
-        input: {},
-      })).rejects.toThrow('Clinic context required for data access');
+      await expect(
+        middleware({
+          ctx,
+          next,
+          path: 'patients.list',
+          type: 'query',
+          input: {},
+        }),
+      ).rejects.toThrow('Clinic context required for data access');
 
       expect(next).not.toHaveBeenCalled();
     });

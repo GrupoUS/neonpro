@@ -92,7 +92,10 @@ describe('WebSocket Integration Middleware (T070)', () => {
 
   describe('Connection Management', () => {
     it('should add and track WebSocket connections', () => {
-      const connectionId = handleWebSocketConnection(mockWs as any, testMetadata);
+      const connectionId = handleWebSocketConnection(
+        mockWs as any,
+        testMetadata,
+      );
 
       expect(connectionId).toBeDefined();
       expect(wsManager.getTotalConnectionsCount()).toBe(1);
@@ -128,7 +131,9 @@ describe('WebSocket Integration Middleware (T070)', () => {
       const welcomeMessage = JSON.parse(mockWs.messages[0]);
       expect(welcomeMessage.type).toBe(WSMessageType.STATUS);
       expect(welcomeMessage.data.status).toBe('connected');
-      expect(welcomeMessage.data.message).toBe('Conectado ao NeonPro em tempo real');
+      expect(welcomeMessage.data.message).toBe(
+        'Conectado ao NeonPro em tempo real',
+      );
       expect(welcomeMessage.metadata.userId).toBe('user-123');
     });
   });
@@ -288,7 +293,10 @@ describe('WebSocket Integration Middleware (T070)', () => {
 
   describe('Connection Cleanup', () => {
     it('should clean up inactive connections', () => {
-      const connectionId = handleWebSocketConnection(mockWs as any, testMetadata);
+      const connectionId = handleWebSocketConnection(
+        mockWs as any,
+        testMetadata,
+      );
 
       // Simulate old last activity
       const connection = (wsManager as any).connections.get(connectionId);
@@ -333,8 +341,14 @@ describe('WebSocket Integration Middleware (T070)', () => {
       await middleware(mockContext as any, mockNext);
 
       expect(mockContext.set).toHaveBeenCalledWith('wsManager', wsManager);
-      expect(mockContext.set).toHaveBeenCalledWith('sendToUser', expect.any(Function));
-      expect(mockContext.set).toHaveBeenCalledWith('broadcast', expect.any(Function));
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'sendToUser',
+        expect.any(Function),
+      );
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'broadcast',
+        expect.any(Function),
+      );
       expect(mockNext).toHaveBeenCalled();
     });
   });
@@ -361,7 +375,10 @@ describe('WebSocket Integration Middleware (T070)', () => {
 
   describe('Healthcare Professional Context', () => {
     it('should preserve healthcare professional information', () => {
-      const connectionId = handleWebSocketConnection(mockWs as any, testMetadata);
+      const connectionId = handleWebSocketConnection(
+        mockWs as any,
+        testMetadata,
+      );
       const metadata = wsManager.getConnectionMetadata(connectionId);
 
       expect(metadata?.healthcareProfessional).toBeDefined();

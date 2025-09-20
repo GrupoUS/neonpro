@@ -4,6 +4,7 @@
 **Prerequisites**: plan.md ✓, research.md ✓, data-model.md ✓, spec.md ✓
 
 ## Execution Flow (main)
+
 ```
 1. Load plan.md from feature directory ✓
    → Tech stack: Next.js 14+, Shadcn MCP, Recharts, TanStack Query, Zustand
@@ -32,11 +33,14 @@
 ```
 
 ## Format: `[ID] [P?] Description`
+
 - **[P]**: Can run in parallel (different files, no dependencies)
 - Exact file paths included in descriptions
 
 ## Path Conventions
+
 **Web Application Structure** (per plan.md):
+
 - **Frontend**: `apps/web/src/` with components, pages, services
 - **Backend Integration**: Supabase functions and migrations
 - **Tests**: Component tests, API tests, integration scenarios
@@ -52,6 +56,7 @@
 - [ ] **T004** [P] Configure TypeScript strict mode for financial data types in `tsconfig.json`
 
 ### Database Schema
+
 - [ ] **T005** Create financial transactions table migration in `supabase/migrations/001_financial_transactions.sql`
 - [ ] **T006** Create financial metrics materialized view in `supabase/migrations/002_financial_metrics.sql`
 - [ ] **T007** Create dashboard preferences table in `supabase/migrations/003_dashboard_preferences.sql`
@@ -60,18 +65,21 @@
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 
 ### API Contract Tests
+
 - [ ] **T009** [P] Contract test GET /api/financial/dashboard in `apps/web/tests/contract/financial-dashboard.test.ts`
 - [ ] **T010** [P] Contract test GET /api/financial/metrics in `apps/web/tests/contract/financial-metrics.test.ts`
 - [ ] **T011** [P] Contract test POST /api/financial/export in `apps/web/tests/contract/financial-export.test.ts`
 - [ ] **T012** [P] Contract test WebSocket /ws/financial/updates in `apps/web/tests/contract/financial-websocket.test.ts`
 
 ### Component Tests
+
 - [ ] **T013** [P] Chart component test for MRR visualization in `apps/web/tests/components/chart-mrr.test.tsx`
 - [ ] **T014** [P] Chart component test for ARR trends in `apps/web/tests/components/chart-arr.test.tsx`
 - [ ] **T015** [P] Chart component test for churn analysis in `apps/web/tests/components/chart-churn.test.tsx`
 - [ ] **T016** [P] Dashboard layout responsive test in `apps/web/tests/components/dashboard-layout.test.tsx`
 
 ### Integration Tests
+
 - [ ] **T017** [P] Integration test: Financial dashboard loading scenario in `apps/web/tests/integration/dashboard-loading.test.ts`
 - [ ] **T018** [P] Integration test: Date range filtering workflow in `apps/web/tests/integration/date-filtering.test.ts`
 - [ ] **T019** [P] Integration test: Export functionality end-to-end in `apps/web/tests/integration/export-workflow.test.ts`
@@ -82,12 +90,14 @@
 ## Phase 3.3: Core Implementation (Days 3-5) - ONLY after tests are failing
 
 ### Data Services
+
 - [ ] **T021** [P] Financial metrics service with TanStack Query in `apps/web/src/services/financial-metrics.ts`
 - [ ] **T022** [P] Dashboard data aggregation service in `apps/web/src/services/dashboard-data.ts`
 - [ ] **T023** [P] Export service for PDF/Excel generation in `apps/web/src/services/export.ts`
 - [ ] **T024** [P] Zustand store for dashboard state in `apps/web/src/stores/dashboard-store.ts`
 
 ### Chart Components (Shadcn MCP + Recharts)
+
 - [ ] **T025** [P] Base chart wrapper component in `apps/web/src/components/charts/chart-base.tsx`
 - [ ] **T026** [P] MRR trend chart component in `apps/web/src/components/charts/chart-mrr.tsx`
 - [ ] **T027** [P] ARR growth chart component in `apps/web/src/components/charts/chart-arr.tsx`
@@ -95,6 +105,7 @@
 - [ ] **T029** [P] Revenue segments chart component in `apps/web/src/components/charts/chart-segments.tsx`
 
 ### Dashboard Components
+
 - [ ] **T030** Dashboard grid layout system in `apps/web/src/components/dashboard/dashboard-grid.tsx`
 - [ ] **T031** Date range picker with Brazilian locale in `apps/web/src/components/dashboard/date-range-picker.tsx`
 - [ ] **T032** Dashboard filters component in `apps/web/src/components/dashboard/dashboard-filters.tsx`
@@ -103,12 +114,14 @@
 ## Phase 3.4: Integration & Features (Days 6-7)
 
 ### API Integration
+
 - [ ] **T034** Supabase API functions for financial aggregations in `supabase/functions/financial-dashboard/`
 - [ ] **T035** Real-time WebSocket integration for live updates in `apps/web/src/hooks/use-financial-realtime.ts`
 - [ ] **T036** Authentication middleware for financial data access in `apps/web/src/middleware/auth-financial.ts`
 - [ ] **T037** LGPD audit logging implementation in `apps/web/src/utils/audit-logger.ts`
 
 ### Advanced Features
+
 - [ ] **T038** PDF export with clinic branding in `apps/web/src/utils/pdf-export.ts`
 - [ ] **T039** Excel export with financial formatting in `apps/web/src/utils/excel-export.ts`
 - [ ] **T040** Dark/light theme integration with Shadcn in `apps/web/src/components/theme/theme-provider.tsx`
@@ -117,17 +130,20 @@
 ## Phase 3.5: Polish & Validation (Days 8-10)
 
 ### Performance & Optimization
+
 - [ ] **T042** [P] Chart data virtualization for large datasets in `apps/web/src/utils/chart-virtualization.ts`
 - [ ] **T043** [P] Performance testing: <2s load time validation in `apps/web/tests/performance/dashboard-load.test.ts`
 - [ ] **T044** [P] Bundle size optimization: <100KB additional impact analysis
 
 ### Compliance & Documentation
+
 - [ ] **T045** LGPD compliance audit and validation checklist execution
 - [ ] **T046** Update project documentation with financial dashboard setup in `docs/features/financial-dashboard.md`
 
 ## Dependencies & Critical Path
 
 ### Phase Dependencies
+
 1. **Setup (T001-T008)** must complete before any other work
 2. **Tests (T009-T020)** must complete and FAIL before implementation
 3. **Data Services (T021-T024)** before Chart Components (T025-T029)
@@ -136,6 +152,7 @@
 6. **Everything** before Polish (T042-T046)
 
 ### Critical Blocking Dependencies
+
 - T005-T008 (DB migrations) block T021-T022 (data services)
 - T021-T024 (services/store) block T025-T029 (chart components)
 - T025-T029 (charts) block T030-T033 (dashboard layout)
@@ -144,6 +161,7 @@
 ## Parallel Execution Examples
 
 ### Phase 3.1 Setup (Parallel)
+
 ```bash
 # Launch T002-T004 together (different config files):
 Task: "Configure project dependencies: Recharts, TanStack Query, Zustand, date-fns in package.json"
@@ -152,6 +170,7 @@ Task: "Configure TypeScript strict mode for financial data types in tsconfig.jso
 ```
 
 ### Phase 3.2 Contract Tests (Parallel)
+
 ```bash
 # Launch T009-T012 together (different test files):
 Task: "Contract test GET /api/financial/dashboard in apps/web/tests/contract/financial-dashboard.test.ts"
@@ -161,6 +180,7 @@ Task: "Contract test WebSocket /ws/financial/updates in apps/web/tests/contract/
 ```
 
 ### Phase 3.3 Chart Components (Parallel)
+
 ```bash
 # Launch T025-T029 together (different component files):
 Task: "Base chart wrapper component in apps/web/src/components/charts/chart-base.tsx"
@@ -172,16 +192,19 @@ Task: "Customer churn analysis chart in apps/web/src/components/charts/chart-chu
 ## Quality Gates & Success Criteria
 
 ### Test Coverage Requirements
+
 - **95% coverage** for financial components (T013-T016)
 - **90% coverage** for API integration (T009-T012)
 - **100% coverage** for LGPD compliance features (T037, T045)
 
 ### Performance Targets
+
 - **<2 second** initial dashboard load (T043)
 - **<500ms** chart interactions (T041)
 - **90+ mobile** Lighthouse score (T020)
 
 ### Compliance Validation
+
 - **LGPD audit trail** implementation (T037)
 - **ANVISA financial reporting** compliance (T045)
 - **CFM professional standards** validation (T045)
@@ -189,21 +212,25 @@ Task: "Customer churn analysis chart in apps/web/src/components/charts/chart-chu
 ## Constitutional Compliance Checkpoints
 
 ### TDD Enforcement
+
 - [ ] All tests (T009-T020) written and failing before implementation
 - [ ] RED-GREEN-REFACTOR cycle followed strictly
 - [ ] Real Supabase dependencies used (no mocks)
 
 ### Mobile-First Validation
+
 - [ ] Touch-optimized chart interactions (T041)
 - [ ] Responsive dashboard layout (T030, T033)
 - [ ] Mobile performance targets met (T043)
 
 ### Healthcare Standards
+
 - [ ] Patient financial data protection (T037)
 - [ ] Comprehensive audit logging (T008, T037)
 - [ ] Brazilian regulatory compliance (T045)
 
 ## Notes
+
 - **[P] tasks** = different files, no dependencies, can run in parallel
 - **Verify tests fail** before implementing (T009-T020 critical)
 - **Commit after each task** for clean git history
@@ -218,6 +245,7 @@ Task: "Customer churn analysis chart in apps/web/src/components/charts/chart-chu
 4. **From Plan**: 5-phase structure → organized task phases with dependencies
 
 ## Validation Checklist
+
 - [x] All financial APIs have corresponding tests (T009-T012)
 - [x] All chart components have tests (T013-T016)
 - [x] All tests come before implementation (T009-T020 before T021+)
@@ -228,5 +256,6 @@ Task: "Customer churn analysis chart in apps/web/src/components/charts/chart-chu
 - [x] Brazilian healthcare compliance addressed (T037, T045)
 
 ---
+
 **Template Version**: 1.1.0 | **Constitution Version**: 1.0.0 | **Last Updated**: 2025-01-15
-*Total Tasks: 46 | Estimated Duration: 10 business days | TDD Compliance: Mandatory*
+_Total Tasks: 46 | Estimated Duration: 10 business days | TDD Compliance: Mandatory_

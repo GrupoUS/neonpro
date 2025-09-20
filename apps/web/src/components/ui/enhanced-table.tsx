@@ -1,11 +1,21 @@
-import React from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './table';
+import React from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "./table";
 
 // Minimal EnhancedTable to unblock build; supports columns + data
 export interface Column<T> {
   accessorKey?: keyof T | string;
   header: React.ReactNode;
-  cell?: (info: { getValue: () => any; row: { original: T } }) => React.ReactNode;
+  cell?: (info: {
+    getValue: () => any;
+    row: { original: T };
+  }) => React.ReactNode;
 }
 
 export interface EnhancedTableProps<T> {
@@ -16,15 +26,18 @@ export interface EnhancedTableProps<T> {
   itemsPerPage?: number;
 }
 
-export function EnhancedTable<T extends Record<string, any>>(
-  { columns, data }: EnhancedTableProps<T>,
-) {
+export function EnhancedTable<T extends Record<string, any>>({
+  columns,
+  data,
+}: EnhancedTableProps<T>) {
   return (
-    <div className='w-full'>
+    <div className="w-full">
       <Table>
         <TableHeader>
           <TableRow>
-            {columns.map((col, i) => <TableHead key={i}>{col.header}</TableHead>)}
+            {columns.map((col, i) => (
+              <TableHead key={i}>{col.header}</TableHead>
+            ))}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -40,7 +53,7 @@ export function EnhancedTable<T extends Record<string, any>>(
                   <TableCell key={cIdx}>
                     {col.cell
                       ? col.cell({ getValue, row: { original: row } })
-                      : String(getValue() ?? '')}
+                      : String(getValue() ?? "")}
                   </TableCell>
                 );
               })}

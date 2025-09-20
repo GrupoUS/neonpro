@@ -70,7 +70,12 @@ export interface DataAccessRequest {
 export interface DataSubjectRequest {
   id: string;
   patientId: string;
-  requestType: 'access' | 'rectification' | 'deletion' | 'portability' | 'objection';
+  requestType:
+    | 'access'
+    | 'rectification'
+    | 'deletion'
+    | 'portability'
+    | 'objection';
   description: string;
   status: 'pending' | 'under_review' | 'approved' | 'rejected' | 'completed';
   requestedAt: Date;
@@ -102,7 +107,11 @@ export interface PrivacyDashboardSummary {
   riskLevel: 'low' | 'medium' | 'high';
   lastUpdated: Date;
   quickActions: Array<{
-    type: 'update_consent' | 'request_data' | 'manage_preferences' | 'emergency_settings';
+    type:
+      | 'update_consent'
+      | 'request_data'
+      | 'manage_preferences'
+      | 'emergency_settings';
     title: string;
     description: string;
     priority: number;
@@ -122,7 +131,9 @@ export class PatientPrivacyControlsService {
   /**
    * Get patient privacy dashboard summary
    */
-  async getPrivacyDashboardSummary(patientId: string): Promise<PrivacyDashboardSummary> {
+  async getPrivacyDashboardSummary(
+    patientId: string,
+  ): Promise<PrivacyDashboardSummary> {
     try {
       // Get consent statistics
       const consentStats = await this.consentService.getConsentStatistics(patientId);
@@ -134,18 +145,31 @@ export class PatientPrivacyControlsService {
       const subjectStats = await this.getDataSubjectRequestStatistics(patientId);
 
       // Calculate privacy score
-      const privacyScore = this.calculatePrivacyScore(consentStats, accessStats, subjectStats);
+      const privacyScore = this.calculatePrivacyScore(
+        consentStats,
+        accessStats,
+        subjectStats,
+      );
 
       // Determine risk level
-      const riskLevel = this.assessPrivacyRisk(consentStats, accessStats, subjectStats);
+      const riskLevel = this.assessPrivacyRisk(
+        consentStats,
+        accessStats,
+        subjectStats,
+      );
 
       // Generate quick actions
-      const quickActions = this.generateQuickActions(consentStats, accessStats, patientId);
+      const quickActions = this.generateQuickActions(
+        consentStats,
+        accessStats,
+        patientId,
+      );
 
       return {
         patientId,
         activeConsents: consentStats.activeConsents,
-        totalDataCategories: Object.keys(consentStats.dataCategoryDistribution).length,
+        totalDataCategories: Object.keys(consentStats.dataCategoryDistribution)
+          .length,
         dataAccessRequests: accessStats,
         dataSubjectRequests: subjectStats,
         privacyScore,
@@ -156,7 +180,9 @@ export class PatientPrivacyControlsService {
     } catch (error) {
       console.error('Error getting privacy dashboard summary:', error);
       if (error instanceof Error) {
-        throw new Error(`Failed to get privacy dashboard summary: ${error.message}`);
+        throw new Error(
+          `Failed to get privacy dashboard summary: ${error.message}`,
+        );
       }
       throw new Error('Failed to get privacy dashboard summary: Unknown error');
     }
@@ -182,7 +208,9 @@ export class PatientPrivacyControlsService {
         consent,
         canWithdraw: consent.status === ConsentStatus.ACTIVE,
         canModify: consent.status === ConsentStatus.ACTIVE,
-        expiryDate: consent.expiryDate ? new Date(consent.expiryDate) : undefined,
+        expiryDate: consent.expiryDate
+          ? new Date(consent.expiryDate)
+          : undefined,
         dataCategories: consent.granularity.dataCategories,
         lastAccessed: this.getLastAccessDate(consent.id),
       }));
@@ -222,7 +250,9 @@ export class PatientPrivacyControlsService {
       );
 
       if (!hasConsent.consented) {
-        throw new Error('No active consent found for requested data categories');
+        throw new Error(
+          'No active consent found for requested data categories',
+        );
       }
 
       // Create access request
@@ -261,7 +291,9 @@ export class PatientPrivacyControlsService {
     } catch (error) {
       console.error('Error submitting data access request:', error);
       if (error instanceof Error) {
-        throw new Error(`Failed to submit data access request: ${error.message}`);
+        throw new Error(
+          `Failed to submit data access request: ${error.message}`,
+        );
       }
       throw new Error('Failed to submit data access request: Unknown error');
     }
@@ -339,13 +371,17 @@ export class PatientPrivacyControlsService {
         }
 
         // Log successful completion
-        await this.logPrivacyActivity('data_access_completed', request.patientId, {
-          requestId,
-          dataCategories: request.dataCategories,
-          format: request.format,
-          size: exportResult.size,
-          processingTime,
-        });
+        await this.logPrivacyActivity(
+          'data_access_completed',
+          request.patientId,
+          {
+            requestId,
+            dataCategories: request.dataCategories,
+            format: request.format,
+            size: exportResult.size,
+            processingTime,
+          },
+        );
 
         return {
           success: true,
@@ -373,7 +409,9 @@ export class PatientPrivacyControlsService {
     } catch (error) {
       console.error('Error in processDataAccessRequest:', error);
       if (error instanceof Error) {
-        throw new Error(`Failed to process data access request: ${error.message}`);
+        throw new Error(
+          `Failed to process data access request: ${error.message}`,
+        );
       }
       throw new Error('Failed to process data access request: Unknown error');
     }
@@ -408,7 +446,10 @@ export class PatientPrivacyControlsService {
         requestedAt: new Date(),
         affectedDataCategories: request.affectedDataCategories,
         priority: request.priority || 'medium',
-        estimatedCompletionDate: this.estimateCompletionDate(request.requestType, request.priority),
+        estimatedCompletionDate: this.estimateCompletionDate(
+          request.requestType,
+          request.priority,
+        ),
       };
 
       // Store request
@@ -423,18 +464,24 @@ export class PatientPrivacyControlsService {
       }
 
       // Log request for audit
-      await this.logPrivacyActivity('data_subject_request_submitted', patientId, {
-        requestId: data.id,
-        requestType: request.requestType,
-        priority: request.priority,
-        affectedDataCategories: request.affectedDataCategories,
-      });
+      await this.logPrivacyActivity(
+        'data_subject_request_submitted',
+        patientId,
+        {
+          requestId: data.id,
+          requestType: request.requestType,
+          priority: request.priority,
+          affectedDataCategories: request.affectedDataCategories,
+        },
+      );
 
       return data;
     } catch (error) {
       console.error('Error submitting data subject request:', error);
       if (error instanceof Error) {
-        throw new Error(`Failed to submit data subject request: ${error.message}`);
+        throw new Error(
+          `Failed to submit data subject request: ${error.message}`,
+        );
       }
       throw new Error('Failed to submit data subject request: Unknown error');
     }
@@ -478,7 +525,10 @@ export class PatientPrivacyControlsService {
           .single();
 
         if (error) {
-          console.error(`Error updating preference ${pref.controlType}.${pref.setting}:`, error);
+          console.error(
+            `Error updating preference ${pref.controlType}.${pref.setting}:`,
+            error,
+          );
           continue;
         }
 
@@ -495,7 +545,9 @@ export class PatientPrivacyControlsService {
     } catch (error) {
       console.error('Error updating privacy preferences:', error);
       if (error instanceof Error) {
-        throw new Error(`Failed to update privacy preferences: ${error.message}`);
+        throw new Error(
+          `Failed to update privacy preferences: ${error.message}`,
+        );
       }
       throw new Error('Failed to update privacy preferences: Unknown error');
     }
@@ -608,7 +660,10 @@ export class PatientPrivacyControlsService {
 
     // Collect data based on categories and access type
     if (dataCategories.includes(LGPDDataCategory.PERSONAL)) {
-      collectedData.personal = await this.getPersonalData(patientId, accessType);
+      collectedData.personal = await this.getPersonalData(
+        patientId,
+        accessType,
+      );
     }
 
     if (dataCategories.includes(LGPDDataCategory.MEDICAL)) {
@@ -616,7 +671,10 @@ export class PatientPrivacyControlsService {
     }
 
     if (dataCategories.includes(LGPDDataCategory.FINANCIAL)) {
-      collectedData.financial = await this.getFinancialData(patientId, accessType);
+      collectedData.financial = await this.getFinancialData(
+        patientId,
+        accessType,
+      );
     }
 
     if (options.includeConsentHistory) {
@@ -635,7 +693,10 @@ export class PatientPrivacyControlsService {
   /**
    * Get personal data with appropriate masking
    */
-  private async getPersonalData(patientId: string, accessType: DataAccessType): Promise<any> {
+  private async getPersonalData(
+    patientId: string,
+    accessType: DataAccessType,
+  ): Promise<any> {
     // Mock implementation - would query actual patient data
     const personalData = {
       name: 'John Doe',
@@ -656,7 +717,10 @@ export class PatientPrivacyControlsService {
         ['data_access'],
         'list',
       );
-      const result = await this.maskingService.maskData(personalData, maskingContext);
+      const result = await this.maskingService.maskData(
+        personalData,
+        maskingContext,
+      );
       return result.maskedData;
     }
 
@@ -666,7 +730,10 @@ export class PatientPrivacyControlsService {
   /**
    * Get medical data with appropriate filtering
    */
-  private async getMedicalData(patientId: string, accessType: DataAccessType): Promise<any> {
+  private async getMedicalData(
+    patientId: string,
+    accessType: DataAccessType,
+  ): Promise<any> {
     // Mock implementation - would query actual medical records
     const medicalData = {
       medicalRecordNumber: 'MRN123456',
@@ -679,7 +746,11 @@ export class PatientPrivacyControlsService {
         { date: '2024-01-15', type: 'General Checkup', doctor: 'Dr. Smith' },
       ],
       diagnoses: [
-        { code: 'Z01.00', description: 'General medical examination', date: '2024-01-15' },
+        {
+          code: 'Z01.00',
+          description: 'General medical examination',
+          date: '2024-01-15',
+        },
       ],
     };
 
@@ -698,13 +769,16 @@ export class PatientPrivacyControlsService {
   /**
    * Get financial data with appropriate masking
    */
-  private async getFinancialData(patientId: string, accessType: DataAccessType): Promise<any> {
+  private async getFinancialData(
+    patientId: string,
+    accessType: DataAccessType,
+  ): Promise<any> {
     // Mock implementation - would query actual billing data
     const financialData = {
       billingAddress: 'Rua Example, 123',
       paymentMethods: ['Credit Card'],
-      lastPayment: { date: '2024-01-10', amount: 150.00 },
-      outstandingBalance: 0.00,
+      lastPayment: { date: '2024-01-10', amount: 150.0 },
+      outstandingBalance: 0.0,
     };
 
     if (accessType === DataAccessType.SUMMARY) {
@@ -715,7 +789,10 @@ export class PatientPrivacyControlsService {
         ['data_access'],
         'list',
       );
-      const result = await this.maskingService.maskData(financialData, maskingContext);
+      const result = await this.maskingService.maskData(
+        financialData,
+        maskingContext,
+      );
       return result.maskedData;
     }
 
@@ -799,7 +876,11 @@ export class PatientPrivacyControlsService {
     accessStats: any,
     subjectStats: any,
   ): 'low' | 'medium' | 'high' {
-    const score = this.calculatePrivacyScore(consentStats, accessStats, subjectStats);
+    const score = this.calculatePrivacyScore(
+      consentStats,
+      accessStats,
+      subjectStats,
+    );
 
     if (score >= 80) return 'low';
     if (score >= 60) return 'medium';
@@ -809,8 +890,16 @@ export class PatientPrivacyControlsService {
   /**
    * Generate quick actions for dashboard
    */
-  private generateQuickActions(consentStats: any, accessStats: any, patientId: string): Array<{
-    type: 'update_consent' | 'request_data' | 'manage_preferences' | 'emergency_settings';
+  private generateQuickActions(
+    consentStats: any,
+    accessStats: any,
+    patientId: string,
+  ): Array<{
+    type:
+      | 'update_consent'
+      | 'request_data'
+      | 'manage_preferences'
+      | 'emergency_settings';
     title: string;
     description: string;
     priority: number;
@@ -866,8 +955,11 @@ export class PatientPrivacyControlsService {
     const completed = requests?.filter(r => r.status === 'completed').length || 0;
     const lastAccessDate = requests
       ?.filter(r => r.status === 'completed')
-      .sort((a, b) => new Date(b.processedAt!).getTime() - new Date(a.processedAt!).getTime())[0]
-      ?.processedAt;
+      .sort(
+        (a, b) =>
+          new Date(b.processedAt!).getTime()
+          - new Date(a.processedAt!).getTime(),
+      )[0]?.processedAt;
 
     return {
       pending,
@@ -895,9 +987,9 @@ export class PatientPrivacyControlsService {
 
     const pending = requests?.filter(r => r.status === 'pending').length || 0;
     const completed = requests?.filter(r => r.status === 'completed').length || 0;
-    const lastRequestDate = requests
-      ?.sort((a, b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime())[0]
-      ?.requestedAt;
+    const lastRequestDate = requests?.sort(
+      (a, b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime(),
+    )[0]?.requestedAt;
 
     return {
       pending,
@@ -929,7 +1021,9 @@ export class PatientPrivacyControlsService {
     }[priority];
 
     const completionDate = new Date();
-    completionDate.setDate(completionDate.getDate() + baseDays * priorityMultiplier);
+    completionDate.setDate(
+      completionDate.getDate() + baseDays * priorityMultiplier,
+    );
 
     return completionDate;
   }
@@ -961,9 +1055,7 @@ export class PatientPrivacyControlsService {
         userAgent: 'Privacy Dashboard',
       };
 
-      await this.supabase
-        .from('privacy_audit_trail')
-        .insert(auditEntry);
+      await this.supabase.from('privacy_audit_trail').insert(auditEntry);
     } catch (error) {
       console.error('Error logging privacy activity:', error);
     }

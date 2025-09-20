@@ -21,13 +21,21 @@ const allowedOrigins = [
   process.env.NEXT_PUBLIC_APP_URL,
 ].filter(Boolean) as string[];
 if (process.env.NODE_ENV !== 'production') {
-  allowedOrigins.push('http://localhost:3000', 'http://localhost:5173', 'http://localhost:8081');
+  allowedOrigins.push(
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:8081',
+  );
 }
 webVitalsRouter.use(
   '*',
   cors({
-    origin:
-      origin => (!origin ? undefined : (allowedOrigins.includes(origin) ? origin : undefined)),
+    origin: origin =>
+      !origin
+        ? undefined
+        : allowedOrigins.includes(origin)
+        ? origin
+        : undefined,
     allowMethods: ['GET', 'POST'],
     allowHeaders: ['Content-Type', 'Authorization'],
   }),
@@ -41,7 +49,12 @@ const sessionsStore = new Map<string, SessionInfo>();
 webVitalsRouter.post('/api/analytics/web-vitals', async c => {
   try {
     const body = await c.req.json();
-    const { metric, data, sessionId, userId }: {
+    const {
+      metric,
+      data,
+      sessionId,
+      userId,
+    }: {
       metric: string;
       data: WebVitalMetric;
       sessionId?: string;
@@ -121,7 +134,13 @@ webVitalsRouter.post('/api/analytics/web-vitals', async c => {
 webVitalsRouter.post('/api/analytics/web-vitals/beacon', async c => {
   try {
     const body = await c.req.json();
-    const { metrics, sessionId, userId, url, timestamp }: {
+    const {
+      metrics,
+      sessionId,
+      userId,
+      url,
+      timestamp,
+    }: {
       metrics: Record<string, any>;
       sessionId?: string;
       userId?: string;
@@ -189,7 +208,9 @@ webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async c => {
     // Filter metrics by time range
     const allMetrics: MetricEntry[] = [];
     for (const [, metrics] of metricsStore.entries()) {
-      const filteredMetrics = metrics.filter(m => new Date(m.timestamp) >= since);
+      const filteredMetrics = metrics.filter(
+        m => new Date(m.timestamp) >= since,
+      );
       allMetrics.push(...filteredMetrics);
     }
 
@@ -199,7 +220,8 @@ webVitalsRouter.get('/api/analytics/web-vitals/dashboard', async c => {
       summary: {
         totalSessions: new Set(allMetrics.map(m => m.sessionId)).size,
         totalMetrics: allMetrics.length,
-        uniqueUsers: new Set(allMetrics.map(m => m.userId).filter(Boolean)).size,
+        uniqueUsers: new Set(allMetrics.map(m => m.userId).filter(Boolean))
+          .size,
         timeRangeStart: since.toISOString(),
       },
       coreWebVitals: calculateCoreWebVitals(allMetrics),
@@ -262,7 +284,9 @@ async function checkPerformanceThresholds(metric: MetricEntry): Promise<void> {
   // Healthcare-specific alerting
   if (
     performanceLevel === 'poor'
-    && (metric.isPatientView || metric.isAppointmentView || metric.isMedicalRecordView)
+    && (metric.isPatientView
+      || metric.isAppointmentView
+      || metric.isMedicalRecordView)
   ) {
     console.warn(
       `🏥 Healthcare performance issue: ${metric.metric} = ${metric.value} on ${metric.pathname}`,
@@ -273,7 +297,9 @@ async function checkPerformanceThresholds(metric: MetricEntry): Promise<void> {
   }
 }
 
-function calculateCoreWebVitals(metrics: MetricEntry[]): Record<string, MetricAnalysis> {
+function calculateCoreWebVitals(
+  metrics: MetricEntry[],
+): Record<string, MetricAnalysis> {
   const vitals = ['LCP', 'FID', 'CLS', 'FCP', 'TTFB'];
   const results: Record<string, MetricAnalysis> = {};
 
@@ -292,8 +318,8 @@ function calculateCoreWebVitals(metrics: MetricEntry[]): Record<string, MetricAn
     }
 
     const values = vitalMetrics.map(m => m.value).sort((a, b) => a - b);
-    const p50 = values[Math.floor(values.length * 0.50)] || 0;
-    const p90 = values[Math.floor(values.length * 0.90)] || 0;
+    const p50 = values[Math.floor(values.length * 0.5)] || 0;
+    const p90 = values[Math.floor(values.length * 0.9)] || 0;
     const p95 = values[Math.floor(values.length * 0.95)] || 0;
     const avg = values.reduce((sum, v) => sum + v, 0) / values.length;
 
@@ -361,8 +387,8 @@ function calculateHealthcareMetrics(metrics: MetricEntry[]): {
   complianceStatus?: string;
   complianceThreshold?: number;
 } {
-  const healthcareMetrics = metrics.filter(m =>
-    m.isPatientView || m.isAppointmentView || m.isMedicalRecordView
+  const healthcareMetrics = metrics.filter(
+    m => m.isPatientView || m.isAppointmentView || m.isMedicalRecordView,
   );
 
   if (healthcareMetrics.length === 0) {
@@ -376,8 +402,10 @@ function calculateHealthcareMetrics(metrics: MetricEntry[]): {
     count: healthcareMetrics.length,
     averageResponseTime: Math.round(avgResponseTime),
     patientViews: healthcareMetrics.filter(m => m.isPatientView).length,
-    appointmentViews: healthcareMetrics.filter(m => m.isAppointmentView).length,
-    medicalRecordViews: healthcareMetrics.filter(m => m.isMedicalRecordView).length,
+    appointmentViews: healthcareMetrics.filter(m => m.isAppointmentView)
+      .length,
+    medicalRecordViews: healthcareMetrics.filter(m => m.isMedicalRecordView)
+      .length,
     complianceStatus: avgResponseTime <= 2000 ? 'compliant' : 'needs-improvement',
     complianceThreshold: 2000,
   };
@@ -419,7 +447,10 @@ function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
   sessions: number;
   avgValue: number;
 }> {
-  const urls: Record<string, { metrics: MetricEntry[]; sessions: Set<string> }> = {};
+  const urls: Record<
+    string,
+    { metrics: MetricEntry[]; sessions: Set<string> }
+  > = {};
 
   metrics.forEach(metric => {
     const pathname = metric.pathname || metric.url || 'unknown';
@@ -435,7 +466,9 @@ function calculateUrlBreakdown(metrics: MetricEntry[]): Array<{
       url,
       metrics: data.metrics.length,
       sessions: data.sessions.size,
-      avgValue: Math.round(data.metrics.reduce((sum, m) => sum + m.value, 0) / data.metrics.length),
+      avgValue: Math.round(
+        data.metrics.reduce((sum, m) => sum + m.value, 0) / data.metrics.length,
+      ),
     }))
     .sort((a, b) => b.metrics - a.metrics);
 }
@@ -459,7 +492,9 @@ function calculateTrends(metrics: MetricEntry[]): Array<{
     .map(([hour, hourMetrics]) => ({
       hour: parseInt(hour),
       count: hourMetrics.length,
-      avgValue: Math.round(hourMetrics.reduce((sum, m) => sum + m.value, 0) / hourMetrics.length),
+      avgValue: Math.round(
+        hourMetrics.reduce((sum, m) => sum + m.value, 0) / hourMetrics.length,
+      ),
     }))
     .sort((a, b) => a.hour - b.hour);
 }

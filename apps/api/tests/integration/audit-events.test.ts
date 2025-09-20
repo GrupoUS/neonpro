@@ -14,11 +14,19 @@ describe('Integration: audit events', () => {
     app.use('/v1/ai-chat/*', auditMiddleware('ai.chat'));
     app.route('/v1/ai-chat', chat);
 
-    const res = await app.request('http://local.test/v1/ai-chat/stream?mock=true', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ messages: [], text: 'oi', locale: 'pt-BR', sessionId: 'sess' }),
-    });
+    const res = await app.request(
+      'http://local.test/v1/ai-chat/stream?mock=true',
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          messages: [],
+          text: 'oi',
+          locale: 'pt-BR',
+          sessionId: 'sess',
+        }),
+      },
+    );
     expect(res.ok).toBe(true);
     expect(spy).toHaveBeenCalled();
     const calls = spy.mock.calls.map(args => args.join(' '));
@@ -34,11 +42,14 @@ describe('Integration: audit events', () => {
     app.use('/v1/tools/finance/*', auditMiddleware('tools.finance'));
     app.route('/v1/tools/finance', finance);
 
-    const res = await app.request('http://local.test/v1/tools/finance/overdue?clinicId=c1', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-clinic-id': 'c1' },
-      body: JSON.stringify({ clinicId: 'c1' }),
-    });
+    const res = await app.request(
+      'http://local.test/v1/tools/finance/overdue?clinicId=c1',
+      {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-clinic-id': 'c1' },
+        body: JSON.stringify({ clinicId: 'c1' }),
+      },
+    );
     expect(res.ok).toBe(true);
     expect(spy).toHaveBeenCalled();
     spy.mockRestore();

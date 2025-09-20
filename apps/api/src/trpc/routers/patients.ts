@@ -41,7 +41,11 @@ import { healthcareProcedure, patientProcedure, protectedProcedure, router } fro
  * Data minimization based on user role and consent
  * Returns only fields that the user is authorized to see
  */
-function minimizePatientData(patient: any, userRole: string, consentLevel: string) {
+function minimizePatientData(
+  patient: any,
+  userRole: string,
+  consentLevel: string,
+) {
   const baseFields = {
     id: patient.id,
     medicalRecordNumber: patient.medicalRecordNumber,
@@ -82,7 +86,11 @@ function minimizePatientData(patient: any, userRole: string, consentLevel: strin
  * Verifies consent integrity and validity
  */
 
-async function validateConsent(patientId: string, operation: string, prisma: any) {
+async function validateConsent(
+  patientId: string,
+  operation: string,
+  prisma: any,
+) {
   const consent = await prisma.lGPDConsent.findFirst({
     where: {
       patientId,
@@ -184,7 +192,10 @@ export const patientsRouter = router({
         }
 
         // Generate cryptographic proof for consent
-        const consentProof = generateCryptographicProof('patient_creation', input);
+        const consentProof = generateCryptographicProof(
+          'patient_creation',
+          input,
+        );
 
         // Create patient with LGPD compliance
         const patient = await ctx.prisma.$transaction(async prisma => {
@@ -254,7 +265,10 @@ export const patientsRouter = router({
             sessionId: ctx.auditMeta.sessionId,
             status: AuditStatus.SUCCESS,
             riskLevel: RiskLevel.MEDIUM,
-            dataAccessed: JSON.stringify(['patient_creation', 'consent_management']),
+            dataAccessed: JSON.stringify([
+              'patient_creation',
+              'consent_management',
+            ]),
             additionalInfo: JSON.stringify({
               action: 'patient_created_with_lgpd_consent',
               consentVersion: input.lgpdConsentVersion,
@@ -399,12 +413,7 @@ export const patientsRouter = router({
   list: protectedProcedure
     .input(ListPatientsSchema)
     .query(async ({ ctx, input }) => {
-      const {
-        limit = 20,
-        offset = 0,
-        search,
-        isActive = true,
-      } = input;
+      const { limit = 20, offset = 0, search, isActive = true } = input;
 
       try {
         // Build search conditions
@@ -414,7 +423,9 @@ export const patientsRouter = router({
           ...(search && {
             OR: [
               { fullName: { contains: search, mode: 'insensitive' } },
-              { medicalRecordNumber: { contains: search, mode: 'insensitive' } },
+              {
+                medicalRecordNumber: { contains: search, mode: 'insensitive' },
+              },
               { email: { contains: search, mode: 'insensitive' } },
             ],
           }),
@@ -505,7 +516,10 @@ export const patientsRouter = router({
         await validateConsent(id, 'update', ctx.prisma);
 
         // Generate cryptographic proof for update
-        const updateProof = generateCryptographicProof('patient_update', updateData);
+        const updateProof = generateCryptographicProof(
+          'patient_update',
+          updateData,
+        );
 
         const updatedPatient = await ctx.prisma.patient.update({
           where: {
@@ -560,21 +574,28 @@ export const patientsRouter = router({
    * Implements the "right to be forgotten" per LGPD Article 18
    */
   withdrawConsent: patientProcedure
-    .input(v.object({
-      patientId: v.string([v.uuid('Invalid patient ID')]),
-      reason: v.string([v.minLength(10, 'Reason must be at least 10 characters')]),
-      digitalSignature: v.optional(v.string()),
-    }))
+    .input(
+      v.object({
+        patientId: v.string([v.uuid('Invalid patient ID')]),
+        reason: v.string([
+          v.minLength(10, 'Reason must be at least 10 characters'),
+        ]),
+        digitalSignature: v.optional(v.string()),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         const { patientId, reason, digitalSignature } = input;
 
         // Generate cryptographic proof for consent withdrawal
-        const withdrawalProof = generateCryptographicProof('consent_withdrawal', {
-          patientId,
-          reason,
-          userId: ctx.userId,
-        });
+        const withdrawalProof = generateCryptographicProof(
+          'consent_withdrawal',
+          {
+            patientId,
+            reason,
+            userId: ctx.userId,
+          },
+        );
 
         const result = await ctx.prisma.$transaction(async prisma => {
           // Update consent status
@@ -593,7 +614,10 @@ export const patientsRouter = router({
           });
 
           // Anonymize patient data (LGPD compliance)
-          const anonymizedPatient = await anonymizePatientData(patientId, prisma);
+          const anonymizedPatient = await anonymizePatientData(
+            patientId,
+            prisma,
+          );
 
           return anonymizedPatient;
         });

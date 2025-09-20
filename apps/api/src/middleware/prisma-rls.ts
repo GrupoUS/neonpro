@@ -57,70 +57,91 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       const userId = c.get('userId') || c.req.header('x-user-id');
       const clinicId = c.get('clinicId') || c.req.header('x-clinic-id');
       const userRole = c.get('userRole')
-        || c.req.header('x-user-role') as HealthcareContext['role'];
+        || (c.req.header('x-user-role') as HealthcareContext['role']);
       const permissions = c.get('permissions') || [];
       const cfmValidated = c.get('cfmValidated') || false;
 
       // Validate authentication requirements
       if (requireAuth && !userId) {
-        return c.json({
-          error: 'Authentication required',
-          code: 'AUTH_REQUIRED',
-          message: 'User authentication is required to access this resource',
-        }, 401);
+        return c.json(
+          {
+            error: 'Authentication required',
+            code: 'AUTH_REQUIRED',
+            message: 'User authentication is required to access this resource',
+          },
+          401,
+        );
       }
 
       if (requireClinicAccess && !clinicId) {
-        return c.json({
-          error: 'Clinic context required',
-          code: 'CLINIC_CONTEXT_REQUIRED',
-          message: 'Clinic context is required for this operation',
-        }, 400);
+        return c.json(
+          {
+            error: 'Clinic context required',
+            code: 'CLINIC_CONTEXT_REQUIRED',
+            message: 'Clinic context is required for this operation',
+          },
+          400,
+        );
       }
 
       // Validate role requirements
       if (requiredRole && userRole !== requiredRole) {
-        return c.json({
-          error: 'Insufficient role permissions',
-          code: 'ROLE_PERMISSION_DENIED',
-          message: `Role '${requiredRole}' required, but user has '${userRole}'`,
-        }, 403);
+        return c.json(
+          {
+            error: 'Insufficient role permissions',
+            code: 'ROLE_PERMISSION_DENIED',
+            message: `Role '${requiredRole}' required, but user has '${userRole}'`,
+          },
+          403,
+        );
       }
 
       // Validate specific permissions
       if (requiredPermissions.length > 0) {
-        const hasRequiredPermissions = requiredPermissions.every(
-          permission => permissions.includes(permission),
+        const hasRequiredPermissions = requiredPermissions.every(permission =>
+          permissions.includes(permission)
         );
 
         if (!hasRequiredPermissions) {
-          return c.json({
-            error: 'Insufficient permissions',
-            code: 'PERMISSION_DENIED',
-            message: `Required permissions: ${requiredPermissions.join(', ')}`,
-          }, 403);
+          return c.json(
+            {
+              error: 'Insufficient permissions',
+              code: 'PERMISSION_DENIED',
+              message: `Required permissions: ${requiredPermissions.join(', ')}`,
+            },
+            403,
+          );
         }
       }
 
       // Validate CFM (Brazilian healthcare professional license) if required
       if (validateCFM && userRole === 'professional' && !cfmValidated) {
-        return c.json({
-          error: 'CFM validation required',
-          code: 'CFM_VALIDATION_REQUIRED',
-          message: 'Brazilian healthcare professional license validation required',
-        }, 403);
+        return c.json(
+          {
+            error: 'CFM validation required',
+            code: 'CFM_VALIDATION_REQUIRED',
+            message: 'Brazilian healthcare professional license validation required',
+          },
+          403,
+        );
       }
 
       // Validate clinic access using existing Supabase RLS
       if (requireClinicAccess && userId && clinicId) {
-        const hasClinicAccess = await healthcareRLS.canAccessClinic(userId, clinicId);
+        const hasClinicAccess = await healthcareRLS.canAccessClinic(
+          userId,
+          clinicId,
+        );
 
         if (!hasClinicAccess) {
-          return c.json({
-            error: 'Clinic access denied',
-            code: 'CLINIC_ACCESS_DENIED',
-            message: 'User does not have access to the specified clinic',
-          }, 403);
+          return c.json(
+            {
+              error: 'Clinic access denied',
+              code: 'CLINIC_ACCESS_DENIED',
+              message: 'User does not have access to the specified clinic',
+            },
+            403,
+          );
         }
       }
 
@@ -141,11 +162,14 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       // Validate the context with the Prisma client
       const isContextValid = await prismaWithContext.validateContext();
       if (!isContextValid) {
-        return c.json({
-          error: 'Healthcare context validation failed',
-          code: 'CONTEXT_VALIDATION_FAILED',
-          message: 'Unable to validate healthcare access context',
-        }, 403);
+        return c.json(
+          {
+            error: 'Healthcare context validation failed',
+            code: 'CONTEXT_VALIDATION_FAILED',
+            message: 'Unable to validate healthcare access context',
+          },
+          403,
+        );
       }
 
       // Store healthcare context and Prisma client in Hono context
@@ -192,29 +216,38 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
 
       // Handle specific healthcare compliance errors
       if (error instanceof HealthcareComplianceError) {
-        return c.json({
-          error: 'Healthcare compliance violation',
-          code: error.code,
-          framework: error.complianceFramework,
-          message: error.message,
-        }, 403);
+        return c.json(
+          {
+            error: 'Healthcare compliance violation',
+            code: error.code,
+            framework: error.complianceFramework,
+            message: error.message,
+          },
+          403,
+        );
       }
 
       if (error instanceof UnauthorizedHealthcareAccessError) {
-        return c.json({
-          error: 'Unauthorized healthcare access',
-          resourceType: error.resourceType,
-          resourceId: error.resourceId,
-          message: error.message,
-        }, 403);
+        return c.json(
+          {
+            error: 'Unauthorized healthcare access',
+            resourceType: error.resourceType,
+            resourceId: error.resourceId,
+            message: error.message,
+          },
+          403,
+        );
       }
 
       // Generic error handling
-      return c.json({
-        error: 'Internal server error',
-        code: 'INTERNAL_ERROR',
-        message: 'An unexpected error occurred during request processing',
-      }, 500);
+      return c.json(
+        {
+          error: 'Internal server error',
+          code: 'INTERNAL_ERROR',
+          message: 'An unexpected error occurred during request processing',
+        },
+        500,
+      );
     }
   };
 }
@@ -228,19 +261,27 @@ export function patientAccessMiddleware(
   return prismaRLSMiddleware({
     ...options,
     requireClinicAccess: true,
-    requiredPermissions: ['patient_read', ...(options.requiredPermissions || [])],
+    requiredPermissions: [
+      'patient_read',
+      ...(options.requiredPermissions || []),
+    ],
   });
 }
 
 /**
  * Specialized middleware for professional operations
  */
-export function professionalAccessMiddleware(options: Omit<PrismaRLSOptions, 'validateCFM'> = {}) {
+export function professionalAccessMiddleware(
+  options: Omit<PrismaRLSOptions, 'validateCFM'> = {},
+) {
   return prismaRLSMiddleware({
     ...options,
     requiredRole: 'professional',
     validateCFM: true,
-    requiredPermissions: ['professional_operations', ...(options.requiredPermissions || [])],
+    requiredPermissions: [
+      'professional_operations',
+      ...(options.requiredPermissions || []),
+    ],
   });
 }
 
@@ -251,7 +292,10 @@ export function clinicAdminMiddleware(options: PrismaRLSOptions = {}) {
   return prismaRLSMiddleware({
     ...options,
     requiredRole: 'admin',
-    requiredPermissions: ['clinic_admin', ...(options.requiredPermissions || [])],
+    requiredPermissions: [
+      'clinic_admin',
+      ...(options.requiredPermissions || []),
+    ],
   });
 }
 
@@ -261,7 +305,11 @@ export function clinicAdminMiddleware(options: PrismaRLSOptions = {}) {
 export function lgpdOperationsMiddleware(options: PrismaRLSOptions = {}) {
   return prismaRLSMiddleware({
     ...options,
-    requiredPermissions: ['lgpd_operations', 'data_export', ...(options.requiredPermissions || [])],
+    requiredPermissions: [
+      'lgpd_operations',
+      'data_export',
+      ...(options.requiredPermissions || []),
+    ],
     logAccess: true, // Always log LGPD operations
   });
 }

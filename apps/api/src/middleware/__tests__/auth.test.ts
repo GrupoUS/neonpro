@@ -77,7 +77,10 @@ describe('Authentication Middleware Enhancement (T073)', () => {
           licenseStatus: 'active',
         }),
       );
-      expect(mockContext.set).toHaveBeenCalledWith('isHealthcareProfessional', true);
+      expect(mockContext.set).toHaveBeenCalledWith(
+        'isHealthcareProfessional',
+        true,
+      );
       expect(mockNext).toHaveBeenCalled();
     });
 
@@ -128,7 +131,10 @@ describe('Authentication Middleware Enhancement (T073)', () => {
     });
 
     it('should validate LGPD consent with required purposes', async () => {
-      const middleware = requireLGPDConsent(['healthcare_service'], ['personal_data']);
+      const middleware = requireLGPDConsent(
+        ['healthcare_service'],
+        ['personal_data'],
+      );
 
       await middleware(mockContext, mockNext);
 
@@ -184,7 +190,10 @@ describe('Authentication Middleware Enhancement (T073)', () => {
         return undefined;
       });
 
-      const middleware = requireLGPDConsent(['healthcare_service'], ['health_data']);
+      const middleware = requireLGPDConsent(
+        ['healthcare_service'],
+        ['health_data'],
+      );
       await middleware(mockContext, mockNext);
 
       const session = sessionManager.getSession(sessionId);
@@ -224,8 +233,12 @@ describe('Authentication Middleware Enhancement (T073)', () => {
         if (key === 'healthcareProfessional') {
           mockContext.get.mockImplementation((getKey: string) => {
             if (getKey === 'healthcareProfessional') return value;
-            if (getKey === 'userId') return '550e8400-e29b-41d4-a716-446655440001';
-            if (getKey === 'sessionId') return '550e8400-e29b-41d4-a716-446655440002';
+            if (getKey === 'userId') {
+              return '550e8400-e29b-41d4-a716-446655440001';
+            }
+            if (getKey === 'sessionId') {
+              return '550e8400-e29b-41d4-a716-446655440002';
+            }
             return undefined;
           });
         }

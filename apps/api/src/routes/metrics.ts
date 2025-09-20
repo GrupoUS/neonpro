@@ -33,65 +33,83 @@ const serverMetricSchema = z.object({
 });
 
 // Collect Web Vitals
-metricsApi.post('/web-vitals', zValidator('json', webVitalSchema), async c => {
-  const metric = c.req.valid('json');
+metricsApi.post(
+  '/web-vitals',
+  zValidator('json', webVitalSchema),
+  async c => {
+    const metric = c.req.valid('json');
 
-  // Store metric
-  metrics.webVitals.push({
-    ...metric,
-    receivedAt: Date.now(),
-  });
+    // Store metric
+    metrics.webVitals.push({
+      ...metric,
+      receivedAt: Date.now(),
+    });
 
-  // Keep only last 10,000 metrics
-  if (metrics.webVitals.length > 10000) {
-    metrics.webVitals = metrics.webVitals.slice(-10000);
-  }
+    // Keep only last 10,000 metrics
+    if (metrics.webVitals.length > 10000) {
+      metrics.webVitals = metrics.webVitals.slice(-10000);
+    }
 
-  return c.json({ success: true });
-});
+    return c.json({ success: true });
+  },
+);
 
 // Collect server metrics
-metricsApi.post('/server', zValidator('json', serverMetricSchema), async c => {
-  const metric = c.req.valid('json');
+metricsApi.post(
+  '/server',
+  zValidator('json', serverMetricSchema),
+  async c => {
+    const metric = c.req.valid('json');
 
-  metrics.serverMetrics.push({
-    ...metric,
-    receivedAt: Date.now(),
-  });
+    metrics.serverMetrics.push({
+      ...metric,
+      receivedAt: Date.now(),
+    });
 
-  if (metrics.serverMetrics.length > 5000) {
-    metrics.serverMetrics = metrics.serverMetrics.slice(-5000);
-  }
+    if (metrics.serverMetrics.length > 5000) {
+      metrics.serverMetrics = metrics.serverMetrics.slice(-5000);
+    }
 
-  return c.json({ success: true });
-});
+    return c.json({ success: true });
+  },
+);
 
 // Get performance dashboard data
 metricsApi.get('/dashboard', async c => {
   const now = Date.now();
-  const last24Hours = now - (24 * 60 * 60 * 1000);
+  const last24Hours = now - 24 * 60 * 60 * 1000;
   // const last1Hour = now - (60 * 60 * 1000); // unused
 
   // Filter recent metrics
-  const recentWebVitals = metrics.webVitals.filter(m => m.timestamp > last24Hours);
-  const recentServerMetrics = metrics.serverMetrics.filter(m => m.timestamp > last24Hours);
+  const recentWebVitals = metrics.webVitals.filter(
+    m => m.timestamp > last24Hours,
+  );
+  const recentServerMetrics = metrics.serverMetrics.filter(
+    m => m.timestamp > last24Hours,
+  );
 
   // Calculate Core Web Vitals averages
-  const webVitalsByName = recentWebVitals.reduce((acc, metric) => {
-    if (!acc[metric.name]) acc[metric.name] = [];
-    acc[metric.name].push(metric.value);
-    return acc;
-  }, {} as Record<string, number[]>);
+  const webVitalsByName = recentWebVitals.reduce(
+    (acc, metric) => {
+      if (!acc[metric.name]) acc[metric.name] = [];
+      acc[metric.name].push(metric.value);
+      return acc;
+    },
+    {} as Record<string, number[]>,
+  );
 
-  const webVitalsAverages = Object.entries(webVitalsByName).reduce((acc, [name, values]) => {
-    acc[name] = {
-      average: values.reduce((sum, val) => sum + val, 0) / values.length,
-      p95: percentile(values, 95),
-      p99: percentile(values, 99),
-      count: values.length,
-    };
-    return acc;
-  }, {} as Record<string, any>);
+  const webVitalsAverages = Object.entries(webVitalsByName).reduce(
+    (acc, [name, values]) => {
+      acc[name] = {
+        average: values.reduce((sum, val) => sum + val, 0) / values.length,
+        p95: percentile(values, 95),
+        p99: percentile(values, 99),
+        count: values.length,
+      };
+      return acc;
+    },
+    {} as Record<string, any>,
+  );
 
   // Calculate server metrics
   const coldStarts = recentServerMetrics
@@ -136,7 +154,7 @@ metricsApi.get('/dashboard', async c => {
 // Get real-time metrics (last 5 minutes)
 metricsApi.get('/realtime', async c => {
   const now = Date.now();
-  const last5Minutes = now - (5 * 60 * 1000);
+  const last5Minutes = now - 5 * 60 * 1000;
 
   const recentMetrics = {
     webVitals: metrics.webVitals.filter(m => m.timestamp > last5Minutes),
@@ -209,7 +227,10 @@ function generateAlerts(webVitals: any, serverMetrics: any[]) {
 
 function calculateAverageRating(metrics: any[]): number {
   const ratings = { good: 3, 'needs-improvement': 2, poor: 1 };
-  const total = metrics.reduce((sum, metric) => sum + (ratings[metric.rating] || 0), 0);
+  const total = metrics.reduce(
+    (sum, metric) => sum + (ratings[metric.rating] || 0),
+    0,
+  );
   return total / metrics.length || 0;
 }
 

@@ -34,30 +34,34 @@
 export function ShineBorder({
   borderWidth = 1,
   duration = 14,
-  shineColor = '#AC9469',
+  shineColor = "#AC9469",
   className,
   style,
   ...props
 }: ShineBorderProps) {
-  const colorValue = Array.isArray(shineColor) ? shineColor.join(',') : shineColor;
+  const colorValue = Array.isArray(shineColor)
+    ? shineColor.join(",")
+    : shineColor;
 
   return (
     <div
       className={cn(
-        'pointer-events-none absolute inset-0 rounded-[inherit] z-0 overflow-hidden',
+        "pointer-events-none absolute inset-0 rounded-[inherit] z-0 overflow-hidden",
         className,
       )}
-      style={{
-        '--border-width': `${borderWidth}px`,
-        '--duration': `${duration}s`,
-        '--shine-color': colorValue,
-        ...style,
-      } as React.CSSProperties}
+      style={
+        {
+          "--border-width": `${borderWidth}px`,
+          "--duration": `${duration}s`,
+          "--shine-color": colorValue,
+          ...style,
+        } as React.CSSProperties
+      }
       {...props}
     >
       {/* Top Border - Horizontal Light */}
       <div
-        className='absolute top-0 left-0 w-full h-[2px] opacity-0'
+        className="absolute top-0 left-0 w-full h-[2px] opacity-0"
         style={{
           background: `linear-gradient(90deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
           animation: `shine-top ${duration}s infinite linear`,
@@ -66,27 +70,25 @@ export function ShineBorder({
 
       {/* Right Border - Vertical Light */}
       <div
-        className='absolute top-0 right-0 w-[2px] h-full opacity-0'
+        className="absolute top-0 right-0 w-[2px] h-full opacity-0"
         style={{
-          background:
-            `linear-gradient(180deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
+          background: `linear-gradient(180deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
           animation: `shine-right ${duration}s infinite linear`,
         }}
       />
 
       {/* Bottom Border - Horizontal Light (Reverse) */}
       <div
-        className='absolute bottom-0 right-0 w-full h-[2px] opacity-0'
+        className="absolute bottom-0 right-0 w-full h-[2px] opacity-0"
         style={{
-          background:
-            `linear-gradient(270deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
+          background: `linear-gradient(270deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
           animation: `shine-bottom ${duration}s infinite linear`,
         }}
       />
 
       {/* Left Border - Vertical Light (Reverse) */}
       <div
-        className='absolute bottom-0 left-0 w-[2px] h-full opacity-0'
+        className="absolute bottom-0 left-0 w-[2px] h-full opacity-0"
         style={{
           background: `linear-gradient(0deg, transparent 0%, ${colorValue} 50%, transparent 100%)`,
           animation: `shine-left ${duration}s infinite linear`,
@@ -102,33 +104,69 @@ export function ShineBorder({
 ```css
 /* Traveling Light Animations - Each border animates sequentially */
 @keyframes shine-top {
-  0% { opacity: 0; }
-  12.5% { opacity: 1; }    /* Peak at 12.5% (1/8 of cycle) */
-  25% { opacity: 0; }      /* Fade out at 25% (1/4 of cycle) */
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  12.5% {
+    opacity: 1;
+  } /* Peak at 12.5% (1/8 of cycle) */
+  25% {
+    opacity: 0;
+  } /* Fade out at 25% (1/4 of cycle) */
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes shine-right {
-  0% { opacity: 0; }
-  25% { opacity: 0; }      /* Wait for top to finish */
-  37.5% { opacity: 1; }    /* Peak at 37.5% (3/8 of cycle) */
-  50% { opacity: 0; }      /* Fade out at 50% (1/2 of cycle) */
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 0;
+  } /* Wait for top to finish */
+  37.5% {
+    opacity: 1;
+  } /* Peak at 37.5% (3/8 of cycle) */
+  50% {
+    opacity: 0;
+  } /* Fade out at 50% (1/2 of cycle) */
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes shine-bottom {
-  0% { opacity: 0; }
-  50% { opacity: 0; }      /* Wait for right to finish */
-  62.5% { opacity: 1; }    /* Peak at 62.5% (5/8 of cycle) */
-  75% { opacity: 0; }      /* Fade out at 75% (3/4 of cycle) */
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0;
+  } /* Wait for right to finish */
+  62.5% {
+    opacity: 1;
+  } /* Peak at 62.5% (5/8 of cycle) */
+  75% {
+    opacity: 0;
+  } /* Fade out at 75% (3/4 of cycle) */
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes shine-left {
-  0% { opacity: 0; }
-  75% { opacity: 0; }      /* Wait for bottom to finish */
-  87.5% { opacity: 1; }    /* Peak at 87.5% (7/8 of cycle) */
-  100% { opacity: 0; }     /* Fade out at 100% (full cycle) */
+  0% {
+    opacity: 0;
+  }
+  75% {
+    opacity: 0;
+  } /* Wait for bottom to finish */
+  87.5% {
+    opacity: 1;
+  } /* Peak at 87.5% (7/8 of cycle) */
+  100% {
+    opacity: 0;
+  } /* Fade out at 100% (full cycle) */
 }
 ```
 

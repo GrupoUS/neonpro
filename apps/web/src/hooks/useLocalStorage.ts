@@ -3,15 +3,15 @@
  * LGPD-compliant storage with encryption and privacy controls
  */
 
-'use client';
+"use client";
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react";
 
 export function useLocalStorage<T>(key: string, initialValue: T) {
   // State to store our value
   // Pass initial state function to useState so logic is only executed once
   const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return initialValue;
     }
 
@@ -29,23 +29,27 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 
   // Return a wrapped version of useState's setter function that...
   // ... persists the new value to localStorage.
-  const setValue = useCallback((value: T | ((val: T) => T)) => {
-    try {
-      // Allow value to be a function so we have same API as useState
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+  const setValue = useCallback(
+    (value: T | ((val: T) => T)) => {
+      try {
+        // Allow value to be a function so we have same API as useState
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
 
-      // Save state
-      setStoredValue(valueToStore);
+        // Save state
+        setStoredValue(valueToStore);
 
-      // Save to local storage
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        // Save to local storage
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        }
+      } catch (error) {
+        // A more advanced implementation would handle the error case
+        console.warn(`Error setting localStorage key "${key}":`, error);
       }
-    } catch (error) {
-      // A more advanced implementation would handle the error case
-      console.warn(`Error setting localStorage key "${key}":`, error);
-    }
-  }, [key, storedValue]);
+    },
+    [key, storedValue],
+  );
 
   // Sync with other tabs/windows
   useEffect(() => {
@@ -59,10 +63,10 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
       }
     };
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('storage', handleStorageChange);
+    if (typeof window !== "undefined") {
+      window.addEventListener("storage", handleStorageChange);
       return () => {
-        window.removeEventListener('storage', handleStorageChange);
+        window.removeEventListener("storage", handleStorageChange);
       };
     }
   }, [key]);
@@ -73,7 +77,7 @@ export function useLocalStorage<T>(key: string, initialValue: T) {
 // Enhanced version with encryption for sensitive data
 export function useSecureLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return initialValue;
     }
 
@@ -95,22 +99,26 @@ export function useSecureLocalStorage<T>(key: string, initialValue: T) {
     }
   });
 
-  const setSecureValue = useCallback((value: T | ((val: T) => T)) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+  const setSecureValue = useCallback(
+    (value: T | ((val: T) => T)) => {
+      try {
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
 
-      setStoredValue(valueToStore);
+        setStoredValue(valueToStore);
 
-      if (typeof window !== 'undefined') {
-        // Encrypt if needed (simplified - in production use proper encryption)
-        const stringValue = JSON.stringify(valueToStore);
-        const encryptedValue = btoa(stringValue); // Base64 encoding (not encryption)
-        window.localStorage.setItem(key, encryptedValue);
+        if (typeof window !== "undefined") {
+          // Encrypt if needed (simplified - in production use proper encryption)
+          const stringValue = JSON.stringify(valueToStore);
+          const encryptedValue = btoa(stringValue); // Base64 encoding (not encryption)
+          window.localStorage.setItem(key, encryptedValue);
+        }
+      } catch (error) {
+        console.warn(`Error setting secure localStorage key "${key}":`, error);
       }
-    } catch (error) {
-      console.warn(`Error setting secure localStorage key "${key}":`, error);
-    }
-  }, [key, storedValue]);
+    },
+    [key, storedValue],
+  );
 
   return [storedValue, setSecureValue] as const;
 }
@@ -118,7 +126,7 @@ export function useSecureLocalStorage<T>(key: string, initialValue: T) {
 // Session storage version for temporary data
 export function useSessionStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return initialValue;
     }
 
@@ -131,19 +139,23 @@ export function useSessionStorage<T>(key: string, initialValue: T) {
     }
   });
 
-  const setValue = useCallback((value: T | ((val: T) => T)) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+  const setValue = useCallback(
+    (value: T | ((val: T) => T)) => {
+      try {
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
 
-      setStoredValue(valueToStore);
+        setStoredValue(valueToStore);
 
-      if (typeof window !== 'undefined') {
-        window.sessionStorage.setItem(key, JSON.stringify(valueToStore));
+        if (typeof window !== "undefined") {
+          window.sessionStorage.setItem(key, JSON.stringify(valueToStore));
+        }
+      } catch (error) {
+        console.warn(`Error setting sessionStorage key "${key}":`, error);
       }
-    } catch (error) {
-      console.warn(`Error setting sessionStorage key "${key}":`, error);
-    }
-  }, [key, storedValue]);
+    },
+    [key, storedValue],
+  );
 
   return [storedValue, setValue] as const;
 }
@@ -158,10 +170,14 @@ export function useCompliantLocalStorage<T>(
     autoCleanup?: boolean;
   } = {},
 ) {
-  const { retentionDays = 30, isSensitiveData = false, autoCleanup = true } = options;
+  const {
+    retentionDays = 30,
+    isSensitiveData = false,
+    autoCleanup = true,
+  } = options;
 
   const [storedValue, setStoredValue] = useState<T>(() => {
-    if (typeof window === 'undefined') {
+    if (typeof window === "undefined") {
       return initialValue;
     }
 
@@ -173,7 +189,8 @@ export function useCompliantLocalStorage<T>(
 
       // Check retention policy
       if (autoCleanup && parsedItem.timestamp) {
-        const ageInDays = (Date.now() - parsedItem.timestamp) / (1000 * 60 * 60 * 24);
+        const ageInDays =
+          (Date.now() - parsedItem.timestamp) / (1000 * 60 * 60 * 24);
         if (ageInDays > retentionDays) {
           window.localStorage.removeItem(key);
           return initialValue;
@@ -187,37 +204,44 @@ export function useCompliantLocalStorage<T>(
     }
   });
 
-  const setCompliantValue = useCallback((value: T | ((val: T) => T)) => {
-    try {
-      const valueToStore = value instanceof Function ? value(storedValue) : value;
+  const setCompliantValue = useCallback(
+    (value: T | ((val: T) => T)) => {
+      try {
+        const valueToStore =
+          value instanceof Function ? value(storedValue) : value;
 
-      setStoredValue(valueToStore);
+        setStoredValue(valueToStore);
 
-      if (typeof window !== 'undefined') {
-        const itemToStore = isSensitiveData
-          ? {
-            data: valueToStore,
-            timestamp: Date.now(),
-            version: '1.0',
-            sensitive: true,
-          }
-          : {
-            value: valueToStore,
-            timestamp: Date.now(),
-            version: '1.0',
-            sensitive: false,
-          };
+        if (typeof window !== "undefined") {
+          const itemToStore = isSensitiveData
+            ? {
+                data: valueToStore,
+                timestamp: Date.now(),
+                version: "1.0",
+                sensitive: true,
+              }
+            : {
+                value: valueToStore,
+                timestamp: Date.now(),
+                version: "1.0",
+                sensitive: false,
+              };
 
-        window.localStorage.setItem(key, JSON.stringify(itemToStore));
+          window.localStorage.setItem(key, JSON.stringify(itemToStore));
+        }
+      } catch (error) {
+        console.warn(
+          `Error setting compliant localStorage key "${key}":`,
+          error,
+        );
       }
-    } catch (error) {
-      console.warn(`Error setting compliant localStorage key "${key}":`, error);
-    }
-  }, [key, storedValue, isSensitiveData]);
+    },
+    [key, storedValue, isSensitiveData],
+  );
 
   // Manual cleanup function
   const cleanup = useCallback(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       window.localStorage.removeItem(key);
       setStoredValue(initialValue);
     }

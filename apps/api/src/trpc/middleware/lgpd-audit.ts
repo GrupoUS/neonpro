@@ -52,7 +52,11 @@ const DATA_MINIMIZATION_RULES = {
 /**
  * Generate cryptographic proof for consent operations
  */
-function generateCryptographicProof(data: any, userId: string, timestamp: Date): {
+function generateCryptographicProof(
+  data: any,
+  userId: string,
+  timestamp: Date,
+): {
   hash: string;
   signature: string;
   timestampToken: string;
@@ -91,7 +95,10 @@ function generateCryptographicProof(data: any, userId: string, timestamp: Date):
 function classifyDataCategory(path: string, input: any): string {
   if (path.includes('patient')) {
     if (
-      input?.bloodType || input?.allergies || input?.chronicConditions || input?.currentMedications
+      input?.bloodType
+      || input?.allergies
+      || input?.chronicConditions
+      || input?.currentMedications
     ) {
       return LGPD_DATA_CATEGORIES.HEALTH;
     }
@@ -115,7 +122,11 @@ function classifyDataCategory(path: string, input: any): string {
 /**
  * Apply data minimization based on operation type and user role
  */
-function applyDataMinimization(data: any, operationType: string, userRole?: string): any {
+function applyDataMinimization(
+  data: any,
+  operationType: string,
+  userRole?: string,
+): any {
   if (!data || typeof data !== 'object') return data;
 
   // Admin users bypass minimization
@@ -124,9 +135,9 @@ function applyDataMinimization(data: any, operationType: string, userRole?: stri
   }
 
   // Apply minimization rules
-  const allowedFields =
-    DATA_MINIMIZATION_RULES[operationType as keyof typeof DATA_MINIMIZATION_RULES]
-    || DATA_MINIMIZATION_RULES.summary;
+  const allowedFields = DATA_MINIMIZATION_RULES[
+    operationType as keyof typeof DATA_MINIMIZATION_RULES
+  ] || DATA_MINIMIZATION_RULES.summary;
 
   if (Array.isArray(data)) {
     return data.map(item => {
@@ -158,7 +169,13 @@ function applyDataMinimization(data: any, operationType: string, userRole?: stri
  * data minimization enforcement, and LGPD compliance validation.
  */
 
-export const lgpdAuditMiddleware = async ({ ctx, next, path, type, input }: any) => {
+export const lgpdAuditMiddleware = async ({
+  ctx,
+  next,
+  path,
+  type,
+  input,
+}: any) => {
   const start = performance.now();
   let auditEntry: any = null;
 
@@ -215,7 +232,11 @@ export const lgpdAuditMiddleware = async ({ ctx, next, path, type, input }: any)
 
     // Apply data minimization to response
     const operationType = determineOperationType(path, type);
-    const minimizedResult = applyDataMinimization(result, operationType, ctx.userRole);
+    const minimizedResult = applyDataMinimization(
+      result,
+      operationType,
+      ctx.userRole,
+    );
 
     // Complete audit entry on success
     if (auditEntry) {
@@ -262,18 +283,27 @@ export const lgpdAuditMiddleware = async ({ ctx, next, path, type, input }: any)
 function getResourceType(path: string): ResourceType {
   if (path.includes('patient')) return ResourceType.PATIENT_RECORD;
   if (path.includes('report')) return ResourceType.REPORT;
-  if (path.includes('user') || path.includes('auth')) return ResourceType.USER_ACCOUNT;
+  if (path.includes('user') || path.includes('auth')) {
+    return ResourceType.USER_ACCOUNT;
+  }
   return ResourceType.SYSTEM_CONFIG;
 }
 
 function extractResourceId(input: any): string | null {
   if (!input || typeof input !== 'object') return null;
-  return input.id || input.patientId || input.appointmentId || input.userId || null;
+  return (
+    input.id || input.patientId || input.appointmentId || input.userId || null
+  );
 }
 
-function calculateRiskLevel(path: string, type: string, dataCategory: string): RiskLevel {
+function calculateRiskLevel(
+  path: string,
+  type: string,
+  dataCategory: string,
+): RiskLevel {
   if (
-    dataCategory === LGPD_DATA_CATEGORIES.HEALTH || dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE
+    dataCategory === LGPD_DATA_CATEGORIES.HEALTH
+    || dataCategory === LGPD_DATA_CATEGORIES.SENSITIVE
   ) {
     return type === 'mutation' ? RiskLevel.HIGH : RiskLevel.MEDIUM;
   }
@@ -292,7 +322,9 @@ function calculateRiskLevel(path: string, type: string, dataCategory: string): R
 function determineOperationType(path: string, type: string): string {
   if (path.includes('list') || path.includes('search')) return 'list';
   if (path.includes('summary') || path.includes('overview')) return 'summary';
-  if (path.includes('appointment') || path.includes('schedule')) return 'appointment';
+  if (path.includes('appointment') || path.includes('schedule')) {
+    return 'appointment';
+  }
   if (path.includes('emergency') || path.includes('urgent')) return 'emergency';
   return type === 'query' ? 'summary' : 'list';
 }

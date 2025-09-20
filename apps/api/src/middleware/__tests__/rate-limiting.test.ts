@@ -107,14 +107,19 @@ describe('Rate Limiting Middleware', () => {
 
       expect(context.header).toHaveBeenCalledWith('X-RateLimit-Limit', '10');
       expect(context.header).toHaveBeenCalledWith('X-RateLimit-Remaining', '9');
-      expect(context.header).toHaveBeenCalledWith('X-RateLimit-Window', '60000');
+      expect(context.header).toHaveBeenCalledWith(
+        'X-RateLimit-Window',
+        '60000',
+      );
     });
   });
 
   describe('Healthcare-Specific Rules', () => {
     it('applies emergency endpoint rules correctly', async () => {
       const middleware = rateLimitMiddleware(DEFAULT_RATE_LIMIT_CONFIG);
-      const context = createMockContext({ path: '/api/v1/emergency/cardiac-alert' });
+      const context = createMockContext({
+        path: '/api/v1/emergency/cardiac-alert',
+      });
       const next = vi.fn();
 
       // Emergency endpoints should have higher limits (1000 requests/minute)
@@ -379,7 +384,9 @@ describe('Rate Limiting Middleware', () => {
       } catch (error: any) {
         const errorData = JSON.parse(error.message);
         expect(errorData.guidance).toContain('medical emergency');
-        expect(errorData.compliance.standard).toBe('LGPD-Article-33-Security-Measures');
+        expect(errorData.compliance.standard).toBe(
+          'LGPD-Article-33-Security-Measures',
+        );
       }
     });
 

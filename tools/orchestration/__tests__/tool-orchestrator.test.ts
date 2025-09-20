@@ -3,16 +3,16 @@
  * Tests coordinated tool execution with intelligent scheduling and conflict resolution
  */
 
-import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
-import { ToolOrchestrator } from '../tool-orchestrator';
+import { describe, it, expect, beforeEach, afterEach } from "bun:test";
+import { ToolOrchestrator } from "../tool-orchestrator";
 import type {
   ToolExecutionRequest,
   ToolExecutionResult,
   AgentName,
   FeatureContext,
-} from '../types';
+} from "../types";
 
-describe('ToolOrchestrator', () => {
+describe("ToolOrchestrator", () => {
   let orchestrator: ToolOrchestrator;
 
   beforeEach(() => {
@@ -23,14 +23,14 @@ describe('ToolOrchestrator', () => {
     // Cleanup if needed
   });
 
-  describe('Tool Execution', () => {
-    it('should execute simple tool request successfully', async () => {
+  describe("Tool Execution", () => {
+    it("should execute simple tool request successfully", async () => {
       const request: ToolExecutionRequest = {
-        id: 'test-1',
-        toolName: 'test-tool',
-        action: 'test-action',
-        parameters: { input: 'test' },
-        priority: 'medium' as const,
+        id: "test-1",
+        toolName: "test-tool",
+        action: "test-action",
+        parameters: { input: "test" },
+        priority: "medium" as const,
         timeout: 5000,
         retries: 2,
       };
@@ -44,30 +44,31 @@ describe('ToolOrchestrator', () => {
       expect(result.duration).toBeGreaterThan(0);
     });
 
-    it('should handle tool execution with dependencies', async () => {
+    it("should handle tool execution with dependencies", async () => {
       const dependencyRequest: ToolExecutionRequest = {
-        id: 'dependency-1',
-        toolName: 'dependency-tool',
-        action: 'setup',
+        id: "dependency-1",
+        toolName: "dependency-tool",
+        action: "setup",
         parameters: { setup: true },
-        priority: 'high' as const,
+        priority: "high" as const,
         timeout: 3000,
         retries: 1,
       };
 
       const dependentRequest: ToolExecutionRequest = {
-        id: 'dependent-1',
-        toolName: 'dependent-tool',
-        action: 'execute',
+        id: "dependent-1",
+        toolName: "dependent-tool",
+        action: "execute",
         parameters: { ready: true },
-        priority: 'medium' as const,
+        priority: "medium" as const,
         timeout: 5000,
         retries: 2,
-        dependencies: ['dependency-1'],
+        dependencies: ["dependency-1"],
       };
 
       // Execute dependency first
-      const dependencyResult = await orchestrator.executeTool(dependencyRequest);
+      const dependencyResult =
+        await orchestrator.executeTool(dependencyRequest);
       expect(dependencyResult.success).toBe(true);
 
       // Execute dependent tool
@@ -75,13 +76,13 @@ describe('ToolOrchestrator', () => {
       expect(dependentResult.success).toBe(true);
     });
 
-    it('should handle tool execution failures gracefully', async () => {
+    it("should handle tool execution failures gracefully", async () => {
       const failingRequest: ToolExecutionRequest = {
-        id: 'fail-1',
-        toolName: 'failing-tool',
-        action: 'fail',
+        id: "fail-1",
+        toolName: "failing-tool",
+        action: "fail",
         parameters: { shouldFail: true },
-        priority: 'low' as const,
+        priority: "low" as const,
         timeout: 1000,
         retries: 1,
       };
@@ -93,13 +94,13 @@ describe('ToolOrchestrator', () => {
       expect(result.duration).toBeGreaterThan(0);
     });
 
-    it('should retry failed tool executions', async () => {
+    it("should retry failed tool executions", async () => {
       const flakyRequest: ToolExecutionRequest = {
-        id: 'flaky-1',
-        toolName: 'flaky-tool',
-        action: 'flaky',
+        id: "flaky-1",
+        toolName: "flaky-tool",
+        action: "flaky",
         parameters: { succeedOnRetry: true },
-        priority: 'medium' as const,
+        priority: "medium" as const,
         timeout: 2000,
         retries: 3,
       };
@@ -111,14 +112,14 @@ describe('ToolOrchestrator', () => {
     });
   });
 
-  describe('Resource Management', () => {
-    it('should allocate resources for tool execution', async () => {
+  describe("Resource Management", () => {
+    it("should allocate resources for tool execution", async () => {
       const resourceRequest: ToolExecutionRequest = {
-        id: 'resource-1',
-        toolName: 'resource-intensive-tool',
-        action: 'process',
-        parameters: { data: 'large' },
-        priority: 'high' as const,
+        id: "resource-1",
+        toolName: "resource-intensive-tool",
+        action: "process",
+        parameters: { data: "large" },
+        priority: "high" as const,
         timeout: 10000,
         retries: 1,
         resources: {
@@ -134,13 +135,13 @@ describe('ToolOrchestrator', () => {
       expect(result.duration).toBeGreaterThan(0);
     });
 
-    it('should handle resource constraints', async () => {
+    it("should handle resource constraints", async () => {
       const constrainedRequest: ToolExecutionRequest = {
-        id: 'constrained-1',
-        toolName: 'constrained-tool',
-        action: 'minimal',
+        id: "constrained-1",
+        toolName: "constrained-tool",
+        action: "minimal",
         parameters: { minimal: true },
-        priority: 'low' as const,
+        priority: "low" as const,
         timeout: 1000,
         retries: 1,
         resources: {
@@ -155,23 +156,23 @@ describe('ToolOrchestrator', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should prioritize high-priority requests', async () => {
+    it("should prioritize high-priority requests", async () => {
       const lowPriority: ToolExecutionRequest = {
-        id: 'low-1',
-        toolName: 'background-tool',
-        action: 'background',
+        id: "low-1",
+        toolName: "background-tool",
+        action: "background",
         parameters: { background: true },
-        priority: 'low' as const,
+        priority: "low" as const,
         timeout: 5000,
         retries: 1,
       };
 
       const highPriority: ToolExecutionRequest = {
-        id: 'high-1',
-        toolName: 'urgent-tool',
-        action: 'urgent',
+        id: "high-1",
+        toolName: "urgent-tool",
+        action: "urgent",
         parameters: { urgent: true },
-        priority: 'critical' as const,
+        priority: "critical" as const,
         timeout: 2000,
         retries: 1,
       };
@@ -189,33 +190,33 @@ describe('ToolOrchestrator', () => {
     });
   });
 
-  describe('Batch Execution', () => {
-    it('should execute multiple tools in parallel', async () => {
+  describe("Batch Execution", () => {
+    it("should execute multiple tools in parallel", async () => {
       const requests: ToolExecutionRequest[] = [
         {
-          id: 'batch-1',
-          toolName: 'batch-tool',
-          action: 'process',
+          id: "batch-1",
+          toolName: "batch-tool",
+          action: "process",
           parameters: { batch: 1 },
-          priority: 'medium' as const,
+          priority: "medium" as const,
           timeout: 3000,
           retries: 1,
         },
         {
-          id: 'batch-2',
-          toolName: 'batch-tool',
-          action: 'process',
+          id: "batch-2",
+          toolName: "batch-tool",
+          action: "process",
           parameters: { batch: 2 },
-          priority: 'medium' as const,
+          priority: "medium" as const,
           timeout: 3000,
           retries: 1,
         },
         {
-          id: 'batch-3',
-          toolName: 'batch-tool',
-          action: 'process',
+          id: "batch-3",
+          toolName: "batch-tool",
+          action: "process",
           parameters: { batch: 3 },
-          priority: 'medium' as const,
+          priority: "medium" as const,
           timeout: 3000,
           retries: 1,
         },
@@ -224,36 +225,36 @@ describe('ToolOrchestrator', () => {
       const results = await orchestrator.executeBatch(requests);
 
       expect(results.length).toBe(3);
-      expect(results.every(r => r.success)).toBe(true);
-      expect(results.every(r => r.duration > 0)).toBe(true);
+      expect(results.every((r) => r.success)).toBe(true);
+      expect(results.every((r) => r.duration > 0)).toBe(true);
     });
 
-    it('should handle batch execution with failures', async () => {
+    it("should handle batch execution with failures", async () => {
       const requests: ToolExecutionRequest[] = [
         {
-          id: 'batch-success-1',
-          toolName: 'batch-tool',
-          action: 'process',
+          id: "batch-success-1",
+          toolName: "batch-tool",
+          action: "process",
           parameters: { batch: 1 },
-          priority: 'medium' as const,
+          priority: "medium" as const,
           timeout: 3000,
           retries: 1,
         },
         {
-          id: 'batch-fail-1',
-          toolName: 'failing-tool',
-          action: 'fail',
+          id: "batch-fail-1",
+          toolName: "failing-tool",
+          action: "fail",
           parameters: { shouldFail: true },
-          priority: 'medium' as const,
+          priority: "medium" as const,
           timeout: 1000,
           retries: 1,
         },
         {
-          id: 'batch-success-2',
-          toolName: 'batch-tool',
-          action: 'process',
+          id: "batch-success-2",
+          toolName: "batch-tool",
+          action: "process",
           parameters: { batch: 2 },
-          priority: 'medium' as const,
+          priority: "medium" as const,
           timeout: 3000,
           retries: 1,
         },
@@ -268,14 +269,14 @@ describe('ToolOrchestrator', () => {
     });
   });
 
-  describe('Conflict Resolution', () => {
-    it('should resolve resource conflicts', async () => {
+  describe("Conflict Resolution", () => {
+    it("should resolve resource conflicts", async () => {
       const conflictingRequest1: ToolExecutionRequest = {
-        id: 'conflict-1',
-        toolName: 'exclusive-tool',
-        action: 'exclusive',
-        parameters: { resource: 'shared' },
-        priority: 'medium' as const,
+        id: "conflict-1",
+        toolName: "exclusive-tool",
+        action: "exclusive",
+        parameters: { resource: "shared" },
+        priority: "medium" as const,
         timeout: 5000,
         retries: 1,
         resources: {
@@ -285,11 +286,11 @@ describe('ToolOrchestrator', () => {
       };
 
       const conflictingRequest2: ToolExecutionRequest = {
-        id: 'conflict-2',
-        toolName: 'exclusive-tool',
-        action: 'exclusive',
-        parameters: { resource: 'shared' },
-        priority: 'high' as const,
+        id: "conflict-2",
+        toolName: "exclusive-tool",
+        action: "exclusive",
+        parameters: { resource: "shared" },
+        priority: "high" as const,
         timeout: 3000,
         retries: 1,
         resources: {
@@ -309,13 +310,13 @@ describe('ToolOrchestrator', () => {
       expect(result2.duration).toBeGreaterThan(0);
     });
 
-    it('should handle timeout conflicts', async () => {
+    it("should handle timeout conflicts", async () => {
       const timeoutRequest: ToolExecutionRequest = {
-        id: 'timeout-1',
-        toolName: 'slow-tool',
-        action: 'slow',
+        id: "timeout-1",
+        toolName: "slow-tool",
+        action: "slow",
         parameters: { delay: 2000 },
-        priority: 'medium' as const,
+        priority: "medium" as const,
         timeout: 1000, // Short timeout
         retries: 1,
       };
@@ -324,26 +325,26 @@ describe('ToolOrchestrator', () => {
 
       // Should handle timeout gracefully
       expect(result.success).toBe(false);
-      expect(result.error).toContain('timeout');
+      expect(result.error).toContain("timeout");
     });
   });
 
-  describe('Healthcare Compliance', () => {
-    it('should validate healthcare compliance for medical tools', async () => {
+  describe("Healthcare Compliance", () => {
+    it("should validate healthcare compliance for medical tools", async () => {
       const healthcareRequest: ToolExecutionRequest = {
-        id: 'healthcare-1',
-        toolName: 'medical-tool',
-        action: 'process-patient-data',
-        parameters: { 
-          patientData: 'sensitive',
-          compliance: true 
+        id: "healthcare-1",
+        toolName: "medical-tool",
+        action: "process-patient-data",
+        parameters: {
+          patientData: "sensitive",
+          compliance: true,
         },
-        priority: 'high' as const,
+        priority: "high" as const,
         timeout: 5000,
         retries: 2,
         metadata: {
           healthcareCompliance: true,
-          dataSensitivity: 'high',
+          dataSensitivity: "high",
         },
       };
 
@@ -353,39 +354,39 @@ describe('ToolOrchestrator', () => {
       expect(result.warnings.length).toBe(0); // No compliance warnings
     });
 
-    it('should warn about non-compliant healthcare operations', async () => {
+    it("should warn about non-compliant healthcare operations", async () => {
       const nonCompliantRequest: ToolExecutionRequest = {
-        id: 'non-compliant-1',
-        toolName: 'medical-tool',
-        action: 'process-patient-data',
-        parameters: { 
-          patientData: 'sensitive',
-          compliance: false 
+        id: "non-compliant-1",
+        toolName: "medical-tool",
+        action: "process-patient-data",
+        parameters: {
+          patientData: "sensitive",
+          compliance: false,
         },
-        priority: 'medium' as const,
+        priority: "medium" as const,
         timeout: 5000,
         retries: 1,
         metadata: {
           healthcareCompliance: true,
-          dataSensitivity: 'high',
+          dataSensitivity: "high",
         },
       };
 
       const result = await orchestrator.executeTool(nonCompliantRequest);
 
       expect(result.warnings.length).toBeGreaterThan(0);
-      expect(result.warnings.some(w => w.includes('compliance'))).toBe(true);
+      expect(result.warnings.some((w) => w.includes("compliance"))).toBe(true);
     });
   });
 
-  describe('Performance Monitoring', () => {
-    it('should track execution metrics', async () => {
+  describe("Performance Monitoring", () => {
+    it("should track execution metrics", async () => {
       const request: ToolExecutionRequest = {
-        id: 'metrics-1',
-        toolName: 'metrics-tool',
-        action: 'track',
+        id: "metrics-1",
+        toolName: "metrics-tool",
+        action: "track",
         parameters: { metrics: true },
-        priority: 'medium' as const,
+        priority: "medium" as const,
         timeout: 3000,
         retries: 1,
       };
@@ -393,20 +394,20 @@ describe('ToolOrchestrator', () => {
       const result = await orchestrator.executeTool(request);
 
       expect(result.duration).toBeGreaterThan(0);
-      
+
       // Check performance stats
       const stats = orchestrator.getPerformanceStats();
       expect(stats.totalExecutions).toBeGreaterThan(0);
       expect(stats.averageDuration).toBeGreaterThan(0);
     });
 
-    it('should provide resource utilization metrics', async () => {
+    it("should provide resource utilization metrics", async () => {
       const resourceRequest: ToolExecutionRequest = {
-        id: 'resource-metrics-1',
-        toolName: 'resource-tool',
-        action: 'consume',
+        id: "resource-metrics-1",
+        toolName: "resource-tool",
+        action: "consume",
         parameters: { consume: true },
-        priority: 'medium' as const,
+        priority: "medium" as const,
         timeout: 3000,
         retries: 1,
         resources: {
@@ -419,7 +420,7 @@ describe('ToolOrchestrator', () => {
       const result = await orchestrator.executeTool(resourceRequest);
 
       expect(result.success).toBe(true);
-      
+
       // Check resource utilization
       const resourceStats = orchestrator.getResourceUtilization();
       expect(resourceStats.memoryUtilization).toBeGreaterThan(0);

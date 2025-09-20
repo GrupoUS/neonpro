@@ -11,7 +11,7 @@ The old structure had significant complexity:
 ```
 tools/
 ├── frontend/           # Frontend-specific testing
-├── backend/            # Backend testing utilities  
+├── backend/            # Backend testing utilities
 ├── database/           # Database testing tools
 ├── quality/            # Quality assurance tools
 ├── orchestration/      # Test orchestration
@@ -75,11 +75,11 @@ pnpm build
 **Before (multiple imports):**
 
 ```typescript
-import { backendUtils } from '@neonpro/backend-tools';
-import { lgpdValidator } from '@neonpro/compliance-tools';
-import { dbUtils } from '@neonpro/database-tools';
-import { frontendUtils } from '@neonpro/frontend-tools';
-import { qualityGates } from '@neonpro/quality-tools';
+import { backendUtils } from "@neonpro/backend-tools";
+import { lgpdValidator } from "@neonpro/compliance-tools";
+import { dbUtils } from "@neonpro/database-tools";
+import { frontendUtils } from "@neonpro/frontend-tools";
+import { qualityGates } from "@neonpro/quality-tools";
 ```
 
 **After (single import):**
@@ -92,7 +92,7 @@ import {
   mockAuthService,
   QualityGateValidator,
   TDDCycle,
-} from '@neonpro/testing-toolkit';
+} from "@neonpro/testing-toolkit";
 ```
 
 ### 3. Update Test Patterns
@@ -101,11 +101,11 @@ import {
 
 ```typescript
 // Different patterns across packages
-describe('Frontend Test', () => {
+describe("Frontend Test", () => {
   // Frontend-specific setup
 });
 
-describe('Backend Test', () => {
+describe("Backend Test", () => {
   // Backend-specific setup
 });
 ```
@@ -113,10 +113,10 @@ describe('Backend Test', () => {
 **After (unified patterns):**
 
 ```typescript
-import { createLGPDTestSuite, createTDDSuite } from '@neonpro/testing-toolkit';
+import { createLGPDTestSuite, createTDDSuite } from "@neonpro/testing-toolkit";
 
 // Unified TDD pattern
-createTDDSuite('user-registration', {
+createTDDSuite("user-registration", {
   redPhase: () => {
     // Write failing tests
   },
@@ -129,7 +129,7 @@ createTDDSuite('user-registration', {
 });
 
 // Unified compliance testing
-createLGPDTestSuite('patient-data', mockPatientData);
+createLGPDTestSuite("patient-data", mockPatientData);
 ```
 
 ### 4. Update Configuration Files
@@ -145,11 +145,11 @@ createLGPDTestSuite('patient-data', mockPatientData);
 
 ```typescript
 // Use the toolkit's unified configuration
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    setupFiles: ['@neonpro/testing-toolkit/setup'],
+    setupFiles: ["@neonpro/testing-toolkit/setup"],
     // Other configuration...
   },
 });

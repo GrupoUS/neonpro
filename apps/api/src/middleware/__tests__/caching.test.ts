@@ -214,8 +214,12 @@ describe('Caching Middleware', () => {
       const res = await app.request('/test');
       expect(res.headers.get('x-content-type-options')).toBe('nosniff');
       expect(res.headers.get('x-frame-options')).toBe('DENY');
-      expect(res.headers.get('referrer-policy')).toBe('strict-origin-when-cross-origin');
-      expect(res.headers.get('x-healthcare-compliance')).toBe('LGPD,ANVISA,CFM');
+      expect(res.headers.get('referrer-policy')).toBe(
+        'strict-origin-when-cross-origin',
+      );
+      expect(res.headers.get('x-healthcare-compliance')).toBe(
+        'LGPD,ANVISA,CFM',
+      );
       expect(res.headers.get('x-data-classification')).toBe('healthcare');
     });
   });
@@ -231,15 +235,25 @@ describe('Caching Middleware', () => {
 
     it('should have correct compliance levels', () => {
       expect(CACHE_CONFIGS.services.complianceLevel).toBe('public');
-      expect(CACHE_CONFIGS['appointments-list'].complianceLevel).toBe('private');
+      expect(CACHE_CONFIGS['appointments-list'].complianceLevel).toBe(
+        'private',
+      );
       expect(CACHE_CONFIGS.patients.complianceLevel).toBe('sensitive');
-      expect(CACHE_CONFIGS['patient-records'].complianceLevel).toBe('sensitive');
+      expect(CACHE_CONFIGS['patient-records'].complianceLevel).toBe(
+        'sensitive',
+      );
     });
 
     it('should have appropriate vary headers for private data', () => {
-      expect(CACHE_CONFIGS['appointments-list'].varyBy).toContain('Authorization');
-      expect(CACHE_CONFIGS['appointments-list'].varyBy).toContain('X-Clinic-ID');
-      expect(CACHE_CONFIGS['professionals-schedule'].varyBy).toContain('Authorization');
+      expect(CACHE_CONFIGS['appointments-list'].varyBy).toContain(
+        'Authorization',
+      );
+      expect(CACHE_CONFIGS['appointments-list'].varyBy).toContain(
+        'X-Clinic-ID',
+      );
+      expect(CACHE_CONFIGS['professionals-schedule'].varyBy).toContain(
+        'Authorization',
+      );
     });
 
     it('should skip sensitive data caching', () => {

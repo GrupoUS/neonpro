@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import {
+  type AnonymizationOptions,
   anonymize_patient_data,
   delete_patient_data,
-  export_patient_data,
-  type LGPDPatientData,
-  type AnonymizationOptions,
   type DeletionOptions,
+  export_patient_data,
   type ExportOptions,
   type LGPDOperationResult,
+  type LGPDPatientData,
 } from '../types/lgpd';
 
 describe('LGPD Functions', () => {

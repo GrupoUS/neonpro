@@ -74,7 +74,11 @@ export const HEALTHCARE_WORKLOAD_PATTERNS = {
 
 // Connection pool alerts
 export interface PoolAlert {
-  type: 'high_utilization' | 'connection_errors' | 'timeout_exceeded' | 'health_degraded';
+  type:
+    | 'high_utilization'
+    | 'connection_errors'
+    | 'timeout_exceeded'
+    | 'health_degraded';
   severity: 'warning' | 'critical';
   message: string;
   metrics: PoolMetrics;
@@ -167,9 +171,11 @@ export class ConnectionPoolManager {
     }
 
     // Penalize high wait times
-    if (this.metrics.averageWaitTime > 1000) { // 1 second
+    if (this.metrics.averageWaitTime > 1000) {
+      // 1 second
       score -= 25;
-    } else if (this.metrics.averageWaitTime > 500) { // 500ms
+    } else if (this.metrics.averageWaitTime > 500) {
+      // 500ms
       score -= 10;
     }
 
@@ -210,7 +216,8 @@ export class ConnectionPoolManager {
     }
 
     // Timeout exceeded alert
-    if (this.metrics.averageWaitTime > 2000) { // 2 seconds
+    if (this.metrics.averageWaitTime > 2000) {
+      // 2 seconds
       alerts.push({
         type: 'timeout_exceeded',
         severity: 'critical',
@@ -263,11 +270,16 @@ export class ConnectionPoolManager {
       // High utilization - recommend increasing pool size
       const increase = Math.ceil(this.currentConfig.max * 0.3);
       recommendedConfig.max = this.currentConfig.max + increase;
-      recommendedConfig.min = Math.min(recommendedConfig.min + 2, recommendedConfig.max);
+      recommendedConfig.min = Math.min(
+        recommendedConfig.min + 2,
+        recommendedConfig.max,
+      );
 
       reasoning.push(
         `High utilization (${
-          avgUtilization.toFixed(1)
+          avgUtilization.toFixed(
+            1,
+          )
         }%) - increase max connections to ${recommendedConfig.max}`,
       );
       estimatedImprovement += 25;
@@ -286,7 +298,9 @@ export class ConnectionPoolManager {
         recommendedConfig.max = newMax;
         reasoning.push(
           `Low utilization (${
-            avgUtilization.toFixed(1)
+            avgUtilization.toFixed(
+              1,
+            )
           }%) - reduce max connections to ${recommendedConfig.max}`,
         );
         estimatedImprovement += 10;
@@ -332,9 +346,12 @@ export class ConnectionPoolManager {
     }
 
     // Idle timeout optimization
-    if (recommendedConfig.idleTimeoutMillis > 600000) { // 10 minutes
+    if (recommendedConfig.idleTimeoutMillis > 600000) {
+      // 10 minutes
       recommendedConfig.idleTimeoutMillis = 300000; // 5 minutes for healthcare
-      reasoning.push('Healthcare workload - reduce idle timeout to free resources faster');
+      reasoning.push(
+        'Healthcare workload - reduce idle timeout to free resources faster',
+      );
       estimatedImprovement += 5;
     }
 
@@ -360,7 +377,10 @@ export class ConnectionPoolManager {
       return this.metrics.utilization;
     }
 
-    const sum = this.metricsHistory.reduce((acc, metrics) => acc + metrics.utilization, 0);
+    const sum = this.metricsHistory.reduce(
+      (acc, metrics) => acc + metrics.utilization,
+      0,
+    );
     return sum / this.metricsHistory.length;
   }
 
@@ -369,13 +389,17 @@ export class ConnectionPoolManager {
    */
   applyConfiguration(newConfig: PoolConfig): void {
     this.currentConfig = { ...newConfig };
-    console.log('Applied new connection pool configuration:', this.currentConfig);
+    console.log(
+      'Applied new connection pool configuration:',
+      this.currentConfig,
+    );
   }
 
   /**
    * Start monitoring
    */
-  startMonitoring(intervalMs: number = 300000): void { // 5 minutes default
+  startMonitoring(intervalMs: number = 300000): void {
+    // 5 minutes default
     this.monitoringInterval = setInterval(() => {
       // In a real implementation, this would collect actual metrics from the pool
       this.simulateMetricsUpdate();
@@ -402,7 +426,9 @@ export class ConnectionPoolManager {
     const randomVariation = Math.random() * 0.3;
 
     const targetUtilization = Math.min(95, (baseLoad + randomVariation) * 100);
-    const active = Math.floor((targetUtilization / 100) * this.currentConfig.max);
+    const active = Math.floor(
+      (targetUtilization / 100) * this.currentConfig.max,
+    );
     const idle = this.currentConfig.max - active;
     const waiting = targetUtilization > 85 ? Math.floor(Math.random() * 5) : 0;
 

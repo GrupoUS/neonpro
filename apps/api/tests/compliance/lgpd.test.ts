@@ -73,7 +73,9 @@ describe('LGPD Compliance for Healthcare Data', () => {
         const data = await res.json();
 
         // Should require granular consent
-        expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain('consent');
+        expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain(
+          'consent',
+        );
         expect(data.lgpdCompliance.dataSubjectRights.consent).toBeDefined();
       }
     });
@@ -91,7 +93,9 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
       if (res) {
         const data = await res.json();
-        expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain('vital_interest');
+        expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain(
+          'vital_interest',
+        );
       }
     });
 
@@ -107,7 +111,9 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
       if (res) {
         const data = await res.json();
-        expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain('legitimate_interest');
+        expect(data.lgpdCompliance.dataProcessing.lawfulBasis).toContain(
+          'legitimate_interest',
+        );
       }
     });
   });
@@ -146,7 +152,11 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
       expect(mockAccessResponse.patientData).toBeDefined();
       expect(Object.keys(mockAccessResponse.patientData)).toEqual(
-        expect.arrayContaining(['personalData', 'medicalRecords', 'appointments']),
+        expect.arrayContaining([
+          'personalData',
+          'medicalRecords',
+          'appointments',
+        ]),
       );
     });
 
@@ -200,7 +210,9 @@ describe('LGPD Compliance for Healthcare Data', () => {
 
       expect(erasureAssessment.erasableData.length).toBeGreaterThan(0);
       expect(erasureAssessment.retainedData).toContain('medical_records');
-      expect(erasureAssessment.retentionReasons).toContain('medical_care_continuity');
+      expect(erasureAssessment.retentionReasons).toContain(
+        'medical_care_continuity',
+      );
     });
 
     it('should provide data portability for patient records', async () => {
@@ -208,7 +220,11 @@ describe('LGPD Compliance for Healthcare Data', () => {
         patientId: mockPatient.id,
         requestType: 'data_portability',
         format: 'FHIR_R4', // Healthcare standard format
-        includeCategories: ['medical_records', 'appointment_history', 'lab_results'],
+        includeCategories: [
+          'medical_records',
+          'appointment_history',
+          'lab_results',
+        ],
       };
 
       const portableData = {
@@ -247,8 +263,12 @@ describe('LGPD Compliance for Healthcare Data', () => {
         justification: 'essential_healthcare_services',
       };
 
-      expect(processingSuspension.suspendedActivities).toContain('marketing_campaigns');
-      expect(processingSuspension.continuedActivities).toContain('medical_care');
+      expect(processingSuspension.suspendedActivities).toContain(
+        'marketing_campaigns',
+      );
+      expect(processingSuspension.continuedActivities).toContain(
+        'medical_care',
+      );
     });
   });
 
@@ -301,7 +321,9 @@ describe('LGPD Compliance for Healthcare Data', () => {
         effectiveImmediately: true,
       };
 
-      expect(withdrawalProcessing.immediateActions).toContain('stop_marketing_emails');
+      expect(withdrawalProcessing.immediateActions).toContain(
+        'stop_marketing_emails',
+      );
       expect(withdrawalProcessing.effectiveImmediately).toBe(true);
     });
 
@@ -381,19 +403,35 @@ describe('LGPD Compliance for Healthcare Data', () => {
       const accessControlMatrix = {
         roles: {
           doctor: {
-            permissions: ['read_medical_records', 'write_prescriptions', 'schedule_appointments'],
+            permissions: [
+              'read_medical_records',
+              'write_prescriptions',
+              'schedule_appointments',
+            ],
             restrictions: ['no_billing_access', 'own_patients_only'],
           },
           nurse: {
-            permissions: ['read_basic_info', 'schedule_appointments', 'update_contact_info'],
+            permissions: [
+              'read_basic_info',
+              'schedule_appointments',
+              'update_contact_info',
+            ],
             restrictions: ['no_prescription_access', 'supervised_access'],
           },
           receptionist: {
-            permissions: ['read_basic_info', 'schedule_appointments', 'update_contact_info'],
+            permissions: [
+              'read_basic_info',
+              'schedule_appointments',
+              'update_contact_info',
+            ],
             restrictions: ['no_medical_records', 'appointment_management_only'],
           },
           patient: {
-            permissions: ['read_own_data', 'update_contact_info', 'download_records'],
+            permissions: [
+              'read_own_data',
+              'update_contact_info',
+              'download_records',
+            ],
             restrictions: ['own_data_only', 'no_other_patients'],
           },
         },
@@ -443,7 +481,9 @@ describe('LGPD Compliance for Healthcare Data', () => {
         },
       };
 
-      expect(breachResponse.immediateActions).toContain('isolate_affected_systems');
+      expect(breachResponse.immediateActions).toContain(
+        'isolate_affected_systems',
+      );
       expect(breachResponse.notifications.anpd.required).toBe(true);
       expect(breachResponse.notifications.anpd.deadline).toBe('72_hours');
     });
@@ -475,8 +515,12 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       expect(notificationProcedure.anpdNotification.deadline).toBe(72);
-      expect(notificationProcedure.anpdNotification.requiredInfo).toContain('nature_of_breach');
-      expect(notificationProcedure.patientNotification.method).toContain('email');
+      expect(notificationProcedure.anpdNotification.requiredInfo).toContain(
+        'nature_of_breach',
+      );
+      expect(notificationProcedure.patientNotification.method).toContain(
+        'email',
+      );
     });
   });
 
@@ -500,8 +544,12 @@ describe('LGPD Compliance for Healthcare Data', () => {
       expect(dataCollectionPolicy.optional.marketing).toHaveLength(2);
 
       // Should not collect unnecessary data
-      expect(dataCollectionPolicy.essential.consultation).not.toContain('income');
-      expect(dataCollectionPolicy.essential.consultation).not.toContain('political_opinions');
+      expect(dataCollectionPolicy.essential.consultation).not.toContain(
+        'income',
+      );
+      expect(dataCollectionPolicy.essential.consultation).not.toContain(
+        'political_opinions',
+      );
     });
 
     it('should enforce data retention limits', async () => {
@@ -574,8 +622,12 @@ describe('LGPD Compliance for Healthcare Data', () => {
       };
 
       expect(transferPolicy.allowedCountries).toContain('European_Union');
-      expect(transferPolicy.requirements.patientConsent).toBe('explicit_consent_required');
-      expect(transferPolicy.exceptions.medicalEmergency).toBe('vital_interests');
+      expect(transferPolicy.requirements.patientConsent).toBe(
+        'explicit_consent_required',
+      );
+      expect(transferPolicy.exceptions.medicalEmergency).toBe(
+        'vital_interests',
+      );
     });
 
     it('should validate data transfer safeguards', async () => {
@@ -599,7 +651,11 @@ describe('LGPD Compliance for Healthcare Data', () => {
       const privacyDashboard = {
         dataOverview: {
           dataTypes: ['personal', 'medical', 'billing', 'communication'],
-          processingPurposes: ['medical_care', 'appointment_scheduling', 'billing'],
+          processingPurposes: [
+            'medical_care',
+            'appointment_scheduling',
+            'billing',
+          ],
           retentionPeriods: ['varies_by_data_type'],
           sharingPartners: ['insurance_companies', 'laboratories'],
         },
@@ -609,15 +665,23 @@ describe('LGPD Compliance for Healthcare Data', () => {
           consentHistory: ['consent_granted_date', 'consent_modified_date'],
         },
         dataRequests: {
-          availableRequests: ['data_access', 'data_rectification', 'data_erasure'],
+          availableRequests: [
+            'data_access',
+            'data_rectification',
+            'data_erasure',
+          ],
           requestStatus: 'pending_requests_and_history',
           processingTime: 'up_to_30_days',
         },
       };
 
       expect(privacyDashboard.dataOverview.dataTypes).toContain('medical');
-      expect(privacyDashboard.consentManagement.withdrawableConsents).toContain('marketing');
-      expect(privacyDashboard.dataRequests.availableRequests).toContain('data_access');
+      expect(privacyDashboard.consentManagement.withdrawableConsents).toContain(
+        'marketing',
+      );
+      expect(privacyDashboard.dataRequests.availableRequests).toContain(
+        'data_access',
+      );
     });
   });
 });
@@ -657,6 +721,8 @@ describe('LGPD Compliance Integration Testing', () => {
     };
 
     expect(complianceReport.metrics.complianceScore).toBe('100%');
-    expect(complianceReport.recommendations).toContain('continue_current_practices');
+    expect(complianceReport.recommendations).toContain(
+      'continue_current_practices',
+    );
   });
 });

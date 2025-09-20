@@ -7,10 +7,11 @@
 **Input**: Enhanced Financial Dashboard for NeonPro Financeiro Page using experiment-03 Shadcn MCP components
 
 ## Execution Flow (main)
+
 ```
 1. Parse user description from Input
    → Feature: Transform basic Financeiro page into sophisticated interactive financial dashboard
-2. Extract key concepts from description  
+2. Extract key concepts from description
    → Actors: clinic administrators, financial managers, healthcare practitioners, auditors
    → Actions: view interactive financial charts, analyze revenue trends, monitor KPIs, export reports
    → Data: financial transactions, revenue metrics, aesthetic clinic KPIs, compliance data
@@ -20,7 +21,7 @@
    ✅ RESOLVED: User permission levels for financial data access (5-tier role-based system defined)
 4. Fill User Scenarios & Testing section
    → Primary flow: Interactive financial dashboard with experiment-03 Shadcn chart components
-5. Generate Enhanced Functional Requirements  
+5. Generate Enhanced Functional Requirements
    → Interactive visualizations, role-based access, export capabilities, real-time updates, mobile optimization
 6. Identify Key Entities: Financial Metrics, User Roles, Compliance Audit, Chart Components
 7. Run Review Checklist
@@ -31,6 +32,7 @@
 ---
 
 ## ⚡ Quick Guidelines
+
 - ✅ Focus on WHAT users need and WHY (enhanced with comprehensive research)
 - ❌ Avoid HOW to implement (technical details in separate research document)
 - 👥 Written for business stakeholders with constitutional compliance focus
@@ -38,12 +40,14 @@
 
 ---
 
-## User Scenarios & Testing *(enhanced)*
+## User Scenarios & Testing _(enhanced)_
 
 ### Primary User Story
+
 As a clinic administrator managing a Brazilian aesthetic clinic, I need a comprehensive, interactive financial dashboard that displays key business metrics, revenue trends, and operational performance indicators through intuitive charts and visualizations, so I can make informed business decisions, ensure regulatory compliance, and monitor the clinic's financial health effectively while maintaining LGPD data protection standards.
 
 ### Enhanced Acceptance Scenarios
+
 1. **Given** I am logged in as a clinic administrator, **When** I navigate to the Financeiro page, **Then** I see a modern dashboard with interactive chart widgets displaying real financial metrics using experiment-03 Shadcn components
 2. **Given** I am viewing the financial dashboard, **When** I select a different date range using the date picker, **Then** all charts update smoothly to reflect data for the selected period with loading states
 3. **Given** I am viewing revenue charts, **When** I click on a specific data point, **Then** I can drill down to see detailed breakdown with tooltips and contextual information
@@ -54,6 +58,7 @@ As a clinic administrator managing a Brazilian aesthetic clinic, I need a compre
 8. **Given** I need to monitor treatment room utilization, **When** I view the operational metrics, **Then** I can see room efficiency trending toward the 80-85% optimal range
 
 ### Compliance & Edge Cases
+
 - **LGPD Compliance**: What happens when a patient requests data deletion or export of their financial records?
 - **Role-Based Access**: How does the system handle role changes and permission updates in real-time?
 - **Data Privacy**: What occurs when unauthorized access attempts are made to sensitive financial data?
@@ -61,9 +66,10 @@ As a clinic administrator managing a Brazilian aesthetic clinic, I need a compre
 - **Performance**: What happens when displaying large datasets (1000+ transactions) on mobile devices?
 - **Real-time Updates**: How does the system handle concurrent access when multiple users are viewing financial data?
 
-## Requirements *(enhanced with research findings)*
+## Requirements _(enhanced with research findings)_
 
 ### Functional Requirements
+
 - **FR-001**: System MUST display interactive financial charts using experiment-03 Shadcn components showing revenue trends, growth metrics, and aesthetic clinic-specific KPIs (CLV, room utilization, retail-to-service ratio)
 - **FR-002**: System MUST provide comprehensive date range selection with react-day-picker allowing users to filter data by custom periods with preset options (month, quarter, year)
 - **FR-003**: Users MUST be able to drill down into chart data to view detailed breakdowns with interactive tooltips and contextual information
@@ -77,7 +83,8 @@ As a clinic administrator managing a Brazilian aesthetic clinic, I need a compre
 - **FR-011**: System MUST provide aesthetic clinic-specific KPI tracking including Client Lifetime Value ($2,500-$10,000 range), Lead Conversion Rate (12.5% benchmark), and Treatment Room Utilization (80-85% target)
 - **FR-012**: System MUST implement ANVISA and CFM compliance features for Brazilian healthcare financial reporting and professional transparency requirements
 
-### Enhanced Key Entities *(with detailed specifications)*
+### Enhanced Key Entities _(with detailed specifications)_
+
 - **Financial Metrics**: Revenue data, expense tracking, profit margins, growth indicators with time-series attributes and Brazilian Real (BRL) currency formatting
 - **Revenue Streams**: Service categories, payment methods, subscription models with aesthetic clinic categorization and performance tracking
 - **Performance Indicators**: Patient acquisition costs, lifetime value distribution, operational efficiency metrics with trend analysis and benchmark comparisons
@@ -85,7 +92,8 @@ As a clinic administrator managing a Brazilian aesthetic clinic, I need a compre
 - **Compliance Audit**: LGPD data access logs, ANVISA equipment cost tracking, CFM financial transparency records with automated reporting
 - **Chart Components**: Interactive Recharts-based visualizations with experiment-03 Shadcn styling, responsive design, and accessibility features
 
-### Non-Functional Requirements *(constitutional standards)*
+### Non-Functional Requirements _(constitutional standards)_
+
 - **Performance**: Initial page load <2 seconds, chart interactions <500ms, mobile 90+ Lighthouse score
 - **Security**: AES-256 encryption, TLS 1.3 transport, row-level security, automated vulnerability scanning
 - **Compliance**: 100% LGPD adherence, ANVISA medical device tracking, CFM professional standards
@@ -95,23 +103,27 @@ As a clinic administrator managing a Brazilian aesthetic clinic, I need a compre
 
 ---
 
-## Review & Acceptance Checklist *(enhanced)*
-*GATE: Comprehensive validation with constitutional compliance*
+## Review & Acceptance Checklist _(enhanced)_
+
+_GATE: Comprehensive validation with constitutional compliance_
 
 ### Content Quality ✅
+
 - [x] No implementation details (languages, frameworks, APIs) - technical details in research.md
 - [x] Focused on user value and business needs with healthcare context
 - [x] Written for non-technical stakeholders with compliance considerations
 - [x] All mandatory sections completed with enhanced detail
 
 ### Requirement Completeness ✅
+
 - [x] No [NEEDS CLARIFICATION] markers remain - All items resolved through comprehensive research
-- [x] Requirements are testable, unambiguous, and aligned with Brazilian healthcare standards  
+- [x] Requirements are testable, unambiguous, and aligned with Brazilian healthcare standards
 - [x] Success criteria are measurable with specific KPI targets
 - [x] Scope is clearly bounded with constitutional compliance integration
 - [x] Dependencies and assumptions identified with risk mitigation
 
 ### Constitutional Compliance ✅
+
 - [x] LGPD data protection requirements fully integrated
 - [x] ANVISA medical device regulations considered
 - [x] CFM professional standards incorporated
@@ -120,8 +132,9 @@ As a clinic administrator managing a Brazilian aesthetic clinic, I need a compre
 
 ---
 
-## Execution Status *(updated)*
-*Updated by comprehensive research and constitutional analysis*
+## Execution Status _(updated)_
+
+_Updated by comprehensive research and constitutional analysis_
 
 - [x] User description parsed and enhanced
 - [x] Key concepts extracted with healthcare context
@@ -134,11 +147,13 @@ As a clinic administrator managing a Brazilian aesthetic clinic, I need a compre
 ---
 
 ## Research Integration Summary
-*Links to comprehensive research documentation*
+
+_Links to comprehensive research documentation_
 
 **Enhanced Research Document**: `research.md` - Contains detailed technical analysis, compliance requirements, and implementation strategies
 
 **Key Research Findings**:
+
 - ✅ Aesthetic clinic KPIs identified and benchmarked
 - ✅ Brazilian healthcare compliance requirements detailed
 - ✅ Experiment-03 Shadcn components analyzed and validated
@@ -148,5 +163,6 @@ As a clinic administrator managing a Brazilian aesthetic clinic, I need a compre
 **Implementation Readiness**: 98% - Ready for Phase 1 development with comprehensive planning and constitutional compliance validation
 
 ---
+
 **Template Version**: 1.2.0 | **Constitution Version**: 1.0.0 | **Last Updated**: 2025-09-15  
-*Enhanced with APEX RESEARCHER v2.0 methodology and constitutional excellence standards*
+_Enhanced with APEX RESEARCHER v2.0 methodology and constitutional excellence standards_

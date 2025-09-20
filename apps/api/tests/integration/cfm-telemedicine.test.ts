@@ -139,14 +139,17 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/validate-license`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/validate-license`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(licenseValidation),
           },
-          body: JSON.stringify(licenseValidation),
-        });
+        );
 
         if (!response.ok) {
           throw new Error(`License validation failed: ${response.status}`);
@@ -185,14 +188,17 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/validate-specialty`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/validate-specialty`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(specialtyValidation),
           },
-          body: JSON.stringify(specialtyValidation),
-        });
+        );
 
         return response.json();
       }).rejects.toThrow();
@@ -207,7 +213,11 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
         doctor_id: doctorId,
         certificate_data: {
           public_key: 'MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA...',
-          certificate_chain: ['cert1_base64', 'cert2_base64', 'root_cert_base64'],
+          certificate_chain: [
+            'cert1_base64',
+            'cert2_base64',
+            'root_cert_base64',
+          ],
           signature_algorithm: 'SHA256withRSA',
         },
         validation_purpose: 'digital_prescription_signing',
@@ -292,14 +302,17 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/ngs2-compliance`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/ngs2-compliance`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(ngs2Compliance),
           },
-          body: JSON.stringify(ngs2Compliance),
-        });
+        );
 
         return response.json();
       }).rejects.toThrow();
@@ -333,14 +346,17 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/security-monitoring`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/security-monitoring`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(sessionSecurityMonitoring),
           },
-          body: JSON.stringify(sessionSecurityMonitoring),
-        });
+        );
 
         return response.json();
       }).rejects.toThrow();
@@ -373,14 +389,17 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/create-session`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/create-session`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(sessionCreation),
           },
-          body: JSON.stringify(sessionCreation),
-        });
+        );
 
         return response.json();
       }).rejects.toThrow();
@@ -425,14 +444,17 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/patient-consent`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/patient-consent`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(patientConsentValidation),
           },
-          body: JSON.stringify(patientConsentValidation),
-        });
+        );
 
         return response.json();
       }).rejects.toThrow();
@@ -560,14 +582,17 @@ describe('CFM Telemedicine Compliance Integration Tests', () => {
       };
 
       await expect(async () => {
-        const response = await fetch(`${process.env.API_BASE_URL}/api/v1/cfm/audit-trail`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${testClient.token}`,
+        const response = await fetch(
+          `${process.env.API_BASE_URL}/api/v1/cfm/audit-trail`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${testClient.token}`,
+            },
+            body: JSON.stringify(auditTrailGeneration),
           },
-          body: JSON.stringify(auditTrailGeneration),
-        });
+        );
 
         return response.json();
       }).rejects.toThrow();

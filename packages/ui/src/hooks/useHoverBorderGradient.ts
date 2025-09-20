@@ -4,7 +4,7 @@
  * Inspired by AceternityUI effects with 60fps performance optimization
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
 // Type for CSS custom properties
 type CSSPropertiesWithVars = React.CSSProperties & {
@@ -20,13 +20,18 @@ interface HoverBorderGradientConfig {
   /** Enable/disable the hover border gradient effect */
   enabled?: boolean;
   /** Animation intensity (subtle, normal, vibrant) */
-  intensity?: 'subtle' | 'normal' | 'vibrant';
+  intensity?: "subtle" | "normal" | "vibrant";
   /** Gradient direction (left-right, top-bottom, diagonal-tl-br, diagonal-tr-bl, radial) */
-  direction?: 'left-right' | 'top-bottom' | 'diagonal-tl-br' | 'diagonal-tr-bl' | 'radial';
+  direction?:
+    | "left-right"
+    | "top-bottom"
+    | "diagonal-tl-br"
+    | "diagonal-tr-bl"
+    | "radial";
   /** Gradient color theme */
-  theme?: 'gold' | 'silver' | 'copper' | 'blue' | 'purple' | 'green' | 'red';
+  theme?: "gold" | "silver" | "copper" | "blue" | "purple" | "green" | "red";
   /** Animation speed (slow, normal, fast) */
-  speed?: 'slow' | 'normal' | 'fast';
+  speed?: "slow" | "normal" | "fast";
   /** Border width in pixels */
   borderWidth?: number;
   /** Custom gradient colors */
@@ -59,17 +64,20 @@ export function useHoverBorderGradient(
 ): HoverBorderGradientReturn {
   const {
     enabled = true,
-    intensity = 'normal',
-    direction = 'radial',
-    theme = 'gold',
-    speed = 'normal',
+    intensity = "normal",
+    direction = "radial",
+    theme = "gold",
+    speed = "normal",
     borderWidth = 1,
     colors,
     debounce = 16, // ~60fps
   } = config;
 
   const elementRef = useRef<HTMLElement | null>(null);
-  const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState<MousePosition>({
+    x: 0,
+    y: 0,
+  });
   const [isHovering, setIsHovering] = useState(false);
   const debounceTimeoutRef = useRef<number | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -91,7 +99,10 @@ export function useHoverBorderGradient(
         const x = ((event.clientX - rect.left) / rect.width) * 100;
         const y = ((event.clientY - rect.top) / rect.height) * 100;
 
-        setMousePosition({ x: Math.max(0, Math.min(100, x)), y: Math.max(0, Math.min(100, y)) });
+        setMousePosition({
+          x: Math.max(0, Math.min(100, x)),
+          y: Math.max(0, Math.min(100, y)),
+        });
       });
     },
     [enabled],
@@ -142,26 +153,26 @@ export function useHoverBorderGradient(
   // Generate CSS class names
   const classNames = enabled
     ? [
-      'hover-border-gradient',
-      `hover-border-gradient--${intensity}`,
-      `hover-border-gradient--${direction}`,
-      `hover-border-gradient--${theme}`,
-      `hover-border-gradient--${speed}`,
-    ].join(' ')
-    : '';
+        "hover-border-gradient",
+        `hover-border-gradient--${intensity}`,
+        `hover-border-gradient--${direction}`,
+        `hover-border-gradient--${theme}`,
+        `hover-border-gradient--${speed}`,
+      ].join(" ")
+    : "";
 
   // Generate CSS custom properties
   const style: CSSPropertiesWithVars = enabled
     ? {
-      '--mouse-x': `${mousePosition.x}%`,
-      '--mouse-y': `${mousePosition.y}%`,
-      '--border-width': `${borderWidth}px`,
-      ...(colors && {
-        '--gradient-color-1': colors[0] || '#AC9469',
-        '--gradient-color-2': colors[1] || '#D4AF37',
-        '--gradient-color-3': colors[2] || '#FFD700',
-      }),
-    }
+        "--mouse-x": `${mousePosition.x}%`,
+        "--mouse-y": `${mousePosition.y}%`,
+        "--border-width": `${borderWidth}px`,
+        ...(colors && {
+          "--gradient-color-1": colors[0] || "#AC9469",
+          "--gradient-color-2": colors[1] || "#D4AF37",
+          "--gradient-color-3": colors[2] || "#FFD700",
+        }),
+      }
     : {};
 
   return {

@@ -187,7 +187,9 @@ export class LGPDConsentService {
   /**
    * Withdraws patient consent (right to withdraw under LGPD Art. 8, §5)
    */
-  async withdrawConsent(request: ConsentWithdrawalRequest): Promise<LGPDOperationResult> {
+  async withdrawConsent(
+    request: ConsentWithdrawalRequest,
+  ): Promise<LGPDOperationResult> {
     try {
       const consent = await this.prisma.auditTrail.findFirst({
         where: {
@@ -241,7 +243,10 @@ export class LGPDConsentService {
       });
 
       // Trigger data deletion/anonymization for affected data
-      await this.handleConsentWithdrawal(request.patientId, consent.metadata?.purpose);
+      await this.handleConsentWithdrawal(
+        request.patientId,
+        consent.metadata?.purpose,
+      );
 
       return {
         success: true,
@@ -318,7 +323,9 @@ export class LGPDConsentService {
   /**
    * Generates consent report for patient data access requests
    */
-  async generateConsentReport(patientId: string): Promise<LGPDOperationResult & { report?: any }> {
+  async generateConsentReport(
+    patientId: string,
+  ): Promise<LGPDOperationResult & { report?: any }> {
     try {
       const consents = await this.getPatientConsents(patientId);
       const auditEntries = await this.prisma.auditTrail.findMany({
@@ -383,7 +390,10 @@ export class LGPDConsentService {
     });
   }
 
-  private async revokeConsent(consentId: string, reason: string): Promise<void> {
+  private async revokeConsent(
+    consentId: string,
+    reason: string,
+  ): Promise<void> {
     await this.prisma.auditTrail.update({
       where: { id: consentId },
       data: {
@@ -428,10 +438,12 @@ export class LGPDConsentService {
       },
     };
 
-    return templates[purpose] || {
-      text: `Autorizo o processamento de meus dados para ${purpose}.`,
-      version: '1.0',
-    };
+    return (
+      templates[purpose] || {
+        text: `Autorizo o processamento de meus dados para ${purpose}.`,
+        version: '1.0',
+      }
+    );
   }
 
   private mapToConsentRecord(audit: any): LGPDConsentRecord {
@@ -445,14 +457,18 @@ export class LGPDConsentService {
       consentText: metadata.consentText,
       version: metadata.version,
       validFrom: new Date(metadata.validFrom),
-      validUntil: metadata.validUntil ? new Date(metadata.validUntil) : undefined,
+      validUntil: metadata.validUntil
+        ? new Date(metadata.validUntil)
+        : undefined,
       ipAddress: metadata.ipAddress,
       userAgent: metadata.userAgent,
       deviceId: metadata.deviceId,
       location: metadata.location,
       language: metadata.language,
       withdrawalReason: metadata.withdrawalReason,
-      withdrawalDate: metadata.withdrawalDate ? new Date(metadata.withdrawalDate) : undefined,
+      withdrawalDate: metadata.withdrawalDate
+        ? new Date(metadata.withdrawalDate)
+        : undefined,
       metadata: metadata,
       createdAt: audit.createdAt,
       updatedAt: audit.updatedAt,
@@ -492,10 +508,15 @@ export class LGPDConsentService {
     }
   }
 
-  private async handleConsentWithdrawal(patientId: string, purpose: string): Promise<void> {
+  private async handleConsentWithdrawal(
+    patientId: string,
+    purpose: string,
+  ): Promise<void> {
     // Handle data deletion/anonymization when consent is withdrawn
     // This would trigger appropriate data handling based on the purpose
-    console.log(`Handling consent withdrawal for patient ${patientId}, purpose: ${purpose}`);
+    console.log(
+      `Handling consent withdrawal for patient ${patientId}, purpose: ${purpose}`,
+    );
 
     // In a real implementation, this would:
     // 1. Identify affected data

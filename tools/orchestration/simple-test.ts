@@ -5,11 +5,11 @@
  * Note: Simplified until core modules are available
  */
 
-console.log('Testing orchestration structure...');
+console.log("Testing orchestration structure...");
 
 try {
-  console.log('✅ Basic orchestration test passed');
-  console.log('   - Core structure is valid');
+  console.log("✅ Basic orchestration test passed");
+  console.log("   - Core structure is valid");
 } catch (error) {
-  console.error('❌ Basic test failed:', error);
+  console.error("❌ Basic test failed:", error);
 }

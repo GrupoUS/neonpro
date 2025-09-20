@@ -3,11 +3,7 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
     "outDir": "./dist",
     "rootDir": ".",
@@ -33,38 +29,16 @@
     "emitDecoratorMetadata": true,
     "downlevelIteration": true,
     "baseUrl": ".",
-    "types": [
-      "node",
-      "vitest",
-      "vitest/globals"
-    ],
+    "types": ["node", "vitest", "vitest/globals"],
     "paths": {
-      "@/*": [
-        "./src/*",
-        "apps/web/src/*",
-        "apps/api/src/*"
-      ],
-      "@shared/*": [
-        "packages/shared/src/*"
-      ],
-      "@neonpro/*": [
-        "packages/*/src"
-      ],
-      "@models/*": [
-        "./src/models/*"
-      ],
-      "@services/*": [
-        "./src/services/*"
-      ],
-      "@cli/*": [
-        "./src/cli/*"
-      ],
-      "@lib/*": [
-        "./src/lib/*"
-      ],
-      "@tests/*": [
-        "./tools/tests/*"
-      ]
+      "@/*": ["./src/*", "apps/web/src/*", "apps/api/src/*"],
+      "@shared/*": ["packages/shared/src/*"],
+      "@neonpro/*": ["packages/*/src"],
+      "@models/*": ["./src/models/*"],
+      "@services/*": ["./src/services/*"],
+      "@cli/*": ["./src/cli/*"],
+      "@lib/*": ["./src/lib/*"],
+      "@tests/*": ["./tools/tests/*"]
     }
   },
   "include": [

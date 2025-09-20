@@ -3,8 +3,15 @@
  * Handles advanced appointment scheduling validation with business rules
  */
 
-import { supabase } from '@/integrations/supabase/client';
-import { addMinutes, format, isAfter, isBefore, isWeekend, parseISO } from 'date-fns';
+import { supabase } from "@/integrations/supabase/client";
+import {
+  addMinutes,
+  format,
+  isAfter,
+  isBefore,
+  isWeekend,
+  parseISO,
+} from "date-fns";
 
 // Type definitions
 export interface TimeSlotValidationResult {
@@ -15,7 +22,11 @@ export interface TimeSlotValidationResult {
 }
 
 export interface ConflictInfo {
-  type: 'professional_busy' | 'clinic_closed' | 'service_unavailable' | 'capacity_exceeded';
+  type:
+    | "professional_busy"
+    | "clinic_closed"
+    | "service_unavailable"
+    | "capacity_exceeded";
   message: string;
   conflictingAppointment?: {
     id: string;
@@ -26,7 +37,11 @@ export interface ConflictInfo {
 }
 
 export interface WarningInfo {
-  type: 'short_notice' | 'outside_preferred_hours' | 'weekend_booking' | 'buffer_time';
+  type:
+    | "short_notice"
+    | "outside_preferred_hours"
+    | "weekend_booking"
+    | "buffer_time";
   message: string;
 }
 
@@ -56,13 +71,13 @@ export interface BusinessRules {
 class TimeSlotValidationService {
   private defaultBusinessRules: BusinessRules = {
     clinicHours: {
-      monday: { start: '08:00', end: '18:00' },
-      tuesday: { start: '08:00', end: '18:00' },
-      wednesday: { start: '08:00', end: '18:00' },
-      thursday: { start: '08:00', end: '18:00' },
-      friday: { start: '08:00', end: '18:00' },
-      saturday: { start: '09:00', end: '14:00' },
-      sunday: { closed: true, start: '00:00', end: '00:00' },
+      monday: { start: "08:00", end: "18:00" },
+      tuesday: { start: "08:00", end: "18:00" },
+      wednesday: { start: "08:00", end: "18:00" },
+      thursday: { start: "08:00", end: "18:00" },
+      friday: { start: "08:00", end: "18:00" },
+      saturday: { start: "09:00", end: "14:00" },
+      sunday: { closed: true, start: "00:00", end: "00:00" },
     },
     bufferTime: 15, // 15 minutes between appointments
     advanceBookingDays: 90, // 3 months in advance
@@ -90,7 +105,11 @@ class TimeSlotValidationService {
       const businessRules = await this.getBusinessRules(clinicId);
 
       // 1. Check clinic operating hours
-      const clinicHoursConflict = this.checkClinicHours(startTime, endTime, businessRules);
+      const clinicHoursConflict = this.checkClinicHours(
+        startTime,
+        endTime,
+        businessRules,
+      );
       if (clinicHoursConflict) conflicts.push(clinicHoursConflict);
 
       // 2. Check professional availability
@@ -147,13 +166,13 @@ class TimeSlotValidationService {
         suggestedAlternatives,
       };
     } catch (error) {
-      console.error('Error validating time slot:', error);
+      console.error("Error validating time slot:", error);
       return {
         isValid: false,
         conflicts: [
           {
-            type: 'service_unavailable',
-            message: 'Unable to validate appointment slot. Please try again.',
+            type: "service_unavailable",
+            message: "Unable to validate appointment slot. Please try again.",
           },
         ],
         warnings: [],
@@ -170,25 +189,25 @@ class TimeSlotValidationService {
     businessRules: BusinessRules,
   ): ConflictInfo | null {
     const dayOfWeek = startTime
-      .toLocaleDateString('en-US', { weekday: 'long' })
-      .toLowerCase() as keyof BusinessRules['clinicHours'];
+      .toLocaleDateString("en-US", { weekday: "long" })
+      .toLowerCase() as keyof BusinessRules["clinicHours"];
     const dayRules = businessRules.clinicHours[dayOfWeek];
 
     if (dayRules.closed) {
       return {
-        type: 'clinic_closed',
+        type: "clinic_closed",
         message: `A clínica está fechada ${
-          dayOfWeek === 'sunday'
-            ? 'aos domingos'
-            : dayOfWeek === 'saturday'
-            ? 'aos sábados'
-            : `às ${dayOfWeek}s`
+          dayOfWeek === "sunday"
+            ? "aos domingos"
+            : dayOfWeek === "saturday"
+              ? "aos sábados"
+              : `às ${dayOfWeek}s`
         }.`,
       };
     }
 
-    const [startHour, startMinute] = dayRules.start.split(':').map(Number);
-    const [endHour, endMinute] = dayRules.end.split(':').map(Number);
+    const [startHour, startMinute] = dayRules.start.split(":").map(Number);
+    const [endHour, endMinute] = dayRules.end.split(":").map(Number);
 
     const clinicStart = new Date(startTime);
     clinicStart.setHours(startHour, startMinute, 0, 0);
@@ -198,7 +217,7 @@ class TimeSlotValidationService {
 
     if (isBefore(startTime, clinicStart) || isAfter(endTime, clinicEnd)) {
       return {
-        type: 'clinic_closed',
+        type: "clinic_closed",
         message: `Horário fora do funcionamento da clínica (${dayRules.start} - ${dayRules.end}).`,
       };
     }
@@ -220,52 +239,63 @@ class TimeSlotValidationService {
     try {
       // Get conflicting appointments
       let query = supabase
-        .from('appointments')
-        .select(`
+        .from("appointments")
+        .select(
+          `
           id,
           start_time,
           end_time,
           status,
           patients!inner(full_name)
-        `)
-        .eq('professional_id', professionalId)
-        .neq('status', 'cancelled')
+        `,
+        )
+        .eq("professional_id", professionalId)
+        .neq("status", "cancelled")
         .or(
           `and(start_time.lte.${startTime.toISOString()},end_time.gt.${startTime.toISOString()}),and(start_time.lt.${endTime.toISOString()},end_time.gte.${endTime.toISOString()}),and(start_time.gte.${startTime.toISOString()},end_time.lte.${endTime.toISOString()})`,
         );
 
       if (excludeAppointmentId) {
-        query = query.neq('id', excludeAppointmentId);
+        query = query.neq("id", excludeAppointmentId);
       }
 
       const { data: conflictingAppointments, error } = await query;
 
       if (error) throw error;
 
-      conflictingAppointments?.forEach(appointment => {
+      conflictingAppointments?.forEach((appointment) => {
         conflicts.push({
-          type: 'professional_busy',
+          type: "professional_busy",
           message: `Profissional já possui agendamento das ${
-            appointment.start_time ? format(parseISO(appointment.start_time), 'HH:mm') : '00:00'
+            appointment.start_time
+              ? format(parseISO(appointment.start_time), "HH:mm")
+              : "00:00"
           } às ${
-            appointment.end_time ? format(parseISO(appointment.end_time), 'HH:mm') : '00:00'
+            appointment.end_time
+              ? format(parseISO(appointment.end_time), "HH:mm")
+              : "00:00"
           }.`,
           conflictingAppointment: {
             id: appointment.id,
-            patientName: appointment.patients?.full_name || 'Paciente',
-            startTime: appointment.start_time ? parseISO(appointment.start_time) : new Date(),
-            endTime: appointment.end_time ? parseISO(appointment.end_time) : new Date(),
+            patientName: appointment.patients?.full_name || "Paciente",
+            startTime: appointment.start_time
+              ? parseISO(appointment.start_time)
+              : new Date(),
+            endTime: appointment.end_time
+              ? parseISO(appointment.end_time)
+              : new Date(),
           },
         });
       });
 
       return conflicts;
     } catch (error) {
-      console.error('Error checking professional availability:', error);
+      console.error("Error checking professional availability:", error);
       return [
         {
-          type: 'professional_busy',
-          message: 'Não foi possível verificar a disponibilidade do profissional.',
+          type: "professional_busy",
+          message:
+            "Não foi possível verificar a disponibilidade do profissional.",
         },
       ];
     }
@@ -297,16 +327,16 @@ class TimeSlotValidationService {
     try {
       // Count concurrent appointments
       let query = supabase
-        .from('appointments')
-        .select('id', { count: 'exact' })
-        .eq('clinic_id', clinicId)
-        .neq('status', 'cancelled')
+        .from("appointments")
+        .select("id", { count: "exact" })
+        .eq("clinic_id", clinicId)
+        .neq("status", "cancelled")
         .or(
           `and(start_time.lte.${startTime.toISOString()},end_time.gt.${startTime.toISOString()}),and(start_time.lt.${endTime.toISOString()},end_time.gte.${endTime.toISOString()}),and(start_time.gte.${startTime.toISOString()},end_time.lte.${endTime.toISOString()})`,
         );
 
       if (excludeAppointmentId) {
-        query = query.neq('id', excludeAppointmentId);
+        query = query.neq("id", excludeAppointmentId);
       }
 
       const { count, error } = await query;
@@ -315,15 +345,14 @@ class TimeSlotValidationService {
 
       if (count && count >= businessRules.maxConcurrentAppointments) {
         return {
-          type: 'capacity_exceeded',
-          message:
-            `Capacidade máxima atingida para este horário (${businessRules.maxConcurrentAppointments} agendamentos simultâneos).`,
+          type: "capacity_exceeded",
+          message: `Capacidade máxima atingida para este horário (${businessRules.maxConcurrentAppointments} agendamentos simultâneos).`,
         };
       }
 
       return null;
     } catch (error) {
-      console.error('Error checking capacity limits:', error);
+      console.error("Error checking capacity limits:", error);
       return null;
     }
   }
@@ -340,10 +369,11 @@ class TimeSlotValidationService {
     const now = new Date();
 
     // Check minimum notice time
-    const hoursUntilAppointment = (startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
+    const hoursUntilAppointment =
+      (startTime.getTime() - now.getTime()) / (1000 * 60 * 60);
     if (hoursUntilAppointment < businessRules.minNoticeHours) {
       warnings.push({
-        type: 'short_notice',
+        type: "short_notice",
         message: `Agendamento com menos de ${businessRules.minNoticeHours} horas de antecedência.`,
       });
     }
@@ -351,8 +381,9 @@ class TimeSlotValidationService {
     // Check weekend booking
     if (isWeekend(startTime) && !businessRules.allowWeekendBookings) {
       warnings.push({
-        type: 'weekend_booking',
-        message: 'Agendamento em final de semana pode ter disponibilidade limitada.',
+        type: "weekend_booking",
+        message:
+          "Agendamento em final de semana pode ter disponibilidade limitada.",
       });
     }
 
@@ -411,15 +442,15 @@ class TimeSlotValidationService {
 
     // Get day of week and operating hours
     const dayOfWeek = date
-      .toLocaleDateString('en-US', { weekday: 'long' })
-      .toLowerCase() as keyof BusinessRules['clinicHours'];
+      .toLocaleDateString("en-US", { weekday: "long" })
+      .toLowerCase() as keyof BusinessRules["clinicHours"];
     const dayRules = businessRules.clinicHours[dayOfWeek];
 
     if (dayRules.closed) return slots;
 
     // Parse operating hours
-    const [startHour, startMinute] = dayRules.start.split(':').map(Number);
-    const [endHour, endMinute] = dayRules.end.split(':').map(Number);
+    const [startHour, startMinute] = dayRules.start.split(":").map(Number);
+    const [endHour, endMinute] = dayRules.end.split(":").map(Number);
 
     let currentTime = new Date(date);
     currentTime.setHours(startHour, startMinute, 0, 0);
@@ -428,7 +459,10 @@ class TimeSlotValidationService {
     endTime.setHours(endHour, endMinute, 0, 0);
 
     // Generate 30-minute intervals
-    while (currentTime.getTime() + (durationMinutes * 60 * 1000) <= endTime.getTime()) {
+    while (
+      currentTime.getTime() + durationMinutes * 60 * 1000 <=
+      endTime.getTime()
+    ) {
       const slotEnd = addMinutes(currentTime, durationMinutes);
 
       // Validate this slot
@@ -461,9 +495,9 @@ class TimeSlotValidationService {
   private async getBusinessRules(clinicId: string): Promise<BusinessRules> {
     try {
       const { data: clinic, error } = await supabase
-        .from('clinics')
-        .select('operating_hours')
-        .eq('id', clinicId)
+        .from("clinics")
+        .select("operating_hours")
+        .eq("id", clinicId)
         .single();
 
       if (error) throw error;
@@ -481,7 +515,7 @@ class TimeSlotValidationService {
 
       return this.defaultBusinessRules;
     } catch (error) {
-      console.error('Error getting business rules:', error);
+      console.error("Error getting business rules:", error);
       return this.defaultBusinessRules;
     }
   }

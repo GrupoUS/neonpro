@@ -7,11 +7,9 @@ export {
   getGlobalTelemetryManager,
   shutdownGlobalTelemetry,
   TELEMETRY_CONFIGS,
-} from './opentelemetry-config';
+} from "./opentelemetry-config";
 
-export type {
-  HealthcareTelemetryConfig,
-} from './opentelemetry-config';
+export type { HealthcareTelemetryConfig } from "./opentelemetry-config";
 
 // Re-export specific OpenTelemetry utilities for convenience
 export type {
@@ -25,7 +23,7 @@ export type {
   SamplingDecision,
   SamplingResult,
   DiagLogger,
-} from '@opentelemetry/api';
+} from "@opentelemetry/api";
 
 export type {
   Meter,
@@ -36,17 +34,13 @@ export type {
   ObservableCounter,
   ObservableGauge,
   ObservableUpDownCounter,
-} from '@opentelemetry/api';
+} from "@opentelemetry/api";
 
 export type {
   BasicTracerProvider,
   BatchSpanProcessor,
   ConsoleSpanExporter,
   SimpleSpanProcessor,
-} from '@opentelemetry/sdk-trace-base';
+} from "@opentelemetry/sdk-trace-base";
 
-export {
-  trace,
-  context,
-  diag,
-} from '@opentelemetry/api';
+export { trace, context, diag } from "@opentelemetry/api";

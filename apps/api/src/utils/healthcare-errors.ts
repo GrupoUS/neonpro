@@ -238,14 +238,20 @@ export class BrazilianRegulatoryError extends HealthcareError {
 
 // Patient data validation errors
 export class PatientDataValidationError extends HealthcareError {
-  public readonly validationErrors: Array<{ field: string; message: string; value?: any }>;
+  public readonly validationErrors: Array<{
+    field: string;
+    message: string;
+    value?: any;
+  }>;
 
   constructor(
     validationErrors: Array<{ field: string; message: string; value?: any }>,
     context?: Partial<HealthcareErrorDetails>,
   ) {
     const message = `Patient data validation failed: ${
-      validationErrors.map(e => e.field).join(', ')
+      validationErrors
+        .map(e => e.field)
+        .join(', ')
     }`;
 
     super({
@@ -264,11 +270,17 @@ export class PatientDataValidationError extends HealthcareError {
 
 // Appointment scheduling errors
 export class AppointmentSchedulingError extends HealthcareError {
-  public readonly conflictType?: 'time_conflict' | 'resource_unavailable' | 'policy_violation';
+  public readonly conflictType?:
+    | 'time_conflict'
+    | 'resource_unavailable'
+    | 'policy_violation';
 
   constructor(
     message: string,
-    conflictType?: 'time_conflict' | 'resource_unavailable' | 'policy_violation',
+    conflictType?:
+      | 'time_conflict'
+      | 'resource_unavailable'
+      | 'policy_violation',
     context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
@@ -287,7 +299,11 @@ export class AppointmentSchedulingError extends HealthcareError {
 
 // Database integrity errors
 export class HealthcareDataIntegrityError extends HealthcareError {
-  constructor(message: string, operation?: string, context?: Partial<HealthcareErrorDetails>) {
+  constructor(
+    message: string,
+    operation?: string,
+    context?: Partial<HealthcareErrorDetails>,
+  ) {
     super({
       code: 'HEALTHCARE_DATA_INTEGRITY_ERROR',
       category: HealthcareErrorCategory.DATA_INTEGRITY,
@@ -408,16 +424,11 @@ export class HealthcareLogger {
       });
 
       if (this.prisma && context?.userId) {
-        await this.prisma.createAuditLog(
-          'SUCCESS',
-          resourceType,
-          resourceId,
-          {
-            operation,
-            duration: context.duration,
-            details: context.details,
-          },
-        );
+        await this.prisma.createAuditLog('SUCCESS', resourceType, resourceId, {
+          operation,
+          duration: context.duration,
+          details: context.details,
+        });
       }
     } catch (loggingError) {
       console.error('Failed to log healthcare success:', loggingError);
@@ -592,7 +603,7 @@ export class HealthcareTRPCError extends HealthcareError {
     message: string,
     category: HealthcareErrorCategory = HealthcareErrorCategory.SYSTEM,
     severity: HealthcareErrorSeverity = HealthcareErrorSeverity.MEDIUM,
-    context?: Partial<HealthcareErrorDetails>
+    context?: Partial<HealthcareErrorDetails>,
   ) {
     super({
       code,

@@ -8,7 +8,7 @@ import { zValidator } from '@hono/zod-validator';
 import { Context, Hono, Next } from 'hono';
 import { z } from 'zod';
 import { AIChatService } from '../../services/ai-chat-service.js';
-import { ComprehensiveAuditService } from '../../services/audit-service.js';
+
 import { LGPDService } from '../../services/lgpd-service.js';
 import { PatientService } from '../../services/patient-service.js';
 
@@ -84,18 +84,24 @@ interface InsightsResponse {
 const mockAuthMiddleware = (c: Context, next: Next) => {
   const authHeader = c.req.header('authorization');
   if (!authHeader) {
-    return c.json({
-      success: false,
-      error: 'Não autorizado. Token de acesso necessário.',
-    }, 401);
+    return c.json(
+      {
+        success: false,
+        error: 'Não autorizado. Token de acesso necessário.',
+      },
+      401,
+    );
   }
 
   // Check for insufficient permissions (mock logic for testing)
   if (authHeader.includes('limited-token')) {
-    return c.json({
-      success: false,
-      error: 'Acesso negado. Permissões de profissional de saúde necessárias.',
-    }, 403);
+    return c.json(
+      {
+        success: false,
+        error: 'Acesso negado. Permissões de profissional de saúde necessárias.',
+      },
+      403,
+    );
   }
 
   c.set('user', { id: 'user-123', role: 'healthcare_professional' });
@@ -125,7 +131,7 @@ const getCacheKey = (
 // Function to check cache
 const getFromCache = (key: string) => {
   const cached = cache.get(key);
-  if (cached && (Date.now() - cached.timestamp) < CACHE_DURATION) {
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
     return cached.data;
   }
   cache.delete(key); // Remove expired entry
@@ -152,15 +158,39 @@ const pathSchema = z.object({
 const insightsQuerySchema = z.object({
   analysisType: z.string().optional(),
   timeRange: z.string().optional(),
-  includeHistory: z.string().transform(val => val === 'true').optional(),
-  includeDetails: z.string().transform(val => val === 'true').optional(),
-  includeHealth: z.string().transform(val => val === 'true').optional(),
-  includeMetrics: z.string().transform(val => val === 'true').optional(),
-  include_recommendations: z.string().transform(val => val === 'true').optional(),
+  includeHistory: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
+  includeDetails: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
+  includeHealth: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
+  includeMetrics: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
+  include_recommendations: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
   useCase: z.string().optional(),
-  includeFallbacks: z.string().transform(val => val === 'true').optional(),
-  healthcareContext: z.string().transform(val => val === 'true').optional(),
-  monitorHealth: z.string().transform(val => val === 'true').optional(),
+  includeFallbacks: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
+  healthcareContext: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
+  monitorHealth: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
   context: z.string().optional(), // Add support for context parameter
 });
 
@@ -191,11 +221,14 @@ app.get(
   mockLGPDMiddleware,
   zValidator('param', pathSchema, (result, c) => {
     if (!result.success) {
-      return c.json({
-        success: false,
-        error: 'Formato de ID de paciente inválido',
-        code: 'INVALID_PATIENT_ID_FORMAT',
-      }, 422);
+      return c.json(
+        {
+          success: false,
+          error: 'Formato de ID de paciente inválido',
+          code: 'INVALID_PATIENT_ID_FORMAT',
+        },
+        422,
+      );
     }
   }),
   zValidator('query', insightsQuerySchema),
@@ -214,7 +247,12 @@ app.get(
       const currentServices = getServices();
 
       // Check cache first
-      const cacheKey = getCacheKey(patientId, queryParams, user.id, medicalSpecialty);
+      const cacheKey = getCacheKey(
+        patientId,
+        queryParams,
+        user.id,
+        medicalSpecialty,
+      );
       const cachedResult = getFromCache(cacheKey);
       let cacheStatus = 'miss';
 
@@ -233,11 +271,14 @@ app.get(
       const patientValidation = await currentServices.patientService.getPatientById(patientId);
 
       if (!patientValidation.success) {
-        return c.json({
-          success: false,
-          error: patientValidation.error || 'Paciente não encontrado',
-          code: patientValidation.code || 'PATIENT_NOT_FOUND',
-        }, 404);
+        return c.json(
+          {
+            success: false,
+            error: patientValidation.error || 'Paciente não encontrado',
+            code: patientValidation.code || 'PATIENT_NOT_FOUND',
+          },
+          404,
+        );
       }
 
       // Validate LGPD data access for patient insights (mock validation for testing)
@@ -254,11 +295,14 @@ app.get(
       */
 
       if (!lgpdValidation.success) {
-        return c.json({
-          success: false,
-          error: lgpdValidation.error,
-          code: lgpdValidation.code || 'LGPD_AI_INSIGHTS_DENIED',
-        }, 403);
+        return c.json(
+          {
+            success: false,
+            error: lgpdValidation.error,
+            code: lgpdValidation.code || 'LGPD_AI_INSIGHTS_DENIED',
+          },
+          403,
+        );
       }
 
       // Generate patient insights
@@ -282,27 +326,36 @@ app.get(
 
       if (!insightsResponse.success) {
         if (insightsResponse.error?.includes('Dados insuficientes')) {
-          return c.json({
-            success: false,
-            error: insightsResponse.error,
-            code: 'INSUFFICIENT_DATA',
-          }, 422);
+          return c.json(
+            {
+              success: false,
+              error: insightsResponse.error,
+              code: 'INSUFFICIENT_DATA',
+            },
+            422,
+          );
         }
 
-        return c.json({
-          success: false,
-          error: insightsResponse.error || 'Erro interno do serviço de insights de IA',
-        }, 500);
+        return c.json(
+          {
+            success: false,
+            error: insightsResponse.error
+              || 'Erro interno do serviço de insights de IA',
+          },
+          500,
+        );
       }
 
       // Mock some insights data with Brazilian context
       let responseData = insightsResponse.data || {
-        insights: [{
-          type: 'risk_analysis',
-          content: 'Análise de risco padrão',
-          confidence: 0.85,
-          sources: ['medical_history', 'current_symptoms'],
-        }],
+        insights: [
+          {
+            type: 'risk_analysis',
+            content: 'Análise de risco padrão',
+            confidence: 0.85,
+            sources: ['medical_history', 'current_symptoms'],
+          },
+        ],
         recommendations: ['Acompanhamento regular', 'Exames complementares'],
         metadata: {
           model: 'gpt-4o',
@@ -318,7 +371,9 @@ app.get(
         responseData.specialtyInsights = {
           specialty: medicalSpecialty,
           specializedAnalysis: `Análise especializada em ${medicalSpecialty}`,
-          recommendations: [`Recomendações específicas para ${medicalSpecialty}`],
+          recommendations: [
+            `Recomendações específicas para ${medicalSpecialty}`,
+          ],
         };
 
         // Add specialty to metadata if it exists
@@ -356,7 +411,9 @@ app.get(
       if (lgpdValidation.data?.accessLevel === 'limited') {
         responseData = {
           ...responseData,
-          insights: currentServices.lgpdService.maskSensitiveData(responseData.insights),
+          insights: currentServices.lgpdService.maskSensitiveData(
+            responseData.insights,
+          ),
         };
       }
 
@@ -416,8 +473,12 @@ app.get(
       // Add AI-specific headers
       if (responseData.metadata) {
         responseHeaders['X-AI-Model'] = responseData.metadata.model || 'unknown';
-        responseHeaders['X-AI-Confidence'] = (responseData.metadata.confidence || 0).toString();
-        responseHeaders['X-AI-Data-Points'] = (responseData.metadata.dataPoints || 0).toString();
+        responseHeaders['X-AI-Confidence'] = (
+          responseData.metadata.confidence || 0
+        ).toString();
+        responseHeaders['X-AI-Data-Points'] = (
+          responseData.metadata.dataPoints || 0
+        ).toString();
         responseHeaders['X-AI-Processing-Time'] = `${responseData.metadata.processingTime || 0}ms`;
         responseHeaders['X-Analysis-Version'] = responseData.metadata.analysisVersion || 'unknown';
       }
@@ -485,30 +546,37 @@ app.get(
         sensitivityLevel: 'critical',
       });
 
-      return c.json({
-        success: false,
-        error: 'Erro interno do servidor. Tente novamente mais tarde.',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro interno do servidor. Tente novamente mais tarde.',
+        },
+        500,
+      );
     }
   },
 );
 
 // POST /no-show-prediction endpoint for AI no-show prediction
 const noShowRequestSchema = z.object({
-  appointments: z.array(z.object({
-    id: z.string(),
-    patientId: z.string(),
-    datetime: z.string(),
-    appointmentType: z.string(),
-    provider: z.string(),
-    duration: z.number().optional(),
-  })),
-  contextualFactors: z.object({
-    weather: z.string().optional(),
-    dayOfWeek: z.string().optional(),
-    timeOfDay: z.string().optional(),
-    previousNoShows: z.number().optional(),
-  }).optional(),
+  appointments: z.array(
+    z.object({
+      id: z.string(),
+      patientId: z.string(),
+      datetime: z.string(),
+      appointmentType: z.string(),
+      provider: z.string(),
+      duration: z.number().optional(),
+    }),
+  ),
+  contextualFactors: z
+    .object({
+      weather: z.string().optional(),
+      dayOfWeek: z.string().optional(),
+      timeOfDay: z.string().optional(),
+      previousNoShows: z.number().optional(),
+    })
+    .optional(),
 });
 
 app.post(
@@ -528,21 +596,31 @@ app.post(
 
       // Validate appointments array
       if (!requestData.appointments || requestData.appointments.length === 0) {
-        return c.json({
-          success: false,
-          error: 'Lista de consultas não pode estar vazia.',
-          code: 'EMPTY_APPOINTMENTS_ARRAY',
-        }, 400);
+        return c.json(
+          {
+            success: false,
+            error: 'Lista de consultas não pode estar vazia.',
+            code: 'EMPTY_APPOINTMENTS_ARRAY',
+          },
+          400,
+        );
       }
 
       // Validate appointment data
       for (const appointment of requestData.appointments) {
-        if (!appointment.id || !appointment.patientId || !appointment.datetime) {
-          return c.json({
-            success: false,
-            error: 'Dados de consulta inválidos. ID, patientId e datetime são obrigatórios.',
-            code: 'INVALID_APPOINTMENT_DATA',
-          }, 422);
+        if (
+          !appointment.id
+          || !appointment.patientId
+          || !appointment.datetime
+        ) {
+          return c.json(
+            {
+              success: false,
+              error: 'Dados de consulta inválidos. ID, patientId e datetime são obrigatórios.',
+              code: 'INVALID_APPOINTMENT_DATA',
+            },
+            422,
+          );
         }
       }
 
@@ -624,10 +702,13 @@ app.post(
     } catch (error) {
       console.error('No-show prediction endpoint error:', error);
 
-      return c.json({
-        success: false,
-        error: 'Erro interno do servidor. Tente novamente mais tarde.',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro interno do servidor. Tente novamente mais tarde.',
+        },
+        500,
+      );
     }
   },
 );

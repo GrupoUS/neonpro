@@ -24,10 +24,13 @@ interface ServiceInterface {
 const mockAuthMiddleware = (c: Context, next: Next) => {
   const authHeader = c.req.header('authorization');
   if (!authHeader) {
-    return c.json({
-      success: false,
-      error: 'Não autorizado. Token de acesso necessário.',
-    }, 401);
+    return c.json(
+      {
+        success: false,
+        error: 'Não autorizado. Token de acesso necessário.',
+      },
+      401,
+    );
   }
   c.set('user', { id: 'user-123', role: 'healthcare_professional' });
   return next();
@@ -58,15 +61,18 @@ const analyzeRequestSchema = z.object({
     structuredData: z.object({}).optional(),
     patientData: z.string().optional(),
   }),
-  options: z.object({
-    includeRecommendations: z.boolean().optional().default(true),
-    confidenceThreshold: z.number().optional().default(0.8),
-    detectConditions: z.array(z.string()).optional(),
-    includeCoordinates: z.boolean().optional().default(false),
-    analyzeSentiment: z.boolean().optional().default(false),
-    extractTopics: z.boolean().optional().default(false),
-    identifyActionItems: z.boolean().optional().default(false),
-  }).optional().default({}),
+  options: z
+    .object({
+      includeRecommendations: z.boolean().optional().default(true),
+      confidenceThreshold: z.number().optional().default(0.8),
+      detectConditions: z.array(z.string()).optional(),
+      includeCoordinates: z.boolean().optional().default(false),
+      analyzeSentiment: z.boolean().optional().default(false),
+      extractTopics: z.boolean().optional().default(false),
+      identifyActionItems: z.boolean().optional().default(false),
+    })
+    .optional()
+    .default({}),
 });
 
 // Services - will be injected during testing or use real services in production
@@ -116,10 +122,14 @@ app.post(
         'diagnostic_support',
       ];
       if (!supportedTypes.includes(requestData.analysisType)) {
-        return c.json({
-          success: false,
-          error: 'Tipo de análise não suportado. Tipos válidos: ' + supportedTypes.join(', '),
-        }, 400);
+        return c.json(
+          {
+            success: false,
+            error: 'Tipo de análise não suportado. Tipos válidos: '
+              + supportedTypes.join(', '),
+          },
+          400,
+        );
       }
 
       // Validate LGPD data access for AI analysis
@@ -132,11 +142,14 @@ app.post(
       });
 
       if (!lgpdValidation.success) {
-        return c.json({
-          success: false,
-          error: lgpdValidation.error,
-          code: lgpdValidation.code || 'LGPD_AI_ANALYSIS_DENIED',
-        }, 403);
+        return c.json(
+          {
+            success: false,
+            error: lgpdValidation.error,
+            code: lgpdValidation.code || 'LGPD_AI_ANALYSIS_DENIED',
+          },
+          403,
+        );
       }
 
       // Prepare analysis request
@@ -163,20 +176,29 @@ app.post(
           analysisResponse = await currentServices.aiChatService.analyzeText(analysisRequest);
           break;
         case 'multi_modal':
-          analysisResponse = await currentServices.aiChatService.analyzeMultiModal(analysisRequest);
+          analysisResponse = await currentServices.aiChatService.analyzeMultiModal(
+            analysisRequest,
+          );
           break;
         default:
-          return c.json({
-            success: false,
-            error: 'Tipo de análise não implementado',
-          }, 400);
+          return c.json(
+            {
+              success: false,
+              error: 'Tipo de análise não implementado',
+            },
+            400,
+          );
       }
 
       if (!analysisResponse.success) {
-        return c.json({
-          success: false,
-          error: analysisResponse.error || 'Erro interno do serviço de análise de IA',
-        }, 500);
+        return c.json(
+          {
+            success: false,
+            error: analysisResponse.error
+              || 'Erro interno do serviço de análise de IA',
+          },
+          500,
+        );
       }
 
       // Calculate data size for logging
@@ -215,16 +237,18 @@ app.post(
       // Add AI-specific headers
       if (analysisResponse.data.metadata) {
         responseHeaders['X-AI-Model'] = analysisResponse.data.metadata.model || 'unknown';
-        responseHeaders['X-AI-Confidence'] = (analysisResponse.data.metadata.confidence || 0)
-          .toString();
+        responseHeaders['X-AI-Confidence'] = (
+          analysisResponse.data.metadata.confidence || 0
+        ).toString();
         responseHeaders['X-AI-Processing-Time'] = `${
           analysisResponse.data.metadata.processingTime || 0
         }ms`;
         responseHeaders['X-Analysis-Type'] = requestData.analysisType;
         responseHeaders['X-Analysis-Version'] = analysisResponse.data.metadata.analysisVersion
           || 'unknown';
-        responseHeaders['X-AI-Data-Points'] = (analysisResponse.data.metadata.dataPoints || 0)
-          .toString();
+        responseHeaders['X-AI-Data-Points'] = (
+          analysisResponse.data.metadata.dataPoints || 0
+        ).toString();
       }
 
       // Set all headers
@@ -256,10 +280,13 @@ app.post(
         sensitivityLevel: 'high',
       });
 
-      return c.json({
-        success: false,
-        error: 'Erro interno do servidor. Tente novamente mais tarde.',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro interno do servidor. Tente novamente mais tarde.',
+        },
+        500,
+      );
     }
   },
 );

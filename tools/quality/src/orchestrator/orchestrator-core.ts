@@ -1,12 +1,12 @@
 /**
  * 🎭 TDD Orchestrator Core
  * ========================
- * 
+ *
  * Main orchestrator class that coordinates multi-agent TDD workflows
  */
 
-import { EventEmitter } from 'events';
-import { 
+import { EventEmitter } from "events";
+import {
   OrchestrationState,
   FeatureContext,
   TDDPhase,
@@ -17,12 +17,12 @@ import {
   OrchestrationMetrics,
   OrchestratorConfig,
   normalizeDomain,
-  normalizeComplexity
-} from './types';
-import { AgentRegistry } from './agent-registry';
-import { WorkflowEngine } from './workflow-engine';
-import { QualityGatesSystem } from './quality-gates';
-import { CommunicationSystem } from './communication';
+  normalizeComplexity,
+} from "./types";
+import { AgentRegistry } from "./agent-registry";
+import { WorkflowEngine } from "./workflow-engine";
+import { QualityGatesSystem } from "./quality-gates";
+import { CommunicationSystem } from "./communication";
 
 export class TDDOrchestrator extends EventEmitter {
   private registry: AgentRegistry;
@@ -39,11 +39,11 @@ export class TDDOrchestrator extends EventEmitter {
     this.workflowEngine = new WorkflowEngine({
       workflows: config.workflows,
       defaultTimeout: 30000,
-      retryAttempts: 3
+      retryAttempts: 3,
     });
     this.qualityGates = new QualityGatesSystem(config.qualityGates);
     this.communication = new CommunicationSystem(config.communication);
-    
+
     this.setupEventHandlers();
   }
 
@@ -52,59 +52,59 @@ export class TDDOrchestrator extends EventEmitter {
    */
   async orchestrateFeature(
     feature: FeatureContext,
-    workflowType?: WorkflowType
+    workflowType?: WorkflowType,
   ): Promise<string> {
     const orchestrationId = this.generateOrchestrationId();
-    
+
     // Determine workflow type if not specified
     const workflow = workflowType || this.determineWorkflowType(feature);
-    
+
     // Select appropriate agents
     const selectedAgents = this.registry.selectAgentsForFeature(feature);
-    
+
     // Create orchestration state
     const state: OrchestrationState = {
       id: orchestrationId,
       feature,
       workflow,
       tddCycle: {
-        phase: 'red',
+        phase: "red",
         iteration: 1,
-        testStatus: 'failing',
+        testStatus: "failing",
         startTime: new Date(),
-        phaseStartTime: new Date()
+        phaseStartTime: new Date(),
       },
       agents: {
         active: [],
         completed: [],
         pending: selectedAgents,
-        failed: []
+        failed: [],
       },
       qualityGates: {
-        architecture: 'pending',
-        security: 'pending',
-        codeQuality: 'pending',
-        testCoverage: 'pending',
-        performance: 'pending',
-        compliance: 'pending'
+        architecture: "pending",
+        security: "pending",
+        codeQuality: "pending",
+        testCoverage: "pending",
+        performance: "pending",
+        compliance: "pending",
       },
       metadata: {},
       createdAt: new Date(),
-      updatedAt: new Date()
+      updatedAt: new Date(),
     };
 
     this.activeOrchestrations.set(orchestrationId, state);
-    
+
     // Emit workflow started event
-    this.emitEvent('workflow-started', orchestrationId, {
+    this.emitEvent("workflow-started", orchestrationId, {
       feature: feature.name,
       workflow,
-      agents: selectedAgents
+      agents: selectedAgents,
     });
 
     // Start the TDD cycle
     await this.executeTDDCycle(orchestrationId);
-    
+
     return orchestrationId;
   }
 
@@ -117,13 +117,13 @@ export class TDDOrchestrator extends EventEmitter {
       throw new Error(`Orchestration not found: ${orchestrationId}`);
     }
 
-    const phases: TDDPhase[] = ['red', 'green', 'refactor'];
-    
+    const phases: TDDPhase[] = ["red", "green", "refactor"];
+
     for (const phase of phases) {
       await this.executePhase(orchestrationId, phase);
-      
+
       // Check if we should continue to next phase
-      if (!await this.shouldContinueToNextPhase(orchestrationId, phase)) {
+      if (!(await this.shouldContinueToNextPhase(orchestrationId, phase))) {
         break;
       }
     }
@@ -135,7 +135,10 @@ export class TDDOrchestrator extends EventEmitter {
   /**
    * Execute a specific TDD phase
    */
-  private async executePhase(orchestrationId: string, phase: TDDPhase): Promise<void> {
+  private async executePhase(
+    orchestrationId: string,
+    phase: TDDPhase,
+  ): Promise<void> {
     const state = this.activeOrchestrations.get(orchestrationId);
     if (!state) return;
 
@@ -144,14 +147,16 @@ export class TDDOrchestrator extends EventEmitter {
     state.tddCycle.phaseStartTime = new Date();
     state.updatedAt = new Date();
 
-    this.emitEvent('phase-changed', orchestrationId, { phase });
+    this.emitEvent("phase-changed", orchestrationId, { phase });
 
     // Get workflow configuration for this phase
-    const workflowConfig = this.workflowEngine.getWorkflowConfig(state.workflow);
+    const workflowConfig = this.workflowEngine.getWorkflowConfig(
+      state.workflow,
+    );
     const _phaseConfig = workflowConfig.phases[phase];
 
     // Execute agents for this phase
-    const agentsForPhase = state.agents.pending.filter(agent => {
+    const agentsForPhase = state.agents.pending.filter((agent) => {
       const agentCapabilities = this.registry.getAgent(agent);
       return agentCapabilities?.phases.includes(phase);
     });
@@ -160,16 +165,24 @@ export class TDDOrchestrator extends EventEmitter {
     const orderedAgents = this.registry.resolveDependencies(agentsForPhase);
 
     // Execute sequential agents first
-    const sequentialAgents = this.registry.getSequentialAgents(phase, orderedAgents);
+    const sequentialAgents = this.registry.getSequentialAgents(
+      phase,
+      orderedAgents,
+    );
     for (const agent of sequentialAgents) {
       await this.executeAgent(orchestrationId, agent, phase);
     }
 
     // Execute parallelizable agents
-    const parallelAgents = this.registry.getParallelizableAgents(phase, orderedAgents);
+    const parallelAgents = this.registry.getParallelizableAgents(
+      phase,
+      orderedAgents,
+    );
     if (parallelAgents.length > 0) {
       await Promise.all(
-        parallelAgents.map(agent => this.executeAgent(orchestrationId, agent, phase))
+        parallelAgents.map((agent) =>
+          this.executeAgent(orchestrationId, agent, phase),
+        ),
       );
     }
 
@@ -181,9 +194,9 @@ export class TDDOrchestrator extends EventEmitter {
    * Execute a specific agent
    */
   private async executeAgent(
-    orchestrationId: string, 
-    agentName: AgentName, 
-    phase: TDDPhase
+    orchestrationId: string,
+    agentName: AgentName,
+    phase: TDDPhase,
   ): Promise<AgentResult> {
     const state = this.activeOrchestrations.get(orchestrationId);
     if (!state) {
@@ -191,12 +204,12 @@ export class TDDOrchestrator extends EventEmitter {
     }
 
     // Move agent to active
-    state.agents.pending = state.agents.pending.filter(a => a !== agentName);
+    state.agents.pending = state.agents.pending.filter((a) => a !== agentName);
     state.agents.active.push(agentName);
     state.updatedAt = new Date();
 
     const startTime = Date.now();
-    
+
     try {
       // Get agent configuration
       const agentConfig = this.config.agents[agentName];
@@ -210,50 +223,49 @@ export class TDDOrchestrator extends EventEmitter {
         timeout: agentConfig.timeout,
         retryAttempts: agentConfig.retries,
         capabilities: [],
-        triggers: []
+        triggers: [],
       };
-      
+
       const result = await this.workflowEngine.executeAgent(
         agentName,
         phase,
         state,
-        transformedAgentConfig
+        transformedAgentConfig,
       );
 
       // Move agent to completed
-      state.agents.active = state.agents.active.filter(a => a !== agentName);
+      state.agents.active = state.agents.active.filter((a) => a !== agentName);
       state.agents.completed.push(agentName);
 
-      this.emitEvent('agent-completed', orchestrationId, {
+      this.emitEvent("agent-completed", orchestrationId, {
         agent: agentName,
         phase,
         status: result.status,
-        duration: result.duration
+        duration: result.duration,
       });
 
       return result;
-
     } catch (error) {
       // Move agent to failed
-      state.agents.active = state.agents.active.filter(a => a !== agentName);
+      state.agents.active = state.agents.active.filter((a) => a !== agentName);
       state.agents.failed.push(agentName);
 
       const _result: AgentResult = {
         agent: agentName,
         phase,
-        status: 'failure',
+        status: "failure",
         findings: [],
         recommendations: [],
         metrics: {},
         duration: Date.now() - startTime,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
 
-      this.emitEvent('agent-completed', orchestrationId, {
+      this.emitEvent("agent-completed", orchestrationId, {
         agent: agentName,
         phase,
-        status: 'failure',
-        error: error instanceof Error ? error.message : 'Unknown error'
+        status: "failure",
+        error: error instanceof Error ? error.message : "Unknown error",
       });
 
       throw error;
@@ -264,19 +276,21 @@ export class TDDOrchestrator extends EventEmitter {
    * Validate quality gates for a phase
    */
   private async validatePhaseQualityGates(
-    orchestrationId: string, 
-    phase: TDDPhase
+    orchestrationId: string,
+    phase: TDDPhase,
   ): Promise<void> {
     const state = this.activeOrchestrations.get(orchestrationId);
     if (!state) return;
 
-    const workflowConfig = this.workflowEngine.getWorkflowConfig(state.workflow);
+    const workflowConfig = this.workflowEngine.getWorkflowConfig(
+      state.workflow,
+    );
     const _phaseConfig = workflowConfig.phases[phase];
 
     const gates = await this.qualityGates.validatePhase(
       phase,
       this.getAgentResults(orchestrationId, phase),
-      state.feature
+      state.feature,
     );
 
     // Update state with all quality gate results
@@ -285,18 +299,21 @@ export class TDDOrchestrator extends EventEmitter {
     // Check if any critical gates failed
     const passedGates = this.qualityGates.areQualityGatesPassed(gates);
     if (!passedGates) {
-      this.emitEvent('quality-gate-failed', orchestrationId, {
-        gate: 'multiple',
-        phase
+      this.emitEvent("quality-gate-failed", orchestrationId, {
+        gate: "multiple",
+        phase,
       });
-      
+
       // Check if any failed gates are critical for this phase
-      const criticalFailures = Object.entries(gates).filter(([gateName, status]) => 
-        status === 'failed' && this.isGateCritical(gateName, phase)
+      const criticalFailures = Object.entries(gates).filter(
+        ([gateName, status]) =>
+          status === "failed" && this.isGateCritical(gateName, phase),
       );
-      
+
       if (criticalFailures.length > 0) {
-        throw new Error(`Critical quality gates failed in ${phase} phase: ${criticalFailures.map(([name]) => name).join(', ')}`);
+        throw new Error(
+          `Critical quality gates failed in ${phase} phase: ${criticalFailures.map(([name]) => name).join(", ")}`,
+        );
       }
     }
 
@@ -307,8 +324,8 @@ export class TDDOrchestrator extends EventEmitter {
    * Check if we should continue to the next phase
    */
   private async shouldContinueToNextPhase(
-    orchestrationId: string, 
-    currentPhase: TDDPhase
+    orchestrationId: string,
+    currentPhase: TDDPhase,
   ): Promise<boolean> {
     const state = this.activeOrchestrations.get(orchestrationId);
     if (!state) return false;
@@ -320,10 +337,10 @@ export class TDDOrchestrator extends EventEmitter {
     }
 
     // Check critical quality gates
-    const criticalGatesFailed = Object.entries(state.qualityGates)
-      .some(([gate, status]) => 
-        this.isGateCritical(gate, currentPhase) && status === 'failed'
-      );
+    const criticalGatesFailed = Object.entries(state.qualityGates).some(
+      ([gate, status]) =>
+        this.isGateCritical(gate, currentPhase) && status === "failed",
+    );
 
     return !criticalGatesFailed;
   }
@@ -337,15 +354,15 @@ export class TDDOrchestrator extends EventEmitter {
 
     // Generate metrics
     const metrics = this.generateMetrics(orchestrationId);
-    
+
     // Store results
     state.metadata.metrics = metrics;
     state.metadata.completedAt = new Date();
     state.updatedAt = new Date();
 
-    this.emitEvent('workflow-completed', orchestrationId, {
+    this.emitEvent("workflow-completed", orchestrationId, {
       success: state.agents.failed.length === 0,
-      metrics
+      metrics,
     });
 
     // Clean up (optional - keep for debugging/analysis)
@@ -355,7 +372,9 @@ export class TDDOrchestrator extends EventEmitter {
   /**
    * Get orchestration state
    */
-  getOrchestrationState(orchestrationId: string): OrchestrationState | undefined {
+  getOrchestrationState(
+    orchestrationId: string,
+  ): OrchestrationState | undefined {
     return this.activeOrchestrations.get(orchestrationId);
   }
 
@@ -375,7 +394,7 @@ export class TDDOrchestrator extends EventEmitter {
 
     // Cancel any active agents
     // Implementation depends on how agents are executed
-    
+
     this.activeOrchestrations.delete(orchestrationId);
   }
 
@@ -387,60 +406,68 @@ export class TDDOrchestrator extends EventEmitter {
 
   private determineWorkflowType(feature: FeatureContext): WorkflowType {
     if (feature.securityCritical || feature.complianceRequirements.length > 0) {
-      return 'security-critical';
+      return "security-critical";
     }
-    
+
     const domainArray = normalizeDomain(feature.domain);
-    if (domainArray.some((d: string) => d.includes('microservice') || d.includes('api'))) {
-      return 'microservices';
+    if (
+      domainArray.some(
+        (d: string) => d.includes("microservice") || d.includes("api"),
+      )
+    ) {
+      return "microservices";
     }
-    
-    if (domainArray.some((d: string) => d.includes('legacy'))) {
-      return 'legacy';
+
+    if (domainArray.some((d: string) => d.includes("legacy"))) {
+      return "legacy";
     }
-    
-    return 'standard';
+
+    return "standard";
   }
 
   private setupEventHandlers(): void {
     // Setup internal event handlers
-    this.on('error', (error) => {
-      console.error('TDD Orchestrator Error:', error);
+    this.on("error", (error) => {
+      console.error("TDD Orchestrator Error:", error);
     });
   }
 
   private emitEvent(
-    type: OrchestratorEvent['type'], 
-    orchestrationId: string, 
-    data: Record<string, any>
+    type: OrchestratorEvent["type"],
+    orchestrationId: string,
+    data: Record<string, any>,
   ): void {
     const event: OrchestratorEvent = {
       type,
       orchestrationId,
       timestamp: new Date(),
-      data
+      data,
     };
-    
+
     this.emit(type, event);
-    this.emit('event', event);
+    this.emit("event", event);
   }
 
-  private getAgentResults(orchestrationId: string, phase: TDDPhase): AgentResult[] {
+  private getAgentResults(
+    orchestrationId: string,
+    phase: TDDPhase,
+  ): AgentResult[] {
     const state = this.activeOrchestrations.get(orchestrationId);
     if (!state || !state.metadata.agentResults) return [];
-    
-    return (state.metadata.agentResults as AgentResult[])
-      .filter(result => result.phase === phase);
+
+    return (state.metadata.agentResults as AgentResult[]).filter(
+      (result) => result.phase === phase,
+    );
   }
 
   private isGateCritical(gateType: string, phase: TDDPhase): boolean {
     // Define which gates are critical for each phase
     const criticalGates = {
-      red: ['testCoverage'],
-      green: ['testCoverage', 'security'],
-      refactor: ['codeQuality', 'performance']
+      red: ["testCoverage"],
+      green: ["testCoverage", "security"],
+      refactor: ["codeQuality", "performance"],
     };
-    
+
     return criticalGates[phase]?.includes(gateType) || false;
   }
 
@@ -461,21 +488,21 @@ export class TDDOrchestrator extends EventEmitter {
       phaseDurations: {
         red: 0, // Calculate from phase transitions
         green: 0,
-        refactor: 0
+        refactor: 0,
       },
       agentDurations: {
-        'apex-dev': 0,
-        'test': 0,
-        'compliance-validator': 0,
-        'code-reviewer': 0,
-        'architect-review': 0,
-        'security-auditor': 0
+        "apex-dev": 0,
+        test: 0,
+        "compliance-validator": 0,
+        "code-reviewer": 0,
+        "architect-review": 0,
+        "security-auditor": 0,
       },
       qualityGateResults: state.qualityGates,
       findingsCount: {},
       recommendationsCount: {},
       success: state.agents.failed.length === 0,
-      timestamp: now
+      timestamp: now,
     };
   }
 }

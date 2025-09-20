@@ -88,7 +88,7 @@ describe('Query Optimizer', () => {
       for (let i = 0; i < 5; i++) {
         monitor.recordQuery({
           query: `SELECT * FROM test_table_${i}`,
-          duration: 100 + (i * 20), // 100, 120, 140, 160, 180
+          duration: 100 + i * 20, // 100, 120, 140, 160, 180
           rowsAffected: 1,
           timestamp: new Date(baseTime.getTime() + i * 1000),
           endpoint: `/api/test/${i}`,

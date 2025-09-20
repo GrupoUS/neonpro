@@ -68,16 +68,19 @@ describe('Patients Mobile Integration API', () => {
 
   describe('GET /api/v2/patients/{id}/mobile-data', () => {
     it('should return 200 with mobile-optimized patient data', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-data`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
-          'X-Mobile-OS': 'iOS',
-          'X-Mobile-Version': '2.1.0',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-data`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+            'X-Mobile-OS': 'iOS',
+            'X-Mobile-Version': '2.1.0',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -100,15 +103,18 @@ describe('Patients Mobile Integration API', () => {
     });
 
     it('should optimize data payload for mobile bandwidth', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-data`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
-          'X-Mobile-Network': '4G',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-data`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+            'X-Mobile-Network': '4G',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       expect(response.headers.get('content-encoding')).toMatch(/gzip/);
@@ -183,15 +189,18 @@ describe('Patients Mobile Integration API', () => {
     });
 
     it('should validate mobile client version compatibility', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-data`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
-          'X-Mobile-Version': '1.0.0', // Outdated version
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-data`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+            'X-Mobile-Version': '1.0.0', // Outdated version
+          },
         },
-      });
+      );
 
       if (response.status === 200) {
         const data = await response.json();
@@ -238,15 +247,18 @@ describe('Patients Mobile Integration API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-sync`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-sync`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+          },
+          body: JSON.stringify(syncRequest),
         },
-        body: JSON.stringify(syncRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -283,15 +295,18 @@ describe('Patients Mobile Integration API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-sync`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-sync`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+          },
+          body: JSON.stringify(conflictRequest),
         },
-        body: JSON.stringify(conflictRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -315,15 +330,18 @@ describe('Patients Mobile Integration API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-sync`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-sync`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+          },
+          body: JSON.stringify(invalidSyncRequest),
         },
-        body: JSON.stringify(invalidSyncRequest),
-      });
+      );
 
       expect(response.status).toBe(400);
       const data = await response.json();
@@ -337,14 +355,17 @@ describe('Patients Mobile Integration API', () => {
 
   describe('GET /api/v2/patients/{id}/mobile-notifications', () => {
     it('should return 200 with mobile notification settings', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-notifications`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-notifications`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -428,15 +449,18 @@ describe('Patients Mobile Integration API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-notifications`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-notifications`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+          },
+          body: JSON.stringify(updateRequest),
         },
-        body: JSON.stringify(updateRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -461,15 +485,18 @@ describe('Patients Mobile Integration API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-notifications`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-notifications`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+          },
+          body: JSON.stringify(conflictingRequest),
         },
-        body: JSON.stringify(conflictingRequest),
-      });
+      );
 
       expect(response.status).toBe(400);
       const data = await response.json();
@@ -501,15 +528,18 @@ describe('Patients Mobile Integration API', () => {
         ],
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-actions`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-actions`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+          },
+          body: JSON.stringify(actionRequest),
         },
-        body: JSON.stringify(actionRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -536,15 +566,18 @@ describe('Patients Mobile Integration API', () => {
         ],
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-actions`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-actions`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+          },
+          body: JSON.stringify(unauthorizedAction),
         },
-        body: JSON.stringify(unauthorizedAction),
-      });
+      );
 
       expect(response.status).toBe(403);
       const data = await response.json();
@@ -569,16 +602,19 @@ describe('Patients Mobile Integration API', () => {
         ],
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-actions`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
-          'X-Offline-Sync': 'true',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-actions`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+            'X-Offline-Sync': 'true',
+          },
+          body: JSON.stringify(offlineActionRequest),
         },
-        body: JSON.stringify(offlineActionRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -593,16 +629,19 @@ describe('Patients Mobile Integration API', () => {
 
   describe('Mobile Security and Performance', () => {
     it('should enforce mobile device security checks', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-security-check`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
-          'X-Device-ID': 'test-device-123',
-          'X-Device-Fingerprint': 'device-fingerprint-hash',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-security-check`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+            'X-Device-ID': 'test-device-123',
+            'X-Device-Fingerprint': 'device-fingerprint-hash',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -620,19 +659,24 @@ describe('Patients Mobile Integration API', () => {
     });
 
     it('should optimize API responses for mobile networks', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-data`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Mobile-Client': 'true',
-          'X-Mobile-Network': '3G', // Slow network
-          'X-Device-Memory': '1GB', // Low memory device
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-data`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Mobile-Client': 'true',
+            'X-Mobile-Network': '3G', // Slow network
+            'X-Device-Memory': '1GB', // Low memory device
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
-      expect(Number(response.headers.get('content-length'))).toBeLessThan(50000); // Should be small
+      expect(Number(response.headers.get('content-length'))).toBeLessThan(
+        50000,
+      ); // Should be small
 
       const data = await response.json();
       expect(data.mobile_data).toMatchObject({
@@ -690,14 +734,17 @@ describe('Patients Mobile Integration API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-devices`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-devices`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(deviceRegistration),
         },
-        body: JSON.stringify(deviceRegistration),
-      });
+      );
 
       expect(response.status).toBe(201);
       const data = await response.json();
@@ -713,13 +760,16 @@ describe('Patients Mobile Integration API', () => {
     });
 
     it('should list registered mobile devices', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/mobile-devices`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/mobile-devices`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();

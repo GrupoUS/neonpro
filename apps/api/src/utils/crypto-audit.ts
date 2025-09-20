@@ -123,7 +123,10 @@ export class CryptographicAuditLogger {
   /**
    * Validate the integrity of an audit log entry
    */
-  validateAuditEntry(entry: AuditLogEntry, previousEntry?: AuditLogEntry): boolean {
+  validateAuditEntry(
+    entry: AuditLogEntry,
+    previousEntry?: AuditLogEntry,
+  ): boolean {
     try {
       // Validate signature
       const expectedSignature = this.createSignature(
@@ -173,7 +176,10 @@ export class CryptographicAuditLogger {
       }
 
       // Validate sequence number
-      if (previousEntry && entry.sequenceNumber !== previousEntry.sequenceNumber + 1) {
+      if (
+        previousEntry
+        && entry.sequenceNumber !== previousEntry.sequenceNumber + 1
+      ) {
         return false;
       }
 
@@ -187,7 +193,9 @@ export class CryptographicAuditLogger {
   /**
    * Validate the integrity of an entire audit chain
    */
-  async validateAuditChain(entries: AuditLogEntry[]): Promise<AuditChainValidation> {
+  async validateAuditChain(
+    entries: AuditLogEntry[],
+  ): Promise<AuditChainValidation> {
     const result: AuditChainValidation = {
       isValid: true,
       totalEntries: entries.length,
@@ -200,7 +208,9 @@ export class CryptographicAuditLogger {
     }
 
     // Sort entries by sequence number
-    const sortedEntries = entries.sort((a, b) => a.sequenceNumber - b.sequenceNumber);
+    const sortedEntries = entries.sort(
+      (a, b) => a.sequenceNumber - b.sequenceNumber,
+    );
 
     for (let i = 0; i < sortedEntries.length; i++) {
       const currentEntry = sortedEntries[i];
@@ -280,7 +290,9 @@ export class CryptographicAuditLogger {
 
     for (const entry of entries) {
       const entryDate = new Date(entry.timestamp);
-      const ageInDays = Math.floor((now.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24));
+      const ageInDays = Math.floor(
+        (now.getTime() - entryDate.getTime()) / (1000 * 60 * 60 * 24),
+      );
 
       const category = this.categorizeAuditEvent(entry.eventType);
       const retentionDays = retentionPeriods[category as keyof typeof retentionPeriods]
@@ -350,12 +362,21 @@ export class CryptographicAuditLogger {
   }
 
   private signReport(reportData: any): string {
-    return createHmac('sha256', this.secretKey).update(JSON.stringify(reportData)).digest('hex');
+    return createHmac('sha256', this.secretKey)
+      .update(JSON.stringify(reportData))
+      .digest('hex');
   }
 
   private sanitizeEventData(eventData: any): any {
     // Remove sensitive information that shouldn't be logged
-    const sensitiveFields = ['password', 'token', 'secret', 'key', 'ssn', 'cpf'];
+    const sensitiveFields = [
+      'password',
+      'token',
+      'secret',
+      'key',
+      'ssn',
+      'cpf',
+    ];
 
     if (typeof eventData !== 'object' || eventData === null) {
       return eventData;

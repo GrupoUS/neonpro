@@ -61,6 +61,7 @@ pnpm run test:a11y
 ```
 
 **Key Features**:
+
 - React Testing Library integration
 - Playwright E2E automation
 - WCAG 2.1 AA+ accessibility validation
@@ -81,6 +82,7 @@ pnpm --filter @neonpro/tools-backend-tests test:middleware
 ```
 
 **Key Features**:
+
 - Hono.dev framework testing
 - Supertest API validation
 - MSW mocking integration
@@ -100,6 +102,7 @@ pnpm run test:compliance  # LGPD/ANVISA/CFM compliance
 ```
 
 **Key Features**:
+
 - Supabase RLS policy testing
 - Brazilian healthcare regulation compliance (LGPD, ANVISA, CFM)
 - Migration safety validation
@@ -120,6 +123,7 @@ pnpm --filter @neonpro/tools-quality-tests benchmark
 ```
 
 **Key Features**:
+
 - Vitest coverage enforcement
 - Performance budget validation
 - Clinic.js profiling integration
@@ -181,11 +185,11 @@ Each category has its own `vitest.config.ts`:
 // tools/frontend/vitest.config.ts
 export default defineConfig({
   test: {
-    environment: 'jsdom',    // For React testing
+    environment: "jsdom", // For React testing
     coverage: {
-      thresholds: { global: { lines: 85 } }
-    }
-  }
+      thresholds: { global: { lines: 85 } },
+    },
+  },
 });
 ```
 
@@ -228,16 +232,19 @@ pnpm --filter @neonpro/tools-frontend-tests test:e2e:ui
 ## Healthcare Compliance Requirements
 
 ### LGPD (Brazilian Data Protection)
+
 - Patient data anonymization tests
 - Consent management validation
 - Data retention policy checks
 
 ### ANVISA (Health Surveillance)
+
 - Medical device software validation
 - Clinical data integrity tests
 - Audit trail verification
 
 ### CFM (Federal Council of Medicine)
+
 - Medical professional verification
 - Prescription validation tests
 - Patient-doctor relationship checks

@@ -12,10 +12,7 @@
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
+  "include": ["src/**/*.ts", "src/**/*.tsx"],
   "exclude": [
     "node_modules",
     "dist",
@@ -24,8 +21,5 @@
     "**/*.spec.ts",
     "**/*.spec.tsx"
   ],
-  "references": [
-    { "path": "../database" },
-    { "path": "../types" }
-  ]
+  "references": [{ "path": "../database" }, { "path": "../types" }]
 }

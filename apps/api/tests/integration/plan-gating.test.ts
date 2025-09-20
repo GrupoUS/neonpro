@@ -40,7 +40,8 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
       const requests = [];
 
       // Simulate multiple AI requests for free plan clinic
-      for (let i = 0; i < 25; i++) { // Free plan limit: 20 requests/month
+      for (let i = 0; i < 25; i++) {
+        // Free plan limit: 20 requests/month
         requests.push(
           fetch('/api/v1/ai/analyze', {
             method: 'POST',
@@ -95,7 +96,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
         patientId: 'patient-advanced-001',
         analysisType: 'complex_aesthetic_analysis',
         aiModel: 'gpt-4', // Premium model
-        features: ['multi_model_routing', 'advanced_analytics', 'custom_recommendations'],
+        features: [
+          'multi_model_routing',
+          'advanced_analytics',
+          'custom_recommendations',
+        ],
       };
 
       // TDD RED: Model restrictions not implemented - MUST FAIL
@@ -477,7 +482,11 @@ describe('Integration Test T012: Plan Gating (Free vs Premium)', () => {
           type: 'access_request',
           cpf: '123.456.789-01',
           requestDate: new Date().toISOString(),
-          dataCategories: ['subscription_data', 'billing_data', 'usage_analytics'],
+          dataCategories: [
+            'subscription_data',
+            'billing_data',
+            'usage_analytics',
+          ],
         },
       };
 

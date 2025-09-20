@@ -153,7 +153,10 @@ class RealtimeSubscriptionManager {
 
       // Apply LGPD filtering if enabled
       if (config.lgpdCompliant && config.userId) {
-        const filteredEvent = await this.applyLGPDFiltering(event, config.userId);
+        const filteredEvent = await this.applyLGPDFiltering(
+          event,
+          config.userId,
+        );
         if (!filteredEvent) {
           return; // Event filtered out due to LGPD compliance
         }
@@ -212,7 +215,12 @@ class RealtimeSubscriptionManager {
 
     // Define sensitive fields by category
     const personalDataFields = ['name', 'full_name', 'cpf', 'rg', 'birth_date'];
-    const healthDataFields = ['medical_history', 'allergies', 'medications', 'diagnosis'];
+    const healthDataFields = [
+      'medical_history',
+      'allergies',
+      'medications',
+      'diagnosis',
+    ];
     const contactDataFields = ['email', 'phone', 'address', 'cep'];
 
     // Filter personal data
@@ -246,7 +254,10 @@ class RealtimeSubscriptionManager {
   }
 
   // Log audit trail for real-time operations
-  private async logAuditTrail(event: RealtimeEvent, config: SubscriptionConfig) {
+  private async logAuditTrail(
+    event: RealtimeEvent,
+    config: SubscriptionConfig,
+  ) {
     try {
       // TODO: Integrate with audit service from T039
       const auditLog = {
@@ -339,9 +350,16 @@ export function realtimeSubscription() {
     c.set('realtimeManager', realtimeManager);
     c.set(
       'createSubscription',
-      (config: SubscriptionConfig, callback: (event: RealtimeEvent) => void) => {
+      (
+        config: SubscriptionConfig,
+        callback: (event: RealtimeEvent) => void,
+      ) => {
         const subscriptionId = crypto.randomUUID();
-        return realtimeManager.createSubscription(subscriptionId, config, callback);
+        return realtimeManager.createSubscription(
+          subscriptionId,
+          config,
+          callback,
+        );
       },
     );
 
@@ -389,7 +407,11 @@ export function patientDataSubscription() {
         };
 
         const subscriptionId = `patient-${patientId}-${userId}`;
-        return realtimeManager.createSubscription(subscriptionId, config, callback);
+        return realtimeManager.createSubscription(
+          subscriptionId,
+          config,
+          callback,
+        );
       },
     );
 

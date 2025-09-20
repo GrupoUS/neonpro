@@ -65,7 +65,9 @@ export const appointmentRouter = router({
 
       // Check for appointment conflicts
       const appointmentDate = new Date(input.scheduledDate);
-      const endDate = new Date(appointmentDate.getTime() + input.duration * 60000);
+      const endDate = new Date(
+        appointmentDate.getTime() + input.duration * 60000,
+      );
 
       const conflictingAppointment = await ctx.prisma.appointment.findFirst({
         where: {
@@ -188,12 +190,14 @@ export const appointmentRouter = router({
       tags: ['appointment', 'read'],
       requiresPermission: 'appointment:read',
     })
-    .input(z.object({
-      id: z.string().uuid(),
-      includePatient: z.boolean().default(true),
-      includeProfessional: z.boolean().default(true),
-      includeMedicalHistory: z.boolean().default(false),
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        includePatient: z.boolean().default(true),
+        includeProfessional: z.boolean().default(true),
+        includeMedicalHistory: z.boolean().default(false),
+      }),
+    )
     .output(AppointmentResponseSchema)
     .query(async ({ input, ctx }) => {
       const appointment = await ctx.prisma.appointment.findUnique({
@@ -255,22 +259,32 @@ export const appointmentRouter = router({
       tags: ['appointment', 'list', 'filter'],
       requiresPermission: 'appointment:list',
     })
-    .input(PaginationSchema.extend({
-      clinicId: z.string().uuid(),
-      patientId: z.string().uuid().optional(),
-      professionalId: z.string().uuid().optional(),
-      status: z.enum(['scheduled', 'confirmed', 'in_progress', 'completed', 'cancelled', 'no_show'])
-        .optional(),
-      priority: z.enum(['routine', 'urgent', 'emergency']).optional(),
-      dateFrom: z.string().datetime().optional(),
-      dateTo: z.string().datetime().optional(),
-      treatmentType: z.string().optional(),
-      highNoShowRisk: z.boolean().default(false),
-      sortBy: z.enum(['scheduledDate', 'createdAt', 'noShowRisk', 'priority']).default(
-        'scheduledDate',
-      ),
-      sortOrder: z.enum(['asc', 'desc']).default('asc'),
-    }))
+    .input(
+      PaginationSchema.extend({
+        clinicId: z.string().uuid(),
+        patientId: z.string().uuid().optional(),
+        professionalId: z.string().uuid().optional(),
+        status: z
+          .enum([
+            'scheduled',
+            'confirmed',
+            'in_progress',
+            'completed',
+            'cancelled',
+            'no_show',
+          ])
+          .optional(),
+        priority: z.enum(['routine', 'urgent', 'emergency']).optional(),
+        dateFrom: z.string().datetime().optional(),
+        dateTo: z.string().datetime().optional(),
+        treatmentType: z.string().optional(),
+        highNoShowRisk: z.boolean().default(false),
+        sortBy: z
+          .enum(['scheduledDate', 'createdAt', 'noShowRisk', 'priority'])
+          .default('scheduledDate'),
+        sortOrder: z.enum(['asc', 'desc']).default('asc'),
+      }),
+    )
     .output(AppointmentsListResponseSchema)
     .query(async ({ input, ctx }) => {
       // Validate clinic access
@@ -286,12 +300,12 @@ export const appointmentRouter = router({
           treatmentType: { contains: input.treatmentType, mode: 'insensitive' },
         }),
         ...(input.highNoShowRisk && { noShowRisk: { gte: 0.7 } }),
-        ...(input.dateFrom || input.dateTo) && {
+        ...((input.dateFrom || input.dateTo) && {
           scheduledDate: {
             ...(input.dateFrom && { gte: new Date(input.dateFrom) }),
             ...(input.dateTo && { lte: new Date(input.dateTo) }),
           },
-        },
+        }),
       };
 
       const [appointments, total] = await Promise.all([
@@ -365,7 +379,10 @@ export const appointmentRouter = router({
       await validateClinicAccess(ctx.user.id, currentAppointment.clinicId);
 
       // Check if status change is valid
-      if (input.status && !isValidStatusTransition(currentAppointment.status, input.status)) {
+      if (
+        input.status
+        && !isValidStatusTransition(currentAppointment.status, input.status)
+      ) {
         throw new HealthcareTRPCError(
           'BAD_REQUEST',
           `Invalid status transition from ${currentAppointment.status} to ${input.status}`,
@@ -423,7 +440,12 @@ export const appointmentRouter = router({
 
       // Handle status-specific actions
       if (input.status) {
-        await handleStatusChange(updatedAppointment, currentAppointment.status, input.status, ctx);
+        await handleStatusChange(
+          updatedAppointment,
+          currentAppointment.status,
+          input.status,
+          ctx,
+        );
       }
 
       // Audit log
@@ -459,17 +481,21 @@ export const appointmentRouter = router({
       tags: ['appointment', 'cancel'],
       requiresPermission: 'appointment:cancel',
     })
-    .input(z.object({
-      id: z.string().uuid(),
-      reason: z.string().min(5).max(500),
-      notifyPatient: z.boolean().default(true),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        reason: z.string().min(5).max(500),
+        notifyPatient: z.boolean().default(true),
+      }),
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       const appointment = await ctx.prisma.appointment.findUnique({
         where: { id: input.id },
@@ -604,7 +630,11 @@ async function handleStatusChange(
 function getChanges(current: any, input: any): Record<string, any> {
   const changes = {};
   Object.keys(input).forEach(key => {
-    if (key !== 'id' && input[key] !== undefined && input[key] !== current[key]) {
+    if (
+      key !== 'id'
+      && input[key] !== undefined
+      && input[key] !== current[key]
+    ) {
       changes[key] = {
         from: current[key],
         to: input[key],
@@ -627,7 +657,10 @@ async function sendConfirmationNotification(_appointment: any): Promise<void> {
   // Implementation for confirmation notifications
 }
 
-async function sendCancellationNotification(_appointment: any, _reason: string): Promise<void> {
+async function sendCancellationNotification(
+  _appointment: any,
+  _reason: string,
+): Promise<void> {
   // Implementation for cancellation notifications
 }
 
@@ -639,7 +672,10 @@ async function updateNoShowStatistics(_patientId: string): Promise<void> {
   // Implementation for no-show statistics tracking
 }
 
-async function validateClinicAccess(_userId: string, _clinicId: string): Promise<void> {
+async function validateClinicAccess(
+  _userId: string,
+  _clinicId: string,
+): Promise<void> {
   // Implementation for clinic access validation
   return Promise.resolve();
 }

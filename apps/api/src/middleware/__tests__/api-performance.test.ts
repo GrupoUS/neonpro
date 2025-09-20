@@ -54,7 +54,7 @@ describe('API Performance Monitoring', () => {
         monitor.recordMetrics({
           endpoint: '/api/test',
           method: 'GET',
-          responseTime: 100 + (i * 10), // 100, 110, 120, ..., 190
+          responseTime: 100 + i * 10, // 100, 110, 120, ..., 190
           statusCode: 200,
           timestamp: new Date(baseTime.getTime() + i * 1000),
         });
@@ -189,7 +189,9 @@ describe('API Performance Monitoring', () => {
         expect.objectContaining({
           type: 'healthcare_compliance',
           severity: 'warning',
-          message: expect.stringContaining('Patient data access slower than recommended'),
+          message: expect.stringContaining(
+            'Patient data access slower than recommended',
+          ),
         }),
       );
     });
@@ -280,7 +282,9 @@ describe('API Performance Monitoring', () => {
       const res = await app.request('/api/fast');
 
       const performanceTier = res.headers.get('x-performance-tier');
-      expect(['excellent', 'good', 'acceptable', 'slow', 'critical']).toContain(performanceTier);
+      expect(['excellent', 'good', 'acceptable', 'slow', 'critical']).toContain(
+        performanceTier,
+      );
     });
   });
 
@@ -321,8 +325,12 @@ describe('API Performance Monitoring', () => {
 
       expect(res.status).toBe(200);
       const data = await res.json();
-      expect(data.healthcareCompliance).toHaveProperty('patientDataPerformance');
-      expect(data.healthcareCompliance).toHaveProperty('appointmentPerformance');
+      expect(data.healthcareCompliance).toHaveProperty(
+        'patientDataPerformance',
+      );
+      expect(data.healthcareCompliance).toHaveProperty(
+        'appointmentPerformance',
+      );
       expect(data.healthcareCompliance).toHaveProperty('overallCompliance');
     });
   });

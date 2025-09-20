@@ -1,7 +1,12 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { LGPDConsentService, ConsentPurpose, ConsentStatus, ConsentChannel } from '../../services/lgpd-consent-service';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { type HealthcarePrismaClient } from '../../clients/prisma';
 import { createHealthcareError } from '../../services/createHealthcareError';
+import {
+  ConsentChannel,
+  ConsentPurpose,
+  ConsentStatus,
+  LGPDConsentService,
+} from '../../services/lgpd-consent-service';
 import { type LGPDOperationResult } from '../../types/lgpd';
 
 // Mock the prisma client
@@ -27,7 +32,9 @@ describe('LGPDConsentService', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    consentService = new LGPDConsentService(mockPrisma as unknown as HealthcarePrismaClient);
+    consentService = new LGPDConsentService(
+      mockPrisma as unknown as HealthcarePrismaClient,
+    );
   });
 
   describe('recordConsent', () => {
@@ -79,11 +86,13 @@ describe('LGPDConsentService', () => {
     it('should revoke existing consent before creating new one', async () => {
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123' });
-      mockPrisma.auditTrail.findFirst.mockResolvedValue({ 
+      mockPrisma.auditTrail.findFirst.mockResolvedValue({
         id: 'existing-consent-123',
-        metadata: { purpose: ConsentPurpose.enum.TREATMENT }
+        metadata: { purpose: ConsentPurpose.enum.TREATMENT },
       });
-      mockPrisma.auditTrail.update.mockResolvedValue({ id: 'existing-consent-123' });
+      mockPrisma.auditTrail.update.mockResolvedValue({
+        id: 'existing-consent-123',
+      });
       mockPrisma.auditTrail.create
         .mockResolvedValueOnce({ id: 'new-consent-123' })
         .mockResolvedValueOnce({ id: 'audit-123' });
@@ -106,7 +115,9 @@ describe('LGPDConsentService', () => {
 
     it('should handle errors gracefully', async () => {
       // Arrange
-      mockPrisma.patient.findUnique.mockRejectedValue(new Error('Database error'));
+      mockPrisma.patient.findUnique.mockRejectedValue(
+        new Error('Database error'),
+      );
 
       // Act
       const result = await consentService.recordConsent(validConsentRequest);
@@ -139,13 +150,15 @@ describe('LGPDConsentService', () => {
           status: 'ACTIVE',
         },
       };
-      
+
       mockPrisma.auditTrail.findFirst.mockResolvedValue(existingConsent);
       mockPrisma.auditTrail.update.mockResolvedValue({ id: 'consent-123' });
       mockPrisma.auditTrail.create.mockResolvedValue({ id: 'audit-123' });
 
       // Act
-      const result = await consentService.withdrawConsent(validWithdrawalRequest);
+      const result = await consentService.withdrawConsent(
+        validWithdrawalRequest,
+      );
 
       // Assert
       expect(result.success).toBe(true);
@@ -171,7 +184,9 @@ describe('LGPDConsentService', () => {
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null);
 
       // Act
-      const result = await consentService.withdrawConsent(validWithdrawalRequest);
+      const result = await consentService.withdrawConsent(
+        validWithdrawalRequest,
+      );
 
       // Assert
       expect(result.success).toBe(false);
@@ -239,7 +254,10 @@ describe('LGPDConsentService', () => {
       });
 
       // Act
-      const result = await consentService.hasActiveConsent('patient-123', ConsentPurpose.enum.TREATMENT);
+      const result = await consentService.hasActiveConsent(
+        'patient-123',
+        ConsentPurpose.enum.TREATMENT,
+      );
 
       // Assert
       expect(result).toBe(true);
@@ -250,7 +268,10 @@ describe('LGPDConsentService', () => {
       mockPrisma.auditTrail.findFirst.mockResolvedValue(null);
 
       // Act
-      const result = await consentService.hasActiveConsent('patient-123', ConsentPurpose.enum.TREATMENT);
+      const result = await consentService.hasActiveConsent(
+        'patient-123',
+        ConsentPurpose.enum.TREATMENT,
+      );
 
       // Assert
       expect(result).toBe(false);
@@ -263,7 +284,7 @@ describe('LGPDConsentService', () => {
       mockPrisma.auditTrail.findFirst.mockResolvedValue({
         id: 'consent-123',
         userId: 'patient-123',
-        metadata: { 
+        metadata: {
           purpose: ConsentPurpose.enum.TREATMENT,
           status: 'ACTIVE',
         },
@@ -272,7 +293,11 @@ describe('LGPDConsentService', () => {
       // Act & Assert
       let error = null;
       try {
-        await consentService.validateConsent('patient-123', ConsentPurpose.enum.TREATMENT, 'test-operation');
+        await consentService.validateConsent(
+          'patient-123',
+          ConsentPurpose.enum.TREATMENT,
+          'test-operation',
+        );
       } catch (err) {
         error = err;
       }
@@ -285,7 +310,11 @@ describe('LGPDConsentService', () => {
 
       // Act & Assert
       await expect(
-        consentService.validateConsent('patient-123', ConsentPurpose.enum.TREATMENT, 'test-operation')
+        consentService.validateConsent(
+          'patient-123',
+          ConsentPurpose.enum.TREATMENT,
+          'test-operation',
+        ),
       ).rejects.toThrow('CONSENT_REQUIRED');
     });
   });
@@ -400,7 +429,9 @@ describe('LGPDConsentService', () => {
   describe('Error Handling', () => {
     it('should handle database connection errors', async () => {
       // Arrange
-      mockPrisma.patient.findUnique.mockRejectedValue(new Error('Connection failed'));
+      mockPrisma.patient.findUnique.mockRejectedValue(
+        new Error('Connection failed'),
+      );
 
       // Act
       const result = await consentService.recordConsent({
@@ -419,7 +450,9 @@ describe('LGPDConsentService', () => {
     it('should handle invalid consent data', async () => {
       // Arrange
       mockPrisma.patient.findUnique.mockResolvedValue({ id: 'patient-123' });
-      mockPrisma.auditTrail.create.mockRejectedValue(new Error('Invalid data format'));
+      mockPrisma.auditTrail.create.mockRejectedValue(
+        new Error('Invalid data format'),
+      );
 
       // Act
       const result = await consentService.recordConsent({
@@ -453,12 +486,12 @@ describe('LGPDConsentService', () => {
 
       // Assert
       expect(mockPrisma.auditTrail.create).toHaveBeenCalledTimes(2);
-      
+
       // First call should create consent record
       const firstCall = mockPrisma.auditTrail.create.mock.calls[0];
       expect(firstCall[0].data.action).toBe('CONSENT_GRANTED');
       expect(firstCall[0].data.entityType).toBe('LGPD_CONSENT');
-      
+
       // Second call should create audit trail
       const secondCall = mockPrisma.auditTrail.create.mock.calls[1];
       expect(secondCall[0].data.action).toBe('LGPD_CONSENT_RECORD');
@@ -475,7 +508,7 @@ describe('LGPDConsentService', () => {
           status: 'ACTIVE',
         },
       };
-      
+
       mockPrisma.auditTrail.findFirst.mockResolvedValue(existingConsent);
       mockPrisma.auditTrail.update.mockResolvedValue({ id: 'consent-123' });
       mockPrisma.auditTrail.create.mockResolvedValue({ id: 'audit-123' });
@@ -515,7 +548,7 @@ describe('LGPDConsentService', () => {
           status: 'ACTIVE',
         },
       };
-      
+
       mockPrisma.auditTrail.findFirst.mockResolvedValue(existingConsent);
       mockPrisma.auditTrail.update.mockResolvedValue({ id: 'consent-123' });
       mockPrisma.auditTrail.create.mockResolvedValue({ id: 'audit-123' });
@@ -532,7 +565,10 @@ describe('LGPDConsentService', () => {
       });
 
       // Assert
-      expect(spy).toHaveBeenCalledWith('patient-123', ConsentPurpose.enum.TREATMENT);
+      expect(spy).toHaveBeenCalledWith(
+        'patient-123',
+        ConsentPurpose.enum.TREATMENT,
+      );
     });
   });
 });

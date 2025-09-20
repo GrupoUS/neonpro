@@ -41,7 +41,9 @@ describe('Compression Middleware', () => {
     });
 
     it('should skip compression for small content', async () => {
-      const middleware = createAdvancedCompressionMiddleware({ threshold: 5000 }); // Higher threshold
+      const middleware = createAdvancedCompressionMiddleware({
+        threshold: 5000,
+      }); // Higher threshold
 
       app.use('*', middleware);
       app.get('/api/small', c => {
@@ -55,7 +57,9 @@ describe('Compression Middleware', () => {
 
       expect(res.status).toBe(200);
       expect(res.headers.get('x-compression')).toBe('SKIP');
-      expect(res.headers.get('x-compression-reason')).toBe('below-threshold-or-excluded');
+      expect(res.headers.get('x-compression-reason')).toBe(
+        'below-threshold-or-excluded',
+      );
     });
 
     it('should skip compression for excluded content types', async () => {
@@ -73,7 +77,9 @@ describe('Compression Middleware', () => {
 
       expect(res.status).toBe(200);
       expect(res.headers.get('x-compression')).toBe('SKIP');
-      expect(res.headers.get('x-compression-reason')).toBe('below-threshold-or-excluded');
+      expect(res.headers.get('x-compression-reason')).toBe(
+        'below-threshold-or-excluded',
+      );
     });
 
     it('should skip compression when client does not support it', async () => {
@@ -265,7 +271,9 @@ describe('Compression Middleware', () => {
 
       const res = await app.request('/api/fhir');
       expect(res.headers.get('x-healthcare-format')).toBe('FHIR');
-      expect(res.headers.get('x-compression-strategy')).toBe('healthcare-optimized');
+      expect(res.headers.get('x-compression-strategy')).toBe(
+        'healthcare-optimized',
+      );
     });
   });
 

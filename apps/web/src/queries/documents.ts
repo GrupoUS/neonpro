@@ -1,5 +1,9 @@
-import { supabase } from '@/integrations/supabase/client';
-import { queryOptions, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from "@/integrations/supabase/client";
+import {
+  queryOptions,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 // Types for documents
 export type PatientDocument = {
@@ -38,20 +42,20 @@ export const patientDocumentsQueryOptions = ({
   search?: string;
 }) =>
   queryOptions({
-    queryKey: ['patient-documents', patientId, { category, search }],
+    queryKey: ["patient-documents", patientId, { category, search }],
     queryFn: async (): Promise<PatientDocument[]> => {
       let query = supabase
-        .from('patient_documents')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('uploaded_at', { ascending: false });
+        .from("patient_documents")
+        .select("*")
+        .eq("patient_id", patientId)
+        .order("uploaded_at", { ascending: false });
 
-      if (category && category !== 'all') {
-        query = query.eq('category', category);
+      if (category && category !== "all") {
+        query = query.eq("category", category);
       }
 
       if (search) {
-        query = query.ilike('name', `%${search}%`);
+        query = query.ilike("name", `%${search}%`);
       }
 
       const { data, error } = await query;
@@ -61,16 +65,16 @@ export const patientDocumentsQueryOptions = ({
       }
 
       // Transform the data to match our frontend interface
-      return (data || []).map(doc => ({
+      return (data || []).map((doc) => ({
         id: doc.id,
-        name: doc.name || 'Untitled',
-        type: doc.mime_type || 'application/octet-stream',
+        name: doc.name || "Untitled",
+        type: doc.mime_type || "application/octet-stream",
         size: doc.file_size || 0,
-        category: doc.category || 'other',
+        category: doc.category || "other",
         description: doc.description || undefined,
         tags: doc.tags || [],
         isSecure: doc.is_secure || false,
-        uploadedBy: doc.uploaded_by || 'Unknown',
+        uploadedBy: doc.uploaded_by || "Unknown",
         uploadedAt: doc.uploaded_at || new Date().toISOString(),
         patientId: doc.patient_id,
         clinicId: doc.clinic_id,
@@ -87,7 +91,7 @@ export const useDocumentUpload = () => {
     mutationFn: async ({
       patientId,
       file,
-      category = 'other',
+      category = "other",
       description,
       tags,
     }: {
@@ -98,15 +102,18 @@ export const useDocumentUpload = () => {
       tags?: string[];
     }) => {
       const formData = new FormData();
-      formData.append('file', file);
-      formData.append('category', category);
-      if (description) formData.append('description', description);
-      if (tags?.length) formData.append('tags', JSON.stringify(tags));
+      formData.append("file", file);
+      formData.append("category", category);
+      if (description) formData.append("description", description);
+      if (tags?.length) formData.append("tags", JSON.stringify(tags));
 
-      const response = await fetch(`/api/v1/patients/${patientId}/documents/upload`, {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await fetch(
+        `/api/v1/patients/${patientId}/documents/upload`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -118,7 +125,7 @@ export const useDocumentUpload = () => {
     onSuccess: (_, variables) => {
       // Invalidate document list for this patient
       queryClient.invalidateQueries({
-        queryKey: ['patient-documents', variables.patientId],
+        queryKey: ["patient-documents", variables.patientId],
       });
     },
   });
@@ -136,9 +143,12 @@ export const useDocumentDelete = () => {
       patientId: string;
       documentId: string;
     }) => {
-      const response = await fetch(`/api/v1/patients/${patientId}/documents/${documentId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/v1/patients/${patientId}/documents/${documentId}`,
+        {
+          method: "DELETE",
+        },
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
@@ -150,34 +160,40 @@ export const useDocumentDelete = () => {
     onSuccess: (_, variables) => {
       // Invalidate document list for this patient
       queryClient.invalidateQueries({
-        queryKey: ['patient-documents', variables.patientId],
+        queryKey: ["patient-documents", variables.patientId],
       });
     },
   });
 };
 
 // Document download helper (not a mutation since it's a direct download)
-export const downloadDocument = async (patientId: string, documentId: string, filename: string) => {
+export const downloadDocument = async (
+  patientId: string,
+  documentId: string,
+  filename: string,
+) => {
   try {
-    const response = await fetch(`/api/v1/patients/${patientId}/documents/${documentId}/download`);
+    const response = await fetch(
+      `/api/v1/patients/${patientId}/documents/${documentId}/download`,
+    );
 
     if (!response.ok) {
-      throw new Error('Download failed');
+      throw new Error("Download failed");
     }
 
     // Create blob and download
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = filename;
-    link.style.display = 'none';
+    link.style.display = "none";
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
   } catch (error) {
-    console.error('Download error:', error);
+    console.error("Download error:", error);
     throw error;
   }
 };

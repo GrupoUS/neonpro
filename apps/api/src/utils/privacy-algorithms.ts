@@ -80,10 +80,16 @@ export class PrivacyAlgorithms {
       for (const group of groups) {
         if (group.length >= k) {
           // Group satisfies k-anonymity, generalize quasi-identifiers
-          const generalizedGroup = this.generalizeGroup(group, quasiIdentifiers);
+          const generalizedGroup = this.generalizeGroup(
+            group,
+            quasiIdentifiers,
+          );
           anonymizedRecords.push(...generalizedGroup.records);
           generalizedFields = [
-            ...new Set([...generalizedFields, ...generalizedGroup.generalizedFields]),
+            ...new Set([
+              ...generalizedFields,
+              ...generalizedGroup.generalizedFields,
+            ]),
           ];
         } else {
           // Group too small, suppress these records
@@ -133,16 +139,26 @@ export class PrivacyAlgorithms {
       const suppressedRecords: DataRecord[] = [];
 
       // Group by generalized quasi-identifiers
-      const groups = this.groupByGeneralizedValues(kAnonymousData.records, sensitiveAttributes);
+      const groups = this.groupByGeneralizedValues(
+        kAnonymousData.records,
+        sensitiveAttributes,
+      );
 
       for (const group of groups) {
-        const diversityValid = this.checkLDiversity(group, sensitiveAttributes, l);
+        const diversityValid = this.checkLDiversity(
+          group,
+          sensitiveAttributes,
+          l,
+        );
 
         if (diversityValid) {
           validRecords.push(...group);
         } else {
           // Further generalize or suppress
-          const furtherGeneralized = this.furtherGeneralize(group, sensitiveAttributes);
+          const furtherGeneralized = this.furtherGeneralize(
+            group,
+            sensitiveAttributes,
+          );
           if (furtherGeneralized.length >= config.k) {
             validRecords.push(...furtherGeneralized);
           } else {
@@ -190,7 +206,7 @@ export class PrivacyAlgorithms {
         const noise = this.generateLaplaceNoise(scale);
         return value + noise;
       } else {
-        const sigma = Math.sqrt(2 * Math.log(1.25)) * sensitivity / epsilon;
+        const sigma = (Math.sqrt(2 * Math.log(1.25)) * sensitivity) / epsilon;
         const noise = this.generateGaussianNoise(0, sigma);
         return value + noise;
       }
@@ -220,7 +236,7 @@ export class PrivacyAlgorithms {
           sensitivity = dataRange ? dataRange.max - dataRange.min : 1;
           break;
         case 'average':
-          sensitivity = dataRange ? (dataRange.max - dataRange.min) : 1;
+          sensitivity = dataRange ? dataRange.max - dataRange.min : 1;
           break;
         case 'max':
         case 'min':
@@ -255,7 +271,13 @@ export class PrivacyAlgorithms {
         .digest('hex');
 
       // Store mapping for reversibility (in production, use secure key management)
-      await this.storePseudonymMapping(pseudonym, identifier, purpose, salt, expirationDays);
+      await this.storePseudonymMapping(
+        pseudonym,
+        identifier,
+        purpose,
+        salt,
+        expirationDays,
+      );
 
       return {
         pseudonym,
@@ -272,15 +294,22 @@ export class PrivacyAlgorithms {
   /**
    * Create irreversible pseudonym for analytics
    */
-  createIrreversiblePseudonym(identifier: string, purpose: string): PseudonymizationResult {
+  createIrreversiblePseudonym(
+    identifier: string,
+    purpose: string,
+  ): PseudonymizationResult {
     try {
       const salt = randomBytes(32).toString('hex');
       const purposeKey = this.derivePurposeKey(purpose, salt);
 
       // Use one-way hash function
-      const pseudonym = pbkdf2Sync(identifier, purposeKey + salt, 100000, 32, 'sha512').toString(
-        'hex',
-      );
+      const pseudonym = pbkdf2Sync(
+        identifier,
+        purposeKey + salt,
+        100000,
+        32,
+        'sha512',
+      ).toString('hex');
 
       return {
         pseudonym,
@@ -309,11 +338,16 @@ export class PrivacyAlgorithms {
       }
 
       // Retrieve original identifier from secure storage
-      const originalIdentifier = await this.retrievePseudonymMapping(pseudonym, purpose);
+      const originalIdentifier = await this.retrievePseudonymMapping(
+        pseudonym,
+        purpose,
+      );
 
       if (originalIdentifier) {
         // Log reversal for audit
-        console.log(`Pseudonym reversed: ${pseudonym} -> [REDACTED] for purpose: ${purpose}`);
+        console.log(
+          `Pseudonym reversed: ${pseudonym} -> [REDACTED] for purpose: ${purpose}`,
+        );
       }
 
       return originalIdentifier;
@@ -388,7 +422,11 @@ export class PrivacyAlgorithms {
           anonymizedDate.setHours(0, 0, 0, 0);
           break;
         case 'day':
-          anonymizedDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+          anonymizedDate = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate(),
+          );
           break;
         default:
           anonymizedDate = new Date(date.getFullYear(), date.getMonth(), 1);
@@ -500,7 +538,9 @@ export class PrivacyAlgorithms {
 
     for (const record of records) {
       // Group by all attributes except sensitive ones
-      const nonSensitiveKeys = Object.keys(record).filter(k => !sensitiveAttributes.includes(k));
+      const nonSensitiveKeys = Object.keys(record).filter(
+        k => !sensitiveAttributes.includes(k),
+      );
       const key = nonSensitiveKeys.map(k => record[k]).join('|');
 
       if (!groups.has(key)) {
@@ -512,7 +552,11 @@ export class PrivacyAlgorithms {
     return Array.from(groups.values());
   }
 
-  private checkLDiversity(group: DataRecord[], sensitiveAttributes: string[], l: number): boolean {
+  private checkLDiversity(
+    group: DataRecord[],
+    sensitiveAttributes: string[],
+    l: number,
+  ): boolean {
     for (const attr of sensitiveAttributes) {
       const values = group.map(r => r[attr]);
       const uniqueValues = new Set(values);
@@ -523,7 +567,10 @@ export class PrivacyAlgorithms {
     return true;
   }
 
-  private furtherGeneralize(group: DataRecord[], sensitiveAttributes: string[]): DataRecord[] {
+  private furtherGeneralize(
+    group: DataRecord[],
+    sensitiveAttributes: string[],
+  ): DataRecord[] {
     // Simple further generalization - in practice, this would be more sophisticated
     return group.map(record => {
       const generalized = { ...record };
@@ -543,7 +590,7 @@ export class PrivacyAlgorithms {
     sensitiveAttributes: string[],
   ): { informationLoss: number; dataUtility: number; privacyLevel: number } {
     // Simplified metrics calculation
-    const informationLoss = 1 - (anonymizedRecords.length / originalRecords.length);
+    const informationLoss = 1 - anonymizedRecords.length / originalRecords.length;
     const dataUtility = anonymizedRecords.length > 0 ? 0.8 : 0; // Simplified
     const privacyLevel = Math.min(informationLoss + 0.5, 1);
 
@@ -567,7 +614,9 @@ export class PrivacyAlgorithms {
   }
 
   private derivePurposeKey(purpose: string, salt: string): string {
-    return createHash('sha256').update(this.masterKey + purpose + salt).digest('hex');
+    return createHash('sha256')
+      .update(this.masterKey + purpose + salt)
+      .digest('hex');
   }
 
   private async storePseudonymMapping(
@@ -578,7 +627,9 @@ export class PrivacyAlgorithms {
     expirationDays?: number,
   ): Promise<void> {
     // In production, store in secure key-value store with proper encryption
-    console.log(`Storing pseudonym mapping: ${pseudonym} for purpose: ${purpose}`);
+    console.log(
+      `Storing pseudonym mapping: ${pseudonym} for purpose: ${purpose}`,
+    );
   }
 
   private async retrievePseudonymMapping(
@@ -586,13 +637,21 @@ export class PrivacyAlgorithms {
     purpose: string,
   ): Promise<string | null> {
     // In production, retrieve from secure key-value store
-    console.log(`Retrieving pseudonym mapping: ${pseudonym} for purpose: ${purpose}`);
+    console.log(
+      `Retrieving pseudonym mapping: ${pseudonym} for purpose: ${purpose}`,
+    );
     return null; // Placeholder
   }
 
-  private validateReversalAuthorization(authorization: string, purpose: string): boolean {
+  private validateReversalAuthorization(
+    authorization: string,
+    purpose: string,
+  ): boolean {
     // In production, implement proper authorization validation
-    return authorization === 'authorized_researcher' && purpose === 'medical_research';
+    return (
+      authorization === 'authorized_researcher'
+      && purpose === 'medical_research'
+    );
   }
 }
 

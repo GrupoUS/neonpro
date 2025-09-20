@@ -5,8 +5,8 @@
  * with LGPD and other healthcare regulations.
  */
 
-import type { AuditTrailEntry, ConsentRecord } from '../compliance/types';
-import { TEST_IDS } from './index';
+import type { AuditTrailEntry, ConsentRecord } from "../compliance/types";
+import { TEST_IDS } from "./index";
 
 export interface MockPatient {
   id: string;
@@ -48,26 +48,29 @@ export interface MockProfessional {
 /**
  * Create mock patient data
  */
-export function createMockPatient(overrides: Partial<MockPatient> = {}): MockPatient {
+export function createMockPatient(
+  overrides: Partial<MockPatient> = {},
+): MockPatient {
   const now = new Date();
 
   return {
     id: TEST_IDS.PATIENT,
-    name: 'João Silva Santos',
-    email: 'joao.silva@email.com',
-    cpf: '123.456.789-00',
-    birthDate: new Date('1985-03-15'),
+    name: "João Silva Santos",
+    email: "joao.silva@email.com",
+    cpf: "123.456.789-00",
+    birthDate: new Date("1985-03-15"),
     clinicId: TEST_IDS.CLINIC,
     consentGiven: true,
-    dataProcessingPurpose: 'Prestação de serviços de saúde e acompanhamento médico',
+    dataProcessingPurpose:
+      "Prestação de serviços de saúde e acompanhamento médico",
     auditTrail: [
       {
         timestamp: now,
-        action: 'patient_created',
+        action: "patient_created",
         userId: TEST_IDS.PROFESSIONAL,
-        resourceType: 'patient',
+        resourceType: "patient",
         resourceId: TEST_IDS.PATIENT,
-        details: { reason: 'Patient registration' },
+        details: { reason: "Patient registration" },
       },
     ],
     createdAt: now,
@@ -79,16 +82,18 @@ export function createMockPatient(overrides: Partial<MockPatient> = {}): MockPat
 /**
  * Create mock clinic data
  */
-export function createMockClinic(overrides: Partial<MockClinic> = {}): MockClinic {
+export function createMockClinic(
+  overrides: Partial<MockClinic> = {},
+): MockClinic {
   return {
     id: TEST_IDS.CLINIC,
-    name: 'Clínica São Paulo',
-    cnpj: '12.345.678/0001-90',
-    address: 'Rua das Flores, 123',
-    city: 'São Paulo',
-    state: 'SP',
-    phone: '(11) 1234-5678',
-    email: 'contato@clinicasp.com.br',
+    name: "Clínica São Paulo",
+    cnpj: "12.345.678/0001-90",
+    address: "Rua das Flores, 123",
+    city: "São Paulo",
+    state: "SP",
+    phone: "(11) 1234-5678",
+    email: "contato@clinicasp.com.br",
     createdAt: new Date(),
     ...overrides,
   };
@@ -102,10 +107,10 @@ export function createMockProfessional(
 ): MockProfessional {
   return {
     id: TEST_IDS.PROFESSIONAL,
-    name: 'Dr. Maria Santos',
-    email: 'maria.santos@clinicasp.com.br',
-    crm: 'CRM/SP 123456',
-    specialty: 'Cardiologia',
+    name: "Dr. Maria Santos",
+    email: "maria.santos@clinicasp.com.br",
+    crm: "CRM/SP 123456",
+    specialty: "Cardiologia",
     clinicId: TEST_IDS.CLINIC,
     licenseValid: true,
     createdAt: new Date(),
@@ -116,20 +121,22 @@ export function createMockProfessional(
 /**
  * Create mock consent record
  */
-export function createMockConsentRecord(overrides: Partial<ConsentRecord> = {}): ConsentRecord {
+export function createMockConsentRecord(
+  overrides: Partial<ConsentRecord> = {},
+): ConsentRecord {
   const now = new Date();
   const expiryDate = new Date(now);
   expiryDate.setFullYear(expiryDate.getFullYear() + 2); // 2 years from now
 
   return {
-    id: 'consent-123',
+    id: "consent-123",
     dataSubjectId: TEST_IDS.PATIENT,
     purpose:
-      'Prestação de serviços de saúde, acompanhamento médico e comunicação sobre tratamentos',
+      "Prestação de serviços de saúde, acompanhamento médico e comunicação sobre tratamentos",
     consentGiven: true,
     consentDate: now,
     expiryDate,
-    legalBasis: 'Art. 7º, I - consentimento do titular',
+    legalBasis: "Art. 7º, I - consentimento do titular",
     ...overrides,
   };
 }
@@ -153,7 +160,7 @@ export function createHealthcareTestDataSet() {
       validConsent: createMockConsentRecord({ consentGiven: true }),
       expiredConsent: createMockConsentRecord({
         consentGiven: true,
-        expiryDate: new Date('2020-01-01'), // Expired
+        expiryDate: new Date("2020-01-01"), // Expired
       }),
       withdrawnConsent: createMockConsentRecord({
         consentGiven: false,
@@ -161,9 +168,9 @@ export function createHealthcareTestDataSet() {
       }),
       invalidLicense: createMockProfessional({ licenseValid: false }),
       minorPatient: createMockPatient({
-        birthDate: new Date('2010-01-01'), // Minor
+        birthDate: new Date("2010-01-01"), // Minor
         dataProcessingPurpose:
-          'Prestação de serviços de saúde pediátrica com consentimento dos responsáveis',
+          "Prestação de serviços de saúde pediátrica com consentimento dos responsáveis",
       }),
     },
   };
@@ -174,27 +181,27 @@ export function createHealthcareTestDataSet() {
  */
 export const LGPD_TEST_PATTERNS = {
   VALID_PURPOSES: [
-    'Prestação de serviços de saúde',
-    'Acompanhamento médico e tratamento',
-    'Comunicação sobre consultas e exames',
-    'Gestão administrativa da clínica',
-    'Cumprimento de obrigações legais e regulatórias',
+    "Prestação de serviços de saúde",
+    "Acompanhamento médico e tratamento",
+    "Comunicação sobre consultas e exames",
+    "Gestão administrativa da clínica",
+    "Cumprimento de obrigações legais e regulatórias",
   ],
 
   INVALID_PURPOSES: [
-    '', // Empty purpose
-    'Marketing', // Without explicit consent
-    'Venda de dados', // Prohibited
-    'Uso indefinido', // Too vague
+    "", // Empty purpose
+    "Marketing", // Without explicit consent
+    "Venda de dados", // Prohibited
+    "Uso indefinido", // Too vague
   ],
 
   REQUIRED_AUDIT_ACTIONS: [
-    'patient_created',
-    'patient_accessed',
-    'patient_updated',
-    'consent_given',
-    'consent_withdrawn',
-    'data_exported',
-    'data_deleted',
+    "patient_created",
+    "patient_accessed",
+    "patient_updated",
+    "consent_given",
+    "consent_withdrawn",
+    "data_exported",
+    "data_deleted",
   ],
 } as const;

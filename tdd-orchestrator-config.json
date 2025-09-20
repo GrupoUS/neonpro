@@ -10,7 +10,13 @@
       "architect-review": {
         "role": "System design and patterns",
         "focus": "Architecture validation, scalability, design patterns",
-        "activationTriggers": ["microservice", "architecture", "system design", "patterns", "scalability"],
+        "activationTriggers": [
+          "microservice",
+          "architecture",
+          "system design",
+          "patterns",
+          "scalability"
+        ],
         "filePatterns": ["**/routes/**", "**/api/**", "**/services/**"],
         "status": "registered",
         "tddIntegration": "Validates architectural test patterns and design compliance"
@@ -18,8 +24,19 @@
       "security-auditor": {
         "role": "DevSecOps and compliance",
         "focus": "Security analysis, vulnerability assessment, compliance validation",
-        "activationTriggers": ["authentication", "authorization", "payment", "personal data", "compliance"],
-        "filePatterns": ["**/auth/**", "**/security/**", "**/*patient*", "**/*clinic*"],
+        "activationTriggers": [
+          "authentication",
+          "authorization",
+          "payment",
+          "personal data",
+          "compliance"
+        ],
+        "filePatterns": [
+          "**/auth/**",
+          "**/security/**",
+          "**/*patient*",
+          "**/*clinic*"
+        ],
         "status": "registered",
         "healthcareCritical": true,
         "tddIntegration": "Security-first approach for all TDD phases in healthcare contexts"
@@ -27,7 +44,12 @@
       "code-reviewer": {
         "role": "Code quality and maintainability",
         "focus": "Quality analysis, performance optimization, technical debt reduction",
-        "activationTriggers": ["performance", "maintainability", "technical debt", "code quality"],
+        "activationTriggers": [
+          "performance",
+          "maintainability",
+          "technical debt",
+          "code quality"
+        ],
         "filePatterns": ["**/*.ts", "**/*.tsx", "**/*.js", "**/*.jsx"],
         "status": "registered",
         "tddIntegration": "Quality gates enforcement during GREEN/REFACTOR phases"
@@ -43,8 +65,22 @@
       "compliance-validator": {
         "role": "Healthcare regulatory validation",
         "focus": "LGPD, ANVISA, CFM compliance, audit trail validation",
-        "activationTriggers": ["lgpd", "gdpr", "hipaa", "anvisa", "cfm", "healthcare", "patient", "clinic"],
-        "filePatterns": ["**/*patient*", "**/*clinic*", "**/healthcare/**", "**/compliance/**"],
+        "activationTriggers": [
+          "lgpd",
+          "gdpr",
+          "hipaa",
+          "anvisa",
+          "cfm",
+          "healthcare",
+          "patient",
+          "clinic"
+        ],
+        "filePatterns": [
+          "**/*patient*",
+          "**/*clinic*",
+          "**/healthcare/**",
+          "**/compliance/**"
+        ],
         "status": "registered",
         "healthcareCritical": true,
         "tddIntegration": "Mandatory validation in ALL phases for healthcare features"
@@ -64,11 +100,7 @@
       "serena",
       "desktop-commander"
     ],
-    "availableSequence": [
-      "sequential-thinking",
-      "filesystem",
-      "context7"
-    ],
+    "availableSequence": ["sequential-thinking", "filesystem", "context7"],
     "adaptationNote": "archon, serena, and desktop-commander MCP servers are not available. Using available MCP servers: sequential-thinking, filesystem, context7.",
     "healthcareComplianceSequence": [
       "sequential-thinking",

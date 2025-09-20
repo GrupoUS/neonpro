@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 /**
  * Enhanced AI Chat Interface Component for NeonPro
- * 
+ *
  * Built with AI SDK components as foundation, enhanced with KokonutUI components
  * and integrated with existing tRPC agent backend for healthcare-specific AI functionality.
- * 
+ *
  * Features:
  * - AI SDK useChat hook for streaming responses
  * - Voice input capability with Brazilian Portuguese support
@@ -16,9 +16,9 @@
  * - Integration with tRPC agent backend
  */
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { useChat } from '@ai-sdk/react';
-import { smoothStream } from 'ai';
+import React, { useState, useCallback, useEffect, useRef } from "react";
+import { useChat } from "@ai-sdk/react";
+import { smoothStream } from "ai";
 import {
   Bot,
   Brain,
@@ -38,7 +38,7 @@ import {
   Plus,
   ChevronDown,
   Globe,
-} from 'lucide-react';
+} from "lucide-react";
 
 import {
   Badge,
@@ -71,10 +71,10 @@ import {
   TabsList,
   TabsTrigger,
   Separator,
-} from '@/components/ui';
+} from "@/components/ui";
 
-import { cn } from '@neonpro/ui';
-import { formatDateTime } from '@/utils/brazilian-formatters';
+import { cn } from "@neonpro/ui";
+import { formatDateTime } from "@/utils/brazilian-formatters";
 
 // Import tRPC hooks for agent integration
 import {
@@ -82,10 +82,10 @@ import {
   useAgentChat,
   useAgentSessionManager,
   useKnowledgeBaseManager,
-} from '@/trpc/agent';
+} from "@/trpc/agent";
 
 // Import AI SDK components as foundation
-import { Message, useAssistant, useCompletion } from '@ai-sdk/react';
+import { Message, useAssistant, useCompletion } from "@ai-sdk/react";
 
 // Types
 export interface EnhancedAIChatProps {
@@ -126,12 +126,12 @@ export interface EnhancedAIChatProps {
   /** Test ID */
   testId?: string;
   /** Session type for tRPC integration */
-  sessionType?: 'client' | 'financial' | 'appointment' | 'general';
+  sessionType?: "client" | "financial" | "appointment" | "general";
 }
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp: Date;
   model?: string;
@@ -156,48 +156,53 @@ export interface AIModel {
   provider: string;
   capabilities: string[];
   healthcareOptimized: boolean;
-  status: 'available' | 'limited' | 'unavailable';
+  status: "available" | "limited" | "unavailable";
   icon?: React.ReactNode;
 }
 
 // Available AI models for NeonPro
 const AVAILABLE_AI_MODELS: AIModel[] = [
   {
-    id: 'gpt-4o',
-    name: 'GPT-4o',
-    provider: 'OpenAI',
-    capabilities: ['chat', 'reasoning', 'healthcare-context'],
+    id: "gpt-4o",
+    name: "GPT-4o",
+    provider: "OpenAI",
+    capabilities: ["chat", "reasoning", "healthcare-context"],
     healthcareOptimized: true,
-    status: 'available',
+    status: "available",
   },
   {
-    id: 'claude-3-5-sonnet',
-    name: 'Claude 3.5 Sonnet',
-    provider: 'Anthropic',
-    capabilities: ['chat', 'analysis', 'healthcare-context'],
+    id: "claude-3-5-sonnet",
+    name: "Claude 3.5 Sonnet",
+    provider: "Anthropic",
+    capabilities: ["chat", "analysis", "healthcare-context"],
     healthcareOptimized: true,
-    status: 'available',
+    status: "available",
   },
   {
-    id: 'gemini-1-5-pro',
-    name: 'Gemini 1.5 Pro',
-    provider: 'Google',
-    capabilities: ['chat', 'multimodal', 'healthcare-context'],
+    id: "gemini-1-5-pro",
+    name: "Gemini 1.5 Pro",
+    provider: "Google",
+    capabilities: ["chat", "multimodal", "healthcare-context"],
     healthcareOptimized: true,
-    status: 'available',
+    status: "available",
   },
   {
-    id: 'neonpro-assistant',
-    name: 'NeonPro Assistant',
-    provider: 'Internal',
-    capabilities: ['healthcare', 'appointments', 'patient-data', 'lgpd-compliant'],
+    id: "neonpro-assistant",
+    name: "NeonPro Assistant",
+    provider: "Internal",
+    capabilities: [
+      "healthcare",
+      "appointments",
+      "patient-data",
+      "lgpd-compliant",
+    ],
     healthcareOptimized: true,
-    status: 'available',
+    status: "available",
   },
 ];
 
 // Voice recognition types
-type VoiceRecognitionState = 'idle' | 'listening' | 'processing' | 'error';
+type VoiceRecognitionState = "idle" | "listening" | "processing" | "error";
 
 /**
  * Enhanced AI Chat Component
@@ -205,7 +210,7 @@ type VoiceRecognitionState = 'idle' | 'listening' | 'processing' | 'error';
 export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   patientContext,
   healthcareProfessional,
-  defaultModel = 'gpt-4o',
+  defaultModel = "gpt-4o",
   showModelSelection = true,
   showVoiceInput = true,
   showFileAttachment = false,
@@ -216,21 +221,23 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
     requiresExplicitConsent: false,
   },
   mobileOptimized = true,
-  maxHeight = '600px',
-  testId = 'enhanced-ai-chat',
-  sessionType = 'general',
+  maxHeight = "600px",
+  testId = "enhanced-ai-chat",
+  sessionType = "general",
 }) => {
   // State management
   const [selectedModel, setSelectedModel] = useState(defaultModel);
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
-  const [voiceState, setVoiceState] = useState<VoiceRecognitionState>('idle');
+  const [voiceState, setVoiceState] = useState<VoiceRecognitionState>("idle");
   const [showSettings, setShowSettings] = useState(false);
   const [showSearchPanel, setShowSearchPanel] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<ChatMessage[]>([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [isLgpdConsentGiven, setIsLgpdConsentGiven] = useState(!lgpdConsent.requiresExplicitConsent);
-  const [activeTab, setActiveTab] = useState('chat');
+  const [isLgpdConsentGiven, setIsLgpdConsentGiven] = useState(
+    !lgpdConsent.requiresExplicitConsent,
+  );
+  const [activeTab, setActiveTab] = useState("chat");
 
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -250,7 +257,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
     data,
     setData,
   } = useChat({
-    api: '/api/ai/chat',
+    api: "/api/ai/chat",
     experimental_transform: smoothStream({
       chunking: /[\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]|\S+\s+/, // Supports Japanese, Chinese, and word boundaries
     }),
@@ -258,7 +265,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
       // Handle LGPD compliance
       if (lgpdConsent.canStoreHistory && isLgpdConsentGiven) {
         // Store message with proper retention policies
-        console.log('Storing message for LGPD compliance:', {
+        console.log("Storing message for LGPD compliance:", {
           messageId: message.id,
           retentionDays: lgpdConsent.dataRetentionDays,
         });
@@ -283,11 +290,12 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   } = useAgentChat(currentSessionId);
 
   // Knowledge base search
-  const { searchEntries, isSearching: isKnowledgeSearching } = useKnowledgeBaseManager();
+  const { searchEntries, isSearching: isKnowledgeSearching } =
+    useKnowledgeBaseManager();
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
   useEffect(() => {
@@ -296,158 +304,174 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 
   // Voice recognition implementation
   const startVoiceRecognition = useCallback(async () => {
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      setVoiceState('error');
+    if (
+      !("webkitSpeechRecognition" in window) &&
+      !("SpeechRecognition" in window)
+    ) {
+      setVoiceState("error");
       return;
     }
 
     try {
-      setVoiceState('listening');
-      
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      setVoiceState("listening");
+
+      const SpeechRecognition =
+        window.SpeechRecognition || window.webkitSpeechRecognition;
       const recognition = new SpeechRecognition();
-      
-      recognition.lang = 'pt-BR'; // Brazilian Portuguese
+
+      recognition.lang = "pt-BR"; // Brazilian Portuguese
       recognition.continuous = false;
       recognition.interimResults = true;
 
       recognition.onresult = (event) => {
         const transcript = Array.from(event.results)
-          .map(result => result[0])
-          .map(result => result.transcript)
-          .join('');
-        
+          .map((result) => result[0])
+          .map((result) => result.transcript)
+          .join("");
+
         setInput(transcript);
       };
 
       recognition.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
-        setVoiceState('error');
+        console.error("Speech recognition error:", event.error);
+        setVoiceState("error");
       };
 
       recognition.onend = () => {
-        setVoiceState('idle');
+        setVoiceState("idle");
       };
 
       recognition.start();
     } catch (error) {
-      console.error('Voice recognition error:', error);
-      setVoiceState('error');
+      console.error("Voice recognition error:", error);
+      setVoiceState("error");
     }
   }, [setInput]);
 
   const stopVoiceRecognition = useCallback(() => {
-    setVoiceState('idle');
+    setVoiceState("idle");
   }, []);
 
   // Search functionality
-  const handleSearch = useCallback(async (query: string) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      return;
-    }
-
-    setIsSearching(true);
-    try {
-      // Search in current messages
-      const filteredMessages = messages.filter(msg => 
-        msg.content.toLowerCase().includes(query.toLowerCase())
-      );
-      
-      // Search in knowledge base if available
-      if (currentSessionId) {
-        const knowledgeResults = await searchEntries({
-          agent_type: sessionType,
-          query,
-          limit: 5,
-        });
-        
-        const knowledgeMessages: ChatMessage[] = knowledgeResults.data?.map((entry, index) => ({
-          id: `knowledge-${index}`,
-          role: 'system',
-          content: entry.content,
-          timestamp: new Date(),
-          metadata: {
-            sources: [{
-              id: entry.id,
-              title: entry.title,
-              content: entry.content,
-              relevance: 0.8,
-            }],
-          },
-        })) || [];
-
-        setSearchResults([...filteredMessages, ...knowledgeMessages]);
-      } else {
-        setSearchResults(filteredMessages);
+  const handleSearch = useCallback(
+    async (query: string) => {
+      if (!query.trim()) {
+        setSearchResults([]);
+        return;
       }
-    } catch (error) {
-      console.error('Search error:', error);
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, [messages, currentSessionId, sessionType, searchEntries]);
+
+      setIsSearching(true);
+      try {
+        // Search in current messages
+        const filteredMessages = messages.filter((msg) =>
+          msg.content.toLowerCase().includes(query.toLowerCase()),
+        );
+
+        // Search in knowledge base if available
+        if (currentSessionId) {
+          const knowledgeResults = await searchEntries({
+            agent_type: sessionType,
+            query,
+            limit: 5,
+          });
+
+          const knowledgeMessages: ChatMessage[] =
+            knowledgeResults.data?.map((entry, index) => ({
+              id: `knowledge-${index}`,
+              role: "system",
+              content: entry.content,
+              timestamp: new Date(),
+              metadata: {
+                sources: [
+                  {
+                    id: entry.id,
+                    title: entry.title,
+                    content: entry.content,
+                    relevance: 0.8,
+                  },
+                ],
+              },
+            })) || [];
+
+          setSearchResults([...filteredMessages, ...knowledgeMessages]);
+        } else {
+          setSearchResults(filteredMessages);
+        }
+      } catch (error) {
+        console.error("Search error:", error);
+        setSearchResults([]);
+      } finally {
+        setIsSearching(false);
+      }
+    },
+    [messages, currentSessionId, sessionType, searchEntries],
+  );
 
   // Handle message submission
-  const handleSendMessage = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!input.trim() || (isAILoading && isAgentSending)) return;
+  const handleSendMessage = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
 
-    try {
-      // Create or get agent session if needed
-      if (!currentSessionId && sessionType !== 'general') {
-        await startNewSession({
-          agent_type: sessionType,
-          initial_context: `Patient: ${patientContext?.patientName || 'Unknown'}, Professional: ${healthcareProfessional?.name || 'Unknown'}`,
-          metadata: {
-            patientId: patientContext?.patientId,
-            professionalId: healthcareProfessional?.id,
-            lgpdConsent: isLgpdConsentGiven,
-          },
-        });
-      }
+      if (!input.trim() || (isAILoading && isAgentSending)) return;
 
-      // Send through tRPC agent for healthcare-specific chats
-      if (sessionType !== 'general' && currentSessionId) {
-        await sendAgentMessage(input, {
-          metadata: {
-            model: selectedModel,
-            patientContext,
-            healthcareProfessional,
-            lgpdCompliant: isLgpdConsentGiven,
-          },
-        });
-      } else {
-        // Send through AI SDK for general chats
-        handleAIChatSubmit(e);
+      try {
+        // Create or get agent session if needed
+        if (!currentSessionId && sessionType !== "general") {
+          await startNewSession({
+            agent_type: sessionType,
+            initial_context: `Patient: ${patientContext?.patientName || "Unknown"}, Professional: ${healthcareProfessional?.name || "Unknown"}`,
+            metadata: {
+              patientId: patientContext?.patientId,
+              professionalId: healthcareProfessional?.id,
+              lgpdConsent: isLgpdConsentGiven,
+            },
+          });
+        }
+
+        // Send through tRPC agent for healthcare-specific chats
+        if (sessionType !== "general" && currentSessionId) {
+          await sendAgentMessage(input, {
+            metadata: {
+              model: selectedModel,
+              patientContext,
+              healthcareProfessional,
+              lgpdCompliant: isLgpdConsentGiven,
+            },
+          });
+        } else {
+          // Send through AI SDK for general chats
+          handleAIChatSubmit(e);
+        }
+      } catch (error) {
+        console.error("Message send error:", error);
       }
-    } catch (error) {
-      console.error('Message send error:', error);
-    }
-  }, [
-    input,
-    isAILoading,
-    isAgentSending,
-    currentSessionId,
-    sessionType,
-    startNewSession,
-    patientContext,
-    healthcareProfessional,
-    isLgpdConsentGiven,
-    sendAgentMessage,
-    selectedModel,
-    handleAIChatSubmit,
-  ]);
+    },
+    [
+      input,
+      isAILoading,
+      isAgentSending,
+      currentSessionId,
+      sessionType,
+      startNewSession,
+      patientContext,
+      healthcareProfessional,
+      isLgpdConsentGiven,
+      sendAgentMessage,
+      selectedModel,
+      handleAIChatSubmit,
+    ],
+  );
 
   // Handle key press
-  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage(e as any);
-    }
-  }, [handleSendMessage]);
+  const handleKeyPress = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        handleSendMessage(e as any);
+      }
+    },
+    [handleSendMessage],
+  );
 
   // Clear chat
   const handleClearChat = useCallback(() => {
@@ -456,13 +480,15 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   }, [setMessages, setData]);
 
   // Get selected model info
-  const selectedModelInfo = AVAILABLE_AI_MODELS.find(m => m.id === selectedModel);
+  const selectedModelInfo = AVAILABLE_AI_MODELS.find(
+    (m) => m.id === selectedModel,
+  );
 
   // Render message content with markdown support
   const renderMessageContent = useCallback((content: string) => {
     return (
       <div className="prose prose-sm max-w-none dark:prose-invert">
-        {content.split('\n').map((line, index) => (
+        {content.split("\n").map((line, index) => (
           <p key={index} className="mb-2 last:mb-0">
             {line}
           </p>
@@ -483,11 +509,17 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Para utilizar o chat com IA, precisamos do seu consentimento conforme a Lei Geral de Proteção de Dados (LGPD).
+            Para utilizar o chat com IA, precisamos do seu consentimento
+            conforme a Lei Geral de Proteção de Dados (LGPD).
           </p>
           <div className="space-y-2 text-sm">
-            <p>• Suas conversas serão armazenadas por {lgpdConsent.dataRetentionDays} dias</p>
-            <p>• Os dados serão utilizados apenas para melhoria do atendimento</p>
+            <p>
+              • Suas conversas serão armazenadas por{" "}
+              {lgpdConsent.dataRetentionDays} dias
+            </p>
+            <p>
+              • Os dados serão utilizados apenas para melhoria do atendimento
+            </p>
             <p>• Você pode solicitar a exclusão dos dados a qualquer momento</p>
           </div>
           <div className="flex gap-2">
@@ -497,10 +529,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
             >
               Concordar e Continuar
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => window.history.back()}
-            >
+            <Button variant="outline" onClick={() => window.history.back()}>
               Cancelar
             </Button>
           </div>
@@ -512,9 +541,9 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   return (
     <Card
       className={cn(
-        'flex flex-col w-full h-full',
-        mobileOptimized && 'touch-manipulation',
-        'border-0 shadow-lg rounded-xl overflow-hidden'
+        "flex flex-col w-full h-full",
+        mobileOptimized && "touch-manipulation",
+        "border-0 shadow-lg rounded-xl overflow-hidden",
       )}
       data-testid={testId}
     >
@@ -528,14 +557,14 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                 Assistente NeonPro
               </CardTitle>
             </div>
-            
+
             {patientContext && (
               <Badge variant="secondary" className="hidden sm:flex">
                 <User className="h-3 w-3 mr-1" />
                 {patientContext.patientName}
               </Badge>
             )}
-            
+
             {healthcareProfessional && (
               <Badge variant="outline" className="hidden sm:flex">
                 <Stethoscope className="h-3 w-3 mr-1" />
@@ -553,7 +582,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                       variant="ghost"
                       size="sm"
                       onClick={() => setShowSearchPanel(!showSearchPanel)}
-                      className={cn(showSearchPanel && 'bg-primary/10')}
+                      className={cn(showSearchPanel && "bg-primary/10")}
                     >
                       <Search className="h-4 w-4" />
                     </Button>
@@ -571,18 +600,22 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {AVAILABLE_AI_MODELS
-                    .filter(model => model.status === 'available')
-                    .map(model => (
-                      <SelectItem key={model.id} value={model.id} className="text-xs">
-                        <div className="flex items-center gap-2">
-                          {model.healthcareOptimized && (
-                            <Stethoscope className="h-3 w-3 text-green-500" />
-                          )}
-                          <span>{model.name}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
+                  {AVAILABLE_AI_MODELS.filter(
+                    (model) => model.status === "available",
+                  ).map((model) => (
+                    <SelectItem
+                      key={model.id}
+                      value={model.id}
+                      className="text-xs"
+                    >
+                      <div className="flex items-center gap-2">
+                        {model.healthcareOptimized && (
+                          <Stethoscope className="h-3 w-3 text-green-500" />
+                        )}
+                        <span>{model.name}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
@@ -613,35 +646,48 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 
                   {patientContext && (
                     <div>
-                      <h4 className="font-medium mb-2 text-sm">Contexto do Paciente</h4>
+                      <h4 className="font-medium mb-2 text-sm">
+                        Contexto do Paciente
+                      </h4>
                       <p className="text-xs text-muted-foreground">
-                        {patientContext.patientName} (ID: {patientContext.patientId})
+                        {patientContext.patientName} (ID:{" "}
+                        {patientContext.patientId})
                       </p>
                       {patientContext.cpf && (
                         <p className="text-xs text-muted-foreground">
-                          CPF: {patientContext.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4')}
+                          CPF:{" "}
+                          {patientContext.cpf.replace(
+                            /(\d{3})(\d{3})(\d{3})(\d{2})/,
+                            "$1.$2.$3-$4",
+                          )}
                         </p>
                       )}
                     </div>
                   )}
 
                   <div>
-                    <h4 className="font-medium mb-2 text-sm">LGPD e Privacidade</h4>
+                    <h4 className="font-medium mb-2 text-sm">
+                      LGPD e Privacidade
+                    </h4>
                     <div className="space-y-1">
                       <p className="text-xs text-muted-foreground">
                         {lgpdConsent.canStoreHistory
                           ? `Histórico armazenado por ${lgpdConsent.dataRetentionDays} dias`
-                          : 'Histórico não armazenado'}
+                          : "Histórico não armazenado"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        Consentimento: {isLgpdConsentGiven ? 'Sim' : 'Não'}
+                        Consentimento: {isLgpdConsentGiven ? "Sim" : "Não"}
                       </p>
                     </div>
                   </div>
 
                   <Separator />
 
-                  <Button onClick={handleClearChat} variant="outline" className="w-full">
+                  <Button
+                    onClick={handleClearChat}
+                    variant="outline"
+                    className="w-full"
+                  >
                     <X className="h-4 w-4 mr-2" />
                     Limpar Conversa
                   </Button>
@@ -668,7 +714,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 
       <CardContent className="flex-1 flex flex-col p-0">
         {/* Search Panel */}
-        {showSearchPanel && activeTab === 'search' && (
+        {showSearchPanel && activeTab === "search" && (
           <div className="border-b p-4 bg-background/50">
             <div className="relative">
               <Input
@@ -683,7 +729,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
               />
               <Search className="absolute right-2 top-2.5 h-4 w-4 text-muted-foreground" />
             </div>
-            
+
             {isSearching && (
               <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
                 <Clock className="h-3 w-3 animate-spin" />
@@ -700,7 +746,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                     onClick={() => {
                       setInput(result.content);
                       setShowSearchPanel(false);
-                      setActiveTab('chat');
+                      setActiveTab("chat");
                     }}
                   >
                     <div className="font-medium mb-1">{result.role}</div>
@@ -729,7 +775,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                 <p className="text-sm text-muted-foreground mb-4">
                   {patientContext
                     ? `Estou aqui para ajudar com questões sobre ${patientContext.patientName}.`
-                    : 'Como posso ajudar você hoje?'}
+                    : "Como posso ajudar você hoje?"}
                 </p>
                 <div className="flex flex-wrap gap-2 justify-center">
                   <Badge variant="outline" className="text-xs">
@@ -750,11 +796,11 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
               <div
                 key={message.id}
                 className={cn(
-                  'flex gap-3',
-                  message.role === 'user' ? 'justify-end' : 'justify-start',
+                  "flex gap-3",
+                  message.role === "user" ? "justify-end" : "justify-start",
                 )}
               >
-                {message.role === 'assistant' && (
+                {message.role === "assistant" && (
                   <div className="flex-shrink-0">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-primary/10 text-primary">
@@ -766,10 +812,10 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 
                 <div
                   className={cn(
-                    'max-w-[80%] rounded-lg px-4 py-3',
-                    message.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted',
+                    "max-w-[80%] rounded-lg px-4 py-3",
+                    message.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted",
                   )}
                 >
                   <div className="text-sm">
@@ -779,7 +825,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                   <div className="flex items-center justify-between mt-2 text-xs opacity-70">
                     <span>{formatDateTime(message.createdAt)}</span>
 
-                    {message.role === 'assistant' && selectedModelInfo && (
+                    {message.role === "assistant" && selectedModelInfo && (
                       <div className="flex items-center gap-2">
                         <span>{selectedModelInfo.name}</span>
                       </div>
@@ -787,7 +833,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                   </div>
                 </div>
 
-                {message.role === 'user' && (
+                {message.role === "user" && (
                   <div className="flex-shrink-0">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-primary text-primary-foreground">
@@ -804,11 +850,11 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
               <div
                 key={message.id}
                 className={cn(
-                  'flex gap-3',
-                  message.role === 'user' ? 'justify-end' : 'justify-start',
+                  "flex gap-3",
+                  message.role === "user" ? "justify-end" : "justify-start",
                 )}
               >
-                {message.role === 'assistant' && (
+                {message.role === "assistant" && (
                   <div className="flex-shrink-0">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-green-500/10 text-green-600">
@@ -820,10 +866,10 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 
                 <div
                   className={cn(
-                    'max-w-[80%] rounded-lg px-4 py-3',
-                    message.role === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800',
+                    "max-w-[80%] rounded-lg px-4 py-3",
+                    message.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800",
                   )}
                 >
                   <div className="text-sm">
@@ -833,7 +879,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                   <div className="flex items-center justify-between mt-2 text-xs opacity-70">
                     <span>{formatDateTime(new Date(message.createdAt))}</span>
 
-                    {message.role === 'assistant' && (
+                    {message.role === "assistant" && (
                       <Badge variant="secondary" className="text-xs">
                         <Stethoscope className="h-3 w-3 mr-1" />
                         Agente NeonPro
@@ -842,7 +888,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                   </div>
                 </div>
 
-                {message.role === 'user' && (
+                {message.role === "user" && (
                   <div className="flex-shrink-0">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-primary text-primary-foreground">
@@ -870,15 +916,17 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                       <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" />
                       <div
                         className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
-                        style={{ animationDelay: '0.1s' }}
+                        style={{ animationDelay: "0.1s" }}
                       />
                       <div
                         className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"
-                        style={{ animationDelay: '0.2s' }}
+                        style={{ animationDelay: "0.2s" }}
                       />
                     </div>
                     <span className="text-xs text-muted-foreground">
-                      {sessionType === 'general' ? 'Digitando...' : 'Analisando contexto médico...'}
+                      {sessionType === "general"
+                        ? "Digitando..."
+                        : "Analisando contexto médico..."}
                     </span>
                   </div>
                 </div>
@@ -897,7 +945,8 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                 </div>
                 <div className="bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3">
                   <div className="text-sm text-red-800 dark:text-red-200">
-                    Ocorreu um erro ao processar sua mensagem. Por favor, tente novamente.
+                    Ocorreu um erro ao processar sua mensagem. Por favor, tente
+                    novamente.
                   </div>
                 </div>
               </div>
@@ -922,13 +971,13 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                 }}
                 onKeyDown={handleKeyPress}
                 placeholder={
-                  sessionType === 'client'
-                    ? 'Pergunte sobre o paciente...'
-                    : sessionType === 'appointment'
-                    ? 'Agendamentos e consultas...'
-                    : sessionType === 'financial'
-                    ? 'Questões financeiras...'
-                    : 'Digite sua mensagem...'
+                  sessionType === "client"
+                    ? "Pergunte sobre o paciente..."
+                    : sessionType === "appointment"
+                      ? "Agendamentos e consultas..."
+                      : sessionType === "financial"
+                        ? "Questões financeiras..."
+                        : "Digite sua mensagem..."
                 }
                 disabled={isAILoading || isAgentSending}
                 className="w-full min-h-[44px] max-h-32 resize-none rounded-lg border border-input bg-background px-4 py-3 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 pr-20"
@@ -965,14 +1014,19 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                           type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={voiceState === 'listening' ? stopVoiceRecognition : startVoiceRecognition}
+                          onClick={
+                            voiceState === "listening"
+                              ? stopVoiceRecognition
+                              : startVoiceRecognition
+                          }
                           className={cn(
-                            'h-8 w-8 p-0',
-                            voiceState === 'listening' && 'text-red-500 bg-red-50',
-                            voiceState === 'error' && 'text-red-500',
+                            "h-8 w-8 p-0",
+                            voiceState === "listening" &&
+                              "text-red-500 bg-red-50",
+                            voiceState === "error" && "text-red-500",
                           )}
                         >
-                          {voiceState === 'listening' ? (
+                          {voiceState === "listening" ? (
                             <MicOff className="h-4 w-4" />
                           ) : (
                             <Mic className="h-4 w-4" />
@@ -981,11 +1035,11 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
                       </TooltipTrigger>
                       <TooltipContent>
                         <p>
-                          {voiceState === 'listening'
-                            ? 'Parar gravação'
-                            : voiceState === 'error'
-                            ? 'Erro no reconhecimento'
-                            : 'Gravar áudio'}
+                          {voiceState === "listening"
+                            ? "Parar gravação"
+                            : voiceState === "error"
+                              ? "Erro no reconhecimento"
+                              : "Gravar áudio"}
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -1005,17 +1059,20 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
           </form>
 
           {/* Voice state indicator */}
-          {voiceState === 'listening' && (
+          {voiceState === "listening" && (
             <div className="flex items-center gap-2 mt-2 text-xs text-red-600">
               <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse" />
               <span>Ouvindo... Fale agora</span>
             </div>
           )}
 
-          {voiceState === 'error' && (
+          {voiceState === "error" && (
             <div className="flex items-center gap-2 mt-2 text-xs text-red-600">
               <AlertTriangle className="h-3 w-3" />
-              <span>Erro no reconhecimento de voz. Verifique as permissões do microfone.</span>
+              <span>
+                Erro no reconhecimento de voz. Verifique as permissões do
+                microfone.
+              </span>
             </div>
           )}
 
@@ -1024,9 +1081,9 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
             <p className="text-xs text-muted-foreground">
               {lgpdConsent.canStoreHistory
                 ? `Conversa armazenada conforme LGPD por ${lgpdConsent.dataRetentionDays} dias`
-                : 'Conversa não armazenada • Conforme LGPD'}
+                : "Conversa não armazenada • Conforme LGPD"}
             </p>
-            
+
             {selectedModelInfo?.healthcareOptimized && (
               <Badge variant="outline" className="text-xs">
                 <CheckCircle className="h-3 w-3 mr-1 text-green-500" />

@@ -1,25 +1,27 @@
-import { NodeSDK } from '@opentelemetry/sdk-node';
-import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
-import { HttpInstrumentation } from '@opentelemetry/instrumentation-http';
-import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
-import { createLogger } from './logging';
-import { initializeMetrics } from './metrics';
-import { initializeHealthChecks } from './health';
-import type { MonitoringConfig } from './types';
+import { NodeSDK } from "@opentelemetry/sdk-node";
+import { JaegerExporter } from "@opentelemetry/exporter-jaeger";
+import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
+import { ExpressInstrumentation } from "@opentelemetry/instrumentation-express";
+import { createLogger } from "./logging";
+import { initializeMetrics } from "./metrics";
+import { initializeHealthChecks } from "./health";
+import type { MonitoringConfig } from "./types";
 
 export type { MonitoringConfig };
 
 let sdk: NodeSDK | null = null;
 
 export function initializeMonitoring(config: MonitoringConfig): void {
-  console.log(`🔍 Initializing monitoring for ${config.serviceName} v${config.serviceVersion}`);
+  console.log(
+    `🔍 Initializing monitoring for ${config.serviceName} v${config.serviceVersion}`,
+  );
 
   // Initialize logging first
   const logger = createLogger(config.logging);
-  logger.info('Monitoring system starting up', {
+  logger.info("Monitoring system starting up", {
     service: config.serviceName,
     version: config.serviceVersion,
-    environment: config.environment
+    environment: config.environment,
   });
 
   // Initialize metrics
@@ -27,9 +29,11 @@ export function initializeMonitoring(config: MonitoringConfig): void {
     initializeMetrics({
       serviceName: config.serviceName,
       port: config.metrics.port || 9464,
-      endpoint: config.metrics.endpoint || '/metrics'
+      endpoint: config.metrics.endpoint || "/metrics",
     });
-    logger.info('Metrics collection enabled', { port: config.metrics.port || 9464 });
+    logger.info("Metrics collection enabled", {
+      port: config.metrics.port || 9464,
+    });
   }
 
   // Initialize tracing
@@ -39,7 +43,7 @@ export function initializeMonitoring(config: MonitoringConfig): void {
       new ExpressInstrumentation(),
     ];
 
-    const traceExporter = config.tracing.jaegerEndpoint 
+    const traceExporter = config.tracing.jaegerEndpoint
       ? new JaegerExporter({
           endpoint: config.tracing.jaegerEndpoint,
         })
@@ -53,42 +57,45 @@ export function initializeMonitoring(config: MonitoringConfig): void {
 
     // Start the SDK
     sdk.start();
-    logger.info('Tracing instrumentation enabled', {
-      jaegerEndpoint: config.tracing.jaegerEndpoint || 'default',
-      sampleRate: config.tracing.sampleRate || 1.0
+    logger.info("Tracing instrumentation enabled", {
+      jaegerEndpoint: config.tracing.jaegerEndpoint || "default",
+      sampleRate: config.tracing.sampleRate || 1.0,
     });
   }
 
   // Initialize health checks
   if (config.health.enabled) {
     initializeHealthChecks({
-      endpoint: config.health.endpoint || '/health',
-      interval: config.health.interval || 30000 // 30 seconds
+      endpoint: config.health.endpoint || "/health",
+      interval: config.health.interval || 30000, // 30 seconds
     });
-    logger.info('Health checks enabled', { 
-      endpoint: config.health.endpoint || '/health',
-      interval: config.health.interval || 30000
+    logger.info("Health checks enabled", {
+      endpoint: config.health.endpoint || "/health",
+      interval: config.health.interval || 30000,
     });
   }
 
   // Graceful shutdown
-  process.on('SIGTERM', () => {
-    logger.info('Received SIGTERM, shutting down monitoring gracefully');
+  process.on("SIGTERM", () => {
+    logger.info("Received SIGTERM, shutting down monitoring gracefully");
     shutdownMonitoring();
   });
 
-  process.on('SIGINT', () => {
-    logger.info('Received SIGINT, shutting down monitoring gracefully');
+  process.on("SIGINT", () => {
+    logger.info("Received SIGINT, shutting down monitoring gracefully");
     shutdownMonitoring();
   });
 
-  logger.info('Monitoring system initialized successfully');
+  logger.info("Monitoring system initialized successfully");
 }
 
 export function shutdownMonitoring(): void {
   if (sdk) {
-    sdk.shutdown()
-      .then(() => console.log('📊 Monitoring system shut down successfully'))
-      .catch((error) => console.error('Error shutting down monitoring:', error));
+    sdk
+      .shutdown()
+      .then(() => console.log("📊 Monitoring system shut down successfully"))
+      .catch((error) =>
+        console.error("Error shutting down monitoring:", error),
+      );
   }
 }

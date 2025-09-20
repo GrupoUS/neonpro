@@ -77,26 +77,39 @@ const SecurityPolicySchema = z.object({
   version: z.string(),
   status: z.enum(['active', 'inactive', 'draft', 'deprecated']),
   priority: z.number().min(1).max(10),
-  rules: z.array(z.object({
-    id: z.string(),
-    type: z.enum([
-      'csp',
-      'cors',
-      'rate_limit',
-      'authentication',
-      'authorization',
-      'encryption',
-      'input_validation',
-    ]),
-    config: z.record(z.any()),
-    conditions: z.array(z.object({
-      field: z.string(),
-      operator: z.enum(['equals', 'contains', 'starts_with', 'ends_with', 'regex', 'in']),
-      value: z.any(),
-    })).optional(),
-    action: z.enum(['allow', 'deny', 'log', 'alert', 'quarantine']),
-    priority: z.number().min(1).max(10),
-  })),
+  rules: z.array(
+    z.object({
+      id: z.string(),
+      type: z.enum([
+        'csp',
+        'cors',
+        'rate_limit',
+        'authentication',
+        'authorization',
+        'encryption',
+        'input_validation',
+      ]),
+      config: z.record(z.any()),
+      conditions: z
+        .array(
+          z.object({
+            field: z.string(),
+            operator: z.enum([
+              'equals',
+              'contains',
+              'starts_with',
+              'ends_with',
+              'regex',
+              'in',
+            ]),
+            value: z.any(),
+          }),
+        )
+        .optional(),
+      action: z.enum(['allow', 'deny', 'log', 'alert', 'quarantine']),
+      priority: z.number().min(1).max(10),
+    }),
+  ),
   compliance: z.object({
     lgpd: z.boolean(),
     anvisa: z.boolean(),
@@ -111,38 +124,57 @@ const SecurityPolicySchema = z.object({
   createdAt: z.string(),
   updatedAt: z.string(),
   lastEvaluated: z.string().optional(),
-  evaluationResults: z.array(z.object({
-    ruleId: z.string(),
-    status: z.enum(['passed', 'failed', 'warning']),
-    message: z.string(),
-    timestamp: z.string(),
-    details: z.any().optional(),
-  })).optional(),
+  evaluationResults: z
+    .array(
+      z.object({
+        ruleId: z.string(),
+        status: z.enum(['passed', 'failed', 'warning']),
+        message: z.string(),
+        timestamp: z.string(),
+        details: z.any().optional(),
+      }),
+    )
+    .optional(),
 });
 
 const SecurityPolicyConfigSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().max(500),
   priority: z.number().min(1).max(10),
-  rules: z.array(z.object({
-    type: z.enum([
-      'csp',
-      'cors',
-      'rate_limit',
-      'authentication',
-      'authorization',
-      'encryption',
-      'input_validation',
-    ]),
-    config: z.record(z.any()),
-    conditions: z.array(z.object({
-      field: z.string(),
-      operator: z.enum(['equals', 'contains', 'starts_with', 'ends_with', 'regex', 'in']),
-      value: z.any(),
-    })).optional(),
-    action: z.enum(['allow', 'deny', 'log', 'alert', 'quarantine']),
-    priority: z.number().min(1).max(10),
-  })).min(1),
+  rules: z
+    .array(
+      z.object({
+        type: z.enum([
+          'csp',
+          'cors',
+          'rate_limit',
+          'authentication',
+          'authorization',
+          'encryption',
+          'input_validation',
+        ]),
+        config: z.record(z.any()),
+        conditions: z
+          .array(
+            z.object({
+              field: z.string(),
+              operator: z.enum([
+                'equals',
+                'contains',
+                'starts_with',
+                'ends_with',
+                'regex',
+                'in',
+              ]),
+              value: z.any(),
+            }),
+          )
+          .optional(),
+        action: z.enum(['allow', 'deny', 'log', 'alert', 'quarantine']),
+        priority: z.number().min(1).max(10),
+      }),
+    )
+    .min(1),
   compliance: z.object({
     lgpd: z.boolean().default(true),
     anvisa: z.boolean().default(true),
@@ -184,16 +216,25 @@ const RateLimitRuleSchema = z.object({
   id: z.string(),
   name: z.string(),
   description: z.string().optional(),
-  strategy: z.enum(['fixed_window', 'sliding_window', 'token_bucket', 'leaky_bucket']),
+  strategy: z.enum([
+    'fixed_window',
+    'sliding_window',
+    'token_bucket',
+    'leaky_bucket',
+  ]),
   windowSize: z.enum(['second', 'minute', 'hour', 'day', 'week', 'month']),
   limit: z.number().min(1),
   burstLimit: z.number().min(1).optional(),
   keyExtractor: z.string(),
-  conditions: z.array(z.object({
-    field: z.string(),
-    operator: z.enum(['equals', 'contains', 'in', 'regex']),
-    value: z.any(),
-  })).optional(),
+  conditions: z
+    .array(
+      z.object({
+        field: z.string(),
+        operator: z.enum(['equals', 'contains', 'in', 'regex']),
+        value: z.any(),
+      }),
+    )
+    .optional(),
   action: z.enum(['allow', 'deny', 'throttle', 'queue']),
   priority: z.number().min(1).max(10),
   metadata: z.record(z.any()).optional(),
@@ -215,11 +256,13 @@ const AuditLogSchema = z.object({
   result: z.enum(['success', 'failure', 'blocked', 'alert']),
   message: z.string(),
   details: z.record(z.any()).optional(),
-  compliance: z.object({
-    lggd: z.boolean().optional(),
-    anvisa: z.boolean().optional(),
-    cfm: z.boolean().optional(),
-  }).optional(),
+  compliance: z
+    .object({
+      lggd: z.boolean().optional(),
+      anvisa: z.boolean().optional(),
+      cfm: z.boolean().optional(),
+    })
+    .optional(),
   retentionPeriod: z.number().optional(),
   isRedacted: z.boolean().default(false),
   redactionReason: z.string().optional(),
@@ -232,13 +275,15 @@ const SecurityEvaluationRequestSchema = z.object({
   headers: z.record(z.string()).optional(),
   body: z.any().optional(),
   queryParams: z.record(z.string()).optional(),
-  userContext: z.object({
-    userId: z.string().optional(),
-    roles: z.array(z.string()).optional(),
-    permissions: z.array(z.string()).optional(),
-    ipAddress: z.string().optional(),
-    userAgent: z.string().optional(),
-  }).optional(),
+  userContext: z
+    .object({
+      userId: z.string().optional(),
+      roles: z.array(z.string()).optional(),
+      permissions: z.array(z.string()).optional(),
+      ipAddress: z.string().optional(),
+      userAgent: z.string().optional(),
+    })
+    .optional(),
 });
 
 const SecurityEvaluationResponseSchema = z.object({
@@ -247,14 +292,16 @@ const SecurityEvaluationResponseSchema = z.object({
   decision: z.enum(['allow', 'deny', 'require_mfa', 'quarantine', 'alert']),
   confidence: z.number().min(0).max(1),
   rulesEvaluated: z.number(),
-  rulesTriggered: z.array(z.object({
-    ruleId: z.string(),
-    ruleType: z.string(),
-    action: z.enum(['allow', 'deny', 'log', 'alert', 'quarantine']),
-    severity: z.enum(['low', 'medium', 'high', 'critical']),
-    message: z.string(),
-    confidence: z.number().min(0).max(1),
-  })),
+  rulesTriggered: z.array(
+    z.object({
+      ruleId: z.string(),
+      ruleType: z.string(),
+      action: z.enum(['allow', 'deny', 'log', 'alert', 'quarantine']),
+      severity: z.enum(['low', 'medium', 'high', 'critical']),
+      message: z.string(),
+      confidence: z.number().min(0).max(1),
+    }),
+  ),
   riskScore: z.number().min(0).max(100),
   recommendations: z.array(z.string()).optional(),
   metadata: z.record(z.any()).optional(),
@@ -263,12 +310,16 @@ const SecurityEvaluationResponseSchema = z.object({
     lgpd: z.boolean(),
     anvisa: z.boolean(),
     cfm: z.boolean(),
-    issues: z.array(z.object({
-      type: z.string(),
-      severity: z.enum(['low', 'medium', 'high', 'critical']),
-      description: z.string(),
-      recommendation: z.string(),
-    })).optional(),
+    issues: z
+      .array(
+        z.object({
+          type: z.string(),
+          severity: z.enum(['low', 'medium', 'high', 'critical']),
+          description: z.string(),
+          recommendation: z.string(),
+        }),
+      )
+      .optional(),
   }),
 });
 
@@ -435,7 +486,11 @@ const generateValidCSP = () => ({
   'style-src': ['\'self\'', '\'unsafe-inline\''],
   'img-src': ['\'self\'', 'data:', 'https:'],
   'connect-src': ['\'self\'', 'https://api.neonpro.health'],
-  'font-src': ['\'self\'', 'https://fonts.googleapis.com', 'https://fonts.gstatic.com'],
+  'font-src': [
+    '\'self\'',
+    'https://fonts.googleapis.com',
+    'https://fonts.gstatic.com',
+  ],
   'object-src': ['\'none\''],
   'media-src': ['\'self\''],
   'frame-src': ['\'none\''],
@@ -814,10 +869,12 @@ describe('Security Policies Contract Tests', () => {
 
       (evaluateSecurityPolicy as Mock).mockResolvedValue(expectedResponse);
 
-      const response = await client.api.security.policies[':id'].evaluate.$post({
-        param: { id: policyId },
-        json: evaluationRequest,
-      });
+      const response = await client.api.security.policies[':id'].evaluate.$post(
+        {
+          param: { id: policyId },
+          json: evaluationRequest,
+        },
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -826,7 +883,10 @@ describe('Security Policies Contract Tests', () => {
       const validatedData = SecurityEvaluationResponseSchema.parse(data);
       expect(validatedData).toEqual(expectedResponse);
 
-      expect(evaluateSecurityPolicy).toHaveBeenCalledWith(policyId, evaluationRequest);
+      expect(evaluateSecurityPolicy).toHaveBeenCalledWith(
+        policyId,
+        evaluationRequest,
+      );
     });
 
     it('should handle policy evaluation with high risk', async () => {
@@ -849,7 +909,11 @@ describe('Security Policies Contract Tests', () => {
           },
         ],
         riskScore: 85,
-        recommendations: ['Implement CAPTCHA', 'Require MFA', 'Review IP reputation'],
+        recommendations: [
+          'Implement CAPTCHA',
+          'Require MFA',
+          'Review IP reputation',
+        ],
         evaluatedAt: new Date().toISOString(),
         compliance: {
           lgpd: true,
@@ -868,10 +932,12 @@ describe('Security Policies Contract Tests', () => {
 
       (evaluateSecurityPolicy as Mock).mockResolvedValue(highRiskResponse);
 
-      const response = await client.api.security.policies[':id'].evaluate.$post({
-        param: { id: policyId },
-        json: evaluationRequest,
-      });
+      const response = await client.api.security.policies[':id'].evaluate.$post(
+        {
+          param: { id: policyId },
+          json: evaluationRequest,
+        },
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -894,10 +960,12 @@ describe('Security Policies Contract Tests', () => {
         },
       };
 
-      const response = await client.api.security.policies[':id'].evaluate.$post({
-        param: { id: policyId },
-        json: invalidRequest,
-      });
+      const response = await client.api.security.policies[':id'].evaluate.$post(
+        {
+          param: { id: policyId },
+          json: invalidRequest,
+        },
+      );
 
       expect(response.status).toBe(400);
       const data = await response.json();
@@ -933,8 +1001,16 @@ describe('Security Policies Contract Tests', () => {
           'https://api.neonpro.health',
           'https://medical-records.neonpro.health',
         ],
-        'script-src': ['\'self\'', '\'unsafe-inline\'', 'https://cdn.neonpro.health'],
-        'style-src': ['\'self\'', '\'unsafe-inline\'', 'https://fonts.googleapis.com'],
+        'script-src': [
+          '\'self\'',
+          '\'unsafe-inline\'',
+          'https://cdn.neonpro.health',
+        ],
+        'style-src': [
+          '\'self\'',
+          '\'unsafe-inline\'',
+          'https://fonts.googleapis.com',
+        ],
       };
 
       (generateCSP as Mock).mockResolvedValue(healthcareCSP);
@@ -945,7 +1021,9 @@ describe('Security Policies Contract Tests', () => {
       const data = await response.json();
 
       expect(data['connect-src']).toContain('https://api.neonpro.health');
-      expect(data['connect-src']).toContain('https://medical-records.neonpro.health');
+      expect(data['connect-src']).toContain(
+        'https://medical-records.neonpro.health',
+      );
     });
   });
 
@@ -1179,10 +1257,14 @@ describe('Security Policies Contract Tests', () => {
           'Review GDPR data processing agreements',
         ],
         lastChecked: new Date().toISOString(),
-        nextReviewDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString(),
+        nextReviewDate: new Date(
+          Date.now() + 90 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
       };
 
-      (validateSecurityPolicyCompliance as Mock).mockResolvedValue(complianceResult);
+      (validateSecurityPolicyCompliance as Mock).mockResolvedValue(
+        complianceResult,
+      );
 
       const response = await client.api.security.compliance.check.$post({
         json: { policyId },
@@ -1209,10 +1291,21 @@ describe('Security Policies Contract Tests', () => {
           lgpd: {
             score: 30,
             compliant: false,
-            issues: ['Missing data retention policy', 'Insufficient consent management'],
+            issues: [
+              'Missing data retention policy',
+              'Insufficient consent management',
+            ],
           },
-          anvisa: { score: 60, compliant: false, issues: ['Medical device validation incomplete'] },
-          cfm: { score: 45, compliant: false, issues: ['Professional ethics policy outdated'] },
+          anvisa: {
+            score: 60,
+            compliant: false,
+            issues: ['Medical device validation incomplete'],
+          },
+          cfm: {
+            score: 45,
+            compliant: false,
+            issues: ['Professional ethics policy outdated'],
+          },
         },
         criticalIssues: [
           {
@@ -1235,10 +1328,14 @@ describe('Security Policies Contract Tests', () => {
           'Review and improve consent management system',
         ],
         lastChecked: new Date().toISOString(),
-        nextReviewDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        nextReviewDate: new Date(
+          Date.now() + 30 * 24 * 60 * 60 * 1000,
+        ).toISOString(),
       };
 
-      (validateSecurityPolicyCompliance as Mock).mockResolvedValue(nonCompliantResult);
+      (validateSecurityPolicyCompliance as Mock).mockResolvedValue(
+        nonCompliantResult,
+      );
 
       const response = await client.api.security.compliance.check.$post({
         json: { policyId },
@@ -1349,7 +1446,9 @@ describe('Security Policies Contract Tests', () => {
       const data = await response.json();
 
       expect(data.frameworks.lgpd.compliant).toBe(true);
-      expect(data.frameworks.lgpd.details.consentManagement.compliant).toBe(true);
+      expect(data.frameworks.lgpd.details.consentManagement.compliant).toBe(
+        true,
+      );
       expect(data.frameworks.lgpd.details.dataRights.deletion).toBe(true);
     });
   });
@@ -1378,12 +1477,14 @@ describe('Security Policies Contract Tests', () => {
       (evaluateSecurityPolicy as Mock).mockResolvedValue(expectedResponse);
 
       // Simulate 10 concurrent requests
-      const concurrentRequests = Array(10).fill(null).map(() =>
-        client.api.security.policies[':id'].evaluate.$post({
-          param: { id: policyId },
-          json: evaluationRequest,
-        })
-      );
+      const concurrentRequests = Array(10)
+        .fill(null)
+        .map(() =>
+          client.api.security.policies[':id'].evaluate.$post({
+            param: { id: policyId },
+            json: evaluationRequest,
+          })
+        );
 
       const responses = await Promise.all(concurrentRequests);
 
@@ -1422,10 +1523,12 @@ describe('Security Policies Contract Tests', () => {
       });
 
       const startTime = Date.now();
-      const response = await client.api.security.policies[':id'].evaluate.$post({
-        param: { id: policyId },
-        json: evaluationRequest,
-      });
+      const response = await client.api.security.policies[':id'].evaluate.$post(
+        {
+          param: { id: policyId },
+          json: evaluationRequest,
+        },
+      );
       const endTime = Date.now();
 
       expect(response.status).toBe(200);
@@ -1437,7 +1540,9 @@ describe('Security Policies Contract Tests', () => {
     it('should handle policy not found errors', async () => {
       const nonExistentId = 'sp_nonexistent_12345678901234567890123456789012';
 
-      (evaluateSecurityPolicy as Mock).mockRejectedValue(new Error('Security policy not found'));
+      (evaluateSecurityPolicy as Mock).mockRejectedValue(
+        new Error('Security policy not found'),
+      );
 
       const response = await client.api.security.policies[':id'].$get({
         param: { id: nonExistentId },
@@ -1456,7 +1561,9 @@ describe('Security Policies Contract Tests', () => {
         'default-src': null, // Invalid type
       };
 
-      (validateCSP as Mock).mockRejectedValue(new Error('Invalid CSP configuration'));
+      (validateCSP as Mock).mockRejectedValue(
+        new Error('Invalid CSP configuration'),
+      );
 
       const response = await client.api.security.csp.validate.$post({
         json: malformedCSP,
@@ -1472,7 +1579,9 @@ describe('Security Policies Contract Tests', () => {
     it('should include detailed error information with severity levels', async () => {
       const policyId = 'sp_error_test_12345678901234567890123456789012';
 
-      (createSecurityPolicy as Mock).mockRejectedValue(new Error('Database connection failed'));
+      (createSecurityPolicy as Mock).mockRejectedValue(
+        new Error('Database connection failed'),
+      );
 
       const response = await client.api.security.policies.$post({
         json: generateValidSecurityPolicyConfig(),
@@ -1540,10 +1649,12 @@ describe('Security Policies Contract Tests', () => {
 
       (evaluateSecurityPolicy as Mock).mockResolvedValue(evaluationResponse);
 
-      const response = await client.api.security.policies[':id'].evaluate.$post({
-        param: { id: evaluationRequest.policyId },
-        json: evaluationRequest,
-      });
+      const response = await client.api.security.policies[':id'].evaluate.$post(
+        {
+          param: { id: evaluationRequest.policyId },
+          json: evaluationRequest,
+        },
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();

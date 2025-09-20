@@ -5,7 +5,7 @@ Status: Implemented (mock-first), streaming SSE with consent/role gating, rate l
 ## Endpoints
 
 - POST /api/v1/chat/query — Submit a question. Returns text/event-stream (SSE)
-- GET  /api/v1/chat/health — Health for chat group
+- GET /api/v1/chat/health — Health for chat group
 
 Mounted under Hono app in `apps/api/src/app.ts` as `v1.route('/chat', chat)` where `chat` is `apps/api/src/routes/chat.ts`.
 
@@ -13,11 +13,12 @@ Mounted under Hono app in `apps/api/src/app.ts` as `v1.route('/chat', chat)` whe
 
 Content-Type: application/json
 {
-  "question": "string (<= 4000)",
-  "sessionId": "uuid (optional)"
+"question": "string (<= 4000)",
+"sessionId": "uuid (optional)"
 }
 
 Headers expected:
+
 - x-user-id: user id (for rate-limit/audit)
 - x-clinic-id: clinic id (for audit)
 - x-role: one of ADMIN | CLINICAL_STAFF | FINANCE_STAFF | SUPPORT_READONLY
@@ -42,10 +43,12 @@ Headers expected:
 ## Mock Mode
 
 Activate via any of:
+
 - Query param: ?mock=true
 - Env: AI_MOCK=true
 
 Deterministic fixtures by question tokens:
+
 - mock:balance → balance summary
 - mock:clinical → treatments overview
 - mock:overdue → overdue counts
@@ -76,11 +79,12 @@ Note: Some non-chat suites may fail without local packages/env. The contract tes
 ## Try it (local dev)
 
 curl -N -X POST 'http://localhost:3000/v1/chat/query?mock=true' \
-  -H 'content-type: application/json' \
-  -H 'x-user-id: u1' -H 'x-clinic-id: c1' -H 'x-role: CLINICAL_STAFF' -H 'x-consent: true' \
-  -d '{"question":"mock:balance","sessionId":"6e9b5f24-7b4d-4db8-9d1b-0db6b7f5a0e0"}'
+ -H 'content-type: application/json' \
+ -H 'x-user-id: u1' -H 'x-clinic-id: c1' -H 'x-role: CLINICAL_STAFF' -H 'x-consent: true' \
+ -d '{"question":"mock:balance","sessionId":"6e9b5f24-7b4d-4db8-9d1b-0db6b7f5a0e0"}'
 
 # Frontend integration notes
+
 - Streams are SSE lines: parse JSON after "data: " prefix.
 - Show first token within ~15ms intervals in mock mode to simulate responsiveness.
 - Display X-Chat-Started-At timestamp to meet perceived responsiveness requirement.

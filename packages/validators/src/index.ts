@@ -10,7 +10,7 @@ export function validateCPF(cpf: string): boolean {
   if (!cpf) return false;
 
   // Remove non-numeric characters
-  const cleanCPF = cpf.replace(/[^\d]/g, '');
+  const cleanCPF = cpf.replace(/[^\d]/g, "");
 
   // Check basic format
   if (cleanCPF.length !== 11 || /^(\d)\1{10}$/.test(cleanCPF)) {
@@ -45,7 +45,7 @@ export function validateCNPJ(cnpj: string): boolean {
   if (!cnpj) return false;
 
   // Remove non-numeric characters
-  const cleanCNPJ = cnpj.replace(/[^\d]/g, '');
+  const cleanCNPJ = cnpj.replace(/[^\d]/g, "");
 
   // Check basic format
   if (cleanCNPJ.length !== 14 || /^(\d)\1{13}$/.test(cleanCNPJ)) {
@@ -81,7 +81,7 @@ export function validateCNPJ(cnpj: string): boolean {
 export function validatePhone(phone: string): boolean {
   if (!phone) return false;
 
-  const cleanPhone = phone.replace(/[^\d]/g, '');
+  const cleanPhone = phone.replace(/[^\d]/g, "");
 
   // Mobile: 11 digits (2 digit area code + 9 + 8 digits)
   // Landline: 10 digits (2 digit area code + 8 digits)
@@ -94,7 +94,7 @@ export function validatePhone(phone: string): boolean {
 export function validateCEP(cep: string): boolean {
   if (!cep) return false;
 
-  const cleanCEP = cep.replace(/[^\d]/g, '');
+  const cleanCEP = cep.replace(/[^\d]/g, "");
 
   // CEP should have exactly 8 digits
   return cleanCEP.length === 8;

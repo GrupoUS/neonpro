@@ -166,15 +166,22 @@ async function selectOptimalProvider(
   switch (requestType) {
     case 'conversation':
       // Prefer OpenAI for conversations (better Portuguese support)
-      return availableProviders.find(p => p.name === 'openai') || availableProviders[0];
+      return (
+        availableProviders.find(p => p.name === 'openai')
+        || availableProviders[0]
+      );
 
     case 'prediction':
       // Prefer lower cost for prediction tasks
-      return availableProviders.sort((a, b) => a.costPerToken - b.costPerToken)[0];
+      return availableProviders.sort(
+        (a, b) => a.costPerToken - b.costPerToken,
+      )[0];
 
     case 'analysis':
       // Prefer higher quality for analysis
-      return availableProviders.sort((a, b) => b.healthScore - a.healthScore)[0];
+      return availableProviders.sort(
+        (a, b) => b.healthScore - a.healthScore,
+      )[0];
 
     default:
       return availableProviders[0];
@@ -217,7 +224,8 @@ async function callAIProvider(
     ? 'analysis'
     : 'conversation';
 
-  const response = responses[provider.name][responseType] || responses[provider.name].conversation;
+  const response = responses[provider.name][responseType]
+    || responses[provider.name].conversation;
   const tokensUsed = Math.floor(response.length / 4); // Rough token estimation
   const cost = tokensUsed * provider.costPerToken;
 
@@ -306,15 +314,19 @@ export const aiRouter = router({
    * Provides Portuguese medical terminology support
    */
   chat: healthcareProcedure
-    .input(v.object({
-      message: v.string([v.minLength(1, 'Message cannot be empty')]),
-      context: v.optional(v.object({
-        patientId: v.optional(v.string()),
-        sessionId: v.optional(v.string()),
-        specialty: v.optional(v.string()),
-      })),
-      language: v.optional(v.string()),
-    }))
+    .input(
+      v.object({
+        message: v.string([v.minLength(1, 'Message cannot be empty')]),
+        context: v.optional(
+          v.object({
+            patientId: v.optional(v.string()),
+            sessionId: v.optional(v.string()),
+            specialty: v.optional(v.string()),
+          }),
+        ),
+        language: v.optional(v.string()),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         // Select optimal AI provider
@@ -380,16 +392,20 @@ export const aiRouter = router({
    * AI-powered prediction with Brazilian patient behavior patterns
    */
   predictNoShow: protectedProcedure
-    .input(v.object({
-      patientId: v.string([v.uuid('Invalid patient ID')]),
-      appointmentTime: v.date(),
-      includeWeatherData: v.optional(v.boolean()),
-      additionalFactors: v.optional(v.object({
-        dayOfWeek: v.optional(v.string()),
-        timeOfDay: v.optional(v.string()),
-        seasonality: v.optional(v.string()),
-      })),
-    }))
+    .input(
+      v.object({
+        patientId: v.string([v.uuid('Invalid patient ID')]),
+        appointmentTime: v.date(),
+        includeWeatherData: v.optional(v.boolean()),
+        additionalFactors: v.optional(
+          v.object({
+            dayOfWeek: v.optional(v.string()),
+            timeOfDay: v.optional(v.string()),
+            seasonality: v.optional(v.string()),
+          }),
+        ),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       try {
         // Get patient data
@@ -462,9 +478,17 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
         return {
           prediction: {
             riskScore: Math.random() * 100, // Mock score, replace with real AI analysis
-            riskLevel: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low',
+            riskLevel: Math.random() > 0.7
+              ? 'high'
+              : Math.random() > 0.4
+              ? 'medium'
+              : 'low',
             confidence: 0.85,
-            factors: ['historical_patterns', 'appointment_timing', 'weather_conditions'],
+            factors: [
+              'historical_patterns',
+              'appointment_timing',
+              'weather_conditions',
+            ],
             recommendations: [
               'Enviar lembrete por WhatsApp 2 horas antes',
               'Confirmar presença 24 horas antes',
@@ -494,21 +518,27 @@ Analise a probabilidade de não comparecimento e forneça recomendações preven
    * AI-powered analytics with Portuguese healthcare context
    */
   generateInsights: protectedProcedure
-    .input(v.object({
-      dataType: v.string([v.picklist(['appointments', 'patients', 'treatments', 'outcomes'])]),
-      timeRange: v.object({
-        startDate: v.date(),
-        endDate: v.date(),
+    .input(
+      v.object({
+        dataType: v.string([
+          v.picklist(['appointments', 'patients', 'treatments', 'outcomes']),
+        ]),
+        timeRange: v.object({
+          startDate: v.date(),
+          endDate: v.date(),
+        }),
+        filters: v.optional(
+          v.object({
+            specialty: v.optional(v.string()),
+            patientAgeRange: v.optional(v.string()),
+            treatmentType: v.optional(v.string()),
+          }),
+        ),
+        analysisType: v.optional(
+          v.string([v.picklist(['trends', 'predictions', 'recommendations'])]),
+        ),
       }),
-      filters: v.optional(v.object({
-        specialty: v.optional(v.string()),
-        patientAgeRange: v.optional(v.string()),
-        treatmentType: v.optional(v.string()),
-      })),
-      analysisType: v.optional(
-        v.string([v.picklist(['trends', 'predictions', 'recommendations'])]),
-      ),
-    }))
+    )
     .query(async ({ ctx, input }) => {
       try {
         // Select optimal AI provider for analysis
@@ -554,7 +584,10 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
         return {
           insights: {
             summary: result.response,
-            trends: ['Aumento de 15% em consultas cardiológicas', 'Redução de 8% em faltas'],
+            trends: [
+              'Aumento de 15% em consultas cardiológicas',
+              'Redução de 8% em faltas',
+            ],
             recommendations: [
               'Implementar programa de prevenção cardiovascular',
               'Otimizar agendamento para horários de menor falta',
@@ -588,16 +621,20 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
    * Required by contract tests
    */
   predict: protectedProcedure
-    .input(v.object({
-      patient_id: v.string([v.uuid('Invalid patient ID')]),
-      appointment_time: v.date(),
-      factors: v.optional(v.object({
-        weather_conditions: v.optional(v.string()),
-        patient_history: v.optional(v.any()),
-        day_of_week: v.optional(v.string()),
-      })),
-      language: v.optional(v.string()),
-    }))
+    .input(
+      v.object({
+        patient_id: v.string([v.uuid('Invalid patient ID')]),
+        appointment_time: v.date(),
+        factors: v.optional(
+          v.object({
+            weather_conditions: v.optional(v.string()),
+            patient_history: v.optional(v.any()),
+            day_of_week: v.optional(v.string()),
+          }),
+        ),
+        language: v.optional(v.string()),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       // Transform input to match predictNoShow schema
       const transformedInput = {
@@ -612,7 +649,9 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
       };
 
       // Delegate to predictNoShow procedure
-      const result = await aiRouter.createCaller(ctx).predictNoShow(transformedInput);
+      const result = await aiRouter
+        .createCaller(ctx)
+        .predictNoShow(transformedInput);
 
       return {
         prediction: result.prediction,
@@ -628,12 +667,14 @@ Gere insights relevantes para gestão de clínica no Brasil, considerando regula
    * Specialized risk analysis for aesthetic medicine procedures
    */
   analyzeAestheticRisk: healthcareProcedure
-    .input(v.object({
-      patient_id: v.string([v.uuid('Invalid patient ID')]),
-      procedure_type: v.string(),
-      medical_history: v.optional(v.any()),
-      specialization: v.optional(v.string()),
-    }))
+    .input(
+      v.object({
+        patient_id: v.string([v.uuid('Invalid patient ID')]),
+        procedure_type: v.string(),
+        medical_history: v.optional(v.any()),
+        specialization: v.optional(v.string()),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       try {
         // Get patient data for risk analysis
@@ -700,7 +741,11 @@ Forneça análise de risco e recomendações.`;
 
         return {
           risk_assessment: {
-            overall_risk: Math.random() > 0.7 ? 'high' : Math.random() > 0.4 ? 'medium' : 'low',
+            overall_risk: Math.random() > 0.7
+              ? 'high'
+              : Math.random() > 0.4
+              ? 'medium'
+              : 'low',
             contraindications: ['Nenhuma contraindicação identificada'],
             recommendations: ['Realizar avaliação pré-procedimento detalhada'],
             anvisa_compliance: true,
@@ -729,12 +774,18 @@ Forneça análise de risco e recomendações.`;
    * Multi-provider routing with cost optimization
    */
   routeProvider: protectedProcedure
-    .input(v.object({
-      request_type: v.string([v.picklist(['conversation', 'prediction', 'analysis'])]),
-      complexity: v.string([v.picklist(['low', 'medium', 'high'])]),
-      max_cost: v.optional(v.number()),
-      preferred_provider: v.optional(v.string([v.picklist(['openai', 'anthropic'])])),
-    }))
+    .input(
+      v.object({
+        request_type: v.string([
+          v.picklist(['conversation', 'prediction', 'analysis']),
+        ]),
+        complexity: v.string([v.picklist(['low', 'medium', 'high'])]),
+        max_cost: v.optional(v.number()),
+        preferred_provider: v.optional(
+          v.string([v.picklist(['openai', 'anthropic'])]),
+        ),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       try {
         // Select optimal provider based on input criteria
@@ -747,7 +798,9 @@ Forneça análise de risco e recomendações.`;
         // If preferred provider is specified and available, use it
         let selectedProvider = provider;
         if (input.preferred_provider) {
-          const preferredProvider = AI_PROVIDERS.find(p => p.name === input.preferred_provider);
+          const preferredProvider = AI_PROVIDERS.find(
+            p => p.name === input.preferred_provider,
+          );
           if (preferredProvider && preferredProvider.healthScore > 0.8) {
             selectedProvider = preferredProvider;
           }
@@ -783,8 +836,9 @@ Forneça análise de risco e recomendações.`;
             health_score: selectedProvider.healthScore,
             max_concurrency: selectedProvider.maxConcurrency,
           },
-          fallback_providers: AI_PROVIDERS.filter(p => p.name !== selectedProvider.name)
-            .map(p => ({ name: p.name, health_score: p.healthScore })),
+          fallback_providers: AI_PROVIDERS.filter(
+            p => p.name !== selectedProvider.name,
+          ).map(p => ({ name: p.name, health_score: p.healthScore })),
           compliance: {
             cost_optimized: true,
             health_checked: true,
@@ -805,18 +859,28 @@ Forneça análise de risco e recomendações.`;
    * Process multiple AI requests in batch for efficiency
    */
   batchAnalysis: protectedProcedure
-    .input(v.object({
-      requests: v.array(v.object({
-        id: v.string(),
-        type: v.string([v.picklist(['conversation', 'prediction', 'analysis'])]),
-        data: v.any(),
-        priority: v.optional(v.string([v.picklist(['low', 'normal', 'high'])])),
-      })),
-      batch_settings: v.optional(v.object({
-        max_concurrent: v.optional(v.number()),
-        timeout_ms: v.optional(v.number()),
-      })),
-    }))
+    .input(
+      v.object({
+        requests: v.array(
+          v.object({
+            id: v.string(),
+            type: v.string([
+              v.picklist(['conversation', 'prediction', 'analysis']),
+            ]),
+            data: v.any(),
+            priority: v.optional(
+              v.string([v.picklist(['low', 'normal', 'high'])]),
+            ),
+          }),
+        ),
+        batch_settings: v.optional(
+          v.object({
+            max_concurrent: v.optional(v.number()),
+            timeout_ms: v.optional(v.number()),
+          }),
+        ),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         const { requests, batch_settings } = input;
@@ -835,12 +899,12 @@ Forneça análise de risco e recomendações.`;
                 'medium',
               );
 
-              const result = await Promise.race([
+              const result = (await Promise.race([
                 callAIProvider(provider, JSON.stringify(request.data)),
                 new Promise((_, reject) =>
                   setTimeout(() => reject(new Error('Timeout')), timeoutMs)
                 ),
-              ]) as any;
+              ])) as any;
 
               return {
                 id: request.id,

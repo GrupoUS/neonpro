@@ -111,7 +111,12 @@ export interface AuditEvent {
   // Actor information
   actor: {
     userId?: string;
-    userType: 'patient' | 'healthcare_professional' | 'admin' | 'system' | 'ai_agent';
+    userType:
+      | 'patient'
+      | 'healthcare_professional'
+      | 'admin'
+      | 'system'
+      | 'ai_agent';
     userName?: string;
     role?: string;
     professionalRegistration?: string;
@@ -120,7 +125,13 @@ export interface AuditEvent {
 
   // Resource information
   resource: {
-    type: 'patient' | 'medical_record' | 'appointment' | 'prescription' | 'system' | 'ai_model';
+    type:
+      | 'patient'
+      | 'medical_record'
+      | 'appointment'
+      | 'prescription'
+      | 'system'
+      | 'ai_model';
     id?: string;
     description?: string;
     sensitivity: 'public' | 'internal' | 'confidential' | 'restricted';
@@ -291,7 +302,10 @@ export const defaultAuditConfig: AuditTrailConfig = {
 export interface AuditStorage {
   store(event: AuditEvent): Promise<void>;
   query(filters: AuditQueryFilters): Promise<AuditEvent[]>;
-  export(filters: AuditQueryFilters, format: 'json' | 'csv' | 'pdf'): Promise<string>;
+  export(
+    filters: AuditQueryFilters,
+    format: 'json' | 'csv' | 'pdf',
+  ): Promise<string>;
   archive(olderThan: Date): Promise<number>;
   count(filters: AuditQueryFilters): Promise<number>;
 }
@@ -344,7 +358,10 @@ export class DatabaseAuditStorage implements AuditStorage {
     return [];
   }
 
-  async export(filters: AuditQueryFilters, format: 'json' | 'csv' | 'pdf'): Promise<string> {
+  async export(
+    filters: AuditQueryFilters,
+    format: 'json' | 'csv' | 'pdf',
+  ): Promise<string> {
     const events = await this.query(filters);
 
     switch (format) {
@@ -361,7 +378,9 @@ export class DatabaseAuditStorage implements AuditStorage {
 
   async archive(olderThan: Date): Promise<number> {
     // Implement archival logic
-    console.log(`[Audit] Archiving events older than ${olderThan.toISOString()}`);
+    console.log(
+      `[Audit] Archiving events older than ${olderThan.toISOString()}`,
+    );
     return 0; // Return number of archived events
   }
 
@@ -406,7 +425,13 @@ export class DatabaseAuditStorage implements AuditStorage {
 
   private convertToCSV(events: AuditEvent[]): string {
     // Implement CSV conversion
-    const headers = ['timestamp', 'eventType', 'userId', 'outcome', 'description'];
+    const headers = [
+      'timestamp',
+      'eventType',
+      'userId',
+      'outcome',
+      'description',
+    ];
     const rows = events.map(event => [
       event.timestamp,
       event.eventType,
@@ -455,7 +480,9 @@ export class AuditTrailService {
   ): Promise<void> {
     try {
       // Check if logging is enabled for this event type
-      if (!this.shouldLogEvent(eventType, options.severity || AuditSeverity.LOW)) {
+      if (
+        !this.shouldLogEvent(eventType, options.severity || AuditSeverity.LOW)
+      ) {
         return;
       }
 
@@ -464,7 +491,8 @@ export class AuditTrailService {
         id: crypto.randomUUID(),
         timestamp: new Date().toISOString(),
         eventType,
-        severity: options.severity || this.determineSeverity(eventType, options.outcome),
+        severity: options.severity
+          || this.determineSeverity(eventType, options.outcome),
         outcome: options.outcome || AuditOutcome.SUCCESS,
         actor,
         resource,
@@ -473,7 +501,11 @@ export class AuditTrailService {
           ...options.technicalContext,
         } as AuditEvent['technicalContext'],
         details,
-        compliance: this.buildComplianceMetadata(eventType, resource, options.healthcareContext),
+        compliance: this.buildComplianceMetadata(
+          eventType,
+          resource,
+          options.healthcareContext,
+        ),
         riskAssessment: options.riskAssessment,
       };
 
@@ -744,10 +776,15 @@ export class AuditTrailService {
   // Private Helper Methods
   // ============================================================================
 
-  private shouldLogEvent(eventType: AuditEventType, severity: AuditSeverity): boolean {
+  private shouldLogEvent(
+    eventType: AuditEventType,
+    severity: AuditSeverity,
+  ): boolean {
     if (!this.config.enabled) return false;
 
-    if (!this.config.filtering.enabledEventTypes.includes(eventType)) return false;
+    if (!this.config.filtering.enabledEventTypes.includes(eventType)) {
+      return false;
+    }
 
     const severityOrder = {
       [AuditSeverity.LOW]: 0,
@@ -756,10 +793,16 @@ export class AuditTrailService {
       [AuditSeverity.CRITICAL]: 3,
     };
 
-    return severityOrder[severity] >= severityOrder[this.config.filtering.minimumSeverity];
+    return (
+      severityOrder[severity]
+        >= severityOrder[this.config.filtering.minimumSeverity]
+    );
   }
 
-  private determineSeverity(eventType: AuditEventType, outcome?: AuditOutcome): AuditSeverity {
+  private determineSeverity(
+    eventType: AuditEventType,
+    outcome?: AuditOutcome,
+  ): AuditSeverity {
     // Critical events
     if (
       [
@@ -833,7 +876,9 @@ export class AuditTrailService {
       cfmRelevant: healthcareContext?.patientId !== undefined,
       retentionPeriod: isPatientData ? 2555 : 1825, // 7 years for patient data, 5 for others
       dataClassification: resource.sensitivity,
-      legalBasis: isPatientData ? 'healthcare_treatment' : 'legitimate_interests',
+      legalBasis: isPatientData
+        ? 'healthcare_treatment'
+        : 'legitimate_interests',
       auditRequired: true,
     };
   }
@@ -868,7 +913,10 @@ export class AuditTrailService {
     // Implement follow-up scheduling
   }
 
-  private async logAuditFailure(originalEventType: AuditEventType, error: any): Promise<void> {
+  private async logAuditFailure(
+    originalEventType: AuditEventType,
+    error: any,
+  ): Promise<void> {
     try {
       // Create a minimal audit event for the failure
       const failureEvent: AuditEvent = {
@@ -924,7 +972,9 @@ export function createAuditTrailMiddleware(auditService: AuditTrailService) {
     // Extract request information
     const userId = req.headers['x-user-id'];
     const sessionId = req.headers['x-session-id'];
-    const patientId = req.headers['x-patient-id'] || req.body?.patientId || req.query?.patientId;
+    const patientId = req.headers['x-patient-id']
+      || req.body?.patientId
+      || req.query?.patientId;
 
     try {
       // Continue with request

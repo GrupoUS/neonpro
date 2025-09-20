@@ -59,10 +59,5 @@
       }
     }
   ],
-  "ignorePatterns": [
-    "dist/",
-    "node_modules/",
-    "coverage/",
-    "*.js"
-  ]
+  "ignorePatterns": ["dist/", "node_modules/", "coverage/", "*.js"]
 }

@@ -4,16 +4,23 @@ import { z } from 'zod';
 
 const app = new Hono();
 
-const ExplanationRequest = z.object({
-  text: z.string().min(1).optional(),
-  messages: z.array(
-    z.object({ role: z.enum(['user', 'assistant', 'system']), content: z.string() }),
-  ).optional(),
-  audience: z.enum(['patient', 'admin', 'professional']).default('patient'),
-  locale: z.string().default('pt-BR'),
-}).refine(v => Boolean(v.text) || (v.messages && v.messages.length > 0), {
-  message: 'text or messages is required',
-});
+const ExplanationRequest = z
+  .object({
+    text: z.string().min(1).optional(),
+    messages: z
+      .array(
+        z.object({
+          role: z.enum(['user', 'assistant', 'system']),
+          content: z.string(),
+        }),
+      )
+      .optional(),
+    audience: z.enum(['patient', 'admin', 'professional']).default('patient'),
+    locale: z.string().default('pt-BR'),
+  })
+  .refine(v => Boolean(v.text) || (v.messages && v.messages.length > 0), {
+    message: 'text or messages is required',
+  });
 
 type ExplanationResponse = {
   summary: string;

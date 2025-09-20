@@ -5,11 +5,11 @@
  * Configures testing environment, mocks, and utilities.
  */
 
-import '@testing-library/jest-dom';
-import { cleanup } from '@testing-library/react';
-import { setupServer } from 'msw/node';
-import { afterAll, afterEach, beforeAll, vi } from 'vitest';
-import { handlers } from '../fixtures/api-handlers';
+import "@testing-library/jest-dom";
+import { cleanup } from "@testing-library/react";
+import { setupServer } from "msw/node";
+import { afterAll, afterEach, beforeAll, vi } from "vitest";
+import { handlers } from "../fixtures/api-handlers";
 
 // MSW server for API mocking
 export const server = setupServer(...handlers);
@@ -17,12 +17,12 @@ export const server = setupServer(...handlers);
 // Global test setup
 beforeAll(() => {
   // Start MSW server
-  server.listen({ onUnhandledRequest: 'error' });
+  server.listen({ onUnhandledRequest: "error" });
 
   // Setup environment variables for testing
-  process.env.NODE_ENV = 'test';
-  process.env.SUPABASE_URL = 'http://localhost:54321';
-  process.env.SUPABASE_ANON_KEY = 'test-anon-key';
+  process.env.NODE_ENV = "test";
+  process.env.SUPABASE_URL = "http://localhost:54321";
+  process.env.SUPABASE_ANON_KEY = "test-anon-key";
 
   // Mock console methods to reduce noise in tests
   global.console = {
@@ -62,10 +62,11 @@ globalThis.testUtils = {
 // Custom matchers for healthcare compliance
 expect.extend({
   toBeCompliantWithLGPD(received: any) {
-    const pass = received
-      && typeof received.consentGiven === 'boolean'
-      && typeof received.dataProcessingPurpose === 'string'
-      && Array.isArray(received.auditTrail);
+    const pass =
+      received &&
+      typeof received.consentGiven === "boolean" &&
+      typeof received.dataProcessingPurpose === "string" &&
+      Array.isArray(received.auditTrail);
 
     return {
       message: () =>
@@ -77,9 +78,10 @@ expect.extend({
   },
 
   toHaveAuditTrail(received: any) {
-    const pass = received
-      && Array.isArray(received.auditTrail)
-      && received.auditTrail.length > 0;
+    const pass =
+      received &&
+      Array.isArray(received.auditTrail) &&
+      received.auditTrail.length > 0;
 
     return {
       message: () =>
@@ -92,7 +94,7 @@ expect.extend({
 });
 
 // Type declarations for custom matchers
-declare module 'vitest' {
+declare module "vitest" {
   interface Assertion<T = any> {
     toBeCompliantWithLGPD(): T;
     toHaveAuditTrail(): T;

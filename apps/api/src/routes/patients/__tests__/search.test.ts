@@ -506,7 +506,9 @@ describe('POST /api/v2/patients/search endpoint (T048)', () => {
     });
 
     it('should handle search timeout errors', async () => {
-      mockPatientService.searchPatients.mockRejectedValue(new Error('Search timeout'));
+      mockPatientService.searchPatients.mockRejectedValue(
+        new Error('Search timeout'),
+      );
 
       const { default: searchRoute } = require('../search');
 

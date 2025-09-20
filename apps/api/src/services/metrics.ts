@@ -209,7 +209,10 @@ export class HealthcareMetricsService {
   /**
    * Get compliance KPI status
    */
-  async getKPIStatus(kpiId: string, period: 'hour' | 'day' | 'week' | 'month' = 'day'): Promise<{
+  async getKPIStatus(
+    kpiId: string,
+    period: 'hour' | 'day' | 'week' | 'month' = 'day',
+  ): Promise<{
     success: boolean;
     kpi?: ComplianceKPI;
     currentValue?: number;
@@ -232,7 +235,11 @@ export class HealthcareMetricsService {
       const complianceStatus = this.evaluateCompliance(currentValue, kpi);
 
       // Calculate trend (simplified - compare with previous period)
-      const previousPeriod = await this.getMetricAggregation(kpi.type, period, 1);
+      const previousPeriod = await this.getMetricAggregation(
+        kpi.type,
+        period,
+        1,
+      );
       let trend: 'improving' | 'stable' | 'declining' = 'stable';
 
       if (previousPeriod.success && previousPeriod.data) {
@@ -241,7 +248,8 @@ export class HealthcareMetricsService {
           ? currentValue > previousValue
           : currentValue < previousValue;
 
-        if (Math.abs(currentValue - previousValue) > (kpi.target * 0.05)) { // 5% threshold
+        if (Math.abs(currentValue - previousValue) > kpi.target * 0.05) {
+          // 5% threshold
           trend = improvement ? 'improving' : 'declining';
         }
       }
@@ -280,7 +288,7 @@ export class HealthcareMetricsService {
         month: 30 * 24 * 60 * 60 * 1000,
       };
 
-      const endTime = new Date(now.getTime() - (periodsBack * periodMs[period]));
+      const endTime = new Date(now.getTime() - periodsBack * periodMs[period]);
       const startTime = new Date(endTime.getTime() - periodMs[period]);
 
       const { data, error } = await this.supabase
@@ -313,10 +321,11 @@ export class HealthcareMetricsService {
       }
 
       const values = data.map(d => d.value);
-      const compliantCount = data.filter(d =>
-        d.compliance_flags.lgpd_compliant
-        && d.compliance_flags.cfm_validated
-        && d.compliance_flags.anvisa_compliant
+      const compliantCount = data.filter(
+        d =>
+          d.compliance_flags.lgpd_compliant
+          && d.compliance_flags.cfm_validated
+          && d.compliance_flags.anvisa_compliant,
       ).length;
 
       const aggregation: MetricAggregation = {
@@ -391,7 +400,10 @@ export class HealthcareMetricsService {
           const kpiScore = this.calculateKPIScore(status.currentValue, kpi);
           totalScore += kpiScore * weight;
 
-          if (status.complianceStatus === 'violation' && kpi.complianceLevel === 'critical') {
+          if (
+            status.complianceStatus === 'violation'
+            && kpi.complianceLevel === 'critical'
+          ) {
             criticalViolations++;
           }
         }
@@ -474,7 +486,11 @@ export class HealthcareMetricsService {
       const alerts = data.map(record => ({
         type: record.type as HealthcareMetricType,
         message: this.generateAlertMessage(record),
-        severity: this.determineSeverity(record) as 'critical' | 'high' | 'medium' | 'low',
+        severity: this.determineSeverity(record) as
+          | 'critical'
+          | 'high'
+          | 'medium'
+          | 'low',
         timestamp: new Date(record.timestamp),
       }));
 
@@ -506,13 +522,15 @@ export class HealthcareMetricsService {
 
   private logMetricToConsole(metric: HealthcareMetric) {
     try {
-      console.log(JSON.stringify({
-        type: 'healthcare_metrics',
-        metric_type: metric.type,
-        value: metric.value,
-        compliance_flags: metric.complianceFlags,
-        timestamp: metric.timestamp.toISOString(),
-      }));
+      console.log(
+        JSON.stringify({
+          type: 'healthcare_metrics',
+          metric_type: metric.type,
+          value: metric.value,
+          compliance_flags: metric.complianceFlags,
+          timestamp: metric.timestamp.toISOString(),
+        }),
+      );
     } catch {
       // noop
     }

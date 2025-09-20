@@ -146,7 +146,9 @@ describe('Contract: AI Optimization API', () => {
       expect(data).toMatchObject({
         cache_key: expect.any(String),
         optimized: expect.any(Boolean),
-        strategy: expect.stringMatching(/^(semantic|exact|healthcare_context)$/),
+        strategy: expect.stringMatching(
+          /^(semantic|exact|healthcare_context)$/,
+        ),
         healthcare_rules: expect.objectContaining({
           emergencyHandling: expect.any(Boolean),
           privacyProtection: expect.any(Boolean),
@@ -716,7 +718,11 @@ describe('Contract: AI Optimization API', () => {
     it('should manage AI consent and preferences', async () => {
       const consentConfig = {
         patient_id: 'patient-123',
-        ai_features: ['diagnostic_assistance', 'treatment_recommendation', 'patient_education'],
+        ai_features: [
+          'diagnostic_assistance',
+          'treatment_recommendation',
+          'patient_education',
+        ],
         consent_level: 'informed',
         preferences: {
           language: 'pt-BR',
@@ -871,10 +877,18 @@ describe('Contract: AI Optimization API', () => {
       expect(data).toMatchObject({
         status: expect.stringMatching(/^(healthy|degraded|unhealthy)$/),
         components: expect.objectContaining({
-          semantic_cache: expect.stringMatching(/^(healthy|degraded|unhealthy)$/),
-          provider_routing: expect.stringMatching(/^(healthy|degraded|unhealthy)$/),
-          cost_tracking: expect.stringMatching(/^(healthy|degraded|unhealthy)$/),
-          compliance_monitoring: expect.stringMatching(/^(healthy|degraded|unhealthy)$/),
+          semantic_cache: expect.stringMatching(
+            /^(healthy|degraded|unhealthy)$/,
+          ),
+          provider_routing: expect.stringMatching(
+            /^(healthy|degraded|unhealthy)$/,
+          ),
+          cost_tracking: expect.stringMatching(
+            /^(healthy|degraded|unhealthy)$/,
+          ),
+          compliance_monitoring: expect.stringMatching(
+            /^(healthy|degraded|unhealthy)$/,
+          ),
         }),
         healthcare_readiness: expect.objectContaining({
           emergency_support: expect.any(Boolean),

@@ -5,10 +5,17 @@
  * to reduce duplication and maintain consistency.
  */
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, readdirSync } from 'fs';
-import { join, dirname, resolve, relative, parse, extname } from 'path';
-import { exec, execSync } from 'child_process';
-import { promisify } from 'util';
+import {
+  readFileSync,
+  writeFileSync,
+  existsSync,
+  mkdirSync,
+  statSync,
+  readdirSync,
+} from "fs";
+import { join, dirname, resolve, relative, parse, extname } from "path";
+import { exec, execSync } from "child_process";
+import { promisify } from "util";
 import {
   Result,
   FileOperationOptions,
@@ -16,7 +23,7 @@ import {
   PackageInfo,
   ToolError,
   ValidationError,
-} from '../types';
+} from "../types";
 
 const execAsync = promisify(exec);
 
@@ -27,7 +34,10 @@ const execAsync = promisify(exec);
 /**
  * Safely read file with error handling
  */
-export function readFileSafe(filePath: string, encoding: BufferEncoding = 'utf8'): Result<string> {
+export function readFileSafe(
+  filePath: string,
+  encoding: BufferEncoding = "utf8",
+): Result<string> {
   try {
     const content = readFileSync(filePath, encoding);
     return {
@@ -50,7 +60,7 @@ export function readFileSafe(filePath: string, encoding: BufferEncoding = 'utf8'
 export function writeFileSafe(
   filePath: string,
   content: string,
-  options: FileOperationOptions = {}
+  options: FileOperationOptions = {},
 ): Result<void> {
   try {
     const dir = dirname(filePath);
@@ -59,7 +69,7 @@ export function writeFileSafe(
     }
 
     writeFileSync(filePath, content, {
-      encoding: options.encoding || 'utf8',
+      encoding: options.encoding || "utf8",
       mode: options.mode,
       flag: options.flag,
     });
@@ -80,7 +90,9 @@ export function writeFileSafe(
 /**
  * Get file statistics safely
  */
-export function getFileStat(filePath: string): Result<{ size: number; mtime: Date; isDirectory: boolean }> {
+export function getFileStat(
+  filePath: string,
+): Result<{ size: number; mtime: Date; isDirectory: boolean }> {
   try {
     const stats = statSync(filePath);
     return {
@@ -107,11 +119,12 @@ export function getFileStat(filePath: string): Result<{ size: number; mtime: Dat
 export function findFiles(
   directory: string,
   pattern: RegExp | string,
-  maxDepth: number = 10
+  maxDepth: number = 10,
 ): Result<string[]> {
   try {
     const files: string[] = [];
-    const patternRegex = typeof pattern === 'string' ? new RegExp(pattern) : pattern;
+    const patternRegex =
+      typeof pattern === "string" ? new RegExp(pattern) : pattern;
 
     function walkDirectory(dir: string, depth: number = 0): void {
       if (depth > maxDepth) return;
@@ -152,9 +165,11 @@ export function findFiles(
 /**
  * Read and parse package.json safely
  */
-export function readPackageJson(filePath: string = 'package.json'): Result<PackageInfo> {
+export function readPackageJson(
+  filePath: string = "package.json",
+): Result<PackageInfo> {
   try {
-    const content = readFileSync(filePath, 'utf8');
+    const content = readFileSync(filePath, "utf8");
     const packageData = JSON.parse(content);
 
     const packageInfo: PackageInfo = {
@@ -183,9 +198,12 @@ export function readPackageJson(filePath: string = 'package.json'): Result<Packa
 /**
  * Check if package is installed
  */
-export function isPackageInstalled(packageName: string, directory: string = process.cwd()): boolean {
+export function isPackageInstalled(
+  packageName: string,
+  directory: string = process.cwd(),
+): boolean {
   try {
-    const packagePath = resolve(directory, 'node_modules', packageName);
+    const packagePath = resolve(directory, "node_modules", packageName);
     return existsSync(packagePath);
   } catch {
     return false;
@@ -195,15 +213,23 @@ export function isPackageInstalled(packageName: string, directory: string = proc
 /**
  * Get package version from node_modules
  */
-export function getInstalledPackageVersion(packageName: string, directory: string = process.cwd()): Result<string> {
+export function getInstalledPackageVersion(
+  packageName: string,
+  directory: string = process.cwd(),
+): Result<string> {
   try {
-    const packageJsonPath = resolve(directory, 'node_modules', packageName, 'package.json');
+    const packageJsonPath = resolve(
+      directory,
+      "node_modules",
+      packageName,
+      "package.json",
+    );
     const result = readPackageJson(packageJsonPath);
 
     if (!result.success || !result.data) {
       return {
         success: false,
-        error: new Error('Package not found'),
+        error: new Error("Package not found"),
         message: `Package ${packageName} is not installed`,
       };
     }
@@ -235,7 +261,7 @@ export async function executeCommand(
     cwd?: string;
     timeout?: number;
     env?: Record<string, string>;
-  } = {}
+  } = {},
 ): Promise<Result<{ stdout: string; stderr: string }>> {
   try {
     const { stdout, stderr } = await execAsync(command, {
@@ -266,12 +292,12 @@ export function executeCommandSync(
   options: {
     cwd?: string;
     encoding?: BufferEncoding;
-  } = {}
+  } = {},
 ): Result<string> {
   try {
     const output = execSync(command, {
       cwd: options.cwd || process.cwd(),
-      encoding: options.encoding || 'utf8',
+      encoding: options.encoding || "utf8",
     });
 
     return {
@@ -295,24 +321,27 @@ export function executeCommandSync(
 /**
  * Validate TypeScript files
  */
-export async function validateTypeScript(files: string[], tsConfigPath?: string): Promise<ValidationResult> {
+export async function validateTypeScript(
+  files: string[],
+  tsConfigPath?: string,
+): Promise<ValidationResult> {
   const errors: string[] = [];
   const warnings: string[] = [];
 
   try {
-    const tsConfigArg = tsConfigPath ? `--project ${tsConfigPath}` : '';
-    const command = `npx tsc --noEmit ${tsConfigArg} ${files.join(' ')}`;
+    const tsConfigArg = tsConfigPath ? `--project ${tsConfigPath}` : "";
+    const command = `npx tsc --noEmit ${tsConfigArg} ${files.join(" ")}`;
 
     const result = await executeCommand(command);
 
     if (!result.success) {
-      const output = result.error?.message || '';
-      const lines = output.split('\n');
+      const output = result.error?.message || "";
+      const lines = output.split("\n");
 
       for (const line of lines) {
-        if (line.includes('error TS')) {
+        if (line.includes("error TS")) {
           errors.push(line.trim());
-        } else if (line.includes('warning') || line.includes('deprecated')) {
+        } else if (line.includes("warning") || line.includes("deprecated")) {
           warnings.push(line.trim());
         }
       }
@@ -340,15 +369,15 @@ export async function validateTypeScript(files: string[], tsConfigPath?: string)
 export function validateConfig<T>(
   config: any,
   requiredFields: (keyof T)[],
-  optionalFields: (keyof T)[] = []
+  optionalFields: (keyof T)[] = [],
 ): ValidationResult {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  if (!config || typeof config !== 'object') {
+  if (!config || typeof config !== "object") {
     return {
       valid: false,
-      errors: ['Configuration must be an object'],
+      errors: ["Configuration must be an object"],
       warnings: [],
       score: 0,
     };
@@ -356,7 +385,11 @@ export function validateConfig<T>(
 
   // Check required fields
   for (const field of requiredFields) {
-    if (!(field in config) || config[field] === undefined || config[field] === null) {
+    if (
+      !(field in config) ||
+      config[field] === undefined ||
+      config[field] === null
+    ) {
       errors.push(`Missing required field: ${String(field)}`);
     }
   }
@@ -389,9 +422,9 @@ export function validateConfig<T>(
 export function toCamelCase(str: string): string {
   return str
     .replace(/(?:^\w|[A-Z]|\b\w)/g, (word, index) =>
-      index === 0 ? word.toLowerCase() : word.toUpperCase()
+      index === 0 ? word.toLowerCase() : word.toUpperCase(),
     )
-    .replace(/\s+/g, '');
+    .replace(/\s+/g, "");
 }
 
 /**
@@ -399,8 +432,8 @@ export function toCamelCase(str: string): string {
  */
 export function toKebabCase(str: string): string {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1-$2')
-    .replace(/[\s_]+/g, '-')
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/[\s_]+/g, "-")
     .toLowerCase();
 }
 
@@ -410,22 +443,22 @@ export function toKebabCase(str: string): string {
 export function toPascalCase(str: string): string {
   return str
     .replace(/(?:^\w|[A-Z]|\b\w)/g, (word) => word.toUpperCase())
-    .replace(/\s+/g, '');
+    .replace(/\s+/g, "");
 }
 
 /**
  * Format bytes to human readable string
  */
 export function formatBytes(bytes: number, decimals: number = 2): string {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return "0 Bytes";
 
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
 
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 }
 
 /**
@@ -450,7 +483,11 @@ export function formatDuration(ms: number): string {
 /**
  * Truncate string with ellipsis
  */
-export function truncate(str: string, maxLength: number, ellipsis: string = '...'): string {
+export function truncate(
+  str: string,
+  maxLength: number,
+  ellipsis: string = "...",
+): string {
   if (str.length <= maxLength) return str;
   return str.slice(0, maxLength - ellipsis.length) + ellipsis;
 }
@@ -470,7 +507,7 @@ export function getRelativePath(from: string, to: string): string {
  * Normalize path separators to forward slashes
  */
 export function normalizePath(path: string): string {
-  return path.replace(/\\/g, '/');
+  return path.replace(/\\/g, "/");
 }
 
 /**
@@ -493,7 +530,7 @@ export function getFileNameWithoutExtension(filePath: string): string {
 // ========================================
 
 const isPlainObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 /**
  * Remove duplicates from array
@@ -507,22 +544,28 @@ export function removeDuplicates<T>(array: T[]): T[] {
  */
 export function groupBy<T, K extends string | number | symbol>(
   array: T[],
-  keyFn: (item: T) => K
+  keyFn: (item: T) => K,
 ): Record<K, T[]> {
-  return array.reduce((groups, item) => {
-    const key = keyFn(item);
-    if (!groups[key]) {
-      groups[key] = [];
-    }
-    groups[key].push(item);
-    return groups;
-  }, {} as Record<K, T[]>);
+  return array.reduce(
+    (groups, item) => {
+      const key = keyFn(item);
+      if (!groups[key]) {
+        groups[key] = [];
+      }
+      groups[key].push(item);
+      return groups;
+    },
+    {} as Record<K, T[]>,
+  );
 }
 
 /**
  * Deep merge objects
  */
-export function deepMerge<T extends Record<string, unknown>>(target: T, source: Partial<T>): T {
+export function deepMerge<T extends Record<string, unknown>>(
+  target: T,
+  source: Partial<T>,
+): T {
   const result = { ...target } as Record<string, unknown>;
 
   const keys = Object.keys(source as Record<string, unknown>) as (keyof T)[];
@@ -538,7 +581,7 @@ export function deepMerge<T extends Record<string, unknown>>(target: T, source: 
     if (isPlainObject(targetValue) && isPlainObject(sourceValue)) {
       result[key as string] = deepMerge(
         targetValue as Record<string, unknown>,
-        sourceValue as Record<string, unknown>
+        sourceValue as Record<string, unknown>,
       );
     } else {
       result[key as string] = sourceValue as unknown;
@@ -553,7 +596,7 @@ export function deepMerge<T extends Record<string, unknown>>(target: T, source: 
  */
 export function pick<T extends Record<string, unknown>, K extends keyof T>(
   obj: T,
-  keys: K[]
+  keys: K[],
 ): Pick<T, K> {
   const result = {} as Pick<T, K>;
   for (const key of keys) {
@@ -569,7 +612,7 @@ export function pick<T extends Record<string, unknown>, K extends keyof T>(
  */
 export function omit<T extends Record<string, unknown>, K extends keyof T>(
   obj: T,
-  keys: K[]
+  keys: K[],
 ): Omit<T, K> {
   const result = { ...obj } as Record<string, unknown>;
   for (const key of keys) {
@@ -586,7 +629,7 @@ export function omit<T extends Record<string, unknown>, K extends keyof T>(
  * Delay execution for specified milliseconds
  */
 export function delay(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -595,7 +638,7 @@ export function delay(ms: number): Promise<void> {
 export async function retry<T>(
   fn: () => Promise<T>,
   maxAttempts: number = 3,
-  baseDelay: number = 1000
+  baseDelay: number = 1000,
 ): Promise<Result<T>> {
   let lastError: Error;
 
@@ -627,7 +670,10 @@ export async function retry<T>(
 /**
  * Run promises with timeout
  */
-export function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+export function withTimeout<T>(
+  promise: Promise<T>,
+  timeoutMs: number,
+): Promise<T> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(() => {
       reject(new Error(`Operation timed out after ${timeoutMs}ms`));
@@ -659,7 +705,7 @@ export function assert(condition: any, message: string): asserts condition {
 export function createError(
   message: string,
   code: string,
-  details?: Record<string, any>
+  details?: Record<string, any>,
 ): ToolError {
   return new ToolError(message, code, details);
 }
@@ -677,14 +723,17 @@ export function isDefined<T>(value: T | null | undefined): value is T {
 export function safeGet<T>(
   obj: any,
   path: string,
-  defaultValue?: T
+  defaultValue?: T,
 ): T | undefined {
   try {
-    return path.split('.').reduce((current, key) => current?.[key], obj) ?? defaultValue;
+    return (
+      path.split(".").reduce((current, key) => current?.[key], obj) ??
+      defaultValue
+    );
   } catch {
     return defaultValue;
   }
 }
 
 // Export everything
-export * from '../types';
+export * from "../types";

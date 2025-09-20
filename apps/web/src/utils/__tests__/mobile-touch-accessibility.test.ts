@@ -3,7 +3,7 @@
  * T083 - Mobile Accessibility Optimization
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
   HEALTHCARE_TOUCH_PATTERNS,
   MOBILE_BREAKPOINTS,
@@ -14,40 +14,40 @@ import {
   type TouchTarget,
   TouchTargetSchema,
   WCAG_TOUCH_TARGETS,
-} from '../mobile-touch-accessibility';
+} from "../mobile-touch-accessibility";
 
-describe('Mobile Touch Accessibility', () => {
+describe("Mobile Touch Accessibility", () => {
   let mobileTouchAccessibility: MobileTouchAccessibility;
 
   beforeEach(() => {
     mobileTouchAccessibility = new MobileTouchAccessibility();
   });
 
-  describe('Schema Validation', () => {
-    it('should validate touch target schema', () => {
+  describe("Schema Validation", () => {
+    it("should validate touch target schema", () => {
       const validTouchTarget = {
-        id: 'button-1',
-        element: 'button.primary',
+        id: "button-1",
+        element: "button.primary",
         width: 48,
         height: 48,
         x: 10,
         y: 10,
         isInteractive: true,
         touchPattern: HEALTHCARE_TOUCH_PATTERNS.PATIENT_DATA_ENTRY,
-        ariaLabel: 'Salvar dados do paciente',
-        role: 'button',
+        ariaLabel: "Salvar dados do paciente",
+        role: "button",
       };
 
       const result = TouchTargetSchema.safeParse(validTouchTarget);
       expect(result.success).toBe(true);
     });
 
-    it('should reject invalid touch target', () => {
+    it("should reject invalid touch target", () => {
       const invalidTouchTarget = {
-        id: 'button-1',
+        id: "button-1",
         // Missing required fields
-        width: 'invalid',
-        height: 'invalid',
+        width: "invalid",
+        height: "invalid",
       };
 
       const result = TouchTargetSchema.safeParse(invalidTouchTarget);
@@ -55,12 +55,12 @@ describe('Mobile Touch Accessibility', () => {
     });
   });
 
-  describe('Touch Target Validation', () => {
-    it('should validate compliant touch targets', () => {
+  describe("Touch Target Validation", () => {
+    it("should validate compliant touch targets", () => {
       const compliantTargets: TouchTarget[] = [
         {
-          id: 'button-1',
-          element: 'button.primary',
+          id: "button-1",
+          element: "button.primary",
           width: 48,
           height: 48,
           x: 10,
@@ -68,8 +68,8 @@ describe('Mobile Touch Accessibility', () => {
           isInteractive: true,
         },
         {
-          id: 'button-2',
-          element: 'button.secondary',
+          id: "button-2",
+          element: "button.secondary",
           width: 44,
           height: 44,
           x: 70,
@@ -78,7 +78,8 @@ describe('Mobile Touch Accessibility', () => {
         },
       ];
 
-      const result = mobileTouchAccessibility.validateTouchTargets(compliantTargets);
+      const result =
+        mobileTouchAccessibility.validateTouchTargets(compliantTargets);
 
       expect(result.level).toBe(TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT);
       expect(result.totalTargets).toBe(2);
@@ -88,11 +89,11 @@ describe('Mobile Touch Accessibility', () => {
       expect(result.issues).toHaveLength(0);
     });
 
-    it('should detect undersized touch targets', () => {
+    it("should detect undersized touch targets", () => {
       const undersizedTargets: TouchTarget[] = [
         {
-          id: 'button-1',
-          element: 'button.small',
+          id: "button-1",
+          element: "button.small",
           width: 32, // Below minimum 44px
           height: 32, // Below minimum 44px
           x: 10,
@@ -100,8 +101,8 @@ describe('Mobile Touch Accessibility', () => {
           isInteractive: true,
         },
         {
-          id: 'button-2',
-          element: 'button.tiny',
+          id: "button-2",
+          element: "button.tiny",
           width: 24, // Below minimum 44px
           height: 24, // Below minimum 44px
           x: 60,
@@ -110,23 +111,24 @@ describe('Mobile Touch Accessibility', () => {
         },
       ];
 
-      const result = mobileTouchAccessibility.validateTouchTargets(undersizedTargets);
+      const result =
+        mobileTouchAccessibility.validateTouchTargets(undersizedTargets);
 
       expect(result.level).toBe(TOUCH_ACCESSIBILITY_LEVELS.CRITICAL);
       expect(result.totalTargets).toBe(2);
       expect(result.compliantTargets).toBe(0);
       expect(result.undersizedTargets).toBe(2);
       expect(result.issues).toHaveLength(1);
-      expect(result.issues[0].type).toBe('size');
-      expect(result.issues[0].severity).toBe('high');
-      expect(result.issues[0].title).toBe('Áreas de toque muito pequenas');
+      expect(result.issues[0].type).toBe("size");
+      expect(result.issues[0].severity).toBe("high");
+      expect(result.issues[0].title).toBe("Áreas de toque muito pequenas");
     });
 
-    it('should detect overlapping touch targets', () => {
+    it("should detect overlapping touch targets", () => {
       const overlappingTargets: TouchTarget[] = [
         {
-          id: 'button-1',
-          element: 'button.first',
+          id: "button-1",
+          element: "button.first",
           width: 44,
           height: 44,
           x: 10,
@@ -134,8 +136,8 @@ describe('Mobile Touch Accessibility', () => {
           isInteractive: true,
         },
         {
-          id: 'button-2',
-          element: 'button.second',
+          id: "button-2",
+          element: "button.second",
           width: 44,
           height: 44,
           x: 50, // Too close, should have 8px minimum spacing
@@ -144,20 +146,23 @@ describe('Mobile Touch Accessibility', () => {
         },
       ];
 
-      const result = mobileTouchAccessibility.validateTouchTargets(overlappingTargets);
+      const result =
+        mobileTouchAccessibility.validateTouchTargets(overlappingTargets);
 
       expect(result.overlappingTargets).toBe(1);
-      expect(result.issues.some(issue => issue.type === 'overlap')).toBe(true);
-      expect(result.issues.find(issue => issue.type === 'overlap')?.title).toBe(
-        'Áreas de toque sobrepostas',
+      expect(result.issues.some((issue) => issue.type === "overlap")).toBe(
+        true,
       );
+      expect(
+        result.issues.find((issue) => issue.type === "overlap")?.title,
+      ).toBe("Áreas de toque sobrepostas");
     });
 
-    it('should handle mixed compliance scenarios', () => {
+    it("should handle mixed compliance scenarios", () => {
       const mixedTargets: TouchTarget[] = [
         {
-          id: 'button-1',
-          element: 'button.compliant',
+          id: "button-1",
+          element: "button.compliant",
           width: 48,
           height: 48,
           x: 10,
@@ -165,8 +170,8 @@ describe('Mobile Touch Accessibility', () => {
           isInteractive: true,
         },
         {
-          id: 'button-2',
-          element: 'button.undersized',
+          id: "button-2",
+          element: "button.undersized",
           width: 32,
           height: 32,
           x: 80,
@@ -174,8 +179,8 @@ describe('Mobile Touch Accessibility', () => {
           isInteractive: true,
         },
         {
-          id: 'button-3',
-          element: 'button.minimum',
+          id: "button-3",
+          element: "button.minimum",
           width: 44,
           height: 44,
           x: 130,
@@ -184,7 +189,8 @@ describe('Mobile Touch Accessibility', () => {
         },
       ];
 
-      const result = mobileTouchAccessibility.validateTouchTargets(mixedTargets);
+      const result =
+        mobileTouchAccessibility.validateTouchTargets(mixedTargets);
 
       expect(result.totalTargets).toBe(3);
       expect(result.compliantTargets).toBe(2);
@@ -197,8 +203,8 @@ describe('Mobile Touch Accessibility', () => {
     });
   });
 
-  describe('Gesture Accessibility Validation', () => {
-    it('should validate gesture accessibility', () => {
+  describe("Gesture Accessibility Validation", () => {
+    it("should validate gesture accessibility", () => {
       const result = mobileTouchAccessibility.validateGestureAccessibility();
 
       expect(result.level).toBeOneOf([
@@ -206,34 +212,36 @@ describe('Mobile Touch Accessibility', () => {
         TOUCH_ACCESSIBILITY_LEVELS.GOOD,
         TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE,
       ]);
-      expect(typeof result.complexGestures).toBe('number');
-      expect(typeof result.alternativesProvided).toBe('number');
+      expect(typeof result.complexGestures).toBe("number");
+      expect(typeof result.alternativesProvided).toBe("number");
       expect(Array.isArray(result.issues)).toBe(true);
 
       // Should detect missing gesture alternatives
       if (result.alternativesProvided < result.complexGestures) {
-        expect(result.issues.some(issue => issue.type === 'gesture')).toBe(true);
-        expect(result.issues.find(issue => issue.type === 'gesture')?.title).toBe(
-          'Alternativas de gesto ausentes',
+        expect(result.issues.some((issue) => issue.type === "gesture")).toBe(
+          true,
         );
+        expect(
+          result.issues.find((issue) => issue.type === "gesture")?.title,
+        ).toBe("Alternativas de gesto ausentes");
       }
     });
 
-    it('should provide healthcare-specific gesture recommendations', () => {
+    it("should provide healthcare-specific gesture recommendations", () => {
       const result = mobileTouchAccessibility.validateGestureAccessibility();
 
-      result.issues.forEach(issue => {
-        if (issue.type === 'gesture') {
-          expect(issue.healthcareImpact).toContain('funcionalidades médicas');
-          expect(issue.wcagReference).toContain('WCAG 2.1 AA');
+      result.issues.forEach((issue) => {
+        if (issue.type === "gesture") {
+          expect(issue.healthcareImpact).toContain("funcionalidades médicas");
+          expect(issue.wcagReference).toContain("WCAG 2.1 AA");
           expect(issue.remediation.steps.length).toBeGreaterThan(0);
         }
       });
     });
   });
 
-  describe('Touch Feedback Validation', () => {
-    it('should validate touch feedback accessibility', () => {
+  describe("Touch Feedback Validation", () => {
+    it("should validate touch feedback accessibility", () => {
       const result = mobileTouchAccessibility.validateTouchFeedback();
 
       expect(result.level).toBeOneOf([
@@ -241,37 +249,45 @@ describe('Mobile Touch Accessibility', () => {
         TOUCH_ACCESSIBILITY_LEVELS.GOOD,
         TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE,
       ]);
-      expect(typeof result.feedbackEnabled).toBe('boolean');
-      expect(typeof result.hapticSupport).toBe('boolean');
-      expect(typeof result.visualFeedback).toBe('boolean');
+      expect(typeof result.feedbackEnabled).toBe("boolean");
+      expect(typeof result.hapticSupport).toBe("boolean");
+      expect(typeof result.visualFeedback).toBe("boolean");
       expect(Array.isArray(result.issues)).toBe(true);
     });
 
-    it('should detect missing haptic feedback', () => {
+    it("should detect missing haptic feedback", () => {
       const result = mobileTouchAccessibility.validateTouchFeedback();
 
       // The mock implementation sets hapticSupport to false
       expect(result.hapticSupport).toBe(false);
-      expect(result.issues.some(issue => issue.type === 'feedback')).toBe(true);
-      expect(result.issues.find(issue => issue.type === 'feedback')?.title).toBe(
-        'Feedback háptico ausente',
+      expect(result.issues.some((issue) => issue.type === "feedback")).toBe(
+        true,
       );
+      expect(
+        result.issues.find((issue) => issue.type === "feedback")?.title,
+      ).toBe("Feedback háptico ausente");
     });
 
-    it('should provide healthcare-specific feedback recommendations', () => {
+    it("should provide healthcare-specific feedback recommendations", () => {
       const result = mobileTouchAccessibility.validateTouchFeedback();
 
-      result.issues.forEach(issue => {
-        if (issue.type === 'feedback') {
-          expect(issue.healthcareImpact).toContain('usuários com deficiências visuais');
-          expect(issue.remediation.difficulty).toBeOneOf(['easy', 'medium', 'hard']);
+      result.issues.forEach((issue) => {
+        if (issue.type === "feedback") {
+          expect(issue.healthcareImpact).toContain(
+            "usuários com deficiências visuais",
+          );
+          expect(issue.remediation.difficulty).toBeOneOf([
+            "easy",
+            "medium",
+            "hard",
+          ]);
         }
       });
     });
   });
 
-  describe('Healthcare Touch Patterns Validation', () => {
-    it('should validate healthcare-specific touch patterns', () => {
+  describe("Healthcare Touch Patterns Validation", () => {
+    it("should validate healthcare-specific touch patterns", () => {
       const result = mobileTouchAccessibility.validateHealthcarePatterns();
 
       expect(result.level).toBeOneOf([
@@ -284,44 +300,70 @@ describe('Mobile Touch Accessibility', () => {
       expect(Array.isArray(result.issues)).toBe(true);
 
       // Should include healthcare-specific patterns
-      const allPatterns = [...result.implementedPatterns, ...result.missingPatterns];
-      expect(allPatterns).toContain(HEALTHCARE_TOUCH_PATTERNS.PATIENT_DATA_ENTRY);
-      expect(allPatterns).toContain(HEALTHCARE_TOUCH_PATTERNS.APPOINTMENT_BOOKING);
-      expect(allPatterns).toContain(HEALTHCARE_TOUCH_PATTERNS.MEDICATION_REMINDER);
+      const allPatterns = [
+        ...result.implementedPatterns,
+        ...result.missingPatterns,
+      ];
+      expect(allPatterns).toContain(
+        HEALTHCARE_TOUCH_PATTERNS.PATIENT_DATA_ENTRY,
+      );
+      expect(allPatterns).toContain(
+        HEALTHCARE_TOUCH_PATTERNS.APPOINTMENT_BOOKING,
+      );
+      expect(allPatterns).toContain(
+        HEALTHCARE_TOUCH_PATTERNS.MEDICATION_REMINDER,
+      );
     });
 
-    it('should detect missing healthcare patterns', () => {
+    it("should detect missing healthcare patterns", () => {
       const result = mobileTouchAccessibility.validateHealthcarePatterns();
 
       if (result.missingPatterns.length > 0) {
-        expect(result.issues.some(issue => issue.type === 'gesture')).toBe(true);
-        expect(result.issues.find(issue => issue.type === 'gesture')?.title).toBe(
-          'Padrões de toque para saúde ausentes',
+        expect(result.issues.some((issue) => issue.type === "gesture")).toBe(
+          true,
         );
+        expect(
+          result.issues.find((issue) => issue.type === "gesture")?.title,
+        ).toBe("Padrões de toque para saúde ausentes");
       }
     });
 
-    it('should validate all healthcare touch pattern types', () => {
+    it("should validate all healthcare touch pattern types", () => {
       const result = mobileTouchAccessibility.validateHealthcarePatterns();
 
-      const allPatterns = [...result.implementedPatterns, ...result.missingPatterns];
+      const allPatterns = [
+        ...result.implementedPatterns,
+        ...result.missingPatterns,
+      ];
 
       // Should include all healthcare patterns
-      expect(allPatterns).toContain(HEALTHCARE_TOUCH_PATTERNS.PATIENT_DATA_ENTRY);
-      expect(allPatterns).toContain(HEALTHCARE_TOUCH_PATTERNS.APPOINTMENT_BOOKING);
-      expect(allPatterns).toContain(HEALTHCARE_TOUCH_PATTERNS.MEDICATION_REMINDER);
-      expect(allPatterns).toContain(HEALTHCARE_TOUCH_PATTERNS.EMERGENCY_CONTACT);
-      expect(allPatterns).toContain(HEALTHCARE_TOUCH_PATTERNS.VITAL_SIGNS_INPUT);
-      expect(allPatterns).toContain(HEALTHCARE_TOUCH_PATTERNS.MEDICAL_RECORD_VIEW);
+      expect(allPatterns).toContain(
+        HEALTHCARE_TOUCH_PATTERNS.PATIENT_DATA_ENTRY,
+      );
+      expect(allPatterns).toContain(
+        HEALTHCARE_TOUCH_PATTERNS.APPOINTMENT_BOOKING,
+      );
+      expect(allPatterns).toContain(
+        HEALTHCARE_TOUCH_PATTERNS.MEDICATION_REMINDER,
+      );
+      expect(allPatterns).toContain(
+        HEALTHCARE_TOUCH_PATTERNS.EMERGENCY_CONTACT,
+      );
+      expect(allPatterns).toContain(
+        HEALTHCARE_TOUCH_PATTERNS.VITAL_SIGNS_INPUT,
+      );
+      expect(allPatterns).toContain(
+        HEALTHCARE_TOUCH_PATTERNS.MEDICAL_RECORD_VIEW,
+      );
     });
   });
 
-  describe('Comprehensive Report Generation', () => {
-    it('should generate comprehensive touch accessibility report', () => {
+  describe("Comprehensive Report Generation", () => {
+    it("should generate comprehensive touch accessibility report", () => {
       const mockTargets: TouchTarget[] = [
         {
-          id: 'button-1',
-          element: 'button.primary',
+          id: "button-1",
+          element: "button.primary",
           width: 48,
           height: 48,
           x: 10,
@@ -330,8 +372,8 @@ describe('Mobile Touch Accessibility', () => {
           touchPattern: HEALTHCARE_TOUCH_PATTERNS.PATIENT_DATA_ENTRY,
         },
         {
-          id: 'button-2',
-          element: 'button.secondary',
+          id: "button-2",
+          element: "button.secondary",
           width: 32, // Undersized
           height: 32,
           x: 80,
@@ -361,11 +403,11 @@ describe('Mobile Touch Accessibility', () => {
       expect(report.healthcarePatterns).toBeDefined();
     });
 
-    it('should calculate overall score based on issues', () => {
+    it("should calculate overall score based on issues", () => {
       const mockTargets: TouchTarget[] = [
         {
-          id: 'button-critical',
-          element: 'button.critical',
+          id: "button-critical",
+          element: "button.critical",
           width: 20, // Very undersized
           height: 20,
           x: 10,
@@ -385,11 +427,11 @@ describe('Mobile Touch Accessibility', () => {
       ]);
     });
 
-    it('should generate actionable recommendations', () => {
+    it("should generate actionable recommendations", () => {
       const mockTargets: TouchTarget[] = [
         {
-          id: 'button-1',
-          element: 'button.undersized',
+          id: "button-1",
+          element: "button.undersized",
           width: 30,
           height: 30,
           x: 10,
@@ -402,32 +444,33 @@ describe('Mobile Touch Accessibility', () => {
 
       expect(report.recommendations.length).toBeGreaterThan(0);
 
-      report.recommendations.forEach(recommendation => {
-        expect(typeof recommendation).toBe('string');
+      report.recommendations.forEach((recommendation) => {
+        expect(typeof recommendation).toBe("string");
         expect(recommendation.length).toBeGreaterThan(0);
       });
 
       // Should prioritize critical and high severity issues
-      const hasHighPriorityRecommendation = report.recommendations.some(rec =>
-        rec.includes('urgentemente') || rec.includes('alta prioridade')
+      const hasHighPriorityRecommendation = report.recommendations.some(
+        (rec) =>
+          rec.includes("urgentemente") || rec.includes("alta prioridade"),
       );
       expect(hasHighPriorityRecommendation).toBe(true);
     });
   });
 
-  describe('WCAG Compliance', () => {
-    it('should enforce WCAG 2.1 AA+ touch target requirements', () => {
+  describe("WCAG Compliance", () => {
+    it("should enforce WCAG 2.1 AA+ touch target requirements", () => {
       expect(WCAG_TOUCH_TARGETS.MINIMUM_SIZE).toBe(44);
       expect(WCAG_TOUCH_TARGETS.RECOMMENDED_SIZE).toBe(48);
       expect(WCAG_TOUCH_TARGETS.MINIMUM_SPACING).toBe(8);
       expect(WCAG_TOUCH_TARGETS.RECOMMENDED_SPACING).toBe(16);
     });
 
-    it('should reference WCAG guidelines in issues', () => {
+    it("should reference WCAG guidelines in issues", () => {
       const undersizedTargets: TouchTarget[] = [
         {
-          id: 'button-1',
-          element: 'button.small',
+          id: "button-1",
+          element: "button.small",
           width: 30,
           height: 30,
           x: 10,
@@ -436,16 +479,17 @@ describe('Mobile Touch Accessibility', () => {
         },
       ];
 
-      const result = mobileTouchAccessibility.validateTouchTargets(undersizedTargets);
+      const result =
+        mobileTouchAccessibility.validateTouchTargets(undersizedTargets);
 
-      result.issues.forEach(issue => {
-        expect(issue.wcagReference).toContain('WCAG 2.1 AA');
+      result.issues.forEach((issue) => {
+        expect(issue.wcagReference).toContain("WCAG 2.1 AA");
       });
     });
   });
 
-  describe('Mobile Breakpoints', () => {
-    it('should define healthcare-appropriate mobile breakpoints', () => {
+  describe("Mobile Breakpoints", () => {
+    it("should define healthcare-appropriate mobile breakpoints", () => {
       expect(MOBILE_BREAKPOINTS.SMALL_MOBILE).toBe(320);
       expect(MOBILE_BREAKPOINTS.MOBILE).toBe(375);
       expect(MOBILE_BREAKPOINTS.LARGE_MOBILE).toBe(414);
@@ -453,22 +497,30 @@ describe('Mobile Touch Accessibility', () => {
     });
   });
 
-  describe('Brazilian Portuguese Localization', () => {
-    it('should provide Brazilian Portuguese accessibility labels', () => {
-      expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.touchTarget).toBe('Área de toque');
-      expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.minimumSize).toBe('Tamanho mínimo');
-      expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.emergencyAccess).toBe('Acesso de emergência');
-      expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.patientDataEntry).toBe(
-        'Entrada de dados do paciente',
+  describe("Brazilian Portuguese Localization", () => {
+    it("should provide Brazilian Portuguese accessibility labels", () => {
+      expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.touchTarget).toBe(
+        "Área de toque",
       );
-      expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.medicationReminder).toBe('Lembrete de medicação');
+      expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.minimumSize).toBe(
+        "Tamanho mínimo",
+      );
+      expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.emergencyAccess).toBe(
+        "Acesso de emergência",
+      );
+      expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.patientDataEntry).toBe(
+        "Entrada de dados do paciente",
+      );
+      expect(TOUCH_ACCESSIBILITY_LABELS_PT_BR.medicationReminder).toBe(
+        "Lembrete de medicação",
+      );
     });
 
-    it('should use Portuguese in issue descriptions', () => {
+    it("should use Portuguese in issue descriptions", () => {
       const undersizedTargets: TouchTarget[] = [
         {
-          id: 'button-1',
-          element: 'button.small',
+          id: "button-1",
+          element: "button.small",
           width: 30,
           height: 30,
           x: 10,
@@ -477,9 +529,10 @@ describe('Mobile Touch Accessibility', () => {
         },
       ];
 
-      const result = mobileTouchAccessibility.validateTouchTargets(undersizedTargets);
+      const result =
+        mobileTouchAccessibility.validateTouchTargets(undersizedTargets);
 
-      result.issues.forEach(issue => {
+      result.issues.forEach((issue) => {
         expect(issue.title).toMatch(/[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/); // Contains Portuguese characters
         expect(issue.description).toMatch(/[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/);
         expect(issue.recommendation).toMatch(/[áéíóúâêîôûãõçÁÉÍÓÚÂÊÎÔÛÃÕÇ]/);
@@ -487,12 +540,12 @@ describe('Mobile Touch Accessibility', () => {
     });
   });
 
-  describe('Healthcare-Specific Features', () => {
-    it('should include healthcare impact in issues', () => {
+  describe("Healthcare-Specific Features", () => {
+    it("should include healthcare impact in issues", () => {
       const mockTargets: TouchTarget[] = [
         {
-          id: 'button-1',
-          element: 'button.medical',
+          id: "button-1",
+          element: "button.medical",
           width: 30,
           height: 30,
           x: 10,
@@ -504,40 +557,52 @@ describe('Mobile Touch Accessibility', () => {
 
       const result = mobileTouchAccessibility.validateTouchTargets(mockTargets);
 
-      result.issues.forEach(issue => {
+      result.issues.forEach((issue) => {
         expect(issue.healthcareImpact).toBeDefined();
         expect(issue.healthcareImpact.length).toBeGreaterThan(0);
       });
     });
 
-    it('should validate healthcare touch patterns', () => {
+    it("should validate healthcare touch patterns", () => {
       const patterns = Object.values(HEALTHCARE_TOUCH_PATTERNS);
 
-      expect(patterns).toContain('patient_data_entry');
-      expect(patterns).toContain('appointment_booking');
-      expect(patterns).toContain('medication_reminder');
-      expect(patterns).toContain('emergency_contact');
-      expect(patterns).toContain('vital_signs_input');
-      expect(patterns).toContain('medical_record_view');
+      expect(patterns).toContain("patient_data_entry");
+      expect(patterns).toContain("appointment_booking");
+      expect(patterns).toContain("medication_reminder");
+      expect(patterns).toContain("emergency_contact");
+      expect(patterns).toContain("vital_signs_input");
+      expect(patterns).toContain("medical_record_view");
     });
   });
 
-  describe('Constants and Enums', () => {
-    it('should have correct touch accessibility levels', () => {
-      expect(TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT).toBe('excellent');
-      expect(TOUCH_ACCESSIBILITY_LEVELS.GOOD).toBe('good');
-      expect(TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE).toBe('acceptable');
-      expect(TOUCH_ACCESSIBILITY_LEVELS.POOR).toBe('poor');
-      expect(TOUCH_ACCESSIBILITY_LEVELS.CRITICAL).toBe('critical');
+  describe("Constants and Enums", () => {
+    it("should have correct touch accessibility levels", () => {
+      expect(TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT).toBe("excellent");
+      expect(TOUCH_ACCESSIBILITY_LEVELS.GOOD).toBe("good");
+      expect(TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE).toBe("acceptable");
+      expect(TOUCH_ACCESSIBILITY_LEVELS.POOR).toBe("poor");
+      expect(TOUCH_ACCESSIBILITY_LEVELS.CRITICAL).toBe("critical");
     });
 
-    it('should have healthcare-specific touch patterns', () => {
-      expect(HEALTHCARE_TOUCH_PATTERNS.PATIENT_DATA_ENTRY).toBe('patient_data_entry');
-      expect(HEALTHCARE_TOUCH_PATTERNS.APPOINTMENT_BOOKING).toBe('appointment_booking');
-      expect(HEALTHCARE_TOUCH_PATTERNS.MEDICATION_REMINDER).toBe('medication_reminder');
-      expect(HEALTHCARE_TOUCH_PATTERNS.EMERGENCY_CONTACT).toBe('emergency_contact');
-      expect(HEALTHCARE_TOUCH_PATTERNS.VITAL_SIGNS_INPUT).toBe('vital_signs_input');
-      expect(HEALTHCARE_TOUCH_PATTERNS.MEDICAL_RECORD_VIEW).toBe('medical_record_view');
+    it("should have healthcare-specific touch patterns", () => {
+      expect(HEALTHCARE_TOUCH_PATTERNS.PATIENT_DATA_ENTRY).toBe(
+        "patient_data_entry",
+      );
+      expect(HEALTHCARE_TOUCH_PATTERNS.APPOINTMENT_BOOKING).toBe(
+        "appointment_booking",
+      );
+      expect(HEALTHCARE_TOUCH_PATTERNS.MEDICATION_REMINDER).toBe(
+        "medication_reminder",
+      );
+      expect(HEALTHCARE_TOUCH_PATTERNS.EMERGENCY_CONTACT).toBe(
+        "emergency_contact",
+      );
+      expect(HEALTHCARE_TOUCH_PATTERNS.VITAL_SIGNS_INPUT).toBe(
+        "vital_signs_input",
+      );
+      expect(HEALTHCARE_TOUCH_PATTERNS.MEDICAL_RECORD_VIEW).toBe(
+        "medical_record_view",
+      );
     });
   });
 });

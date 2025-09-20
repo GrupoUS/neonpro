@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import * as React from 'react';
+import * as React from "react";
 
-import { cn } from '@neonpro/ui';
+import { cn } from "@neonpro/ui";
 
 interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
   /**
@@ -30,7 +30,7 @@ interface ShineBorderProps extends React.HTMLAttributes<HTMLDivElement> {
 export function ShineBorder({
   borderWidth = 1,
   duration = 6,
-  shineColor = '#AC9469',
+  shineColor = "#AC9469",
   className,
   style,
   ...props
@@ -40,10 +40,11 @@ export function ShineBorder({
 
   return (
     <div
-      style={{
-        '--border-width': `${borderWidth}px`,
-        '--duration': `${duration}s`,
-        backgroundImage: `conic-gradient(
+      style={
+        {
+          "--border-width": `${borderWidth}px`,
+          "--duration": `${duration}s`,
+          backgroundImage: `conic-gradient(
             from 0deg,
             transparent 0deg,
             ${goldColor} 90deg,
@@ -51,15 +52,16 @@ export function ShineBorder({
             transparent 270deg,
             ${goldColor} 360deg
           )`,
-        mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
-        WebkitMask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
-        WebkitMaskComposite: 'xor',
-        maskComposite: 'exclude',
-        padding: 'var(--border-width)',
-        ...style,
-      } as React.CSSProperties}
+          mask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
+          WebkitMask: `linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)`,
+          WebkitMaskComposite: "xor",
+          maskComposite: "exclude",
+          padding: "var(--border-width)",
+          ...style,
+        } as React.CSSProperties
+      }
       className={cn(
-        'pointer-events-none absolute inset-0 size-full rounded-[inherit] will-change-transform motion-safe:animate-shine-rotate',
+        "pointer-events-none absolute inset-0 size-full rounded-[inherit] will-change-transform motion-safe:animate-shine-rotate",
         className,
       )}
       {...props}

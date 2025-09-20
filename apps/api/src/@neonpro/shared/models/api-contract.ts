@@ -59,7 +59,10 @@ export interface ValidationRule {
   /** Fields this rule applies to */
   fields: string[];
   /** Validation function */
-  validate: (value: any, context: ValidationContext) => boolean | HealthcareValidationError;
+  validate: (
+    value: any,
+    context: ValidationContext,
+  ) => boolean | HealthcareValidationError;
   /** Error message if validation fails */
   errorMessage: string;
   /** Severity level */
@@ -190,7 +193,12 @@ export const DEFAULT_HEALTHCARE_VALIDATION_RULES: ValidationRule[] = [
     description: 'Validates medical data classification',
     fields: ['dataClassification'],
     validate: (value: any) => {
-      const validClassifications = ['public', 'restricted', 'confidential', 'highly_confidential'];
+      const validClassifications = [
+        'public',
+        'restricted',
+        'confidential',
+        'highly_confidential',
+      ];
       return validClassifications.includes(value);
     },
     errorMessage: 'Invalid data classification',
@@ -202,7 +210,10 @@ export const DEFAULT_HEALTHCARE_VALIDATION_RULES: ValidationRule[] = [
 /**
  * Default field constraints for healthcare data
  */
-export const DEFAULT_HEALTHCARE_FIELD_CONSTRAINTS: Record<string, FieldConstraint> = {
+export const DEFAULT_HEALTHCARE_FIELD_CONSTRAINTS: Record<
+  string,
+  FieldConstraint
+> = {
   patientId: {
     type: 'string',
     required: false,
@@ -328,7 +339,10 @@ export function validateAPIContract(
 
       // Length validation
       if (constraint.type === 'string' || constraint.type === 'array') {
-        if (constraint.minLength && (value as string | any[]).length < constraint.minLength) {
+        if (
+          constraint.minLength
+          && (value as string | any[]).length < constraint.minLength
+        ) {
           errors.push({
             id: 'min_length_violation',
             message: `Field '${field}' must be at least ${constraint.minLength} characters long`,
@@ -341,7 +355,10 @@ export function validateAPIContract(
           return;
         }
 
-        if (constraint.maxLength && (value as string | any[]).length > constraint.maxLength) {
+        if (
+          constraint.maxLength
+          && (value as string | any[]).length > constraint.maxLength
+        ) {
           errors.push({
             id: 'max_length_violation',
             message:

@@ -6,7 +6,7 @@
  * Based on 002-platform-architecture-improvements data-model.md specification
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // ============================================================================
 // Core Security Policy Types
@@ -23,10 +23,21 @@ export interface SecurityPolicy {
 
   // Policy scope and application
   scope: {
-    applicationScope: 'global' | 'clinic' | 'department' | 'role_specific';
-    targetUsers: ('healthcare_professional' | 'patient' | 'admin' | 'support')[];
-    targetSystems: ('web_app' | 'mobile_app' | 'api' | 'database' | 'ai_service')[];
-    enforcementLevel: 'advisory' | 'warning' | 'blocking' | 'critical';
+    applicationScope: "global" | "clinic" | "department" | "role_specific";
+    targetUsers: (
+      | "healthcare_professional"
+      | "patient"
+      | "admin"
+      | "support"
+    )[];
+    targetSystems: (
+      | "web_app"
+      | "mobile_app"
+      | "api"
+      | "database"
+      | "ai_service"
+    )[];
+    enforcementLevel: "advisory" | "warning" | "blocking" | "critical";
   };
 
   // Healthcare compliance requirements
@@ -71,7 +82,11 @@ export interface HealthcareCompliancePolicy {
 
     anvisaCompliance: {
       enabled: boolean;
-      medicalDeviceClassification: 'class-i' | 'class-ii' | 'class-iii' | 'class-iv';
+      medicalDeviceClassification:
+        | "class-i"
+        | "class-ii"
+        | "class-iii"
+        | "class-iv";
       postMarketSurveillance: boolean;
       adverseEventReporting: boolean;
       cybersecurityRequirements: boolean;
@@ -121,7 +136,13 @@ export interface HealthcareCompliancePolicy {
 export interface LGPDCompliancePolicy {
   // Legal basis for data processing (LGPD Article 7)
   legalBasis: {
-    primary: 'consent' | 'contract' | 'legal_obligation' | 'vital_interests' | 'public_interest' | 'legitimate_interests';
+    primary:
+      | "consent"
+      | "contract"
+      | "legal_obligation"
+      | "vital_interests"
+      | "public_interest"
+      | "legitimate_interests";
     secondary?: string[];
     justification: string;
     documentation: string;
@@ -133,7 +154,7 @@ export interface LGPDCompliancePolicy {
       enabled: boolean;
       responseTimeLimit: number; // Days (max 15)
       automatedResponse: boolean;
-      formatOptions: ('json' | 'pdf' | 'csv')[];
+      formatOptions: ("json" | "pdf" | "csv")[];
     };
 
     rightToCorrection: {
@@ -152,7 +173,7 @@ export interface LGPDCompliancePolicy {
     rightToBlocking: {
       enabled: boolean;
       immediateBlocking: boolean;
-      blockingScope: 'full' | 'partial' | 'conditional';
+      blockingScope: "full" | "partial" | "conditional";
     };
 
     rightToDeletion: {
@@ -279,7 +300,7 @@ export interface LGPDCompliancePolicy {
     };
     dataSubjectNotification: {
       required: boolean;
-      riskThreshold: 'low' | 'medium' | 'high';
+      riskThreshold: "low" | "medium" | "high";
       notificationChannels: string[];
     };
     breachDocumentation: boolean;
@@ -295,11 +316,11 @@ export interface ANVISACompliancePolicy {
   // Software as Medical Device (SaMD) classification
   samdClassification: {
     productClassification: {
-      riskClass: 'class-i' | 'class-ii' | 'class-iii' | 'class-iv';
-      riskLevel: 'low' | 'moderate' | 'high' | 'very-high';
+      riskClass: "class-i" | "class-ii" | "class-iii" | "class-iv";
+      riskLevel: "low" | "moderate" | "high" | "very-high";
       medicalPurpose: string;
-      targetUser: 'healthcare_professional' | 'patient' | 'lay_user';
-      clinicalDecisionLevel: 'inform' | 'drive' | 'diagnose' | 'treat';
+      targetUser: "healthcare_professional" | "patient" | "lay_user";
+      clinicalDecisionLevel: "inform" | "drive" | "diagnose" | "treat";
     };
 
     regulatoryStatus: {
@@ -373,7 +394,7 @@ export interface AuthenticationPolicy {
     preventUserInfoInPassword: boolean;
     maxAge: number; // Days
     preventReuse: number; // Number of previous passwords
-    strengthRequirement: 'weak' | 'fair' | 'good' | 'strong' | 'very_strong';
+    strengthRequirement: "weak" | "fair" | "good" | "strong" | "very_strong";
   };
 
   // Multi-factor authentication
@@ -424,7 +445,7 @@ export interface AuthenticationPolicy {
   // Single Sign-On (SSO)
   singleSignOn: {
     enabled: boolean;
-    providers: ('saml' | 'oauth2' | 'openid_connect')[];
+    providers: ("saml" | "oauth2" | "openid_connect")[];
     autoProvisioning: boolean;
     roleMapping: Record<string, string[]>;
     sessionSynchronization: boolean;
@@ -433,7 +454,7 @@ export interface AuthenticationPolicy {
   // Biometric authentication
   biometricAuthentication: {
     enabled: boolean;
-    methods: ('fingerprint' | 'face_recognition' | 'voice_recognition')[];
+    methods: ("fingerprint" | "face_recognition" | "voice_recognition")[];
     fallbackMethods: string[];
     privacyProtection: boolean;
     localProcessing: boolean;
@@ -450,8 +471,8 @@ export interface DataSecurityPolicy {
   encryption: {
     encryptionAtRest: {
       enabled: boolean;
-      algorithm: 'AES-256-GCM' | 'AES-256-CBC' | 'ChaCha20-Poly1305';
-      keyManagement: 'hsm' | 'kms' | 'vault' | 'manual';
+      algorithm: "AES-256-GCM" | "AES-256-CBC" | "ChaCha20-Poly1305";
+      keyManagement: "hsm" | "kms" | "vault" | "manual";
       keyRotation: {
         enabled: boolean;
         frequency: number; // Days
@@ -461,7 +482,7 @@ export interface DataSecurityPolicy {
 
     encryptionInTransit: {
       enabled: boolean;
-      minTlsVersion: '1.2' | '1.3';
+      minTlsVersion: "1.2" | "1.3";
       cipherSuites: string[];
       certificateValidation: boolean;
       pinning: boolean;
@@ -504,22 +525,22 @@ export interface DataSecurityPolicy {
   // Data classification
   dataClassification: {
     classificationScheme: {
-      'public': {
+      public: {
         description: string;
         handling: string[];
         retention: number; // Days
       };
-      'internal': {
+      internal: {
         description: string;
         handling: string[];
         retention: number;
       };
-      'confidential': {
+      confidential: {
         description: string;
         handling: string[];
         retention: number;
       };
-      'restricted': {
+      restricted: {
         description: string;
         handling: string[];
         retention: number;
@@ -563,7 +584,7 @@ export interface AuditPolicy {
   // Audit logging requirements
   auditLogging: {
     enabled: boolean;
-    logLevel: 'minimal' | 'standard' | 'comprehensive' | 'detailed';
+    logLevel: "minimal" | "standard" | "comprehensive" | "detailed";
     realTimeLogging: boolean;
     structuredLogging: boolean;
 
@@ -634,7 +655,7 @@ export interface AuditPolicy {
   // Compliance reporting
   complianceReporting: {
     automaticReporting: boolean;
-    reportingFrequency: 'daily' | 'weekly' | 'monthly' | 'quarterly';
+    reportingFrequency: "daily" | "weekly" | "monthly" | "quarterly";
     reportTemplates: string[];
     regulatoryReporting: {
       lgpdReporting: boolean;
@@ -654,22 +675,22 @@ export interface IncidentResponsePolicy {
   // Incident classification
   incidentClassification: {
     severityLevels: {
-      'low': {
+      low: {
         description: string;
         responseTime: number; // Hours
         escalationLevel: string;
       };
-      'medium': {
+      medium: {
         description: string;
         responseTime: number;
         escalationLevel: string;
       };
-      'high': {
+      high: {
         description: string;
         responseTime: number;
         escalationLevel: string;
       };
-      'critical': {
+      critical: {
         description: string;
         responseTime: number;
         escalationLevel: string;
@@ -677,13 +698,13 @@ export interface IncidentResponsePolicy {
     };
 
     incidentTypes: {
-      'security_breach': string;
-      'data_breach': string;
-      'system_compromise': string;
-      'malware_infection': string;
-      'unauthorized_access': string;
-      'service_disruption': string;
-      'compliance_violation': string;
+      security_breach: string;
+      data_breach: string;
+      system_compromise: string;
+      malware_infection: string;
+      unauthorized_access: string;
+      service_disruption: string;
+      compliance_violation: string;
     };
   };
 
@@ -796,7 +817,13 @@ export interface PolicyMetadata {
 
   // Lifecycle management
   lifecycle: {
-    status: 'draft' | 'review' | 'approved' | 'active' | 'deprecated' | 'archived';
+    status:
+      | "draft"
+      | "review"
+      | "approved"
+      | "active"
+      | "deprecated"
+      | "archived";
     createdAt: string;
     createdBy: string;
     reviewedAt?: string;
@@ -822,17 +849,21 @@ export interface PolicyMetadata {
   complianceTracking: {
     lastComplianceReview: string;
     nextComplianceReview: string;
-    complianceStatus: 'compliant' | 'non_compliant' | 'partial' | 'pending_review';
+    complianceStatus:
+      | "compliant"
+      | "non_compliant"
+      | "partial"
+      | "pending_review";
     complianceGaps: string[];
     remediationPlan: string[];
   };
 
   // Risk assessment
   riskAssessment: {
-    riskLevel: 'low' | 'medium' | 'high' | 'critical';
+    riskLevel: "low" | "medium" | "high" | "critical";
     riskFactors: string[];
     mitigationMeasures: string[];
-    residualRisk: 'low' | 'medium' | 'high' | 'critical';
+    residualRisk: "low" | "medium" | "high" | "critical";
     lastRiskReview: string;
   };
 
@@ -862,7 +893,12 @@ export const HealthcareCompliancePolicySchema = z.object({
     }),
     anvisaCompliance: z.object({
       enabled: z.boolean(),
-      medicalDeviceClassification: z.enum(['class-i', 'class-ii', 'class-iii', 'class-iv']),
+      medicalDeviceClassification: z.enum([
+        "class-i",
+        "class-ii",
+        "class-iii",
+        "class-iv",
+      ]),
       postMarketSurveillance: z.boolean(),
       adverseEventReporting: z.boolean(),
       cybersecurityRequirements: z.boolean(),
@@ -911,7 +947,13 @@ export const PasswordPolicySchema = z.object({
   preventUserInfoInPassword: z.boolean(),
   maxAge: z.number().positive(),
   preventReuse: z.number().min(0).max(24),
-  strengthRequirement: z.enum(['weak', 'fair', 'good', 'strong', 'very_strong']),
+  strengthRequirement: z.enum([
+    "weak",
+    "fair",
+    "good",
+    "strong",
+    "very_strong",
+  ]),
 });
 
 // Main Security Policy Schema
@@ -922,10 +964,19 @@ export const SecurityPolicySchema = z.object({
   description: z.string().min(1).max(1000),
 
   scope: z.object({
-    applicationScope: z.enum(['global', 'clinic', 'department', 'role_specific']),
-    targetUsers: z.array(z.enum(['healthcare_professional', 'patient', 'admin', 'support'])),
-    targetSystems: z.array(z.enum(['web_app', 'mobile_app', 'api', 'database', 'ai_service'])),
-    enforcementLevel: z.enum(['advisory', 'warning', 'blocking', 'critical']),
+    applicationScope: z.enum([
+      "global",
+      "clinic",
+      "department",
+      "role_specific",
+    ]),
+    targetUsers: z.array(
+      z.enum(["healthcare_professional", "patient", "admin", "support"]),
+    ),
+    targetSystems: z.array(
+      z.enum(["web_app", "mobile_app", "api", "database", "ai_service"]),
+    ),
+    enforcementLevel: z.enum(["advisory", "warning", "blocking", "critical"]),
   }),
 
   healthcareCompliance: HealthcareCompliancePolicySchema,
@@ -953,7 +1004,10 @@ export class SecurityPolicyValidator {
   /**
    * Validate password strength against policy
    */
-  static validatePasswordStrength(password: string, policy: AuthenticationPolicy['passwordPolicy']): {
+  static validatePasswordStrength(
+    password: string,
+    policy: AuthenticationPolicy["passwordPolicy"],
+  ): {
     isValid: boolean;
     violations: string[];
     strength: string;
@@ -961,29 +1015,35 @@ export class SecurityPolicyValidator {
     const violations: string[] = [];
 
     if (password.length < policy.minLength) {
-      violations.push(`Password must be at least ${policy.minLength} characters long`);
+      violations.push(
+        `Password must be at least ${policy.minLength} characters long`,
+      );
     }
 
     if (password.length > policy.maxLength) {
-      violations.push(`Password must not exceed ${policy.maxLength} characters`);
+      violations.push(
+        `Password must not exceed ${policy.maxLength} characters`,
+      );
     }
 
     if (policy.requireUppercase && !/[A-Z]/.test(password)) {
-      violations.push('Password must contain at least one uppercase letter');
+      violations.push("Password must contain at least one uppercase letter");
     }
 
     if (policy.requireLowercase && !/[a-z]/.test(password)) {
-      violations.push('Password must contain at least one lowercase letter');
+      violations.push("Password must contain at least one lowercase letter");
     }
 
     if (policy.requireNumbers && !/\d/.test(password)) {
-      violations.push('Password must contain at least one number');
+      violations.push("Password must contain at least one number");
     }
 
     if (policy.requireSpecialChars) {
-      const specialCharsPattern = new RegExp(`[${policy.specialCharsAllowed.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}]`);
+      const specialCharsPattern = new RegExp(
+        `[${policy.specialCharsAllowed.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}]`,
+      );
       if (!specialCharsPattern.test(password)) {
-        violations.push('Password must contain at least one special character');
+        violations.push("Password must contain at least one special character");
       }
     }
 
@@ -997,8 +1057,16 @@ export class SecurityPolicyValidator {
     if (/\d/.test(password)) strengthScore += 1;
     if (/[^a-zA-Z0-9]/.test(password)) strengthScore += 1;
 
-    const strengthLevels = ['very_weak', 'weak', 'fair', 'good', 'strong', 'very_strong'];
-    const strength = strengthLevels[Math.min(strengthScore, strengthLevels.length - 1)];
+    const strengthLevels = [
+      "very_weak",
+      "weak",
+      "fair",
+      "good",
+      "strong",
+      "very_strong",
+    ];
+    const strength =
+      strengthLevels[Math.min(strengthScore, strengthLevels.length - 1)];
 
     return {
       isValid: violations.length === 0,
@@ -1010,16 +1078,28 @@ export class SecurityPolicyValidator {
   /**
    * Check if MFA is required for a user role
    */
-  static isMfaRequired(userRole: string, policy: AuthenticationPolicy['multiFactor']): boolean {
+  static isMfaRequired(
+    userRole: string,
+    policy: AuthenticationPolicy["multiFactor"],
+  ): boolean {
     if (!policy.required) return false;
-    return policy.requiredRoles.length === 0 || policy.requiredRoles.includes(userRole);
+    return (
+      policy.requiredRoles.length === 0 ||
+      policy.requiredRoles.includes(userRole)
+    );
   }
 
   /**
    * Get data retention period based on classification
    */
-  static getRetentionPeriod(dataClassification: string, policy: DataSecurityPolicy): number {
-    const classification = policy.dataClassification.classificationScheme[dataClassification as keyof typeof policy.dataClassification.classificationScheme];
+  static getRetentionPeriod(
+    dataClassification: string,
+    policy: DataSecurityPolicy,
+  ): number {
+    const classification =
+      policy.dataClassification.classificationScheme[
+        dataClassification as keyof typeof policy.dataClassification.classificationScheme
+      ];
     return classification?.retention || 365; // Default to 1 year
   }
 }
@@ -1027,7 +1107,5 @@ export class SecurityPolicyValidator {
 // ============================================================================
 // Export Types
 // ============================================================================
-
-
 
 export default SecurityPolicy;

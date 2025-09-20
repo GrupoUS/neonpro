@@ -55,35 +55,38 @@ COGNITIVE_ARCHITECTURE:
 VIBECODER_ENGINEERING_PRINCIPLES:
   kiss_principle:
     definition: "Keep It Simple, Stupid - Simplicity is key"
-    core_rules: [
-      "Choose simplest solution that meets requirements",
-      "Prefer readable code over clever optimizations",
-      "Reduce cognitive load",
-      "Does this solve the core problem without unnecessary complexity?",
-      "Use clear, descriptive naming and avoid Over-Engineering",
-    ]
+    core_rules:
+      [
+        "Choose simplest solution that meets requirements",
+        "Prefer readable code over clever optimizations",
+        "Reduce cognitive load",
+        "Does this solve the core problem without unnecessary complexity?",
+        "Use clear, descriptive naming and avoid Over-Engineering",
+      ]
 
   yagni_principle:
     definition: "You Aren't Gonna Need It - Don't implement until needed"
-    core_rules: [
-      "Build only what current requirements specify",
-      "Resist 'just in case' features",
-      "Refactor when requirements emerge",
-      "Focus on current user stories",
-      "Remove unused code immediately",
-    ]
+    core_rules:
+      [
+        "Build only what current requirements specify",
+        "Resist 'just in case' features",
+        "Refactor when requirements emerge",
+        "Focus on current user stories",
+        "Remove unused code immediately",
+      ]
 
   chain_of_thought:
     definition: "Explicit step-by-step reasoning for accuracy"
-    core_rules: [
-      "Break problems into sequential steps",
-      "Verbalize reasoning process",
-      "Show intermediate decisions",
-      "Question assumptions",
-      "Validate against requirements",
-      "Each step follows logically from previous steps",
-      "Final solution traced back to requirements",
-    ]
+    core_rules:
+      [
+        "Break problems into sequential steps",
+        "Verbalize reasoning process",
+        "Show intermediate decisions",
+        "Question assumptions",
+        "Validate against requirements",
+        "Each step follows logically from previous steps",
+        "Final solution traced back to requirements",
+      ]
 
 CONSTITUTIONAL_PRINCIPLES:
   principle_based_design: "Align with software engineering excellence"

@@ -213,16 +213,28 @@ describe('Healthcare Prisma Client Integration Tests', () => {
 
   describe('Brazilian Healthcare Validation', () => {
     test('should validate Brazilian CPF correctly', () => {
-      expect(BrazilianHealthcareValidator.validateCPF('123.456.789-01')).toBe(false); // Invalid test CPF
-      expect(BrazilianHealthcareValidator.validateCPF('000.000.000-00')).toBe(false); // Invalid pattern
+      expect(BrazilianHealthcareValidator.validateCPF('123.456.789-01')).toBe(
+        false,
+      ); // Invalid test CPF
+      expect(BrazilianHealthcareValidator.validateCPF('000.000.000-00')).toBe(
+        false,
+      ); // Invalid pattern
       expect(BrazilianHealthcareValidator.validateCPF('')).toBe(false); // Empty
     });
 
     test('should validate Brazilian phone numbers', () => {
-      expect(BrazilianHealthcareValidator.validateBrazilianPhone('(11) 99999-9999')).toBe(true);
-      expect(BrazilianHealthcareValidator.validateBrazilianPhone('11 99999-9999')).toBe(true);
-      expect(BrazilianHealthcareValidator.validateBrazilianPhone('(11) 9999-9999')).toBe(true);
-      expect(BrazilianHealthcareValidator.validateBrazilianPhone('123')).toBe(false);
+      expect(
+        BrazilianHealthcareValidator.validateBrazilianPhone('(11) 99999-9999'),
+      ).toBe(true);
+      expect(
+        BrazilianHealthcareValidator.validateBrazilianPhone('11 99999-9999'),
+      ).toBe(true);
+      expect(
+        BrazilianHealthcareValidator.validateBrazilianPhone('(11) 9999-9999'),
+      ).toBe(true);
+      expect(BrazilianHealthcareValidator.validateBrazilianPhone('123')).toBe(
+        false,
+      );
     });
 
     test('should validate CFM license numbers', () => {
@@ -252,9 +264,12 @@ describe('Healthcare Prisma Client Integration Tests', () => {
 
   describe('Healthcare Query Operations', () => {
     test('should find patients in clinic with RLS validation', async () => {
-      const patients = await prismaWithContext.findPatientsInClinic(testClinicId, {
-        isActive: true,
-      });
+      const patients = await prismaWithContext.findPatientsInClinic(
+        testClinicId,
+        {
+          isActive: true,
+        },
+      );
 
       expect(Array.isArray(patients)).toBe(true);
       // Verify all patients belong to the test clinic
@@ -302,22 +317,28 @@ describe('Healthcare Prisma Client Integration Tests', () => {
 
   describe('Performance Optimization', () => {
     test('should optimize patient search with caching', async () => {
-      const searchResult1 = await queryOptimizer.searchPatientsOptimized(testClinicId, {
-        query: 'João',
-        page: 1,
-        limit: 10,
-      });
+      const searchResult1 = await queryOptimizer.searchPatientsOptimized(
+        testClinicId,
+        {
+          query: 'João',
+          page: 1,
+          limit: 10,
+        },
+      );
 
       expect(searchResult1.fromCache).toBe(false);
       expect(searchResult1.patients).toBeDefined();
       expect(searchResult1.total).toBeGreaterThanOrEqual(0);
 
       // Second call should use cache
-      const searchResult2 = await queryOptimizer.searchPatientsOptimized(testClinicId, {
-        query: 'João',
-        page: 1,
-        limit: 10,
-      });
+      const searchResult2 = await queryOptimizer.searchPatientsOptimized(
+        testClinicId,
+        {
+          query: 'João',
+          page: 1,
+          limit: 10,
+        },
+      );
 
       expect(searchResult2.fromCache).toBe(true);
     });

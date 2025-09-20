@@ -46,8 +46,10 @@ describe('IndexOptimizerService', () => {
       expect(primaryKey?.columns).toContain('id');
 
       // Should recommend professional_id + start_time index
-      const scheduleIndex = analysis.recommendedIndexes.find(idx =>
-        idx.columns.includes('professional_id') && idx.columns.includes('start_time')
+      const scheduleIndex = analysis.recommendedIndexes.find(
+        idx =>
+          idx.columns.includes('professional_id')
+          && idx.columns.includes('start_time'),
       );
       expect(scheduleIndex).toBeDefined();
       expect(scheduleIndex?.priority).toBe('critical');
@@ -71,7 +73,10 @@ describe('IndexOptimizerService', () => {
       expect(professionalsAnalysis.optimizationScore).toBeGreaterThan(0);
 
       // Scores should reflect index completeness
-      if (patientsAnalysis.missingIndexes.length < professionalsAnalysis.missingIndexes.length) {
+      if (
+        patientsAnalysis.missingIndexes.length
+          < professionalsAnalysis.missingIndexes.length
+      ) {
         expect(patientsAnalysis.optimizationScore).toBeGreaterThanOrEqual(
           professionalsAnalysis.optimizationScore,
         );
@@ -82,7 +87,9 @@ describe('IndexOptimizerService', () => {
   describe('generateIndexCreationScripts', () => {
     it('should generate valid SQL for missing indexes', async () => {
       const analysis = await service.analyzeTableIndexes('patients');
-      const scripts = service.generateIndexCreationScripts(analysis.missingIndexes);
+      const scripts = service.generateIndexCreationScripts(
+        analysis.missingIndexes,
+      );
 
       expect(scripts).toBeInstanceOf(Array);
 
@@ -113,7 +120,9 @@ describe('IndexOptimizerService', () => {
 
     it('should handle GIN indexes for full-text search', async () => {
       const analysis = await service.analyzeTableIndexes('patients');
-      const ginIndex = analysis.recommendedIndexes.find(idx => idx.type === 'gin');
+      const ginIndex = analysis.recommendedIndexes.find(
+        idx => idx.type === 'gin',
+      );
 
       if (ginIndex) {
         const scripts = service.generateIndexCreationScripts([ginIndex]);
@@ -127,10 +136,16 @@ describe('IndexOptimizerService', () => {
 
     it('should prioritize healthcare-critical indexes', async () => {
       const analysis = await service.analyzeTableIndexes('patients');
-      const scripts = service.generateIndexCreationScripts(analysis.missingIndexes);
+      const scripts = service.generateIndexCreationScripts(
+        analysis.missingIndexes,
+      );
 
-      const criticalScripts = scripts.filter(script => script.healthcareImpact === 'high');
-      const lowImpactScripts = scripts.filter(script => script.healthcareImpact === 'low');
+      const criticalScripts = scripts.filter(
+        script => script.healthcareImpact === 'high',
+      );
+      const lowImpactScripts = scripts.filter(
+        script => script.healthcareImpact === 'low',
+      );
 
       if (criticalScripts.length > 0 && lowImpactScripts.length > 0) {
         // Critical healthcare indexes should be estimated to take more time (larger tables)
@@ -204,7 +219,9 @@ describe('IndexOptimizerService', () => {
 
       // Should have creation scripts
       expect(report.creationScripts).toBeInstanceOf(Array);
-      expect(report.creationScripts.length).toBe(report.prioritizedRecommendations.length);
+      expect(report.creationScripts.length).toBe(
+        report.prioritizedRecommendations.length,
+      );
     });
 
     it('should prioritize recommendations correctly', async () => {
@@ -229,15 +246,16 @@ describe('IndexOptimizerService', () => {
       const topRecommendations = report.prioritizedRecommendations.slice(0, 5);
 
       // Should include patient CPF index (critical for Brazilian healthcare)
-      const hasCpfIndex = topRecommendations.some(rec =>
-        rec.table === 'patients' && rec.columns.includes('cpf')
+      const hasCpfIndex = topRecommendations.some(
+        rec => rec.table === 'patients' && rec.columns.includes('cpf'),
       );
 
       // Should include appointment scheduling index
-      const hasScheduleIndex = topRecommendations.some(rec =>
-        rec.table === 'appointments'
-        && rec.columns.includes('professional_id')
-        && rec.columns.includes('start_time')
+      const hasScheduleIndex = topRecommendations.some(
+        rec =>
+          rec.table === 'appointments'
+          && rec.columns.includes('professional_id')
+          && rec.columns.includes('start_time'),
       );
 
       // At least one of these critical indexes should be in top recommendations
@@ -275,7 +293,9 @@ describe('IndexOptimizerService', () => {
         expect(pattern).toHaveProperty('indexes');
 
         expect(typeof pattern.pattern).toBe('string');
-        expect(['low', 'medium', 'high', 'very_high']).toContain(pattern.frequency);
+        expect(['low', 'medium', 'high', 'very_high']).toContain(
+          pattern.frequency,
+        );
         expect(pattern.indexes).toBeInstanceOf(Array);
         expect(pattern.indexes.length).toBeGreaterThan(0);
       });

@@ -11,9 +11,9 @@
  * - Medical chart rendering performance
  */
 
-import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-describe('Performance Contracts', () => {
+describe("Performance Contracts", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     global.window = {
@@ -32,8 +32,8 @@ describe('Performance Contracts', () => {
     vi.restoreAllMocks();
   });
 
-  describe('Core Web Vitals Contract', () => {
-    test('should define Core Web Vitals thresholds for healthcare applications', () => {
+  describe("Core Web Vitals Contract", () => {
+    test("should define Core Web Vitals thresholds for healthcare applications", () => {
       // Contract: Core Web Vitals thresholds optimized for healthcare workflows
       const coreWebVitalsThresholds = {
         LCP: {
@@ -65,42 +65,46 @@ describe('Performance Contracts', () => {
       expect(coreWebVitalsThresholds.INP.good).toBe(200);
     });
 
-    test('should provide Core Web Vitals measurement interface', () => {
+    test("should provide Core Web Vitals measurement interface", () => {
       // Contract: Interface for measuring Core Web Vitals
       interface CoreWebVitalsMeasurement {
-        metric: 'LCP' | 'FID' | 'CLS' | 'INP';
+        metric: "LCP" | "FID" | "CLS" | "INP";
         value: number;
-        rating: 'good' | 'needs-improvement' | 'poor';
+        rating: "good" | "needs-improvement" | "poor";
         timestamp: number;
         url: string;
         healthcare_context: {
-          workflow_type: 'emergency' | 'routine' | 'admin';
-          patient_impact: 'high' | 'medium' | 'low';
-          medical_criticality: 'critical' | 'important' | 'routine';
+          workflow_type: "emergency" | "routine" | "admin";
+          patient_impact: "high" | "medium" | "low";
+          medical_criticality: "critical" | "important" | "routine";
         };
       }
 
       const sampleMeasurement: CoreWebVitalsMeasurement = {
-        metric: 'LCP',
+        metric: "LCP",
         value: 1.8,
-        rating: 'good',
+        rating: "good",
         timestamp: Date.now(),
-        url: '/patients/emergency',
+        url: "/patients/emergency",
         healthcare_context: {
-          workflow_type: 'emergency',
-          patient_impact: 'high',
-          medical_criticality: 'critical',
+          workflow_type: "emergency",
+          patient_impact: "high",
+          medical_criticality: "critical",
         },
       };
 
       // Test: Core Web Vitals measurement structure
-      expect(sampleMeasurement.metric).toBe('LCP');
-      expect(sampleMeasurement.rating).toBe('good');
-      expect(sampleMeasurement.healthcare_context.workflow_type).toBe('emergency');
-      expect(sampleMeasurement.healthcare_context.medical_criticality).toBe('critical');
+      expect(sampleMeasurement.metric).toBe("LCP");
+      expect(sampleMeasurement.rating).toBe("good");
+      expect(sampleMeasurement.healthcare_context.workflow_type).toBe(
+        "emergency",
+      );
+      expect(sampleMeasurement.healthcare_context.medical_criticality).toBe(
+        "critical",
+      );
     });
 
-    test('should categorize performance by healthcare workflow criticality', () => {
+    test("should categorize performance by healthcare workflow criticality", () => {
       // Contract: Performance categorization by medical workflow importance
       const performanceCriteria = {
         emergency_workflows: {
@@ -129,7 +133,7 @@ describe('Performance Contracts', () => {
       expect(performanceCriteria.administrative_tasks.max_lcp).toBe(3.0);
     });
 
-    test('should provide performance monitoring for medical charts', () => {
+    test("should provide performance monitoring for medical charts", () => {
       // Contract: Medical chart rendering performance monitoring
       const chartPerformanceMetrics = {
         chart_types: {
@@ -146,16 +150,22 @@ describe('Performance Contracts', () => {
       };
 
       // Test: Medical chart performance metrics
-      expect(chartPerformanceMetrics.chart_types.patient_vitals.max_render_time).toBe(500);
-      expect(chartPerformanceMetrics.data_volume_thresholds.small_dataset.max_render_time).toBe(
-        300,
-      );
-      expect(chartPerformanceMetrics.data_volume_thresholds.large_dataset.max_records).toBe(10000);
+      expect(
+        chartPerformanceMetrics.chart_types.patient_vitals.max_render_time,
+      ).toBe(500);
+      expect(
+        chartPerformanceMetrics.data_volume_thresholds.small_dataset
+          .max_render_time,
+      ).toBe(300);
+      expect(
+        chartPerformanceMetrics.data_volume_thresholds.large_dataset
+          .max_records,
+      ).toBe(10000);
     });
   });
 
-  describe('Bundle Size Optimization Contract', () => {
-    test('should define bundle size limits for healthcare application', () => {
+  describe("Bundle Size Optimization Contract", () => {
+    test("should define bundle size limits for healthcare application", () => {
       // Contract: Bundle size limits optimized for clinic internet connections
       const bundleSizeLimits = {
         total_bundle: {
@@ -187,7 +197,7 @@ describe('Performance Contracts', () => {
       expect(bundleSizeLimits.app_bundle.max).toBe(250);
     });
 
-    test('should provide bundle analysis interface', () => {
+    test("should provide bundle analysis interface", () => {
       // Contract: Interface for bundle size analysis
       interface BundleAnalysis {
         name: string;
@@ -207,14 +217,14 @@ describe('Performance Contracts', () => {
       }
 
       const sampleBundleAnalysis: BundleAnalysis = {
-        name: 'main',
+        name: "main",
         size: 524288, // 512 kB
         gzippedSize: 163840, // 160 kB
         chunks: [
           {
-            name: 'vendor',
+            name: "vendor",
             size: 262144, // 256 kB
-            modules: ['react', 'react-dom', 'antd'],
+            modules: ["react", "react-dom", "antd"],
           },
         ],
         healthcareModules: {
@@ -231,133 +241,150 @@ describe('Performance Contracts', () => {
       expect(sampleBundleAnalysis.healthcareModules.medicalCharts).toBe(75000);
     });
 
-    test('should track critical healthcare dependencies', () => {
+    test("should track critical healthcare dependencies", () => {
       // Contract: Critical healthcare dependencies that should be optimized
       const criticalDependencies = {
-        medical_charts: ['chart.js', 'd3', 'recharts'],
-        patient_data: ['zod', 'react-hook-form', 'date-fns'],
-        ai_integration: ['@ai-sdk/react', '@ai-sdk/openai'],
-        security: ['jose', 'crypto-js'],
-        ui_framework: ['antd', 'react', 'react-dom'],
-        healthcare_specific: ['@neonpro/healthcare-ui', '@neonpro/patient-data'],
+        medical_charts: ["chart.js", "d3", "recharts"],
+        patient_data: ["zod", "react-hook-form", "date-fns"],
+        ai_integration: ["@ai-sdk/react", "@ai-sdk/openai"],
+        security: ["jose", "crypto-js"],
+        ui_framework: ["antd", "react", "react-dom"],
+        healthcare_specific: [
+          "@neonpro/healthcare-ui",
+          "@neonpro/patient-data",
+        ],
       };
 
       const dependencySizeLimits = {
-        'chart.js': 50000, // 50 kB limit
+        "chart.js": 50000, // 50 kB limit
         antd: 150000, // 150 kB limit
         react: 40000, // 40 kB limit
-        '@ai-sdk/react': 30000, // 30 kB limit
+        "@ai-sdk/react": 30000, // 30 kB limit
       };
 
       // Test: Critical dependencies tracking
-      expect(criticalDependencies.medical_charts).toContain('chart.js');
-      expect(criticalDependencies.ai_integration).toContain('@ai-sdk/react');
-      expect(dependencySizeLimits['chart.js']).toBe(50000);
-      expect(dependencySizeLimits['antd']).toBe(150000);
+      expect(criticalDependencies.medical_charts).toContain("chart.js");
+      expect(criticalDependencies.ai_integration).toContain("@ai-sdk/react");
+      expect(dependencySizeLimits["chart.js"]).toBe(50000);
+      expect(dependencySizeLimits["antd"]).toBe(150000);
     });
 
-    test('should provide code splitting strategy for healthcare modules', () => {
+    test("should provide code splitting strategy for healthcare modules", () => {
       // Contract: Code splitting strategy optimized for healthcare workflows
       const codeSplittingStrategy = {
-        immediate_load: ['authentication', 'navigation', 'emergency-alerts'],
+        immediate_load: ["authentication", "navigation", "emergency-alerts"],
         lazy_load: {
           patient_management: {
-            trigger: 'route:/patients',
+            trigger: "route:/patients",
             preload: false,
-            chunks: ['patient-list', 'patient-details', 'patient-forms'],
+            chunks: ["patient-list", "patient-details", "patient-forms"],
           },
           medical_charts: {
-            trigger: 'component:ChartViewer',
+            trigger: "component:ChartViewer",
             preload: true,
-            chunks: ['chart-rendering', 'chart-data-processing'],
+            chunks: ["chart-rendering", "chart-data-processing"],
           },
           admin_tools: {
-            trigger: 'route:/admin',
+            trigger: "route:/admin",
             preload: false,
-            chunks: ['user-management', 'system-settings', 'reports'],
+            chunks: ["user-management", "system-settings", "reports"],
           },
         },
       };
 
       // Test: Code splitting strategy
-      expect(codeSplittingStrategy.immediate_load).toContain('emergency-alerts');
-      expect(codeSplittingStrategy.lazy_load.patient_management.trigger).toBe('route:/patients');
+      expect(codeSplittingStrategy.immediate_load).toContain(
+        "emergency-alerts",
+      );
+      expect(codeSplittingStrategy.lazy_load.patient_management.trigger).toBe(
+        "route:/patients",
+      );
       expect(codeSplittingStrategy.lazy_load.medical_charts.preload).toBe(true);
     });
   });
 
-  describe('Resource Loading Performance Contract', () => {
-    test('should define resource loading priorities for healthcare', () => {
+  describe("Resource Loading Performance Contract", () => {
+    test("should define resource loading priorities for healthcare", () => {
       // Contract: Resource loading priorities for medical workflows
       const resourceLoadingPriorities = {
         critical: {
-          priority: 'high',
-          resources: ['authentication.js', 'emergency-alerts.js', 'patient-safety.css'],
+          priority: "high",
+          resources: [
+            "authentication.js",
+            "emergency-alerts.js",
+            "patient-safety.css",
+          ],
           max_load_time: 500, // milliseconds
         },
         important: {
-          priority: 'medium',
-          resources: ['patient-management.js', 'medical-charts.js', 'ai-chat.js'],
+          priority: "medium",
+          resources: [
+            "patient-management.js",
+            "medical-charts.js",
+            "ai-chat.js",
+          ],
           max_load_time: 1000,
         },
         optional: {
-          priority: 'low',
-          resources: ['admin-tools.js', 'reports.js', 'analytics.js'],
+          priority: "low",
+          resources: ["admin-tools.js", "reports.js", "analytics.js"],
           max_load_time: 2000,
         },
       };
 
       // Test: Resource loading priorities
       expect(resourceLoadingPriorities.critical.max_load_time).toBe(500);
-      expect(resourceLoadingPriorities.critical.resources).toContain('emergency-alerts.js');
-      expect(resourceLoadingPriorities.important.priority).toBe('medium');
+      expect(resourceLoadingPriorities.critical.resources).toContain(
+        "emergency-alerts.js",
+      );
+      expect(resourceLoadingPriorities.important.priority).toBe("medium");
     });
 
-    test('should provide resource timing measurement interface', () => {
+    test("should provide resource timing measurement interface", () => {
       // Contract: Interface for measuring resource loading performance
       interface ResourceTimingMeasurement {
         name: string;
         startTime: number;
         loadTime: number;
         size: number;
-        type: 'script' | 'stylesheet' | 'image' | 'fetch' | 'xmlhttprequest';
-        healthcare_category: 'critical' | 'important' | 'optional';
-        cache_status: 'miss' | 'hit' | 'revalidated';
+        type: "script" | "stylesheet" | "image" | "fetch" | "xmlhttprequest";
+        healthcare_category: "critical" | "important" | "optional";
+        cache_status: "miss" | "hit" | "revalidated";
       }
 
       const sampleResourceTiming: ResourceTimingMeasurement = {
-        name: 'patient-management.js',
+        name: "patient-management.js",
         startTime: 123.456,
         loadTime: 234.567,
         size: 45678,
-        type: 'script',
-        healthcare_category: 'important',
-        cache_status: 'miss',
+        type: "script",
+        healthcare_category: "important",
+        cache_status: "miss",
       };
 
       // Test: Resource timing measurement structure
-      expect(sampleResourceTiming.type).toBe('script');
-      expect(sampleResourceTiming.healthcare_category).toBe('important');
-      expect(sampleResourceTiming.cache_status).toBe('miss');
+      expect(sampleResourceTiming.type).toBe("script");
+      expect(sampleResourceTiming.healthcare_category).toBe("important");
+      expect(sampleResourceTiming.cache_status).toBe("miss");
     });
 
-    test('should monitor CDN and external resource performance', () => {
+    test("should monitor CDN and external resource performance", () => {
       // Contract: CDN and external resource performance monitoring
       const externalResourceMonitoring = {
         cdn_endpoints: {
-          primary: 'https://cdn.neonpro.com.br',
-          fallback: 'https://cdn-backup.neonpro.com.br',
+          primary: "https://cdn.neonpro.com.br",
+          fallback: "https://cdn-backup.neonpro.com.br",
           max_response_time: 300, // milliseconds
         },
         external_apis: {
           ai_services: {
-            endpoint: 'https://api.openai.com',
+            endpoint: "https://api.openai.com",
             max_response_time: 2000,
             timeout: 5000,
             retry_attempts: 3,
           },
           medical_databases: {
-            endpoint: 'https://api.medical-db.com.br',
+            endpoint: "https://api.medical-db.com.br",
             max_response_time: 1000,
             timeout: 3000,
             retry_attempts: 2,
@@ -366,14 +393,21 @@ describe('Performance Contracts', () => {
       };
 
       // Test: External resource monitoring configuration
-      expect(externalResourceMonitoring.cdn_endpoints.max_response_time).toBe(300);
-      expect(externalResourceMonitoring.external_apis.ai_services.max_response_time).toBe(2000);
-      expect(externalResourceMonitoring.external_apis.medical_databases.retry_attempts).toBe(2);
+      expect(externalResourceMonitoring.cdn_endpoints.max_response_time).toBe(
+        300,
+      );
+      expect(
+        externalResourceMonitoring.external_apis.ai_services.max_response_time,
+      ).toBe(2000);
+      expect(
+        externalResourceMonitoring.external_apis.medical_databases
+          .retry_attempts,
+      ).toBe(2);
     });
   });
 
-  describe('Healthcare Workflow Performance Contract', () => {
-    test('should define performance SLAs for medical workflows', () => {
+  describe("Healthcare Workflow Performance Contract", () => {
+    test("should define performance SLAs for medical workflows", () => {
       // Contract: Performance SLAs specific to healthcare workflows
       const healthcareWorkflowSLAs = {
         emergency_patient_registration: {
@@ -395,12 +429,18 @@ describe('Performance Contracts', () => {
       };
 
       // Test: Healthcare workflow SLAs
-      expect(healthcareWorkflowSLAs.emergency_patient_registration.max_total_time).toBe(3000);
-      expect(healthcareWorkflowSLAs.patient_chart_loading.max_initial_load).toBe(2000);
-      expect(healthcareWorkflowSLAs.ai_consultation.max_response_time).toBe(3000);
+      expect(
+        healthcareWorkflowSLAs.emergency_patient_registration.max_total_time,
+      ).toBe(3000);
+      expect(
+        healthcareWorkflowSLAs.patient_chart_loading.max_initial_load,
+      ).toBe(2000);
+      expect(healthcareWorkflowSLAs.ai_consultation.max_response_time).toBe(
+        3000,
+      );
     });
 
-    test('should provide workflow performance measurement', () => {
+    test("should provide workflow performance measurement", () => {
       // Contract: Interface for measuring healthcare workflow performance
       interface WorkflowPerformanceMeasurement {
         workflow_name: string;
@@ -413,39 +453,41 @@ describe('Performance Contracts', () => {
           success: boolean;
           errors?: string[];
         }>;
-        patient_impact: 'critical' | 'high' | 'medium' | 'low';
+        patient_impact: "critical" | "high" | "medium" | "low";
         medical_context: {
           specialty: string;
-          urgency_level: 'emergency' | 'urgent' | 'routine';
-          patient_condition: 'stable' | 'critical' | 'unknown';
+          urgency_level: "emergency" | "urgent" | "routine";
+          patient_condition: "stable" | "critical" | "unknown";
         };
       }
 
       const sampleWorkflowMeasurement: WorkflowPerformanceMeasurement = {
-        workflow_name: 'emergency_patient_registration',
+        workflow_name: "emergency_patient_registration",
         start_time: 1000,
         end_time: 3500,
         total_duration: 2500,
         steps: [
-          { name: 'form_validation', duration: 400, success: true },
-          { name: 'data_processing', duration: 600, success: true },
-          { name: 'database_save', duration: 700, success: true },
+          { name: "form_validation", duration: 400, success: true },
+          { name: "data_processing", duration: 600, success: true },
+          { name: "database_save", duration: 700, success: true },
         ],
-        patient_impact: 'critical',
+        patient_impact: "critical",
         medical_context: {
-          specialty: 'emergency_medicine',
-          urgency_level: 'emergency',
-          patient_condition: 'critical',
+          specialty: "emergency_medicine",
+          urgency_level: "emergency",
+          patient_condition: "critical",
         },
       };
 
       // Test: Workflow performance measurement structure
       expect(sampleWorkflowMeasurement.total_duration).toBe(2500);
-      expect(sampleWorkflowMeasurement.patient_impact).toBe('critical');
-      expect(sampleWorkflowMeasurement.medical_context.urgency_level).toBe('emergency');
+      expect(sampleWorkflowMeasurement.patient_impact).toBe("critical");
+      expect(sampleWorkflowMeasurement.medical_context.urgency_level).toBe(
+        "emergency",
+      );
     });
 
-    test('should monitor database query performance for patient data', () => {
+    test("should monitor database query performance for patient data", () => {
       // Contract: Database query performance monitoring for patient operations
       const databasePerformanceThresholds = {
         patient_queries: {
@@ -467,14 +509,20 @@ describe('Performance Contracts', () => {
       };
 
       // Test: Database performance thresholds
-      expect(databasePerformanceThresholds.patient_queries.simple_lookup).toBe(50);
-      expect(databasePerformanceThresholds.compliance_queries.lgpd_audit_log).toBe(100);
-      expect(databasePerformanceThresholds.ai_data_queries.context_gathering).toBe(300);
+      expect(databasePerformanceThresholds.patient_queries.simple_lookup).toBe(
+        50,
+      );
+      expect(
+        databasePerformanceThresholds.compliance_queries.lgpd_audit_log,
+      ).toBe(100);
+      expect(
+        databasePerformanceThresholds.ai_data_queries.context_gathering,
+      ).toBe(300);
     });
   });
 
-  describe('Performance Regression Prevention Contract', () => {
-    test('should provide performance regression detection', () => {
+  describe("Performance Regression Prevention Contract", () => {
+    test("should provide performance regression detection", () => {
       // Contract: Performance regression detection for healthcare application
       const performanceRegressionThresholds = {
         core_web_vitals: {
@@ -493,12 +541,19 @@ describe('Performance Contracts', () => {
       };
 
       // Test: Performance regression thresholds
-      expect(performanceRegressionThresholds.core_web_vitals.lcp_regression).toBe(10);
-      expect(performanceRegressionThresholds.bundle_size.total_size_regression).toBe(5);
-      expect(performanceRegressionThresholds.api_performance.response_time_regression).toBe(15);
+      expect(
+        performanceRegressionThresholds.core_web_vitals.lcp_regression,
+      ).toBe(10);
+      expect(
+        performanceRegressionThresholds.bundle_size.total_size_regression,
+      ).toBe(5);
+      expect(
+        performanceRegressionThresholds.api_performance
+          .response_time_regression,
+      ).toBe(15);
     });
 
-    test('should provide performance baseline management', () => {
+    test("should provide performance baseline management", () => {
       // Contract: Performance baseline management for comparison
       interface PerformanceBaseline {
         version: string;
@@ -523,34 +578,45 @@ describe('Performance Contracts', () => {
           };
         };
         healthcare_context: {
-          test_environment: 'production' | 'staging' | 'development';
-          user_load: 'peak' | 'normal' | 'minimal';
-          geographic_region: 'brazil' | 'global';
+          test_environment: "production" | "staging" | "development";
+          user_load: "peak" | "normal" | "minimal";
+          geographic_region: "brazil" | "global";
         };
       }
 
       const sampleBaseline: PerformanceBaseline = {
-        version: '2.1.0',
+        version: "2.1.0",
         timestamp: Date.now(),
         metrics: {
           core_web_vitals: { lcp: 2.1, fid: 85, cls: 0.08, inp: 180 },
-          bundle_sizes: { total: 580000, vendor: 280000, app: 200000, css: 80000 },
-          api_performance: { average_response_time: 450, p95_response_time: 800, error_rate: 0.02 },
+          bundle_sizes: {
+            total: 580000,
+            vendor: 280000,
+            app: 200000,
+            css: 80000,
+          },
+          api_performance: {
+            average_response_time: 450,
+            p95_response_time: 800,
+            error_rate: 0.02,
+          },
         },
         healthcare_context: {
-          test_environment: 'production',
-          user_load: 'normal',
-          geographic_region: 'brazil',
+          test_environment: "production",
+          user_load: "normal",
+          geographic_region: "brazil",
         },
       };
 
       // Test: Performance baseline structure
       expect(sampleBaseline.metrics.core_web_vitals.lcp).toBe(2.1);
       expect(sampleBaseline.metrics.bundle_sizes.total).toBe(580000);
-      expect(sampleBaseline.healthcare_context.geographic_region).toBe('brazil');
+      expect(sampleBaseline.healthcare_context.geographic_region).toBe(
+        "brazil",
+      );
     });
 
-    test('should provide automated performance testing integration', () => {
+    test("should provide automated performance testing integration", () => {
       // Contract: Automated performance testing integration
       const performanceTestingConfig = {
         lighthouse_config: {
@@ -558,22 +624,26 @@ describe('Performance Contracts', () => {
           thresholds: {
             performance: 90,
             accessibility: 95,
-            'best-practices': 90,
+            "best-practices": 90,
             seo: 80,
           },
-          healthcare_audits: ['lgpd-compliance', 'medical-accessibility', 'emergency-performance'],
+          healthcare_audits: [
+            "lgpd-compliance",
+            "medical-accessibility",
+            "emergency-performance",
+          ],
         },
         load_testing: {
           enabled: true,
           scenarios: {
-            emergency_peak: { users: 100, duration: '5m', rampUp: '1m' },
-            normal_operations: { users: 50, duration: '10m', rampUp: '2m' },
-            ai_consultation_load: { users: 25, duration: '15m', rampUp: '3m' },
+            emergency_peak: { users: 100, duration: "5m", rampUp: "1m" },
+            normal_operations: { users: 50, duration: "10m", rampUp: "2m" },
+            ai_consultation_load: { users: 25, duration: "15m", rampUp: "3m" },
           },
         },
         continuous_monitoring: {
           enabled: true,
-          frequency: '5m',
+          frequency: "5m",
           alerts: {
             performance_degradation: true,
             bundle_size_increase: true,
@@ -583,9 +653,15 @@ describe('Performance Contracts', () => {
       };
 
       // Test: Performance testing configuration
-      expect(performanceTestingConfig.lighthouse_config.thresholds.performance).toBe(90);
-      expect(performanceTestingConfig.load_testing.scenarios.emergency_peak.users).toBe(100);
-      expect(performanceTestingConfig.continuous_monitoring.frequency).toBe('5m');
+      expect(
+        performanceTestingConfig.lighthouse_config.thresholds.performance,
+      ).toBe(90);
+      expect(
+        performanceTestingConfig.load_testing.scenarios.emergency_peak.users,
+      ).toBe(100);
+      expect(performanceTestingConfig.continuous_monitoring.frequency).toBe(
+        "5m",
+      );
     });
   });
 });

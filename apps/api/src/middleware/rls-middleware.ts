@@ -21,10 +21,13 @@ export function rlsMiddleware(options: RLSMiddlewareOptions = {}) {
       const clinicId = c.get('clinicId') || c.req.header('x-clinic-id');
 
       if (!userId && options.requireRLS) {
-        return c.json({
-          error: 'User authentication required for RLS-protected resources',
-          code: 'RLS_AUTH_REQUIRED',
-        }, 401);
+        return c.json(
+          {
+            error: 'User authentication required for RLS-protected resources',
+            code: 'RLS_AUTH_REQUIRED',
+          },
+          401,
+        );
       }
 
       // Create RLS-aware query builder
@@ -56,10 +59,13 @@ export function rlsMiddleware(options: RLSMiddlewareOptions = {}) {
       return next();
     } catch (error) {
       console.error('RLS middleware error:', error);
-      return c.json({
-        error: 'RLS middleware error',
-        code: 'RLS_MIDDLEWARE_ERROR',
-      }, 500);
+      return c.json(
+        {
+          error: 'RLS middleware error',
+          code: 'RLS_MIDDLEWARE_ERROR',
+        },
+        500,
+      );
     }
   };
 }
@@ -114,28 +120,37 @@ export function clinicAccessMiddleware() {
       const healthcareRLS = c.get('healthcareRLS');
 
       if (!userId) {
-        return c.json({
-          error: 'User authentication required',
-          code: 'AUTH_REQUIRED',
-        }, 401);
+        return c.json(
+          {
+            error: 'User authentication required',
+            code: 'AUTH_REQUIRED',
+          },
+          401,
+        );
       }
 
       if (!clinicId) {
-        return c.json({
-          error: 'Clinic ID is required',
-          code: 'CLINIC_ID_REQUIRED',
-        }, 400);
+        return c.json(
+          {
+            error: 'Clinic ID is required',
+            code: 'CLINIC_ID_REQUIRED',
+          },
+          400,
+        );
       }
 
       // Check if user has access to this clinic
       const hasAccess = await healthcareRLS.canAccessClinic(userId, clinicId);
 
       if (!hasAccess) {
-        return c.json({
-          error: 'Access denied to clinic',
-          code: 'CLINIC_ACCESS_DENIED',
-          clinicId,
-        }, 403);
+        return c.json(
+          {
+            error: 'Access denied to clinic',
+            code: 'CLINIC_ACCESS_DENIED',
+            clinicId,
+          },
+          403,
+        );
       }
 
       // Store clinic ID in context
@@ -144,10 +159,13 @@ export function clinicAccessMiddleware() {
       return next();
     } catch (error) {
       console.error('Clinic access middleware error:', error);
-      return c.json({
-        error: 'Clinic access validation error',
-        code: 'CLINIC_ACCESS_ERROR',
-      }, 500);
+      return c.json(
+        {
+          error: 'Clinic access validation error',
+          code: 'CLINIC_ACCESS_ERROR',
+        },
+        500,
+      );
     }
   };
 }
@@ -164,28 +182,37 @@ export function patientAccessMiddleware() {
       const healthcareRLS = c.get('healthcareRLS');
 
       if (!userId) {
-        return c.json({
-          error: 'User authentication required',
-          code: 'AUTH_REQUIRED',
-        }, 401);
+        return c.json(
+          {
+            error: 'User authentication required',
+            code: 'AUTH_REQUIRED',
+          },
+          401,
+        );
       }
 
       if (!patientId) {
-        return c.json({
-          error: 'Patient ID is required',
-          code: 'PATIENT_ID_REQUIRED',
-        }, 400);
+        return c.json(
+          {
+            error: 'Patient ID is required',
+            code: 'PATIENT_ID_REQUIRED',
+          },
+          400,
+        );
       }
 
       // Check if user has access to this patient
       const hasAccess = await healthcareRLS.canAccessPatient(userId, patientId);
 
       if (!hasAccess) {
-        return c.json({
-          error: 'Access denied to patient data',
-          code: 'PATIENT_ACCESS_DENIED',
-          patientId,
-        }, 403);
+        return c.json(
+          {
+            error: 'Access denied to patient data',
+            code: 'PATIENT_ACCESS_DENIED',
+            patientId,
+          },
+          403,
+        );
       }
 
       // Store patient ID in context
@@ -194,10 +221,13 @@ export function patientAccessMiddleware() {
       return next();
     } catch (error) {
       console.error('Patient access middleware error:', error);
-      return c.json({
-        error: 'Patient access validation error',
-        code: 'PATIENT_ACCESS_ERROR',
-      }, 500);
+      return c.json(
+        {
+          error: 'Patient access validation error',
+          code: 'PATIENT_ACCESS_ERROR',
+        },
+        500,
+      );
     }
   };
 }
@@ -214,20 +244,26 @@ export function professionalAccessMiddleware() {
       const rlsQuery = c.get('rlsQuery');
 
       if (!userId) {
-        return c.json({
-          error: 'User authentication required',
-          code: 'AUTH_REQUIRED',
-        }, 401);
+        return c.json(
+          {
+            error: 'User authentication required',
+            code: 'AUTH_REQUIRED',
+          },
+          401,
+        );
       }
 
       // Check if user is a healthcare professional
       const professionalRoles = ['doctor', 'nurse', 'admin', 'receptionist'];
       if (!userRole || !professionalRoles.includes(userRole.toLowerCase())) {
-        return c.json({
-          error: 'Healthcare professional access required',
-          code: 'PROFESSIONAL_ACCESS_REQUIRED',
-          userRole,
-        }, 403);
+        return c.json(
+          {
+            error: 'Healthcare professional access required',
+            code: 'PROFESSIONAL_ACCESS_REQUIRED',
+            userRole,
+          },
+          403,
+        );
       }
 
       // Verify professional is active in the system
@@ -239,10 +275,13 @@ export function professionalAccessMiddleware() {
         .single();
 
       if (error || !professional) {
-        return c.json({
-          error: 'Active professional record not found',
-          code: 'PROFESSIONAL_NOT_FOUND',
-        }, 403);
+        return c.json(
+          {
+            error: 'Active professional record not found',
+            code: 'PROFESSIONAL_NOT_FOUND',
+          },
+          403,
+        );
       }
 
       // Store professional info in context
@@ -252,10 +291,13 @@ export function professionalAccessMiddleware() {
       return next();
     } catch (error) {
       console.error('Professional access middleware error:', error);
-      return c.json({
-        error: 'Professional access validation error',
-        code: 'PROFESSIONAL_ACCESS_ERROR',
-      }, 500);
+      return c.json(
+        {
+          error: 'Professional access validation error',
+          code: 'PROFESSIONAL_ACCESS_ERROR',
+        },
+        500,
+      );
     }
   };
 }

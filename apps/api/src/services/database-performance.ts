@@ -80,7 +80,11 @@ export const HEALTHCARE_QUERY_PATTERNS = {
   },
   lgpdCompliance: {
     tables: ['patients', 'consent_records', 'audit_logs'],
-    commonFilters: ['lgpd_consent_given', 'consent_date', 'data_retention_until'],
+    commonFilters: [
+      'lgpd_consent_given',
+      'consent_date',
+      'data_retention_until',
+    ],
     expectedResponseTime: 25, // ms - Critical for compliance
   },
 };
@@ -331,12 +335,16 @@ export class DatabasePerformanceService {
   /**
    * Start continuous health monitoring
    */
-  startHealthMonitoring(intervalMs: number = 300000) { // 5 minutes default
+  startHealthMonitoring(intervalMs: number = 300000) {
+    // 5 minutes default
     this.healthCheckInterval = setInterval(async () => {
       const health = await this.performHealthCheck();
 
       if (health.status === 'critical') {
-        console.error('CRITICAL: Database health issues detected:', health.issues);
+        console.error(
+          'CRITICAL: Database health issues detected:',
+          health.issues,
+        );
       } else if (health.status === 'warning') {
         console.warn('WARNING: Database performance issues:', health.issues);
       }

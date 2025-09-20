@@ -5,40 +5,40 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/molecules/table';
-import { getGovernanceService } from '@/lib/governance-service';
-import { Badge } from '@neonpro/ui';
-import { useQuery } from '@tanstack/react-query';
+} from "@/components/molecules/table";
+import { getGovernanceService } from "@/lib/governance-service";
+import { Badge } from "@neonpro/ui";
+import { useQuery } from "@tanstack/react-query";
 
-type RiskSeverity = 'low' | 'medium' | 'high' | 'critical';
-type RiskStatus = 'active' | 'mitigating' | 'resolved' | 'closed';
+type RiskSeverity = "low" | "medium" | "high" | "critical";
+type RiskStatus = "active" | "mitigating" | "resolved" | "closed";
 
 function getSeverityBadge(severity: RiskSeverity) {
   const variants = {
-    low: { variant: 'secondary' as const, text: 'Low' },
-    medium: { variant: 'default' as const, text: 'Medium' },
-    high: { variant: 'destructive' as const, text: 'High' },
-    critical: { variant: 'destructive' as const, text: 'Critical' },
+    low: { variant: "secondary" as const, text: "Low" },
+    medium: { variant: "default" as const, text: "Medium" },
+    high: { variant: "destructive" as const, text: "High" },
+    critical: { variant: "destructive" as const, text: "Critical" },
   };
   return variants[severity];
 }
 
 function getStatusBadge(status: RiskStatus) {
   const variants = {
-    active: { variant: 'destructive' as const, text: 'Active' },
-    mitigating: { variant: 'secondary' as const, text: 'Mitigating' },
-    resolved: { variant: 'default' as const, text: 'Resolved' },
-    closed: { variant: 'outline' as const, text: 'Closed' },
+    active: { variant: "destructive" as const, text: "Active" },
+    mitigating: { variant: "secondary" as const, text: "Mitigating" },
+    resolved: { variant: "default" as const, text: "Resolved" },
+    closed: { variant: "outline" as const, text: "Closed" },
   };
   return variants[status];
 }
 
 export function RiskAssessmentTable() {
   // TODO: Get actual clinic ID from auth context
-  const clinicId = 'default-clinic-id'; // Placeholder
+  const clinicId = "default-clinic-id"; // Placeholder
 
   const { data: riskData, isLoading } = useQuery<any[]>({
-    queryKey: ['risk-assessment', clinicId],
+    queryKey: ["risk-assessment", clinicId],
     queryFn: async () => {
       const governanceService = getGovernanceService();
       return await governanceService.getRiskAssessmentData(clinicId);
@@ -49,21 +49,22 @@ export function RiskAssessmentTable() {
 
   if (isLoading) {
     return (
-      <div className='space-y-4'>
-        <h2 className='text-lg font-semibold'>Risk Assessment</h2>
-        <div className='flex items-center justify-center p-8'>
-          <span className='text-muted-foreground'>Loading risk data...</span>
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold">Risk Assessment</h2>
+        <div className="flex items-center justify-center p-8">
+          <span className="text-muted-foreground">Loading risk data...</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className='space-y-4'>
-      <div className='flex items-center justify-between'>
-        <h2 className='text-lg font-semibold'>Risk Assessment</h2>
-        <div className='text-sm text-muted-foreground'>
-          {riskData?.length || 0} risk{riskData && riskData.length !== 1 ? 's' : ''} identified
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Risk Assessment</h2>
+        <div className="text-sm text-muted-foreground">
+          {riskData?.length || 0} risk
+          {riskData && riskData.length !== 1 ? "s" : ""} identified
         </div>
       </div>
 
@@ -86,7 +87,7 @@ export function RiskAssessmentTable() {
 
             return (
               <TableRow key={risk.id}>
-                <TableCell className='font-medium'>{risk.id}</TableCell>
+                <TableCell className="font-medium">{risk.id}</TableCell>
                 <TableCell>{risk.title}</TableCell>
                 <TableCell>{risk.category}</TableCell>
                 <TableCell>
@@ -110,7 +111,7 @@ export function RiskAssessmentTable() {
       </Table>
 
       {riskData && riskData.length === 0 && (
-        <div className='text-center p-8 text-muted-foreground'>
+        <div className="text-center p-8 text-muted-foreground">
           No risks identified at this time.
         </div>
       )}

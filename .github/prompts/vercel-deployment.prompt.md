@@ -147,7 +147,7 @@ npx vercel env rm VITE_LEGACY_FLAG
 
 Important:
 
-- For frontend Vite apps, only variables prefixed with VITE_ are exposed to the client.
+- For frontend Vite apps, only variables prefixed with VITE\_ are exposed to the client.
 - Keep secrets in Vercel Env; do not commit .env files.
 
 ### Deployments from CLI

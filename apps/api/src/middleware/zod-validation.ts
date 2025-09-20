@@ -21,7 +21,12 @@ export interface ValidationConfig {
   optional?: boolean;
   sanitize?: boolean;
   auditRequired?: boolean;
-  dataClassification?: 'public' | 'internal' | 'personal' | 'medical' | 'financial';
+  dataClassification?:
+    | 'public'
+    | 'internal'
+    | 'personal'
+    | 'medical'
+    | 'financial';
 }
 
 // Healthcare data validation rules
@@ -29,18 +34,27 @@ export const HealthcareValidationRules = {
   // Brazilian document validation with healthcare context
   cpf: v.pipe(
     v.string(),
-    v.regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/, 'CPF deve estar no formato XXX.XXX.XXX-XX'),
+    v.regex(
+      /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
+      'CPF deve estar no formato XXX.XXX.XXX-XX',
+    ),
     v.check(validateCPF, 'CPF inválido'),
   ),
 
   rg: v.pipe(
     v.string(),
-    v.regex(/^\d{2}\.\d{3}\.\d{3}-\d{1}$/, 'RG deve estar no formato XX.XXX.XXX-X'),
+    v.regex(
+      /^\d{2}\.\d{3}\.\d{3}-\d{1}$/,
+      'RG deve estar no formato XX.XXX.XXX-X',
+    ),
   ),
 
   cnpj: v.pipe(
     v.string(),
-    v.regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, 'CNPJ deve estar no formato XX.XXX.XXX/XXXX-XX'),
+    v.regex(
+      /^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/,
+      'CNPJ deve estar no formato XX.XXX.XXX/XXXX-XX',
+    ),
     v.check(validateCNPJ, 'CNPJ inválido'),
   ),
 
@@ -52,13 +66,19 @@ export const HealthcareValidationRules = {
   // Medical professional licenses
   crm: v.pipe(
     v.string(),
-    v.regex(/^CRM[A-Z]{2}\s?\d{4,6}$/, 'CRM deve estar no formato CRMXX XXXXXX'),
+    v.regex(
+      /^CRM[A-Z]{2}\s?\d{4,6}$/,
+      'CRM deve estar no formato CRMXX XXXXXX',
+    ),
     v.transform(val => val.replace(/\s+/g, ' ')), // Normalize spacing
   ),
 
   cro: v.pipe(
     v.string(),
-    v.regex(/^CRO[A-Z]{2}\s?\d{4,6}$/, 'CRO deve estar no formato CROXX XXXXXX'),
+    v.regex(
+      /^CRO[A-Z]{2}\s?\d{4,6}$/,
+      'CRO deve estar no formato CROXX XXXXXX',
+    ),
     v.transform(val => val.replace(/\s+/g, ' ')),
   ),
 
@@ -93,7 +113,10 @@ export const HealthcareValidationRules = {
   // TUSS procedure codes
   tussCode: v.pipe(
     v.string(),
-    v.regex(/^\d{8}\.\d{2}\.\d{2}$/, 'Código TUSS deve estar no formato XXXXXXXX.XX.XX'),
+    v.regex(
+      /^\d{8}\.\d{2}\.\d{2}$/,
+      'Código TUSS deve estar no formato XXXXXXXX.XX.XX',
+    ),
   ),
 
   // Patient age validation
@@ -138,10 +161,7 @@ export const HealthcareValidationRules = {
   ),
 
   // Healthcare facility validation
-  cnes: v.pipe(
-    v.string(),
-    v.regex(/^\d{7}$/, 'CNES deve ter 7 dígitos'),
-  ),
+  cnes: v.pipe(v.string(), v.regex(/^\d{7}$/, 'CNES deve ter 7 dígitos')),
 };
 
 // Common validation schemas for healthcare operations
@@ -207,13 +227,17 @@ export const CommonHealthcareSchemas = {
       description: v.pipe(v.string(), v.maxLength(500)),
     }),
     treatment: v.optional(v.pipe(v.string(), v.maxLength(1000))),
-    prescription: v.optional(v.array(v.object({
-      medication: v.pipe(v.string(), v.minLength(1), v.maxLength(200)),
-      dosage: HealthcareValidationRules.dosage,
-      frequency: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
-      duration: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
-      instructions: v.optional(v.pipe(v.string(), v.maxLength(500))),
-    }))),
+    prescription: v.optional(
+      v.array(
+        v.object({
+          medication: v.pipe(v.string(), v.minLength(1), v.maxLength(200)),
+          dosage: HealthcareValidationRules.dosage,
+          frequency: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
+          duration: v.pipe(v.string(), v.minLength(1), v.maxLength(100)),
+          instructions: v.optional(v.pipe(v.string(), v.maxLength(500))),
+        }),
+      ),
+    ),
   }),
 };
 
@@ -271,11 +295,13 @@ function validateBrazilianDate(dateString: string): boolean {
   const [day, month, year] = dateString.split('/').map(Number);
   const date = new Date(year, month - 1, day);
 
-  return date.getFullYear() === year
+  return (
+    date.getFullYear() === year
     && date.getMonth() === month - 1
     && date.getDate() === day
     && year >= 1900
-    && year <= new Date().getFullYear() + 1;
+    && year <= new Date().getFullYear() + 1
+  );
 }
 
 // SUS card validation (basic check digit validation)
@@ -345,7 +371,10 @@ export function valibotValidation(config: ValidationConfig) {
       }
 
       // Skip validation if optional and no data present
-      if (config.optional && (!dataToValidate || Object.keys(dataToValidate).length === 0)) {
+      if (
+        config.optional
+        && (!dataToValidate || Object.keys(dataToValidate).length === 0)
+      ) {
         await next();
         return;
       }
@@ -358,7 +387,8 @@ export function valibotValidation(config: ValidationConfig) {
 
       // Log audit trail for sensitive data validation
       if (
-        config.auditRequired && config.dataClassification
+        config.auditRequired
+        && config.dataClassification
         && ['personal', 'medical', 'financial'].includes(config.dataClassification)
       ) {
         const auditEvent = {
@@ -372,7 +402,10 @@ export function valibotValidation(config: ValidationConfig) {
           validatedFields: Object.keys(validatedData),
         };
 
-        console.log('[HEALTHCARE_VALIDATION_AUDIT]', JSON.stringify(auditEvent));
+        console.log(
+          '[HEALTHCARE_VALIDATION_AUDIT]',
+          JSON.stringify(auditEvent),
+        );
       }
 
       await next();
@@ -389,16 +422,20 @@ export function valibotValidation(config: ValidationConfig) {
               target: config.target,
               dataClassification: config.dataClassification,
               errors: v.flatten(error).nested
-                ? Object.entries(v.flatten(error).nested).map(([field, issues]) => ({
-                  field,
-                  message: issues?.[0] || 'Validation error',
-                  code: 'validation_error',
-                }))
-                : [{
-                  field: 'root',
-                  message: v.flatten(error).root?.[0] || 'Validation error',
-                  code: 'validation_error',
-                }],
+                ? Object.entries(v.flatten(error).nested).map(
+                  ([field, issues]) => ({
+                    field,
+                    message: issues?.[0] || 'Validation error',
+                    code: 'validation_error',
+                  }),
+                )
+                : [
+                  {
+                    field: 'root',
+                    message: v.flatten(error).root?.[0] || 'Validation error',
+                    code: 'validation_error',
+                  },
+                ],
               // Sanitize input data for error logging
               invalidData: sanitizeHealthcareData(error),
             },
@@ -497,7 +534,10 @@ export function validateMedicalRecord() {
 }
 
 // Helper to get validated data from context
-export function getValidatedData<T = any>(c: Context, target: ValidationTarget): T {
+export function getValidatedData<T = any>(
+  c: Context,
+  target: ValidationTarget,
+): T {
   return c.get(`validated_${target}`) as T;
 }
 

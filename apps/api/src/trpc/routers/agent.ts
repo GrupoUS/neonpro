@@ -1,30 +1,30 @@
 /**
  * AI Agents tRPC Router
- * 
+ *
  * Implements AI Agent Database Integration with CopilotKit, AG-UI Protocol, and RAG
  * Full LGPD/ANVISA/CFM compliance for healthcare data interactions
  */
 
+import { HealthcareTRPCError } from '@/utils/healthcare-errors';
 import { AuditAction, AuditStatus, ResourceType, RiskLevel } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
-import { protectedProcedure, router } from '../trpc';
-import { HealthcareTRPCError } from '@/utils/healthcare-errors';
 import {
-  CreateAgentSessionSchema,
-  CreateAgentMessageSchema,
-  CreateKnowledgeEntrySchema,
-  ListAgentSessionsSchema,
-  ListAgentMessagesSchema,
-  SearchKnowledgeBaseSchema,
-  RAGQuerySchema,
-  AgentSessionResponseSchema,
   AgentMessageResponseSchema,
-  KnowledgeEntryResponseSchema,
-  RAGResponseSchema,
-  AgentTypeSchema,
+  AgentSessionResponseSchema,
   AgentStatusSchema,
+  AgentTypeSchema,
+  CreateAgentMessageSchema,
+  CreateAgentSessionSchema,
+  CreateKnowledgeEntrySchema,
+  KnowledgeEntryResponseSchema,
+  ListAgentMessagesSchema,
+  ListAgentSessionsSchema,
+  RAGQuerySchema,
+  RAGResponseSchema,
+  SearchKnowledgeBaseSchema,
 } from '../contracts/agent';
+import { protectedProcedure, router } from '../trpc';
 
 // =====================================
 // AGENT TYPES AND INTERFACES
@@ -131,8 +131,16 @@ function sanitizeDataForAI(data: any, agentType: string): any {
 
   // Remove direct identifiers
   const sensitiveFields = [
-    'fullName', 'cpf', 'rg', 'email', 'phonePrimary', 'phoneSecondary',
-    'addressLine1', 'addressLine2', 'passportNumber', 'id'
+    'fullName',
+    'cpf',
+    'rg',
+    'email',
+    'phonePrimary',
+    'phoneSecondary',
+    'addressLine1',
+    'addressLine2',
+    'passportNumber',
+    'id',
   ];
 
   sensitiveFields.forEach(field => {
@@ -149,7 +157,13 @@ function sanitizeDataForAI(data: any, agentType: string): any {
 
   // Keep agent-specific relevant data
   const allowedFieldsByType = {
-    client: ['allergies', 'chronicConditions', 'bloodType', 'gender', 'ageGroup'],
+    client: [
+      'allergies',
+      'chronicConditions',
+      'bloodType',
+      'gender',
+      'ageGroup',
+    ],
     financial: ['insurancePlan', 'paymentHistory', 'outstandingBalance'],
     appointment: ['appointmentHistory', 'noShowCount', 'preferredTimes'],
   };
@@ -212,7 +226,8 @@ async function performRAGSearch(
     client: [
       {
         id: 'doc1',
-        content: 'Pacientes com alergias a penicilina devem ser identificados com alerta vermelho no prontuário',
+        content:
+          'Pacientes com alergias a penicilina devem ser identificados com alerta vermelho no prontuário',
         source: 'Protocolos Clínicos',
         score: 0.95,
         metadata: { type: 'protocol', category: 'safety' },
@@ -221,7 +236,7 @@ async function performRAGSearch(
         id: 'doc2',
         content: 'LGPD exige consentimento explícito para compartilhamento de dados médicos',
         source: 'LGPD Guidelines',
-        score: 0.90,
+        score: 0.9,
         metadata: { type: 'regulation', category: 'compliance' },
       },
     ],
@@ -259,7 +274,10 @@ async function performRAGSearch(
     ],
   };
 
-  return (mockResults[agentType as keyof typeof mockResults] || []).slice(0, limit);
+  return (mockResults[agentType as keyof typeof mockResults] || []).slice(
+    0,
+    limit,
+  );
 }
 
 // =====================================
@@ -273,22 +291,27 @@ export const agentRouter = router({
    */
   createSession: protectedProcedure
     .input(CreateAgentSessionSchema)
-    .output(z.object({
-      success: z.literal(true),
-      data: AgentSessionResponseSchema,
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: AgentSessionResponseSchema,
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         // Validate user has permission for this agent type
-        if (input.agent_type === 'client' && !ctx.user.permissions?.includes('patient:read')) {
+        if (
+          input.agent_type === 'client'
+          && !ctx.user.permissions?.includes('patient:read')
+        ) {
           throw new HealthcareTRPCError(
             'FORBIDDEN',
             'Insufficient permissions for client agent',
             'INSUFFICIENT_PERMISSIONS',
-            { required: 'patient:read' }
+            { required: 'patient:read' },
           );
         }
 
@@ -307,10 +330,16 @@ export const agentRouter = router({
         });
 
         // Create audit trail
-        await createAgentAuditTrail(ctx, 'session_created', input.agent_type, session.id, {
-          session_id: session.id,
-          initial_context: input.initial_context,
-        });
+        await createAgentAuditTrail(
+          ctx,
+          'session_created',
+          input.agent_type,
+          session.id,
+          {
+            session_id: session.id,
+            initial_context: input.initial_context,
+          },
+        );
 
         return {
           success: true,
@@ -345,20 +374,22 @@ export const agentRouter = router({
    */
   listSessions: protectedProcedure
     .input(ListAgentSessionsSchema)
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        sessions: z.array(AgentSessionResponseSchema),
-        pagination: z.object({
-          page: z.number(),
-          limit: z.number(),
-          total: z.number(),
-          total_pages: z.number(),
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          sessions: z.array(AgentSessionResponseSchema),
+          pagination: z.object({
+            page: z.number(),
+            limit: z.number(),
+            total: z.number(),
+            total_pages: z.number(),
+          }),
         }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
     .query(async ({ ctx, input }) => {
       try {
         const where = {
@@ -415,19 +446,23 @@ export const agentRouter = router({
    * Retrieve session details with message history
    */
   getSession: protectedProcedure
-    .input(z.object({
-      session_id: z.string().uuid(),
-      include_messages: z.boolean().default(false),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        session: AgentSessionResponseSchema,
-        messages: z.array(AgentMessageResponseSchema).optional(),
+    .input(
+      z.object({
+        session_id: z.string().uuid(),
+        include_messages: z.boolean().default(false),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          session: AgentSessionResponseSchema,
+          messages: z.array(AgentMessageResponseSchema).optional(),
+        }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       try {
         const session = await ctx.prisma.agentSession.findFirst({
@@ -442,7 +477,7 @@ export const agentRouter = router({
             'NOT_FOUND',
             'Agent session not found',
             'SESSION_NOT_FOUND',
-            { session_id: input.session_id }
+            { session_id: input.session_id },
           );
         }
 
@@ -497,19 +532,21 @@ export const agentRouter = router({
    */
   sendMessage: protectedProcedure
     .input(CreateAgentMessageSchema)
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        message: AgentMessageResponseSchema,
-        agent_response: z.object({
-          content: z.string(),
-          actions: z.array(z.any()).optional(),
-          processing_time: z.number(),
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          message: AgentMessageResponseSchema,
+          agent_response: z.object({
+            content: z.string(),
+            actions: z.array(z.any()).optional(),
+            processing_time: z.number(),
+          }),
         }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         // Verify session exists and belongs to user
@@ -526,7 +563,7 @@ export const agentRouter = router({
             'NOT_FOUND',
             'Active agent session not found',
             'SESSION_NOT_FOUND',
-            { session_id: input.session_id }
+            { session_id: input.session_id },
           );
         }
 
@@ -543,10 +580,14 @@ export const agentRouter = router({
 
         // Process message with RAG
         const startTime = Date.now();
-        
+
         // Perform RAG search for relevant context
-        const ragResults = await performRAGSearch(input.content, session.agentType, 5);
-        
+        const ragResults = await performRAGSearch(
+          input.content,
+          session.agentType,
+          5,
+        );
+
         // Build context for AI
         const context = HEALTHCARE_CONTEXTS[session.agentType];
         const ragContext = ragResults
@@ -557,7 +598,13 @@ export const agentRouter = router({
         const provider = AGENT_PROVIDERS.local; // Default to local for now
 
         // Mock AI response (replace with real AI call)
-        const aiResponse = `Entendi sua mensagem. Como assistente de ${session.agentType === 'client' ? 'pacientes' : session.agentType === 'financial' ? 'finanças' : 'agendamento'}, estou aqui para ajudar.`;
+        const aiResponse = `Entendi sua mensagem. Como assistente de ${
+          session.agentType === 'client'
+            ? 'pacientes'
+            : session.agentType === 'financial'
+            ? 'finanças'
+            : 'agendamento'
+        }, estou aqui para ajudar.`;
 
         // Save agent response
         const agentMessage = await ctx.prisma.agentMessage.create({
@@ -580,11 +627,17 @@ export const agentRouter = router({
         });
 
         // Create audit trail
-        await createAgentAuditTrail(ctx, 'message_sent', session.agentType, input.session_id, {
-          message_id: userMessage.id,
-          rag_results_count: ragResults.length,
-          processing_time: Date.now() - startTime,
-        });
+        await createAgentAuditTrail(
+          ctx,
+          'message_sent',
+          session.agentType,
+          input.session_id,
+          {
+            message_id: userMessage.id,
+            rag_results_count: ragResults.length,
+            processing_time: Date.now() - startTime,
+          },
+        );
 
         return {
           success: true,
@@ -625,13 +678,15 @@ export const agentRouter = router({
    */
   addKnowledge: protectedProcedure
     .input(CreateKnowledgeEntrySchema)
-    .output(z.object({
-      success: z.literal(true),
-      data: KnowledgeEntryResponseSchema,
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: KnowledgeEntryResponseSchema,
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         // Create knowledge entry
@@ -648,11 +703,17 @@ export const agentRouter = router({
         });
 
         // Create audit trail
-        await createAgentAuditTrail(ctx, 'knowledge_added', input.agent_type, undefined, {
-          knowledge_id: entry.id,
-          title: input.title,
-          tags: input.tags,
-        });
+        await createAgentAuditTrail(
+          ctx,
+          'knowledge_added',
+          input.agent_type,
+          undefined,
+          {
+            knowledge_id: entry.id,
+            title: input.title,
+            tags: input.tags,
+          },
+        );
 
         return {
           success: true,
@@ -687,16 +748,18 @@ export const agentRouter = router({
    */
   searchKnowledge: protectedProcedure
     .input(SearchKnowledgeBaseSchema)
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        results: z.array(KnowledgeEntryResponseSchema),
-        query: z.string(),
-        total_matches: z.number(),
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          results: z.array(KnowledgeEntryResponseSchema),
+          query: z.string(),
+          total_matches: z.number(),
+        }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
     .query(async ({ ctx, input }) => {
       try {
         // Mock semantic search (replace with vector search)
@@ -766,17 +829,19 @@ export const agentRouter = router({
             'NOT_FOUND',
             'Agent session not found',
             'SESSION_NOT_FOUND',
-            { session_id: input.session_id }
+            { session_id: input.session_id },
           );
         }
 
         // Perform RAG search
-        const ragResults = await performRAGSearch(input.query, session.agentType, input.max_results);
+        const ragResults = await performRAGSearch(
+          input.query,
+          session.agentType,
+          input.max_results,
+        );
 
         // Build context
-        const context = ragResults
-          .map(r => r.content)
-          .join('\n\n');
+        const context = ragResults.map(r => r.content).join('\n\n');
 
         // Generate response (mock implementation)
         const response = `Com base nas informações disponíveis: ${context.substring(0, 200)}...`;
@@ -806,16 +871,20 @@ export const agentRouter = router({
    * Soft delete session for audit compliance
    */
   archiveSession: protectedProcedure
-    .input(z.object({
-      session_id: z.string().uuid(),
-      reason: z.string().min(10).max(500),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        session_id: z.string().uuid(),
+        reason: z.string().min(10).max(500),
+      }),
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       try {
         const session = await ctx.prisma.agentSession.findFirst({
@@ -830,7 +899,7 @@ export const agentRouter = router({
             'NOT_FOUND',
             'Agent session not found',
             'SESSION_NOT_FOUND',
-            { session_id: input.session_id }
+            { session_id: input.session_id },
           );
         }
 
@@ -849,9 +918,15 @@ export const agentRouter = router({
         });
 
         // Create audit trail
-        await createAgentAuditTrail(ctx, 'session_archived', session.agentType, input.session_id, {
-          reason: input.reason,
-        });
+        await createAgentAuditTrail(
+          ctx,
+          'session_archived',
+          session.agentType,
+          input.session_id,
+          {
+            reason: input.reason,
+          },
+        );
 
         return {
           success: true,
@@ -876,26 +951,32 @@ export const agentRouter = router({
    * Retrieve usage statistics and performance metrics
    */
   getAnalytics: protectedProcedure
-    .input(z.object({
-      agent_type: AgentTypeSchema.optional(),
-      start_date: z.string().date().optional(),
-      end_date: z.string().date().optional(),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        total_sessions: z.number(),
-        total_messages: z.number(),
-        average_response_time: z.number(),
-        user_satisfaction: z.number().optional(),
-        top_queries: z.array(z.object({
-          query: z.string(),
-          count: z.number(),
-        })),
+    .input(
+      z.object({
+        agent_type: AgentTypeSchema.optional(),
+        start_date: z.string().date().optional(),
+        end_date: z.string().date().optional(),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          total_sessions: z.number(),
+          total_messages: z.number(),
+          average_response_time: z.number(),
+          user_satisfaction: z.number().optional(),
+          top_queries: z.array(
+            z.object({
+              query: z.string(),
+              count: z.number(),
+            }),
+          ),
+        }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       try {
         const where = {

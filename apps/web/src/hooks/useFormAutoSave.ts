@@ -10,7 +10,7 @@
  * - Error handling for corrupted data
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface SavedFormData {
   data: Record<string, any>;
@@ -28,10 +28,10 @@ interface UseFormAutoSaveReturn {
   recoveryAge: number | null;
 }
 
-const STORAGE_PREFIX = 'form-autosave-';
+const STORAGE_PREFIX = "form-autosave-";
 const DEBOUNCE_DELAY = 1000; // 1 second
 const EXPIRATION_TIME = 24 * 60 * 60 * 1000; // 24 hours
-const CURRENT_VERSION = '1.0';
+const CURRENT_VERSION = "1.0";
 
 export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
   const [savedData, setSavedData] = useState<Record<string, any> | null>(null);
@@ -59,7 +59,7 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
         setLastSaved(new Date(parsedData.timestamp));
       }
     } catch (error) {
-      console.warn('Failed to load saved form data:', error);
+      console.warn("Failed to load saved form data:", error);
       // Clear corrupted data
       localStorage.removeItem(storageKey);
       setSavedData(null);
@@ -68,34 +68,37 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
   }, [storageKey]);
 
   // Debounced save function
-  const saveFormData = useCallback((data: Record<string, any>) => {
-    // Don't save empty data
-    if (!data || Object.keys(data).length === 0) {
-      return;
-    }
-
-    // Clear existing debounce timer
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
-
-    // Set new debounce timer
-    debounceRef.current = setTimeout(() => {
-      try {
-        const saveData: SavedFormData = {
-          data,
-          timestamp: Date.now(),
-          version: CURRENT_VERSION,
-        };
-
-        localStorage.setItem(storageKey, JSON.stringify(saveData));
-        setSavedData(data);
-        setLastSaved(new Date());
-      } catch (error) {
-        console.error('Failed to save form data:', error);
+  const saveFormData = useCallback(
+    (data: Record<string, any>) => {
+      // Don't save empty data
+      if (!data || Object.keys(data).length === 0) {
+        return;
       }
-    }, DEBOUNCE_DELAY);
-  }, [storageKey]);
+
+      // Clear existing debounce timer
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+      }
+
+      // Set new debounce timer
+      debounceRef.current = setTimeout(() => {
+        try {
+          const saveData: SavedFormData = {
+            data,
+            timestamp: Date.now(),
+            version: CURRENT_VERSION,
+          };
+
+          localStorage.setItem(storageKey, JSON.stringify(saveData));
+          setSavedData(data);
+          setLastSaved(new Date());
+        } catch (error) {
+          console.error("Failed to save form data:", error);
+        }
+      }, DEBOUNCE_DELAY);
+    },
+    [storageKey],
+  );
 
   // Clear saved data
   const clearSavedData = useCallback(() => {
@@ -104,7 +107,7 @@ export function useFormAutoSave(formKey: string): UseFormAutoSaveReturn {
       setSavedData(null);
       setLastSaved(null);
     } catch (error) {
-      console.error('Failed to clear saved form data:', error);
+      console.error("Failed to clear saved form data:", error);
     }
   }, [storageKey]);
 

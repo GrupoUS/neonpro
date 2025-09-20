@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState } from "react";
 
-export type Role = 'admin' | 'user' | 'healthcare_professional' | 'guest';
+export type Role = "admin" | "user" | "healthcare_professional" | "guest";
 
 export interface AuthUser {
   id: string;
@@ -29,6 +29,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within an AuthProvider');
+  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
   return ctx;
 }

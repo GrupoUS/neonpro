@@ -8,7 +8,12 @@
     },
     "archon": {
       "type": "local",
-      "command": ["bunx", "mcp-remote", "http://31.97.170.4:8051/mcp", "--allow-http"],
+      "command": [
+        "bunx",
+        "mcp-remote",
+        "http://31.97.170.4:8051/mcp",
+        "--allow-http"
+      ],
       "enabled": true
     },
     "desktop-commander": {
@@ -53,12 +58,27 @@
     },
     "supabase": {
       "type": "local",
-      "command": ["bunx", "@supabase/mcp-server-supabase@latest", "--access-token", "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc"],
+      "command": [
+        "bunx",
+        "@supabase/mcp-server-supabase@latest",
+        "--access-token",
+        "sbp_40a721931e7ff98b4f6979a5bcb2a28c8ea5c0dc"
+      ],
       "enabled": true
     },
     "serena": {
       "type": "local",
-      "command": ["uvx", "--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server", "--context", "ide-assistant", "--project", "/home/vibecode/neonpro"],
+      "command": [
+        "uvx",
+        "--from",
+        "git+https://github.com/oraios/serena",
+        "serena",
+        "start-mcp-server",
+        "--context",
+        "ide-assistant",
+        "--project",
+        "/home/vibecode/neonpro"
+      ],
       "enabled": true
     }
   }

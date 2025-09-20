@@ -62,7 +62,11 @@ class HealthcareComplianceError extends Error {
 }
 
 class UnauthorizedHealthcareAccessError extends Error {
-  constructor(message: string, public resourceType: string, public resourceId?: string) {
+  constructor(
+    message: string,
+    public resourceType: string,
+    public resourceId?: string,
+  ) {
     super(message);
     this.name = 'UnauthorizedHealthcareAccessError';
   }
@@ -90,15 +94,21 @@ interface HealthcarePrismaClient extends PrismaClient {
     requestedBy: string,
     reason: string,
   ): Promise<LGPDDataExport>;
-  deletePatientData(patientId: string, options?: {
-    cascadeDelete?: boolean;
-    retainAuditTrail?: boolean;
-    reason?: string;
-  }): Promise<void>;
+  deletePatientData(
+    patientId: string,
+    options?: {
+      cascadeDelete?: boolean;
+      retainAuditTrail?: boolean;
+      reason?: string;
+    },
+  ): Promise<void>;
 
   // Healthcare-specific query methods
   findPatientsInClinic(clinicId: string, filters?: any): Promise<any[]>;
-  findAppointmentsForProfessional(professionalId: string, filters?: any): Promise<any[]>;
+  findAppointmentsForProfessional(
+    professionalId: string,
+    filters?: any,
+  ): Promise<any[]>;
   createAuditLog(
     action: string,
     resourceType: string,
@@ -127,9 +137,13 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
   // Healthcare-optimized configuration
   const healthcareConfig: HealthcareConnectionConfig = {
     maxConnections: parseInt(process.env.DATABASE_MAX_CONNECTIONS || '20'),
-    connectionTimeout: parseInt(process.env.DATABASE_CONNECTION_TIMEOUT || '30000'),
+    connectionTimeout: parseInt(
+      process.env.DATABASE_CONNECTION_TIMEOUT || '30000',
+    ),
     idleTimeout: parseInt(process.env.DATABASE_IDLE_TIMEOUT || '600000'),
-    healthCheckInterval: parseInt(process.env.DATABASE_HEALTH_CHECK_INTERVAL || '30000'),
+    healthCheckInterval: parseInt(
+      process.env.DATABASE_HEALTH_CHECK_INTERVAL || '30000',
+    ),
   };
 
   // Create base Prisma client with healthcare optimizations
@@ -158,7 +172,9 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
   };
 
   // Healthcare context management
-  healthcarePrisma.withContext = function(context: HealthcareContext): HealthcarePrismaClient {
+  healthcarePrisma.withContext = function(
+    context: HealthcareContext,
+  ): HealthcarePrismaClient {
     const newInstance = Object.create(this);
     newInstance.currentContext = context;
     return newInstance;
@@ -177,7 +193,10 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
       );
 
       // Additional CFM validation for healthcare professionals
-      if (this.currentContext.role === 'professional' && !this.currentContext.cfmValidated) {
+      if (
+        this.currentContext.role === 'professional'
+        && !this.currentContext.cfmValidated
+      ) {
         const professional = await this.professional.findFirst({
           where: {
             userId: this.currentContext.userId,
@@ -213,7 +232,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
   ): Promise<LGPDDataExport> {
     try {
       // Validate context and permissions
-      if (!await this.validateContext()) {
+      if (!(await this.validateContext())) {
         throw new UnauthorizedHealthcareAccessError(
           'Insufficient permissions for data export',
           'patient_data',
@@ -348,7 +367,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
 
     try {
       // Validate context and permissions
-      if (!await this.validateContext()) {
+      if (!(await this.validateContext())) {
         throw new UnauthorizedHealthcareAccessError(
           'Insufficient permissions for data deletion',
           'patient_data',
@@ -415,7 +434,12 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
   ): Promise<any[]> {
     try {
       // Validate clinic access
-      if (!await healthcareRLS.canAccessClinic(this.currentContext?.userId || '', clinicId)) {
+      if (
+        !(await healthcareRLS.canAccessClinic(
+          this.currentContext?.userId || '',
+          clinicId,
+        ))
+      ) {
         throw new UnauthorizedHealthcareAccessError(
           'Access denied to clinic patients',
           'clinic_patients',
@@ -546,7 +570,7 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
         userAgent: details.userAgent || 'api-client',
         sessionId: details.sessionId,
         status: 'SUCCESS' as any,
-        riskLevel: details.riskLevel || 'LOW' as any,
+        riskLevel: details.riskLevel || ('LOW' as any),
         additionalInfo: JSON.stringify({
           context: this.currentContext,
           details,
@@ -630,7 +654,9 @@ function createHealthcarePrismaClient(): HealthcarePrismaClient {
     }
   };
 
-  healthcarePrisma.handleConnectionError = async function(error: any): Promise<void> {
+  healthcarePrisma.handleConnectionError = async function(
+    error: any,
+  ): Promise<void> {
     console.error('Prisma connection error:', error);
 
     this.connectionPool.healthStatus = 'unhealthy';
@@ -725,7 +751,9 @@ export function getHealthcarePrismaClient(): HealthcarePrismaClient {
 /**
  * Create a new Prisma client instance with healthcare context
  */
-export function createPrismaWithContext(context: HealthcareContext): HealthcarePrismaClient {
+export function createPrismaWithContext(
+  context: HealthcareContext,
+): HealthcarePrismaClient {
   const client = createHealthcarePrismaClient();
   return client.withContext(context);
 }

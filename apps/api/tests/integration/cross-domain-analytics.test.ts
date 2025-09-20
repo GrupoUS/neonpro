@@ -237,15 +237,18 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
       };
 
       // TDD RED: Professional network analytics not implemented - MUST FAIL
-      const response = await fetch('/api/v1/ai/analytics/professional-network', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-network-analysis': 'true',
-          ...testClient.headers,
+      const response = await fetch(
+        '/api/v1/ai/analytics/professional-network',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-network-analysis': 'true',
+            ...testClient.headers,
+          },
+          body: JSON.stringify(professionalAnalyticsRequest),
         },
-        body: JSON.stringify(professionalAnalyticsRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
 
@@ -407,7 +410,11 @@ describe('Integration Test T016: Cross-Domain Analytics', () => {
         },
         seasonalPatterns: {
           summer: expect.objectContaining({
-            peakMonths: expect.arrayContaining(['dezembro', 'janeiro', 'fevereiro']),
+            peakMonths: expect.arrayContaining([
+              'dezembro',
+              'janeiro',
+              'fevereiro',
+            ]),
             popularProcedures: expect.any(Array),
             demandIncrease: expect.any(Number),
             regionalVariations: expect.any(Object),

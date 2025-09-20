@@ -95,14 +95,14 @@ Send a message to the AI assistant and receive a response.
 
 #### Parameters
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `message` | string | Yes | The user's message (1-2000 characters) |
-| `sessionId` | string | Yes | Unique session identifier |
-| `userId` | string | Yes | User identifier for rate limiting and audit |
-| `streaming` | boolean | No | Enable streaming response (default: false) |
-| `context` | object | No | Additional context for the AI |
-| `consent` | object | Yes | LGPD consent information |
+| Field       | Type    | Required | Description                                 |
+| ----------- | ------- | -------- | ------------------------------------------- |
+| `message`   | string  | Yes      | The user's message (1-2000 characters)      |
+| `sessionId` | string  | Yes      | Unique session identifier                   |
+| `userId`    | string  | Yes      | User identifier for rate limiting and audit |
+| `streaming` | boolean | No       | Enable streaming response (default: false)  |
+| `context`   | object  | No       | Additional context for the AI               |
+| `consent`   | object  | Yes      | LGPD consent information                    |
 
 #### Response (Non-streaming)
 
@@ -161,11 +161,11 @@ Retrieve chat session information and message history.
 
 #### Parameters
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `sessionId` | string | Yes | Session identifier (path parameter) |
-| `limit` | number | No | Number of messages to return (default: 50) |
-| `offset` | number | No | Offset for pagination (default: 0) |
+| Field       | Type   | Required | Description                                |
+| ----------- | ------ | -------- | ------------------------------------------ |
+| `sessionId` | string | Yes      | Session identifier (path parameter)        |
+| `limit`     | number | No       | Number of messages to return (default: 50) |
+| `offset`    | number | No       | Offset for pagination (default: 0)         |
 
 #### Response
 
@@ -271,11 +271,11 @@ Get contextual suggestions for follow-up questions or actions.
 
 #### Parameters
 
-| Field | Type | Required | Description |
-|-------|------|----------|-------------|
-| `sessionId` | string | No | Session context for suggestions |
-| `context` | string | No | Context type (medical, administrative, etc.) |
-| `language` | string | No | Language for suggestions (default: pt-BR) |
+| Field       | Type   | Required | Description                                  |
+| ----------- | ------ | -------- | -------------------------------------------- |
+| `sessionId` | string | No       | Session context for suggestions              |
+| `context`   | string | No       | Context type (medical, administrative, etc.) |
+| `language`  | string | No       | Language for suggestions (default: pt-BR)    |
 
 #### Response
 
@@ -322,14 +322,14 @@ The API uses standard HTTP status codes and returns detailed error information:
 
 ### Common Error Codes
 
-| Code | Description |
-|------|-------------|
-| `INVALID_REQUEST` | Request validation failed |
-| `MISSING_CONSENT` | LGPD consent required |
-| `RATE_LIMIT_EXCEEDED` | Rate limit exceeded |
-| `SESSION_NOT_FOUND` | Chat session not found |
-| `AI_SERVICE_ERROR` | AI provider error |
-| `INTERNAL_ERROR` | Internal server error |
+| Code                  | Description               |
+| --------------------- | ------------------------- |
+| `INVALID_REQUEST`     | Request validation failed |
+| `MISSING_CONSENT`     | LGPD consent required     |
+| `RATE_LIMIT_EXCEEDED` | Rate limit exceeded       |
+| `SESSION_NOT_FOUND`   | Chat session not found    |
+| `AI_SERVICE_ERROR`    | AI provider error         |
+| `INTERNAL_ERROR`      | Internal server error     |
 
 ## LGPD Compliance
 
@@ -402,23 +402,23 @@ All API interactions are logged for compliance:
 ### JavaScript/TypeScript
 
 ```typescript
-import { NeonProChatAPI } from '@neonpro/chat-sdk';
+import { NeonProChatAPI } from "@neonpro/chat-sdk";
 
 const chatAPI = new NeonProChatAPI({
-  baseURL: 'https://api.neonpro.com.br',
-  sessionToken: 'your-session-token'
+  baseURL: "https://api.neonpro.com.br",
+  sessionToken: "your-session-token",
 });
 
 // Send a message
 const response = await chatAPI.sendMessage({
-  message: 'Olá, preciso de ajuda',
-  sessionId: 'session_123',
-  userId: 'user_abc',
+  message: "Olá, preciso de ajuda",
+  sessionId: "session_123",
+  userId: "user_abc",
   consent: {
     dataProcessing: true,
     aiInteraction: true,
-    timestamp: new Date().toISOString()
-  }
+    timestamp: new Date().toISOString(),
+  },
 });
 
 console.log(response.response);

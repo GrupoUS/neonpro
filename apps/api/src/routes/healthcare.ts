@@ -38,25 +38,27 @@ type HealthcareEnv = {
 const healthcare = new Hono<HealthcareEnv>();
 
 // Performance monitoring middleware
-const performanceMiddleware = createMiddleware<HealthcareEnv>(async (c, next) => {
-  const startTime = Date.now();
-  c.set('performanceMetrics', { startTime, dbQueries: 0 });
+const performanceMiddleware = createMiddleware<HealthcareEnv>(
+  async (c, next) => {
+    const startTime = Date.now();
+    c.set('performanceMetrics', { startTime, dbQueries: 0 });
 
-  await next();
+    await next();
 
-  const endTime = Date.now();
-  const duration = endTime - startTime;
-  const metrics = c.get('performanceMetrics');
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    const metrics = c.get('performanceMetrics');
 
-  // Log performance metrics for healthcare compliance
-  console.log(
-    `Healthcare API Performance: ${c.req.method} ${c.req.path} - ${duration}ms, ${metrics.dbQueries} DB queries`,
-  );
+    // Log performance metrics for healthcare compliance
+    console.log(
+      `Healthcare API Performance: ${c.req.method} ${c.req.path} - ${duration}ms, ${metrics.dbQueries} DB queries`,
+    );
 
-  // Add performance headers
-  c.header('X-Response-Time', `${duration}ms`);
-  c.header('X-DB-Queries', metrics.dbQueries.toString());
-});
+    // Add performance headers
+    c.header('X-Response-Time', `${duration}ms`);
+    c.header('X-DB-Queries', metrics.dbQueries.toString());
+  },
+);
 
 // LGPD compliance audit middleware
 const auditMiddleware = createMiddleware<HealthcareEnv>(async (c, next) => {
@@ -108,44 +110,49 @@ const auditMiddleware = createMiddleware<HealthcareEnv>(async (c, next) => {
 });
 
 // Healthcare role-based authorization middleware
-const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(async (c, next) => {
-  const token = c.req.header('Authorization')?.replace('Bearer ', '');
+const healthcareAuthMiddleware = createMiddleware<HealthcareEnv>(
+  async (c, next) => {
+    const token = c.req.header('Authorization')?.replace('Bearer ', '');
 
-  if (!token) {
-    return c.json({ error: 'Token de autorização necessário' }, 401);
-  }
-
-  try {
-    // Verify JWT token with Supabase
-    const { data: { user }, error } = await supabase.auth.getUser(token);
-
-    if (error || !user) {
-      return c.json({ error: 'Token inválido' }, 401);
+    if (!token) {
+      return c.json({ error: 'Token de autorização necessário' }, 401);
     }
 
-    // Get user role and permissions
-    const { data: profile } = await supabase
-      .from('user_profiles')
-      .select('role, permissions')
-      .eq('user_id', user.id)
-      .single();
+    try {
+      // Verify JWT token with Supabase
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser(token);
 
-    if (!profile) {
-      return c.json({ error: 'Perfil de usuário não encontrado' }, 403);
+      if (error || !user) {
+        return c.json({ error: 'Token inválido' }, 401);
+      }
+
+      // Get user role and permissions
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('role, permissions')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!profile) {
+        return c.json({ error: 'Perfil de usuário não encontrado' }, 403);
+      }
+
+      c.set('user', {
+        id: user.id,
+        role: profile.role,
+        permissions: profile.permissions || [],
+      });
+
+      await next();
+    } catch (error) {
+      console.error('Authentication error:', error);
+      return c.json({ error: 'Erro de autenticação' }, 401);
     }
-
-    c.set('user', {
-      id: user.id,
-      role: profile.role,
-      permissions: profile.permissions || [],
-    });
-
-    await next();
-  } catch (error) {
-    console.error('Authentication error:', error);
-    return c.json({ error: 'Erro de autenticação' }, 401);
-  }
-});
+  },
+);
 
 // Apply global middleware
 healthcare.use('*', logger());
@@ -158,13 +165,21 @@ const allowedOrigins = [
   process.env.NEXT_PUBLIC_APP_URL,
 ].filter(Boolean) as string[];
 if (process.env.NODE_ENV !== 'production') {
-  allowedOrigins.push('http://localhost:3000', 'http://localhost:5173', 'http://localhost:8081');
+  allowedOrigins.push(
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://localhost:8081',
+  );
 }
 healthcare.use(
   '*',
   cors({
-    origin:
-      origin => (!origin ? undefined : (allowedOrigins.includes(origin) ? origin : undefined)),
+    origin: origin =>
+      !origin
+        ? undefined
+        : allowedOrigins.includes(origin)
+        ? origin
+        : undefined,
     allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -176,7 +191,10 @@ healthcare.use('*', auditMiddleware);
 // Validation schemas
 const patientSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
-  cpf: z.string().regex(/^\d{11}$/, 'CPF deve ter 11 dígitos').optional(),
+  cpf: z
+    .string()
+    .regex(/^\d{11}$/, 'CPF deve ter 11 dígitos')
+    .optional(),
   phone: z.string().min(10, 'Telefone inválido').optional(),
   email: z.string().email('Email inválido').optional(),
   birth_date: z.string().datetime().optional(),
@@ -213,14 +231,16 @@ healthcare.get(
 
       const { data: patients, error } = await supabase
         .from('patients')
-        .select(`
+        .select(
+          `
           id,
           name,
           phone,
           email,
           created_at,
           updated_at
-        `)
+        `,
+        )
         .order('created_at', { ascending: false })
         .limit(50); // Pagination for performance
 
@@ -238,10 +258,13 @@ healthcare.get(
       });
     } catch (error) {
       console.error('Error fetching patients:', error);
-      return c.json({
-        success: false,
-        error: 'Erro ao buscar pacientes',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro ao buscar pacientes',
+        },
+        500,
+      );
     }
   },
 );
@@ -260,7 +283,8 @@ healthcare.get('/patients/:id', async c => {
 
     const { data: patient, error } = await supabase
       .from('patients')
-      .select(`
+      .select(
+        `
         id,
         name,
         cpf,
@@ -271,7 +295,8 @@ healthcare.get('/patients/:id', async c => {
         updated_at,
         aesthetic_preferences,
         medical_history
-      `)
+      `,
+      )
       .eq('id', patientId)
       .single();
 
@@ -288,10 +313,13 @@ healthcare.get('/patients/:id', async c => {
     });
   } catch (error) {
     console.error('Error fetching patient:', error);
-    return c.json({
-      success: false,
-      error: 'Erro ao buscar paciente',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: 'Erro ao buscar paciente',
+      },
+      500,
+    );
   }
 });
 
@@ -320,64 +348,77 @@ healthcare.post('/patients', zValidator('json', patientSchema), async c => {
       throw error;
     }
 
-    return c.json({
-      success: true,
-      data: patient,
-      message: 'Paciente criado com sucesso',
-    }, 201);
+    return c.json(
+      {
+        success: true,
+        data: patient,
+        message: 'Paciente criado com sucesso',
+      },
+      201,
+    );
   } catch (error) {
     console.error('Error creating patient:', error);
-    return c.json({
-      success: false,
-      error: 'Erro ao criar paciente',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: 'Erro ao criar paciente',
+      },
+      500,
+    );
   }
 });
 
-healthcare.put('/patients/:id', zValidator('json', patientSchema.partial()), async c => {
-  const patientId = c.req.param('id');
-  const user = c.get('user');
-  const metrics = c.get('performanceMetrics');
-  const updates = c.req.valid('json');
+healthcare.put(
+  '/patients/:id',
+  zValidator('json', patientSchema.partial()),
+  async c => {
+    const patientId = c.req.param('id');
+    const user = c.get('user');
+    const metrics = c.get('performanceMetrics');
+    const updates = c.req.valid('json');
 
-  if (!user.permissions.includes('update_patients')) {
-    return c.json({ error: 'Sem permissão para atualizar pacientes' }, 403);
-  }
-
-  try {
-    metrics.dbQueries++;
-
-    const { data: patient, error } = await supabase
-      .from('patients')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-        updated_by: user.id,
-      })
-      .eq('id', patientId)
-      .select()
-      .single();
-
-    if (error) {
-      if (error.code === 'PGRST116') {
-        return c.json({ error: 'Paciente não encontrado' }, 404);
-      }
-      throw error;
+    if (!user.permissions.includes('update_patients')) {
+      return c.json({ error: 'Sem permissão para atualizar pacientes' }, 403);
     }
 
-    return c.json({
-      success: true,
-      data: patient,
-      message: 'Paciente atualizado com sucesso',
-    });
-  } catch (error) {
-    console.error('Error updating patient:', error);
-    return c.json({
-      success: false,
-      error: 'Erro ao atualizar paciente',
-    }, 500);
-  }
-});
+    try {
+      metrics.dbQueries++;
+
+      const { data: patient, error } = await supabase
+        .from('patients')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString(),
+          updated_by: user.id,
+        })
+        .eq('id', patientId)
+        .select()
+        .single();
+
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return c.json({ error: 'Paciente não encontrado' }, 404);
+        }
+        throw error;
+      }
+
+      return c.json({
+        success: true,
+        data: patient,
+        message: 'Paciente atualizado com sucesso',
+      });
+    } catch (error) {
+      console.error('Error updating patient:', error);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro ao atualizar paciente',
+        },
+        500,
+      );
+    }
+  },
+);
 
 // Appointment routes
 healthcare.get('/patients/:id/appointments', async c => {
@@ -394,7 +435,8 @@ healthcare.get('/patients/:id/appointments', async c => {
 
     const { data: appointments, error } = await supabase
       .from('appointments')
-      .select(`
+      .select(
+        `
         id,
         scheduled_at,
         status,
@@ -402,7 +444,8 @@ healthcare.get('/patients/:id/appointments', async c => {
         notes,
         created_at,
         updated_at
-      `)
+      `,
+      )
       .eq('patient_id', patientId)
       .order('scheduled_at', { ascending: false });
 
@@ -416,77 +459,96 @@ healthcare.get('/patients/:id/appointments', async c => {
     });
   } catch (error) {
     console.error('Error fetching appointments:', error);
-    return c.json({
-      success: false,
-      error: 'Erro ao buscar agendamentos',
-    }, 500);
-  }
-});
-
-healthcare.post('/appointments', zValidator('json', appointmentSchema), async c => {
-  const user = c.get('user');
-  const metrics = c.get('performanceMetrics');
-  const appointmentData = c.req.valid('json');
-
-  if (!user.permissions.includes('create_appointments')) {
-    return c.json({ error: 'Sem permissão para criar agendamentos' }, 403);
-  }
-
-  // Healthcare-specific validation
-  const scheduledDate = new Date(appointmentData.scheduled_at);
-  const now = new Date();
-
-  if (scheduledDate <= now) {
-    return c.json({
-      success: false,
-      error: 'Agendamento deve ser para uma data futura',
-    }, 400);
-  }
-
-  try {
-    // Check for scheduling conflicts
-    metrics.dbQueries++;
-    const { data: conflicts } = await supabase
-      .from('appointments')
-      .select('id')
-      .eq('scheduled_at', appointmentData.scheduled_at)
-      .neq('status', 'cancelled');
-
-    if (conflicts && conflicts.length > 0) {
-      return c.json({
+    return c.json(
+      {
         success: false,
-        error: 'Já existe um agendamento para este horário',
-      }, 409);
-    }
-
-    metrics.dbQueries++;
-    const { data: appointment, error } = await supabase
-      .from('appointments')
-      .insert({
-        ...appointmentData,
-        status: 'scheduled',
-        created_by: user.id,
-      })
-      .select()
-      .single();
-
-    if (error) {
-      throw error;
-    }
-
-    return c.json({
-      success: true,
-      data: appointment,
-      message: 'Agendamento criado com sucesso',
-    }, 201);
-  } catch (error) {
-    console.error('Error creating appointment:', error);
-    return c.json({
-      success: false,
-      error: 'Erro ao criar agendamento',
-    }, 500);
+        error: 'Erro ao buscar agendamentos',
+      },
+      500,
+    );
   }
 });
+
+healthcare.post(
+  '/appointments',
+  zValidator('json', appointmentSchema),
+  async c => {
+    const user = c.get('user');
+    const metrics = c.get('performanceMetrics');
+    const appointmentData = c.req.valid('json');
+
+    if (!user.permissions.includes('create_appointments')) {
+      return c.json({ error: 'Sem permissão para criar agendamentos' }, 403);
+    }
+
+    // Healthcare-specific validation
+    const scheduledDate = new Date(appointmentData.scheduled_at);
+    const now = new Date();
+
+    if (scheduledDate <= now) {
+      return c.json(
+        {
+          success: false,
+          error: 'Agendamento deve ser para uma data futura',
+        },
+        400,
+      );
+    }
+
+    try {
+      // Check for scheduling conflicts
+      metrics.dbQueries++;
+      const { data: conflicts } = await supabase
+        .from('appointments')
+        .select('id')
+        .eq('scheduled_at', appointmentData.scheduled_at)
+        .neq('status', 'cancelled');
+
+      if (conflicts && conflicts.length > 0) {
+        return c.json(
+          {
+            success: false,
+            error: 'Já existe um agendamento para este horário',
+          },
+          409,
+        );
+      }
+
+      metrics.dbQueries++;
+      const { data: appointment, error } = await supabase
+        .from('appointments')
+        .insert({
+          ...appointmentData,
+          status: 'scheduled',
+          created_by: user.id,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        throw error;
+      }
+
+      return c.json(
+        {
+          success: true,
+          data: appointment,
+          message: 'Agendamento criado com sucesso',
+        },
+        201,
+      );
+    } catch (error) {
+      console.error('Error creating appointment:', error);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro ao criar agendamento',
+        },
+        500,
+      );
+    }
+  },
+);
 
 // Healthcare analytics endpoint with caching
 healthcare.get(
@@ -506,9 +568,15 @@ healthcare.get(
     try {
       // Parallel queries for better performance
       const [patientsResult, appointmentsResult, proceduresResult] = await Promise.all([
-        supabase.from('patients').select('id', { count: 'exact', head: true }),
-        supabase.from('appointments').select('id, status', { count: 'exact' }),
-        supabase.from('procedures').select('id, performed_at', { count: 'exact' }),
+        supabase
+          .from('patients')
+          .select('id', { count: 'exact', head: true }),
+        supabase
+          .from('appointments')
+          .select('id, status', { count: 'exact' }),
+        supabase
+          .from('procedures')
+          .select('id, performed_at', { count: 'exact' }),
       ]);
 
       metrics.dbQueries += 3;
@@ -530,10 +598,13 @@ healthcare.get(
       });
     } catch (error) {
       console.error('Error fetching analytics:', error);
-      return c.json({
-        success: false,
-        error: 'Erro ao buscar analytics',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro ao buscar analytics',
+        },
+        500,
+      );
     }
   },
 );

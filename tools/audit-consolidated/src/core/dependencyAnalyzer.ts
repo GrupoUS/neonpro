@@ -1,10 +1,19 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-import { DependencySummary, ScannedFile } from '../types.js';
+import { promises as fs } from "fs";
+import path from "path";
+import { DependencySummary, ScannedFile } from "../types.js";
 
-const SUPPORTED_EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs']);
+const SUPPORTED_EXTENSIONS = new Set([
+  ".ts",
+  ".tsx",
+  ".js",
+  ".jsx",
+  ".mjs",
+  ".cjs",
+]);
 
-export async function analyseDependencies(files: ScannedFile[]): Promise<DependencySummary> {
+export async function analyseDependencies(
+  files: ScannedFile[],
+): Promise<DependencySummary> {
   let totalImports = 0;
   const entryPoints: string[] = [];
   const candidatesForUnused: string[] = [];
@@ -20,8 +29,10 @@ export async function analyseDependencies(files: ScannedFile[]): Promise<Depende
     }
 
     try {
-      const content = await fs.readFile(file.path, 'utf-8');
-      const importMatches = content.match(/^(import\s.+|const\s.+?=\srequire\()/gm);
+      const content = await fs.readFile(file.path, "utf-8");
+      const importMatches = content.match(
+        /^(import\s.+|const\s.+?=\srequire\()/gm,
+      );
       const importCount = importMatches ? importMatches.length : 0;
       totalImports += importCount;
 

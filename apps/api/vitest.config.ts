@@ -31,12 +31,7 @@ export default defineConfig({
       'tests/**/*.{test,spec}.{ts,tsx}',
       'src/**/*.{test,spec}.{ts,tsx}',
     ],
-    exclude: [
-      'node_modules/**',
-      'dist/**',
-      '.vercel/**',
-      '../../apps/web/**',
-    ],
+    exclude: ['node_modules/**', 'dist/**', '.vercel/**', '../../apps/web/**'],
     reporters: ['default'],
     bail: 1,
     timeout: 20000,
@@ -45,21 +40,31 @@ export default defineConfig({
       web: [/\.tsx?$/],
       ssr: [/\.tsx?$/],
     },
+    // Add custom resolver for shared packages
+    alias: {
+      '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src'),
+    },
   },
   resolve: {
     alias: {
-      '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src/index.ts'),
-      '@neonpro/database': path.resolve(__dirname, '../../packages/database/src/index.ts'),
-      '@neonpro/security': path.resolve(__dirname, '../../packages/security/src/index.ts'),
-      '@neonpro/types': path.resolve(__dirname, '../../packages/types/src/index.ts'),
-      '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src/index.ts'),
+      '@neonpro/utils': path.resolve(__dirname, '../../packages/utils/src'),
+      '@neonpro/database': path.resolve(
+        __dirname,
+        '../../packages/database/src',
+      ),
+      '@neonpro/security': path.resolve(
+        __dirname,
+        '../../packages/security/src',
+      ),
+      '@neonpro/types': path.resolve(__dirname, '../../packages/types/src'),
+      '@neonpro/shared': path.resolve(__dirname, '../../packages/shared/src'),
       '@neonpro/shared/validators': path.resolve(
         __dirname,
         '../../packages/shared/src/validators',
       ),
       '@neonpro/core-services': path.resolve(
         __dirname,
-        '../../packages/core-services/src/index.ts',
+        '../../packages/core-services/src',
       ),
     },
   },

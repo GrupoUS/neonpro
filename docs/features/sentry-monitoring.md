@@ -7,6 +7,7 @@ Integração completa do Sentry para monitoramento de erros e performance na apl
 ## Features Implemented
 
 ### Error Tracking
+
 - ✅ Automated error capture and reporting
 - ✅ React Error Boundary integration
 - ✅ Performance monitoring with Web Vitals
@@ -14,6 +15,7 @@ Integração completa do Sentry para monitoramento de erros e performance na apl
 - ✅ Environment-based configuration
 
 ### Security & Compliance
+
 - ✅ **PII/PHI Data Filtering**: Automatic sanitization of sensitive data before sending to Sentry
 - ✅ **LGPD Compliance**: No personal data is sent to external monitoring services
 - ✅ **Brazilian Data Residency**: Configuration respects data sovereignty requirements
@@ -62,12 +64,12 @@ VITE_APP_VERSION=1.0.0               # For release tracking
 
 ### Initialization Options
 
-| Setting | Production | Development | Description |
-|---------|------------|-------------|-------------|
-| `tracesSampleRate` | 0.1 (10%) | 1.0 (100%) | Performance monitoring sample rate |
-| `sampleRate` | 1.0 (100%) | 1.0 (100%) | Error reporting rate |
-| `beforeSend` | ✅ Enabled | ✅ Enabled | PII filtering function |
-| `ignoreErrors` | ✅ Browser extensions, network errors | Same | Common noise filtering |
+| Setting            | Production                            | Development | Description                        |
+| ------------------ | ------------------------------------- | ----------- | ---------------------------------- |
+| `tracesSampleRate` | 0.1 (10%)                             | 1.0 (100%)  | Performance monitoring sample rate |
+| `sampleRate`       | 1.0 (100%)                            | 1.0 (100%)  | Error reporting rate               |
+| `beforeSend`       | ✅ Enabled                            | ✅ Enabled  | PII filtering function             |
+| `ignoreErrors`     | ✅ Browser extensions, network errors | Same        | Common noise filtering             |
 
 ## Usage
 
@@ -82,22 +84,22 @@ Errors are automatically captured through:
 ### Manual Error Reporting
 
 ```typescript
-import { captureException, captureMessage } from '@/lib/monitoring/sentry';
+import { captureException, captureMessage } from "@/lib/monitoring/sentry";
 
 // Capture an exception with context
 try {
   // Some risky operation
 } catch (error) {
   captureException(error, {
-    context: 'patient-data-processing',
-    userId: 'user_masked_id',
-    feature: 'appointment-booking'
+    context: "patient-data-processing",
+    userId: "user_masked_id",
+    feature: "appointment-booking",
   });
 }
 
 // Capture custom messages
-captureMessage('Custom event occurred', 'info', {
-  customData: { processed: true }
+captureMessage("Custom event occurred", "info", {
+  customData: { processed: true },
 });
 ```
 
@@ -120,10 +122,25 @@ The Sentry integration includes comprehensive data sanitization:
 
 ```typescript
 const piiFields = [
-  'cpf', 'rg', 'email', 'phone', 'telefone', 'celular',
-  'name', 'nome', 'sobrenome', 'address', 'endereco',
-  'birth_date', 'data_nascimento', 'patient_id', 'paciente_id',
-  'password', 'token', 'authorization', 'cookie'
+  "cpf",
+  "rg",
+  "email",
+  "phone",
+  "telefone",
+  "celular",
+  "name",
+  "nome",
+  "sobrenome",
+  "address",
+  "endereco",
+  "birth_date",
+  "data_nascimento",
+  "patient_id",
+  "paciente_id",
+  "password",
+  "token",
+  "authorization",
+  "cookie",
 ];
 ```
 
@@ -137,6 +154,7 @@ const piiFields = [
 #### Headers Sanitization
 
 Sensitive headers are automatically removed:
+
 - `authorization`
 - `cookie`
 - `x-api-key`
@@ -208,7 +226,7 @@ Recommended Sentry alerts:
 // Trigger test error (development only)
 if (import.meta.env.DEV) {
   window.testSentryError = () => {
-    throw new Error('Test Sentry integration');
+    throw new Error("Test Sentry integration");
   };
 }
 ```
@@ -228,9 +246,9 @@ VITE_SENTRY_DSN=your_dsn npm run dev
 ```typescript
 // Check if Sentry is initialized
 if (Sentry.getCurrentHub().getClient()) {
-  console.log('Sentry is active');
+  console.log("Sentry is active");
 } else {
-  console.log('Sentry is not initialized');
+  console.log("Sentry is not initialized");
 }
 ```
 
@@ -309,7 +327,7 @@ npx @sentry/cli releases finalize $VERSION
 ```typescript
 // Enable Sentry debug mode
 Sentry.init({
-  debug: true,  // Only in development
+  debug: true, // Only in development
   // ... other options
 });
 ```

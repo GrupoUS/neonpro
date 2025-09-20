@@ -46,13 +46,16 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
           );
 
           if (!hasValidConsent) {
-            return c.json({
-              error: 'LGPD_CONSENT_REQUIRED',
-              message: 'Consentimento LGPD necessário para esta operação',
-              purpose: options.purpose,
-              dataCategories: options.dataCategories,
-              consentUrl: '/api/lgpd/consent',
-            }, 403);
+            return c.json(
+              {
+                error: 'LGPD_CONSENT_REQUIRED',
+                message: 'Consentimento LGPD necessário para esta operação',
+                purpose: options.purpose,
+                dataCategories: options.dataCategories,
+                consentUrl: '/api/lgpd/consent',
+              },
+              403,
+            );
           }
         }
       }
@@ -76,7 +79,10 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
         if (process.env.NODE_ENV === 'production') {
           await logAuditEvent('LGPD_DATA_ACCESS', auditData);
         } else {
-          console.log(`[LGPD AUDIT] ${auditData.method} ${auditData.path}`, auditData);
+          console.log(
+            `[LGPD AUDIT] ${auditData.method} ${auditData.path}`,
+            auditData,
+          );
         }
       }
 
@@ -91,12 +97,18 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
         c.header('X-Content-Type-Options', 'nosniff');
         c.header('X-Frame-Options', 'DENY');
         c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
-        c.header('Cache-Control', 'no-cache, no-store, must-revalidate, private');
+        c.header(
+          'Cache-Control',
+          'no-cache, no-store, must-revalidate, private',
+        );
         c.header('Pragma', 'no-cache');
 
         // Data retention information
         if (options.retentionPeriodDays) {
-          c.header('X-Data-Retention-Days', options.retentionPeriodDays.toString());
+          c.header(
+            'X-Data-Retention-Days',
+            options.retentionPeriodDays.toString(),
+          );
         }
       }
 
@@ -125,10 +137,13 @@ export function dataProtectionMiddleware(options: DataProtectionOptions) {
       console.error('[LGPD ERROR]', errorData);
 
       // Don't expose internal errors to client
-      return c.json({
-        error: 'LGPD_PROCESSING_ERROR',
-        message: 'Erro no processamento dos dados pessoais',
-      }, 500);
+      return c.json(
+        {
+          error: 'LGPD_PROCESSING_ERROR',
+          message: 'Erro no processamento dos dados pessoais',
+        },
+        500,
+      );
     }
   };
 }
@@ -169,7 +184,8 @@ async function validateUserConsent(
     // Query active consent records for the user
     const { data: consentRecords, error } = await supabase
       .from('consent_records')
-      .select(`
+      .select(
+        `
         id,
         status,
         consent_type,
@@ -180,7 +196,8 @@ async function validateUserConsent(
         given_at,
         expires_at,
         withdrawn_at
-      `)
+      `,
+      )
       .eq('patient_id', userId)
       .eq('clinic_id', clinicId)
       .eq('status', 'active')
@@ -215,8 +232,9 @@ async function validateUserConsent(
         granular: 3,
       };
 
-      const currentLevel =
-        consentLevelHierarchy[consent.consent_type as keyof typeof consentLevelHierarchy] || 1;
+      const currentLevel = consentLevelHierarchy[
+        consent.consent_type as keyof typeof consentLevelHierarchy
+      ] || 1;
       const requiredLevel = consentLevelHierarchy[minimumLevel];
 
       if (currentLevel >= requiredLevel) {
@@ -240,10 +258,12 @@ function getCurrentClinicId(): string {
 }
 
 function getClientIP(c: Context): string {
-  return c.req.header('X-Forwarded-For')
+  return (
+    c.req.header('X-Forwarded-For')
     || c.req.header('X-Real-IP')
     || c.req.header('CF-Connecting-IP')
-    || 'unknown';
+    || 'unknown'
+  );
 }
 
 function generateRequestId(): string {
@@ -275,9 +295,7 @@ async function logAuditEvent(eventType: string, data: any): Promise<void> {
     };
 
     // Insert into audit_logs table (this table should be created)
-    const { error } = await supabase
-      .from('audit_logs')
-      .insert(auditEntry);
+    const { error } = await supabase.from('audit_logs').insert(auditEntry);
 
     if (error) {
       console.error('Failed to log audit event to database:', error);

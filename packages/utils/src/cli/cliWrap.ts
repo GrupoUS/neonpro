@@ -1,11 +1,11 @@
 /**
  * CLI Wrapper - Standardized CLI command execution with JSON output
- * 
+ *
  * Provides a consistent interface for CLI commands with proper error handling,
  * timeout support, and standardized JSON output format.
  */
 
-import { exitOk, exitError, setupGlobalErrorHandling } from './exitHelper.js';
+import { exitOk, exitError, setupGlobalErrorHandling } from "./exitHelper.js";
 
 export interface CLICommand {
   /** Command name for identification */
@@ -22,7 +22,7 @@ export interface CLIOptionDefinition {
   /** Option description */
   description: string;
   /** Option type */
-  type: 'string' | 'number' | 'boolean';
+  type: "string" | "number" | "boolean";
   /** Default value */
   default?: unknown;
   /** Whether the option is required */
@@ -54,11 +54,11 @@ export class CLIWrapper {
 
   constructor(config: CLIWrapperConfig) {
     this.config = {
-      version: '1.0.0',
-      description: '',
+      version: "1.0.0",
+      description: "",
       timeout: 30000,
       setupErrorHandling: true,
-      ...config
+      ...config,
     };
 
     if (this.config.setupErrorHandling) {
@@ -77,24 +77,32 @@ export class CLIWrapper {
   /**
    * Parse command line arguments
    */
-  private parseArgs(args: string[]): { command?: string; options: CLIOptions; positional: string[] } {
-    const result: { command?: string; options: CLIOptions; positional: string[] } = {
+  private parseArgs(args: string[]): {
+    command?: string;
+    options: CLIOptions;
+    positional: string[];
+  } {
+    const result: {
+      command?: string;
+      options: CLIOptions;
+      positional: string[];
+    } = {
       options: {},
-      positional: []
+      positional: [],
     };
 
     let currentOption: string | null = null;
-    
+
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];
 
       // Handle long options (--option=value or --option value)
-      if (arg.startsWith('--')) {
+      if (arg.startsWith("--")) {
         if (currentOption) {
           result.options[currentOption] = true; // Previous option was a flag
         }
-        
-        const [option, value] = arg.slice(2).split('=');
+
+        const [option, value] = arg.slice(2).split("=");
         if (value !== undefined) {
           result.options[option] = value;
           currentOption = null;
@@ -103,14 +111,14 @@ export class CLIWrapper {
         }
       }
       // Handle short options (-o value or -o=value)
-      else if (arg.startsWith('-') && arg.length > 1) {
+      else if (arg.startsWith("-") && arg.length > 1) {
         if (currentOption) {
           result.options[currentOption] = true; // Previous option was a flag
         }
 
         const option = arg.slice(1);
-        if (option.includes('=')) {
-          const [opt, value] = option.split('=');
+        if (option.includes("=")) {
+          const [opt, value] = option.split("=");
           result.options[opt] = value;
           currentOption = null;
         } else {
@@ -149,21 +157,23 @@ export class CLIWrapper {
       exitOk(`${this.config.appName} ${commandName}`, {
         details: {
           description: cmd.description,
-          options: cmd.options
-        }
+          options: cmd.options,
+        },
       });
     } else {
-      const commands = Array.from(this.commands.entries()).map(([name, cmd]) => ({
-        name,
-        description: cmd.description
-      }));
+      const commands = Array.from(this.commands.entries()).map(
+        ([name, cmd]) => ({
+          name,
+          description: cmd.description,
+        }),
+      );
 
       exitOk(`${this.config.appName} v${this.config.version}`, {
         details: {
           description: this.config.description,
           commands,
-          usage: `${this.config.appName} <command> [options] [args]`
-        }
+          usage: `${this.config.appName} <command> [options] [args]`,
+        },
       });
     }
   }
@@ -189,15 +199,15 @@ export class CLIWrapper {
 
       // Validate command
       if (!parsed.command) {
-        exitError('No command provided', 1, {
-          details: { availableCommands: Array.from(this.commands.keys()) }
+        exitError("No command provided", 1, {
+          details: { availableCommands: Array.from(this.commands.keys()) },
         });
         return;
       }
 
       if (!this.commands.has(parsed.command)) {
         exitError(`Unknown command: ${parsed.command}`, 1, {
-          details: { availableCommands: Array.from(this.commands.keys()) }
+          details: { availableCommands: Array.from(this.commands.keys()) },
         });
         return;
       }
@@ -206,26 +216,33 @@ export class CLIWrapper {
 
       // Execute command with timeout
       const timeoutId = setTimeout(() => {
-        exitError(`Command '${parsed.command}' timed out after ${this.config.timeout}ms`, 124);
+        exitError(
+          `Command '${parsed.command}' timed out after ${this.config.timeout}ms`,
+          124,
+        );
       }, this.config.timeout);
 
       try {
-        await Promise.resolve(command.handler(parsed.positional, parsed.options));
+        await Promise.resolve(
+          command.handler(parsed.positional, parsed.options),
+        );
         clearTimeout(timeoutId);
       } catch (error) {
         clearTimeout(timeoutId);
         throw error;
       }
-
     } catch (error) {
-      const errorDetails = error instanceof Error ? {
-        name: error.name,
-        message: error.message,
-        stack: error.stack
-      } : { error: String(error) };
+      const errorDetails =
+        error instanceof Error
+          ? {
+              name: error.name,
+              message: error.message,
+              stack: error.stack,
+            }
+          : { error: String(error) };
 
-      exitError('Command execution failed', 1, {
-        details: errorDetails
+      exitError("Command execution failed", 1, {
+        details: errorDetails,
       });
     }
   }

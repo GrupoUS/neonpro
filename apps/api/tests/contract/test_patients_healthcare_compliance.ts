@@ -68,13 +68,16 @@ describe('Patients Healthcare Compliance API', () => {
 
   describe('GET /api/v2/patients/{id}/compliance-status', () => {
     it('should return 200 with comprehensive compliance status', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-status`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-status`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -96,13 +99,16 @@ describe('Patients Healthcare Compliance API', () => {
     });
 
     it('should include LGPD compliance details', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-status`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-status`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -126,13 +132,16 @@ describe('Patients Healthcare Compliance API', () => {
     });
 
     it('should include ANVISA compliance for medical data', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-status`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-status`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -152,13 +161,16 @@ describe('Patients Healthcare Compliance API', () => {
     });
 
     it('should include CFM (Conselho Federal de Medicina) compliance', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-status`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-status`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -193,12 +205,15 @@ describe('Patients Healthcare Compliance API', () => {
     });
 
     it('should return 401 for unauthorized access', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-status`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-status`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(401);
     });
@@ -213,14 +228,17 @@ describe('Patients Healthcare Compliance API', () => {
         include_historical_violations: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-audit`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-audit`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(auditRequest),
         },
-        body: JSON.stringify(auditRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -246,14 +264,17 @@ describe('Patients Healthcare Compliance API', () => {
         deep_scan: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-audit`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-audit`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(auditRequest),
         },
-        body: JSON.stringify(auditRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -281,14 +302,17 @@ describe('Patients Healthcare Compliance API', () => {
         include_timeline: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-audit`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-audit`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(auditRequest),
         },
-        body: JSON.stringify(auditRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -311,14 +335,17 @@ describe('Patients Healthcare Compliance API', () => {
         severity_threshold: 'invalid_severity',
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-audit`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-audit`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(invalidRequest),
         },
-        body: JSON.stringify(invalidRequest),
-      });
+      );
 
       expect(response.status).toBe(400);
       const data = await response.json();
@@ -332,13 +359,16 @@ describe('Patients Healthcare Compliance API', () => {
 
   describe('GET /api/v2/patients/{id}/consent-records', () => {
     it('should return 200 with consent history', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/consent-records`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/consent-records`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -354,13 +384,16 @@ describe('Patients Healthcare Compliance API', () => {
     });
 
     it('should include detailed consent information', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/consent-records`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/consent-records`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -399,19 +432,22 @@ describe('Patients Healthcare Compliance API', () => {
       });
 
       // Check consent records
-      const response = await app.request(`/api/v2/patients/${patientId}/consent-records`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/consent-records`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
 
-      const withdrawalRecord = data.consent_records.records.find((r: any) =>
-        r.type === 'ai_processing_withdrawal'
+      const withdrawalRecord = data.consent_records.records.find(
+        (r: any) => r.type === 'ai_processing_withdrawal',
       );
       expect(withdrawalRecord).toBeDefined();
       expect(withdrawalRecord.status).toBe('withdrawn');
@@ -449,14 +485,17 @@ describe('Patients Healthcare Compliance API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/consent`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/consent`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(consentUpdate),
         },
-        body: JSON.stringify(consentUpdate),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -479,14 +518,17 @@ describe('Patients Healthcare Compliance API', () => {
         reason: 'Withdraw data processing consent',
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/consent`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/consent`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(withdrawalRequest),
         },
-        body: JSON.stringify(withdrawalRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -505,14 +547,17 @@ describe('Patients Healthcare Compliance API', () => {
         reason: 'Attempt to withdraw essential consent',
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/consent`, {
-        method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/consent`,
+        {
+          method: 'PUT',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(essentialWithdrawal),
         },
-        body: JSON.stringify(essentialWithdrawal),
-      });
+      );
 
       // Should either be rejected or processed with strong warnings
       if (response.status === 200) {
@@ -539,14 +584,17 @@ describe('Patients Healthcare Compliance API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/data-subject-request`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/data-subject-request`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dsrRequest),
         },
-        body: JSON.stringify(dsrRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -572,14 +620,17 @@ describe('Patients Healthcare Compliance API', () => {
         retention_exemption_check: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/data-subject-request`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/data-subject-request`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(deletionRequest),
         },
-        body: JSON.stringify(deletionRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -599,14 +650,17 @@ describe('Patients Healthcare Compliance API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/data-subject-request`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/data-subject-request`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(invalidRequest),
         },
-        body: JSON.stringify(invalidRequest),
-      });
+      );
 
       expect(response.status).toBe(400);
       const data = await response.json();
@@ -619,13 +673,16 @@ describe('Patients Healthcare Compliance API', () => {
 
   describe('GET /api/v2/patients/{id}/compliance-reports', () => {
     it('should return 200 with compliance reports', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-reports`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-reports`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -683,13 +740,16 @@ describe('Patients Healthcare Compliance API', () => {
 
   describe('Compliance Monitoring and Alerts', () => {
     it('should provide real-time compliance monitoring', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-monitoring`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-monitoring`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -718,14 +778,17 @@ describe('Patients Healthcare Compliance API', () => {
         immediate_actions_taken: ['access_revoked', 'notification_sent'],
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/compliance-violations`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/compliance-violations`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(violationRequest),
         },
-        body: JSON.stringify(violationRequest),
-      });
+      );
 
       expect(response.status).toBe(201);
       const data = await response.json();

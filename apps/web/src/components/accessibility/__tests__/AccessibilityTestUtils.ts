@@ -8,9 +8,9 @@
  * - Healthcare-specific accessibility test helpers
  */
 
-import { render, screen, within } from '@testing-library/react';
-import { axe, toHaveNoViolations } from 'jest-axe';
-import { AccessibilityIssue } from '../../utils/accessibility-testing';
+import { render, screen, within } from "@testing-library/react";
+import { axe, toHaveNoViolations } from "jest-axe";
+import { AccessibilityIssue } from "../../utils/accessibility-testing";
 
 // Extend Jest expect with axe-core matchers
 expect.extend(toHaveNoViolations);
@@ -28,7 +28,11 @@ export async function testAccessibility(
   component: React.ReactElement,
   options: AccessibilityTestOptions = {},
 ): Promise<AccessibilityIssue[]> {
-  const { axeOptions = {}, includeHealthcareRules = true, skipCertainRules = [] } = options;
+  const {
+    axeOptions = {},
+    includeHealthcareRules = true,
+    skipCertainRules = [],
+  } = options;
 
   // Render the component
   const { container } = render(component);
@@ -37,34 +41,38 @@ export async function testAccessibility(
   const results = await axe(container, {
     rules: {
       // Skip certain rules if specified
-      ...Object.fromEntries(skipCertainRules.map(rule => [rule, { enabled: false }])),
+      ...Object.fromEntries(
+        skipCertainRules.map((rule) => [rule, { enabled: false }]),
+      ),
       // Enable healthcare-specific rules
-      ...includeHealthcareRules && {
-        'color-contrast': { enabled: true },
-        'label-content-name-mismatch': { enabled: true },
-        'input-button-name': { enabled: true },
-      },
+      ...(includeHealthcareRules && {
+        "color-contrast": { enabled: true },
+        "label-content-name-mismatch": { enabled: true },
+        "input-button-name": { enabled: true },
+      }),
     },
     ...axeOptions,
   });
 
   // Convert axe results to AccessibilityIssue format
-  const violations: AccessibilityIssue[] = results.violations.map(violation => ({
-    id: violation.id,
-    impact: violation.impact as AccessibilityIssue['impact'],
-    description: violation.description,
-    help: violation.help,
-    helpUrl: violation.helpUrl,
-    tags: violation.tags,
-    nodes: violation.nodes.map(node => ({
-      html: node.html,
-      target: node.target,
-      failureSummary: node.failureSummary,
-      any: node.any,
-    })),
-    healthcareSpecific: isHealthcareSpecificViolation(violation),
-    lgpdRelevant: isLgpdRelevantViolation(violation),
-  }));
+  const violations: AccessibilityIssue[] = results.violations.map(
+    (violation) => ({
+      id: violation.id,
+      impact: violation.impact as AccessibilityIssue["impact"],
+      description: violation.description,
+      help: violation.help,
+      helpUrl: violation.helpUrl,
+      tags: violation.tags,
+      nodes: violation.nodes.map((node) => ({
+        html: node.html,
+        target: node.target,
+        failureSummary: node.failureSummary,
+        any: node.any,
+      })),
+      healthcareSpecific: isHealthcareSpecificViolation(violation),
+      lgpdRelevant: isLgpdRelevantViolation(violation),
+    }),
+  );
 
   return violations;
 }
@@ -81,7 +89,7 @@ export async function expectNoAccessibilityViolations(
   expect(violations).toHaveLength(0);
 
   if (violations.length > 0) {
-    console.error('Accessibility violations found:', violations);
+    console.error("Accessibility violations found:", violations);
   }
 }
 
@@ -100,9 +108,11 @@ export async function testHealthcareAccessibility(
     includeHealthcareRules: true,
   });
 
-  const lgpdViolations = violations.filter(v => v.lgpdRelevant);
-  const healthcareViolations = violations.filter(v => v.healthcareSpecific);
-  const emergencyViolations = violations.filter(v => v.tags.includes('emergency'));
+  const lgpdViolations = violations.filter((v) => v.lgpdRelevant);
+  const healthcareViolations = violations.filter((v) => v.healthcareSpecific);
+  const emergencyViolations = violations.filter((v) =>
+    v.tags.includes("emergency"),
+  );
 
   return {
     lgpdCompliance: lgpdViolations.length === 0,
@@ -131,27 +141,33 @@ export function testKeyboardNavigation(component: React.ReactElement): {
 
   focusableElements.forEach((element, index) => {
     const tagName = element.tagName.toLowerCase();
-    const hasLabel = element.hasAttribute('aria-label')
-      || element.hasAttribute('aria-labelledby')
-      || (element.id && document.querySelector(`label[for="${element.id}"]`))
-      || element.textContent?.trim();
+    const hasLabel =
+      element.hasAttribute("aria-label") ||
+      element.hasAttribute("aria-labelledby") ||
+      (element.id && document.querySelector(`label[for="${element.id}"]`)) ||
+      element.textContent?.trim();
 
     tabOrder.push(`${tagName}[${index}]`);
 
     // Check for common keyboard navigation issues
     if (
-      !hasLabel
-      && (tagName === 'button' || tagName === 'input' || tagName === 'select'
-        || tagName === 'textarea')
+      !hasLabel &&
+      (tagName === "button" ||
+        tagName === "input" ||
+        tagName === "select" ||
+        tagName === "textarea")
     ) {
       issues.push(`Element ${index} (${tagName}) missing accessible label`);
     }
 
     if (
-      element.hasAttribute('tabindex') && element.getAttribute('tabindex') !== '0'
-      && element.getAttribute('tabindex') !== '-1'
+      element.hasAttribute("tabindex") &&
+      element.getAttribute("tabindex") !== "0" &&
+      element.getAttribute("tabindex") !== "-1"
     ) {
-      issues.push(`Element ${index} has invalid tabindex: ${element.getAttribute('tabindex')}`);
+      issues.push(
+        `Element ${index} has invalid tabindex: ${element.getAttribute("tabindex")}`,
+      );
     }
   });
 
@@ -176,18 +192,20 @@ export function testColorContrast(container: HTMLElement): {
   }>;
 } {
   const textElements = container.querySelectorAll(
-    'p, span, h1, h2, h3, h4, h5, h6, button, input, label',
+    "p, span, h1, h2, h3, h4, h5, h6, button, input, label",
   );
   const results: any[] = [];
 
-  textElements.forEach(element => {
+  textElements.forEach((element) => {
     const computedStyle = window.getComputedStyle(element);
     const foreground = computedStyle.color;
     const background = computedStyle.backgroundColor;
 
     if (
-      foreground && background && foreground !== 'rgba(0, 0, 0, 0)'
-      && background !== 'rgba(0, 0, 0, 0)'
+      foreground &&
+      background &&
+      foreground !== "rgba(0, 0, 0, 0)" &&
+      background !== "rgba(0, 0, 0, 0)"
     ) {
       // This is a simplified check - in real implementation, you'd use proper color contrast calculation
       const ratio = calculateContrastRatio(foreground, background);
@@ -204,7 +222,7 @@ export function testColorContrast(container: HTMLElement): {
   });
 
   return {
-    passes: results.every(r => r.passes),
+    passes: results.every((r) => r.passes),
     elements: results,
   };
 }
@@ -212,7 +230,10 @@ export function testColorContrast(container: HTMLElement): {
 /**
  * Mock function for color contrast calculation (simplified)
  */
-function calculateContrastRatio(foreground: string, background: string): number {
+function calculateContrastRatio(
+  foreground: string,
+  background: string,
+): number {
   // This is a simplified version - in real implementation, use proper color conversion and calculation
   // For testing purposes, return a mock value
   return 4.5;
@@ -223,23 +244,26 @@ function calculateContrastRatio(foreground: string, background: string): number 
  */
 function isHealthcareSpecificViolation(violation: any): boolean {
   const healthcareKeywords = [
-    'medical',
-    'health',
-    'patient',
-    'emergency',
-    'diagnosis',
-    'treatment',
-    'medication',
-    'prescription',
-    'appointment',
-    'clinical',
-    'healthcare',
+    "medical",
+    "health",
+    "patient",
+    "emergency",
+    "diagnosis",
+    "treatment",
+    "medication",
+    "prescription",
+    "appointment",
+    "clinical",
+    "healthcare",
   ];
 
-  return healthcareKeywords.some(keyword =>
-    violation.description?.toLowerCase()?.includes(keyword)
-    || violation.help?.toLowerCase()?.includes(keyword)
-    || violation.tags?.some((tag: string) => tag.toLowerCase()?.includes(keyword))
+  return healthcareKeywords.some(
+    (keyword) =>
+      violation.description?.toLowerCase()?.includes(keyword) ||
+      violation.help?.toLowerCase()?.includes(keyword) ||
+      violation.tags?.some((tag: string) =>
+        tag.toLowerCase()?.includes(keyword),
+      ),
   );
 }
 
@@ -248,20 +272,23 @@ function isHealthcareSpecificViolation(violation: any): boolean {
  */
 function isLgpdRelevantViolation(violation: any): boolean {
   const lgpdKeywords = [
-    'privacy',
-    'personal data',
-    'consent',
-    'data protection',
-    'sensitive',
-    'personal information',
-    'data collection',
-    'data storage',
+    "privacy",
+    "personal data",
+    "consent",
+    "data protection",
+    "sensitive",
+    "personal information",
+    "data collection",
+    "data storage",
   ];
 
-  return lgpdKeywords.some(keyword =>
-    violation.description?.toLowerCase()?.includes(keyword)
-    || violation.help?.toLowerCase()?.includes(keyword)
-    || violation.tags?.some((tag: string) => tag.toLowerCase()?.includes(keyword))
+  return lgpdKeywords.some(
+    (keyword) =>
+      violation.description?.toLowerCase()?.includes(keyword) ||
+      violation.help?.toLowerCase()?.includes(keyword) ||
+      violation.tags?.some((tag: string) =>
+        tag.toLowerCase()?.includes(keyword),
+      ),
   );
 }
 
@@ -274,37 +301,42 @@ export function testFormAccessibility(container: HTMLElement): {
   hasLabels: boolean;
   issues: string[];
 } {
-  const forms = container.querySelectorAll('form');
+  const forms = container.querySelectorAll("form");
   const issues: string[] = [];
 
   let hasRequiredFields = false;
   let hasErrorMessages = false;
   let hasLabels = false;
 
-  forms.forEach(form => {
-    const requiredFields = form.querySelectorAll('[required]');
-    const errorContainers = form.querySelectorAll('[role="alert"], [aria-live="assertive"]');
-    const labels = form.querySelectorAll('label');
-    const inputs = form.querySelectorAll('input, select, textarea');
+  forms.forEach((form) => {
+    const requiredFields = form.querySelectorAll("[required]");
+    const errorContainers = form.querySelectorAll(
+      '[role="alert"], [aria-live="assertive"]',
+    );
+    const labels = form.querySelectorAll("label");
+    const inputs = form.querySelectorAll("input, select, textarea");
 
     hasRequiredFields = hasRequiredFields || requiredFields.length > 0;
     hasErrorMessages = hasErrorMessages || errorContainers.length > 0;
     hasLabels = hasLabels || labels.length > 0;
 
     // Check if all inputs have labels
-    inputs.forEach(input => {
-      const hasLabel = input.hasAttribute('aria-label')
-        || input.hasAttribute('aria-labelledby')
-        || (input.id && form.querySelector(`label[for="${input.id}"]`));
+    inputs.forEach((input) => {
+      const hasLabel =
+        input.hasAttribute("aria-label") ||
+        input.hasAttribute("aria-labelledby") ||
+        (input.id && form.querySelector(`label[for="${input.id}"]`));
 
       if (!hasLabel) {
-        issues.push(`Input ${input.getAttribute('name') || input.id} missing label`);
+        issues.push(
+          `Input ${input.getAttribute("name") || input.id} missing label`,
+        );
       }
     });
 
     // Check if required fields have proper ARIA attributes
-    requiredFields.forEach(field => {
-      if (!field.hasAttribute('aria-required')) {
+    requiredFields.forEach((field) => {
+      if (!field.hasAttribute("aria-required")) {
         issues.push(`Required field missing aria-required attribute`);
       }
     });
@@ -327,28 +359,28 @@ export function testTableAccessibility(container: HTMLElement): {
   hasScope: boolean;
   issues: string[];
 } {
-  const tables = container.querySelectorAll('table');
+  const tables = container.querySelectorAll("table");
   const issues: string[] = [];
 
   let hasHeaders = false;
   let hasCaption = false;
   let hasScope = false;
 
-  tables.forEach(table => {
-    const headers = table.querySelectorAll('th');
-    const caption = table.querySelector('caption');
-    const scopedHeaders = table.querySelectorAll('th[scope]');
+  tables.forEach((table) => {
+    const headers = table.querySelectorAll("th");
+    const caption = table.querySelector("caption");
+    const scopedHeaders = table.querySelectorAll("th[scope]");
 
     hasHeaders = hasHeaders || headers.length > 0;
     hasCaption = hasCaption || caption !== null;
     hasScope = hasScope || scopedHeaders.length > 0;
 
     if (headers.length > 0 && scopedHeaders.length === 0) {
-      issues.push('Table headers missing scope attributes');
+      issues.push("Table headers missing scope attributes");
     }
 
     if (!caption) {
-      issues.push('Table missing caption');
+      issues.push("Table missing caption");
     }
   });
 
@@ -368,19 +400,19 @@ export function testImageAccessibility(container: HTMLElement): {
   hasDecorativeImages: boolean;
   issues: string[];
 } {
-  const images = container.querySelectorAll('img');
+  const images = container.querySelectorAll("img");
   const issues: string[] = [];
 
   let hasAltText = true;
   let hasDecorativeImages = false;
 
-  images.forEach(img => {
-    const alt = img.getAttribute('alt');
+  images.forEach((img) => {
+    const alt = img.getAttribute("alt");
 
     if (!alt) {
       hasAltText = false;
       issues.push(`Image missing alt text: ${img.src}`);
-    } else if (alt === '' && !img.hasAttribute('role')) {
+    } else if (alt === "" && !img.hasAttribute("role")) {
       hasDecorativeImages = true;
       // This is acceptable for decorative images
     }
@@ -400,24 +432,26 @@ export function testModalAccessibility(container: HTMLElement): {
   modalsFound: number;
   issues: string[];
 } {
-  const modals = container.querySelectorAll('[role="dialog"], [role="alertdialog"]');
+  const modals = container.querySelectorAll(
+    '[role="dialog"], [role="alertdialog"]',
+  );
   const issues: string[] = [];
 
-  modals.forEach(modal => {
-    const hasTitle = modal.hasAttribute('aria-labelledby');
-    const hasDescription = modal.hasAttribute('aria-describedby');
-    const isFocusTrapped = modal.querySelector('[data-focus-trapped]') !== null;
+  modals.forEach((modal) => {
+    const hasTitle = modal.hasAttribute("aria-labelledby");
+    const hasDescription = modal.hasAttribute("aria-describedby");
+    const isFocusTrapped = modal.querySelector("[data-focus-trapped]") !== null;
 
     if (!hasTitle) {
-      issues.push('Modal missing title (aria-labelledby)');
+      issues.push("Modal missing title (aria-labelledby)");
     }
 
     if (!hasDescription) {
-      issues.push('Modal missing description (aria-describedby)');
+      issues.push("Modal missing description (aria-describedby)");
     }
 
     if (!isFocusTrapped) {
-      issues.push('Modal missing focus trap');
+      issues.push("Modal missing focus trap");
     }
 
     // Check for close button
@@ -425,7 +459,7 @@ export function testModalAccessibility(container: HTMLElement): {
       'button[aria-label*="close"], button[aria-label*="fechar"]',
     );
     if (!closeButton) {
-      issues.push('Modal missing accessible close button');
+      issues.push("Modal missing accessible close button");
     }
   });
 

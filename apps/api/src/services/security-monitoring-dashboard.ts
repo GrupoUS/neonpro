@@ -35,7 +35,10 @@ export interface SecurityDashboard {
   };
   accessPatterns: {
     byRole: Record<string, { requests: number; denied: number; score: number }>;
-    byEndpoint: Record<string, { requests: number; denied: number; avgThreat: number }>;
+    byEndpoint: Record<
+      string,
+      { requests: number; denied: number; avgThreat: number }
+    >;
     byTime: Array<{ hour: number; requests: number; threats: number }>;
   };
   compliance: {
@@ -95,13 +98,25 @@ export class SecurityMonitoringDashboardService {
       const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
 
       // Get real-time metrics
-      const realTimeMetrics = await this.getRealTimeMetrics(clinicId, oneHourAgo, now);
+      const realTimeMetrics = await this.getRealTimeMetrics(
+        clinicId,
+        oneHourAgo,
+        now,
+      );
 
       // Get alerts by severity
-      const alerts = await this.getAlertsBySeverity(clinicId, twentyFourHoursAgo, now);
+      const alerts = await this.getAlertsBySeverity(
+        clinicId,
+        twentyFourHoursAgo,
+        now,
+      );
 
       // Get access patterns
-      const accessPatterns = await this.getAccessPatterns(clinicId, twentyFourHoursAgo, now);
+      const accessPatterns = await this.getAccessPatterns(
+        clinicId,
+        twentyFourHoursAgo,
+        now,
+      );
 
       // Get compliance status
       const compliance = await this.getComplianceStatus(clinicId);
@@ -134,7 +149,10 @@ export class SecurityMonitoringDashboardService {
 
     // Check cache first
     const cached = this.metricsCache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp.getTime() < this.dashboardUpdateInterval) {
+    if (
+      cached
+      && Date.now() - cached.timestamp.getTime() < this.dashboardUpdateInterval
+    ) {
       return cached;
     }
 
@@ -159,26 +177,28 @@ export class SecurityMonitoringDashboardService {
         timestamp: new Date(),
         totalRequests: data?.length || 0,
         deniedRequests: data?.filter(log => !log.access_granted).length || 0,
-        securityScore: data?.reduce((acc, log) => acc + log.security_score, 0) / (data?.length || 1)
-          || 0,
-        threatLevel: data?.reduce((acc, log) => acc + log.threat_level, 0) / (data?.length || 1)
-          || 0,
-        alerts: data?.filter(log => log.threat_level > 50).map(log => ({
-          type: 'THREAT_DETECTED' as const,
-          severity: log.threat_level > 75 ? 'HIGH' : 'MEDIUM' as const,
-          description: log.reason,
-          context: {
-            userId: log.user_id,
-            userRole: '',
-            clinicId: '',
-            sessionId: '',
-            requestMethod: '',
-            requestPath: '',
-            timestamp: new Date(log.timestamp),
-          },
-          details: { threatLevel: log.threat_level },
-          actionTaken: 'Logged for review',
-        })) || [],
+        securityScore: data?.reduce((acc, log) => acc + log.security_score, 0)
+            / (data?.length || 1) || 0,
+        threatLevel: data?.reduce((acc, log) => acc + log.threat_level, 0)
+            / (data?.length || 1) || 0,
+        alerts: data
+          ?.filter(log => log.threat_level > 50)
+          .map(log => ({
+            type: 'THREAT_DETECTED' as const,
+            severity: log.threat_level > 75 ? 'HIGH' : ('MEDIUM' as const),
+            description: log.reason,
+            context: {
+              userId: log.user_id,
+              userRole: '',
+              clinicId: '',
+              sessionId: '',
+              requestMethod: '',
+              requestPath: '',
+              timestamp: new Date(log.timestamp),
+            },
+            details: { threatLevel: log.threat_level },
+            actionTaken: 'Logged for review',
+          })) || [],
         topThreatTypes: this.getTopThreatTypes(data || []),
         responseTime: Math.random() * 100 + 50, // Mock response time
       };
@@ -252,7 +272,10 @@ export class SecurityMonitoringDashboardService {
     endDate: Date,
   ): Promise<{
     byRole: Record<string, { requests: number; denied: number; score: number }>;
-    byEndpoint: Record<string, { requests: number; denied: number; avgThreat: number }>;
+    byEndpoint: Record<
+      string,
+      { requests: number; denied: number; avgThreat: number }
+    >;
     byTime: Array<{ hour: number; requests: number; threats: number }>;
   }> {
     try {
@@ -270,11 +293,16 @@ export class SecurityMonitoringDashboardService {
       const logs = data || [];
 
       // Analyze by role
-      const byRole: Record<string, { requests: number; denied: number; score: number }> = {};
+      const byRole: Record<
+        string,
+        { requests: number; denied: number; score: number }
+      > = {};
 
       // Analyze by endpoint
-      const byEndpoint: Record<string, { requests: number; denied: number; avgThreat: number }> =
-        {};
+      const byEndpoint: Record<
+        string,
+        { requests: number; denied: number; avgThreat: number }
+      > = {};
 
       // Analyze by time
       const byTime: Array<{ hour: number; requests: number; threats: number }> = Array(24)
@@ -341,13 +369,17 @@ export class SecurityMonitoringDashboardService {
   }> {
     try {
       // Check various compliance aspects
-      const [auditRetention, encryptionStatus, accessControlStatus, incidentStatus] = await Promise
-        .all([
-          this.checkAuditLogRetention(),
-          this.checkDataEncryption(),
-          this.checkAccessControls(),
-          this.checkIncidentResponse(),
-        ]);
+      const [
+        auditRetention,
+        encryptionStatus,
+        accessControlStatus,
+        incidentStatus,
+      ] = await Promise.all([
+        this.checkAuditLogRetention(),
+        this.checkDataEncryption(),
+        this.checkAccessControls(),
+        this.checkIncidentResponse(),
+      ]);
 
       return {
         lgpdCompliant: auditRetention && encryptionStatus && accessControlStatus,
@@ -430,7 +462,12 @@ export class SecurityMonitoringDashboardService {
     includeRecommendations?: boolean;
   }): Promise<SecurityReport> {
     try {
-      const { clinicId, startDate, endDate, includeRecommendations = true } = options;
+      const {
+        clinicId,
+        startDate,
+        endDate,
+        includeRecommendations = true,
+      } = options;
 
       const report: SecurityReport = {
         id: `security_report_${Date.now()}`,
@@ -468,11 +505,17 @@ export class SecurityMonitoringDashboardService {
 
       // Calculate summary
       report.summary.totalRequests = logs.length;
-      report.summary.deniedRequests = logs.filter(log => !log.access_granted).length;
-      report.summary.securityIncidents = logs.filter(log => log.threat_level > 70).length;
+      report.summary.deniedRequests = logs.filter(
+        log => !log.access_granted,
+      ).length;
+      report.summary.securityIncidents = logs.filter(
+        log => log.threat_level > 70,
+      ).length;
       report.summary.avgSecurityScore = logs.reduce((acc, log) => acc + log.security_score, 0)
         / logs.length;
-      report.summary.maxThreatLevel = Math.max(...logs.map(log => log.threat_level));
+      report.summary.maxThreatLevel = Math.max(
+        ...logs.map(log => log.threat_level),
+      );
 
       // Analyze threats
       report.threats = this.analyzeThreatTypes(logs);
@@ -482,7 +525,10 @@ export class SecurityMonitoringDashboardService {
 
       // Generate recommendations
       if (includeRecommendations) {
-        report.recommendations = await this.generateSecurityRecommendations(logs, clinicId);
+        report.recommendations = await this.generateSecurityRecommendations(
+          logs,
+          clinicId,
+        );
       }
 
       // Store report
@@ -500,9 +546,12 @@ export class SecurityMonitoringDashboardService {
    */
   private startRealTimeMonitoring(): void {
     // Set up periodic cache cleanup
-    setInterval(() => {
-      this.cleanupMetricsCache();
-    }, 5 * 60 * 1000); // Clean up every 5 minutes
+    setInterval(
+      () => {
+        this.cleanupMetricsCache();
+      },
+      5 * 60 * 1000,
+    ); // Clean up every 5 minutes
 
     // Set up real-time subscriptions for security alerts
     this.setupRealTimeSubscriptions();
@@ -512,7 +561,7 @@ export class SecurityMonitoringDashboardService {
    * Clean up old metrics cache entries
    */
   private cleanupMetricsCache(): void {
-    const cutoff = Date.now() - (5 * 60 * 1000); // 5 minutes ago
+    const cutoff = Date.now() - 5 * 60 * 1000; // 5 minutes ago
 
     for (const [key, metrics] of this.metricsCache.entries()) {
       if (metrics.timestamp.getTime() < cutoff) {
@@ -671,7 +720,10 @@ export class SecurityMonitoringDashboardService {
           threatTypes[type] = { count: 0, maxThreat: 0 };
         }
         threatTypes[type].count++;
-        threatTypes[type].maxThreat = Math.max(threatTypes[type].maxThreat, log.threat_level);
+        threatTypes[type].maxThreat = Math.max(
+          threatTypes[type].maxThreat,
+          log.threat_level,
+        );
       }
     });
 
@@ -683,7 +735,10 @@ export class SecurityMonitoringDashboardService {
     }));
   }
 
-  private async assessCompliance(logs: any[], clinicId?: string): Promise<{
+  private async assessCompliance(
+    logs: any[],
+    clinicId?: string,
+  ): Promise<{
     score: number;
     issues: string[];
     passedChecks: string[];
@@ -695,7 +750,9 @@ export class SecurityMonitoringDashboardService {
     // Check for high threat levels
     const highThreatLogs = logs.filter(log => log.threat_level > 70);
     if (highThreatLogs.length > 0) {
-      issues.push(`${highThreatLogs.length} high-threat security events detected`);
+      issues.push(
+        `${highThreatLogs.length} high-threat security events detected`,
+      );
       score -= 20;
     } else {
       passedChecks.push('No high-threat security events');
@@ -705,7 +762,9 @@ export class SecurityMonitoringDashboardService {
     const failedAccess = logs.filter(log => !log.access_granted);
     const failedAccessRate = failedAccess.length / logs.length;
     if (failedAccessRate > 0.1) {
-      issues.push(`High access denial rate: ${(failedAccessRate * 100).toFixed(1)}%`);
+      issues.push(
+        `High access denial rate: ${(failedAccessRate * 100).toFixed(1)}%`,
+      );
       score -= 15;
     } else {
       passedChecks.push('Acceptable access denial rate');
@@ -727,7 +786,10 @@ export class SecurityMonitoringDashboardService {
     };
   }
 
-  private async generateSecurityRecommendations(logs: any[], clinicId?: string): Promise<string[]> {
+  private async generateSecurityRecommendations(
+    logs: any[],
+    clinicId?: string,
+  ): Promise<string[]> {
     const recommendations: string[] = [];
 
     // Analyze patterns and generate recommendations
@@ -735,7 +797,9 @@ export class SecurityMonitoringDashboardService {
     const highThreatLogs = logs.filter(log => log.threat_level > 70);
 
     if (failedAccess.length > 0) {
-      recommendations.push('Review and update RLS policies for frequently denied access patterns');
+      recommendations.push(
+        'Review and update RLS policies for frequently denied access patterns',
+      );
     }
 
     if (highThreatLogs.length > 0) {
@@ -751,7 +815,9 @@ export class SecurityMonitoringDashboardService {
     });
 
     if (offHoursAccess.length > 0) {
-      recommendations.push('Consider implementing stricter controls for off-hours access');
+      recommendations.push(
+        'Consider implementing stricter controls for off-hours access',
+      );
     }
 
     // Check for suspicious IPs
@@ -762,9 +828,13 @@ export class SecurityMonitoringDashboardService {
       }
     });
 
-    const suspiciousIPs = Object.entries(ipCounts).filter(([, count]) => count > 100);
+    const suspiciousIPs = Object.entries(ipCounts).filter(
+      ([, count]) => count > 100,
+    );
     if (suspiciousIPs.length > 0) {
-      recommendations.push('Investigate high-frequency access patterns from specific IP addresses');
+      recommendations.push(
+        'Investigate high-frequency access patterns from specific IP addresses',
+      );
     }
 
     return recommendations;
@@ -772,19 +842,17 @@ export class SecurityMonitoringDashboardService {
 
   private async storeSecurityReport(report: SecurityReport): Promise<void> {
     try {
-      await this.supabase
-        .from('security_reports')
-        .insert({
-          id: report.id,
-          generated_at: report.generatedAt.toISOString(),
-          period_start: report.period.start.toISOString(),
-          period_end: report.period.end.toISOString(),
-          clinic_id: null, // Would be set if clinic-specific
-          summary: report.summary,
-          threats: report.threats,
-          compliance_score: report.compliance.score,
-          recommendations: report.recommendations,
-        });
+      await this.supabase.from('security_reports').insert({
+        id: report.id,
+        generated_at: report.generatedAt.toISOString(),
+        period_start: report.period.start.toISOString(),
+        period_end: report.period.end.toISOString(),
+        clinic_id: null, // Would be set if clinic-specific
+        summary: report.summary,
+        threats: report.threats,
+        compliance_score: report.compliance.score,
+        recommendations: report.recommendations,
+      });
     } catch (error) {
       console.error('Failed to store security report:', error);
     }
@@ -817,8 +885,10 @@ export class SecurityMonitoringDashboardService {
       const logs = data || [];
 
       // Group by date
-      const dateGroups: Record<string, { count: number; totalThreat: number; totalScore: number }> =
-        {};
+      const dateGroups: Record<
+        string,
+        { count: number; totalThreat: number; totalScore: number }
+      > = {};
 
       logs.forEach(log => {
         const date = new Date(log.timestamp).toISOString().split('T')[0];

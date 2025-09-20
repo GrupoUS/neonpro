@@ -310,26 +310,26 @@ The build system follows a **dependency-first approach** where packages build in
 
 ```typescript
 // Type-only imports (preferred for types)
-import type { Database } from '@neonpro/database';
-import type { Appointment, Patient } from '@neonpro/types';
+import type { Database } from "@neonpro/database";
+import type { Appointment, Patient } from "@neonpro/types";
 
 // Runtime imports
-import { PatientService } from '@neonpro/core-services';
-import { encryptPII } from '@neonpro/security';
-import { formatCurrency, formatDate } from '@neonpro/utils';
+import { PatientService } from "@neonpro/core-services";
+import { encryptPII } from "@neonpro/security";
+import { formatCurrency, formatDate } from "@neonpro/utils";
 ```
 
 **Local Imports** (Within same app/package):
 
 ```typescript
 // Relative imports for local files
-import { Header } from '../components/Header';
-import { useAuth } from '../hooks/useAuth';
+import { Header } from "../components/Header";
+import { useAuth } from "../hooks/useAuth";
 
 // Alias imports (configured in tsconfig.json)
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import type { AppRouter } from '@/types/router';
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import type { AppRouter } from "@/types/router";
 ```
 
 **Import Order Convention**:
@@ -533,11 +533,13 @@ apps/web/src/
 The NeonPro monorepo is optimized for production deployment on Vercel with the following considerations:
 
 **Build Configuration**:
+
 - Turborepo handles dependency-aware builds
 - Apps build in parallel after packages complete
 - Vercel deployment configured for Vite + TanStack Router stack
 
 **Package Distribution**:
+
 - `@neonpro/web` → Frontend application (Vercel static hosting)
 - `@neonpro/api` → Backend API (Vercel serverless functions)
 - Shared packages → Bundled into applications during build

@@ -38,7 +38,11 @@ export enum LGPDLegalBasis {
 export interface LGPDContext {
   // Data subject information
   dataSubjectId?: string;
-  dataSubjectType: 'patient' | 'healthcare_professional' | 'employee' | 'visitor';
+  dataSubjectType:
+    | 'patient'
+    | 'healthcare_professional'
+    | 'employee'
+    | 'visitor';
 
   // Data processing details
   processingPurpose: string[];
@@ -296,7 +300,9 @@ export class LGPDDataDetector {
       const fullPath = path ? `${path}.${key}` : key;
 
       // Check if field name indicates sensitive data
-      if (sensitiveNames.some(name => key.toLowerCase().includes(name.toLowerCase()))) {
+      if (
+        sensitiveNames.some(name => key.toLowerCase().includes(name.toLowerCase()))
+      ) {
         found.push(fullPath);
       }
 
@@ -360,9 +366,11 @@ export class LGPDConsentManager {
 
     // Check if consent is required for the data categories
     const requiresConsent = dataCategories.some(category =>
-      [LGPDDataCategory.PERSONAL, LGPDDataCategory.SENSITIVE, LGPDDataCategory.MEDICAL].includes(
-        category,
-      )
+      [
+        LGPDDataCategory.PERSONAL,
+        LGPDDataCategory.SENSITIVE,
+        LGPDDataCategory.MEDICAL,
+      ].includes(category)
     );
 
     if (requiresConsent) {
@@ -380,7 +388,9 @@ export class LGPDConsentManager {
       );
 
       if (uncoveredPurposes.length > 0) {
-        violations.push(`Consent does not cover purposes: ${uncoveredPurposes.join(', ')}`);
+        violations.push(
+          `Consent does not cover purposes: ${uncoveredPurposes.join(', ')}`,
+        );
       }
 
       // Check consent is not withdrawn
@@ -389,7 +399,10 @@ export class LGPDConsentManager {
       }
 
       // Check consent is not expired
-      if (consentRecord.expiresAt && new Date() > new Date(consentRecord.expiresAt)) {
+      if (
+        consentRecord.expiresAt
+        && new Date() > new Date(consentRecord.expiresAt)
+      ) {
         violations.push('Consent has expired');
       }
 
@@ -420,7 +433,11 @@ export class LGPDConsentManager {
     // Mock implementation - replace with actual database lookup
     return {
       id: `consent_${dataSubjectId}`,
-      scope: ['healthcare_treatment', 'appointment_management', 'communication'],
+      scope: [
+        'healthcare_treatment',
+        'appointment_management',
+        'communication',
+      ],
       obtainedAt: new Date().toISOString(),
       expiresAt: undefined,
       withdrawn: false,
@@ -584,12 +601,16 @@ export class LGPDAuditLogger {
       context: {
         ...context,
         // Anonymize sensitive identifiers for audit logs
-        dataSubjectId: context.dataSubjectId ? this.hashId(context.dataSubjectId) : undefined,
+        dataSubjectId: context.dataSubjectId
+          ? this.hashId(context.dataSubjectId)
+          : undefined,
       },
       details: {
         ...details,
         // Remove sensitive data from audit logs
-        userAgent: details.userAgent ? this.sanitizeUserAgent(details.userAgent) : undefined,
+        userAgent: details.userAgent
+          ? this.sanitizeUserAgent(details.userAgent)
+          : undefined,
       },
       lgpdCompliance: {
         auditRequired: true,
@@ -611,7 +632,7 @@ export class LGPDAuditLogger {
     let hash = 0;
     for (let i = 0; i < id.length; i++) {
       const char = id.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return `hashed_${Math.abs(hash).toString(16)}`;
@@ -632,7 +653,9 @@ export class LGPDAuditLogger {
 // Main LGPD Compliance Middleware
 // ============================================================================
 
-export function lgpdComplianceMiddleware(config: Partial<LGPDMiddlewareConfig> = {}) {
+export function lgpdComplianceMiddleware(
+  config: Partial<LGPDMiddlewareConfig> = {},
+) {
   const mergedConfig = { ...defaultLGPDConfig, ...config };
 
   return async (c: Context, next: Next) => {
@@ -673,7 +696,10 @@ export function lgpdComplianceMiddleware(config: Partial<LGPDMiddlewareConfig> =
         removedFields: [],
         pseudonymizedFields: [],
       };
-      if (mergedConfig.dataMinimization.enableAutomaticMinimization && dataDetection.detected) {
+      if (
+        mergedConfig.dataMinimization.enableAutomaticMinimization
+        && dataDetection.detected
+      ) {
         minimizationResult = LGPDDataMinimizer.minimizeData(
           requestData,
           lgpdContext.processingPurpose,
@@ -690,13 +716,21 @@ export function lgpdComplianceMiddleware(config: Partial<LGPDMiddlewareConfig> =
       // Create enriched request context
       const lgpdEnrichedRequest: LGPDEnrichedRequest = {
         lgpdContext,
-        personalDataDetected: dataDetection.categories.includes(LGPDDataCategory.PERSONAL),
-        sensitiveDataDetected: dataDetection.categories.includes(LGPDDataCategory.SENSITIVE),
-        medicalDataDetected: dataDetection.categories.includes(LGPDDataCategory.MEDICAL),
+        personalDataDetected: dataDetection.categories.includes(
+          LGPDDataCategory.PERSONAL,
+        ),
+        sensitiveDataDetected: dataDetection.categories.includes(
+          LGPDDataCategory.SENSITIVE,
+        ),
+        medicalDataDetected: dataDetection.categories.includes(
+          LGPDDataCategory.MEDICAL,
+        ),
         consentRequired: dataDetection.detected,
         auditRequired: lgpdContext.auditRequired || dataDetection.detected,
         dataMinimizationApplied: minimizationResult.removedFields.length > 0,
-        anonymizationRequired: dataDetection.categories.includes(LGPDDataCategory.MEDICAL),
+        anonymizationRequired: dataDetection.categories.includes(
+          LGPDDataCategory.MEDICAL,
+        ),
       };
 
       // Add LGPD context to request
@@ -717,39 +751,52 @@ export function lgpdComplianceMiddleware(config: Partial<LGPDMiddlewareConfig> =
             action: method,
             result: shouldBlock
               ? 'blocked'
-              : (consentValidation.violations.length > 0 ? 'warning' : 'allowed'),
+              : consentValidation.violations.length > 0
+              ? 'warning'
+              : 'allowed',
             violations: consentValidation.violations,
-            emergencyJustification: isEmergencyAccess ? 'Emergency medical access' : undefined,
+            emergencyJustification: isEmergencyAccess
+              ? 'Emergency medical access'
+              : undefined,
           },
         );
       }
 
       // Block request if non-compliant
       if (shouldBlock) {
-        return c.json({
-          error: 'LGPD_COMPLIANCE_VIOLATION',
-          message: 'Request blocked due to LGPD compliance violations',
-          violations: consentValidation.violations,
-          dataSubjectRights: {
-            access: 'You can request access to your personal data',
-            rectification: 'You can request correction of your personal data',
-            deletion: 'You can request deletion of your personal data',
-            portability: 'You can request a copy of your personal data',
-            objection: 'You can object to the processing of your personal data',
+        return c.json(
+          {
+            error: 'LGPD_COMPLIANCE_VIOLATION',
+            message: 'Request blocked due to LGPD compliance violations',
+            violations: consentValidation.violations,
+            dataSubjectRights: {
+              access: 'You can request access to your personal data',
+              rectification: 'You can request correction of your personal data',
+              deletion: 'You can request deletion of your personal data',
+              portability: 'You can request a copy of your personal data',
+              objection: 'You can object to the processing of your personal data',
+            },
+            contact: {
+              dpo: 'dpo@neonpro.com.br',
+              phone: '+55 11 9999-9999',
+              address: 'Data Protection Officer, NeonPro Healthcare Platform',
+            },
           },
-          contact: {
-            dpo: 'dpo@neonpro.com.br',
-            phone: '+55 11 9999-9999',
-            address: 'Data Protection Officer, NeonPro Healthcare Platform',
-          },
-        }, 403);
+          403,
+        );
       }
 
       // Add compliance headers
       c.header('X-LGPD-Compliant', 'true');
       c.header('X-LGPD-Data-Detected', dataDetection.detected.toString());
-      c.header('X-LGPD-Consent-Required', lgpdEnrichedRequest.consentRequired.toString());
-      c.header('X-LGPD-Processing-Purpose', lgpdContext.processingPurpose.join(','));
+      c.header(
+        'X-LGPD-Consent-Required',
+        lgpdEnrichedRequest.consentRequired.toString(),
+      );
+      c.header(
+        'X-LGPD-Processing-Purpose',
+        lgpdContext.processingPurpose.join(','),
+      );
       c.header('X-LGPD-Legal-Basis', lgpdContext.legalBasis);
 
       if (emergencyOverrideAllowed) {
@@ -795,7 +842,9 @@ export function lgpdComplianceMiddleware(config: Partial<LGPDMiddlewareConfig> =
           endpoint: c.req.url,
           action: 'middleware_error',
           result: 'blocked',
-          violations: [error instanceof Error ? error.message : 'Unknown error'],
+          violations: [
+            error instanceof Error ? error.message : 'Unknown error',
+          ],
         },
       );
 
@@ -803,10 +852,13 @@ export function lgpdComplianceMiddleware(config: Partial<LGPDMiddlewareConfig> =
 
       // Don't block request on middleware errors unless configured to do so
       if (mergedConfig.enforcement.blockNonCompliantRequests) {
-        return c.json({
-          error: 'LGPD_MIDDLEWARE_ERROR',
-          message: 'LGPD compliance check failed',
-        }, 500);
+        return c.json(
+          {
+            error: 'LGPD_MIDDLEWARE_ERROR',
+            message: 'LGPD compliance check failed',
+          },
+          500,
+        );
       }
 
       await next();
@@ -821,7 +873,11 @@ export function lgpdComplianceMiddleware(config: Partial<LGPDMiddlewareConfig> =
 /**
  * Build LGPD context from request
  */
-async function buildLGPDContext(c: Context, body: any, query: any): Promise<LGPDContext> {
+async function buildLGPDContext(
+  c: Context,
+  body: any,
+  query: any,
+): Promise<LGPDContext> {
   const headers = Object.fromEntries(c.req.headers.entries());
   const url = new URL(c.req.url);
 
@@ -831,12 +887,19 @@ async function buildLGPDContext(c: Context, body: any, query: any): Promise<LGPD
   const professionalId = headers['x-professional-id'] || headers['x-user-id'];
 
   // Determine data subject type
-  let dataSubjectType: 'patient' | 'healthcare_professional' | 'employee' | 'visitor' = 'visitor';
+  let dataSubjectType:
+    | 'patient'
+    | 'healthcare_professional'
+    | 'employee'
+    | 'visitor' = 'visitor';
   if (patientId) dataSubjectType = 'patient';
   else if (professionalId) dataSubjectType = 'healthcare_professional';
 
   // Determine processing purpose based on endpoint
-  const processingPurpose = determineProcessingPurpose(url.pathname, c.req.method);
+  const processingPurpose = determineProcessingPurpose(
+    url.pathname,
+    c.req.method,
+  );
 
   // Determine legal basis
   const legalBasis = determineLegalBasis(processingPurpose, dataSubjectType);
@@ -861,14 +924,19 @@ async function buildLGPDContext(c: Context, body: any, query: any): Promise<LGPD
       emergencyAccess: headers['x-emergency-access'] === 'true',
     },
     auditRequired: true,
-    auditLevel: dataCategories.includes(LGPDDataCategory.MEDICAL) ? 'detailed' : 'standard',
+    auditLevel: dataCategories.includes(LGPDDataCategory.MEDICAL)
+      ? 'detailed'
+      : 'standard',
   };
 }
 
 /**
  * Determine processing purpose from endpoint
  */
-function determineProcessingPurpose(pathname: string, method: string): string[] {
+function determineProcessingPurpose(
+  pathname: string,
+  method: string,
+): string[] {
   const purposes: string[] = [];
 
   if (pathname.includes('/patients')) {
@@ -886,7 +954,10 @@ function determineProcessingPurpose(pathname: string, method: string): string[] 
     purposes.push('billing');
   }
 
-  if (pathname.includes('/communication') || pathname.includes('/notification')) {
+  if (
+    pathname.includes('/communication')
+    || pathname.includes('/notification')
+  ) {
     purposes.push('communication');
   }
 
@@ -905,7 +976,10 @@ function determineProcessingPurpose(pathname: string, method: string): string[] 
 /**
  * Determine legal basis for processing
  */
-function determineLegalBasis(purposes: string[], _dataSubjectType: string): LGPDLegalBasis {
+function determineLegalBasis(
+  purposes: string[],
+  _dataSubjectType: string,
+): LGPDLegalBasis {
   // Emergency care - vital interests
   if (purposes.includes('emergency_care')) {
     return LGPDLegalBasis.VITAL_INTERESTS;
@@ -933,7 +1007,11 @@ function determineLegalBasis(purposes: string[], _dataSubjectType: string): LGPD
 /**
  * Determine data categories from endpoint and data
  */
-function determineDataCategories(pathname: string, body: any, query: any): LGPDDataCategory[] {
+function determineDataCategories(
+  pathname: string,
+  body: any,
+  query: any,
+): LGPDDataCategory[] {
   const categories: LGPDDataCategory[] = [];
 
   // Medical endpoints always involve medical data

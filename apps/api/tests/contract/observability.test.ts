@@ -153,8 +153,12 @@ describe('Contract: Observability API', () => {
       expect(rateLimitedResponse).toBeDefined();
 
       if (rateLimitedResponse) {
-        expect(rateLimitedResponse.headers.get('X-RateLimit-Limit')).toBeTruthy();
-        expect(rateLimitedResponse.headers.get('X-RateLimit-Remaining')).toBe('0');
+        expect(
+          rateLimitedResponse.headers.get('X-RateLimit-Limit'),
+        ).toBeTruthy();
+        expect(rateLimitedResponse.headers.get('X-RateLimit-Remaining')).toBe(
+          '0',
+        );
         expect(rateLimitedResponse.headers.get('Retry-After')).toBeTruthy();
       }
     });
@@ -274,7 +278,9 @@ describe('Contract: Observability API', () => {
         metric_id: expect.any(String),
         status: 'recorded',
         analysis: expect.objectContaining({
-          performance_grade: expect.stringMatching(/^(excellent|good|needs_improvement|poor)$/),
+          performance_grade: expect.stringMatching(
+            /^(excellent|good|needs_improvement|poor)$/,
+          ),
           healthcare_compliance_score: expect.any(Number),
         }),
       });

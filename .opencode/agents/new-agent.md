@@ -244,8 +244,7 @@ ACTIVATION_TRIGGERS:
 COLLABORATION_WORKFLOWS:
   workflow_1:
     name: "[Workflow name]"
-    sequence:
-      1. "[Agent 1] → [Specific task/responsibility]"
+    sequence: 1. "[Agent 1] → [Specific task/responsibility]"
       2. "[Agent 2] → [Specific task/responsibility]"
       3. "[This Agent] → [Specific task/responsibility]"
       4. "[Agent 4] → [Specific task/responsibility]"
@@ -253,8 +252,7 @@ COLLABORATION_WORKFLOWS:
 
   workflow_2:
     name: "[Workflow name]"
-    sequence:
-      1. "[This Agent] → [Specific task/responsibility]"
+    sequence: 1. "[This Agent] → [Specific task/responsibility]"
       2. "[Agent 2] → [Specific task/responsibility]"
       3. "[Agent 3] → [Specific task/responsibility]"
     output: "[Expected workflow outcome]"
@@ -295,6 +293,7 @@ KNOWLEDGE_OPERATIONS:
 ### **Termination Criteria**
 
 **Only stop when:**
+
 - User query is 100% resolved
 - All success criteria are met
 - Quality validation is complete (≥9.5/10)

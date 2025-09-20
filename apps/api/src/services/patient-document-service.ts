@@ -103,7 +103,9 @@ export class PatientDocumentService {
       });
 
     if (uploadRes.error) {
-      throw new Error(`Falha ao armazenar documento: ${uploadRes.error.message}`);
+      throw new Error(
+        `Falha ao armazenar documento: ${uploadRes.error.message}`,
+      );
     }
 
     // 2. Insert metadata row
@@ -141,24 +143,31 @@ export class PatientDocumentService {
 
     // 3. Audit trail (non-blocking)
     if (this.audit) {
-      this.audit.logActivity({
-        userId: params.uploadedBy,
-        action: 'upload',
-        resourceType: 'patient_document',
-        resourceId: documentId,
-        details: {
-          patientId,
-          mimeType,
-          sizeBytes: size,
-          checksum: checksum_sha256,
-        },
-      }).catch(_error => {/* swallow audit errors */});
+      this.audit
+        .logActivity({
+          userId: params.uploadedBy,
+          action: 'upload',
+          resourceType: 'patient_document',
+          resourceId: documentId,
+          details: {
+            patientId,
+            mimeType,
+            sizeBytes: size,
+            checksum: checksum_sha256,
+          },
+        })
+        .catch(_error => {
+          /* swallow audit errors */
+        });
     }
 
     return { success: true, data: dto };
   }
 
-  async getDocument(_documentId: string, _userId: string): Promise<PatientDocumentDTO | null> {
+  async getDocument(
+    _documentId: string,
+    _userId: string,
+  ): Promise<PatientDocumentDTO | null> {
     console.warn('In-memory mode: getDocument not implemented');
     return null;
   }

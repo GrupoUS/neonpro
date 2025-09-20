@@ -1,21 +1,26 @@
 # Implementation Planning Workflow
 
 ## Description
+
 Execute implementation planning workflow using plan template to generate design artifacts with constitutional compliance for NeonPro healthcare platform.
 
 ## Category
+
 Specification
 
 ## Complexity
+
 High
 
 ## MCP Tools Required
+
 - desktop-commander
 - archon
 
 ## Execution Flow
 
 ### Phase 1: Initialization
+
 1. **Setup Script Execution**
    - Execute setup script: `.specify/scripts/bash/setup-plan.sh --json`
    - Parse JSON output for paths (FEATURE_SPEC, IMPL_PLAN, SPECS_DIR, BRANCH)
@@ -29,6 +34,7 @@ High
    - Ensure constitutional documents are accessible
 
 ### Phase 2: Analysis and Preparation
+
 1. **Feature Specification Analysis**
    - Read feature specification from FEATURE_SPEC path
    - Extract functional and non-functional requirements
@@ -48,6 +54,7 @@ High
    - Prepare for template execution
 
 ### Phase 3: Template Execution
+
 1. **Template Phase Execution**
    - Execute template main function steps 1-10
    - Follow template's execution flow and error handling
@@ -67,6 +74,7 @@ High
    - Log any issues or deviations
 
 ### Phase 4: Artifact Generation
+
 1. **Phase 0 Artifact: Research**
    - Generate research.md with comprehensive research findings
    - Include technology analysis and justification
@@ -86,6 +94,7 @@ High
    - Verify observability and monitoring considerations
 
 ### Phase 5: Verification and Validation
+
 1. **Progress Tracking Verification**
    - Examine template's progress tracking section
    - Verify all phases are marked as complete
@@ -105,6 +114,7 @@ High
    - Ensure no critical issues remain unresolved
 
 ### Phase 6: Reporting and Documentation
+
 1. **Completion Report Generation**
    - Generate completion report with outputs and status
    - Include branch name, file paths, and generated artifacts
@@ -118,12 +128,14 @@ High
    - Enable tracking and monitoring capabilities
 
 ## Input Parameters
+
 - **implementation_details**: User-provided implementation details and requirements
 - **compliance_level**: Healthcare compliance strictness level (standard, enhanced, strict)
 - **architecture_constraints**: Specific architectural constraints and requirements
 - **timeline_requirements**: Development timeline and milestone requirements
 
 ## Output Requirements
+
 - **research.md**: Comprehensive research findings and analysis
 - **data-model.md**: Complete data model design with relationships
 - **contracts/**: API contracts and interface definitions
@@ -133,6 +145,7 @@ High
 - **completion_report**: Execution summary and next steps
 
 ## Quality Gates
+
 - **Template Execution**: All template phases completed successfully
 - **Artifact Generation**: All required artifacts generated in correct locations
 - **Constitutional Compliance**: All artifacts follow constitutional principles
@@ -142,6 +155,7 @@ High
 - **Documentation**: Complete documentation with clear guidance
 
 ## Error Handling
+
 - **Setup Script Failure**: Abort with JSON parsing error and recovery steps
 - **File Reading Failure**: Abort with file access error and specific file details
 - **Template Execution Failure**: Follow template's error handling and gate checks
@@ -149,6 +163,7 @@ High
 - **Constitutional Violations**: Report specific violations and require correction
 
 ## Success Criteria
+
 - **Template Execution**: All template phases completed successfully with validation
 - **Artifacts Generated**: All required design artifacts created and validated
 - **Implementation Plan**: Complete implementation plan with technical context updated
@@ -158,6 +173,7 @@ High
 - **Branch Management**: Development branch prepared and ready for implementation
 
 ## Constitutional Compliance
+
 - **KISS/YAGNI**: Implementation plan is simple and necessary, no over-engineering
 - **Test-First**: All components have test requirements and validation criteria
 - **Architecture**: Design follows established monorepo patterns and boundaries
@@ -165,6 +181,7 @@ High
 - **Observability**: Monitoring and logging requirements included in design
 
 ## Integration Points
+
 - **Desktop Commander**: File system operations, script execution, and artifact generation
 - **Archon**: Persistent storage of implementation plans and design artifacts
 - **Serena**: Code analysis and validation for design completeness and compliance

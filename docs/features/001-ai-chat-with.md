@@ -3,12 +3,14 @@
 Last updated: 2025-09-13
 
 Overview
+
 - Adds AI chat endpoints aligned with specs in `specs/001-ai-chat-with/`
 - Streaming chat with provider failover and a deterministic mock mode for tests
 - Explanation summary endpoint (privacy-preserving reasoning summary)
 - Clinical/Finance tools minimal contracts (overdue invoices, new treatments, patient balance)
 
 Endpoints (prefix `/v1`)
+
 - POST `/ai-chat/stream` — Streams text with metadata headers
   - Body: `{ messages?: UIMessage[], text?: string, presetId?: string, params?: Record<string,any>, locale?: string, sessionId: string, model?: string }`
   - Headers in response: `X-Chat-Started-At`, `X-Chat-Model`, `X-Data-Freshness`
@@ -20,11 +22,13 @@ Endpoints (prefix `/v1`)
 - POST `/tools/clinical/patient/balance` — Gets patient balance (consent-aware)
 
 Security & Compliance
+
 - PII redaction for logs (CPF/CNPJ/phone/email)
 - Console audit trail for chat interactions with timestamp, sessionId, locale
 - Explanation summary avoids raw prompts or PII
 
 Testing
+
 - Contract tests: `apps/api/tests/contract/*`
   - Chat: exercises `/v1/ai-chat/stream?mock=true` and asserts headers/text
   - Explanation & tools: minimal GREEN payloads asserted
@@ -33,6 +37,7 @@ Testing
   - `pnpm --filter @neonpro/api type-check`
 
 Notes
+
 - UI hook/components already present; wiring to new stream headers can be added later
 - Future phases: RLS enforcement, consent checks from DB, full audit pipeline
 
@@ -60,11 +65,11 @@ End-to-end guidance for implementing NeonPro's AI chat capable of answering clin
 
 ## Data Flow
 
-1) User submits message → `useChat` posts to `/api/chat`.
-2) Server converts UI messages → model messages; runs `streamText` with tools.
-3) Tools call service layer functions that enforce auth + RLS.
-4) Streamed parts (text/data/tool states) render in UI; metadata tracks model/tokens.
-5) On finish, chat history (UIMessage[]) is persisted; audit log recorded.
+1. User submits message → `useChat` posts to `/api/chat`.
+2. Server converts UI messages → model messages; runs `streamText` with tools.
+3. Tools call service layer functions that enforce auth + RLS.
+4. Streamed parts (text/data/tool states) render in UI; metadata tracks model/tokens.
+5. On finish, chat history (UIMessage[]) is persisted; audit log recorded.
 
 ## Core Contracts
 
@@ -76,25 +81,26 @@ End-to-end guidance for implementing NeonPro's AI chat capable of answering clin
 ## Minimal Server Route (Hono + AI SDK v5)
 
 ```ts
-import { Hono } from 'hono';
-import { openai } from '@ai-sdk/openai';
-import { streamText, convertToModelMessages } from 'ai';
-import type { UIMessage } from 'ai';
+import { Hono } from "hono";
+import { openai } from "@ai-sdk/openai";
+import { streamText, convertToModelMessages } from "ai";
+import type { UIMessage } from "ai";
 
 type MyUIMessage = UIMessage;
 const app = new Hono();
 
-app.post('/api/chat', async (c) => {
+app.post("/api/chat", async (c) => {
   const { messages } = (await c.req.json()) as { messages: MyUIMessage[] };
 
   const result = await streamText({
-    model: openai('gpt-4o-mini'),
+    model: openai("gpt-4o-mini"),
     messages: convertToModelMessages(messages),
-    onError: ({ error }) => console.error('stream error', error),
+    onError: ({ error }) => console.error("stream error", error),
   });
 
   return result.toUIMessageStreamResponse({
-    messageMetadata: ({ part }) => (part.type === 'start' ? { createdAt: Date.now() } : undefined),
+    messageMetadata: ({ part }) =>
+      part.type === "start" ? { createdAt: Date.now() } : undefined,
   });
 });
 
@@ -104,13 +110,14 @@ export default app;
 ## Minimal Client (React)
 
 ```tsx
-import { useChat } from 'ai/react';
-import type { UIMessage } from 'ai';
+import { useChat } from "ai/react";
+import type { UIMessage } from "ai";
 
 type MyUIMessage = UIMessage;
 
 export function Chat() {
-  const { messages, input, setInput, sendMessage, isLoading } = useChat<MyUIMessage>({ api: '/api/chat' });
+  const { messages, input, setInput, sendMessage, isLoading } =
+    useChat<MyUIMessage>({ api: "/api/chat" });
   return (
     <form
       onSubmit={(e) => {
@@ -118,7 +125,11 @@ export function Chat() {
         if (input.trim()) sendMessage({ text: input });
       }}
     >
-      <ul>{messages.map((m) => (<li key={m.id}>{m.display || m.role}</li>))}</ul>
+      <ul>
+        {messages.map((m) => (
+          <li key={m.id}>{m.display || m.role}</li>
+        ))}
+      </ul>
       <input value={input} onChange={(e) => setInput(e.target.value)} />
       <button disabled={isLoading}>Send</button>
     </form>
@@ -129,18 +140,21 @@ export function Chat() {
 ## Example Tool (DB-Aware)
 
 ```ts
-import { tool } from 'ai';
-import { z } from 'zod';
-import { PatientService } from '@neonpro/core-services';
+import { tool } from "ai";
+import { z } from "zod";
+import { PatientService } from "@neonpro/core-services";
 
 export const getPatientBalance = tool({
-  description: 'Get patient outstanding balance by patientId',
+  description: "Get patient outstanding balance by patientId",
   inputSchema: z.object({ patientId: z.string().uuid() }),
   outputSchema: z.object({ currency: z.string(), balance: z.number() }),
   execute: async ({ patientId }, { user }) => {
     // user contains auth context injected by your server
     const { clinicId, userId } = user;
-    const result = await PatientService.getBalance({ userId, clinicId }, { patientId });
+    const result = await PatientService.getBalance(
+      { userId, clinicId },
+      { patientId },
+    );
     return result; // must conform to outputSchema
   },
 });
@@ -167,6 +181,7 @@ export const getPatientBalance = tool({
 - Integration: chat route streaming, tool invocation paths (MSW mocks for providers), RLS behavior.
 - E2E: user flows for typical clinic questions; ensure no PII leaks; consent gating.
 - Commands:
+
 ```bash
 pnpm --filter @neonpro/web test
 pnpm --filter @neonpro/web type-check

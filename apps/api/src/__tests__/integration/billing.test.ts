@@ -51,21 +51,21 @@ describe('Billing API', () => {
           {
             description: 'Consulta médica especializada',
             quantity: 1,
-            unitPrice: 150.00,
+            unitPrice: 150.0,
             taxRate: 0.15,
             cbhpmCode: '10101012',
           },
           {
             description: 'Exame complementar',
             quantity: 1,
-            unitPrice: 80.00,
-            taxRate: 0.10,
+            unitPrice: 80.0,
+            taxRate: 0.1,
             susCode: '0201010010',
           },
         ],
-        patientResponsibility: 100.00,
-        insuranceCoverage: 130.00,
-        discountAmount: 0.00,
+        patientResponsibility: 100.0,
+        insuranceCoverage: 130.0,
+        discountAmount: 0.0,
         notes: 'Fatura gerada automaticamente',
       };
 
@@ -79,7 +79,7 @@ describe('Billing API', () => {
       expect(data.success).toBe(true);
       expect(data.data).toHaveProperty('id');
       expect(data.data).toHaveProperty('invoiceNumber');
-      expect(data.data.totalAmount).toBe(230.00);
+      expect(data.data.totalAmount).toBe(230.0);
       expect(data.data.status).toBe('pending');
 
       testInvoiceId = data.data.id;
@@ -93,12 +93,12 @@ describe('Billing API', () => {
           {
             description: 'Consulta com ISS',
             quantity: 1,
-            unitPrice: 100.00,
+            unitPrice: 100.0,
             taxRate: 0.05, // 5% ISS
           },
         ],
-        patientResponsibility: 100.00,
-        insuranceCoverage: 0.00,
+        patientResponsibility: 100.0,
+        insuranceCoverage: 0.0,
       };
 
       const res = await testClient(app).billing.invoices.$post({
@@ -108,8 +108,8 @@ describe('Billing API', () => {
 
       expect(res.status).toBe(201);
       const data = await res.json();
-      expect(data.data.taxAmount).toBe(5.00);
-      expect(data.data.netAmount).toBe(95.00);
+      expect(data.data.taxAmount).toBe(5.0);
+      expect(data.data.netAmount).toBe(95.0);
     });
 
     it('should validate required fields', async () => {
@@ -137,12 +137,12 @@ describe('Billing API', () => {
           {
             description: 'Consulta não autorizada',
             quantity: 1,
-            unitPrice: 100.00,
+            unitPrice: 100.0,
             taxRate: 0.05,
           },
         ],
-        patientResponsibility: 100.00,
-        insuranceCoverage: 0.00,
+        patientResponsibility: 100.0,
+        insuranceCoverage: 0.0,
       };
 
       const res = await testClient(app).billing.invoices.$post({
@@ -163,12 +163,12 @@ describe('Billing API', () => {
           {
             description: 'Consulta de teste',
             quantity: 1,
-            unitPrice: 120.00,
-            taxRate: 0.10,
+            unitPrice: 120.0,
+            taxRate: 0.1,
           },
         ],
-        patientResponsibility: 120.00,
-        insuranceCoverage: 0.00,
+        patientResponsibility: 120.0,
+        insuranceCoverage: 0.0,
       };
 
       const res = await testClient(app).billing.invoices.$post({
@@ -223,12 +223,12 @@ describe('Billing API', () => {
             {
               description: 'Consulta 1',
               quantity: 1,
-              unitPrice: 100.00,
+              unitPrice: 100.0,
               taxRate: 0.05,
             },
           ],
-          patientResponsibility: 100.00,
-          insuranceCoverage: 0.00,
+          patientResponsibility: 100.0,
+          insuranceCoverage: 0.0,
         },
         {
           patientId: mockPatient.id,
@@ -237,12 +237,12 @@ describe('Billing API', () => {
             {
               description: 'Exame 1',
               quantity: 1,
-              unitPrice: 200.00,
-              taxRate: 0.10,
+              unitPrice: 200.0,
+              taxRate: 0.1,
             },
           ],
-          patientResponsibility: 150.00,
-          insuranceCoverage: 50.00,
+          patientResponsibility: 150.0,
+          insuranceCoverage: 50.0,
         },
       ];
 
@@ -299,12 +299,12 @@ describe('Billing API', () => {
           {
             description: 'Consulta para pagamento',
             quantity: 1,
-            unitPrice: 150.00,
+            unitPrice: 150.0,
             taxRate: 0.08,
           },
         ],
-        patientResponsibility: 150.00,
-        insuranceCoverage: 0.00,
+        patientResponsibility: 150.0,
+        insuranceCoverage: 0.0,
       };
 
       const res = await testClient(app).billing.invoices.$post({
@@ -318,7 +318,7 @@ describe('Billing API', () => {
 
     it('should process a payment', async () => {
       const paymentData = {
-        amount: 150.00,
+        amount: 150.0,
         paymentMethod: 'credit_card',
         transactionId: 'txn_123456789',
         notes: 'Pagamento via cartão de crédito',
@@ -333,14 +333,14 @@ describe('Billing API', () => {
       expect(res.status).toBe(201);
       const data = await res.json();
       expect(data.data).toHaveProperty('id');
-      expect(data.data.amount).toBe(150.00);
+      expect(data.data.amount).toBe(150.0);
       expect(data.data.paymentMethod).toBe('credit_card');
       expect(data.data.status).toBe('completed');
     });
 
     it('should process partial payment', async () => {
       const paymentData = {
-        amount: 75.00, // Half of the invoice amount
+        amount: 75.0, // Half of the invoice amount
         paymentMethod: 'cash',
         notes: 'Pagamento parcial',
       };
@@ -353,7 +353,7 @@ describe('Billing API', () => {
 
       expect(res.status).toBe(201);
       const data = await res.json();
-      expect(data.data.amount).toBe(75.00);
+      expect(data.data.amount).toBe(75.0);
 
       // Check that invoice is still partially paid
       const invoiceRes = await testClient(app).billing.invoices[':id'].$get({
@@ -367,7 +367,7 @@ describe('Billing API', () => {
 
     it('should handle installment payments', async () => {
       const paymentData = {
-        amount: 150.00,
+        amount: 150.0,
         paymentMethod: 'credit_card',
         installments: 3,
         notes: 'Pagamento parcelado em 3x',
@@ -382,7 +382,7 @@ describe('Billing API', () => {
       expect(res.status).toBe(201);
       const data = await res.json();
       expect(data.data.installments).toBe(3);
-      expect(data.data.installmentAmount).toBe(50.00);
+      expect(data.data.installmentAmount).toBe(50.0);
     });
   });
 
@@ -396,12 +396,12 @@ describe('Billing API', () => {
           {
             description: 'Consulta com histórico',
             quantity: 1,
-            unitPrice: 100.00,
+            unitPrice: 100.0,
             taxRate: 0.05,
           },
         ],
-        patientResponsibility: 100.00,
-        insuranceCoverage: 0.00,
+        patientResponsibility: 100.0,
+        insuranceCoverage: 0.0,
       };
 
       const invoiceRes = await testClient(app).billing.invoices.$post({
@@ -413,7 +413,7 @@ describe('Billing API', () => {
 
       // Add a payment
       const paymentData = {
-        amount: 50.00,
+        amount: 50.0,
         paymentMethod: 'cash',
         notes: 'Primeiro pagamento',
       };
@@ -565,12 +565,12 @@ describe('Billing API', () => {
           {
             description: 'Consulta para teste de status',
             quantity: 1,
-            unitPrice: 200.00,
-            taxRate: 0.10,
+            unitPrice: 200.0,
+            taxRate: 0.1,
           },
         ],
-        patientResponsibility: 200.00,
-        insuranceCoverage: 0.00,
+        patientResponsibility: 200.0,
+        insuranceCoverage: 0.0,
       };
 
       const res = await testClient(app).billing.invoices.$post({
@@ -583,12 +583,14 @@ describe('Billing API', () => {
 
     it('should update invoice status to paid when full payment received', async () => {
       const paymentData = {
-        amount: 200.00,
+        amount: 200.0,
         paymentMethod: 'bank_transfer',
         notes: 'Pagamento completo',
       };
 
-      const paymentRes = await testClient(app).billing.invoices[':id'].payments.$post({
+      const paymentRes = await testClient(app).billing.invoices[
+        ':id'
+      ].payments.$post({
         param: { id: testInvoiceId },
         json: paymentData,
         header: authHeaders,
@@ -619,12 +621,12 @@ describe('Billing API', () => {
           {
             description: 'Consulta com auditoria',
             quantity: 1,
-            unitPrice: 100.00,
+            unitPrice: 100.0,
             taxRate: 0.05,
           },
         ],
-        patientResponsibility: 100.00,
-        insuranceCoverage: 0.00,
+        patientResponsibility: 100.0,
+        insuranceCoverage: 0.0,
       };
 
       const res = await testClient(app).billing.invoices.$post({
@@ -648,12 +650,12 @@ describe('Billing API', () => {
           {
             description: 'Consulta com dados sensíveis',
             quantity: 1,
-            unitPrice: 150.00,
+            unitPrice: 150.0,
             taxRate: 0.08,
           },
         ],
-        patientResponsibility: 150.00,
-        insuranceCoverage: 0.00,
+        patientResponsibility: 150.0,
+        insuranceCoverage: 0.0,
         notes: 'Informações confidenciais do paciente',
       };
 

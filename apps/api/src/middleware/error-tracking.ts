@@ -126,9 +126,12 @@ export function errorTrackingMiddleware() {
 
     try {
       // Execute the request within the span context
-      await otelContext.with(trace.setSpan(otelContext.active(), span), async () => {
-        await next();
-      });
+      await otelContext.with(
+        trace.setSpan(otelContext.active(), span),
+        async () => {
+          await next();
+        },
+      );
 
       // Record successful request metrics
       const duration = Date.now() - startTime;
@@ -240,7 +243,7 @@ async function handleError(
     scope.setTag('component', 'api');
     scope.setTag('errorType', errorType);
     scope.setTag('severity', severity);
-    scope.setLevel(severity === 'critical' ? 'fatal' : severity as any);
+    scope.setLevel(severity === 'critical' ? 'fatal' : (severity as any));
 
     // Add healthcare context (without sensitive data)
     scope.setContext('healthcare', {
@@ -312,7 +315,12 @@ export function setupGlobalErrorHandlers(): void {
   });
 
   process.on('unhandledRejection', (reason, promise) => {
-    console.error('Unhandled Promise Rejection at:', promise, 'reason:', reason);
+    console.error(
+      'Unhandled Promise Rejection at:',
+      promise,
+      'reason:',
+      reason,
+    );
 
     Sentry.withScope(scope => {
       scope.setTag('component', 'global');

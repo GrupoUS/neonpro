@@ -61,17 +61,26 @@ const ApiKeySchema = z.object({
   isActive: z.boolean(),
   lastUsed: z.string().optional(),
   usageCount: z.number().min(0),
-  rateLimit: z.object({
-    requestsPerMinute: z.number().min(1),
-    requestsPerHour: z.number().min(1),
-    requestsPerDay: z.number().min(1),
-  }).optional(),
-  lgpdConsent: z.object({
-    hasConsent: z.boolean(),
-    legalBasis: z.enum(['consent', 'contract', 'legal_obligation', 'vital_interests']),
-    consentTimestamp: z.string(),
-    purposes: z.array(z.string()),
-  }).optional(),
+  rateLimit: z
+    .object({
+      requestsPerMinute: z.number().min(1),
+      requestsPerHour: z.number().min(1),
+      requestsPerDay: z.number().min(1),
+    })
+    .optional(),
+  lgpdConsent: z
+    .object({
+      hasConsent: z.boolean(),
+      legalBasis: z.enum([
+        'consent',
+        'contract',
+        'legal_obligation',
+        'vital_interests',
+      ]),
+      consentTimestamp: z.string(),
+      purposes: z.array(z.string()),
+    })
+    .optional(),
 });
 
 const ApiKeyCreateRequestSchema = z.object({
@@ -80,13 +89,20 @@ const ApiKeyCreateRequestSchema = z.object({
   permissions: z.array(z.enum(['read', 'write', 'delete', 'admin'])).min(1),
   metadata: z.record(z.any()).optional(),
   expiresAt: z.string().optional(),
-  rateLimit: z.object({
-    requestsPerMinute: z.number().min(1).max(10000),
-    requestsPerHour: z.number().min(1).max(100000),
-    requestsPerDay: z.number().min(1).max(1000000),
-  }).optional(),
+  rateLimit: z
+    .object({
+      requestsPerMinute: z.number().min(1).max(10000),
+      requestsPerHour: z.number().min(1).max(100000),
+      requestsPerDay: z.number().min(1).max(1000000),
+    })
+    .optional(),
   lgpdConsent: z.object({
-    legalBasis: z.enum(['consent', 'contract', 'legal_obligation', 'vital_interests']),
+    legalBasis: z.enum([
+      'consent',
+      'contract',
+      'legal_obligation',
+      'vital_interests',
+    ]),
     purposes: z.array(z.string()),
   }),
 });
@@ -98,11 +114,13 @@ const ApiKeyUpdateRequestSchema = z.object({
   metadata: z.record(z.any()).optional(),
   expiresAt: z.string().optional(),
   isActive: z.boolean().optional(),
-  rateLimit: z.object({
-    requestsPerMinute: z.number().min(1).max(10000),
-    requestsPerHour: z.number().min(1).max(100000),
-    requestsPerDay: z.number().min(1).max(1000000),
-  }).optional(),
+  rateLimit: z
+    .object({
+      requestsPerMinute: z.number().min(1).max(10000),
+      requestsPerHour: z.number().min(1).max(100000),
+      requestsPerDay: z.number().min(1).max(1000000),
+    })
+    .optional(),
 });
 
 const RateLimitSchema = z.object({
@@ -121,11 +139,15 @@ const QuotaSchema = z.object({
   period: z.enum(['daily', 'monthly', 'yearly']),
   resetTime: z.string(),
   exceeded: z.boolean(),
-  features: z.record(z.object({
-    used: z.number().min(0),
-    limit: z.number().min(1),
-    remaining: z.number().min(0),
-  })).optional(),
+  features: z
+    .record(
+      z.object({
+        used: z.number().min(0),
+        limit: z.number().min(1),
+        remaining: z.number().min(0),
+      }),
+    )
+    .optional(),
 });
 
 const SecurityPolicySchema = z.object({
@@ -134,21 +156,25 @@ const SecurityPolicySchema = z.object({
   description: z.string().optional(),
   version: z.string(),
   isActive: z.boolean(),
-  rules: z.array(z.object({
-    type: z.enum(['csp', 'cors', 'rate_limit', 'auth', 'encryption']),
-    config: z.record(z.any()),
-    priority: z.number().min(1).max(10),
-  })),
+  rules: z.array(
+    z.object({
+      type: z.enum(['csp', 'cors', 'rate_limit', 'auth', 'encryption']),
+      config: z.record(z.any()),
+      priority: z.number().min(1).max(10),
+    }),
+  ),
   createdAt: z.string(),
   updatedAt: z.string(),
   lastApplied: z.string().optional(),
-  compliance: z.object({
-    lgpd: z.boolean(),
-    anvisa: z.boolean(),
-    cfm: z.boolean(),
-    gdpr: z.boolean(),
-    hipaa: z.boolean(),
-  }).optional(),
+  compliance: z
+    .object({
+      lgpd: z.boolean(),
+      anvisa: z.boolean(),
+      cfm: z.boolean(),
+      gdpr: z.boolean(),
+      hipaa: z.boolean(),
+    })
+    .optional(),
 });
 
 const ErrorResponseSchema = z.object({
@@ -784,7 +810,9 @@ describe('API Management Contract Tests', () => {
 
       (validateSecurityPolicy as Mock).mockResolvedValue(expectedPolicies);
 
-      const response = await client.api.management['security-policies'].$get({});
+      const response = await client.api.management['security-policies'].$get(
+        {},
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -801,9 +829,13 @@ describe('API Management Contract Tests', () => {
     it('should include healthcare compliance information', async () => {
       const policyWithCompliance = generateValidSecurityPolicy();
 
-      (validateSecurityPolicy as Mock).mockResolvedValue([policyWithCompliance]);
+      (validateSecurityPolicy as Mock).mockResolvedValue([
+        policyWithCompliance,
+      ]);
 
-      const response = await client.api.management['security-policies'].$get({});
+      const response = await client.api.management['security-policies'].$get(
+        {},
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -820,7 +852,9 @@ describe('API Management Contract Tests', () => {
 
       (validateSecurityPolicy as Mock).mockResolvedValue([policy]);
 
-      const response = await client.api.management['security-policies'].$get({});
+      const response = await client.api.management['security-policies'].$get(
+        {},
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -830,7 +864,9 @@ describe('API Management Contract Tests', () => {
 
       if (policyData.rules.length > 0) {
         const rule = policyData.rules[0];
-        expect(['csp', 'cors', 'rate_limit', 'auth', 'encryption']).toContain(rule.type);
+        expect(['csp', 'cors', 'rate_limit', 'auth', 'encryption']).toContain(
+          rule.type,
+        );
         expect(typeof rule.priority).toBe('number');
         expect(rule.priority).toBeGreaterThanOrEqual(1);
         expect(rule.priority).toBeLessThanOrEqual(10);
@@ -852,7 +888,9 @@ describe('API Management Contract Tests', () => {
 
       (applySecurityPolicy as Mock).mockResolvedValue(expectedResponse);
 
-      const response = await client.api.management['security-policies'][':id'].apply.$post({
+      const response = await client.api.management['security-policies'][
+        ':id'
+      ].apply.$post({
         param: { id: policyId },
       });
 
@@ -866,9 +904,13 @@ describe('API Management Contract Tests', () => {
     it('should handle non-existent security policy', async () => {
       const nonExistentId = 'sp_nonexistent_12345678901234567890123456789012';
 
-      (applySecurityPolicy as Mock).mockRejectedValue(new Error('Security policy not found'));
+      (applySecurityPolicy as Mock).mockRejectedValue(
+        new Error('Security policy not found'),
+      );
 
-      const response = await client.api.management['security-policies'][':id'].apply.$post({
+      const response = await client.api.management['security-policies'][
+        ':id'
+      ].apply.$post({
         param: { id: nonExistentId },
       });
 
@@ -882,9 +924,13 @@ describe('API Management Contract Tests', () => {
     it('should handle policy application failure', async () => {
       const policyId = 'sp_failed_12345678901234567890123456789012';
 
-      (applySecurityPolicy as Mock).mockRejectedValue(new Error('Policy application failed'));
+      (applySecurityPolicy as Mock).mockRejectedValue(
+        new Error('Policy application failed'),
+      );
 
-      const response = await client.api.management['security-policies'][':id'].apply.$post({
+      const response = await client.api.management['security-policies'][
+        ':id'
+      ].apply.$post({
         param: { id: policyId },
       });
 
@@ -965,13 +1011,15 @@ describe('API Management Contract Tests', () => {
       (validateApiKey as Mock).mockResolvedValue(expectedResponse);
 
       // Simulate concurrent requests
-      const concurrentRequests = Array(10).fill(null).map(() =>
-        client.api.management['api-keys'].$get({
-          header: {
-            Authorization: `Bearer ${apiKey}`,
-          },
-        })
-      );
+      const concurrentRequests = Array(10)
+        .fill(null)
+        .map(() =>
+          client.api.management['api-keys'].$get({
+            header: {
+              Authorization: `Bearer ${apiKey}`,
+            },
+          })
+        );
 
       const responses = await Promise.all(concurrentRequests);
 
@@ -1024,7 +1072,9 @@ describe('API Management Contract Tests', () => {
     it('should handle service failures gracefully', async () => {
       const apiKey = 'sk_error_test_12345678901234567890123456789012';
 
-      (validateApiKey as Mock).mockRejectedValue(new Error('Database connection failed'));
+      (validateApiKey as Mock).mockRejectedValue(
+        new Error('Database connection failed'),
+      );
 
       const response = await client.api.management['api-keys'].$get({
         header: {

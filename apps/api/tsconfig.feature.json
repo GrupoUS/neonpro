@@ -12,15 +12,6 @@
       "@neonpro/utils": ["src/types/shims-neonpro.d.ts"]
     }
   },
-  "include": [
-    "src/routes/chat.ts",
-    "src/config/ai.ts",
-    "src/types/**/*.d.ts"
-  ],
-  "exclude": [
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "dist",
-    "node_modules"
-  ]
+  "include": ["src/routes/chat.ts", "src/config/ai.ts", "src/types/**/*.d.ts"],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "dist", "node_modules"]
 }

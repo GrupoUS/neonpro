@@ -59,7 +59,7 @@ async function validateCFMLicenseRealTime(
   // Check if license validation is recent (within 24 hours)
   const lastValidation = professional.lastValidationDate;
   const needsRevalidation = !lastValidation
-    || (Date.now() - lastValidation.getTime()) > 24 * 60 * 60 * 1000;
+    || Date.now() - lastValidation.getTime() > 24 * 60 * 60 * 1000;
 
   if (needsRevalidation) {
     // In production: Call CFM portal API
@@ -157,7 +157,7 @@ async function predictNoShowRiskAdvanced(
 
   // Factor 1: Historical no-show rate (30% weight)
   const noShowRate = patient.totalAppointments
-    ? (patient.totalNoShows / patient.totalAppointments)
+    ? patient.totalNoShows / patient.totalAppointments
     : 0;
   riskScore += noShowRate * 0.3;
   if (noShowRate > 0.2) riskFactors.push('high_historical_noshows');
@@ -219,14 +219,13 @@ async function predictNoShowRiskAdvanced(
   riskScore = Math.min(Math.max(riskScore, 0), 1);
 
   // Determine risk level
-  const riskLevel = riskScore > 0.7
-    ? 'high'
-    : riskScore > 0.4
-    ? 'medium'
-    : 'low';
+  const riskLevel = riskScore > 0.7 ? 'high' : riskScore > 0.4 ? 'medium' : 'low';
 
   // Calculate confidence based on data availability
-  confidence = Math.min(confidence + (patient.totalAppointments || 0) * 0.01, 0.95);
+  confidence = Math.min(
+    confidence + (patient.totalAppointments || 0) * 0.01,
+    0.95,
+  );
 
   return {
     riskLevel,
@@ -239,7 +238,10 @@ async function predictNoShowRiskAdvanced(
  * Generate prevention recommendations based on risk factors
  */
 
-function generatePreventionRecommendations(riskLevel: string, factors: string[]) {
+function generatePreventionRecommendations(
+  riskLevel: string,
+  factors: string[],
+) {
   const recommendations: string[] = [];
 
   if (factors.includes('high_historical_noshows')) {
@@ -252,7 +254,10 @@ function generatePreventionRecommendations(riskLevel: string, factors: string[])
     recommendations.push('offer_preferred_time_alternatives');
   }
 
-  if (factors.includes('heavy_rain') || factors.includes('extreme_temperature')) {
+  if (
+    factors.includes('heavy_rain')
+    || factors.includes('extreme_temperature')
+  ) {
     recommendations.push('send_weather_alert_with_options');
     recommendations.push('offer_telemedicine_alternative');
   }
@@ -406,7 +411,10 @@ async function scheduleMultiChannelReminders(
 
   if (!patient) return;
 
-  const reminderSchedule = generateAdaptiveReminderSchedule(riskLevel, appointmentTime);
+  const reminderSchedule = generateAdaptiveReminderSchedule(
+    riskLevel,
+    appointmentTime,
+  );
   const reminders = [];
 
   for (const reminder of reminderSchedule) {
@@ -418,7 +426,11 @@ async function scheduleMultiChannelReminders(
         type: 'whatsapp',
         scheduledFor: reminder.when,
         priority: reminder.priority,
-        message: generateReminderMessage('whatsapp', reminder.type, appointmentTime),
+        message: generateReminderMessage(
+          'whatsapp',
+          reminder.type,
+          appointmentTime,
+        ),
         phoneNumber: patient.phonePrimary,
         status: 'scheduled',
       });
@@ -447,7 +459,11 @@ async function scheduleMultiChannelReminders(
         scheduledFor: reminder.when,
         priority: reminder.priority,
         subject: generateReminderSubject(reminder.type, appointmentTime),
-        message: generateReminderMessage('email', reminder.type, appointmentTime),
+        message: generateReminderMessage(
+          'email',
+          reminder.type,
+          appointmentTime,
+        ),
         email: patient.email,
         status: 'scheduled',
       });
@@ -467,7 +483,10 @@ async function scheduleMultiChannelReminders(
 /**
  * Generate adaptive reminder schedule based on risk level
  */
-function generateAdaptiveReminderSchedule(riskLevel: string, appointmentTime: Date) {
+function generateAdaptiveReminderSchedule(
+  riskLevel: string,
+  appointmentTime: Date,
+) {
   const schedule = [];
   const appointmentTimestamp = appointmentTime.getTime();
 
@@ -551,7 +570,11 @@ function generateAdaptiveReminderSchedule(riskLevel: string, appointmentTime: Da
 /**
  * Generate personalized reminder messages
  */
-function generateReminderMessage(channel: string, type: string, appointmentTime: Date): string {
+function generateReminderMessage(
+  channel: string,
+  type: string,
+  appointmentTime: Date,
+): string {
   const dateStr = appointmentTime.toLocaleDateString('pt-BR');
   const timeStr = appointmentTime.toLocaleTimeString('pt-BR', {
     hour: '2-digit',
@@ -586,7 +609,10 @@ function generateReminderMessage(channel: string, type: string, appointmentTime:
     },
   };
 
-  return messages[channel]?.[type] || `Lembrete de consulta: ${dateStr} às ${timeStr}`;
+  return (
+    messages[channel]?.[type]
+    || `Lembrete de consulta: ${dateStr} às ${timeStr}`
+  );
 }
 
 /**
@@ -782,12 +808,14 @@ export const appointmentsRouter = router({
    * Validates professional and clinic availability in real-time
    */
   checkAvailability: protectedProcedure
-    .input(v.object({
-      professionalId: v.string([v.uuid('Invalid professional ID')]),
-      startTime: v.date(),
-      endTime: v.date(),
-      serviceTypeId: v.string([v.uuid('Invalid service type ID')]),
-    }))
+    .input(
+      v.object({
+        professionalId: v.string([v.uuid('Invalid professional ID')]),
+        startTime: v.date(),
+        endTime: v.date(),
+        serviceTypeId: v.string([v.uuid('Invalid service type ID')]),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       const availability = await checkRealTimeAvailability(
         input.professionalId,
@@ -827,11 +855,13 @@ export const appointmentsRouter = router({
    * Returns AI-powered risk assessment
    */
   predictNoShowRisk: protectedProcedure
-    .input(v.object({
-      patientId: v.string([v.uuid('Invalid patient ID')]),
-      appointmentTime: v.date(),
-      includeWeather: v.optional(v.boolean()),
-    }))
+    .input(
+      v.object({
+        patientId: v.string([v.uuid('Invalid patient ID')]),
+        appointmentTime: v.date(),
+        includeWeather: v.optional(v.boolean()),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       try {
         const prediction = await predictNoShowRiskAdvanced(
@@ -885,12 +915,16 @@ export const appointmentsRouter = router({
    * Allows staff to send immediate reminders
    */
   sendReminder: healthcareProcedure
-    .input(v.object({
-      appointmentId: v.string([v.uuid('Invalid appointment ID')]),
-      reminderType: v.string([v.picklist(['whatsapp', 'sms', 'email', 'phone'])]),
-      customMessage: v.optional(v.string()),
-      urgent: v.optional(v.boolean()),
-    }))
+    .input(
+      v.object({
+        appointmentId: v.string([v.uuid('Invalid appointment ID')]),
+        reminderType: v.string([
+          v.picklist(['whatsapp', 'sms', 'email', 'phone']),
+        ]),
+        customMessage: v.optional(v.string()),
+        urgent: v.optional(v.boolean()),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const appointment = await ctx.prisma.appointment.findFirst({
         where: {
@@ -924,11 +958,12 @@ export const appointmentsRouter = router({
           type: input.reminderType,
           scheduledFor: new Date(),
           priority: input.urgent ? 'critical' : 'high',
-          message: input.customMessage || generateReminderMessage(
-            input.reminderType,
-            'manual',
-            appointment.startTime,
-          ),
+          message: input.customMessage
+            || generateReminderMessage(
+              input.reminderType,
+              'manual',
+              appointment.startTime,
+            ),
           phoneNumber: appointment.patient.phonePrimary,
           email: appointment.patient.email,
           status: 'sent',
@@ -1077,7 +1112,8 @@ export const appointmentsRouter = router({
         ...(patientId && { patientId }),
         ...(professionalId && { professionalId }),
         ...(status && { status }),
-        ...(startDate && endDate && {
+        ...(startDate
+          && endDate && {
           startTime: {
             gte: startDate,
             lte: endDate,
@@ -1191,7 +1227,10 @@ export const appointmentsRouter = router({
 
       // Re-evaluate risk if appointment is being rescheduled
       let riskUpdate = {};
-      if (updateData.startTime && updateData.startTime !== appointment.startTime) {
+      if (
+        updateData.startTime
+        && updateData.startTime !== appointment.startTime
+      ) {
         const newRiskPrediction = await predictNoShowRiskAdvanced(
           appointment.patientId,
           updateData.startTime,
@@ -1246,11 +1285,13 @@ export const appointmentsRouter = router({
    * Cancel Appointment with No-Show Analytics Update
    */
   cancel: protectedProcedure
-    .input(v.object({
-      appointmentId: v.string([v.uuid('Invalid appointment ID')]),
-      reason: v.string([v.minLength(5, 'Cancellation reason required')]),
-      isNoShow: v.optional(v.boolean()),
-    }))
+    .input(
+      v.object({
+        appointmentId: v.string([v.uuid('Invalid appointment ID')]),
+        reason: v.string([v.minLength(5, 'Cancellation reason required')]),
+        isNoShow: v.optional(v.boolean()),
+      }),
+    )
     .mutation(async ({ ctx, input }) => {
       const appointment = await ctx.prisma.appointment.findFirst({
         where: {
@@ -1309,7 +1350,9 @@ export const appointmentsRouter = router({
           status: AuditStatus.SUCCESS,
           riskLevel: input.isNoShow ? RiskLevel.HIGH : RiskLevel.MEDIUM,
           additionalInfo: JSON.stringify({
-            action: input.isNoShow ? 'appointment_no_show' : 'appointment_cancelled',
+            action: input.isNoShow
+              ? 'appointment_no_show'
+              : 'appointment_cancelled',
             reason: input.reason,
             isNoShow: input.isNoShow || false,
           }),
@@ -1410,12 +1453,14 @@ export const appointmentsRouter = router({
    * Required by T025 specification
    */
   getAvailability: protectedProcedure
-    .input(v.object({
-      professionalId: v.string([v.uuid('Invalid professional ID')]),
-      startTime: v.date(),
-      endTime: v.date(),
-      serviceTypeId: v.string([v.uuid('Invalid service type ID')]),
-    }))
+    .input(
+      v.object({
+        professionalId: v.string([v.uuid('Invalid professional ID')]),
+        startTime: v.date(),
+        endTime: v.date(),
+        serviceTypeId: v.string([v.uuid('Invalid service type ID')]),
+      }),
+    )
     .query(async ({ ctx, input }) => {
       // Call checkRealTimeAvailability directly
       const availability = await checkRealTimeAvailability(

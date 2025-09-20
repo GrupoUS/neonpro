@@ -47,11 +47,21 @@ const CacheEntrySchema = z.object({
     sessionId: z.string().optional(),
     department: z.string(),
     urgencyLevel: z.enum(['low', 'medium', 'high', 'emergency']),
-    dataCategory: z.enum(['diagnostic', 'treatment', 'administrative', 'research']),
+    dataCategory: z.enum([
+      'diagnostic',
+      'treatment',
+      'administrative',
+      'research',
+    ]),
   }),
   lgpdCompliance: z.object({
     dataProcessed: z.boolean(),
-    legalBasis: z.enum(['consent', 'vital_interests', 'public_interest', 'legitimate_interest']),
+    legalBasis: z.enum([
+      'consent',
+      'vital_interests',
+      'public_interest',
+      'legitimate_interest',
+    ]),
     consentId: z.string().optional(),
     retentionPeriod: z.number().positive(),
     anonymized: z.boolean(),
@@ -110,19 +120,31 @@ const CacheStatsSchema = z.object({
 
 const CacheInvalidationRequestSchema = z.object({
   pattern: z.string(),
-  reason: z.enum(['explicit', 'ttl_expired', 'size_limit', 'compliance', 'data_update']),
-  healthcareContext: z.object({
-    patientId: z.string().optional(),
-    sessionId: z.string().optional(),
-    dataCategory: z.enum(['diagnostic', 'treatment', 'administrative', 'research']).optional(),
-    urgency: z.enum(['low', 'medium', 'high', 'emergency']).optional(),
-  }).optional(),
-  compliance: z.object({
-    lggd: z.boolean().optional(),
-    anvisa: z.boolean().optional(),
-    cfm: z.boolean().optional(),
-    retentionPolicy: z.boolean().optional(),
-  }).optional(),
+  reason: z.enum([
+    'explicit',
+    'ttl_expired',
+    'size_limit',
+    'compliance',
+    'data_update',
+  ]),
+  healthcareContext: z
+    .object({
+      patientId: z.string().optional(),
+      sessionId: z.string().optional(),
+      dataCategory: z
+        .enum(['diagnostic', 'treatment', 'administrative', 'research'])
+        .optional(),
+      urgency: z.enum(['low', 'medium', 'high', 'emergency']).optional(),
+    })
+    .optional(),
+  compliance: z
+    .object({
+      lggd: z.boolean().optional(),
+      anvisa: z.boolean().optional(),
+      cfm: z.boolean().optional(),
+      retentionPolicy: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 // Mock services and utilities
@@ -261,9 +283,18 @@ describe('AI Semantic Caching Integration Tests', () => {
 
     // Setup default mock implementations
     mockAuditService.logCacheOperation.mockResolvedValue({ success: true });
-    mockComplianceService.validateLGPD.mockResolvedValue({ valid: true, score: 0.98 });
-    mockComplianceService.validateANVISA.mockResolvedValue({ valid: true, score: 0.95 });
-    mockComplianceService.validateCFM.mockResolvedValue({ valid: true, score: 0.97 });
+    mockComplianceService.validateLGPD.mockResolvedValue({
+      valid: true,
+      score: 0.98,
+    });
+    mockComplianceService.validateANVISA.mockResolvedValue({
+      valid: true,
+      score: 0.95,
+    });
+    mockComplianceService.validateCFM.mockResolvedValue({
+      valid: true,
+      score: 0.97,
+    });
     mockPerformanceMonitor.recordMetric.mockResolvedValue({ success: true });
     mockAIProvider.generateResponse.mockResolvedValue({
       content: 'AI generated response',
@@ -279,7 +310,10 @@ describe('AI Semantic Caching Integration Tests', () => {
       const cacheEntry = generateValidCacheEntry();
 
       // Store cache entry
-      const storeResult = await semanticCacheService.store(queryData, cacheEntry);
+      const storeResult = await semanticCacheService.store(
+        queryData,
+        cacheEntry,
+      );
       expect(storeResult.success).toBe(true);
       expect(storeResult.entryId).toBeDefined();
 
@@ -288,12 +322,16 @@ describe('AI Semantic Caching Integration Tests', () => {
       expect(parsedEntry.success).toBe(true);
 
       // Retrieve cache entry
-      const retrieveResult = await semanticCacheService.retrieve(queryData.query);
+      const retrieveResult = await semanticCacheService.retrieve(
+        queryData.query,
+      );
       expect(retrieveResult.success).toBe(true);
-      expect(retrieveResult.entry).toEqual(expect.objectContaining({
-        query: cacheEntry.query,
-        response: cacheEntry.response,
-      }));
+      expect(retrieveResult.entry).toEqual(
+        expect.objectContaining({
+          query: cacheEntry.query,
+          response: cacheEntry.response,
+        }),
+      );
 
       // Verify audit logging
       expect(mockAuditService.logCacheOperation).toHaveBeenCalledTimes(2);
@@ -322,8 +360,9 @@ describe('AI Semantic Caching Integration Tests', () => {
         violations: ['insufficient_consent'],
       });
 
-      await expect(semanticCacheService.store(queryData, cacheEntry))
-        .rejects.toThrow('LGPD_COMPLIANCE_FAILED');
+      await expect(
+        semanticCacheService.store(queryData, cacheEntry),
+      ).rejects.toThrow('LGPD_COMPLIANCE_FAILED');
     });
 
     it('should handle cache expiration and TTL management', async () => {
@@ -388,7 +427,9 @@ describe('AI Semantic Caching Integration Tests', () => {
       if (result.matches.length > 0) {
         expect(result.matches).toHaveLength.lessThanOrEqual(options.maxResults);
         result.matches.forEach(match => {
-          expect(match.similarityScore).toBe.greaterThanOrEqual(options.threshold);
+          expect(match.similarityScore).toBe.greaterThanOrEqual(
+            options.threshold,
+          );
         });
       }
     });
@@ -443,7 +484,9 @@ describe('AI Semantic Caching Integration Tests', () => {
       const retrievedMetrics = await semanticCacheService.getPerformanceMetrics();
       expect(retrievedMetrics.success).toBe(true);
 
-      const parsedMetrics = CachePerformanceMetricsSchema.safeParse(retrievedMetrics.metrics);
+      const parsedMetrics = CachePerformanceMetricsSchema.safeParse(
+        retrievedMetrics.metrics,
+      );
       expect(parsedMetrics.success).toBe(true);
     });
 
@@ -645,7 +688,9 @@ describe('AI Semantic Caching Integration Tests', () => {
       const queryData = generateValidCacheQuery();
 
       // Attempt cache miss scenario with failed AI provider
-      const result = await semanticCacheService.retrieveOrGenerate(queryData.query);
+      const result = await semanticCacheService.retrieveOrGenerate(
+        queryData.query,
+      );
 
       expect(result.success).toBe(false);
       expect(result.error).toBe('AI_PROVIDER_FAILURE');
@@ -660,8 +705,9 @@ describe('AI Semantic Caching Integration Tests', () => {
       const queryData = generateValidCacheQuery();
       const cacheEntry = generateValidCacheEntry();
 
-      await expect(semanticCacheService.store(queryData, cacheEntry))
-        .rejects.toThrow('DATABASE_FAILURE');
+      await expect(
+        semanticCacheService.store(queryData, cacheEntry),
+      ).rejects.toThrow('DATABASE_FAILURE');
 
       // Verify fallback mechanisms
       expect(mockAuditService.logSecurityEvent).toHaveBeenCalledWith(
@@ -702,7 +748,9 @@ describe('AI Semantic Caching Integration Tests', () => {
       // Clear cache to ensure miss
       await semanticCacheService.clear();
 
-      const result = await semanticCacheService.retrieveOrGenerate(queryData.query);
+      const result = await semanticCacheService.retrieveOrGenerate(
+        queryData.query,
+      );
 
       expect(result.success).toBe(true);
       expect(result.source).toBe('AI_PROVIDER');
@@ -740,7 +788,9 @@ describe('AI Semantic Caching Integration Tests', () => {
           metadata: { preferredProvider: provider },
         };
 
-        const result = await semanticCacheService.retrieveOrGenerate(queryData.query);
+        const result = await semanticCacheService.retrieveOrGenerate(
+          queryData.query,
+        );
         expect(result.success).toBe(true);
 
         if (result.source === 'AI_PROVIDER') {
@@ -762,8 +812,12 @@ describe('AI Semantic Caching Integration Tests', () => {
 
       // Verify healthcare-specific breakdown
       expect(stats.statistics.healthcareBreakdown).toBeDefined();
-      expect(stats.statistics.healthcareBreakdown.diagnosticQueries).toBeDefined();
-      expect(stats.statistics.healthcareBreakdown.emergencyQueries).toBeDefined();
+      expect(
+        stats.statistics.healthcareBreakdown.diagnosticQueries,
+      ).toBeDefined();
+      expect(
+        stats.statistics.healthcareBreakdown.emergencyQueries,
+      ).toBeDefined();
     });
 
     it('should monitor cache health and alert on issues', async () => {

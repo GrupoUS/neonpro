@@ -14,7 +14,11 @@ describe('Contract: Tool.clinical.newTreatments', () => {
     const res = await api('/tools/clinical/treatments/new', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ clinicId: 'clinic_001', fromDate: '2025-08-01', locale: 'pt-BR' }),
+      body: JSON.stringify({
+        clinicId: 'clinic_001',
+        fromDate: '2025-08-01',
+        locale: 'pt-BR',
+      }),
     });
     expect(res.ok).toBe(true);
     const json = await res.json();

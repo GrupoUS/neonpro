@@ -4,17 +4,22 @@
     "moduleResolution": "bundler",
     "module": "ESNext",
     "target": "ES2020",
-    "lib": [
-      "ES2020",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
     "strict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
@@ -22,42 +27,19 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "types": [
-      "vite/client",
-      "vitest/globals"
-    ],
+    "types": ["vite/client", "vitest/globals", "node", "recharts"],
     "baseUrl": ".",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ],
-      "@/hooks/*": [
-        "./src/hooks/*"
-      ],
-      "@neonpro/shared": [
-        "../../packages/shared/src"
-      ],
-      "@neonpro/shared/*": [
-        "../../packages/shared/src/*"
-      ],
-      "@neonpro/utils": [
-        "../../packages/utils/src"
-      ],
-      "@neonpro/types": [
-        "../../packages/types/src"
-      ],
-      "@neonpro/types/*": [
-        "../../packages/types/src/*"
-      ],
-      "@neonpro/ui": [
-        "../../packages/ui/src"
-      ],
-      "@neonpro/ui/lib/utils": [
-        "../../packages/ui/src/lib/utils.ts"
-      ],
-      "@neonpro/ui/theme": [
-        "../../packages/ui/src/theme"
-      ]
+      "@/*": ["./src/*"],
+      "@/hooks/*": ["./src/hooks/*"],
+      "@neonpro/shared": ["../../packages/shared/src"],
+      "@neonpro/shared/*": ["../../packages/shared/src/*"],
+      "@neonpro/utils": ["../../packages/utils/src"],
+      "@neonpro/types": ["../../packages/types/src"],
+      "@neonpro/types/*": ["../../packages/types/src/*"],
+      "@neonpro/ui": ["../../packages/ui/src"],
+      "@neonpro/ui/lib/utils": ["../../packages/ui/src/lib/utils.ts"],
+      "@neonpro/ui/theme": ["../../packages/ui/src/theme"]
     }
   },
   "include": [

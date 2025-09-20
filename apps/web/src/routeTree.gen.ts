@@ -33,12 +33,14 @@ import { Route as PatientsIdBackupRouteImport } from './routes/patients/[id]-bac
 import { Route as PatientsIdRouteImport } from './routes/patients/[id]'
 import { Route as PatientsDashboardBackupRouteImport } from './routes/patients/dashboard-backup'
 import { Route as PatientsDashboardRouteImport } from './routes/patients/dashboard'
+import { Route as PatientsAiInsightsRouteImport } from './routes/patients/ai-insights'
 import { Route as PatientsPatientIdRouteImport } from './routes/patients/$patientId'
 import { Route as GoogleCalendarAuthRouteImport } from './routes/google-calendar/auth'
 import { Route as FinancialSubscriptionRouteImport } from './routes/financial/subscription'
 import { Route as FinancialPricingRulesRouteImport } from './routes/financial/pricing-rules'
 import { Route as DemosSignupDemoRouteImport } from './routes/demos/signup-demo'
 import { Route as DemosAestheticDemoRouteImport } from './routes/demos/aesthetic-demo'
+import { Route as DashboardMainRouteImport } from './routes/dashboard/main'
 import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard/analytics'
 import { Route as DashboardAiChatRouteImport } from './routes/dashboard/ai-chat'
 import { Route as DashboardAdvancedAnalyticsRouteImport } from './routes/dashboard/advanced-analytics'
@@ -49,6 +51,7 @@ import { Route as AuthCallbackRouteImport } from './routes/auth/callback'
 import { Route as AppointmentsNewRouteImport } from './routes/appointments/new'
 import { Route as AiInsightsEnhancedRouteImport } from './routes/ai/insights-enhanced'
 import { Route as AiInsightsRouteImport } from './routes/ai/insights'
+import { Route as AiAgentPageRouteImport } from './routes/ai-agent/page'
 import { Route as AdminSettingsRouteImport } from './routes/admin/settings'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminGovernanceRouteImport } from './routes/admin/governance'
@@ -185,6 +188,11 @@ const PatientsDashboardRoute = PatientsDashboardRouteImport.update({
   path: '/patients/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PatientsAiInsightsRoute = PatientsAiInsightsRouteImport.update({
+  id: '/patients/ai-insights',
+  path: '/patients/ai-insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PatientsPatientIdRoute = PatientsPatientIdRouteImport.update({
   id: '/patients/$patientId',
   path: '/patients/$patientId',
@@ -213,6 +221,11 @@ const DemosSignupDemoRoute = DemosSignupDemoRouteImport.update({
 const DemosAestheticDemoRoute = DemosAestheticDemoRouteImport.update({
   id: '/demos/aesthetic-demo',
   path: '/demos/aesthetic-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardMainRoute = DashboardMainRouteImport.update({
+  id: '/dashboard/main',
+  path: '/dashboard/main',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardAnalyticsRoute = DashboardAnalyticsRouteImport.update({
@@ -264,6 +277,11 @@ const AiInsightsEnhancedRoute = AiInsightsEnhancedRouteImport.update({
 const AiInsightsRoute = AiInsightsRouteImport.update({
   id: '/ai/insights',
   path: '/ai/insights',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiAgentPageRoute = AiAgentPageRouteImport.update({
+  id: '/ai-agent/page',
+  path: '/ai-agent/page',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminSettingsRoute = AdminSettingsRouteImport.update({
@@ -336,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/ai-agent/page': typeof AiAgentPageRoute
   '/ai/insights': typeof AiInsightsRoute
   '/ai/insights-enhanced': typeof AiInsightsEnhancedRoute
   '/appointments/new': typeof AppointmentsNewRoute
@@ -346,12 +365,14 @@ export interface FileRoutesByFullPath {
   '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute
   '/dashboard/ai-chat': typeof DashboardAiChatRoute
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/main': typeof DashboardMainRoute
   '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
   '/financial/subscription': typeof FinancialSubscriptionRoute
   '/google-calendar/auth': typeof GoogleCalendarAuthRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/patients/ai-insights': typeof PatientsAiInsightsRoute
   '/patients/dashboard': typeof PatientsDashboardRoute
   '/patients/dashboard-backup': typeof PatientsDashboardBackupRoute
   '/patients/id': typeof PatientsIdRoute
@@ -388,6 +409,7 @@ export interface FileRoutesByTo {
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/ai-agent/page': typeof AiAgentPageRoute
   '/ai/insights': typeof AiInsightsRoute
   '/ai/insights-enhanced': typeof AiInsightsEnhancedRoute
   '/appointments/new': typeof AppointmentsNewRoute
@@ -398,12 +420,14 @@ export interface FileRoutesByTo {
   '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute
   '/dashboard/ai-chat': typeof DashboardAiChatRoute
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/main': typeof DashboardMainRoute
   '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
   '/financial/subscription': typeof FinancialSubscriptionRoute
   '/google-calendar/auth': typeof GoogleCalendarAuthRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/patients/ai-insights': typeof PatientsAiInsightsRoute
   '/patients/dashboard': typeof PatientsDashboardRoute
   '/patients/dashboard-backup': typeof PatientsDashboardBackupRoute
   '/patients/id': typeof PatientsIdRoute
@@ -442,6 +466,7 @@ export interface FileRoutesById {
   '/admin/governance': typeof AdminGovernanceRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/settings': typeof AdminSettingsRoute
+  '/ai-agent/page': typeof AiAgentPageRoute
   '/ai/insights': typeof AiInsightsRoute
   '/ai/insights-enhanced': typeof AiInsightsEnhancedRoute
   '/appointments/new': typeof AppointmentsNewRoute
@@ -452,12 +477,14 @@ export interface FileRoutesById {
   '/dashboard/advanced-analytics': typeof DashboardAdvancedAnalyticsRoute
   '/dashboard/ai-chat': typeof DashboardAiChatRoute
   '/dashboard/analytics': typeof DashboardAnalyticsRoute
+  '/dashboard/main': typeof DashboardMainRoute
   '/demos/aesthetic-demo': typeof DemosAestheticDemoRoute
   '/demos/signup-demo': typeof DemosSignupDemoRoute
   '/financial/pricing-rules': typeof FinancialPricingRulesRoute
   '/financial/subscription': typeof FinancialSubscriptionRoute
   '/google-calendar/auth': typeof GoogleCalendarAuthRoute
   '/patients/$patientId': typeof PatientsPatientIdRouteWithChildren
+  '/patients/ai-insights': typeof PatientsAiInsightsRoute
   '/patients/dashboard': typeof PatientsDashboardRoute
   '/patients/dashboard-backup': typeof PatientsDashboardBackupRoute
   '/patients/id': typeof PatientsIdRoute
@@ -497,6 +524,7 @@ export interface FileRouteTypes {
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
+    | '/ai-agent/page'
     | '/ai/insights'
     | '/ai/insights-enhanced'
     | '/appointments/new'
@@ -507,12 +535,14 @@ export interface FileRouteTypes {
     | '/dashboard/advanced-analytics'
     | '/dashboard/ai-chat'
     | '/dashboard/analytics'
+    | '/dashboard/main'
     | '/demos/aesthetic-demo'
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
     | '/financial/subscription'
     | '/google-calendar/auth'
     | '/patients/$patientId'
+    | '/patients/ai-insights'
     | '/patients/dashboard'
     | '/patients/dashboard-backup'
     | '/patients/id'
@@ -549,6 +579,7 @@ export interface FileRouteTypes {
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
+    | '/ai-agent/page'
     | '/ai/insights'
     | '/ai/insights-enhanced'
     | '/appointments/new'
@@ -559,12 +590,14 @@ export interface FileRouteTypes {
     | '/dashboard/advanced-analytics'
     | '/dashboard/ai-chat'
     | '/dashboard/analytics'
+    | '/dashboard/main'
     | '/demos/aesthetic-demo'
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
     | '/financial/subscription'
     | '/google-calendar/auth'
     | '/patients/$patientId'
+    | '/patients/ai-insights'
     | '/patients/dashboard'
     | '/patients/dashboard-backup'
     | '/patients/id'
@@ -602,6 +635,7 @@ export interface FileRouteTypes {
     | '/admin/governance'
     | '/admin/reports'
     | '/admin/settings'
+    | '/ai-agent/page'
     | '/ai/insights'
     | '/ai/insights-enhanced'
     | '/appointments/new'
@@ -612,12 +646,14 @@ export interface FileRouteTypes {
     | '/dashboard/advanced-analytics'
     | '/dashboard/ai-chat'
     | '/dashboard/analytics'
+    | '/dashboard/main'
     | '/demos/aesthetic-demo'
     | '/demos/signup-demo'
     | '/financial/pricing-rules'
     | '/financial/subscription'
     | '/google-calendar/auth'
     | '/patients/$patientId'
+    | '/patients/ai-insights'
     | '/patients/dashboard'
     | '/patients/dashboard-backup'
     | '/patients/id'
@@ -656,6 +692,7 @@ export interface RootRouteChildren {
   AdminGovernanceRoute: typeof AdminGovernanceRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminSettingsRoute: typeof AdminSettingsRoute
+  AiAgentPageRoute: typeof AiAgentPageRoute
   AiInsightsRoute: typeof AiInsightsRoute
   AiInsightsEnhancedRoute: typeof AiInsightsEnhancedRoute
   AppointmentsNewRoute: typeof AppointmentsNewRoute
@@ -666,12 +703,14 @@ export interface RootRouteChildren {
   DashboardAdvancedAnalyticsRoute: typeof DashboardAdvancedAnalyticsRoute
   DashboardAiChatRoute: typeof DashboardAiChatRoute
   DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
+  DashboardMainRoute: typeof DashboardMainRoute
   DemosAestheticDemoRoute: typeof DemosAestheticDemoRoute
   DemosSignupDemoRoute: typeof DemosSignupDemoRoute
   FinancialPricingRulesRoute: typeof FinancialPricingRulesRoute
   FinancialSubscriptionRoute: typeof FinancialSubscriptionRoute
   GoogleCalendarAuthRoute: typeof GoogleCalendarAuthRoute
   PatientsPatientIdRoute: typeof PatientsPatientIdRouteWithChildren
+  PatientsAiInsightsRoute: typeof PatientsAiInsightsRoute
   PatientsDashboardRoute: typeof PatientsDashboardRoute
   PatientsDashboardBackupRoute: typeof PatientsDashboardBackupRoute
   PatientsIdRoute: typeof PatientsIdRoute
@@ -864,6 +903,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PatientsDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/patients/ai-insights': {
+      id: '/patients/ai-insights'
+      path: '/patients/ai-insights'
+      fullPath: '/patients/ai-insights'
+      preLoaderRoute: typeof PatientsAiInsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/patients/$patientId': {
       id: '/patients/$patientId'
       path: '/patients/$patientId'
@@ -904,6 +950,13 @@ declare module '@tanstack/react-router' {
       path: '/demos/aesthetic-demo'
       fullPath: '/demos/aesthetic-demo'
       preLoaderRoute: typeof DemosAestheticDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/main': {
+      id: '/dashboard/main'
+      path: '/dashboard/main'
+      fullPath: '/dashboard/main'
+      preLoaderRoute: typeof DashboardMainRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard/analytics': {
@@ -974,6 +1027,13 @@ declare module '@tanstack/react-router' {
       path: '/ai/insights'
       fullPath: '/ai/insights'
       preLoaderRoute: typeof AiInsightsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-agent/page': {
+      id: '/ai-agent/page'
+      path: '/ai-agent/page'
+      fullPath: '/ai-agent/page'
+      preLoaderRoute: typeof AiAgentPageRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/settings': {
@@ -1099,6 +1159,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminGovernanceRoute: AdminGovernanceRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminSettingsRoute: AdminSettingsRoute,
+  AiAgentPageRoute: AiAgentPageRoute,
   AiInsightsRoute: AiInsightsRoute,
   AiInsightsEnhancedRoute: AiInsightsEnhancedRoute,
   AppointmentsNewRoute: AppointmentsNewRoute,
@@ -1109,12 +1170,14 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardAdvancedAnalyticsRoute: DashboardAdvancedAnalyticsRoute,
   DashboardAiChatRoute: DashboardAiChatRoute,
   DashboardAnalyticsRoute: DashboardAnalyticsRoute,
+  DashboardMainRoute: DashboardMainRoute,
   DemosAestheticDemoRoute: DemosAestheticDemoRoute,
   DemosSignupDemoRoute: DemosSignupDemoRoute,
   FinancialPricingRulesRoute: FinancialPricingRulesRoute,
   FinancialSubscriptionRoute: FinancialSubscriptionRoute,
   GoogleCalendarAuthRoute: GoogleCalendarAuthRoute,
   PatientsPatientIdRoute: PatientsPatientIdRouteWithChildren,
+  PatientsAiInsightsRoute: PatientsAiInsightsRoute,
   PatientsDashboardRoute: PatientsDashboardRoute,
   PatientsDashboardBackupRoute: PatientsDashboardBackupRoute,
   PatientsIdRoute: PatientsIdRoute,

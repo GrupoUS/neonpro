@@ -70,7 +70,9 @@ describe('LGPD Compliance Service (T040)', () => {
 
       expect(result.success).toBe(true);
       expect(result.data.withdrawalDate).toBeDefined();
-      expect(result.data.withdrawalReason).toBe('Solicitação do titular dos dados');
+      expect(result.data.withdrawalReason).toBe(
+        'Solicitação do titular dos dados',
+      );
       expect(result.message).toContain('Consentimento revogado');
     });
 
@@ -296,12 +298,19 @@ describe('LGPD Compliance Service (T040)', () => {
         description: 'Test assessment',
       });
 
-      const result = await service.updatePrivacyImpactAssessment(createResult.data.assessmentId, {
-        riskLevel: 'medium',
-        mitigationMeasures: ['Encryption', 'Access controls', 'Audit logging'],
-        status: 'approved',
-        approvedBy: 'dpo-123',
-      });
+      const result = await service.updatePrivacyImpactAssessment(
+        createResult.data.assessmentId,
+        {
+          riskLevel: 'medium',
+          mitigationMeasures: [
+            'Encryption',
+            'Access controls',
+            'Audit logging',
+          ],
+          status: 'approved',
+          approvedBy: 'dpo-123',
+        },
+      );
 
       expect(result.success).toBe(true);
       expect(result.data.riskLevel).toBe('medium');

@@ -229,7 +229,9 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       expect(patientAuditTrail.length).toBeGreaterThan(0);
       expect(patientAuditTrail[0].action).toBe('data_collection');
-      expect(patientAuditTrail.every(log => log.legal_basis === 'consent')).toBe(true);
+      expect(
+        patientAuditTrail.every(log => log.legal_basis === 'consent'),
+      ).toBe(true);
     });
 
     it('should enforce data minimization principles', async () => {
@@ -404,8 +406,12 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       );
 
       expect(consentHistory.length).toBe(2);
-      expect(consentHistory[0].cryptographic_proof).not.toBe(consentHistory[1].cryptographic_proof);
-      expect(consentHistory.every(c => c.cryptographic_proof.length === 64)).toBe(true);
+      expect(consentHistory[0].cryptographic_proof).not.toBe(
+        consentHistory[1].cryptographic_proof,
+      );
+      expect(
+        consentHistory.every(c => c.cryptographic_proof.length === 64),
+      ).toBe(true);
     });
 
     it('should ensure audit trail immutability and integrity', async () => {
@@ -430,7 +436,10 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       // Calculate integrity hashes
       const integrityHashes = originalEntries.map(entry => ({
         entry_id: entry.id,
-        hash: crypto.createHash('sha256').update(JSON.stringify(entry)).digest('hex'),
+        hash: crypto
+          .createHash('sha256')
+          .update(JSON.stringify(entry))
+          .digest('hex'),
         timestamp: new Date().toISOString(),
       }));
 
@@ -543,14 +552,24 @@ describe('T045: LGPD Compliance Validation Tests', () => {
     it('should handle immediate data processing cessation after withdrawal', async () => {
       // Simulate active data processing
       const activeProcesses = [
-        { id: 'proc_1', type: 'ai_analysis', status: 'running', patient_id: patientId },
+        {
+          id: 'proc_1',
+          type: 'ai_analysis',
+          status: 'running',
+          patient_id: patientId,
+        },
         {
           id: 'proc_2',
           type: 'marketing_communication',
           status: 'scheduled',
           patient_id: patientId,
         },
-        { id: 'proc_3', type: 'research_analytics', status: 'queued', patient_id: patientId },
+        {
+          id: 'proc_3',
+          type: 'research_analytics',
+          status: 'queued',
+          patient_id: patientId,
+        },
       ];
 
       // Patient withdraws AI processing consent
@@ -562,8 +581,11 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Process immediate cessation
       const cessationResults = activeProcesses.map(process => {
-        const shouldStop = withdrawalRequest.withdrawn_purposes.some(purpose =>
-          process.type.includes(purpose.replace('_processing', '').replace('_', '_'))
+        const shouldStop = withdrawalRequest.withdrawn_purposes.some(
+          purpose =>
+            process.type.includes(
+              purpose.replace('_processing', '').replace('_', '_'),
+            ),
         );
 
         if (shouldStop) {
@@ -579,12 +601,18 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       });
 
       // Verify immediate cessation
-      const stoppedProcesses = cessationResults.filter(p => p.status === 'stopped');
+      const stoppedProcesses = cessationResults.filter(
+        p => p.status === 'stopped',
+      );
       expect(stoppedProcesses.length).toBeGreaterThan(0);
-      expect(stoppedProcesses.every(p => p.stopped_reason === 'consent_withdrawn')).toBe(true);
+      expect(
+        stoppedProcesses.every(p => p.stopped_reason === 'consent_withdrawn'),
+      ).toBe(true);
 
       // Healthcare services should continue (essential for patient care)
-      const continuingProcesses = cessationResults.filter(p => p.status !== 'stopped');
+      const continuingProcesses = cessationResults.filter(
+        p => p.status !== 'stopped',
+      );
       expect(continuingProcesses.length).toBeGreaterThanOrEqual(0);
     });
   });
@@ -705,15 +733,18 @@ describe('T045: LGPD Compliance Validation Tests', () => {
           neighborhood: 'Vila Madalena', // SP zona sul
           recent_procedure: 'botox', // facial aesthetics
         },
-        matching_records: anonymizedRecords.filter(record =>
-          record.age_range === '30-35'
-          && record.location === 'SP_zona_sul'
-          && record.procedure_category === 'facial_aesthetics'
+        matching_records: anonymizedRecords.filter(
+          record =>
+            record.age_range === '30-35'
+            && record.location === 'SP_zona_sul'
+            && record.procedure_category === 'facial_aesthetics',
         ),
       };
 
       // Should not be able to uniquely identify
-      expect(reidentificationAttempt.matching_records.length).toBeGreaterThan(1);
+      expect(reidentificationAttempt.matching_records.length).toBeGreaterThan(
+        1,
+      );
     });
   });
 
@@ -728,16 +759,32 @@ describe('T045: LGPD Compliance Validation Tests', () => {
           email: 'maria@email.com',
         },
         medical_records: [
-          { date: '2025-09-01', procedure: 'Botox', notes: 'Primeira aplicação' },
-          { date: '2025-08-15', procedure: 'Limpeza de pele', notes: 'Tratamento mensal' },
+          {
+            date: '2025-09-01',
+            procedure: 'Botox',
+            notes: 'Primeira aplicação',
+          },
+          {
+            date: '2025-08-15',
+            procedure: 'Limpeza de pele',
+            notes: 'Tratamento mensal',
+          },
         ],
         appointment_history: [
           { date: '2025-09-10', status: 'completed', doctor: 'Dr. Silva' },
           { date: '2025-09-25', status: 'scheduled', doctor: 'Dr. Santos' },
         ],
         communication_logs: [
-          { date: '2025-09-05', type: 'whatsapp', content: 'Lembrete de consulta' },
-          { date: '2025-09-01', type: 'email', content: 'Confirmação de agendamento' },
+          {
+            date: '2025-09-05',
+            type: 'whatsapp',
+            content: 'Lembrete de consulta',
+          },
+          {
+            date: '2025-09-01',
+            type: 'email',
+            content: 'Confirmação de agendamento',
+          },
         ],
         billing_records: [
           { date: '2025-09-01', amount: 800, procedure: 'Botox' },
@@ -830,7 +877,9 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       // Verify standard format compliance
       expect(portableData.format).toBe('HL7_FHIR_R4');
       expect(portableData.patient_resource.resourceType).toBe('Patient');
-      expect(portableData.export_metadata.compliance_standard).toBe('LGPD_Art_20');
+      expect(portableData.export_metadata.compliance_standard).toBe(
+        'LGPD_Art_20',
+      );
 
       // Update request status
       portabilityRequest.status = 'completed';
@@ -899,17 +948,22 @@ describe('T045: LGPD Compliance Validation Tests', () => {
       };
 
       // Check adequacy decision
-      const adequacyResponse = await fetch('https://adequacy.gov.br/api/transfer/validate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(transferAttempt),
-      });
+      const adequacyResponse = await fetch(
+        'https://adequacy.gov.br/api/transfer/validate',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(transferAttempt),
+        },
+      );
 
       const adequacyResult = await adequacyResponse.json();
 
       // Should block transfer without proper safeguards
       expect(adequacyResult.transfer_allowed).toBe(false);
-      expect(adequacyResult.required_safeguards).toContain('standard_contractual_clauses');
+      expect(adequacyResult.required_safeguards).toContain(
+        'standard_contractual_clauses',
+      );
       expect(adequacyResult.blocking_transfers).toBe(true);
 
       // Log blocked transfer attempt
@@ -945,15 +999,18 @@ describe('T045: LGPD Compliance Validation Tests', () => {
 
       // Verify all data stays in Brazil
       expect(
-        dataLocalizationCheck.database_regions.every(region =>
-          region.includes('sa') || region.includes('br') || region.includes('gru')
-          || region.includes('sao')
+        dataLocalizationCheck.database_regions.every(
+          region =>
+            region.includes('sa')
+            || region.includes('br')
+            || region.includes('gru')
+            || region.includes('sao'),
         ),
       ).toBe(true);
 
       expect(
-        dataLocalizationCheck.backup_locations.every(location =>
-          location.includes('sa-east') || location.includes('brazil')
+        dataLocalizationCheck.backup_locations.every(
+          location => location.includes('sa-east') || location.includes('brazil'),
         ),
       ).toBe(true);
 

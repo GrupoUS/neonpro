@@ -1,57 +1,63 @@
-import { 
-  IngestionConfig, 
-  IngestionResult, 
-  IngestionEvent, 
+import {
+  IngestionConfig,
+  IngestionResult,
+  IngestionEvent,
   IngestionError,
   ValidationRule,
   TransformationRule,
   IngestionMonitoringMetrics,
-  IngestionEventType
-} from '../types/ingestion';
+  IngestionEventType,
+} from "../types/ingestion";
 // Remove unused import - AnalyticsEvent not needed directly here
 
 /**
  * Ingestion Adapter Interface
- * 
+ *
  * Provides extensible data ingestion capabilities for healthcare analytics.
  * Supports batch processing, real-time streams, and compliance validation.
  */
 export interface IngestionAdapter {
   /** Adapter identifier */
   readonly adapterId: string;
-  
+
   /** Adapter configuration */
   readonly config: IngestionConfig;
-  
+
   /** Connection and lifecycle management */
   connect(): Promise<void>;
   disconnect(): Promise<void>;
   isConnected(): boolean;
-  
+
   /** Data ingestion methods */
   ingestBatch(data: any[]): Promise<IngestionResult>;
   ingestStream(stream: ReadableStream): Promise<IngestionResult>;
   ingestSingle(record: any): Promise<IngestionResult>;
-  
+
   /** Configuration management */
   updateConfig(config: Partial<IngestionConfig>): Promise<void>;
   addValidationRule(rule: ValidationRule): Promise<void>;
   addTransformationRule(rule: TransformationRule): Promise<void>;
-  
+
   /** Monitoring and health */
   getMetrics(): Promise<IngestionMonitoringMetrics>;
   getHealthStatus(): Promise<HealthStatus>;
-  
+
   /** Event handling */
-  addEventListener(eventType: IngestionEventType, handler: (event: IngestionEvent) => void): void;
-  removeEventListener(eventType: IngestionEventType, handler: (event: IngestionEvent) => void): void;
+  addEventListener(
+    eventType: IngestionEventType,
+    handler: (event: IngestionEvent) => void,
+  ): void;
+  removeEventListener(
+    eventType: IngestionEventType,
+    handler: (event: IngestionEvent) => void,
+  ): void;
 }
 
 /**
  * Health Status for Ingestion Adapter
  */
 export interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status: "healthy" | "degraded" | "unhealthy";
   lastCheck: Date;
   details: {
     connection: boolean;
@@ -64,64 +70,77 @@ export interface HealthStatus {
 
 /**
  * Base Ingestion Adapter Implementation
- * 
+ *
  * Provides common functionality for all ingestion adapters.
  * Extend this class to create specific adapter implementations.
  */
 export abstract class BaseIngestionAdapter implements IngestionAdapter {
-  protected eventHandlers: Map<IngestionEventType, Set<(event: IngestionEvent) => void>> = new Map();
+  protected eventHandlers: Map<
+    IngestionEventType,
+    Set<(event: IngestionEvent) => void>
+  > = new Map();
   protected validationRules: ValidationRule[] = [];
   protected transformationRules: TransformationRule[] = [];
   protected isConnectedFlag = false;
-  
+
   constructor(
     public readonly adapterId: string,
-    public readonly config: IngestionConfig
+    public readonly config: IngestionConfig,
   ) {}
-  
+
   /** Abstract methods to be implemented by specific adapters */
   abstract connect(): Promise<void>;
   abstract disconnect(): Promise<void>;
   abstract ingestBatch(data: any[]): Promise<IngestionResult>;
   abstract ingestStream(stream: ReadableStream): Promise<IngestionResult>;
   abstract getMetrics(): Promise<IngestionMonitoringMetrics>;
-  
+
   /** Common implementation methods */
-  
+
   isConnected(): boolean {
     return this.isConnectedFlag;
   }
-  
+
   async ingestSingle(record: any): Promise<IngestionResult> {
     return this.ingestBatch([record]);
   }
-  
+
   async updateConfig(config: Partial<IngestionConfig>): Promise<void> {
     Object.assign(this.config, config);
     this.emitEvent({
       id: `config_update_${Date.now()}`,
-      type: 'config_update',
-      eventType: 'data_received',
+      type: "config_update",
+      eventType: "data_received",
       timestamp: new Date(),
       properties: { configUpdate: true },
       context: { adapterId: this.adapterId },
-      source: { sourceId: this.adapterId, sourceType: 'config', recordCount: 0, dataSize: 0 },
-      processing: { startTime: new Date(), status: 'completed' },
-      quality: { validRecords: 0, invalidRecords: 0, duplicateRecords: 0, transformedRecords: 0 }
+      source: {
+        sourceId: this.adapterId,
+        sourceType: "config",
+        recordCount: 0,
+        dataSize: 0,
+      },
+      processing: { startTime: new Date(), status: "completed" },
+      quality: {
+        validRecords: 0,
+        invalidRecords: 0,
+        duplicateRecords: 0,
+        transformedRecords: 0,
+      },
     } as IngestionEvent);
   }
-  
+
   async addValidationRule(rule: ValidationRule): Promise<void> {
     this.validationRules.push(rule);
   }
-  
+
   async addTransformationRule(rule: TransformationRule): Promise<void> {
     this.transformationRules.push(rule);
   }
-  
+
   async getHealthStatus(): Promise<HealthStatus> {
     return {
-      status: this.isConnected() ? 'healthy' : 'unhealthy',
+      status: this.isConnected() ? "healthy" : "unhealthy",
       lastCheck: new Date(),
       details: {
         connection: this.isConnected(),
@@ -132,47 +151,68 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
       errors: [],
     };
   }
-  
-  addEventListener(eventType: IngestionEventType, handler: (event: IngestionEvent) => void): void {
+
+  addEventListener(
+    eventType: IngestionEventType,
+    handler: (event: IngestionEvent) => void,
+  ): void {
     if (!this.eventHandlers.has(eventType)) {
       this.eventHandlers.set(eventType, new Set());
     }
     this.eventHandlers.get(eventType)!.add(handler);
   }
-  
-  removeEventListener(eventType: IngestionEventType, handler: (event: IngestionEvent) => void): void {
+
+  removeEventListener(
+    eventType: IngestionEventType,
+    handler: (event: IngestionEvent) => void,
+  ): void {
     const handlers = this.eventHandlers.get(eventType);
     if (handlers) {
       handlers.delete(handler);
     }
   }
-  
+
   protected emitEvent(event: IngestionEvent): void {
     const handlers = this.eventHandlers.get(event.eventType);
     if (handlers) {
-      handlers.forEach(handler => handler(event));
+      handlers.forEach((handler) => handler(event));
     }
   }
-  
-  protected validateData(data: any[]): { valid: any[], invalid: any[], errors: IngestionError[] } {
+
+  protected validateData(data: any[]): {
+    valid: any[];
+    invalid: any[];
+    errors: IngestionError[];
+  } {
     const valid: any[] = [];
     const invalid: any[] = [];
     const errors: IngestionError[] = [];
-    
+
     data.forEach((record, index) => {
       let isValid = true;
-      
+
       for (const rule of this.validationRules) {
         try {
           if (!this.applyValidationRule(record, rule)) {
             isValid = false;
             errors.push({
               errorId: `validation_${Date.now()}_${index}`,
-              type: 'validation_error',
+              type: "validation_error",
               message: `Validation failed for rule: ${rule.description}`,
-              source: { sourceId: this.adapterId, recordId: index.toString(), field: rule.field },
-              context: { operation: 'validation', timestamp: new Date(), retryCount: 0 },
-              recovery: { recoverable: true, suggestions: ['Check data format', 'Review validation rules'] }
+              source: {
+                sourceId: this.adapterId,
+                recordId: index.toString(),
+                field: rule.field,
+              },
+              context: {
+                operation: "validation",
+                timestamp: new Date(),
+                retryCount: 0,
+              },
+              recovery: {
+                recoverable: true,
+                suggestions: ["Check data format", "Review validation rules"],
+              },
             });
             break;
           }
@@ -180,116 +220,148 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
           isValid = false;
           errors.push({
             errorId: `validation_error_${Date.now()}_${index}`,
-            type: 'validation_error',
+            type: "validation_error",
             message: `Validation rule execution failed: ${error}`,
-            source: { sourceId: this.adapterId, recordId: index.toString(), field: rule.field },
-            context: { operation: 'validation', timestamp: new Date(), retryCount: 0 },
-            recovery: { recoverable: false, suggestions: ['Review validation rule logic'] }
+            source: {
+              sourceId: this.adapterId,
+              recordId: index.toString(),
+              field: rule.field,
+            },
+            context: {
+              operation: "validation",
+              timestamp: new Date(),
+              retryCount: 0,
+            },
+            recovery: {
+              recoverable: false,
+              suggestions: ["Review validation rule logic"],
+            },
           });
           break;
         }
       }
-      
+
       if (isValid) {
         valid.push(record);
       } else {
         invalid.push(record);
       }
     });
-    
+
     return { valid, invalid, errors };
   }
-  
-  protected transformData(data: any[]): { transformed: any[], errors: IngestionError[] } {
+
+  protected transformData(data: any[]): {
+    transformed: any[];
+    errors: IngestionError[];
+  } {
     const transformed: any[] = [];
     const errors: IngestionError[] = [];
-    
+
     data.forEach((record, index) => {
       let transformedRecord = { ...record };
-      
+
       for (const rule of this.transformationRules) {
         try {
-          transformedRecord = this.applyTransformationRule(transformedRecord, rule);
+          transformedRecord = this.applyTransformationRule(
+            transformedRecord,
+            rule,
+          );
         } catch (error) {
           errors.push({
             errorId: `transformation_error_${Date.now()}_${index}`,
-            type: 'transformation_error',
+            type: "transformation_error",
             message: `Transformation failed for rule: ${rule.description}`,
-            source: { sourceId: this.adapterId, recordId: index.toString(), field: rule.sourceField },
-            context: { operation: 'transformation', timestamp: new Date(), retryCount: 0 },
-            recovery: { recoverable: true, suggestions: ['Review transformation rule logic'] }
+            source: {
+              sourceId: this.adapterId,
+              recordId: index.toString(),
+              field: rule.sourceField,
+            },
+            context: {
+              operation: "transformation",
+              timestamp: new Date(),
+              retryCount: 0,
+            },
+            recovery: {
+              recoverable: true,
+              suggestions: ["Review transformation rule logic"],
+            },
           });
         }
       }
-      
+
       transformed.push(transformedRecord);
     });
-    
+
     return { transformed, errors };
   }
-  
+
   private applyValidationRule(record: any, rule: ValidationRule): boolean {
     const fieldValue = this.getFieldValue(record, rule.field);
-    
+
     switch (rule.type) {
-      case 'required':
-        return fieldValue !== null && fieldValue !== undefined && fieldValue !== '';
-      
-      case 'format':
+      case "required":
+        return (
+          fieldValue !== null && fieldValue !== undefined && fieldValue !== ""
+        );
+
+      case "format":
         if (rule.parameters.pattern) {
           const regex = new RegExp(rule.parameters.pattern);
           return regex.test(String(fieldValue));
         }
         return true;
-      
-      case 'range':
+
+      case "range":
         const numValue = Number(fieldValue);
         if (isNaN(numValue)) return false;
-        if (rule.parameters.min !== undefined && numValue < rule.parameters.min) return false;
-        if (rule.parameters.max !== undefined && numValue > rule.parameters.max) return false;
+        if (rule.parameters.min !== undefined && numValue < rule.parameters.min)
+          return false;
+        if (rule.parameters.max !== undefined && numValue > rule.parameters.max)
+          return false;
         return true;
-      
-      case 'compliance':
+
+      case "compliance":
         // Implement compliance-specific validation
         return this.validateCompliance(record, rule);
-      
+
       default:
         return true;
     }
   }
-  
+
   private applyTransformationRule(record: any, rule: TransformationRule): any {
     const sourceValue = this.getFieldValue(record, rule.sourceField);
     let transformedValue = sourceValue;
-    
+
     switch (rule.type) {
-      case 'map':
+      case "map":
         transformedValue = rule.logic.mapping[sourceValue] || sourceValue;
         break;
-      
-      case 'anonymize':
+
+      case "anonymize":
         transformedValue = this.anonymizeValue(sourceValue, rule.logic);
         break;
-      
-      case 'calculate':
+
+      case "calculate":
         transformedValue = this.calculateValue(record, rule.logic);
         break;
-      
-      case 'filter':
+
+      case "filter":
         // Filter logic would be applied at the record level
         break;
     }
-    
+
     this.setFieldValue(record, rule.targetField, transformedValue);
     return record;
   }
-  
+
   private getFieldValue(record: any, fieldPath: string): any {
-    return fieldPath.split('.').reduce((obj, key) => obj?.[key], record);
+    return fieldPath.split(".").reduce((obj, key) => obj?.[key], record);
   }
-  
+
   private setFieldValue(record: any, fieldPath: string, value: any): void {
-    const keys = fieldPath.split('.');
+    const keys = fieldPath.split(".");
     const lastKey = keys.pop()!;
     const target = keys.reduce((obj, key) => {
       if (!obj[key]) obj[key] = {};
@@ -297,19 +369,19 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
     }, record);
     target[lastKey] = value;
   }
-  
+
   private validateCompliance(_record: any, _rule: ValidationRule): boolean {
     // Placeholder for compliance validation logic
     // Would integrate with actual compliance frameworks
     return true;
   }
-  
+
   private anonymizeValue(value: any, _logic: any): any {
     // Placeholder for anonymization logic
     // Would implement various anonymization techniques
     return `***${String(value).slice(-3)}`;
   }
-  
+
   private calculateValue(_record: any, _logic: any): any {
     // Placeholder for calculation logic
     // Would implement formula evaluation
@@ -319,7 +391,7 @@ export abstract class BaseIngestionAdapter implements IngestionAdapter {
 
 /**
  * Database Ingestion Adapter
- * 
+ *
  * Ingests data from database sources with SQL query support.
  */
 export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
@@ -327,68 +399,92 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
   private _connectionPool: any = null;
-  
+
   async connect(): Promise<void> {
     // Placeholder for database connection logic
     this.isConnectedFlag = true;
     this.emitEvent({
       id: `db_connect_${Date.now()}`,
-      type: 'database_connection',
-      eventType: 'data_received',
+      type: "database_connection",
+      eventType: "data_received",
       timestamp: new Date(),
-      properties: { connection: 'established' },
+      properties: { connection: "established" },
       context: { adapterId: this.adapterId },
-      source: { sourceId: this.adapterId, sourceType: 'database', recordCount: 0, dataSize: 0 },
-      processing: { startTime: new Date(), status: 'completed' },
-      quality: { validRecords: 0, invalidRecords: 0, duplicateRecords: 0, transformedRecords: 0 }
+      source: {
+        sourceId: this.adapterId,
+        sourceType: "database",
+        recordCount: 0,
+        dataSize: 0,
+      },
+      processing: { startTime: new Date(), status: "completed" },
+      quality: {
+        validRecords: 0,
+        invalidRecords: 0,
+        duplicateRecords: 0,
+        transformedRecords: 0,
+      },
     } as IngestionEvent);
   }
-  
+
   async disconnect(): Promise<void> {
     this.isConnectedFlag = false;
     this._connectionPool = null;
   }
-  
+
   async ingestBatch(data: any[]): Promise<IngestionResult> {
     const startTime = new Date();
     const operationId = `db_batch_${Date.now()}`;
-    
-    const { valid, invalid, errors: validationErrors } = this.validateData(data);
-    const { transformed, errors: transformationErrors } = this.transformData(valid);
-    
-    const events: IngestionEvent[] = [{
-      id: `${operationId}_processing`,
-      type: 'ingestion_processing',
-      eventType: 'processing_completed',
-      timestamp: new Date(),
-      userId: undefined,
-      sessionId: operationId,
-      properties: {
-        operation: 'batch_processing'
+
+    const {
+      valid,
+      invalid,
+      errors: validationErrors,
+    } = this.validateData(data);
+    const { transformed, errors: transformationErrors } =
+      this.transformData(valid);
+
+    const events: IngestionEvent[] = [
+      {
+        id: `${operationId}_processing`,
+        type: "ingestion_processing",
+        eventType: "processing_completed",
+        timestamp: new Date(),
+        userId: undefined,
+        sessionId: operationId,
+        properties: {
+          operation: "batch_processing",
+        },
+        context: {
+          adapterId: this.adapterId,
+        },
+        source: {
+          sourceId: this.adapterId,
+          sourceType: "database",
+          recordCount: data.length,
+          dataSize: JSON.stringify(data).length,
+        },
+        processing: { startTime, endTime: new Date(), status: "completed" },
+        quality: {
+          validRecords: valid.length,
+          invalidRecords: invalid.length,
+          duplicateRecords: 0,
+          transformedRecords: transformed.length,
+        },
       },
-      context: {
-        adapterId: this.adapterId
-      },
-      source: {
-        sourceId: this.adapterId,
-        sourceType: 'database',
-        recordCount: data.length,
-        dataSize: JSON.stringify(data).length
-      },
-      processing: { startTime, endTime: new Date(), status: 'completed' },
-      quality: { validRecords: valid.length, invalidRecords: invalid.length, duplicateRecords: 0, transformedRecords: transformed.length }
-    }];
-    
+    ];
+
     return {
       operationId,
-      status: invalid.length === 0 ? 'success' : 'partial_success',
+      status: invalid.length === 0 ? "success" : "partial_success",
       summary: {
         totalRecords: data.length,
         processedRecords: transformed.length,
         validRecords: valid.length,
         invalidRecords: invalid.length,
-        errors: [...validationErrors, ...transformationErrors].map(e => e.message),
-        warnings: []
+        errors: [...validationErrors, ...transformationErrors].map(
+          (e) => e.message,
+        ),
+        warnings: [],
       },
       metrics: [], // Would convert transformed data to metrics
       events,
@@ -396,30 +492,51 @@ export class DatabaseIngestionAdapter extends BaseIngestionAdapter {
         startTime,
         endTime: new Date(),
         duration: Date.now() - startTime.getTime(),
-        stages: { validation: 100, transformation: 50, storage: 25 }
-      }
+        stages: { validation: 100, transformation: 50, storage: 25 },
+      },
     };
   }
-  
+
   async ingestStream(_stream: ReadableStream): Promise<IngestionResult> {
     // Placeholder for stream processing logic
     return this.ingestBatch([]);
   }
-  
+
   async getMetrics(): Promise<IngestionMonitoringMetrics> {
     return {
       period: { start: new Date(Date.now() - 3600000), end: new Date() },
-      throughput: { recordsPerSecond: 100, bytesPerSecond: 1024, peakThroughput: 200, averageThroughput: 150 },
-      performance: { averageLatency: 50, p95Latency: 100, p99Latency: 200, errorRate: 0.01, uptime: 99.9 },
-      resources: { cpuUsage: 45, memoryUsage: 512, diskUsage: 1024, networkIO: 256 },
-      quality: { dataQualityScore: 95, complianceScore: 98, validationSuccessRate: 99, transformationSuccessRate: 97 }
+      throughput: {
+        recordsPerSecond: 100,
+        bytesPerSecond: 1024,
+        peakThroughput: 200,
+        averageThroughput: 150,
+      },
+      performance: {
+        averageLatency: 50,
+        p95Latency: 100,
+        p99Latency: 200,
+        errorRate: 0.01,
+        uptime: 99.9,
+      },
+      resources: {
+        cpuUsage: 45,
+        memoryUsage: 512,
+        diskUsage: 1024,
+        networkIO: 256,
+      },
+      quality: {
+        dataQualityScore: 95,
+        complianceScore: 98,
+        validationSuccessRate: 99,
+        transformationSuccessRate: 97,
+      },
     };
   }
 }
 
 /**
  * API Ingestion Adapter
- * 
+ *
  * Ingests data from REST APIs and webhook endpoints.
  */
 export class APIIngestionAdapter extends BaseIngestionAdapter {
@@ -427,34 +544,55 @@ export class APIIngestionAdapter extends BaseIngestionAdapter {
   // @ts-ignore
   // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
   private _webhookServer: any = null;
-  
+
   async connect(): Promise<void> {
     // Placeholder for API connection logic
     this.isConnectedFlag = true;
   }
-  
+
   async disconnect(): Promise<void> {
     this.isConnectedFlag = false;
     this._webhookServer = null;
   }
-  
+
   async ingestBatch(data: any[]): Promise<IngestionResult> {
     // Similar implementation to DatabaseIngestionAdapter
     return this.ingestBatch(data);
   }
-  
+
   async ingestStream(_stream: ReadableStream): Promise<IngestionResult> {
     // Stream processing for API data
     return this.ingestBatch([]);
   }
-  
+
   async getMetrics(): Promise<IngestionMonitoringMetrics> {
     return {
       period: { start: new Date(Date.now() - 3600000), end: new Date() },
-      throughput: { recordsPerSecond: 50, bytesPerSecond: 512, peakThroughput: 100, averageThroughput: 75 },
-      performance: { averageLatency: 75, p95Latency: 150, p99Latency: 300, errorRate: 0.02, uptime: 99.5 },
-      resources: { cpuUsage: 35, memoryUsage: 256, diskUsage: 512, networkIO: 128 },
-      quality: { dataQualityScore: 92, complianceScore: 96, validationSuccessRate: 98, transformationSuccessRate: 95 }
+      throughput: {
+        recordsPerSecond: 50,
+        bytesPerSecond: 512,
+        peakThroughput: 100,
+        averageThroughput: 75,
+      },
+      performance: {
+        averageLatency: 75,
+        p95Latency: 150,
+        p99Latency: 300,
+        errorRate: 0.02,
+        uptime: 99.5,
+      },
+      resources: {
+        cpuUsage: 35,
+        memoryUsage: 256,
+        diskUsage: 512,
+        networkIO: 128,
+      },
+      quality: {
+        dataQualityScore: 92,
+        complianceScore: 96,
+        validationSuccessRate: 98,
+        transformationSuccessRate: 95,
+      },
     };
   }
 }

@@ -17,6 +17,9 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { createTestClient } from '../helpers/auth';
 import { cleanupTestDatabase, setupTestDatabase } from '../helpers/database';
 
+// Import test setup to configure mocks
+import '../../src/test-setup';
+
 describe('Contract Test T008: POST /api/v1/ai/analyze', () => {
   let testClient: any;
   let patientId: string;

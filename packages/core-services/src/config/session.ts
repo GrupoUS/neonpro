@@ -1,5 +1,5 @@
 // T044: Session management and authentication middleware
-import type { Context, Next, MiddlewareHandler } from 'hono';
+import type { Context, Next, MiddlewareHandler } from "hono";
 
 export interface SessionConfig {
   cookieName: string;
@@ -7,7 +7,7 @@ export interface SessionConfig {
   maxAge: number;
   secure: boolean;
   httpOnly: boolean;
-  sameSite: 'strict' | 'lax' | 'none';
+  sameSite: "strict" | "lax" | "none";
   domain?: string;
   path: string;
   renewThreshold: number; // Renew session if less than this many seconds remain
@@ -105,7 +105,7 @@ export class SessionManager {
       id: sessionId,
       userId: userData.userId,
       email: userData.email,
-      role: userData.role || 'user',
+      role: userData.role || "user",
       permissions: userData.permissions || [],
       metadata: userData.metadata || {},
       createdAt: now.toISOString(),
@@ -121,7 +121,10 @@ export class SessionManager {
     return await this.store.get(sessionId);
   }
 
-  async updateSession(sessionId: string, updates: Partial<UserSession>): Promise<UserSession | null> {
+  async updateSession(
+    sessionId: string,
+    updates: Partial<UserSession>,
+  ): Promise<UserSession | null> {
     const session = await this.store.get(sessionId);
     if (!session) return null;
 
@@ -171,11 +174,11 @@ export class SessionManager {
     ];
 
     if (this.config.secure) {
-      cookieOptions.push('Secure');
+      cookieOptions.push("Secure");
     }
 
     if (this.config.httpOnly) {
-      cookieOptions.push('HttpOnly');
+      cookieOptions.push("HttpOnly");
     }
 
     if (this.config.sameSite) {
@@ -186,7 +189,7 @@ export class SessionManager {
       cookieOptions.push(`Domain=${this.config.domain}`);
     }
 
-    return cookieOptions.join('; ');
+    return cookieOptions.join("; ");
   }
 
   createClearCookie(): string {
@@ -196,21 +199,24 @@ export class SessionManager {
 
 export function createSessionConfig(): SessionConfig {
   return {
-    cookieName: process.env.SESSION_COOKIE_NAME || 'neonpro_session',
-    secretKey: process.env.SESSION_SECRET_KEY || 'your-secret-key-here',
-    maxAge: parseInt(process.env.SESSION_MAX_AGE || '86400'), // 24 hours
-    secure: process.env.NODE_ENV === 'production',
+    cookieName: process.env.SESSION_COOKIE_NAME || "neonpro_session",
+    secretKey: process.env.SESSION_SECRET_KEY || "your-secret-key-here",
+    maxAge: parseInt(process.env.SESSION_MAX_AGE || "86400"), // 24 hours
+    secure: process.env.NODE_ENV === "production",
     httpOnly: true,
-    sameSite: (process.env.SESSION_SAME_SITE as any) || 'lax',
+    sameSite: (process.env.SESSION_SAME_SITE as any) || "lax",
     domain: process.env.SESSION_DOMAIN,
-    path: process.env.SESSION_PATH || '/',
-    renewThreshold: parseInt(process.env.SESSION_RENEW_THRESHOLD || '3600'), // 1 hour
+    path: process.env.SESSION_PATH || "/",
+    renewThreshold: parseInt(process.env.SESSION_RENEW_THRESHOLD || "3600"), // 1 hour
   };
 }
 
 let sessionManagerInstance: SessionManager | null = null;
 
-export function createSessionManager(config?: SessionConfig, store?: SessionStore): SessionManager {
+export function createSessionManager(
+  config?: SessionConfig,
+  store?: SessionStore,
+): SessionManager {
   const sessionConfig = config || createSessionConfig();
   const sessionStore = store || new MemorySessionStore();
   sessionManagerInstance = new SessionManager(sessionConfig, sessionStore);
@@ -233,8 +239,11 @@ export function sessionMiddleware(options?: {
     const sessionManager = getSessionManager();
     const config = createSessionConfig();
 
-    const cookieSessionId = getCookieValue(c.req.header('Cookie') || '', config.cookieName);
-    const headerSessionId = c.req.header('X-Session-ID');
+    const cookieSessionId = getCookieValue(
+      c.req.header("Cookie") || "",
+      config.cookieName,
+    );
+    const headerSessionId = c.req.header("X-Session-ID");
     const sessionId = headerSessionId || cookieSessionId;
 
     let session: UserSession | null = null;
@@ -245,35 +254,35 @@ export function sessionMiddleware(options?: {
       if (session && sessionManager.shouldRenewSession(session)) {
         session = await sessionManager.renewSession(sessionId);
         if (session) {
-          c.header('Set-Cookie', sessionManager.createSessionCookie(sessionId));
+          c.header("Set-Cookie", sessionManager.createSessionCookie(sessionId));
         }
       }
     }
 
     if (options?.required && !session) {
-      return c.json({ error: 'Authentication required' }, 401);
+      return c.json({ error: "Authentication required" }, 401);
     }
 
     if (session && options?.roles && options.roles.length > 0) {
       if (!session.role || !options.roles.includes(session.role)) {
-        return c.json({ error: 'Insufficient permissions' }, 403);
+        return c.json({ error: "Insufficient permissions" }, 403);
       }
     }
 
     if (session && options?.permissions && options.permissions.length > 0) {
       const userPermissions = session.permissions || [];
-      const hasAllPermissions = options.permissions.every(permission =>
+      const hasAllPermissions = options.permissions.every((permission) =>
         userPermissions.includes(permission),
       );
 
       if (!hasAllPermissions) {
-        return c.json({ error: 'Insufficient permissions' }, 403);
+        return c.json({ error: "Insufficient permissions" }, 403);
       }
     }
 
-    c.set('session', session);
+    c.set("session", session);
     c.set(
-      'user',
+      "user",
       session
         ? {
             id: session.userId,
@@ -289,9 +298,9 @@ export function sessionMiddleware(options?: {
 }
 
 function getCookieValue(cookieHeader: string, name: string): string | null {
-  const cookies = cookieHeader.split(';').map(cookie => cookie.trim());
+  const cookies = cookieHeader.split(";").map((cookie) => cookie.trim());
   for (const cookie of cookies) {
-    const [cookieName, cookieValue] = cookie.split('=');
+    const [cookieName, cookieValue] = cookie.split("=");
     if (cookieName === name) {
       return cookieValue;
     }

@@ -35,22 +35,34 @@ export class ExportLGPDCompliance {
     }
 
     if (patientCount > 10000) {
-      return { valid: false, error: 'Exportação limitada a 10.000 registros por solicitação' };
+      return {
+        valid: false,
+        error: 'Exportação limitada a 10.000 registros por solicitação',
+      };
     }
 
     if (options.consentRequired) {
       const hasConsent = await this.checkUserConsent(userId, options.purpose);
       if (!hasConsent) {
-        return { valid: false, error: 'Consentimento do paciente não encontrado' };
+        return {
+          valid: false,
+          error: 'Consentimento do paciente não encontrado',
+        };
       }
     }
 
     return { valid: true };
   }
 
-  static async checkUserConsent(userId: string, purpose: string): Promise<boolean> {
+  static async checkUserConsent(
+    userId: string,
+    purpose: string,
+  ): Promise<boolean> {
     try {
-      return await brazilianComplianceService.hasDataProcessingConsent(userId, purpose);
+      return await brazilianComplianceService.hasDataProcessingConsent(
+        userId,
+        purpose,
+      );
     } catch (error) {
       console.error('Erro ao verificar consentimento LGPD:', error);
       return false;
@@ -73,7 +85,10 @@ export class ExportLGPDCompliance {
           );
         }
 
-        if (options.excludeRestrictedFields && this.isRestrictedField(field.field)) {
+        if (
+          options.excludeRestrictedFields
+          && this.isRestrictedField(field.field)
+        ) {
           delete anonymizedRecord[field.field];
         }
       });
@@ -163,7 +178,12 @@ export class ExportLGPDCompliance {
     fields: PatientExportField[],
     recordCount: number,
   ): Promise<void> {
-    const _auditLog = this.generateAuditTrail(userId, exportId, recordCount, 'DATA_EXPORT');
+    const _auditLog = this.generateAuditTrail(
+      userId,
+      exportId,
+      recordCount,
+      'DATA_EXPORT',
+    );
 
     try {
       await brazilianComplianceService.logDataAccess({

@@ -56,7 +56,10 @@ export class ExportService {
     return this.ACTIVE_JOBS.get(jobId) || null;
   }
 
-  static async cancelExportJob(jobId: string, userId: string): Promise<boolean> {
+  static async cancelExportJob(
+    jobId: string,
+    userId: string,
+  ): Promise<boolean> {
     const job = this.ACTIVE_JOBS.get(jobId);
 
     if (!job || job.userId !== userId) {
@@ -72,7 +75,9 @@ export class ExportService {
     return false;
   }
 
-  static async getExportFormats(): Promise<Array<{ format: string; description: string }>> {
+  static async getExportFormats(): Promise<
+    Array<{ format: string; description: string }>
+  > {
     return [
       {
         format: 'csv',
@@ -89,7 +94,10 @@ export class ExportService {
     return DEFAULT_EXPORT_FIELDS;
   }
 
-  static async getExportHistory(userId: string, limit: number = 10): Promise<ExportJob[]> {
+  static async getExportHistory(
+    userId: string,
+    limit: number = 10,
+  ): Promise<ExportJob[]> {
     const userJobs = Array.from(this.ACTIVE_JOBS.values())
       .filter(job => job.userId === userId)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
@@ -109,7 +117,10 @@ export class ExportService {
       job.status = 'processing';
       job.updatedAt = new Date();
 
-      const { data, total } = await this.fetchPatientData(job.filters, job.pagination);
+      const { data, total } = await this.fetchPatientData(
+        job.filters,
+        job.pagination,
+      );
 
       job.progress.total = total;
 
@@ -192,17 +203,27 @@ export class ExportService {
           Math.floor(Math.random() * 12),
           Math.floor(Math.random() * 28) + 1,
         ),
-        gender: ['Masculino', 'Feminino', 'Outro'][Math.floor(Math.random() * 3)],
-        bloodType:
-          ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'][Math.floor(Math.random() * 8)],
-        allergies: ['Penicilina', 'Látex', 'Amendoim'][Math.floor(Math.random() * 3)] || [],
-        medications: ['Dipirona', 'Paracetamol', 'Ibuprofeno'][Math.floor(Math.random() * 3)] || [],
+        gender: ['Masculino', 'Feminino', 'Outro'][
+          Math.floor(Math.random() * 3)
+        ],
+        bloodType: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'][
+          Math.floor(Math.random() * 8)
+        ],
+        allergies: ['Penicilina', 'Látex', 'Amendoim'][Math.floor(Math.random() * 3)]
+          || [],
+        medications: ['Dipirona', 'Paracetamol', 'Ibuprofeno'][
+          Math.floor(Math.random() * 3)
+        ] || [],
         emergencyContact: `(11) 9${Math.floor(Math.random() * 9000) + 1000}-${
           Math.floor(Math.random() * 9000) + 1000
         }`,
         status: ['ativo', 'inativo', 'pendente'][Math.floor(Math.random() * 3)],
-        createdAt: new Date(Date.now() - Math.floor(Math.random() * 365) * 24 * 60 * 60 * 1000),
-        updatedAt: new Date(Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000),
+        createdAt: new Date(
+          Date.now() - Math.floor(Math.random() * 365) * 24 * 60 * 60 * 1000,
+        ),
+        updatedAt: new Date(
+          Date.now() - Math.floor(Math.random() * 30) * 24 * 60 * 60 * 1000,
+        ),
       });
     }
 
@@ -221,7 +242,10 @@ export class ExportService {
     }
   }
 
-  private static async generateCSV(data: any[], jobId: string): Promise<string> {
+  private static async generateCSV(
+    data: any[],
+    jobId: string,
+  ): Promise<string> {
     const Papa = await import('papaparse');
 
     const fields = DEFAULT_EXPORT_FIELDS.filter(f => f.required);
@@ -230,7 +254,7 @@ export class ExportService {
     const csvData = data.map(record => {
       return fields.map(field => {
         const value = record[field.field];
-        return field.formatter ? field.formatter(value) : (value || '');
+        return field.formatter ? field.formatter(value) : value || '';
       });
     });
 
@@ -242,11 +266,17 @@ export class ExportService {
     return `/api/exports/${jobId}/data.csv`;
   }
 
-  private static async generateXLSX(data: any[], jobId: string): Promise<string> {
+  private static async generateXLSX(
+    data: any[],
+    jobId: string,
+  ): Promise<string> {
     return `/api/exports/${jobId}/data.xlsx`;
   }
 
-  private static calculateFileSize(data: any[], format: 'csv' | 'xlsx'): number {
+  private static calculateFileSize(
+    data: any[],
+    format: 'csv' | 'xlsx',
+  ): number {
     const estimatedSize = data.length * 500; // rough estimate
     return format === 'csv' ? estimatedSize : estimatedSize * 1.2;
   }
@@ -262,10 +292,13 @@ export class ExportService {
     return {
       totalRecords: job.progress.total,
       exportedRecords: job.progress.processed,
-      processingTime: job.completedAt ? job.completedAt.getTime() - job.createdAt.getTime() : 0,
+      processingTime: job.completedAt
+        ? job.completedAt.getTime() - job.createdAt.getTime()
+        : 0,
       fileSize: job.result?.size || 0,
       averageSpeed: job.progress.processed > 0
-        ? job.progress.processed / ((job.updatedAt.getTime() - job.createdAt.getTime()) / 1000)
+        ? job.progress.processed
+          / ((job.updatedAt.getTime() - job.createdAt.getTime()) / 1000)
         : 0,
     };
   }

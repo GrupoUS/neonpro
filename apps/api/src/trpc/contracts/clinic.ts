@@ -200,16 +200,20 @@ export const clinicRouter = router({
       tags: ['clinic', 'read', 'compliance', 'metrics'],
       requiresPermission: 'clinic:read',
     })
-    .input(z.object({
-      id: z.string().uuid(),
-      includeMetrics: z.boolean().default(false),
-      includeCompliance: z.boolean().default(true),
-      includeSettings: z.boolean().default(false),
-      metricsDateRange: z.object({
-        from: z.string().datetime(),
-        to: z.string().datetime(),
-      }).optional(),
-    }))
+    .input(
+      z.object({
+        id: z.string().uuid(),
+        includeMetrics: z.boolean().default(false),
+        includeCompliance: z.boolean().default(true),
+        includeSettings: z.boolean().default(false),
+        metricsDateRange: z
+          .object({
+            from: z.string().datetime(),
+            to: z.string().datetime(),
+          })
+          .optional(),
+      }),
+    )
     .output(ClinicResponseSchema)
     .query(async ({ input, ctx }) => {
       const clinic = await ctx.prisma.clinic.findUnique({
@@ -285,16 +289,22 @@ export const clinicRouter = router({
       tags: ['clinic', 'list', 'search'],
       requiresPermission: 'clinic:list',
     })
-    .input(PaginationSchema.extend({
-      search: z.string().optional(),
-      state: z.string().length(2).optional(),
-      city: z.string().optional(),
-      isActive: z.boolean().default(true),
-      complianceStatus: z.enum(['compliant', 'non_compliant', 'pending_review']).optional(),
-      sortBy: z.enum(['name', 'createdAt', 'complianceStatus']).default('name'),
-      sortOrder: z.enum(['asc', 'desc']).default('asc'),
-      userAccessOnly: z.boolean().default(false),
-    }))
+    .input(
+      PaginationSchema.extend({
+        search: z.string().optional(),
+        state: z.string().length(2).optional(),
+        city: z.string().optional(),
+        isActive: z.boolean().default(true),
+        complianceStatus: z
+          .enum(['compliant', 'non_compliant', 'pending_review'])
+          .optional(),
+        sortBy: z
+          .enum(['name', 'createdAt', 'complianceStatus'])
+          .default('name'),
+        sortOrder: z.enum(['asc', 'desc']).default('asc'),
+        userAccessOnly: z.boolean().default(false),
+      }),
+    )
     .output(ClinicsListResponseSchema)
     .query(async ({ input, ctx }) => {
       let clinicIds = null;
@@ -321,7 +331,9 @@ export const clinicRouter = router({
         ...(input.city && {
           address: { path: ['city'], string_contains: input.city },
         }),
-        ...(input.complianceStatus && { complianceStatus: input.complianceStatus }),
+        ...(input.complianceStatus && {
+          complianceStatus: input.complianceStatus,
+        }),
       };
 
       const [clinics, total] = await Promise.all([
@@ -549,49 +561,61 @@ export const clinicRouter = router({
       tags: ['clinic', 'compliance', 'audit'],
       requiresPermission: 'clinic:compliance',
     })
-    .input(z.object({
-      clinicId: z.string().uuid(),
-      includeHistory: z.boolean().default(true),
-      historyLimit: z.number().min(1).max(100).default(20),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        clinicId: z.string(),
-        currentStatus: z.enum(['compliant', 'non_compliant', 'pending_review']),
-        lastCheckDate: z.string().datetime(),
-        nextCheckDate: z.string().datetime(),
-        complianceAreas: z.object({
-          businessLicense: z.object({
-            isValid: z.boolean(),
-            validatedAt: z.string().datetime().nullable(),
-            expiresAt: z.string().datetime().nullable(),
-          }),
-          healthLicense: z.object({
-            isValid: z.boolean(),
-            validatedAt: z.string().datetime().nullable(),
-            expiresAt: z.string().datetime().nullable(),
-          }),
-          lgpdCompliance: z.object({
-            isCompliant: z.boolean(),
-            lastAssessment: z.string().datetime().nullable(),
-          }),
-          anvisaCompliance: z.object({
-            isCompliant: z.boolean(),
-            lastAssessment: z.string().datetime().nullable(),
-          }),
-        }),
-        complianceHistory: z.array(z.object({
-          id: z.string(),
-          complianceType: z.string(),
-          status: z.string(),
-          checkDate: z.string().datetime(),
-          details: z.record(z.any()),
-        })).optional(),
+    .input(
+      z.object({
+        clinicId: z.string().uuid(),
+        includeHistory: z.boolean().default(true),
+        historyLimit: z.number().min(1).max(100).default(20),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          clinicId: z.string(),
+          currentStatus: z.enum([
+            'compliant',
+            'non_compliant',
+            'pending_review',
+          ]),
+          lastCheckDate: z.string().datetime(),
+          nextCheckDate: z.string().datetime(),
+          complianceAreas: z.object({
+            businessLicense: z.object({
+              isValid: z.boolean(),
+              validatedAt: z.string().datetime().nullable(),
+              expiresAt: z.string().datetime().nullable(),
+            }),
+            healthLicense: z.object({
+              isValid: z.boolean(),
+              validatedAt: z.string().datetime().nullable(),
+              expiresAt: z.string().datetime().nullable(),
+            }),
+            lgpdCompliance: z.object({
+              isCompliant: z.boolean(),
+              lastAssessment: z.string().datetime().nullable(),
+            }),
+            anvisaCompliance: z.object({
+              isCompliant: z.boolean(),
+              lastAssessment: z.string().datetime().nullable(),
+            }),
+          }),
+          complianceHistory: z
+            .array(
+              z.object({
+                id: z.string(),
+                complianceType: z.string(),
+                status: z.string(),
+                checkDate: z.string().datetime(),
+                details: z.record(z.any()),
+              }),
+            )
+            .optional(),
+        }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .query(async ({ input, ctx }) => {
       // Validate clinic access
       await validateClinicAccess(ctx.user.id, input.clinicId);
@@ -635,8 +659,10 @@ export const clinicRouter = router({
         data: {
           clinicId: input.clinicId,
           currentStatus: clinic.complianceStatus,
-          lastCheckDate: latestCompliance?.checkDate.toISOString() || new Date().toISOString(),
-          nextCheckDate: latestCompliance?.nextCheckDate.toISOString() || new Date().toISOString(),
+          lastCheckDate: latestCompliance?.checkDate.toISOString()
+            || new Date().toISOString(),
+          nextCheckDate: latestCompliance?.nextCheckDate.toISOString()
+            || new Date().toISOString(),
           complianceAreas: {
             businessLicense: {
               isValid: !!clinic.businessLicenseValidatedAt,
@@ -673,37 +699,49 @@ export const clinicRouter = router({
       tags: ['clinic', 'settings'],
       requiresPermission: 'clinic:settings',
     })
-    .input(z.object({
-      clinicId: z.string().uuid(),
-      settings: z.object({
-        workingHours: z.record(z.object({
-          start: z.string(),
-          end: z.string(),
-          isOpen: z.boolean(),
-        })).optional(),
-        appointmentDuration: z.number().min(15).max(180).optional(),
-        bookingAdvanceLimit: z.number().min(1).max(365).optional(),
-        cancellationPolicy: z.object({
-          allowedHours: z.number().min(0).max(168),
-          chargePercentage: z.number().min(0).max(100),
-        }).optional(),
-        notifications: z.object({
-          emailEnabled: z.boolean(),
-          smsEnabled: z.boolean(),
-          whatsappEnabled: z.boolean(),
-        }).optional(),
+    .input(
+      z.object({
+        clinicId: z.string().uuid(),
+        settings: z.object({
+          workingHours: z
+            .record(
+              z.object({
+                start: z.string(),
+                end: z.string(),
+                isOpen: z.boolean(),
+              }),
+            )
+            .optional(),
+          appointmentDuration: z.number().min(15).max(180).optional(),
+          bookingAdvanceLimit: z.number().min(1).max(365).optional(),
+          cancellationPolicy: z
+            .object({
+              allowedHours: z.number().min(0).max(168),
+              chargePercentage: z.number().min(0).max(100),
+            })
+            .optional(),
+          notifications: z
+            .object({
+              emailEnabled: z.boolean(),
+              smsEnabled: z.boolean(),
+              whatsappEnabled: z.boolean(),
+            })
+            .optional(),
+        }),
       }),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        clinicId: z.string(),
-        settings: z.record(z.any()),
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          clinicId: z.string(),
+          settings: z.record(z.any()),
+        }),
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
       }),
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
     .mutation(async ({ input, ctx }) => {
       // Validate clinic admin access
       await validateClinicAdminAccess(ctx.user.id, input.clinicId);
@@ -834,7 +872,10 @@ function hasSystemAdminRole(role: string): boolean {
   return role === 'system_admin';
 }
 
-async function createClinicAdminUser(clinicId: string, createdBy: string): Promise<void> {
+async function createClinicAdminUser(
+  clinicId: string,
+  createdBy: string,
+): Promise<void> {
   // Placeholder for clinic admin user creation
 }
 
@@ -846,7 +887,8 @@ function getChanges(current: any, input: any): Record<string, any> {
   const changes = {};
   Object.keys(input).forEach(key => {
     if (
-      key !== 'id' && input[key] !== undefined
+      key !== 'id'
+      && input[key] !== undefined
       && JSON.stringify(input[key]) !== JSON.stringify(current[key])
     ) {
       changes[key] = {
@@ -858,12 +900,18 @@ function getChanges(current: any, input: any): Record<string, any> {
   return changes;
 }
 
-async function validateClinicAccess(userId: string, clinicId: string): Promise<void> {
+async function validateClinicAccess(
+  userId: string,
+  clinicId: string,
+): Promise<void> {
   // Implementation for clinic access validation
   return Promise.resolve();
 }
 
-async function validateClinicAdminAccess(userId: string, clinicId: string): Promise<void> {
+async function validateClinicAdminAccess(
+  userId: string,
+  clinicId: string,
+): Promise<void> {
   // Implementation for clinic admin access validation
   return Promise.resolve();
 }
@@ -873,7 +921,9 @@ function hasClinicAdminAccess(userId: string, clinicId: string): boolean {
   return true;
 }
 
-async function getUserAccessibleClinics(userId: string): Promise<Array<{ clinicId: string }>> {
+async function getUserAccessibleClinics(
+  userId: string,
+): Promise<Array<{ clinicId: string }>> {
   // Implementation for getting user accessible clinics
   return [];
 }

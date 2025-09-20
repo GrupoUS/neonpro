@@ -18,32 +18,47 @@ import { app } from '../../src/app';
 const BulkActionRequestSchema = z.object({
   action: z.enum(['update', 'delete', 'updateStatus', 'export', 'merge']),
   patientIds: z.array(z.string().uuid()).min(1).max(100),
-  data: z.object({
-    // For update actions
-    updates: z.object({
-      status: z.enum(['active', 'inactive', 'archived']).optional(),
-      emergencyContact: z.object({
-        name: z.string().optional(),
-        relationship: z.string().optional(),
-        phone: z.string().regex(/^\(\d{2}\) \d{4,5}-\d{4}$/).optional(),
-      }).optional(),
-      lgpdConsent: z.object({
-        marketingCommunications: z.boolean().optional(),
-        thirdPartySharing: z.boolean().optional(),
-      }).optional(),
-    }).optional(),
-    // For delete actions
-    deletionType: z.enum(['soft', 'hard']).optional(),
-    // For merge actions
-    primaryPatientId: z.string().uuid().optional(),
-    mergeStrategy: z.enum(['prefer_primary', 'prefer_recent', 'manual']).optional(),
-  }).optional(),
-  options: z.object({
-    validateOnly: z.boolean().default(false),
-    skipValidation: z.boolean().default(false),
-    continueOnError: z.boolean().default(false),
-    batchSize: z.number().min(1).max(50).default(10),
-  }).optional(),
+  data: z
+    .object({
+      // For update actions
+      updates: z
+        .object({
+          status: z.enum(['active', 'inactive', 'archived']).optional(),
+          emergencyContact: z
+            .object({
+              name: z.string().optional(),
+              relationship: z.string().optional(),
+              phone: z
+                .string()
+                .regex(/^\(\d{2}\) \d{4,5}-\d{4}$/)
+                .optional(),
+            })
+            .optional(),
+          lgpdConsent: z
+            .object({
+              marketingCommunications: z.boolean().optional(),
+              thirdPartySharing: z.boolean().optional(),
+            })
+            .optional(),
+        })
+        .optional(),
+      // For delete actions
+      deletionType: z.enum(['soft', 'hard']).optional(),
+      // For merge actions
+      primaryPatientId: z.string().uuid().optional(),
+      mergeStrategy: z
+        .enum(['prefer_primary', 'prefer_recent', 'manual'])
+        .optional(),
+    })
+    .optional(),
+  options: z
+    .object({
+      validateOnly: z.boolean().default(false),
+      skipValidation: z.boolean().default(false),
+      continueOnError: z.boolean().default(false),
+      batchSize: z.number().min(1).max(50).default(10),
+    })
+    .optional(),
 });
 
 // Bulk action response schema validation
@@ -55,12 +70,14 @@ const BulkActionResponseSchema = z.object({
     failed: z.number(),
     skipped: z.number(),
   }),
-  results: z.array(z.object({
-    patientId: z.string().uuid(),
-    status: z.enum(['success', 'error', 'skipped']),
-    data: z.any().optional(), // Updated patient data or error details
-    error: z.string().optional(),
-  })),
+  results: z.array(
+    z.object({
+      patientId: z.string().uuid(),
+      status: z.enum(['success', 'error', 'skipped']),
+      data: z.any().optional(), // Updated patient data or error details
+      error: z.string().optional(),
+    }),
+  ),
   performanceMetrics: z.object({
     duration: z.number(), // Total operation time
     averageTimePerPatient: z.number(),
@@ -224,7 +241,9 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
       expect(response.body.summary.failed).toBe(1);
 
       // Check that the failed result contains error details
-      const failedResult = response.body.results.find(r => r.status === 'error');
+      const failedResult = response.body.results.find(
+        r => r.status === 'error',
+      );
       expect(failedResult).toBeDefined();
       expect(failedResult.error).toContain('not found');
     });
@@ -256,7 +275,9 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
 
       response.body.results.forEach(result => {
         expect(result.status).toBe('success');
-        expect(result.data.emergencyContact.name).toBe('Updated Emergency Contact');
+        expect(result.data.emergencyContact.name).toBe(
+          'Updated Emergency Contact',
+        );
         expect(result.data.emergencyContact.phone).toBe('(11) 77777-7777');
       });
     });
@@ -417,8 +438,12 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
       const duration = Date.now() - startTime;
 
       expect(response.body.summary.totalRequested).toBe(testPatientIds.length);
-      expect(response.body.performanceMetrics.batchesProcessed).toBeGreaterThan(1);
-      expect(response.body.performanceMetrics.averageTimePerPatient).toBeLessThan(100); // <100ms per patient
+      expect(response.body.performanceMetrics.batchesProcessed).toBeGreaterThan(
+        1,
+      );
+      expect(
+        response.body.performanceMetrics.averageTimePerPatient,
+      ).toBeLessThan(100); // <100ms per patient
     });
 
     it('should respect batch size limits', async () => {
@@ -442,15 +467,19 @@ describe('POST /api/v2/patients/bulk-actions - Contract Tests', () => {
         .expect(200);
 
       const expectedBatches = Math.ceil(testPatientIds.length / 3);
-      expect(response.body.performanceMetrics.batchesProcessed).toBe(expectedBatches);
+      expect(response.body.performanceMetrics.batchesProcessed).toBe(
+        expectedBatches,
+      );
     });
   });
 
   describe('Error Handling', () => {
     it('should return 400 for too many patient IDs', async () => {
-      const tooManyIds = Array(101).fill().map((_, i) =>
-        `123e4567-e89b-12d3-a456-42661417400${i.toString().padStart(1, '0')}`
-      );
+      const tooManyIds = Array(101)
+        .fill()
+        .map(
+          (_, i) => `123e4567-e89b-12d3-a456-42661417400${i.toString().padStart(1, '0')}`,
+        );
 
       const bulkRequest = {
         action: 'updateStatus',

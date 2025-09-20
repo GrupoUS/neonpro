@@ -76,14 +76,17 @@ describe('Patients AI Integration API', () => {
         include_confidence_scores: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-insights`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-insights`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(insightsRequest),
         },
-        body: JSON.stringify(insightsRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -162,14 +165,17 @@ describe('Patients AI Integration API', () => {
         models: ['invalid_model'],
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-insights`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-insights`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(invalidRequest),
         },
-        body: JSON.stringify(invalidRequest),
-      });
+      );
 
       expect(response.status).toBe(400);
       const data = await response.json();
@@ -186,14 +192,17 @@ describe('Patients AI Integration API', () => {
         include_compliance_validation: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-insights`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-insights`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(insightsRequest),
         },
-        body: JSON.stringify(insightsRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -238,30 +247,36 @@ describe('Patients AI Integration API', () => {
         analysis_type: 'risk_assessment',
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-insights`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          'X-Request-ID': 'ai-insights-test-123',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-insights`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            'X-Request-ID': 'ai-insights-test-123',
+          },
+          body: JSON.stringify(insightsRequest),
         },
-        body: JSON.stringify(insightsRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
 
       // Check audit trail was created
-      const auditResponse = await app.request(`/api/v2/patients/${patientId}/audit-trail`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const auditResponse = await app.request(
+        `/api/v2/patients/${patientId}/audit-trail`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       const auditData = await auditResponse.json();
-      const aiProcessingEntry = auditData.data.audit_trail.find((entry: any) =>
-        entry.action === 'ai_insights_generated'
+      const aiProcessingEntry = auditData.data.audit_trail.find(
+        (entry: any) => entry.action === 'ai_insights_generated',
       );
       expect(aiProcessingEntry).toBeDefined();
     });
@@ -270,20 +285,27 @@ describe('Patients AI Integration API', () => {
   describe('POST /api/v2/patients/{id}/ai-predictions', () => {
     it('should return 200 for successful AI predictions', async () => {
       const predictionRequest = {
-        prediction_types: ['no_show_risk', 'readmission_risk', 'medication_adherence'],
+        prediction_types: [
+          'no_show_risk',
+          'readmission_risk',
+          'medication_adherence',
+        ],
         timeframe_days: 30,
         include_confidence_intervals: true,
         include_explanations: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-predictions`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-predictions`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(predictionRequest),
         },
-        body: JSON.stringify(predictionRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -329,14 +351,17 @@ describe('Patients AI Integration API', () => {
         timeframe_days: -1, // Invalid timeframe
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-predictions`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-predictions`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(invalidRequest),
         },
-        body: JSON.stringify(invalidRequest),
-      });
+      );
 
       expect(response.status).toBe(400);
       const data = await response.json();
@@ -356,20 +381,23 @@ describe('Patients AI Integration API', () => {
         include_ethical_assessment: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-predictions`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-predictions`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(predictionRequest),
         },
-        body: JSON.stringify(predictionRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
 
-      const prediction = data.predictions.predictions.find((p: any) =>
-        p.type === 'treatment_recommendation'
+      const prediction = data.predictions.predictions.find(
+        (p: any) => p.type === 'treatment_recommendation',
       );
       expect(prediction).toMatchObject({
         ethical_assessment: expect.objectContaining({
@@ -383,7 +411,11 @@ describe('Patients AI Integration API', () => {
 
     it('should enforce prediction usage limits', async () => {
       const predictionRequest = {
-        prediction_types: ['no_show_risk', 'readmission_risk', 'medication_adherence'],
+        prediction_types: [
+          'no_show_risk',
+          'readmission_risk',
+          'medication_adherence',
+        ],
       };
 
       // Make multiple requests to test usage limits
@@ -423,14 +455,17 @@ describe('Patients AI Integration API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-recommendations`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-recommendations`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(recommendationRequest),
         },
-        body: JSON.stringify(recommendationRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -452,14 +487,17 @@ describe('Patients AI Integration API', () => {
         include_historical_data: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-recommendations`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-recommendations`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(recommendationRequest),
         },
-        body: JSON.stringify(recommendationRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -481,14 +519,17 @@ describe('Patients AI Integration API', () => {
         cultural_context: 'urban_sao_paulo',
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-recommendations`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-recommendations`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(recommendationRequest),
         },
-        body: JSON.stringify(recommendationRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -509,14 +550,17 @@ describe('Patients AI Integration API', () => {
         include_safety_validation: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-recommendations`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-recommendations`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(recommendationRequest),
         },
-        body: JSON.stringify(recommendationRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -541,14 +585,17 @@ describe('Patients AI Integration API', () => {
         language: 'pt-BR',
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-chat`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-chat`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(chatRequest),
         },
-        body: JSON.stringify(chatRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -573,20 +620,25 @@ describe('Patients AI Integration API', () => {
         language: 'pt-BR',
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-chat`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-chat`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(medicalInquiryRequest),
         },
-        body: JSON.stringify(medicalInquiryRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
 
       expect(data.response).toMatchObject({
-        medical_disclaimer: expect.stringContaining('não substitui aconselhamento'),
+        medical_disclaimer: expect.stringContaining(
+          'não substitui aconselhamento',
+        ),
         urgency_assessment: expect.any(String),
         recommended_actions: expect.any(Array),
         requires_human_followup: expect.any(Boolean),
@@ -599,14 +651,17 @@ describe('Patients AI Integration API', () => {
         context: 'malicious_request',
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-chat`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-chat`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(inappropriateRequest),
         },
-        body: JSON.stringify(inappropriateRequest),
-      });
+      );
 
       expect(response.status).toBe(400);
       const data = await response.json();
@@ -625,14 +680,17 @@ describe('Patients AI Integration API', () => {
         save_to_history: true,
       };
 
-      const firstResponse = await app.request(`/api/v2/patients/${patientId}/ai-chat`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const firstResponse = await app.request(
+        `/api/v2/patients/${patientId}/ai-chat`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(firstMessage),
         },
-        body: JSON.stringify(firstMessage),
-      });
+      );
 
       expect(firstResponse.status).toBe(200);
 
@@ -643,14 +701,17 @@ describe('Patients AI Integration API', () => {
         reference_previous: true,
       };
 
-      const secondResponse = await app.request(`/api/v2/patients/${patientId}/ai-chat`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const secondResponse = await app.request(
+        `/api/v2/patients/${patientId}/ai-chat`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(secondMessage),
         },
-        body: JSON.stringify(secondMessage),
-      });
+      );
 
       expect(secondResponse.status).toBe(200);
       const secondData = await secondResponse.json();
@@ -669,14 +730,17 @@ describe('Patients AI Integration API', () => {
         include_emergency_guidance: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-chat`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-chat`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(urgentRequest),
         },
-        body: JSON.stringify(urgentRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -744,14 +808,17 @@ describe('Patients AI Integration API', () => {
         include_data_minimization: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-insights`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-insights`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(privacyCheckRequest),
         },
-        body: JSON.stringify(privacyCheckRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -772,14 +839,17 @@ describe('Patients AI Integration API', () => {
         include_explainability: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/ai-predictions`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/ai-predictions`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(explainabilityRequest),
         },
-        body: JSON.stringify(explainabilityRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();

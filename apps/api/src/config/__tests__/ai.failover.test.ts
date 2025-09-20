@@ -11,7 +11,8 @@ describe('generateWithFailover', () => {
   it('falls back to secondary model when primary throws', async () => {
     // Mock ai SDK generateText used by ai.ts
     vi.mock('ai', () => ({
-      generateText: vi.fn()
+      generateText: vi
+        .fn()
         // First call (primary) throws
         .mockRejectedValueOnce(new Error('primary down'))
         // Second call (secondary) returns text
@@ -25,6 +26,8 @@ describe('generateWithFailover', () => {
       prompt: 'hello',
     });
     expect(result.text).toBe('fallback text');
-    expect(result.headers.get('X-Chat-Model')).toMatch(/google:|anthropic:|openai:/);
+    expect(result.headers.get('X-Chat-Model')).toMatch(
+      /google:|anthropic:|openai:/,
+    );
   });
 });

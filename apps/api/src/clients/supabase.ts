@@ -34,7 +34,11 @@ function getSupabaseAnonKey(): string {
   if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
     return process.env.SUPABASE_ANON_KEY || '';
   }
-  return process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+  return (
+    process.env.SUPABASE_ANON_KEY
+    || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    || ''
+  );
 }
 
 function getSupabaseServiceKey(): string {
@@ -60,7 +64,13 @@ function validateAdminEnvironment(): void {
 // Cookie handler interface for SSR
 interface CookieHandlers {
   getAll(): Array<{ name: string; value: string }>;
-  setAll(cookies: Array<{ name: string; value: string; options?: Record<string, any> }>): void;
+  setAll(
+    cookies: Array<{
+      name: string;
+      value: string;
+      options?: Record<string, any>;
+    }>,
+  ): void;
 }
 
 // Extended admin client interface for healthcare features
@@ -75,7 +85,10 @@ interface HealthcareAdminClient extends SupabaseClient<Database> {
 
   // LGPD compliance methods
   exportUserData(userId: string): Promise<any>;
-  deleteUserData(userId: string, options?: { cascadeDelete?: boolean }): Promise<void>;
+  deleteUserData(
+    userId: string,
+    options?: { cascadeDelete?: boolean },
+  ): Promise<void>;
 
   // Healthcare-specific admin methods
   auth: SupabaseClient<Database>['auth'] & {
@@ -95,7 +108,10 @@ interface HealthcareServerClient extends SupabaseClient<Database> {
 // Extended user client interface
 interface HealthcareUserClient extends SupabaseClient<Database> {
   auth: SupabaseClient<Database>['auth'] & {
-    signInWithPassword(credentials: { email: string; password: string }): Promise<any>;
+    signInWithPassword(credentials: {
+      email: string;
+      password: string;
+    }): Promise<any>;
   };
 }
 
@@ -179,10 +195,13 @@ export function createAdminClient(): HealthcareAdminClient {
             .eq('user_id', userId);
           exportData[table] = data || [];
         } catch (error) {
-          console.error(`Failed to export ${table} data for user ${userId}:`, error);
-          exportData[table] = { 
+          console.error(
+            `Failed to export ${table} data for user ${userId}:`,
+            error,
+          );
+          exportData[table] = {
             error: 'Table access denied or not found',
-            details: error instanceof Error ? error.message : String(error)
+            details: error instanceof Error ? error.message : String(error),
           };
         }
       }
@@ -216,12 +235,18 @@ export function createAdminClient(): HealthcareAdminClient {
         ];
 
         for (const table of relatedTables) {
-          await adminClient.from(table as any).delete().eq('user_id', userId);
+          await adminClient
+            .from(table as any)
+            .delete()
+            .eq('user_id', userId);
         }
       }
 
       // Delete user profile and auth record
-      await adminClient.from('profiles' as any).delete().eq('id', userId);
+      await adminClient
+        .from('profiles' as any)
+        .delete()
+        .eq('id', userId);
       await adminClient.auth.admin.deleteUser(userId);
     } catch (error) {
       throw new Error(`Failed to delete user data: ${error}`);
@@ -245,7 +270,9 @@ export function createAdminClient(): HealthcareAdminClient {
     },
     // Prevent admin client from being used for user authentication
     signInWithPassword: () => {
-      throw new Error('Admin client should not be used for user authentication');
+      throw new Error(
+        'Admin client should not be used for user authentication',
+      );
     },
   } as any;
 
@@ -267,7 +294,9 @@ export function resetClientInstances(): void {
  * Creates server client with SSR cookie management
  * For use in Hono.js server-side rendering
  */
-export function createServerClient(cookieHandlers?: CookieHandlers): HealthcareServerClient {
+export function createServerClient(
+  cookieHandlers?: CookieHandlers,
+): HealthcareServerClient {
   // In test environment, provide no-op cookie handlers to simplify usage
   if (!cookieHandlers) {
     if (process.env.NODE_ENV === 'test' || process.env.VITEST) {
@@ -331,7 +360,10 @@ export const healthcareRLS = {
    * Validates if user can access specific clinic data
    * Based on clinic membership and role permissions
    */
-  canAccessClinic: async (userId: string, clinicId: string): Promise<boolean> => {
+  canAccessClinic: async (
+    userId: string,
+    clinicId: string,
+  ): Promise<boolean> => {
     try {
       const adminClient = createAdminClient();
 
@@ -346,7 +378,10 @@ export const healthcareRLS = {
 
       return !!membership;
     } catch (error) {
-      console.error(`Failed to check user clinic membership for user ${userId}, clinic ${clinicId}:`, error);
+      console.error(
+        `Failed to check user clinic membership for user ${userId}, clinic ${clinicId}:`,
+        error,
+      );
       return false;
     }
   },
@@ -355,7 +390,10 @@ export const healthcareRLS = {
    * Validates if user can access specific patient data
    * Based on clinic association and healthcare professional permissions
    */
-  canAccessPatient: async (userId: string, patientId: string): Promise<boolean> => {
+  canAccessPatient: async (
+    userId: string,
+    patientId: string,
+  ): Promise<boolean> => {
     try {
       const adminClient = createAdminClient();
 
@@ -379,7 +417,10 @@ export const healthcareRLS = {
 
       return !!patientClinic;
     } catch (error) {
-      console.error(`Failed to check patient access for patient ${patientId}:`, error);
+      console.error(
+        `Failed to check patient access for patient ${patientId}:`,
+        error,
+      );
       return false;
     }
   },
@@ -390,7 +431,10 @@ export const healthcareRLS = {
  * Automatically applies clinic and patient access filters
  */
 export class RLSQueryBuilder {
-  constructor(public userId?: string, public role?: string) {}
+  constructor(
+    public userId?: string,
+    public role?: string,
+  ) {}
 
   /**
    * Builds patient query with RLS filters applied
@@ -438,6 +482,8 @@ export const supabaseAdminWithTelemetry = createTelemetryEnabledSupabaseClient(s
 export const supabaseClientWithTelemetry = createTelemetryEnabledSupabaseClient(supabaseClient);
 
 // Helper function to get telemetry-enabled client based on context
-export function getTelemetryEnabledClient(useAdmin = false): TelemetryEnabledSupabaseClient {
+export function getTelemetryEnabledClient(
+  useAdmin = false,
+): TelemetryEnabledSupabaseClient {
   return useAdmin ? supabaseAdminWithTelemetry : supabaseClientWithTelemetry;
 }

@@ -74,7 +74,7 @@ import {
   AccessibilityProvider,
   MobilePatientList,
   PatientErrorBoundary,
-} from '@/components/patients';
+} from "@/components/patients";
 
 function PatientManagement() {
   const [patients, setPatients] = useState<MobilePatientData[]>([]);
@@ -84,8 +84,8 @@ function PatientManagement() {
       <PatientErrorBoundary>
         <MobilePatientList
           patients={patients}
-          onPatientSelect={id => console.log('Selected:', id)}
-          userRole='aesthetician'
+          onPatientSelect={(id) => console.log("Selected:", id)}
+          userRole="aesthetician"
         />
       </PatientErrorBoundary>
     </AccessibilityProvider>
@@ -159,21 +159,21 @@ const LGPD_CONSENT_PURPOSES = {
 
 ```tsx
 // CPF validation with checksum algorithm
-validateCpf('123.456.789-00'); // Returns boolean
+validateCpf("123.456.789-00"); // Returns boolean
 
 // CNS (National Health Card) validation
-validateCns('123 4567 8901 2345'); // Returns boolean
+validateCns("123 4567 8901 2345"); // Returns boolean
 
 // Brazilian phone number validation
-validateBrazilianPhone('(11) 99999-9999'); // Returns boolean
+validateBrazilianPhone("(11) 99999-9999"); // Returns boolean
 ```
 
 ### Document Formatting
 
 ```tsx
-formatters.cpf('12345678900'); // '123.456.789-00'
-formatters.phone('11999999999'); // '(11) 99999-9999'
-formatters.cep('01234567'); // '01234-567'
+formatters.cpf("12345678900"); // '123.456.789-00'
+formatters.phone("11999999999"); // '(11) 99999-9999'
+formatters.cep("01234567"); // '01234-567'
 ```
 
 ### Healthcare Integration
@@ -199,7 +199,7 @@ formatters.cep('01234567'); // '01234-567'
 <AccessibilityProvider>
   {/* Provides accessibility context to all children */}
   <PatientInterface />
-</AccessibilityProvider>;
+</AccessibilityProvider>
 ```
 
 ### Accessibility Panel
@@ -218,7 +218,7 @@ formatters.cep('01234567'); // '01234-567'
 <PatientErrorBoundary
   onError={(error, errorInfo) => {
     // Sanitized error logging (no PII)
-    auditLog('HEALTHCARE_ERROR', {
+    auditLog("HEALTHCARE_ERROR", {
       errorId: generateErrorId(),
       message: sanitize(error.message),
       timestamp: new Date().toISOString(),
@@ -226,7 +226,7 @@ formatters.cep('01234567'); // '01234-567'
   }}
 >
   <PatientComponent />
-</PatientErrorBoundary>;
+</PatientErrorBoundary>
 ```
 
 ### Data Sanitization
@@ -246,7 +246,7 @@ interface MobilePatientListProps {
   isLoading?: boolean;
   onPatientSelect: (patientId: string) => void;
   onCreatePatient?: () => void;
-  userRole: 'admin' | 'aesthetician' | 'coordinator';
+  userRole: "admin" | "aesthetician" | "coordinator";
 }
 ```
 
@@ -271,7 +271,7 @@ interface ConsentManagementDialogProps {
   onConsentUpdate: (consents: Partial<ConsentFormData>) => Promise<void>;
   onDataExport: (patientId: string) => Promise<void>;
   onDataErasure: (patientId: string) => Promise<void>;
-  userRole: 'admin' | 'aesthetician' | 'coordinator';
+  userRole: "admin" | "aesthetician" | "coordinator";
 }
 ```
 
@@ -281,11 +281,11 @@ interface ConsentManagementDialogProps {
 
 ```css
 :root {
-  --neonpro-primary: #AC9469;    /* Golden Primary */
-  --neonpro-deep-blue: #112031;  /* Professional Blue */
-  --neonpro-accent: #d2aa60ff;   /* Gold Accent */
-  --neonpro-neutral: #B4AC9C;    /* Calming Beige */
-  --neonpro-background: #D2D0C8; /* Soft Background */
+  --neonpro-primary: #ac9469; /* Golden Primary */
+  --neonpro-deep-blue: #112031; /* Professional Blue */
+  --neonpro-accent: #d2aa60ff; /* Gold Accent */
+  --neonpro-neutral: #b4ac9c; /* Calming Beige */
+  --neonpro-background: #d2d0c8; /* Soft Background */
 }
 ```
 
@@ -314,12 +314,12 @@ npm run dev
 
 ```tsx
 // Document validation
-expect(validateCpf('041.767.406-84')).toBe(true);
-expect(validateCpf('111.111.111-11')).toBe(false);
+expect(validateCpf("041.767.406-84")).toBe(true);
+expect(validateCpf("111.111.111-11")).toBe(false);
 
 // Formatting
-expect(formatters.cpf('12345678900')).toBe('123.456.789-00');
-expect(formatters.phone('11999999999')).toBe('(11) 99999-9999');
+expect(formatters.cpf("12345678900")).toBe("123.456.789-00");
+expect(formatters.phone("11999999999")).toBe("(11) 99999-9999");
 ```
 
 ### Performance Testing
@@ -340,13 +340,17 @@ npm run analyze
 
 ```tsx
 // Import alongside existing components
-import { MobilePatientList } from '@/components/patients';
-import { PatientDataTable } from '@/components/patients/PatientDataTable';
+import { MobilePatientList } from "@/components/patients";
+import { PatientDataTable } from "@/components/patients/PatientDataTable";
 
 // Use conditionally based on screen size
-const isMobile = useMediaQuery('(max-width: 768px)');
+const isMobile = useMediaQuery("(max-width: 768px)");
 
-return isMobile ? <MobilePatientList {...props} /> : <PatientDataTable {...props} />;
+return isMobile ? (
+  <MobilePatientList {...props} />
+) : (
+  <PatientDataTable {...props} />
+);
 ```
 
 ### With tRPC Client
@@ -357,7 +361,7 @@ const { data: patients, isLoading } = trpc.patients.list.useQuery();
 <MobilePatientList
   patients={patients || []}
   isLoading={isLoading}
-  onPatientSelect={id => router.push(`/patients/${id}`)}
+  onPatientSelect={(id) => router.push(`/patients/${id}`)}
   userRole={user.role}
 />;
 ```

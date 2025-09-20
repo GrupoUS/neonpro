@@ -1,34 +1,47 @@
-import { AppointmentBooking } from '@/components/appointment-booking';
-import { type EventColor } from '@/components/event-calendar';
-import { Experiment06CalendarIntegration } from '@/components/calendar/experiment-06-integration';
+import { AppointmentBooking } from "@/components/appointment-booking";
+import { type EventColor } from "@/components/event-calendar";
+import { Experiment06CalendarIntegration } from "@/components/calendar/experiment-06-integration";
 import {
   useAppointmentRealtime,
   useAppointments,
   useCreateAppointment,
   useDeleteAppointment,
   useUpdateAppointment,
-} from '@/hooks/useAppointments';
-import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/useToast';
-import type { CreateAppointmentData, UpdateAppointmentData } from '@/services/appointments.service';
-import { Card, CardContent } from '@neonpro/ui';
-import { Button } from '@neonpro/ui';
-import { createFileRoute, Link } from '@tanstack/react-router'; // useNavigate removed
-import { isAfter, isSameDay } from 'date-fns';
-import { CalendarCheck, CalendarClock, CheckCircle2, XCircle } from 'lucide-react';
-import { useMemo, useState } from 'react';
-
+} from "@/hooks/useAppointments";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
+import type {
+  CreateAppointmentData,
+  UpdateAppointmentData,
+} from "@/services/appointments.service";
+import { Card, CardContent } from "@neonpro/ui";
+import { Button } from "@neonpro/ui";
+import { createFileRoute, Link } from "@tanstack/react-router"; // useNavigate removed
+import { isAfter, isSameDay } from "date-fns";
+import {
+  CalendarCheck,
+  CalendarClock,
+  CheckCircle2,
+  XCircle,
+} from "lucide-react";
+import { useMemo, useState } from "react";
 
 function AppointmentsPage() {
   const [showNewAppointment, setShowNewAppointment] = useState(false); // removed unused navigate
-  const { /* user, */ profile, hasPermission, loading: authLoading } = useAuth();
+  const {
+    /* user, */ profile,
+    hasPermission,
+    loading: authLoading,
+  } = useAuth();
   const toast = useToast();
 
   // Get clinic ID from user profile
-  const clinicId = profile?.clinicId || '89084c3a-9200-4058-a15a-b440d3c60687'; // Fallback for testing
+  const clinicId = profile?.clinicId || "89084c3a-9200-4058-a15a-b440d3c60687"; // Fallback for testing
 
   // Check permissions - handle case where profile is null
-  const canViewAllAppointments = profile ? hasPermission('canViewAllAppointments') : true; // Allow access when no profile
+  const canViewAllAppointments = profile
+    ? hasPermission("canViewAllAppointments")
+    : true; // Allow access when no profile
   // const canCreateAppointments = profile ? hasPermission('canCreateAppointments') : true; // Removed top CTA, keep permission check if re-enabled later
 
   // Fetch appointments from database
@@ -37,7 +50,7 @@ function AppointmentsPage() {
 
   // Build a memoized set of event time ranges for collision checks
   const appointmentRanges = useMemo(() => {
-    return (appointments || []).map(a => ({
+    return (appointments || []).map((a) => ({
       id: a.id,
       start: new Date(a.start),
       end: new Date(a.end),
@@ -56,21 +69,26 @@ function AppointmentsPage() {
   const stats = useMemo(() => {
     const list = appointments || [];
     const now = new Date();
-    const totalToday = list.filter(a => isSameDay(new Date(a.start), now)).length;
-    const upcoming = list.filter(a => isAfter(new Date(a.start), now)).length;
-    const completed = list.filter(a =>
-      ['completed', 'done'].includes(String(a.status || '').toLowerCase())
+    const totalToday = list.filter((a) =>
+      isSameDay(new Date(a.start), now),
     ).length;
-    const cancelled =
-      list.filter(a => ['cancelled', 'canceled'].includes(String(a.status || '').toLowerCase()))
-        .length;
+    const upcoming = list.filter((a) => isAfter(new Date(a.start), now)).length;
+    const completed = list.filter((a) =>
+      ["completed", "done"].includes(String(a.status || "").toLowerCase()),
+    ).length;
+    const cancelled = list.filter((a) =>
+      ["cancelled", "canceled"].includes(String(a.status || "").toLowerCase()),
+    ).length;
     return { totalToday, upcoming, completed, cancelled };
   }, [appointments]);
 
   // New event creation is handled by EventCalendar's internal dialog.
   // We only need to handle add/update/delete callbacks from the calendar.
 
-  const handleEventUpdate = (event: CalendarEvent, updates?: Partial<CalendarEvent>) => {
+  const handleEventUpdate = (
+    event: CalendarEvent,
+    updates?: Partial<CalendarEvent>,
+  ) => {
     const updateData: UpdateAppointmentData = {};
 
     // Use updates if provided (e.g., inline edit), otherwise use the updated event payload (e.g., DnD)
@@ -87,17 +105,17 @@ function AppointmentsPage() {
     // Collision check (non-blocking): warn if overlapping with another appointment
     const start = updateData.startTime ?? (event.start as Date);
     const end = updateData.endTime ?? (event.end as Date);
-    const overlaps = appointmentRanges.some(r =>
-      r.id !== event.id && start < r.end && end > r.start
+    const overlaps = appointmentRanges.some(
+      (r) => r.id !== event.id && start < r.end && end > r.start,
     );
     if (overlaps) {
-      toast.info('Aviso: possível conflito de horário com outro agendamento.');
+      toast.info("Aviso: possível conflito de horário com outro agendamento.");
     }
 
     // Lightweight audit note (client-side). In a full implementation, send to an audit endpoint.
     try {
-      console.debug('[Audit] appointment_update', {
-        action: 'appointment_update',
+      console.debug("[Audit] appointment_update", {
+        action: "appointment_update",
         appointmentId: event.id,
         clinicId,
         userRole: profile?.role,
@@ -121,7 +139,7 @@ function AppointmentsPage() {
     deleteAppointmentMutation.mutate({
       appointmentId: eventId,
       clinicId,
-      reason: 'Cancelled from calendar',
+      reason: "Cancelled from calendar",
     });
   };
 
@@ -136,7 +154,7 @@ function AppointmentsPage() {
     notes?: string;
   }) => {
     // Parse time and create start/end dates
-    const [hours, minutes] = booking.time.split(':').map(Number);
+    const [hours, minutes] = booking.time.split(":").map(Number);
     const startTime = new Date(booking.date);
     startTime.setHours(hours, minutes, 0, 0);
 
@@ -150,13 +168,13 @@ function AppointmentsPage() {
 
     // Use the actual IDs from the booking form
     const appointmentData: CreateAppointmentData = {
-      patientId: booking.patientId || 'placeholder-patient-id', // Will need patient creation if empty
+      patientId: booking.patientId || "placeholder-patient-id", // Will need patient creation if empty
       professionalId: booking.professionalId,
       serviceTypeId: booking.serviceTypeId,
       startTime,
       endTime,
       notes: booking.notes,
-      status: 'scheduled',
+      status: "scheduled",
     };
 
     createAppointmentMutation.mutate(
@@ -170,61 +188,77 @@ function AppointmentsPage() {
   };
 
   return (
-    <div className='container mx-auto px-4 py-8'>
+    <div className="container mx-auto px-4 py-8">
       {/* Overview cards */}
-      <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 sm:mb-6'>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4 sm:mb-6">
         <Card>
-          <CardContent className='p-4'>
-            <div className='flex items-center justify-between'>
-              <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Consultas hoje</p>
-                <p className='text-2xl font-bold'>{stats.totalToday.toLocaleString('pt-BR')}</p>
-                <p className='text-xs text-muted-foreground'>Atualizado em tempo real</p>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Consultas hoje</p>
+                <p className="text-2xl font-bold">
+                  {stats.totalToday.toLocaleString("pt-BR")}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Atualizado em tempo real
+                </p>
               </div>
-              <div className='p-3 bg-primary/10 rounded-full'>
-                <CalendarCheck className='w-5 h-5 text-primary' />
+              <div className="p-3 bg-primary/10 rounded-full">
+                <CalendarCheck className="w-5 h-5 text-primary" />
               </div>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className='p-4'>
-            <div className='flex items-center justify-between'>
-              <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Próximas consultas</p>
-                <p className='text-2xl font-bold'>{stats.upcoming.toLocaleString('pt-BR')}</p>
-                <p className='text-xs text-muted-foreground'>Agendadas no futuro</p>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">
+                  Próximas consultas
+                </p>
+                <p className="text-2xl font-bold">
+                  {stats.upcoming.toLocaleString("pt-BR")}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Agendadas no futuro
+                </p>
               </div>
-              <div className='p-3 bg-primary/10 rounded-full'>
-                <CalendarClock className='w-5 h-5 text-primary' />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className='p-4'>
-            <div className='flex items-center justify-between'>
-              <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Concluídas</p>
-                <p className='text-2xl font-bold'>{stats.completed.toLocaleString('pt-BR')}</p>
-                <p className='text-xs text-muted-foreground'>Hoje e anteriores</p>
-              </div>
-              <div className='p-3 bg-primary/10 rounded-full'>
-                <CheckCircle2 className='w-5 h-5 text-primary' />
+              <div className="p-3 bg-primary/10 rounded-full">
+                <CalendarClock className="w-5 h-5 text-primary" />
               </div>
             </div>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className='p-4'>
-            <div className='flex items-center justify-between'>
-              <div className='space-y-1'>
-                <p className='text-sm text-muted-foreground'>Canceladas</p>
-                <p className='text-2xl font-bold'>{stats.cancelled.toLocaleString('pt-BR')}</p>
-                <p className='text-xs text-muted-foreground'>Período atual</p>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Concluídas</p>
+                <p className="text-2xl font-bold">
+                  {stats.completed.toLocaleString("pt-BR")}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Hoje e anteriores
+                </p>
               </div>
-              <div className='p-3 bg-primary/10 rounded-full'>
-                <XCircle className='w-5 h-5 text-primary' />
+              <div className="p-3 bg-primary/10 rounded-full">
+                <CheckCircle2 className="w-5 h-5 text-primary" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm text-muted-foreground">Canceladas</p>
+                <p className="text-2xl font-bold">
+                  {stats.cancelled.toLocaleString("pt-BR")}
+                </p>
+                <p className="text-xs text-muted-foreground">Período atual</p>
+              </div>
+              <div className="p-3 bg-primary/10 rounded-full">
+                <XCircle className="w-5 h-5 text-primary" />
               </div>
             </div>
           </CardContent>
@@ -232,17 +266,18 @@ function AppointmentsPage() {
       </div>
 
       <Card>
-        <CardContent className='p-4 sm:p-5'>
+        <CardContent className="p-4 sm:p-5">
           {(authLoading || isLoading) && (
-            <div className='flex items-center justify-center h-96'>
-              <div className='text-center'>
-                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4'>
-                </div>
-                <p className='text-sm text-muted-foreground'>
-                  {authLoading ? 'Carregando perfil do usuário...' : 'Carregando agendamentos...'}
+            <div className="flex items-center justify-center h-96">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                <p className="text-sm text-muted-foreground">
+                  {authLoading
+                    ? "Carregando perfil do usuário..."
+                    : "Carregando agendamentos..."}
                 </p>
                 {authLoading && (
-                  <p className='text-xs text-muted-foreground mt-2'>
+                  <p className="text-xs text-muted-foreground mt-2">
                     Se esta tela persistir, recarregue a página
                   </p>
                 )}
@@ -250,64 +285,75 @@ function AppointmentsPage() {
             </div>
           )}
 
-          {!authLoading && !canViewAllAppointments && profile && profile.role !== 'patient' && (
-            <div className='flex items-center justify-center h-96'>
-              <div className='text-center'>
-                <p className='text-lg font-semibold text-destructive'>Acesso Negado</p>
-                <p className='mt-2 text-sm text-muted-foreground'>
-                  Você não tem permissão para visualizar agendamentos.
-                </p>
+          {!authLoading &&
+            !canViewAllAppointments &&
+            profile &&
+            profile.role !== "patient" && (
+              <div className="flex items-center justify-center h-96">
+                <div className="text-center">
+                  <p className="text-lg font-semibold text-destructive">
+                    Acesso Negado
+                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    Você não tem permissão para visualizar agendamentos.
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
           {error && (
-            <div className='flex items-center justify-center h-96'>
-              <div className='text-center'>
-                <p className='text-lg font-semibold text-destructive mb-2'>
+            <div className="flex items-center justify-center h-96">
+              <div className="text-center">
+                <p className="text-lg font-semibold text-destructive mb-2">
                   Erro ao carregar agendamentos
                 </p>
-                <p className='text-sm text-muted-foreground mb-4'>
-                  Ocorreu um problema ao conectar com o servidor. Tente novamente.
+                <p className="text-sm text-muted-foreground mb-4">
+                  Ocorreu um problema ao conectar com o servidor. Tente
+                  novamente.
                 </p>
                 <Button
-                  variant='outline'
+                  variant="outline"
                   onClick={() => window.location.reload()}
-                  className='mr-2'
+                  className="mr-2"
                 >
                   Recarregar Página
                 </Button>
-                <Button
-                  variant='ghost'
-                  onClick={() => window.history.back()}
-                >
+                <Button variant="ghost" onClick={() => window.history.back()}>
                   Voltar
                 </Button>
               </div>
             </div>
           )}
-          {!authLoading && !isLoading && !error
-            && (canViewAllAppointments || !profile || profile.role === 'patient') && (
-              (appointments?.length ?? 0) === 0
-                ? <p className='text-sm text-muted-foreground'>Nenhum agendamento encontrado</p>
-                : (
-                  <>
-                    <div className='h-[calc(100vh-340px)] min-h-[520px] max-h-[82vh]'>
-                      <Experiment06CalendarIntegration
-                        appointments={appointments || []}
-                        onEventUpdate={handleEventUpdate}
-                        onEventDelete={handleEventDelete}
-                        onNewConsultation={() => setShowNewAppointment(true)}
-                        className="h-full"
-                      />
-                    </div>
-                  </>
-                )
-            )}
+          {!authLoading &&
+            !isLoading &&
+            !error &&
+            (canViewAllAppointments ||
+              !profile ||
+              profile.role === "patient") &&
+            ((appointments?.length ?? 0) === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                Nenhum agendamento encontrado
+              </p>
+            ) : (
+              <>
+                <div className="h-[calc(100vh-340px)] min-h-[520px] max-h-[82vh]">
+                  <Experiment06CalendarIntegration
+                    appointments={appointments || []}
+                    onEventUpdate={handleEventUpdate}
+                    onEventDelete={handleEventDelete}
+                    onNewConsultation={() => setShowNewAppointment(true)}
+                    className="h-full"
+                  />
+                </div>
+              </>
+            ))}
         </CardContent>
       </Card>
 
-      <div className='mt-4'>
-        <Link to='/dashboard' className='text-sm text-muted-foreground hover:underline'>
+      <div className="mt-4">
+        <Link
+          to="/dashboard"
+          className="text-sm text-muted-foreground hover:underline"
+        >
           ← Voltar ao Dashboard
         </Link>
       </div>
@@ -324,6 +370,6 @@ function AppointmentsPage() {
   );
 }
 
-export const Route = createFileRoute('/services/appointments')({
+export const Route = createFileRoute("/services/appointments")({
   component: AppointmentsPage,
 });

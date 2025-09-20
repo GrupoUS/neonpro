@@ -119,7 +119,9 @@ describe('ErrorTrackingManager', () => {
         },
       };
 
-      const context = errorTracker.extractContextFromHono(mockHonoContext as any);
+      const context = errorTracker.extractContextFromHono(
+        mockHonoContext as any,
+      );
 
       expect(context.requestId).toBe('req-123');
       expect(context.userId).toBe('user-456');
@@ -143,7 +145,9 @@ describe('ErrorTrackingManager', () => {
         },
       };
 
-      const context = errorTracker.extractContextFromHono(mockHonoContext as any);
+      const context = errorTracker.extractContextFromHono(
+        mockHonoContext as any,
+      );
 
       expect(context.requestId).toBe('unknown');
       expect(context.endpoint).toBe('/unknown');
@@ -160,7 +164,9 @@ describe('ErrorTrackingManager', () => {
 
     it('should add breadcrumbs without errors', () => {
       expect(() => {
-        errorTracker.addBreadcrumb('Test breadcrumb', 'navigation', { page: 'test' });
+        errorTracker.addBreadcrumb('Test breadcrumb', 'navigation', {
+          page: 'test',
+        });
       }).not.toThrow();
     });
   });

@@ -1,19 +1,19 @@
-import type { Database } from '../types/supabase';
-import type { 
-  RTCAuditLogEntry, 
-  MedicalDataClassification 
-} from '@neonpro/types';
-import { createClient } from '@supabase/supabase-js';
-import { BaseService } from './base.service';
+import type { Database } from "../types/supabase";
+import type {
+  RTCAuditLogEntry,
+  MedicalDataClassification,
+} from "@neonpro/types";
+import { createClient } from "@supabase/supabase-js";
+import { BaseService } from "./base.service";
 
 // Types for audit logging
-import type { ComplianceEventType } from '../types/events';
+import type { ComplianceEventType } from "../types/events";
 
 export interface AuditLogRequest {
   sessionId: string;
   eventType: ComplianceEventType;
   userId: string;
-  userRole: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system';
+  userRole: "doctor" | "patient" | "nurse" | "admin" | "system";
   dataClassification: MedicalDataClassification;
   description: string;
   ipAddress?: string;
@@ -25,7 +25,7 @@ export interface AuditLogRequest {
 export interface ComplianceCheck {
   isCompliant: boolean;
   violations?: string[];
-  riskLevel: 'low' | 'medium' | 'high';
+  riskLevel: "low" | "medium" | "high";
 }
 
 /**
@@ -48,30 +48,30 @@ export class AuditService extends BaseService {
   async createAuditLog(request: AuditLogRequest): Promise<string> {
     try {
       const { data, error } = await this.supabase
-        .from('audit_logs')
+        .from("audit_logs")
         .insert({
           action: request.eventType,
           user_id: request.userId,
           resource: request.description,
-          resource_type: 'session', // Default resource type
-          ip_address: request.ipAddress || 'unknown',
-          user_agent: request.userAgent || 'unknown',
+          resource_type: "session", // Default resource type
+          ip_address: request.ipAddress || "unknown",
+          user_agent: request.userAgent || "unknown",
           clinic_id: request.clinicId,
           lgpd_basis: request.metadata?.legalBasis || null,
           old_values: request.metadata?.oldValues || null,
           new_values: request.metadata?.newValues || null,
         })
-        .select('id')
+        .select("id")
         .single();
 
       if (error) {
-        console.error('Failed to create audit log:', error);
+        console.error("Failed to create audit log:", error);
         throw new Error(`Failed to create audit log: ${error.message}`);
       }
 
       return data.id;
     } catch (error) {
-      console.error('AuditService.createAuditLog error:', error);
+      console.error("AuditService.createAuditLog error:", error);
       throw error;
     }
   }
@@ -89,34 +89,34 @@ export class AuditService extends BaseService {
     doctorId: string,
     patientId: string,
     clinicId: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     try {
       // Log doctor joining session
       await this.createAuditLog({
         sessionId,
-        eventType: 'session-start',
+        eventType: "session-start",
         userId: doctorId,
-        userRole: 'doctor',
-        dataClassification: 'internal',
+        userRole: "doctor",
+        dataClassification: "internal",
         description: `Doctor started telemedicine session`,
         clinicId,
-        metadata: { ...metadata, patientId, role: 'doctor' }
+        metadata: { ...metadata, patientId, role: "doctor" },
       });
 
       // Log patient joining session
       await this.createAuditLog({
         sessionId,
-        eventType: 'participant-join',
+        eventType: "participant-join",
         userId: patientId,
-        userRole: 'patient',
-        dataClassification: 'internal',
+        userRole: "patient",
+        dataClassification: "internal",
         description: `Patient joined telemedicine session`,
         clinicId,
-        metadata: { ...metadata, doctorId, role: 'patient' }
+        metadata: { ...metadata, doctorId, role: "patient" },
       });
     } catch (error) {
-      console.error('AuditService.logSessionStart error:', error);
+      console.error("AuditService.logSessionStart error:", error);
       throw error;
     }
   }
@@ -132,23 +132,23 @@ export class AuditService extends BaseService {
   async logSessionEnd(
     sessionId: string,
     userId: string,
-    userRole: 'doctor' | 'patient',
+    userRole: "doctor" | "patient",
     clinicId: string,
-    duration: number
+    duration: number,
   ): Promise<void> {
     try {
       await this.createAuditLog({
         sessionId,
-        eventType: 'session-end',
+        eventType: "session-end",
         userId,
         userRole,
-        dataClassification: 'internal',
+        dataClassification: "internal",
         description: `Telemedicine session ended by ${userRole}`,
         clinicId,
-        metadata: { duration, endedBy: userRole }
+        metadata: { duration, endedBy: userRole },
       });
     } catch (error) {
-      console.error('AuditService.logSessionEnd error:', error);
+      console.error("AuditService.logSessionEnd error:", error);
       throw error;
     }
   }
@@ -164,23 +164,23 @@ export class AuditService extends BaseService {
   async logParticipantLeave(
     sessionId: string,
     userId: string,
-    userRole: 'doctor' | 'patient',
+    userRole: "doctor" | "patient",
     clinicId: string,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     try {
       await this.createAuditLog({
         sessionId,
-        eventType: 'participant-leave',
+        eventType: "participant-leave",
         userId,
         userRole,
-        dataClassification: 'internal',
+        dataClassification: "internal",
         description: `${userRole} left telemedicine session`,
         clinicId,
-        metadata: { reason, role: userRole }
+        metadata: { reason, role: userRole },
       });
     } catch (error) {
-      console.error('AuditService.logParticipantLeave error:', error);
+      console.error("AuditService.logParticipantLeave error:", error);
       throw error;
     }
   }
@@ -198,25 +198,25 @@ export class AuditService extends BaseService {
   async logDataAccess(
     sessionId: string,
     userId: string,
-    userRole: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system',
+    userRole: "doctor" | "patient" | "nurse" | "admin" | "system",
     dataClassification: MedicalDataClassification,
     description: string,
     clinicId: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, any>,
   ): Promise<void> {
     try {
       await this.createAuditLog({
         sessionId,
-        eventType: 'data-access',
+        eventType: "data-access",
         userId,
         userRole,
         dataClassification,
         description,
         clinicId,
-        metadata
+        metadata,
       });
     } catch (error) {
-      console.error('AuditService.logDataAccess error:', error);
+      console.error("AuditService.logDataAccess error:", error);
       throw error;
     }
   }
@@ -234,21 +234,21 @@ export class AuditService extends BaseService {
     userId: string,
     dataTypes: MedicalDataClassification[],
     purpose: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<void> {
     try {
       await this.createAuditLog({
         sessionId,
-        eventType: 'consent-given',
+        eventType: "consent-given",
         userId,
-        userRole: 'patient',
-        dataClassification: 'internal',
+        userRole: "patient",
+        dataClassification: "internal",
         description: `Patient granted consent for ${purpose}`,
         clinicId,
-        metadata: { dataTypes, purpose }
+        metadata: { dataTypes, purpose },
       });
     } catch (error) {
-      console.error('AuditService.logConsentGiven error:', error);
+      console.error("AuditService.logConsentGiven error:", error);
       throw error;
     }
   }
@@ -266,21 +266,21 @@ export class AuditService extends BaseService {
     userId: string,
     dataType: MedicalDataClassification,
     reason: string,
-    clinicId: string
+    clinicId: string,
   ): Promise<void> {
     try {
       await this.createAuditLog({
         sessionId,
-        eventType: 'consent-revoked',
+        eventType: "consent-revoked",
         userId,
-        userRole: 'patient',
+        userRole: "patient",
         dataClassification: dataType,
         description: `Patient revoked consent for ${dataType}`,
         clinicId,
-        metadata: { reason, dataType }
+        metadata: { reason, dataType },
       });
     } catch (error) {
-      console.error('AuditService.logConsentRevoked error:', error);
+      console.error("AuditService.logConsentRevoked error:", error);
       throw error;
     }
   }
@@ -296,27 +296,27 @@ export class AuditService extends BaseService {
   async logError(
     sessionId: string,
     userId: string,
-    userRole: 'doctor' | 'patient' | 'nurse' | 'admin' | 'system',
+    userRole: "doctor" | "patient" | "nurse" | "admin" | "system",
     error: Error | string,
-    clinicId: string
+    clinicId: string,
   ): Promise<void> {
     try {
       const errorMessage = error instanceof Error ? error.message : error;
       await this.createAuditLog({
         sessionId,
-        eventType: 'error-occurred',
+        eventType: "error-occurred",
         userId,
         userRole,
-        dataClassification: 'public',
+        dataClassification: "public",
         description: `Error in telemedicine session: ${errorMessage}`,
         clinicId,
-        metadata: { 
+        metadata: {
           error: errorMessage,
-          stack: error instanceof Error ? error.stack : undefined
-        }
+          stack: error instanceof Error ? error.stack : undefined,
+        },
       });
     } catch (auditError) {
-      console.error('AuditService.logError error:', auditError);
+      console.error("AuditService.logError error:", auditError);
       // Don't throw here to avoid infinite error loops
     }
   }
@@ -330,8 +330,9 @@ export class AuditService extends BaseService {
   async getSessionAuditLogs(sessionId: string): Promise<RTCAuditLogEntry[]> {
     try {
       const { data: logs, error } = await this.supabase
-        .from('audit_logs')
-        .select(`
+        .from("audit_logs")
+        .select(
+          `
           id,
           user_id,
           action,
@@ -342,12 +343,13 @@ export class AuditService extends BaseService {
           session_id,
           status,
           risk_level
-        `)
-        .eq('session_id', sessionId)
-        .order('created_at', { ascending: false });
+        `,
+        )
+        .eq("session_id", sessionId)
+        .order("created_at", { ascending: false });
 
       if (error) {
-        console.error('Failed to get session audit logs:', error);
+        console.error("Failed to get session audit logs:", error);
         return [];
       }
 
@@ -360,65 +362,79 @@ export class AuditService extends BaseService {
         sessionId: log.session_id || sessionId,
         userId: log.user_id,
         eventType: this.mapActionToEventType(log.action),
-        userRole: (log.user_role as 'doctor' | 'patient' | 'nurse' | 'admin' | 'system') || 'system',
-        dataClassification: (log.data_classification as any) || 'general',
-        description: log.description || `${log.action} performed on ${log.resource_type}`,
+        userRole:
+          (log.user_role as
+            | "doctor"
+            | "patient"
+            | "nurse"
+            | "admin"
+            | "system") || "system",
+        dataClassification: (log.data_classification as any) || "general",
+        description:
+          log.description || `${log.action} performed on ${log.resource_type}`,
         timestamp: log.created_at || new Date().toISOString(),
         ipAddress: log.ip_address,
         userAgent: log.user_agent,
-        clinicId: log.clinic_id || 'default',
+        clinicId: log.clinic_id || "default",
         complianceCheck: {
-          isCompliant: log.status === 'SUCCESS',
-          violations: log.status === 'FAILED' ? ['Audit log indicates failure'] : [],
-          riskLevel: (log.risk_level?.toLowerCase() as 'low' | 'medium' | 'high') || 'low'
-        }
+          isCompliant: log.status === "SUCCESS",
+          violations:
+            log.status === "FAILED" ? ["Audit log indicates failure"] : [],
+          riskLevel:
+            (log.risk_level?.toLowerCase() as "low" | "medium" | "high") ||
+            "low",
+        },
       }));
     } catch (error) {
-      console.error('AuditService.getSessionAuditLogs error:', error);
+      console.error("AuditService.getSessionAuditLogs error:", error);
       return [];
     }
   }
 
-  async getUserAuditLogs(userId: string, clinicId: string, limit: number = 100): Promise<RTCAuditLogEntry[]> {
+  async getUserAuditLogs(
+    userId: string,
+    clinicId: string,
+    limit: number = 100,
+  ): Promise<RTCAuditLogEntry[]> {
     try {
       const { data: auditLogs, error } = await this.supabase
-        .from('audit_logs')
-        .select('*')
-        .eq('user_id', userId)
-        .eq('clinic_id', clinicId)
-        .order('created_at', { ascending: false })
+        .from("audit_logs")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("clinic_id", clinicId)
+        .order("created_at", { ascending: false })
         .limit(limit);
 
       if (error) {
-        console.error('Failed to get user audit logs:', error);
+        console.error("Failed to get user audit logs:", error);
         return [];
       }
 
-      return auditLogs.map(log => ({
+      return auditLogs.map((log) => ({
         id: log.id,
-        sessionId: log.resource_id || 'unknown', // Use resource_id for sessionId
+        sessionId: log.resource_id || "unknown", // Use resource_id for sessionId
         eventType: log.action as any,
         timestamp: log.created_at || new Date().toISOString(),
         userId: log.user_id,
-        userRole: 'patient' as any, // Default role, should be determined from user data
-        dataClassification: 'internal' as MedicalDataClassification,
-        description: log.resource_type || 'Audit log entry', // Use resource_type for description
-        ipAddress: log.ip_address as string || 'unknown',
-        userAgent: log.user_agent || 'unknown',
-        clinicId: log.clinic_id || 'unknown', // Provide default for null case
+        userRole: "patient" as any, // Default role, should be determined from user data
+        dataClassification: "internal" as MedicalDataClassification,
+        description: log.resource_type || "Audit log entry", // Use resource_type for description
+        ipAddress: (log.ip_address as string) || "unknown",
+        userAgent: log.user_agent || "unknown",
+        clinicId: log.clinic_id || "unknown", // Provide default for null case
         metadata: {
           lgpd_basis: log.lgpd_basis,
           old_values: log.old_values,
-          new_values: log.new_values
+          new_values: log.new_values,
         },
         complianceCheck: {
           isCompliant: true, // Default to compliant since status field doesn't exist in schema
           violations: [],
-          riskLevel: 'low' as 'low' | 'medium' | 'high' // Default risk level since field doesn't exist in schema
-        }
+          riskLevel: "low" as "low" | "medium" | "high", // Default risk level since field doesn't exist in schema
+        },
       }));
     } catch (error) {
-      console.error('AuditService.getUserAuditLogs error:', error);
+      console.error("AuditService.getUserAuditLogs error:", error);
       return [];
     }
   }
@@ -430,60 +446,73 @@ export class AuditService extends BaseService {
    * @param endDate - End date for report
    * @returns Promise<any> - Compliance report data
    */
-  async getComplianceReport(clinicId: string, startDate: Date, endDate: Date): Promise<any> {
+  async getComplianceReport(
+    clinicId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<any> {
     try {
       const { data: auditLogs, error } = await this.supabase
-        .from('audit_logs')
-        .select('*')
-        .eq('clinic_id', clinicId)
-        .gte('created_at', startDate.toISOString())
-        .lte('created_at', endDate.toISOString())
-        .order('created_at', { ascending: false });
+        .from("audit_logs")
+        .select("*")
+        .eq("clinic_id", clinicId)
+        .gte("created_at", startDate.toISOString())
+        .lte("created_at", endDate.toISOString())
+        .order("created_at", { ascending: false });
 
       if (error) {
-        console.error('Failed to get compliance report:', error);
+        console.error("Failed to get compliance report:", error);
         return null;
       }
 
       // Analyze compliance data - all events are considered compliant by default
       const totalEvents = auditLogs.length;
       const compliantEvents = totalEvents; // All events are compliant by default
-      
+
       // Check for LGPD compliance (presence of lgpd_basis)
-      const lgpdCompliantEvents = auditLogs.filter(log => log.lgpd_basis !== null).length;
-      
+      const lgpdCompliantEvents = auditLogs.filter(
+        (log) => log.lgpd_basis !== null,
+      ).length;
+
       // Group by event types (action field)
-      const eventTypes = auditLogs.reduce((acc, log) => {
-        acc[log.action] = (acc[log.action] || 0) + 1;
-        return acc;
-      }, {} as Record<string, number>);
+      const eventTypes = auditLogs.reduce(
+        (acc, log) => {
+          acc[log.action] = (acc[log.action] || 0) + 1;
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
       // Group by LGPD basis
-      const lgpdBasis = auditLogs.reduce((acc, log) => {
-        if (log.lgpd_basis) {
-          acc[log.lgpd_basis] = (acc[log.lgpd_basis] || 0) + 1;
-        }
-        return acc;
-      }, {} as Record<string, number>);
+      const lgpdBasis = auditLogs.reduce(
+        (acc, log) => {
+          if (log.lgpd_basis) {
+            acc[log.lgpd_basis] = (acc[log.lgpd_basis] || 0) + 1;
+          }
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
 
       return {
         reportPeriod: {
           startDate: startDate.toISOString(),
-          endDate: endDate.toISOString()
+          endDate: endDate.toISOString(),
         },
         summary: {
           totalEvents,
           compliantEvents,
           lgpdCompliantEvents,
           complianceRate: 100, // All events are compliant by default
-          lgpdComplianceRate: totalEvents > 0 ? (lgpdCompliantEvents / totalEvents) * 100 : 100,
+          lgpdComplianceRate:
+            totalEvents > 0 ? (lgpdCompliantEvents / totalEvents) * 100 : 100,
         },
         eventTypes,
         lgpdBasis,
-        clinicId
+        clinicId,
       };
     } catch (error) {
-      console.error('AuditService.getComplianceReport error:', error);
+      console.error("AuditService.getComplianceReport error:", error);
       return null;
     }
   }
@@ -505,65 +534,65 @@ export class AuditService extends BaseService {
       endDate?: Date;
       riskLevel?: string;
     },
-    limit: number = 100
+    limit: number = 100,
   ): Promise<RTCAuditLogEntry[]> {
     try {
       let query = this.supabase
-        .from('audit_logs')
-        .select('*')
-        .eq('clinic_id', clinicId);
+        .from("audit_logs")
+        .select("*")
+        .eq("clinic_id", clinicId);
 
       if (filters.sessionId) {
-        query = query.eq('resource_id', filters.sessionId); // sessionId stored in resource_id
+        query = query.eq("resource_id", filters.sessionId); // sessionId stored in resource_id
       }
 
       if (filters.userId) {
-        query = query.eq('user_id', filters.userId);
+        query = query.eq("user_id", filters.userId);
       }
 
       if (filters.eventType) {
-        query = query.eq('action', filters.eventType);
+        query = query.eq("action", filters.eventType);
       }
 
       if (filters.startDate) {
-        query = query.gte('created_at', filters.startDate.toISOString());
+        query = query.gte("created_at", filters.startDate.toISOString());
       }
 
       if (filters.endDate) {
-        query = query.lte('created_at', filters.endDate.toISOString());
+        query = query.lte("created_at", filters.endDate.toISOString());
       }
 
       const { data: auditLogs, error } = await query
-        .order('created_at', { ascending: false })
+        .order("created_at", { ascending: false })
         .limit(limit);
 
       if (error) {
-        console.error('Failed to search audit logs:', error);
+        console.error("Failed to search audit logs:", error);
         return [];
       }
 
-      let results = auditLogs.map(log => ({
+      let results = auditLogs.map((log) => ({
         id: log.id,
-        sessionId: log.resource_id || 'unknown', // Use resource_id for sessionId
+        sessionId: log.resource_id || "unknown", // Use resource_id for sessionId
         eventType: log.action as any,
         timestamp: log.created_at || new Date().toISOString(),
         userId: log.user_id,
-        userRole: 'patient' as any, // Default role, should be determined from user data
-        dataClassification: 'internal' as MedicalDataClassification,
-        description: log.resource_type || 'Audit log entry', // Use resource_type for description
-        ipAddress: log.ip_address as string || 'unknown',
-        userAgent: log.user_agent || 'unknown',
-        clinicId: log.clinic_id || 'unknown', // Provide default for null case
+        userRole: "patient" as any, // Default role, should be determined from user data
+        dataClassification: "internal" as MedicalDataClassification,
+        description: log.resource_type || "Audit log entry", // Use resource_type for description
+        ipAddress: (log.ip_address as string) || "unknown",
+        userAgent: log.user_agent || "unknown",
+        clinicId: log.clinic_id || "unknown", // Provide default for null case
         metadata: {
           lgpd_basis: log.lgpd_basis,
           old_values: log.old_values,
-          new_values: log.new_values
+          new_values: log.new_values,
         },
         complianceCheck: {
           isCompliant: true, // Default to compliant since status field doesn't exist in schema
           violations: [],
-          riskLevel: 'low' as 'low' | 'medium' | 'high' // Default risk level since field doesn't exist in schema
-        }
+          riskLevel: "low" as "low" | "medium" | "high", // Default risk level since field doesn't exist in schema
+        },
       }));
 
       // Note: riskLevel filtering is not available since the field doesn't exist in schema
@@ -571,7 +600,7 @@ export class AuditService extends BaseService {
 
       return results;
     } catch (error) {
-      console.error('AuditService.searchAuditLogs error:', error);
+      console.error("AuditService.searchAuditLogs error:", error);
       return [];
     }
   }
@@ -579,24 +608,34 @@ export class AuditService extends BaseService {
   /**
    * Maps action strings to RTCAuditLogEntry event types
    */
-  private mapActionToEventType(action: string): 'session-start' | 'session-end' | 'participant-join' | 'participant-leave' | 
-                                                'recording-start' | 'recording-stop' | 'data-access' | 'consent-given' | 
-                                                'consent-revoked' | 'error-occurred' {
+  private mapActionToEventType(
+    action: string,
+  ):
+    | "session-start"
+    | "session-end"
+    | "participant-join"
+    | "participant-leave"
+    | "recording-start"
+    | "recording-stop"
+    | "data-access"
+    | "consent-given"
+    | "consent-revoked"
+    | "error-occurred" {
     const actionMapping: Record<string, any> = {
-      'CREATE': 'session-start',
-      'UPDATE': 'data-access',
-      'DELETE': 'session-end',
-      'READ': 'data-access',
-      'JOIN': 'participant-join',
-      'LEAVE': 'participant-leave',
-      'START_RECORDING': 'recording-start',
-      'STOP_RECORDING': 'recording-stop',
-      'CONSENT_GIVEN': 'consent-given',
-      'CONSENT_REVOKED': 'consent-revoked',
-      'ERROR': 'error-occurred'
+      CREATE: "session-start",
+      UPDATE: "data-access",
+      DELETE: "session-end",
+      READ: "data-access",
+      JOIN: "participant-join",
+      LEAVE: "participant-leave",
+      START_RECORDING: "recording-start",
+      STOP_RECORDING: "recording-stop",
+      CONSENT_GIVEN: "consent-given",
+      CONSENT_REVOKED: "consent-revoked",
+      ERROR: "error-occurred",
     };
-    
-    return actionMapping[action?.toUpperCase()] || 'data-access';
+
+    return actionMapping[action?.toUpperCase()] || "data-access";
   }
 }
 

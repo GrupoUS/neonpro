@@ -17,7 +17,9 @@ type AppointmentInput = {
   update: inferProcedureInput<typeof appointmentRouter.update>;
   cancel: inferProcedureInput<typeof appointmentRouter.cancel>;
   list: inferProcedureInput<typeof appointmentRouter.list>;
-  getAvailability: inferProcedureInput<typeof appointmentRouter.getAvailability>;
+  getAvailability: inferProcedureInput<
+    typeof appointmentRouter.getAvailability
+  >;
   checkConflicts: inferProcedureInput<typeof appointmentRouter.checkConflicts>;
 };
 
@@ -27,7 +29,9 @@ type AppointmentOutput = {
   update: inferProcedureOutput<typeof appointmentRouter.update>;
   cancel: inferProcedureOutput<typeof appointmentRouter.cancel>;
   list: inferProcedureOutput<typeof appointmentRouter.list>;
-  getAvailability: inferProcedureOutput<typeof appointmentRouter.getAvailability>;
+  getAvailability: inferProcedureOutput<
+    typeof appointmentRouter.getAvailability
+  >;
   checkConflicts: inferProcedureOutput<typeof appointmentRouter.checkConflicts>;
 };
 
@@ -41,8 +45,12 @@ describe('Appointment API Contract Tests', () => {
     caller = createCaller(mockContext);
 
     // Mock audit logging
-    vi.spyOn(mockContext.audit, 'logAppointmentAction').mockResolvedValue(undefined);
-    vi.spyOn(mockContext.scheduling, 'checkAvailability').mockResolvedValue(true);
+    vi.spyOn(mockContext.audit, 'logAppointmentAction').mockResolvedValue(
+      undefined,
+    );
+    vi.spyOn(mockContext.scheduling, 'checkAvailability').mockResolvedValue(
+      true,
+    );
     vi.spyOn(mockContext.scheduling, 'detectConflicts').mockResolvedValue([]);
   });
 
@@ -127,8 +135,9 @@ describe('Appointment API Contract Tests', () => {
         },
       ]);
 
-      await expect(caller.api.appointment.create(conflictingInput))
-        .rejects.toThrow('Scheduling conflict detected');
+      await expect(
+        caller.api.appointment.create(conflictingInput),
+      ).rejects.toThrow('Scheduling conflict detected');
     });
 
     it('should validate appointment timing constraints', async () => {
@@ -141,8 +150,9 @@ describe('Appointment API Contract Tests', () => {
         type: 'consultation',
       };
 
-      await expect(caller.api.appointment.create(pastDateInput))
-        .rejects.toThrow('Cannot schedule appointments in the past');
+      await expect(
+        caller.api.appointment.create(pastDateInput),
+      ).rejects.toThrow('Cannot schedule appointments in the past');
     });
 
     it('should validate business hours constraints', async () => {
@@ -155,8 +165,9 @@ describe('Appointment API Contract Tests', () => {
         type: 'consultation',
       };
 
-      await expect(caller.api.appointment.create(afterHoursInput))
-        .rejects.toThrow('Appointment outside business hours');
+      await expect(
+        caller.api.appointment.create(afterHoursInput),
+      ).rejects.toThrow('Appointment outside business hours');
     });
   });
 
@@ -177,7 +188,9 @@ describe('Appointment API Contract Tests', () => {
         updatedAt: new Date(),
       };
 
-      mockContext.prisma.appointment.findUnique.mockResolvedValue(mockAppointment);
+      mockContext.prisma.appointment.findUnique.mockResolvedValue(
+        mockAppointment,
+      );
 
       const input: AppointmentInput['getById'] = { id: appointmentId };
       const result = await caller.api.appointment.getById(input);
@@ -206,8 +219,9 @@ describe('Appointment API Contract Tests', () => {
 
       const input: AppointmentInput['getById'] = { id: appointmentId };
 
-      await expect(caller.api.appointment.getById(input))
-        .rejects.toThrow('Appointment not found');
+      await expect(caller.api.appointment.getById(input)).rejects.toThrow(
+        'Appointment not found',
+      );
     });
   });
 
@@ -238,8 +252,12 @@ describe('Appointment API Contract Tests', () => {
         updatedAt: new Date(),
       };
 
-      mockContext.prisma.appointment.findUnique.mockResolvedValue(existingAppointment);
-      mockContext.prisma.appointment.update.mockResolvedValue(updatedAppointment);
+      mockContext.prisma.appointment.findUnique.mockResolvedValue(
+        existingAppointment,
+      );
+      mockContext.prisma.appointment.update.mockResolvedValue(
+        updatedAppointment,
+      );
 
       const result = await caller.api.appointment.update(updateInput);
 
@@ -275,10 +293,13 @@ describe('Appointment API Contract Tests', () => {
         patientId: 'patient-123',
       };
 
-      mockContext.prisma.appointment.findUnique.mockResolvedValue(completedAppointment);
+      mockContext.prisma.appointment.findUnique.mockResolvedValue(
+        completedAppointment,
+      );
 
-      await expect(caller.api.appointment.update(updateInput))
-        .rejects.toThrow('Cannot update completed appointment');
+      await expect(caller.api.appointment.update(updateInput)).rejects.toThrow(
+        'Cannot update completed appointment',
+      );
     });
   });
   describe('Appointment Cancellation Contract', () => {
@@ -306,8 +327,12 @@ describe('Appointment API Contract Tests', () => {
         cancelledBy: 'patient',
       };
 
-      mockContext.prisma.appointment.findUnique.mockResolvedValue(existingAppointment);
-      mockContext.prisma.appointment.update.mockResolvedValue(cancelledAppointment);
+      mockContext.prisma.appointment.findUnique.mockResolvedValue(
+        existingAppointment,
+      );
+      mockContext.prisma.appointment.update.mockResolvedValue(
+        cancelledAppointment,
+      );
 
       const result = await caller.api.appointment.cancel(cancelInput);
 
@@ -343,10 +368,13 @@ describe('Appointment API Contract Tests', () => {
         status: 'scheduled',
       };
 
-      mockContext.prisma.appointment.findUnique.mockResolvedValue(soonAppointment);
+      mockContext.prisma.appointment.findUnique.mockResolvedValue(
+        soonAppointment,
+      );
 
-      await expect(caller.api.appointment.cancel(cancelInput))
-        .rejects.toThrow('Cannot cancel appointment less than 24 hours in advance');
+      await expect(caller.api.appointment.cancel(cancelInput)).rejects.toThrow(
+        'Cannot cancel appointment less than 24 hours in advance',
+      );
     });
   });
 
@@ -373,7 +401,9 @@ describe('Appointment API Contract Tests', () => {
         },
       };
 
-      mockContext.scheduling.getAvailability.mockResolvedValue(mockAvailability);
+      mockContext.scheduling.getAvailability.mockResolvedValue(
+        mockAvailability,
+      );
 
       const result = await caller.api.appointment.getAvailability(availabilityInput);
 
@@ -512,7 +542,9 @@ describe('Appointment API Contract Tests', () => {
         },
       ];
 
-      mockContext.prisma.appointment.findMany.mockResolvedValue(mockAppointments);
+      mockContext.prisma.appointment.findMany.mockResolvedValue(
+        mockAppointments,
+      );
       mockContext.prisma.appointment.count.mockResolvedValue(15);
 
       const result = await caller.api.appointment.list(listInput);

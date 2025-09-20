@@ -1,11 +1,11 @@
 /**
  * AI Configuration for NeonPro Healthcare Platform
- * 
+ *
  * Centralized configuration for AI agent integration with healthcare compliance
  * Supports multiple providers and Brazilian healthcare context
  */
 
-import { z } from 'zod';
+import { z } from "zod";
 
 // =====================================
 // CONFIGURATION SCHEMAS
@@ -27,7 +27,9 @@ const AIHealthcareConfigSchema = z.object({
   contextEnabled: z.boolean().default(true),
   lgpdCompliance: z.boolean().default(true),
   auditEnabled: z.boolean().default(true),
-  anonymizationLevel: z.enum(['none', 'basic', 'strict', 'full']).default('strict'),
+  anonymizationLevel: z
+    .enum(["none", "basic", "strict", "full"])
+    .default("strict"),
   dataRetentionDays: z.number().int().min(1).max(365).default(30),
   consentRequired: z.boolean().default(true),
   encryptionEnabled: z.boolean().default(true),
@@ -43,7 +45,9 @@ const AISecurityConfigSchema = z.object({
   }),
   inputValidation: z.object({
     maxLength: z.number().int().min(1).default(10000),
-    allowedContentTypes: z.array(z.string()).default(['text/plain', 'application/json']),
+    allowedContentTypes: z
+      .array(z.string())
+      .default(["text/plain", "application/json"]),
     scanForMalicious: z.boolean().default(true),
   }),
   outputFiltering: z.object({
@@ -83,66 +87,66 @@ const AIPerformanceConfigSchema = z.object({
 export const AI_PROVIDERS = {
   openai: {
     gpt4: {
-      model: 'gpt-4',
+      model: "gpt-4",
       maxTokens: 4000,
       temperature: 0.3,
       timeout: 30000,
       healthcareOptimized: true,
-      capabilities: ['chat', 'analysis', 'prediction', 'medical-context'],
+      capabilities: ["chat", "analysis", "prediction", "medical-context"],
     },
     gpt35: {
-      model: 'gpt-3.5-turbo',
+      model: "gpt-3.5-turbo",
       maxTokens: 4000,
       temperature: 0.3,
       timeout: 25000,
       healthcareOptimized: true,
-      capabilities: ['chat', 'basic-analysis'],
+      capabilities: ["chat", "basic-analysis"],
     },
     gpt4o: {
-      model: 'gpt-4o',
+      model: "gpt-4o",
       maxTokens: 4000,
       temperature: 0.3,
       timeout: 30000,
       healthcareOptimized: true,
-      capabilities: ['chat', 'analysis', 'vision', 'medical-context'],
+      capabilities: ["chat", "analysis", "vision", "medical-context"],
     },
   },
   anthropic: {
     claude3: {
-      model: 'claude-3-sonnet-20240229',
+      model: "claude-3-sonnet-20240229",
       maxTokens: 4000,
       temperature: 0.3,
       timeout: 30000,
       healthcareOptimized: true,
-      capabilities: ['chat', 'analysis', 'medical-context', 'long-context'],
+      capabilities: ["chat", "analysis", "medical-context", "long-context"],
     },
     claude3haiku: {
-      model: 'claude-3-haiku-20240307',
+      model: "claude-3-haiku-20240307",
       maxTokens: 4000,
       temperature: 0.3,
       timeout: 20000,
       healthcareOptimized: true,
-      capabilities: ['chat', 'fast-response'],
+      capabilities: ["chat", "fast-response"],
     },
   },
   google: {
     gemini: {
-      model: 'gemini-pro',
+      model: "gemini-pro",
       maxTokens: 4000,
       temperature: 0.3,
       timeout: 30000,
       healthcareOptimized: true,
-      capabilities: ['chat', 'analysis', 'multimodal'],
+      capabilities: ["chat", "analysis", "multimodal"],
     },
   },
   local: {
     default: {
-      model: 'local-model',
+      model: "local-model",
       maxTokens: 2000,
       temperature: 0.2,
       timeout: 15000,
       healthcareOptimized: false,
-      capabilities: ['chat'],
+      capabilities: ["chat"],
     },
   },
 } as const;
@@ -186,13 +190,13 @@ export const HEALTHCARE_CONTEXTS = {
 - Culturalmente apropriado para o contexto brasileiro`,
 
     capabilities: [
-      'agendamento',
-      'triagem',
-      'orientações',
-      'acompanhamento',
-      'educação',
+      "agendamento",
+      "triagem",
+      "orientações",
+      "acompanhamento",
+      "educação",
     ],
-    complianceLevel: 'strict',
+    complianceLevel: "strict",
   },
 
   financial: {
@@ -228,13 +232,13 @@ export const HEALTHCARE_CONTEXTS = {
 - Mantenha discrição e confidencialidade financeira`,
 
     capabilities: [
-      'faturamento',
-      'cobrança',
-      'relatórios',
-      'planejamento',
-      'compliance',
+      "faturamento",
+      "cobrança",
+      "relatórios",
+      "planejamento",
+      "compliance",
     ],
-    complianceLevel: 'strict',
+    complianceLevel: "strict",
   },
 
   appointment: {
@@ -277,13 +281,13 @@ export const HEALTHCARE_CONTEXTS = {
 - Colete feedback para melhorar continuamente`,
 
     capabilities: [
-      'agendamento',
-      'confirmação',
-      'otimização',
-      'comunicação',
-      'lembretes',
+      "agendamento",
+      "confirmação",
+      "otimização",
+      "comunicação",
+      "lembretes",
     ],
-    complianceLevel: 'standard',
+    complianceLevel: "standard",
   },
 } as const;
 
@@ -293,27 +297,27 @@ export const HEALTHCARE_CONTEXTS = {
 
 export const DEFAULT_AI_CONFIG = {
   // Provider settings
-  defaultProvider: 'openai' as const,
-  defaultModel: 'gpt4' as const,
-  
+  defaultProvider: "openai" as const,
+  defaultModel: "gpt4" as const,
+
   // Core settings
   streaming: true,
   maxResponseLength: 4000,
   temperature: 0.3,
-  
+
   // Healthcare compliance
   healthcare: {
     contextEnabled: true,
     lgpdCompliance: true,
     auditEnabled: true,
-    anonymizationLevel: 'strict' as const,
+    anonymizationLevel: "strict" as const,
     dataRetentionDays: 30,
     consentRequired: true,
     encryptionEnabled: true,
     brazilianContext: true,
     portugueseLanguage: true,
   },
-  
+
   // Security settings
   security: {
     rateLimiting: {
@@ -323,7 +327,7 @@ export const DEFAULT_AI_CONFIG = {
     },
     inputValidation: {
       maxLength: 10000,
-      allowedContentTypes: ['text/plain', 'application/json'],
+      allowedContentTypes: ["text/plain", "application/json"],
       scanForMalicious: true,
     },
     outputFiltering: {
@@ -333,7 +337,7 @@ export const DEFAULT_AI_CONFIG = {
       sanitizeOutput: true,
     },
   },
-  
+
   // Performance optimization
   performance: {
     caching: {
@@ -356,7 +360,7 @@ export const DEFAULT_AI_CONFIG = {
       },
     },
   },
-  
+
   // Feature flags
   features: {
     enableVoiceInput: false,
@@ -367,7 +371,7 @@ export const DEFAULT_AI_CONFIG = {
     enableKnowledgeBase: true,
     enableRAG: true,
   },
-  
+
   // UI/UX settings
   ui: {
     showThinkingIndicator: true,
@@ -388,8 +392,8 @@ export const DEFAULT_AI_CONFIG = {
 export function getAIConfig() {
   return {
     // Environment-specific settings
-    environment: process.env.NODE_ENV || 'development',
-    
+    environment: process.env.NODE_ENV || "development",
+
     // API keys and endpoints
     providers: {
       openai: {
@@ -403,31 +407,35 @@ export function getAIConfig() {
         apiKey: process.env.NEXT_PUBLIC_GOOGLE_AI_API_KEY,
       },
       local: {
-        baseUrl: process.env.NEXT_PUBLIC_LOCAL_AI_ENDPOINT || 'http://localhost:8000/v1',
+        baseUrl:
+          process.env.NEXT_PUBLIC_LOCAL_AI_ENDPOINT ||
+          "http://localhost:8000/v1",
       },
     },
-    
+
     // Feature flags from environment
     features: {
       ...DEFAULT_AI_CONFIG.features,
-      enableVoiceInput: process.env.NEXT_PUBLIC_ENABLE_VOICE_INPUT === 'true',
-      enableFileAttachments: process.env.NEXT_PUBLIC_ENABLE_ATTACHMENTS === 'true',
-      enableMultilingual: process.env.NEXT_PUBLIC_ENABLE_MULTILINGUAL === 'true',
+      enableVoiceInput: process.env.NEXT_PUBLIC_ENABLE_VOICE_INPUT === "true",
+      enableFileAttachments:
+        process.env.NEXT_PUBLIC_ENABLE_ATTACHMENTS === "true",
+      enableMultilingual:
+        process.env.NEXT_PUBLIC_ENABLE_MULTILINGUAL === "true",
     },
-    
+
     // Compliance settings
     compliance: {
-      lgpdEnabled: process.env.NEXT_PUBLIC_LGPD_ENABLED !== 'false',
-      auditEnabled: process.env.NEXT_PUBLIC_AUDIT_ENABLED !== 'false',
-      encryptionEnabled: process.env.NEXT_PUBLIC_ENCRYPTION_ENABLED !== 'false',
+      lgpdEnabled: process.env.NEXT_PUBLIC_LGPD_ENABLED !== "false",
+      auditEnabled: process.env.NEXT_PUBLIC_AUDIT_ENABLED !== "false",
+      encryptionEnabled: process.env.NEXT_PUBLIC_ENCRYPTION_ENABLED !== "false",
     },
-    
+
     // Performance settings
     performance: {
       ...DEFAULT_AI_CONFIG.performance,
       caching: {
         ...DEFAULT_AI_CONFIG.performance.caching,
-        enabled: process.env.NEXT_PUBLIC_ENABLE_CACHING !== 'false',
+        enabled: process.env.NEXT_PUBLIC_ENABLE_CACHING !== "false",
       },
     },
   };
@@ -444,20 +452,20 @@ export function validateAIConfig(config: unknown) {
       security: AISecurityConfigSchema.parse(config),
       performance: AIPerformanceConfigSchema.parse(config),
     };
-    
+
     return { valid: true, config: fullConfig };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return {
         valid: false,
         errors: error.errors,
-        message: 'Invalid AI configuration',
+        message: "Invalid AI configuration",
       };
     }
-    
+
     return {
       valid: false,
-      message: 'Unknown configuration validation error',
+      message: "Unknown configuration validation error",
     };
   }
 }
@@ -468,38 +476,41 @@ export function validateAIConfig(config: unknown) {
 
 export function selectOptimalProvider(
   agentType: keyof typeof HEALTHCARE_CONTEXTS,
-  complexity: 'low' | 'medium' | 'high' = 'medium',
-  availableProviders: string[] = ['openai', 'anthropic', 'google']
+  complexity: "low" | "medium" | "high" = "medium",
+  availableProviders: string[] = ["openai", "anthropic", "google"],
 ): { provider: string; model: string; reason: string } {
   const context = HEALTHCARE_CONTEXTS[agentType];
-  
+
   // Priority mapping based on agent type and requirements
   const providerPriority = {
     client: {
-      high: ['anthropic', 'openai', 'google'], // Claude for long context, GPT-4 for medical
-      medium: ['openai', 'anthropic', 'google'],
-      low: ['openai', 'anthropic'],
+      high: ["anthropic", "openai", "google"], // Claude for long context, GPT-4 for medical
+      medium: ["openai", "anthropic", "google"],
+      low: ["openai", "anthropic"],
     },
     financial: {
-      high: ['anthropic', 'openai', 'google'], // Claude for analytical tasks
-      medium: ['openai', 'anthropic'],
-      low: ['openai'],
+      high: ["anthropic", "openai", "google"], // Claude for analytical tasks
+      medium: ["openai", "anthropic"],
+      low: ["openai"],
     },
     appointment: {
-      high: ['openai', 'anthropic', 'google'],
-      medium: ['openai', 'anthropic'],
-      low: ['openai'],
+      high: ["openai", "anthropic", "google"],
+      medium: ["openai", "anthropic"],
+      low: ["openai"],
     },
   };
 
-  const priorities = providerPriority[agentType]?.[complexity] || providerPriority.client.medium;
-  
+  const priorities =
+    providerPriority[agentType]?.[complexity] || providerPriority.client.medium;
+
   // Find first available provider
   for (const provider of priorities) {
     if (availableProviders.includes(provider)) {
-      const models = Object.keys(AI_PROVIDERS[provider as keyof typeof AI_PROVIDERS]);
+      const models = Object.keys(
+        AI_PROVIDERS[provider as keyof typeof AI_PROVIDERS],
+      );
       const recommendedModel = models[0]; // Use first available model
-      
+
       return {
         provider,
         model: recommendedModel,
@@ -507,12 +518,12 @@ export function selectOptimalProvider(
       };
     }
   }
-  
+
   // Fallback to default
   return {
-    provider: 'openai',
-    model: 'gpt4',
-    reason: 'Default provider selection',
+    provider: "openai",
+    model: "gpt4",
+    reason: "Default provider selection",
   };
 }
 

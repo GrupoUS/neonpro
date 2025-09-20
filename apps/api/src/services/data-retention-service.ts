@@ -276,7 +276,10 @@ export class DataRetentionService {
         patientId,
         scheduledDate,
         action: policy.action,
-        estimatedRecordCount: await this.estimateRecordCount(dataSource, dataIdentifier),
+        estimatedRecordCount: await this.estimateRecordCount(
+          dataSource,
+          dataIdentifier,
+        ),
         status: 'scheduled',
         executedBy: 'system',
         createdAt: new Date(),
@@ -344,7 +347,11 @@ export class DataRetentionService {
           action: job.action,
           reason: `Automated cleanup based on policy: ${policy.name}`,
           legalBasis: 'LGPD Art. 16º - Data retention limitation',
-          complianceReferences: ['LGPD', 'ANVISA', 'Brazilian Healthcare Standards'],
+          complianceReferences: [
+            'LGPD',
+            'ANVISA',
+            'Brazilian Healthcare Standards',
+          ],
         },
       };
 
@@ -413,7 +420,11 @@ export class DataRetentionService {
     job: CleanupJob,
     policy: RetentionPolicy,
     execution: CleanupExecution,
-  ): Promise<{ processedCount: number; affectedCount: number; hasErrors: boolean }> {
+  ): Promise<{
+    processedCount: number;
+    affectedCount: number;
+    hasErrors: boolean;
+  }> {
     switch (job.action) {
       case RetentionAction.DELETE:
         return this.executeDeletion(job, execution);
@@ -434,13 +445,20 @@ export class DataRetentionService {
   private async executeDeletion(
     job: CleanupJob,
     execution: CleanupExecution,
-  ): Promise<{ processedCount: number; affectedCount: number; hasErrors: boolean }> {
+  ): Promise<{
+    processedCount: number;
+    affectedCount: number;
+    hasErrors: boolean;
+  }> {
     try {
       // This would integrate with your data deletion service
       console.log(`Executing deletion for job ${job.id} on ${job.dataSource}`);
 
       // Simulate deletion process
-      const affectedCount = await this.simulateDataDeletion(job.dataSource, job.dataIdentifier);
+      const affectedCount = await this.simulateDataDeletion(
+        job.dataSource,
+        job.dataIdentifier,
+      );
 
       execution.auditLog.action = RetentionAction.DELETE;
       execution.auditLog.reason += ' - Data permanently deleted per LGPD requirements';
@@ -467,9 +485,15 @@ export class DataRetentionService {
   private async executeAnonymization(
     job: CleanupJob,
     execution: CleanupExecution,
-  ): Promise<{ processedCount: number; affectedCount: number; hasErrors: boolean }> {
+  ): Promise<{
+    processedCount: number;
+    affectedCount: number;
+    hasErrors: boolean;
+  }> {
     try {
-      console.log(`Executing anonymization for job ${job.id} on ${job.dataSource}`);
+      console.log(
+        `Executing anonymization for job ${job.id} on ${job.dataSource}`,
+      );
 
       // Simulate anonymization process
       const affectedCount = await this.simulateDataAnonymization(
@@ -502,12 +526,19 @@ export class DataRetentionService {
   private async executeArchival(
     job: CleanupJob,
     execution: CleanupExecution,
-  ): Promise<{ processedCount: number; affectedCount: number; hasErrors: boolean }> {
+  ): Promise<{
+    processedCount: number;
+    affectedCount: number;
+    hasErrors: boolean;
+  }> {
     try {
       console.log(`Executing archival for job ${job.id} on ${job.dataSource}`);
 
       // Simulate archival process
-      const affectedCount = await this.simulateDataArchival(job.dataSource, job.dataIdentifier);
+      const affectedCount = await this.simulateDataArchival(
+        job.dataSource,
+        job.dataIdentifier,
+      );
 
       execution.auditLog.action = RetentionAction.ARCHIVE;
       execution.auditLog.reason += ' - Data archived for long-term storage';
@@ -534,12 +565,19 @@ export class DataRetentionService {
   private async executeFlagging(
     job: CleanupJob,
     execution: CleanupExecution,
-  ): Promise<{ processedCount: number; affectedCount: number; hasErrors: boolean }> {
+  ): Promise<{
+    processedCount: number;
+    affectedCount: number;
+    hasErrors: boolean;
+  }> {
     try {
       console.log(`Executing flagging for job ${job.id} on ${job.dataSource}`);
 
       // Simulate flagging process
-      const affectedCount = await this.simulateDataFlagging(job.dataSource, job.dataIdentifier);
+      const affectedCount = await this.simulateDataFlagging(
+        job.dataSource,
+        job.dataIdentifier,
+      );
 
       execution.auditLog.action = RetentionAction.FLAG_FOR_REVIEW;
       execution.auditLog.reason += ' - Data flagged for manual review';
@@ -572,7 +610,10 @@ export class DataRetentionService {
   /**
    * Estimate record count for cleanup job
    */
-  private async estimateRecordCount(dataSource: string, dataIdentifier: string): Promise<number> {
+  private async estimateRecordCount(
+    dataSource: string,
+    dataIdentifier: string,
+  ): Promise<number> {
     // This would query your database to estimate record count
     // For now, return a mock estimate
     return Math.floor(Math.random() * 1000) + 100;
@@ -581,9 +622,14 @@ export class DataRetentionService {
   /**
    * Simulate data deletion
    */
-  private async simulateDataDeletion(dataSource: string, dataIdentifier: string): Promise<number> {
+  private async simulateDataDeletion(
+    dataSource: string,
+    dataIdentifier: string,
+  ): Promise<number> {
     // In production, this would execute actual DELETE operations
-    console.log(`Deleting data from ${dataSource} with identifier ${dataIdentifier}`);
+    console.log(
+      `Deleting data from ${dataSource} with identifier ${dataIdentifier}`,
+    );
     return Math.floor(Math.random() * 950) + 50; // Simulate 50-1000 records deleted
   }
 
@@ -595,25 +641,37 @@ export class DataRetentionService {
     dataIdentifier: string,
   ): Promise<number> {
     // In production, this would execute UPDATE operations to anonymize data
-    console.log(`Anonymizing data from ${dataSource} with identifier ${dataIdentifier}`);
+    console.log(
+      `Anonymizing data from ${dataSource} with identifier ${dataIdentifier}`,
+    );
     return Math.floor(Math.random() * 980) + 20; // Simulate 20-1000 records anonymized
   }
 
   /**
    * Simulate data archival
    */
-  private async simulateDataArchival(dataSource: string, dataIdentifier: string): Promise<number> {
+  private async simulateDataArchival(
+    dataSource: string,
+    dataIdentifier: string,
+  ): Promise<number> {
     // In production, this would move data to archival storage
-    console.log(`Archiving data from ${dataSource} with identifier ${dataIdentifier}`);
+    console.log(
+      `Archiving data from ${dataSource} with identifier ${dataIdentifier}`,
+    );
     return Math.floor(Math.random() * 990) + 10; // Simulate 10-1000 records archived
   }
 
   /**
    * Simulate data flagging
    */
-  private async simulateDataFlagging(dataSource: string, dataIdentifier: string): Promise<number> {
+  private async simulateDataFlagging(
+    dataSource: string,
+    dataIdentifier: string,
+  ): Promise<number> {
     // In production, this would add flags to records for review
-    console.log(`Flagging data from ${dataSource} with identifier ${dataIdentifier}`);
+    console.log(
+      `Flagging data from ${dataSource} with identifier ${dataIdentifier}`,
+    );
     return Math.floor(Math.random() * 990) + 10; // Simulate 10-1000 records flagged
   }
 
@@ -659,7 +717,9 @@ export class DataRetentionService {
   /**
    * Store execution record
    */
-  private async storeExecutionRecord(execution: CleanupExecution): Promise<void> {
+  private async storeExecutionRecord(
+    execution: CleanupExecution,
+  ): Promise<void> {
     const { error } = await this.supabase
       .from('data_retention_executions')
       .insert(execution);
@@ -674,7 +734,10 @@ export class DataRetentionService {
   /**
    * Send cleanup notification
    */
-  private async sendCleanupNotification(job: CleanupJob, policy: RetentionPolicy): Promise<void> {
+  private async sendCleanupNotification(
+    job: CleanupJob,
+    policy: RetentionPolicy,
+  ): Promise<void> {
     if (!policy.notificationConfig) return;
 
     const message =

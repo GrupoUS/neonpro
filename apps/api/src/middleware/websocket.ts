@@ -43,12 +43,14 @@ const wsMessageSchema = z.object({
   id: z.string().optional(),
   timestamp: z.string().optional(),
   data: z.any().optional(),
-  metadata: z.object({
-    userId: z.string().optional(),
-    sessionId: z.string().optional(),
-    healthcareContext: z.boolean().optional(),
-    lgpdConsent: z.boolean().optional(),
-  }).optional(),
+  metadata: z
+    .object({
+      userId: z.string().optional(),
+      sessionId: z.string().optional(),
+      healthcareContext: z.boolean().optional(),
+      lgpdConsent: z.boolean().optional(),
+    })
+    .optional(),
 });
 
 export type WSMessage = z.infer<typeof wsMessageSchema>;
@@ -74,11 +76,18 @@ interface ConnectionMetadata {
 
 // WebSocket connection manager
 class WebSocketManager {
-  private connections = new Map<string, { ws: WebSocket; metadata: ConnectionMetadata }>();
+  private connections = new Map<
+    string,
+    { ws: WebSocket; metadata: ConnectionMetadata }
+  >();
   private userConnections = new Map<string, Set<string>>();
 
   // Add connection
-  addConnection(connectionId: string, ws: WebSocket, metadata: ConnectionMetadata) {
+  addConnection(
+    connectionId: string,
+    ws: WebSocket,
+    metadata: ConnectionMetadata,
+  ) {
     this.connections.set(connectionId, { ws, metadata });
 
     // Track user connections
@@ -156,7 +165,10 @@ class WebSocketManager {
   }
 
   // Broadcast to all connections with optional filter
-  broadcast(message: WSMessage, filter?: (metadata: ConnectionMetadata) => boolean): number {
+  broadcast(
+    message: WSMessage,
+    filter?: (metadata: ConnectionMetadata) => boolean,
+  ): number {
     let sentCount = 0;
 
     for (const [connectionId, { metadata }] of this.connections) {
@@ -234,7 +246,10 @@ class WebSocketManager {
   }
 
   // Handle incoming messages from clients
-  private async handleIncomingMessage(connectionId: string, message: WSMessage) {
+  private async handleIncomingMessage(
+    connectionId: string,
+    message: WSMessage,
+  ) {
     const connection = this.connections.get(connectionId);
     if (!connection) return;
 
@@ -324,13 +339,18 @@ export function websocketUpgrade() {
 
     // Extract authentication token
     const authHeader = c.req.header('authorization');
-    const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : undefined;
+    const token = authHeader?.startsWith('Bearer ')
+      ? authHeader.slice(7).trim()
+      : undefined;
 
     if (!token) {
-      return c.json({
-        success: false,
-        error: 'Token de autenticação necessário para WebSocket',
-      }, 401);
+      return c.json(
+        {
+          success: false,
+          error: 'Token de autenticação necessário para WebSocket',
+        },
+        401,
+      );
     }
 
     // TODO: Validate token and extract user information
@@ -366,11 +386,16 @@ export function websocketUpgrade() {
 }
 
 // WebSocket connection handler
-export function handleWebSocketConnection(ws: WebSocket, metadata: ConnectionMetadata) {
+export function handleWebSocketConnection(
+  ws: WebSocket,
+  metadata: ConnectionMetadata,
+) {
   const connectionId = crypto.randomUUID();
   wsManager.addConnection(connectionId, ws, metadata);
 
-  console.log(`WebSocket connected: ${connectionId} (User: ${metadata.userId})`);
+  console.log(
+    `WebSocket connected: ${connectionId} (User: ${metadata.userId})`,
+  );
 
   return connectionId;
 }
@@ -386,8 +411,10 @@ export function websocketMiddleware() {
     );
     c.set(
       'broadcast',
-      (message: WSMessage, filter?: (metadata: ConnectionMetadata) => boolean) =>
-        wsManager.broadcast(message, filter),
+      (
+        message: WSMessage,
+        filter?: (metadata: ConnectionMetadata) => boolean,
+      ) => wsManager.broadcast(message, filter),
     );
 
     return next();

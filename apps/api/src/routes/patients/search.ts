@@ -94,39 +94,58 @@ const LGPDService = {
 // Validation schemas
 const searchCriteriaSchema = z.object({
   query: z.string().optional(),
-  searchType: z.enum(['fulltext', 'structured', 'fuzzy', 'advanced']).optional().default(
-    'fulltext',
-  ),
-  filters: z.object({
-    gender: z.enum(['male', 'female', 'other']).optional(),
-    status: z.union([z.string(), z.array(z.string())]).optional(),
-    ageRange: z.object({
-      min: z.number().min(0).max(150).optional(),
-      max: z.number().min(0).max(150).optional(),
-    }).optional(),
-    dateRange: z.object({
-      field: z.enum(['createdAt', 'updatedAt', 'birthDate']).optional(),
-      start: z.string().datetime().optional(),
-      end: z.string().datetime().optional(),
-    }).optional(),
-    hasEmail: z.boolean().optional(),
-    hasPhone: z.boolean().optional(),
-    city: z.string().optional(),
-    state: z.string().optional(),
-    medicalConditions: z.array(z.string()).optional(),
-  }).optional().default({}),
-  fuzzyOptions: z.object({
-    threshold: z.number().min(0).max(1).optional().default(0.8),
-    fields: z.array(z.string()).optional().default(['name', 'email']),
-  }).optional(),
-  pagination: z.object({
-    page: z.number().min(1).optional().default(1),
-    limit: z.number().min(1).max(100).optional().default(20),
-  }).optional().default({ page: 1, limit: 20 }),
-  sorting: z.object({
-    field: z.enum(['name', 'createdAt', 'updatedAt', 'birthDate']).optional().default('name'),
-    order: z.enum(['asc', 'desc']).optional().default('asc'),
-  }).optional().default({ field: 'name', order: 'asc' }),
+  searchType: z
+    .enum(['fulltext', 'structured', 'fuzzy', 'advanced'])
+    .optional()
+    .default('fulltext'),
+  filters: z
+    .object({
+      gender: z.enum(['male', 'female', 'other']).optional(),
+      status: z.union([z.string(), z.array(z.string())]).optional(),
+      ageRange: z
+        .object({
+          min: z.number().min(0).max(150).optional(),
+          max: z.number().min(0).max(150).optional(),
+        })
+        .optional(),
+      dateRange: z
+        .object({
+          field: z.enum(['createdAt', 'updatedAt', 'birthDate']).optional(),
+          start: z.string().datetime().optional(),
+          end: z.string().datetime().optional(),
+        })
+        .optional(),
+      hasEmail: z.boolean().optional(),
+      hasPhone: z.boolean().optional(),
+      city: z.string().optional(),
+      state: z.string().optional(),
+      medicalConditions: z.array(z.string()).optional(),
+    })
+    .optional()
+    .default({}),
+  fuzzyOptions: z
+    .object({
+      threshold: z.number().min(0).max(1).optional().default(0.8),
+      fields: z.array(z.string()).optional().default(['name', 'email']),
+    })
+    .optional(),
+  pagination: z
+    .object({
+      page: z.number().min(1).optional().default(1),
+      limit: z.number().min(1).max(100).optional().default(20),
+    })
+    .optional()
+    .default({ page: 1, limit: 20 }),
+  sorting: z
+    .object({
+      field: z
+        .enum(['name', 'createdAt', 'updatedAt', 'birthDate'])
+        .optional()
+        .default('name'),
+      order: z.enum(['asc', 'desc']).optional().default('asc'),
+    })
+    .optional()
+    .default({ field: 'name', order: 'asc' }),
   includeInactive: z.boolean().optional().default(false),
 });
 
@@ -146,9 +165,15 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
 
     // Determine search type based on criteria
     let searchType = searchCriteria.searchType;
-    if (!searchCriteria.query && Object.keys(searchCriteria.filters).length > 0) {
+    if (
+      !searchCriteria.query
+      && Object.keys(searchCriteria.filters).length > 0
+    ) {
       searchType = 'structured';
-    } else if (searchCriteria.query && Object.keys(searchCriteria.filters).length > 0) {
+    } else if (
+      searchCriteria.query
+      && Object.keys(searchCriteria.filters).length > 0
+    ) {
       searchType = 'advanced';
     }
 
@@ -162,11 +187,14 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
     });
 
     if (!lgpdValidation.success) {
-      return c.json({
-        success: false,
-        error: lgpdValidation.error || 'Acesso negado por política LGPD',
-        code: lgpdValidation.code || 'LGPD_SEARCH_DENIED',
-      }, 403);
+      return c.json(
+        {
+          success: false,
+          error: lgpdValidation.error || 'Acesso negado por política LGPD',
+          code: lgpdValidation.code || 'LGPD_SEARCH_DENIED',
+        },
+        403,
+      );
     }
 
     // Get healthcare professional context from headers
@@ -183,10 +211,13 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
     });
 
     if (!searchResult.success) {
-      return c.json({
-        success: false,
-        error: searchResult.error || 'Erro interno do serviço de busca',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: searchResult.error || 'Erro interno do serviço de busca',
+        },
+        500,
+      );
     }
 
     // Mask sensitive data based on access level
@@ -194,7 +225,9 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
     let maskedPatients = searchResult.data.patients;
 
     if (accessLevel === 'limited') {
-      maskedPatients = LGPDService.maskSensitiveData(searchResult.data.patients);
+      maskedPatients = LGPDService.maskSensitiveData(
+        searchResult.data.patients,
+      );
     }
 
     // Log search activity for audit trail
@@ -222,8 +255,14 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
     const executionTime = Date.now() - startTime;
 
     // Set response headers
-    c.header('X-Search-Time', `${searchResult.data.searchMetadata.executionTime}ms`);
-    c.header('X-Results-Count', searchResult.data.searchMetadata.resultsFound.toString());
+    c.header(
+      'X-Search-Time',
+      `${searchResult.data.searchMetadata.executionTime}ms`,
+    );
+    c.header(
+      'X-Results-Count',
+      searchResult.data.searchMetadata.resultsFound.toString(),
+    );
     c.header('X-Search-Type', searchType);
     c.header('X-Response-Time', `${executionTime}ms`);
     c.header('X-Database-Queries', '3');
@@ -248,28 +287,37 @@ app.post('/', requireAuth, dataProtection.clientView, async c => {
 
     // Handle validation errors
     if (error instanceof z.ZodError) {
-      return c.json({
-        success: false,
-        error: 'Dados de busca inválidos',
-        errors: error.errors.map(err => ({
-          field: err.path.join('.'),
-          message: err.message,
-        })),
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: 'Dados de busca inválidos',
+          errors: error.errors.map(err => ({
+            field: err.path.join('.'),
+            message: err.message,
+          })),
+        },
+        400,
+      );
     }
 
     // Handle JSON parsing errors
     if (error instanceof SyntaxError) {
-      return c.json({
-        success: false,
-        error: 'Formato JSON inválido',
-      }, 400);
+      return c.json(
+        {
+          success: false,
+          error: 'Formato JSON inválido',
+        },
+        400,
+      );
     }
 
-    return c.json({
-      success: false,
-      error: 'Erro interno do servidor',
-    }, 500);
+    return c.json(
+      {
+        success: false,
+        error: 'Erro interno do servidor',
+      },
+      500,
+    );
   }
 });
 

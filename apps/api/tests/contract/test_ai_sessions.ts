@@ -38,11 +38,13 @@ const CreateSessionRequestSchema = z.object({
     }),
     language: z.enum(['pt-BR', 'en-US']).default('pt-BR'),
   }),
-  settings: z.object({
-    temperature: z.number().min(0).max(2).default(0.7),
-    maxTokens: z.number().min(1).max(4000).default(1000),
-    enableStreaming: z.boolean().default(true),
-  }).optional(),
+  settings: z
+    .object({
+      temperature: z.number().min(0).max(2).default(0.7),
+      maxTokens: z.number().min(1).max(4000).default(1000),
+      enableStreaming: z.boolean().default(true),
+    })
+    .optional(),
 });
 
 // Response schema validation

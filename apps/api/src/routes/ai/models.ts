@@ -20,10 +20,13 @@ interface ServiceInterface {
 const mockAuthMiddleware = (c: Context, next: Next) => {
   const authHeader = c.req.header('authorization');
   if (!authHeader) {
-    return c.json({
-      success: false,
-      error: 'Não autorizado. Token de acesso necessário.',
-    }, 401);
+    return c.json(
+      {
+        success: false,
+        error: 'Não autorizado. Token de acesso necessário.',
+      },
+      401,
+    );
   }
   c.set('user', { id: 'user-123', role: 'healthcare_professional' });
   return next();
@@ -36,13 +39,31 @@ const modelsQuerySchema = z.object({
   provider: z.string().optional(),
   capability: z.string().optional(),
   status: z.string().optional(),
-  includeDetails: z.string().transform(val => val === 'true').optional(),
-  includeHealth: z.string().transform(val => val === 'true').optional(),
-  includeMetrics: z.string().transform(val => val === 'true').optional(),
+  includeDetails: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
+  includeHealth: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
+  includeMetrics: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
   useCase: z.string().optional(),
-  includeFallbacks: z.string().transform(val => val === 'true').optional(),
-  healthcareContext: z.string().transform(val => val === 'true').optional(),
-  monitorHealth: z.string().transform(val => val === 'true').optional(),
+  includeFallbacks: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
+  healthcareContext: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
+  monitorHealth: z
+    .string()
+    .transform(val => val === 'true')
+    .optional(),
 });
 
 // Services - will be injected during testing or use real services in production
@@ -91,26 +112,43 @@ app.get(
       ];
       const validStatuses = ['available', 'limited', 'degraded', 'unavailable'];
 
-      if (queryParams.provider && !validProviders.includes(queryParams.provider)) {
-        return c.json({
-          success: false,
-          error: 'Parâmetros de filtro inválidos. Provedores válidos: ' + validProviders.join(', '),
-        }, 400);
+      if (
+        queryParams.provider
+        && !validProviders.includes(queryParams.provider)
+      ) {
+        return c.json(
+          {
+            success: false,
+            error: 'Parâmetros de filtro inválidos. Provedores válidos: '
+              + validProviders.join(', '),
+          },
+          400,
+        );
       }
 
-      if (queryParams.capability && !validCapabilities.includes(queryParams.capability)) {
-        return c.json({
-          success: false,
-          error: 'Parâmetros de filtro inválidos. Capacidades válidas: '
-            + validCapabilities.join(', '),
-        }, 400);
+      if (
+        queryParams.capability
+        && !validCapabilities.includes(queryParams.capability)
+      ) {
+        return c.json(
+          {
+            success: false,
+            error: 'Parâmetros de filtro inválidos. Capacidades válidas: '
+              + validCapabilities.join(', '),
+          },
+          400,
+        );
       }
 
       if (queryParams.status && !validStatuses.includes(queryParams.status)) {
-        return c.json({
-          success: false,
-          error: 'Parâmetros de filtro inválidos. Status válidos: ' + validStatuses.join(', '),
-        }, 400);
+        return c.json(
+          {
+            success: false,
+            error: 'Parâmetros de filtro inválidos. Status válidos: '
+              + validStatuses.join(', '),
+          },
+          400,
+        );
       }
 
       // Prepare models request
@@ -119,11 +157,21 @@ app.get(
       };
 
       // Add filters if provided
-      if (queryParams.provider || queryParams.capability || queryParams.status) {
+      if (
+        queryParams.provider
+        || queryParams.capability
+        || queryParams.status
+      ) {
         modelsRequest.filters = {};
-        if (queryParams.provider) modelsRequest.filters.provider = queryParams.provider;
-        if (queryParams.capability) modelsRequest.filters.capability = queryParams.capability;
-        if (queryParams.status) modelsRequest.filters.status = queryParams.status;
+        if (queryParams.provider) {
+          modelsRequest.filters.provider = queryParams.provider;
+        }
+        if (queryParams.capability) {
+          modelsRequest.filters.capability = queryParams.capability;
+        }
+        if (queryParams.status) {
+          modelsRequest.filters.status = queryParams.status;
+        }
       }
 
       // Add healthcare context if provided
@@ -142,17 +190,24 @@ app.get(
 
       if (!modelsResponse.success) {
         if (modelsResponse.error?.includes('unavailable')) {
-          return c.json({
-            success: false,
-            error:
-              'Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.',
-          }, 503);
+          return c.json(
+            {
+              success: false,
+              error:
+                'Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.',
+            },
+            503,
+          );
         }
 
-        return c.json({
-          success: false,
-          error: modelsResponse.error || 'Erro interno do serviço de modelos de IA',
-        }, 500);
+        return c.json(
+          {
+            success: false,
+            error: modelsResponse.error
+              || 'Erro interno do serviço de modelos de IA',
+          },
+          500,
+        );
       }
 
       // Get additional data if requested
@@ -204,15 +259,18 @@ app.get(
 
       // Add model-specific headers
       if (modelsResponse.data.summary) {
-        responseHeaders['X-Total-Models'] = (modelsResponse.data.summary.totalModels || 0)
-          .toString();
-        responseHeaders['X-Available-Models'] = (modelsResponse.data.summary.availableModels || 0)
-          .toString();
-        responseHeaders['X-Healthy-Models'] = (modelsResponse.data.summary.healthyModels || 0)
-          .toString();
-        responseHeaders['X-Model-Providers'] = (modelsResponse.data.summary.providers || []).join(
-          ',',
-        );
+        responseHeaders['X-Total-Models'] = (
+          modelsResponse.data.summary.totalModels || 0
+        ).toString();
+        responseHeaders['X-Available-Models'] = (
+          modelsResponse.data.summary.availableModels || 0
+        ).toString();
+        responseHeaders['X-Healthy-Models'] = (
+          modelsResponse.data.summary.healthyModels || 0
+        ).toString();
+        responseHeaders['X-Model-Providers'] = (
+          modelsResponse.data.summary.providers || []
+        ).join(',');
       }
 
       if (modelsResponse.data.metadata) {
@@ -259,17 +317,23 @@ app.get(
       });
 
       if (error instanceof Error && error.message.includes('unavailable')) {
-        return c.json({
-          success: false,
-          error:
-            'Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.',
-        }, 503);
+        return c.json(
+          {
+            success: false,
+            error:
+              'Serviço de modelos de IA temporariamente indisponível. Tente novamente mais tarde.',
+          },
+          503,
+        );
       }
 
-      return c.json({
-        success: false,
-        error: 'Erro interno do servidor. Tente novamente mais tarde.',
-      }, 500);
+      return c.json(
+        {
+          success: false,
+          error: 'Erro interno do servidor. Tente novamente mais tarde.',
+        },
+        500,
+      );
     }
   },
 );

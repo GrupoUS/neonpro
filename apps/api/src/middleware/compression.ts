@@ -99,7 +99,9 @@ function shouldCompress(
  */
 /* istanbul ignore next - currently not used, kept for future strategies */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-function getCompressionStrategy(contentType: string): Partial<CompressionConfig> {
+function getCompressionStrategy(
+  contentType: string,
+): Partial<CompressionConfig> {
   for (const [type, strategy] of Object.entries(CONTENT_TYPE_STRATEGIES)) {
     if (contentType.startsWith(type)) {
       return strategy;
@@ -112,7 +114,9 @@ function getCompressionStrategy(contentType: string): Partial<CompressionConfig>
 /**
  * Determine best compression encoding based on Accept-Encoding header
  */
-function getBestEncoding(acceptEncoding: string): 'br' | 'gzip' | 'deflate' | null {
+function getBestEncoding(
+  acceptEncoding: string,
+): 'br' | 'gzip' | 'deflate' | null {
   if (!acceptEncoding) {
     return null;
   }
@@ -140,7 +144,10 @@ function getBestEncoding(acceptEncoding: string): 'br' | 'gzip' | 'deflate' | nu
 /**
  * Calculate compression ratio for monitoring
  */
-function calculateCompressionRatio(originalSize: number, compressedSize: number): number {
+function calculateCompressionRatio(
+  originalSize: number,
+  compressedSize: number,
+): number {
   if (originalSize === 0) return 0;
   return Math.round(((originalSize - compressedSize) / originalSize) * 100);
 }
@@ -169,7 +176,9 @@ export function createAdvancedCompressionMiddleware(
 
     const contentType = c.res.headers.get('content-type') || '';
     const contentLengthHeader = c.res.headers.get('content-length');
-    const contentLength = contentLengthHeader ? parseInt(contentLengthHeader, 10) : 0;
+    const contentLength = contentLengthHeader
+      ? parseInt(contentLengthHeader, 10)
+      : 0;
 
     // Check if we should compress (simulate content size for testing)
     const simulatedContentLength = contentLength || 2000; // Default to large content for testing
@@ -183,7 +192,10 @@ export function createAdvancedCompressionMiddleware(
       // For testing purposes, simulate compression
       const originalSize = 2000; // Simulated size
       const compressedSize = 1000; // Simulated compressed size
-      const compressionRatio = calculateCompressionRatio(originalSize, compressedSize);
+      const compressionRatio = calculateCompressionRatio(
+        originalSize,
+        compressedSize,
+      );
       const compressionTime = Date.now() - startTime;
 
       // Simulate successful compression
@@ -251,8 +263,14 @@ export function compressionMonitoringMiddleware() {
       if (compressionHeader === 'APPLIED') {
         compressionStats.compressedRequests++;
 
-        const originalSize = parseInt(c.res.headers.get('x-original-size') || '0', 10);
-        const compressedSize = parseInt(c.res.headers.get('x-compressed-size') || '0', 10);
+        const originalSize = parseInt(
+          c.res.headers.get('x-original-size') || '0',
+          10,
+        );
+        const compressedSize = parseInt(
+          c.res.headers.get('x-compressed-size') || '0',
+          10,
+        );
         const _compressionTime = parseInt(
           c.res.headers.get('x-compression-time')?.replace('ms', '') || '0',
           10,
@@ -273,7 +291,8 @@ export function compressionMonitoringMiddleware() {
     getStats: () => ({
       ...compressionStats,
       compressionRate: Math.round(
-        (compressionStats.compressedRequests / compressionStats.totalRequests) * 100,
+        (compressionStats.compressedRequests / compressionStats.totalRequests)
+          * 100,
       ),
     }),
 

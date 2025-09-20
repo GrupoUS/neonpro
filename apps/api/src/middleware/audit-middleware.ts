@@ -46,17 +46,24 @@ export function auditMiddleware(options: AuditMiddlewareOptions) {
           || c.req.query('justification');
 
         if (!justification) {
-          await logAuditEvent('EMERGENCY_ACCESS_DENIED', {
-            reason: 'Missing justification',
-            requestId,
-            path: c.req.path,
-            method: c.req.method,
-          }, auditContext);
+          await logAuditEvent(
+            'EMERGENCY_ACCESS_DENIED',
+            {
+              reason: 'Missing justification',
+              requestId,
+              path: c.req.path,
+              method: c.req.method,
+            },
+            auditContext,
+          );
 
-          return c.json({
-            error: 'Emergency access requires justification',
-            code: 'JUSTIFICATION_REQUIRED',
-          }, 400);
+          return c.json(
+            {
+              error: 'Emergency access requires justification',
+              code: 'JUSTIFICATION_REQUIRED',
+            },
+            400,
+          );
         }
       }
 
@@ -65,12 +72,18 @@ export function auditMiddleware(options: AuditMiddlewareOptions) {
 
       // Log request start
       if (options.auditLevel !== 'basic') {
-        await logAuditEvent('REQUEST_START', {
-          method: c.req.method,
-          path: c.req.path,
-          requestId,
-          requestData: options.captureRequest ? await captureRequestData(c) : undefined,
-        }, auditContext);
+        await logAuditEvent(
+          'REQUEST_START',
+          {
+            method: c.req.method,
+            path: c.req.path,
+            requestId,
+            requestData: options.captureRequest
+              ? await captureRequestData(c)
+              : undefined,
+          },
+          auditContext,
+        );
       }
 
       // Execute the route handler
@@ -80,37 +93,54 @@ export function auditMiddleware(options: AuditMiddlewareOptions) {
       const responseTime = Date.now() - startTime;
 
       // Check performance threshold
-      if (options.performanceThreshold && responseTime > options.performanceThreshold) {
-        await logAuditEvent('PERFORMANCE_THRESHOLD_EXCEEDED', {
-          responseTime,
-          threshold: options.performanceThreshold,
-          path: c.req.path,
-          method: c.req.method,
-          requestId,
-        }, auditContext);
+      if (
+        options.performanceThreshold
+        && responseTime > options.performanceThreshold
+      ) {
+        await logAuditEvent(
+          'PERFORMANCE_THRESHOLD_EXCEEDED',
+          {
+            responseTime,
+            threshold: options.performanceThreshold,
+            path: c.req.path,
+            method: c.req.method,
+            requestId,
+          },
+          auditContext,
+        );
       }
 
       // Log successful completion
-      await logAuditEvent(options.eventType || 'REQUEST_COMPLETED', {
-        method: c.req.method,
-        path: c.req.path,
-        responseTime,
-        statusCode: c.res.status,
-        requestId,
-        responseData: options.captureResponse ? await captureResponseData(c) : undefined,
-      }, auditContext);
+      await logAuditEvent(
+        options.eventType || 'REQUEST_COMPLETED',
+        {
+          method: c.req.method,
+          path: c.req.path,
+          responseTime,
+          statusCode: c.res.status,
+          requestId,
+          responseData: options.captureResponse
+            ? await captureResponseData(c)
+            : undefined,
+        },
+        auditContext,
+      );
     } catch (error) {
       const responseTime = Date.now() - startTime;
 
       // Log error with full context
-      await logAuditEvent('REQUEST_ERROR', {
-        method: c.req.method,
-        path: c.req.path,
-        error: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined,
-        responseTime,
-        requestId,
-      }, await buildAuditContext(c, options, requestId));
+      await logAuditEvent(
+        'REQUEST_ERROR',
+        {
+          method: c.req.method,
+          path: c.req.path,
+          error: error instanceof Error ? error.message : 'Unknown error',
+          stack: error instanceof Error ? error.stack : undefined,
+          responseTime,
+          requestId,
+        },
+        await buildAuditContext(c, options, requestId),
+      );
 
       throw error; // Re-throw to maintain error handling flow
     }
@@ -251,30 +281,41 @@ export function complianceMonitoringMiddleware() {
 
       // Validate compliance before proceeding
       if (securityContext && !securityContext.accessGranted) {
-        await logAuditEvent('COMPLIANCE_VIOLATION', {
-          violationType: 'ACCESS_DENIED',
-          reason: 'RLS policy violation',
-          path: c.req.path,
-          method: c.req.method,
-          userId: securityContext.rlsContext.userId,
-          clinicId: securityContext.rlsContext.clinicId,
-        }, auditContext);
+        await logAuditEvent(
+          'COMPLIANCE_VIOLATION',
+          {
+            violationType: 'ACCESS_DENIED',
+            reason: 'RLS policy violation',
+            path: c.req.path,
+            method: c.req.method,
+            userId: securityContext.rlsContext.userId,
+            clinicId: securityContext.rlsContext.clinicId,
+          },
+          auditContext,
+        );
 
-        return c.json({
-          error: 'Compliance violation detected',
-          code: 'COMPLIANCE_VIOLATION',
-        }, 403);
+        return c.json(
+          {
+            error: 'Compliance violation detected',
+            code: 'COMPLIANCE_VIOLATION',
+          },
+          403,
+        );
       }
 
       // Check for missing consent validation
       if (securityContext && !securityContext.consentValidated) {
-        await logAuditEvent('COMPLIANCE_WARNING', {
-          warningType: 'MISSING_CONSENT_VALIDATION',
-          path: c.req.path,
-          method: c.req.method,
-          userId: securityContext.rlsContext.userId,
-          clinicId: securityContext.rlsContext.clinicId,
-        }, auditContext);
+        await logAuditEvent(
+          'COMPLIANCE_WARNING',
+          {
+            warningType: 'MISSING_CONSENT_VALIDATION',
+            path: c.req.path,
+            method: c.req.method,
+            userId: securityContext.rlsContext.userId,
+            clinicId: securityContext.rlsContext.clinicId,
+          },
+          auditContext,
+        );
       }
 
       await next();
@@ -282,20 +323,28 @@ export function complianceMonitoringMiddleware() {
       // Post-request compliance checks
       const responseStatus = c.res.status;
       if (responseStatus >= 400) {
-        await logAuditEvent('COMPLIANCE_ALERT', {
-          alertType: 'ERROR_RESPONSE',
-          statusCode: responseStatus,
-          path: c.req.path,
-          method: c.req.method,
-        }, auditContext);
+        await logAuditEvent(
+          'COMPLIANCE_ALERT',
+          {
+            alertType: 'ERROR_RESPONSE',
+            statusCode: responseStatus,
+            path: c.req.path,
+            method: c.req.method,
+          },
+          auditContext,
+        );
       }
     } catch (error) {
       // Log compliance monitoring errors
-      await logAuditEvent('COMPLIANCE_MONITORING_ERROR', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        path: c.req.path,
-        method: c.req.method,
-      }, c.get('auditContext'));
+      await logAuditEvent(
+        'COMPLIANCE_MONITORING_ERROR',
+        {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          path: c.req.path,
+          method: c.req.method,
+        },
+        c.get('auditContext'),
+      );
 
       throw error;
     }
@@ -331,14 +380,19 @@ export function anomalyDetectionMiddleware() {
         timeWindows.set(userKey, currentTime);
 
         // Check for excessive access
-        if ((accessCounts.get(userKey) || 0) > 100) { // More than 100 requests per hour
-          await logAuditEvent('ANOMALY_DETECTED', {
-            anomalyType: 'EXCESSIVE_USER_ACCESS',
-            userId,
-            accessCount: accessCounts.get(userKey),
-            timeWindow: '1_hour',
-            ipAddress,
-          }, c.get('auditContext'));
+        if ((accessCounts.get(userKey) || 0) > 100) {
+          // More than 100 requests per hour
+          await logAuditEvent(
+            'ANOMALY_DETECTED',
+            {
+              anomalyType: 'EXCESSIVE_USER_ACCESS',
+              userId,
+              accessCount: accessCounts.get(userKey),
+              timeWindow: '1_hour',
+              ipAddress,
+            },
+            c.get('auditContext'),
+          );
         }
       }
 
@@ -357,22 +411,31 @@ export function anomalyDetectionMiddleware() {
         timeWindows.set(ipKey, currentTime);
 
         // Check for suspicious IP activity
-        if ((accessCounts.get(ipKey) || 0) > 500) { // More than 500 requests per hour from same IP
-          await logAuditEvent('ANOMALY_DETECTED', {
-            anomalyType: 'EXCESSIVE_IP_ACCESS',
-            ipAddress,
-            accessCount: accessCounts.get(ipKey),
-            timeWindow: '1_hour',
-            userId,
-          }, c.get('auditContext'));
+        if ((accessCounts.get(ipKey) || 0) > 500) {
+          // More than 500 requests per hour from same IP
+          await logAuditEvent(
+            'ANOMALY_DETECTED',
+            {
+              anomalyType: 'EXCESSIVE_IP_ACCESS',
+              ipAddress,
+              accessCount: accessCounts.get(ipKey),
+              timeWindow: '1_hour',
+              userId,
+            },
+            c.get('auditContext'),
+          );
         }
       }
 
       await next();
     } catch (error) {
-      await logAuditEvent('ANOMALY_DETECTION_ERROR', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-      }, c.get('auditContext'));
+      await logAuditEvent(
+        'ANOMALY_DETECTION_ERROR',
+        {
+          error: error instanceof Error ? error.message : 'Unknown error',
+        },
+        c.get('auditContext'),
+      );
 
       throw error;
     }
@@ -503,10 +566,12 @@ function generateRequestId(): string {
 }
 
 function getClientIP(c: Context): string {
-  return c.req.header('X-Forwarded-For')?.split(',')[0]?.trim()
+  return (
+    c.req.header('X-Forwarded-For')?.split(',')[0]?.trim()
     || c.req.header('X-Real-IP')
     || c.req.header('CF-Connecting-IP')
-    || 'unknown';
+    || 'unknown'
+  );
 }
 
 // Export types

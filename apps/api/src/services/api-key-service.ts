@@ -32,11 +32,13 @@ export const ApiKeyMetadataSchema = z.object({
   lastUsedAt: z.date().optional(),
   expiresAt: z.date().optional(),
   isActive: z.boolean().default(true),
-  rateLimit: z.object({
-    requestsPerMinute: z.number().default(60),
-    requestsPerHour: z.number().default(1000),
-    requestsPerDay: z.number().default(10000),
-  }).optional(),
+  rateLimit: z
+    .object({
+      requestsPerMinute: z.number().default(60),
+      requestsPerHour: z.number().default(1000),
+      requestsPerDay: z.number().default(10000),
+    })
+    .optional(),
 });
 
 export type ApiKeyMetadata = z.infer<typeof ApiKeyMetadataSchema>;

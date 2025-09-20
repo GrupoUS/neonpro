@@ -24,6 +24,7 @@ related:
 The Patient Dashboard Enhancement project modernizes the existing patient management interface using the **Modular Component Pattern (MCP)** and **shadcn/ui** component system. This enhancement addresses current UX limitations while establishing a scalable foundation for future healthcare modules.
 
 **Business Value**:
+
 - **50% reduction** in patient data entry time through enhanced forms
 - **Enhanced accessibility** compliance (WCAG 2.1 AA+) for inclusive healthcare access
 - **Improved data accuracy** through real-time validation and smart defaults
@@ -31,6 +32,7 @@ The Patient Dashboard Enhancement project modernizes the existing patient manage
 - **LGPD/ANVISA compliance** maintaining Brazilian healthcare regulatory standards
 
 **Target Users**:
+
 - **Primary**: Clinic administrators and healthcare staff managing patient data
 - **Secondary**: Patients accessing their own dashboard information
 - **Stakeholders**: Clinic owners, healthcare regulators, IT administrators
@@ -65,6 +67,7 @@ This enhancement aligns with NeonPro's mission to provide **simple, compliant, a
 ### Registry Configuration & Component System
 
 **Shadcn Registry Strategy**:
+
 ```bash
 # Primary installation command
 npx shadcn init https://ui-experiments-green.vercel.app/r/experiment-01.json
@@ -76,6 +79,7 @@ npx shadcn add toast alert-dialog drawer popover
 ```
 
 **Component Hierarchy**:
+
 ```
 apps/web/src/components/
 ├── ui/                           # shadcn/ui base components
@@ -97,6 +101,7 @@ apps/web/src/components/
 ### State Management Architecture
 
 **Data Flow Strategy**:
+
 - **Server State**: TanStack Query for patient data, caching, optimistic updates
 - **Client State**: Zustand for UI state, form state, navigation state
 - **Form State**: React Hook Form for complex multi-step forms
@@ -108,12 +113,12 @@ interface PatientDashboardState {
   // Server state (TanStack Query)
   patients: UseQueryResult<Patient[], Error>;
   patientDetail: UseQueryResult<PatientDetail, Error>;
-  
+
   // Client state (Zustand)
   selectedPatients: string[];
   tableFilters: PatientFilters;
   sidebarCollapsed: boolean;
-  
+
   // Form state (React Hook Form)
   registrationForm: UseFormReturn<PatientRegistration>;
 }
@@ -124,6 +129,7 @@ interface PatientDashboardState {
 ### Three-Phase Implementation Strategy
 
 **Phase 1: Foundation & Registry (Days 1-2)**
+
 ```json
 {
   "phase": 1,
@@ -145,10 +151,11 @@ interface PatientDashboardState {
 ```
 
 **Phase 2: Enhanced Tables & Forms (Days 3-5)**
+
 ```json
 {
   "phase": 2,
-  "duration": "3 days", 
+  "duration": "3 days",
   "focus": "core_patient_management_features",
   "deliverables": [
     "Advanced PatientDataTable with filtering/sorting",
@@ -167,6 +174,7 @@ interface PatientDashboardState {
 ```
 
 **Phase 3: Navigation & Polish (Days 6-7)**
+
 ```json
 {
   "phase": 3,
@@ -191,50 +199,52 @@ interface PatientDashboardState {
 ### Core Component Specifications
 
 **PatientDataTable Enhancement**:
+
 ```typescript
 interface PatientDataTableProps {
   // Data management
   data: Patient[];
   loading?: boolean;
   error?: Error | null;
-  
+
   // Advanced features
   filters: PatientFilters;
   sorting: SortingState;
   pagination: PaginationState;
   selection: RowSelectionState;
-  
+
   // Actions
   onPatientSelect: (patient: Patient) => void;
   onBulkAction: (action: BulkAction, patientIds: string[]) => void;
   onFilterChange: (filters: PatientFilters) => void;
   onExport: (format: ExportFormat) => void;
-  
+
   // Customization
   columns?: ColumnDef<Patient>[];
   actions?: TableAction[];
-  density?: 'comfortable' | 'compact';
+  density?: "comfortable" | "compact";
 }
 ```
 
 **PatientRegistrationForm Wizard**:
+
 ```typescript
 interface PatientRegistrationFormProps {
   // Form configuration
   initialData?: Partial<PatientRegistration>;
   steps: FormStep[];
   validationSchema: ZodSchema;
-  
+
   // Form behavior
   autoSave?: boolean;
   allowSkipOptional?: boolean;
   showProgress?: boolean;
-  
+
   // Callbacks
   onSubmit: (data: PatientRegistration) => Promise<void>;
   onSave: (data: Partial<PatientRegistration>) => Promise<void>;
   onCancel: () => void;
-  
+
   // Brazilian compliance
   cpfValidation: CPFValidationConfig;
   phoneFormats: BrazilianPhoneFormats;
@@ -252,7 +262,7 @@ Following NeonPro's source tree organization (`apps/api/src/routes/patients/`):
 // Patient CRUD operations
 GET    /api/patients              // List patients with filtering/pagination
 POST   /api/patients              // Create new patient
-GET    /api/patients/:id          // Get patient details  
+GET    /api/patients/:id          // Get patient details
 PUT    /api/patients/:id          // Update patient information
 DELETE /api/patients/:id          // Soft delete patient
 
@@ -269,31 +279,32 @@ WEBSOCKET /realtime/patients      // Real-time patient updates
 ### Data Model Enhancements
 
 **Patient Entity** (aligned with `packages/types/src/Patient.ts`):
+
 ```typescript
 interface Patient {
   // Core identification
   id: string;
-  cpf: string;              // Brazilian tax ID (validated)
-  rg?: string;              // State ID (optional)
+  cpf: string; // Brazilian tax ID (validated)
+  rg?: string; // State ID (optional)
   full_name: string;
   preferred_name?: string;
-  
+
   // Contact information
   email: string;
   phone: BrazilianPhone;
   address: BrazilianAddress;
-  
+
   // Medical information
   birth_date: Date;
   gender: Gender;
   medical_history?: MedicalHistory[];
   allergies?: string[];
   medications?: Medication[];
-  
+
   // Healthcare provider data
   insurance?: InsuranceInfo;
   emergency_contact: EmergencyContact;
-  
+
   // Compliance & audit
   consent_lgpd: LGPDConsent;
   created_at: Date;
@@ -304,20 +315,21 @@ interface Patient {
 ```
 
 **Form Validation Schemas** (using Zod):
+
 ```typescript
 const PatientRegistrationSchema = z.object({
   // Personal information
   full_name: z.string().min(2).max(100),
   cpf: z.string().refine(validateCPF, "CPF inválido"),
   birth_date: z.date().max(new Date(), "Data não pode ser futura"),
-  
-  // Contact information  
+
+  // Contact information
   email: z.string().email("Email inválido"),
   phone: z.string().refine(validateBrazilianPhone, "Telefone inválido"),
-  
+
   // Address (Brazilian specific)
   address: BrazilianAddressSchema,
-  
+
   // LGPD compliance
   consent_lgpd: z.object({
     data_processing: z.literal(true),
@@ -354,62 +366,64 @@ const PatientRegistrationSchema = z.object({
 ### Component Testing Specifications
 
 **PatientDataTable Tests**:
+
 ```typescript
 // apps/web/src/components/patient/__tests__/PatientDataTable.test.tsx
-describe('PatientDataTable', () => {
-  describe('Rendering', () => {
-    it('displays patient data correctly');
-    it('shows loading state appropriately');
-    it('handles empty state gracefully');
-    it('renders accessibility attributes');
+describe("PatientDataTable", () => {
+  describe("Rendering", () => {
+    it("displays patient data correctly");
+    it("shows loading state appropriately");
+    it("handles empty state gracefully");
+    it("renders accessibility attributes");
   });
-  
-  describe('Filtering & Sorting', () => {
-    it('filters patients by name, CPF, email');
-    it('sorts by all sortable columns');
-    it('persists filter state in URL');
-    it('combines multiple filters correctly');
+
+  describe("Filtering & Sorting", () => {
+    it("filters patients by name, CPF, email");
+    it("sorts by all sortable columns");
+    it("persists filter state in URL");
+    it("combines multiple filters correctly");
   });
-  
-  describe('Selection & Actions', () => {
-    it('selects individual patients');
-    it('handles bulk selection');
-    it('executes bulk actions safely');
-    it('shows confirmation for destructive actions');
+
+  describe("Selection & Actions", () => {
+    it("selects individual patients");
+    it("handles bulk selection");
+    it("executes bulk actions safely");
+    it("shows confirmation for destructive actions");
   });
-  
-  describe('Accessibility', () => {
-    it('supports keyboard navigation');
-    it('works with screen readers');
-    it('maintains focus management');
-    it('provides ARIA labels and descriptions');
+
+  describe("Accessibility", () => {
+    it("supports keyboard navigation");
+    it("works with screen readers");
+    it("maintains focus management");
+    it("provides ARIA labels and descriptions");
   });
 });
 ```
 
 **Form Testing Requirements**:
+
 ```typescript
 // Patient registration form tests
-describe('PatientRegistrationForm', () => {
-  describe('Brazilian Compliance', () => {
-    it('validates CPF format and checksum');
-    it('validates Brazilian phone numbers');
-    it('supports CEP address lookup');
-    it('enforces LGPD consent requirements');
+describe("PatientRegistrationForm", () => {
+  describe("Brazilian Compliance", () => {
+    it("validates CPF format and checksum");
+    it("validates Brazilian phone numbers");
+    it("supports CEP address lookup");
+    it("enforces LGPD consent requirements");
   });
-  
-  describe('Multi-step Workflow', () => {
-    it('navigates between form steps');
-    it('validates each step before proceeding');
-    it('saves progress automatically');
-    it('recovers from browser refresh');
+
+  describe("Multi-step Workflow", () => {
+    it("navigates between form steps");
+    it("validates each step before proceeding");
+    it("saves progress automatically");
+    it("recovers from browser refresh");
   });
-  
-  describe('File Upload', () => {
-    it('accepts valid medical document formats');
-    it('rejects invalid file types');
-    it('handles file size limitations');
-    it('shows upload progress feedback');
+
+  describe("File Upload", () => {
+    it("accepts valid medical document formats");
+    it("rejects invalid file types");
+    it("handles file size limitations");
+    it("shows upload progress feedback");
   });
 });
 ```
@@ -417,11 +431,12 @@ describe('PatientRegistrationForm', () => {
 ### Performance Benchmarks
 
 **Core Web Vitals Targets**:
+
 ```json
 {
   "performance_targets": {
     "largest_contentful_paint": "< 1.5s",
-    "first_input_delay": "< 100ms", 
+    "first_input_delay": "< 100ms",
     "cumulative_layout_shift": "< 0.1",
     "time_to_interactive": "< 3s"
   },
@@ -439,6 +454,7 @@ describe('PatientRegistrationForm', () => {
 ### LGPD (Lei Geral de Proteção de Dados) Compliance
 
 **Data Protection Requirements**:
+
 - **Explicit Consent**: Multi-level consent for data processing and marketing
 - **Data Minimization**: Collect only necessary patient information
 - **Right to Deletion**: Implement patient data removal workflows
@@ -446,21 +462,22 @@ describe('PatientRegistrationForm', () => {
 - **Audit Trail**: Log all patient data access and modifications
 
 **Implementation Strategy**:
+
 ```typescript
 // LGPD compliance utilities (packages/security/src/lgpd/)
 interface LGPDConsent {
-  data_processing: boolean;          // Required for basic operations
+  data_processing: boolean; // Required for basic operations
   marketing_communications?: boolean; // Optional marketing consent
-  data_sharing?: boolean;            // Optional third-party sharing
+  data_sharing?: boolean; // Optional third-party sharing
   date_consented: Date;
-  ip_address: string;               // For audit purposes
-  consent_version: string;          // Track consent form versions
+  ip_address: string; // For audit purposes
+  consent_version: string; // Track consent form versions
 }
 
 // Audit trail implementation
 interface PatientAuditLog {
   patient_id: string;
-  action: 'create' | 'read' | 'update' | 'delete' | 'export';
+  action: "create" | "read" | "update" | "delete" | "export";
   user_id: string;
   timestamp: Date;
   ip_address: string;
@@ -472,6 +489,7 @@ interface PatientAuditLog {
 ### ANVISA (Agência Nacional de Vigilância Sanitária) Compliance
 
 **Aesthetic Clinic Regulations**:
+
 - **Patient Record Standards**: Structured medical history and treatment records
 - **Document Retention**: 10-year minimum retention for patient records
 - **Professional Identification**: Track which healthcare professional accessed records
@@ -480,33 +498,35 @@ interface PatientAuditLog {
 ### WCAG 2.1 AA+ Accessibility Standards
 
 **Accessibility Implementation**:
+
 ```typescript
 // Accessibility requirements checklist
 const AccessibilityChecklist = {
   // Perceivable
-  text_alternatives: true,          // Alt text for all images
-  captions_transcripts: true,       // For any audio/video content
-  color_contrast: 4.5,             // Minimum contrast ratio
-  responsive_design: true,          // Support 320px to 1920px+ screens
-  
-  // Operable  
-  keyboard_accessible: true,        // Full keyboard navigation
-  no_seizure_triggers: true,        // No flashing content
-  navigation_consistent: true,      // Consistent navigation patterns
-  focus_indicators: true,          // Clear focus indicators
-  
+  text_alternatives: true, // Alt text for all images
+  captions_transcripts: true, // For any audio/video content
+  color_contrast: 4.5, // Minimum contrast ratio
+  responsive_design: true, // Support 320px to 1920px+ screens
+
+  // Operable
+  keyboard_accessible: true, // Full keyboard navigation
+  no_seizure_triggers: true, // No flashing content
+  navigation_consistent: true, // Consistent navigation patterns
+  focus_indicators: true, // Clear focus indicators
+
   // Understandable
-  readable_language: true,         // Clear, simple Portuguese
-  predictable_navigation: true,    // Consistent behavior
-  input_assistance: true,          // Clear labels and error messages
-  
+  readable_language: true, // Clear, simple Portuguese
+  predictable_navigation: true, // Consistent behavior
+  input_assistance: true, // Clear labels and error messages
+
   // Robust
-  valid_markup: true,              // Valid HTML5 markup
-  compatibility: true,             // Works with assistive technologies
+  valid_markup: true, // Valid HTML5 markup
+  compatibility: true, // Works with assistive technologies
 };
 ```
 
 **Implementation in Components**:
+
 ```typescript
 // Example accessible PatientDataTable
 <Table role="grid" aria-label="Lista de pacientes">
@@ -536,12 +556,13 @@ const AccessibilityChecklist = {
 ### Primary Dependencies
 
 **Shadcn/ui Components** (from experiment-01.json registry):
+
 ```json
 {
   "registry_url": "https://ui-experiments-green.vercel.app/r/experiment-01.json",
   "core_components": [
     "@shadcn/ui/table",
-    "@shadcn/ui/form", 
+    "@shadcn/ui/form",
     "@shadcn/ui/sidebar",
     "@shadcn/ui/dialog",
     "@shadcn/ui/button",
@@ -556,11 +577,13 @@ const AccessibilityChecklist = {
 ```
 
 **TanStack Ecosystem Integration**:
+
 - **TanStack Table v8.15**: Advanced data grids with filtering, sorting, pagination
 - **TanStack Query v5.62**: Server state management with caching and optimistic updates
 - **TanStack Router**: Type-safe routing with search parameter management
 
 **Form & Validation Stack**:
+
 - **React Hook Form v7.62**: Performance-optimized form management
 - **Zod v3.23**: Runtime schema validation with TypeScript integration
 - **@hookform/resolvers**: Bridge between React Hook Form and Zod
@@ -568,41 +591,47 @@ const AccessibilityChecklist = {
 ### Integration with Existing NeonPro Systems
 
 **Supabase Integration** (`packages/database/src/`):
+
 ```typescript
 // Real-time patient updates
 const usePatientSubscription = (patientId: string) => {
   return useSupabaseSubscription(
-    'patients',
+    "patients",
     {
-      event: '*',
-      schema: 'public',
-      table: 'patients',
-      filter: `id=eq.${patientId}`
+      event: "*",
+      schema: "public",
+      table: "patients",
+      filter: `id=eq.${patientId}`,
     },
     (payload) => {
       // Invalidate queries and update UI
-      queryClient.invalidateQueries(['patients', patientId]);
-    }
+      queryClient.invalidateQueries(["patients", patientId]);
+    },
   );
 };
 ```
 
 **Authentication Integration** (`packages/shared/src/auth/`):
+
 ```typescript
 // Patient data access control
 const usePatientAccess = (patientId: string) => {
   const { user, permissions } = useAuth();
-  
-  return useMemo(() => ({
-    canView: permissions.includes('patients:read'),
-    canEdit: permissions.includes('patients:write'),
-    canDelete: permissions.includes('patients:delete'),
-    isOwner: user?.id === patient?.created_by,
-  }), [user, permissions, patient]);
+
+  return useMemo(
+    () => ({
+      canView: permissions.includes("patients:read"),
+      canEdit: permissions.includes("patients:write"),
+      canDelete: permissions.includes("patients:delete"),
+      isOwner: user?.id === patient?.created_by,
+    }),
+    [user, permissions, patient],
+  );
 };
 ```
 
 **Analytics Integration** (`packages/utils/src/analytics/`):
+
 - Track patient dashboard usage patterns
 - Monitor form completion rates and abandonment points
 - Measure search and filter usage for UX optimization
@@ -613,14 +642,16 @@ const usePatientAccess = (patientId: string) => {
 ### Technical Risks
 
 **Risk: Registry Compatibility Issues**
+
 - **Probability**: Medium (30%)
 - **Impact**: High (could delay implementation)
-- **Mitigation**: 
+- **Mitigation**:
   - Thorough testing of experiment-01.json registry components
   - Fallback to standard shadcn registry if compatibility issues arise
   - Component isolation to prevent cascade failures
 
 **Risk: Performance Degradation**
+
 - **Probability**: Low (15%)
 - **Impact**: Medium (affects user experience)
 - **Mitigation**:
@@ -629,6 +660,7 @@ const usePatientAccess = (patientId: string) => {
   - Use React profiler to identify and optimize rendering bottlenecks
 
 **Risk: Mobile Responsiveness Challenges**
+
 - **Probability**: Medium (25%)
 - **Impact**: Medium (mobile users experience degraded functionality)
 - **Mitigation**:
@@ -639,6 +671,7 @@ const usePatientAccess = (patientId: string) => {
 ### Timeline Risks
 
 **Risk: Scope Creep**
+
 - **Probability**: High (40%)
 - **Impact**: High (delays delivery and increases complexity)
 - **Mitigation**:
@@ -647,6 +680,7 @@ const usePatientAccess = (patientId: string) => {
   - Regular stakeholder check-ins to manage expectations
 
 **Risk: Integration Complexity**
+
 - **Probability**: Medium (30%)
 - **Impact**: Medium (delays specific features)
 - **Mitigation**:
@@ -657,6 +691,7 @@ const usePatientAccess = (patientId: string) => {
 ### Compliance Risks
 
 **Risk: LGPD Non-Compliance**
+
 - **Probability**: Very Low (5%)
 - **Impact**: Very High (legal and regulatory consequences)
 - **Mitigation**:
@@ -666,6 +701,7 @@ const usePatientAccess = (patientId: string) => {
   - Regular compliance testing and validation
 
 **Risk: Accessibility Non-Compliance**
+
 - **Probability**: Low (20%)
 - **Impact**: High (excludes users and potential legal issues)
 - **Mitigation**:
@@ -677,6 +713,7 @@ const usePatientAccess = (patientId: string) => {
 ### Business Continuity Risks
 
 **Risk: Critical Bug in Production**
+
 - **Probability**: Low (15%)
 - **Impact**: High (affects patient care operations)
 - **Mitigation**:
@@ -690,6 +727,7 @@ const usePatientAccess = (patientId: string) => {
 ### Key Performance Indicators (KPIs)
 
 **User Experience Metrics**:
+
 ```json
 {
   "task_completion_time": {
@@ -711,6 +749,7 @@ const usePatientAccess = (patientId: string) => {
 ```
 
 **Technical Performance Metrics**:
+
 ```json
 {
   "page_load_time": {
@@ -731,18 +770,21 @@ const usePatientAccess = (patientId: string) => {
 ### Quality Gates for Each Phase
 
 **Phase 1 Quality Gates**:
+
 - ✅ All registry components install without conflicts
 - ✅ TypeScript compilation passes with zero errors
 - ✅ Component architecture follows MCP principles
 - ✅ Development environment fully functional
 
 **Phase 2 Quality Gates**:
+
 - ✅ Table renders 1000+ patient records in <200ms
 - ✅ Form validation includes all Brazilian compliance requirements
 - ✅ File upload system handles medical document formats
 - ✅ Bulk operations work with optimistic UI updates
 
 **Phase 3 Quality Gates**:
+
 - ✅ Navigation state persists across browser sessions
 - ✅ Mobile responsive design matches desktop functionality
 - ✅ WCAG 2.1 AA+ accessibility audit passes
@@ -799,7 +841,7 @@ const usePatientAccess = (patientId: string) => {
   "archon_plan_id": "plan-patient-dashboard-2025-01-15",
   "archon_tasks": [
     "task-registry-setup",
-    "task-component-architecture", 
+    "task-component-architecture",
     "task-table-enhancement",
     "task-form-implementation",
     "task-navigation-system",
@@ -812,13 +854,14 @@ const usePatientAccess = (patientId: string) => {
 ### Version Control & Change Management
 
 **Feature Branch Strategy**:
+
 ```bash
 # Main development branch
 feature/patient-dashboard-enhancement
 
 # Phase-specific branches
 feature/patient-dashboard-phase-1-registry
-feature/patient-dashboard-phase-2-tables-forms  
+feature/patient-dashboard-phase-2-tables-forms
 feature/patient-dashboard-phase-3-navigation
 
 # Component-specific branches
@@ -830,12 +873,14 @@ feature/dashboard-navigation-system
 ## 📋 Implementation Checklist
 
 ### Pre-Implementation
+
 - [ ] Stakeholder approval for technical approach
 - [ ] Development environment configured with registry access
 - [ ] Team alignment on MCP patterns and component organization
 - [ ] Accessibility requirements and testing strategy defined
 
 ### Phase 1: Foundation (Days 1-2)
+
 - [ ] Configure experiment-01.json registry in components.json
 - [ ] Install and test all required shadcn components
 - [ ] Establish MCP component directory structure
@@ -843,6 +888,7 @@ feature/dashboard-navigation-system
 - [ ] Setup form validation schemas with Brazilian requirements
 
 ### Phase 2: Core Features (Days 3-5)
+
 - [ ] Enhance PatientDataTable with TanStack Table integration
 - [ ] Implement advanced filtering, sorting, and pagination
 - [ ] Create multi-step patient registration wizard
@@ -851,6 +897,7 @@ feature/dashboard-navigation-system
 - [ ] Add bulk selection and action capabilities
 
 ### Phase 3: Navigation & Polish (Days 6-7)
+
 - [ ] Build collapsible sidebar with persistent state
 - [ ] Implement context-aware breadcrumb navigation
 - [ ] Create global command palette for quick actions
@@ -859,6 +906,7 @@ feature/dashboard-navigation-system
 - [ ] Conduct comprehensive accessibility audit
 
 ### Testing & Quality Assurance
+
 - [ ] Unit tests for all new components (90%+ coverage)
 - [ ] Integration tests for patient data flows
 - [ ] End-to-end tests for critical user journeys
@@ -867,6 +915,7 @@ feature/dashboard-navigation-system
 - [ ] Cross-browser compatibility verification
 
 ### Documentation & Deployment
+
 - [ ] Update component documentation and usage examples
 - [ ] Create migration guide for existing patient components
 - [ ] Performance monitoring and alerting setup

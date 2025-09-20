@@ -161,8 +161,8 @@ Each documented endpoint must include:
 
 ---
 
-**Focus**: API documentation orchestration and standards for NeonPro aesthetic clinic platform  
-**Compliance**: LGPD, healthcare data protection, and audit requirements  
-**Target**: Developers implementing and maintaining API documentation  
+**Focus**: API documentation orchestration and standards for NeonPro aesthetic clinic platform
+**Compliance**: LGPD, healthcare data protection, and audit requirements
+**Target**: Developers implementing and maintaining API documentation
 **Version**: 3.0.0 - Optimized for orchestration only
 ```

@@ -190,14 +190,17 @@ describe('Patients Real-time Integration API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-subscribe`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-subscribe`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(subscriptionRequest),
         },
-        body: JSON.stringify(subscriptionRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -223,14 +226,17 @@ describe('Patients Real-time Integration API', () => {
         ],
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-subscribe`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-subscribe`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(invalidSubscription),
         },
-        body: JSON.stringify(invalidSubscription),
-      });
+      );
 
       expect(response.status).toBe(400);
       const data = await response.json();
@@ -269,17 +275,22 @@ describe('Patients Real-time Integration API', () => {
 
   describe('GET /api/v2/patients/{id}/realtime-events', () => {
     it('should return 200 with real-time event stream', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-events`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
-          Accept: 'text/event-stream',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-events`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+            Accept: 'text/event-stream',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
-      expect(response.headers.get('content-type')).toMatch(/text\/event-stream/);
+      expect(response.headers.get('content-type')).toMatch(
+        /text\/event-stream/,
+      );
       expect(response.headers.get('cache-control')).toBe('no-cache');
       expect(response.headers.get('connection')).toBe('keep-alive');
     });
@@ -299,7 +310,9 @@ describe('Patients Real-time Integration API', () => {
 
       expect(response.status).toBe(200);
       // The response should be a streaming response
-      expect(response.headers.get('content-type')).toMatch(/text\/event-stream/);
+      expect(response.headers.get('content-type')).toMatch(
+        /text\/event-stream/,
+      );
     });
 
     it('should handle event history requests', async () => {
@@ -344,14 +357,17 @@ describe('Patients Real-time Integration API', () => {
         requires_acknowledgment: false,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-events`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-events`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(eventRequest),
         },
-        body: JSON.stringify(eventRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -377,14 +393,17 @@ describe('Patients Real-time Integration API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-events`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${unauthorizedClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-events`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${unauthorizedClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(sensitiveEvent),
         },
-        body: JSON.stringify(sensitiveEvent),
-      });
+      );
 
       expect(response.status).toBe(403);
       const data = await response.json();
@@ -408,14 +427,17 @@ describe('Patients Real-time Integration API', () => {
         auto_escalation: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-events`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-events`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(emergencyEvent),
         },
-        body: JSON.stringify(emergencyEvent),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -449,14 +471,17 @@ describe('Patients Real-time Integration API', () => {
         conflict_resolution: 'server_wins',
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-sync`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-sync`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(syncRequest),
         },
-        body: JSON.stringify(syncRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -488,14 +513,17 @@ describe('Patients Real-time Integration API', () => {
         conflict_resolution: 'manual_review',
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-sync`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-sync`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(conflictSyncRequest),
         },
-        body: JSON.stringify(conflictSyncRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -510,13 +538,16 @@ describe('Patients Real-time Integration API', () => {
 
   describe('Real-time Analytics and Monitoring', () => {
     it('should provide real-time connection monitoring', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-monitoring`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-monitoring`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -537,13 +568,16 @@ describe('Patients Real-time Integration API', () => {
     });
 
     it('should track real-time performance metrics', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-metrics`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-metrics`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -582,14 +616,17 @@ describe('Patients Real-time Integration API', () => {
         },
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-security`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-security`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(monitoringRequest),
         },
-        body: JSON.stringify(monitoringRequest),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -611,14 +648,17 @@ describe('Patients Real-time Integration API', () => {
         alert_on_violation: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-compliance`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-compliance`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(complianceCheck),
         },
-        body: JSON.stringify(complianceCheck),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -632,13 +672,16 @@ describe('Patients Real-time Integration API', () => {
     });
 
     it('should provide audit trail for real-time operations', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/realtime-audit`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/realtime-audit`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -667,14 +710,17 @@ describe('Patients Real-time Integration API', () => {
         response_required: true,
       };
 
-      const response = await app.request(`/api/v2/patients/${patientId}/emergency-broadcast`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/emergency-broadcast`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(emergencyBroadcast),
         },
-        body: JSON.stringify(emergencyBroadcast),
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -691,13 +737,16 @@ describe('Patients Real-time Integration API', () => {
     });
 
     it('should track emergency response times', async () => {
-      const response = await app.request(`/api/v2/patients/${patientId}/emergency-metrics`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${testClient.token}`,
-          'Content-Type': 'application/json',
+      const response = await app.request(
+        `/api/v2/patients/${patientId}/emergency-metrics`,
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${testClient.token}`,
+            'Content-Type': 'application/json',
+          },
         },
-      });
+      );
 
       expect(response.status).toBe(200);
       const data = await response.json();

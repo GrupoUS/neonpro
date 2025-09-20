@@ -1,10 +1,10 @@
-import { I18nProvider } from '@/i18n/i18n';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, RenderOptions } from '@testing-library/react';
-import React from 'react';
+import { I18nProvider } from "@/i18n/i18n";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, RenderOptions } from "@testing-library/react";
+import React from "react";
 
 export type Providers = {
-  i18n?: { locale?: 'pt-BR' | 'en-US' };
+  i18n?: { locale?: "pt-BR" | "en-US" };
   queryClient?: QueryClient;
 };
 
@@ -17,7 +17,7 @@ export function renderWithI18n(
   const qc = queryClient ?? new QueryClient();
   function AllProviders({ children }: { children: React.ReactNode }) {
     return (
-      <I18nProvider defaultLocale={(i18n?.locale as any) ?? 'pt-BR'}>
+      <I18nProvider defaultLocale={(i18n?.locale as any) ?? "pt-BR"}>
         <QueryClientProvider client={qc}>{children}</QueryClientProvider>
       </I18nProvider>
     );
@@ -25,4 +25,4 @@ export function renderWithI18n(
   return render(ui, { wrapper: AllProviders, ...options });
 }
 
-export * from '@testing-library/react';
+export * from "@testing-library/react";

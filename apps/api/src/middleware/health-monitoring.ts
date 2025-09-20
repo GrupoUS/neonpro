@@ -88,13 +88,16 @@ interface ComplianceMetrics {
 
 // Performance metrics
 interface PerformanceMetrics {
-  endpoints: Map<string, {
-    requestCount: number;
-    averageResponseTime: number;
-    errorRate: number;
-    p95ResponseTime: number;
-    p99ResponseTime: number;
-  }>;
+  endpoints: Map<
+    string,
+    {
+      requestCount: number;
+      averageResponseTime: number;
+      errorRate: number;
+      p95ResponseTime: number;
+      p99ResponseTime: number;
+    }
+  >;
   database: {
     connectionCount: number;
     queryCount: number;
@@ -107,12 +110,15 @@ interface PerformanceMetrics {
     evictionRate: number;
     memoryUsage: number;
   };
-  aiProviders: Map<string, {
-    requestCount: number;
-    successRate: number;
-    averageResponseTime: number;
-    errorRate: number;
-  }>;
+  aiProviders: Map<
+    string,
+    {
+      requestCount: number;
+      successRate: number;
+      averageResponseTime: number;
+      errorRate: number;
+    }
+  >;
   timestamp: Date;
 }
 
@@ -422,20 +428,26 @@ class HealthMonitor {
   private async updatePerformanceMetrics() {
     this.performanceMetrics = {
       endpoints: new Map([
-        ['/api/v2/patients', {
-          requestCount: 1250,
-          averageResponseTime: 145,
-          errorRate: 0.8,
-          p95ResponseTime: 280,
-          p99ResponseTime: 450,
-        }],
-        ['/api/v2/ai/chat', {
-          requestCount: 890,
-          averageResponseTime: 2100,
-          errorRate: 2.1,
-          p95ResponseTime: 4200,
-          p99ResponseTime: 6800,
-        }],
+        [
+          '/api/v2/patients',
+          {
+            requestCount: 1250,
+            averageResponseTime: 145,
+            errorRate: 0.8,
+            p95ResponseTime: 280,
+            p99ResponseTime: 450,
+          },
+        ],
+        [
+          '/api/v2/ai/chat',
+          {
+            requestCount: 890,
+            averageResponseTime: 2100,
+            errorRate: 2.1,
+            p95ResponseTime: 4200,
+            p99ResponseTime: 6800,
+          },
+        ],
       ]),
       database: {
         connectionCount: 15,
@@ -450,25 +462,36 @@ class HealthMonitor {
         memoryUsage: 245.8,
       },
       aiProviders: new Map([
-        ['openai', {
-          requestCount: 450,
-          successRate: 97.8,
-          averageResponseTime: 1800,
-          errorRate: 2.2,
-        }],
-        ['anthropic', {
-          requestCount: 320,
-          successRate: 98.5,
-          averageResponseTime: 1650,
-          errorRate: 1.5,
-        }],
+        [
+          'openai',
+          {
+            requestCount: 450,
+            successRate: 97.8,
+            averageResponseTime: 1800,
+            errorRate: 2.2,
+          },
+        ],
+        [
+          'anthropic',
+          {
+            requestCount: 320,
+            successRate: 98.5,
+            averageResponseTime: 1650,
+            errorRate: 1.5,
+          },
+        ],
       ]),
       timestamp: new Date(),
     };
   }
 
   // Record metric
-  recordMetric(name: string, type: MetricType, value: number, labels?: Record<string, string>) {
+  recordMetric(
+    name: string,
+    type: MetricType,
+    value: number,
+    labels?: Record<string, string>,
+  ) {
     const metric: MetricEntry = {
       name,
       type,
@@ -516,7 +539,10 @@ class HealthMonitor {
       if (check.status === HealthStatus.CRITICAL) {
         status = HealthStatus.CRITICAL;
         break;
-      } else if (check.status === HealthStatus.WARNING && status === HealthStatus.HEALTHY) {
+      } else if (
+        check.status === HealthStatus.WARNING
+        && status === HealthStatus.HEALTHY
+      ) {
         status = HealthStatus.WARNING;
       }
     }
@@ -574,11 +600,16 @@ export function healthMonitoring(config: Partial<HealthCheckConfig> = {}) {
 
       // Record response time
       const responseTime = Date.now() - startTime;
-      monitor.recordMetric('http_response_time', MetricType.TIMER, responseTime, {
-        method: c.req.method,
-        endpoint: c.req.path,
-        status: String(c.res.status),
-      });
+      monitor.recordMetric(
+        'http_response_time',
+        MetricType.TIMER,
+        responseTime,
+        {
+          method: c.req.method,
+          endpoint: c.req.path,
+          status: String(c.res.status),
+        },
+      );
     } catch (error) {
       // Record error metric
       monitor.recordMetric('http_errors_total', MetricType.COUNTER, 1, {
@@ -634,5 +665,3 @@ export function metricsEndpoint() {
     });
   };
 }
-
-

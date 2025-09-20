@@ -195,13 +195,16 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
-        new Request('http://localhost/patient-123/insights?analysisType=risk_assessment', {
-          method: 'GET',
-          headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+        new Request(
+          'http://localhost/patient-123/insights?analysisType=risk_assessment',
+          {
+            method: 'GET',
+            headers: {
+              authorization: 'Bearer valid-token',
+              'content-type': 'application/json',
+            },
           },
-        }),
+        ),
       );
 
       const data = await response.json();
@@ -220,13 +223,16 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
-        new Request('http://localhost/patient-123/insights?timeRange=6months&includeHistory=true', {
-          method: 'GET',
-          headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
+        new Request(
+          'http://localhost/patient-123/insights?timeRange=6months&includeHistory=true',
+          {
+            method: 'GET',
+            headers: {
+              authorization: 'Bearer valid-token',
+              'content-type': 'application/json',
+            },
           },
-        }),
+        ),
       );
 
       const data = await response.json();
@@ -304,7 +310,9 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       );
 
       expect(response.status).toBe(200);
-      expect(response.headers.get('Cache-Control')).toBe('private, max-age=1800');
+      expect(response.headers.get('Cache-Control')).toBe(
+        'private, max-age=1800',
+      );
       expect(response.headers.get('X-Cache-Status')).toBe('miss');
     });
   });
@@ -336,15 +344,18 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const { default: insightsRoute } = await import('../insights');
 
       await insightsRoute.request(
-        new Request('http://localhost/patient-123/insights?analysisType=risk_assessment', {
-          method: 'GET',
-          headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
-            'X-Real-IP': '192.168.1.100',
-            'User-Agent': 'Mozilla/5.0',
+        new Request(
+          'http://localhost/patient-123/insights?analysisType=risk_assessment',
+          {
+            method: 'GET',
+            headers: {
+              authorization: 'Bearer valid-token',
+              'content-type': 'application/json',
+              'X-Real-IP': '192.168.1.100',
+              'User-Agent': 'Mozilla/5.0',
+            },
           },
-        }),
+        ),
       );
 
       expect(mockAuditService.logActivity).toHaveBeenCalledWith({
@@ -434,7 +445,9 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.data.insights.riskAssessment.riskFactors[0].factor).toContain('***');
+      expect(data.data.insights.riskAssessment.riskFactors[0].factor).toContain(
+        '***',
+      );
       expect(response.headers.get('X-Access-Level')).toBe('limited');
     });
   });
@@ -572,15 +585,18 @@ describe('GET /api/v2/ai/insights/{patientId} endpoint (T052)', () => {
       const { default: insightsRoute } = await import('../insights');
 
       const response = await insightsRoute.request(
-        new Request('http://localhost/patient-123/insights?analysisType=diagnostic_support', {
-          method: 'GET',
-          headers: {
-            authorization: 'Bearer valid-token',
-            'content-type': 'application/json',
-            'X-Healthcare-Professional': 'CRM-SP-123456',
-            'X-Healthcare-Context': 'diagnostic_support',
+        new Request(
+          'http://localhost/patient-123/insights?analysisType=diagnostic_support',
+          {
+            method: 'GET',
+            headers: {
+              authorization: 'Bearer valid-token',
+              'content-type': 'application/json',
+              'X-Healthcare-Professional': 'CRM-SP-123456',
+              'X-Healthcare-Context': 'diagnostic_support',
+            },
           },
-        }),
+        ),
       );
 
       expect(response.status).toBe(200);

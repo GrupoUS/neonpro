@@ -19,8 +19,5 @@
   },
   "include": ["src/**/*", "prisma/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.test.tsx"],
-  "references": [
-    { "path": "../types" }
-  ]
+  "references": [{ "path": "../types" }]
 }
-

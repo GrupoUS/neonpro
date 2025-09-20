@@ -34,13 +34,16 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     console.error('WhatsApp webhook verification error:', error);
-    return createHealthcareResponse({
-      error: 'Webhook verification failed',
-      message: error instanceof Error ? error.message : 'Unknown error',
-    }, {
-      status: 500,
-      dataType: 'public',
-    });
+    return createHealthcareResponse(
+      {
+        error: 'Webhook verification failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+      },
+      {
+        status: 500,
+        dataType: 'public',
+      },
+    );
   }
 }
 
@@ -53,42 +56,54 @@ export async function POST(request: NextRequest) {
   try {
     const webhookData = await request.json();
 
-    console.log('WhatsApp webhook received:', JSON.stringify(webhookData, null, 2));
+    console.log(
+      'WhatsApp webhook received:',
+      JSON.stringify(webhookData, null, 2),
+    );
 
     // Process webhook data
     const result = await whatsappReminderService.handleWebhook(webhookData);
 
     const processingTime = Date.now() - startTime;
 
-    return createHealthcareResponse({
-      success: result.success,
-      processed: result.processed,
-      processing_time_ms: processingTime,
-      timestamp: new Date().toISOString(),
-    }, {
-      status: result.success ? 200 : 500,
-      dataType: 'public',
-    });
+    return createHealthcareResponse(
+      {
+        success: result.success,
+        processed: result.processed,
+        processing_time_ms: processingTime,
+        timestamp: new Date().toISOString(),
+      },
+      {
+        status: result.success ? 200 : 500,
+        dataType: 'public',
+      },
+    );
   } catch (error) {
     console.error('WhatsApp webhook processing error:', error);
 
     const processingTime = Date.now() - startTime;
 
-    return createHealthcareResponse({
-      error: 'Webhook processing failed',
-      message: error instanceof Error ? error.message : 'Unknown error',
-      processing_time_ms: processingTime,
-      timestamp: new Date().toISOString(),
-    }, {
-      status: 500,
-      dataType: 'public',
-    });
+    return createHealthcareResponse(
+      {
+        error: 'Webhook processing failed',
+        message: error instanceof Error ? error.message : 'Unknown error',
+        processing_time_ms: processingTime,
+        timestamp: new Date().toISOString(),
+      },
+      {
+        status: 500,
+        dataType: 'public',
+      },
+    );
   }
 }
 
 export async function OPTIONS() {
-  return createHealthcareResponse({}, {
-    status: 200,
-    dataType: 'public',
-  });
+  return createHealthcareResponse(
+    {},
+    {
+      status: 200,
+      dataType: 'public',
+    },
+  );
 }

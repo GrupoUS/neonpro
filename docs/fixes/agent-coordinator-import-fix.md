@@ -13,11 +13,13 @@ TypeError: AgentCoordinator is not a constructor
 O problema estava relacionado ao caminho de importação incorreto no arquivo de teste:
 
 **Importação Incorreta:**
+
 ```typescript
-import { AgentCoordinator } from '../src/agents';
+import { AgentCoordinator } from "../src/agents";
 ```
 
 **Estrutura de Arquivos:**
+
 - `/src/agents/index.ts` - Exporta tudo dos módulos
 - `/src/agents/coordinator.ts` - Contém a classe `AgentCoordinator`
 - `/src/agents/types.ts` - Definições de tipos
@@ -26,24 +28,26 @@ import { AgentCoordinator } from '../src/agents';
 ## Solução Implementada
 
 ### 1. Correção do Import
+
 Alterado o import no arquivo de teste para usar o caminho específico:
 
 ```typescript
 // Antes
-import { AgentCoordinator } from '../src/agents';
+import { AgentCoordinator } from "../src/agents";
 
 // Depois
-import { AgentCoordinator } from '../src/agents/coordinator';
+import { AgentCoordinator } from "../src/agents/coordinator";
 ```
 
 ### 2. Verificação da Estrutura
+
 Confirmado que a classe `AgentCoordinator` está corretamente exportada em `/src/agents/coordinator.ts`:
 
 ```typescript
 export class AgentCoordinator {
   private config: CoordinationConfig;
   private results: Map<AgentType, AgentResult> = new Map();
-  
+
   constructor(config: CoordinationConfig) {
     this.config = config;
   }

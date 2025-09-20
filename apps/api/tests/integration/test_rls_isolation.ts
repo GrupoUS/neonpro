@@ -11,11 +11,17 @@ describe('Integration: RLS isolation', () => {
     app.use('/v1/tools/finance/overdue', requireClinicScope());
     app.route('/v1/tools/finance', finance);
 
-    const res = await app.request('http://local.test/v1/tools/finance/overdue?clinicId=clinic_A', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-clinic-id': 'clinic_B' },
-      body: JSON.stringify({ clinicId: 'clinic_A' }),
-    });
+    const res = await app.request(
+      'http://local.test/v1/tools/finance/overdue?clinicId=clinic_A',
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-clinic-id': 'clinic_B',
+        },
+        body: JSON.stringify({ clinicId: 'clinic_A' }),
+      },
+    );
     expect(res.status).toBe(403);
     const body = await res.json();
     expect(body.error).toBe('RLS_SCOPE_VIOLATION');
@@ -28,11 +34,17 @@ describe('Integration: RLS isolation', () => {
     app.use('/v1/tools/finance/overdue', requireClinicScope());
     app.route('/v1/tools/finance', finance);
 
-    const res = await app.request('http://local.test/v1/tools/finance/overdue?clinicId=clinic_A', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-clinic-id': 'clinic_A' },
-      body: JSON.stringify({ clinicId: 'clinic_A' }),
-    });
+    const res = await app.request(
+      'http://local.test/v1/tools/finance/overdue?clinicId=clinic_A',
+      {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-clinic-id': 'clinic_A',
+        },
+        body: JSON.stringify({ clinicId: 'clinic_A' }),
+      },
+    );
     expect(res.ok).toBe(true);
     const body = await res.json();
     expect(Array.isArray(body.items)).toBe(true);

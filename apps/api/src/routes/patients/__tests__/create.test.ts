@@ -199,7 +199,9 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
       const response = await createRoute.request(mockRequest);
 
       expect(response.status).toBe(201);
-      expect(response.headers.get('Location')).toBe('/api/v2/patients/patient-123');
+      expect(response.headers.get('Location')).toBe(
+        '/api/v2/patients/patient-123',
+      );
     });
 
     it('should send welcome notification after patient creation', async () => {
@@ -261,7 +263,9 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
       await createRoute.request(mockRequest);
 
-      expect(mockBrazilianValidator.validateCPF).toHaveBeenCalledWith('123.456.789-00');
+      expect(mockBrazilianValidator.validateCPF).toHaveBeenCalledWith(
+        '123.456.789-00',
+      );
     });
 
     it('should reject invalid CPF', async () => {
@@ -321,7 +325,9 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
       await createRoute.request(mockRequest);
 
-      expect(mockBrazilianValidator.validatePhone).toHaveBeenCalledWith('(11) 99999-9999');
+      expect(mockBrazilianValidator.validatePhone).toHaveBeenCalledWith(
+        '(11) 99999-9999',
+      );
     });
 
     it('should validate CEP format in address', async () => {
@@ -351,7 +357,9 @@ describe('POST /api/v2/patients endpoint (T044)', () => {
 
       await createRoute.request(mockRequest);
 
-      expect(mockBrazilianValidator.validateCEP).toHaveBeenCalledWith('01234-567');
+      expect(mockBrazilianValidator.validateCEP).toHaveBeenCalledWith(
+        '01234-567',
+      );
     });
   });
 

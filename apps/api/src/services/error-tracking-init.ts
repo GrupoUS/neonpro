@@ -64,7 +64,10 @@ export async function initializeErrorTracking(): Promise<void> {
 
     // Even if initialization fails, we should continue with the application
     // but log the failure for monitoring
-    if (typeof process !== 'undefined' && process.env.NODE_ENV === 'production') {
+    if (
+      typeof process !== 'undefined'
+      && process.env.NODE_ENV === 'production'
+    ) {
       console.error(
         'Error tracking initialization failure in production - this should be investigated',
       );
@@ -120,7 +123,9 @@ export function getErrorTrackingHealth(): {
     status: isInitialized ? 'healthy' : 'unhealthy',
     systems: {
       sentry: errorTrackingConfig.sentry.enabled ? 'enabled' : 'disabled',
-      openTelemetry: errorTrackingConfig.openTelemetry.enabled ? 'enabled' : 'disabled',
+      openTelemetry: errorTrackingConfig.openTelemetry.enabled
+        ? 'enabled'
+        : 'disabled',
       globalHandlers: isInitialized ? 'enabled' : 'disabled',
     },
     config: errorTrackingConfig,
@@ -203,11 +208,13 @@ export async function forceErrorTracking(
 
   // Send to Sentry
   if (errorTrackingConfig.sentry.enabled) {
-    const { withScope, captureException, setLevel } = await import('@sentry/node');
+    const { withScope, captureException, setLevel } = await import(
+      '@sentry/node'
+    );
     withScope(scope => {
       scope.setTag('test', true);
       scope.setTag('severity', severity);
-      scope.setLevel(severity === 'critical' ? 'fatal' : severity as any);
+      scope.setLevel(severity === 'critical' ? 'fatal' : (severity as any));
       captureException(testError);
     });
   }
@@ -225,7 +232,9 @@ export async function forceErrorTracking(
     span.end();
   }
 
-  console.log(`🧪 Forced error tracking test: ${message} (severity: ${severity})`);
+  console.log(
+    `🧪 Forced error tracking test: ${message} (severity: ${severity})`,
+  );
 }
 
 // Export the initialization status for other modules

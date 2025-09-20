@@ -407,7 +407,9 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
     });
 
     it('should handle database connection errors', async () => {
-      mockPatientService.listPatients.mockRejectedValue(new Error('Database connection failed'));
+      mockPatientService.listPatients.mockRejectedValue(
+        new Error('Database connection failed'),
+      );
 
       const { default: listRoute } = require('../list');
 
@@ -443,7 +445,9 @@ describe('GET /api/v2/patients endpoint (T043)', () => {
       const response = await listRoute.request(mockRequest);
 
       expect(response.headers.get('X-Response-Time')).toBeDefined();
-      expect(response.headers.get('Cache-Control')).toBe('private, max-age=300');
+      expect(response.headers.get('Cache-Control')).toBe(
+        'private, max-age=300',
+      );
     });
 
     it('should handle large result sets efficiently', async () => {

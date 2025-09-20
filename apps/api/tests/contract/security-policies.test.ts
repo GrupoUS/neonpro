@@ -595,14 +595,16 @@ describe('Contract: Security Policies API', () => {
 
     it('should handle rate limit exceeded', async () => {
       // Simulate rate limit by making multiple rapid requests
-      const requests = Array(10).fill(null).map(() =>
-        api('/api/v1/security/rate-limit/status', {
-          method: 'GET',
-          headers: {
-            authorization: 'Bearer test-token',
-          },
-        })
-      );
+      const requests = Array(10)
+        .fill(null)
+        .map(() =>
+          api('/api/v1/security/rate-limit/status', {
+            method: 'GET',
+            headers: {
+              authorization: 'Bearer test-token',
+            },
+          })
+        );
 
       const responses = await Promise.all(requests);
       const rateLimitedResponse = responses.find(res => res.status === 429);

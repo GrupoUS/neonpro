@@ -78,7 +78,8 @@ describe('Authentication Middleware - Real Database Integration', () => {
         aud: 'authenticated',
       };
 
-      mockContext.req.header = vi.fn()
+      mockContext.req.header = vi
+        .fn()
         .mockReturnValueOnce('Bearer valid-token')
         .mockReturnValueOnce('session-123')
         .mockReturnValueOnce('192.168.1.1')
@@ -171,7 +172,9 @@ describe('Authentication Middleware - Real Database Integration', () => {
 
       // Assert
       expect(result).toBeUndefined(); // Should call next()
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('healthcare_professionals');
+      expect(mockSupabaseClient.from).toHaveBeenCalledWith(
+        'healthcare_professionals',
+      );
       expect(mockContext.set).toHaveBeenCalledWith(
         'healthcareProfessional',
         expect.objectContaining({
@@ -285,9 +288,10 @@ describe('Authentication Middleware - Real Database Integration', () => {
       mockSupabaseClient.from.mockReturnValue(mockQueryBuilder);
 
       // Act
-      const middleware = requireLGPDConsent(['healthcare_service', 'ai_assistance'], [
-        'health_data',
-      ]);
+      const middleware = requireLGPDConsent(
+        ['healthcare_service', 'ai_assistance'],
+        ['health_data'],
+      );
       const result = await middleware(mockContext, mockNext);
 
       // Assert
@@ -336,9 +340,10 @@ describe('Authentication Middleware - Real Database Integration', () => {
       mockSupabaseClient.from.mockReturnValue(mockQueryBuilder);
 
       // Act
-      const middleware = requireLGPDConsent(['healthcare_service', 'ai_assistance'], [
-        'health_data',
-      ]);
+      const middleware = requireLGPDConsent(
+        ['healthcare_service', 'ai_assistance'],
+        ['health_data'],
+      );
       const result = await middleware(mockContext, mockNext);
 
       // Assert
@@ -378,7 +383,10 @@ describe('Authentication Middleware - Real Database Integration', () => {
       mockSupabaseClient.from.mockReturnValue(mockQueryBuilder);
 
       // Act
-      const middleware = requireLGPDConsent(['healthcare_service'], ['health_data']);
+      const middleware = requireLGPDConsent(
+        ['healthcare_service'],
+        ['health_data'],
+      );
       const result = await middleware(mockContext, mockNext);
 
       // Assert
@@ -413,7 +421,8 @@ describe('Authentication Middleware - Real Database Integration', () => {
         is_active: true,
       };
 
-      mockContext.get = vi.fn()
+      mockContext.get = vi
+        .fn()
         .mockReturnValueOnce(userId)
         .mockReturnValueOnce('session-123')
         .mockReturnValueOnce(mockHealthcareProfessional)
@@ -470,7 +479,8 @@ describe('Authentication Middleware - Real Database Integration', () => {
         is_active: true,
       };
 
-      mockContext.get = vi.fn()
+      mockContext.get = vi
+        .fn()
         .mockReturnValueOnce(userId)
         .mockReturnValueOnce('session-123')
         .mockReturnValueOnce(mockHealthcareProfessional)

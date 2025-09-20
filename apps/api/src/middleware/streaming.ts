@@ -12,7 +12,10 @@ export function sseHeaders(extra?: Record<string, string>) {
 }
 
 // Simple demo stream helper useful for mocks and failover
-export function sseStreamFromChunks(chunks: string[], intervalMs = 15): ReadableStream<Uint8Array> {
+export function sseStreamFromChunks(
+  chunks: string[],
+  intervalMs = 15,
+): ReadableStream<Uint8Array> {
   return new ReadableStream<Uint8Array>({
     start(controller) {
       const enc = new TextEncoder();
@@ -23,7 +26,9 @@ export function sseStreamFromChunks(chunks: string[], intervalMs = 15): Readable
         i++;
         if (i >= chunks.length) {
           clearInterval(id);
-          controller.enqueue(enc.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
+          controller.enqueue(
+            enc.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`),
+          );
           controller.close();
         }
       }, intervalMs);

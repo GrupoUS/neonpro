@@ -216,7 +216,9 @@ describe('Observability API Contract Tests', () => {
     });
 
     it('MUST enforce metric limits per request', async () => {
-      const tooManyMetrics = Array(contract.performance.maxMetricsPerRequest + 1)
+      const tooManyMetrics = Array(
+        contract.performance.maxMetricsPerRequest + 1,
+      )
         .fill(null)
         .map((_, i) => ({
           name: 'custom_metric',
@@ -408,7 +410,9 @@ describe('Observability API Contract Tests', () => {
 
     it('MUST enforce span size limits', () => {
       const traceData = generateValidTracingData();
-      expect(traceData.spans.length).toBeLessThanOrEqual(contract.tracing.spanSizeLimit);
+      expect(traceData.spans.length).toBeLessThanOrEqual(
+        contract.tracing.spanSizeLimit,
+      );
     });
 
     it('MUST filter healthcare data from traces', () => {
@@ -466,16 +470,18 @@ describe('Observability API Contract Tests', () => {
 
     it('MUST enforce rate limiting', async () => {
       // Simulate rapid requests to trigger rate limiting
-      const requests = Array(100).fill(null).map(() =>
-        mockApiCall('/telemetry/performance', {
-          method: 'POST',
-          body: generateValidPerformanceTelemetry(),
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': 'test-api-key',
-          },
-        })
-      );
+      const requests = Array(100)
+        .fill(null)
+        .map(() =>
+          mockApiCall('/telemetry/performance', {
+            method: 'POST',
+            body: generateValidPerformanceTelemetry(),
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': 'test-api-key',
+            },
+          })
+        );
 
       const responses = await Promise.all(requests);
       const rateLimitedResponses = responses.filter(r => r.status === 429);
@@ -596,7 +602,9 @@ describe('Observability API Contract Tests', () => {
       };
 
       expect(healthcareData.lgpdConsent.hasConsent).toBe(true);
-      expect(['consent', 'legitimate_interests']).toContain(healthcareData.lgpdConsent.legalBasis);
+      expect(['consent', 'legitimate_interests']).toContain(
+        healthcareData.lgpdConsent.legalBasis,
+      );
     });
 
     it('MUST support anonymization of user identifiers', () => {
@@ -624,23 +632,27 @@ describe('Observability API Contract Tests', () => {
 
     it('MUST handle concurrent telemetry submissions', async () => {
       const concurrentRequests = 50;
-      const requests = Array(concurrentRequests).fill(null).map(() =>
-        mockApiCall('/telemetry/performance', {
-          method: 'POST',
-          body: generateValidPerformanceTelemetry(),
-          headers: {
-            'Content-Type': 'application/json',
-            'X-API-Key': `test-api-key-${Math.random()}`,
-          },
-        })
-      );
+      const requests = Array(concurrentRequests)
+        .fill(null)
+        .map(() =>
+          mockApiCall('/telemetry/performance', {
+            method: 'POST',
+            body: generateValidPerformanceTelemetry(),
+            headers: {
+              'Content-Type': 'application/json',
+              'X-API-Key': `test-api-key-${Math.random()}`,
+            },
+          })
+        );
 
       const responses = await Promise.allSettled(requests);
-      const successfulResponses = responses.filter(r =>
-        r.status === 'fulfilled' && r.value.status === 200
+      const successfulResponses = responses.filter(
+        r => r.status === 'fulfilled' && r.value.status === 200,
       );
 
-      expect(successfulResponses.length).toBeGreaterThan(concurrentRequests * 0.9); // 90% success rate
+      expect(successfulResponses.length).toBeGreaterThan(
+        concurrentRequests * 0.9,
+      ); // 90% success rate
     });
 
     it('MUST validate data format compliance', () => {
@@ -681,7 +693,9 @@ async function mockApiCall(endpoint: string, options: any) {
   }
 
   if (
-    options.method === 'POST' && !options.headers['X-API-Key'] && !options.headers['Authorization']
+    options.method === 'POST'
+    && !options.headers['X-API-Key']
+    && !options.headers['Authorization']
   ) {
     return {
       status: 401,

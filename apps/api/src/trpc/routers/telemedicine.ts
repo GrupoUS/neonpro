@@ -30,7 +30,12 @@ const licenseService = new MedicalLicenseService();
 const createSessionSchema = z.object({
   patientId: z.string().uuid(),
   physicianId: z.string().uuid(),
-  sessionType: z.enum(['consultation', 'follow_up', 'emergency', 'second_opinion']),
+  sessionType: z.enum([
+    'consultation',
+    'follow_up',
+    'emergency',
+    'second_opinion',
+  ]),
   specialty: z.string().optional(),
   scheduledFor: z.date().optional(),
   estimatedDuration: z.number().min(5).max(180).default(30), // 5-180 minutes
@@ -50,13 +55,15 @@ const joinSessionSchema = z.object({
 
 const patientVerificationSchema = z.object({
   patientId: z.string().uuid(),
-  documents: z.array(z.object({
-    type: z.enum(['cpf', 'rg', 'cns', 'passport', 'driver_license']),
-    number: z.string(),
-    issuingAuthority: z.string().optional(),
-    issueDate: z.date().optional(),
-    expiryDate: z.date().optional(),
-  })),
+  documents: z.array(
+    z.object({
+      type: z.enum(['cpf', 'rg', 'cns', 'passport', 'driver_license']),
+      number: z.string(),
+      issuingAuthority: z.string().optional(),
+      issueDate: z.date().optional(),
+      expiryDate: z.date().optional(),
+    }),
+  ),
   enableBiometric: z.boolean().default(false),
 });
 
@@ -69,7 +76,12 @@ const licenseVerificationSchema = z.object({
 const consentSchema = z.object({
   patientId: z.string().uuid(),
   sessionId: z.string().uuid(),
-  consentType: z.enum(['telemedicine', 'data_processing', 'recording', 'second_opinion']),
+  consentType: z.enum([
+    'telemedicine',
+    'data_processing',
+    'recording',
+    'second_opinion',
+  ]),
   consentData: z.record(z.any()),
 });
 
@@ -77,10 +89,12 @@ const complianceReportSchema = z.object({
   sessionId: z.string().uuid().optional(),
   patientId: z.string().uuid().optional(),
   physicianId: z.string().uuid().optional(),
-  dateRange: z.object({
-    start: z.date(),
-    end: z.date(),
-  }).optional(),
+  dateRange: z
+    .object({
+      start: z.date(),
+      end: z.date(),
+    })
+    .optional(),
   reportType: z.enum([
     'session_audit',
     'compliance_violations',
@@ -209,11 +223,18 @@ export const telemedicineRouter = router({
 
   // End a session
   endSession: telemedicineProcedure
-    .input(z.object({
-      sessionId: z.string().uuid(),
-      endReason: z.enum(['completed', 'cancelled', 'technical_issue', 'emergency']),
-      notes: z.string().max(1000).optional(),
-    }))
+    .input(
+      z.object({
+        sessionId: z.string().uuid(),
+        endReason: z.enum([
+          'completed',
+          'cancelled',
+          'technical_issue',
+          'emergency',
+        ]),
+        notes: z.string().max(1000).optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         const sessionSummary = await webrtcService.endSession(
@@ -283,19 +304,26 @@ export const telemedicineRouter = router({
 
   // Verify patient address
   verifyPatientAddress: patientProcedure
-    .input(z.object({
-      patientId: z.string().uuid(),
-      address: z.object({
-        zipCode: z.string(),
-        state: z.string(),
-        city: z.string(),
-        neighborhood: z.string().optional(),
-        street: z.string(),
-        number: z.string().optional(),
-        complement: z.string().optional(),
-        verificationMethod: z.enum(['postal_service', 'utility_bill', 'bank_statement', 'manual']),
+    .input(
+      z.object({
+        patientId: z.string().uuid(),
+        address: z.object({
+          zipCode: z.string(),
+          state: z.string(),
+          city: z.string(),
+          neighborhood: z.string().optional(),
+          street: z.string(),
+          number: z.string().optional(),
+          complement: z.string().optional(),
+          verificationMethod: z.enum([
+            'postal_service',
+            'utility_bill',
+            'bank_statement',
+            'manual',
+          ]),
+        }),
       }),
-    }))
+    )
     .mutation(async ({ input }) => {
       try {
         return await identityService.verifyPatientAddress(input.patientId, {
@@ -339,12 +367,14 @@ export const telemedicineRouter = router({
 
   // Check telemedicine authorization
   checkTelemedicineAuthorization: healthcareProcedure
-    .input(z.object({
-      cfmNumber: z.string(),
-      physicianState: z.string().length(2),
-      consultationState: z.string().length(2),
-      specialty: z.string().optional(),
-    }))
+    .input(
+      z.object({
+        cfmNumber: z.string(),
+        physicianState: z.string().length(2),
+        consultationState: z.string().length(2),
+        specialty: z.string().optional(),
+      }),
+    )
     .query(async ({ input }) => {
       try {
         return await licenseService.isAuthorizedForTelemedicine(
@@ -394,14 +424,25 @@ export const telemedicineRouter = router({
 
   // Get consent status
   getConsentStatus: patientProcedure
-    .input(z.object({
-      patientId: z.string().uuid(),
-      consentType: z.enum(['telemedicine', 'data_processing', 'recording', 'second_opinion'])
-        .optional(),
-    }))
+    .input(
+      z.object({
+        patientId: z.string().uuid(),
+        consentType: z
+          .enum([
+            'telemedicine',
+            'data_processing',
+            'recording',
+            'second_opinion',
+          ])
+          .optional(),
+      }),
+    )
     .query(async ({ input }) => {
       try {
-        return await cfmService.getPatientConsentStatus(input.patientId, input.consentType);
+        return await cfmService.getPatientConsentStatus(
+          input.patientId,
+          input.consentType,
+        );
       } catch (error) {
         console.error('Error getting consent status:', error);
         throw new TRPCError({
@@ -456,12 +497,14 @@ export const telemedicineRouter = router({
 
   // List active sessions (for admin monitoring)
   listActiveSessions: healthcareProcedure
-    .input(z.object({
-      clinicId: z.string().uuid().optional(),
-      physicianId: z.string().uuid().optional(),
-      limit: z.number().min(1).max(100).default(50),
-      offset: z.number().min(0).default(0),
-    }))
+    .input(
+      z.object({
+        clinicId: z.string().uuid().optional(),
+        physicianId: z.string().uuid().optional(),
+        limit: z.number().min(1).max(100).default(50),
+        offset: z.number().min(0).default(0),
+      }),
+    )
     .query(async ({ input }) => {
       try {
         return await webrtcService.listActiveSessions({
@@ -486,14 +529,16 @@ export const telemedicineRouter = router({
 
   // Send WebRTC signal (for peer connection establishment)
   sendSignal: telemedicineProcedure
-    .input(z.object({
-      sessionId: z.string().uuid(),
-      signal: z.object({
-        type: z.enum(['offer', 'answer', 'ice-candidate']),
-        data: z.any(),
+    .input(
+      z.object({
+        sessionId: z.string().uuid(),
+        signal: z.object({
+          type: z.enum(['offer', 'answer', 'ice-candidate']),
+          data: z.any(),
+        }),
+        targetParticipant: z.string().uuid(),
       }),
-      targetParticipant: z.string().uuid(),
-    }))
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         await webrtcService.sendSignal(
@@ -532,10 +577,12 @@ export const telemedicineRouter = router({
 
   // Start session recording (requires consent)
   startRecording: telemedicineProcedure
-    .input(z.object({
-      sessionId: z.string().uuid(),
-      recordingType: z.enum(['video', 'audio', 'screen']),
-    }))
+    .input(
+      z.object({
+        sessionId: z.string().uuid(),
+        recordingType: z.enum(['video', 'audio', 'screen']),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       try {
         // Verify recording consent exists

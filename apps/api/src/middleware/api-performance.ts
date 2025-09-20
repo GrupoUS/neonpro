@@ -85,7 +85,8 @@ export class APIPerformanceMonitor {
   /**
    * Get performance statistics
    */
-  getStats(timeWindow: number = 3600000): { // Default 1 hour
+  getStats(timeWindow: number = 3600000): {
+    // Default 1 hour
     totalRequests: number;
     averageResponseTime: number;
     p95ResponseTime: number;
@@ -121,7 +122,9 @@ export class APIPerformanceMonitor {
 
     // Basic statistics
     const totalRequests = recentMetrics.length;
-    const responseTimes = recentMetrics.map(m => m.responseTime).sort((a, b) => a - b);
+    const responseTimes = recentMetrics
+      .map(m => m.responseTime)
+      .sort((a, b) => a - b);
     const averageResponseTime = responseTimes.reduce((sum, time) => sum + time, 0) / totalRequests;
 
     // Percentiles
@@ -131,7 +134,9 @@ export class APIPerformanceMonitor {
     const p99ResponseTime = responseTimes[p99Index] || 0;
 
     // Error rate
-    const errorRequests = recentMetrics.filter(m => m.statusCode >= 400).length;
+    const errorRequests = recentMetrics.filter(
+      m => m.statusCode >= 400,
+    ).length;
     const errorRate = (errorRequests / totalRequests) * 100;
 
     // Requests per minute
@@ -158,22 +163,27 @@ export class APIPerformanceMonitor {
       .slice(0, 10);
 
     // Healthcare-specific metrics
-    const patientDataMetrics = recentMetrics.filter(m =>
-      m.endpoint.includes('/patients') || m.endpoint.includes('/patient-records')
+    const patientDataMetrics = recentMetrics.filter(
+      m =>
+        m.endpoint.includes('/patients')
+        || m.endpoint.includes('/patient-records'),
     );
     const appointmentMetrics = recentMetrics.filter(m => m.endpoint.includes('/appointments'));
-    const sensitiveDataQueries = recentMetrics.filter(m =>
-      m.endpoint.includes('/patients')
-      || m.endpoint.includes('/medical-history')
-      || m.endpoint.includes('/patient-records')
+    const sensitiveDataQueries = recentMetrics.filter(
+      m =>
+        m.endpoint.includes('/patients')
+        || m.endpoint.includes('/medical-history')
+        || m.endpoint.includes('/patient-records'),
     ).length;
 
     const avgPatientDataAccess = patientDataMetrics.length > 0
-      ? patientDataMetrics.reduce((sum, m) => sum + m.responseTime, 0) / patientDataMetrics.length
+      ? patientDataMetrics.reduce((sum, m) => sum + m.responseTime, 0)
+        / patientDataMetrics.length
       : 0;
 
     const avgAppointmentResponse = appointmentMetrics.length > 0
-      ? appointmentMetrics.reduce((sum, m) => sum + m.responseTime, 0) / appointmentMetrics.length
+      ? appointmentMetrics.reduce((sum, m) => sum + m.responseTime, 0)
+        / appointmentMetrics.length
       : 0;
 
     return {
@@ -208,7 +218,9 @@ export class APIPerformanceMonitor {
         metrics,
         threshold: HEALTHCARE_THRESHOLDS.responseTime.critical,
       });
-    } else if (metrics.responseTime > HEALTHCARE_THRESHOLDS.responseTime.warning) {
+    } else if (
+      metrics.responseTime > HEALTHCARE_THRESHOLDS.responseTime.warning
+    ) {
       alerts.push({
         type: 'response_time',
         severity: 'warning',
@@ -220,7 +232,10 @@ export class APIPerformanceMonitor {
     }
 
     // Memory usage alerts
-    if (metrics.memoryUsage && metrics.memoryUsage > HEALTHCARE_THRESHOLDS.memoryUsage.critical) {
+    if (
+      metrics.memoryUsage
+      && metrics.memoryUsage > HEALTHCARE_THRESHOLDS.memoryUsage.critical
+    ) {
       alerts.push({
         type: 'memory_usage',
         severity: 'critical',
@@ -270,7 +285,11 @@ export class APIPerformanceMonitor {
 
 // Performance alert interface
 export interface PerformanceAlert {
-  type: 'response_time' | 'memory_usage' | 'error_rate' | 'healthcare_compliance';
+  type:
+    | 'response_time'
+    | 'memory_usage'
+    | 'error_rate'
+    | 'healthcare_compliance';
   severity: 'warning' | 'critical';
   message: string;
   metrics: PerformanceMetrics;
@@ -302,7 +321,9 @@ export function createPerformanceMonitoringMiddleware() {
       const endTime = Date.now();
       const responseTime = endTime - startTime;
       const endMemory = process.memoryUsage();
-      const memoryUsage = Math.round((endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024);
+      const memoryUsage = Math.round(
+        (endMemory.heapUsed - startMemory.heapUsed) / 1024 / 1024,
+      );
 
       const metrics: PerformanceMetrics = {
         endpoint,
@@ -326,7 +347,10 @@ export function createPerformanceMonitoringMiddleware() {
       c.header('X-Performance-Tier', getPerformanceTier(responseTime));
 
       // Healthcare compliance headers
-      if (endpoint.includes('/patients') || endpoint.includes('/appointments')) {
+      if (
+        endpoint.includes('/patients')
+        || endpoint.includes('/appointments')
+      ) {
         c.header('X-Healthcare-Performance', 'monitored');
         c.header('X-LGPD-Compliant', 'true');
       }

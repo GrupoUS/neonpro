@@ -22,7 +22,7 @@ export const ANVISA_COMPLIANCE_LEVELS = {
 } as const;
 
 export type ANVISAComplianceLevel =
-  typeof ANVISA_COMPLIANCE_LEVELS[keyof typeof ANVISA_COMPLIANCE_LEVELS];
+  (typeof ANVISA_COMPLIANCE_LEVELS)[keyof typeof ANVISA_COMPLIANCE_LEVELS];
 
 // ANVISA Medical Device Classes
 export const ANVISA_DEVICE_CLASSES = {
@@ -32,7 +32,7 @@ export const ANVISA_DEVICE_CLASSES = {
   CLASS_IV: 'class_iv', // Very high risk
 } as const;
 
-export type ANVISADeviceClass = typeof ANVISA_DEVICE_CLASSES[keyof typeof ANVISA_DEVICE_CLASSES];
+export type ANVISADeviceClass = (typeof ANVISA_DEVICE_CLASSES)[keyof typeof ANVISA_DEVICE_CLASSES];
 
 // ANVISA Medical Software Categories
 export const ANVISA_SOFTWARE_CATEGORIES = {
@@ -45,7 +45,7 @@ export const ANVISA_SOFTWARE_CATEGORIES = {
 } as const;
 
 export type ANVISASoftwareCategory =
-  typeof ANVISA_SOFTWARE_CATEGORIES[keyof typeof ANVISA_SOFTWARE_CATEGORIES];
+  (typeof ANVISA_SOFTWARE_CATEGORIES)[keyof typeof ANVISA_SOFTWARE_CATEGORIES];
 
 // ANVISA Compliance Requirements
 export const ANVISA_REQUIREMENTS = {
@@ -59,7 +59,7 @@ export const ANVISA_REQUIREMENTS = {
   TRACEABILITY: 'traceability',
 } as const;
 
-export type ANVISARequirement = typeof ANVISA_REQUIREMENTS[keyof typeof ANVISA_REQUIREMENTS];
+export type ANVISARequirement = (typeof ANVISA_REQUIREMENTS)[keyof typeof ANVISA_REQUIREMENTS];
 
 // ANVISA Medical Device Registration Schema
 export const ANVISADeviceRegistrationSchema = z.object({
@@ -81,7 +81,9 @@ export const ANVISADeviceRegistrationSchema = z.object({
   updatedAt: z.date(),
 });
 
-export type ANVISADeviceRegistration = z.infer<typeof ANVISADeviceRegistrationSchema>;
+export type ANVISADeviceRegistration = z.infer<
+  typeof ANVISADeviceRegistrationSchema
+>;
 
 // ANVISA Compliance Issue
 export interface ANVISAComplianceIssue {
@@ -203,7 +205,10 @@ export class ANVISAComplianceService {
       safetyCompliance,
       recommendations: this.generateRecommendations(),
       nextAuditDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
-      registrationStatus: this.determineRegistrationStatus(deviceClass, softwareCategory),
+      registrationStatus: this.determineRegistrationStatus(
+        deviceClass,
+        softwareCategory,
+      ),
     };
   }
 
@@ -248,7 +253,9 @@ export class ANVISAComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
@@ -302,7 +309,9 @@ export class ANVISAComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
@@ -337,7 +346,11 @@ export class ANVISAComplianceService {
         title: 'Medidas de segurança do usuário ausentes',
         description: 'Sistema não implementa medidas adequadas de segurança do usuário',
         recommendation: 'Implementar medidas de segurança para prevenção de erros médicos',
-        affectedComponents: ['medication_management', 'patient_identification', 'critical_alerts'],
+        affectedComponents: [
+          'medication_management',
+          'patient_identification',
+          'critical_alerts',
+        ],
         anvisaReference: 'RDC 36/2013 - Segurança do Paciente',
         remediation: {
           steps: [
@@ -356,7 +369,9 @@ export class ANVISAComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
@@ -391,7 +406,11 @@ export class ANVISAComplianceService {
         title: 'Suporte HL7 FHIR ausente',
         description: 'Sistema não implementa padrões HL7 FHIR para interoperabilidade',
         recommendation: 'Implementar suporte a HL7 FHIR para interoperabilidade de dados de saúde',
-        affectedComponents: ['data_exchange', 'api_endpoints', 'patient_records'],
+        affectedComponents: [
+          'data_exchange',
+          'api_endpoints',
+          'patient_records',
+        ],
         anvisaReference: 'Portaria 2.073/2011 - Interoperabilidade',
         remediation: {
           steps: [
@@ -410,7 +429,9 @@ export class ANVISAComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
@@ -445,7 +466,11 @@ export class ANVISAComplianceService {
         title: 'Avaliação clínica ausente',
         description: `Dispositivo Classe ${deviceClass} requer avaliação clínica`,
         recommendation: 'Realizar avaliação clínica conforme requisitos ANVISA',
-        affectedComponents: ['clinical_features', 'safety_measures', 'efficacy_validation'],
+        affectedComponents: [
+          'clinical_features',
+          'safety_measures',
+          'efficacy_validation',
+        ],
         anvisaReference: 'RDC 185/2001 - Avaliação Clínica',
         remediation: {
           steps: [
@@ -464,7 +489,9 @@ export class ANVISAComplianceService {
 
     this.issues.push(...issues);
 
-    const level = issues.some(i => i.severity === 'critical' || i.severity === 'high')
+    const level = issues.some(
+        i => i.severity === 'critical' || i.severity === 'high',
+      )
       ? ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT
       : issues.length > 0
       ? ANVISA_COMPLIANCE_LEVELS.PARTIAL
@@ -482,7 +509,9 @@ export class ANVISAComplianceService {
   /**
    * Calculate overall compliance level
    */
-  private calculateOverallCompliance(levels: ANVISAComplianceLevel[]): ANVISAComplianceLevel {
+  private calculateOverallCompliance(
+    levels: ANVISAComplianceLevel[],
+  ): ANVISAComplianceLevel {
     if (levels.includes(ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT)) {
       return ANVISA_COMPLIANCE_LEVELS.NON_COMPLIANT;
     }
@@ -496,14 +525,17 @@ export class ANVISAComplianceService {
    * Calculate compliance score
    */
   private calculateComplianceScore(): number {
-    const criticalIssues = this.issues.filter(i => i.severity === 'critical').length;
+    const criticalIssues = this.issues.filter(
+      i => i.severity === 'critical',
+    ).length;
     const highIssues = this.issues.filter(i => i.severity === 'high').length;
-    const mediumIssues = this.issues.filter(i => i.severity === 'medium').length;
+    const mediumIssues = this.issues.filter(
+      i => i.severity === 'medium',
+    ).length;
     const lowIssues = this.issues.filter(i => i.severity === 'low').length;
 
     // Calculate penalty based on issue severity
-    const penalty = (criticalIssues * 30) + (highIssues * 20) + (mediumIssues * 10)
-      + (lowIssues * 5);
+    const penalty = criticalIssues * 30 + highIssues * 20 + mediumIssues * 10 + lowIssues * 5;
 
     return Math.max(0, 100 - penalty);
   }
@@ -515,14 +547,19 @@ export class ANVISAComplianceService {
     const recommendations: string[] = [];
 
     // Group issues by requirement and generate recommendations
-    const issuesByRequirement = this.issues.reduce((acc, issue) => {
-      if (!acc[issue.requirement]) acc[issue.requirement] = [];
-      acc[issue.requirement].push(issue);
-      return acc;
-    }, {} as Record<string, ANVISAComplianceIssue[]>);
+    const issuesByRequirement = this.issues.reduce(
+      (acc, issue) => {
+        if (!acc[issue.requirement]) acc[issue.requirement] = [];
+        acc[issue.requirement].push(issue);
+        return acc;
+      },
+      {} as Record<string, ANVISAComplianceIssue[]>,
+    );
 
     Object.entries(issuesByRequirement).forEach(([requirement, issues]) => {
-      const criticalCount = issues.filter(i => i.severity === 'critical').length;
+      const criticalCount = issues.filter(
+        i => i.severity === 'critical',
+      ).length;
       const highCount = issues.filter(i => i.severity === 'high').length;
       const mediumCount = issues.filter(i => i.severity === 'medium').length;
 
@@ -545,7 +582,9 @@ export class ANVISAComplianceService {
 
     // Add general recommendations
     if (this.issues.length === 0) {
-      recommendations.push('Manter monitoramento contínuo da conformidade ANVISA');
+      recommendations.push(
+        'Manter monitoramento contínuo da conformidade ANVISA',
+      );
       recommendations.push('Realizar auditorias regulares de conformidade');
       recommendations.push('Manter documentação atualizada');
     }

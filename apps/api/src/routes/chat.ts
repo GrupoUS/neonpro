@@ -45,7 +45,12 @@ import {
   sseHeaders as sseHeadersHelper,
   sseStreamFromChunks as sseStreamFromChunksHelper,
 } from '../middleware/streaming';
-const ALLOWED_ROLES = new Set(['ADMIN', 'CLINICAL_STAFF', 'FINANCE_STAFF', 'SUPPORT_READONLY']);
+const ALLOWED_ROLES = new Set([
+  'ADMIN',
+  'CLINICAL_STAFF',
+  'FINANCE_STAFF',
+  'SUPPORT_READONLY',
+]);
 function checkConsentAndRole(req: Request) {
   const role = req.headers.get('x-role') || 'ANONYMOUS';
   const consent = (req.headers.get('x-consent') || '').toLowerCase();
@@ -54,9 +59,13 @@ function checkConsentAndRole(req: Request) {
   return { ok: hasRole && consentStatus === 'valid', consentStatus, role };
 }
 
-function classifyQueryType(q: string): 'treatment' | 'finance' | 'mixed' | 'other' {
+function classifyQueryType(
+  q: string,
+): 'treatment' | 'finance' | 'mixed' | 'other' {
   const lower = q.toLowerCase();
-  const isTreat = /(tratamento|procedimento|botox|preenchimento|limpeza)/.test(lower);
+  const isTreat = /(tratamento|procedimento|botox|preenchimento|limpeza)/.test(
+    lower,
+  );
   const isFin = /(saldo|financeiro|pagamento|fatura|atraso|overdue|balance)/.test(lower);
   if (isTreat && isFin) return 'mixed';
   if (isTreat) return 'treatment';
@@ -68,19 +77,28 @@ function sseStreamFromChunks(chunks: string[]): ReadableStream<Uint8Array> {
   return sseStreamFromChunksHelper(chunks);
 }
 
-function mockAnswer(
-  question: string,
-): { chunks: string[]; outcome: 'success' | 'refusal' | 'limit' } {
+function mockAnswer(question: string): {
+  chunks: string[];
+  outcome: 'success' | 'refusal' | 'limit';
+} {
   const q = question.toLowerCase();
   if (q.includes('mock:balance')) {
     return {
-      chunks: ['Saldo atual: R$ 320,00. ', '2 faturas em atraso. ', 'Último pagamento há 12 dias.'],
+      chunks: [
+        'Saldo atual: R$ 320,00. ',
+        '2 faturas em atraso. ',
+        'Último pagamento há 12 dias.',
+      ],
       outcome: 'success',
     };
   }
   if (q.includes('mock:clinical')) {
     return {
-      chunks: ['Tratamentos recentes: ', 'limpeza de pele (10/08), ', 'botox (25/08).'],
+      chunks: [
+        'Tratamentos recentes: ',
+        'limpeza de pele (10/08), ',
+        'botox (25/08).',
+      ],
       outcome: 'success',
     };
   }
@@ -97,7 +115,10 @@ function mockAnswer(
     };
   }
   if (q.includes('mock:refusal')) {
-    return { chunks: ['Não posso responder sem consentimento válido.'], outcome: 'refusal' };
+    return {
+      chunks: ['Não posso responder sem consentimento válido.'],
+      outcome: 'refusal',
+    };
   }
   // Default deterministic
   return {
@@ -211,7 +232,8 @@ app.post(
     }
 
     const url = new URL(c.req.url);
-    const mock = url.searchParams.get('mock') === 'true' || process.env.MOCK_MODE === 'true'
+    const mock = url.searchParams.get('mock') === 'true'
+      || process.env.MOCK_MODE === 'true'
       || process.env.AI_MOCK === 'true';
 
     try {
@@ -268,7 +290,10 @@ app.post(
         { role: 'user', content: question },
       ];
 
-      const aiResp = await streamWithFailover({ model: DEFAULT_PRIMARY, messages });
+      const aiResp = await streamWithFailover({
+        model: DEFAULT_PRIMARY,
+        messages,
+      });
       const reader = aiResp.body?.getReader();
       const enc = new TextEncoder();
       const stream = new ReadableStream<Uint8Array>({
@@ -285,11 +310,15 @@ app.post(
               const text = textDecoder.decode(value);
               if (text) {
                 controller.enqueue(
-                  enc.encode(`data: ${JSON.stringify({ type: 'text', delta: text })}\n\n`),
+                  enc.encode(
+                    `data: ${JSON.stringify({ type: 'text', delta: text })}\n\n`,
+                  ),
                 );
               }
             }
-            controller.enqueue(enc.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`));
+            controller.enqueue(
+              enc.encode(`data: ${JSON.stringify({ type: 'done' })}\n\n`),
+            );
             controller.close();
           } catch (e) {
             controller.error(e);
@@ -379,7 +408,8 @@ app.get('/session/:id', async c => {
   const userId = c.req.header('x-user-id') || 'anonymous';
   const clinicId = c.req.header('x-clinic-id') || 'unknown';
   const url = new URL(c.req.url);
-  const mock = url.searchParams.get('mock') === 'true' || process.env.MOCK_MODE === 'true'
+  const mock = url.searchParams.get('mock') === 'true'
+    || process.env.MOCK_MODE === 'true'
     || process.env.AI_MOCK === 'true';
 
   // In real mode, attempt to fetch from DB; fallback to mock if table not available
@@ -392,35 +422,47 @@ app.get('/session/:id', async c => {
         .maybeSingle();
       if (error) throw error;
       if (data) {
-        return c.json({
-          id: data.id,
-          userId: data.user_id,
-          clinicId: data.clinic_id,
-          locale: data.locale || (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR',
-          startedAt: data.started_at,
-          lastActivityAt: data.last_activity_at,
-        }, 200);
+        return c.json(
+          {
+            id: data.id,
+            userId: data.user_id,
+            clinicId: data.clinic_id,
+            locale: data.locale
+              || (c.req.header('x-locale') as 'pt-BR' | 'en-US')
+              || 'pt-BR',
+            startedAt: data.started_at,
+            lastActivityAt: data.last_activity_at,
+          },
+          200,
+        );
       }
       // create minimal session row if not found
       const now = new Date().toISOString();
       const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
-      const ins = await supabase.from('ai_chat_sessions').insert({
-        id,
-        user_id: userId,
-        clinic_id: clinicId,
-        started_at: now,
-        last_activity_at: now,
-        locale,
-      }).select('id, user_id, clinic_id, started_at, last_activity_at, locale').single();
+      const ins = await supabase
+        .from('ai_chat_sessions')
+        .insert({
+          id,
+          user_id: userId,
+          clinic_id: clinicId,
+          started_at: now,
+          last_activity_at: now,
+          locale,
+        })
+        .select('id, user_id, clinic_id, started_at, last_activity_at, locale')
+        .single();
       if (ins.error) throw ins.error;
-      return c.json({
-        id: ins.data.id,
-        userId: ins.data.user_id,
-        clinicId: ins.data.clinic_id,
-        locale: ins.data.locale,
-        startedAt: ins.data.started_at,
-        lastActivityAt: ins.data.last_activity_at,
-      }, 200);
+      return c.json(
+        {
+          id: ins.data.id,
+          userId: ins.data.user_id,
+          clinicId: ins.data.clinic_id,
+          locale: ins.data.locale,
+          startedAt: ins.data.started_at,
+          lastActivityAt: ins.data.last_activity_at,
+        },
+        200,
+      );
     } catch (e) {
       console.warn('Session DB operation failed, falling back to mock:', e);
     }
@@ -429,14 +471,18 @@ app.get('/session/:id', async c => {
   // Mock fallback
   const locale = (c.req.header('x-locale') as 'pt-BR' | 'en-US') || 'pt-BR';
   const now = new Date().toISOString();
-  return c.json({ id, userId, locale, startedAt: now, lastActivityAt: now }, 200);
+  return c.json(
+    { id, userId, locale, startedAt: now, lastActivityAt: now },
+    200,
+  );
 });
 
 // POST /explanation — returns concise explanation with LGPD safeguards
 app.post('/explanation', async c => {
   const t0 = Date.now();
   const url = new URL(c.req.url);
-  const mock = url.searchParams.get('mock') === 'true' || process.env.MOCK_MODE === 'true'
+  const mock = url.searchParams.get('mock') === 'true'
+    || process.env.MOCK_MODE === 'true'
     || process.env.AI_MOCK === 'true';
 
   // Parse and validate payload
@@ -456,11 +502,14 @@ app.post('/explanation', async c => {
   const { ok, consentStatus } = checkConsentAndRole(c.req.raw);
   if (!ok && !mock) {
     // Refusal without processing text
-    return c.json({
-      message: locale === 'en-US'
-        ? 'Cannot answer without valid consent.'
-        : 'Não é possível responder sem consentimento válido.',
-    }, 403);
+    return c.json(
+      {
+        message: locale === 'en-US'
+          ? 'Cannot answer without valid consent.'
+          : 'Não é possível responder sem consentimento válido.',
+      },
+      403,
+    );
   }
 
   // Minimal LGPD redaction on input prior to model usage/logging
@@ -482,7 +531,10 @@ app.post('/explanation', async c => {
       ? `Explain concisely and safely for a patient: ${redactedInput}`
       : `Explique de forma concisa e segura para um paciente: ${redactedInput}`;
 
-    const result = await generateWithFailover({ model: DEFAULT_PRIMARY, prompt });
+    const result = await generateWithFailover({
+      model: DEFAULT_PRIMARY,
+      prompt,
+    });
 
     // Final output redaction as defense in depth
     const explanation = redact(result.text);
@@ -512,11 +564,14 @@ app.post('/explanation', async c => {
     return c.json({ explanation, traceId }, 200);
   } catch (err) {
     console.error('Explanation error:', err);
-    return c.json({
-      message: locale === 'en-US'
-        ? 'Service temporarily unavailable'
-        : 'Serviço temporariamente indisponível',
-    }, 500);
+    return c.json(
+      {
+        message: locale === 'en-US'
+          ? 'Service temporarily unavailable'
+          : 'Serviço temporariamente indisponível',
+      },
+      500,
+    );
   }
 });
 

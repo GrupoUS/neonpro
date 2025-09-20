@@ -9,35 +9,43 @@ const exportRouter = new Hono();
 
 const exportSchema = z.object({
   format: z.enum(['csv', 'xlsx']).default('csv'),
-  filters: z.object({
-    search: z.string().optional(),
-    status: z.string().optional(),
-    dateRange: z.object({
-      start: z.string(),
-      end: z.string(),
-    }).optional(),
-    fields: z.array(z.string()).optional(),
-  }).optional(),
-  pagination: z.object({
-    page: z.number().min(1).default(1),
-    limit: z.number().min(1).max(1000).default(100),
-  }).default({
-    page: 1,
-    limit: 100,
-  }),
-  lgpdOptions: z.object({
-    anonymizeSensitiveFields: z.boolean().default(true),
-    excludeRestrictedFields: z.boolean().default(false),
-    purpose: z.string().default('DATA_EXPORT'),
-    retentionDays: z.number().min(1).max(365).default(30),
-    consentRequired: z.boolean().default(true),
-  }).default({
-    anonymizeSensitiveFields: true,
-    excludeRestrictedFields: false,
-    purpose: 'DATA_EXPORT',
-    retentionDays: 30,
-    consentRequired: true,
-  }),
+  filters: z
+    .object({
+      search: z.string().optional(),
+      status: z.string().optional(),
+      dateRange: z
+        .object({
+          start: z.string(),
+          end: z.string(),
+        })
+        .optional(),
+      fields: z.array(z.string()).optional(),
+    })
+    .optional(),
+  pagination: z
+    .object({
+      page: z.number().min(1).default(1),
+      limit: z.number().min(1).max(1000).default(100),
+    })
+    .default({
+      page: 1,
+      limit: 100,
+    }),
+  lgpdOptions: z
+    .object({
+      anonymizeSensitiveFields: z.boolean().default(true),
+      excludeRestrictedFields: z.boolean().default(false),
+      purpose: z.string().default('DATA_EXPORT'),
+      retentionDays: z.number().min(1).max(365).default(30),
+      consentRequired: z.boolean().default(true),
+    })
+    .default({
+      anonymizeSensitiveFields: true,
+      excludeRestrictedFields: false,
+      purpose: 'DATA_EXPORT',
+      retentionDays: 30,
+      consentRequired: true,
+    }),
 });
 
 exportRouter.post(
@@ -81,29 +89,38 @@ exportRouter.post(
         lgpdOptions,
       );
 
-      return c.json({
-        success: true,
-        data: {
-          jobId: job.id,
-          status: job.status,
-          message: 'Exportação iniciada com sucesso',
-          estimatedTime: '2-5 minutos',
+      return c.json(
+        {
+          success: true,
+          data: {
+            jobId: job.id,
+            status: job.status,
+            message: 'Exportação iniciada com sucesso',
+            estimatedTime: '2-5 minutos',
+          },
         },
-      }, 202);
+        202,
+      );
     } catch (error) {
       console.error('Erro ao iniciar exportação:', error);
 
       if (error instanceof z.ZodError) {
-        return c.json({
-          error: 'Dados inválidos',
-          details: error.errors,
-        }, 400);
+        return c.json(
+          {
+            error: 'Dados inválidos',
+            details: error.errors,
+          },
+          400,
+        );
       }
 
-      return c.json({
-        error: 'Erro ao iniciar exportação',
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-      }, 500);
+      return c.json(
+        {
+          error: 'Erro ao iniciar exportação',
+          message: error instanceof Error ? error.message : 'Erro desconhecido',
+        },
+        500,
+      );
     }
   },
 );
@@ -144,10 +161,13 @@ exportRouter.get(
       });
     } catch (error) {
       console.error('Erro ao buscar status da exportação:', error);
-      return c.json({
-        error: 'Erro ao buscar status da exportação',
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-      }, 500);
+      return c.json(
+        {
+          error: 'Erro ao buscar status da exportação',
+          message: error instanceof Error ? error.message : 'Erro desconhecido',
+        },
+        500,
+      );
     }
   },
 );
@@ -166,7 +186,10 @@ exportRouter.delete(
       const success = await ExportService.cancelExportJob(jobId, userId);
 
       if (!success) {
-        return c.json({ error: 'Exportação não encontrada ou não pode ser cancelada' }, 404);
+        return c.json(
+          { error: 'Exportação não encontrada ou não pode ser cancelada' },
+          404,
+        );
       }
 
       return c.json({
@@ -175,10 +198,13 @@ exportRouter.delete(
       });
     } catch (error) {
       console.error('Erro ao cancelar exportação:', error);
-      return c.json({
-        error: 'Erro ao cancelar exportação',
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-      }, 500);
+      return c.json(
+        {
+          error: 'Erro ao cancelar exportação',
+          message: error instanceof Error ? error.message : 'Erro desconhecido',
+        },
+        500,
+      );
     }
   },
 );
@@ -224,10 +250,13 @@ exportRouter.get(
       });
     } catch (error) {
       console.error('Erro ao gerar link de download:', error);
-      return c.json({
-        error: 'Erro ao gerar link de download',
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-      }, 500);
+      return c.json(
+        {
+          error: 'Erro ao gerar link de download',
+          message: error instanceof Error ? error.message : 'Erro desconhecido',
+        },
+        500,
+      );
     }
   },
 );
@@ -251,10 +280,13 @@ exportRouter.get(
       });
     } catch (error) {
       console.error('Erro ao buscar histórico de exportações:', error);
-      return c.json({
-        error: 'Erro ao buscar histórico de exportações',
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-      }, 500);
+      return c.json(
+        {
+          error: 'Erro ao buscar histórico de exportações',
+          message: error instanceof Error ? error.message : 'Erro desconhecido',
+        },
+        500,
+      );
     }
   },
 );
@@ -288,10 +320,13 @@ exportRouter.get(
       });
     } catch (error) {
       console.error('Erro ao buscar métricas:', error);
-      return c.json({
-        error: 'Erro ao buscar métricas',
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-      }, 500);
+      return c.json(
+        {
+          error: 'Erro ao buscar métricas',
+          message: error instanceof Error ? error.message : 'Erro desconhecido',
+        },
+        500,
+      );
     }
   },
 );
@@ -305,10 +340,13 @@ exportRouter.get('/export/meta/formats', async c => {
     });
   } catch (error) {
     console.error('Erro ao buscar formatos:', error);
-    return c.json({
-      error: 'Erro ao buscar formatos',
-      message: error instanceof Error ? error.message : 'Erro desconhecido',
-    }, 500);
+    return c.json(
+      {
+        error: 'Erro ao buscar formatos',
+        message: error instanceof Error ? error.message : 'Erro desconhecido',
+      },
+      500,
+    );
   }
 });
 
@@ -324,10 +362,13 @@ exportRouter.get(
       });
     } catch (error) {
       console.error('Erro ao buscar campos:', error);
-      return c.json({
-        error: 'Erro ao buscar campos',
-        message: error instanceof Error ? error.message : 'Erro desconhecido',
-      }, 500);
+      return c.json(
+        {
+          error: 'Erro ao buscar campos',
+          message: error instanceof Error ? error.message : 'Erro desconhecido',
+        },
+        500,
+      );
     }
   },
 );

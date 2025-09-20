@@ -21,7 +21,7 @@ export interface AIInputSearchProps {
 }
 
 export interface AILoadingProps {
-  size?: 'sm' | 'default' | 'lg';
+  size?: "sm" | "default" | "lg";
   message?: string;
   showMessage?: boolean;
   className?: string;
@@ -45,7 +45,7 @@ export interface AIVoiceProps {
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant' | 'system';
+  role: "user" | "assistant" | "system";
   content: string;
   timestamp: Date;
   clientId?: string;

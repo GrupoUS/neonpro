@@ -9,15 +9,15 @@
  * - Performance-optimized testing
  */
 
-import { AxeResults } from '@axe-core/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { AxeResults } from "@axe-core/react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   AccessibilityIssue,
   AccessibilityTestResult,
   ColorContrastResult,
   runAccessibilityTest,
   validateHealthcareColorContrast,
-} from '../utils/accessibility-testing';
+} from "../utils/accessibility-testing";
 
 export interface AccessibilityTestingOptions {
   enabled?: boolean;
@@ -50,7 +50,7 @@ export interface AccessibilityTestingResult {
 }
 
 const DEFAULT_OPTIONS: Required<AccessibilityTestingOptions> = {
-  enabled: process.env.NODE_ENV === 'development',
+  enabled: process.env.NODE_ENV === "development",
   runOnMount: true,
   runOnChanges: true,
   includeHealthcareRules: true,
@@ -70,7 +70,9 @@ export function useAccessibilityTesting(
 ): AccessibilityTestingResult {
   const [isTesting, setIsTesting] = useState(false);
   const [lastTested, setLastTested] = useState<Date | null>(null);
-  const [testResult, setTestResult] = useState<AccessibilityTestResult | null>(null);
+  const [testResult, setTestResult] = useState<AccessibilityTestResult | null>(
+    null,
+  );
   const [colorContrast, setColorContrast] = useState<ColorContrastResult>({
     passes: true,
     ratio: 0,
@@ -83,10 +85,16 @@ export function useAccessibilityTesting(
 
   // Group issues by impact level
   const issues = testResult?.violations || [];
-  const criticalIssues = issues.filter(issue => issue.impact === 'critical').length;
-  const seriousIssues = issues.filter(issue => issue.impact === 'serious').length;
-  const moderateIssues = issues.filter(issue => issue.impact === 'moderate').length;
-  const minorIssues = issues.filter(issue => issue.impact === 'minor').length;
+  const criticalIssues = issues.filter(
+    (issue) => issue.impact === "critical",
+  ).length;
+  const seriousIssues = issues.filter(
+    (issue) => issue.impact === "serious",
+  ).length;
+  const moderateIssues = issues.filter(
+    (issue) => issue.impact === "moderate",
+  ).length;
+  const minorIssues = issues.filter((issue) => issue.impact === "minor").length;
 
   const healthcareCompliance = testResult?.healthcareCompliance || {
     lgpd: true,
@@ -115,17 +123,22 @@ export function useAccessibilityTesting(
       setLastTested(new Date());
 
       // Log issues in development
-      if (process.env.NODE_ENV === 'development' && result.violations.length > 0) {
-        console.group('🔍 Accessibility Issues Found');
-        result.violations.forEach(violation => {
-          console.warn(`[${violation.impact.toUpperCase()}] ${violation.description}`);
+      if (
+        process.env.NODE_ENV === "development" &&
+        result.violations.length > 0
+      ) {
+        console.group("🔍 Accessibility Issues Found");
+        result.violations.forEach((violation) => {
+          console.warn(
+            `[${violation.impact.toUpperCase()}] ${violation.description}`,
+          );
           console.log(`  Help: ${violation.help}`);
           console.log(`  URL: ${violation.helpUrl}`);
           if (violation.healthcareSpecific) {
-            console.log('  🏥 Healthcare Specific: Yes');
+            console.log("  🏥 Healthcare Specific: Yes");
           }
           if (violation.lgpdRelevant) {
-            console.log('  🇧🇷 LGPD Relevant: Yes');
+            console.log("  🇧🇷 LGPD Relevant: Yes");
           }
         });
         console.groupEnd();
@@ -134,7 +147,8 @@ export function useAccessibilityTesting(
       // Check thresholds
       const { threshold } = optionsRef.current;
       if (
-        threshold.maxViolations !== undefined && result.violations.length > threshold.maxViolations
+        threshold.maxViolations !== undefined &&
+        result.violations.length > threshold.maxViolations
       ) {
         console.error(
           `Accessibility threshold exceeded: ${result.violations.length} violations (max: ${threshold.maxViolations})`,
@@ -142,14 +156,15 @@ export function useAccessibilityTesting(
       }
 
       if (
-        threshold.maxCriticalIssues !== undefined && criticalIssues > threshold.maxCriticalIssues
+        threshold.maxCriticalIssues !== undefined &&
+        criticalIssues > threshold.maxCriticalIssues
       ) {
         console.error(
           `Critical issues threshold exceeded: ${criticalIssues} critical issues (max: ${threshold.maxCriticalIssues})`,
         );
       }
     } catch (error) {
-      console.error('Accessibility testing failed:', error);
+      console.error("Accessibility testing failed:", error);
     } finally {
       setIsTesting(false);
     }
@@ -208,7 +223,7 @@ export function useAccessibilityTesting(
       childList: true,
       subtree: true,
       attributes: true,
-      attributeFilter: ['aria-label', 'role', 'alt', 'disabled'],
+      attributeFilter: ["aria-label", "role", "alt", "disabled"],
     });
 
     return () => {
@@ -276,9 +291,15 @@ export function useAccessibilityMonitor() {
           includeHealthcareRules: true,
         });
 
-        const healthcareViolations = result.violations.filter(v => v.healthcareSpecific).length;
-        const lgpdViolations = result.violations.filter(v => v.lgpdRelevant).length;
-        const criticalIssues = result.violations.filter(v => v.impact === 'critical').length;
+        const healthcareViolations = result.violations.filter(
+          (v) => v.healthcareSpecific,
+        ).length;
+        const lgpdViolations = result.violations.filter(
+          (v) => v.lgpdRelevant,
+        ).length;
+        const criticalIssues = result.violations.filter(
+          (v) => v.impact === "critical",
+        ).length;
 
         setSummary({
           totalIssues: result.violations.length,
@@ -287,7 +308,7 @@ export function useAccessibilityMonitor() {
           lgpdViolations,
         });
       } catch (error) {
-        console.error('Accessibility monitoring failed:', error);
+        console.error("Accessibility monitoring failed:", error);
       }
     };
 
@@ -335,18 +356,22 @@ export function useKeyboardNavigationTest() {
 
     // Check each focusable element
     focusableElements.forEach((element, index) => {
-      const tabIndex = element.getAttribute('tabindex');
-      const ariaLabel = element.getAttribute('aria-label');
-      const role = element.getAttribute('role');
+      const tabIndex = element.getAttribute("tabindex");
+      const ariaLabel = element.getAttribute("aria-label");
+      const role = element.getAttribute("role");
       const textContent = element.textContent?.trim();
 
       tabOrder.push(`${element.tagName.toLowerCase()}${index}`);
 
       // Check for missing labels
       if (
-        (element.tagName === 'BUTTON' || element.tagName === 'INPUT') && !ariaLabel && !textContent
+        (element.tagName === "BUTTON" || element.tagName === "INPUT") &&
+        !ariaLabel &&
+        !textContent
       ) {
-        issues.push(`Element ${index} (${element.tagName}) missing label or text`);
+        issues.push(
+          `Element ${index} (${element.tagName}) missing label or text`,
+        );
       }
 
       // Check for positive tabindex (should be avoided)
@@ -355,7 +380,7 @@ export function useKeyboardNavigationTest() {
       }
 
       // Check for interactive elements with proper roles
-      if (element.tagName === 'BUTTON' && !role) {
+      if (element.tagName === "BUTTON" && !role) {
         // Buttons don't need explicit roles, but we should check they're accessible
         if (!element.textContent?.trim() && !ariaLabel) {
           issues.push(`Button ${index} lacks accessible name`);
@@ -364,9 +389,11 @@ export function useKeyboardNavigationTest() {
     });
 
     // Check for skip links
-    const skipLinks = document.querySelectorAll('[href^="#"], [data-skip-link]');
+    const skipLinks = document.querySelectorAll(
+      '[href^="#"], [data-skip-link]',
+    );
     if (skipLinks.length === 0) {
-      issues.push('No skip links found for keyboard navigation');
+      issues.push("No skip links found for keyboard navigation");
     }
 
     setResults({
@@ -376,16 +403,16 @@ export function useKeyboardNavigationTest() {
     });
 
     // Log results in development
-    if (process.env.NODE_ENV === 'development') {
-      console.group('🎹 Keyboard Navigation Test');
+    if (process.env.NODE_ENV === "development") {
+      console.group("🎹 Keyboard Navigation Test");
       console.log(`Focusable elements: ${focusableElements.length}`);
-      console.log(`Tab order: ${tabOrder.join(' → ')}`);
+      console.log(`Tab order: ${tabOrder.join(" → ")}`);
 
       if (issues.length > 0) {
-        console.warn('Issues found:');
-        issues.forEach(issue => console.warn(`  ❌ ${issue}`));
+        console.warn("Issues found:");
+        issues.forEach((issue) => console.warn(`  ❌ ${issue}`));
       } else {
-        console.log('✅ No keyboard navigation issues found');
+        console.log("✅ No keyboard navigation issues found");
       }
 
       console.groupEnd();

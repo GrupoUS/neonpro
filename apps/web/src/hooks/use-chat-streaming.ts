@@ -1,5 +1,5 @@
 // Phase 3.5 — T033: Chat streaming hook (SSE)
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 export function useChatStreaming(opts: {
   question?: string;
@@ -19,11 +19,14 @@ export function useChatStreaming(opts: {
     (async () => {
       try {
         setStreaming(true);
-        const url = new URL('/api/v1/chat/query', window.location.origin);
-        if (mock) url.searchParams.set('mock', 'true');
+        const url = new URL("/api/v1/chat/query", window.location.origin);
+        if (mock) url.searchParams.set("mock", "true");
         const res = await fetch(url.toString(), {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Accept: 'text/event-stream' },
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "text/event-stream",
+          },
           body: JSON.stringify({ question }),
           signal: controller.signal,
         });
@@ -35,12 +38,13 @@ export function useChatStreaming(opts: {
           if (done) break;
           const text = decoder.decode(value);
           // Very simple SSE parsing for data: lines
-          text.split('\n').forEach(line => {
-            if (line.startsWith('data:')) {
+          text.split("\n").forEach((line) => {
+            if (line.startsWith("data:")) {
               const payload = line.slice(5).trim();
               try {
                 const evt = JSON.parse(payload);
-                if (evt?.type === 'text' && typeof evt.delta === 'string') onDelta?.(evt.delta);
+                if (evt?.type === "text" && typeof evt.delta === "string")
+                  onDelta?.(evt.delta);
               } catch {
                 // ignore malformed JSON
               }
@@ -48,7 +52,7 @@ export function useChatStreaming(opts: {
           });
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : 'Unknown error');
+        setError(e instanceof Error ? e.message : "Unknown error");
       } finally {
         setStreaming(false);
       }
@@ -56,5 +60,9 @@ export function useChatStreaming(opts: {
     return () => controller.abort();
   }, [auto, question, mock, onDelta]);
 
-  return { streaming, error, cancel: () => controllerRef.current?.abort() } as const;
+  return {
+    streaming,
+    error,
+    cancel: () => controllerRef.current?.abort(),
+  } as const;
 }

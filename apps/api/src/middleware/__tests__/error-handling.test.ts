@@ -113,7 +113,9 @@ describe('Error Handling and Logging Middleware (T076)', () => {
       const result = await errorHandler.handleError(error, context);
 
       expect(result.status).toBe(503);
-      expect(result.response.error).toBe('Serviço de IA temporariamente indisponível');
+      expect(result.response.error).toBe(
+        'Serviço de IA temporariamente indisponível',
+      );
       expect(result.response.code).toBe('AI_SERVICE_UNAVAILABLE');
     });
 
@@ -323,7 +325,9 @@ describe('Error Handling and Logging Middleware (T076)', () => {
       mockContext.get.mockImplementation((key: string) => {
         if (key === 'requestId') return 'req-context-1';
         if (key === 'userId') return 'user-context-1';
-        if (key === 'healthcareProfessional') return { id: 'hp-context-1', crmNumber: '54321-RJ' };
+        if (key === 'healthcareProfessional') {
+          return { id: 'hp-context-1', crmNumber: '54321-RJ' };
+        }
         return undefined;
       });
 

@@ -3,9 +3,10 @@
  * Combines all domain routers with healthcare compliance
  */
 
-import { aiRouter } from './routers/ai';
 import { agentRouter } from './routers/agent';
+import { aiRouter } from './routers/ai';
 import { appointmentsRouter } from './routers/appointments';
+import { crudRouter } from './routers/crud';
 import { healthcareServicesRouter } from './routers/healthcare-services';
 import { patientsRouter } from './routers/patients';
 import { realtimeTelemedicineRouter } from './routers/realtime-telemedicine';
@@ -44,6 +45,7 @@ export const appRouter = router({
   appointments: appointmentsRouter,
   ai: aiRouter,
   agents: agentRouter,
+  crud: crudRouter,
   healthcareServices: healthcareServicesRouter,
   realtimeTelemedicine: realtimeTelemedicineRouter,
   telemedicine: telemedicineRouter,

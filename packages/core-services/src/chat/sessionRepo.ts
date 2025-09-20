@@ -1,10 +1,13 @@
 // Phase 3.3 — T013: Session repository (in-memory for Phase 1)
-import type { ChatSession } from '@neonpro/types';
+import type { ChatSession } from "@neonpro/types";
 
 const mem = new Map<string, ChatSession>();
 
 export class SessionRepo {
-  async create(userId: string, locale: ChatSession['locale'] = 'pt-BR'): Promise<ChatSession> {
+  async create(
+    userId: string,
+    locale: ChatSession["locale"] = "pt-BR",
+  ): Promise<ChatSession> {
     const id = crypto.randomUUID();
     const now = new Date().toISOString();
     const sess: ChatSession = {

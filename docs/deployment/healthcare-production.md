@@ -7,18 +7,21 @@ This guide provides comprehensive instructions for deploying the NeonPro healthc
 ## 🏥 Brazilian Healthcare Compliance Requirements
 
 ### LGPD (Lei Geral de Proteção de Dados) - Data Residency
+
 - **Data Localization**: Patient data must remain within Brazilian territory
 - **Server Location**: Vercel São Paulo region (gru1) mandatory
 - **Data Processing**: All sensitive health data processing within Brazil
 - **Cross-Border Transfers**: Requires explicit consent and adequacy decisions
 
 ### CFM (Conselho Federal de Medicina) Requirements
+
 - **Resolution 2,314/2022**: Telemedicine compliance standards
 - **Digital Certificates**: ICP-Brasil validation required
 - **Professional Licensing**: Real-time CRM validation
 - **Security Standards**: NGS2 Level 2 minimum compliance
 
 ### ANVISA (Agência Nacional de Vigilância Sanitária) Requirements
+
 - **RDC 657/2022**: Medical device software classification
 - **SaMD Compliance**: Software as Medical Device regulations
 - **Quality Management**: ISO 13485 compliance
@@ -31,6 +34,7 @@ This guide provides comprehensive instructions for deploying the NeonPro healthc
 ### 1. Project Configuration
 
 #### Vercel Configuration File
+
 ```json
 {
   "version": 2,
@@ -103,6 +107,7 @@ This guide provides comprehensive instructions for deploying the NeonPro healthc
 ### 2. Environment Variables
 
 #### Production Environment Configuration
+
 ```bash
 # Database Configuration (Supabase São Paulo)
 DATABASE_URL="postgresql://user:pass@db.supabase.co:5432/postgres?connection_limit=20&pool_timeout=0"
@@ -173,26 +178,28 @@ HEALTHCARE_REGION="BR"
 ### 3. Regional Deployment Configuration
 
 #### São Paulo Region (gru1) Setup
+
 ```bash
 # Deploy to São Paulo region for Brazilian compliance
 vercel --prod --regions gru1
 ```
 
 #### Edge Functions Configuration
+
 ```typescript
 // api/edge/healthcare-lookup.ts
 export const config = {
-  runtime: 'edge',
-  regions: ['gru1'], // São Paulo only for patient data
+  runtime: "edge",
+  regions: ["gru1"], // São Paulo only for patient data
   maxDuration: 5,
 };
 
 export default async function handler(request: Request) {
   // Healthcare data processing within Brazilian territory
-  return new Response('Healthcare data processed in Brazil', {
+  return new Response("Healthcare data processed in Brazil", {
     headers: {
-      'X-Region': 'gru1',
-      'X-Compliance': 'LGPD',
+      "X-Region": "gru1",
+      "X-Compliance": "LGPD",
     },
   });
 }
@@ -205,9 +212,10 @@ export default async function handler(request: Request) {
 ### 1. Database Setup
 
 #### Connection Configuration
+
 ```typescript
 // lib/supabase.ts
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.SUPABASE_URL!;
 const supabaseKey = process.env.SUPABASE_ANON_KEY!;
@@ -218,12 +226,12 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     autoRefreshToken: true,
   },
   db: {
-    schema: 'public',
+    schema: "public",
   },
   global: {
     headers: {
-      'X-Healthcare-Platform': 'neonpro',
-      'X-Compliance-Version': 'v1.0',
+      "X-Healthcare-Platform": "neonpro",
+      "X-Compliance-Version": "v1.0",
     },
   },
   realtime: {
@@ -235,6 +243,7 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
 ```
 
 #### Row-Level Security (RLS) Policies
+
 ```sql
 -- Enable RLS on all healthcare tables
 ALTER TABLE patients ENABLE ROW LEVEL SECURITY;
@@ -251,7 +260,7 @@ CREATE POLICY "clinic_patients_isolation" ON patients
 CREATE POLICY "healthcare_professional_access" ON patients
   FOR SELECT TO authenticated
   USING (
-    (auth.jwt() ->> 'role') IN ('doctor', 'nurse', 'admin') 
+    (auth.jwt() ->> 'role') IN ('doctor', 'nurse', 'admin')
     AND clinic_id = (auth.jwt() ->> 'clinic_id')::uuid
   );
 
@@ -260,9 +269,9 @@ CREATE POLICY "lgpd_consent_required" ON patients
   FOR ALL TO authenticated
   USING (
     EXISTS (
-      SELECT 1 FROM lgpd_consents 
-      WHERE patient_id = patients.id 
-      AND is_active = true 
+      SELECT 1 FROM lgpd_consents
+      WHERE patient_id = patients.id
+      AND is_active = true
       AND expiration_date > now()
     )
   );
@@ -271,23 +280,24 @@ CREATE POLICY "lgpd_consent_required" ON patients
 ### 2. Real-Time Subscriptions
 
 #### Healthcare Real-Time Configuration
+
 ```typescript
 // lib/realtime-subscriptions.ts
 export const subscribeToAppointments = (clinicId: string) => {
   return supabase
     .channel(`appointments:${clinicId}`)
     .on(
-      'postgres_changes',
+      "postgres_changes",
       {
-        event: '*',
-        schema: 'public',
-        table: 'appointments',
+        event: "*",
+        schema: "public",
+        table: "appointments",
         filter: `clinic_id=eq.${clinicId}`,
       },
       (payload) => {
         // Handle real-time appointment updates
         handleAppointmentUpdate(payload);
-      }
+      },
     )
     .subscribe();
 };
@@ -296,17 +306,17 @@ export const subscribeToTelemedicine = (sessionId: string) => {
   return supabase
     .channel(`telemedicine:${sessionId}`)
     .on(
-      'postgres_changes',
+      "postgres_changes",
       {
-        event: '*',
-        schema: 'public',
-        table: 'telemedicine_sessions',
+        event: "*",
+        schema: "public",
+        table: "telemedicine_sessions",
         filter: `id=eq.${sessionId}`,
       },
       (payload) => {
         // Handle telemedicine session updates
         handleTelemedicineUpdate(payload);
-      }
+      },
     )
     .subscribe();
 };
@@ -319,6 +329,7 @@ export const subscribeToTelemedicine = (sessionId: string) => {
 ### 1. Performance Monitoring
 
 #### Healthcare SLA Requirements
+
 ```typescript
 // lib/monitoring/healthcare-sla.ts
 export const HEALTHCARE_SLA_TARGETS = {
@@ -342,8 +353,8 @@ export const HEALTHCARE_SLA_TARGETS = {
   },
   // Telemedicine quality
   telemedicine: {
-    videoQuality: '720p',
-    audioQuality: '48kHz',
+    videoQuality: "720p",
+    audioQuality: "48kHz",
     latency: 150, // ms
     jitter: 30, // ms
     packetLoss: 0.1, // %
@@ -352,33 +363,34 @@ export const HEALTHCARE_SLA_TARGETS = {
 ```
 
 #### Vercel Analytics Integration
+
 ```typescript
 // lib/monitoring/vercel-analytics.ts
-import { track } from '@vercel/analytics';
+import { track } from "@vercel/analytics";
 
 export const trackHealthcareOperation = (
   operation: string,
   duration: number,
   success: boolean,
-  metadata?: Record<string, any>
+  metadata?: Record<string, any>,
 ) => {
-  track('healthcare_operation', {
+  track("healthcare_operation", {
     operation,
     duration,
     success,
-    compliance: 'lgpd',
-    region: 'gru1',
+    compliance: "lgpd",
+    region: "gru1",
     ...metadata,
   });
 
   // Check SLA compliance
   const slaTarget = getSLATarget(operation);
   if (duration > slaTarget.responseTime) {
-    track('sla_violation', {
+    track("sla_violation", {
       operation,
       target: slaTarget.responseTime,
       actual: duration,
-      severity: duration > slaTarget.responseTime * 2 ? 'high' : 'medium',
+      severity: duration > slaTarget.responseTime * 2 ? "high" : "medium",
     });
   }
 };
@@ -387,6 +399,7 @@ export const trackHealthcareOperation = (
 ### 2. Health Checks
 
 #### Comprehensive Health Monitoring
+
 ```typescript
 // api/health/comprehensive.ts
 export default async function handler(req: Request) {
@@ -401,34 +414,34 @@ export default async function handler(req: Request) {
 
   const results = healthChecks.map((check, index) => ({
     service: [
-      'database',
-      'ai_providers',
-      'cfm_integration',
-      'whatsapp_api',
-      'supabase_realtime',
-      'lgpd_compliance',
+      "database",
+      "ai_providers",
+      "cfm_integration",
+      "whatsapp_api",
+      "supabase_realtime",
+      "lgpd_compliance",
     ][index],
-    status: check.status === 'fulfilled' ? 'healthy' : 'unhealthy',
-    details: check.status === 'fulfilled' ? check.value : check.reason,
+    status: check.status === "fulfilled" ? "healthy" : "unhealthy",
+    details: check.status === "fulfilled" ? check.value : check.reason,
   }));
 
-  const overallHealth = results.every(r => r.status === 'healthy');
+  const overallHealth = results.every((r) => r.status === "healthy");
 
   return new Response(
     JSON.stringify({
-      status: overallHealth ? 'healthy' : 'degraded',
+      status: overallHealth ? "healthy" : "degraded",
       timestamp: new Date().toISOString(),
-      region: 'gru1',
-      compliance: 'lgpd',
+      region: "gru1",
+      compliance: "lgpd",
       checks: results,
     }),
     {
       status: overallHealth ? 200 : 503,
       headers: {
-        'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache',
+        "Content-Type": "application/json",
+        "Cache-Control": "no-cache",
       },
-    }
+    },
   );
 }
 ```
@@ -436,9 +449,10 @@ export default async function handler(req: Request) {
 ### 3. Uptime Monitoring
 
 #### Brazilian Healthcare Uptime Requirements
+
 ```typescript
 // lib/monitoring/uptime.ts
-import { Upstash } from '@upstash/redis';
+import { Upstash } from "@upstash/redis";
 
 const redis = new Upstash({
   url: process.env.UPSTASH_REDIS_REST_URL!,
@@ -447,8 +461,8 @@ const redis = new Upstash({
 
 export const recordUptime = async (
   service: string,
-  status: 'up' | 'down',
-  responseTime?: number
+  status: "up" | "down",
+  responseTime?: number,
 ) => {
   const timestamp = Date.now();
   const key = `uptime:${service}:${new Date().toISOString().slice(0, 10)}`;
@@ -459,7 +473,7 @@ export const recordUptime = async (
       status,
       responseTime,
       timestamp,
-      region: 'gru1',
+      region: "gru1",
     }),
   });
 
@@ -475,6 +489,7 @@ export const recordUptime = async (
 ### 1. Backup Strategy
 
 #### Automated Database Backups
+
 ```sql
 -- Daily backup schedule (São Paulo timezone)
 SELECT cron.schedule(
@@ -492,6 +507,7 @@ SELECT cron.schedule(
 ```
 
 #### LGPD-Compliant Backup Function
+
 ```sql
 CREATE OR REPLACE FUNCTION backup_patient_data_lgpd_compliant()
 RETURNS void AS $$
@@ -500,10 +516,10 @@ DECLARE
   retention_period interval := '20 years'; -- CFM requirement
 BEGIN
   backup_name := 'patient_backup_' || to_char(now(), 'YYYY_MM_DD_HH24_MI_SS');
-  
+
   -- Create encrypted backup
   COPY (
-    SELECT 
+    SELECT
       p.*,
       array_agg(lc.consent_type) as consent_types,
       array_agg(lc.legal_basis) as legal_bases
@@ -512,7 +528,7 @@ BEGIN
     WHERE p.data_consent_status = 'active'
     GROUP BY p.id
   ) TO PROGRAM 'gpg --cipher-algo AES256 --compress-algo 2 --symmetric --output /backups/' || backup_name || '.gpg';
-  
+
   -- Log backup for audit
   INSERT INTO audit_trails (
     action, resource, additional_info
@@ -533,6 +549,7 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 ### 2. Recovery Procedures
 
 #### Emergency Data Recovery
+
 ```bash
 #!/bin/bash
 # Emergency recovery script
@@ -571,22 +588,23 @@ curl -X POST "$SLACK_WEBHOOK" \
 ### 3. Geographic Redundancy
 
 #### Multi-Region Backup Strategy
+
 ```typescript
 // lib/backup/geographic-redundancy.ts
 export const setupGeographicBackups = async () => {
   const regions = [
-    'gru1', // São Paulo (Primary)
-    'gru2', // São Paulo (Secondary)
-    'bsb1', // Brasília (Compliance backup)
+    "gru1", // São Paulo (Primary)
+    "gru2", // São Paulo (Secondary)
+    "bsb1", // Brasília (Compliance backup)
   ];
 
   for (const region of regions) {
     await scheduleBackup({
       region,
-      frequency: region === 'gru1' ? 'hourly' : 'daily',
-      retention: '20y', // CFM requirement
-      encryption: 'AES-256',
-      compliance: ['LGPD', 'CFM', 'ANVISA'],
+      frequency: region === "gru1" ? "hourly" : "daily",
+      retention: "20y", // CFM requirement
+      encryption: "AES-256",
+      compliance: ["LGPD", "CFM", "ANVISA"],
     });
   }
 };
@@ -599,52 +617,60 @@ export const setupGeographicBackups = async () => {
 ### 1. SSL/TLS Configuration
 
 #### HTTPS and Security Headers
+
 ```typescript
 // middleware.ts
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export function middleware(request: NextRequest) {
   const response = NextResponse.next();
 
   // Enforce HTTPS for healthcare data
-  if (!request.url.startsWith('https://') && process.env.NODE_ENV === 'production') {
-    return NextResponse.redirect(`https://${request.headers.get('host')}${request.nextUrl.pathname}`);
+  if (
+    !request.url.startsWith("https://") &&
+    process.env.NODE_ENV === "production"
+  ) {
+    return NextResponse.redirect(
+      `https://${request.headers.get("host")}${request.nextUrl.pathname}`,
+    );
   }
 
   // Brazilian healthcare security headers
-  response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  response.headers.set('X-Content-Type-Options', 'nosniff');
-  response.headers.set('X-Frame-Options', 'DENY');
-  response.headers.set('X-XSS-Protection', '1; mode=block');
-  response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  response.headers.set('X-Healthcare-Platform', 'neonpro');
-  response.headers.set('X-Compliance-Version', 'v1.0');
-  response.headers.set('X-Region', 'BR');
+  response.headers.set(
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains",
+  );
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-XSS-Protection", "1; mode=block");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("X-Healthcare-Platform", "neonpro");
+  response.headers.set("X-Compliance-Version", "v1.0");
+  response.headers.set("X-Region", "BR");
 
   // CSP for healthcare applications
   response.headers.set(
-    'Content-Security-Policy',
-    "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://*.vercel.app;"
+    "Content-Security-Policy",
+    "default-src 'self'; script-src 'self' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://*.vercel.app;",
   );
 
   return response;
 }
 
 export const config = {
-  matcher: [
-    '/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)',
-  ],
+  matcher: ["/((?!api/|_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)"],
 };
 ```
 
 ### 2. Authentication & Authorization
 
 #### Healthcare-Specific Auth Configuration
+
 ```typescript
 // lib/auth/healthcare-config.ts
 export const healthcareAuthConfig = {
   session: {
-    strategy: 'jwt',
+    strategy: "jwt",
     maxAge: 8 * 60 * 60, // 8 hours for healthcare workers
   },
   jwt: {
@@ -670,8 +696,8 @@ export const healthcareAuthConfig = {
     },
   },
   pages: {
-    signIn: '/auth/signin',
-    error: '/auth/error',
+    signIn: "/auth/signin",
+    error: "/auth/error",
   },
 };
 ```
@@ -683,17 +709,14 @@ export const healthcareAuthConfig = {
 ### 1. Edge Runtime Optimization
 
 #### Bundle Size Optimization
+
 ```typescript
 // next.config.js
 module.exports = {
   experimental: {
-    runtime: 'edge',
+    runtime: "edge",
     optimizeCss: true,
-    optimizePackageImports: [
-      '@prisma/client',
-      '@trpc/server',
-      'valibot',
-    ],
+    optimizePackageImports: ["@prisma/client", "@trpc/server", "valibot"],
   },
   webpack: (config, { isServer }) => {
     if (!isServer) {
@@ -708,12 +731,12 @@ module.exports = {
 
     // Healthcare bundle optimization
     config.optimization.splitChunks = {
-      chunks: 'all',
+      chunks: "all",
       cacheGroups: {
         healthcare: {
           test: /[\\/]node_modules[\\/](prisma|trpc|valibot)[\\/]/,
-          name: 'healthcare',
-          chunks: 'all',
+          name: "healthcare",
+          chunks: "all",
         },
       },
     };
@@ -726,13 +749,17 @@ module.exports = {
 ### 2. Database Performance
 
 #### Connection Pooling and Optimization
+
 ```typescript
 // lib/prisma/optimized-client.ts
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from "@prisma/client";
 
 const createPrismaClient = () => {
   return new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+    log:
+      process.env.NODE_ENV === "development"
+        ? ["query", "error", "warn"]
+        : ["error"],
     datasources: {
       db: {
         url: process.env.DATABASE_URL,
@@ -752,7 +779,7 @@ const createPrismaClient = () => {
             operation,
             duration,
             recordCount: result.length,
-            compliance: 'LGPD',
+            compliance: "LGPD",
           });
 
           return result;
@@ -764,7 +791,7 @@ const createPrismaClient = () => {
 
 export const prisma = globalThis.prisma || createPrismaClient();
 
-if (process.env.NODE_ENV !== 'production') {
+if (process.env.NODE_ENV !== "production") {
   globalThis.prisma = prisma;
 }
 ```
@@ -776,6 +803,7 @@ if (process.env.NODE_ENV !== 'production') {
 ### 1. Production Deployment
 
 #### Automated Deployment Script
+
 ```bash
 #!/bin/bash
 # Production deployment script
@@ -839,6 +867,7 @@ echo "📊 Monitor: https://vercel.com/neonpro/analytics"
 ### 2. Rollback Procedure
 
 #### Emergency Rollback Script
+
 ```bash
 #!/bin/bash
 # Emergency rollback script

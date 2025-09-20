@@ -30,7 +30,7 @@
   },
   "include": [
     "apps/web/src/**/*",
-    "packages/ui/src/**/*", 
+    "packages/ui/src/**/*",
     "packages/utils/src/**/*",
     "packages/shared/src/**/*",
     "packages/types/src/**/*",

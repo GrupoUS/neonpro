@@ -3,6 +3,7 @@
  * Comprehensive AI integration with health compliance and error handling
  */
 
+import { auditLogger } from '@neonpro/security';
 import {
   AIChatResponseSchema,
   AIHealthcheckResponseSchema,
@@ -12,38 +13,32 @@ import {
   PaginationSchema,
 } from '@neonpro/types/api/contracts';
 import { z } from 'zod';
-import { protectedProcedure, router } from '../trpc';
-import auditLogger from '@neonpro/security';
-import { 
+import { LGPDComplianceMiddleware } from '../../middleware/lgpd-compliance';
+import {
   aiSecurityService,
   sanitizeForAI,
-  validatePromptSecurity,
+  shouldRetainAIData,
   validateAIOutputSafety,
-  shouldRetainAIData
-} from '../services/ai-security-service';
-import { 
-  lgpdConsentService, 
-  lgpdAuditService,
-  lgpdDataSubjectService 
-} from '../services';
-import { LGPDComplianceMiddleware } from '../middleware/lgpd-compliance';
-import { ConsentPurpose, DataCategory } from '../types/lgpd';
+  validatePromptSecurity,
+} from '../../services/ai-security-service';
+import { DataCategory } from '../../services/lgpd-audit-service';
+import { lgpdAuditService, lgpdConsentService } from '../../services/lgpd-consent-service';
+import { ConsentPurpose } from '../../services/lgpd-consent-service';
+import { lgpdDataSubjectService } from '../../services/lgpd-data-subject-service';
+import { protectedProcedure, router } from '../trpc';
 
-// Health analysis functions
-import {
-  gatherPatientAnalysisData,
-  buildHealthAnalysisPrompt,
-  callHealthAnalysisAI,
-  parseHealthAnalysisResponse,
-  storeHealthAnalysis
-} from '@neonpro/core-services';
+// Health analysis service
+import { HealthAnalysisService } from '@neonpro/core-services';
 
 // AI service management functions
 import {
   checkAIServiceHealth,
   checkModelAvailability,
-  getAIUsageStats
+  getAIUsageStats,
 } from '@neonpro/core-services';
+
+// Initialize services
+const healthAnalysisService = new HealthAnalysisService();
 
 export const aiRouter = router({
   /**
@@ -55,23 +50,29 @@ export const aiRouter = router({
       tags: ['ai', 'chat', 'healthcare', 'compliance'],
       requiresPermission: 'ai:chat',
     })
-    .input(AIRequestSchema.extend({
-      message: z.string().min(1).max(4000),
-      conversationId: z.string().uuid().optional(),
-      patientId: z.string().uuid().optional(),
-      clinicId: z.string().uuid(),
-      context: z.enum([
-        'general',
-        'patient_consultation',
-        'appointment_scheduling',
-        'medical_analysis',
-      ]).default('general'),
-      model: z.enum(['gpt-4', 'gpt-3.5-turbo', 'claude-3', 'claude-3-haiku']).default('gpt-4'),
-      temperature: z.number().min(0).max(2).default(0.7),
-      maxTokens: z.number().min(1).max(4000).default(1000),
-      includeHistory: z.boolean().default(true),
-      lgpdCompliant: z.boolean().default(true),
-    }))
+    .input(
+      AIRequestSchema.extend({
+        message: z.string().min(1).max(4000),
+        conversationId: z.string().uuid().optional(),
+        patientId: z.string().uuid().optional(),
+        clinicId: z.string().uuid(),
+        context: z
+          .enum([
+            'general',
+            'patient_consultation',
+            'appointment_scheduling',
+            'medical_analysis',
+          ])
+          .default('general'),
+        model: z
+          .enum(['gpt-4', 'gpt-3.5-turbo', 'claude-3', 'claude-3-haiku'])
+          .default('gpt-4'),
+        temperature: z.number().min(0).max(2).default(0.7),
+        maxTokens: z.number().min(1).max(4000).default(1000),
+        includeHistory: z.boolean().default(true),
+        lgpdCompliant: z.boolean().default(true),
+      }),
+    )
     .output(AIChatResponseSchema)
     .mutation(async ({ input, ctx }) => {
       // Validate clinic access
@@ -106,7 +107,7 @@ export const aiRouter = router({
           await lgpdConsentService.validateConsent(
             input.patientId || ctx.userId,
             ConsentPurpose.AI_ANALYSIS,
-            'AI chat processing'
+            'AI chat processing',
           );
         } catch (error) {
           // Create audit entry for consent violation
@@ -122,8 +123,8 @@ export const aiRouter = router({
             metadata: {
               operation: 'AI_CHAT',
               purpose: ConsentPurpose.AI_ANALYSIS,
-              error: error instanceof Error ? error.message : 'Unknown error'
-            }
+              error: error instanceof Error ? error.message : 'Unknown error',
+            },
           });
           throw error;
         }
@@ -134,7 +135,7 @@ export const aiRouter = router({
         throw new HealthcareTRPCError(
           'BAD_REQUEST',
           'Message contains potentially harmful content',
-          'SECURITY_VALIDATION_FAILED',
+          'CONTENT_FILTERED',
         );
       }
 
@@ -261,7 +262,7 @@ export const aiRouter = router({
           throw new HealthcareTRPCError(
             'BAD_REQUEST',
             'AI response failed security validation',
-            'AI_RESPONSE_SECURITY_VALIDATION_FAILED',
+            'CONTENT_FILTERED',
           );
         }
 
@@ -304,8 +305,8 @@ export const aiRouter = router({
             model: input.model,
             lgpdCompliant: input.lgpdCompliant,
             consentValidated: input.lgpdCompliant,
-            processingTime: Date.now()
-          }
+            processingTime: Date.now(),
+          },
         });
 
         // Store AI response in audit trail
@@ -428,57 +429,73 @@ export const aiRouter = router({
       tags: ['ai', 'conversation', 'history'],
       requiresPermission: 'ai:history',
     })
-    .input(PaginationSchema.extend({
-      conversationId: z.string().uuid().optional(),
-      clinicId: z.string().uuid(),
-      patientId: z.string().uuid().optional(),
-      context: z.enum([
-        'general',
-        'patient_consultation',
-        'appointment_scheduling',
-        'medical_analysis',
-      ]).optional(),
-      dateFrom: z.string().datetime().optional(),
-      dateTo: z.string().datetime().optional(),
-      includeContent: z.boolean().default(true),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        conversations: z.array(z.object({
-          id: z.string(),
-          context: z.string(),
-          patientId: z.string().nullable(),
-          createdAt: z.string().datetime(),
-          updatedAt: z.string().datetime(),
-          messageCount: z.number(),
-          lastMessage: z.object({
-            role: z.string(),
-            content: z.string(),
-            createdAt: z.string().datetime(),
-          }).optional(),
-          messages: z.array(z.object({
-            id: z.string(),
-            role: z.enum(['user', 'assistant', 'system']),
-            content: z.string(),
-            usage: z.object({
-              prompt_tokens: z.number(),
-              completion_tokens: z.number(),
-              total_tokens: z.number(),
-            }).optional(),
-            createdAt: z.string().datetime(),
-          })).optional(),
-        })),
-        pagination: z.object({
-          page: z.number(),
-          limit: z.number(),
-          total: z.number(),
-          totalPages: z.number(),
-        }),
+    .input(
+      PaginationSchema.extend({
+        conversationId: z.string().uuid().optional(),
+        clinicId: z.string().uuid(),
+        patientId: z.string().uuid().optional(),
+        context: z
+          .enum([
+            'general',
+            'patient_consultation',
+            'appointment_scheduling',
+            'medical_analysis',
+          ])
+          .optional(),
+        dateFrom: z.string().datetime().optional(),
+        dateTo: z.string().datetime().optional(),
+        includeContent: z.boolean().default(true),
       }),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          conversations: z.array(
+            z.object({
+              id: z.string(),
+              context: z.string(),
+              patientId: z.string().nullable(),
+              createdAt: z.string().datetime(),
+              updatedAt: z.string().datetime(),
+              messageCount: z.number(),
+              lastMessage: z
+                .object({
+                  role: z.string(),
+                  content: z.string(),
+                  createdAt: z.string().datetime(),
+                })
+                .optional(),
+              messages: z
+                .array(
+                  z.object({
+                    id: z.string(),
+                    role: z.enum(['user', 'assistant', 'system']),
+                    content: z.string(),
+                    usage: z
+                      .object({
+                        prompt_tokens: z.number(),
+                        completion_tokens: z.number(),
+                        total_tokens: z.number(),
+                      })
+                      .optional(),
+                    createdAt: z.string().datetime(),
+                  }),
+                )
+                .optional(),
+            }),
+          ),
+          pagination: z.object({
+            page: z.number(),
+            limit: z.number(),
+            total: z.number(),
+            totalPages: z.number(),
+          }),
+        }),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .query(async ({ input, ctx }) => {
       // Validate clinic access through context
       if (ctx.clinicId !== input.clinicId) {
@@ -521,7 +538,13 @@ export const aiRouter = router({
           where: {
             ...where,
             action: 'AI_CHAT',
-            resource: { in: ['AI_CONVERSATION_START', 'AI_MESSAGE_USER', 'AI_MESSAGE_ASSISTANT'] },
+            resource: {
+              in: [
+                'AI_CONVERSATION_START',
+                'AI_MESSAGE_USER',
+                'AI_MESSAGE_ASSISTANT',
+              ],
+            },
           },
           skip: (input.page - 1) * input.limit,
           take: input.limit,
@@ -543,7 +566,7 @@ export const aiRouter = router({
           let lastMessage;
           if (!input.includeContent) {
             lastMessage = await ctx.prisma.auditTrail.findFirst({
-              where: { 
+              where: {
                 resourceId: conversation.resourceId,
                 action: 'AI_CHAT',
               },
@@ -564,7 +587,9 @@ export const aiRouter = router({
             }
           };
 
-          const lastMessageInfo = lastMessage ? parseMessageInfo(lastMessage.additionalInfo) : null;
+          const lastMessageInfo = lastMessage
+            ? parseMessageInfo(lastMessage.additionalInfo)
+            : null;
 
           return {
             id: conversation.resourceId,
@@ -582,27 +607,33 @@ export const aiRouter = router({
               }
               : undefined,
             messages: input.includeContent
-              ? await ctx.prisma.auditTrail.findMany({
+              ? await ctx.prisma.auditTrail
+                .findMany({
                   where: {
                     resourceId: conversation.resourceId,
                     action: 'AI_CHAT',
-                    resource: { in: ['AI_MESSAGE_USER', 'AI_MESSAGE_ASSISTANT'] },
+                    resource: {
+                      in: ['AI_MESSAGE_USER', 'AI_MESSAGE_ASSISTANT'],
+                    },
                   },
                   orderBy: { createdAt: 'asc' },
                   select: {
                     additionalInfo: true,
                     createdAt: true,
                   },
-                }).then(msgs => msgs.map(msg => {
-                  const msgInfo = parseMessageInfo(msg.additionalInfo);
-                  return {
-                    id: msg.id,
-                    role: msgInfo.role as 'user' | 'assistant' | 'system',
-                    content: msgInfo.content,
-                    usage: msgInfo.usage,
-                    createdAt: msg.createdAt.toISOString(),
-                  };
-                }))
+                })
+                .then(msgs =>
+                  msgs.map(msg => {
+                    const msgInfo = parseMessageInfo(msg.additionalInfo);
+                    return {
+                      id: msg.id,
+                      role: msgInfo.role as 'user' | 'assistant' | 'system',
+                      content: msgInfo.content,
+                      usage: msgInfo.usage,
+                      createdAt: msg.createdAt.toISOString(),
+                    };
+                  })
+                )
               : undefined,
           };
         }),
@@ -633,78 +664,90 @@ export const aiRouter = router({
       tags: ['ai', 'health', 'analysis', 'insights'],
       requiresPermission: 'ai:health_analysis',
     })
-    .input(z.object({
-      patientId: z.string().uuid(),
-      clinicId: z.string().uuid(),
-      analysisType: z.enum([
-        'risk_assessment',
-        'treatment_recommendation',
-        'diagnostic_support',
-        'follow_up_planning',
-      ]),
-      includeHistory: z.boolean().default(true),
-      timeRange: z.object({
-        from: z.string().datetime(),
-        to: z.string().datetime(),
-      }).optional(),
-      customPrompt: z.string().max(1000).optional(),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        analysisId: z.string(),
-        patientId: z.string(),
-        analysisType: z.string(),
-        insights: z.array(z.object({
-          category: z.string(),
-          title: z.string(),
-          description: z.string(),
-          confidence: z.number().min(0).max(1),
-          severity: z.enum(['low', 'medium', 'high', 'critical']),
-          recommendations: z.array(z.string()),
-        })),
-        riskFactors: z.array(z.object({
-          factor: z.string(),
-          impact: z.enum(['low', 'medium', 'high']),
-          description: z.string(),
-        })),
-        recommendations: z.array(z.object({
-          category: z.string(),
-          recommendation: z.string(),
-          priority: z.enum(['low', 'medium', 'high', 'urgent']),
-          reasoning: z.string(),
-        })),
-        followUp: z.object({
-          recommended: z.boolean(),
-          timeframe: z.string().optional(),
-          notes: z.string().optional(),
-        }),
-        metadata: z.object({
-          model: z.string(),
-          generatedAt: z.string().datetime(),
-          dataPoints: z.number(),
-          confidence: z.number(),
-        }),
+    .input(
+      z.object({
+        patientId: z.string().uuid(),
+        clinicId: z.string().uuid(),
+        analysisType: z.enum([
+          'risk_assessment',
+          'treatment_recommendation',
+          'diagnostic_support',
+          'follow_up_planning',
+        ]),
+        includeHistory: z.boolean().default(true),
+        timeRange: z
+          .object({
+            from: z.string().datetime(),
+            to: z.string().datetime(),
+          })
+          .optional(),
+        customPrompt: z.string().max(1000).optional(),
       }),
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          analysisId: z.string(),
+          patientId: z.string(),
+          analysisType: z.string(),
+          insights: z.array(
+            z.object({
+              category: z.string(),
+              title: z.string(),
+              description: z.string(),
+              confidence: z.number().min(0).max(1),
+              severity: z.enum(['low', 'medium', 'high', 'critical']),
+              recommendations: z.array(z.string()),
+            }),
+          ),
+          riskFactors: z.array(
+            z.object({
+              factor: z.string(),
+              impact: z.enum(['low', 'medium', 'high']),
+              description: z.string(),
+            }),
+          ),
+          recommendations: z.array(
+            z.object({
+              category: z.string(),
+              recommendation: z.string(),
+              priority: z.enum(['low', 'medium', 'high', 'urgent']),
+              reasoning: z.string(),
+            }),
+          ),
+          followUp: z.object({
+            recommended: z.boolean(),
+            timeframe: z.string().optional(),
+            notes: z.string().optional(),
+          }),
+          metadata: z.object({
+            model: z.string(),
+            generatedAt: z.string().datetime(),
+            dataPoints: z.number(),
+            confidence: z.number(),
+          }),
+        }),
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       // Validate clinic and patient access
       const clinic = await ctx.prisma.clinic.findFirst({
         where: {
           id: input.clinicId,
-          userId: ctx.user.id
-        }
+          userId: ctx.user.id,
+        },
       });
 
       if (!clinic) {
         throw new HealthcareTRPCError(
           'NOT_FOUND',
           'Clinic not found',
-          'CLINIC_NOT_FOUND',
-          { clinicId: input.clinicId }
+          'CLINIC_ACCESS_DENIED',
+          { clinicId: input.clinicId },
         );
       }
 
@@ -712,8 +755,8 @@ export const aiRouter = router({
         where: {
           id: input.patientId,
           clinicId: input.clinicId,
-          userId: ctx.user.id
-        }
+          userId: ctx.user.id,
+        },
       });
 
       if (!patient) {
@@ -721,7 +764,7 @@ export const aiRouter = router({
           'NOT_FOUND',
           'Patient not found',
           'PATIENT_NOT_FOUND',
-          { patientId: input.patientId }
+          { patientId: input.patientId },
         );
       }
 
@@ -730,24 +773,26 @@ export const aiRouter = router({
         throw new HealthcareTRPCError(
           'FORBIDDEN',
           'Insufficient permissions for health analysis',
-          'INSUFFICIENT_PERMISSIONS',
+          'CLINIC_ACCESS_DENIED',
           { requiredPermission: 'health_analysis', userRole: ctx.user.role },
         );
       }
 
       // Gather patient data for analysis
-      const patientData = await gatherPatientAnalysisData(
-        input.patientId,
-        input.clinicId,
-        input.timeRange,
-        input.includeHistory,
+      const patientData = await healthAnalysisService.gatherPatientAnalysisData(
+        {
+          patientId: input.patientId,
+          clinicId: input.clinicId,
+          userId: ctx.user.id,
+          userRole: ctx.user.role,
+        },
       );
 
       if (!patientData.hasMinimumData) {
         throw new HealthcareTRPCError(
           'BAD_REQUEST',
           'Insufficient patient data for analysis',
-          'INSUFFICIENT_DATA',
+          'AI_PROCESSING_ERROR',
           {
             dataPoints: patientData.dataPointCount,
             minimumRequired: 3,
@@ -756,25 +801,26 @@ export const aiRouter = router({
       }
 
       // Build analysis prompt
-      const analysisPrompt = buildHealthAnalysisPrompt({
-        analysisType: input.analysisType,
+      const analysisPrompt = healthAnalysisService.buildHealthAnalysisPrompt({
         patientData,
         customPrompt: input.customPrompt,
       });
 
       try {
         // Call AI service for health analysis
-        const aiResponse = await callHealthAnalysisAI({
+        const aiResponse = await healthAnalysisService.callHealthAnalysisAI({
           prompt: analysisPrompt,
           model: 'gpt-4', // Use most capable model for health analysis
           temperature: 0.3, // Lower temperature for medical analysis
         });
 
         // Parse AI response into structured insights
-        const analysisResult = parseHealthAnalysisResponse(aiResponse.content);
+        const analysisResult = healthAnalysisService.parseHealthAnalysisResponse(
+          aiResponse.content,
+        );
 
         // Store analysis results
-        const analysisId = await storeHealthAnalysis({
+        const analysisId = await healthAnalysisService.storeHealthAnalysis({
           patientId: input.patientId,
           clinicId: input.clinicId,
           analysisType: input.analysisType,
@@ -848,10 +894,12 @@ export const aiRouter = router({
       tags: ['ai', 'health', 'monitoring'],
       requiresPermission: 'ai:healthcheck',
     })
-    .input(z.object({
-      includeModels: z.boolean().default(true),
-      includeUsage: z.boolean().default(true),
-    }))
+    .input(
+      z.object({
+        includeModels: z.boolean().default(true),
+        includeUsage: z.boolean().default(true),
+      }),
+    )
     .output(AIHealthcheckResponseSchema)
     .query(async ({ input, ctx }) => {
       try {
@@ -916,58 +964,66 @@ export const aiRouter = router({
       tags: ['ai', 'appointments', 'scheduling'],
       requiresPermission: 'ai:appointments',
     })
-    .input(z.object({
-      patientId: z.string().uuid(),
-      clinicId: z.string().uuid(),
-      serviceType: z.string().optional(),
-      preferredTimeframe: z.object({
-        from: z.string().datetime(),
-        to: z.string().datetime(),
-      }).optional(),
-      urgency: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
-      previousAppointments: z.boolean().default(true),
-    }))
-    .output(z.object({
-      success: z.literal(true),
-      data: z.object({
-        suggestions: z.array(z.object({
-          appointmentType: z.string(),
-          recommendedDate: z.string().datetime(),
-          duration: z.number(),
-          priority: z.enum(['low', 'medium', 'high', 'urgent']),
-          reasoning: z.string(),
-          professionalId: z.string().optional(),
-          serviceId: z.string().optional(),
-        })),
-        optimization: z.object({
-          bestTimeSlots: z.array(z.string().datetime()),
-          conflictWarnings: z.array(z.string()),
-          efficiencyScore: z.number().min(0).max(1),
-        }),
-        patientInsights: z.object({
-          appointmentHistory: z.object({
-            totalAppointments: z.number(),
-            averageInterval: z.number(),
-            lastAppointment: z.string().datetime().nullable(),
-          }),
-          preferences: z.object({
-            preferredTimes: z.array(z.string()),
-            preferredDays: z.array(z.string()),
-            noShowRisk: z.enum(['low', 'medium', 'high']),
-          }),
-        }),
+    .input(
+      z.object({
+        patientId: z.string().uuid(),
+        clinicId: z.string().uuid(),
+        serviceType: z.string().optional(),
+        preferredTimeframe: z
+          .object({
+            from: z.string().datetime(),
+            to: z.string().datetime(),
+          })
+          .optional(),
+        urgency: z.enum(['low', 'medium', 'high', 'urgent']).default('medium'),
+        previousAppointments: z.boolean().default(true),
       }),
-      message: z.string(),
-      timestamp: z.string().datetime(),
-      requestId: z.string().optional(),
-    }))
+    )
+    .output(
+      z.object({
+        success: z.literal(true),
+        data: z.object({
+          suggestions: z.array(
+            z.object({
+              appointmentType: z.string(),
+              recommendedDate: z.string().datetime(),
+              duration: z.number(),
+              priority: z.enum(['low', 'medium', 'high', 'urgent']),
+              reasoning: z.string(),
+              professionalId: z.string().optional(),
+              serviceId: z.string().optional(),
+            }),
+          ),
+          optimization: z.object({
+            bestTimeSlots: z.array(z.string().datetime()),
+            conflictWarnings: z.array(z.string()),
+            efficiencyScore: z.number().min(0).max(1),
+          }),
+          patientInsights: z.object({
+            appointmentHistory: z.object({
+              totalAppointments: z.number(),
+              averageInterval: z.number(),
+              lastAppointment: z.string().datetime().nullable(),
+            }),
+            preferences: z.object({
+              preferredTimes: z.array(z.string()),
+              preferredDays: z.array(z.string()),
+              noShowRisk: z.enum(['low', 'medium', 'high']),
+            }),
+          }),
+        }),
+        message: z.string(),
+        timestamp: z.string().datetime(),
+        requestId: z.string().optional(),
+      }),
+    )
     .mutation(async ({ input, ctx }) => {
       // Validate access
       const clinic = await ctx.prisma.clinic.findFirst({
         where: {
           id: input.clinicId,
-          userId: ctx.user.id
-        }
+          userId: ctx.user.id,
+        },
       });
 
       if (!clinic) {
@@ -978,8 +1034,8 @@ export const aiRouter = router({
         where: {
           id: input.patientId,
           clinicId: input.clinicId,
-          userId: ctx.user.id
-        }
+          userId: ctx.user.id,
+        },
       });
 
       if (!patient) {
@@ -1054,7 +1110,10 @@ export const aiRouter = router({
 });
 
 // Helper functions
-async function sanitizeHealthcareMessage(message: string, patientId?: string): Promise<string> {
+async function sanitizeHealthcareMessage(
+  message: string,
+  patientId?: string,
+): Promise<string> {
   // Implementation for LGPD-compliant message sanitization
   return message; // Placeholder
 }
@@ -1074,7 +1133,10 @@ async function callAIServiceWithRetry(request: any): Promise<any> {
   };
 }
 
-async function checkAIUsageLimit(userId: string, clinicId: string): Promise<any> {
+async function checkAIUsageLimit(
+  userId: string,
+  clinicId: string,
+): Promise<any> {
   return { allowed: true, currentUsage: 0, limit: 1000, resetTime: new Date() };
 }
 

@@ -202,9 +202,14 @@ export class LGPDComplianceValidator {
       }
 
       // Validate data minimization (LGPD Art. 6, III)
-      const isMinimized = await this.validateDataMinimization(dataCategories, purpose);
+      const isMinimized = await this.validateDataMinimization(
+        dataCategories,
+        purpose,
+      );
       if (!isMinimized) {
-        violations.push('Data processing violates data minimization principle (LGPD Art. 6, III)');
+        violations.push(
+          'Data processing violates data minimization principle (LGPD Art. 6, III)',
+        );
       }
 
       return {
@@ -218,7 +223,13 @@ export class LGPDComplianceValidator {
         'LGPD compliance validation failed',
         'Art. 6',
         'data_processing',
-        { dataSubjectId, purpose, dataCategories, legalBasis, error: error.message },
+        {
+          dataSubjectId,
+          purpose,
+          dataCategories,
+          legalBasis,
+          error: error.message,
+        },
       );
     }
   }
@@ -240,10 +251,7 @@ export class LGPDComplianceValidator {
           dataCategories: {
             has: dataCategory,
           },
-          OR: [
-            { expiresAt: null },
-            { expiresAt: { gte: new Date() } },
-          ],
+          OR: [{ expiresAt: null }, { expiresAt: { gte: new Date() } }],
         },
       });
 
@@ -302,7 +310,9 @@ export class LGPDComplianceValidator {
       };
 
       // Check if current purpose is original or compatible
-      const isOriginalPurpose = originalPurposes.includes(currentPurpose.toString());
+      const isOriginalPurpose = originalPurposes.includes(
+        currentPurpose.toString(),
+      );
       const isCompatiblePurpose = originalPurposes.some(original =>
         compatiblePurposes[original]?.includes(currentPurpose)
       );
@@ -377,12 +387,18 @@ export class LGPDComplianceValidator {
           break;
 
         case LGPDDataSubjectRights.RECTIFICATION:
-          result = await this.handleDataRectification(dataSubjectId, requestDetails.specificData);
+          result = await this.handleDataRectification(
+            dataSubjectId,
+            requestDetails.specificData,
+          );
           message = 'Data rectification request initiated';
           break;
 
         case LGPDDataSubjectRights.DELETION:
-          result = await this.handleDataDeletion(dataSubjectId, requestDetails.reason);
+          result = await this.handleDataDeletion(
+            dataSubjectId,
+            requestDetails.reason,
+          );
           message = 'Data deletion request completed successfully';
           break;
 
@@ -392,7 +408,10 @@ export class LGPDComplianceValidator {
           break;
 
         case LGPDDataSubjectRights.CONSENT_WITHDRAWAL:
-          result = await this.handleConsentWithdrawal(dataSubjectId, requestDetails.specificData);
+          result = await this.handleConsentWithdrawal(
+            dataSubjectId,
+            requestDetails.specificData,
+          );
           message = 'Consent withdrawal processed successfully';
           break;
 
@@ -486,7 +505,10 @@ export class LGPDComplianceValidator {
   /**
    * Handles data deletion requests (LGPD Art. 18, VI)
    */
-  private async handleDataDeletion(dataSubjectId: string, reason?: string): Promise<any> {
+  private async handleDataDeletion(
+    dataSubjectId: string,
+    reason?: string,
+  ): Promise<any> {
     await this.prisma.deletePatientData(dataSubjectId, {
       cascadeDelete: true,
       retainAuditTrail: true,

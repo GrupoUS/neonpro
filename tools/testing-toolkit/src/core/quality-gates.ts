@@ -5,7 +5,7 @@
  * and validation rules.
  */
 
-import type { QualityGateResult } from './types';
+import type { QualityGateResult } from "./types";
 
 export interface QualityGateConfig {
   name: string;
@@ -16,34 +16,34 @@ export interface QualityGateConfig {
 
 export const DEFAULT_QUALITY_GATES: QualityGateConfig[] = [
   {
-    name: 'test-coverage',
+    name: "test-coverage",
     threshold: 85,
     critical: true,
-    description: 'Minimum test coverage percentage',
+    description: "Minimum test coverage percentage",
   },
   {
-    name: 'performance-budget',
+    name: "performance-budget",
     threshold: 1000,
     critical: false,
-    description: 'Maximum test execution time in milliseconds',
+    description: "Maximum test execution time in milliseconds",
   },
   {
-    name: 'security-vulnerabilities',
+    name: "security-vulnerabilities",
     threshold: 0,
     critical: true,
-    description: 'Maximum number of critical security vulnerabilities',
+    description: "Maximum number of critical security vulnerabilities",
   },
   {
-    name: 'code-quality-score',
+    name: "code-quality-score",
     threshold: 80,
     critical: false,
-    description: 'Minimum code quality score',
+    description: "Minimum code quality score",
   },
   {
-    name: 'healthcare-compliance',
+    name: "healthcare-compliance",
     threshold: 100,
     critical: true,
-    description: 'Healthcare compliance score (LGPD, ANVISA, CFM)',
+    description: "Healthcare compliance score (LGPD, ANVISA, CFM)",
   },
 ];
 
@@ -58,7 +58,7 @@ export class QualityGateValidator {
    * Validate a single quality gate
    */
   validateGate(gateName: string, actualValue: number): QualityGateResult {
-    const gate = this.gates.find(g => g.name === gateName);
+    const gate = this.gates.find((g) => g.name === gateName);
 
     if (!gate) {
       throw new Error(`Quality gate '${gateName}' not found`);
@@ -67,10 +67,10 @@ export class QualityGateValidator {
     let passed: boolean;
 
     // Special handling for different gate types
-    if (gateName === 'security-vulnerabilities') {
+    if (gateName === "security-vulnerabilities") {
       // Lower is better for vulnerabilities
       passed = actualValue <= gate.threshold;
-    } else if (gateName === 'performance-budget') {
+    } else if (gateName === "performance-budget") {
       // Lower is better for performance
       passed = actualValue <= gate.threshold;
     } else {
@@ -107,8 +107,8 @@ export class QualityGateValidator {
       }
     });
 
-    const failedResults = results.filter(r => !r.passed);
-    const criticalFailures = failedResults.filter(r => r.critical);
+    const failedResults = results.filter((r) => !r.passed);
+    const criticalFailures = failedResults.filter((r) => r.critical);
     const passed = criticalFailures.length === 0;
 
     const summary = passed
@@ -127,7 +127,7 @@ export class QualityGateValidator {
    * Add or update a quality gate
    */
   addGate(gate: QualityGateConfig): void {
-    const existingIndex = this.gates.findIndex(g => g.name === gate.name);
+    const existingIndex = this.gates.findIndex((g) => g.name === gate.name);
 
     if (existingIndex >= 0) {
       this.gates[existingIndex] = gate;
@@ -148,27 +148,29 @@ export class QualityGateValidator {
    */
   generateReport(results: QualityGateResult[]): string {
     const lines: string[] = [];
-    lines.push('Quality Gates Report');
-    lines.push('==================');
-    lines.push('');
+    lines.push("Quality Gates Report");
+    lines.push("==================");
+    lines.push("");
 
-    results.forEach(result => {
-      const status = result.passed ? '✅ PASS' : '❌ FAIL';
-      const critical = result.critical ? ' (CRITICAL)' : '';
+    results.forEach((result) => {
+      const status = result.passed ? "✅ PASS" : "❌ FAIL";
+      const critical = result.critical ? " (CRITICAL)" : "";
       lines.push(`${status} ${result.gate}${critical}`);
       lines.push(`  Expected: ${result.expected}, Actual: ${result.actual}`);
-      lines.push('');
+      lines.push("");
     });
 
-    const passedCount = results.filter(r => r.passed).length;
+    const passedCount = results.filter((r) => r.passed).length;
     const totalCount = results.length;
-    const criticalFailures = results.filter(r => !r.passed && r.critical).length;
+    const criticalFailures = results.filter(
+      (r) => !r.passed && r.critical,
+    ).length;
 
     lines.push(`Summary: ${passedCount}/${totalCount} gates passed`);
     if (criticalFailures > 0) {
       lines.push(`⚠️  ${criticalFailures} critical failures detected`);
     }
 
-    return lines.join('\n');
+    return lines.join("\n");
   }
 }
