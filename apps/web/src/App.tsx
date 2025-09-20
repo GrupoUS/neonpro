@@ -53,15 +53,15 @@ const App = () => {
             {/* Healthcare AI Chat Interface */}
             <CopilotPopup
               labels={{
-                title: "Assistente NeonPro",
-                initial: "Como posso ajudar com seus dados de saúde?",
-                placeholder: "Digite sua pergunta sobre pacientes, agendamentos ou finanças...",
-                button: "Abrir assistente"
+                title: 'Assistente NeonPro',
+                initial: 'Como posso ajudar com seus dados de saúde?',
+                placeholder: 'Digite sua pergunta sobre pacientes, agendamentos ou finanças...',
+                button: 'Abrir assistente',
               }}
-              className="neonpro-copilot-popup"
+              className='neonpro-copilot-popup'
               // Healthcare-optimized popup configuration
               defaultOpen={false}
-              triggerClassName="neonpro-chat-trigger"
+              triggerClassName='neonpro-chat-trigger'
               style={{
                 // NeonPro brand colors
                 '--copilot-kit-primary-color': '#AC9469',
@@ -76,7 +76,7 @@ const App = () => {
 
                 // Healthcare-appropriate spacing
                 '--copilot-kit-spacing': '16px',
-                '--copilot-kit-touch-target': '44px'
+                '--copilot-kit-touch-target': '44px',
               } as React.CSSProperties}
             />
 

@@ -29,7 +29,7 @@ export interface AccessControlResult {
 
 export class AccessControlService {
   static async validateResourceAccess(
-    request: ResourceRequest
+    request: ResourceRequest,
   ): Promise<AccessControlResult> {
     // Mock implementation for testing
     const auditLog = {
@@ -51,7 +51,7 @@ export class AccessControlService {
   static async checkPermission(
     userId: string,
     resource: string,
-    action: string
+    action: string,
   ): Promise<boolean> {
     // Mock implementation for testing
     return true;
@@ -59,7 +59,7 @@ export class AccessControlService {
 
   static async getUserPermissions(
     userId: string,
-    resource?: string
+    resource?: string,
   ): Promise<string[]> {
     // Mock implementation for testing
     return ['read', 'write', 'execute'];
@@ -68,7 +68,7 @@ export class AccessControlService {
   static async logAccessAttempt(
     request: ResourceRequest,
     granted: boolean,
-    reason?: string
+    reason?: string,
   ): Promise<void> {
     // Mock implementation for testing
     console.log('Access attempt logged:', {

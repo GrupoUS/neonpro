@@ -1,3 +1,4 @@
+import { trpcServer } from '@hono/trpc-server';
 import { cors } from 'hono/cors';
 import { errorHandler } from './middleware/error-handler';
 import { errorSanitizationMiddleware } from './middleware/error-sanitization';
@@ -8,19 +9,15 @@ import chatRouter from './routes/chat';
 import { medicalRecords } from './routes/medical-records';
 import patientsRouter from './routes/patients';
 import v1Router from './routes/v1';
-import { trpcServer } from '@hono/trpc-server';
-import { appRouter } from './trpc/router';
 import { Context } from './trpc/context';
+import { appRouter } from './trpc/router';
 
 // Import security and monitoring libraries
 // import security from '@neonpro/security';
 import { initializeLogger, logger } from './lib/logger';
 import { initializeSentry, sentryMiddleware } from './lib/sentry';
 import { errorTracker } from './services/error-tracking-bridge';
-import {
-  getErrorTrackingHealth,
-  initializeErrorTracking,
-} from './services/error-tracking-init';
+import { getErrorTrackingHealth, initializeErrorTracking } from './services/error-tracking-init';
 // import { sdk as telemetrySDK, healthcareTelemetryMiddleware } from '@neonpro/shared/src/telemetry';
 import { createHealthcareOpenAPIApp, setupHealthcareSwaggerUI } from './lib/openapi-generator';
 import { cspViolationHandler, healthcareCSPMiddleware } from './lib/security/csp';
@@ -29,7 +26,10 @@ import {
   globalErrorHandler,
 } from './middleware/error-tracking';
 import { rateLimitMiddleware } from './middleware/rate-limiting';
-import { healthcareSecurityHeadersMiddleware, httpsRedirectMiddleware } from './middleware/security-headers';
+import {
+  healthcareSecurityHeadersMiddleware,
+  httpsRedirectMiddleware,
+} from './middleware/security-headers';
 import { sensitiveDataExposureMiddleware } from './services/sensitive-field-analyzer';
 
 // Extract middleware functions from security package
@@ -242,12 +242,12 @@ app.route('/api/v1', v1Router);
 // Mount tRPC router under /trpc for type-safe API access
 const tRPCHandle = trpcServer({
   router: appRouter,
-  createContext: async (opts) => {
+  createContext: async opts => {
     // Create tRPC context from Hono request
     const headers = opts.req.headers;
     const userId = headers.get('x-user-id') || headers.get('user-id');
     const clinicId = headers.get('x-clinic-id') || headers.get('clinic-id');
-    
+
     return {
       userId,
       clinicId,

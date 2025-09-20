@@ -116,6 +116,7 @@ id_ed25519*
 .turbo
 **/.turbo
 .specify/
+.specify
 
 # Workspace and package manager
 node_modules/
@@ -214,8 +215,6 @@ cleanup-reports/
 # Workspace configurations
 *.code-workspace
 **/*.code-workspace
-.vscode/settings.json
-.vscode/launch.json
 
 # Healthcare specific temporary files
 *patient*temp*

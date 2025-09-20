@@ -1,6 +1,6 @@
-import { defineConfig } from 'vite'
-import tsconfigPaths from 'vite-tsconfig-paths'
-import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { defineConfig } from 'vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [
@@ -24,7 +24,7 @@ export default defineConfig({
       entry: 'src/index.ts',
       name: 'NeonProAPI',
       fileName: 'index',
-      formats: ['es']
+      formats: ['es'],
     },
     rollupOptions: {
       external: [
@@ -33,21 +33,26 @@ export default defineConfig({
         '@prisma/client',
         '@supabase/supabase-js',
         '@trpc/server',
-        '@trpc/client'
+        '@trpc/client',
+        '@opentelemetry/api',
+        '@opentelemetry/auto-instrumentations-node',
+        '@opentelemetry/exporter-prometheus',
+        '@opentelemetry/sdk-node',
+        '@opentelemetry/semantic-conventions',
       ],
       output: {
         globals: {
-          hono: 'Hono'
-        }
-      }
+          hono: 'Hono',
+        },
+      },
     },
     target: 'node18',
     minify: 'terser',
-    sourcemap: true
+    sourcemap: true,
   },
   server: {
     port: 3005,
-    host: true
+    host: true,
   },
   optimizeDeps: {
     include: [
@@ -56,10 +61,10 @@ export default defineConfig({
       '@hono/trpc-server',
       '@trpc/server',
       'zod',
-      'valibot'
-    ]
+      'valibot',
+    ],
   },
   esbuild: {
-    target: 'node18'
-  }
-})
+    target: 'node18',
+  },
+});

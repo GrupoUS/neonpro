@@ -1,407 +1,407 @@
 /**
  * Integration Test for "Access denied handling" scenario
  * TDD Test - MUST FAIL until implementation is complete
- * 
+ *
  * This test validates proper access control and denial scenarios
  * from quickstart.md scenario 5
  */
 
-import { describe, test, expect, beforeAll, afterAll } from 'vitest'
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
 
 describe('Access Denied Handling - Integration Test', () => {
-  let app: any
+  let app: any;
 
   beforeAll(async () => {
     try {
-      app = (await import('../../src/app')).default
+      app = (await import('../../src/app')).default;
     } catch (error) {
-      console.log('Expected failure: App not available during TDD phase')
+      console.log('Expected failure: App not available during TDD phase');
     }
-  })
+  });
 
   describe('Role-Based Access Denial', () => {
     test('should deny financial data access for receptionist role', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
-      const query = "Me mostre todos os dados financeiros"
-      const sessionId = "test-session-receptionist-denied"
+      const query = 'Me mostre todos os dados financeiros';
+      const sessionId = 'test-session-receptionist-denied';
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-receptionist-token'
+          Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
           query,
           sessionId,
           context: {
-            userId: "receptionist-user-id",
-            role: "receptionist"
-          }
-        })
-      })
+            userId: 'receptionist-user-id',
+            role: 'receptionist',
+          },
+        }),
+      });
 
-      expect(response.status).toBe(200) // Should not be HTTP error
-      
-      const responseData = await response.json()
-      expect(responseData.success).toBe(true)
-      expect(responseData.response.type).toBe('text')
-      
+      expect(response.status).toBe(200); // Should not be HTTP error
+
+      const responseData = await response.json();
+      expect(responseData.success).toBe(true);
+      expect(responseData.response.type).toBe('text');
+
       // Should contain access denied message in Portuguese
-      const message = responseData.response.content.text.toLowerCase()
-      expect(message).toMatch(/acesso negado|não autorizado|sem permissão|não tem acesso/)
-    })
+      const message = responseData.response.content.text.toLowerCase();
+      expect(message).toMatch(/acesso negado|não autorizado|sem permissão|não tem acesso/);
+    });
 
     test('should deny sensitive client data for unauthorized roles', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const restrictedQueries = [
-        "Histórico médico completo de todos os pacientes",
-        "Dados pessoais completos dos clientes",
-        "Informações confidenciais dos pacientes"
-      ]
+        'Histórico médico completo de todos os pacientes',
+        'Dados pessoais completos dos clientes',
+        'Informações confidenciais dos pacientes',
+      ];
 
       for (const query of restrictedQueries) {
         const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer valid-receptionist-token'
+            Authorization: 'Bearer valid-receptionist-token',
           },
           body: JSON.stringify({
             query,
             sessionId: `test-session-denied-${Math.random()}`,
             context: {
-              userId: "receptionist-user-id",
-              role: "receptionist"
-            }
-          })
-        })
+              userId: 'receptionist-user-id',
+              role: 'receptionist',
+            },
+          }),
+        });
 
-        expect(response.status).toBe(200)
-        
-        const responseData = await response.json()
-        expect(responseData.success).toBe(true)
-        expect(responseData.response.type).toBe('text')
-        
-        const message = responseData.response.content.text.toLowerCase()
-        expect(message).toMatch(/acesso|permissão|autorização/)
+        expect(response.status).toBe(200);
+
+        const responseData = await response.json();
+        expect(responseData.success).toBe(true);
+        expect(responseData.response.type).toBe('text');
+
+        const message = responseData.response.content.text.toLowerCase();
+        expect(message).toMatch(/acesso|permissão|autorização/);
       }
-    })
-  })
+    });
+  });
 
   describe('Domain-Based Access Denial', () => {
     test('should deny cross-domain data access', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-clinic-a-token'
+          Authorization: 'Bearer valid-clinic-a-token',
         },
         body: JSON.stringify({
-          query: "Dados de todos os clientes do sistema",
-          sessionId: "test-session-cross-domain",
+          query: 'Dados de todos os clientes do sistema',
+          sessionId: 'test-session-cross-domain',
           context: {
-            userId: "clinic-a-user",
-            domain: "clinic-a"
-          }
-        })
-      })
+            userId: 'clinic-a-user',
+            domain: 'clinic-a',
+          },
+        }),
+      });
 
-      expect(response.status).toBe(200)
-      
-      const responseData = await response.json()
-      
+      expect(response.status).toBe(200);
+
+      const responseData = await response.json();
+
       // Should only return data from the user's domain
       if (responseData.success && responseData.response.content.data) {
         // In a properly implemented system, this would only show clinic-a data
-        expect(responseData.response.content.data).toBeDefined()
+        expect(responseData.response.content.data).toBeDefined();
       }
-    })
+    });
 
     test('should handle unauthorized domain attempts', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer invalid-domain-token'
+          Authorization: 'Bearer invalid-domain-token',
         },
         body: JSON.stringify({
-          query: "Acesso a dados de outra clínica",
-          sessionId: "test-session-invalid-domain",
+          query: 'Acesso a dados de outra clínica',
+          sessionId: 'test-session-invalid-domain',
           context: {
-            userId: "malicious-user",
-            domain: "unauthorized-domain"
-          }
-        })
-      })
+            userId: 'malicious-user',
+            domain: 'unauthorized-domain',
+          },
+        }),
+      });
 
       // Should either return 403 or access denied message
       if (response.status === 200) {
-        const responseData = await response.json()
+        const responseData = await response.json();
         if (responseData.success) {
-          const message = responseData.response.content.text.toLowerCase()
-          expect(message).toMatch(/acesso negado|não autorizado/)
+          const message = responseData.response.content.text.toLowerCase();
+          expect(message).toMatch(/acesso negado|não autorizado/);
         }
       } else {
-        expect(response.status).toBe(403)
+        expect(response.status).toBe(403);
       }
-    })
-  })
+    });
+  });
 
   describe('User-Friendly Error Messages', () => {
     test('should provide clear access denied message in Portuguese', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-receptionist-token'
+          Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
-          query: "Relatório financeiro completo",
-          sessionId: "test-session-clear-message",
+          query: 'Relatório financeiro completo',
+          sessionId: 'test-session-clear-message',
           context: {
-            userId: "receptionist-user-id",
-            role: "receptionist"
-          }
-        })
-      })
+            userId: 'receptionist-user-id',
+            role: 'receptionist',
+          },
+        }),
+      });
 
-      const responseData = await response.json()
-      expect(responseData.success).toBe(true)
-      expect(responseData.response.type).toBe('text')
-      
-      const message = responseData.response.content.text
-      
+      const responseData = await response.json();
+      expect(responseData.success).toBe(true);
+      expect(responseData.response.type).toBe('text');
+
+      const message = responseData.response.content.text;
+
       // Should be a user-friendly message in Portuguese
-      expect(message).toMatch(/[Dd]esculpe|[Ss]into muito|[Nn]ão é possível|[Aa]cesso negado/)
-      expect(message.length).toBeGreaterThan(20) // Should be explanatory, not just "Access Denied"
-    })
+      expect(message).toMatch(/[Dd]esculpe|[Ss]into muito|[Nn]ão é possível|[Aa]cesso negado/);
+      expect(message.length).toBeGreaterThan(20); // Should be explanatory, not just "Access Denied"
+    });
 
     test('should suggest allowed queries for denied requests', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-nurse-token'
+          Authorization: 'Bearer valid-nurse-token',
         },
         body: JSON.stringify({
-          query: "Dados financeiros confidenciais",
-          sessionId: "test-session-suggestions",
+          query: 'Dados financeiros confidenciais',
+          sessionId: 'test-session-suggestions',
           context: {
-            userId: "nurse-user-id",
-            role: "nurse"
-          }
-        })
-      })
+            userId: 'nurse-user-id',
+            role: 'nurse',
+          },
+        }),
+      });
 
-      const responseData = await response.json()
-      
+      const responseData = await response.json();
+
       if (responseData.response.type === 'text') {
-        const message = responseData.response.content.text.toLowerCase()
-        
+        const message = responseData.response.content.text.toLowerCase();
+
         // Should suggest what the user CAN do
-        const hasSuggestions = message.includes('pode') || 
-                              message.includes('tente') || 
-                              message.includes('permitido') ||
-                              message.includes('disponível')
-        
-        expect(hasSuggestions).toBe(true)
+        const hasSuggestions = message.includes('pode')
+          || message.includes('tente')
+          || message.includes('permitido')
+          || message.includes('disponível');
+
+        expect(hasSuggestions).toBe(true);
       }
-    })
+    });
 
     test('should maintain professional tone in denial messages', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-receptionist-token'
+          Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
-          query: "Acesso total ao sistema",
-          sessionId: "test-session-professional",
+          query: 'Acesso total ao sistema',
+          sessionId: 'test-session-professional',
           context: {
-            userId: "receptionist-user-id",
-            role: "receptionist"
-          }
-        })
-      })
+            userId: 'receptionist-user-id',
+            role: 'receptionist',
+          },
+        }),
+      });
 
-      const responseData = await response.json()
-      
+      const responseData = await response.json();
+
       if (responseData.response.type === 'text') {
-        const message = responseData.response.content.text
-        
+        const message = responseData.response.content.text;
+
         // Should not be harsh or rude
-        expect(message).not.toMatch(/[Nn]ão!|[Pp]roibido!|[Nn]unca/)
-        
+        expect(message).not.toMatch(/[Nn]ão!|[Pp]roibido!|[Nn]unca/);
+
         // Should be polite and professional
-        expect(message).toMatch(/[Dd]esculpe|[Ll]amento|[Cc]ompreendo/)
+        expect(message).toMatch(/[Dd]esculpe|[Ll]amento|[Cc]ompreendo/);
       }
-    })
-  })
+    });
+  });
 
   describe('Security Event Logging', () => {
     test('should log access denial attempts for audit', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-receptionist-token'
+          Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
-          query: "Tentar acessar dados restritos",
-          sessionId: "test-session-audit-log",
+          query: 'Tentar acessar dados restritos',
+          sessionId: 'test-session-audit-log',
           context: {
-            userId: "receptionist-user-id",
-            role: "receptionist"
-          }
-        })
-      })
+            userId: 'receptionist-user-id',
+            role: 'receptionist',
+          },
+        }),
+      });
 
-      expect(response.status).toBe(200)
-      
+      expect(response.status).toBe(200);
+
       // Audit logging should be triggered for access denial
       // This would be validated in implementation with proper logging
-      const responseData = await response.json()
-      expect(responseData.success).toBe(true)
-    })
+      const responseData = await response.json();
+      expect(responseData.success).toBe(true);
+    });
 
     test('should track repeated unauthorized access attempts', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       // Simulate multiple unauthorized attempts
       const unauthorizedQueries = [
-        "Dados financeiros secretos",
-        "Informações confidenciais completas",
-        "Acesso administrativo total"
-      ]
+        'Dados financeiros secretos',
+        'Informações confidenciais completas',
+        'Acesso administrativo total',
+      ];
 
       for (const query of unauthorizedQueries) {
         const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer suspicious-user-token'
+            Authorization: 'Bearer suspicious-user-token',
           },
           body: JSON.stringify({
             query,
             sessionId: `test-session-suspicious-${Math.random()}`,
             context: {
-              userId: "suspicious-user-id",
-              role: "guest"
-            }
-          })
-        })
+              userId: 'suspicious-user-id',
+              role: 'guest',
+            },
+          }),
+        });
 
         // Should handle gracefully and log
-        expect(response.status).toBeLessThanOrEqual(403)
+        expect(response.status).toBeLessThanOrEqual(403);
       }
-    })
-  })
+    });
+  });
 
   describe('Response Time for Denied Requests', () => {
     test('should respond quickly even for denied requests', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
-      const startTime = Date.now()
-      
+      const startTime = Date.now();
+
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer valid-receptionist-token'
+          Authorization: 'Bearer valid-receptionist-token',
         },
         body: JSON.stringify({
-          query: "Dados financeiros completos",
-          sessionId: "test-session-denied-performance",
+          query: 'Dados financeiros completos',
+          sessionId: 'test-session-denied-performance',
           context: {
-            userId: "receptionist-user-id",
-            role: "receptionist"
-          }
-        })
-      })
+            userId: 'receptionist-user-id',
+            role: 'receptionist',
+          },
+        }),
+      });
 
-      const endTime = Date.now()
-      const responseTime = endTime - startTime
+      const endTime = Date.now();
+      const responseTime = endTime - startTime;
 
-      expect(responseTime).toBeLessThan(2000) // <2s requirement even for denied requests
-      expect(response.status).toBe(200)
-    })
-  })
+      expect(responseTime).toBeLessThan(2000); // <2s requirement even for denied requests
+      expect(response.status).toBe(200);
+    });
+  });
 
   describe('Different Access Denial Scenarios', () => {
     test('should handle expired session gracefully', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer expired-session-token'
+          Authorization: 'Bearer expired-session-token',
         },
         body: JSON.stringify({
-          query: "Qualquer consulta",
-          sessionId: "expired-session-id",
+          query: 'Qualquer consulta',
+          sessionId: 'expired-session-id',
           context: {
-            userId: "user-with-expired-session"
-          }
-        })
-      })
+            userId: 'user-with-expired-session',
+          },
+        }),
+      });
 
-      expect(response.status).toBe(401)
-    })
+      expect(response.status).toBe(401);
+    });
 
     test('should handle invalid authentication gracefully', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer invalid-jwt-token'
+          Authorization: 'Bearer invalid-jwt-token',
         },
         body: JSON.stringify({
-          query: "Teste de token inválido",
-          sessionId: "invalid-auth-session",
+          query: 'Teste de token inválido',
+          sessionId: 'invalid-auth-session',
           context: {
-            userId: "invalid-user"
-          }
-        })
-      })
+            userId: 'invalid-user',
+          },
+        }),
+      });
 
-      expect(response.status).toBe(401)
-    })
+      expect(response.status).toBe(401);
+    });
 
     test('should handle missing authentication', async () => {
-      expect(app).toBeDefined()
+      expect(app).toBeDefined();
 
       const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
           // No Authorization header
         },
         body: JSON.stringify({
-          query: "Teste sem autenticação",
-          sessionId: "no-auth-session"
-        })
-      })
+          query: 'Teste sem autenticação',
+          sessionId: 'no-auth-session',
+        }),
+      });
 
-      expect(response.status).toBe(401)
-    })
-  })
-})
+      expect(response.status).toBe(401);
+    });
+  });
+});

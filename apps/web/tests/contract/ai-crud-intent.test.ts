@@ -263,7 +263,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // RED: Test expects authentication validation
       const requestWithoutAuth = {
         ...mockIntentRequest,
-        context: { ...mockIntentRequest.context }
+        context: { ...mockIntentRequest.context },
       };
       delete requestWithoutAuth.context.userId;
 
@@ -274,7 +274,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // RED: Test expects session tracking
       const requestWithoutSession = {
         ...mockIntentRequest,
-        context: { ...mockIntentRequest.context }
+        context: { ...mockIntentRequest.context },
       };
       delete requestWithoutSession.context.sessionId;
 
@@ -357,7 +357,7 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // Create circular reference that cannot be stringified
       const circularObj: any = { entity: 'test' };
       circularObj.circular = circularObj;
-      
+
       await expect(createCrudIntent(circularObj)).rejects.toThrow('Invalid JSON');
     });
 
@@ -365,9 +365,9 @@ describe('AI CRUD Intent Phase - Contract Tests', () => {
       // RED: Test expects timeout handling
       // Stop MSW to let the timeout happen naturally
       server.close();
-      
+
       await expect(createCrudIntent(mockIntentRequest, 50)).rejects.toThrow('Request timeout');
-      
+
       // Restart server for other tests
       server.listen();
     });
