@@ -438,7 +438,9 @@ export const PerformanceTester: React.FC = () => {
     
     // Refresh memory info after tests
     getMemoryInfo();
-  }, [updateMetric, getMemoryInfo]);  const getStatusColor = (status: PerformanceMetric['status']) => {
+  }, [updateMetric, getMemoryInfo]);
+
+  const getStatusColor = (status: PerformanceMetric['status']) => {
     switch (status) {
       case 'excellent': return 'text-green-600';
       case 'good': return 'text-blue-600';
