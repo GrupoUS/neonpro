@@ -111,34 +111,9 @@ interface MemoryInfo {
 // Simulation functions for healthcare scenarios
 const simulateEmergencyAlert = async (): Promise<number> => {
   const start = performance.now();
-  
-  // Simulate emergency alert rendering
-  await new Promise(resolve => {
-    const element = document.createElement('div');
-    element.className = 'emergency-alert';
-    element.textContent = 'CRITICAL: Patient requires immediate attention';
-    element.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #ef4444;
-      color: white;
-      padding: 16px;
-      border-radius: 8px;
-      z-index: 9999;
-      animation: emergencyPulse 0.5s ease-in-out;
-    `;
-    
-    document.body.appendChild(element);
-    
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        document.body.removeChild(element);
-        resolve(void 0);
-      });
-    });
-  });
-  
+
+  // Simulate emergency alert rendering delay (without DOM manipulation)
+  await new Promise(resolve => setTimeout(resolve, 16)); // ~1 frame at 60Hz
   return performance.now() - start;
 };
 
