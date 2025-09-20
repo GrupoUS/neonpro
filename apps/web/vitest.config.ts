@@ -22,7 +22,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: ["./src/__tests__/setup.ts"],
+    setupFiles: ["./src/__tests__/setup.ts", "./tests/setup.ts"],
     pool: "forks",
     // Curated, fast test suite (5–6 core tests) by default.
     // To run FULL suite (including legacy/excluídos), set FULL_TESTS=1
@@ -56,6 +56,12 @@ export default defineConfig({
           "tests/accessibility/automated-test-runner.ts",
           // New UI tests
           "tests/ui/**/*.test.tsx",
+          // Contract tests for Financial Dashboard Enhancement
+          "tests/contract/**/*.test.ts",
+          // Component tests for Financial Dashboard Enhancement
+          "tests/component/**/*.test.tsx",
+          // Integration tests for Financial Dashboard Enhancement
+          "tests/integration/**/*.test.ts",
           // Telemedicine tests (T102.2 implementation)
           "src/components/telemedicine/__tests__/**/*.test.tsx",
           // Temporarily quarantine legacy route tests

@@ -171,7 +171,7 @@ describe('TDD: Unused Imports Detection', () => {
     it('should detect unused \'serve\' import from \'@hono/node-server\' in targeted-issues.test.ts', () => {
       const filePath = join(
         process.cwd(),
-        'apps/api/tests/integration/pr44-fixes/targeted-issues.test.ts',
+        'tests/integration/pr44-fixes/targeted-issues.test.ts',
       );
       const content = readFileSync(filePath, 'utf8');
 

@@ -27,6 +27,11 @@ describe("Contract: Financial Dashboard API", () => {
       // ACT: Call the REAL API endpoint (will fail until implemented)
       const response = await fetch(
         "/api/financial/dashboard?period=current_month",
+        {
+          headers: {
+            'Authorization': 'Bearer valid-test-token'
+          }
+        }
       );
 
       // ASSERT: These will FAIL until the endpoint is implemented
@@ -76,7 +81,11 @@ describe("Contract: Financial Dashboard API", () => {
       // TDD RED PHASE: Test real endpoint for LGPD compliance
 
       // ACT: Call real endpoint (will fail until implemented)
-      const response = await fetch("/api/financial/dashboard");
+      const response = await fetch("/api/financial/dashboard", {
+        headers: {
+          'Authorization': 'Bearer valid-test-token'
+        }
+      });
 
       // ASSERT: LGPD compliance indicators should be present
       expect(response.ok).toBe(true);
@@ -108,7 +117,11 @@ describe("Contract: Financial Dashboard API", () => {
       // TDD RED PHASE: Test real endpoint currency formatting
 
       // ACT: Call real endpoint (will fail until implemented)
-      const response = await fetch("/api/financial/dashboard");
+      const response = await fetch("/api/financial/dashboard", {
+        headers: {
+          'Authorization': 'Bearer valid-test-token'
+        }
+      });
 
       // ASSERT: Brazilian currency formatting patterns
       expect(response.ok).toBe(true);

@@ -8,7 +8,6 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { calendarDataMinimizationService } from "@/services/lgpd/data-minimization.service";
 import type {
   DataMinimizationConfig,
-  MinimizationResult,
   PatientDataSensitivity,
   LGPDDataCategory,
   DataMinimizationLevel,

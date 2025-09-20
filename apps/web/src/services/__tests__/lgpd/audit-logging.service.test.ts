@@ -7,11 +7,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { calendarLGPDAuditService } from "@/services/lgpd/audit-logging.service";
 import type {
-  LGPDAuditLog,
   LGPDAuditAction,
-  AuditDetails,
   AuditFilter,
-  AuditReport,
   ConsentValidationResult,
   DataMinimizationLevel,
 } from "@/services/lgpd/audit-logging.service";

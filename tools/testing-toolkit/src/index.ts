@@ -29,7 +29,6 @@ export {
   describe,
   expect,
   it,
-  test,
   vi,
   vitest,
 } from "vitest";

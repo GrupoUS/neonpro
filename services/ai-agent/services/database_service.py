@@ -52,7 +52,7 @@ class DatabaseService:
             query = (
                 self.client
                 .from_('patients')
-                .select(`
+                .select('''
                     id, 
                     full_name, 
                     email, 
@@ -63,7 +63,7 @@ class DatabaseService:
                     lgpd_consent_given,
                     created_at,
                     updated_at
-                `)
+                ''')
                 .ilike('full_name', f'%{name}%')
                 .limit(limit)
             )
@@ -96,7 +96,7 @@ class DatabaseService:
             query = (
                 self.client
                 .from_('appointments')
-                .select(`
+                .select('''
                     id,
                     patient_id,
                     professional_id,
@@ -108,7 +108,7 @@ class DatabaseService:
                     notes,
                     created_at,
                     updated_at
-                `)
+                ''')
                 .eq('patient_id', patient_id)
             )
             
@@ -137,7 +137,7 @@ class DatabaseService:
             query = (
                 self.client
                 .from_('financial_transactions')
-                .select(`
+                .select('''
                     id,
                     clinic_id,
                     patient_id,
@@ -149,7 +149,7 @@ class DatabaseService:
                     payment_method,
                     created_at,
                     updated_at
-                `)
+                ''')
             )
             
             # Apply filters

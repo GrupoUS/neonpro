@@ -4,7 +4,7 @@
   "description": "NeonPro aesthetic clinic management platform - Turborepo monorepo",
   "private": true,
   "type": "module",
-  "packageManager": "pnpm@8.15.0+sha512.ea45517d5285d123eac02c3793505fa1fd6da90a2fc60d1e8d9e0c1e9292886ecfaff513f062b9d1cc8021bb8615033b1ac5bea3b2ee3fc165a6d7034bbe6b03",
+  "packageManager": "pnpm@8.15.1+sha256.245fe901f8e7fa8782d7f17d32b6a83995e2ae03984cb5b62b8949bfdc27c7b5",
   "engines": {
     "node": ">=20.0.0",
     "npm": ">=8.0.0"
@@ -96,10 +96,12 @@
     "eslint-plugin-prettier": "^5.0.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-security": "^2.1.0",
+    "msw": "^2.11.2",
     "oxlint": "^1.15.0",
     "pre-commit": "^1.2.2",
     "prettier": "^3.0.0",
     "typescript": "^5.9.2",
+    "undici": "^7.16.0",
     "vitest": "^3.2.4"
   },
   "pnpm": {

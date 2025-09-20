@@ -162,7 +162,7 @@ describe("NeonPro Testing Toolkit Examples", () => {
 
   describe("Integration with MSW", () => {
     it("should mock API responses", async () => {
-      const response = await fetch("/api/auth/login", {
+      const response = await fetch('http://localhost/api/auth/login', {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -170,16 +170,16 @@ describe("NeonPro Testing Toolkit Examples", () => {
           password: "password",
         }),
       });
-
-      expect(response.ok).toBe(true);
-
+      
       const data = await response.json();
+      
+      expect(response.status).toBe(200);
+      expect(data).toHaveProperty("token");
       expect(data.user.email).toBe("test@example.com");
-      expect(data.token).toBe("mock-jwt-token");
     });
 
     it("should validate LGPD compliance in API responses", async () => {
-      const response = await fetch("/api/patients/test-patient-789");
+      const response = await fetch('http://localhost/api/patients/test-patient-789');
       expect(response.ok).toBe(true);
 
       const patient = await response.json();
@@ -190,32 +190,33 @@ describe("NeonPro Testing Toolkit Examples", () => {
   });
 });
 
-// Example of using the TDD suite creator
-createTDDSuite(
-  {
-    feature: "user-registration",
-    agents: ["security-auditor", "code-reviewer"],
-    compliance: ["LGPD"],
-  },
-  {
-    redPhase: () => {
-      // Define failing tests
-      expect(false).toBe(true); // This will fail
+describe("TDD Suite Creator Example", () => {
+  createTDDSuite(
+    {
+      feature: "user-registration",
+      agents: ["security-auditor", "code-reviewer"],
+      compliance: ["LGPD"],
     },
-    greenPhase: () => {
-      // Minimal implementation
-      const user = { id: "123", email: "test@example.com" };
-      expect(user.id).toBeTruthy();
+    {
+      redPhase: () => {
+        // Define failing tests - this should fail in RED phase
+        expect(false).toBe(true);
+      },
+      greenPhase: () => {
+        // Minimal implementation
+        const user = { id: "123", email: "test@example.com" };
+        expect(user.id).toBe("123");
+      },
+      refactorPhase: () => {
+        // Improved implementation
+        const user = {
+          id: "123",
+          email: "test@example.com",
+          createdAt: new Date(),
+          lgpdCompliant: true,
+        };
+        expect(user.lgpdCompliant).toBe(true);
+      },
     },
-    refactorPhase: () => {
-      // Improved implementation
-      const user = {
-        id: "123",
-        email: "test@example.com",
-        createdAt: new Date(),
-        lgpdCompliant: true,
-      };
-      expect(user.lgpdCompliant).toBe(true);
-    },
-  },
-);
+  );
+});

@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { appRouter } from '../../../trpc/router';
 
 // Import middleware and utilities
-import { mockAuthMiddleware, mockLGPDMiddleware } from '../../../middleware/auth-middleware';
+import { requireAuth, requireAIAccess } from '../../../middleware/auth';
 import { ComprehensiveAuditService } from '../../../services/audit-service';
 import { LGPDService } from '../../../services/lgpd-service';
 
@@ -77,8 +77,8 @@ const app = new Hono();
 // Main CRUD endpoint
 app.post(
   '/crud',
-  mockAuthMiddleware,
-  mockLGPDMiddleware,
+  requireAuth,
+  requireAIAccess,
   zValidator('json', crudRequestSchema),
   async c => {
     const startTime = Date.now();
