@@ -23,6 +23,7 @@ model User {
   auditTrails  AuditTrail[]
   auditLogs    AuditLog[]
   escalations  EscalationWorkflow[]
+  operationStates OperationState[]
   googleCalendarIntegrations GoogleCalendarIntegration[]
 
   @@map("users")
