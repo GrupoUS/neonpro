@@ -1,5 +1,5 @@
-import type { MedicalDataClassification } from "@neonpro/types";
-import { useCallback, useEffect, useState } from "react";
+import type { MedicalDataClassification } from '@neonpro/types';
+import { useCallback, useEffect, useState } from 'react';
 
 // Mock services for now - these would be replaced with actual API calls
 interface ConsentService {
@@ -35,7 +35,7 @@ interface AuditService {
   logSessionEnd: (
     sessionId: string,
     userId: string,
-    userRole: "doctor" | "patient",
+    userRole: 'doctor' | 'patient',
     clinicId: string,
     duration: number,
   ) => Promise<void>;
@@ -95,10 +95,10 @@ export interface UseLGPDConsentOptions {
   clinicId: string;
   dataTypes: MedicalDataClassification[];
   purpose:
-    | "telemedicine"
-    | "medical_treatment"
-    | "ai_assistance"
-    | "communication";
+    | 'telemedicine'
+    | 'medical_treatment'
+    | 'ai_assistance'
+    | 'communication';
   autoCheck?: boolean;
 }
 
@@ -132,14 +132,12 @@ export function useLGPDConsent({
    * Check if user has valid consent for all required data types
    */
   const checkConsent = useCallback(async () => {
-    setConsentState((prev) => ({ ...prev, isLoading: true, error: null }));
+    setConsentState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
       // Check consent for each data type
       const consentChecks = await Promise.all(
-        dataTypes.map((dataType) =>
-          consentService.verifyConsent(userId, dataType, sessionId),
-        ),
+        dataTypes.map(dataType => consentService.verifyConsent(userId, dataType, sessionId)),
       );
 
       const hasValidConsent = consentChecks.every(Boolean);
@@ -158,8 +156,8 @@ export function useLGPDConsent({
       await auditService.logDataAccess(
         sessionId,
         userId,
-        "patient",
-        "general-medical",
+        'patient',
+        'general-medical',
         `Consent verification for ${purpose}`,
         clinicId,
         { dataTypes, hasValidConsent },
@@ -167,9 +165,8 @@ export function useLGPDConsent({
 
       return hasValidConsent;
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
-      setConsentState((prev) => ({
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setConsentState(prev => ({
         ...prev,
         isLoading: false,
         error: errorMessage,
@@ -205,11 +202,10 @@ export function useLGPDConsent({
 
       return success;
     } catch (error) {
-      console.error("Failed to request consent:", error);
-      setConsentState((prev) => ({
+      console.error('Failed to request consent:', error);
+      setConsentState(prev => ({
         ...prev,
-        error:
-          error instanceof Error ? error.message : "Failed to request consent",
+        error: error instanceof Error ? error.message : 'Failed to request consent',
       }));
       return false;
     }
@@ -242,11 +238,10 @@ export function useLGPDConsent({
 
         return success;
       } catch (error) {
-        console.error("Failed to grant consent:", error);
-        setConsentState((prev) => ({
+        console.error('Failed to grant consent:', error);
+        setConsentState(prev => ({
           ...prev,
-          error:
-            error instanceof Error ? error.message : "Failed to grant consent",
+          error: error instanceof Error ? error.message : 'Failed to grant consent',
         }));
         return false;
       }
@@ -270,7 +265,7 @@ export function useLGPDConsent({
   const revokeConsent = useCallback(
     async (
       dataType: MedicalDataClassification,
-      reason: string = "User request",
+      reason: string = 'User request',
     ): Promise<void> => {
       try {
         await consentService.revokeConsent(userId, dataType, sessionId, reason);
@@ -287,11 +282,10 @@ export function useLGPDConsent({
         // Refresh consent state
         await checkConsent();
       } catch (error) {
-        console.error("Failed to revoke consent:", error);
-        setConsentState((prev) => ({
+        console.error('Failed to revoke consent:', error);
+        setConsentState(prev => ({
           ...prev,
-          error:
-            error instanceof Error ? error.message : "Failed to revoke consent",
+          error: error instanceof Error ? error.message : 'Failed to revoke consent',
         }));
       }
     },
@@ -315,7 +309,7 @@ export function useLGPDConsent({
           { purpose, dataTypes, startTime },
         );
       } catch (error) {
-        console.error("Failed to log session start:", error);
+        console.error('Failed to log session start:', error);
       }
     },
     [sessionId, patientId, userId, clinicId, purpose, dataTypes, auditService],
@@ -325,7 +319,7 @@ export function useLGPDConsent({
    * End telemedicine session with audit logging
    */
   const endSession = useCallback(
-    async (userRole: "doctor" | "patient" = "patient"): Promise<void> => {
+    async (userRole: 'doctor' | 'patient' = 'patient'): Promise<void> => {
       try {
         const endTime = Date.now();
         const duration = sessionStartTime ? endTime - sessionStartTime : 0;
@@ -340,7 +334,7 @@ export function useLGPDConsent({
 
         setSessionStartTime(null);
       } catch (error) {
-        console.error("Failed to log session end:", error);
+        console.error('Failed to log session end:', error);
       }
     },
     [sessionId, userId, clinicId, sessionStartTime, auditService],
@@ -353,7 +347,7 @@ export function useLGPDConsent({
     async (
       dataClassification: MedicalDataClassification,
       description: string,
-      userRole: string = "patient",
+      userRole: string = 'patient',
       metadata?: any,
     ): Promise<void> => {
       try {
@@ -367,7 +361,7 @@ export function useLGPDConsent({
           metadata,
         );
       } catch (error) {
-        console.error("Failed to log data access:", error);
+        console.error('Failed to log data access:', error);
       }
     },
     [sessionId, userId, clinicId, auditService],

@@ -4,7 +4,7 @@
  * Service layer for SMS/Email notifications and patient communication
  */
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 import type {
   CommunicationFilters,
   CommunicationMessage,
@@ -15,7 +15,7 @@ import type {
   PatientCommunicationPreferences,
   SendMessageRequest,
   UpdateCommunicationTemplateRequest,
-} from "@/types/patient-communication";
+} from '@/types/patient-communication';
 
 export class PatientCommunicationService {
   private static sb: any = supabase;
@@ -31,27 +31,27 @@ export class PatientCommunicationService {
     },
   ): Promise<CommunicationTemplate[]> {
     let query = this.sb
-      .from("communication_templates")
-      .select("*")
-      .eq("clinic_id", clinicId)
-      .order("created_at", { ascending: false });
+      .from('communication_templates')
+      .select('*')
+      .eq('clinic_id', clinicId)
+      .order('created_at', { ascending: false });
 
     if (filters?.message_type) {
-      query = query.eq("message_type", filters.message_type);
+      query = query.eq('message_type', filters.message_type);
     }
 
     if (filters?.communication_type) {
-      query = query.eq("communication_type", filters.communication_type);
+      query = query.eq('communication_type', filters.communication_type);
     }
 
     if (filters?.is_active !== undefined) {
-      query = query.eq("is_active", filters.is_active);
+      query = query.eq('is_active', filters.is_active);
     }
 
     const { data, error } = await query;
 
     if (error) {
-      console.error("Error fetching communication templates:", error);
+      console.error('Error fetching communication templates:', error);
       throw new Error(
         `Failed to fetch communication templates: ${error.message}`,
       );
@@ -68,7 +68,7 @@ export class PatientCommunicationService {
     request: CreateCommunicationTemplateRequest,
   ): Promise<CommunicationTemplate> {
     const { data, error } = await this.sb
-      .from("communication_templates")
+      .from('communication_templates')
       .insert({
         clinic_id: clinicId,
         ...request,
@@ -77,7 +77,7 @@ export class PatientCommunicationService {
       .single();
 
     if (error) {
-      console.error("Error creating communication template:", error);
+      console.error('Error creating communication template:', error);
       throw new Error(
         `Failed to create communication template: ${error.message}`,
       );
@@ -94,17 +94,17 @@ export class PatientCommunicationService {
     request: UpdateCommunicationTemplateRequest,
   ): Promise<CommunicationTemplate> {
     const { data, error } = await this.sb
-      .from("communication_templates")
+      .from('communication_templates')
       .update({
         ...request,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", id)
+      .eq('id', id)
       .select()
       .single();
 
     if (error) {
-      console.error("Error updating communication template:", error);
+      console.error('Error updating communication template:', error);
       throw new Error(
         `Failed to update communication template: ${error.message}`,
       );
@@ -118,12 +118,12 @@ export class PatientCommunicationService {
    */
   static async deleteCommunicationTemplate(id: string): Promise<void> {
     const { error } = await supabase
-      .from("communication_templates")
+      .from('communication_templates')
       .delete()
-      .eq("id", id);
+      .eq('id', id);
 
     if (error) {
-      console.error("Error deleting communication template:", error);
+      console.error('Error deleting communication template:', error);
       throw new Error(
         `Failed to delete communication template: ${error.message}`,
       );
@@ -137,7 +137,7 @@ export class PatientCommunicationService {
     clinicId: string,
     request: SendMessageRequest,
   ): Promise<CommunicationMessage> {
-    const { data, error } = await this.sb.rpc("send_patient_message", {
+    const { data, error } = await this.sb.rpc('send_patient_message', {
       p_clinic_id: clinicId,
       p_patient_id: request.patient_id,
       p_appointment_id: request.appointment_id,
@@ -151,7 +151,7 @@ export class PatientCommunicationService {
     });
 
     if (error) {
-      console.error("Error sending message:", error);
+      console.error('Error sending message:', error);
       throw new Error(`Failed to send message: ${error.message}`);
     }
 
@@ -166,7 +166,7 @@ export class PatientCommunicationService {
     filters?: CommunicationFilters,
   ): Promise<CommunicationMessage[]> {
     let query = this.sb
-      .from("communication_messages")
+      .from('communication_messages')
       .select(
         `
         *,
@@ -174,35 +174,35 @@ export class PatientCommunicationService {
         appointment:appointments(appointment_date, service_type:service_types(name))
       `,
       )
-      .eq("clinic_id", clinicId)
-      .order("created_at", { ascending: false });
+      .eq('clinic_id', clinicId)
+      .order('created_at', { ascending: false });
 
     if (filters?.message_type) {
-      query = query.eq("message_type", filters.message_type);
+      query = query.eq('message_type', filters.message_type);
     }
 
     if (filters?.communication_type) {
-      query = query.eq("communication_type", filters.communication_type);
+      query = query.eq('communication_type', filters.communication_type);
     }
 
     if (filters?.status) {
-      query = query.eq("status", filters.status);
+      query = query.eq('status', filters.status);
     }
 
     if (filters?.patient_id) {
-      query = query.eq("patient_id", filters.patient_id);
+      query = query.eq('patient_id', filters.patient_id);
     }
 
     if (filters?.appointment_id) {
-      query = query.eq("appointment_id", filters.appointment_id);
+      query = query.eq('appointment_id', filters.appointment_id);
     }
 
     if (filters?.start_date) {
-      query = query.gte("created_at", filters.start_date);
+      query = query.gte('created_at', filters.start_date);
     }
 
     if (filters?.end_date) {
-      query = query.lte("created_at", filters.end_date);
+      query = query.lte('created_at', filters.end_date);
     }
 
     if (filters?.search) {
@@ -214,7 +214,7 @@ export class PatientCommunicationService {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Error fetching communication messages:", error);
+      console.error('Error fetching communication messages:', error);
       throw new Error(
         `Failed to fetch communication messages: ${error.message}`,
       );
@@ -230,16 +230,16 @@ export class PatientCommunicationService {
     clinicId: string,
   ): Promise<CommunicationSettings | null> {
     const { data, error } = await this.sb
-      .from("communication_settings")
-      .select("*")
-      .eq("clinic_id", clinicId)
+      .from('communication_settings')
+      .select('*')
+      .eq('clinic_id', clinicId)
       .single();
 
     if (error) {
-      if (error.code === "PGRST116") {
+      if (error.code === 'PGRST116') {
         return null; // Not found
       }
-      console.error("Error fetching communication settings:", error);
+      console.error('Error fetching communication settings:', error);
       throw new Error(
         `Failed to fetch communication settings: ${error.message}`,
       );
@@ -256,7 +256,7 @@ export class PatientCommunicationService {
     settings: Partial<CommunicationSettings>,
   ): Promise<CommunicationSettings> {
     const { data, error } = await this.sb
-      .from("communication_settings")
+      .from('communication_settings')
       .upsert({
         clinic_id: clinicId,
         ...settings,
@@ -266,7 +266,7 @@ export class PatientCommunicationService {
       .single();
 
     if (error) {
-      console.error("Error updating communication settings:", error);
+      console.error('Error updating communication settings:', error);
       throw new Error(
         `Failed to update communication settings: ${error.message}`,
       );
@@ -282,16 +282,16 @@ export class PatientCommunicationService {
     patientId: string,
   ): Promise<PatientCommunicationPreferences | null> {
     const { data, error } = await this.sb
-      .from("patient_communication_preferences")
-      .select("*")
-      .eq("patient_id", patientId)
+      .from('patient_communication_preferences')
+      .select('*')
+      .eq('patient_id', patientId)
       .single();
 
     if (error) {
-      if (error.code === "PGRST116") {
+      if (error.code === 'PGRST116') {
         return null; // Not found
       }
-      console.error("Error fetching patient communication preferences:", error);
+      console.error('Error fetching patient communication preferences:', error);
       throw new Error(
         `Failed to fetch patient communication preferences: ${error.message}`,
       );
@@ -308,7 +308,7 @@ export class PatientCommunicationService {
     preferences: Partial<PatientCommunicationPreferences>,
   ): Promise<PatientCommunicationPreferences> {
     const { data, error } = await this.sb
-      .from("patient_communication_preferences")
+      .from('patient_communication_preferences')
       .upsert({
         patient_id: patientId,
         ...preferences,
@@ -318,7 +318,7 @@ export class PatientCommunicationService {
       .single();
 
     if (error) {
-      console.error("Error updating patient communication preferences:", error);
+      console.error('Error updating patient communication preferences:', error);
       throw new Error(
         `Failed to update patient communication preferences: ${error.message}`,
       );
@@ -335,14 +335,14 @@ export class PatientCommunicationService {
     startDate?: string,
     endDate?: string,
   ): Promise<CommunicationStats> {
-    const { data, error } = await this.sb.rpc("get_communication_stats", {
+    const { data, error } = await this.sb.rpc('get_communication_stats', {
       p_clinic_id: clinicId,
       p_start_date: startDate,
       p_end_date: endDate,
     });
 
     if (error) {
-      console.error("Error fetching communication stats:", error);
+      console.error('Error fetching communication stats:', error);
       throw new Error(`Failed to fetch communication stats: ${error.message}`);
     }
 
@@ -375,7 +375,7 @@ export class PatientCommunicationService {
     appointmentId: string,
   ): Promise<{ scheduled_count: number }> {
     const { data, error } = await this.sb.rpc(
-      "schedule_appointment_reminders",
+      'schedule_appointment_reminders',
       {
         p_clinic_id: clinicId,
         p_appointment_id: appointmentId,
@@ -383,7 +383,7 @@ export class PatientCommunicationService {
     );
 
     if (error) {
-      console.error("Error scheduling appointment reminders:", error);
+      console.error('Error scheduling appointment reminders:', error);
       throw new Error(
         `Failed to schedule appointment reminders: ${error.message}`,
       );
@@ -399,13 +399,13 @@ export class PatientCommunicationService {
     appointmentId: string,
     messageTypes?: string[],
   ): Promise<{ cancelled_count: number }> {
-    const { data, error } = await this.sb.rpc("cancel_scheduled_messages", {
+    const { data, error } = await this.sb.rpc('cancel_scheduled_messages', {
       p_appointment_id: appointmentId,
       p_message_types: messageTypes,
     });
 
     if (error) {
-      console.error("Error cancelling scheduled messages:", error);
+      console.error('Error cancelling scheduled messages:', error);
       throw new Error(`Failed to cancel scheduled messages: ${error.message}`);
     }
 

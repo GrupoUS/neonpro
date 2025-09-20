@@ -6,13 +6,13 @@ export function saveAs(
   _filename?: string,
   _options?: any,
 ) {
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     console.warn(
-      "[shim:file-saver] saveAs called in browser environment. Implement real saver if needed.",
+      '[shim:file-saver] saveAs called in browser environment. Implement real saver if needed.',
     );
   } else {
     console.warn(
-      "[shim:file-saver] saveAs called in non-browser environment; ignoring.",
+      '[shim:file-saver] saveAs called in non-browser environment; ignoring.',
     );
   }
 }

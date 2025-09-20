@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Activity,
   AlertCircle,
@@ -12,9 +12,9 @@ import {
   Trash2,
   Users,
   X,
-} from "lucide-react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
+} from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 import {
   Badge,
@@ -54,31 +54,31 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@neonpro/ui";
+} from '@neonpro/ui';
 
-import { useDebounce } from "@/hooks/useDebounce";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { usePerformanceMonitor } from "@/hooks/usePerformanceMonitor";
+import { useDebounce } from '@/hooks/useDebounce';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { usePerformanceMonitor } from '@/hooks/usePerformanceMonitor';
 
 // Bulk operation types
 export type BulkOperationType =
-  | "activate_patients"
-  | "inactivate_patients"
-  | "add_tags"
-  | "remove_tags"
-  | "delete_patients"
-  | "export_data"
-  | "send_communication";
+  | 'activate_patients'
+  | 'inactivate_patients'
+  | 'add_tags'
+  | 'remove_tags'
+  | 'delete_patients'
+  | 'export_data'
+  | 'send_communication';
 
 // Bulk operation status
 export type BulkOperationStatus =
-  | "pending"
-  | "processing"
-  | "completed"
-  | "failed"
-  | "cancelled"
-  | "undoing"
-  | "undone";
+  | 'pending'
+  | 'processing'
+  | 'completed'
+  | 'failed'
+  | 'cancelled'
+  | 'undoing'
+  | 'undone';
 
 // Bulk operation interface
 export interface BulkOperation {
@@ -143,7 +143,7 @@ function generateMockPatients(
     id: `patient-${i + 1}`,
     name: `Paciente ${i + 1}`,
     email: `paciente${i + 1}@exemplo.com`,
-    status: i % 3 === 0 ? "active" : i % 3 === 1 ? "inactive" : "pending",
+    status: i % 3 === 0 ? 'active' : i % 3 === 1 ? 'inactive' : 'pending',
   }));
 }
 
@@ -157,20 +157,21 @@ export function BulkOperationsManager({
   const { measurePerformance } = usePerformanceMonitor();
 
   // State
-  const [activeTab, setActiveTab] = useState<"operations" | "queue" | "audit">(
-    "operations",
+  const [activeTab, setActiveTab] = useState<'operations' | 'queue' | 'audit'>(
+    'operations',
   );
-  const [selectedOperation, setSelectedOperation] =
-    useState<BulkOperationType>("activate_patients");
-  const [customTags, setCustomTags] = useState("");
+  const [selectedOperation, setSelectedOperation] = useState<BulkOperationType>(
+    'activate_patients',
+  );
+  const [customTags, setCustomTags] = useState('');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [showUndoDialog, setShowUndoDialog] = useState(false);
   const [operationToUndo, setOperationToUndo] = useState<BulkOperation | null>(
     null,
   );
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState<BulkOperationStatus | "all">(
-    "all",
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterStatus, setFilterStatus] = useState<BulkOperationStatus | 'all'>(
+    'all',
   );
 
   // Debounced search
@@ -178,7 +179,7 @@ export function BulkOperationsManager({
 
   // Queue state
   const [queue, setQueue] = useLocalStorage<BulkOperationQueue>(
-    "bulk-operations-queue",
+    'bulk-operations-queue',
     {
       operations: [],
       paused: false,
@@ -196,18 +197,18 @@ export function BulkOperationsManager({
 
   // Mock operations query
   const { data: operations, isLoading } = useQuery({
-    queryKey: ["bulk-operations", clinicId],
+    queryKey: ['bulk-operations', clinicId],
     queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise(resolve => setTimeout(resolve, 100));
 
       // Generate mock operations
       const mockOperations: BulkOperation[] = [
         {
-          id: "op-1",
-          type: "activate_patients",
-          status: "completed",
-          title: "Ativação de Pacientes",
-          description: "Ativação de 25 pacientes selecionados",
+          id: 'op-1',
+          type: 'activate_patients',
+          status: 'completed',
+          title: 'Ativação de Pacientes',
+          description: 'Ativação de 25 pacientes selecionados',
           patientIds: selectedPatientIds.slice(0, 25),
           affectedCount: 25,
           totalCount: 25,
@@ -217,22 +218,22 @@ export function BulkOperationsManager({
           completedAt: new Date(Date.now() - 3000000).toISOString(),
           auditTrail: [
             {
-              id: "audit-1",
+              id: 'audit-1',
               timestamp: new Date(Date.now() - 3600000).toISOString(),
-              userId: "user-1",
-              action: "bulk_operation_started",
-              details: { operationType: "activate_patients", patientCount: 25 },
-              ipAddress: "192.168.1.1",
-              userAgent: "Mozilla/5.0",
+              userId: 'user-1',
+              action: 'bulk_operation_started',
+              details: { operationType: 'activate_patients', patientCount: 25 },
+              ipAddress: '192.168.1.1',
+              userAgent: 'Mozilla/5.0',
             },
           ],
           undoable: true,
         },
         {
-          id: "op-2",
-          type: "add_tags",
-          status: "processing",
-          title: "Adição de Tags",
+          id: 'op-2',
+          type: 'add_tags',
+          status: 'processing',
+          title: 'Adição de Tags',
           description: 'Adicionando tags "VIP" e "Retorno" para 15 pacientes',
           patientIds: selectedPatientIds.slice(0, 15),
           affectedCount: 10,
@@ -253,34 +254,35 @@ export function BulkOperationsManager({
   // Process queue
   useEffect(() => {
     if (
-      queue.paused ||
-      !queue.currentOperation ||
-      queue.operations.length === 0
-    )
+      queue.paused
+      || !queue.currentOperation
+      || queue.operations.length === 0
+    ) {
       return;
+    }
 
     const processNextOperation = async () => {
       const currentOp = queue.operations.find(
-        (op) => op.id === queue.currentOperation,
+        op => op.id === queue.currentOperation,
       );
       if (!currentOp) return;
 
       try {
         // Simulate processing
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Update operation status
-        setQueue((prev) => ({
+        setQueue(prev => ({
           ...prev,
-          operations: prev.operations.map((op) =>
+          operations: prev.operations.map(op =>
             op.id === currentOp.id
               ? {
-                  ...op,
-                  status: "completed",
-                  progress: 100,
-                  completedAt: new Date().toISOString(),
-                }
-              : op,
+                ...op,
+                status: 'completed',
+                progress: 100,
+                completedAt: new Date().toISOString(),
+              }
+              : op
           ),
           currentOperation: undefined,
         }));
@@ -288,19 +290,18 @@ export function BulkOperationsManager({
         onOperationComplete?.(currentOp);
         toast.success(`Operação concluída: ${currentOp.title}`);
       } catch (error) {
-        console.error("Bulk operation failed:", error);
-        setQueue((prev) => ({
+        console.error('Bulk operation failed:', error);
+        setQueue(prev => ({
           ...prev,
-          operations: prev.operations.map((op) =>
+          operations: prev.operations.map(op =>
             op.id === currentOp.id
               ? {
-                  ...op,
-                  status: "failed",
-                  errorMessage:
-                    error instanceof Error ? error.message : "Unknown error",
-                  failedAt: new Date().toISOString(),
-                }
-              : op,
+                ...op,
+                status: 'failed',
+                errorMessage: error instanceof Error ? error.message : 'Unknown error',
+                failedAt: new Date().toISOString(),
+              }
+              : op
           ),
           currentOperation: undefined,
         }));
@@ -312,68 +313,65 @@ export function BulkOperationsManager({
   }, [queue, onOperationComplete]);
 
   // Filter operations
-  const filteredOperations =
-    operations?.filter((op) => {
-      const matchesSearch =
-        op.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase()) ||
-        op.description
-          .toLowerCase()
-          .includes(debouncedSearchQuery.toLowerCase());
-      const matchesStatus =
-        filterStatus === "all" || op.status === filterStatus;
-      return matchesSearch && matchesStatus;
-    }) || [];
+  const filteredOperations = operations?.filter(op => {
+    const matchesSearch = op.title.toLowerCase().includes(debouncedSearchQuery.toLowerCase())
+      || op.description
+        .toLowerCase()
+        .includes(debouncedSearchQuery.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || op.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  }) || [];
 
   // Get operation config
   const getOperationConfig = (type: BulkOperationType) => {
     const configs = {
       activate_patients: {
-        title: "Ativar Pacientes",
-        description: "Ativar múltiplos pacientes selecionados",
+        title: 'Ativar Pacientes',
+        description: 'Ativar múltiplos pacientes selecionados',
         icon: Users,
-        color: "green",
+        color: 'green',
         undoable: true,
       },
       inactivate_patients: {
-        title: "Inativar Pacientes",
-        description: "Inativar múltiplos pacientes selecionados",
+        title: 'Inativar Pacientes',
+        description: 'Inativar múltiplos pacientes selecionados',
         icon: Users,
-        color: "orange",
+        color: 'orange',
         undoable: true,
       },
       add_tags: {
-        title: "Adicionar Tags",
-        description: "Adicionar tags a múltiplos pacientes",
-        icon: "Activity",
-        color: "blue",
+        title: 'Adicionar Tags',
+        description: 'Adicionar tags a múltiplos pacientes',
+        icon: 'Activity',
+        color: 'blue',
         undoable: true,
       },
       remove_tags: {
-        title: "Remover Tags",
-        description: "Remover tags de múltiplos pacientes",
-        icon: "X",
-        color: "red",
+        title: 'Remover Tags',
+        description: 'Remover tags de múltiplos pacientes',
+        icon: 'X',
+        color: 'red',
         undoable: true,
       },
       delete_patients: {
-        title: "Excluir Pacientes",
-        description: "Excluir permanentemente pacientes selecionados",
+        title: 'Excluir Pacientes',
+        description: 'Excluir permanentemente pacientes selecionados',
         icon: Trash2,
-        color: "red",
+        color: 'red',
         undoable: false,
       },
       export_data: {
-        title: "Exportar Dados",
-        description: "Exportar dados dos pacientes selecionados",
-        icon: "Activity",
-        color: "purple",
+        title: 'Exportar Dados',
+        description: 'Exportar dados dos pacientes selecionados',
+        icon: 'Activity',
+        color: 'purple',
         undoable: false,
       },
       send_communication: {
-        title: "Enviar Comunicação",
-        description: "Enviar comunicação para pacientes selecionados",
-        icon: "Activity",
-        color: "blue",
+        title: 'Enviar Comunicação',
+        description: 'Enviar comunicação para pacientes selecionados',
+        icon: 'Activity',
+        color: 'blue',
         undoable: false,
       },
     };
@@ -385,14 +383,14 @@ export function BulkOperationsManager({
   const createBulkOperation = useCallback(
     async (type: BulkOperationType) => {
       if (selectedPatientIds.length === 0) {
-        toast.error("Selecione pelo menos um paciente");
+        toast.error('Selecione pelo menos um paciente');
         return;
       }
 
       // Check rate limit
       if (rateLimit.remaining <= 0) {
         toast.error(
-          "Limite de requisições excedido. Tente novamente mais tarde.",
+          'Limite de requisições excedido. Tente novamente mais tarde.',
         );
         return;
       }
@@ -403,7 +401,7 @@ export function BulkOperationsManager({
       const operation: BulkOperation = {
         id: operationId,
         type,
-        status: "pending",
+        status: 'pending',
         title: config.title,
         description: `${config.description} (${selectedPatientIds.length} pacientes)`,
         patientIds: [...selectedPatientIds],
@@ -415,14 +413,14 @@ export function BulkOperationsManager({
           {
             id: `audit-${Date.now()}`,
             timestamp: new Date().toISOString(),
-            userId: "current-user", // Get from auth context
-            action: "bulk_operation_created",
+            userId: 'current-user', // Get from auth context
+            action: 'bulk_operation_created',
             details: {
               operationType: type,
               patientCount: selectedPatientIds.length,
-              reason: "bulk_patient_management",
+              reason: 'bulk_patient_management',
             },
-            ipAddress: "127.0.0.1", // Get from request
+            ipAddress: '127.0.0.1', // Get from request
             userAgent: navigator.userAgent,
           },
         ],
@@ -430,14 +428,14 @@ export function BulkOperationsManager({
       };
 
       // Add to queue
-      setQueue((prev) => ({
+      setQueue(prev => ({
         ...prev,
         operations: [...prev.operations, operation],
         currentOperation: prev.currentOperation || operation.id,
       }));
 
       // Update rate limit
-      setRateLimit((prev) => ({
+      setRateLimit(prev => ({
         ...prev,
         requests: prev.requests + 1,
         remaining: prev.remaining - 1,
@@ -452,45 +450,45 @@ export function BulkOperationsManager({
   const undoOperation = useCallback(
     async (operation: BulkOperation) => {
       if (!operation.undoable) {
-        toast.error("Esta operação não pode ser desfeita");
+        toast.error('Esta operação não pode ser desfeita');
         return;
       }
 
       try {
-        await measurePerformance("bulk-undo", async () => {
+        await measurePerformance('bulk-undo', async () => {
           // Simulate undo operation
-          await new Promise((resolve) => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, 2000));
 
           // Update operation status
-          setQueue((prev) => ({
+          setQueue(prev => ({
             ...prev,
-            operations: prev.operations.map((op) =>
+            operations: prev.operations.map(op =>
               op.id === operation.id
                 ? {
-                    ...op,
-                    status: "undone",
-                    undoneAt: new Date().toISOString(),
-                    auditTrail: [
-                      ...op.auditTrail,
-                      {
-                        id: `audit-${Date.now()}`,
-                        timestamp: new Date().toISOString(),
-                        userId: "current-user",
-                        action: "bulk_operation_undone",
-                        details: { originalOperationId: operation.id },
-                        ipAddress: "127.0.0.1",
-                        userAgent: navigator.userAgent,
-                      },
-                    ],
-                  }
-                : op,
+                  ...op,
+                  status: 'undone',
+                  undoneAt: new Date().toISOString(),
+                  auditTrail: [
+                    ...op.auditTrail,
+                    {
+                      id: `audit-${Date.now()}`,
+                      timestamp: new Date().toISOString(),
+                      userId: 'current-user',
+                      action: 'bulk_operation_undone',
+                      details: { originalOperationId: operation.id },
+                      ipAddress: '127.0.0.1',
+                      userAgent: navigator.userAgent,
+                    },
+                  ],
+                }
+                : op
             ),
           }));
 
           toast.success(`Operação desfeita: ${operation.title}`);
         });
       } catch (error) {
-        console.error("Undo operation failed:", error);
+        console.error('Undo operation failed:', error);
         toast.error(`Falha ao desfazer operação: ${operation.title}`);
       }
     },
@@ -519,48 +517,48 @@ export function BulkOperationsManager({
 
   // Toggle queue pause
   const toggleQueuePause = () => {
-    setQueue((prev) => ({ ...prev, paused: !prev.paused }));
+    setQueue(prev => ({ ...prev, paused: !prev.paused }));
   };
 
   // Status badge component
   const StatusBadge = ({ status }: { status: BulkOperationStatus }) => {
     const statusConfig = {
-      pending: { label: "Pendente", color: "gray" },
-      processing: { label: "Processando", color: "blue" },
-      completed: { label: "Concluído", color: "green" },
-      failed: { label: "Falhou", color: "red" },
-      cancelled: { label: "Cancelado", color: "orange" },
-      undoing: { label: "Desfazendo", color: "yellow" },
-      undone: { label: "Desfeito", color: "purple" },
+      pending: { label: 'Pendente', color: 'gray' },
+      processing: { label: 'Processando', color: 'blue' },
+      completed: { label: 'Concluído', color: 'green' },
+      failed: { label: 'Falhou', color: 'red' },
+      cancelled: { label: 'Cancelado', color: 'orange' },
+      undoing: { label: 'Desfazendo', color: 'yellow' },
+      undone: { label: 'Desfeito', color: 'purple' },
     };
 
     const config = statusConfig[status];
 
     return (
-      <Badge variant={status === "completed" ? "default" : "secondary"}>
+      <Badge variant={status === 'completed' ? 'default' : 'secondary'}>
         {config.label}
       </Badge>
     );
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className='flex items-center justify-between'>
         <div>
-          <h2 className="text-2xl font-bold">Operações em Massa</h2>
-          <p className="text-muted-foreground">
+          <h2 className='text-2xl font-bold'>Operações em Massa</h2>
+          <p className='text-muted-foreground'>
             Gerencie múltiplos pacientes com operações em lote
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Badge variant="outline" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+        <div className='flex items-center gap-2'>
+          <Badge variant='outline' className='flex items-center gap-2'>
+            <Users className='h-4 w-4' />
             {selectedPatientIds.length} selecionados
           </Badge>
           {selectedPatientIds.length > 0 && (
-            <Button variant="outline" size="sm" onClick={clearSelection}>
+            <Button variant='outline' size='sm' onClick={clearSelection}>
               Limpar seleção
             </Button>
           )}
@@ -570,20 +568,20 @@ export function BulkOperationsManager({
       {/* Operation Selection */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5" />
+          <CardTitle className='flex items-center gap-2'>
+            <Shield className='h-5 w-5' />
             Nova Operação em Massa
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className='space-y-4'>
             {/* Operation Type Selection */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className='grid grid-cols-2 md:grid-cols-4 gap-3'>
               {Object.entries({
-                activate_patients: "Ativar",
-                inactivate_patients: "Inativar",
-                add_tags: "Adicionar Tags",
-                remove_tags: "Remover Tags",
+                activate_patients: 'Ativar',
+                inactivate_patients: 'Inativar',
+                add_tags: 'Adicionar Tags',
+                remove_tags: 'Remover Tags',
               }).map(([type, label]) => {
                 const config = getOperationConfig(type as BulkOperationType);
                 const Icon = config.icon;
@@ -591,37 +589,37 @@ export function BulkOperationsManager({
                 return (
                   <Button
                     key={type}
-                    variant={selectedOperation === type ? "default" : "outline"}
-                    className="h-20 flex-col"
-                    onClick={() =>
-                      setSelectedOperation(type as BulkOperationType)
-                    }
+                    variant={selectedOperation === type ? 'default' : 'outline'}
+                    className='h-20 flex-col'
+                    onClick={() => setSelectedOperation(type as BulkOperationType)}
                   >
-                    <Icon className="h-6 w-6 mb-2" />
-                    <span className="text-sm">{label}</span>
+                    <Icon className='h-6 w-6 mb-2' />
+                    <span className='text-sm'>{label}</span>
                   </Button>
                 );
               })}
             </div>
 
             {/* Operation Configuration */}
-            {selectedOperation === "add_tags" ||
-            selectedOperation === "remove_tags" ? (
-              <div className="space-y-2">
-                <Label>Tags (separadas por vírgula)</Label>
-                <Input
-                  placeholder="VIP, Retorno, Acompanhamento..."
-                  value={customTags}
-                  onChange={(e) => setCustomTags(e.target.value)}
-                />
-              </div>
-            ) : null}
+            {selectedOperation === 'add_tags'
+                || selectedOperation === 'remove_tags'
+              ? (
+                <div className='space-y-2'>
+                  <Label>Tags (separadas por vírgula)</Label>
+                  <Input
+                    placeholder='VIP, Retorno, Acompanhamento...'
+                    value={customTags}
+                    onChange={e => setCustomTags(e.target.value)}
+                  />
+                </div>
+              )
+              : null}
 
             {/* Action Button */}
             <Button
               onClick={() => setShowConfirmDialog(true)}
               disabled={selectedPatientIds.length === 0}
-              className="w-full"
+              className='w-full'
             >
               Executar Operação
             </Button>
@@ -632,16 +630,16 @@ export function BulkOperationsManager({
       {/* Operations List */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className='flex items-center justify-between'>
             <CardTitle>Operações Recentes</CardTitle>
 
-            <div className="flex items-center gap-2">
+            <div className='flex items-center gap-2'>
               {/* Search */}
               <Input
-                placeholder="Buscar operações..."
+                placeholder='Buscar operações...'
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-64"
+                onChange={e => setSearchQuery(e.target.value)}
+                className='w-64'
               />
 
               {/* Status Filter */}
@@ -649,147 +647,149 @@ export function BulkOperationsManager({
                 value={filterStatus}
                 onValueChange={(value: any) => setFilterStatus(value)}
               >
-                <SelectTrigger className="w-40">
+                <SelectTrigger className='w-40'>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Todos</SelectItem>
-                  <SelectItem value="pending">Pendente</SelectItem>
-                  <SelectItem value="processing">Processando</SelectItem>
-                  <SelectItem value="completed">Concluído</SelectItem>
-                  <SelectItem value="failed">Falhou</SelectItem>
+                  <SelectItem value='all'>Todos</SelectItem>
+                  <SelectItem value='pending'>Pendente</SelectItem>
+                  <SelectItem value='processing'>Processando</SelectItem>
+                  <SelectItem value='completed'>Concluído</SelectItem>
+                  <SelectItem value='failed'>Falhou</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-8 w-8 animate-spin" />
-            </div>
-          ) : filteredOperations.length === 0 ? (
-            <div className="text-center py-8">
-              <AlertCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <h3 className="text-lg font-medium mb-2">
-                Nenhuma operação encontrada
-              </h3>
-              <p className="text-muted-foreground">
-                Nenhuma operação em massa foi realizada ainda
-              </p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Operação</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Progresso</TableHead>
-                  <TableHead>Pacientes</TableHead>
-                  <TableHead>Data</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredOperations.map((operation) => (
-                  <TableRow key={operation.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{operation.title}</p>
-                        <p className="text-sm text-muted-foreground">
-                          {operation.description}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge status={operation.status} />
-                    </TableCell>
-                    <TableCell>
-                      <div className="space-y-1">
-                        <Progress value={operation.progress} className="w-24" />
-                        <p className="text-xs text-muted-foreground">
-                          {operation.affectedCount}/{operation.totalCount}
-                        </p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">
-                        {operation.totalCount} pacientes
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        {new Date(operation.createdAt).toLocaleString("pt-BR")}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        {operation.undoable &&
-                          operation.status === "completed" && (
+          {isLoading
+            ? (
+              <div className='flex items-center justify-center py-8'>
+                <Loader2 className='h-8 w-8 animate-spin' />
+              </div>
+            )
+            : filteredOperations.length === 0
+            ? (
+              <div className='text-center py-8'>
+                <AlertCircle className='h-12 w-12 mx-auto mb-4 text-muted-foreground' />
+                <h3 className='text-lg font-medium mb-2'>
+                  Nenhuma operação encontrada
+                </h3>
+                <p className='text-muted-foreground'>
+                  Nenhuma operação em massa foi realizada ainda
+                </p>
+              </div>
+            )
+            : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Operação</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Progresso</TableHead>
+                    <TableHead>Pacientes</TableHead>
+                    <TableHead>Data</TableHead>
+                    <TableHead className='text-right'>Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredOperations.map(operation => (
+                    <TableRow key={operation.id}>
+                      <TableCell>
+                        <div>
+                          <p className='font-medium'>{operation.title}</p>
+                          <p className='text-sm text-muted-foreground'>
+                            {operation.description}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge status={operation.status} />
+                      </TableCell>
+                      <TableCell>
+                        <div className='space-y-1'>
+                          <Progress value={operation.progress} className='w-24' />
+                          <p className='text-xs text-muted-foreground'>
+                            {operation.affectedCount}/{operation.totalCount}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant='outline'>
+                          {operation.totalCount} pacientes
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className='flex items-center gap-1 text-sm text-muted-foreground'>
+                          <Clock className='h-3 w-3' />
+                          {new Date(operation.createdAt).toLocaleString('pt-BR')}
+                        </div>
+                      </TableCell>
+                      <TableCell className='text-right'>
+                        <div className='flex items-center justify-end gap-1'>
+                          {operation.undoable
+                            && operation.status === 'completed' && (
                             <Button
-                              variant="outline"
-                              size="sm"
+                              variant='outline'
+                              size='sm'
                               onClick={() => {
                                 setOperationToUndo(operation);
                                 setShowUndoDialog(true);
                               }}
                             >
-                              <RotateCcw className="h-3 w-3 mr-1" />
+                              <RotateCcw className='h-3 w-3 mr-1' />
                               Desfazer
                             </Button>
                           )}
 
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm">
-                              ...
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
-                              <Activity className="h-4 w-4 mr-2" />
-                              Ver Detalhes
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <Shield className="h-4 w-4 mr-2" />
-                              Auditoria
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant='ghost' size='sm'>
+                                ...
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align='end'>
+                              <DropdownMenuItem>
+                                <Activity className='h-4 w-4 mr-2' />
+                                Ver Detalhes
+                              </DropdownMenuItem>
+                              <DropdownMenuItem>
+                                <Shield className='h-4 w-4 mr-2' />
+                                Auditoria
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
         </CardContent>
       </Card>
 
       {/* Queue Status */}
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
+          <CardTitle className='flex items-center justify-between'>
+            <div className='flex items-center gap-2'>
+              <Activity className='h-5 w-5' />
               Fila de Operações
             </div>
-            <Button variant="outline" size="sm" onClick={toggleQueuePause}>
-              {queue.paused ? "Retomar" : "Pausar"}
+            <Button variant='outline' size='sm' onClick={toggleQueuePause}>
+              {queue.paused ? 'Retomar' : 'Pausar'}
             </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="flex items-center gap-2">
-                {queue.paused ? (
-                  <Clock className="h-4 w-4 text-orange-500" />
-                ) : (
-                  <Activity className="h-4 w-4 text-green-500" />
-                )}
-                Status: {queue.paused ? "Pausada" : "Ativa"}
+          <div className='space-y-4'>
+            <div className='flex items-center justify-between text-sm'>
+              <span className='flex items-center gap-2'>
+                {queue.paused
+                  ? <Clock className='h-4 w-4 text-orange-500' />
+                  : <Activity className='h-4 w-4 text-green-500' />}
+                Status: {queue.paused ? 'Pausada' : 'Ativa'}
               </span>
               <span>
                 Limite de requisições: {rateLimit.remaining}/{rateLimit.limit}
@@ -797,22 +797,22 @@ export function BulkOperationsManager({
             </div>
 
             {queue.operations.length > 0 && (
-              <div className="space-y-2">
-                <p className="text-sm font-medium">Operações na fila:</p>
-                {queue.operations.slice(0, 3).map((operation) => (
+              <div className='space-y-2'>
+                <p className='text-sm font-medium'>Operações na fila:</p>
+                {queue.operations.slice(0, 3).map(operation => (
                   <div
                     key={operation.id}
-                    className="flex items-center justify-between p-2 bg-muted rounded"
+                    className='flex items-center justify-between p-2 bg-muted rounded'
                   >
-                    <div className="flex items-center gap-2">
+                    <div className='flex items-center gap-2'>
                       <StatusBadge status={operation.status} />
-                      <span className="text-sm">{operation.title}</span>
+                      <span className='text-sm'>{operation.title}</span>
                     </div>
-                    <Progress value={operation.progress} className="w-20" />
+                    <Progress value={operation.progress} className='w-20' />
                   </div>
                 ))}
                 {queue.operations.length > 3 && (
-                  <p className="text-sm text-muted-foreground">
+                  <p className='text-sm text-muted-foreground'>
                     +{queue.operations.length - 3} operações adicionais
                   </p>
                 )}
@@ -828,17 +828,16 @@ export function BulkOperationsManager({
           <DialogHeader>
             <DialogTitle>Confirmar Operação em Massa</DialogTitle>
             <DialogDescription>
-              Esta operação afetará {selectedPatientIds.length} pacientes. Esta
-              ação{" "}
-              {selectedOperation === "delete_patients"
-                ? "não pode ser desfeita"
-                : "pode ser desfeita"}
+              Esta operação afetará {selectedPatientIds.length} pacientes. Esta ação{' '}
+              {selectedOperation === 'delete_patients'
+                ? 'não pode ser desfeita'
+                : 'pode ser desfeita'}
               .
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button
-              variant="outline"
+              variant='outline'
               onClick={() => setShowConfirmDialog(false)}
             >
               Cancelar
@@ -855,15 +854,15 @@ export function BulkOperationsManager({
             <DialogTitle>Desfazer Operação</DialogTitle>
             <DialogDescription>
               Tem certeza que deseja desfazer a operação "
-              {operationToUndo?.title}"? Esta ação restaurará os dados para o
-              estado anterior à operação.
+              {operationToUndo?.title}"? Esta ação restaurará os dados para o estado anterior à
+              operação.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowUndoDialog(false)}>
+            <Button variant='outline' onClick={() => setShowUndoDialog(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleConfirmUndo} variant="destructive">
+            <Button onClick={handleConfirmUndo} variant='destructive'>
               Desfazer Operação
             </Button>
           </DialogFooter>

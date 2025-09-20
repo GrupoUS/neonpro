@@ -49,7 +49,7 @@ describe('Professional Contract Testing', () => {
     },
   };
 
-  const trpcMsw = createTRPCMsw<AppRouter>();
+  const _trpcMsw = createTRPCMsw<AppRouter>();
   const caller = appRouter.createCaller(mockContext);
 
   beforeEach(() => {

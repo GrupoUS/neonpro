@@ -11,7 +11,7 @@
  * - Brazilian Portuguese accessibility labels
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // WCAG 2.1 AA+ Touch Target Requirements
 export const WCAG_TOUCH_TARGETS = {
@@ -31,11 +31,11 @@ export const MOBILE_BREAKPOINTS = {
 
 // Touch Accessibility Levels
 export const TOUCH_ACCESSIBILITY_LEVELS = {
-  EXCELLENT: "excellent",
-  GOOD: "good",
-  ACCEPTABLE: "acceptable",
-  POOR: "poor",
-  CRITICAL: "critical",
+  EXCELLENT: 'excellent',
+  GOOD: 'good',
+  ACCEPTABLE: 'acceptable',
+  POOR: 'poor',
+  CRITICAL: 'critical',
 } as const;
 
 export type TouchAccessibilityLevel =
@@ -43,12 +43,12 @@ export type TouchAccessibilityLevel =
 
 // Healthcare Touch Patterns
 export const HEALTHCARE_TOUCH_PATTERNS = {
-  PATIENT_DATA_ENTRY: "patient_data_entry",
-  APPOINTMENT_BOOKING: "appointment_booking",
-  MEDICATION_REMINDER: "medication_reminder",
-  EMERGENCY_CONTACT: "emergency_contact",
-  VITAL_SIGNS_INPUT: "vital_signs_input",
-  MEDICAL_RECORD_VIEW: "medical_record_view",
+  PATIENT_DATA_ENTRY: 'patient_data_entry',
+  APPOINTMENT_BOOKING: 'appointment_booking',
+  MEDICATION_REMINDER: 'medication_reminder',
+  EMERGENCY_CONTACT: 'emergency_contact',
+  VITAL_SIGNS_INPUT: 'vital_signs_input',
+  MEDICAL_RECORD_VIEW: 'medical_record_view',
 } as const;
 
 export type HealthcareTouchPattern =
@@ -73,8 +73,8 @@ export type TouchTarget = z.infer<typeof TouchTargetSchema>;
 // Touch Accessibility Issue
 export interface TouchAccessibilityIssue {
   id: string;
-  type: "size" | "spacing" | "overlap" | "gesture" | "feedback";
-  severity: "critical" | "high" | "medium" | "low";
+  type: 'size' | 'spacing' | 'overlap' | 'gesture' | 'feedback';
+  severity: 'critical' | 'high' | 'medium' | 'low';
   title: string;
   description: string;
   recommendation: string;
@@ -84,7 +84,7 @@ export interface TouchAccessibilityIssue {
   remediation: {
     steps: string[];
     timeframe: string;
-    difficulty: "easy" | "medium" | "hard";
+    difficulty: 'easy' | 'medium' | 'hard';
   };
   detectedAt: Date;
 }
@@ -126,20 +126,20 @@ export interface TouchAccessibilityReport {
 
 // Brazilian Portuguese Touch Accessibility Labels
 export const TOUCH_ACCESSIBILITY_LABELS_PT_BR = {
-  touchTarget: "Área de toque",
-  minimumSize: "Tamanho mínimo",
-  recommendedSize: "Tamanho recomendado",
-  touchSpacing: "Espaçamento de toque",
-  gestureAlternative: "Alternativa de gesto",
-  touchFeedback: "Feedback de toque",
-  hapticFeedback: "Feedback háptico",
-  visualFeedback: "Feedback visual",
-  emergencyAccess: "Acesso de emergência",
-  patientDataEntry: "Entrada de dados do paciente",
-  appointmentBooking: "Agendamento de consulta",
-  medicationReminder: "Lembrete de medicação",
-  vitalSignsInput: "Entrada de sinais vitais",
-  medicalRecordView: "Visualização de prontuário",
+  touchTarget: 'Área de toque',
+  minimumSize: 'Tamanho mínimo',
+  recommendedSize: 'Tamanho recomendado',
+  touchSpacing: 'Espaçamento de toque',
+  gestureAlternative: 'Alternativa de gesto',
+  touchFeedback: 'Feedback de toque',
+  hapticFeedback: 'Feedback háptico',
+  visualFeedback: 'Feedback visual',
+  emergencyAccess: 'Acesso de emergência',
+  patientDataEntry: 'Entrada de dados do paciente',
+  appointmentBooking: 'Agendamento de consulta',
+  medicationReminder: 'Lembrete de medicação',
+  vitalSignsInput: 'Entrada de sinais vitais',
+  medicalRecordView: 'Visualização de prontuário',
 } as const;
 
 /**
@@ -153,7 +153,7 @@ export class MobileTouchAccessibility {
    */
   validateTouchTargets(
     targets: TouchTarget[],
-  ): TouchAccessibilityReport["touchTargetCompliance"] {
+  ): TouchAccessibilityReport['touchTargetCompliance'] {
     this.issues = [];
 
     const totalTargets = targets.length;
@@ -163,7 +163,7 @@ export class MobileTouchAccessibility {
     const issues: TouchAccessibilityIssue[] = [];
 
     // Validate each touch target
-    targets.forEach((target) => {
+    targets.forEach(target => {
       const isCompliant = this.validateSingleTouchTarget(target);
       if (isCompliant) {
         compliantTargets++;
@@ -179,28 +179,27 @@ export class MobileTouchAccessibility {
     // Generate issues for undersized targets
     if (undersizedTargets > 0) {
       issues.push({
-        id: "undersized-touch-targets",
-        type: "size",
-        severity: "high",
-        title: "Áreas de toque muito pequenas",
+        id: 'undersized-touch-targets',
+        type: 'size',
+        severity: 'high',
+        title: 'Áreas de toque muito pequenas',
         description: `${undersizedTargets} áreas de toque não atendem ao tamanho mínimo de 44x44px`,
-        recommendation:
-          "Aumentar o tamanho das áreas de toque para pelo menos 44x44px",
+        recommendation: 'Aumentar o tamanho das áreas de toque para pelo menos 44x44px',
         affectedElements: targets
-          .filter((t) => !this.validateSingleTouchTarget(t))
-          .map((t) => t.element),
-        wcagReference: "WCAG 2.1 AA - Critério 2.5.5 (Tamanho do Alvo)",
+          .filter(t => !this.validateSingleTouchTarget(t))
+          .map(t => t.element),
+        wcagReference: 'WCAG 2.1 AA - Critério 2.5.5 (Tamanho do Alvo)',
         healthcareImpact:
-          "Dificulta o acesso a funcionalidades médicas críticas para pacientes com deficiências motoras",
+          'Dificulta o acesso a funcionalidades médicas críticas para pacientes com deficiências motoras',
         remediation: {
           steps: [
-            "Identificar elementos com área de toque menor que 44x44px",
-            "Aumentar padding ou dimensões dos elementos",
-            "Testar com usuários com deficiências motoras",
-            "Validar em dispositivos móveis reais",
+            'Identificar elementos com área de toque menor que 44x44px',
+            'Aumentar padding ou dimensões dos elementos',
+            'Testar com usuários com deficiências motoras',
+            'Validar em dispositivos móveis reais',
           ],
-          timeframe: "1-2 semanas",
-          difficulty: "easy",
+          timeframe: '1-2 semanas',
+          difficulty: 'easy',
         },
         detectedAt: new Date(),
       });
@@ -209,28 +208,26 @@ export class MobileTouchAccessibility {
     // Generate issues for overlapping targets
     if (overlappingTargets > 0) {
       issues.push({
-        id: "overlapping-touch-targets",
-        type: "overlap",
-        severity: "medium",
-        title: "Áreas de toque sobrepostas",
+        id: 'overlapping-touch-targets',
+        type: 'overlap',
+        severity: 'medium',
+        title: 'Áreas de toque sobrepostas',
         description: `${overlappingTargets} pares de áreas de toque estão sobrepostas`,
-        recommendation:
-          "Adicionar espaçamento mínimo de 8px entre áreas de toque",
+        recommendation: 'Adicionar espaçamento mínimo de 8px entre áreas de toque',
         affectedElements: overlaps.map(
-          (o) => `${o.target1.element} + ${o.target2.element}`,
+          o => `${o.target1.element} + ${o.target2.element}`,
         ),
-        wcagReference: "WCAG 2.1 AA - Critério 2.5.5 (Tamanho do Alvo)",
-        healthcareImpact:
-          "Pode causar ativação acidental de funcionalidades médicas",
+        wcagReference: 'WCAG 2.1 AA - Critério 2.5.5 (Tamanho do Alvo)',
+        healthcareImpact: 'Pode causar ativação acidental de funcionalidades médicas',
         remediation: {
           steps: [
-            "Identificar elementos sobrepostos",
-            "Adicionar espaçamento entre elementos",
-            "Reorganizar layout se necessário",
-            "Testar interações de toque",
+            'Identificar elementos sobrepostos',
+            'Adicionar espaçamento entre elementos',
+            'Reorganizar layout se necessário',
+            'Testar interações de toque',
           ],
-          timeframe: "1 semana",
-          difficulty: "medium",
+          timeframe: '1 semana',
+          difficulty: 'medium',
         },
         detectedAt: new Date(),
       });
@@ -257,7 +254,7 @@ export class MobileTouchAccessibility {
   /**
    * Validate gesture accessibility
    */
-  validateGestureAccessibility(): TouchAccessibilityReport["gestureAccessibility"] {
+  validateGestureAccessibility(): TouchAccessibilityReport['gestureAccessibility'] {
     // Mock implementation - would analyze actual gestures in real app
     const complexGestures = 3; // Swipe, pinch, long press
     const alternativesProvided = 2; // Only 2 out of 3 have alternatives
@@ -265,27 +262,25 @@ export class MobileTouchAccessibility {
 
     if (alternativesProvided < complexGestures) {
       issues.push({
-        id: "missing-gesture-alternatives",
-        type: "gesture",
-        severity: "high",
-        title: "Alternativas de gesto ausentes",
-        description:
-          "Nem todos os gestos complexos possuem alternativas acessíveis",
-        recommendation:
-          "Fornecer alternativas de botão para todos os gestos complexos",
-        affectedElements: ["swipe-navigation", "pinch-zoom"],
-        wcagReference: "WCAG 2.1 AA - Critério 2.5.1 (Gestos de Ponteiro)",
+        id: 'missing-gesture-alternatives',
+        type: 'gesture',
+        severity: 'high',
+        title: 'Alternativas de gesto ausentes',
+        description: 'Nem todos os gestos complexos possuem alternativas acessíveis',
+        recommendation: 'Fornecer alternativas de botão para todos os gestos complexos',
+        affectedElements: ['swipe-navigation', 'pinch-zoom'],
+        wcagReference: 'WCAG 2.1 AA - Critério 2.5.1 (Gestos de Ponteiro)',
         healthcareImpact:
-          "Impede acesso a funcionalidades médicas para usuários com limitações motoras",
+          'Impede acesso a funcionalidades médicas para usuários com limitações motoras',
         remediation: {
           steps: [
-            "Identificar gestos complexos sem alternativas",
-            "Implementar botões alternativos",
-            "Adicionar instruções de uso",
-            "Testar com tecnologias assistivas",
+            'Identificar gestos complexos sem alternativas',
+            'Implementar botões alternativos',
+            'Adicionar instruções de uso',
+            'Testar com tecnologias assistivas',
           ],
-          timeframe: "2-3 semanas",
-          difficulty: "medium",
+          timeframe: '2-3 semanas',
+          difficulty: 'medium',
         },
         detectedAt: new Date(),
       });
@@ -293,12 +288,11 @@ export class MobileTouchAccessibility {
 
     this.issues.push(...issues);
 
-    const level: TouchAccessibilityLevel =
-      alternativesProvided >= complexGestures
-        ? TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT
-        : alternativesProvided >= Math.floor(complexGestures * 0.8)
-          ? TOUCH_ACCESSIBILITY_LEVELS.GOOD
-          : TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE;
+    const level: TouchAccessibilityLevel = alternativesProvided >= complexGestures
+      ? TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT
+      : alternativesProvided >= Math.floor(complexGestures * 0.8)
+      ? TOUCH_ACCESSIBILITY_LEVELS.GOOD
+      : TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE;
 
     return {
       level,
@@ -311,7 +305,7 @@ export class MobileTouchAccessibility {
   /**
    * Validate touch feedback accessibility
    */
-  validateTouchFeedback(): TouchAccessibilityReport["touchFeedback"] {
+  validateTouchFeedback(): TouchAccessibilityReport['touchFeedback'] {
     // Mock implementation - would check actual feedback implementation
     const feedbackEnabled = true;
     const hapticSupport = false; // Intentionally set to false for testing
@@ -320,26 +314,24 @@ export class MobileTouchAccessibility {
 
     if (!hapticSupport) {
       issues.push({
-        id: "missing-haptic-feedback",
-        type: "feedback",
-        severity: "medium",
-        title: "Feedback háptico ausente",
-        description:
-          "Sistema não fornece feedback háptico para interações de toque",
-        recommendation: "Implementar feedback háptico para ações importantes",
-        affectedElements: ["buttons", "form-inputs", "navigation"],
-        wcagReference: "WCAG 2.1 AA - Critério 3.3.1 (Identificação de Erro)",
-        healthcareImpact:
-          "Reduz confirmação de ações para usuários com deficiências visuais",
+        id: 'missing-haptic-feedback',
+        type: 'feedback',
+        severity: 'medium',
+        title: 'Feedback háptico ausente',
+        description: 'Sistema não fornece feedback háptico para interações de toque',
+        recommendation: 'Implementar feedback háptico para ações importantes',
+        affectedElements: ['buttons', 'form-inputs', 'navigation'],
+        wcagReference: 'WCAG 2.1 AA - Critério 3.3.1 (Identificação de Erro)',
+        healthcareImpact: 'Reduz confirmação de ações para usuários com deficiências visuais',
         remediation: {
           steps: [
-            "Implementar API de vibração do navegador",
-            "Adicionar feedback háptico para ações críticas",
-            "Permitir configuração pelo usuário",
-            "Testar em dispositivos móveis",
+            'Implementar API de vibração do navegador',
+            'Adicionar feedback háptico para ações críticas',
+            'Permitir configuração pelo usuário',
+            'Testar em dispositivos móveis',
           ],
-          timeframe: "1 semana",
-          difficulty: "easy",
+          timeframe: '1 semana',
+          difficulty: 'easy',
         },
         detectedAt: new Date(),
       });
@@ -347,12 +339,11 @@ export class MobileTouchAccessibility {
 
     this.issues.push(...issues);
 
-    const level =
-      feedbackEnabled && hapticSupport && visualFeedback
-        ? TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT
-        : feedbackEnabled && visualFeedback
-          ? TOUCH_ACCESSIBILITY_LEVELS.GOOD
-          : TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE;
+    const level = feedbackEnabled && hapticSupport && visualFeedback
+      ? TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT
+      : feedbackEnabled && visualFeedback
+      ? TOUCH_ACCESSIBILITY_LEVELS.GOOD
+      : TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE;
 
     return {
       level,
@@ -366,7 +357,7 @@ export class MobileTouchAccessibility {
   /**
    * Validate healthcare-specific touch patterns
    */
-  validateHealthcarePatterns(): TouchAccessibilityReport["healthcarePatterns"] {
+  validateHealthcarePatterns(): TouchAccessibilityReport['healthcarePatterns'] {
     // Mock implementation - would check actual healthcare patterns
     const implementedPatterns: HealthcareTouchPattern[] = [
       HEALTHCARE_TOUCH_PATTERNS.PATIENT_DATA_ENTRY,
@@ -384,26 +375,25 @@ export class MobileTouchAccessibility {
 
     if (missingPatterns.length > 0) {
       issues.push({
-        id: "missing-healthcare-patterns",
-        type: "gesture",
-        severity: "medium",
-        title: "Padrões de toque para saúde ausentes",
-        description: `${missingPatterns.length} padrões de toque específicos para saúde não implementados`,
-        recommendation:
-          "Implementar padrões de toque otimizados para aplicações de saúde",
+        id: 'missing-healthcare-patterns',
+        type: 'gesture',
+        severity: 'medium',
+        title: 'Padrões de toque para saúde ausentes',
+        description:
+          `${missingPatterns.length} padrões de toque específicos para saúde não implementados`,
+        recommendation: 'Implementar padrões de toque otimizados para aplicações de saúde',
         affectedElements: missingPatterns,
-        wcagReference: "WCAG 2.1 AA - Critério 2.5.5 (Tamanho do Alvo)",
-        healthcareImpact:
-          "Reduz eficiência e acessibilidade para profissionais e pacientes",
+        wcagReference: 'WCAG 2.1 AA - Critério 2.5.5 (Tamanho do Alvo)',
+        healthcareImpact: 'Reduz eficiência e acessibilidade para profissionais e pacientes',
         remediation: {
           steps: [
-            "Implementar padrões de toque para medicação",
-            "Adicionar acesso rápido para emergências",
-            "Otimizar entrada de sinais vitais",
-            "Testar com profissionais de saúde",
+            'Implementar padrões de toque para medicação',
+            'Adicionar acesso rápido para emergências',
+            'Otimizar entrada de sinais vitais',
+            'Testar com profissionais de saúde',
           ],
-          timeframe: "3-4 semanas",
-          difficulty: "medium",
+          timeframe: '3-4 semanas',
+          difficulty: 'medium',
         },
         detectedAt: new Date(),
       });
@@ -411,12 +401,11 @@ export class MobileTouchAccessibility {
 
     this.issues.push(...issues);
 
-    const level =
-      missingPatterns.length === 0
-        ? TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT
-        : missingPatterns.length <= 2
-          ? TOUCH_ACCESSIBILITY_LEVELS.GOOD
-          : TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE;
+    const level = missingPatterns.length === 0
+      ? TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT
+      : missingPatterns.length <= 2
+      ? TOUCH_ACCESSIBILITY_LEVELS.GOOD
+      : TOUCH_ACCESSIBILITY_LEVELS.ACCEPTABLE;
 
     return {
       level,
@@ -464,8 +453,8 @@ export class MobileTouchAccessibility {
    */
   private validateSingleTouchTarget(target: TouchTarget): boolean {
     return (
-      target.width >= WCAG_TOUCH_TARGETS.MINIMUM_SIZE &&
-      target.height >= WCAG_TOUCH_TARGETS.MINIMUM_SIZE
+      target.width >= WCAG_TOUCH_TARGETS.MINIMUM_SIZE
+      && target.height >= WCAG_TOUCH_TARGETS.MINIMUM_SIZE
     );
   }
 
@@ -498,10 +487,10 @@ export class MobileTouchAccessibility {
     const spacing = WCAG_TOUCH_TARGETS.MINIMUM_SPACING;
 
     return !(
-      target1.x + target1.width + spacing <= target2.x ||
-      target2.x + target2.width + spacing <= target1.x ||
-      target1.y + target1.height + spacing <= target2.y ||
-      target2.y + target2.height + spacing <= target1.y
+      target1.x + target1.width + spacing <= target2.x
+      || target2.x + target2.width + spacing <= target1.x
+      || target1.y + target1.height + spacing <= target2.y
+      || target2.y + target2.height + spacing <= target1.y
     );
   }
 
@@ -543,9 +532,8 @@ export class MobileTouchAccessibility {
       [TOUCH_ACCESSIBILITY_LEVELS.CRITICAL]: 1,
     };
 
-    const averageScore =
-      levels.reduce((sum, level) => sum + levelScores[level], 0) /
-      levels.length;
+    const averageScore = levels.reduce((sum, level) => sum + levelScores[level], 0)
+      / levels.length;
 
     if (averageScore >= 4.5) return TOUCH_ACCESSIBILITY_LEVELS.EXCELLENT;
     if (averageScore >= 3.5) return TOUCH_ACCESSIBILITY_LEVELS.GOOD;
@@ -559,16 +547,15 @@ export class MobileTouchAccessibility {
    */
   private calculateOverallScore(): number {
     const criticalIssues = this.issues.filter(
-      (i) => i.severity === "critical",
+      i => i.severity === 'critical',
     ).length;
-    const highIssues = this.issues.filter((i) => i.severity === "high").length;
+    const highIssues = this.issues.filter(i => i.severity === 'high').length;
     const mediumIssues = this.issues.filter(
-      (i) => i.severity === "medium",
+      i => i.severity === 'medium',
     ).length;
-    const lowIssues = this.issues.filter((i) => i.severity === "low").length;
+    const lowIssues = this.issues.filter(i => i.severity === 'low').length;
 
-    const penalty =
-      criticalIssues * 25 + highIssues * 15 + mediumIssues * 8 + lowIssues * 3;
+    const penalty = criticalIssues * 25 + highIssues * 15 + mediumIssues * 8 + lowIssues * 3;
 
     return Math.max(0, 100 - penalty);
   }
@@ -590,10 +577,10 @@ export class MobileTouchAccessibility {
 
     Object.entries(issuesByType).forEach(([type, issues]) => {
       const criticalCount = issues.filter(
-        (i) => i.severity === "critical",
+        i => i.severity === 'critical',
       ).length;
-      const highCount = issues.filter((i) => i.severity === "high").length;
-      const mediumCount = issues.filter((i) => i.severity === "medium").length;
+      const highCount = issues.filter(i => i.severity === 'high').length;
+      const mediumCount = issues.filter(i => i.severity === 'medium').length;
 
       if (criticalCount > 0) {
         recommendations.push(
@@ -614,10 +601,10 @@ export class MobileTouchAccessibility {
 
     if (this.issues.length === 0) {
       recommendations.push(
-        "Manter conformidade com padrões de acessibilidade de toque",
+        'Manter conformidade com padrões de acessibilidade de toque',
       );
-      recommendations.push("Realizar testes regulares com usuários reais");
-      recommendations.push("Monitorar feedback de acessibilidade");
+      recommendations.push('Realizar testes regulares com usuários reais');
+      recommendations.push('Monitorar feedback de acessibilidade');
     }
 
     return recommendations;

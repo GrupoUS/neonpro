@@ -4,7 +4,7 @@ import type {
   AppointmentTemplateFilters,
   CreateAppointmentTemplateData,
   UpdateAppointmentTemplateData,
-} from "@/types/appointment-templates";
+} from '@/types/appointment-templates';
 
 class AppointmentTemplatesServiceStub {
   async getAppointmentTemplates(
@@ -25,7 +25,7 @@ class AppointmentTemplatesServiceStub {
     _userId: string,
   ): Promise<AppointmentTemplate> {
     throw new Error(
-      "appointmentTemplatesService.createAppointmentTemplate not implemented",
+      'appointmentTemplatesService.createAppointmentTemplate not implemented',
     );
   }
 
@@ -35,7 +35,7 @@ class AppointmentTemplatesServiceStub {
     _userId: string,
   ): Promise<AppointmentTemplate> {
     throw new Error(
-      "appointmentTemplatesService.updateAppointmentTemplate not implemented",
+      'appointmentTemplatesService.updateAppointmentTemplate not implemented',
     );
   }
 
@@ -58,5 +58,4 @@ class AppointmentTemplatesServiceStub {
   }
 }
 
-export const appointmentTemplatesService =
-  new AppointmentTemplatesServiceStub();
+export const appointmentTemplatesService = new AppointmentTemplatesServiceStub();

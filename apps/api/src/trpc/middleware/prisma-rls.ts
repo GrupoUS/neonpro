@@ -11,7 +11,6 @@
  * @performance <200ms RLS overhead target
  */
 
-import { Prisma } from '@prisma/client';
 import { TRPCError } from '@trpc/server';
 
 // RLS Policy Types
@@ -44,8 +43,8 @@ const RLS_POLICIES = {
   // Clinic-based isolation - ensures users only access data from their clinic
   clinic_isolation: (
     ctx: RLSContext,
-    model: string,
-    operation: string,
+    _model: string,
+    _operation: string,
   ): RLSPolicyResult => {
     if (!ctx.clinicId) {
       return {
@@ -181,8 +180,8 @@ const RLS_POLICIES = {
   // Emergency override - special policy for emergency medical situations
   emergency_override: (
     ctx: RLSContext,
-    model: string,
-    operation: string,
+    _model: string,
+    _operation: string,
   ): RLSPolicyResult => {
     if (!ctx.isEmergency) {
       return {
@@ -236,27 +235,7 @@ const MODEL_RLS_CONFIG = {
   },
 } as const;
 
-/**
- * Extract model name from Prisma operation
- */
-function extractModelName(operation: any): string {
-  if (typeof operation === 'string') {
-    return operation;
-  }
-
-  // Extract model from Prisma delegate call
-  if (operation?.model) {
-    return operation.model;
-  }
-
-  // Fallback to analyzing the operation structure
-  const operationStr = operation?.toString() || '';
-  const modelMatch = operationStr.match(
-    /(\w+)\.(findMany|findUnique|create|update|delete)/,
-  );
-
-  return modelMatch?.[1] || 'Unknown';
-} /**
+ /**
  * Extract operation type from Prisma call
  */
 
@@ -381,7 +360,7 @@ function applyRLSPolicies(
 function createRLSEnforcedPrisma(
   originalPrisma: any,
   rlsContext: RLSContext,
-  auditMeta: any,
+  _auditMeta: any,
 ) {
   const enhancedPrisma = new Proxy(originalPrisma, {
     get(target, prop) {
@@ -466,8 +445,8 @@ export const prismaRLSMiddleware = async ({
   ctx,
   next,
   path,
-  type,
-  input,
+  _type,
+  _input,
 }: any) => {
   const start = performance.now();
 

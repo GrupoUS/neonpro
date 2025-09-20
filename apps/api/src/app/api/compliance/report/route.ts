@@ -9,6 +9,7 @@ import {
   brazilianHealthcareEdge,
   createHealthcareResponse,
 } from '../../../../middleware/edge-runtime';
+import { logger } from '@/utils/secure-logger';
 
 // Configure for edge runtime
 export const runtime = 'edge';
@@ -80,7 +81,7 @@ export async function GET() {
       cacheControl: 'public, max-age=60', // Cache for 1 minute
     });
   } catch (error) {
-    console.error('Compliance report generation failed:', error);
+    logger.error('Compliance report generation failed', error);
 
     return createHealthcareResponse(
       {

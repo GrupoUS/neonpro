@@ -128,7 +128,7 @@ export class WorkflowEngine {
           phaseConfig,
         );
 
-      case "security-auditor":
+      case "test-auditor":
         return this.executeSecurityAgent(
           phase,
           state,
@@ -402,7 +402,7 @@ export class WorkflowEngine {
     }
 
     return {
-      agent: "security-auditor",
+      agent: "test-auditor",
       phase,
       status: state.feature.securityCritical ? "success" : "skipped",
       findings,
@@ -450,21 +450,21 @@ export class WorkflowEngine {
         description: "TDD workflow with enhanced security validation",
         phases: {
           red: {
-            agents: ["apex-dev", "security-auditor", "code-reviewer"],
+            agents: ["apex-dev", "test-auditor", "code-reviewer"],
             qualityGates: ["testCoverage", "security"],
             parallelizable: false,
             timeout: 450000, // 7.5 minutes
             retryAttempts: 2,
           },
           green: {
-            agents: ["apex-dev", "security-auditor", "code-reviewer"],
+            agents: ["apex-dev", "test-auditor", "code-reviewer"],
             qualityGates: ["testCoverage", "security", "codeQuality"],
             parallelizable: false,
             timeout: 900000, // 15 minutes
             retryAttempts: 2,
           },
           refactor: {
-            agents: ["code-reviewer", "architect-review", "security-auditor"],
+            agents: ["code-reviewer", "architect-review", "test-auditor"],
             qualityGates: ["codeQuality", "architecture", "security"],
             parallelizable: true,
             timeout: 1200000, // 20 minutes

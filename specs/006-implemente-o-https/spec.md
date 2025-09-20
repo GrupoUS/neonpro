@@ -28,6 +28,11 @@ As a healthcare professional, I want to conversationaly ask questions about my c
 - What happens when the database connection is temporarily unavailable?
 - How does the system handle requests for extremely large datasets?
 - What happens when the user's session has expired during a conversation?
+- What happens when a user attempts to access the system via HTTP instead of HTTPS?
+- How does the system handle SSL/TLS certificate expiration or invalid certificates?
+- What happens when security headers are blocked by corporate firewalls?
+- How does the system respond when mixed content is detected?
+- What happens during HTTPS certificate renewal without service interruption?
 
 ## Requirements _(mandatory)_
 
@@ -43,6 +48,30 @@ As a healthcare professional, I want to conversationaly ask questions about my c
 - **FR-008**: System MUST maintain conversation context for follow-up questions
 - **FR-009**: System MUST support interactive elements in responses (e.g., "Ver detalhes" buttons)
 - **FR-010**: System MUST ensure all database access respects Row Level Security (RLS) policies
+
+### Non-Functional Requirements
+
+#### Security & HTTPS Requirements (MANDATORY)
+
+- **NFR-001**: System MUST use HTTPS with TLS 1.3 or higher for ALL production traffic
+- **NFR-002**: System MUST implement HTTP Strict Transport Security (HSTS) with max-age ≥ 31536000 (1 year), includeSubDomains, and preload
+- **NFR-003**: System MUST automatically renew SSL/TLS certificates and monitor for expiration
+- **NFR-004**: System MUST implement comprehensive security headers including:
+  - Strict-Transport-Security
+  - X-Content-Type-Options: nosniff
+  - X-Frame-Options: DENY
+  - X-XSS-Protection: 1; mode=block
+  - Content-Security-Policy
+  - Referrer-Policy
+- **NFR-005**: System MUST prevent mixed content by serving all resources over HTTPS
+- **NFR-006**: System MUST support Perfect Forward Secrecy (PFS) cipher suites
+- **NFR-007**: System MUST support Certificate Transparency logging for all certificates
+
+#### Performance Requirements
+
+- **NFR-008**: Agent responses MUST be delivered within 2 seconds for simple queries
+- **NFR-009**: HTTPS handshake time MUST be ≤300ms
+- **NFR-010**: System MUST support concurrent users without performance degradation
 
 ### Key Entities _(include if feature involves data)_
 
@@ -73,6 +102,15 @@ _GATE: Automated checks run during main() execution_
 - [x] Success criteria are measurable
 - [x] Scope is clearly bounded
 - [x] Dependencies and assumptions identified
+
+### Security & HTTPS Compliance
+
+- [ ] All HTTPS requirements from constitution are included
+- [ ] Security headers requirements are specified
+- [ ] Certificate management approach is defined
+- [ ] Mixed content prevention is addressed
+- [ ] HSTS enforcement is documented
+- [ ] Performance impact of HTTPS is considered
 
 ---
 

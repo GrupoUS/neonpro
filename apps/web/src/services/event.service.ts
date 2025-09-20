@@ -4,30 +4,30 @@
  * with comprehensive validation, filtering, and search capabilities
  */
 
-import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/lib/supabase/types/database";
-import { 
-  addHours, 
-  addMinutes, 
-  isSameDay, 
-  isSameMonth, 
-  isSameWeek, 
-  isAfter, 
-  isBefore,
-  startOfDay,
+import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/lib/supabase/types/database';
+import {
+  addHours,
+  addMinutes,
   endOfDay,
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
   endOfMonth,
+  endOfWeek,
+  format,
+  isAfter,
+  isBefore,
+  isSameDay,
+  isSameMonth,
+  isSameWeek,
   parseISO,
-  format
-} from "date-fns";
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+} from 'date-fns';
 
 // Type definitions
-type AppointmentInsert = Database["public"]["Tables"]["appointments"]["Insert"];
-type AppointmentUpdate = Database["public"]["Tables"]["appointments"]["Update"];
-type AppointmentRow = Database["public"]["Tables"]["appointments"]["Row"];
+type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
+type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
+type AppointmentRow = Database['public']['Tables']['appointments']['Row'];
 
 // Event interface that extends CalendarEvent with additional metadata
 export interface CalendarEventExtended {
@@ -134,7 +134,7 @@ export class EventService {
   private static appointmentToEvent(appointment: AppointmentRow): CalendarEventExtended {
     // Generate title from related data (this would need to be fetched separately)
     const title = `Appointment #${appointment.id.slice(0, 8)}`;
-    
+
     return {
       id: appointment.id,
       title,
@@ -233,7 +233,7 @@ export class EventService {
       // Check for reasonable event duration
       const duration = event.end.getTime() - event.start.getTime();
       const durationMinutes = duration / (1000 * 60);
-      
+
       if (durationMinutes < 5) {
         warnings.push('Event duration is less than 5 minutes');
       }
@@ -268,7 +268,7 @@ export class EventService {
     }
 
     const appointmentData = this.eventToAppointmentInsert(eventData);
-    
+
     const { data, error } = await supabase
       .from('appointments')
       .insert(appointmentData)
@@ -312,7 +312,7 @@ export class EventService {
     }
 
     const appointmentData = this.eventToAppointmentUpdate(eventData);
-    
+
     const { data, error } = await supabase
       .from('appointments')
       .update(appointmentData)
@@ -384,7 +384,7 @@ export class EventService {
     // Apply search term filter (basic text search)
     if (filters?.searchTerm) {
       query = query.or(
-        `notes.ilike.%${filters.searchTerm}%,internal_notes.ilike.%${filters.searchTerm}%`
+        `notes.ilike.%${filters.searchTerm}%,internal_notes.ilike.%${filters.searchTerm}%`,
       );
     }
 
@@ -408,7 +408,13 @@ export class EventService {
     totalCount: number;
     hasMore: boolean;
   }> {
-    const { query, searchIn = ['title', 'description', 'notes'], dateRange, limit = 20, offset = 0 } = searchOptions;
+    const {
+      query,
+      searchIn = ['title', 'description', 'notes'],
+      dateRange,
+      limit = 20,
+      offset = 0,
+    } = searchOptions;
 
     let dbQuery = supabase
       .from('appointments')
@@ -423,12 +429,12 @@ export class EventService {
 
     // Apply search conditions
     const searchConditions: string[] = [];
-    
+
     if (searchIn.includes('title') || searchIn.includes('description')) {
       // Since we don't have a direct title field, we'll search in notes
       searchConditions.push(`notes.ilike.%${query}%`);
     }
-    
+
     if (searchIn.includes('notes')) {
       searchConditions.push(`notes.ilike.%${query}%`);
     }
@@ -458,7 +464,10 @@ export class EventService {
   /**
    * Get events for a specific date range
    */
-  static async getEventsForDateRange(startDate: Date, endDate: Date): Promise<CalendarEventExtended[]> {
+  static async getEventsForDateRange(
+    startDate: Date,
+    endDate: Date,
+  ): Promise<CalendarEventExtended[]> {
     return this.getEvents({
       dateRange: { start: startDate, end: endDate },
     });
@@ -477,7 +486,10 @@ export class EventService {
    */
   static async getThisWeekEvents(): Promise<CalendarEventExtended[]> {
     const today = new Date();
-    return this.getEventsForDateRange(startOfWeek(today, { weekStartsOn: 0 }), endOfWeek(today, { weekStartsOn: 0 }));
+    return this.getEventsForDateRange(
+      startOfWeek(today, { weekStartsOn: 0 }),
+      endOfWeek(today, { weekStartsOn: 0 }),
+    );
   }
 
   /**
@@ -504,12 +516,12 @@ export class EventService {
    * Check for conflicting events
    */
   static async checkConflicts(
-    start: Date, 
-    end: Date, 
-    excludeEventId?: string
+    start: Date,
+    end: Date,
+    excludeEventId?: string,
   ): Promise<CalendarEventExtended[]> {
     const events = await this.getEvents({
-      dateRange: { 
+      dateRange: {
         start: addMinutes(start, -30), // Check 30 minutes before
         end: addMinutes(end, 30), // Check 30 minutes after
       },
@@ -519,12 +531,12 @@ export class EventService {
       if (excludeEventId && event.id === excludeEventId) {
         return false;
       }
-      
+
       // Check for overlap
       return (
-        (isAfter(event.start, start) && isBefore(event.start, end)) ||
-        (isAfter(event.end, start) && isBefore(event.end, end)) ||
-        (isBefore(event.start, start) && isAfter(event.end, end))
+        (isAfter(event.start, start) && isBefore(event.start, end))
+        || (isAfter(event.end, start) && isBefore(event.end, end))
+        || (isBefore(event.start, start) && isAfter(event.end, end))
       );
     });
   }
@@ -538,7 +550,7 @@ export class EventService {
     eventsByPriority: Record<number, number>;
     averageDuration: number;
   }> {
-    const events = dateRange 
+    const events = dateRange
       ? await this.getEvents({ dateRange })
       : await this.getEvents();
 

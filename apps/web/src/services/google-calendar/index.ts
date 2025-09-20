@@ -1,18 +1,11 @@
-export { GoogleCalendarClient } from "./client";
-export { GoogleCalendarService } from "./service";
-export type {
-  GoogleCalendarConfig,
-  OAuth2Tokens,
-  CalendarEvent,
-} from "./client";
-export type {
-  GoogleCalendarIntegrationConfig,
-  AppointmentData,
-} from "./service";
+export { GoogleCalendarClient } from './client';
+export type { CalendarEvent, GoogleCalendarConfig, OAuth2Tokens } from './client';
+export { GoogleCalendarService } from './service';
+export type { AppointmentData, GoogleCalendarIntegrationConfig } from './service';
 
 // Re-export database types for convenience
 export type {
-  GoogleCalendarIntegration,
   GoogleCalendarEvent,
+  GoogleCalendarIntegration,
   GoogleCalendarSyncLog,
-} from "@prisma/client";
+} from '@prisma/client';

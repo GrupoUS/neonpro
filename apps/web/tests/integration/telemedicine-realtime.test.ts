@@ -1,3 +1,4 @@
+import React from 'react';
 import { createClient } from '@supabase/supabase-js';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -22,86 +23,89 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
  */
 
 // Mock components that will need to be implemented
-const MockTelemedicineRoom = () => <div data-testid='telemedicine-room'>Telemedicine Room</div>;
-const MockVideoConsultation = () => <div data-testid='video-consultation'>Video Consultation</div>;
-const MockRealTimeChat = () => <div data-testid='realtime-chat'>Real-time Chat</div>;
-const MockNotificationCenter = () => (
-  <div data-testid='notification-center'>Notification Center</div>
-);
-
-// Mock WebRTC and real-time APIs
-const mockPeerConnection = {
-  createOffer: vi.fn(() => Promise.resolve({ type: 'offer', sdp: 'mock_offer_sdp' })),
-  createAnswer: vi.fn(() => Promise.resolve({ type: 'answer', sdp: 'mock_answer_sdp' })),
-  setLocalDescription: vi.fn(() => Promise.resolve()),
-  setRemoteDescription: vi.fn(() => Promise.resolve()),
-  addIceCandidate: vi.fn(() => Promise.resolve()),
-  close: vi.fn(),
-  onicecandidate: null,
-  ontrack: null,
-  onconnectionstatechange: null,
-  connectionState: 'new',
-};
-
-Object.defineProperty(window, 'RTCPeerConnection', {
-  value: vi.fn(() => mockPeerConnection),
-  writable: true,
-});
-
-Object.defineProperty(window.navigator, 'mediaDevices', {
-  value: {
-    getUserMedia: vi.fn(() =>
-      Promise.resolve({
-        getTracks: () => [
-          { kind: 'video', id: 'video_track_1', stop: vi.fn() },
-          { kind: 'audio', id: 'audio_track_1', stop: vi.fn() },
-        ],
-      })
-    ),
-    enumerateDevices: vi.fn(() =>
-      Promise.resolve([
-        { deviceId: 'camera_1', kind: 'videoinput', label: 'Front Camera' },
-        { deviceId: 'mic_1', kind: 'audioinput', label: 'Built-in Microphone' },
-      ])
-    ),
-  },
-  writable: true,
-});
-
-// Mock WebSocket for real-time communication
-class MockWebSocket {
-  constructor(url: string) {
-    this.url = url;
-    this.readyState = WebSocket.CONNECTING;
-    setTimeout(() => {
-      this.readyState = WebSocket.OPEN;
-      if (this.onopen) this.onopen({} as Event);
-    }, 100);
-  }
-
-  url: string;
-  readyState: number;
-  onopen: ((event: Event) => void) | null = null;
-  onmessage: ((event: MessageEvent) => void) | null = null;
-  onclose: ((event: CloseEvent) => void) | null = null;
-  onerror: ((event: Event) => void) | null = null;
-
-  send = vi.fn();
-  close = vi.fn();
-}
-
-Object.defineProperty(window, 'WebSocket', {
-  value: MockWebSocket,
-  writable: true,
-});
+const MockTelemedicineRoom = () => React.createElement('div', { 'data-testid': 'telemedicine-room' }, 'Telemedicine Room');
+const MockVideoConsultation = () => React.createElement('div', { 'data-testid': 'video-consultation' }, 'Video Consultation');
+const MockRealTimeChat = () => React.createElement('div', { 'data-testid': 'realtime-chat' }, 'Real-time Chat');
+const MockNotificationCenter = () => React.createElement('div', { 'data-testid': 'notification-center' }, 'Notification Center');
 
 describe('Real-Time Telemedicine Interface Integration Tests', () => {
   let queryClient: QueryClient;
   let supabase: ReturnType<typeof createClient>;
   let user: ReturnType<typeof userEvent.setup>;
-  let mockWebSocket: MockWebSocket;
+  let mockWebSocket: any;
 
   beforeEach(async () => {
+    // Setup window object
+    global.window = global.window || {};
+    
+    // Mock WebRTC and real-time APIs
+    const mockPeerConnection = {
+      createOffer: vi.fn(() => Promise.resolve({ type: 'offer', sdp: 'mock_offer_sdp' })),
+      createAnswer: vi.fn(() => Promise.resolve({ type: 'answer', sdp: 'mock_answer_sdp' })),
+      setLocalDescription: vi.fn(() => Promise.resolve()),
+      setRemoteDescription: vi.fn(() => Promise.resolve()),
+      addIceCandidate: vi.fn(() => Promise.resolve()),
+      close: vi.fn(),
+      onicecandidate: null,
+      ontrack: null,
+      onconnectionstatechange: null,
+      connectionState: 'new',
+    };
+
+    Object.defineProperty(window, 'RTCPeerConnection', {
+      value: vi.fn(() => mockPeerConnection),
+      writable: true,
+    });
+
+    Object.defineProperty(window, 'navigator', {
+      value: {
+        mediaDevices: {
+          getUserMedia: vi.fn(() =>
+            Promise.resolve({
+              getTracks: () => [
+                { kind: 'video', id: 'video_track_1', stop: vi.fn() },
+                { kind: 'audio', id: 'audio_track_1', stop: vi.fn() },
+              ],
+            })
+          ),
+          enumerateDevices: vi.fn(() =>
+            Promise.resolve([
+              { deviceId: 'camera_1', kind: 'videoinput', label: 'Front Camera' },
+              { deviceId: 'mic_1', kind: 'audioinput', label: 'Built-in Microphone' },
+            ])
+          ),
+        },
+      },
+      writable: true,
+    });
+
+    // Mock WebSocket for real-time communication
+    class MockWebSocket {
+      constructor(url: string) {
+        this.url = url;
+        this.readyState = 1; // WebSocket.CONNECTING
+        setTimeout(() => {
+          this.readyState = 1; // WebSocket.OPEN
+          if (this.onopen) this.onopen({} as Event);
+        }, 100);
+      }
+
+      url: string;
+      readyState: number;
+      onopen: ((event: Event) => void) | null = null;
+      onmessage: ((event: MessageEvent) => void) | null = null;
+      onclose: ((event: CloseEvent) => void) | null = null;
+      onerror: ((event: Event) => void) | null = null;
+
+      send = vi.fn();
+      close = vi.fn();
+    }
+
+    Object.defineProperty(window, 'WebSocket', {
+      value: MockWebSocket,
+      writable: true,
+    });
+
     queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false },
@@ -109,8 +113,8 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       },
     });
 
-    supabase = createClient('mock_url', 'mock_key');
-    user = userEvent.setup();
+    supabase = createClient('https://mock.supabase.co', 'mock_key');
+    user = userEvent;
 
     // Mock WebSocket connection
     mockWebSocket = new MockWebSocket('wss://realtime.neonpro.com.br/telemedicine');
@@ -123,11 +127,11 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
 
   const renderWithProviders = (component: React.ReactElement) => {
     return render(
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          {component}
-        </BrowserRouter>
-      </QueryClientProvider>,
+      React.createElement(QueryClientProvider, { client: queryClient },
+        React.createElement(BrowserRouter, null,
+          component
+        )
+      ),
     );
   };
 
@@ -164,7 +168,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(<MockVideoConsultation />);
+        renderWithProviders(React.createElement(MockVideoConsultation));
 
         // This should fail until WebRTC implementation is complete
         const videoElement = screen.getByTestId('video-local-stream');
@@ -207,7 +211,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(<MockVideoConsultation />);
+        renderWithProviders(React.createElement(MockVideoConsultation));
 
         // Mock poor network conditions
         const connectionQualityEvent = new CustomEvent('networkquality', {
@@ -262,7 +266,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
 
         // This should fail until multi-device implementation is complete
         const registerDevice = () => {
-          renderWithProviders(<MockTelemedicineRoom />);
+          renderWithProviders(React.createElement(MockTelemedicineRoom));
           const deviceRegistration = screen.getByTestId('device-registration');
           fireEvent.click(deviceRegistration);
         };
@@ -304,7 +308,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(<MockRealTimeChat />);
+        renderWithProviders(React.createElement(MockRealTimeChat));
 
         // Test medical terminology autocomplete
         const chatInput = screen.getByTestId('chat-message-input');
@@ -355,7 +359,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(<MockRealTimeChat />);
+        renderWithProviders(React.createElement(MockRealTimeChat));
 
         // Test emergency message detection
         const chatInput = screen.getByTestId('chat-message-input');
@@ -409,7 +413,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(<MockNotificationCenter />);
+        renderWithProviders(React.createElement(MockNotificationCenter));
 
         // Mock incoming WebSocket notification
         const appointmentNotification = {
@@ -471,16 +475,16 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(<MockNotificationCenter />);
+        renderWithProviders(React.createElement(MockNotificationCenter));
 
         // Test connection interruption handling
-        mockWebSocket.readyState = WebSocket.CLOSED;
+        mockWebSocket.readyState = 3; // WebSocket.CLOSED
         if (mockWebSocket.onclose) {
           mockWebSocket.onclose({} as CloseEvent);
         }
 
         // Should attempt reconnection
-        expect(MockWebSocket).toHaveBeenCalledTimes(2); // Initial + reconnect
+        expect(window.WebSocket).toHaveBeenCalledTimes(2); // Initial + reconnect
 
         // Should show connection status
         const connectionStatus = screen.getByTestId('connection-status');
@@ -526,7 +530,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       expect(async () => {
         const startTime = performance.now();
 
-        renderWithProviders(<MockTelemedicineRoom />);
+        renderWithProviders(React.createElement(MockTelemedicineRoom));
 
         // Test critical operation timing
         const emergencyButton = screen.getByTestId('emergency-alert-button');
@@ -580,7 +584,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
         // This should fail until high-concurrency handling is implemented
         const loadTestResults = await Promise.all(
           concurrentSessions.map(session => {
-            renderWithProviders(<MockVideoConsultation />);
+            renderWithProviders(React.createElement(MockVideoConsultation));
             return screen.getByTestId('video-consultation');
           }),
         );
@@ -616,7 +620,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(<MockVideoConsultation />);
+        renderWithProviders(React.createElement(MockVideoConsultation));
 
         // Test encryption status indicators
         const encryptionStatus = screen.getByTestId('encryption-status');
@@ -658,7 +662,7 @@ describe('Real-Time Telemedicine Interface Integration Tests', () => {
       };
 
       expect(() => {
-        renderWithProviders(<MockTelemedicineRoom />);
+        renderWithProviders(React.createElement(MockTelemedicineRoom));
 
         // Test audit trail generation
         const auditLog = screen.getByTestId('audit-trail-indicator');

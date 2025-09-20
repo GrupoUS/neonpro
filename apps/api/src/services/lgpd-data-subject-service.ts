@@ -808,12 +808,12 @@ export class LGPDDataSubjectService {
     };
   }
 
-  private async getThirdPartySharingData(patientId: string): Promise<any> {
+  private async getThirdPartySharingData(_patientId: string): Promise<any> {
     // Return third-party data sharing records
     return [];
   }
 
-  private async getDataRetentionInfo(patientId: string): Promise<any> {
+  private async getDataRetentionInfo(_patientId: string): Promise<any> {
     // Return data retention information
     return {
       personalDataRetention: '10 years after last contact',

@@ -238,17 +238,19 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
           });
         }
 
-        // Create adverse events for significant issues
-        if (performanceIssues.length > 0) {
+        // Create adverse events for ALL issues, not just the first one
+        for (const issue of performanceIssues) {
           adverseEvents.push({
             operation: operation.operation,
-            issue_type: performanceIssues[0].type,
-            severity: performanceIssues[0].severity,
-            requires_reporting: performanceIssues[0].severity === 'CRITICO'
-              || performanceIssues[0].severity === 'GRAVE',
+            issue_type: issue.type,
+            severity: issue.severity,
+            requires_reporting: issue.severity === 'CRITICO'
+              || issue.severity === 'GRAVE',
           });
         }
       }
+
+  
 
       // Verify automatic detection
       expect(adverseEvents.length).toBeGreaterThan(0);
@@ -1077,10 +1079,10 @@ describe('T047: ANVISA Adverse Event Reporting Tests', () => {
 
       if (baselineVersion && updatedVersion) {
         const improvement = {
-          response_time_improvement: baselineVersion.performance_metrics!.response_time_ms
-            - updatedVersion.performance_metrics!.response_time_ms,
-          accuracy_improvement: updatedVersion.performance_metrics!.accuracy_percentage
-            - baselineVersion.performance_metrics!.accuracy_percentage,
+          response_time_improvement: (baselineVersion.performance_metrics! as any).average_response_time
+            - (updatedVersion.performance_metrics! as any).average_response_time,
+          accuracy_improvement: (updatedVersion.performance_metrics! as any).accuracy
+            - (baselineVersion.performance_metrics! as any).accuracy,
         };
 
         expect(improvement.response_time_improvement).toBeGreaterThan(0); // Faster

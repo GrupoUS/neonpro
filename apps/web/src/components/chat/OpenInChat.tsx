@@ -1,4 +1,4 @@
-import { useI18n } from "@/i18n/i18n";
+import { useI18n } from '@/i18n/i18n';
 
 export type OpenInChatProps = {
   getPrefill: () => string;
@@ -14,8 +14,8 @@ export function OpenInChat({ getPrefill, onOpen }: OpenInChatProps) {
 
   return (
     <div>
-      <button onClick={handleOpen} aria-label={t("chat.open_in_chat")}>
-        {t("chat.open_in_chat")}
+      <button onClick={handleOpen} aria-label={t('chat.open_in_chat')}>
+        {t('chat.open_in_chat')}
       </button>
     </div>
   );

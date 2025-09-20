@@ -195,7 +195,7 @@ export class EnhancedRLSSecurityService {
   private async assessThreats(
     context: SecurityContext,
     tableName: string,
-    operation: string,
+    _operation: string,
   ): Promise<{ threatLevel: number; alerts: SecurityAlert[] }> {
     const alerts: SecurityAlert[] = [];
     let threatScore = 0;
@@ -596,8 +596,8 @@ export class EnhancedRLSSecurityService {
 
   private async detectUnusualPatterns(
     context: SecurityContext,
-    tableName: string,
-    operation: string,
+    _tableName: string,
+    _operation: string,
   ): Promise<number> {
     // Check for unusual access patterns
     try {
@@ -668,7 +668,7 @@ export class EnhancedRLSSecurityService {
   private detectUnusualSequence(
     sequence: any[],
     currentTable: string,
-    currentOperation: string,
+    _currentOperation: string,
   ): boolean {
     // Detect suspicious access patterns
     const sensitiveTables = [

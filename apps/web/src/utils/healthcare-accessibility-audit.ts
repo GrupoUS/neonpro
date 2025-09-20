@@ -7,37 +7,31 @@
  * @package NeonPro Healthcare Accessibility
  */
 
-import * as Axe from "axe-core";
-import type { AxeResults, Result } from "axe-core";
-import type {
-  AccessibilityIssue,
-  AccessibilityTestingOptions,
-} from "./accessibility-testing";
+import * as Axe from 'axe-core';
+import type { AxeResults, Result } from 'axe-core';
+import type { AccessibilityIssue, AccessibilityTestingOptions } from './accessibility-testing';
 
 // Healthcare-specific accessibility rule IDs
 export const HEALTHCARE_ACCESSIBILITY_RULES = {
   // Patient data privacy and accessibility
-  "patient-data-privacy":
-    "Patient data must be accessible while maintaining privacy",
-  "emergency-info-accessible":
-    "Emergency information must be accessible to all users",
-  "medical-terminology": "Medical terminology must be screen reader compatible",
-  "treatment-accessibility": "Treatment plans must be cognitively accessible",
+  'patient-data-privacy': 'Patient data must be accessible while maintaining privacy',
+  'emergency-info-accessible': 'Emergency information must be accessible to all users',
+  'medical-terminology': 'Medical terminology must be screen reader compatible',
+  'treatment-accessibility': 'Treatment plans must be cognitively accessible',
 
   // Brazilian healthcare compliance
-  "lgpd-accessibility": "LGPD compliance with accessibility requirements",
-  "anvisa-accessibility": "ANVISA regulatory information accessibility",
-  "cfm-accessibility": "CFM medical ethics accessibility standards",
+  'lgpd-accessibility': 'LGPD compliance with accessibility requirements',
+  'anvisa-accessibility': 'ANVISA regulatory information accessibility',
+  'cfm-accessibility': 'CFM medical ethics accessibility standards',
 
   // Healthcare interaction patterns
-  "appointment-accessibility": "Appointment scheduling accessibility",
-  "medical-history": "Medical history navigation accessibility",
-  "consent-forms": "Medical consent form accessibility",
-  "vital-signs": "Vital signs display accessibility",
+  'appointment-accessibility': 'Appointment scheduling accessibility',
+  'medical-history': 'Medical history navigation accessibility',
+  'consent-forms': 'Medical consent form accessibility',
+  'vital-signs': 'Vital signs display accessibility',
 } as const;
 
-export type HealthcareAccessibilityRuleId =
-  keyof typeof HEALTHCARE_ACCESSIBILITY_RULES;
+export type HealthcareAccessibilityRuleId = keyof typeof HEALTHCARE_ACCESSIBILITY_RULES;
 
 // Healthcare compliance standards
 export interface HealthcareComplianceStandard {
@@ -45,51 +39,49 @@ export interface HealthcareComplianceStandard {
   name: string;
   description: string;
   accessibilityRequirements: string[];
-  regulatoryBody: "LGPD" | "ANVISA" | "CFM" | "ISO";
-  severity: "critical" | "high" | "medium" | "low";
+  regulatoryBody: 'LGPD' | 'ANVISA' | 'CFM' | 'ISO';
+  severity: 'critical' | 'high' | 'medium' | 'low';
 }
 
 export const HEALTHCARE_COMPLIANCE_STANDARDS: HealthcareComplianceStandard[] = [
   {
-    id: "lgpd-accessibility",
-    name: "LGPD Accessibility Compliance",
-    description:
-      "Brazilian General Data Protection Law accessibility requirements",
+    id: 'lgpd-accessibility',
+    name: 'LGPD Accessibility Compliance',
+    description: 'Brazilian General Data Protection Law accessibility requirements',
     accessibilityRequirements: [
-      "Accessible privacy policies",
-      "Patient data access with assistive technology",
-      "Consent form accessibility",
-      "Data portability accessibility",
+      'Accessible privacy policies',
+      'Patient data access with assistive technology',
+      'Consent form accessibility',
+      'Data portability accessibility',
     ],
-    regulatoryBody: "LGPD",
-    severity: "critical",
+    regulatoryBody: 'LGPD',
+    severity: 'critical',
   },
   {
-    id: "anvisa-accessibility",
-    name: "ANVISA Accessibility Standards",
-    description:
-      "Brazilian Health Regulatory Agency accessibility requirements",
+    id: 'anvisa-accessibility',
+    name: 'ANVISA Accessibility Standards',
+    description: 'Brazilian Health Regulatory Agency accessibility requirements',
     accessibilityRequirements: [
-      "Medication information accessibility",
-      "Treatment instructions accessibility",
-      "Medical device information accessibility",
-      "Adverse event reporting accessibility",
+      'Medication information accessibility',
+      'Treatment instructions accessibility',
+      'Medical device information accessibility',
+      'Adverse event reporting accessibility',
     ],
-    regulatoryBody: "ANVISA",
-    severity: "high",
+    regulatoryBody: 'ANVISA',
+    severity: 'high',
   },
   {
-    id: "cfm-accessibility",
-    name: "CFM Medical Ethics Accessibility",
-    description: "Federal Council of Medicine accessibility standards",
+    id: 'cfm-accessibility',
+    name: 'CFM Medical Ethics Accessibility',
+    description: 'Federal Council of Medicine accessibility standards',
     accessibilityRequirements: [
-      "Patient dignity in accessibility",
-      "Medical confidentiality accessibility",
-      "Informed consent accessibility",
-      "Professional ethics accessibility",
+      'Patient dignity in accessibility',
+      'Medical confidentiality accessibility',
+      'Informed consent accessibility',
+      'Professional ethics accessibility',
     ],
-    regulatoryBody: "CFM",
-    severity: "high",
+    regulatoryBody: 'CFM',
+    severity: 'high',
   },
 ];
 
@@ -97,27 +89,27 @@ export const HEALTHCARE_COMPLIANCE_STANDARDS: HealthcareComplianceStandard[] = [
 export interface HealthcareAccessibilityIssue extends AccessibilityIssue {
   healthcareRuleId: HealthcareAccessibilityRuleId;
   complianceStandards: HealthcareComplianceStandard[];
-  patientImpact: "critical" | "high" | "medium" | "low";
+  patientImpact: 'critical' | 'high' | 'medium' | 'low';
   emergencyRelevant: boolean;
-  remediationPriority: "immediate" | "high" | "medium" | "low";
+  remediationPriority: 'immediate' | 'high' | 'medium' | 'low';
   affectedPatientFlows: string[];
 }
 
 // Healthcare audit context
 export interface HealthcareAuditContext {
   patientJourney:
-    | "registration"
-    | "appointment"
-    | "treatment"
-    | "follow-up"
-    | "emergency";
-  dataSensitivity: "low" | "medium" | "high" | "critical";
+    | 'registration'
+    | 'appointment'
+    | 'treatment'
+    | 'follow-up'
+    | 'emergency';
+  dataSensitivity: 'low' | 'medium' | 'high' | 'critical';
   userDisabilityProfile?:
-    | "visual"
-    | "auditory"
-    | "motor"
-    | "cognitive"
-    | "multiple";
+    | 'visual'
+    | 'auditory'
+    | 'motor'
+    | 'cognitive'
+    | 'multiple';
   emergencyContext: boolean;
   regulatoryRequirements: HealthcareComplianceStandard[];
 }
@@ -140,28 +132,28 @@ export interface HealthcareAccessibilityRecommendation {
   id: string;
   title: string;
   description: string;
-  priority: "immediate" | "high" | "medium" | "low";
+  priority: 'immediate' | 'high' | 'medium' | 'low';
   healthcareRelevance: string;
   complianceStandards: HealthcareComplianceStandard[];
   implementationSteps: string[];
   validationCriteria: string[];
-  estimatedEffort: "low" | "medium" | "high";
+  estimatedEffort: 'low' | 'medium' | 'high';
 }
 
 // Healthcare-specific accessibility rules configuration
 export const healthcareAccessibilityRules = {
   rules: [
-    "patient-data-privacy",
-    "emergency-info-accessible",
-    "medical-terminology",
-    "treatment-accessibility",
-    "lgpd-accessibility",
-    "anvisa-accessibility",
-    "cfm-accessibility",
-    "appointment-accessibility",
-    "medical-history",
-    "consent-forms",
-    "vital-signs",
+    'patient-data-privacy',
+    'emergency-info-accessible',
+    'medical-terminology',
+    'treatment-accessibility',
+    'lgpd-accessibility',
+    'anvisa-accessibility',
+    'cfm-accessibility',
+    'appointment-accessibility',
+    'medical-history',
+    'consent-forms',
+    'vital-signs',
   ],
 };
 
@@ -172,8 +164,8 @@ export class HealthcareAccessibilityAuditor {
 
   constructor(context: Partial<HealthcareAuditContext> = {}) {
     this.context = {
-      patientJourney: "registration",
-      dataSensitivity: "medium",
+      patientJourney: 'registration',
+      dataSensitivity: 'medium',
       emergencyContext: false,
       regulatoryRequirements: HEALTHCARE_COMPLIANCE_STANDARDS,
       ...context,
@@ -194,8 +186,8 @@ export class HealthcareAccessibilityAuditor {
     // Run standard axe-core audit
     const axeResults = await Axe.run(element, {
       runOnly: {
-        type: "tag",
-        values: ["wcag2a", "wcag2aa", "best-practice"],
+        type: 'tag',
+        values: ['wcag2a', 'wcag2aa', 'best-practice'],
       },
       ...options,
     });
@@ -208,8 +200,7 @@ export class HealthcareAccessibilityAuditor {
     const accessibilityScore = axeResults
       ? this.calculateAccessibilityScore(axeResults)
       : 0;
-    const healthcareSpecificScore =
-      this.calculateHealthcareSpecificScore(healthcareIssues);
+    const healthcareSpecificScore = this.calculateHealthcareSpecificScore(healthcareIssues);
 
     // Generate recommendations
     const recommendations = this.generateRecommendations(healthcareIssues);
@@ -223,10 +214,10 @@ export class HealthcareAccessibilityAuditor {
       healthcareSpecificScore,
       recommendations,
       criticalIssuesCount: healthcareIssues.filter(
-        (issue) => issue.impact === "critical",
+        issue => issue.impact === 'critical',
       ).length,
       emergencyIssuesCount: healthcareIssues.filter(
-        (issue) => issue.emergencyRelevant,
+        issue => issue.emergencyRelevant,
       ).length,
     };
 
@@ -241,7 +232,7 @@ export class HealthcareAccessibilityAuditor {
   ): HealthcareAccessibilityIssue[] {
     const healthcareIssues: HealthcareAccessibilityIssue[] = [];
 
-    axeResults.violations.forEach((violation) => {
+    axeResults.violations.forEach(violation => {
       const healthcareRuleId = violation.id as HealthcareAccessibilityRuleId;
 
       if (HEALTHCARE_ACCESSIBILITY_RULES[healthcareRuleId]) {
@@ -259,7 +250,7 @@ export class HealthcareAccessibilityAuditor {
                 target: Array.isArray(node.target)
                   ? node.target.map(String)
                   : [String(node.target)],
-                failureSummary: node.failureSummary || "",
+                failureSummary: node.failureSummary || '',
                 any: node.any || [],
               },
             ],
@@ -272,7 +263,7 @@ export class HealthcareAccessibilityAuditor {
             remediationPriority: this.determineRemediationPriority(violation),
             affectedPatientFlows: this.identifyAffectedPatientFlows(violation),
             healthcareSpecific: true,
-            lgpdRelevant: violation.tags.includes("lgpd"),
+            lgpdRelevant: violation.tags.includes('lgpd'),
           };
 
           healthcareIssues.push(healthcareIssue);
@@ -289,12 +280,12 @@ export class HealthcareAccessibilityAuditor {
   private getRelevantComplianceStandards(
     tags: string[],
   ): HealthcareComplianceStandard[] {
-    return HEALTHCARE_COMPLIANCE_STANDARDS.filter((standard) =>
+    return HEALTHCARE_COMPLIANCE_STANDARDS.filter(standard =>
       tags.some(
-        (tag) =>
-          standard.id.toLowerCase().includes(tag) ||
-          standard.regulatoryBody.toLowerCase() === tag,
-      ),
+        tag =>
+          standard.id.toLowerCase().includes(tag)
+          || standard.regulatoryBody.toLowerCase() === tag,
+      )
     );
   }
 
@@ -303,26 +294,26 @@ export class HealthcareAccessibilityAuditor {
    */
   private assessPatientImpact(
     violation: Result,
-  ): "critical" | "high" | "medium" | "low" {
+  ): 'critical' | 'high' | 'medium' | 'low' {
     if (
-      violation.tags.includes("emergency") ||
-      violation.tags.includes("critical")
+      violation.tags.includes('emergency')
+      || violation.tags.includes('critical')
     ) {
-      return "critical";
+      return 'critical';
     }
 
     if (
-      violation.tags.includes("healthcare") &&
-      violation.impact === "serious"
+      violation.tags.includes('healthcare')
+      && violation.impact === 'serious'
     ) {
-      return "high";
+      return 'high';
     }
 
-    if (violation.impact === "serious") {
-      return "medium";
+    if (violation.impact === 'serious') {
+      return 'medium';
     }
 
-    return "low";
+    return 'low';
   }
 
   /**
@@ -330,9 +321,9 @@ export class HealthcareAccessibilityAuditor {
    */
   private isEmergencyRelevant(violation: Result): boolean {
     return (
-      violation.tags.includes("emergency") ||
-      violation.tags.includes("critical") ||
-      violation.id === "emergency-info-accessible"
+      violation.tags.includes('emergency')
+      || violation.tags.includes('critical')
+      || violation.id === 'emergency-info-accessible'
     );
   }
 
@@ -341,23 +332,23 @@ export class HealthcareAccessibilityAuditor {
    */
   private determineRemediationPriority(
     violation: Result,
-  ): "immediate" | "high" | "medium" | "low" {
+  ): 'immediate' | 'high' | 'medium' | 'low' {
     if (
-      violation.tags.includes("emergency") ||
-      violation.impact === "critical"
+      violation.tags.includes('emergency')
+      || violation.impact === 'critical'
     ) {
-      return "immediate";
+      return 'immediate';
     }
 
-    if (violation.tags.includes("lgpd") || violation.impact === "serious") {
-      return "high";
+    if (violation.tags.includes('lgpd') || violation.impact === 'serious') {
+      return 'high';
     }
 
-    if (violation.tags.includes("healthcare")) {
-      return "medium";
+    if (violation.tags.includes('healthcare')) {
+      return 'medium';
     }
 
-    return "low";
+    return 'low';
   }
 
   /**
@@ -366,26 +357,26 @@ export class HealthcareAccessibilityAuditor {
   private identifyAffectedPatientFlows(violation: Result): string[] {
     const flows: string[] = [];
 
-    if (violation.tags.includes("privacy") || violation.tags.includes("lgpd")) {
-      flows.push("registration", "data-access");
+    if (violation.tags.includes('privacy') || violation.tags.includes('lgpd')) {
+      flows.push('registration', 'data-access');
     }
 
     if (
-      violation.tags.includes("treatment") ||
-      violation.tags.includes("medical")
+      violation.tags.includes('treatment')
+      || violation.tags.includes('medical')
     ) {
-      flows.push("treatment", "follow-up");
+      flows.push('treatment', 'follow-up');
     }
 
-    if (violation.tags.includes("appointment")) {
-      flows.push("appointment", "scheduling");
+    if (violation.tags.includes('appointment')) {
+      flows.push('appointment', 'scheduling');
     }
 
-    if (violation.tags.includes("emergency")) {
-      flows.push("emergency");
+    if (violation.tags.includes('emergency')) {
+      flows.push('emergency');
     }
 
-    return flows.length > 0 ? flows : ["general"];
+    return flows.length > 0 ? flows : ['general'];
   }
 
   /**
@@ -396,7 +387,7 @@ export class HealthcareAccessibilityAuditor {
   ): number {
     const totalStandards = HEALTHCARE_COMPLIANCE_STANDARDS.length;
     const violatedStandards = new Set(
-      issues.flatMap((issue) => issue.complianceStandards.map((s) => s.id)),
+      issues.flatMap(issue => issue.complianceStandards.map(s => s.id)),
     ).size;
 
     return Math.round(
@@ -416,15 +407,14 @@ export class HealthcareAccessibilityAuditor {
     // Base score of 100, deduct points for violations
     let score = 100;
 
-    axeResults.violations.forEach((violation) => {
-      const weight =
-        violation.impact === "critical"
-          ? 10
-          : violation.impact === "serious"
-            ? 5
-            : violation.impact === "moderate"
-              ? 2
-              : 1;
+    axeResults.violations.forEach(violation => {
+      const weight = violation.impact === 'critical'
+        ? 10
+        : violation.impact === 'serious'
+        ? 5
+        : violation.impact === 'moderate'
+        ? 2
+        : 1;
 
       score -= weight * violation.nodes.length;
     });
@@ -442,29 +432,29 @@ export class HealthcareAccessibilityAuditor {
 
     const totalWeight = issues.reduce((sum, issue) => {
       return (
-        sum +
-        (issue.emergencyRelevant
+        sum
+        + (issue.emergencyRelevant
           ? 3
-          : issue.impact === "critical"
-            ? 3
-            : issue.impact === "serious"
-              ? 2
-              : 1)
+          : issue.impact === 'critical'
+          ? 3
+          : issue.impact === 'serious'
+          ? 2
+          : 1)
       );
     }, 0);
 
     const resolvedWeight = issues
-      .filter((issue) => issue.remediationPriority === "low")
+      .filter(issue => issue.remediationPriority === 'low')
       .reduce((sum, issue) => {
         return (
-          sum +
-          (issue.emergencyRelevant
+          sum
+          + (issue.emergencyRelevant
             ? 3
-            : issue.impact === "critical"
-              ? 3
-              : issue.impact === "serious"
-                ? 2
-                : 1)
+            : issue.impact === 'critical'
+            ? 3
+            : issue.impact === 'serious'
+            ? 2
+            : 1)
         );
       }, 0);
 
@@ -521,17 +511,17 @@ export class HealthcareAccessibilityAuditor {
 
   private getHighestPriority(
     issues: HealthcareAccessibilityIssue[],
-  ): "immediate" | "high" | "medium" | "low" {
+  ): 'immediate' | 'high' | 'medium' | 'low' {
     const priorityOrder = { immediate: 4, high: 3, medium: 2, low: 1 };
     const highestPriority = issues.reduce(
-      (highest: "immediate" | "high" | "medium" | "low", issue) => {
+      (highest: 'immediate' | 'high' | 'medium' | 'low', issue) => {
         const currentPriority = priorityOrder[issue.remediationPriority];
         const highestPriorityValue = priorityOrder[highest];
         return currentPriority > highestPriorityValue
           ? issue.remediationPriority
           : highest;
       },
-      "low" as const,
+      'low' as const,
     );
 
     return highestPriority;
@@ -541,17 +531,17 @@ export class HealthcareAccessibilityAuditor {
     ruleId: HealthcareAccessibilityRuleId,
   ): string {
     const relevanceMap: Record<HealthcareAccessibilityRuleId, string> = {
-      "patient-data-privacy": "Critical for patient trust and LGPD compliance",
-      "emergency-info-accessible": "Life-critical for emergency situations",
-      "medical-terminology": "Essential for patient understanding and safety",
-      "treatment-accessibility": "Vital for treatment adherence and outcomes",
-      "lgpd-accessibility": "Legal requirement for patient data rights",
-      "anvisa-accessibility": "Regulatory requirement for medical information",
-      "cfm-accessibility": "Medical ethics requirement",
-      "appointment-accessibility": "Essential for healthcare access",
-      "medical-history": "Critical for continuity of care",
-      "consent-forms": "Legal and ethical requirement",
-      "vital-signs": "Important for patient monitoring",
+      'patient-data-privacy': 'Critical for patient trust and LGPD compliance',
+      'emergency-info-accessible': 'Life-critical for emergency situations',
+      'medical-terminology': 'Essential for patient understanding and safety',
+      'treatment-accessibility': 'Vital for treatment adherence and outcomes',
+      'lgpd-accessibility': 'Legal requirement for patient data rights',
+      'anvisa-accessibility': 'Regulatory requirement for medical information',
+      'cfm-accessibility': 'Medical ethics requirement',
+      'appointment-accessibility': 'Essential for healthcare access',
+      'medical-history': 'Critical for continuity of care',
+      'consent-forms': 'Legal and ethical requirement',
+      'vital-signs': 'Important for patient monitoring',
     };
 
     return relevanceMap[ruleId];
@@ -561,79 +551,79 @@ export class HealthcareAccessibilityAuditor {
     ruleId: HealthcareAccessibilityRuleId,
   ): string[] {
     const stepsMap: Record<HealthcareAccessibilityRuleId, string[]> = {
-      "patient-data-privacy": [
-        "Add aria-labels to all patient data elements",
-        "Implement privacy level indicators",
-        "Ensure screen reader compatibility",
-        "Test with assistive technologies",
+      'patient-data-privacy': [
+        'Add aria-labels to all patient data elements',
+        'Implement privacy level indicators',
+        'Ensure screen reader compatibility',
+        'Test with assistive technologies',
       ],
-      "emergency-info-accessible": [
-        "Implement high contrast colors",
-        "Add keyboard navigation",
-        "Create live regions for critical updates",
-        "Test emergency scenarios",
+      'emergency-info-accessible': [
+        'Implement high contrast colors',
+        'Add keyboard navigation',
+        'Create live regions for critical updates',
+        'Test emergency scenarios',
       ],
-      "medical-terminology": [
-        "Add explanation for medical terms",
-        "Use ABBR tags for abbreviations",
-        "Provide glossary links",
-        "Test with medical content",
+      'medical-terminology': [
+        'Add explanation for medical terms',
+        'Use ABBR tags for abbreviations',
+        'Provide glossary links',
+        'Test with medical content',
       ],
-      "treatment-accessibility": [
-        "Structure treatment information clearly",
-        "Use simplified language",
-        "Add step-by-step breakdowns",
-        "Test with diverse patients",
+      'treatment-accessibility': [
+        'Structure treatment information clearly',
+        'Use simplified language',
+        'Add step-by-step breakdowns',
+        'Test with diverse patients',
       ],
-      "lgpd-accessibility": [
-        "Make privacy policies accessible",
-        "Ensure consent forms are accessible",
-        "Provide accessible data access methods",
-        "Document compliance measures",
+      'lgpd-accessibility': [
+        'Make privacy policies accessible',
+        'Ensure consent forms are accessible',
+        'Provide accessible data access methods',
+        'Document compliance measures',
       ],
-      "anvisa-accessibility": [
-        "Make medication information accessible",
-        "Ensure treatment instructions are clear",
-        "Provide accessible adverse event reporting",
-        "Comply with ANVISA standards",
+      'anvisa-accessibility': [
+        'Make medication information accessible',
+        'Ensure treatment instructions are clear',
+        'Provide accessible adverse event reporting',
+        'Comply with ANVISA standards',
       ],
-      "cfm-accessibility": [
-        "Ensure professional ethics information is accessible",
-        "Make confidentiality policies accessible",
-        "Provide accessible informed consent",
-        "Follow CFM accessibility guidelines",
+      'cfm-accessibility': [
+        'Ensure professional ethics information is accessible',
+        'Make confidentiality policies accessible',
+        'Provide accessible informed consent',
+        'Follow CFM accessibility guidelines',
       ],
-      "appointment-accessibility": [
-        "Make scheduling interfaces accessible",
-        "Ensure calendar navigation works with screen readers",
-        "Provide accessible confirmation methods",
-        "Test with assistive technologies",
+      'appointment-accessibility': [
+        'Make scheduling interfaces accessible',
+        'Ensure calendar navigation works with screen readers',
+        'Provide accessible confirmation methods',
+        'Test with assistive technologies',
       ],
-      "medical-history": [
-        "Structure medical history information clearly",
-        "Provide accessible navigation",
-        "Ensure data privacy while maintaining accessibility",
-        "Test with various disabilities",
+      'medical-history': [
+        'Structure medical history information clearly',
+        'Provide accessible navigation',
+        'Ensure data privacy while maintaining accessibility',
+        'Test with various disabilities',
       ],
-      "consent-forms": [
-        "Make consent forms screen reader compatible",
-        "Ensure form fields are properly labeled",
-        "Provide accessible signature methods",
-        "Test with assistive technologies",
+      'consent-forms': [
+        'Make consent forms screen reader compatible',
+        'Ensure form fields are properly labeled',
+        'Provide accessible signature methods',
+        'Test with assistive technologies',
       ],
-      "vital-signs": [
-        "Make vital signs displays accessible",
-        "Provide real-time updates via ARIA live regions",
-        "Ensure high contrast for readability",
-        "Test with visual impairments",
+      'vital-signs': [
+        'Make vital signs displays accessible',
+        'Provide real-time updates via ARIA live regions',
+        'Ensure high contrast for readability',
+        'Test with visual impairments',
       ],
     };
 
     return (
       stepsMap[ruleId] || [
-        "Analyze issue",
-        "Implement fix",
-        "Test with assistive technologies",
+        'Analyze issue',
+        'Implement fix',
+        'Test with assistive technologies',
       ]
     );
   }
@@ -642,23 +632,23 @@ export class HealthcareAccessibilityAuditor {
     ruleId: HealthcareAccessibilityRuleId,
   ): string[] {
     return [
-      "Pass automated accessibility testing",
-      "Manual testing with screen readers",
-      "Keyboard navigation testing",
-      "User testing with diverse disabilities",
-      "Healthcare context validation",
+      'Pass automated accessibility testing',
+      'Manual testing with screen readers',
+      'Keyboard navigation testing',
+      'User testing with diverse disabilities',
+      'Healthcare context validation',
     ];
   }
 
   private estimateEffort(
     issues: HealthcareAccessibilityIssue[],
-  ): "low" | "medium" | "high" {
-    const emergencyCount = issues.filter((i) => i.emergencyRelevant).length;
-    const criticalCount = issues.filter((i) => i.impact === "critical").length;
+  ): 'low' | 'medium' | 'high' {
+    const emergencyCount = issues.filter(i => i.emergencyRelevant).length;
+    const criticalCount = issues.filter(i => i.impact === 'critical').length;
 
-    if (emergencyCount > 0 || criticalCount > 2) return "high";
-    if (criticalCount > 0 || issues.length > 5) return "medium";
-    return "low";
+    if (emergencyCount > 0 || criticalCount > 2) return 'high';
+    if (criticalCount > 0 || issues.length > 5) return 'medium';
+    return 'low';
   }
 
   /**
@@ -674,7 +664,7 @@ export class HealthcareAccessibilityAuditor {
   generateComplianceReport(result: HealthcareAccessibilityAuditResult): string {
     return `
 # Healthcare Accessibility Compliance Report
-**Generated:** ${new Date(result.timestamp).toLocaleString("pt-BR")}
+**Generated:** ${new Date(result.timestamp).toLocaleString('pt-BR')}
 **Context:** ${result.context.patientJourney} journey, ${result.context.dataSensitivity} sensitivity
 
 ## Summary
@@ -685,21 +675,27 @@ export class HealthcareAccessibilityAuditor {
 - **Emergency-Related Issues:** ${result.emergencyIssuesCount}
 
 ## Regulatory Compliance
-${result.context.regulatoryRequirements
-  .map((std) => `- **${std.name} (${std.regulatoryBody}):** Requirements met`)
-  .join("\n")}
+${
+      result.context.regulatoryRequirements
+        .map(std => `- **${std.name} (${std.regulatoryBody}):** Requirements met`)
+        .join('\n')
+    }
 
 ## Critical Findings
-${result.issues
-  .filter((issue) => issue.impact === "critical" || issue.emergencyRelevant)
-  .map((issue) => `- **${issue.healthcareRuleId}:** ${issue.description}`)
-  .join("\n")}
+${
+      result.issues
+        .filter(issue => issue.impact === 'critical' || issue.emergencyRelevant)
+        .map(issue => `- **${issue.healthcareRuleId}:** ${issue.description}`)
+        .join('\n')
+    }
 
 ## Recommendations
-${result.recommendations
-  .slice(0, 5)
-  .map((rec) => `- **${rec.title}:** ${rec.description}`)
-  .join("\n")}
+${
+      result.recommendations
+        .slice(0, 5)
+        .map(rec => `- **${rec.title}:** ${rec.description}`)
+        .join('\n')
+    }
 
 ## Next Steps
 1. Address immediate priority recommendations
@@ -719,4 +715,4 @@ export function createHealthcareAuditor(
 }
 
 // Export types and utilities
-export * from "./accessibility-testing";
+export * from './accessibility-testing';

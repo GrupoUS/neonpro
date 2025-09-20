@@ -5,7 +5,7 @@
  * compliance validation for medical practice and telemedicine.
  */
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it } from 'vitest';
 
 export interface CFMTestData {
   professionalLicensing: {
@@ -44,13 +44,13 @@ export class CFMValidator {
   static validateProfessionalLicensing(data: CFMTestData): boolean {
     const licensing = data.professionalLicensing;
     return (
-      typeof licensing.crmNumber === "string" &&
-      licensing.crmNumber.length > 0 &&
-      licensing.licenseValid === true &&
-      typeof licensing.specialty === "string" &&
-      licensing.specialty.length > 0 &&
-      typeof licensing.registrationState === "string" &&
-      licensing.registrationState.length === 2 // Brazilian state code
+      typeof licensing.crmNumber === 'string'
+      && licensing.crmNumber.length > 0
+      && licensing.licenseValid === true
+      && typeof licensing.specialty === 'string'
+      && licensing.specialty.length > 0
+      && typeof licensing.registrationState === 'string'
+      && licensing.registrationState.length === 2 // Brazilian state code
     );
   }
 
@@ -60,9 +60,9 @@ export class CFMValidator {
   static validateTelemedicineCompliance(data: CFMTestData): boolean {
     const telemedicine = data.telemedicineCompliance;
     return (
-      telemedicine.patientConsentRequired === true &&
-      telemedicine.recordKeepingCompliant === true &&
-      telemedicine.emergencyProtocols === true
+      telemedicine.patientConsentRequired === true
+      && telemedicine.recordKeepingCompliant === true
+      && telemedicine.emergencyProtocols === true
     );
   }
 
@@ -72,9 +72,9 @@ export class CFMValidator {
   static validateDigitalPrescription(data: CFMTestData): boolean {
     const prescription = data.digitalPrescription;
     return (
-      prescription.digitalSignature === true &&
-      prescription.prescriptionValidation === true &&
-      prescription.controlledSubstances === true
+      prescription.digitalSignature === true
+      && prescription.prescriptionValidation === true
+      && prescription.controlledSubstances === true
     );
   }
 
@@ -84,10 +84,10 @@ export class CFMValidator {
   static validatePatientConfidentiality(data: CFMTestData): boolean {
     const confidentiality = data.patientConfidentiality;
     return (
-      confidentiality.hipaaCompliant === true &&
-      confidentiality.accessControls === true &&
-      confidentiality.auditLogging === true &&
-      confidentiality.dataEncryption === true
+      confidentiality.hipaaCompliant === true
+      && confidentiality.accessControls === true
+      && confidentiality.auditLogging === true
+      && confidentiality.dataEncryption === true
     );
   }
 
@@ -103,36 +103,36 @@ export class CFMValidator {
     const recommendations: string[] = [];
 
     if (!this.validateProfessionalLicensing(data)) {
-      violations.push("Professional licensing requirements not met");
+      violations.push('Professional licensing requirements not met');
       recommendations.push(
-        "Ensure all medical professionals have valid CRM registration",
+        'Ensure all medical professionals have valid CRM registration',
       );
     }
 
     if (
-      data.telemedicineCompliance.enabled &&
-      !this.validateTelemedicineCompliance(data)
+      data.telemedicineCompliance.enabled
+      && !this.validateTelemedicineCompliance(data)
     ) {
-      violations.push("Telemedicine compliance requirements not met");
+      violations.push('Telemedicine compliance requirements not met');
       recommendations.push(
-        "Implement proper telemedicine protocols and patient consent mechanisms",
+        'Implement proper telemedicine protocols and patient consent mechanisms',
       );
     }
 
     if (
-      data.digitalPrescription.enabled &&
-      !this.validateDigitalPrescription(data)
+      data.digitalPrescription.enabled
+      && !this.validateDigitalPrescription(data)
     ) {
-      violations.push("Digital prescription requirements not met");
+      violations.push('Digital prescription requirements not met');
       recommendations.push(
-        "Implement digital signature and prescription validation systems",
+        'Implement digital signature and prescription validation systems',
       );
     }
 
     if (!this.validatePatientConfidentiality(data)) {
-      violations.push("Patient confidentiality requirements not met");
+      violations.push('Patient confidentiality requirements not met');
       recommendations.push(
-        "Implement comprehensive access controls and audit logging",
+        'Implement comprehensive access controls and audit logging',
       );
     }
 
@@ -149,11 +149,11 @@ export class CFMValidator {
  */
 export function createCFMTestSuite(testName: string, testData: CFMTestData) {
   describe(`CFM Compliance: ${testName}`, () => {
-    it("should have valid professional licensing", () => {
+    it('should have valid professional licensing', () => {
       expect(CFMValidator.validateProfessionalLicensing(testData)).toBe(true);
     });
 
-    it("should comply with telemedicine requirements (if enabled)", () => {
+    it('should comply with telemedicine requirements (if enabled)', () => {
       if (testData.telemedicineCompliance.enabled) {
         expect(CFMValidator.validateTelemedicineCompliance(testData)).toBe(
           true,
@@ -161,17 +161,17 @@ export function createCFMTestSuite(testName: string, testData: CFMTestData) {
       }
     });
 
-    it("should comply with digital prescription requirements (if enabled)", () => {
+    it('should comply with digital prescription requirements (if enabled)', () => {
       if (testData.digitalPrescription.enabled) {
         expect(CFMValidator.validateDigitalPrescription(testData)).toBe(true);
       }
     });
 
-    it("should maintain patient confidentiality", () => {
+    it('should maintain patient confidentiality', () => {
       expect(CFMValidator.validatePatientConfidentiality(testData)).toBe(true);
     });
 
-    it("should be fully CFM compliant", () => {
+    it('should be fully CFM compliant', () => {
       const result = CFMValidator.validateCompliance(testData);
       expect(result.isCompliant).toBe(true);
       expect(result.violations).toHaveLength(0);
@@ -187,10 +187,10 @@ export function createMockCFMData(
 ): CFMTestData {
   return {
     professionalLicensing: {
-      crmNumber: "CRM/SP 123456",
+      crmNumber: 'CRM/SP 123456',
       licenseValid: true,
-      specialty: "Cardiologia",
-      registrationState: "SP",
+      specialty: 'Cardiologia',
+      registrationState: 'SP',
     },
     telemedicineCompliance: {
       enabled: true,

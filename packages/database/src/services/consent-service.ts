@@ -1,74 +1,34 @@
-import type { Database } from "../types/supabase";
+import { SupabaseClient } from "@supabase/supabase-js";
 import type {
+  ConsentRecord,
   MedicalDataClassification,
   RTCAuditLogEntry,
-  RTCConsentManager,
-} from "@neonpro/types";
-import { createClient } from "@supabase/supabase-js";
-import { BaseService } from "./base.service";
-
-// Types for consent management
-export interface ConsentRequest {
-  patientId: string;
-  dataTypes: MedicalDataClassification[];
-  purpose:
-    | "telemedicine"
-    | "medical_treatment"
-    | "ai_assistance"
-    | "communication";
-  sessionId?: string;
-  expiresAt?: Date;
-  clinicId: string;
-}
-
-export interface ConsentRecord {
-  id: string;
-  patientId: string;
-  clinicId: string;
-  consentType: string;
-  purpose: string;
-  legalBasis: string;
-  status: "pending" | "granted" | "withdrawn" | "expired";
-  givenAt?: Date;
-  withdrawnAt?: Date;
-  expiresAt?: Date;
-  collectionMethod: string;
-  ipAddress?: string;
-  userAgent?: string;
-  evidence?: any;
-  dataCategories: string[];
-  createdAt?: Date;
-  updatedAt?: Date;
-}
+  UserDataExport,
+} from "../types";
 
 /**
- * LGPD-compliant consent management service for telemedicine
- * Implements RTCConsentManager interface and LGPD requirements
+ * Service for managing patient consent and LGPD compliance
+ * Handles consent requests, verification, revocation, and audit trails
  */
-export class ConsentService extends BaseService implements RTCConsentManager {
-  private supabase: ReturnType<typeof createClient<Database>>;
-
-  constructor(supabaseClient: ReturnType<typeof createClient<Database>>) {
-    super();
-    this.supabase = supabaseClient;
-  }
+export class ConsentService {
+  constructor(private supabase: SupabaseClient) {}
 
   /**
-   * Request consent for specific data processing
+   * Request consent for medical data processing
    * @param userId - Patient user ID
-   * @param dataTypes - Types of medical data to process
-   * @param purpose - Purpose for data processing
-   * @param sessionId - Optional WebRTC session ID
-   * @returns Promise<boolean> - True if consent was successfully requested
+   * @param dataType - Type of medical data to process
+   * @param purpose - Purpose of data processing
+   * @param sessionId - Optional session ID for tracking
+   * @returns Promise<boolean> - True if consent request was created
    */
   async requestConsent(
     userId: string,
-    dataTypes: MedicalDataClassification[],
+    dataType: MedicalDataClassification,
     purpose: string,
     sessionId?: string,
   ): Promise<boolean> {
     try {
-      // Get patient ID from user ID
+      // Get patient by user ID
       const { data: patient, error: patientError } = await this.supabase
         .from("patients")
         .select("id, clinic_id")
@@ -76,27 +36,25 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         .single();
 
       if (patientError || !patient) {
-        throw new Error("Patient not found for user");
+        console.error("Patient not found for user:", userId);
+        return false;
       }
 
-      // Create consent record directly in database
+      // Create consent request
       const { data: consentData, error: consentError } = await this.supabase
         .from("consent_records")
         .insert({
           patient_id: patient.id,
           clinic_id: patient.clinic_id,
-          consent_type: "webrtc",
-          purpose: purpose,
-          legal_basis: "consent", // Default legal basis
+          purpose,
+          data_categories: [dataType],
           status: "pending",
-          data_categories: dataTypes,
-          processing_purposes: [purpose],
-          collection_method: "digital",
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
+          requested_at: new Date().toISOString(),
+          session_id: sessionId,
+          lgpd_basis: "consent",
           metadata: {
+            request_source: "webrtc_session",
             session_id: sessionId,
-            requested_at: new Date().toISOString(),
           },
         })
         .select("id")
@@ -115,14 +73,16 @@ export class ConsentService extends BaseService implements RTCConsentManager {
   }
 
   /**
-   * Verify existing consent is valid
+   * Verify existing consent is valid using RPC function
    * @param userId - Patient user ID
    * @param dataType - Type of medical data to verify
+   * @param sessionId - Session ID for tracking
    * @returns Promise<boolean> - True if consent is valid
    */
   async verifyConsent(
     userId: string,
     dataType: MedicalDataClassification,
+    sessionId: string,
   ): Promise<boolean> {
     try {
       // Get patient by user ID
@@ -136,31 +96,23 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         return false;
       }
 
-      // Check for valid consent directly from the consent_records table
-      // Query for valid consents (either no expiry or future expiry)
-      const currentTime = new Date().toISOString();
-
-      // Split the query into two parts to avoid .or() issues
-      let query = this.supabase
-        .from("consent_records")
-        .select("*")
-        .eq("patient_id", patient.id)
-        .eq("status", "granted")
-        .contains("data_categories", [dataType]);
-
-      // Add the expiry condition using or
-      query = query.or(`expires_at.is.null,expires_at.gt.${currentTime}`);
-
-      const { data: consents, error } = await query
-        .order("created_at", { ascending: false })
-        .limit(1);
+      // Use RPC function to validate consent
+      const { data: isValid, error } = await this.supabase.rpc(
+        "validate_webrtc_consent",
+        {
+          p_patient_id: patient.id,
+          p_session_id: sessionId,
+          p_data_types: [dataType],
+          p_clinic_id: patient.clinic_id,
+        },
+      );
 
       if (error) {
         console.error("Failed to verify consent:", error);
         return false;
       }
 
-      return consents && consents.length > 0;
+      return !!isValid;
     } catch (error) {
       console.error("ConsentService.verifyConsent error:", error);
       return false;
@@ -168,10 +120,10 @@ export class ConsentService extends BaseService implements RTCConsentManager {
   }
 
   /**
-   * Revoke consent for data processing
+   * Revoke consent for specific data type
    * @param userId - Patient user ID
-   * @param dataType - Type of medical data to revoke consent for
-   * @param sessionId - WebRTC session ID
+   * @param dataType - Type of medical data to revoke
+   * @param sessionId - Session ID for tracking
    * @param reason - Optional reason for revocation
    */
   async revokeConsent(
@@ -181,7 +133,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
     reason?: string,
   ): Promise<void> {
     try {
-      // Get patient ID from user ID
+      // Get patient by user ID
       const { data: patient, error: patientError } = await this.supabase
         .from("patients")
         .select("id, clinic_id")
@@ -192,12 +144,13 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         throw new Error("Patient not found for user");
       }
 
-      // Update consent records to withdrawn status
+      // Update consent status to withdrawn
       const { error } = await this.supabase
         .from("consent_records")
         .update({
           status: "withdrawn",
           withdrawn_at: new Date().toISOString(),
+          withdrawn_reason: reason || "User request",
           updated_at: new Date().toISOString(),
           metadata: {
             withdrawn_reason: reason || "User revoked consent",
@@ -212,16 +165,18 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         throw new Error(`Failed to revoke consent: ${error.message}`);
       }
 
-      // Create audit log for consent revocation in main audit_logs table
-      await this.supabase.from("audit_logs").insert({
-        action: "consent-revoked",
-        user_id: userId,
-        resource_id: sessionId,
-        resource_type: "consent",
-        clinic_id: patient.clinic_id,
-        lgpd_basis: "consent",
-        old_values: { status: "granted", data_type: dataType },
-        new_values: { status: "withdrawn", reason: reason || "User request" },
+      // Create audit log for consent revocation using RPC
+      await this.supabase.rpc("create_webrtc_audit_log", {
+        p_session_id: sessionId,
+        p_user_id: userId,
+        p_user_role: "patient",
+        p_event_type: "consent-revoked",
+        p_data_classification: dataType,
+        p_clinic_id: patient.clinic_id,
+        p_metadata: {
+          reason: reason || "User request",
+          revoked_at: new Date().toISOString(),
+        },
       });
     } catch (error) {
       console.error("ConsentService.revokeConsent error:", error);
@@ -252,7 +207,7 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         .from("audit_logs")
         .select("*")
         .eq("user_id", userId)
-        .in("action", ["consent-given", "consent-revoked", "data-access"])
+        .in("action", ["consent-given", "consent-revoked", "consent-requested"])
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -260,29 +215,17 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         return [];
       }
 
-      // Transform to RTCAuditLogEntry format
-      return auditLogs.map((log) => ({
+      // Transform audit logs to RTCAuditLogEntry format
+      return (auditLogs || []).map((log) => ({
         id: log.id,
-        sessionId: log.resource_id || "unknown",
-        eventType: log.action as any,
-        timestamp: log.created_at || new Date().toISOString(),
+        sessionId: log.resource_id || "",
+        eventType: log.action,
         userId: log.user_id,
-        userRole: "patient" as any, // Default role
-        dataClassification: "internal" as MedicalDataClassification,
-        description: log.resource_type || "Consent audit log entry",
-        ipAddress: (log.ip_address as string) || "unknown",
-        userAgent: log.user_agent || "unknown",
-        clinicId: log.clinic_id || "unknown",
-        metadata: {
-          lgpd_basis: log.lgpd_basis,
-          old_values: log.old_values,
-          new_values: log.new_values,
-        },
-        complianceCheck: {
-          isCompliant: true,
-          violations: [],
-          riskLevel: "low",
-        },
+        userRole: "patient",
+        dataClassification: log.new_values?.data_type || "general-medical",
+        timestamp: log.created_at,
+        clinicId: log.clinic_id,
+        metadata: log.new_values || {},
       }));
     } catch (error) {
       console.error("ConsentService.getConsentHistory error:", error);
@@ -291,13 +234,13 @@ export class ConsentService extends BaseService implements RTCConsentManager {
   }
 
   /**
-   * Export user data for LGPD compliance (Right to Data Portability)
+   * Export all user data for LGPD compliance
    * @param userId - Patient user ID
-   * @returns Promise<any> - Exported user data
+   * @returns Promise<UserDataExport> - Complete user data export
    */
-  async exportUserData(userId: string): Promise<any> {
+  async exportUserData(userId: string): Promise<UserDataExport> {
     try {
-      // Get patient ID from user ID
+      // Get patient by user ID
       const { data: patient, error: patientError } = await this.supabase
         .from("patients")
         .select("*")
@@ -314,9 +257,9 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         .select("*")
         .eq("patient_id", patient.id);
 
-      // Get audit logs for this user
-      const { data: auditLogs } = await this.supabase
-        .from("audit_logs")
+      // Get WebRTC audit logs
+      const { data: webrtcAuditLogs } = await this.supabase
+        .from("webrtc_audit_logs")
         .select("*")
         .eq("user_id", userId);
 
@@ -328,9 +271,9 @@ export class ConsentService extends BaseService implements RTCConsentManager {
 
       return {
         exportDate: new Date().toISOString(),
-        patient: patient,
+        patient,
         consentRecords: consentRecords || [],
-        webrtcAuditLogs: auditLogs || [],
+        webrtcAuditLogs: webrtcAuditLogs || [],
         generalAuditLogs: generalAuditLogs || [],
         note: "This export contains all personal data processed by NeonPro according to LGPD requirements.",
       };
@@ -341,13 +284,13 @@ export class ConsentService extends BaseService implements RTCConsentManager {
   }
 
   /**
-   * Delete user data (Right to Erasure)
+   * Delete user data for LGPD compliance (right to be forgotten)
    * @param userId - Patient user ID
    * @param sessionId - Optional specific session to delete
    */
   async deleteUserData(userId: string, sessionId?: string): Promise<void> {
     try {
-      // Get patient ID from user ID
+      // Get patient by user ID
       const { data: patient, error: patientError } = await this.supabase
         .from("patients")
         .select("id, clinic_id")
@@ -359,43 +302,42 @@ export class ConsentService extends BaseService implements RTCConsentManager {
       }
 
       if (sessionId) {
-        // Delete specific session data (by session ID in metadata)
+        // Delete specific session data
         await this.supabase
           .from("consent_records")
           .delete()
           .eq("patient_id", patient.id)
-          .contains("metadata", { session_id: sessionId });
+          .eq("session_id", sessionId);
 
         await this.supabase
-          .from("audit_logs")
+          .from("webrtc_audit_logs")
           .delete()
           .eq("user_id", userId)
-          .eq("resource_id", sessionId);
+          .eq("session_id", sessionId);
       } else {
-        // Delete all user data (complete erasure)
+        // Delete all user data
         await this.supabase
           .from("consent_records")
           .delete()
           .eq("patient_id", patient.id);
 
-        await this.supabase.from("audit_logs").delete().eq("user_id", userId);
+        await this.supabase
+          .from("webrtc_audit_logs")
+          .delete()
+          .eq("user_id", userId);
       }
 
-      // Create final audit log entry
-      await this.supabase.from("audit_logs").insert({
-        action: "data-deletion",
-        user_id: userId,
-        resource_id: sessionId || "complete-erasure",
-        resource_type: "lgpd-erasure",
-        clinic_id: patient.clinic_id,
-        lgpd_basis: "legal_obligation",
-        old_values: {
-          data_existed: true,
-          session_id: sessionId || "all_sessions",
-        },
-        new_values: {
-          data_deleted: true,
-          deletion_timestamp: new Date().toISOString(),
+      // Create audit log for data deletion
+      await this.supabase.rpc("create_webrtc_audit_log", {
+        p_session_id: sessionId || "data-deletion",
+        p_user_id: userId,
+        p_user_role: "patient",
+        p_event_type: "data-deleted",
+        p_data_classification: "all",
+        p_clinic_id: patient.clinic_id,
+        p_metadata: {
+          deletion_type: sessionId ? "session-specific" : "complete",
+          deleted_at: new Date().toISOString(),
         },
       });
     } catch (error) {
@@ -405,9 +347,10 @@ export class ConsentService extends BaseService implements RTCConsentManager {
   }
 
   /**
-   * Grant consent (called when user accepts consent dialog)
+   * Grant consent for a specific consent record
    * @param patientId - Patient ID
-   * @param consentId - Consent record ID to update
+   * @param consentId - Consent record ID
+   * @returns Promise<boolean> - True if consent was granted successfully
    */
   async grantConsent(patientId: string, consentId: string): Promise<boolean> {
     try {
@@ -415,12 +358,11 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         .from("consent_records")
         .update({
           status: "granted",
-          given_at: new Date().toISOString(),
+          granted_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
         })
         .eq("id", consentId)
-        .eq("patient_id", patientId)
-        .eq("status", "pending");
+        .eq("patient_id", patientId);
 
       return !error;
     } catch (error) {
@@ -430,20 +372,24 @@ export class ConsentService extends BaseService implements RTCConsentManager {
   }
 
   /**
-   * Get pending consent requests for a patient
+   * Get pending consents for a user
    * @param userId - Patient user ID
-   * @returns Promise<ConsentRecord[]> - Pending consent records
+   * @returns Promise<ConsentRecord[]> - Array of pending consent records
    */
   async getPendingConsents(userId: string): Promise<ConsentRecord[]> {
     try {
-      const { data: patient } = await this.supabase
+      // Get patient by user ID
+      const { data: patient, error: patientError } = await this.supabase
         .from("patients")
         .select("id")
         .eq("user_id", userId)
         .single();
 
-      if (!patient) return [];
+      if (patientError || !patient) {
+        return [];
+      }
 
+      // Get pending consent records
       const { data: consents, error } = await this.supabase
         .from("consent_records")
         .select("*")
@@ -451,180 +397,15 @@ export class ConsentService extends BaseService implements RTCConsentManager {
         .eq("status", "pending")
         .order("created_at", { ascending: false });
 
-      if (error) return [];
+      if (error) {
+        console.error("Failed to get pending consents:", error);
+        return [];
+      }
 
-      return consents.map((consent) => ({
-        id: consent.id,
-        patientId: consent.patient_id,
-        clinicId: consent.clinic_id,
-        consentType: consent.consent_type,
-        purpose: consent.purpose,
-        legalBasis: consent.legal_basis,
-        status: consent.status as
-          | "pending"
-          | "granted"
-          | "withdrawn"
-          | "expired",
-        givenAt: consent.given_at ? new Date(consent.given_at) : undefined,
-        withdrawnAt: consent.withdrawn_at
-          ? new Date(consent.withdrawn_at)
-          : undefined,
-        expiresAt: consent.expires_at
-          ? new Date(consent.expires_at)
-          : undefined,
-        collectionMethod: consent.collection_method,
-        ipAddress: consent.ip_address as string | undefined,
-        userAgent: consent.user_agent as string | undefined,
-        evidence: consent.evidence,
-        dataCategories: consent.data_categories || [],
-        createdAt: consent.created_at
-          ? new Date(consent.created_at)
-          : undefined,
-        updatedAt: consent.updated_at
-          ? new Date(consent.updated_at)
-          : undefined,
-      }));
+      return consents || [];
     } catch (error) {
       console.error("ConsentService.getPendingConsents error:", error);
       return [];
     }
   }
-
-  /**
-   * Validate LGPD consent before processing patient data
-   * @param patientId - Patient ID
-   * @param purpose - Purpose for data processing
-   * @returns Promise<boolean> - True if consent is valid
-   */
-  override async validateLGPDConsent(
-    patientId: string,
-    purpose:
-      | "medical_treatment"
-      | "ai_assistance"
-      | "communication"
-      | "marketing",
-  ): Promise<boolean> {
-    try {
-      // Check if there's a consent record for this specific purpose
-      const { data: purposeConsents } = await this.supabase
-        .from("consent_records")
-        .select("*")
-        .eq("patient_id", patientId)
-        .eq("purpose", purpose)
-        .eq("status", "granted")
-        .order("created_at", { ascending: false })
-        .limit(1);
-
-      return purposeConsents !== null && purposeConsents.length > 0;
-    } catch (error) {
-      console.error("ConsentService.validateLGPDConsent error:", error);
-      return false;
-    }
-  }
-
-  /**
-   * Get all active consents for a patient
-   * @param userId - Patient user ID
-   * @returns Promise<ConsentRecord[]> - Active consent records
-   */
-  async getActiveConsents(userId: string): Promise<ConsentRecord[]> {
-    try {
-      const { data: patient } = await this.supabase
-        .from("patients")
-        .select("id")
-        .eq("user_id", userId)
-        .single();
-
-      if (!patient) return [];
-
-      const { data: consents, error } = await this.supabase
-        .from("consent_records")
-        .select("*")
-        .eq("patient_id", patient.id)
-        .eq("status", "granted")
-        .lte("expires_at", new Date().toISOString())
-        .order("created_at", { ascending: false });
-
-      if (error) return [];
-
-      return consents.map((consent) => ({
-        id: consent.id,
-        patientId: consent.patient_id,
-        clinicId: consent.clinic_id,
-        consentType: consent.consent_type,
-        purpose: consent.purpose,
-        legalBasis: consent.legal_basis,
-        status: consent.status as
-          | "pending"
-          | "granted"
-          | "withdrawn"
-          | "expired",
-        givenAt: consent.given_at ? new Date(consent.given_at) : undefined,
-        withdrawnAt: consent.withdrawn_at
-          ? new Date(consent.withdrawn_at)
-          : undefined,
-        expiresAt: consent.expires_at
-          ? new Date(consent.expires_at)
-          : undefined,
-        collectionMethod: consent.collection_method,
-        ipAddress: consent.ip_address as string | undefined,
-        userAgent: consent.user_agent as string | undefined,
-        evidence: consent.evidence,
-        dataCategories: consent.data_categories || [],
-        createdAt: consent.created_at
-          ? new Date(consent.created_at)
-          : undefined,
-        updatedAt: consent.updated_at
-          ? new Date(consent.updated_at)
-          : undefined,
-      }));
-    } catch (error) {
-      console.error("ConsentService.getActiveConsents error:", error);
-      return [];
-    }
-  }
-
-  /**
-   * Renew expired consent
-   * @param userId - Patient user ID
-   * @param consentId - Consent record ID to renew
-   * @param newExpiryDate - New expiry date
-   */
-  async renewConsent(
-    userId: string,
-    consentId: string,
-    newExpiryDate: Date,
-  ): Promise<boolean> {
-    try {
-      const { data: patient } = await this.supabase
-        .from("patients")
-        .select("id")
-        .eq("user_id", userId)
-        .single();
-
-      if (!patient) return false;
-
-      const { error } = await this.supabase
-        .from("consent_records")
-        .update({
-          status: "granted",
-          expires_at: newExpiryDate.toISOString(),
-          updated_at: new Date().toISOString(),
-          metadata: {
-            renewed_at: new Date().toISOString(),
-            renewal_reason: "User renewed consent",
-          },
-        })
-        .eq("id", consentId)
-        .eq("patient_id", patient.id)
-        .eq("status", "expired");
-
-      return !error;
-    } catch (error) {
-      console.error("ConsentService.renewConsent error:", error);
-      return false;
-    }
-  }
 }
-
-export default ConsentService;

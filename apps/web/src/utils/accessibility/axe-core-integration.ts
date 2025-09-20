@@ -5,38 +5,38 @@
  * with WCAG 2.1 AA+ compliance validation and Brazilian healthcare standards.
  */
 
-import * as axe from "axe-core";
-import { type AxeResults, type Result, type Rule } from "axe-core";
-import * as React from "react";
+import * as axe from 'axe-core';
+import { type AxeResults, type Result, type Rule } from 'axe-core';
+import * as React from 'react';
 
 // Brazilian healthcare specific rules configuration
 const HEALTHCARE_RULES = {
-  "color-contrast": {
+  'color-contrast': {
     enabled: true,
     // Healthcare specific: higher contrast requirements for medical information
     options: {
-      minimumAA: "4.5",
-      minimumAAA: "7.0",
-      minimumLargeAA: "3.0",
-      minimumLargeAAA: "4.5",
+      minimumAA: '4.5',
+      minimumAAA: '7.0',
+      minimumLargeAA: '3.0',
+      minimumLargeAAA: '4.5',
     },
   },
-  "form-field-multiple-labels": {
+  'form-field-multiple-labels': {
     enabled: true,
   },
-  "landmark-one-main": {
+  'landmark-one-main': {
     enabled: true,
   },
-  "page-has-heading-one": {
+  'page-has-heading-one': {
     enabled: true,
   },
-  "duplicate-id": {
+  'duplicate-id': {
     enabled: true,
   },
-  "label-title-only": {
+  'label-title-only': {
     enabled: true,
   },
-  "link-in-text-block": {
+  'link-in-text-block': {
     enabled: true,
   },
 };
@@ -44,21 +44,20 @@ const HEALTHCARE_RULES = {
 // Healthcare-specific impact levels
 const HEALTHCARE_IMPACT_LEVELS = {
   critical: {
-    description: "Critical barrier for healthcare professionals and patients",
-    impact: "critical",
+    description: 'Critical barrier for healthcare professionals and patients',
+    impact: 'critical',
   },
   serious: {
-    description: "Serious problem affecting medical information accessibility",
-    impact: "serious",
+    description: 'Serious problem affecting medical information accessibility',
+    impact: 'serious',
   },
   moderate: {
-    description:
-      "Moderate issue affecting user experience in healthcare context",
-    impact: "moderate",
+    description: 'Moderate issue affecting user experience in healthcare context',
+    impact: 'moderate',
   },
   minor: {
-    description: "Minor improvement opportunity for healthcare application",
-    impact: "minor",
+    description: 'Minor improvement opportunity for healthcare application',
+    impact: 'minor',
   },
 };
 
@@ -74,7 +73,7 @@ export function initializeAxeCore(): void {
     // Add healthcare-specific checks
     checks: [
       {
-        id: "healthcare-data-sensitivity",
+        id: 'healthcare-data-sensitivity',
         evaluate: (node: Element) => {
           // Check if sensitive healthcare data has proper ARIA labeling
           const sensitiveSelectors = [
@@ -83,22 +82,21 @@ export function initializeAxeCore(): void {
             '[data-category="phi"]',
           ];
 
-          return sensitiveSelectors.some((selector) => {
+          return sensitiveSelectors.some(selector => {
             const elements = document.querySelectorAll(selector);
-            return Array.from(elements).every((el) => {
-              const hasLabel =
-                el.hasAttribute("aria-label") ||
-                el.hasAttribute("aria-labelledby") ||
-                el.getAttribute("role") === "alert";
+            return Array.from(elements).every(el => {
+              const hasLabel = el.hasAttribute('aria-label')
+                || el.hasAttribute('aria-labelledby')
+                || el.getAttribute('role') === 'alert';
               return hasLabel;
             });
           });
         },
         metadata: {
-          impact: "serious",
+          impact: 'serious',
           messages: {
-            pass: "Sensitive healthcare data has proper accessibility labels",
-            fail: "Sensitive healthcare data lacks proper accessibility labels",
+            pass: 'Sensitive healthcare data has proper accessibility labels',
+            fail: 'Sensitive healthcare data lacks proper accessibility labels',
           },
         },
       },
@@ -116,14 +114,14 @@ export async function runAccessibilityScan(
   try {
     const results = await axe.run(context || document, {
       ...options,
-      reporter: "v2",
-      resultTypes: ["violations", "passes", "incomplete", "inapplicable"],
+      reporter: 'v2',
+      resultTypes: ['violations', 'passes', 'incomplete', 'inapplicable'],
     });
 
     // Process and categorize results for healthcare context
     return processHealthcareResults(results);
   } catch (error) {
-    console.error("Accessibility scan failed:", error);
+    console.error('Accessibility scan failed:', error);
     throw new Error(`Accessibility scan failed: ${error}`);
   }
 }
@@ -133,13 +131,13 @@ export async function runAccessibilityScan(
  */
 function processHealthcareResults(results: AxeResults): AxeResults {
   // Add healthcare-specific metadata
-  results.violations = results.violations.map((violation) => {
+  results.violations = results.violations.map(violation => {
     const healthcareImpact = assessHealthcareImpact(violation);
 
     return {
       ...violation,
       healthcareImpact,
-      requiresImmediateAttention: healthcareImpact.impact === "critical",
+      requiresImmediateAttention: healthcareImpact.impact === 'critical',
       category: categorizeHealthcareViolation(violation),
     };
   });
@@ -154,20 +152,20 @@ function assessHealthcareImpact(
   violation: Result,
 ): (typeof HEALTHCARE_IMPACT_LEVELS)[keyof typeof HEALTHCARE_IMPACT_LEVELS] {
   const criticalHealthcareRules = [
-    "color-contrast",
-    "name-role-value",
-    "label",
-    "button-name",
-    "link-name",
-    "aria-command-name",
-    "aria-input-field-name",
+    'color-contrast',
+    'name-role-value',
+    'label',
+    'button-name',
+    'link-name',
+    'aria-command-name',
+    'aria-input-field-name',
   ];
 
   if (criticalHealthcareRules.includes(violation.id)) {
     return HEALTHCARE_IMPACT_LEVELS.critical;
   }
 
-  if (violation.impact === "serious") {
+  if (violation.impact === 'serious') {
     return HEALTHCARE_IMPACT_LEVELS.serious;
   }
 
@@ -183,11 +181,11 @@ function assessHealthcareImpact(
  */
 function categorizeHealthcareViolation(violation: Result): string {
   const categories = {
-    "patient-safety": ["color-contrast", "name-role-value", "label"],
-    "medical-forms": ["form-field-multiple-labels", "label-title-only"],
-    navigation: ["landmark-one-main", "duplicate-id"],
-    "content-structure": ["page-has-heading-one", "link-in-text-block"],
-    "interactive-elements": ["button-name", "link-name", "aria-command-name"],
+    'patient-safety': ['color-contrast', 'name-role-value', 'label'],
+    'medical-forms': ['form-field-multiple-labels', 'label-title-only'],
+    navigation: ['landmark-one-main', 'duplicate-id'],
+    'content-structure': ['page-has-heading-one', 'link-in-text-block'],
+    'interactive-elements': ['button-name', 'link-name', 'aria-command-name'],
   };
 
   for (const [category, rules] of Object.entries(categories)) {
@@ -196,7 +194,7 @@ function categorizeHealthcareViolation(violation: Result): string {
     }
   }
 
-  return "general";
+  return 'general';
 }
 
 /**
@@ -230,24 +228,23 @@ export function generateAccessibilityReport(results: AxeResults): {
   >;
 
   const summary = {
-    critical: violations.filter((v) => v.healthcareImpact.impact === "critical")
+    critical: violations.filter(v => v.healthcareImpact.impact === 'critical')
       .length,
-    serious: violations.filter((v) => v.healthcareImpact.impact === "serious")
+    serious: violations.filter(v => v.healthcareImpact.impact === 'serious')
       .length,
-    moderate: violations.filter((v) => v.healthcareImpact.impact === "moderate")
+    moderate: violations.filter(v => v.healthcareImpact.impact === 'moderate')
       .length,
-    minor: violations.filter((v) => v.healthcareImpact.impact === "minor")
+    minor: violations.filter(v => v.healthcareImpact.impact === 'minor')
       .length,
     total: violations.length,
-    wcagCompliance:
-      violations.length === 0
-        ? "100% WCAG 2.1 AA+ Compliant"
-        : `${Math.max(0, 100 - violations.length * 10)}% WCAG 2.1 AA+ Compliant`,
+    wcagCompliance: violations.length === 0
+      ? '100% WCAG 2.1 AA+ Compliant'
+      : `${Math.max(0, 100 - violations.length * 10)}% WCAG 2.1 AA+ Compliant`,
   };
 
   const recommendations = generateHealthcareRecommendations(violations);
 
-  const violationDetails = violations.map((v) => ({
+  const violationDetails = violations.map(v => ({
     rule: v.id,
     impact: v.healthcareImpact.impact,
     description: v.description,
@@ -276,26 +273,26 @@ function generateHealthcareRecommendations(
 ): string[] {
   const recommendations: string[] = [];
 
-  if (violations.some((v) => v.category === "patient-safety")) {
+  if (violations.some(v => v.category === 'patient-safety')) {
     recommendations.push(
-      "🏥 CRITICAL: Patient safety violations detected - immediate attention required",
-      "Ensure all medical information is accessible to healthcare professionals",
-      "Verify color contrast meets healthcare standards (minimum 4.5:1)",
+      '🏥 CRITICAL: Patient safety violations detected - immediate attention required',
+      'Ensure all medical information is accessible to healthcare professionals',
+      'Verify color contrast meets healthcare standards (minimum 4.5:1)',
     );
   }
 
-  if (violations.some((v) => v.category === "medical-forms")) {
+  if (violations.some(v => v.category === 'medical-forms')) {
     recommendations.push(
-      "📋 Medical form accessibility issues detected",
-      "Ensure all form fields have proper labels and instructions",
-      "Provide clear error messages for medical data validation",
+      '📋 Medical form accessibility issues detected',
+      'Ensure all form fields have proper labels and instructions',
+      'Provide clear error messages for medical data validation',
     );
   }
 
-  if (violations.some((v) => v.healthcareImpact.impact === "critical")) {
+  if (violations.some(v => v.healthcareImpact.impact === 'critical')) {
     recommendations.push(
-      "🚨 Critical accessibility violations require immediate fix",
-      "Schedule urgent accessibility review with healthcare compliance team",
+      '🚨 Critical accessibility violations require immediate fix',
+      'Schedule urgent accessibility review with healthcare compliance team',
     );
   }
 
@@ -308,9 +305,11 @@ function generateHealthcareRecommendations(
 export function useAccessibilityTesting() {
   const [isScanning, setIsScanning] = React.useState(false);
   const [lastScan, setLastScan] = React.useState<AxeResults | null>(null);
-  const [report, setReport] = React.useState<ReturnType<
-    typeof generateAccessibilityReport
-  > | null>(null);
+  const [report, setReport] = React.useState<
+    ReturnType<
+      typeof generateAccessibilityReport
+    > | null
+  >(null);
 
   const scan = React.useCallback(async (context?: string | Element) => {
     setIsScanning(true);
@@ -321,7 +320,7 @@ export function useAccessibilityTesting() {
       setReport(generatedReport);
       return results;
     } catch (error) {
-      console.error("Accessibility scan failed:", error);
+      console.error('Accessibility scan failed:', error);
       throw error;
     } finally {
       setIsScanning(false);

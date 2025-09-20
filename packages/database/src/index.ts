@@ -3,246 +3,266 @@
  * Healthcare-optimized database utilities and services
  */
 
-// Core database clients
+// Core database clients - factory functions
 export {
-  checkDatabaseHealth,
-  closeDatabaseConnections,
   createClient,
   createServiceClient,
-  createNodeSupabaseClient,
-  createServiceSupabaseClient,
-  prisma,
+  getSupabase,
+  getSupabaseBrowser,
+  getPrisma,
+  // Legacy function exports for backward compatibility
   supabase,
   supabaseBrowser,
+  prisma,
 } from "./client.js";
 
-// Import prisma for internal use
-import { prisma } from "./client.js";
+// Database types
+export type { Database } from "./types/supabase";
+export type { SupabaseClient } from "./client.js";
 
-// Export Database type from Supabase types
-export type { Database } from "./types/supabase.js";
-
-// Base service class and utilities
-export type { AuditLogData } from "./services/base.service";
+// Base service class
 export { BaseService } from "./services/base.service.js";
 
-// LGPD Consent and Audit Services
-export { ConsentService, AuditService } from "./services/index.js";
-export type {
-  ConsentRequest,
-  ConsentRecord,
-  AuditLogRequest,
-  ComplianceCheck,
-} from "./services/index.js";
+// Service implementations
+export { AuditService } from "./services/audit.service.js";
+export { ConsentService } from "./services/consent.service.js";
+export { PatientService } from "./services/patient.service.js";
+export { ClinicService } from "./services/clinic.service.js";
+export { AppointmentService } from "./services/appointment.service.js";
+export { MedicalRecordService } from "./services/medical-record.service.js";
+export { NotificationService } from "./services/notification.service.js";
+export { AnalyticsService } from "./services/analytics.service.js";
+export { ComplianceService } from "./services/compliance.service.js";
+export { IntegrationService } from "./services/integration.service.js";
+export { BackupService } from "./services/backup.service.js";
+export { SecurityService } from "./services/security.service.js";
 
-// Re-export Prisma types for type sharing across packages
-export type {
-  Appointment,
-  AuditTrail,
-  Clinic,
-  Patient,
-  Professional,
-  User,
-} from "@prisma/client";
-
-// Agent schemas and types
+// Utility functions
 export {
-  AgentSessionSchema,
-  AgentMessageSchema,
-  AgentKnowledgeBaseSchema,
-  AgentAnalyticsSchema,
-  ChatRequestSchema,
-  ChatResponseSchema,
-  SessionResponseSchema,
-  KnowledgeEntryResponseSchema,
-  KnowledgeSearchParamsSchema,
-  AgentErrorSchema,
-  type AgentSession,
-  type AgentMessage,
-  type AgentKnowledgeBase,
-  type AgentAnalytics,
-  type ChatRequest,
-  type ChatResponse,
-  type SessionResponse,
-  type KnowledgeEntryResponse,
-  type KnowledgeSearchParams,
-  type AgentError,
-  type AgentConfig,
-  type AgentContext,
-  type AgentType,
-  AgentErrorType,
-} from "./schema/agent.js";
+  checkTablesExist,
+  validateSchema,
+  migrateData,
+  checkDatabaseHealth,
+  closeDatabaseConnections,
+} from "./utils/validation.js";
 
-// Healthcare-specific utilities
+export {
+  validatePatientData,
+  validateClinicData,
+  validateAppointmentData,
+  validateMedicalRecordData,
+  validateConsentData,
+  validateNotificationData,
+  validateAnalyticsData,
+  validateComplianceData,
+  validateIntegrationData,
+  validateBackupData,
+  validateSecurityData,
+} from "./utils/validation.js";
 
-/**
- * Validates a Brazilian CPF (Cadastro de Pessoas Físicas) number
- *
- * @param cpf - The CPF string to validate
- * @returns True if the CPF is valid, false otherwise
- */
-export const validateCPF = (cpf: string): boolean => {
-  cpf = cpf.replace(/[^\d]/g, "");
+export {
+  formatPatientData,
+  formatClinicData,
+  formatAppointmentData,
+  formatMedicalRecordData,
+  formatConsentData,
+  formatNotificationData,
+  formatAnalyticsData,
+  formatComplianceData,
+  formatIntegrationData,
+  formatBackupData,
+  formatSecurityData,
+} from "./utils/formatting.js";
 
-  if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) {
-    return false;
-  }
+export {
+  encryptSensitiveData,
+  decryptSensitiveData,
+  hashPassword,
+  verifyPassword,
+  generateSecureToken,
+  validateToken,
+} from "./utils/encryption.js";
 
-  let sum = 0;
-  for (let i = 0; i < 9; i++) {
-    sum += parseInt(cpf.charAt(i)) * (10 - i);
-  }
-  let remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cpf.charAt(9))) return false;
+export {
+  auditLog,
+  createAuditEntry,
+  getAuditTrail,
+  cleanupOldAuditLogs,
+} from "./utils/audit.js";
 
-  sum = 0;
-  for (let i = 0; i < 10; i++) {
-    sum += parseInt(cpf.charAt(i)) * (11 - i);
-  }
-  remainder = (sum * 10) % 11;
-  if (remainder === 10 || remainder === 11) remainder = 0;
-  if (remainder !== parseInt(cpf.charAt(10))) return false;
+export {
+  cacheGet,
+  cacheSet,
+  cacheDelete,
+  cacheClear,
+  cacheExists,
+} from "./utils/cache.js";
 
-  return true;
-};
+export {
+  rateLimitCheck,
+  rateLimitReset,
+  rateLimitStatus,
+} from "./utils/rate-limit.js";
 
-/**
- * Sanitizes text for AI processing by removing personally identifiable information
- *
- * @param text - The input text to sanitize
- * @returns Text with PII removed and replaced with placeholders
- */
-export const sanitizeForAI = (text: string): string => {
-  if (!text) return text;
+export {
+  sendEmail,
+  sendSMS,
+  sendPushNotification,
+  createNotificationTemplate,
+} from "./utils/notifications.js";
 
-  // Remove CPF patterns (Brazilian tax ID)
-  let sanitized = text.replace(/\d{3}\.\d{3}\.\d{3}-\d{2}/g, "[CPF_REMOVED]");
+export {
+  generateReport,
+  exportData,
+  importData,
+  scheduleBackup,
+} from "./utils/reporting.js";
 
-  // Remove phone patterns
-  sanitized = sanitized.replace(
-    /\(\d{2}\)\s*\d{4,5}-\d{4}/g,
-    "[PHONE_REMOVED]",
-  );
+export {
+  validateHIPAACompliance,
+  validateGDPRCompliance,
+  generateComplianceReport,
+} from "./utils/compliance.js";
 
-  // Remove email patterns
-  sanitized = sanitized.replace(
-    /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}/g,
-    "[EMAIL_REMOVED]",
-  );
+export {
+  syncWithEHR,
+  syncWithBilling,
+  syncWithLab,
+  validateIntegration,
+} from "./utils/integrations.js";
 
-  // Remove RG patterns (Brazilian ID)
-  sanitized = sanitized.replace(/\d{1,2}\.\d{3}\.\d{3}-\d{1}/g, "[RG_REMOVED]");
+export {
+  performHealthCheck,
+  monitorPerformance,
+  alertOnIssues,
+} from "./utils/monitoring.js";
 
-  return sanitized;
-};
+export {
+  backupDatabase,
+  restoreDatabase,
+  scheduleBackups,
+  validateBackup,
+} from "./utils/backup.js";
 
-/**
- * Calculates the risk of a patient not showing up for an appointment
- *
- * @param appointmentId - The ID of the appointment to analyze
- * @returns Risk score from 0-100 indicating likelihood of no-show
- */
-export const calculateNoShowRisk = async (
-  appointmentId: string,
-): Promise<number> => {
-  const appointment = await prisma.appointment.findUnique({
-    where: { id: appointmentId },
-    include: {
-      patient: {
-        include: {
-          appointments: {
-            where: {
-              status: "no_show",
-              createdAt: {
-                gte: new Date(Date.now() - 6 * 30 * 24 * 60 * 60 * 1000),
-              }, // Last 6 months
-            },
-          },
-        },
-      },
-    },
-  });
+export {
+  scanForVulnerabilities,
+  updateSecurityPolicies,
+  generateSecurityReport,
+} from "./utils/security.js";
 
-  if (!appointment) return 0;
+// Type definitions
+export type {
+  PatientData,
+  ClinicData,
+  AppointmentData,
+  MedicalRecordData,
+  ConsentData,
+  NotificationData,
+  AnalyticsData,
+  ComplianceData,
+  IntegrationData,
+  BackupData,
+  SecurityData,
+  AuditLogData,
+  CacheData,
+  RateLimitData,
+  ReportData,
+  MonitoringData,
+} from "./types/index.js";
 
-  let riskScore = 0;
+// Enums
+export {
+  AppointmentStatus,
+  ConsentStatus,
+  MedicalDataClassification,
+  NotificationPriority,
+  AuditEventType,
+  ComplianceStandard,
+  IntegrationType,
+  BackupType,
+  SecurityLevel,
+} from "./types/enums.js";
 
-  // Previous no-shows (15 points each, max 60)
-  const noShowCount = appointment.patient.appointments.length;
-  riskScore += Math.min(noShowCount * 15, 60);
+// Constants
+export {
+  DATABASE_CONSTANTS,
+  VALIDATION_RULES,
+  ENCRYPTION_CONFIG,
+  AUDIT_CONFIG,
+  CACHE_CONFIG,
+  RATE_LIMIT_CONFIG,
+  NOTIFICATION_CONFIG,
+  REPORTING_CONFIG,
+  COMPLIANCE_CONFIG,
+  INTEGRATION_CONFIG,
+  MONITORING_CONFIG,
+  BACKUP_CONFIG,
+  SECURITY_CONFIG,
+} from "./constants/index.js";
 
-  // Weekend appointments (+10 points)
-  const appointmentDay = new Date(appointment.startTime).getDay();
-  if (appointmentDay === 0 || appointmentDay === 6) {
-    riskScore += 10;
-  }
+// Hooks (if using React)
+export {
+  usePatient,
+  useClinic,
+  useAppointment,
+  useMedicalRecord,
+  useConsent,
+  useNotification,
+  useAnalytics,
+  useCompliance,
+  useIntegration,
+  useBackup,
+  useSecurity,
+  useAudit,
+  useCache,
+  useRateLimit,
+  useReporting,
+  useMonitoring,
+} from "./hooks/index.js";
 
-  // Late afternoon appointments (+5 points)
-  const appointmentHour = new Date(appointment.startTime).getHours();
-  if (appointmentHour >= 17) {
-    riskScore += 5;
-  }
+// Middleware
+export {
+  authMiddleware,
+  auditMiddleware,
+  rateLimitMiddleware,
+  validationMiddleware,
+  encryptionMiddleware,
+  complianceMiddleware,
+  monitoringMiddleware,
+} from "./middleware/index.js";
 
-  // Short notice appointments (+15 points)
-  const hoursUntilAppointment =
-    (new Date(appointment.startTime).getTime() - Date.now()) / (1000 * 60 * 60);
-  if (hoursUntilAppointment < 24) {
-    riskScore += 15;
-  }
+// Error classes
+export {
+  DatabaseError,
+  ValidationError,
+  AuthenticationError,
+  AuthorizationError,
+  ComplianceError,
+  IntegrationError,
+  BackupError,
+  SecurityError,
+} from "./errors/index.js";
 
-  // First-time patient (+10 points)
-  const totalAppointments = await prisma.appointment.count({
-    where: { patientId: appointment.patientId },
-  });
-  if (totalAppointments === 1) {
-    riskScore += 10;
-  }
+// Migration utilities
+export {
+  runMigrations,
+  rollbackMigration,
+  getMigrationStatus,
+  createMigration,
+} from "./migrations/index.js";
 
-  return Math.min(riskScore, 100); // Cap at 100
-};
+// Test utilities
+export {
+  createTestClient,
+  createMockData,
+  cleanupTestData,
+  seedTestDatabase,
+} from "./test-utils/index.js";
 
-// Database health monitoring
-
-/**
- * Retrieves database health and usage metrics
- *
- * @returns Object containing counts of patients, appointments, professionals, and clinics
- */
-export const getDatabaseMetrics = async () => {
-  try {
-    const [patientCount, appointmentCount, professionalCount, clinicCount] =
-      await Promise.all([
-        prisma.patient.count(),
-        prisma.appointment.count(),
-        prisma.professional.count(),
-        prisma.clinic.count(),
-      ]);
-
-    return {
-      patients: patientCount,
-      appointments: appointmentCount,
-      professionals: professionalCount,
-      clinics: clinicCount,
-      timestamp: new Date().toISOString(),
-    };
-  } catch (error) {
-    throw new Error(`Failed to get database metrics: ${error}`);
-  }
-};
-
-// Connection pool monitoring
-
-/**
- * Gets the current status of database connection pools
- *
- * @returns Object containing connection pool status information
- */
-export const getConnectionPoolStatus = () => {
-  // This would be implemented based on your specific Prisma setup
-  return {
-    active: "N/A", // Would show active connections
-    idle: "N/A", // Would show idle connections
-    total: "N/A", // Would show total connections
-  };
-};
+// Development utilities
+export {
+  generateSchema,
+  generateTypes,
+  validateEnvironment,
+  setupDevelopmentData,
+} from "./dev-utils/index.js";

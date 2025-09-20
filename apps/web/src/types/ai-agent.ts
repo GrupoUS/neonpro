@@ -3,7 +3,7 @@
  * Defines the contract between frontend, backend, and AI agent for healthcare data queries
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // =====================================
 // Core Data Types
@@ -31,7 +31,7 @@ export interface ClientData {
     state: string;
     zipCode: string;
   };
-  status: "active" | "inactive" | "suspended";
+  status: 'active' | 'inactive' | 'suspended';
   createdAt: string;
   updatedAt: string;
 }
@@ -50,13 +50,13 @@ export interface AppointmentData {
   scheduledAt: string;
   duration: number; // in minutes
   status:
-    | "scheduled"
-    | "confirmed"
-    | "in-progress"
-    | "completed"
-    | "cancelled"
-    | "no-show";
-  type: "consultation" | "exam" | "procedure" | "return" | "emergency";
+    | 'scheduled'
+    | 'confirmed'
+    | 'in-progress'
+    | 'completed'
+    | 'cancelled'
+    | 'no-show';
+  type: 'consultation' | 'exam' | 'procedure' | 'return' | 'emergency';
   notes?: string;
   location?: string;
   telemedicine?: boolean;
@@ -76,14 +76,14 @@ export interface FinancialData {
   professionalId: string;
   professionalName: string;
   amount: number;
-  currency: "BRL";
-  status: "pending" | "paid" | "overdue" | "cancelled" | "refunded";
+  currency: 'BRL';
+  status: 'pending' | 'paid' | 'overdue' | 'cancelled' | 'refunded';
   paymentMethod?:
-    | "cash"
-    | "credit_card"
-    | "debit_card"
-    | "health_plan"
-    | "other";
+    | 'cash'
+    | 'credit_card'
+    | 'debit_card'
+    | 'health_plan'
+    | 'other';
   paymentDate?: string;
   dueDate?: string;
   invoiceId?: string;
@@ -99,12 +99,12 @@ export interface FinancialData {
  * User query intent classification
  */
 export enum QueryIntent {
-  CLIENT_SEARCH = "client_search",
-  APPOINTMENT_QUERY = "appointment_query",
-  FINANCIAL_QUERY = "financial_query",
-  APPOINTMENT_CREATION = "appointment_creation",
-  GENERAL_INQUIRY = "general_inquiry",
-  UNKNOWN = "unknown",
+  CLIENT_SEARCH = 'client_search',
+  APPOINTMENT_QUERY = 'appointment_query',
+  FINANCIAL_QUERY = 'financial_query',
+  APPOINTMENT_CREATION = 'appointment_creation',
+  GENERAL_INQUIRY = 'general_inquiry',
+  UNKNOWN = 'unknown',
 }
 
 /**
@@ -121,7 +121,7 @@ export interface UserQuery {
     }>;
     dates?: Array<{
       date: string;
-      type: "absolute" | "relative";
+      type: 'absolute' | 'relative';
       confidence: number;
     }>;
     services?: Array<{
@@ -173,11 +173,11 @@ export interface AgentResponse {
 export interface AgentAction {
   id: string;
   type:
-    | "create_appointment"
-    | "view_details"
-    | "export_data"
-    | "navigate"
-    | "refresh";
+    | 'create_appointment'
+    | 'view_details'
+    | 'export_data'
+    | 'navigate'
+    | 'refresh';
   label: string;
   payload?: Record<string, any>;
   icon?: string;
@@ -223,7 +223,7 @@ export interface DataAgentResponse {
  */
 export interface ChatMessage {
   id: string;
-  role: "user" | "assistant" | "system";
+  role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: string;
   data?: any; // Structured data from assistant
@@ -279,7 +279,7 @@ export const ClientSchema = z.object({
       zipCode: z.string(),
     })
     .optional(),
-  status: z.enum(["active", "inactive", "suspended"]),
+  status: z.enum(['active', 'inactive', 'suspended']),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });
@@ -296,14 +296,14 @@ export const AppointmentSchema = z.object({
   scheduledAt: z.string().datetime(),
   duration: z.number().positive(),
   status: z.enum([
-    "scheduled",
-    "confirmed",
-    "in-progress",
-    "completed",
-    "cancelled",
-    "no-show",
+    'scheduled',
+    'confirmed',
+    'in-progress',
+    'completed',
+    'cancelled',
+    'no-show',
   ]),
-  type: z.enum(["consultation", "exam", "procedure", "return", "emergency"]),
+  type: z.enum(['consultation', 'exam', 'procedure', 'return', 'emergency']),
   notes: z.string().optional(),
   location: z.string().optional(),
   telemedicine: z.boolean().optional(),
@@ -321,10 +321,10 @@ export const FinancialSchema = z.object({
   professionalId: z.string(),
   professionalName: z.string(),
   amount: z.number().nonnegative(),
-  currency: z.literal("BRL"),
-  status: z.enum(["pending", "paid", "overdue", "cancelled", "refunded"]),
+  currency: z.literal('BRL'),
+  status: z.enum(['pending', 'paid', 'overdue', 'cancelled', 'refunded']),
   paymentMethod: z
-    .enum(["cash", "credit_card", "debit_card", "health_plan", "other"])
+    .enum(['cash', 'credit_card', 'debit_card', 'health_plan', 'other'])
     .optional(),
   paymentDate: z.string().datetime().optional(),
   dueDate: z.string().datetime().optional(),
@@ -354,7 +354,7 @@ export const UserQuerySchema = z.object({
       .array(
         z.object({
           date: z.string(),
-          type: z.enum(["absolute", "relative"]),
+          type: z.enum(['absolute', 'relative']),
           confidence: z.number().min(0).max(1),
         }),
       )
@@ -412,11 +412,11 @@ export const AgentResponseSchema = z.object({
       z.object({
         id: z.string(),
         type: z.enum([
-          "create_appointment",
-          "view_details",
-          "export_data",
-          "navigate",
-          "refresh",
+          'create_appointment',
+          'view_details',
+          'export_data',
+          'navigate',
+          'refresh',
         ]),
         label: z.string(),
         payload: z.record(z.any()).optional(),
@@ -480,7 +480,7 @@ export class AgentError extends Error {
     public details?: any,
   ) {
     super(message);
-    this.name = "AgentError";
+    this.name = 'AgentError';
   }
 }
 
@@ -489,8 +489,8 @@ export class ValidationError extends AgentError {
     message: string,
     public field: string,
   ) {
-    super(message, "VALIDATION_ERROR", { field });
-    this.name = "ValidationError";
+    super(message, 'VALIDATION_ERROR', { field });
+    this.name = 'ValidationError';
   }
 }
 
@@ -499,8 +499,8 @@ export class DataAccessError extends AgentError {
     message: string,
     public resource: string,
   ) {
-    super(message, "DATA_ACCESS_ERROR", { resource });
-    this.name = "DataAccessError";
+    super(message, 'DATA_ACCESS_ERROR', { resource });
+    this.name = 'DataAccessError';
   }
 }
 
@@ -509,8 +509,8 @@ export class IntentParsingError extends AgentError {
     message: string,
     public query: string,
   ) {
-    super(message, "INTENT_PARSING_ERROR", { query });
-    this.name = "IntentParsingError";
+    super(message, 'INTENT_PARSING_ERROR', { query });
+    this.name = 'IntentParsingError';
   }
 }
 
@@ -558,9 +558,9 @@ export function safeValidate<T>(
  * Format currency for Brazilian locale
  */
 export function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
   }).format(amount);
 }
 
@@ -568,11 +568,11 @@ export function formatCurrency(amount: number): string {
  * Format date for Brazilian locale
  */
 export function formatDate(date: string | Date): string {
-  return new Intl.DateTimeFormat("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+  return new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   }).format(new Date(date));
 }

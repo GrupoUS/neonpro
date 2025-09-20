@@ -15,7 +15,6 @@ import {
   createHealthcareContextFromRequest,
   createPrismaWithContext,
   getHealthcarePrismaClient,
-  HealthcareComplianceError,
   type HealthcareContext,
   UnauthorizedHealthcareAccessError,
 } from '../../clients/prisma.js';

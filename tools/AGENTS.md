@@ -171,7 +171,7 @@ The tools integrate with AI agents for enhanced testing:
 - **apex-ui-ux-designer**: Frontend design validation
 - **apex-dev**: Code implementation review
 - **code-reviewer**: Code quality assessment
-- **security-auditor**: Security and compliance validation
+- **test-auditor**: Security and compliance validation
 - **architect-review**: Architecture decisions
 - **tdd-orchestrator**: Test-driven development coordination
 

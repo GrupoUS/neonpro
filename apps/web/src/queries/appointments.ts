@@ -1,11 +1,11 @@
-import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/lib/supabase/types/database";
-import { queryOptions } from "@tanstack/react-query";
+import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/lib/supabase/types/database';
+import { queryOptions } from '@tanstack/react-query';
 
 // Tipos para melhor type safety
 // type Appointment = Database['public']['Tables']['appointments']['Row'];
-type AppointmentInsert = Database["public"]["Tables"]["appointments"]["Insert"];
-type AppointmentUpdate = Database["public"]["Tables"]["appointments"]["Update"];
+type AppointmentInsert = Database['public']['Tables']['appointments']['Insert'];
+type AppointmentUpdate = Database['public']['Tables']['appointments']['Update'];
 
 // Query options para listar agendamentos com filtros
 export const appointmentsQueryOptions: any = ({
@@ -27,8 +27,8 @@ export const appointmentsQueryOptions: any = ({
 } = {}) =>
   queryOptions({
     queryKey: [
-      "appointments",
-      "list",
+      'appointments',
+      'list',
       {
         page,
         pageSize,
@@ -40,7 +40,7 @@ export const appointmentsQueryOptions: any = ({
       },
     ],
     queryFn: async () => {
-      let query = supabase.from("appointments").select(
+      let query = supabase.from('appointments').select(
         `
           *,
           patient:patients(*),
@@ -48,32 +48,32 @@ export const appointmentsQueryOptions: any = ({
           clinic:clinics(*),
           service:services(*)
         `,
-        { count: "exact" },
+        { count: 'exact' },
       );
 
       // Aplicar filtros
       if (startDate) {
-        query = query.gte("start_time", startDate);
+        query = query.gte('start_time', startDate);
       }
 
       if (endDate) {
-        query = query.lte("start_time", endDate);
+        query = query.lte('start_time', endDate);
       }
 
       if (status) {
-        query = query.eq("status", status);
+        query = query.eq('status', status);
       }
 
       if (professionalId) {
-        query = query.eq("professional_id", professionalId);
+        query = query.eq('professional_id', professionalId);
       }
 
       if (patientId) {
-        query = query.eq("patient_id", patientId);
+        query = query.eq('patient_id', patientId);
       }
 
       // Ordenar por data/hora
-      query = query.order("start_time", { ascending: true });
+      query = query.order('start_time', { ascending: true });
 
       // Aplicar paginação
       const from = (page - 1) * pageSize;
@@ -99,10 +99,10 @@ export const appointmentsQueryOptions: any = ({
 // Query options para buscar um agendamento específico
 export const appointmentQueryOptions: any = (id: string) =>
   queryOptions({
-    queryKey: ["appointments", "detail", id],
+    queryKey: ['appointments', 'detail', id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           *,
@@ -113,7 +113,7 @@ export const appointmentQueryOptions: any = (id: string) =>
           consent_records:consent_records(*)
         `,
         )
-        .eq("id", id)
+        .eq('id', id)
         .single();
 
       if (error) throw error;
@@ -127,12 +127,12 @@ export const appointmentQueryOptions: any = (id: string) =>
 // Query options para agendamentos do dia
 export const todayAppointmentsQueryOptions: any = (professionalId?: string) =>
   queryOptions({
-    queryKey: ["appointments", "today", professionalId],
+    queryKey: ['appointments', 'today', professionalId],
     queryFn: async () => {
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toISOString().split('T')[0];
 
       let query = supabase
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           *,
@@ -141,12 +141,12 @@ export const todayAppointmentsQueryOptions: any = (professionalId?: string) =>
           service:services(*)
         `,
         )
-        .gte("start_time", `${today}T00:00:00`)
-        .lte("start_time", `${today}T23:59:59`)
-        .order("start_time", { ascending: true });
+        .gte('start_time', `${today}T00:00:00`)
+        .lte('start_time', `${today}T23:59:59`)
+        .order('start_time', { ascending: true });
 
       if (professionalId) {
-        query = query.eq("professional_id", professionalId);
+        query = query.eq('professional_id', professionalId);
       }
 
       const { data, error } = await query;
@@ -162,7 +162,7 @@ export const todayAppointmentsQueryOptions: any = (professionalId?: string) =>
 // Query options para agenda semanal
 export const weeklyAppointmentsQueryOptions: any = (professionalId?: string) =>
   queryOptions({
-    queryKey: ["appointments", "weekly", professionalId],
+    queryKey: ['appointments', 'weekly', professionalId],
     queryFn: async () => {
       const today = new Date();
       const startOfWeek = new Date(
@@ -173,7 +173,7 @@ export const weeklyAppointmentsQueryOptions: any = (professionalId?: string) =>
       );
 
       let query = supabase
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           *,
@@ -182,12 +182,12 @@ export const weeklyAppointmentsQueryOptions: any = (professionalId?: string) =>
           service:services(*)
         `,
         )
-        .gte("start_time", startOfWeek.toISOString())
-        .lte("start_time", endOfWeek.toISOString())
-        .order("start_time", { ascending: true });
+        .gte('start_time', startOfWeek.toISOString())
+        .lte('start_time', endOfWeek.toISOString())
+        .order('start_time', { ascending: true });
 
       if (professionalId) {
-        query = query.eq("professional_id", professionalId);
+        query = query.eq('professional_id', professionalId);
       }
 
       const { data, error } = await query;
@@ -202,9 +202,9 @@ export const weeklyAppointmentsQueryOptions: any = (professionalId?: string) =>
 // Query options para estatísticas de agendamentos
 export const appointmentStatsQueryOptions = () =>
   queryOptions({
-    queryKey: ["appointments", "stats"],
+    queryKey: ['appointments', 'stats'],
     queryFn: async () => {
-      const today = new Date().toISOString().split("T")[0];
+      const today = new Date().toISOString().split('T')[0];
       const startOfMonth = new Date(
         new Date().getFullYear(),
         new Date().getMonth(),
@@ -220,30 +220,30 @@ export const appointmentStatsQueryOptions = () =>
         { count: upcomingAppointments },
       ] = await Promise.all([
         supabase
-          .from("appointments")
-          .select("*", { count: "exact", head: true }),
+          .from('appointments')
+          .select('*', { count: 'exact', head: true }),
         supabase
-          .from("appointments")
-          .select("*", { count: "exact", head: true })
-          .gte("start_time", `${today}T00:00:00`)
-          .lte("start_time", `${today}T23:59:59`),
+          .from('appointments')
+          .select('*', { count: 'exact', head: true })
+          .gte('start_time', `${today}T00:00:00`)
+          .lte('start_time', `${today}T23:59:59`),
         supabase
-          .from("appointments")
-          .select("*", { count: "exact", head: true })
-          .gte("start_time", startOfMonth),
+          .from('appointments')
+          .select('*', { count: 'exact', head: true })
+          .gte('start_time', startOfMonth),
         supabase
-          .from("appointments")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "completed"),
+          .from('appointments')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'completed'),
         supabase
-          .from("appointments")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "cancelled"),
+          .from('appointments')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'cancelled'),
         supabase
-          .from("appointments")
-          .select("*", { count: "exact", head: true })
-          .gte("start_time", new Date().toISOString())
-          .in("status", ["scheduled", "confirmed"]),
+          .from('appointments')
+          .select('*', { count: 'exact', head: true })
+          .gte('start_time', new Date().toISOString())
+          .in('status', ['scheduled', 'confirmed']),
       ]);
 
       return {
@@ -266,7 +266,7 @@ export const appointmentStatsQueryOptions = () =>
 export const createAppointmentMutationOptions = {
   mutationFn: async (appointment: AppointmentInsert) => {
     const { data, error } = await supabase
-      .from("appointments")
+      .from('appointments')
       .insert([appointment])
       .select()
       .single();
@@ -276,11 +276,11 @@ export const createAppointmentMutationOptions = {
   },
   onSuccess: () => {
     // Invalidar queries relacionadas após sucesso
-    const { invalidateSupabaseQueries } = require("@/lib/query-client");
-    invalidateSupabaseQueries("appointments");
+    const { invalidateSupabaseQueries } = require('@/lib/query-client');
+    invalidateSupabaseQueries('appointments');
   },
   onError: (error: any) => {
-    console.error("Error creating appointment:", error);
+    console.error('Error creating appointment:', error);
   },
 };
 
@@ -291,9 +291,9 @@ export const updateAppointmentMutationOptions = {
     ...appointment
   }: AppointmentUpdate & { id: string }) => {
     const { data, error } = await supabase
-      .from("appointments")
+      .from('appointments')
       .update(appointment)
-      .eq("id", id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -302,29 +302,29 @@ export const updateAppointmentMutationOptions = {
   },
   onSuccess: (_: unknown, _variables: unknown) => {
     // Invalidar queries relacionadas após sucesso
-    const { invalidateSupabaseQueries } = require("@/lib/query-client");
-    invalidateSupabaseQueries("appointments");
+    const { invalidateSupabaseQueries } = require('@/lib/query-client');
+    invalidateSupabaseQueries('appointments');
   },
   onError: (error: any) => {
-    console.error("Error updating appointment:", error);
+    console.error('Error updating appointment:', error);
   },
 };
 
 // Mutation options para deletar agendamento
 export const deleteAppointmentMutationOptions = {
   mutationFn: async (id: string) => {
-    const { error } = await supabase.from("appointments").delete().eq("id", id);
+    const { error } = await supabase.from('appointments').delete().eq('id', id);
 
     if (error) throw error;
     return id;
   },
   onSuccess: () => {
     // Invalidar queries relacionadas após sucesso
-    const { invalidateSupabaseQueries } = require("@/lib/query-client");
-    invalidateSupabaseQueries("appointments");
+    const { invalidateSupabaseQueries } = require('@/lib/query-client');
+    invalidateSupabaseQueries('appointments');
   },
   onError: (error: any) => {
-    console.error("Error deleting appointment:", error);
+    console.error('Error deleting appointment:', error);
   },
 };
 
@@ -332,9 +332,9 @@ export const deleteAppointmentMutationOptions = {
 export const confirmAppointmentMutationOptions = {
   mutationFn: async (id: string) => {
     const { data, error } = await supabase
-      .from("appointments")
-      .update({ status: "confirmed" })
-      .eq("id", id)
+      .from('appointments')
+      .update({ status: 'confirmed' })
+      .eq('id', id)
       .select()
       .single();
 
@@ -342,10 +342,10 @@ export const confirmAppointmentMutationOptions = {
     return data;
   },
   onSuccess: (_: unknown, _variables: unknown) => {
-    const { invalidateSupabaseQueries } = require("@/lib/query-client");
-    invalidateSupabaseQueries("appointments");
+    const { invalidateSupabaseQueries } = require('@/lib/query-client');
+    invalidateSupabaseQueries('appointments');
   },
   onError: (error: any) => {
-    console.error("Error confirming appointment:", error);
+    console.error('Error confirming appointment:', error);
   },
 };

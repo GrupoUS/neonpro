@@ -1,5 +1,5 @@
-const { BundleAnalyzerPlugin } = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true",
+const { BundleAnalyzerPlugin } = require('@next/bundle-analyzer')({
+  enabled: process.env.ANALYZE === 'true',
 });
 
 // Healthcare Performance Budget Configuration
@@ -119,12 +119,12 @@ const performanceMonitoring = {
 
 // Bundle Analysis Configuration
 const bundleAnalysisConfig = {
-  analyzerMode: "static",
+  analyzerMode: 'static',
   analyzerPort: 8888,
   openAnalyzer: false,
   generateStatsFile: true,
-  statsFilename: "bundle-stats.json",
-  defaultSizes: "gzip",
+  statsFilename: 'bundle-stats.json',
+  defaultSizes: 'gzip',
 
   // Healthcare-specific analysis
   healthcareAnalysis: {
@@ -154,7 +154,7 @@ const bundleAnalysisConfig = {
   // Report configuration
   reports: {
     generateReport: true,
-    reportFilename: "bundle-analysis-report.html",
+    reportFilename: 'bundle-analysis-report.html',
     includeHealthcareMetrics: true,
     includeComplianceMetrics: true,
     includePerformanceRecommendations: true,
@@ -163,20 +163,20 @@ const bundleAnalysisConfig = {
   // Alerting configuration
   alerts: {
     enabled: true,
-    channels: ["console", "file"],
-    alertFile: "bundle-analysis-alerts.log",
+    channels: ['console', 'file'],
+    alertFile: 'bundle-analysis-alerts.log',
 
     // Budget violation alerts
     budgetViolations: {
       critical: {
         enabled: true,
         notify: true,
-        action: "fail", // Fail build on critical budget violations
+        action: 'fail', // Fail build on critical budget violations
       },
       warning: {
         enabled: true,
         notify: true,
-        action: "warn", // Warn on budget warnings
+        action: 'warn', // Warn on budget warnings
       },
     },
 
@@ -185,17 +185,17 @@ const bundleAnalysisConfig = {
       lgpd: {
         enabled: true,
         notify: true,
-        action: "fail", // Fail build on LGPD violations
+        action: 'fail', // Fail build on LGPD violations
       },
       accessibility: {
         enabled: true,
         notify: true,
-        action: "warn", // Warn on accessibility violations
+        action: 'warn', // Warn on accessibility violations
       },
       healthcare: {
         enabled: true,
         notify: true,
-        action: "fail", // Fail build on healthcare compliance violations
+        action: 'fail', // Fail build on healthcare compliance violations
       },
     },
   },
@@ -208,19 +208,19 @@ const optimizationRecommendations = {
     enabled: true,
     strategies: [
       {
-        name: "route-based",
-        description: "Split bundles by application routes",
-        priority: "high",
+        name: 'route-based',
+        description: 'Split bundles by application routes',
+        priority: 'high',
       },
       {
-        name: "feature-based",
-        description: "Split bundles by healthcare features",
-        priority: "high",
+        name: 'feature-based',
+        description: 'Split bundles by healthcare features',
+        priority: 'high',
       },
       {
-        name: "vendor-based",
-        description: "Split vendor libraries into separate chunks",
-        priority: "medium",
+        name: 'vendor-based',
+        description: 'Split vendor libraries into separate chunks',
+        priority: 'medium',
       },
     ],
   },
@@ -230,19 +230,19 @@ const optimizationRecommendations = {
     enabled: true,
     recommendations: [
       {
-        pattern: "telemedicine",
-        description: "Lazy load telemedicine features",
-        priority: "high",
+        pattern: 'telemedicine',
+        description: 'Lazy load telemedicine features',
+        priority: 'high',
       },
       {
-        pattern: "admin",
-        description: "Lazy load admin features",
-        priority: "medium",
+        pattern: 'admin',
+        description: 'Lazy load admin features',
+        priority: 'medium',
       },
       {
-        pattern: "reporting",
-        description: "Lazy load reporting features",
-        priority: "medium",
+        pattern: 'reporting',
+        description: 'Lazy load reporting features',
+        priority: 'medium',
       },
     ],
   },
@@ -252,19 +252,19 @@ const optimizationRecommendations = {
     enabled: true,
     strategies: [
       {
-        name: "gzip",
-        description: "Enable gzip compression",
-        priority: "high",
+        name: 'gzip',
+        description: 'Enable gzip compression',
+        priority: 'high',
       },
       {
-        name: "brotli",
-        description: "Enable Brotli compression",
-        priority: "high",
+        name: 'brotli',
+        description: 'Enable Brotli compression',
+        priority: 'high',
       },
       {
-        name: "image-optimization",
-        description: "Optimize medical images with WebP/AVIF",
-        priority: "medium",
+        name: 'image-optimization',
+        description: 'Optimize medical images with WebP/AVIF',
+        priority: 'medium',
       },
     ],
   },
@@ -274,19 +274,19 @@ const optimizationRecommendations = {
     enabled: true,
     strategies: [
       {
-        name: "static-assets",
-        description: "Cache static assets with long TTL",
-        priority: "high",
+        name: 'static-assets',
+        description: 'Cache static assets with long TTL',
+        priority: 'high',
       },
       {
-        name: "api-responses",
-        description: "Cache API responses with healthcare context",
-        priority: "medium",
+        name: 'api-responses',
+        description: 'Cache API responses with healthcare context',
+        priority: 'medium',
       },
       {
-        name: "patient-data",
-        description: "Cache patient data with privacy controls",
-        priority: "low",
+        name: 'patient-data',
+        description: 'Cache patient data with privacy controls',
+        priority: 'low',
       },
     ],
   },
@@ -303,13 +303,13 @@ class HealthcarePerformanceBudgetPlugin {
 
   apply(compiler) {
     compiler.hooks.emit.tapAsync(
-      "HealthcarePerformanceBudgetPlugin",
+      'HealthcarePerformanceBudgetPlugin',
       (compilation, callback) => {
         const violations = [];
         const warnings = [];
 
         // Check performance budgets
-        Object.keys(compilation.assets).forEach((assetName) => {
+        Object.keys(compilation.assets).forEach(assetName => {
           const asset = compilation.assets[assetName];
           const size = asset.size();
 
@@ -318,23 +318,25 @@ class HealthcarePerformanceBudgetPlugin {
             ([budgetName, budget]) => {
               if (size > budget.maxSize) {
                 violations.push({
-                  type: "budget",
-                  severity: "critical",
+                  type: 'budget',
+                  severity: 'critical',
                   budget: budgetName,
                   asset: assetName,
                   size: size,
                   maxSize: budget.maxSize,
-                  message: `Asset ${assetName} (${size} bytes) exceeds ${budgetName} budget (${budget.maxSize} bytes)`,
+                  message:
+                    `Asset ${assetName} (${size} bytes) exceeds ${budgetName} budget (${budget.maxSize} bytes)`,
                 });
               } else if (size > budget.warningSize) {
                 warnings.push({
-                  type: "budget",
-                  severity: "warning",
+                  type: 'budget',
+                  severity: 'warning',
                   budget: budgetName,
                   asset: assetName,
                   size: size,
                   warningSize: budget.warningSize,
-                  message: `Asset ${assetName} (${size} bytes) approaches ${budgetName} budget warning (${budget.warningSize} bytes)`,
+                  message:
+                    `Asset ${assetName} (${size} bytes) approaches ${budgetName} budget warning (${budget.warningSize} bytes)`,
                 });
               }
             },
@@ -342,23 +344,23 @@ class HealthcarePerformanceBudgetPlugin {
 
           // Check LGPD compliance
           if (
-            assetName.includes("patient") ||
-            assetName.includes("healthcare")
+            assetName.includes('patient')
+            || assetName.includes('healthcare')
           ) {
             if (
-              size >
-              this.options.healthcareAnalysis.compliance.lgpd
-                .maxDataTransferSize
+              size
+                > this.options.healthcareAnalysis.compliance.lgpd
+                  .maxDataTransferSize
             ) {
               violations.push({
-                type: "lgpd",
-                severity: "critical",
+                type: 'lgpd',
+                severity: 'critical',
                 asset: assetName,
                 size: size,
-                maxSize:
-                  this.options.healthcareAnalysis.compliance.lgpd
-                    .maxDataTransferSize,
-                message: `Patient data asset ${assetName} (${size} bytes) exceeds LGPD compliance limit`,
+                maxSize: this.options.healthcareAnalysis.compliance.lgpd
+                  .maxDataTransferSize,
+                message:
+                  `Patient data asset ${assetName} (${size} bytes) exceeds LGPD compliance limit`,
               });
             }
           }
@@ -366,8 +368,8 @@ class HealthcarePerformanceBudgetPlugin {
 
         // Log violations and warnings
         if (violations.length > 0) {
-          const message = violations.map((v) => v.message).join("\n");
-          if (this.options.alerts.budgetViolations.critical.action === "fail") {
+          const message = violations.map(v => v.message).join('\n');
+          if (this.options.alerts.budgetViolations.critical.action === 'fail') {
             compilation.errors.push(new Error(message));
           } else {
             compilation.warnings.push(new Error(message));
@@ -375,7 +377,7 @@ class HealthcarePerformanceBudgetPlugin {
         }
 
         if (warnings.length > 0) {
-          const message = warnings.map((w) => w.message).join("\n");
+          const message = warnings.map(w => w.message).join('\n');
           compilation.warnings.push(new Error(message));
         }
 
@@ -389,7 +391,7 @@ class HealthcarePerformanceBudgetPlugin {
           recommendations: optimizationRecommendations,
         };
 
-        compilation.assets["healthcare-performance-report.json"] = {
+        compilation.assets['healthcare-performance-report.json'] = {
           source: JSON.stringify(report, null, 2),
           size: Buffer.byteLength(JSON.stringify(report, null, 2)),
         };
@@ -402,19 +404,19 @@ class HealthcarePerformanceBudgetPlugin {
 
 // Webpack Configuration for Bundle Analysis
 const webpackConfig = {
-  mode: process.env.NODE_ENV === "production" ? "production" : "development",
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
 
   // Performance budget configuration
   performance: {
-    hints: process.env.NODE_ENV === "production" ? "warning" : false,
+    hints: process.env.NODE_ENV === 'production' ? 'warning' : false,
     maxEntrypointSize: 800 * 1024, // 800KB
     maxAssetSize: 200 * 1024, // 200KB
-    assetFilter: function (assetFilename) {
+    assetFilter: function(assetFilename) {
       // Exclude certain assets from performance checks
       return (
-        !assetFilename.endsWith(".map") &&
-        !assetFilename.endsWith(".txt") &&
-        !assetFilename.endsWith(".json")
+        !assetFilename.endsWith('.map')
+        && !assetFilename.endsWith('.txt')
+        && !assetFilename.endsWith('.json')
       );
     },
   },
@@ -436,13 +438,13 @@ const webpackConfig = {
   // Optimization settings
   optimization: {
     splitChunks: {
-      chunks: "all",
+      chunks: 'all',
       minSize: 20 * 1024, // 20KB
       maxSize: 250 * 1024, // 250KB
       minChunks: 1,
       maxAsyncRequests: 30,
       maxInitialRequests: 30,
-      automaticNameDelimiter: "~",
+      automaticNameDelimiter: '~',
       cacheGroups: {
         vendors: {
           test: /[\\/]node_modules[\\/]/,
@@ -467,5 +469,4 @@ module.exports.lgpdPerformanceRequirements = lgpdPerformanceRequirements;
 module.exports.performanceMonitoring = performanceMonitoring;
 module.exports.bundleAnalysisConfig = bundleAnalysisConfig;
 module.exports.optimizationRecommendations = optimizationRecommendations;
-module.exports.HealthcarePerformanceBudgetPlugin =
-  HealthcarePerformanceBudgetPlugin;
+module.exports.HealthcarePerformanceBudgetPlugin = HealthcarePerformanceBudgetPlugin;

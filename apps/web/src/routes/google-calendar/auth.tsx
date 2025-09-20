@@ -1,17 +1,17 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
-import { GoogleCalendarService } from "@/services/google-calendar";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from '@/hooks/useAuth';
+import { GoogleCalendarService } from '@/services/google-calendar';
+import { useMutation } from '@tanstack/react-query';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 
-export const Route = createFileRoute("/google-calendar/auth")({
+export const Route = createFileRoute('/google-calendar/auth')({
   component: GoogleCalendarAuth,
   loader: () => {
     // Check if we have authorization code
     const urlParams = new URLSearchParams(window.location.search);
-    const code = urlParams.get("code");
-    const state = urlParams.get("state");
-    const error = urlParams.get("error");
+    const code = urlParams.get('code');
+    const state = urlParams.get('state');
+    const error = urlParams.get('error');
 
     return { code, state, error };
   },
@@ -25,7 +25,7 @@ function GoogleCalendarAuth() {
   const callbackMutation = useMutation({
     mutationFn: async () => {
       if (!code || !state) {
-        throw new Error("Missing required parameters");
+        throw new Error('Missing required parameters');
       }
 
       // Parse state to get userId and clinicId
@@ -33,7 +33,7 @@ function GoogleCalendarAuth() {
       const { userId, clinicId, lgpdConsent } = stateData;
 
       if (!userId || !clinicId) {
-        throw new Error("Invalid state parameters");
+        throw new Error('Invalid state parameters');
       }
 
       const service = new GoogleCalendarService({
@@ -51,11 +51,11 @@ function GoogleCalendarAuth() {
     },
     onSuccess: () => {
       // Redirect back to settings page
-      navigate({ to: "/settings/calendar", search: { success: "true" } });
+      navigate({ to: '/settings/calendar', search: { success: 'true' } });
     },
-    onError: (error) => {
-      console.error("OAuth callback error:", error);
-      navigate({ to: "/settings/calendar", search: { error: "oauth_failed" } });
+    onError: error => {
+      console.error('OAuth callback error:', error);
+      navigate({ to: '/settings/calendar', search: { error: 'oauth_failed' } });
     },
   });
 
@@ -63,8 +63,8 @@ function GoogleCalendarAuth() {
     if (error) {
       // Handle OAuth error
       navigate({
-        to: "/settings/calendar",
-        search: { error: "oauth_denied" },
+        to: '/settings/calendar',
+        search: { error: 'oauth_denied' },
       });
       return;
     }
@@ -76,13 +76,14 @@ function GoogleCalendarAuth() {
 
   if (callbackMutation.isPending) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <h2 className="text-xl font-semibold mb-2">
+      <div className='flex items-center justify-center min-h-screen'>
+        <div className='text-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4'>
+          </div>
+          <h2 className='text-xl font-semibold mb-2'>
             Conectando ao Google Calendar
           </h2>
-          <p className="text-gray-600">
+          <p className='text-gray-600'>
             Por favor, aguarde enquanto finalizamos a integração...
           </p>
         </div>
@@ -92,33 +93,32 @@ function GoogleCalendarAuth() {
 
   if (callbackMutation.isError) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center max-w-md">
-          <div className="text-red-500 mb-4">
+      <div className='flex items-center justify-center min-h-screen'>
+        <div className='text-center max-w-md'>
+          <div className='text-red-500 mb-4'>
             <svg
-              className="w-16 h-16 mx-auto"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+              className='w-16 h-16 mx-auto'
+              fill='none'
+              stroke='currentColor'
+              viewBox='0 0 24 24'
             >
               <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
+                strokeLinecap='round'
+                strokeLinejoin='round'
                 strokeWidth={2}
-                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold mb-2 text-red-600">
+          <h2 className='text-xl font-semibold mb-2 text-red-600'>
             Erro na Conexão
           </h2>
-          <p className="text-gray-600 mb-4">
-            Não foi possível conectar sua conta do Google Calendar. Por favor,
-            tente novamente.
+          <p className='text-gray-600 mb-4'>
+            Não foi possível conectar sua conta do Google Calendar. Por favor, tente novamente.
           </p>
           <button
-            onClick={() => navigate({ to: "/settings/calendar" })}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            onClick={() => navigate({ to: '/settings/calendar' })}
+            className='bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700'
           >
             Voltar para Configurações
           </button>

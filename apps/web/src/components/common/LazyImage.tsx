@@ -3,9 +3,9 @@
  * T078 - Frontend Performance Optimization
  */
 
-import { cn } from "@/lib/utils";
-import { createIntersectionObserver } from "@/utils/performance";
-import React, { useEffect, useRef, useState } from "react";
+import { cn } from '@/lib/utils';
+import { createIntersectionObserver } from '@/utils/performance';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -14,7 +14,7 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallback?: string;
   className?: string;
   containerClassName?: string;
-  loading?: "lazy" | "eager";
+  loading?: 'lazy' | 'eager';
   priority?: boolean;
   sizes?: string;
   srcSet?: string;
@@ -25,11 +25,12 @@ interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
 export const LazyImage: React.FC<LazyImageProps> = ({
   src,
   alt,
-  placeholder = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PC9zdmc+",
-  fallback = "/images/placeholder.svg",
+  placeholder =
+    'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PC9zdmc+',
+  fallback = '/images/placeholder.svg',
   className,
   containerClassName,
-  loading = "lazy",
+  loading = 'lazy',
   priority = false,
   sizes,
   srcSet,
@@ -44,14 +45,14 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (priority || loading === "eager") {
+    if (priority || loading === 'eager') {
       setIsInView(true);
       return;
     }
 
     const observer = createIntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
+      entries => {
+        entries.forEach(entry => {
           if (entry.isIntersecting) {
             setIsInView(true);
             observer?.disconnect();
@@ -59,7 +60,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
         });
       },
       {
-        rootMargin: "50px",
+        rootMargin: '50px',
         threshold: 0.1,
       },
     );
@@ -89,7 +90,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
     <div
       ref={containerRef}
       className={cn(
-        "relative overflow-hidden bg-gray-100 dark:bg-gray-800",
+        'relative overflow-hidden bg-gray-100 dark:bg-gray-800',
         containerClassName,
       )}
     >
@@ -98,9 +99,9 @@ export const LazyImage: React.FC<LazyImageProps> = ({
         src={imageSrc}
         alt={alt}
         className={cn(
-          "transition-opacity duration-300",
-          isLoaded ? "opacity-100" : "opacity-0",
-          hasError && "opacity-50",
+          'transition-opacity duration-300',
+          isLoaded ? 'opacity-100' : 'opacity-0',
+          hasError && 'opacity-50',
           className,
         )}
         sizes={sizes}
@@ -108,30 +109,30 @@ export const LazyImage: React.FC<LazyImageProps> = ({
         onLoad={handleLoad}
         onError={handleError}
         loading={loading}
-        decoding="async"
+        decoding='async'
         {...props}
       />
 
       {!isLoaded && !hasError && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="animate-pulse bg-gray-200 dark:bg-gray-700 rounded w-8 h-8" />
+        <div className='absolute inset-0 flex items-center justify-center'>
+          <div className='animate-pulse bg-gray-200 dark:bg-gray-700 rounded w-8 h-8' />
         </div>
       )}
 
       {hasError && (
-        <div className="absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-600">
+        <div className='absolute inset-0 flex items-center justify-center text-gray-400 dark:text-gray-600'>
           <svg
-            className="w-8 h-8"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+            className='w-8 h-8'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'
+            xmlns='http://www.w3.org/2000/svg'
           >
             <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
+              strokeLinecap='round'
+              strokeLinejoin='round'
               strokeWidth={2}
-              d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+              d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
             />
           </svg>
         </div>
@@ -165,25 +166,24 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
 
     return Object.entries(breakpoints)
       .map(([size, width]) => `${baseSrc}?w=${width} ${width}w`)
-      .join(", ");
+      .join(', ');
   };
 
   const generateSizes = () => {
     if (!breakpoints) return undefined;
 
     const sizeMap = {
-      sm: "640px",
-      md: "768px",
-      lg: "1024px",
-      xl: "1280px",
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      xl: '1280px',
     };
 
     return Object.entries(breakpoints)
       .map(
-        ([size, width]) =>
-          `(max-width: ${sizeMap[size as keyof typeof sizeMap]}) ${width}px`,
+        ([size, width]) => `(max-width: ${sizeMap[size as keyof typeof sizeMap]}) ${width}px`,
       )
-      .join(", ");
+      .join(', ');
   };
 
   if (webpSrc || avifSrc) {
@@ -193,14 +193,14 @@ export const ResponsiveImage: React.FC<ResponsiveImageProps> = ({
           <source
             srcSet={generateSrcSet(avifSrc)}
             sizes={generateSizes()}
-            type="image/avif"
+            type='image/avif'
           />
         )}
         {webpSrc && (
           <source
             srcSet={generateSrcSet(webpSrc)}
             sizes={generateSizes()}
-            type="image/webp"
+            type='image/webp'
           />
         )}
         <LazyImage

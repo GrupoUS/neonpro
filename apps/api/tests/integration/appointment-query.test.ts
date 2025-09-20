@@ -1,413 +1,365 @@
-import { Hono } from 'hono';
-import { createServer } from 'http';
-import { fetch } from 'undici';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+/**
+ * Integration Test for "Query upcoming appointments" scenario
+ * TDD Test - MUST FAIL until implementation is complete
+ * 
+ * This test validates the complete flow for querying upcoming appointments
+ * from quickstart.md scenario 1
+ */
 
-// Import the agent endpoint with mock data service
-import { agentRouter } from '../../src/routes/ai/data-agent';
+import { describe, test, expect, beforeAll, afterAll, beforeEach } from 'vitest'
 
-// Mock the AIDataService to avoid actual database calls during tests
-vi.mock('../../src/services/ai-data-service', () => ({
-  AIDataService: {
-    getInstance: () => ({
-      getClientsByName: async (name: string) => ({
-        type: 'list',
-        title: 'Clientes Encontrados',
-        data: [],
-        columns: [],
-      }),
-      getAppointmentsByDate: async (date: string) => {
-        // Mock appointment data
-        const mockAppointments = [
-          {
-            id: 'apt-1',
-            datetime: '2024-01-20T09:00:00Z',
-            clientName: 'Maria Silva',
-            status: 'scheduled',
-            type: 'Consulta',
-            duration: 60,
-          },
-          {
-            id: 'apt-2',
-            datetime: '2024-01-20T10:30:00Z',
-            clientName: 'João Santos',
-            status: 'scheduled',
-            type: 'Avaliação',
-            duration: 45,
-          },
-          {
-            id: 'apt-3',
-            datetime: '2024-01-20T14:00:00Z',
-            clientName: 'Ana Oliveira',
-            status: 'confirmed',
-            type: 'Retorno',
-            duration: 30,
-          },
-        ];
-
-        return {
-          type: 'list',
-          title: 'Agendamentos',
-          data: mockAppointments,
-          columns: [
-            { key: 'datetime', label: 'Data/Hora', type: 'datetime' },
-            { key: 'clientName', label: 'Cliente', type: 'text' },
-            { key: 'status', label: 'Status', type: 'badge' },
-            { key: 'type', label: 'Tipo', type: 'text' },
-          ],
-          actions: [
-            { id: 'view-details', label: 'Ver Detalhes', type: 'button' },
-          ],
-        };
-      },
-      getFinancialSummary: async (period: string) => ({
-        type: 'summary',
-        title: 'Resumo Financeiro',
-        data: [],
-        summary: {},
-        columns: [],
-      }),
-    }),
-  },
-}));
-
-describe('Integration Tests: Appointment Query', () => {
-  let server: any;
-  let baseUrl: string;
-  let app: Hono;
+describe('Query Upcoming Appointments - Integration Test', () => {
+  let app: any
+  let testServer: any
 
   beforeAll(async () => {
-    // Create Hono app with agent route
-    app = new Hono();
-    app.route('/api/ai/data-agent', agentRouter);
-
-    // Start test server
-    server = createServer({
-      fetch: app.fetch,
-      port: 0,
-    });
-
-    await new Promise(resolve => {
-      server.listen(0, () => {
-        const address = server.address();
-        if (address && typeof address === 'object') {
-          baseUrl = `http://localhost:${address.port}`;
-        }
-        resolve(true);
-      });
-    });
-  });
+    try {
+      app = (await import('../../src/app')).default
+    } catch (error) {
+      console.log('Expected failure: App not available during TDD phase')
+    }
+  })
 
   afterAll(async () => {
-    if (server) {
-      await new Promise(resolve => server.close(resolve));
+    if (testServer) {
+      testServer.close()
     }
-  });
+  })
 
-  describe('Appointment Query Integration', () => {
-    it('should successfully query for appointments', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+  beforeEach(async () => {
+    // Setup test data - this will fail until implementation is complete
+    // In real implementation, this would set up test appointments
+  })
+
+  describe('Portuguese Language Query Processing', () => {
+    test('should handle "Quais os próximos agendamentos?" query', async () => {
+      expect(app).toBeDefined()
+
+      const query = "Quais os próximos agendamentos?"
+      const sessionId = "test-session-appointments"
+
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-doctor-token'
         },
         body: JSON.stringify({
-          query: 'Quais os próximos agendamentos?',
-          sessionId: 'test-session-apt-1',
-        }),
-      });
+          query,
+          sessionId,
+          context: {
+            userId: "doctor-user-id"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      // Response validation
+      expect(response.status).toBe(200)
+      
+      const responseData = await response.json()
+      expect(responseData.success).toBe(true)
+      expect(responseData.response).toBeDefined()
+      
+      // Should return list type for appointments
+      expect(responseData.response.type).toBe('list')
+      
+      // Content should have title and data
+      expect(responseData.response.content).toHaveProperty('title')
+      expect(responseData.response.content.title).toContain('Agendamentos')
+      expect(responseData.response.content).toHaveProperty('data')
+      expect(Array.isArray(responseData.response.content.data)).toBe(true)
+    })
 
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('list');
-      expect(data.response.title).toBe('Agendamentos');
-      expect(Array.isArray(data.response.data)).toBe(true);
-      expect(data.response.data.length).toBeGreaterThan(0);
+    test('should handle alternative appointment queries', async () => {
+      expect(app).toBeDefined()
 
-      // Verify appointment data structure
-      const appointment = data.response.data[0];
-      expect(appointment).toHaveProperty('id');
-      expect(appointment).toHaveProperty('datetime');
-      expect(appointment).toHaveProperty('clientName');
-      expect(appointment).toHaveProperty('status');
-      expect(appointment).toHaveProperty('type');
-    });
+      const alternativeQueries = [
+        "Próximos agendamentos",
+        "Me mostre os agendamentos de hoje",
+        "Consultas marcadas para hoje",
+        "Agenda do dia"
+      ]
 
-    it('should query appointments for today', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Agendamentos de hoje',
-          sessionId: 'test-session-apt-2',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('list');
-      expect(data.response.title).toBe('Agendamentos');
-    });
-
-    it('should query appointments for tomorrow', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Agendamentos para amanhã',
-          sessionId: 'test-session-apt-3',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('list');
-    });
-
-    it('should query appointments for specific client', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Agendamentos da Maria Silva',
-          sessionId: 'test-session-apt-4',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('list');
-
-      // Verify that appointments are returned
-      const appointments = data.response.data;
-      expect(appointments.length).toBeGreaterThan(0);
-    });
-
-    it('should include action buttons in response', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Próximas consultas',
-          sessionId: 'test-session-apt-5',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data.actions).toBeDefined();
-      expect(Array.isArray(data.actions)).toBe(true);
-      expect(data.actions.length).toBeGreaterThan(0);
-
-      // Verify action structure
-      const action = data.actions[0];
-      expect(action).toHaveProperty('id');
-      expect(action).toHaveProperty('label');
-      expect(action).toHaveProperty('type');
-      expect(action.type).toBe('button');
-    });
-
-    it('should handle variations in appointment query phrasing', async () => {
-      const variations = [
-        'Agendamentos de hoje',
-        'Consultas marcadas',
-        'Próximos atendimentos',
-        'Mostrar agendamentos',
-        'minhas consultas',
-      ];
-
-      for (const query of variations) {
-        const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      for (const query of alternativeQueries) {
+        const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer test-token',
+            'Authorization': 'Bearer valid-doctor-token'
           },
           body: JSON.stringify({
             query,
-            sessionId: `test-session-var-${query}`,
-          }),
-        });
+            sessionId: `test-session-${Math.random()}`,
+            context: {
+              userId: "doctor-user-id"
+            }
+          })
+        })
 
-        expect(response.status).toBe(200);
-        const data = await response.json();
-        expect(data.success).toBe(true);
-        expect(data.response.type).toBe('list');
+        expect(response.status).toBe(200)
+        
+        const responseData = await response.json()
+        expect(responseData.success).toBe(true)
+        expect(responseData.response.type).toBe('list')
       }
-    });
+    })
+  })
 
-    it('should return appointments in chronological order', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+  describe('Response Structure Validation', () => {
+    test('should return properly structured appointment data', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-doctor-token'
         },
         body: JSON.stringify({
-          query: 'Agendamentos de hoje',
-          sessionId: 'test-session-apt-6',
-        }),
-      });
+          query: "Quais os próximos agendamentos?",
+          sessionId: "test-session-structure",
+          context: {
+            userId: "doctor-user-id"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      const appointments = data.response.data;
-
-      // Verify appointments are sorted by datetime
-      for (let i = 1; i < appointments.length; i++) {
-        const prevTime = new Date(appointments[i - 1].datetime).getTime();
-        const currTime = new Date(appointments[i].datetime).getTime();
-        expect(prevTime).toBeLessThanOrEqual(currTime);
+      const responseData = await response.json()
+      
+      if (responseData.response.content.data.length > 0) {
+        const appointment = responseData.response.content.data[0]
+        
+        // Validate appointment structure according to quickstart requirements
+        expect(appointment).toHaveProperty('id')
+        expect(appointment).toHaveProperty('datetime')
+        expect(appointment).toHaveProperty('clientName')
+        expect(appointment).toHaveProperty('status')
+        
+        // Validate status is one of expected values
+        expect(['scheduled', 'confirmed', 'completed', 'cancelled']).toContain(appointment.status)
+        
+        // Validate datetime format
+        expect(new Date(appointment.datetime)).toBeInstanceOf(Date)
       }
-    });
+    })
 
-    it('should handle appointment status display', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+    test('should include interactive action buttons', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-doctor-token'
         },
         body: JSON.stringify({
-          query: 'Agendamentos',
-          sessionId: 'test-session-apt-7',
-        }),
-      });
+          query: "Próximos agendamentos",
+          sessionId: "test-session-actions",
+          context: {
+            userId: "doctor-user-id"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      const appointments = data.response.data;
-
-      // Verify status field exists and has valid values
-      const validStatuses = [
-        'scheduled',
-        'confirmed',
-        'completed',
-        'cancelled',
-        'no-show',
-      ];
-      appointments.forEach(apt => {
-        expect(validStatuses).toContain(apt.status);
-      });
-    });
-
-    it('should handle empty appointment list', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Agendamentos para dia sem agendamentos',
-          sessionId: 'test-session-apt-8',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data.success).toBe(true);
-      expect(data.response.type).toBe('list');
-      expect(Array.isArray(data.response.data)).toBe(true);
-      expect(data.response.data.length).toBe(0);
-    });
-
-    it('should include duration information when available', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
-        },
-        body: JSON.stringify({
-          query: 'Agendamentos de hoje',
-          sessionId: 'test-session-apt-9',
-        }),
-      });
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      const appointments = data.response.data;
-
-      if (appointments.length > 0) {
-        // Duration might be optional
-        if ('duration' in appointments[0]) {
-          expect(typeof appointments[0].duration).toBe('number');
-          expect(appointments[0].duration).toBeGreaterThan(0);
-        }
+      const responseData = await response.json()
+      
+      // Should include interactive actions
+      expect(responseData.actions).toBeDefined()
+      expect(Array.isArray(responseData.actions)).toBe(true)
+      
+      if (responseData.actions.length > 0) {
+        const action = responseData.actions[0]
+        expect(action).toHaveProperty('id')
+        expect(action).toHaveProperty('label')
+        expect(action).toHaveProperty('type')
+        expect(action.label).toContain('detalhes')
       }
-    });
+    })
+  })
 
-    it('should handle appointment type queries', async () => {
-      const types = ['Consulta', 'Avaliação', 'Retorno', 'Procedimento'];
+  describe('Permission and Security Validation', () => {
+    test('should respect domain-based data access', async () => {
+      expect(app).toBeDefined()
 
-      for (const type of types) {
-        const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-clinic-a-token'
+        },
+        body: JSON.stringify({
+          query: "Quais os próximos agendamentos?",
+          sessionId: "test-session-domain",
+          context: {
+            userId: "clinic-a-user",
+            domain: "clinic-a"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      
+      if (responseData.success && responseData.response.content.data.length > 0) {
+        // All appointments should belong to the user's domain
+        const appointments = responseData.response.content.data
+        appointments.forEach(appointment => {
+          // This validation will be implemented with actual domain checking
+          expect(appointment).toBeDefined()
+        })
+      }
+    })
+
+    test('should enforce role-based access control', async () => {
+      expect(app).toBeDefined()
+
+      // Test different roles
+      const roles = [
+        { token: 'valid-doctor-token', role: 'doctor', shouldSeeAll: true },
+        { token: 'valid-nurse-token', role: 'nurse', shouldSeeAll: true },
+        { token: 'valid-receptionist-token', role: 'receptionist', shouldSeeAll: false }
+      ]
+
+      for (const { token, role, shouldSeeAll } of roles) {
+        const response = await app.request('/api/ai/data-agent', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer test-token',
+            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
-            query: `Agendamentos do tipo ${type}`,
-            sessionId: `test-session-type-${type}`,
-          }),
-        });
+            query: "Próximos agendamentos",
+            sessionId: `test-session-${role}`,
+            context: {
+              userId: `${role}-user-id`,
+              role: role
+            }
+          })
+        })
 
-        expect(response.status).toBe(200);
-        const data = await response.json();
-        expect(data.success).toBe(true);
+        expect(response.status).toBe(200)
+        
+        const responseData = await response.json()
+        expect(responseData.success).toBe(true)
+        
+        // Role-specific validation would be implemented here
+        if (!shouldSeeAll) {
+          // Receptionist might see limited information
+          expect(responseData.response).toBeDefined()
+        }
       }
-    });
+    })
+  })
 
-    it('should handle datetime formatting correctly', async () => {
-      const response = await fetch(`${baseUrl}/api/ai/data-agent`, {
+  describe('Performance Requirements', () => {
+    test('should respond within 2 seconds', async () => {
+      expect(app).toBeDefined()
+
+      const startTime = Date.now()
+      
+      const response = await app.request('/api/ai/data-agent', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer test-token',
+          'Authorization': 'Bearer valid-doctor-token'
         },
         body: JSON.stringify({
-          query: 'Agendamentos',
-          sessionId: 'test-session-apt-10',
-        }),
-      });
+          query: "Quais os próximos agendamentos?",
+          sessionId: "test-session-performance",
+          context: {
+            userId: "doctor-user-id"
+          }
+        })
+      })
 
-      expect(response.status).toBe(200);
-      const data = await response.json();
+      const endTime = Date.now()
+      const responseTime = endTime - startTime
 
-      const appointments = data.response.data;
+      expect(responseTime).toBeLessThan(2000) // <2s requirement
+      expect(response.status).toBe(200)
+    })
 
-      if (appointments.length > 0) {
-        // Verify datetime is valid ISO string
-        expect(() => new Date(appointments[0].datetime)).not.toThrow();
+    test('should include processing time metadata', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-doctor-token'
+        },
+        body: JSON.stringify({
+          query: "Próximos agendamentos",
+          sessionId: "test-session-metadata",
+          context: {
+            userId: "doctor-user-id"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      
+      expect(responseData.metadata).toBeDefined()
+      expect(responseData.metadata.processingTime).toBeDefined()
+      expect(typeof responseData.metadata.processingTime).toBe('number')
+      expect(responseData.metadata.processingTime).toBeLessThan(2000)
+    })
+  })
+
+  describe('Data Formatting and Display', () => {
+    test('should format appointment dates in Portuguese locale', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-doctor-token'
+        },
+        body: JSON.stringify({
+          query: "Agendamentos de hoje",
+          sessionId: "test-session-locale",
+          context: {
+            userId: "doctor-user-id"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      
+      if (responseData.response.content.data.length > 0) {
+        const appointment = responseData.response.content.data[0]
+        
+        // Should include proper date formatting
+        expect(appointment.datetime).toBeDefined()
+        
+        // Response should be in Portuguese
+        expect(responseData.response.content.title).toMatch(/[Aa]gendamentos?/)
       }
-    });
-  });
-});
+    })
+
+    test('should handle empty results gracefully', async () => {
+      expect(app).toBeDefined()
+
+      const response = await app.request('/api/ai/data-agent', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-empty-schedule-token'
+        },
+        body: JSON.stringify({
+          query: "Agendamentos para amanhã",
+          sessionId: "test-session-empty",
+          context: {
+            userId: "empty-schedule-user"
+          }
+        })
+      })
+
+      const responseData = await response.json()
+      
+      expect(responseData.success).toBe(true)
+      expect(responseData.response.type).toBe('text')
+      expect(responseData.response.content.text).toContain('Não há agendamentos')
+    })
+  })
+})

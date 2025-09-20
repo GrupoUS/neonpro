@@ -1,6 +1,6 @@
-import { analytics } from "@/lib/analytics";
-import { useEffect } from "react";
-import { useConsent } from "../contexts/ConsentContext";
+import { analytics } from '@/lib/analytics';
+import { useEffect } from 'react';
+import { useConsent } from '../contexts/ConsentContext';
 
 /**
  * Hook to initialize analytics based on user consent
@@ -11,9 +11,9 @@ export function useAnalytics() {
 
   useEffect(() => {
     // Initialize analytics if user has granted analytics consent
-    if (hasConsent("analytics")) {
+    if (hasConsent('analytics')) {
       analytics.initialize().catch((error: Error) => {
-        console.error("Failed to initialize analytics:", error);
+        console.error('Failed to initialize analytics:', error);
       });
     }
   }, [hasConsent]);
@@ -23,11 +23,11 @@ export function useAnalytics() {
     const handleConsentChange = (event: CustomEvent) => {
       const { category, granted } = event.detail;
 
-      if (category === "analytics") {
+      if (category === 'analytics') {
         if (granted) {
           analytics.initialize().catch((error: Error) => {
             console.error(
-              "Failed to initialize analytics after consent granted:",
+              'Failed to initialize analytics after consent granted:',
               error,
             );
           });
@@ -39,13 +39,13 @@ export function useAnalytics() {
 
     // Add event listener for consent changes
     window.addEventListener(
-      "consent-changed",
+      'consent-changed',
       handleConsentChange as EventListener,
     );
 
     return () => {
       window.removeEventListener(
-        "consent-changed",
+        'consent-changed',
         handleConsentChange as EventListener,
       );
     };
@@ -58,12 +58,12 @@ export function useAnalytics() {
       title: string;
       referrer?: string;
     }) => {
-      if (hasConsent("analytics")) {
+      if (hasConsent('analytics')) {
         analytics.trackPageView(data);
       }
     },
     trackEvent: (data: { name: string; properties?: Record<string, any> }) => {
-      if (hasConsent("analytics")) {
+      if (hasConsent('analytics')) {
         analytics.trackEvent(data);
       }
     },
@@ -74,16 +74,16 @@ export function useAnalytics() {
       label?: string;
       value?: number;
     }) => {
-      if (hasConsent("analytics")) {
+      if (hasConsent('analytics')) {
         analytics.trackInteraction(data);
       }
     },
     setUserId: (userId: string) => {
-      if (hasConsent("analytics")) {
+      if (hasConsent('analytics')) {
         analytics.setUserId(userId);
       }
     },
-    isInitialized: hasConsent("analytics"),
+    isInitialized: hasConsent('analytics'),
   };
 }
 
@@ -118,7 +118,7 @@ export function useInteractionTracking() {
   ) => {
     trackInteraction({
       element,
-      action: "click",
+      action: 'click',
       category,
       label,
       value,
@@ -127,9 +127,9 @@ export function useInteractionTracking() {
 
   const trackFormSubmit = (formName: string, success: boolean) => {
     trackInteraction({
-      element: "form",
-      action: "submit",
-      category: "form_interaction",
+      element: 'form',
+      action: 'submit',
+      category: 'form_interaction',
       label: formName,
       value: success ? 1 : 0,
     });
@@ -137,9 +137,9 @@ export function useInteractionTracking() {
 
   const trackSearch = (query: string, resultsCount?: number) => {
     trackInteraction({
-      element: "search",
-      action: "search",
-      category: "site_search",
+      element: 'search',
+      action: 'search',
+      category: 'site_search',
       label: query,
       value: resultsCount,
     });

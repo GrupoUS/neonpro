@@ -15,9 +15,9 @@ export const ACCESSIBILITY_CONFIG = {
   // Healthcare compliance levels
   compliance: {
     wcag: {
-      level: "AA",
-      version: "2.1",
-      enforceAAA: ["color-contrast"], // Enforce AAA for specific rules
+      level: 'AA',
+      version: '2.1',
+      enforceAAA: ['color-contrast'], // Enforce AAA for specific rules
     },
     healthcare: {
       anvisa: true,
@@ -29,10 +29,10 @@ export const ACCESSIBILITY_CONFIG = {
 
   // Test categories and priorities
   categories: {
-    critical: ["telemedicine", "emergency", "patient-data"],
-    high: ["patient-portal", "medical-professional", "accessibility"],
-    medium: ["admin", "analytics", "reporting"],
-    low: ["ui", "common", "utilities"],
+    critical: ['telemedicine', 'emergency', 'patient-data'],
+    high: ['patient-portal', 'medical-professional', 'accessibility'],
+    medium: ['admin', 'analytics', 'reporting'],
+    low: ['ui', 'common', 'utilities'],
   },
 
   // Reporting configuration
@@ -61,57 +61,57 @@ export const ACCESSIBILITY_CONFIG = {
 export const HEALTHCARE_RULES = {
   // Brazilian healthcare-specific accessibility rules
   anvisa: [
-    "color-contrast-enhanced", // Medical interfaces require higher contrast
-    "focus-order-semantics", // Critical for medical device interfaces
-    "keyboard-navigation", // Required for professional medical software
-    "aria-live-region", // Essential for real-time medical alerts
+    'color-contrast-enhanced', // Medical interfaces require higher contrast
+    'focus-order-semantics', // Critical for medical device interfaces
+    'keyboard-navigation', // Required for professional medical software
+    'aria-live-region', // Essential for real-time medical alerts
   ],
 
   cfm: [
-    "document-title", // Medical document titles required
-    "landmarks", // Professional interface navigation
-    "aria-roles", // Medical role definitions
-    "form-field-multiple-labels", // Medical form requirements
+    'document-title', // Medical document titles required
+    'landmarks', // Professional interface navigation
+    'aria-roles', // Medical role definitions
+    'form-field-multiple-labels', // Medical form requirements
   ],
 
   lgpd: [
-    "aria-describedby", // Patient data description requirements
-    "required-attr", // Consent form requirements
-    "label", // Patient data input labels
-    "bypass", // Data access navigation
+    'aria-describedby', // Patient data description requirements
+    'required-attr', // Consent form requirements
+    'label', // Patient data input labels
+    'bypass', // Data access navigation
   ],
 } as const;
 
 export const TEST_DATA = {
   // Mock data for testing healthcare components
   mockPatient: {
-    id: "patient-test-123",
-    name: "João Silva Santos",
-    cpf: "123.456.789-00",
-    birthDate: "1985-03-15",
-    email: "joao.silva@test.com",
-    phone: "(11) 99999-8888",
+    id: 'patient-test-123',
+    name: 'João Silva Santos',
+    cpf: '123.456.789-00',
+    birthDate: '1985-03-15',
+    email: 'joao.silva@test.com',
+    phone: '(11) 99999-8888',
   },
 
   mockPhysician: {
-    id: "physician-test-123",
-    name: "Dr. Maria Santos",
-    crm: "12345-SP",
-    specialty: "Cardiologia",
+    id: 'physician-test-123',
+    name: 'Dr. Maria Santos',
+    crm: '12345-SP',
+    specialty: 'Cardiologia',
   },
 
   mockSession: {
-    id: "session-test-123",
-    status: "active",
+    id: 'session-test-123',
+    status: 'active',
     startedAt: new Date().toISOString(),
   },
 
   mockEmergency: {
-    protocol: "2024.001234/SP-12",
+    protocol: '2024.001234/SP-12',
     location: {
       latitude: -23.5505,
       longitude: -46.6333,
-      address: "Av. Paulista, 1000, São Paulo - SP",
+      address: 'Av. Paulista, 1000, São Paulo - SP',
     },
   },
 } as const;
@@ -137,9 +137,9 @@ export const MOCK_PROVIDERS = {
     useRealTimeChat: () => ({
       messages: [
         {
-          id: "1",
-          content: "Olá, como está se sentindo?",
-          sender: "physician",
+          id: '1',
+          content: 'Olá, como está se sentindo?',
+          sender: 'physician',
           timestamp: new Date().toISOString(),
         },
       ],
@@ -179,8 +179,8 @@ export const MOCK_PROVIDERS = {
     useWebRTC: () => ({
       localStream: null,
       remoteStream: null,
-      connectionState: "connected",
-      networkQuality: "excellent",
+      connectionState: 'connected',
+      networkQuality: 'excellent',
     }),
   },
 } as const;

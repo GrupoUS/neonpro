@@ -12,10 +12,10 @@
  * - Medical transcription and AI assistance
  */
 
-import { trpc } from "@/lib/trpc/client";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-import { useAuth } from "./useAuth";
+import { trpc } from '@/lib/trpc/client';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { useAuth } from './useAuth';
 
 // Types
 export interface TelemedicineSession {
@@ -23,8 +23,8 @@ export interface TelemedicineSession {
   appointmentId: string;
   patientId: string;
   professionalId: string;
-  status: "scheduled" | "waiting" | "active" | "ended" | "cancelled";
-  sessionType: "consultation" | "followup" | "emergency";
+  status: 'scheduled' | 'waiting' | 'active' | 'ended' | 'cancelled';
+  sessionType: 'consultation' | 'followup' | 'emergency';
   startTime: Date;
   endTime?: Date;
   consentGiven: boolean;
@@ -49,7 +49,7 @@ export interface VideoCallState {
   isMuted: boolean;
   isVideoEnabled: boolean;
   isScreenSharing: boolean;
-  connectionQuality: "excellent" | "good" | "poor" | "critical";
+  connectionQuality: 'excellent' | 'good' | 'poor' | 'critical';
   bandwidth: number;
   latency: number;
 }
@@ -58,10 +58,10 @@ export interface ChatMessage {
   id: string;
   sessionId: string;
   senderId: string;
-  senderType: "patient" | "professional" | "ai_assistant" | "system";
+  senderType: 'patient' | 'professional' | 'ai_assistant' | 'system';
   content: string;
   timestamp: Date;
-  type: "text" | "voice" | "system" | "emergency";
+  type: 'text' | 'voice' | 'system' | 'emergency';
   encrypted: boolean;
   aiGenerated: boolean;
 }
@@ -90,18 +90,18 @@ export function useTelemedicineSession(params: {
   );
 
   const createSessionMutation = trpc.telemedicine.createSession.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       setSession(data);
-      toast.success("Sessão de telemedicina criada com sucesso");
+      toast.success('Sessão de telemedicina criada com sucesso');
     },
-    onError: (error) => {
+    onError: error => {
       setError(error.message);
-      toast.error("Erro ao criar sessão de telemedicina");
+      toast.error('Erro ao criar sessão de telemedicina');
     },
   });
 
   const updateSessionMutation = trpc.telemedicine.updateSession.useMutation({
-    onSuccess: (data) => {
+    onSuccess: data => {
       setSession(data);
     },
   });
@@ -109,7 +109,7 @@ export function useTelemedicineSession(params: {
   const endSessionMutation = trpc.telemedicine.endSession.useMutation({
     onSuccess: () => {
       setSession(null);
-      toast.success("Sessão finalizada com sucesso");
+      toast.success('Sessão finalizada com sucesso');
     },
   });
 
@@ -127,7 +127,7 @@ export function useTelemedicineSession(params: {
   const createSession = useCallback(
     async (data: {
       appointmentId: string;
-      sessionType: "consultation" | "followup" | "emergency";
+      sessionType: 'consultation' | 'followup' | 'emergency';
       consentGiven: boolean;
     }) => {
       return createSessionMutation.mutateAsync(data);
@@ -180,7 +180,7 @@ export function useVideoCall(sessionId: string) {
     isMuted: false,
     isVideoEnabled: true,
     isScreenSharing: false,
-    connectionQuality: "excellent",
+    connectionQuality: 'excellent',
     bandwidth: 0,
     latency: 0,
   });
@@ -196,7 +196,7 @@ export function useVideoCall(sessionId: string) {
         audio: true,
       });
 
-      setCallState((prev) => ({ ...prev, localStream: stream }));
+      setCallState(prev => ({ ...prev, localStream: stream }));
 
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = stream;
@@ -204,16 +204,16 @@ export function useVideoCall(sessionId: string) {
 
       // Initialize WebRTC peer connection
       const peerConnection = new RTCPeerConnection({
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
       });
 
-      stream.getTracks().forEach((track) => {
+      stream.getTracks().forEach(track => {
         peerConnection.addTrack(track, stream);
       });
 
-      peerConnection.ontrack = (event) => {
+      peerConnection.ontrack = event => {
         const [remoteStream] = event.streams;
-        setCallState((prev) => ({ ...prev, remoteStream }));
+        setCallState(prev => ({ ...prev, remoteStream }));
 
         if (remoteVideoRef.current) {
           remoteVideoRef.current.srcObject = remoteStream;
@@ -221,10 +221,10 @@ export function useVideoCall(sessionId: string) {
       };
 
       peerConnectionRef.current = peerConnection;
-      setCallState((prev) => ({ ...prev, isConnected: true }));
+      setCallState(prev => ({ ...prev, isConnected: true }));
     } catch (error) {
-      console.error("Error initializing video call:", error);
-      toast.error("Erro ao inicializar videochamada");
+      console.error('Error initializing video call:', error);
+      toast.error('Erro ao inicializar videochamada');
     }
   }, []);
 
@@ -233,7 +233,7 @@ export function useVideoCall(sessionId: string) {
       const audioTrack = callState.localStream.getAudioTracks()[0];
       if (audioTrack) {
         audioTrack.enabled = !audioTrack.enabled;
-        setCallState((prev) => ({ ...prev, isMuted: !audioTrack.enabled }));
+        setCallState(prev => ({ ...prev, isMuted: !audioTrack.enabled }));
       }
     }
   }, [callState.localStream]);
@@ -243,7 +243,7 @@ export function useVideoCall(sessionId: string) {
       const videoTrack = callState.localStream.getVideoTracks()[0];
       if (videoTrack) {
         videoTrack.enabled = !videoTrack.enabled;
-        setCallState((prev) => ({
+        setCallState(prev => ({
           ...prev,
           isVideoEnabled: videoTrack.enabled,
         }));
@@ -258,20 +258,20 @@ export function useVideoCall(sessionId: string) {
         audio: true,
       });
 
-      setCallState((prev) => ({ ...prev, isScreenSharing: true }));
+      setCallState(prev => ({ ...prev, isScreenSharing: true }));
 
       if (localVideoRef.current) {
         localVideoRef.current.srcObject = screenStream;
       }
     } catch (error) {
-      console.error("Error starting screen share:", error);
-      toast.error("Erro ao compartilhar tela");
+      console.error('Error starting screen share:', error);
+      toast.error('Erro ao compartilhar tela');
     }
   }, []);
 
   const endCall = useCallback(() => {
     if (callState.localStream) {
-      callState.localStream.getTracks().forEach((track) => track.stop());
+      callState.localStream.getTracks().forEach(track => track.stop());
     }
 
     if (peerConnectionRef.current) {
@@ -285,7 +285,7 @@ export function useVideoCall(sessionId: string) {
       isMuted: false,
       isVideoEnabled: true,
       isScreenSharing: false,
-      connectionQuality: "excellent",
+      connectionQuality: 'excellent',
       bandwidth: 0,
       latency: 0,
     });
@@ -321,11 +321,11 @@ export function useRealTimeChat(params: {
   );
 
   const sendMessageMutation = trpc.telemedicine.sendChatMessage.useMutation({
-    onSuccess: (newMessage) => {
-      setMessages((prev) => [...prev, newMessage]);
+    onSuccess: newMessage => {
+      setMessages(prev => [...prev, newMessage]);
     },
-    onError: (error) => {
-      toast.error("Erro ao enviar mensagem");
+    onError: error => {
+      toast.error('Erro ao enviar mensagem');
     },
   });
 
@@ -337,7 +337,7 @@ export function useRealTimeChat(params: {
   }, [messagesQuery.data]);
 
   const sendMessage = useCallback(
-    async (content: string, type: "text" | "voice" = "text") => {
+    async (content: string, type: 'text' | 'voice' = 'text') => {
       return sendMessageMutation.mutateAsync({
         sessionId: params.sessionId,
         content,
@@ -364,12 +364,11 @@ export function useSessionConsent(sessionId: string) {
     { enabled: !!sessionId },
   );
 
-  const updateConsentMutation =
-    trpc.telemedicine.updateSessionConsent.useMutation({
-      onSuccess: () => {
-        toast.success("Consentimento atualizado com sucesso");
-      },
-    });
+  const updateConsentMutation = trpc.telemedicine.updateSessionConsent.useMutation({
+    onSuccess: () => {
+      toast.success('Consentimento atualizado com sucesso');
+    },
+  });
 
   const updateConsent = useCallback(
     async (data: {
@@ -398,17 +397,17 @@ export function useSessionConsent(sessionId: string) {
 export function useEmergencyEscalation(sessionId: string) {
   const escalateMutation = trpc.telemedicine.escalateEmergency.useMutation({
     onSuccess: () => {
-      toast.success("Emergência escalada com sucesso");
+      toast.success('Emergência escalada com sucesso');
     },
     onError: () => {
-      toast.error("Erro ao escalar emergência");
+      toast.error('Erro ao escalar emergência');
     },
   });
 
   const escalateEmergency = useCallback(
     async (data: {
-      emergencyType: "medical" | "technical" | "security";
-      severity: "low" | "medium" | "high" | "critical";
+      emergencyType: 'medical' | 'technical' | 'security';
+      severity: 'low' | 'medium' | 'high' | 'critical';
       description: string;
       location?: string;
     }) => {
@@ -433,14 +432,14 @@ export function useSessionRecording(sessionId: string) {
   const startRecordingMutation = trpc.telemedicine.startRecording.useMutation({
     onSuccess: () => {
       setIsRecording(true);
-      toast.success("Gravação iniciada");
+      toast.success('Gravação iniciada');
     },
   });
 
   const stopRecordingMutation = trpc.telemedicine.stopRecording.useMutation({
     onSuccess: () => {
       setIsRecording(false);
-      toast.success("Gravação finalizada");
+      toast.success('Gravação finalizada');
     },
   });
 
@@ -464,7 +463,7 @@ export function useSessionRecording(sessionId: string) {
 // Medical transcription hook
 export function useMedicalTranscription(sessionId: string) {
   const [isTranscribing, setIsTranscribing] = useState(false);
-  const [transcript, setTranscript] = useState<string>("");
+  const [transcript, setTranscript] = useState<string>('');
 
   const transcriptionQuery = trpc.telemedicine.getTranscription.useQuery(
     { sessionId },
@@ -474,21 +473,19 @@ export function useMedicalTranscription(sessionId: string) {
     },
   );
 
-  const startTranscriptionMutation =
-    trpc.telemedicine.startTranscription.useMutation({
-      onSuccess: () => {
-        setIsTranscribing(true);
-        toast.success("Transcrição médica iniciada");
-      },
-    });
+  const startTranscriptionMutation = trpc.telemedicine.startTranscription.useMutation({
+    onSuccess: () => {
+      setIsTranscribing(true);
+      toast.success('Transcrição médica iniciada');
+    },
+  });
 
-  const stopTranscriptionMutation =
-    trpc.telemedicine.stopTranscription.useMutation({
-      onSuccess: () => {
-        setIsTranscribing(false);
-        toast.success("Transcrição médica finalizada");
-      },
-    });
+  const stopTranscriptionMutation = trpc.telemedicine.stopTranscription.useMutation({
+    onSuccess: () => {
+      setIsTranscribing(false);
+      toast.success('Transcrição médica finalizada');
+    },
+  });
 
   useEffect(() => {
     if (transcriptionQuery.data) {
@@ -562,7 +559,7 @@ export function useWaitingRoom(params: {
   patientId?: string;
 }) {
   return {
-    connectionStatus: "connected" as const,
+    connectionStatus: 'connected' as const,
     joinWaitingRoom: useCallback(() => Promise.resolve(), []),
     leaveWaitingRoom: useCallback(() => Promise.resolve(), []),
     updatePreConsultationData: useCallback(() => Promise.resolve(), []),

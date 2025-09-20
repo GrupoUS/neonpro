@@ -11,12 +11,12 @@
  * - LGPD compliant data handling
  */
 
-"use client";
+'use client';
 
-import { MapPin, Phone, User } from "lucide-react";
-import { forwardRef, useCallback, useEffect, useState } from "react";
+import { MapPin, Phone, User } from 'lucide-react';
+import { forwardRef, useCallback, useEffect, useState } from 'react';
 
-import { Input, Label } from "@/components/ui";
+import { Input, Label } from '@/components/ui';
 import {
   formatCEP,
   formatCNPJ,
@@ -24,18 +24,10 @@ import {
   unformatCNPJ,
   unformatCPF,
   unformatPhone,
-} from "@/utils/brazilian-formatters";
-import {
-  validateCEP,
-  validateCNPJ,
-} from "@neonpro/shared/validators/brazilian";
-import { cn } from "@neonpro/ui";
-import {
-  formatBRPhone,
-  formatCPF,
-  validateBRPhoneMask,
-  validateCPFMask,
-} from "@neonpro/utils";
+} from '@/utils/brazilian-formatters';
+import { validateCEP, validateCNPJ } from '@neonpro/shared/validators/brazilian';
+import { cn } from '@neonpro/ui';
+import { formatBRPhone, formatCPF, validateBRPhoneMask, validateCPFMask } from '@neonpro/utils';
 
 export interface BrazilianFieldProps {
   /** Field label */
@@ -73,24 +65,24 @@ export interface BrazilianFieldProps {
 export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
   (
     {
-      label = "CPF",
-      placeholder = "000.000.000-00",
-      value = "",
+      label = 'CPF',
+      placeholder = '000.000.000-00',
+      value = '',
       onChange,
       onBlur,
       error,
       required = false,
       disabled = false,
       id,
-      name = "cpf",
+      name = 'cpf',
       className,
-      testId = "cpf-field",
-      autoComplete = "off",
+      testId = 'cpf-field',
+      autoComplete = 'off',
     },
     ref,
   ) => {
     const [internalValue, setInternalValue] = useState(value);
-    const [validationError, setValidationError] = useState<string>("");
+    const [validationError, setValidationError] = useState<string>('');
 
     // Update internal value when prop changes
     useEffect(() => {
@@ -116,9 +108,9 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
       const unformatted = unformatCPF(internalValue);
 
       if (unformatted && !validateCPFMask(unformatted)) {
-        setValidationError("CPF inválido");
+        setValidationError('CPF inválido');
       } else {
-        setValidationError("");
+        setValidationError('');
       }
 
       onBlur?.();
@@ -127,21 +119,21 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
     const displayError = error || validationError;
 
     return (
-      <div className={cn("space-y-2", className)}>
+      <div className={cn('space-y-2', className)}>
         {label && (
-          <Label htmlFor={id} className="text-sm font-medium">
+          <Label htmlFor={id} className='text-sm font-medium'>
             {label}
-            {required && <span className="text-destructive ml-1">*</span>}
+            {required && <span className='text-destructive ml-1'>*</span>}
           </Label>
         )}
-        <div className="relative">
-          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className='relative'>
+          <User className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
           <Input
             ref={ref}
             id={id}
             name={name}
-            type="text"
-            inputMode="numeric"
+            type='text'
+            inputMode='numeric'
             placeholder={placeholder}
             value={internalValue}
             onChange={handleChange}
@@ -150,9 +142,9 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
             required={required}
             autoComplete={autoComplete}
             className={cn(
-              "pl-10",
-              displayError &&
-                "border-destructive focus-visible:ring-destructive",
+              'pl-10',
+              displayError
+                && 'border-destructive focus-visible:ring-destructive',
             )}
             data-testid={testId}
             aria-invalid={!!displayError}
@@ -162,9 +154,9 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
         {displayError && (
           <p
             id={`${id}-error`}
-            className="text-sm text-destructive"
-            role="alert"
-            aria-live="polite"
+            className='text-sm text-destructive'
+            role='alert'
+            aria-live='polite'
           >
             {displayError}
           </p>
@@ -174,7 +166,7 @@ export const CPFField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
   },
 );
 
-CPFField.displayName = "CPFField";
+CPFField.displayName = 'CPFField';
 
 /**
  * CNPJ Input Field
@@ -183,24 +175,24 @@ CPFField.displayName = "CPFField";
 export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
   (
     {
-      label = "CNPJ",
-      placeholder = "00.000.000/0000-00",
-      value = "",
+      label = 'CNPJ',
+      placeholder = '00.000.000/0000-00',
+      value = '',
       onChange,
       onBlur,
       error,
       required = false,
       disabled = false,
       id,
-      name = "cnpj",
+      name = 'cnpj',
       className,
-      testId = "cnpj-field",
-      autoComplete = "off",
+      testId = 'cnpj-field',
+      autoComplete = 'off',
     },
     ref,
   ) => {
     const [internalValue, setInternalValue] = useState(value);
-    const [validationError, setValidationError] = useState<string>("");
+    const [validationError, setValidationError] = useState<string>('');
 
     useEffect(() => {
       setInternalValue(value);
@@ -225,9 +217,9 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
       const unformatted = unformatCNPJ(internalValue);
 
       if (unformatted && !validateCNPJ(unformatted)) {
-        setValidationError("CNPJ inválido");
+        setValidationError('CNPJ inválido');
       } else {
-        setValidationError("");
+        setValidationError('');
       }
 
       onBlur?.();
@@ -236,21 +228,21 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
     const displayError = error || validationError;
 
     return (
-      <div className={cn("space-y-2", className)}>
+      <div className={cn('space-y-2', className)}>
         {label && (
-          <Label htmlFor={id} className="text-sm font-medium">
+          <Label htmlFor={id} className='text-sm font-medium'>
             {label}
-            {required && <span className="text-destructive ml-1">*</span>}
+            {required && <span className='text-destructive ml-1'>*</span>}
           </Label>
         )}
-        <div className="relative">
-          <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className='relative'>
+          <User className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
           <Input
             ref={ref}
             id={id}
             name={name}
-            type="text"
-            inputMode="numeric"
+            type='text'
+            inputMode='numeric'
             placeholder={placeholder}
             value={internalValue}
             onChange={handleChange}
@@ -259,9 +251,9 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
             required={required}
             autoComplete={autoComplete}
             className={cn(
-              "pl-10",
-              displayError &&
-                "border-destructive focus-visible:ring-destructive",
+              'pl-10',
+              displayError
+                && 'border-destructive focus-visible:ring-destructive',
             )}
             data-testid={testId}
             aria-invalid={!!displayError}
@@ -271,9 +263,9 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
         {displayError && (
           <p
             id={`${id}-error`}
-            className="text-sm text-destructive"
-            role="alert"
-            aria-live="polite"
+            className='text-sm text-destructive'
+            role='alert'
+            aria-live='polite'
           >
             {displayError}
           </p>
@@ -283,7 +275,7 @@ export const CNPJField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
   },
 );
 
-CNPJField.displayName = "CNPJField";
+CNPJField.displayName = 'CNPJField';
 
 /**
  * Phone Input Field
@@ -292,24 +284,24 @@ CNPJField.displayName = "CNPJField";
 export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
   (
     {
-      label = "Telefone",
-      placeholder = "(00) 00000-0000",
-      value = "",
+      label = 'Telefone',
+      placeholder = '(00) 00000-0000',
+      value = '',
       onChange,
       onBlur,
       error,
       required = false,
       disabled = false,
       id,
-      name = "phone",
+      name = 'phone',
       className,
-      testId = "phone-field",
-      autoComplete = "tel",
+      testId = 'phone-field',
+      autoComplete = 'tel',
     },
     ref,
   ) => {
     const [internalValue, setInternalValue] = useState(value);
-    const [validationError, setValidationError] = useState<string>("");
+    const [validationError, setValidationError] = useState<string>('');
 
     useEffect(() => {
       setInternalValue(value);
@@ -334,9 +326,9 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
       const unformatted = unformatPhone(internalValue);
 
       if (unformatted && !validateBRPhoneMask(unformatted)) {
-        setValidationError("Telefone inválido");
+        setValidationError('Telefone inválido');
       } else {
-        setValidationError("");
+        setValidationError('');
       }
 
       onBlur?.();
@@ -345,21 +337,21 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
     const displayError = error || validationError;
 
     return (
-      <div className={cn("space-y-2", className)}>
+      <div className={cn('space-y-2', className)}>
         {label && (
-          <Label htmlFor={id} className="text-sm font-medium">
+          <Label htmlFor={id} className='text-sm font-medium'>
             {label}
-            {required && <span className="text-destructive ml-1">*</span>}
+            {required && <span className='text-destructive ml-1'>*</span>}
           </Label>
         )}
-        <div className="relative">
-          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className='relative'>
+          <Phone className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
           <Input
             ref={ref}
             id={id}
             name={name}
-            type="tel"
-            inputMode="numeric"
+            type='tel'
+            inputMode='numeric'
             placeholder={placeholder}
             value={internalValue}
             onChange={handleChange}
@@ -368,9 +360,9 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
             required={required}
             autoComplete={autoComplete}
             className={cn(
-              "pl-10",
-              displayError &&
-                "border-destructive focus-visible:ring-destructive",
+              'pl-10',
+              displayError
+                && 'border-destructive focus-visible:ring-destructive',
             )}
             data-testid={testId}
             aria-invalid={!!displayError}
@@ -380,9 +372,9 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
         {displayError && (
           <p
             id={`${id}-error`}
-            className="text-sm text-destructive"
-            role="alert"
-            aria-live="polite"
+            className='text-sm text-destructive'
+            role='alert'
+            aria-live='polite'
           >
             {displayError}
           </p>
@@ -392,7 +384,7 @@ export const PhoneField = forwardRef<HTMLInputElement, BrazilianFieldProps>(
   },
 );
 
-PhoneField.displayName = "PhoneField";
+PhoneField.displayName = 'PhoneField';
 
 /**
  * CEP Input Field
@@ -407,25 +399,25 @@ export const CEPField = forwardRef<
 >(
   (
     {
-      label = "CEP",
-      placeholder = "00000-000",
-      value = "",
+      label = 'CEP',
+      placeholder = '00000-000',
+      value = '',
       onChange,
       onBlur,
       error,
       required = false,
       disabled = false,
       id,
-      name = "cep",
+      name = 'cep',
       className,
-      testId = "cep-field",
-      autoComplete = "postal-code",
+      testId = 'cep-field',
+      autoComplete = 'postal-code',
       onAddressFound,
     },
     ref,
   ) => {
     const [internalValue, setInternalValue] = useState(value);
-    const [validationError, setValidationError] = useState<string>("");
+    const [validationError, setValidationError] = useState<string>('');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
@@ -451,9 +443,9 @@ export const CEPField = forwardRef<
       const unformatted = unformatCEP(internalValue);
 
       if (unformatted && !validateCEP(unformatted)) {
-        setValidationError("CEP inválido");
+        setValidationError('CEP inválido');
       } else {
-        setValidationError("");
+        setValidationError('');
 
         // Auto-fill address if CEP is valid and callback is provided
         if (unformatted.length === 8 && onAddressFound) {
@@ -474,7 +466,7 @@ export const CEPField = forwardRef<
               });
             }
           } catch (error) {
-            console.warn("Erro ao buscar endereço:", error);
+            console.warn('Erro ao buscar endereço:', error);
           } finally {
             setIsLoading(false);
           }
@@ -487,21 +479,21 @@ export const CEPField = forwardRef<
     const displayError = error || validationError;
 
     return (
-      <div className={cn("space-y-2", className)}>
+      <div className={cn('space-y-2', className)}>
         {label && (
-          <Label htmlFor={id} className="text-sm font-medium">
+          <Label htmlFor={id} className='text-sm font-medium'>
             {label}
-            {required && <span className="text-destructive ml-1">*</span>}
+            {required && <span className='text-destructive ml-1'>*</span>}
           </Label>
         )}
-        <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <div className='relative'>
+          <MapPin className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground' />
           <Input
             ref={ref}
             id={id}
             name={name}
-            type="text"
-            inputMode="numeric"
+            type='text'
+            inputMode='numeric'
             placeholder={placeholder}
             value={internalValue}
             onChange={handleChange}
@@ -510,26 +502,26 @@ export const CEPField = forwardRef<
             required={required}
             autoComplete={autoComplete}
             className={cn(
-              "pl-10",
-              displayError &&
-                "border-destructive focus-visible:ring-destructive",
+              'pl-10',
+              displayError
+                && 'border-destructive focus-visible:ring-destructive',
             )}
             data-testid={testId}
             aria-invalid={!!displayError}
             aria-describedby={displayError ? `${id}-error` : undefined}
           />
           {isLoading && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+            <div className='absolute right-3 top-1/2 transform -translate-y-1/2'>
+              <div className='animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full' />
             </div>
           )}
         </div>
         {displayError && (
           <p
             id={`${id}-error`}
-            className="text-sm text-destructive"
-            role="alert"
-            aria-live="polite"
+            className='text-sm text-destructive'
+            role='alert'
+            aria-live='polite'
           >
             {displayError}
           </p>
@@ -539,7 +531,7 @@ export const CEPField = forwardRef<
   },
 );
 
-CEPField.displayName = "CEPField";
+CEPField.displayName = 'CEPField';
 
 // Default export for lazy loading
 const BrazilianFields = {

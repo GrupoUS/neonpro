@@ -10,30 +10,30 @@
  * - Brazilian Portuguese descriptions and examples
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // API Documentation Types
 export const API_METHODS = {
-  GET: "GET",
-  POST: "POST",
-  PUT: "PUT",
-  PATCH: "PATCH",
-  DELETE: "DELETE",
+  GET: 'GET',
+  POST: 'POST',
+  PUT: 'PUT',
+  PATCH: 'PATCH',
+  DELETE: 'DELETE',
 } as const;
 
 export type APIMethod = (typeof API_METHODS)[keyof typeof API_METHODS];
 
 // API Endpoint Categories
 export const API_CATEGORIES = {
-  PATIENT_MANAGEMENT: "patient_management",
-  APPOINTMENT_SCHEDULING: "appointment_scheduling",
-  MEDICAL_RECORDS: "medical_records",
-  AI_FEATURES: "ai_features",
-  AUTHENTICATION: "authentication",
-  NOTIFICATIONS: "notifications",
-  ANALYTICS: "analytics",
-  COMPLIANCE: "compliance",
-  MOBILE_API: "mobile_api",
+  PATIENT_MANAGEMENT: 'patient_management',
+  APPOINTMENT_SCHEDULING: 'appointment_scheduling',
+  MEDICAL_RECORDS: 'medical_records',
+  AI_FEATURES: 'ai_features',
+  AUTHENTICATION: 'authentication',
+  NOTIFICATIONS: 'notifications',
+  ANALYTICS: 'analytics',
+  COMPLIANCE: 'compliance',
+  MOBILE_API: 'mobile_api',
 } as const;
 
 export type APICategory = (typeof API_CATEGORIES)[keyof typeof API_CATEGORIES];
@@ -50,7 +50,7 @@ export const APIEndpointSchema = z.object({
   descriptionPtBr: z.string().optional(),
   authentication: z.object({
     required: z.boolean(),
-    type: z.enum(["bearer", "api_key", "oauth2"]).optional(),
+    type: z.enum(['bearer', 'api_key', 'oauth2']).optional(),
     scopes: z.array(z.string()).optional(),
     lgpdConsent: z.boolean().optional(),
   }),
@@ -58,7 +58,7 @@ export const APIEndpointSchema = z.object({
     .array(
       z.object({
         name: z.string(),
-        type: z.enum(["path", "query", "header", "body"]),
+        type: z.enum(['path', 'query', 'header', 'body']),
         dataType: z.string(),
         required: z.boolean(),
         description: z.string(),
@@ -167,39 +167,39 @@ export interface APIDocumentationReport {
 // Brazilian Portuguese API Labels
 export const API_LABELS_PT_BR = {
   // HTTP Methods
-  [API_METHODS.GET]: "BUSCAR",
-  [API_METHODS.POST]: "CRIAR",
-  [API_METHODS.PUT]: "ATUALIZAR",
-  [API_METHODS.PATCH]: "MODIFICAR",
-  [API_METHODS.DELETE]: "EXCLUIR",
+  [API_METHODS.GET]: 'BUSCAR',
+  [API_METHODS.POST]: 'CRIAR',
+  [API_METHODS.PUT]: 'ATUALIZAR',
+  [API_METHODS.PATCH]: 'MODIFICAR',
+  [API_METHODS.DELETE]: 'EXCLUIR',
 
   // Categories
-  [API_CATEGORIES.PATIENT_MANAGEMENT]: "Gestão de Pacientes",
-  [API_CATEGORIES.APPOINTMENT_SCHEDULING]: "Agendamento de Consultas",
-  [API_CATEGORIES.MEDICAL_RECORDS]: "Prontuários Médicos",
-  [API_CATEGORIES.AI_FEATURES]: "Recursos de IA",
-  [API_CATEGORIES.AUTHENTICATION]: "Autenticação",
-  [API_CATEGORIES.NOTIFICATIONS]: "Notificações",
-  [API_CATEGORIES.ANALYTICS]: "Análises",
-  [API_CATEGORIES.COMPLIANCE]: "Conformidade",
-  [API_CATEGORIES.MOBILE_API]: "API Móvel",
+  [API_CATEGORIES.PATIENT_MANAGEMENT]: 'Gestão de Pacientes',
+  [API_CATEGORIES.APPOINTMENT_SCHEDULING]: 'Agendamento de Consultas',
+  [API_CATEGORIES.MEDICAL_RECORDS]: 'Prontuários Médicos',
+  [API_CATEGORIES.AI_FEATURES]: 'Recursos de IA',
+  [API_CATEGORIES.AUTHENTICATION]: 'Autenticação',
+  [API_CATEGORIES.NOTIFICATIONS]: 'Notificações',
+  [API_CATEGORIES.ANALYTICS]: 'Análises',
+  [API_CATEGORIES.COMPLIANCE]: 'Conformidade',
+  [API_CATEGORIES.MOBILE_API]: 'API Móvel',
 
   // Common Terms
   // Note: keys like 'authentication' and 'compliance' are already represented via API_CATEGORIES mapping to avoid duplicate keys here.
-  authorization: "Autorização",
-  parameters: "Parâmetros",
-  requestBody: "Corpo da Requisição",
-  response: "Resposta",
-  errors: "Erros",
-  examples: "Exemplos",
-  required: "Obrigatório",
-  optional: "Opcional",
-  deprecated: "Descontinuado",
-  rateLimit: "Limite de Taxa",
-  caching: "Cache",
-  mobileOptimized: "Otimizado para Móvel",
-  healthcareContext: "Contexto de Saúde",
-  lgpdConsent: "Consentimento LGPD",
+  authorization: 'Autorização',
+  parameters: 'Parâmetros',
+  requestBody: 'Corpo da Requisição',
+  response: 'Resposta',
+  errors: 'Erros',
+  examples: 'Exemplos',
+  required: 'Obrigatório',
+  optional: 'Opcional',
+  deprecated: 'Descontinuado',
+  rateLimit: 'Limite de Taxa',
+  caching: 'Cache',
+  mobileOptimized: 'Otimizado para Móvel',
+  healthcareContext: 'Contexto de Saúde',
+  lgpdConsent: 'Consentimento LGPD',
 } as const;
 
 /**
@@ -218,51 +218,49 @@ export class APIDocumentationGenerator {
   private initializeHealthcareEndpoints(): void {
     // Patient Management Endpoints
     this.endpoints.push({
-      id: "get-patient",
-      path: "/api/patients/{id}",
+      id: 'get-patient',
+      path: '/api/patients/{id}',
       method: API_METHODS.GET,
       category: API_CATEGORIES.PATIENT_MANAGEMENT,
-      title: "Get Patient Information",
-      titlePtBr: "Obter Informações do Paciente",
-      description: "Retrieve detailed patient information with LGPD compliance",
-      descriptionPtBr:
-        "Recuperar informações detalhadas do paciente com conformidade LGPD",
+      title: 'Get Patient Information',
+      titlePtBr: 'Obter Informações do Paciente',
+      description: 'Retrieve detailed patient information with LGPD compliance',
+      descriptionPtBr: 'Recuperar informações detalhadas do paciente com conformidade LGPD',
       authentication: {
         required: true,
-        type: "bearer",
-        scopes: ["patient:read"],
+        type: 'bearer',
+        scopes: ['patient:read'],
         lgpdConsent: true,
       },
       parameters: [
         {
-          name: "id",
-          type: "path",
-          dataType: "string",
+          name: 'id',
+          type: 'path',
+          dataType: 'string',
           required: true,
-          description: "Patient unique identifier",
-          descriptionPtBr: "Identificador único do paciente",
-          example: "pat_123456789",
-          validation: "UUID format",
-          healthcareContext:
-            "Patient identification for medical records access",
+          description: 'Patient unique identifier',
+          descriptionPtBr: 'Identificador único do paciente',
+          example: 'pat_123456789',
+          validation: 'UUID format',
+          healthcareContext: 'Patient identification for medical records access',
         },
       ],
       responses: [
         {
           statusCode: 200,
-          description: "Patient information retrieved successfully",
-          descriptionPtBr: "Informações do paciente recuperadas com sucesso",
+          description: 'Patient information retrieved successfully',
+          descriptionPtBr: 'Informações do paciente recuperadas com sucesso',
           example: {
-            id: "pat_123456789",
-            name: "João Silva",
-            cpf: "***.***.***-**", // Masked for LGPD compliance
-            birthDate: "1985-03-15",
-            phone: "(11) 99999-****", // Partially masked
-            email: "joao.silva@email.com",
+            id: 'pat_123456789',
+            name: 'João Silva',
+            cpf: '***.***.***-**', // Masked for LGPD compliance
+            birthDate: '1985-03-15',
+            phone: '(11) 99999-****', // Partially masked
+            email: 'joao.silva@email.com',
             medicalHistory: {
-              allergies: ["Penicilina"],
-              chronicConditions: ["Hipertensão"],
-              medications: ["Losartana 50mg"],
+              allergies: ['Penicilina'],
+              chronicConditions: ['Hipertensão'],
+              medications: ['Losartana 50mg'],
             },
             accessibility: {
               screenReaderOptimized: true,
@@ -273,81 +271,76 @@ export class APIDocumentationGenerator {
               dataProcessing: true,
               medicalTreatment: true,
               marketingCommunications: false,
-              consentDate: "2024-01-15T10:30:00Z",
+              consentDate: '2024-01-15T10:30:00Z',
             },
           },
         },
         {
           statusCode: 404,
-          description: "Patient not found",
-          descriptionPtBr: "Paciente não encontrado",
+          description: 'Patient not found',
+          descriptionPtBr: 'Paciente não encontrado',
         },
       ],
       errors: [
         {
-          code: "PATIENT_NOT_FOUND",
+          code: 'PATIENT_NOT_FOUND',
           statusCode: 404,
-          message: "Patient not found",
-          messagePtBr: "Paciente não encontrado",
-          description: "The specified patient ID does not exist in the system",
-          descriptionPtBr:
-            "O ID do paciente especificado não existe no sistema",
-          resolution: "Verify the patient ID and try again",
-          resolutionPtBr: "Verifique o ID do paciente e tente novamente",
+          message: 'Patient not found',
+          messagePtBr: 'Paciente não encontrado',
+          description: 'The specified patient ID does not exist in the system',
+          descriptionPtBr: 'O ID do paciente especificado não existe no sistema',
+          resolution: 'Verify the patient ID and try again',
+          resolutionPtBr: 'Verifique o ID do paciente e tente novamente',
         },
         {
-          code: "LGPD_CONSENT_REQUIRED",
+          code: 'LGPD_CONSENT_REQUIRED',
           statusCode: 403,
-          message: "LGPD consent required",
-          messagePtBr: "Consentimento LGPD obrigatório",
-          description: "Patient has not provided consent for data access",
-          descriptionPtBr:
-            "Paciente não forneceu consentimento para acesso aos dados",
-          resolution: "Request patient consent before accessing data",
-          resolutionPtBr:
-            "Solicite consentimento do paciente antes de acessar os dados",
+          message: 'LGPD consent required',
+          messagePtBr: 'Consentimento LGPD obrigatório',
+          description: 'Patient has not provided consent for data access',
+          descriptionPtBr: 'Paciente não forneceu consentimento para acesso aos dados',
+          resolution: 'Request patient consent before accessing data',
+          resolutionPtBr: 'Solicite consentimento do paciente antes de acessar os dados',
         },
       ],
       examples: [
         {
-          title: "Basic Patient Information Request",
-          titlePtBr: "Requisição Básica de Informações do Paciente",
-          description: "Standard patient data retrieval with LGPD compliance",
-          descriptionPtBr:
-            "Recuperação padrão de dados do paciente com conformidade LGPD",
+          title: 'Basic Patient Information Request',
+          titlePtBr: 'Requisição Básica de Informações do Paciente',
+          description: 'Standard patient data retrieval with LGPD compliance',
+          descriptionPtBr: 'Recuperação padrão de dados do paciente com conformidade LGPD',
           request: {
-            method: "GET",
-            url: "/api/patients/pat_123456789",
+            method: 'GET',
+            url: '/api/patients/pat_123456789',
             headers: {
-              Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-              "X-LGPD-Consent": "true",
-              Accept: "application/json",
-              "User-Agent": "NeonPro-Mobile/1.0.0",
+              Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+              'X-LGPD-Consent': 'true',
+              Accept: 'application/json',
+              'User-Agent': 'NeonPro-Mobile/1.0.0',
             },
           },
           response: {
             status: 200,
             data: {
-              id: "pat_123456789",
-              name: "João Silva",
+              id: 'pat_123456789',
+              name: 'João Silva',
               accessibility: {
                 screenReaderOptimized: true,
                 mobileOptimized: true,
               },
             },
           },
-          healthcareContext: "Accessing patient data for medical consultation",
-          accessibilityNotes:
-            "Response includes accessibility metadata for screen readers",
-          mobileNotes: "Optimized payload size for mobile applications",
+          healthcareContext: 'Accessing patient data for medical consultation',
+          accessibilityNotes: 'Response includes accessibility metadata for screen readers',
+          mobileNotes: 'Optimized payload size for mobile applications',
         },
       ],
       metadata: {
-        version: "1.0.0",
+        version: '1.0.0',
         deprecated: false,
         rateLimit: {
           requests: 100,
-          window: "1h",
+          window: '1h',
         },
         caching: {
           cacheable: true,
@@ -366,69 +359,69 @@ export class APIDocumentationGenerator {
 
     // Appointment Scheduling Endpoint
     this.endpoints.push({
-      id: "create-appointment",
-      path: "/api/appointments",
+      id: 'create-appointment',
+      path: '/api/appointments',
       method: API_METHODS.POST,
       category: API_CATEGORIES.APPOINTMENT_SCHEDULING,
-      title: "Create Appointment",
-      titlePtBr: "Criar Consulta",
-      description: "Schedule a new appointment with accessibility features",
-      descriptionPtBr: "Agendar nova consulta com recursos de acessibilidade",
+      title: 'Create Appointment',
+      titlePtBr: 'Criar Consulta',
+      description: 'Schedule a new appointment with accessibility features',
+      descriptionPtBr: 'Agendar nova consulta com recursos de acessibilidade',
       authentication: {
         required: true,
-        type: "bearer",
-        scopes: ["appointment:create"],
+        type: 'bearer',
+        scopes: ['appointment:create'],
         lgpdConsent: true,
       },
       requestBody: {
-        contentType: "application/json",
+        contentType: 'application/json',
         schema: {
-          type: "object",
+          type: 'object',
           properties: {
-            patientId: { type: "string", description: "Patient ID" },
-            doctorId: { type: "string", description: "Doctor ID" },
-            dateTime: { type: "string", format: "date-time" },
+            patientId: { type: 'string', description: 'Patient ID' },
+            doctorId: { type: 'string', description: 'Doctor ID' },
+            dateTime: { type: 'string', format: 'date-time' },
             type: {
-              type: "string",
-              enum: ["consultation", "followup", "emergency"],
+              type: 'string',
+              enum: ['consultation', 'followup', 'emergency'],
             },
             accessibility: {
-              type: "object",
+              type: 'object',
               properties: {
-                wheelchairAccess: { type: "boolean" },
-                signLanguageInterpreter: { type: "boolean" },
-                largeTextDisplay: { type: "boolean" },
+                wheelchairAccess: { type: 'boolean' },
+                signLanguageInterpreter: { type: 'boolean' },
+                largeTextDisplay: { type: 'boolean' },
               },
             },
           },
-          required: ["patientId", "doctorId", "dateTime", "type"],
+          required: ['patientId', 'doctorId', 'dateTime', 'type'],
         },
         example: {
-          patientId: "pat_123456789",
-          doctorId: "doc_987654321",
-          dateTime: "2024-02-15T14:30:00Z",
-          type: "consultation",
+          patientId: 'pat_123456789',
+          doctorId: 'doc_987654321',
+          dateTime: '2024-02-15T14:30:00Z',
+          type: 'consultation',
           accessibility: {
             wheelchairAccess: true,
             signLanguageInterpreter: false,
             largeTextDisplay: true,
           },
-          notes: "Paciente com necessidades especiais de acessibilidade",
+          notes: 'Paciente com necessidades especiais de acessibilidade',
         },
-        healthcareFields: ["patientId", "doctorId", "type", "accessibility"],
-        lgpdFields: ["patientId", "notes"],
+        healthcareFields: ['patientId', 'doctorId', 'type', 'accessibility'],
+        lgpdFields: ['patientId', 'notes'],
       },
       responses: [
         {
           statusCode: 201,
-          description: "Appointment created successfully",
-          descriptionPtBr: "Consulta criada com sucesso",
+          description: 'Appointment created successfully',
+          descriptionPtBr: 'Consulta criada com sucesso',
           example: {
-            id: "apt_456789123",
-            patientId: "pat_123456789",
-            doctorId: "doc_987654321",
-            dateTime: "2024-02-15T14:30:00Z",
-            status: "scheduled",
+            id: 'apt_456789123',
+            patientId: 'pat_123456789',
+            doctorId: 'doc_987654321',
+            dateTime: '2024-02-15T14:30:00Z',
+            status: 'scheduled',
             accessibility: {
               wheelchairAccess: true,
               largeTextDisplay: true,
@@ -439,35 +432,35 @@ export class APIDocumentationGenerator {
       ],
       errors: [
         {
-          code: "APPOINTMENT_CONFLICT",
+          code: 'APPOINTMENT_CONFLICT',
           statusCode: 409,
-          message: "Appointment time conflict",
-          messagePtBr: "Conflito de horário da consulta",
-          description: "The requested time slot is already booked",
-          descriptionPtBr: "O horário solicitado já está reservado",
-          resolution: "Choose a different time slot",
-          resolutionPtBr: "Escolha um horário diferente",
+          message: 'Appointment time conflict',
+          messagePtBr: 'Conflito de horário da consulta',
+          description: 'The requested time slot is already booked',
+          descriptionPtBr: 'O horário solicitado já está reservado',
+          resolution: 'Choose a different time slot',
+          resolutionPtBr: 'Escolha um horário diferente',
         },
       ],
       examples: [
         {
-          title: "Accessible Appointment Creation",
-          titlePtBr: "Criação de Consulta Acessível",
-          description: "Creating appointment with accessibility requirements",
-          descriptionPtBr: "Criando consulta com requisitos de acessibilidade",
+          title: 'Accessible Appointment Creation',
+          titlePtBr: 'Criação de Consulta Acessível',
+          description: 'Creating appointment with accessibility requirements',
+          descriptionPtBr: 'Criando consulta com requisitos de acessibilidade',
           request: {
-            method: "POST",
-            url: "/api/appointments",
+            method: 'POST',
+            url: '/api/appointments',
             headers: {
-              Authorization: "Bearer token",
-              "Content-Type": "application/json",
-              "X-LGPD-Consent": "true",
+              Authorization: 'Bearer token',
+              'Content-Type': 'application/json',
+              'X-LGPD-Consent': 'true',
             },
             body: {
-              patientId: "pat_123456789",
-              doctorId: "doc_987654321",
-              dateTime: "2024-02-15T14:30:00Z",
-              type: "consultation",
+              patientId: 'pat_123456789',
+              doctorId: 'doc_987654321',
+              dateTime: '2024-02-15T14:30:00Z',
+              type: 'consultation',
               accessibility: {
                 wheelchairAccess: true,
                 largeTextDisplay: true,
@@ -477,28 +470,25 @@ export class APIDocumentationGenerator {
           response: {
             status: 201,
             data: {
-              id: "apt_456789123",
-              status: "scheduled",
+              id: 'apt_456789123',
+              status: 'scheduled',
               accessibility: {
                 wheelchairAccess: true,
                 largeTextDisplay: true,
               },
             },
           },
-          healthcareContext:
-            "Scheduling consultation with accessibility accommodations",
-          accessibilityNotes:
-            "Appointment includes accessibility requirements for patient needs",
-          mobileNotes:
-            "Mobile-optimized appointment creation with touch-friendly interface",
+          healthcareContext: 'Scheduling consultation with accessibility accommodations',
+          accessibilityNotes: 'Appointment includes accessibility requirements for patient needs',
+          mobileNotes: 'Mobile-optimized appointment creation with touch-friendly interface',
         },
       ],
       metadata: {
-        version: "1.0.0",
+        version: '1.0.0',
         deprecated: false,
         rateLimit: {
           requests: 50,
-          window: "1h",
+          window: '1h',
         },
         compliance: {
           lgpd: true,
@@ -513,68 +503,68 @@ export class APIDocumentationGenerator {
 
     // AI Features Endpoint
     this.endpoints.push({
-      id: "ai-no-show-prediction",
-      path: "/api/ai/no-show-prediction",
+      id: 'ai-no-show-prediction',
+      path: '/api/ai/no-show-prediction',
       method: API_METHODS.POST,
       category: API_CATEGORIES.AI_FEATURES,
-      title: "AI No-Show Prediction",
-      titlePtBr: "Predição de Falta com IA",
-      description: "Predict appointment no-show probability using AI",
-      descriptionPtBr: "Prever probabilidade de falta em consulta usando IA",
+      title: 'AI No-Show Prediction',
+      titlePtBr: 'Predição de Falta com IA',
+      description: 'Predict appointment no-show probability using AI',
+      descriptionPtBr: 'Prever probabilidade de falta em consulta usando IA',
       authentication: {
         required: true,
-        type: "bearer",
-        scopes: ["ai:predict"],
+        type: 'bearer',
+        scopes: ['ai:predict'],
         lgpdConsent: true,
       },
       requestBody: {
-        contentType: "application/json",
+        contentType: 'application/json',
         schema: {
-          type: "object",
+          type: 'object',
           properties: {
-            appointmentId: { type: "string" },
-            patientHistory: { type: "object" },
-            appointmentDetails: { type: "object" },
+            appointmentId: { type: 'string' },
+            patientHistory: { type: 'object' },
+            appointmentDetails: { type: 'object' },
           },
-          required: ["appointmentId"],
+          required: ['appointmentId'],
         },
         example: {
-          appointmentId: "apt_456789123",
+          appointmentId: 'apt_456789123',
           patientHistory: {
             previousAppointments: 15,
             noShowCount: 2,
-            lastVisit: "2024-01-10T10:00:00Z",
+            lastVisit: '2024-01-10T10:00:00Z',
           },
           appointmentDetails: {
-            type: "consultation",
-            dayOfWeek: "monday",
-            timeOfDay: "morning",
+            type: 'consultation',
+            dayOfWeek: 'monday',
+            timeOfDay: 'morning',
           },
         },
         healthcareFields: [
-          "appointmentId",
-          "patientHistory",
-          "appointmentDetails",
+          'appointmentId',
+          'patientHistory',
+          'appointmentDetails',
         ],
-        lgpdFields: ["patientHistory"],
+        lgpdFields: ['patientHistory'],
       },
       responses: [
         {
           statusCode: 200,
-          description: "No-show prediction generated successfully",
-          descriptionPtBr: "Predição de falta gerada com sucesso",
+          description: 'No-show prediction generated successfully',
+          descriptionPtBr: 'Predição de falta gerada com sucesso',
           example: {
-            appointmentId: "apt_456789123",
+            appointmentId: 'apt_456789123',
             noShowProbability: 0.23,
-            riskLevel: "low",
+            riskLevel: 'low',
             factors: [
-              "Patient has good attendance history",
-              "Morning appointments have lower no-show rates",
-              "Recent engagement with healthcare provider",
+              'Patient has good attendance history',
+              'Morning appointments have lower no-show rates',
+              'Recent engagement with healthcare provider',
             ],
             recommendations: [
-              "Send reminder 24 hours before appointment",
-              "Confirm appointment via preferred communication method",
+              'Send reminder 24 hours before appointment',
+              'Confirm appointment via preferred communication method',
             ],
             accessibility: {
               screenReaderFriendly: true,
@@ -585,34 +575,32 @@ export class APIDocumentationGenerator {
       ],
       errors: [
         {
-          code: "INSUFFICIENT_DATA",
+          code: 'INSUFFICIENT_DATA',
           statusCode: 400,
-          message: "Insufficient data for prediction",
-          messagePtBr: "Dados insuficientes para predição",
-          description:
-            "Not enough historical data to generate accurate prediction",
-          descriptionPtBr:
-            "Dados históricos insuficientes para gerar predição precisa",
-          resolution: "Collect more patient history data",
-          resolutionPtBr: "Colete mais dados do histórico do paciente",
+          message: 'Insufficient data for prediction',
+          messagePtBr: 'Dados insuficientes para predição',
+          description: 'Not enough historical data to generate accurate prediction',
+          descriptionPtBr: 'Dados históricos insuficientes para gerar predição precisa',
+          resolution: 'Collect more patient history data',
+          resolutionPtBr: 'Colete mais dados do histórico do paciente',
         },
       ],
       examples: [
         {
-          title: "No-Show Risk Assessment",
-          titlePtBr: "Avaliação de Risco de Falta",
-          description: "AI-powered prediction for appointment attendance",
-          descriptionPtBr: "Predição com IA para comparecimento em consultas",
+          title: 'No-Show Risk Assessment',
+          titlePtBr: 'Avaliação de Risco de Falta',
+          description: 'AI-powered prediction for appointment attendance',
+          descriptionPtBr: 'Predição com IA para comparecimento em consultas',
           request: {
-            method: "POST",
-            url: "/api/ai/no-show-prediction",
+            method: 'POST',
+            url: '/api/ai/no-show-prediction',
             headers: {
-              Authorization: "Bearer token",
-              "Content-Type": "application/json",
-              "X-LGPD-Consent": "true",
+              Authorization: 'Bearer token',
+              'Content-Type': 'application/json',
+              'X-LGPD-Consent': 'true',
             },
             body: {
-              appointmentId: "apt_456789123",
+              appointmentId: 'apt_456789123',
               patientHistory: {
                 previousAppointments: 15,
                 noShowCount: 2,
@@ -623,24 +611,21 @@ export class APIDocumentationGenerator {
             status: 200,
             data: {
               noShowProbability: 0.23,
-              riskLevel: "low",
-              recommendations: ["Send reminder 24 hours before appointment"],
+              riskLevel: 'low',
+              recommendations: ['Send reminder 24 hours before appointment'],
             },
           },
-          healthcareContext:
-            "Optimizing appointment scheduling and patient engagement",
-          accessibilityNotes:
-            "AI predictions include accessibility-friendly explanations",
-          mobileNotes:
-            "Optimized for mobile healthcare management applications",
+          healthcareContext: 'Optimizing appointment scheduling and patient engagement',
+          accessibilityNotes: 'AI predictions include accessibility-friendly explanations',
+          mobileNotes: 'Optimized for mobile healthcare management applications',
         },
       ],
       metadata: {
-        version: "1.0.0",
+        version: '1.0.0',
         deprecated: false,
         rateLimit: {
           requests: 200,
-          window: "1h",
+          window: '1h',
         },
         compliance: {
           lgpd: true,
@@ -658,30 +643,30 @@ export class APIDocumentationGenerator {
    * Generate API documentation report
    */
   generateReport(): APIDocumentationReport {
-    const categories = [...new Set(this.endpoints.map((e) => e.category))];
+    const categories = [...new Set(this.endpoints.map(e => e.category))];
     const authMethods = [
       ...new Set(
         this.endpoints
-          .filter((e) => e.authentication.required)
-          .map((e) => e.authentication.type)
+          .filter(e => e.authentication.required)
+          .map(e => e.authentication.type)
           .filter(Boolean),
       ),
     ];
 
     const complianceFeatures = {
-      lgpdCompliant: this.endpoints.filter((e) => e.metadata.compliance?.lgpd)
+      lgpdCompliant: this.endpoints.filter(e => e.metadata.compliance?.lgpd)
         .length,
       anvisaCompliant: this.endpoints.filter(
-        (e) => e.metadata.compliance?.anvisa,
+        e => e.metadata.compliance?.anvisa,
       ).length,
-      cfmCompliant: this.endpoints.filter((e) => e.metadata.compliance?.cfm)
+      cfmCompliant: this.endpoints.filter(e => e.metadata.compliance?.cfm)
         .length,
-      wcagCompliant: this.endpoints.filter((e) => e.metadata.compliance?.wcag)
+      wcagCompliant: this.endpoints.filter(e => e.metadata.compliance?.wcag)
         .length,
     };
 
     const mobileOptimized = this.endpoints.filter(
-      (e) => e.metadata.mobileOptimized,
+      e => e.metadata.mobileOptimized,
     ).length;
 
     return {
@@ -692,7 +677,7 @@ export class APIDocumentationGenerator {
       complianceFeatures,
       mobileOptimized,
       lastGenerated: new Date(),
-      version: "1.0.0",
+      version: '1.0.0',
     };
   }
 
@@ -700,7 +685,7 @@ export class APIDocumentationGenerator {
    * Get endpoints by category
    */
   getEndpointsByCategory(category: APICategory): APIEndpoint[] {
-    return this.endpoints.filter((endpoint) => endpoint.category === category);
+    return this.endpoints.filter(endpoint => endpoint.category === category);
   }
 
   /**
@@ -708,10 +693,10 @@ export class APIDocumentationGenerator {
    */
   getHealthcareCompliantEndpoints(): APIEndpoint[] {
     return this.endpoints.filter(
-      (endpoint) =>
-        endpoint.metadata.compliance?.lgpd ||
-        endpoint.metadata.compliance?.anvisa ||
-        endpoint.metadata.compliance?.cfm,
+      endpoint =>
+        endpoint.metadata.compliance?.lgpd
+        || endpoint.metadata.compliance?.anvisa
+        || endpoint.metadata.compliance?.cfm,
     );
   }
 
@@ -720,7 +705,7 @@ export class APIDocumentationGenerator {
    */
   getMobileOptimizedEndpoints(): APIEndpoint[] {
     return this.endpoints.filter(
-      (endpoint) => endpoint.metadata.mobileOptimized,
+      endpoint => endpoint.metadata.mobileOptimized,
     );
   }
 

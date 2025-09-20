@@ -5,13 +5,13 @@
 
 // Template types for different use cases
 export type ServiceTemplateType =
-  | "package"
-  | "procedure"
-  | "consultation"
-  | "followup";
+  | 'package'
+  | 'procedure'
+  | 'consultation'
+  | 'followup';
 
 // Pricing strategies for templates
-export type ServiceTemplatePriceType = "fixed" | "calculated" | "custom";
+export type ServiceTemplatePriceType = 'fixed' | 'calculated' | 'custom';
 
 // Base service template
 export interface ServiceTemplate {
@@ -146,7 +146,7 @@ export interface ServiceTemplateStats {
 export interface PackageTemplateConfig {
   allow_item_customization: boolean;
   require_all_services: boolean;
-  discount_type: "percentage" | "fixed";
+  discount_type: 'percentage' | 'fixed';
   bulk_discount: number;
   scheduling_preferences: {
     same_day: boolean;
@@ -164,7 +164,7 @@ export interface ProcedureTemplateConfig {
 }
 
 export interface ConsultationTemplateConfig {
-  consultation_type: "initial" | "followup" | "emergency";
+  consultation_type: 'initial' | 'followup' | 'emergency';
   required_forms: string[];
   preparation_required: boolean;
   includes_examination: boolean;
@@ -183,22 +183,22 @@ export const SERVICE_TEMPLATE_TYPES: Record<
   }
 > = {
   package: {
-    label: "Pacote",
-    description: "Conjunto de serviços com desconto",
-    color: "#3b82f6",
-    icon: "package",
+    label: 'Pacote',
+    description: 'Conjunto de serviços com desconto',
+    color: '#3b82f6',
+    icon: 'package',
     defaultConfig: {
       allow_item_customization: true,
       require_all_services: false,
-      discount_type: "percentage",
+      discount_type: 'percentage',
       bulk_discount: 10,
     },
   },
   procedure: {
-    label: "Procedimento",
-    description: "Procedimento médico específico",
-    color: "#10b981",
-    icon: "activity",
+    label: 'Procedimento',
+    description: 'Procedimento médico específico',
+    color: '#10b981',
+    icon: 'activity',
     defaultConfig: {
       preparation_instructions: [],
       aftercare_instructions: [],
@@ -207,24 +207,24 @@ export const SERVICE_TEMPLATE_TYPES: Record<
     },
   },
   consultation: {
-    label: "Consulta",
-    description: "Consulta médica padrão",
-    color: "#f59e0b",
-    icon: "user-check",
+    label: 'Consulta',
+    description: 'Consulta médica padrão',
+    color: '#f59e0b',
+    icon: 'user-check',
     defaultConfig: {
-      consultation_type: "initial",
+      consultation_type: 'initial',
       required_forms: [],
       preparation_required: false,
       includes_examination: true,
     },
   },
   followup: {
-    label: "Retorno",
-    description: "Consulta de acompanhamento",
-    color: "#8b5cf6",
-    icon: "repeat",
+    label: 'Retorno',
+    description: 'Consulta de acompanhamento',
+    color: '#8b5cf6',
+    icon: 'repeat',
     defaultConfig: {
-      consultation_type: "followup",
+      consultation_type: 'followup',
       required_forms: [],
       preparation_required: false,
       includes_examination: false,
@@ -241,16 +241,16 @@ export const SERVICE_TEMPLATE_PRICE_TYPES: Record<
   }
 > = {
   fixed: {
-    label: "Preço Fixo",
-    description: "Preço definido manualmente",
+    label: 'Preço Fixo',
+    description: 'Preço definido manualmente',
   },
   calculated: {
-    label: "Preço Calculado",
-    description: "Soma dos preços dos serviços incluídos",
+    label: 'Preço Calculado',
+    description: 'Soma dos preços dos serviços incluídos',
   },
   custom: {
-    label: "Preço Personalizado",
-    description: "Preço definido durante o agendamento",
+    label: 'Preço Personalizado',
+    description: 'Preço definido durante o agendamento',
   },
 };
 
@@ -268,11 +268,11 @@ export const calculateTemplatePrice = (
   items: ServiceTemplateItem[],
 ): number => {
   switch (template.price_type) {
-    case "fixed":
+    case 'fixed':
       return template.default_price;
-    case "calculated":
+    case 'calculated':
       return items.reduce((total, item) => total + item.total_price, 0);
-    case "custom":
+    case 'custom':
       return 0; // Will be set during booking
     default:
       return template.default_price;
@@ -289,7 +289,7 @@ export const calculateTemplateDuration = (
 
   // For packages, use the sum of all service durations
   // For procedures, use the default duration (usually longer than individual services)
-  if (template.template_type === "package") {
+  if (template.template_type === 'package') {
     return items.reduce((total, item) => {
       // Assuming service duration is available in the item or needs to be fetched
       return total + 60 * item.quantity; // Default 60 minutes per service
@@ -344,8 +344,8 @@ export const sortTemplatesByCategory = (
 ): ServiceTemplateWithCategory[] => {
   return [...templates].sort((a, b) => {
     // Group by category first
-    const categoryA = a.category_name || "Sem categoria";
-    const categoryB = b.category_name || "Sem categoria";
+    const categoryA = a.category_name || 'Sem categoria';
+    const categoryB = b.category_name || 'Sem categoria';
 
     if (categoryA !== categoryB) {
       return categoryA.localeCompare(categoryB);
@@ -369,10 +369,10 @@ export const filterTemplatesBySearch = (
 
   const query = searchQuery.toLowerCase();
   return templates.filter(
-    (template) =>
-      template.name.toLowerCase().includes(query) ||
-      template.description?.toLowerCase().includes(query) ||
-      template.template_type.toLowerCase().includes(query),
+    template =>
+      template.name.toLowerCase().includes(query)
+      || template.description?.toLowerCase().includes(query)
+      || template.template_type.toLowerCase().includes(query),
   );
 };
 

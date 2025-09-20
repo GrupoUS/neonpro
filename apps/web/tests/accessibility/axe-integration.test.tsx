@@ -11,28 +11,28 @@
  * - CI/CD integration ready
  */
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter } from "@tanstack/react-router";
-import { cleanup, render, screen } from "@testing-library/react";
-import React from "react";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { axe, toHaveNoViolations } from "vitest-axe";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter } from '@tanstack/react-router';
+import { cleanup, render, screen } from '@testing-library/react';
+import React from 'react';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { axe, toHaveNoViolations } from 'vitest-axe';
 
 // Real component imports for comprehensive testing
-import { AccessiblePatientCard } from "@/components/accessibility/AccessiblePatientCard";
-import { EnhancedHealthcareForm } from "@/components/accessibility/EnhancedHealthcareForm";
-import { PatientRegistrationWizard } from "@/components/patients/PatientRegistrationWizard";
-import { EmergencyEscalation } from "@/components/telemedicine/EmergencyEscalation";
-import { VideoConsultation } from "@/components/telemedicine/VideoConsultation";
+import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
+import { EnhancedHealthcareForm } from '@/components/accessibility/EnhancedHealthcareForm';
+import { PatientRegistrationWizard } from '@/components/patients/PatientRegistrationWizard';
+import { EmergencyEscalation } from '@/components/telemedicine/EmergencyEscalation';
+import { VideoConsultation } from '@/components/telemedicine/VideoConsultation';
 
 // Performance optimization utilities
-import { performance } from "perf_hooks";
+import { performance } from 'perf_hooks';
 
 // Extend Jest matchers
 try {
   expect.extend(toHaveNoViolations);
 } catch (error) {
-  console.warn("Accessibility matcher already extended:", error);
+  console.warn('Accessibility matcher already extended:', error);
 }
 
 // Performance optimization for large-scale testing
@@ -119,67 +119,67 @@ const createTestProviders = () => {
 const healthcareAxeConfig = {
   rules: {
     // WCAG 2.1 AA requirements
-    "color-contrast": { enabled: true },
-    "color-contrast-enhanced": { enabled: true }, // AAA level for medical data
-    "focus-order-semantics": { enabled: true },
-    "keyboard-navigation": { enabled: true },
+    'color-contrast': { enabled: true },
+    'color-contrast-enhanced': { enabled: true }, // AAA level for medical data
+    'focus-order-semantics': { enabled: true },
+    'keyboard-navigation': { enabled: true },
     landmarks: { enabled: true },
-    "page-has-heading-one": { enabled: true },
+    'page-has-heading-one': { enabled: true },
     region: { enabled: true },
 
     // Healthcare-specific rules
-    "aria-required-attr": { enabled: true },
-    "aria-required-children": { enabled: true },
-    "aria-required-parent": { enabled: true },
-    "aria-roles": { enabled: true },
-    "aria-valid-attr": { enabled: true },
-    "aria-valid-attr-value": { enabled: true },
+    'aria-required-attr': { enabled: true },
+    'aria-required-children': { enabled: true },
+    'aria-required-parent': { enabled: true },
+    'aria-roles': { enabled: true },
+    'aria-valid-attr': { enabled: true },
+    'aria-valid-attr-value': { enabled: true },
 
     // Medical form requirements
     label: { enabled: true },
-    "label-title-only": { enabled: true },
-    "form-field-multiple-labels": { enabled: true },
-    "required-attr": { enabled: true },
+    'label-title-only': { enabled: true },
+    'form-field-multiple-labels': { enabled: true },
+    'required-attr': { enabled: true },
 
     // Critical for healthcare
     bypass: { enabled: true }, // Skip navigation for screen readers
-    "document-title": { enabled: true },
-    "duplicate-id": { enabled: true },
-    "html-has-lang": { enabled: true },
-    "html-lang-valid": { enabled: true },
+    'document-title': { enabled: true },
+    'duplicate-id': { enabled: true },
+    'html-has-lang': { enabled: true },
+    'html-lang-valid': { enabled: true },
     lang: { enabled: true },
 
     // Image accessibility (medical images, charts)
-    "image-alt": { enabled: true },
-    "image-redundant-alt": { enabled: true },
-    "object-alt": { enabled: true },
-    "svg-img-alt": { enabled: true },
+    'image-alt': { enabled: true },
+    'image-redundant-alt': { enabled: true },
+    'object-alt': { enabled: true },
+    'svg-img-alt': { enabled: true },
 
     // Table accessibility (medical records, lab results)
-    "table-fake-caption": { enabled: true },
-    "td-headers-attr": { enabled: true },
-    "th-has-data-cells": { enabled: true },
-    "scope-attr-valid": { enabled: true },
+    'table-fake-caption': { enabled: true },
+    'td-headers-attr': { enabled: true },
+    'th-has-data-cells': { enabled: true },
+    'scope-attr-valid': { enabled: true },
 
     // Link accessibility
-    "link-name": { enabled: true },
-    "link-in-text-block": { enabled: true },
+    'link-name': { enabled: true },
+    'link-in-text-block': { enabled: true },
 
     // Button accessibility
-    "button-name": { enabled: true },
-    "nested-interactive": { enabled: true },
+    'button-name': { enabled: true },
+    'nested-interactive': { enabled: true },
 
     // Heading structure
-    "heading-order": { enabled: true },
-    "empty-heading": { enabled: true },
+    'heading-order': { enabled: true },
+    'empty-heading': { enabled: true },
 
     // List accessibility
     list: { enabled: true },
     listitem: { enabled: true },
-    "definition-list": { enabled: true },
+    'definition-list': { enabled: true },
     dlitem: { enabled: true },
   },
-  tags: ["wcag2a", "wcag2aa", "wcag21aa", "best-practice"],
+  tags: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'],
 };
 
 // Performance testing utilities
@@ -208,7 +208,7 @@ const measureAccessibilityTest = async (
 const runOptimizedAccessibilityTest = async (
   component: React.ReactElement,
   componentName: string,
-  context: keyof typeof healthcareTestContexts = "PATIENT_PORTAL",
+  context: keyof typeof healthcareTestContexts = 'PATIENT_PORTAL',
 ) => {
   const Providers = createTestProviders();
 
@@ -223,18 +223,18 @@ const runOptimizedAccessibilityTest = async (
 
     // Track critical violations
     const criticalViolations = results.violations.filter(
-      (v) => v.impact === "critical" || v.impact === "serious",
+      v => v.impact === 'critical' || v.impact === 'serious',
     );
     globalAccessibilityReport.criticalViolations.push(...criticalViolations);
 
     // Update compliance tracking
-    if (results.violations.some((v) => v.tags.includes("wcag2a"))) {
+    if (results.violations.some(v => v.tags.includes('wcag2a'))) {
       globalAccessibilityReport.wcagCompliance.wcag2a = false;
     }
-    if (results.violations.some((v) => v.tags.includes("wcag2aa"))) {
+    if (results.violations.some(v => v.tags.includes('wcag2aa'))) {
       globalAccessibilityReport.wcagCompliance.wcag2aa = false;
     }
-    if (results.violations.some((v) => v.tags.includes("wcag21aa"))) {
+    if (results.violations.some(v => v.tags.includes('wcag21aa'))) {
       globalAccessibilityReport.wcagCompliance.wcag21aa = false;
     }
 
@@ -245,34 +245,34 @@ const runOptimizedAccessibilityTest = async (
 // Healthcare-specific test contexts
 const healthcareTestContexts = {
   PATIENT_PORTAL: {
-    description: "Patient portal accessibility for general users",
-    requirements: ["wcag2aa", "anvisa-basic"],
-    colorContrastLevel: "AA",
+    description: 'Patient portal accessibility for general users',
+    requirements: ['wcag2aa', 'anvisa-basic'],
+    colorContrastLevel: 'AA',
   },
   MEDICAL_PROFESSIONAL: {
-    description: "Medical professional interface with enhanced requirements",
+    description: 'Medical professional interface with enhanced requirements',
     requirements: [
-      "wcag2aa",
-      "wcag2aaa-color",
-      "anvisa-professional",
-      "cfm-standards",
+      'wcag2aa',
+      'wcag2aaa-color',
+      'anvisa-professional',
+      'cfm-standards',
     ],
-    colorContrastLevel: "AAA",
+    colorContrastLevel: 'AAA',
   },
   EMERGENCY_INTERFACE: {
-    description: "Emergency interface with critical accessibility needs",
+    description: 'Emergency interface with critical accessibility needs',
     requirements: [
-      "wcag2aa",
-      "wcag2aaa",
-      "anvisa-critical",
-      "emergency-standards",
+      'wcag2aa',
+      'wcag2aaa',
+      'anvisa-critical',
+      'emergency-standards',
     ],
-    colorContrastLevel: "AAA",
+    colorContrastLevel: 'AAA',
   },
   TELEMEDICINE: {
-    description: "Telemedicine interface with real-time communication needs",
-    requirements: ["wcag2aa", "anvisa-telemedicine", "cfm-telemedicine"],
-    colorContrastLevel: "AA",
+    description: 'Telemedicine interface with real-time communication needs',
+    requirements: ['wcag2aa', 'anvisa-telemedicine', 'cfm-telemedicine'],
+    colorContrastLevel: 'AA',
   },
 };
 
@@ -281,35 +281,35 @@ const MockPatientPortalComponent = () => (
   <div>
     <header>
       <h1>Portal do Paciente</h1>
-      <nav aria-label="Navegação principal">
+      <nav aria-label='Navegação principal'>
         <ul>
           <li>
-            <a href="/consultas">Consultas</a>
+            <a href='/consultas'>Consultas</a>
           </li>
           <li>
-            <a href="/exames">Exames</a>
+            <a href='/exames'>Exames</a>
           </li>
           <li>
-            <a href="/receitas">Receitas</a>
+            <a href='/receitas'>Receitas</a>
           </li>
           <li>
-            <a href="/perfil">Perfil</a>
+            <a href='/perfil'>Perfil</a>
           </li>
         </ul>
       </nav>
     </header>
     <main>
-      <section aria-labelledby="proximas-consultas">
-        <h2 id="proximas-consultas">Próximas Consultas</h2>
+      <section aria-labelledby='proximas-consultas'>
+        <h2 id='proximas-consultas'>Próximas Consultas</h2>
         <table>
           <caption>Lista de consultas agendadas</caption>
           <thead>
             <tr>
-              <th scope="col">Data</th>
-              <th scope="col">Horário</th>
-              <th scope="col">Médico</th>
-              <th scope="col">Especialidade</th>
-              <th scope="col">Ações</th>
+              <th scope='col'>Data</th>
+              <th scope='col'>Horário</th>
+              <th scope='col'>Médico</th>
+              <th scope='col'>Especialidade</th>
+              <th scope='col'>Ações</th>
             </tr>
           </thead>
           <tbody>
@@ -319,7 +319,7 @@ const MockPatientPortalComponent = () => (
               <td>Dr. João Silva</td>
               <td>Cardiologia</td>
               <td>
-                <button aria-label="Cancelar consulta com Dr. João Silva em 15/01/2024">
+                <button aria-label='Cancelar consulta com Dr. João Silva em 15/01/2024'>
                   Cancelar
                 </button>
               </td>
@@ -328,58 +328,58 @@ const MockPatientPortalComponent = () => (
         </table>
       </section>
 
-      <section aria-labelledby="resultados-exames">
-        <h2 id="resultados-exames">Resultados de Exames</h2>
+      <section aria-labelledby='resultados-exames'>
+        <h2 id='resultados-exames'>Resultados de Exames</h2>
         <form>
           <fieldset>
             <legend>Filtrar resultados</legend>
-            <label htmlFor="data-inicio">Data de início:</label>
+            <label htmlFor='data-inicio'>Data de início:</label>
             <input
-              type="date"
-              id="data-inicio"
-              name="dataInicio"
-              aria-describedby="data-inicio-help"
+              type='date'
+              id='data-inicio'
+              name='dataInicio'
+              aria-describedby='data-inicio-help'
             />
-            <div id="data-inicio-help">
+            <div id='data-inicio-help'>
               Selecione a data inicial para filtrar os exames
             </div>
 
-            <label htmlFor="tipo-exame">Tipo de exame:</label>
-            <select id="tipo-exame" name="tipoExame" aria-required="true">
-              <option value="">Selecione um tipo</option>
-              <option value="sangue">Exame de Sangue</option>
-              <option value="imagem">Exame de Imagem</option>
-              <option value="cardiaco">Exame Cardíaco</option>
+            <label htmlFor='tipo-exame'>Tipo de exame:</label>
+            <select id='tipo-exame' name='tipoExame' aria-required='true'>
+              <option value=''>Selecione um tipo</option>
+              <option value='sangue'>Exame de Sangue</option>
+              <option value='imagem'>Exame de Imagem</option>
+              <option value='cardiaco'>Exame Cardíaco</option>
             </select>
 
-            <button type="submit">Filtrar Resultados</button>
+            <button type='submit'>Filtrar Resultados</button>
           </fieldset>
         </form>
       </section>
     </main>
 
-    <aside aria-labelledby="alertas">
-      <h2 id="alertas">Alertas Importantes</h2>
-      <div role="alert" aria-live="polite">
+    <aside aria-labelledby='alertas'>
+      <h2 id='alertas'>Alertas Importantes</h2>
+      <div role='alert' aria-live='polite'>
         <p>Você tem uma consulta agendada para hoje às 14:30.</p>
       </div>
     </aside>
 
     <footer>
       <p>© 2024 NeonPro Healthcare Platform. Todos os direitos reservados.</p>
-      <nav aria-label="Links do rodapé">
+      <nav aria-label='Links do rodapé'>
         <ul>
           <li>
-            <a href="/privacidade">Política de Privacidade</a>
+            <a href='/privacidade'>Política de Privacidade</a>
           </li>
           <li>
-            <a href="/termos">Termos de Uso</a>
+            <a href='/termos'>Termos de Uso</a>
           </li>
           <li>
-            <a href="/contato">Contato</a>
+            <a href='/contato'>Contato</a>
           </li>
           <li>
-            <a href="/acessibilidade">Acessibilidade</a>
+            <a href='/acessibilidade'>Acessibilidade</a>
           </li>
         </ul>
       </nav>
@@ -389,59 +389,59 @@ const MockPatientPortalComponent = () => (
 
 const MockMedicalProfessionalComponent = () => (
   <div>
-    <header role="banner">
+    <header role='banner'>
       <h1>Sistema Médico Profissional</h1>
-      <nav aria-label="Menu principal do sistema médico">
+      <nav aria-label='Menu principal do sistema médico'>
         <ul>
           <li>
-            <a href="/pacientes" aria-current="page">
+            <a href='/pacientes' aria-current='page'>
               Pacientes
             </a>
           </li>
           <li>
-            <a href="/agenda">Agenda</a>
+            <a href='/agenda'>Agenda</a>
           </li>
           <li>
-            <a href="/prescricoes">Prescrições</a>
+            <a href='/prescricoes'>Prescrições</a>
           </li>
           <li>
-            <a href="/laudos">Laudos</a>
+            <a href='/laudos'>Laudos</a>
           </li>
         </ul>
       </nav>
-      <div role="region" aria-label="Informações do profissional">
+      <div role='region' aria-label='Informações do profissional'>
         <p>Dr. Maria Santos - CRM 12345-SP</p>
         <p>Cardiologia</p>
       </div>
     </header>
 
-    <main role="main">
-      <section aria-labelledby="busca-paciente">
-        <h2 id="busca-paciente">Buscar Paciente</h2>
-        <form role="search">
-          <label htmlFor="termo-busca">
+    <main role='main'>
+      <section aria-labelledby='busca-paciente'>
+        <h2 id='busca-paciente'>Buscar Paciente</h2>
+        <form role='search'>
+          <label htmlFor='termo-busca'>
             Buscar por nome, CPF ou número do prontuário:
           </label>
           <input
-            type="search"
-            id="termo-busca"
-            name="termoBusca"
-            aria-describedby="busca-instrucoes"
-            aria-required="true"
-            autoComplete="off"
+            type='search'
+            id='termo-busca'
+            name='termoBusca'
+            aria-describedby='busca-instrucoes'
+            aria-required='true'
+            autoComplete='off'
           />
-          <div id="busca-instrucoes">
+          <div id='busca-instrucoes'>
             Digite pelo menos 3 caracteres para iniciar a busca
           </div>
-          <button type="submit">Buscar Paciente</button>
+          <button type='submit'>Buscar Paciente</button>
         </form>
       </section>
 
-      <section aria-labelledby="prontuario-paciente">
-        <h2 id="prontuario-paciente">Prontuário do Paciente</h2>
+      <section aria-labelledby='prontuario-paciente'>
+        <h2 id='prontuario-paciente'>Prontuário do Paciente</h2>
 
-        <div role="tabpanel" aria-labelledby="tab-dados-pessoais">
-          <h3 id="tab-dados-pessoais">Dados Pessoais</h3>
+        <div role='tabpanel' aria-labelledby='tab-dados-pessoais'>
+          <h3 id='tab-dados-pessoais'>Dados Pessoais</h3>
           <dl>
             <dt>Nome completo:</dt>
             <dd>João da Silva Santos</dd>
@@ -454,17 +454,17 @@ const MockMedicalProfessionalComponent = () => (
           </dl>
         </div>
 
-        <section aria-labelledby="historico-medico">
-          <h3 id="historico-medico">Histórico Médico</h3>
+        <section aria-labelledby='historico-medico'>
+          <h3 id='historico-medico'>Histórico Médico</h3>
           <table>
             <caption>Histórico de consultas e procedimentos</caption>
             <thead>
               <tr>
-                <th scope="col">Data</th>
-                <th scope="col">Tipo</th>
-                <th scope="col">Profissional</th>
-                <th scope="col">Diagnóstico/Observações</th>
-                <th scope="col">Status</th>
+                <th scope='col'>Data</th>
+                <th scope='col'>Tipo</th>
+                <th scope='col'>Profissional</th>
+                <th scope='col'>Diagnóstico/Observações</th>
+                <th scope='col'>Status</th>
               </tr>
             </thead>
             <tbody>
@@ -474,7 +474,7 @@ const MockMedicalProfessionalComponent = () => (
                 <td>Dr. Maria Santos</td>
                 <td>Hipertensão controlada</td>
                 <td>
-                  <span className="status-ativo" aria-label="Tratamento ativo">
+                  <span className='status-ativo' aria-label='Tratamento ativo'>
                     Ativo
                   </span>
                 </td>
@@ -483,68 +483,69 @@ const MockMedicalProfessionalComponent = () => (
           </table>
         </section>
 
-        <section aria-labelledby="nova-prescricao">
-          <h3 id="nova-prescricao">Nova Prescrição</h3>
+        <section aria-labelledby='nova-prescricao'>
+          <h3 id='nova-prescricao'>Nova Prescrição</h3>
           <form>
             <fieldset>
               <legend>Informações da prescrição</legend>
 
-              <label htmlFor="medicamento">Medicamento:</label>
+              <label htmlFor='medicamento'>Medicamento:</label>
               <input
-                type="text"
-                id="medicamento"
-                name="medicamento"
-                aria-required="true"
-                aria-describedby="medicamento-help"
+                type='text'
+                id='medicamento'
+                name='medicamento'
+                aria-required='true'
+                aria-describedby='medicamento-help'
               />
-              <div id="medicamento-help">
+              <div id='medicamento-help'>
                 Digite o nome do medicamento conforme registro ANVISA
               </div>
 
-              <label htmlFor="dosagem">Dosagem:</label>
+              <label htmlFor='dosagem'>Dosagem:</label>
               <input
-                type="text"
-                id="dosagem"
-                name="dosagem"
-                aria-required="true"
-                placeholder="Ex: 10mg"
+                type='text'
+                id='dosagem'
+                name='dosagem'
+                aria-required='true'
+                placeholder='Ex: 10mg'
               />
 
-              <label htmlFor="frequencia">Frequência:</label>
-              <select id="frequencia" name="frequencia" aria-required="true">
-                <option value="">Selecione a frequência</option>
-                <option value="1x">1x ao dia</option>
-                <option value="2x">2x ao dia</option>
-                <option value="3x">3x ao dia</option>
-                <option value="sos">Se necessário</option>
+              <label htmlFor='frequencia'>Frequência:</label>
+              <select id='frequencia' name='frequencia' aria-required='true'>
+                <option value=''>Selecione a frequência</option>
+                <option value='1x'>1x ao dia</option>
+                <option value='2x'>2x ao dia</option>
+                <option value='3x'>3x ao dia</option>
+                <option value='sos'>Se necessário</option>
               </select>
 
-              <label htmlFor="observacoes">Observações:</label>
+              <label htmlFor='observacoes'>Observações:</label>
               <textarea
-                id="observacoes"
-                name="observacoes"
+                id='observacoes'
+                name='observacoes'
                 rows={4}
-                aria-describedby="observacoes-help"
-              ></textarea>
-              <div id="observacoes-help">
+                aria-describedby='observacoes-help'
+              >
+              </textarea>
+              <div id='observacoes-help'>
                 Instruções especiais para o paciente
               </div>
 
-              <button type="submit">Salvar Prescrição</button>
+              <button type='submit'>Salvar Prescrição</button>
             </fieldset>
           </form>
         </section>
       </section>
     </main>
 
-    <aside role="complementary" aria-labelledby="alertas-clinicos">
-      <h2 id="alertas-clinicos">Alertas Clínicos</h2>
-      <div role="alert" aria-live="assertive">
+    <aside role='complementary' aria-labelledby='alertas-clinicos'>
+      <h2 id='alertas-clinicos'>Alertas Clínicos</h2>
+      <div role='alert' aria-live='assertive'>
         <p>
           <strong>Atenção:</strong> Paciente possui alergia à penicilina.
         </p>
       </div>
-      <div role="status" aria-live="polite">
+      <div role='status' aria-live='polite'>
         <p>Últimos exames atualizados há 2 dias.</p>
       </div>
     </aside>
@@ -553,139 +554,140 @@ const MockMedicalProfessionalComponent = () => (
 
 const MockEmergencyInterfaceComponent = () => (
   <div>
-    <header role="banner">
+    <header role='banner'>
       <h1>Sistema de Emergência</h1>
-      <div role="status" aria-live="polite" aria-atomic="true">
+      <div role='status' aria-live='polite' aria-atomic='true'>
         <p>Status: Sistema operacional</p>
       </div>
     </header>
 
-    <main role="main">
+    <main role='main'>
       <section
-        aria-labelledby="paciente-emergencia"
-        className="emergency-section"
+        aria-labelledby='paciente-emergencia'
+        className='emergency-section'
       >
-        <h2 id="paciente-emergencia">Atendimento de Emergência</h2>
+        <h2 id='paciente-emergencia'>Atendimento de Emergência</h2>
 
-        <div role="alert" aria-live="assertive" className="emergency-alert">
+        <div role='alert' aria-live='assertive' className='emergency-alert'>
           <h3>PRIORIDADE ALTA</h3>
           <p>Paciente em estado crítico - Requer atenção imediata</p>
         </div>
 
-        <form className="emergency-form">
+        <form className='emergency-form'>
           <fieldset>
             <legend>Triagem Rápida</legend>
 
-            <div className="emergency-vital-signs">
+            <div className='emergency-vital-signs'>
               <h4>Sinais Vitais</h4>
 
-              <label htmlFor="pressao-arterial">Pressão Arterial:</label>
+              <label htmlFor='pressao-arterial'>Pressão Arterial:</label>
               <input
-                type="text"
-                id="pressao-arterial"
-                name="pressaoArterial"
-                placeholder="120/80"
-                aria-required="true"
-                className="emergency-input"
+                type='text'
+                id='pressao-arterial'
+                name='pressaoArterial'
+                placeholder='120/80'
+                aria-required='true'
+                className='emergency-input'
               />
 
-              <label htmlFor="frequencia-cardiaca">Frequência Cardíaca:</label>
+              <label htmlFor='frequencia-cardiaca'>Frequência Cardíaca:</label>
               <input
-                type="number"
-                id="frequencia-cardiaca"
-                name="frequenciaCardiaca"
-                placeholder="72"
-                aria-required="true"
-                min="30"
-                max="250"
-                className="emergency-input"
+                type='number'
+                id='frequencia-cardiaca'
+                name='frequenciaCardiaca'
+                placeholder='72'
+                aria-required='true'
+                min='30'
+                max='250'
+                className='emergency-input'
               />
 
-              <label htmlFor="temperatura">Temperatura (°C):</label>
+              <label htmlFor='temperatura'>Temperatura (°C):</label>
               <input
-                type="number"
-                id="temperatura"
-                name="temperatura"
-                placeholder="36.5"
-                aria-required="true"
-                step="0.1"
-                min="30"
-                max="45"
-                className="emergency-input"
+                type='number'
+                id='temperatura'
+                name='temperatura'
+                placeholder='36.5'
+                aria-required='true'
+                step='0.1'
+                min='30'
+                max='45'
+                className='emergency-input'
               />
 
-              <label htmlFor="saturacao">Saturação O2 (%):</label>
+              <label htmlFor='saturacao'>Saturação O2 (%):</label>
               <input
-                type="number"
-                id="saturacao"
-                name="saturacao"
-                placeholder="98"
-                aria-required="true"
-                min="60"
-                max="100"
-                className="emergency-input"
+                type='number'
+                id='saturacao'
+                name='saturacao'
+                placeholder='98'
+                aria-required='true'
+                min='60'
+                max='100'
+                className='emergency-input'
               />
             </div>
 
-            <div className="emergency-assessment">
+            <div className='emergency-assessment'>
               <h4>Avaliação Rápida</h4>
 
               <fieldset>
                 <legend>Nível de Consciência</legend>
                 <input
-                  type="radio"
-                  id="consciente"
-                  name="consciencia"
-                  value="consciente"
+                  type='radio'
+                  id='consciente'
+                  name='consciencia'
+                  value='consciente'
                 />
-                <label htmlFor="consciente">Consciente e orientado</label>
+                <label htmlFor='consciente'>Consciente e orientado</label>
 
                 <input
-                  type="radio"
-                  id="desorientado"
-                  name="consciencia"
-                  value="desorientado"
+                  type='radio'
+                  id='desorientado'
+                  name='consciencia'
+                  value='desorientado'
                 />
-                <label htmlFor="desorientado">
+                <label htmlFor='desorientado'>
                   Consciente mas desorientado
                 </label>
 
                 <input
-                  type="radio"
-                  id="semiconsciente"
-                  name="consciencia"
-                  value="semiconsciente"
+                  type='radio'
+                  id='semiconsciente'
+                  name='consciencia'
+                  value='semiconsciente'
                 />
-                <label htmlFor="semiconsciente">Semi-consciente</label>
+                <label htmlFor='semiconsciente'>Semi-consciente</label>
 
                 <input
-                  type="radio"
-                  id="inconsciente"
-                  name="consciencia"
-                  value="inconsciente"
+                  type='radio'
+                  id='inconsciente'
+                  name='consciencia'
+                  value='inconsciente'
                 />
-                <label htmlFor="inconsciente">Inconsciente</label>
+                <label htmlFor='inconsciente'>Inconsciente</label>
               </fieldset>
 
-              <label htmlFor="queixa-principal">Queixa Principal:</label>
+              <label htmlFor='queixa-principal'>Queixa Principal:</label>
               <textarea
-                id="queixa-principal"
-                name="queixaPrincipal"
+                id='queixa-principal'
+                name='queixaPrincipal'
                 rows={3}
-                aria-required="true"
-                placeholder="Descreva a queixa principal do paciente"
-                className="emergency-textarea"
-              ></textarea>
+                aria-required='true'
+                placeholder='Descreva a queixa principal do paciente'
+                className='emergency-textarea'
+              >
+              </textarea>
             </div>
 
-            <div className="emergency-actions">
-              <button type="submit" className="emergency-button primary">
+            <div className='emergency-actions'>
+              <button type='submit' className='emergency-button primary'>
                 Registrar Triagem
               </button>
-              <button type="button" className="emergency-button alert">
+              <button type='button' className='emergency-button alert'>
                 Chamar Médico
               </button>
-              <button type="button" className="emergency-button critical">
+              <button type='button' className='emergency-button critical'>
                 Código Azul
               </button>
             </div>
@@ -693,9 +695,9 @@ const MockEmergencyInterfaceComponent = () => (
         </form>
       </section>
 
-      <section aria-labelledby="historico-rapido">
-        <h2 id="historico-rapido">Histórico Médico Rápido</h2>
-        <div className="emergency-history">
+      <section aria-labelledby='historico-rapido'>
+        <h2 id='historico-rapido'>Histórico Médico Rápido</h2>
+        <div className='emergency-history'>
           <h3>Alergias Conhecidas</h3>
           <ul>
             <li>Penicilina - Reação anafilática</li>
@@ -717,21 +719,21 @@ const MockEmergencyInterfaceComponent = () => (
       </section>
     </main>
 
-    <aside role="region" aria-labelledby="protocolos-emergencia">
-      <h2 id="protocolos-emergencia">Protocolos de Emergência</h2>
-      <nav aria-label="Protocolos rápidos">
+    <aside role='region' aria-labelledby='protocolos-emergencia'>
+      <h2 id='protocolos-emergencia'>Protocolos de Emergência</h2>
+      <nav aria-label='Protocolos rápidos'>
         <ul>
           <li>
-            <a href="/protocolo/parada-cardiaca">Parada Cardíaca</a>
+            <a href='/protocolo/parada-cardiaca'>Parada Cardíaca</a>
           </li>
           <li>
-            <a href="/protocolo/avc">AVC</a>
+            <a href='/protocolo/avc'>AVC</a>
           </li>
           <li>
-            <a href="/protocolo/infarto">Infarto</a>
+            <a href='/protocolo/infarto'>Infarto</a>
           </li>
           <li>
-            <a href="/protocolo/anafilaxia">Anafilaxia</a>
+            <a href='/protocolo/anafilaxia'>Anafilaxia</a>
           </li>
         </ul>
       </nav>
@@ -740,12 +742,12 @@ const MockEmergencyInterfaceComponent = () => (
 );
 
 // Test suites
-describe("Healthcare Platform Accessibility Tests", () => {
+describe('Healthcare Platform Accessibility Tests', () => {
   beforeEach(() => {
     // Configure test environment for healthcare compliance
-    process.env.NODE_ENV = "test";
-    process.env.HEALTHCARE_MODE = "true";
-    process.env.ACCESSIBILITY_LEVEL = "WCAG2AA";
+    process.env.NODE_ENV = 'test';
+    process.env.HEALTHCARE_MODE = 'true';
+    process.env.ACCESSIBILITY_LEVEL = 'WCAG2AA';
 
     // Reset global report for each test suite
     globalAccessibilityReport = {
@@ -769,13 +771,13 @@ describe("Healthcare Platform Accessibility Tests", () => {
     };
 
     // Mock hooks for testing
-    vi.mock("@/hooks/use-telemedicine", () => ({
+    vi.mock('@/hooks/use-telemedicine', () => ({
       useTelemedicineSession: () => ({
         session: {
-          id: "test-session",
-          patient: { name: "João Silva", id: "patient-1" },
-          physician: { name: "Dr. Maria Santos", id: "physician-1" },
-          status: "active",
+          id: 'test-session',
+          patient: { name: 'João Silva', id: 'patient-1' },
+          physician: { name: 'Dr. Maria Santos', id: 'physician-1' },
+          status: 'active',
         },
       }),
       useVideoCall: () => ({
@@ -800,11 +802,11 @@ describe("Healthcare Platform Accessibility Tests", () => {
       }),
     }));
 
-    vi.mock("@/hooks/use-webrtc", () => ({
+    vi.mock('@/hooks/use-webrtc', () => ({
       useWebRTC: () => ({
         localStream: null,
         remoteStream: null,
-        connectionState: "connected",
+        connectionState: 'connected',
       }),
     }));
   });
@@ -814,58 +816,58 @@ describe("Healthcare Platform Accessibility Tests", () => {
     vi.clearAllMocks();
   });
 
-  describe("Patient Portal Accessibility", () => {
-    test("should meet WCAG 2.1 AA standards for patient interface", async () => {
+  describe('Patient Portal Accessibility', () => {
+    test('should meet WCAG 2.1 AA standards for patient interface', async () => {
       const { container } = render(<MockPatientPortalComponent />);
       const results = await axe(container, {
         ...healthcareAxeConfig,
-        tags: ["wcag2a", "wcag2aa", "wcag21aa"],
+        tags: ['wcag2a', 'wcag2aa', 'wcag21aa'],
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should have proper heading hierarchy", async () => {
+    test('should have proper heading hierarchy', async () => {
       const { container } = render(<MockPatientPortalComponent />);
       const results = await axe(container, {
         rules: {
-          "heading-order": { enabled: true },
-          "page-has-heading-one": { enabled: true },
+          'heading-order': { enabled: true },
+          'page-has-heading-one': { enabled: true },
         },
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should have accessible forms for patient data entry", async () => {
+    test('should have accessible forms for patient data entry', async () => {
       const { container } = render(<MockPatientPortalComponent />);
       const results = await axe(container, {
         rules: {
           label: { enabled: true },
-          "label-title-only": { enabled: true },
-          "form-field-multiple-labels": { enabled: true },
-          "required-attr": { enabled: true },
+          'label-title-only': { enabled: true },
+          'form-field-multiple-labels': { enabled: true },
+          'required-attr': { enabled: true },
         },
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should have accessible data tables for medical information", async () => {
+    test('should have accessible data tables for medical information', async () => {
       const { container } = render(<MockPatientPortalComponent />);
       const results = await axe(container, {
         rules: {
-          "table-fake-caption": { enabled: true },
-          "td-headers-attr": { enabled: true },
-          "th-has-data-cells": { enabled: true },
-          "scope-attr-valid": { enabled: true },
+          'table-fake-caption': { enabled: true },
+          'td-headers-attr': { enabled: true },
+          'th-has-data-cells': { enabled: true },
+          'scope-attr-valid': { enabled: true },
         },
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should provide proper landmarks for screen readers", async () => {
+    test('should provide proper landmarks for screen readers', async () => {
       const { container } = render(<MockPatientPortalComponent />);
       const results = await axe(container, {
         rules: {
@@ -879,66 +881,66 @@ describe("Healthcare Platform Accessibility Tests", () => {
     });
   });
 
-  describe("Medical Professional Interface Accessibility", () => {
-    test("should meet enhanced WCAG 2.1 AA+ standards for medical professionals", async () => {
+  describe('Medical Professional Interface Accessibility', () => {
+    test('should meet enhanced WCAG 2.1 AA+ standards for medical professionals', async () => {
       const { container } = render(<MockMedicalProfessionalComponent />);
       const results = await axe(container, {
         ...healthcareAxeConfig,
         rules: {
           ...healthcareAxeConfig.rules,
-          "color-contrast-enhanced": { enabled: true }, // AAA level for professional use
+          'color-contrast-enhanced': { enabled: true }, // AAA level for professional use
         },
-        tags: ["wcag2a", "wcag2aa", "wcag21aa", "best-practice"],
+        tags: ['wcag2a', 'wcag2aa', 'wcag21aa', 'best-practice'],
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should have accessible search functionality for patient lookup", async () => {
+    test('should have accessible search functionality for patient lookup', async () => {
       const { container } = render(<MockMedicalProfessionalComponent />);
       const results = await axe(container, {
         rules: {
           label: { enabled: true },
-          "aria-required-attr": { enabled: true },
-          "aria-valid-attr-value": { enabled: true },
+          'aria-required-attr': { enabled: true },
+          'aria-valid-attr-value': { enabled: true },
         },
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should provide accessible medical record tables", async () => {
+    test('should provide accessible medical record tables', async () => {
       const { container } = render(<MockMedicalProfessionalComponent />);
       const results = await axe(container, {
         rules: {
-          "table-fake-caption": { enabled: true },
-          "th-has-data-cells": { enabled: true },
-          "scope-attr-valid": { enabled: true },
+          'table-fake-caption': { enabled: true },
+          'th-has-data-cells': { enabled: true },
+          'scope-attr-valid': { enabled: true },
         },
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should have accessible prescription forms with proper validation", async () => {
+    test('should have accessible prescription forms with proper validation', async () => {
       const { container } = render(<MockMedicalProfessionalComponent />);
       const results = await axe(container, {
         rules: {
           label: { enabled: true },
-          "required-attr": { enabled: true },
-          "aria-describedby": { enabled: true },
+          'required-attr': { enabled: true },
+          'aria-describedby': { enabled: true },
         },
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should provide accessible clinical alerts and notifications", async () => {
+    test('should provide accessible clinical alerts and notifications', async () => {
       const { container } = render(<MockMedicalProfessionalComponent />);
       const results = await axe(container, {
         rules: {
-          "aria-live-region": { enabled: true },
-          "aria-atomic": { enabled: true },
+          'aria-live-region': { enabled: true },
+          'aria-atomic': { enabled: true },
         },
       });
 
@@ -946,51 +948,51 @@ describe("Healthcare Platform Accessibility Tests", () => {
     });
   });
 
-  describe("Emergency Interface Accessibility", () => {
-    test("should meet critical accessibility standards for emergency situations", async () => {
+  describe('Emergency Interface Accessibility', () => {
+    test('should meet critical accessibility standards for emergency situations', async () => {
       const { container } = render(<MockEmergencyInterfaceComponent />);
       const results = await axe(container, {
         ...healthcareAxeConfig,
         rules: {
           ...healthcareAxeConfig.rules,
-          "color-contrast-enhanced": { enabled: true },
-          "focus-order-semantics": { enabled: true },
+          'color-contrast-enhanced': { enabled: true },
+          'focus-order-semantics': { enabled: true },
         },
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should have accessible emergency alerts with proper ARIA live regions", async () => {
+    test('should have accessible emergency alerts with proper ARIA live regions', async () => {
       const { container } = render(<MockEmergencyInterfaceComponent />);
       const results = await axe(container, {
         rules: {
-          "aria-live-region": { enabled: true },
-          "aria-atomic": { enabled: true },
+          'aria-live-region': { enabled: true },
+          'aria-atomic': { enabled: true },
         },
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should provide accessible vital signs input forms", async () => {
+    test('should provide accessible vital signs input forms', async () => {
       const { container } = render(<MockEmergencyInterfaceComponent />);
       const results = await axe(container, {
         rules: {
           label: { enabled: true },
-          "required-attr": { enabled: true },
-          "input-button-name": { enabled: true },
+          'required-attr': { enabled: true },
+          'input-button-name': { enabled: true },
         },
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should have proper keyboard navigation for emergency workflows", async () => {
+    test('should have proper keyboard navigation for emergency workflows', async () => {
       const { container } = render(<MockEmergencyInterfaceComponent />);
       const results = await axe(container, {
         rules: {
-          "focus-order-semantics": { enabled: true },
+          'focus-order-semantics': { enabled: true },
           keyboard: { enabled: true },
           tabindex: { enabled: true },
         },
@@ -1000,8 +1002,8 @@ describe("Healthcare Platform Accessibility Tests", () => {
     });
   });
 
-  describe("Healthcare-Specific Accessibility Requirements", () => {
-    test("should ensure medical terminology is accessible", async () => {
+  describe('Healthcare-Specific Accessibility Requirements', () => {
+    test('should ensure medical terminology is accessible', async () => {
       const components = [
         <MockPatientPortalComponent />,
         <MockMedicalProfessionalComponent />,
@@ -1012,8 +1014,8 @@ describe("Healthcare Platform Accessibility Tests", () => {
         const { container } = render(component);
         const results = await axe(container, {
           rules: {
-            "aria-describedby": { enabled: true },
-            "title-only": { enabled: true },
+            'aria-describedby': { enabled: true },
+            'title-only': { enabled: true },
           },
         });
 
@@ -1021,27 +1023,27 @@ describe("Healthcare Platform Accessibility Tests", () => {
       }
     });
 
-    test("should provide accessible data input for Brazilian healthcare standards", async () => {
+    test('should provide accessible data input for Brazilian healthcare standards', async () => {
       const { container } = render(<MockMedicalProfessionalComponent />);
       const results = await axe(container, {
         rules: {
           label: { enabled: true },
-          "aria-required-attr": { enabled: true },
-          "autocomplete-valid": { enabled: true },
+          'aria-required-attr': { enabled: true },
+          'autocomplete-valid': { enabled: true },
         },
       });
 
       expect(results).toHaveNoViolations();
     });
 
-    test("should meet ANVISA accessibility requirements for medical devices", async () => {
+    test('should meet ANVISA accessibility requirements for medical devices', async () => {
       const { container } = render(<MockMedicalProfessionalComponent />);
       const results = await axe(container, {
         ...healthcareAxeConfig,
         rules: {
           ...healthcareAxeConfig.rules,
-          "color-contrast-enhanced": { enabled: true }, // Higher contrast for medical data
-          "focus-order-semantics": { enabled: true },
+          'color-contrast-enhanced': { enabled: true }, // Higher contrast for medical data
+          'focus-order-semantics': { enabled: true },
           keyboard: { enabled: true },
         },
       });
@@ -1049,13 +1051,13 @@ describe("Healthcare Platform Accessibility Tests", () => {
       expect(results).toHaveNoViolations();
     });
 
-    test("should comply with CFM digital standards for medical professionals", async () => {
+    test('should comply with CFM digital standards for medical professionals', async () => {
       const { container } = render(<MockMedicalProfessionalComponent />);
       const results = await axe(container, {
         rules: {
-          "aria-roles": { enabled: true },
-          "aria-valid-attr": { enabled: true },
-          "document-title": { enabled: true },
+          'aria-roles': { enabled: true },
+          'aria-valid-attr': { enabled: true },
+          'document-title': { enabled: true },
           landmarks: { enabled: true },
         },
       });
@@ -1064,8 +1066,8 @@ describe("Healthcare Platform Accessibility Tests", () => {
     });
   });
 
-  describe("Performance and UX Accessibility", () => {
-    test("should maintain accessibility during dynamic content updates", async () => {
+  describe('Performance and UX Accessibility', () => {
+    test('should maintain accessibility during dynamic content updates', async () => {
       const { container } = render(<MockPatientPortalComponent />);
 
       // Test initial state
@@ -1075,8 +1077,7 @@ describe("Healthcare Platform Accessibility Tests", () => {
       // Simulate dynamic content update (would be done with actual state changes in real tests)
       const alertElement = container.querySelector('[role="alert"]');
       if (alertElement) {
-        alertElement.textContent =
-          "Nova mensagem: Consulta reagendada para amanhã.";
+        alertElement.textContent = 'Nova mensagem: Consulta reagendada para amanhã.';
       }
 
       // Test after update
@@ -1084,12 +1085,12 @@ describe("Healthcare Platform Accessibility Tests", () => {
       expect(results).toHaveNoViolations();
     });
 
-    test("should provide accessible loading states for medical data", async () => {
+    test('should provide accessible loading states for medical data', async () => {
       // Mock loading component
       const LoadingComponent = () => (
-        <div role="status" aria-live="polite">
+        <div role='status' aria-live='polite'>
           <p>Carregando dados médicos...</p>
-          <div aria-hidden="true">Loading spinner</div>
+          <div aria-hidden='true'>Loading spinner</div>
         </div>
       );
 
@@ -1099,19 +1100,19 @@ describe("Healthcare Platform Accessibility Tests", () => {
       expect(results).toHaveNoViolations();
     });
 
-    test("should handle accessibility for error states in healthcare forms", async () => {
+    test('should handle accessibility for error states in healthcare forms', async () => {
       // Mock error component
       const ErrorComponent = () => (
         <div>
           <form>
-            <label htmlFor="cpf-input">CPF do paciente:</label>
+            <label htmlFor='cpf-input'>CPF do paciente:</label>
             <input
-              type="text"
-              id="cpf-input"
-              aria-invalid="true"
-              aria-describedby="cpf-error"
+              type='text'
+              id='cpf-input'
+              aria-invalid='true'
+              aria-describedby='cpf-error'
             />
-            <div id="cpf-error" role="alert">
+            <div id='cpf-error' role='alert'>
               CPF inválido. Por favor, verifique o número digitado.
             </div>
           </form>
@@ -1125,22 +1126,22 @@ describe("Healthcare Platform Accessibility Tests", () => {
     });
   });
 
-  describe("Multi-language Accessibility Support", () => {
-    test("should properly handle Portuguese language attributes", async () => {
+  describe('Multi-language Accessibility Support', () => {
+    test('should properly handle Portuguese language attributes', async () => {
       const PortugueseComponent = () => (
-        <div lang="pt-BR">
+        <div lang='pt-BR'>
           <h1>Sistema de Saúde</h1>
           <p>Bem-vindo ao portal do paciente.</p>
-          <label htmlFor="nome">Nome completo:</label>
-          <input type="text" id="nome" />
+          <label htmlFor='nome'>Nome completo:</label>
+          <input type='text' id='nome' />
         </div>
       );
 
       const { container } = render(<PortugueseComponent />);
       const results = await axe(container, {
         rules: {
-          "html-has-lang": { enabled: true },
-          "html-lang-valid": { enabled: true },
+          'html-has-lang': { enabled: true },
+          'html-lang-valid': { enabled: true },
           lang: { enabled: true },
         },
       });
@@ -1148,15 +1149,15 @@ describe("Healthcare Platform Accessibility Tests", () => {
       expect(results).toHaveNoViolations();
     });
 
-    test("should handle accessibility for bilingual content (Portuguese/English)", async () => {
+    test('should handle accessibility for bilingual content (Portuguese/English)', async () => {
       const BilingualComponent = () => (
-        <div lang="pt-BR">
+        <div lang='pt-BR'>
           <h1>Sistema de Saúde - Health System</h1>
           <section>
             <h2>Informações em Português</h2>
             <p>Conteúdo em português para pacientes brasileiros.</p>
           </section>
-          <section lang="en">
+          <section lang='en'>
             <h2>Information in English</h2>
             <p>English content for international patients.</p>
           </section>
@@ -1180,29 +1181,23 @@ const generateViolationTrackingReport = async (
   const violationReport = {
     timestamp: new Date().toISOString(),
     totalViolations: violations.length,
-    criticalViolations: violations.filter((v) => v.impact === "critical")
+    criticalViolations: violations.filter(v => v.impact === 'critical')
       .length,
-    seriousViolations: violations.filter((v) => v.impact === "serious").length,
-    moderateViolations: violations.filter((v) => v.impact === "moderate")
+    seriousViolations: violations.filter(v => v.impact === 'serious').length,
+    moderateViolations: violations.filter(v => v.impact === 'moderate')
       .length,
-    minorViolations: violations.filter((v) => v.impact === "minor").length,
+    minorViolations: violations.filter(v => v.impact === 'minor').length,
     wcagLevel: {
-      level_a: violations.filter((v) => v.tags.includes("wcag2a")).length,
-      level_aa: violations.filter((v) => v.tags.includes("wcag2aa")).length,
-      level_aaa: violations.filter((v) => v.tags.includes("wcag2aaa")).length,
+      level_a: violations.filter(v => v.tags.includes('wcag2a')).length,
+      level_aa: violations.filter(v => v.tags.includes('wcag2aa')).length,
+      level_aaa: violations.filter(v => v.tags.includes('wcag2aaa')).length,
     },
     healthcareSpecific: {
-      anvisa: violations.filter((v) =>
-        v.description.toLowerCase().includes("medical"),
-      ).length,
-      cfm: violations.filter((v) =>
-        v.description.toLowerCase().includes("professional"),
-      ).length,
-      lgpd: violations.filter((v) =>
-        v.description.toLowerCase().includes("privacy"),
-      ).length,
+      anvisa: violations.filter(v => v.description.toLowerCase().includes('medical')).length,
+      cfm: violations.filter(v => v.description.toLowerCase().includes('professional')).length,
+      lgpd: violations.filter(v => v.description.toLowerCase().includes('privacy')).length,
     },
-    violations: violations.map((v) => ({
+    violations: violations.map(v => ({
       id: v.id,
       impact: v.impact,
       description: v.description,
@@ -1240,7 +1235,7 @@ export const healthcareAccessibilityHelpers = {
    */
   async testHealthcareAccessibility(
     component: React.ReactElement,
-    context: keyof typeof healthcareTestContexts = "PATIENT_PORTAL",
+    context: keyof typeof healthcareTestContexts = 'PATIENT_PORTAL',
   ) {
     const { container } = render(component);
     const testContext = healthcareTestContexts[context];
@@ -1249,8 +1244,8 @@ export const healthcareAccessibilityHelpers = {
       ...healthcareAxeConfig,
       rules: {
         ...healthcareAxeConfig.rules,
-        ...(testContext.colorContrastLevel === "AAA" && {
-          "color-contrast-enhanced": { enabled: true },
+        ...(testContext.colorContrastLevel === 'AAA' && {
+          'color-contrast-enhanced': { enabled: true },
         }),
       },
     };
@@ -1279,7 +1274,7 @@ export const healthcareAccessibilityHelpers = {
       reports.push({
         componentIndex: index,
         violationCount: results.violations.length,
-        violations: results.violations.map((v) => ({
+        violations: results.violations.map(v => ({
           id: v.id,
           impact: v.impact,
           description: v.description,
@@ -1288,18 +1283,14 @@ export const healthcareAccessibilityHelpers = {
         })),
         passCount: results.passes.length,
         compliance: {
-          wcag2a:
-            results.violations.filter((v) => v.tags.includes("wcag2a"))
-              .length === 0,
-          wcag2aa:
-            results.violations.filter((v) => v.tags.includes("wcag2aa"))
-              .length === 0,
-          wcag21aa:
-            results.violations.filter((v) => v.tags.includes("wcag21aa"))
-              .length === 0,
-          bestPractice:
-            results.violations.filter((v) => v.tags.includes("best-practice"))
-              .length === 0,
+          wcag2a: results.violations.filter(v => v.tags.includes('wcag2a'))
+            .length === 0,
+          wcag2aa: results.violations.filter(v => v.tags.includes('wcag2aa'))
+            .length === 0,
+          wcag21aa: results.violations.filter(v => v.tags.includes('wcag21aa'))
+            .length === 0,
+          bestPractice: results.violations.filter(v => v.tags.includes('best-practice'))
+            .length === 0,
         },
       });
 
@@ -1309,9 +1300,8 @@ export const healthcareAccessibilityHelpers = {
     return {
       totalComponents: reports.length,
       totalViolations: reports.reduce((sum, r) => sum + r.violationCount, 0),
-      compliantComponents: reports.filter((r) => r.violationCount === 0).length,
-      complianceRate:
-        reports.filter((r) => r.violationCount === 0).length / reports.length,
+      compliantComponents: reports.filter(r => r.violationCount === 0).length,
+      complianceRate: reports.filter(r => r.violationCount === 0).length / reports.length,
       reports,
     };
   },

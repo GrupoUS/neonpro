@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 const MOBILE_BREAKPOINT = 768;
 
@@ -10,16 +10,16 @@ export function useIsMobile() {
     const onChange = () => {
       setIsMobile(mql.matches);
     };
-    if (typeof mql.addEventListener === "function") {
-      mql.addEventListener("change", onChange);
-    } else if (typeof mql.addListener === "function") {
+    if (typeof mql.addEventListener === 'function') {
+      mql.addEventListener('change', onChange);
+    } else if (typeof mql.addListener === 'function') {
       mql.addListener(onChange);
     }
     setIsMobile(mql.matches);
     return () => {
-      if (typeof mql.removeEventListener === "function") {
-        mql.removeEventListener("change", onChange);
-      } else if (typeof mql.removeListener === "function") {
+      if (typeof mql.removeEventListener === 'function') {
+        mql.removeEventListener('change', onChange);
+      } else if (typeof mql.removeListener === 'function') {
         mql.removeListener(onChange);
       }
     };

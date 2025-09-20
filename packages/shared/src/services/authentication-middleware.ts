@@ -24,6 +24,97 @@ import { verify } from "hono/jwt";
 // ============================================================================
 
 /**
+ * JWT Payload interface for authentication tokens
+ */
+export interface JWTPayload {
+  /** User identifier */
+  userId: string;
+  /** Session identifier (optional) */
+  sessionId?: string;
+  /** Token issuer */
+  iss: string;
+  /** Token audience */
+  aud: string;
+  /** Expiration timestamp */
+  exp: number;
+  /** Issued at timestamp */
+  iat: number;
+  /** Authentication method used */
+  authMethod?: string;
+  /** MFA verification status */
+  mfaVerified?: boolean;
+  /** Emergency mode flag */
+  emergencyMode?: boolean;
+  /** Supervisor override flag */
+  supervisorOverride?: boolean;
+}
+
+/**
+ * User Profile interface for healthcare professionals
+ */
+export interface UserProfile {
+  /** Healthcare role */
+  role: HealthcareRole;
+  /** Healthcare facility ID */
+  facilityId: string;
+  /** Department ID */
+  departmentId: string;
+  /** Current shift ID (optional) */
+  shiftId?: string;
+  /** Professional license number */
+  licenseNumber: string;
+  /** Medical specialization */
+  specialization: string;
+  /** Preferred language */
+  preferredLanguage: string;
+  /** User timezone */
+  timezone: string;
+  /** LGPD consent status */
+  consentStatus: {
+    dataProcessing: boolean;
+    communication: boolean;
+    analytics: boolean;
+    thirdParty: boolean;
+    consentDate: string;
+    consentVersion: string;
+  };
+}
+
+/**
+ * Authorization requirements interface
+ */
+export interface AuthorizationRequirements {
+  permission?: HealthcarePermission;
+  accessLevel?: number;
+  resource?: string;
+  operation?: "read" | "write" | "delete";
+}
+
+/**
+ * JWT Algorithm type
+ */
+export type JWTAlgorithm = "HS256" | "HS384" | "HS512" | "RS256" | "RS384" | "RS512";
+
+/**
+ * Environment type
+ */
+export type Environment = "development" | "staging" | "production";
+
+/**
+ * Log level type
+ */
+export type LogLevel = "debug" | "info" | "warn" | "error";
+
+/**
+ * Authentication error interface
+ */
+export interface AuthenticationError {
+  message: string;
+  code?: string;
+  stack?: string;
+}
+
+/**
  * Healthcare user roles with access levels
  */
 export const HealthcareRoleSchema = z.enum([
@@ -1228,7 +1319,7 @@ export class HealthcareAuthMiddleware {
   /**
    * Validate authentication token
    */
-  private async validateToken(token: string): Promise<any> {
+  private async validateToken(token: string): Promise<JWTPayload | null> {
     try {
       const secret = process.env.JWT_SECRET;
 
@@ -1241,7 +1332,7 @@ export class HealthcareAuthMiddleware {
       const decoded = await verify(
         token,
         secret,
-        this.config.jwt.algorithm as any,
+        this.config.jwt.algorithm as JWTAlgorithm,
       );
 
       // Validate token claims
@@ -1257,7 +1348,21 @@ export class HealthcareAuthMiddleware {
         throw new Error("Token expired");
       }
 
-      return decoded;
+      // Cast to our JWTPayload interface
+      const jwtPayload: JWTPayload = {
+        userId: (decoded.sub || decoded.userId || "") as string,
+        sessionId: decoded.sessionId as string,
+        iss: decoded.iss as string,
+        aud: decoded.aud as string,
+        exp: decoded.exp as number,
+        iat: decoded.iat as number,
+        authMethod: decoded.authMethod as string,
+        mfaVerified: decoded.mfaVerified as boolean,
+        emergencyMode: decoded.emergencyMode as boolean,
+        supervisorOverride: decoded.supervisorOverride as boolean,
+      };
+
+      return jwtPayload;
     } catch (error) {
       console.error("Token validation error:", error);
       return null;
@@ -1268,7 +1373,7 @@ export class HealthcareAuthMiddleware {
    * Get or create user session
    */
   private async getOrCreateSession(
-    decoded: any,
+    decoded: JWTPayload,
     c: Context,
   ): Promise<AuthSession | null> {
     try {
@@ -1297,7 +1402,7 @@ export class HealthcareAuthMiddleware {
    * Create new authentication session
    */
   private async createNewSession(
-    decoded: any,
+    decoded: JWTPayload,
     c: Context,
   ): Promise<AuthSession | null> {
     try {
@@ -1353,7 +1458,7 @@ export class HealthcareAuthMiddleware {
           ),
           userAgent: c.req.header("user-agent") || "unknown",
           deviceType: this.detectDeviceType(c.req.header("user-agent")),
-          authenticationMethod: decoded.authMethod || "password",
+          authenticationMethod: (decoded.authMethod as "password" | "mfa" | "biometric" | "smartcard" | "emergency") || "password",
           mfaVerified: decoded.mfaVerified || false,
           riskScore: 0, // Will be calculated
           workflowContext: {
@@ -1384,7 +1489,7 @@ export class HealthcareAuthMiddleware {
   /**
    * Get user profile from database
    */
-  private async getUserProfile(userId: string): Promise<any> {
+  private async getUserProfile(userId: string): Promise<UserProfile | null> {
     // TODO: Implement actual database lookup
     // This is a mock implementation
     return {
@@ -1658,7 +1763,7 @@ export class HealthcareAuthMiddleware {
   /**
    * Handle authentication error
    */
-  private async handleAuthError(c: Context, error: any): Promise<Response> {
+  private async handleAuthError(c: Context, error: AuthenticationError | unknown): Promise<Response> {
     const errorResponse = {
       error: "AUTHENTICATION_ERROR",
       message: "Internal authentication error",
@@ -1730,7 +1835,7 @@ export class HealthcareAuthMiddleware {
   private async logSuccessfulAuthorization(
     c: Context,
     session: AuthSession,
-    requirements: any,
+    requirements: AuthorizationRequirements,
   ): Promise<void> {
     if (!this.config.logging.enableAuthAudit) return;
 
@@ -1996,7 +2101,7 @@ export class HealthcareAuthMiddleware {
  */
 export const healthcareAuthMiddleware = new HealthcareAuthMiddleware({
   enabled: true,
-  environment: (process.env.NODE_ENV as any) || "development",
+  environment: (process.env.NODE_ENV as Environment) || "development",
 
   jwt: {
     issuer: "neonpro-healthcare",
@@ -2073,7 +2178,7 @@ export const healthcareAuthMiddleware = new HealthcareAuthMiddleware({
     enableAuthAudit: true,
     enableSessionTracking: true,
     enableRiskLogging: true,
-    logLevel: (process.env.LOG_LEVEL as any) || "info",
+    logLevel: (process.env.LOG_LEVEL as LogLevel) || "info",
     auditRetentionDays: 2555,
   },
 });

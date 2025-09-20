@@ -211,8 +211,8 @@ export function createAdminClient(): HealthcareAdminClient {
         exportDate: new Date().toISOString(),
         data: exportData,
       };
-    } catch (error) {
-      throw new Error(`Failed to export user data: ${error}`);
+    } catch (_error) {
+      throw new Error(`Failed to export user data`);
     }
   };
 
@@ -377,10 +377,9 @@ export const healthcareRLS = {
         .single();
 
       return !!membership;
-    } catch (error) {
+    } catch (_error) {
       console.error(
-        `Failed to check user clinic membership for user ${userId}, clinic ${clinicId}:`,
-        error,
+        `Failed to check user clinic membership for user ${userId}, clinic ${clinicId}`
       );
       return false;
     }

@@ -10,40 +10,40 @@
  * @data-integrity 100% data consistency across offline/online transitions
  */
 
-import { expect, test } from "@playwright/test";
-import type { Page } from "@playwright/test";
+import { expect, test } from '@playwright/test';
+import type { Page } from '@playwright/test';
 
 // Offline functionality test data
 const generateOfflineTestData = () => ({
   patient: {
-    id: "offline-patient-" + Date.now(),
-    name: "Maria Fernanda Silva",
-    cpf: "987.654.321-00",
-    phone: "(21) 99887-6655",
-    email: "maria.fernanda@email.com",
-    birthDate: "1988-07-22",
-    gender: "female",
+    id: 'offline-patient-' + Date.now(),
+    name: 'Maria Fernanda Silva',
+    cpf: '987.654.321-00',
+    phone: '(21) 99887-6655',
+    email: 'maria.fernanda@email.com',
+    birthDate: '1988-07-22',
+    gender: 'female',
   },
   appointment: {
-    id: "offline-appointment-" + Date.now(),
-    patientId: "offline-patient-" + Date.now(),
+    id: 'offline-appointment-' + Date.now(),
+    patientId: 'offline-patient-' + Date.now(),
     date: new Date(Date.now() + 24 * 60 * 60 * 1000)
       .toISOString()
-      .split("T")[0],
-    time: "15:30",
-    type: "consulta_dermatologia",
+      .split('T')[0],
+    time: '15:30',
+    type: 'consulta_dermatologia',
     duration: 30,
-    notes: "Consulta de rotina - avaliação de manchas na pele",
+    notes: 'Consulta de rotina - avaliação de manchas na pele',
   },
   prescription: {
-    id: "offline-prescription-" + Date.now(),
-    patientId: "offline-patient-" + Date.now(),
+    id: 'offline-prescription-' + Date.now(),
+    patientId: 'offline-patient-' + Date.now(),
     medications: [
       {
-        name: "Protetor Solar FPS 60",
-        instructions: "Aplicar 30 minutos antes da exposição solar",
+        name: 'Protetor Solar FPS 60',
+        instructions: 'Aplicar 30 minutos antes da exposição solar',
         quantity: 1,
-        frequency: "conforme necessário",
+        frequency: 'conforme necessário',
       },
     ],
   },
@@ -51,31 +51,31 @@ const generateOfflineTestData = () => ({
 
 // Offline storage keys for validation
 const OFFLINE_STORAGE_KEYS = {
-  pendingActions: "neonpro_pending_actions",
-  offlineData: "neonpro_offline_data",
-  syncQueue: "neonpro_sync_queue",
-  lastSync: "neonpro_last_sync",
-  conflictResolution: "neonpro_conflicts",
+  pendingActions: 'neonpro_pending_actions',
+  offlineData: 'neonpro_offline_data',
+  syncQueue: 'neonpro_sync_queue',
+  lastSync: 'neonpro_last_sync',
+  conflictResolution: 'neonpro_conflicts',
 };
 
-describe("Offline Functionality Tests (T029)", () => {
+describe('Offline Functionality Tests (T029)', () => {
   let testData: ReturnType<typeof generateOfflineTestData>;
 
   test.beforeEach(async ({ page }) => {
     testData = generateOfflineTestData();
 
     // Setup authenticated session
-    await page.goto("/");
+    await page.goto('/');
     await page.evaluate(() => {
       sessionStorage.setItem(
-        "supabase.auth.token",
+        'supabase.auth.token',
         JSON.stringify({
-          access_token: "mock-offline-token",
+          access_token: 'mock-offline-token',
           user: {
-            id: "offline-test-user",
-            email: "offline.test@professional.com",
-            role: "healthcare_professional",
-            crm: "CRM-98765",
+            id: 'offline-test-user',
+            email: 'offline.test@professional.com',
+            role: 'healthcare_professional',
+            crm: 'CRM-98765',
           },
         }),
       );
@@ -84,17 +84,14 @@ describe("Offline Functionality Tests (T029)", () => {
     // Clear offline storage before each test
     await page.evaluate(() => {
       localStorage.clear();
-      indexedDB.deleteDatabase("neonpro_offline");
+      indexedDB.deleteDatabase('neonpro_offline');
     });
   });
 
-  describe("Offline Detection and UI State", () => {
-    test("should detect offline state and show appropriate UI", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/dashboard");
-      await page.waitForLoadState("networkidle");
+  describe('Offline Detection and UI State', () => {
+    test('should detect offline state and show appropriate UI', async ({ context, page }) => {
+      await page.goto('/dashboard');
+      await page.waitForLoadState('networkidle');
 
       // Verify online state initially
       await expect(
@@ -153,12 +150,9 @@ describe("Offline Functionality Tests (T029)", () => {
       ).toHaveText(/online|conectado/i);
     });
 
-    test("should show queued actions count when offline", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/patients");
-      await page.waitForLoadState("networkidle");
+    test('should show queued actions count when offline', async ({ context, page }) => {
+      await page.goto('/patients');
+      await page.waitForLoadState('networkidle');
 
       // Go offline
       await context.setOffline(true);
@@ -185,8 +179,8 @@ describe("Offline Functionality Tests (T029)", () => {
 
       // Perform another action
       await page.click('[data-testid="add-patient-button"]');
-      await page.fill('[data-testid="patient-name"]', "João Carlos Santos");
-      await page.fill('[data-testid="patient-cpf"]', "111.222.333-44");
+      await page.fill('[data-testid="patient-name"]', 'João Carlos Santos');
+      await page.fill('[data-testid="patient-cpf"]', '111.222.333-44');
       await page.click('[data-testid="save-patient-offline"]');
 
       // Should show updated queue count
@@ -197,38 +191,35 @@ describe("Offline Functionality Tests (T029)", () => {
     });
   });
 
-  describe("Offline Data Storage and Retrieval", () => {
-    test("should store patient data offline for access", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/patients");
-      await page.waitForLoadState("networkidle");
+  describe('Offline Data Storage and Retrieval', () => {
+    test('should store patient data offline for access', async ({ context, page }) => {
+      await page.goto('/patients');
+      await page.waitForLoadState('networkidle');
 
       // Load some initial patient data while online
       const initialPatients = await page.evaluate(() => {
         return Promise.resolve([
           {
-            id: "1",
-            name: "Ana Carolina Silva",
-            cpf: "123.456.789-09",
-            phone: "(11) 98765-4321",
-            lastConsultation: "2024-01-15",
+            id: '1',
+            name: 'Ana Carolina Silva',
+            cpf: '123.456.789-09',
+            phone: '(11) 98765-4321',
+            lastConsultation: '2024-01-15',
           },
           {
-            id: "2",
-            name: "Pedro Henrique Santos",
-            cpf: "987.654.321-00",
-            phone: "(21) 87654-3210",
-            lastConsultation: "2024-01-10",
+            id: '2',
+            name: 'Pedro Henrique Santos',
+            cpf: '987.654.321-00',
+            phone: '(21) 87654-3210',
+            lastConsultation: '2024-01-10',
           },
         ]);
       });
 
       // Store data in offline storage
-      await page.evaluate((patients) => {
+      await page.evaluate(patients => {
         localStorage.setItem(
-          "neonpro_offline_patients",
+          'neonpro_offline_patients',
           JSON.stringify(patients),
         );
       }, initialPatients);
@@ -243,7 +234,7 @@ describe("Offline Functionality Tests (T029)", () => {
 
       // Refresh page to test offline loading
       await page.reload();
-      await page.waitForLoadState("domcontentloaded");
+      await page.waitForLoadState('domcontentloaded');
 
       // Should load patients from offline storage
       await expect(page.locator('[data-testid="patient-list"]')).toBeVisible();
@@ -260,42 +251,39 @@ describe("Offline Functionality Tests (T029)", () => {
       const firstPatient = patientCards.first();
       await expect(
         firstPatient.locator('[data-testid="patient-name"]'),
-      ).toContainText("Ana Carolina Silva");
+      ).toContainText('Ana Carolina Silva');
       await expect(
         firstPatient.locator('[data-testid="patient-cpf"]'),
-      ).toContainText("123.456.789-09");
+      ).toContainText('123.456.789-09');
     });
 
-    test("should maintain medical records offline", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/patients/1/medical-records");
-      await page.waitForLoadState("networkidle");
+    test('should maintain medical records offline', async ({ context, page }) => {
+      await page.goto('/patients/1/medical-records');
+      await page.waitForLoadState('networkidle');
 
       // Store medical records offline
       const medicalRecords = [
         {
-          id: "record-1",
-          date: "2024-01-15",
-          type: "Consulta Dermatológica",
-          diagnosis: "Dermatite seborreica",
-          treatment: "Shampoo antisseborreico",
-          followUp: "30 dias",
+          id: 'record-1',
+          date: '2024-01-15',
+          type: 'Consulta Dermatológica',
+          diagnosis: 'Dermatite seborreica',
+          treatment: 'Shampoo antisseborreico',
+          followUp: '30 dias',
         },
         {
-          id: "record-2",
-          date: "2023-12-10",
-          type: "Consulta de Rotina",
-          diagnosis: "Pele saudável",
-          treatment: "Manutenção",
-          followUp: "6 meses",
+          id: 'record-2',
+          date: '2023-12-10',
+          type: 'Consulta de Rotina',
+          diagnosis: 'Pele saudável',
+          treatment: 'Manutenção',
+          followUp: '6 meses',
         },
       ];
 
-      await page.evaluate((records) => {
+      await page.evaluate(records => {
         localStorage.setItem(
-          "neonpro_offline_records_1",
+          'neonpro_offline_records_1',
           JSON.stringify(records),
         );
       }, medicalRecords);
@@ -310,7 +298,7 @@ describe("Offline Functionality Tests (T029)", () => {
 
       // Refresh to test offline loading
       await page.reload();
-      await page.waitForLoadState("domcontentloaded");
+      await page.waitForLoadState('domcontentloaded');
 
       // Should load medical records from offline storage
       await expect(
@@ -324,47 +312,44 @@ describe("Offline Functionality Tests (T029)", () => {
       const firstRecord = recordCards.first();
       await expect(
         firstRecord.locator('[data-testid="record-diagnosis"]'),
-      ).toContainText("Dermatite seborreica");
+      ).toContainText('Dermatite seborreica');
       await expect(
         firstRecord.locator('[data-testid="record-treatment"]'),
-      ).toContainText("Shampoo antisseborreico");
+      ).toContainText('Shampoo antisseborreico');
     });
 
-    test("should cache images and documents offline", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/patients/1/documents");
-      await page.waitForLoadState("networkidle");
+    test('should cache images and documents offline', async ({ context, page }) => {
+      await page.goto('/patients/1/documents');
+      await page.waitForLoadState('networkidle');
 
       // Mock some cached images
       await page.evaluate(() => {
         const cacheData = {
           images: [
             {
-              id: "img-1",
-              url: "blob:cached-image-1",
-              type: "patient_photo",
+              id: 'img-1',
+              url: 'blob:cached-image-1',
+              type: 'patient_photo',
               cachedAt: new Date().toISOString(),
             },
             {
-              id: "img-2",
-              url: "blob:cached-image-2",
-              type: "dermatoscopy",
+              id: 'img-2',
+              url: 'blob:cached-image-2',
+              type: 'dermatoscopy',
               cachedAt: new Date().toISOString(),
             },
           ],
           documents: [
             {
-              id: "doc-1",
-              name: "Exame Dermatoscópico.pdf",
-              type: "examination_result",
+              id: 'doc-1',
+              name: 'Exame Dermatoscópico.pdf',
+              type: 'examination_result',
               cachedAt: new Date().toISOString(),
             },
           ],
         };
         localStorage.setItem(
-          "neonpro_offline_media_1",
+          'neonpro_offline_media_1',
           JSON.stringify(cacheData),
         );
       });
@@ -400,13 +385,10 @@ describe("Offline Functionality Tests (T029)", () => {
     });
   });
 
-  describe("Offline Action Queuing and Synchronization", () => {
-    test("should queue patient creation when offline", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/patients/new");
-      await page.waitForLoadState("networkidle");
+  describe('Offline Action Queuing and Synchronization', () => {
+    test('should queue patient creation when offline', async ({ context, page }) => {
+      await page.goto('/patients/new');
+      await page.waitForLoadState('networkidle');
 
       // Go offline
       await context.setOffline(true);
@@ -444,28 +426,25 @@ describe("Offline Functionality Tests (T029)", () => {
 
       // Verify action is stored in local queue
       const queuedActions = await page.evaluate(() => {
-        const queue = localStorage.getItem("neonpro_pending_actions");
+        const queue = localStorage.getItem('neonpro_pending_actions');
         return queue ? JSON.parse(queue) : [];
       });
 
       expect(queuedActions).toHaveLength(1);
       expect(queuedActions[0]).toMatchObject({
-        type: "CREATE_PATIENT",
+        type: 'CREATE_PATIENT',
         data: expect.objectContaining({
           name: testData.patient.name,
           cpf: testData.patient.cpf,
         }),
         timestamp: expect.any(String),
-        status: "pending",
+        status: 'pending',
       });
     });
 
-    test("should sync queued actions when coming back online", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/patients");
-      await page.waitForLoadState("networkidle");
+    test('should sync queued actions when coming back online', async ({ context, page }) => {
+      await page.goto('/patients');
+      await page.waitForLoadState('networkidle');
 
       // Go offline and queue some actions
       await context.setOffline(true);
@@ -478,36 +457,36 @@ describe("Offline Functionality Tests (T029)", () => {
       // Queue multiple actions
       const queuedActions = [
         {
-          id: "action-1",
-          type: "CREATE_PATIENT",
+          id: 'action-1',
+          type: 'CREATE_PATIENT',
           data: { ...testData.patient, id: undefined },
           timestamp: new Date().toISOString(),
-          status: "pending",
+          status: 'pending',
           retries: 0,
         },
         {
-          id: "action-2",
-          type: "UPDATE_APPOINTMENT",
-          data: { ...testData.appointment, notes: "Atualizado offline" },
+          id: 'action-2',
+          type: 'UPDATE_APPOINTMENT',
+          data: { ...testData.appointment, notes: 'Atualizado offline' },
           timestamp: new Date().toISOString(),
-          status: "pending",
+          status: 'pending',
           retries: 0,
         },
       ];
 
-      await page.evaluate((actions) => {
+      await page.evaluate(actions => {
         localStorage.setItem(
-          "neonpro_pending_actions",
+          'neonpro_pending_actions',
           JSON.stringify(actions),
         );
       }, queuedActions);
 
       // Should show queued actions count
       await page.reload();
-      await page.waitForLoadState("domcontentloaded");
+      await page.waitForLoadState('domcontentloaded');
       await expect(
         page.locator('[data-testid="queued-actions-count"]'),
-      ).toContainText("2");
+      ).toContainText('2');
 
       // Go back online
       await context.setOffline(false);
@@ -530,9 +509,9 @@ describe("Offline Functionality Tests (T029)", () => {
       await page.evaluate(() => {
         // Simulate successful sync after delay
         setTimeout(() => {
-          localStorage.removeItem("neonpro_pending_actions");
-          localStorage.setItem("neonpro_last_sync", new Date().toISOString());
-          window.dispatchEvent(new CustomEvent("sync-completed"));
+          localStorage.removeItem('neonpro_pending_actions');
+          localStorage.setItem('neonpro_last_sync', new Date().toISOString());
+          window.dispatchEvent(new CustomEvent('sync-completed'));
         }, 2000);
       });
 
@@ -542,53 +521,50 @@ describe("Offline Functionality Tests (T029)", () => {
       });
       await expect(
         page.locator('[data-testid="queued-actions-count"]'),
-      ).toContainText("0");
+      ).toContainText('0');
 
       // Verify actions were cleared from queue
       const remainingActions = await page.evaluate(() => {
-        const queue = localStorage.getItem("neonpro_pending_actions");
+        const queue = localStorage.getItem('neonpro_pending_actions');
         return queue ? JSON.parse(queue) : [];
       });
       expect(remainingActions).toHaveLength(0);
     });
 
-    test("should handle sync conflicts and resolution", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/patients/1");
-      await page.waitForLoadState("networkidle");
+    test('should handle sync conflicts and resolution', async ({ context, page }) => {
+      await page.goto('/patients/1');
+      await page.waitForLoadState('networkidle');
 
       // Simulate a patient record existing both online and offline with different data
       const onlinePatient = {
-        id: "1",
-        name: "Ana Carolina Silva",
-        phone: "(11) 98765-4321",
-        lastModified: "2024-01-15T10:00:00Z",
+        id: '1',
+        name: 'Ana Carolina Silva',
+        phone: '(11) 98765-4321',
+        lastModified: '2024-01-15T10:00:00Z',
         version: 2,
       };
 
       const offlineModification = {
-        id: "1",
-        name: "Ana Carolina Silva Santos", // Modified offline
-        phone: "(11) 99999-9999", // Modified offline
-        lastModified: "2024-01-15T09:30:00Z",
+        id: '1',
+        name: 'Ana Carolina Silva Santos', // Modified offline
+        phone: '(11) 99999-9999', // Modified offline
+        lastModified: '2024-01-15T09:30:00Z',
         version: 1,
       };
 
       // Store offline modification
-      await page.evaluate((patient) => {
+      await page.evaluate(patient => {
         const actions = [
           {
-            id: "conflict-action",
-            type: "UPDATE_PATIENT",
+            id: 'conflict-action',
+            type: 'UPDATE_PATIENT',
             data: patient,
             timestamp: new Date().toISOString(),
-            status: "pending",
+            status: 'pending',
           },
         ];
         localStorage.setItem(
-          "neonpro_pending_actions",
+          'neonpro_pending_actions',
           JSON.stringify(actions),
         );
       }, offlineModification);
@@ -619,10 +595,10 @@ describe("Offline Functionality Tests (T029)", () => {
       // Should show both versions
       await expect(
         page.locator('[data-testid="online-version"]'),
-      ).toContainText("Ana Carolina Silva");
+      ).toContainText('Ana Carolina Silva');
       await expect(
         page.locator('[data-testid="offline-version"]'),
-      ).toContainText("Ana Carolina Silva Santos");
+      ).toContainText('Ana Carolina Silva Santos');
 
       // Select resolution strategy
       await page.click('[data-testid="resolve-keep-online"]');
@@ -635,41 +611,38 @@ describe("Offline Functionality Tests (T029)", () => {
       await expect(page.locator('[data-testid="sync-success"]')).toBeVisible();
     });
 
-    test("should handle partial sync failures with retry logic", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/dashboard");
-      await page.waitForLoadState("networkidle");
+    test('should handle partial sync failures with retry logic', async ({ context, page }) => {
+      await page.goto('/dashboard');
+      await page.waitForLoadState('networkidle');
 
       // Queue multiple actions
       const actions = [
         {
-          id: "action-1",
-          type: "CREATE_PATIENT",
+          id: 'action-1',
+          type: 'CREATE_PATIENT',
           data: testData.patient,
-          status: "pending",
+          status: 'pending',
           retries: 0,
         },
         {
-          id: "action-2",
-          type: "CREATE_APPOINTMENT",
+          id: 'action-2',
+          type: 'CREATE_APPOINTMENT',
           data: testData.appointment,
-          status: "pending",
+          status: 'pending',
           retries: 0,
         },
         {
-          id: "action-3",
-          type: "CREATE_PRESCRIPTION",
+          id: 'action-3',
+          type: 'CREATE_PRESCRIPTION',
           data: testData.prescription,
-          status: "pending",
+          status: 'pending',
           retries: 0,
         },
       ];
 
-      await page.evaluate((queuedActions) => {
+      await page.evaluate(queuedActions => {
         localStorage.setItem(
-          "neonpro_pending_actions",
+          'neonpro_pending_actions',
           JSON.stringify(queuedActions),
         );
       }, actions);
@@ -683,26 +656,26 @@ describe("Offline Functionality Tests (T029)", () => {
         // Simulate first action succeeding, second failing, third pending
         const updatedActions = [
           {
-            id: "action-2",
-            type: "CREATE_APPOINTMENT",
-            status: "failed",
+            id: 'action-2',
+            type: 'CREATE_APPOINTMENT',
+            status: 'failed',
             retries: 1,
-            error: "Network timeout",
+            error: 'Network timeout',
           },
           {
-            id: "action-3",
-            type: "CREATE_PRESCRIPTION",
-            status: "pending",
+            id: 'action-3',
+            type: 'CREATE_PRESCRIPTION',
+            status: 'pending',
             retries: 0,
           },
         ];
         localStorage.setItem(
-          "neonpro_pending_actions",
+          'neonpro_pending_actions',
           JSON.stringify(updatedActions),
         );
 
         window.dispatchEvent(
-          new CustomEvent("sync-partial-failure", {
+          new CustomEvent('sync-partial-failure', {
             detail: { succeeded: 1, failed: 1, pending: 1 },
           }),
         );
@@ -729,17 +702,14 @@ describe("Offline Functionality Tests (T029)", () => {
       // Should show updated queue count during retry
       await expect(
         page.locator('[data-testid="queued-actions-count"]'),
-      ).toContainText("2");
+      ).toContainText('2');
     });
   });
 
-  describe("Offline Form Validation and Data Integrity", () => {
-    test("should validate Brazilian data formats offline", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/patients/new");
-      await page.waitForLoadState("networkidle");
+  describe('Offline Form Validation and Data Integrity', () => {
+    test('should validate Brazilian data formats offline', async ({ context, page }) => {
+      await page.goto('/patients/new');
+      await page.waitForLoadState('networkidle');
 
       // Go offline
       await context.setOffline(true);
@@ -748,7 +718,7 @@ describe("Offline Functionality Tests (T029)", () => {
       ).toBeVisible();
 
       // Test CPF validation offline
-      await page.fill('[data-testid="patient-cpf"]', "123.456.789-00"); // Invalid CPF
+      await page.fill('[data-testid="patient-cpf"]', '123.456.789-00'); // Invalid CPF
       await page.blur('[data-testid="patient-cpf"]');
 
       await expect(page.locator('[data-testid="cpf-error"]')).toBeVisible();
@@ -758,14 +728,14 @@ describe("Offline Functionality Tests (T029)", () => {
       expect(cpfError).toMatch(/cpf.*inválido/i);
 
       // Test valid CPF
-      await page.fill('[data-testid="patient-cpf"]', "123.456.789-09"); // Valid CPF
+      await page.fill('[data-testid="patient-cpf"]', '123.456.789-09'); // Valid CPF
       await page.blur('[data-testid="patient-cpf"]');
 
       await expect(page.locator('[data-testid="cpf-error"]')).not.toBeVisible();
       await expect(page.locator('[data-testid="cpf-valid"]')).toBeVisible();
 
       // Test phone validation offline
-      await page.fill('[data-testid="patient-phone"]', "11999999999");
+      await page.fill('[data-testid="patient-phone"]', '11999999999');
       await page.blur('[data-testid="patient-phone"]');
 
       // Should format automatically even offline
@@ -773,7 +743,7 @@ describe("Offline Functionality Tests (T029)", () => {
       expect(phoneValue).toMatch(/^\(\d{2}\)\s\d{4,5}-\d{4}$/);
 
       // Test CEP validation offline
-      await page.fill('[data-testid="patient-cep"]', "01310100");
+      await page.fill('[data-testid="patient-cep"]', '01310100');
       await page.blur('[data-testid="patient-cep"]');
 
       // Should format automatically even offline
@@ -781,12 +751,9 @@ describe("Offline Functionality Tests (T029)", () => {
       expect(cepValue).toMatch(/^\d{5}-\d{3}$/);
     });
 
-    test("should maintain LGPD consent state offline", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/patients/new");
-      await page.waitForLoadState("networkidle");
+    test('should maintain LGPD consent state offline', async ({ context, page }) => {
+      await page.goto('/patients/new');
+      await page.waitForLoadState('networkidle');
 
       // Go offline
       await context.setOffline(true);
@@ -825,7 +792,7 @@ describe("Offline Functionality Tests (T029)", () => {
 
       // Verify consent is stored with queued action
       const queuedActions = await page.evaluate(() => {
-        const queue = localStorage.getItem("neonpro_pending_actions");
+        const queue = localStorage.getItem('neonpro_pending_actions');
         return queue ? JSON.parse(queue) : [];
       });
 
@@ -836,12 +803,9 @@ describe("Offline Functionality Tests (T029)", () => {
       });
     });
 
-    test("should validate prescription data offline", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/prescriptions/new");
-      await page.waitForLoadState("networkidle");
+    test('should validate prescription data offline', async ({ context, page }) => {
+      await page.goto('/prescriptions/new');
+      await page.waitForLoadState('networkidle');
 
       // Go offline
       await context.setOffline(true);
@@ -850,22 +814,22 @@ describe("Offline Functionality Tests (T029)", () => {
       ).toBeVisible();
 
       // Fill prescription form
-      await page.fill('[data-testid="patient-search"]', "Maria Silva");
+      await page.fill('[data-testid="patient-search"]', 'Maria Silva');
       await page.click('[data-testid="patient-suggestion"]');
 
       // Add medication
       await page.fill(
         '[data-testid="medication-name"]',
-        "Losartana Potássica 50mg",
+        'Losartana Potássica 50mg',
       );
       await page.fill(
         '[data-testid="medication-dosage"]',
-        "1 comprimido pela manhã",
+        '1 comprimido pela manhã',
       );
-      await page.fill('[data-testid="medication-quantity"]', "30");
+      await page.fill('[data-testid="medication-quantity"]', '30');
 
       // Test CRM validation offline
-      await page.fill('[data-testid="physician-crm"]', "CRM123456SP");
+      await page.fill('[data-testid="physician-crm"]', 'CRM123456SP');
       await page.blur('[data-testid="physician-crm"]');
 
       // Should format CRM even offline
@@ -882,11 +846,11 @@ describe("Offline Functionality Tests (T029)", () => {
 
       // Verify prescription data integrity in queue
       const queuedPrescriptions = await page.evaluate(() => {
-        const queue = localStorage.getItem("neonpro_pending_actions");
+        const queue = localStorage.getItem('neonpro_pending_actions');
         return queue
           ? JSON.parse(queue).filter(
-              (action) => action.type === "CREATE_PRESCRIPTION",
-            )
+            action => action.type === 'CREATE_PRESCRIPTION',
+          )
           : [];
       });
 
@@ -895,8 +859,8 @@ describe("Offline Functionality Tests (T029)", () => {
         physicianCrm: expect.stringMatching(/^CRM-\d{4,6}\/[A-Z]{2}$/),
         medications: expect.arrayContaining([
           expect.objectContaining({
-            name: "Losartana Potássica 50mg",
-            dosage: "1 comprimido pela manhã",
+            name: 'Losartana Potássica 50mg',
+            dosage: '1 comprimido pela manhã',
             quantity: 30,
           }),
         ]),
@@ -904,27 +868,23 @@ describe("Offline Functionality Tests (T029)", () => {
     });
   });
 
-  describe("Performance and Storage Management", () => {
-    test("should manage offline storage size and cleanup", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/settings/offline");
-      await page.waitForLoadState("networkidle");
+  describe('Performance and Storage Management', () => {
+    test('should manage offline storage size and cleanup', async ({ context, page }) => {
+      await page.goto('/settings/offline');
+      await page.waitForLoadState('networkidle');
 
       // Check current storage usage
       await expect(page.locator('[data-testid="storage-usage"]')).toBeVisible();
 
       const storageInfo = await page.evaluate(async () => {
-        if ("storage" in navigator && "estimate" in navigator.storage) {
+        if ('storage' in navigator && 'estimate' in navigator.storage) {
           const estimate = await navigator.storage.estimate();
           return {
             used: estimate.usage,
             available: estimate.quota,
-            percentage:
-              estimate.usage && estimate.quota
-                ? Math.round((estimate.usage / estimate.quota) * 100)
-                : 0,
+            percentage: estimate.usage && estimate.quota
+              ? Math.round((estimate.usage / estimate.quota) * 100)
+              : 0,
           };
         }
         return null;
@@ -948,37 +908,34 @@ describe("Offline Functionality Tests (T029)", () => {
       // Verify storage was cleaned up
       const postCleanupStorage = await page.evaluate(() => {
         const keys = [
-          "neonpro_offline_patients",
-          "neonpro_offline_records",
-          "neonpro_offline_media",
+          'neonpro_offline_patients',
+          'neonpro_offline_records',
+          'neonpro_offline_media',
         ];
-        return keys.map((key) => localStorage.getItem(key)).filter(Boolean)
+        return keys.map(key => localStorage.getItem(key)).filter(Boolean)
           .length;
       });
 
       expect(postCleanupStorage).toBe(0);
     });
 
-    test("should optimize data synchronization performance", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/dashboard");
-      await page.waitForLoadState("networkidle");
+    test('should optimize data synchronization performance', async ({ context, page }) => {
+      await page.goto('/dashboard');
+      await page.waitForLoadState('networkidle');
 
       // Queue a large number of actions to test batch sync
       const manyActions = Array.from({ length: 50 }, (_, i) => ({
         id: `action-${i}`,
-        type: "UPDATE_PATIENT",
+        type: 'UPDATE_PATIENT',
         data: { id: `patient-${i}`, lastModified: new Date().toISOString() },
         timestamp: new Date().toISOString(),
-        status: "pending",
+        status: 'pending',
         retries: 0,
       }));
 
-      await page.evaluate((actions) => {
+      await page.evaluate(actions => {
         localStorage.setItem(
-          "neonpro_pending_actions",
+          'neonpro_pending_actions',
           JSON.stringify(actions),
         );
       }, manyActions);
@@ -1002,10 +959,10 @@ describe("Offline Functionality Tests (T029)", () => {
 
       // Simulate sync completion
       await page.evaluate(() => {
-        localStorage.removeItem("neonpro_pending_actions");
-        localStorage.setItem("neonpro_last_sync", new Date().toISOString());
+        localStorage.removeItem('neonpro_pending_actions');
+        localStorage.setItem('neonpro_last_sync', new Date().toISOString());
         window.dispatchEvent(
-          new CustomEvent("batch-sync-completed", {
+          new CustomEvent('batch-sync-completed', {
             detail: { synced: 50, failed: 0, duration: 1800 },
           }),
         );
@@ -1020,16 +977,16 @@ describe("Offline Functionality Tests (T029)", () => {
       ).toBeVisible();
     });
 
-    test("should handle storage quota exceeded scenarios", async ({ page }) => {
-      await page.goto("/patients");
-      await page.waitForLoadState("networkidle");
+    test('should handle storage quota exceeded scenarios', async ({ page }) => {
+      await page.goto('/patients');
+      await page.waitForLoadState('networkidle');
 
       // Simulate storage quota exceeded
       await page.evaluate(() => {
         // Mock localStorage to throw quota exceeded error
         const originalSetItem = localStorage.setItem;
         localStorage.setItem = () => {
-          throw new DOMException("QuotaExceededError");
+          throw new DOMException('QuotaExceededError');
         };
 
         // Restore after test
@@ -1069,35 +1026,32 @@ describe("Offline Functionality Tests (T029)", () => {
     });
   });
 
-  describe("Healthcare-Specific Offline Features", () => {
-    test("should support emergency offline access to patient data", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/emergency");
-      await page.waitForLoadState("networkidle");
+  describe('Healthcare-Specific Offline Features', () => {
+    test('should support emergency offline access to patient data', async ({ context, page }) => {
+      await page.goto('/emergency');
+      await page.waitForLoadState('networkidle');
 
       // Store critical patient data for emergency access
       const emergencyPatients = [
         {
-          id: "emergency-1",
-          name: "João Carlos Silva",
-          cpf: "123.456.789-09",
-          bloodType: "O+",
-          allergies: ["Penicilina", "Látex"],
+          id: 'emergency-1',
+          name: 'João Carlos Silva',
+          cpf: '123.456.789-09',
+          bloodType: 'O+',
+          allergies: ['Penicilina', 'Látex'],
           emergencyContact: {
-            name: "Maria Silva",
-            phone: "(11) 99999-9999",
-            relationship: "Esposa",
+            name: 'Maria Silva',
+            phone: '(11) 99999-9999',
+            relationship: 'Esposa',
           },
-          criticalConditions: ["Diabetes Tipo 2", "Hipertensão"],
-          medications: ["Losartana 50mg", "Metformina 850mg"],
+          criticalConditions: ['Diabetes Tipo 2', 'Hipertensão'],
+          medications: ['Losartana 50mg', 'Metformina 850mg'],
         },
       ];
 
-      await page.evaluate((patients) => {
+      await page.evaluate(patients => {
         localStorage.setItem(
-          "neonpro_emergency_patients",
+          'neonpro_emergency_patients',
           JSON.stringify(patients),
         );
       }, emergencyPatients);
@@ -1111,7 +1065,7 @@ describe("Offline Functionality Tests (T029)", () => {
       // Should still allow emergency patient search
       await page.fill(
         '[data-testid="emergency-patient-search"]',
-        "123.456.789-09",
+        '123.456.789-09',
       );
       await page.click('[data-testid="emergency-search-button"]');
 
@@ -1123,16 +1077,16 @@ describe("Offline Functionality Tests (T029)", () => {
       // Should display critical information
       await expect(
         page.locator('[data-testid="patient-blood-type"]'),
-      ).toContainText("O+");
+      ).toContainText('O+');
       await expect(
         page.locator('[data-testid="patient-allergies"]'),
-      ).toContainText("Penicilina");
+      ).toContainText('Penicilina');
       await expect(
         page.locator('[data-testid="emergency-contact"]'),
-      ).toContainText("Maria Silva");
+      ).toContainText('Maria Silva');
       await expect(
         page.locator('[data-testid="critical-medications"]'),
-      ).toContainText("Losartana");
+      ).toContainText('Losartana');
 
       // Should show offline emergency mode indicator
       await expect(
@@ -1144,42 +1098,39 @@ describe("Offline Functionality Tests (T029)", () => {
       expect(emergencyMode).toMatch(/emergency|emergência.*offline/i);
     });
 
-    test("should maintain prescription history offline", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/patients/1/prescriptions");
-      await page.waitForLoadState("networkidle");
+    test('should maintain prescription history offline', async ({ context, page }) => {
+      await page.goto('/patients/1/prescriptions');
+      await page.waitForLoadState('networkidle');
 
       // Store prescription history
       const prescriptionHistory = [
         {
-          id: "rx-1",
-          date: "2024-01-15",
-          physician: "Dr. Ana Santos - CRM-12345/SP",
+          id: 'rx-1',
+          date: '2024-01-15',
+          physician: 'Dr. Ana Santos - CRM-12345/SP',
           medications: [
-            { name: "Losartana 50mg", dosage: "1x manhã", duration: "30 dias" },
+            { name: 'Losartana 50mg', dosage: '1x manhã', duration: '30 dias' },
           ],
-          status: "active",
+          status: 'active',
         },
         {
-          id: "rx-2",
-          date: "2023-12-10",
-          physician: "Dr. Carlos Lima - CRM-67890/RJ",
+          id: 'rx-2',
+          date: '2023-12-10',
+          physician: 'Dr. Carlos Lima - CRM-67890/RJ',
           medications: [
             {
-              name: "Protetor Solar FPS 60",
-              dosage: "aplicar antes da exposição",
-              duration: "uso contínuo",
+              name: 'Protetor Solar FPS 60',
+              dosage: 'aplicar antes da exposição',
+              duration: 'uso contínuo',
             },
           ],
-          status: "completed",
+          status: 'completed',
         },
       ];
 
-      await page.evaluate((prescriptions) => {
+      await page.evaluate(prescriptions => {
         localStorage.setItem(
-          "neonpro_offline_prescriptions_1",
+          'neonpro_offline_prescriptions_1',
           JSON.stringify(prescriptions),
         );
       }, prescriptionHistory);
@@ -1192,7 +1143,7 @@ describe("Offline Functionality Tests (T029)", () => {
 
       // Refresh to test offline loading
       await page.reload();
-      await page.waitForLoadState("domcontentloaded");
+      await page.waitForLoadState('domcontentloaded');
 
       // Should load prescription history from offline storage
       await expect(
@@ -1206,37 +1157,34 @@ describe("Offline Functionality Tests (T029)", () => {
       const activePrescription = prescriptions.first();
       await expect(
         activePrescription.locator('[data-testid="prescription-medication"]'),
-      ).toContainText("Losartana");
+      ).toContainText('Losartana');
       await expect(
         activePrescription.locator('[data-testid="prescription-physician"]'),
-      ).toContainText("Dr. Ana Santos");
+      ).toContainText('Dr. Ana Santos');
       await expect(
         activePrescription.locator('[data-testid="prescription-status"]'),
-      ).toContainText("active");
+      ).toContainText('active');
     });
 
-    test("should support offline appointment modifications with conflict resolution", async ({
-      context,
-      page,
-    }) => {
-      await page.goto("/appointments/calendar");
-      await page.waitForLoadState("networkidle");
+    test('should support offline appointment modifications with conflict resolution', async ({ context, page }) => {
+      await page.goto('/appointments/calendar');
+      await page.waitForLoadState('networkidle');
 
       const existingAppointment = {
-        id: "apt-1",
-        patientId: "patient-1",
-        date: "2024-01-20",
-        time: "14:00",
+        id: 'apt-1',
+        patientId: 'patient-1',
+        date: '2024-01-20',
+        time: '14:00',
         duration: 30,
-        type: "consulta_rotina",
-        status: "confirmed",
-        lastModified: "2024-01-15T10:00:00Z",
+        type: 'consulta_rotina',
+        status: 'confirmed',
+        lastModified: '2024-01-15T10:00:00Z',
         version: 1,
       };
 
-      await page.evaluate((appointment) => {
+      await page.evaluate(appointment => {
         localStorage.setItem(
-          "neonpro_offline_appointments",
+          'neonpro_offline_appointments',
           JSON.stringify([appointment]),
         );
       }, existingAppointment);
@@ -1252,10 +1200,10 @@ describe("Offline Functionality Tests (T029)", () => {
       await page.click('[data-testid="edit-appointment"]');
 
       // Change appointment time
-      await page.selectOption('[data-testid="appointment-time"]', "15:30");
+      await page.selectOption('[data-testid="appointment-time"]', '15:30');
       await page.fill(
         '[data-testid="appointment-notes"]',
-        "Horário alterado pelo paciente - offline",
+        'Horário alterado pelo paciente - offline',
       );
       await page.click('[data-testid="save-appointment"]');
 
@@ -1266,18 +1214,18 @@ describe("Offline Functionality Tests (T029)", () => {
 
       // Verify queued update
       const queuedActions = await page.evaluate(() => {
-        const queue = localStorage.getItem("neonpro_pending_actions");
+        const queue = localStorage.getItem('neonpro_pending_actions');
         return queue ? JSON.parse(queue) : [];
       });
 
       const appointmentUpdate = queuedActions.find(
-        (action) => action.type === "UPDATE_APPOINTMENT",
+        action => action.type === 'UPDATE_APPOINTMENT',
       );
       expect(appointmentUpdate).toBeTruthy();
       expect(appointmentUpdate.data).toMatchObject({
-        id: "apt-1",
-        time: "15:30",
-        notes: "Horário alterado pelo paciente - offline",
+        id: 'apt-1',
+        time: '15:30',
+        notes: 'Horário alterado pelo paciente - offline',
       });
 
       // Go back online
@@ -1294,16 +1242,16 @@ describe("Offline Functionality Tests (T029)", () => {
       // Simulate conflict (appointment was also modified online)
       await page.evaluate(() => {
         window.dispatchEvent(
-          new CustomEvent("appointment-conflict", {
+          new CustomEvent('appointment-conflict', {
             detail: {
-              appointmentId: "apt-1",
+              appointmentId: 'apt-1',
               onlineVersion: {
-                time: "16:00",
-                notes: "Reagendado pela clínica",
+                time: '16:00',
+                notes: 'Reagendado pela clínica',
               },
               offlineVersion: {
-                time: "15:30",
-                notes: "Horário alterado pelo paciente - offline",
+                time: '15:30',
+                notes: 'Horário alterado pelo paciente - offline',
               },
             },
           }),
@@ -1316,10 +1264,10 @@ describe("Offline Functionality Tests (T029)", () => {
       ).toBeVisible();
       await expect(
         page.locator('[data-testid="conflict-online-version"]'),
-      ).toContainText("16:00");
+      ).toContainText('16:00');
       await expect(
         page.locator('[data-testid="conflict-offline-version"]'),
-      ).toContainText("15:30");
+      ).toContainText('15:30');
 
       // Resolve conflict by merging changes
       await page.click('[data-testid="merge-appointment-changes"]');

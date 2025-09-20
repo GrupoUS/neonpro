@@ -4,10 +4,10 @@
  * Tests LGPD service integration with calendar components
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Experiment06CalendarIntegration } from '@/components/calendar/experiment-06-integration';
 import type { CalendarAppointment } from '@/services/appointments.service';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock the LGPD services that the component depends on
 vi.mock('@/services/lgpd/calendar-consent.service', () => ({
@@ -53,16 +53,26 @@ vi.mock('@/services/lgpd/audit-logging.service', () => ({
 // Mock EventCalendar component
 vi.mock('@/components/event-calendar/event-calendar', () => ({
   EventCalendar: vi.fn(({ events, onEventUpdate, onEventDelete, onEventAdd, className }) => (
-    <div data-testid="event-calendar" className={className}>
-      <div data-testid="calendar-events">
+    <div data-testid='event-calendar' className={className}>
+      <div data-testid='calendar-events'>
         {events.map((event: any) => (
           <div key={event.id} data-event-id={event.id}>
             {event.title}
           </div>
         ))}
       </div>
-      <button onClick={() => onEventUpdate?.(events[0] || {}, {})}>Update Event</button>
-      <button onClick={() => onEventDelete?.('test-id')}>Delete Event</button>
+      <button
+        onClick={() =>
+          onEventUpdate?.(events[0] || {}, {})}
+      >
+        Update Event
+      </button>
+      <button
+        onClick={() =>
+          onEventDelete?.('test-id')}
+      >
+        Delete Event
+      </button>
       <button onClick={() => onEventAdd?.({})}>Add Event</button>
     </div>
   )),
@@ -83,7 +93,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     mockAppointments = [
       {
         id: 'apt-123',
@@ -153,7 +163,9 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
     it('should FAIL - should have all required LGPD service methods', () => {
       // RED: This test fails if required methods are missing
       const { calendarLGPDConsentService } = require('@/services/lgpd/calendar-consent.service');
-      const { calendarDataMinimizationService } = require('@/services/lgpd/data-minimization.service');
+      const { calendarDataMinimizationService } = require(
+        '@/services/lgpd/data-minimization.service',
+      );
       const { calendarLGPDAuditService } = require('@/services/lgpd/audit-logging.service');
 
       // Consent service methods
@@ -162,7 +174,9 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
       expect(typeof calendarLGPDConsentService.minimizeAppointmentData).toBe('function');
 
       // Data minimization service methods
-      expect(typeof calendarDataMinimizationService.minimizeAppointmentWithCompliance).toBe('function');
+      expect(typeof calendarDataMinimizationService.minimizeAppointmentWithCompliance).toBe(
+        'function',
+      );
       expect(typeof calendarDataMinimizationService.batchMinimizeAppointments).toBe('function');
 
       // Audit service methods
@@ -197,11 +211,12 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
-        expect(screen.getByText(/✓ Conformidade LGPD|⚠.*bloqueado\(s\) por LGPD/)).toBeInTheDocument();
+        expect(screen.getByText(/✓ Conformidade LGPD|⚠.*bloqueado\(s\) por LGPD/))
+          .toBeInTheDocument();
       });
     });
 
@@ -213,7 +228,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -230,7 +245,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -250,14 +265,14 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
         expect(calendarLGPDConsentService.processAppointmentsWithCompliance).toHaveBeenCalledWith(
           mockAppointments,
           'current_user',
-          'user'
+          'user',
         );
       });
     });
@@ -270,7 +285,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -281,7 +296,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
     it('should FAIL - should show compliance issues when detected', async () => {
       // RED: This test fails if compliance issue display is missing
       const { calendarLGPDConsentService } = require('@/services/lgpd/calendar-consent.service');
-      
+
       // Mock compliance issues
       calendarLGPDConsentService.processAppointmentsWithCompliance.mockResolvedValue({
         compliantAppointments: [],
@@ -303,7 +318,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -315,7 +330,9 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
   describe('Event Updates with LGPD Compliance', () => {
     it('should FAIL - should validate consent before event updates', async () => {
       // RED: This test fails if consent validation is missing
-      const { calendarLGPDConsentService, calendarLGPDAuditService } = require('@/services/lgpd/calendar-consent.service');
+      const { calendarLGPDConsentService, calendarLGPDAuditService } = require(
+        '@/services/lgpd/calendar-consent.service',
+      );
 
       render(
         <Experiment06CalendarIntegration
@@ -323,7 +340,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -335,7 +352,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           'apt-123',
           'appointment_management',
           'current_user',
-          'user'
+          'user',
         );
         expect(calendarLGPDAuditService.logAppointmentAccess).toHaveBeenCalled();
       });
@@ -344,7 +361,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
     it('should FAIL - should block updates without valid consent', async () => {
       // RED: This test fails if consent-based blocking is missing
       const { calendarLGPDConsentService } = require('@/services/lgpd/calendar-consent.service');
-      
+
       // Mock invalid consent
       calendarLGPDConsentService.validateCalendarConsent.mockResolvedValue({
         isValid: false,
@@ -361,7 +378,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -384,7 +401,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -399,7 +416,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           expect.objectContaining({ isValid: true }),
           expect.any(String),
           'edit',
-          expect.objectContaining({ updateDetails: {} })
+          expect.objectContaining({ updateDetails: {} }),
         );
       });
     });
@@ -408,7 +425,9 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
   describe('Event Deletion with LGPD Compliance', () => {
     it('should FAIL - should validate consent before event deletion', async () => {
       // RED: This test fails if consent validation is missing
-      const { calendarLGPDConsentService, calendarLGPDAuditService } = require('@/services/lgpd/calendar-consent.service');
+      const { calendarLGPDConsentService, calendarLGPDAuditService } = require(
+        '@/services/lgpd/calendar-consent.service',
+      );
 
       render(
         <Experiment06CalendarIntegration
@@ -416,7 +435,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -428,7 +447,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           'apt-123',
           'appointment_management',
           'current_user',
-          'user'
+          'user',
         );
         expect(calendarLGPDAuditService.logAppointmentAccess).toHaveBeenCalled();
       });
@@ -437,7 +456,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
     it('should FAIL - should block deletions without valid consent', async () => {
       // RED: This test fails if consent-based blocking is missing
       const { calendarLGPDConsentService } = require('@/services/lgpd/calendar-consent.service');
-      
+
       calendarLGPDConsentService.validateCalendarConsent.mockResolvedValue({
         isValid: false,
         error: 'Consentimento não válido para exclusão',
@@ -449,7 +468,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -472,7 +491,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -487,9 +506,9 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           expect.objectContaining({ isValid: true }),
           expect.any(String),
           'edit',
-          expect.objectContaining({ 
-            deletionReason: 'User initiated deletion' 
-          })
+          expect.objectContaining({
+            deletionReason: 'User initiated deletion',
+          }),
         );
       });
     });
@@ -506,7 +525,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -522,7 +541,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           expect.any(String),
           [],
           [],
-          expect.objectContaining({ action: 'NEW_CONSULTATION_INITIATED' })
+          expect.objectContaining({ action: 'NEW_CONSULTATION_INITIATED' }),
         );
       });
     });
@@ -530,9 +549,9 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
     it('should FAIL - should proceed with consultation even if audit logging fails', async () => {
       // RED: This test fails if audit error handling is missing
       const { calendarLGPDAuditService } = require('@/services/lgpd/audit-logging.service');
-      
+
       calendarLGPDAuditService.logBatchOperation.mockRejectedValue(
-        new Error('Audit logging failed')
+        new Error('Audit logging failed'),
       );
 
       render(
@@ -541,7 +560,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -559,9 +578,9 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
     it('should FAIL - should handle LGPD service errors gracefully', async () => {
       // RED: This test fails if error handling is not robust
       const { calendarLGPDConsentService } = require('@/services/lgpd/calendar-consent.service');
-      
+
       calendarLGPDConsentService.processAppointmentsWithCompliance.mockRejectedValue(
-        new Error('LGPD service unavailable')
+        new Error('LGPD service unavailable'),
       );
 
       render(
@@ -570,11 +589,12 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
-        expect(screen.getByText('Erro ao processar agendamentos com conformidade LGPD')).toBeInTheDocument();
+        expect(screen.getByText('Erro ao processar agendamentos com conformidade LGPD'))
+          .toBeInTheDocument();
         expect(screen.getByText('✓ Conformidade LGPD')).toBeInTheDocument(); // Fallback state
       });
     });
@@ -582,9 +602,9 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
     it('should FAIL - should show fallback data on compliance errors', async () => {
       // RED: This test fails if fallback data is missing
       const { calendarLGPDConsentService } = require('@/services/lgpd/calendar-consent.service');
-      
+
       calendarLGPDConsentService.processAppointmentsWithCompliance.mockRejectedValue(
-        new Error('Compliance error')
+        new Error('Compliance error'),
       );
 
       render(
@@ -593,13 +613,13 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
         const calendar = screen.getByTestId('event-calendar');
         const events = calendar.querySelectorAll('[data-event-id]');
-        
+
         // Should show fallback appointment data
         expect(events.length).toBeGreaterThan(0);
         expect(screen.getByText('Agendamento Reservado', { exact: false })).toBeInTheDocument();
@@ -609,7 +629,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
     it('should FAIL - should block all appointments when compliance fails completely', async () => {
       // RED: This test fails if complete failure blocking is missing
       const { calendarLGPDConsentService } = require('@/services/lgpd/calendar-consent.service');
-      
+
       calendarLGPDConsentService.processAppointmentsWithCompliance.mockResolvedValue({
         compliantAppointments: [],
         consentIssues: mockAppointments.map(apt => ({
@@ -629,14 +649,14 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
         expect(screen.getByText(/1 bloqueado\(s\) por LGPD/)).toBeInTheDocument();
         const calendar = screen.getByTestId('event-calendar');
         const events = calendar.querySelectorAll('[data-event-id]');
-        
+
         // Should not show any appointments when all are blocked
         expect(events.length).toBe(0);
       });
@@ -647,10 +667,10 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
     it('should FAIL - should show loading state during compliance processing', async () => {
       // RED: This test fails if loading state is missing
       const { calendarLGPDConsentService } = require('@/services/lgpd/calendar-consent.service');
-      
+
       // Mock slow processing
       calendarLGPDConsentService.processAppointmentsWithCompliance.mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 100))
+        () => new Promise(resolve => setTimeout(resolve, 100)),
       );
 
       render(
@@ -659,7 +679,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       // Should show loading state immediately
@@ -674,9 +694,9 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
     it('should FAIL - should disable interactions during loading', async () => {
       // RED: This test fails if interaction disabling is missing
       const { calendarLGPDConsentService } = require('@/services/lgpd/calendar-consent.service');
-      
+
       calendarLGPDConsentService.processAppointmentsWithCompliance.mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 100))
+        () => new Promise(resolve => setTimeout(resolve, 100)),
       );
 
       render(
@@ -685,13 +705,13 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       // Interactions should be disabled during loading
       const updateButton = screen.getByText('Update Event');
       const deleteButton = screen.getByText('Delete Event');
-      
+
       // Note: Testing disabled state depends on actual implementation
       expect(updateButton).toBeInTheDocument();
       expect(deleteButton).toBeInTheDocument();
@@ -707,13 +727,13 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
         const complianceStatus = screen.getByText(/✓ Conformidade LGPD|⚠.*bloqueado\(s\) por LGPD/);
         expect(complianceStatus).toBeInTheDocument();
-        
+
         // Should have proper ARIA attributes
         expect(complianceStatus).toHaveAttribute('role');
       });
@@ -727,7 +747,7 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
@@ -748,11 +768,13 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
-        expect(calendarLGPDConsentService.processAppointmentsWithCompliance).toHaveBeenCalledTimes(1);
+        expect(calendarLGPDConsentService.processAppointmentsWithCompliance).toHaveBeenCalledTimes(
+          1,
+        );
       });
 
       // Update appointments
@@ -768,15 +790,17 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-        />
+        />,
       );
 
       await waitFor(() => {
-        expect(calendarLGPDConsentService.processAppointmentsWithCompliance).toHaveBeenCalledTimes(2);
+        expect(calendarLGPDConsentService.processAppointmentsWithCompliance).toHaveBeenCalledTimes(
+          2,
+        );
         expect(calendarLGPDConsentService.processAppointmentsWithCompliance).toHaveBeenCalledWith(
           newAppointments,
           'current_user',
-          'user'
+          'user',
         );
       });
     });
@@ -790,12 +814,14 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-          className="test-class"
-        />
+          className='test-class'
+        />,
       );
 
       await waitFor(() => {
-        expect(calendarLGPDConsentService.processAppointmentsWithCompliance).toHaveBeenCalledTimes(1);
+        expect(calendarLGPDConsentService.processAppointmentsWithCompliance).toHaveBeenCalledTimes(
+          1,
+        );
       });
 
       // Rerender with same appointments (should not reprocess)
@@ -805,8 +831,8 @@ describe('Experiment06CalendarIntegration - LGPD Dependencies RED Phase Tests', 
           onEventUpdate={mockOnEventUpdate}
           onEventDelete={mockOnEventDelete}
           onNewConsultation={mockOnNewConsultation}
-          className="test-class-updated"
-        />
+          className='test-class-updated'
+        />,
       );
 
       // Should not reprocess if appointments haven't changed

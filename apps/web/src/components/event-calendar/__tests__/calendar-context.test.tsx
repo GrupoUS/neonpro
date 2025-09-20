@@ -3,11 +3,11 @@
  * Tests state management, event operations, filtering, and navigation functionality
  */
 
-import React, { act } from 'react';
-import { render, waitFor, screen, fireEvent } from '@testing-library/react';
-import { CalendarProvider, useCalendarContext } from '../calendar-context';
 import { EventService } from '@/services/event.service';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import React, { act } from 'react';
 import { toast } from 'sonner';
+import { CalendarProvider, useCalendarContext } from '../calendar-context';
 
 // Mock dependencies
 vi.mock('@/services/event.service');
@@ -15,48 +15,50 @@ vi.mock('sonner');
 
 const TestComponent = () => {
   const context = useCalendarContext();
-  
+
   return (
-    <div data-testid="test-component">
-      <div data-testid="loading">{context.loading.toString()}</div>
-      <div data-testid="error">{context.error || 'no-error'}</div>
-      <div data-testid="events-count">{context.events.length}</div>
-      <div data-testid="filtered-events-count">{context.filteredEvents.length}</div>
-      <div data-testid="current-view">{context.currentView}</div>
-      <button 
-        data-testid="create-event"
-        onClick={() => context.createEvent({
-          title: 'Test Event',
-          start: new Date(),
-          end: new Date(Date.now() + 3600000),
-          clinicId: 'test-clinic',
-        })}
+    <div data-testid='test-component'>
+      <div data-testid='loading'>{context.loading.toString()}</div>
+      <div data-testid='error'>{context.error || 'no-error'}</div>
+      <div data-testid='events-count'>{context.events.length}</div>
+      <div data-testid='filtered-events-count'>{context.filteredEvents.length}</div>
+      <div data-testid='current-view'>{context.currentView}</div>
+      <button
+        data-testid='create-event'
+        onClick={() =>
+          context.createEvent({
+            title: 'Test Event',
+            start: new Date(),
+            end: new Date(Date.now() + 3600000),
+            clinicId: 'test-clinic',
+          })}
       >
         Create Event
       </button>
-      <button 
-        data-testid="update-event"
-        onClick={() => context.updateEvent({
-          id: 'test-id',
-          title: 'Updated Event',
-        })}
+      <button
+        data-testid='update-event'
+        onClick={() =>
+          context.updateEvent({
+            id: 'test-id',
+            title: 'Updated Event',
+          })}
       >
         Update Event
       </button>
-      <button 
-        data-testid="delete-event"
+      <button
+        data-testid='delete-event'
         onClick={() => context.deleteEvent('test-id')}
       >
         Delete Event
       </button>
-      <button 
-        data-testid="navigate-today"
+      <button
+        data-testid='navigate-today'
         onClick={context.navigateToToday}
       >
         Navigate Today
       </button>
-      <button 
-        data-testid="set-view"
+      <button
+        data-testid='set-view'
         onClick={() => context.setCurrentView('week')}
       >
         Set View
@@ -82,7 +84,7 @@ describe('CalendarProvider', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock EventService methods
     vi.mocked(EventService.getEvents).mockResolvedValue([mockEvent as any]);
     vi.mocked(EventService.createEvent).mockResolvedValue(mockEvent as any);
@@ -98,7 +100,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     expect(screen.getByTestId('loading')).toHaveTextContent('true');
@@ -111,7 +113,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     await waitFor(() => {
@@ -136,7 +138,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     expect(screen.getByTestId('loading')).toHaveTextContent('true');
@@ -153,7 +155,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     await waitFor(() => {
@@ -171,7 +173,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     // Wait for initial load
@@ -203,7 +205,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     // Wait for initial load
@@ -225,7 +227,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     // Wait for initial load
@@ -252,7 +254,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     // Wait for initial load
@@ -276,7 +278,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     // Wait for initial load
@@ -297,7 +299,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     // Wait for initial load
@@ -317,7 +319,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     // Wait for initial load
@@ -344,7 +346,7 @@ describe('CalendarProvider', () => {
     render(
       <CalendarProvider>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     await waitFor(() => {
@@ -356,11 +358,11 @@ describe('CalendarProvider', () => {
 
   it('should use initial events when provided', async () => {
     const initialEvents = [mockEvent as any];
-    
+
     render(
       <CalendarProvider initialEvents={initialEvents}>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     // Should start with initial events
@@ -374,18 +376,18 @@ describe('CalendarProvider', () => {
 
   it('should apply clinic ID filter when provided', async () => {
     const defaultClinicId = 'default-clinic-id';
-    
+
     render(
       <CalendarProvider defaultClinicId={defaultClinicId}>
         <TestComponent />
-      </CalendarProvider>
+      </CalendarProvider>,
     );
 
     await waitFor(() => {
       expect(EventService.getEvents).toHaveBeenCalledWith(
         expect.objectContaining({
           clinicId: [defaultClinicId],
-        })
+        }),
       );
     });
   });

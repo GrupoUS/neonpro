@@ -54,6 +54,10 @@ export const createContext = (opts: CreateHTTPContextOptions) => {
     clinicId,
     requestId,
     auditMeta,
+    // Authorization info will be populated by CFM validation middleware
+    authorization: null as any,
+    consentValidated: false,
+    consentRecord: null as any,
   };
 };
 

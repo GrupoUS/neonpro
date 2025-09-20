@@ -50,35 +50,6 @@ QUALITY_STANDARDS:
 4. **[Phase 4 Name]** → [Description of fourth phase in agent's workflow]
 5. **[Phase 5 Name]** → [Description of fifth phase in agent's workflow]
 
-### **Complexity Mapping**
-
-```yaml
-COMPLEXITY_LEVELS:
-  L1_L2_Basic:
-    approach: "[Approach for basic complexity tasks]"
-    tools: "[Tools used for basic tasks]"
-    validation: "[Validation method for basic tasks]"
-    output: "[Expected output for basic tasks]"
-
-  L3_L4_Enhanced:
-    approach: "[Approach for enhanced complexity tasks]"
-    tools: "[Tools used for enhanced tasks]"
-    validation: "[Validation method for enhanced tasks]"
-    output: "[Expected output for enhanced tasks]"
-
-  L5_L6_Comprehensive:
-    approach: "[Approach for comprehensive complexity tasks]"
-    tools: "[Tools used for comprehensive tasks]"
-    validation: "[Validation method for comprehensive tasks]"
-    output: "[Expected output for comprehensive tasks]"
-
-  L7_L10_Critical:
-    approach: "[Approach for critical complexity tasks]"
-    tools: "[Tools used for critical tasks]"
-    validation: "[Validation method for critical tasks]"
-    output: "[Expected output for critical tasks]"
-```
-
 ## 🛠️ MCP TOOL ORCHESTRATION
 
 ### **Tool Coordination Strategy**

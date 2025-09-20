@@ -226,7 +226,7 @@ describe("Orchestration Integration", () => {
         depth: "L5" as const,
         healthcare: true,
         parallel: false,
-        agents: ["security-auditor", "architect-review"] as AgentName[],
+        agents: ["test-auditor", "architect-review"] as AgentName[],
         orchestrator: true,
       };
 
@@ -327,7 +327,7 @@ describe("Orchestration Integration", () => {
       // 6. Execute healthcare quality control bridge command
       const healthcareBridgeResult =
         await qualityControlBridge.executeQualityControl(
-          `compliance ${healthcareFeature.name} --depth=L5 --healthcare --agents=security-auditor,architect-review`,
+          `compliance ${healthcareFeature.name} --depth=L5 --healthcare --agents=test-auditor,architect-review`,
         );
 
       expect(healthcareBridgeResult.success).toBe(true);
@@ -721,7 +721,7 @@ describe("Orchestration Integration", () => {
         parallel: true,
         agents: [
           "code-reviewer",
-          "security-auditor",
+          "test-auditor",
           "test",
           "architect-review",
         ] as AgentName[],

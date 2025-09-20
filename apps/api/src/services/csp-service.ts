@@ -209,7 +209,7 @@ export async function updateCSPPolicy(
 /**
  * Delete CSP policy
  */
-export async function deleteCSPPolicy(id: string): Promise<boolean> {
+export async function deleteCSPPolicy(_id: string): Promise<boolean> {
   // Mock implementation for contract testing
   return true;
 }

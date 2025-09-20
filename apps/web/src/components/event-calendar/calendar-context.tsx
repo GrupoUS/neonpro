@@ -1,18 +1,25 @@
-"use client";
+'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useEffect, useCallback } from "react";
-import { etiquettes } from "@/components/big-calendar";
-import { toast } from "sonner";
-import type { 
-  CalendarEvent, 
+import { etiquettes } from '@/components/big-calendar';
+import type {
+  CalendarEvent,
+  CalendarEventExtended,
   CalendarView,
+  CreateEventData,
   EventFilterOptions,
   EventSearchOptions,
-  CreateEventData,
   UpdateEventData,
-  CalendarEventExtended,
-} from "@/components/event-calendar";
-import { EventService } from "@/services/event.service";
+} from '@/components/event-calendar';
+import { EventService } from '@/services/event.service';
+import React, {
+  createContext,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import { toast } from 'sonner';
 
 interface CalendarContextType {
   // Date management
@@ -28,20 +35,22 @@ interface CalendarContextType {
   events: CalendarEventExtended[];
   loading: boolean;
   error: string | null;
-  
+
   // Event CRUD operations
   createEvent: (event: CreateEventData) => Promise<void>;
   updateEvent: (event: UpdateEventData) => Promise<void>;
   deleteEvent: (id: string) => Promise<void>;
   refreshEvents: () => Promise<void>;
-  
+
   // Event filtering and search
   filteredEvents: CalendarEventExtended[];
-  searchEvents: (options: EventSearchOptions) => Promise<{ events: CalendarEventExtended[]; totalCount: number; hasMore: boolean }>;
+  searchEvents: (
+    options: EventSearchOptions,
+  ) => Promise<{ events: CalendarEventExtended[]; totalCount: number; hasMore: boolean }>;
   applyFilters: (filters: EventFilterOptions) => void;
   clearFilters: () => void;
   currentFilters: EventFilterOptions | null;
-  
+
   // Calendar navigation
   currentView: CalendarView;
   setCurrentView: (view: CalendarView) => void;
@@ -59,7 +68,7 @@ export function useCalendarContext() {
   const context = useContext(CalendarContext);
   if (context === undefined) {
     throw new Error(
-      "useCalendarContext must be used within a CalendarProvider",
+      'useCalendarContext must be used within a CalendarProvider',
     );
   }
   return context;
@@ -71,20 +80,20 @@ interface CalendarProviderProps {
   defaultClinicId?: string;
 }
 
-export function CalendarProvider({ 
-  children, 
+export function CalendarProvider({
+  children,
   initialEvents = [],
-  defaultClinicId 
+  defaultClinicId,
 }: CalendarProviderProps) {
   // State for date and color management
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
-  const [currentView, setCurrentView] = useState<CalendarView>("month");
-  
+  const [currentView, setCurrentView] = useState<CalendarView>('month');
+
   // Initialize visibleColors based on the isActive property in etiquettes
   const [visibleColors, setVisibleColors] = useState<string[]>(() => {
     return etiquettes
-      .filter((etiquette) => etiquette.isActive)
-      .map((etiquette) => etiquette.color);
+      .filter(etiquette => etiquette.isActive)
+      .map(etiquette => etiquette.color);
   });
 
   // Event management state
@@ -104,22 +113,22 @@ export function CalendarProvider({
       let endDate: Date;
 
       switch (currentView) {
-        case "day":
+        case 'day':
           startDate = new Date(currentDate);
           endDate = new Date(currentDate);
           endDate.setDate(endDate.getDate() + 1);
           break;
-        case "week":
+        case 'week':
           startDate = new Date(currentDate);
           startDate.setDate(startDate.getDate() - startDate.getDay()); // Start of week
           endDate = new Date(startDate);
           endDate.setDate(endDate.getDate() + 7); // End of week
           break;
-        case "month":
+        case 'month':
           startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
           endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
           break;
-        case "agenda":
+        case 'agenda':
           startDate = new Date(currentDate);
           endDate = new Date(currentDate);
           endDate.setDate(endDate.getDate() + 30); // Show 30 days in agenda
@@ -163,9 +172,9 @@ export function CalendarProvider({
 
   // Toggle visibility of a color
   const toggleColorVisibility = useCallback((color: string) => {
-    setVisibleColors((prev) => {
+    setVisibleColors(prev => {
       if (prev.includes(color)) {
-        return prev.filter((c) => c !== color);
+        return prev.filter(c => c !== color);
       } else {
         return [...prev, color];
       }
@@ -191,9 +200,9 @@ export function CalendarProvider({
       };
 
       const newEvent = await EventService.createEvent(finalEventData);
-      
+
       setEvents(prev => [...prev, newEvent]);
-      
+
       // Apply filters to new event
       if (currentFilters) {
         // For simplicity, just refresh the filtered events
@@ -201,7 +210,7 @@ export function CalendarProvider({
       } else {
         setFilteredEvents(prev => [...prev, newEvent]);
       }
-      
+
       toast.success(`Event "${newEvent.title}" created successfully`);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create event';
@@ -219,16 +228,14 @@ export function CalendarProvider({
 
     try {
       const updatedEvent = await EventService.updateEvent(eventData);
-      
-      setEvents(prev => 
-        prev.map(event => event.id === eventData.id ? updatedEvent : event)
-      );
-      
+
+      setEvents(prev => prev.map(event => event.id === eventData.id ? updatedEvent : event));
+
       // Update filtered events
-      setFilteredEvents(prev => 
+      setFilteredEvents(prev =>
         prev.map(event => event.id === eventData.id ? updatedEvent : event)
       );
-      
+
       toast.success(`Event "${updatedEvent.title}" updated successfully`);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update event';
@@ -246,12 +253,12 @@ export function CalendarProvider({
 
     try {
       const eventToDelete = events.find(e => e.id === id);
-      
+
       await EventService.deleteEvent(id);
-      
+
       setEvents(prev => prev.filter(event => event.id !== id));
       setFilteredEvents(prev => prev.filter(event => event.id !== id));
-      
+
       if (eventToDelete) {
         toast.success(`Event "${eventToDelete.title}" deleted successfully`);
       }
@@ -303,16 +310,16 @@ export function CalendarProvider({
   const navigatePrevious = useCallback(() => {
     const newDate = new Date(currentDate);
     switch (currentView) {
-      case "day":
+      case 'day':
         newDate.setDate(newDate.getDate() - 1);
         break;
-      case "week":
+      case 'week':
         newDate.setDate(newDate.getDate() - 7);
         break;
-      case "month":
+      case 'month':
         newDate.setMonth(newDate.getMonth() - 1);
         break;
-      case "agenda":
+      case 'agenda':
         newDate.setDate(newDate.getDate() - 7);
         break;
     }
@@ -322,16 +329,16 @@ export function CalendarProvider({
   const navigateNext = useCallback(() => {
     const newDate = new Date(currentDate);
     switch (currentView) {
-      case "day":
+      case 'day':
         newDate.setDate(newDate.getDate() + 1);
         break;
-      case "week":
+      case 'week':
         newDate.setDate(newDate.getDate() + 7);
         break;
-      case "month":
+      case 'month':
         newDate.setMonth(newDate.getMonth() + 1);
         break;
-      case "agenda":
+      case 'agenda':
         newDate.setDate(newDate.getDate() + 7);
         break;
     }
@@ -342,12 +349,12 @@ export function CalendarProvider({
     // Date management
     currentDate,
     setCurrentDate,
-    
+
     // Etiquette visibility management
     visibleColors,
     toggleColorVisibility,
     isColorVisible,
-    
+
     // Event management
     events,
     loading,
@@ -356,14 +363,14 @@ export function CalendarProvider({
     updateEvent,
     deleteEvent,
     refreshEvents,
-    
+
     // Event filtering and search
     filteredEvents,
     searchEvents,
     applyFilters,
     clearFilters,
     currentFilters,
-    
+
     // Calendar navigation
     currentView,
     setCurrentView,

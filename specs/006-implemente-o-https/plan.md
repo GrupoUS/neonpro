@@ -42,8 +42,9 @@ Create a conversational AI interface for NeonPro that allows healthcare professi
 **Storage**: Supabase (PostgreSQL) with RLS policies  
 **Testing**: Jest/Vitest for unit tests, Playwright for E2E  
 **Target Platform**: Web application (Next.js)  
-**Performance Goals**: <2s response time for simple queries, support concurrent users  
-**Constraints**: Must respect RLS policies, no exposure of service keys, real-time communication  
+**Performance Goals**: <2s response time for simple queries, HTTPS handshake ≤300ms, support concurrent users  
+**Security Requirements**: HTTPS with TLS 1.3+, HSTS enforcement, comprehensive security headers, automatic certificate renewal  
+**Constraints**: Must respect RLS policies, no exposure of service keys, real-time communication, all traffic MUST use HTTPS  
 **Scale/Scope**: Multi-tenant healthcare application with role-based access control  
 **Project Type**: web (frontend + backend)
 
@@ -63,6 +64,13 @@ _GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 - ✅ Focused on user value - quick data access without navigation
 - ✅ Testable requirements - clear acceptance criteria defined
 - ✅ Security first - RLS enforcement at all layers
+- ✅ HTTPS mandatory - TLS 1.3+ for all production traffic
+- ✅ HSTS enforcement - max-age ≥31536000 with includeSubDomains
+- ✅ Security headers - comprehensive implementation required
+- ✅ Certificate management - automatic renewal and monitoring
+- ✅ Mixed content prevention - all resources served over HTTPS
+- ✅ Perfect Forward Secrecy - PFS cipher suites supported
+- ✅ Certificate Transparency - logging enabled for all certificates
 
 ## Project Structure
 
@@ -122,11 +130,17 @@ tests/
    - ✅ Resolved: AG-UI Protocol implementation
    - ✅ Resolved: Database security with RLS
    - ✅ Resolved: Performance requirements
+   - ✅ Resolved: HTTPS/TLS 1.3 implementation approach
+   - ✅ Resolved: Security headers configuration
+   - ✅ Resolved: Certificate management strategy
 
 2. **Generate and dispatch research agents**:
    - ✅ Completed: Research on CopilotKit, AG-UI, ottomator-agents
    - ✅ Completed: Best practices for AI chat interfaces
    - ✅ Completed: Security patterns for database access
+   - ✅ Completed: HTTPS implementation in Node.js/Next.js applications
+   - ✅ Completed: Certificate management and renewal strategies
+   - ✅ Completed: Security headers best practices for healthcare applications
 
 3. **Consolidate findings** in `research.md` using format:
    - ✅ Decision: [what was chosen]
@@ -163,7 +177,14 @@ _Prerequisites: research.md complete_
    - ✅ Preserve manual additions between markers
    - ✅ Keep under 150 lines for token efficiency
 
-**Output**: data-model.md, /contracts/\*, failing tests, quickstart.md, AGENTS.md ✓
+6. **HTTPS Configuration Design**:
+   - ✅ Define security headers middleware structure
+   - ✅ Plan certificate management integration
+   - ✅ Design HSTS policy implementation
+   - ✅ Create CSP policy for chat interface
+   - ✅ Plan mixed content prevention strategy
+
+**Output**: data-model.md, /contracts/\*, failing tests, quickstart.md, AGENTS.md, HTTPS configuration design ✓
 
 ## Phase 2: Task Planning Approach
 

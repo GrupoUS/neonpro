@@ -3,7 +3,7 @@
  * React Query hooks for patient communication and notifications
  */
 
-import { patientCommunicationService } from "@/services/patient-communication.service";
+import { patientCommunicationService } from '@/services/patient-communication.service';
 import type {
   CommunicationFilters,
   CommunicationSettings,
@@ -11,25 +11,23 @@ import type {
   PatientCommunicationPreferences,
   SendMessageRequest,
   UpdateCommunicationTemplateRequest,
-} from "@/types/patient-communication";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+} from '@/types/patient-communication';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 // Query Keys
 export const communicationKeys = {
-  all: ["communication"] as const,
-  templates: () => [...communicationKeys.all, "templates"] as const,
+  all: ['communication'] as const,
+  templates: () => [...communicationKeys.all, 'templates'] as const,
   templatesList: (clinicId: string, filters?: any) =>
     [...communicationKeys.templates(), clinicId, filters] as const,
-  messages: () => [...communicationKeys.all, "messages"] as const,
+  messages: () => [...communicationKeys.all, 'messages'] as const,
   messagesList: (clinicId: string, filters?: CommunicationFilters) =>
     [...communicationKeys.messages(), clinicId, filters] as const,
-  settings: (clinicId: string) =>
-    [...communicationKeys.all, "settings", clinicId] as const,
-  preferences: (patientId: string) =>
-    [...communicationKeys.all, "preferences", patientId] as const,
+  settings: (clinicId: string) => [...communicationKeys.all, 'settings', clinicId] as const,
+  preferences: (patientId: string) => [...communicationKeys.all, 'preferences', patientId] as const,
   stats: (clinicId: string, startDate?: string, endDate?: string) =>
-    [...communicationKeys.all, "stats", clinicId, startDate, endDate] as const,
+    [...communicationKeys.all, 'stats', clinicId, startDate, endDate] as const,
 };
 
 /**
@@ -45,8 +43,7 @@ export function useCommunicationTemplates(
 ) {
   return useQuery({
     queryKey: communicationKeys.templatesList(clinicId, filters),
-    queryFn: () =>
-      patientCommunicationService.getCommunicationTemplates(clinicId, filters),
+    queryFn: () => patientCommunicationService.getCommunicationTemplates(clinicId, filters),
     enabled: !!clinicId,
   });
 }
@@ -76,11 +73,11 @@ export function useCreateCommunicationTemplate() {
         queryKey: communicationKeys.templates(),
       });
 
-      toast.success("Template de comunicação criado com sucesso!");
+      toast.success('Template de comunicação criado com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error creating communication template:", error);
+      console.error('Error creating communication template:', error);
       toast.error(`Erro ao criar template: ${error.message}`);
     },
   });
@@ -107,11 +104,11 @@ export function useUpdateCommunicationTemplate() {
         queryKey: communicationKeys.templates(),
       });
 
-      toast.success("Template de comunicação atualizado com sucesso!");
+      toast.success('Template de comunicação atualizado com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error updating communication template:", error);
+      console.error('Error updating communication template:', error);
       toast.error(`Erro ao atualizar template: ${error.message}`);
     },
   });
@@ -124,8 +121,7 @@ export function useDeleteCommunicationTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      patientCommunicationService.deleteCommunicationTemplate(id),
+    mutationFn: (id: string) => patientCommunicationService.deleteCommunicationTemplate(id),
 
     onSuccess: () => {
       // Invalidate templates list
@@ -133,11 +129,11 @@ export function useDeleteCommunicationTemplate() {
         queryKey: communicationKeys.templates(),
       });
 
-      toast.success("Template de comunicação excluído com sucesso!");
+      toast.success('Template de comunicação excluído com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error deleting communication template:", error);
+      console.error('Error deleting communication template:', error);
       toast.error(`Erro ao excluir template: ${error.message}`);
     },
   });
@@ -164,11 +160,11 @@ export function useSendMessage() {
         queryKey: communicationKeys.messages(),
       });
 
-      toast.success("Mensagem enviada com sucesso!");
+      toast.success('Mensagem enviada com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error sending message:", error);
+      console.error('Error sending message:', error);
       toast.error(`Erro ao enviar mensagem: ${error.message}`);
     },
   });
@@ -183,8 +179,7 @@ export function useCommunicationMessages(
 ) {
   return useQuery({
     queryKey: communicationKeys.messagesList(clinicId, filters),
-    queryFn: () =>
-      patientCommunicationService.getCommunicationMessages(clinicId, filters),
+    queryFn: () => patientCommunicationService.getCommunicationMessages(clinicId, filters),
     enabled: !!clinicId,
     refetchInterval: 1000 * 30, // Refetch every 30 seconds for status updates
   });
@@ -196,8 +191,7 @@ export function useCommunicationMessages(
 export function useCommunicationSettings(clinicId: string) {
   return useQuery({
     queryKey: communicationKeys.settings(clinicId),
-    queryFn: () =>
-      patientCommunicationService.getCommunicationSettings(clinicId),
+    queryFn: () => patientCommunicationService.getCommunicationSettings(clinicId),
     enabled: !!clinicId,
   });
 }
@@ -221,18 +215,18 @@ export function useUpdateCommunicationSettings() {
         settings,
       ),
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Update settings in cache
       queryClient.setQueryData(
         communicationKeys.settings(data.clinic_id),
         data,
       );
 
-      toast.success("Configurações de comunicação atualizadas com sucesso!");
+      toast.success('Configurações de comunicação atualizadas com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error updating communication settings:", error);
+      console.error('Error updating communication settings:', error);
       toast.error(`Erro ao atualizar configurações: ${error.message}`);
     },
   });
@@ -244,8 +238,7 @@ export function useUpdateCommunicationSettings() {
 export function usePatientCommunicationPreferences(patientId: string) {
   return useQuery({
     queryKey: communicationKeys.preferences(patientId),
-    queryFn: () =>
-      patientCommunicationService.getPatientCommunicationPreferences(patientId),
+    queryFn: () => patientCommunicationService.getPatientCommunicationPreferences(patientId),
     enabled: !!patientId,
   });
 }
@@ -269,18 +262,18 @@ export function useUpdatePatientCommunicationPreferences() {
         preferences,
       ),
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Update preferences in cache
       queryClient.setQueryData(
         communicationKeys.preferences(data.patient_id),
         data,
       );
 
-      toast.success("Preferências de comunicação atualizadas com sucesso!");
+      toast.success('Preferências de comunicação atualizadas com sucesso!');
     },
 
     onError: (error: Error) => {
-      console.error("Error updating patient communication preferences:", error);
+      console.error('Error updating patient communication preferences:', error);
       toast.error(`Erro ao atualizar preferências: ${error.message}`);
     },
   });
@@ -326,7 +319,7 @@ export function useScheduleAppointmentReminders() {
         appointmentId,
       ),
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Invalidate messages list to show new scheduled messages
       queryClient.invalidateQueries({
         queryKey: communicationKeys.messages(),
@@ -336,7 +329,7 @@ export function useScheduleAppointmentReminders() {
     },
 
     onError: (error: Error) => {
-      console.error("Error scheduling appointment reminders:", error);
+      console.error('Error scheduling appointment reminders:', error);
       toast.error(`Erro ao agendar lembretes: ${error.message}`);
     },
   });
@@ -361,7 +354,7 @@ export function useCancelScheduledMessages() {
         messageTypes,
       ),
 
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Invalidate messages list to reflect cancelled messages
       queryClient.invalidateQueries({
         queryKey: communicationKeys.messages(),
@@ -373,7 +366,7 @@ export function useCancelScheduledMessages() {
     },
 
     onError: (error: Error) => {
-      console.error("Error cancelling scheduled messages:", error);
+      console.error('Error cancelling scheduled messages:', error);
       toast.error(`Erro ao cancelar mensagens: ${error.message}`);
     },
   });

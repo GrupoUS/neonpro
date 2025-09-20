@@ -293,6 +293,10 @@ constraints:
 - [ ] T002 Install AG-UI Protocol and runtime dependencies in apps/api/package.json
 - [ ] T003 [P] Configure environment variables for Supabase service key and OpenAI API
 - [ ] T004 Set up Python environment for ottomator-agents in apps/api/agents/
+- [ ] T046 [P] Configure HTTPS with TLS 1.3 in apps/api server configuration
+- [ ] T047 [P] Implement HSTS headers middleware in apps/api/src/middleware/security-headers.ts
+- [ ] T048 [P] Set up automatic SSL/TLS certificate renewal configuration
+- [ ] T049 [P] Configure comprehensive security headers middleware in apps/api/src/middleware/security-headers.ts
 
 ## Phase 3.2: Tests First (TDD) ⚠️ MUST COMPLETE BEFORE 3.3
 
@@ -305,6 +309,10 @@ constraints:
 - [ ] T009 [P] Integration test appointment query in tests/integration/appointment-query.test.ts
 - [ ] T010 [P] Integration test financial query in tests/integration/financial-query.test.ts
 - [ ] T011 [P] Integration test access control in tests/integration/access-control.test.ts
+- [ ] T050 [P] HTTPS enforcement test in tests/integration/https-enforcement.test.ts
+- [ ] T051 [P] Security headers validation test in tests/integration/security-headers.test.ts
+- [ ] T052 [P] Mixed content prevention test in tests/integration/mixed-content.test.ts
+- [ ] T053 [P] Certificate transparency validation test in tests/integration/certificate-transparency.test.ts
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 
@@ -336,6 +344,10 @@ constraints:
 - [ ] T034 Add error handling and user-friendly error messages
 - [ ] T035 Implement permission checking and access control
 - [ ] T036 Add logging and monitoring for agent interactions
+- [ ] T054 Configure production HTTPS endpoints with proper TLS configuration
+- [ ] T055 Update all API calls to use HTTPS exclusively
+- [ ] T056 Implement Content Security Policy (CSP) for chat UI components
+- [ ] T057 Add HTTPS monitoring and certificate expiration alerts
 
 ## Phase 3.5: Polish
 
@@ -351,12 +363,14 @@ constraints:
 
 ## Dependencies
 
-- Tests (T005-T011) before implementation (T012-T026)
+- Setup tasks (T001-T004, T046-T049) can run in parallel
+- Tests (T005-T011, T050-T053) before implementation (T012-T026)
 - T016 blocks T017-T019
 - T020 blocks T021
 - T021 blocks T022-T023
 - T024 depends on T025, T026
 - Integration tasks (T027-T036) depend on core implementation
+- HTTPS integration (T054-T057) depends on setup (T046-T049) and core implementation
 - Polish tasks (T037-T045) come after all functionality is complete
 
 ## Parallel Examples

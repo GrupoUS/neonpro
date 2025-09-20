@@ -11,6 +11,7 @@
 
 import { Context, Next } from 'hono';
 import { queryMonitor } from '../utils/query-optimizer';
+import { logger } from '@/utils/secure-logger';
 
 // Performance metrics
 export interface PerformanceMetrics {
@@ -262,7 +263,7 @@ export class APIPerformanceMonitor {
         try {
           callback(alert);
         } catch (error) {
-          console.error('Error in performance alert callback:', error);
+          logger.error('Error in performance alert callback', error);
         }
       });
     });
@@ -417,12 +418,12 @@ export function createPerformanceDashboardMiddleware() {
 
 // Setup default alert handlers
 apiPerformanceMonitor.onAlert(alert => {
-  console.warn('Performance Alert:', alert);
+  logger.warn('Performance Alert', alert);
 
   // In production, you would send alerts to monitoring systems
   if (alert.severity === 'critical') {
     // Send to alerting system (PagerDuty, Slack, etc.)
-    console.error('CRITICAL PERFORMANCE ALERT:', alert.message);
+    logger.error('CRITICAL PERFORMANCE ALERT', alert.message);
   }
 });
 

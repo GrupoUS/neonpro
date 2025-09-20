@@ -597,7 +597,7 @@ export const patientsRouter = router({
           },
         );
 
-        const result = await ctx.prisma.$transaction(async prisma => {
+        const _result = await ctx.prisma.$transaction(async prisma => {
           // Update consent status
           await prisma.lGPDConsent.updateMany({
             where: {

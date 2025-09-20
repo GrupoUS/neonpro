@@ -1,5 +1,6 @@
 import { cors } from 'hono/cors';
 import { errorHandler } from './middleware/error-handler';
+import { errorSanitizationMiddleware } from './middleware/error-sanitization';
 import aiRouter from './routes/ai';
 import appointmentsRouter from './routes/appointments';
 import { billing } from './routes/billing';
@@ -114,6 +115,13 @@ app.use(
 
 // Sentry middleware for error tracking and performance monitoring
 app.use('*', sentryMiddleware());
+
+// Error sanitization middleware for sensitive data protection
+app.use('*', errorSanitizationMiddleware());
+
+// HTTP error handling middleware with rate limiting and DDoS protection
+import { httpErrorHandlingMiddleware } from './middleware/http-error-handling';
+app.use('*', httpErrorHandlingMiddleware());
 
 // Global error handler with enhanced error tracking
 app.use('*', errorHandler);

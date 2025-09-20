@@ -624,7 +624,7 @@ export class PrivacyAlgorithms {
     originalId: string,
     purpose: string,
     salt: string,
-    expirationDays?: number,
+    _expirationDays?: number,
   ): Promise<void> {
     // In production, store in secure key-value store with proper encryption
     console.log(

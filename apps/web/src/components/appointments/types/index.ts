@@ -12,7 +12,7 @@ export interface TimeSlot {
   appointmentId?: string;
   patientName?: string;
   serviceName?: string;
-  riskLevel?: "low" | "medium" | "high";
+  riskLevel?: 'low' | 'medium' | 'high';
 }
 
 export interface AppointmentFormData {
@@ -32,7 +32,7 @@ export interface AppointmentFormData {
 }
 
 export interface NoShowRisk {
-  level: "low" | "medium" | "high";
+  level: 'low' | 'medium' | 'high';
   score: number;
   factors: string[];
   interventions: string[];
@@ -51,13 +51,13 @@ export interface Appointment {
   endTime: Date;
   duration: number;
   status:
-    | "scheduled"
-    | "confirmed"
-    | "completed"
-    | "cancelled"
-    | "no-show"
-    | "rescheduled";
-  type: "in-person" | "telemedicine" | "hybrid";
+    | 'scheduled'
+    | 'confirmed'
+    | 'completed'
+    | 'cancelled'
+    | 'no-show'
+    | 'rescheduled';
+  type: 'in-person' | 'telemedicine' | 'hybrid';
   notes?: string;
   noShowRisk?: NoShowRisk;
   reminderPreferences: {
@@ -103,7 +103,7 @@ export interface AppointmentAvailability {
 }
 
 export interface ReminderChannel {
-  type: "whatsapp" | "sms" | "email" | "push";
+  type: 'whatsapp' | 'sms' | 'email' | 'push';
   enabled: boolean;
   timing: number; // hours before appointment
   template: string;
@@ -117,8 +117,8 @@ export interface AppointmentFilters {
   status?: string[];
   professionalId?: string;
   patientId?: string;
-  riskLevel?: ("low" | "medium" | "high")[];
-  type?: ("in-person" | "telemedicine" | "hybrid")[];
+  riskLevel?: ('low' | 'medium' | 'high')[];
+  type?: ('in-person' | 'telemedicine' | 'hybrid')[];
   serviceId?: string;
 }
 
@@ -126,19 +126,19 @@ export interface AppointmentListOptions {
   page?: number;
   limit?: number;
   filters?: AppointmentFilters;
-  sortBy?: "startTime" | "patientName" | "status" | "riskScore";
-  sortOrder?: "asc" | "desc";
+  sortBy?: 'startTime' | 'patientName' | 'status' | 'riskScore';
+  sortOrder?: 'asc' | 'desc';
   includeNoShowRisk?: boolean;
   includeAnalytics?: boolean;
 }
 
 export type AppointmentStatus =
-  | "scheduled"
-  | "confirmed"
-  | "completed"
-  | "cancelled"
-  | "no-show"
-  | "rescheduled";
-export type AppointmentType = "in-person" | "telemedicine" | "hybrid";
-export type RiskLevel = "low" | "medium" | "high";
-export type ReminderChannelType = "whatsapp" | "sms" | "email" | "push";
+  | 'scheduled'
+  | 'confirmed'
+  | 'completed'
+  | 'cancelled'
+  | 'no-show'
+  | 'rescheduled';
+export type AppointmentType = 'in-person' | 'telemedicine' | 'hybrid';
+export type RiskLevel = 'low' | 'medium' | 'high';
+export type ReminderChannelType = 'whatsapp' | 'sms' | 'email' | 'push';

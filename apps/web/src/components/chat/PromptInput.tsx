@@ -1,5 +1,5 @@
-import { AIPrompt } from "@/components/ui/ai-chat";
-import { useI18n } from "@/i18n/i18n";
+import { AIPrompt } from '@/components/ui/ai-chat';
+import { useI18n } from '@/i18n/i18n';
 
 export type PromptInputProps = {
   placeholder?: string;
@@ -13,6 +13,6 @@ export default function PromptInput({
   onSubmit,
 }: PromptInputProps) {
   const { t } = useI18n();
-  const ph = placeholder ?? t("chat.placeholder");
+  const ph = placeholder ?? t('chat.placeholder');
   return <AIPrompt onSubmit={onSubmit} placeholder={ph} disabled={disabled} />;
 }

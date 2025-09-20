@@ -240,7 +240,7 @@ The test suite includes comprehensive mocks for:
 **Healthcare Compliance**
 
 ```typescript
-vi.mock("@/utils/accessibility/healthcare-audit-utils", () => ({
+vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({
   validateCalendarEvent: vi.fn(),
   auditEventAccess: vi.fn(),
   validateLGPDCompliance: vi.fn(),
@@ -253,7 +253,7 @@ vi.mock("@/utils/accessibility/healthcare-audit-utils", () => ({
 **Performance Monitoring**
 
 ```typescript
-vi.mock("@/utils/performance-optimizer", () => ({
+vi.mock('@/utils/performance-optimizer', () => ({
   measureComponentRender: vi.fn(),
   measureCalendarPerformance: vi.fn(),
   optimizeCalendarRendering: vi.fn(),

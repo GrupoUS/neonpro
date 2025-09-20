@@ -5,12 +5,8 @@
  * Brazilian data protection law compliance testing
  */
 
-import { describe, it, expect } from 'vitest';
-import {
-  LGPDValidator,
-  createLGPDTestSuite,
-  createMockLGPDData,
-} from './lgpd';
+import { describe, expect, it } from 'vitest';
+import { createLGPDTestSuite, createMockLGPDData, LGPDValidator } from './lgpd';
 
 describe('LGPDValidator', () => {
   describe('validateConsent', () => {
@@ -139,7 +135,7 @@ describe('LGPDValidator', () => {
       const data = createMockLGPDData();
       const requiredFields = ['name', 'email', 'cpf'];
       const result = LGPDValidator.validateCompliance(data, requiredFields);
-      
+
       expect(result.isCompliant).toBe(true);
       expect(result.violations).toHaveLength(0);
       expect(result.recommendations).toHaveLength(0);
@@ -152,7 +148,7 @@ describe('LGPDValidator', () => {
       });
       const requiredFields = ['name', 'email', 'cpf'];
       const result = LGPDValidator.validateCompliance(data, requiredFields);
-      
+
       expect(result.isCompliant).toBe(false);
       expect(result.violations.length).toBeGreaterThan(0);
       expect(result.recommendations.length).toBeGreaterThan(0);
@@ -166,7 +162,7 @@ describe('LGPDValidator', () => {
       });
       const requiredFields = ['name', 'email', 'cpf'];
       const result = LGPDValidator.validateCompliance(data, requiredFields);
-      
+
       expect(result.violations).toContain('Invalid or missing consent');
       expect(result.violations).toContain('Incomplete or missing audit trail');
       expect(result.violations).toContain('Data minimization principle violated');
@@ -175,19 +171,19 @@ describe('LGPDValidator', () => {
 });
 
 describe('createLGPDTestSuite', () => {
-    it('should create comprehensive test suite', () => {
-      const testData = createMockLGPDData();
-      const requiredFields = ['name', 'email', 'cpf'];
-      
-      // This creates a describe block with multiple tests
-      createLGPDTestSuite('Healthcare Data', testData, requiredFields);
-    });
+  it('should create comprehensive test suite', () => {
+    const testData = createMockLGPDData();
+    const requiredFields = ['name', 'email', 'cpf'];
+
+    // This creates a describe block with multiple tests
+    createLGPDTestSuite('Healthcare Data', testData, requiredFields);
   });
+});
 
 describe('createMockLGPDData', () => {
   it('should create valid mock data by default', () => {
     const data = createMockLGPDData();
-    
+
     expect(data.consentGiven).toBe(true);
     expect(data.dataProcessingPurpose).toBe('Healthcare service provision');
     expect(data.auditTrail).toHaveLength(1);
@@ -201,9 +197,9 @@ describe('createMockLGPDData', () => {
       consentGiven: false,
       dataProcessingPurpose: 'Research purposes',
     };
-    
+
     const data = createMockLGPDData(customData);
-    
+
     expect(data.consentGiven).toBe(false);
     expect(data.dataProcessingPurpose).toBe('Research purposes');
   });
@@ -214,9 +210,9 @@ describe('createMockLGPDData', () => {
         name: 'Maria Souza',
       },
     };
-    
+
     const data = createMockLGPDData(customData);
-    
+
     expect(data.personalData.name).toBe('Maria Souza');
     expect(data.consentGiven).toBe(true); // Default value
     expect(data.auditTrail).toHaveLength(1); // Default value

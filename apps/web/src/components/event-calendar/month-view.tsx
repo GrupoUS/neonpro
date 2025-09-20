@@ -1,6 +1,5 @@
-"use client";
+'use client';
 
-import React, { useEffect, useMemo, useState } from "react";
 import {
   addDays,
   eachDayOfInterval,
@@ -12,14 +11,11 @@ import {
   isToday,
   startOfMonth,
   startOfWeek,
-} from "date-fns";
+} from 'date-fns';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
+  type CalendarEvent,
   DraggableEvent,
   DroppableCell,
   EventGap,
@@ -30,9 +26,9 @@ import {
   getSpanningEventsForDay,
   sortEvents,
   useEventVisibility,
-  type CalendarEvent,
-} from "@/components/event-calendar/index";
-import { DefaultStartHour } from "@/components/event-calendar/index";
+} from '@/components/event-calendar/index';
+import { DefaultStartHour } from '@/components/event-calendar/index';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface MonthViewProps {
   currentDate: Date;
@@ -59,7 +55,7 @@ export function MonthView({
   const weekdays = useMemo(() => {
     return Array.from({ length: 7 }).map((_, i) => {
       const date = addDays(startOfWeek(new Date()), i);
-      return format(date, "EEE");
+      return format(date, 'EEE');
     });
   }, []);
 
@@ -94,22 +90,22 @@ export function MonthView({
   }, []);
 
   return (
-    <div data-slot="month-view" className="contents">
-      <div className="border-border/70 grid grid-cols-7 border-y uppercase">
-        {weekdays.map((day) => (
+    <div data-slot='month-view' className='contents'>
+      <div className='border-border/70 grid grid-cols-7 border-y uppercase'>
+        {weekdays.map(day => (
           <div
             key={day}
-            className="text-muted-foreground/70 py-2 text-center text-xs"
+            className='text-muted-foreground/70 py-2 text-center text-xs'
           >
             {day}
           </div>
         ))}
       </div>
-      <div className="grid flex-1 auto-rows-fr">
+      <div className='grid flex-1 auto-rows-fr'>
         {weeks.map((week, weekIndex) => (
           <div
             key={`week-${weekIndex}`}
-            className="grid grid-cols-7 [&:last-child>*]:border-b-0"
+            className='grid grid-cols-7 [&:last-child>*]:border-b-0'
           >
             {week.map((day, dayIndex) => {
               if (!day) return null; // Skip if day is undefined
@@ -125,9 +121,8 @@ export function MonthView({
               const visibleCount = isMounted
                 ? getVisibleEventCount(allDayEvents.length)
                 : undefined;
-              const hasMore =
-                visibleCount !== undefined &&
-                allDayEvents.length > visibleCount;
+              const hasMore = visibleCount !== undefined
+                && allDayEvents.length > visibleCount;
               const remainingCount = hasMore
                 ? allDayEvents.length - visibleCount
                 : 0;
@@ -135,7 +130,7 @@ export function MonthView({
               return (
                 <div
                   key={day.toString()}
-                  className="group border-border/70 data-outside-cell:bg-muted/25 data-outside-cell:text-muted-foreground/70 border-r border-b last:border-r-0"
+                  className='group border-border/70 data-outside-cell:bg-muted/25 data-outside-cell:text-muted-foreground/70 border-r border-b last:border-r-0'
                   data-today={isToday(day) || undefined}
                   data-outside-cell={!isCurrentMonth || undefined}
                 >
@@ -148,12 +143,12 @@ export function MonthView({
                       onEventCreate(startTime);
                     }}
                   >
-                    <div className="group-data-today:bg-primary group-data-today:text-primary-foreground mt-1 inline-flex size-6 items-center justify-center rounded-full text-sm">
-                      {format(day, "d")}
+                    <div className='group-data-today:bg-primary group-data-today:text-primary-foreground mt-1 inline-flex size-6 items-center justify-center rounded-full text-sm'>
+                      {format(day, 'd')}
                     </div>
                     <div
                       ref={isReferenceCell ? contentRef : null}
-                      className="min-h-[calc((var(--event-height)+var(--event-gap))*2)] sm:min-h-[calc((var(--event-height)+var(--event-gap))*3)] lg:min-h-[calc((var(--event-height)+var(--event-gap))*4)]"
+                      className='min-h-[calc((var(--event-height)+var(--event-gap))*2)] sm:min-h-[calc((var(--event-height)+var(--event-gap))*3)] lg:min-h-[calc((var(--event-height)+var(--event-gap))*4)]'
                     >
                       {sortEvents(allDayEvents).map((event, index) => {
                         const eventStart = new Date(event.start);
@@ -161,8 +156,7 @@ export function MonthView({
                         const isFirstDay = isSameDay(day, eventStart);
                         const isLastDay = isSameDay(day, eventEnd);
 
-                        const isHidden =
-                          isMounted && visibleCount && index >= visibleCount;
+                        const isHidden = isMounted && visibleCount && index >= visibleCount;
 
                         if (!visibleCount) return null;
 
@@ -170,23 +164,24 @@ export function MonthView({
                           return (
                             <div
                               key={`spanning-${event.id}-${day.toISOString().slice(0, 10)}`}
-                              className="aria-hidden:hidden"
-                              aria-hidden={isHidden ? "true" : undefined}
+                              className='aria-hidden:hidden'
+                              aria-hidden={isHidden ? 'true' : undefined}
                             >
                               <EventItem
-                                onClick={(e) => handleEventClick(event, e)}
+                                onClick={e => handleEventClick(event, e)}
                                 event={event}
-                                view="month"
+                                view='month'
                                 isFirstDay={isFirstDay}
                                 isLastDay={isLastDay}
                               >
-                                <div className="invisible" aria-hidden={true}>
+                                <div className='invisible' aria-hidden={true}>
                                   {!event.allDay && (
                                     <span>
                                       {format(
                                         new Date(event.start),
-                                        "h:mm",
-                                      )}{" "}
+                                        'h:mm',
+                                      )}
+                                      {' '}
                                     </span>
                                   )}
                                   {event.title}
@@ -199,13 +194,13 @@ export function MonthView({
                         return (
                           <div
                             key={event.id}
-                            className="aria-hidden:hidden"
-                            aria-hidden={isHidden ? "true" : undefined}
+                            className='aria-hidden:hidden'
+                            aria-hidden={isHidden ? 'true' : undefined}
                           >
                             <DraggableEvent
                               event={event}
-                              view="month"
-                              onClick={(e) => handleEventClick(event, e)}
+                              view='month'
+                              onClick={e => handleEventClick(event, e)}
                               isFirstDay={isFirstDay}
                               isLastDay={isLastDay}
                             />
@@ -217,30 +212,27 @@ export function MonthView({
                         <Popover modal>
                           <PopoverTrigger asChild>
                             <button
-                              className="focus-visible:border-ring focus-visible:ring-ring/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 mt-[var(--event-gap)] flex h-[var(--event-height)] w-full items-center overflow-hidden px-1 text-left text-[10px] backdrop-blur-md transition outline-none select-none focus-visible:ring-[3px] sm:px-2 sm:text-xs"
-                              onClick={(e) => e.stopPropagation()}
+                              className='focus-visible:border-ring focus-visible:ring-ring/50 text-muted-foreground hover:text-foreground hover:bg-muted/50 mt-[var(--event-gap)] flex h-[var(--event-height)] w-full items-center overflow-hidden px-1 text-left text-[10px] backdrop-blur-md transition outline-none select-none focus-visible:ring-[3px] sm:px-2 sm:text-xs'
+                              onClick={e => e.stopPropagation()}
                             >
                               <span>
-                                + {remainingCount}{" "}
-                                <span className="max-sm:sr-only">more</span>
+                                + {remainingCount} <span className='max-sm:sr-only'>more</span>
                               </span>
                             </button>
                           </PopoverTrigger>
                           <PopoverContent
-                            align="center"
-                            className="max-w-52 p-3"
-                            style={
-                              {
-                                "--event-height": `${EventHeight}px`,
-                              } as React.CSSProperties
-                            }
+                            align='center'
+                            className='max-w-52 p-3'
+                            style={{
+                              '--event-height': `${EventHeight}px`,
+                            } as React.CSSProperties}
                           >
-                            <div className="space-y-2">
-                              <div className="text-sm font-medium">
-                                {format(day, "EEE d")}
+                            <div className='space-y-2'>
+                              <div className='text-sm font-medium'>
+                                {format(day, 'EEE d')}
                               </div>
-                              <div className="space-y-1">
-                                {sortEvents(allEvents).map((event) => {
+                              <div className='space-y-1'>
+                                {sortEvents(allEvents).map(event => {
                                   const eventStart = new Date(event.start);
                                   const eventEnd = new Date(event.end);
                                   const isFirstDay = isSameDay(day, eventStart);
@@ -249,11 +241,9 @@ export function MonthView({
                                   return (
                                     <EventItem
                                       key={event.id}
-                                      onClick={(e) =>
-                                        handleEventClick(event, e)
-                                      }
+                                      onClick={e => handleEventClick(event, e)}
                                       event={event}
-                                      view="month"
+                                      view='month'
                                       isFirstDay={isFirstDay}
                                       isLastDay={isLastDay}
                                     />

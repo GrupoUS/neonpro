@@ -4,10 +4,10 @@
  * Performance monitoring for aesthetic clinic operations
  */
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
 
-export const runtime = "edge";
-export const preferredRegion = "gru1";
+export const runtime = 'edge';
+export const preferredRegion = 'gru1';
 
 // Lightweight validation with Valibot patterns (simulated for edge optimization)
 interface BundleMetrics {
@@ -20,10 +20,10 @@ interface BundleMetrics {
 }
 
 interface AestheticClinicPageMetrics {
-  page: "home" | "agendamento" | "tratamentos" | "contato" | "paciente";
-  device_type: "mobile" | "desktop" | "tablet";
-  connection: "3g" | "4g" | "5g" | "wifi";
-  location: "brasil" | "internacional";
+  page: 'home' | 'agendamento' | 'tratamentos' | 'contato' | 'paciente';
+  device_type: 'mobile' | 'desktop' | 'tablet';
+  connection: '3g' | '4g' | '5g' | 'wifi';
+  location: 'brasil' | 'internacional';
 }
 
 // Otimizações específicas para clínica de estética brasileira
@@ -50,14 +50,14 @@ const performanceBudgets = {
 
 export default async function handler(req: NextRequest) {
   const headers = {
-    "Content-Type": "application/json",
-    "Cache-Control": "public, max-age=300", // 5 min cache for performance data
-    "X-Performance-Optimized": "true",
+    'Content-Type': 'application/json',
+    'Cache-Control': 'public, max-age=300', // 5 min cache for performance data
+    'X-Performance-Optimized': 'true',
   };
 
-  if (req.method !== "POST") {
+  if (req.method !== 'POST') {
     return NextResponse.json(
-      { error: "Método não permitido" },
+      { error: 'Método não permitido' },
       { status: 405, headers },
     );
   }
@@ -76,13 +76,13 @@ export default async function handler(req: NextRequest) {
     let budget = performanceBudgets.mobile_3g; // Default for Brazilian mobile users
 
     if (
-      page_info.device_type === "desktop" &&
-      page_info.connection === "wifi"
+      page_info.device_type === 'desktop'
+      && page_info.connection === 'wifi'
     ) {
       budget = performanceBudgets.desktop_wifi;
     } else if (
-      page_info.device_type === "mobile" &&
-      page_info.connection === "4g"
+      page_info.device_type === 'mobile'
+      && page_info.connection === '4g'
     ) {
       budget = performanceBudgets.mobile_4g;
     }
@@ -102,34 +102,31 @@ export default async function handler(req: NextRequest) {
 
     if (!analysis.bundle_size_ok) {
       recommendations.push({
-        type: "bundle_size",
-        priority: "high",
-        message: "Bundle muito grande para usuários móveis brasileiros",
-        suggestion:
-          "Implementar code splitting por página (agendamento, tratamentos, etc)",
-        impact: "Redução de 30-50% no tempo de carregamento",
+        type: 'bundle_size',
+        priority: 'high',
+        message: 'Bundle muito grande para usuários móveis brasileiros',
+        suggestion: 'Implementar code splitting por página (agendamento, tratamentos, etc)',
+        impact: 'Redução de 30-50% no tempo de carregamento',
       });
     }
 
     if (!analysis.load_time_ok) {
       recommendations.push({
-        type: "load_time",
-        priority: "high",
-        message:
-          "Tempo de carregamento acima do ideal para clínica de estética",
-        suggestion:
-          "Otimizar imagens de tratamentos e implementar lazy loading",
-        impact: "Melhora na experiência do paciente",
+        type: 'load_time',
+        priority: 'high',
+        message: 'Tempo de carregamento acima do ideal para clínica de estética',
+        suggestion: 'Otimizar imagens de tratamentos e implementar lazy loading',
+        impact: 'Melhora na experiência do paciente',
       });
     }
 
     if (!analysis.lcp_ok) {
       recommendations.push({
-        type: "lcp",
-        priority: "medium",
-        message: "Largest Contentful Paint pode ser melhorado",
-        suggestion: "Priorizar carregamento de hero images de tratamentos",
-        impact: "Melhor percepção de velocidade",
+        type: 'lcp',
+        priority: 'medium',
+        message: 'Largest Contentful Paint pode ser melhorado',
+        suggestion: 'Priorizar carregamento de hero images de tratamentos',
+        impact: 'Melhor percepção de velocidade',
       });
     }
 
@@ -152,25 +149,24 @@ export default async function handler(req: NextRequest) {
         success: true,
         performance_analysis: {
           score: performance_score,
-          grade:
-            performance_score >= 90
-              ? "A"
-              : performance_score >= 80
-                ? "B"
-                : performance_score >= 70
-                  ? "C"
-                  : "D",
+          grade: performance_score >= 90
+            ? 'A'
+            : performance_score >= 80
+            ? 'B'
+            : performance_score >= 70
+            ? 'C'
+            : 'D',
           budget_compliance: analysis,
           recommendations,
           page_context: {
-            optimized_for: "clínica de estética brasileira",
-            target_audience: "pacientes móveis com 3G/4G",
-            priority_metrics: ["bundle_size", "load_time", "fcp"],
+            optimized_for: 'clínica de estética brasileira',
+            target_audience: 'pacientes móveis com 3G/4G',
+            priority_metrics: ['bundle_size', 'load_time', 'fcp'],
           },
         },
         edge_performance: {
           processing_time_ms: processingTime,
-          region: "gru1",
+          region: 'gru1',
           bundle_optimized: true,
         },
       },
@@ -179,8 +175,8 @@ export default async function handler(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       {
-        error: "Erro na análise de performance",
-        code: "BUNDLE_ANALYSIS_ERROR",
+        error: 'Erro na análise de performance',
+        code: 'BUNDLE_ANALYSIS_ERROR',
       },
       { status: 500, headers },
     );

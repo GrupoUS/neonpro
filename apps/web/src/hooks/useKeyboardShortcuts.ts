@@ -3,9 +3,9 @@
  * Essential for WCAG 2.1 AA+ compliance and healthcare accessibility
  */
 
-"use client";
+'use client';
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 
 export type KeyboardShortcutHandler = (e: KeyboardEvent) => void;
 
@@ -35,10 +35,10 @@ export function useKeyboardShortcuts(
     };
 
     // Add event listener with passive option for better performance
-    window.addEventListener("keydown", handleKeyDown, { passive: false });
+    window.addEventListener('keydown', handleKeyDown, { passive: false });
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, deps); // Include dependencies to reattach when they change
 
@@ -51,11 +51,11 @@ export function useKeyboardShortcuts(
   const isInInputField = (target: EventTarget) => {
     const element = target as HTMLElement;
     return (
-      element.tagName === "INPUT" ||
-      element.tagName === "TEXTAREA" ||
-      element.tagName === "SELECT" ||
-      element.isContentEditable ||
-      element.closest('[contenteditable="true"]')
+      element.tagName === 'INPUT'
+      || element.tagName === 'TEXTAREA'
+      || element.tagName === 'SELECT'
+      || element.isContentEditable
+      || element.closest('[contenteditable="true"]')
     );
   };
 
@@ -95,14 +95,14 @@ export function useAdvancedKeyboardShortcuts(
 
       // Build the shortcut key combination
       const key = [
-        e.ctrlKey ? "Ctrl+" : "",
-        e.metaKey ? "Meta+" : "",
-        e.altKey ? "Alt+" : "",
-        e.shiftKey ? "Shift+" : "",
+        e.ctrlKey ? 'Ctrl+' : '',
+        e.metaKey ? 'Meta+' : '',
+        e.altKey ? 'Alt+' : '',
+        e.shiftKey ? 'Shift+' : '',
         e.key,
       ]
         .filter(Boolean)
-        .join("");
+        .join('');
 
       const handler = shortcutsRef.current[key];
       if (handler) {
@@ -116,10 +116,10 @@ export function useAdvancedKeyboardShortcuts(
       }
     };
 
-    window.addEventListener("keydown", handleKeyDown, { passive: false });
+    window.addEventListener('keydown', handleKeyDown, { passive: false });
 
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown);
     };
   }, deps);
 
@@ -132,11 +132,11 @@ export function useAdvancedKeyboardShortcuts(
 function isInInputField(target: EventTarget) {
   const element = target as HTMLElement;
   return (
-    element.tagName === "INPUT" ||
-    element.tagName === "TEXTAREA" ||
-    element.tagName === "SELECT" ||
-    element.isContentEditable ||
-    element.closest('[contenteditable="true"]')
+    element.tagName === 'INPUT'
+    || element.tagName === 'TEXTAREA'
+    || element.tagName === 'SELECT'
+    || element.isContentEditable
+    || element.closest('[contenteditable="true"]')
   );
 }
 

@@ -1,24 +1,30 @@
-import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calculator, Play } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Calculator, Play } from 'lucide-react';
+import React, { useState } from 'react';
 
 export interface MetricsCalculatorProps {
   onCalculate?: (result: any) => void;
   className?: string;
-  "data-testid"?: string;
+  'data-testid'?: string;
 }
 
 export const MetricsCalculator: React.FC<MetricsCalculatorProps> = ({
   onCalculate,
   className,
-  "data-testid": testId,
+  'data-testid': testId,
 }) => {
-  const [period, setPeriod] = useState<string>("monthly");
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  const [period, setPeriod] = useState<string>('monthly');
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const [isCalculating, setIsCalculating] = useState(false);
 
   const handleCalculate = async () => {
@@ -32,10 +38,10 @@ export const MetricsCalculator: React.FC<MetricsCalculatorProps> = ({
         metrics: {
           revenue: 150000,
           expenses: 80000,
-          profit: 70000
-        }
+          profit: 70000,
+        },
       };
-      
+
       if (onCalculate) {
         onCalculate(result);
       }
@@ -49,51 +55,51 @@ export const MetricsCalculator: React.FC<MetricsCalculatorProps> = ({
   return (
     <Card className={className} data-testid={testId}>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Calculator className="h-5 w-5" />
+        <CardTitle className='flex items-center gap-2'>
+          <Calculator className='h-5 w-5' />
           Metrics Calculator
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className='space-y-4'>
         <div>
-          <label className="text-sm font-medium">Period</label>
+          <label className='text-sm font-medium'>Period</label>
           <Select value={period} onValueChange={setPeriod}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="daily">Daily</SelectItem>
-              <SelectItem value="weekly">Weekly</SelectItem>
-              <SelectItem value="monthly">Monthly</SelectItem>
-              <SelectItem value="yearly">Yearly</SelectItem>
+              <SelectItem value='daily'>Daily</SelectItem>
+              <SelectItem value='weekly'>Weekly</SelectItem>
+              <SelectItem value='monthly'>Monthly</SelectItem>
+              <SelectItem value='yearly'>Yearly</SelectItem>
             </SelectContent>
           </Select>
         </div>
-        
+
         <div>
-          <label className="text-sm font-medium">Start Date</label>
+          <label className='text-sm font-medium'>Start Date</label>
           <Input
-            type="date"
+            type='date'
             value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
+            onChange={e => setStartDate(e.target.value)}
           />
         </div>
-        
+
         <div>
-          <label className="text-sm font-medium">End Date</label>
+          <label className='text-sm font-medium'>End Date</label>
           <Input
-            type="date"
+            type='date'
             value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
+            onChange={e => setEndDate(e.target.value)}
           />
         </div>
-        
+
         <Button
           onClick={handleCalculate}
           disabled={isCalculating || !startDate || !endDate}
-          className="w-full"
+          className='w-full'
         >
-          <Play className="h-4 w-4 mr-2" />
+          <Play className='h-4 w-4 mr-2' />
           {isCalculating ? 'Calculating...' : 'Calculate Metrics'}
         </Button>
       </CardContent>

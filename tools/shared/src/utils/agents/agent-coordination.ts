@@ -16,7 +16,7 @@ export type AgentName =
   | "tdd-orchestrator"
   | "code-reviewer"
   | "architect-review"
-  | "security-auditor"
+  | "test-auditor"
   | "test";
 
 export type TDDPhase = "red" | "green" | "refactor";
@@ -48,7 +48,7 @@ export const AGENT_CAPABILITIES: Record<AgentName, AgentCapability> = {
     categories: ["backend", "database", "quality"],
     phases: ["red", "green", "refactor"],
   },
-  "security-auditor": {
+  "test-auditor": {
     name: "Security Auditor",
     description: "Security validation, compliance, and vulnerability scanning",
     categories: ["database", "backend", "quality"],
@@ -109,7 +109,7 @@ export class AgentCoordinator {
         supportAgents = eligibleAgents.filter(
           (agent) =>
             agent !== "test" &&
-            ["architect-review", "security-auditor"].includes(agent),
+            ["architect-review", "test-auditor"].includes(agent),
         );
         workflow = "sequential";
         qualityGates = [

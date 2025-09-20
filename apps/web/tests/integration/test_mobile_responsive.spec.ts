@@ -10,17 +10,17 @@
  * @accessibility Full keyboard navigation, screen reader support
  */
 
-import { devices, expect, test } from "@playwright/test";
-import type { BrowserContext, Page } from "@playwright/test";
+import { devices, expect, test } from '@playwright/test';
+import type { BrowserContext, Page } from '@playwright/test';
 
 // Mobile device configurations for testing
 const MOBILE_DEVICES = [
-  { name: "iPhone 12", ...devices["iPhone 12"] },
-  { name: "iPhone 13 Pro Max", ...devices["iPhone 13 Pro Max"] },
-  { name: "Samsung Galaxy S22", ...devices["Galaxy S21"] },
-  { name: "iPad", ...devices["iPad Pro"] },
-  { name: "Generic Mobile", viewport: { width: 375, height: 667 } },
-  { name: "Generic Tablet", viewport: { width: 768, height: 1024 } },
+  { name: 'iPhone 12', ...devices['iPhone 12'] },
+  { name: 'iPhone 13 Pro Max', ...devices['iPhone 13 Pro Max'] },
+  { name: 'Samsung Galaxy S22', ...devices['Galaxy S21'] },
+  { name: 'iPad', ...devices['iPad Pro'] },
+  { name: 'Generic Mobile', viewport: { width: 375, height: 667 } },
+  { name: 'Generic Tablet', viewport: { width: 768, height: 1024 } },
 ];
 
 // Performance thresholds (Constitutional Requirements)
@@ -34,56 +34,56 @@ const PERFORMANCE_THRESHOLDS = {
 // Healthcare-specific responsive test data
 const generateHealthcareTestData = () => ({
   patient: {
-    name: "João Silva Santos",
-    cpf: "123.456.789-09",
-    phone: "(11) 98765-4321",
-    email: "joao.silva@email.com",
+    name: 'João Silva Santos',
+    cpf: '123.456.789-09',
+    phone: '(11) 98765-4321',
+    email: 'joao.silva@email.com',
   },
   appointment: {
     date: new Date(Date.now() + 24 * 60 * 60 * 1000)
       .toISOString()
-      .split("T")[0],
-    time: "14:30",
-    type: "consulta_dermatologia",
+      .split('T')[0],
+    time: '14:30',
+    type: 'consulta_dermatologia',
   },
 });
 
-describe("Mobile Responsive Design Tests (T027)", () => {
+describe('Mobile Responsive Design Tests (T027)', () => {
   let testData: ReturnType<typeof generateHealthcareTestData>;
 
   test.beforeEach(async ({ page }) => {
     testData = generateHealthcareTestData();
 
     // Setup authenticated session for healthcare professional
-    await page.goto("/");
+    await page.goto('/');
     await page.evaluate(() => {
       sessionStorage.setItem(
-        "supabase.auth.token",
+        'supabase.auth.token',
         JSON.stringify({
-          access_token: "mock-mobile-token",
+          access_token: 'mock-mobile-token',
           user: {
-            id: "mobile-test-user",
-            email: "mobile.test@professional.com",
-            role: "healthcare_professional",
+            id: 'mobile-test-user',
+            email: 'mobile.test@professional.com',
+            role: 'healthcare_professional',
           },
         }),
       );
     });
   });
 
-  describe("Cross-Device Responsive Layout", () => {
+  describe('Cross-Device Responsive Layout', () => {
     for (const device of MOBILE_DEVICES) {
       test(`should display properly on ${device.name}`, async ({ browser }) => {
         const context = await browser.newContext({
           ...device,
-          locale: "pt-BR",
-          timezoneId: "America/Sao_Paulo",
+          locale: 'pt-BR',
+          timezoneId: 'America/Sao_Paulo',
         });
         const page = await context.newPage();
 
         const startTime = Date.now();
-        await page.goto("/dashboard");
-        await page.waitForLoadState("networkidle");
+        await page.goto('/dashboard');
+        await page.waitForLoadState('networkidle');
         const loadTime = Date.now() - startTime;
 
         // Constitutional Performance Requirement: <500ms
@@ -130,15 +130,13 @@ describe("Mobile Responsive Design Tests (T027)", () => {
     }
   });
 
-  describe("Touch Target Accessibility", () => {
-    test("should have accessible touch targets on mobile", async ({
-      browser,
-    }) => {
-      const context = await browser.newContext(devices["iPhone 12"]);
+  describe('Touch Target Accessibility', () => {
+    test('should have accessible touch targets on mobile', async ({ browser }) => {
+      const context = await browser.newContext(devices['iPhone 12']);
       const page = await context.newPage();
 
-      await page.goto("/patients");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/patients');
+      await page.waitForLoadState('networkidle');
 
       // Check touch target sizes for critical healthcare actions
       const criticalButtons = [
@@ -166,14 +164,12 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       await context.close();
     });
 
-    test("should support touch gestures for patient data entry", async ({
-      browser,
-    }) => {
-      const context = await browser.newContext(devices["iPhone 12"]);
+    test('should support touch gestures for patient data entry', async ({ browser }) => {
+      const context = await browser.newContext(devices['iPhone 12']);
       const page = await context.newPage();
 
-      await page.goto("/patients/new");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/patients/new');
+      await page.waitForLoadState('networkidle');
 
       // Test swipe gestures for form sections
       const formSections = page.locator('[data-testid="form-section"]');
@@ -212,15 +208,13 @@ describe("Mobile Responsive Design Tests (T027)", () => {
     });
   });
 
-  describe("Mobile Healthcare Workflows", () => {
-    test("should support mobile patient registration workflow", async ({
-      browser,
-    }) => {
-      const context = await browser.newContext(devices["iPhone 12"]);
+  describe('Mobile Healthcare Workflows', () => {
+    test('should support mobile patient registration workflow', async ({ browser }) => {
+      const context = await browser.newContext(devices['iPhone 12']);
       const page = await context.newPage();
 
-      await page.goto("/patients/new");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/patients/new');
+      await page.waitForLoadState('networkidle');
 
       // Verify form is mobile-optimized
       await expect(
@@ -237,12 +231,12 @@ describe("Mobile Responsive Design Tests (T027)", () => {
 
       // Verify mobile keyboard optimizations
       const phoneInput = page.locator('[data-testid="patient-phone"]');
-      const phoneInputType = await phoneInput.getAttribute("inputmode");
-      expect(phoneInputType).toBe("tel");
+      const phoneInputType = await phoneInput.getAttribute('inputmode');
+      expect(phoneInputType).toBe('tel');
 
       const emailInput = page.locator('[data-testid="patient-email"]');
-      const emailInputType = await emailInput.getAttribute("inputmode");
-      expect(emailInputType).toBe("email");
+      const emailInputType = await emailInput.getAttribute('inputmode');
+      expect(emailInputType).toBe('email');
 
       // Test LGPD consent on mobile
       await expect(
@@ -269,14 +263,12 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       await context.close();
     });
 
-    test("should support mobile appointment scheduling", async ({
-      browser,
-    }) => {
-      const context = await browser.newContext(devices["Samsung Galaxy S21"]);
+    test('should support mobile appointment scheduling', async ({ browser }) => {
+      const context = await browser.newContext(devices['Samsung Galaxy S21']);
       const page = await context.newPage();
 
-      await page.goto("/appointments/schedule");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/appointments/schedule');
+      await page.waitForLoadState('networkidle');
 
       // Test mobile calendar interface
       await expect(
@@ -325,14 +317,12 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       await context.close();
     });
 
-    test("should support mobile telemedicine interface", async ({
-      browser,
-    }) => {
-      const context = await browser.newContext(devices["iPhone 12"]);
+    test('should support mobile telemedicine interface', async ({ browser }) => {
+      const context = await browser.newContext(devices['iPhone 12']);
       const page = await context.newPage();
 
-      await page.goto("/telemedicine/session/new");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/telemedicine/session/new');
+      await page.waitForLoadState('networkidle');
 
       // Verify mobile video interface
       await expect(
@@ -383,17 +373,17 @@ describe("Mobile Responsive Design Tests (T027)", () => {
     });
   });
 
-  describe("Accessibility on Mobile", () => {
-    test("should support screen readers on mobile", async ({ browser }) => {
+  describe('Accessibility on Mobile', () => {
+    test('should support screen readers on mobile', async ({ browser }) => {
       const context = await browser.newContext({
-        ...devices["iPhone 12"],
-        reducedMotion: "reduce",
-        forcedColors: "active",
+        ...devices['iPhone 12'],
+        reducedMotion: 'reduce',
+        forcedColors: 'active',
       });
       const page = await context.newPage();
 
-      await page.goto("/dashboard");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/dashboard');
+      await page.waitForLoadState('networkidle');
 
       // Check ARIA labels for screen readers
       const navigationItems = page.locator('[data-testid="nav-item"]');
@@ -401,23 +391,23 @@ describe("Mobile Responsive Design Tests (T027)", () => {
 
       for (let i = 0; i < navCount; i++) {
         const navItem = navigationItems.nth(i);
-        const ariaLabel = await navItem.getAttribute("aria-label");
-        const role = await navItem.getAttribute("role");
+        const ariaLabel = await navItem.getAttribute('aria-label');
+        const role = await navItem.getAttribute('role');
 
         // Each nav item should have proper accessibility attributes
         expect(ariaLabel || role).toBeTruthy();
       }
 
       // Test focus management
-      await page.keyboard.press("Tab");
-      const focusedElement = page.locator(":focus");
+      await page.keyboard.press('Tab');
+      const focusedElement = page.locator(':focus');
       await expect(focusedElement).toBeVisible();
 
       // Verify focus indicators are visible
       const focusBox = await focusedElement.boundingBox();
       if (focusBox) {
         const focusIndicator = await page.evaluate(
-          (element) => {
+          element => {
             const styles = window.getComputedStyle(element);
             return {
               outline: styles.outline,
@@ -430,25 +420,25 @@ describe("Mobile Responsive Design Tests (T027)", () => {
 
         // Should have visible focus indicator
         expect(
-          focusIndicator.outline !== "none" ||
-            focusIndicator.outlineWidth !== "0px" ||
-            focusIndicator.boxShadow !== "none",
+          focusIndicator.outline !== 'none'
+            || focusIndicator.outlineWidth !== '0px'
+            || focusIndicator.boxShadow !== 'none',
         ).toBe(true);
       }
 
       await context.close();
     });
 
-    test("should support high contrast mode on mobile", async ({ browser }) => {
+    test('should support high contrast mode on mobile', async ({ browser }) => {
       const context = await browser.newContext({
-        ...devices["iPhone 12"],
-        colorScheme: "dark",
-        forcedColors: "active",
+        ...devices['iPhone 12'],
+        colorScheme: 'dark',
+        forcedColors: 'active',
       });
       const page = await context.newPage();
 
-      await page.goto("/patients");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/patients');
+      await page.waitForLoadState('networkidle');
 
       // Verify high contrast compliance
       const importantElements = [
@@ -460,7 +450,7 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       for (const selector of importantElements) {
         const element = page.locator(selector);
         if (await element.isVisible()) {
-          const styles = await page.evaluate((sel) => {
+          const styles = await page.evaluate(sel => {
             const el = document.querySelector(sel);
             if (!el) return null;
             const computed = window.getComputedStyle(el);
@@ -480,17 +470,15 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       await context.close();
     });
 
-    test("should support keyboard navigation on mobile", async ({
-      browser,
-    }) => {
+    test('should support keyboard navigation on mobile', async ({ browser }) => {
       const context = await browser.newContext({
-        ...devices["iPad"],
+        ...devices['iPad'],
         hasTouch: false, // Simulate keyboard-only navigation
       });
       const page = await context.newPage();
 
-      await page.goto("/patients/new");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/patients/new');
+      await page.waitForLoadState('networkidle');
 
       // Test keyboard navigation through form
       const formInputs = [
@@ -501,13 +489,13 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       ];
 
       for (const selector of formInputs) {
-        await page.keyboard.press("Tab");
-        const focused = page.locator(":focus");
+        await page.keyboard.press('Tab');
+        const focused = page.locator(':focus');
 
         // Should be able to reach each input via keyboard
         const inputElement = page.locator(selector);
         if (await inputElement.isVisible()) {
-          const isFocused = await page.evaluate((sel) => {
+          const isFocused = await page.evaluate(sel => {
             const element = document.querySelector(sel);
             return document.activeElement === element;
           }, selector);
@@ -521,12 +509,10 @@ describe("Mobile Responsive Design Tests (T027)", () => {
     });
   });
 
-  describe("Performance on Mobile Networks", () => {
-    test("should perform well on slow mobile connections", async ({
-      browser,
-    }) => {
+  describe('Performance on Mobile Networks', () => {
+    test('should perform well on slow mobile connections', async ({ browser }) => {
       const context = await browser.newContext({
-        ...devices["iPhone 12"],
+        ...devices['iPhone 12'],
         // Simulate slow 3G connection
         // Note: Playwright doesn't have built-in network throttling like Puppeteer
         // This would be implemented with CDP in a real environment
@@ -534,8 +520,8 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       const page = await context.newPage();
 
       const startTime = Date.now();
-      await page.goto("/dashboard");
-      await page.waitForLoadState("domcontentloaded");
+      await page.goto('/dashboard');
+      await page.waitForLoadState('domcontentloaded');
       const loadTime = Date.now() - startTime;
 
       // Should still meet performance targets on slow connections
@@ -547,7 +533,7 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       ).toBeVisible();
 
       // Wait for full content load
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState('networkidle');
       await expect(
         page.locator('[data-testid="dashboard-content"]'),
       ).toBeVisible();
@@ -555,14 +541,12 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       await context.close();
     });
 
-    test("should handle offline/online state transitions", async ({
-      browser,
-    }) => {
-      const context = await browser.newContext(devices["iPhone 12"]);
+    test('should handle offline/online state transitions', async ({ browser }) => {
+      const context = await browser.newContext(devices['iPhone 12']);
       const page = await context.newPage();
 
-      await page.goto("/patients");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/patients');
+      await page.waitForLoadState('networkidle');
 
       // Simulate going offline
       await context.setOffline(true);
@@ -599,15 +583,13 @@ describe("Mobile Responsive Design Tests (T027)", () => {
     });
   });
 
-  describe("Brazilian Healthcare Mobile UX", () => {
-    test("should support Brazilian mobile payment integration", async ({
-      browser,
-    }) => {
-      const context = await browser.newContext(devices["iPhone 12"]);
+  describe('Brazilian Healthcare Mobile UX', () => {
+    test('should support Brazilian mobile payment integration', async ({ browser }) => {
+      const context = await browser.newContext(devices['iPhone 12']);
       const page = await context.newPage();
 
-      await page.goto("/payments/new");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/payments/new');
+      await page.waitForLoadState('networkidle');
 
       // Check for Brazilian payment methods
       const paymentMethods = [
@@ -647,18 +629,16 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       await context.close();
     });
 
-    test("should validate Brazilian data formats on mobile", async ({
-      browser,
-    }) => {
-      const context = await browser.newContext(devices["Samsung Galaxy S21"]);
+    test('should validate Brazilian data formats on mobile', async ({ browser }) => {
+      const context = await browser.newContext(devices['Samsung Galaxy S21']);
       const page = await context.newPage();
 
-      await page.goto("/patients/new");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/patients/new');
+      await page.waitForLoadState('networkidle');
 
       // Test CPF input with mobile keyboard
       await page.tap('[data-testid="patient-cpf"]');
-      await page.keyboard.type("12345678909");
+      await page.keyboard.type('12345678909');
 
       // Should format automatically
       const cpfValue = await page.inputValue('[data-testid="patient-cpf"]');
@@ -666,7 +646,7 @@ describe("Mobile Responsive Design Tests (T027)", () => {
 
       // Test phone number with mobile keyboard
       await page.tap('[data-testid="patient-phone"]');
-      await page.keyboard.type("11987654321");
+      await page.keyboard.type('11987654321');
 
       // Should format automatically
       const phoneValue = await page.inputValue('[data-testid="patient-phone"]');
@@ -674,7 +654,7 @@ describe("Mobile Responsive Design Tests (T027)", () => {
 
       // Test CEP input
       await page.tap('[data-testid="patient-cep"]');
-      await page.keyboard.type("01310100");
+      await page.keyboard.type('01310100');
 
       // Should format automatically
       const cepValue = await page.inputValue('[data-testid="patient-cep"]');
@@ -683,14 +663,12 @@ describe("Mobile Responsive Design Tests (T027)", () => {
       await context.close();
     });
 
-    test("should support Brazilian healthcare professional mobile workflows", async ({
-      browser,
-    }) => {
-      const context = await browser.newContext(devices["iPhone 12"]);
+    test('should support Brazilian healthcare professional mobile workflows', async ({ browser }) => {
+      const context = await browser.newContext(devices['iPhone 12']);
       const page = await context.newPage();
 
-      await page.goto("/prescriptions/new");
-      await page.waitForLoadState("networkidle");
+      await page.goto('/prescriptions/new');
+      await page.waitForLoadState('networkidle');
 
       // Test mobile prescription interface
       await expect(
@@ -699,14 +677,14 @@ describe("Mobile Responsive Design Tests (T027)", () => {
 
       // CRM input should be touch-optimized
       await page.tap('[data-testid="physician-crm"]');
-      await page.keyboard.type("CRM123456SP");
+      await page.keyboard.type('CRM123456SP');
 
       const crmValue = await page.inputValue('[data-testid="physician-crm"]');
       expect(crmValue).toMatch(/^CRM-\d{4,6}\/[A-Z]{2}$/);
 
       // Test medication search on mobile
       await page.tap('[data-testid="medication-search"]');
-      await page.keyboard.type("Losartana");
+      await page.keyboard.type('Losartana');
 
       // Should show medication suggestions
       await expect(

@@ -3,9 +3,9 @@
  * React Query hooks for managing service templates and packages
  */
 
-import { serviceTemplatesService } from "@/services/service-templates.service";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { serviceTemplatesService } from '@/services/service-templates.service';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 // Only import the types we actually use to avoid TS6196
 import type {
   CreateServiceTemplateItemRequest,
@@ -14,23 +14,19 @@ import type {
   ServiceTemplateFilters,
   UpdateServiceTemplateItemRequest,
   UpdateServiceTemplateRequest,
-} from "@/types/service-templates";
+} from '@/types/service-templates';
 
 // NOTE: Keep imports minimal; these types are used in generics below to satisfy TS
 
 // Query keys
 export const serviceTemplatesKeys = {
-  all: ["service-templates"] as const,
-  lists: () => [...serviceTemplatesKeys.all, "list"] as const,
-  list: (filters: ServiceTemplateFilters) =>
-    [...serviceTemplatesKeys.lists(), filters] as const,
-  withItems: (clinicId: string) =>
-    [...serviceTemplatesKeys.all, "with-items", clinicId] as const,
-  detail: (id: string) => [...serviceTemplatesKeys.all, "detail", id] as const,
-  detailWithItems: (id: string) =>
-    [...serviceTemplatesKeys.all, "detail-with-items", id] as const,
-  stats: (clinicId: string) =>
-    [...serviceTemplatesKeys.all, "stats", clinicId] as const,
+  all: ['service-templates'] as const,
+  lists: () => [...serviceTemplatesKeys.all, 'list'] as const,
+  list: (filters: ServiceTemplateFilters) => [...serviceTemplatesKeys.lists(), filters] as const,
+  withItems: (clinicId: string) => [...serviceTemplatesKeys.all, 'with-items', clinicId] as const,
+  detail: (id: string) => [...serviceTemplatesKeys.all, 'detail', id] as const,
+  detailWithItems: (id: string) => [...serviceTemplatesKeys.all, 'detail-with-items', id] as const,
+  stats: (clinicId: string) => [...serviceTemplatesKeys.all, 'stats', clinicId] as const,
 };
 
 /**
@@ -50,8 +46,7 @@ export function useServiceTemplates(filters: ServiceTemplateFilters = {}) {
 export function useServiceTemplatesWithItems(clinicId: string) {
   return useQuery({
     queryKey: serviceTemplatesKeys.withItems(clinicId),
-    queryFn: () =>
-      serviceTemplatesService.getServiceTemplatesWithItems(clinicId),
+    queryFn: () => serviceTemplatesService.getServiceTemplatesWithItems(clinicId),
     enabled: !!clinicId,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
@@ -106,7 +101,7 @@ export function useCreateServiceTemplate() {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
 
-      toast.success("Template de serviço criado com sucesso!");
+      toast.success('Template de serviço criado com sucesso!');
     },
     onError: (error: Error) => {
       toast.error(`Erro ao criar template: ${error.message}`);
@@ -123,14 +118,14 @@ export function useUpdateServiceTemplate() {
   return useMutation({
     mutationFn: (request: UpdateServiceTemplateRequest) =>
       serviceTemplatesService.updateServiceTemplate(request),
-    onSuccess: (data) => {
+    onSuccess: data => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
       queryClient.invalidateQueries({
         queryKey: serviceTemplatesKeys.detail(data.id),
       });
 
-      toast.success("Template atualizado com sucesso!");
+      toast.success('Template atualizado com sucesso!');
     },
     onError: (error: Error) => {
       toast.error(`Erro ao atualizar template: ${error.message}`);
@@ -145,13 +140,12 @@ export function useDeleteServiceTemplate() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (id: string) =>
-      serviceTemplatesService.deleteServiceTemplate(id),
+    mutationFn: (id: string) => serviceTemplatesService.deleteServiceTemplate(id),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
 
-      toast.success("Template removido com sucesso!");
+      toast.success('Template removido com sucesso!');
     },
     onError: (error: Error) => {
       toast.error(`Erro ao remover template: ${error.message}`);
@@ -180,7 +174,7 @@ export function useAddTemplateItems() {
         queryKey: serviceTemplatesKeys.detailWithItems(variables.templateId),
       });
 
-      toast.success("Serviços adicionados ao template!");
+      toast.success('Serviços adicionados ao template!');
     },
     onError: (error: Error) => {
       toast.error(`Erro ao adicionar serviços: ${error.message}`);
@@ -201,7 +195,7 @@ export function useUpdateTemplateItem() {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
 
-      toast.success("Item do template atualizado!");
+      toast.success('Item do template atualizado!');
     },
     onError: (error: Error) => {
       toast.error(`Erro ao atualizar item: ${error.message}`);
@@ -216,13 +210,12 @@ export function useRemoveTemplateItem() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (itemId: string) =>
-      serviceTemplatesService.removeTemplateItem(itemId),
+    mutationFn: (itemId: string) => serviceTemplatesService.removeTemplateItem(itemId),
     onSuccess: () => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
 
-      toast.success("Item removido do template!");
+      toast.success('Item removido do template!');
     },
     onError: (error: Error) => {
       toast.error(`Erro ao remover item: ${error.message}`);
@@ -237,14 +230,13 @@ export function useIncrementTemplateUsage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (templateId: string) =>
-      serviceTemplatesService.incrementTemplateUsage(templateId),
+    mutationFn: (templateId: string) => serviceTemplatesService.incrementTemplateUsage(templateId),
     onSuccess: () => {
       // Invalidate stats queries to update usage counts
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
     },
     onError: (error: Error) => {
-      console.error("Error incrementing template usage:", error);
+      console.error('Error incrementing template usage:', error);
       // Don't show error toast for this as it's a background operation
     },
   });
@@ -263,7 +255,7 @@ export function useDuplicateServiceTemplate() {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
 
-      toast.success("Template duplicado com sucesso!");
+      toast.success('Template duplicado com sucesso!');
     },
     onError: (error: Error) => {
       toast.error(`Erro ao duplicar template: ${error.message}`);
@@ -292,8 +284,8 @@ export function useToggleTemplateFeatured() {
     },
     onSuccess: (_, { isFeatured }) => {
       const message = isFeatured
-        ? "Template removido dos destaques"
-        : "Template adicionado aos destaques";
+        ? 'Template removido dos destaques'
+        : 'Template adicionado aos destaques';
       toast.success(message);
     },
     onError: (error: Error) => {
@@ -316,7 +308,7 @@ export function useToggleTemplateActive() {
       });
     },
     onSuccess: (_, { isActive }) => {
-      const message = isActive ? "Template desativado" : "Template ativado";
+      const message = isActive ? 'Template desativado' : 'Template ativado';
       toast.success(message);
     },
     onError: (error: Error) => {

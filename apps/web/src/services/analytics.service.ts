@@ -3,9 +3,9 @@
  * Provides comprehensive analytics and reporting for clinic management
  */
 
-import { supabase } from "@/integrations/supabase/client";
-import { endOfMonth, format, startOfMonth, subMonths } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { supabase } from '@/integrations/supabase/client';
+import { endOfMonth, format, startOfMonth, subMonths } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 // Type definitions
 export interface AppointmentMetrics {
@@ -111,49 +111,46 @@ class AnalyticsService {
   ): Promise<AppointmentMetrics> {
     try {
       const { data: appointments, error } = await (supabase as any)
-        .from("appointments")
-        .select("id, status, start_time")
-        .eq("clinic_id" as any, clinicId as any)
-        .gte("start_time", dateRange.startDate.toISOString())
-        .lte("start_time", dateRange.endDate.toISOString());
+        .from('appointments')
+        .select('id, status, start_time')
+        .eq('clinic_id' as any, clinicId as any)
+        .gte('start_time', dateRange.startDate.toISOString())
+        .lte('start_time', dateRange.endDate.toISOString());
 
       if (error) throw error;
 
       const totalAppointments = appointments?.length || 0;
-      const completedAppointments =
-        (appointments as any[])?.filter((a: any) => a.status === "completed")
-          .length || 0;
-      const cancelledAppointments =
-        (appointments as any[])?.filter((a: any) => a.status === "cancelled")
-          .length || 0;
-      const noShowAppointments =
-        (appointments as any[])?.filter((a: any) => a.status === "no_show")
-          .length || 0;
+      const completedAppointments = (appointments as any[])?.filter((a: any) =>
+        a.status === 'completed'
+      )
+        .length || 0;
+      const cancelledAppointments = (appointments as any[])?.filter((a: any) =>
+        a.status === 'cancelled'
+      )
+        .length || 0;
+      const noShowAppointments = (appointments as any[])?.filter((a: any) => a.status === 'no_show')
+        .length || 0;
 
       return {
         totalAppointments,
         completedAppointments,
         cancelledAppointments,
         noShowAppointments,
-        bookingRate:
-          totalAppointments > 0
-            ? (completedAppointments / totalAppointments) * 100
-            : 0,
-        completionRate:
-          totalAppointments > 0
-            ? (completedAppointments / totalAppointments) * 100
-            : 0,
-        cancellationRate:
-          totalAppointments > 0
-            ? (cancelledAppointments / totalAppointments) * 100
-            : 0,
-        noShowRate:
-          totalAppointments > 0
-            ? (noShowAppointments / totalAppointments) * 100
-            : 0,
+        bookingRate: totalAppointments > 0
+          ? (completedAppointments / totalAppointments) * 100
+          : 0,
+        completionRate: totalAppointments > 0
+          ? (completedAppointments / totalAppointments) * 100
+          : 0,
+        cancellationRate: totalAppointments > 0
+          ? (cancelledAppointments / totalAppointments) * 100
+          : 0,
+        noShowRate: totalAppointments > 0
+          ? (noShowAppointments / totalAppointments) * 100
+          : 0,
       };
     } catch (error) {
-      console.error("Error getting appointment metrics:", error);
+      console.error('Error getting appointment metrics:', error);
       return {
         totalAppointments: 0,
         completedAppointments: 0,
@@ -176,7 +173,7 @@ class AnalyticsService {
   ): Promise<RevenueMetrics> {
     try {
       const { data: appointments, error } = await (supabase as any)
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           id,
@@ -187,17 +184,16 @@ class AnalyticsService {
           professionals!inner(id, full_name)
         `,
         )
-        .eq("clinic_id" as any, clinicId as any)
-        .eq("status", "completed")
-        .gte("start_time", dateRange.startDate.toISOString())
-        .lte("start_time", dateRange.endDate.toISOString());
+        .eq('clinic_id' as any, clinicId as any)
+        .eq('status', 'completed')
+        .gte('start_time', dateRange.startDate.toISOString())
+        .lte('start_time', dateRange.endDate.toISOString());
 
       if (error) throw error;
 
-      const totalRevenue =
-        (
-          appointments as Array<{ total_amount: number | null }> | undefined
-        )?.reduce((sum: number, apt) => sum + (apt.total_amount || 0), 0) || 0;
+      const totalRevenue = (
+        appointments as Array<{ total_amount: number | null }> | undefined
+      )?.reduce((sum: number, apt) => sum + (apt.total_amount || 0), 0) || 0;
       const averageTicket = appointments?.length
         ? totalRevenue / appointments.length
         : 0;
@@ -218,18 +214,16 @@ class AnalyticsService {
 
           existing.totalRevenue += apt.total_amount || 0;
           existing.appointmentCount += 1;
-          existing.averagePrice =
-            existing.totalRevenue / existing.appointmentCount;
+          existing.averagePrice = existing.totalRevenue / existing.appointmentCount;
 
           serviceRevenue.set(service.id, existing);
         }
       });
 
       const revenueByService = Array.from(serviceRevenue.values()).map(
-        (service) => ({
+        service => ({
           ...service,
-          percentage:
-            totalRevenue > 0 ? (service.totalRevenue / totalRevenue) * 100 : 0,
+          percentage: totalRevenue > 0 ? (service.totalRevenue / totalRevenue) * 100 : 0,
         }),
       );
 
@@ -252,8 +246,7 @@ class AnalyticsService {
 
           existing.totalRevenue += apt.total_amount || 0;
           existing.appointmentCount += 1;
-          existing.averageTicket =
-            existing.totalRevenue / existing.appointmentCount;
+          existing.averageTicket = existing.totalRevenue / existing.appointmentCount;
 
           professionalRevenue.set(professional.id, existing);
         }
@@ -267,11 +260,10 @@ class AnalyticsService {
         const monthStart = startOfMonth(subMonths(new Date(), i));
         const monthEnd = endOfMonth(monthStart);
 
-        const monthAppointments =
-          (appointments as any[])?.filter((apt: any) => {
-            const aptDate = new Date(apt.start_time);
-            return aptDate >= monthStart && aptDate <= monthEnd;
-          }) || [];
+        const monthAppointments = (appointments as any[])?.filter((apt: any) => {
+          const aptDate = new Date(apt.start_time);
+          return aptDate >= monthStart && aptDate <= monthEnd;
+        }) || [];
 
         const monthRevenue = (monthAppointments as any[]).reduce(
           (sum: number, apt: any) => sum + (apt.total_amount || 0),
@@ -279,13 +271,12 @@ class AnalyticsService {
         );
 
         monthlyRevenue.push({
-          month: format(monthStart, "MMM yyyy", { locale: ptBR }),
+          month: format(monthStart, 'MMM yyyy', { locale: ptBR }),
           revenue: monthRevenue,
           appointmentCount: monthAppointments.length,
-          averageTicket:
-            monthAppointments.length > 0
-              ? monthRevenue / monthAppointments.length
-              : 0,
+          averageTicket: monthAppointments.length > 0
+            ? monthRevenue / monthAppointments.length
+            : 0,
         });
       }
 
@@ -297,7 +288,7 @@ class AnalyticsService {
         monthlyRevenue,
       };
     } catch (error) {
-      console.error("Error getting revenue metrics:", error);
+      console.error('Error getting revenue metrics:', error);
       return {
         totalRevenue: 0,
         averageTicket: 0,
@@ -320,9 +311,9 @@ class AnalyticsService {
       const { data: allPatients, error: patientsError } = await (
         supabase as any
       )
-        .from("patients")
-        .select("id, full_name, created_at")
-        .eq("clinic_id" as any, clinicId as any);
+        .from('patients')
+        .select('id, full_name, created_at')
+        .eq('clinic_id' as any, clinicId as any);
 
       if (patientsError) throw patientsError;
 
@@ -330,7 +321,7 @@ class AnalyticsService {
       const { data: appointments, error: appointmentsError } = await (
         supabase as any
       )
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           id,
@@ -341,21 +332,20 @@ class AnalyticsService {
           patients!inner(full_name)
         `,
         )
-        .eq("clinic_id" as any, clinicId as any)
-        .gte("start_time", dateRange.startDate.toISOString())
-        .lte("start_time", dateRange.endDate.toISOString());
+        .eq('clinic_id' as any, clinicId as any)
+        .gte('start_time', dateRange.startDate.toISOString())
+        .lte('start_time', dateRange.endDate.toISOString());
 
       if (appointmentsError) throw appointmentsError;
 
       const totalPatients = allPatients?.length || 0;
-      const newPatients =
-        (allPatients as any[])?.filter((p: any) => {
-          const createdDate = new Date((p as any).created_at || 0);
-          return (
-            createdDate >= dateRange.startDate &&
-            createdDate <= dateRange.endDate
-          );
-        }).length || 0;
+      const newPatients = (allPatients as any[])?.filter((p: any) => {
+        const createdDate = new Date((p as any).created_at || 0);
+        return (
+          createdDate >= dateRange.startDate
+          && createdDate <= dateRange.endDate
+        );
+      }).length || 0;
 
       // Calculate patient frequency
       const patientFrequency = new Map<string, PatientFrequencyData>();
@@ -389,10 +379,12 @@ class AnalyticsService {
         (p: PatientFrequencyData) => p.appointmentCount > 1,
       ).length;
 
-      const patientRetentionRate =
-        totalPatients > 0 ? (returningPatients / totalPatients) * 100 : 0;
-      const averageVisitsPerPatient =
-        totalPatients > 0 ? (appointments?.length || 0) / totalPatients : 0;
+      const patientRetentionRate = totalPatients > 0
+        ? (returningPatients / totalPatients) * 100
+        : 0;
+      const averageVisitsPerPatient = totalPatients > 0
+        ? (appointments?.length || 0) / totalPatients
+        : 0;
 
       // Patient acquisition trend (last 6 months)
       const patientAcquisitionTrend: PatientAcquisitionData[] = [];
@@ -400,24 +392,23 @@ class AnalyticsService {
         const monthStart = startOfMonth(subMonths(new Date(), i));
         const monthEnd = endOfMonth(monthStart);
 
-        const monthNewPatients =
-          (allPatients as any[])?.filter((p: any) => {
-            const createdDate = new Date((p as any).created_at || 0);
-            return createdDate >= monthStart && createdDate <= monthEnd;
-          }).length || 0;
+        const monthNewPatients = (allPatients as any[])?.filter((p: any) => {
+          const createdDate = new Date((p as any).created_at || 0);
+          return createdDate >= monthStart && createdDate <= monthEnd;
+        }).length || 0;
 
         const monthReturningPatients = Array.from(
           patientFrequency.values(),
         ).filter((p: PatientFrequencyData) => {
           return (
-            p.lastVisit >= monthStart &&
-            p.lastVisit <= monthEnd &&
-            p.appointmentCount > 1
+            p.lastVisit >= monthStart
+            && p.lastVisit <= monthEnd
+            && p.appointmentCount > 1
           );
         }).length;
 
         patientAcquisitionTrend.push({
-          month: format(monthStart, "MMM yyyy", { locale: ptBR }),
+          month: format(monthStart, 'MMM yyyy', { locale: ptBR }),
           newPatients: monthNewPatients,
           returningPatients: monthReturningPatients,
         });
@@ -433,7 +424,7 @@ class AnalyticsService {
         patientAcquisitionTrend,
       };
     } catch (error) {
-      console.error("Error getting patient analytics:", error);
+      console.error('Error getting patient analytics:', error);
       return {
         totalPatients: 0,
         newPatients: 0,
@@ -455,7 +446,7 @@ class AnalyticsService {
   ): Promise<ProfessionalPerformance[]> {
     try {
       const { data: appointments, error } = await (supabase as any)
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           id,
@@ -466,9 +457,9 @@ class AnalyticsService {
           professionals!inner(full_name)
         `,
         )
-        .eq("clinic_id" as any, clinicId as any)
-        .gte("start_time", dateRange.startDate.toISOString())
-        .lte("start_time", dateRange.endDate.toISOString());
+        .eq('clinic_id' as any, clinicId as any)
+        .gte('start_time', dateRange.startDate.toISOString())
+        .lte('start_time', dateRange.endDate.toISOString());
 
       if (error) throw error;
 
@@ -489,7 +480,7 @@ class AnalyticsService {
           };
 
           existing.totalAppointments += 1;
-          if (apt.status === "completed") {
+          if (apt.status === 'completed') {
             existing.completedAppointments += 1;
             existing.totalRevenue += apt.total_amount || 0;
           }
@@ -498,17 +489,16 @@ class AnalyticsService {
         }
       });
 
-      return Array.from(professionalStats.values()).map((prof) => ({
+      return Array.from(professionalStats.values()).map(prof => ({
         ...prof,
-        cancellationRate:
-          prof.totalAppointments > 0
-            ? ((prof.totalAppointments - prof.completedAppointments) /
-                prof.totalAppointments) *
-              100
-            : 0,
+        cancellationRate: prof.totalAppointments > 0
+          ? ((prof.totalAppointments - prof.completedAppointments)
+            / prof.totalAppointments)
+            * 100
+          : 0,
       }));
     } catch (error) {
-      console.error("Error getting professional performance:", error);
+      console.error('Error getting professional performance:', error);
       return [];
     }
   }
@@ -522,7 +512,7 @@ class AnalyticsService {
   ): Promise<PopularServicesData[]> {
     try {
       const { data: appointments, error } = await (supabase as any)
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           id,
@@ -532,10 +522,10 @@ class AnalyticsService {
           service_types!inner(name)
         `,
         )
-        .eq("clinic_id" as any, clinicId as any)
-        .eq("status", "completed")
-        .gte("start_time", dateRange.startDate.toISOString())
-        .lte("start_time", dateRange.endDate.toISOString());
+        .eq('clinic_id' as any, clinicId as any)
+        .eq('status', 'completed')
+        .gte('start_time', dateRange.startDate.toISOString())
+        .lte('start_time', dateRange.endDate.toISOString());
 
       if (error) throw error;
 
@@ -562,7 +552,7 @@ class AnalyticsService {
         (a, b) => b.appointmentCount - a.appointmentCount,
       );
     } catch (error) {
-      console.error("Error getting popular services:", error);
+      console.error('Error getting popular services:', error);
       return [];
     }
   }
@@ -573,34 +563,34 @@ class AnalyticsService {
   async exportAnalyticsToCSV(
     clinicId: string,
     dateRange: AnalyticsDateRange,
-    reportType: "appointments" | "revenue" | "patients" | "professionals",
+    reportType: 'appointments' | 'revenue' | 'patients' | 'professionals',
   ): Promise<string> {
     try {
-      let csvContent = "";
+      let csvContent = '';
 
       switch (reportType) {
-        case "appointments":
+        case 'appointments':
           const appointmentMetrics = await this.getAppointmentMetrics(
             clinicId,
             dateRange,
           );
           csvContent = this.convertAppointmentMetricsToCSV(appointmentMetrics);
           break;
-        case "revenue":
+        case 'revenue':
           const revenueMetrics = await this.getRevenueMetrics(
             clinicId,
             dateRange,
           );
           csvContent = this.convertRevenueMetricsToCSV(revenueMetrics);
           break;
-        case "patients":
+        case 'patients':
           const patientAnalytics = await this.getPatientAnalytics(
             clinicId,
             dateRange,
           );
           csvContent = this.convertPatientAnalyticsToCSV(patientAnalytics);
           break;
-        case "professionals":
+        case 'professionals':
           const professionalPerformance = await this.getProfessionalPerformance(
             clinicId,
             dateRange,
@@ -610,73 +600,73 @@ class AnalyticsService {
           );
           break;
         default:
-          throw new Error("Invalid report type");
+          throw new Error('Invalid report type');
       }
 
       return csvContent;
     } catch (error) {
-      console.error("Error exporting analytics to CSV:", error);
+      console.error('Error exporting analytics to CSV:', error);
       throw error;
     }
   }
 
   private convertAppointmentMetricsToCSV(metrics: AppointmentMetrics): string {
-    const headers = ["Métrica", "Valor"];
+    const headers = ['Métrica', 'Valor'];
     const rows = [
-      ["Total de Agendamentos", metrics.totalAppointments.toString()],
-      ["Agendamentos Concluídos", metrics.completedAppointments.toString()],
-      ["Agendamentos Cancelados", metrics.cancelledAppointments.toString()],
-      ["Faltas", metrics.noShowAppointments.toString()],
-      ["Taxa de Conclusão (%)", metrics.completionRate.toFixed(2)],
-      ["Taxa de Cancelamento (%)", metrics.cancellationRate.toFixed(2)],
-      ["Taxa de Faltas (%)", metrics.noShowRate.toFixed(2)],
+      ['Total de Agendamentos', metrics.totalAppointments.toString()],
+      ['Agendamentos Concluídos', metrics.completedAppointments.toString()],
+      ['Agendamentos Cancelados', metrics.cancelledAppointments.toString()],
+      ['Faltas', metrics.noShowAppointments.toString()],
+      ['Taxa de Conclusão (%)', metrics.completionRate.toFixed(2)],
+      ['Taxa de Cancelamento (%)', metrics.cancellationRate.toFixed(2)],
+      ['Taxa de Faltas (%)', metrics.noShowRate.toFixed(2)],
     ];
 
-    return [headers, ...rows].map((row) => row.join(",")).join("\n");
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
   }
 
   private convertRevenueMetricsToCSV(metrics: RevenueMetrics): string {
     const headers = [
-      "Serviço",
-      "Receita Total",
-      "Quantidade",
-      "Ticket Médio",
-      "Percentual",
+      'Serviço',
+      'Receita Total',
+      'Quantidade',
+      'Ticket Médio',
+      'Percentual',
     ];
-    const rows = metrics.revenueByService.map((service) => [
+    const rows = metrics.revenueByService.map(service => [
       service.serviceName,
       service.totalRevenue.toFixed(2),
       service.appointmentCount.toString(),
       service.averagePrice.toFixed(2),
-      service.percentage.toFixed(2) + "%",
+      service.percentage.toFixed(2) + '%',
     ]);
 
-    return [headers, ...rows].map((row) => row.join(",")).join("\n");
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
   }
 
   private convertPatientAnalyticsToCSV(analytics: PatientAnalytics): string {
-    const headers = ["Paciente", "Frequência", "Total Gasto", "Última Visita"];
-    const rows = analytics.topPatientsByFrequency.map((patient) => [
+    const headers = ['Paciente', 'Frequência', 'Total Gasto', 'Última Visita'];
+    const rows = analytics.topPatientsByFrequency.map(patient => [
       patient.patientName,
       patient.appointmentCount.toString(),
       patient.totalSpent.toFixed(2),
-      format(patient.lastVisit, "dd/MM/yyyy"),
+      format(patient.lastVisit, 'dd/MM/yyyy'),
     ]);
 
-    return [headers, ...rows].map((row) => row.join(",")).join("\n");
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
   }
 
   private convertProfessionalPerformanceToCSV(
     performance: ProfessionalPerformance[],
   ): string {
     const headers = [
-      "Profissional",
-      "Total Agendamentos",
-      "Concluídos",
-      "Taxa Cancelamento (%)",
-      "Receita Total",
+      'Profissional',
+      'Total Agendamentos',
+      'Concluídos',
+      'Taxa Cancelamento (%)',
+      'Receita Total',
     ];
-    const rows = performance.map((prof) => [
+    const rows = performance.map(prof => [
       prof.professionalName,
       prof.totalAppointments.toString(),
       prof.completedAppointments.toString(),
@@ -684,7 +674,7 @@ class AnalyticsService {
       prof.totalRevenue.toFixed(2),
     ]);
 
-    return [headers, ...rows].map((row) => row.join(",")).join("\n");
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
   }
 }
 

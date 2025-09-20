@@ -13,33 +13,33 @@
  * - Brazilian Portuguese localization
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // Production Readiness Configuration Schema
 export const ProductionReadinessConfigSchema = z
   .object({
-    environment: z.enum(["staging", "production"]).default("staging"),
+    environment: z.enum(['staging', 'production']).default('staging'),
     healthcareCompliance: z
-      .array(z.enum(["LGPD", "ANVISA", "CFM"]))
-      .default(["LGPD", "ANVISA", "CFM"]),
+      .array(z.enum(['LGPD', 'ANVISA', 'CFM']))
+      .default(['LGPD', 'ANVISA', 'CFM']),
     validationTypes: z
       .array(
         z.enum([
-          "deployment",
-          "monitoring",
-          "security",
-          "performance",
-          "compliance",
-          "accessibility",
-          "mobile",
+          'deployment',
+          'monitoring',
+          'security',
+          'performance',
+          'compliance',
+          'accessibility',
+          'mobile',
         ]),
       )
       .default([
-        "deployment",
-        "monitoring",
-        "security",
-        "performance",
-        "compliance",
+        'deployment',
+        'monitoring',
+        'security',
+        'performance',
+        'compliance',
       ]),
     performanceThresholds: z
       .object({
@@ -52,20 +52,20 @@ export const ProductionReadinessConfigSchema = z
     securityRequirements: z
       .array(z.string())
       .default([
-        "HTTPS enforcement",
-        "Healthcare data encryption",
-        "LGPD consent management",
-        "Audit trail logging",
-        "Emergency access controls",
+        'HTTPS enforcement',
+        'Healthcare data encryption',
+        'LGPD consent management',
+        'Audit trail logging',
+        'Emergency access controls',
       ]),
     monitoringRequirements: z
       .array(z.string())
       .default([
-        "Healthcare workflow monitoring",
-        "Patient data access logging",
-        "Performance monitoring",
-        "Error tracking",
-        "Compliance monitoring",
+        'Healthcare workflow monitoring',
+        'Patient data access logging',
+        'Performance monitoring',
+        'Error tracking',
+        'Compliance monitoring',
       ]),
   })
   .strict();
@@ -77,7 +77,7 @@ export type ProductionReadinessConfig = z.infer<
 // Production Readiness Validation Types
 export interface ProductionReadinessValidation {
   validationType: string;
-  status: "passed" | "failed" | "warning";
+  status: 'passed' | 'failed' | 'warning';
   score: number;
   issues: ProductionReadinessIssue[];
   recommendations: string[];
@@ -85,7 +85,7 @@ export interface ProductionReadinessValidation {
 }
 
 export interface ProductionReadinessIssue {
-  severity: "critical" | "high" | "medium" | "low";
+  severity: 'critical' | 'high' | 'medium' | 'low';
   category: string;
   issue: string;
   recommendation: string;
@@ -106,7 +106,7 @@ export interface ProductionReadinessReport {
     failedValidations: number;
     warningValidations: number;
     overallScore: number;
-    readinessLevel: "production-ready" | "staging-ready" | "not-ready";
+    readinessLevel: 'production-ready' | 'staging-ready' | 'not-ready';
     criticalIssues: number;
     healthcareCompliance: {
       lgpd: boolean;
@@ -121,25 +121,25 @@ export interface ProductionReadinessReport {
 
 // Production Readiness Validation Constants
 export const VALIDATION_TYPES = {
-  DEPLOYMENT: "deployment",
-  MONITORING: "monitoring",
-  SECURITY: "security",
-  PERFORMANCE: "performance",
-  COMPLIANCE: "compliance",
-  ACCESSIBILITY: "accessibility",
-  MOBILE: "mobile",
+  DEPLOYMENT: 'deployment',
+  MONITORING: 'monitoring',
+  SECURITY: 'security',
+  PERFORMANCE: 'performance',
+  COMPLIANCE: 'compliance',
+  ACCESSIBILITY: 'accessibility',
+  MOBILE: 'mobile',
 } as const;
 
 export const HEALTHCARE_COMPLIANCE_STANDARDS = {
-  LGPD: "LGPD",
-  ANVISA: "ANVISA",
-  CFM: "CFM",
+  LGPD: 'LGPD',
+  ANVISA: 'ANVISA',
+  CFM: 'CFM',
 } as const;
 
 export const READINESS_LEVELS = {
-  PRODUCTION_READY: "production-ready",
-  STAGING_READY: "staging-ready",
-  NOT_READY: "not-ready",
+  PRODUCTION_READY: 'production-ready',
+  STAGING_READY: 'staging-ready',
+  NOT_READY: 'not-ready',
 } as const;
 
 /**
@@ -206,7 +206,7 @@ export default class ProductionReadinessService {
     validationType: string,
   ): Promise<ProductionReadinessValidation> {
     // Mock implementation - in real scenario, this would perform actual validation
-    await new Promise((resolve) => setTimeout(resolve, 500)); // Simulate validation time
+    await new Promise(resolve => setTimeout(resolve, 500)); // Simulate validation time
 
     const issues: ProductionReadinessIssue[] = [];
     const recommendations: string[] = [];
@@ -214,50 +214,50 @@ export default class ProductionReadinessService {
 
     // Generate mock validation results based on type
     let score = 85 + Math.random() * 15; // 85-100% score range
-    let status: "passed" | "failed" | "warning" = "passed";
+    let status: 'passed' | 'failed' | 'warning' = 'passed';
 
     switch (validationType) {
       case VALIDATION_TYPES.DEPLOYMENT:
-        recommendations.push("Configurar monitoramento de saúde da aplicação");
+        recommendations.push('Configurar monitoramento de saúde da aplicação');
         recommendations.push(
-          "Implementar rollback automático em caso de falha",
+          'Implementar rollback automático em caso de falha',
         );
         healthcareConsiderations.push(
-          "Garantir disponibilidade 24/7 para emergências médicas",
+          'Garantir disponibilidade 24/7 para emergências médicas',
         );
         break;
 
       case VALIDATION_TYPES.SECURITY:
-        recommendations.push("Implementar criptografia de dados de pacientes");
+        recommendations.push('Implementar criptografia de dados de pacientes');
         recommendations.push(
-          "Configurar auditoria de acesso a dados sensíveis",
+          'Configurar auditoria de acesso a dados sensíveis',
         );
         healthcareConsiderations.push(
-          "Conformidade com LGPD para dados de saúde",
+          'Conformidade com LGPD para dados de saúde',
         );
         break;
 
       case VALIDATION_TYPES.PERFORMANCE:
         recommendations.push(
-          "Otimizar tempo de carregamento para < 3 segundos",
+          'Otimizar tempo de carregamento para < 3 segundos',
         );
         recommendations.push(
-          "Implementar cache para consultas médicas frequentes",
+          'Implementar cache para consultas médicas frequentes',
         );
         healthcareConsiderations.push(
-          "Performance crítica para situações de emergência",
+          'Performance crítica para situações de emergência',
         );
         break;
 
       case VALIDATION_TYPES.COMPLIANCE:
         recommendations.push(
-          "Validar conformidade com ANVISA para dispositivos médicos",
+          'Validar conformidade com ANVISA para dispositivos médicos',
         );
         recommendations.push(
-          "Implementar consentimento LGPD para dados de pacientes",
+          'Implementar consentimento LGPD para dados de pacientes',
         );
         healthcareConsiderations.push(
-          "Auditoria CFM para práticas médicas digitais",
+          'Auditoria CFM para práticas médicas digitais',
         );
         break;
     }
@@ -265,15 +265,15 @@ export default class ProductionReadinessService {
     // Add some mock issues for demonstration
     if (Math.random() > 0.8) {
       issues.push({
-        severity: "medium",
+        severity: 'medium',
         category: validationType,
         issue: `Configuração de ${validationType} precisa de ajustes`,
         recommendation: `Revisar configurações de ${validationType} para ambiente de produção`,
         healthcareImpact: [
-          "Pode afetar disponibilidade do sistema para pacientes",
+          'Pode afetar disponibilidade do sistema para pacientes',
         ],
       });
-      status = "warning";
+      status = 'warning';
       score -= 10;
     }
 
@@ -293,42 +293,39 @@ export default class ProductionReadinessService {
   private generateSummary(validations: ProductionReadinessValidation[]) {
     const totalValidations = validations.length;
     const passedValidations = validations.filter(
-      (v) => v.status === "passed",
+      v => v.status === 'passed',
     ).length;
     const failedValidations = validations.filter(
-      (v) => v.status === "failed",
+      v => v.status === 'failed',
     ).length;
     const warningValidations = validations.filter(
-      (v) => v.status === "warning",
+      v => v.status === 'warning',
     ).length;
 
-    const overallScore =
-      validations.reduce((sum, v) => sum + v.score, 0) / totalValidations;
+    const overallScore = validations.reduce((sum, v) => sum + v.score, 0) / totalValidations;
 
-    let readinessLevel: "production-ready" | "staging-ready" | "not-ready" =
-      "not-ready";
+    let readinessLevel: 'production-ready' | 'staging-ready' | 'not-ready' = 'not-ready';
     if (overallScore >= 95 && failedValidations === 0) {
-      readinessLevel = "production-ready";
+      readinessLevel = 'production-ready';
     } else if (overallScore >= 80 && failedValidations <= 1) {
-      readinessLevel = "staging-ready";
+      readinessLevel = 'staging-ready';
     }
 
     const criticalIssues = validations.reduce(
-      (sum, v) =>
-        sum + v.issues.filter((i) => i.severity === "critical").length,
+      (sum, v) => sum + v.issues.filter(i => i.severity === 'critical').length,
       0,
     );
 
     // Mock healthcare compliance validation
     const healthcareCompliance = {
       lgpd: validations.some(
-        (v) => v.validationType === "compliance" && v.score >= 90,
+        v => v.validationType === 'compliance' && v.score >= 90,
       ),
       anvisa: validations.some(
-        (v) => v.validationType === "security" && v.score >= 85,
+        v => v.validationType === 'security' && v.score >= 85,
       ),
       cfm: validations.some(
-        (v) => v.validationType === "monitoring" && v.score >= 80,
+        v => v.validationType === 'monitoring' && v.score >= 80,
       ),
     };
 
@@ -353,19 +350,19 @@ export default class ProductionReadinessService {
     const recommendations = new Set<string>();
 
     // Collect all recommendations from validations
-    validations.forEach((validation) => {
-      validation.recommendations.forEach((rec) => recommendations.add(rec));
+    validations.forEach(validation => {
+      validation.recommendations.forEach(rec => recommendations.add(rec));
     });
 
     // Add general healthcare recommendations
     recommendations.add(
-      "Implementar monitoramento contínuo de conformidade LGPD",
+      'Implementar monitoramento contínuo de conformidade LGPD',
     );
     recommendations.add(
-      "Configurar alertas para falhas críticas em horário comercial",
+      'Configurar alertas para falhas críticas em horário comercial',
     );
     recommendations.add(
-      "Estabelecer procedimentos de backup para dados de pacientes",
+      'Estabelecer procedimentos de backup para dados de pacientes',
     );
 
     return Array.from(recommendations);
@@ -379,9 +376,9 @@ export default class ProductionReadinessService {
   ): ProductionReadinessIssue[] {
     const criticalIssues: ProductionReadinessIssue[] = [];
 
-    validations.forEach((validation) => {
-      validation.issues.forEach((issue) => {
-        if (issue.severity === "critical" || issue.severity === "high") {
+    validations.forEach(validation => {
+      validation.issues.forEach(issue => {
+        if (issue.severity === 'critical' || issue.severity === 'high') {
           criticalIssues.push(issue);
         }
       });
@@ -397,21 +394,21 @@ export default class ProductionReadinessService {
     validations: ProductionReadinessValidation[],
   ): string[] {
     const checklist = [
-      "✅ Configurar variáveis de ambiente de produção",
-      "✅ Validar certificados SSL/TLS",
-      "✅ Configurar monitoramento de aplicação",
-      "✅ Implementar logging estruturado",
-      "✅ Configurar backup automático de dados",
-      "✅ Validar conformidade LGPD",
-      "✅ Testar procedimentos de emergência",
-      "✅ Configurar alertas de sistema",
-      "✅ Validar performance sob carga",
-      "✅ Revisar políticas de segurança",
+      '✅ Configurar variáveis de ambiente de produção',
+      '✅ Validar certificados SSL/TLS',
+      '✅ Configurar monitoramento de aplicação',
+      '✅ Implementar logging estruturado',
+      '✅ Configurar backup automático de dados',
+      '✅ Validar conformidade LGPD',
+      '✅ Testar procedimentos de emergência',
+      '✅ Configurar alertas de sistema',
+      '✅ Validar performance sob carga',
+      '✅ Revisar políticas de segurança',
     ];
 
     // Add specific items based on validation results
-    const failedValidations = validations.filter((v) => v.status === "failed");
-    failedValidations.forEach((validation) => {
+    const failedValidations = validations.filter(v => v.status === 'failed');
+    failedValidations.forEach(validation => {
       checklist.push(`⚠️ Corrigir problemas de ${validation.validationType}`);
     });
 

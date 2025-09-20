@@ -4,9 +4,9 @@
  * @version 1.0.0
  */
 
-import type { Context, Next } from "hono";
-import { HTTPException } from "hono/http-exception";
-import { RateLimiter, SecurityUtils } from "./utils";
+import type { Context, Next } from 'hono';
+import { HTTPException } from 'hono/http-exception';
+import { RateLimiter, SecurityUtils } from './utils';
 
 /**
  * Security headers middleware
@@ -15,22 +15,22 @@ import { RateLimiter, SecurityUtils } from "./utils";
 export function securityHeaders() {
   return async (c: Context, next: Next) => {
     // Add security headers
-    c.header("X-Content-Type-Options", "nosniff");
-    c.header("X-Frame-Options", "DENY");
-    c.header("X-XSS-Protection", "1; mode=block");
+    c.header('X-Content-Type-Options', 'nosniff');
+    c.header('X-Frame-Options', 'DENY');
+    c.header('X-XSS-Protection', '1; mode=block');
     c.header(
-      "Strict-Transport-Security",
-      "max-age=31536000; includeSubDomains",
+      'Strict-Transport-Security',
+      'max-age=31536000; includeSubDomains',
     );
     c.header(
-      "Content-Security-Policy",
-      "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none';",
+      'Content-Security-Policy',
+      'default-src \'self\'; script-src \'self\' \'unsafe-inline\'; style-src \'self\' \'unsafe-inline\'; img-src \'self\' data: https:; font-src \'self\' data:; connect-src \'self\' https:; frame-ancestors \'none\';',
     );
-    c.header("Referrer-Policy", "strict-origin-when-cross-origin");
-    c.header("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-    c.header("X-Permitted-Cross-Domain-Policies", "none");
-    c.header("X-Download-Options", "noopen");
-    c.header("X-Robots-Tag", "noindex, nofollow");
+    c.header('Referrer-Policy', 'strict-origin-when-cross-origin');
+    c.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+    c.header('X-Permitted-Cross-Domain-Policies', 'none');
+    c.header('X-Download-Options', 'noopen');
+    c.header('X-Robots-Tag', 'noindex, nofollow');
 
     await next();
   };
@@ -45,11 +45,11 @@ export function inputValidation() {
     // Validate query parameters
     const queryParams = c.req.query();
     for (const [key, value] of Object.entries(queryParams)) {
-      if (typeof value === "string") {
+      if (typeof value === 'string') {
         // Check for suspicious patterns
         if (SecurityUtils.containsSuspiciousPatterns(value)) {
           throw new HTTPException(400, {
-            message: "Invalid input detected",
+            message: 'Invalid input detected',
           });
         }
 
@@ -59,25 +59,25 @@ export function inputValidation() {
     }
 
     // Validate request body for POST/PUT/PATCH requests
-    if (["POST", "PUT", "PATCH"].includes(c.req.method)) {
+    if (['POST', 'PUT', 'PATCH'].includes(c.req.method)) {
       try {
-        const contentType = c.req.header("content-type") || "";
+        const contentType = c.req.header('content-type') || '';
 
-        if (contentType.includes("application/json")) {
+        if (contentType.includes('application/json')) {
           const body = await c.req.json();
           const sanitizedBody = sanitizeObject(body);
 
           // Replace the request body with sanitized version
           // Note: This requires custom request handling in Hono
-          c.set("sanitizedBody", sanitizedBody);
-        } else if (contentType.includes("application/x-www-form-urlencoded")) {
+          c.set('sanitizedBody', sanitizedBody);
+        } else if (contentType.includes('application/x-www-form-urlencoded')) {
           const formData = await c.req.parseBody();
           const sanitizedFormData = sanitizeObject(formData);
-          c.set("sanitizedFormData", sanitizedFormData);
+          c.set('sanitizedFormData', sanitizedFormData);
         }
       } catch (error) {
         // If body parsing fails, continue to let error handlers deal with it
-        console.warn("Failed to parse request body for validation:", error);
+        console.warn('Failed to parse request body for validation:', error);
       }
     }
 
@@ -100,7 +100,7 @@ export function rateLimiting(
     maxAttempts = 100,
     windowMs = 60000, // 1 minute
     keyGenerator = (c: Context) =>
-      c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown",
+      c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown',
   } = options;
 
   const rateLimiter = new RateLimiter();
@@ -115,13 +115,13 @@ export function rateLimiting(
         windowMs,
       );
 
-      c.header("X-RateLimit-Limit", maxAttempts.toString());
-      c.header("X-RateLimit-Remaining", remaining.toString());
-      c.header("X-RateLimit-Reset", (Date.now() + windowMs).toString());
-      c.header("Retry-After", Math.ceil(windowMs / 1000).toString());
+      c.header('X-RateLimit-Limit', maxAttempts.toString());
+      c.header('X-RateLimit-Remaining', remaining.toString());
+      c.header('X-RateLimit-Reset', (Date.now() + windowMs).toString());
+      c.header('Retry-After', Math.ceil(windowMs / 1000).toString());
 
       throw new HTTPException(429, {
-        message: "Too many requests. Please try again later.",
+        message: 'Too many requests. Please try again later.',
       });
     }
 
@@ -131,9 +131,9 @@ export function rateLimiting(
       maxAttempts,
       windowMs,
     );
-    c.header("X-RateLimit-Limit", maxAttempts.toString());
-    c.header("X-RateLimit-Remaining", remaining.toString());
-    c.header("X-RateLimit-Reset", (Date.now() + windowMs).toString());
+    c.header('X-RateLimit-Limit', maxAttempts.toString());
+    c.header('X-RateLimit-Remaining', remaining.toString());
+    c.header('X-RateLimit-Reset', (Date.now() + windowMs).toString());
 
     await next();
   };
@@ -146,22 +146,21 @@ export function rateLimiting(
 export function csrfProtection() {
   return async (c: Context, next: Next) => {
     // Skip CSRF protection for safe methods
-    if (["GET", "HEAD", "OPTIONS"].includes(c.req.method)) {
+    if (['GET', 'HEAD', 'OPTIONS'].includes(c.req.method)) {
       await next();
       return;
     }
 
     // Check CSRF token for state-changing methods
-    const csrfToken =
-      c.req.header("x-csrf-token") ||
-      c.req.header("x-xsrf-token") ||
-      c.get("csrfToken");
+    const csrfToken = c.req.header('x-csrf-token')
+      || c.req.header('x-xsrf-token')
+      || c.get('csrfToken');
 
-    const sessionToken = c.get("sessionCsrfToken");
+    const sessionToken = c.get('sessionCsrfToken');
 
     if (!csrfToken || !sessionToken || csrfToken !== sessionToken) {
       throw new HTTPException(403, {
-        message: "Invalid CSRF token",
+        message: 'Invalid CSRF token',
       });
     }
 
@@ -175,11 +174,11 @@ export function csrfProtection() {
  */
 export function authentication() {
   return async (c: Context, next: Next) => {
-    const authHeader = c.req.header("authorization");
+    const authHeader = c.req.header('authorization');
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new HTTPException(401, {
-        message: "Missing or invalid authorization header",
+        message: 'Missing or invalid authorization header',
       });
     }
 
@@ -192,16 +191,16 @@ export function authentication() {
       // c.set('user', decoded);
 
       // For now, just set a placeholder user but use the token for logging
-      console.log("Token received:", token.substring(0, 10) + "...");
-      c.set("user", { id: "placeholder", role: "user" });
+      console.log('Token received:', token.substring(0, 10) + '...');
+      c.set('user', { id: 'placeholder', role: 'user' });
 
       await next();
     } catch (error: unknown) {
       if (error instanceof Error) {
-        console.error("JWT validation error:", error.message);
+        console.error('JWT validation error:', error.message);
       }
       throw new HTTPException(401, {
-        message: "Invalid or expired token",
+        message: 'Invalid or expired token',
       });
     }
   };
@@ -213,17 +212,17 @@ export function authentication() {
  */
 export function authorization(roles: string[] = []) {
   return async (c: Context, next: Next) => {
-    const user = c.get("user");
+    const user = c.get('user');
 
     if (!user) {
       throw new HTTPException(401, {
-        message: "Authentication required",
+        message: 'Authentication required',
       });
     }
 
     if (roles.length > 0 && !roles.includes(user.role)) {
       throw new HTTPException(403, {
-        message: "Insufficient permissions",
+        message: 'Insufficient permissions',
       });
     }
 
@@ -238,8 +237,8 @@ export function authorization(roles: string[] = []) {
 export function requestId() {
   return async (c: Context, next: Next) => {
     const requestId = crypto.randomUUID();
-    c.set("requestId", requestId);
-    c.header("X-Request-ID", requestId);
+    c.set('requestId', requestId);
+    c.header('X-Request-ID', requestId);
 
     await next();
   };
@@ -252,10 +251,9 @@ export function requestId() {
 export function securityLogging() {
   return async (c: Context, next: Next) => {
     const startTime = Date.now();
-    const requestId = c.get("requestId");
-    const clientIp =
-      c.req.header("x-forwarded-for") || c.req.header("x-real-ip") || "unknown";
-    const userAgent = c.req.header("user-agent") || "unknown";
+    const requestId = c.get('requestId');
+    const clientIp = c.req.header('x-forwarded-for') || c.req.header('x-real-ip') || 'unknown';
+    const userAgent = c.req.header('user-agent') || 'unknown';
 
     try {
       await next();
@@ -264,7 +262,7 @@ export function securityLogging() {
       const status = c.res.status;
 
       // Log successful requests
-      console.log("[Security]", {
+      console.log('[Security]', {
         requestId,
         method: c.req.method,
         path: c.req.path,
@@ -278,7 +276,7 @@ export function securityLogging() {
       const duration = Date.now() - startTime;
 
       // Log errors and security events
-      console.error("[Security Error]", {
+      console.error('[Security Error]', {
         requestId,
         method: c.req.method,
         path: c.req.path,
@@ -301,25 +299,24 @@ export function securityLogging() {
 export function healthcareDataProtection() {
   return async (c: Context, next: Next) => {
     // Check if this is a healthcare-related endpoint
-    const isHealthcareEndpoint =
-      c.req.path.includes("/patients") ||
-      c.req.path.includes("/appointments") ||
-      c.req.path.includes("/medical-records") ||
-      c.req.path.includes("/healthcare");
+    const isHealthcareEndpoint = c.req.path.includes('/patients')
+      || c.req.path.includes('/appointments')
+      || c.req.path.includes('/medical-records')
+      || c.req.path.includes('/healthcare');
 
     if (isHealthcareEndpoint) {
       // Add healthcare-specific security headers
-      c.header("X-Healthcare-Data", "protected");
-      c.header("X-LGPD-Compliance", "enabled");
+      c.header('X-Healthcare-Data', 'protected');
+      c.header('X-LGPD-Compliance', 'enabled');
 
       // Log healthcare data access
-      const user = c.get("user");
-      const patientId = c.req.param("patientId") || c.req.query("patientId");
+      const user = c.get('user');
+      const patientId = c.req.param('patientId') || c.req.query('patientId');
 
-      console.log("[Healthcare Access]", {
-        requestId: c.get("requestId"),
-        userId: user?.id || "anonymous",
-        patientId: patientId ? "[REDACTED]" : undefined,
+      console.log('[Healthcare Access]', {
+        requestId: c.get('requestId'),
+        userId: user?.id || 'anonymous',
+        patientId: patientId ? '[REDACTED]' : undefined,
         endpoint: c.req.path,
         method: c.req.method,
         timestamp: new Date().toISOString(),
@@ -345,19 +342,19 @@ export function healthcareDataProtection() {
  * Helper function to sanitize object properties recursively
  */
 function sanitizeObject(obj: any): any {
-  if (typeof obj !== "object" || obj === null) {
+  if (typeof obj !== 'object' || obj === null) {
     return obj;
   }
 
   if (Array.isArray(obj)) {
-    return obj.map((item) => sanitizeObject(item));
+    return obj.map(item => sanitizeObject(item));
   }
 
   const sanitized: any = {};
   for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === "string") {
+    if (typeof value === 'string') {
       sanitized[key] = SecurityUtils.sanitizeInput(value);
-    } else if (typeof value === "object" && value !== null) {
+    } else if (typeof value === 'object' && value !== null) {
       sanitized[key] = sanitizeObject(value);
     } else {
       sanitized[key] = value;
@@ -382,7 +379,7 @@ async function validateJWT(_token: string): Promise<any> {
   // 3. Validate claims
   // 4. Return decoded payload
 
-  throw new Error("JWT validation not implemented");
+  throw new Error('JWT validation not implemented');
 }
 
 /**
@@ -402,11 +399,11 @@ async function validateLGPDConsent(
     // Placeholder implementation - always return true for now
     // TODO: Implement actual consent validation when service is available
     console.warn(
-      "LGPD consent validation not fully implemented - allowing access",
+      'LGPD consent validation not fully implemented - allowing access',
     );
     return true;
   } catch (error) {
-    console.error("LGPD consent validation failed:", error);
+    console.error('LGPD consent validation failed:', error);
     // Fail securely - deny access if consent validation fails
     return false;
   }

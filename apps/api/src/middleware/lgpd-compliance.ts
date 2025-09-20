@@ -667,7 +667,7 @@ export function lgpdComplianceMiddleware(
       const url = c.req.url;
       const body = method !== 'GET' ? await c.req.json().catch(() => ({})) : {};
       const query = Object.fromEntries(new URL(url).searchParams);
-      const headers = Object.fromEntries(c.req.headers.entries());
+      const headers = Object.fromEntries(c.req.header.entries());
 
       // Build LGPD context
       const lgpdContext = await buildLGPDContext(c, body, query);
@@ -861,7 +861,7 @@ export function lgpdComplianceMiddleware(
         );
       }
 
-      await next();
+      return await next();
     }
   };
 }
@@ -878,7 +878,7 @@ async function buildLGPDContext(
   body: any,
   query: any,
 ): Promise<LGPDContext> {
-  const headers = Object.fromEntries(c.req.headers.entries());
+  const headers = Object.fromEntries(c.req.header.entries());
   const url = new URL(c.req.url);
 
   // Extract healthcare context

@@ -1,0 +1,28 @@
+# AG-UI Protocol and core dependencies
+agui==0.3.0
+fastapi==0.110.0
+uvicorn==0.27.1
+pydantic==2.6.1
+websockets==12.0
+
+# Database and ORM
+supabase==2.3.0
+sqlalchemy==2.0.27
+psycopg2-binary==2.9.9
+
+# AI and LLM dependencies
+openai==1.12.0
+anthropic==0.18.1
+langchain==0.1.9
+langchain-openai==0.0.8
+langchain-community==0.0.20
+
+# RAG and vector search
+chromadb==0.4.22
+sentence-transformers==2.3.1
+faiss-cpu==1.7.4
+
+# Utility dependencies
+python-dotenv==1.0.1
+httpx==0.26.0
+aiofiles==23.2.0

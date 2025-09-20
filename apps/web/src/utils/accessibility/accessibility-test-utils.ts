@@ -5,139 +5,137 @@
  * with automated testing, validation patterns, and healthcare-specific checks.
  */
 
-import * as axe from "axe-core";
-import { generateAccessibilityReport } from "./axe-core-integration";
+import * as axe from 'axe-core';
+import { generateAccessibilityReport } from './axe-core-integration';
 
 // Healthcare-specific test scenarios
 export const HEALTHCARE_TEST_SCENARIOS = [
   {
-    name: "Patient Dashboard",
-    description: "Critical patient information display",
-    selectors: ['[data-testid="patient-dashboard"]', ".patient-dashboard"],
-    requiredRules: ["color-contrast", "name-role-value", "label"],
+    name: 'Patient Dashboard',
+    description: 'Critical patient information display',
+    selectors: ['[data-testid="patient-dashboard"]', '.patient-dashboard'],
+    requiredRules: ['color-contrast', 'name-role-value', 'label'],
   },
   {
-    name: "Medical Forms",
-    description: "Patient data entry forms",
-    selectors: ['form[data-medical="true"]', ".medical-form"],
-    requiredRules: ["form-field-multiple-labels", "label-title-only"],
+    name: 'Medical Forms',
+    description: 'Patient data entry forms',
+    selectors: ['form[data-medical="true"]', '.medical-form'],
+    requiredRules: ['form-field-multiple-labels', 'label-title-only'],
   },
   {
-    name: "Appointment Scheduling",
-    description: "Scheduling interface for healthcare professionals",
+    name: 'Appointment Scheduling',
+    description: 'Scheduling interface for healthcare professionals',
     selectors: [
       '[data-testid="appointment-scheduler"]',
-      ".appointment-scheduler",
+      '.appointment-scheduler',
     ],
-    requiredRules: ["button-name", "link-name", "aria-input-field-name"],
+    requiredRules: ['button-name', 'link-name', 'aria-input-field-name'],
   },
   {
-    name: "Medical Records",
-    description: "Patient medical records viewer",
-    selectors: ['[data-testid="medical-records"]', ".medical-records"],
-    requiredRules: ["landmark-one-main", "page-has-heading-one"],
+    name: 'Medical Records',
+    description: 'Patient medical records viewer',
+    selectors: ['[data-testid="medical-records"]', '.medical-records'],
+    requiredRules: ['landmark-one-main', 'page-has-heading-one'],
   },
   {
-    name: "Prescription Management",
-    description: "Prescription and medication management",
+    name: 'Prescription Management',
+    description: 'Prescription and medication management',
     selectors: [
       '[data-testid="prescription-manager"]',
-      ".prescription-manager",
+      '.prescription-manager',
     ],
-    requiredRules: ["duplicate-id", "aria-command-name"],
+    requiredRules: ['duplicate-id', 'aria-command-name'],
   },
 ];
 
 // WCAG 2.1 AA+ requirements for healthcare
 export const WCAG_HEALTHCARE_REQUIREMENTS = {
-  "1.1.1": {
-    title: "Non-text Content",
-    description: "All non-text content has text alternative",
+  '1.1.1': {
+    title: 'Non-text Content',
+    description: 'All non-text content has text alternative',
     critical: true,
     test: (element: Element) => {
-      if (element.tagName === "IMG") {
+      if (element.tagName === 'IMG') {
         return (
-          element.hasAttribute("alt") ||
-          element.hasAttribute("aria-label") ||
-          element.getAttribute("role") === "presentation"
+          element.hasAttribute('alt')
+          || element.hasAttribute('aria-label')
+          || element.getAttribute('role') === 'presentation'
         );
       }
       return true;
     },
   },
-  "1.3.1": {
-    title: "Info and Relationships",
-    description:
-      "Information structure and relationships can be programmatically determined",
+  '1.3.1': {
+    title: 'Info and Relationships',
+    description: 'Information structure and relationships can be programmatically determined',
     critical: true,
     test: (element: Element) => {
-      const forms = element.querySelectorAll("form");
-      return Array.from(forms).every((form) => {
-        const inputs = form.querySelectorAll("input, select, textarea");
-        return Array.from(inputs).every((input) => {
+      const forms = element.querySelectorAll('form');
+      return Array.from(forms).every(form => {
+        const inputs = form.querySelectorAll('input, select, textarea');
+        return Array.from(inputs).every(input => {
           return (
-            input.hasAttribute("id") &&
-            input.hasAttribute("name") &&
-            document.querySelector(`label[for="${input.id}"]`) !== null
+            input.hasAttribute('id')
+            && input.hasAttribute('name')
+            && document.querySelector(`label[for="${input.id}"]`) !== null
           );
         });
       });
     },
   },
-  "1.4.3": {
-    title: "Contrast (Minimum)",
-    description: "Text contrast ratio at least 4.5:1",
+  '1.4.3': {
+    title: 'Contrast (Minimum)',
+    description: 'Text contrast ratio at least 4.5:1',
     critical: true,
     test: () => true, // Handled by axe-core
   },
-  "2.4.6": {
-    title: "Headings and Labels",
-    description: "Headings and labels describe topic or purpose",
+  '2.4.6': {
+    title: 'Headings and Labels',
+    description: 'Headings and labels describe topic or purpose',
     critical: true,
     test: (element: Element) => {
-      const headings = element.querySelectorAll("h1, h2, h3, h4, h5, h6");
-      const labels = element.querySelectorAll("label");
+      const headings = element.querySelectorAll('h1, h2, h3, h4, h5, h6');
+      const labels = element.querySelectorAll('label');
 
       return (
         Array.from(headings).every(
-          (heading) => heading.textContent?.trim().length > 0,
-        ) &&
-        Array.from(labels).every(
-          (label) => label.textContent?.trim().length > 0,
+          heading => heading.textContent?.trim().length > 0,
+        )
+        && Array.from(labels).every(
+          label => label.textContent?.trim().length > 0,
         )
       );
     },
   },
-  "3.3.2": {
-    title: "Labels or Instructions",
-    description:
-      "Labels or instructions provided when content requires user input",
+  '3.3.2': {
+    title: 'Labels or Instructions',
+    description: 'Labels or instructions provided when content requires user input',
     critical: true,
     test: (element: Element) => {
-      const inputs = element.querySelectorAll("input, select, textarea");
-      return Array.from(inputs).every((input) => {
+      const inputs = element.querySelectorAll('input, select, textarea');
+      return Array.from(inputs).every(input => {
         const label = document.querySelector(`label[for="${input.id}"]`);
         return (
-          label !== null ||
-          input.hasAttribute("aria-label") ||
-          input.hasAttribute("title")
+          label !== null
+          || input.hasAttribute('aria-label')
+          || input.hasAttribute('title')
         );
       });
     },
   },
-  "4.1.2": {
-    title: "Name, Role, Value",
-    description: "Name, role, value can be programmatically determined",
+  '4.1.2': {
+    title: 'Name, Role, Value',
+    description: 'Name, role, value can be programmatically determined',
     critical: true,
     test: (element: Element) => {
       const interactive = element.querySelectorAll(
-        "button, input, select, textarea, a",
+        'button, input, select, textarea, a',
       );
-      return Array.from(interactive).every((el) => {
+      return Array.from(interactive).every(el => {
         return (
-          el.hasAttribute("aria-label") ||
-          el.hasAttribute("aria-labelledby") ||
-          el.textContent?.trim().length > 0
+          el.hasAttribute('aria-label')
+          || el.hasAttribute('aria-labelledby')
+          || el.textContent?.trim().length > 0
         );
       });
     },
@@ -149,8 +147,7 @@ export const WCAG_HEALTHCARE_REQUIREMENTS = {
  */
 export class HealthcareAccessibilityTester {
   private testResults: Map<string, any> = new Map();
-  private scenarios: typeof HEALTHCARE_TEST_SCENARIOS =
-    HEALTHCARE_TEST_SCENARIOS;
+  private scenarios: typeof HEALTHCARE_TEST_SCENARIOS = HEALTHCARE_TEST_SCENARIOS;
 
   /**
    * Run comprehensive accessibility tests
@@ -221,9 +218,9 @@ export class HealthcareAccessibilityTester {
           passed: false,
           violations: [
             {
-              rule: "ELEMENT_NOT_FOUND",
+              rule: 'ELEMENT_NOT_FOUND',
               description: `No elements found for scenario: ${scenario.name}`,
-              impact: "critical",
+              impact: 'critical',
             },
           ],
           score: 0,
@@ -236,9 +233,11 @@ export class HealthcareAccessibilityTester {
 
       for (const element of elements) {
         // Test WCAG requirements
-        for (const [wcagId, requirement] of Object.entries(
-          WCAG_HEALTHCARE_REQUIREMENTS,
-        )) {
+        for (
+          const [wcagId, requirement] of Object.entries(
+            WCAG_HEALTHCARE_REQUIREMENTS,
+          )
+        ) {
           totalChecks++;
           if (requirement.test(element)) {
             passedChecks++;
@@ -246,7 +245,7 @@ export class HealthcareAccessibilityTester {
             violations.push({
               rule: wcagId,
               description: requirement.description,
-              impact: requirement.critical ? "critical" : "moderate",
+              impact: requirement.critical ? 'critical' : 'moderate',
             });
           }
         }
@@ -279,9 +278,9 @@ export class HealthcareAccessibilityTester {
         passed: false,
         violations: [
           {
-            rule: "TEST_ERROR",
+            rule: 'TEST_ERROR',
             description: `Test execution failed: ${error}`,
-            impact: "critical",
+            impact: 'critical',
           },
         ],
         score: 0,
@@ -299,7 +298,7 @@ export class HealthcareAccessibilityTester {
 
     for (const selector of scenario.selectors) {
       const found = document.querySelectorAll(selector);
-      found.forEach((el) => elements.push(el));
+      found.forEach(el => elements.push(el));
     }
 
     return elements;
@@ -337,8 +336,8 @@ export class HealthcareAccessibilityTester {
 
       for (const element of Array.from(elements)) {
         if (
-          !element.hasAttribute("aria-label") &&
-          !element.hasAttribute("aria-labelledby")
+          !element.hasAttribute('aria-label')
+          && !element.hasAttribute('aria-labelledby')
         ) {
           return false;
         }
@@ -359,8 +358,8 @@ export class HealthcareAccessibilityTester {
 
     for (const element of Array.from(anvisaElements)) {
       if (
-        !element.hasAttribute("role") &&
-        !element.hasAttribute("aria-label")
+        !element.hasAttribute('role')
+        && !element.hasAttribute('aria-label')
       ) {
         return false;
       }
@@ -378,8 +377,8 @@ export class HealthcareAccessibilityTester {
 
     for (const element of Array.from(cfmElements)) {
       if (
-        !element.hasAttribute("aria-label") &&
-        !element.hasAttribute("aria-describedby")
+        !element.hasAttribute('aria-label')
+        && !element.hasAttribute('aria-describedby')
       ) {
         return false;
       }
@@ -410,45 +409,44 @@ export class HealthcareAccessibilityTester {
     // Generate recommendations based on test results
     if (testResults.overallScore < 80) {
       recommendations.push(
-        "🚨 Critical: Overall accessibility score below 80%",
+        '🚨 Critical: Overall accessibility score below 80%',
       );
       criticalIssues.push({
-        type: "LOW_SCORE",
-        description: "Accessibility score requires immediate improvement",
+        type: 'LOW_SCORE',
+        description: 'Accessibility score requires immediate improvement',
       });
     }
 
     if (!testResults.healthcareCompliance.lgpd) {
       recommendations.push(
-        "🔒 LGPD compliance issues detected - review sensitive data handling",
+        '🔒 LGPD compliance issues detected - review sensitive data handling',
       );
       criticalIssues.push({
-        type: "LGPD_COMPLIANCE",
-        description: "LGPD accessibility requirements not met",
+        type: 'LGPD_COMPLIANCE',
+        description: 'LGPD accessibility requirements not met',
       });
     }
 
     if (!testResults.healthcareCompliance.anvisa) {
       recommendations.push(
-        "⚕️ ANVISA compliance issues detected - review medical device interfaces",
+        '⚕️ ANVISA compliance issues detected - review medical device interfaces',
       );
     }
 
     if (!testResults.healthcareCompliance.cfm) {
       recommendations.push(
-        "👨‍⚕️ CFM compliance issues detected - review professional interfaces",
+        '👨‍⚕️ CFM compliance issues detected - review professional interfaces',
       );
     }
 
     return {
       summary: {
         overallScore: testResults.overallScore,
-        accessibilityCompliance:
-          testResults.overallScore >= 90
-            ? "Excellent WCAG 2.1 AA+ Compliance"
-            : testResults.overallScore >= 80
-              ? "Good WCAG 2.1 AA+ Compliance"
-              : "Needs Improvement",
+        accessibilityCompliance: testResults.overallScore >= 90
+          ? 'Excellent WCAG 2.1 AA+ Compliance'
+          : testResults.overallScore >= 80
+          ? 'Good WCAG 2.1 AA+ Compliance'
+          : 'Needs Improvement',
         healthcareCompliance: testResults.healthcareCompliance,
       },
       recommendations,
@@ -460,8 +458,7 @@ export class HealthcareAccessibilityTester {
 /**
  * Create global accessibility tester instance
  */
-export const healthcareAccessibilityTester =
-  new HealthcareAccessibilityTester();
+export const healthcareAccessibilityTester = new HealthcareAccessibilityTester();
 
 /**
  * Utility function for quick accessibility checks
@@ -478,9 +475,9 @@ export async function quickAccessibilityCheck(selector?: string): Promise<{
       passed: false,
       violations: [
         {
-          rule: "ELEMENT_NOT_FOUND",
+          rule: 'ELEMENT_NOT_FOUND',
           description: `No element found for selector: ${selector}`,
-          impact: "critical",
+          impact: 'critical',
         },
       ],
       score: 0,
@@ -497,14 +494,14 @@ export async function quickAccessibilityCheck(selector?: string): Promise<{
       score: Math.max(0, 100 - report.summary.total * 10),
     };
   } catch (error) {
-    console.error("Quick accessibility check failed:", error);
+    console.error('Quick accessibility check failed:', error);
     return {
       passed: false,
       violations: [
         {
-          rule: "TEST_ERROR",
+          rule: 'TEST_ERROR',
           description: `Accessibility test failed: ${error}`,
-          impact: "critical",
+          impact: 'critical',
         },
       ],
       score: 0,
@@ -513,5 +510,5 @@ export async function quickAccessibilityCheck(selector?: string): Promise<{
 }
 
 // Export for React testing library
-export * from "@testing-library/dom";
+export * from '@testing-library/dom';
 export { axe };

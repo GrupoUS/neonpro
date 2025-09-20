@@ -1,17 +1,14 @@
-import {
-  type DocumentProps as PDFDocumentProps,
-  pdf,
-} from "@react-pdf/renderer";
+import { type DocumentProps as PDFDocumentProps, pdf } from '@react-pdf/renderer';
 // Use local shim to avoid CI resolution issues with file-saver on Vercel
-import { saveAs } from "@/shims/file-saver";
+import { saveAs } from '@/shims/file-saver';
 
 /**
  * Narrow PDF Document props type.
  * If the upstream library changes its export name or structure, adjust here centrally.
  */
 export type DocumentProps = PDFDocumentProps;
-import { useState } from "react";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { toast } from 'sonner';
 
 interface UsePDFExportOptions {
   filename?: string;
@@ -71,20 +68,19 @@ export const usePDFExport = (): UsePDFExportReturn => {
       // Preview se especificado
       if (options?.showPreview) {
         const url = URL.createObjectURL(blob);
-        window.open(url, "_blank");
+        window.open(url, '_blank');
         // Cleanup URL após um tempo
         setTimeout(() => URL.revokeObjectURL(url), 10000);
       }
 
       return blob;
     } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Erro desconhecido na geração do PDF";
+      const errorMessage = err instanceof Error
+        ? err.message
+        : 'Erro desconhecido na geração do PDF';
       setError(errorMessage);
       toast.error(`Erro ao gerar PDF: ${errorMessage}`);
-      console.error("PDF generation error:", err);
+      console.error('PDF generation error:', err);
       return null;
     } finally {
       setIsGenerating(false);
@@ -96,7 +92,7 @@ export const usePDFExport = (): UsePDFExportReturn => {
     filename: string,
   ): Promise<void> => {
     await generatePDF(component, {
-      filename: filename.endsWith(".pdf") ? filename : `${filename}.pdf`,
+      filename: filename.endsWith('.pdf') ? filename : `${filename}.pdf`,
       autoDownload: true,
     });
   };
@@ -119,27 +115,27 @@ export const usePDFExport = (): UsePDFExportReturn => {
 // Utility functions para nomes de arquivo padronizados
 const normalizeNameForFilename = (name: string): string => {
   return name
-    .normalize("NFD") // Decompõe acentos
-    .replace(/[\u0300-\u036f]/g, "") // Remove marcas diacríticas (acentos)
-    .replace(/[^a-zA-Z0-9\s-]/g, "") // Remove caracteres especiais, mantendo espaços e hífens
-    .replace(/[-\s]+/g, "_") // Substitui espaços e hífens por underscore
-    .replace(/_+/g, "_") // Remove underscores duplicados
+    .normalize('NFD') // Decompõe acentos
+    .replace(/[\u0300-\u036f]/g, '') // Remove marcas diacríticas (acentos)
+    .replace(/[^a-zA-Z0-9\s-]/g, '') // Remove caracteres especiais, mantendo espaços e hífens
+    .replace(/[-\s]+/g, '_') // Substitui espaços e hífens por underscore
+    .replace(/_+/g, '_') // Remove underscores duplicados
     .toLowerCase();
 };
 
 export const generatePDFFilename = (
-  type: "assessment" | "treatment" | "consent",
+  type: 'assessment' | 'treatment' | 'consent',
   patientName: string,
   date?: Date,
 ): string => {
   const now = date || new Date();
-  const dateStr = now.toISOString().split("T")[0]; // YYYY-MM-DD
+  const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD
   const cleanName = normalizeNameForFilename(patientName);
 
   const typeMap = {
-    assessment: "avaliacao_estetica",
-    treatment: "plano_tratamento",
-    consent: "termo_consentimento",
+    assessment: 'avaliacao_estetica',
+    treatment: 'plano_tratamento',
+    consent: 'termo_consentimento',
   };
 
   return `${typeMap[type]}_${cleanName}_${dateStr}.pdf`;

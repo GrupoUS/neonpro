@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from 'react';
 
 interface UseAutoResizeTextareaProps {
   minHeight: number;
@@ -46,8 +46,8 @@ export function useAutoResizeTextarea({
   // Adjust height on window resize
   useEffect(() => {
     const handleResize = () => adjustHeight();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [adjustHeight]);
 
   return { textareaRef, adjustHeight };

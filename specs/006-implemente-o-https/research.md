@@ -85,6 +85,61 @@
 - Support for concurrent user conversations
 - Efficient data retrieval with proper indexing
 - Caching strategies for frequently accessed data
+- HTTPS handshake time ≤300ms
+
+### HTTPS & Security Implementation
+
+**Decision**: Use TLS 1.3 with Let's Encrypt certificates and comprehensive security headers  
+**Rationale**:
+
+- TLS 1.3 provides superior security and performance over older versions
+- Let's Encrypt offers free, automated certificate management
+- HSTS headers prevent protocol downgrade attacks
+- Comprehensive security headers protect against common web vulnerabilities
+- Automatic certificate renewal prevents service interruptions
+
+**Implementation Approach**:
+
+- Configure Node.js/Hono.js server with TLS 1.3 support
+- Implement HSTS with max-age 31536000, includeSubDomains, preload
+- Deploy security headers middleware for all responses
+- Set up automated certificate renewal with monitoring
+- Implement Content Security Policy for chat interface
+
+**Certificate Management**:
+
+- Primary: Let's Encrypt with automated renewal
+- Backup: Manual certificate support for enterprise requirements
+- Monitoring: Certificate expiration alerts 30 days before expiry
+- Fallback: Graceful handling of certificate renewal failures
+
+**Security Headers Configuration**:
+
+- Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: DENY
+- X-XSS-Protection: 1; mode=block
+- Content-Security-Policy: Strict policy for chat interface
+- Referrer-Policy: strict-origin-when-cross-origin
+
+**Perfect Forward Secrecy**:
+
+- Support for ECDHE cipher suites
+- Disable weak ciphers and protocols
+- Regular cipher suite updates following security best practices
+
+**Certificate Transparency**:
+
+- Enable CT logging for all certificates
+- Monitor CT logs for unauthorized certificates
+- Integrate with certificate monitoring services
+
+**Alternatives considered**:
+
+- Cloudflare SSL: Would add dependency on external service
+- Self-signed certificates: Not suitable for production healthcare application
+- TLS 1.2: Acceptable but TLS 1.3 provides better security and performance
+- Other certificate providers: Let's Encrypt chosen for automation and cost
 
 ## Integration Points
 
@@ -99,3 +154,8 @@
 - [x] How to secure database access from agent
 - [x] How to handle real-time communication
 - [x] How to format responses for interactive display
+- [x] How to implement HTTPS with TLS 1.3 in Node.js/Hono.js
+- [x] How to configure automatic certificate renewal
+- [x] How to implement comprehensive security headers
+- [x] How to prevent mixed content in chat interface
+- [x] How to monitor certificate expiration and renewal

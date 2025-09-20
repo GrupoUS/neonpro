@@ -1,23 +1,20 @@
-import { HealthcareRoutePrefetcher } from "@/lib/prefetching/route-prefetcher";
-import { queryClient } from "@/lib/query-client";
-import { appointmentDetailsQueryOptions } from "@/queries/appointments";
-import {
-  patientDetailsQueryOptions,
-  patientsQueryOptions,
-} from "@/queries/patients";
-import type { Appointment, Patient } from "@neonpro/types";
-import React, { useEffect } from "react";
+import { HealthcareRoutePrefetcher } from '@/lib/prefetching/route-prefetcher';
+import { queryClient } from '@/lib/query-client';
+import { appointmentDetailsQueryOptions } from '@/queries/appointments';
+import { patientDetailsQueryOptions, patientsQueryOptions } from '@/queries/patients';
+import type { Appointment, Patient } from '@neonpro/types';
+import React, { useEffect } from 'react';
 
 interface SmartPrefetcherProps {
   /**
    * Tipo de dado para prefetch
    */
   type:
-    | "patient"
-    | "appointment"
-    | "patients-list"
-    | "appointments-list"
-    | "dashboard";
+    | 'patient'
+    | 'appointment'
+    | 'patients-list'
+    | 'appointments-list'
+    | 'dashboard';
 
   /**
    * ID do paciente (apenas para type 'patient')
@@ -32,7 +29,7 @@ interface SmartPrefetcherProps {
   /**
    * Gatilho para prefetch (hover, visible, immediate)
    */
-  trigger?: "hover" | "visible" | "immediate";
+  trigger?: 'hover' | 'visible' | 'immediate';
 
   /**
    * Delay antes do prefetch (em ms)
@@ -59,11 +56,11 @@ export function SmartPrefetcher({
   type,
   patientId,
   appointmentId,
-  trigger = "hover",
+  trigger = 'hover',
   delay = 200,
   includeRelated = false,
   children,
-  className = "",
+  className = '',
   ...props
 }: SmartPrefetcherProps) {
   const timeoutRef = React.useRef<NodeJS.Timeout>();
@@ -73,7 +70,7 @@ export function SmartPrefetcher({
     if (hasPrefetched) return;
 
     switch (type) {
-      case "patient":
+      case 'patient':
         if (patientId) {
           queryClient.prefetchQuery(patientDetailsQueryOptions(patientId));
           if (includeRelated) {
@@ -82,7 +79,7 @@ export function SmartPrefetcher({
         }
         break;
 
-      case "appointment":
+      case 'appointment':
         if (appointmentId) {
           queryClient.prefetchQuery(
             appointmentDetailsQueryOptions(appointmentId),
@@ -90,22 +87,22 @@ export function SmartPrefetcher({
         }
         break;
 
-      case "patients-list":
+      case 'patients-list':
         queryClient.prefetchQuery(
           patientsQueryOptions({
             page: 1,
             pageSize: 10,
-            sortBy: "created_at",
-            sortOrder: "desc",
+            sortBy: 'created_at',
+            sortOrder: 'desc',
           }),
         );
         break;
 
-      case "appointments-list":
+      case 'appointments-list':
         HealthcareRoutePrefetcher.prefetchAppointmentsData();
         break;
 
-      case "dashboard":
+      case 'dashboard':
         HealthcareRoutePrefetcher.prefetchDashboardData();
         break;
     }
@@ -114,7 +111,7 @@ export function SmartPrefetcher({
   }, [type, patientId, appointmentId, includeRelated, hasPrefetched]);
 
   const handleMouseEnter = React.useCallback(() => {
-    if (trigger === "hover" && !hasPrefetched) {
+    if (trigger === 'hover' && !hasPrefetched) {
       timeoutRef.current = setTimeout(executePrefetch, delay);
     }
   }, [trigger, hasPrefetched, delay, executePrefetch]);
@@ -127,20 +124,20 @@ export function SmartPrefetcher({
 
   // Prefetch imediato quando o componente é montado
   useEffect(() => {
-    if (trigger === "immediate" && !hasPrefetched) {
+    if (trigger === 'immediate' && !hasPrefetched) {
       executePrefetch();
     }
   }, [trigger, hasPrefetched, executePrefetch]);
 
   // Prefetch baseado em visibilidade (Intersection Observer)
   useEffect(() => {
-    if (trigger === "visible" && !hasPrefetched) {
+    if (trigger === 'visible' && !hasPrefetched) {
       const element = document.currentScript?.previousElementSibling;
       if (!element) return;
 
       const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
+        entries => {
+          entries.forEach(entry => {
             if (entry.isIntersecting) {
               executePrefetch();
               observer.disconnect();
@@ -148,7 +145,7 @@ export function SmartPrefetcher({
           });
         },
         {
-          rootMargin: "100px",
+          rootMargin: '100px',
           threshold: 0.1,
         },
       );
@@ -181,7 +178,7 @@ export function SmartPrefetcher({
 export function PatientLink({
   patient,
   children,
-  className = "",
+  className = '',
   includeRelated = false,
 }: {
   patient: Patient | { id: string; name?: string };
@@ -191,12 +188,12 @@ export function PatientLink({
 }) {
   return (
     <SmartPrefetcher
-      type="patient"
+      type='patient'
       patientId={patient.id}
-      trigger="hover"
+      trigger='hover'
       delay={300}
       includeRelated={includeRelated}
-      className="inline-block"
+      className='inline-block'
     >
       <a
         href={`/patients/${patient.id}`}
@@ -215,7 +212,7 @@ export function PatientLink({
 export function AppointmentLink({
   appointment,
   children,
-  className = "",
+  className = '',
   includeRelated = false,
 }: {
   appointment: Appointment | { id: string };
@@ -225,12 +222,12 @@ export function AppointmentLink({
 }) {
   return (
     <SmartPrefetcher
-      type="appointment"
+      type='appointment'
       appointmentId={appointment.id}
-      trigger="hover"
+      trigger='hover'
       delay={300}
       includeRelated={includeRelated}
-      className="inline-block"
+      className='inline-block'
     >
       <a
         href={`/appointments/${appointment.id}`}
@@ -270,12 +267,12 @@ export function ScrollPrefetcher({
       if (scrollPercentage >= threshold && !hasPrefetched) {
         prefetchData();
         setHasPrefetched(true);
-        window.removeEventListener("scroll", handleScroll);
+        window.removeEventListener('scroll', handleScroll);
       }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [hasPrefetched, prefetchData, threshold]);
 
   return <>{children}</>;

@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { GoogleCalendarClient, OAuth2Tokens, CalendarEvent } from "./client";
+import { PrismaClient } from '@prisma/client';
+import { CalendarEvent, GoogleCalendarClient, OAuth2Tokens } from './client';
 
 export interface GoogleCalendarIntegrationConfig {
   clientId: string;
@@ -53,11 +53,10 @@ export class GoogleCalendarService {
 
       // Get user's primary calendar
       const calendars = await this.client.listCalendars();
-      const primaryCalendar =
-        calendars.find((cal) => cal.primary) || calendars[0];
+      const primaryCalendar = calendars.find(cal => cal.primary) || calendars[0];
 
       if (!primaryCalendar) {
-        throw new Error("No calendars found");
+        throw new Error('No calendars found');
       }
 
       // Store integration in database
@@ -79,11 +78,11 @@ export class GoogleCalendarService {
       // Log the integration
       await this.logSyncOperation(
         integration.id,
-        "CREATE",
-        "TO_GOOGLE",
+        'CREATE',
+        'TO_GOOGLE',
         null,
         null,
-        "SUCCESS",
+        'SUCCESS',
       );
 
       return {
@@ -91,7 +90,7 @@ export class GoogleCalendarService {
         calendarId: primaryCalendar.id,
       };
     } catch (error) {
-      console.error("Error initializing Google Calendar integration:", error);
+      console.error('Error initializing Google Calendar integration:', error);
       throw error;
     }
   }
@@ -117,7 +116,7 @@ export class GoogleCalendarService {
     appointment: AppointmentData,
     userId: string,
     clinicId: string,
-    operation: "CREATE" | "UPDATE" | "DELETE" = "CREATE",
+    operation: 'CREATE' | 'UPDATE' | 'DELETE' = 'CREATE',
   ): Promise<{
     success: boolean;
     googleEventId?: string;
@@ -127,7 +126,7 @@ export class GoogleCalendarService {
       const integration = await this.getIntegration(userId, clinicId);
 
       if (!integration || !integration.syncEnabled) {
-        return { success: false, error: "Integration not found or disabled" };
+        return { success: false, error: 'Integration not found or disabled' };
       }
 
       // Check and refresh tokens if needed
@@ -142,18 +141,17 @@ export class GoogleCalendarService {
       let result;
 
       switch (operation) {
-        case "CREATE":
+        case 'CREATE':
           result = await this.client.createEvent(
             integration.syncCalendarId,
             event,
           );
           break;
-        case "UPDATE":
+        case 'UPDATE':
           // Find existing Google Calendar event
-          const existingEvent =
-            await this.prisma.googleCalendarEvent.findUnique({
-              where: { appointmentId: appointment.id },
-            });
+          const existingEvent = await this.prisma.googleCalendarEvent.findUnique({
+            where: { appointmentId: appointment.id },
+          });
 
           if (!existingEvent) {
             result = await this.client.createEvent(
@@ -168,11 +166,10 @@ export class GoogleCalendarService {
             );
           }
           break;
-        case "DELETE":
-          const eventToDelete =
-            await this.prisma.googleCalendarEvent.findUnique({
-              where: { appointmentId: appointment.id },
-            });
+        case 'DELETE':
+          const eventToDelete = await this.prisma.googleCalendarEvent.findUnique({
+            where: { appointmentId: appointment.id },
+          });
 
           if (eventToDelete) {
             await this.client.deleteEvent(
@@ -187,14 +184,14 @@ export class GoogleCalendarService {
       }
 
       // Store or update event mapping
-      if (operation !== "DELETE") {
+      if (operation !== 'DELETE') {
         await this.prisma.googleCalendarEvent.upsert({
           where: { appointmentId: appointment.id },
           update: {
             googleEventId: result.id,
             calendarId: integration.syncCalendarId,
             htmlLink: result.htmlLink,
-            syncStatus: "SYNCED",
+            syncStatus: 'SYNCED',
             lastSyncAt: new Date(),
           },
           create: {
@@ -202,7 +199,7 @@ export class GoogleCalendarService {
             googleEventId: result.id,
             calendarId: integration.syncCalendarId,
             htmlLink: result.htmlLink,
-            syncStatus: "SYNCED",
+            syncStatus: 'SYNCED',
             lastSyncAt: new Date(),
           },
         });
@@ -222,10 +219,10 @@ export class GoogleCalendarService {
       await this.logSyncOperation(
         integration.id,
         operation,
-        "TO_GOOGLE",
+        'TO_GOOGLE',
         appointment.id,
         result.id,
-        "SUCCESS",
+        'SUCCESS',
       );
 
       return {
@@ -252,10 +249,10 @@ export class GoogleCalendarService {
         await this.logSyncOperation(
           integration.id,
           operation,
-          "TO_GOOGLE",
+          'TO_GOOGLE',
           appointment.id,
           null,
-          "FAILED",
+          'FAILED',
           error instanceof Error ? error.message : String(error),
         );
       }
@@ -278,16 +275,16 @@ export class GoogleCalendarService {
     nextSyncToken?: string;
     changes: Array<{
       eventId: string;
-      operation: "created" | "updated" | "deleted";
+      operation: 'created' | 'updated' | 'deleted';
     }>;
   }> {
     try {
       const integration = await this.getIntegration(userId, clinicId);
 
       if (
-        !integration ||
-        !integration.syncEnabled ||
-        !integration.bidirectional
+        !integration
+        || !integration.syncEnabled
+        || !integration.bidirectional
       ) {
         return { changes: [] };
       }
@@ -305,23 +302,22 @@ export class GoogleCalendarService {
       // Process changes
       const changes = [];
       for (const item of result.items) {
-        if (item.status === "cancelled") {
+        if (item.status === 'cancelled') {
           changes.push({
             eventId: item.id,
-            operation: "deleted" as const,
+            operation: 'deleted' as const,
           });
         } else {
           // Check if this is a new or updated event
-          const existingEvent =
-            await this.prisma.googleCalendarEvent.findUnique({
-              where: { googleEventId: item.id },
-            });
+          const existingEvent = await this.prisma.googleCalendarEvent.findUnique({
+            where: { googleEventId: item.id },
+          });
 
           changes.push({
             eventId: item.id,
             operation: existingEvent
-              ? ("updated" as const)
-              : ("created" as const),
+              ? ('updated' as const)
+              : ('created' as const),
           });
         }
       }
@@ -341,7 +337,7 @@ export class GoogleCalendarService {
         changes,
       };
     } catch (error) {
-      console.error("Error syncing from Google Calendar:", error);
+      console.error('Error syncing from Google Calendar:', error);
       throw error;
     }
   }
@@ -355,14 +351,14 @@ export class GoogleCalendarService {
       description: appointment.description,
       start: {
         dateTime: appointment.startTime.toISOString(),
-        timeZone: appointment.timeZone || "America/Sao_Paulo",
+        timeZone: appointment.timeZone || 'America/Sao_Paulo',
       },
       end: {
         dateTime: appointment.endTime.toISOString(),
-        timeZone: appointment.timeZone || "America/Sao_Paulo",
+        timeZone: appointment.timeZone || 'America/Sao_Paulo',
       },
       location: appointment.location,
-      visibility: "private", // Healthcare appointments should be private
+      visibility: 'private', // Healthcare appointments should be private
     };
 
     // Add attendees if available
@@ -377,7 +373,7 @@ export class GoogleCalendarService {
       attendees.push({
         email: appointment.professionalEmail,
         displayName: appointment.professionalName,
-        responseStatus: "accepted",
+        responseStatus: 'accepted',
       });
     }
     if (attendees.length > 0) {
@@ -397,14 +393,14 @@ export class GoogleCalendarService {
       expiry_date: integration.expiresAt
         ? integration.expiresAt.getTime()
         : undefined,
-      token_type: "Bearer",
+      token_type: 'Bearer',
       scope: integration.scope,
     };
 
     // Check if token is expired
     if (integration.expiresAt && integration.expiresAt <= new Date()) {
       if (!integration.refreshToken) {
-        throw new Error("Access token expired and no refresh token available");
+        throw new Error('Access token expired and no refresh token available');
       }
 
       // Refresh token
@@ -450,12 +446,12 @@ export class GoogleCalendarService {
           eventId,
           status,
           error,
-          ipAddress: "unknown", // In real app, get from request
-          userAgent: "neonpro-service", // In real app, get from request
+          ipAddress: 'unknown', // In real app, get from request
+          userAgent: 'neonpro-service', // In real app, get from request
         },
       });
     } catch (logError) {
-      console.error("Error logging sync operation:", logError);
+      console.error('Error logging sync operation:', logError);
       // Don't throw error for logging failures
     }
   }
@@ -480,7 +476,7 @@ export class GoogleCalendarService {
                 where: { integrationId: integration.id },
                 select: { appointmentId: true },
               })
-            ).map((e) => e.appointmentId),
+            ).map(e => e.appointmentId),
           },
         },
       });
@@ -492,7 +488,7 @@ export class GoogleCalendarService {
 
       return true;
     } catch (error) {
-      console.error("Error disconnecting Google Calendar:", error);
+      console.error('Error disconnecting Google Calendar:', error);
       return false;
     }
   }

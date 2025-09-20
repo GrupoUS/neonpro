@@ -1,5 +1,5 @@
-import { supabase } from "@/integrations/supabase/client";
-import { queryOptions } from "@tanstack/react-query";
+import { supabase } from '@/integrations/supabase/client';
+import { queryOptions } from '@tanstack/react-query';
 
 // Tipos básicos para melhor type safety
 type Patient = {
@@ -12,33 +12,33 @@ type Patient = {
   clinicId: string;
 };
 
-type PatientInsert = Omit<Patient, "id" | "createdAt" | "updatedAt">;
+type PatientInsert = Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>;
 type PatientUpdate = Partial<PatientInsert> & { id: string };
 
 // Query options para listar pacientes com filtros
 export const patientsQueryOptions = ({
   page = 1,
   pageSize = 10,
-  search = "",
+  search = '',
   status,
-  sortBy = "created_at",
-  sortOrder = "desc",
+  sortBy = 'created_at',
+  sortOrder = 'desc',
 }: {
   page?: number;
   pageSize?: number;
   search?: string;
   status?: string;
   sortBy?: string;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: 'asc' | 'desc';
 } = {}) =>
   queryOptions({
     queryKey: [
-      "patients",
-      "list",
+      'patients',
+      'list',
       { page, pageSize, search, status, sortBy, sortOrder },
     ],
     queryFn: async () => {
-      let query = supabase.from("patients").select("*", { count: "exact" });
+      let query = supabase.from('patients').select('*', { count: 'exact' });
 
       // Aplicar filtros
       if (search) {
@@ -48,11 +48,11 @@ export const patientsQueryOptions = ({
       }
 
       if (status) {
-        query = query.eq("status", status);
+        query = query.eq('status', status);
       }
 
       // Aplicar ordenação
-      query = query.order(sortBy as any, { ascending: sortOrder === "asc" });
+      query = query.order(sortBy as any, { ascending: sortOrder === 'asc' });
 
       // Aplicar paginação
       const from = (page - 1) * pageSize;
@@ -78,10 +78,10 @@ export const patientsQueryOptions = ({
 // Query options para buscar um paciente específico
 export const patientQueryOptions = (id: string) =>
   queryOptions({
-    queryKey: ["patients", "detail", id],
+    queryKey: ['patients', 'detail', id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("patients")
+        .from('patients')
         .select(
           `
           *,
@@ -95,7 +95,7 @@ export const patientQueryOptions = (id: string) =>
           consent_records:consent_records(*)
         `,
         )
-        .eq("id", id)
+        .eq('id', id)
         .single();
 
       if (error) throw error;
@@ -109,12 +109,12 @@ export const patientQueryOptions = (id: string) =>
 // Query options para buscar pacientes com LGPD compliance
 export const patientsLGDPQueryOptions: any = () =>
   queryOptions({
-    queryKey: ["patients", "lgpd", "compliance"],
+    queryKey: ['patients', 'lgpd', 'compliance'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("patients")
-        .select("id, full_name, email, lgpd_consent_given, lgpd_consent_date")
-        .eq("lgpd_consent_given", true);
+        .from('patients')
+        .select('id, full_name, email, lgpd_consent_given, lgpd_consent_date')
+        .eq('lgpd_consent_given', true);
 
       if (error) throw error;
       return data;
@@ -126,7 +126,7 @@ export const patientsLGDPQueryOptions: any = () =>
 // Query options para estatísticas de pacientes
 export const patientStatsQueryOptions = () =>
   queryOptions({
-    queryKey: ["patients", "stats"],
+    queryKey: ['patients', 'stats'],
     queryFn: async () => {
       const [
         { count: totalPatients },
@@ -134,16 +134,16 @@ export const patientStatsQueryOptions = () =>
         { count: newThisMonth },
         { count: lgpdCompliant },
       ] = await Promise.all([
-        supabase.from("patients").select("*", { count: "exact", head: true }),
+        supabase.from('patients').select('*', { count: 'exact', head: true }),
         supabase
-          .from("patients")
-          .select("*", { count: "exact", head: true })
-          .eq("status", "Active"),
+          .from('patients')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'Active'),
         supabase
-          .from("patients")
-          .select("*", { count: "exact", head: true })
+          .from('patients')
+          .select('*', { count: 'exact', head: true })
           .gte(
-            "created_at",
+            'created_at',
             new Date(
               new Date().getFullYear(),
               new Date().getMonth(),
@@ -151,9 +151,9 @@ export const patientStatsQueryOptions = () =>
             ).toISOString(),
           ),
         supabase
-          .from("patients")
-          .select("*", { count: "exact", head: true })
-          .eq("lgpd_consent_given", true),
+          .from('patients')
+          .select('*', { count: 'exact', head: true })
+          .eq('lgpd_consent_given', true),
       ]);
 
       return {
@@ -175,7 +175,7 @@ export const createPatientMutationOptions = {
   mutationFn: async (patients: any) => {
     const patientsArray = Array.isArray(patients) ? patients : [patients];
     const { data, error } = await (supabase as any)
-      .from("patients")
+      .from('patients')
       .insert(patientsArray)
       .select();
 
@@ -187,7 +187,7 @@ export const createPatientMutationOptions = {
     // queryClient.invalidateQueries({ queryKey: ['patients'] });
   },
   onError: (error: any) => {
-    console.error("Error creating patient:", error);
+    console.error('Error creating patient:', error);
   },
 };
 
@@ -195,9 +195,9 @@ export const createPatientMutationOptions = {
 export const updatePatientMutationOptions = {
   mutationFn: async ({ id, ...patient }: PatientUpdate & { id: string }) => {
     const { data, error } = await supabase
-      .from("patients")
+      .from('patients')
       .update(patient)
-      .eq("id", id)
+      .eq('id', id)
       .select()
       .single();
 
@@ -206,19 +206,19 @@ export const updatePatientMutationOptions = {
   },
   onSuccess: (_: unknown, _variables: unknown) => {
     // Invalidar queries relacionadas após sucesso
-    const { invalidateSupabaseQueries } = require("@/lib/query-client");
-    invalidateSupabaseQueries("patients");
-    invalidateSupabaseQueries("patients");
+    const { invalidateSupabaseQueries } = require('@/lib/query-client');
+    invalidateSupabaseQueries('patients');
+    invalidateSupabaseQueries('patients');
   },
   onError: (error: any) => {
-    console.error("Error updating patient:", error);
+    console.error('Error updating patient:', error);
   },
 };
 
 // Mutation options para deletar paciente
 export const deletePatientMutationOptions = {
   mutationFn: async (id: string) => {
-    const { error } = await supabase.from("patients").delete().eq("id", id);
+    const { error } = await supabase.from('patients').delete().eq('id', id);
 
     if (error) throw error;
     return id;
@@ -228,6 +228,6 @@ export const deletePatientMutationOptions = {
     // queryClient.invalidateQueries({ queryKey: ['patients'] });
   },
   onError: (error: any) => {
-    console.error("Error deleting patient:", error);
+    console.error('Error deleting patient:', error);
   },
 };

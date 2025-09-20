@@ -1,17 +1,11 @@
-import { useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Calendar, AlertTriangle, CheckCircle, Loader2 } from "lucide-react";
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { useMutation } from '@tanstack/react-query';
+import { AlertTriangle, Calendar, CheckCircle, Loader2 } from 'lucide-react';
+import { useState } from 'react';
 
 interface GoogleCalendarConnectButtonProps {
   userId: string;
@@ -37,32 +31,32 @@ export function GoogleCalendarConnectButton({
       );
 
       if (!response.ok) {
-        throw new Error("Failed to get auth URL");
+        throw new Error('Failed to get auth URL');
       }
 
       const data = await response.json();
       return data.authUrl;
     },
-    onSuccess: (authUrl) => {
+    onSuccess: authUrl => {
       window.location.href = authUrl;
     },
-    onError: (error) => {
-      console.error("Error connecting to Google Calendar:", error);
+    onError: error => {
+      console.error('Error connecting to Google Calendar:', error);
     },
   });
 
   const disconnectMutation = useMutation({
     mutationFn: async () => {
-      const response = await fetch("/api/google-calendar/disconnect", {
-        method: "POST",
+      const response = await fetch('/api/google-calendar/disconnect', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ userId, clinicId }),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to disconnect");
+        throw new Error('Failed to disconnect');
       }
 
       return response.json();
@@ -70,8 +64,8 @@ export function GoogleCalendarConnectButton({
     onSuccess: () => {
       onDisconnect?.();
     },
-    onError: (error) => {
-      console.error("Error disconnecting Google Calendar:", error);
+    onError: error => {
+      console.error('Error disconnecting Google Calendar:', error);
     },
   });
 
@@ -85,30 +79,28 @@ export function GoogleCalendarConnectButton({
 
   if (isConnected) {
     return (
-      <Card className="border-green-200">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0">
-          <div className="flex items-center space-x-2">
-            <CheckCircle className="h-5 w-5 text-green-600" />
-            <CardTitle className="text-green-800">
+      <Card className='border-green-200'>
+        <CardHeader className='flex flex-row items-center justify-between space-y-0'>
+          <div className='flex items-center space-x-2'>
+            <CheckCircle className='h-5 w-5 text-green-600' />
+            <CardTitle className='text-green-800'>
               Google Calendar Conectado
             </CardTitle>
           </div>
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={handleDisconnect}
             disabled={disconnectMutation.isPending}
           >
-            {disconnectMutation.isPending && (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            )}
+            {disconnectMutation.isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
             Desconectar
           </Button>
         </CardHeader>
         <CardContent>
           <CardDescription>
-            Sua conta do Google Calendar está conectada e sincronizando
-            compromissos automaticamente.
+            Sua conta do Google Calendar está conectada e sincronizando compromissos
+            automaticamente.
           </CardDescription>
         </CardContent>
       </Card>
@@ -118,54 +110,50 @@ export function GoogleCalendarConnectButton({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Calendar className="h-5 w-5" />
+        <CardTitle className='flex items-center space-x-2'>
+          <Calendar className='h-5 w-5' />
           <span>Conectar Google Calendar</span>
         </CardTitle>
         <CardDescription>
           Sincronize seus compromissos automaticamente com o Google Calendar
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className='space-y-4'>
         <Alert>
-          <AlertTriangle className="h-4 w-4" />
+          <AlertTriangle className='h-4 w-4' />
           <AlertDescription>
-            Ao conectar sua conta do Google Calendar, você concorda com o
-            compartilhamento de dados de agendamento entre o NeonPro e o Google
-            Calendar, em conformidade com a LGPD.
+            Ao conectar sua conta do Google Calendar, você concorda com o compartilhamento de dados
+            de agendamento entre o NeonPro e o Google Calendar, em conformidade com a LGPD.
           </AlertDescription>
         </Alert>
 
-        <div className="flex items-center space-x-2">
+        <div className='flex items-center space-x-2'>
           <Switch
-            id="lgpd-consent"
+            id='lgpd-consent'
             checked={lgpdConsent}
             onCheckedChange={setLgpdConsent}
           />
-          <Label htmlFor="lgpd-consent" className="text-sm">
-            Eu concordo com o compartilhamento de dados conforme a LGPD (Lei
-            Geral de Proteção de Dados)
+          <Label htmlFor='lgpd-consent' className='text-sm'>
+            Eu concordo com o compartilhamento de dados conforme a LGPD (Lei Geral de Proteção de
+            Dados)
           </Label>
         </div>
 
         <Button
           onClick={handleConnect}
           disabled={!lgpdConsent || connectMutation.isPending}
-          className="w-full"
+          className='w-full'
         >
-          {connectMutation.isPending && (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          )}
-          <Calendar className="mr-2 h-4 w-4" />
+          {connectMutation.isPending && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+          <Calendar className='mr-2 h-4 w-4' />
           Conectar com Google Calendar
         </Button>
 
         {connectMutation.isError && (
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
+          <Alert variant='destructive'>
+            <AlertTriangle className='h-4 w-4' />
             <AlertDescription>
-              Não foi possível conectar ao Google Calendar. Por favor, tente
-              novamente.
+              Não foi possível conectar ao Google Calendar. Por favor, tente novamente.
             </AlertDescription>
           </Alert>
         )}

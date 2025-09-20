@@ -12,6 +12,7 @@ export type AgentName =
   | "compliance-validator"
   | "code-reviewer"
   | "architect-review"
+  | "test-auditor"
   | "security-auditor";
 
 export type TDDPhase = "red" | "green" | "refactor";

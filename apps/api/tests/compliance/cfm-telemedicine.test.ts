@@ -134,9 +134,14 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
     });
 
     server = setupServer(
-      // Mock CFM doctor validation API
-      http.get('https://portal.cfm.org.br/api/medicos/:crm', ({ params }) => {
-        const doctor = mockCFMSystem.doctors.find(d => d.crm === params.crm);
+      // Mock CFM doctor validation API - handle both raw and encoded CRM
+      http.get(/https:\/\/portal\.cfm\.org\.br\/api\/medicos\/(.+)/, async ({ params }) => {
+        // Extract CRM from URL (handles URL encoding)
+        const crmFromUrl = params[0];
+        // URL decode if necessary
+        const decodedCRM = decodeURIComponent(crmFromUrl);
+        
+        const doctor = mockCFMSystem.doctors.find(d => d.crm === decodedCRM);
         if (!doctor) {
           return new Response(
             JSON.stringify({ error: 'Médico não encontrado' }),
@@ -145,15 +150,20 @@ describe('T046: CFM Telemedicine Compliance Tests', () => {
         }
         return Response.json(doctor);
       }),
-      // Mock CFM telemedicine certification API
+      // Mock CFM telemedicine certification API - handle both raw and encoded CRM
       http.get(
-        'https://telemedicina.cfm.org.br/api/habilitacao/:crm',
-        ({ params }) => {
+        /https:\/\/telemedicina\.cfm\.org\.br\/api\/habilitacao\/(.+)/,
+        async ({ params }) => {
+          // Extract CRM from URL (handles URL encoding)
+          const crmFromUrl = params[0];
+          // URL decode if necessary
+          const decodedCRM = decodeURIComponent(crmFromUrl);
+          
           const doctor = mockCFMSystem.doctors.find(
-            d => d.crm === params.crm,
+            d => d.crm === decodedCRM,
           );
           return Response.json({
-            crm: params.crm,
+            crm: decodedCRM,
             habilitado: doctor?.registro_telemedicina === 'HABILITADO',
             certificacao_data: '2024-01-15',
             validade: '2026-01-15',

@@ -7,6 +7,9 @@ export * from "./logging/redact";
 // CLI utilities
 export * from "./cli";
 
+// Healthcare utilities
+export * from "./healthcare-errors";
+
 // UI utilities
 export * from "./lib/currency/brl";
 export * from "./lib/utils";

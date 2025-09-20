@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from '@prisma/client';
 
 export interface ComplianceConfig {
   enableDataEncryption: boolean;
@@ -55,32 +55,31 @@ export class GoogleCalendarComplianceService {
 
     try {
       // Check if consent was given
-      const integration =
-        await this.prisma.googleCalendarIntegration.findUnique({
-          where: {
-            userId_clinicId: { userId, clinicId },
-          },
-        });
+      const integration = await this.prisma.googleCalendarIntegration.findUnique({
+        where: {
+          userId_clinicId: { userId, clinicId },
+        },
+      });
 
       if (!integration?.lgpdConsent) {
-        issues.push("LGPD consent not recorded");
+        issues.push('LGPD consent not recorded');
         recommendations.push(
-          "Obtain explicit consent before enabling calendar sync",
+          'Obtain explicit consent before enabling calendar sync',
         );
       }
 
       // Check consent date
       if (integration?.lgpdConsent && !integration.consentDate) {
-        issues.push("Consent date not recorded");
-        recommendations.push("Record consent date for compliance tracking");
+        issues.push('Consent date not recorded');
+        recommendations.push('Record consent date for compliance tracking');
       }
 
       // Check if data retention is configured
       if (this.config.lgpdRetentionDays > 730) {
         // 2 years
-        issues.push("Data retention period exceeds LGPD recommendations");
+        issues.push('Data retention period exceeds LGPD recommendations');
         recommendations.push(
-          "Consider reducing retention period to 2 years maximum",
+          'Consider reducing retention period to 2 years maximum',
         );
       }
 
@@ -89,8 +88,8 @@ export class GoogleCalendarComplianceService {
         // Verify tokens are encrypted at rest
         const hasEncryptedTokens = this.verifyTokenEncryption(integration);
         if (!hasEncryptedTokens) {
-          issues.push("Access tokens not encrypted at rest");
-          recommendations.push("Enable encryption for sensitive data");
+          issues.push('Access tokens not encrypted at rest');
+          recommendations.push('Enable encryption for sensitive data');
         }
       }
 
@@ -103,9 +102,9 @@ export class GoogleCalendarComplianceService {
         });
 
         if (auditLogs === 0) {
-          issues.push("No audit logs found");
+          issues.push('No audit logs found');
           recommendations.push(
-            "Enable audit logging for all calendar operations",
+            'Enable audit logging for all calendar operations',
           );
         }
       }
@@ -116,11 +115,11 @@ export class GoogleCalendarComplianceService {
         recommendations,
       };
     } catch (error) {
-      console.error("Error validating LGPD compliance:", error);
+      console.error('Error validating LGPD compliance:', error);
       return {
         compliant: false,
-        issues: ["Unable to validate compliance"],
-        recommendations: ["Check system configuration and try again"],
+        issues: ['Unable to validate compliance'],
+        recommendations: ['Check system configuration and try again'],
       };
     }
   }
@@ -143,9 +142,9 @@ export class GoogleCalendarComplianceService {
         purpose,
         retentionPeriod,
         consentedAt: new Date(),
-        version: "1.0",
-        ipAddress: "unknown", // In real app, get from request
-        userAgent: "neonpro-service", // In real app, get from request
+        version: '1.0',
+        ipAddress: 'unknown', // In real app, get from request
+        userAgent: 'neonpro-service', // In real app, get from request
       },
     });
 
@@ -158,7 +157,7 @@ export class GoogleCalendarComplianceService {
       data: {
         lgpdConsent: true,
         consentDate: new Date(),
-        consentVersion: "1.0",
+        consentVersion: '1.0',
       },
     });
 
@@ -217,12 +216,11 @@ export class GoogleCalendarComplianceService {
 
     try {
       // Delete old sync logs
-      const deletedSyncLogs =
-        await this.prisma.googleCalendarSyncLog.deleteMany({
-          where: {
-            createdAt: { lt: cutoffDate },
-          },
-        });
+      const deletedSyncLogs = await this.prisma.googleCalendarSyncLog.deleteMany({
+        where: {
+          createdAt: { lt: cutoffDate },
+        },
+      });
 
       // Delete old event mappings for deleted appointments
       const deletedEvents = await this.prisma.googleCalendarEvent.deleteMany({
@@ -230,22 +228,21 @@ export class GoogleCalendarComplianceService {
           appointment: {
             OR: [
               { deletedAt: { not: null } },
-              { status: "cancelled", updatedAt: { lt: cutoffDate } },
+              { status: 'cancelled', updatedAt: { lt: cutoffDate } },
             ],
           },
         },
       });
 
       // Purge integrations that haven't been used in over a year
-      const purgedIntegrations =
-        await this.prisma.googleCalendarIntegration.deleteMany({
-          where: {
-            OR: [
-              { lastSyncAt: { lt: cutoffDate } },
-              { createdAt: { lt: cutoffDate }, syncEnabled: false },
-            ],
-          },
-        });
+      const purgedIntegrations = await this.prisma.googleCalendarIntegration.deleteMany({
+        where: {
+          OR: [
+            { lastSyncAt: { lt: cutoffDate } },
+            { createdAt: { lt: cutoffDate }, syncEnabled: false },
+          ],
+        },
+      });
 
       return {
         deletedSyncLogs: deletedSyncLogs.count,
@@ -253,7 +250,7 @@ export class GoogleCalendarComplianceService {
         purgedIntegrations: purgedIntegrations.count,
       };
     } catch (error) {
-      console.error("Error purging old data:", error);
+      console.error('Error purging old data:', error);
       throw error;
     }
   }
@@ -305,10 +302,9 @@ export class GoogleCalendarComplianceService {
       }),
     ]);
 
-    const encryptionCompliance =
-      totalIntegrations > 0
-        ? (integrationsWithEncryption / totalIntegrations) * 100
-        : 100;
+    const encryptionCompliance = totalIntegrations > 0
+      ? (integrationsWithEncryption / totalIntegrations) * 100
+      : 100;
 
     // Calculate data retention compliance
     const cutoffDate = new Date();
@@ -321,10 +317,9 @@ export class GoogleCalendarComplianceService {
       },
     });
 
-    const dataRetentionCompliance =
-      auditLogsCount > 0
-        ? ((auditLogsCount - oldRecords) / auditLogsCount) * 100
-        : 100;
+    const dataRetentionCompliance = auditLogsCount > 0
+      ? ((auditLogsCount - oldRecords) / auditLogsCount) * 100
+      : 100;
 
     const issues: string[] = [];
     if (encryptionCompliance < 100) {
@@ -333,7 +328,7 @@ export class GoogleCalendarComplianceService {
       );
     }
     if (dataRetentionCompliance < 95) {
-      issues.push("Data retention policy not being followed properly");
+      issues.push('Data retention policy not being followed properly');
     }
     if (consentsRecorded < totalIntegrations) {
       issues.push(
@@ -388,7 +383,7 @@ export class GoogleCalendarComplianceService {
             ...integrationsWhere,
           },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
       }),
       this.prisma.googleCalendarEvent.findMany({
         where: {
@@ -461,7 +456,7 @@ export class GoogleCalendarComplianceService {
         deletedConsents: deletedConsents.count,
       };
     } catch (error) {
-      console.error("Error deleting user data:", error);
+      console.error('Error deleting user data:', error);
       return {
         success: false,
         deletedIntegrations: 0,
@@ -478,27 +473,27 @@ export class GoogleCalendarComplianceService {
   private maskName(name: string): string {
     if (!name || name.length <= 2) return name;
 
-    const parts = name.split(" ");
+    const parts = name.split(' ');
     return parts
       .map((part, index) => {
         if (index === 0 || part.length <= 2) return part;
-        return part[0] + "*".repeat(part.length - 1);
+        return part[0] + '*'.repeat(part.length - 1);
       })
-      .join(" ");
+      .join(' ');
   }
 
   /**
    * Mask an email address
    */
   private maskEmail(email: string): string {
-    if (!email || !email.includes("@")) return email;
+    if (!email || !email.includes('@')) return email;
 
-    const [local, domain] = email.split("@");
-    const maskedLocal = local[0] + "*".repeat(local.length - 1);
-    const [domainName, ...domainParts] = domain.split(".");
-    const maskedDomain = domainName[0] + "*".repeat(domainName.length - 1);
+    const [local, domain] = email.split('@');
+    const maskedLocal = local[0] + '*'.repeat(local.length - 1);
+    const [domainName, ...domainParts] = domain.split('.');
+    const maskedDomain = domainName[0] + '*'.repeat(domainName.length - 1);
 
-    return `${maskedLocal}@${maskedDomain}.${domainParts.join(".")}`;
+    return `${maskedLocal}@${maskedDomain}.${domainParts.join('.')}`;
   }
 
   /**

@@ -1,10 +1,10 @@
 // Phase 3.5 — T032: Chat session hook
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export interface ChatSessionInfo {
   id: string;
   userId: string;
-  locale: "pt-BR" | "en-US";
+  locale: 'pt-BR' | 'en-US';
   startedAt: string;
   lastActivityAt: string;
 }
@@ -24,16 +24,17 @@ export function useChatSession(sessionId: string, opts?: { mock?: boolean }) {
           `/api/v1/chat/session/${sessionId}`,
           window.location.origin,
         );
-        if (opts?.mock) url.searchParams.set("mock", "true");
+        if (opts?.mock) url.searchParams.set('mock', 'true');
         const res = await fetch(url.toString(), {
-          headers: { "x-locale": navigator.language as any },
+          headers: { 'x-locale': navigator.language as any },
         });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const json = (await res.json()) as ChatSessionInfo;
         if (!cancelled) setData(json);
       } catch (e) {
-        if (!cancelled)
-          setError(e instanceof Error ? e.message : "Unknown error");
+        if (!cancelled) {
+          setError(e instanceof Error ? e.message : 'Unknown error');
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }

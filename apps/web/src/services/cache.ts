@@ -18,7 +18,7 @@ export class CacheService {
    */
   static async get<T = any>(key: string): Promise<T | null> {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return null;
     }
@@ -36,14 +36,14 @@ export class CacheService {
    * Set data in cache with optional TTL
    */
   static async set<T = any>(
-    key: string, 
-    data: T, 
-    ttl: number = this.DEFAULT_TTL
+    key: string,
+    data: T,
+    ttl: number = this.DEFAULT_TTL,
   ): Promise<void> {
     const entry: CacheEntry<T> = {
       data,
       timestamp: Date.now(),
-      ttl
+      ttl,
     };
 
     this.cache.set(key, entry);
@@ -95,7 +95,7 @@ export class CacheService {
     return {
       size: this.cache.size,
       keys,
-      memory
+      memory,
     };
   }
 
@@ -104,7 +104,7 @@ export class CacheService {
    */
   static has(key: string): boolean {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return false;
     }
@@ -125,7 +125,7 @@ export class CacheService {
     // Run cleanup every 5 minutes
     if (!this.cleanupScheduled) {
       this.cleanupScheduled = true;
-      
+
       setTimeout(() => {
         this.cleanup();
         this.cleanupScheduled = false;

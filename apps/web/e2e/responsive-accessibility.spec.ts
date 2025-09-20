@@ -1,12 +1,12 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from '@playwright/test';
 
-test.describe("Responsive Design and Accessibility", () => {
-  test.describe("Mobile Viewport (375px)", () => {
+test.describe('Responsive Design and Accessibility', () => {
+  test.describe('Mobile Viewport (375px)', () => {
     test.use({ viewport: { width: 375, height: 667 } });
 
-    test("should display correctly on mobile", async ({ page }) => {
-      await page.goto("/signup-demo");
-      await page.waitForLoadState("networkidle");
+    test('should display correctly on mobile', async ({ page }) => {
+      await page.goto('/signup-demo');
+      await page.waitForLoadState('networkidle');
 
       // Checks that the form is visible and properly formatted
       const formContainer = page.locator('div[class*="max-w-md"]');
@@ -27,15 +27,15 @@ test.describe("Responsive Design and Accessibility", () => {
       await expect(complianceBadges).toBeVisible();
     });
 
-    test("should handle form validation on mobile", async ({ page }) => {
-      await page.goto("/signup-demo");
+    test('should handle form validation on mobile', async ({ page }) => {
+      await page.goto('/signup-demo');
 
       // Tenta submeter formulário vazio
       await page.locator('button[type="submit"]').click();
 
       // Verifica se as mensagens de erro são visíveis no mobile
       await expect(
-        page.locator("text=Nome deve ter pelo menos 2 caracteres"),
+        page.locator('text=Nome deve ter pelo menos 2 caracteres'),
       ).toBeVisible();
 
       // Verifica se as mensagens não quebram o layout
@@ -43,8 +43,8 @@ test.describe("Responsive Design and Accessibility", () => {
       await expect(errorMessages.first()).toBeVisible();
     });
 
-    test("should maintain touch targets on mobile", async ({ page }) => {
-      await page.goto("/signup-demo");
+    test('should maintain touch targets on mobile', async ({ page }) => {
+      await page.goto('/signup-demo');
 
       // Verifica se todos os botões têm tamanho adequado para touch (mínimo 44px)
       const submitButton = page.locator('button[type="submit"]');
@@ -69,11 +69,11 @@ test.describe("Responsive Design and Accessibility", () => {
     });
   });
 
-  test.describe("Tablet Viewport (768px)", () => {
+  test.describe('Tablet Viewport (768px)', () => {
     test.use({ viewport: { width: 768, height: 1024 } });
 
-    test("should display correctly on tablet", async ({ page }) => {
-      await page.goto("/signup-demo");
+    test('should display correctly on tablet', async ({ page }) => {
+      await page.goto('/signup-demo');
 
       // Verifica se os campos nome/sobrenome ficam lado a lado no tablet
       const nameContainer = page.locator('div[class*="md:flex-row"]');
@@ -85,11 +85,11 @@ test.describe("Responsive Design and Accessibility", () => {
     });
   });
 
-  test.describe("Desktop Viewport (1920px)", () => {
+  test.describe('Desktop Viewport (1920px)', () => {
     test.use({ viewport: { width: 1920, height: 1080 } });
 
-    test("should display correctly on desktop", async ({ page }) => {
-      await page.goto("/signup-demo");
+    test('should display correctly on desktop', async ({ page }) => {
+      await page.goto('/signup-demo');
 
       // Verifica se o formulário está centralizado
       const container = page.locator(
@@ -103,12 +103,12 @@ test.describe("Responsive Design and Accessibility", () => {
     });
   });
 
-  test.describe("Accessibility Compliance", () => {
-    test("should have proper ARIA labels and roles", async ({ page }) => {
-      await page.goto("/signup-demo");
+  test.describe('Accessibility Compliance', () => {
+    test('should have proper ARIA labels and roles', async ({ page }) => {
+      await page.goto('/signup-demo');
 
       // Verifica se todos os inputs têm labels associados
-      const inputs = page.locator("input");
+      const inputs = page.locator('input');
       const count = await inputs.count();
       for (let i = 0; i < count; i++) {
         const input = inputs.nth(i);
@@ -120,65 +120,61 @@ test.describe("Responsive Design and Accessibility", () => {
         /Entrar na Plataforma|Processando/,
       );
       await expect(
-        page.getByRole("button", { name: /entrar na plataforma|processando/i }),
+        page.getByRole('button', { name: /entrar na plataforma|processando/i }),
       ).toBeVisible();
       await expect(
-        page.getByRole("button", { name: /continue with google/i }),
+        page.getByRole('button', { name: /continue with google/i }),
       ).toBeVisible();
     });
 
-    test("should support keyboard navigation", async ({ page }) => {
-      await page.goto("/signup-demo");
+    test('should support keyboard navigation', async ({ page }) => {
+      await page.goto('/signup-demo');
 
       // Testa navegação por Tab
-      await test.step("Firstname recebe foco", async () => {
-        await page.keyboard.press("Tab");
+      await test.step('Firstname recebe foco', async () => {
+        await page.keyboard.press('Tab');
         await expect(page.getByLabel(/first\s*name/i)).toBeFocused();
       });
 
-      await page.keyboard.press("Tab");
-      await expect(page.locator("#lastname")).toBeFocused();
+      await page.keyboard.press('Tab');
+      await expect(page.locator('#lastname')).toBeFocused();
 
-      await page.keyboard.press("Tab");
-      await expect(page.locator("#email")).toBeFocused();
+      await page.keyboard.press('Tab');
+      await expect(page.locator('#email')).toBeFocused();
 
-      await page.keyboard.press("Tab");
-      await expect(page.locator("#password")).toBeFocused();
+      await page.keyboard.press('Tab');
+      await expect(page.locator('#password')).toBeFocused();
 
-      await page.keyboard.press("Tab");
-      await expect(page.locator("#crm")).toBeFocused();
+      await page.keyboard.press('Tab');
+      await expect(page.locator('#crm')).toBeFocused();
 
-      await page.keyboard.press("Tab");
+      await page.keyboard.press('Tab');
       await expect(page.locator('button[type="submit"]')).toBeFocused();
 
-      await page.keyboard.press("Tab");
+      await page.keyboard.press('Tab');
       await expect(
         page.locator('button:has-text("Continue with Google")'),
       ).toBeFocused();
     });
 
-    test("should focus first invalid field on form submission", async ({
-      page,
-    }) => {
-      await page.goto("/signup-demo");
+    test('should focus first invalid field on form submission', async ({ page }) => {
+      await page.goto('/signup-demo');
 
       // Preenche dados inválidos
-      await page.locator("#firstname").fill("A"); // Muito curto
-      await page.locator("#lastname").fill("Silva");
-      await page.locator("#email").fill("email-invalido");
-      await page.locator("#password").fill("123");
+      await page.locator('#firstname').fill('A'); // Muito curto
+      await page.locator('#lastname').fill('Silva');
+      await page.locator('#email').fill('email-invalido');
+      await page.locator('#password').fill('123');
 
       // Submete o formulário
       await page.locator('button[type="submit"]').click();
 
       // Verifica se o foco vai para o primeiro campo com erro
-      await expect(page.locator("#firstname")).toBeFocused();
+      await expect(page.locator('#firstname')).toBeFocused();
     });
 
-    test("should provide screen reader friendly error messages", async ({
-      page,
-    }) => {
-      await page.goto("/signup-demo");
+    test('should provide screen reader friendly error messages', async ({ page }) => {
+      await page.goto('/signup-demo');
 
       // Submete formulário vazio
       await page.locator('button[type="submit"]').click();
@@ -192,18 +188,18 @@ test.describe("Responsive Design and Accessibility", () => {
 
       // Verifica se as mensagens estão próximas aos campos relacionados
       const firstNameError = page
-        .locator("#firstname")
-        .locator("..")
+        .locator('#firstname')
+        .locator('..')
         .locator('p[class*="text-destructive"]');
       await expect(firstNameError).toBeVisible();
-      const firstName = page.locator("#firstname");
-      const describedBy = await firstName.getAttribute("aria-describedby");
+      const firstName = page.locator('#firstname');
+      const describedBy = await firstName.getAttribute('aria-describedby');
       await expect(describedBy).toMatch(/.+/);
       await expect(page.locator(`#${describedBy}`)).toBeVisible();
     });
 
-    test("should maintain adequate color contrast", async ({ page }) => {
-      await page.goto("/signup-demo");
+    test('should maintain adequate color contrast', async ({ page }) => {
+      await page.goto('/signup-demo');
 
       // Verifica se elementos importantes têm contraste adequado
       // (Isso seria melhor testado com ferramentas específicas de contraste)
@@ -220,10 +216,10 @@ test.describe("Responsive Design and Accessibility", () => {
       await expect(googleButton).toHaveClass(/text-gray-700/);
     });
 
-    test("should support high contrast mode", async ({ page }) => {
+    test('should support high contrast mode', async ({ page }) => {
       // Simula modo de alto contraste
-      await page.emulateMedia({ colorScheme: "dark" });
-      await page.goto("/signup-demo");
+      await page.emulateMedia({ colorScheme: 'dark' });
+      await page.goto('/signup-demo');
 
       // Verifica se elementos são visíveis no modo escuro
       await expect(page.locator('h2:has-text("NEON PRO")')).toBeVisible();
@@ -233,10 +229,10 @@ test.describe("Responsive Design and Accessibility", () => {
       ).toBeVisible();
     });
 
-    test("should handle reduced motion preferences", async ({ page }) => {
+    test('should handle reduced motion preferences', async ({ page }) => {
       // Simula preferência por movimento reduzido
-      await page.emulateMedia({ reducedMotion: "reduce" });
-      await page.goto("/signup-demo");
+      await page.emulateMedia({ reducedMotion: 'reduce' });
+      await page.goto('/signup-demo');
 
       // Verifica se animações são reduzidas/removidas
       const submitButton = page.locator('button[type="submit"]');

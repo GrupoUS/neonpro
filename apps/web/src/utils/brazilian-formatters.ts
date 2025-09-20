@@ -9,17 +9,17 @@
 /**
  * Format CPF with mask (000.000.000-00)
  */
-import { formatBRPhone } from "@neonpro/utils";
+import { formatBRPhone } from '@neonpro/utils';
 
 export function formatCPF(cpf: string): string {
-  if (!cpf) return "";
+  if (!cpf) return '';
 
   // Remove all non-numeric characters
-  const cleaned = cpf.replace(/\D/g, "");
+  const cleaned = cpf.replace(/\D/g, '');
 
   // Apply CPF mask
   if (cleaned.length <= 11) {
-    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+    return cleaned.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 
   return cpf; // Return original if invalid length
@@ -29,16 +29,16 @@ export function formatCPF(cpf: string): string {
  * Format CNPJ with mask (00.000.000/0000-00)
  */
 export function formatCNPJ(cnpj: string): string {
-  if (!cnpj) return "";
+  if (!cnpj) return '';
 
   // Remove all non-numeric characters
-  const cleaned = cnpj.replace(/\D/g, "");
+  const cleaned = cnpj.replace(/\D/g, '');
 
   // Apply CNPJ mask
   if (cleaned.length <= 14) {
     return cleaned.replace(
       /(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/,
-      "$1.$2.$3/$4-$5",
+      '$1.$2.$3/$4-$5',
     );
   }
 
@@ -54,8 +54,8 @@ export function formatCNPJ(cnpj: string): string {
  * This wrapper delegates to shared utils to keep backward compatibility.
  */
 export function formatPhone(phone: string): string {
-  if (!phone) return "";
-  const cleaned = phone.replace(/\D/g, "");
+  if (!phone) return '';
+  const cleaned = phone.replace(/\D/g, '');
   return formatBRPhone(cleaned);
 }
 
@@ -63,14 +63,14 @@ export function formatPhone(phone: string): string {
  * Format CEP with mask (00000-000)
  */
 export function formatCEP(cep: string): string {
-  if (!cep) return "";
+  if (!cep) return '';
 
   // Remove all non-numeric characters
-  const cleaned = cep.replace(/\D/g, "");
+  const cleaned = cep.replace(/\D/g, '');
 
   // Apply CEP mask
   if (cleaned.length <= 8) {
-    return cleaned.replace(/(\d{5})(\d{3})/, "$1-$2");
+    return cleaned.replace(/(\d{5})(\d{3})/, '$1-$2');
   }
 
   return cep; // Return original if invalid length
@@ -80,13 +80,13 @@ export function formatCEP(cep: string): string {
  * Format currency in Brazilian Real (R$)
  */
 export function formatCurrency(value: number | string): string {
-  const numValue = typeof value === "string" ? parseFloat(value) : value;
+  const numValue = typeof value === 'string' ? parseFloat(value) : value;
 
-  if (isNaN(numValue)) return "R$ 0,00";
+  if (isNaN(numValue)) return 'R$ 0,00';
 
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
   }).format(numValue);
 }
 
@@ -94,31 +94,31 @@ export function formatCurrency(value: number | string): string {
  * Format date in Brazilian format (DD/MM/YYYY)
  */
 export function formatDate(date: string | Date): string {
-  if (!date) return "";
+  if (!date) return '';
 
-  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
 
-  if (isNaN(dateObj.getTime())) return "";
+  if (isNaN(dateObj.getTime())) return '';
 
-  return dateObj.toLocaleDateString("pt-BR");
+  return dateObj.toLocaleDateString('pt-BR');
 }
 
 /**
  * Format date and time in Brazilian format (DD/MM/YYYY HH:mm)
  */
 export function formatDateTime(date: string | Date): string {
-  if (!date) return "";
+  if (!date) return '';
 
-  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
 
-  if (isNaN(dateObj.getTime())) return "";
+  if (isNaN(dateObj.getTime())) return '';
 
-  return dateObj.toLocaleString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+  return dateObj.toLocaleString('pt-BR', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -126,15 +126,15 @@ export function formatDateTime(date: string | Date): string {
  * Format time in Brazilian format (HH:mm)
  */
 export function formatTime(date: string | Date): string {
-  if (!date) return "";
+  if (!date) return '';
 
-  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const dateObj = typeof date === 'string' ? new Date(date) : date;
 
-  if (isNaN(dateObj.getTime())) return "";
+  if (isNaN(dateObj.getTime())) return '';
 
-  return dateObj.toLocaleTimeString("pt-BR", {
-    hour: "2-digit",
-    minute: "2-digit",
+  return dateObj.toLocaleTimeString('pt-BR', {
+    hour: '2-digit',
+    minute: '2-digit',
   });
 }
 
@@ -142,28 +142,28 @@ export function formatTime(date: string | Date): string {
  * Remove formatting from CPF (keep only numbers)
  */
 export function unformatCPF(cpf: string): string {
-  return cpf.replace(/\D/g, "");
+  return cpf.replace(/\D/g, '');
 }
 
 /**
  * Remove formatting from CNPJ (keep only numbers)
  */
 export function unformatCNPJ(cnpj: string): string {
-  return cnpj.replace(/\D/g, "");
+  return cnpj.replace(/\D/g, '');
 }
 
 /**
  * Remove formatting from phone (keep only numbers)
  */
 export function unformatPhone(phone: string): string {
-  return phone.replace(/\D/g, "");
+  return phone.replace(/\D/g, '');
 }
 
 /**
  * Remove formatting from CEP (keep only numbers)
  */
 export function unformatCEP(cep: string): string {
-  return cep.replace(/\D/g, "");
+  return cep.replace(/\D/g, '');
 }
 
 /**
@@ -171,22 +171,22 @@ export function unformatCEP(cep: string): string {
  */
 export function maskSensitiveData(
   data: string,
-  type: "cpf" | "phone" | "email" | "address",
+  type: 'cpf' | 'phone' | 'email' | 'address',
 ): string {
-  if (!data) return "";
+  if (!data) return '';
 
   switch (type) {
-    case "cpf":
-      return "***.***.***-**";
-    case "phone":
-      return "(**) ****-****";
-    case "email":
-      const [, domain] = data.split("@");
-      return `***@${domain || "***.***"}`;
-    case "address":
-      return "Endereço restrito";
+    case 'cpf':
+      return '***.***.***-**';
+    case 'phone':
+      return '(**) ****-****';
+    case 'email':
+      const [, domain] = data.split('@');
+      return `***@${domain || '***.***'}`;
+    case 'address':
+      return 'Endereço restrito';
     default:
-      return "***";
+      return '***';
   }
 }
 
@@ -195,33 +195,33 @@ export function maskSensitiveData(
  */
 export function formatState(state: string): string {
   const stateMap: Record<string, string> = {
-    AC: "Acre",
-    AL: "Alagoas",
-    AP: "Amapá",
-    AM: "Amazonas",
-    BA: "Bahia",
-    CE: "Ceará",
-    DF: "Distrito Federal",
-    ES: "Espírito Santo",
-    GO: "Goiás",
-    MA: "Maranhão",
-    MT: "Mato Grosso",
-    MS: "Mato Grosso do Sul",
-    MG: "Minas Gerais",
-    PA: "Pará",
-    PB: "Paraíba",
-    PR: "Paraná",
-    PE: "Pernambuco",
-    PI: "Piauí",
-    RJ: "Rio de Janeiro",
-    RN: "Rio Grande do Norte",
-    RS: "Rio Grande do Sul",
-    RO: "Rondônia",
-    RR: "Roraima",
-    SC: "Santa Catarina",
-    SP: "São Paulo",
-    SE: "Sergipe",
-    TO: "Tocantins",
+    AC: 'Acre',
+    AL: 'Alagoas',
+    AP: 'Amapá',
+    AM: 'Amazonas',
+    BA: 'Bahia',
+    CE: 'Ceará',
+    DF: 'Distrito Federal',
+    ES: 'Espírito Santo',
+    GO: 'Goiás',
+    MA: 'Maranhão',
+    MT: 'Mato Grosso',
+    MS: 'Mato Grosso do Sul',
+    MG: 'Minas Gerais',
+    PA: 'Pará',
+    PB: 'Paraíba',
+    PR: 'Paraná',
+    PE: 'Pernambuco',
+    PI: 'Piauí',
+    RJ: 'Rio de Janeiro',
+    RN: 'Rio Grande do Norte',
+    RS: 'Rio Grande do Sul',
+    RO: 'Rondônia',
+    RR: 'Roraima',
+    SC: 'Santa Catarina',
+    SP: 'São Paulo',
+    SE: 'Sergipe',
+    TO: 'Tocantins',
   };
 
   return stateMap[state.toUpperCase()] || state;
@@ -231,13 +231,13 @@ export function formatState(state: string): string {
  * Format file size in human readable format
  */
 export function formatFileSize(bytes: number): string {
-  if (bytes === 0) return "0 Bytes";
+  if (bytes === 0) return '0 Bytes';
 
   const k = 1024;
-  const sizes = ["Bytes", "KB", "MB", "GB"];
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
 /**
@@ -252,5 +252,5 @@ export function formatPercentage(value: number, decimals: number = 1): string {
  */
 export function truncateText(text: string, maxLength: number): string {
   if (text.length <= maxLength) return text;
-  return text.substring(0, maxLength - 3) + "...";
+  return text.substring(0, maxLength - 3) + '...';
 }

@@ -3,27 +3,23 @@
  * Handles aesthetic clinic services and procedures
  */
 
-import {
-  type ServiceType,
-  serviceTypeService,
-} from "@/services/service-types.service";
-import { useQuery, type UseQueryOptions } from "@tanstack/react-query";
-import React from "react";
+import { type ServiceType, serviceTypeService } from '@/services/service-types.service';
+import { useQuery, type UseQueryOptions } from '@tanstack/react-query';
+import React from 'react';
 
 // Query keys for service types
 export const serviceTypeKeys = {
-  all: ["serviceTypes"] as const,
-  lists: () => [...serviceTypeKeys.all, "list"] as const,
+  all: ['serviceTypes'] as const,
+  lists: () => [...serviceTypeKeys.all, 'list'] as const,
   list: (clinicId?: string, filters?: any) =>
     [...serviceTypeKeys.lists(), clinicId, filters] as const,
-  details: () => [...serviceTypeKeys.all, "detail"] as const,
+  details: () => [...serviceTypeKeys.all, 'detail'] as const,
   detail: (id: string) => [...serviceTypeKeys.details(), id] as const,
   search: (query: string, clinicId?: string) =>
-    [...serviceTypeKeys.all, "search", query, clinicId] as const,
-  categories: (clinicId?: string) =>
-    [...serviceTypeKeys.all, "categories", clinicId] as const,
+    [...serviceTypeKeys.all, 'search', query, clinicId] as const,
+  categories: (clinicId?: string) => [...serviceTypeKeys.all, 'categories', clinicId] as const,
   byCategory: (category: string, clinicId?: string) =>
-    [...serviceTypeKeys.all, "byCategory", category, clinicId] as const,
+    [...serviceTypeKeys.all, 'byCategory', category, clinicId] as const,
 };
 
 /**
@@ -31,7 +27,7 @@ export const serviceTypeKeys = {
  */
 export function useServiceTypes(
   clinicId?: string,
-  options?: Omit<UseQueryOptions<ServiceType[], Error>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<ServiceType[], Error>, 'queryKey' | 'queryFn'>,
 ) {
   return useQuery({
     queryKey: serviceTypeKeys.list(clinicId),
@@ -48,7 +44,7 @@ export function useServiceTypes(
 export function useSearchServiceTypes(
   query: string,
   clinicId?: string,
-  options?: Omit<UseQueryOptions<ServiceType[], Error>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<ServiceType[], Error>, 'queryKey' | 'queryFn'>,
 ) {
   return useQuery({
     queryKey: serviceTypeKeys.search(query, clinicId),
@@ -67,7 +63,7 @@ export function useServiceType(
   serviceTypeId: string,
   options?: Omit<
     UseQueryOptions<ServiceType | null, Error>,
-    "queryKey" | "queryFn"
+    'queryKey' | 'queryFn'
   >,
 ) {
   return useQuery({
@@ -86,12 +82,11 @@ export function useServiceType(
 export function useServiceTypesByCategory(
   category: string,
   clinicId?: string,
-  options?: Omit<UseQueryOptions<ServiceType[], Error>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<ServiceType[], Error>, 'queryKey' | 'queryFn'>,
 ) {
   return useQuery({
     queryKey: serviceTypeKeys.byCategory(category, clinicId),
-    queryFn: () =>
-      serviceTypeService.getServiceTypesByCategory(category, clinicId),
+    queryFn: () => serviceTypeService.getServiceTypesByCategory(category, clinicId),
     staleTime: 10 * 60 * 1000, // 10 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes
     enabled: !!category,
@@ -104,7 +99,7 @@ export function useServiceTypesByCategory(
  */
 export function useServiceCategories(
   clinicId?: string,
-  options?: Omit<UseQueryOptions<string[], Error>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<string[], Error>, 'queryKey' | 'queryFn'>,
 ) {
   return useQuery({
     queryKey: serviceTypeKeys.categories(clinicId),
@@ -120,7 +115,7 @@ export function useServiceCategories(
  */
 export function usePopularServices(clinicId?: string) {
   return useServiceTypes(clinicId, {
-    select: (services) => {
+    select: services => {
       // Return services sorted by popularity (could be based on usage stats)
       // For now, just return first 6 services
       return services.slice(0, 6);
@@ -141,7 +136,7 @@ export function useServicesByCategory(clinicId?: string) {
     return categories.reduce(
       (acc, category) => {
         acc[category] = services.filter(
-          (service) => service.category === category,
+          service => service.category === category,
         );
         return acc;
       },

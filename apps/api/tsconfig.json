@@ -18,7 +18,9 @@
       "@neonpro/database": ["../../packages/database/src"],
       "@neonpro/database/*": ["../../packages/database/src/*"],
       "@neonpro/types": ["../../packages/types/src"],
-      "@neonpro/types/*": ["../../packages/types/src/*"]
+      "@neonpro/types/*": ["../../packages/types/src/*"],
+      "@neonpro/utils": ["../../packages/utils/dist"],
+      "@neonpro/utils/*": ["../../packages/utils/dist/*"]
     },
     "types": ["node", "vitest/globals"],
     "allowSyntheticDefaultImports": true,

@@ -4,7 +4,8 @@
  */
 
 import { createServerClient } from '../clients/supabase.js';
-import { enhancedRLSSecurityService, type SecurityAlert } from './enhanced-rls-security.js';
+import { logger } from '@/utils/secure-logger';
+import { type SecurityAlert } from './enhanced-rls-security.js';
 
 export interface SecurityMetrics {
   timestamp: Date;
@@ -132,7 +133,7 @@ export class SecurityMonitoringDashboardService {
         compliance,
       };
     } catch (error) {
-      console.error('Failed to generate security dashboard:', error);
+      logger.error('Failed to generate security dashboard', error);
       throw new Error('Failed to generate security dashboard');
     }
   }
@@ -208,7 +209,7 @@ export class SecurityMonitoringDashboardService {
 
       return metrics;
     } catch (error) {
-      console.error('Failed to get real-time metrics:', error);
+      logger.error('Failed to get real-time metrics', error);
       return {
         timestamp: new Date(),
         totalRequests: 0,
@@ -258,7 +259,7 @@ export class SecurityMonitoringDashboardService {
         low: alerts.filter(alert => alert.severity === 'LOW'),
       };
     } catch (error) {
-      console.error('Failed to get alerts by severity:', error);
+      logger.error('Failed to get alerts by severity', error);
       return { critical: [], high: [], medium: [], low: [] };
     }
   }
@@ -352,7 +353,7 @@ export class SecurityMonitoringDashboardService {
         byTime,
       };
     } catch (error) {
-      console.error('Failed to get access patterns:', error);
+      logger.error('Failed to get access patterns', error);
       return { byRole: {}, byEndpoint: {}, byTime: [] };
     }
   }
@@ -360,7 +361,7 @@ export class SecurityMonitoringDashboardService {
   /**
    * Get compliance status
    */
-  private async getComplianceStatus(clinicId?: string): Promise<{
+  private async getComplianceStatus(_clinicId?: string): Promise<{
     lgpdCompliant: boolean;
     auditLogRetention: boolean;
     dataEncryption: boolean;
@@ -389,7 +390,7 @@ export class SecurityMonitoringDashboardService {
         incidentResponse: incidentStatus,
       };
     } catch (error) {
-      console.error('Failed to get compliance status:', error);
+      logger.error('Failed to get compliance status', error);
       return {
         lgpdCompliant: false,
         auditLogRetention: false,
@@ -440,7 +441,7 @@ export class SecurityMonitoringDashboardService {
         lastUpdated: now,
       };
     } catch (error) {
-      console.error('Failed to get overview stats:', error);
+      logger.error('Failed to get overview stats', error);
       return {
         totalEndpoints: 0,
         protectedEndpoints: 0,
@@ -536,7 +537,7 @@ export class SecurityMonitoringDashboardService {
 
       return report;
     } catch (error) {
-      console.error('Failed to generate security report:', error);
+      logger.error('Failed to generate security report', error);
       throw new Error('Failed to generate security report');
     }
   }
@@ -585,7 +586,7 @@ export class SecurityMonitoringDashboardService {
           table: 'security_alerts',
         },
         payload => {
-          console.log('🚨 Real-time security alert:', payload);
+          logger.info('🚨 Real-time security alert', payload);
           // Trigger real-time notifications
           this.handleRealTimeAlert(payload.new);
         },
@@ -604,7 +605,7 @@ export class SecurityMonitoringDashboardService {
       // Update dashboard metrics cache
       this.invalidateMetricsCache(alert.clinic_id);
     } catch (error) {
-      console.error('Failed to handle real-time alert:', error);
+      logger.error('Failed to handle real-time alert', error);
     }
   }
 
@@ -613,7 +614,7 @@ export class SecurityMonitoringDashboardService {
    */
   private async sendSecurityNotification(alert: any): Promise<void> {
     // Implementation would integrate with notification system
-    console.log('📧 Security notification sent for alert:', alert.id);
+    logger.info('📧 Security notification sent for alert', alert.id);
   }
 
   /**
@@ -737,7 +738,7 @@ export class SecurityMonitoringDashboardService {
 
   private async assessCompliance(
     logs: any[],
-    clinicId?: string,
+    _clinicId?: string,
   ): Promise<{
     score: number;
     issues: string[];
@@ -788,7 +789,7 @@ export class SecurityMonitoringDashboardService {
 
   private async generateSecurityRecommendations(
     logs: any[],
-    clinicId?: string,
+    _clinicId?: string,
   ): Promise<string[]> {
     const recommendations: string[] = [];
 
@@ -854,7 +855,7 @@ export class SecurityMonitoringDashboardService {
         recommendations: report.recommendations,
       });
     } catch (error) {
-      console.error('Failed to store security report:', error);
+      logger.error('Failed to store security report', error);
     }
   }
 
@@ -917,7 +918,7 @@ export class SecurityMonitoringDashboardService {
         })),
       };
     } catch (error) {
-      console.error('Failed to get security trends:', error);
+      logger.error('Failed to get security trends', error);
       return { requests: [], threats: [], securityScores: [] };
     }
   }
@@ -945,7 +946,7 @@ export class SecurityMonitoringDashboardService {
       const { data } = await query;
       return data || [];
     } catch (error) {
-      console.error('Failed to get top security events:', error);
+      logger.error('Failed to get top security events', error);
       return [];
     }
   }

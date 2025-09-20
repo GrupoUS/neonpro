@@ -4,13 +4,13 @@
  * Performance optimized with intelligent batching and caching
  */
 
-import fs from "fs/promises";
-import { glob } from "glob";
-import path from "path";
-import { performance } from "perf_hooks";
-import React from "react";
-import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { axe, toHaveNoViolations } from "vitest-axe";
+import fs from 'fs/promises';
+import { glob } from 'glob';
+import path from 'path';
+import { performance } from 'perf_hooks';
+import React from 'react';
+import { afterAll, beforeAll, describe, expect, test } from 'vitest';
+import { axe, toHaveNoViolations } from 'vitest-axe';
 
 // Import configuration and utilities
 import {
@@ -18,24 +18,24 @@ import {
   healthcareAxeConfig,
   healthcareTestContexts,
   runOptimizedAccessibilityTest,
-} from "./axe-integration.test";
+} from './axe-integration.test';
 
 expect.extend(toHaveNoViolations);
 
 interface ComponentDiscovery {
   name: string;
   path: string;
-  type: "component" | "page" | "layout" | "utility";
-  complexity: "simple" | "medium" | "complex";
+  type: 'component' | 'page' | 'layout' | 'utility';
+  complexity: 'simple' | 'medium' | 'complex';
   category:
-    | "telemedicine"
-    | "patient"
-    | "admin"
-    | "ui"
-    | "accessibility"
-    | "common";
+    | 'telemedicine'
+    | 'patient'
+    | 'admin'
+    | 'ui'
+    | 'accessibility'
+    | 'common';
   hasTests: boolean;
-  priority: "critical" | "high" | "medium" | "low";
+  priority: 'critical' | 'high' | 'medium' | 'low';
 }
 
 interface TestBatch {
@@ -91,12 +91,12 @@ class AccessibilityTestRunner {
    */
   async discoverComponents(): Promise<ComponentDiscovery[]> {
     const componentPaths = [
-      "src/components/**/*.tsx",
-      "src/routes/**/*.tsx",
-      "!src/components/**/*.test.tsx",
-      "!src/components/**/*.stories.tsx",
-      "!src/**/__tests__/**",
-      "!src/**/*.d.ts",
+      'src/components/**/*.tsx',
+      'src/routes/**/*.tsx',
+      '!src/components/**/*.test.tsx',
+      '!src/components/**/*.stories.tsx',
+      '!src/**/__tests__/**',
+      '!src/**/*.d.ts',
     ];
 
     const files = await glob(componentPaths, {
@@ -108,12 +108,12 @@ class AccessibilityTestRunner {
 
     for (const filePath of files) {
       try {
-        const content = await fs.readFile(filePath, "utf-8");
+        const content = await fs.readFile(filePath, 'utf-8');
 
         // Skip files without React components
         if (
-          !content.includes("export") ||
-          (!content.includes("React") && !content.includes("jsx"))
+          !content.includes('export')
+          || (!content.includes('React') && !content.includes('jsx'))
         ) {
           continue;
         }
@@ -140,61 +140,58 @@ class AccessibilityTestRunner {
     filePath: string,
     content: string,
   ): Promise<ComponentDiscovery | null> {
-    const fileName = path.basename(filePath, ".tsx");
+    const fileName = path.basename(filePath, '.tsx');
     const relativePath = path.relative(process.cwd(), filePath);
 
     // Determine component category
-    let category: ComponentDiscovery["category"] = "common";
-    if (relativePath.includes("/telemedicine/")) category = "telemedicine";
-    else if (relativePath.includes("/patient")) category = "patient";
-    else if (relativePath.includes("/admin/")) category = "admin";
-    else if (relativePath.includes("/ui/")) category = "ui";
-    else if (relativePath.includes("/accessibility/"))
-      category = "accessibility";
+    let category: ComponentDiscovery['category'] = 'common';
+    if (relativePath.includes('/telemedicine/')) category = 'telemedicine';
+    else if (relativePath.includes('/patient')) category = 'patient';
+    else if (relativePath.includes('/admin/')) category = 'admin';
+    else if (relativePath.includes('/ui/')) category = 'ui';
+    else if (relativePath.includes('/accessibility/')) {
+      category = 'accessibility';
+    }
 
     // Determine component type
-    let type: ComponentDiscovery["type"] = "component";
-    if (relativePath.includes("/routes/")) type = "page";
-    else if (relativePath.includes("/layout/")) type = "layout";
-    else if (relativePath.includes("/utils/")) type = "utility";
+    let type: ComponentDiscovery['type'] = 'component';
+    if (relativePath.includes('/routes/')) type = 'page';
+    else if (relativePath.includes('/layout/')) type = 'layout';
+    else if (relativePath.includes('/utils/')) type = 'utility';
 
     // Analyze complexity based on content
-    let complexity: ComponentDiscovery["complexity"] = "simple";
-    const lineCount = content.split("\n").length;
-    const hasState =
-      content.includes("useState") || content.includes("useReducer");
-    const hasEffects =
-      content.includes("useEffect") || content.includes("useLayoutEffect");
-    const hasComplexLogic =
-      content.includes("useMemo") || content.includes("useCallback");
-    const hasAsyncOperations =
-      content.includes("async") || content.includes("Promise");
+    let complexity: ComponentDiscovery['complexity'] = 'simple';
+    const lineCount = content.split('\n').length;
+    const hasState = content.includes('useState') || content.includes('useReducer');
+    const hasEffects = content.includes('useEffect') || content.includes('useLayoutEffect');
+    const hasComplexLogic = content.includes('useMemo') || content.includes('useCallback');
+    const hasAsyncOperations = content.includes('async') || content.includes('Promise');
 
     if (lineCount > 200 || (hasState && hasEffects && hasComplexLogic)) {
-      complexity = "complex";
+      complexity = 'complex';
     } else if (
-      lineCount > 100 ||
-      hasState ||
-      hasEffects ||
-      hasAsyncOperations
+      lineCount > 100
+      || hasState
+      || hasEffects
+      || hasAsyncOperations
     ) {
-      complexity = "medium";
+      complexity = 'medium';
     }
 
     // Determine priority based on healthcare context
-    let priority: ComponentDiscovery["priority"] = "medium";
-    if (category === "telemedicine" || relativePath.includes("emergency")) {
-      priority = "critical";
-    } else if (category === "patient" || category === "accessibility") {
-      priority = "high";
-    } else if (category === "admin") {
-      priority = "medium";
+    let priority: ComponentDiscovery['priority'] = 'medium';
+    if (category === 'telemedicine' || relativePath.includes('emergency')) {
+      priority = 'critical';
+    } else if (category === 'patient' || category === 'accessibility') {
+      priority = 'high';
+    } else if (category === 'admin') {
+      priority = 'medium';
     } else {
-      priority = "low";
+      priority = 'low';
     }
 
     // Check if component has existing tests
-    const testPath = filePath.replace(".tsx", ".test.tsx");
+    const testPath = filePath.replace('.tsx', '.test.tsx');
     const hasTests = await fs
       .access(testPath)
       .then(() => true)
@@ -220,10 +217,8 @@ class AccessibilityTestRunner {
       const priorityWeight = { critical: 4, high: 3, medium: 2, low: 1 };
       const complexityWeight = { complex: 3, medium: 2, simple: 1 };
 
-      const aScore =
-        priorityWeight[a.priority] + complexityWeight[a.complexity];
-      const bScore =
-        priorityWeight[b.priority] + complexityWeight[b.complexity];
+      const aScore = priorityWeight[a.priority] + complexityWeight[a.complexity];
+      const bScore = priorityWeight[b.priority] + complexityWeight[b.complexity];
 
       return bScore - aScore;
     });
@@ -236,8 +231,8 @@ class AccessibilityTestRunner {
       const estimatedMemory = this.estimateComponentMemoryUsage(component);
 
       if (
-        currentBatch.length >= this.maxBatchSize ||
-        currentBatchMemory + estimatedMemory > this.maxMemoryPerBatch
+        currentBatch.length >= this.maxBatchSize
+        || currentBatchMemory + estimatedMemory > this.maxMemoryPerBatch
       ) {
         if (currentBatch.length > 0) {
           batches.push({
@@ -288,9 +283,9 @@ class AccessibilityTestRunner {
     };
 
     return (
-      baseMemory *
-      complexityMultiplier[component.complexity] *
-      categoryMultiplier[component.category]
+      baseMemory
+      * complexityMultiplier[component.complexity]
+      * categoryMultiplier[component.category]
     );
   }
 
@@ -317,8 +312,8 @@ class AccessibilityTestRunner {
     }
 
     const endTime = performance.now();
-    this.report.batchingMetrics.averageBatchDuration =
-      (endTime - startTime) / this.testBatches.length;
+    this.report.batchingMetrics.averageBatchDuration = (endTime - startTime)
+      / this.testBatches.length;
 
     // Calculate compliance rates by category
     this.calculateCategoryMetrics();
@@ -367,16 +362,16 @@ class AccessibilityTestRunner {
       }
 
       // Determine test context based on component category
-      let context: keyof typeof healthcareTestContexts = "PATIENT_PORTAL";
+      let context: keyof typeof healthcareTestContexts = 'PATIENT_PORTAL';
       switch (component.category) {
-        case "telemedicine":
-          context = "TELEMEDICINE";
+        case 'telemedicine':
+          context = 'TELEMEDICINE';
           break;
-        case "admin":
-          context = "MEDICAL_PROFESSIONAL";
+        case 'admin':
+          context = 'MEDICAL_PROFESSIONAL';
           break;
-        case "accessibility":
-          context = "PATIENT_PORTAL";
+        case 'accessibility':
+          context = 'PATIENT_PORTAL';
           break;
       }
 
@@ -405,17 +400,17 @@ class AccessibilityTestRunner {
 
     // Common props based on component category
     switch (component.category) {
-      case "telemedicine":
-        mockProps.sessionId = "test-session-123";
+      case 'telemedicine':
+        mockProps.sessionId = 'test-session-123';
         mockProps.onSessionEnd = () => {};
         break;
-      case "patient":
-        mockProps.patientId = "patient-123";
+      case 'patient':
+        mockProps.patientId = 'patient-123';
         mockProps.onSave = () => {};
         break;
-      case "admin":
-        mockProps.userId = "admin-123";
-        mockProps.permissions = ["read", "write"];
+      case 'admin':
+        mockProps.userId = 'admin-123';
+        mockProps.permissions = ['read', 'write'];
         break;
     }
 
@@ -438,37 +433,37 @@ class AccessibilityTestRunner {
     categoryData.count++;
     categoryData.violations += results.violations?.length || 0;
     categoryData.complianceRate =
-      ((categoryData.count - categoryData.violations) / categoryData.count) *
-      100;
+      ((categoryData.count - categoryData.violations) / categoryData.count)
+      * 100;
   }
 
   /**
    * Calculate final category metrics
    */
   private calculateCategoryMetrics(): void {
-    for (const [category, data] of Object.entries(
-      this.report.componentCategories,
-    )) {
-      data.complianceRate =
-        data.count > 0
-          ? ((data.count - data.violations) / data.count) * 100
-          : 0;
+    for (
+      const [category, data] of Object.entries(
+        this.report.componentCategories,
+      )
+    ) {
+      data.complianceRate = data.count > 0
+        ? ((data.count - data.violations) / data.count) * 100
+        : 0;
     }
 
     // Calculate overall compliance rate
-    this.report.complianceRate =
-      this.report.totalComponents > 0
-        ? ((this.report.totalComponents - this.report.totalViolations) /
-            this.report.totalComponents) *
-          100
-        : 0;
+    this.report.complianceRate = this.report.totalComponents > 0
+      ? ((this.report.totalComponents - this.report.totalViolations)
+        / this.report.totalComponents)
+        * 100
+      : 0;
   }
 
   /**
    * Generate comprehensive accessibility report
    */
   private async generateReport(): Promise<void> {
-    const reportPath = path.join(process.cwd(), "accessibility-report.json");
+    const reportPath = path.join(process.cwd(), 'accessibility-report.json');
 
     try {
       await fs.writeFile(reportPath, JSON.stringify(this.report, null, 2));
@@ -477,7 +472,7 @@ class AccessibilityTestRunner {
       // Also generate human-readable summary
       await this.generateHumanReadableReport();
     } catch (error) {
-      console.error("Failed to generate accessibility report:", error);
+      console.error('Failed to generate accessibility report:', error);
     }
   }
 
@@ -485,7 +480,7 @@ class AccessibilityTestRunner {
    * Generate human-readable accessibility report
    */
   private async generateHumanReadableReport(): Promise<void> {
-    const summaryPath = path.join(process.cwd(), "accessibility-summary.md");
+    const summaryPath = path.join(process.cwd(), 'accessibility-summary.md');
 
     const summary = `
 # 🏥 Healthcare Platform Accessibility Report
@@ -504,20 +499,20 @@ class AccessibilityTestRunner {
 
 ## 🎯 WCAG Compliance
 
-- **WCAG 2A:** ${this.report.wcagCompliance.wcag2a ? "✅ Compliant" : "❌ Non-compliant"}
-- **WCAG 2AA:** ${this.report.wcagCompliance.wcag2aa ? "✅ Compliant" : "❌ Non-compliant"}
-- **WCAG 2.1 AA:** ${this.report.wcagCompliance.wcag21aa ? "✅ Compliant" : "❌ Non-compliant"}
+- **WCAG 2A:** ${this.report.wcagCompliance.wcag2a ? '✅ Compliant' : '❌ Non-compliant'}
+- **WCAG 2AA:** ${this.report.wcagCompliance.wcag2aa ? '✅ Compliant' : '❌ Non-compliant'}
+- **WCAG 2.1 AA:** ${this.report.wcagCompliance.wcag21aa ? '✅ Compliant' : '❌ Non-compliant'}
 - **Best Practices:** ${
       this.report.wcagCompliance.bestPractice
-        ? "✅ Compliant"
-        : "❌ Non-compliant"
+        ? '✅ Compliant'
+        : '❌ Non-compliant'
     }
 
 ## 🏥 Healthcare Compliance
 
-- **ANVISA:** ${this.report.healthcareCompliance.anvisa ? "✅ Compliant" : "❌ Non-compliant"}
-- **CFM:** ${this.report.healthcareCompliance.cfm ? "✅ Compliant" : "❌ Non-compliant"}
-- **LGPD:** ${this.report.healthcareCompliance.lgpd ? "✅ Compliant" : "❌ Non-compliant"}
+- **ANVISA:** ${this.report.healthcareCompliance.anvisa ? '✅ Compliant' : '❌ Non-compliant'}
+- **CFM:** ${this.report.healthcareCompliance.cfm ? '✅ Compliant' : '❌ Non-compliant'}
+- **LGPD:** ${this.report.healthcareCompliance.lgpd ? '✅ Compliant' : '❌ Non-compliant'}
 
 ## 📈 Performance Metrics
 
@@ -527,33 +522,35 @@ class AccessibilityTestRunner {
 
 ## 🏷️ Component Categories
 
-${Object.entries(this.report.componentCategories)
-  .map(
-    ([category, data]) => `
+${
+      Object.entries(this.report.componentCategories)
+        .map(
+          ([category, data]) => `
 ### ${category.charAt(0).toUpperCase() + category.slice(1)}
 - **Components:** ${data.count}
 - **Violations:** ${data.violations}
 - **Compliance Rate:** ${data.complianceRate.toFixed(2)}%
 `,
-  )
-  .join("")}
+        )
+        .join('')
+    }
 
 ## 🚨 Critical Violations
 
 ${
-  this.report.criticalViolations.length > 0
-    ? this.report.criticalViolations
-        .map(
-          (v) => `
+      this.report.criticalViolations.length > 0
+        ? this.report.criticalViolations
+          .map(
+            v => `
 ### ${v.id}
 - **Impact:** ${v.impact}
 - **Description:** ${v.description}
 - **Help:** ${v.help}
 `,
-        )
-        .join("")
-    : "No critical violations found ✅"
-}
+          )
+          .join('')
+        : 'No critical violations found ✅'
+    }
 
 ---
 
@@ -565,38 +562,38 @@ ${
       await fs.writeFile(summaryPath, summary);
       console.log(`📋 Human-readable summary generated: ${summaryPath}`);
     } catch (error) {
-      console.error("Failed to generate summary report:", error);
+      console.error('Failed to generate summary report:', error);
     }
   }
 }
 
 // Test suite for automated testing
-describe("Automated Accessibility Test Runner", () => {
+describe('Automated Accessibility Test Runner', () => {
   let testRunner: AccessibilityTestRunner;
 
   beforeAll(async () => {
     testRunner = new AccessibilityTestRunner();
   });
 
-  test("discovers all UI components in the project", async () => {
+  test('discovers all UI components in the project', async () => {
     const components = await testRunner.discoverComponents();
 
     expect(components.length).toBeGreaterThan(0);
-    expect(components.every((c) => c.name && c.path && c.category)).toBe(true);
+    expect(components.every(c => c.name && c.path && c.category)).toBe(true);
 
     console.log(`📦 Discovered ${components.length} components`);
   });
 
-  test("creates optimized test batches for performance", async () => {
+  test('creates optimized test batches for performance', async () => {
     const batches = testRunner.createTestBatches();
 
     expect(batches.length).toBeGreaterThan(0);
-    expect(batches.every((b) => b.components.length <= 10)).toBe(true); // Max batch size
+    expect(batches.every(b => b.components.length <= 10)).toBe(true); // Max batch size
 
     console.log(`🔄 Created ${batches.length} optimized test batches`);
   });
 
-  test("runs automated accessibility tests on all components", async () => {
+  test('runs automated accessibility tests on all components', async () => {
     const report = await testRunner.runAutomatedTests();
 
     expect(report.discoveredComponents).toBeGreaterThan(0);
@@ -607,13 +604,8 @@ describe("Automated Accessibility Test Runner", () => {
   }, 300000); // 5 minute timeout for full test suite
 
   afterAll(async () => {
-    console.log("✅ Automated accessibility testing completed");
+    console.log('✅ Automated accessibility testing completed');
   });
 });
 
-export {
-  AccessibilityTestRunner,
-  AutomatedTestReport,
-  ComponentDiscovery,
-  TestBatch,
-};
+export { AccessibilityTestRunner, AutomatedTestReport, ComponentDiscovery, TestBatch };

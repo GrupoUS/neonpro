@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useCallback, useMemo } from "react";
-import { useCalendarContext } from "../calendar-context";
-import type { EventFilterOptions } from "@/services/event.service";
+import type { EventFilterOptions } from '@/services/event.service';
+import { useCallback, useMemo } from 'react';
+import { useCalendarContext } from '../calendar-context';
 
 /**
  * Hook for managing event filters with the calendar context
  */
 export function useEventFilters() {
-  const { 
-    filteredEvents, 
-    applyFilters, 
-    clearFilters, 
+  const {
+    filteredEvents,
+    applyFilters,
+    clearFilters,
     currentFilters,
     events,
-    loading 
+    loading,
   } = useCalendarContext();
 
   // Apply filters locally for immediate feedback
@@ -51,7 +51,9 @@ export function useEventFilters() {
 
       // Professional filter
       if (currentFilters.professionalId && currentFilters.professionalId.length > 0) {
-        if (!event.professionalId || !currentFilters.professionalId.includes(event.professionalId)) {
+        if (
+          !event.professionalId || !currentFilters.professionalId.includes(event.professionalId)
+        ) {
           return false;
         }
       }
@@ -133,7 +135,7 @@ export function useEventFilters() {
         todayEnd.setHours(23, 59, 59, 999);
         filters.dateRange = { start: today, end: todayEnd };
         break;
-      
+
       case 'week':
         const weekStart = new Date(now);
         weekStart.setDate(now.getDate() - now.getDay());
@@ -143,14 +145,14 @@ export function useEventFilters() {
         weekEnd.setHours(23, 59, 59, 999);
         filters.dateRange = { start: weekStart, end: weekEnd };
         break;
-      
+
       case 'month':
         const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
         const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0);
         monthEnd.setHours(23, 59, 59, 999);
         filters.dateRange = { start: monthStart, end: monthEnd };
         break;
-      
+
       case 'upcoming':
         const upcomingStart = new Date(now);
         const upcomingEnd = new Date(now);
@@ -189,10 +191,10 @@ export function useEventFilters() {
     filteredEvents: locallyFilteredEvents,
     isLoading: loading,
     hasActiveFilters: !!currentFilters,
-    
+
     // Filter options
     filterOptions,
-    
+
     // Actions
     applyFilters: applyLocalFilters,
     clearFilters,
@@ -202,7 +204,7 @@ export function useEventFilters() {
     filterByColor,
     filterByDateRange,
     filterBySearchTerm,
-    
+
     // Stats
     totalEvents: events.length,
     filteredCount: locallyFilteredEvents.length,

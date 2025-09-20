@@ -198,7 +198,7 @@ export class HealthcareResilienceService {
     }
 
     // LGPD compliance - notify data protection officer for certain errors
-    if (context.lgpdCategories.includes("sensitive_health_data")) {
+    if (context.lgpdCategories.includes(LGPDDataCategory.SENSITIVE_DATA)) {
       await this.notifyDataProtectionError(error, context);
     }
   }
@@ -361,7 +361,7 @@ export class HealthcareResilienceService {
           (entry) =>
             !entry.success &&
             entry.context.lgpdCategories.includes(
-              LGPDDataCategory.SENSITIVE_HEALTH_DATA,
+              LGPDDataCategory.SENSITIVE_DATA,
             ),
         ).length,
       },
@@ -443,7 +443,7 @@ export class HealthcareResilienceService {
 
     const sensitiveDataOperations = periodAuditLog.filter((entry) =>
       entry.context.lgpdCategories.includes(
-        LGPDDataCategory.SENSITIVE_HEALTH_DATA,
+        LGPDDataCategory.SENSITIVE_DATA,
       ),
     );
 

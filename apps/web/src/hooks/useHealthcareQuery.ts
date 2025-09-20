@@ -3,31 +3,24 @@
  * Provides optimistic updates, error handling, and healthcare data patterns
  */
 
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { useMutation, useQuery, useQueryClient, UseQueryOptions } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 // Healthcare-specific query keys factory
 export const healthcareKeys = {
-  all: ["healthcare"] as const,
-  patients: () => [...healthcareKeys.all, "patients"] as const,
+  all: ['healthcare'] as const,
+  patients: () => [...healthcareKeys.all, 'patients'] as const,
   patient: (id: string) => [...healthcareKeys.patients(), id] as const,
-  patientAppointments: (id: string) =>
-    [...healthcareKeys.patient(id), "appointments"] as const,
-  patientProcedures: (id: string) =>
-    [...healthcareKeys.patient(id), "procedures"] as const,
-  patientRisk: (id: string) => [...healthcareKeys.patient(id), "risk"] as const,
-  appointments: () => [...healthcareKeys.all, "appointments"] as const,
+  patientAppointments: (id: string) => [...healthcareKeys.patient(id), 'appointments'] as const,
+  patientProcedures: (id: string) => [...healthcareKeys.patient(id), 'procedures'] as const,
+  patientRisk: (id: string) => [...healthcareKeys.patient(id), 'risk'] as const,
+  appointments: () => [...healthcareKeys.all, 'appointments'] as const,
   appointment: (id: string) => [...healthcareKeys.appointments(), id] as const,
-  procedures: () => [...healthcareKeys.all, "procedures"] as const,
+  procedures: () => [...healthcareKeys.all, 'procedures'] as const,
   procedure: (id: string) => [...healthcareKeys.procedures(), id] as const,
-  auditLogs: () => [...healthcareKeys.all, "audit-logs"] as const,
+  auditLogs: () => [...healthcareKeys.all, 'audit-logs'] as const,
 };
 
 // Healthcare audit logging utility
@@ -40,7 +33,7 @@ async function logHealthcareAction(
 ) {
   try {
     if (!userId) return; // ensure required field
-    await supabase.from("audit_logs").insert({
+    await supabase.from('audit_logs').insert({
       table_name: resourceType,
       action,
       resource_type: resourceType,
@@ -49,14 +42,14 @@ async function logHealthcareAction(
       details: details ? JSON.stringify(details) : null,
     });
   } catch (error) {
-    console.error("Failed to log healthcare action:", error);
+    console.error('Failed to log healthcare action:', error);
   }
 }
 
 // Patient data query with LGPD compliance
 export function usePatient(
   patientId: string,
-  options?: Omit<UseQueryOptions<any, Error>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<any, Error>, 'queryKey' | 'queryFn'>,
 ) {
   const { user } = useAuth();
 
@@ -65,15 +58,15 @@ export function usePatient(
     queryFn: async () => {
       // Log data access for LGPD compliance
       await logHealthcareAction(
-        "patient_data_accessed",
-        "patient",
+        'patient_data_accessed',
+        'patient',
         patientId,
         user?.id,
-        { access_type: "query" },
+        { access_type: 'query' },
       );
 
       const { data, error } = await supabase
-        .from("patients")
+        .from('patients')
         .select(
           `
           id,
@@ -92,7 +85,7 @@ export function usePatient(
           data_consent_status
         `,
         )
-        .eq("id", patientId)
+        .eq('id', patientId)
         .single();
 
       if (error) {
@@ -106,8 +99,8 @@ export function usePatient(
     retry: (failureCount, error) => {
       // Don't retry on permission errors
       if (
-        error.message.includes("permission") ||
-        error.message.includes("unauthorized")
+        error.message.includes('permission')
+        || error.message.includes('unauthorized')
       ) {
         return false;
       }
@@ -120,7 +113,7 @@ export function usePatient(
 // Patient appointments query
 export function usePatientAppointments(
   patientId: string,
-  options?: Omit<UseQueryOptions<any[], Error>, "queryKey" | "queryFn">,
+  options?: Omit<UseQueryOptions<any[], Error>, 'queryKey' | 'queryFn'>,
 ) {
   const { user } = useAuth();
 
@@ -128,14 +121,14 @@ export function usePatientAppointments(
     queryKey: healthcareKeys.patientAppointments(patientId),
     queryFn: async () => {
       await logHealthcareAction(
-        "patient_appointments_accessed",
-        "patient",
+        'patient_appointments_accessed',
+        'patient',
         patientId,
         user?.id,
       );
 
       const { data, error } = await supabase
-        .from("appointments")
+        .from('appointments')
         .select(
           `
           id,
@@ -147,8 +140,8 @@ export function usePatientAppointments(
           updated_at
         `,
         )
-        .eq("patient_id", patientId)
-        .order("scheduled_at", { ascending: false });
+        .eq('patient_id', patientId)
+        .order('scheduled_at', { ascending: false });
 
       if (error) {
         throw new Error(`Failed to fetch appointments: ${error.message}`);
@@ -176,17 +169,17 @@ export function useUpdatePatient() {
     }) => {
       // Log the update action
       await logHealthcareAction(
-        "patient_data_updated",
-        "patient",
+        'patient_data_updated',
+        'patient',
         patientId,
         user?.id,
         { updated_fields: Object.keys(updates) },
       );
 
       const { data, error } = await supabase
-        .from("patients")
+        .from('patients')
         .update(updates)
-        .eq("id", patientId)
+        .eq('id', patientId)
         .select()
         .single();
 
@@ -225,7 +218,7 @@ export function useUpdatePatient() {
     // On success, replace optimistic data with server data
     onSuccess: (data, { patientId }) => {
       queryClient.setQueryData(healthcareKeys.patient(patientId), data);
-      toast.success("Dados do paciente atualizados com sucesso");
+      toast.success('Dados do paciente atualizados com sucesso');
     },
 
     // On error, rollback to previous data
@@ -238,7 +231,7 @@ export function useUpdatePatient() {
       }
 
       toast.error(`Erro ao atualizar paciente: ${error.message}`);
-      console.error("Patient update error:", error);
+      console.error('Patient update error:', error);
     },
 
     // Always refetch after mutation
@@ -261,32 +254,32 @@ export function useCreateAppointment() {
       scheduled_at: string;
       procedure_type: string;
       notes?: string;
-      priority?: "low" | "medium" | "high";
+      priority?: 'low' | 'medium' | 'high';
     }) => {
       // Healthcare-specific validation
       const scheduledDate = new Date(appointmentData.scheduled_at);
       const now = new Date();
 
       if (scheduledDate <= now) {
-        throw new Error("Agendamento deve ser para uma data futura");
+        throw new Error('Agendamento deve ser para uma data futura');
       }
 
       // Check for conflicts (simplified)
       const { data: conflicts } = await supabase
-        .from("appointments")
-        .select("id")
-        .eq("scheduled_at", appointmentData.scheduled_at)
-        .neq("status", "cancelled");
+        .from('appointments')
+        .select('id')
+        .eq('scheduled_at', appointmentData.scheduled_at)
+        .neq('status', 'cancelled');
 
       if (conflicts && conflicts.length > 0) {
-        throw new Error("Já existe um agendamento para este horário");
+        throw new Error('Já existe um agendamento para este horário');
       }
 
       // Log appointment creation
       await logHealthcareAction(
-        "appointment_created",
-        "appointment",
-        "pending",
+        'appointment_created',
+        'appointment',
+        'pending',
         user?.id,
         {
           patient_id: appointmentData.patient_id,
@@ -296,11 +289,11 @@ export function useCreateAppointment() {
       );
 
       const { data, error } = await supabase
-        .from("appointments")
+        .from('appointments')
         // Cast due to partial demo schema vs generated types
         .insert({
           ...appointmentData,
-          status: "scheduled",
+          status: 'scheduled',
           created_by: user?.id as string,
           // placeholders for required fields in typed schema
           clinic_id: undefined as unknown as string | undefined,
@@ -320,7 +313,7 @@ export function useCreateAppointment() {
     },
 
     // Optimistic update for appointments list
-    onMutate: async (newAppointment) => {
+    onMutate: async newAppointment => {
       const patientId = newAppointment.patient_id;
 
       // Cancel outgoing refetches
@@ -337,7 +330,7 @@ export function useCreateAppointment() {
       const optimisticAppointment = {
         id: `temp-${Date.now()}`,
         ...newAppointment,
-        status: "scheduled",
+        status: 'scheduled',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
@@ -358,14 +351,14 @@ export function useCreateAppointment() {
       queryClient.setQueryData(
         healthcareKeys.patientAppointments(patientId),
         (old: any[]) =>
-          old?.map((appointment) =>
+          old?.map(appointment =>
             appointment.id === context?.optimisticAppointment.id
               ? data
-              : appointment,
+              : appointment
           ) || [data],
       );
 
-      toast.success("Agendamento criado com sucesso");
+      toast.success('Agendamento criado com sucesso');
     },
 
     onError: (error, variables, context) => {
@@ -408,14 +401,14 @@ export function useEmergencyDetection() {
       symptoms,
     }: {
       patientId: string;
-      severity: "low" | "medium" | "high" | "critical";
+      severity: 'low' | 'medium' | 'high' | 'critical';
       description: string;
       symptoms: string[];
     }) => {
       // Log emergency detection
       await logHealthcareAction(
-        "emergency_detected",
-        "patient",
+        'emergency_detected',
+        'patient',
         patientId,
         user?.id,
         { severity, description, symptoms },
@@ -424,14 +417,14 @@ export function useEmergencyDetection() {
       // Create emergency record
       const { data, error } = await supabase
         // Table may not exist in generated types in some envs; keep flexible
-        .from("emergency_alerts" as any)
+        .from('emergency_alerts' as any)
         .insert({
           patient_id: patientId,
           severity,
           description,
           symptoms,
           detected_by: user?.id as string,
-          status: "active",
+          status: 'active',
         } as any)
         .select()
         .single();
@@ -441,10 +434,10 @@ export function useEmergencyDetection() {
       }
 
       // For critical emergencies, trigger immediate notifications
-      if (severity === "critical") {
+      if (severity === 'critical') {
         // This would integrate with notification system
         console.log(
-          "CRITICAL EMERGENCY DETECTED - IMMEDIATE ATTENTION REQUIRED",
+          'CRITICAL EMERGENCY DETECTED - IMMEDIATE ATTENTION REQUIRED',
         );
       }
 
@@ -453,16 +446,16 @@ export function useEmergencyDetection() {
 
     onSuccess: (data: any) => {
       toast.warning(
-        `Emergência detectada: ${String((data as any)?.severity ?? "ALTA").toUpperCase()}`,
+        `Emergência detectada: ${String((data as any)?.severity ?? 'ALTA').toUpperCase()}`,
         {
           duration: 10000,
           action: {
-            label: "Ver Detalhes",
+            label: 'Ver Detalhes',
             onClick: () => {
               // Navigate to emergency details
               console.log(
-                "Navigate to emergency details:",
-                (data as any)?.id ?? "unknown",
+                'Navigate to emergency details:',
+                (data as any)?.id ?? 'unknown',
               );
             },
           },
@@ -470,9 +463,9 @@ export function useEmergencyDetection() {
       );
     },
 
-    onError: (error) => {
+    onError: error => {
       toast.error(`Erro ao registrar emergência: ${error.message}`);
-      console.error("Emergency detection error:", error);
+      console.error('Emergency detection error:', error);
     },
   });
 }
@@ -486,9 +479,9 @@ export function usePrefetchHealthcareData() {
       queryKey: healthcareKeys.patient(patientId),
       queryFn: async () => {
         const { data } = await supabase
-          .from("patients")
-          .select("*")
-          .eq("id", patientId)
+          .from('patients')
+          .select('*')
+          .eq('id', patientId)
           .single();
         return data;
       },
@@ -501,10 +494,10 @@ export function usePrefetchHealthcareData() {
       queryKey: healthcareKeys.patientAppointments(patientId),
       queryFn: async () => {
         const { data } = await supabase
-          .from("appointments")
-          .select("*")
-          .eq("patient_id", patientId)
-          .order("scheduled_at", { ascending: false });
+          .from('appointments')
+          .select('*')
+          .eq('patient_id', patientId)
+          .order('scheduled_at', { ascending: false });
         return data || [];
       },
       staleTime: 2 * 60 * 1000,

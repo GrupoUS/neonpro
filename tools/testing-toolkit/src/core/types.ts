@@ -5,16 +5,16 @@
  */
 
 export type TestCategory =
-  | "unit"
-  | "integration"
-  | "e2e"
-  | "security"
-  | "performance"
-  | "compliance";
+  | 'unit'
+  | 'integration'
+  | 'e2e'
+  | 'security'
+  | 'performance'
+  | 'compliance';
 
-export type TestEnvironment = "jsdom" | "node" | "happy-dom";
+export type TestEnvironment = 'jsdom' | 'node' | 'happy-dom';
 
-export type CoverageThreshold = "critical" | "important" | "useful";
+export type CoverageThreshold = 'critical' | 'important' | 'useful';
 
 export interface TestConfig {
   category: TestCategory;

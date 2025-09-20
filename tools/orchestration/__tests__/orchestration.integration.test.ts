@@ -37,9 +37,9 @@ async function testParallelExecution() {
     // Test 2: Quality Control Command Execution
     console.log("2️⃣ Testing Quality Control Commands...");
     const commands = [
-      "analyze --type security --depth L5 --parallel --agents code-reviewer,security-auditor",
+      "analyze --type security --depth L5 --parallel --agents code-reviewer,test-auditor",
       "test --type unit --parallel --agents test,code-reviewer",
-      "review --depth L6 --parallel --agents architect-review,security-auditor --healthcare",
+      "review --depth L6 --parallel --agents architect-review,test-auditor --healthcare",
     ];
 
     for (const command of commands) {
@@ -80,7 +80,7 @@ async function testParallelExecution() {
     const options: OrchestrationOptions = {
       workflow: "parallel",
       coordination: "parallel",
-      agents: ["code-reviewer", "architect-review", "security-auditor"],
+      agents: ["code-reviewer", "architect-review", "test-auditor"],
       healthcare: true,
     };
 
@@ -101,7 +101,7 @@ async function testParallelExecution() {
     const agents = [
       "code-reviewer",
       "architect-review",
-      "security-auditor",
+      "test-auditor",
       "test",
     ];
     const optimized = system.agentRegistry.getParallelOptimizedAgents(agents);
@@ -179,7 +179,7 @@ async function testParallelExecution() {
 
       const agentResults = [
         {
-          agentName: "security-auditor" as const,
+          agentName: "test-auditor" as const,
           success: true,
           result: { securityScan: { vulnerabilities: [], score: 95 } },
           duration: 100,

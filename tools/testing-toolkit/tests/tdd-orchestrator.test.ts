@@ -6,10 +6,15 @@
  */
 
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { TDDOrchestrator, TDDOrchestratorConfig, createTDDOrchestrationSystem, runTDDCycle } from '../src/core/tdd-orchestrator';
-import { TDDCycle } from '../src/core/tdd-cycle';
 import { AgentCoordinator } from '../src/agents/coordinator';
 import { QualityGateValidator } from '../src/core/quality-gates';
+import { TDDCycle } from '../src/core/tdd-cycle';
+import {
+  createTDDOrchestrationSystem,
+  runTDDCycle,
+  TDDOrchestrator,
+  TDDOrchestratorConfig,
+} from '../src/core/tdd-orchestrator';
 
 // Mock dependencies
 vi.mock('../src/core/tdd-cycle', () => ({
@@ -22,28 +27,28 @@ vi.mock('../src/core/tdd-cycle', () => ({
       agents: ['tdd-orchestrator'],
       phases: { 'red-phase': true, 'green-phase': true, 'refactor-phase': true },
       success: true,
-      currentPhase: 'COMPLETE'
+      currentPhase: 'COMPLETE',
     }),
     executePhase: vi.fn().mockResolvedValue({
       success: true,
       phase: 'red',
       output: 'Mock TDD phase executed',
-      duration: 1000
+      duration: 1000,
     }),
     validatePhase: vi.fn().mockReturnValue(true),
-    getPhaseStatus: vi.fn().mockReturnValue('completed')
-  }))
+    getPhaseStatus: vi.fn().mockReturnValue('completed'),
+  })),
 }));
 
 vi.mock('../src/agents/coordinator', () => ({
   AgentCoordinator: vi.fn().mockImplementation(() => ({
     execute: vi.fn().mockResolvedValue([
       { agent: 'agent1', result: { success: true } },
-      { agent: 'agent2', result: { success: true } }
+      { agent: 'agent2', result: { success: true } },
     ]),
     validate: vi.fn().mockReturnValue(true),
-    getStatus: vi.fn().mockReturnValue('active')
-  }))
+    getStatus: vi.fn().mockReturnValue('active'),
+  })),
 }));
 
 vi.mock('../src/core/quality-gates', () => ({
@@ -55,12 +60,12 @@ vi.mock('../src/core/quality-gates', () => ({
       results: [
         { gate: 'test-coverage', passed: true, score: 85 },
         { gate: 'code-quality', passed: true, score: 90 },
-        { gate: 'security', passed: true, score: 95 }
-      ]
+        { gate: 'security', passed: true, score: 95 },
+      ],
     }),
     addGate: vi.fn(),
-    removeGate: vi.fn()
-  }))
+    removeGate: vi.fn(),
+  })),
 }));
 
 describe('TDDOrchestrator', () => {
@@ -129,10 +134,10 @@ describe('TDDOrchestrator', () => {
     it('should handle different coordination patterns', () => {
       const parallelConfig = { ...mockConfig, coordination: 'parallel' as const };
       const parallelOrchestrator = new TDDOrchestrator(parallelConfig);
-      
+
       expect(parallelOrchestrator).toBeDefined();
       expect(AgentCoordinator).toHaveBeenCalledWith(
-        expect.objectContaining({ pattern: 'parallel' })
+        expect.objectContaining({ pattern: 'parallel' }),
       );
     });
   });
@@ -228,14 +233,19 @@ describe('TDDOrchestrator', () => {
     });
 
     it('should handle different workflow types', async () => {
-      const workflows = ['standard-tdd', 'security-critical-tdd', 'microservices-tdd', 'legacy-tdd'] as const;
-      
+      const workflows = [
+        'standard-tdd',
+        'security-critical-tdd',
+        'microservices-tdd',
+        'legacy-tdd',
+      ] as const;
+
       for (const workflow of workflows) {
         const config = { ...mockConfig, workflow };
         const testOrchestrator = new TDDOrchestrator(config);
-        
+
         const result = await testOrchestrator.orchestrate();
-        
+
         expect(result.success).toBe(true);
       }
     });

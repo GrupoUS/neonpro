@@ -88,7 +88,7 @@ The toolkit is designed to work seamlessly with the existing code review agents:
 
 - **architect-review.md**: Validates architectural patterns and design decisions
 - **code-reviewer.md**: Analyzes code quality and performance
-- **security-auditor.md**: Performs security and compliance validation
+- **test-auditor.md**: Performs security and compliance validation
 - **tdd-orchestrator.md**: Coordinates the complete TDD cycle
 
 ## Configuration

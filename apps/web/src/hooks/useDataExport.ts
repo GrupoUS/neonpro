@@ -11,16 +11,16 @@
  * - Support for filtered/selected data export
  */
 
-import { useCallback, useState } from "react";
-import { toast } from "sonner";
+import { useCallback, useState } from 'react';
+import { toast } from 'sonner';
 
-export type ExportFormat = "csv" | "pdf";
+export type ExportFormat = 'csv' | 'pdf';
 export type ExportStatus =
-  | "idle"
-  | "preparing"
-  | "exporting"
-  | "complete"
-  | "error";
+  | 'idle'
+  | 'preparing'
+  | 'exporting'
+  | 'complete'
+  | 'error';
 
 interface ExportOptions {
   format: ExportFormat;
@@ -42,77 +42,77 @@ interface UseDataExportReturn {
 }
 
 export function useDataExport(): UseDataExportReturn {
-  const [status, setStatus] = useState<ExportStatus>("idle");
+  const [status, setStatus] = useState<ExportStatus>('idle');
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const generateCSV = useCallback(
     (data: any[], options: ExportOptions): string => {
       if (!data || data.length === 0) {
-        throw new Error("Nenhum dado para exportar");
+        throw new Error('Nenhum dado para exportar');
       }
 
       const headers = options.selectedFields || Object.keys(data[0]);
-      const csvHeaders = headers.map((header) => {
+      const csvHeaders = headers.map(header => {
         // Convert camelCase to readable format
         return header
-          .replace(/([A-Z])/g, " $1")
-          .replace(/^./, (str) => str.toUpperCase())
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/^./, str => str.toUpperCase())
           .trim();
       });
 
-      let csv = "";
+      let csv = '';
 
       // Add UTF-8 BOM for proper Excel compatibility
-      csv += "\uFEFF";
+      csv += '\uFEFF';
 
       // Add headers if requested
       if (options.includeHeaders !== false) {
-        csv += csvHeaders.join(",") + "\n";
+        csv += csvHeaders.join(',') + '\n';
       }
 
       // Add data rows
       data.forEach((row, index) => {
-        const values = headers.map((header) => {
+        const values = headers.map(header => {
           let value = row[header];
 
           // Handle different data types
           if (value === null || value === undefined) {
-            return "";
+            return '';
           }
 
           // Format dates for Brazilian locale
-          if (header.includes("Date") || header.includes("At")) {
+          if (header.includes('Date') || header.includes('At')) {
             try {
               const date = new Date(value);
-              value = date.toLocaleDateString("pt-BR");
+              value = date.toLocaleDateString('pt-BR');
             } catch {
               // Keep original value if date parsing fails
             }
           }
 
           // Format phone numbers
-          if (header.includes("phone") || header.includes("Phone")) {
+          if (header.includes('phone') || header.includes('Phone')) {
             value = String(value).replace(
               /(\d{2})(\d{5})(\d{4})/,
-              "($1) $2-$3",
+              '($1) $2-$3',
             );
           }
 
           // Format CPF
-          if (header.includes("cpf") || header.includes("Cpf")) {
+          if (header.includes('cpf') || header.includes('Cpf')) {
             value = String(value).replace(
               /(\d{3})(\d{3})(\d{3})(\d{2})/,
-              "$1.$2.$3-$4",
+              '$1.$2.$3-$4',
             );
           }
 
           // Escape commas and quotes in CSV
           value = String(value).replace(/"/g, '""');
           if (
-            value.includes(",") ||
-            value.includes('"') ||
-            value.includes("\n")
+            value.includes(',')
+            || value.includes('"')
+            || value.includes('\n')
           ) {
             value = `"${value}"`;
           }
@@ -120,7 +120,7 @@ export function useDataExport(): UseDataExportReturn {
           return value;
         });
 
-        csv += values.join(",") + "\n";
+        csv += values.join(',') + '\n';
 
         // Update progress
         setProgress(Math.round(((index + 1) / data.length) * 100));
@@ -137,10 +137,10 @@ export function useDataExport(): UseDataExportReturn {
       // In a real implementation, you might use libraries like jsPDF or Puppeteer
 
       const headers = options.selectedFields || Object.keys(data[0]);
-      const csvHeaders = headers.map((header) => {
+      const csvHeaders = headers.map(header => {
         return header
-          .replace(/([A-Z])/g, " $1")
-          .replace(/^./, (str) => str.toUpperCase())
+          .replace(/([A-Z])/g, ' $1')
+          .replace(/^./, str => str.toUpperCase())
           .trim();
       });
 
@@ -162,57 +162,59 @@ export function useDataExport(): UseDataExportReturn {
       </head>
       <body>
         <h1>Relatório de Pacientes</h1>
-        <p>Gerado em: ${new Date().toLocaleDateString("pt-BR")} às ${new Date().toLocaleTimeString(
-          "pt-BR",
-        )}</p>
+        <p>Gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${
+        new Date().toLocaleTimeString(
+          'pt-BR',
+        )
+      }</p>
         <table>
           <thead>
             <tr>
-              ${csvHeaders.map((header) => `<th>${header}</th>`).join("")}
+              ${csvHeaders.map(header => `<th>${header}</th>`).join('')}
             </tr>
           </thead>
           <tbody>
     `;
 
       data.forEach((row, index) => {
-        html += "<tr>";
-        headers.forEach((header) => {
+        html += '<tr>';
+        headers.forEach(header => {
           let value = row[header];
 
           // Handle different data types
           if (value === null || value === undefined) {
-            value = "";
+            value = '';
           }
 
           // Format dates for Brazilian locale
-          if (header.includes("Date") || header.includes("At")) {
+          if (header.includes('Date') || header.includes('At')) {
             try {
               const date = new Date(value);
-              value = date.toLocaleDateString("pt-BR");
+              value = date.toLocaleDateString('pt-BR');
             } catch {
               // Keep original value if date parsing fails
             }
           }
 
           // Format phone numbers
-          if (header.includes("phone") || header.includes("Phone")) {
+          if (header.includes('phone') || header.includes('Phone')) {
             value = String(value).replace(
               /(\d{2})(\d{5})(\d{4})/,
-              "($1) $2-$3",
+              '($1) $2-$3',
             );
           }
 
           // Format CPF
-          if (header.includes("cpf") || header.includes("Cpf")) {
+          if (header.includes('cpf') || header.includes('Cpf')) {
             value = String(value).replace(
               /(\d{3})(\d{3})(\d{3})(\d{2})/,
-              "$1.$2.$3-$4",
+              '$1.$2.$3-$4',
             );
           }
 
-          html += `<td>${String(value).replace(/</g, "&lt;").replace(/>/g, "&gt;")}</td>`;
+          html += `<td>${String(value).replace(/</g, '&lt;').replace(/>/g, '&gt;')}</td>`;
         });
-        html += "</tr>";
+        html += '</tr>';
 
         // Update progress
         setProgress(Math.round(((index + 1) / data.length) * 100));
@@ -231,14 +233,14 @@ export function useDataExport(): UseDataExportReturn {
 
       // Convert HTML to PDF blob (simplified approach)
       // In production, you'd use a proper PDF generation library
-      return new Blob([html], { type: "text/html;charset=utf-8" });
+      return new Blob([html], { type: 'text/html;charset=utf-8' });
     },
     [],
   );
 
   const downloadFile = useCallback((blob: Blob, filename: string) => {
     const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = url;
     link.download = filename;
 
@@ -254,15 +256,15 @@ export function useDataExport(): UseDataExportReturn {
   const exportData = useCallback(
     async (data: any[], options: ExportOptions) => {
       try {
-        setStatus("preparing");
+        setStatus('preparing');
         setProgress(0);
         setError(null);
 
         if (!data || data.length === 0) {
-          throw new Error("Nenhum dado para exportar");
+          throw new Error('Nenhum dado para exportar');
         }
 
-        setStatus("exporting");
+        setStatus('exporting');
 
         const timestamp = new Date().toISOString().slice(0, 10);
         const defaultFilename = `pacientes_${timestamp}`;
@@ -271,20 +273,20 @@ export function useDataExport(): UseDataExportReturn {
         let blob: Blob;
         let finalFilename: string;
 
-        if (options.format === "csv") {
+        if (options.format === 'csv') {
           const csvContent = generateCSV(data, options);
-          blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+          blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
           finalFilename = `${filename}.csv`;
-        } else if (options.format === "pdf") {
+        } else if (options.format === 'pdf') {
           blob = await generatePDF(data, options);
           finalFilename = `${filename}.pdf`;
         } else {
-          throw new Error("Formato de exportação não suportado");
+          throw new Error('Formato de exportação não suportado');
         }
 
         downloadFile(blob, finalFilename);
 
-        setStatus("complete");
+        setStatus('complete');
         setProgress(100);
 
         toast.success(
@@ -293,21 +295,20 @@ export function useDataExport(): UseDataExportReturn {
 
         // Reset status after a delay
         setTimeout(() => {
-          setStatus("idle");
+          setStatus('idle');
           setProgress(0);
         }, 3000);
       } catch (err) {
-        const errorMessage =
-          err instanceof Error
-            ? err.message
-            : "Erro desconhecido na exportação";
+        const errorMessage = err instanceof Error
+          ? err.message
+          : 'Erro desconhecido na exportação';
         setError(errorMessage);
-        setStatus("error");
+        setStatus('error');
         toast.error(`Erro na exportação: ${errorMessage}`);
 
         // Reset status after a delay
         setTimeout(() => {
-          setStatus("idle");
+          setStatus('idle');
           setProgress(0);
           setError(null);
         }, 5000);
@@ -321,6 +322,6 @@ export function useDataExport(): UseDataExportReturn {
     status,
     progress,
     error,
-    isExporting: status === "preparing" || status === "exporting",
+    isExporting: status === 'preparing' || status === 'exporting',
   };
 }

@@ -11,31 +11,30 @@
  * - Developer guides with coding standards and testing procedures
  */
 
-import { z } from "zod";
+import { z } from 'zod';
 
 // Documentation Types
 export const DOCUMENTATION_TYPES = {
-  API: "api",
-  COMPONENT: "component",
-  ARCHITECTURE: "architecture",
-  DEPLOYMENT: "deployment",
-  USER_GUIDE: "user_guide",
-  DEVELOPER_GUIDE: "developer_guide",
-  HEALTHCARE_COMPLIANCE: "healthcare_compliance",
-  ACCESSIBILITY: "accessibility",
-  MOBILE: "mobile",
+  API: 'api',
+  COMPONENT: 'component',
+  ARCHITECTURE: 'architecture',
+  DEPLOYMENT: 'deployment',
+  USER_GUIDE: 'user_guide',
+  DEVELOPER_GUIDE: 'developer_guide',
+  HEALTHCARE_COMPLIANCE: 'healthcare_compliance',
+  ACCESSIBILITY: 'accessibility',
+  MOBILE: 'mobile',
 } as const;
 
-export type DocumentationType =
-  (typeof DOCUMENTATION_TYPES)[keyof typeof DOCUMENTATION_TYPES];
+export type DocumentationType = (typeof DOCUMENTATION_TYPES)[keyof typeof DOCUMENTATION_TYPES];
 
 // Documentation Output Formats
 export const DOCUMENTATION_FORMATS = {
-  MARKDOWN: "markdown",
-  HTML: "html",
-  JSON: "json",
-  PDF: "pdf",
-  INTERACTIVE: "interactive",
+  MARKDOWN: 'markdown',
+  HTML: 'html',
+  JSON: 'json',
+  PDF: 'pdf',
+  INTERACTIVE: 'interactive',
 } as const;
 
 export type DocumentationFormat =
@@ -43,8 +42,8 @@ export type DocumentationFormat =
 
 // Documentation Languages
 export const DOCUMENTATION_LANGUAGES = {
-  PORTUGUESE_BR: "pt-BR",
-  ENGLISH: "en",
+  PORTUGUESE_BR: 'pt-BR',
+  ENGLISH: 'en',
 } as const;
 
 export type DocumentationLanguage =
@@ -52,15 +51,15 @@ export type DocumentationLanguage =
 
 // Healthcare Documentation Categories
 export const HEALTHCARE_DOC_CATEGORIES = {
-  PATIENT_MANAGEMENT: "patient_management",
-  APPOINTMENT_SCHEDULING: "appointment_scheduling",
-  MEDICAL_RECORDS: "medical_records",
-  EMERGENCY_PROCEDURES: "emergency_procedures",
-  MEDICATION_MANAGEMENT: "medication_management",
-  VITAL_SIGNS: "vital_signs",
-  COMPLIANCE_VALIDATION: "compliance_validation",
-  ACCESSIBILITY_FEATURES: "accessibility_features",
-  MOBILE_OPTIMIZATION: "mobile_optimization",
+  PATIENT_MANAGEMENT: 'patient_management',
+  APPOINTMENT_SCHEDULING: 'appointment_scheduling',
+  MEDICAL_RECORDS: 'medical_records',
+  EMERGENCY_PROCEDURES: 'emergency_procedures',
+  MEDICATION_MANAGEMENT: 'medication_management',
+  VITAL_SIGNS: 'vital_signs',
+  COMPLIANCE_VALIDATION: 'compliance_validation',
+  ACCESSIBILITY_FEATURES: 'accessibility_features',
+  MOBILE_OPTIMIZATION: 'mobile_optimization',
 } as const;
 
 export type HealthcareDocCategory =
@@ -68,9 +67,9 @@ export type HealthcareDocCategory =
 
 // Documentation Configuration Schema
 export const DocumentationConfigSchema = z.object({
-  projectName: z.string().default("NeonPro Healthcare Platform"),
-  version: z.string().default("1.0.0"),
-  outputDirectory: z.string().default("./docs"),
+  projectName: z.string().default('NeonPro Healthcare Platform'),
+  version: z.string().default('1.0.0'),
+  outputDirectory: z.string().default('./docs'),
   formats: z
     .array(z.nativeEnum(DOCUMENTATION_FORMATS))
     .default([DOCUMENTATION_FORMATS.MARKDOWN, DOCUMENTATION_FORMATS.HTML]),
@@ -175,68 +174,68 @@ export interface DocumentationReport {
   errors: Array<{
     section: string;
     type:
-      | "content"
-      | "translation"
-      | "example"
-      | "compliance"
-      | "accessibility";
+      | 'content'
+      | 'translation'
+      | 'example'
+      | 'compliance'
+      | 'accessibility';
     message: string;
-    severity: "low" | "medium" | "high" | "critical";
+    severity: 'low' | 'medium' | 'high' | 'critical';
   }>;
 }
 
 // Brazilian Portuguese Documentation Labels
 export const DOCUMENTATION_LABELS_PT_BR = {
   // General
-  overview: "Visão Geral",
-  gettingStarted: "Primeiros Passos",
-  installation: "Instalação",
-  configuration: "Configuração",
-  examples: "Exemplos",
-  troubleshooting: "Solução de Problemas",
+  overview: 'Visão Geral',
+  gettingStarted: 'Primeiros Passos',
+  installation: 'Instalação',
+  configuration: 'Configuração',
+  examples: 'Exemplos',
+  troubleshooting: 'Solução de Problemas',
 
   // API Documentation
-  apiReference: "Referência da API",
-  endpoints: "Endpoints",
-  authentication: "Autenticação",
-  requestResponse: "Requisição e Resposta",
-  errorHandling: "Tratamento de Erros",
-  rateLimit: "Limite de Taxa",
+  apiReference: 'Referência da API',
+  endpoints: 'Endpoints',
+  authentication: 'Autenticação',
+  requestResponse: 'Requisição e Resposta',
+  errorHandling: 'Tratamento de Erros',
+  rateLimit: 'Limite de Taxa',
 
   // Component Documentation
-  components: "Componentes",
-  props: "Propriedades",
-  accessibility: "Acessibilidade",
-  mobileOptimization: "Otimização Móvel",
-  usageExamples: "Exemplos de Uso",
+  components: 'Componentes',
+  props: 'Propriedades',
+  accessibility: 'Acessibilidade',
+  mobileOptimization: 'Otimização Móvel',
+  usageExamples: 'Exemplos de Uso',
 
   // Healthcare Specific
-  patientManagement: "Gestão de Pacientes",
-  appointmentScheduling: "Agendamento de Consultas",
-  medicalRecords: "Prontuários Médicos",
-  emergencyProcedures: "Procedimentos de Emergência",
-  medicationManagement: "Gestão de Medicamentos",
-  vitalSigns: "Sinais Vitais",
+  patientManagement: 'Gestão de Pacientes',
+  appointmentScheduling: 'Agendamento de Consultas',
+  medicalRecords: 'Prontuários Médicos',
+  emergencyProcedures: 'Procedimentos de Emergência',
+  medicationManagement: 'Gestão de Medicamentos',
+  vitalSigns: 'Sinais Vitais',
 
   // Compliance
-  lgpdCompliance: "Conformidade LGPD",
-  anvisaCompliance: "Conformidade ANVISA",
-  cfmCompliance: "Conformidade CFM",
-  wcagCompliance: "Conformidade WCAG",
+  lgpdCompliance: 'Conformidade LGPD',
+  anvisaCompliance: 'Conformidade ANVISA',
+  cfmCompliance: 'Conformidade CFM',
+  wcagCompliance: 'Conformidade WCAG',
 
   // Mobile & Accessibility
-  mobileAccessibility: "Acessibilidade Móvel",
-  touchAccessibility: "Acessibilidade de Toque",
-  screenReaderSupport: "Suporte a Leitores de Tela",
-  keyboardNavigation: "Navegação por Teclado",
-  responsiveDesign: "Design Responsivo",
+  mobileAccessibility: 'Acessibilidade Móvel',
+  touchAccessibility: 'Acessibilidade de Toque',
+  screenReaderSupport: 'Suporte a Leitores de Tela',
+  keyboardNavigation: 'Navegação por Teclado',
+  responsiveDesign: 'Design Responsivo',
 
   // Development
-  codingStandards: "Padrões de Codificação",
-  testingProcedures: "Procedimentos de Teste",
-  deploymentGuide: "Guia de Implantação",
-  performanceOptimization: "Otimização de Performance",
-  securityGuidelines: "Diretrizes de Segurança",
+  codingStandards: 'Padrões de Codificação',
+  testingProcedures: 'Procedimentos de Teste',
+  deploymentGuide: 'Guia de Implantação',
+  performanceOptimization: 'Otimização de Performance',
+  securityGuidelines: 'Diretrizes de Segurança',
 } as const;
 
 /**
@@ -330,24 +329,20 @@ export class DocumentationGeneratorService {
    */
   private async generateAPIDocumentation(): Promise<void> {
     const apiSection: DocumentationSection = {
-      id: "api-documentation",
-      title: "API Documentation",
+      id: 'api-documentation',
+      title: 'API Documentation',
       titlePtBr: DOCUMENTATION_LABELS_PT_BR.apiReference,
-      content:
-        "Comprehensive API documentation for NeonPro Healthcare Platform",
-      contentPtBr:
-        "Documentação abrangente da API para a Plataforma de Saúde NeonPro",
+      content: 'Comprehensive API documentation for NeonPro Healthcare Platform',
+      contentPtBr: 'Documentação abrangente da API para a Plataforma de Saúde NeonPro',
       type: DOCUMENTATION_TYPES.API,
       category: HEALTHCARE_DOC_CATEGORIES.PATIENT_MANAGEMENT,
       examples: [
         {
-          id: "patient-api-example",
-          title: "Patient Management API",
-          titlePtBr: "API de Gestão de Pacientes",
-          description:
-            "Example of patient data management with LGPD compliance",
-          descriptionPtBr:
-            "Exemplo de gestão de dados de pacientes com conformidade LGPD",
+          id: 'patient-api-example',
+          title: 'Patient Management API',
+          titlePtBr: 'API de Gestão de Pacientes',
+          description: 'Example of patient data management with LGPD compliance',
+          descriptionPtBr: 'Exemplo de gestão de dados de pacientes com conformidade LGPD',
           code: `
 // GET /api/patients/:id
 const response = await fetch('/api/patients/123', {
@@ -361,19 +356,19 @@ const response = await fetch('/api/patients/123', {
 const patient = await response.json();
 console.log('Patient data:', patient);
           `,
-          language: "typescript",
+          language: 'typescript',
           interactive: true,
-          healthcareContext: "Patient data retrieval with LGPD compliance",
-          accessibilityNotes: "API responses include accessibility metadata",
-          mobileNotes: "Optimized for mobile applications",
+          healthcareContext: 'Patient data retrieval with LGPD compliance',
+          accessibilityNotes: 'API responses include accessibility metadata',
+          mobileNotes: 'Optimized for mobile applications',
         },
       ],
       subsections: [],
       metadata: {
         lastUpdated: new Date(),
-        author: "NeonPro Development Team",
+        author: 'NeonPro Development Team',
         version: this.config.version,
-        tags: ["api", "healthcare", "lgpd", "patient-management"],
+        tags: ['api', 'healthcare', 'lgpd', 'patient-management'],
         wcagCompliance: true,
         healthcareCompliance: true,
         mobileOptimized: true,
@@ -388,20 +383,20 @@ console.log('Patient data:', patient);
    */
   private async generateComponentDocumentation(): Promise<void> {
     const componentSection: DocumentationSection = {
-      id: "component-documentation",
-      title: "Component Documentation",
-      titlePtBr: "Documentação de Componentes",
-      content: "React components with accessibility and healthcare patterns",
-      contentPtBr: "Componentes React com padrões de acessibilidade e saúde",
+      id: 'component-documentation',
+      title: 'Component Documentation',
+      titlePtBr: 'Documentação de Componentes',
+      content: 'React components with accessibility and healthcare patterns',
+      contentPtBr: 'Componentes React com padrões de acessibilidade e saúde',
       type: DOCUMENTATION_TYPES.COMPONENT,
       category: HEALTHCARE_DOC_CATEGORIES.ACCESSIBILITY_FEATURES,
       examples: [
         {
-          id: "patient-card-component",
-          title: "Patient Card Component",
-          titlePtBr: "Componente de Cartão do Paciente",
-          description: "Accessible patient card with mobile optimization",
-          descriptionPtBr: "Cartão de paciente acessível com otimização móvel",
+          id: 'patient-card-component',
+          title: 'Patient Card Component',
+          titlePtBr: 'Componente de Cartão do Paciente',
+          description: 'Accessible patient card with mobile optimization',
+          descriptionPtBr: 'Cartão de paciente acessível com otimização móvel',
           code: `
 import { PatientCard } from '@/components/healthcare/PatientCard';
 
@@ -414,21 +409,19 @@ import { PatientCard } from '@/components/healthcare/PatientCard';
   aria-label="Cartão do paciente João Silva"
 />
           `,
-          language: "tsx",
+          language: 'tsx',
           interactive: true,
-          healthcareContext:
-            "Patient information display with emergency access",
-          accessibilityNotes:
-            "WCAG 2.1 AA compliant with screen reader support",
-          mobileNotes: "Touch-friendly with 44px minimum touch targets",
+          healthcareContext: 'Patient information display with emergency access',
+          accessibilityNotes: 'WCAG 2.1 AA compliant with screen reader support',
+          mobileNotes: 'Touch-friendly with 44px minimum touch targets',
         },
       ],
       subsections: [],
       metadata: {
         lastUpdated: new Date(),
-        author: "NeonPro Development Team",
+        author: 'NeonPro Development Team',
         version: this.config.version,
-        tags: ["components", "react", "accessibility", "mobile", "healthcare"],
+        tags: ['components', 'react', 'accessibility', 'mobile', 'healthcare'],
         wcagCompliance: true,
         healthcareCompliance: true,
         mobileOptimized: true,
@@ -443,26 +436,25 @@ import { PatientCard } from '@/components/healthcare/PatientCard';
    */
   private async generateArchitectureDocumentation(): Promise<void> {
     const architectureSection: DocumentationSection = {
-      id: "architecture-documentation",
-      title: "System Architecture",
-      titlePtBr: "Arquitetura do Sistema",
-      content: "Complete system architecture with compliance integration",
-      contentPtBr:
-        "Arquitetura completa do sistema com integração de conformidade",
+      id: 'architecture-documentation',
+      title: 'System Architecture',
+      titlePtBr: 'Arquitetura do Sistema',
+      content: 'Complete system architecture with compliance integration',
+      contentPtBr: 'Arquitetura completa do sistema com integração de conformidade',
       type: DOCUMENTATION_TYPES.ARCHITECTURE,
       category: HEALTHCARE_DOC_CATEGORIES.COMPLIANCE_VALIDATION,
       examples: [],
       subsections: [],
       metadata: {
         lastUpdated: new Date(),
-        author: "NeonPro Architecture Team",
+        author: 'NeonPro Architecture Team',
         version: this.config.version,
         tags: [
-          "architecture",
-          "system-design",
-          "compliance",
-          "performance",
-          "healthcare",
+          'architecture',
+          'system-design',
+          'compliance',
+          'performance',
+          'healthcare',
         ],
         wcagCompliance: true,
         healthcareCompliance: true,
@@ -478,20 +470,20 @@ import { PatientCard } from '@/components/healthcare/PatientCard';
    */
   private async generateDeploymentDocumentation(): Promise<void> {
     const deploymentSection: DocumentationSection = {
-      id: "deployment-documentation",
-      title: "Deployment Guide",
+      id: 'deployment-documentation',
+      title: 'Deployment Guide',
       titlePtBr: DOCUMENTATION_LABELS_PT_BR.deploymentGuide,
-      content: "Production deployment with healthcare compliance",
-      contentPtBr: "Implantação em produção com conformidade de saúde",
+      content: 'Production deployment with healthcare compliance',
+      contentPtBr: 'Implantação em produção com conformidade de saúde',
       type: DOCUMENTATION_TYPES.DEPLOYMENT,
       category: HEALTHCARE_DOC_CATEGORIES.COMPLIANCE_VALIDATION,
       examples: [],
       subsections: [],
       metadata: {
         lastUpdated: new Date(),
-        author: "NeonPro DevOps Team",
+        author: 'NeonPro DevOps Team',
         version: this.config.version,
-        tags: ["deployment", "production", "healthcare", "compliance"],
+        tags: ['deployment', 'production', 'healthcare', 'compliance'],
         wcagCompliance: true,
         healthcareCompliance: true,
         mobileOptimized: true,
@@ -506,20 +498,20 @@ import { PatientCard } from '@/components/healthcare/PatientCard';
    */
   private async generateUserGuideDocumentation(): Promise<void> {
     const userGuideSection: DocumentationSection = {
-      id: "user-guide-documentation",
-      title: "User Guide",
-      titlePtBr: "Guia do Usuário",
-      content: "User guides for healthcare professionals and patients",
-      contentPtBr: "Guias do usuário para profissionais de saúde e pacientes",
+      id: 'user-guide-documentation',
+      title: 'User Guide',
+      titlePtBr: 'Guia do Usuário',
+      content: 'User guides for healthcare professionals and patients',
+      contentPtBr: 'Guias do usuário para profissionais de saúde e pacientes',
       type: DOCUMENTATION_TYPES.USER_GUIDE,
       category: HEALTHCARE_DOC_CATEGORIES.ACCESSIBILITY_FEATURES,
       examples: [],
       subsections: [],
       metadata: {
         lastUpdated: new Date(),
-        author: "NeonPro UX Team",
+        author: 'NeonPro UX Team',
         version: this.config.version,
-        tags: ["user-guide", "healthcare", "accessibility", "mobile"],
+        tags: ['user-guide', 'healthcare', 'accessibility', 'mobile'],
         wcagCompliance: true,
         healthcareCompliance: true,
         mobileOptimized: true,
@@ -534,21 +526,20 @@ import { PatientCard } from '@/components/healthcare/PatientCard';
    */
   private async generateDeveloperGuideDocumentation(): Promise<void> {
     const developerGuideSection: DocumentationSection = {
-      id: "developer-guide-documentation",
-      title: "Developer Guide",
-      titlePtBr: "Guia do Desenvolvedor",
-      content: "Developer onboarding with coding standards and testing",
-      contentPtBr:
-        "Integração de desenvolvedores com padrões de código e testes",
+      id: 'developer-guide-documentation',
+      title: 'Developer Guide',
+      titlePtBr: 'Guia do Desenvolvedor',
+      content: 'Developer onboarding with coding standards and testing',
+      contentPtBr: 'Integração de desenvolvedores com padrões de código e testes',
       type: DOCUMENTATION_TYPES.DEVELOPER_GUIDE,
       category: HEALTHCARE_DOC_CATEGORIES.COMPLIANCE_VALIDATION,
       examples: [],
       subsections: [],
       metadata: {
         lastUpdated: new Date(),
-        author: "NeonPro Development Team",
+        author: 'NeonPro Development Team',
         version: this.config.version,
-        tags: ["developer-guide", "coding-standards", "testing", "compliance"],
+        tags: ['developer-guide', 'coding-standards', 'testing', 'compliance'],
         wcagCompliance: true,
         healthcareCompliance: true,
         mobileOptimized: true,
@@ -563,20 +554,20 @@ import { PatientCard } from '@/components/healthcare/PatientCard';
    */
   private async generateHealthcareComplianceDocumentation(): Promise<void> {
     const complianceSection: DocumentationSection = {
-      id: "healthcare-compliance-documentation",
-      title: "Healthcare Compliance",
-      titlePtBr: "Conformidade de Saúde",
-      content: "LGPD, ANVISA, and CFM compliance documentation",
-      contentPtBr: "Documentação de conformidade LGPD, ANVISA e CFM",
+      id: 'healthcare-compliance-documentation',
+      title: 'Healthcare Compliance',
+      titlePtBr: 'Conformidade de Saúde',
+      content: 'LGPD, ANVISA, and CFM compliance documentation',
+      contentPtBr: 'Documentação de conformidade LGPD, ANVISA e CFM',
       type: DOCUMENTATION_TYPES.HEALTHCARE_COMPLIANCE,
       category: HEALTHCARE_DOC_CATEGORIES.COMPLIANCE_VALIDATION,
       examples: [],
       subsections: [],
       metadata: {
         lastUpdated: new Date(),
-        author: "NeonPro Compliance Team",
+        author: 'NeonPro Compliance Team',
         version: this.config.version,
-        tags: ["compliance", "lgpd", "anvisa", "cfm", "healthcare"],
+        tags: ['compliance', 'lgpd', 'anvisa', 'cfm', 'healthcare'],
         wcagCompliance: true,
         healthcareCompliance: true,
         mobileOptimized: true,
@@ -591,20 +582,20 @@ import { PatientCard } from '@/components/healthcare/PatientCard';
    */
   private async generateAccessibilityDocumentation(): Promise<void> {
     const accessibilitySection: DocumentationSection = {
-      id: "accessibility-documentation",
-      title: "Accessibility Documentation",
-      titlePtBr: "Documentação de Acessibilidade",
-      content: "WCAG 2.1 AA+ compliance and accessibility patterns",
-      contentPtBr: "Conformidade WCAG 2.1 AA+ e padrões de acessibilidade",
+      id: 'accessibility-documentation',
+      title: 'Accessibility Documentation',
+      titlePtBr: 'Documentação de Acessibilidade',
+      content: 'WCAG 2.1 AA+ compliance and accessibility patterns',
+      contentPtBr: 'Conformidade WCAG 2.1 AA+ e padrões de acessibilidade',
       type: DOCUMENTATION_TYPES.ACCESSIBILITY,
       category: HEALTHCARE_DOC_CATEGORIES.ACCESSIBILITY_FEATURES,
       examples: [],
       subsections: [],
       metadata: {
         lastUpdated: new Date(),
-        author: "NeonPro Accessibility Team",
+        author: 'NeonPro Accessibility Team',
         version: this.config.version,
-        tags: ["accessibility", "wcag", "screen-reader", "keyboard-navigation"],
+        tags: ['accessibility', 'wcag', 'screen-reader', 'keyboard-navigation'],
         wcagCompliance: true,
         healthcareCompliance: true,
         mobileOptimized: true,
@@ -619,20 +610,20 @@ import { PatientCard } from '@/components/healthcare/PatientCard';
    */
   private async generateMobileDocumentation(): Promise<void> {
     const mobileSection: DocumentationSection = {
-      id: "mobile-documentation",
-      title: "Mobile Documentation",
-      titlePtBr: "Documentação Móvel",
-      content: "Mobile accessibility and optimization patterns",
-      contentPtBr: "Padrões de acessibilidade e otimização móvel",
+      id: 'mobile-documentation',
+      title: 'Mobile Documentation',
+      titlePtBr: 'Documentação Móvel',
+      content: 'Mobile accessibility and optimization patterns',
+      contentPtBr: 'Padrões de acessibilidade e otimização móvel',
       type: DOCUMENTATION_TYPES.MOBILE,
       category: HEALTHCARE_DOC_CATEGORIES.MOBILE_OPTIMIZATION,
       examples: [],
       subsections: [],
       metadata: {
         lastUpdated: new Date(),
-        author: "NeonPro Mobile Team",
+        author: 'NeonPro Mobile Team',
         version: this.config.version,
-        tags: ["mobile", "accessibility", "touch", "responsive"],
+        tags: ['mobile', 'accessibility', 'touch', 'responsive'],
         wcagCompliance: true,
         healthcareCompliance: true,
         mobileOptimized: true,
@@ -686,24 +677,24 @@ import { PatientCard } from '@/components/healthcare/PatientCard';
     const recommendations = [];
 
     if (validationResults.contentQuality < 90) {
-      recommendations.push("Melhorar qualidade do conteúdo da documentação");
+      recommendations.push('Melhorar qualidade do conteúdo da documentação');
     }
 
     if (validationResults.translationCompleteness < 90) {
-      recommendations.push("Completar traduções em português brasileiro");
+      recommendations.push('Completar traduções em português brasileiro');
     }
 
     if (validationResults.accessibilityCompliance < 95) {
-      recommendations.push("Revisar conformidade de acessibilidade");
+      recommendations.push('Revisar conformidade de acessibilidade');
     }
 
     if (validationResults.mobileOptimization < 90) {
-      recommendations.push("Otimizar documentação para dispositivos móveis");
+      recommendations.push('Otimizar documentação para dispositivos móveis');
     }
 
     // Always include positive recommendations for good quality
-    recommendations.push("Documentação está em excelente estado");
-    recommendations.push("Manter atualizações regulares");
+    recommendations.push('Documentação está em excelente estado');
+    recommendations.push('Manter atualizações regulares');
 
     return recommendations;
   }

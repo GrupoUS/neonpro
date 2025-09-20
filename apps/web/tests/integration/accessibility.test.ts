@@ -10,14 +10,17 @@
  * @healthcare-platform NeonPro
  */
 
+import React from 'react';
 import { useAccessibility } from '@/hooks/use-accessibility';
 import { useColorContrast } from '@/hooks/use-color-contrast';
 import { useFocusManagement } from '@/hooks/use-focus-management';
 import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
 import { useScreenReader } from '@/hooks/use-screen-reader';
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
+import { z } from 'zod';
 
 // Import accessibility services
 import {

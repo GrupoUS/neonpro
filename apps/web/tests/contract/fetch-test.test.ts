@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+// This test should run without MSW to test real fetch functionality
 describe('Basic Fetch Test', () => {
   it('should have fetch available', async () => {
     console.log('🔍 Checking if fetch is available...');

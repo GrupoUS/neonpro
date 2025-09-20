@@ -4,7 +4,7 @@
  * Service layer for advanced patient medical history and treatment tracking
  */
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 import type {
   CreateMedicalRecordRequest,
   CreateProgressNoteRequest,
@@ -19,7 +19,7 @@ import type {
   TreatmentPlan,
   UpdateMedicalRecordRequest,
   UpdateTreatmentPlanRequest,
-} from "@/types/patient-history";
+} from '@/types/patient-history';
 
 export class PatientHistoryService {
   private static sb: any = supabase;
@@ -31,7 +31,7 @@ export class PatientHistoryService {
     filters?: PatientHistoryFilters,
   ): Promise<MedicalRecord[]> {
     let query = PatientHistoryService.sb
-      .from("medical_records")
+      .from('medical_records')
       .select(
         `
         *,
@@ -39,23 +39,23 @@ export class PatientHistoryService {
         appointment:appointments(appointment_date, service_type:service_types(name))
       `,
       )
-      .eq("patient_id", patientId)
-      .order("record_date", { ascending: false });
+      .eq('patient_id', patientId)
+      .order('record_date', { ascending: false });
 
     if (filters?.record_type) {
-      query = query.eq("record_type", filters.record_type);
+      query = query.eq('record_type', filters.record_type);
     }
 
     if (filters?.professional_id) {
-      query = query.eq("professional_id", filters.professional_id);
+      query = query.eq('professional_id', filters.professional_id);
     }
 
     if (filters?.start_date) {
-      query = query.gte("record_date", filters.start_date);
+      query = query.gte('record_date', filters.start_date);
     }
 
     if (filters?.end_date) {
-      query = query.lte("record_date", filters.end_date);
+      query = query.lte('record_date', filters.end_date);
     }
 
     if (filters?.search) {
@@ -67,7 +67,7 @@ export class PatientHistoryService {
     const { data, error } = await query;
 
     if (error) {
-      console.error("Error fetching medical records:", error);
+      console.error('Error fetching medical records:', error);
       throw new Error(`Failed to fetch medical records: ${error.message}`);
     }
 
@@ -83,7 +83,7 @@ export class PatientHistoryService {
     request: CreateMedicalRecordRequest,
   ): Promise<MedicalRecord> {
     const { data, error } = await PatientHistoryService.sb
-      .from("medical_records")
+      .from('medical_records')
       .insert({
         patient_id: patientId,
         clinic_id: clinicId,
@@ -93,7 +93,7 @@ export class PatientHistoryService {
       .single();
 
     if (error) {
-      console.error("Error creating medical record:", error);
+      console.error('Error creating medical record:', error);
       throw new Error(`Failed to create medical record: ${error.message}`);
     }
 
@@ -108,17 +108,17 @@ export class PatientHistoryService {
     request: UpdateMedicalRecordRequest,
   ): Promise<MedicalRecord> {
     const { data, error } = await PatientHistoryService.sb
-      .from("medical_records")
+      .from('medical_records')
       .update({
         ...request,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", id)
+      .eq('id', id)
       .select()
       .single();
 
     if (error) {
-      console.error("Error updating medical record:", error);
+      console.error('Error updating medical record:', error);
       throw new Error(`Failed to update medical record: ${error.message}`);
     }
 
@@ -130,18 +130,18 @@ export class PatientHistoryService {
    */
   static async getTreatmentPlans(patientId: string): Promise<TreatmentPlan[]> {
     const { data, error } = await PatientHistoryService.sb
-      .from("treatment_plans")
+      .from('treatment_plans')
       .select(
         `
         *,
         professional:profiles!treatment_plans_professional_id_fkey(name)
       `,
       )
-      .eq("patient_id", patientId)
-      .order("created_at", { ascending: false });
+      .eq('patient_id', patientId)
+      .order('created_at', { ascending: false });
 
     if (error) {
-      console.error("Error fetching treatment plans:", error);
+      console.error('Error fetching treatment plans:', error);
       throw new Error(`Failed to fetch treatment plans: ${error.message}`);
     }
 
@@ -157,11 +157,11 @@ export class PatientHistoryService {
     request: CreateTreatmentPlanRequest,
   ): Promise<TreatmentPlan> {
     const { data, error } = await PatientHistoryService.sb
-      .from("treatment_plans")
+      .from('treatment_plans')
       .insert({
         patient_id: patientId,
         clinic_id: clinicId,
-        overall_status: "planned",
+        overall_status: 'planned',
         progress_percentage: 0,
         ...request,
       })
@@ -169,7 +169,7 @@ export class PatientHistoryService {
       .single();
 
     if (error) {
-      console.error("Error creating treatment plan:", error);
+      console.error('Error creating treatment plan:', error);
       throw new Error(`Failed to create treatment plan: ${error.message}`);
     }
 
@@ -184,17 +184,17 @@ export class PatientHistoryService {
     request: UpdateTreatmentPlanRequest,
   ): Promise<TreatmentPlan> {
     const { data, error } = await PatientHistoryService.sb
-      .from("treatment_plans")
+      .from('treatment_plans')
       .update({
         ...request,
         updated_at: new Date().toISOString(),
       })
-      .eq("id", id)
+      .eq('id', id)
       .select()
       .single();
 
     if (error) {
-      console.error("Error updating treatment plan:", error);
+      console.error('Error updating treatment plan:', error);
       throw new Error(`Failed to update treatment plan: ${error.message}`);
     }
 
@@ -209,7 +209,7 @@ export class PatientHistoryService {
     treatmentPlanId?: string,
   ): Promise<ProgressNote[]> {
     let query = PatientHistoryService.sb
-      .from("progress_notes")
+      .from('progress_notes')
       .select(
         `
         *,
@@ -217,17 +217,17 @@ export class PatientHistoryService {
         treatment_plan:treatment_plans(name)
       `,
       )
-      .eq("patient_id", patientId)
-      .order("date", { ascending: false });
+      .eq('patient_id', patientId)
+      .order('date', { ascending: false });
 
     if (treatmentPlanId) {
-      query = query.eq("treatment_plan_id", treatmentPlanId);
+      query = query.eq('treatment_plan_id', treatmentPlanId);
     }
 
     const { data, error } = await query;
 
     if (error) {
-      console.error("Error fetching progress notes:", error);
+      console.error('Error fetching progress notes:', error);
       throw new Error(`Failed to fetch progress notes: ${error.message}`);
     }
 
@@ -242,7 +242,7 @@ export class PatientHistoryService {
     request: CreateProgressNoteRequest,
   ): Promise<ProgressNote> {
     const { data, error } = await PatientHistoryService.sb
-      .from("progress_notes")
+      .from('progress_notes')
       .insert({
         patient_id: patientId,
         ...request,
@@ -251,7 +251,7 @@ export class PatientHistoryService {
       .single();
 
     if (error) {
-      console.error("Error creating progress note:", error);
+      console.error('Error creating progress note:', error);
       throw new Error(`Failed to create progress note: ${error.message}`);
     }
 
@@ -265,14 +265,14 @@ export class PatientHistoryService {
     patientId: string,
   ): Promise<PatientAllergy[]> {
     const { data, error } = await PatientHistoryService.sb
-      .from("patient_allergies")
-      .select("*")
-      .eq("patient_id", patientId)
-      .eq("is_active", true)
-      .order("created_at", { ascending: false });
+      .from('patient_allergies')
+      .select('*')
+      .eq('patient_id', patientId)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
 
     if (error) {
-      console.error("Error fetching patient allergies:", error);
+      console.error('Error fetching patient allergies:', error);
       throw new Error(`Failed to fetch patient allergies: ${error.message}`);
     }
 
@@ -286,11 +286,11 @@ export class PatientHistoryService {
     patientId: string,
     allergy: Omit<
       PatientAllergy,
-      "id" | "patient_id" | "created_at" | "updated_at"
+      'id' | 'patient_id' | 'created_at' | 'updated_at'
     >,
   ): Promise<PatientAllergy> {
     const { data, error } = await PatientHistoryService.sb
-      .from("patient_allergies")
+      .from('patient_allergies')
       .insert({
         patient_id: patientId,
         ...allergy,
@@ -299,7 +299,7 @@ export class PatientHistoryService {
       .single();
 
     if (error) {
-      console.error("Error adding patient allergy:", error);
+      console.error('Error adding patient allergy:', error);
       throw new Error(`Failed to add patient allergy: ${error.message}`);
     }
 
@@ -313,13 +313,13 @@ export class PatientHistoryService {
     patientId: string,
   ): Promise<PatientCondition[]> {
     const { data, error } = await PatientHistoryService.sb
-      .from("patient_conditions")
-      .select("*")
-      .eq("patient_id", patientId)
-      .order("diagnosis_date", { ascending: false });
+      .from('patient_conditions')
+      .select('*')
+      .eq('patient_id', patientId)
+      .order('diagnosis_date', { ascending: false });
 
     if (error) {
-      console.error("Error fetching patient conditions:", error);
+      console.error('Error fetching patient conditions:', error);
       throw new Error(`Failed to fetch patient conditions: ${error.message}`);
     }
 
@@ -333,11 +333,11 @@ export class PatientHistoryService {
     patientId: string,
     condition: Omit<
       PatientCondition,
-      "id" | "patient_id" | "created_at" | "updated_at"
+      'id' | 'patient_id' | 'created_at' | 'updated_at'
     >,
   ): Promise<PatientCondition> {
     const { data, error } = await PatientHistoryService.sb
-      .from("patient_conditions")
+      .from('patient_conditions')
       .insert({
         patient_id: patientId,
         ...condition,
@@ -346,7 +346,7 @@ export class PatientHistoryService {
       .single();
 
     if (error) {
-      console.error("Error adding patient condition:", error);
+      console.error('Error adding patient condition:', error);
       throw new Error(`Failed to add patient condition: ${error.message}`);
     }
 
@@ -358,14 +358,14 @@ export class PatientHistoryService {
    */
   static async getPatientTimeline(patientId: string): Promise<PatientTimeline> {
     const { data, error } = await (PatientHistoryService.sb as any).rpc(
-      "get_patient_timeline",
+      'get_patient_timeline',
       {
         p_patient_id: patientId,
       },
     );
 
     if (error) {
-      console.error("Error fetching patient timeline:", error);
+      console.error('Error fetching patient timeline:', error);
       throw new Error(`Failed to fetch patient timeline: ${error.message}`);
     }
 
@@ -377,29 +377,29 @@ export class PatientHistoryService {
    */
   static async getPatientSummary(patientId: string): Promise<PatientSummary> {
     const { data, error } = await (PatientHistoryService.sb as any).rpc(
-      "get_patient_summary",
+      'get_patient_summary',
       {
         p_patient_id: patientId,
       },
     );
 
     if (error) {
-      console.error("Error fetching patient summary:", error);
+      console.error('Error fetching patient summary:', error);
       throw new Error(`Failed to fetch patient summary: ${error.message}`);
     }
 
     return (
       (data as PatientSummary) || {
         patient_id: patientId,
-        name: "",
+        name: '',
         age: 0,
-        gender: "",
+        gender: '',
         active_conditions: [],
         active_allergies: [],
         current_medications: [],
         active_treatments: [],
         recent_appointments: [],
-        overall_progress: "satisfactory",
+        overall_progress: 'satisfactory',
         risk_factors: [],
         total_appointments: 0,
         total_treatments: 0,
@@ -421,22 +421,22 @@ export class PatientHistoryService {
     const { data: _uploadData, error: uploadError } = await (
       PatientHistoryService.sb as any
     ).storage
-      .from("medical-attachments")
+      .from('medical-attachments')
       .upload(fileName, file);
 
     if (uploadError) {
-      console.error("Error uploading file:", uploadError);
+      console.error('Error uploading file:', uploadError);
       throw new Error(`Failed to upload file: ${uploadError.message}`);
     }
 
     // Get public URL
     const { data: urlData } = (PatientHistoryService.sb as any).storage
-      .from("medical-attachments")
+      .from('medical-attachments')
       .getPublicUrl(fileName);
 
     // Save attachment record
     const { data, error } = await (PatientHistoryService.sb as any)
-      .from("medical_record_attachments")
+      .from('medical_record_attachments')
       .insert({
         medical_record_id: recordId,
         filename: file.name,
@@ -449,7 +449,7 @@ export class PatientHistoryService {
       .single();
 
     if (error) {
-      console.error("Error saving attachment record:", error);
+      console.error('Error saving attachment record:', error);
       throw new Error(`Failed to save attachment record: ${error.message}`);
     }
 

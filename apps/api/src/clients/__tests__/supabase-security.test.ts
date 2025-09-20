@@ -14,7 +14,7 @@
  */
 
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
 // Mock LGPD compliance utilities
 vi.mock('../../utils/lgpd-compliance', () => ({
@@ -291,7 +291,7 @@ vi.mock('../supabase', () => ({
       });
     }),
   })),
-  createServerClient: vi.fn((cookieHandlers: any) => ({
+  createServerClient: vi.fn((_cookieHandlers: any) => ({
     rpc: vi.fn((functionName: string, params?: any) => {
       // Mock LGPD consent validation
       if (functionName === 'lgpd_validate_consent') {

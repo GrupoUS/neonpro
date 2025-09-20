@@ -3,9 +3,9 @@
  * Handles email, SMS, and WhatsApp notifications with LGPD compliance
  */
 
-import { supabase } from "@/integrations/supabase/client";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { supabase } from '@/integrations/supabase/client';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 // Type definitions
 export interface NotificationPreferences {
@@ -30,15 +30,15 @@ export interface NotificationTemplate {
 }
 
 export type NotificationType =
-  | "appointment_confirmation"
-  | "appointment_reminder"
-  | "appointment_cancellation"
-  | "appointment_rescheduled"
-  | "promotional"
-  | "welcome"
-  | "birthday";
+  | 'appointment_confirmation'
+  | 'appointment_reminder'
+  | 'appointment_cancellation'
+  | 'appointment_rescheduled'
+  | 'promotional'
+  | 'welcome'
+  | 'birthday';
 
-export type NotificationChannel = "email" | "sms" | "whatsapp";
+export type NotificationChannel = 'email' | 'sms' | 'whatsapp';
 
 export interface NotificationData {
   patientId: string;
@@ -85,7 +85,7 @@ class NotificationService {
 
       if (!preferences.lgpdConsent) {
         throw new Error(
-          "Patient has not provided LGPD consent for notifications",
+          'Patient has not provided LGPD consent for notifications',
         );
       }
 
@@ -96,7 +96,7 @@ class NotificationService {
       // Send notifications based on preferences
       if (preferences.email && data.patientEmail) {
         const emailResult = await this.sendEmailNotification(
-          "appointment_confirmation",
+          'appointment_confirmation',
           data,
         );
         results.push(emailResult);
@@ -104,7 +104,7 @@ class NotificationService {
 
       if (preferences.sms && data.patientPhone) {
         const smsResult = await this.sendSMSNotification(
-          "appointment_confirmation",
+          'appointment_confirmation',
           data,
         );
         results.push(smsResult);
@@ -112,7 +112,7 @@ class NotificationService {
 
       if (preferences.whatsapp && data.patientPhone) {
         const whatsappResult = await this.sendWhatsAppNotification(
-          "appointment_confirmation",
+          'appointment_confirmation',
           data,
         );
         results.push(whatsappResult);
@@ -121,18 +121,18 @@ class NotificationService {
       // Log notification activity
       await this.logNotificationActivity(
         data.patientId,
-        "appointment_confirmation",
+        'appointment_confirmation',
         results,
       );
 
       return results;
     } catch (error) {
-      console.error("Error sending appointment confirmation:", error);
+      console.error('Error sending appointment confirmation:', error);
       return [
         {
           success: false,
-          error: error instanceof Error ? error.message : "Unknown error",
-          channel: "email",
+          error: error instanceof Error ? error.message : 'Unknown error',
+          channel: 'email',
           sentAt: new Date(),
         },
       ];
@@ -157,13 +157,13 @@ class NotificationService {
       // Send reminders via preferred channels
       if (preferences.whatsapp && data.patientPhone) {
         const whatsappResult = await this.sendWhatsAppNotification(
-          "appointment_reminder",
+          'appointment_reminder',
           data,
         );
         results.push(whatsappResult);
       } else if (preferences.sms && data.patientPhone) {
         const smsResult = await this.sendSMSNotification(
-          "appointment_reminder",
+          'appointment_reminder',
           data,
         );
         results.push(smsResult);
@@ -171,7 +171,7 @@ class NotificationService {
 
       if (preferences.email && data.patientEmail) {
         const emailResult = await this.sendEmailNotification(
-          "appointment_reminder",
+          'appointment_reminder',
           data,
         );
         results.push(emailResult);
@@ -179,12 +179,12 @@ class NotificationService {
 
       await this.logNotificationActivity(
         data.patientId,
-        "appointment_reminder",
+        'appointment_reminder',
         results,
       );
       return results;
     } catch (error) {
-      console.error("Error sending appointment reminder:", error);
+      console.error('Error sending appointment reminder:', error);
       return [];
     }
   }
@@ -207,7 +207,7 @@ class NotificationService {
       // Send cancellation notifications
       if (preferences.email && data.patientEmail) {
         const emailResult = await this.sendEmailNotification(
-          "appointment_cancellation",
+          'appointment_cancellation',
           data,
         );
         results.push(emailResult);
@@ -215,7 +215,7 @@ class NotificationService {
 
       if (preferences.whatsapp && data.patientPhone) {
         const whatsappResult = await this.sendWhatsAppNotification(
-          "appointment_cancellation",
+          'appointment_cancellation',
           data,
         );
         results.push(whatsappResult);
@@ -223,12 +223,12 @@ class NotificationService {
 
       await this.logNotificationActivity(
         data.patientId,
-        "appointment_cancellation",
+        'appointment_cancellation',
         results,
       );
       return results;
     } catch (error) {
-      console.error("Error sending appointment cancellation:", error);
+      console.error('Error sending appointment cancellation:', error);
       return [];
     }
   }
@@ -241,11 +241,11 @@ class NotificationService {
     data: NotificationData,
   ): Promise<NotificationResult> {
     try {
-      const template = this.getTemplate(type, "email");
+      const template = this.getTemplate(type, 'email');
       const content = this.processTemplate(template.content, data);
       const subject = template.subject
         ? this.processTemplate(template.subject, data)
-        : "NeonPro - Notificação";
+        : 'NeonPro - Notificação';
 
       // In a real implementation, you would integrate with an email service like:
       // - SendGrid
@@ -254,26 +254,26 @@ class NotificationService {
       // - Resend
 
       // For now, we'll simulate the email sending
-      console.log("Sending email:", {
+      console.log('Sending email:', {
         to: data.patientEmail,
         subject,
         content,
       });
 
       // Simulate API call delay
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       return {
         success: true,
         messageId: `email_${Date.now()}`,
-        channel: "email",
+        channel: 'email',
         sentAt: new Date(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Email sending failed",
-        channel: "email",
+        error: error instanceof Error ? error.message : 'Email sending failed',
+        channel: 'email',
         sentAt: new Date(),
       };
     }
@@ -287,7 +287,7 @@ class NotificationService {
     data: NotificationData,
   ): Promise<NotificationResult> {
     try {
-      const template = this.getTemplate(type, "sms");
+      const template = this.getTemplate(type, 'sms');
       const content = this.processTemplate(template.content, data);
 
       // In a real implementation, you would integrate with an SMS service like:
@@ -296,24 +296,24 @@ class NotificationService {
       // - Zenvia
       // - TotalVoice (Brazilian provider)
 
-      console.log("Sending SMS:", {
+      console.log('Sending SMS:', {
         to: data.patientPhone,
         content,
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       return {
         success: true,
         messageId: `sms_${Date.now()}`,
-        channel: "sms",
+        channel: 'sms',
         sentAt: new Date(),
       };
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "SMS sending failed",
-        channel: "sms",
+        error: error instanceof Error ? error.message : 'SMS sending failed',
+        channel: 'sms',
         sentAt: new Date(),
       };
     }
@@ -327,7 +327,7 @@ class NotificationService {
     data: NotificationData,
   ): Promise<NotificationResult> {
     try {
-      const template = this.getTemplate(type, "whatsapp");
+      const template = this.getTemplate(type, 'whatsapp');
       const content = this.processTemplate(template.content, data);
 
       // In a real implementation, you would integrate with WhatsApp Business API:
@@ -336,25 +336,24 @@ class NotificationService {
       // - Zenvia WhatsApp
       // - ChatAPI
 
-      console.log("Sending WhatsApp:", {
+      console.log('Sending WhatsApp:', {
         to: data.patientPhone,
         content,
       });
 
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      await new Promise(resolve => setTimeout(resolve, 800));
 
       return {
         success: true,
         messageId: `whatsapp_${Date.now()}`,
-        channel: "whatsapp",
+        channel: 'whatsapp',
         sentAt: new Date(),
       };
     } catch (error) {
       return {
         success: false,
-        error:
-          error instanceof Error ? error.message : "WhatsApp sending failed",
-        channel: "whatsapp",
+        error: error instanceof Error ? error.message : 'WhatsApp sending failed',
+        channel: 'whatsapp',
         sentAt: new Date(),
       };
     }
@@ -368,12 +367,12 @@ class NotificationService {
   ): Promise<NotificationPreferences> {
     try {
       const { data, error } = await supabase
-        .from("patient_notification_preferences" as any)
-        .select("*")
-        .eq("patient_id", patientId)
+        .from('patient_notification_preferences' as any)
+        .select('*')
+        .eq('patient_id', patientId)
         .single();
 
-      if (error && error.code !== "PGRST116") {
+      if (error && error.code !== 'PGRST116') {
         // Not found error
         throw error;
       }
@@ -408,7 +407,7 @@ class NotificationService {
           : new Date(),
       };
     } catch (error) {
-      console.error("Error getting notification preferences:", error);
+      console.error('Error getting notification preferences:', error);
       // Return safe defaults
       return {
         email: false,
@@ -429,11 +428,11 @@ class NotificationService {
    */
   private initializeDefaultTemplates(): void {
     // Appointment Confirmation Templates
-    this.templates.set("appointment_confirmation_email", {
-      id: "appointment_confirmation_email",
-      type: "appointment_confirmation",
-      channel: "email",
-      subject: "Confirmação de Agendamento - {{clinicName}}",
+    this.templates.set('appointment_confirmation_email', {
+      id: 'appointment_confirmation_email',
+      type: 'appointment_confirmation',
+      channel: 'email',
+      subject: 'Confirmação de Agendamento - {{clinicName}}',
       content: `
         <h2>Agendamento Confirmado!</h2>
         <p>Olá {{patientName}},</p>
@@ -449,37 +448,37 @@ class NotificationService {
         <p>Atenciosamente,<br>Equipe {{clinicName}}</p>
       `,
       variables: [
-        "patientName",
-        "appointmentDate",
-        "appointmentTime",
-        "professionalName",
-        "serviceName",
-        "clinicName",
-        "clinicAddress",
-        "clinicPhone",
+        'patientName',
+        'appointmentDate',
+        'appointmentTime',
+        'professionalName',
+        'serviceName',
+        'clinicName',
+        'clinicAddress',
+        'clinicPhone',
       ],
     });
 
-    this.templates.set("appointment_confirmation_sms", {
-      id: "appointment_confirmation_sms",
-      type: "appointment_confirmation",
-      channel: "sms",
+    this.templates.set('appointment_confirmation_sms', {
+      id: 'appointment_confirmation_sms',
+      type: 'appointment_confirmation',
+      channel: 'sms',
       content:
-        "Agendamento confirmado! {{patientName}}, sua consulta está marcada para {{appointmentDate}} às {{appointmentTime}} com {{professionalName}}. {{clinicName}} - {{clinicPhone}}",
+        'Agendamento confirmado! {{patientName}}, sua consulta está marcada para {{appointmentDate}} às {{appointmentTime}} com {{professionalName}}. {{clinicName}} - {{clinicPhone}}',
       variables: [
-        "patientName",
-        "appointmentDate",
-        "appointmentTime",
-        "professionalName",
-        "clinicName",
-        "clinicPhone",
+        'patientName',
+        'appointmentDate',
+        'appointmentTime',
+        'professionalName',
+        'clinicName',
+        'clinicPhone',
       ],
     });
 
-    this.templates.set("appointment_confirmation_whatsapp", {
-      id: "appointment_confirmation_whatsapp",
-      type: "appointment_confirmation",
-      channel: "whatsapp",
+    this.templates.set('appointment_confirmation_whatsapp', {
+      id: 'appointment_confirmation_whatsapp',
+      type: 'appointment_confirmation',
+      channel: 'whatsapp',
       content: `🎉 *Agendamento Confirmado!*
 
 Olá {{patientName}}! 
@@ -497,14 +496,14 @@ Seu agendamento foi confirmado:
 
 Nos vemos em breve! ✨`,
       variables: [
-        "patientName",
-        "appointmentDate",
-        "appointmentTime",
-        "professionalName",
-        "serviceName",
-        "clinicName",
-        "clinicAddress",
-        "clinicPhone",
+        'patientName',
+        'appointmentDate',
+        'appointmentTime',
+        'professionalName',
+        'serviceName',
+        'clinicName',
+        'clinicAddress',
+        'clinicPhone',
       ],
     });
 
@@ -536,31 +535,31 @@ Nos vemos em breve! ✨`,
     let processed = template;
 
     // Replace variables
-    processed = processed.replace(/{{patientName}}/g, data.patientName || "");
+    processed = processed.replace(/{{patientName}}/g, data.patientName || '');
     processed = processed.replace(
       /{{appointmentDate}}/g,
       data.appointmentDate
-        ? format(data.appointmentDate, "dd/MM/yyyy", { locale: ptBR })
-        : "",
+        ? format(data.appointmentDate, 'dd/MM/yyyy', { locale: ptBR })
+        : '',
     );
     processed = processed.replace(
       /{{appointmentTime}}/g,
-      data.appointmentTime || "",
+      data.appointmentTime || '',
     );
     processed = processed.replace(
       /{{professionalName}}/g,
-      data.professionalName || "",
+      data.professionalName || '',
     );
-    processed = processed.replace(/{{serviceName}}/g, data.serviceName || "");
-    processed = processed.replace(/{{clinicName}}/g, data.clinicName || "");
+    processed = processed.replace(/{{serviceName}}/g, data.serviceName || '');
+    processed = processed.replace(/{{clinicName}}/g, data.clinicName || '');
     processed = processed.replace(
       /{{clinicAddress}}/g,
-      data.clinicAddress || "",
+      data.clinicAddress || '',
     );
-    processed = processed.replace(/{{clinicPhone}}/g, data.clinicPhone || "");
+    processed = processed.replace(/{{clinicPhone}}/g, data.clinicPhone || '');
     processed = processed.replace(
       /{{customMessage}}/g,
-      data.customMessage || "",
+      data.customMessage || '',
     );
 
     return processed;
@@ -575,7 +574,7 @@ Nos vemos em breve! ✨`,
     results: NotificationResult[],
   ): Promise<void> {
     try {
-      const logEntries = results.map((result) => ({
+      const logEntries = results.map(result => ({
         patient_id: patientId,
         notification_type: type,
         channel: result.channel,
@@ -587,14 +586,14 @@ Nos vemos em breve! ✨`,
       }));
 
       const { error } = await supabase
-        .from("notification_logs" as any)
+        .from('notification_logs' as any)
         .insert(logEntries as any);
 
       if (error) {
-        console.error("Error logging notification activity:", error);
+        console.error('Error logging notification activity:', error);
       }
     } catch (error) {
-      console.error("Error logging notification activity:", error);
+      console.error('Error logging notification activity:', error);
     }
   }
 }

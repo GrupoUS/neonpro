@@ -3,7 +3,7 @@
  * Handles aesthetic clinic services and procedures
  */
 
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 
 // type ServiceTypeRow = Database['public']['Tables']['service_types']['Row'];
 
@@ -25,7 +25,7 @@ class ServiceTypeService {
   async getServiceTypes(clinicId?: string): Promise<ServiceType[]> {
     try {
       let query = supabase
-        .from("service_types")
+        .from('service_types')
         .select(
           `
           id,
@@ -37,33 +37,33 @@ class ServiceTypeService {
           is_active
         `,
         )
-        .eq("is_active", true)
-        .order("name");
+        .eq('is_active', true)
+        .order('name');
 
       // If clinic-specific services exist, filter by clinic
       if (clinicId) {
-        query = query.eq("clinic_id", clinicId);
+        query = query.eq('clinic_id', clinicId);
       }
 
       const { data, error } = await query;
 
       if (error) {
-        console.error("Error fetching service types:", error);
+        console.error('Error fetching service types:', error);
         throw new Error(`Failed to fetch service types: ${error.message}`);
       }
 
-      return (data || []).map((service) => ({
+      return (data || []).map(service => ({
         id: service.id,
         name: service.name,
         description: service.description || undefined,
         durationMinutes: service.duration_minutes || 60,
         price: service.price || 0,
         category: undefined, // No category column in current schema
-        color: service.color || "#3b82f6",
+        color: service.color || '#3b82f6',
         isActive: service.is_active || false,
       }));
     } catch (error) {
-      console.error("Error in getServiceTypes:", error);
+      console.error('Error in getServiceTypes:', error);
       throw error;
     }
   }
@@ -78,7 +78,7 @@ class ServiceTypeService {
   ): Promise<ServiceType[]> {
     try {
       let dbQuery = supabase
-        .from("service_types")
+        .from('service_types')
         .select(
           `
           id,
@@ -90,34 +90,34 @@ class ServiceTypeService {
           is_active
         `,
         )
-        .eq("is_active", true)
+        .eq('is_active', true)
         .or(`name.ilike.%${query}%`)
         .limit(limit)
-        .order("name");
+        .order('name');
 
       if (clinicId) {
-        dbQuery = dbQuery.eq("clinic_id", clinicId);
+        dbQuery = dbQuery.eq('clinic_id', clinicId);
       }
 
       const { data, error } = await dbQuery;
 
       if (error) {
-        console.error("Error searching service types:", error);
+        console.error('Error searching service types:', error);
         throw new Error(`Failed to search service types: ${error.message}`);
       }
 
-      return (data || []).map((service) => ({
+      return (data || []).map(service => ({
         id: service.id,
         name: service.name,
         description: service.description || undefined,
         durationMinutes: service.duration_minutes || 60,
         price: service.price || 0,
         category: undefined, // No category column in current schema
-        color: service.color || "#3b82f6",
+        color: service.color || '#3b82f6',
         isActive: service.is_active || false,
       }));
     } catch (error) {
-      console.error("Error in searchServiceTypes:", error);
+      console.error('Error in searchServiceTypes:', error);
       throw error;
     }
   }
@@ -128,7 +128,7 @@ class ServiceTypeService {
   async getServiceType(serviceTypeId: string): Promise<ServiceType | null> {
     try {
       const { data, error } = await supabase
-        .from("service_types")
+        .from('service_types')
         .select(
           `
           id,
@@ -140,14 +140,14 @@ class ServiceTypeService {
           is_active
         `,
         )
-        .eq("id", serviceTypeId)
+        .eq('id', serviceTypeId)
         .single();
 
       if (error) {
-        if (error.code === "PGRST116") {
+        if (error.code === 'PGRST116') {
           return null; // Service type not found
         }
-        console.error("Error getting service type:", error);
+        console.error('Error getting service type:', error);
         throw new Error(`Failed to get service type: ${error.message}`);
       }
 
@@ -158,11 +158,11 @@ class ServiceTypeService {
         durationMinutes: data.duration_minutes || 60,
         price: data.price || 0,
         category: undefined, // No category column in current schema
-        color: data.color || "#3b82f6",
+        color: data.color || '#3b82f6',
         isActive: data.is_active || false,
       };
     } catch (error) {
-      console.error("Error in getServiceType:", error);
+      console.error('Error in getServiceType:', error);
       throw error;
     }
   }
@@ -180,7 +180,7 @@ class ServiceTypeService {
       // we'll return an empty array for now
       return [];
     } catch (error) {
-      console.error("Error in getServiceTypesByCategory:", error);
+      console.error('Error in getServiceTypesByCategory:', error);
       throw error;
     }
   }
@@ -195,7 +195,7 @@ class ServiceTypeService {
       // we'll return an empty array for now
       return [];
     } catch (error) {
-      console.error("Error in getServiceCategories:", error);
+      console.error('Error in getServiceCategories:', error);
       throw error;
     }
   }

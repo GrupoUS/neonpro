@@ -65,7 +65,7 @@ const feature = {
 const result = await runTDDCycle(feature, {
   workflow: "parallel",
   coordination: "parallel",
-  agents: ["security-auditor", "code-reviewer", "architect-review"],
+  agents: ["test-auditor", "code-reviewer", "architect-review"],
   healthcare: true,
 });
 
@@ -141,7 +141,7 @@ bun run test:healthcare
 analyze --type security --depth L7 --parallel --healthcare
 
 # Parallel testing
-test --type integration --parallel --agents test,security-auditor
+test --type integration --parallel --agents test,test-auditor
 
 # Architecture review
 review --depth L5 --agents architect-review,code-reviewer --healthcare

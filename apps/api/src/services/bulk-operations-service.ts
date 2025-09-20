@@ -11,6 +11,8 @@
  * - Brazilian healthcare compliance
  */
 
+import { logger } from '@/utils/secure-logger';
+
 export interface BulkOperationRequest {
   operationType:
     | 'activate'
@@ -214,13 +216,14 @@ export class BulkOperationsService {
       this.undoOperations.delete(undoToken);
 
       // Log undo operation
-      console.info(
-        `Bulk operation undone: ${undoToken} by user ${requesterUserId}`,
+      logger.info(
+        'Bulk operation undone',
+        { undoToken, requesterUserId }
       );
 
       return true;
     } catch (error: any) {
-      console.error(`Failed to undo bulk operation ${undoToken}:`, error);
+      logger.error('Failed to undo bulk operation', { undoToken, error });
       return false;
     }
   }
@@ -325,8 +328,9 @@ export class BulkOperationsService {
         if (attempt < maxRetries) {
           const delay = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
           await new Promise(resolve => setTimeout(resolve, delay));
-          console.warn(
-            `Bulk operation attempt ${attempt} failed, retrying in ${delay}ms: ${error.message}`,
+          logger.warn(
+            'Bulk operation attempt failed, retrying',
+            { attempt, delay, error: error.message }
           );
         }
       }
@@ -376,7 +380,7 @@ export class BulkOperationsService {
             code: error.code || 'UNKNOWN_ERROR',
           });
 
-          console.error(`Failed to process entity ${entityId}:`, error);
+          logger.error('Failed to process entity', { entityId, error });
         }
       }
     }
@@ -386,8 +390,9 @@ export class BulkOperationsService {
     // Store original data for undo if any entities were processed
     if (result.processed > 0) {
       // In a real implementation, this would be stored in the database
-      console.info(
-        `Bulk operation processed ${result.processed} entities, ${result.failed} failed`,
+      logger.info(
+        'Bulk operation processed entities',
+        { processed: result.processed, failed: result.failed }
       );
     }
 
@@ -409,22 +414,22 @@ export class BulkOperationsService {
     // Mock implementation - in real application, execute actual operation
     switch (request.operationType) {
       case 'activate':
-        console.info(`Activating ${request.entityType} ${entityId}`);
+        logger.info('Activating entity', { entityType: request.entityType, entityId });
         break;
       case 'deactivate':
-        console.info(`Deactivating ${request.entityType} ${entityId}`);
+        logger.info('Deactivating entity', { entityType: request.entityType, entityId });
         break;
       case 'delete':
-        console.info(`Deleting ${request.entityType} ${entityId}`);
+        logger.info('Deleting entity', { entityType: request.entityType, entityId });
         break;
       case 'update':
-        console.info(`Updating ${request.entityType} ${entityId}`);
+        logger.info('Updating entity', { entityType: request.entityType, entityId });
         break;
       case 'assign_tag':
-        console.info(`Assigning tag to ${request.entityType} ${entityId}`);
+        logger.info('Assigning tag to entity', { entityType: request.entityType, entityId });
         break;
       case 'export':
-        console.info(`Exporting ${request.entityType} ${entityId}`);
+        logger.info('Exporting entity', { entityType: request.entityType, entityId });
         break;
       default:
         throw new Error(`Unsupported operation: ${request.operationType}`);
@@ -485,7 +490,8 @@ export class BulkOperationsService {
     request: BulkOperationRequest,
     auditTrailId: string,
   ): Promise<void> {
-    console.info(`Bulk operation started: ${auditTrailId}`, {
+    logger.info('Bulk operation started', {
+      auditTrailId,
       operation: request.operationType,
       entityType: request.entityType,
       count: request.entityIds.length,
@@ -499,7 +505,8 @@ export class BulkOperationsService {
     result: BulkOperationResult,
     auditTrailId: string,
   ): Promise<void> {
-    console.info(`Bulk operation completed: ${auditTrailId}`, {
+    logger.info('Bulk operation completed', {
+      auditTrailId,
       success: result.success,
       processed: result.processed,
       failed: result.failed,
@@ -512,7 +519,8 @@ export class BulkOperationsService {
     error: Error,
     auditTrailId: string,
   ): Promise<void> {
-    console.error(`Bulk operation failed: ${auditTrailId}`, {
+    logger.error('Bulk operation failed', {
+      auditTrailId,
       operation: request.operationType,
       entityType: request.entityType,
       user: request.requesterUserId,
