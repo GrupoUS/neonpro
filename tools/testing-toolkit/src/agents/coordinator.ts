@@ -14,6 +14,7 @@ const QUALITY_GATE_KEY_MAP: Record<AgentType, keyof typeof QUALITY_GATES> = {
   'security-auditor': 'SECURITY',
   'tdd-orchestrator': 'TDD',
   'test-agent': 'TDD',
+  'test-auditor': 'TDD',
 };
 
 export interface CoordinationConfig {

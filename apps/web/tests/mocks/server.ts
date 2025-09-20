@@ -142,6 +142,76 @@ export const handlers = [
       }, { status: 401 });
     }
 
+    // Input validation
+    if (!body.intentId || body.intentId === 'invalid-id') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Invalid intent ID',
+        code: 'INVALID_REQUEST',
+      }, { status: 400 });
+    }
+
+    if (!body.token || body.token === 'invalid-token') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Invalid or expired token',
+        code: 'INVALID_TOKEN',
+      }, { status: 400 });
+    }
+
+    if (!body.confirmation || typeof body.confirmation !== 'object') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Missing required fields',
+        code: 'MISSING_FIELDS',
+      }, { status: 400 });
+    }
+
+    // Validate confirmation data structure
+    if (body.confirmation && Object.keys(body.confirmation).length === 0) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Invalid confirmation data',
+        code: 'INVALID_CONFIRMATION',
+      }, { status: 400 });
+    }
+
+    // Check for non-compliant data
+    if (body.data && body.data.type === 'non-compliant') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Compliance validation failed',
+        code: 'COMPLIANCE_FAILED',
+      }, { status: 422 });
+    }
+
+    // Session continuity check
+    if (body.sessionId && body.sessionId !== body.intentId) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Session mismatch',
+        code: 'SESSION_MISMATCH',
+      }, { status: 400 });
+    }
+
+    // Expired token check
+    if (body.token === 'expired-token') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Token has expired',
+        code: 'TOKEN_EXPIRED',
+      }, { status: 400 });
+    }
+
+    // Concurrent confirmation attempts - reject additional attempts
+    if (body.isConcurrent) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Concurrent confirmation not allowed',
+        code: 'CONCURRENT_CONFLICT',
+      }, { status: 409 });
+    }
+
     // Mock successful confirmation
     return HttpResponse.json({
       success: true,
@@ -155,6 +225,14 @@ export const handlers = [
           cfm: { valid: true, score: 92 },
           anvisa: { valid: true, score: 88 },
         },
+      },
+      auditTrail: {
+        intentId: body.intentId,
+        confirmId: 'confirm-456',
+        timestamp: new Date().toISOString(),
+        validations: ['data_schema', 'privacy', 'compliance'],
+        riskLevel: 'LOW',
+        correlationId: body.correlationId || 'correlation-456'
       },
       meta: {
         requestId: 'req-456',
@@ -181,22 +259,168 @@ export const handlers = [
       }, { status: 401 });
     }
 
+    // Input validation
+    if (!body.confirmId || body.confirmId === 'invalid-id') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Invalid confirm ID',
+        code: 'INVALID_REQUEST',
+      }, { status: 400 });
+    }
+
+    if (!body.executionToken || body.executionToken === 'invalid-token') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Invalid execution token',
+        code: 'INVALID_TOKEN',
+      }, { status: 400 });
+    }
+
+    if (!body.operation) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Missing required fields',
+        code: 'MISSING_FIELDS',
+      }, { status: 400 });
+    }
+
+    // Validate operation structure
+    if (body.operation && (!body.operation.type || !body.operation.entity)) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Invalid operation structure',
+        code: 'INVALID_OPERATION',
+      }, { status: 400 });
+    }
+
+    // Validate operation-specific validation (missing required fields for CREATE)
+    if (body.operation?.type === 'create' && body.operation?.data?.name === '') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Validation failed',
+        code: 'VALIDATION_FAILED',
+      }, { status: 400 });
+    }
+
+    // SQL Injection Protection
+    if (body.operation?.data && JSON.stringify(body.operation.data).includes('DROP TABLE')) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Invalid input format',
+        code: 'SECURITY_VIOLATION',
+      }, { status: 400 });
+    }
+
+    // Data type validation
+    if (body.operation?.data?.email && typeof body.operation.data.email !== 'string') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Type validation failed',
+        code: 'TYPE_VALIDATION_FAILED',
+      }, { status: 400 });
+    }
+
+    // LGPD consent validation for sensitive data
+    if (body.operation?.data?.healthHistory && !body.operation?.metadata?.lgpdConsent) {
+      return HttpResponse.json({
+        success: false,
+        error: 'LGPD consent required',
+        code: 'CONSENT_REQUIRED',
+      }, { status: 422 });
+    }
+
+    // Database connection simulation
+    if (body.simulateError === 'database_connection') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Database connection failed',
+        code: 'DATABASE_ERROR',
+      }, { status: 500 });
+    }
+
+    // Constraint violation simulation  
+    if (body.operation?.data?.email === 'existing@example.com') {
+      return HttpResponse.json({
+        success: false,
+        error: 'Constraint violation',
+        code: 'CONSTRAINT_VIOLATION',
+      }, { status: 409 });
+    }
+
+    // Transaction rollback simulation
+    if (body.operation?.data?.relatedData?.some((item: any) => !item.valid)) {
+      return HttpResponse.json({
+        success: false,
+        error: 'Transaction failed',
+        code: 'TRANSACTION_FAILED',
+      }, { status: 500 });
+    }
+
+    // Generate appropriate result based on operation type
+    let result: any = { id: 'patient-123' };
+    
+    switch (body.operation?.type) {
+      case 'create':
+        result = {
+          recordId: 'patient-123',
+          created: true,
+          data: { id: 'patient-123', ...body.operation.data }
+        };
+        break;
+      case 'read':
+        result = {
+          data: [{ id: 'patient-123', name: 'Test Patient', email: 'test@example.com' }]
+        };
+        break;
+      case 'update':
+        result = {
+          affected: 1,
+          data: { id: 'patient-123', ...body.operation.data }
+        };
+        break;
+      case 'delete':
+        result = {
+          affected: 1,
+          deleted: true
+        };
+        break;
+      default:
+        result = { ...body.operation?.data || {} };
+    }
+
     // Mock successful execution
     return HttpResponse.json({
       success: true,
       data: {
         executionId: 'exec-789',
-        result: {
-          id: 'patient-123',
-          ...body.operation.data,
-        },
+        result,
         status: 'completed',
+        dataRetention: {
+          policy: 'healthcare-7-years',
+          expiresAt: '2031-01-01T00:00:00Z'
+        }
       },
       auditTrail: {
+        executionId: 'exec-789',
+        confirmId: body.confirmId,
         timestamp: new Date().toISOString(),
-        userId: body.context.userId,
-        operation: body.operation.type,
-        correlationId: body.context.correlationId || 'corr-123',
+        userId: body.context?.userId || 'user-123',
+        correlationId: body.context?.correlationId || 'correlation-789',
+        compliance: {
+          lgpd: { passed: true, score: 95 },
+          cfm: { passed: true, score: 92 },
+          anvisa: { passed: true, score: 88 }
+        },
+        flowContext: {
+          userJourney: body.context?.userJourney || 'patient-management',
+          sessionId: body.context?.sessionId || 'session-123'
+        },
+        success: true
+      },
+      performance: {
+        executionTime: 150,
+        validationTime: 25,
+        databaseTime: 75
       },
       meta: {
         requestId: 'req-789',

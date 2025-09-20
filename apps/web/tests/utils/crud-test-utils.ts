@@ -154,7 +154,26 @@ export async function confirmCrudIntent(
       throw error;
     }
 
-    return response.json();
+    const data = await response.json();
+    
+    // Flatten structure to match test expectations
+    if (data.data) {
+      return {
+        success: data.success,
+        confirmId: data.data.confirmId,
+        executionToken: data.data.executionToken,
+        readyForExecution: data.data.validated,
+        validationResult: {
+          dataValid: data.data.validated,
+          transformations: data.data.transformations,
+          compliance: data.data.compliance
+        },
+        auditTrail: data.auditTrail,
+        meta: data.meta
+      };
+    }
+    
+    return data;
   } catch (error) {
     clearTimeout(timeoutId);
     throw error;
@@ -189,7 +208,21 @@ export async function executeCrudOperation(
       throw error;
     }
 
-    return response.json();
+    const data = await response.json();
+    
+    // Flatten structure to match test expectations
+    if (data.data) {
+      return {
+        success: data.success,
+        executionId: data.data.executionId,
+        result: data.data.result,
+        auditTrail: data.auditTrail,
+        performance: data.meta?.performance,
+        meta: data.meta
+      };
+    }
+    
+    return data;
   } catch (error) {
     clearTimeout(timeoutId);
     throw error;
