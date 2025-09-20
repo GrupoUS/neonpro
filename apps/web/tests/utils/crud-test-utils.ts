@@ -311,27 +311,25 @@ export function validateANVISACompliance(data: Record<string, any>): {
 }
 
 // Performance measurement helpers
-export function measureExecutionTime<T>(fn: () => Promise<T>): Promise<{
+export async function measureExecutionTime<T>(fn: () => Promise<T>): Promise<{
   result: T;
   executionTime: number;
 }> {
-  return new Promise(async (resolve, reject) => {
-    const startTime = performance.now();
-    try {
-      const result = await fn();
-      const endTime = performance.now();
-      resolve({
-        result,
-        executionTime: endTime - startTime
-      });
-    } catch (error) {
-      const endTime = performance.now();
-      reject({
-        error,
-        executionTime: endTime - startTime
-      });
-    }
-  });
+  const startTime = performance.now();
+  try {
+    const result = await fn();
+    const endTime = performance.now();
+    return {
+      result,
+      executionTime: endTime - startTime
+    };
+  } catch (error) {
+    const endTime = performance.now();
+    throw {
+      error,
+      executionTime: endTime - startTime
+    };
+  }
 }
 
 // Test data builders

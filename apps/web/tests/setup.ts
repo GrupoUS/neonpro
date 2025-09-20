@@ -18,12 +18,14 @@ afterAll(() => {
 });
 
 // Polyfill fetch for Node.js environment
-if (!globalThis.fetch) {
-  const { fetch, Headers, Request, Response } = require('undici');
-  Object.assign(globalThis, {
-    fetch,
-    Headers,
-    Request,
-    Response,
-  });
-}
+(async () => {
+  if (!globalThis.fetch) {
+    const { fetch, Headers, Request, Response } = await import('undici');
+    Object.assign(globalThis, {
+      fetch,
+      Headers,
+      Request,
+      Response,
+    });
+  }
+})();
