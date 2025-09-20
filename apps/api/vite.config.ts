@@ -4,7 +4,9 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   plugins: [
-    tsconfigPaths(),
+    tsconfigPaths({
+      ignoreConfigErrors: true,
+    }),
     nodePolyfills({
       // To exclude specific polyfills, add them to this list.
       exclude: [],

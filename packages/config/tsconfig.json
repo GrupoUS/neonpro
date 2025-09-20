@@ -11,6 +11,6 @@
       "@neonpro/types": ["../types/dist/index.d.ts"]
     }
   },
-  "include": ["**/*.ts", "**/*.json"],
+  "include": ["**/*.ts"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

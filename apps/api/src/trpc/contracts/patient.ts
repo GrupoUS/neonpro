@@ -11,7 +11,7 @@ import {
   PatientResponseSchema,
   PatientsListResponseSchema,
   UpdatePatientRequestSchema,
-} from '@neonpro/types';
+} from '@neonpro/types/api/contracts';
 import { z } from 'zod';
 import { protectedProcedure, router } from '../trpc';
 

@@ -58,6 +58,17 @@ export type QueryStatus =
   | 'completed'
   | 'failed';
 
+export interface ResponseMetadata {
+  /** Response confidence score */
+  confidence?: number;
+  /** Model used for generation */
+  model?: string;
+  /** Processing duration in ms */
+  processingTime?: number;
+  /** Additional metadata */
+  [key: string]: any;
+}
+
 export interface AgentResponse {
   /** Unique identifier (UUID) */
   id: string;
@@ -269,6 +280,10 @@ export interface ChatMessage {
   timestamp: Date;
   /** Optional structured data */
   data?: Record<string, any>;
+  /** Optional interactive actions */
+  actions?: AgentAction[];
+  /** Optional metadata */
+  metadata?: Record<string, any>;
 }
 
 export interface SessionResponse {
@@ -335,4 +350,70 @@ export function isAgentResponse(obj: any): obj is AgentResponse {
 export function isInteractiveAction(obj: any): obj is InteractiveAction {
   return obj
     && typeof obj.id === 'string'
-    && typeof obj.label === 'string'
+    && typeof obj.label === 'string';
+}
+
+// Additional types for DataAgentChat component
+export interface ChatState {
+  messages: ChatMessage[];
+  isLoading: boolean;
+  error?: string;
+}
+
+export interface DataAgentRequest {
+  query: string;
+  sessionId?: string;
+  userContext: {
+    userId: string;
+    userRole: 'admin' | 'professional' | 'assistant' | 'receptionist';
+    domain?: string;
+  };
+}
+
+export interface DataAgentResponse {
+  success: boolean;
+  response: {
+    id: string;
+    message: string;
+    data?: {
+      clients?: ClientData[];
+      appointments?: AppointmentData[];
+      financial?: FinancialData[];
+    };
+    actions?: AgentAction[];
+    suggestions?: string[];
+  };
+}
+
+export interface ClientData {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  status: string;
+}
+
+export interface AppointmentData {
+  id: string;
+  clientName: string;
+  scheduledAt: string;
+  serviceName: string;
+  status: string;
+}
+
+export interface FinancialData {
+  id: string;
+  clientName: string;
+  serviceName: string;
+  amount: number;
+  status: string;
+}
+
+export interface AgentAction {
+  id: string;
+  label: string;
+  icon?: string;
+  primary?: boolean;
+  type: 'view_details' | 'create_appointment' | 'export_data' | 'navigate' | 'refresh';
+  payload?: Record<string, any>;
+}
