@@ -4,9 +4,7 @@
  * Optimized for Brazilian Portuguese communication with LGPD compliance
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-
-export const runtime = 'edge';
+// Edge Runtime replacement - standard fetch API
 export const preferredRegion = 'gru1'; // São Paulo for Brazilian customers
 
 interface WhatsAppReminderRequest {
@@ -62,7 +60,7 @@ const reminderTemplates = {
     `Perfeito ${name}! ✅\n\nSeu *${treatment}* está confirmado:\n📅 ${date}\n⏰ ${time}\n\nObrigada pela confirmação! 💆‍♀️`,
 };
 
-export default async function handler(req: NextRequest) {
+export default async function handler(req: Request) {
   const headers = {
     'Content-Type': 'application/json',
     'X-Content-Type-Options': 'nosniff',
@@ -72,8 +70,8 @@ export default async function handler(req: NextRequest) {
   };
 
   if (req.method !== 'POST') {
-    return NextResponse.json(
-      { error: 'Método não permitido', code: 'METHOD_NOT_ALLOWED' },
+    return new Response(
+      JSON.stringify({ error: 'Método não permitido', code: 'METHOD_NOT_ALLOWED' }),
       { status: 405, headers },
     );
   }
@@ -84,12 +82,12 @@ export default async function handler(req: NextRequest) {
 
     // LGPD consent validation
     if (!reminderData.patient_data.whatsapp_consent) {
-      return NextResponse.json(
-        {
+      return new Response(
+        JSON.stringify({
           success: false,
           error: 'Paciente não consentiu com comunicação via WhatsApp',
           code: 'LGPD_CONSENT_REQUIRED',
-        },
+        }),
         { status: 403, headers },
       );
     }
@@ -97,12 +95,12 @@ export default async function handler(req: NextRequest) {
     // Format phone number for Brazilian standard
     const phone = reminderData.patient_data.phone.replace(/\D/g, '');
     if (!phone.startsWith('55') || phone.length < 13) {
-      return NextResponse.json(
-        {
+      return new Response(
+        JSON.stringify({
           success: false,
           error: 'Número de telefone brasileiro inválido',
           code: 'INVALID_PHONE_NUMBER',
-        },
+        }),
         { status: 400, headers },
       );
     }
@@ -159,8 +157,8 @@ export default async function handler(req: NextRequest) {
 
     const processingTime = Date.now() - startTime;
 
-    return NextResponse.json(
-      {
+    return new Response(
+      JSON.stringify({
         success: true,
         reminder_sent: true,
         whatsapp_response: mockWhatsAppResponse,
@@ -169,17 +167,17 @@ export default async function handler(req: NextRequest) {
           processing_time_ms: processingTime,
           region: 'gru1',
         },
-      },
+      }),
       { status: 200, headers },
     );
   } catch (error) {
-    return NextResponse.json(
-      {
+    return new Response(
+      JSON.stringify({
         success: false,
         error: 'Erro ao enviar lembrete via WhatsApp',
         code: 'WHATSAPP_ERROR',
         lgpd_compliant: true,
-      },
+      }),
       { status: 500, headers },
     );
   }
