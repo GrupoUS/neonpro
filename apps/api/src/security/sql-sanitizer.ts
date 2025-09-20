@@ -46,6 +46,8 @@ class SQLSanitizer {
     /(\bLOAD_FILE\b)/gi,
     /(\bSCRIPT\b)/gi,
     /(javascript:|vbscript:|onload=|onerror=)/gi,
+    /\bINFORMATION_SCHEMA\b/gi,
+    /0x[0-9a-fA-F]+/g,
   ];
 
   private static readonly ALLOWED_TABLES: TableConfig[] = [
