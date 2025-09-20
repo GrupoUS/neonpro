@@ -16,6 +16,15 @@ import { TRPCError } from '@trpc/server';
 import * as v from 'valibot';
 import { healthcareProcedure, protectedProcedure, router } from '../trpc';
 import { createOperationStateService } from '../../services/operation-state-service';
+import { HealthcareValidationService } from '../../services/healthcare-validation-service';
+import { 
+  getEntitySchema,
+  PatientSchema,
+  AppointmentSchema,
+  ProfessionalSchema,
+  MedicalRecordSchema,
+  PrescriptionSchema,
+} from '../../schemas/healthcare-validation-schemas';
 
 // =====================================
 // TYPE DEFINITIONS & SCHEMAS
@@ -51,7 +60,16 @@ const crudIntentSchema = v.object({
   step: v.literal('intent'),
   operation: v.string([v.picklist(CRUD_OPERATIONS)]),
   entity: v.string([v.picklist(SUPPORTED_ENTITIES)]),
-  data: v.any(), // Dynamic data based on entity
+  data: v.lazy(() => 
+    v.union([
+      PatientSchema,
+      AppointmentSchema,
+      ProfessionalSchema,
+      MedicalRecordSchema,
+      PrescriptionSchema,
+      v.object({ id: v.string() }), // For read/delete operations
+    ])
+  ), // Dynamic data based on entity - validated at runtime with Zod schemas
   options: v.optional(
     v.object({
       skipConfirmation: v.optional(v.boolean()),
@@ -77,7 +95,17 @@ const crudConfirmSchema = v.object({
   step: v.literal('confirm'),
   intentId: v.string([v.uuid('Invalid intent ID')]),
   confirmed: v.boolean(),
-  modifications: v.optional(v.any()), // Optional modifications before execution
+  modifications: v.optional(v.lazy(() => 
+    v.object({
+      patientData: v.optional(PatientSchema.partial()),
+      appointmentData: v.optional(AppointmentSchema.partial()),
+      professionalData: v.optional(ProfessionalSchema.partial()),
+      medicalRecordData: v.optional(MedicalRecordSchema.partial()),
+      prescriptionData: v.optional(PrescriptionSchema.partial()),
+      operation: v.optional(v.enum(['create', 'update', 'delete'])),
+      entity: v.optional(v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions'])),
+    })
+  )), // Optional modifications before execution
   reason: v.optional(v.string()),
 });
 
@@ -88,7 +116,17 @@ const crudExecuteSchema = v.object({
   step: v.literal('execute'),
   intentId: v.string([v.uuid('Invalid intent ID')]),
   confirmationId: v.string([v.uuid('Invalid confirmation ID')]),
-  finalData: v.optional(v.any()), // Final data with any modifications
+  finalData: v.optional(v.lazy(() => 
+    v.object({
+      patientData: v.optional(PatientSchema.partial()),
+      appointmentData: v.optional(AppointmentSchema.partial()),
+      professionalData: v.optional(ProfessionalSchema.partial()),
+      medicalRecordData: v.optional(MedicalRecordSchema.partial()),
+      prescriptionData: v.optional(PrescriptionSchema.partial()),
+      operation: v.optional(v.enum(['create', 'update', 'delete'])),
+      entity: v.optional(v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions'])),
+    })
+  )), // Final data with validated modifications
 });
 
 /**
@@ -115,7 +153,28 @@ const crudIntentResponseSchema = v.object({
     warnings: v.optional(v.array(v.string())),
     aiScore: v.optional(v.number()),
   }),
-  preview: v.optional(v.any()),
+  preview: v.optional(v.object({
+    operation: v.enum(['create', 'read', 'update', 'delete']),
+    entity: v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions']),
+    summary: v.string(),
+    affectedRecords: v.number(),
+    changes: v.optional(v.array(v.object({
+      field: v.string(),
+      oldValue: v.optional(v.union([
+      v.string(),
+      v.number(),
+      v.boolean(),
+      v.null(),
+    ])),
+      newValue: v.optional(v.union([
+      v.string(),
+      v.number(),
+      v.boolean(),
+      v.null(),
+    ])),
+    }))),
+    complianceChecks: v.array(v.string()),
+  })),
   confirmationRequired: v.boolean(),
   estimatedImpact: v.optional(
     v.object({
@@ -143,7 +202,15 @@ const crudConfirmResponseSchema = v.object({
     v.picklist(['confirmed', 'rejected', 'requires_modification']),
   ]),
   readyToExecute: v.boolean(),
-  finalData: v.optional(v.any()),
+  finalData: v.optional(v.object({
+    patientData: v.optional(PatientSchema.partial()),
+    appointmentData: v.optional(AppointmentSchema.partial()),
+    professionalData: v.optional(ProfessionalSchema.partial()),
+    medicalRecordData: v.optional(MedicalRecordSchema.partial()),
+    prescriptionData: v.optional(PrescriptionSchema.partial()),
+    operation: v.optional(v.enum(['create', 'update', 'delete'])),
+    entity: v.optional(v.enum(['patients', 'appointments', 'professionals', 'medical_records', 'prescriptions'])),
+  })),
   executionPlan: v.optional(
     v.object({
       steps: v.array(v.string()),
@@ -162,7 +229,19 @@ const crudExecuteResponseSchema = v.object({
   confirmationId: v.string(),
   step: v.literal('execute'),
   status: v.string([v.picklist(['completed', 'failed', 'partial'])]),
-  result: v.any(),
+  result: v.optional(v.union([
+    PatientSchema,
+    AppointmentSchema,
+    ProfessionalSchema,
+    MedicalRecordSchema,
+    PrescriptionSchema,
+    v.array(PatientSchema),
+    v.array(AppointmentSchema),
+    v.array(ProfessionalSchema),
+    v.array(MedicalRecordSchema),
+    v.array(PrescriptionSchema),
+    v.null(),
+  ])),
   metrics: v.object({
     executionTimeMs: v.number(),
     recordsAffected: v.number(),
@@ -181,7 +260,9 @@ const crudExecuteResponseSchema = v.object({
 // =====================================
 
 /**
- * AI-powered data validation for healthcare entities
+ * Real healthcare validation with comprehensive compliance checking
+ * Replaces mock AI validation with actual healthcare professional validation,
+ * LGPD compliance, and ANVISA regulatory checking
  */
 async function validateWithAI(
   operation: CrudOperation,
@@ -196,74 +277,50 @@ async function validateWithAI(
   transformedData?: any;
 }> {
   try {
-    // Mock AI validation - in production, integrate with real AI service
-    const validationPrompts = {
-      create: `Validar dados para criação de ${entity}: ${JSON.stringify(data)}`,
-      update: `Validar dados para atualização de ${entity}: ${JSON.stringify(data)}`,
-      delete: `Validar deleção de ${entity} com ID: ${data.id}`,
-      read: `Validar consulta de ${entity} com filtros: ${JSON.stringify(data)}`,
+    // Initialize real healthcare validation service
+    const healthcareValidator = new HealthcareValidationService();
+
+    // Validate context for professional authorization
+    const validationContext = {
+      professionalId: ctx.user?.id || data.professionalId,
+      patientId: data.patientId,
+      organizationId: ctx.user?.organizationId,
     };
 
-    const prompt = `
-Você é um assistente de IA especializado em validação de dados de saúde brasileiros.
-Analise os dados para a operação ${operation} na entidade ${entity}.
+    // Perform comprehensive healthcare validation
+    const validationResult = await healthcareValidator.validateHealthcareData(
+      operation,
+      entity,
+      data,
+      validationContext
+    );
 
-Contexto:
-- Operação: ${operation}
-- Entidade: ${entity}
-- Dados: ${JSON.stringify(data, null, 2)}
-
-Validar:
-1. Conformidade com LGPD
-2. Formato e tipo de dados
-3. Campos obrigatórios
-4. Regras de negócio específicas da entidade
-5. Consistência dos dados
-
-Retorne um JSON com:
-{
-  "isValid": boolean,
-  "errors": ["string"],
-  "warnings": ["string"],
-  "score": number (0-1),
-  "transformedData": object (opcional)
-}`;
-
-    // Simulate AI processing
-    await new Promise(resolve => setTimeout(resolve, 100));
-
-    // Mock validation result
-    const validationResult = {
-      isValid: true,
-      errors: [],
-      warnings: data.name && data.name.length > 100 ? ['Nome muito longo'] : [],
-      aiScore: 0.95,
-      transformedData: data,
+    // Transform the result to match expected interface
+    return {
+      isValid: validationResult.isValid,
+      errors: validationResult.errors,
+      warnings: validationResult.warnings,
+      aiScore: validationResult.aiScore,
+      transformedData: validationResult.transformedData || data,
     };
 
-    // Entity-specific validation
-    switch (entity) {
-      case 'patients':
-        if (operation === 'create' && !data.fullName) {
-          validationResult.isValid = false;
-          validationResult.errors.push('Nome do paciente é obrigatório');
-        }
-        break;
-      case 'appointments':
-        if (operation === 'create' && !data.startTime) {
-          validationResult.isValid = false;
-          validationResult.errors.push('Horário da consulta é obrigatório');
-        }
-        break;
-    }
-
-    return validationResult;
   } catch (error) {
-    console.error('AI validation error:', error);
+    // Use global error handler for consistent sanitization
+    const appError = GlobalErrorHandler.createError(
+      'VALIDATION_ERROR',
+      { 
+        operation,
+        entity,
+        validationFailed: true 
+      },
+      ctx.user?.id,
+      data.patientId
+    );
+    
     return {
       isValid: false,
-      errors: ['Erro na validação por IA'],
-      warnings: [],
+      errors: [appError.message],
+      warnings: ['Operação bloqueada por falha de validação de segurança'],
       aiScore: 0,
     };
   }
@@ -294,22 +351,41 @@ async function generatePreview(
     };
 
     if (operation === 'update' && data.id) {
-      // Show current vs new values
+      // Show current vs new values (with sensitive data sanitization)
       const current = await getCurrentData(entity, data.id, ctx);
       if (current) {
         preview.changes = Object.entries(data)
           .filter(([key, value]) => key !== 'id' && current[key] !== value)
           .map(([key, value]) => ({
             field: key,
-            oldValue: current[key],
-            newValue: value,
+            oldValue: this.sanitizePreviewValue(current[key], key),
+            newValue: this.sanitizePreviewValue(value, key),
           }));
       }
     }
 
     return preview;
   } catch (error) {
-    console.error('Preview generation error:', error);
+    // Use global error handler for consistent sanitization
+    const appError = GlobalErrorHandler.createError(
+      'INTERNAL_ERROR',
+      { 
+        operation,
+        entity,
+        previewFailed: true 
+      },
+      ctx.user?.id,
+      data.patientId
+    );
+    
+    // Log sanitized error for debugging
+    logger.warn('Preview generation failed', {
+      error: appError.message,
+      operation,
+      entity,
+      userId: ctx.user?.id
+    });
+    
     return null;
   }
 }
@@ -336,7 +412,25 @@ async function getCurrentData(
         return null;
     }
   } catch (error) {
-    console.error('Error getting current data:', error);
+    // Use global error handler for consistent sanitization
+    const appError = GlobalErrorHandler.createError(
+      'INTERNAL_ERROR',
+      { 
+        entity,
+        operation: 'read',
+        currentDataFailed: true 
+      },
+      ctx.user?.id
+    );
+    
+    // Log sanitized error for debugging
+    logger.warn('Failed to get current data', {
+      error: appError.message,
+      entity,
+      id,
+      userId: ctx.user?.id
+    });
+    
     return null;
   }
 }
@@ -505,11 +599,42 @@ async function handleIntentStep(
   // Generate unique intent ID
   const intentId = `intent-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 
-  // AI-powered validation
+  // Runtime validation with proper Zod schemas (replaces v.any() security vulnerability)
+  const schema = getEntitySchema(input.entity);
+  const schemaValidation = schema.safeParse(input.data);
+  
+  if (!schemaValidation.success) {
+    const errors = schemaValidation.error.errors.map(err => 
+      `Campo ${err.path.join('.')}: ${err.message}`
+    );
+    
+    // Create sanitized error without exposing internal validation details
+    const appError = GlobalErrorHandler.createError(
+      'VALIDATION_ERROR',
+      { 
+        entity: input.entity,
+        operation: input.operation,
+        validationErrors: errors.length
+      },
+      ctx.userId,
+      input.metadata?.patientId
+    );
+    
+    throw new TRPCError({
+      code: 'BAD_REQUEST',
+      message: appError.message,
+      cause: { sanitizedErrors: errors.length > 3 ? errors.slice(0, 3) : errors },
+    });
+  }
+
+  // Use validated data
+  const validatedData = schemaValidation.data;
+
+  // AI-powered healthcare validation
   const validation = await validateWithAI(
     input.operation,
     input.entity,
-    input.data,
+    validatedData,
     ctx,
   );
 
@@ -517,7 +642,7 @@ async function handleIntentStep(
   const preview = await generatePreview(
     input.operation,
     input.entity,
-    input.data,
+    validatedData,
     ctx,
   );
 
@@ -834,9 +959,16 @@ async function handleExecuteStep(
       },
     };
   } catch (executionError) {
-    error = executionError instanceof Error
-      ? executionError.message
-      : 'Unknown error';
+    // Sanitize error message to prevent information disclosure
+    const appError = executionError instanceof Error 
+      ? GlobalErrorHandler.createError('INTERNAL_ERROR', {
+          operation: intentData.operation,
+          entity: intentData.entity,
+          executionStep: 'execute'
+        }, ctx.userId, intentAudit.patientId)
+      : GlobalErrorHandler.createError('INTERNAL_ERROR');
+    
+    error = appError.message;
 
     // Create audit trail for failed execution
     await ctx.prisma.auditTrail.create({

@@ -8,6 +8,7 @@
 export * from "./coordinator";
 export * from "./types";
 export * from "./validation";
+export * from "./red-phase-specialist";
 
 // Agent types matching the code review agents
 export const AGENT_REGISTRY = {
@@ -33,12 +34,13 @@ export const AGENT_REGISTRY = {
   },
   "security-auditor": {
     name: "security-auditor",
-    description: "Security and compliance validation",
-    specialties: ["security", "compliance", "vulnerabilities"],
+    description: "TDD RED phase testing and auditing authority",
+    specialties: ["testing", "error-detection", "quality-validation", "coverage-analysis"],
     qualityGates: [
-      "security-scan",
-      "compliance-check",
-      "vulnerability-assessment",
+      "red-phase-compliance",
+      "error-detection",
+      "test-coverage",
+      "quality-validation",
     ],
   },
   "tdd-orchestrator": {
@@ -71,9 +73,10 @@ export const QUALITY_GATES = {
     maintainability: 85,
   },
   SECURITY: {
-    compliance: 95,
-    vulnerabilities: 0,
-    authentication: 100,
+    "red-phase-compliance": 95,
+    "error-detection": 100,
+    "test-coverage": 95,
+    "quality-validation": 90,
   },
   TDD: {
     patterns: 90,

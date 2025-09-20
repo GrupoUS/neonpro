@@ -14,6 +14,7 @@
 import { Context, Next } from 'hono';
 import { HTTPException } from 'hono/http-exception';
 import * as v from 'valibot';
+import { logger } from '../utils/secure-logger';
 
 // Error severity levels
 export enum ErrorSeverity {
@@ -150,19 +151,19 @@ class ErrorLogger {
       stack: this.config.includeStack ? error.stack : undefined,
     };
 
-    // Console logging based on severity
+    // Secure logging based on severity
     switch (error.severity) {
       case ErrorSeverity.CRITICAL:
-        console.error('🚨 CRITICAL ERROR:', logEntry);
+        logger.error('CRITICAL ERROR', logEntry, { severity: 'critical', component: 'error-handler' });
         break;
       case ErrorSeverity.HIGH:
-        console.error('❌ HIGH SEVERITY ERROR:', logEntry);
+        logger.error('HIGH SEVERITY ERROR', logEntry, { severity: 'high', component: 'error-handler' });
         break;
       case ErrorSeverity.MEDIUM:
-        console.warn('⚠️ MEDIUM SEVERITY ERROR:', logEntry);
+        logger.warn('MEDIUM SEVERITY ERROR', logEntry, { severity: 'medium', component: 'error-handler' });
         break;
       case ErrorSeverity.LOW:
-        console.info('ℹ️ LOW SEVERITY ERROR:', logEntry);
+        logger.info('LOW SEVERITY ERROR', logEntry, { severity: 'low', component: 'error-handler' });
         break;
     }
 
@@ -221,9 +222,9 @@ class ErrorLogger {
         },
       };
 
-      console.log('Audit trail logged:', auditEntry);
+      logger.info('Audit trail logged', { auditEntry });
     } catch (auditError) {
-      console.error('Failed to log to audit trail:', auditError);
+      logger.error('Failed to log to audit trail', auditError);
     }
   }
 
@@ -239,9 +240,9 @@ class ErrorLogger {
         timestamp: error.context.timestamp,
       };
 
-      console.log('Performance metrics recorded:', metrics);
+      logger.info('Performance metrics recorded', { metrics });
     } catch (metricsError) {
-      console.error('Failed to record performance metrics:', metricsError);
+      logger.error('Failed to record performance metrics', metricsError);
     }
   }
 }

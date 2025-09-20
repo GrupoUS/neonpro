@@ -13,6 +13,7 @@ import {
   type AppointmentReminder,
   whatsappReminderService,
 } from '../../../../services/whatsapp-reminder-service';
+import { logger } from '@/utils/secure-logger';
 
 // Configure for edge runtime
 export const runtime = 'edge';
@@ -136,7 +137,7 @@ export async function POST(request: NextRequest) {
       },
     );
   } catch (error) {
-    console.error('Reminder send error:', error);
+    logger.error('Reminder send error', error);
 
     const processingTime = Date.now() - startTime;
 
@@ -254,7 +255,7 @@ export async function PUT(request: NextRequest) {
       },
     );
   } catch (error) {
-    console.error('Bulk reminder send error:', error);
+    logger.error('Bulk reminder send error', error);
 
     const processingTime = Date.now() - startTime;
 
@@ -333,7 +334,7 @@ export async function GET(request: NextRequest) {
       },
     );
   } catch (error) {
-    console.error('Get reminder status error:', error);
+    logger.error('Get reminder status error', error);
 
     const processingTime = Date.now() - startTime;
 

@@ -11,13 +11,29 @@
  * The endpoint /api/financial/trends does NOT exist yet
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll, afterEach, afterAll } from "vitest";
 import type {
   FinancialMetrics,
   MonetaryValue,
   Currency,
   Period,
 } from "@/types/financial";
+import { server } from '../mocks/server';
+
+// Setup MSW server
+beforeAll(() => {
+  console.log('📡 Starting MSW server for financial trends tests...');
+  server.listen({ onUnhandledRequest: 'error' });
+  console.log('✅ MSW server started');
+});
+
+afterEach(() => {
+  server.resetHandlers();
+});
+
+afterAll(() => {
+  server.close();
+});
 
 describe("Contract: Financial Trends API", () => {
   describe("GET /api/financial/trends", () => {
@@ -26,7 +42,13 @@ describe("Contract: Financial Trends API", () => {
 
       // ACT: Call real endpoint for MRR trends
       const response = await fetch(
-        "/api/financial/trends?metric=mrr&period=12_months",
+        "http://localhost:3000/api/financial/trends?metric=mrr&period=12_months",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        }
       );
 
       // ASSERT: Should return MRR trend data
@@ -56,7 +78,13 @@ describe("Contract: Financial Trends API", () => {
 
       // ACT: Call real endpoint for ARR growth with forecast
       const response = await fetch(
-        "/api/financial/trends?metric=arr&period=24_months&include_forecast=true",
+        "http://localhost:3000/api/financial/trends?metric=arr&period=24_months&include_forecast=true",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        }
       );
 
       // ASSERT: Should return ARR trend with forecast
@@ -83,7 +111,13 @@ describe("Contract: Financial Trends API", () => {
 
       // ACT: Call real endpoint for churn trends
       const response = await fetch(
-        "/api/financial/trends?metric=churn&period=18_months&analysis=detailed",
+        "http://localhost:3000/api/financial/trends?metric=churn&period=18_months&analysis=detailed",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        }
       );
 
       // ASSERT: Should return churn trend analysis
@@ -108,7 +142,13 @@ describe("Contract: Financial Trends API", () => {
 
       // ACT: Call real endpoint for chart data
       const response = await fetch(
-        "/api/financial/trends?metric=revenue&period=6_months&format=chart_data",
+        "http://localhost:3000/api/financial/trends?metric=revenue&period=6_months&format=chart_data",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        }
       );
 
       // ASSERT: Should return chart-ready data
@@ -136,7 +176,13 @@ describe("Contract: Financial Trends API", () => {
 
       // ACT: Call real endpoint for metrics comparison
       const response = await fetch(
-        "/api/financial/trends?metrics=mrr,arr,churn&period=12_months&compare=true",
+        "http://localhost:3000/api/financial/trends?metrics=mrr,arr,churn&period=12_months&compare=true",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        }
       );
 
       // ASSERT: Should return comparison data
@@ -169,7 +215,13 @@ describe("Contract: Financial Trends API", () => {
 
       // ACT: Call real endpoint with anomaly detection
       const response = await fetch(
-        "/api/financial/trends?metric=revenue&period=24_months&detect_anomalies=true",
+        "http://localhost:3000/api/financial/trends?metric=revenue&period=24_months&detect_anomalies=true",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        }
       );
 
       // ASSERT: Should return anomaly detection results
@@ -200,7 +252,13 @@ describe("Contract: Financial Trends API", () => {
 
       // ACT: Call real endpoint for seasonal analysis
       const response = await fetch(
-        "/api/financial/trends?metric=revenue&period=36_months&analyze_seasonality=true",
+        "http://localhost:3000/api/financial/trends?metric=revenue&period=36_months&analyze_seasonality=true",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        }
       );
 
       // ASSERT: Should return seasonal analysis
@@ -228,7 +286,13 @@ describe("Contract: Financial Trends API", () => {
 
       // ACT: Call real endpoint with specific calculation method
       const response = await fetch(
-        "/api/financial/trends?metric=growth&period=12_months&method=linear_regression",
+        "http://localhost:3000/api/financial/trends?metric=growth&period=12_months&method=linear_regression",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        }
       );
 
       // ASSERT: Should return trend with calculation metadata
@@ -252,7 +316,13 @@ describe("Contract: Financial Trends API", () => {
 
       // ACT: Call endpoint with invalid metric
       const response = await fetch(
-        "/api/financial/trends?metric=invalid_metric&period=12_months",
+        "http://localhost:3000/api/financial/trends?metric=invalid_metric&period=12_months",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        }
       );
 
       // ASSERT: Should return validation error
@@ -275,7 +345,13 @@ describe("Contract: Financial Trends API", () => {
 
       // ACT: Call endpoint with period requiring more data than available
       const response = await fetch(
-        "/api/financial/trends?metric=mrr&period=60_months&min_data_points=50",
+        "http://localhost:3000/api/financial/trends?metric=mrr&period=60_months&min_data_points=50",
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer test-token",
+          },
+        }
       );
 
       // ASSERT: Should handle insufficient data gracefully

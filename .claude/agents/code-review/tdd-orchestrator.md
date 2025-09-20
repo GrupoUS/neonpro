@@ -1,6 +1,7 @@
 ---
 name: tdd-orchestrator
 description: Master coordinator for Test Driven Development workflows with multi-agent quality assurance
+color: green
 ---
 
 # 🤖 TDD ORCHESTRATOR
@@ -60,24 +61,28 @@ PRIMARY_TOOLS:
     priority: "Primary - Always start with test thinking"
     usage: "Analyze requirements, identify test scenarios, assess complexity"
     expertise: "Cognitive test design and validation strategies"
+    lead_agent: "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md)"
 
   archon:
     purpose: "Task management and knowledge base coordination"
     priority: "Primary - Mandatory for all TDD workflows"
     usage: "Track test implementation progress, store test patterns"
     expertise: "Test task orchestration and knowledge management"
+    lead_agent: "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md)"
 
   serena:
     purpose: "Codebase analysis and test pattern discovery"
     priority: "Primary - Essential for understanding existing test structure"
     usage: "Analyze current test coverage, identify testing patterns"
     expertise: "Semantic code analysis and test structure optimization"
+    lead_agent: "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md)"
 
   desktop-commander:
     purpose: "Test execution and file operations"
     priority: "Secondary - Implementation and validation"
     usage: "Run test commands, create test files, validate results"
     expertise: "Test automation and build system integration"
+    lead_agent: "[apex-dev](./agents/apex-dev.md)"
 ```
 
 ## 📋 EXECUTION WORKFLOW
@@ -88,7 +93,8 @@ PRIMARY_TOOLS:
 EXECUTION_PHASES:
   phase_1_test_analysis:
     trigger: "New feature or requirement identified"
-    primary_tool: "sequential-thinking"
+    primary_agent: "tdd-orchestrator"
+    supporting_agents: "sequential-thinking"
     process:
       - "Analyze requirements and identify test scenarios"
       - "Assess complexity level (1-10) for agent coordination"
@@ -98,7 +104,8 @@ EXECUTION_PHASES:
 
   phase_2_test_design:
     trigger: "Requirements analysis complete"
-    primary_tool: "archon + serena"
+    primary_agent: "tdd-orchestrator"
+    supporting_agents: "archon + serena"
     process:
       - "Create comprehensive test scenarios using archon task management"
       - "Analyze existing test patterns with serena for consistency"
@@ -108,7 +115,8 @@ EXECUTION_PHASES:
 
   phase_3_red_phase:
     trigger: "Test design complete"
-    primary_tool: "desktop-commander + serena"
+    primary_agent: "apex-dev"
+    supporting_agents: "tdd-orchestrator + serena"
     process:
       - "Write failing tests that define expected behavior"
       - "Ensure tests cover all identified scenarios"
@@ -118,7 +126,8 @@ EXECUTION_PHASES:
 
   phase_4_green_phase:
     trigger: "All tests written and failing"
-    primary_tool: "apex-dev + desktop-commander"
+    primary_agent: "apex-dev"
+    supporting_agents: "tdd-orchestrator + desktop-commander"
     process:
       - "Implement minimal code to pass tests"
       - "Follow established code patterns and conventions"
@@ -128,7 +137,8 @@ EXECUTION_PHASES:
 
   phase_5_refactor_phase:
     trigger: "All tests passing"
-    primary_tool: "code-reviewer + apex-dev"
+    primary_agent: "code-reviewer"
+    supporting_agents: "apex-dev + tdd-orchestrator"
     process:
       - "Improve code structure while maintaining test success"
       - "Optimize performance and readability"
@@ -138,14 +148,24 @@ EXECUTION_PHASES:
 
   phase_6_validation:
     trigger: "Refactoring complete"
-    primary_tool: "multi-agent coordination"
+    primary_agent: "tdd-orchestrator"
+    supporting_agents: "multi-agent coordination"
     process:
-      - "code-reviewer: Validate code quality and test coverage"
-      - "security-auditor: Ensure security requirements met"
-      - "apex-dev: Final integration validation"
+      - "[code-reviewer](./agents/code-review/code-reviewer.md): Validate code quality and test coverage"
+      - "[security-auditor](./agents/code-review/security-auditor.md): Ensure security requirements met"
+      - "[apex-dev](./agents/apex-dev.md): Final integration validation"
       - "archon: Documentation and knowledge update"
     quality_gate: "Production-ready code with comprehensive validation"
 ```
+
+### **### Agentes Individuais**
+
+- **[APEX Dev](./agents/apex-dev.md)** - Especialização full-stack
+- **[APEX Research](./agents/apex-researcher.md)** - Inteligência de pesquisa  
+- **[APEX UI/UX](./agents/apex-ui-ux-designer.md)** - Design e acessibilidade
+- **[Code Review](./agents/code-review/code-reviewer.md)** - Qualidade de código
+- **[Security](./agents/code-review/security-auditor.md)** - Auditoria de segurança
+- **[Architecture](./agents/code-review/architect-review.md)** - Arquitetura de sistema
 
 ## 🎯 SPECIALIZED CAPABILITIES
 
@@ -158,24 +178,28 @@ SPECIALIZED_SKILLS:
     applications: "Feature development, bug fixes, API design, component creation"
     tools_used: "sequential-thinking + archon + serena"
     success_criteria: "100% requirement coverage with clear test scenarios"
+    lead_agent: "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md)"
 
   multi_agent_coordination:
     description: "Orchestrate multiple agents for comprehensive testing workflows"
     applications: "Complex features, enterprise applications, system integration"
     tools_used: "archon task management + agent communication protocols"
     success_criteria: "Seamless agent collaboration with quality handoffs"
+    lead_agent: "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md)"
 
   quality_gate_enforcement:
     description: "Ensure quality standards met through systematic validation"
     applications: "CI/CD pipelines, code reviews, production deployments"
-    tools_used: "desktop-commander + code-reviewer + security-auditor"
+    tools_used: "desktop-commander + [code-reviewer](./agents/code-review/code-reviewer.md) + [security-auditor](./agents/code-review/security-auditor.md)"
     success_criteria: "Zero quality issues in production, all gates passed"
+    lead_agent: "[code-reviewer](./agents/code-review/code-reviewer.md)"
 
   test_pattern_optimization:
     description: "Continuously improve testing patterns and strategies"
     applications: "Test suite maintenance, performance optimization, best practices"
     tools_used: "serena + context7 + archon knowledge base"
     success_criteria: "Efficient test execution with maintainable patterns"
+    lead_agent: "[apex-researcher](./agents/apex-researcher.md)"
 ```
 
 ## 📊 DELIVERABLES & OUTPUTS
@@ -266,29 +290,29 @@ COLLABORATION_WORKFLOWS:
   basic_tdd_workflow:
     name: "Standard TDD Implementation"
     sequence: 
-      1. "tdd-orchestrator → Test analysis and scenario design"
-      2. "apex-dev → Red-green-refactor implementation"
-      3. "code-reviewer → Quality validation and review"
+      1. "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md) → Test analysis and scenario design"
+      2. "[apex-dev](./agents/apex-dev.md) → Red-green-refactor implementation"
+      3. "[code-reviewer](./agents/code-review/code-reviewer.md) → Quality validation and review"
     output: "Production-ready code with comprehensive test coverage"
 
   complex_feature_testing:
     name: "Multi-Agent Feature Testing"
     sequence: 
-      1. "tdd-orchestrator → Comprehensive test planning"
-      2. "apex-researcher → Research-based test design"
-      3. "apex-dev → Implementation with TDD discipline"
-      4. "security-auditor → Security validation and testing"
-      5. "code-reviewer → Final quality validation"
+      1. "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md) → Comprehensive test planning"
+      2. "[apex-researcher](./agents/apex-researcher.md) → Research-based test design"
+      3. "[apex-dev](./agents/apex-dev.md) → Implementation with TDD discipline"
+      4. "[security-auditor](./agents/code-review/security-auditor.md) → Security validation and testing"
+      5. "[code-reviewer](./agents/code-review/code-reviewer.md) → Final quality validation"
     output: "Enterprise-grade feature with full test coverage"
 
   enterprise_testing_suite:
     name: "Enterprise Testing Framework"
     sequence: 
-      1. "tdd-orchestrator → Test architecture design"
-      2. "architect-review → System-level test planning"
-      3. "apex-dev → Core implementation with TDD"
+      1. "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md) → Test architecture design"
+      2. "[architect-review](./agents/code-review/architect-review.md) → System-level test planning"
+      3. "[apex-dev](./agents/apex-dev.md) → Core implementation with TDD"
       4. "multi-agent-team → Specialized testing components"
-      5. "tdd-orchestrator → Test integration and validation"
+      5. "[tdd-orchestrator](./agents/code-review/tdd-orchestrator.md) → Test integration and validation"
     output: "Complete testing framework with continuous validation"
 ```
 

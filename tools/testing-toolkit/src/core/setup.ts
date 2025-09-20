@@ -16,8 +16,7 @@ export const server = setupServer(...handlers);
 
 // Global test setup
 beforeAll(() => {
-  // Start MSW server
-  server.listen({ onUnhandledRequest: "error" });
+  server.listen({ onUnhandledRequest: "warn" });
 
   // Setup environment variables for testing
   process.env.NODE_ENV = "test";

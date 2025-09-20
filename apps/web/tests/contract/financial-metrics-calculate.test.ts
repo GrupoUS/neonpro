@@ -11,13 +11,29 @@
  * The endpoint /api/financial/metrics/calculate does NOT exist yet
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, beforeAll, afterEach, afterAll } from "vitest";
 import type {
   FinancialMetrics,
   MonetaryValue,
   Currency,
   Period,
 } from "@/types/financial";
+import { server } from '../mocks/server';
+
+// Setup MSW server
+beforeAll(() => {
+  console.log('📡 Starting MSW server for financial metrics calculate tests...');
+  server.listen({ onUnhandledRequest: 'error' });
+  console.log('✅ MSW server started');
+});
+
+afterEach(() => {
+  server.resetHandlers();
+});
+
+afterAll(() => {
+  server.close();
+});
 
 describe("Contract: Financial Metrics Calculate API", () => {
   describe("POST /api/financial/metrics/calculate", () => {
@@ -35,10 +51,11 @@ describe("Contract: Financial Metrics Calculate API", () => {
       };
 
       // ACT: Call real endpoint with calculation request
-      const response = await fetch("/api/financial/metrics/calculate", {
-        method: "POST",
+      const response = await fetch('http://localhost:3000/api/financial/metrics/calculate', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer valid-test-token'
         },
         body: JSON.stringify(requestBody),
       });
@@ -71,10 +88,11 @@ describe("Contract: Financial Metrics Calculate API", () => {
       };
 
       // ACT: Call endpoint with invalid request
-      const response = await fetch("/api/financial/metrics/calculate", {
+      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": "Bearer valid-test-token",
         },
         body: JSON.stringify(invalidRequestBody),
       });
@@ -105,10 +123,11 @@ describe("Contract: Financial Metrics Calculate API", () => {
       };
 
       // ACT: Call endpoint for real-time calculation
-      const response = await fetch("/api/financial/metrics/calculate", {
+      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": "Bearer valid-test-token",
         },
         body: JSON.stringify(requestBody),
       });
@@ -154,10 +173,11 @@ describe("Contract: Financial Metrics Calculate API", () => {
       };
 
       // ACT: Call endpoint for bulk calculations
-      const response = await fetch("/api/financial/metrics/calculate", {
+      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": "Bearer valid-test-token",
         },
         body: JSON.stringify(requestBody),
       });
@@ -195,10 +215,11 @@ describe("Contract: Financial Metrics Calculate API", () => {
       };
 
       // ACT: Call endpoint with potentially long calculation
-      const response = await fetch("/api/financial/metrics/calculate", {
+      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": "Bearer valid-test-token",
         },
         body: JSON.stringify(requestBody),
       });
@@ -232,10 +253,11 @@ describe("Contract: Financial Metrics Calculate API", () => {
       };
 
       // ACT: Call endpoint with performance monitoring
-      const response = await fetch("/api/financial/metrics/calculate", {
+      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": "Bearer valid-test-token",
         },
         body: JSON.stringify(requestBody),
       });
@@ -260,10 +282,11 @@ describe("Contract: Financial Metrics Calculate API", () => {
       };
 
       // ACT: Call endpoint with missing required fields
-      const response = await fetch("/api/financial/metrics/calculate", {
+      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": "Bearer valid-test-token",
         },
         body: JSON.stringify(invalidRequestBody),
       });
@@ -296,10 +319,11 @@ describe("Contract: Financial Metrics Calculate API", () => {
       };
 
       // ACT: Call endpoint with test data
-      const response = await fetch("/api/financial/metrics/calculate", {
+      const response = await fetch("http://localhost:3000/api/financial/metrics/calculate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": "Bearer valid-test-token",
         },
         body: JSON.stringify(requestBody),
       });

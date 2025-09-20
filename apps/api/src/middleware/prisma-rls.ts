@@ -16,6 +16,7 @@ import {
   UnauthorizedHealthcareAccessError,
 } from '../clients/prisma';
 import { healthcareRLS } from '../clients/supabase.js';
+import { logger } from '@/utils/secure-logger';
 
 // Middleware configuration options
 interface PrismaRLSOptions {
@@ -204,7 +205,7 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
             },
           );
         } catch (auditError) {
-          console.error('Audit logging failed:', auditError);
+          logger.error('Audit logging failed', auditError);
           // Don't fail the request if audit logging fails
         }
       }
@@ -212,7 +213,7 @@ export function prismaRLSMiddleware(options: PrismaRLSOptions = {}) {
       // Continue to next middleware/handler
       await next();
     } catch (error) {
-      console.error('Prisma RLS middleware error:', error);
+      logger.error('Prisma RLS middleware error', error);
 
       // Handle specific healthcare compliance errors
       if (error instanceof HealthcareComplianceError) {

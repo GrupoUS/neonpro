@@ -133,341 +133,10 @@ export const handlers = [
     });
   }),
 
-  // Financial Metrics API
-  http.get('/api/financial/metrics', ({ request }) => {
-    const url = new URL(request.url);
-    const period = url.searchParams.get('period') || '30d';
-    const date = url.searchParams.get('date');
-    const metrics = url.searchParams.get('metrics')?.split(',') || [];
+  
 
-    // Handle validation errors FIRST (before auth check)
-    if (date === 'invalid-date') {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'INVALID_DATE_FORMAT',
-          message: 'Data em formato de data inválido',
-          field: 'date'
-        }
-      }, { status: 400 });
-    }
-
-    if (period === 'invalid') {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid period parameter',
-          details: 'Period must be one of: 7d, 30d, 90d, 1y',
-          field: 'period',
-          requestId: 'req-' + Math.random().toString(36).substr(2, 9)
-        }
-      }, { status: 400 });
-    }
-
-    // Handle authentication errors AFTER validation - no authorization header
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'UNAUTHORIZED',
-          message: 'Authentication required'
-        }
-      }, { status: 401 });
-    }
-
-    // Handle invalid token
-    if (authHeader === 'Bearer invalid-token') {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'UNAUTHORIZED', 
-          message: 'Invalid token'
-        }
-      }, { status: 401 });
-    }
-
-    // Handle server errors
-    if (request.url.includes('/invalid')) {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'INTERNAL_SERVER_ERROR',
-          message: 'Internal server error',
-          requestId: 'req-' + Math.random().toString(36).substr(2, 9)
-        }
-      }, { status: 500 });
-    }
-
-    return HttpResponse.json({
-      success: true,
-      data: {
-        id: 'metrics-001',
-        period: {
-          start: '2024-01-01',
-          end: '2024-01-31',
-          type: period
-        },
-        kpis: {
-          revenue: {
-            amount: 125000,
-            currency: 'BRL',
-            formatted: 'R$ 125.000,00',
-            growth: 12.5,
-            trend: 'up'
-          },
-          profit: {
-            amount: 40000,
-            currency: 'BRL',
-            formatted: 'R$ 40.000,00',
-            margin: 32,
-            trend: 'up'
-          },
-          costs: {
-            amount: 85000,
-            currency: 'BRL',
-            formatted: 'R$ 85.000,00',
-            growth: 8.2,
-            trend: 'up'
-          },
-          efficiency: {
-            score: 85,
-            percentile: 92,
-            trend: 'stable'
-          }
-        },
-        details: {
-          totalRevenue: 125000,
-          totalExpenses: 85000,
-          netProfit: 40000,
-          grossMargin: 68,
-          netMargin: 32,
-          operatingMargin: 35,
-          ebitda: 48000,
-          cashFlow: 35000,
-          burnRate: 12000,
-          runway: 24
-        },
-        breakdown: {
-          revenueBySource: [
-            { source: 'Consultas', amount: 75000, percentage: 60 },
-            { source: 'Procedimentos', amount: 35000, percentage: 28 },
-            { source: 'Exames', amount: 15000, percentage: 12 }
-          ],
-          expensesByCategory: [
-            { category: 'Pessoal', amount: 45000, percentage: 53 },
-            { category: 'Infraestrutura', amount: 25000, percentage: 29 },
-            { category: 'Marketing', amount: 10000, percentage: 12 },
-            { category: 'Outros', amount: 5000, percentage: 6 }
-          ]
-        }
-      },
-      meta: {
-        lastUpdated: new Date().toISOString(),
-        period,
-        currency: 'BRL',
-        lgpdCompliant: true,
-        dataAnonymized: true
-      }
-    }, {
-      headers: {
-        'Cache-Control': 'max-age=300'
-      }
-    });
-  }),
-
-  // Financial Trends API
-  http.get('/api/financial/trends', ({ request }) => {
-    const url = new URL(request.url);
-    const period = url.searchParams.get('period') || '12m';
-    const metric = url.searchParams.get('metric') || 'revenue';
-
-    // Handle validation errors FIRST (before auth check)
-    if (metric === 'invalid') {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid metric parameter',
-          details: 'Metric must be one of: revenue, expenses, profit, arr, mrr',
-          field: 'metric',
-          requestId: 'req-' + Math.random().toString(36).substr(2, 9)
-        }
-      }, { status: 400 });
-    }
-
-    if (period === 'invalid') {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'VALIDATION_ERROR',
-          message: 'Invalid period parameter',
-          details: 'Period must be one of: 7d, 30d, 90d, 12m',
-          field: 'period',
-          requestId: 'req-' + Math.random().toString(36).substr(2, 9)
-        }
-      }, { status: 400 });
-    }
-
-    // Handle authentication errors AFTER validation - no authorization header
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader) {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'UNAUTHORIZED',
-          message: 'Authentication required'
-        }
-      }, { status: 401 });
-    }
-
-    // Handle invalid token
-    if (authHeader === 'Bearer invalid-token') {
-      return HttpResponse.json({
-        success: false,
-        error: {
-          code: 'UNAUTHORIZED', 
-          message: 'Invalid token'
-        }
-      }, { status: 401 });
-    }
-
-    return HttpResponse.json({
-      success: true,
-      data: {
-        id: 'trends-001',
-        period: {
-          start: '2023-01-01',
-          end: '2024-01-31',
-          type: period
-        },
-        series: [
-          {
-            name: 'Revenue',
-            data: [
-              { period: '2023-01', value: 35000 },
-              { period: '2023-02', value: 38000 },
-              { period: '2023-03', value: 41000 },
-              { period: '2023-04', value: 39500 },
-              { period: '2023-05', value: 44000 },
-              { period: '2023-06', value: 42000 },
-              { period: '2023-07', value: 45000 },
-              { period: '2023-08', value: 47000 },
-              { period: '2023-09', value: 49000 },
-              { period: '2023-10', value: 51000 },
-              { period: '2023-11', value: 48000 },
-              { period: '2023-12', value: 52000 }
-            ]
-          },
-          {
-            name: 'Expenses',
-            data: [
-              { period: '2023-01', value: 28000 },
-              { period: '2023-02', value: 29500 },
-              { period: '2023-03', value: 27800 },
-              { period: '2023-04', value: 31000 },
-              { period: '2023-05', value: 30200 },
-              { period: '2023-06', value: 32000 },
-              { period: '2023-07', value: 33500 },
-              { period: '2023-08', value: 34000 },
-              { period: '2023-09', value: 35200 },
-              { period: '2023-10', value: 36000 },
-              { period: '2023-11', value: 34800 },
-              { period: '2023-12', value: 37000 }
-            ]
-          }
-        ],
-        insights: {
-          growth: {
-            revenue: 12.5,
-            expenses: 8.2,
-            profit: 18.7
-          },
-          volatility: {
-            revenue: 0.15,
-            expenses: 0.08
-          },
-          seasonality: {
-            peak: 'December',
-            low: 'March'
-          }
-        }
-      },
-      meta: {
-        lastUpdated: new Date().toISOString(),
-        period,
-        metric,
-        currency: 'BRL'
-      }
-    });
-  }),
-  // Financial Dashboard API
-  http.get('/api/financial/dashboard', ({ request }) => {
-    const url = new URL(request.url);
-    const timeframe = url.searchParams.get('timeframe') || '30d';
-    const includeProjections = url.searchParams.get('includeProjections') === 'true';
-
-    return HttpResponse.json({
-      success: true,
-      data: {
-        summary: {
-          totalRevenue: 125000,
-          totalExpenses: 85000,
-          netProfit: 40000,
-          profitMargin: 32,
-          revenueGrowth: 12.5,
-          expenseGrowth: 8.2
-        },
-        metrics: {
-          monthlyRecurringRevenue: 42000,
-          averageOrderValue: 350,
-          customerLifetimeValue: 2800,
-          costPerAcquisition: 120,
-          churnRate: 3.2,
-          retentionRate: 96.8
-        },
-        trends: {
-          revenue: [
-            { month: 'Jan', value: 38000 },
-            { month: 'Feb', value: 41000 },
-            { month: 'Mar', value: 39500 },
-            { month: 'Apr', value: 44000 },
-            { month: 'May', value: 42000 },
-            { month: 'Jun', value: 45000 }
-          ],
-          expenses: [
-            { month: 'Jan', value: 28000 },
-            { month: 'Feb', value: 29500 },
-            { month: 'Mar', value: 27800 },
-            { month: 'Apr', value: 31000 },
-            { month: 'May', value: 30200 },
-            { month: 'Jun', value: 32000 }
-          ]
-        },
-        projections: includeProjections ? {
-          nextMonth: {
-            revenue: 47000,
-            expenses: 33000,
-            profit: 14000
-          },
-          nextQuarter: {
-            revenue: 142000,
-            expenses: 98000,
-            profit: 44000
-          }
-        } : null
-      },
-      meta: {
-        lastUpdated: new Date().toISOString(),
-        timeframe,
-        currency: 'BRL',
-        lgpdCompliant: true,
-        dataAnonymized: false,
-        consentStatus: 'granted'
-      }
-    });
-  }),
+  
+  
 
   // Financial Metrics API
   http.get('/api/financial/metrics', ({ request }) => {
@@ -622,7 +291,38 @@ export const handlers = [
       }, { status: 401 });
     }
 
-    // Handle validation errors
+    // Check for bulk calculation first
+    const isBulkCalculation = body.calculations && Array.isArray(body.calculations);
+    const isRealTime = body.realTime === true;
+    
+    if (isBulkCalculation) {
+      // Return bulk calculation response
+      return HttpResponse.json({
+        success: true,
+        data: {
+          calculations: body.calculations.map((calc: any, index: number) => ({
+            period: calc.period,
+            metrics: {
+              mrr: { amount: 40000 + (index * 1000), currency: 'BRL' },
+              churn: { amount: 2.5 - (index * 0.1), unit: 'percent' }
+            }
+          })),
+          comparison: {
+            trends: {
+              mrr: 'increasing',
+              churn: 'decreasing'
+            }
+          }
+        },
+        meta: {
+          calculatedAt: new Date().toISOString(),
+          metrics: body.calculations.map((c: any) => c.metrics).flat(),
+          bulkCalculation: true
+        }
+      });
+    }
+
+    // Handle validation errors for single calculation requests
     if (!body.period) {
       return HttpResponse.json({
         success: false,
@@ -671,14 +371,11 @@ export const handlers = [
         success: false,
         error: {
           code: 'CALCULATION_TIMEOUT',
-          message: 'Request exceeded maximum processing time',
+          message: 'Request exceeded maximum processing timeout',
           timeout: body.timeout
         }
       }, { status: 408 });
     }
-
-    const isBulkCalculation = body.calculations && Array.isArray(body.calculations);
-    const isRealTime = body.realTime === true;
     
     return HttpResponse.json({
       success: true,
@@ -708,19 +405,6 @@ export const handlers = [
           calculatedAt: new Date().toISOString(),
           executionTime: body.timeout ? Math.min(body.timeout - 100, 4900) : 156
         },
-        calculations: isBulkCalculation ? body.calculations.map((calc: any, index: number) => ({
-          period: calc.period,
-          metrics: {
-            mrr: { amount: 40000 + (index * 1000), currency: 'BRL' },
-            churn: { amount: 2.5 - (index * 0.1), unit: 'percent' }
-          }
-        })) : undefined,
-        comparison: isBulkCalculation ? {
-          trends: {
-            mrr: 'increasing',
-            churn: 'decreasing'
-          }
-        } : undefined,
         performance: body.includePerformance ? {
           executionTime: body.timeout ? Math.min(body.timeout - 100, 4900) : 156,
           memoryUsage: 42.8,
@@ -731,6 +415,180 @@ export const handlers = [
         calculatedAt: new Date().toISOString(),
         metrics: body.metrics,
         realTime: isRealTime
+      }
+    });
+  }),
+
+  // Financial Trends API
+  http.get('http://localhost:3000/api/financial/trends', ({ request }) => {
+    const url = new URL(request.url);
+    const metric = url.searchParams.get('metric');
+    const period = url.searchParams.get('period');
+    const includeeForecast = url.searchParams.get('include_forecast') === 'true';
+    const analysis = url.searchParams.get('analysis');
+    const format = url.searchParams.get('format');
+    const metrics = url.searchParams.get('metrics');
+    const compare = url.searchParams.get('compare') === 'true';
+    const detectAnomalies = url.searchParams.get('detect_anomalies') === 'true';
+    const analyzeSeasonality = url.searchParams.get('analyze_seasonality') === 'true';
+    const method = url.searchParams.get('method');
+    const minDataPoints = url.searchParams.get('min_data_points');
+
+    // Handle authentication errors
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader) {
+      return HttpResponse.json({
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: 'Authentication required'
+        }
+      }, { status: 401 });
+    }
+
+    // Handle invalid metrics
+    if (metric === 'invalid_metric') {
+      return HttpResponse.json({
+        success: false,
+        error: {
+          code: 'INVALID_METRIC',
+          message: 'Invalid metric specified',
+          validMetrics: ['mrr', 'arr', 'churn', 'revenue', 'growth']
+        }
+      }, { status: 400 });
+    }
+
+    // Handle insufficient data scenarios
+    if (minDataPoints && parseInt(minDataPoints) > 24) {
+      return HttpResponse.json({
+        success: false,
+        error: {
+          code: 'INSUFFICIENT_DATA',
+          message: 'Insufficient data points for requested analysis',
+          details: {
+            requested: parseInt(minDataPoints),
+            available: 24
+          }
+        }
+      }, { status: 400 });
+    }
+
+    // Generate mock trend data
+    const dataPoints = Array.from({ length: 12 }, (_, i) => ({
+      date: `2024-${String(i + 1).padStart(2, '0')}-01`,
+      value: 10000 + (i * 1000) + Math.random() * 500,
+      growth: (Math.random() - 0.5) * 20,
+      formattedValue: `R$ ${(10000 + (i * 1000) + Math.random() * 500).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`,
+      ...(detectAnomalies && i === 8 && { anomaly: true, anomalyScore: 0.95 })
+    }));
+
+    return HttpResponse.json({
+      success: true,
+      data: {
+        trend: {
+          metric: metric || 'mrr',
+          period: period || '12_months',
+          dataPoints,
+          summary: {
+            totalGrowth: 24.5,
+            averageGrowth: 2.04,
+            maxValue: Math.max(...dataPoints.map(p => p.value)),
+            minValue: Math.min(...dataPoints.map(p => p.value)),
+            volatility: 12.8
+          },
+          ...(includeeForecast && {
+            forecast: {
+              enabled: true,
+              period: period + '_forecast',
+              confidence: 0.85,
+              dataPoints: Array.from({ length: 6 }, (_, i) => ({
+                date: `2024-${String(i + 13).padStart(2, '0')}-01`,
+                value: 22000 + (i * 1200),
+                confidence: 0.85 - (i * 0.05)
+              })),
+              predictions: Array.from({ length: 6 }, (_, i) => ({
+                date: `2024-${String(i + 13).padStart(2, '0')}-01`,
+                value: 22000 + (i * 1200),
+                confidence: 0.85 - (i * 0.05)
+              })),
+              accuracy: 0.85,
+              model: 'linear_regression'
+            }
+          }),
+          ...(analysis === 'detailed' && {
+            analysis: {
+              type: 'detailed',
+              patterns: ['seasonal', 'growth'],
+              seasonality: 'moderate',
+              averageChurn: 2.5,
+              trendDirection: 'increasing',
+              acceleration: 'stable',
+              correlation: 0.92
+            }
+          }),
+          ...(format === 'chart_data' && {
+            chartData: {
+              type: 'line',
+              xAxis: 'date',
+              yAxis: 'value',
+              color: '#10b981',
+              datasets: [{
+                label: metric || 'Revenue',
+                data: dataPoints.map(p => ({ x: p.date, y: p.value }))
+              }]
+            }
+          }),
+          ...(compare && metrics && {
+            comparison: {
+              metrics: metrics.split(',').map(m => ({
+                metric: m,
+                correlation: Math.random() * 0.8 + 0.2,
+                trend: Math.random() > 0.5 ? 'increasing' : 'decreasing'
+              }))
+            }
+          }),
+          ...(method && {
+            calculationMethod: {
+              method: method,
+              confidence: 0.91,
+              rSquared: 0.88
+            }
+          })
+        },
+        ...(detectAnomalies && {
+          anomalies: {
+            detected: true,
+            count: dataPoints.filter(p => p.anomaly).length,
+            items: dataPoints.filter(p => p.anomaly).map(p => ({
+              date: p.date,
+              value: p.value,
+              score: p.anomalyScore,
+              type: 'outlier'
+            }))
+          }
+        }),
+        ...(analyzeSeasonality && {
+          seasonality: {
+            detected: true,
+            pattern: 'quarterly',
+            strength: 0.73,
+            peaks: ['Q1', 'Q4'],
+            troughs: ['Q2', 'Q3']
+          }
+        }),
+        ...(method && {
+          calculation: {
+            method: method,
+            confidence: 0.91,
+            rSquared: 0.88,
+            accuracy: 'high'
+          }
+        })
+      },
+      meta: {
+        calculatedAt: new Date().toISOString(),
+        dataSource: 'financial_metrics_v2',
+        cacheStatus: 'miss'
       }
     });
   }),

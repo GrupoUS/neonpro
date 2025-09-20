@@ -1,5 +1,6 @@
 // Audit logging helper (Phase 3.4 T031)
 // Thin wrapper over existing audit middleware/services with Supabase toggle.
+import { logger } from '../utils/secure-logger';
 import { createClient } from '@supabase/supabase-js';
 import type { Context, Next } from 'hono';
 
@@ -49,12 +50,12 @@ export function auditLog(eventName: string) {
           return;
         } catch (err) {
           // fall through to console logging
-          console.warn('auditLog supabase insert failed', err);
+          logger.warn('auditLog supabase insert failed', { error: err });
         }
       }
     }
 
     // Fallback to console if DB disabled or failed
-    console.log('AUDIT_EVENT', JSON.stringify(payload));
+    logger.info('AUDIT_EVENT', { payload: JSON.stringify(payload) });
   };
 }

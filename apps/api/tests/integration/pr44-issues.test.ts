@@ -31,13 +31,14 @@ describe('PR #44 Issues - Integration Tests', () => {
 
     it('should validate that bun install works with frozen lockfile', async () => {
       // This test simulates the CI failure scenario
-      const { execSync } = require('child_process')
+      const { execSync } = require('child_process');
+      const path = require('path');
       
       try {
         // This should fail in CI environment
         const result = execSync('bun install --frozen-lockfile', { 
           encoding: 'utf8',
-          cwd: '/home/vibecode/neonpro'
+          cwd: path.resolve(process.cwd())
         })
         // If we get here, the command succeeded (test should fail)
         expect(false).toBe(true)
@@ -51,9 +52,10 @@ describe('PR #44 Issues - Integration Tests', () => {
   describe('Security Vulnerabilities - Hardcoded Credentials', () => {
     it('should detect hardcoded credentials in mock middleware', async () => {
       // Read the crud.ts file to check for hardcoded credentials
-      const fs = require('fs')
+      const fs = require('fs');
+      const path = require('path');
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/routes/v1/ai/crud.ts'), 
         'utf8'
       )
       
@@ -68,7 +70,7 @@ describe('PR #44 Issues - Integration Tests', () => {
     it('should detect mock AI validation implementations', async () => {
       const fs = require('fs')
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'), 
         'utf8'
       )
       
@@ -83,7 +85,7 @@ describe('PR #44 Issues - Integration Tests', () => {
     it('should validate proper authentication middleware usage', async () => {
       const fs = require('fs')
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/routes/v1/ai/crud.ts'), 
         'utf8'
       )
       
@@ -100,7 +102,7 @@ describe('PR #44 Issues - Integration Tests', () => {
     it('should detect auditTrail misuse for state management', async () => {
       const fs = require('fs')
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'), 
         'utf8'
       )
       
@@ -116,7 +118,7 @@ describe('PR #44 Issues - Integration Tests', () => {
       // This test checks if state management is properly implemented
       const fs = require('fs')
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'), 
         'utf8'
       )
       
@@ -131,7 +133,7 @@ describe('PR #44 Issues - Integration Tests', () => {
     it('should detect storage of operation state in JSON blobs', async () => {
       const fs = require('fs')
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'), 
         'utf8'
       )
       
@@ -148,7 +150,7 @@ describe('PR #44 Issues - Integration Tests', () => {
     it('should detect conflicting imports in crud.ts', async () => {
       const fs = require('fs')
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/routes/v1/ai/crud.ts'), 
         'utf8'
       )
       
@@ -163,7 +165,7 @@ describe('PR #44 Issues - Integration Tests', () => {
     it('should validate proper error handling', async () => {
       const fs = require('fs')
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'), 
         'utf8'
       )
       
@@ -179,7 +181,7 @@ describe('PR #44 Issues - Integration Tests', () => {
     it('should detect circular dependencies or redundant imports', async () => {
       const fs = require('fs')
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/routes/v1/ai/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/routes/v1/ai/crud.ts'), 
         'utf8'
       )
       
@@ -250,7 +252,7 @@ describe('PR #44 Issues - Integration Tests', () => {
     it('should detect inadequate data protection', async () => {
       const fs = require('fs')
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'), 
         'utf8'
       )
       
@@ -266,7 +268,7 @@ describe('PR #44 Issues - Integration Tests', () => {
     it('should validate patient data encryption', async () => {
       const fs = require('fs')
       const crudFile = fs.readFileSync(
-        '/home/vibecode/neonpro/apps/api/src/trpc/routers/crud.ts', 
+        path.resolve(process.cwd(), 'apps/api/src/trpc/routers/crud.ts'), 
         'utf8'
       )
       

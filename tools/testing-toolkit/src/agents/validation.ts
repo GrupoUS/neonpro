@@ -184,13 +184,21 @@ export function generateAgentRecommendations(
           break;
 
         case "security-auditor":
-          if (metric === "vulnerabilities") {
+          if (metric === "error-detection") {
             recommendations.push(
-              "Address security vulnerabilities immediately",
+              "Improve error detection and test coverage in RED phase",
             );
-          } else if (metric === "compliance") {
+          } else if (metric === "test-coverage") {
             recommendations.push(
-              "Ensure full healthcare compliance (LGPD, ANVISA, CFM)",
+              "Increase test coverage to meet ≥95% threshold",
+            );
+          } else if (metric === "quality-validation") {
+            recommendations.push(
+              "Enhance test quality validation and maintainability",
+            );
+          } else if (metric === "red-phase-compliance") {
+            recommendations.push(
+              "Ensure full compliance with TDD RED phase requirements",
             );
           }
           break;

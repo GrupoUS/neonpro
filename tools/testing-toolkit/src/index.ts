@@ -30,7 +30,6 @@ export {
   expect,
   it,
   vi,
-  vitest,
 } from "vitest";
 
 export {

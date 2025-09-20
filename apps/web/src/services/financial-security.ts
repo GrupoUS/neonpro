@@ -273,9 +273,25 @@ export class FinancialSecurityService {
    */
   static async encryptData(data: any, dataType: string): Promise<string> {
     try {
-      // In a real implementation, use proper encryption
+      const crypto = await import('crypto');
+      
+      // Generate a random IV for each encryption
+      const iv = crypto.randomBytes(16);
+      const key = crypto.scryptSync(process.env.ENCRYPTION_KEY || 'default-secret-key', 'salt', 32);
+      
+      // Create cipher
+      const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
+      
+      // Encrypt the data
       const jsonString = JSON.stringify(data);
-      const encoded = btoa(jsonString);
+      let encrypted = cipher.update(jsonString, 'utf8', 'hex');
+      encrypted += cipher.final('hex');
+      
+      // Get authentication tag
+      const authTag = cipher.getAuthTag();
+      
+      // Combine IV + encrypted data + auth tag
+      const result = iv.toString('hex') + ':' + encrypted + ':' + authTag.toString('hex');
       
       // Log encryption event
       await this.logSecurityEvent({
@@ -290,7 +306,7 @@ export class FinancialSecurityService {
         metadata: { dataType, size: jsonString.length }
       });
 
-      return encoded;
+      return result;
     } catch (error) {
       console.error('Error encrypting data:', error);
       throw new Error('Data encryption failed');
@@ -302,9 +318,28 @@ export class FinancialSecurityService {
    */
   static async decryptData(encryptedData: string, userId: string): Promise<any> {
     try {
-      // In a real implementation, use proper decryption
-      const jsonString = atob(encryptedData);
-      const data = JSON.parse(jsonString);
+      const crypto = await import('crypto');
+      
+      // Parse the encrypted data
+      const parts = encryptedData.split(':');
+      if (parts.length !== 3) {
+        throw new Error('Invalid encrypted data format');
+      }
+      
+      const iv = Buffer.from(parts[0], 'hex');
+      const encrypted = parts[1];
+      const authTag = Buffer.from(parts[2], 'hex');
+      
+      // Create decipher
+      const key = crypto.scryptSync(process.env.ENCRYPTION_KEY || 'default-secret-key', 'salt', 32);
+      const decipher = crypto.createDecipheriv('aes-256-gcm', key, iv);
+      decipher.setAuthTag(authTag);
+      
+      // Decrypt the data
+      let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+      decrypted += decipher.final('utf8');
+      
+      const data = JSON.parse(decrypted);
 
       // Log decryption event
       await this.logSecurityEvent({
@@ -316,7 +351,7 @@ export class FinancialSecurityService {
         ipAddress: "system",
         userAgent: "decryption-service",
         timestamp: new Date(),
-        metadata: { size: jsonString.length }
+        metadata: { size: decrypted.length }
       });
 
       return data;

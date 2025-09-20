@@ -43,6 +43,7 @@
         "@ai-sdk/openai": "^2.0.13",
         "@hono/node-server": "^1.19.2",
         "@hono/swagger-ui": "^0.4.1",
+        "@hono/trpc-server": "^0.4.0",
         "@hono/zod-openapi": "^0.18.4",
         "@hono/zod-validator": "^0.2.2",
         "@neonpro/security": "0.1.0",
@@ -197,7 +198,7 @@
         "react-dom": "^19.1.1",
         "react-hook-form": "^7.62.0",
         "react-router-dom": "^7.9.1",
-        "recharts": "^2.15.4",
+        "recharts": "^2.12.7",
         "resend": "^6.0.3",
         "sonner": "^2.0.7",
         "stripe": "^18.5.0",
@@ -804,6 +805,8 @@
     "@hono/node-server": ["@hono/node-server@1.19.2", "", { "peerDependencies": { "hono": "^4" } }, "sha512-lndWsd9De/btN998Aiv6gkeMVV2h9Cc0AR0qwFTmxx/YFh/PbrjgoxTpHaNaRn6F4GAkPiVJwI0W0gQF4Wn8EA=="],
 
     "@hono/swagger-ui": ["@hono/swagger-ui@0.4.1", "", { "peerDependencies": { "hono": "*" } }, "sha512-kPaJatHffeYQ3yVkHo878hCqwfapqx54FczJVJ+eRWt8J4biyVVMIdCAJb6MyA8bcnHUoTmUpPc7OJAV1VTg2g=="],
+
+    "@hono/trpc-server": ["@hono/trpc-server@0.4.0", "", { "peerDependencies": { "@trpc/server": "^10.10.0 || >11.0.0-rc", "hono": ">=4.*" } }, "sha512-LGlJfCmNIGMwcknZEIYdujVMs9OkNVazhpOhaz3kTWOXvNL660VOHpvvktosCiJrajyBY1RtIJKQ+IKaQvNuSg=="],
 
     "@hono/zod-openapi": ["@hono/zod-openapi@0.18.4", "", { "dependencies": { "@asteasolutions/zod-to-openapi": "^7.1.0", "@hono/zod-validator": "^0.4.1" }, "peerDependencies": { "hono": ">=4.3.6", "zod": "3.*" } }, "sha512-6NHMHU96Hh32B1yDhb94Z4Z5/POsmEu2AXpWLWcBq9arskRnOMt2752yEoXoADV8WUAc7H1IkNaQHGj1ytXbYw=="],
 

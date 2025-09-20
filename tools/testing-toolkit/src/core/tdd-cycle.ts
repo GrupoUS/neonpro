@@ -6,6 +6,7 @@
  */
 
 import { beforeEach, describe, expect, it } from "vitest";
+import { executeREDPhase } from "../agents/red-phase-specialist";
 
 export interface TDDCycleConfig {
   feature: string;
@@ -34,7 +35,7 @@ export interface TDDPhase {
 export class TDDCycle {
   private config: TDDCycleConfig;
   private currentPhase: TDDPhase | null = null;
-  private testResults: Map<string, boolean> = new Map();
+  private testResults: Map<string, any> = new Map();
 
   constructor(config: TDDCycleConfig) {
     this.config = config;
@@ -46,25 +47,43 @@ export class TDDCycle {
   async redPhase(testDefinition: () => void): Promise<boolean> {
     this.currentPhase = {
       name: "RED",
-      primaryAgent: "tdd-orchestrator",
-      supportAgents: ["architect-review", "security-auditor"],
+      primaryAgent: "security-auditor",
+      supportAgents: ["architect-review", "tdd-orchestrator"],
       qualityGates: [
         "Test patterns compliance ≥95%",
         "Architecture alignment ≥90%",
-        "Security coverage ≥100%",
+        "Error detection ≥100%",
+        "Test coverage ≥95%",
       ],
     };
 
     console.log(`🔴 RED Phase: ${this.config.feature}`);
-    console.log(`Primary Agent: ${this.currentPhase.primaryAgent}`);
+    console.log(`Primary Agent: ${this.currentPhase.primaryAgent} (TDD RED Phase Authority)`);
     console.log(
       `Support Agents: ${this.currentPhase.supportAgents.join(", ")}`,
     );
 
     try {
+      // Execute RED phase with security-auditor leadership
+      console.log("🔍 Security-auditor executing comprehensive RED phase analysis...");
+      const redPhaseResult = await executeREDPhase(this.config.feature, {
+        testCoverageTarget: 95,
+        errorDetectionThreshold: 100,
+        qualityValidationEnabled: true,
+        enableHealthcareCompliance: this.config.compliance?.includes("LGPD") || 
+                                this.config.compliance?.includes("ANVISA") || 
+                                this.config.compliance?.includes("CFM"),
+      });
+
+      if (!redPhaseResult.success) {
+        console.warn("⚠️  RED phase validation issues detected:");
+        redPhaseResult.recommendations.forEach(rec => console.warn(`   - ${rec}`));
+      }
+
       // Execute test definition - should fail initially
       testDefinition();
       this.testResults.set("red-phase", false);
+      this.testResults.set("red-phase-validation", redPhaseResult);
       return false; // Tests should fail in RED phase
     } catch {
       this.testResults.set("red-phase", true);

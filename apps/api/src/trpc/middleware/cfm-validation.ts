@@ -13,6 +13,7 @@
 
 import { TRPCError } from '@trpc/server';
 import { createHash, createVerify } from 'crypto';
+import { HealthcareProfessionalAuthorizationService } from '../../services/healthcare-professional-authorization';
 
 // CFM Medical Specialties (partial list - expand as needed)
 const CFM_SPECIALTIES = {
@@ -219,10 +220,40 @@ function setCachedCFMValidation(
     expiry: Date.now() + CACHE_DURATION,
   });
 } /**
+ * Extract operation type from tRPC path for permission validation
+ */
+function extractOperationFromPath(path: string): string {
+  const pathParts = path.split('.');
+  const lastPart = pathParts[pathParts.length - 1];
+  
+  // Map common operations
+  const operationMap: Record<string, string> = {
+    'create': 'create',
+    'read': 'read', 
+    'update': 'update',
+    'delete': 'delete',
+    'crud': 'create', // Default for CRUD operations
+  };
+  
+  return operationMap[lastPart] || 'read';
+}
+
+/**
+ * Extract entity type from tRPC path for permission validation
+ */
+function extractEntityTypeFromPath(path: string): string {
+  const pathParts = path.split('.');
+  if (pathParts.length >= 2) {
+    return pathParts[pathParts.length - 2];
+  }
+  return 'unknown';
+}
+
+/**
  * CFM Validation Middleware
  *
  * Validates medical licenses, ICP-Brasil certificates, and ensures compliance
- * with CFM telemedicine regulations and NGS2 security standards.
+ * with CFM telemedicine regulations and NGS2 security standards using real RBAC.
  */
 
 export const cfmValidationMiddleware = async ({
@@ -246,58 +277,48 @@ export const cfmValidationMiddleware = async ({
     if (!professionalId) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
-        message: 'Professional identification required for medical operations',
+        message: 'Identificação profissional necessária para operações médicas',
       });
     }
 
-    // Get professional data from database
-    const professional = await ctx.prisma.professional.findUnique({
-      where: { id: professionalId },
-      select: {
-        crmNumber: true,
-        crmState: true,
-        specialties: true,
-        icpBrasilCertificate: true,
-        cfmValidationStatus: true,
-        cfmLastValidated: true,
-        telemedicineAuthorized: true,
-      },
-    });
+    // Initialize real healthcare professional authorization service
+    const authorizationService = new HealthcareProfessionalAuthorizationService(ctx.prisma);
 
-    if (!professional) {
+    // Extract operation from path for permission validation
+    const operation = extractOperationFromPath(path);
+    const entityType = extractEntityTypeFromPath(path);
+
+    // Validate professional authorization with real RBAC
+    const authorizationResult = await authorizationService.validateAuthorization(
+      professionalId,
+      operation,
+      entityType,
+      {
+        patientId: input?.patientId,
+        clinicId: ctx.clinicId,
+        emergency: input?.emergency || false,
+      }
+    );
+
+    if (!authorizationResult.isAuthorized) {
       throw new TRPCError({
-        code: 'NOT_FOUND',
-        message: 'Professional not found',
+        code: 'FORBIDDEN',
+        message: 'Profissional não autorizado para esta operação',
+        cause: {
+          role: authorizationResult.role,
+          permissions: authorizationResult.permissions,
+          restrictions: authorizationResult.restrictions,
+        },
       });
     }
 
-    // Check if CFM validation is recent (within 24 hours)
-    const validationExpiry = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    const needsRevalidation = !professional.cfmLastValidated
-      || professional.cfmLastValidated < validationExpiry;
-
-    let cfmValidation: CFMLicenseValidationResult;
-
-    if (needsRevalidation) {
-      // Check cache first
-      const cachedValidation = getCachedCFMValidation(
-        professional.crmNumber,
-        professional.crmState,
-      );
-
-      if (cachedValidation) {
-        cfmValidation = cachedValidation;
-      } else {
-        // Perform real-time CFM validation
-        cfmValidation = await validateCFMLicense(
-          professional.crmNumber,
-          professional.crmState,
-        );
-        setCachedCFMValidation(
-          professional.crmNumber,
-          professional.crmState,
-          cfmValidation,
-        );
+    // Add authorization info to context for audit trail
+    ctx.authorization = {
+      professionalId,
+      role: authorizationResult.role,
+      specialties: authorizationResult.specialties,
+      validatedAt: authorizationResult.lastValidated,
+    };
 
         // Update professional record with validation results
         await ctx.prisma.professional.update({
@@ -311,52 +332,31 @@ export const cfmValidationMiddleware = async ({
           },
         });
       }
-    } else {
-      // Use existing validation status
-      cfmValidation = {
-        isValid: professional.cfmValidationStatus === 'validated',
-        crmNumber: professional.crmNumber,
-        state: professional.crmState,
-        specialties: professional.specialties || [],
-        status: professional.cfmValidationStatus === 'validated'
-          ? 'active'
-          : 'inactive',
-        telemedicineAuthorized: professional.telemedicineAuthorized || false,
-        ethicsCompliant: professional.cfmValidationStatus === 'validated',
-        lastValidated: professional.cfmLastValidated || new Date(),
-      };
-    }
 
-    // Validate CFM license status
-    if (!cfmValidation.isValid || cfmValidation.status !== 'active') {
-      throw new TRPCError({
-        code: 'FORBIDDEN',
-        message: 'Invalid or inactive CFM license. Medical operations not authorized.',
-      });
-    } // Special validation for telemedicine operations
+    // Special validation for telemedicine operations  
     if (isTelemedicineOperation(path)) {
-      if (!cfmValidation.telemedicineAuthorized) {
+      if (!authorizationResult.telemedicineAuthorized) {
         throw new TRPCError({
           code: 'FORBIDDEN',
-          message:
-            'Telemedicine not authorized for this professional. CFM Resolution 2,314/2022 compliance required.',
+          message: 'Telemedicina não autorizada para este profissional. Resolução CFM 2.314/2022 requerida.',
         });
       }
 
-      // Validate ICP-Brasil certificate for telemedicine
-      if (professional.icpBrasilCertificate) {
+      // Validate ICP-Brasil certificate for telemedicine if available
+      const professional = await ctx.prisma.professional.findUnique({
+        where: { id: professionalId },
+        select: { icpBrasilCertificate: true },
+      });
+
+      if (professional?.icpBrasilCertificate) {
         const certificateValidation = await validateICPBrasilCertificate(
           professional.icpBrasilCertificate,
         );
 
-        if (
-          !certificateValidation.isValid
-          || !certificateValidation.ngs2Compliant
-        ) {
+        if (!certificateValidation.isValid || !certificateValidation.ngs2Compliant) {
           throw new TRPCError({
-            code: 'FORBIDDEN',
-            message:
-              'Valid ICP-Brasil certificate with NGS2 Level 2 compliance required for telemedicine operations.',
+            code: 'FORBIDDEN', 
+            message: 'Certificado ICP-Brasil válido com conformidade NGS2 Nível 2 necessário para operações de telemedicina.',
           });
         }
 

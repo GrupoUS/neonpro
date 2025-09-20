@@ -164,7 +164,8 @@ export class TDDOrchestrator {
       switch (phase) {
         case "RED":
           phaseSuccess = await this.tddCycle.redPhase(() => {
-            console.log("📝 Defining failing tests...");
+            console.log("📝 Defining failing tests under security-auditor leadership...");
+            console.log("🔍 Security-auditor conducting comprehensive error detection...");
           });
           break;
         case "GREEN":

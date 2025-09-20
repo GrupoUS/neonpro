@@ -1,5 +1,4 @@
-import { supabase } from "@/lib/supabase";
-import { CacheService } from "./cache";
+import { supabase } from "@/integrations/supabase/client";
 
 export interface FinancialMetric {
   id: string;
@@ -33,23 +32,12 @@ export interface MetricsHistory {
 }
 
 export class FinancialMetricsService {
-  private static readonly CACHE_PREFIX = "financial_metrics";
-  private static readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
-
   /**
    * Calculate financial metrics for the specified period
    */
   static async calculateMetrics(
     options: MetricsCalculationOptions
   ): Promise<FinancialMetric[]> {
-    const cacheKey = `${this.CACHE_PREFIX}_${JSON.stringify(options)}`;
-    
-    // Try to get from cache first
-    const cached = await CacheService.get(cacheKey);
-    if (cached) {
-      return cached;
-    }
-
     try {
       const { data, error } = await supabase
         .from('financial_transactions')
@@ -63,34 +51,11 @@ export class FinancialMetricsService {
 
       if (error) throw error;
 
-      const metrics = this.processTransactionsToMetrics(data || [], options);
-      
-      // Cache the results
-      await CacheService.set(cacheKey, metrics, this.CACHE_TTL);
-      
-      return metrics;
+      return this.processTransactionsToMetrics(data || [], options);
     } catch (error) {
       console.error('Error calculating financial metrics:', error);
       throw new Error('Failed to calculate financial metrics');
     }
-  }
-
-  /**
-   * Get cached metrics if available
-   */
-  static async getCachedMetrics(
-    options: MetricsCalculationOptions
-  ): Promise<FinancialMetric[] | null> {
-    const cacheKey = `${this.CACHE_PREFIX}_${JSON.stringify(options)}`;
-    return await CacheService.get(cacheKey);
-  }
-
-  /**
-   * Invalidate metrics cache
-   */
-  static async invalidateCache(pattern?: string): Promise<void> {
-    const invalidatePattern = pattern || `${this.CACHE_PREFIX}_*`;
-    await CacheService.invalidate(invalidatePattern);
   }
 
   /**
