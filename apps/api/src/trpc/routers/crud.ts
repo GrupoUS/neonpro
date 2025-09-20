@@ -60,16 +60,33 @@ const crudIntentSchema = v.object({
   step: v.literal('intent'),
   operation: v.string([v.picklist(CRUD_OPERATIONS)]),
   entity: v.string([v.picklist(SUPPORTED_ENTITIES)]),
-  data: v.lazy(() =>
-    v.union([
-      PatientSchema,
-      AppointmentSchema,
-      ProfessionalSchema,
-      MedicalRecordSchema,
-      PrescriptionSchema,
-      v.object({ id: v.string() }), // For read/delete operations
-    ])
-  ), // Dynamic data based on entity - validated at runtime with Zod schemas
+  data: v.custom((data, ctx) => {
+    // Get the entity from the parent object
+    const entity = ctx?.object?.entity;
+    const operation = ctx?.object?.operation;
+    // Map entity to schema
+    const entitySchemas: Record<string, any> = {
+      patients: PatientSchema,
+      appointments: AppointmentSchema,
+      healthcare_professionals: ProfessionalSchema,
+      medical_records: MedicalRecordSchema,
+      prescriptions: PrescriptionSchema,
+    };
+    // For read/delete, only id is required
+    if (operation === 'read' || operation === 'delete') {
+      const idSchema = v.object({ id: v.string() });
+      return idSchema._parse(data, ctx);
+    }
+    // For create/update, use the entity schema
+    const schema = entitySchemas[entity];
+    if (!schema) {
+      return v.issue(ctx, {
+        code: 'custom',
+        message: `Unsupported entity: ${entity}`,
+      });
+    }
+    return schema._parse(data, ctx);
+  }),
   options: v.optional(
     v.object({
       skipConfirmation: v.optional(v.boolean()),
