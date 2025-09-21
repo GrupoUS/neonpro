@@ -1,11 +1,11 @@
 /**
  * RED Phase: Security Logging Tests
- * 
+ *
  * These tests initially FAIL and demonstrate current security-related logging vulnerabilities
  * They will only pass when proper security logging practices and data sanitization is implemented
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock console methods to capture logging output
 const mockConsoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
@@ -25,9 +25,9 @@ describe('Security Logging - Vulnerability Prevention', () => {
   describe('SQL Injection Prevention Logging', () => {
     it('should NOT log raw SQL queries with parameters', () => {
       const maliciousQueries = [
-        "SELECT * FROM patients WHERE name = 'Robert'); DROP TABLE patients; --",
-        "SELECT * FROM users WHERE email = 'admin@test.com' OR '1'='1'",
-        "INSERT INTO audit_logs (action, user_id) VALUES ('login', 'admin'); SELECT * FROM credit_cards"
+        'SELECT * FROM patients WHERE name = \'Robert\'); DROP TABLE patients; --',
+        'SELECT * FROM users WHERE email = \'admin@test.com\' OR \'1\'=\'1\'',
+        'INSERT INTO audit_logs (action, user_id) VALUES (\'login\', \'admin\'); SELECT * FROM credit_cards',
       ];
 
       maliciousQueries.forEach(query => {
@@ -41,11 +41,11 @@ describe('Security Logging - Vulnerability Prevention', () => {
 
       // Test will FAIL because raw SQL queries are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
-      const hasRawSql = allLogs.some(call => 
-        JSON.stringify(call).includes('DROP TABLE') ||
-        JSON.stringify(call).includes('OR \'1\'=\'1\'') ||
-        JSON.stringify(call).includes('SELECT * FROM credit_cards') ||
-        JSON.stringify(call).includes('Robert\'); DROP TABLE')
+      const hasRawSql = allLogs.some(call =>
+        JSON.stringify(call).includes('DROP TABLE')
+        || JSON.stringify(call).includes('OR \'1\'=\'1\'')
+        || JSON.stringify(call).includes('SELECT * FROM credit_cards')
+        || JSON.stringify(call).includes('Robert\'); DROP TABLE')
       );
 
       expect(hasRawSql).toBe(false);
@@ -55,7 +55,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
       const connectionStrings = [
         'postgresql://user:password@localhost:5432/neonpro',
         'mysql://root:supersecret@db.prod.neonpro.com:3306/healthcare',
-        'mongodb://admin:complexPassword123!@mongo.neonpro.com:27017/patients'
+        'mongodb://admin:complexPassword123!@mongo.neonpro.com:27017/patients',
       ];
 
       connectionStrings.forEach(connStr => {
@@ -69,12 +69,12 @@ describe('Security Logging - Vulnerability Prevention', () => {
 
       // Test will FAIL because connection strings with credentials are being logged
       const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls];
-      const hasConnectionStrings = allLogs.some(call => 
-        JSON.stringify(call).includes('password') ||
-        JSON.stringify(call).includes('supersecret') ||
-        JSON.stringify(call).includes('complexPassword123') ||
-        JSON.stringify(call).includes('root:supersecret') ||
-        JSON.stringify(call).includes('user:password')
+      const hasConnectionStrings = allLogs.some(call =>
+        JSON.stringify(call).includes('password')
+        || JSON.stringify(call).includes('supersecret')
+        || JSON.stringify(call).includes('complexPassword123')
+        || JSON.stringify(call).includes('root:supersecret')
+        || JSON.stringify(call).includes('user:password')
       );
 
       expect(hasConnectionStrings).toBe(false);
@@ -88,7 +88,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
         'javascript:alert("XSS")',
         '<img src=x onerror=alert("XSS")>',
         '"><script>alert(document.cookie)</script>',
-        '<svg onload=alert("XSS")>'
+        '<svg onload=alert("XSS")>',
       ];
 
       xssPayloads.forEach(payload => {
@@ -102,13 +102,17 @@ describe('Security Logging - Vulnerability Prevention', () => {
       });
 
       // Test will FAIL because XSS payloads are being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
-      const hasXssPayloads = allLogs.some(call => 
-        JSON.stringify(call).includes('<script>') ||
-        JSON.stringify(call).includes('javascript:') ||
-        JSON.stringify(call).includes('onerror=alert') ||
-        JSON.stringify(call).includes('onload=alert') ||
-        JSON.stringify(call).includes('document.cookie')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleWarn.mock.calls,
+      ];
+      const hasXssPayloads = allLogs.some(call =>
+        JSON.stringify(call).includes('<script>')
+        || JSON.stringify(call).includes('javascript:')
+        || JSON.stringify(call).includes('onerror=alert')
+        || JSON.stringify(call).includes('onload=alert')
+        || JSON.stringify(call).includes('document.cookie')
       );
 
       expect(hasXssPayloads).toBe(false);
@@ -130,12 +134,16 @@ describe('Security Logging - Vulnerability Prevention', () => {
       console.info('Form structure:', htmlContent);
 
       // Test will FAIL because HTML with sensitive attributes is being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
-      const hasHtmlContent = allLogs.some(call => 
-        JSON.stringify(call).includes('csrf_token') ||
-        JSON.stringify(call).includes('abc123def456') ||
-        JSON.stringify(call).includes('patient-form') ||
-        JSON.stringify(call).includes('/api/patients')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleInfo.mock.calls,
+      ];
+      const hasHtmlContent = allLogs.some(call =>
+        JSON.stringify(call).includes('csrf_token')
+        || JSON.stringify(call).includes('abc123def456')
+        || JSON.stringify(call).includes('patient-form')
+        || JSON.stringify(call).includes('/api/patients')
       );
 
       expect(hasHtmlContent).toBe(false);
@@ -148,7 +156,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
         token: 'csrf-token-1234567890abcdef',
         sessionId: 'sess-9876543210fedcba',
         formId: 'patient-update-form',
-        userId: 'user-123'
+        userId: 'user-123',
       };
 
       // Simulate CSRF validation logging
@@ -157,12 +165,16 @@ describe('Security Logging - Vulnerability Prevention', () => {
       console.warn(`Invalid CSRF token: ${csrfData.token}`);
 
       // Test will FAIL because CSRF tokens are being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
-      const hasCsrfData = allLogs.some(call => 
-        JSON.stringify(call).includes('csrf-token-1234567890abcdef') ||
-        JSON.stringify(call).includes('sess-9876543210fedcba') ||
-        JSON.stringify(call).includes('patient-update-form') ||
-        JSON.stringify(call).includes('user-123')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleWarn.mock.calls,
+      ];
+      const hasCsrfData = allLogs.some(call =>
+        JSON.stringify(call).includes('csrf-token-1234567890abcdef')
+        || JSON.stringify(call).includes('sess-9876543210fedcba')
+        || JSON.stringify(call).includes('patient-update-form')
+        || JSON.stringify(call).includes('user-123')
       );
 
       expect(hasCsrfData).toBe(false);
@@ -175,13 +187,13 @@ describe('Security Logging - Vulnerability Prevention', () => {
         headers: {
           'X-CSRF-Token': 'csrf-secret-123',
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer user-token-456'
+          Authorization: 'Bearer user-token-456',
         },
         body: {
           name: 'Patient Name',
           email: 'patient@test.com',
-          medicalRecord: 'Sensitive medical data'
-        }
+          medicalRecord: 'Sensitive medical data',
+        },
       };
 
       // Simulate request logging
@@ -190,12 +202,16 @@ describe('Security Logging - Vulnerability Prevention', () => {
       console.info('Request URL:', requestData.url);
 
       // Test will FAIL because request details with tokens are being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
-      const hasRequestData = allLogs.some(call => 
-        JSON.stringify(call).includes('csrf-secret-123') ||
-        JSON.stringify(call).includes('user-token-456') ||
-        JSON.stringify(call).includes('/api/v1/patients/123456/update') ||
-        JSON.stringify(call).includes('patient@test.com')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleInfo.mock.calls,
+      ];
+      const hasRequestData = allLogs.some(call =>
+        JSON.stringify(call).includes('csrf-secret-123')
+        || JSON.stringify(call).includes('user-token-456')
+        || JSON.stringify(call).includes('/api/v1/patients/123456/update')
+        || JSON.stringify(call).includes('patient@test.com')
       );
 
       expect(hasRequestData).toBe(false);
@@ -210,15 +226,15 @@ describe('Security Logging - Vulnerability Prevention', () => {
           contentType: 'application/pdf',
           size: 2048576, // 2MB
           content: 'Sensitive patient medical report content...',
-          userId: 'user-789'
+          userId: 'user-789',
         },
         {
           filename: 'medical-image.dcm',
           contentType: 'application/dicom',
           size: 5242880, // 5MB
           content: 'DICOM image data with patient information...',
-          patientId: 'patient-456'
-        }
+          patientId: 'patient-456',
+        },
       ];
 
       fileUploads.forEach(file => {
@@ -232,14 +248,18 @@ describe('Security Logging - Vulnerability Prevention', () => {
       });
 
       // Test will FAIL because file contents and metadata are being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
-      const hasFileData = allLogs.some(call => 
-        JSON.stringify(call).includes('patient-report.pdf') ||
-        JSON.stringify(call).includes('medical-image.dcm') ||
-        JSON.stringify(call).includes('Sensitive patient medical report') ||
-        JSON.stringify(call).includes('DICOM image data') ||
-        JSON.stringify(call).includes('user-789') ||
-        JSON.stringify(call).includes('patient-456')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleWarn.mock.calls,
+      ];
+      const hasFileData = allLogs.some(call =>
+        JSON.stringify(call).includes('patient-report.pdf')
+        || JSON.stringify(call).includes('medical-image.dcm')
+        || JSON.stringify(call).includes('Sensitive patient medical report')
+        || JSON.stringify(call).includes('DICOM image data')
+        || JSON.stringify(call).includes('user-789')
+        || JSON.stringify(call).includes('patient-456')
       );
 
       expect(hasFileData).toBe(false);
@@ -251,7 +271,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
         '/home/neonpro/storage/private/medical-records/',
         'C:\\Program Files\\NeonPro\\Data\\PatientFiles\\',
         '../../uploads/temp/',
-        '/tmp/neonpro_uploads/'
+        '/tmp/neonpro_uploads/',
       ];
 
       filePaths.forEach(path => {
@@ -261,13 +281,17 @@ describe('Security Logging - Vulnerability Prevention', () => {
       });
 
       // Test will FAIL because file system paths are being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
-      const hasFilePaths = allLogs.some(call => 
-        JSON.stringify(call).includes('/var/www/neonpro') ||
-        JSON.stringify(call).includes('/home/neonpro/storage') ||
-        JSON.stringify(call).includes('C:\\Program Files\\NeonPro') ||
-        JSON.stringify(call).includes('../../uploads/temp') ||
-        JSON.stringify(call).includes('/tmp/neonpro_uploads')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleWarn.mock.calls,
+      ];
+      const hasFilePaths = allLogs.some(call =>
+        JSON.stringify(call).includes('/var/www/neonpro')
+        || JSON.stringify(call).includes('/home/neonpro/storage')
+        || JSON.stringify(call).includes('C:\\Program Files\\NeonPro')
+        || JSON.stringify(call).includes('../../uploads/temp')
+        || JSON.stringify(call).includes('/tmp/neonpro_uploads')
       );
 
       expect(hasFilePaths).toBe(false);
@@ -283,7 +307,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
           userAgent: 'Bot/1.0 (Scanner)',
           endpoint: '/api/v1/auth/login',
           requestCount: 150,
-          windowSeconds: 60
+          windowSeconds: 60,
         },
         {
           eventType: 'suspicious_pattern',
@@ -291,10 +315,10 @@ describe('Security Logging - Vulnerability Prevention', () => {
           patterns: [
             'SQL injection attempt',
             'XSS payload detected',
-            'Directory traversal attempt'
+            'Directory traversal attempt',
           ],
-          blocked: true
-        }
+          blocked: true,
+        },
       ];
 
       securityEvents.forEach(event => {
@@ -304,13 +328,17 @@ describe('Security Logging - Vulnerability Prevention', () => {
       });
 
       // Test will FAIL because IP addresses and detailed patterns are being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
-      const hasSecurityData = allLogs.some(call => 
-        JSON.stringify(call).includes('189.1.1.100') ||
-        JSON.stringify(call).includes('200.200.200.200') ||
-        JSON.stringify(call).includes('Bot/1.0 (Scanner)') ||
-        JSON.stringify(call).includes('SQL injection attempt') ||
-        JSON.stringify(call).includes('XSS payload detected')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleWarn.mock.calls,
+      ];
+      const hasSecurityData = allLogs.some(call =>
+        JSON.stringify(call).includes('189.1.1.100')
+        || JSON.stringify(call).includes('200.200.200.200')
+        || JSON.stringify(call).includes('Bot/1.0 (Scanner)')
+        || JSON.stringify(call).includes('SQL injection attempt')
+        || JSON.stringify(call).includes('XSS payload detected')
       );
 
       expect(hasSecurityData).toBe(false);
@@ -321,19 +349,19 @@ describe('Security Logging - Vulnerability Prevention', () => {
         endpoints: {
           '/api/v1/auth/login': { requests: 5, window: 60000 },
           '/api/v1/patients': { requests: 100, window: 3600000 },
-          '/api/v1/ai/consult': { requests: 20, window: 300000 }
+          '/api/v1/ai/consult': { requests: 20, window: 300000 },
         },
         global: {
           maxRequests: 10000,
           window: 3600000,
-          banDuration: 86400000
+          banDuration: 86400000,
         },
         storage: {
           type: 'redis',
           host: 'redis.neonpro.com',
           port: 6379,
-          password: 'redis-secret-123'
-        }
+          password: 'redis-secret-123',
+        },
       };
 
       // Simulate configuration logging
@@ -342,13 +370,17 @@ describe('Security Logging - Vulnerability Prevention', () => {
       console.info('Endpoint limits:', rateLimitConfig.endpoints);
 
       // Test will FAIL because configuration details are being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
-      const hasConfigData = allLogs.some(call => 
-        JSON.stringify(call).includes('redis.neonpro.com') ||
-        JSON.stringify(call).includes('redis-secret-123') ||
-        JSON.stringify(call).includes('6379') ||
-        JSON.stringify(call).includes('/api/v1/auth/login') ||
-        JSON.stringify(call).includes('10000 requests')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleInfo.mock.calls,
+      ];
+      const hasConfigData = allLogs.some(call =>
+        JSON.stringify(call).includes('redis.neonpro.com')
+        || JSON.stringify(call).includes('redis-secret-123')
+        || JSON.stringify(call).includes('6379')
+        || JSON.stringify(call).includes('/api/v1/auth/login')
+        || JSON.stringify(call).includes('10000 requests')
       );
 
       expect(hasConfigData).toBe(false);
@@ -365,7 +397,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
           action: 'view_medical_history',
           timestamp: '2024-01-15T14:30:00Z',
           ip: '189.1.1.50',
-          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+          userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         },
         {
           eventType: 'prescription_created',
@@ -373,8 +405,8 @@ describe('Security Logging - Vulnerability Prevention', () => {
           patientId: 'patient-012',
           medication: 'Lisinopril 10mg',
           dosage: '1 tablet daily',
-          reason: 'Hypertension management'
-        }
+          reason: 'Hypertension management',
+        },
       ];
 
       auditEvents.forEach(event => {
@@ -384,13 +416,17 @@ describe('Security Logging - Vulnerability Prevention', () => {
       });
 
       // Test will FAIL because audit events contain PII
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
-      const hasAuditData = allLogs.some(call => 
-        JSON.stringify(call).includes('doctor-123') ||
-        JSON.stringify(call).includes('patient-456') ||
-        JSON.stringify(call).includes('189.1.1.50') ||
-        JSON.stringify(call).includes('Lisinopril 10mg') ||
-        JSON.stringify(call).includes('Hypertension management')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleInfo.mock.calls,
+      ];
+      const hasAuditData = allLogs.some(call =>
+        JSON.stringify(call).includes('doctor-123')
+        || JSON.stringify(call).includes('patient-456')
+        || JSON.stringify(call).includes('189.1.1.50')
+        || JSON.stringify(call).includes('Lisinopril 10mg')
+        || JSON.stringify(call).includes('Hypertension management')
       );
 
       expect(hasAuditData).toBe(false);
@@ -400,11 +436,11 @@ describe('Security Logging - Vulnerability Prevention', () => {
       const breachDetails = {
         breachType: 'SQL_injection_attempt',
         vulnerableEndpoint: '/api/v1/patients/search',
-        payload: "SELECT * FROM patients WHERE name = 'test' OR 1=1--",
+        payload: 'SELECT * FROM patients WHERE name = \'test\' OR 1=1--',
         attackerIp: '192.168.1.100',
         timestamp: '2024-01-15T15:45:00Z',
         affectedRecords: 150,
-        mitigationApplied: 'Input validation and parameterized queries'
+        mitigationApplied: 'Input validation and parameterized queries',
       };
 
       // Simulate breach logging
@@ -413,13 +449,17 @@ describe('Security Logging - Vulnerability Prevention', () => {
       console.info('Breach mitigation:', breachDetails.mitigationApplied);
 
       // Test will FAIL because breach details contain exploit information
-      const allLogs = [...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls, ...mockConsoleInfo.mock.calls];
-      const hasBreachData = allLogs.some(call => 
-        JSON.stringify(call).includes('SQL_injection_attempt') ||
-        JSON.stringify(call).includes('/api/v1/patients/search') ||
-        JSON.stringify(call).includes('test\' OR 1=1--') ||
-        JSON.stringify(call).includes('192.168.1.100') ||
-        JSON.stringify(call).includes('150 records')
+      const allLogs = [
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleWarn.mock.calls,
+        ...mockConsoleInfo.mock.calls,
+      ];
+      const hasBreachData = allLogs.some(call =>
+        JSON.stringify(call).includes('SQL_injection_attempt')
+        || JSON.stringify(call).includes('/api/v1/patients/search')
+        || JSON.stringify(call).includes('test\' OR 1=1--')
+        || JSON.stringify(call).includes('192.168.1.100')
+        || JSON.stringify(call).includes('150 records')
       );
 
       expect(hasBreachData).toBe(false);
@@ -433,7 +473,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
         key: 'encryption-key-256bit-1234567890abcdef',
         iv: 'initialization-vector-1234567890',
         tag: 'authentication-tag-1234567890',
-        encryptedData: 'ciphertext-sensitive-data-encrypted'
+        encryptedData: 'ciphertext-sensitive-data-encrypted',
       };
 
       // Simulate encryption logging
@@ -442,12 +482,16 @@ describe('Security Logging - Vulnerability Prevention', () => {
       console.warn('Key generation completed:', encryptionData.key);
 
       // Test will FAIL because encryption details are being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleWarn.mock.calls];
-      const hasEncryptionData = allLogs.some(call => 
-        JSON.stringify(call).includes('AES-256-GCM') ||
-        JSON.stringify(call).includes('encryption-key-256bit') ||
-        JSON.stringify(call).includes('initialization-vector') ||
-        JSON.stringify(call).includes('authentication-tag')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleWarn.mock.calls,
+      ];
+      const hasEncryptionData = allLogs.some(call =>
+        JSON.stringify(call).includes('AES-256-GCM')
+        || JSON.stringify(call).includes('encryption-key-256bit')
+        || JSON.stringify(call).includes('initialization-vector')
+        || JSON.stringify(call).includes('authentication-tag')
       );
 
       expect(hasEncryptionData).toBe(false);
@@ -460,7 +504,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
         passphrase: 'super-secret-cert-passphrase',
         issuer: 'Let\'s Encrypt',
         subject: 'neonpro.com',
-        validUntil: '2025-01-15T23:59:59Z'
+        validUntil: '2025-01-15T23:59:59Z',
       };
 
       // Simulate certificate logging
@@ -469,18 +513,22 @@ describe('Security Logging - Vulnerability Prevention', () => {
       console.info('Certificate subject:', certificateData.subject);
 
       // Test will FAIL because certificate details are being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
-      const hasCertData = allLogs.some(call => 
-        JSON.stringify(call).includes('/etc/ssl/certs/neonpro.crt') ||
-        JSON.stringify(call).includes('/etc/ssl/private/neonpro.key') ||
-        JSON.stringify(call).includes('super-secret-cert-passphrase') ||
-        JSON.stringify(call).includes('Let\'s Encrypt')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleInfo.mock.calls,
+      ];
+      const hasCertData = allLogs.some(call =>
+        JSON.stringify(call).includes('/etc/ssl/certs/neonpro.crt')
+        || JSON.stringify(call).includes('/etc/ssl/private/neonpro.key')
+        || JSON.stringify(call).includes('super-secret-cert-passphrase')
+        || JSON.stringify(call).includes('Let\'s Encrypt')
       );
 
       expect(hasCertData).toBe(false);
     });
   });
-  
+
   describe('Network Security Logging', () => {
     it('should NOT log network traffic details or packet contents', () => {
       const networkData = {
@@ -490,25 +538,29 @@ describe('Security Logging - Vulnerability Prevention', () => {
         protocol: 'HTTPS',
         packetData: 'Encrypted packet contents with sensitive data...',
         tlsVersion: 'TLS 1.3',
-        cipherSuite: 'TLS_AES_256_GCM_SHA384'
+        cipherSuite: 'TLS_AES_256_GCM_SHA384',
       };
 
       // Simulate network logging
       console.log('Network connection:', networkData);
       console.error('Network security event:', networkData);
-      console.info('TLS handshake completed:', { 
-        version: networkData.tlsVersion, 
-        cipher: networkData.cipherSuite 
+      console.info('TLS handshake completed:', {
+        version: networkData.tlsVersion,
+        cipher: networkData.cipherSuite,
       });
 
       // Test will FAIL because network details are being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
-      const hasNetworkData = allLogs.some(call => 
-        JSON.stringify(call).includes('10.0.1.100') ||
-        JSON.stringify(call).includes('10.0.1.200') ||
-        JSON.stringify(call).includes('TLS 1.3') ||
-        JSON.stringify(call).includes('TLS_AES_256_GCM_SHA384') ||
-        JSON.stringify(call).includes('packet contents')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleInfo.mock.calls,
+      ];
+      const hasNetworkData = allLogs.some(call =>
+        JSON.stringify(call).includes('10.0.1.100')
+        || JSON.stringify(call).includes('10.0.1.200')
+        || JSON.stringify(call).includes('TLS 1.3')
+        || JSON.stringify(call).includes('TLS_AES_256_GCM_SHA384')
+        || JSON.stringify(call).includes('packet contents')
       );
 
       expect(hasNetworkData).toBe(false);
@@ -523,7 +575,7 @@ describe('Security Logging - Vulnerability Prevention', () => {
             source: '192.168.1.0/24',
             destination: '10.0.1.100',
             port: 443,
-            description: 'Allow HTTPS from internal network'
+            description: 'Allow HTTPS from internal network',
           },
           {
             action: 'deny',
@@ -531,11 +583,11 @@ describe('Security Logging - Vulnerability Prevention', () => {
             source: '0.0.0.0/0',
             destination: '10.0.1.100',
             port: 22,
-            description: 'Block SSH from external'
-          }
+            description: 'Block SSH from external',
+          },
         ],
         securityGroup: 'web-server-sg',
-        vpcId: 'vpc-1234567890abcdef'
+        vpcId: 'vpc-1234567890abcdef',
       };
 
       // Simulate firewall logging
@@ -544,13 +596,17 @@ describe('Security Logging - Vulnerability Prevention', () => {
       console.info('Security group:', firewallConfig.securityGroup);
 
       // Test will FAIL because network configuration is being logged
-      const allLogs = [...mockConsoleLog.mock.calls, ...mockConsoleError.mock.calls, ...mockConsoleInfo.mock.calls];
-      const hasFirewallData = allLogs.some(call => 
-        JSON.stringify(call).includes('192.168.1.0/24') ||
-        JSON.stringify(call).includes('10.0.1.100') ||
-        JSON.stringify(call).includes('web-server-sg') ||
-        JSON.stringify(call).includes('vpc-1234567890abcdef') ||
-        JSON.stringify(call).includes('Block SSH from external')
+      const allLogs = [
+        ...mockConsoleLog.mock.calls,
+        ...mockConsoleError.mock.calls,
+        ...mockConsoleInfo.mock.calls,
+      ];
+      const hasFirewallData = allLogs.some(call =>
+        JSON.stringify(call).includes('192.168.1.0/24')
+        || JSON.stringify(call).includes('10.0.1.100')
+        || JSON.stringify(call).includes('web-server-sg')
+        || JSON.stringify(call).includes('vpc-1234567890abcdef')
+        || JSON.stringify(call).includes('Block SSH from external')
       );
 
       expect(hasFirewallData).toBe(false);

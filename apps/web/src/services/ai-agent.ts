@@ -82,8 +82,12 @@ export interface QuickFeedbackRequest {
   responseId?: string;
   helpful: boolean;
   issues?: Array<
-    'incorrect_data' | 'slow_response' | 'unclear_answer' | 
-    'missing_information' | 'technical_error' | 'other'
+    | 'incorrect_data'
+    | 'slow_response'
+    | 'unclear_answer'
+    | 'missing_information'
+    | 'technical_error'
+    | 'other'
   >;
   suggestions?: string;
 }
@@ -143,7 +147,7 @@ export class AIAgentError extends Error {
     message: string,
     public code: string,
     public statusCode?: number,
-    public details?: any
+    public details?: any,
   ) {
     super(message);
     this.name = 'AIAgentError';
@@ -155,7 +159,7 @@ export class AIAgentError extends Error {
       error.message || 'Unknown API error',
       error.code || 'UNKNOWN_ERROR',
       statusCode,
-      error.details
+      error.details,
     );
   }
 }
@@ -196,7 +200,7 @@ class HttpClient {
 
   static async request<T = any>(
     endpoint: string,
-    options: RequestInit & RequestOptions = {}
+    options: RequestInit & RequestOptions = {},
   ): Promise<T> {
     const {
       timeout = DEFAULT_TIMEOUT,
@@ -217,7 +221,9 @@ class HttpClient {
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
     // Combine signals
-    const combinedSignal = signal ? this.combineSignals([signal, controller.signal]) : controller.signal;
+    const combinedSignal = signal
+      ? this.combineSignals([signal, controller.signal])
+      : controller.signal;
 
     let lastError: Error | null = null;
 
@@ -243,8 +249,8 @@ class HttpClient {
 
         // Don't retry on certain errors
         if (
-          error instanceof AIAgentError && 
-          (error.statusCode === 401 || error.statusCode === 403 || error.statusCode === 400)
+          error instanceof AIAgentError
+          && (error.statusCode === 401 || error.statusCode === 403 || error.statusCode === 400)
         ) {
           throw error;
         }
@@ -294,7 +300,7 @@ export class AIAgentService {
    */
   static async queryDataAgent(
     query: string,
-    options: AgentQueryOptions = {}
+    options: AgentQueryOptions = {},
   ): Promise<DataAgentResponse> {
     if (!query.trim()) {
       throw new AIAgentError('Query cannot be empty', 'EMPTY_QUERY');
@@ -326,7 +332,7 @@ export class AIAgentService {
         'Failed to query data agent',
         'QUERY_FAILED',
         undefined,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -336,7 +342,7 @@ export class AIAgentService {
    */
   static async createSession(
     request: SessionCreateRequest,
-    options: RequestOptions = {}
+    options: RequestOptions = {},
   ): Promise<SessionResponse> {
     try {
       const response = await HttpClient.request<SessionResponse>('/sessions', {
@@ -354,7 +360,7 @@ export class AIAgentService {
         'Failed to create session',
         'SESSION_CREATE_FAILED',
         undefined,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -364,7 +370,7 @@ export class AIAgentService {
    */
   static async getSession(
     sessionId: string,
-    options: RequestOptions = {}
+    options: RequestOptions = {},
   ): Promise<SessionResponse> {
     if (!sessionId) {
       throw new AIAgentError('Session ID is required', 'MISSING_SESSION_ID');
@@ -385,7 +391,7 @@ export class AIAgentService {
         'Failed to get session',
         'SESSION_GET_FAILED',
         undefined,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -396,7 +402,7 @@ export class AIAgentService {
   static async updateSession(
     sessionId: string,
     updates: SessionUpdateRequest,
-    options: RequestOptions = {}
+    options: RequestOptions = {},
   ): Promise<SessionResponse> {
     if (!sessionId) {
       throw new AIAgentError('Session ID is required', 'MISSING_SESSION_ID');
@@ -418,7 +424,7 @@ export class AIAgentService {
         'Failed to update session',
         'SESSION_UPDATE_FAILED',
         undefined,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -442,7 +448,7 @@ export class AIAgentService {
         'Failed to list sessions',
         'SESSION_LIST_FAILED',
         undefined,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -452,7 +458,7 @@ export class AIAgentService {
    */
   static async deleteSession(
     sessionId: string,
-    options: RequestOptions = {}
+    options: RequestOptions = {},
   ): Promise<{ success: boolean; message?: string }> {
     if (!sessionId) {
       throw new AIAgentError('Session ID is required', 'MISSING_SESSION_ID');
@@ -473,7 +479,7 @@ export class AIAgentService {
         'Failed to delete session',
         'SESSION_DELETE_FAILED',
         undefined,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -484,7 +490,7 @@ export class AIAgentService {
   static async submitFeedback(
     sessionId: string,
     feedback: FeedbackRequest,
-    options: RequestOptions = {}
+    options: RequestOptions = {},
   ): Promise<FeedbackResponse> {
     if (!sessionId) {
       throw new AIAgentError('Session ID is required', 'MISSING_SESSION_ID');
@@ -501,7 +507,7 @@ export class AIAgentService {
           method: 'POST',
           body: JSON.stringify(feedback),
           ...options,
-        }
+        },
       );
 
       return response;
@@ -513,7 +519,7 @@ export class AIAgentService {
         'Failed to submit feedback',
         'FEEDBACK_SUBMIT_FAILED',
         undefined,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -524,7 +530,7 @@ export class AIAgentService {
   static async submitQuickFeedback(
     sessionId: string,
     feedback: QuickFeedbackRequest,
-    options: RequestOptions = {}
+    options: RequestOptions = {},
   ): Promise<FeedbackResponse> {
     if (!sessionId) {
       throw new AIAgentError('Session ID is required', 'MISSING_SESSION_ID');
@@ -537,7 +543,7 @@ export class AIAgentService {
           method: 'POST',
           body: JSON.stringify(feedback),
           ...options,
-        }
+        },
       );
 
       return response;
@@ -549,7 +555,7 @@ export class AIAgentService {
         'Failed to submit quick feedback',
         'QUICK_FEEDBACK_FAILED',
         undefined,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -559,7 +565,7 @@ export class AIAgentService {
    */
   static async getFeedbackSummary(
     sessionId: string,
-    options: RequestOptions = {}
+    options: RequestOptions = {},
   ): Promise<any> {
     if (!sessionId) {
       throw new AIAgentError('Session ID is required', 'MISSING_SESSION_ID');
@@ -580,7 +586,7 @@ export class AIAgentService {
         'Failed to get feedback summary',
         'FEEDBACK_GET_FAILED',
         undefined,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -604,7 +610,7 @@ export class AIAgentService {
         'Failed to get feedback analytics',
         'ANALYTICS_GET_FAILED',
         undefined,
-        { originalError: error }
+        { originalError: error },
       );
     }
   }
@@ -612,7 +618,9 @@ export class AIAgentService {
   /**
    * Health check for AI agent services
    */
-  static async healthCheck(service?: 'data-agent' | 'sessions' | 'feedback'): Promise<HealthResponse> {
+  static async healthCheck(
+    service?: 'data-agent' | 'sessions' | 'feedback',
+  ): Promise<HealthResponse> {
     const endpoint = service ? `/${service}/health` : '/data-agent/health';
 
     try {
@@ -646,7 +654,7 @@ export class AIAgentService {
     suggestions: string[];
   } {
     const data = response.response?.data || {};
-    
+
     return {
       clients: data.clients || [],
       appointments: data.appointments || [],
@@ -692,12 +700,12 @@ export class AIAgentService {
   static isRetryableError(error: unknown): boolean {
     if (error instanceof AIAgentError) {
       const nonRetryableCodes = [
-        'UNAUTHORIZED', 
-        'FORBIDDEN', 
+        'UNAUTHORIZED',
+        'FORBIDDEN',
         'VALIDATION_ERROR',
         'EMPTY_QUERY',
         'MISSING_SESSION_ID',
-        'INVALID_RATING'
+        'INVALID_RATING',
       ];
       return !nonRetryableCodes.includes(error.code);
     }

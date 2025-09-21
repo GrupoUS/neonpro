@@ -282,7 +282,9 @@ describe('Financial Metrics API Contract Tests', () => {
       // ACT & ASSERT: Test each edge case
       for (const testCase of edgeCases) {
         const response = await fetch(
-          makeAbsoluteUrl(`/api/financial/metrics?type=${testCase.type}&timeframe=${testCase.timeframe}`),
+          makeAbsoluteUrl(
+            `/api/financial/metrics?type=${testCase.type}&timeframe=${testCase.timeframe}`,
+          ),
         );
 
         expect(response.ok).toBe(true);
@@ -303,7 +305,9 @@ describe('Financial Metrics API Contract Tests', () => {
 
       // ACT: Make request with category parameter
       const response = await fetch(
-        makeAbsoluteUrl(`/api/financial/metrics?type=${type}&timeframe=${timeframe}&category=${category}`),
+        makeAbsoluteUrl(
+          `/api/financial/metrics?type=${type}&timeframe=${timeframe}&category=${category}`,
+        ),
       );
 
       // ASSERT: Should handle category parameter gracefully

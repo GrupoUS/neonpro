@@ -6,7 +6,7 @@ describe('AI CRUD Execute API Debug Test', () => {
     // ARRANGE: Create a minimal valid request
     const request = {
       confirmId: 'confirm-123',
-      executionToken: 'execution-token-456', 
+      executionToken: 'execution-token-456',
       operation: {
         entity: 'patients',
         action: 'create',

@@ -1,19 +1,22 @@
+import { ChatMessage, ChatSession, SessionResponse, UserRole } from '@neonpro/types';
 import { Hono } from 'hono';
-import { handle } from 'hono/vercel';
 import { cors } from 'hono/cors';
 import { jwt } from 'hono/jwt';
-import { SessionResponse, ChatSession, ChatMessage, UserRole } from '@neonpro/types';
+import { handle } from 'hono/vercel';
 
 // Create Hono app for Vercel deployment
 const app = new Hono().basePath('/api');
 
 // Enable CORS for frontend integration
-app.use('*', cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  maxAge: 86400, // 24 hours
-}));
+app.use(
+  '*',
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    maxAge: 86400, // 24 hours
+  }),
+);
 
 // JWT middleware for authentication
 app.use('*', async (c, next) => {
@@ -55,7 +58,7 @@ function validateUserSession(payload: any, sessionId: string): { valid: boolean;
   const now = new Date();
   const lastActivity = new Date(session.lastActivity);
   const inactiveTime = now.getTime() - lastActivity.getTime();
-  
+
   if (inactiveTime > 30 * 60 * 1000) { // 30 minutes
     session.status = 'expired';
     sessionStore.set(sessionId, session);
@@ -69,7 +72,7 @@ function validateUserSession(payload: any, sessionId: string): { valid: boolean;
  * GET /api/ai/sessions/:sessionId
  * Retrieve conversation session data
  */
-app.get('/ai/sessions/:sessionId', async (c) => {
+app.get('/ai/sessions/:sessionId', async c => {
   try {
     const sessionId = c.req.param('sessionId');
     const payload = c.get('jwtPayload');
@@ -81,12 +84,12 @@ app.get('/ai/sessions/:sessionId', async (c) => {
         error: {
           code: 'SESSION_INVALID',
           message: validation.error || 'Invalid session',
-        }
+        },
       }, validation.error?.includes('not found') ? 404 : 401);
     }
 
     const session = sessionStore.get(sessionId)!;
-    
+
     // Update last activity timestamp
     session.lastActivity = new Date();
     sessionStore.set(sessionId, session);
@@ -103,15 +106,14 @@ app.get('/ai/sessions/:sessionId', async (c) => {
     };
 
     return c.json(response, 200);
-
   } catch (error) {
     console.error('Session endpoint error:', error);
-    
+
     return c.json({
       error: {
         code: 'INTERNAL_ERROR',
         message: 'Failed to retrieve session data',
-      }
+      },
     }, 500);
   }
 });
@@ -122,7 +124,7 @@ app.get('/ai/sessions/:sessionId', async (c) => {
 export function createSession(userId: string, userRole: UserRole, domain: string): ChatSession {
   const sessionId = crypto.randomUUID();
   const now = new Date();
-  
+
   const session: ChatSession = {
     id: sessionId,
     userId,
@@ -147,8 +149,8 @@ export function createSession(userId: string, userRole: UserRole, domain: string
  * Helper function to add a message to a session
  */
 export function addMessageToSession(
-  sessionId: string, 
-  message: Omit<ChatMessage, 'id' | 'timestamp'>
+  sessionId: string,
+  message: Omit<ChatMessage, 'id' | 'timestamp'>,
 ): ChatMessage | null {
   const session = sessionStore.get(sessionId);
   if (!session) {
@@ -165,7 +167,7 @@ export function addMessageToSession(
   if (!session.context.recentMessages) {
     session.context.recentMessages = [];
   }
-  
+
   session.context.recentMessages.push(fullMessage);
   if (session.context.recentMessages.length > 10) {
     session.context.recentMessages.shift();
@@ -174,7 +176,7 @@ export function addMessageToSession(
   // Update session metadata
   session.lastActivity = new Date();
   session.messageCount++;
-  
+
   sessionStore.set(sessionId, session);
   return fullMessage;
 }
@@ -184,7 +186,7 @@ export function addMessageToSession(
  */
 export function updateSessionContext(
   sessionId: string,
-  context: Partial<ChatSession['context']>
+  context: Partial<ChatSession['context']>,
 ): boolean {
   const session = sessionStore.get(sessionId);
   if (!session) {
@@ -195,7 +197,7 @@ export function updateSessionContext(
     ...session.context,
     ...context,
   };
-  
+
   session.lastActivity = new Date();
   sessionStore.set(sessionId, session);
   return true;
@@ -226,7 +228,7 @@ export function cleanupExpiredSessions(): void {
   for (const [sessionId, session] of sessionStore.entries()) {
     const lastActivity = new Date(session.lastActivity);
     const inactiveTime = now.getTime() - lastActivity.getTime();
-    
+
     if (inactiveTime > expirationThreshold) {
       session.status = 'expired';
       sessionStore.set(sessionId, session);
@@ -237,7 +239,7 @@ export function cleanupExpiredSessions(): void {
 /**
  * Health check endpoint
  */
-app.get('/ai/sessions/health', async (c) => {
+app.get('/ai/sessions/health', async c => {
   try {
     const activeSessions = Array.from(sessionStore.values())
       .filter(s => s.status === 'active')

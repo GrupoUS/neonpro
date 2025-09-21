@@ -11,7 +11,7 @@ import { logger } from '../lib/logger';
 export const sseHeaders = {
   'Content-Type': 'text/event-stream',
   'Cache-Control': 'no-cache',
-  'Connection': 'keep-alive',
+  Connection: 'keep-alive',
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'Content-Type',
   'X-Accel-Buffering': 'no', // Disable nginx buffering
@@ -22,22 +22,22 @@ export const sseHeaders = {
  */
 export function formatSSEData(data: any, event?: string, id?: string): string {
   let result = '';
-  
+
   if (id) {
     result += `id: ${id}\n`;
   }
-  
+
   if (event) {
     result += `event: ${event}\n`;
   }
-  
+
   const dataStr = typeof data === 'string' ? data : JSON.stringify(data);
   const lines = dataStr.split('\n');
-  
+
   for (const line of lines) {
     result += `data: ${line}\n`;
   }
-  
+
   result += '\n';
   return result;
 }
@@ -53,21 +53,21 @@ export function sseStreamFromChunks(chunks: AsyncIterable<any>): ReadableStream<
           const sseData = formatSSEData(chunk);
           controller.enqueue(new TextEncoder().encode(sseData));
         }
-        
+
         // Send final event to indicate completion
         const finalEvent = formatSSEData('[DONE]', 'complete');
         controller.enqueue(new TextEncoder().encode(finalEvent));
-        
+
         controller.close();
       } catch (error) {
         logger.error('SSE streaming error', {
           error: error instanceof Error ? error.message : String(error),
         });
-        
+
         // Send error event
         const errorEvent = formatSSEData(
-          { error: 'Stream failed' }, 
-          'error'
+          { error: 'Stream failed' },
+          'error',
         );
         controller.enqueue(new TextEncoder().encode(errorEvent));
         controller.close();
@@ -79,30 +79,32 @@ export function sseStreamFromChunks(chunks: AsyncIterable<any>): ReadableStream<
 /**
  * Creates an SSE stream from a simple async generator
  */
-export function createSSEStream(generator: () => AsyncGenerator<string, void, unknown>): ReadableStream<Uint8Array> {
+export function createSSEStream(
+  generator: () => AsyncGenerator<string, void, unknown>,
+): ReadableStream<Uint8Array> {
   return new ReadableStream({
     async start(controller) {
       try {
         const gen = generator();
-        
+
         for await (const chunk of gen) {
           const sseData = formatSSEData(chunk);
           controller.enqueue(new TextEncoder().encode(sseData));
         }
-        
+
         // Send completion event
         const doneEvent = formatSSEData('[DONE]', 'complete');
         controller.enqueue(new TextEncoder().encode(doneEvent));
-        
+
         controller.close();
       } catch (error) {
         logger.error('SSE generator error', {
           error: error instanceof Error ? error.message : String(error),
         });
-        
+
         const errorEvent = formatSSEData(
-          { error: 'Stream generation failed' }, 
-          'error'
+          { error: 'Stream generation failed' },
+          'error',
         );
         controller.enqueue(new TextEncoder().encode(errorEvent));
         controller.close();
@@ -121,29 +123,28 @@ export function streamingMiddleware() {
       Object.entries(sseHeaders).forEach(([key, value]) => {
         c.header(key, value);
       });
-      
+
       // Add streaming context
       c.set('isStreaming', true);
       c.set('streamStartTime', Date.now());
-      
+
       await next();
-      
     } catch (error) {
       logger.error('Streaming middleware error', {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
         method: c.req.method,
       });
-      
+
       // Send error as SSE event
       const errorEvent = formatSSEData(
-        { 
+        {
           error: 'Streaming failed',
           message: error instanceof Error ? error.message : String(error),
-        }, 
-        'error'
+        },
+        'error',
       );
-      
+
       return c.body(errorEvent, 500, sseHeaders);
     }
   };
@@ -164,7 +165,7 @@ export function createHeartbeatStream(intervalMs: number = 30000): ReadableStrea
           controller.close();
         }
       }, intervalMs);
-      
+
       // Clean up on close
       return () => {
         clearInterval(interval);
@@ -176,12 +177,14 @@ export function createHeartbeatStream(intervalMs: number = 30000): ReadableStrea
 /**
  * Utility to merge multiple SSE streams
  */
-export function mergeSSEStreams(...streams: ReadableStream<Uint8Array>[]): ReadableStream<Uint8Array> {
+export function mergeSSEStreams(
+  ...streams: ReadableStream<Uint8Array>[]
+): ReadableStream<Uint8Array> {
   return new ReadableStream({
     async start(controller) {
       try {
         const readers = streams.map(stream => stream.getReader());
-        
+
         const readPromises = readers.map(async (reader, index) => {
           try {
             while (true) {
@@ -197,10 +200,9 @@ export function mergeSSEStreams(...streams: ReadableStream<Uint8Array>[]): Reada
             reader.releaseLock();
           }
         });
-        
+
         await Promise.all(readPromises);
         controller.close();
-        
       } catch (error) {
         logger.error('Stream merge error', {
           error: error instanceof Error ? error.message : String(error),
@@ -214,7 +216,10 @@ export function mergeSSEStreams(...streams: ReadableStream<Uint8Array>[]): Reada
 /**
  * Helper to create streaming response with proper headers
  */
-export function createStreamingResponse(stream: ReadableStream<Uint8Array>, status: number = 200): Response {
+export function createStreamingResponse(
+  stream: ReadableStream<Uint8Array>,
+  status: number = 200,
+): Response {
   return new Response(stream, {
     status,
     headers: sseHeaders,

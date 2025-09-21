@@ -32,7 +32,7 @@ import {
   User,
   Users,
 } from 'lucide-react';
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
   Badge,
@@ -51,7 +51,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-
   DropdownMenuTrigger,
   Input,
   ScrollArea,
@@ -71,15 +70,15 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui';
-import { formatCurrency, formatDateTime, formatCPF, formatPhone } from '@/utils/brazilian-formatters';
+import {
+  formatCPF,
+  formatCurrency,
+  formatDateTime,
+  formatPhone,
+} from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
 
-import type {
-  AgentResponse,
-  AppointmentData,
-  ClientData,
-  FinancialData,
-} from '@neonpro/types';
+import type { AgentResponse, AppointmentData, ClientData, FinancialData } from '@neonpro/types';
 
 export interface ResponseFormatterProps {
   /** Agent response data to format */
@@ -118,39 +117,39 @@ const ClientCard: React.FC<{
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <Card 
+    <Card
       className={cn(
         'cursor-pointer hover:shadow-md transition-all duration-200',
-        compact && 'p-2'
+        compact && 'p-2',
       )}
       onClick={onClick}
     >
       <CardHeader className={cn('pb-2', compact && 'pb-1')}>
-        <div className="flex items-center justify-between">
+        <div className='flex items-center justify-between'>
           <CardTitle className={cn('text-base font-medium', compact && 'text-sm')}>
-            <div className="flex items-center gap-2">
-              <User className="h-4 w-4 text-muted-foreground" />
+            <div className='flex items-center gap-2'>
+              <User className='h-4 w-4 text-muted-foreground' />
               {client.name}
             </div>
           </CardTitle>
-          <div className="flex items-center gap-2">
-            <Badge 
+          <div className='flex items-center gap-2'>
+            <Badge
               variant={client.status === 'active' ? 'default' : 'secondary'}
-              className="text-xs"
+              className='text-xs'
             >
               {client.status === 'active' ? 'Ativo' : 'Inativo'}
             </Badge>
             {!compact && (
               <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
+                variant='ghost'
+                size='sm'
+                onClick={e => {
                   e.stopPropagation();
                   setExpanded(!expanded);
                 }}
-                className="h-6 w-6 p-0"
+                className='h-6 w-6 p-0'
               >
-                {expanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                {expanded ? <ChevronUp className='h-3 w-3' /> : <ChevronDown className='h-3 w-3' />}
               </Button>
             )}
           </div>
@@ -158,41 +157,43 @@ const ClientCard: React.FC<{
       </CardHeader>
 
       <CardContent className={cn('pt-0', compact && 'text-xs')}>
-        <div className="space-y-1">
+        <div className='space-y-1'>
           {client.email && (
-            <div className="flex items-center text-sm text-muted-foreground">
+            <div className='flex items-center text-sm text-muted-foreground'>
               <span>{client.email}</span>
             </div>
           )}
           {client.phone && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <Phone className="h-3 w-3 mr-1" />
+            <div className='flex items-center text-sm text-muted-foreground'>
+              <Phone className='h-3 w-3 mr-1' />
               {formatPhone(client.phone)}
             </div>
           )}
           {client.document && (
-            <div className="flex items-center text-sm text-muted-foreground">
+            <div className='flex items-center text-sm text-muted-foreground'>
               CPF: {formatCPF(client.document)}
             </div>
           )}
         </div>
 
         {expanded && !compact && (
-          <div className="mt-3 pt-3 border-t space-y-2">
+          <div className='mt-3 pt-3 border-t space-y-2'>
             {client.birthDate && (
-              <div className="text-sm">
-                <span className="font-medium">Nascimento:</span> {formatDateTime(client.birthDate, 'date')}
+              <div className='text-sm'>
+                <span className='font-medium'>Nascimento:</span>{' '}
+                {formatDateTime(client.birthDate, 'date')}
               </div>
             )}
             {client.healthPlan && (
-              <div className="text-sm">
-                <span className="font-medium">Plano:</span> {client.healthPlan}
+              <div className='text-sm'>
+                <span className='font-medium'>Plano:</span> {client.healthPlan}
                 {client.healthPlanNumber && ` - ${client.healthPlanNumber}`}
               </div>
             )}
             {client.address && (
-              <div className="text-sm">
-                <span className="font-medium">Endereço:</span> {client.address.street}, {client.address.number}
+              <div className='text-sm'>
+                <span className='font-medium'>Endereço:</span> {client.address.street},{' '}
+                {client.address.number}
                 {client.address.complement && `, ${client.address.complement}`}
                 <br />
                 {client.address.neighborhood} - {client.address.city}/{client.address.state}
@@ -217,68 +218,74 @@ const AppointmentCard: React.FC<{
 }> = ({ appointment, onClick, compact }) => {
   const getStatusColor = (_status: any) => {
     switch (status) {
-      case 'confirmed': return 'default';
-      case 'scheduled': return 'secondary';
-      case 'completed': return 'default';
-      case 'cancelled': return 'destructive';
-      case 'no-show': return 'destructive';
-      default: return 'secondary';
+      case 'confirmed':
+        return 'default';
+      case 'scheduled':
+        return 'secondary';
+      case 'completed':
+        return 'default';
+      case 'cancelled':
+        return 'destructive';
+      case 'no-show':
+        return 'destructive';
+      default:
+        return 'secondary';
     }
   };
 
   const getStatusText = (_status: any) => {
     const statusMap = {
-      'scheduled': 'Agendado',
-      'confirmed': 'Confirmado',
+      scheduled: 'Agendado',
+      confirmed: 'Confirmado',
       'in-progress': 'Em andamento',
-      'completed': 'Concluído',
-      'cancelled': 'Cancelado',
+      completed: 'Concluído',
+      cancelled: 'Cancelado',
       'no-show': 'Não compareceu',
     };
     return statusMap[status as keyof typeof statusMap] || status;
   };
 
   return (
-    <Card 
+    <Card
       className={cn(
         'cursor-pointer hover:shadow-md transition-all duration-200',
-        compact && 'p-2'
+        compact && 'p-2',
       )}
       onClick={onClick}
     >
       <CardHeader className={cn('pb-2', compact && 'pb-1')}>
-        <div className="flex items-center justify-between">
+        <div className='flex items-center justify-between'>
           <CardTitle className={cn('text-base font-medium', compact && 'text-sm')}>
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4 text-muted-foreground" />
+            <div className='flex items-center gap-2'>
+              <Calendar className='h-4 w-4 text-muted-foreground' />
               {appointment.clientName}
             </div>
           </CardTitle>
-          <Badge variant={getStatusColor(appointment.status)} className="text-xs">
+          <Badge variant={getStatusColor(appointment.status)} className='text-xs'>
             {getStatusText(appointment.status)}
           </Badge>
         </div>
       </CardHeader>
 
       <CardContent className={cn('pt-0', compact && 'text-xs')}>
-        <div className="space-y-1">
-          <div className="flex items-center text-sm text-muted-foreground">
-            <Clock className="h-3 w-3 mr-1" />
+        <div className='space-y-1'>
+          <div className='flex items-center text-sm text-muted-foreground'>
+            <Clock className='h-3 w-3 mr-1' />
             {formatDateTime(appointment.scheduledAt)}
           </div>
-          <div className="text-sm text-muted-foreground">
-            <span className="font-medium">Serviço:</span> {appointment.serviceName}
+          <div className='text-sm text-muted-foreground'>
+            <span className='font-medium'>Serviço:</span> {appointment.serviceName}
           </div>
-          <div className="text-sm text-muted-foreground">
-            <span className="font-medium">Profissional:</span> {appointment.professionalName}
+          <div className='text-sm text-muted-foreground'>
+            <span className='font-medium'>Profissional:</span> {appointment.professionalName}
           </div>
           {appointment.duration && (
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium">Duração:</span> {appointment.duration} minutos
+            <div className='text-sm text-muted-foreground'>
+              <span className='font-medium'>Duração:</span> {appointment.duration} minutos
             </div>
           )}
           {appointment.telemedicine && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant='outline' className='text-xs'>
               Telemedicina
             </Badge>
           )}
@@ -298,47 +305,53 @@ const FinancialCard: React.FC<{
 }> = ({ financial, onClick, compact }) => {
   const getStatusColor = (_status: any) => {
     switch (status) {
-      case 'paid': return 'default';
-      case 'pending': return 'secondary';
-      case 'overdue': return 'destructive';
-      case 'cancelled': return 'destructive';
-      case 'refunded': return 'secondary';
-      default: return 'secondary';
+      case 'paid':
+        return 'default';
+      case 'pending':
+        return 'secondary';
+      case 'overdue':
+        return 'destructive';
+      case 'cancelled':
+        return 'destructive';
+      case 'refunded':
+        return 'secondary';
+      default:
+        return 'secondary';
     }
   };
 
   const getStatusText = (_status: any) => {
     const statusMap = {
-      'pending': 'Pendente',
-      'paid': 'Pago',
-      'overdue': 'Vencido',
-      'cancelled': 'Cancelado',
-      'refunded': 'Estornado',
+      pending: 'Pendente',
+      paid: 'Pago',
+      overdue: 'Vencido',
+      cancelled: 'Cancelado',
+      refunded: 'Estornado',
     };
     return statusMap[status as keyof typeof statusMap] || status;
   };
 
   return (
-    <Card 
+    <Card
       className={cn(
         'cursor-pointer hover:shadow-md transition-all duration-200',
-        compact && 'p-2'
+        compact && 'p-2',
       )}
       onClick={onClick}
     >
       <CardHeader className={cn('pb-2', compact && 'pb-1')}>
-        <div className="flex items-center justify-between">
+        <div className='flex items-center justify-between'>
           <CardTitle className={cn('text-base font-medium', compact && 'text-sm')}>
-            <div className="flex items-center gap-2">
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <div className='flex items-center gap-2'>
+              <DollarSign className='h-4 w-4 text-muted-foreground' />
               {financial.clientName}
             </div>
           </CardTitle>
-          <div className="text-right">
+          <div className='text-right'>
             <div className={cn('font-semibold', compact ? 'text-sm' : 'text-lg')}>
               {formatCurrency(financial.amount)}
             </div>
-            <Badge variant={getStatusColor(financial.status)} className="text-xs">
+            <Badge variant={getStatusColor(financial.status)} className='text-xs'>
               {getStatusText(financial.status)}
             </Badge>
           </div>
@@ -346,31 +359,37 @@ const FinancialCard: React.FC<{
       </CardHeader>
 
       <CardContent className={cn('pt-0', compact && 'text-xs')}>
-        <div className="space-y-1">
-          <div className="text-sm text-muted-foreground">
-            <span className="font-medium">Serviço:</span> {financial.serviceName}
+        <div className='space-y-1'>
+          <div className='text-sm text-muted-foreground'>
+            <span className='font-medium'>Serviço:</span> {financial.serviceName}
           </div>
-          <div className="text-sm text-muted-foreground">
-            <span className="font-medium">Profissional:</span> {financial.professionalName}
+          <div className='text-sm text-muted-foreground'>
+            <span className='font-medium'>Profissional:</span> {financial.professionalName}
           </div>
           {financial.paymentMethod && (
-            <div className="flex items-center text-sm text-muted-foreground">
-              <CreditCard className="h-3 w-3 mr-1" />
-              {financial.paymentMethod === 'credit_card' ? 'Cartão de Crédito' :
-               financial.paymentMethod === 'debit_card' ? 'Cartão de Débito' :
-               financial.paymentMethod === 'cash' ? 'Dinheiro' :
-               financial.paymentMethod === 'health_plan' ? 'Plano de Saúde' :
-               financial.paymentMethod}
+            <div className='flex items-center text-sm text-muted-foreground'>
+              <CreditCard className='h-3 w-3 mr-1' />
+              {financial.paymentMethod === 'credit_card'
+                ? 'Cartão de Crédito'
+                : financial.paymentMethod === 'debit_card'
+                ? 'Cartão de Débito'
+                : financial.paymentMethod === 'cash'
+                ? 'Dinheiro'
+                : financial.paymentMethod === 'health_plan'
+                ? 'Plano de Saúde'
+                : financial.paymentMethod}
             </div>
           )}
           {financial.dueDate && (
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium">Vencimento:</span> {formatDateTime(financial.dueDate, 'date')}
+            <div className='text-sm text-muted-foreground'>
+              <span className='font-medium'>Vencimento:</span>{' '}
+              {formatDateTime(financial.dueDate, 'date')}
             </div>
           )}
           {financial.paymentDate && (
-            <div className="text-sm text-muted-foreground">
-              <span className="font-medium">Pagamento:</span> {formatDateTime(financial.paymentDate, 'date')}
+            <div className='text-sm text-muted-foreground'>
+              <span className='font-medium'>Pagamento:</span>{' '}
+              {formatDateTime(financial.paymentDate, 'date')}
             </div>
           )}
         </div>
@@ -397,7 +416,7 @@ const DataTable: React.FC<{
             <TableHead>Email</TableHead>
             <TableHead>Telefone</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="w-12"></TableHead>
+            <TableHead className='w-12'></TableHead>
           </TableRow>
         );
       case 'appointments':
@@ -408,7 +427,7 @@ const DataTable: React.FC<{
             <TableHead>Serviço</TableHead>
             <TableHead>Profissional</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead className="w-12"></TableHead>
+            <TableHead className='w-12'></TableHead>
           </TableRow>
         );
       case 'financial':
@@ -419,7 +438,7 @@ const DataTable: React.FC<{
             <TableHead>Valor</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Vencimento</TableHead>
-            <TableHead className="w-12"></TableHead>
+            <TableHead className='w-12'></TableHead>
           </TableRow>
         );
       default:
@@ -431,8 +450,12 @@ const DataTable: React.FC<{
     switch (type) {
       case 'clients':
         return (
-          <TableRow key={index} className="cursor-pointer hover:bg-muted/50" onClick={() => onItemClick?.(item)}>
-            <TableCell className="font-medium">{item.name}</TableCell>
+          <TableRow
+            key={index}
+            className='cursor-pointer hover:bg-muted/50'
+            onClick={() => onItemClick?.(item)}
+          >
+            <TableCell className='font-medium'>{item.name}</TableCell>
             <TableCell>{item.email || '-'}</TableCell>
             <TableCell>{item.phone ? formatPhone(item.phone) : '-'}</TableCell>
             <TableCell>
@@ -441,35 +464,43 @@ const DataTable: React.FC<{
               </Badge>
             </TableCell>
             <TableCell>
-              <Button variant="ghost" size="sm">
-                <ExternalLink className="h-3 w-3" />
+              <Button variant='ghost' size='sm'>
+                <ExternalLink className='h-3 w-3' />
               </Button>
             </TableCell>
           </TableRow>
         );
       case 'appointments':
         return (
-          <TableRow key={index} className="cursor-pointer hover:bg-muted/50" onClick={() => onItemClick?.(item)}>
-            <TableCell className="font-medium">{item.clientName}</TableCell>
+          <TableRow
+            key={index}
+            className='cursor-pointer hover:bg-muted/50'
+            onClick={() => onItemClick?.(item)}
+          >
+            <TableCell className='font-medium'>{item.clientName}</TableCell>
             <TableCell>{formatDateTime(item.scheduledAt)}</TableCell>
             <TableCell>{item.serviceName}</TableCell>
             <TableCell>{item.professionalName}</TableCell>
             <TableCell>
-              <Badge variant="secondary">{item.status}</Badge>
+              <Badge variant='secondary'>{item.status}</Badge>
             </TableCell>
             <TableCell>
-              <Button variant="ghost" size="sm">
-                <ExternalLink className="h-3 w-3" />
+              <Button variant='ghost' size='sm'>
+                <ExternalLink className='h-3 w-3' />
               </Button>
             </TableCell>
           </TableRow>
         );
       case 'financial':
         return (
-          <TableRow key={index} className="cursor-pointer hover:bg-muted/50" onClick={() => onItemClick?.(item)}>
-            <TableCell className="font-medium">{item.clientName}</TableCell>
+          <TableRow
+            key={index}
+            className='cursor-pointer hover:bg-muted/50'
+            onClick={() => onItemClick?.(item)}
+          >
+            <TableCell className='font-medium'>{item.clientName}</TableCell>
             <TableCell>{item.serviceName}</TableCell>
-            <TableCell className="font-semibold">{formatCurrency(item.amount)}</TableCell>
+            <TableCell className='font-semibold'>{formatCurrency(item.amount)}</TableCell>
             <TableCell>
               <Badge variant={item.status === 'paid' ? 'default' : 'secondary'}>
                 {item.status === 'paid' ? 'Pago' : 'Pendente'}
@@ -477,8 +508,8 @@ const DataTable: React.FC<{
             </TableCell>
             <TableCell>{item.dueDate ? formatDateTime(item.dueDate, 'date') : '-'}</TableCell>
             <TableCell>
-              <Button variant="ghost" size="sm">
-                <ExternalLink className="h-3 w-3" />
+              <Button variant='ghost' size='sm'>
+                <ExternalLink className='h-3 w-3' />
               </Button>
             </TableCell>
           </TableRow>
@@ -489,7 +520,7 @@ const DataTable: React.FC<{
   };
 
   return (
-    <div className="border rounded-lg">
+    <div className='border rounded-lg'>
       <Table>
         <TableHeader>
           {renderTableHeaders()}
@@ -531,8 +562,8 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
   const hasFinancial = financial.length > 0;
   const dataTypes = [
     hasClients && 'clients',
-    hasAppointments && 'appointments', 
-    hasFinancial && 'financial'
+    hasAppointments && 'appointments',
+    hasFinancial && 'financial',
   ].filter(Boolean) as string[];
 
   const [activeTab, setActiveTab] = useState(dataTypes[0] || 'clients');
@@ -540,10 +571,14 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
   // Get active data
   const getActiveData = () => {
     switch (activeTab) {
-      case 'clients': return clients;
-      case 'appointments': return appointments;
-      case 'financial': return financial;
-      default: return [];
+      case 'clients':
+        return clients;
+      case 'appointments':
+        return appointments;
+      case 'financial':
+        return financial;
+      default:
+        return [];
     }
   };
 
@@ -591,34 +626,36 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
     if (!summary) return null;
 
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-        <Card className="p-4">
-          <div className="text-2xl font-bold">{summary.count || filteredData.length}</div>
-          <div className="text-sm text-muted-foreground">
-            {activeTab === 'clients' ? 'Clientes' :
-             activeTab === 'appointments' ? 'Agendamentos' :
-             'Transações'}
+      <div className='grid grid-cols-2 md:grid-cols-4 gap-4 mb-6'>
+        <Card className='p-4'>
+          <div className='text-2xl font-bold'>{summary.count || filteredData.length}</div>
+          <div className='text-sm text-muted-foreground'>
+            {activeTab === 'clients'
+              ? 'Clientes'
+              : activeTab === 'appointments'
+              ? 'Agendamentos'
+              : 'Transações'}
           </div>
         </Card>
-        
+
         {summary.total !== undefined && (
-          <Card className="p-4">
-            <div className="text-2xl font-bold">{formatCurrency(summary.total)}</div>
-            <div className="text-sm text-muted-foreground">Total</div>
+          <Card className='p-4'>
+            <div className='text-2xl font-bold'>{formatCurrency(summary.total)}</div>
+            <div className='text-sm text-muted-foreground'>Total</div>
           </Card>
         )}
-        
+
         {summary.paid !== undefined && (
-          <Card className="p-4">
-            <div className="text-2xl font-bold">{formatCurrency(summary.paid)}</div>
-            <div className="text-sm text-muted-foreground">Pago</div>
+          <Card className='p-4'>
+            <div className='text-2xl font-bold'>{formatCurrency(summary.paid)}</div>
+            <div className='text-sm text-muted-foreground'>Pago</div>
           </Card>
         )}
-        
+
         {summary.pending !== undefined && (
-          <Card className="p-4">
-            <div className="text-2xl font-bold">{formatCurrency(summary.pending)}</div>
-            <div className="text-sm text-muted-foreground">Pendente</div>
+          <Card className='p-4'>
+            <div className='text-2xl font-bold'>{formatCurrency(summary.pending)}</div>
+            <div className='text-sm text-muted-foreground'>Pendente</div>
           </Card>
         )}
       </div>
@@ -630,36 +667,36 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
     if (!enableFilters) return null;
 
     return (
-      <div className="flex flex-col sm:flex-row gap-4 mb-4">
-        <div className="flex-1">
-          <div className="relative">
-            <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+      <div className='flex flex-col sm:flex-row gap-4 mb-4'>
+        <div className='flex-1'>
+          <div className='relative'>
+            <Search className='absolute left-3 top-3 h-4 w-4 text-muted-foreground' />
             <Input
-              placeholder="Buscar..."
+              placeholder='Buscar...'
               value={filters.search}
-              onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
-              className="pl-10"
+              onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
+              className='pl-10'
             />
           </div>
         </div>
-        
-        <div className="flex gap-2">
+
+        <div className='flex gap-2'>
           <Select
             value={viewMode}
             onValueChange={(value: 'cards' | 'table') => setViewMode(value)}
           >
-            <SelectTrigger className="w-32">
+            <SelectTrigger className='w-32'>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="cards">Cards</SelectItem>
-              <SelectItem value="table">Tabela</SelectItem>
+              <SelectItem value='cards'>Cards</SelectItem>
+              <SelectItem value='table'>Tabela</SelectItem>
             </SelectContent>
           </Select>
 
           {showExport && (
-            <Button variant="outline" onClick={handleExport} className="shrink-0">
-              <Download className="h-4 w-4 mr-2" />
+            <Button variant='outline' onClick={handleExport} className='shrink-0'>
+              <Download className='h-4 w-4 mr-2' />
               Exportar
             </Button>
           )}
@@ -672,8 +709,8 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
   const renderContent = () => {
     if (filteredData.length === 0) {
       return (
-        <div className="text-center py-8">
-          <div className="text-muted-foreground">Nenhum resultado encontrado</div>
+        <div className='text-center py-8'>
+          <div className='text-muted-foreground'>Nenhum resultado encontrado</div>
         </div>
       );
     }
@@ -690,10 +727,12 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
     }
 
     return (
-      <div className={cn(
-        'grid gap-4',
-        compact ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3'
-      )}>
+      <div
+        className={cn(
+          'grid gap-4',
+          compact ? 'grid-cols-1 sm:grid-cols-2' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+        )}
+      >
         {paginatedData.map((item, _index) => {
           switch (activeTab) {
             case 'clients':
@@ -736,22 +775,24 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
     if (totalPages <= 1) return null;
 
     return (
-      <div className="flex items-center justify-between mt-6">
-        <div className="text-sm text-muted-foreground">
-          Mostrando {(currentPage - 1) * itemsPerPage + 1} a {Math.min(currentPage * itemsPerPage, filteredData.length)} de {filteredData.length} resultados
+      <div className='flex items-center justify-between mt-6'>
+        <div className='text-sm text-muted-foreground'>
+          Mostrando {(currentPage - 1) * itemsPerPage + 1} a{' '}
+          {Math.min(currentPage * itemsPerPage, filteredData.length)} de {filteredData.length}{' '}
+          resultados
         </div>
-        <div className="flex gap-2">
+        <div className='flex gap-2'>
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
           >
             Anterior
           </Button>
           <Button
-            variant="outline"
-            size="sm"
+            variant='outline'
+            size='sm'
             onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
           >
@@ -764,8 +805,8 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
 
   if (!hasClients && !hasAppointments && !hasFinancial) {
     return (
-      <div className="text-center py-8" data-testid={testId}>
-        <div className="text-muted-foreground">
+      <div className='text-center py-8' data-testid={testId}>
+        <div className='text-muted-foreground'>
           Nenhum dado encontrado para exibir
         </div>
       </div>
@@ -773,45 +814,47 @@ export const ResponseFormatter: React.FC<ResponseFormatterProps> = ({
   }
 
   return (
-    <div className="space-y-4" data-testid={testId}>
+    <div className='space-y-4' data-testid={testId}>
       {renderSummary()}
 
-      {dataTypes.length > 1 ? (
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-3">
-            {hasClients && (
-              <TabsTrigger value="clients" className="flex items-center gap-2">
-                <Users className="h-4 w-4" />
-                Clientes ({clients.length})
-              </TabsTrigger>
-            )}
-            {hasAppointments && (
-              <TabsTrigger value="appointments" className="flex items-center gap-2">
-                <Calendar className="h-4 w-4" />
-                Agendamentos ({appointments.length})
-              </TabsTrigger>
-            )}
-            {hasFinancial && (
-              <TabsTrigger value="financial" className="flex items-center gap-2">
-                <DollarSign className="h-4 w-4" />
-                Financeiro ({financial.length})
-              </TabsTrigger>
-            )}
-          </TabsList>
+      {dataTypes.length > 1
+        ? (
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className='grid w-full grid-cols-3'>
+              {hasClients && (
+                <TabsTrigger value='clients' className='flex items-center gap-2'>
+                  <Users className='h-4 w-4' />
+                  Clientes ({clients.length})
+                </TabsTrigger>
+              )}
+              {hasAppointments && (
+                <TabsTrigger value='appointments' className='flex items-center gap-2'>
+                  <Calendar className='h-4 w-4' />
+                  Agendamentos ({appointments.length})
+                </TabsTrigger>
+              )}
+              {hasFinancial && (
+                <TabsTrigger value='financial' className='flex items-center gap-2'>
+                  <DollarSign className='h-4 w-4' />
+                  Financeiro ({financial.length})
+                </TabsTrigger>
+              )}
+            </TabsList>
 
-          <TabsContent value={activeTab} className="space-y-4">
+            <TabsContent value={activeTab} className='space-y-4'>
+              {renderFilters()}
+              {renderContent()}
+              {renderPagination()}
+            </TabsContent>
+          </Tabs>
+        )
+        : (
+          <div className='space-y-4'>
             {renderFilters()}
             {renderContent()}
             {renderPagination()}
-          </TabsContent>
-        </Tabs>
-      ) : (
-        <div className="space-y-4">
-          {renderFilters()}
-          {renderContent()}
-          {renderPagination()}
-        </div>
-      )}
+          </div>
+        )}
     </div>
   );
 };

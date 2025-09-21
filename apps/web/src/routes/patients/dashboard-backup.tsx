@@ -1,39 +1,16 @@
-import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
-import { MobilePatientCard } from '@/components/patients/MobilePatientCard';
 import { AnimatedModal } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { EnhancedTable } from '@/components/ui/enhanced-table';
 import { FocusCards } from '@/components/ui/focus-cards';
 import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
-import { usePatientStats } from '@/hooks/usePatientStats';
-import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
-import { cn } from '@/lib/utils';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { format, isThisWeek, isToday, subDays } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import {
-  Activity,
-  AlertTriangle,
-  Bell,
-  Calendar,
-  Clock,
-  Eye,
-  Heart,
-  Mail,
-  MapPin,
-  Phone,
-  RefreshCw,
-  Shield,
-  TrendingUp,
-  Users,
-  Zap,
-} from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 export const Route = createFileRoute('/patients/dashboard-backup')({
   component: PatientDashboard,
@@ -103,13 +80,13 @@ interface PatientCardProps {
 }
 
 function PatientCard({ patient, onClick }: PatientCardProps) {
-  const getRiskColor = (_riskScore: any) => {
+  const getRiskColor = (riskScore: number) => {
     if (riskScore >= 0.8) return 'destructive';
     if (riskScore >= 0.6) return 'warning';
     return 'default';
   };
 
-  const getRiskLabel = (_riskScore: any) => {
+  const getRiskLabel = (riskScore: number) => {
     if (riskScore >= 0.8) return 'Alto Risco';
     if (riskScore >= 0.6) return 'Médio Risco';
     return 'Baixo Risco';
@@ -155,7 +132,10 @@ function PatientCard({ patient, onClick }: PatientCardProps) {
             <div className='text-sm font-medium'>Próxima consulta:</div>
             <div className='text-sm text-muted-foreground'>
               {format(
-                new Date(patient.nextAppointment.date),
+                // combine date + time when available for formatting
+                new Date(
+                  `${patient.nextAppointment.date}T${patient.nextAppointment.time || '00:00'}`,
+                ),
                 'dd/MM/yyyy HH:mm',
                 { locale: ptBR },
               )}
@@ -187,7 +167,7 @@ function PatientDashboard() {
     patientSatisfaction: 4.7,
   };
 
-  const mockAIInsights: AIInsight[] = [
+  const _mockAIInsights: AIInsight[] = [
     {
       id: '1',
       type: 'no_show_prediction',
@@ -229,7 +209,7 @@ function PatientDashboard() {
     },
   ];
 
-  const mockRealTimeUpdates: RealTimeUpdate[] = [
+  const _mockRealTimeUpdates: RealTimeUpdate[] = [
     {
       type: 'new_patient',
       message: 'Novo paciente cadastrado: Ana Costa',
@@ -292,12 +272,14 @@ function PatientDashboard() {
       || patient.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const handlePatientClick = (_patientId: any) => {
+  // Use correct param name and pass through when navigating
+  const handlePatientClick = (patientId: string) => {
     navigate({ to: '/patients/$patientId', params: { patientId } });
   };
 
-  const handleDeletePatient = (_patient: any) => {
-    setSelectedPatient(patient);
+  // Use correct param reference when opening delete modal
+  const handleDeletePatient = (patientParam: Patient) => {
+    setSelectedPatient(patientParam);
     setIsModalOpen(true);
   };
 
@@ -334,7 +316,8 @@ function PatientDashboard() {
     {
       accessorKey: 'riskScore',
       header: 'Risco',
-      cell: (_info: any) => {
+      // use 'info' param correctly
+      cell: (info: any) => {
         const score = info.getValue();
         let variant: 'default' | 'destructive' | 'outline' = 'default';
         let label = 'Baixo';
@@ -353,7 +336,8 @@ function PatientDashboard() {
     {
       accessorKey: 'lastVisit',
       header: 'Última Consulta',
-      cell: (_info: any) => {
+      // use 'info' param correctly
+      cell: (info: any) => {
         const date = info.getValue();
         return date
           ? format(new Date(date), 'dd/MM/yyyy', { locale: ptBR })
@@ -363,8 +347,9 @@ function PatientDashboard() {
     {
       id: 'actions',
       header: 'Ações',
-      cell: (_info: any) => {
-        const patient = info.row.original;
+      // use 'info' param correctly
+      cell: (info: any) => {
+        const patient = info.row.original as Patient;
         return (
           <div className='flex gap-2'>
             <Button
@@ -554,7 +539,16 @@ function PatientDashboard() {
               </div>
             </div>
 
-            <div className='overflow-x-auto'>
+            {/* Patients listing: show cards on mobile, table on sm+ */}
+            <div className='grid grid-cols-1 gap-4 sm:hidden'>
+              {patients.map(p => <PatientCard
+                key={p.id}
+                patient={p}
+                onClick={handlePatientClick}
+              />)}
+            </div>
+
+            <div className='overflow-x-auto hidden sm:block'>
               <EnhancedTable
                 columns={tableColumns}
                 data={patients}

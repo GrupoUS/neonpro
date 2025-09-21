@@ -14,9 +14,7 @@
  */
 
 import { validatePatientData } from '../../../../packages/shared/src';
-import {
-  Patient,
-} from '../../../../packages/shared/src/types/patient';
+import { Patient } from '../../../../packages/shared/src/types/patient';
 import {
   createPrismaWithContext,
   getHealthcarePrismaClient,

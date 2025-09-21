@@ -6,7 +6,7 @@ describe('TDD Suite Test', () => {
     const result = createTDDSuite({
       feature: 'Example TDD Cycle',
       agents: ['test-agent'],
-      coverageThreshold: 80
+      coverageThreshold: 80,
     }, {
       redPhase: () => {
         // This should fail initially
@@ -21,7 +21,7 @@ describe('TDD Suite Test', () => {
         expect(true).toBe(true);
       },
     });
-    
+
     expect(result).toBeDefined();
   });
 });

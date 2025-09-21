@@ -328,8 +328,7 @@ export interface FeedbackResponse {
 
 // Type guards for runtime validation
 export function isUserQuery(obj: any): obj is UserQuery {
-  const hasTimestamp =
-    !!obj
+  const hasTimestamp = !!obj
     && (
       obj.timestamp instanceof Date
       || (typeof obj.timestamp === 'string' && !isNaN(Date.parse(obj.timestamp)))
@@ -348,8 +347,7 @@ export function isUserQuery(obj: any): obj is UserQuery {
 }
 
 export function isAgentResponse(obj: any): obj is AgentResponse {
-  const hasTimestamp =
-    !!obj
+  const hasTimestamp = !!obj
     && (
       obj.timestamp instanceof Date
       || (typeof obj.timestamp === 'string' && !isNaN(Date.parse(obj.timestamp)))

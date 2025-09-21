@@ -1,9 +1,9 @@
 /**
  * JWT Validation Security Tests - RED PHASE
- * 
+ *
  * These tests are designed to FAIL initially and demonstrate critical JWT security vulnerabilities.
  * They will only PASS when the security issues are properly implemented.
- * 
+ *
  * VULNERABILITIES TESTED:
  * 1. Algorithm confusion attacks (none algorithm)
  * 2. Missing audience validation
@@ -11,18 +11,18 @@
  * 4. Missing key ID validation
  * 5. Insufficient token expiration validation
  * 6. Missing token type validation
- * 
+ *
  * @security_critical
  * @compliance OWASP, JWT Security Best Practices
  * @version 1.0.0
  */
 
 import { Hono } from 'hono';
-import { beforeEach, describe, expect, it } from 'vitest';
-import { jwtValidator } from '../../src/security/jwt-validator';
-import { requireAuth } from '../../src/middleware/auth';
-import { unauthorized } from '../../src/utils/responses';
 import jwt from 'jsonwebtoken';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { requireAuth } from '../../src/middleware/auth';
+import { jwtValidator } from '../../src/security/jwt-validator';
+import { unauthorized } from '../../src/utils/responses';
 
 // Mock environment
 process.env.SUPABASE_URL = 'https://test.supabase.co';
@@ -35,7 +35,7 @@ describe('JWT Validation Security Tests', () => {
 
   beforeEach(() => {
     app = new Hono();
-    
+
     // Create a valid token for testing
     validToken = jwt.sign(
       {
@@ -47,7 +47,7 @@ describe('JWT Validation Security Tests', () => {
         iat: Math.floor(Date.now() / 1000),
       },
       'test-secret-key',
-      { algorithm: 'HS256' }
+      { algorithm: 'HS256' },
     );
   });
 
@@ -63,16 +63,16 @@ describe('JWT Validation Security Tests', () => {
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
         '',
-        { algorithm: 'none' }
+        { algorithm: 'none' },
       );
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${noneAlgorithmToken}`
-        }
+          Authorization: `Bearer ${noneAlgorithmToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -91,16 +91,16 @@ describe('JWT Validation Security Tests', () => {
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
         'test-secret-key',
-        { algorithm: 'HS512' }
+        { algorithm: 'HS512' },
       );
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${unsupportedAlgorithmToken}`
-        }
+          Authorization: `Bearer ${unsupportedAlgorithmToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -120,16 +120,16 @@ describe('JWT Validation Security Tests', () => {
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
         'test-secret-key',
-        { algorithm: 'HS256' }
+        { algorithm: 'HS256' },
       );
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${wrongAudienceToken}`
-        }
+          Authorization: `Bearer ${wrongAudienceToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -147,16 +147,16 @@ describe('JWT Validation Security Tests', () => {
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
         'test-secret-key',
-        { algorithm: 'HS256' }
+        { algorithm: 'HS256' },
       );
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${noAudienceToken}`
-        }
+          Authorization: `Bearer ${noAudienceToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -176,16 +176,16 @@ describe('JWT Validation Security Tests', () => {
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
         'test-secret-key',
-        { algorithm: 'HS256' }
+        { algorithm: 'HS256' },
       );
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${wrongIssuerToken}`
-        }
+          Authorization: `Bearer ${wrongIssuerToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -203,16 +203,16 @@ describe('JWT Validation Security Tests', () => {
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
         'test-secret-key',
-        { algorithm: 'HS256' }
+        { algorithm: 'HS256' },
       );
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${noIssuerToken}`
-        }
+          Authorization: `Bearer ${noIssuerToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -233,16 +233,16 @@ describe('JWT Validation Security Tests', () => {
           iat: Math.floor(Date.now() / 1000) - 7200,
         },
         'test-secret-key',
-        { algorithm: 'HS256' }
+        { algorithm: 'HS256' },
       );
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${expiredToken}`
-        }
+          Authorization: `Bearer ${expiredToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -262,16 +262,16 @@ describe('JWT Validation Security Tests', () => {
           iat: Math.floor(Date.now() / 1000),
         },
         'test-secret-key',
-        { algorithm: 'HS256' }
+        { algorithm: 'HS256' },
       );
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${longExpirationToken}`
-        }
+          Authorization: `Bearer ${longExpirationToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized for excessive expiration
@@ -289,16 +289,16 @@ describe('JWT Validation Security Tests', () => {
           iat: Math.floor(Date.now() / 1000),
         },
         'test-secret-key',
-        { algorithm: 'HS256' }
+        { algorithm: 'HS256' },
       );
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${noExpirationToken}`
-        }
+          Authorization: `Bearer ${noExpirationToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -312,12 +312,12 @@ describe('JWT Validation Security Tests', () => {
       const malformedToken = 'header.payload.invalid-signature';
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${malformedToken}`
-        }
+          Authorization: `Bearer ${malformedToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -329,12 +329,12 @@ describe('JWT Validation Security Tests', () => {
       const insufficientSegmentsToken = 'header.payload';
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${insufficientSegmentsToken}`
-        }
+          Authorization: `Bearer ${insufficientSegmentsToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -344,15 +344,16 @@ describe('JWT Validation Security Tests', () => {
     it('SHOULD FAIL: Should reject tokens with invalid JSON in payload', async () => {
       // Token with invalid JSON payload
       const invalidJsonPayload = Buffer.from('{"sub":"test","email":invalid}').toString('base64');
-      const invalidJsonToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${invalidJsonPayload}.signature`;
+      const invalidJsonToken =
+        `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${invalidJsonPayload}.signature`;
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${invalidJsonToken}`
-        }
+          Authorization: `Bearer ${invalidJsonToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -372,7 +373,7 @@ describe('JWT Validation Security Tests', () => {
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
         'test-secret-key',
-        { algorithm: 'HS256' }
+        { algorithm: 'HS256' },
       );
 
       // Temporarily enable key ID requirement for this test
@@ -380,12 +381,12 @@ describe('JWT Validation Security Tests', () => {
       jwtValidator.config.requireKeyId = true;
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${noKidToken}`
-        }
+          Authorization: `Bearer ${noKidToken}`,
+        },
       });
 
       // Restore original configuration
@@ -407,16 +408,16 @@ describe('JWT Validation Security Tests', () => {
           exp: Math.floor(Date.now() / 1000) + 3600,
         },
         'test-secret-key',
-        { algorithm: 'HS256', keyid: 'invalid-key-id' }
+        { algorithm: 'HS256', keyid: 'invalid-key-id' },
       );
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${invalidKidToken}`
-        }
+          Authorization: `Bearer ${invalidKidToken}`,
+        },
       });
 
       // This should fail with 401 Unauthorized
@@ -431,13 +432,13 @@ describe('JWT Validation Security Tests', () => {
       process.env.NODE_ENV = 'production';
 
       app.use('/protected', requireAuth);
-      app.get('/protected', (c) => c.json({ message: 'protected' }));
+      app.get('/protected', c => c.json({ message: 'protected' }));
 
       const response = await app.request('/protected', {
         headers: {
-          'Authorization': `Bearer ${validToken}`,
-          'X-Forwarded-Proto': 'http'
-        }
+          Authorization: `Bearer ${validToken}`,
+          'X-Forwarded-Proto': 'http',
+        },
       });
 
       // This should fail with 401 Unauthorized for non-HTTPS in production

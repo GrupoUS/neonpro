@@ -52,7 +52,12 @@ export class REDPhaseSpecialist {
     // Configure agent coordination for RED phase
     const coordinationConfig = {
       pattern: 'hierarchical' as const,
-      agents: ['security-auditor', 'architect-review', 'tdd-orchestrator', 'test-agent'] as AgentType[],
+      agents: [
+        'security-auditor',
+        'architect-review',
+        'tdd-orchestrator',
+        'test-agent',
+      ] as AgentType[],
       qualityGates: ['red-phase-compliance', 'error-detection', 'test-coverage'],
       timeout: 300000,
     };

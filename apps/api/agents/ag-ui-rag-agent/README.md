@@ -37,11 +37,13 @@ A specialized RAG (Retrieval-Augmented Generation) agent for healthcare data ope
 ## Installation
 
 1. Install Python dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 2. Set up environment variables:
+
 ```bash
 # Supabase Configuration
 export SUPABASE_URL="your_supabase_url"
@@ -73,11 +75,13 @@ python -m src.main
 ### API Endpoints
 
 #### Health Check
+
 ```bash
 curl http://localhost:8080/health
 ```
 
 #### Process Query
+
 ```bash
 curl -X POST http://localhost:8080/api/ai/data-agent \
   -H "Content-Type: application/json" \
@@ -90,6 +94,7 @@ curl -X POST http://localhost:8080/api/ai/data-agent \
 ```
 
 #### Get Agent Status
+
 ```bash
 curl http://localhost:8080/api/ai/status
 ```
@@ -104,11 +109,11 @@ ws.onopen = () => {
     type: 'query',
     query: 'What medications is this patient currently taking?',
     user_id: 'user_456',
-    patient_id: 'patient_789'
+    patient_id: 'patient_789',
   }));
 };
 
-ws.onmessage = (event) => {
+ws.onmessage = event => {
   const response = JSON.parse(event.data);
   console.log('Response:', response);
 };
@@ -119,21 +124,25 @@ ws.onmessage = (event) => {
 The agent is configured through environment variables and the `AgentConfig` class. Key configuration sections:
 
 ### Database Configuration
+
 - `SUPABASE_URL`: Supabase project URL
 - `SUPABASE_SERVICE_KEY`: Supabase service role key
 - `SUPABASE_PROJECT_REF`: Supabase project reference
 
 ### AI Provider Configuration
+
 - `AI_PROVIDER`: AI provider (openai, anthropic, local)
 - `AI_MODEL`: Model name (gpt-4, claude-3-sonnet-20240229, etc.)
 - `OPENAI_API_KEY` / `ANTHROPIC_API_KEY`: API keys for respective providers
 
 ### Vector Store Configuration
+
 - `EMBEDDING_MODEL`: Embedding model to use
 - `EMBEDDING_DIMENSION`: Vector dimension (default: 1536)
 - `VECTOR_TABLE_NAME`: Table name for vector embeddings
 
 ### Security Configuration
+
 - `ENCRYPTION_KEY`: Key for data encryption
 - `JWT_SECRET`: Secret for JWT tokens
 - `AUDIT_LOGGING`: Enable audit logging (default: true)
@@ -143,6 +152,7 @@ The agent is configured through environment variables and the `AgentConfig` clas
 The agent provides specialized functions for healthcare data:
 
 ### Patient Data Retrieval
+
 ```python
 # Get comprehensive patient information
 patient_data = await agent.healthcare_retriever.retrieve_patient_data(
@@ -152,6 +162,7 @@ patient_data = await agent.healthcare_retriever.retrieve_patient_data(
 ```
 
 ### Medical Knowledge Search
+
 ```python
 # Search medical knowledge base
 knowledge = await agent.healthcare_retriever.search_medical_knowledge(
@@ -161,6 +172,7 @@ knowledge = await agent.healthcare_retriever.search_medical_knowledge(
 ```
 
 ### Appointment Data
+
 ```python
 # Retrieve appointment information
 appointments = await agent.healthcare_retriever.retrieve_appointment_data(
@@ -170,6 +182,7 @@ appointments = await agent.healthcare_retriever.retrieve_appointment_data(
 ```
 
 ### Financial Summary
+
 ```python
 # Get financial summary
 financial = await agent.healthcare_retriever.retrieve_financial_summary(
@@ -180,13 +193,16 @@ financial = await agent.healthcare_retriever.retrieve_financial_summary(
 ## Compliance Features
 
 ### LGPD Compliance
+
 - Automatic audit logging for all data access
 - PII detection and sanitization
 - Data retention policies
 - Role-based access control
 
 ### Audit Logging
+
 All data access and queries are logged with:
+
 - User ID and session ID
 - Patient ID (when applicable)
 - Query content and response
@@ -194,6 +210,7 @@ All data access and queries are logged with:
 - IP address and user agent
 
 ### PII Protection
+
 - Automatic detection of common PII patterns
 - Sanitization of sensitive information in responses
 - Configurable PII detection rules
@@ -201,11 +218,13 @@ All data access and queries are logged with:
 ## Development
 
 ### Running Tests
+
 ```bash
 pytest tests/
 ```
 
 ### Code Quality
+
 ```bash
 # Format code
 black src/
@@ -220,6 +239,7 @@ mypy src/
 The agent requires several database tables:
 
 #### Vector Embeddings Table
+
 ```sql
 CREATE TABLE vector_embeddings (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -236,6 +256,7 @@ CREATE TABLE vector_embeddings (
 ```
 
 #### Sessions Table
+
 ```sql
 CREATE TABLE rag_agent_sessions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -251,6 +272,7 @@ CREATE TABLE rag_agent_sessions (
 ```
 
 #### Audit Log Table
+
 ```sql
 CREATE TABLE rag_agent_audit_log (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -307,6 +329,7 @@ The agent provides several monitoring endpoints:
 ### Debug Mode
 
 Enable debug logging:
+
 ```bash
 export LOG_LEVEL=DEBUG
 ```

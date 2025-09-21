@@ -1,12 +1,12 @@
 /**
  * Agent Audit Service
- * 
+ *
  * Provides comprehensive audit logging for all AI agent data access attempts
  * with LGPD compliance and healthcare security requirements.
  */
 
-import { createClient } from '@supabase/supabase-js';
 import { Database } from '@/types/database';
+import { createClient } from '@supabase/supabase-js';
 
 export interface AuditEvent {
   id: string;
@@ -60,7 +60,7 @@ export class AgentAuditService {
     const auditEvent: AuditEvent = {
       ...event,
       id: crypto.randomUUID(),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
 
     this.pendingEvents.push(auditEvent);
@@ -102,15 +102,15 @@ export class AgentAuditService {
         ...params.metadata,
         resourceId: params.resourceId,
         actionType: params.action,
-        accessMethod: 'api'
+        accessMethod: 'api',
       },
       compliance: {
         lgpdConsentVerified: await this.verifyLgpdConsent(params.userId),
         dataAccessReason: this.determineAccessReason(params.action, params.resource),
         dataRetentionPolicy: this.getRetentionPolicy(params.resource),
         patientId: params.patientId,
-        sensitivityLevel
-      }
+        sensitivityLevel,
+      },
     });
   }
 
@@ -153,15 +153,15 @@ export class AgentAuditService {
         sources: params.sources,
         containsPhi,
         aiModel: 'gpt-4', // Could be configured
-        queryType: this.categorizeQuery(params.query)
+        queryType: this.categorizeQuery(params.query),
       },
       compliance: {
         lgpdConsentVerified: await this.verifyLgpdConsent(params.userId),
         dataAccessReason: 'ai_assistant_interaction',
         dataRetentionPolicy: '30_days',
         patientIds: params.patientIds,
-        sensitivityLevel: containsPhi ? 'high' : 'medium'
-      }
+        sensitivityLevel: containsPhi ? 'high' : 'medium',
+      },
     });
   }
 
@@ -189,13 +189,13 @@ export class AgentAuditService {
       userAgent: params.userAgent,
       metadata: {
         ...params.metadata,
-        sessionAction: params.action
+        sessionAction: params.action,
       },
       compliance: {
         lgpdConsentVerified: await this.verifyLgpdConsent(params.userId),
         dataAccessReason: 'session_management',
-        dataRetentionPolicy: '24_hours'
-      }
+        dataRetentionPolicy: '24_hours',
+      },
     });
   }
 
@@ -225,13 +225,13 @@ export class AgentAuditService {
       metadata: {
         permission: params.permission,
         processingTimeMs: params.processingTimeMs,
-        checkType: 'rbac'
+        checkType: 'rbac',
       },
       compliance: {
         lgpdConsentVerified: true, // Permission checks don't require additional consent
         dataAccessReason: 'security_validation',
-        dataRetentionPolicy: '90_days'
-      }
+        dataRetentionPolicy: '90_days',
+      },
     });
   }
 
@@ -300,15 +300,14 @@ export class AgentAuditService {
       return {
         events,
         total: count || 0,
-        hasMore: (options.limit || 0) + (options.offset || 0) < (count || 0)
+        hasMore: (options.limit || 0) + (options.offset || 0) < (count || 0),
       };
-
     } catch (error) {
       console.error('Error querying audit logs:', error);
       return {
         events: [],
         total: 0,
-        hasMore: false
+        hasMore: false,
       };
     }
   }
@@ -362,7 +361,7 @@ export class AgentAuditService {
       events.forEach(event => {
         // Count actions
         actionCounts.set(event.action, (actionCounts.get(event.action) || 0) + 1);
-        
+
         // Count resources
         if (event.table_name) {
           resourceCounts.set(event.table_name, (resourceCounts.get(event.table_name) || 0) + 1);
@@ -400,9 +399,10 @@ export class AgentAuditService {
         failedEvents,
         topActions,
         topResources,
-        averageProcessingTime: processingTimeCount > 0 ? totalProcessingTime / processingTimeCount : 0
+        averageProcessingTime: processingTimeCount > 0
+          ? totalProcessingTime / processingTimeCount
+          : 0,
       };
-
     } catch (error) {
       console.error('Error getting audit statistics:', error);
       return {
@@ -411,7 +411,7 @@ export class AgentAuditService {
         failedEvents: 0,
         topActions: [],
         topResources: [],
-        averageProcessingTime: 0
+        averageProcessingTime: 0,
       };
     }
   }
@@ -419,12 +419,14 @@ export class AgentAuditService {
   /**
    * Export audit logs for compliance reporting
    */
-  async exportAuditLogs(options: AuditQueryOptions & {
-    format: 'csv' | 'json';
-  }): Promise<string> {
+  async exportAuditLogs(
+    options: AuditQueryOptions & {
+      format: 'csv' | 'json';
+    },
+  ): Promise<string> {
     const { events } = await this.queryAuditLogs({
       ...options,
-      limit: 10000 // Max export size
+      limit: 10000, // Max export size
     });
 
     if (options.format === 'json') {
@@ -433,8 +435,17 @@ export class AgentAuditService {
 
     if (options.format === 'csv') {
       const headers = [
-        'ID', 'User ID', 'Session ID', 'Action', 'Resource', 'Timestamp',
-        'IP Address', 'Success', 'Error', 'Patient ID', 'Sensitivity Level'
+        'ID',
+        'User ID',
+        'Session ID',
+        'Action',
+        'Resource',
+        'Timestamp',
+        'IP Address',
+        'Success',
+        'Error',
+        'Patient ID',
+        'Sensitivity Level',
       ];
 
       const rows = events.map(event => [
@@ -448,7 +459,7 @@ export class AgentAuditService {
         event.success.toString(),
         event.error || '',
         event.compliance?.patientId || '',
-        event.compliance?.sensitivityLevel || ''
+        event.compliance?.sensitivityLevel || '',
       ]);
 
       return [headers, ...rows]
@@ -477,7 +488,6 @@ export class AgentAuditService {
       }
 
       return 0; // Actual count would need to be queried separately
-
     } catch (error) {
       console.error('Error cleaning up old audit logs:', error);
       return 0;
@@ -508,8 +518,8 @@ export class AgentAuditService {
         user_agent: event.userAgent,
         compliance_metadata: {
           ...event.metadata,
-          ...event.compliance
-        }
+          ...event.compliance,
+        },
       }));
 
       const { error } = await this.supabase
@@ -521,7 +531,6 @@ export class AgentAuditService {
         // Re-add failed events to pending queue
         this.pendingEvents.unshift(...eventsToFlush);
       }
-
     } catch (error) {
       console.error('Error flushing audit events:', error);
       // Re-add failed events to pending queue
@@ -554,14 +563,17 @@ export class AgentAuditService {
       success: record.success,
       error: record.error,
       metadata: record.compliance_metadata,
-      compliance: record.compliance_metadata
+      compliance: record.compliance_metadata,
     };
   }
 
   /**
    * Determine sensitivity level based on resource and patient data
    */
-  private determineSensitivityLevel(resource: string, patientId?: string): 'low' | 'medium' | 'high' | 'critical' {
+  private determineSensitivityLevel(
+    resource: string,
+    patientId?: string,
+  ): 'low' | 'medium' | 'high' | 'critical' {
     if (resource.includes('financial') || resource.includes('billing')) {
       return 'high';
     }
@@ -649,7 +661,7 @@ export class AgentAuditService {
       /\b\d{2}\/\d{2}\/\d{4}\b/, // Date
       /\b\d{3}-\d{3}-\d{4}\b/, // Phone
       /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/, // Email
-      /\b(patient|paciente|médico|doctor|hospital|clínica)\b/i // Healthcare terms
+      /\b(patient|paciente|médico|doctor|hospital|clínica)\b/i, // Healthcare terms
     ];
 
     return phiPatterns.some(pattern => pattern.test(text));
@@ -686,7 +698,7 @@ export class AgentAuditService {
   async shutdown(): Promise<void> {
     // Flush any remaining events
     await this.flushPendingEvents();
-    
+
     // Clear timer
     if (this.flushTimer) {
       clearInterval(this.flushTimer);

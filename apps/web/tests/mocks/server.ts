@@ -26,7 +26,7 @@ export const handlers = [
         success: false,
         error: 'Invalid JSON',
         code: 'JSON_PARSE_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -50,7 +50,7 @@ export const handlers = [
         success: false,
         error: 'Missing required fields',
         code: 'VALIDATION_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -64,7 +64,7 @@ export const handlers = [
         success: false,
         error: 'Authentication required',
         code: 'AUTH_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 401 });
     }
 
@@ -77,7 +77,7 @@ export const handlers = [
         success: false,
         error: 'Session required',
         code: 'SESSION_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 401 });
     }
 
@@ -92,7 +92,7 @@ export const handlers = [
         success: false,
         error: 'Invalid entity',
         code: 'INVALID_ENTITY',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -107,7 +107,7 @@ export const handlers = [
         success: false,
         error: 'Invalid operation',
         code: 'INVALID_OPERATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -121,7 +121,7 @@ export const handlers = [
         success: false,
         error: 'Invalid operation',
         code: 'INVALID_OPERATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -135,11 +135,9 @@ export const handlers = [
         success: false,
         error: 'Invalid operation',
         code: 'INVALID_OPERATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
-
-
 
     // Validate data schema for operations that include data
     if (body.data && body.operation === 'create') {
@@ -153,7 +151,7 @@ export const handlers = [
           success: false,
           error: 'Invalid data schema',
           code: 'SCHEMA_ERROR',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         }, { status: 400 });
       }
 
@@ -168,7 +166,7 @@ export const handlers = [
             success: false,
             error: 'Invalid data schema',
             code: 'SCHEMA_ERROR',
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
           }, { status: 400 });
         }
       }
@@ -184,7 +182,7 @@ export const handlers = [
         success: false,
         error: 'Invalid data schema',
         code: 'SCHEMA_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -198,7 +196,7 @@ export const handlers = [
         success: false,
         error: 'Invalid data schema',
         code: 'SCHEMA_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -212,7 +210,7 @@ export const handlers = [
         success: false,
         error: 'Session required',
         code: 'SESSION_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 401 });
     }
 
@@ -226,7 +224,7 @@ export const handlers = [
         success: false,
         error: 'Session required',
         code: 'SESSION_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 401 });
     }
 
@@ -240,7 +238,7 @@ export const handlers = [
         success: false,
         error: 'Session required',
         code: 'SESSION_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 401 });
     }
 
@@ -254,7 +252,7 @@ export const handlers = [
         success: false,
         error: 'Session required',
         code: 'SESSION_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 401 });
     }
 
@@ -268,7 +266,7 @@ export const handlers = [
         success: false,
         error: 'Session required',
         code: 'SESSION_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 401 });
     }
 
@@ -282,7 +280,7 @@ export const handlers = [
         success: false,
         error: 'Session required',
         code: 'SESSION_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 401 });
     }
 
@@ -303,7 +301,9 @@ export const handlers = [
       security: {
         riskLevel: body.operation === 'delete' ? 'HIGH' : 'MEDIUM',
       },
-      nextStep: (body.entity === 'patients' && (body.data.sensitiveData || body.data.healthData)) ? 'consent_validation' : 'confirm',
+      nextStep: (body.entity === 'patients' && (body.data.sensitiveData || body.data.healthData))
+        ? 'consent_validation'
+        : 'confirm',
       auditTrail: {
         requestId: 'req-123',
         timestamp: new Date().toISOString(),
@@ -335,7 +335,7 @@ export const handlers = [
         success: false,
         error: 'Authentication required',
         code: 'UNAUTHORIZED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 401 });
     }
 
@@ -349,7 +349,7 @@ export const handlers = [
         success: false,
         error: 'Invalid intent ID',
         code: 'INVALID_REQUEST',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -363,7 +363,7 @@ export const handlers = [
         success: false,
         error: 'Invalid token',
         code: 'INVALID_TOKEN',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -376,16 +376,18 @@ export const handlers = [
         success: false,
         error: 'Missing required fields',
         code: 'MISSING_FIELDS',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
     // Validate confirmation data structure
-    if (body.confirmation && (
-      body.confirmation.valid === false ||
-      typeof body.confirmation.validated !== 'boolean' ||
-      body.confirmation.validated === 'invalid'
-    )) {
+    if (
+      body.confirmation && (
+        body.confirmation.valid === false
+        || typeof body.confirmation.validated !== 'boolean'
+        || body.confirmation.validated === 'invalid'
+      )
+    ) {
       const error = new Error('Invalid confirmation data');
       error.code = 'INVALID_CONFIRMATION';
       error.details = { timestamp: new Date().toISOString() };
@@ -394,7 +396,7 @@ export const handlers = [
         success: false,
         error: 'Invalid confirmation data',
         code: 'INVALID_CONFIRMATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -408,29 +410,33 @@ export const handlers = [
         success: false,
         error: 'Compliance validation failed',
         code: 'COMPLIANCE_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 422 });
     }
 
     // Check for non-compliant data in confirmation
-    if (body.confirmation && body.confirmation.data &&
-        body.confirmation.data.patientData === 'sensitive-info-without-consent') {
+    if (
+      body.confirmation && body.confirmation.data
+      && body.confirmation.data.patientData === 'sensitive-info-without-consent'
+    ) {
       return HttpResponse.json({
         success: false,
         error: 'Compliance validation failed',
         code: 'COMPLIANCE_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 422 });
     }
 
     // Check for non-compliant data in confirmation for test case
-    if (body.confirmation && body.confirmation.data &&
-        body.confirmation.data.nonCompliantData === true) {
+    if (
+      body.confirmation && body.confirmation.data
+      && body.confirmation.data.nonCompliantData === true
+    ) {
       return HttpResponse.json({
         success: false,
         error: 'Compliance validation failed',
         code: 'COMPLIANCE_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 422 });
     }
 
@@ -444,7 +450,7 @@ export const handlers = [
         success: false,
         error: 'Session mismatch',
         code: 'SESSION_MISMATCH',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -458,7 +464,7 @@ export const handlers = [
         success: false,
         error: 'Session continuity validation failed',
         code: 'SESSION_MISMATCH',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -472,7 +478,7 @@ export const handlers = [
         success: false,
         error: 'Token expired',
         code: 'TOKEN_EXPIRED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -486,7 +492,7 @@ export const handlers = [
         success: false,
         error: 'Token expired',
         code: 'TOKEN_EXPIRED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -510,7 +516,7 @@ export const handlers = [
         success: false,
         error: 'Concurrent confirmation not allowed',
         code: 'CONCURRENT_CONFLICT',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 409 });
     }
 
@@ -521,22 +527,22 @@ export const handlers = [
 
     // Determine transformation flags based on request
     const transformations: any = {};
-    
+
     // Check for normalization in confirmation.transformations
     if (body.confirmation?.transformations?.dataNormalization) {
       transformations.normalized = true;
     }
-    
+
     // Check for privacy filtering in confirmation.transformations
     if (body.confirmation?.transformations?.privacyFiltering) {
       transformations.privacyFiltered = true;
     }
-    
+
     // Check for format standardization in confirmation.transformations
     if (body.confirmation?.transformations?.formatStandardization) {
       transformations.standardized = true;
     }
-    
+
     // Fallback to body.data checks for backward compatibility
     if (body.data?.normalizationRequired) {
       transformations.normalized = true;
@@ -550,7 +556,7 @@ export const handlers = [
 
     // Transform the data based on what transformations are enabled
     let transformedData = body.confirmation?.data || body.data;
-    
+
     // Apply privacy filtering if enabled
     if (transformations.privacyFiltered && transformedData) {
       transformedData = { ...transformedData };
@@ -561,7 +567,7 @@ export const handlers = [
       delete transformedData.ssn;
       delete transformedData.socialSecurityNumber;
     }
-    
+
     // Apply format standardization if enabled
     if (transformations.standardized && transformedData) {
       transformedData = { ...transformedData };
@@ -590,12 +596,12 @@ export const handlers = [
       validationResult: {
         dataValid: true,
         compliance: {
-          lgpd: { valid: true, score: 98 },  // Increased scores
-          cfm: { valid: true, score: 96 },   // Increased scores  
+          lgpd: { valid: true, score: 98 }, // Increased scores
+          cfm: { valid: true, score: 96 }, // Increased scores
           anvisa: { valid: true, score: 92 }, // Increased scores
         },
         transformations: transformations,
-        data: transformedData // Include transformed data
+        data: transformedData, // Include transformed data
       },
       auditTrail: {
         intentId: body.intentId || 'intent-123',
@@ -603,7 +609,7 @@ export const handlers = [
         correlationId: body.correlationId || 'correlation-456',
         timestamp: new Date().toISOString(),
         riskLevel: 'LOW',
-        validations: ['data_schema', 'privacy', 'compliance']
+        validations: ['data_schema', 'privacy', 'compliance'],
       },
       meta: {
         requestId: 'req-456',
@@ -648,7 +654,7 @@ export const handlers = [
         success: false,
         error: 'Invalid execution token',
         code: 'INVALID_TOKEN',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 401 });
     }
 
@@ -661,12 +667,14 @@ export const handlers = [
         success: false,
         error: 'Missing required fields',
         code: 'MISSING_FIELDS',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
     // Validate operation structure with proper error handling
-    if (body.operation && ((!body.operation.type && !body.operation.action) || !body.operation.entity)) {
+    if (
+      body.operation && ((!body.operation.type && !body.operation.action) || !body.operation.entity)
+    ) {
       const error = new Error('Invalid operation structure');
       error.code = 'INVALID_OPERATION';
       error.details = { timestamp: new Date().toISOString() };
@@ -675,7 +683,7 @@ export const handlers = [
         success: false,
         error: 'Invalid operation structure',
         code: 'INVALID_OPERATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -689,7 +697,7 @@ export const handlers = [
         success: false,
         error: 'Invalid confirmation ID',
         code: 'INVALID_REQUEST',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -703,7 +711,7 @@ export const handlers = [
         success: false,
         error: 'Validation failed',
         code: 'VALIDATION_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -717,7 +725,7 @@ export const handlers = [
         success: false,
         error: 'Validation failed',
         code: 'VALIDATION_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -731,7 +739,7 @@ export const handlers = [
         success: false,
         error: 'Validation failed',
         code: 'VALIDATION_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -745,7 +753,7 @@ export const handlers = [
         success: false,
         error: 'Invalid input format',
         code: 'SECURITY_VIOLATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -759,7 +767,7 @@ export const handlers = [
         success: false,
         error: 'Invalid input format',
         code: 'SECURITY_VIOLATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -773,7 +781,7 @@ export const handlers = [
         success: false,
         error: 'Invalid input format',
         code: 'SECURITY_VIOLATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -787,7 +795,7 @@ export const handlers = [
         success: false,
         error: 'Type validation failed',
         code: 'TYPE_VALIDATION_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -801,7 +809,7 @@ export const handlers = [
         success: false,
         error: 'Type validation failed',
         code: 'TYPE_VALIDATION_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -815,7 +823,7 @@ export const handlers = [
         success: false,
         error: 'Type validation failed',
         code: 'TYPE_VALIDATION_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -829,7 +837,7 @@ export const handlers = [
         success: false,
         error: 'Consent required',
         code: 'CONSENT_REQUIRED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 422 });
     }
 
@@ -843,7 +851,7 @@ export const handlers = [
         success: false,
         error: 'Consent required',
         code: 'CONSENT_REQUIRED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 422 });
     }
 
@@ -857,7 +865,7 @@ export const handlers = [
         success: false,
         error: 'Consent required',
         code: 'CONSENT_REQUIRED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 422 });
     }
 
@@ -871,14 +879,16 @@ export const handlers = [
         success: false,
         error: 'Consent required',
         code: 'CONSENT_REQUIRED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 422 });
     }
 
     // Database connection simulation - check for special trigger values
-    if (body.simulateError === 'database_connection' ||
-        body.operation?.data?.triggerDatabaseError === true ||
-        body.operation?.data?.name === 'TRIGGER_DB_ERROR') {
+    if (
+      body.simulateError === 'database_connection'
+      || body.operation?.data?.triggerDatabaseError === true
+      || body.operation?.data?.name === 'TRIGGER_DB_ERROR'
+    ) {
       const error = new Error('Database connection failed');
       error.code = 'DATABASE_ERROR';
       error.details = { timestamp: new Date().toISOString() };
@@ -887,7 +897,7 @@ export const handlers = [
         success: false,
         error: 'Database connection failed',
         code: 'DATABASE_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 500 });
     }
 
@@ -901,7 +911,7 @@ export const handlers = [
         success: false,
         error: 'Database connection failed',
         code: 'DATABASE_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 500 });
     }
 
@@ -915,7 +925,7 @@ export const handlers = [
         success: false,
         error: 'Database connection failed',
         code: 'DATABASE_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 500 });
     }
 
@@ -929,7 +939,7 @@ export const handlers = [
         success: false,
         error: 'Database connection failed',
         code: 'DATABASE_ERROR',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 500 });
     }
 
@@ -943,7 +953,7 @@ export const handlers = [
         success: false,
         error: 'Constraint violation',
         code: 'CONSTRAINT_VIOLATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 409 });
     }
 
@@ -957,7 +967,7 @@ export const handlers = [
         success: false,
         error: 'Constraint violation',
         code: 'CONSTRAINT_VIOLATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 409 });
     }
 
@@ -971,7 +981,7 @@ export const handlers = [
         success: false,
         error: 'Constraint violation',
         code: 'CONSTRAINT_VIOLATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 409 });
     }
 
@@ -985,7 +995,7 @@ export const handlers = [
         success: false,
         error: 'Constraint violation',
         code: 'CONSTRAINT_VIOLATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 409 });
     }
 
@@ -999,7 +1009,7 @@ export const handlers = [
         success: false,
         error: 'Transaction failed',
         code: 'TRANSACTION_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 500 });
     }
 
@@ -1013,7 +1023,7 @@ export const handlers = [
         success: false,
         error: 'Transaction failed',
         code: 'TRANSACTION_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 500 });
     }
 
@@ -1027,7 +1037,7 @@ export const handlers = [
         success: false,
         error: 'Transaction failed',
         code: 'TRANSACTION_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 500 });
     }
 
@@ -1041,17 +1051,17 @@ export const handlers = [
         success: false,
         error: 'Transaction failed',
         code: 'TRANSACTION_FAILED',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 500 });
     }
 
     // Generate appropriate result based on operation type or action
     let result: any = { id: 'patient-123' };
     const operationType = body.operation?.type || body.operation?.action;
-    
+
     // Create sanitized data copy for result
     let sanitizedData = { ...body.operation.data };
-    
+
     // Sanitize XSS attempts
     if (sanitizedData && typeof sanitizedData === 'object') {
       Object.keys(sanitizedData).forEach(key => {
@@ -1075,7 +1085,7 @@ export const handlers = [
         success: false,
         error: 'Invalid input format',
         code: 'SECURITY_VIOLATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -1089,7 +1099,7 @@ export const handlers = [
         success: false,
         error: 'Invalid input format',
         code: 'SECURITY_VIOLATION',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, { status: 400 });
     }
 
@@ -1101,12 +1111,12 @@ export const handlers = [
           data: {
             id: 'patient-123',
             createdAt: new Date().toISOString(),
-            ...sanitizedData
+            ...sanitizedData,
           },
           dataRetention: {
             policy: 'healthcare-7-years',
-            expiresAt: '2031-01-01T00:00:00Z'
-          }
+            expiresAt: '2031-01-01T00:00:00Z',
+          },
         };
         break;
       case 'read':
@@ -1114,12 +1124,12 @@ export const handlers = [
           data: {
             id: 'patient-123',
             name: 'Test Patient',
-            email: 'test@example.com'
+            email: 'test@example.com',
           },
           dataRetention: {
             policy: 'healthcare-7-years',
-            expiresAt: '2031-01-01T00:00:00Z'
-          }
+            expiresAt: '2031-01-01T00:00:00Z',
+          },
         };
         break;
       case 'update':
@@ -1128,8 +1138,8 @@ export const handlers = [
           data: { id: 'patient-123', ...sanitizedData },
           dataRetention: {
             policy: 'healthcare-7-years',
-            expiresAt: '2031-01-01T00:00:00Z'
-          }
+            expiresAt: '2031-01-01T00:00:00Z',
+          },
         };
         break;
       case 'delete':
@@ -1138,8 +1148,8 @@ export const handlers = [
           deleted: true,
           dataRetention: {
             policy: 'healthcare-7-years',
-            expiresAt: '2031-01-01T00:00:00Z'
-          }
+            expiresAt: '2031-01-01T00:00:00Z',
+          },
         };
         break;
       default:
@@ -1147,8 +1157,8 @@ export const handlers = [
           ...sanitizedData,
           dataRetention: {
             policy: 'healthcare-7-years',
-            expiresAt: '2031-01-01T00:00:00Z'
-          }
+            expiresAt: '2031-01-01T00:00:00Z',
+          },
         };
     }
 
@@ -1168,20 +1178,20 @@ export const handlers = [
         compliance: {
           lgpd: { passed: true, score: 95 },
           cfm: { passed: true, score: 92 },
-          anvisa: { passed: true, score: 88 }
+          anvisa: { passed: true, score: 88 },
         },
         flowContext: {
           userJourney: body.context?.userJourney || 'patient_registration',
           sessionId: body.context?.sessionId || 'session-123',
-          correlationId: body.context?.correlationId || 'correlation-789'
+          correlationId: body.context?.correlationId || 'correlation-789',
         },
-        success: true
+        success: true,
       },
       performance: {
         executionTime: 150,
         validationTime: 25,
         databaseTime: 75,
-        totalTime: 250
+        totalTime: 250,
       },
       meta: {
         requestId: 'req-789',
@@ -1454,15 +1464,41 @@ export const handlers = [
           comparison: {
             metrics: ['revenue', 'expenses', 'profit'],
             data: [
-              { name: 'revenue', trend: 'up', changePercent: 12.5, correlation: 0.85, direction: 'increasing' },
-              { name: 'expenses', trend: 'up', changePercent: 8.2, correlation: 0.72, direction: 'increasing' },
-              { name: 'profit', trend: 'up', changePercent: 14.3, correlation: 0.91, direction: 'increasing' },
+              {
+                name: 'revenue',
+                trend: 'up',
+                changePercent: 12.5,
+                correlation: 0.85,
+                direction: 'increasing',
+              },
+              {
+                name: 'expenses',
+                trend: 'up',
+                changePercent: 8.2,
+                correlation: 0.72,
+                direction: 'increasing',
+              },
+              {
+                name: 'profit',
+                trend: 'up',
+                changePercent: 14.3,
+                correlation: 0.91,
+                direction: 'increasing',
+              },
             ],
           },
           anomalies: {
             detected: true,
             points: [
-              { date: '2024-01-15', value: 45000, expectedValue: 38000, deviationPercent: 18.4, severity: 'medium', score: 0.85, type: 'outlier' }
+              {
+                date: '2024-01-15',
+                value: 45000,
+                expectedValue: 38000,
+                deviationPercent: 18.4,
+                severity: 'medium',
+                score: 0.85,
+                type: 'outlier',
+              },
             ],
           },
           seasonality: {
@@ -1882,16 +1918,21 @@ export const server = setupServer(...handlers);
 
 // Configure server for testing environment
 if (typeof global !== 'undefined') {
-  beforeAll(() => server.listen({
-    onUnhandledRequest: (req) => {
-      // Allow external requests to pass through (like httpbin.org)
-      const url = new URL(req.url);
-      if (url.hostname !== 'localhost' && url.hostname !== '127.0.0.1' && !url.hostname.includes('httpbin.org')) {
-        return 'bypass';
-      }
-      return 'warn';
-    }
-  }));
+  beforeAll(() =>
+    server.listen({
+      onUnhandledRequest: req => {
+        // Allow external requests to pass through (like httpbin.org)
+        const url = new URL(req.url);
+        if (
+          url.hostname !== 'localhost' && url.hostname !== '127.0.0.1'
+          && !url.hostname.includes('httpbin.org')
+        ) {
+          return 'bypass';
+        }
+        return 'warn';
+      },
+    })
+  );
   afterEach(() => {
     server.resetHandlers();
     resetConcurrencyTracker(); // Reset concurrency tracker between tests

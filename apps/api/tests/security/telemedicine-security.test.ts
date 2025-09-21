@@ -3,9 +3,9 @@
  * Testing security vulnerabilities identified in PR 40
  */
 
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PrismaClient } from '@prisma/client';
 import * as crypto from 'crypto';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import TelemedicineService from '../../src/services/telemedicine';
 
 // Mock Prisma client

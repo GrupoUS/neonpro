@@ -1,28 +1,28 @@
 /**
  * AG-UI Protocol Package Entry Point
- * 
+ *
  * WebSocket-based communication protocol for real-time agent interaction.
  * Provides types, protocol implementation, and service integration.
  */
 
-export * from './types';
 export * from './protocol';
 export * from './service';
+export * from './types';
 
 // Re-export commonly used types and classes
 export {
-  AguiProtocol,
-  AguiService,
+  AguiErrorMessage,
+  AguiHealthStatus,
   AguiMessage,
   AguiMessageType,
+  AguiProtocol,
   AguiQueryMessage,
   AguiResponseMessage,
-  AguiErrorMessage,
+  AguiService,
   AguiSession,
-  AguiHealthStatus,
   QueryContext,
   QueryResult,
-  ServiceMetrics
+  ServiceMetrics,
 } from './types';
 
 // Default configuration
@@ -32,14 +32,14 @@ export const DEFAULT_AGUI_CONFIG = {
   jwtSecret: process.env.JWT_SECRET || 'your-secret-key',
   rateLimit: {
     requestsPerMinute: 60,
-    requestsPerHour: 1000
+    requestsPerHour: 1000,
   },
   maxMessageAge: 300000, // 5 minutes
   connectionTimeout: 300000, // 5 minutes
   cleanupInterval: 60000, // 1 minute
   ragAgentEndpoint: process.env.RAG_AGENT_ENDPOINT || 'http://localhost:8080',
   enableMetrics: true,
-  metricsInterval: 30000 // 30 seconds
+  metricsInterval: 30000, // 30 seconds
 };
 
 // Service factory function

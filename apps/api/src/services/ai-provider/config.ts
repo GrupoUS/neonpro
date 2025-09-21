@@ -3,10 +3,7 @@
  * Extracted from ai-provider-router.ts for better modularity
  */
 
-import {
-  AIModelCategory,
-  AIProviderOpt,
-} from '@neonpro/shared';
+import { AIModelCategory, AIProviderOpt } from '@neonpro/shared';
 import { ProviderConfig, ProviderHealthCheck, ProviderStatus } from './types';
 
 /**

@@ -281,10 +281,7 @@ app.get(
         );
       }
 
-      // Validate LGPD data access for patient insights (mock validation for testing)
-      const lgpdValidation = { success: true }; // Mock for testing
-      // TODO: Implement real LGPD validation
-      /*
+      // Validate LGPD data access for patient insights
       const lgpdValidation = await currentServices.lgpdService.validateDataAccess({
         userId: user.id,
         patientId,
@@ -292,7 +289,6 @@ app.get(
         purpose: 'healthcare_analysis',
         legalBasis: 'legitimate_interest',
       });
-      */
 
       if (!lgpdValidation.success) {
         return c.json(

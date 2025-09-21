@@ -1,30 +1,30 @@
 /**
  * AG-UI Protocol Service
- * 
+ *
  * Integrates the AG-UI Protocol with the backend services and RAG agent.
  * Provides high-level methods for agent communication and session management.
  */
 
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
+import { createHealthcareCacheConfig, ResponseCacheService } from '../cache/response-cache-service';
+import { ConversationContextService } from '../conversation';
+import type { ConversationMessage } from '../conversation';
+import { AgentPermissionService, PermissionContext } from '../permissions';
+import { RealtimeSubscriptionService } from '../realtime';
+import type { RealtimeEvent } from '../realtime';
 import { AguiProtocol, AguiProtocolConfig } from './protocol';
 import {
+  AguiAction,
+  AguiCapability,
+  AguiHealthStatus,
+  AguiMessage,
   AguiQueryMessage,
   AguiResponseMessage,
-  AguiMessage,
   AguiSession,
-  AguiHealthStatus,
-  AguiCapability,
   AguiSource,
   AguiUsageStats,
-  AguiAction
 } from './types';
-import { AgentPermissionService, PermissionContext } from '../permissions';
-import { ConversationContextService } from '../conversation';
-import { RealtimeSubscriptionService } from '../realtime';
-import { ResponseCacheService, createHealthcareCacheConfig } from '../cache/response-cache-service';
-import type { ConversationMessage } from '../conversation';
-import type { RealtimeEvent } from '../realtime';
 
 export interface AguiServiceConfig extends AguiProtocolConfig {
   ragAgentEndpoint: string;
@@ -68,32 +68,32 @@ export class AguiService extends EventEmitter {
     this.config = config;
     this.protocol = new AguiProtocol(config);
     this.metrics = this.initializeMetrics();
-    
+
     // Initialize permission service if Supabase config is provided
     if (config.supabaseUrl && config.supabaseServiceKey) {
       this.permissionService = new AgentPermissionService(
         config.supabaseUrl,
-        config.supabaseServiceKey
+        config.supabaseServiceKey,
       );
-      
+
       // Initialize conversation context service
       this.conversationService = new ConversationContextService(
         config.supabaseUrl,
-        config.supabaseServiceKey
+        config.supabaseServiceKey,
       );
-      
+
       // Initialize real-time subscription service
       this.realtimeService = new RealtimeSubscriptionService(
         config.supabaseUrl,
-        config.supabaseServiceKey
+        config.supabaseServiceKey,
       );
-      
+
       // Initialize cache service
       this.cacheService = new ResponseCacheService(createHealthcareCacheConfig());
     }
-    
+
     this.setupEventHandlers();
-    
+
     if (config.enableMetrics && config.metricsInterval) {
       this.startMetricsCollection(config.metricsInterval);
     }
@@ -104,16 +104,15 @@ export class AguiService extends EventEmitter {
    */
   async initialize(): Promise<void> {
     this.emit('initializing');
-    
+
     try {
       // Test RAG agent connectivity
       await this.testRagAgentConnectivity();
-      
+
       // Initialize protocol
       this.protocol.getHealthStatus();
-      
+
       this.emit('initialized');
-      
     } catch (error) {
       this.emit('initializationError', error);
       throw error;
@@ -132,16 +131,16 @@ export class AguiService extends EventEmitter {
       timeout?: number;
       includeSources?: boolean;
       skipCache?: boolean;
-    }
+    },
   ): Promise<QueryResult> {
     const queryId = uuidv4();
     const startTime = Date.now();
-    
+
     try {
       // Create abort controller for timeout
       const abortController = new AbortController();
       this.activeQueries.set(queryId, abortController);
-      
+
       // Check cache first if available and not skipped
       if (this.cacheService && !options?.skipCache) {
         const cachedResponse = await this.cacheService.getCachedResponse({
@@ -150,9 +149,9 @@ export class AguiService extends EventEmitter {
             patientId: context.patientId,
             userId: context.userId,
             previousTopics: context.previousTopics,
-            userPreferences: context.userPreferences
+            userPreferences: context.userPreferences,
           },
-          options
+          options,
         }, context.userId);
 
         if (cachedResponse) {
@@ -163,21 +162,21 @@ export class AguiService extends EventEmitter {
             confidence: cachedResponse.confidence,
             usage: cachedResponse.usage,
             actions: cachedResponse.actions,
-            processingTimeMs: Date.now() - startTime
+            processingTimeMs: Date.now() - startTime,
           };
 
           // Update metrics for cache hit
           this.updateMetrics({
             queryCount: 1,
             processingTimeMs: cachedResult.processingTimeMs,
-            success: true
+            success: true,
           });
 
           this.emit('queryCompleted', { queryId, result: cachedResult, context, cached: true });
           return cachedResult;
         }
       }
-      
+
       // Prepare query for RAG agent
       const ragQuery = {
         query,
@@ -188,15 +187,15 @@ export class AguiService extends EventEmitter {
           patient_id: context.patientId,
           user_id: context.userId,
           preferences: context.userPreferences,
-          previous_topics: context.previousTopics
+          previous_topics: context.previousTopics,
         },
-        options
+        options,
       };
 
       // Send query to RAG agent
       const response = await this.sendToRagAgent(ragQuery, {
         signal: abortController.signal,
-        timeout: options?.timeout || 30000
+        timeout: options?.timeout || 30000,
       });
 
       // Process response
@@ -207,24 +206,29 @@ export class AguiService extends EventEmitter {
         confidence: response.confidence,
         usage: response.usage,
         actions: response.actions,
-        processingTimeMs: Date.now() - startTime
+        processingTimeMs: Date.now() - startTime,
       };
 
       // Cache the response if caching is enabled
       if (this.cacheService && !options?.skipCache) {
         try {
-          await this.cacheService.cacheResponse({
-            query,
-            context: {
-              patientId: context.patientId,
-              userId: context.userId,
-              previousTopics: context.previousTopics,
-              userPreferences: context.userPreferences
+          await this.cacheService.cacheResponse(
+            {
+              query,
+              context: {
+                patientId: context.patientId,
+                userId: context.userId,
+                previousTopics: context.previousTopics,
+                userPreferences: context.userPreferences,
+              },
+              options,
             },
-            options
-          }, response, context.userId, {
-            skipCache: false
-          });
+            response,
+            context.userId,
+            {
+              skipCache: false,
+            },
+          );
         } catch (error) {
           console.error('[AguiService] Error caching response:', error);
           // Don't fail the query if caching fails
@@ -243,9 +247,9 @@ export class AguiService extends EventEmitter {
             type: 'text',
             metadata: {
               queryIntent: this.extractIntent(query),
-              entitiesExtracted: this.extractEntities(query)
+              entitiesExtracted: this.extractEntities(query),
             },
-            dataClassification: this.classifyData(query)
+            dataClassification: this.classifyData(query),
           });
 
           // Store assistant response
@@ -260,9 +264,9 @@ export class AguiService extends EventEmitter {
               sources: response.sources,
               confidence: response.confidence,
               processingTimeMs: result.processingTimeMs,
-              actionTaken: response.actions?.[0]?.type
+              actionTaken: response.actions?.[0]?.type,
             },
-            dataClassification: this.classifyData(response.content)
+            dataClassification: this.classifyData(response.content),
           });
         } catch (error) {
           console.error('[AguiService] Error storing conversation context:', error);
@@ -284,14 +288,14 @@ export class AguiService extends EventEmitter {
               role: 'user',
               content: query,
               messageType: 'text',
-              processingTimeMs: result.processingTimeMs
+              processingTimeMs: result.processingTimeMs,
             },
             eventType: 'user_message',
             metadata: {
               source: 'user',
               urgency: 'medium',
-              dataClassification: this.classifyData(query)
-            }
+              dataClassification: this.classifyData(query),
+            },
           });
 
           // Broadcast assistant response event
@@ -307,14 +311,14 @@ export class AguiService extends EventEmitter {
               messageType: result.type,
               sources: result.sources,
               confidence: result.confidence,
-              processingTimeMs: result.processingTimeMs
+              processingTimeMs: result.processingTimeMs,
             },
             eventType: 'assistant_response',
             metadata: {
               source: 'assistant',
               urgency: result.type === 'error' ? 'high' : 'medium',
-              dataClassification: this.classifyData(result.content)
-            }
+              dataClassification: this.classifyData(result.content),
+            },
           });
         } catch (error) {
           console.error('[AguiService] Error broadcasting real-time events:', error);
@@ -326,27 +330,26 @@ export class AguiService extends EventEmitter {
       this.updateMetrics({
         queryCount: 1,
         processingTimeMs: result.processingTimeMs,
-        success: true
+        success: true,
       });
 
       this.emit('queryCompleted', { queryId, result, context });
-      
-      return result;
 
+      return result;
     } catch (error) {
       // Update metrics
       this.updateMetrics({
         queryCount: 1,
         errorCount: 1,
-        success: false
+        success: false,
       });
 
       this.emit('queryError', { queryId, error, context });
-      
+
       if (error.name === 'AbortError') {
         throw new Error('Query timeout');
       }
-      
+
       throw error;
     } finally {
       this.activeQueries.delete(queryId);
@@ -364,11 +367,11 @@ export class AguiService extends EventEmitter {
       maxResults?: number;
       timeout?: number;
       includeSources?: boolean;
-    }
+    },
   ): Promise<QueryResult> {
     const queryId = uuidv4();
     const startTime = Date.now();
-    
+
     try {
       const abortController = new AbortController();
       this.activeQueries.set(queryId, abortController);
@@ -377,25 +380,24 @@ export class AguiService extends EventEmitter {
       // In a real implementation, this would use Server-Sent Events or WebSocket streaming
       const response = await this.processQuery(query, context, {
         ...options,
-        streaming: true
+        streaming: true,
       });
 
       // Simulate streaming by breaking response into chunks
       const chunks = this.splitIntoChunks(response.content, 50); // 50 characters per chunk
-      
+
       for (const chunk of chunks) {
         if (abortController.signal.aborted) {
           throw new Error('Query aborted');
         }
-        
+
         onChunk(chunk);
         await new Promise(resolve => setTimeout(resolve, 50)); // Simulate streaming delay
       }
 
       this.emit('streamingQueryCompleted', { queryId, result: response, context });
-      
-      return response;
 
+      return response;
     } catch (error) {
       this.emit('streamingQueryError', { queryId, error, context });
       throw error;
@@ -413,7 +415,7 @@ export class AguiService extends EventEmitter {
       title?: string;
       context?: Record<string, any>;
       expiresAt?: Date;
-    }
+    },
   ): Promise<AguiSession> {
     const sessionId = uuidv4();
     const session: AguiSession = {
@@ -423,18 +425,18 @@ export class AguiService extends EventEmitter {
       context: options?.context || {},
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
-      expiresAt: options?.expiresAt?.toISOString() || 
-                new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
+      expiresAt: options?.expiresAt?.toISOString()
+        || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
       isActive: true,
       messageCount: 0,
-      lastActivity: new Date().toISOString()
+      lastActivity: new Date().toISOString(),
     };
 
     // Store session in database or cache
     await this.storeSession(session);
 
     this.emit('sessionCreated', session);
-    
+
     return session;
   }
 
@@ -445,11 +447,11 @@ export class AguiService extends EventEmitter {
     try {
       // Retrieve session from database or cache
       const session = await this.retrieveSession(sessionId);
-      
+
       if (session && new Date(session.expiresAt) > new Date()) {
         return session;
       }
-      
+
       return null;
     } catch (error) {
       this.emit('sessionError', { sessionId, error });
@@ -466,7 +468,7 @@ export class AguiService extends EventEmitter {
       title?: string;
       context?: Record<string, any>;
       expiresAt?: Date;
-    }
+    },
   ): Promise<AguiSession | null> {
     try {
       const session = await this.getSession(sessionId);
@@ -476,14 +478,13 @@ export class AguiService extends EventEmitter {
 
       // Apply updates
       Object.assign(session, updates, { updatedAt: new Date().toISOString() });
-      
+
       // Store updated session
       await this.storeSession(session);
 
       this.emit('sessionUpdated', { session, updates });
-      
-      return session;
 
+      return session;
     } catch (error) {
       this.emit('sessionError', { sessionId, error });
       return null;
@@ -498,7 +499,7 @@ export class AguiService extends EventEmitter {
     messageId: string,
     rating: number,
     feedback?: string,
-    category?: 'accuracy' | 'helpfulness' | 'clarity' | 'completeness'
+    category?: 'accuracy' | 'helpfulness' | 'clarity' | 'completeness',
   ): Promise<void> {
     try {
       const feedbackData = {
@@ -507,7 +508,7 @@ export class AguiService extends EventEmitter {
         rating,
         feedback,
         category,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       // Store feedback in database
@@ -516,7 +517,6 @@ export class AguiService extends EventEmitter {
       this.updateMetrics({ feedbackCount: 1 });
 
       this.emit('feedbackSubmitted', feedbackData);
-
     } catch (error) {
       this.emit('feedbackError', { sessionId, messageId, error });
       throw error;
@@ -528,7 +528,7 @@ export class AguiService extends EventEmitter {
    */
   async getHealthStatus(): Promise<AguiHealthStatus> {
     const protocolHealth = this.protocol.getHealthStatus();
-    
+
     // Test RAG agent connectivity
     let ragAgentHealthy = true;
     try {
@@ -541,8 +541,8 @@ export class AguiService extends EventEmitter {
       ...protocolHealth,
       components: {
         ...protocolHealth.components,
-        rag_agent: ragAgentHealthy ? 'healthy' : 'unhealthy'
-      }
+        rag_agent: ragAgentHealthy ? 'healthy' : 'unhealthy',
+      },
     };
   }
 
@@ -572,23 +572,23 @@ export class AguiService extends EventEmitter {
    */
   async shutdown(): Promise<void> {
     this.emit('shuttingDown');
-    
+
     // Abort all active queries
     for (const [queryId, abortController] of this.activeQueries) {
       abortController.abort();
     }
     this.activeQueries.clear();
-    
+
     // Stop metrics collection
     if (this.metricsInterval) {
       clearInterval(this.metricsInterval);
     }
-    
+
     // Shutdown real-time service
     if (this.realtimeService) {
       await this.realtimeService.shutdown();
     }
-    
+
     this.emit('shutdown');
   }
 
@@ -600,16 +600,16 @@ export class AguiService extends EventEmitter {
     options: {
       signal?: AbortSignal;
       timeout?: number;
-    }
+    },
   ): Promise<any> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), options.timeout);
-    
+
     try {
       // Combine signals
-      const combinedSignal = options.signal ? 
-        AbortSignal.any([options.signal, controller.signal]) : 
-        controller.signal;
+      const combinedSignal = options.signal
+        ? AbortSignal.any([options.signal, controller.signal])
+        : controller.signal;
 
       const response = await fetch(`${this.config.ragAgentEndpoint}/api/ai/data-agent`, {
         method: 'POST',
@@ -617,7 +617,7 @@ export class AguiService extends EventEmitter {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(query),
-        signal: combinedSignal
+        signal: combinedSignal,
       });
 
       if (!response.ok) {
@@ -625,7 +625,6 @@ export class AguiService extends EventEmitter {
       }
 
       return await response.json();
-
     } finally {
       clearTimeout(timeoutId);
     }
@@ -637,7 +636,7 @@ export class AguiService extends EventEmitter {
   private async testRagAgentConnectivity(): Promise<void> {
     const response = await fetch(`${this.config.ragAgentEndpoint}/health`, {
       method: 'GET',
-      signal: AbortSignal.timeout(5000)
+      signal: AbortSignal.timeout(5000),
     });
 
     if (!response.ok) {
@@ -677,7 +676,7 @@ export class AguiService extends EventEmitter {
    * Setup event handlers
    */
   private setupEventHandlers(): void {
-    this.protocol.on('query', async (data) => {
+    this.protocol.on('query', async data => {
       try {
         const result = await this.processQuery(
           data.query,
@@ -686,37 +685,36 @@ export class AguiService extends EventEmitter {
             userId: data.session.userId,
             patientId: data.query.context?.patientId,
             userPreferences: data.query.context?.userPreferences,
-            previousTopics: data.query.context?.previousTopics
+            previousTopics: data.query.context?.previousTopics,
           },
-          data.query.options
+          data.query.options,
         );
 
         this.protocol.sendResponse(data.connection.id, result, data.messageId);
-
       } catch (error) {
         this.protocol.sendError(
           data.connection.ws,
           'INTERNAL_ERROR',
-          'Failed to process query'
+          'Failed to process query',
         );
       }
     });
 
-    this.protocol.on('sessionCreated', (session) => {
+    this.protocol.on('sessionCreated', session => {
       this.emit('sessionCreated', session);
     });
 
-    this.protocol.on('sessionUpdated', (data) => {
+    this.protocol.on('sessionUpdated', data => {
       this.emit('sessionUpdated', data);
     });
 
-    this.protocol.on('feedback', async (data) => {
+    this.protocol.on('feedback', async data => {
       await this.submitFeedback(
         data.sessionId,
         data.messageId,
         data.rating,
         data.feedback,
-        data.category
+        data.category,
       );
     });
   }
@@ -731,7 +729,7 @@ export class AguiService extends EventEmitter {
       errorCount: 0,
       feedbackCount: 0,
       averageProcessingTimeMs: 0,
-      lastReset: new Date().toISOString()
+      lastReset: new Date().toISOString(),
     };
   }
 
@@ -740,12 +738,13 @@ export class AguiService extends EventEmitter {
    */
   private updateMetrics(updates: Partial<ServiceMetrics>): void {
     Object.assign(this.metrics, updates);
-    
+
     // Calculate average processing time
     if (updates.processingTimeMs && this.metrics.queryCount > 0) {
-      this.metrics.averageProcessingTimeMs = 
-        (this.metrics.averageProcessingTimeMs * (this.metrics.queryCount - 1) + updates.processingTimeMs) / 
-        this.metrics.queryCount;
+      this.metrics.averageProcessingTimeMs =
+        (this.metrics.averageProcessingTimeMs * (this.metrics.queryCount - 1)
+          + updates.processingTimeMs)
+        / this.metrics.queryCount;
     }
   }
 
@@ -786,7 +785,7 @@ export class AguiService extends EventEmitter {
       eventTypes?: ('message' | 'session_update' | 'context_change' | 'system_event')[];
       includeSystemEvents?: boolean;
       heartbeatInterval?: number;
-    } = {}
+    } = {},
   ) {
     if (!this.realtimeService) {
       throw new Error('Real-time service not available');
@@ -833,16 +832,31 @@ export class AguiService extends EventEmitter {
    */
   private extractIntent(query: string): string {
     const lowerQuery = query.toLowerCase();
-    
-    if (lowerQuery.includes('agendamento') || lowerQuery.includes('consulta') || lowerQuery.includes('appointment')) {
+
+    if (
+      lowerQuery.includes('agendamento') || lowerQuery.includes('consulta')
+      || lowerQuery.includes('appointment')
+    ) {
       return 'scheduling';
-    } else if (lowerQuery.includes('paciente') || lowerQuery.includes('patient') || lowerQuery.includes('cliente')) {
+    } else if (
+      lowerQuery.includes('paciente') || lowerQuery.includes('patient')
+      || lowerQuery.includes('cliente')
+    ) {
       return 'patient_inquiry';
-    } else if (lowerQuery.includes('financeiro') || lowerQuery.includes('pagamento') || lowerQuery.includes('financial')) {
+    } else if (
+      lowerQuery.includes('financeiro') || lowerQuery.includes('pagamento')
+      || lowerQuery.includes('financial')
+    ) {
       return 'financial_inquiry';
-    } else if (lowerQuery.includes('exame') || lowerQuery.includes('resultado') || lowerQuery.includes('exam')) {
+    } else if (
+      lowerQuery.includes('exame') || lowerQuery.includes('resultado')
+      || lowerQuery.includes('exam')
+    ) {
       return 'results_inquiry';
-    } else if (lowerQuery.includes('tratamento') || lowerQuery.includes('medicamento') || lowerQuery.includes('treatment')) {
+    } else if (
+      lowerQuery.includes('tratamento') || lowerQuery.includes('medicamento')
+      || lowerQuery.includes('treatment')
+    ) {
       return 'treatment_inquiry';
     } else {
       return 'general_inquiry';
@@ -854,28 +868,28 @@ export class AguiService extends EventEmitter {
    */
   private extractEntities(query: string): string[] {
     const entities: string[] = [];
-    
+
     // Extract potential names (simple implementation)
     const namePattern = /\b([A-Z][a-z]+ [A-Z][a-z]+)\b/g;
     const names = query.match(namePattern);
     if (names) {
       entities.push(...names);
     }
-    
+
     // Extract dates
     const datePattern = /\d{2}\/\d{2}\/\d{4}|\d{4}-\d{2}-\d{2}/g;
     const dates = query.match(datePattern);
     if (dates) {
       entities.push(...dates);
     }
-    
+
     // Extract phone numbers
     const phonePattern = /\(\d{2}\)\s*\d{4,5}-\d{4}|\d{10,11}/g;
     const phones = query.match(phonePattern);
     if (phones) {
       entities.push(...phones);
     }
-    
+
     return entities;
   }
 
@@ -884,44 +898,50 @@ export class AguiService extends EventEmitter {
    */
   private classifyData(text: string): ConversationMessage['dataClassification'] {
     const lowerText = text.toLowerCase();
-    
+
     // Check for highly sensitive healthcare information
-    if (lowerText.includes('diagnóstico') || 
-        lowerText.includes('diagnosis') ||
-        lowerText.includes('hiv') ||
-        lowerText.includes('câncer') ||
-        lowerText.includes('cancer') ||
-        lowerText.includes('saúde mental') ||
-        lowerText.includes('mental health') ||
-        lowerText.includes('doença sexualmente transmissível') ||
-        lowerText.includes('std')) {
+    if (
+      lowerText.includes('diagnóstico')
+      || lowerText.includes('diagnosis')
+      || lowerText.includes('hiv')
+      || lowerText.includes('câncer')
+      || lowerText.includes('cancer')
+      || lowerText.includes('saúde mental')
+      || lowerText.includes('mental health')
+      || lowerText.includes('doença sexualmente transmissível')
+      || lowerText.includes('std')
+    ) {
       return 'restricted';
     }
-    
+
     // Check for confidential healthcare information
-    if (lowerText.includes('paciente') ||
-        lowerText.includes('patient') ||
-        lowerText.includes('médico') ||
-        lowerText.includes('doctor') ||
-        lowerText.includes('tratamento') ||
-        lowerText.includes('treatment') ||
-        lowerText.includes('medicação') ||
-        lowerText.includes('medication') ||
-        lowerText.includes('cpf') ||
-        lowerText.includes('rg')) {
+    if (
+      lowerText.includes('paciente')
+      || lowerText.includes('patient')
+      || lowerText.includes('médico')
+      || lowerText.includes('doctor')
+      || lowerText.includes('tratamento')
+      || lowerText.includes('treatment')
+      || lowerText.includes('medicação')
+      || lowerText.includes('medication')
+      || lowerText.includes('cpf')
+      || lowerText.includes('rg')
+    ) {
       return 'confidential';
     }
-    
+
     // Check for internal operational data
-    if (lowerText.includes('agendamento') ||
-        lowerText.includes('appointment') ||
-        lowerText.includes('consulta') ||
-        lowerText.includes('consulta') ||
-        lowerText.includes('clinica') ||
-        lowerText.includes('clinic')) {
+    if (
+      lowerText.includes('agendamento')
+      || lowerText.includes('appointment')
+      || lowerText.includes('consulta')
+      || lowerText.includes('consulta')
+      || lowerText.includes('clinica')
+      || lowerText.includes('clinic')
+    ) {
       return 'internal';
     }
-    
+
     // Default to public for general information
     return 'public';
   }
@@ -931,7 +951,7 @@ export class AguiService extends EventEmitter {
    */
   async processCopilotRequest(request: CopilotRequest): Promise<CopilotResponse> {
     const startTime = Date.now();
-    
+
     try {
       logger.info('Processing CopilotKit request', {
         requestId: request.id,
@@ -986,7 +1006,8 @@ export class AguiService extends EventEmitter {
       const errorResponse: CopilotResponse = {
         id: request.id,
         type: 'error',
-        content: 'Desculpe, ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.',
+        content:
+          'Desculpe, ocorreu um erro ao processar sua solicitação. Por favor, tente novamente.',
         sessionId: request.sessionId,
         userId: request.userId,
         timestamp: new Date().toISOString(),

@@ -1,32 +1,32 @@
 /**
  * AG-UI Protocol Implementation
- * 
+ *
  * Handles the WebSocket-based communication protocol for real-time agent interaction.
  * Implements message formatting, validation, and session management.
  */
 
-import { WebSocket } from 'ws';
 import { EventEmitter } from 'events';
-import { v4 as uuidv4 } from 'uuid';
 import * as jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
+import { WebSocket } from 'ws';
 import {
-  AguiMessage,
-  AguiMessageType,
-  AguiMessageMetadata,
-  AguiHelloMessage,
-  AguiQueryMessage,
-  AguiResponseMessage,
-  AguiErrorMessage,
-  AguiStatusMessage,
-  AguiSessionUpdate,
-  AguiFeedbackMessage,
   AguiContextUpdate,
-  AguiStreamingChunk,
-  AguiSession,
-  AguiHealthStatus,
   AguiErrorCode,
+  AguiErrorMessage,
+  AguiFeedbackMessage,
+  AguiHealthStatus,
+  AguiHelloMessage,
+  AguiMessage,
+  AguiMessageMetadata,
+  AguiMessageType,
+  AguiProtocolInfo,
+  AguiQueryMessage,
   AguiRateLimitInfo,
-  AguiProtocolInfo
+  AguiResponseMessage,
+  AguiSession,
+  AguiSessionUpdate,
+  AguiStatusMessage,
+  AguiStreamingChunk,
 } from './types';
 
 export class AguiProtocol extends EventEmitter {
@@ -38,7 +38,7 @@ export class AguiProtocol extends EventEmitter {
   constructor(config: AguiProtocolConfig) {
     super();
     this.config = config;
-    
+
     // Start periodic cleanup
     setInterval(() => this.cleanup(), this.config.cleanupInterval);
     setInterval(() => this.updateRateLimits(), 60000); // Update every minute
@@ -50,7 +50,7 @@ export class AguiProtocol extends EventEmitter {
   async handleConnection(ws: WebSocket, request: any): Promise<void> {
     const connectionId = uuidv4();
     const clientIp = this.getClientIp(request);
-    
+
     try {
       // Check rate limits
       if (!this.checkRateLimit(clientIp)) {
@@ -69,21 +69,20 @@ export class AguiProtocol extends EventEmitter {
         authenticated: false,
         connectedAt: new Date(),
         lastActivity: new Date(),
-        messageCount: 0
+        messageCount: 0,
       };
 
       this.connections.set(connectionId, connection);
-      
+
       // Set up message handler
-      ws.on('message', (data) => this.handleMessage(connectionId, data));
+      ws.on('message', data => this.handleMessage(connectionId, data));
       ws.on('close', () => this.handleDisconnect(connectionId));
-      ws.on('error', (error) => this.handleError(connectionId, error));
-      
+      ws.on('error', error => this.handleError(connectionId, error));
+
       // Send hello message
       this.sendHello(connection);
-      
+
       this.emit('connection', connection);
-      
     } catch (error) {
       this.emit('connectionError', { connectionId, error });
       ws.close(1011, 'Internal server error');
@@ -138,7 +137,6 @@ export class AguiProtocol extends EventEmitter {
       }
 
       this.emit('message', { connection, message });
-
     } catch (error) {
       this.emit('messageError', { connectionId, error, data });
       this.sendError(connection.ws, 'INTERNAL_ERROR', 'Failed to process message');
@@ -151,7 +149,7 @@ export class AguiProtocol extends EventEmitter {
   private parseMessage(data: any): AguiMessage | null {
     try {
       const message = JSON.parse(data.toString());
-      
+
       // Basic structure validation
       if (!message.id || !message.type || !message.timestamp || !message.sessionId) {
         return null;
@@ -171,7 +169,7 @@ export class AguiProtocol extends EventEmitter {
     const messageTime = new Date(message.timestamp);
     const now = new Date();
     const timeDiff = Math.abs(now.getTime() - messageTime.getTime());
-    
+
     if (timeDiff > this.config.maxMessageAge) {
       return 'Message timestamp is too old or in the future';
     }
@@ -189,7 +187,10 @@ export class AguiProtocol extends EventEmitter {
         }
         break;
       case 'feedback':
-        if (typeof message.payload?.rating !== 'number' || message.payload.rating < 1 || message.payload.rating > 5) {
+        if (
+          typeof message.payload?.rating !== 'number' || message.payload.rating < 1
+          || message.payload.rating > 5
+        ) {
           return 'Feedback rating must be a number between 1 and 5';
         }
         break;
@@ -204,7 +205,7 @@ export class AguiProtocol extends EventEmitter {
   private async handleHello(connection: AguiConnection, message: AguiMessage): Promise<void> {
     try {
       const hello = message.payload as AguiHelloMessage;
-      
+
       // Validate protocol version
       if (!this.isVersionSupported(hello.version)) {
         this.sendError(connection.ws, 'INVALID_MESSAGE', 'Unsupported protocol version');
@@ -218,7 +219,7 @@ export class AguiProtocol extends EventEmitter {
           this.sendError(connection.ws, 'AUTHENTICATION_FAILED', authResult.error);
           return;
         }
-        
+
         connection.userId = authResult.userId;
         connection.authenticated = true;
       }
@@ -234,12 +235,11 @@ export class AguiProtocol extends EventEmitter {
         sessionId: message.sessionId,
         payload: {
           version: this.config.version,
-          capabilities: this.getCapabilities()
-        }
+          capabilities: this.getCapabilities(),
+        },
       });
 
       this.emit('authenticated', { connection, userId: connection.userId });
-
     } catch (error) {
       this.sendError(connection.ws, 'INTERNAL_ERROR', 'Failed to process hello message');
     }
@@ -255,7 +255,7 @@ export class AguiProtocol extends EventEmitter {
     }
 
     const query = message.payload as AguiQueryMessage;
-    
+
     // Check session
     const session = await this.getOrCreateSession(message.sessionId, connection.userId);
     connection.sessionId = session.id;
@@ -267,7 +267,7 @@ export class AguiProtocol extends EventEmitter {
       query: query.query,
       context: query.context,
       options: query.options,
-      messageId: message.id
+      messageId: message.id,
     });
   }
 
@@ -276,23 +276,26 @@ export class AguiProtocol extends EventEmitter {
    */
   private async handleFeedback(connection: AguiConnection, message: AguiMessage): Promise<void> {
     const feedback = message.payload as AguiFeedbackMessage;
-    
+
     this.emit('feedback', {
       sessionId: message.sessionId,
       messageId: feedback.messageId,
       rating: feedback.rating,
       feedback: feedback.feedback,
       category: feedback.category,
-      userId: connection.userId
+      userId: connection.userId,
     });
   }
 
   /**
    * Handle session update
    */
-  private async handleSessionUpdate(connection: AguiConnection, message: AguiMessage): Promise<void> {
+  private async handleSessionUpdate(
+    connection: AguiConnection,
+    message: AguiMessage,
+  ): Promise<void> {
     const update = message.payload as AguiSessionUpdate;
-    
+
     const session = this.sessions.get(update.sessionId);
     if (!session || session.userId !== connection.userId) {
       this.sendError(connection.ws, 'AUTHORIZATION_FAILED', 'Session not found or access denied');
@@ -301,21 +304,24 @@ export class AguiProtocol extends EventEmitter {
 
     // Update session
     Object.assign(session, update.updates, { updatedAt: new Date().toISOString() });
-    
+
     this.emit('sessionUpdated', { session, updates: update.updates });
   }
 
   /**
    * Handle context update
    */
-  private async handleContextUpdate(connection: AguiConnection, message: AguiMessage): Promise<void> {
+  private async handleContextUpdate(
+    connection: AguiConnection,
+    message: AguiMessage,
+  ): Promise<void> {
     const contextUpdate = message.payload as AguiContextUpdate;
-    
+
     this.emit('contextUpdate', {
       sessionId: contextUpdate.sessionId,
       context: contextUpdate.context,
       source: contextUpdate.source,
-      userId: connection.userId
+      userId: connection.userId,
     });
   }
 
@@ -332,7 +338,7 @@ export class AguiProtocol extends EventEmitter {
       timestamp: new Date().toISOString(),
       sessionId: connection.sessionId || '',
       payload: response,
-      metadata: messageId ? { requestId: messageId } : undefined
+      metadata: messageId ? { requestId: messageId } : undefined,
     });
   }
 
@@ -348,14 +354,19 @@ export class AguiProtocol extends EventEmitter {
       type: 'streaming_chunk',
       timestamp: new Date().toISOString(),
       sessionId: connection.sessionId || '',
-      payload: chunk
+      payload: chunk,
     });
   }
 
   /**
    * Send error message
    */
-  sendError(ws: WebSocket, code: AguiErrorCode, message: string, details?: Record<string, any>): void {
+  sendError(
+    ws: WebSocket,
+    code: AguiErrorCode,
+    message: string,
+    details?: Record<string, any>,
+  ): void {
     this.sendMessage(ws, {
       id: uuidv4(),
       type: 'error',
@@ -365,8 +376,8 @@ export class AguiProtocol extends EventEmitter {
         code,
         message,
         details,
-        retryable: this.isRetryableError(code)
-      }
+        retryable: this.isRetryableError(code),
+      },
     });
   }
 
@@ -379,7 +390,7 @@ export class AguiProtocol extends EventEmitter {
       uptime: process.uptime() * 1000,
       activeSessions: this.sessions.size,
       queueSize: 0,
-      performance: this.getPerformanceMetrics()
+      performance: this.getPerformanceMetrics(),
     };
 
     if (connectionId) {
@@ -390,7 +401,7 @@ export class AguiProtocol extends EventEmitter {
           type: 'status',
           timestamp: new Date().toISOString(),
           sessionId: connection.sessionId || '',
-          payload: status
+          payload: status,
         });
       }
     } else {
@@ -400,7 +411,7 @@ export class AguiProtocol extends EventEmitter {
         type: 'status',
         timestamp: new Date().toISOString(),
         sessionId: '',
-        payload: status
+        payload: status,
       });
     }
   }
@@ -416,8 +427,8 @@ export class AguiProtocol extends EventEmitter {
       sessionId: '',
       payload: {
         version: this.config.version,
-        capabilities: this.getCapabilities()
-      }
+        capabilities: this.getCapabilities(),
+      },
     });
   }
 
@@ -430,7 +441,7 @@ export class AguiProtocol extends EventEmitter {
       type: 'pong',
       timestamp: new Date().toISOString(),
       sessionId: connection.sessionId || '',
-      payload: { timestamp: new Date().toISOString() }
+      payload: { timestamp: new Date().toISOString() },
     });
   }
 
@@ -479,13 +490,15 @@ export class AguiProtocol extends EventEmitter {
   /**
    * Authenticate user
    */
-  private async authenticate(auth: any): Promise<{ success: boolean; userId?: string; error?: string }> {
+  private async authenticate(
+    auth: any,
+  ): Promise<{ success: boolean; userId?: string; error?: string }> {
     try {
       if (auth.type === 'jwt') {
         const decoded = jwt.verify(auth.token, this.config.jwtSecret) as any;
         return { success: true, userId: decoded.userId };
       }
-      
+
       return { success: false, error: 'Unsupported authentication type' };
     } catch (error) {
       return { success: false, error: 'Invalid authentication token' };
@@ -497,7 +510,7 @@ export class AguiProtocol extends EventEmitter {
    */
   private async getOrCreateSession(sessionId: string, userId: string): Promise<AguiSession> {
     let session = this.sessions.get(sessionId);
-    
+
     if (!session) {
       session = {
         id: sessionId,
@@ -508,13 +521,13 @@ export class AguiProtocol extends EventEmitter {
         expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours
         isActive: true,
         messageCount: 0,
-        lastActivity: new Date().toISOString()
+        lastActivity: new Date().toISOString(),
       };
-      
+
       this.sessions.set(sessionId, session);
       this.emit('sessionCreated', session);
     }
-    
+
     return session;
   }
 
@@ -524,21 +537,21 @@ export class AguiProtocol extends EventEmitter {
   private checkRateLimit(clientIp: string): boolean {
     const limit = this.rateLimiter.get(clientIp) || this.getDefaultRateLimit();
     const now = Date.now();
-    
+
     // Reset minute counter if needed
     if (now > new Date(limit.resetTimes.minute).getTime()) {
       limit.currentUsage.minute = 0;
       limit.resetTimes.minute = new Date(now + 60000).toISOString();
     }
-    
+
     // Check if limit exceeded
     if (limit.currentUsage.minute >= limit.requestsPerMinute) {
       return false;
     }
-    
+
     limit.currentUsage.minute++;
     this.rateLimiter.set(clientIp, limit);
-    
+
     return true;
   }
 
@@ -552,8 +565,8 @@ export class AguiProtocol extends EventEmitter {
       currentUsage: { minute: 0, hour: 0 },
       resetTimes: {
         minute: new Date(Date.now() + 60000).toISOString(),
-        hour: new Date(Date.now() + 3600000).toISOString()
-      }
+        hour: new Date(Date.now() + 3600000).toISOString(),
+      },
     };
   }
 
@@ -563,18 +576,18 @@ export class AguiProtocol extends EventEmitter {
   private updateRateLimits(): void {
     for (const [clientIp, limit] of this.rateLimiter.entries()) {
       const now = Date.now();
-      
+
       // Reset counters if needed
       if (now > new Date(limit.resetTimes.minute).getTime()) {
         limit.currentUsage.minute = 0;
         limit.resetTimes.minute = new Date(now + 60000).toISOString();
       }
-      
+
       if (now > new Date(limit.resetTimes.hour).getTime()) {
         limit.currentUsage.hour = 0;
         limit.resetTimes.hour = new Date(now + 3600000).toISOString();
       }
-      
+
       // Remove old entries
       if (limit.currentUsage.minute === 0 && limit.currentUsage.hour === 0) {
         const lastActivity = new Date(limit.resetTimes.minute).getTime() - 60000;
@@ -590,7 +603,7 @@ export class AguiProtocol extends EventEmitter {
    */
   private cleanup(): void {
     const now = Date.now();
-    
+
     // Clean up expired sessions
     for (const [sessionId, session] of this.sessions.entries()) {
       if (new Date(session.expiresAt).getTime() < now) {
@@ -598,7 +611,7 @@ export class AguiProtocol extends EventEmitter {
         this.emit('sessionExpired', session);
       }
     }
-    
+
     // Clean up inactive connections
     for (const [connectionId, connection] of this.connections.entries()) {
       if (now - connection.lastActivity.getTime() > this.config.connectionTimeout) {
@@ -612,9 +625,9 @@ export class AguiProtocol extends EventEmitter {
    * Get client IP address
    */
   private getClientIp(request: any): string {
-    return request.headers['x-forwarded-for'] || 
-           request.connection.remoteAddress || 
-           request.socket.remoteAddress;
+    return request.headers['x-forwarded-for']
+      || request.connection.remoteAddress
+      || request.socket.remoteAddress;
   }
 
   /**
@@ -639,18 +652,18 @@ export class AguiProtocol extends EventEmitter {
       {
         name: 'query',
         version: '1.0.0',
-        features: ['streaming', 'context-aware', 'multi-modal']
+        features: ['streaming', 'context-aware', 'multi-modal'],
       },
       {
         name: 'session',
         version: '1.0.0',
-        features: ['persistence', 'context-sharing', 'encryption']
+        features: ['persistence', 'context-sharing', 'encryption'],
       },
       {
         name: 'feedback',
         version: '1.0.0',
-        features: ['rating', 'comments', 'categorization']
-      }
+        features: ['rating', 'comments', 'categorization'],
+      },
     ];
   }
 
@@ -663,7 +676,7 @@ export class AguiProtocol extends EventEmitter {
       requestsPerSecond: 0, // Would calculate from request logs
       errorRate: 0, // Would calculate from error logs
       databaseConnections: 0, // Would get from database pool
-      memoryUsageMb: process.memoryUsage().heapUsed / 1024 / 1024
+      memoryUsageMb: process.memoryUsage().heapUsed / 1024 / 1024,
     };
   }
 
@@ -685,10 +698,10 @@ export class AguiProtocol extends EventEmitter {
         database: 'healthy',
         ai_service: 'healthy',
         vector_store: 'healthy',
-        websocket_server: 'healthy'
+        websocket_server: 'healthy',
       },
       metrics: this.getPerformanceMetrics(),
-      lastCheck: new Date().toISOString()
+      lastCheck: new Date().toISOString(),
     };
   }
 
@@ -700,7 +713,7 @@ export class AguiProtocol extends EventEmitter {
       version: this.config.version,
       supportedVersions: this.config.supportedVersions,
       compatibility: 'full',
-      features: ['query', 'session', 'feedback', 'streaming', 'encryption']
+      features: ['query', 'session', 'feedback', 'streaming', 'encryption'],
     };
   }
 }

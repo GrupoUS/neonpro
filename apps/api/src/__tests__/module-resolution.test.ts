@@ -36,9 +36,9 @@ describe('Module Resolution - TDD RED Phase', () => {
         '@/services/audit-service',
         '@/services/security-headers-service',
         '@/utils/logging',
-        '@/types/healthcare'
+        '@/types/healthcare',
       ];
-      
+
       let failedResolutions = 0;
       pathAliases.forEach(alias => {
         try {
@@ -47,7 +47,7 @@ describe('Module Resolution - TDD RED Phase', () => {
           failedResolutions++;
         }
       });
-      
+
       // Should fail initially - path aliases not working
       expect(failedResolutions).toBe(pathAliases.length);
     });
@@ -57,9 +57,9 @@ describe('Module Resolution - TDD RED Phase', () => {
       const problematicImports = [
         '../../../../../packages/database/src/types/supabase',
         '../../../../../../packages/types/src/appointment.valibot',
-        '../../src/services/security-headers-service'
+        '../../src/services/security-headers-service',
       ];
-      
+
       let failedImports = 0;
       problematicImports.forEach(importPath => {
         try {
@@ -68,7 +68,7 @@ describe('Module Resolution - TDD RED Phase', () => {
           failedImports++;
         }
       });
-      
+
       // Should fail initially - relative imports broken
       expect(failedImports).toBe(problematicImports.length);
     });
@@ -79,11 +79,11 @@ describe('Module Resolution - TDD RED Phase', () => {
       // Test workspace package imports
       const workspacePackages = [
         '@neonpro/shared',
-        '@neonpro/database', 
+        '@neonpro/database',
         '@neonpro/security',
-        '@neonpro/types'
+        '@neonpro/types',
       ];
-      
+
       let resolutionIssues = 0;
       workspacePackages.forEach(pkg => {
         try {
@@ -97,7 +97,7 @@ describe('Module Resolution - TDD RED Phase', () => {
           resolutionIssues++;
         }
       });
-      
+
       // Should fail initially - workspace packages not properly linked
       expect(resolutionIssues).toBeGreaterThan(0);
     });
@@ -107,9 +107,9 @@ describe('Module Resolution - TDD RED Phase', () => {
       const workspaceConfigIssues = [
         'Incorrect package linking in monorepo',
         'Missing workspace dependencies in package.json',
-        'Improper TypeScript path mapping in tsconfig'
+        'Improper TypeScript path mapping in tsconfig',
       ];
-      
+
       // Should fail initially - workspace config issues exist
       expect(workspaceConfigIssues.length).toBeGreaterThan(0);
     });
@@ -123,22 +123,22 @@ describe('Module Resolution - TDD RED Phase', () => {
           setting: 'moduleResolution',
           currentValue: 'classic', // This is likely the issue
           expectedValue: 'node16',
-          error: 'module resolution setting is outdated'
+          error: 'module resolution setting is outdated',
         },
         {
           setting: 'baseUrl',
           currentValue: undefined,
           expectedValue: './',
-          error: 'baseUrl not configured for path aliases'
+          error: 'baseUrl not configured for path aliases',
         },
         {
           setting: 'paths',
           currentValue: undefined,
           expectedValue: { '@/*': ['./*'] },
-          error: 'path mappings not configured'
-        }
+          error: 'path mappings not configured',
+        },
       ];
-      
+
       // Should fail initially - tsconfig issues exist
       expect(tsconfigIssues.length).toBeGreaterThan(0);
     });
@@ -148,9 +148,9 @@ describe('Module Resolution - TDD RED Phase', () => {
       const externalDeps = [
         'openapi-types',
         '@types/bcryptjs',
-        '@types/jsonwebtoken'
+        '@types/jsonwebtoken',
       ];
-      
+
       let failedExternalImports = 0;
       externalDeps.forEach(dep => {
         try {
@@ -159,7 +159,7 @@ describe('Module Resolution - TDD RED Phase', () => {
           failedExternalImports++;
         }
       });
-      
+
       // Should fail initially - some external deps missing
       expect(failedExternalImports).toBeGreaterThan(0);
     });
@@ -172,20 +172,20 @@ describe('Module Resolution - TDD RED Phase', () => {
         {
           pattern: 'require() vs ES6 imports',
           issue: 'Mixed CommonJS and ES6 import styles',
-          files: ['src/lib/logger.ts', 'src/middleware/audit-log.ts']
+          files: ['src/lib/logger.ts', 'src/middleware/audit-log.ts'],
         },
         {
           pattern: 'Named vs default imports',
           issue: 'Inconsistent import styles for same modules',
-          files: ['src/routes/chat.ts', 'src/trpc/trpc.ts']
+          files: ['src/routes/chat.ts', 'src/trpc/trpc.ts'],
         },
         {
           pattern: 'Type-only imports',
           issue: 'Missing type-only imports where appropriate',
-          files: ['src/types/*.ts']
-        }
+          files: ['src/types/*.ts'],
+        },
       ];
-      
+
       // Should fail initially - inconsistent patterns exist
       expect(importPatterns.length).toBeGreaterThan(0);
     });
@@ -196,15 +196,15 @@ describe('Module Resolution - TDD RED Phase', () => {
         {
           from: 'src/services/',
           to: 'src/middleware/',
-          risk: 'Service-middleware circular import risk'
+          risk: 'Service-middleware circular import risk',
         },
         {
           from: 'src/trpc/',
           to: 'src/routes/',
-          risk: 'TRPC-routes circular import risk'
-        }
+          risk: 'TRPC-routes circular import risk',
+        },
       ];
-      
+
       // Should fail initially - circular dependency risks exist
       expect(circularDependencyRisks.length).toBeGreaterThan(0);
     });
@@ -216,29 +216,28 @@ describe('Module Resolution - TDD RED Phase', () => {
       const allModuleIssues = {
         missingModules: [
           '@neonpro/utils/logging/logger',
-          '@/services/audit-service'
+          '@/services/audit-service',
         ],
         pathAliasIssues: [
           '@/services/*',
-          '@/utils/*'
+          '@/utils/*',
         ],
         workspaceIssues: [
           '@neonpro/shared package resolution',
-          '@neonpro/database type exports'
+          '@neonpro/database type exports',
         ],
         configIssues: [
           'tsconfig.json moduleResolution',
-          'vite.config.ts alias configuration'
-        ]
+          'vite.config.ts alias configuration',
+        ],
       };
-      
+
       // Count total issues
-      const totalIssues = 
-        allModuleIssues.missingModules.length +
-        allModuleIssues.pathAliasIssues.length +
-        allModuleIssues.workspaceIssues.length +
-        allModuleIssues.configIssues.length;
-      
+      const totalIssues = allModuleIssues.missingModules.length
+        + allModuleIssues.pathAliasIssues.length
+        + allModuleIssues.workspaceIssues.length
+        + allModuleIssues.configIssues.length;
+
       // Should fail initially - multiple module resolution issues
       expect(totalIssues).toBeGreaterThan(0);
       console.log(`🔴 Module Resolution Issues: ${totalIssues} identified`);
@@ -251,22 +250,22 @@ describe('Module Resolution - TDD RED Phase', () => {
           pattern: 'Cannot find module',
           frequency: 'high',
           files: ['src/lib/logger.ts', 'tests/contracts/security-policies.test.ts'],
-          fixRequired: 'Update import paths and package configuration'
+          fixRequired: 'Update import paths and package configuration',
         },
         {
           pattern: 'Module not found',
-          frequency: 'medium', 
+          frequency: 'medium',
           files: ['tests/unit/architecture-issues.test.ts'],
-          fixRequired: 'Replace bun:test with vitest imports'
+          fixRequired: 'Replace bun:test with vitest imports',
         },
         {
           pattern: 'Failed to load url',
           frequency: 'medium',
           files: ['tests/integration/pr44-issues.test.ts'],
-          fixRequired: 'Fix test framework imports'
-        }
+          fixRequired: 'Fix test framework imports',
+        },
       ];
-      
+
       // Should document current state for GREEN phase
       expect(errorPatterns.length).toBeGreaterThan(0);
       errorPatterns.forEach(pattern => {

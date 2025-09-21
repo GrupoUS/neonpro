@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export interface LongTask {
   id: string;
@@ -42,12 +42,12 @@ export function useLongTasks(): UseLongTasksReturn {
       prev.map(task =>
         task.id === id
           ? {
-              ...task,
-              ...updates,
-              duration: updates.status === 'completed' || updates.status === 'failed'
-                ? Date.now() - task.startTime
-                : task.duration
-            }
+            ...task,
+            ...updates,
+            duration: updates.status === 'completed' || updates.status === 'failed'
+              ? Date.now() - task.startTime
+              : task.duration,
+          }
           : task
       )
     );
@@ -78,7 +78,7 @@ export function useLongTasks(): UseLongTasksReturn {
           if (task.status === 'running') {
             return {
               ...task,
-              duration: Date.now() - task.startTime
+              duration: Date.now() - task.startTime,
             };
           }
           return task;

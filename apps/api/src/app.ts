@@ -364,7 +364,7 @@ app.get('/v1/info', c => {
 // HTTPS monitoring endpoint (T066)
 app.get('/v1/monitoring/https', c => {
   const requestId = c.get('requestId');
-  
+
   logger.info('https_monitoring_endpoint', 'HTTPS monitoring status requested', { requestId });
 
   const monitoringService = httpsMonitoringService.getStatus();
@@ -378,22 +378,22 @@ app.get('/v1/monitoring/https', c => {
     alerts: {
       total: monitoringService.alertsCount,
       active: monitoringService.activeAlertsCount,
-      recent: activeAlerts.slice(0, 10) // Last 10 alerts
+      recent: activeAlerts.slice(0, 10), // Last 10 alerts
     },
     compliance: {
       handshakeTimeRequirementMs: monitoringService.config.maxHandshakeTimeMs,
       currentComplianceRate: performanceSummary.complianceRate,
-      isCompliant: performanceSummary.complianceRate >= 99.0 // 99% compliance target
+      isCompliant: performanceSummary.complianceRate >= 99.0, // 99% compliance target
     },
     timestamp: new Date().toISOString(),
-    requestId
+    requestId,
   };
 
   logger.audit(
     'https_monitoring_access',
     'HTTPS monitoring status retrieved',
     { requestId },
-    monitoringData
+    monitoringData,
   );
 
   return c.json(monitoringData);

@@ -82,20 +82,20 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui';
+import { createAGUIProtocolClient, useAGUIProtocol } from '@/services/agui-protocol';
 import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
-import { createAGUIProtocolClient, useAGUIProtocol } from '@/services/agui-protocol';
 
 // Import our specific types for AI agent integration
 import type {
   AgentAction,
   AgentResponse,
+  AppointmentData,
   ChatMessage,
   ChatState,
+  ClientData,
   DataAgentRequest,
   DataAgentResponse,
-  AppointmentData,
-  ClientData,
   FinancialData,
   UserQuery,
 } from '@neonpro/types';
@@ -161,7 +161,7 @@ const AccessibleMessageFeedback: React.FC<{
     // Submit quick feedback logic here
     setFeedbackSubmitted(true);
     onFeedbackSubmitted();
-    
+
     // Announce to screen readers
     const announcement = helpful ? 'Feedback positivo enviado' : 'Feedback negativo enviado';
     const ariaLive = document.createElement('div');
@@ -175,7 +175,7 @@ const AccessibleMessageFeedback: React.FC<{
 
   const handleDetailedFeedback = () => {
     if (rating === 0) return;
-    
+
     // Submit detailed feedback logic here
     setShowDetailedFeedback(false);
     setRating(0);
@@ -186,10 +186,10 @@ const AccessibleMessageFeedback: React.FC<{
 
   if (feedbackSubmitted) {
     return (
-      <div 
+      <div
         className={cn('flex items-center gap-2 mt-2 text-xs text-green-600', className)}
-        role="status"
-        aria-label="Feedback enviado com sucesso"
+        role='status'
+        aria-label='Feedback enviado com sucesso'
       >
         <span>✓ Feedback enviado</span>
       </div>
@@ -197,24 +197,24 @@ const AccessibleMessageFeedback: React.FC<{
   }
 
   return (
-    <div 
+    <div
       className={cn('flex items-center gap-2 mt-2', className)}
-      role="group"
-      aria-label="Avaliação da resposta do assistente"
+      role='group'
+      aria-label='Avaliação da resposta do assistente'
     >
-      <div className="flex gap-1">
+      <div className='flex gap-1'>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant="ghost"
-                size="sm"
+                variant='ghost'
+                size='sm'
                 onClick={() => handleQuickFeedback(true)}
-                className="min-h-[44px] min-w-[44px] p-2 text-muted-foreground hover:text-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
-                aria-label="Marcar resposta como útil"
-                type="button"
+                className='min-h-[44px] min-w-[44px] p-2 text-muted-foreground hover:text-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-2'
+                aria-label='Marcar resposta como útil'
+                type='button'
               >
-                <ThumbsUp className="h-4 w-4" aria-hidden="true" />
+                <ThumbsUp className='h-4 w-4' aria-hidden='true' />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -227,14 +227,14 @@ const AccessibleMessageFeedback: React.FC<{
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant="ghost"
-                size="sm"
+                variant='ghost'
+                size='sm'
                 onClick={() => handleQuickFeedback(false)}
-                className="min-h-[44px] min-w-[44px] p-2 text-muted-foreground hover:text-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                aria-label="Marcar resposta como não útil"
-                type="button"
+                className='min-h-[44px] min-w-[44px] p-2 text-muted-foreground hover:text-red-600 focus:ring-2 focus:ring-red-500 focus:ring-offset-2'
+                aria-label='Marcar resposta como não útil'
+                type='button'
               >
-                <ThumbsDown className="h-4 w-4" aria-hidden="true" />
+                <ThumbsDown className='h-4 w-4' aria-hidden='true' />
               </Button>
             </TooltipTrigger>
             <TooltipContent>
@@ -246,51 +246,52 @@ const AccessibleMessageFeedback: React.FC<{
 
       <Dialog open={showDetailedFeedback} onOpenChange={setShowDetailedFeedback}>
         <DialogTrigger asChild>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="h-auto text-xs text-muted-foreground hover:text-[#AC9469] focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2"
-            aria-label="Abrir formulário de feedback detalhado"
+          <Button
+            variant='ghost'
+            size='sm'
+            className='h-auto text-xs text-muted-foreground hover:text-[#AC9469] focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2'
+            aria-label='Abrir formulário de feedback detalhado'
           >
             Feedback Detalhado
           </Button>
         </DialogTrigger>
-        <DialogContent 
-          className="sm:max-w-md"
-          aria-describedby="feedback-dialog-description"
+        <DialogContent
+          className='sm:max-w-md'
+          aria-describedby='feedback-dialog-description'
         >
           <DialogHeader>
             <DialogTitle>Avaliar Resposta do Assistente</DialogTitle>
-            <DialogDescription id="feedback-dialog-description">
-              Sua avaliação nos ajuda a melhorar o atendimento e a precisão das respostas sobre dados de saúde.
+            <DialogDescription id='feedback-dialog-description'>
+              Sua avaliação nos ajuda a melhorar o atendimento e a precisão das respostas sobre
+              dados de saúde.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className='space-y-4'>
             <div>
-              <label 
-                htmlFor="rating-input"
-                className="text-sm font-medium block mb-2"
+              <label
+                htmlFor='rating-input'
+                className='text-sm font-medium block mb-2'
               >
                 Nota (1-5 estrelas) *
               </label>
-              <div 
-                className="flex gap-1"
-                role="radiogroup"
-                aria-label="Avaliação de 1 a 5 estrelas"
-                aria-required="true"
+              <div
+                className='flex gap-1'
+                role='radiogroup'
+                aria-label='Avaliação de 1 a 5 estrelas'
+                aria-required='true'
               >
-                {[1, 2, 3, 4, 5].map((star) => (
+                {[1, 2, 3, 4, 5].map(star => (
                   <Button
                     key={star}
-                    type="button"
-                    variant="ghost"
-                    size="sm"
+                    type='button'
+                    variant='ghost'
+                    size='sm'
                     onClick={() => setRating(star)}
                     className={cn(
-                      "h-10 w-10 p-0 focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2",
-                      rating >= star ? "text-yellow-500" : "text-muted-foreground"
+                      'h-10 w-10 p-0 focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2',
+                      rating >= star ? 'text-yellow-500' : 'text-muted-foreground',
                     )}
-                    role="radio"
+                    role='radio'
                     aria-checked={rating === star}
                     aria-label={`${star} estrela${star > 1 ? 's' : ''}`}
                   >
@@ -301,45 +302,46 @@ const AccessibleMessageFeedback: React.FC<{
             </div>
 
             <div>
-              <label 
-                htmlFor="comment-input"
-                className="text-sm font-medium block mb-2"
+              <label
+                htmlFor='comment-input'
+                className='text-sm font-medium block mb-2'
               >
                 Comentário (opcional)
               </label>
               <Textarea
-                id="comment-input"
+                id='comment-input'
                 value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Como podemos melhorar as respostas do assistente?"
-                className="mt-1 focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2"
+                onChange={e => setComment(e.target.value)}
+                placeholder='Como podemos melhorar as respostas do assistente?'
+                className='mt-1 focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2'
                 rows={3}
-                aria-describedby="comment-help"
+                aria-describedby='comment-help'
               />
-              <div id="comment-help" className="text-xs text-muted-foreground mt-1">
-                Opcional: Compartilhe sugestões específicas para melhorar as consultas de dados de saúde.
+              <div id='comment-help' className='text-xs text-muted-foreground mt-1'>
+                Opcional: Compartilhe sugestões específicas para melhorar as consultas de dados de
+                saúde.
               </div>
             </div>
 
-            <div className="flex gap-2">
+            <div className='flex gap-2'>
               <Button
                 onClick={handleDetailedFeedback}
                 disabled={rating === 0}
-                className="flex-1 bg-gradient-to-r from-[#AC9469] to-[#294359] hover:from-[#294359] hover:to-[#112031] focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2"
+                className='flex-1 bg-gradient-to-r from-[#AC9469] to-[#294359] hover:from-[#294359] hover:to-[#112031] focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2'
                 aria-describedby={rating === 0 ? 'rating-required' : undefined}
               >
                 Enviar Avaliação
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant='outline'
                 onClick={() => setShowDetailedFeedback(false)}
-                className="focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2"
+                className='focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2'
               >
                 Cancelar
               </Button>
             </div>
             {rating === 0 && (
-              <div id="rating-required" className="text-xs text-red-600" role="alert">
+              <div id='rating-required' className='text-xs text-red-600' role='alert'>
                 Por favor, selecione uma avaliação antes de enviar.
               </div>
             )}
@@ -360,27 +362,41 @@ const AccessibleActionButton: React.FC<{
   className?: string;
 }> = ({ action, onExecute, className }) => {
   const getIcon = (_iconName: any) => {
-    const iconProps = { className: "h-4 w-4", 'aria-hidden': "true" as const };
+    const iconProps = { className: 'h-4 w-4', 'aria-hidden': 'true' as const };
     switch (iconName) {
-      case 'user': return <User {...iconProps} />;
-      case 'calendar': return <Calendar {...iconProps} />;
-      case 'chart-bar': return <DollarSign {...iconProps} />;
-      case 'download': return <Download {...iconProps} />;
-      case 'refresh': return <RefreshCw {...iconProps} />;
-      case 'plus': return <Plus {...iconProps} />;
-      case 'help': return <MessageSquare {...iconProps} />;
-      default: return <ExternalLink {...iconProps} />;
+      case 'user':
+        return <User {...iconProps} />;
+      case 'calendar':
+        return <Calendar {...iconProps} />;
+      case 'chart-bar':
+        return <DollarSign {...iconProps} />;
+      case 'download':
+        return <Download {...iconProps} />;
+      case 'refresh':
+        return <RefreshCw {...iconProps} />;
+      case 'plus':
+        return <Plus {...iconProps} />;
+      case 'help':
+        return <MessageSquare {...iconProps} />;
+      default:
+        return <ExternalLink {...iconProps} />;
     }
   };
 
   const getActionDescription = (action: AgentAction): string => {
     switch (action.type) {
-      case 'view_details': return 'Visualizar detalhes do item selecionado';
-      case 'create_appointment': return 'Criar novo agendamento';
-      case 'export_data': return 'Exportar dados em formato acessível';
-      case 'navigate': return 'Navegar para página relacionada';
-      case 'refresh': return 'Atualizar informações exibidas';
-      default: return 'Executar ação relacionada aos dados';
+      case 'view_details':
+        return 'Visualizar detalhes do item selecionado';
+      case 'create_appointment':
+        return 'Criar novo agendamento';
+      case 'export_data':
+        return 'Exportar dados em formato acessível';
+      case 'navigate':
+        return 'Navegar para página relacionada';
+      case 'refresh':
+        return 'Atualizar informações exibidas';
+      default:
+        return 'Executar ação relacionada aos dados';
     }
   };
 
@@ -390,17 +406,18 @@ const AccessibleActionButton: React.FC<{
         <TooltipTrigger asChild>
           <Button
             variant={action.primary ? 'default' : 'outline'}
-            size="sm"
+            size='sm'
             onClick={() => onExecute(action)}
             className={cn(
               'flex items-center gap-2 text-xs min-h-[44px] px-4',
               'focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2',
               'hover:scale-105 transition-transform duration-200',
-              action.primary && 'bg-gradient-to-r from-[#AC9469] to-[#294359] hover:from-[#294359] hover:to-[#112031]',
-              className
+              action.primary
+                && 'bg-gradient-to-r from-[#AC9469] to-[#294359] hover:from-[#294359] hover:to-[#112031]',
+              className,
             )}
             aria-label={`${action.label}: ${getActionDescription(action)}`}
-            type="button"
+            type='button'
           >
             {action.icon && getIcon(action.icon)}
             <span>{action.label}</span>
@@ -431,89 +448,93 @@ const AccessibleDataSummaryCard: React.FC<{
 
   const getTypeDescription = (type: string): string => {
     switch (type) {
-      case 'clients': return 'Lista de clientes do sistema';
-      case 'appointments': return 'Lista de agendamentos médicos';
-      case 'financial': return 'Dados financeiros e faturamento';
-      default: return 'Dados estruturados do sistema';
+      case 'clients':
+        return 'Lista de clientes do sistema';
+      case 'appointments':
+        return 'Lista de agendamentos médicos';
+      case 'financial':
+        return 'Dados financeiros e faturamento';
+      default:
+        return 'Dados estruturados do sistema';
     }
   };
 
   const renderItem = (item: any, index: number) => {
     const itemId = `${testId}-item-${index}`;
-    
+
     switch (type) {
       case 'clients':
         return (
-          <div 
-            key={index} 
-            className="p-3 border rounded-md focus-within:ring-2 focus-within:ring-[#AC9469] focus-within:ring-offset-2"
-            role="article"
+          <div
+            key={index}
+            className='p-3 border rounded-md focus-within:ring-2 focus-within:ring-[#AC9469] focus-within:ring-offset-2'
+            role='article'
             aria-labelledby={`${itemId}-name`}
             aria-describedby={`${itemId}-details`}
           >
-            <div id={`${itemId}-name`} className="font-medium text-sm">{item.name}</div>
-            <div id={`${itemId}-details`} className="text-xs text-muted-foreground">
+            <div id={`${itemId}-name`} className='font-medium text-sm'>{item.name}</div>
+            <div id={`${itemId}-details`} className='text-xs text-muted-foreground'>
               <span>Email: {item.email}</span>
-              <span className="mx-2">•</span>
+              <span className='mx-2'>•</span>
               <span>Status: {item.status}</span>
             </div>
           </div>
         );
-      
+
       case 'appointments':
         return (
-          <div 
-            key={index} 
-            className="p-3 border rounded-md focus-within:ring-2 focus-within:ring-[#AC9469] focus-within:ring-offset-2"
-            role="article"
+          <div
+            key={index}
+            className='p-3 border rounded-md focus-within:ring-2 focus-within:ring-[#AC9469] focus-within:ring-offset-2'
+            role='article'
             aria-labelledby={`${itemId}-client`}
             aria-describedby={`${itemId}-details`}
           >
-            <div id={`${itemId}-client`} className="font-medium text-sm">{item.clientName}</div>
-            <div id={`${itemId}-details`} className="text-xs text-muted-foreground">
+            <div id={`${itemId}-client`} className='font-medium text-sm'>{item.clientName}</div>
+            <div id={`${itemId}-details`} className='text-xs text-muted-foreground'>
               <time dateTime={item.scheduledAt}>
                 {formatDateTime(item.scheduledAt)}
               </time>
-              <span className="mx-2">•</span>
+              <span className='mx-2'>•</span>
               <span>{item.serviceName}</span>
             </div>
-            <Badge 
-              variant="outline" 
-              className="text-xs mt-1"
+            <Badge
+              variant='outline'
+              className='text-xs mt-1'
               aria-label={`Status do agendamento: ${item.status}`}
             >
               {item.status}
             </Badge>
           </div>
         );
-      
+
       case 'financial':
         return (
-          <div 
-            key={index} 
-            className="p-3 border rounded-md focus-within:ring-2 focus-within:ring-[#AC9469] focus-within:ring-offset-2"
-            role="article"
+          <div
+            key={index}
+            className='p-3 border rounded-md focus-within:ring-2 focus-within:ring-[#AC9469] focus-within:ring-offset-2'
+            role='article'
             aria-labelledby={`${itemId}-client`}
             aria-describedby={`${itemId}-details`}
           >
-            <div id={`${itemId}-client`} className="font-medium text-sm">{item.clientName}</div>
-            <div id={`${itemId}-details`} className="text-xs text-muted-foreground">
+            <div id={`${itemId}-client`} className='font-medium text-sm'>{item.clientName}</div>
+            <div id={`${itemId}-details`} className='text-xs text-muted-foreground'>
               <span>{item.serviceName}</span>
-              <span className="mx-2">•</span>
+              <span className='mx-2'>•</span>
               <span aria-label={`Valor: ${formatCurrency(item.amount)}`}>
                 {formatCurrency(item.amount)}
               </span>
             </div>
-            <Badge 
-              variant={item.status === 'paid' ? 'default' : 'destructive'} 
-              className="text-xs mt-1"
+            <Badge
+              variant={item.status === 'paid' ? 'default' : 'destructive'}
+              className='text-xs mt-1'
               aria-label={`Status do pagamento: ${item.status === 'paid' ? 'Pago' : 'Pendente'}`}
             >
               {item.status === 'paid' ? 'Pago' : 'Pendente'}
             </Badge>
           </div>
         );
-      
+
       default:
         return null;
     }
@@ -522,37 +543,37 @@ const AccessibleDataSummaryCard: React.FC<{
   if (!data || data.length === 0) return null;
 
   return (
-    <Card 
-      className="mt-3"
+    <Card
+      className='mt-3'
       ref={cardRef}
-      role="region"
+      role='region'
       aria-labelledby={`${testId}-title`}
       aria-describedby={`${testId}-description`}
     >
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <CardTitle 
+      <CardHeader className='pb-2'>
+        <div className='flex items-center justify-between'>
+          <CardTitle
             id={`${testId}-title`}
-            className="text-sm font-medium"
+            className='text-sm font-medium'
           >
             {title}
           </CardTitle>
-          <Badge 
-            variant="secondary" 
-            className="text-xs"
+          <Badge
+            variant='secondary'
+            className='text-xs'
             aria-label={`Total de ${data.length} ${data.length === 1 ? 'item' : 'itens'}`}
           >
             {data.length} {data.length === 1 ? 'item' : 'itens'}
           </Badge>
         </div>
-        <CardDescription 
+        <CardDescription
           id={`${testId}-description`}
-          className="text-xs"
+          className='text-xs'
         >
           {getTypeDescription(type)}
           {summary && type === 'financial' && (
-            <span 
-              className="block mt-1"
+            <span
+              className='block mt-1'
               aria-label={`Total financeiro: ${formatCurrency(summary.total)}`}
             >
               Total: {formatCurrency(summary.total)}
@@ -560,22 +581,22 @@ const AccessibleDataSummaryCard: React.FC<{
           )}
         </CardDescription>
       </CardHeader>
-      <CardContent className="pt-0">
-        <div 
-          className="space-y-2"
-          role="list"
+      <CardContent className='pt-0'>
+        <div
+          className='space-y-2'
+          role='list'
           aria-label={`Lista de ${data.length} ${data.length === 1 ? 'item' : 'itens'}`}
         >
           {data.slice(0, expanded ? data.length : displayLimit).map((item, _index) => (
-            <div key={index} role="listitem">
+            <div key={index} role='listitem'>
               {renderItem(item, index)}
             </div>
           ))}
-          
+
           {data.length > displayLimit && (
             <Button
-              variant="ghost"
-              size="sm"
+              variant='ghost'
+              size='sm'
               onClick={() => {
                 setExpanded(!expanded);
                 // Announce change to screen readers
@@ -588,18 +609,17 @@ const AccessibleDataSummaryCard: React.FC<{
                   }, 100);
                 }
               }}
-              className="w-full justify-center text-xs min-h-[44px] focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2"
+              className='w-full justify-center text-xs min-h-[44px] focus:ring-2 focus:ring-[#AC9469] focus:ring-offset-2'
               aria-expanded={expanded}
               aria-controls={`${testId}-items`}
-              aria-label={expanded 
-                ? 'Recolher lista, mostrar menos itens' 
-                : `Expandir lista, mostrar mais ${data.length - displayLimit} itens`
-              }
+              aria-label={expanded
+                ? 'Recolher lista, mostrar menos itens'
+                : `Expandir lista, mostrar mais ${data.length - displayLimit} itens`}
             >
               {expanded ? 'Ver menos' : `Ver mais ${data.length - displayLimit} itens`}
-              <ChevronDown 
-                className={cn("h-3 w-3 ml-1 transition-transform", expanded && "rotate-180")} 
-                aria-hidden="true"
+              <ChevronDown
+                className={cn('h-3 w-3 ml-1 transition-transform', expanded && 'rotate-180')}
+                aria-hidden='true'
               />
             </Button>
           )}
@@ -609,10 +629,6 @@ const AccessibleDataSummaryCard: React.FC<{
   );
 };
 
-export {
-  AccessibleMessageFeedback,
-  AccessibleActionButton,
-  AccessibleDataSummaryCard,
-};
+export { AccessibleActionButton, AccessibleDataSummaryCard, AccessibleMessageFeedback };
 
 export type { DataAgentChatAccessibilityProps };

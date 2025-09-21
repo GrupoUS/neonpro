@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { CalendarEvent2Tokens } from './client';
+import { GoogleCalendarClient, CalendarEvent, OAuth2Tokens } from './client';
 
 export interface GoogleCalendarIntegrationConfig {
   clientId: string;

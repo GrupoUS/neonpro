@@ -1,6 +1,6 @@
 /**
  * AG-UI Protocol Types and Interfaces
- * 
+ *
  * Defines the communication protocol between frontend and backend agents
  * using WebSocket-based real-time messaging.
  */
@@ -14,7 +14,7 @@ export interface AguiMessage {
   metadata?: AguiMessageMetadata;
 }
 
-export type AguiMessageType = 
+export type AguiMessageType =
   | 'hello'
   | 'query'
   | 'response'
@@ -121,7 +121,7 @@ export interface AguiErrorMessage {
   retryable?: boolean;
 }
 
-export type AguiErrorCode = 
+export type AguiErrorCode =
   | 'AUTHENTICATION_FAILED'
   | 'AUTHORIZATION_FAILED'
   | 'INVALID_MESSAGE'

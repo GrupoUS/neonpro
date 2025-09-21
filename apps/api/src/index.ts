@@ -1,9 +1,8 @@
-import { serve } from '@hono/node-server';
 import { createServer } from 'http';
 import app from './app';
+import { createWebSocketServer } from './middleware/websocket-server';
 import { initializeErrorTracking, shutdownErrorTracking } from './services/error-tracking-init';
 import { secureLogger } from './utils/secure-logger';
-import { createWebSocketServer } from './middleware/websocket-server';
 
 // This is the Node entrypoint for the API. In serverless/Vercel, we use files under vercel/.
 const port = Number(process.env.PORT || 3005);
@@ -18,10 +17,10 @@ async function startServer() {
     if (process.env.VERCEL === undefined) {
       // Only start a local server when not running on Vercel
       const server = createServer(app);
-      
+
       // Initialize WebSocket server for AG-UI Protocol
-      const wsServer = createWebSocketServer(server);
-      
+      const _wsServer = createWebSocketServer(server);
+
       server.listen(port, () => {
         secureLogger.info(`API server listening`, {
           port,
@@ -32,7 +31,7 @@ async function startServer() {
           component: 'websocket-server',
         });
       });
-      
+
       // Graceful shutdown for WebSocket server
       server.on('close', () => {
         secureLogger.info('WebSocket server closed', { component: 'server-shutdown' });

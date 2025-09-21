@@ -7,7 +7,7 @@ import { router } from './trpc';
  */
 export function createTRPCHono() {
   const honoApp = new Hono();
-  
+
   return {
     honoApp,
     router: (path: string, routes: any) => {

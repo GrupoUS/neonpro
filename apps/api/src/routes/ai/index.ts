@@ -6,11 +6,11 @@
 import { Hono } from 'hono';
 import analyzeRoutes from './analyze';
 import chatRoutes from './chat';
+import { copilotEndpoint } from './copilot';
 import copilotBridge from './copilot-bridge';
 import insightsRoutes from './insights';
 import modelsRoutes from './models';
 import realtimeRoutes from './realtime';
-import { copilotEndpoint } from './copilot';
 
 const app = new Hono();
 

@@ -1,6 +1,6 @@
 /**
  * Real-time Services Index
- * 
+ *
  * Exports all real-time subscription services for AI agent integration
  */
 
@@ -8,10 +8,10 @@ export { RealtimeSubscriptionService } from './realtime-subscription-service';
 
 // Re-export types for convenience
 export type {
+  RealtimeAnalytics,
   RealtimeEvent,
-  SubscriptionOptions,
   SubscriptionHandle,
-  RealtimeAnalytics
+  SubscriptionOptions,
 } from './realtime-subscription-service';
 
 // Default export for easy importing

@@ -1,13 +1,13 @@
 /**
  * Ottomator Agent Integration Tests
- * 
+ *
  * Tests the integration between the Node.js backend and Python ottomator-agents.
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { PermissionContext } from '@neonpro/types';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { AIDataService } from '../../src/services/ai-data-service';
 import { OttomatorAgentBridge } from '../../src/services/ottomator-agent-bridge';
-import { PermissionContext } from '@neonpro/types';
 
 describe('Ottomator Agent Integration', () => {
   let dataService: AIDataService;
@@ -59,7 +59,7 @@ describe('Ottomator Agent Integration', () => {
 
       const response = await dataService.processNaturalLanguageQuery(
         query,
-        sessionId
+        sessionId,
       );
 
       expect(response).toBeDefined();
@@ -76,7 +76,7 @@ describe('Ottomator Agent Integration', () => {
 
       const response = await dataService.processNaturalLanguageQuery(
         query,
-        sessionId
+        sessionId,
       );
 
       expect(response).toBeDefined();
@@ -90,7 +90,7 @@ describe('Ottomator Agent Integration', () => {
 
       const response = await dataService.processNaturalLanguageQuery(
         query,
-        sessionId
+        sessionId,
       );
 
       expect(response).toBeDefined();
@@ -104,7 +104,7 @@ describe('Ottomator Agent Integration', () => {
 
       const response = await dataService.processNaturalLanguageQuery(
         query,
-        sessionId
+        sessionId,
       );
 
       expect(response).toBeDefined();
@@ -117,13 +117,13 @@ describe('Ottomator Agent Integration', () => {
       const sessionId = 'test-session-context';
       const context = {
         patientId: 'patient-123',
-        previousQueries: ['Quem é João?']
+        previousQueries: ['Quem é João?'],
       };
 
       const response = await dataService.processNaturalLanguageQuery(
         query,
         sessionId,
-        context
+        context,
       );
 
       expect(response).toBeDefined();
@@ -136,13 +136,13 @@ describe('Ottomator Agent Integration', () => {
       const queries = [
         'Mostre os clientes',
         'Informações do paciente Maria',
-        'Lista de clientes ativos'
+        'Lista de clientes ativos',
       ];
 
       for (const query of queries) {
         const response = await dataService.processNaturalLanguageQuery(
           query,
-          'test-session'
+          'test-session',
         );
 
         expect(response.success).toBe(true);
@@ -154,13 +154,13 @@ describe('Ottomator Agent Integration', () => {
       const queries = [
         'Agendamentos de hoje',
         'Consultas da semana',
-        'Horários disponíveis'
+        'Horários disponíveis',
       ];
 
       for (const query of queries) {
         const response = await dataService.processNaturalLanguageQuery(
           query,
-          'test-session'
+          'test-session',
         );
 
         expect(response.success).toBe(true);
@@ -172,13 +172,13 @@ describe('Ottomator Agent Integration', () => {
       const queries = [
         'Resumo financeiro',
         'Valores recebidos hoje',
-        'Pagamentos pendentes'
+        'Pagamentos pendentes',
       ];
 
       for (const query of queries) {
         const response = await dataService.processNaturalLanguageQuery(
           query,
-          'test-session'
+          'test-session',
         );
 
         expect(response.success).toBe(true);
@@ -191,7 +191,7 @@ describe('Ottomator Agent Integration', () => {
     it('should handle empty queries', async () => {
       const response = await dataService.processNaturalLanguageQuery(
         '',
-        'test-session'
+        'test-session',
       );
 
       expect(response).toBeDefined();
@@ -201,10 +201,10 @@ describe('Ottomator Agent Integration', () => {
 
     it('should handle very long queries', async () => {
       const longQuery = 'A'.repeat(1000) + ' clientes';
-      
+
       const response = await dataService.processNaturalLanguageQuery(
         longQuery,
-        'test-session'
+        'test-session',
       );
 
       expect(response).toBeDefined();
@@ -213,10 +213,10 @@ describe('Ottomator Agent Integration', () => {
 
     it('should handle special characters in queries', async () => {
       const specialQuery = 'Clientes com @#$%^&*()';
-      
+
       const response = await dataService.processNaturalLanguageQuery(
         specialQuery,
-        'test-session'
+        'test-session',
       );
 
       expect(response).toBeDefined();
@@ -227,14 +227,14 @@ describe('Ottomator Agent Integration', () => {
   describe('Performance', () => {
     it('should respond within reasonable time', async () => {
       const startTime = Date.now();
-      
+
       const response = await dataService.processNaturalLanguageQuery(
         'Clientes ativos',
-        'test-session'
+        'test-session',
       );
 
       const duration = Date.now() - startTime;
-      
+
       expect(response).toBeDefined();
       expect(response.success).toBe(true);
       expect(duration).toBeLessThan(5000); // Should respond within 5 seconds
@@ -245,7 +245,7 @@ describe('Ottomator Agent Integration', () => {
       const queries = [
         'Clientes ativos',
         'Agendamentos hoje',
-        'Resumo financeiro'
+        'Resumo financeiro',
       ];
 
       const promises = queries.map((query, index) =>
@@ -265,7 +265,7 @@ describe('Ottomator Agent Integration', () => {
     it('should return properly formatted response', async () => {
       const response = await dataService.processNaturalLanguageQuery(
         'Clientes ativos',
-        'test-session'
+        'test-session',
       );
 
       expect(response).toBeDefined();
@@ -280,7 +280,7 @@ describe('Ottomator Agent Integration', () => {
     it('should include sources in response', async () => {
       const response = await dataService.processNaturalLanguageQuery(
         'Clientes ativos',
-        'test-session'
+        'test-session',
       );
 
       expect(response.response?.sources).toBeDefined();

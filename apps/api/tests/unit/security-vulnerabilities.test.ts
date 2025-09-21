@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'fs';
+import { describe, expect, it } from 'vitest';
 
 describe('Security Vulnerabilities - Unit Tests', () => {
   describe('Mock Middleware Detection', () => {

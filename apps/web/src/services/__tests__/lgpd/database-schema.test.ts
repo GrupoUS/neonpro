@@ -4,9 +4,9 @@
  * Tests LGPD compliance at database level with Brazilian healthcare requirements
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/lib/supabase/types/database';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Supabase client for controlled testing
 vi.mock('@/integrations/supabase/client', () => ({
@@ -22,52 +22,62 @@ vi.mock('@/integrations/supabase/client', () => ({
                     order: vi.fn(() => ({
                       limit: vi.fn(() => ({
                         single: vi.fn(() => ({
-                          then: vi.fn((resolve) => resolve({ 
-                            data: null, 
-                            error: { message: 'Mock database error' } 
-                          }))
-                        }))
+                          then: vi.fn(resolve =>
+                            resolve({
+                              data: null,
+                              error: { message: 'Mock database error' },
+                            })
+                          ),
+                        })),
                       })),
-                      then: vi.fn((resolve) => resolve({ 
-                        data: [], 
-                        error: null 
-                      }))
-                    }))
-                  }))
-                }))
-              }))
-            }))
-          }))
-        }))
+                      then: vi.fn(resolve =>
+                        resolve({
+                          data: [],
+                          error: null,
+                        })
+                      ),
+                    })),
+                  })),
+                })),
+              })),
+            })),
+          })),
+        })),
       })),
       insert: vi.fn(() => ({
         select: vi.fn(() => ({
           single: vi.fn(() => ({
-            then: vi.fn((resolve) => resolve({ 
-              data: { id: 'record-123' }, 
-              error: null 
-            }))
-          }))
-        }))
+            then: vi.fn(resolve =>
+              resolve({
+                data: { id: 'record-123' },
+                error: null,
+              })
+            ),
+          })),
+        })),
       })),
       update: vi.fn(() => ({
         eq: vi.fn(() => ({
-          then: vi.fn((resolve) => resolve({ 
-            data: null, 
-            error: null 
-          }))
-        }))
+          then: vi.fn(resolve =>
+            resolve({
+              data: null,
+              error: null,
+            })
+          ),
+        })),
       })),
       delete: vi.fn(() => ({
         eq: vi.fn(() => ({
-          then: vi.fn((resolve) => resolve({ 
-            data: null, 
-            error: null 
-          }))
-        }))
-      }))
-    }))
-  }
+          then: vi.fn(resolve =>
+            resolve({
+              data: null,
+              error: null,
+            })
+          ),
+        })),
+      })),
+    })),
+  },
 }));
 
 describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
@@ -83,7 +93,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should have required LGPD consent fields in database', async () => {
       // RED: This test fails if consent table structure is incomplete
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // Test consent record creation
       await mockSupabase.from('lgpd_consents').insert({
         user_id: 'patient-123',
@@ -100,7 +110,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should validate consent method enumeration', async () => {
       // RED: This test fails if consent method validation is missing
       const validMethods = ['explicit', 'implicit', 'opt_out'];
-      
+
       // This would test database constraints on consent_method field
       expect(true).toBe(false); // Force failure to indicate test needs implementation
     });
@@ -123,13 +133,13 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should support consent withdrawal tracking', async () => {
       // RED: This test fails if consent withdrawal tracking is missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // Update consent to mark as withdrawn
       await mockSupabase.from('lgpd_consents')
-        .update({ 
-          is_active: false, 
+        .update({
+          is_active: false,
           withdrawn_at: new Date().toISOString(),
-          withdrawal_reason: 'patient_request'
+          withdrawal_reason: 'patient_request',
         })
         .eq('id', 'consent-123');
 
@@ -142,7 +152,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
       // RED: This test fails if Patient model LGPD fields are missing
       const requiredLGPDFields = [
         'dataConsentStatus',
-        'dataConsentDate', 
+        'dataConsentDate',
         'dataConsentVersion',
         'dataRetentionUntil',
         'lgpdConsentGiven',
@@ -161,7 +171,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should validate Brazilian identity fields (CPF, CNS)', () => {
       // RED: This test fails if Brazilian ID validation is missing
       const brazilianFields = ['cpf', 'cns', 'rg'];
-      
+
       brazilianFields.forEach(_field => {
         expect(true).toBe(false); // Force failure to indicate test needs implementation
       });
@@ -215,7 +225,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
       // RED: This test fails if action enumeration validation is missing
       const validActions = [
         'consent_validated',
-        'consent_denied', 
+        'consent_denied',
         'appointment_accessed',
         'appointment_created',
         'appointment_updated',
@@ -269,7 +279,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should enforce risk level constraints', () => {
       // RED: This test fails if risk level validation is missing
       const validRiskLevels = ['low', 'medium', 'high', 'critical'];
-      
+
       validRiskLevels.forEach(_level => {
         expect(true).toBe(false); // Force failure to indicate test needs implementation
       });
@@ -280,7 +290,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should respect LGPD retention periods', async () => {
       // RED: This test fails if retention period enforcement is missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // Query for expired records that should be anonymized
       await mockSupabase.from('patients')
         .select('*')
@@ -293,10 +303,10 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should support automated data anonymization', async () => {
       // RED: This test fails if anonymization automation is missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // Mark patient data as anonymized
       await mockSupabase.from('patients')
-        .update({ 
+        .update({
           data_anonymized_at: new Date().toISOString(),
           full_name: 'Anonymized Patient',
           cpf: null,
@@ -311,7 +321,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should handle consent expiration cleanup', async () => {
       // RED: This test fails if consent expiration cleanup is missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // Deactivate expired consents
       await mockSupabase.from('lgpd_consents')
         .update({ is_active: false })
@@ -326,7 +336,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should enforce patient data access control', async () => {
       // RED: This test fails if RLS policies are missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // Patients should only see their own data
       await mockSupabase.from('patients')
         .select('*')
@@ -351,7 +361,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
       // RED: This test fails if CPF validation is missing
       const validCPF = '123.456.789-09';
       const invalidCPF = '123.456.789-00';
-      
+
       // This would test database-level CPF validation
       expect(true).toBe(false); // Force failure to indicate test needs implementation
     });
@@ -364,12 +374,14 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should enforce foreign key constraints', async () => {
       // RED: This test fails if foreign key constraints are missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // This should fail due to foreign key constraint violation
-      await expect(mockSupabase.from('appointments').insert({
-        patient_id: 'non-existent-patient',
-        clinic_id: 'non-existent-clinic',
-      })).rejects.toThrow();
+      await expect(
+        mockSupabase.from('appointments').insert({
+          patient_id: 'non-existent-patient',
+          clinic_id: 'non-existent-clinic',
+        }),
+      ).rejects.toThrow();
     });
 
     it('should FAIL - should validate date ranges for retention periods', () => {
@@ -398,7 +410,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should optimize audit log queries with proper indexing', async () => {
       // RED: This test fails if audit log queries are not optimized
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // Query audit logs with filters
       await mockSupabase.from('lgpd_audit_logs')
         .select('*')
@@ -422,7 +434,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
       // RED: This test fails if migration support is missing
       const migrationFiles = [
         '20240101_add_lgpd_consents.sql',
-        '20240102_add_lgpd_audit_logs.sql', 
+        '20240102_add_lgpd_audit_logs.sql',
         '20240103_add_patient_lgpd_fields.sql',
         '20240104_add_retention_policies.sql',
       ];
@@ -447,7 +459,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should support compliance reporting queries', async () => {
       // RED: This test fails if compliance reporting queries are missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // Generate compliance report
       await mockSupabase.from('lgpd_audit_logs')
         .select(`
@@ -465,7 +477,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should track consent expiration metrics', async () => {
       // RED: This test fails if consent expiration tracking is missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // Find consents expiring soon
       await mockSupabase.from('lgpd_consents')
         .select('*')
@@ -486,7 +498,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should provide database interface for consent service', async () => {
       // RED: This test fails if database interface is missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       // Query active consents for a patient
       await mockSupabase.from('lgpd_consents')
         .select('*')
@@ -502,7 +514,7 @@ describe('Database Schema LGPD Compliance - RED Phase Tests', () => {
     it('should FAIL - should support audit log insertion from service layer', async () => {
       // RED: This test fails if audit log insertion is missing
       const mockSupabase = require('@/integrations/supabase/client').supabase;
-      
+
       await mockSupabase.from('lgpd_audit_logs').insert({
         patient_id: 'patient-123',
         action: 'appointment_viewed',

@@ -1,19 +1,22 @@
+import { FeedbackRequest, FeedbackResponse, UserRole } from '@neonpro/types';
 import { Hono } from 'hono';
-import { handle } from 'hono/vercel';
 import { cors } from 'hono/cors';
 import { jwt } from 'hono/jwt';
-import { FeedbackRequest, FeedbackResponse, UserRole } from '@neonpro/types';
+import { handle } from 'hono/vercel';
 
 // Create Hono app for Vercel deployment
 const app = new Hono().basePath('/api');
 
 // Enable CORS for frontend integration
-app.use('*', cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  maxAge: 86400, // 24 hours
-}));
+app.use(
+  '*',
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+    maxAge: 86400, // 24 hours
+  }),
+);
 
 // JWT middleware for authentication
 app.use('*', async (c, next) => {
@@ -29,7 +32,10 @@ const feedbackStore = new Map<string, any>();
 /**
  * Helper function to validate feedback request
  */
-function validateFeedbackRequest(body: any, _userRole: UserRole): { valid: boolean; errors: string[] } {
+function validateFeedbackRequest(
+  body: any,
+  _userRole: UserRole,
+): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
 
   if (!body.messageId) {
@@ -69,7 +75,7 @@ async function logFeedbackForAnalytics(
   messageId: string,
   userId: string,
   userRole: UserRole,
-  feedback: FeedbackRequest['feedback']
+  feedback: FeedbackRequest['feedback'],
 ): Promise<void> {
   try {
     // In production, this would store to your analytics database
@@ -87,7 +93,7 @@ async function logFeedbackForAnalytics(
     };
 
     feedbackStore.set(feedbackData.id, feedbackData);
-    
+
     console.log('Feedback logged:', {
       sessionId,
       messageId,
@@ -106,7 +112,7 @@ async function logFeedbackForAnalytics(
  */
 async function triggerFeedbackImprovements(
   feedback: FeedbackRequest['feedback'],
-  queryContext?: any
+  queryContext?: any,
 ): Promise<void> {
   // Low ratings trigger improvement alerts
   if (feedback.rating <= 2) {
@@ -142,11 +148,11 @@ async function triggerFeedbackImprovements(
  * POST /api/ai/sessions/:sessionId/feedback
  * Submit feedback for agent responses
  */
-app.post('/ai/sessions/:sessionId/feedback', async (c) => {
+app.post('/ai/sessions/:sessionId/feedback', async c => {
   try {
     const sessionId = c.req.param('sessionId');
     const payload = c.get('jwtPayload');
-    
+
     // Parse and validate request
     const body = await c.req.json() as FeedbackRequest;
     const userRole = payload.role as UserRole;
@@ -159,7 +165,7 @@ app.post('/ai/sessions/:sessionId/feedback', async (c) => {
           code: 'INVALID_FEEDBACK',
           message: 'Invalid feedback request',
           details: validation.errors,
-        }
+        },
       }, 400);
     }
 
@@ -169,7 +175,7 @@ app.post('/ai/sessions/:sessionId/feedback', async (c) => {
         error: {
           code: 'INVALID_USER',
           message: 'Invalid user token',
-        }
+        },
       }, 401);
     }
 
@@ -179,7 +185,7 @@ app.post('/ai/sessions/:sessionId/feedback', async (c) => {
       body.messageId,
       payload.sub,
       userRole,
-      body.feedback
+      body.feedback,
     );
 
     // Trigger improvement processes based on feedback
@@ -193,15 +199,14 @@ app.post('/ai/sessions/:sessionId/feedback', async (c) => {
     };
 
     return c.json(response, 200);
-
   } catch (error) {
     console.error('Feedback endpoint error:', error);
-    
+
     return c.json({
       error: {
         code: 'INTERNAL_ERROR',
         message: 'Failed to submit feedback',
-      }
+      },
     }, 500);
   }
 });
@@ -210,7 +215,7 @@ app.post('/ai/sessions/:sessionId/feedback', async (c) => {
  * GET /api/ai/sessions/:sessionId/feedback/stats
  * Get feedback statistics for a session (admin only)
  */
-app.get('/ai/sessions/:sessionId/feedback/stats', async (c) => {
+app.get('/ai/sessions/:sessionId/feedback/stats', async c => {
   try {
     const sessionId = c.req.param('sessionId');
     const payload = c.get('jwtPayload');
@@ -222,7 +227,7 @@ app.get('/ai/sessions/:sessionId/feedback/stats', async (c) => {
         error: {
           code: 'INSUFFICIENT_PERMISSIONS',
           message: 'Admin access required to view feedback statistics',
-        }
+        },
       }, 403);
     }
 
@@ -243,7 +248,7 @@ app.get('/ai/sessions/:sessionId/feedback/stats', async (c) => {
 
     const totalFeedback = sessionFeedback.length;
     const averageRating = sessionFeedback.reduce((sum, f) => sum + f.rating, 0) / totalFeedback;
-    
+
     const ratingDistribution = sessionFeedback.reduce((acc, f) => {
       acc[f.rating] = (acc[f.rating] || 0) + 1;
       return acc;
@@ -269,15 +274,14 @@ app.get('/ai/sessions/:sessionId/feedback/stats', async (c) => {
       helpfulPercentage: Math.round(helpfulPercentage * 100) / 100,
       recentComments,
     }, 200);
-
   } catch (error) {
     console.error('Feedback stats endpoint error:', error);
-    
+
     return c.json({
       error: {
         code: 'INTERNAL_ERROR',
         message: 'Failed to retrieve feedback statistics',
-      }
+      },
     }, 500);
   }
 });
@@ -286,7 +290,7 @@ app.get('/ai/sessions/:sessionId/feedback/stats', async (c) => {
  * GET /api/ai/feedback/admin/overview
  * Get system-wide feedback overview (admin only)
  */
-app.get('/ai/feedback/admin/overview', async (c) => {
+app.get('/ai/feedback/admin/overview', async c => {
   try {
     const payload = c.get('jwtPayload');
     const userRole = payload.role as UserRole;
@@ -297,7 +301,7 @@ app.get('/ai/feedback/admin/overview', async (c) => {
         error: {
           code: 'INSUFFICIENT_PERMISSIONS',
           message: 'Admin access required to view feedback overview',
-        }
+        },
       }, 403);
     }
 
@@ -316,7 +320,7 @@ app.get('/ai/feedback/admin/overview', async (c) => {
 
     const totalFeedback = allFeedback.length;
     const averageRating = allFeedback.reduce((sum, f) => sum + f.rating, 0) / totalFeedback;
-    
+
     const ratingDistribution = allFeedback.reduce((acc, f) => {
       acc[f.rating] = (acc[f.rating] || 0) + 1;
       return acc;
@@ -355,15 +359,14 @@ app.get('/ai/feedback/admin/overview', async (c) => {
       topIssues,
       recentActivity,
     }, 200);
-
   } catch (error) {
     console.error('Feedback overview endpoint error:', error);
-    
+
     return c.json({
       error: {
         code: 'INTERNAL_ERROR',
         message: 'Failed to retrieve feedback overview',
-      }
+      },
     }, 500);
   }
 });
@@ -371,7 +374,7 @@ app.get('/ai/feedback/admin/overview', async (c) => {
 /**
  * Health check endpoint
  */
-app.get('/ai/feedback/health', async (c) => {
+app.get('/ai/feedback/health', async c => {
   try {
     const totalFeedback = feedbackStore.size;
     const recentFeedback = Array.from(feedbackStore.values())

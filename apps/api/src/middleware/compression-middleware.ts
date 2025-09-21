@@ -3,8 +3,8 @@
  * Configures compression and optimization for HTTPS responses to improve performance
  */
 
-import { Request, Response, NextFunction } from 'express';
 import { createHash, randomBytes } from 'crypto';
+import { NextFunction, Request, Response } from 'express';
 // Use global performance API available in Node.js
 declare const performance: {
   now(): number;
@@ -59,7 +59,7 @@ export class CompressionMiddleware {
     compressedResponses: 0,
     totalBytesSaved: 0,
     averageCompressionRatio: 0,
-    compressionMethods: new Map<string, number>()
+    compressionMethods: new Map<string, number>(),
   };
 
   constructor(config: Partial<CompressionConfig> = {}) {
@@ -74,7 +74,7 @@ export class CompressionMiddleware {
       enableVaryHeader: true,
       enablePreconditionChecks: true,
       enableStreamingCompression: true,
-      ...config
+      ...config,
     };
   }
 
@@ -84,7 +84,7 @@ export class CompressionMiddleware {
   middleware = (req: Request, res: Response, next: NextFunction): void => {
     const requestId = this.generateRequestId();
     const startTime = performance.now();
-    
+
     // Add request ID for tracking
     req.requestId = requestId;
     req.compressionStartTime = startTime;
@@ -99,7 +99,7 @@ export class CompressionMiddleware {
       method: preferredEncoding,
       enabled: preferredEncoding !== 'none',
       requestId,
-      startTime
+      startTime,
     };
 
     // Set up response optimization
@@ -108,7 +108,7 @@ export class CompressionMiddleware {
     // Override res.end to apply compression and metrics
     const originalEnd = res.end;
     const originalWrite = res.write;
-    
+
     let responseBuffer: Buffer[] = [];
     let originalSize = 0;
 
@@ -140,18 +140,18 @@ export class CompressionMiddleware {
       // Apply compression if beneficial
       if (shouldCompress(finalBuffer, preferredEncoding, this.config)) {
         const compressedData = compressResponse(finalBuffer, preferredEncoding, this.config);
-        
+
         if (compressedData && compressedData.length < finalBuffer.length) {
           // Set compression headers
           res.setHeader('Content-Encoding', preferredEncoding);
           res.setHeader('Vary', 'Accept-Encoding');
-          
+
           // Remove Content-Length as it will be set by the compression
           res.removeHeader('Content-Length');
-          
+
           // Send compressed data
           originalEnd.call(this, compressedData);
-          
+
           // Record metrics
           this.recordCompressionMetrics({
             requestId,
@@ -163,7 +163,7 @@ export class CompressionMiddleware {
             compressionMethod: preferredEncoding,
             compressionTimeMs: compressionTime,
             timestamp: new Date().toISOString(),
-            cacheHit: false
+            cacheHit: false,
           });
         } else {
           // Send uncompressed if compression didn't help
@@ -181,7 +181,6 @@ export class CompressionMiddleware {
       if (res.locals.compression.enabled && res.getHeader('Content-Encoding')) {
         this.compressionStats.compressedResponses++;
       }
-
     }.bind(this);
 
     next();
@@ -220,7 +219,9 @@ export class CompressionMiddleware {
     const headersToRemove = ['X-Content-Type-Options', 'X-Frame-Options', 'X-XSS-Protection'];
     headersToRemove.forEach(header => {
       // Keep security headers even when compressing
-      if (header.startsWith('X-') && !header.includes('Content-Type') && !header.includes('Frame')) {
+      if (
+        header.startsWith('X-') && !header.includes('Content-Type') && !header.includes('Frame')
+      ) {
         // Don't remove security headers
       }
     });
@@ -231,7 +232,7 @@ export class CompressionMiddleware {
    */
   private setupETag(res: Response): void {
     const originalSetHeader = res.setHeader;
-    
+
     res.setHeader = function(name: string, value: any) {
       if (name.toLowerCase() === 'etag') {
         // Store ETag for later use
@@ -257,7 +258,7 @@ export class CompressionMiddleware {
   private setupCacheControl(req: Request, res: Response): void {
     const path = req.path;
     const method = req.method;
-    
+
     // Different cache strategies for different types of content
     let cacheOptions: CacheControlOptions;
 
@@ -267,28 +268,28 @@ export class CompressionMiddleware {
         maxAge: 300, // 5 minutes
         sMaxAge: 600, // 10 minutes for shared caches
         public: true,
-        mustRevalidate: true
+        mustRevalidate: true,
       };
     } else if (path.startsWith('/static/') || path.includes('.css') || path.includes('.js')) {
       // Static assets - cache for 1 year
       cacheOptions = {
         maxAge: 31536000, // 1 year
         public: true,
-        immutable: true
+        immutable: true,
       };
     } else if (method === 'GET' && !path.includes('/api/')) {
       // General GET requests - cache for 1 hour
       cacheOptions = {
         maxAge: 3600, // 1 hour
         public: true,
-        mustRevalidate: true
+        mustRevalidate: true,
       };
     } else {
       // Dynamic content - don't cache
       cacheOptions = {
         noCache: true,
         noStore: true,
-        mustRevalidate: true
+        mustRevalidate: true,
       };
     }
 
@@ -328,7 +329,7 @@ export class CompressionMiddleware {
     if (!acceptEncoding) return 'none';
 
     const encodings = acceptEncoding.split(',').map(e => e.trim());
-    
+
     // Check for Brotli (highest priority)
     if (this.config.enableBrotli && encodings.includes('br')) {
       return 'br';
@@ -357,7 +358,7 @@ export class CompressionMiddleware {
    */
   private recordCompressionMetrics(metrics: CompressionMetrics): void {
     this.metrics.push(metrics);
-    
+
     // Keep only last 1000 metrics
     if (this.metrics.length > 1000) {
       this.metrics = this.metrics.slice(-1000);
@@ -365,9 +366,10 @@ export class CompressionMiddleware {
 
     // Update statistics
     this.compressionStats.totalBytesSaved += metrics.originalSize - metrics.compressedSize;
-    
+
     // Update compression method stats
-    const methodStats = this.compressionStats.compressionMethods.get(metrics.compressionMethod) || 0;
+    const methodStats = this.compressionStats.compressionMethods.get(metrics.compressionMethod)
+      || 0;
     this.compressionStats.compressionMethods.set(metrics.compressionMethod, methodStats + 1);
 
     // Update average compression ratio
@@ -383,14 +385,17 @@ export class CompressionMiddleware {
   getCompressionStats() {
     const stats = {
       ...this.compressionStats,
-      compressionRate: this.compressionStats.totalRequests > 0 ? 
-        (this.compressionStats.compressedResponses / this.compressionStats.totalRequests) * 100 : 0,
-      averageResponseSize: this.metrics.length > 0 ? 
-        this.metrics.reduce((sum, m) => sum + m.originalSize, 0) / this.metrics.length : 0,
-      averageCompressedSize: this.metrics.length > 0 ? 
-        this.metrics.reduce((sum, m) => sum + m.compressedSize, 0) / this.metrics.length : 0,
+      compressionRate: this.compressionStats.totalRequests > 0
+        ? (this.compressionStats.compressedResponses / this.compressionStats.totalRequests) * 100
+        : 0,
+      averageResponseSize: this.metrics.length > 0
+        ? this.metrics.reduce((sum, m) => sum + m.originalSize, 0) / this.metrics.length
+        : 0,
+      averageCompressedSize: this.metrics.length > 0
+        ? this.metrics.reduce((sum, m) => sum + m.compressedSize, 0) / this.metrics.length
+        : 0,
       topCompressedRoutes: this.getTopCompressedRoutes(5),
-      compressionMethodDistribution: Object.fromEntries(this.compressionStats.compressionMethods)
+      compressionMethodDistribution: Object.fromEntries(this.compressionStats.compressionMethods),
     };
 
     return stats;
@@ -401,7 +406,7 @@ export class CompressionMiddleware {
    */
   private getTopCompressedRoutes(limit: number) {
     const routeStats: Record<string, { count: number; bytesSaved: number }> = {};
-    
+
     this.metrics.forEach(m => {
       if (!routeStats[m.path]) {
         routeStats[m.path] = { count: 0, bytesSaved: 0 };
@@ -417,7 +422,7 @@ export class CompressionMiddleware {
         route,
         requestsCompressed: stats.count,
         bytesSaved: stats.bytesSaved,
-        averageCompressionRatio: stats.bytesSaved / (stats.count * 1024) // KB saved per request
+        averageCompressionRatio: stats.bytesSaved / (stats.count * 1024), // KB saved per request
       }));
   }
 
@@ -443,9 +448,9 @@ export class CompressionMiddleware {
         enableBrotli: this.config.enableBrotli,
         enableGzip: this.config.enableGzip,
         compressionLevel: this.config.compressionLevel,
-        minSize: this.config.minSize
+        minSize: this.config.minSize,
       },
-      recommendations: this.generateHealthRecommendations(stats)
+      recommendations: this.generateHealthRecommendations(stats),
     };
   }
 
@@ -476,13 +481,16 @@ export class CompressionMiddleware {
  */
 function shouldCompress(buffer: Buffer, method: string, config: CompressionConfig): boolean {
   if (method === 'none') return false;
-  
+
   // Don't compress very small responses
   if (buffer.length < config.minSize) return false;
 
   // Don't compress already compressed content
   const contentType = ''; // Would need to be passed in
-  if (contentType.includes('image/') || contentType.includes('video/') || contentType.includes('application/zip')) {
+  if (
+    contentType.includes('image/') || contentType.includes('video/')
+    || contentType.includes('application/zip')
+  ) {
     return false;
   }
 
@@ -492,11 +500,15 @@ function shouldCompress(buffer: Buffer, method: string, config: CompressionConfi
 /**
  * Compress response data
  */
-function compressResponse(buffer: Buffer, method: string, config: CompressionConfig): Buffer | null {
+function compressResponse(
+  buffer: Buffer,
+  method: string,
+  config: CompressionConfig,
+): Buffer | null {
   try {
     // This is a placeholder implementation
     // In production, use actual compression libraries like 'iltorb' for Brotli or 'zlib' for Gzip
-    
+
     if (method === 'gzip') {
       // const gzip = require('zlib').gzipSync;
       // return gzip(buffer);
@@ -593,7 +605,7 @@ export function createHealthcareCompressionMiddleware(): CompressionMiddleware {
     enableCacheControl: true,
     enableVaryHeader: true,
     enablePreconditionChecks: true,
-    enableStreamingCompression: true
+    enableStreamingCompression: true,
   });
 }
 

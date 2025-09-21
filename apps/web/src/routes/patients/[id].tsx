@@ -1,38 +1,15 @@
 'use client';
 
-import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePatientCard';
-import { MobilePatientCard } from '@/components/patients/MobilePatientCard';
-import { Alert } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
-import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs } from '@/components/ui/tabs';
-import { UniversalButton } from '@/components/ui/universal-button';
-import { useToast } from '@/hooks/use-toast';
-import { useRealtimeSubscription } from '@/hooks/useRealtimeSubscription';
-import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
-import { format, isThisMonth, isThisWeek, isToday, parseISO } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import {
-  Activity,
-  AlertCircle,
   AlertTriangle,
   ArrowLeft,
   Brain,
   Calendar,
-  CheckCircle,
-  ChevronDown,
-  ChevronRight,
-  Clock,
   Download,
   Edit,
   Eye,
   EyeOff,
   FileText,
-  Filter,
   Heart,
   Mail,
   MapPin,
@@ -41,12 +18,8 @@ import {
   Phone,
   Pill,
   Printer,
-  Share2,
   Shield,
-  Stethoscope,
-  TrendingUp,
   User,
-  UserPlus,
   Video,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -175,18 +148,6 @@ interface AIInsight {
   actionLabel?: string;
   timestamp: Date;
   category: 'health' | 'treatment' | 'prevention' | 'administrative';
-}
-
-interface TreatmentPlan {
-  id: string;
-  name: string;
-  startDate: string;
-  endDate?: string;
-  status: 'active' | 'completed' | 'paused' | 'cancelled';
-  progress: number;
-  procedures: string[];
-  goals: string[];
-  notes: string;
 }
 
 // Mock data generator for development
@@ -1404,3 +1365,16 @@ function PatientDetailPage() {
     </div>
   );
 }
+                </Badge>
+                <Badge variant='outline' className='text-xs'>
+                  Marketing: {patient.lgpdConsent.marketing ? 'Sim' : 'Não'}
+                </Badge>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </footer>
+    </div>
+  );
+}
+

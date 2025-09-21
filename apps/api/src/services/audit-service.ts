@@ -266,7 +266,6 @@ export const HealthcareAuditEvents = {
     }),
 };
 
-
 // Comprehensive audit service class that provides a unified interface
 export class ComprehensiveAuditService {
   /**

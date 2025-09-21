@@ -68,7 +68,7 @@ export default async function handler(
       JSON.stringify({ error: 'Método não permitido. Use POST.' }),
       {
         status: 405,
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       },
     );
   }
@@ -86,8 +86,8 @@ export default async function handler(
         }),
         {
           status: 400,
-          headers: { 'Content-Type': 'application/json' }
-        }
+          headers: { 'Content-Type': 'application/json' },
+        },
       );
     }
 
@@ -136,8 +136,8 @@ export default async function handler(
       }),
       {
         status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
+        headers: { 'Content-Type': 'application/json' },
+      },
     );
   }
 }

@@ -281,7 +281,7 @@ export const lazyComponents = {
         import('@/components/event-calendar/event-calendar').then(m => ({
           default: m.EventCalendar,
         })),
-      "event-calendar",
+      'event-calendar',
     ),
 
   // Chart Components

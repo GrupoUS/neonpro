@@ -34,9 +34,7 @@ import {
 } from '@neonpro/types';
 
 // Import only used schemas
-import {
-  ConsentWithdrawalRecordSchema,
-} from '../../services/enhanced-lgpd-lifecycle';
+import { ConsentWithdrawalRecordSchema } from '../../services/enhanced-lgpd-lifecycle';
 
 // Service instances (would be injected in real app)
 let lgpdService: EnhancedLGPDLifecycleService;

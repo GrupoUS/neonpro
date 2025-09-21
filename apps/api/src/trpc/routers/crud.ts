@@ -86,8 +86,8 @@ const crudIntentSchema = v.object({
             type: 'custom',
             context: ctx,
             message: `Unsupported entity: ${entity}`,
-          }
-        ]
+          },
+        ],
       };
     }
     return schema._parse(data, ctx);

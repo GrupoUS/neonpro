@@ -1,6 +1,6 @@
 /**
  * Session Services Index
- * 
+ *
  * Exports all session-related services and utilities
  */
 
@@ -8,8 +8,8 @@ export { AgentSessionService } from './agent-session-service';
 export type {
   SessionConfig,
   SessionContext,
+  SessionCreateOptions,
   SessionData,
-  SessionCreateOptions
 } from './agent-session-service';
 
 // Default session configurations
@@ -17,14 +17,14 @@ export const DEFAULT_SESSION_CONFIG = {
   defaultExpirationMs: 24 * 60 * 60 * 1000, // 24 hours
   maxSessionLengthMs: 7 * 24 * 60 * 60 * 1000, // 7 days
   cleanupIntervalMs: 15 * 60 * 1000, // 15 minutes
-  maxConcurrentSessions: 10
+  maxConcurrentSessions: 10,
 } as const;
 
 // Healthcare-specific session configurations
 export const HEALTHCARE_SESSION_CONFIG = {
   ...DEFAULT_SESSION_CONFIG,
   defaultExpirationMs: 4 * 60 * 60 * 1000, // 4 hours for healthcare
-  maxConcurrentSessions: 5 // Lower limit for healthcare compliance
+  maxConcurrentSessions: 5, // Lower limit for healthcare compliance
 } as const;
 
 // Session event types
@@ -34,7 +34,7 @@ export const SESSION_EVENTS = {
   EXPIRED: 'session_expired',
   DELETED: 'session_deleted',
   ACTIVITY: 'session_activity',
-  CLEANUP: 'session_cleanup'
+  CLEANUP: 'session_cleanup',
 } as const;
 
 // Helper functions for session management

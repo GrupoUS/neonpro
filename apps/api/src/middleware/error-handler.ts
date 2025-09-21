@@ -26,13 +26,13 @@ export async function errorHandler(c: Context, next: Next) {
             status: error.status,
           },
         },
-        error.status
+        error.status,
       );
     }
 
     // Handle other errors
     const message = error instanceof Error ? error.message : 'Internal Server Error';
-    
+
     return c.json(
       {
         error: {
@@ -40,7 +40,7 @@ export async function errorHandler(c: Context, next: Next) {
           status: 500,
         },
       },
-      500
+      500,
     );
   }
 }

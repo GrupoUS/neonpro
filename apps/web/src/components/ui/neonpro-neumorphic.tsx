@@ -13,9 +13,9 @@
 
 'use client';
 
+import { cn } from '@neonpro/ui';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { forwardRef } from 'react';
-import { cn } from '@neonpro/ui';
 
 // NeonPro Brand Color System
 const neonProColors = {
@@ -122,7 +122,7 @@ const neumorphicButtonVariants = cva(
       variant: 'neutral',
       size: 'default',
     },
-  }
+  },
 );
 
 // Neumorphic Card Variants
@@ -182,7 +182,7 @@ const neumorphicCardVariants = cva(
       variant: 'raised',
       size: 'default',
     },
-  }
+  },
 );
 
 // Neumorphic Input Variants
@@ -228,13 +228,15 @@ const neumorphicInputVariants = cva(
       variant: 'inset',
       size: 'default',
     },
-  }
+  },
 );
 
 // Neumorphic Button Component
 export interface NeumorphicButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof neumorphicButtonVariants> {
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof neumorphicButtonVariants>
+{
   // asChild removed - not used in implementation
 }
 
@@ -247,14 +249,14 @@ const NeumorphicButton = forwardRef<HTMLButtonElement, NeumorphicButtonProps>(
         {...props}
       />
     );
-  }
+  },
 );
 NeumorphicButton.displayName = 'NeumorphicButton';
 
 // Neumorphic Card Component
 export interface NeumorphicCardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof neumorphicCardVariants> {
+  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof neumorphicCardVariants>
+{
   // asChild removed - not used in implementation
 }
 
@@ -267,14 +269,14 @@ const NeumorphicCard = forwardRef<HTMLDivElement, NeumorphicCardProps>(
         {...props}
       />
     );
-  }
+  },
 );
 NeumorphicCard.displayName = 'NeumorphicCard';
 
 // Neumorphic Input Component
 export interface NeumorphicInputProps
-  extends React.InputHTMLAttributes<HTMLInputElement>,
-    VariantProps<typeof neumorphicInputVariants> {}
+  extends React.InputHTMLAttributes<HTMLInputElement>, VariantProps<typeof neumorphicInputVariants>
+{}
 
 const NeumorphicInput = forwardRef<HTMLInputElement, NeumorphicInputProps>(
   ({ className, variant, size, type, ...props }, ref) => {
@@ -286,14 +288,16 @@ const NeumorphicInput = forwardRef<HTMLInputElement, NeumorphicInputProps>(
         {...props}
       />
     );
-  }
+  },
 );
 NeumorphicInput.displayName = 'NeumorphicInput';
 
 // Neumorphic Textarea Component
 export interface NeumorphicTextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement>,
-    VariantProps<typeof neumorphicInputVariants> {}
+  extends
+    React.TextareaHTMLAttributes<HTMLTextAreaElement>,
+    VariantProps<typeof neumorphicInputVariants>
+{}
 
 const NeumorphicTextarea = forwardRef<HTMLTextAreaElement, NeumorphicTextareaProps>(
   ({ className, variant, size, ...props }, ref) => {
@@ -302,13 +306,13 @@ const NeumorphicTextarea = forwardRef<HTMLTextAreaElement, NeumorphicTextareaPro
         className={cn(
           neumorphicInputVariants({ variant, size }),
           'min-h-[80px] resize-none',
-          className
+          className,
         )}
         ref={ref}
         {...props}
       />
     );
-  }
+  },
 );
 NeumorphicTextarea.displayName = 'NeumorphicTextarea';
 
@@ -323,11 +327,16 @@ export interface PatientStatusBadgeProps {
 const PatientStatusBadge = forwardRef<HTMLSpanElement, PatientStatusBadgeProps>(
   ({ status, className, ...props }, ref) => {
     const statusStyles = {
-      active: 'bg-gradient-to-r from-green-400 to-green-500 text-white shadow-[2px_2px_4px_#22c55e80,_-2px_-2px_4px_#4ade8080]',
-      inactive: 'bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-[2px_2px_4px_#6b728080,_-2px_-2px_4px_#9ca3af80]',
-      pending: 'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-[2px_2px_4px_#eab30880,_-2px_-2px_4px_#f59e0b80]',
-      urgent: 'bg-gradient-to-r from-red-400 to-red-500 text-white shadow-[2px_2px_4px_#ef444480,_-2px_-2px_4px_#f8717180]',
-      completed: 'bg-gradient-to-r from-[#AC9469] to-[#d2aa60ff] text-white shadow-[2px_2px_4px_#AC946980,_-2px_-2px_4px_#d2aa6080]',
+      active:
+        'bg-gradient-to-r from-green-400 to-green-500 text-white shadow-[2px_2px_4px_#22c55e80,_-2px_-2px_4px_#4ade8080]',
+      inactive:
+        'bg-gradient-to-r from-gray-400 to-gray-500 text-white shadow-[2px_2px_4px_#6b728080,_-2px_-2px_4px_#9ca3af80]',
+      pending:
+        'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-[2px_2px_4px_#eab30880,_-2px_-2px_4px_#f59e0b80]',
+      urgent:
+        'bg-gradient-to-r from-red-400 to-red-500 text-white shadow-[2px_2px_4px_#ef444480,_-2px_-2px_4px_#f8717180]',
+      completed:
+        'bg-gradient-to-r from-[#AC9469] to-[#d2aa60ff] text-white shadow-[2px_2px_4px_#AC946980,_-2px_-2px_4px_#d2aa6080]',
     };
 
     return (
@@ -335,7 +344,7 @@ const PatientStatusBadge = forwardRef<HTMLSpanElement, PatientStatusBadgeProps>(
         className={cn(
           'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium transition-all duration-200',
           statusStyles[status],
-          className
+          className,
         )}
         ref={ref}
         {...props}
@@ -343,7 +352,7 @@ const PatientStatusBadge = forwardRef<HTMLSpanElement, PatientStatusBadgeProps>(
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </span>
     );
-  }
+  },
 );
 PatientStatusBadge.displayName = 'PatientStatusBadge';
 
@@ -358,10 +367,14 @@ export interface MedicalAlertCardProps extends React.HTMLAttributes<HTMLDivEleme
 const MedicalAlertCard = forwardRef<HTMLDivElement, MedicalAlertCardProps>(
   ({ alertType, title, description, icon, className, children, ...props }, ref) => {
     const alertStyles = {
-      info: 'from-blue-50 to-blue-100 border-l-blue-500 shadow-[6px_6px_12px_#c7d2fe,_-6px_-6px_12px_#ffffff]',
-      warning: 'from-yellow-50 to-yellow-100 border-l-yellow-500 shadow-[6px_6px_12px_#fde68a,_-6px_-6px_12px_#ffffff]',
-      error: 'from-red-50 to-red-100 border-l-red-500 shadow-[6px_6px_12px_#fecaca,_-6px_-6px_12px_#ffffff]',
-      success: 'from-green-50 to-green-100 border-l-green-500 shadow-[6px_6px_12px_#bbf7d0,_-6px_-6px_12px_#ffffff]',
+      info:
+        'from-blue-50 to-blue-100 border-l-blue-500 shadow-[6px_6px_12px_#c7d2fe,_-6px_-6px_12px_#ffffff]',
+      warning:
+        'from-yellow-50 to-yellow-100 border-l-yellow-500 shadow-[6px_6px_12px_#fde68a,_-6px_-6px_12px_#ffffff]',
+      error:
+        'from-red-50 to-red-100 border-l-red-500 shadow-[6px_6px_12px_#fecaca,_-6px_-6px_12px_#ffffff]',
+      success:
+        'from-green-50 to-green-100 border-l-green-500 shadow-[6px_6px_12px_#bbf7d0,_-6px_-6px_12px_#ffffff]',
     };
 
     return (
@@ -369,30 +382,28 @@ const MedicalAlertCard = forwardRef<HTMLDivElement, MedicalAlertCardProps>(
         className={cn(
           'rounded-2xl p-6 bg-gradient-to-br border-l-4 transition-all duration-300',
           alertStyles[alertType],
-          className
+          className,
         )}
         ref={ref}
-        role="alert"
-        aria-live="polite"
+        role='alert'
+        aria-live='polite'
         {...props}
       >
-        <div className="flex items-start gap-4">
+        <div className='flex items-start gap-4'>
           {icon && (
-            <div className="flex-shrink-0 mt-1">
+            <div className='flex-shrink-0 mt-1'>
               {icon}
             </div>
           )}
-          <div className="flex-1">
-            <h3 className="font-semibold text-[#112031] mb-2">{title}</h3>
-            {description && (
-              <p className="text-sm text-[#112031]/70 mb-3">{description}</p>
-            )}
+          <div className='flex-1'>
+            <h3 className='font-semibold text-[#112031] mb-2'>{title}</h3>
+            {description && <p className='text-sm text-[#112031]/70 mb-3'>{description}</p>}
             {children}
           </div>
         </div>
       </div>
     );
-  }
+  },
 );
 MedicalAlertCard.displayName = 'MedicalAlertCard';
 
@@ -412,20 +423,18 @@ const ClinicalActionPanel = forwardRef<HTMLDivElement, ClinicalActionPanelProps>
           'shadow-[8px_8px_16px_#e1dfdc,_-8px_-8px_16px_#ffffff]',
           'hover:shadow-[6px_6px_12px_#e1dfdc,_-6px_-6px_12px_#ffffff]',
           'transition-all duration-300',
-          className
+          className,
         )}
         ref={ref}
         {...props}
       >
-        <div className="flex items-center justify-between mb-4">
+        <div className='flex items-center justify-between mb-4'>
           <div>
-            <h2 className="text-lg font-semibold text-[#112031]">{title}</h2>
-            {subtitle && (
-              <p className="text-sm text-[#B4AC9C] mt-1">{subtitle}</p>
-            )}
+            <h2 className='text-lg font-semibold text-[#112031]'>{title}</h2>
+            {subtitle && <p className='text-sm text-[#B4AC9C] mt-1'>{subtitle}</p>}
           </div>
           {actions && (
-            <div className="flex items-center gap-2">
+            <div className='flex items-center gap-2'>
               {actions}
             </div>
           )}
@@ -433,28 +442,28 @@ const ClinicalActionPanel = forwardRef<HTMLDivElement, ClinicalActionPanelProps>
         {children}
       </div>
     );
-  }
+  },
 );
 ClinicalActionPanel.displayName = 'ClinicalActionPanel';
 
 export {
+  ClinicalActionPanel,
+  MedicalAlertCard,
+  neonProColors,
   NeumorphicButton,
   NeumorphicCard,
   NeumorphicInput,
+  neumorphicShadows,
   NeumorphicTextarea,
   PatientStatusBadge,
-  MedicalAlertCard,
-  ClinicalActionPanel,
-  neonProColors,
-  neumorphicShadows,
 };
 
 export type {
+  ClinicalActionPanelProps,
+  MedicalAlertCardProps,
   NeumorphicButtonProps,
   NeumorphicCardProps,
   NeumorphicInputProps,
   NeumorphicTextareaProps,
   PatientStatusBadgeProps,
-  MedicalAlertCardProps,
-  ClinicalActionPanelProps,
 };

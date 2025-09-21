@@ -5,8 +5,8 @@
 
 'use client';
 
-import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
 import { CopilotChat } from '@copilotkit/react-ui';
 import { AgentAction } from '@neonpro/types';

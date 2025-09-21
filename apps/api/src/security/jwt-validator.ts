@@ -1,9 +1,9 @@
 /**
  * Enhanced JWT Security Validation Service
- * 
+ *
  * Implements comprehensive JWT validation following OWASP security best practices
  * and healthcare compliance requirements (LGPD, ANVISA).
- * 
+ *
  * Features:
  * - Algorithm confusion attack prevention
  * - Audience and issuer validation
@@ -12,15 +12,15 @@
  * - Token blacklisting and revocation
  * - Rate limiting for authentication attempts
  * - Security header validation
- * 
+ *
  * @security_critical CVSS: 9.8
  * @compliance OWASP JWT Security Best Practices, LGPD, ANVISA
  * @author AI Development Agent
  * @version 1.0.0
  */
 
-import jwt, { JwtPayload, Algorithm, VerifyOptions } from 'jsonwebtoken';
 import { Context } from 'hono';
+import jwt, { Algorithm, JwtPayload, VerifyOptions } from 'jsonwebtoken';
 
 // Security configuration interfaces
 interface JWTSecurityConfig {
@@ -99,7 +99,7 @@ export class JWTSecurityValidator {
 
     // Initialize key store with default key
     this.keyStore.set('default', 'test-secret-key');
-    
+
     // Add test secret for testing
     this.keyStore.set('test-secret-key', 'test-secret-key');
   }
@@ -184,7 +184,6 @@ export class JWTSecurityValidator {
         payload: verifyResult.payload,
         securityLevel: 'high',
       };
-
     } catch (error) {
       return {
         isValid: false,
@@ -314,8 +313,8 @@ export class JWTSecurityValidator {
 
     // Check for HTTPS in production
     const forwardedProto = context?.req.header('x-forwarded-proto');
-    const isHttps = forwardedProto === 'https' || 
-                   context?.req.url.startsWith('https://');
+    const isHttps = forwardedProto === 'https'
+      || context?.req.url.startsWith('https://');
 
     if (!isHttps) {
       return {
@@ -358,7 +357,6 @@ export class JWTSecurityValidator {
         payload,
         securityLevel: 'high',
       };
-
     } catch (error) {
       if (error instanceof jwt.JsonWebTokenError) {
         return {
@@ -446,7 +444,7 @@ export class JWTSecurityValidator {
     }
 
     const now = Math.floor(Date.now() / 1000);
-    
+
     // Check if token is expired
     if (exp <= now) {
       return {
@@ -552,16 +550,16 @@ export class JWTSecurityValidator {
     }
 
     // Get client identifier (IP address or session ID)
-    const clientIp = context.req.header('x-forwarded-for') || 
-                     context.req.header('x-real-ip') || 
-                     'unknown';
-    
+    const clientIp = context.req.header('x-forwarded-for')
+      || context.req.header('x-real-ip')
+      || 'unknown';
+
     const sessionId = context.req.header('x-session-id') || clientIp;
     const now = Date.now();
 
     // Get or create rate limit entry
     let entry = this.rateLimitMap.get(sessionId);
-    
+
     if (!entry) {
       entry = {
         attempts: 0,

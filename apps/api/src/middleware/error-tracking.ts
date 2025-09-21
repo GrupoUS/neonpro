@@ -1,6 +1,6 @@
 /**
  * Error Tracking Middleware
- * 
+ *
  * Global error handlers and tracking setup for the API
  */
 
@@ -26,7 +26,7 @@ export function setupGlobalErrorHandlers(): void {
   });
 
   // Handle unhandled promise rejections
-  process.on('unhandledRejection', (reason: unknown, promise: Promise<unknown>) => {
+  process.on('unhandledRejection', (reason: unknown, _promise: Promise<unknown>) => {
     logger.error('Unhandled Promise Rejection', {
       reason: reason instanceof Error ? reason.message : String(reason),
       stack: reason instanceof Error ? reason.stack : undefined,
@@ -86,17 +86,19 @@ export function globalErrorHandler(error: Error, req?: any, res?: any, next?: an
     stack: error.stack,
     timestamp: new Date().toISOString(),
     url: req?.url,
-    method: req?.method
+    method: req?.method,
   });
-  
+
   if (res && !res.headersSent) {
     res.status(500).json({
       error: 'Internal Server Error',
-      message: process.env.NODE_ENV === 'development' ? error.message : 'An unexpected error occurred',
-      timestamp: new Date().toISOString()
+      message: process.env.NODE_ENV === 'development'
+        ? error.message
+        : 'An unexpected error occurred',
+      timestamp: new Date().toISOString(),
     });
   }
-  
+
   if (next) {
     next(error);
   }

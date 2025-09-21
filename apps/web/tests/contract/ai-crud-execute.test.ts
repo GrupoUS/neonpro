@@ -172,9 +172,11 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
         }
 
         // Database connection simulation
-        if (body.simulateError === 'database_connection' ||
-            body.operation?.data?.triggerDatabaseError === true ||
-            body.operation?.data?.name === 'TRIGGER_DB_ERROR') {
+        if (
+          body.simulateError === 'database_connection'
+          || body.operation?.data?.triggerDatabaseError === true
+          || body.operation?.data?.name === 'TRIGGER_DB_ERROR'
+        ) {
           return new HttpResponse(
             JSON.stringify({
               error: 'Database connection failed',
@@ -267,7 +269,7 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               },
               dataRetention: {
                 policy: 'healthcare-7-years',
-                expiresAt: '2031-01-01T00:00:00Z'
+                expiresAt: '2031-01-01T00:00:00Z',
               },
             },
             auditTrail: {
@@ -288,8 +290,8 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               flowContext: {
                 userJourney: body.context?.userJourney || 'patient_registration',
                 sessionId: body.context?.sessionId || 'session-456',
-                correlationId: body.context?.correlationId || 'correlation-789'
-              }
+                correlationId: body.context?.correlationId || 'correlation-789',
+              },
             },
             performance: {
               executionTime: 156,
@@ -308,12 +310,12 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               data: {
                 id: 'patient-123',
                 name: 'Test Patient',
-                email: 'test@example.com'
+                email: 'test@example.com',
               },
               dataRetention: {
                 policy: 'healthcare-7-years',
-                expiresAt: '2031-01-01T00:00:00Z'
-              }
+                expiresAt: '2031-01-01T00:00:00Z',
+              },
             };
             break;
           case 'update':
@@ -322,8 +324,8 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               data: { id: 'patient-123', name: 'Updated Patient' },
               dataRetention: {
                 policy: 'healthcare-7-years',
-                expiresAt: '2031-01-01T00:00:00Z'
-              }
+                expiresAt: '2031-01-01T00:00:00Z',
+              },
             };
             break;
           case 'delete':
@@ -332,8 +334,8 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               deleted: true,
               dataRetention: {
                 policy: 'healthcare-7-years',
-                expiresAt: '2031-01-01T00:00:00Z'
-              }
+                expiresAt: '2031-01-01T00:00:00Z',
+              },
             };
             break;
           default:
@@ -341,8 +343,8 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
               affected: 1,
               dataRetention: {
                 policy: 'healthcare-7-years',
-                expiresAt: '2031-01-01T00:00:00Z'
-              }
+                expiresAt: '2031-01-01T00:00:00Z',
+              },
             };
         }
 
@@ -367,8 +369,8 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
             ...result,
             dataRetention: {
               policy: 'healthcare-7-years',
-              expiresAt: '2031-01-01T00:00:00Z'
-            }
+              expiresAt: '2031-01-01T00:00:00Z',
+            },
           },
           auditTrail: {
             executionId: 'exec-123',
@@ -382,8 +384,8 @@ describe('AI CRUD Execute Phase - Contract Tests', () => {
             flowContext: {
               userJourney: body.context?.userJourney || 'patient_registration',
               sessionId: body.context?.sessionId || 'session-456',
-              correlationId: body.context?.correlationId || 'correlation-789'
-            }
+              correlationId: body.context?.correlationId || 'correlation-789',
+            },
           },
         });
       }),

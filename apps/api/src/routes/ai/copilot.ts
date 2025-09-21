@@ -1,14 +1,14 @@
-import { Context } from 'hono';
-import { createMiddleware } from 'hono/factory';
 import { logger } from '@/lib/logger';
 import { AguiService } from '@/services/agui-protocol/service';
-import { CopilotRequest, CopilotResponse } from '@/services/agui-protocol/types';
+import { CopilotRequest } from '@/services/agui-protocol/types';
+import { Context } from 'hono';
+import { createMiddleware } from 'hono/factory';
 
 /**
  * CopilotKit endpoint for healthcare AI integration
  * Handles requests from frontend CopilotKit provider
  */
-export const copilotEndpoint = createMiddleware(async (c: Context, next) => {
+export const copilotEndpoint = createMiddleware(async (c: Context, _next) => {
   const requestId = c.get('requestId');
   const userId = c.get('userId');
   const clinicId = c.get('clinicId');
@@ -27,7 +27,7 @@ export const copilotEndpoint = createMiddleware(async (c: Context, next) => {
 
     if (c.req.method === 'POST') {
       const body = await c.req.json();
-      
+
       // Validate CopilotKit request format
       const copilotRequest: CopilotRequest = {
         id: body.id || requestId,
@@ -93,7 +93,7 @@ export const copilotEndpoint = createMiddleware(async (c: Context, next) => {
         requestId,
         timestamp: new Date().toISOString(),
       },
-      500
+      500,
     );
   }
 });

@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'fs';
+import { describe, expect, it } from 'vitest';
 
 describe('PR #44 Issues - Simple Detection Tests', () => {
   describe('Security Issues Detection', () => {

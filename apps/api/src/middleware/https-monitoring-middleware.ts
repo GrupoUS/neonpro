@@ -1,12 +1,12 @@
 /**
  * HTTPS Handshake Monitoring Middleware
- * 
+ *
  * Intercepts and monitors TLS handshake performance with ≤300ms healthcare compliance.
  * Integrates with the HTTPSMonitoringService for real-time performance tracking.
  */
 
-import { httpsMonitoringService } from '../services/monitoring/https-monitoring-service';
 import { logger } from '../lib/logger';
+import { httpsMonitoringService } from '../services/monitoring/https-monitoring-service';
 
 export interface TLSHandshakeInfo {
   sessionId: string;
@@ -61,7 +61,7 @@ export class HTTPSMonitoringMiddleware {
             alpnProtocol: tlsInfo.alpnProtocol,
             ocspStapling: tlsInfo.ocspStapling,
             certificateTransparency: tlsInfo.certificateTransparency,
-            sessionId: tlsInfo.sessionId
+            sessionId: tlsInfo.sessionId,
           };
 
           // Record metrics asynchronously
@@ -69,14 +69,14 @@ export class HTTPSMonitoringMiddleware {
             logger.error('https_monitoring_middleware', 'Failed to record handshake metrics', {
               error: error.message,
               sessionId: tlsInfo.sessionId,
-              requestId
+              requestId,
             });
           });
         }
       } catch (error) {
         logger.error('https_monitoring_middleware', 'Error in handshake monitoring', {
           error: (error as Error).message,
-          requestId
+          requestId,
         });
       }
     });
@@ -91,7 +91,7 @@ export class HTTPSMonitoringMiddleware {
     try {
       // Try to get TLS information from various sources
       const socket = req.socket || req.connection;
-      
+
       if (!socket || !socket.encrypted) {
         // Not an HTTPS request
         return null;
@@ -99,22 +99,32 @@ export class HTTPSMonitoringMiddleware {
 
       // Extract timing information (if available)
       const timing = {
-        clientHello: req.get('x-client-hello-time') ? parseInt(req.get('x-client-hello-time')) : Date.now() - 100,
-        serverHello: req.get('x-server-hello-time') ? parseInt(req.get('x-server-hello-time')) : Date.now() - 80,
-        certificate: req.get('x-certificate-time') ? parseInt(req.get('x-certificate-time')) : Date.now() - 60,
-        keyExchange: req.get('x-key-exchange-time') ? parseInt(req.get('x-key-exchange-time')) : Date.now() - 40,
-        finished: req.get('x-finished-time') ? parseInt(req.get('x-finished-time')) : Date.now() - 20
+        clientHello: req.get('x-client-hello-time')
+          ? parseInt(req.get('x-client-hello-time'))
+          : Date.now() - 100,
+        serverHello: req.get('x-server-hello-time')
+          ? parseInt(req.get('x-server-hello-time'))
+          : Date.now() - 80,
+        certificate: req.get('x-certificate-time')
+          ? parseInt(req.get('x-certificate-time'))
+          : Date.now() - 60,
+        keyExchange: req.get('x-key-exchange-time')
+          ? parseInt(req.get('x-key-exchange-time'))
+          : Date.now() - 40,
+        finished: req.get('x-finished-time')
+          ? parseInt(req.get('x-finished-time'))
+          : Date.now() - 20,
       };
 
       // Extract TLS version
       const tlsVersion = this.getTLSVersion(socket);
-      
+
       // Extract cipher suite
       const cipherSuite = socket.getCipher?.() || 'UNKNOWN';
-      
+
       // Extract server name (SNI)
       const serverName = req.get('host') || req.hostname || 'default';
-      
+
       // Extract session ID
       const sessionId = req.get('x-session-id') || socket.getSessionId?.() || this.generateId();
 
@@ -126,11 +136,11 @@ export class HTTPSMonitoringMiddleware {
         alpnProtocol: socket.alpnProtocol || undefined,
         ocspStapling: socket.ocspStapling || false,
         certificateTransparency: socket.certificateTransparency || false,
-        timing
+        timing,
       };
     } catch (error) {
       logger.debug('https_monitoring_middleware', 'Failed to extract TLS info', {
-        error: (error as Error).message
+        error: (error as Error).message,
       });
       return null;
     }
@@ -142,15 +152,15 @@ export class HTTPSMonitoringMiddleware {
   private getTLSVersion(socket: any): string {
     try {
       const protocol = socket.getProtocol?.() || socket.protocol;
-      
+
       // Map protocol string to standard TLS version names
       const versionMap: Record<string, string> = {
         'TLSv1.3': 'TLSv1.3',
         'TLSv1.2': 'TLSv1.2',
         'TLSv1.1': 'TLSv1.1',
-        'TLSv1': 'TLSv1.0',
-        'SSLv3': 'SSLv3',
-        'SSLv2': 'SSLv2'
+        TLSv1: 'TLSv1.0',
+        SSLv3: 'SSLv3',
+        SSLv2: 'SSLv2',
       };
 
       return versionMap[protocol] || protocol || 'UNKNOWN';
@@ -166,7 +176,7 @@ export class HTTPSMonitoringMiddleware {
     // Skip monitoring for health checks and internal endpoints
     const skipPaths = ['/health', '/v1/health', '/metrics', '/ready', '/live'];
     const path = req.path || req.url || '';
-    
+
     if (skipPaths.some(skipPath => path.startsWith(skipPath))) {
       return false;
     }
@@ -207,7 +217,7 @@ export class HTTPSMonitoringMiddleware {
       }
     } catch (error) {
       logger.warning('https_monitoring_middleware', 'Failed to setup server TLS monitoring', {
-        error: (error as Error).message
+        error: (error as Error).message,
       });
     }
   }
@@ -234,8 +244,8 @@ export class HTTPSMonitoringMiddleware {
           serverHello: 0,
           certificate: 0,
           keyExchange: 0,
-          finished: 0
-        }
+          finished: 0,
+        },
       };
 
       this.activeHandshakes.set(sessionId, handshakeInfo);
@@ -250,7 +260,7 @@ export class HTTPSMonitoringMiddleware {
       });
     } catch (error) {
       logger.error('https_monitoring_middleware', 'Error handling secure connection', {
-        error: (error as Error).message
+        error: (error as Error).message,
       });
     }
   }
@@ -285,13 +295,13 @@ export class HTTPSMonitoringMiddleware {
           alpnProtocol: handshakeInfo.alpnProtocol,
           ocspStapling: handshakeInfo.ocspStapling,
           certificateTransparency: handshakeInfo.certificateTransparency,
-          sessionId: handshakeInfo.sessionId
+          sessionId: handshakeInfo.sessionId,
         };
 
         httpsMonitoringService.recordHandshakeMetrics(metrics).catch(error => {
           logger.error('https_monitoring_middleware', 'Failed to record handshake metrics', {
             error: error.message,
-            sessionId
+            sessionId,
           });
         });
 
@@ -301,7 +311,7 @@ export class HTTPSMonitoringMiddleware {
     } catch (error) {
       logger.error('https_monitoring_middleware', 'Error handling handshake completion', {
         error: (error as Error).message,
-        sessionId
+        sessionId,
       });
     }
   }
@@ -312,18 +322,18 @@ export class HTTPSMonitoringMiddleware {
   private handleTLSClientError(err: any, socket: any): void {
     try {
       const sessionId = socket.getSessionId?.() || this.generateId();
-      
+
       logger.warning('https_monitoring_middleware', 'TLS client error occurred', {
         error: err.message,
         sessionId,
-        code: err.code
+        code: err.code,
       });
 
       // Clean up any pending handshake
       this.activeHandshakes.delete(sessionId);
     } catch (error) {
       logger.error('https_monitoring_middleware', 'Error handling TLS client error', {
-        error: (error as Error).message
+        error: (error as Error).message,
       });
     }
   }
@@ -336,7 +346,7 @@ export class HTTPSMonitoringMiddleware {
       logger.warning('https_monitoring_middleware', 'Handshake error occurred', {
         error: error.message,
         sessionId,
-        code: error.code
+        code: error.code,
       });
 
       // Clean up pending handshake
@@ -344,7 +354,7 @@ export class HTTPSMonitoringMiddleware {
     } catch (err) {
       logger.error('https_monitoring_middleware', 'Error handling handshake error', {
         error: (err as Error).message,
-        sessionId
+        sessionId,
       });
     }
   }
@@ -365,7 +375,7 @@ export class HTTPSMonitoringMiddleware {
       activeHandshakes: activeCount,
       totalCompleted: summary.totalHandshakes,
       averageHandshakeTime: summary.averageHandshakeTime,
-      complianceRate: summary.complianceRate
+      complianceRate: summary.complianceRate,
     };
   }
 

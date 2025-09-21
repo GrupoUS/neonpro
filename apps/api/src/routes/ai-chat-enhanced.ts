@@ -11,10 +11,7 @@ import { endTimerMs, logMetric, startTimer } from '../services/metrics';
 // Import semantic caching components
 import { HealthcareDataSanitizer, PIIRedactionLevel } from '../lib/pii-redaction';
 import { AIProviderResponse, AIProviderRouter } from '../services/ai-provider-router-new';
-import {
-  CacheKeyGenerator,
-  SemanticCacheService,
-} from '../services/semantic-cache';
+import { CacheKeyGenerator, SemanticCacheService } from '../services/semantic-cache';
 
 // Import healthcare compliance utilities
 import {

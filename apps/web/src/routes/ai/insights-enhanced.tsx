@@ -14,66 +14,28 @@ import {
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs } from '@/components/ui/tabs';
-import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { format, isThisMonth, isThisWeek, isToday, subDays } from 'date-fns';
+import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
-  Activity,
-  Activity as ActivityIcon,
-  AlertCircle,
   AlertTriangle,
   ArrowLeft,
-  BarChart3,
   Brain,
-  Calendar,
-  CheckCircle,
-  CheckCircle as CheckCircleIcon,
-  ChevronDown,
-  ChevronRight,
   Clock,
-  Clock as ClockIcon,
   Cpu,
-  Database,
   Download,
-  Eye,
-  EyeOff,
-  FileText,
   Filter,
-  Globe,
-  HardDrive,
   Heart,
-  LineChart,
-  Mail,
   MapPin,
-  Monitor,
-  MoreHorizontal,
-  Network,
-  Phone,
-  PieChart,
-  Pill,
-  Pulse,
   RefreshCw,
-  ScatterChart,
-  Server,
-  Settings,
   Shield,
-  Smartphone,
   Stethoscope,
-  Syringe,
-  Tablet,
   Target,
-  Thermometer,
-  TrendingDown,
   TrendingUp,
-  TrendingUp as TrendingUpIcon,
-  UserCheck,
   Users,
-  XCircle,
-  Zap,
 } from 'lucide-react';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 export const Route = createFileRoute('/ai/insights-enhanced')({
   component: AIInsightsPage,
@@ -702,7 +664,7 @@ function AIInsightsPage() {
   const { toast } = useToast();
   const [insights, setInsights] = useState<AIInsight[]>([]);
   const [models, setModels] = useState<AIModel[]>([]);
-  const [trends, setTrends] = useState<PredictionTrend[]>([]);
+  const [_trends, setTrends] = useState<PredictionTrend[]>([]);
   const [populationMetrics, setPopulationMetrics] = useState<PopulationHealthMetrics | null>(null);
   const [noShowAnalysis, setNoShowAnalysis] = useState<NoShowAnalysis | null>(
     null,
@@ -734,7 +696,7 @@ function AIInsightsPage() {
         setTreatmentEffectiveness(generateMockTreatmentEffectiveness());
 
         setLoading(false);
-      } catch (error) {
+      } catch (_error) {
         setError('Erro ao carregar dados de IA');
         setLoading(false);
       }
@@ -813,7 +775,9 @@ function AIInsightsPage() {
 
           {/* Stats skeleton */}
           <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5'>
-            {Array.from({ length: 5 }).map((_, _index) => <Skeleton key={index} className='h-32' />)}
+            {Array.from({ length: 5 }).map((_, _index) => (
+              <Skeleton key={index} className='h-32' />
+            ))}
           </div>
 
           {/* Content skeleton */}
@@ -1195,7 +1159,7 @@ function AIInsightsPage() {
                     {Object.entries(populationMetrics.riskDistribution).map(
                       ([level, count]) => {
                         const percentage = (count / populationMetrics.totalPatients) * 100;
-                        const color = level === 'critical'
+                        const _color = level === 'critical'
                           ? 'red'
                           : level === 'high'
                           ? 'orange'

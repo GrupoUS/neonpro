@@ -1,6 +1,8 @@
 import { Context, Next } from 'hono';
 import { HTTPException } from 'hono/http-exception';
+import { createAdminClient } from '../clients/supabase';
 import { logger } from '../lib/logger';
+import { jwtValidator } from '../security/jwt-validator';
 
 // Interface for validated user token data
 interface ValidatedUser {
@@ -19,69 +21,78 @@ export function authenticationMiddleware() {
     try {
       // Get authorization header
       const authHeader = c.req.header('authorization');
-      
+
       if (!authHeader || !authHeader.startsWith('Bearer ')) {
         logger.warn('Missing or invalid authorization header', {
           path: c.req.path,
           method: c.req.method,
           ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
         });
-        
+
         throw new HTTPException(401, {
           message: 'Authorization header required',
         });
       }
-      
+
       const token = authHeader.replace('Bearer ', '');
-      
+
       if (!token) {
         throw new HTTPException(401, {
           message: 'Bearer token required',
         });
       }
-      
-      // TODO: Implement actual token validation
-      // For now, we'll just check if it's not empty
-      // In a real implementation, you would:
-      // 1. Validate JWT token
-      // 2. Check token expiration
-      // 3. Verify token signature
-      // 4. Extract user information
-      // 5. Check user permissions
-      
-      // Mock user validation - replace with actual implementation
-      const user = await validateToken(token);
-      
+
+      // Validate JWT token using comprehensive security validator
+      const validationResult = await jwtValidator.validateToken(token, c);
+
+      if (!validationResult.isValid) {
+        logger.warn('Token validation failed', {
+          error: validationResult.error,
+          errorCode: validationResult.errorCode,
+          securityLevel: validationResult.securityLevel,
+          path: c.req.path,
+          method: c.req.method,
+          ip: c.req.header('x-forwarded-for') || c.req.header('x-real-ip'),
+        });
+
+        throw new HTTPException(401, {
+          message: validationResult.error || 'Invalid token',
+        });
+      }
+
+      // Extract user information from validated token
+      const user = await validateUserFromToken(validationResult.payload!);
+
       if (!user) {
         throw new HTTPException(401, {
           message: 'Invalid or expired token',
         });
       }
-      
+
       // Set user context for downstream handlers
       c.set('user', user);
       c.set('userId', user.id);
       c.set('clinicId', user.clinicId);
-      
+
       logger.debug('User authenticated successfully', {
         userId: user.id,
         clinicId: user.clinicId,
         path: c.req.path,
         method: c.req.method,
       });
-      
+
       await next();
     } catch (error) {
       if (error instanceof HTTPException) {
         throw error;
       }
-      
+
       logger.error('Authentication error', {
         error: error instanceof Error ? error.message : String(error),
         path: c.req.path,
         method: c.req.method,
       });
-      
+
       throw new HTTPException(401, {
         message: 'Authentication failed',
       });
@@ -95,13 +106,13 @@ export function authenticationMiddleware() {
 export function authorizationMiddleware(allowedRoles: string[] = []) {
   return async (c: Context, next: Next) => {
     const user = c.get('user');
-    
+
     if (!user) {
       throw new HTTPException(401, {
         message: 'User not authenticated',
       });
     }
-    
+
     if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
       logger.warn('Access denied - insufficient permissions', {
         userId: user.id,
@@ -110,19 +121,19 @@ export function authorizationMiddleware(allowedRoles: string[] = []) {
         path: c.req.path,
         method: c.req.method,
       });
-      
+
       throw new HTTPException(403, {
         message: 'Insufficient permissions',
       });
     }
-    
+
     logger.debug('User authorized successfully', {
       userId: user.id,
       userRole: user.role,
       path: c.req.path,
       method: c.req.method,
     });
-    
+
     await next();
   };
 }
@@ -134,13 +145,13 @@ export function clinicAccessMiddleware() {
   return async (c: Context, next: Next) => {
     const user = c.get('user');
     const requestedClinicId = c.req.param('clinicId') || c.req.query('clinicId');
-    
+
     if (!user) {
       throw new HTTPException(401, {
         message: 'User not authenticated',
       });
     }
-    
+
     if (requestedClinicId && requestedClinicId !== user.clinicId) {
       logger.warn('Access denied - clinic mismatch', {
         userId: user.id,
@@ -149,48 +160,62 @@ export function clinicAccessMiddleware() {
         path: c.req.path,
         method: c.req.method,
       });
-      
+
       throw new HTTPException(403, {
         message: 'Access denied to clinic data',
       });
     }
-    
+
     await next();
   };
 }
 
 /**
- * Mock token validation function
- * Replace with actual implementation using your authentication provider
+ * Validate user from JWT token payload and fetch user data
  */
-async function validateToken(token: string): Promise<ValidatedUser | null> {
+async function validateUserFromToken(payload: any): Promise<ValidatedUser | null> {
   try {
-    // TODO: Replace with actual token validation
-    // This could be:
-    // - JWT verification with your secret key
-    // - Supabase Auth validation
-    // - Call to external authentication service
-    // - Database lookup for session tokens
-    
-    // For development/testing purposes only
-    if (token === 'test-token') {
+    const { sub: userId, email, role, clinic_id: clinicId, name } = payload;
+
+    if (!userId || !email) {
+      logger.error('Invalid token payload: missing required fields', { payload });
+      return null;
+    }
+
+    // For development/testing, allow test tokens
+    if (userId === 'test-user-id' && email === 'test@example.com') {
       return {
-        id: 'test-user-id',
-        email: 'test@example.com',
-        role: 'admin',
-        clinicId: 'test-clinic-id',
-        name: 'Test User',
+        id: userId,
+        email,
+        role: role || 'admin',
+        clinicId: clinicId || 'test-clinic-id',
+        name: name || 'Test User',
       };
     }
-    
-    // In a real implementation, you might do something like:
-    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // const user = await getUserFromDatabase(decoded.sub);
-    // return user;
-    
-    return null;
+
+    // In production, validate user against database
+    const supabase = createAdminClient();
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('id, email, role, clinic_id, name')
+      .eq('id', userId)
+      .eq('email', email)
+      .single();
+
+    if (error || !user) {
+      logger.error('User not found in database', { userId, email, error });
+      return null;
+    }
+
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      clinicId: user.clinic_id,
+      name: user.name,
+    };
   } catch (error) {
-    logger.error('Token validation failed', {
+    logger.error('User validation from token failed', {
       error: error instanceof Error ? error.message : String(error),
     });
     return null;
@@ -204,12 +229,12 @@ export function requireAuth(allowedRoles: string[] = []) {
   return async (c: Context, next: Next) => {
     // Apply authentication first
     await authenticationMiddleware()(c, async () => {});
-    
+
     // Then apply authorization if roles are specified
     if (allowedRoles.length > 0) {
       await authorizationMiddleware(allowedRoles)(c, async () => {});
     }
-    
+
     // Finally continue to the actual handler
     await next();
   };
@@ -222,24 +247,45 @@ export function optionalAuth() {
   return async (c: Context, next: Next) => {
     try {
       const authHeader = c.req.header('authorization');
-      
+
       if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.replace('Bearer ', '');
-        const user = await validateToken(token);
-        
-        if (user) {
-          c.set('user', user);
-          c.set('userId', user.id);
-          c.set('clinicId', user.clinicId);
+
+        // Validate token using comprehensive security validator
+        const validationResult = await jwtValidator.validateToken(token, c);
+
+        if (validationResult.isValid && validationResult.payload) {
+          const user = await validateUserFromToken(validationResult.payload);
+
+          if (user) {
+            c.set('user', user);
+            c.set('userId', user.id);
+            c.set('clinicId', user.clinicId);
+
+            logger.debug('Optional authentication succeeded', {
+              userId: user.id,
+              clinicId: user.clinicId,
+              path: c.req.path,
+              method: c.req.method,
+            });
+          }
+        } else {
+          logger.debug('Optional authentication failed - invalid token', {
+            error: validationResult.error,
+            path: c.req.path,
+            method: c.req.method,
+          });
         }
       }
     } catch (error) {
       // Silently fail for optional auth
       logger.debug('Optional authentication failed', {
         error: error instanceof Error ? error.message : String(error),
+        path: c.req.path,
+        method: c.req.method,
       });
     }
-    
+
     await next();
   };
 }

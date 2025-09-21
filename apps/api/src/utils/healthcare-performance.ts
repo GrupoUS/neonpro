@@ -287,11 +287,11 @@ export class HealthcareQueryOptimizer {
   }> {
     const startTime = Date.now();
     const {
-      professionalId,
-      patientId,
-      startDate,
-      endDate,
-      status,
+      professionalId: _professionalId,
+      patientId: _patientId,
+      startDate: _startDate,
+      endDate: _endDate,
+      status: _status,
       includePatientDetails = true,
       includeProfessionalDetails = true,
       page = 1,
@@ -663,7 +663,7 @@ export class HealthcareQueryOptimizer {
   /**
    * Invalidate cache entries by pattern
    */
-  async invalidateCache(pattern: string): Promise<void> {
+  async invalidateCache(_pattern: string): Promise<void> {
     // This would need to be implemented based on the cache implementation
     // For now, just clear all cache
     await this.cache.clear();

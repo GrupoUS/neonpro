@@ -1,13 +1,13 @@
 /**
  * Conversation Context Persistence Service
- * 
+ *
  * Manages conversation context storage and retrieval for AI agent sessions
  * in Supabase with LGPD compliance and healthcare data protection.
  */
 
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
-import { Database } from '../../../packages/database/src/types/database';
 import { v4 as uuidv4 } from 'uuid';
+import { Database } from '../../../packages/database/src/types/database';
 
 export interface ConversationMessage {
   id: string;
@@ -116,8 +116,8 @@ export class ConversationContextService {
   constructor(supabaseUrl: string, supabaseServiceKey: string) {
     this.supabase = createClient<Database>(supabaseUrl, supabaseServiceKey, {
       auth: {
-        persistSession: false
-      }
+        persistSession: false,
+      },
     });
   }
 
@@ -131,7 +131,7 @@ export class ConversationContextService {
 
       // Prepare message for storage with LGPD compliance
       const sanitizedContent = this.sanitizeContent(message.content, message.dataClassification);
-      
+
       const messageData = {
         id: messageId,
         session_id: message.sessionId,
@@ -145,7 +145,7 @@ export class ConversationContextService {
         data_classification: message.dataClassification,
         encryption_key: message.encryptionKey || null,
         created_at: timestamp,
-        updated_at: timestamp
+        updated_at: timestamp,
       };
 
       const { data, error } = await this.supabase
@@ -180,7 +180,7 @@ export class ConversationContextService {
       includeMetadata?: boolean;
       messageLimit?: number;
       includeSystemMessages?: boolean;
-    } = {}
+    } = {},
   ): Promise<ConversationContext | null> {
     try {
       // Check cache first
@@ -233,7 +233,7 @@ export class ConversationContextService {
         userId: msg.user_id,
         patientId: msg.patient_id || undefined,
         encryptionKey: msg.encryption_key || undefined,
-        dataClassification: msg.data_classification
+        dataClassification: msg.data_classification,
       }));
 
       // Generate context summary
@@ -251,13 +251,13 @@ export class ConversationContextService {
           lastActivity: session.last_activity,
           messageCount: conversationMessages.length,
           averageResponseTime: this.calculateAverageResponseTime(conversationMessages),
-          complianceFlags: session.context?.complianceFlags || []
+          complianceFlags: session.context?.complianceFlags || [],
         },
         retentionPolicy: {
           retentionDays: 30, // LGPD compliance
           autoDelete: true,
-          archivalEnabled: true
-        }
+          archivalEnabled: true,
+        },
       };
 
       // Cache the result
@@ -333,13 +333,13 @@ export class ConversationContextService {
         userId: msg.user_id,
         patientId: msg.patient_id || undefined,
         encryptionKey: msg.encryption_key || undefined,
-        dataClassification: msg.data_classification
+        dataClassification: msg.data_classification,
       }));
 
       return {
         messages,
         totalCount: count || 0,
-        hasMore: (options.limit || 10) === messages.length
+        hasMore: (options.limit || 10) === messages.length,
       };
     } catch (error) {
       console.error('[ConversationContext] Error searching conversations:', error);
@@ -352,7 +352,7 @@ export class ConversationContextService {
    */
   async updateContextSummary(
     sessionId: string,
-    summary: Partial<ConversationContext['contextSummary']>
+    summary: Partial<ConversationContext['contextSummary']>,
   ): Promise<void> {
     try {
       const { error } = await this.supabase
@@ -360,7 +360,7 @@ export class ConversationContextService {
         .upsert({
           session_id: sessionId,
           context_summary: summary,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         });
 
       if (error) {
@@ -383,7 +383,7 @@ export class ConversationContextService {
       userId?: string;
       dateRange?: { start: string; end: string };
       patientId?: string;
-    } = {}
+    } = {},
   ): Promise<ContextAnalytics> {
     try {
       let query = this.supabase
@@ -481,7 +481,7 @@ export class ConversationContextService {
       return {
         deletedSessions,
         deletedMessages,
-        archivedSessions
+        archivedSessions,
       };
     } catch (error) {
       console.error('[ConversationContext] Error applying retention policies:', error);
@@ -498,7 +498,7 @@ export class ConversationContextService {
         .from('agent_sessions')
         .update({
           is_archived: true,
-          archived_at: new Date().toISOString()
+          archived_at: new Date().toISOString(),
         })
         .eq('id', sessionId);
 
@@ -514,14 +514,17 @@ export class ConversationContextService {
   /**
    * Sanitize content for LGPD compliance
    */
-  private sanitizeContent(content: string, classification: ConversationMessage['dataClassification']): string {
+  private sanitizeContent(
+    content: string,
+    classification: ConversationMessage['dataClassification'],
+  ): string {
     if (classification === 'public' || classification === 'internal') {
       return content;
     }
 
     // For confidential and restricted data, apply sanitization
     let sanitized = content;
-    
+
     // Remove potential PII patterns (basic implementation)
     const piiPatterns = [
       /\d{3}\.\d{3}\.\d{3}-\d{2}/g, // CPF
@@ -540,12 +543,14 @@ export class ConversationContextService {
   /**
    * Generate context summary from messages
    */
-  private generateContextSummary(messages: ConversationMessage[]): ConversationContext['contextSummary'] {
+  private generateContextSummary(
+    messages: ConversationMessage[],
+  ): ConversationContext['contextSummary'] {
     if (messages.length === 0) {
       return {
         topics: [],
         entities: [],
-        conversationFlow: 'initial'
+        conversationFlow: 'initial',
       };
     }
 
@@ -561,7 +566,7 @@ export class ConversationContextService {
       entities,
       lastQueryIntent: lastUserMessage?.metadata?.queryIntent,
       patientFocus: this.extractPatientFocus(messages),
-      conversationFlow: this.determineConversationFlow(messages)
+      conversationFlow: this.determineConversationFlow(messages),
     };
   }
 
@@ -571,10 +576,26 @@ export class ConversationContextService {
   private extractTopics(messages: ConversationMessage[]): string[] {
     const allContent = messages.map(m => m.content).join(' ').toLowerCase();
     const healthcareTopics = [
-      'agendamento', 'consulta', 'exame', 'tratamento', 'medicamento',
-      'paciente', 'médico', 'clinica', 'hospital', 'saúde',
-      'appointment', 'consultation', 'exam', 'treatment', 'medicine',
-      'patient', 'doctor', 'clinic', 'hospital', 'health'
+      'agendamento',
+      'consulta',
+      'exame',
+      'tratamento',
+      'medicamento',
+      'paciente',
+      'médico',
+      'clinica',
+      'hospital',
+      'saúde',
+      'appointment',
+      'consultation',
+      'exam',
+      'treatment',
+      'medicine',
+      'patient',
+      'doctor',
+      'clinic',
+      'hospital',
+      'health',
     ];
 
     return healthcareTopics.filter(topic => allContent.includes(topic));
@@ -585,7 +606,7 @@ export class ConversationContextService {
    */
   private extractEntities(messages: ConversationMessage[]): string[] {
     const entities = new Set<string>();
-    
+
     messages.forEach(message => {
       if (message.metadata?.entitiesExtracted) {
         message.metadata.entitiesExtracted.forEach(entity => {
@@ -611,14 +632,20 @@ export class ConversationContextService {
   /**
    * Determine conversation flow
    */
-  private determineConversationFlow(messages: ConversationMessage[]): ConversationContext['contextSummary']['conversationFlow'] {
+  private determineConversationFlow(
+    messages: ConversationMessage[],
+  ): ConversationContext['contextSummary']['conversationFlow'] {
     const userMessages = messages.filter(m => m.role === 'user');
     const assistantMessages = messages.filter(m => m.role === 'assistant');
 
     if (userMessages.length === 1 && assistantMessages.length === 0) {
       return 'initial';
-    } else if (userMessages.some(m => m.content.toLowerCase().includes('esclarecer') || 
-                    m.content.toLowerCase().includes('clarify'))) {
+    } else if (
+      userMessages.some(m =>
+        m.content.toLowerCase().includes('esclarecer')
+        || m.content.toLowerCase().includes('clarify')
+      )
+    ) {
       return 'clarification';
     } else if (userMessages.length > 1 && assistantMessages.length > 0) {
       return 'follow_up';
@@ -632,13 +659,14 @@ export class ConversationContextService {
    */
   private calculateAverageResponseTime(messages: ConversationMessage[]): number | undefined {
     const responseTimes: number[] = [];
-    
+
     for (let i = 1; i < messages.length; i++) {
       const current = messages[i];
       const previous = messages[i - 1];
-      
+
       if (current.role === 'assistant' && previous.role === 'user') {
-        const responseTime = new Date(current.timestamp).getTime() - new Date(previous.timestamp).getTime();
+        const responseTime = new Date(current.timestamp).getTime()
+          - new Date(previous.timestamp).getTime();
         responseTimes.push(responseTime);
       }
     }
@@ -653,11 +681,14 @@ export class ConversationContextService {
   /**
    * Calculate analytics from messages
    */
-  private calculateAnalytics(messages: ConversationMessage[], sessionCount: number): ContextAnalytics {
+  private calculateAnalytics(
+    messages: ConversationMessage[],
+    sessionCount: number,
+  ): ContextAnalytics {
     // Calculate response time analytics
     const responseTimes = this.extractResponseTimes(messages);
-    const avgResponseTime = responseTimes.length > 0 
-      ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length 
+    const avgResponseTime = responseTimes.length > 0
+      ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length
       : 0;
 
     // Calculate topics frequency
@@ -683,14 +714,14 @@ export class ConversationContextService {
         average: avgResponseTime,
         min: responseTimes.length > 0 ? Math.min(...responseTimes) : 0,
         max: responseTimes.length > 0 ? Math.max(...responseTimes) : 0,
-        p95: this.calculatePercentile(responseTimes, 95)
+        p95: this.calculatePercentile(responseTimes, 95),
       },
       satisfactionTrends: [], // Would need satisfaction ratings in metadata
       complianceMetrics: {
         flaggedContent: messages.filter(m => m.dataClassification === 'restricted').length,
         dataBreaches: 0, // Would need breach tracking
-        accessViolations: 0 // Would need access violation tracking
-      }
+        accessViolations: 0, // Would need access violation tracking
+      },
     };
   }
 
@@ -699,13 +730,14 @@ export class ConversationContextService {
    */
   private extractResponseTimes(messages: ConversationMessage[]): number[] {
     const times: number[] = [];
-    
+
     for (let i = 1; i < messages.length; i++) {
       const current = messages[i];
       const previous = messages[i - 1];
-      
+
       if (current.role === 'assistant' && previous.role === 'user') {
-        const responseTime = new Date(current.timestamp).getTime() - new Date(previous.timestamp).getTime();
+        const responseTime = new Date(current.timestamp).getTime()
+          - new Date(previous.timestamp).getTime();
         times.push(responseTime);
       }
     }
@@ -718,7 +750,7 @@ export class ConversationContextService {
    */
   private calculatePercentile(numbers: number[], percentile: number): number {
     if (numbers.length === 0) return 0;
-    
+
     const sorted = numbers.slice().sort((a, b) => a - b);
     const index = Math.ceil((percentile / 100) * sorted.length) - 1;
     return sorted[Math.max(0, Math.min(index, sorted.length - 1))];
@@ -733,7 +765,7 @@ export class ConversationContextService {
         .from('agent_sessions')
         .update({
           last_activity: new Date().toISOString(),
-          message_count: this.supabase.rpc('increment', { x: 1 })
+          message_count: this.supabase.rpc('increment', { x: 1 }),
         })
         .eq('id', sessionId);
 

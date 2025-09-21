@@ -3,36 +3,36 @@
  * These tests should fail initially and pass after fixes are implemented
  */
 
-import { describe, expect, it } from 'vitest';
 import { execSync } from 'child_process';
+import { describe, expect, it } from 'vitest';
 
 describe('Build Compilation - TDD RED Phase', () => {
   describe('TypeScript Compilation', () => {
     it('should FAIL: TypeScript compilation should have no errors', () => {
       // This test will fail initially due to compilation errors
       // After fixes, this should pass
-      
+
       let compilationSuccess = true;
       let compilationErrors: string[] = [];
-      
+
       try {
         // This should fail initially with compilation errors
-        execSync('npm run type-check', { 
+        execSync('npm run type-check', {
           cwd: '/home/vibecode/neonpro/apps/api',
-          stdio: 'pipe'
+          stdio: 'pipe',
         });
       } catch (error: any) {
         compilationSuccess = false;
-        compilationErrors = error.stdout?.toString().split('\n').filter((line: string) => 
+        compilationErrors = error.stdout?.toString().split('\n').filter((line: string) =>
           line.includes('error TS') && !line.includes('npm error')
         ) || [];
       }
-      
+
       // Initially this should FAIL because we expect compilation errors
       // After fixes, this expectation should be inverted
       expect(compilationSuccess).toBe(false);
       expect(compilationErrors.length).toBeGreaterThan(0);
-      
+
       // Document the specific errors we expect to fix
       const expectedErrorPatterns = [
         'Cannot find module',
@@ -41,13 +41,13 @@ describe('Build Compilation - TDD RED Phase', () => {
         'error TS2345',
         'error TS2559',
         'error TS6133',
-        'error TS7030'
+        'error TS7030',
       ];
-      
+
       const foundErrorPatterns = compilationErrors.filter(error =>
         expectedErrorPatterns.some(pattern => error.includes(pattern))
       );
-      
+
       expect(foundErrorPatterns.length).toBeGreaterThan(0);
     });
 
@@ -56,12 +56,12 @@ describe('Build Compilation - TDD RED Phase', () => {
       const missingModules = [
         '@neonpro/utils/logging/logger',
         '@/services/audit-service',
-        'bun:test'
+        'bun:test',
       ];
-      
+
       // Initially, all these modules should fail to import
       let importFailures = 0;
-      
+
       missingModules.forEach(module => {
         try {
           // This will fail initially
@@ -70,7 +70,7 @@ describe('Build Compilation - TDD RED Phase', () => {
           importFailures++;
         }
       });
-      
+
       // Should fail initially - all modules missing
       expect(importFailures).toBe(missingModules.length);
     });
@@ -83,29 +83,30 @@ describe('Build Compilation - TDD RED Phase', () => {
         {
           file: 'src/lib/logger.ts',
           error: 'Cannot find module \'@neonpro/utils/logging/logger\'',
-          code: 'TS2307'
+          code: 'TS2307',
         },
         {
-          file: 'src/middleware/audit-log.ts', 
+          file: 'src/middleware/audit-log.ts',
           error: 'Property \'clone\' does not exist on type \'HonoRequest\'',
-          code: 'TS2339'
+          code: 'TS2339',
         },
         {
           file: 'src/middleware/audit-log.ts',
           error: 'Property \'debug\' does not exist on type \'HealthcareLogger\'',
-          code: 'TS2339'
+          code: 'TS2339',
         },
         {
           file: 'src/routes/chat.ts',
-          error: 'Argument of type \'string[]\' is not assignable to parameter of type \'AsyncIterable<any>\'',
-          code: 'TS2345'
-        }
+          error:
+            'Argument of type \'string[]\' is not assignable to parameter of type \'AsyncIterable<any>\'',
+          code: 'TS2345',
+        },
       ];
-      
+
       // This will fail because these errors currently exist
       // After fixes, these errors should be resolved
       expect(expectedErrors.length).toBeGreaterThan(0);
-      
+
       // Each error should be documented for fixing
       expectedErrors.forEach(error => {
         expect(error.file).toBeDefined();
@@ -120,20 +121,20 @@ describe('Build Compilation - TDD RED Phase', () => {
         {
           file: 'src/middleware/audit-log.ts',
           error: 'includeResponseBody is declared but its value is never read',
-          code: 'TS6133'
+          code: 'TS6133',
         },
         {
           file: 'src/middleware/rate-limiting.ts',
           error: 'Not all code paths return a value',
-          code: 'TS7030'
+          code: 'TS7030',
         },
         {
           file: 'src/middleware/streaming.ts',
-          error: 'Not all code paths return a value', 
-          code: 'TS7030'
-        }
+          error: 'Not all code paths return a value',
+          code: 'TS7030',
+        },
       ];
-      
+
       // Should fail initially - these cleanup errors exist
       expect(expectedCleanupErrors.length).toBeGreaterThan(0);
     });
@@ -145,9 +146,9 @@ describe('Build Compilation - TDD RED Phase', () => {
       const testFrameworkIssues = [
         'bun:test imports in vitest project',
         'missing vi.mock definitions',
-        'inconsistent test setup patterns'
+        'inconsistent test setup patterns',
       ];
-      
+
       // Should fail initially - framework issues exist
       expect(testFrameworkIssues.length).toBeGreaterThan(0);
     });
@@ -157,9 +158,9 @@ describe('Build Compilation - TDD RED Phase', () => {
       const dependencyIssues = [
         'TypeScript resolution configuration',
         'Module resolution strategy',
-        'Package workspace linking'
+        'Package workspace linking',
       ];
-      
+
       // Should fail initially - dependency issues exist
       expect(dependencyIssues.length).toBeGreaterThan(0);
     });
@@ -170,19 +171,19 @@ describe('Build Compilation - TDD RED Phase', () => {
       // Test the complete build process
       let buildSteps = ['type-check', 'test', 'build'];
       let failedSteps = 0;
-      
+
       buildSteps.forEach(step => {
         try {
-          execSync(`npm run ${step}`, { 
+          execSync(`npm run ${step}`, {
             cwd: '/home/vibecode/neonpro/apps/api',
             stdio: 'pipe',
-            timeout: 30000
+            timeout: 30000,
           });
         } catch {
           failedSteps++;
         }
       });
-      
+
       // Should fail initially - build pipeline broken
       expect(failedSteps).toBeGreaterThan(0);
     });
@@ -193,32 +194,35 @@ describe('Build Compilation - TDD RED Phase', () => {
         moduleResolution: {
           count: 3,
           severity: 'high',
-          files: ['src/lib/logger.ts', 'tests/contracts/security-policies.test.ts']
+          files: ['src/lib/logger.ts', 'tests/contracts/security-policies.test.ts'],
         },
         typeErrors: {
           count: 4,
-          severity: 'high', 
-          files: ['src/middleware/audit-log.ts', 'src/routes/chat.ts']
+          severity: 'high',
+          files: ['src/middleware/audit-log.ts', 'src/routes/chat.ts'],
         },
         codeQuality: {
           count: 3,
           severity: 'medium',
-          files: ['src/middleware/audit-log.ts', 'src/middleware/rate-limiting.ts']
+          files: ['src/middleware/audit-log.ts', 'src/middleware/rate-limiting.ts'],
         },
         testFramework: {
           count: 3,
           severity: 'medium',
-          files: ['tests/integration/access-control.test.ts', 'tests/unit/architecture-issues.test.ts']
-        }
+          files: [
+            'tests/integration/access-control.test.ts',
+            'tests/unit/architecture-issues.test.ts',
+          ],
+        },
       };
-      
+
       // Should document the current state for GREEN phase
       expect(Object.keys(errorCategories).length).toBe(4);
-      
+
       // Total errors to fix
       const totalErrors = Object.values(errorCategories)
         .reduce((sum, category) => sum + category.count, 0);
-      
+
       expect(totalErrors).toBeGreaterThan(0);
       console.log(`🔴 TDD RED PHASE: ${totalErrors} errors identified for fixing`);
     });

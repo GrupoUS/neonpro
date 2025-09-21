@@ -52,9 +52,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tabs } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
-import {
-  useSendAppointmentReminder,
-} from '@/hooks/use-appointments';
+import { useSendAppointmentReminder } from '@/hooks/use-appointments';
 import { useLGPDConsent } from '@/hooks/useLGPDConsent';
 import { cn } from '@/lib/utils';
 

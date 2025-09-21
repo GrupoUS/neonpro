@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export interface ResourceTimingEntry {
   name: string;
@@ -26,7 +26,9 @@ export interface UseResourceTimingReturn {
 
 export function useResourceTiming(): UseResourceTimingReturn {
   const [resources, setResources] = useState<ResourceTimingEntry[]>([]);
-  const [isSupported] = useState(() => 'performance' in window && 'getEntriesByType' in performance);
+  const [isSupported] = useState(() =>
+    'performance' in window && 'getEntriesByType' in performance
+  );
 
   const updateResources = useCallback(() => {
     if (!isSupported) return;
@@ -73,7 +75,7 @@ export function useResourceTiming(): UseResourceTimingReturn {
     updateResources();
 
     // Listen for new resources
-    const observer = new PerformanceObserver((list) => {
+    const observer = new PerformanceObserver(list => {
       updateResources();
     });
 

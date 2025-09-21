@@ -1,6 +1,6 @@
 /**
  * Real-time Subscriptions Endpoint
- * 
+ *
  * Provides REST API for managing real-time subscriptions for AI agent sessions
  * with healthcare compliance and security filtering.
  */
@@ -15,34 +15,46 @@ import { logger } from '../../utils/secure-logger';
 const app = new Hono();
 
 // Apply CORS for cross-origin requests
-app.use('*', cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://app.neonpro.com', 'https://neonpro.com'] 
-    : ['http://localhost:3000', 'http://localhost:3005'],
-  allowMethods: ['GET', 'POST', 'DELETE'],
-  allowHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
-}));
+app.use(
+  '*',
+  cors({
+    origin: process.env.NODE_ENV === 'production'
+      ? ['https://app.neonpro.com', 'https://neonpro.com']
+      : ['http://localhost:3000', 'http://localhost:3005'],
+    allowMethods: ['GET', 'POST', 'DELETE'],
+    allowHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
+  }),
+);
 
 // Apply JWT authentication for protected routes
-app.use('/subscribe', jwt({
-  secret: process.env.JWT_SECRET || 'fallback-secret',
-}));
-app.use('/unsubscribe', jwt({
-  secret: process.env.JWT_SECRET || 'fallback-secret',
-}));
-app.use('/analytics', jwt({
-  secret: process.env.JWT_SECRET || 'fallback-secret',
-}));
+app.use(
+  '/subscribe',
+  jwt({
+    secret: process.env.JWT_SECRET || 'fallback-secret',
+  }),
+);
+app.use(
+  '/unsubscribe',
+  jwt({
+    secret: process.env.JWT_SECRET || 'fallback-secret',
+  }),
+);
+app.use(
+  '/analytics',
+  jwt({
+    secret: process.env.JWT_SECRET || 'fallback-secret',
+  }),
+);
 
 /**
  * POST /api/ai/realtime/subscribe
  * Create a new real-time subscription
  */
-app.post('/subscribe', async (c) => {
+app.post('/subscribe', async c => {
   try {
     const requestId = c.req.header('X-Request-ID') || uuidv4();
     const start = Date.now();
-    
+
     const payload = await c.req.json();
     const { eventTypes, sessionId, includeSystemEvents, heartbeatInterval } = payload;
 
@@ -55,7 +67,7 @@ app.post('/subscribe', async (c) => {
         success: false,
         error: 'User ID not found in token',
         requestId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, 400);
     }
 
@@ -64,7 +76,7 @@ app.post('/subscribe', async (c) => {
       userId,
       sessionId,
       eventTypes,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Validate input
@@ -73,7 +85,7 @@ app.post('/subscribe', async (c) => {
         success: false,
         error: 'Event types must be provided as an array',
         requestId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, 400);
     }
 
@@ -85,7 +97,7 @@ app.post('/subscribe', async (c) => {
         success: false,
         error: 'Real-time service not available',
         requestId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, 503);
     }
 
@@ -94,7 +106,7 @@ app.post('/subscribe', async (c) => {
       sessionId,
       eventTypes,
       includeSystemEvents,
-      heartbeatInterval: heartbeatInterval || 30000
+      heartbeatInterval: heartbeatInterval || 30000,
     });
 
     logger.info('Real-time subscription created successfully', {
@@ -102,7 +114,7 @@ app.post('/subscribe', async (c) => {
       subscriptionId: subscription.id,
       userId,
       processingTimeMs: Date.now() - start,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     return c.json({
@@ -113,22 +125,21 @@ app.post('/subscribe', async (c) => {
         sessionId: subscription.sessionId,
         eventTypes: Array.from(subscription.eventTypes),
         isActive: subscription.isActive,
-        createdAt: subscription.createdAt
+        createdAt: subscription.createdAt,
       },
       requestId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     logger.error('Error creating real-time subscription', error, {
-      requestId: c.req.header('X-Request-ID')
+      requestId: c.req.header('X-Request-ID'),
     });
 
     return c.json({
       success: false,
       error: error.message || 'Internal server error',
       requestId: c.req.header('X-Request-ID'),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }, 500);
   }
 });
@@ -137,7 +148,7 @@ app.post('/subscribe', async (c) => {
  * DELETE /api/ai/realtime/unsubscribe/:subscriptionId
  * Remove a real-time subscription
  */
-app.delete('/unsubscribe/:subscriptionId', async (c) => {
+app.delete('/unsubscribe/:subscriptionId', async c => {
   try {
     const requestId = c.req.header('X-Request-ID') || uuidv4();
     const subscriptionId = c.req.param('subscriptionId');
@@ -152,7 +163,7 @@ app.delete('/unsubscribe/:subscriptionId', async (c) => {
         success: false,
         error: 'User ID not found in token',
         requestId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, 400);
     }
 
@@ -160,7 +171,7 @@ app.delete('/unsubscribe/:subscriptionId', async (c) => {
       requestId,
       subscriptionId,
       userId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Get AG-UI service instance
@@ -171,7 +182,7 @@ app.delete('/unsubscribe/:subscriptionId', async (c) => {
         success: false,
         error: 'Real-time service not available',
         requestId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, 503);
     }
 
@@ -183,30 +194,29 @@ app.delete('/unsubscribe/:subscriptionId', async (c) => {
       subscriptionId,
       userId,
       processingTimeMs: Date.now() - start,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     return c.json({
       success: true,
       data: {
         subscriptionId,
-        message: 'Subscription removed successfully'
+        message: 'Subscription removed successfully',
       },
       requestId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     logger.error('Error removing real-time subscription', error, {
       requestId: c.req.header('X-Request-ID'),
-      subscriptionId: c.req.param('subscriptionId')
+      subscriptionId: c.req.param('subscriptionId'),
     });
 
     return c.json({
       success: false,
       error: error.message || 'Internal server error',
       requestId: c.req.header('X-Request-ID'),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }, 500);
   }
 });
@@ -215,7 +225,7 @@ app.delete('/unsubscribe/:subscriptionId', async (c) => {
  * GET /api/ai/realtime/analytics
  * Get real-time analytics (admin only)
  */
-app.get('/analytics', async (c) => {
+app.get('/analytics', async c => {
   try {
     const requestId = c.req.header('X-Request-ID') || uuidv4();
     const start = Date.now();
@@ -231,7 +241,7 @@ app.get('/analytics', async (c) => {
         success: false,
         error: 'Insufficient permissions',
         requestId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, 403);
     }
 
@@ -239,7 +249,7 @@ app.get('/analytics', async (c) => {
       requestId,
       userId,
       userRole,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Get AG-UI service instance
@@ -250,7 +260,7 @@ app.get('/analytics', async (c) => {
         success: false,
         error: 'Real-time service not available',
         requestId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, 503);
     }
 
@@ -260,26 +270,25 @@ app.get('/analytics', async (c) => {
     logger.info('Real-time analytics retrieved successfully', {
       requestId,
       processingTimeMs: Date.now() - start,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     return c.json({
       success: true,
       data: analytics,
       requestId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     logger.error('Error getting real-time analytics', error, {
-      requestId: c.req.header('X-Request-ID')
+      requestId: c.req.header('X-Request-ID'),
     });
 
     return c.json({
       success: false,
       error: error.message || 'Internal server error',
       requestId: c.req.header('X-Request-ID'),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }, 500);
   }
 });
@@ -288,7 +297,7 @@ app.get('/analytics', async (c) => {
  * GET /api/ai/realtime/subscriptions
  * Get user's active subscriptions
  */
-app.get('/subscriptions', async (c) => {
+app.get('/subscriptions', async c => {
   try {
     const requestId = c.req.header('X-Request-ID') || uuidv4();
     const start = Date.now();
@@ -302,14 +311,14 @@ app.get('/subscriptions', async (c) => {
         success: false,
         error: 'User ID not found in token',
         requestId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, 400);
     }
 
     logger.info('Real-time subscriptions request', {
       requestId,
       userId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Get AG-UI service instance
@@ -320,7 +329,7 @@ app.get('/subscriptions', async (c) => {
         success: false,
         error: 'Real-time service not available',
         requestId,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       }, 503);
     }
 
@@ -332,7 +341,7 @@ app.get('/subscriptions', async (c) => {
       userId,
       subscriptionCount: subscriptions.length,
       processingTimeMs: Date.now() - start,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     return c.json({
@@ -344,22 +353,21 @@ app.get('/subscriptions', async (c) => {
         eventTypes: Array.from(sub.eventTypes),
         isActive: sub.isActive,
         lastActivity: sub.lastActivity,
-        createdAt: sub.createdAt
+        createdAt: sub.createdAt,
       })),
       requestId,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
-
   } catch (error) {
     logger.error('Error getting real-time subscriptions', error, {
-      requestId: c.req.header('X-Request-ID')
+      requestId: c.req.header('X-Request-ID'),
     });
 
     return c.json({
       success: false,
       error: error.message || 'Internal server error',
       requestId: c.req.header('X-Request-ID'),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     }, 500);
   }
 });
@@ -367,12 +375,12 @@ app.get('/subscriptions', async (c) => {
 /**
  * Health check endpoint
  */
-app.get('/health', (c) => {
+app.get('/health', c => {
   return c.json({
     status: 'healthy',
     service: 'realtime-subscriptions',
     timestamp: new Date().toISOString(),
-    version: '1.0.0'
+    version: '1.0.0',
   });
 });
 

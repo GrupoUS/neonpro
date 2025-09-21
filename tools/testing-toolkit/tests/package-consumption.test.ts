@@ -19,10 +19,10 @@ describe('Package Consumption', () => {
         expect(true).toBe(true);
       },
     });
-    
+
     expect(result).toBeDefined();
   });
-  
+
   // Import the function directly to test
   const { createTDDSuite } = require('../src/core/tdd-cycle');
 

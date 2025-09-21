@@ -61,12 +61,12 @@ function sanitizeData(data: any, sensitiveFields: string[] = DEFAULT_SENSITIVE_F
   }
 
   const sanitized: any = {};
-  
+
   for (const [key, value] of Object.entries(data)) {
-    const isSensitive = sensitiveFields.some(field => 
+    const isSensitive = sensitiveFields.some(field =>
       key.toLowerCase().includes(field.toLowerCase())
     );
-    
+
     if (isSensitive) {
       sanitized[key] = '[REDACTED]';
     } else if (typeof value === 'object' && value !== null) {
@@ -75,18 +75,21 @@ function sanitizeData(data: any, sensitiveFields: string[] = DEFAULT_SENSITIVE_F
       sanitized[key] = value;
     }
   }
-  
+
   return sanitized;
 }
 
 /**
  * Extracts action and resource from the request
  */
-function extractActionAndResource(method: string, path: string): { action: string; resource: string } {
+function extractActionAndResource(
+  method: string,
+  path: string,
+): { action: string; resource: string } {
   // Extract resource from path
   const pathParts = path.split('/').filter(part => part && !part.match(/^v\d+$/));
   const resource = pathParts[0] || 'unknown';
-  
+
   // Map HTTP methods to actions
   const actionMap: Record<string, string> = {
     GET: 'read',
@@ -95,9 +98,9 @@ function extractActionAndResource(method: string, path: string): { action: strin
     PATCH: 'update',
     DELETE: 'delete',
   };
-  
+
   const action = actionMap[method.toUpperCase()] || method.toLowerCase();
-  
+
   return { action, resource };
 }
 
@@ -107,39 +110,38 @@ function extractActionAndResource(method: string, path: string): { action: strin
 export function auditLogMiddleware(config: AuditLogConfig = {}) {
   const {
     includeRequestBody = false,
-    includeResponseBody = false,
     sensitiveFields = DEFAULT_SENSITIVE_FIELDS,
     logLevel = 'info',
   } = config;
 
   return async (c: Context, next: Next) => {
     const startTime = Date.now();
-    
+
     // Extract request information
     const method = c.req.method;
     const path = c.req.path;
-    const ip = c.req.header('x-forwarded-for') || 
-               c.req.header('x-real-ip') || 
-               c.req.header('cf-connecting-ip') || 
-               'unknown';
+    const ip = c.req.header('x-forwarded-for')
+      || c.req.header('x-real-ip')
+      || c.req.header('cf-connecting-ip')
+      || 'unknown';
     const userAgent = c.req.header('user-agent') || 'unknown';
     const requestId = c.get('requestId') || 'unknown';
-    
+
     // Extract user information if available
     const user = c.get('user');
     const userId = user?.id || c.get('userId');
     const clinicId = user?.clinicId || c.get('clinicId');
     const sessionId = c.get('sessionId') || c.req.header('x-session-id');
-    
+
     // Extract action and resource
     const { action, resource } = extractActionAndResource(method, path);
-    
+
     // Extract resource ID from path or query params
-    const resourceId = c.req.param('id') || 
-                      c.req.param('patientId') || 
-                      c.req.param('appointmentId') ||
-                      c.req.query('id');
-    
+    const resourceId = c.req.param('id')
+      || c.req.param('patientId')
+      || c.req.param('appointmentId')
+      || c.req.query('id');
+
     // Prepare base audit entry
     const baseAuditEntry: Partial<AuditLogEntry> = {
       timestamp: new Date(),
@@ -155,7 +157,7 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
       sessionId,
       requestId,
     };
-    
+
     // Get request body if configured
     let requestBody: any;
     if (includeRequestBody && ['POST', 'PUT', 'PATCH'].includes(method)) {
@@ -164,20 +166,20 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
         const clonedRequest = c.req.clone?.() || c.req;
         requestBody = await clonedRequest.json();
         requestBody = sanitizeData(requestBody, sensitiveFields);
-      } catch (error) {
+      } catch (_error) {
         // Ignore errors when reading request body
       }
     }
-    
+
     let auditEntry: AuditLogEntry;
     let error: any;
-    
+
     try {
       await next();
-      
+
       const duration = Date.now() - startTime;
       const statusCode = c.res.status;
-      
+
       // Create successful audit entry
       auditEntry = {
         ...baseAuditEntry,
@@ -188,11 +190,10 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
           success: true,
         },
       } as AuditLogEntry;
-      
     } catch (err) {
       error = err;
       const duration = Date.now() - startTime;
-      
+
       // Create error audit entry
       auditEntry = {
         ...baseAuditEntry,
@@ -208,14 +209,14 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
         },
       } as AuditLogEntry;
     }
-    
+
     // Log the audit entry
     const logMessage = `${action.toUpperCase()} ${resource}`;
     const logContext = {
       audit: auditEntry,
       type: 'audit',
     };
-    
+
     if (error) {
       logger.error(logMessage, logContext);
     } else {
@@ -235,10 +236,10 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
           break;
       }
     }
-    
+
     // Store audit entry in context for potential use by other middleware
     c.set('auditEntry', auditEntry);
-    
+
     // Re-throw error if one occurred
     if (error) {
       throw error;

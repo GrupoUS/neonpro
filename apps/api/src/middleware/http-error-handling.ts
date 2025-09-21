@@ -38,7 +38,7 @@ export function httpErrorHandlingMiddleware() {
             requestId: errorContext.requestId,
             timestamp: new Date().toISOString(),
           },
-          error.status
+          error.status,
         );
       }
 
@@ -60,7 +60,7 @@ export function httpErrorHandlingMiddleware() {
             requestId: errorContext.requestId,
             timestamp: new Date().toISOString(),
           },
-          400
+          400,
         );
       }
 
@@ -82,7 +82,7 @@ export function httpErrorHandlingMiddleware() {
             requestId: errorContext.requestId,
             timestamp: new Date().toISOString(),
           },
-          500
+          500,
         );
       }
 
@@ -94,7 +94,7 @@ export function httpErrorHandlingMiddleware() {
         });
 
         const status = error.message.toLowerCase().includes('unauthorized') ? 401 : 403;
-        
+
         return c.json(
           {
             error: {
@@ -105,7 +105,7 @@ export function httpErrorHandlingMiddleware() {
             requestId: errorContext.requestId,
             timestamp: new Date().toISOString(),
           },
-          status
+          status,
         );
       }
 
@@ -126,7 +126,7 @@ export function httpErrorHandlingMiddleware() {
             requestId: errorContext.requestId,
             timestamp: new Date().toISOString(),
           },
-          503
+          503,
         );
       }
 
@@ -147,7 +147,7 @@ export function httpErrorHandlingMiddleware() {
           requestId: errorContext.requestId,
           timestamp: new Date().toISOString(),
         },
-        500
+        500,
       );
     }
   };
@@ -158,20 +158,34 @@ export function httpErrorHandlingMiddleware() {
  */
 function getErrorCode(status: number): string {
   switch (status) {
-    case 400: return 'BAD_REQUEST';
-    case 401: return 'UNAUTHORIZED';
-    case 403: return 'FORBIDDEN';
-    case 404: return 'NOT_FOUND';
-    case 405: return 'METHOD_NOT_ALLOWED';
-    case 409: return 'CONFLICT';
-    case 410: return 'GONE';
-    case 422: return 'UNPROCESSABLE_ENTITY';
-    case 429: return 'TOO_MANY_REQUESTS';
-    case 500: return 'INTERNAL_ERROR';
-    case 502: return 'BAD_GATEWAY';
-    case 503: return 'SERVICE_UNAVAILABLE';
-    case 504: return 'GATEWAY_TIMEOUT';
-    default: return 'UNKNOWN_ERROR';
+    case 400:
+      return 'BAD_REQUEST';
+    case 401:
+      return 'UNAUTHORIZED';
+    case 403:
+      return 'FORBIDDEN';
+    case 404:
+      return 'NOT_FOUND';
+    case 405:
+      return 'METHOD_NOT_ALLOWED';
+    case 409:
+      return 'CONFLICT';
+    case 410:
+      return 'GONE';
+    case 422:
+      return 'UNPROCESSABLE_ENTITY';
+    case 429:
+      return 'TOO_MANY_REQUESTS';
+    case 500:
+      return 'INTERNAL_ERROR';
+    case 502:
+      return 'BAD_GATEWAY';
+    case 503:
+      return 'SERVICE_UNAVAILABLE';
+    case 504:
+      return 'GATEWAY_TIMEOUT';
+    default:
+      return 'UNKNOWN_ERROR';
   }
 }
 
@@ -180,11 +194,11 @@ function getErrorCode(status: number): string {
  */
 function isValidationError(error: any): boolean {
   return (
-    error.name === 'ValidationError' ||
-    error.name === 'ZodError' ||
-    error.name === 'ValibotError' ||
-    (error.message && error.message.includes('validation')) ||
-    Array.isArray(error.errors)
+    error.name === 'ValidationError'
+    || error.name === 'ZodError'
+    || error.name === 'ValibotError'
+    || (error.message && error.message.includes('validation'))
+    || Array.isArray(error.errors)
   );
 }
 
@@ -193,12 +207,12 @@ function isValidationError(error: any): boolean {
  */
 function isDatabaseError(error: any): boolean {
   return (
-    error.name === 'PrismaClientKnownRequestError' ||
-    error.name === 'PrismaClientUnknownRequestError' ||
-    error.name === 'PrismaClientValidationError' ||
-    error.name === 'DatabaseError' ||
-    error.name === 'SequelizeError' ||
-    (error.code && typeof error.code === 'string' && error.code.startsWith('P')) // Prisma error codes
+    error.name === 'PrismaClientKnownRequestError'
+    || error.name === 'PrismaClientUnknownRequestError'
+    || error.name === 'PrismaClientValidationError'
+    || error.name === 'DatabaseError'
+    || error.name === 'SequelizeError'
+    || (error.code && typeof error.code === 'string' && error.code.startsWith('P')) // Prisma error codes
   );
 }
 
@@ -207,15 +221,15 @@ function isDatabaseError(error: any): boolean {
  */
 function isAuthError(error: any): boolean {
   return (
-    error.name === 'AuthenticationError' ||
-    error.name === 'AuthorizationError' ||
-    error.name === 'UnauthorizedError' ||
-    error.name === 'ForbiddenError' ||
-    (error.message && (
-      error.message.toLowerCase().includes('unauthorized') ||
-      error.message.toLowerCase().includes('forbidden') ||
-      error.message.toLowerCase().includes('access denied') ||
-      error.message.toLowerCase().includes('not authorized')
+    error.name === 'AuthenticationError'
+    || error.name === 'AuthorizationError'
+    || error.name === 'UnauthorizedError'
+    || error.name === 'ForbiddenError'
+    || (error.message && (
+      error.message.toLowerCase().includes('unauthorized')
+      || error.message.toLowerCase().includes('forbidden')
+      || error.message.toLowerCase().includes('access denied')
+      || error.message.toLowerCase().includes('not authorized')
     ))
   );
 }
@@ -225,16 +239,16 @@ function isAuthError(error: any): boolean {
  */
 function isNetworkError(error: any): boolean {
   return (
-    error.name === 'TimeoutError' ||
-    error.name === 'NetworkError' ||
-    error.name === 'FetchError' ||
-    error.code === 'ECONNREFUSED' ||
-    error.code === 'ENOTFOUND' ||
-    error.code === 'ETIMEDOUT' ||
-    (error.message && (
-      error.message.includes('timeout') ||
-      error.message.includes('network') ||
-      error.message.includes('connection')
+    error.name === 'TimeoutError'
+    || error.name === 'NetworkError'
+    || error.name === 'FetchError'
+    || error.code === 'ECONNREFUSED'
+    || error.code === 'ENOTFOUND'
+    || error.code === 'ETIMEDOUT'
+    || (error.message && (
+      error.message.includes('timeout')
+      || error.message.includes('network')
+      || error.message.includes('connection')
     ))
   );
 }

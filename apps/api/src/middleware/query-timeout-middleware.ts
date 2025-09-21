@@ -3,7 +3,7 @@
  * Ensures all queries complete within <2s healthcare compliance requirement
  */
 
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 // Use global performance API available in Node.js
 declare const performance: {
   now(): number;
@@ -35,7 +35,8 @@ export interface QueryMetrics {
 export class QueryTimeoutMiddleware {
   private config: QueryTimeoutConfig;
   private metrics: QueryMetrics[] = [];
-  private activeQueries: Map<string, { startTime: number; timeout: number; req: Request }> = new Map();
+  private activeQueries: Map<string, { startTime: number; timeout: number; req: Request }> =
+    new Map();
   private timeoutWarnings: Set<string> = new Set();
 
   constructor(config: Partial<QueryTimeoutConfig> = {}) {
@@ -45,7 +46,7 @@ export class QueryTimeoutMiddleware {
       timeoutHeader: 'X-Query-Timeout',
       enableTimeoutExtension: true,
       enableResponseCompression: true,
-      ...config
+      ...config,
     };
 
     // Start metrics cleanup interval
@@ -58,7 +59,7 @@ export class QueryTimeoutMiddleware {
   middleware = (req: Request, res: Response, next: NextFunction): void => {
     const queryId = this.generateQueryId();
     const startTime = performance.now();
-    
+
     // Get timeout from header or use default
     const timeoutHeader = req.headers[this.config.timeoutHeader.toLowerCase()];
     let timeout = this.config.defaultTimeout;
@@ -78,7 +79,7 @@ export class QueryTimeoutMiddleware {
     this.activeQueries.set(queryId, {
       startTime,
       timeout,
-      req
+      req,
     });
 
     // Set up timeout timer
@@ -90,10 +91,10 @@ export class QueryTimeoutMiddleware {
     const originalEnd = res.end;
     res.end = function(chunk?: any, encoding?: any) {
       clearTimeout(timeoutTimer);
-      
+
       const endTime = performance.now();
       const duration = endTime - startTime;
-      
+
       // Record metrics
       const metrics: QueryMetrics = {
         queryId,
@@ -107,7 +108,7 @@ export class QueryTimeoutMiddleware {
         statusCode: res.statusCode,
         responseSize: chunk ? chunk.length : 0,
         userAgent: req.headers['user-agent'],
-        userId: this.extractUserId(req)
+        userId: this.extractUserId(req),
       };
 
       this.recordQueryMetrics(metrics);
@@ -119,7 +120,7 @@ export class QueryTimeoutMiddleware {
           queryId,
           route: req.path,
           method: req.method,
-          userId: metrics.userId
+          userId: metrics.userId,
         });
       }
 
@@ -157,7 +158,7 @@ export class QueryTimeoutMiddleware {
       statusCode: 504, // Gateway Timeout
       responseSize: 0,
       userAgent: req.headers['user-agent'],
-      userId: this.extractUserId(req)
+      userId: this.extractUserId(req),
     };
 
     this.recordQueryMetrics(metrics);
@@ -169,7 +170,7 @@ export class QueryTimeoutMiddleware {
       route: req.path,
       method: req.method,
       userId: metrics.userId,
-      userAgent: req.headers['user-agent']
+      userAgent: req.headers['user-agent'],
     });
 
     // Send timeout response
@@ -180,7 +181,7 @@ export class QueryTimeoutMiddleware {
         queryId,
         timeout: timeout,
         actualTime: duration,
-        retryable: true
+        retryable: true,
       });
     }
 
@@ -205,11 +206,11 @@ export class QueryTimeoutMiddleware {
   private extractUserId(req: Request): string | undefined {
     // Extract user ID from various possible sources
     return (
-      req.headers['x-user-id'] as string ||
-      req.headers['user-id'] as string ||
-      req.query?.userId as string ||
-      req.body?.userId as string ||
-      req.user?.id
+      req.headers['x-user-id'] as string
+      || req.headers['user-id'] as string
+      || req.query?.userId as string
+      || req.body?.userId as string
+      || req.user?.id
     );
   }
 
@@ -225,7 +226,7 @@ export class QueryTimeoutMiddleware {
    */
   private recordQueryMetrics(metrics: QueryMetrics): void {
     this.metrics.push(metrics);
-    
+
     // Keep only last 1000 metrics
     if (this.metrics.length > 1000) {
       this.metrics = this.metrics.slice(-1000);
@@ -263,13 +264,15 @@ export class QueryTimeoutMiddleware {
       routesWithMostTimeouts: this.getRoutesWithMostTimeouts(),
       timeoutDistribution: this.getTimeoutDistribution(),
       currentActiveQueries: this.activeQueries.size,
-      longestRunningQuery: this.getLongestRunningQuery()
+      longestRunningQuery: this.getLongestRunningQuery(),
     };
 
     if (stats.totalQueries > 0) {
       stats.timeoutRate = (stats.timedOutQueries / stats.totalQueries) * 100;
-      stats.averageResponseTime = this.metrics.reduce((sum, m) => sum + m.duration, 0) / stats.totalQueries;
-      stats.averageTimeout = this.metrics.reduce((sum, m) => sum + m.timeout, 0) / stats.totalQueries;
+      stats.averageResponseTime = this.metrics.reduce((sum, m) => sum + m.duration, 0)
+        / stats.totalQueries;
+      stats.averageTimeout = this.metrics.reduce((sum, m) => sum + m.timeout, 0)
+        / stats.totalQueries;
     }
 
     return stats;
@@ -280,7 +283,7 @@ export class QueryTimeoutMiddleware {
    */
   private getRoutesWithMostTimeouts(limit = 5) {
     const routeTimeouts: Record<string, number> = {};
-    
+
     this.metrics.filter(m => m.timedOut).forEach(m => {
       routeTimeouts[m.route] = (routeTimeouts[m.route] || 0) + 1;
     });
@@ -299,7 +302,7 @@ export class QueryTimeoutMiddleware {
       '500-1000ms': 0,
       '1000-1500ms': 0,
       '1500-2000ms': 0,
-      '>2000ms': 0
+      '>2000ms': 0,
     };
 
     this.metrics.forEach(m => {
@@ -329,7 +332,7 @@ export class QueryTimeoutMiddleware {
         longestQuery = {
           queryId,
           duration,
-          route: query.req.path
+          route: query.req.path,
         };
       }
     }
@@ -340,20 +343,24 @@ export class QueryTimeoutMiddleware {
   /**
    * Check for queries approaching timeout
    */
-  checkApproachingTimeouts(thresholdPercentage = 80): Array<{ queryId: string; duration: number; timeout: number; route: string }> {
+  checkApproachingTimeouts(
+    thresholdPercentage = 80,
+  ): Array<{ queryId: string; duration: number; timeout: number; route: string }> {
     const now = performance.now();
-    const approaching: Array<{ queryId: string; duration: number; timeout: number; route: string }> = [];
+    const approaching: Array<
+      { queryId: string; duration: number; timeout: number; route: string }
+    > = [];
 
     for (const [queryId, query] of this.activeQueries) {
       const duration = now - query.startTime;
       const percentage = (duration / query.timeout) * 100;
-      
+
       if (percentage >= thresholdPercentage) {
         approaching.push({
           queryId,
           duration,
           timeout: query.timeout,
-          route: query.req.path
+          route: query.req.path,
         });
       }
     }
@@ -366,7 +373,7 @@ export class QueryTimeoutMiddleware {
    */
   forceTimeout(queryIds: string[]): number {
     let timeoutCount = 0;
-    
+
     queryIds.forEach(queryId => {
       const activeQuery = this.activeQueries.get(queryId);
       if (activeQuery) {
@@ -391,10 +398,10 @@ export class QueryTimeoutMiddleware {
         timeout: query.timeout,
         route: query.req.path,
         method: query.req.method,
-        percentageUsed: ((performance.now() - query.startTime) / query.timeout) * 100
+        percentageUsed: ((performance.now() - query.startTime) / query.timeout) * 100,
       })),
       approachingTimeouts: this.checkApproachingTimeouts(),
-      stats: this.getTimeoutStats()
+      stats: this.getTimeoutStats(),
     };
   }
 
@@ -409,7 +416,7 @@ export class QueryTimeoutMiddleware {
       status: isHealthy ? 'healthy' : 'degraded',
       timestamp: new Date().toISOString(),
       metrics: stats,
-      recommendations: this.generateHealthRecommendations(stats)
+      recommendations: this.generateHealthRecommendations(stats),
     };
   }
 
@@ -420,7 +427,9 @@ export class QueryTimeoutMiddleware {
     const recommendations: string[] = [];
 
     if (stats.timeoutRate > 5) {
-      recommendations.push('High timeout rate detected - consider increasing timeout values or optimizing queries');
+      recommendations.push(
+        'High timeout rate detected - consider increasing timeout values or optimizing queries',
+      );
     }
 
     if (stats.averageResponseTime > 1500) {
@@ -433,7 +442,9 @@ export class QueryTimeoutMiddleware {
 
     const problematicRoutes = stats.routesWithMostTimeouts;
     if (problematicRoutes.length > 0 && problematicRoutes[0][1] > 10) {
-      recommendations.push(`Route ${problematicRoutes[0][0]} has high timeout count - investigate performance`);
+      recommendations.push(
+        `Route ${problematicRoutes[0][0]} has high timeout count - investigate performance`,
+      );
     }
 
     return recommendations;
@@ -449,7 +460,7 @@ export function createHealthcareTimeoutMiddleware(): QueryTimeoutMiddleware {
     maxTimeout: 3000, // Maximum 3 seconds for complex healthcare queries
     timeoutHeader: 'X-Healthcare-Timeout',
     enableTimeoutExtension: false, // Disable extension for healthcare compliance
-    enableResponseCompression: true
+    enableResponseCompression: true,
   });
 }
 
