@@ -4,9 +4,7 @@
  * RDC 67/2007 and RDC 4/2009 compliance for aesthetic procedures
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-
-export const runtime = 'edge';
+// Edge Runtime replacement - standard fetch API
 export const preferredRegion = 'gru1'; // São Paulo for ANVISA compliance
 
 interface AdverseEventReport {
@@ -63,12 +61,15 @@ interface AnvisaReportResponse {
 }
 
 export default async function handler(
-  request: NextRequest,
-): Promise<NextResponse> {
+  request: Request,
+): Promise<Response> {
   if (request.method !== 'POST') {
-    return NextResponse.json(
-      { error: 'Método não permitido. Use POST.' },
-      { status: 405 },
+    return new Response(
+      JSON.stringify({ error: 'Método não permitido. Use POST.' }),
+      {
+        status: 405,
+        headers: { 'Content-Type': 'application/json' }
+      },
     );
   }
 
@@ -78,12 +79,15 @@ export default async function handler(
     // Validate required fields for ANVISA compliance
     const validationResult = validateAnvisaRequirements(eventData);
     if (!validationResult.valid) {
-      return NextResponse.json(
-        {
+      return new Response(
+        JSON.stringify({
           error: 'Dados incompletos para relatório ANVISA',
           missing_fields: validationResult.missing_fields,
-        },
-        { status: 400 },
+        }),
+        {
+          status: 400,
+          headers: { 'Content-Type': 'application/json' }
+        }
       );
     }
 
@@ -113,9 +117,10 @@ export default async function handler(
       compliance_status: 'compliant',
     };
 
-    return NextResponse.json(response, {
+    return new Response(JSON.stringify(response), {
       status: 200,
       headers: {
+        'Content-Type': 'application/json',
         'Cache-Control': 'no-store, max-age=0',
         'X-Compliance': 'ANVISA-RDC-67-2007',
         'X-Report-Type': 'adverse-event',
@@ -124,12 +129,15 @@ export default async function handler(
   } catch (error) {
     console.error('Erro ao processar evento adverso:', error);
 
-    return NextResponse.json(
-      {
+    return new Response(
+      JSON.stringify({
         error: 'Erro interno do servidor ao processar evento adverso',
         compliance_status: 'non_compliant',
-      },
-      { status: 500 },
+      }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
+      }
     );
   }
 }

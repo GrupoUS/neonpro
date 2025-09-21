@@ -1,5 +1,51 @@
 export * from './aesthetic-data';
-export * from './ai-chat';
+
+// AI Agent types (primary)
+export type {
+  UserQuery,
+  QueryIntent,
+  QueryParameters,
+  DateRange,
+  QueryStatus,
+  ResponseMetadata,
+  AgentResponse,
+  ResponseType,
+  ResponseContent,
+  TableColumn,
+  ChartConfig,
+  ChartDataPoint,
+  ChartAxis,
+  InteractiveAction,
+  SessionStatus,
+  SessionContext,
+  UserRole,
+  PermissionContext,
+  Permission,
+  DataScope,
+  AgentQueryRequest,
+  AgentAction,
+} from './ai-agent';
+
+// AI Agent Chat types (with prefixes to avoid conflicts)
+export type {
+  ChatSession as AgentChatSession,
+  ChatMessage as AgentChatMessage,
+} from './ai-agent';
+
+// AI Chat types (legacy, with prefixes)
+export type {
+  ChatRole,
+  ChatSessionStatus,
+  ChatSession as LegacyChatSession,
+  ChatMessage as LegacyChatMessage,
+  // Direct exports for backward compatibility
+  ChatSession,
+  ChatMessage,
+  AuditOutcome,
+  ConsentStatus,
+  AuditEvent,
+} from './ai-chat';
+
 export * from './ai-provider';
 export * from './api/contracts';
 export * from './enhanced-ai';

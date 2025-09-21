@@ -29,7 +29,7 @@ import {
   Shield,
   Zap,
 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   useAccessibilityTesting,
   useKeyboardNavigationTest,
@@ -64,12 +64,9 @@ export function AccessibilityTester({
     lastTested,
     isTesting,
     healthcareCompliance,
-  };
-
-  const {
     testAccessibility,
     clearResults: _clearResults,
-  } = useAccessibilityTesting(null, {
+  } = useAccessibilityTesting(undefined, {
     enabled,
     runOnMount: autoTest,
     includeHealthcareRules,

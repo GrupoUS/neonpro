@@ -3,7 +3,7 @@
 import { useCalendarContext } from '@/components/event-calendar/calendar-context';
 import { etiquettes } from '@/components/event-calendar/constants';
 import { RiCheckLine } from '@remixicon/react';
-import Link from 'next/link';
+import { Link } from '@tanstack/react-router';
 import * as React from 'react';
 
 import { NavUser } from '@/components/nav-user';

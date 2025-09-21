@@ -80,10 +80,15 @@ const crudIntentSchema = v.object({
     // For create/update, use the entity schema
     const schema = entitySchemas[entity];
     if (!schema) {
-      return v.issue(ctx, {
-        code: 'custom',
-        message: `Unsupported entity: ${entity}`,
-      });
+      return {
+        issues: [
+          {
+            type: 'custom',
+            context: ctx,
+            message: `Unsupported entity: ${entity}`,
+          }
+        ]
+      };
     }
     return schema._parse(data, ctx);
   }),

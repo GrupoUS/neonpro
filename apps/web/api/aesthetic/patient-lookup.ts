@@ -3,9 +3,7 @@
  * Optimized for <100ms cold starts - Brazilian aesthetic clinic operations
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-
-export const runtime = 'edge';
+// Edge Runtime replacement - standard fetch API
 export const preferredRegion = 'gru1'; // São Paulo, Brazil for LGPD compliance
 
 interface AestheticPatientLookup {
@@ -45,7 +43,7 @@ interface AestheticPatientProfile {
   };
 }
 
-export default async function handler(req: NextRequest) {
+export default async function handler(req: Request) {
   // LGPD compliance headers
   const headers = {
     'Content-Type': 'application/json',
@@ -56,8 +54,8 @@ export default async function handler(req: NextRequest) {
   };
 
   if (req.method !== 'POST') {
-    return NextResponse.json(
-      { error: 'Método não permitido', code: 'METHOD_NOT_ALLOWED' },
+    return new Response(
+      JSON.stringify({ error: 'Método não permitido', code: 'METHOD_NOT_ALLOWED' }),
       { status: 405, headers },
     );
   }
@@ -68,11 +66,11 @@ export default async function handler(req: NextRequest) {
 
     // Input validation for aesthetic clinic context
     if (!cpf && !phone && !email && !name) {
-      return NextResponse.json(
-        {
+      return new Response(
+        JSON.stringify({
           error: 'Informe pelo menos um dado para busca: CPF, telefone, email ou nome',
           code: 'MISSING_SEARCH_CRITERIA',
-        },
+        }),
         { status: 400, headers },
       );
     }
@@ -113,8 +111,8 @@ export default async function handler(req: NextRequest) {
 
     const processingTime = Date.now() - startTime;
 
-    return NextResponse.json(
-      {
+    return new Response(
+      JSON.stringify({
         success: true,
         patient: mockPatientProfile,
         performance: {
@@ -122,16 +120,16 @@ export default async function handler(req: NextRequest) {
           region: 'gru1',
           lgpd_compliant: true,
         },
-      },
+      }),
       { status: 200, headers },
     );
   } catch (error) {
-    return NextResponse.json(
-      {
+    return new Response(
+      JSON.stringify({
         error: 'Erro interno do servidor',
         code: 'INTERNAL_ERROR',
         lgpd_compliant: true,
-      },
+      }),
       { status: 500, headers },
     );
   }

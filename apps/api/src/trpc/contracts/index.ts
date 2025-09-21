@@ -3,7 +3,7 @@
  * Healthcare-compliant API contracts for NeonPro Platform
  */
 
-export { agentRouter } from './agent';
+export { agentRouter } from '../routers/agent';
 export { aiRouter } from './ai';
 export { appointmentRouter } from './appointment';
 export { clinicRouter } from './clinic';
@@ -12,7 +12,7 @@ export { professionalRouter } from './professional';
 
 // Main API router combining all contracts
 import { router } from '../trpc';
-import { agentRouter } from './agent';
+import { agentRouter } from '../routers/agent';
 import { aiRouter } from './ai';
 import { appointmentRouter } from './appointment';
 import { clinicRouter } from './clinic';

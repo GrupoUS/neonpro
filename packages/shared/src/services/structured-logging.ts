@@ -1212,6 +1212,28 @@ export class StructuredLogger {
   }
 
   /**
+   * Generate correlation ID
+   */
+  generateCorrelationId(): string {
+    return `corr_${nanoid(16)}`;
+  }
+
+  /**
+   * Set correlation ID for request tracking
+   */
+  setCorrelationId(correlationId: string): void {
+    // Store in a simple property that can be used in log entries
+    (this as any).currentCorrelationId = correlationId;
+  }
+
+  /**
+   * Get current correlation ID
+   */
+  getCorrelationId(): string {
+    return (this as any).currentCorrelationId || this.generateCorrelationId();
+  }
+
+  /**
    * Get logging statistics
    */
   getStatistics(): {

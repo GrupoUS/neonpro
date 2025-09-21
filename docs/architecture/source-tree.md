@@ -20,8 +20,9 @@ NeonPro uses a **Turborepo-based monorepo** with 2 applications and 7 shared pac
 ```
 neonpro/
 ├── 📁 apps/                              # Application Layer (2 apps)
-│   ├── 📁 api/                           # Backend API (tRPC v11 + Prisma + Supabase)
+│   ├── 📁 api/                           # Backend API (Vite + Hono + tRPC v11 + Prisma + Supabase)
 │   │   ├── 📄 package.json               # API dependencies & scripts
+│   │   ├── 📄 vite.config.ts             # Vite build configuration
 │   │   ├── 📄 tsconfig.json              # TypeScript configuration
 │   │   └── 📁 src/                       # API source code
 │   │       ├── 📁 trpc/                  # tRPC infrastructure
@@ -31,6 +32,7 @@ neonpro/
 │   │       │   ├── 📄 router.ts          # Main AppRouter composition
 │   │       │   ├── 📄 index.ts           # Clean exports for client integration
 │   │       │   ├── 📁 routers/           # Domain-specific tRPC routers
+│   │       │   ├── 📁 contracts/         # tRPC contract definitions
 │   │       │   │   ├── 📄 patients.ts    # LGPD-compliant patient operations
 │   │       │   │   ├── 📄 appointments.ts # CFM validation + no-show prediction
 │   │       │   │   └── 📄 ai.ts          # Portuguese healthcare AI support

@@ -17,6 +17,52 @@ export const BaseResponseSchema = z.object({
   requestId: z.string().uuid().optional(),
 });
 
+// Request schemas for professionals
+export const CreateProfessionalRequestSchema = z.object({
+  userId: z.string().uuid(),
+  clinicId: z.string().uuid(),
+
+  // Professional Details
+  fullName: z.string().min(2).max(100),
+  specialization: z.string().min(2).max(100),
+  licenseNumber: z.string().min(5).max(20),
+  licenseType: z.enum(['CRM', 'COREN', 'CRF', 'CFP', 'COFITO', 'CREF']),
+
+  // Professional Status
+  isActive: z.boolean().default(true),
+  canPrescribe: z.boolean().default(false),
+  emergencyContact: z.boolean().default(false),
+
+  // Scheduling
+  workingHours: z.array(
+    z.object({
+      dayOfWeek: z.number().int().min(0).max(6),
+      startTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
+      endTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
+    }),
+  ).optional(),
+});
+
+export const UpdateProfessionalRequestSchema = z.object({
+  fullName: z.string().min(2).max(100).optional(),
+  specialization: z.string().min(2).max(100).optional(),
+  licenseNumber: z.string().min(5).max(20).optional(),
+  licenseType: z.enum(['CRM', 'COREN', 'CRF', 'CFP', 'COFITO', 'CREF']).optional(),
+
+  // Professional Status
+  isActive: z.boolean().optional(),
+  canPrescribe: z.boolean().optional(),
+  emergencyContact: z.boolean().optional(),
+
+  // Scheduling
+  workingHours: z.array(
+    z.object({
+      dayOfWeek: z.number().int().min(0).max(6),
+      startTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
+      endTime: z.string().regex(/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/),
+    }),
+  ).optional(),
+});
 export const PaginationSchema = z.object({
   page: z.number().int().min(1).default(1),
   limit: z.number().int().min(1).max(100).default(20),
@@ -123,6 +169,19 @@ export const ProfessionalContractSchema = z.object({
   // Audit
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
+});
+// Response schemas for professionals
+export const ProfessionalResponseSchema = BaseResponseSchema.extend({
+  data: ProfessionalContractSchema,
+  success: z.literal(true),
+});
+
+export const ProfessionalsListResponseSchema = BaseResponseSchema.extend({
+  data: z.object({
+    professionals: z.array(ProfessionalContractSchema),
+    pagination: PaginationSchema,
+  }),
+  success: z.literal(true),
 });
 
 // =======================

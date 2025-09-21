@@ -265,3 +265,33 @@ export const HealthcareAuditEvents = {
       compliance: { lgpd: true, anvisa: true, cfm: true },
     }),
 };
+
+
+// Comprehensive audit service class that provides a unified interface
+export class ComprehensiveAuditService {
+  /**
+   * Log an activity/event for audit purposes
+   */
+  async logActivity(data: {
+    userId: string;
+    action: string;
+    resource?: string;
+    details?: Record<string, any>;
+    result?: 'success' | 'failure' | 'blocked' | 'alert';
+    severity?: AuditSeverity;
+  }): Promise<void> {
+    await createAuditTrail({
+      eventType: data.action,
+      severity: data.severity || AuditSeverity.INFO,
+      category: 'ai',
+      source: 'ai-service',
+      userId: data.userId,
+      action: data.action,
+      result: data.result || 'success',
+      message: `AI activity: ${data.action}`,
+      resource: data.resource,
+      details: data.details,
+      compliance: { lgpd: true, anvisa: true, cfm: true },
+    });
+  }
+}

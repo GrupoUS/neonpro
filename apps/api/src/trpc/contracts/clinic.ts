@@ -873,13 +873,13 @@ function hasSystemAdminRole(role: string): boolean {
 }
 
 async function createClinicAdminUser(
-  clinicId: string,
-  createdBy: string,
+  _clinicId: string,
+  _createdBy: string,
 ): Promise<void> {
   // Placeholder for clinic admin user creation
 }
 
-async function sendClinicSetupNotification(clinic: any): Promise<void> {
+async function sendClinicSetupNotification(_clinic: any): Promise<void> {
   // Placeholder for clinic setup notification
 }
 
@@ -901,8 +901,8 @@ function getChanges(current: any, input: any): Record<string, any> {
 }
 
 async function validateClinicAccess(
-  userId: string,
-  clinicId: string,
+  _userId: string,
+  _clinicId: string,
 ): Promise<void> {
   // Implementation for clinic access validation
   return Promise.resolve();
@@ -922,7 +922,7 @@ function hasClinicAdminAccess(_userId: string, _clinicId: string): boolean {
 }
 
 async function getUserAccessibleClinics(
-  userId: string,
+  _userId: string,
 ): Promise<Array<{ clinicId: string }>> {
   // Implementation for getting user accessible clinics
   return [];

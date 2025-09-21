@@ -1,10 +1,3 @@
-/**
- * @fileoverview Healthcare UI Performance Testing Suite
- * @author APEX UI/UX Designer Agent
- * @description Specialized performance testing for healthcare applications
- * @compliance Core Web Vitals, Healthcare UX Performance Standards
- */
-
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -108,6 +101,29 @@ interface MemoryInfo {
   jsHeapSizeLimit: number;
 }
 
+// Enhanced PerformanceEntry interfaces for better type safety
+interface LCPEntry extends PerformanceEntry {
+  startTime: number;
+  size: number;
+  element?: Element;
+}
+
+interface FIDEntry extends PerformanceEntry {
+  processingStart: number;
+  startTime: number;
+}
+
+interface CLSEntry extends PerformanceEntry {
+  value: number;
+  hadRecentInput: boolean;
+}
+
+interface INPEntry extends PerformanceEntry {
+  processingStart: number;
+  startTime: number;
+  interactionId?: number;
+}
+
 // Simulation functions for healthcare scenarios
 const simulateEmergencyAlert = async (): Promise<number> => {
   const start = performance.now();
@@ -165,7 +181,8 @@ export const PerformanceTester: React.FC = () => {
   const [memoryInfo, setMemoryInfo] = useState<MemoryInfo | null>(null);
   const [testStartTime, setTestStartTime] = useState<Date | null>(null);
   
-  const observerRef = useRef<PerformanceObserver | null>(null);
+  // Store all observers for proper cleanup
+  const observersRef = useRef<PerformanceObserver[]>([]);
   const metricsRef = useRef<Map<string, PerformanceMetric>>(new Map());
 
   // Initialize performance monitoring
@@ -176,9 +193,15 @@ export const PerformanceTester: React.FC = () => {
     getMemoryInfo();
     
     return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
+      // Properly cleanup ALL observers
+      observersRef.current.forEach(observer => {
+        try {
+          observer.disconnect();
+        } catch (error) {
+          console.warn('Error disconnecting observer:', error);
+        }
+      });
+      observersRef.current = [];
     };
   }, []);
 
@@ -203,66 +226,111 @@ export const PerformanceTester: React.FC = () => {
   }, []);
 
   const setupPerformanceObservers = useCallback(() => {
-    if (!window.PerformanceObserver) return;
+    if (!window.PerformanceObserver) {
+      console.warn('PerformanceObserver not supported in this browser');
+      return;
+    }
+
+    const observers: PerformanceObserver[] = [];
 
     try {
       // LCP Observer
       const lcpObserver = new PerformanceObserver((entryList) => {
-        const entries = entryList.getEntries();
-        const lastEntry = entries[entries.length - 1] as PerformanceEventTiming;
-        updateMetric('LCP', lastEntry.startTime);
+        const entries = entryList.getEntries() as LCPEntry[];
+        const lastEntry = entries[entries.length - 1];
+        if (lastEntry) {
+          updateMetric('LCP', lastEntry.startTime);
+        }
       });
-      lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+      
+      try {
+        lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
+        observers.push(lcpObserver);
+      } catch (e) {
+        console.warn('LCP observation not supported');
+      }
 
       // FID Observer
       const fidObserver = new PerformanceObserver((entryList) => {
         entryList.getEntries().forEach((entry) => {
-          const fid = entry.processingStart - entry.startTime;
-          updateMetric('FID', fid);
+          const fidEntry = entry as FIDEntry;
+          if (fidEntry.processingStart && fidEntry.startTime) {
+            const fid = fidEntry.processingStart - fidEntry.startTime;
+            updateMetric('FID', fid);
+          }
         });
       });
-      fidObserver.observe({ entryTypes: ['first-input'] });
+      
+      try {
+        fidObserver.observe({ entryTypes: ['first-input'] });
+        observers.push(fidObserver);
+      } catch (e) {
+        console.warn('FID observation not supported');
+      }
 
       // CLS Observer
       let clsValue = 0;
       const clsObserver = new PerformanceObserver((entryList) => {
-        entryList.getEntries().forEach((entry: any) => {
-          if (!entry.hadRecentInput) {
-            clsValue += entry.value;
+        entryList.getEntries().forEach((entry) => {
+          const clsEntry = entry as CLSEntry;
+          if (!clsEntry.hadRecentInput && typeof clsEntry.value === 'number') {
+            clsValue += clsEntry.value;
             updateMetric('CLS', clsValue);
           }
         });
       });
-      clsObserver.observe({ entryTypes: ['layout-shift'] });
+      
+      try {
+        clsObserver.observe({ entryTypes: ['layout-shift'] });
+        observers.push(clsObserver);
+      } catch (e) {
+        console.warn('CLS observation not supported');
+      }
 
-      // INP Observer (experimental)
-      if ('IntersectionObserver' in window) {
+      // INP Observer (experimental) - Check for proper support
+      try {
         const inpObserver = new PerformanceObserver((entryList) => {
-          entryList.getEntries().forEach((entry: any) => {
-            if (entry.interactionId) {
-              const inp = entry.processingStart - entry.startTime;
+          entryList.getEntries().forEach((entry) => {
+            const inpEntry = entry as INPEntry;
+            if (inpEntry.interactionId && inpEntry.processingStart && inpEntry.startTime) {
+              const inp = inpEntry.processingStart - inpEntry.startTime;
               updateMetric('INP', inp);
             }
           });
         });
-        try {
-          inpObserver.observe({ entryTypes: ['event'] });
-        } catch (e) {
-          console.warn('INP observation not supported');
-        }
+        
+        // Try to observe interaction events - this may fail in browsers that don't support INP
+        inpObserver.observe({ entryTypes: ['event'] });
+        observers.push(inpObserver);
+      } catch (e) {
+        console.warn('INP observation not supported:', e);
       }
 
-      // Navigation timing
+      // Navigation timing - immediate measurement
       const navEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
       if (navEntries.length > 0) {
         const nav = navEntries[0];
-        updateMetric('TTFB', nav.responseStart - nav.requestStart);
-        updateMetric('TTI', nav.domInteractive - nav.navigationStart);
+        if (nav.responseStart && nav.requestStart) {
+          updateMetric('TTFB', nav.responseStart - nav.requestStart);
+        }
+        if (nav.domInteractive && nav.navigationStart) {
+          updateMetric('TTI', nav.domInteractive - nav.navigationStart);
+        }
       }
 
-      observerRef.current = lcpObserver;
+      // Store all observers for cleanup
+      observersRef.current = observers;
+      
     } catch (error) {
       console.warn('Performance observers setup failed:', error);
+      // Clean up any observers that were created before the error
+      observers.forEach(observer => {
+        try {
+          observer.disconnect();
+        } catch (e) {
+          console.warn('Error disconnecting observer during cleanup:', e);
+        }
+      });
     }
   }, []);
 
@@ -360,7 +428,7 @@ export const PerformanceTester: React.FC = () => {
         });
       }
 
-      // Small delay between scenarios
+      // Small delay between scenarios to prevent resource contention
       await new Promise(resolve => setTimeout(resolve, 100));
     }
 
@@ -521,36 +589,37 @@ export const PerformanceTester: React.FC = () => {
   );
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6 p-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold flex items-center gap-2">
+          <h1 className="text-3xl font-bold flex items-center gap-3">
             <Heart className="w-8 h-8 text-red-500" />
             Healthcare Performance Tester
           </h1>
-          <p className="text-muted-foreground mt-1">
-            Specialized performance testing for clinical environments
+          <p className="text-muted-foreground mt-2">
+            Critical performance validation for healthcare applications with real-time monitoring
           </p>
         </div>
-        <Button 
-          onClick={runCriticalScenarios} 
-          disabled={isRunning}
-          className="flex items-center gap-2"
-        >
-          {isRunning ? <Timer className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
-          {isRunning ? 'Testing...' : 'Run Critical Scenarios'}
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={runCriticalScenarios} 
+            disabled={isRunning}
+            className="flex items-center gap-2"
+          >
+            {isRunning ? (
+              <>
+                <Timer className="w-4 h-4 animate-pulse" />
+                Running Tests...
+              </>
+            ) : (
+              <>
+                <Zap className="w-4 h-4" />
+                Run Critical Tests
+              </>
+            )}
+          </Button>
+        </div>
       </div>
-
-      {testStartTime && (
-        <Alert>
-          <Shield className="w-4 h-4" />
-          <AlertDescription>
-            Last test run: {testStartTime.toLocaleString()} | 
-            Testing {CRITICAL_SCENARIOS.length} critical healthcare scenarios
-          </AlertDescription>
-        </Alert>
-      )}
 
       {isRunning && (
         <Card>
@@ -560,36 +629,58 @@ export const PerformanceTester: React.FC = () => {
               <span className="text-sm font-medium">{progress.toFixed(0)}%</span>
             </div>
             <p className="text-sm text-muted-foreground mt-2">
-              Running healthcare-specific performance scenarios...
+              Running healthcare performance scenarios...
             </p>
           </CardContent>
         </Card>
       )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Gauge className="w-5 h-5" />
-            Core Web Vitals & Healthcare Metrics
-          </CardTitle>
-          <CardDescription>
-            Real-time performance monitoring for healthcare applications
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {renderMetricsGrid()}
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Gauge className="w-5 h-5" />
+              Core Web Vitals & Healthcare Metrics
+            </CardTitle>
+            <CardDescription>
+              Real-time performance monitoring with healthcare-specific thresholds
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {renderMetricsGrid()}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="w-5 h-5" />
+              System Information
+            </CardTitle>
+            <CardDescription>
+              Current system and network conditions
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {renderSystemInfo()}
+          </CardContent>
+        </Card>
+      </div>
 
       {scenarioResults.length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Activity className="w-5 h-5" />
+              <TrendingUp className="w-5 h-5" />
               Critical Scenario Results
             </CardTitle>
             <CardDescription>
-              Performance testing of healthcare-critical interactions
+              Healthcare-specific performance scenario validation
+              {testStartTime && (
+                <span className="block mt-1 text-xs">
+                  Test run: {testStartTime.toLocaleString()}
+                </span>
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -598,7 +689,15 @@ export const PerformanceTester: React.FC = () => {
         </Card>
       )}
 
-      {renderSystemInfo()}
+      <Alert>
+        <AlertTriangle className="h-4 w-4" />
+        <AlertDescription>
+          <strong>Healthcare Performance Standards:</strong> This tester validates critical performance 
+          metrics for healthcare applications. Emergency scenarios should complete within 100ms, 
+          patient data loading within 1.5 seconds, and all user interactions should feel responsive 
+          for optimal patient care workflows.
+        </AlertDescription>
+      </Alert>
     </div>
   );
 };

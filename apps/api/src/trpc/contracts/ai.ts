@@ -22,7 +22,8 @@ import {
   validatePromptSecurity,
 } from '../../services/ai-security-service';
 import { DataCategory } from '../../services/lgpd-audit-service';
-import { lgpdAuditService, lgpdConsentService } from '../../services/lgpd-consent-service';
+import { lgpdConsentService } from '../../services/lgpd-consent-service';
+import { lgpdAuditService } from '../../services/lgpd-audit-service';
 import { ConsentPurpose } from '../../services/lgpd-consent-service';
 import { lgpdDataSubjectService } from '../../services/lgpd-data-subject-service';
 import { protectedProcedure, router } from '../trpc';

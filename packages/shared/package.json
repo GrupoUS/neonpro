@@ -4,31 +4,31 @@
   "private": true,
   "type": "module",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
     "./services/*": {
-      "import": "./dist/services/*.mjs",
+      "import": "./dist/services/*.js",
       "require": "./dist/services/*.js",
       "types": "./dist/services/*.d.ts"
     },
     "./services/structured-logging": {
-      "import": "./dist/services/structured-logging.mjs",
+      "import": "./dist/services/structured-logging.js",
       "require": "./dist/services/structured-logging.js",
       "types": "./dist/services/structured-logging.d.ts"
     },
     "./errors/*": {
-      "import": "./dist/errors/*.mjs",
+      "import": "./dist/errors/*.js",
       "require": "./dist/errors/*.js",
       "types": "./dist/errors/*.d.ts"
     },
     "./errors/healthcare-errors": {
-      "import": "./dist/errors/healthcare-errors.mjs",
+      "import": "./dist/errors/healthcare-errors.js",
       "require": "./dist/errors/healthcare-errors.js",
       "types": "./dist/errors/healthcare-errors.d.ts"
     }
@@ -44,8 +44,8 @@
     "prepare": "echo 'prepare script disabled for workspace install'"
   },
   "dependencies": {
-    "@neonpro/types": "0.1.0",
-    "@neonpro/utils": "0.1.0",
+    "@neonpro/types": "workspace:*",
+    "@neonpro/utils": "workspace:*",
     "@opentelemetry/api": "^1.9.0",
     "@opentelemetry/sdk-node": "^0.57.2",
     "@opentelemetry/resources": "^1.29.0",

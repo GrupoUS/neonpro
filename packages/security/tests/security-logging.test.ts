@@ -480,8 +480,8 @@ describe('Security Logging - Vulnerability Prevention', () => {
       expect(hasCertData).toBe(false);
     });
   });
-
-  describe 'Network Security Logging', () => {
+  
+  describe('Network Security Logging', () => {
     it('should NOT log network traffic details or packet contents', () => {
       const networkData = {
         sourceIp: '10.0.1.100',

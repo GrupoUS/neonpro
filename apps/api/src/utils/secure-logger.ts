@@ -287,6 +287,9 @@ export const logger = createLogger({
   auditTrail: true,
 });
 
+// Export with alternative name for compatibility
+export const secureLogger = logger;
+
 // Export types for TypeScript support
 export type { LogContext, LoggerConfig };
 export { SecureLogger };
