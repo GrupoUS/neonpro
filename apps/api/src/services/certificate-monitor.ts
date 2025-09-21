@@ -168,13 +168,13 @@ export class CertificateMonitor {
         `openssl x509 -in "${this.config.certificatePath}" -text -noout`
       )
 
-      return this.parseCertificateOutput(stdout)
+      return await this.parseCertificateOutput(stdout)
     } catch (error) {
       throw new Error(`Failed to get certificate info: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
-  private parseCertificateOutput(opensslOutput: string): CertificateInfo {
+  private async parseCertificateOutput(opensslOutput: string): Promise<CertificateInfo> {
     const lines = opensslOutput.split('\n')
     
     const certInfo: Partial<CertificateInfo> = {}

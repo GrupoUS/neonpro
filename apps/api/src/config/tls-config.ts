@@ -129,7 +129,7 @@ export class TLSConfigManager {
     }
 
     try {
-      const cert = this.config.cert.toString()
+      const _cert = this.config.cert.toString()
       // This is a simplified certificate info extraction
       // In production, you might want to use a proper certificate parser
       return {
@@ -140,7 +140,7 @@ export class TLSConfigManager {
         validTo: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
         fingerprint: 'placeholder-fingerprint'
       }
-    } catch (error) {
+    } catch (_error) {
       return {}
     }
   }

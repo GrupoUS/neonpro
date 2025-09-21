@@ -438,7 +438,7 @@ export class HealthcareProfessionalAuthorizationService {
     entityType?: string,
     context?: { patientId?: string; clinicId?: string; emergency?: boolean },
   ): ProfessionalAuthorizationResult {
-    const { permissions, restrictions, role } = authorization;
+    const { permissions, restrictions, role: _role } = authorization;
 
     // Emergency access override
     if (context?.emergency && permissions.includes('emergency_access')) {

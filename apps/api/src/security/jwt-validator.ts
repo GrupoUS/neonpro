@@ -603,7 +603,7 @@ export class JWTSecurityValidator {
   /**
    * Add token to blacklist
    */
-  addToBlacklist(jti?: string, sub?: string, reason: string, ttlMs: number = 3600000): void {
+  addToBlacklist(reason: string, jti?: string, sub?: string, ttlMs: number = 3600000): void {
     const expiresAt = Date.now() + ttlMs;
     const entry: BlacklistEntry = {
       jti,
