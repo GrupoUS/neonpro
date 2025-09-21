@@ -209,7 +209,7 @@ export function useExportAnalytics() {
     mutationFn: (request: AnalyticsExportRequest) =>
       serviceAnalyticsService.exportAnalytics(request),
 
-    onSuccess: (blob, variables) => {
+    onSuccess: (blob, _variables) => {
       // Create download link
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');

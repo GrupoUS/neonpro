@@ -120,7 +120,7 @@ export async function runAccessibilityScan(
 
     // Process and categorize results for healthcare context
     return processHealthcareResults(results);
-  } catch (error) {
+  } catch (_error) {
     console.error('Accessibility scan failed:', error);
     throw new Error(`Accessibility scan failed: ${error}`);
   }
@@ -319,7 +319,7 @@ export function useAccessibilityTesting() {
       const generatedReport = generateAccessibilityReport(results);
       setReport(generatedReport);
       return results;
-    } catch (error) {
+    } catch (_error) {
       console.error('Accessibility scan failed:', error);
       throw error;
     } finally {

@@ -199,10 +199,12 @@ export function useTableNavigation() {
           event.preventDefault();
           if (currentRowIndex > 0) {
             const prevRow = allRows[currentRowIndex - 1];
-            const targetCell = prevRow.querySelectorAll("td, th")[
-              currentCellIndex
-            ] as HTMLElement;
-            targetCell?.focus();
+            if (prevRow) {
+              const targetCell = prevRow.querySelectorAll("td, th")[
+                currentCellIndex
+              ] as HTMLElement;
+              targetCell?.focus();
+            }
           }
           break;
 
@@ -210,10 +212,12 @@ export function useTableNavigation() {
           event.preventDefault();
           if (currentRowIndex < allRows.length - 1) {
             const nextRow = allRows[currentRowIndex + 1];
-            const targetCell = nextRow.querySelectorAll("td, th")[
-              currentCellIndex
-            ] as HTMLElement;
-            targetCell?.focus();
+            if (nextRow) {
+              const targetCell = nextRow.querySelectorAll("td, th")[
+                currentCellIndex
+              ] as HTMLElement;
+              targetCell?.focus();
+            }
           }
           break;
 
@@ -284,9 +288,9 @@ export function validateColorContrast(
     const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
     return result
       ? {
-          r: parseInt(result[1], 16),
-          g: parseInt(result[2], 16),
-          b: parseInt(result[3], 16),
+          r: parseInt(result[1] ?? '0', 16),
+          g: parseInt(result[2] ?? '0', 16),
+          b: parseInt(result[3] ?? '0', 16),
         }
       : { r: 0, g: 0, b: 0 };
   }
@@ -296,7 +300,7 @@ export function validateColorContrast(
       c = c / 255;
       return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
     });
-    return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
+    return 0.2126 * (rs ?? 0) + 0.7152 * (gs ?? 0) + 0.0722 * (bs ?? 0);
   }
 
   const fg = hexToRgb(foregroundColor);

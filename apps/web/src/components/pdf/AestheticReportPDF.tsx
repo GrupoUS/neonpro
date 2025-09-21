@@ -166,7 +166,7 @@ export const AestheticReportPDF: React.FC<AestheticReportPDFProps> = ({
           <Text style={[styles.label, { marginTop: 10, marginBottom: 8 }]}>
             Preocupações Primárias:
           </Text>
-          {skinAnalysis.primaryConcerns.map((concern, index) => (
+          {skinAnalysis.primaryConcerns.map((concern, _index) => (
             <Text
               key={index}
               style={[styles.value, { marginLeft: 20, marginBottom: 4 }]}

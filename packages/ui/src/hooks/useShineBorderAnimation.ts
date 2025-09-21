@@ -167,7 +167,7 @@ export function useShineBorderAnimation(
       const nextIndex = hoverClockwise
         ? (currentIndex - 1 + directions.length) % directions.length
         : (currentIndex + 1) % directions.length;
-      return directions[nextIndex];
+      return directions[nextIndex] ?? "TOP";
     },
     [hoverClockwise],
   );

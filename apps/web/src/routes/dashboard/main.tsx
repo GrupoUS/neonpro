@@ -510,7 +510,7 @@ function DashboardMain() {
             </span>
           </div>
           <div className='space-y-1'>
-            {realTimeUpdates.slice(0, 2).map((update, index) => (
+            {realTimeUpdates.slice(0, 2).map((update, _index) => (
               <div
                 key={index}
                 className='text-xs sm:text-sm text-green-700 flex items-center gap-1'
@@ -554,7 +554,7 @@ function DashboardMain() {
               Métricas principais
             </h2>
             <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
-              {metricsCards.map((metric, index) => (
+              {metricsCards.map((metric, _index) => (
                 <Card
                   key={metric.title}
                   className='transition-all hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'

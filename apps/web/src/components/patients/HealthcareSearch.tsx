@@ -304,7 +304,7 @@ const SearchResultCard = ({
                 Correspondências encontradas:
               </p>
               <div className='flex flex-wrap gap-1 mt-1'>
-                {patient.matchReasons.map((reason, index) => (
+                {patient.matchReasons.map((reason, _index) => (
                   <Badge key={index} variant='outline' className='text-xs'>
                     {reason}
                   </Badge>

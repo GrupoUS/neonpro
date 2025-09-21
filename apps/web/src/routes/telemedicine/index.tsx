@@ -204,7 +204,7 @@ function TelemedicineDashboard() {
           complianceMode: 'strict',
         },
       });
-    } catch (error) {
+    } catch (_error) {
       // Error handled by onError callback
     }
   };
@@ -213,7 +213,7 @@ function TelemedicineDashboard() {
   const handleJoinSession = async (_sessionId: any) => {
     try {
       await joinSessionMutation.mutateAsync({ sessionId });
-    } catch (error) {
+    } catch (_error) {
       // Error handled by onError callback
     }
   };
@@ -225,7 +225,7 @@ function TelemedicineDashboard() {
   ) => {
     try {
       await endSessionMutation.mutateAsync({ sessionId, reason });
-    } catch (error) {
+    } catch (_error) {
       // Error handled by onError callback
     }
   };
@@ -735,7 +735,7 @@ function TelemedicineDashboard() {
               <CardContent>
                 <ScrollArea className='h-48'>
                   <div className='space-y-3'>
-                    {activeSessions?.slice(0, 5).map((session, index) => (
+                    {activeSessions?.slice(0, 5).map((session, _index) => (
                       <div
                         key={session.id}
                         className='flex items-center space-x-3 text-sm'

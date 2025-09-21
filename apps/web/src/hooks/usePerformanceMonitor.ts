@@ -294,7 +294,7 @@ export function usePerformanceMonitor() {
         } else {
           return finish(result);
         }
-      } catch (error) {
+      } catch (_error) {
         finish();
         throw error;
       }

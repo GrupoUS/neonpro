@@ -57,7 +57,7 @@ export async function testSupabaseConnection() {
       basicConnectionWorking: true,
       patientsAccessWorking: true,
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('❌ Connection test failed:', error);
     return {
       success: false,

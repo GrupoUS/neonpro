@@ -286,7 +286,7 @@ export function useAddPatientAllergy() {
       >;
     }) => patientHistoryService.addPatientAllergy(patientId, allergy),
 
-    onSuccess: (_data, variables) => {
+    onSuccess: (_data, _variables) => {
       void _data;
       // Invalidate allergies for this patient
       queryClient.invalidateQueries({
@@ -337,7 +337,7 @@ export function useAddPatientCondition() {
       >;
     }) => patientHistoryService.addPatientCondition(patientId, condition),
 
-    onSuccess: (_data, variables) => {
+    onSuccess: (_data, _variables) => {
       void _data;
       // Invalidate conditions for this patient
       queryClient.invalidateQueries({

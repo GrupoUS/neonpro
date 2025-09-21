@@ -54,7 +54,7 @@ export function useKeyboardNavigation<T>(
     orientation?: 'horizontal' | 'vertical' | 'grid';
     wrap?: boolean;
     columns?: number;
-    onSelect?: (item: T, index: number) => void;
+    onSelect?: (item: T, _index: number) => void;
   } = {},
 ) {
   const {

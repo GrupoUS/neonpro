@@ -167,7 +167,7 @@ export function useAddTemplateItems() {
       templateId: string;
       items: CreateServiceTemplateItemRequest[];
     }) => serviceTemplatesService.addTemplateItems(templateId, items),
-    onSuccess: (_, variables) => {
+    onSuccess: (_, _variables) => {
       // Invalidate relevant queries
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
       queryClient.invalidateQueries({

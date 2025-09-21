@@ -448,7 +448,7 @@ export const MobileResponsiveValidator: React.FC = () => {
                   <AlertCircle className="w-4 h-4" />
                   <AlertDescription>
                     <ul className="list-disc list-inside">
-                      {result.issues.map((issue, index) => (
+                      {result.issues.map((issue, _index) => (
                         <li key={index}>{issue}</li>
                       ))}
                     </ul>
@@ -531,7 +531,7 @@ export const MobileResponsiveValidator: React.FC = () => {
               <AlertCircle className="w-4 h-4" />
               <AlertDescription>
                 <ul className="list-disc list-inside">
-                  {accessibilityResults.issues.map((issue, index) => (
+                  {accessibilityResults.issues.map((issue, _index) => (
                     <li key={index}>{issue}</li>
                   ))}
                 </ul>
@@ -591,7 +591,7 @@ export const MobileResponsiveValidator: React.FC = () => {
               <AlertCircle className="w-4 h-4" />
               <AlertDescription>
                 <ul className="list-disc list-inside">
-                  {healthcareResults.issues.map((issue, index) => (
+                  {healthcareResults.issues.map((issue, _index) => (
                     <li key={index}>{issue}</li>
                   ))}
                 </ul>

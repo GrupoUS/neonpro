@@ -548,7 +548,7 @@ export function SessionConsent({
 
               <TabsContent value='history' className='space-y-4'>
                 <ScrollArea className='h-96'>
-                  {auditTrail.map((entry, index) => (
+                  {auditTrail.map((entry, _index) => (
                     <div
                       key={index}
                       className='flex justify-between text-sm py-2 border-b'

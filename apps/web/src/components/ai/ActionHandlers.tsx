@@ -485,7 +485,7 @@ export const ActionHandlers: React.FC<ActionHandlersProps> = ({
           try {
             const clientData = await aiAgentService.getClientDetails(action.payload.clientId);
             setSelectedClient(clientData);
-          } catch (error) {
+          } catch (_error) {
             console.error('Failed to fetch client details:', error);
           }
         } else if (action.payload?.client) {

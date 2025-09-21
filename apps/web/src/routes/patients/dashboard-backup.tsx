@@ -471,7 +471,7 @@ function PatientDashboard() {
           Estatísticas do dashboard
         </h2>
         <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4'>
-          {statsCards.map((stat, index) => (
+          {statsCards.map((stat, _index) => (
             <Card
               key={stat.title}
               className='transition-shadow hover:shadow-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2'

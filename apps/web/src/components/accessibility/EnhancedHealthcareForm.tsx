@@ -271,7 +271,7 @@ export function EnhancedHealthcareForm({
         setSubmitSuccess(true);
         announceFormSuccess('Formulário de saúde enviado com sucesso');
         announceLive('Formulário de saúde enviado com sucesso!', 'polite');
-      } catch (error) {
+      } catch (_error) {
         const errorMessage = error instanceof Error
           ? error.message
           : 'Erro ao enviar formulário de saúde';

@@ -56,7 +56,7 @@ if ((import.meta as any).env?.DEV) {
 clientCSPManager;
 
 // Healthcare SRI-enabled resource loading utility
-function loadResourceWithSRI(
+function _loadResourceWithSRI(
   url: string,
   type: 'script' | 'style',
   integrity?: string,

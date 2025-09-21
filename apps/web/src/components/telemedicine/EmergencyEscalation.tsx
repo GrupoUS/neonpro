@@ -725,7 +725,7 @@ export function EmergencyEscalation({
                           Indicadores:
                         </div>
                         <ul className='text-sm space-y-1'>
-                          {severity.indicators.map((indicator, index) => (
+                          {severity.indicators.map((indicator, _index) => (
                             <li key={index}>• {indicator}</li>
                           ))}
                         </ul>
@@ -848,7 +848,7 @@ export function EmergencyEscalation({
                     <CardContent>
                       <ScrollArea className='h-[200px]'>
                         <div className='space-y-2'>
-                          {timeline.map((event, index) => (
+                          {timeline.map((event, _index) => (
                             <div
                               key={index}
                               className='flex items-start space-x-2 text-sm'

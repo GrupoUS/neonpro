@@ -284,7 +284,7 @@ describe('TreatmentSuggestions Component', () => {
       );
 
       const suggestionItems = screen.getAllByRole('listitem');
-      suggestionItems.forEach((item, index) => {
+      suggestionItems.forEach((item, _index) => {
         expect(item).toHaveAttribute('aria-setsize', '2');
         expect(item).toHaveAttribute('aria-posinset', (index + 1).toString());
       });

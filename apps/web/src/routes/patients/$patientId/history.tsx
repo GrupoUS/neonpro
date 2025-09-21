@@ -438,7 +438,7 @@ function PatientHistoryPage() {
         {filteredHistory.length > 0
           ? (
             <div className='space-y-4'>
-              {filteredHistory.map((item, index) => (
+              {filteredHistory.map((item, _index) => (
                 <HistoryItemCard
                   key={item.id}
                   item={item}

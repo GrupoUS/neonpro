@@ -813,7 +813,7 @@ function AIInsightsPage() {
 
           {/* Stats skeleton */}
           <div className='grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5'>
-            {Array.from({ length: 5 }).map((_, index) => <Skeleton key={index} className='h-32' />)}
+            {Array.from({ length: 5 }).map((_, _index) => <Skeleton key={index} className='h-32' />)}
           </div>
 
           {/* Content skeleton */}
@@ -1125,7 +1125,7 @@ function AIInsightsPage() {
                       Recomendações:
                     </div>
                     <ul className='text-xs text-gray-600 space-y-1'>
-                      {insight.recommendations.slice(0, 2).map((rec, index) => (
+                      {insight.recommendations.slice(0, 2).map((rec, _index) => (
                         <li key={index} className='flex items-start gap-1'>
                           <span className='text-green-600 mt-1'>•</span>
                           <span>{rec}</span>
@@ -1343,7 +1343,7 @@ function AIInsightsPage() {
                 <CardContent className='space-y-3'>
                   {populationMetrics.demographics.locations
                     .slice(0, 5)
-                    .map((location, index) => (
+                    .map((location, _index) => (
                       <div
                         key={index}
                         className='flex justify-between items-center text-sm'
@@ -1487,7 +1487,7 @@ function AIInsightsPage() {
                       Fatores de Risco:
                     </div>
                     <div className='space-y-2'>
-                      {noShowAnalysis.factors.map((factor, index) => (
+                      {noShowAnalysis.factors.map((factor, _index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between text-sm'
@@ -1518,7 +1518,7 @@ function AIInsightsPage() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className='space-y-3'>
-                  {noShowAnalysis.highRiskPatients.map((patient, index) => (
+                  {noShowAnalysis.highRiskPatients.map((patient, _index) => (
                     <div
                       key={index}
                       className='flex items-center justify-between p-2 border rounded'
@@ -1569,7 +1569,7 @@ function AIInsightsPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {treatmentEffectiveness.map((treatment, index) => (
+                        {treatmentEffectiveness.map((treatment, _index) => (
                           <tr key={index} className='border-b'>
                             <td className='p-2 font-medium'>
                               {treatment.treatmentType}

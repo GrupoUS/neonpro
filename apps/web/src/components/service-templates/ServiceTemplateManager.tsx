@@ -107,7 +107,7 @@ export function ServiceTemplateManager({
     ) {
       try {
         await deleteTemplate.mutateAsync(template.id);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error deleting template:', error);
       }
     }
@@ -119,7 +119,7 @@ export function ServiceTemplateManager({
         id: template.id,
         isFeatured: template.is_featured,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error toggling featured:', error);
     }
   };
@@ -130,7 +130,7 @@ export function ServiceTemplateManager({
         id: template.id,
         isActive: template.is_active,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error toggling active:', error);
     }
   };
@@ -143,7 +143,7 @@ export function ServiceTemplateManager({
         new_name: newName,
         clinic_id: clinicId,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error duplicating template:', error);
     }
   };

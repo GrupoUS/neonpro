@@ -248,7 +248,7 @@ export function EventSearchBar({
           {!isSearching && searchSuggestions.length > 0 && searchResults.length === 0 && (
             <div className='p-2'>
               <p className='text-xs font-medium text-muted-foreground px-2 py-1'>Suggestions</p>
-              {searchSuggestions.map((suggestion, index) => (
+              {searchSuggestions.map((suggestion, _index) => (
                 <button
                   key={index}
                   className={cn(
@@ -279,7 +279,7 @@ export function EventSearchBar({
               </div>
 
               <div className='max-h-64 overflow-y-auto'>
-                {searchResults.map((event, index) => {
+                {searchResults.map((event, _index) => {
                   const suggestionIndex = searchSuggestions.length + index;
                   return (
                     <button

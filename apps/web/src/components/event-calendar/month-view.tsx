@@ -150,7 +150,7 @@ export function MonthView({
                       ref={isReferenceCell ? contentRef : null}
                       className='min-h-[calc((var(--event-height)+var(--event-gap))*2)] sm:min-h-[calc((var(--event-height)+var(--event-gap))*3)] lg:min-h-[calc((var(--event-height)+var(--event-gap))*4)]'
                     >
-                      {sortEvents(allDayEvents).map((event, index) => {
+                      {sortEvents(allDayEvents).map((event, _index) => {
                         const eventStart = new Date(event.start);
                         const eventEnd = new Date(event.end);
                         const isFirstDay = isSameDay(day, eventStart);
