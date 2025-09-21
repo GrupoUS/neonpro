@@ -13,7 +13,6 @@ import {
   XCircle,
   Zap,
 } from 'lucide-react';
-import React from 'react';
 import { Alert } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';

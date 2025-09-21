@@ -35,7 +35,7 @@ function TestAuth() {
         setStatus('success');
       }
     } catch (error) {
-      setResult(`Unexpected error: ${err}`);
+      setResult(`Unexpected error: ${error}`);
       setStatus('error');
     } finally {
       setIsLoading(false);
@@ -60,7 +60,7 @@ function TestAuth() {
         setStatus('success');
       }
     } catch (error) {
-      setResult(`Connection error: ${err}`);
+      setResult(`Connection error: ${error}`);
       setStatus('error');
     } finally {
       setIsLoading(false);

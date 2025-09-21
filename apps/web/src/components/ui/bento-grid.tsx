@@ -2,8 +2,14 @@
 
 import { cn } from '@neonpro/ui';
 import { Card } from '@neonpro/ui';
-import { motion, useReducedMotion } from 'framer-motion';
-import React from 'react';
+import { lazy, Suspense } from 'react';
+import { LibraryLoading } from '@/lib/utils';
+
+// Lazy load framer-motion for better bundle splitting
+const FramerMotion = lazy(() => import('framer-motion'));
+
+// Import types from lazy-loaded module
+type MotionProps = any;
 
 // Enhanced interfaces for Kokonut UI integration
 interface BentoGridProps {
@@ -51,42 +57,21 @@ export function BentoGrid({
   useKokonutUI = NEONPRO_FEATURE_BENTO_KOKONUT,
   density = 'comfortable',
 }: BentoGridProps) {
-  const shouldReduceMotion = useReducedMotion();
-
   const densityStyles = {
     comfortable: 'gap-6',
     compact: 'gap-4',
   };
 
-  const gridAnimation = {
-    initial: { opacity: 0 },
-    animate: {
-      opacity: 1,
-      transition: {
-        staggerChildren: shouldReduceMotion ? 0 : 0.1,
-        delayChildren: shouldReduceMotion ? 0 : 0.05,
-      },
-    },
-  };
-
-  if (useKokonutUI && !shouldReduceMotion) {
+  if (useKokonutUI) {
     return (
-      <motion.div
-        className={cn(
-          'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto',
-          densityStyles[density],
-          // Motion-safe animations
-          'motion-reduce:transition-none',
-          className,
-        )}
-        variants={gridAnimation}
-        initial='initial'
-        animate='animate'
-        role='grid'
-        aria-label='NeonPro feature showcase grid'
-      >
-        {children}
-      </motion.div>
+      <Suspense fallback={<LibraryLoading message="Carregando grade..." />}>
+        <BentoGridMotion
+          className={className}
+          children={children}
+          density={density}
+          densityStyles={densityStyles}
+        />
+      </Suspense>
     );
   }
 
@@ -103,6 +88,53 @@ export function BentoGrid({
     >
       {children}
     </div>
+  );
+}
+
+// Motion-enabled version of BentoGrid
+function BentoGridMotion({
+  className,
+  children,
+  density,
+  densityStyles,
+}: {
+  className?: string;
+  children: React.ReactNode;
+  density: 'comfortable' | 'compact';
+  densityStyles: Record<string, string>;
+}) {
+  const { motion, useReducedMotion } = FramerMotion as any;
+  
+  const shouldReduceMotion = useReducedMotion();
+
+  const gridAnimation = {
+    initial: { opacity: 0 },
+    animate: {
+      opacity: 1,
+      transition: {
+        staggerChildren: shouldReduceMotion ? 0 : 0.1,
+        delayChildren: shouldReduceMotion ? 0 : 0.05,
+      },
+    },
+  };
+
+  return (
+    <motion.div
+      className={cn(
+        'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl mx-auto',
+        densityStyles[density],
+        // Motion-safe animations
+        'motion-reduce:transition-none',
+        className,
+      )}
+      variants={gridAnimation}
+      initial='initial'
+      animate='animate'
+      role='grid'
+      aria-label='NeonPro feature showcase grid'
+    >
+      {children}
+    </motion.div>
   );
 }
 
@@ -125,8 +157,6 @@ export function BentoGridItem({
   emphasis = 'default',
   kokonutContent,
 }: BentoGridItemProps) {
-  const shouldReduceMotion = useReducedMotion();
-  const enableMotion = motionProp !== 'off' && !shouldReduceMotion;
   const variantStyles = {
     default: 'bg-card hover:bg-card/80 border-border',
     primary:
@@ -156,6 +186,74 @@ export function BentoGridItem({
     brand: 'ring-1 ring-[#AC9469]/30',
   } as const;
 
+  return (
+    <Suspense fallback={<div className={cn(
+      'group relative overflow-hidden cursor-pointer',
+      'transition-all duration-300 ease-in-out',
+      elevationStyles[elevation],
+      emphasisStyles[emphasis],
+      'focus-within:ring-2 focus-within:ring-[#AC9469]/50 focus-within:ring-offset-2',
+      variantStyles[variant],
+      sizeStyles[size],
+      className,
+    )} aria-label={title ? `${title} card` : 'Bento grid item'}>
+      <div className="flex items-center justify-center h-full">
+        <LibraryLoading message="Carregando item..." />
+      </div>
+    </div>}>
+      <BentoGridItemMotion
+        title={title}
+        description={description}
+        header={header}
+        icon={icon}
+        children={children}
+        variant={variant}
+        size={size}
+        enhanced={enhanced}
+        motion={motionProp}
+        elevation={elevation}
+        emphasis={emphasis}
+        kokonutContent={kokonutContent}
+        variantStyles={variantStyles}
+        sizeStyles={sizeStyles}
+        elevationStyles={elevationStyles}
+        emphasisStyles={emphasisStyles}
+        className={className}
+      />
+    </Suspense>
+  );
+}
+
+// Motion-enabled version of BentoGridItem
+function BentoGridItemMotion({
+  title,
+  description,
+  header,
+  icon,
+  children,
+  variant,
+  size,
+  enhanced,
+  motion: motionProp,
+  elevation,
+  emphasis,
+  kokonutContent,
+  variantStyles,
+  sizeStyles,
+  elevationStyles,
+  emphasisStyles,
+  className,
+}: BentoGridItemProps & {
+  variantStyles: Record<string, string>;
+  sizeStyles: Record<string, string>;
+  elevationStyles: Record<string, string>;
+  emphasisStyles: Record<string, string>;
+}) {
+  const { motion, useReducedMotion } = FramerMotion as any;
+  
+  const shouldReduceMotion = useReducedMotion();
+  const enableMotion = motionProp !== 'off' && !shouldReduceMotion;
+
   const MotionWrapper = enableMotion && enhanced ? motion.div : 'div';
   const cardProps = enableMotion && enhanced
     ? {
@@ -165,7 +263,7 @@ export function BentoGridItem({
     : {};
 
   return (
-    <MotionWrapper {...(cardProps as any)}>
+    <MotionWrapper {...(cardProps as MotionProps)}>
       <Card
         className={cn(
           // Base styles

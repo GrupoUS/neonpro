@@ -1,0 +1,32 @@
+{
+  "name": "@neonpro/vitest-base",
+  "version": "0.1.0",
+  "description": "Standardized Vitest configuration for NEONPRO TDD compliance",
+  "main": "index.ts",
+  "types": "index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "vitest": "^3.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "vitest",
+    "testing",
+    "tdd",
+    "configuration",
+    "neonpro"
+  ],
+  "author": "NEONPRO Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

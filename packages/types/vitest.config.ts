@@ -2,12 +2,28 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    // Exit gracefully if no test files are found
-    passWithNoTests: true,
-    // Don't include any plugins that might interfere
+    // TDD Compliance: Require tests to exist (no empty suites allowed)
+    passWithNoTests: false,
     globals: false,
     environment: "node",
+    coverage: {
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'dist/',
+        '**/*.d.ts',
+        '**/*.config.ts',
+        '**/types/**',
+      ],
+      thresholds: {
+        global: {
+          branches: 80,
+          functions: 80,
+          lines: 80,
+          statements: 80,
+        },
+      },
+    },
   },
-  // Explicitly exclude any vite plugins that might be inherited
   plugins: [],
 });

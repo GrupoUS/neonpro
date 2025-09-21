@@ -1,0 +1,46 @@
+{
+  "name": "@neonpro/governance",
+  "version": "1.0.0",
+  "description": "Healthcare governance and compliance services for NeonPro",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --ext .ts,.tsx",
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.22.0",
+    "@neonpro/domain": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0",
+    "@vitest/coverage-v8": "^1.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "keywords": [
+    "governance",
+    "compliance",
+    "healthcare",
+    "lgpd",
+    "audit"
+  ],
+  "author": "NeonPro Team",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "restricted"
+  }
+}

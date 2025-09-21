@@ -48,6 +48,17 @@ export type {
   SessionRecording
 } from "./services/webrtc-session.service";
 
+// Application services using repository pattern
+export { PatientService } from "./application";
+
+// Repository implementations with dependency injection
+export {
+  PatientRepository,
+  ConsentRepository,
+  AppointmentRepository,
+  RepositoryContainer
+} from "./repositories";
+
 // Utility functions
 export {
   checkDatabaseHealth,

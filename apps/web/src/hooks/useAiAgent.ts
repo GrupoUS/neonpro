@@ -236,7 +236,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   const queryClient = useQueryClient();
 
   // Load existing session
-  const { data: sessionData, isLoading: isLoadingSession, error: sessionError } = useQuery({
+  const { data: _sessionData, isLoading: isLoadingSession, error: sessionError } = useQuery({
     queryKey: ['ai-session', currentSessionId],
     queryFn: () => getSession(currentSessionId!),
     enabled: !!currentSessionId,
@@ -368,7 +368,7 @@ export const useAiAgent = (options: UseAiAgentOptions): UseAiAgentReturn => {
   });
 
   // Delete session mutation
-  const deleteSessionMutation = useMutation({
+  const _deleteSessionMutation = useMutation({
     mutationFn: deleteSession,
     onSuccess: () => {
       setCurrentSessionId(null);

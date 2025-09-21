@@ -431,7 +431,7 @@ export function initializeMobileViewport(config?: Partial<MobileViewportConfig>)
       deviceType: detectMobileDevice(),
     });
 
-  } catch (_error) {
+  } catch {
     console.error('[Mobile Viewport] ❌ Initialization failed:', error);
     throw error;
   }

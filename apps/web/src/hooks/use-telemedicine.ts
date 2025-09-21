@@ -324,7 +324,7 @@ export function useRealTimeChat(params: {
     onSuccess: newMessage => {
       setMessages(prev => [...prev, newMessage]);
     },
-    onError: error => {
+    onError: _error => {
       toast.error('Erro ao enviar mensagem');
     },
   });

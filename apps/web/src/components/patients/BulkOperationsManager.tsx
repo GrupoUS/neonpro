@@ -1,19 +1,17 @@
 'use client';
 
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
   Activity,
   AlertCircle,
-  CheckCircle,
   Clock,
   Loader2,
   RotateCcw,
   Shield,
   Trash2,
   Users,
-  X,
 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import {
@@ -21,9 +19,7 @@ import {
   Button,
   Card,
   CardContent,
-  CardHeader,
   CardTitle,
-  cn,
   Dialog,
   DialogContent,
   DialogDescription,
@@ -37,23 +33,17 @@ import {
   Input,
   Label,
   Progress,
-  ScrollArea,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-  Separator,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
 } from '@neonpro/ui';
 
 import { useDebounce } from '@/hooks/useDebounce';
@@ -135,31 +125,15 @@ interface BulkOperationsManagerProps {
   onOperationComplete?: (operation: BulkOperation) => void;
 }
 
-// Mock data generator
-function generateMockPatients(
-  count: number,
-): Array<{ id: string; name: string; email: string; status: string }> {
-  return Array.from({ length: count }, (_, i) => ({
-    id: `patient-${i + 1}`,
-    name: `Paciente ${i + 1}`,
-    email: `paciente${i + 1}@exemplo.com`,
-    status: i % 3 === 0 ? 'active' : i % 3 === 1 ? 'inactive' : 'pending',
-  }));
-}
-
 export function BulkOperationsManager({
   clinicId,
   selectedPatientIds,
   onSelectionChange,
   onOperationComplete,
 }: BulkOperationsManagerProps) {
-  const queryClient = useQueryClient();
   const { measurePerformance } = usePerformanceMonitor();
 
   // State
-  const [activeTab, setActiveTab] = useState<'operations' | 'queue' | 'audit'>(
-    'operations',
-  );
   const [selectedOperation, setSelectedOperation] = useState<BulkOperationType>(
     'activate_patients',
   );

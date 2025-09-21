@@ -12,7 +12,10 @@
     "build": "tsup",
     "dev": "tsc -w -p tsconfig.json",
     "lint": "oxlint src --fix",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "vitest --run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest --run --coverage"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

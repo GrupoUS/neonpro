@@ -869,7 +869,7 @@ class AppointmentService {
           timestamp: new Date().toISOString(),
         },
       );
-    } catch (_logError) {
+    } catch (logError) {
       console.error('Error logging compliance failure:', logError);
     }
   }

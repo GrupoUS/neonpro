@@ -22,6 +22,30 @@ export interface AuditLogEntry {
   dataClassification?: 'public' | 'internal' | 'sensitive' | 'restricted';
 }
 
+export interface AIMetadata {
+  inputTokens?: number;
+  outputTokens?: number;
+  model?: string;
+  confidence?: number;
+  processingTimeMs?: number;
+  costUsd?: number;
+  requestType?: string;
+  responseFormat?: string;
+  errorRate?: number;
+}
+
+export interface HealthcareAccessMetadata {
+  dataType: string;
+  lgpdConsent: boolean;
+  patientId?: string;
+  encounterId?: string;
+  facilityId?: string;
+  departmentId?: string;
+  accessReason?: string;
+  retentionPeriod?: string;
+  dataSensitivity?: string;
+}
+
 export interface AuditLoggerOptions {
   enableConsoleLogging?: boolean;
   enableDatabaseLogging?: boolean;
@@ -161,19 +185,43 @@ export class AuditLogger {
     model: string,
     inputTokens?: number,
     outputTokens?: number,
-    metadata?: Record<string, any>,
+    metadata?: Record<string, unknown>,
   ): Promise<void> {
+    // Validate AI metadata
+    const aiMetadata: AIMetadata = {
+      inputTokens,
+      outputTokens,
+      model,
+    };
+
+    // Validate additional metadata fields if present
+    if (metadata) {
+      if (typeof metadata.confidence === 'number') {
+        aiMetadata.confidence = metadata.confidence;
+      }
+      if (typeof metadata.processingTimeMs === 'number') {
+        aiMetadata.processingTimeMs = metadata.processingTimeMs;
+      }
+      if (typeof metadata.costUsd === 'number') {
+        aiMetadata.costUsd = metadata.costUsd;
+      }
+      if (typeof metadata.requestType === 'string') {
+        aiMetadata.requestType = metadata.requestType;
+      }
+      if (typeof metadata.responseFormat === 'string') {
+        aiMetadata.responseFormat = metadata.responseFormat;
+      }
+      if (typeof metadata.errorRate === 'number') {
+        aiMetadata.errorRate = metadata.errorRate;
+      }
+    }
+
     await this.log({
       userId,
       action: `ai_${action}`,
       resource: 'ai_model',
       resourceId: model,
-      metadata: {
-        ...metadata,
-        inputTokens,
-        outputTokens,
-        model,
-      },
+      metadata: aiMetadata as Record<string, unknown>,
       success: true,
       dataClassification: 'internal',
     });
@@ -196,12 +244,15 @@ export class AuditLogger {
   private async logToDatabase(entry: AuditLogEntry): Promise<void> {
     if (!this.supabase) return;
 
+    // Serialize metadata safely
+    const serializedMetadata = this.serializeMetadata(entry.metadata);
+
     const { error } = await this.supabase.from('audit_logs').insert({
       user_id: entry.userId,
       action: entry.action,
       resource_type: entry.resource,
       resource_id: entry.resourceId,
-      new_values: entry.metadata as any || null, // Store metadata in new_values
+      new_values: serializedMetadata as any,
       ip_address: entry.ipAddress || null,
       user_agent: entry.userAgent,
       lgpd_basis: entry.lgpdCompliant ? 'legitimate_interest' : null,
@@ -210,6 +261,41 @@ export class AuditLogger {
 
     if (error) {
       throw error;
+    }
+  }
+
+  /**
+   * Safely serialize metadata for database storage
+   */
+  private serializeMetadata(metadata?: Record<string, unknown>): unknown {
+    if (!metadata) return null;
+
+    try {
+      // Create a safe copy of the metadata
+      const safeMetadata: Record<string, unknown> = {};
+      
+      // Only include primitive types and safe objects
+      for (const [key, value] of Object.entries(metadata)) {
+        if (value === null || value === undefined) {
+          safeMetadata[key] = null;
+        } else if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+          safeMetadata[key] = value;
+        } else if (typeof value === 'object') {
+          // For objects, try to stringify them safely
+          try {
+            safeMetadata[key] = JSON.stringify(value);
+          } catch {
+            safeMetadata[key] = '[Object]';
+          }
+        } else {
+          safeMetadata[key] = String(value);
+        }
+      }
+
+      return safeMetadata;
+    } catch (error) {
+      console.warn('[Audit Logger] Failed to serialize metadata:', error);
+      return null;
     }
   }
 

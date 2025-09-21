@@ -96,7 +96,7 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (error) {
+    } catch {
       setError('Failed to export metrics');
     }
   };

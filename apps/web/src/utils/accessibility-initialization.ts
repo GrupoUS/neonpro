@@ -100,7 +100,7 @@ function initializeAxeCore(): void {
     });
 
     console.log('[Accessibility] axe-core initialized with healthcare configuration');
-  } catch (_error) {
+  } catch {
     console.error('[Accessibility] Failed to initialize axe-core:', error);
   }
 }
@@ -153,7 +153,7 @@ function setupMobileAccessibility(): void {
     }
 
     console.log('[Accessibility] Mobile accessibility optimizations initialized');
-  } catch (_error) {
+  } catch {
     console.error('[Accessibility] Failed to setup mobile accessibility:', error);
   }
 }
@@ -216,7 +216,7 @@ async function runInitialAudit(): Promise<void> {
       elementsTested: contrastResult.elements.length,
     });
 
-  } catch (_error) {
+  } catch {
     console.error('[Accessibility] Initial audit failed:', error);
   }
 }
@@ -261,13 +261,13 @@ function setupContinuousMonitoring(): void {
         }
 
         accessibilityState.lastReportTime = new Date();
-      } catch (_error) {
+      } catch {
         console.error('[Accessibility] Continuous monitoring error:', error);
       }
     }, interval);
 
     console.log(`[Accessibility] Continuous monitoring enabled (${interval}ms interval)`);
-  } catch (_error) {
+  } catch {
     console.error('[Accessibility] Failed to setup continuous monitoring:', error);
   }
 }
@@ -310,7 +310,7 @@ function setupAccessibilityHelpers(): void {
     document.addEventListener('keydown', handleKeyDown);
 
     console.log('[Accessibility] Global helpers initialized (Ctrl+Shift+A for audit)');
-  } catch (_error) {
+  } catch {
     console.error('[Accessibility] Failed to setup accessibility helpers:', error);
   }
 }
@@ -362,7 +362,7 @@ export async function initializeAccessibility(config?: Partial<AccessibilityConf
       mobileOptimized: accessibilityState.config.enableMobileOptimization,
     });
 
-  } catch (_error) {
+  } catch {
     console.error('[Accessibility] ❌ Initialization failed:', error);
     throw error;
   }
@@ -392,7 +392,7 @@ export function cleanupAccessibility(): void {
     };
 
     console.log('[Accessibility] Cleanup completed');
-  } catch (_error) {
+  } catch {
     console.error('[Accessibility] Cleanup failed:', error);
   }
 }

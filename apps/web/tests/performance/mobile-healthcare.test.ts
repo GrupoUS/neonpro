@@ -1,3 +1,4 @@
+import React from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -127,12 +128,11 @@ describe('T043: Mobile Healthcare Performance Tests', () => {
         })
       );
 
-      const PatientDashboard = () => (
-        <div data-testid="patient-dashboard">
-          <h1>Pacientes</h1>
-          <div data-testid='patient-list'>Loading...</div>
-        </div>
-      );
+      const PatientDashboard = () =>
+        React.createElement('div', { 'data-testid': 'patient-dashboard' },
+          React.createElement('h1', null, 'Pacientes'),
+          React.createElement('div', { 'data-testid': 'patient-list' }, 'Loading...')
+        );
 
       render(
         <QueryClientProvider client={queryClient}>

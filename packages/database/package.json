@@ -47,6 +47,7 @@
     "prisma": "^5.22.0"
   },
   "devDependencies": {
+    "@neonpro/domain": "0.1.0",
     "@types/node": "^20.19.13",
     "typescript": "^5.9.2",
     "vitest": "^3.2.4"

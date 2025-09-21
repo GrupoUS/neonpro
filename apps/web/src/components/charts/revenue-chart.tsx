@@ -33,8 +33,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function RevenueChart() {
-  const id = useId();
-
   return (
     <Card>
       <CardHeader>

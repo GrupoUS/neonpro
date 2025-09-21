@@ -264,7 +264,7 @@ export const PerformanceTester: React.FC = () => {
       try {
         lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
         observers.push(lcpObserver);
-      } catch (error) {
+      } catch {
         console.warn('LCP observation not supported');
       }
 
@@ -282,7 +282,7 @@ export const PerformanceTester: React.FC = () => {
       try {
         fidObserver.observe({ entryTypes: ['first-input'] });
         observers.push(fidObserver);
-      } catch (error) {
+      } catch {
         console.warn('FID observation not supported');
       }
 
@@ -301,7 +301,7 @@ export const PerformanceTester: React.FC = () => {
       try {
         clsObserver.observe({ entryTypes: ['layout-shift'] });
         observers.push(clsObserver);
-      } catch (error) {
+      } catch {
         console.warn('CLS observation not supported');
       }
 

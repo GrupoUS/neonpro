@@ -2,13 +2,11 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@neonpro/ui';
-import { AlertTriangle } from 'lucide-react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { type AestheticAssessmentData } from '../pdf/AestheticReportPDF';
 import PDFExportButtons from '../pdf/PDFExportButtons';
-import { Alert } from '../ui/alert';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
 import {
@@ -22,7 +20,6 @@ import {
 } from '../ui/form';
 import { Input } from '../ui/input';
 import { Select } from '../ui/select';
-import { Textarea } from '../ui/textarea';
 
 // Schema de validação para o formulário de avaliação estética
 const aestheticAssessmentSchema = z.object({

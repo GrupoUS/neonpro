@@ -134,7 +134,7 @@ class HealthcareCacheManager {
       await Promise.all(healthcareCaches.map(name => caches.delete(name)));
       
       console.log('[Healthcare Cache] Cleared healthcare-specific caches:', healthcareCaches);
-    } catch (_error) {
+    } catch {
       console.error('[Healthcare Cache] Failed to clear healthcare caches:', error);
     }
   }
@@ -164,7 +164,7 @@ class HealthcareCacheManager {
       await cache.put(url, response);
       
       console.log(`[Healthcare Cache] Cached ${strategy} data for:`, url);
-    } catch (_error) {
+    } catch {
       console.error('[Healthcare Cache] Failed to cache healthcare data:', error);
     }
   }
@@ -200,7 +200,7 @@ class HealthcareCacheManager {
 
       const data = await response.json();
       return data;
-    } catch (_error) {
+    } catch {
       console.error('[Healthcare Cache] Failed to get cached data:', error);
       return null;
     }
@@ -224,7 +224,7 @@ class HealthcareCacheManager {
       await registration.sync.register('sync-appointments');
       
       console.log('[Healthcare Cache] Background sync registered for healthcare data');
-    } catch (_error) {
+    } catch {
       console.error('[Healthcare Cache] Failed to setup background sync:', error);
     }
   }
@@ -258,7 +258,7 @@ class HealthcareCacheManager {
       await Promise.all(promises);
       
       console.log('[Healthcare Cache] Emergency mode activated - critical resources cached');
-    } catch (_error) {
+    } catch {
       console.error('[Healthcare Cache] Failed to activate emergency mode:', error);
     }
   }
@@ -313,7 +313,7 @@ export async function registerHealthcareServiceWorker(
     console.log('[Healthcare SW] ✅ Healthcare service worker registered successfully');
     
     return registrationState;
-  } catch (_error) {
+  } catch {
     console.error('[Healthcare SW] ❌ Registration failed:', error);
     throw error;
   }
@@ -461,7 +461,7 @@ export async function updateHealthcareServiceWorker(): Promise<void> {
       await registration.update();
       console.log('[Healthcare SW] Healthcare service worker update triggered');
     }
-  } catch (_error) {
+  } catch {
     console.error('[Healthcare SW] Failed to update healthcare service worker:', error);
   }
 }
@@ -486,7 +486,7 @@ export async function unregisterHealthcareServiceWorker(): Promise<boolean> {
       return result;
     }
     return false;
-  } catch (_error) {
+  } catch {
     console.error('[Healthcare SW] Failed to unregister healthcare service worker:', error);
     return false;
   }

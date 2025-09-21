@@ -1,7 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Database2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 export interface MetricsCacheProps {

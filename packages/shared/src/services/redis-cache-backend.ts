@@ -93,8 +93,14 @@ export class RedisCacheBackend implements CacheBackend {
         return null;
       }
 
-      // Parse and validate cache entry
-      const entry: CacheEntry = JSON.parse(result);
+      // Parse and validate cache entry with safe JSON parsing
+      const entry = this.safeJSONParse(result);
+      if (!entry) {
+        console.warn(`[Redis Cache] Invalid JSON or failed schema validation for key: ${secureKey}`);
+        await this.delete(key);
+        this.stats.missRate = this.updateRate(this.stats.missRate, false);
+        return null;
+      }
       
       // Validate entry structure
       if (!this.validateCacheEntry(entry)) {
@@ -521,7 +527,77 @@ export class RedisCacheBackend implements CacheBackend {
   }
 
   /**
-   * Validate cache entry structure
+   * Safe JSON parsing with schema validation to prevent prototype pollution
+   */
+  private safeJSONParse(jsonString: string): CacheEntry | null {
+    try {
+      // First, basic JSON parsing with reviver to prevent prototype pollution
+      const parsed = JSON.parse(jsonString, (key, value) => {
+        // Prevent prototype pollution
+        if (key === '__proto__' || key === 'constructor' || key === 'prototype') {
+          return undefined;
+        }
+        return value;
+      });
+
+      // Validate against Zod schema
+      const validationResult = this.validateWithSchema(parsed);
+      if (!validationResult.success) {
+        console.warn('[Redis Cache] Schema validation failed:', validationResult.error);
+        return null;
+      }
+
+      // Convert date strings to Date objects
+      return this.normalizeDates(validationResult.data);
+    } catch (error) {
+      console.warn('[Redis Cache] JSON parsing failed:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Validate parsed data against Zod schema
+   */
+  private validateWithSchema(data: any): { success: boolean; data?: CacheEntry; error?: string } {
+    try {
+      // Import schema dynamically to avoid circular dependencies
+      const { CacheEntrySchema } = require('./cache-management');
+      
+      const result = CacheEntrySchema.safeParse(data);
+      if (result.success) {
+        return { success: true, data: result.data };
+      } else {
+        return { 
+          success: false, 
+          error: result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
+        };
+      }
+    } catch (error) {
+      return { success: false, error: 'Schema validation unavailable' };
+    }
+  }
+
+  /**
+   * Normalize date strings to Date objects
+   */
+  private normalizeDates(data: any): CacheEntry {
+    const normalized = { ...data };
+    
+    if (typeof normalized.createdAt === 'string') {
+      normalized.createdAt = new Date(normalized.createdAt);
+    }
+    if (typeof normalized.lastAccessedAt === 'string') {
+      normalized.lastAccessedAt = new Date(normalized.lastAccessedAt);
+    }
+    if (typeof normalized.expiresAt === 'string') {
+      normalized.expiresAt = new Date(normalized.expiresAt);
+    }
+    
+    return normalized;
+  }
+
+  /**
+   * Validate cache entry structure (legacy fallback)
    */
   private validateCacheEntry(entry: any): boolean {
     return !!(

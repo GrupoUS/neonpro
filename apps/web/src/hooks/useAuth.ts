@@ -67,7 +67,7 @@ export function useAuth(): AuthState {
               userProfile ? 'Success' : 'Failed',
             );
             setProfile(userProfile);
-          } catch (_profileError) {
+          } catch (profileError) {
             console.error(
               '❌ useAuth: Error loading user profile:',
               profileError,
@@ -122,7 +122,7 @@ export function useAuth(): AuthState {
             profileTimeoutPromise,
           ])) as any;
           setProfile(userProfile);
-        } catch (_profileError) {
+        } catch (profileError) {
           console.error('Error loading user profile:', profileError);
           setProfile(null);
         }
