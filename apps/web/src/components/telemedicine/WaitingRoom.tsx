@@ -33,18 +33,18 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert } from '@/components/ui/alert';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
+import { Dialog } from '@/components/ui/dialog';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
 import {
@@ -170,14 +170,14 @@ export function WaitingRoom({
   }, [checkResults, consent, preConsultationData]);
 
   // Format time
-  const formatTime = useCallback((seconds: number) => {
+  const formatTime = useCallback((_seconds: [a-zA-Z][a-zA-Z]*) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   }, []);
 
   // Format wait time estimate
-  const formatWaitTimeEstimate = useCallback((minutes: number) => {
+  const formatWaitTimeEstimate = useCallback((_minutes: [a-zA-Z][a-zA-Z]*) => {
     if (minutes < 1) return 'Menos de 1 minuto';
     if (minutes === 1) return '1 minuto';
     if (minutes < 60) return `${minutes} minutos`;
@@ -201,7 +201,7 @@ export function WaitingRoom({
       } else {
         setShowTriageDialog(true);
       }
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao processar emergência');
     }
   }, [preConsultationData, performTriage, onEmergencyEscalation]);
@@ -222,7 +222,7 @@ export function WaitingRoom({
       onSessionStart?.(sessionId);
 
       toast.success('Iniciando consulta...');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao iniciar consulta');
     }
   }, [
@@ -234,7 +234,7 @@ export function WaitingRoom({
   ]);
 
   // Handle vital signs update
-  const handleVitalSignsUpdate = useCallback((vitals: VitalSigns) => {
+  const handleVitalSignsUpdate = useCallback((_vitals: [a-zA-Z][a-zA-Z]*) => {
     setPreConsultationData(prev => ({
       ...prev,
       vitalSigns: { ...prev.vitalSigns, ...vitals },
@@ -261,7 +261,7 @@ export function WaitingRoom({
       });
       setShowConsentDialog(false);
       toast.success('Consentimento registrado');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Erro ao registrar consentimento');
     }
   }, [updateConsent]);

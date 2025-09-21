@@ -24,7 +24,7 @@ import {
   Switch,
 } from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { Bell, Brain, Eye, EyeOff, Globe, Shield, ShieldCheck, Users } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import React from 'react';
 
 export const Route = createFileRoute('/admin/settings')({
@@ -66,7 +66,7 @@ function SettingsPage() {
     })();
   }, [user?.id]);
 
-  const handleSelectDefault = async (model: string) => {
+  const handleSelectDefault = async (_model: [a-zA-Z][a-zA-Z]*) => {
     setDefaultModel(model);
     try {
       localStorage.setItem('neonpro-default-chat-model', model);
@@ -80,7 +80,7 @@ function SettingsPage() {
 
   // Provider visibility toggles
   const [hiddenProviders, setHidden] = React.useState<ProviderKey[]>(() => getHiddenProviders());
-  const toggleProvider = (key: ProviderKey) => {
+  const toggleProvider = (_key: [a-zA-Z][a-zA-Z]*) => {
     const next = hiddenProviders.includes(key)
       ? hiddenProviders.filter(p => p !== key)
       : [...hiddenProviders, key];

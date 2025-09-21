@@ -3,7 +3,7 @@
  * Zustand store for managing dashboard state, filters, and real-time data synchronization
  */
 
-import type { DashboardData, DashboardFilters, RealTimeMetrics } from '@/services/dashboard-data';
+import type { DashboardData } from '@/services/dashboard-data';
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';

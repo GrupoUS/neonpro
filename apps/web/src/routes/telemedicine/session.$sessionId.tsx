@@ -48,11 +48,11 @@ import {
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert } from '@/components/ui/alert';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Dialog,
   DialogContent,
@@ -63,10 +63,10 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
-import type { MediaSettings, ParticipantInfo, SessionDetails, SessionStatus } from '@neonpro/types';
+import type { MediaSettings } from '@neonpro/types';
 
 /**
  * Telemedicine Session Component

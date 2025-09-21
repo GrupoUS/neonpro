@@ -90,7 +90,7 @@ describe('Supabase RLS - Security Auditor Coordinated', () => {
 
       // Validate LGPD compliance
       if (data && data.length > 0) {
-        data.forEach(patient => {
+        data.forEach(_patient => {
           expect(patient.organization_id).toBe(testOrg.id);
           expect(patient._test_data).toBe(true);
           expect(HealthcareTestValidators.validateLGPDCompliance(patient)).toBe(
@@ -302,7 +302,7 @@ describe('Supabase RLS - Security Auditor Coordinated', () => {
       expect(error).toBeNull();
 
       if (data && data.length > 0) {
-        data.forEach(patient => {
+        data.forEach(_patient => {
           // Validate CPF is masked
           if (patient.masked_cpf) {
             expect(patient.masked_cpf).toMatch(/\*\*\*\.\*\*\*\.\*\*\*-\d{2}/);

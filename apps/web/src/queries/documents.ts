@@ -188,7 +188,7 @@ export const downloadDocument = async (
     link.click();
     document.body.removeChild(link);
     window.URL.revokeObjectURL(url);
-  } catch (error) {
+  } catch (_error) {
     console.error('Download error:', error);
     throw error;
   }

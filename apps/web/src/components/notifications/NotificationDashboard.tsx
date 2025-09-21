@@ -25,7 +25,7 @@ const Progress = ({
   </div>
 );
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import {
   AlertTriangle,
@@ -58,7 +58,7 @@ export function NotificationDashboard({
     try {
       await processPendingMutation.mutateAsync();
       refetch(); // Refresh stats after processing
-    } catch (error) {
+    } catch (_error) {
       console.error('Error processing pending notifications:', error);
     }
   };

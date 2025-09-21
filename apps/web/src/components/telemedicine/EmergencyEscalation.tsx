@@ -52,11 +52,11 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Card } from '@/components/ui/card';
+import { Dialog } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -68,7 +68,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 
 import { cn } from '@/lib/utils';
@@ -389,7 +389,7 @@ export function EmergencyEscalation({
     onEmergencyActivated(emergencyData);
   };
 
-  const contactEmergencyService = async (contact: EmergencyContact) => {
+  const contactEmergencyService = async (_contact: [a-zA-Z][a-zA-Z]*) => {
     setContacts(prev =>
       prev.map(c =>
         c.type === contact.type
@@ -438,13 +438,13 @@ export function EmergencyEscalation({
     );
   };
 
-  const formatDuration = (seconds: number) => {
+  const formatDuration = (_seconds: [a-zA-Z][a-zA-Z]*) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins}:${String(secs).padStart(2, '0')}`;
   };
 
-  const getSeverityColor = (level: string) => {
+  const getSeverityColor = (_level: [a-zA-Z][a-zA-Z]*) => {
     switch (level) {
       case 'red':
         return 'text-red-600 bg-red-50 border-red-200';

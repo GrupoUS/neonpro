@@ -30,8 +30,8 @@ export function usePerformance(componentName: string) {
     }
   });
 
-  const measureAsyncOperation = (operationName: string) => {
-    return <T extends (...args: any[]) => Promise<any>>(fn: T) => {
+  const measureAsyncOperation = (_operationName: [a-zA-Z][a-zA-Z]*) => {
+    return <T extends (...args: any[]) => Promise<any>>(_fn: [a-zA-Z][a-zA-Z]*) => {
       return async (...args: Parameters<T>): Promise<ReturnType<T>> => {
         const start = performance.now();
         try {
@@ -42,7 +42,7 @@ export function usePerformance(componentName: string) {
             end - start,
           );
           return result as ReturnType<T>;
-        } catch (error) {
+        } catch (_error) {
           const end = performance.now();
           (performanceMonitor as any).handleCustomMetric(
             `${componentName}-${operationName}-error`,

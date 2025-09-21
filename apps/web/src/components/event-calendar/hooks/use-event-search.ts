@@ -28,14 +28,14 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   // Debounced search function
   const debouncedSearch = useMemo(
     () =>
-      debounce(async (options: EventSearchOptions) => {
+      debounce(async (_options: [a-zA-Z][a-zA-Z]*) => {
         try {
           setIsSearching(true);
           const result = await searchEvents(options);
           setSearchResults(result.events);
           setTotalCount(result.totalCount);
           setHasMore(result.hasMore);
-        } catch (error) {
+        } catch (_error) {
           console.error('Search failed:', error);
           setSearchResults([]);
           setTotalCount(0);
@@ -48,7 +48,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   );
 
   // Perform search
-  const performSearch = useCallback(async (options: EventSearchOptions) => {
+  const performSearch = useCallback(async (_options: [a-zA-Z][a-zA-Z]*) => {
     setSearchOptions(options);
     setCurrentPage(0);
     await debouncedSearch(options);
@@ -73,7 +73,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
       setSearchResults(prev => [...prev, ...result.events]);
       setCurrentPage(newPage);
       setHasMore(result.hasMore);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to load more results:', error);
     } finally {
       setIsSearching(false);
@@ -115,7 +115,7 @@ export function useEventSearch(options: UseEventSearchOptions = {}) {
   }, [performSearch, defaultLimit]);
 
   // Search with custom filters
-  const searchWithFilters = useCallback(async (options: EventSearchOptions) => {
+  const searchWithFilters = useCallback(async (_options: [a-zA-Z][a-zA-Z]*) => {
     await performSearch({
       ...options,
       limit: options.limit || defaultLimit,
@@ -274,7 +274,7 @@ export function useAdvancedEventSearch() {
       const result = await searchEvents(searchOptions);
       setSearchResults(result.events);
       setTotalCount(result.totalCount);
-    } catch (error) {
+    } catch (_error) {
       console.error('Advanced search failed:', error);
       setSearchResults([]);
       setTotalCount(0);

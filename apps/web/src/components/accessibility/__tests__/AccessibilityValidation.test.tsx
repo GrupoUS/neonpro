@@ -476,7 +476,7 @@ describe('Healthcare Accessibility Validation', () => {
         'understandable',
         'robust',
       ];
-      categories.forEach(category => {
+      categories.forEach(_category => {
         const criteriaInCategory = WCAG_21_AA_VALIDATION_CRITERIA.filter(
           criteria => criteria.category === category,
         );
@@ -506,7 +506,7 @@ describe('Healthcare Accessibility Validation', () => {
 
       expect(healthcareCriteria.length).toBeGreaterThan(0);
 
-      healthcareCriteria.forEach(criteria => {
+      healthcareCriteria.forEach(_criteria => {
         expect(criteria.healthcareRelevant).toBe(true);
         expect(criteria.wcagLevel).toMatch(/A|AA|AAA/);
         expect(criteria.category).toMatch(
@@ -567,7 +567,7 @@ describe('Healthcare Accessibility Validation', () => {
 
       expect(report.recommendations.length).toBeGreaterThan(0);
 
-      report.recommendations.forEach(recommendation => {
+      report.recommendations.forEach(_recommendation => {
         expect(recommendation.title).toBeDefined();
         expect(recommendation.description).toBeDefined();
         expect(recommendation.priority).toMatch(/critical|high|medium|low/);

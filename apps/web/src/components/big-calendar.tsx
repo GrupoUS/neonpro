@@ -45,7 +45,7 @@ export const etiquettes = [
 ];
 
 // Function to calculate days until next Sunday
-const getDaysUntilNextSunday = (date: Date) => {
+const getDaysUntilNextSunday = (_date: [a-zA-Z][a-zA-Z]*) => {
   const day = getDay(date); // 0 is Sunday, 6 is Saturday
   return day === 0 ? 0 : 7 - day; // If today is Sunday, return 0, otherwise calculate days until Sunday
 };
@@ -621,19 +621,19 @@ export default function Component({
     return events.filter(event => isColorVisible(event.color));
   }, [events, isColorVisible]);
 
-  const handleEventAdd = (event: CalendarEvent) => {
+  const handleEventAdd = (_event: [a-zA-Z][a-zA-Z]*) => {
     setEvents([...events, event]);
     onEventCreate?.(event);
   };
 
-  const handleEventUpdate = (updatedEvent: CalendarEvent) => {
+  const handleEventUpdate = (_updatedEvent: [a-zA-Z][a-zA-Z]*) => {
     setEvents(
       events.map(event => event.id === updatedEvent.id ? updatedEvent : event),
     );
     onEventUpdate?.(updatedEvent);
   };
 
-  const handleEventDelete = (eventId: string) => {
+  const handleEventDelete = (_eventId: [a-zA-Z][a-zA-Z]*) => {
     setEvents(events.filter(event => event.id !== eventId));
     onEventDelete?.(eventId);
   };

@@ -12,7 +12,7 @@ export function useAnalytics() {
   useEffect(() => {
     // Initialize analytics if user has granted analytics consent
     if (hasConsent('analytics')) {
-      analytics.initialize().catch((error: Error) => {
+      analytics.initialize().catch((_error: [a-zA-Z][a-zA-Z]*) => {
         console.error('Failed to initialize analytics:', error);
       });
     }
@@ -20,12 +20,12 @@ export function useAnalytics() {
 
   useEffect(() => {
     // Listen for consent changes to handle analytics initialization/cleanup
-    const handleConsentChange = (event: CustomEvent) => {
+    const handleConsentChange = (_event: [a-zA-Z][a-zA-Z]*) => {
       const { category, granted } = event.detail;
 
       if (category === 'analytics') {
         if (granted) {
-          analytics.initialize().catch((error: Error) => {
+          analytics.initialize().catch((_error: [a-zA-Z][a-zA-Z]*) => {
             console.error(
               'Failed to initialize analytics after consent granted:',
               error,
@@ -78,7 +78,7 @@ export function useAnalytics() {
         analytics.trackInteraction(data);
       }
     },
-    setUserId: (userId: string) => {
+    setUserId: (_userId: [a-zA-Z][a-zA-Z]*) => {
       if (hasConsent('analytics')) {
         analytics.setUserId(userId);
       }

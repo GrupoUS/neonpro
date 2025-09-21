@@ -7,7 +7,7 @@ import { useSubscription } from '@/hooks/useSubscription';
 import { useToast } from '@/hooks/useToast';
 import { cn } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { Brain, Check, Crown, ExternalLink, Shield, Zap } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import { useState } from 'react';
 
 interface SubscriptionUpgradeProps {
@@ -54,7 +54,7 @@ export default function SubscriptionUpgrade({
       toast(
         'Redirecionando para pagamento - Você será redirecionado para completar sua assinatura Pro.',
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error opening payment link:', error);
       toast('Erro ao processar upgrade - Tente novamente em alguns instantes.');
     } finally {

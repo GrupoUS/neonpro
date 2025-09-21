@@ -256,7 +256,7 @@ export function useAgentSessionManager() {
   );
 
   const endCurrentSession = useCallback(
-    async (reason: string) => {
+    async (_reason: [a-zA-Z][a-zA-Z]*) => {
       if (currentSessionId) {
         await archiveSession.mutateAsync({
           session_id: currentSessionId,

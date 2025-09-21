@@ -10,7 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { getGovernanceService } from '@/lib/governance-service';
 import type { PolicySummary } from '@/lib/governance-service';
 import { Badge } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 
 type PolicyStatus = 'active' | 'draft' | 'inactive' | 'archived';
@@ -173,7 +173,7 @@ export function PolicyManagementPanel() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {policyData?.policies.map((policy: any) => {
+            {policyData?.policies.map((_policy: [a-zA-Z][a-zA-Z]*) => {
               const statusBadge = getStatusBadge(policy.status);
 
               return (

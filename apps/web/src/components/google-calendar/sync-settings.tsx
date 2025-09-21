@@ -1,7 +1,7 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { AlertCircle, CheckCircle, Clock, RefreshCw, Settings, Shield, Sync } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 
 interface SyncSettingsProps {
@@ -50,7 +50,7 @@ export function SyncSettings({
   });
 
   const updateSettingsMutation = useMutation({
-    mutationFn: async (settings: any) => {
+    mutationFn: async (_settings: [a-zA-Z][a-zA-Z]*) => {
       // In real app, update via API
       return { success: true };
     },

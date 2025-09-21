@@ -3,8 +3,8 @@
  * CFM-compliant telemedicine platform with WebRTC integration
  */
 
-import { createFileRoute, Outlet } from '@tanstack/react-router';
-import { Activity, Shield, Stethoscope, Users } from 'lucide-react';
+import { createFileRoute } from '@tanstack/react-router';
+import { Activity } from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';

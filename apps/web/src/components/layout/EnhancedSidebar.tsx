@@ -149,7 +149,7 @@ export const EnhancedSidebarProvider = ({
     [],
   );
 
-  const toggleSection = useCallback((sectionId: string) => {
+  const toggleSection = useCallback((_sectionId: [a-zA-Z][a-zA-Z]*) => {
     setExpandedSections(prev => {
       const newSet = new Set(prev);
       if (newSet.has(sectionId)) {
@@ -343,7 +343,7 @@ export function EnhancedSidebar({
 
   // Keyboard shortcuts handler
   const handleKeyboardShortcuts = useCallback(
-    (event: KeyboardEvent) => {
+    (_event: [a-zA-Z][a-zA-Z]*) => {
       if (!userPreferences.keyboardShortcuts) return;
 
       const action = Object.entries(KEYBOARD_SHORTCUTS).find(([_, config]) => {

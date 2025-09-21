@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   type FinancialMetric,
   FinancialMetricsService,
   type MetricsCalculationOptions,
 } from '@/services/financial-metrics';
-import { Calendar, Download, RefreshCw } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 export interface FinancialMetricsProps {
@@ -68,7 +68,7 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
       if (onMetricsUpdate) {
         onMetricsUpdate(result);
       }
-    } catch (err) {
+    } catch (_err) {
       setError(err instanceof Error ? err.message : 'Failed to load metrics');
     } finally {
       setIsLoading(false);
@@ -96,7 +96,7 @@ export const FinancialMetrics: React.FC<FinancialMetricsProps> = ({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-    } catch (err) {
+    } catch (_err) {
       setError('Failed to export metrics');
     }
   };

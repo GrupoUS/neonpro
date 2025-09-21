@@ -1,9 +1,9 @@
 'use client';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import {
   Select,
@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
@@ -622,7 +622,7 @@ const generateMockTreatmentEffectiveness = (): TreatmentEffectiveness[] => [
 ];
 
 // Utility functions
-const getStatusColor = (status: string) => {
+const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
   switch (status) {
     case 'active':
       return 'text-green-600 bg-green-50 border-green-200';
@@ -639,7 +639,7 @@ const getStatusColor = (status: string) => {
   }
 };
 
-const getStatusIcon = (status: string) => {
+const getStatusIcon = (_status: [a-zA-Z][a-zA-Z]*) => {
   switch (status) {
     case 'active':
       return CheckCircle;
@@ -656,7 +656,7 @@ const getStatusIcon = (status: string) => {
   }
 };
 
-const getPriorityColor = (priority: string) => {
+const getPriorityColor = (_priority: [a-zA-Z][a-zA-Z]*) => {
   switch (priority) {
     case 'critical':
       return 'text-red-600 bg-red-50 border-red-200';
@@ -671,7 +671,7 @@ const getPriorityColor = (priority: string) => {
   }
 };
 
-const getPriorityLabel = (priority: string) => {
+const getPriorityLabel = (_priority: [a-zA-Z][a-zA-Z]*) => {
   switch (priority) {
     case 'critical':
       return 'Crítico';
@@ -686,14 +686,14 @@ const getPriorityLabel = (priority: string) => {
   }
 };
 
-const formatCurrency = (value: number) => {
+const formatCurrency = (_value: [a-zA-Z][a-zA-Z]*) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
   }).format(value);
 };
 
-const formatPercentage = (value: number) => {
+const formatPercentage = (_value: [a-zA-Z][a-zA-Z]*) => {
   return `${(value * 100).toFixed(1)}%`;
 };
 
@@ -734,7 +734,7 @@ function AIInsightsPage() {
         setTreatmentEffectiveness(generateMockTreatmentEffectiveness());
 
         setLoading(false);
-      } catch (err) {
+      } catch (_err) {
         setError('Erro ao carregar dados de IA');
         setLoading(false);
       }
@@ -770,7 +770,7 @@ function AIInsightsPage() {
     };
   }, [insights, models, noShowAnalysis]);
 
-  const handleInsightAction = (insight: AIInsight) => {
+  const handleInsightAction = (_insight: [a-zA-Z][a-zA-Z]*) => {
     toast({
       title: 'Ação executada',
       description: `${insight.actionLabel} foi realizada com sucesso.`,

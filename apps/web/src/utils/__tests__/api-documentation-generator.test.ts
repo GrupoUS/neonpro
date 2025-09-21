@@ -254,7 +254,7 @@ describe('API Documentation Generator', () => {
         report.complianceFeatures.lgpdCompliant,
       );
 
-      lgpdEndpoints.forEach(endpoint => {
+      lgpdEndpoints.forEach(_endpoint => {
         expect(endpoint.authentication.lgpdConsent).toBe(true);
       });
     });
@@ -317,8 +317,8 @@ describe('API Documentation Generator', () => {
       );
       expect(endpointsWithExamples.length).toBeGreaterThan(0);
 
-      endpointsWithExamples.forEach(endpoint => {
-        endpoint.examples?.forEach(example => {
+      endpointsWithExamples.forEach(_endpoint => {
+        endpoint.examples?.forEach(_example => {
           expect(example.mobileNotes).toBeDefined();
           expect(typeof example.mobileNotes).toBe('string');
           expect(example.mobileNotes!.length).toBeGreaterThan(0);
@@ -359,7 +359,7 @@ describe('API Documentation Generator', () => {
       );
       expect(lgpdEndpoints.length).toBeGreaterThan(0);
 
-      lgpdEndpoints.forEach(endpoint => {
+      lgpdEndpoints.forEach(_endpoint => {
         expect(endpoint.authentication.lgpdConsent).toBe(true);
       });
     });
@@ -372,7 +372,7 @@ describe('API Documentation Generator', () => {
       );
       expect(rateLimitedEndpoints.length).toBeGreaterThan(0);
 
-      rateLimitedEndpoints.forEach(endpoint => {
+      rateLimitedEndpoints.forEach(_endpoint => {
         expect(endpoint.metadata.rateLimit?.requests).toBeGreaterThan(0);
         expect(endpoint.metadata.rateLimit?.window).toBeDefined();
       });
@@ -388,8 +388,8 @@ describe('API Documentation Generator', () => {
       );
       expect(endpointsWithErrors.length).toBeGreaterThan(0);
 
-      endpointsWithErrors.forEach(endpoint => {
-        endpoint.errors?.forEach(error => {
+      endpointsWithErrors.forEach(_endpoint => {
+        endpoint.errors?.forEach(_error => {
           expect(error.code).toBeDefined();
           expect(error.statusCode).toBeGreaterThan(0);
           expect(error.message).toBeDefined();
@@ -463,15 +463,15 @@ describe('API Documentation Generator', () => {
     it('should include Portuguese translations in endpoints', () => {
       const report = generator.generateReport();
 
-      report.endpoints.forEach(endpoint => {
+      report.endpoints.forEach(_endpoint => {
         expect(endpoint.titlePtBr).toBeDefined();
         expect(endpoint.descriptionPtBr).toBeDefined();
 
-        endpoint.parameters?.forEach(param => {
+        endpoint.parameters?.forEach(_param => {
           expect(param.descriptionPtBr).toBeDefined();
         });
 
-        endpoint.responses.forEach(response => {
+        endpoint.responses.forEach(_response => {
           expect(response.descriptionPtBr).toBeDefined();
         });
       });
@@ -484,8 +484,8 @@ describe('API Documentation Generator', () => {
         e => e.examples && e.examples.length > 0,
       );
 
-      endpointsWithExamples.forEach(endpoint => {
-        endpoint.examples?.forEach(example => {
+      endpointsWithExamples.forEach(_endpoint => {
+        endpoint.examples?.forEach(_example => {
           expect(example.titlePtBr).toBeDefined();
           expect(example.descriptionPtBr).toBeDefined();
         });
@@ -514,8 +514,8 @@ describe('API Documentation Generator', () => {
         e => e.examples && e.examples.length > 0,
       );
 
-      endpointsWithExamples.forEach(endpoint => {
-        endpoint.examples?.forEach(example => {
+      endpointsWithExamples.forEach(_endpoint => {
+        endpoint.examples?.forEach(_example => {
           expect(example.accessibilityNotes).toBeDefined();
           expect(typeof example.accessibilityNotes).toBe('string');
           expect(example.accessibilityNotes!.length).toBeGreaterThan(0);
@@ -530,8 +530,8 @@ describe('API Documentation Generator', () => {
         e => e.examples && e.examples.length > 0,
       );
 
-      endpointsWithExamples.forEach(endpoint => {
-        endpoint.examples?.forEach(example => {
+      endpointsWithExamples.forEach(_endpoint => {
+        endpoint.examples?.forEach(_example => {
           expect(example.healthcareContext).toBeDefined();
           expect(typeof example.healthcareContext).toBe('string');
           expect(example.healthcareContext!.length).toBeGreaterThan(0);
@@ -547,7 +547,7 @@ describe('API Documentation Generator', () => {
       );
       expect(patientEndpoints.length).toBeGreaterThan(0);
 
-      patientEndpoints.forEach(endpoint => {
+      patientEndpoints.forEach(_endpoint => {
         expect(endpoint.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT);
       });
     });
@@ -556,7 +556,7 @@ describe('API Documentation Generator', () => {
       const healthcareEndpoints = generator.getHealthcareCompliantEndpoints();
       expect(healthcareEndpoints.length).toBeGreaterThan(0);
 
-      healthcareEndpoints.forEach(endpoint => {
+      healthcareEndpoints.forEach(_endpoint => {
         const hasCompliance = endpoint.metadata.compliance?.lgpd
           || endpoint.metadata.compliance?.anvisa
           || endpoint.metadata.compliance?.cfm;
@@ -568,7 +568,7 @@ describe('API Documentation Generator', () => {
       const mobileEndpoints = generator.getMobileOptimizedEndpoints();
       expect(mobileEndpoints.length).toBeGreaterThan(0);
 
-      mobileEndpoints.forEach(endpoint => {
+      mobileEndpoints.forEach(_endpoint => {
         expect(endpoint.metadata.mobileOptimized).toBe(true);
       });
     });

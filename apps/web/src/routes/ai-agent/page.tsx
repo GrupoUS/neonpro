@@ -9,10 +9,10 @@ import { AIChat } from '@/components/ai-agent/ai-chat';
 import { AIChatWS } from '@/components/ai-agent/ai-chat-ws';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { useAuth } from '@/hooks/useAuth';
 import { createFileRoute } from '@tanstack/react-router';
-import { Brain, Calendar, MessageSquare, Shield, TrendingUp, Users, Zap } from 'lucide-react';
+import { Brain } from 'lucide-react';
 import React, { useState } from 'react';
 
 export const Route = createFileRoute('/ai-agent/page')({

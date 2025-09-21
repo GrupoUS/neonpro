@@ -74,7 +74,7 @@ export const usePDFExport = (): UsePDFExportReturn => {
       }
 
       return blob;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error
         ? err.message
         : 'Erro desconhecido na geração do PDF';

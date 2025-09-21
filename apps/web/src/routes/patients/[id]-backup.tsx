@@ -1,11 +1,11 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 // Fallback to shared UI Avatar not available; using simple initials circle inline below
 // import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -226,7 +226,7 @@ function PatientDetailPage() {
         setAppointments(mockAppointments);
         setMedicalRecords(mockMedicalRecords);
         setAiInsights(mockInsights);
-      } catch (err) {
+      } catch (_err) {
         setError('Erro ao carregar dados do paciente');
         console.error('Error fetching patient data:', err);
       } finally {
@@ -237,7 +237,7 @@ function PatientDetailPage() {
     fetchPatientData();
   }, [id]);
 
-  const calculateAge = (birthDate: string) => {
+  const calculateAge = (_birthDate: [a-zA-Z][a-zA-Z]*) => {
     const birth = new Date(birthDate);
     const today = new Date();
     let age = today.getFullYear() - birth.getFullYear();
@@ -251,7 +251,7 @@ function PatientDetailPage() {
     return age;
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (_status: [a-zA-Z][a-zA-Z]*) => {
     const variants = {
       scheduled: { variant: 'default' as const, label: 'Agendada' },
       completed: { variant: 'secondary' as const, label: 'Realizada' },
@@ -261,7 +261,7 @@ function PatientDetailPage() {
     return variants[status as keyof typeof variants] || variants.scheduled;
   };
 
-  const getPriorityBadge = (priority: string) => {
+  const getPriorityBadge = (_priority: [a-zA-Z][a-zA-Z]*) => {
     const variants = {
       low: { variant: 'outline' as const, label: 'Baixa' },
       medium: { variant: 'default' as const, label: 'Média' },
@@ -271,7 +271,7 @@ function PatientDetailPage() {
     return variants[priority as keyof typeof variants] || variants.low;
   };
 
-  const formatBirthDate = (dateString: string) => {
+  const formatBirthDate = (_dateString: [a-zA-Z][a-zA-Z]*) => {
     return format(new Date(dateString), 'dd \'de\' MMMM \'de\' yyyy', {
       locale: ptBR,
     });

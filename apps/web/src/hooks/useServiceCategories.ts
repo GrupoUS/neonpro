@@ -167,7 +167,7 @@ export function useInitializeDefaultCategories() {
       serviceCategoriesService.initializeDefaultCategories(clinicId),
     onSuccess: (categories, clinicId) => {
       // Add categories to cache
-      categories.forEach(category => {
+      categories.forEach(_category => {
         queryClient.setQueryData(
           serviceCategoryKeys.detail(category.id),
           category,

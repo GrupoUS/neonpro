@@ -8,7 +8,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { EventCalendar } from '../event-calendar';
-import { CalendarEvent, EventColor } from '../types';
+import { CalendarEvent } from '../types';
 
 // Mock performance utilities
 vi.mock('@/utils/performance-optimizer', () => ({

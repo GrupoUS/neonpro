@@ -332,7 +332,7 @@ export function useAppointmentRealtime(clinicId: string) {
   const queryClient = useQueryClient();
 
   const handleRealtimeUpdate = useCallback(
-    (payload: any) => {
+    (_payload: [a-zA-Z][a-zA-Z]*) => {
       const { eventType } = payload;
 
       // Update all relevant queries

@@ -149,7 +149,7 @@ class AnalyticsService {
           ? (noShowAppointments / totalAppointments) * 100
           : 0,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting appointment metrics:', error);
       return {
         totalAppointments: 0,
@@ -200,7 +200,7 @@ class AnalyticsService {
 
       // Revenue by service
       const serviceRevenue = new Map<string, ServiceRevenueBreakdown>();
-      (appointments as any[])?.forEach((apt: any) => {
+      (appointments as any[])?.forEach((_apt: [a-zA-Z][a-zA-Z]*) => {
         const service = apt.service_types;
         if (service) {
           const existing = serviceRevenue.get(service.id) || {
@@ -232,7 +232,7 @@ class AnalyticsService {
         string,
         ProfessionalRevenueBreakdown
       >();
-      (appointments as any[])?.forEach((apt: any) => {
+      (appointments as any[])?.forEach((_apt: [a-zA-Z][a-zA-Z]*) => {
         const professional = apt.professionals;
         if (professional) {
           const existing = professionalRevenue.get(professional.id) || {
@@ -260,7 +260,7 @@ class AnalyticsService {
         const monthStart = startOfMonth(subMonths(new Date(), i));
         const monthEnd = endOfMonth(monthStart);
 
-        const monthAppointments = (appointments as any[])?.filter((apt: any) => {
+        const monthAppointments = (appointments as any[])?.filter((_apt: [a-zA-Z][a-zA-Z]*) => {
           const aptDate = new Date(apt.start_time);
           return aptDate >= monthStart && aptDate <= monthEnd;
         }) || [];
@@ -287,7 +287,7 @@ class AnalyticsService {
         revenueByProfessional,
         monthlyRevenue,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting revenue metrics:', error);
       return {
         totalRevenue: 0,
@@ -339,7 +339,7 @@ class AnalyticsService {
       if (appointmentsError) throw appointmentsError;
 
       const totalPatients = allPatients?.length || 0;
-      const newPatients = (allPatients as any[])?.filter((p: any) => {
+      const newPatients = (allPatients as any[])?.filter((_p: [a-zA-Z][a-zA-Z]*) => {
         const createdDate = new Date((p as any).created_at || 0);
         return (
           createdDate >= dateRange.startDate
@@ -349,7 +349,7 @@ class AnalyticsService {
 
       // Calculate patient frequency
       const patientFrequency = new Map<string, PatientFrequencyData>();
-      (appointments as any[])?.forEach((apt: any) => {
+      (appointments as any[])?.forEach((_apt: [a-zA-Z][a-zA-Z]*) => {
         if (apt.patient_id && apt.patients) {
           const existing = patientFrequency.get(apt.patient_id) || {
             patientId: apt.patient_id,
@@ -392,14 +392,14 @@ class AnalyticsService {
         const monthStart = startOfMonth(subMonths(new Date(), i));
         const monthEnd = endOfMonth(monthStart);
 
-        const monthNewPatients = (allPatients as any[])?.filter((p: any) => {
+        const monthNewPatients = (allPatients as any[])?.filter((_p: [a-zA-Z][a-zA-Z]*) => {
           const createdDate = new Date((p as any).created_at || 0);
           return createdDate >= monthStart && createdDate <= monthEnd;
         }).length || 0;
 
         const monthReturningPatients = Array.from(
           patientFrequency.values(),
-        ).filter((p: PatientFrequencyData) => {
+        ).filter((_p: [a-zA-Z][a-zA-Z]*) => {
           return (
             p.lastVisit >= monthStart
             && p.lastVisit <= monthEnd
@@ -423,7 +423,7 @@ class AnalyticsService {
         topPatientsByFrequency,
         patientAcquisitionTrend,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting patient analytics:', error);
       return {
         totalPatients: 0,
@@ -465,7 +465,7 @@ class AnalyticsService {
 
       const professionalStats = new Map<string, ProfessionalPerformance>();
 
-      (appointments as any[])?.forEach((apt: any) => {
+      (appointments as any[])?.forEach((_apt: [a-zA-Z][a-zA-Z]*) => {
         if (apt.professional_id && apt.professionals) {
           const existing = professionalStats.get(apt.professional_id) || {
             professionalId: apt.professional_id,
@@ -497,7 +497,7 @@ class AnalyticsService {
             * 100
           : 0,
       }));
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting professional performance:', error);
       return [];
     }
@@ -531,7 +531,7 @@ class AnalyticsService {
 
       const serviceStats = new Map<string, PopularServicesData>();
 
-      (appointments as any[])?.forEach((apt: any) => {
+      (appointments as any[])?.forEach((_apt: [a-zA-Z][a-zA-Z]*) => {
         if (apt.service_type_id && apt.service_types) {
           const existing = serviceStats.get(apt.service_type_id) || {
             serviceId: apt.service_type_id,
@@ -551,7 +551,7 @@ class AnalyticsService {
       return Array.from(serviceStats.values()).sort(
         (a, b) => b.appointmentCount - a.appointmentCount,
       );
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting popular services:', error);
       return [];
     }
@@ -604,7 +604,7 @@ class AnalyticsService {
       }
 
       return csvContent;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error exporting analytics to CSV:', error);
       throw error;
     }

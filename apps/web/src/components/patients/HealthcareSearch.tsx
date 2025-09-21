@@ -207,17 +207,17 @@ const BRAZILIAN_STATES = [
 ];
 
 // Format Brazilian documents
-const formatCpf = (value: string) => {
+const formatCpf = (_value: [a-zA-Z][a-zA-Z]*) => {
   const numbers = value.replace(/\D/g, '');
   return numbers.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
 };
 
-const formatCns = (value: string) => {
+const formatCns = (_value: [a-zA-Z][a-zA-Z]*) => {
   const numbers = value.replace(/\D/g, '');
   return numbers.replace(/(\d{3})(\d{4})(\d{4})(\d{4})/, '$1 $2 $3 $4');
 };
 
-const formatPhone = (value: string) => {
+const formatPhone = (_value: [a-zA-Z][a-zA-Z]*) => {
   const numbers = value.replace(/\D/g, '');
   if (numbers.length === 11) {
     return numbers.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
@@ -408,11 +408,11 @@ export function HealthcareSearch({
     [],
   );
 
-  const handleBasicSearch = async (data: BasicSearchData) => {
+  const handleBasicSearch = async (_data: [a-zA-Z][a-zA-Z]*) => {
     await performSearch(data);
   };
 
-  const handleAdvancedSearch = async (data: AdvancedSearchData) => {
+  const handleAdvancedSearch = async (_data: [a-zA-Z][a-zA-Z]*) => {
     await performSearch(data);
   };
 

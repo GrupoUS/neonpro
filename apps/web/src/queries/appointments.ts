@@ -264,7 +264,7 @@ export const appointmentStatsQueryOptions = () =>
 
 // Mutation options para criar agendamento
 export const createAppointmentMutationOptions = {
-  mutationFn: async (appointment: AppointmentInsert) => {
+  mutationFn: async (_appointment: [a-zA-Z][a-zA-Z]*) => {
     const { data, error } = await supabase
       .from('appointments')
       .insert([appointment])
@@ -279,7 +279,7 @@ export const createAppointmentMutationOptions = {
     const { invalidateSupabaseQueries } = require('@/lib/query-client');
     invalidateSupabaseQueries('appointments');
   },
-  onError: (error: any) => {
+  onError: (_error: [a-zA-Z][a-zA-Z]*) => {
     console.error('Error creating appointment:', error);
   },
 };
@@ -305,14 +305,14 @@ export const updateAppointmentMutationOptions = {
     const { invalidateSupabaseQueries } = require('@/lib/query-client');
     invalidateSupabaseQueries('appointments');
   },
-  onError: (error: any) => {
+  onError: (_error: [a-zA-Z][a-zA-Z]*) => {
     console.error('Error updating appointment:', error);
   },
 };
 
 // Mutation options para deletar agendamento
 export const deleteAppointmentMutationOptions = {
-  mutationFn: async (id: string) => {
+  mutationFn: async (_id: [a-zA-Z][a-zA-Z]*) => {
     const { error } = await supabase.from('appointments').delete().eq('id', id);
 
     if (error) throw error;
@@ -323,14 +323,14 @@ export const deleteAppointmentMutationOptions = {
     const { invalidateSupabaseQueries } = require('@/lib/query-client');
     invalidateSupabaseQueries('appointments');
   },
-  onError: (error: any) => {
+  onError: (_error: [a-zA-Z][a-zA-Z]*) => {
     console.error('Error deleting appointment:', error);
   },
 };
 
 // Mutation options para confirmar agendamento
 export const confirmAppointmentMutationOptions = {
-  mutationFn: async (id: string) => {
+  mutationFn: async (_id: [a-zA-Z][a-zA-Z]*) => {
     const { data, error } = await supabase
       .from('appointments')
       .update({ status: 'confirmed' })
@@ -345,7 +345,7 @@ export const confirmAppointmentMutationOptions = {
     const { invalidateSupabaseQueries } = require('@/lib/query-client');
     invalidateSupabaseQueries('appointments');
   },
-  onError: (error: any) => {
+  onError: (_error: [a-zA-Z][a-zA-Z]*) => {
     console.error('Error confirming appointment:', error);
   },
 };

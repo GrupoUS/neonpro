@@ -4,9 +4,9 @@
  */
 
 import { useServiceCategories } from '@/hooks/useServiceCategories';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
-import { BarChart3, DollarSign, Package, TrendingUp } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 
 interface ServiceCategoryStatsProps {
   clinicId: string;

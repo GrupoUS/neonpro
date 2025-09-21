@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Activity, Clock, Zap } from 'lucide-react';
+import { Activity } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 export interface MetricsPerformanceProps {
@@ -42,7 +42,7 @@ export const MetricsPerformance: React.FC<MetricsPerformanceProps> = ({
     }
   }, []);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
     switch (status) {
       case 'good':
         return 'bg-green-500';

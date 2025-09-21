@@ -84,7 +84,7 @@ export function usePerformanceMonitor() {
       performanceObserver.current = new PerformanceObserver(list => {
         const entries = list.getEntries();
 
-        entries.forEach(entry => {
+        entries.forEach(_entry => {
           if (entry.entryType === 'navigation') {
             const navEntry = entry as PerformanceNavigationTiming;
             updateMetrics({
@@ -203,7 +203,7 @@ export function usePerformanceMonitor() {
         setAlerts(prev => [...prev, ...newAlerts].slice(-20)); // Keep last 20 alerts
 
         // Show toast notifications for critical issues
-        newAlerts.forEach(alert => {
+        newAlerts.forEach(_alert => {
           if (alert.severity === 'error' || alert.severity === 'critical') {
             toast.error(alert.message);
           } else if (alert.severity === 'warning') {
@@ -287,14 +287,14 @@ export function usePerformanceMonitor() {
         const result = fn();
 
         if (result && typeof result.then === 'function') {
-          return result.then(finish).catch((error: any) => {
+          return result.then(finish).catch((_error: [a-zA-Z][a-zA-Z]*) => {
             finish();
             throw error;
           });
         } else {
           return finish(result);
         }
-      } catch (error) {
+      } catch (_error) {
         finish();
         throw error;
       }

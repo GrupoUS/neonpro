@@ -18,7 +18,7 @@
 
 import { useAuth } from '@/hooks/useAuth';
 import { cn } from '@/lib/utils';
-import { Button, Progress } from '@neonpro/ui';
+import { Button } from '@neonpro/ui';
 import {
   IconAlertCircle,
   IconCheck,
@@ -187,7 +187,7 @@ export function FileUploadIntegration({
 
   // Handle file selection
   const handleFiles = useCallback(
-    async (files: FileList) => {
+    async (_files: [a-zA-Z][a-zA-Z]*) => {
       if (disabled) return;
 
       const fileArray = Array.from(files);
@@ -257,7 +257,7 @@ export function FileUploadIntegration({
 
           toast.success(`Arquivo "${file.name}" enviado com sucesso!`);
           onFilesUploaded?.([uploadedFile]);
-        } catch (error) {
+        } catch (_error) {
           console.error('Upload error:', error);
 
           setUploadStates(prev => {
@@ -283,13 +283,13 @@ export function FileUploadIntegration({
   );
 
   // Handle file removal (simplified for now)
-  const handleRemoveFile = async (fileId: string) => {
+  const handleRemoveFile = async (_fileId: [a-zA-Z][a-zA-Z]*) => {
     try {
       // TODO: Implement actual file removal from Supabase storage
       setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
       onFileRemoved?.(fileId);
       toast.success('Arquivo removido com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error removing file:', error);
       toast.error('Erro ao remover arquivo');
     }
@@ -334,7 +334,7 @@ export function FileUploadIntegration({
   );
 
   // Get file type info
-  const getFileTypeInfo = (mimeType: string) => {
+  const getFileTypeInfo = (_mimeType: [a-zA-Z][a-zA-Z]*) => {
     return (
       HEALTHCARE_FILE_TYPES[mimeType as keyof typeof HEALTHCARE_FILE_TYPES]
       || HEALTHCARE_FILE_TYPES.default

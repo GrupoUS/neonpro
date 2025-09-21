@@ -1,8 +1,8 @@
 'use client';
 
 import { Slot } from '@radix-ui/react-slot';
-import { RiLayoutLeft2Line, RiSkipLeftLine } from '@remixicon/react';
-import { cva, VariantProps } from 'class-variance-authority';
+import { RiLayoutLeft2Line } from '@remixicon/react';
+import { cva } from 'class-variance-authority';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -16,7 +16,7 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { cn } from '@/lib/utils';
 
@@ -91,7 +91,7 @@ function SidebarProvider({
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (_event: [a-zA-Z][a-zA-Z]*) => {
       if (
         event.key === SIDEBAR_KEYBOARD_SHORTCUT
         && (event.metaKey || event.ctrlKey)

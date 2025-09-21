@@ -179,7 +179,7 @@ describe('EventCalendar Component - Healthcare Compliance', () => {
 
     // All interactive elements should be accessible
     const interactiveElements = screen.getAllByRole('button');
-    interactiveElements.forEach(element => {
+    interactiveElements.forEach(_element => {
       expect(element).toHaveAttribute('aria-label');
       expect(element).toHaveAttribute('tabindex');
     });

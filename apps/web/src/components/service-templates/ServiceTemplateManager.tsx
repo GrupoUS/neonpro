@@ -18,7 +18,7 @@ import {
 } from '@/types/service-templates';
 import type { ServiceTemplateWithItems } from '@/types/service-templates';
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
 import {
@@ -29,7 +29,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@neonpro/ui';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@neonpro/ui';
+import { Select } from '@neonpro/ui';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -99,7 +99,7 @@ export function ServiceTemplateManager({
     return matchesSearch && matchesType && matchesStatus;
   }) || [];
 
-  const handleDeleteTemplate = async (template: ServiceTemplateWithItems) => {
+  const handleDeleteTemplate = async (_template: [a-zA-Z][a-zA-Z]*) => {
     if (
       window.confirm(
         `Tem certeza que deseja excluir o template "${template.name}"?`,
@@ -107,35 +107,35 @@ export function ServiceTemplateManager({
     ) {
       try {
         await deleteTemplate.mutateAsync(template.id);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error deleting template:', error);
       }
     }
   };
 
-  const handleToggleFeatured = async (template: ServiceTemplateWithItems) => {
+  const handleToggleFeatured = async (_template: [a-zA-Z][a-zA-Z]*) => {
     try {
       await toggleFeatured.mutateAsync({
         id: template.id,
         isFeatured: template.is_featured,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error toggling featured:', error);
     }
   };
 
-  const handleToggleActive = async (template: ServiceTemplateWithItems) => {
+  const handleToggleActive = async (_template: [a-zA-Z][a-zA-Z]*) => {
     try {
       await toggleActive.mutateAsync({
         id: template.id,
         isActive: template.is_active,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error toggling active:', error);
     }
   };
 
-  const handleDuplicate = async (template: ServiceTemplateWithItems) => {
+  const handleDuplicate = async (_template: [a-zA-Z][a-zA-Z]*) => {
     const newName = `${template.name} (Cópia)`;
     try {
       await duplicateTemplate.mutateAsync({
@@ -143,7 +143,7 @@ export function ServiceTemplateManager({
         new_name: newName,
         clinic_id: clinicId,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Error duplicating template:', error);
     }
   };

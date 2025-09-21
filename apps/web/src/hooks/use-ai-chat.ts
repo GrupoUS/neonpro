@@ -147,7 +147,7 @@ export function useAIChat(conversationId?: string) {
       if (convId) {
         queryClient.setQueryData(
           aiChatKeys.conversation(convId),
-          (old: any) => {
+          (_old: [a-zA-Z][a-zA-Z]*) => {
             if (!old) return old;
             return {
               ...old,
@@ -168,7 +168,7 @@ export function useAIChat(conversationId?: string) {
       if (convId) {
         queryClient.setQueryData(
           aiChatKeys.conversation(convId),
-          (old: any) => {
+          (_old: [a-zA-Z][a-zA-Z]*) => {
             if (!old) return old;
 
             // Replace optimistic message with real data
@@ -223,7 +223,7 @@ export function useAIChat(conversationId?: string) {
       if (convId) {
         queryClient.setQueryData(
           aiChatKeys.conversation(convId),
-          (old: any) => {
+          (_old: [a-zA-Z][a-zA-Z]*) => {
             if (!old) return old;
             return {
               ...old,
@@ -278,7 +278,7 @@ export function useAINoShowPrediction() {
 
     onSuccess: (data, variables) => {
       // Cache prediction result
-      queryClient.setQueryData(aiChatKeys.predictions(), (old: any) => {
+      queryClient.setQueryData(aiChatKeys.predictions(), (_old: [a-zA-Z][a-zA-Z]*) => {
         const predictions = old || [];
         return [
           ...predictions.filter(
@@ -334,7 +334,7 @@ export function useAIHealthcareInsights() {
       const queryClient = useQueryClient();
       queryClient.setQueryData(
         aiChatKeys.insights(variables.type),
-        (old: any) => {
+        (_old: [a-zA-Z][a-zA-Z]*) => {
           const insights = old || [];
           return [data, ...insights.slice(0, 9)]; // Keep last 10 insights
         },
@@ -630,7 +630,7 @@ export function useAIConversationHistory() {
     onSuccess: (data, variables) => {
       // Update conversations cache
       const queryClient = useQueryClient();
-      queryClient.setQueryData(aiChatKeys.conversations(), (old: any) => {
+      queryClient.setQueryData(aiChatKeys.conversations(), (_old: [a-zA-Z][a-zA-Z]*) => {
         if (!old) return old;
         return old.filter(
           (conv: Conversation) => conv.id !== variables.conversationId,

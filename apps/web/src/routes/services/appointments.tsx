@@ -10,12 +10,12 @@ import {
 } from '@/hooks/useAppointments';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/useToast';
-import type { CreateAppointmentData, UpdateAppointmentData } from '@/services/appointments.service';
-import { Card, CardContent } from '@neonpro/ui';
+import type { CreateAppointmentData } from '@/services/appointments.service';
+import { Card } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { createFileRoute, Link } from '@tanstack/react-router'; // useNavigate removed
+import { createFileRoute } from '@tanstack/react-router'; // useNavigate removed
 import { isAfter, isSameDay } from 'date-fns';
-import { CalendarCheck, CalendarClock, CheckCircle2, XCircle } from 'lucide-react';
+import { CalendarCheck2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 function AppointmentsPage() {
@@ -125,7 +125,7 @@ function AppointmentsPage() {
     });
   };
 
-  const handleEventDelete = (eventId: string) => {
+  const handleEventDelete = (_eventId: [a-zA-Z][a-zA-Z]*) => {
     deleteAppointmentMutation.mutate({
       appointmentId: eventId,
       clinicId,

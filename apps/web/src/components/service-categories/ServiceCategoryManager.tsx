@@ -11,7 +11,7 @@ import {
 import type { ServiceCategory } from '@/types/service-categories';
 import { cn } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Input } from '@neonpro/ui';
 import {
@@ -79,7 +79,7 @@ export function ServiceCategoryManager({
       || category.description?.toLowerCase().includes(searchQuery.toLowerCase()),
   ) || [];
 
-  const handleDeleteCategory = async (category: ServiceCategory) => {
+  const handleDeleteCategory = async (_category: [a-zA-Z][a-zA-Z]*) => {
     if (
       window.confirm(
         `Tem certeza que deseja excluir a categoria "${category.name}"?`,
@@ -87,7 +87,7 @@ export function ServiceCategoryManager({
     ) {
       try {
         await deleteCategory.mutateAsync(category.id);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error deleting category:', error);
       }
     }
@@ -101,7 +101,7 @@ export function ServiceCategoryManager({
     ) {
       try {
         await initializeDefaults.mutateAsync(clinicId);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error initializing default categories:', error);
       }
     }

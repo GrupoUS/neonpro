@@ -54,7 +54,7 @@ export function useEventActions() {
       }
 
       return true;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create event';
       if (showToast) {
         toast.error(errorMessage);
@@ -104,7 +104,7 @@ export function useEventActions() {
       }
 
       return true;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update event';
       if (showToast) {
         toast.error(errorMessage);
@@ -145,7 +145,7 @@ export function useEventActions() {
       }
 
       return true;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete event';
       if (showToast) {
         toast.error(errorMessage);
@@ -210,7 +210,7 @@ export function useEventActions() {
       }
 
       return true;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to duplicate event';
       if (showToast) {
         toast.error(errorMessage);
@@ -257,7 +257,7 @@ export function useEventActions() {
       }
 
       return true;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to move event';
       if (showToast) {
         toast.error(errorMessage);
@@ -287,7 +287,7 @@ export function useEventActions() {
       }
 
       return true;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update event status';
       if (showToast) {
         toast.error(errorMessage);
@@ -316,7 +316,7 @@ export function useEventActions() {
       }
 
       return true;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update events';
       if (showToast) {
         toast.error(errorMessage);
@@ -352,7 +352,7 @@ export function useEventActions() {
       }
 
       return true;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete events';
       if (showToast) {
         toast.error(errorMessage);
@@ -366,7 +366,7 @@ export function useEventActions() {
     try {
       await refreshEvents();
       toast.success('Events refreshed');
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to refresh events';
       toast.error(errorMessage);
       throw err;

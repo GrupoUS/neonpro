@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { CalendarEvent, GoogleCalendarClient, OAuth2Tokens } from './client';
+import { CalendarEvent2Tokens } from './client';
 
 export interface GoogleCalendarIntegrationConfig {
   clientId: string;
@@ -89,7 +89,7 @@ export class GoogleCalendarService {
         integration,
         calendarId: primaryCalendar.id,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error initializing Google Calendar integration:', error);
       throw error;
     }
@@ -229,7 +229,7 @@ export class GoogleCalendarService {
         success: true,
         googleEventId: result.id,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error(
         `Error ${operation} appointment in Google Calendar:`,
         error,
@@ -336,7 +336,7 @@ export class GoogleCalendarService {
         nextSyncToken: result.nextSyncToken,
         changes,
       };
-    } catch (error) {
+    } catch (_error) {
       console.error('Error syncing from Google Calendar:', error);
       throw error;
     }
@@ -450,7 +450,7 @@ export class GoogleCalendarService {
           userAgent: 'neonpro-service', // In real app, get from request
         },
       });
-    } catch (logError) {
+    } catch (_logError) {
       console.error('Error logging sync operation:', logError);
       // Don't throw error for logging failures
     }
@@ -487,7 +487,7 @@ export class GoogleCalendarService {
       });
 
       return true;
-    } catch (error) {
+    } catch (_error) {
       console.error('Error disconnecting Google Calendar:', error);
       return false;
     }

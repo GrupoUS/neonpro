@@ -1,9 +1,9 @@
 import { AppointmentBooking } from '@/components/appointment-booking';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
-import { createFileRoute, Link, useNavigate, useSearch } from '@tanstack/react-router';
-import { ArrowLeft, Calendar, Clock, FileText, User } from 'lucide-react';
+import { Card } from '@neonpro/ui';
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router';
+import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 
 function NewAppointmentPage() {
@@ -25,7 +25,7 @@ function NewAppointmentPage() {
   // Check permissions
   const canCreateAppointments = hasPermission('canCreateAppointments');
 
-  const handleBookingComplete = (booking: any) => {
+  const handleBookingComplete = (_booking: [a-zA-Z][a-zA-Z]*) => {
     console.log('Booking completed:', booking);
     // Navigate back to appointments page after successful booking
     navigate({ to: '/appointments' });

@@ -67,7 +67,7 @@ export class CacheService {
         }
       }
 
-      keysToDelete.forEach(key => this.cache.delete(key));
+      keysToDelete.forEach(_key => this.cache.delete(key));
     } else {
       // Exact match
       this.cache.delete(pattern);
@@ -148,6 +148,6 @@ export class CacheService {
       }
     }
 
-    keysToDelete.forEach(key => this.cache.delete(key));
+    keysToDelete.forEach(_key => this.cache.delete(key));
   }
 }

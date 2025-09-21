@@ -1,10 +1,10 @@
 'use client';
 
 import { useId, useState } from 'react';
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { Bar } from 'recharts';
 
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   ChartConfig,
   ChartContainer,

@@ -103,7 +103,7 @@ export function useCreateServiceTemplate() {
 
       toast.success('Template de serviço criado com sucesso!');
     },
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao criar template: ${error.message}`);
     },
   });
@@ -127,7 +127,7 @@ export function useUpdateServiceTemplate() {
 
       toast.success('Template atualizado com sucesso!');
     },
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao atualizar template: ${error.message}`);
     },
   });
@@ -147,7 +147,7 @@ export function useDeleteServiceTemplate() {
 
       toast.success('Template removido com sucesso!');
     },
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao remover template: ${error.message}`);
     },
   });
@@ -176,7 +176,7 @@ export function useAddTemplateItems() {
 
       toast.success('Serviços adicionados ao template!');
     },
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao adicionar serviços: ${error.message}`);
     },
   });
@@ -197,7 +197,7 @@ export function useUpdateTemplateItem() {
 
       toast.success('Item do template atualizado!');
     },
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao atualizar item: ${error.message}`);
     },
   });
@@ -217,7 +217,7 @@ export function useRemoveTemplateItem() {
 
       toast.success('Item removido do template!');
     },
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao remover item: ${error.message}`);
     },
   });
@@ -235,7 +235,7 @@ export function useIncrementTemplateUsage() {
       // Invalidate stats queries to update usage counts
       queryClient.invalidateQueries({ queryKey: serviceTemplatesKeys.all });
     },
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error incrementing template usage:', error);
       // Don't show error toast for this as it's a background operation
     },
@@ -257,7 +257,7 @@ export function useDuplicateServiceTemplate() {
 
       toast.success('Template duplicado com sucesso!');
     },
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao duplicar template: ${error.message}`);
     },
   });
@@ -288,7 +288,7 @@ export function useToggleTemplateFeatured() {
         : 'Template adicionado aos destaques';
       toast.success(message);
     },
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao alterar destaque: ${error.message}`);
     },
   });
@@ -311,7 +311,7 @@ export function useToggleTemplateActive() {
       const message = isActive ? 'Template desativado' : 'Template ativado';
       toast.success(message);
     },
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao alterar status: ${error.message}`);
     },
   });

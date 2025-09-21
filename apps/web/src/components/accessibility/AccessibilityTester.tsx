@@ -13,7 +13,7 @@
 'use client';
 
 import { Button } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import {
   Accessibility,

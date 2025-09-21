@@ -226,7 +226,7 @@ export function useAdvancedAnalytics(
       setBrazilianKPIs(newBrazilianKPIs);
       setComplianceAudit(newComplianceAudit);
       setLastUpdate(new Date());
-    } catch (err) {
+    } catch (_err) {
       setError(
         err instanceof Error ? err.message : 'Erro ao carregar analytics',
       );

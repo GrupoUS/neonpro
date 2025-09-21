@@ -178,7 +178,7 @@ export function useDataExport(): UseDataExportReturn {
 
       data.forEach((row, index) => {
         html += '<tr>';
-        headers.forEach(header => {
+        headers.forEach(_header => {
           let value = row[header];
 
           // Handle different data types
@@ -298,7 +298,7 @@ export function useDataExport(): UseDataExportReturn {
           setStatus('idle');
           setProgress(0);
         }, 3000);
-      } catch (err) {
+      } catch (_err) {
         const errorMessage = err instanceof Error
           ? err.message
           : 'Erro desconhecido na exportação';

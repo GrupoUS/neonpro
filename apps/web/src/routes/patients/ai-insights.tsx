@@ -4,10 +4,10 @@ import { AccessiblePatientCard } from '@/components/accessibility/AccessiblePati
 import { AnimatedModal } from '@/components/ui/animated-modal';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { UniversalButton } from '@/components/ui/universal-button';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -409,7 +409,7 @@ function PatientAIInsights() {
         setPredictions(mockPredictions);
         setModels(mockModels);
         setTreatments(mockTreatments);
-      } catch (error) {
+      } catch (_error) {
         console.error('Error loading AI insights:', error);
       } finally {
         setLoading(false);
@@ -427,7 +427,7 @@ function PatientAIInsights() {
     });
   }, [insights, selectedCategory, selectedPriority]);
 
-  const getPriorityColor = (priority: string) => {
+  const getPriorityColor = (_priority: [a-zA-Z][a-zA-Z]*) => {
     switch (priority) {
       case 'critical':
         return 'destructive';
@@ -442,7 +442,7 @@ function PatientAIInsights() {
     }
   };
 
-  const getPriorityLabel = (priority: string) => {
+  const getPriorityLabel = (_priority: [a-zA-Z][a-zA-Z]*) => {
     switch (priority) {
       case 'critical':
         return 'Crítico';
@@ -457,7 +457,7 @@ function PatientAIInsights() {
     }
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
     switch (status) {
       case 'active':
         return 'default';
@@ -470,7 +470,7 @@ function PatientAIInsights() {
     }
   };
 
-  const handleInsightAction = async (insight: PatientAIInsight) => {
+  const handleInsightAction = async (_insight: [a-zA-Z][a-zA-Z]*) => {
     toast({
       title: 'Ação de IA executada',
       description: `Iniciando ações para: ${insight.title}`,
@@ -485,7 +485,7 @@ function PatientAIInsights() {
     }, 2000);
   };
 
-  const handleInsightDetails = (insight: PatientAIInsight) => {
+  const handleInsightDetails = (_insight: [a-zA-Z][a-zA-Z]*) => {
     setSelectedInsight(insight);
     setIsModalOpen(true);
   };

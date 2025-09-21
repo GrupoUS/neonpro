@@ -2,7 +2,7 @@ import { HealthcareRoutePrefetcher } from '@/lib/prefetching/route-prefetcher';
 import { queryClient } from '@/lib/query-client';
 import { appointmentDetailsQueryOptions } from '@/queries/appointments';
 import { patientDetailsQueryOptions, patientsQueryOptions } from '@/queries/patients';
-import type { Appointment, Patient } from '@neonpro/types';
+import type { Appointment } from '@neonpro/types';
 import React, { useEffect } from 'react';
 
 interface SmartPrefetcherProps {
@@ -137,7 +137,7 @@ export function SmartPrefetcher({
 
       const observer = new IntersectionObserver(
         entries => {
-          entries.forEach(entry => {
+          entries.forEach(_entry => {
             if (entry.isIntersecting) {
               executePrefetch();
               observer.disconnect();

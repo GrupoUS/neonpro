@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@neonpro/ui';
 import { type SharedAnimatedListItem } from '@neonpro/ui';
-import { ExpandableCard, ExpandableCardProvider } from '@neonpro/ui';
+import { ExpandableCard } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import * as React from 'react';
@@ -149,7 +149,7 @@ export default function NotificationCard({
 
   const items = (data ?? []) as readonly NormalizedNotification[];
 
-  const onClickItem = (n: NormalizedNotification) => {
+  const onClickItem = (_n: [a-zA-Z][a-zA-Z]*) => {
     const id = String(n.id);
     const updated = new Set(readIds);
     updated.add(id);

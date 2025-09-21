@@ -5,10 +5,10 @@
  * and LGPD-compliant healthcare analytics visualization.
  */
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   Activity,
@@ -134,7 +134,7 @@ export function AdvancedAnalyticsDashboard({
     }, 1500);
   };
 
-  const getInsightIcon = (type: string) => {
+  const getInsightIcon = (_type: [a-zA-Z][a-zA-Z]*) => {
     switch (type) {
       case 'no_show_risk':
         return AlertTriangle;
@@ -149,7 +149,7 @@ export function AdvancedAnalyticsDashboard({
     }
   };
 
-  const getImpactColor = (impact: string) => {
+  const getImpactColor = (_impact: [a-zA-Z][a-zA-Z]*) => {
     switch (impact) {
       case 'high':
         return 'text-red-600 bg-red-50 border-red-200';

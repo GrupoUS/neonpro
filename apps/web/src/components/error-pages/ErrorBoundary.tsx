@@ -4,7 +4,7 @@
  * React Error Boundary that catches JavaScript errors and displays appropriate error pages
  */
 
-import { Component, ErrorInfo, ReactNode } from 'react';
+import { Component } from 'react';
 import { ServerErrorPage } from './ServerErrorPage';
 
 interface Props {

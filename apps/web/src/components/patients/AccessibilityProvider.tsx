@@ -25,7 +25,7 @@ import {
   ZoomIn,
   ZoomOut,
 } from 'lucide-react';
-import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 // Accessibility preferences interface
 interface AccessibilityPreferences {
@@ -398,7 +398,7 @@ export function AccessibilityProvider({
       try {
         const parsed = JSON.parse(savedPreferences);
         setPreferences({ ...defaultPreferences, ...parsed });
-      } catch (error) {
+      } catch (_error) {
         console.error('Error loading accessibility preferences:', error);
       }
     }
@@ -493,7 +493,7 @@ export function AccessibilityProvider({
     );
   };
 
-  const announceToScreenReader = (message: string) => {
+  const announceToScreenReader = (_message: [a-zA-Z][a-zA-Z]*) => {
     const event = new CustomEvent('accessibility-announce', {
       detail: message,
     });
@@ -544,7 +544,7 @@ export function useAccessibility() {
 export function withAccessibility<P extends object>(
   Component: React.ComponentType<P>,
 ) {
-  const AccessibleComponent = (props: P) => {
+  const AccessibleComponent = (_props: [a-zA-Z][a-zA-Z]*) => {
     const { preferences, announceToScreenReader } = useAccessibility();
 
     return (
@@ -566,7 +566,7 @@ export function useKeyboardNavigation() {
   const { preferences } = useAccessibility();
 
   useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+    const handleKeyDown = (_event: [a-zA-Z][a-zA-Z]*) => {
       // Add keyboard delay if enabled
       if (preferences.slowKeys && preferences.clickDelay > 0) {
         setTimeout(() => {
@@ -608,7 +608,7 @@ export function useKeyboardNavigation() {
 export function useFocusManagement() {
   const { announceToScreenReader } = useAccessibility();
 
-  const trapFocus = (element: HTMLElement) => {
+  const trapFocus = (_element: [a-zA-Z][a-zA-Z]*) => {
     const focusableElements = element.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
@@ -617,7 +617,7 @@ export function useFocusManagement() {
       focusableElements.length - 1
     ] as HTMLElement;
 
-    const handleTabKey = (event: KeyboardEvent) => {
+    const handleTabKey = (_event: [a-zA-Z][a-zA-Z]*) => {
       if (event.key === 'Tab') {
         if (event.shiftKey) {
           if (document.activeElement === firstElement) {

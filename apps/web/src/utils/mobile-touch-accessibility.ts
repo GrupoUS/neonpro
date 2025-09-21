@@ -163,7 +163,7 @@ export class MobileTouchAccessibility {
     const issues: TouchAccessibilityIssue[] = [];
 
     // Validate each touch target
-    targets.forEach(target => {
+    targets.forEach(_target => {
       const isCompliant = this.validateSingleTouchTarget(target);
       if (isCompliant) {
         compliantTargets++;

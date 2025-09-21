@@ -276,7 +276,7 @@ export function useCheckAvailability() {
 
         // Add conflicts for existing appointments
         if (existingAppointments && existingAppointments.length > 0) {
-          existingAppointments.forEach(appointment => {
+          existingAppointments.forEach(_appointment => {
             const patient = appointment.patients as any;
             const service = appointment.service_types as any;
             conflicts.push({
@@ -329,7 +329,7 @@ export function useCheckAvailability() {
           conflicts,
           warnings,
         };
-      } catch (error) {
+      } catch (_error) {
         console.error('Error in availability check:', error);
         throw error;
       }
@@ -439,7 +439,7 @@ export function useServiceTimeSlots(
         }
 
         return slots;
-      } catch (error) {
+      } catch (_error) {
         console.error('Error generating time slots:', error);
         throw error;
       }

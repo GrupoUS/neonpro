@@ -3,9 +3,9 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Calendar, Clock, Filter, Search, X } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useEventSearch } from './hooks/use-event-search';
 
@@ -44,7 +44,7 @@ export function EventSearchBar({
   const resultsRef = useRef<HTMLDivElement>(null);
 
   // Handle search input change
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = (_value: [a-zA-Z][a-zA-Z]*) => {
     setSearchQuery(value);
 
     if (value.trim()) {
@@ -65,7 +65,7 @@ export function EventSearchBar({
   };
 
   // Handle result selection
-  const handleResultSelect = (event: any) => {
+  const handleResultSelect = (_event: [a-zA-Z][a-zA-Z]*) => {
     onResultSelect?.(event);
     setShowResults(false);
     clearSearch();
@@ -108,7 +108,7 @@ export function EventSearchBar({
 
   // Close results when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    const handleClickOutside = (_event: [a-zA-Z][a-zA-Z]*) => {
       if (
         inputRef.current && !inputRef.current.contains(event.target as Node)
         && resultsRef.current && !resultsRef.current.contains(event.target as Node)
@@ -133,7 +133,7 @@ export function EventSearchBar({
   }, [searchResults, searchSuggestions]);
 
   // Format date for display
-  const formatDate = (date: Date) => {
+  const formatDate = (_date: [a-zA-Z][a-zA-Z]*) => {
     return new Intl.DateTimeFormat('en-US', {
       month: 'short',
       day: 'numeric',

@@ -85,7 +85,7 @@ export const getOptimizedImageSrc = (
 export const preloadCriticalResources = (resources: string[]) => {
   if (typeof document === 'undefined') return;
 
-  resources.forEach(resource => {
+  resources.forEach(_resource => {
     const link = document.createElement('link');
     link.rel = 'preload';
     link.href = resource;
@@ -114,7 +114,7 @@ export const deferNonCriticalResources = () => {
   const nonCriticalStyles = document.querySelectorAll(
     'link[rel="stylesheet"][data-defer]',
   );
-  nonCriticalStyles.forEach(link => {
+  nonCriticalStyles.forEach(_link => {
     const newLink = document.createElement('link');
     newLink.rel = 'stylesheet';
     newLink.href = (link as HTMLLinkElement).href;
@@ -167,7 +167,7 @@ export const addResourceHints = () => {
     'api.supabase.co',
   ];
 
-  externalDomains.forEach(domain => {
+  externalDomains.forEach(_domain => {
     const link = document.createElement('link');
     link.rel = 'dns-prefetch';
     link.href = `//${domain}`;
@@ -180,7 +180,7 @@ export const addResourceHints = () => {
     'https://api.supabase.co',
   ];
 
-  criticalOrigins.forEach(origin => {
+  criticalOrigins.forEach(_origin => {
     const link = document.createElement('link');
     link.rel = 'preconnect';
     link.href = origin;

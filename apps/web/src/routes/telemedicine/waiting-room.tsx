@@ -18,11 +18,11 @@ import {
   Video,
 } from 'lucide-react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert } from '@/components/ui/alert';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 
 export const Route = createFileRoute('/telemedicine/waiting-room')({
@@ -73,7 +73,7 @@ function WaitingRoom() {
     },
   ];
 
-  const getInitials = (name: string) => {
+  const getInitials = (_name: [a-zA-Z][a-zA-Z]*) => {
     return name
       .split(' ')
       .map(n => n[0])
@@ -81,7 +81,7 @@ function WaitingRoom() {
       .toUpperCase();
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
     switch (status) {
       case 'ready':
         return 'bg-green-100 text-green-800';
@@ -94,7 +94,7 @@ function WaitingRoom() {
     }
   };
 
-  const getConnectionIcon = (quality: string) => {
+  const getConnectionIcon = (_quality: [a-zA-Z][a-zA-Z]*) => {
     switch (quality) {
       case 'excellent':
         return <div className='w-2 h-2 bg-green-500 rounded-full'></div>;
@@ -107,7 +107,7 @@ function WaitingRoom() {
     }
   };
 
-  const getPriorityBadge = (priority: string) => {
+  const getPriorityBadge = (_priority: [a-zA-Z][a-zA-Z]*) => {
     if (priority === 'urgent') {
       return (
         <Badge variant='destructive' className='text-xs'>

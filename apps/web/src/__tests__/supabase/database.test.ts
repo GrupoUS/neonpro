@@ -368,7 +368,7 @@ describe('Supabase Database Integration', () => {
       const results = await Promise.all(operationPromises);
 
       // All operations should succeed
-      results.forEach(result => {
+      results.forEach(_result => {
         expect(result.error).toBeNull();
         expect(
           HealthcareTestValidators.validatePerformance(

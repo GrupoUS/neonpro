@@ -5,7 +5,7 @@
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AccessiblePatientCard, AccessiblePatientList } from '../AccessiblePatientCard';
+import { AccessiblePatientCard } from '../AccessiblePatientCard';
 
 // Mock the accessibility hooks
 vi.mock('../../hooks/useAccessibility', () => ({

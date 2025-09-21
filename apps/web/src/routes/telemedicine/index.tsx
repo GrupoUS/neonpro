@@ -4,7 +4,7 @@
  * Enhanced with real tRPC integration, real-time updates, and comprehensive features
  */
 
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import {
   Activity,
   AlertTriangle,
@@ -33,11 +33,11 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert } from '@/components/ui/alert';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -49,12 +49,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 
 // Import tRPC client and types
 import { trpc } from '@/lib/trpc';
-import type { ScheduledSession, Session, SessionStats } from '@neonpro/types';
+import type { ScheduledSession } from '@neonpro/types';
 
 // Import telemedicine components
 import { RealTimeChat } from '@/components/telemedicine/RealTimeChat';
@@ -193,7 +193,7 @@ function TelemedicineDashboard() {
   }, [state.autoRefresh, refetchSessions, refetchStats]);
 
   // Handle session start
-  const handleStartSession = async (appointmentId: string) => {
+  const handleStartSession = async (_appointmentId: [a-zA-Z][a-zA-Z]*) => {
     try {
       await startSessionMutation.mutateAsync({
         appointmentId,
@@ -204,16 +204,16 @@ function TelemedicineDashboard() {
           complianceMode: 'strict',
         },
       });
-    } catch (error) {
+    } catch (_error) {
       // Error handled by onError callback
     }
   };
 
   // Handle session join
-  const handleJoinSession = async (sessionId: string) => {
+  const handleJoinSession = async (_sessionId: [a-zA-Z][a-zA-Z]*) => {
     try {
       await joinSessionMutation.mutateAsync({ sessionId });
-    } catch (error) {
+    } catch (_error) {
       // Error handled by onError callback
     }
   };
@@ -225,7 +225,7 @@ function TelemedicineDashboard() {
   ) => {
     try {
       await endSessionMutation.mutateAsync({ sessionId, reason });
-    } catch (error) {
+    } catch (_error) {
       // Error handled by onError callback
     }
   };
@@ -244,7 +244,7 @@ function TelemedicineDashboard() {
   }) || [];
 
   // Get status color
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
     switch (status) {
       case 'active':
         return 'bg-green-100 text-green-800 border-green-300';
@@ -262,7 +262,7 @@ function TelemedicineDashboard() {
   };
 
   // Get urgency color
-  const getUrgencyColor = (urgency: string) => {
+  const getUrgencyColor = (_urgency: [a-zA-Z][a-zA-Z]*) => {
     switch (urgency) {
       case 'critical':
         return 'text-red-600';
@@ -278,7 +278,7 @@ function TelemedicineDashboard() {
   };
 
   // Format time for display
-  const formatTime = (date: Date) => {
+  const formatTime = (_date: [a-zA-Z][a-zA-Z]*) => {
     return new Intl.DateTimeFormat('pt-BR', {
       hour: '2-digit',
       minute: '2-digit',

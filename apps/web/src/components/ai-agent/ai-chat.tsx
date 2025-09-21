@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { CopilotChat } from '@copilotkit/react-ui';
-import { AgentAction, ChatMessage, ChatState } from '@neonpro/types';
+import { AgentAction } from '@neonpro/types';
 import React, { useCallback, useRef, useState } from 'react';
 
 interface AIChatProps {
@@ -62,7 +62,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Handle message submission
   const handleSubmit = useCallback(
-    async (message: string) => {
+    async (_message: [a-zA-Z][a-zA-Z]*) => {
       if (!user) {
         toast({
           title: 'Erro de autenticação',
@@ -149,7 +149,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Handle agent actions
   const handleActions = useCallback((actions: AgentAction[]) => {
-    actions.forEach(action => {
+    actions.forEach(_action => {
       switch (action.type) {
         case 'view_details':
           if (action.payload?.clientId) {
@@ -179,7 +179,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Handle data export
   const handleExportData = useCallback(
-    async (payload: any) => {
+    async (_payload: [a-zA-Z][a-zA-Z]*) => {
       try {
         const response = await fetch('/api/ai/export', {
           method: 'POST',
@@ -206,7 +206,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
             description: 'Seu relatório foi baixado com sucesso',
           });
         }
-      } catch (error) {
+      } catch (_error) {
         toast({
           title: 'Erro de exportação',
           description: 'Não foi possível exportar os dados',
@@ -219,7 +219,7 @@ export function AIChat({ className, initialContext }: AIChatProps) {
 
   // Custom message renderer
   const renderMessage = useCallback(
-    (message: ChatMessage) => {
+    (_message: [a-zA-Z][a-zA-Z]*) => {
       if (message.role === 'system') return null;
 
       return (

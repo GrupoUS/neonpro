@@ -9,7 +9,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { useWebSocketAgent } from '@/services/websocket-agent-service';
-import { AgentAction, ChatMessage, ChatState } from '@neonpro/types';
+import { AgentAction } from '@neonpro/types';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 interface AIChatProps {
@@ -113,7 +113,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Handle message submission
   const handleSubmit = useCallback(
-    async (message: string) => {
+    async (_message: [a-zA-Z][a-zA-Z]*) => {
       if (!user) {
         toast({
           title: 'Erro de autenticação',
@@ -182,7 +182,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Handle agent actions
   const handleActions = useCallback((actions: AgentAction[]) => {
-    actions.forEach(action => {
+    actions.forEach(_action => {
       switch (action.type) {
         case 'view_details':
           if (action.payload?.clientId) {
@@ -212,7 +212,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Handle data export
   const handleExportData = useCallback(
-    async (payload: any) => {
+    async (_payload: [a-zA-Z][a-zA-Z]*) => {
       try {
         // Send export action via WebSocket
         await sendAction('export_data', payload);
@@ -221,7 +221,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
           title: 'Exportação iniciada',
           description: 'Seu relatório está sendo gerado...',
         });
-      } catch (error) {
+      } catch (_error) {
         toast({
           title: 'Erro de exportação',
           description: 'Não foi possível iniciar a exportação',
@@ -234,7 +234,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
 
   // Custom message renderer
   const renderMessage = useCallback(
-    (message: ChatMessage) => {
+    (_message: [a-zA-Z][a-zA-Z]*) => {
       if (message.role === 'system') {
         return (
           <div key={message.id} className='text-center py-2'>

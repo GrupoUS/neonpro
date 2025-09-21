@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import {
   Select,
@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Calculator, Play } from 'lucide-react';
+import { Calculator } from 'lucide-react';
 import React, { useState } from 'react';
 
 export interface MetricsCalculatorProps {
@@ -45,7 +45,7 @@ export const MetricsCalculator: React.FC<MetricsCalculatorProps> = ({
       if (onCalculate) {
         onCalculate(result);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Calculation failed:', error);
     } finally {
       setIsCalculating(false);

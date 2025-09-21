@@ -14,7 +14,7 @@
  * - Real-time alerts and notifications
  */
 
-import { Alert, AlertDescription, AlertTitle } from '@neonpro/ui/components/ui/alert';
+import { Alert } from '@neonpro/ui/components/ui/alert';
 import { Badge } from '@neonpro/ui/components/ui/badge';
 import { Button } from '@neonpro/ui/components/ui/button';
 import {
@@ -25,7 +25,7 @@ import {
   CardTitle,
 } from '@neonpro/ui/components/ui/card';
 import { Progress } from '@neonpro/ui/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@neonpro/ui/components/ui/tabs';
+import { Tabs } from '@neonpro/ui/components/ui/tabs';
 import {
   Activity,
   AlertTriangle,

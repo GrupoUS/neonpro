@@ -143,7 +143,7 @@ export class PerformanceOptimizer {
             }
 
             resolve(result);
-          } catch (error) {
+          } catch (_error) {
             reject(error);
           }
         }, debounceMs);
@@ -172,7 +172,7 @@ export class PerformanceOptimizer {
 
     return new IntersectionObserver(
       entries => {
-        entries.forEach(entry => {
+        entries.forEach(_entry => {
           if (entry.isIntersecting) {
             const element = entry.target as HTMLElement;
 
@@ -391,13 +391,13 @@ export class PerformanceOptimizer {
   private observePaintMetrics(): void {
     try {
       const observer = new PerformanceObserver(list => {
-        list.getEntries().forEach(entry => {
+        list.getEntries().forEach(_entry => {
           this.metrics.set(entry.name, entry.startTime);
         });
       });
       observer.observe({ entryTypes: ['paint'] });
       this.observers.push(observer);
-    } catch (error) {
+    } catch (_error) {
       console.warn('Paint metrics not supported');
     }
   }
@@ -406,7 +406,7 @@ export class PerformanceOptimizer {
     try {
       const observer = new PerformanceObserver(list => {
         let clsValue = 0;
-        list.getEntries().forEach((entry: any) => {
+        list.getEntries().forEach((_entry: [a-zA-Z][a-zA-Z]*) => {
           if (!entry.hadRecentInput) {
             clsValue += entry.value;
           }
@@ -415,7 +415,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['layout-shift'] });
       this.observers.push(observer);
-    } catch (error) {
+    } catch (_error) {
       console.warn('Layout shift metrics not supported');
     }
   }
@@ -423,7 +423,7 @@ export class PerformanceOptimizer {
   private observeFirstInputDelay(): void {
     try {
       const observer = new PerformanceObserver(list => {
-        list.getEntries().forEach(entry => {
+        list.getEntries().forEach(_entry => {
           const processingStart = (entry as any).processingStart || entry.startTime;
           this.metrics.set(
             'first-input-delay',
@@ -433,7 +433,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['first-input'] });
       this.observers.push(observer);
-    } catch (error) {
+    } catch (_error) {
       console.warn('First input delay metrics not supported');
     }
   }
@@ -447,7 +447,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.push(observer);
-    } catch (error) {
+    } catch (_error) {
       console.warn('Largest contentful paint metrics not supported');
     }
   }
@@ -456,7 +456,7 @@ export class PerformanceOptimizer {
    * Cleanup observers
    */
   destroy(): void {
-    this.observers.forEach(observer => observer.disconnect());
+    this.observers.forEach(_observer => observer.disconnect());
     this.observers = [];
     this.metrics.clear();
   }

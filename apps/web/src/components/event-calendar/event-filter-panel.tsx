@@ -4,10 +4,10 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Input } from '@/components/ui/input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Popover } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
-import { Calendar, Clock, Filter, Search, X } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useEventFilters } from './hooks/use-event-filters';
 

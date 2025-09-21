@@ -21,7 +21,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
         'src/components/ui/input.tsx',
       ];
 
-      files.forEach(file => {
+      files.forEach(_file => {
         if (existsSync(join(process.cwd(), file))) {
           const content = readFileSync(join(process.cwd(), file), 'utf8');
           const usesAliasImport = content.includes("from '@/") || content.includes("from '@/");
@@ -91,7 +91,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
         '../../packages/types/src',
       ];
 
-      packages.forEach(packagePath => {
+      packages.forEach(_packagePath => {
         const fullPath = join(process.cwd(), packagePath);
         expect(existsSync(fullPath)).toBe(true);
       });
@@ -105,7 +105,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
         '../../packages/types/src/index.ts',
       ];
 
-      packageIndexFiles.forEach(indexPath => {
+      packageIndexFiles.forEach(_indexPath => {
         const fullPath = join(process.cwd(), indexPath);
         expect(existsSync(fullPath)).toBe(true);
       });
@@ -153,7 +153,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
         'src/components/ui/button.tsx',
       ];
 
-      testFiles.forEach(file => {
+      testFiles.forEach(_file => {
         const fullPath = join(process.cwd(), file);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf8');
@@ -173,7 +173,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
         'src/routes/patients/ai-insights.tsx',
       ];
 
-      testFiles.forEach(file => {
+      testFiles.forEach(_file => {
         const fullPath = join(process.cwd(), file);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf8');
@@ -193,7 +193,7 @@ describe('TDD: Import Resolution Issues - RED Phase', () => {
         'src/routes/patients/ai-insights.tsx',
       ];
 
-      testFiles.forEach(file => {
+      testFiles.forEach(_file => {
         const fullPath = join(process.cwd(), file);
         if (existsSync(fullPath)) {
           const content = readFileSync(fullPath, 'utf8');

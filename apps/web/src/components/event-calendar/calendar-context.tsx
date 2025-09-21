@@ -156,7 +156,7 @@ export function CalendarProvider({
       const fetchedEvents = await EventService.getEvents(filters);
       setEvents(fetchedEvents);
       setFilteredEvents(fetchedEvents);
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load events';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -171,7 +171,7 @@ export function CalendarProvider({
   }, [loadEventsForCurrentView]);
 
   // Toggle visibility of a color
-  const toggleColorVisibility = useCallback((color: string) => {
+  const toggleColorVisibility = useCallback((_color: [a-zA-Z][a-zA-Z]*) => {
     setVisibleColors(prev => {
       if (prev.includes(color)) {
         return prev.filter(c => c !== color);
@@ -188,7 +188,7 @@ export function CalendarProvider({
   }, [visibleColors]);
 
   // Event CRUD operations
-  const createEvent = useCallback(async (eventData: CreateEventData) => {
+  const createEvent = useCallback(async (_eventData: [a-zA-Z][a-zA-Z]*) => {
     setLoading(true);
     setError(null);
 
@@ -212,7 +212,7 @@ export function CalendarProvider({
       }
 
       toast.success(`Event "${newEvent.title}" created successfully`);
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to create event';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -222,7 +222,7 @@ export function CalendarProvider({
     }
   }, [defaultClinicId, currentFilters, loadEventsForCurrentView]);
 
-  const updateEvent = useCallback(async (eventData: UpdateEventData) => {
+  const updateEvent = useCallback(async (_eventData: [a-zA-Z][a-zA-Z]*) => {
     setLoading(true);
     setError(null);
 
@@ -237,7 +237,7 @@ export function CalendarProvider({
       );
 
       toast.success(`Event "${updatedEvent.title}" updated successfully`);
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to update event';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -247,7 +247,7 @@ export function CalendarProvider({
     }
   }, []);
 
-  const deleteEvent = useCallback(async (id: string) => {
+  const deleteEvent = useCallback(async (_id: [a-zA-Z][a-zA-Z]*) => {
     setLoading(true);
     setError(null);
 
@@ -262,7 +262,7 @@ export function CalendarProvider({
       if (eventToDelete) {
         toast.success(`Event "${eventToDelete.title}" deleted successfully`);
       }
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete event';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -277,7 +277,7 @@ export function CalendarProvider({
   }, [loadEventsForCurrentView]);
 
   // Event filtering and search
-  const applyFilters = useCallback((filters: EventFilterOptions) => {
+  const applyFilters = useCallback((_filters: [a-zA-Z][a-zA-Z]*) => {
     setCurrentFilters(filters);
     // The actual filtering will happen in the loadEventsForCurrentView effect
   }, []);
@@ -286,11 +286,11 @@ export function CalendarProvider({
     setCurrentFilters(null);
   }, []);
 
-  const searchEvents = useCallback(async (options: EventSearchOptions) => {
+  const searchEvents = useCallback(async (_options: [a-zA-Z][a-zA-Z]*) => {
     try {
       const result = await EventService.searchEvents(options);
       return result;
-    } catch (err) {
+    } catch (_err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to search events';
       setError(errorMessage);
       toast.error(errorMessage);
@@ -299,7 +299,7 @@ export function CalendarProvider({
   }, []);
 
   // Calendar navigation
-  const navigateToDate = useCallback((date: Date) => {
+  const navigateToDate = useCallback((_date: [a-zA-Z][a-zA-Z]*) => {
     setCurrentDate(date);
   }, []);
 

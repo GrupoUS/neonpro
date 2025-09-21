@@ -6,7 +6,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import React from 'react';
-import { LGPDConsentData, LGPDConsentManager } from '../LGPDConsentManager';
+import { LGPDConsentData } from '../LGPDConsentManager';
 
 // Mock do hook de consentimento
 jest.mock('../hooks/useLGPDConsent', () => ({
@@ -723,7 +723,7 @@ describe('LGPDConsentManager Component', () => {
 
       // Botões devem estar empilhados verticalmente
       const buttons = screen.getAllByRole('button');
-      buttons.forEach(button => {
+      buttons.forEach(_button => {
         expect(button).toHaveClass('mobile-button');
       });
     });

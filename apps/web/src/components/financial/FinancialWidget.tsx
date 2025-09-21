@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
-import { Minus, RefreshCw, TrendingDown, TrendingUp } from 'lucide-react';
+import { Minus } from 'lucide-react';
 import React from 'react';
 
 export interface FinancialMetric {

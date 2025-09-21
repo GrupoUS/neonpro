@@ -465,7 +465,7 @@ describe('CalendarLGPDConsentService - RED Phase Tests', () => {
         'CalendarLGPDPurpose',
       ];
 
-      types.forEach(type => {
+      types.forEach(_type => {
         expect(true).toBe(false); // Will fail until type validation is implemented
       });
     });

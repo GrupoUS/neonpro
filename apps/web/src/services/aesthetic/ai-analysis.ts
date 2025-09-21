@@ -277,7 +277,7 @@ export class AestheticAIAnalysisService {
 
       // Validate and normalize the analysis result
       return this.validateAnalysis(analysisResult);
-    } catch (error) {
+    } catch (_error) {
       console.error('AI Analysis error:', error);
       // Fallback to mock analysis in case of API failure
       return this.getMockAnalysis(analysisType);
@@ -293,7 +293,7 @@ export class AestheticAIAnalysisService {
     const suggestions: TreatmentSuggestion[] = [];
 
     // Analyze concerns and match with treatments
-    analysis.concerns.forEach(concern => {
+    analysis.concerns.forEach(_concern => {
       const concernLower = concern.toLowerCase();
 
       // Match treatments based on concerns

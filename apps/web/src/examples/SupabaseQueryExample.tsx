@@ -1,10 +1,10 @@
-import { AppointmentLink, PatientLink, SmartPrefetcher } from '@/components/common/SmartPrefetcher';
+import { AppointmentLink } from '@/components/common/SmartPrefetcher';
 import { useSupabaseQuery } from '@/hooks/useSupabaseQuery';
 import { invalidateAppointmentData, invalidatePatientData } from '@/lib/cache/cache-utils';
 import { supabase } from '@/lib/supabase';
 import { appointmentsQueryOptions } from '@/queries/appointments';
 import { patientsQueryOptions } from '@/queries/patients';
-import type { Appointment, Patient } from '@neonpro/types';
+import type { Appointment } from '@neonpro/types';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 import { toast } from 'sonner';
@@ -87,7 +87,7 @@ export function SupabaseQueryExample() {
 
       toast.success(`Paciente ${updatedPatient.name} atualizado com sucesso!`);
     },
-    onError: (error: any) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao atualizar paciente: ${error.message}`);
     },
   });
@@ -117,13 +117,13 @@ export function SupabaseQueryExample() {
 
       toast.success(`Agendamento atualizado com sucesso!`);
     },
-    onError: (error: any) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       toast.error(`Erro ao atualizar agendamento: ${error.message}`);
     },
   });
 
   // Exemplo de prefetching manual
-  const handlePatientHover = (patientId: string) => {
+  const handlePatientHover = (_patientId: [a-zA-Z][a-zA-Z]*) => {
     queryClient.prefetchQuery(
       patientsQueryOptions({
         page: 1,

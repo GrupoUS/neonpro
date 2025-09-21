@@ -88,7 +88,7 @@ const fetchPatient = async (patientId: string): Promise<Patient> => {
   return response.json();
 };
 
-const fetchAIInsights = async (patientId: string) => {
+const fetchAIInsights = async (_patientId: [a-zA-Z][a-zA-Z]*) => {
   // This calls the actual GET /api/v2/ai/insights/{patientId} endpoint (T052)
   const response = await fetch(`/api/v2/ai/insights/${patientId}`, {
     headers: {

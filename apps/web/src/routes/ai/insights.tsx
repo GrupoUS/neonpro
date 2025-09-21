@@ -1,7 +1,7 @@
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import {
   Select,
@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -298,7 +298,7 @@ function AIInsightsPage() {
         setInsights(mockInsights);
         setModels(mockModels);
         setTrends(mockTrends);
-      } catch (err) {
+      } catch (_err) {
         setError('Erro ao carregar insights de IA');
         console.error('Error fetching AI insights:', err);
       } finally {
@@ -309,7 +309,7 @@ function AIInsightsPage() {
     fetchAIInsights();
   }, [timeRange]);
 
-  const getPriorityBadge = (priority: string) => {
+  const getPriorityBadge = (_priority: [a-zA-Z][a-zA-Z]*) => {
     const variants = {
       low: { variant: 'outline' as const, label: 'Baixa', icon: CheckCircle },
       medium: { variant: 'default' as const, label: 'Média', icon: Clock },
@@ -327,7 +327,7 @@ function AIInsightsPage() {
     return variants[priority as keyof typeof variants] || variants.low;
   };
 
-  const getModelStatusBadge = (status: string) => {
+  const getModelStatusBadge = (_status: [a-zA-Z][a-zA-Z]*) => {
     const variants = {
       active: {
         variant: 'default' as const,
@@ -353,7 +353,7 @@ function AIInsightsPage() {
     return variants[status as keyof typeof variants] || variants.active;
   };
 
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (_type: [a-zA-Z][a-zA-Z]*) => {
     const icons = {
       health_risk: Heart,
       treatment_optimization: Activity,

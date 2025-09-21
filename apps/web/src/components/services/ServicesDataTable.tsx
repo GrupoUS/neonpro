@@ -15,7 +15,7 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Search } from 'lucide-react';
+import { ArrowUpDown } from 'lucide-react';
 import { useState } from 'react';
 
 import {

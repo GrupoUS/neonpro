@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
 import { 
@@ -194,10 +194,10 @@ export const PerformanceTester: React.FC = () => {
     
     return () => {
       // Properly cleanup ALL observers
-      observersRef.current.forEach(observer => {
+      observersRef.current.forEach(_observer => {
         try {
           observer.disconnect();
-        } catch (error) {
+        } catch (_error) {
           console.warn('Error disconnecting observer:', error);
         }
       });
@@ -246,7 +246,7 @@ export const PerformanceTester: React.FC = () => {
       try {
         lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
         observers.push(lcpObserver);
-      } catch (e) {
+      } catch (_e) {
         console.warn('LCP observation not supported');
       }
 
@@ -264,7 +264,7 @@ export const PerformanceTester: React.FC = () => {
       try {
         fidObserver.observe({ entryTypes: ['first-input'] });
         observers.push(fidObserver);
-      } catch (e) {
+      } catch (_e) {
         console.warn('FID observation not supported');
       }
 
@@ -283,7 +283,7 @@ export const PerformanceTester: React.FC = () => {
       try {
         clsObserver.observe({ entryTypes: ['layout-shift'] });
         observers.push(clsObserver);
-      } catch (e) {
+      } catch (_e) {
         console.warn('CLS observation not supported');
       }
 
@@ -302,7 +302,7 @@ export const PerformanceTester: React.FC = () => {
         // Try to observe interaction events - this may fail in browsers that don't support INP
         inpObserver.observe({ entryTypes: ['event'] });
         observers.push(inpObserver);
-      } catch (e) {
+      } catch (_e) {
         console.warn('INP observation not supported:', e);
       }
 
@@ -321,13 +321,13 @@ export const PerformanceTester: React.FC = () => {
       // Store all observers for cleanup
       observersRef.current = observers;
       
-    } catch (error) {
+    } catch (_error) {
       console.warn('Performance observers setup failed:', error);
       // Clean up any observers that were created before the error
-      observers.forEach(observer => {
+      observers.forEach(_observer => {
         try {
           observer.disconnect();
-        } catch (e) {
+        } catch (_e) {
           console.warn('Error disconnecting observer during cleanup:', e);
         }
       });
@@ -417,7 +417,7 @@ export const PerformanceTester: React.FC = () => {
           updateMetric('DATA_LOAD', duration);
         }
 
-      } catch (error) {
+      } catch (_error) {
         results.push({
           id: scenario.id,
           name: scenario.name,

@@ -112,7 +112,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
     try {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
+    } catch (_error) {
       console.warn(`Error reading localStorage key "${key}":`, error);
       return initialValue;
     }
@@ -126,7 +126,7 @@ function useLocalStorage<T>(key: string, initialValue: T) {
         if (typeof window !== 'undefined') {
           window.localStorage.setItem(key, JSON.stringify(valueToStore));
         }
-      } catch (error) {
+      } catch (_error) {
         console.warn(`Error setting localStorage key "${key}":`, error);
       }
     },
@@ -328,7 +328,7 @@ export function GlobalPatientSearch({
               : undefined,
           },
         }));
-      } catch (error) {
+      } catch (_error) {
         console.error('Search error:', error);
         throw error;
       }
@@ -387,7 +387,7 @@ export function GlobalPatientSearch({
 
   // Handle patient selection
   const handlePatientSelect = useCallback(
-    (patient: PatientSearchResult) => {
+    (_patient: [a-zA-Z][a-zA-Z]*) => {
       onPatientSelect?.(patient);
 
       // Navigate to patient details if no handler provided
@@ -409,7 +409,7 @@ export function GlobalPatientSearch({
   );
 
   // Handle search history item click
-  const handleHistoryClick = useCallback((historyItem: SearchHistoryItem) => {
+  const handleHistoryClick = useCallback((_historyItem: [a-zA-Z][a-zA-Z]*) => {
     setQuery(historyItem.query);
     inputRef.current?.focus();
   }, []);
@@ -426,7 +426,7 @@ export function GlobalPatientSearch({
     deps: any[] = [],
   ) {
     useEffect(() => {
-      const handleKeyDown = (e: KeyboardEvent) => {
+      const handleKeyDown = (_e: [a-zA-Z][a-zA-Z]*) => {
         const handler = shortcuts[e.key];
         if (handler) {
           handler(e);

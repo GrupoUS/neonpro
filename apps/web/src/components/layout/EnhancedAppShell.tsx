@@ -375,13 +375,13 @@ const useSessionMonitoring = () => {
       'touchstart',
       'click',
     ];
-    activityEvents.forEach(event => {
+    activityEvents.forEach(_event => {
       window.addEventListener(event, handleActivity, { passive: true });
     });
 
     return () => {
       clearInterval(interval);
-      activityEvents.forEach(event => {
+      activityEvents.forEach(_event => {
         window.removeEventListener(event, handleActivity);
       });
     };

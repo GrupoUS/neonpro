@@ -34,7 +34,7 @@ import {
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar } from '@/components/ui/avatar';
 
 import { Badge } from '@/components/ui/badge';
 
@@ -48,9 +48,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip } from '@/components/ui/tooltip';
 
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
 import { formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
@@ -232,7 +232,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
       onCopy?.(content);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to copy text:', error);
     }
   }, [content, onCopy]);

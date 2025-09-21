@@ -6,12 +6,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import MobileResponsiveValidator from './MobileResponsiveValidator';
 import PerformanceTester from './PerformanceTester';
@@ -198,7 +198,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
       setValidationResult(result);
       updateBenchmarkComparison(result.percentage);
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Validation failed:', error);
     } finally {
       setIsValidating(false);
@@ -320,7 +320,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
     let totalWeightedScore = 0;
     let totalWeight = 0;
     
-    categoryScores.forEach(score => {
+    categoryScores.forEach(_score => {
       const category = VALIDATION_CATEGORIES[score.category];
       totalWeightedScore += (score.percentage * category.weight) / 100;
       totalWeight += category.weight;
@@ -351,9 +351,9 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
   const extractCriticalIssues = (categoryScores: ValidationScore[]): string[] => {
     const critical: string[] = [];
     
-    categoryScores.forEach(score => {
+    categoryScores.forEach(_score => {
       if (score.status === 'critical' || score.status === 'poor') {
-        score.issues.forEach(issue => {
+        score.issues.forEach(_issue => {
           critical.push(`${VALIDATION_CATEGORIES[score.category].name}: ${issue}`);
         });
       }
@@ -366,8 +366,8 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
   const extractTopRecommendations = (categoryScores: ValidationScore[]): string[] => {
     const recommendations: string[] = [];
     
-    categoryScores.forEach(score => {
-      score.recommendations.forEach(rec => {
+    categoryScores.forEach(_score => {
+      score.recommendations.forEach(_rec => {
         recommendations.push(rec);
       });
     });
@@ -376,7 +376,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
   };
 
   // Update benchmark comparison
-  const updateBenchmarkComparison = (score: number) => {
+  const updateBenchmarkComparison = (_score: [a-zA-Z][a-zA-Z]*) => {
     setBenchmarks(prev => prev.map(benchmark => ({
       ...benchmark,
       isBeaten: score >= benchmark.score

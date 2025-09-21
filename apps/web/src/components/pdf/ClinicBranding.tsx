@@ -1,4 +1,4 @@
-import { Text, View } from '@react-pdf/renderer';
+import { Text } from '@react-pdf/renderer';
 import styles from './pdf-styles';
 
 export interface ClinicBrandingData {

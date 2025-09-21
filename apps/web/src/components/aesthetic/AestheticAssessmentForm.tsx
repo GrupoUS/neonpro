@@ -2,15 +2,15 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@neonpro/ui';
-import { AlertTriangle, FileText, Upload, User } from 'lucide-react';
+import { AlertTriangle } from 'lucide-react';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { type AestheticAssessmentData } from '../pdf/AestheticReportPDF';
 import PDFExportButtons from '../pdf/PDFExportButtons';
-import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Alert } from '../ui/alert';
 import { Badge } from '../ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card } from '../ui/card';
 import {
   Form,
   FormControl,
@@ -21,7 +21,7 @@ import {
   FormMessage,
 } from '../ui/form';
 import { Input } from '../ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { Select } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 
 // Schema de validação para o formulário de avaliação estética
@@ -151,7 +151,7 @@ export function AestheticAssessmentForm({
     'Textura irregular',
   ];
 
-  const handleConcernToggle = (concern: string) => {
+  const handleConcernToggle = (_concern: [a-zA-Z][a-zA-Z]*) => {
     const currentConcerns = form.getValues('skinAnalysis.primaryConcerns');
     const updatedConcerns = currentConcerns.includes(concern)
       ? currentConcerns.filter(c => c !== concern)

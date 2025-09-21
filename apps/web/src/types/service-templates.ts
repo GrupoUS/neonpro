@@ -255,11 +255,11 @@ export const SERVICE_TEMPLATE_PRICE_TYPES: Record<
 };
 
 // Utility functions
-export const getTemplateTypeConfig = (type: ServiceTemplateType) => {
+export const getTemplateTypeConfig = (_type: [a-zA-Z][a-zA-Z]*) => {
   return SERVICE_TEMPLATE_TYPES[type];
 };
 
-export const getPriceTypeConfig = (type: ServiceTemplatePriceType) => {
+export const getPriceTypeConfig = (_type: [a-zA-Z][a-zA-Z]*) => {
   return SERVICE_TEMPLATE_PRICE_TYPES[type];
 };
 

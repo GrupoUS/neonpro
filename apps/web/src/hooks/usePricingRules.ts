@@ -78,7 +78,7 @@ export function useCreatePricingRule() {
       toast.success('Regra de preço criada com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error creating pricing rule:', error);
       toast.error(`Erro ao criar regra de preço: ${error.message}`);
     },
@@ -112,7 +112,7 @@ export function useUpdatePricingRule() {
       toast.success('Regra de preço atualizada com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error updating pricing rule:', error);
       toast.error(`Erro ao atualizar regra de preço: ${error.message}`);
     },
@@ -142,7 +142,7 @@ export function useDeletePricingRule() {
       toast.success('Regra de preço excluída com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error deleting pricing rule:', error);
       toast.error(`Erro ao excluir regra de preço: ${error.message}`);
     },
@@ -172,7 +172,7 @@ export function useTogglePricingRule() {
       toast.success(`Regra de preço ${status} com sucesso!`);
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error toggling pricing rule:', error);
       toast.error(`Erro ao alterar status da regra: ${error.message}`);
     },
@@ -244,7 +244,7 @@ export function useUpdatePricingRulePriorities() {
       toast.success('Prioridades das regras atualizadas com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error updating pricing rule priorities:', error);
       toast.error(`Erro ao atualizar prioridades: ${error.message}`);
     },

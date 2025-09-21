@@ -8,7 +8,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EventCalendar } from '../event-calendar';
-import { CalendarEvent, EventColor } from '../types';
+import { CalendarEvent } from '../types';
 
 // Mock healthcare compliance utilities
 vi.mock('@/utils/accessibility/healthcare-audit-utils', () => ({

@@ -145,7 +145,7 @@ class UserProfileService {
         authUser.user.email,
       );
       return this.buildPatientProfile(authUser.user);
-    } catch (error) {
+    } catch (_error) {
       console.error('❌ Error fetching user profile:', error);
       // Throw error instead of creating fallback to let caller handle it
       throw error;
@@ -378,7 +378,7 @@ class UserProfileService {
       // For now, return single clinic ID
       // In future, could support multi-clinic access
       return profile.clinicId ? [profile.clinicId] : [];
-    } catch (error) {
+    } catch (_error) {
       console.error('Error getting accessible clinics:', error);
       return [];
     }

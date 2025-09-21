@@ -1,8 +1,8 @@
 import { useAuth } from '@/hooks/useAuth';
 import { getCurrentSession } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { createFileRoute, redirect } from '@tanstack/react-router';
-import { BarChart3, FileText, PieChart, TrendingUp } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
 
 export const Route = createFileRoute('/admin/reports')({
   beforeLoad: async () => {

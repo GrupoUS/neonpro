@@ -15,7 +15,7 @@
 'use client';
 
 import { useCopilotContext, useCopilotReadable } from '@copilotkit/react-core';
-import { CopilotChat, CopilotPopup } from '@copilotkit/react-ui';
+import { CopilotChat } from '@copilotkit/react-ui';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Bot,
@@ -84,7 +84,7 @@ import {
 } from '@/components/ui';
 import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
-import { createAGUIProtocolClient, useAGUIProtocol, AGUIConnectionState } from '@/services/agui-protocol';
+import { createAGUIProtocolClient, useAGUIProtocol } from '@/services/agui-protocol';
 
 // Import our specific types for AI agent integration
 import type {
@@ -157,7 +157,7 @@ const AccessibleMessageFeedback: React.FC<{
   const [comment, setComment] = useState('');
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
 
-  const handleQuickFeedback = (helpful: boolean) => {
+  const handleQuickFeedback = (_helpful: [a-zA-Z][a-zA-Z]*) => {
     // Submit quick feedback logic here
     setFeedbackSubmitted(true);
     onFeedbackSubmitted();
@@ -359,7 +359,7 @@ const AccessibleActionButton: React.FC<{
   onExecute: (action: AgentAction) => void;
   className?: string;
 }> = ({ action, onExecute, className }) => {
-  const getIcon = (iconName: string) => {
+  const getIcon = (_iconName: [a-zA-Z][a-zA-Z]*) => {
     const iconProps = { className: "h-4 w-4", 'aria-hidden': "true" as const };
     switch (iconName) {
       case 'user': return <User {...iconProps} />;

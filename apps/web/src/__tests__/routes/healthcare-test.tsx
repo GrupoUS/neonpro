@@ -9,7 +9,7 @@ import {
   usePatientAppointments,
   useUpdatePatient,
 } from '@/hooks/useHealthcareQuery';
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Badge } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -50,7 +50,7 @@ function HealthcareTestComponent() {
         },
       });
       toast.success('Paciente atualizado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao atualizar paciente:', error);
       toast.error('Erro ao atualizar paciente');
     } finally {
@@ -73,7 +73,7 @@ function HealthcareTestComponent() {
         priority: 'medium',
       });
       toast.success('Agendamento criado com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Erro ao criar agendamento:', error);
       toast.error('Erro ao criar agendamento');
     } finally {

@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 // 'h' - hours (1-12)
 // 'a' - am/pm
 // ':mm' - minutes with leading zero (only if the token 'mm' is present)
-const formatTimeWithOptionalMinutes = (date: Date) => {
+const formatTimeWithOptionalMinutes = (_date: [a-zA-Z][a-zA-Z]*) => {
   return format(date, getMinutes(date) === 0 ? 'ha' : 'h:mma').toLowerCase();
 };
 

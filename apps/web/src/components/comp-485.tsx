@@ -580,7 +580,7 @@ export default function Component() {
           </Label>
           <Select
             value={table.getState().pagination.pageSize.toString()}
-            onValueChange={(value: string) => {
+            onValueChange={(_value: [a-zA-Z][a-zA-Z]*) => {
               table.setPageSize(Number(value));
             }}
           >

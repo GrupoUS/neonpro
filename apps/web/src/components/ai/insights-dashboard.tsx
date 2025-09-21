@@ -227,7 +227,7 @@ export const TrendMiniChart = ({
   }
 
   // Extract numeric values robustly from various possible field names
-  const values = data.map((d: any) => {
+  const values = data.map((_d: [a-zA-Z][a-zA-Z]*) => {
     if (typeof d === 'number') return d;
     if (d == null) return 0;
     if (d.value != null) return Number(d.value);

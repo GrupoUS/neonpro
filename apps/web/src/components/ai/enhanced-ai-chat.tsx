@@ -340,7 +340,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
       };
 
       recognition.start();
-    } catch (error) {
+    } catch (_error) {
       console.error('Voice recognition error:', error);
       setVoiceState('error');
     }
@@ -352,7 +352,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
 
   // Search functionality
   const handleSearch = useCallback(
-    async (query: string) => {
+    async (_query: [a-zA-Z][a-zA-Z]*) => {
       if (!query.trim()) {
         setSearchResults([]);
         return;
@@ -394,7 +394,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
         } else {
           setSearchResults(filteredMessages);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Search error:', error);
         setSearchResults([]);
       } finally {
@@ -441,7 +441,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
           // Send through AI SDK for general chats
           handleAIChatSubmit(e);
         }
-      } catch (error) {
+      } catch (_error) {
         console.error('Message send error:', error);
       }
     },
@@ -484,7 +484,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   );
 
   // Render message content with markdown support
-  const renderMessageContent = useCallback((content: string) => {
+  const renderMessageContent = useCallback((_content: [a-zA-Z][a-zA-Z]*) => {
     return (
       <div className='prose prose-sm max-w-none dark:prose-invert'>
         {content.split('\n').map((line, index) => (

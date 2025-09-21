@@ -9,7 +9,7 @@ import {
 import { getGovernanceService } from '@/lib/governance-service';
 import type { Escalations } from '@/lib/governance-service';
 import { Badge } from '@neonpro/ui';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { useQuery } from '@tanstack/react-query';
 
 type EscalationPriority = 'low' | 'medium' | 'high' | 'critical';
@@ -179,7 +179,7 @@ export function EscalationWorkflowStatus() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {escalationData?.activeEscalations.map((escalation: any) => {
+            {escalationData?.activeEscalations.map((_escalation: [a-zA-Z][a-zA-Z]*) => {
               const priorityBadge = getPriorityBadge(
                 (escalation.priority ?? 'low') as EscalationPriority,
               );

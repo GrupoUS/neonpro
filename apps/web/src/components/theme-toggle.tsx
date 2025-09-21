@@ -1,6 +1,6 @@
 'use client';
 
-import { RiMoonClearLine, RiSunLine } from '@remixicon/react';
+import { RiMoonClearLine } from '@remixicon/react';
 import { useTheme } from 'next-themes';
 import { useId, useState } from 'react';
 

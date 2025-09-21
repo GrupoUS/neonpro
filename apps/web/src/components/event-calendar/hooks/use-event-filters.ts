@@ -18,7 +18,7 @@ export function useEventFilters() {
   } = useCalendarContext();
 
   // Apply filters locally for immediate feedback
-  const applyLocalFilters = useCallback((filters: EventFilterOptions) => {
+  const applyLocalFilters = useCallback((_filters: [a-zA-Z][a-zA-Z]*) => {
     // First update the context filters (will trigger backend fetch)
     applyFilters(filters);
   }, [applyFilters]);
@@ -181,7 +181,7 @@ export function useEventFilters() {
     applyLocalFilters({ ...currentFilters, dateRange: { start, end } });
   }, [applyLocalFilters, currentFilters]);
 
-  const filterBySearchTerm = useCallback((searchTerm: string) => {
+  const filterBySearchTerm = useCallback((_searchTerm: [a-zA-Z][a-zA-Z]*) => {
     applyLocalFilters({ ...currentFilters, searchTerm });
   }, [applyLocalFilters, currentFilters]);
 

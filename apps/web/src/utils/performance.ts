@@ -115,7 +115,7 @@ export class PerformanceMonitor {
   }
 
   destroy() {
-    this.observers.forEach(observer => observer.disconnect());
+    this.observers.forEach(_observer => observer.disconnect());
     this.observers = [];
   }
 }
@@ -153,7 +153,7 @@ export const preloadResource = (
   document.head.appendChild(link);
 };
 
-export const prefetchResource = (href: string) => {
+export const prefetchResource = (_href: [a-zA-Z][a-zA-Z]*) => {
   if (typeof document === 'undefined') return;
 
   const link = document.createElement('link');

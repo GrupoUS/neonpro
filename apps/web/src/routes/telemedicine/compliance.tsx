@@ -21,12 +21,12 @@ import {
   Users,
 } from 'lucide-react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs } from '@/components/ui/tabs';
 
 export const Route = createFileRoute('/telemedicine/compliance')({
   component: ComplianceDashboard,
@@ -97,7 +97,7 @@ function ComplianceDashboard() {
     },
   ];
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (_status: [a-zA-Z][a-zA-Z]*) => {
     switch (status) {
       case 'compliant':
         return 'text-green-600';
@@ -110,7 +110,7 @@ function ComplianceDashboard() {
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (_status: [a-zA-Z][a-zA-Z]*) => {
     switch (status) {
       case 'compliant':
         return <CheckCircle className='h-5 w-5 text-green-600' />;
@@ -123,7 +123,7 @@ function ComplianceDashboard() {
     }
   };
 
-  const formatDateTime = (dateString: string) => {
+  const formatDateTime = (_dateString: [a-zA-Z][a-zA-Z]*) => {
     return new Date(dateString).toLocaleString('pt-BR');
   };
 

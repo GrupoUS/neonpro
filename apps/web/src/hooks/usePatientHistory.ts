@@ -92,7 +92,7 @@ export function useCreateMedicalRecord() {
       toast.success('Registro médico criado com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error creating medical record:', error);
       toast.error(`Erro ao criar registro médico: ${error.message}`);
     },
@@ -123,7 +123,7 @@ export function useUpdateMedicalRecord() {
       toast.success('Registro médico atualizado com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error updating medical record:', error);
       toast.error(`Erro ao atualizar registro médico: ${error.message}`);
     },
@@ -172,7 +172,7 @@ export function useCreateTreatmentPlan() {
       toast.success('Plano de tratamento criado com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error creating treatment plan:', error);
       toast.error(`Erro ao criar plano de tratamento: ${error.message}`);
     },
@@ -203,7 +203,7 @@ export function useUpdateTreatmentPlan() {
       toast.success('Plano de tratamento atualizado com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error updating treatment plan:', error);
       toast.error(`Erro ao atualizar plano de tratamento: ${error.message}`);
     },
@@ -250,7 +250,7 @@ export function useCreateProgressNote() {
       toast.success('Nota de progresso criada com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error creating progress note:', error);
       toast.error(`Erro ao criar nota de progresso: ${error.message}`);
     },
@@ -301,7 +301,7 @@ export function useAddPatientAllergy() {
       toast.success('Alergia adicionada com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error adding patient allergy:', error);
       toast.error(`Erro ao adicionar alergia: ${error.message}`);
     },
@@ -352,7 +352,7 @@ export function useAddPatientCondition() {
       toast.success('Condição médica adicionada com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error adding patient condition:', error);
       toast.error(`Erro ao adicionar condição médica: ${error.message}`);
     },
@@ -409,7 +409,7 @@ export function useUploadAttachment() {
       toast.success('Anexo enviado com sucesso!');
     },
 
-    onError: (error: Error) => {
+    onError: (_error: [a-zA-Z][a-zA-Z]*) => {
       console.error('Error uploading attachment:', error);
       toast.error(`Erro ao enviar anexo: ${error.message}`);
     },

@@ -4,10 +4,10 @@
  */
 
 import { usePatient } from '@/hooks/usePatients';
-import { Card, CardContent, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';
 import { Button } from '@neonpro/ui';
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { differenceInDays, format, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
@@ -524,7 +524,7 @@ function HistoryItemCard({
   item: HistoryItem;
   isLast: boolean;
 }) {
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (_type: [a-zA-Z][a-zA-Z]*) => {
     switch (type) {
       case 'appointment':
         return Calendar;
@@ -539,7 +539,7 @@ function HistoryItemCard({
     }
   };
 
-  const getTypeLabel = (type: string) => {
+  const getTypeLabel = (_type: [a-zA-Z][a-zA-Z]*) => {
     switch (type) {
       case 'appointment':
         return 'Consulta';
@@ -554,7 +554,7 @@ function HistoryItemCard({
     }
   };
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (_status: [a-zA-Z][a-zA-Z]*) => {
     const statusMap = {
       completed: { label: 'Concluído', variant: 'default' as const },
       cancelled: { label: 'Cancelado', variant: 'destructive' as const },

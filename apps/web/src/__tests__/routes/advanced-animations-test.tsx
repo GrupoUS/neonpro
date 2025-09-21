@@ -11,9 +11,9 @@ import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@neonpro/ui';
 import { UniversalButton } from '@neonpro/ui';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@neonpro/ui';
+import { Card } from '@neonpro/ui';
 import { createFileRoute } from '@tanstack/react-router';
-import { PauseCircle, PlayCircle, RotateCcw, Settings, Sparkles, Zap } from 'lucide-react';
+import { PauseCircle } from 'lucide-react';
 import React, { useState } from 'react';
 
 function AdvancedAnimationsTest() {

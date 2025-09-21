@@ -21,11 +21,11 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Alert } from '@/components/ui/alert';
+import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -97,7 +97,7 @@ function NewSession() {
       || patient.medicalRecord.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
-  const getInitials = (name: string) => {
+  const getInitials = (_name: [a-zA-Z][a-zA-Z]*) => {
     return name
       .split(' ')
       .map(n => n[0])
