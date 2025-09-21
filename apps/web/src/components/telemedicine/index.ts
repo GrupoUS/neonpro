@@ -24,101 +24,101 @@ export { ConsentDialog } from './ConsentDialog';
 export { SchedulingUI } from './SchedulingUI';
 
 // Enhanced T042 Components
-export { VideoConsultation } from './VideoConsultation';
-export { WaitingRoom } from './WaitingRoom';
+export { EmergencyEscalation } from './EmergencyEscalation';
 export { RealTimeChat } from './RealTimeChat';
 export { SessionConsent } from './SessionConsent';
-export { EmergencyEscalation } from './EmergencyEscalation';
+export { VideoConsultation } from './VideoConsultation';
+export { WaitingRoom } from './WaitingRoom';
 
 // Telemedicine Route Components
 export { TelemedicineDashboard } from './routes/TelemedicineDashboard';
 
 // Telemedicine Types and Interfaces
 export type {
-  TelemedicineSession,
-  SessionStatus,
+  AuditTrail,
+  ComplianceReport,
   ConsentData,
-  RealTimeChatMessage,
+  ConsultationNotes,
   EmergencyEscalationType,
-  TelemedicineMetrics,
-  VideoQualityMetrics,
-  SessionRecording,
+  FollowUpSchedule,
   MedicalProtocol,
   PatientVitals,
-  ConsultationNotes,
   PrescriptionData,
-  FollowUpSchedule,
-  ComplianceReport,
-  AuditTrail,
+  RealTimeChatMessage,
+  SessionRecording,
+  SessionStatus,
+  TelemedicineMetrics,
+  TelemedicineSession,
+  VideoQualityMetrics,
 } from './types/telemedicine-types';
 
 // Telemedicine Hooks
 export {
-  useTelemedicineSession,
-  useVideoConsultation,
-  useRealTimeChat,
+  useComplianceReporting,
+  useConsultationNotes,
   useEmergencyEscalation,
-  useSessionConsent,
-  useTelemedicineMetrics,
-  useSessionRecording,
+  useFollowUpScheduling,
   useMedicalProtocols,
   usePatientVitals,
-  useConsultationNotes,
   usePrescriptionManagement,
-  useFollowUpScheduling,
-  useComplianceReporting,
+  useRealTimeChat,
+  useSessionConsent,
+  useSessionRecording,
+  useTelemedicineMetrics,
+  useTelemedicineSession,
+  useVideoConsultation,
 } from './hooks';
 
 // Utility Functions
 export {
-  validateSessionConsent,
   checkCFMCompliance,
-  generateSessionAuditLog,
-  formatMedicalData,
-  sanitizePatientInfo,
   encryptSessionData,
-  validatePrescription,
-  generateComplianceReport,
-  scheduleFollowUp,
   escalateEmergency,
+  formatMedicalData,
+  generateComplianceReport,
+  generateSessionAuditLog,
+  sanitizePatientInfo,
+  scheduleFollowUp,
+  validatePrescription,
+  validateSessionConsent,
 } from './utils/telemedicine-utils';
 
 /**
  * Usage Examples:
- * 
+ *
  * // Basic video consultation
  * import { VideoConsultation } from '@/components/telemedicine';
- * 
+ *
  * <VideoConsultation
  *   sessionId="session-123"
  *   patientId="pat-456"
  *   professionalId="prof-789"
  *   onSessionEnd={() => console.log('Session ended')}
  * />
- * 
+ *
  * // Patient waiting room
  * import { WaitingRoom } from '@/components/telemedicine';
- * 
+ *
  * <WaitingRoom
  *   sessionId="session-123"
  *   patientName="João Silva"
  *   estimatedWaitTime={15}
  *   onJoinSession={() => console.log('Joining session')}
  * />
- * 
+ *
  * // Real-time chat interface
  * import { RealTimeChat } from '@/components/telemedicine';
- * 
+ *
  * <RealTimeChat
  *   sessionId="session-123"
  *   participantId="part-456"
  *   enableAI={true}
  *   onMessageSent={(message) => console.log('Message sent:', message)}
  * />
- * 
+ *
  * // Session consent dialog
  * import { SessionConsent } from '@/components/telemedicine';
- * 
+ *
  * <SessionConsent
  *   open={consentOpen}
  *   onOpenChange={setConsentOpen}
@@ -126,43 +126,43 @@ export {
  *   sessionType="consultation"
  *   onConsentGiven={(consent) => console.log('Consent given:', consent)}
  * />
- * 
+ *
  * // Emergency escalation interface
  * import { EmergencyEscalation } from '@/components/telemedicine';
- * 
+ *
  * <EmergencyEscalation
  *   sessionId="session-123"
  *   escalationType="medical"
  *   onEscalationComplete={(details) => console.log('Escalated:', details)}
  * />
- * 
+ *
  * // LGPD consent dialog
  * import { ConsentDialog } from '@/components/telemedicine';
- * 
+ *
  * <ConsentDialog
  *   open={consentOpen}
  *   onOpenChange={setConsentOpen}
  *   patientId="pat-456"
  *   onConsentGiven={(consent) => console.log('Consent given:', consent)}
  * />
- * 
+ *
  * // Telemedicine scheduling interface
  * import { SchedulingUI } from '@/components/telemedicine';
- * 
+ *
  * <SchedulingUI
  *   professionalId="prof-789"
  *   availableSlots={slots}
  *   onSchedule={(appointment) => console.log('Scheduled:', appointment)}
  * />
- * 
+ *
  * // With tRPC hooks
  * import { useTelemedicineSession, useRealTimeChat } from '@/components/telemedicine';
- * 
+ *
  * const { data: session } = useTelemedicineSession({
  *   sessionId: "session-123",
  *   includeConsent: true
  * });
- * 
+ *
  * const { sendMessage, messages } = useRealTimeChat({
  *   sessionId: "session-123",
  *   enableAI: true

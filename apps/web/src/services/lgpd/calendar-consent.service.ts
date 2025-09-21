@@ -4,7 +4,6 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
-import type { Database } from '@/lib/supabase/types/database';
 import type { CalendarAppointment } from '@/services/appointments.service';
 
 // LGPD Processing Purposes for Calendar Operations

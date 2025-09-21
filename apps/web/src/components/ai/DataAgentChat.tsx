@@ -74,9 +74,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui';
-import {
-  useAGUIProtocol,
-} from '@/services/agui-protocol';
+import { useAGUIProtocol } from '@/services/agui-protocol';
 import { formatCurrency, formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
 
@@ -221,7 +219,7 @@ const submitQuickFeedback = async (
  * Interactive Action Button Component
  * Renders clickable action buttons returned by the AI agent
  */
-const ActionButton: React.FC<{
+const _ActionButton: React.FC<{
   action: AgentAction;
   onExecute: (action: AgentAction) => void;
 }> = ({ action, onExecute }) => {
@@ -271,8 +269,6 @@ const MessageFeedback: React.FC<{
   const [showDetailedFeedback, setShowDetailedFeedback] = useState(false);
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-
   const submitQuickFeedbackMutation = useMutation({
     mutationFn: (helpful: boolean) =>
       submitQuickFeedback(sessionId, {

@@ -3,8 +3,8 @@
  * Tests for type safety and metadata validation
  */
 
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { AuditLogger, AuditLogEntry, AIMetadata, HealthcareAccessMetadata } from '../logger';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { AIMetadata, AuditLogEntry, AuditLogger, HealthcareAccessMetadata } from '../logger';
 
 // Mock Supabase
 const mockSupabase = {
@@ -20,7 +20,7 @@ describe('Audit Logger Security Tests', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     mockSupabase.from.mockReturnValue({
       insert: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnValue({
@@ -61,7 +61,7 @@ describe('Audit Logger Security Tests', () => {
         'gpt-4',
         100,
         50,
-        aiMetadata
+        aiMetadata,
       );
 
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
@@ -83,8 +83,8 @@ describe('Audit Logger Security Tests', () => {
           'gpt-4',
           invalidMetadata.inputTokens as any,
           invalidMetadata.outputTokens as any,
-          invalidMetadata
-        )
+          invalidMetadata,
+        ),
       ).resolves.not.toThrow();
     });
 
@@ -107,7 +107,7 @@ describe('Audit Logger Security Tests', () => {
         'patient123',
         'patient_record',
         true,
-        healthcareMetadata
+        healthcareMetadata,
       );
 
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
@@ -232,7 +232,7 @@ describe('Audit Logger Security Tests', () => {
         metadata: {
           special_chars: '!@#$%^&*()_+-={}[]|:";\'<>?,./',
           unicode: '测试 🚀',
-          sql_injection: "SELECT * FROM users",
+          sql_injection: 'SELECT * FROM users',
           xss: '<script>alert("xss")</script>',
         },
       };
@@ -294,7 +294,7 @@ describe('Audit Logger Security Tests', () => {
         {
           accessReason: 'treatment',
           retentionPeriod: '10_years',
-        }
+        },
       );
 
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
@@ -310,7 +310,7 @@ describe('Audit Logger Security Tests', () => {
         {
           accessReason: 'emergency',
           retentionPeriod: '24_hours',
-        }
+        },
       );
 
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');
@@ -330,7 +330,7 @@ describe('Audit Logger Security Tests', () => {
         'patient123',
         'patient_record',
         true,
-        validHealthcareMetadata
+        validHealthcareMetadata,
       );
 
       expect(mockSupabase.from).toHaveBeenCalledWith('audit_logs');

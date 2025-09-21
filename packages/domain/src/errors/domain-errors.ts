@@ -2,14 +2,27 @@
  * Base domain error class
  */
 export class DomainError extends Error {
+  protected _code: string;
+  protected _statusCode: number;
+
   constructor(
     message: string,
-    public readonly code: string,
-    public readonly statusCode: number = 400
+    code: string,
+    statusCode: number = 400
   ) {
     super(message);
+    this._code = code;
+    this._statusCode = statusCode;
     this.name = this.constructor.name;
     Error.captureStackTrace(this, this.constructor);
+  }
+
+  get code(): string {
+    return this._code;
+  }
+
+  get statusCode(): number {
+    return this._statusCode;
   }
 }
 
@@ -141,26 +154,39 @@ export class RepositoryError extends DomainError {
     super(`Repository error: ${message}`, 'REPOSITORY_ERROR', 500);
     this.cause = originalError;
   }
+
+  get code(): string {
+    return 'REPOSITORY_ERROR';
+  }
 }
 
 export class DatabaseConnectionError extends RepositoryError {
   constructor(originalError?: Error) {
     super('Database connection failed', originalError);
-    this.code = 'DATABASE_CONNECTION_ERROR';
+  }
+
+  override get code(): string {
+    return 'DATABASE_CONNECTION_ERROR';
   }
 }
 
 export class QueryTimeoutError extends RepositoryError {
   constructor(query: string, timeoutMs: number) {
     super(`Query timeout after ${timeoutMs}ms: ${query}`);
-    this.code = 'QUERY_TIMEOUT_ERROR';
+  }
+
+  override get code(): string {
+    return 'QUERY_TIMEOUT_ERROR';
   }
 }
 
 export class ConstraintViolationError extends RepositoryError {
   constructor(constraint: string, table: string) {
     super(`Constraint violation on ${table}: ${constraint}`);
-    this.code = 'CONSTRAINT_VIOLATION_ERROR';
+  }
+
+  override get code(): string {
+    return 'CONSTRAINT_VIOLATION_ERROR';
   }
 }
 
@@ -177,12 +203,19 @@ export class AuthorizationError extends DomainError {
   constructor(message: string = 'Authorization failed') {
     super(message, 'AUTHORIZATION_ERROR', 403);
   }
+
+  get code(): string {
+    return 'AUTHORIZATION_ERROR';
+  }
 }
 
 export class PermissionDeniedError extends AuthorizationError {
   constructor(permission: string, resource: string) {
     super(`Permission denied: ${permission} required for ${resource}`);
-    this.code = 'PERMISSION_DENIED';
+  }
+
+  override get code(): string {
+    return 'PERMISSION_DENIED';
   }
 }
 

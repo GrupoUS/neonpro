@@ -8,8 +8,6 @@ import APIDocumentationGenerator, {
   API_CATEGORIES,
   API_LABELS_PT_BR,
   API_METHODS,
-  type APIDocumentationReport,
-  type APIEndpoint,
   APIEndpointSchema,
 } from '../api-documentation-generator';
 
@@ -254,7 +252,7 @@ describe('API Documentation Generator', () => {
         report.complianceFeatures.lgpdCompliant,
       );
 
-      lgpdEndpoints.forEach(_endpoint => {
+      lgpdEndpoints.forEach((endpoint: any) => {
         expect(endpoint.authentication.lgpdConsent).toBe(true);
       });
     });
@@ -318,7 +316,8 @@ describe('API Documentation Generator', () => {
       expect(endpointsWithExamples.length).toBeGreaterThan(0);
 
       endpointsWithExamples.forEach(_endpoint => {
-        endpoint.examples?.forEach(_example => {
+        (endpoint as any).examples?.forEach(_example => {
+          const example: any = _example;
           expect(example.mobileNotes).toBeDefined();
           expect(typeof example.mobileNotes).toBe('string');
           expect(example.mobileNotes!.length).toBeGreaterThan(0);
@@ -334,7 +333,8 @@ describe('API Documentation Generator', () => {
 
       expect(patientEndpoint?.responses[0].example.accessibility).toBeDefined();
       expect(
-        patientEndpoint?.responses[0].example.accessibility.mobileOptimized,
+        (patientEndpoint?.responses[0].example.accessibility as any)
+          .mobileOptimized,
       ).toBe(true);
     });
   });
@@ -346,7 +346,7 @@ describe('API Documentation Generator', () => {
       expect(report.authenticationMethods).toContain('bearer');
 
       const authEndpoints = report.endpoints.filter(
-        e => e.authentication.required,
+        e => (e as any).authentication.required,
       );
       expect(authEndpoints.length).toBe(report.endpoints.length); // All endpoints require auth
     });
@@ -355,11 +355,11 @@ describe('API Documentation Generator', () => {
       const report = generator.generateReport();
 
       const lgpdEndpoints = report.endpoints.filter(
-        e => e.authentication.lgpdConsent,
+        e => (e as any).authentication.lgpdConsent,
       );
       expect(lgpdEndpoints.length).toBeGreaterThan(0);
 
-      lgpdEndpoints.forEach(_endpoint => {
+      lgpdEndpoints.forEach((endpoint: any) => {
         expect(endpoint.authentication.lgpdConsent).toBe(true);
       });
     });
@@ -373,8 +373,8 @@ describe('API Documentation Generator', () => {
       expect(rateLimitedEndpoints.length).toBeGreaterThan(0);
 
       rateLimitedEndpoints.forEach(_endpoint => {
-        expect(endpoint.metadata.rateLimit?.requests).toBeGreaterThan(0);
-        expect(endpoint.metadata.rateLimit?.window).toBeDefined();
+        expect((endpoint as any).metadata.rateLimit?.requests).toBeGreaterThan(0);
+        expect((endpoint as any).metadata.rateLimit?.window).toBeDefined();
       });
     });
   });
@@ -389,7 +389,8 @@ describe('API Documentation Generator', () => {
       expect(endpointsWithErrors.length).toBeGreaterThan(0);
 
       endpointsWithErrors.forEach(_endpoint => {
-        endpoint.errors?.forEach(_error => {
+        (endpoint as any).errors?.forEach(_error => {
+          const error: any = _error;
           expect(error.code).toBeDefined();
           expect(error.statusCode).toBeGreaterThan(0);
           expect(error.message).toBeDefined();
@@ -409,9 +410,9 @@ describe('API Documentation Generator', () => {
       );
 
       expect(patientEndpoint?.errors).toBeDefined();
-      expect(patientEndpoint?.errors?.length).toBeGreaterThan(0);
+      expect((patientEndpoint as any).errors?.length).toBeGreaterThan(0);
 
-      const lgpdError = patientEndpoint?.errors?.find(
+      const lgpdError = (patientEndpoint as any)?.errors?.find(
         e => e.code === 'LGPD_CONSENT_REQUIRED',
       );
       expect(lgpdError).toBeDefined();
@@ -427,7 +428,7 @@ describe('API Documentation Generator', () => {
 
       expect(appointmentEndpoint?.errors).toBeDefined();
 
-      const conflictError = appointmentEndpoint?.errors?.find(
+      const conflictError = (appointmentEndpoint as any)?.errors?.find(
         e => e.code === 'APPOINTMENT_CONFLICT',
       );
       expect(conflictError).toBeDefined();
@@ -464,14 +465,17 @@ describe('API Documentation Generator', () => {
       const report = generator.generateReport();
 
       report.endpoints.forEach(_endpoint => {
+        const endpoint: any = _endpoint;
         expect(endpoint.titlePtBr).toBeDefined();
         expect(endpoint.descriptionPtBr).toBeDefined();
 
         endpoint.parameters?.forEach(_param => {
+          const param: any = _param;
           expect(param.descriptionPtBr).toBeDefined();
         });
 
         endpoint.responses.forEach(_response => {
+          const response: any = _response;
           expect(response.descriptionPtBr).toBeDefined();
         });
       });
@@ -485,7 +489,9 @@ describe('API Documentation Generator', () => {
       );
 
       endpointsWithExamples.forEach(_endpoint => {
+        const endpoint: any = _endpoint;
         endpoint.examples?.forEach(_example => {
+          const example: any = _example;
           expect(example.titlePtBr).toBeDefined();
           expect(example.descriptionPtBr).toBeDefined();
         });
@@ -500,9 +506,9 @@ describe('API Documentation Generator', () => {
         e => e.id === 'get-patient',
       );
 
-      expect(patientEndpoint?.parameters).toBeDefined();
-      expect(patientEndpoint?.parameters![0].healthcareContext).toBeDefined();
-      expect(patientEndpoint?.parameters![0].healthcareContext).toContain(
+      expect((patientEndpoint as any).parameters).toBeDefined();
+      expect((patientEndpoint as any).parameters![0].healthcareContext).toBeDefined();
+      expect((patientEndpoint as any).parameters![0].healthcareContext).toContain(
         'Patient identification',
       );
     });
@@ -515,7 +521,9 @@ describe('API Documentation Generator', () => {
       );
 
       endpointsWithExamples.forEach(_endpoint => {
+        const endpoint: any = _endpoint;
         endpoint.examples?.forEach(_example => {
+          const example: any = _example;
           expect(example.accessibilityNotes).toBeDefined();
           expect(typeof example.accessibilityNotes).toBe('string');
           expect(example.accessibilityNotes!.length).toBeGreaterThan(0);
@@ -531,7 +539,9 @@ describe('API Documentation Generator', () => {
       );
 
       endpointsWithExamples.forEach(_endpoint => {
+        const endpoint: any = _endpoint;
         endpoint.examples?.forEach(_example => {
+          const example: any = _example;
           expect(example.healthcareContext).toBeDefined();
           expect(typeof example.healthcareContext).toBe('string');
           expect(example.healthcareContext!.length).toBeGreaterThan(0);
@@ -548,6 +558,7 @@ describe('API Documentation Generator', () => {
       expect(patientEndpoints.length).toBeGreaterThan(0);
 
       patientEndpoints.forEach(_endpoint => {
+        const endpoint: any = _endpoint;
         expect(endpoint.category).toBe(API_CATEGORIES.PATIENT_MANAGEMENT);
       });
     });
@@ -557,6 +568,7 @@ describe('API Documentation Generator', () => {
       expect(healthcareEndpoints.length).toBeGreaterThan(0);
 
       healthcareEndpoints.forEach(_endpoint => {
+        const endpoint: any = _endpoint;
         const hasCompliance = endpoint.metadata.compliance?.lgpd
           || endpoint.metadata.compliance?.anvisa
           || endpoint.metadata.compliance?.cfm;
@@ -569,6 +581,7 @@ describe('API Documentation Generator', () => {
       expect(mobileEndpoints.length).toBeGreaterThan(0);
 
       mobileEndpoints.forEach(_endpoint => {
+        const endpoint: any = _endpoint;
         expect(endpoint.metadata.mobileOptimized).toBe(true);
       });
     });

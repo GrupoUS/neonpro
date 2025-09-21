@@ -1,21 +1,23 @@
+import { Loader2 } from 'lucide-react';
 import * as React from 'react';
 import { lazy, Suspense } from 'react';
-import { Loader2 } from 'lucide-react';
 
 // Lazy load recharts for better bundle splitting
-const RechartsPrimitive = lazy(() => import('recharts').then(mod => ({
-  default: mod,
-  ...Object.fromEntries(Object.entries(mod).filter(([key]) => key !== 'default'))
-})));
+const RechartsPrimitive = lazy(() =>
+  import('recharts').then(mod => ({
+    default: mod,
+    ...Object.fromEntries(Object.entries(mod).filter(([key]) => key !== 'default')),
+  }))
+);
 
 import { cn } from 'src/lib/utils';
 
 // Loading component for charts
 const ChartLoading = () => (
-  <div className="flex items-center justify-center h-full w-full">
-    <div className="text-center space-y-2">
-      <Loader2 className="h-6 w-6 animate-spin mx-auto text-blue-600" />
-      <p className="text-sm text-muted-foreground">Carregando gráfico...</p>
+  <div className='flex items-center justify-center h-full w-full'>
+    <div className='text-center space-y-2'>
+      <Loader2 className='h-6 w-6 animate-spin mx-auto text-blue-600' />
+      <p className='text-sm text-muted-foreground'>Carregando gráfico...</p>
     </div>
   </div>
 );

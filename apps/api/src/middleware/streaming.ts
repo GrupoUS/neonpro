@@ -129,7 +129,7 @@ export function streamingMiddleware() {
       c.set('streamStartTime', Date.now());
 
       await next();
-      
+
       // Return the response after next() completes
       return;
     } catch (error) {

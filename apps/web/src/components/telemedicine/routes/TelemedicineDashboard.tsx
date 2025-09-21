@@ -4,6 +4,7 @@
  * Enhanced with real tRPC integration, real-time updates, and comprehensive features
  */
 
+import { Link } from '@tanstack/react-router';
 import {
   Activity,
   AlertTriangle,
@@ -31,7 +32,6 @@ import {
   WifiOff,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { Link } from '@tanstack/react-router';
 
 import { Alert } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';

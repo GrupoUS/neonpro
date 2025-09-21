@@ -170,7 +170,7 @@ function PatientDocumentsPage() {
   const deleteMutation = useDocumentDelete();
 
   // Mock documents for development (replace with real data from API)
-  const mockDocuments = [
+  const _mockDocuments = [
     {
       id: '1',
       name: 'Exame de Sangue - Janeiro 2024.pdf',
@@ -233,7 +233,7 @@ function PatientDocumentsPage() {
     }
   };
 
-  const handleUpload = async (
+  const _handleUpload = async (
     file: File,
     category: string,
     description?: string,

@@ -120,7 +120,7 @@ export function useWebRTC(sessionId: string, participantId: string) {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
-  const signalingStateRef = useRef<'connecting' | 'connected' | 'disconnected'>(
+  const _signalingStateRef = useRef<'connecting' | 'connected' | 'disconnected'>(
     'disconnected',
   );
   const statisticsIntervalRef = useRef<NodeJS.Timeout | null>(null);

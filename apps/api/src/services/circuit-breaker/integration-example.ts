@@ -6,8 +6,18 @@
  * for healthcare compliance and reliability.
  */
 
-import { CircuitBreakerService, HEALTHCARE_CIRCUIT_CONFIG, STANDARD_CIRCUIT_CONFIG, RequestContext, withCircuitBreaker } from './circuit-breaker-service';
-import { ExternalServiceHealthChecker, HEALTHCARE_HEALTH_CONFIG, ServiceDependency } from './health-checker';
+import {
+  CircuitBreakerService,
+  HEALTHCARE_CIRCUIT_CONFIG,
+  RequestContext,
+  STANDARD_CIRCUIT_CONFIG,
+  withCircuitBreaker,
+} from './circuit-breaker-service';
+import {
+  ExternalServiceHealthChecker,
+  HEALTHCARE_HEALTH_CONFIG,
+  ServiceDependency,
+} from './health-checker';
 
 // Example 1: Enhanced AG-UI Service with Circuit Breaker
 export class AguiServiceWithCircuitBreaker {
@@ -42,7 +52,7 @@ export class AguiServiceWithCircuitBreaker {
   async processQueryWithCircuitBreaker(
     query: string,
     context: any,
-    options?: any
+    options?: any,
   ): Promise<any> {
     const requestContext: RequestContext = {
       userId: context.userId,
@@ -62,7 +72,7 @@ export class AguiServiceWithCircuitBreaker {
     return this.ragAgentCircuitBreaker.execute(
       () => this.sendToRagAgent(query, context),
       requestContext,
-      this.createFallbackResponse(query, context)
+      this.createFallbackResponse(query, context),
     );
   }
 
@@ -86,7 +96,7 @@ export class AguiServiceWithCircuitBreaker {
 
     return this.databaseCircuitBreaker.execute(
       () => this.storeMessageInDatabase(message),
-      requestContext
+      requestContext,
     );
   }
 
@@ -98,7 +108,7 @@ export class AguiServiceWithCircuitBreaker {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.RAG_AGENT_API_KEY}`,
+        Authorization: `Bearer ${process.env.RAG_AGENT_API_KEY}`,
       },
       body: JSON.stringify({
         query,
@@ -129,11 +139,12 @@ export class AguiServiceWithCircuitBreaker {
   private createRagAgentFallback() {
     return async (error: Error, context?: RequestContext) => {
       console.log('RAG Agent fallback activated:', error.message);
-      
+
       // For healthcare-critical queries, provide a safe response
       if (context?.metadata?.dataClassification === 'restricted') {
         return {
-          content: 'Desculpe, estou temporariamente com problemas para acessar informações médicas detalhadas. Por favor, tente novamente em alguns minutos ou entre em contato com suporte.',
+          content:
+            'Desculpe, estou temporariamente com problemas para acessar informações médicas detalhadas. Por favor, tente novamente em alguns minutos ou entre em contato com suporte.',
           type: 'error',
           confidence: 0,
           sources: [],
@@ -144,7 +155,8 @@ export class AguiServiceWithCircuitBreaker {
 
       // For general queries, provide cached or simplified response
       return {
-        content: 'Estou experiencing dificuldades técnicas no momento. Por favor, tente novamente ou entre em contato com o suporte.',
+        content:
+          'Estou experiencing dificuldades técnicas no momento. Por favor, tente novamente ou entre em contato com o suporte.',
         type: 'error',
         confidence: 0,
         sources: [],
@@ -160,10 +172,10 @@ export class AguiServiceWithCircuitBreaker {
   private createDatabaseFallback() {
     return async (error: Error, context?: RequestContext) => {
       console.log('Database fallback activated:', error.message);
-      
+
       // For database failures, we might want to queue the operation
       // or temporarily store in memory/cache
-      
+
       // Don't throw error - just log and continue
       console.warn('Database operation failed, operation skipped:', {
         error: error.message,
@@ -177,7 +189,8 @@ export class AguiServiceWithCircuitBreaker {
    */
   private createFallbackResponse(query: string, context: any) {
     return {
-      content: 'Desculpe, estou temporariamente indisponível. Por favor, tente novamente em alguns minutos.',
+      content:
+        'Desculpe, estou temporariamente indisponível. Por favor, tente novamente em alguns minutos.',
       type: 'error',
       confidence: 0,
       sources: [],
@@ -298,7 +311,7 @@ export class GoogleCalendarServiceWithCircuitBreaker {
 
     return this.circuitBreaker.execute(
       () => this.exchangeCodeForToken(code, userId),
-      requestContext
+      requestContext,
     );
   }
 
@@ -321,7 +334,7 @@ export class GoogleCalendarServiceWithCircuitBreaker {
     return this.circuitBreaker.execute(
       () => this.syncEventsToGoogle(userId, events),
       requestContext,
-      { success: false, synced: 0, failed: events.length } // Fallback value
+      { success: false, synced: 0, failed: events.length }, // Fallback value
     );
   }
 
@@ -355,7 +368,7 @@ export class GoogleCalendarServiceWithCircuitBreaker {
   private createCalendarFallback() {
     return async (error: Error, context?: RequestContext) => {
       console.log('Google Calendar fallback activated:', error.message);
-      
+
       // For calendar sync failures, return a failure response
       // The system can retry later or use local storage
       return {
@@ -403,7 +416,7 @@ export class AIAgentServiceWithCircuitBreaker {
    */
   async processRequestWithCircuitBreaker(
     request: any,
-    context: any
+    context: any,
   ): Promise<any> {
     const requestContext: RequestContext = {
       userId: context.userId,
@@ -422,7 +435,7 @@ export class AIAgentServiceWithCircuitBreaker {
     return this.circuitBreaker.execute(
       () => this.processAIRequest(request, context),
       requestContext,
-      this.createAIFallbackResponse(request)
+      this.createAIFallbackResponse(request),
     );
   }
 
@@ -431,7 +444,7 @@ export class AIAgentServiceWithCircuitBreaker {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.AI_AGENT_API_KEY}`,
+        Authorization: `Bearer ${process.env.AI_AGENT_API_KEY}`,
       },
       body: JSON.stringify({
         ...request,
@@ -449,11 +462,12 @@ export class AIAgentServiceWithCircuitBreaker {
   private createAIAgentFallback() {
     return async (error: Error, context?: RequestContext) => {
       console.log('AI Agent fallback activated:', error.message);
-      
+
       // For healthcare-critical AI requests, provide a safe response
       if (context?.metadata?.dataClassification === 'restricted') {
         return {
-          response: 'Desculpe, estou temporariamente com problemas para processar solicitações médicas. Por favor, consulte um profissional de saúde ou tente novamente.',
+          response:
+            'Desculpe, estou temporariamente com problemas para processar solicitações médicas. Por favor, consulte um profissional de saúde ou tente novamente.',
           confidence: 0,
           sources: [],
           fallback: true,
@@ -463,7 +477,8 @@ export class AIAgentServiceWithCircuitBreaker {
 
       // For general AI requests, provide a helpful error message
       return {
-        response: 'Estou temporariamente indisponível para processar sua solicitação. Por favor, tente novamente em alguns minutos.',
+        response:
+          'Estou temporariamente indisponível para processar sua solicitação. Por favor, tente novamente em alguns minutos.',
         confidence: 0,
         sources: [],
         fallback: true,
@@ -511,7 +526,7 @@ export function withCircuitBreakerProtection<T>(
   operation: () => Promise<T>,
   context?: RequestContext,
   fallbackValue?: T,
-  config?: any
+  config?: any,
 ): Promise<T> {
   return withCircuitBreaker(serviceName, operation, context, fallbackValue, config);
 }
@@ -519,13 +534,13 @@ export function withCircuitBreakerProtection<T>(
 // Example 5: Health monitoring setup utility
 export function setupHealthMonitoring(services: ServiceDependency[]) {
   const healthChecker = new ExternalServiceHealthChecker(HEALTHCARE_HEALTH_CONFIG);
-  
+
   services.forEach(service => {
     healthChecker.registerService(service);
   });
 
   // Set up event listeners for alerts
-  healthChecker.onEvent((event) => {
+  healthChecker.onEvent(event => {
     console.log('Health Check Event:', {
       type: event.type,
       service: event.serviceName,
@@ -563,8 +578,8 @@ function sendHealthAlert(event: any) {
 // Export examples and utilities
 export {
   AguiServiceWithCircuitBreaker,
-  GoogleCalendarServiceWithCircuitBreaker,
   AIAgentServiceWithCircuitBreaker,
-  withCircuitBreakerProtection,
+  GoogleCalendarServiceWithCircuitBreaker,
   setupHealthMonitoring,
+  withCircuitBreakerProtection,
 };

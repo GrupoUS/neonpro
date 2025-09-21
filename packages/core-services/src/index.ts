@@ -8,6 +8,9 @@ export * from "./services/governance/index";
 // Phase 4 Compliance & Audit Module
 export * from "./audit/index";
 
+// Error handling utilities
+export * from "./errors/map";
+
 // Phase 4 Analytics Module - selective exports to avoid conflicts
 export type {
   BaseMetric,

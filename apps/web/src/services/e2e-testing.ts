@@ -780,7 +780,7 @@ export class E2ETestingService {
    */
   private async executeStep(
     step: E2ETestStep,
-    scenario: E2ETestScenario,
+    _scenario: E2ETestScenario,
   ): Promise<{
     success: boolean;
     error?: string;

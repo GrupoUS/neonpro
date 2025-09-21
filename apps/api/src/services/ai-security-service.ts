@@ -23,7 +23,7 @@ const auditLogger = {
 import { z } from 'zod';
 
 // Security validation schemas
-const SensitiveDataSchema = z.object({
+const _SensitiveDataSchema = z.object({
   name: z.string().regex(/^[A-Za-z\s]+$/),
   cpf: z.string().regex(/^\d{3}\.\d{3}\.\d{3}-\d{2}$/),
   medicalRecord: z.string().regex(/^MR-\d+$/),
@@ -31,7 +31,7 @@ const SensitiveDataSchema = z.object({
   email: z.string().email(),
 });
 
-const MedicalTermSchema = z.object({
+const _MedicalTermSchema = z.object({
   term: z.string(),
   category: z.enum(['symptom', 'diagnosis', 'treatment', 'medication']),
   isValid: z.boolean(),

@@ -3,7 +3,7 @@
  * Ensures LGPD compliance, proper RLS enforcement, audit trails, and authentication context
  */
 
-import { apiClient, type ApiResponse, type PaginatedResponse } from '@/utils/api-client';
+import { apiClient } from '@/utils/api-client';
 
 // Patient data types (maintaining existing interfaces)
 export interface Patient {
@@ -224,8 +224,8 @@ class PatientService {
    */
   async createPatient(
     data: CreatePatientData,
-    clinicId: string,
-    userId: string,
+    _clinicId: string,
+    _userId: string,
   ): Promise<Patient> {
     try {
       const response = await apiClient.post<Patient>(this.baseEndpoint, data);

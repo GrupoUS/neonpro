@@ -599,7 +599,7 @@ export class CalendarLGPDAuditService {
 
   private assessBatchRiskLevel(
     consentResults: ConsentValidationResult[],
-    minimizationResults: any[],
+    _minimizationResults: any[],
   ): 'low' | 'medium' | 'high' | 'critical' {
     const invalidConsents = consentResults.filter(r => !r.isValid).length;
     const totalRecords = consentResults.length;

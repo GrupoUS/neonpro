@@ -200,7 +200,7 @@ export class UsageCounterRepository {
       // Update existing counter
       const updateData: Partial<UsageCounterDatabaseRow> = {
         metadata: {
-          ...(existing.metadata || {}),
+          ...existing.metadata,
           last_activity: now.toISOString(),
         },
       };

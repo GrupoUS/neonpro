@@ -1,15 +1,15 @@
-import { Suspense, lazy } from 'react';
 import { Loader2 } from 'lucide-react';
+import { lazy, Suspense } from 'react';
 
 // Lazy load TanStack Table for better bundle splitting
 const TanStackTable = lazy(() => import('@tanstack/react-table'));
 
 // Loading component for table
 const TableLoading = () => (
-  <div className="flex items-center justify-center p-8">
-    <div className="text-center space-y-2">
-      <Loader2 className="h-6 w-6 animate-spin mx-auto text-blue-600" />
-      <p className="text-sm text-muted-foreground">Carregando tabela...</p>
+  <div className='flex items-center justify-center p-8'>
+    <div className='text-center space-y-2'>
+      <Loader2 className='h-6 w-6 animate-spin mx-auto text-blue-600' />
+      <p className='text-sm text-muted-foreground'>Carregando tabela...</p>
     </div>
   </div>
 );
@@ -168,7 +168,8 @@ function LazyDataTable() {
       accessorKey: 'location',
       cell: ({ row }) => (
         <div>
-          <span className='text-lg leading-none'>{row.original.flag}</span> {row.getValue('location')}
+          <span className='text-lg leading-none'>{row.original.flag}</span>{' '}
+          {row.getValue('location')}
         </div>
       ),
       size: 180,

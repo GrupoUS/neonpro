@@ -5,15 +5,12 @@
  * @compliance WCAG 2.1 AA+, Core Web Vitals, Healthcare UX Standards
  */
 
-import { Alert } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
 import { Tabs } from '@/components/ui/tabs';
 import {
-  Activity,
   AlertTriangle,
   BarChart3,
   CheckCircle,
@@ -319,7 +316,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
     let totalWeightedScore = 0;
     let totalWeight = 0;
 
-    categoryScores.forEach(_score => {
+    categoryScores.forEach(score => {
       const category = VALIDATION_CATEGORIES[score.category];
       totalWeightedScore += (score.percentage * category.weight) / 100;
       totalWeight += category.weight;
@@ -350,9 +347,9 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
   const extractCriticalIssues = (categoryScores: ValidationScore[]): string[] => {
     const critical: string[] = [];
 
-    categoryScores.forEach(_score => {
+    categoryScores.forEach(score => {
       if (score.status === 'critical' || score.status === 'poor') {
-        score.issues.forEach(_issue => {
+        score.issues.forEach(issue => {
           critical.push(`${VALIDATION_CATEGORIES[score.category].name}: ${issue}`);
         });
       }
@@ -365,8 +362,8 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
   const extractTopRecommendations = (categoryScores: ValidationScore[]): string[] => {
     const recommendations: string[] = [];
 
-    categoryScores.forEach(_score => {
-      score.recommendations.forEach(_rec => {
+    categoryScores.forEach(score => {
+      score.recommendations.forEach(rec => {
         recommendations.push(rec);
       });
     });
@@ -473,12 +470,12 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
 
     return (
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6'>
-        {validationResult.categoryScores.map(score => {
+        {validationResult.categoryScores.map((score, index) => {
           const category = VALIDATION_CATEGORIES[score.category];
           const IconComponent = category.icon;
 
           return (
-            <Card key={score.category}>
+            <Card key={index}>
               <CardHeader className='pb-3'>
                 <CardTitle className='flex items-center gap-2 text-lg'>
                   <IconComponent className='w-5 h-5' />
@@ -511,7 +508,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
                   <div className='mt-3'>
                     <div className='text-sm font-medium mb-1'>Issues:</div>
                     <ul className='text-xs text-muted-foreground space-y-1'>
-                      {score.issues.slice(0, 2).map((issue, _index) => (
+                      {score.issues.slice(0, 2).map((issue, index) => (
                         <li key={index}>• {issue}</li>
                       ))}
                       {score.issues.length > 2 && <li>• ... and {score.issues.length - 2} more</li>}
@@ -540,7 +537,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className='space-y-4'>
-          {benchmarks.map((benchmark, _index) => (
+          {benchmarks.map((benchmark, index) => (
             <div key={index} className='flex items-center justify-between p-3 border rounded-lg'>
               <div className='flex items-center gap-3'>
                 {benchmark.isBeaten
@@ -633,7 +630,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <ul className='space-y-2'>
-                    {validationResult.criticalIssues.map((issue, _index) => (
+                    {validationResult.criticalIssues.map((issue, index) => (
                       <li key={index} className='flex items-start gap-2'>
                         <XCircle className='w-4 h-4 text-red-500 mt-0.5 flex-shrink-0' />
                         <span className='text-sm'>{issue}</span>
@@ -654,7 +651,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <ul className='space-y-2'>
-                    {validationResult.topRecommendations.map((rec, _index) => (
+                    {validationResult.topRecommendations.map((rec, index) => (
                       <li key={index} className='flex items-start gap-2'>
                         <CheckCircle className='w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0' />
                         <span className='text-sm'>{rec}</span>

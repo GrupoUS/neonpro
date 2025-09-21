@@ -1,13 +1,13 @@
 import crypto from 'crypto';
 import fs from 'fs';
 import https from 'https';
-import { 
-  TLS_CONSTANTS, 
-  ERROR_CONSTANTS, 
+import {
+  ERROR_CONSTANTS,
+  formatCipherList,
   getAllCiphers,
-  isWeakCipher,
   getDefaultTLSVersion,
-  formatCipherList
+  isWeakCipher,
+  TLS_CONSTANTS,
 } from './tls-constants';
 
 export interface TLSConfiguration {
@@ -32,18 +32,18 @@ export interface CertificateConfig {
 
 /**
  * TLS Configuration Manager
- * 
+ *
  * A singleton class that manages TLS/SSL configuration for HTTPS servers.
  * Provides centralized certificate management, cipher suite configuration,
  * and security settings for healthcare applications requiring HIPAA compliance.
- * 
+ *
  * Features:
  * - Centralized cipher suite management
  * - Certificate validation and monitoring
  * - Session ticket rotation for forward secrecy
  * - Security configuration validation
  * - Performance monitoring and metrics
- * 
+ *
  * @example
  * ```typescript
  * const tlsManager = TLSConfigManager.getInstance();
@@ -80,7 +80,7 @@ export class TLSConfigManager {
   public initialize(certConfig: CertificateConfig): void {
     // Validate input configuration
     this.validateCertificateConfig(certConfig);
-    
+
     this.certificateConfig = certConfig;
     this.config = this.createTLSConfiguration(certConfig);
   }
@@ -190,12 +190,17 @@ export class TLSConfigManager {
         issuer: TLS_CONSTANTS.CERTIFICATE.ISSUER_PLACEHOLDER,
         subject: TLS_CONSTANTS.CERTIFICATE.SUBJECT_PLACEHOLDER,
         validFrom: new Date(),
-        validTo: new Date(Date.now() + TLS_CONSTANTS.CERTIFICATE.DEFAULT_VALIDITY_DAYS * 24 * 60 * 60 * 1000),
+        validTo: new Date(
+          Date.now() + TLS_CONSTANTS.CERTIFICATE.DEFAULT_VALIDITY_DAYS * 24 * 60 * 60 * 1000,
+        ),
         fingerprint: this.generateCertificateFingerprint(cert),
       };
     } catch (error) {
       // Log certificate parsing error securely
-      console.error('Certificate parsing failed:', error instanceof Error ? error.message : 'Unknown error');
+      console.error(
+        'Certificate parsing failed:',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
       return {};
     }
   }
@@ -255,7 +260,9 @@ export class TLSConfigManager {
 
   public rotateSessionTickets(): void {
     if (this.config) {
-      this.config.ticketKeys = crypto.getRandomValues(new Uint8Array(TLS_CONSTANTS.SECURITY.TICKET_KEY_SIZE));
+      this.config.ticketKeys = crypto.getRandomValues(
+        new Uint8Array(TLS_CONSTANTS.SECURITY.TICKET_KEY_SIZE),
+      );
     }
   }
 

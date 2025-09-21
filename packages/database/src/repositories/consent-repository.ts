@@ -9,33 +9,50 @@ import {
   ConsentSearchResult,
   ConsentQueryOptions 
 } from "@neonpro/domain";
+import { DatabasePerformanceService } from "../services/database-performance.service.js";
 
 /**
  * Supabase implementation of ConsentRepository
  * Handles all consent data access operations with LGPD compliance
  */
 export class ConsentRepository implements IConsentRepository {
-  constructor(private supabase: SupabaseClient) {}
+  private performanceService: DatabasePerformanceService;
+
+  constructor(private supabase: SupabaseClient) {
+    this.performanceService = new DatabasePerformanceService(supabase, {
+      enableQueryCaching: true,
+      cacheTTL: 300000, // 5 minutes
+      slowQueryThreshold: 1000,
+      enablePerformanceLogging: true,
+    });
+  }
 
   async findById(id: string): Promise<ConsentRecord | null> {
     try {
-      const { data, error } = await this.supabase
-        .from("consent_records")
-        .select(`
-          *,
-          patient:patients(id, full_name, cpf)
-        `)
-        .eq("id", id)
-        .single();
+      return await this.performanceService.optimizedQuery(
+        "consent_records",
+        "select",
+        async (client) => {
+          const { data, error } = await client
+            .from("consent_records")
+            .select(`
+              id, patient_id, clinic_id, consent_type, purpose, legal_basis, status,
+              given_at, withdrawn_at, expires_at, collection_method, ip_address,
+              user_agent, evidence, data_categories, created_at, updated_at,
+              patient:patients(id, full_name, cpf)
+            `)
+            .eq("id", id)
+            .single();
 
-      if (error) {
-        console.error("ConsentRepository.findById error:", error);
-        return null;
-      }
-
-      if (!data) return null;
-
-      return this.mapDatabaseConsentToDomain(data);
+          if (error) throw error;
+          if (!data) return null;
+          return this.mapDatabaseConsentToDomain(data);
+        },
+        {
+          cacheKey: `findById:${id}`,
+          columns: "id, patient_id, consent_type, status, expires_at, patient:patients(id, full_name, cpf)",
+        }
+      );
     } catch (error) {
       console.error("ConsentRepository.findById error:", error);
       return null;
@@ -228,29 +245,41 @@ export class ConsentRepository implements IConsentRepository {
 
   async checkExpiration(): Promise<ConsentRecord[]> {
     try {
-      const now = new Date().toISOString();
-      
-      const { data, error } = await this.supabase
-        .from("consent_records")
-        .select("*")
-        .eq("status", ConsentStatus.ACTIVE)
-        .lte("expires_at", now);
+      // Use optimized single-operation expiration check
+      const result = await this.performanceService.optimizeExpirationCheck(
+        "consent_records",
+        "expires_at",
+        "status",
+        ConsentStatus.ACTIVE,
+        ConsentStatus.EXPIRED
+      );
 
-      if (error) {
-        console.error("ConsentRepository.checkExpiration error:", error);
+      if (result.updatedCount === 0) {
         return [];
       }
 
-      if (!data) return [];
+      // Fetch the updated records
+      return await this.performanceService.optimizedQuery(
+        "consent_records",
+        "select",
+        async (client) => {
+          const { data, error } = await client
+            .from("consent_records")
+            .select(`
+              id, patient_id, consent_type, purpose, status, 
+              given_at, expires_at, withdrawn_at, created_at
+            `)
+            .in("id", result.expiredIds)
+            .order("expires_at", { ascending: false });
 
-      // Update expired consents
-      const expiredIds = data.map(consent => consent.id);
-      await this.supabase
-        .from("consent_records")
-        .update({ status: ConsentStatus.EXPIRED })
-        .in("id", expiredIds);
-
-      return data.map(this.mapDatabaseConsentToDomain);
+          if (error) throw error;
+          return data ? data.map(this.mapDatabaseConsentToDomain) : [];
+        },
+        {
+          cacheKey: `checkExpiration:${Date.now()}`,
+          columns: "id, patient_id, consent_type, status, expires_at",
+        }
+      );
     } catch (error) {
       console.error("ConsentRepository.checkExpiration error:", error);
       return [];
@@ -259,22 +288,30 @@ export class ConsentRepository implements IConsentRepository {
 
   async getActiveConsents(patientId: string): Promise<ConsentRecord[]> {
     try {
-      const { data, error } = await this.supabase
-        .from("consent_records")
-        .select("*")
-        .eq("patient_id", patientId)
-        .eq("status", ConsentStatus.ACTIVE)
-        .or("expires_at.is.null,expires_at.gt." + new Date().toISOString())
-        .order("granted_at", { ascending: false });
+      return await this.performanceService.optimizedQuery(
+        "consent_records",
+        "select",
+        async (client) => {
+          const now = new Date().toISOString();
+          const { data, error } = await client
+            .from("consent_records")
+            .select(`
+              id, patient_id, consent_type, purpose, status, 
+              granted_at, expires_at, created_at, data_types
+            `)
+            .eq("patient_id", patientId)
+            .eq("status", ConsentStatus.ACTIVE)
+            .or("expires_at.is.null,expires_at.gt." + now)
+            .order("granted_at", { ascending: false });
 
-      if (error) {
-        console.error("ConsentRepository.getActiveConsents error:", error);
-        return [];
-      }
-
-      if (!data) return [];
-
-      return data.map(this.mapDatabaseConsentToDomain);
+          if (error) throw error;
+          return data ? data.map(this.mapDatabaseConsentToDomain) : [];
+        },
+        {
+          cacheKey: `getActiveConsents:${patientId}`,
+          columns: "id, patient_id, consent_type, status, expires_at, granted_at",
+        }
+      );
     } catch (error) {
       console.error("ConsentRepository.getActiveConsents error:", error);
       return [];
@@ -283,21 +320,31 @@ export class ConsentRepository implements IConsentRepository {
 
   async hasActiveConsent(patientId: string, consentType: ConsentType): Promise<boolean> {
     try {
-      const { data, error } = await this.supabase
-        .from("consent_records")
-        .select("id")
-        .eq("patient_id", patientId)
-        .eq("consent_type", consentType)
-        .eq("status", ConsentStatus.ACTIVE)
-        .or("expires_at.is.null,expires_at.gt." + new Date().toISOString())
-        .single();
+      return await this.performanceService.optimizedQuery(
+        "consent_records",
+        "select",
+        async (client) => {
+          const now = new Date().toISOString();
+          const { data, error } = await client
+            .from("consent_records")
+            .select("id")
+            .eq("patient_id", patientId)
+            .eq("consent_type", consentType)
+            .eq("status", ConsentStatus.ACTIVE)
+            .or("expires_at.is.null,expires_at.gt." + now)
+            .single();
 
-      if (error) {
-        console.error("ConsentRepository.hasActiveConsent error:", error);
-        return false;
-      }
-
-      return !!data;
+          if (error && error.code !== 'PGRST116') { // PGRST116 = not found
+            throw error;
+          }
+          
+          return !!data;
+        },
+        {
+          cacheKey: `hasActiveConsent:${patientId}:${consentType}`,
+          columns: "id",
+        }
+      );
     } catch (error) {
       console.error("ConsentRepository.hasActiveConsent error:", error);
       return false;

@@ -3,7 +3,6 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Separator } from '@/components/ui/separator';
 import {
   Activity,
   AlertTriangle,
@@ -13,7 +12,6 @@ import {
   Gauge,
   Heart,
   Shield,
-  Smartphone,
   Timer,
   TrendingUp,
   XCircle,
@@ -174,7 +172,7 @@ const simulateAppointmentBooking = async (): Promise<number> => {
   // Simulate form interactions and validation
   const steps = ['date-selection', 'time-selection', 'service-selection', 'confirmation'];
 
-  for (const step of steps) {
+  for (const _step of steps) {
     await new Promise(resolve => setTimeout(resolve, Math.random() * 300 + 100));
   }
 

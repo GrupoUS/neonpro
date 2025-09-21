@@ -393,7 +393,7 @@ export class GoogleCalendarSyncService {
   /**
    * Cancel scheduled sync
    */
-  async cancelAutoSync(scheduleId: string): Promise<boolean> {
+  async cancelAutoSync(_scheduleId: string): Promise<boolean> {
     // In a real implementation, this would remove the scheduled job
     return true;
   }

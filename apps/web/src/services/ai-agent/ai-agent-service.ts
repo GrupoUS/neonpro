@@ -6,10 +6,8 @@
 import {
   DataAgentRequest,
   DataAgentRequestSchema,
-  DataAgentResponse,
   DataAgentResponseSchema,
   safeValidate,
-  ValidDataAgentRequest,
   ValidDataAgentResponse,
 } from '@neonpro/types';
 

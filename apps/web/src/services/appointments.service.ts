@@ -10,7 +10,6 @@ import {
   calendarLGPDConsentService,
   type ConsentValidationResult,
   DataMinimizationLevel,
-  type MinimizedCalendarAppointment,
 } from '@/services/lgpd/calendar-consent.service';
 import { calendarDataMinimizationService } from '@/services/lgpd/data-minimization.service';
 import { parseISO } from 'date-fns';
@@ -818,7 +817,7 @@ class AppointmentService {
     action: string,
     request: LGPDCompliantAppointmentRequest,
     consentResult: ConsentValidationResult,
-    metadata?: any,
+    _metadata?: any,
   ): Promise<string> {
     try {
       return await calendarLGPDAuditService.logConsentValidation(

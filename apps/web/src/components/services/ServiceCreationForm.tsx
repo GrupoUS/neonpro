@@ -14,7 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@neonpro/ui';
-import { Clock2 } from 'lucide-react'; // Removed DollarSign
 import { useState } from 'react';
 import { toast } from 'sonner';
 

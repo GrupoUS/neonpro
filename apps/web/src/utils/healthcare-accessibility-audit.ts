@@ -193,7 +193,7 @@ export class HealthcareAccessibilityAuditor {
         // Healthcare-specific rule configurations
         'color-contrast': { enabled: true },
         'image-alt': { enabled: true },
-        'label': { enabled: true },
+        label: { enabled: true },
         'button-name': { enabled: true },
         'link-name': { enabled: true },
         'input-button-name': { enabled: true },

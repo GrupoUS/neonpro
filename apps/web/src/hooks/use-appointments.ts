@@ -436,7 +436,7 @@ export function useSendAppointmentReminder() {
       });
     },
 
-    onSuccess: (data, _variables) => {
+    onSuccess: (_data, _variables) => {
       // Update appointment cache with reminder info
       queryClient.setQueryData(
         appointmentKeys.detail(variables.appointmentId),

@@ -1,4 +1,4 @@
-import { Patient } from '../entities/patient.js';
+import type { Patient } from '../entities/patient.js';
 
 /**
  * Patient Repository Interface

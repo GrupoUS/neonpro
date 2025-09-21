@@ -5,15 +5,12 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import {
   AlertTriangle,
-  Calendar,
   Check,
   ChevronLeft,
   ChevronRight,
   FileText,
   Heart,
-  Info,
   Loader2,
-  Lock,
   Mail,
   MapPin,
   Phone,
@@ -22,7 +19,6 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm, useFormContext } from 'react-hook-form';
-import { z } from 'zod';
 
 import {
   Alert,
@@ -55,22 +51,14 @@ import {
   SelectTrigger,
   SelectValue,
   Separator,
-  Textarea,
 } from '@neonpro/ui';
 import { cn } from '@neonpro/utils';
 
 // Import our Brazilian validation schemas
 import {
-  type BasicPatient,
-  BasicPatientSchema,
-  type BrazilianAddress,
-  BrazilianAddressSchema,
   type CompletePatientRegistration,
   CompletePatientRegistrationSchema,
-  type PatientConsent,
-  PatientConsentSchema,
   validateBrazilianPhone,
-  validateCns,
   validateCpf,
 } from './validation/brazilian-healthcare-schemas';
 
@@ -112,8 +100,6 @@ const REGISTRATION_STEPS = [
     required: true,
   },
 ] as const;
-
-type StepId = (typeof REGISTRATION_STEPS)[number]['id'];
 
 interface EnhancedPatientRegistrationFormProps {
   isOpen: boolean;
@@ -833,7 +819,7 @@ export function EnhancedPatientRegistrationForm({
   onOpenChange,
   onSubmit,
   initialData,
-  userRole,
+  userRole: _userRole,
   className,
 }: EnhancedPatientRegistrationFormProps) {
   const [currentStep, setCurrentStep] = useState<number>(0);

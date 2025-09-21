@@ -71,11 +71,7 @@ import { formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
 
 // Import tRPC hooks for agent integration
-import {
-  useAgentChat,
-  useAgentSessionManager,
-  useKnowledgeBaseManager,
-} from '@/trpc/agent';
+import { useAgentChat, useAgentSessionManager, useKnowledgeBaseManager } from '@/trpc/agent';
 
 // Types
 export interface EnhancedAIChatProps {
@@ -278,7 +274,7 @@ export const EnhancedAIChat: React.FC<EnhancedAIChatProps> = ({
   } = useAgentChat(currentSessionId);
 
   // Knowledge base search
-  const { searchEntries, isSearching: isKnowledgeSearching } = useKnowledgeBaseManager();
+  const { searchEntries, isSearching: _isKnowledgeSearching } = useKnowledgeBaseManager();
 
   // Auto-scroll to bottom
   const scrollToBottom = useCallback(() => {

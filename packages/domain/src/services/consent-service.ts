@@ -1,14 +1,14 @@
-import { 
-  ConsentRecord, 
-  ConsentRequest, 
-  ConsentAction,
-  ConsentStatus,
-  ComplianceCheck,
-  ComplianceViolation,
+import {
+  type ConsentRecord,
+  type ConsentRequest,
+  type ComplianceCheck,
+  type ComplianceViolation,
   ConsentValidator,
-  ConsentFactory 
+  ConsentFactory,
+  ConsentAction,
+  ConsentStatus
 } from '../entities/consent.js';
-import { ConsentRepository, ConsentQueryRepository } from '../repositories/consent-repository.js';
+import { type ConsentRepository, type ConsentQueryRepository } from '../repositories/consent-repository.js';
 
 /**
  * Domain Service for Consent Management
@@ -71,11 +71,11 @@ export class ConsentDomainService {
     const consents = await this.repository.findByPatientId(patientId, includeExpired);
     
     // Log access for audit trail
-    const accessEvent = ConsentFactory.createAuditEvent(
+    void ConsentFactory.createAuditEvent(
       ConsentAction.ACCESSED,
       patientId,
       'system',
-      { 
+      {
         includeExpired,
         consentCount: consents.length,
         timestamp: new Date().toISOString()
@@ -103,7 +103,7 @@ export class ConsentDomainService {
     }
 
     // Check if consent is already revoked
-    if (existingConsent.status === ConsentStatus.REVOKED) {
+    if (existingConsent.status === 'REVOKED') {
       throw new Error(`Consent ${consentId} is already revoked`);
     }
 
@@ -111,7 +111,7 @@ export class ConsentDomainService {
     const revokedConsent = await this.repository.revoke(consentId, revokedBy, reason);
 
     // Create audit trail entry
-    const auditEvent = ConsentFactory.createAuditEvent(
+    void ConsentFactory.createAuditEvent(
       ConsentAction.REVOKED,
       revokedConsent.patientId,
       revokedBy,
@@ -157,7 +157,7 @@ export class ConsentDomainService {
     // Check for expired consents that should be renewed
     for (const consent of consents) {
       if (consent.expiresAt && new Date(consent.expiresAt) < now) {
-        if (consent.status !== ConsentStatus.EXPIRED) {
+        if (consent.status !== 'EXPIRED') {
           violations.push({
             id: `violation_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
             type: 'EXPIRED_CONSENT_NOT_MARKED',
@@ -174,10 +174,10 @@ export class ConsentDomainService {
 
     // Check for consents expiring soon (within 30 days)
     const thirtyDaysFromNow = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-    const expiringSoon = consents.filter(consent => 
-      consent.expiresAt && 
+    const expiringSoon = consents.filter(consent =>
+      consent.expiresAt &&
       new Date(consent.expiresAt) < thirtyDaysFromNow &&
-      consent.status === ConsentStatus.ACTIVE
+      consent.status === 'ACTIVE'
     );
 
     if (expiringSoon.length > 0) {
@@ -192,9 +192,9 @@ export class ConsentDomainService {
     }
 
     // Check for missing essential consents (data processing)
-    const hasDataProcessingConsent = consents.some(consent => 
-      consent.consentType === 'data_processing' && 
-      consent.status === ConsentStatus.ACTIVE
+    const hasDataProcessingConsent = consents.some(consent =>
+      consent.consentType === 'data_processing' &&
+      consent.status === 'ACTIVE'
     );
 
     if (!hasDataProcessingConsent) {
@@ -287,7 +287,7 @@ export class ConsentDomainService {
     });
 
     // Add renewal audit event
-    const renewalEvent = ConsentFactory.createAuditEvent(
+    void ConsentFactory.createAuditEvent(
       ConsentAction.UPDATED,
       existingConsent.patientId,
       renewedBy,

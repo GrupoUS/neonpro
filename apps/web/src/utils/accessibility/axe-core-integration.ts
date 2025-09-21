@@ -6,7 +6,7 @@
  */
 
 import * as axe from 'axe-core';
-import { type AxeResults, type Result, type Rule } from 'axe-core';
+import { type AxeResults, type Result } from 'axe-core';
 import * as React from 'react';
 
 // Brazilian healthcare specific rules configuration

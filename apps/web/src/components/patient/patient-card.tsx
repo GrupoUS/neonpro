@@ -27,10 +27,10 @@ import {
   UserCheck,
 } from 'lucide-react';
 import { memo, useCallback, useMemo } from 'react';
+import { useScreenReaderAnnouncer } from '@/hooks/accessibility/use-focus-management';
 
 import {
   Badge,
-  Button,
   Card,
   CardContent,
   CardFooter,
@@ -40,6 +40,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui';
+import { HealthcareButton } from '@/components/ui/healthcare/healthcare-button';
 import { formatCEP } from '@/utils/brazilian-formatters';
 import { Patient } from '@neonpro/shared/types/patient';
 import { cn } from '@neonpro/ui';
@@ -99,11 +100,13 @@ export const PatientCard = memo<PatientCardProps>(
     error = null,
     ariaLabel,
     testId = 'patient-card',
-  }) => {
+  ) => {
     const navigate = useNavigate();
+    const { announcePolite } = useScreenReaderAnnouncer();
 
     // Handle card click navigation
     const handleCardClick = useCallback(() => {
+      announcePolite(`Navegando para o perfil do paciente ${displayData.name}`);
       if (onClick) {
         onClick(patient);
       } else if (onView) {
@@ -115,7 +118,7 @@ export const PatientCard = memo<PatientCardProps>(
           params: { patientId: patient.id },
         });
       }
-    }, [onClick, onView, patient, navigate]);
+    }, [onClick, onView, patient, navigate, announcePolite, displayData.name]);
 
     // Handle action buttons
     const handleView = useCallback(
@@ -400,37 +403,45 @@ export const PatientCard = memo<PatientCardProps>(
         {showActions && (
           <CardFooter className='pt-3 border-t'>
             <div className='flex gap-2 w-full'>
-              <Button
+              <HealthcareButton
                 variant='outline'
                 size='sm'
                 onClick={handleView}
                 className='flex-1'
-                aria-label={`Ver detalhes de ${displayData.name}`}
+                ariaLabel={`Ver detalhes de ${displayData.name}`}
+                healthcareContext='patient-management'
+                accessibilityAction='view'
               >
                 <User className='h-4 w-4 mr-1' />
                 Ver
-              </Button>
+              </HealthcareButton>
 
-              <Button
+              <HealthcareButton
                 variant='outline'
                 size='sm'
                 onClick={handleEdit}
                 className='flex-1'
-                aria-label={`Editar ${displayData.name}`}
+                ariaLabel={`Editar ${displayData.name}`}
+                healthcareContext='patient-management'
+                accessibilityAction='edit'
               >
                 Editar
-              </Button>
+              </HealthcareButton>
 
               {onDelete && (
-                <Button
-                  variant='outline'
+                <HealthcareButton
+                  variant='destructive'
                   size='sm'
                   onClick={handleDelete}
-                  className='text-destructive hover:text-destructive'
-                  aria-label={`Excluir ${displayData.name}`}
+                  className='flex-1'
+                  ariaLabel={`Excluir ${displayData.name}`}
+                  healthcareContext='patient-management'
+                  requiresConfirmation={true}
+                  confirmationMessage={`Tem certeza que deseja excluir o paciente ${displayData.name}?`}
+                  accessibilityAction='delete'
                 >
                   Excluir
-                </Button>
+                </HealthcareButton>
               )}
             </div>
           </CardFooter>

@@ -1,7 +1,6 @@
 'use client';
 
 import { cn } from '@neonpro/ui';
-import { Mic2 } from 'lucide-react';
 import { useCallback, useRef, useState } from 'react';
 import type { AIVoiceProps } from './types';
 
@@ -57,7 +56,7 @@ export default function AIVoice({
           const mimeType = mediaRecorder.mimeType || audioChunks[0]?.type || 'audio/webm';
           const audioBlob = new Blob(audioChunks, { type: mimeType });
           onVoiceInput?.(audioBlob);
-          stream.getTracks().forEach(_track => track.stop());
+          stream.getTracks().forEach(_track => _track.stop());
         };
 
         mediaRecorder.start();

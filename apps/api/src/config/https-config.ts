@@ -4,7 +4,6 @@
  */
 
 import { readFileSync } from 'fs';
-import type { ServerOptions } from 'https';
 import { join } from 'path';
 
 interface HTTPSConfig {

@@ -5,19 +5,13 @@
 
 import {
   AlertTriangle,
-  Archive,
   Bot,
   CheckCircle,
   Clock,
   Copy,
   Download,
-  Eye,
-  EyeOff,
   FileText,
-  Filter,
-  Flag,
   Heart,
-  Image,
   Lock,
   MessageSquare,
   MoreVertical,
@@ -26,25 +20,16 @@ import {
   Send,
   Settings,
   Shield,
-  Smile,
   Stethoscope,
   Trash2,
   User,
 } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Alert } from '@/components/ui/alert';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Popover } from '@/components/ui/popover';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -76,59 +61,12 @@ interface RealTimeChatProps {
   className?: string;
 }
 
-interface ChatMessage {
-  id: string;
-  content: string;
-  senderType: 'patient' | 'professional' | 'ai_assistant' | 'system';
-  senderId: string;
-  senderName: string;
-  timestamp: Date;
-  messageType:
-    | 'text'
-    | 'file'
-    | 'image'
-    | 'voice'
-    | 'system_alert'
-    | 'medical_note';
-  metadata?: {
-    fileUrl?: string;
-    fileName?: string;
-    fileSize?: number;
-    voiceDuration?: number;
-    medicalTerms?: string[];
-    urgencyLevel?: 'low' | 'medium' | 'high' | 'critical';
-    aiContext?: string;
-    complianceFlags?: string[];
-  };
-  isEncrypted: boolean;
-  auditTrail: {
-    created: Date;
-    edited?: Date;
-    seen?: Date[];
-    deleted?: Date;
-  };
-  reactions?: {
-    userId: string;
-    userName: string;
-    reaction: string;
-  }[];
-}
-
-interface AISuggestion {
-  id: string;
-  type: 'diagnosis' | 'treatment' | 'followup' | 'emergency' | 'terminology';
-  content: string;
-  confidence: number;
-  context: string;
-  source?: string;
-}
-
 export function RealTimeChat({
   sessionId,
   participantRole,
   enableAI = true,
   enableFileSharing = true,
-  enableVoiceNotes = false,
+  enableVoiceNotes: _enableVoiceNotes = false,
   className = '',
 }: RealTimeChatProps) {
   // Hooks
@@ -145,12 +83,13 @@ export function RealTimeChat({
   const {
     suggestions,
     generateSuggestion,
-    expandMedicalTerm,
-    checkSymptoms,
-    isProcessing,
+    expandMedicalTerm: _expandMedicalTerm,
+    checkSymptoms: _checkSymptoms,
+    isProcessing: _isProcessing,
   } = useAIAssistant(sessionId);
 
-  const { complianceStatus, flagMessage, checkCompliance } = useChatCompliance(sessionId);
+  const { complianceStatus, flagMessage: _flagMessage, checkCompliance: _checkCompliance } =
+    useChatCompliance(sessionId);
 
   const { auditLog, exportChatHistory, generateAuditReport } = useChatAudit(sessionId);
 
@@ -305,6 +244,7 @@ export function RealTimeChat({
         );
       }
     } catch (error) {
+      console.error('Error sending message:', error);
       toast.error('Erro ao enviar mensagem');
     }
   }, [
@@ -358,6 +298,7 @@ export function RealTimeChat({
         setEditingContent('');
         toast.success('Mensagem editada');
       } catch (error) {
+        console.error('Error editing message:', error);
         toast.error('Erro ao editar mensagem');
       }
     },
@@ -409,6 +350,7 @@ export function RealTimeChat({
 
         toast.success('Arquivo enviado com sucesso');
       } catch (error) {
+        console.error('Error uploading file:', error);
         toast.error('Erro ao enviar arquivo');
       }
     },
@@ -428,6 +370,7 @@ export function RealTimeChat({
         });
         toast.success('Sugestão aplicada');
       } catch (error) {
+        console.error('Error applying suggestion:', error);
         toast.error('Erro ao aplicar sugestão');
       }
     },
@@ -437,9 +380,10 @@ export function RealTimeChat({
   // Handle export chat
   const handleExportChat = useCallback(async () => {
     try {
-      const exportData = await exportChatHistory('pdf');
+      const _exportData = await exportChatHistory('pdf');
       toast.success('Histórico exportado com sucesso');
     } catch (error) {
+      console.error('Error exporting chat:', error);
       toast.error('Erro ao exportar histórico');
     }
   }, [exportChatHistory]);

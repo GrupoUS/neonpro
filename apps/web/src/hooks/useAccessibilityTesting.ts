@@ -9,7 +9,6 @@
  * - Performance-optimized testing
  */
 
-import { AxeResults } from '@axe-core/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   AccessibilityIssue,

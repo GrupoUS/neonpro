@@ -1,4 +1,4 @@
-import { AgentQueryRequest, AgentResponse, InteractiveAction, QueryIntent, UserRole } from '@neonpro/types';
+import { AgentQueryRequest, InteractiveAction, QueryIntent, UserRole } from '@neonpro/types';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { jwt } from 'hono/jwt';

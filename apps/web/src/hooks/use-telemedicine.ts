@@ -72,7 +72,7 @@ export function useTelemedicineSession(params: {
   appointmentId?: string;
   includeConsent?: boolean;
 }) {
-  const { user } = useAuth();
+  const { user: _user } = useAuth();
   const [session, setSession] = useState<TelemedicineSession | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -172,7 +172,7 @@ export function useTelemedicineSession(params: {
 }
 
 // Video call management hook
-export function useVideoCall(sessionId: string) {
+export function useVideoCall(_sessionId: string) {
   const [callState, setCallState] = useState<VideoCallState>({
     isConnected: false,
     localStream: null,
@@ -309,7 +309,7 @@ export function useRealTimeChat(params: {
   enableAI?: boolean;
 }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [isTyping, setIsTyping] = useState(false);
+  const [isTyping] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const messagesQuery = trpc.telemedicine.getChatMessages.useQuery(
@@ -554,7 +554,7 @@ export function useTelemedicineAvailability(professionalId?: string) {
 }
 
 // Waiting room hook (stub implementation for CI)
-export function useWaitingRoom(params: {
+export function useWaitingRoom(_params: {
   appointmentId?: string;
   patientId?: string;
 }) {
@@ -569,7 +569,7 @@ export function useWaitingRoom(params: {
 }
 
 // Queue position hook (stub implementation for CI)
-export function useQueuePosition(appointmentId?: string) {
+export function useQueuePosition(_appointmentId?: string) {
   return {
     queueInfo: { position: 1, estimatedWaitTime: 15, totalInQueue: 3 },
     refreshPosition: useCallback(() => Promise.resolve(), []),
@@ -577,7 +577,7 @@ export function useQueuePosition(appointmentId?: string) {
 }
 
 // Pre-consultation check hook (stub implementation for CI)
-export function usePreConsultationCheck(appointmentId?: string) {
+export function usePreConsultationCheck(_appointmentId?: string) {
   return {
     checkResults: null,
     performCheck: useCallback(() => Promise.resolve(), []),
@@ -586,7 +586,7 @@ export function usePreConsultationCheck(appointmentId?: string) {
 }
 
 // Emergency triage hook (stub implementation for CI)
-export function useEmergencyTriage(appointmentId?: string) {
+export function useEmergencyTriage(_appointmentId?: string) {
   return {
     triageAssessment: null,
     performTriage: useCallback(() => Promise.resolve(), []),

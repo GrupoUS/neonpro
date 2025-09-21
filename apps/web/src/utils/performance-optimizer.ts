@@ -225,7 +225,7 @@ export class PerformanceOptimizer {
       height,
       quality = 80,
       format = 'webp',
-      lazy = true,
+      lazy: _lazy = true,
     } = options;
 
     // Use responsive image service or CDN optimization
@@ -397,7 +397,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['paint'] });
       this.observers.push(observer);
-    } catch (error) {
+    } catch {
       console.warn('Paint metrics not supported');
     }
   }
@@ -415,7 +415,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['layout-shift'] });
       this.observers.push(observer);
-    } catch (error) {
+    } catch {
       console.warn('Layout shift metrics not supported');
     }
   }
@@ -433,7 +433,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['first-input'] });
       this.observers.push(observer);
-    } catch (error) {
+    } catch {
       console.warn('First input delay metrics not supported');
     }
   }
@@ -447,7 +447,7 @@ export class PerformanceOptimizer {
       });
       observer.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.push(observer);
-    } catch (error) {
+    } catch {
       console.warn('Largest contentful paint metrics not supported');
     }
   }

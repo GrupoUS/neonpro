@@ -2,37 +2,22 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import {
-  AlertCircle,
-  Calendar,
-  Clock,
-  History,
-  Loader2,
-  MapPin,
-  Phone,
-  Search,
-  Star,
-  X,
-} from 'lucide-react';
+import { AlertCircle, Calendar, Clock, History, Search, Star, X } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import {
   Badge,
   Button,
-  Card,
-  CardContent,
   cn,
   Input,
   Popover,
   PopoverContent,
   PopoverTrigger,
   ScrollArea,
-  Separator,
 } from '@neonpro/ui';
 
 import { useDebounce } from '@/hooks/useDebounce';
-import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useSearchPerformance } from '@/hooks/usePerformanceMonitor';
 
@@ -216,10 +201,10 @@ export function GlobalPatientSearch({
   const [query, setQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
-  const [isFocused, setIsFocused] = useState(false);
+  const [_isFocused, _setIsFocused] = useState(false);
 
   const debouncedQuery = useDebounce(query, 300);
-  const { measureSearch, searchResponseTime, searchStatus, isSearchHealthy } =
+  const { measureSearch: _measureSearch, searchResponseTime, searchStatus, isSearchHealthy } =
     useSearchPerformance();
 
   // Search history
@@ -338,44 +323,6 @@ export function GlobalPatientSearch({
     cacheTime: 10 * 60 * 1000, // 10 minutes cache
   });
 
-  // Keyboard shortcuts
-  useKeyboardShortcuts(
-    {
-      '/': e => {
-        e.preventDefault();
-        inputRef.current?.focus();
-      },
-      Escape: () => {
-        setIsOpen(false);
-        setQuery('');
-      },
-      ArrowDown: e => {
-        if (isOpen && searchResults && searchResults.length > 0) {
-          e.preventDefault();
-          setSelectedIndex(prev => Math.min(prev + 1, searchResults.length - 1));
-        }
-      },
-      ArrowUp: e => {
-        if (isOpen) {
-          e.preventDefault();
-          setSelectedIndex(prev => Math.max(prev - 1, -1));
-        }
-      },
-      Enter: e => {
-        if (
-          isOpen
-          && selectedIndex >= 0
-          && searchResults
-          && searchResults[selectedIndex]
-        ) {
-          e.preventDefault();
-          handlePatientSelect(searchResults[selectedIndex]);
-        }
-      },
-    },
-    [isOpen, searchResults, selectedIndex],
-  );
-
   // Filter and sort results
   const filteredResults = useMemo(() => {
     if (!searchResults) return [];
@@ -419,24 +366,6 @@ export function GlobalPatientSearch({
     setSearchHistory([]);
     toast.success('Histórico de busca limpo');
   }, [setSearchHistory]);
-
-  // Keyboard shortcuts hook
-  function useKeyboardShortcuts(
-    shortcuts: Record<string, (e: KeyboardEvent) => void>,
-    deps: any[] = [],
-  ) {
-    useEffect(() => {
-      const handleKeyDown = (_e: any) => {
-        const handler = shortcuts[e.key];
-        if (handler) {
-          handler(e);
-        }
-      };
-
-      window.addEventListener('keydown', handleKeyDown);
-      return () => window.removeEventListener('keydown', handleKeyDown);
-    }, deps);
-  }
 
   // Update top queries for analytics
   function updateTopQueries(
@@ -518,7 +447,7 @@ export function GlobalPatientSearch({
           </p>
           {patient.phone && (
             <p className='text-xs text-gray-500 dark:text-gray-400 flex items-center'>
-              <Phone className='h-3 w-3 mr-1' />
+              <Search className='h-3 w-3 mr-1' />
               {patient.highlightedFields.phone || patient.phone}
             </p>
           )}

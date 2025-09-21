@@ -72,10 +72,10 @@ import {
   useBulkDeletePatients,
   usePatientsTable,
 } from '@/hooks/usePatients';
+import { HealthcareLoadingFallback } from '@/lib/lazy-loading';
 import { toast } from 'sonner';
 import { AdvancedSearchDialog } from './AdvancedSearchDialog';
 import { PatientCreationForm } from './PatientCreationForm';
-import { TableLoading } from '@/lib/utils';
 
 // Lazy load TanStack Table for better bundle splitting
 const TanStackTable = lazy(() => import('@tanstack/react-table'));
@@ -157,7 +157,7 @@ export function PatientDataTable({ clinicId }: PatientDataTableProps) {
   const statusFilter = (columnFilters.find(f => f.id === 'status')?.value as string[]) || [];
 
   return (
-    <Suspense fallback={<TableLoading />}>
+    <Suspense fallback={<HealthcareLoadingFallback />}>
       <PatientDataTableContent
         clinicId={clinicId}
         id={id}
@@ -222,14 +222,14 @@ function PatientDataTableContent({
   statusFilter: string[];
 }) {
   // Dynamically import TanStack Table hooks
-  const { 
-    useReactTable, 
-    getCoreRowModel, 
-    getFacetedUniqueValues, 
-    getFilteredRowModel, 
-    getPaginationRowModel, 
-    getSortedRowModel, 
-    flexRender 
+  const {
+    useReactTable,
+    getCoreRowModel,
+    getFacetedUniqueValues,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    flexRender,
   } = TanStackTable as any;
 
   // Fetch patients data with real-time updates

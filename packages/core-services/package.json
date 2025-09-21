@@ -25,7 +25,6 @@
   },
   "dependencies": {
     "@neonpro/config": "0.1.0",
-    "@neonpro/database": "0.1.0",
     "@neonpro/types": "0.1.0",
     "@neonpro/utils": "0.1.0",
     "@nestjs/common": "^11.1.6",

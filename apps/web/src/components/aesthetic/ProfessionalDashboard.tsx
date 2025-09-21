@@ -17,7 +17,7 @@ import {
 import React from 'react';
 import { Badge } from '../ui/badge';
 import { Card } from '../ui/card';
-import { CardContent, CardHeader, CardTitle, CardDescription } from '../ui/card';
+import { CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 
 export interface DashboardMetrics {
   patientsToday: number;
@@ -100,7 +100,6 @@ export function ProfessionalDashboard({
   onNavigateToPatients,
   onNavigateToSchedule,
   onNavigateToCompliance,
-  onViewActivity,
 }: ProfessionalDashboardProps) {
   const formatCurrency = (amount: number, currency: string) => {
     return `${currency} ${amount.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;

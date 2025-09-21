@@ -11,21 +11,8 @@ import {
   Switch,
 } from '@neonpro/ui';
 import { cn } from '@neonpro/utils';
-import {
-  Contrast,
-  Eye,
-  Keyboard,
-  Moon,
-  MousePointer,
-  RotateCcw,
-  Sun,
-  Type,
-  Volume2,
-  VolumeX,
-  ZoomIn,
-  ZoomOut,
-} from 'lucide-react';
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Eye, Keyboard, Moon, MousePointer, RotateCcw, Sun, Type, Volume2 } from 'lucide-react';
+import React, { createContext, type ReactNode, useContext, useEffect, useState } from 'react';
 
 // Accessibility preferences interface
 interface AccessibilityPreferences {
@@ -493,7 +480,7 @@ export function AccessibilityProvider({
     );
   };
 
-  const announceToScreenReader = (_message: any) => {
+  const announceToScreenReader = (message: string) => {
     const event = new CustomEvent('accessibility-announce', {
       detail: message,
     });
@@ -544,7 +531,7 @@ export function useAccessibility() {
 export function withAccessibility<P extends object>(
   Component: React.ComponentType<P>,
 ) {
-  const AccessibleComponent = (_props: any) => {
+  const AccessibleComponent = (props: P) => {
     const { preferences, announceToScreenReader } = useAccessibility();
 
     return (
@@ -566,7 +553,7 @@ export function useKeyboardNavigation() {
   const { preferences } = useAccessibility();
 
   useEffect(() => {
-    const handleKeyDown = (_event: any) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       // Add keyboard delay if enabled
       if (preferences.slowKeys && preferences.clickDelay > 0) {
         setTimeout(() => {
@@ -608,7 +595,7 @@ export function useKeyboardNavigation() {
 export function useFocusManagement() {
   const { announceToScreenReader } = useAccessibility();
 
-  const trapFocus = (_element: any) => {
+  const trapFocus = (element: HTMLElement) => {
     const focusableElements = element.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
     );
@@ -617,7 +604,7 @@ export function useFocusManagement() {
       focusableElements.length - 1
     ] as HTMLElement;
 
-    const handleTabKey = (_event: any) => {
+    const handleTabKey = (event: KeyboardEvent) => {
       if (event.key === 'Tab') {
         if (event.shiftKey) {
           if (document.activeElement === firstElement) {

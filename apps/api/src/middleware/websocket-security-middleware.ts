@@ -1,6 +1,6 @@
 /**
  * WebSocket Security Middleware
- * 
+ *
  * Implements security measures for WebSocket connections including rate limiting,
  * authentication, DDoS protection, and healthcare compliance features.
  */
@@ -65,7 +65,7 @@ export class WebSocketSecurityMiddleware {
       enableDDoSProtection: true,
       blockedIPs: [],
       allowedOrigins: [],
-      ...config
+      ...config,
     };
 
     this.startSecurityMonitoring();
@@ -91,7 +91,7 @@ export class WebSocketSecurityMiddleware {
         severity: 'high',
         message: 'Connection attempt from blocked IP',
         ip,
-        details: { userAgent, origin, blocked: true }
+        details: { userAgent, origin, blocked: true },
       });
       return { allowed: false, reason: 'IP address blocked' };
     }
@@ -103,7 +103,7 @@ export class WebSocketSecurityMiddleware {
         severity: 'medium',
         message: 'Connection attempt from disallowed origin',
         ip,
-        details: { userAgent, origin, disallowed: true }
+        details: { userAgent, origin, disallowed: true },
       });
       return { allowed: false, reason: 'Origin not allowed' };
     }
@@ -115,7 +115,7 @@ export class WebSocketSecurityMiddleware {
         severity: 'critical',
         message: 'DDoS attack detected',
         ip,
-        details: { userAgent, origin, ddosDetected: true }
+        details: { userAgent, origin, ddosDetected: true },
       });
       return { allowed: false, reason: 'DDoS protection activated' };
     }
@@ -127,7 +127,7 @@ export class WebSocketSecurityMiddleware {
         severity: 'high',
         message: 'Connection limit exceeded for IP',
         ip,
-        details: { userAgent, origin, connectionLimitExceeded: true }
+        details: { userAgent, origin, connectionLimitExceeded: true },
       });
       return { allowed: false, reason: 'Connection limit exceeded' };
     }
@@ -139,7 +139,7 @@ export class WebSocketSecurityMiddleware {
         severity: 'medium',
         message: 'Suspicious user agent detected',
         ip,
-        details: { userAgent, origin, suspicious: true }
+        details: { userAgent, origin, suspicious: true },
       });
     }
 
@@ -152,7 +152,7 @@ export class WebSocketSecurityMiddleware {
       lastActivity: Date.now(),
       messageCount: 0,
       isAuthenticated: false,
-      sessionValid: false
+      sessionValid: false,
     };
 
     // Track connection
@@ -163,7 +163,7 @@ export class WebSocketSecurityMiddleware {
       severity: 'low',
       message: 'WebSocket connection validated',
       ip,
-      details: { userAgent, origin, connectionId, allowed: true }
+      details: { userAgent, origin, connectionId, allowed: true },
     });
 
     return { allowed: true, connectionInfo };
@@ -194,7 +194,7 @@ export class WebSocketSecurityMiddleware {
         message: 'Message size exceeded',
         ip: connection.ip,
         userId: connection.userId,
-        details: { connectionId, messageSize, maxSize: this.config.maxMessageSize }
+        details: { connectionId, messageSize, maxSize: this.config.maxMessageSize },
       });
       return { allowed: false, reason: 'Message too large' };
     }
@@ -207,7 +207,7 @@ export class WebSocketSecurityMiddleware {
         message: 'Message rate limit exceeded',
         ip: connection.ip,
         userId: connection.userId,
-        details: { connectionId, messageCount: connection.messageCount }
+        details: { connectionId, messageCount: connection.messageCount },
       });
       return { allowed: false, reason: 'Rate limit exceeded' };
     }
@@ -220,7 +220,7 @@ export class WebSocketSecurityMiddleware {
         message: 'Invalid message structure',
         ip: connection.ip,
         userId: connection.userId,
-        details: { connectionId, message: typeof message }
+        details: { connectionId, message: typeof message },
       });
       return { allowed: false, reason: 'Invalid message structure' };
     }
@@ -248,7 +248,7 @@ export class WebSocketSecurityMiddleware {
         message: 'User connection limit exceeded',
         ip: connection.ip,
         userId,
-        details: { connectionId, currentConnections: this.userConnections.get(userId)?.size || 0 }
+        details: { connectionId, currentConnections: this.userConnections.get(userId)?.size || 0 },
       });
       return { success: false, reason: 'Connection limit exceeded' };
     }
@@ -263,7 +263,7 @@ export class WebSocketSecurityMiddleware {
           message: 'Authentication failed',
           ip: connection.ip,
           userId,
-          details: { connectionId, tokenPresent: true }
+          details: { connectionId, tokenPresent: true },
         });
         return { success: false, reason: 'Authentication failed' };
       }
@@ -283,7 +283,7 @@ export class WebSocketSecurityMiddleware {
       message: 'WebSocket connection authenticated',
       ip: connection.ip,
       userId,
-      details: { connectionId, success: true }
+      details: { connectionId, success: true },
     });
 
     return { success: true };
@@ -305,7 +305,7 @@ export class WebSocketSecurityMiddleware {
       message: 'WebSocket connection disconnected',
       ip: connection.ip,
       userId: connection.userId,
-      details: { connectionId, duration: Date.now() - connection.connectedAt }
+      details: { connectionId, duration: Date.now() - connection.connectedAt },
     });
   }
 
@@ -314,12 +314,12 @@ export class WebSocketSecurityMiddleware {
    */
   private getClientIP(request: any): string {
     return (
-      request.headers['x-forwarded-for'] ||
-      request.headers['x-real-ip'] ||
-      request.connection.remoteAddress ||
-      request.socket.remoteAddress ||
-      request.info.remoteAddress ||
-      'unknown'
+      request.headers['x-forwarded-for']
+      || request.headers['x-real-ip']
+      || request.connection.remoteAddress
+      || request.socket.remoteAddress
+      || request.info.remoteAddress
+      || 'unknown'
     ).split(',')[0].trim();
   }
 
@@ -447,7 +447,7 @@ export class WebSocketSecurityMiddleware {
       /javascript:/i,
       /vbscript:/i,
       /onload=/i,
-      /onerror=/i
+      /onerror=/i,
     ];
 
     return !dangerousPatterns.some(pattern => pattern.test(messageStr));
@@ -480,7 +480,7 @@ export class WebSocketSecurityMiddleware {
       /spider/i,
       /scanner/i,
       /test/i,
-      /^$/ // Empty user agent
+      /^$/, // Empty user agent
     ];
 
     return suspiciousPatterns.some(pattern => pattern.test(userAgent));
@@ -502,7 +502,7 @@ export class WebSocketSecurityMiddleware {
     const securityEvent: SecurityEvent = {
       ...event,
       id: `sec_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     this.securityEvents.push(securityEvent);
@@ -519,7 +519,7 @@ export class WebSocketSecurityMiddleware {
       type: event.type,
       severity: event.severity,
       ip: event.ip,
-      userId: event.userId
+      userId: event.userId,
     }, event.details);
   }
 
@@ -566,7 +566,9 @@ export class WebSocketSecurityMiddleware {
     }
 
     if (cleanedCount > 0) {
-      logger.info('websocket_security_cleanup', 'Cleaned up inactive connections', { cleanedCount });
+      logger.info('websocket_security_cleanup', 'Cleaned up inactive connections', {
+        cleanedCount,
+      });
     }
   }
 
@@ -582,7 +584,7 @@ export class WebSocketSecurityMiddleware {
     connectionDistribution: Record<string, number>;
   } {
     const recentEvents = this.securityEvents.filter(
-      event => Date.now() - event.timestamp < 3600000 // Last hour
+      event => Date.now() - event.timestamp < 3600000, // Last hour
     );
 
     const connectionDistribution = recentEvents.reduce((acc, event) => {
@@ -598,7 +600,7 @@ export class WebSocketSecurityMiddleware {
       uniqueUsers: this.userConnections.size,
       securityEvents: recentEvents.slice(-50), // Last 50 events
       blockedIPs: this.config.blockedIPs,
-      connectionDistribution
+      connectionDistribution,
     };
   }
 
@@ -613,7 +615,7 @@ export class WebSocketSecurityMiddleware {
         severity: 'high',
         message: 'IP address blocked',
         ip,
-        details: { blocked: true }
+        details: { blocked: true },
       });
 
       // Disconnect all connections from this IP
@@ -638,7 +640,7 @@ export class WebSocketSecurityMiddleware {
         severity: 'low',
         message: 'IP address unblocked',
         ip,
-        details: { unblocked: true }
+        details: { unblocked: true },
       });
     }
   }

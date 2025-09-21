@@ -1,16 +1,16 @@
 /**
  * Bundle Optimization Validation Tests - Simplified
- * 
+ *
  * Tests to validate that bundle size optimizations are working correctly
  * and that lazy-loaded components function properly.
- * 
+ *
  * TDD compliance: RED-GREEN-REFACTOR methodology
  * Healthcare compliance: LGPD, ANVISA, CFM maintained throughout
  */
 
 import { render, screen, waitFor } from '@testing-library/react';
 import React, { Suspense } from 'react';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Import optimized components
 import { HealthcareLoadingFallback } from '@/lib/lazy-loading';
@@ -24,7 +24,7 @@ describe('Bundle Optimization Tests', () => {
   describe('Loading Components', () => {
     it('should render HealthcareLoadingFallback component', () => {
       render(<HealthcareLoadingFallback />);
-      
+
       expect(screen.getByText('Carregando...')).toBeInTheDocument();
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
@@ -67,7 +67,7 @@ describe('Bundle Optimization Tests', () => {
     it('should validate bundle size reduction', () => {
       // This test validates that our optimizations are working
       // In a real CI/CD environment, this would check actual bundle sizes
-      
+
       // Mock bundle size data (in a real scenario, this would come from build output)
       const bundleSizes = {
         'vendor-misc': 8000000, // Current size after optimization: ~8MB (43% reduction)
@@ -86,9 +86,13 @@ describe('Bundle Optimization Tests', () => {
       Object.entries(bundleSizes).forEach(([chunk, currentSize]) => {
         const targetSize = targetSizes[chunk as keyof typeof targetSizes];
         const reduction = ((14171568 - currentSize) / 14171568) * 100; // Original was 14.17MB
-        
-        console.log(`${chunk}: ${Math.round(currentSize / 1024 / 1024 * 100) / 100}MB → ${Math.round(targetSize / 1024 / 1024 * 100) / 100}MB (${Math.round(reduction)}% reduction)`);
-        
+
+        console.log(
+          `${chunk}: ${Math.round(currentSize / 1024 / 1024 * 100) / 100}MB → ${
+            Math.round(targetSize / 1024 / 1024 * 100) / 100
+          }MB (${Math.round(reduction)}% reduction)`,
+        );
+
         // For now, this is informational - in production, we'd enforce targets
         expect(currentSize).toBeGreaterThan(0);
         expect(currentSize).toBeLessThanOrEqual(14171568); // Should be less than original
@@ -97,15 +101,15 @@ describe('Bundle Optimization Tests', () => {
 
     it('should validate code splitting effectiveness', () => {
       // This test validates that our code splitting strategy is working
-      
+
       // Expected chunks that should exist after optimization
       const expectedChunks = [
-        'vendor-charts',      // Recharts and D3
-        'vendor-tables',      // TanStack Table
-        'vendor-forms',       // React Hook Form + Zod
-        'vendor-dates',       // Date-fns
-        'vendor-ui-base',     // Radix UI base
-        'vendor-animations',  // Framer Motion
+        'vendor-charts', // Recharts and D3
+        'vendor-tables', // TanStack Table
+        'vendor-forms', // React Hook Form + Zod
+        'vendor-dates', // Date-fns
+        'vendor-ui-base', // Radix UI base
+        'vendor-animations', // Framer Motion
         'feature-telemedicine', // Telemedicine feature chunks
       ];
 
@@ -131,7 +135,7 @@ describe('Bundle Optimization Tests', () => {
         render(
           <div>
             <div>Test Content</div>
-          </div>
+          </div>,
         );
       }).not.toThrow();
     });

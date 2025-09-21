@@ -24,21 +24,21 @@ export interface CircuitBreakerConfig {
   failureThreshold: number; // Number of failures before opening circuit
   resetTimeout: number; // Milliseconds to wait before attempting reset
   monitoringPeriod: number; // Time window for failure counting
-  
+
   // Retry configuration
   maxRetries: number;
   retryDelay: number; // Base delay for exponential backoff
   retryBackoffMultiplier: number;
-  
+
   // Timeout configuration
   requestTimeout: number; // Individual request timeout
   overallTimeout: number; // Overall operation timeout
-  
+
   // Healthcare-specific settings
   healthcareCritical: boolean; // Whether this service is healthcare-critical
   failSecureMode: boolean; // Deny access on failure if true
   auditLogging: boolean; // Enable detailed audit logging
-  
+
   // Custom fallback
   customFallback?: (error: Error, context?: any) => Promise<any>;
 }
@@ -83,7 +83,12 @@ export interface RequestContext {
 
 // Circuit breaker event
 export interface CircuitBreakerEvent {
-  type: 'STATE_CHANGE' | 'REQUEST_SUCCESS' | 'REQUEST_FAILURE' | 'FALLBACK_ACTIVATED' | 'HEALTH_CHECK';
+  type:
+    | 'STATE_CHANGE'
+    | 'REQUEST_SUCCESS'
+    | 'REQUEST_FAILURE'
+    | 'FALLBACK_ACTIVATED'
+    | 'HEALTH_CHECK';
   timestamp: Date;
   fromState?: CircuitState;
   toState?: CircuitState;
@@ -149,10 +154,10 @@ export class CircuitBreakerService {
   async execute<T>(
     operation: () => Promise<T>,
     context?: RequestContext,
-    fallbackValue?: T
+    fallbackValue?: T,
   ): Promise<T> {
     const startTime = Date.now();
-    
+
     // Check if circuit is open and we should fail fast
     if (this.state === 'OPEN' && this.shouldFailFast()) {
       return this.handleCircuitOpen(context, fallbackValue);
@@ -161,10 +166,10 @@ export class CircuitBreakerService {
     try {
       // Execute with timeout
       const result = await this.executeWithTimeout(operation);
-      
+
       // Record success
       this.recordSuccess(Date.now() - startTime);
-      
+
       // Emit success event
       this.emitEvent({
         type: 'REQUEST_SUCCESS',
@@ -177,7 +182,7 @@ export class CircuitBreakerService {
     } catch (error) {
       // Record failure
       this.recordFailure(error as Error, Date.now() - startTime);
-      
+
       // Emit failure event
       this.emitEvent({
         type: 'REQUEST_FAILURE',
@@ -202,11 +207,11 @@ export class CircuitBreakerService {
       }, this.config.requestTimeout);
 
       operation()
-        .then((result) => {
+        .then(result => {
           clearTimeout(timeout);
           resolve(result);
         })
-        .catch((error) => {
+        .catch(error => {
           clearTimeout(timeout);
           reject(error);
         });
@@ -242,7 +247,7 @@ export class CircuitBreakerService {
       try {
         return await this.config.customFallback(
           new Error('Circuit breaker is OPEN'),
-          context
+          context,
         );
       } catch (fallbackError) {
         // Fallback failed, use default behavior
@@ -269,7 +274,7 @@ export class CircuitBreakerService {
   private async handleFailure<T>(
     error: Error,
     context?: RequestContext,
-    fallbackValue?: T
+    fallbackValue?: T,
   ): Promise<T> {
     // Check if we should open the circuit
     if (this.state === 'CLOSED' && this.shouldOpenCircuit()) {
@@ -359,7 +364,8 @@ export class CircuitBreakerService {
     this.metrics.lastSuccessTime = new Date();
 
     // Update response time average
-    const totalResponseTime = this.metrics.averageResponseTime * (this.metrics.totalRequests - 1) + responseTime;
+    const totalResponseTime = this.metrics.averageResponseTime * (this.metrics.totalRequests - 1)
+      + responseTime;
     this.metrics.averageResponseTime = totalResponseTime / this.metrics.totalRequests;
 
     // Add to history
@@ -390,7 +396,8 @@ export class CircuitBreakerService {
     this.metrics.lastFailureTime = new Date();
 
     // Update response time average (even for failures)
-    const totalResponseTime = this.metrics.averageResponseTime * (this.metrics.totalRequests - 1) + responseTime;
+    const totalResponseTime = this.metrics.averageResponseTime * (this.metrics.totalRequests - 1)
+      + responseTime;
     this.metrics.averageResponseTime = totalResponseTime / this.metrics.totalRequests;
 
     // Add to history
@@ -434,8 +441,8 @@ export class CircuitBreakerService {
    * Update health status based on metrics
    */
   private updateHealthStatus(): void {
-    const successRate = this.metrics.totalRequests > 0 
-      ? this.metrics.successfulRequests / this.metrics.totalRequests 
+    const successRate = this.metrics.totalRequests > 0
+      ? this.metrics.successfulRequests / this.metrics.totalRequests
       : 1;
 
     if (successRate >= 0.95 && this.metrics.averageResponseTime < 2000) {
@@ -496,14 +503,16 @@ export class CircuitBreakerService {
     try {
       // For circuit breaker health, we check recent success rate
       const recentRequests = this.requestHistory.filter(
-        req => req.timestamp > new Date(Date.now() - this.config.monitoringPeriod)
+        req => req.timestamp > new Date(Date.now() - this.config.monitoringPeriod),
       );
 
       if (recentRequests.length === 0) {
         status = 'UNKNOWN';
       } else {
-        const successRate = recentRequests.filter(req => req.success).length / recentRequests.length;
-        const avgResponseTime = recentRequests.reduce((sum, req) => sum + req.responseTime, 0) / recentRequests.length;
+        const successRate = recentRequests.filter(req => req.success).length
+          / recentRequests.length;
+        const avgResponseTime = recentRequests.reduce((sum, req) => sum + req.responseTime, 0)
+          / recentRequests.length;
 
         if (successRate >= 0.9 && avgResponseTime < 3000) {
           status = 'HEALTHY';
@@ -659,13 +668,14 @@ export class CircuitBreakerRegistry {
    */
   getCircuitBreaker(serviceName: string, config?: CircuitBreakerConfig): CircuitBreakerService {
     if (!this.circuitBreakers.has(serviceName)) {
-      const circuitConfig = config || (serviceName.includes('healthcare') || serviceName.includes('patient') 
-        ? HEALTHCARE_CIRCUIT_CONFIG 
-        : STANDARD_CIRCUIT_CONFIG);
-      
+      const circuitConfig = config
+        || (serviceName.includes('healthcare') || serviceName.includes('patient')
+          ? HEALTHCARE_CIRCUIT_CONFIG
+          : STANDARD_CIRCUIT_CONFIG);
+
       this.circuitBreakers.set(serviceName, new CircuitBreakerService(circuitConfig));
     }
-    
+
     return this.circuitBreakers.get(serviceName)!;
   }
 
@@ -681,11 +691,11 @@ export class CircuitBreakerRegistry {
    */
   getAllMetrics(): Record<string, CircuitBreakerMetrics> {
     const metrics: Record<string, CircuitBreakerMetrics> = {};
-    
+
     this.circuitBreakers.forEach((circuitBreaker, serviceName) => {
       metrics[serviceName] = circuitBreaker.getMetrics();
     });
-    
+
     return metrics;
   }
 
@@ -713,7 +723,7 @@ export class CircuitBreakerRegistry {
 // Helper function to create circuit breaker for external API calls
 export function createCircuitBreaker(
   serviceName: string,
-  config?: CircuitBreakerConfig
+  config?: CircuitBreakerConfig,
 ): CircuitBreakerService {
   const registry = CircuitBreakerRegistry.getInstance();
   return registry.getCircuitBreaker(serviceName, config);
@@ -725,7 +735,7 @@ export function withCircuitBreaker<T>(
   operation: () => Promise<T>,
   context?: RequestContext,
   fallbackValue?: T,
-  config?: CircuitBreakerConfig
+  config?: CircuitBreakerConfig,
 ): Promise<T> {
   const circuitBreaker = createCircuitBreaker(serviceName, config);
   return circuitBreaker.execute(operation, context, fallbackValue);

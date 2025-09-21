@@ -34,7 +34,7 @@ export interface ConsentRequest {
   purpose: string;
   dataTypes: string[];
   expiration?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> | undefined;
   requestorId?: string;
   requestorRole?: string;
 }
@@ -50,13 +50,13 @@ export interface ConsentRecord {
   purpose: string;
   dataTypes: string[];
   grantedAt: string;
-  expiresAt?: string;
+  expiresAt?: string | undefined;
   revokedAt?: string;
   revokedBy?: string;
   revocationReason?: string;
   legalBasis: LegalBasis;
   consentVersion: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown> | undefined;
   auditTrail: ConsentAuditEvent[];
 }
 
@@ -70,7 +70,7 @@ export interface ConsentAuditEvent {
   actorId: string;
   actorRole?: string;
   patientIdHash: string;
-  details?: Record<string, unknown>;
+  details?: Record<string, unknown> | undefined;
 }
 
 /**

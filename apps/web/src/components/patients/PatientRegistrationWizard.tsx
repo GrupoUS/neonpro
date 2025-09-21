@@ -46,7 +46,7 @@ import {
   User,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { type ControllerRenderProps, type FieldPath, useForm } from 'react-hook-form';
+import { type ControllerRenderProps, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { FileUploadIntegration, type UploadedFile } from './FileUploadIntegration';

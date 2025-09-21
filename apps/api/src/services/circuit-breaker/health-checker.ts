@@ -11,7 +11,7 @@
  */
 
 import { z } from 'zod';
-import { CircuitBreakerService, HealthStatus, HealthCheckResult } from './circuit-breaker-service';
+import { CircuitBreakerService, HealthCheckResult, HealthStatus } from './circuit-breaker-service';
 
 // Health check configuration
 export interface HealthCheckConfig {
@@ -19,17 +19,17 @@ export interface HealthCheckConfig {
   timeout: number; // Individual check timeout
   retries: number; // Number of retries before marking unhealthy
   retryDelay: number; // Delay between retries
-  
+
   // Healthcare-specific settings
   healthcareCritical: boolean;
   dataSensitivityLevel: 'low' | 'medium' | 'high' | 'critical';
   complianceValidation: boolean;
-  
+
   // Alert thresholds
   responseTimeWarning: number;
   responseTimeCritical: number;
   failureRateThreshold: number;
-  
+
   // Custom health check logic
   customHealthCheck?: () => Promise<boolean>;
 }
@@ -85,7 +85,12 @@ export interface ServiceMetrics {
 
 // Health check event
 export interface HealthCheckEvent {
-  type: 'SERVICE_HEALTHY' | 'SERVICE_UNHEALTHY' | 'SERVICE_DEGRADED' | 'RECOVERY_DETECTED' | 'COMPLIANCE_VIOLATION';
+  type:
+    | 'SERVICE_HEALTHY'
+    | 'SERVICE_UNHEALTHY'
+    | 'SERVICE_DEGRADED'
+    | 'RECOVERY_DETECTED'
+    | 'COMPLIANCE_VIOLATION';
   timestamp: Date;
   serviceName: string;
   previousStatus?: HealthStatus;
@@ -143,7 +148,7 @@ export class ExternalServiceHealthChecker {
    */
   registerService(service: ServiceDependency): void {
     this.services.set(service.name, service);
-    
+
     // Initialize service health
     const initialHealth: ServiceHealth = {
       service,
@@ -154,9 +159,9 @@ export class ExternalServiceHealthChecker {
       uptime: 100,
       metrics: this.initializeMetrics(),
     };
-    
+
     this.serviceHealth.set(service.name, initialHealth);
-    
+
     // Create circuit breaker for this service
     const circuitBreaker = new CircuitBreakerService({
       failureThreshold: service.healthcareCritical ? 3 : 5,
@@ -171,12 +176,12 @@ export class ExternalServiceHealthChecker {
       failSecureMode: service.healthcareCritical,
       auditLogging: this.config.complianceValidation,
     });
-    
+
     this.circuitBreakers.set(service.name, circuitBreaker);
-    
+
     // Start monitoring
     this.startMonitoring(service.name);
-    
+
     console.log(`Registered service for health monitoring: ${service.name}`);
   }
 
@@ -187,7 +192,7 @@ export class ExternalServiceHealthChecker {
     const interval = setInterval(() => {
       this.checkServiceHealth(serviceName);
     }, this.config.checkInterval);
-    
+
     this.checkIntervals.set(serviceName, interval);
   }
 
@@ -198,7 +203,7 @@ export class ExternalServiceHealthChecker {
     const service = this.services.get(serviceName);
     const currentHealth = this.serviceHealth.get(serviceName);
     const circuitBreaker = this.circuitBreakers.get(serviceName);
-    
+
     if (!service || !currentHealth || !circuitBreaker) {
       return;
     }
@@ -217,20 +222,19 @@ export class ExternalServiceHealthChecker {
           endpoint: service.endpoint,
           method: 'HEALTH_CHECK',
           timestamp: new Date(),
-        } as any
+        } as any,
       );
 
       responseTime = Date.now() - startTime;
       status = isHealthy ? this.determineHealthStatus(responseTime, service) : 'UNHEALTHY';
-      
+
       // Record success
       this.recordHealthCheckSuccess(serviceName, responseTime);
-      
     } catch (checkError) {
       responseTime = Date.now() - startTime;
       status = 'UNHEALTHY';
       error = checkError instanceof Error ? checkError.message : 'Unknown error';
-      
+
       // Record failure
       this.recordHealthCheckFailure(serviceName, error, responseTime);
     }
@@ -354,9 +358,12 @@ export class ExternalServiceHealthChecker {
    * Determine health status based on response time
    */
   private determineHealthStatus(responseTime: number, service: ServiceDependency): HealthStatus {
-    const thresholds = service.healthcareCritical 
+    const thresholds = service.healthcareCritical
       ? { warning: this.config.responseTimeWarning, critical: this.config.responseTimeCritical }
-      : { warning: this.config.responseTimeWarning * 1.5, critical: this.config.responseTimeCritical * 1.5 };
+      : {
+        warning: this.config.responseTimeWarning * 1.5,
+        critical: this.config.responseTimeCritical * 1.5,
+      };
 
     if (responseTime <= thresholds.warning) {
       return 'HEALTHY';
@@ -377,8 +384,9 @@ export class ExternalServiceHealthChecker {
     const metrics = health.metrics;
     metrics.totalChecks++;
     metrics.successfulChecks++;
-    metrics.averageResponseTime = 
-      (metrics.averageResponseTime * (metrics.totalChecks - 1) + responseTime) / metrics.totalChecks;
+    metrics.averageResponseTime =
+      (metrics.averageResponseTime * (metrics.totalChecks - 1) + responseTime)
+      / metrics.totalChecks;
     metrics.minResponseTime = Math.min(metrics.minResponseTime || responseTime, responseTime);
     metrics.maxResponseTime = Math.max(metrics.maxResponseTime || responseTime, responseTime);
     metrics.lastSuccessTime = new Date();
@@ -395,8 +403,9 @@ export class ExternalServiceHealthChecker {
     const metrics = health.metrics;
     metrics.totalChecks++;
     metrics.failedChecks++;
-    metrics.averageResponseTime = 
-      (metrics.averageResponseTime * (metrics.totalChecks - 1) + responseTime) / metrics.totalChecks;
+    metrics.averageResponseTime =
+      (metrics.averageResponseTime * (metrics.totalChecks - 1) + responseTime)
+      / metrics.totalChecks;
     metrics.lastFailureTime = new Date();
     metrics.uptime = (metrics.successfulChecks / metrics.totalChecks) * 100;
 
@@ -411,7 +420,7 @@ export class ExternalServiceHealthChecker {
     serviceName: string,
     status: HealthStatus,
     responseTime: number,
-    error?: string
+    error?: string,
   ): void {
     const health = this.serviceHealth.get(serviceName);
     if (!health) return;
@@ -448,13 +457,13 @@ export class ExternalServiceHealthChecker {
   private emitStatusChangeEvent(
     serviceName: string,
     previousStatus: HealthStatus,
-    currentStatus: HealthStatus
+    currentStatus: HealthStatus,
   ): void {
     const health = this.serviceHealth.get(serviceName);
     if (!health) return;
 
     let eventType: HealthCheckEvent['type'];
-    
+
     switch (currentStatus) {
       case 'HEALTHY':
         eventType = 'SERVICE_HEALTHY';
@@ -483,7 +492,7 @@ export class ExternalServiceHealthChecker {
   private checkCompliance(serviceName: string, status: HealthStatus, responseTime: number): void {
     const service = this.services.get(serviceName);
     const health = this.serviceHealth.get(serviceName);
-    
+
     if (!service || !health) return;
 
     // Check if critical healthcare service is unhealthy
@@ -495,15 +504,21 @@ export class ExternalServiceHealthChecker {
         currentStatus: status,
         details: health,
       });
-      
-      this.logIncident(serviceName, 'COMPLIANCE_VIOLATION', 
-        `Critical healthcare service ${serviceName} is unhealthy`);
+
+      this.logIncident(
+        serviceName,
+        'COMPLIANCE_VIOLATION',
+        `Critical healthcare service ${serviceName} is unhealthy`,
+      );
     }
 
     // Check response time violations
     if (responseTime > this.config.responseTimeCritical) {
-      this.logIncident(serviceName, 'RESPONSE_TIME_VIOLATION',
-        `Service response time ${responseTime}ms exceeds critical threshold`);
+      this.logIncident(
+        serviceName,
+        'RESPONSE_TIME_VIOLATION',
+        `Service response time ${responseTime}ms exceeds critical threshold`,
+      );
     }
   }
 
@@ -529,23 +544,29 @@ export class ExternalServiceHealthChecker {
   /**
    * Determine incident severity
    */
-  private determineIncidentSeverity(serviceName: string, type: string): 'low' | 'medium' | 'high' | 'critical' {
+  private determineIncidentSeverity(
+    serviceName: string,
+    type: string,
+  ): 'low' | 'medium' | 'high' | 'critical' {
     const service = this.services.get(serviceName);
-    
+
     if (!service) return 'medium';
-    
-    if (service.healthcareCritical && (type === 'COMPLIANCE_VIOLATION' || type === 'HEALTH_CHECK_FAILURE')) {
+
+    if (
+      service.healthcareCritical
+      && (type === 'COMPLIANCE_VIOLATION' || type === 'HEALTH_CHECK_FAILURE')
+    ) {
       return 'critical';
     }
-    
+
     if (type === 'COMPLIANCE_VIOLATION') {
       return 'high';
     }
-    
+
     if (type === 'HEALTH_CHECK_FAILURE') {
       return service.healthcareCritical ? 'high' : 'medium';
     }
-    
+
     return 'low';
   }
 
@@ -602,7 +623,7 @@ export class ExternalServiceHealthChecker {
         if (service.healthcareCritical && health.status !== 'HEALTHY') {
           criticalServicesHealthy = false;
         }
-        
+
         if (service.healthcareCritical && health.status === 'UNHEALTHY') {
           healthcareCompliance = false;
         }
@@ -629,7 +650,9 @@ export class ExternalServiceHealthChecker {
       timestamp: new Date(),
       uptime: averageUptime,
       incidentCount: this.incidentLog.length,
-      lastIncident: this.incidentLog.length > 0 ? this.incidentLog[this.incidentLog.length - 1].timestamp : undefined,
+      lastIncident: this.incidentLog.length > 0
+        ? this.incidentLog[this.incidentLog.length - 1].timestamp
+        : undefined,
       healthcareCompliance,
       criticalServicesHealthy,
     };
@@ -660,7 +683,7 @@ export class ExternalServiceHealthChecker {
     if (!since) {
       return [...this.incidentLog];
     }
-    
+
     return this.incidentLog.filter(incident => incident.timestamp >= since);
   }
 

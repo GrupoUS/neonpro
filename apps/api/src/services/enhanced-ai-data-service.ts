@@ -1,20 +1,28 @@
 /**
  * Enhanced AI Data Service with Redis Caching
- * 
+ *
  * Extends the base AIDataService with intelligent caching for <2s response requirements
  * and healthcare compliance optimization.
- * 
+ *
  * @version 1.0.0
  * @author NeonPro Platform Team
  * @compliance LGPD, ANVISA, CFM
  */
 
-import { AIDataService } from './ai-data-service';
 import { Database } from '@neonpro/database';
+import {
+  CacheConfig,
+  CacheDataSensitivity,
+  CacheEntry,
+  CacheTier,
+} from '@neonpro/shared/src/services/cache-management';
+import {
+  createRedisCacheBackend,
+  RedisCacheBackend,
+} from '@neonpro/shared/src/services/redis-cache-backend';
 import { DateRange, PermissionContext, QueryIntent, QueryParameters } from '@neonpro/types';
-import { createRedisCacheBackend, RedisCacheBackend } from '@neonpro/shared/src/services/redis-cache-backend';
-import { CacheConfig, CacheEntry, CacheDataSensitivity, CacheTier } from '@neonpro/shared/src/services/cache-management';
 import { createHash } from 'crypto';
+import { AIDataService } from './ai-data-service';
 
 /**
  * Cache configuration for AI data queries
@@ -29,7 +37,7 @@ const AIDATA_CACHE_CONFIG: CacheConfig = {
   sensitivity: CacheDataSensitivity.MEDIUM,
   auditEnabled: true,
   performanceMode: true,
-  enableHealthCheck: true
+  enableHealthCheck: true,
 };
 
 /**
@@ -41,12 +49,12 @@ export class EnhancedAIDataService extends AIDataService {
     hits: 0,
     misses: 0,
     avgCacheTime: 0,
-    avgDbTime: 0
+    avgDbTime: 0,
   };
 
   constructor(permissionContext: PermissionContext) {
     super(permissionContext);
-    
+
     // Initialize Redis cache backend
     this.cache = createRedisCacheBackend(AIDATA_CACHE_CONFIG);
   }
@@ -60,7 +68,7 @@ export class EnhancedAIDataService extends AIDataService {
       userId: this.permissionContext.userId,
       domain: this.permissionContext.domain,
       role: this.permissionContext.role,
-      parameters: this.sanitizeParameters(parameters)
+      parameters: this.sanitizeParameters(parameters),
     };
 
     return createHash('sha256')
@@ -73,18 +81,18 @@ export class EnhancedAIDataService extends AIDataService {
    */
   private sanitizeParameters(parameters: QueryParameters): any {
     const sanitized = { ...parameters };
-    
+
     // Remove sensitive data for cache key
     delete sanitized.patientId;
-    
+
     // Normalize date ranges
     if (sanitized.dateRanges) {
       sanitized.dateRanges = sanitized.dateRanges.map(range => ({
         start: range.start.toISOString().split('T')[0],
-        end: range.end.toISOString().split('T')[0]
+        end: range.end.toISOString().split('T')[0],
       }));
     }
-    
+
     return sanitized;
   }
 
@@ -94,7 +102,7 @@ export class EnhancedAIDataService extends AIDataService {
   private async getWithCache<T>(
     intent: QueryIntent,
     parameters: QueryParameters,
-    dbOperation: () => Promise<T>
+    dbOperation: () => Promise<T>,
   ): Promise<T> {
     const cacheKey = this.generateCacheKey(intent, parameters);
     const startTime = Date.now();
@@ -102,14 +110,14 @@ export class EnhancedAIDataService extends AIDataService {
     try {
       // Try cache first
       const cachedEntry = await this.cache.get(cacheKey);
-      
+
       if (cachedEntry) {
         this.cacheStats.hits++;
         this.cacheStats.avgCacheTime = this.updateAverage(
-          this.cacheStats.avgCacheTime, 
-          Date.now() - startTime
+          this.cacheStats.avgCacheTime,
+          Date.now() - startTime,
         );
-        
+
         return cachedEntry.data as T;
       }
 
@@ -118,10 +126,10 @@ export class EnhancedAIDataService extends AIDataService {
       const dbStartTime = Date.now();
       const data = await dbOperation();
       const dbTime = Date.now() - dbStartTime;
-      
+
       this.cacheStats.avgDbTime = this.updateAverage(
-        this.cacheStats.avgDbTime, 
-        dbTime
+        this.cacheStats.avgDbTime,
+        dbTime,
       );
 
       // Cache the result with appropriate TTL
@@ -140,15 +148,14 @@ export class EnhancedAIDataService extends AIDataService {
             intent,
             recordCount: data.length,
             queryTime: dbTime,
-            userId: this.permissionContext.userId
-          }
+            userId: this.permissionContext.userId,
+          },
         };
 
         await this.cache.set(cacheKey, cacheEntry);
       }
 
       return data;
-
     } catch (error) {
       console.error(`[EnhancedAIDataService] Error in getWithCache for ${intent}:`, error);
       throw error;
@@ -228,7 +235,7 @@ export class EnhancedAIDataService extends AIDataService {
     const redisStats = await this.cache.getStats();
     const totalRequests = this.cacheStats.hits + this.cacheStats.misses;
     const hitRate = totalRequests > 0 ? this.cacheStats.hits / totalRequests : 0;
-    
+
     return {
       ...redisStats,
       customStats: {
@@ -237,15 +244,18 @@ export class EnhancedAIDataService extends AIDataService {
         hitRate,
         avgCacheTime: this.cacheStats.avgCacheTime,
         avgDbTime: this.cacheStats.avgDbTime,
-        totalRequests
+        totalRequests,
       },
       performance: {
         cacheEfficiency: hitRate > 0.7 ? 'excellent' : hitRate > 0.5 ? 'good' : 'needs_improvement',
-        avgResponseTime: hitRate * this.cacheStats.avgCacheTime + (1 - hitRate) * this.cacheStats.avgDbTime,
-        speedImprovement: this.cacheStats.avgDbTime > 0 
-          ? ((this.cacheStats.avgDbTime - (hitRate * this.cacheStats.avgCacheTime + (1 - hitRate) * this.cacheStats.avgDbTime)) / this.cacheStats.avgDbTime * 100)
-          : 0
-      }
+        avgResponseTime: hitRate * this.cacheStats.avgCacheTime
+          + (1 - hitRate) * this.cacheStats.avgDbTime,
+        speedImprovement: this.cacheStats.avgDbTime > 0
+          ? ((this.cacheStats.avgDbTime
+            - (hitRate * this.cacheStats.avgCacheTime + (1 - hitRate) * this.cacheStats.avgDbTime))
+            / this.cacheStats.avgDbTime * 100)
+          : 0,
+      },
     };
   }
 
@@ -278,7 +288,7 @@ export class EnhancedAIDataService extends AIDataService {
     return {
       cache: cacheHealthy,
       database: dbHealthy,
-      performance: stats.performance
+      performance: stats.performance,
     };
   }
 
@@ -290,7 +300,7 @@ export class EnhancedAIDataService extends AIDataService {
       // Test cache with a simple get/set operation
       const testKey = 'health_check_test';
       const testData = { test: true, timestamp: Date.now() };
-      
+
       const testEntry: CacheEntry = {
         key: testKey,
         data: testData,
@@ -300,7 +310,7 @@ export class EnhancedAIDataService extends AIDataService {
         ttl: 60,
         sensitivity: CacheDataSensitivity.LOW,
         lgpdCompliant: true,
-        tier: CacheTier.REDIS
+        tier: CacheTier.REDIS,
       };
 
       await this.cache.set(testKey, testEntry);
@@ -313,9 +323,11 @@ export class EnhancedAIDataService extends AIDataService {
 
       return { healthy: true };
     } catch (error) {
-      return { 
-        healthy: false, 
-        message: `Cache health check failed: ${error instanceof Error ? error.message : 'Unknown error'}` 
+      return {
+        healthy: false,
+        message: `Cache health check failed: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
       };
     }
   }
@@ -336,9 +348,11 @@ export class EnhancedAIDataService extends AIDataService {
 
       return { healthy: true };
     } catch (error) {
-      return { 
-        healthy: false, 
-        message: `Database health check failed: ${error instanceof Error ? error.message : 'Unknown error'}` 
+      return {
+        healthy: false,
+        message: `Database health check failed: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
       };
     }
   }
@@ -356,7 +370,9 @@ export class EnhancedAIDataService extends AIDataService {
 /**
  * Factory function to create enhanced AI data service
  */
-export function createEnhancedAIDataService(permissionContext: PermissionContext): EnhancedAIDataService {
+export function createEnhancedAIDataService(
+  permissionContext: PermissionContext,
+): EnhancedAIDataService {
   return new EnhancedAIDataService(permissionContext);
 }
 

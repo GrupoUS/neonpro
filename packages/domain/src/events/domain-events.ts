@@ -288,7 +288,7 @@ export class EventFactory {
     eventType: string,
     aggregateId: string,
     aggregateType: string,
-    data: T['data'],
+    data: T extends { data: infer D } ? D : never,
     metadata?: Record<string, any>
   ): T {
     return {
@@ -298,8 +298,10 @@ export class EventFactory {
       aggregateId,
       aggregateType,
       version: 1,
-      data,
-      metadata
-    } as T;
+      metadata: {
+        ...metadata,
+        data
+      }
+    } as unknown as T;
   }
 }

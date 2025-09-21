@@ -10,10 +10,10 @@
  */
 
 import * as Axe from 'axe-core';
-import { healthcareAxeConfig } from './healthcare-accessibility-audit';
+import { prefersHighContrast, prefersReducedMotion } from './accessibility';
 import { runAccessibilityTest } from './accessibility-testing';
 import { validateHealthcareColorContrast } from './accessibility-testing';
-import { prefersReducedMotion, prefersHighContrast } from './accessibility';
+import { healthcareAxeConfig } from './healthcare-accessibility-audit';
 
 /**
  * Accessibility configuration interface
@@ -116,7 +116,7 @@ function setupMobileAccessibility(): void {
   try {
     // Add mobile-specific accessibility attributes
     const html = document.documentElement;
-    
+
     // Detect touch capabilities
     const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     if (isTouchDevice) {
@@ -128,26 +128,26 @@ function setupMobileAccessibility(): void {
     const updateBreakpoint = () => {
       const width = window.innerWidth;
       let breakpoint = 'desktop';
-      
+
       if (width < 640) breakpoint = 'mobile';
       else if (width < 768) breakpoint = 'mobile-large';
       else if (width < 1024) breakpoint = 'tablet';
       else if (width < 1280) breakpoint = 'tablet-large';
-      
+
       html.setAttribute('data-breakpoint', breakpoint);
     };
 
     // Initial breakpoint detection
     updateBreakpoint();
-    
+
     // Listen for resize events
     window.addEventListener('resize', updateBreakpoint);
-    
+
     // Set up user preference detection
     if (prefersReducedMotion()) {
       html.setAttribute('data-prefers-reduced-motion', 'true');
     }
-    
+
     if (prefersHighContrast()) {
       html.setAttribute('data-prefers-high-contrast', 'true');
     }
@@ -164,19 +164,19 @@ function setupMobileAccessibility(): void {
 async function runInitialAudit(): Promise<void> {
   try {
     console.log('[Accessibility] Running initial accessibility audit...');
-    
+
     const result = await runAccessibilityTest(
       document.documentElement,
       {
         includeHealthcareRules: accessibilityState.config.enableHealthcareRules,
         context: 'initial-audit',
-      }
+      },
     );
 
     // Log results
     if (result.violations.length > 0) {
       console.warn('[Accessibility] Initial audit found violations:', result.violations.length);
-      
+
       // Group violations by impact
       const violationsByImpact = result.violations.reduce((acc, violation) => {
         if (!acc[violation.impact]) {
@@ -215,7 +215,6 @@ async function runInitialAudit(): Promise<void> {
       required: contrastResult.required,
       elementsTested: contrastResult.elements.length,
     });
-
   } catch {
     console.error('[Accessibility] Initial audit failed:', error);
   }
@@ -231,7 +230,7 @@ function setupContinuousMonitoring(): void {
 
   try {
     const interval = accessibilityState.config.reportInterval || 30000;
-    
+
     accessibilityState.monitoringInterval = setInterval(async () => {
       try {
         const result = await runAccessibilityTest(
@@ -239,14 +238,14 @@ function setupContinuousMonitoring(): void {
           {
             includeHealthcareRules: accessibilityState.config.enableHealthcareRules,
             context: 'continuous-monitoring',
-          }
+          },
         );
 
         // Check for new violations
-        const newViolations = result.violations.filter(violation => 
-          !accessibilityState.violations.some(existing => 
-            existing.id === violation.id && 
-            existing.nodes[0]?.target === violation.nodes[0]?.target
+        const newViolations = result.violations.filter(violation =>
+          !accessibilityState.violations.some(existing =>
+            existing.id === violation.id
+            && existing.nodes[0]?.target === violation.nodes[0]?.target
           )
         );
 
@@ -255,7 +254,7 @@ function setupContinuousMonitoring(): void {
           newViolations.forEach(violation => {
             console.warn(`  - ${violation.impact}: ${violation.description}`);
           });
-          
+
           // Update stored violations
           accessibilityState.violations = result.violations;
         }
@@ -287,15 +286,15 @@ function setupAccessibilityHelpers(): void {
         console.log('[Accessibility] Manual audit completed:', result);
         return result;
       },
-      
+
       validateContrast: () => {
         return validateHealthcareColorContrast();
       },
-      
+
       getConfig: () => accessibilityState.config,
-      
+
       getViolations: () => accessibilityState.violations,
-      
+
       isMonitoring: () => !!accessibilityState.monitoringInterval,
     };
 
@@ -318,7 +317,9 @@ function setupAccessibilityHelpers(): void {
 /**
  * Initialize accessibility features
  */
-export async function initializeAccessibility(config?: Partial<AccessibilityConfig>): Promise<void> {
+export async function initializeAccessibility(
+  config?: Partial<AccessibilityConfig>,
+): Promise<void> {
   if (accessibilityState.isInitialized) {
     console.log('[Accessibility] Already initialized');
     return;
@@ -352,7 +353,7 @@ export async function initializeAccessibility(config?: Partial<AccessibilityConf
     accessibilityState.isInitialized = true;
 
     console.log('[Accessibility] ✅ Accessibility initialization completed');
-    
+
     // Log final status
     console.log('[Accessibility] Final Status:', {
       initialized: accessibilityState.isInitialized,
@@ -361,7 +362,6 @@ export async function initializeAccessibility(config?: Partial<AccessibilityConf
       healthcareRules: accessibilityState.config.enableHealthcareRules,
       mobileOptimized: accessibilityState.config.enableMobileOptimization,
     });
-
   } catch {
     console.error('[Accessibility] ❌ Initialization failed:', error);
     throw error;

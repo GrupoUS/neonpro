@@ -3,14 +3,10 @@
  * Implements intelligent caching for frequently accessed healthcare data
  */
 
-import { Redis } from 'ioredis';
 import { createHash } from 'crypto';
+import { Redis } from 'ioredis';
 import { z } from 'zod';
-import {
-  AguiQueryMessage,
-  AguiResponseMessage,
-  AguiSource,
-} from '../agui-protocol/types';
+import { AguiQueryMessage, AguiResponseMessage, AguiSource } from '../agui-protocol/types';
 
 // Input validation schemas
 const CacheKeySchema = z.string().min(1).max(500);
@@ -77,7 +73,7 @@ export class ResponseCacheService {
       averageResponseTimeMs: 0,
       memoryUsage: 0,
       cacheSize: 0,
-      evictionCount: 0
+      evictionCount: 0,
     };
 
     // Initialize Redis with security options
@@ -95,15 +91,17 @@ export class ResponseCacheService {
     const queryData = {
       query: this.sanitizeQueryString(query.query),
       context: {
-        patientId: query.context?.patientId ? this.sanitizeString(query.context.patientId) : undefined,
+        patientId: query.context?.patientId
+          ? this.sanitizeString(query.context.patientId)
+          : undefined,
         userId: query.context?.userId ? this.sanitizeString(query.context.userId) : undefined,
-        previousTopics: query.context?.previousTopics?.map(t => this.sanitizeString(t)) || []
+        previousTopics: query.context?.previousTopics?.map(t => this.sanitizeString(t)) || [],
       },
       options: {
         maxResults: Math.min(query.options?.maxResults || 10, 100), // Limit max results
         model: this.sanitizeString(query.options?.model || 'default'),
-        temperature: Math.max(0, Math.min(1, query.options?.temperature || 0.7)) // Clamp temperature
-      }
+        temperature: Math.max(0, Math.min(1, query.options?.temperature || 0.7)), // Clamp temperature
+      },
     };
 
     const hash = createHash('sha256')
@@ -118,7 +116,7 @@ export class ResponseCacheService {
    */
   private extractDataCategories(response: AguiResponseMessage): string[] {
     const categories: string[] = [];
-    
+
     if (response.sources) {
       response.sources.forEach(source => {
         switch (source.type) {
@@ -167,7 +165,7 @@ export class ResponseCacheService {
     // In production, use proper compression algorithms
     return {
       _compressed: true,
-      data: JSON.stringify(data)
+      data: JSON.stringify(data),
     };
   }
 
@@ -187,7 +185,7 @@ export class ResponseCacheService {
    */
   async getCachedResponse(
     query: AguiQueryMessage,
-    userId: string
+    userId: string,
   ): Promise<AguiResponseMessage | null> {
     const startTime = Date.now();
 
@@ -247,7 +245,6 @@ export class ResponseCacheService {
       this.stats.totalMisses++;
       this.updateHitRate();
       return null;
-
     } catch (error) {
       console.error('[Cache] Error retrieving cached response:', error);
       this.stats.totalMisses++;
@@ -266,7 +263,7 @@ export class ResponseCacheService {
     options: {
       customTTL?: number;
       skipCache?: boolean;
-    } = {}
+    } = {},
   ): Promise<void> {
     if (options.skipCache) {
       return;
@@ -287,7 +284,9 @@ export class ResponseCacheService {
       const cacheKey = this.generateCacheKey(query, validatedUserId);
 
       // Sanitize metadata
-      const patientId = query.context?.patientId ? this.sanitizeString(query.context.patientId) : undefined;
+      const patientId = query.context?.patientId
+        ? this.sanitizeString(query.context.patientId)
+        : undefined;
 
       const entry: CacheEntry = {
         data: await this.compressData(validatedResponse),
@@ -300,8 +299,8 @@ export class ResponseCacheService {
           patientId,
           dataCategories: this.extractDataCategories(validatedResponse),
           confidenceScore: Math.max(0, Math.min(1, validatedResponse.confidence || 0)),
-          sources: validatedResponse.sources?.map(s => this.validateSource(s)) || []
-        }
+          sources: validatedResponse.sources?.map(s => this.validateSource(s)) || [],
+        },
       };
 
       // Validate entry structure
@@ -312,7 +311,9 @@ export class ResponseCacheService {
 
       // Store in Redis if connected
       if (this.isConnected && this.redis) {
-        await this.safeRedisOperation(() => this.redis.setex(cacheKey, validatedTTL, JSON.stringify(entry)));
+        await this.safeRedisOperation(() =>
+          this.redis.setex(cacheKey, validatedTTL, JSON.stringify(entry))
+        );
       }
 
       // Store in local cache with size limit
@@ -322,7 +323,6 @@ export class ResponseCacheService {
       }
 
       this.stats.cacheSize++;
-
     } catch (error) {
       console.error('[Cache] Error caching response:', error);
     }
@@ -335,7 +335,7 @@ export class ResponseCacheService {
     const now = new Date();
     const expiresAt = new Date(entry.timestamp);
     expiresAt.setSeconds(expiresAt.getSeconds() + entry.ttl);
-    
+
     return now > expiresAt;
   }
 
@@ -347,7 +347,7 @@ export class ResponseCacheService {
       // Simple LRU eviction
       const entries = Array.from(this.localCache.entries());
       entries.sort((a, b) => a[1].hitCount - b[1].hitCount);
-      
+
       const toRemove = entries.slice(0, Math.floor(this.config.maxSize * 0.2));
       toRemove.forEach(([key]) => {
         this.localCache.delete(key);
@@ -371,7 +371,7 @@ export class ResponseCacheService {
     try {
       // Validate pattern to prevent cache poisoning
       const validatedPattern = CacheKeySchema.parse(pattern);
-      
+
       // Sanitize pattern to prevent Redis injection
       const sanitizedPattern = this.sanitizeRedisPattern(validatedPattern);
 
@@ -401,7 +401,6 @@ export class ResponseCacheService {
 
       this.stats.evictionCount += invalidatedCount;
       return invalidatedCount;
-
     } catch (error) {
       console.error('[Cache] Error invalidating cache:', error);
       return 0;
@@ -421,7 +420,6 @@ export class ResponseCacheService {
       // Get cache size
       const cacheSize = await this.redis.dbsize();
       this.stats.cacheSize = cacheSize;
-
     } catch (error) {
       console.error('[Cache] Error getting cache stats:', error);
     }
@@ -444,7 +442,6 @@ export class ResponseCacheService {
           this.stats.evictionCount++;
         }
       }
-
     } catch (error) {
       console.error('[Cache] Health check failed:', error);
     }
@@ -456,7 +453,7 @@ export class ResponseCacheService {
   private initializeHealthCheck(): void {
     this.healthCheckTimer = setInterval(
       () => this.healthCheck(),
-      this.config.healthCheckInterval
+      this.config.healthCheckInterval,
     );
   }
 
@@ -467,7 +464,7 @@ export class ResponseCacheService {
     if (this.healthCheckTimer) {
       clearInterval(this.healthCheckTimer);
     }
-    
+
     await this.redis.quit();
     this.localCache.clear();
   }
@@ -486,7 +483,7 @@ export function createHealthcareCacheConfig(): CacheConfig {
   // Validate Redis URL format
   try {
     new URL(redisUrl);
-  } catch (_error) {
+  } catch {
     throw new Error('Invalid REDIS_URL format');
   }
 
@@ -495,7 +492,7 @@ export function createHealthcareCacheConfig(): CacheConfig {
     defaultTTL: 3600, // 1 hour for healthcare data
     maxSize: 1000, // Local cache size
     compressionEnabled: true,
-    healthCheckInterval: 30000 // 30 seconds
+    healthCheckInterval: 30000, // 30 seconds
   };
 }
 
@@ -507,34 +504,34 @@ export const CacheStrategies = {
   patientData: {
     ttl: 7200, // 2 hours
     compress: true,
-    priority: 'high'
+    priority: 'high',
   },
 
   // Appointments - shorter TTL, medium priority
   appointments: {
     ttl: 1800, // 30 minutes
     compress: true,
-    priority: 'medium'
+    priority: 'medium',
   },
 
   // Financial data - medium TTL, high priority
   financial: {
     ttl: 3600, // 1 hour
     compress: true,
-    priority: 'high'
+    priority: 'high',
   },
 
   // Medical knowledge - long TTL, low priority
   medicalKnowledge: {
     ttl: 86400, // 24 hours
     compress: true,
-    priority: 'low'
+    priority: 'low',
   },
 
   // Real-time queries - very short TTL, no cache
   realtime: {
     ttl: 60, // 1 minute
     compress: false,
-    priority: 'low'
-  }
+    priority: 'low',
+  },
 };

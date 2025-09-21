@@ -17,7 +17,6 @@
  */
 
 import {
-  AlertTriangle,
   Bot,
   CheckCircle,
   Clock,
@@ -47,8 +46,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-
-
 
 import { formatDateTime } from '@/utils/brazilian-formatters';
 import { cn } from '@neonpro/ui';
@@ -114,7 +111,7 @@ export interface AIMessageDisplayProps {
 }
 
 // Simple markdown renderer (safe implementation)
-const renderMarkdown = (content: string, isStreaming = false) => {
+const renderMarkdown = (content: string, _isStreaming = false) => {
   if (!content) return null;
 
   // Basic markdown processing - replace with a proper markdown library in production
@@ -199,7 +196,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
   processingTime,
   healthcareContext = false,
   sources = [],
-  metadata = {},
+  metadata: _metadata = {},
   userAvatar,
   assistantAvatar,
   showTimestamp = true,
@@ -207,7 +204,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
   showActions = true,
   compact = false,
   testId = 'ai-message-display',
-  onMessageAction,
+  onMessageAction: _onMessageAction,
   onCopy,
   onSpeak,
   onEdit,
@@ -217,7 +214,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
   // State
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(content);
-  const [isCopied, setIsCopied] = useState(false);
+  const [_isCopied, setIsCopied] = useState(false);
   const [showSources, setShowSources] = useState(false);
 
   // Refs

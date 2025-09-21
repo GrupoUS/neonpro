@@ -22,8 +22,6 @@ import {
   CacheConfig, 
   CacheDataSensitivity,
   CacheTier,
-  CacheOperationResult,
-  HealthcareCacheContext 
 } from './cache-management';
 
 /**
@@ -75,7 +73,7 @@ export class RedisCacheBackend implements CacheBackend {
    * Get value from Redis cache
    */
   async get(key: string): Promise<CacheEntry | null> {
-    const startTime = Date.now();
+    const _startTime = Date.now();
 
     try {
       if (!this.isConnected || !this.redis) {
@@ -263,7 +261,7 @@ export class RedisCacheBackend implements CacheBackend {
 
         // Get performance metrics
         const performanceInfo = await this.safeRedisOperation(() => this.redis.info('stats'));
-        const totalCommands = performanceInfo.match(/total_commands_processed:([^\r\n]+)/);
+        const _totalCommands = performanceInfo.match(/total_commands_processed:([^\r\n]+)/);
         const keyspaceHits = performanceInfo.match(/keyspace_hits:([^\r\n]+)/);
         const keyspaceMisses = performanceInfo.match(/keyspace_misses:([^\r\n]+)/);
 
@@ -572,7 +570,7 @@ export class RedisCacheBackend implements CacheBackend {
           error: result.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')
         };
       }
-    } catch (error) {
+    } catch {
       return { success: false, error: 'Schema validation unavailable' };
     }
   }

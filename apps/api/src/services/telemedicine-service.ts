@@ -375,7 +375,7 @@ export class TelemedicineService {
       // Validate CFM license
       const licenseVerification = await this.authorizationService.validateAuthorization(
         physician.id,
-        'telemedicine_session'
+        'telemedicine_session',
       );
 
       return licenseVerification;

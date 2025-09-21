@@ -9,8 +9,16 @@
  * - Error handling and fallbacks
  */
 
-import { CircuitBreakerService, HEALTHCARE_CIRCUIT_CONFIG, CircuitState } from '../circuit-breaker-service';
-import { ExternalServiceHealthChecker, HEALTHCARE_HEALTH_CONFIG, ServiceDependency } from '../health-checker';
+import {
+  CircuitBreakerService,
+  CircuitState,
+  HEALTHCARE_CIRCUIT_CONFIG,
+} from '../circuit-breaker-service';
+import {
+  ExternalServiceHealthChecker,
+  HEALTHCARE_HEALTH_CONFIG,
+  ServiceDependency,
+} from '../health-checker';
 
 describe('CircuitBreakerService', () => {
   let circuitBreaker: CircuitBreakerService;
@@ -43,7 +51,7 @@ describe('CircuitBreakerService', () => {
 
     test('should open circuit after failure threshold', async () => {
       const error = new Error('Test error');
-      
+
       // Fail multiple times to open circuit
       for (let i = 0; i < HEALTHCARE_CIRCUIT_CONFIG.failureThreshold; i++) {
         try {
@@ -64,7 +72,9 @@ describe('CircuitBreakerService', () => {
       circuitBreaker['state'] = 'OPEN';
       circuitBreaker['nextAttemptTime'] = new Date(Date.now() + 60000);
 
-      await expect(circuitBreaker.execute(async () => 'success')).rejects.toThrow('Service temporarily unavailable');
+      await expect(circuitBreaker.execute(async () => 'success')).rejects.toThrow(
+        'Service temporarily unavailable',
+      );
     });
   });
 
@@ -81,7 +91,9 @@ describe('CircuitBreakerService', () => {
       healthcareCircuitBreaker['state'] = 'OPEN';
       healthcareCircuitBreaker['nextAttemptTime'] = new Date(Date.now() + 60000);
 
-      await expect(healthcareCircuitBreaker.execute(async () => 'success')).rejects.toThrow('Service unavailable - healthcare critical operation blocked');
+      await expect(healthcareCircuitBreaker.execute(async () => 'success')).rejects.toThrow(
+        'Service unavailable - healthcare critical operation blocked',
+      );
 
       healthcareCircuitBreaker.destroy();
     });
@@ -121,7 +133,7 @@ describe('CircuitBreakerService', () => {
     test('should track request metrics', async () => {
       // Successful request
       await circuitBreaker.execute(async () => 'success');
-      
+
       let metrics = circuitBreaker.getMetrics();
       expect(metrics.totalRequests).toBe(1);
       expect(metrics.successfulRequests).toBe(1);
@@ -144,7 +156,7 @@ describe('CircuitBreakerService', () => {
 
     test('should track consecutive failures', async () => {
       const error = new Error('Test error');
-      
+
       for (let i = 0; i < 3; i++) {
         try {
           await circuitBreaker.execute(async () => {
@@ -179,7 +191,7 @@ describe('CircuitBreakerService', () => {
   describe('Event Handling', () => {
     test('should emit events for state changes', async () => {
       const events: any[] = [];
-      circuitBreaker.onEvent((event) => {
+      circuitBreaker.onEvent(event => {
         events.push(event);
       });
 
@@ -201,7 +213,7 @@ describe('CircuitBreakerService', () => {
 
     test('should emit events for successful requests', async () => {
       const events: any[] = [];
-      circuitBreaker.onEvent((event) => {
+      circuitBreaker.onEvent(event => {
         events.push(event);
       });
 
@@ -294,7 +306,7 @@ describe('ExternalServiceHealthChecker', () => {
       };
 
       healthChecker.registerService(service);
-      
+
       // Should not throw when registering same service again
       expect(() => {
         healthChecker.registerService(service);
@@ -349,7 +361,7 @@ describe('ExternalServiceHealthChecker', () => {
   describe('Event Handling', () => {
     test('should emit health check events', async () => {
       const events: any[] = [];
-      healthChecker.onEvent((event) => {
+      healthChecker.onEvent(event => {
         events.push(event);
       });
 
@@ -445,7 +457,9 @@ describe('Integration Scenarios', () => {
     healthcareCircuitBreaker['state'] = 'OPEN';
     healthcareCircuitBreaker['nextAttemptTime'] = new Date(Date.now() + 60000);
 
-    await expect(healthcareCircuitBreaker.execute(async () => 'success')).rejects.toThrow('Service unavailable - healthcare critical operation blocked');
+    await expect(healthcareCircuitBreaker.execute(async () => 'success')).rejects.toThrow(
+      'Service unavailable - healthcare critical operation blocked',
+    );
 
     healthcareCircuitBreaker.destroy();
   });

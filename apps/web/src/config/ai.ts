@@ -479,7 +479,7 @@ export function selectOptimalProvider(
   complexity: 'low' | 'medium' | 'high' = 'medium',
   availableProviders: string[] = ['openai', 'anthropic', 'google'],
 ): { provider: string; model: string; reason: string } {
-  const context = HEALTHCARE_CONTEXTS[agentType];
+  const _context = HEALTHCARE_CONTEXTS[agentType];
 
   // Priority mapping based on agent type and requirements
   const providerPriority = {

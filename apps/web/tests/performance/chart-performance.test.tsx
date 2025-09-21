@@ -22,45 +22,49 @@
  * @subpackage Data Visualization
  */
 
-import React from 'react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { performance, PerformanceObserver } from 'perf_hooks';
+import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 // Mock Recharts components
 const MockLineChart = ({ data, width, height, children }: any) =>
-  React.createElement('div', {
-    className: 'recharts-wrapper',
-    style: { width, height },
-    'data-testid': 'line-chart'
-  },
+  React.createElement(
+    'div',
+    {
+      className: 'recharts-wrapper',
+      style: { width, height },
+      'data-testid': 'line-chart',
+    },
     React.createElement('svg', {
       width,
       height,
-      className: 'recharts-surface'
-    }, children)
+      className: 'recharts-surface',
+    }, children),
   );
 
 const MockLine = ({ dataKey, stroke, dot, activeDot }) =>
-  React.createElement('g', { className: 'recharts-line' },
+  React.createElement(
+    'g',
+    { className: 'recharts-line' },
     React.createElement('path', {
       d: 'M0,100 L100,80 L200,90 L300,70',
       stroke,
       fill: 'none',
-      strokeWidth: 2
+      strokeWidth: 2,
     }),
     dot && React.createElement('circle', {
       cx: '150',
       cy: '85',
       r: '3',
-      fill: stroke
+      fill: stroke,
     }),
     activeDot && React.createElement('circle', {
       cx: '150',
       cy: '85',
       r: '5',
-      fill: stroke
-    })
+      fill: stroke,
+    }),
   );
 
 const MockXAxis = ({ dataKey }) => (

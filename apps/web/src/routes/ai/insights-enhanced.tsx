@@ -696,7 +696,7 @@ function AIInsightsPage() {
         setTreatmentEffectiveness(generateMockTreatmentEffectiveness());
 
         setLoading(false);
-      } catch (error) {
+      } catch {
         setError('Erro ao carregar dados de IA');
         setLoading(false);
       }

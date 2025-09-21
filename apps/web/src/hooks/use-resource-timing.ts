@@ -75,7 +75,7 @@ export function useResourceTiming(): UseResourceTimingReturn {
     updateResources();
 
     // Listen for new resources
-    const observer = new PerformanceObserver(list => {
+    const observer = new PerformanceObserver(_list => {
       updateResources();
     });
 

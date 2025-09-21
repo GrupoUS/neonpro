@@ -13,13 +13,7 @@
 
 import { endOfDay, format, isSameDay, startOfDay } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import {
-  AlertTriangle,
-  Calendar,
-  CheckCircle,
-  Clock,
-  User,
-} from 'lucide-react';
+import { AlertTriangle, Calendar, CheckCircle, Clock, User } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { Alert } from '@/components/ui/alert';
@@ -59,7 +53,10 @@ import {
 } from '@/hooks/use-appointments';
 import { usePatientsList } from '@/hooks/use-patients';
 import { cn } from '@/lib/utils';
-import { validateHealthcareFormData, HealthcareDataSensitivity } from '@/utils/healthcare-form-validation';
+import {
+  HealthcareDataSensitivity,
+  validateHealthcareFormData,
+} from '@/utils/healthcare-form-validation';
 
 interface AppointmentBookingProps {
   initialDate?: Date;

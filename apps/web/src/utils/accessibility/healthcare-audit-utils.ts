@@ -5,8 +5,6 @@
  * WCAG 2.1 AA+ requirements, and healthcare-specific validation patterns.
  */
 
-import { generateAccessibilityReport } from './axe-core-integration';
-
 // Brazilian healthcare compliance standards
 export const BRAZILIAN_HEALTHCARE_STANDARDS = {
   LGPD: {
@@ -660,7 +658,7 @@ export class HealthcareAccessibilityAuditor {
     let fixed = 0;
     let failed = 0;
 
-    for (const [ruleId, rule] of Object.entries(this.rules)) {
+    for (const [_ruleId, rule] of Object.entries(this.rules)) {
       try {
         rule.fix(elementContext);
         fixes.push({

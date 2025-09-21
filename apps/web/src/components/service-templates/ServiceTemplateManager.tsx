@@ -16,7 +16,6 @@ import {
   SERVICE_TEMPLATE_TYPES,
   type ServiceTemplateType,
 } from '@/types/service-templates';
-import type { ServiceTemplateWithItems } from '@/types/service-templates';
 import { Button } from '@neonpro/ui';
 import { Card } from '@neonpro/ui';
 import { Badge } from '@neonpro/ui';

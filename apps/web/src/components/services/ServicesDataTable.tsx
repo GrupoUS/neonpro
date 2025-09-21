@@ -25,9 +25,9 @@ import {
   TableRow,
 } from '@neonpro/ui';
 
+import { HealthcareLoadingFallback } from '@/lib/lazy-loading';
 import type { Service } from '@/types/service';
 import { formatBRL } from '@neonpro/utils';
-import { TableLoading } from '@/lib/utils';
 
 // Lazy load TanStack Table for better bundle splitting
 const TanStackTable = lazy(() => import('@tanstack/react-table'));
@@ -163,7 +163,7 @@ export function ServicesDataTable({
   ];
 
   return (
-    <Suspense fallback={<TableLoading />}>
+    <Suspense fallback={<HealthcareLoadingFallback />}>
       <ServicesDataTableContent
         data={data}
         loading={loading}
@@ -208,8 +208,14 @@ function ServicesDataTableContent({
   setColumnVisibility: (visibility: VisibilityState) => void;
 }) {
   // Dynamically import TanStack Table hooks
-  const { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, flexRender } =
-    TanStackTable as any;
+  const {
+    useReactTable,
+    getCoreRowModel,
+    getPaginationRowModel,
+    getSortedRowModel,
+    getFilteredRowModel,
+    flexRender,
+  } = TanStackTable as any;
 
   const table = useReactTable({
     data,

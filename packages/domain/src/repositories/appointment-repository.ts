@@ -1,9 +1,9 @@
-import { 
-  Appointment, 
-  AppointmentStatus, 
+import {
+  type Appointment,
+  AppointmentStatus,
   AppointmentType,
   AppointmentPriority,
-  AppointmentCalendarView 
+  type AppointmentCalendarView
 } from '../entities/appointment.js';
 
 /**

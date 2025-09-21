@@ -852,9 +852,9 @@ export class AgentPermissionService {
             schema: 'public',
             table: 'user_roles',
           },
-          (payload) => {
+          payload => {
             this.handleRoleChange(payload);
-          }
+          },
         )
         .on(
           'postgres_changes',
@@ -863,11 +863,11 @@ export class AgentPermissionService {
             schema: 'public',
             table: 'role_permissions',
           },
-          (payload) => {
+          payload => {
             this.handlePermissionChange(payload);
-          }
+          },
         )
-        .subscribe((status) => {
+        .subscribe(status => {
           console.log('Real-time permission invalidation status:', status);
         });
 
@@ -954,7 +954,9 @@ export class AgentPermissionService {
    * Log cache invalidation events for audit
    */
   private logCacheInvalidation(reason: string, target: string): void {
-    console.log(`Cache invalidated - Reason: ${reason}, Target: ${target}, Version: ${this.cacheVersion}`);
+    console.log(
+      `Cache invalidated - Reason: ${reason}, Target: ${target}, Version: ${this.cacheVersion}`,
+    );
   }
 
   /**

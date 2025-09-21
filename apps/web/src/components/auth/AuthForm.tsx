@@ -12,8 +12,12 @@ import {
   signUpWithEmail,
 } from '@/integrations/supabase/client';
 import { type AuthFormData, authFormSchema, emailSchema } from '@/lib/validations/auth';
+import {
+  HealthcareDataSensitivity,
+  validateBrazilianProfessionalData,
+  validateHealthcareFormData,
+} from '@/utils/healthcare-form-validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { validateHealthcareFormData, HealthcareDataSensitivity, validateBrazilianProfessionalData } from '@/utils/healthcare-form-validation';
 import { IconBrandGoogle } from '@tabler/icons-react';
 import { useRouter } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';

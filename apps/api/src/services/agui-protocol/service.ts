@@ -13,13 +13,7 @@ import type { ConversationMessage } from '../conversation';
 import { AgentPermissionService } from '../permissions';
 import { RealtimeSubscriptionService } from '../realtime';
 import { AguiProtocol, AguiProtocolConfig } from './protocol';
-import {
-  AguiAction,
-  AguiHealthStatus,
-  AguiSession,
-  AguiSource,
-  AguiUsageStats,
-} from './types';
+import { AguiAction, AguiHealthStatus, AguiSession, AguiSource, AguiUsageStats } from './types';
 
 export interface AguiServiceConfig extends AguiProtocolConfig {
   ragAgentEndpoint: string;
@@ -529,7 +523,10 @@ export class AguiService extends EventEmitter {
       await this.testRagAgentConnectivity();
     } catch (error) {
       // Log error securely without exposing sensitive information
-      console.error('RAG agent connectivity test failed:', error instanceof Error ? error.message : 'Unknown error');
+      console.error(
+        'RAG agent connectivity test failed:',
+        error instanceof Error ? error.message : 'Unknown error',
+      );
       ragAgentHealthy = false;
     }
 
@@ -689,7 +686,10 @@ export class AguiService extends EventEmitter {
         this.protocol.sendResponse(data.connection.id, result, data.messageId);
       } catch (error) {
         // Log error for debugging while protecting sensitive information
-        console.error('Query processing failed:', error instanceof Error ? error.message : 'Unknown error');
+        console.error(
+          'Query processing failed:',
+          error instanceof Error ? error.message : 'Unknown error',
+        );
         this.protocol.sendError(
           data.connection.ws,
           'INTERNAL_ERROR',

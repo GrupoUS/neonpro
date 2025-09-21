@@ -18,7 +18,7 @@ afterAll(() => {
 });
 
 // Global test utilities
-global.testUtils = {
+(global as any).testUtils = {
   createMockPatient: () => ({
     clinicId: "test-clinic-id",
     medicalRecordNumber: `MRN-${Date.now()}`,

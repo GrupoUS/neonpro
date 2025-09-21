@@ -17,7 +17,6 @@ import {
   Share,
   Shield,
   Trash2,
-  User,
   X,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -25,10 +24,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
   Alert,
   AlertDescription,
   Badge,
@@ -38,23 +33,18 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-  Checkbox,
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   Form,
   FormControl,
   FormDescription,
   FormField,
   FormItem,
   FormLabel,
-  FormMessage,
-  Separator,
   Switch,
-  Textarea,
 } from '@neonpro/ui';
 import { cn } from '@neonpro/utils';
 
@@ -219,7 +209,7 @@ export function ConsentManagementDialog({
   onConsentUpdate,
   onDataExport,
   onDataErasure,
-  userRole,
+  userRole: _userRole,
   className,
 }: ConsentManagementDialogProps) {
   const [isLoading, setIsLoading] = useState(false);

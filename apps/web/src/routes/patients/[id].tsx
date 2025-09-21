@@ -1,5 +1,5 @@
-'use client';;
-import { createFileRoute } from '@tanstack/react-router'
+'use client';
+import { createFileRoute } from '@tanstack/react-router';
 
 import {
   AlertTriangle,

@@ -273,12 +273,14 @@ export class AuditLogger {
     try {
       // Create a safe copy of the metadata
       const safeMetadata: Record<string, unknown> = {};
-      
+
       // Only include primitive types and safe objects
       for (const [key, value] of Object.entries(metadata)) {
         if (value === null || value === undefined) {
           safeMetadata[key] = null;
-        } else if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+        } else if (
+          typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean'
+        ) {
           safeMetadata[key] = value;
         } else if (typeof value === 'object') {
           // For objects, try to stringify them safely

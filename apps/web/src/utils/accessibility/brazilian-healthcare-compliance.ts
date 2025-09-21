@@ -9,8 +9,6 @@
  * Provides automated validation, audit trails, and compliance reporting.
  */
 
-import { healthcareAccessibilityAuditor } from './healthcare-audit-utils';
-
 // Brazilian healthcare compliance standards
 export const BRAZILIAN_HEALTHCARE_COMPLIANCE = {
   LGPD: {
@@ -481,7 +479,7 @@ export class BrazilianHealthcareComplianceValidator {
     const criticalIssues = [];
     let passedRequirements = 0;
 
-    for (const [reqId, requirement] of Object.entries(standard.requirements)) {
+    for (const [_reqId, requirement] of Object.entries(standard.requirements)) {
       try {
         const req = requirement as any; // Type assertion to handle unknown type
         const passed = req.validation(context);
