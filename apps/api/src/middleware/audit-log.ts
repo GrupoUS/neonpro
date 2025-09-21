@@ -163,8 +163,13 @@ export function auditLogMiddleware(config: AuditLogConfig = {}) {
     if (includeRequestBody && ['POST', 'PUT', 'PATCH'].includes(method)) {
       try {
         // Clone the request to read the body without consuming it
-        const clonedRequest = c.req.clone?.() || c.req;
-        requestBody = await clonedRequest.json();
+        // Note: HonoRequest may not have clone method, so we try to access body directly
+        try {
+          requestBody = await c.req.json();
+        } catch (bodyError) {
+          // If we can't read the body, continue without it
+          console.warn('Could not read request body for audit logging:', bodyError);
+        }
         requestBody = sanitizeData(requestBody, sensitiveFields);
       } catch (_error) {
         // Ignore errors when reading request body

@@ -762,7 +762,7 @@ export class AgentPermissionService {
     if (typeof input !== 'string') return '';
     return input
       .replace(/[<>]/g, '') // Remove potential HTML/script tags
-      .replace(/[;'\"\\]/g, '') // Remove potential SQL injection chars
+      .replace(/[;'"\\]/g, '') // Remove potential SQL injection chars
       .trim()
       .substring(0, 255); // Limit length
   }

@@ -129,6 +129,9 @@ export function streamingMiddleware() {
       c.set('streamStartTime', Date.now());
 
       await next();
+      
+      // Return the response after next() completes
+      return;
     } catch (error) {
       logger.error('Streaming middleware error', {
         error: error instanceof Error ? error.message : String(error),

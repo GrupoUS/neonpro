@@ -160,6 +160,9 @@ function createRateLimit(config: RateLimitConfig) {
         c.header('X-RateLimit-Reset', Math.ceil(resetTime / 1000).toString());
       }
     }
+    
+    // Return void for middleware compatibility
+    return;
   };
 }
 

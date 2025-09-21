@@ -805,7 +805,7 @@ export class EnhancedQueryCacheService {
   private sanitizeQueryString(query: string): string {
     if (typeof query !== 'string') return '';
     return query
-      .replace(/[<>\"'&]/g, '')
+      .replace(/[<>"'&]/g, '')
       .replace(/\s+/g, ' ')
       .trim()
       .substring(0, 1000);
@@ -817,7 +817,7 @@ export class EnhancedQueryCacheService {
   private sanitizeString(input: string): string {
     if (typeof input !== 'string') return '';
     return input
-      .replace(/[<>\"'&\\]/g, '')
+      .replace(/[<>"'&\\]/g, '')
       .replace(/\s+/g, ' ')
       .trim()
       .substring(0, 255);
