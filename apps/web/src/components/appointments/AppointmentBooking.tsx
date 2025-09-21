@@ -184,7 +184,7 @@ export function AppointmentBooking({
       onBookingComplete?.(result);
       setIsBookingDialogOpen(false);
       setSelectedTime('');
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to book appointment:', error);
     }
   };
@@ -214,7 +214,7 @@ export function AppointmentBooking({
         {dayAppointments.length > 0 && (
           <div className='absolute -bottom-1 left-1/2 transform -translate-x-1/2'>
             <div className='flex gap-1'>
-              {dayAppointments.slice(0, 3).map((apt, index) => (
+              {dayAppointments.slice(0, 3).map((apt, _index) => (
                 <div
                   key={apt.id}
                   className={cn(

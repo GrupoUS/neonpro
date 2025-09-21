@@ -162,7 +162,7 @@ export function useAIChat(conversationId?: string) {
       return { optimisticMessage, conversationId: convId };
     },
 
-    onSuccess: (data, variables, context) => {
+    onSuccess: (data, _variables, context) => {
       // Update conversation with real response
       const convId = context?.conversationId || data.conversationId;
       if (convId) {
@@ -217,7 +217,7 @@ export function useAIChat(conversationId?: string) {
       }
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Remove optimistic message
       const convId = context?.conversationId;
       if (convId) {
@@ -276,7 +276,7 @@ export function useAINoShowPrediction() {
       });
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Cache prediction result
       queryClient.setQueryData(aiChatKeys.predictions(), (_old: any) => {
         const predictions = old || [];
@@ -329,7 +329,7 @@ export function useAIHealthcareInsights() {
       });
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Cache insights
       const queryClient = useQueryClient();
       queryClient.setQueryData(
@@ -627,7 +627,7 @@ export function useAIConversationHistory() {
   );
 
   const deleteConversation = trpc.ai.deleteConversation.useMutation({
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update conversations cache
       const queryClient = useQueryClient();
       queryClient.setQueryData(aiChatKeys.conversations(), (_old: any) => {

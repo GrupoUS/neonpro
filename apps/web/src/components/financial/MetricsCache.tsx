@@ -44,7 +44,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = ({
       if (onCacheUpdate) {
         onCacheUpdate(stats);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to refresh cache stats:', error);
     } finally {
       setIsRefreshing(false);
@@ -60,7 +60,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = ({
         keys: [],
         memory: 0,
       });
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to clear cache:', error);
     }
   };
@@ -129,7 +129,7 @@ export const MetricsCache: React.FC<MetricsCacheProps> = ({
           <div>
             <h4 className='font-medium mb-2'>Cache Keys</h4>
             <div className='flex flex-wrap gap-2'>
-              {cacheStats.keys.map((key, index) => (
+              {cacheStats.keys.map((key, _index) => (
                 <Badge key={index} variant='secondary'>
                   {key}
                 </Badge>

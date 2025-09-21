@@ -197,7 +197,7 @@ export const PerformanceTester: React.FC = () => {
       observersRef.current.forEach(_observer => {
         try {
           observer.disconnect();
-        } catch (error) {
+        } catch (_error) {
           console.warn('Error disconnecting observer:', error);
         }
       });
@@ -246,7 +246,9 @@ export const PerformanceTester: React.FC = () => {
       try {
         lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
         observers.push(lcpObserver);
+
       } catch (error) {
+
         console.warn('LCP observation not supported');
       }
 
@@ -264,7 +266,9 @@ export const PerformanceTester: React.FC = () => {
       try {
         fidObserver.observe({ entryTypes: ['first-input'] });
         observers.push(fidObserver);
+
       } catch (error) {
+
         console.warn('FID observation not supported');
       }
 
@@ -283,7 +287,9 @@ export const PerformanceTester: React.FC = () => {
       try {
         clsObserver.observe({ entryTypes: ['layout-shift'] });
         observers.push(clsObserver);
+
       } catch (error) {
+
         console.warn('CLS observation not supported');
       }
 
@@ -302,7 +308,9 @@ export const PerformanceTester: React.FC = () => {
         // Try to observe interaction events - this may fail in browsers that don't support INP
         inpObserver.observe({ entryTypes: ['event'] });
         observers.push(inpObserver);
+
       } catch (error) {
+
         console.warn('INP observation not supported:', e);
       }
 
@@ -321,13 +329,14 @@ export const PerformanceTester: React.FC = () => {
       // Store all observers for cleanup
       observersRef.current = observers;
       
-    } catch (error) {
+    } catch (_error) {
       console.warn('Performance observers setup failed:', error);
       // Clean up any observers that were created before the error
       observers.forEach(_observer => {
         try {
           observer.disconnect();
         } catch (error) {
+
           console.warn('Error disconnecting observer during cleanup:', e);
         }
       });
@@ -417,7 +426,7 @@ export const PerformanceTester: React.FC = () => {
           updateMetric('DATA_LOAD', duration);
         }
 
-      } catch (error) {
+      } catch (_error) {
         results.push({
           id: scenario.id,
           name: scenario.name,

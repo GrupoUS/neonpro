@@ -834,7 +834,7 @@ function PatientDetailPage() {
                         Condições Crônicas
                       </h4>
                       <div className='space-y-1'>
-                        {patient.chronicConditions.map((condition, index) => (
+                        {patient.chronicConditions.map((condition, _index) => (
                           <Badge
                             key={index}
                             variant='outline'
@@ -849,7 +849,7 @@ function PatientDetailPage() {
                     <div>
                       <h4 className='font-medium text-sm mb-2'>Alergias</h4>
                       <div className='space-y-1'>
-                        {patient.allergies.map((allergy, index) => (
+                        {patient.allergies.map((allergy, _index) => (
                           <Badge
                             key={index}
                             variant='destructive'
@@ -867,7 +867,7 @@ function PatientDetailPage() {
                       Medicações Atuais
                     </h4>
                     <div className='space-y-2'>
-                      {patient.medications.map((medication, index) => (
+                      {patient.medications.map((medication, _index) => (
                         <div
                           key={index}
                           className='flex items-center justify-between p-2 bg-gray-50 rounded text-sm'
@@ -1202,7 +1202,7 @@ function PatientDetailPage() {
                                     Prescrição
                                   </div>
                                   <div className='space-y-1'>
-                                    {record.prescription.map((presc, index) => (
+                                    {record.prescription.map((presc, _index) => (
                                       <div
                                         key={index}
                                         className='text-sm text-muted-foreground'

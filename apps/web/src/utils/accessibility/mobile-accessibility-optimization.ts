@@ -877,7 +877,7 @@ export async function quickMobileAccessibilityCheck(
       responsiveDesign: results.summary.responsiveImprovements > 0,
       issues: results.recommendations,
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('Quick mobile accessibility check failed:', error);
     return {
       passed: false,

@@ -79,7 +79,7 @@ export function useResourceTiming(): UseResourceTimingReturn {
 
     try {
       observer.observe({ entryTypes: ['resource'] });
-    } catch (error) {
+    } catch (_error) {
       // Fallback for browsers that don't support PerformanceObserver
       console.warn('PerformanceObserver not supported, using fallback');
     }

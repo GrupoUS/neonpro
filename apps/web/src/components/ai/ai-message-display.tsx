@@ -232,7 +232,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
       onCopy?.(content);
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to copy text:', error);
     }
   }, [content, onCopy]);
@@ -415,7 +415,7 @@ export const AIMessageDisplay: React.FC<AIMessageDisplayProps> = ({
 
               {showSources && (
                 <div className='mt-2 space-y-1'>
-                  {sources.map((source, index) => (
+                  {sources.map((source, _index) => (
                     <div
                       key={source.id}
                       className='flex items-start gap-2 p-2 rounded bg-background/50 text-xs'

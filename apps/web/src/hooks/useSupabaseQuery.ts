@@ -238,7 +238,7 @@ export function useSupabaseMutation(
       if (result.error) throw result.error;
       return result.data;
     },
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Invalidar queries relacionadas
       if (options.invalidateQueries) {
         options.invalidateQueries.forEach(_queryKey => {

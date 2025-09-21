@@ -262,7 +262,7 @@ class ServiceTemplatesService {
     templateId: string,
     items: CreateServiceTemplateItemRequest[],
   ): Promise<void> {
-    const itemsData = items.map((item, index) => ({
+    const itemsData = items.map((item, _index) => ({
       template_id: templateId,
       service_id: item.service_id,
       quantity: item.quantity || 1,

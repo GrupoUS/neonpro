@@ -40,7 +40,7 @@ export async function registerServiceWorker(): Promise<ServiceWorkerRegistration
     });
 
     return registration;
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Service worker registration failed:', error);
     return null;
   }
@@ -60,7 +60,7 @@ export async function unregisterServiceWorker(): Promise<boolean> {
       return result;
     }
     return false;
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Service worker unregistration failed:', error);
     return false;
   }
@@ -78,7 +78,7 @@ export async function updateServiceWorker(): Promise<void> {
       await registration.update();
       console.log('[SW] Service worker update triggered');
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Service worker update failed:', error);
   }
 }
@@ -123,7 +123,7 @@ export async function clearCaches(): Promise<void> {
       await Promise.all(cacheNames.map(name => caches.delete(name)));
       console.log('[SW] Browser caches cleared');
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Failed to clear caches:', error);
   }
 }
@@ -146,7 +146,7 @@ export async function preloadCriticalResources(urls: string[]): Promise<void> {
         ]);
       });
     }
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Failed to preload resources:', error);
   }
 }
@@ -185,7 +185,7 @@ export async function getServiceWorkerStatus(): Promise<{
       active: !!registration?.active,
       waiting: !!registration?.waiting,
     };
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Failed to get service worker status:', error);
     return {
       supported: true,
@@ -262,7 +262,7 @@ export async function initializeServiceWorker(): Promise<void> {
     await preloadCriticalResources(criticalResources);
 
     console.log('[SW] Service worker initialized successfully');
-  } catch (error) {
+  } catch (_error) {
     console.error('[SW] Service worker initialization failed:', error);
   }
 }

@@ -149,7 +149,7 @@ export function PricingRuleForm({
         toast.success('Regra de preço criada com sucesso');
       }
       onSuccess();
-    } catch (error) {
+    } catch (_error) {
       console.error('Failed to submit pricing rule form:', error);
       toast.error(rule ? 'Erro ao atualizar regra' : 'Erro ao criar regra');
     }

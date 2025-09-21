@@ -221,7 +221,7 @@ export function AIChatWS({ className, initialContext }: AIChatProps) {
           title: 'Exportação iniciada',
           description: 'Seu relatório está sendo gerado...',
         });
-      } catch (error) {
+      } catch (_error) {
         toast({
           title: 'Erro de exportação',
           description: 'Não foi possível iniciar a exportação',

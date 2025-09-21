@@ -101,22 +101,24 @@ const validateCNS = (cns: string): boolean => {
 
   if (cleanCNS.length !== 15) return false;
 
+  const firstDigit = cleanCNS.charAt(0);
+  
   // Temporary CNS validation (starts with 7, 8, or 9)
-  if (["7", "8", "9"].includes(cleanCNS[0])) {
+  if (["7", "8", "9"].includes(firstDigit)) {
     let sum = 0;
     for (let i = 0; i < 15; i++) {
-      sum += parseInt(cleanCNS[i]) * (15 - i);
+      sum += parseInt(cleanCNS.charAt(i)) * (15 - i);
     }
     return sum % 11 === 0;
   }
 
   // Definitive CNS validation (starts with 1 or 2)
-  if (["1", "2"].includes(cleanCNS[0])) {
+  if (["1", "2"].includes(firstDigit)) {
     const identifier = cleanCNS.substring(0, 11);
     let sum = 0;
 
     for (let i = 0; i < 11; i++) {
-      sum += parseInt(identifier[i]) * (15 - i);
+      sum += parseInt(identifier.charAt(i)) * (15 - i);
     }
 
     const remainder = sum % 11;

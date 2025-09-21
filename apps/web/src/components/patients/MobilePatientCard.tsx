@@ -356,7 +356,7 @@ export function MobilePatientCard({
                     <div>
                       <p className='font-medium text-red-600'>Alergias:</p>
                       <ul className='list-disc list-inside ml-2'>
-                        {healthInfo.allergies.map((allergy, index) => (
+                        {healthInfo.allergies.map((allergy, _index) => (
                           <li key={index}>{allergy}</li>
                         ))}
                       </ul>
@@ -367,7 +367,7 @@ export function MobilePatientCard({
                     <div>
                       <p className='font-medium'>Medicamentos em uso:</p>
                       <ul className='list-disc list-inside ml-2'>
-                        {healthInfo.medications.map((medication, index) => (
+                        {healthInfo.medications.map((medication, _index) => (
                           <li key={index}>{medication}</li>
                         ))}
                       </ul>

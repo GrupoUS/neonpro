@@ -18,7 +18,7 @@ export const healthcareValidationSchemas = {
       /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
       "CPF deve estar no formato 000.000.000-00",
     )
-    .refine((cpf) => {
+    .refine((cpf: string) => {
       // CPF validation algorithm
       const cleanCpf = cpf.replace(/[^\d]/g, "");
       if (cleanCpf.length !== 11) return false;
@@ -63,7 +63,7 @@ export const healthcareValidationSchemas = {
       /^CRM\/[A-Z]{2}\s\d{4,6}$/,
       "CRM deve estar no formato CRM/UF 0000000",
     )
-    .refine((crm) => {
+    .refine((crm: string) => {
       const match = crm.match(/^CRM\/([A-Z]{2})\s(\d{4,6})$/);
       if (!match) return false;
 
@@ -108,7 +108,7 @@ export const healthcareValidationSchemas = {
       /^\(\d{2}\)\s\d{4,5}-\d{4}$/,
       "Telefone deve estar no formato (00) 00000-0000",
     )
-    .refine((phone) => {
+    .refine((phone: string) => {
       const digits = phone.replace(/[^\d]/g, "");
       return digits.length === 10 || digits.length === 11;
     }, "Número de telefone inválido"),
@@ -127,7 +127,7 @@ export const healthcareValidationSchemas = {
   dateOfBirth: z
     .string()
     .regex(/^\d{2}\/\d{2}\/\d{4}$/, "Data deve estar no formato DD/MM/AAAA")
-    .refine((dateStr) => {
+    .refine((dateStr: string) => {
       const [day, month, year] = dateStr.split("/").map(Number);
       const date = new Date(year, month - 1, day);
       const now = new Date();
@@ -276,7 +276,7 @@ export const lgpdConsentSchema = z.object({
   dataProcessingConsent: z
     .boolean()
     .refine(
-      (val) => val === true,
+      (val: boolean) => val === true,
       "Consentimento para processamento de dados é obrigatório",
     ),
   marketingConsent: z.boolean(),

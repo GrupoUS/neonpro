@@ -158,7 +158,7 @@ export function useCreatePatient() {
       return { previousPatients };
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update cache with real patient data
       queryClient.setQueryData(patientKeys.detail(data.id), data);
 
@@ -176,7 +176,7 @@ export function useCreatePatient() {
       toast.success(`Paciente ${data.fullName} criado com sucesso!`);
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Rollback optimistic update
       if (context?.previousPatients) {
         queryClient.setQueryData(patientKeys.lists(), context.previousPatients);
@@ -233,7 +233,7 @@ export function useUpdatePatient() {
       return { previousPatient };
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Update cache with server response
       queryClient.setQueryData(patientKeys.detail(data.id), data);
 
@@ -243,7 +243,7 @@ export function useUpdatePatient() {
       toast.success('Dados do paciente atualizados com sucesso!');
     },
 
-    onError: (error, variables, context) => {
+    onError: (error, _variables, context) => {
       // Rollback optimistic update
       if (context?.previousPatient) {
         queryClient.setQueryData(
@@ -287,7 +287,7 @@ export function useWithdrawPatientConsent() {
       return { confirmed: true };
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Remove patient from cache or mark as anonymized
       queryClient.removeQueries({
         queryKey: patientKeys.detail(variables.patientId),
@@ -305,7 +305,7 @@ export function useWithdrawPatientConsent() {
       toast.success('Consentimento retirado e dados anonimizados com sucesso.');
     },
 
-    onError: (error, variables) => {
+    onError: (error, _variables) => {
       if (error.message === 'Operação cancelada pelo usuário') {
         toast.info('Operação cancelada.');
         return;
@@ -442,7 +442,7 @@ export function useBulkPatientOperations() {
       });
     },
 
-    onSuccess: (data, variables) => {
+    onSuccess: (data, _variables) => {
       // Invalidate affected patients
       variables.patientIds.forEach(_id => {
         queryClient.invalidateQueries({ queryKey: patientKeys.detail(id) });

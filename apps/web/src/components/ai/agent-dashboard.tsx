@@ -302,7 +302,7 @@ export function AgentDashboard({
               <CardContent>
                 <ScrollArea className='max-h-64'>
                   <div className='space-y-2'>
-                    {analytics?.data?.top_queries?.map((query, index) => (
+                    {analytics?.data?.top_queries?.map((query, _index) => (
                       <div
                         key={index}
                         className='flex items-center justify-between p-2 rounded bg-muted'

@@ -198,7 +198,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
       setValidationResult(result);
       updateBenchmarkComparison(result.percentage);
       
-    } catch (error) {
+    } catch (_error) {
       console.error('Validation failed:', error);
     } finally {
       setIsValidating(false);
@@ -502,7 +502,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
                   <div className="mt-3">
                     <div className="text-sm font-medium mb-1">Issues:</div>
                     <ul className="text-xs text-muted-foreground space-y-1">
-                      {score.issues.slice(0, 2).map((issue, index) => (
+                      {score.issues.slice(0, 2).map((issue, _index) => (
                         <li key={index}>• {issue}</li>
                       ))}
                       {score.issues.length > 2 && (
@@ -533,7 +533,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {benchmarks.map((benchmark, index) => (
+          {benchmarks.map((benchmark, _index) => (
             <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
               <div className="flex items-center gap-3">
                 {benchmark.isBeaten ? 
@@ -622,7 +622,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  {validationResult.criticalIssues.map((issue, index) => (
+                  {validationResult.criticalIssues.map((issue, _index) => (
                     <li key={index} className="flex items-start gap-2">
                       <XCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
                       <span className="text-sm">{issue}</span>
@@ -643,7 +643,7 @@ export const HealthcareUIValidationDashboard: React.FC = () => {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  {validationResult.topRecommendations.map((rec, index) => (
+                  {validationResult.topRecommendations.map((rec, _index) => (
                     <li key={index} className="flex items-start gap-2">
                       <CheckCircle className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
                       <span className="text-sm">{rec}</span>

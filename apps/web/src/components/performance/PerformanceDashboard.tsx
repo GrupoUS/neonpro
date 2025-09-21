@@ -233,7 +233,7 @@ export function PerformanceDashboard({
           </CardHeader>
           <CardContent>
             <div className='space-y-3'>
-              {alerts.slice(-5).map((alert, index) => (
+              {alerts.slice(-5).map((alert, _index) => (
                 <div
                   key={index}
                   className={cn(

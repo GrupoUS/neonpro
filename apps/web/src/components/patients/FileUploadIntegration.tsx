@@ -257,7 +257,7 @@ export function FileUploadIntegration({
 
           toast.success(`Arquivo "${file.name}" enviado com sucesso!`);
           onFilesUploaded?.([uploadedFile]);
-        } catch (error) {
+        } catch (_error) {
           console.error('Upload error:', error);
 
           setUploadStates(prev => {
@@ -289,7 +289,7 @@ export function FileUploadIntegration({
       setUploadedFiles(prev => prev.filter(f => f.id !== fileId));
       onFileRemoved?.(fileId);
       toast.success('Arquivo removido com sucesso!');
-    } catch (error) {
+    } catch (_error) {
       console.error('Error removing file:', error);
       toast.error('Erro ao remover arquivo');
     }

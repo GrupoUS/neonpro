@@ -45,7 +45,7 @@ export const MetricsCalculator: React.FC<MetricsCalculatorProps> = ({
       if (onCalculate) {
         onCalculate(result);
       }
-    } catch (error) {
+    } catch (_error) {
       console.error('Calculation failed:', error);
     } finally {
       setIsCalculating(false);

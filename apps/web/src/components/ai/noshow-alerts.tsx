@@ -324,7 +324,7 @@ const PredictionCard = ({
               <div>
                 <h4 className='text-sm font-medium mb-2'>Fatores de Risco:</h4>
                 <div className='space-y-1'>
-                  {prediction.factors.slice(0, 3).map((factor, index) => (
+                  {prediction.factors.slice(0, 3).map((factor, _index) => (
                     <div
                       key={index}
                       className='flex items-start gap-2 text-sm text-muted-foreground'
@@ -347,7 +347,7 @@ const PredictionCard = ({
               <div>
                 <h4 className='text-sm font-medium mb-2'>Ações Realizadas:</h4>
                 <div className='space-y-1'>
-                  {prediction.actionsTaken.map((action, index) => (
+                  {prediction.actionsTaken.map((action, _index) => (
                     <div
                       key={index}
                       className='flex items-start gap-2 text-sm text-muted-foreground'
