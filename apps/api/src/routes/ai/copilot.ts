@@ -2,7 +2,7 @@ import { Context } from 'hono';
 import { createMiddleware } from 'hono/factory';
 import { logger } from '@/lib/logger';
 import { AguiService } from '@/services/agui-protocol/service';
-import { CopilotRequest, CopilotResponse } from '@/services/agui-protocol/types';
+import { CopilotRequest, CopilotResponse } from '../../services/agui-protocol/types';
 
 /**
  * CopilotKit endpoint for healthcare AI integration
